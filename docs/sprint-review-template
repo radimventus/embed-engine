@@ -1,0 +1,16 @@
+# Sprint Completion Checklist
+
+Every sprint must end with the following checklist.
+
+| Requirement | Status | Notes |
+|-------------|--------|-------|
+| Matches approved wireframe | ✅ / ❌ | |
+| Geometry Specification followed | ✅ / ❌ | |
+| Design Language followed | ✅ / ❌ | |
+| Existing sections unchanged | ✅ / ❌ | |
+| Build successful | ✅ / ❌ | |
+| Screenshot generated | ✅ / ❌ | |
+| Technical debt documented | ✅ / ❌ | |
+| Ready for merge | ✅ / ❌ | |
+
+If any item is marked ❌, explain exactly why.
