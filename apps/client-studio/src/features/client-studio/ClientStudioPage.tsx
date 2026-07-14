@@ -2,7 +2,7 @@ import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
 import { AIAdvisor } from './sections/AIAdvisor/AIAdvisor';
 import { Hero } from './sections/Hero/Hero';
-import { LeadCapture } from './sections/LeadCapture/LeadCapture';
+import { AuditLeadCapture } from './sections/AuditLeadCapture/AuditLeadCapture';
 import { PriorityEngine } from './sections/PriorityEngine/PriorityEngine';
 import { PropertyExplorer } from './sections/PropertyExplorer/PropertyExplorer';
 
@@ -14,7 +14,7 @@ export function ClientStudioPage() {
       <PropertyExplorer />
       <PriorityEngine />
       <AIAdvisor />
-      <LeadCapture />
+      <AuditLeadCapture />
     </DesktopCanvas>
   );
 }
