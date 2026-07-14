@@ -2,6 +2,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { AppShell } from './components/layout/AppShell';
+import { ClientStudioPage } from './features/client-studio/ClientStudioPage';
+import { ClientStudioSidebar } from './features/client-studio/ClientStudioSidebar';
 import './index.css';
 
 const rootElement = document.getElementById('root');
@@ -12,6 +14,8 @@ if (rootElement === null) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <AppShell studioTitle="Klientské studio" />
+    <AppShell sidebar={<ClientStudioSidebar />} showStatusBar={false}>
+      <ClientStudioPage />
+    </AppShell>
   </StrictMode>,
 );
