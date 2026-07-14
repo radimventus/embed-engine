@@ -1,0 +1,155 @@
+---
+description: EMBED Engine Engineering Rules
+alwaysApply: true
+---
+
+# EMBED Engine
+
+This repository contains the EMBED Engine.
+
+The engine powers:
+
+- Client Studio
+- Sales Studio
+- Manager Studio
+
+Every implementation must respect the architecture defined below.
+
+---
+
+# Architecture
+
+The repository is a pnpm monorepo.
+
+Applications live in:
+
+apps/
+
+Reusable packages live in:
+
+packages/
+
+Applications never contain business logic.
+
+Business logic belongs only to packages.
+
+---
+
+# Design Philosophy
+
+The engine is not a website.
+
+The engine is not a CMS.
+
+The engine is a reusable runtime.
+
+Every feature must increase reusability.
+
+---
+
+# Domain Driven Design
+
+Business entities must remain framework independent.
+
+No React imports.
+
+No browser API.
+
+No HTTP.
+
+No UI.
+
+Domain must be pure TypeScript.
+
+---
+
+# Package Rules
+
+Packages may depend only downward.
+
+Forbidden:
+
+UI → App
+
+Services → UI
+
+Kernel → Services
+
+Allowed:
+
+Apps
+↓
+
+UI
+↓
+
+Services
+↓
+
+Kernel
+↓
+
+Contracts
+↓
+
+Model
+
+---
+
+# Naming
+
+Folders
+
+kebab-case
+
+Classes
+
+PascalCase
+
+Interfaces
+
+PascalCase
+
+Functions
+
+camelCase
+
+Constants
+
+UPPER_SNAKE_CASE
+
+---
+
+# Code Style
+
+Small files.
+
+Single responsibility.
+
+Composition over inheritance.
+
+No magic values.
+
+No duplicated logic.
+
+No dead code.
+
+No commented code.
+
+---
+
+# Architecture Goal
+
+The engine must remain usable for products other than real estate.
+
+Client Studio is only one implementation.
+
+Never hardcode real-estate assumptions into Kernel.
+
+---
+
+# Golden Rule
+
+Whenever in doubt, simplify.
+
+Architecture has priority over implementation speed.
