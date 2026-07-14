@@ -7,6 +7,8 @@ export default {
     extend: {
       colors: {
         embed: {
+          white: colors.white,
+          black: colors.black,
           neutral: colors.neutral,
           status: colors.status,
           background: colors.background,
