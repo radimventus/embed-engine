@@ -16,6 +16,16 @@ export default {
           border: colors.border,
         },
       },
+      spacing: {
+        section: '24px',
+      },
+      width: {
+        sidebar: '48px',
+        canvas: '1432px',
+      },
+      height: {
+        header: '72px',
+      },
       fontFamily: {
         sans: typography.fontFamily.sans.split(',').map((font) => font.trim()),
       },
