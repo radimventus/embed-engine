@@ -1,0 +1,103 @@
+{
+  "capturedAt": "2026-07-14T21:08:07.191Z",
+  "sourceFingerprint": {
+    "propertyExplorer": "3c5cf3aa60e5936dc3b10d64aeb2896f8e75ade139794fd187ac0f49e758fe17",
+    "tailwindConfig": "55a4d505412e03dc72409290949293810c3391e26fe228ddf69e1f6813c2f869",
+    "heroImage": "692f88852c2b8d8d56ab8ae530f8eb960890d33d6d2b1c98221230f5e897f56c"
+  },
+  "dev": {
+    "url": "http://127.0.0.1:4173",
+    "pngHash": "66966a0ecedca5ce9b716dbf461e5c4f787e5ba4a1049ecfce608b5d77463d77",
+    "metrics": {
+      "url": "http://127.0.0.1:4173/",
+      "canvasWidth": 1432,
+      "canvasHeight": 3530,
+      "heroHeight": 640,
+      "heroComputed": "640px",
+      "peGridCols": "715px 214.5px 500.5px",
+      "floorplanSize": {
+        "w": 480,
+        "h": 480
+      },
+      "hasTriptych": true,
+      "stylesheetCount": 2,
+      "heroCssRules": [
+        ".h-hero-image { height: 40rem; }"
+      ],
+      "stylesheets": [
+        {
+          "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+          "rules": "blocked"
+        },
+        {
+          "href": null,
+          "rules": 195
+        }
+      ],
+      "moduleScripts": [
+        "",
+        "http://127.0.0.1:4173/@vite/client",
+        "http://127.0.0.1:4173/src/main.tsx"
+      ],
+      "linkStyles": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+      ]
+    }
+  },
+  "prod": {
+    "url": "http://127.0.0.1:4174",
+    "pngHash": "66966a0ecedca5ce9b716dbf461e5c4f787e5ba4a1049ecfce608b5d77463d77",
+    "metrics": {
+      "url": "http://127.0.0.1:4174/",
+      "canvasWidth": 1432,
+      "canvasHeight": 3530,
+      "heroHeight": 640,
+      "heroComputed": "640px",
+      "peGridCols": "715px 214.5px 500.5px",
+      "floorplanSize": {
+        "w": 480,
+        "h": 480
+      },
+      "hasTriptych": true,
+      "stylesheetCount": 2,
+      "heroCssRules": [
+        ".h-hero-image { height: 40rem; }"
+      ],
+      "stylesheets": [
+        {
+          "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+          "rules": "blocked"
+        },
+        {
+          "href": "http://127.0.0.1:4174/assets/index-DEnVQCHq.css",
+          "rules": 195
+        }
+      ],
+      "moduleScripts": [
+        "http://127.0.0.1:4174/assets/index-Ct9z9A6j.js"
+      ],
+      "linkStyles": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+        "http://127.0.0.1:4174/assets/index-DEnVQCHq.css"
+      ]
+    }
+  },
+  "pngIdentical": true,
+  "metricDiff": {
+    "canvasWidth": true,
+    "canvasHeight": true,
+    "heroHeight": true,
+    "peGridCols": true,
+    "floorplanSize": true,
+    "triptych": true
+  },
+  "distCssHeroRules": [
+    {
+      "file": "/Users/radimventus/embed-engine/apps/client-studio/dist/assets/index-DEnVQCHq.css",
+      "matches": 1
+    }
+  ],
+  "devHeroCssRules": [
+    ".h-hero-image { height: 40rem; }"
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "sprint": "CS-12",
+  "referenceAuthority": "CS-14 addendum B — wireframe is valid design reference",
+  "capturedAt": "2026-07-14T22:16:18.673Z",
+  "invalidates": "CS-11 — cropped wireframe (1024×1022, ~29% canvas). CS-11 hero/PE/Priority conclusions invalid for partial-crop methodology only.",
+  "reference": {
+    "file": "docs/client-studio-wireframe-full.png",
+    "filePx": "557×1024",
+    "canvasCrop": { "left": 21, "width": 536, "height": 1024 },
+    "logicalCanvasHeight": 2048,
+    "note": "PNG is 0.5× export; uniform scale to render canvas width 1432px → scaled height 2736px"
+  },
+  "render": {
+    "file": "docs/cs-12-render-1600.png",
+    "canvasBox": { "x": 108, "y": 0, "w": 1432, "h": 3530 }
+  },
+  "alignment": {
+    "method": "Desktop Canvas top-left aligned; single uniform scale 2.672× (536→1432px width); aspect ratio preserved; no per-section rescale",
+    "scaledWireframeHeight": 2736,
+    "renderCanvasHeight": 3530,
+    "canvasHeightDelta": 794
+  },
+  "horizontalTable": [
+    { "boundary": "Header end", "wireframeCanvasY": 83, "renderCanvasY": 33, "delta": -50 },
+    { "boundary": "Hero image end", "wireframeCanvasY": 684, "renderCanvasY": 712, "delta": 28 },
+    { "boundary": "Hero content end", "wireframeCanvasY": 828, "renderCanvasY": 875, "delta": 47 },
+    { "boundary": "Social Proof end", "wireframeCanvasY": 935, "renderCanvasY": 956, "delta": 21 },
+    { "boundary": "Property Explorer end", "wireframeCanvasY": 1232, "renderCanvasY": 1748, "delta": 516 },
+    { "boundary": "Priority Engine end", "wireframeCanvasY": 1614, "renderCanvasY": 2100, "delta": 486 },
+    { "boundary": "FAQ + AI end", "wireframeCanvasY": 2052, "renderCanvasY": 2763, "delta": 711 },
+    { "boundary": "Audit end", "wireframeCanvasY": 2653, "renderCanvasY": 3200, "delta": 547 },
+    { "boundary": "Footer end", "wireframeCanvasY": 2736, "renderCanvasY": 3530, "delta": 794 }
+  ],
+  "sectionHeights": [
+    { "section": "Header", "wireframeH": 83, "renderH": 33, "deltaH": -50 },
+    { "section": "Hero image", "wireframeH": 601, "renderH": 679, "deltaH": 78 },
+    { "section": "Hero content", "wireframeH": 144, "renderH": 163, "deltaH": 19 },
+    { "section": "Social Proof", "wireframeH": 107, "renderH": 81, "deltaH": -26 },
+    { "section": "Property Explorer", "wireframeH": 297, "renderH": 792, "deltaH": 495 },
+    { "section": "Priority Engine", "wireframeH": 382, "renderH": 352, "deltaH": -30 },
+    { "section": "FAQ + AI", "wireframeH": 438, "renderH": 663, "deltaH": 225 },
+    { "section": "Audit", "wireframeH": 601, "renderH": 437, "deltaH": -164 },
+    { "section": "Footer tail", "wireframeH": 83, "renderH": 330, "deltaH": 247 }
+  ],
+  "verticalTable": [
+    {
+      "region": "Property Explorer — column split 1 (gallery | room index)",
+      "wireframeX": 724,
+      "wireframePct": 50.6,
+      "renderX": "not pixel-detectable (near-white placeholders)",
+      "renderPctNote": "overlay visually ~50%"
+    },
+    {
+      "region": "Property Explorer — column split 2 (room index | floorplan)",
+      "wireframeX": 932,
+      "wireframePct": 65.1,
+      "renderX": "not pixel-detectable",
+      "renderPctNote": "overlay visually ~65%"
+    }
+  ],
+  "propertyExplorerColumnsWireframe": [
+    { "x0": 61, "w": 647, "pct": 45.1 },
+    { "x0": 724, "w": 208, "pct": 14.6 },
+    { "x0": 948, "w": 422, "pct": 29.5 }
+  ],
+  "visualMass": [
+    {
+      "region": "Hero image band",
+      "wireframeCanvasPct": 17.0,
+      "renderCanvasPct": 19.2,
+      "note": "Wire 601px band vs render 679px band on 3530px canvas"
+    },
+    {
+      "region": "Property Explorer band",
+      "wireframeCanvasPct": 8.4,
+      "renderCanvasPct": 22.4,
+      "note": "297px wire vs 792px render band height"
+    },
+    {
+      "region": "Audit dark-blue block",
+      "wireframeCanvasPct": 17.0,
+      "renderCanvasPct": 12.4,
+      "note": "601px wire vs 437px render band height"
+    }
+  ],
+  "whitespace": {
+    "heroBandExtraPx": 78,
+    "propertyExplorerExtraPx": 495,
+    "canvasTotalExtraPx": 794,
+    "firstMajorDivergenceBoundary": "Property Explorer end (+516px vs wireframe guide)"
+  },
+  "rootCause": "Property Explorer vertical band consumes 792px versus 297px in the scaled wireframe (+495px), becoming the first major sectional divergence after the upper bands (Hero +78px, Social −26px) and driving cumulative downward displacement of Priority (+486px), FAQ (+711px), and Audit (+547px) boundaries.",
+  "designerSideBySide": "NO",
+  "overlay": "docs/cs-12-overlay-full.png"
+}

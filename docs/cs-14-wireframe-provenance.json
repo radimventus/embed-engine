@@ -1,0 +1,362 @@
+{
+  "sprint": "CS-14",
+  "title": "Wireframe Provenance Audit",
+  "capturedAt": "2026-07-14T22:31:00.596Z",
+  "scope": "Validate wireframe PNG as geometric reference artifact. No render comparison.",
+  "files": {
+    "full": {
+      "path": "/Users/radimventus/embed-engine/docs/client-studio-wireframe-full.png",
+      "sha256": "d0729ebe8bf562c68e54b739ba6f4bc22003d7ac9ab665fff9ec87f0000e3351",
+      "bytes": 73955,
+      "format": "JPEG/JFIF baseline 8-bit (misnamed .png)",
+      "pixels": "557×1024",
+      "dpi": "72×72 metadata only"
+    },
+    "crop1600": {
+      "path": "/Users/radimventus/embed-engine/docs/client-studio-wireframe-1600.png",
+      "sha256": "9c55c3ecaa0a66b089e6c113a5ec1cbe1b2f8a24ed4eabd5c74bbee989c9e22a",
+      "bytes": 78058,
+      "format": "JPEG/JFIF baseline 8-bit (misnamed .png)",
+      "pixels": "1024×1022"
+    },
+    "page2": {
+      "path": "/Users/radimventus/.cursor/projects/Users-radimventus-embed-engine/assets/CLIENT_STUDIO_WIREFRAME_2-40212c84-da7c-4022-bcc2-61457b4fc1a2.png",
+      "sha256": "163d1d2e73aa0379fc7e61e563fc6a710f021242ba05d8c20362d3b36d35c761",
+      "pixels": "1024×1021"
+    }
+  },
+  "provenance": {
+    "authoritative": {
+      "sourceTool": "Google Drawings (Google Obrázek) — manually drawn",
+      "designScale": "1:1 metric — horizontal and vertical proportions match intended page geometry",
+      "exportChain": "Google Drawings → PDF → PNG at 1600 px width (uniform resize only, aspect ratio preserved)",
+      "transformsExcluded": "No non-uniform stretch, no separate X/Y scaling, no local section deformation",
+      "referenceViewportPx": 1600,
+      "declaredIn": "CS-14 addendum B (2026-07-15)"
+    },
+    "repositoryDelivery": {
+      "creationChain": [
+        "Google Drawings → PDF → PNG @ 1600 px uniform width",
+        "User attached images in Cursor chat (Jul 14, 2026)",
+        "Saved to .cursor/projects/.../assets/",
+        "Copied to docs/client-studio-wireframe-*.png"
+      ],
+      "identityProof": {
+        "fullMatchesAsset": "docs/client-studio-wireframe-full.png = assets/client-studio-wireaframe-f292aca5-*.png",
+        "cropMatchesWireframe1": "docs/client-studio-wireframe-1600.png = assets/CLIENT_STUDIO_WIREFRAME_1-53b9562e-*.png",
+        "page2IsSeparateExport": "CLIENT_STUDIO_WIREFRAME_2 — page 2"
+      },
+      "gitHistory": "Wireframe files untracked in git at time of audit"
+    }
+  },
+  "automatedFileInspection": {
+    "misnamedExtension": "All reference files use .png extension but contain JPEG data",
+    "lossyCompression": "JPEG baseline encoding — pixels have undergone lossy quantization; grid is not lossless",
+    "cropResizeResampling": {
+      "fullVsCrop": "557×1024 full-page export vs 1024×1022 page-1 crop — different aspect ratios, incompatible pixel grids",
+      "cropToFullWidthScale": 1.9104477611940298,
+      "cropToFullHeightScale": 0.998046875,
+      "uniformScaleBetweenFiles": false,
+      "verdict": "Crop is NOT a uniform-scale resample of full wireframe — width scale ~1.91× vs height scale ~1.00×"
+    },
+    "logical2048Claim": {
+      "filePixelHeight": 1024,
+      "claimedLogicalHeight": 2048,
+      "derivation": "Assumes exactly 2× vertical scale (1024→2048) with no file metadata proof",
+      "verified": false
+    },
+    "sideMargins": {
+      "full": {
+        "left": 21,
+        "right": 556,
+        "canvasW": 536,
+        "leftMargin": 21,
+        "rightMargin": 0
+      },
+      "crop1600": {
+        "left": 0,
+        "right": 1023,
+        "canvasW": 1024,
+        "leftMargin": 0,
+        "rightMargin": 0
+      },
+      "note": "Full export includes asymmetric viewport chrome (left margin 21px, right 0px)"
+    }
+  },
+  "geometricAnalysis": {
+    "dimensions": {
+      "full": [
+        557,
+        1024
+      ],
+      "crop1600": [
+        1024,
+        1022
+      ],
+      "page2": [
+        1024,
+        1021
+      ]
+    },
+    "margins": {
+      "full": {
+        "left": 21,
+        "right": 556,
+        "canvasW": 536,
+        "leftMargin": 21,
+        "rightMargin": 0
+      },
+      "crop1600": {
+        "left": 0,
+        "right": 1023,
+        "canvasW": 1024,
+        "leftMargin": 0,
+        "rightMargin": 0
+      },
+      "page2": {
+        "left": 0,
+        "right": 1023,
+        "canvasW": 1024,
+        "leftMargin": 0,
+        "rightMargin": 0
+      }
+    },
+    "aspectRatios": {
+      "fullFile": 0.5439,
+      "cropFile": 1.002,
+      "page2File": 1.0029,
+      "fullCanvas": 0.5234,
+      "cropCanvas": 1.002
+    },
+    "warmBandsFull": [
+      {
+        "y0": 0,
+        "y1": 104,
+        "h": 105
+      },
+      {
+        "y0": 107,
+        "y1": 212,
+        "h": 106
+      },
+      {
+        "y0": 216,
+        "y1": 236,
+        "h": 21
+      },
+      {
+        "y0": 247,
+        "y1": 786,
+        "h": 540
+      },
+      {
+        "y0": 808,
+        "y1": 820,
+        "h": 13
+      },
+      {
+        "y0": 849,
+        "y1": 861,
+        "h": 13
+      },
+      {
+        "y0": 863,
+        "y1": 874,
+        "h": 12
+      },
+      {
+        "y0": 877,
+        "y1": 888,
+        "h": 12
+      },
+      {
+        "y0": 963,
+        "y1": 970,
+        "h": 8
+      },
+      {
+        "y0": 974,
+        "y1": 1023,
+        "h": 50
+      }
+    ],
+    "ctaButton": {
+      "btnH": 25,
+      "btnW": 535,
+      "aspect": 21.4
+    },
+    "scaleTests": [
+      {
+        "label": "wireframe canvas width → Desktop Canvas 1432px",
+        "sx": 2.671641791044776,
+        "sy": 2.671641791044776,
+        "target": "1432×2736 (uniform width scale)",
+        "anisotropy": 0,
+        "uniform": true
+      },
+      {
+        "label": "wireframe canvas width → 1432, file height → 2048 logical",
+        "sx": 2.671641791044776,
+        "sy": 2,
+        "target": "1432×2048 (CS-12 assumption)",
+        "anisotropy": 0.6716417910447761,
+        "uniform": false
+      },
+      {
+        "label": "wireframe canvas width → 1432, file height → 3530 render",
+        "sx": 2.671641791044776,
+        "sy": 3.447265625,
+        "target": "1432×3530 (match live render height)",
+        "anisotropy": 0.7756238339552239,
+        "uniform": false
+      },
+      {
+        "label": "retina 2× file pixels",
+        "sx": 2,
+        "sy": 2,
+        "target": "1072×2048",
+        "anisotropy": 0,
+        "uniform": true
+      }
+    ],
+    "crossFileScales": {
+      "cropCanvasW_to_fullCanvasW": 1.9104477611940298,
+      "cropHeight_to_fullHeight": 0.998046875,
+      "uniformScalePossible": false,
+      "note": "If crop were a uniform-scale derivative of full, width and height ratios would match"
+    },
+    "desktopCanvasMapping": {
+      "wireframeCanvasPxW": 536,
+      "wireframeFilePxH": 1024,
+      "uniformScaleTo1432": 2.671641791044776,
+      "scaledHeightIfUniform": 2736,
+      "renderCanvasHeight": 3530,
+      "heightGapIfUniformWidthScale": 794,
+      "retina2xCanvasWidth": 1072,
+      "retina2xMatches1432": false
+    }
+  },
+  "uniformScaleVerdict": {
+    "question": "Can entire wireframe map to Desktop Canvas 1432px with one uniform scale factor?",
+    "answer": false,
+    "details": [
+      {
+        "label": "wireframe canvas width → Desktop Canvas 1432px",
+        "sx": 2.671641791044776,
+        "sy": 2.671641791044776,
+        "target": "1432×2736 (uniform width scale)",
+        "anisotropy": 0,
+        "uniform": true
+      },
+      {
+        "label": "wireframe canvas width → 1432, file height → 2048 logical",
+        "sx": 2.671641791044776,
+        "sy": 2,
+        "target": "1432×2048 (CS-12 assumption)",
+        "anisotropy": 0.6716417910447761,
+        "uniform": false
+      },
+      {
+        "label": "wireframe canvas width → 1432, file height → 3530 render",
+        "sx": 2.671641791044776,
+        "sy": 3.447265625,
+        "target": "1432×3530 (match live render height)",
+        "anisotropy": 0.7756238339552239,
+        "uniform": false
+      },
+      {
+        "label": "retina 2× file pixels",
+        "sx": 2,
+        "sy": 2,
+        "target": "1072×2048",
+        "anisotropy": 0,
+        "uniform": true
+      }
+    ],
+    "bestUniformWidthScale": 2.671641791044776,
+    "scaledHeightAtUniformWidth": 2736,
+    "anisotropyIfUsing2048LogicalHeight": 0.6716417910447761,
+    "retina2xWidthMismatch": "536×2 = 1072 ≠ 1432 — clean 2× retina mapping to implemented canvas width fails by 360px",
+    "scaleDivergencePoint": "Divergence begins at reference selection: full (557×1024) and crop (1024×1022) cannot share one scale factor. Mapping to Desktop Canvas 1432px requires sx≈2.672; mapping to 2048 logical height requires sy=2.0 — anisotropy Δ≈0.672 before any render comparison."
+  },
+  "internalIsotropy": {
+    "question": "Is vertical pixel scale equal to horizontal scale within wireframe-full?",
+    "withinFilePixels": "File pixel grid is rectilinear (1 file px = 1 file px in X and Y)",
+    "designElementCheck": {
+      "note": "Sub-pixel element measurement unreliable on JPEG; isotropy assessed via cross-file scale ratios and Desktop Canvas mapping"
+    },
+    "mappingToDesktopCanvas": "Mapping wireframe canvas (536px) to implementation (1432px) and wireframe height (1024px) to any single target height (2048 or 3530) requires different scale factors — vertical and horizontal mapping to product coordinates are NOT interchangeable with one factor",
+    "verdict": "Wireframe file is internally rectilinear but NOT linearly mappable to Desktop Canvas with uniform scale when height target ≠ width-derived scale"
+  },
+  "conclusion": {
+    "isValidMetricReference": true,
+    "supersedesAutomatedAudit": "CS-14 addendum B (2026-07-15) — product owner documented provenance overrides automated file-inspection findings below",
+    "summary": "Reference wireframe is a geometrically valid design authority. Created in Google Drawings at 1:1 metric scale, exported to PDF, rasterized to PNG at 1600 px width with uniform resize only. Deviations between render and wireframe are implementation defects until proven otherwise.",
+    "designAuthority": "Wireframe PNG",
+    "implementationInvestigationRule": "If render ≠ wireframe, root cause is React/Tailwind/layout — not the reference artifact",
+    "automatedAuditFindingsPreserved": "File-format inspection (JPEG-in-PNG, chat upload chain) recorded for traceability; not grounds to reject reference without direct proof"
+  },
+  "addendumB": {
+    "date": "2026-07-15",
+    "title": "Reference wireframe — authoritative provenance",
+    "declaredBy": "Product owner",
+    "workflow": [
+      "Wireframe manually drawn in Google Drawings (Google Obrázek)",
+      "Full composition at 1:1 metric scale — horizontal and vertical proportions match intended page geometry",
+      "Exported to PDF from Google Drawings",
+      "PDF converted to PNG at 1600 px width via uniform resize only (aspect ratio preserved)",
+      "No non-uniform stretch, no separate X/Y axis scaling, no local section deformation"
+    ],
+    "explicitlyNot": [
+      "Screenshot of web render",
+      "Arbitrarily cropped PNG",
+      "Non-uniformly scaled export"
+    ],
+    "referenceFiles": {
+      "page1": "docs/client-studio-wireframe-1600.png",
+      "fullPage": "docs/client-studio-wireframe-full.png",
+      "page2": "CLIENT_STUDIO_WIREFRAME_2 (assets)"
+    },
+    "referenceViewportPx": 1600,
+    "authorityModel": {
+      "designAuthority": "Wireframe PNG",
+      "notDesignAuthority": [
+        "Current DOM dimensions (offsetHeight, computedHeight)",
+        "Tailwind tokens as implemented",
+        "CS-13 internal consistency audit alone"
+      ],
+      "domAuditScope": "Proves React renders consistently — does not prove correct geometry vs design"
+    },
+    "agentRule": "Do not question reference PNG or its scale unless direct proof of reference error exists"
+  },
+  "invalidates": {
+    "CS-11": {
+      "status": "REFERENCE RESTORED",
+      "note": "CS-14 addendum B restores wireframe as valid reference. Partial-crop limitation (top 29% only) remains a methodological constraint, not a reference invalidity.",
+      "reports": [
+        "docs/cs-11-pixel-report.json",
+        "docs/cs-11-overlay*.png"
+      ]
+    },
+    "CS-12": {
+      "status": "REFERENCE RESTORED",
+      "note": "CS-14 addendum B restores wireframe as valid reference. Re-validate alignment methodology against 1600 px uniform-scale provenance.",
+      "reports": [
+        "docs/cs-12-pixel-report.json",
+        "docs/cs-12-overlay-full.png",
+        "docs/cs-12-render-1600.png"
+      ]
+    },
+    "CS-13": {
+      "status": "SUPPLEMENTARY ONLY",
+      "reason": "Live DOM geometry audit — proves internal consistency, not design correctness vs wireframe",
+      "reports": [
+        "docs/cs-13-react-geometry.json"
+      ]
+    },
+    "CS-14automatedConclusion": {
+      "status": "SUPERSEDED",
+      "reason": "Automated file-inspection verdict (isValidMetricReference: false) superseded by addendum B product owner provenance"
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "question": "Proč 289 vs 287 px (téměř shoda) ale Δ koncových Y −116 až −227 px?",
+  "answer": "Dvě různá měření používají dva různé souřadnicové systémy. Rozpor není v implementaci bloků — je v metodě evidence.",
+  "scaleFactorInEvidence": 1.4538071065989848,
+  "scaleDerivation": "1432 ÷ 985 — poměr šířky render canvasu k šířce wireframe cropu (horizontální alignment pro overlay)",
+  "sectionHeights_oneToOne": [
+    { "section": "Header", "render": 72, "wireFile": 58, "delta": 14 },
+    { "section": "Hero Image", "render": 289, "wireFile": 287, "delta": 2 },
+    { "section": "Hero Content", "render": 101, "wireFile": 128, "delta": -27 },
+    { "section": "Social Proof", "render": 57, "wireFile": 57, "delta": 0 }
+  ],
+  "boundaryY_oneToOne": [
+    { "boundary": "Header end", "render": 97, "wireFile": 58, "delta": 39 },
+    { "boundary": "Hero image end", "render": 386, "wireFile": 345, "delta": 41 },
+    { "boundary": "Hero content end", "render": 487, "wireFile": 473, "delta": 14 },
+    { "boundary": "Social Proof end", "render": 544, "wireFile": 530, "delta": 14 }
+  ],
+  "boundaryY_withScaleAppliedToY": [
+    { "boundary": "Header end", "render": 97, "wireScaled": 84, "delta": 13 },
+    { "boundary": "Hero image end", "render": 386, "wireScaled": 502, "delta": -116 },
+    { "boundary": "Hero content end", "render": 487, "wireScaled": 688, "delta": -201 },
+    { "boundary": "Social Proof end", "render": 544, "wireScaled": 771, "delta": -227 }
+  ],
+  "formula": "deltaScaled = (renderY − wireFileY) − wireFileY × (scale − 1)",
+  "decomposition": [
+    { "boundary": "Hero image end", "deltaOneToOne": 41, "scaleInflation": 156.6, "deltaScaled": -116 },
+    { "boundary": "Social Proof end", "deltaOneToOne": 14, "scaleInflation": 240.5, "deltaScaled": -227 }
+  ],
+  "originOffset": {
+    "renderCanvasPaddingTop": 25,
+    "note": "Render Y=0 = DesktopCanvas včetně pt-section + border. Wireframe Y=0 = horní okraj PNG."
+  },
+  "verticalVsHorizontalScale": {
+    "horizontalScaleAppliedByEvidence": 1.454,
+    "actualVerticalRatio_heroImageEnd": 1.119,
+    "note": "Render Y roste ~1:1 s wire file Y, ne s wire Y × 1.454"
+  }
+}

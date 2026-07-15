@@ -1,0 +1,79 @@
+{
+  "locationHref": "http://127.0.0.1:4173/",
+  "bodyInnerHtmlLength": 14773,
+  "canvasInnerHtmlLength": 13614,
+  "canvasSectionCount": 9,
+  "ariaLabelElementCount": 8,
+  "ariaLabels": [
+    {
+      "tag": "button",
+      "ariaLabel": "Menu"
+    },
+    {
+      "tag": "button",
+      "ariaLabel": "Domů"
+    },
+    {
+      "tag": "section",
+      "ariaLabel": "Media Explorer"
+    },
+    {
+      "tag": "section",
+      "ariaLabel": "Room Index"
+    },
+    {
+      "tag": "section",
+      "ariaLabel": "Floor Plan Explorer"
+    },
+    {
+      "tag": "section",
+      "ariaLabel": "Priority Engine"
+    },
+    {
+      "tag": "section",
+      "ariaLabel": "AI Advisor"
+    },
+    {
+      "tag": "section",
+      "ariaLabel": "Audit and Lead Capture"
+    }
+  ],
+  "reactRoot": {
+    "tagName": "DIV",
+    "id": "root",
+    "className": null,
+    "childElementCount": 1
+  },
+  "mainJsBundleUrl": "http://127.0.0.1:4173/src/main.tsx",
+  "cssFiles": [
+    {
+      "type": "link",
+      "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap"
+    },
+    {
+      "type": "style",
+      "href": "/Users/radimventus/embed-engine/apps/client-studio/src/index.css"
+    }
+  ],
+  "moduleScripts": [
+    "import { injectIntoGlobalHook } from \"/@react-refresh\";\ninjectIntoGlobalHook(win",
+    "http://127.0.0.1:4173/@vite/client",
+    "http://127.0.0.1:4173/src/main.tsx"
+  ],
+  "canvasPresent": true,
+  "title": "EMBED Platform | Klientské studio",
+  "networkJsBundles": [
+    {
+      "url": "http://127.0.0.1:4173/src/main.tsx",
+      "status": 200,
+      "contentType": "text/javascript"
+    },
+    {
+      "url": "http://127.0.0.1:4173/@vite/client",
+      "status": 200,
+      "contentType": "text/javascript"
+    }
+  ],
+  "capturedAt": "2026-07-14T21:35:59.401Z",
+  "auditUrl": "http://127.0.0.1:4173/"
+}

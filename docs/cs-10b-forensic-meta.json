@@ -1,0 +1,676 @@
+{
+  "capturedAt": "2026-07-14T20:59:41.219Z",
+  "gitHead": "40b104363ecfdcad30fc9450679d5cd3f1707fbc",
+  "gitCommitDate": "2026-07-14 18:37:52 +0200",
+  "gitDirty": true,
+  "gitDirtyFiles": 75,
+  "build": "vite dev (HMR) — not production build",
+  "browserUrl": "http://localhost:5185",
+  "viewport": {
+    "width": 1600,
+    "height": 3576
+  },
+  "canvas": {
+    "offsetWidth": 1432,
+    "offsetHeight": 3530,
+    "scrollHeight": 3528,
+    "rect": {
+      "w": 1432,
+      "h": 3530
+    }
+  },
+  "measured": {
+    "heroImage": {
+      "found": true,
+      "tag": "div",
+      "className": "flex h-hero-image items-center justify-center",
+      "aria": null,
+      "offsetWidth": 1430,
+      "offsetHeight": 640,
+      "computedWidth": "1430px",
+      "computedHeight": "640px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 1,
+        "y": 97,
+        "w": 1430,
+        "h": 640
+      }
+    },
+    "heroContent": {
+      "found": true,
+      "tag": "section",
+      "className": "min-h-hero-content border-b border-embed-border-default px-section py-6",
+      "aria": null,
+      "offsetWidth": 1430,
+      "offsetHeight": 137,
+      "computedWidth": "1430px",
+      "computedHeight": "136.5px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 1,
+        "y": 738,
+        "w": 1430,
+        "h": 137
+      }
+    },
+    "socialProof": {
+      "found": true,
+      "tag": "section",
+      "className": "grid grid-cols-3 divide-x divide-embed-border-default border-b border-embed-border-default mobile:grid-cols-1 mobile:divide-x-0 mobile:divide-y",
+      "aria": null,
+      "offsetWidth": 1430,
+      "offsetHeight": 81,
+      "computedWidth": "1430px",
+      "computedHeight": "81px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 1,
+        "y": 875,
+        "w": 1430,
+        "h": 81
+      }
+    },
+    "gallery": {
+      "found": true,
+      "tag": "div",
+      "className": "mt-section flex aspect-video w-full shrink-0 grow-0 items-center justify-center border border-embed-border-default bg-embed-status-warning/15",
+      "aria": null,
+      "offsetWidth": 702,
+      "offsetHeight": 395,
+      "computedWidth": "702px",
+      "computedHeight": "394.875px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 25,
+        "y": 1038,
+        "w": 702,
+        "h": 395
+      }
+    },
+    "roomIndex": {
+      "found": true,
+      "tag": "section",
+      "className": "grid h-full shrink-0 grow-0 grid-rows-[auto_1fr_auto] px-section py-section",
+      "aria": "Room Index",
+      "offsetWidth": 215,
+      "offsetHeight": 703,
+      "computedWidth": "214.5px",
+      "computedHeight": "703px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 716,
+        "y": 956,
+        "w": 215,
+        "h": 703
+      }
+    },
+    "floorplan": {
+      "found": true,
+      "tag": "div",
+      "className": "relative mt-section flex aspect-square w-full max-w-full shrink-0 grow-0 items-center justify-center border border-embed-border-default bg-embed-status-warning/15",
+      "aria": null,
+      "offsetWidth": 480,
+      "offsetHeight": 480,
+      "computedWidth": "480px",
+      "computedHeight": "480px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 956,
+        "y": 1047,
+        "w": 480,
+        "h": 480
+      }
+    },
+    "priorityCards": {
+      "found": true,
+      "tag": "div",
+      "className": "grid grid-cols-5 gap-4",
+      "aria": null,
+      "offsetWidth": 706,
+      "offsetHeight": 288,
+      "computedWidth": "706.156px",
+      "computedHeight": "288px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 25,
+        "y": 1748,
+        "w": 706,
+        "h": 288
+      }
+    },
+    "priorityIntro": {
+      "found": true,
+      "tag": "div",
+      "className": "flex h-full min-h-0 items-center gap-section border border-embed-border-default bg-embed-status-warning/15 p-section",
+      "aria": null,
+      "offsetWidth": 652,
+      "offsetHeight": 288,
+      "computedWidth": "651.828px",
+      "computedHeight": "288px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 755,
+        "y": 1748,
+        "w": 652,
+        "h": 288
+      }
+    },
+    "faq": {
+      "found": true,
+      "tag": "div",
+      "className": "flex h-full flex-col px-section py-section",
+      "aria": null,
+      "offsetWidth": 715,
+      "offsetHeight": 608,
+      "computedWidth": "715px",
+      "computedHeight": "608px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 1,
+        "y": 2155,
+        "w": 715,
+        "h": 608
+      }
+    },
+    "aiConversation": {
+      "found": true,
+      "tag": "div",
+      "className": "mt-section flex h-full min-h-ai-conversation max-h-ai-conversation flex-col space-y-section overflow-y-auto",
+      "aria": null,
+      "offsetWidth": 666,
+      "offsetHeight": 384,
+      "computedWidth": "666px",
+      "computedHeight": "384px",
+      "overflowX": "auto",
+      "overflowY": "auto",
+      "transform": "none",
+      "rect": {
+        "x": 741,
+        "y": 2227,
+        "w": 666,
+        "h": 384
+      }
+    },
+    "audit": {
+      "found": true,
+      "tag": "section",
+      "className": "",
+      "aria": "Audit and Lead Capture",
+      "offsetWidth": 1430,
+      "offsetHeight": 741,
+      "computedWidth": "1430px",
+      "computedHeight": "740.75px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 1,
+        "y": 2764,
+        "w": 1430,
+        "h": 741
+      }
+    },
+    "heroSectionWrapper": {
+      "found": true,
+      "tag": "section",
+      "className": "border-b border-embed-border-default bg-embed-status-warning/15",
+      "aria": null,
+      "offsetWidth": 1430,
+      "offsetHeight": 641,
+      "computedWidth": "1430px",
+      "computedHeight": "641px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "rect": {
+        "x": 1,
+        "y": 97,
+        "w": 1430,
+        "h": 641
+      }
+    }
+  },
+  "boxes": [
+    {
+      "key": "heroImage",
+      "label": "Hero Image",
+      "color": "#ff0000",
+      "component": "HeroImage",
+      "dom": "div.h-hero-image",
+      "sizeLabel": "1430 × 640 px",
+      "rect": {
+        "x": 1,
+        "y": 97,
+        "w": 1430,
+        "h": 640
+      },
+      "offsetWidth": 1430,
+      "offsetHeight": 640,
+      "computedWidth": "1430px",
+      "computedHeight": "640px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none"
+    },
+    {
+      "key": "heroContent",
+      "label": "Hero Content",
+      "color": "#00aa00",
+      "component": "Hero",
+      "dom": "section.min-h-hero-content",
+      "sizeLabel": "1430 × 137 px",
+      "rect": {
+        "x": 1,
+        "y": 738,
+        "w": 1430,
+        "h": 137
+      },
+      "offsetWidth": 1430,
+      "offsetHeight": 137,
+      "computedWidth": "1430px",
+      "computedHeight": "136.5px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none"
+    },
+    {
+      "key": "socialProof",
+      "label": "Social Proof",
+      "color": "#0066ff",
+      "component": "SocialProof",
+      "dom": "section.grid-cols-3",
+      "sizeLabel": "1430 × 81 px",
+      "rect": {
+        "x": 1,
+        "y": 875,
+        "w": 1430,
+        "h": 81
+      },
+      "offsetWidth": 1430,
+      "offsetHeight": 81,
+      "computedWidth": "1430px",
+      "computedHeight": "81px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none"
+    },
+    {
+      "key": "gallery",
+      "label": "Gallery",
+      "color": "#ff8800",
+      "component": "MainMedia",
+      "dom": "div.aspect-video",
+      "sizeLabel": "702 × 395 px",
+      "rect": {
+        "x": 25,
+        "y": 1038,
+        "w": 702,
+        "h": 395
+      },
+      "offsetWidth": 702,
+      "offsetHeight": 395,
+      "computedWidth": "702px",
+      "computedHeight": "394.875px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none"
+    },
+    {
+      "key": "roomIndex",
+      "label": "Room Index",
+      "color": "#9900ff",
+      "component": "RoomIndex",
+      "dom": "section[aria-label=\"Room Index\"]",
+      "sizeLabel": "215 × 703 px",
+      "rect": {
+        "x": 716,
+        "y": 956,
+        "w": 215,
+        "h": 703
+      },
+      "offsetWidth": 215,
+      "offsetHeight": 703,
+      "computedWidth": "214.5px",
+      "computedHeight": "703px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none"
+    },
+    {
+      "key": "floorplan",
+      "label": "Floorplan",
+      "color": "#00cccc",
+      "component": "FloorPlan",
+      "dom": "div.aspect-square",
+      "sizeLabel": "480 × 480 px",
+      "rect": {
+        "x": 956,
+        "y": 1047,
+        "w": 480,
+        "h": 480
+      },
+      "offsetWidth": 480,
+      "offsetHeight": 480,
+      "computedWidth": "480px",
+      "computedHeight": "480px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none"
+    },
+    {
+      "key": "priorityCards",
+      "label": "Priority Cards",
+      "color": "#ffcc00",
+      "component": "PriorityCards",
+      "dom": "div.grid-cols-5",
+      "sizeLabel": "706 × 288 px",
+      "rect": {
+        "x": 25,
+        "y": 1748,
+        "w": 706,
+        "h": 288
+      },
+      "offsetWidth": 706,
+      "offsetHeight": 288,
+      "computedWidth": "706.156px",
+      "computedHeight": "288px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none"
+    },
+    {
+      "key": "priorityIntro",
+      "label": "Priority Explanation",
+      "color": "#ff00ff",
+      "component": "IntroText",
+      "dom": "IntroText column",
+      "sizeLabel": "652 × 288 px",
+      "rect": {
+        "x": 755,
+        "y": 1748,
+        "w": 652,
+        "h": 288
+      },
+      "offsetWidth": 652,
+      "offsetHeight": 288,
+      "computedWidth": "651.828px",
+      "computedHeight": "288px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none"
+    },
+    {
+      "key": "faq",
+      "label": "FAQ",
+      "color": "#006622",
+      "component": "SuggestedQuestions",
+      "dom": "SuggestedQuestions column",
+      "sizeLabel": "715 × 608 px",
+      "rect": {
+        "x": 1,
+        "y": 2155,
+        "w": 715,
+        "h": 608
+      },
+      "offsetWidth": 715,
+      "offsetHeight": 608,
+      "computedWidth": "715px",
+      "computedHeight": "608px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none"
+    },
+    {
+      "key": "aiConversation",
+      "label": "AI Conversation",
+      "color": "#003399",
+      "component": "Conversation",
+      "dom": "div.min-h-ai-conversation",
+      "sizeLabel": "666 × 384 px",
+      "rect": {
+        "x": 741,
+        "y": 2227,
+        "w": 666,
+        "h": 384
+      },
+      "offsetWidth": 666,
+      "offsetHeight": 384,
+      "computedWidth": "666px",
+      "computedHeight": "384px",
+      "overflowX": "auto",
+      "overflowY": "auto",
+      "transform": "none"
+    },
+    {
+      "key": "audit",
+      "label": "Audit",
+      "color": "#111111",
+      "component": "AuditLeadCapture",
+      "dom": "section[aria-label=\"Audit and Lead Capture\"]",
+      "sizeLabel": "1430 × 741 px",
+      "rect": {
+        "x": 1,
+        "y": 2764,
+        "w": 1430,
+        "h": 741
+      },
+      "offsetWidth": 1430,
+      "offsetHeight": 741,
+      "computedWidth": "1430px",
+      "computedHeight": "740.75px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none"
+    }
+  ],
+  "heroForensics": {
+    "inner": {
+      "dom": "div.flex.h-hero-image.items-center.justify-center",
+      "offsetWidth": 1430,
+      "offsetHeight": 640,
+      "computedWidth": "1430px",
+      "computedHeight": "640px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "clipPath": "none",
+      "rect": {
+        "x": 1,
+        "y": 97,
+        "w": 1430,
+        "h": 640
+      }
+    },
+    "sectionWrapper": {
+      "dom": "section.border-b.border-embed-border-default.bg-embed-status-warning/15",
+      "offsetWidth": 1430,
+      "offsetHeight": 641,
+      "computedWidth": "1430px",
+      "computedHeight": "641px",
+      "overflowX": "visible",
+      "overflowY": "visible",
+      "transform": "none",
+      "clipPath": "none",
+      "rect": {
+        "x": 1,
+        "y": 97,
+        "w": 1430,
+        "h": 641
+      }
+    },
+    "parentChainInner": [
+      {
+        "tag": "div",
+        "class": "flex h-hero-image items-center justify-center",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "640px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "section",
+        "class": "border-b border-embed-border-default bg-embed-status-warning/15",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "641px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "div",
+        "class": "box-border w-canvas min-w-canvas max-w-canvas shrink-0 grow-0 self-start border ",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "3530px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "main",
+        "class": "flex flex-1 items-start justify-center overflow-x-auto overflow-y-auto bg-embed-",
+        "overflow": "auto",
+        "overflowX": "auto",
+        "overflowY": "auto",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "3576px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "div",
+        "class": "flex min-h-0 min-w-0 flex-1 flex-col",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "3576px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "div",
+        "class": "flex h-full min-h-screen bg-embed-background-primary",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "3576px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "div",
+        "class": "",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "3576px",
+        "maxHeight": "none"
+      }
+    ],
+    "parentChainSection": [
+      {
+        "tag": "section",
+        "class": "border-b border-embed-border-default bg-embed-status-warning/15",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "641px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "div",
+        "class": "box-border w-canvas min-w-canvas max-w-canvas shrink-0 grow-0 self-start border ",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "3530px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "main",
+        "class": "flex flex-1 items-start justify-center overflow-x-auto overflow-y-auto bg-embed-",
+        "overflow": "auto",
+        "overflowX": "auto",
+        "overflowY": "auto",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "3576px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "div",
+        "class": "flex min-h-0 min-w-0 flex-1 flex-col",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "3576px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "div",
+        "class": "flex h-full min-h-screen bg-embed-background-primary",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "3576px",
+        "maxHeight": "none"
+      },
+      {
+        "tag": "div",
+        "class": "",
+        "overflow": "visible",
+        "overflowX": "visible",
+        "overflowY": "visible",
+        "transform": "none",
+        "clipPath": "none",
+        "height": "3576px",
+        "maxHeight": "none"
+      }
+    ]
+  },
+  "renderDimensions": {
+    "w": 1432,
+    "h": 3530
+  },
+  "overlayDimensions": {
+    "w": 1432,
+    "h": 3570
+  }
+}

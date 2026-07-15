@@ -1,0 +1,121 @@
+{
+  "pageUrl": "http://127.0.0.1:4174/",
+  "stylesheetLinks": [
+    "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+    "http://127.0.0.1:4174/assets/index-DEnVQCHq.css"
+  ],
+  "styleTags": [],
+  "cssomHHeroImage": [
+    {
+      "sheet": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+      "error": "SecurityError: Failed to read the 'cssRules' property from 'CSSStyleSheet': Cannot access rules"
+    },
+    {
+      "sheet": "http://127.0.0.1:4174/assets/index-DEnVQCHq.css",
+      "ruleIndex": 59,
+      "approximateCssomLine": 60,
+      "selector": ".h-hero-image",
+      "cssText": ".h-hero-image { height: 40rem; }",
+      "height": "40rem"
+    }
+  ],
+  "cssomHasSelector": true,
+  "consoleChecks": {
+    "el": "ref: <Node>",
+    "elHeight": "640px",
+    "elMinHeight": "0px",
+    "elMaxHeight": "none",
+    "elDisplay": "flex",
+    "elClassName": "flex h-hero-image items-center justify-center",
+    "pHeight": "24px",
+    "pLineHeight": "24px",
+    "sectionHeight": "641px"
+  },
+  "divStylesPanel": {
+    "allMatchedCount": 6,
+    "heightRules": [
+      {
+        "selector": ".h-hero-image",
+        "height": "40rem",
+        "important": false,
+        "cssText": ".h-hero-image { height: 40rem; }"
+      }
+    ],
+    "computedHeight": "640px",
+    "wouldShowInStylesPanel": [
+      {
+        "selector": ".h-hero-image",
+        "height": "40rem",
+        "important": false,
+        "cssText": ".h-hero-image { height: 40rem; }"
+      }
+    ]
+  },
+  "pStylesPanel": {
+    "allMatchedCount": 5,
+    "heightRules": [],
+    "computedHeight": "24px",
+    "wouldShowInStylesPanel": "žádné pravidlo s height — Styles panel neukáže height"
+  },
+  "sectionStylesPanel": {
+    "allMatchedCount": 5,
+    "heightRules": [],
+    "computedHeight": "641px",
+    "wouldShowInStylesPanel": "žádné pravidlo s height — Styles panel neukáže height"
+  },
+  "missingRuleExperiment": {
+    "classesWithoutHeroToken": "flex items-center justify-center",
+    "computedHeightWithoutRule": "24px",
+    "interpretation": "24px = výška textového obsahu (line-height text-base), NE spacing.section token"
+  },
+  "boundingRects": {
+    "div": {
+      "x": 109,
+      "y": -2303,
+      "width": 1430,
+      "height": 640,
+      "top": -2303,
+      "right": 1539,
+      "bottom": -1663,
+      "left": 109
+    },
+    "p": {
+      "x": 765.765625,
+      "y": -1995,
+      "width": 116.46875,
+      "height": 24,
+      "top": -1995,
+      "right": 882.234375,
+      "bottom": -1971,
+      "left": 765.765625
+    },
+    "section": {
+      "x": 109,
+      "y": -2303,
+      "width": 1430,
+      "height": 641,
+      "top": -2303,
+      "right": 1539,
+      "bottom": -1662,
+      "left": 109
+    }
+  },
+  "networkCss": [
+    {
+      "url": "http://127.0.0.1:4174/assets/index-DEnVQCHq.css",
+      "status": 200,
+      "contentType": "text/css",
+      "sizeBytes": 12961,
+      "hasHHeroImage": true,
+      "heroRule": ".h-hero-image{height:40rem}"
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+      "status": 200,
+      "contentType": "text/css; charset=utf-8",
+      "sizeBytes": 7521,
+      "hasHHeroImage": false,
+      "heroRule": null
+    }
+  ]
+}

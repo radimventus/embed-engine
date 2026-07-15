@@ -1,0 +1,81 @@
+{
+  "sprint": "CS-11",
+  "referenceAuthority": "CS-14 addendum B — wireframe is valid design reference",
+  "capturedAt": "2026-07-14T22:00:00.000Z",
+  "method": "Pixel-only comparison. Wireframe 50% opacity over render. Aligned: canvas top-left (108,0), no stretch.",
+  "assets": {
+    "wireframe": "docs/client-studio-wireframe-1600.png",
+    "render": "docs/cs-11-render-1600.png",
+    "overlay": "docs/cs-11-overlay.png",
+    "overlayTop": "docs/cs-11-overlay-top1022.png"
+  },
+  "wireframeLimitation": "Wireframe PNG is 1024×1022 and covers only the top 29.0% of the 3530px canvas. FAQ, Audit and Footer are not present in the reference crop.",
+  "canvasBox": { "x": 108, "y": 0, "w": 1432, "h": 3530 },
+  "horizontalTable": [
+    { "boundary": "Header end", "wireframeY": 58, "renderY": 72, "delta": 14 },
+    { "boundary": "Hero image end", "wireframeY": 345, "renderY": 712, "delta": 367 },
+    { "boundary": "Hero content end", "wireframeY": 473, "renderY": 875, "delta": 402 },
+    { "boundary": "Social Proof end", "wireframeY": 530, "renderY": 956, "delta": 426 },
+    { "boundary": "Property Explorer end", "wireframeY": 844, "renderY": 1748, "delta": 904 },
+    { "boundary": "Priority Engine start", "wireframeY": 844, "renderY": 1748, "delta": 904 }
+  ],
+  "sectionHeights": [
+    { "section": "Hero image", "wireframeH": 287, "renderH": 640, "deltaH": 353 },
+    { "section": "Hero content", "wireframeH": 128, "renderH": 163, "deltaH": 35 },
+    { "section": "Social Proof", "wireframeH": 57, "renderH": 81, "deltaH": 24 },
+    { "section": "Property Explorer", "wireframeH": 314, "renderH": 792, "deltaH": 478 }
+  ],
+  "verticalTablePE": [
+    { "split": "Gallery | Room Index", "wireframeX": 486, "renderX": 716, "wirePct": 49.3, "renderPct": 50.0 },
+    { "split": "Room Index | Floorplan", "wireframeX": 639, "renderX": 931, "wirePct": 64.9, "renderPct": 65.0 },
+    { "split": "Canvas right edge", "wireframeX": 985, "renderX": 1432, "delta": 447 }
+  ],
+  "visualMass": [
+    {
+      "region": "Hero image band",
+      "wireframePx": 282695,
+      "renderPx": 916480,
+      "wireframeCanvasPct": 5.59,
+      "renderCanvasPct": 18.13
+    },
+    {
+      "region": "Property Explorer band (wireframe yellow-detect)",
+      "wireframePx": 309290,
+      "wireframeCanvasPct": 6.12,
+      "note": "Render placeholders screenshot as near-white; band height 792px vs wireframe 314px"
+    }
+  ],
+  "visualHierarchy": {
+    "Header": "NO MATCH — render header 14px taller; labels align at overlay top but baseline spacing differs",
+    "Hero image": "NO MATCH — render yellow block extends 367px lower than wireframe block; dominates upper canvas",
+    "Hero content": "NO MATCH — title/CTA row displaced +402px; CTA no longer sits directly under wireframe hero boundary",
+    "Social Proof": "NO MATCH — strip displaced +426px; 24px taller than wireframe strip",
+    "Property Explorer": "NO MATCH — section 478px taller; horizontal triptych proportions match (~50/15/35) but vertical envelope diverges",
+    "Priority Engine": "NO MATCH — starts at Y 1748 vs wireframe Y 844 (+904px); card row sits far below wireframe priority block",
+    "FAQ + AI": "NOT IN WIREFRAME CROP",
+    "Audit": "NOT IN WIREFRAME CROP",
+    "Footer": "NOT IN WIREFRAME CROP"
+  },
+  "rootCause": "Vertical rhythm is redistributed toward the upper half because the hero image band consumes 640px of canvas height versus 287px in the wireframe (+353px), displacing every subsequent section boundary downward by 367–904px.",
+  "fixProposals": [
+    {
+      "section": "Hero image",
+      "visualMismatch": "Hero block is 2.23× taller in pixels than the wireframe block; overlay shows wireframe hero ending while render hero continues for hundreds of pixels.",
+      "whyVisually": "The upper third of the canvas reads as one continuous light field instead of the wireframe's compact intro image followed immediately by title row.",
+      "recommendedCorrection": "Reduce hero image visible height until wireframe overlay boundary at Y 345 aligns with render boundary (target ~287–320px canvas-relative, not 640px)."
+    },
+    {
+      "section": "Property Explorer",
+      "visualMismatch": "Explorer band is 478px taller than wireframe; priority section appears only at bottom of wireframe but mid-page in render.",
+      "whyVisually": "Gallery and floorplan read as a short module in wireframe; in render they float inside a tall white envelope with excess breathing room above and below placeholders.",
+      "recommendedCorrection": "After hero correction, compress Property Explorer vertical envelope until explorer end aligns with wireframe Y 844 equivalent."
+    },
+    {
+      "section": "Priority Engine",
+      "visualMismatch": "Priority block starts 904px lower than wireframe.",
+      "whyVisually": "Not an independent layout error — cumulative displacement from oversized sections above.",
+      "recommendedCorrection": "Re-evaluate after hero and explorer height correction; do not tune Priority in isolation."
+    }
+  ],
+  "designerSideBySide": "NO"
+}

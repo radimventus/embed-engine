@@ -1,0 +1,97 @@
+{
+  "url": "http://127.0.0.1:4173/",
+  "timestamp": "2026-07-14T21:29:48.250Z",
+  "cssRequests": [
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+      "status": 200,
+      "contentType": "text/css; charset=utf-8",
+      "sizeBytes": 7521,
+      "containsHHeroImage": false,
+      "ruleBlocks": []
+    },
+    {
+      "url": "http://127.0.0.1:4173/src/index.css",
+      "status": 200,
+      "contentType": "text/javascript",
+      "sizeBytes": 21919,
+      "containsHHeroImage": true,
+      "ruleBlocks": [
+        ".h-hero-image {\\n  height: 40rem;\\n}"
+      ]
+    }
+  ],
+  "cssom": {
+    "selectorFound": true,
+    "matchingRules": [
+      {
+        "sheet": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+        "error": "SecurityError: Failed to read the 'cssRules' property from 'CSSStyleSheet': Cannot access rules"
+      },
+      {
+        "sheet": "[inline]",
+        "index": 59,
+        "selector": ".h-hero-image",
+        "cssText": ".h-hero-image { height: 40rem; }",
+        "style": {
+          "height": "40rem"
+        }
+      }
+    ],
+    "allStylesheetHrefs": [
+      "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+      "[inline]"
+    ]
+  },
+  "console": {
+    "element": {
+      "tagName": "DIV",
+      "className": "flex h-hero-image items-center justify-center",
+      "inlineStyle": null
+    },
+    "computed": {
+      "height": "640px",
+      "minHeight": "0px",
+      "maxHeight": "none",
+      "display": "flex"
+    },
+    "cssom": {
+      "selectorFound": true,
+      "matchingRules": [
+        {
+          "sheet": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+          "error": "SecurityError: Failed to read the 'cssRules' property from 'CSSStyleSheet': Cannot access rules"
+        },
+        {
+          "sheet": "[inline]",
+          "index": 59,
+          "selector": ".h-hero-image",
+          "cssText": ".h-hero-image { height: 40rem; }",
+          "style": {
+            "height": "40rem"
+          }
+        }
+      ],
+      "allStylesheetHrefs": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+        "[inline]"
+      ]
+    },
+    "matchedRulesWithHeight": [
+      {
+        "selector": ".h-hero-image",
+        "height": "40rem",
+        "cssText": ".h-hero-image { height: 40rem; }"
+      }
+    ],
+    "allMatchedSelectors": [
+      ".h-hero-image"
+    ]
+  },
+  "element": {
+    "tagName": "DIV",
+    "className": "flex h-hero-image items-center justify-center",
+    "inlineStyle": null
+  },
+  "verdict": null
+}

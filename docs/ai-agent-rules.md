@@ -80,6 +80,14 @@ Never invent proportions.
 
 Never modify geometry without updating the Geometry Specification.
 
+The **design wireframe** is the authority for correct layout geometry.
+
+DOM metrics (`offsetHeight`, `computedHeight`, CSS values) prove implementation consistency only — they do not prove design correctness.
+
+If render deviates from the wireframe, investigate React/Tailwind/layout — not the reference artifact.
+
+Do not question wireframe scale or provenance unless direct proof of reference error exists.
+
 Always follow:
 
 Client Studio Geometry Specification.

@@ -1,0 +1,100 @@
+{
+  "capturedAt": "2026-07-15T06:03:01.419Z",
+  "browserUrl": "http://127.0.0.1:4173/",
+  "viewport": {
+    "width": 1600,
+    "height": 900
+  },
+  "localhostInstance": "http://127.0.0.1:4173/",
+  "port5173Active": false,
+  "port4173Active": true,
+  "userBrowserConnected": "Google Chrome → localhost:4173 (lsof at capture time)",
+  "sectionHeights": {
+    "header": {
+      "render": 72,
+      "wireframeFile": 58,
+      "wireframeScaled": 84
+    },
+    "heroImage": {
+      "render": 289,
+      "wireframeFile": 287,
+      "wireframeScaled": 417
+    },
+    "heroContent": {
+      "render": 101,
+      "wireframeFile": 128,
+      "wireframeScaled": 186
+    },
+    "socialProof": {
+      "render": 57,
+      "wireframeFile": 57,
+      "wireframeScaled": 83
+    }
+  },
+  "computedHeights": {
+    "header": {
+      "offsetTop": 25,
+      "offsetHeight": 72,
+      "offsetBottom": 97,
+      "computedHeight": "72px"
+    },
+    "heroImage": {
+      "offsetTop": 97,
+      "offsetHeight": 289,
+      "offsetBottom": 386,
+      "computedHeight": "289px"
+    },
+    "heroContent": {
+      "offsetTop": 386,
+      "offsetHeight": 101,
+      "offsetBottom": 487,
+      "computedHeight": "100.5px"
+    },
+    "socialProof": {
+      "offsetTop": 487,
+      "offsetHeight": 57,
+      "offsetBottom": 544,
+      "computedHeight": "57px"
+    }
+  },
+  "canvasRelativeBoundaries": {
+    "headerEnd": 97,
+    "heroImageEnd": 386,
+    "heroContentEnd": 487,
+    "socialProofEnd": 544
+  },
+  "wireframeScaledBoundaries": {
+    "headerEnd": 84,
+    "heroImageEnd": 502,
+    "heroContentEnd": 688,
+    "socialProofEnd": 771
+  },
+  "deltasPx": {
+    "headerEnd": 13,
+    "heroImageEnd": -116,
+    "heroContentEnd": -201,
+    "socialProofEnd": -227
+  },
+  "wireframeDetection": {
+    "w": 1024,
+    "h": 1022,
+    "canvasBounds": {
+      "left": 39,
+      "right": 1023,
+      "canvasW": 985
+    },
+    "wireCanvasY": {
+      "headerEnd": 58,
+      "heroImageEnd": 345,
+      "heroContentEnd": 473,
+      "socialProofEnd": 530
+    }
+  },
+  "scaleWireToRenderCanvas": 1.4538071065989848,
+  "files": {
+    "sideBySide": "docs/r-01-evidence-side-by-side.png",
+    "overlay50": "docs/r-01-evidence-overlay-50.png",
+    "guides": "docs/r-01-evidence-guides.png",
+    "renderViewport": "docs/r-01-evidence-render-1600x900.png"
+  }
+}
