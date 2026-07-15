@@ -1,19 +1,18 @@
 import { HeroContent } from './HeroContent';
-import { HeroCTA } from './HeroCTA';
 import { HeroImage } from './HeroImage';
+import { HeroSurface } from './HeroSurface';
 import { SocialProof } from './SocialProof';
 
 export function Hero() {
   return (
     <section
       aria-label="Opening"
-      className="border-b border-embed-border-default bg-embed-background-primary"
+      className="mb-[30px] border-b border-embed-border-default bg-embed-background-primary"
     >
-      <HeroImage />
-      <div className="flex h-hero-content items-center justify-between gap-section px-section mobile:flex-col mobile:items-start">
+      <HeroSurface>
+        <HeroImage />
         <HeroContent />
-        <HeroCTA />
-      </div>
+      </HeroSurface>
       <SocialProof />
     </section>
   );

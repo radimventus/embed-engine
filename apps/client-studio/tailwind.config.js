@@ -38,15 +38,15 @@ export default {
       height: {
         header: '58px',
         'hero-image': '18rem',
-        'hero-content': '8rem',
-        'social-proof': '3.5rem',
+        'hero-content': '6.4rem',
+        'social-proof': '4.2rem',
         'property-explorer': '44rem',
         'ai-conversation': '24rem',
         'faq-ai': '38rem',
       },
       minHeight: {
         'property-explorer': '44rem',
-        'hero-content': '8rem',
+        'hero-content': '6.4rem',
         'faq-ai': '38rem',
         'ai-conversation': '24rem',
       },
