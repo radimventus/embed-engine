@@ -1,0 +1,5 @@
+export const DECISION_TRANSITION_MS = 125;
+
+export const DECISION_TRANSITION_PHASE_MS = 62;
+
+export const DECISION_TRANSITION_EASING = 'ease-out';

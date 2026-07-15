@@ -20,9 +20,15 @@ importers:
 
   apps/client-studio:
     dependencies:
+      '@embed-engine/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@embed-engine/design-tokens':
         specifier: workspace:*
         version: link:../../packages/design-tokens
+      '@embed-engine/kernel':
+        specifier: workspace:*
+        version: link:../../packages/kernel
       react:
         specifier: ^19.1.0
         version: 19.2.7
@@ -58,7 +64,23 @@ importers:
         specifier: ^7.0.0
         version: 7.3.6(jiti@1.21.7)
 
+  packages/contracts:
+    devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
   packages/design-tokens:
+    devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  packages/kernel:
+    dependencies:
+      '@embed-engine/contracts':
+        specifier: workspace:*
+        version: link:../contracts
     devDependencies:
       typescript:
         specifier: ^5.9.2

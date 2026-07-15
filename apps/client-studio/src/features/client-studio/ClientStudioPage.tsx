@@ -5,16 +5,19 @@ import { Hero } from './sections/Hero/Hero';
 import { AuditLeadCapture } from './sections/AuditLeadCapture/AuditLeadCapture';
 import { PriorityEngine } from './sections/PriorityEngine/PriorityEngine';
 import { PropertyExplorer } from './sections/PropertyExplorer/PropertyExplorer';
+import { WalkthroughProvider } from '../walkthrough';
 
 export function ClientStudioPage() {
   return (
-    <DesktopCanvas>
-      <ClientStudioHeader />
-      <Hero />
-      <PropertyExplorer />
-      <PriorityEngine />
-      <AIAdvisor />
-      <AuditLeadCapture />
-    </DesktopCanvas>
+    <WalkthroughProvider>
+      <DesktopCanvas>
+        <ClientStudioHeader />
+        <Hero />
+        <PropertyExplorer />
+        <PriorityEngine />
+        <AIAdvisor />
+        <AuditLeadCapture />
+      </DesktopCanvas>
+    </WalkthroughProvider>
   );
 }

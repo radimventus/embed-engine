@@ -10,7 +10,9 @@
     "typecheck": "tsc -b --noEmit"
   },
   "dependencies": {
+    "@embed-engine/contracts": "workspace:*",
     "@embed-engine/design-tokens": "workspace:*",
+    "@embed-engine/kernel": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
