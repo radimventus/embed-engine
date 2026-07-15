@@ -50,9 +50,9 @@ export function AIAdvisor() {
 
   return (
     <section aria-label="AI Advisor" className="border-b border-embed-border-default">
-      <div className="grid grid-cols-2 divide-x divide-embed-border-default">
+      <div className="grid min-h-faq-ai grid-cols-2 items-stretch divide-x divide-embed-border-default mobile:grid-cols-1 mobile:divide-x-0 mobile:divide-y">
         <SuggestedQuestions onQuestionSelect={handleQuestionSelect} />
-        <div className="px-4 py-6 md:px-8 md:py-8">
+        <div className="grid h-full min-h-faq-ai grid-rows-[auto_1fr_auto_auto] px-section py-section">
           <SectionHeader />
           <Conversation messages={messages} />
           <InputBar value={inputValue} onChange={setInputValue} onSend={handleSend} />

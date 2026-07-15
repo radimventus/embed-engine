@@ -1,10 +1,10 @@
 export function AuditSummary() {
   return (
-    <div className="mt-6 flex flex-wrap justify-center gap-4">
-      <div className="border border-embed-white px-6 py-3 text-sm text-embed-white">
+    <div className="mx-auto mt-section grid w-full max-w-xl grid-cols-2 gap-section">
+      <div className="bg-embed-white px-section py-3 text-center text-sm text-embed-brand-navy">
         Mám vlastní pozemek
       </div>
-      <div className="bg-embed-status-warning px-6 py-3 text-sm text-embed-white">
+      <div className="bg-embed-status-warning px-section py-3 text-center text-sm text-embed-white">
         Hledám vhodnou parcelu
       </div>
     </div>

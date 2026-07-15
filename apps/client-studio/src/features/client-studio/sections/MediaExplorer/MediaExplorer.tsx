@@ -6,7 +6,7 @@ export function MediaExplorer() {
   return (
     <section
       aria-label="Media Explorer"
-      className="border-b border-embed-border-default px-4 py-6 md:px-8 md:py-8"
+      className="grid h-full shrink-0 grid-rows-[auto_auto_auto] px-section py-section"
     >
       <SectionHeader title="PROCHÁZKA DOMEM" />
       <MainMedia />

@@ -1,9 +1,7 @@
 export function HeroImage() {
   return (
-    <section className="border-b border-embed-border-default bg-embed-status-warning/15">
-      <div className="flex min-h-48 items-center justify-center px-6 py-16 md:min-h-64 md:py-24">
-        <p className="text-sm text-embed-foreground-secondary md:text-base">úvodní obrázek</p>
-      </div>
-    </section>
+    <div className="flex h-hero-image items-center justify-center bg-embed-status-warning/15">
+      <p className="text-base text-embed-foreground-secondary">úvodní obrázek</p>
+    </div>
   );
 }

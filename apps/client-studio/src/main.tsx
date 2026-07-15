@@ -14,7 +14,7 @@ if (rootElement === null) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <AppShell sidebar={<ClientStudioSidebar />} showStatusBar={false}>
+    <AppShell sidebar={<ClientStudioSidebar />} showStatusBar={false} header={<></>}>
       <ClientStudioPage />
     </AppShell>
   </StrictMode>,

@@ -35,4 +35,7 @@ export const colors = {
     default: '#E5E5E5',
     strong: '#D4D4D4',
   },
+  brand: {
+    navy: '#1A3A6C',
+  },
 } as const;

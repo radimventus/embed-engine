@@ -12,14 +12,14 @@ export function AuditLeadCapture() {
 
   return (
     <section aria-label="Audit and Lead Capture">
-      <div className="bg-embed-status-info px-4 py-6 md:px-8 md:py-8">
+      <div className="bg-embed-brand-navy px-section py-16">
         <SectionHeader />
         <AuditSummary />
         <IntroContent />
         {submitted ? <SuccessState /> : <ContactForm onSubmit={() => setSubmitted(true)} />}
         <ContactCard />
       </div>
-      <p className="py-4 text-center text-xs text-embed-foreground-muted">
+      <p className="py-section text-center text-xs text-embed-foreground-muted">
         power by Realivideo.online
       </p>
     </section>

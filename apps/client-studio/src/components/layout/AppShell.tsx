@@ -27,7 +27,7 @@ export function AppShell({
   return (
     <div className="flex h-full min-h-screen bg-embed-background-primary">
       {sidebar ?? <Sidebar items={sidebarItems} />}
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {header ?? <Header studioTitle={studioTitle} />}
         <Workspace>{children}</Workspace>
         {showStatusBar ? <StatusBar status={status} /> : null}

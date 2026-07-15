@@ -1,6 +1,6 @@
 export function SectionHeader() {
   return (
-    <h2 className="text-sm font-bold tracking-wide text-embed-foreground-primary md:text-base">
+    <h2 className="text-base font-bold tracking-wide text-embed-brand-navy">
       AI PRŮVODCE – ZEPTEJTE SE NA COKOLI
     </h2>
   );

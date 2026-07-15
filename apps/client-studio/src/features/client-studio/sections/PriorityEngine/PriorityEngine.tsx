@@ -7,16 +7,14 @@ export function PriorityEngine() {
   return (
     <section
       aria-label="Priority Engine"
-      className="border-b border-embed-border-default px-4 py-6 md:px-8 md:py-8"
+      className="border-b border-embed-border-default px-section py-10"
     >
       <SectionHeader />
-      <div className="mt-4 grid grid-cols-[52fr_48fr] gap-4">
-        <div>
-          <PriorityCards />
-          <RecommendationCard />
-        </div>
+      <div className="mt-section grid min-h-[18rem] grid-cols-[52fr_48fr] items-stretch gap-section mobile:grid-cols-1">
+        <PriorityCards />
         <IntroText />
       </div>
+      <RecommendationCard />
     </section>
   );
 }

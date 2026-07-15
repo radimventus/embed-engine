@@ -1,8 +1,8 @@
 export function IntroText() {
   return (
-    <div className="flex h-full min-h-[320px] flex-col border border-embed-border-default bg-embed-status-warning/15 p-6 md:min-h-[360px] md:p-8">
-      <div className="aspect-square w-32 rounded-full border border-embed-border-default bg-embed-background-tertiary md:w-40" />
-      <p className="mt-6 text-sm text-embed-foreground-secondary md:text-base">textové pole</p>
+    <div className="flex h-full min-h-0 items-center gap-section border border-embed-border-default bg-embed-status-warning/15 p-section">
+      <div className="aspect-square w-40 shrink-0 rounded-full border border-embed-border-default bg-embed-background-tertiary" />
+      <p className="text-base text-embed-foreground-secondary">textové pole</p>
     </div>
   );
 }

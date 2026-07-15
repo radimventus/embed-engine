@@ -12,8 +12,8 @@ export function MessageBubble({ role, text, time }: MessageBubbleProps) {
       <div
         className={
           isUser
-            ? 'max-w-[85%] bg-embed-status-info/20 px-4 py-3 text-sm text-embed-foreground-primary'
-            : 'max-w-[85%] bg-embed-background-tertiary px-4 py-3 text-sm text-embed-foreground-primary'
+            ? 'max-w-[85%] bg-embed-status-info/25 px-4 py-3 text-sm text-embed-foreground-primary'
+            : 'max-w-[85%] border border-embed-border-default bg-embed-background-primary px-4 py-3 text-sm text-embed-foreground-primary'
         }
       >
         {text}

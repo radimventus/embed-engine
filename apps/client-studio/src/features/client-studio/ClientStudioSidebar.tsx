@@ -1,6 +1,6 @@
 export function ClientStudioSidebar() {
   return (
-    <aside className="flex w-sidebar shrink-0 flex-col items-center gap-section bg-embed-neutral-900 py-section">
+    <aside className="flex w-sidebar shrink-0 flex-col items-center gap-section bg-embed-brand-navy py-section">
       <button
         type="button"
         aria-label="Menu"

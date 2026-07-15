@@ -24,7 +24,7 @@ export function InputBar({ value, onChange, onSend }: InputBarProps) {
   const canSend = value.trim().length > 0;
 
   return (
-    <div className="mt-4 flex items-end border border-embed-border-default">
+    <div className="mt-section flex items-end border border-embed-border-default">
       <textarea
         ref={textareaRef}
         rows={1}

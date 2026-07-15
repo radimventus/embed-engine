@@ -16,7 +16,7 @@ export function ContactForm({ onSubmit }: ContactFormProps) {
 
   return (
     <form
-      className="mx-auto mt-8 flex max-w-md flex-col gap-3"
+      className="mx-auto mt-section flex w-full max-w-md flex-col gap-3"
       onSubmit={handleSubmit}
     >
       <label className="sr-only" htmlFor="contact-name">
@@ -57,7 +57,7 @@ export function ContactForm({ onSubmit }: ContactFormProps) {
 
       <button
         type="submit"
-        className="mt-2 bg-embed-status-warning px-6 py-3 text-sm text-embed-white"
+        className="mt-section w-full bg-embed-status-warning px-6 py-3 text-sm text-embed-white"
       >
         Odeslat
       </button>

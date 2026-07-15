@@ -6,10 +6,11 @@ type DesktopCanvasProps = {
 
 export function DesktopCanvas({ children }: DesktopCanvasProps) {
   return (
-    <div className="flex min-h-full justify-center pt-section">
-      <div className="w-canvas border border-embed-border-default bg-embed-background-primary">
-        {children}
-      </div>
+    <div
+      data-desktop-canvas
+      className="box-border w-canvas min-w-canvas max-w-canvas shrink-0 grow-0 self-start border border-embed-border-default bg-embed-background-primary pb-section pt-section mobile:max-w-none mobile:min-w-0 mobile:w-full"
+    >
+      {children}
     </div>
   );
 }

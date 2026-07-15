@@ -14,17 +14,47 @@ export default {
           background: colors.background,
           foreground: colors.foreground,
           border: colors.border,
+          brand: colors.brand,
         },
       },
       spacing: {
         section: '24px',
       },
+      screens: {
+        mobile: { max: '767px' },
+        tablet: { min: '768px' },
+        desktop: { min: '1280px' },
+      },
       width: {
         sidebar: '48px',
         canvas: '1432px',
       },
+      minWidth: {
+        canvas: '1432px',
+      },
+      maxWidth: {
+        canvas: '1432px',
+      },
       height: {
-        header: '72px',
+        header: '58px',
+        'hero-image': '18rem',
+        'hero-content': '8rem',
+        'social-proof': '3.5rem',
+        'property-explorer': '44rem',
+        'ai-conversation': '24rem',
+        'faq-ai': '38rem',
+      },
+      minHeight: {
+        'property-explorer': '44rem',
+        'hero-content': '8rem',
+        'faq-ai': '38rem',
+        'ai-conversation': '24rem',
+      },
+      maxHeight: {
+        'ai-conversation': '24rem',
+      },
+      gridTemplateRows: {
+        'media-gallery': '7fr 3fr',
       },
       fontFamily: {
         sans: typography.fontFamily.sans.split(',').map((font) => font.trim()),

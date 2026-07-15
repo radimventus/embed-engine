@@ -13,17 +13,17 @@ type SuggestedQuestionsProps = {
 
 export function SuggestedQuestions({ onQuestionSelect }: SuggestedQuestionsProps) {
   return (
-    <div className="px-4 py-6 md:px-8 md:py-8">
-      <h2 className="text-sm font-bold tracking-wide text-embed-foreground-primary md:text-base">
+    <div className="flex h-full flex-col px-section py-section">
+      <h2 className="text-base font-bold tracking-wide text-embed-brand-navy">
         CO NAŠE KLIENTY NEJVÍCE ZAJÍMÁ:
       </h2>
-      <ul className="mt-4 divide-y divide-embed-border-default border border-embed-border-default">
+      <ul className="mt-section flex flex-1 flex-col divide-y divide-embed-border-default border border-embed-border-default">
         {FAQ_ITEMS.map((question, index) => (
-          <li key={index}>
+          <li key={index} className="flex flex-1">
             <button
               type="button"
               onClick={() => onQuestionSelect(question)}
-              className="flex w-full cursor-pointer items-center justify-between px-4 py-3 text-left text-sm text-embed-foreground-primary"
+              className="flex flex-1 cursor-pointer items-center justify-between px-section text-left text-sm text-embed-foreground-primary"
             >
               <span>{question}</span>
               <span aria-hidden="true" className="text-embed-foreground-tertiary">
