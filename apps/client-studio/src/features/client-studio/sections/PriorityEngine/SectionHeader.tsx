@@ -1,7 +1,7 @@
+import { CHAPTER_HEADER_CLASS } from '../spatial-terminal-layout';
+
 export function SectionHeader() {
   return (
-    <h2 className="text-base font-bold tracking-wide text-embed-brand-navy">
-      CO JE PRO VÁS PODSTATNÉ? VYBERTE 3 PRIORITY.
-    </h2>
+    <h2 className={CHAPTER_HEADER_CLASS}>CO JE PRO VÁS PODSTATNÉ? VYBERTE 3 PRIORITY.</h2>
   );
 }

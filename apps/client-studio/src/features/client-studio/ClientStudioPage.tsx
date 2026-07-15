@@ -13,6 +13,10 @@ export function ClientStudioPage() {
       <DesktopCanvas>
         <ClientStudioHeader />
         <Hero />
+        <div
+          aria-hidden="true"
+          className="h-[30px] w-full shrink-0 bg-embed-background-secondary"
+        />
         <PropertyExplorer />
         <PriorityEngine />
         <AIAdvisor />

@@ -1,7 +1,5 @@
+import { DECISION_CANVAS_CHAPTER_TITLE_CLASS } from '../spatial-terminal-layout';
+
 export function SectionHeader() {
-  return (
-    <h2 className="text-base font-bold tracking-wide text-embed-brand-navy">
-      INTERAKTIVNÍ PŮDORYS
-    </h2>
-  );
+  return <h2 className={DECISION_CANVAS_CHAPTER_TITLE_CLASS}>Interaktivní půdorys</h2>;
 }

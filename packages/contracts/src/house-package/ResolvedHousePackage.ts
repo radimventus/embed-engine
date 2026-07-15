@@ -1,4 +1,5 @@
 import type { HousePackageFloorPlanRegion } from './HousePackageManifest';
+import type { HousePackageMediaItem } from './HousePackageMediaItem';
 
 export type ResolvedHousePackageRoom = {
   id: string;
@@ -8,6 +9,7 @@ export type ResolvedHousePackageRoom = {
   heroSrc: string;
   gallerySrcs: readonly string[];
   photos: readonly string[];
+  mediaItems: readonly HousePackageMediaItem[];
   videoSrc: string;
   floorPlanRegion: HousePackageFloorPlanRegion | null;
 };

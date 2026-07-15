@@ -1,9 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { HOUSE_PACKAGE, useWalkthrough } from '../../../walkthrough';
-import {
-  DECISION_TRANSITION_EASING,
-} from '../../../walkthrough/transition-tokens';
+import { DECISION_TRANSITION_EASING } from '../../../walkthrough/transition-tokens';
 import { useDecisionCrossfade } from '../../../walkthrough/useDecisionCrossfade';
 
 import { PlayControl } from './PlayControl';
@@ -12,13 +10,17 @@ function buildMediaKey(
   mediaMode: string,
   mode: string,
   activeRoomId: string | null,
-  activePhotoSrc: string | null,
+  activeMediaSrc: string | null,
 ): string {
-  if (mediaMode === 'photo' && activePhotoSrc !== null) {
-    return `photo|${activeRoomId ?? 'none'}|${activePhotoSrc}`;
+  if (mediaMode === 'photo' && activeMediaSrc !== null) {
+    return `photo|${activeRoomId ?? 'none'}|${activeMediaSrc}`;
   }
 
-  return `video|${mode}`;
+  if (mediaMode === 'video' && activeRoomId !== null && activeMediaSrc !== null) {
+    return `video|${activeRoomId}|${activeMediaSrc}`;
+  }
+
+  return `video|intro|${mode}`;
 }
 
 function parsePhotoSrc(displayKey: string): string | null {
@@ -31,37 +33,80 @@ function parsePhotoSrc(displayKey: string): string | null {
 }
 
 export function MainMedia() {
-  const { mode, mediaMode, activePhotoSrc, activeRoomId, play, onVideoEnded } = useWalkthrough();
+  const {
+    mode,
+    mediaMode,
+    activeMediaSrc,
+    activeRoomId,
+    activeRoom,
+    play,
+    onVideoEnded,
+  } = useWalkthrough();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasStartedPlayback, setHasStartedPlayback] = useState(false);
 
-  const mediaKey = buildMediaKey(mediaMode, mode, activeRoomId, activePhotoSrc);
+  const isRoomVideo = activeRoomId !== null && mediaMode === 'video';
+  const videoSrc = isRoomVideo
+    ? (activeRoom?.videoSrc ?? HOUSE_PACKAGE.walkthroughVideoSrc)
+    : HOUSE_PACKAGE.walkthroughVideoSrc;
+  const videoPoster = isRoomVideo
+    ? (activeRoom?.heroSrc ?? HOUSE_PACKAGE.walkthroughVideoPoster)
+    : HOUSE_PACKAGE.walkthroughVideoPoster;
+  const videoKey = `${videoSrc}|${activeRoomId ?? 'intro'}|${mediaMode}`;
+
+  const mediaKey = buildMediaKey(mediaMode, mode, activeRoomId, activeMediaSrc);
   const { displayKey, opacity, phaseMs } = useDecisionCrossfade(mediaKey);
 
   useEffect(() => {
+    setHasStartedPlayback(false);
+  }, [mediaMode, videoSrc, activeRoomId, mode]);
+
+  useEffect(() => {
     const video = videoRef.current;
-    if (video === null) {
-      return;
-    }
 
-    if (mode === 'photo') {
-      video.pause();
-      video.currentTime = 0;
-      return;
-    }
-
-    if (mode === 'playing') {
-      void video.play();
+    if (video === null || mediaMode !== 'video') {
       return;
     }
 
     video.pause();
-  }, [mode]);
+    video.currentTime = 0;
+    video.load();
+
+    if (mode === 'playing') {
+      void video.play();
+    }
+  }, [mediaMode, mode, videoKey, videoSrc]);
 
   const photoSrc = parsePhotoSrc(displayKey);
   const showPhoto = photoSrc !== null;
+  const showPlayControl = mediaMode === 'video' && !hasStartedPlayback;
+  const showNativeControls = mediaMode === 'video' && hasStartedPlayback;
+
+  const handlePlay = () => {
+    if (mode === 'ready') {
+      play();
+      return;
+    }
+
+    const video = videoRef.current;
+
+    if (video !== null) {
+      void video.play();
+    }
+  };
+
+  const handleVideoPlay = () => {
+    setHasStartedPlayback(true);
+  };
+
+  const handleVideoEnded = () => {
+    if (mode === 'playing') {
+      onVideoEnded();
+    }
+  };
 
   return (
-    <div className="relative mt-section flex aspect-video w-full shrink-0 grow-0 items-center justify-center overflow-hidden border border-embed-border-default bg-embed-status-warning/15">
+    <div className="relative flex aspect-video w-full min-w-0 max-w-full shrink-0 grow-0 items-center justify-center overflow-hidden border border-embed-border-default bg-embed-status-warning/15">
       <div
         className="absolute inset-0 transition-opacity"
         style={{
@@ -81,17 +126,20 @@ export function MainMedia() {
         ) : (
           <>
             <video
+              key={videoKey}
               ref={videoRef}
-              src={HOUSE_PACKAGE.walkthroughVideoSrc}
-              poster={HOUSE_PACKAGE.walkthroughVideoPoster}
+              src={videoSrc}
+              poster={videoPoster}
+              controls={showNativeControls}
               className="h-full w-full object-cover"
               playsInline
               preload="metadata"
-              onEnded={onVideoEnded}
+              onPlay={handleVideoPlay}
+              onEnded={handleVideoEnded}
               data-walkthrough-mode={mode}
               data-media-mode={mediaMode}
             />
-            {mode === 'ready' ? <PlayControl onPlay={play} /> : null}
+            {showPlayControl ? <PlayControl onPlay={handlePlay} /> : null}
           </>
         )}
       </div>

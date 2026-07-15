@@ -17,6 +17,11 @@ function resolveRoomMedia(basePath: string, room: HousePackageRoom): ResolvedHou
   const heroSrc = `${mediaBase}/${room.media.hero}`;
   const gallerySrcs = room.media.gallery.map((filename) => `${mediaBase}/${filename}`);
   const photos = [heroSrc, ...gallerySrcs];
+  const mediaItems = [
+    { kind: 'video' as const, src: `${mediaBase}/${room.media.video}`, thumbnailSrc: heroSrc },
+    { kind: 'photo' as const, src: heroSrc, thumbnailSrc: heroSrc },
+    ...gallerySrcs.map((src) => ({ kind: 'photo' as const, src, thumbnailSrc: src })),
+  ];
 
   return {
     id: room.id,
@@ -26,6 +31,7 @@ function resolveRoomMedia(basePath: string, room: HousePackageRoom): ResolvedHou
     heroSrc,
     gallerySrcs,
     photos,
+    mediaItems,
     videoSrc: `${mediaBase}/${room.media.video}`,
     floorPlanRegion: room.floorPlanRegion ?? null,
   };

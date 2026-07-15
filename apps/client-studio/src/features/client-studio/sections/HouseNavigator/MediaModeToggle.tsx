@@ -1,34 +1,30 @@
 import { useWalkthrough } from '../../../walkthrough';
+import {
+  SEGMENTED_CONTROL_SEGMENT_ACTIVE_CLASS,
+  SEGMENTED_CONTROL_SEGMENT_INACTIVE_CLASS,
+  SEGMENTED_CONTROL_SHELL_CLASS,
+} from '../spatial-terminal-layout';
 
 export function MediaModeToggle() {
-  const { mediaMode } = useWalkthrough();
+  const { mediaMode, setMediaMode } = useWalkthrough();
   const videoActive = mediaMode === 'video';
   const photoActive = mediaMode === 'photo';
 
-  const segmentClass =
-    'py-3 text-sm transition-colors duration-[125ms] ease-out';
-
   return (
-    <div className="mt-section grid grid-cols-2 gap-px">
+    <div className={SEGMENTED_CONTROL_SHELL_CLASS}>
       <button
         type="button"
         aria-pressed={videoActive}
-        className={
-          videoActive
-            ? `${segmentClass} bg-embed-brand-navy text-embed-white`
-            : `${segmentClass} border border-embed-border-default bg-embed-background-primary text-embed-foreground-secondary`
-        }
+        className={videoActive ? SEGMENTED_CONTROL_SEGMENT_ACTIVE_CLASS : SEGMENTED_CONTROL_SEGMENT_INACTIVE_CLASS}
+        onClick={() => setMediaMode('video')}
       >
         VIDEO
       </button>
       <button
         type="button"
         aria-pressed={photoActive}
-        className={
-          photoActive
-            ? `${segmentClass} bg-embed-brand-navy text-embed-white`
-            : `${segmentClass} border border-embed-border-default bg-embed-background-primary text-embed-foreground-secondary`
-        }
+        className={photoActive ? SEGMENTED_CONTROL_SEGMENT_ACTIVE_CLASS : SEGMENTED_CONTROL_SEGMENT_INACTIVE_CLASS}
+        onClick={() => setMediaMode('photo')}
       >
         FOTKY
       </button>

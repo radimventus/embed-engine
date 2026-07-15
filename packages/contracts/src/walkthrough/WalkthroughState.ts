@@ -5,6 +5,6 @@ export type WalkthroughState = {
   mode: WalkthroughMode;
   mediaMode: MediaMode;
   activeRoomId: string | null;
-  activePhotoIndex: number;
+  activeMediaIndex: number;
   defaultRoomId: string;
 };

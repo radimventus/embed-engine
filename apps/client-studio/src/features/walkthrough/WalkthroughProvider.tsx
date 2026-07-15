@@ -8,7 +8,12 @@ import {
   type ReactNode,
 } from 'react';
 
-import type { MediaMode, ResolvedHousePackageRoom, WalkthroughState } from '@embed-engine/contracts';
+import type {
+  HousePackageMediaItem,
+  MediaMode,
+  ResolvedHousePackageRoom,
+  WalkthroughState,
+} from '@embed-engine/contracts';
 import { WalkthroughController, createInitialWalkthroughState } from '@embed-engine/kernel';
 
 import { HOUSE_PACKAGE } from './house-package';
@@ -18,13 +23,18 @@ type WalkthroughContextValue = {
   mediaMode: MediaMode;
   activeRoomId: string | null;
   activeRoom: ResolvedHousePackageRoom | null;
-  activePhotoSrc: string | null;
-  roomPhotos: readonly string[];
+  activeMediaIndex: number;
+  activeMediaItem: HousePackageMediaItem | null;
+  activeMediaSrc: string | null;
+  roomMediaItems: readonly HousePackageMediaItem[];
   rooms: readonly ResolvedHousePackageRoom[];
   isRoomActive: (roomId: string) => boolean;
+  isMediaActive: (mediaIndex: number) => boolean;
   play: () => void;
   onVideoEnded: () => void;
   selectRoom: (roomId: string) => void;
+  selectMediaIndex: (mediaIndex: number) => void;
+  setMediaMode: (mediaMode: MediaMode) => void;
 };
 
 const WalkthroughContext = createContext<WalkthroughContextValue | null>(null);
@@ -58,22 +68,29 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       state.activeRoomId === null
         ? null
         : (HOUSE_PACKAGE.rooms.find((room) => room.id === state.activeRoomId) ?? null);
-    const roomPhotos = activeRoom?.photos ?? [];
-    const activePhotoSrc =
-      activeRoom === null ? null : (roomPhotos[state.activePhotoIndex] ?? null);
+    const roomMediaItems = activeRoom?.mediaItems ?? [];
+    const activeMediaItem = roomMediaItems[state.activeMediaIndex] ?? null;
+    const activeMediaSrc = activeMediaItem?.src ?? null;
 
     return {
       mode: state.mode,
       mediaMode: state.mediaMode,
       activeRoomId: state.activeRoomId,
       activeRoom,
-      activePhotoSrc,
-      roomPhotos,
+      activeMediaIndex: state.activeMediaIndex,
+      activeMediaItem,
+      activeMediaSrc,
+      roomMediaItems,
       rooms: HOUSE_PACKAGE.rooms,
       isRoomActive: (roomId: string) => state.activeRoomId === roomId,
+      isMediaActive: (mediaIndex: number) => state.activeMediaIndex === mediaIndex,
       play: () => controller.dispatch({ type: 'PLAY' }),
       onVideoEnded: () => controller.dispatch({ type: 'VIDEO_ENDED' }),
       selectRoom: (roomId: string) => controller.dispatch({ type: 'SELECT_ROOM', roomId }),
+      selectMediaIndex: (mediaIndex: number) =>
+        controller.dispatch({ type: 'SELECT_MEDIA_INDEX', mediaIndex }),
+      setMediaMode: (mediaMode: MediaMode) =>
+        controller.dispatch({ type: 'SET_MEDIA_MODE', mediaMode }),
     };
   }, [controller, state]);
 

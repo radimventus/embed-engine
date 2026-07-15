@@ -23,7 +23,7 @@ export class WalkthroughController {
       nextState.mode === this.state.mode &&
       nextState.mediaMode === this.state.mediaMode &&
       nextState.activeRoomId === this.state.activeRoomId &&
-      nextState.activePhotoIndex === this.state.activePhotoIndex
+      nextState.activeMediaIndex === this.state.activeMediaIndex
     ) {
       return;
     }

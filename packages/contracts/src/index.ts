@@ -11,6 +11,7 @@ export type {
   HousePackageRoomMedia,
   HousePackageWalkthrough,
 } from './house-package/HousePackageManifest';
+export type { HousePackageMediaItem, HousePackageMediaKind } from './house-package/HousePackageMediaItem';
 export type {
   ResolvedHousePackage,
   ResolvedHousePackageRoom,
