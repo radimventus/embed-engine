@@ -1,6 +1,6 @@
 import { IntroText } from './IntroText';
 import { PriorityCards } from './PriorityCards';
-import { RecommendationCard } from './RecommendationCard';
+import { RecommendationPanel } from './RecommendationPanel';
 import { SectionHeader } from './SectionHeader';
 
 export function PriorityEngine() {
@@ -14,7 +14,7 @@ export function PriorityEngine() {
         <PriorityCards />
         <IntroText />
       </div>
-      <RecommendationCard />
+      <RecommendationPanel />
     </section>
   );
 }
