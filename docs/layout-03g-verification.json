@@ -1,0 +1,119 @@
+{
+  "measuredAtViewport": {
+    "width": 1600,
+    "height": 900
+  },
+  "spatialTerminalWidth": 1430,
+  "gridTemplateColumns": "690px 239px 501px",
+  "columnGap": "0px",
+  "mediaColumnWidth": 690,
+  "visibleViewportWidth": 690,
+  "visibleViewportLeft": 109,
+  "visibleViewportRight": 799,
+  "titleText": {
+    "width": 185.8125,
+    "left": 133,
+    "right": 318.8125
+  },
+  "roomWidth": 239,
+  "floorWidth": 501,
+  "columnSum": 1430,
+  "chain": [
+    {
+      "name": "1-spatial-terminal",
+      "width": 1430,
+      "left": 109,
+      "right": 1539,
+      "paddingLeft": "0px",
+      "paddingRight": "0px",
+      "borderLeft": "0px",
+      "borderRight": "0px",
+      "marginLeft": "0px",
+      "marginRight": "0px",
+      "maxWidth": "none",
+      "overflowX": "hidden",
+      "boxSizing": "border-box"
+    },
+    {
+      "name": "2-media-column",
+      "width": 690,
+      "left": 109,
+      "right": 799,
+      "paddingLeft": "0px",
+      "paddingRight": "0px",
+      "borderLeft": "0px",
+      "borderRight": "0px",
+      "marginLeft": "0px",
+      "marginRight": "0px",
+      "maxWidth": "none",
+      "overflowX": "hidden",
+      "boxSizing": "border-box"
+    },
+    {
+      "name": "2a-title-band",
+      "width": 690,
+      "left": 109,
+      "right": 799,
+      "paddingLeft": "24px",
+      "paddingRight": "0px",
+      "borderLeft": "0px",
+      "borderRight": "0px",
+      "marginLeft": "0px",
+      "marginRight": "0px",
+      "maxWidth": "none",
+      "overflowX": "hidden",
+      "boxSizing": "border-box"
+    },
+    {
+      "name": "3-main-media-wrapper",
+      "width": 690,
+      "left": 109,
+      "right": 799,
+      "paddingLeft": "0px",
+      "paddingRight": "0px",
+      "borderLeft": "0px",
+      "borderRight": "0px",
+      "marginLeft": "0px",
+      "marginRight": "0px",
+      "maxWidth": "none",
+      "overflowX": "hidden",
+      "boxSizing": "border-box"
+    },
+    {
+      "name": "4-crossfade-wrapper",
+      "width": 690,
+      "left": 109,
+      "right": 799,
+      "paddingLeft": "0px",
+      "paddingRight": "0px",
+      "borderLeft": "0px",
+      "borderRight": "0px",
+      "marginLeft": "0px",
+      "marginRight": "0px",
+      "maxWidth": "none",
+      "overflowX": "visible",
+      "boxSizing": "border-box"
+    },
+    {
+      "name": "5-visible-viewport-video",
+      "width": 690,
+      "left": 109,
+      "right": 799,
+      "paddingLeft": "0px",
+      "paddingRight": "0px",
+      "borderLeft": "0px",
+      "borderRight": "0px",
+      "marginLeft": "0px",
+      "marginRight": "0px",
+      "maxWidth": "100%",
+      "overflowX": "clip",
+      "boxSizing": "border-box"
+    }
+  ],
+  "clipCheck": {
+    "videoRight": 799,
+    "roomLeft": 799,
+    "gap": 0
+  },
+  "pass": true
+}

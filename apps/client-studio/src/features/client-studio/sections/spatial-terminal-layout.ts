@@ -9,6 +9,9 @@ export const DECISION_CANVAS_CHAPTER_TITLE_CLASS = `${SPATIAL_TERMINAL_HEADER_CL
 export const CHAPTER_HEADER_CLASS =
   'flex h-chapter-title shrink-0 items-end text-base font-bold leading-none tracking-wide text-embed-brand-navy';
 
+export const PRIORITY_ENGINE_HEADER_CLASS =
+  'flex h-chapter-title shrink-0 items-center text-base font-bold leading-none tracking-wide text-embed-brand-navy';
+
 export const SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS = 'h-[80px] w-[140px] shrink-0';
 
 export const SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS = 'pt-5';
@@ -19,6 +22,15 @@ export const SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS = 'h-[100px]';
 
 export const SPATIAL_TERMINAL_SECTION_CLASS =
   'grid w-full min-w-0 content-start items-start gap-0 overflow-x-hidden px-section pb-section';
+
+export const SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS =
+  'box-border w-full min-w-0 content-start items-start gap-0 overflow-x-hidden pb-section pl-[20px] mobile:px-section';
+
+export const SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS =
+  'grid w-[690px] min-w-[690px] max-w-[690px] shrink-0 content-start items-start gap-0';
+
+export const SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS =
+  'relative box-border h-full min-h-0 w-[690px] min-w-[690px] max-w-[690px] shrink-0 overflow-hidden bg-embed-status-warning/15';
 
 export const SEGMENTED_CONTROL_SHELL_CLASS =
   'inline-flex w-[9.5rem] shrink-0 rounded-lg border border-embed-neutral-200 bg-embed-neutral-50/50 p-0.5';

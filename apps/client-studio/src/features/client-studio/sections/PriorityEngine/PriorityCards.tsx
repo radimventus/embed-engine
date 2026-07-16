@@ -1,6 +1,7 @@
 import { DecisionCard } from './DecisionCard';
 import { DecisionProgress } from './DecisionProgress';
 import {
+  DECISION_GRID_COLUMN_SIZE_PX,
   DECISION_GRID_GAP_PX,
   DECISION_SURFACE_HEIGHT_PX,
   DECISION_SURFACE_WIDTH_PX,
@@ -27,9 +28,10 @@ export function PriorityCards() {
       />
       <div
         aria-label="Decision Surface"
-        className="grid shrink-0 grid-cols-5 overflow-visible"
+        className="grid shrink-0 items-center justify-items-center overflow-visible"
         style={{
           gap: DECISION_GRID_GAP_PX,
+          gridTemplateColumns: `repeat(5, ${DECISION_GRID_COLUMN_SIZE_PX}px)`,
           height: DECISION_SURFACE_HEIGHT_PX,
           width: DECISION_SURFACE_WIDTH_PX,
         }}

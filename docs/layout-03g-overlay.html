@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>LAYOUT-03G Overlay</title>
+</head>
+<body>
+  <script type="module">
+    const SPEC_CROP = { x: 618, y: 250, w: 902, h: 412 };
+    const IMPL_W = 1430;
+
+    async function load(src) {
+      const img = new Image();
+      img.src = src;
+      await img.decode();
+      return img;
+    }
+
+    function edgeProfile(data, w, h, y0p, y1p) {
+      const y0 = Math.floor(h * y0p);
+      const y1 = Math.floor(h * y1p);
+      const profile = new Array(w).fill(0);
+      for (let x = 1; x < w; x++) {
+        let sum = 0;
+        for (let y = y0; y < y1; y++) {
+          const i = (y * w + x) * 4;
+          const iL = (y * w + x - 1) * 4;
+          const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+          const lumL = (data[iL] + data[iL + 1] + data[iL + 2]) / 3;
+          sum += Math.abs(lum - lumL);
+        }
+        profile[x] = sum / (y1 - y0);
+      }
+      return profile;
+    }
+
+    function localMaxima(profile, minX, maxX, threshold) {
+      const peaks = [];
+      for (let x = minX; x <= maxX; x++) {
+        if (profile[x] < threshold) continue;
+        if (profile[x] >= profile[x - 1] && profile[x] >= profile[x + 1]) peaks.push(x);
+      }
+      return peaks;
+    }
+
+    function clusterPeaks(peaks, minDist = 10) {
+      if (!peaks.length) return [];
+      const sorted = [...peaks].sort((a, b) => a - b);
+      const clusters = [[sorted[0]]];
+      for (let i = 1; i < sorted.length; i++) {
+        const last = clusters[clusters.length - 1];
+        if (sorted[i] - last[last.length - 1] <= minDist) last.push(sorted[i]);
+        else clusters.push([sorted[i]]);
+      }
+      return clusters.map((c) => Math.round(c.reduce((a, b) => a + b, 0) / c.length));
+    }
+
+    function pickLandmarks(peaks, width) {
+      const left = peaks.find((x) => x <= width * 0.03) ?? 0;
+      const mediaRight = peaks.find((x) => x > width * 0.42 && x < width * 0.52);
+      const roomRight = peaks.find((x) => x > width * 0.58 && x < width * 0.68);
+      const right = peaks.filter((x) => x >= width * 0.95).pop() ?? width - 1;
+      return { left, mediaRight, roomRight, right };
+    }
+
+    const specSrc = './design-system/master-layout-specification-v1.png';
+    const implSrc = './layout-03g-spatial-terminal-1600.png';
+
+    const specImg = await load(specSrc);
+    const implImg = await load(implSrc);
+
+    const specScale = IMPL_W / SPEC_CROP.w;
+    const specH = Math.round(SPEC_CROP.h * specScale);
+    const specCanvas = document.createElement('canvas');
+    specCanvas.width = IMPL_W;
+    specCanvas.height = specH;
+    const specCtx = specCanvas.getContext('2d');
+    specCtx.drawImage(
+      specImg,
+      SPEC_CROP.x,
+      SPEC_CROP.y,
+      SPEC_CROP.w,
+      SPEC_CROP.h,
+      0,
+      0,
+      IMPL_W,
+      specH,
+    );
+    const specData = specCtx.getImageData(0, 0, IMPL_W, specH).data;
+    const specProfile = edgeProfile(specData, IMPL_W, specH, 0.24, 0.72);
+    const specPeaks = clusterPeaks(localMaxima(specProfile, 8, IMPL_W - 8, 4.5));
+    const specLandmarks = pickLandmarks(specPeaks, IMPL_W);
+
+    const implCanvas = document.createElement('canvas');
+    implCanvas.width = implImg.width;
+    implCanvas.height = implImg.height;
+    const implCtx = implCanvas.getContext('2d');
+    implCtx.drawImage(implImg, 0, 0);
+    const implData = implCtx.getImageData(0, 0, implImg.width, implImg.height).data;
+    const implProfile = edgeProfile(implData, implImg.width, implImg.height, 0.12, 0.68);
+    const implPeaks = clusterPeaks(localMaxima(implProfile, 8, implImg.width - 8, 2));
+    const implLandmarks = pickLandmarks(implPeaks, implImg.width);
+
+    const overlay = document.createElement('canvas');
+    overlay.width = IMPL_W;
+    overlay.height = Math.max(specH, implImg.height);
+    const octx = overlay.getContext('2d');
+    octx.drawImage(specCanvas, 0, 0);
+    octx.globalAlpha = 0.45;
+    octx.drawImage(implImg, 0, 0);
+    octx.globalAlpha = 1;
+
+    const metrics = [
+      ['Spatial Terminal left edge', 0, 0],
+      ['Media viewport left edge', specLandmarks.left, implLandmarks.left],
+      ['Media viewport right edge', specLandmarks.mediaRight, implLandmarks.mediaRight],
+      ['Room Index right edge', specLandmarks.roomRight, implLandmarks.roomRight],
+      ['Floor Plan right edge', specLandmarks.right, implLandmarks.right],
+      ['Media viewport width', specLandmarks.mediaRight - specLandmarks.left, implLandmarks.mediaRight - implLandmarks.left],
+      ['Room Index width', specLandmarks.roomRight - specLandmarks.mediaRight, implLandmarks.roomRight - implLandmarks.mediaRight],
+      ['Floor Plan width', specLandmarks.right - specLandmarks.roomRight, implLandmarks.right - implLandmarks.roomRight],
+      ['Spatial Terminal width', specLandmarks.right - specLandmarks.left, implLandmarks.right - implLandmarks.left],
+    ].map(([name, expected, actual]) => ({
+      name,
+      expected,
+      actual,
+      difference: actual - expected,
+    }));
+
+    window.__OVERLAY__ = {
+      specPeaks,
+      implPeaks,
+      specLandmarks,
+      implLandmarks,
+      metrics,
+      deviations: metrics.filter((m) => Math.abs(m.difference) > 2),
+    };
+
+    document.body.dataset.ready = '1';
+  </script>
+</body>
+</html>

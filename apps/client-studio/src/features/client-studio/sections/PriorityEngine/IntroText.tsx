@@ -1,6 +1,6 @@
 export function IntroText() {
   return (
-    <div className="flex h-full min-h-0 flex-col justify-center border border-embed-border-default bg-embed-white p-section">
+    <div className="flex min-h-0 flex-col self-start border border-embed-border-default bg-embed-white p-section">
       <p className="text-sm font-medium leading-relaxed text-embed-brand-navy">
         Calibrate your decision filter
       </p>

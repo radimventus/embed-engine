@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8" /><title>overlay</title></head>
+<body>
+<script type="module">
+  const DW = 1430;
+  const CROP = { x: 692, y: 262, w: 800, h: 175 };
+
+  async function load(src) {
+    const img = new Image();
+    img.src = src;
+    await img.decode();
+    return img;
+  }
+
+  function bandBox(data, w, h, y0p, y1p) {
+    const y0 = Math.floor(h * y0p);
+    const y1 = Math.floor(h * y1p);
+    const col = new Array(w).fill(0);
+    for (let x = 0; x < w; x++) {
+      for (let y = y0; y < y1; y++) {
+        const i = (y * w + x) * 4;
+        const lum = (data[i] + data[i + 1] + data[i + 2]) / 3;
+        if (lum < 245) col[x]++;
+      }
+    }
+    const thr = (y1 - y0) * 0.28;
+    let l = 0;
+    let r = w - 1;
+    while (l < w && col[l] < thr) l++;
+    while (r > l && col[r] < thr) r--;
+    return { left: l, right: r, width: r - l + 1 };
+  }
+
+  const specImg = await load('./design-system/master-layout-specification-v1.png');
+  const implImg = await load('./layout-03g-spatial-terminal-1600.png');
+  const dh = Math.round(CROP.h * (DW / CROP.w));
+
+  const sc = document.createElement('canvas');
+  sc.width = DW;
+  sc.height = dh;
+  sc.getContext('2d').drawImage(specImg, CROP.x, CROP.y, CROP.w, CROP.h, 0, 0, DW, dh);
+  const specMedia = bandBox(sc.getContext('2d').getImageData(0, 0, DW, dh).data, DW, dh, 0.15, 0.95);
+
+  const ic = document.createElement('canvas');
+  ic.width = implImg.width;
+  ic.height = implImg.height;
+  ic.getContext('2d').drawImage(implImg, 0, 0);
+  const implMedia = bandBox(ic.getContext('2d').getImageData(0, 0, ic.width, ic.height).data, ic.width, ic.height, 0.08, 0.72);
+
+  window.__R__ = { specMedia, implMedia, dh };
+  document.body.dataset.ok = '1';
+</script>
+</body>
+</html>

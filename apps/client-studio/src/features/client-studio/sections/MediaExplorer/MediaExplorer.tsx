@@ -2,18 +2,23 @@ import { MainMedia } from './MainMedia';
 import { SectionHeader } from './SectionHeader';
 import { ThumbnailRail } from './ThumbnailRail';
 import {
-  SPATIAL_TERMINAL_SECTION_CLASS,
+  SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS,
+  SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS,
 } from '../spatial-terminal-layout';
 
 export function MediaExplorer() {
   return (
     <section
       aria-label="Media Explorer"
-      className={`${SPATIAL_TERMINAL_SECTION_CLASS} grid h-full min-h-0 shrink-0 grid-rows-[auto_minmax(0,1fr)_100px] content-start`}
+      className={SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS}
     >
-      <SectionHeader title="PROCHÁZKA DOMEM" />
-      <MainMedia />
-      <ThumbnailRail />
+      <div
+        className={`${SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS} grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_100px] content-start`}
+      >
+        <SectionHeader title="PROCHÁZKA DOMEM" />
+        <MainMedia />
+        <ThumbnailRail />
+      </div>
     </section>
   );
 }

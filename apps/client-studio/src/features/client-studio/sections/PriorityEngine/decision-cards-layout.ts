@@ -5,9 +5,10 @@ import {
   MOTION_DURATION_CLASS,
 } from '../../chapter-layout';
 
-export const DECISION_SURFACE_WIDTH_PX = 690;
+export const DECISION_GRID_COLUMN_SIZE_PX = 120;
+export const DECISION_SURFACE_WIDTH_PX = 680;
 export const DECISION_SURFACE_HEIGHT_PX = 264;
-export const DECISION_CARD_SIZE_PX = 122;
+export const DECISION_CARD_SIZE_PX = 118;
 export const DECISION_GRID_GAP_PX = 20;
 export const DECISION_CARD_ACTIVE_SCALE = 1.12;
 export const DECISION_TRANSITION_MS = 200;

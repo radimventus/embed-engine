@@ -5,6 +5,7 @@ import { DECISION_TRANSITION_EASING } from '../../../walkthrough/transition-toke
 import { useDecisionCrossfade } from '../../../walkthrough/useDecisionCrossfade';
 
 import { PlayControl } from './PlayControl';
+import { SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS } from '../spatial-terminal-layout';
 
 function buildMediaKey(
   mediaMode: string,
@@ -106,7 +107,7 @@ export function MainMedia() {
   };
 
   return (
-    <div className="relative h-full min-h-0 w-full min-w-0 max-w-full shrink-0 overflow-hidden border border-embed-border-default bg-embed-status-warning/15">
+    <div className={SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS}>
       <div
         className="absolute inset-0 transition-opacity"
         style={{

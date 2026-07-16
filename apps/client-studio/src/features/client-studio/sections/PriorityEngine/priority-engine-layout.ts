@@ -1,0 +1,14 @@
+import { SECTION_PADDING_PX } from '../../chapter-layout';
+
+export const PRIORITY_ENGINE_CONTENT_OFFSET_PX = 20;
+
+export const PRIORITY_ENGINE_CONTENT_OFFSET_CLASS = 'pt-5';
+
+export const PRIORITY_ENGINE_INTRO_OFFSET_CLASS = PRIORITY_ENGINE_CONTENT_OFFSET_CLASS;
+
+export const PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL = false;
+
+export const PRIORITY_ENGINE_SHOW_DECISION_REPORT = false;
+
+/** @internal Reference for layout audits */
+export const PRIORITY_ENGINE_SECTION_PADDING_PX = SECTION_PADDING_PX;

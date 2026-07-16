@@ -1,7 +1,6 @@
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
 import { AIAdvisor } from './sections/AIAdvisor/AIAdvisor';
-import { DecisionReportPreview } from './sections/DecisionReportPreview/DecisionReportPreview';
 import { Hero } from './sections/Hero/Hero';
 import { AuditLeadCapture } from './sections/AuditLeadCapture/AuditLeadCapture';
 import { PriorityEngine } from './sections/PriorityEngine/PriorityEngine';
@@ -28,7 +27,6 @@ export function ClientStudioPage() {
           aria-hidden="true"
           className="h-chapter-spacing w-full shrink-0 bg-embed-background-secondary"
         />
-        <DecisionReportPreview />
         <AIAdvisor />
         <AuditLeadCapture />
       </DesktopCanvas>
