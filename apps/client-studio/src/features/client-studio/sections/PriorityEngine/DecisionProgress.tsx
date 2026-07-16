@@ -10,7 +10,7 @@ export function DecisionProgress({
   selectedCount,
 }: DecisionProgressProps) {
   return (
-    <div className="mb-4 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+    <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
       <p className="text-sm leading-none text-embed-foreground-secondary">
         <span className="font-medium tracking-wide">Selected</span>{' '}
         <span className="tabular-nums font-semibold text-embed-foreground-primary">

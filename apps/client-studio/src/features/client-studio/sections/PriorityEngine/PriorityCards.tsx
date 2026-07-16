@@ -1,5 +1,5 @@
+import { DecisionActionArea } from './DecisionActionArea';
 import { DecisionCard } from './DecisionCard';
-import { DecisionProgress } from './DecisionProgress';
 import {
   DECISION_GRID_COLUMN_SIZE_PX,
   DECISION_GRID_GAP_PX,
@@ -20,12 +20,7 @@ export function PriorityCards() {
   } = useDecisionCards();
 
   return (
-    <div className="flex min-w-0 flex-col">
-      <DecisionProgress
-        minimumMet={minimumMet}
-        minimumSelection={minimumSelection}
-        selectedCount={selectedCount}
-      />
+    <div className="flex min-w-0 flex-col self-start">
       <div
         aria-label="Decision Surface"
         className="grid shrink-0 items-center justify-items-center overflow-visible"
@@ -51,6 +46,11 @@ export function PriorityCards() {
           );
         })}
       </div>
+      <DecisionActionArea
+        minimumMet={minimumMet}
+        minimumSelection={minimumSelection}
+        selectedCount={selectedCount}
+      />
     </div>
   );
 }

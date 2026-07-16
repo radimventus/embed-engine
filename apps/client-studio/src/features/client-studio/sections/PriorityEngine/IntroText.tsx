@@ -1,6 +1,8 @@
+import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from './priority-engine-layout';
+
 export function IntroText() {
   return (
-    <div className="flex min-h-0 flex-col self-start border border-embed-border-default bg-embed-white p-section">
+    <div className={PRIORITY_ENGINE_INTRO_PANEL_CLASS}>
       <p className="text-sm font-medium leading-relaxed text-embed-brand-navy">
         Calibrate your decision filter
       </p>
