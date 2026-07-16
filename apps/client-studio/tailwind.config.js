@@ -41,7 +41,7 @@ export default {
         'hero-overlay': '112px',
         'social-proof': '90px',
         'chapter-title': '60px',
-        'spatial-terminal-surface': '464px',
+        'spatial-terminal-surface': '484px',
         'thumbnail-rail': '80px',
         'faq-row': '55px',
         'property-explorer': '44rem',
@@ -50,7 +50,7 @@ export default {
         'chapter-spacing': '30px',
       },
       minHeight: {
-        'spatial-terminal-surface': '464px',
+        'spatial-terminal-surface': '484px',
         'property-explorer': '44rem',
         'faq-ai': '480px',
         'ai-conversation': '24rem',

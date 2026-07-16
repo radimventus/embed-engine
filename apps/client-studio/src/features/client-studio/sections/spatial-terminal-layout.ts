@@ -1,12 +1,21 @@
 export const SPATIAL_TERMINAL_HEADER_CLASS =
   'flex h-chapter-title shrink-0 items-end overflow-hidden text-base font-bold leading-none tracking-wide text-embed-brand-navy';
 
+export const SPATIAL_TERMINAL_WALKTHROUGH_TITLE_CLASS =
+  'flex h-chapter-title shrink-0 items-center overflow-hidden text-base font-bold leading-none tracking-wide text-embed-brand-navy';
+
 export const DECISION_CANVAS_CHAPTER_TITLE_CLASS = `${SPATIAL_TERMINAL_HEADER_CLASS} box-border w-[calc(100%+(15/35)*100%+24px+1px)] max-w-none -ml-[calc((15/35)*100%+24px+1px)]`;
 
 export const CHAPTER_HEADER_CLASS =
   'flex h-chapter-title shrink-0 items-end text-base font-bold leading-none tracking-wide text-embed-brand-navy';
 
 export const SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS = 'h-[80px] w-[140px] shrink-0';
+
+export const SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS = 'pt-5';
+
+export const SPATIAL_TERMINAL_CONTROL_GAP_CLASS = 'gap-5';
+
+export const SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS = 'h-[100px]';
 
 export const SPATIAL_TERMINAL_SECTION_CLASS =
   'grid w-full min-w-0 content-start items-start gap-0 overflow-x-hidden px-section pb-section';

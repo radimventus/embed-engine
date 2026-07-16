@@ -7,7 +7,9 @@ import {
   useThumbnailRailNavigation,
 } from '../../../walkthrough/useThumbnailRailScroll';
 import { useWalkthrough } from '../../../walkthrough';
-import { SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS } from '../spatial-terminal-layout';
+import { SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS, SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS, SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS } from '../spatial-terminal-layout';
+
+const THUMBNAIL_RAIL_ROW_CLASS = `box-border min-w-0 shrink-0 ${SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS} ${SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS}`;
 
 const EMPTY_SLOT_CLASS = `${SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS} rounded-lg border border-embed-neutral-100 bg-embed-neutral-50/60`;
 
@@ -52,21 +54,23 @@ export function ThumbnailRail() {
 
   if (activeRoomId === null) {
     return (
-      <div className="flex h-thumbnail-rail min-w-0 shrink-0 items-stretch gap-section">
-        {Array.from({ length: THUMBNAIL_SLOT_COUNT }, (_, index) => (
-          <div key={index} className={EMPTY_SLOT_CLASS} />
-        ))}
+      <div className={`${THUMBNAIL_RAIL_ROW_CLASS} flex flex-col justify-end`}>
+        <div className="flex h-thumbnail-rail items-stretch gap-section">
+          {Array.from({ length: THUMBNAIL_SLOT_COUNT }, (_, index) => (
+            <div key={index} className={EMPTY_SLOT_CLASS} />
+          ))}
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="relative h-thumbnail-rail min-w-0 shrink-0">
+    <div className={`relative ${THUMBNAIL_RAIL_ROW_CLASS}`}>
       {canScrollLeft ? (
         <button
           type="button"
           aria-label="Předchozí náhledy"
-          className="absolute -left-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-embed-neutral-200/80 bg-embed-white/75 shadow-sm backdrop-blur-[1px] transition-opacity duration-[125ms] ease-out hover:bg-embed-white/90"
+          className="absolute -left-2 bottom-10 z-10 flex h-7 w-7 translate-y-1/2 items-center justify-center rounded-full border border-embed-neutral-200/80 bg-embed-white/75 shadow-sm backdrop-blur-[1px] transition-opacity duration-[125ms] ease-out hover:bg-embed-white/90"
           onClick={() => scrollGroup(-1)}
         >
           <ChevronIcon direction="left" />
@@ -76,7 +80,7 @@ export function ThumbnailRail() {
         <button
           type="button"
           aria-label="Další náhledy"
-          className="absolute -right-2 top-1/2 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-embed-neutral-200/80 bg-embed-white/75 shadow-sm backdrop-blur-[1px] transition-opacity duration-[125ms] ease-out hover:bg-embed-white/90"
+          className="absolute -right-2 bottom-10 z-10 flex h-7 w-7 translate-y-1/2 items-center justify-center rounded-full border border-embed-neutral-200/80 bg-embed-white/75 shadow-sm backdrop-blur-[1px] transition-opacity duration-[125ms] ease-out hover:bg-embed-white/90"
           onClick={() => scrollGroup(1)}
         >
           <ChevronIcon direction="right" />
@@ -93,7 +97,7 @@ export function ThumbnailRail() {
       <div
         ref={scrollRef}
         aria-label="Náhledy médií"
-        className="absolute inset-0 overflow-x-auto overflow-y-hidden overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:thin] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-embed-neutral-300"
+        className="absolute inset-x-0 bottom-0 h-thumbnail-rail overflow-x-auto overflow-y-hidden overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:thin] [-webkit-overflow-scrolling:touch] [&::-webkit-scrollbar]:h-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-embed-neutral-300"
         role="region"
       >
         <div className="flex h-full gap-section">
