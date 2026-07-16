@@ -1,9 +1,6 @@
 import { DecisionCard } from './DecisionCard';
 import { DecisionProgress } from './DecisionProgress';
 import {
-  DECISION_CTA_DISABLED_CLASS,
-  DECISION_CTA_ENABLED_CLASS,
-  DECISION_CTA_FOCUS_CLASS,
   DECISION_GRID_GAP_PX,
   DECISION_SURFACE_HEIGHT_PX,
   DECISION_SURFACE_WIDTH_PX,
@@ -52,13 +49,6 @@ export function PriorityCards() {
           );
         })}
       </div>
-      <button
-        type="button"
-        disabled={!minimumMet}
-        className={`mt-4 w-fit ${DECISION_CTA_FOCUS_CLASS} ${minimumMet ? DECISION_CTA_ENABLED_CLASS : DECISION_CTA_DISABLED_CLASS}`}
-      >
-        Pokračovat
-      </button>
     </div>
   );
 }

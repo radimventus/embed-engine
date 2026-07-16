@@ -7,12 +7,12 @@ import {
   useThumbnailRailNavigation,
 } from '../../../walkthrough/useThumbnailRailScroll';
 import { useWalkthrough } from '../../../walkthrough';
+import { SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS } from '../spatial-terminal-layout';
 
-const EMPTY_SLOT_CLASS =
-  'aspect-video rounded-lg border border-embed-neutral-100 bg-embed-neutral-50/60';
+const EMPTY_SLOT_CLASS = `${SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS} rounded-lg border border-embed-neutral-100 bg-embed-neutral-50/60`;
 
 const THUMB_BASE_CLASS =
-  'aspect-video shrink-0 overflow-hidden rounded-lg border-2 transition-[border-color] duration-[125ms] ease-out';
+  'shrink-0 overflow-hidden rounded-lg border-2 transition-[border-color] duration-[125ms] ease-out';
 
 function ChevronIcon({ direction }: { direction: 'left' | 'right' }) {
   return (
@@ -52,7 +52,7 @@ export function ThumbnailRail() {
 
   if (activeRoomId === null) {
     return (
-      <div className="grid min-w-0 shrink-0 grid-cols-4 items-stretch gap-section">
+      <div className="flex h-thumbnail-rail min-w-0 shrink-0 items-stretch gap-section">
         {Array.from({ length: THUMBNAIL_SLOT_COUNT }, (_, index) => (
           <div key={index} className={EMPTY_SLOT_CLASS} />
         ))}
@@ -61,7 +61,7 @@ export function ThumbnailRail() {
   }
 
   return (
-    <div className="relative min-w-0 shrink-0">
+    <div className="relative h-thumbnail-rail min-w-0 shrink-0">
       {canScrollLeft ? (
         <button
           type="button"
@@ -84,10 +84,10 @@ export function ThumbnailRail() {
       ) : null}
       <div
         aria-hidden="true"
-        className="pointer-events-none invisible grid grid-cols-4 gap-section select-none"
+        className="pointer-events-none invisible flex h-thumbnail-rail gap-section select-none"
       >
         {Array.from({ length: THUMBNAIL_SLOT_COUNT }, (_, index) => (
-          <div key={index} className="aspect-video" />
+          <div key={index} className={SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS} />
         ))}
       </div>
       <div
@@ -107,7 +107,7 @@ export function ThumbnailRail() {
                 type="button"
                 aria-label={item.kind === 'video' ? 'Video místnosti' : 'Fotografie'}
                 aria-pressed={active}
-                className={`${THUMB_BASE_CLASS} h-full ${
+                className={`${THUMB_BASE_CLASS} ${SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS} ${
                   active
                     ? 'border-embed-brand-navy'
                     : 'border-embed-neutral-200 hover:border-embed-neutral-300'

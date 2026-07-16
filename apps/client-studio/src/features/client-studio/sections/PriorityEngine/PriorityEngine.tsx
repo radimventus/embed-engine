@@ -10,7 +10,7 @@ export function PriorityEngine() {
       className="border-b border-embed-border-default px-section py-section"
     >
       <SectionHeader />
-      <div className="mt-section grid min-h-[18rem] grid-cols-[52fr_48fr] items-stretch gap-section mobile:grid-cols-1">
+      <div className="grid min-h-[18rem] grid-cols-[52fr_48fr] items-stretch gap-section mobile:grid-cols-1">
         <PriorityCards />
         <IntroText />
       </div>

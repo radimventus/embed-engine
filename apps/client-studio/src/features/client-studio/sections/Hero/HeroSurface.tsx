@@ -13,7 +13,7 @@ export function HeroSurface({ children }: HeroSurfaceProps) {
     <div
       role="img"
       aria-label="Rodinný dům MODERN A01"
-      className="bg-cover bg-[center_42%] bg-no-repeat"
+      className="relative bg-cover bg-[center_42%] bg-no-repeat"
       style={{ backgroundImage: `url('${heroSrc}')` }}
     >
       {children}

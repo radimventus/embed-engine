@@ -1,7 +1,10 @@
 import {
-  DECISION_CTA_ENABLED_CLASS,
-  DECISION_CTA_FOCUS_CLASS,
-} from './decision-cards-layout';
+  CHAPTER_CTA_CLASS,
+  CHAPTER_CTA_FOCUS_CLASS,
+  CHAPTER_PANEL_CLASS,
+  CHAPTER_PANEL_DIVIDER_CLASS,
+  CHAPTER_PANEL_LABEL_CLASS,
+} from '../../chapter-layout';
 import {
   MOCK_RECOMMENDATION_VIEW_MODEL,
   RECOMMENDATION_MAX_CONSIDERATIONS,
@@ -25,18 +28,13 @@ export function RecommendationPanel({
   const considerations = viewModel.considerations.slice(0, RECOMMENDATION_MAX_CONSIDERATIONS);
 
   return (
-    <section
-      aria-label="Recommendation"
-      className="mt-section rounded-xl border border-embed-neutral-200/80 bg-embed-white px-section py-5"
-    >
+    <section aria-label="Recommendation" className={`mt-section ${CHAPTER_PANEL_CLASS}`}>
       <h3 className="text-sm font-semibold tracking-wide text-embed-brand-navy">
         {viewModel.title}
       </h3>
 
-      <div className="mt-4 border-t border-embed-neutral-200/80 pt-4">
-        <p className="text-xs font-medium uppercase tracking-wide text-embed-foreground-tertiary">
-          Overall Match
-        </p>
+      <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
+        <p className={CHAPTER_PANEL_LABEL_CLASS}>Overall Match</p>
         <p
           className="mt-1 text-base leading-none tracking-wide text-embed-brand-navy"
           aria-label={`Overall match rating: ${viewModel.score} out of 5 stars`}
@@ -45,10 +43,8 @@ export function RecommendationPanel({
         </p>
       </div>
 
-      <div className="mt-4 border-t border-embed-neutral-200/80 pt-4">
-        <h4 className="text-xs font-medium uppercase tracking-wide text-embed-foreground-tertiary">
-          Strengths
-        </h4>
+      <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
+        <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Strengths</h4>
         <ul className="mt-2 space-y-1.5" aria-label="Strengths">
           {strengths.map((strength) => (
             <li
@@ -64,10 +60,8 @@ export function RecommendationPanel({
         </ul>
       </div>
 
-      <div className="mt-4 border-t border-embed-neutral-200/80 pt-4">
-        <h4 className="text-xs font-medium uppercase tracking-wide text-embed-foreground-tertiary">
-          Considerations
-        </h4>
+      <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
+        <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Considerations</h4>
         <ul className="mt-2 space-y-1.5" aria-label="Considerations">
           {considerations.map((consideration) => (
             <li
@@ -83,17 +77,12 @@ export function RecommendationPanel({
         </ul>
       </div>
 
-      <div className="mt-4 border-t border-embed-neutral-200/80 pt-4">
-        <h4 className="text-xs font-medium uppercase tracking-wide text-embed-foreground-tertiary">
-          Next Step
-        </h4>
+      <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
+        <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Next Step</h4>
         <p className="mt-2 text-sm leading-relaxed text-embed-foreground-secondary">
           {viewModel.nextStep}
         </p>
-        <button
-          type="button"
-          className={`mt-4 ${DECISION_CTA_FOCUS_CLASS} ${DECISION_CTA_ENABLED_CLASS}`}
-        >
+        <button type="button" className={`mt-4 ${CHAPTER_CTA_FOCUS_CLASS} ${CHAPTER_CTA_CLASS}`}>
           Continue →
         </button>
       </div>

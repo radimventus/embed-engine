@@ -16,10 +16,18 @@ export function ClientStudioPage() {
         <Hero />
         <div
           aria-hidden="true"
-          className="h-[30px] w-full shrink-0 bg-embed-background-secondary"
+          className="h-chapter-spacing w-full shrink-0 bg-embed-background-secondary"
         />
         <PropertyExplorer />
+        <div
+          aria-hidden="true"
+          className="h-chapter-spacing w-full shrink-0 bg-embed-background-secondary"
+        />
         <PriorityEngine />
+        <div
+          aria-hidden="true"
+          className="h-chapter-spacing w-full shrink-0 bg-embed-background-secondary"
+        />
         <DecisionReportPreview />
         <AIAdvisor />
         <AuditLeadCapture />

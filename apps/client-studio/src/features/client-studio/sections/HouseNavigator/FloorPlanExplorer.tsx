@@ -7,14 +7,14 @@ export function FloorPlanExplorer() {
   return (
     <section
       aria-label="Floor Plan Explorer"
-      className="grid h-full w-full min-w-0 grid-rows-[auto_1fr] content-start items-start gap-section overflow-x-hidden px-section py-section"
+      className="grid h-full w-full min-w-0 grid-rows-[1fr_auto] content-start items-start gap-0 overflow-x-hidden px-section pb-section pt-5"
     >
-      <SectionHeader />
-      <div className="flex min-h-0 flex-col justify-end">
+      <div className="relative min-h-0">
+        <SectionHeader className="pointer-events-none absolute inset-x-0 top-0 z-10" />
         <FloorPlan />
-        <div className={SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS}>
-          <FloorSelector />
-        </div>
+      </div>
+      <div className={SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS}>
+        <FloorSelector />
       </div>
     </section>
   );

@@ -1,7 +1,10 @@
 import {
-  DECISION_CTA_ENABLED_CLASS,
-  DECISION_CTA_FOCUS_CLASS,
-} from '../PriorityEngine/decision-cards-layout';
+  CHAPTER_CTA_CLASS,
+  CHAPTER_CTA_FOCUS_CLASS,
+  CHAPTER_PANEL_CLASS,
+  CHAPTER_PANEL_DIVIDER_CLASS,
+  CHAPTER_PANEL_LABEL_CLASS,
+} from '../../chapter-layout';
 import { CHAPTER_HEADER_CLASS } from '../spatial-terminal-layout';
 import {
   MOCK_DECISION_REPORT_PREVIEW,
@@ -11,14 +14,6 @@ import {
 type DecisionReportPreviewProps = {
   viewModel?: DecisionReportPreviewViewModel;
 };
-
-const PANEL_CLASS =
-  'rounded-xl border border-embed-neutral-200/80 bg-embed-white px-section py-5';
-
-const SECTION_DIVIDER_CLASS = 'mt-4 border-t border-embed-neutral-200/80 pt-4';
-
-const SECTION_LABEL_CLASS =
-  'text-xs font-medium uppercase tracking-wide text-embed-foreground-tertiary';
 
 export function DecisionReportPreview({
   viewModel = MOCK_DECISION_REPORT_PREVIEW,
@@ -39,20 +34,20 @@ export function DecisionReportPreview({
         </p>
       </header>
 
-      <article className={`mt-section ${PANEL_CLASS}`} aria-label="Report preview">
+      <article className={`mt-section ${CHAPTER_PANEL_CLASS}`} aria-label="Report preview">
         <h3 className="text-sm font-semibold tracking-wide text-embed-brand-navy">
           Decision Report
         </h3>
 
-        <div className={SECTION_DIVIDER_CLASS}>
-          <p className={SECTION_LABEL_CLASS}>Property</p>
+        <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
+          <p className={CHAPTER_PANEL_LABEL_CLASS}>Property</p>
           <p className="mt-1 text-sm font-medium text-embed-foreground-primary">
             {viewModel.propertyName}
           </p>
         </div>
 
-        <div className={SECTION_DIVIDER_CLASS}>
-          <h4 className={SECTION_LABEL_CLASS}>Selected Priorities</h4>
+        <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
+          <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Selected Priorities</h4>
           <ul className="mt-2 space-y-1.5" aria-label="Selected priorities">
             {viewModel.priorities.map((priority) => (
               <li
@@ -68,15 +63,15 @@ export function DecisionReportPreview({
           </ul>
         </div>
 
-        <div className={SECTION_DIVIDER_CLASS}>
-          <h4 className={SECTION_LABEL_CLASS}>Summary</h4>
+        <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
+          <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Summary</h4>
           <p className="mt-2 text-sm leading-relaxed text-embed-foreground-secondary">
             {viewModel.summary}
           </p>
         </div>
 
-        <div className={SECTION_DIVIDER_CLASS}>
-          <h4 className={SECTION_LABEL_CLASS}>Included in the report</h4>
+        <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
+          <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Included in the report</h4>
           <ul className="mt-2 space-y-1.5" aria-label="Included in the report">
             {viewModel.includedItems.map((item) => (
               <li
@@ -92,7 +87,7 @@ export function DecisionReportPreview({
           </ul>
         </div>
 
-        <div className={SECTION_DIVIDER_CLASS}>
+        <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
           <button
             type="button"
             className="flex items-center gap-2 text-sm font-medium text-embed-brand-navy transition-opacity duration-200 ease-out hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-navy/25 focus-visible:ring-offset-2"
@@ -107,7 +102,7 @@ export function DecisionReportPreview({
           </button>
         </div>
 
-        <div className={SECTION_DIVIDER_CLASS}>
+        <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
           <h4 className="text-sm font-medium text-embed-foreground-primary">
             Send report to email
           </h4>
@@ -123,7 +118,7 @@ export function DecisionReportPreview({
           </label>
           <button
             type="button"
-            className={`mt-4 ${DECISION_CTA_FOCUS_CLASS} ${DECISION_CTA_ENABLED_CLASS}`}
+            className={`mt-4 ${CHAPTER_CTA_FOCUS_CLASS} ${CHAPTER_CTA_CLASS}`}
           >
             Send Report
           </button>

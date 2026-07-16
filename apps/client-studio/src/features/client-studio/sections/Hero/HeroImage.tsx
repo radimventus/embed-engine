@@ -3,7 +3,7 @@ export function HeroImage() {
     <section
       aria-label="Hero Image"
       aria-hidden="true"
-      className="h-hero-image"
+      className="h-hero-image w-full shrink-0"
     />
   );
 }

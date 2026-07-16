@@ -7,7 +7,7 @@ export function MediaExplorer() {
   return (
     <section
       aria-label="Media Explorer"
-      className={`${SPATIAL_TERMINAL_SECTION_CLASS} h-full shrink-0 content-start`}
+      className={`${SPATIAL_TERMINAL_SECTION_CLASS} grid h-full min-h-0 shrink-0 grid-rows-[auto_minmax(0,1fr)_theme(height.thumbnail-rail)] content-start`}
     >
       <SectionHeader title="PROCHÁZKA DOMEM" />
       <MainMedia />

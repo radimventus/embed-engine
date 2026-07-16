@@ -106,7 +106,7 @@ export function MainMedia() {
   };
 
   return (
-    <div className="relative flex aspect-video w-full min-w-0 max-w-full shrink-0 grow-0 items-center justify-center overflow-hidden border border-embed-border-default bg-embed-status-warning/15">
+    <div className="relative h-full min-h-0 w-full min-w-0 max-w-full shrink-0 overflow-hidden border border-embed-border-default bg-embed-status-warning/15">
       <div
         className="absolute inset-0 transition-opacity"
         style={{

@@ -1,13 +1,15 @@
 export const SPATIAL_TERMINAL_HEADER_CLASS =
-  'flex h-6 shrink-0 items-end overflow-hidden text-base font-bold leading-none tracking-wide text-embed-brand-navy';
+  'flex h-chapter-title shrink-0 items-end overflow-hidden text-base font-bold leading-none tracking-wide text-embed-brand-navy';
 
 export const DECISION_CANVAS_CHAPTER_TITLE_CLASS = `${SPATIAL_TERMINAL_HEADER_CLASS} box-border w-[calc(100%+(15/35)*100%+24px+1px)] max-w-none -ml-[calc((15/35)*100%+24px+1px)]`;
 
 export const CHAPTER_HEADER_CLASS =
-  'flex min-h-6 shrink-0 items-end text-base font-bold leading-none tracking-wide text-embed-brand-navy';
+  'flex h-chapter-title shrink-0 items-end text-base font-bold leading-none tracking-wide text-embed-brand-navy';
+
+export const SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS = 'h-[80px] w-[140px] shrink-0';
 
 export const SPATIAL_TERMINAL_SECTION_CLASS =
-  'grid w-full min-w-0 content-start items-start gap-section overflow-x-hidden px-section py-section';
+  'grid w-full min-w-0 content-start items-start gap-0 overflow-x-hidden px-section pb-section';
 
 export const SEGMENTED_CONTROL_SHELL_CLASS =
   'inline-flex w-[9.5rem] shrink-0 rounded-lg border border-embed-neutral-200 bg-embed-neutral-50/50 p-0.5';

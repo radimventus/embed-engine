@@ -1,5 +1,7 @@
 import type { MouseEvent } from 'react';
 
+import { CHAPTER_CTA_CLASS, CHAPTER_CTA_FOCUS_CLASS } from '../../chapter-layout';
+
 export function HeroCTA() {
   const handleNavigate = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
@@ -19,7 +21,7 @@ export function HeroCTA() {
     <a
       href="#walkthrough"
       onClick={handleNavigate}
-      className="rounded-xl bg-embed-brand-navy px-8 py-4 text-center font-sans text-base font-medium text-embed-white shadow-sm transition-[box-shadow,opacity] duration-150 ease-out hover:opacity-90 hover:shadow-md active:opacity-95 active:shadow-sm"
+      className={`${CHAPTER_CTA_CLASS} ${CHAPTER_CTA_FOCUS_CLASS}`}
     >
       Podívat se dovnitř – video
     </a>
