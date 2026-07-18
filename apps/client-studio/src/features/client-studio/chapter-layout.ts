@@ -19,8 +19,13 @@ export const SPATIAL_TERMINAL_MEDIA_LEFT_GUTTER_PX = 20;
 export const SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX = 690;
 export const SPATIAL_TERMINAL_MEDIA_COLUMN_WIDTH_PX =
   SPATIAL_TERMINAL_MEDIA_LEFT_GUTTER_PX + SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX;
-export const SPATIAL_TERMINAL_ROOM_INDEX_WIDTH_PX = 239;
-export const SPATIAL_TERMINAL_FLOOR_PLAN_WIDTH_PX = 501;
+/** Narrowed so Floor Plan column gains ~30px of width. */
+export const SPATIAL_TERMINAL_ROOM_INDEX_WIDTH_PX = 209;
+export const SPATIAL_TERMINAL_FLOOR_PLAN_RIGHT_GUTTER_PX = 20;
+export const SPATIAL_TERMINAL_FLOOR_PLAN_WIDTH_PX =
+  CANVAS_WIDTH_PX -
+  SPATIAL_TERMINAL_MEDIA_COLUMN_WIDTH_PX -
+  SPATIAL_TERMINAL_ROOM_INDEX_WIDTH_PX;
 export const SPATIAL_TERMINAL_WIDTH_PX =
   SPATIAL_TERMINAL_MEDIA_COLUMN_WIDTH_PX +
   SPATIAL_TERMINAL_ROOM_INDEX_WIDTH_PX +
@@ -29,25 +34,20 @@ export const SPATIAL_TERMINAL_TITLE_BAND_PX = 60;
 export const SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_PX = 20;
 export const SPATIAL_TERMINAL_THUMBNAIL_ROW_PX = 100;
 export const SPATIAL_TERMINAL_THUMBNAIL_RAIL_PX = 80;
-export const SPATIAL_TERMINAL_THUMBNAIL_WIDTH_PX = 140;
 export const SPATIAL_TERMINAL_THUMBNAIL_HEIGHT_PX = 80;
+/** 16:9 at thumbnail rail height */
+export const SPATIAL_TERMINAL_THUMBNAIL_WIDTH_PX = Math.round(
+  (SPATIAL_TERMINAL_THUMBNAIL_HEIGHT_PX * 16) / 9,
+);
 
-export const FAQ_ROW_HEIGHT_PX = 55;
+export const FAQ_ROW_HEIGHT_PX = 45;
 export const FAQ_CHAPTER_MIN_HEIGHT_PX = 480;
+export const FAQ_COLUMN_WIDTH_PX = 690;
+export const AI_ADVISOR_CHAT_LEFT_INSET_PX = 14;
 
 export const MOTION_DURATION_CLASS = 'duration-200 ease-out';
 
-export const CHAPTER_CTA_CLASS = `rounded-xl bg-embed-brand-navy px-8 py-4 text-center font-sans text-base font-medium text-embed-white shadow-sm transition-[box-shadow,opacity] ${MOTION_DURATION_CLASS} hover:opacity-90 hover:shadow-md active:opacity-95 active:shadow-sm`;
-
-export const CHAPTER_CTA_FOCUS_CLASS =
-  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-navy/25 focus-visible:ring-offset-2';
-
-export const CHAPTER_CTA_DISABLED_CLASS = `rounded-xl border border-embed-neutral-200 bg-embed-neutral-100 px-8 py-4 text-center font-sans text-base font-medium text-embed-foreground-muted transition-[box-shadow,opacity] ${MOTION_DURATION_CLASS} disabled:cursor-not-allowed`;
-
-export const CHAPTER_PANEL_CLASS =
-  'rounded-xl border border-embed-neutral-200/80 bg-embed-white px-section py-5';
-
-export const CHAPTER_PANEL_DIVIDER_CLASS = 'mt-4 border-t border-embed-neutral-200/80 pt-4';
+export const CHAPTER_PANEL_DIVIDER_CLASS = 'mt-4 border-t border-embed-border-default pt-4';
 
 export const CHAPTER_PANEL_LABEL_CLASS =
-  'text-xs font-medium uppercase tracking-wide text-embed-foreground-tertiary';
+  'text-xs font-medium uppercase tracking-wide text-embed-foreground-primary/45';

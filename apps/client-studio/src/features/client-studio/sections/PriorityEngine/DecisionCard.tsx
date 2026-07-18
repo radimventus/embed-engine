@@ -7,6 +7,7 @@ import {
   DECISION_CARD_SIZE_PX,
   DECISION_TRANSITION_CLASS,
 } from './decision-cards-layout';
+import { DecisionCategoryIcon } from './DecisionCategoryIcon';
 import { DecisionSlider } from './DecisionSlider';
 
 type DecisionCardProps = {
@@ -16,6 +17,9 @@ type DecisionCardProps = {
   onImportanceChange: (value: number) => void;
   onToggle: () => void;
 };
+
+/** Counters card active scale so icon pixel size stays constant across states. */
+const ACTIVE_ICON_COUNTER_SCALE = 'scale-[0.893]';
 
 export function DecisionCard({
   category,
@@ -34,20 +38,27 @@ export function DecisionCard({
         aria-pressed={isActive}
         aria-label={`${category.title} decision category`}
         onClick={onToggle}
-        className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-xl border px-2.5 transition-[transform,box-shadow,border-color] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${
+        className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-[8px] border px-2.5 transition-[transform,box-shadow,border-color] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${
           isActive
             ? `${DECISION_CARD_ACTIVE_CLASS} justify-between py-2.5`
             : `${DECISION_CARD_IDLE_CLASS} ${DECISION_CARD_HOVER_CLASS} z-0 scale-100 justify-center py-3`
         }`}
         style={{ transformOrigin: 'center center' }}
       >
-        <div className="flex flex-col items-center gap-1.5">
-          <span className="text-xl leading-none" aria-hidden="true">
-            {category.icon}
+        <div className="flex flex-col items-center gap-2.5">
+          <span
+            className={`-mt-0.5 flex items-center justify-center leading-none ${
+              isActive ? ACTIVE_ICON_COUNTER_SCALE : ''
+            }`}
+            aria-hidden="true"
+          >
+            <DecisionCategoryIcon categoryId={category.id} />
           </span>
           <span
-            className={`max-w-[96px] text-center text-[10px] font-medium leading-snug tracking-wide ${
-              isActive ? 'text-embed-brand-navy' : 'text-embed-foreground-secondary'
+            className={`max-w-[96px] text-center font-medium leading-snug tracking-wide ${
+              isActive
+                ? 'text-[10px] text-embed-foreground-primary'
+                : 'text-[13px] text-embed-foreground-primary/70'
             }`}
           >
             {category.title}
@@ -56,7 +67,7 @@ export function DecisionCard({
         <div
           className={`w-full transition-[opacity,transform,max-height] ${DECISION_TRANSITION_CLASS} ${
             isActive
-              ? 'max-h-10 translate-y-0 border-t border-embed-neutral-100 pt-2 opacity-100'
+              ? 'max-h-10 translate-y-0 pt-2 opacity-100'
               : 'pointer-events-none max-h-0 translate-y-1 opacity-0'
           }`}
           onClick={(event) => event.stopPropagation()}

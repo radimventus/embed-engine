@@ -8,14 +8,22 @@ type ConversationProps = {
 };
 
 export function Conversation({ messages }: ConversationProps) {
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const container = containerRef.current;
+    if (container === null) {
+      return;
+    }
+
+    container.scrollTop = container.scrollHeight;
   }, [messages]);
 
   return (
-    <div className="mt-section flex h-full min-h-ai-conversation max-h-ai-conversation flex-col space-y-section overflow-y-auto">
+    <div
+      ref={containerRef}
+      className="flex min-h-0 flex-1 flex-col space-y-section overflow-x-hidden overflow-y-auto"
+    >
       {messages.map((message) => (
         <MessageBubble
           key={message.id}
@@ -24,7 +32,6 @@ export function Conversation({ messages }: ConversationProps) {
           time={message.time}
         />
       ))}
-      <div ref={bottomRef} />
     </div>
   );
 }

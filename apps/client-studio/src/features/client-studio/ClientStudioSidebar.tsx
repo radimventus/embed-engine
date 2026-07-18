@@ -1,24 +1,54 @@
+import { useState } from 'react';
+
+const HOUSE_MENU_ITEMS = [
+  'MODERN 01',
+  'MODERN 02',
+  'MODERN 03',
+  'MODERN 04',
+  'MODERN 05',
+  'MODERN 06',
+] as const;
+
+const SIDEBAR_COLLAPSED_WIDTH_PX = 48;
+const SIDEBAR_EXPANDED_WIDTH_PX = 220;
+
 export function ClientStudioSidebar() {
+  const [expanded, setExpanded] = useState(false);
+
   return (
-    <aside className="flex w-sidebar shrink-0 flex-col items-center gap-section bg-embed-brand-navy py-section">
-      <button
-        type="button"
-        aria-label="Menu"
-        className="flex flex-col items-center justify-center gap-1.5 p-2"
-      >
-        <span className="block h-px w-5 bg-embed-white" />
-        <span className="block h-px w-5 bg-embed-white" />
-        <span className="block h-px w-5 bg-embed-white" />
-      </button>
-      <button type="button" aria-label="Domů" className="p-2">
-        <svg
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-          className="h-6 w-6 fill-embed-white"
+    <aside
+      className="flex h-full min-h-screen shrink-0 flex-col bg-embed-brand-navy py-section transition-[width] duration-200 ease-out"
+      style={{
+        width: expanded ? SIDEBAR_EXPANDED_WIDTH_PX : SIDEBAR_COLLAPSED_WIDTH_PX,
+      }}
+    >
+      <div className={`flex ${expanded ? 'justify-start px-4' : 'justify-center'}`}>
+        <button
+          type="button"
+          aria-label={expanded ? 'Zavřít menu' : 'Otevřít menu'}
+          aria-expanded={expanded}
+          onClick={() => setExpanded((current) => !current)}
+          className="flex flex-col items-center justify-center gap-1.5 p-2"
         >
-          <path d="M12 3 3 10v11h6v-7h6v7h6V10L12 3z" />
-        </svg>
-      </button>
+          <span className="block h-px w-5 bg-embed-background-primary" />
+          <span className="block h-px w-5 bg-embed-background-primary" />
+          <span className="block h-px w-5 bg-embed-background-primary" />
+        </button>
+      </div>
+
+      {expanded ? (
+        <nav aria-label="Domy" className="mt-section flex flex-col px-2">
+          {HOUSE_MENU_ITEMS.map((house) => (
+            <button
+              key={house}
+              type="button"
+              className="w-full rounded-md px-3 py-2.5 text-left text-sm tracking-wide text-embed-background-primary transition-opacity duration-150 ease-out hover:bg-embed-background-primary/10 hover:opacity-95"
+            >
+              {house}
+            </button>
+          ))}
+        </nav>
+      ) : null}
     </aside>
   );
 }

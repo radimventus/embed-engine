@@ -1,3 +1,5 @@
+import { PrimaryButton } from '@embed-engine/ui';
+
 type SendButtonProps = {
   disabled?: boolean;
   onClick: () => void;
@@ -5,13 +7,13 @@ type SendButtonProps = {
 
 export function SendButton({ disabled = false, onClick }: SendButtonProps) {
   return (
-    <button
-      type="button"
+    <PrimaryButton
       disabled={disabled}
       onClick={onClick}
-      className="bg-embed-brand-navy px-6 py-3 text-sm text-embed-white disabled:cursor-not-allowed disabled:opacity-50"
+      size="sm"
+      className="h-[50px] shrink-0 border-0 px-6 py-0 shadow-none"
     >
       Odeslat
-    </button>
+    </PrimaryButton>
   );
 }

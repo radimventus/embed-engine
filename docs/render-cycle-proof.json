@@ -1,0 +1,426 @@
+{
+  "s0": {
+    "label": "t0-domcontentloaded",
+    "t": 443,
+    "shellId": "9418896107236159",
+    "shellClass": "flex h-screen overflow-hidden",
+    "mainClass": "flex min-h-0 flex-1 scroll-smooth items-start justify-center overscroll-none overflow-x-auto overflow-y-auto",
+    "canvasClass": "box-border w-canvas min-w-canvas max-w-canvas shrink-0 grow-0 self-start border border-embed-border-default pb-section pt-section mobile:max-w-none mobile:min-w-0 mobile:w-full",
+    "walkClass": "scroll-mt-header grid min-h-spatial-terminal-surface w-full min-w-0 items-stretch gap-0 overflow-x-hidden border-b border-embed-border-default mobile:grid-cols-1 mobile:divide-y mo",
+    "walkBg": "rgba(0, 0, 0, 0)",
+    "bodyBg": "rgb(250, 249, 246)",
+    "videoBg": "rgb(0, 30, 58)",
+    "videoColor": "rgb(255, 255, 255)",
+    "mainScroll": 0,
+    "rootChildCount": 1,
+    "canvasCount": 1,
+    "hScreenCount": 1,
+    "styleTagCount": 1,
+    "viteStyleIds": [
+      "/Users/radimventus/embed-engine/apps/client-studio/src/index.css"
+    ],
+    "whiteHits": [
+      {
+        "y": 860,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 840,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 820,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 800,
+        "target": "DIV.h-chapter-spacing",
+        "whiteAncestor": null
+      },
+      {
+        "y": 780,
+        "target": "DIV.h-chapter-spacing",
+        "whiteAncestor": null
+      }
+    ],
+    "diag": {
+      "mutationCount": 1,
+      "classChangeCount": 0,
+      "addedNodeCount": 1,
+      "remountCount": 0,
+      "scrollEventCount": 0,
+      "styleSheetChangeCount": 0,
+      "remounts": [],
+      "scrollEvents": [],
+      "classChanges": [],
+      "addedNodes": [
+        {
+          "t": 410.5,
+          "parent": {
+            "tag": "DIV",
+            "id": "root",
+            "aria": null,
+            "dataCanvas": null,
+            "className": "",
+            "childElementCount": 1
+          },
+          "node": {
+            "tag": "DIV",
+            "id": null,
+            "aria": null,
+            "dataCanvas": null,
+            "className": "flex h-screen overflow-hidden",
+            "childElementCount": 2
+          }
+        }
+      ],
+      "styleSheetChanges": [],
+      "mutationsSample": [
+        {
+          "t": 410.5,
+          "type": "childList",
+          "target": {
+            "tag": "DIV",
+            "id": "root",
+            "aria": null,
+            "dataCanvas": null,
+            "className": "",
+            "childElementCount": 1
+          },
+          "added": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "aria": null,
+              "dataCanvas": null,
+              "className": "flex h-screen overflow-hidden",
+              "childElementCount": 2
+            }
+          ],
+          "removed": []
+        }
+      ]
+    }
+  },
+  "s1": {
+    "label": "t300ms",
+    "t": 768.2999999523163,
+    "shellId": "9418896107236159",
+    "shellClass": "flex h-screen overflow-hidden",
+    "mainClass": "flex min-h-0 flex-1 scroll-smooth items-start justify-center overscroll-none overflow-x-auto overflow-y-auto",
+    "canvasClass": "box-border w-canvas min-w-canvas max-w-canvas shrink-0 grow-0 self-start border border-embed-border-default pb-section pt-section mobile:max-w-none mobile:min-w-0 mobile:w-full",
+    "walkClass": "scroll-mt-header grid min-h-spatial-terminal-surface w-full min-w-0 items-stretch gap-0 overflow-x-hidden border-b border-embed-border-default mobile:grid-cols-1 mobile:divide-y mo",
+    "walkBg": "rgba(0, 0, 0, 0)",
+    "bodyBg": "rgb(250, 249, 246)",
+    "videoBg": "rgb(0, 30, 58)",
+    "videoColor": "rgb(255, 255, 255)",
+    "mainScroll": 0,
+    "rootChildCount": 1,
+    "canvasCount": 1,
+    "hScreenCount": 1,
+    "styleTagCount": 1,
+    "viteStyleIds": [
+      "/Users/radimventus/embed-engine/apps/client-studio/src/index.css"
+    ],
+    "whiteHits": [
+      {
+        "y": 860,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 840,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 820,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 800,
+        "target": "DIV.h-chapter-spacing",
+        "whiteAncestor": null
+      },
+      {
+        "y": 780,
+        "target": "DIV.h-chapter-spacing",
+        "whiteAncestor": null
+      }
+    ],
+    "diag": {
+      "mutationCount": 1,
+      "classChangeCount": 0,
+      "addedNodeCount": 1,
+      "remountCount": 0,
+      "scrollEventCount": 0,
+      "styleSheetChangeCount": 0,
+      "remounts": [],
+      "scrollEvents": [],
+      "classChanges": [],
+      "addedNodes": [
+        {
+          "t": 410.5,
+          "parent": {
+            "tag": "DIV",
+            "id": "root",
+            "aria": null,
+            "dataCanvas": null,
+            "className": "",
+            "childElementCount": 1
+          },
+          "node": {
+            "tag": "DIV",
+            "id": null,
+            "aria": null,
+            "dataCanvas": null,
+            "className": "flex h-screen overflow-hidden",
+            "childElementCount": 2
+          }
+        }
+      ],
+      "styleSheetChanges": [],
+      "mutationsSample": [
+        {
+          "t": 410.5,
+          "type": "childList",
+          "target": {
+            "tag": "DIV",
+            "id": "root",
+            "aria": null,
+            "dataCanvas": null,
+            "className": "",
+            "childElementCount": 1
+          },
+          "added": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "aria": null,
+              "dataCanvas": null,
+              "className": "flex h-screen overflow-hidden",
+              "childElementCount": 2
+            }
+          ],
+          "removed": []
+        }
+      ]
+    }
+  },
+  "s2": {
+    "label": "networkidle",
+    "t": 1112.5,
+    "shellId": "9418896107236159",
+    "shellClass": "flex h-screen overflow-hidden",
+    "mainClass": "flex min-h-0 flex-1 scroll-smooth items-start justify-center overscroll-none overflow-x-auto overflow-y-auto",
+    "canvasClass": "box-border w-canvas min-w-canvas max-w-canvas shrink-0 grow-0 self-start border border-embed-border-default pb-section pt-section mobile:max-w-none mobile:min-w-0 mobile:w-full",
+    "walkClass": "scroll-mt-header grid min-h-spatial-terminal-surface w-full min-w-0 items-stretch gap-0 overflow-x-hidden border-b border-embed-border-default mobile:grid-cols-1 mobile:divide-y mo",
+    "walkBg": "rgba(0, 0, 0, 0)",
+    "bodyBg": "rgb(250, 249, 246)",
+    "videoBg": "rgb(0, 30, 58)",
+    "videoColor": "rgb(255, 255, 255)",
+    "mainScroll": 0,
+    "rootChildCount": 1,
+    "canvasCount": 1,
+    "hScreenCount": 1,
+    "styleTagCount": 1,
+    "viteStyleIds": [
+      "/Users/radimventus/embed-engine/apps/client-studio/src/index.css"
+    ],
+    "whiteHits": [
+      {
+        "y": 860,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 840,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 820,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 800,
+        "target": "DIV.h-chapter-spacing",
+        "whiteAncestor": null
+      },
+      {
+        "y": 780,
+        "target": "DIV.h-chapter-spacing",
+        "whiteAncestor": null
+      }
+    ],
+    "diag": {
+      "mutationCount": 1,
+      "classChangeCount": 0,
+      "addedNodeCount": 1,
+      "remountCount": 0,
+      "scrollEventCount": 0,
+      "styleSheetChangeCount": 0,
+      "remounts": [],
+      "scrollEvents": [],
+      "classChanges": [],
+      "addedNodes": [
+        {
+          "t": 410.5,
+          "parent": {
+            "tag": "DIV",
+            "id": "root",
+            "aria": null,
+            "dataCanvas": null,
+            "className": "",
+            "childElementCount": 1
+          },
+          "node": {
+            "tag": "DIV",
+            "id": null,
+            "aria": null,
+            "dataCanvas": null,
+            "className": "flex h-screen overflow-hidden",
+            "childElementCount": 2
+          }
+        }
+      ],
+      "styleSheetChanges": [],
+      "mutationsSample": [
+        {
+          "t": 410.5,
+          "type": "childList",
+          "target": {
+            "tag": "DIV",
+            "id": "root",
+            "aria": null,
+            "dataCanvas": null,
+            "className": "",
+            "childElementCount": 1
+          },
+          "added": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "aria": null,
+              "dataCanvas": null,
+              "className": "flex h-screen overflow-hidden",
+              "childElementCount": 2
+            }
+          ],
+          "removed": []
+        }
+      ]
+    }
+  },
+  "s3": {
+    "label": "t1500ms-after-idle",
+    "t": 2978.0999999046326,
+    "shellId": "9418896107236159",
+    "shellClass": "flex h-screen overflow-hidden",
+    "mainClass": "flex min-h-0 flex-1 scroll-smooth items-start justify-center overscroll-none overflow-x-auto overflow-y-auto",
+    "canvasClass": "box-border w-canvas min-w-canvas max-w-canvas shrink-0 grow-0 self-start border border-embed-border-default pb-section pt-section mobile:max-w-none mobile:min-w-0 mobile:w-full",
+    "walkClass": "scroll-mt-header grid min-h-spatial-terminal-surface w-full min-w-0 items-stretch gap-0 overflow-x-hidden border-b border-embed-border-default mobile:grid-cols-1 mobile:divide-y mo",
+    "walkBg": "rgba(0, 0, 0, 0)",
+    "bodyBg": "rgb(250, 249, 246)",
+    "videoBg": "rgb(0, 30, 58)",
+    "videoColor": "rgb(255, 255, 255)",
+    "mainScroll": 0,
+    "rootChildCount": 1,
+    "canvasCount": 1,
+    "hScreenCount": 1,
+    "styleTagCount": 1,
+    "viteStyleIds": [
+      "/Users/radimventus/embed-engine/apps/client-studio/src/index.css"
+    ],
+    "whiteHits": [
+      {
+        "y": 860,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 840,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 820,
+        "target": "H2.flex",
+        "whiteAncestor": null
+      },
+      {
+        "y": 800,
+        "target": "DIV.h-chapter-spacing",
+        "whiteAncestor": null
+      },
+      {
+        "y": 780,
+        "target": "DIV.h-chapter-spacing",
+        "whiteAncestor": null
+      }
+    ],
+    "diag": {
+      "mutationCount": 1,
+      "classChangeCount": 0,
+      "addedNodeCount": 1,
+      "remountCount": 0,
+      "scrollEventCount": 0,
+      "styleSheetChangeCount": 0,
+      "remounts": [],
+      "scrollEvents": [],
+      "classChanges": [],
+      "addedNodes": [
+        {
+          "t": 410.5,
+          "parent": {
+            "tag": "DIV",
+            "id": "root",
+            "aria": null,
+            "dataCanvas": null,
+            "className": "",
+            "childElementCount": 1
+          },
+          "node": {
+            "tag": "DIV",
+            "id": null,
+            "aria": null,
+            "dataCanvas": null,
+            "className": "flex h-screen overflow-hidden",
+            "childElementCount": 2
+          }
+        }
+      ],
+      "styleSheetChanges": [],
+      "mutationsSample": [
+        {
+          "t": 410.5,
+          "type": "childList",
+          "target": {
+            "tag": "DIV",
+            "id": "root",
+            "aria": null,
+            "dataCanvas": null,
+            "className": "",
+            "childElementCount": 1
+          },
+          "added": [
+            {
+              "tag": "DIV",
+              "id": null,
+              "aria": null,
+              "dataCanvas": null,
+              "className": "flex h-screen overflow-hidden",
+              "childElementCount": 2
+            }
+          ],
+          "removed": []
+        }
+      ]
+    }
+  }
+}

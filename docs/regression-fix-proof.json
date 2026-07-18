@@ -1,0 +1,114 @@
+{
+  "canvasBg": "rgb(255, 255, 255)",
+  "canvasPadBottom": "0px",
+  "sections": [
+    {
+      "aria": null,
+      "tag": "HEADER",
+      "bg": "rgb(255, 255, 255)",
+      "h": 72,
+      "cls": "grid h-header shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-embed-border-default bg"
+    },
+    {
+      "aria": "Opening",
+      "tag": "SECTION",
+      "bg": "rgb(255, 255, 255)",
+      "h": 675,
+      "cls": "border-b border-embed-border-default bg-[#FFFFFF]"
+    },
+    {
+      "aria": null,
+      "tag": "DIV",
+      "bg": "rgb(255, 255, 255)",
+      "h": 30,
+      "cls": "h-chapter-spacing w-full shrink-0 bg-[#FFFFFF]"
+    },
+    {
+      "aria": null,
+      "tag": "DIV",
+      "bg": "rgb(255, 255, 255)",
+      "h": 539,
+      "cls": "scroll-mt-header grid min-h-spatial-terminal-surface w-full min-w-0 items-stretch gap-0 overflow-x-h"
+    },
+    {
+      "aria": null,
+      "tag": "DIV",
+      "bg": "rgb(255, 255, 255)",
+      "h": 30,
+      "cls": "h-chapter-spacing w-full shrink-0 bg-[#FFFFFF]"
+    },
+    {
+      "aria": "Priority Engine",
+      "tag": "SECTION",
+      "bg": "rgb(255, 255, 255)",
+      "h": 407,
+      "cls": "relative border-b border-embed-border-default bg-[#FFFFFF] px-[21px] pb-5"
+    },
+    {
+      "aria": null,
+      "tag": "DIV",
+      "bg": "rgb(255, 255, 255)",
+      "h": 30,
+      "cls": "h-chapter-spacing w-full shrink-0 bg-[#FFFFFF]"
+    },
+    {
+      "aria": "AI Advisor",
+      "tag": "SECTION",
+      "bg": "rgb(255, 255, 255)",
+      "h": 484.5,
+      "cls": "border-b border-embed-border-default bg-[#FFFFFF]"
+    },
+    {
+      "aria": "Audit and Lead Capture",
+      "tag": "SECTION",
+      "bg": "rgba(0, 0, 0, 0)",
+      "h": 716.8,
+      "cls": ""
+    }
+  ],
+  "bottomHits": [
+    {
+      "y": 820,
+      "opaque": {
+        "tag": "DIV",
+        "id": "walkthrough",
+        "aria": null,
+        "bg": "rgb(255, 255, 255)",
+        "cls": "scroll-mt-header grid min-h-spatial-terminal-surface w-full min-w-0 items-stretch gap-0 ov"
+      }
+    },
+    {
+      "y": 860,
+      "opaque": {
+        "tag": "DIV",
+        "id": "walkthrough",
+        "aria": null,
+        "bg": "rgb(255, 255, 255)",
+        "cls": "scroll-mt-header grid min-h-spatial-terminal-surface w-full min-w-0 items-stretch gap-0 ov"
+      }
+    },
+    {
+      "y": 890,
+      "opaque": {
+        "tag": "DIV",
+        "id": "",
+        "aria": null,
+        "bg": "rgb(227, 227, 227)",
+        "cls": "relative box-border h-full min-h-0 w-[690px] min-w-[690px] max-w-[690px] shrink-0 overflow"
+      }
+    }
+  ],
+  "audit": {
+    "sectionH": 716.75,
+    "navyH": 716.75,
+    "navyContainsAll": true,
+    "gapBelowNavyToCanvas": 1,
+    "gapBelowSectionToCanvas": 1,
+    "togglesInsideNavy": true,
+    "toggleCount": 2,
+    "toggleBgs": [
+      "rgb(250, 249, 246)",
+      "rgb(200, 161, 101)"
+    ]
+  }
+}

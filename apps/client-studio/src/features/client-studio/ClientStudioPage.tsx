@@ -13,21 +13,13 @@ export function ClientStudioPage() {
       <DesktopCanvas>
         <ClientStudioHeader />
         <Hero />
-        <div
-          aria-hidden="true"
-          className="h-chapter-spacing w-full shrink-0 bg-embed-background-secondary"
-        />
+        <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
         <PropertyExplorer />
-        <div
-          aria-hidden="true"
-          className="h-chapter-spacing w-full shrink-0 bg-embed-background-secondary"
-        />
+        <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
         <PriorityEngine />
-        <div
-          aria-hidden="true"
-          className="h-chapter-spacing w-full shrink-0 bg-embed-background-secondary"
-        />
+        <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
         <AIAdvisor />
+        <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
         <AuditLeadCapture />
       </DesktopCanvas>
     </WalkthroughProvider>

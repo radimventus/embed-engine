@@ -1,5 +1,7 @@
-import { useLayoutEffect, useRef } from 'react';
+import { colors } from '@embed-engine/design-tokens';
+import { TextArea } from '@embed-engine/ui';
 
+import { AI_ADVISOR_INPUT_GAP_CLASS, FAQ_ACCORDION_LIST_WIDTH_CLASS } from './ai-advisor-layout';
 import { SendButton } from './SendButton';
 
 type InputBarProps = {
@@ -8,31 +10,27 @@ type InputBarProps = {
   onSend: () => void;
 };
 
+/**
+ * Light field: transparent fill, goldIntense border only.
+ * Row width matches FAQ (680px). Height stays 50px.
+ */
 export function InputBar({ value, onChange, onSend }: InputBarProps) {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useLayoutEffect(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) {
-      return;
-    }
-
-    textarea.style.height = 'auto';
-    textarea.style.height = `${textarea.scrollHeight}px`;
-  }, [value]);
-
   const canSend = value.trim().length > 0;
 
   return (
-    <div className="mt-section flex items-end border border-embed-border-default">
-      <textarea
-        ref={textareaRef}
-        rows={1}
-        value={value}
-        placeholder="Zadejte svůj dotaz"
-        onChange={(event) => onChange(event.target.value)}
-        className="max-h-40 min-h-[48px] flex-1 resize-none bg-embed-background-primary px-4 py-3 text-sm text-embed-foreground-primary placeholder:text-embed-foreground-muted"
-      />
+    <div className={`${AI_ADVISOR_INPUT_GAP_CLASS} ${FAQ_ACCORDION_LIST_WIDTH_CLASS} flex items-stretch gap-3`}>
+      <div
+        className="flex h-[50px] min-w-0 flex-1 items-center overflow-hidden rounded-[8px] border bg-transparent px-section"
+        style={{ borderColor: colors.action.accent }}
+      >
+        <TextArea
+          rows={1}
+          value={value}
+          placeholder="Zadejte svůj dotaz"
+          onChange={(event) => onChange(event.target.value)}
+          className="h-[50px] min-h-[50px] w-full min-w-0 resize-none border-0 bg-transparent px-0 py-0 leading-[50px]"
+        />
+      </div>
       <SendButton disabled={!canSend} onClick={onSend} />
     </div>
   );

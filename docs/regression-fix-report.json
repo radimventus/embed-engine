@@ -1,0 +1,86 @@
+{
+  "spacers": [
+    {
+      "h": 30,
+      "prev": "Opening",
+      "next": "DIV"
+    },
+    {
+      "h": 30,
+      "prev": "DIV",
+      "next": "Priority Engine"
+    },
+    {
+      "h": 30,
+      "prev": "Priority Engine",
+      "next": "AI Advisor"
+    },
+    {
+      "h": 30,
+      "prev": "AI Advisor",
+      "next": "Audit and Lead Capture"
+    }
+  ],
+  "footer": {
+    "powerBg": "rgb(255, 255, 255)",
+    "powerParentBg": "rgba(0, 0, 0, 0)",
+    "text": "power by Realivideo.online"
+  },
+  "auditButton": {
+    "enabled": true,
+    "disabledAttr": false,
+    "className": "inline-flex items-center justify-center text-center font-sans font-medium duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 w-full rounded-xl px-6 py-3 text-sm bg-[#001E3A] text-[#FFFFFF] mt-section",
+    "computed": {
+      "backgroundColor": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "opacity": "1",
+      "cursor": "pointer",
+      "filter": "none",
+      "boxShadow": "none"
+    },
+    "parentOpaque": {
+      "cls": "-mx-section mt-section bg-[#FFFFFF] px-section py-16",
+      "bg": "rgb(255, 255, 255)"
+    }
+  },
+  "segs": [
+    {
+      "text": "Mám vlastní pozemek",
+      "pressed": "true",
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)"
+    },
+    {
+      "text": "Hledám vhodnou parcelu",
+      "pressed": "false",
+      "bg": "rgb(227, 227, 227)",
+      "color": "rgb(0, 30, 58)"
+    }
+  ],
+  "compact": [
+    {
+      "text": "VIDEO",
+      "pressed": "true",
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)"
+    },
+    {
+      "text": "FOTKY",
+      "pressed": "false",
+      "bg": "rgb(227, 227, 227)",
+      "color": "rgb(0, 30, 58)"
+    },
+    {
+      "text": "PŘÍZEMÍ",
+      "pressed": "true",
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)"
+    },
+    {
+      "text": "PATRO",
+      "pressed": "false",
+      "bg": "rgb(227, 227, 227)",
+      "color": "rgba(0, 30, 58, 0.3)"
+    }
+  ]
+}

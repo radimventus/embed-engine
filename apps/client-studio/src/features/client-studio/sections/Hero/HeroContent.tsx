@@ -1,23 +1,57 @@
+import { colors } from '@embed-engine/design-tokens';
+
 import { HeroCTA } from './HeroCTA';
 
+const HERO_FEATURES = [
+  { value: '124 m2', label: 'Užitná plocha' },
+  { value: 'A ++', label: 'Energetická třída' },
+  { value: 'Dřevostavba', label: 'Difuzně otevřená' },
+] as const;
+
+/** Same veil as former Social Proof divider — anchored to gold line, fading upward. */
+const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
+  backgroundImage: `linear-gradient(to top, color-mix(in srgb, ${colors.border.default} 30%, #FFFFFF), #FFFFFF)`,
+} as const;
+
+/** Left third — solid white information block with copy + CTA. */
 export function HeroContent() {
   return (
     <section
       aria-label="Hero Content"
-      className="absolute inset-x-0 bottom-0 z-10 grid h-hero-overlay grid-cols-[minmax(0,50%)_minmax(120px,15%)_minmax(0,35%)] items-center bg-[linear-gradient(90deg,rgba(255,255,255,0.70)_0%,rgba(255,255,255,0.55)_45%,rgba(255,255,255,0.40)_75%,rgba(255,255,255,0.30)_100%)] px-section mobile:static mobile:grid mobile:h-auto mobile:grid-cols-1 mobile:gap-4 mobile:py-4"
+      className="relative flex h-full min-h-0 w-full flex-col justify-center bg-white px-section py-section mobile:py-8"
     >
-      <div className="min-w-0 mobile:col-span-1">
-        <h1 className="font-sans text-3xl font-black leading-tight tracking-tight text-embed-brand-navy">
-          Rodinný dům, kde to dýchá
-        </h1>
-        <p className="mt-1.5 font-sans text-base font-black leading-snug text-embed-brand-navy">
-          MODERN A01 – 4+kk – Energetická třída A – od 7,94 mil. Kč
+      <div className="translate-x-[10px]">
+        <p className="text-sm font-bold uppercase tracking-wide text-[#D4AF37]">
+          MODERN A01 – 4+kk
         </p>
+
+        <h1 className="mt-3 font-sans text-[2.52rem] font-black leading-[1.15] tracking-tight text-embed-foreground-primary">
+          Rodinný dům, kde to dýchá štěstím
+        </h1>
+
+        <dl className="mt-8 grid grid-cols-3 divide-x divide-embed-border-default">
+          {HERO_FEATURES.map((feature) => (
+            <div key={feature.label} className="flex flex-col px-3 first:pl-0 last:pr-0">
+              <dd className="order-1 text-base font-bold leading-tight text-[#D4AF37]">
+                {feature.value}
+              </dd>
+              <dt className="order-2 mt-1 text-xs leading-snug text-embed-foreground-primary">
+                {feature.label}
+              </dt>
+            </div>
+          ))}
+        </dl>
+
+        <div className="mt-10 flex -translate-x-[10px] translate-y-[50px] justify-center">
+          <HeroCTA />
+        </div>
       </div>
-      <div aria-hidden="true" className="mobile:hidden" />
-      <div className="flex justify-center mobile:justify-start">
-        <HeroCTA />
-      </div>
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[33px]"
+        style={HERO_CONTENT_BOTTOM_VEIL_STYLE}
+      />
     </section>
   );
 }

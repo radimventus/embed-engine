@@ -1,0 +1,842 @@
+{
+  "inspectedAt": "2026-07-17T09:54:59.158Z",
+  "url": "http://127.0.0.1:4210/?audit=1784282097736",
+  "loaded": {
+    "title": "EMBED Platform | Klientské studio",
+    "stylesheets": [
+      "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+      "http://127.0.0.1:4210/assets/index-DroPmt3K.css"
+    ],
+    "bodyClass": "",
+    "htmlClass": ""
+  },
+  "stylesheetsFetched": {
+    "href": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+    "length": 10028,
+    "cacheControl": "private, max-age=86400, stale-while-revalidate=604800",
+    "hasNavy": false,
+    "hasWarmWhite": false,
+    "hasLightGray": false,
+    "hasGold": false,
+    "bgPrimary": null,
+    "textPrimary": null,
+    "surfaceCard": null,
+    "borderDefault": null,
+    "brandAccent": null,
+    "preflightBorder": null,
+    "bodyRule": null
+  },
+  "evidence": {
+    "body": {
+      "label": "body background",
+      "tag": "body",
+      "classList": [],
+      "primarySelector": "body",
+      "computed": {
+        "background-color": {
+          "raw": "rgb(250, 249, 246)",
+          "hex": "#FAF9F6"
+        },
+        "background-image": {
+          "raw": "none"
+        }
+      },
+      "matchingRules": {
+        "background-color": [
+          {
+            "selector": "html, body, #root",
+            "value": "rgb(250 249 246 / var(--tw-bg-opacity, 1))",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ]
+      },
+      "winningTokenClasses": [],
+      "likelyWinningRule": {
+        "background-color": {
+          "selector": "html, body, #root",
+          "value": "rgb(250 249 246 / var(--tw-bg-opacity, 1))",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        }
+      }
+    },
+    "appShell": {
+      "label": "Main application wrapper",
+      "tag": "div",
+      "classList": [
+        "flex",
+        "h-screen",
+        "overflow-hidden",
+        "bg-embed-background-primary"
+      ],
+      "primarySelector": "div.flex.h-screen.overflow-hidden.bg-embed-background-primary",
+      "computed": {
+        "background-color": {
+          "raw": "rgb(250, 249, 246)",
+          "hex": "#FAF9F6"
+        },
+        "background-image": {
+          "raw": "none"
+        }
+      },
+      "matchingRules": {
+        "background-color": [
+          {
+            "selector": ".bg-embed-background-primary",
+            "value": "rgb(250 249 246 / var(--tw-bg-opacity, 1))",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ]
+      },
+      "winningTokenClasses": [
+        "bg-embed-background-primary"
+      ],
+      "likelyWinningRule": {
+        "background-color": {
+          "selector": ".bg-embed-background-primary",
+          "value": "rgb(250 249 246 / var(--tw-bg-opacity, 1))",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        }
+      }
+    },
+    "workspace": {
+      "label": "Workspace main",
+      "tag": "main",
+      "classList": [
+        "flex",
+        "min-h-0",
+        "flex-1",
+        "scroll-smooth",
+        "items-start",
+        "justify-center",
+        "overscroll-none",
+        "overflow-x-auto",
+        "overflow-y-auto",
+        "bg-embed-background-secondary"
+      ],
+      "primarySelector": "main.flex.min-h-0.flex-1.scroll-smooth",
+      "computed": {
+        "background-color": {
+          "raw": "rgb(250, 249, 246)",
+          "hex": "#FAF9F6"
+        },
+        "background-image": {
+          "raw": "none"
+        }
+      },
+      "matchingRules": {
+        "background-color": [
+          {
+            "selector": ".bg-embed-background-secondary",
+            "value": "rgb(250 249 246 / var(--tw-bg-opacity, 1))",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ]
+      },
+      "winningTokenClasses": [
+        "bg-embed-background-secondary"
+      ],
+      "likelyWinningRule": {
+        "background-color": {
+          "selector": ".bg-embed-background-secondary",
+          "value": "rgb(250 249 246 / var(--tw-bg-opacity, 1))",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        }
+      }
+    },
+    "canvas": {
+      "label": "Desktop canvas",
+      "tag": "div",
+      "classList": [
+        "box-border",
+        "w-canvas",
+        "min-w-canvas",
+        "max-w-canvas",
+        "shrink-0",
+        "grow-0",
+        "self-start",
+        "border",
+        "border-embed-border-default",
+        "bg-embed-background-primary",
+        "pb-section",
+        "pt-section",
+        "mobile:max-w-none",
+        "mobile:min-w-0",
+        "mobile:w-full"
+      ],
+      "primarySelector": "div.box-border.w-canvas.min-w-canvas.max-w-canvas",
+      "computed": {
+        "background-color": {
+          "raw": "rgb(250, 249, 246)",
+          "hex": "#FAF9F6"
+        },
+        "background-image": {
+          "raw": "none"
+        }
+      },
+      "matchingRules": {
+        "background-color": [
+          {
+            "selector": ".bg-embed-background-primary",
+            "value": "rgb(250 249 246 / var(--tw-bg-opacity, 1))",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ]
+      },
+      "winningTokenClasses": [
+        "border-embed-border-default",
+        "bg-embed-background-primary"
+      ],
+      "likelyWinningRule": {
+        "background-color": {
+          "selector": ".bg-embed-background-primary",
+          "value": "rgb(250 249 246 / var(--tw-bg-opacity, 1))",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        }
+      }
+    },
+    "header": {
+      "label": "Header background",
+      "tag": "header",
+      "classList": [
+        "grid",
+        "h-header",
+        "shrink-0",
+        "grid-cols-[1fr_auto_1fr]",
+        "items-center",
+        "border-b",
+        "border-embed-border-default",
+        "bg-embed-background-primary",
+        "px-section"
+      ],
+      "primarySelector": "header.grid.h-header.shrink-0.grid-cols-[1fr_auto_1fr]",
+      "computed": {
+        "background-color": {
+          "raw": "rgb(250, 249, 246)",
+          "hex": "#FAF9F6"
+        },
+        "background-image": {
+          "raw": "none"
+        }
+      },
+      "matchingRules": {
+        "background-color": [
+          {
+            "selector": ".bg-embed-background-primary",
+            "value": "rgb(250 249 246 / var(--tw-bg-opacity, 1))",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ]
+      },
+      "winningTokenClasses": [
+        "border-embed-border-default",
+        "bg-embed-background-primary"
+      ],
+      "likelyWinningRule": {
+        "background-color": {
+          "selector": ".bg-embed-background-primary",
+          "value": "rgb(250 249 246 / var(--tw-bg-opacity, 1))",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        }
+      }
+    },
+    "heroOverlay": {
+      "label": "Hero overlay background",
+      "tag": "section",
+      "classList": [
+        "absolute",
+        "inset-x-0",
+        "bottom-0",
+        "z-10",
+        "grid",
+        "h-hero-overlay",
+        "grid-cols-[minmax(0,50%)_minmax(120px,15%)_minmax(0,35%)]",
+        "items-center",
+        "bg-[linear-gradient(90deg,rgba(250,249,246,0.88)_0%,rgba(250,249,246,0.72)_45%,rgba(250,249,246,0.52)_75%,rgba(250,249,246,0.38)_100%)]",
+        "px-section",
+        "mobile:static",
+        "mobile:grid",
+        "mobile:h-auto",
+        "mobile:grid-cols-1",
+        "mobile:gap-4",
+        "mobile:py-4"
+      ],
+      "primarySelector": "section.absolute.inset-x-0.bottom-0.z-10",
+      "computed": {
+        "background-color": {
+          "raw": "rgba(0, 0, 0, 0)",
+          "hex": "#000000 @ alpha 0"
+        },
+        "background-image": {
+          "raw": "linear-gradient(90deg, rgba(250, 249, 246, 0.88), rgba(250, 249, 246, 0.72) 45%, rgba(250, 249, 246, 0.52) 75%, rgba(250, 249, 246, 0.38))"
+        }
+      },
+      "matchingRules": {
+        "background-color": []
+      },
+      "winningTokenClasses": [],
+      "likelyWinningRule": {
+        "background-color": null
+      }
+    },
+    "priorityCard": {
+      "label": "Priority card background",
+      "tag": "button",
+      "classList": [
+        "absolute",
+        "inset-0",
+        "flex",
+        "flex-col",
+        "items-center",
+        "overflow-hidden",
+        "rounded-xl",
+        "border",
+        "px-2.5",
+        "transition-[transform,box-shadow,border-color]",
+        "duration-200",
+        "ease-out",
+        "focus-visible:outline-none",
+        "focus-visible:ring-2",
+        "focus-visible:ring-embed-brand-gold/35",
+        "focus-visible:ring-offset-2",
+        "border-embed-border-default",
+        "bg-embed-surface-card",
+        "shadow-none",
+        "hover:cursor-pointer",
+        "hover:border-embed-border-strong",
+        "hover:shadow-[0_4px_14px_rgba(0,19,37,0.06)]",
+        "z-0",
+        "scale-100",
+        "justify-center",
+        "py-3"
+      ],
+      "primarySelector": "button.absolute.inset-0.flex.flex-col",
+      "computed": {
+        "background-color": {
+          "raw": "rgb(227, 227, 227)",
+          "hex": "#E3E3E3"
+        },
+        "border-top-color": {
+          "raw": "rgb(227, 227, 227)",
+          "hex": "#E3E3E3"
+        },
+        "background-image": {
+          "raw": "none"
+        }
+      },
+      "matchingRules": {
+        "background-color": [
+          {
+            "selector": "button, input:where([type=\"button\"]), input:where([type=\"reset\"]), input:where([type=\"submit\"])",
+            "value": "transparent",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          },
+          {
+            "selector": ".bg-embed-surface-card, .bg-embed-surface-chatIncoming",
+            "value": "rgb(227 227 227 / var(--tw-bg-opacity, 1))",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ],
+        "border-top-color": [
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(229, 231, 235)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          },
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(227, 227, 227)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ]
+      },
+      "winningTokenClasses": [
+        "border-embed-border-default",
+        "bg-embed-surface-card"
+      ],
+      "likelyWinningRule": {
+        "background-color": {
+          "selector": ".bg-embed-surface-card, .bg-embed-surface-chatIncoming",
+          "value": "rgb(227 227 227 / var(--tw-bg-opacity, 1))",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        },
+        "border-top-color": {
+          "selector": "*, ::before, ::after",
+          "value": "rgb(227, 227, 227)",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        }
+      }
+    },
+    "faqItem": {
+      "label": "FAQ item background",
+      "tag": "li",
+      "classList": [
+        "h-faq-row",
+        "shrink-0",
+        "bg-embed-surface-card"
+      ],
+      "primarySelector": "li.h-faq-row.shrink-0.bg-embed-surface-card",
+      "computed": {
+        "background-color": {
+          "raw": "rgb(227, 227, 227)",
+          "hex": "#E3E3E3"
+        },
+        "background-image": {
+          "raw": "none"
+        }
+      },
+      "matchingRules": {
+        "background-color": [
+          {
+            "selector": ".bg-embed-surface-card, .bg-embed-surface-chatIncoming",
+            "value": "rgb(227 227 227 / var(--tw-bg-opacity, 1))",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ]
+      },
+      "winningTokenClasses": [
+        "bg-embed-surface-card"
+      ],
+      "likelyWinningRule": {
+        "background-color": {
+          "selector": ".bg-embed-surface-card, .bg-embed-surface-chatIncoming",
+          "value": "rgb(227 227 227 / var(--tw-bg-opacity, 1))",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        }
+      }
+    },
+    "faqListBorder": {
+      "label": "FAQ list border (ul)",
+      "tag": "ul",
+      "classList": [
+        "w-[680px]",
+        "mt-section",
+        "flex",
+        "shrink-0",
+        "flex-col",
+        "divide-y",
+        "divide-embed-border-default",
+        "border",
+        "border-embed-border-default"
+      ],
+      "primarySelector": "ul.w-[680px].mt-section.flex.shrink-0",
+      "computed": {
+        "border-top-color": {
+          "raw": "rgb(227, 227, 227)",
+          "hex": "#E3E3E3"
+        },
+        "background-color": {
+          "raw": "rgba(0, 0, 0, 0)",
+          "hex": "#000000 @ alpha 0"
+        },
+        "background-image": {
+          "raw": "none"
+        }
+      },
+      "matchingRules": {
+        "border-top-color": [
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(229, 231, 235)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          },
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(227, 227, 227)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ],
+        "background-color": []
+      },
+      "winningTokenClasses": [
+        "border-embed-border-default"
+      ],
+      "likelyWinningRule": {
+        "border-top-color": {
+          "selector": "*, ::before, ::after",
+          "value": "rgb(227, 227, 227)",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        },
+        "background-color": null
+      }
+    },
+    "aiChatPanel": {
+      "label": "AI chat panel background",
+      "tag": "div",
+      "classList": [
+        "mt-section",
+        "flex",
+        "max-h-ai-conversation",
+        "flex-col",
+        "space-y-section",
+        "overflow-x-visible",
+        "overflow-y-auto"
+      ],
+      "primarySelector": "div.mt-section.flex.max-h-ai-conversation.flex-col",
+      "computed": {
+        "background-color": {
+          "raw": "rgba(0, 0, 0, 0)",
+          "hex": "#000000 @ alpha 0"
+        },
+        "background-image": {
+          "raw": "none"
+        }
+      },
+      "matchingRules": {
+        "background-color": []
+      },
+      "winningTokenClasses": [],
+      "likelyWinningRule": {
+        "background-color": null
+      }
+    },
+    "aiChatCol": {
+      "label": "AI chat column",
+      "tag": "div",
+      "classList": [
+        "grid",
+        "min-h-faq-ai",
+        "grid-cols-[690px_minmax(0,1fr)]",
+        "items-stretch",
+        "gap-section",
+        "mobile:grid-cols-1"
+      ],
+      "primarySelector": "div.grid.min-h-faq-ai.grid-cols-[690px_minmax(0,1fr)].items-stretch",
+      "computed": {
+        "background-color": {
+          "raw": "rgba(0, 0, 0, 0)",
+          "hex": "#000000 @ alpha 0"
+        },
+        "background-image": {
+          "raw": "none"
+        }
+      },
+      "matchingRules": {
+        "background-color": []
+      },
+      "winningTokenClasses": [],
+      "likelyWinningRule": {
+        "background-color": null
+      }
+    },
+    "cardBorder": {
+      "label": "Card border",
+      "tag": "button",
+      "classList": [
+        "absolute",
+        "inset-0",
+        "flex",
+        "flex-col",
+        "items-center",
+        "overflow-hidden",
+        "rounded-xl",
+        "border",
+        "px-2.5",
+        "transition-[transform,box-shadow,border-color]",
+        "duration-200",
+        "ease-out",
+        "focus-visible:outline-none",
+        "focus-visible:ring-2",
+        "focus-visible:ring-embed-brand-gold/35",
+        "focus-visible:ring-offset-2",
+        "border-embed-border-default",
+        "bg-embed-surface-card",
+        "shadow-none",
+        "hover:cursor-pointer",
+        "hover:border-embed-border-strong",
+        "hover:shadow-[0_4px_14px_rgba(0,19,37,0.06)]",
+        "z-0",
+        "scale-100",
+        "justify-center",
+        "py-3"
+      ],
+      "primarySelector": "button.absolute.inset-0.flex.flex-col",
+      "computed": {
+        "border-top-color": {
+          "raw": "rgb(227, 227, 227)",
+          "hex": "#E3E3E3"
+        },
+        "border-right-color": {
+          "raw": "rgb(227, 227, 227)",
+          "hex": "#E3E3E3"
+        },
+        "border-bottom-color": {
+          "raw": "rgb(227, 227, 227)",
+          "hex": "#E3E3E3"
+        },
+        "border-left-color": {
+          "raw": "rgb(227, 227, 227)",
+          "hex": "#E3E3E3"
+        }
+      },
+      "matchingRules": {
+        "border-top-color": [
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(229, 231, 235)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          },
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(227, 227, 227)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ],
+        "border-right-color": [
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(229, 231, 235)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          },
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(227, 227, 227)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ],
+        "border-bottom-color": [
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(229, 231, 235)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          },
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(227, 227, 227)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ],
+        "border-left-color": [
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(229, 231, 235)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          },
+          {
+            "selector": "*, ::before, ::after",
+            "value": "rgb(227, 227, 227)",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ]
+      },
+      "winningTokenClasses": [
+        "border-embed-border-default",
+        "bg-embed-surface-card"
+      ],
+      "likelyWinningRule": {
+        "border-top-color": {
+          "selector": "*, ::before, ::after",
+          "value": "rgb(227, 227, 227)",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        },
+        "border-right-color": {
+          "selector": "*, ::before, ::after",
+          "value": "rgb(227, 227, 227)",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        },
+        "border-bottom-color": {
+          "selector": "*, ::before, ::after",
+          "value": "rgb(227, 227, 227)",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        },
+        "border-left-color": {
+          "selector": "*, ::before, ::after",
+          "value": "rgb(227, 227, 227)",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        }
+      }
+    },
+    "heading": {
+      "label": "Main heading text",
+      "tag": "h1",
+      "classList": [
+        "font-sans",
+        "text-3xl",
+        "font-black",
+        "leading-tight",
+        "tracking-tight",
+        "text-embed-foreground-primary"
+      ],
+      "primarySelector": "h1.font-sans.text-3xl.font-black.leading-tight",
+      "computed": {
+        "color": {
+          "raw": "rgb(0, 19, 37)",
+          "hex": "#001325"
+        }
+      },
+      "matchingRules": {
+        "color": [
+          {
+            "selector": ".text-embed-foreground-primary",
+            "value": "rgb(0 19 37 / var(--tw-text-opacity, 1))",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ]
+      },
+      "winningTokenClasses": [
+        "text-embed-foreground-primary"
+      ],
+      "likelyWinningRule": {
+        "color": {
+          "selector": ".text-embed-foreground-primary",
+          "value": "rgb(0 19 37 / var(--tw-text-opacity, 1))",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        }
+      }
+    },
+    "secondary": {
+      "label": "Secondary body text",
+      "tag": "p",
+      "classList": [
+        "mt-1.5",
+        "font-sans",
+        "text-base",
+        "font-black",
+        "leading-snug",
+        "text-embed-foreground-primary"
+      ],
+      "primarySelector": "p.mt-1.5.font-sans.text-base.font-black",
+      "computed": {
+        "color": {
+          "raw": "rgb(0, 19, 37)",
+          "hex": "#001325"
+        },
+        "opacity": {
+          "raw": "1",
+          "hex": "1"
+        }
+      },
+      "matchingRules": {
+        "color": [
+          {
+            "selector": ".text-embed-foreground-primary",
+            "value": "rgb(0 19 37 / var(--tw-text-opacity, 1))",
+            "important": false,
+            "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+            "asset": "index-DroPmt3K.css"
+          }
+        ],
+        "opacity": []
+      },
+      "winningTokenClasses": [
+        "text-embed-foreground-primary"
+      ],
+      "likelyWinningRule": {
+        "color": {
+          "selector": ".text-embed-foreground-primary",
+          "value": "rgb(0 19 37 / var(--tw-text-opacity, 1))",
+          "important": false,
+          "href": "http://127.0.0.1:4210/assets/index-DroPmt3K.css",
+          "asset": "index-DroPmt3K.css"
+        },
+        "opacity": null
+      }
+    }
+  },
+  "hardcodedScan": [
+    {
+      "tag": "rect",
+      "fill": "transparent",
+      "stroke": "#E3E3E3",
+      "parent": "Decision Canvas"
+    },
+    {
+      "tag": "rect",
+      "fill": "transparent",
+      "stroke": "#E3E3E3",
+      "parent": "Decision Canvas"
+    },
+    {
+      "tag": "rect",
+      "fill": "transparent",
+      "stroke": "#E3E3E3",
+      "parent": "Decision Canvas"
+    },
+    {
+      "tag": "rect",
+      "fill": "transparent",
+      "stroke": "#E3E3E3",
+      "parent": "Decision Canvas"
+    }
+  ],
+  "utilityScan": [],
+  "screenshots": {
+    "canvas": "/Users/radimventus/embed-engine/docs/palette-render-audit-1600.png",
+    "viewport": "/Users/radimventus/embed-engine/docs/palette-render-audit-viewport-1600.png"
+  },
+  "expectedPalette": {
+    "navy": "#001325",
+    "warmWhite": "#FAF9F6",
+    "lightGray": "#E3E3E3",
+    "gold": "#C8A165"
+  }
+}

@@ -11,14 +11,14 @@ export function DecisionProgress({
 }: DecisionProgressProps) {
   return (
     <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-      <p className="text-sm leading-none text-embed-foreground-secondary">
+      <p className="text-sm leading-none text-embed-foreground-primary/70">
         <span className="font-medium tracking-wide">Selected</span>{' '}
         <span className="tabular-nums font-semibold text-embed-foreground-primary">
           {selectedCount} / {minimumSelection}
         </span>
       </p>
       {minimumMet ? (
-        <p className="text-sm font-medium leading-none tracking-wide text-embed-brand-navy">
+        <p className="text-sm font-medium leading-none tracking-wide text-embed-foreground-primary">
           ✓ Minimum completed
         </p>
       ) : null}

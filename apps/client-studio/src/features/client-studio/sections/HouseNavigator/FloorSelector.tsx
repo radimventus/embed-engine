@@ -1,18 +1,38 @@
-import {
-  SEGMENTED_CONTROL_SEGMENT_ACTIVE_CLASS,
-  SEGMENTED_CONTROL_SEGMENT_DISABLED_CLASS,
-  SEGMENTED_CONTROL_SHELL_CLASS,
-} from '../spatial-terminal-layout';
+import { useState } from 'react';
+import { SegmentedControl } from '@embed-engine/ui';
+
+import { HOUSE_PACKAGE } from '../../../walkthrough';
+
+function uniqueFloors(): string[] {
+  return [...new Set(HOUSE_PACKAGE.rooms.map((room) => room.floor))];
+}
+
+function floorLabel(floor: string): string {
+  if (floor === 'ground-floor') {
+    return 'PŘÍZEMÍ';
+  }
+
+  return 'PATRO';
+}
 
 export function FloorSelector() {
+  const floors = uniqueFloors();
+  const [selectedFloor, setSelectedFloor] = useState(floors[0] ?? '');
+
+  if (floors.length < 2) {
+    return null;
+  }
+
   return (
-    <div aria-label="Výběr patra" className={SEGMENTED_CONTROL_SHELL_CLASS}>
-      <button type="button" aria-pressed={true} className={SEGMENTED_CONTROL_SEGMENT_ACTIVE_CLASS}>
-        PŘÍZEMÍ
-      </button>
-      <button type="button" disabled aria-pressed={false} className={SEGMENTED_CONTROL_SEGMENT_DISABLED_CLASS}>
-        PATRO
-      </button>
-    </div>
+    <SegmentedControl
+      aria-label="Výběr patra"
+      theme="navy"
+      value={selectedFloor}
+      onChange={setSelectedFloor}
+      options={floors.map((floor) => ({
+        value: floor,
+        label: floorLabel(floor),
+      }))}
+    />
   );
 }

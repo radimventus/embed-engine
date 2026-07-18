@@ -1,20 +1,19 @@
 export type DecisionCategory = {
   id: string;
-  icon: string;
   title: string;
 };
 
 export const DECISION_CATEGORIES: DecisionCategory[] = [
-  { id: 'energy', icon: '🌿', title: 'Energy' },
-  { id: 'operating-costs', icon: '💰', title: 'Operating Costs' },
-  { id: 'layout', icon: '📐', title: 'Layout' },
-  { id: 'privacy', icon: '🔒', title: 'Privacy' },
-  { id: 'design', icon: '✨', title: 'Design' },
-  { id: 'quality', icon: '⭐', title: 'Quality' },
-  { id: 'plot', icon: '🏡', title: 'Plot' },
-  { id: 'investment', icon: '📈', title: 'Investment' },
-  { id: 'maintenance', icon: '🔧', title: 'Maintenance' },
-  { id: 'flexibility', icon: '🔄', title: 'Flexibility' },
+  { id: 'energy', title: 'Energie' },
+  { id: 'operating-costs', title: 'Provozní náklady' },
+  { id: 'layout', title: 'Dispozice' },
+  { id: 'privacy', title: 'Soukromí' },
+  { id: 'design', title: 'Design' },
+  { id: 'quality', title: 'Kvalita' },
+  { id: 'plot', title: 'Pozemek' },
+  { id: 'investment', title: 'Investice' },
+  { id: 'maintenance', title: 'Údržba' },
+  { id: 'flexibility', title: 'Flexibilita' },
 ];
 
 export const DECISION_MINIMUM_SELECTION = 3;

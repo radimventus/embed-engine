@@ -4,6 +4,8 @@ import { HOUSE_PACKAGE, useWalkthrough } from '../../../walkthrough';
 import { DECISION_TRANSITION_EASING } from '../../../walkthrough/transition-tokens';
 import { useDecisionCrossfade } from '../../../walkthrough/useDecisionCrossfade';
 
+import { MediaLightbox } from './MediaLightbox';
+import { MediaZoomControl } from './MediaZoomControl';
 import { PlayControl } from './PlayControl';
 import { SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS } from '../spatial-terminal-layout';
 
@@ -45,6 +47,7 @@ export function MainMedia() {
   } = useWalkthrough();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasStartedPlayback, setHasStartedPlayback] = useState(false);
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const isRoomVideo = activeRoomId !== null && mediaMode === 'video';
   const videoSrc = isRoomVideo
@@ -82,6 +85,9 @@ export function MainMedia() {
   const showPhoto = photoSrc !== null;
   const showPlayControl = mediaMode === 'video' && !hasStartedPlayback;
   const showNativeControls = mediaMode === 'video' && hasStartedPlayback;
+  const previewAlt = showPhoto
+    ? (activeRoom?.title ?? 'Fotografie místnosti')
+    : 'Náhled procházky domem';
 
   const handlePlay = () => {
     if (mode === 'ready') {
@@ -144,6 +150,15 @@ export function MainMedia() {
           </>
         )}
       </div>
+      <MediaZoomControl onClick={() => setIsLightboxOpen(true)} />
+      <MediaLightbox
+        alt={previewAlt}
+        isOpen={isLightboxOpen}
+        kind={showPhoto ? 'photo' : 'video'}
+        poster={videoPoster}
+        src={showPhoto ? photoSrc : videoSrc}
+        onClose={() => setIsLightboxOpen(false)}
+      />
     </div>
   );
 }

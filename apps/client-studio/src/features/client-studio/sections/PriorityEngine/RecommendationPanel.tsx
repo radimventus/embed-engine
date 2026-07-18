@@ -1,7 +1,6 @@
+import { Panel, PrimaryButton } from '@embed-engine/ui';
+
 import {
-  CHAPTER_CTA_CLASS,
-  CHAPTER_CTA_FOCUS_CLASS,
-  CHAPTER_PANEL_CLASS,
   CHAPTER_PANEL_DIVIDER_CLASS,
   CHAPTER_PANEL_LABEL_CLASS,
 } from '../../chapter-layout';
@@ -28,15 +27,15 @@ export function RecommendationPanel({
   const considerations = viewModel.considerations.slice(0, RECOMMENDATION_MAX_CONSIDERATIONS);
 
   return (
-    <section aria-label="Recommendation" className={`mt-section ${CHAPTER_PANEL_CLASS}`}>
-      <h3 className="text-sm font-semibold tracking-wide text-embed-brand-navy">
+    <Panel as="section" aria-label="Recommendation" variant="inset" className="mt-section">
+      <h3 className="text-sm font-semibold tracking-wide text-embed-foreground-primary">
         {viewModel.title}
       </h3>
 
       <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
         <p className={CHAPTER_PANEL_LABEL_CLASS}>Overall Match</p>
         <p
-          className="mt-1 text-base leading-none tracking-wide text-embed-brand-navy"
+          className="mt-1 text-base leading-none tracking-wide text-embed-brand-gold"
           aria-label={`Overall match rating: ${viewModel.score} out of 5 stars`}
         >
           {renderStars(viewModel.score)}
@@ -51,7 +50,7 @@ export function RecommendationPanel({
               key={strength}
               className="flex items-start gap-2 text-sm leading-snug text-embed-foreground-primary"
             >
-              <span className="mt-px shrink-0 text-embed-brand-navy" aria-hidden="true">
+              <span className="mt-px shrink-0 text-embed-brand-gold" aria-hidden="true">
                 ✓
               </span>
               <span>{strength}</span>
@@ -66,7 +65,7 @@ export function RecommendationPanel({
           {considerations.map((consideration) => (
             <li
               key={consideration}
-              className="flex items-start gap-2 text-sm leading-snug text-embed-foreground-muted"
+              className="flex items-start gap-2 text-sm leading-snug text-embed-foreground-primary/70"
             >
               <span className="mt-px shrink-0" aria-hidden="true">
                 •
@@ -79,13 +78,13 @@ export function RecommendationPanel({
 
       <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
         <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Next Step</h4>
-        <p className="mt-2 text-sm leading-relaxed text-embed-foreground-secondary">
+        <p className="mt-2 text-sm leading-relaxed text-embed-foreground-primary/70">
           {viewModel.nextStep}
         </p>
-        <button type="button" className={`mt-4 ${CHAPTER_CTA_FOCUS_CLASS} ${CHAPTER_CTA_CLASS}`}>
+        <PrimaryButton type="button" className="mt-4">
           Continue →
-        </button>
+        </PrimaryButton>
       </div>
-    </section>
+    </Panel>
   );
 }

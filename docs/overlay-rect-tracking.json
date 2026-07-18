@@ -1,0 +1,926 @@
+[
+  {
+    "scrollTop": 0,
+    "html": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "body": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "#root": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "AppShell": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "ShellCol": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "main": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "auto"
+    },
+    "canvas": {
+      "top": 0,
+      "bottom": 3010.3,
+      "h": 3010.3,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "header": {
+      "top": 25,
+      "bottom": 97,
+      "h": 72,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "walkthrough": {
+      "top": 802,
+      "bottom": 1341,
+      "h": 539,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "auto"
+    },
+    "priority": {
+      "top": 1371,
+      "bottom": 1778,
+      "h": 407,
+      "pos": "relative",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "ai": {
+      "top": 1808,
+      "bottom": 2292.5,
+      "h": 484.5,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "audit": {
+      "top": 2292.5,
+      "bottom": 3009.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "visible"
+    },
+    "navy": {
+      "top": 2292.5,
+      "bottom": 3009.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(0, 30, 58)",
+      "overflow": "visible"
+    },
+    "hits": [
+      {
+        "y": 780,
+        "tag": "DIV",
+        "id": "",
+        "aria": null,
+        "cls": "h-chapter-spacing w-full shrink-0 bg-[#FFFFFF]",
+        "pos": "static"
+      },
+      {
+        "y": 820,
+        "tag": "H2",
+        "id": "",
+        "aria": "Media Explorer",
+        "cls": "flex h-chapter-title shrink-0 items-center overflow-hidden text-base f",
+        "pos": "static"
+      },
+      {
+        "y": 860,
+        "tag": "H2",
+        "id": "",
+        "aria": "Media Explorer",
+        "cls": "flex h-chapter-title shrink-0 items-center overflow-hidden text-base f",
+        "pos": "static"
+      },
+      {
+        "y": 890,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "Přehrát video",
+        "cls": "group absolute inset-0 flex cursor-pointer items-center justify-center",
+        "pos": "absolute"
+      }
+    ]
+  },
+  {
+    "scrollTop": 400,
+    "html": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "body": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "#root": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "AppShell": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "ShellCol": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "main": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "auto"
+    },
+    "canvas": {
+      "top": -400,
+      "bottom": 2610.3,
+      "h": 3010.3,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "header": {
+      "top": -375,
+      "bottom": -303,
+      "h": 72,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "walkthrough": {
+      "top": 402,
+      "bottom": 941,
+      "h": 539,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "auto"
+    },
+    "priority": {
+      "top": 971,
+      "bottom": 1378,
+      "h": 407,
+      "pos": "relative",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "ai": {
+      "top": 1408,
+      "bottom": 1892.5,
+      "h": 484.5,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "audit": {
+      "top": 1892.5,
+      "bottom": 2609.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "visible"
+    },
+    "navy": {
+      "top": 1892.5,
+      "bottom": 2609.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(0, 30, 58)",
+      "overflow": "visible"
+    },
+    "hits": [
+      {
+        "y": 780,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "Zvětšit náhled",
+        "cls": "absolute bottom-3 right-3 z-10 flex h-9 w-9 shrink-0 cursor-pointer it",
+        "pos": "absolute"
+      },
+      {
+        "y": 820,
+        "tag": "DIV",
+        "id": "",
+        "aria": "Media Explorer",
+        "cls": "box-border min-w-0 shrink-0 pt-5 h-[100px] flex flex-col justify-end",
+        "pos": "static"
+      },
+      {
+        "y": 860,
+        "tag": "DIV",
+        "id": "",
+        "aria": "Media Explorer",
+        "cls": "flex h-thumbnail-rail items-stretch gap-section",
+        "pos": "static"
+      },
+      {
+        "y": 890,
+        "tag": "DIV",
+        "id": "",
+        "aria": "Media Explorer",
+        "cls": "flex h-thumbnail-rail items-stretch gap-section",
+        "pos": "static"
+      }
+    ]
+  },
+  {
+    "scrollTop": 800,
+    "html": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "body": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "#root": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "AppShell": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "ShellCol": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "main": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "auto"
+    },
+    "canvas": {
+      "top": -800,
+      "bottom": 2210.3,
+      "h": 3010.3,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "header": {
+      "top": -775,
+      "bottom": -703,
+      "h": 72,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "walkthrough": {
+      "top": 2,
+      "bottom": 541,
+      "h": 539,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "auto"
+    },
+    "priority": {
+      "top": 571,
+      "bottom": 978,
+      "h": 407,
+      "pos": "relative",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "ai": {
+      "top": 1008,
+      "bottom": 1492.5,
+      "h": 484.5,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "audit": {
+      "top": 1492.5,
+      "bottom": 2209.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "visible"
+    },
+    "navy": {
+      "top": 1492.5,
+      "bottom": 2209.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(0, 30, 58)",
+      "overflow": "visible"
+    },
+    "hits": [
+      {
+        "y": 780,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "Flexibility decision category",
+        "cls": "absolute inset-0 flex flex-col items-center overflow-hidden rounded-xl",
+        "pos": "absolute"
+      },
+      {
+        "y": 820,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "Flexibility decision category",
+        "cls": "absolute inset-0 flex flex-col items-center overflow-hidden rounded-xl",
+        "pos": "absolute"
+      },
+      {
+        "y": 860,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "Flexibility decision category",
+        "cls": "absolute inset-0 flex flex-col items-center overflow-hidden rounded-xl",
+        "pos": "absolute"
+      },
+      {
+        "y": 890,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "Flexibility decision category",
+        "cls": "absolute inset-0 flex flex-col items-center overflow-hidden rounded-xl",
+        "pos": "absolute"
+      }
+    ]
+  },
+  {
+    "scrollTop": 1200,
+    "html": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "body": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "#root": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "AppShell": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "ShellCol": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "main": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "auto"
+    },
+    "canvas": {
+      "top": -1200,
+      "bottom": 1810.3,
+      "h": 3010.3,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "header": {
+      "top": -1175,
+      "bottom": -1103,
+      "h": 72,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "walkthrough": {
+      "top": -398,
+      "bottom": 141,
+      "h": 539,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "auto"
+    },
+    "priority": {
+      "top": 171,
+      "bottom": 578,
+      "h": 407,
+      "pos": "relative",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "ai": {
+      "top": 608,
+      "bottom": 1092.5,
+      "h": 484.5,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "audit": {
+      "top": 1092.5,
+      "bottom": 1809.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "visible"
+    },
+    "navy": {
+      "top": 1092.5,
+      "bottom": 1809.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(0, 30, 58)",
+      "overflow": "visible"
+    },
+    "hits": [
+      {
+        "y": 780,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "AI Advisor",
+        "cls": "flex h-full w-full cursor-pointer items-center justify-between px-sect",
+        "pos": "static"
+      },
+      {
+        "y": 820,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "AI Advisor",
+        "cls": "flex h-full w-full cursor-pointer items-center justify-between px-sect",
+        "pos": "static"
+      },
+      {
+        "y": 860,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "AI Advisor",
+        "cls": "flex h-full w-full cursor-pointer items-center justify-between px-sect",
+        "pos": "static"
+      },
+      {
+        "y": 890,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "AI Advisor",
+        "cls": "flex h-full w-full cursor-pointer items-center justify-between px-sect",
+        "pos": "static"
+      }
+    ]
+  },
+  {
+    "scrollTop": 1600,
+    "html": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "body": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "#root": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "AppShell": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "ShellCol": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "main": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "auto"
+    },
+    "canvas": {
+      "top": -1600,
+      "bottom": 1410.3,
+      "h": 3010.3,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "header": {
+      "top": -1575,
+      "bottom": -1503,
+      "h": 72,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "walkthrough": {
+      "top": -798,
+      "bottom": -259,
+      "h": 539,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "auto"
+    },
+    "priority": {
+      "top": -229,
+      "bottom": 178,
+      "h": 407,
+      "pos": "relative",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "ai": {
+      "top": 208,
+      "bottom": 692.5,
+      "h": 484.5,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "audit": {
+      "top": 692.5,
+      "bottom": 1409.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "visible"
+    },
+    "navy": {
+      "top": 692.5,
+      "bottom": 1409.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(0, 30, 58)",
+      "overflow": "visible"
+    },
+    "hits": [
+      {
+        "y": 780,
+        "tag": "H2",
+        "id": "",
+        "aria": "Audit and Lead Capture",
+        "cls": "text-center text-xl font-bold uppercase leading-snug tracking-wide tex",
+        "pos": "static"
+      },
+      {
+        "y": 820,
+        "tag": "DIV",
+        "id": "",
+        "aria": "Audit and Lead Capture",
+        "cls": "bg-embed-white px-section py-3 text-center text-sm text-embed-brand-na",
+        "pos": "static"
+      },
+      {
+        "y": 860,
+        "tag": "DIV",
+        "id": "",
+        "aria": "Audit and Lead Capture",
+        "cls": "bg-embed-brand-navy px-section py-16",
+        "pos": "static"
+      },
+      {
+        "y": 890,
+        "tag": "P",
+        "id": "",
+        "aria": "Audit and Lead Capture",
+        "cls": "mx-auto mt-section max-w-2xl text-center text-base leading-relaxed tex",
+        "pos": "static"
+      }
+    ]
+  },
+  {
+    "scrollTop": 2000,
+    "html": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "body": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "#root": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(250, 249, 246)",
+      "overflow": "hidden"
+    },
+    "AppShell": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "ShellCol": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "hidden"
+    },
+    "main": {
+      "top": 0,
+      "bottom": 900,
+      "h": 900,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "auto"
+    },
+    "canvas": {
+      "top": -2000,
+      "bottom": 1010.3,
+      "h": 3010.3,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "header": {
+      "top": -1975,
+      "bottom": -1903,
+      "h": 72,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "walkthrough": {
+      "top": -1198,
+      "bottom": -659,
+      "h": 539,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "auto"
+    },
+    "priority": {
+      "top": -629,
+      "bottom": -222,
+      "h": 407,
+      "pos": "relative",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "ai": {
+      "top": -192,
+      "bottom": 292.5,
+      "h": 484.5,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(255, 255, 255)",
+      "overflow": "visible"
+    },
+    "audit": {
+      "top": 292.5,
+      "bottom": 1009.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgba(0, 0, 0, 0)",
+      "overflow": "visible"
+    },
+    "navy": {
+      "top": 292.5,
+      "bottom": 1009.3,
+      "h": 716.8,
+      "pos": "static",
+      "z": "auto",
+      "bg": "rgb(0, 30, 58)",
+      "overflow": "visible"
+    },
+    "hits": [
+      {
+        "y": 780,
+        "tag": "BUTTON",
+        "id": "",
+        "aria": "Audit and Lead Capture",
+        "cls": "inline-flex items-center justify-center text-center font-sans font-med",
+        "pos": "static"
+      },
+      {
+        "y": 820,
+        "tag": "DIV",
+        "id": "",
+        "aria": "Audit and Lead Capture",
+        "cls": "mt-section border-t border-embed-white pt-section",
+        "pos": "static"
+      },
+      {
+        "y": 860,
+        "tag": "P",
+        "id": "",
+        "aria": "Audit and Lead Capture",
+        "cls": "",
+        "pos": "static"
+      },
+      {
+        "y": 890,
+        "tag": "P",
+        "id": "",
+        "aria": "Audit and Lead Capture",
+        "cls": "",
+        "pos": "static"
+      }
+    ]
+  }
+]

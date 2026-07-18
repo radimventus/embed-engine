@@ -1,41 +1,87 @@
+/**
+ * Client Studio / EMBED color system.
+ * Single source of truth — only these palette values exist.
+ */
+export const palette = {
+  navy: '#001E3A',
+  warmWhite: '#F7F6F4',
+  /** Interactive secondary surfaces (FAQ rows, segment track, idle segments). */
+  warmGray: '#E8E5E0',
+  lightGray: '#E3E3E3',
+  gold: '#C8A165',
+  /** Strong accent fill (Audit segmented control). */
+  goldIntense: '#D4AF37',
+  pureWhite: '#FFFFFF',
+} as const;
+
 export const colors = {
-  white: '#FFFFFF',
-  black: '#000000',
+  white: palette.warmWhite,
+  black: palette.navy,
+  /** Collapsed scale — every step resolves to a palette color */
   neutral: {
-    50: '#FAFAFA',
-    100: '#F5F5F5',
-    200: '#E5E5E5',
-    300: '#D4D4D4',
-    400: '#A3A3A3',
-    500: '#737373',
-    600: '#525252',
-    700: '#404040',
-    800: '#262626',
-    900: '#171717',
-    950: '#0A0A0A',
+    50: palette.warmWhite,
+    100: palette.warmWhite,
+    200: palette.lightGray,
+    300: palette.lightGray,
+    400: palette.lightGray,
+    500: palette.navy,
+    600: palette.navy,
+    700: palette.navy,
+    800: palette.navy,
+    900: palette.navy,
+    950: palette.navy,
   },
   status: {
-    ready: '#16A34A',
-    warning: '#CA8A04',
-    error: '#DC2626',
-    info: '#2563EB',
+    ready: palette.gold,
+    warning: palette.gold,
+    error: palette.navy,
+    info: palette.navy,
   },
   background: {
-    primary: '#FFFFFF',
-    secondary: '#FAFAFA',
-    tertiary: '#F5F5F5',
+    primary: palette.warmWhite,
+    secondary: palette.warmWhite,
+    tertiary: palette.lightGray,
   },
   foreground: {
-    primary: '#171717',
-    secondary: '#404040',
-    tertiary: '#737373',
-    muted: '#A3A3A3',
+    primary: palette.navy,
+    secondary: palette.navy,
+    tertiary: palette.navy,
+    muted: palette.navy,
   },
   border: {
-    default: '#E5E5E5',
-    strong: '#D4D4D4',
+    default: palette.lightGray,
+    strong: palette.lightGray,
+    /** Input / accent outlines — saturated gold */
+    gold: palette.goldIntense,
   },
   brand: {
-    navy: '#1A3A6C',
+    navy: palette.navy,
+    gold: palette.gold,
+    goldIntense: palette.goldIntense,
+    goldLight: palette.lightGray,
+  },
+  /** Interactive action surfaces — consumed by @embed-engine/ui */
+  action: {
+    primary: palette.navy,
+    onPrimary: palette.pureWhite,
+    secondary: palette.pureWhite,
+    onSecondary: palette.navy,
+    secondaryAccent: palette.gold,
+    accent: palette.goldIntense,
+    onAccent: palette.navy,
+    muted: palette.lightGray,
+    onMuted: palette.navy,
+  },
+  surface: {
+    chatUser: palette.warmGray,
+    chatAssistant: palette.warmWhite,
+    chatIncoming: palette.warmGray,
+    chatOutgoing: palette.warmWhite,
+    placeholder: palette.lightGray,
+    card: palette.warmWhite,
+    elevated: palette.pureWhite,
+    inset: palette.lightGray,
+    /** Shared interactive fill — FAQ items, SegmentedControl track/idle */
+    interactive: palette.warmGray,
   },
 } as const;

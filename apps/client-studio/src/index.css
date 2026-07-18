@@ -3,13 +3,67 @@
 @tailwind utilities;
 
 @layer base {
+  *,
+  ::before,
+  ::after {
+    /* palette.lightGray — overrides Tailwind Preflight cold gray */
+    border-color: #e3e3e3;
+  }
+
   html,
   body,
   #root {
-    @apply h-full;
+    @apply min-h-screen overscroll-none text-embed-foreground-primary;
+    background-color: #f7f6f4;
   }
 
   body {
     @apply font-sans antialiased;
   }
+
+  input::placeholder,
+  textarea::placeholder {
+    /* palette.navy @ 40% — overrides Tailwind Preflight #9ca3af */
+    color: rgb(0 30 58 / 0.4);
+  }
 }
+
+/**
+ * Hero photo veils — cycle 14s after 1s delay:
+ * shrink L 2s → gone 5s → expand 2s → visible 5s → repeat.
+ */
+@keyframes hero-photo-veil-cycle {
+  /* 0–2s shrink to left */
+  0% {
+    transform: scaleX(1);
+  }
+  14.2857% {
+    transform: scaleX(0);
+  }
+  /* 2–7s hold gone */
+  50% {
+    transform: scaleX(0);
+  }
+  /* 7–9s expand */
+  64.2857% {
+    transform: scaleX(1);
+  }
+  /* 9–14s hold full */
+  100% {
+    transform: scaleX(1);
+  }
+}
+
+@layer utilities {
+  .animate-hero-photo-veil {
+    transform-origin: left center;
+    animation: hero-photo-veil-cycle 14s linear 1s infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-hero-photo-veil {
+      animation: none;
+    }
+  }
+}
+

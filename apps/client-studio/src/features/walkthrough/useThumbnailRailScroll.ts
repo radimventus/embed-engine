@@ -1,7 +1,7 @@
-import { useEffect, useState, type RefObject } from 'react';
+import { useCallback, useEffect, useState, type RefObject } from 'react';
 
 export const THUMBNAIL_SLOT_COUNT = 4;
-export const THUMBNAIL_GAP_PX = 24;
+export const THUMBNAIL_GAP_PX = 16;
 
 export function scrollThumbnailIntoView(
   container: HTMLElement,
@@ -20,13 +20,6 @@ export function scrollThumbnailIntoView(
   if (thumbnailEnd > viewportEnd) {
     container.scrollLeft = thumbnailEnd - container.clientWidth;
   }
-}
-
-export function scrollThumbnailGroup(
-  container: HTMLElement,
-  direction: -1 | 1,
-): void {
-  container.scrollLeft += direction * container.clientWidth;
 }
 
 export function useHorizontalWheelScroll(containerRef: RefObject<HTMLElement | null>): void {
@@ -76,52 +69,79 @@ export function useActiveThumbnailScroll(
   }, [activeMediaIndex, containerRef, itemCount, thumbRefs]);
 }
 
+/**
+ * Slot-based rail navigation — one step = one thumbnail (+ gap).
+ * Max offset keeps a full window of THUMBNAIL_SLOT_COUNT thumbs visible.
+ */
 export function useThumbnailRailNavigation(
   containerRef: RefObject<HTMLElement | null>,
   itemCount: number,
+  slotStepPx: number,
 ): {
   canScrollLeft: boolean;
   canScrollRight: boolean;
   scrollGroup: (direction: -1 | 1) => void;
+  scrollToSlot: (slotIndex: number, behavior?: ScrollBehavior) => void;
 } {
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
+  const maxSlotOffset = Math.max(0, itemCount - THUMBNAIL_SLOT_COUNT);
+  const [slotOffset, setSlotOffset] = useState(0);
+
+  useEffect(() => {
+    setSlotOffset(0);
+    const container = containerRef.current;
+    if (container !== null) {
+      container.scrollLeft = 0;
+    }
+  }, [containerRef, itemCount]);
 
   useEffect(() => {
     const container = containerRef.current;
 
-    if (container === null) {
+    if (container === null || slotStepPx <= 0) {
       return;
     }
 
-    const update = () => {
-      const overflow = container.scrollWidth > container.clientWidth + 1;
-      setCanScrollLeft(overflow && container.scrollLeft > 0);
-      setCanScrollRight(
-        overflow && container.scrollLeft + container.clientWidth < container.scrollWidth - 1,
-      );
+    const syncFromScroll = () => {
+      const next = Math.round(container.scrollLeft / slotStepPx);
+      setSlotOffset(Math.min(maxSlotOffset, Math.max(0, next)));
     };
 
-    update();
-    container.addEventListener('scroll', update, { passive: true });
-    const observer = new ResizeObserver(update);
-    observer.observe(container);
+    container.addEventListener('scroll', syncFromScroll, { passive: true });
 
     return () => {
-      container.removeEventListener('scroll', update);
-      observer.disconnect();
+      container.removeEventListener('scroll', syncFromScroll);
     };
-  }, [containerRef, itemCount]);
+  }, [containerRef, maxSlotOffset, slotStepPx]);
 
-  const scrollGroup = (direction: -1 | 1) => {
-    const container = containerRef.current;
+  const scrollToSlot = useCallback(
+    (slotIndex: number, behavior: ScrollBehavior = 'smooth') => {
+      const container = containerRef.current;
+      const next = Math.min(maxSlotOffset, Math.max(0, slotIndex));
+      setSlotOffset(next);
 
-    if (container === null) {
-      return;
-    }
+      if (container === null) {
+        return;
+      }
 
-    scrollThumbnailGroup(container, direction);
+      container.scrollTo({
+        left: next * slotStepPx,
+        behavior,
+      });
+    },
+    [containerRef, maxSlotOffset, slotStepPx],
+  );
+
+  const scrollGroup = useCallback(
+    (direction: -1 | 1) => {
+      scrollToSlot(slotOffset + direction);
+    },
+    [scrollToSlot, slotOffset],
+  );
+
+  return {
+    canScrollLeft: slotOffset > 0,
+    canScrollRight: slotOffset < maxSlotOffset,
+    scrollGroup,
+    scrollToSlot,
   };
-
-  return { canScrollLeft, canScrollRight, scrollGroup };
 }

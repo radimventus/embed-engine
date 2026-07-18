@@ -13,6 +13,7 @@
     "@embed-engine/contracts": "workspace:*",
     "@embed-engine/design-tokens": "workspace:*",
     "@embed-engine/kernel": "workspace:*",
+    "@embed-engine/ui": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

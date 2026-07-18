@@ -1,0 +1,260 @@
+{
+  "primary": [
+    {
+      "tag": "A",
+      "text": "Podívat se dovnitř – video",
+      "disabled": false,
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "opacity": "1",
+      "filter": "none",
+      "mixBlendMode": "normal",
+      "boxShadow": "none",
+      "navy": true,
+      "whiteText": true
+    },
+    {
+      "tag": "BUTTON",
+      "text": "VIDEO",
+      "disabled": false,
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "opacity": "1",
+      "filter": "none",
+      "mixBlendMode": "normal",
+      "boxShadow": "none",
+      "navy": true,
+      "whiteText": true
+    },
+    {
+      "tag": "BUTTON",
+      "text": "PŘÍZEMÍ",
+      "disabled": false,
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "opacity": "1",
+      "filter": "none",
+      "mixBlendMode": "normal",
+      "boxShadow": "none",
+      "navy": true,
+      "whiteText": true
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Odeslat",
+      "disabled": true,
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "opacity": "0.4",
+      "filter": "none",
+      "mixBlendMode": "normal",
+      "boxShadow": "none",
+      "navy": true,
+      "whiteText": true
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Mám vlastní pozemek",
+      "disabled": false,
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "opacity": "1",
+      "filter": "none",
+      "mixBlendMode": "normal",
+      "boxShadow": "none",
+      "navy": true,
+      "whiteText": true
+    },
+    {
+      "tag": "BUTTON",
+      "text": "Odeslat",
+      "disabled": false,
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "opacity": "1",
+      "filter": "none",
+      "mixBlendMode": "normal",
+      "boxShadow": "none",
+      "navy": true,
+      "whiteText": true
+    }
+  ],
+  "segments": [
+    {
+      "text": "Kuchyně",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgba(0, 30, 58, 0.45)",
+      "ok": false
+    },
+    {
+      "text": "Koupelna",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgba(0, 30, 58, 0.45)",
+      "ok": false
+    },
+    {
+      "text": "Ložnice",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgba(0, 30, 58, 0.45)",
+      "ok": false
+    },
+    {
+      "text": "Obývací pokoj",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgba(0, 30, 58, 0.45)",
+      "ok": false
+    },
+    {
+      "text": "Chodba",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgba(0, 30, 58, 0.45)",
+      "ok": false
+    },
+    {
+      "text": "Terasa",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgba(0, 0, 0, 0)",
+      "color": "rgba(0, 30, 58, 0.45)",
+      "ok": false
+    },
+    {
+      "text": "VIDEO",
+      "pressed": true,
+      "disabled": false,
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "ok": true
+    },
+    {
+      "text": "FOTKY",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(227, 227, 227)",
+      "color": "rgb(0, 30, 58)",
+      "ok": true
+    },
+    {
+      "text": "PŘÍZEMÍ",
+      "pressed": true,
+      "disabled": false,
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "ok": true
+    },
+    {
+      "text": "PATRO",
+      "pressed": false,
+      "disabled": true,
+      "bg": "rgb(227, 227, 227)",
+      "color": "rgba(0, 30, 58, 0.3)",
+      "ok": true
+    },
+    {
+      "text": "🌿Energy",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(250, 249, 246)",
+      "color": "rgb(0, 30, 58)",
+      "ok": false
+    },
+    {
+      "text": "💰Operating Costs",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(250, 249, 246)",
+      "color": "rgb(0, 30, 58)",
+      "ok": false
+    },
+    {
+      "text": "📐Layout",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(250, 249, 246)",
+      "color": "rgb(0, 30, 58)",
+      "ok": false
+    },
+    {
+      "text": "🔒Privacy",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(250, 249, 246)",
+      "color": "rgb(0, 30, 58)",
+      "ok": false
+    },
+    {
+      "text": "✨Design",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(250, 249, 246)",
+      "color": "rgb(0, 30, 58)",
+      "ok": false
+    },
+    {
+      "text": "⭐Quality",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(250, 249, 246)",
+      "color": "rgb(0, 30, 58)",
+      "ok": false
+    },
+    {
+      "text": "🏡Plot",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(250, 249, 246)",
+      "color": "rgb(0, 30, 58)",
+      "ok": false
+    },
+    {
+      "text": "📈Investment",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(250, 249, 246)",
+      "color": "rgb(0, 30, 58)",
+      "ok": false
+    },
+    {
+      "text": "🔧Maintenance",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(250, 249, 246)",
+      "color": "rgb(0, 30, 58)",
+      "ok": false
+    },
+    {
+      "text": "🔄Flexibility",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(250, 249, 246)",
+      "color": "rgb(0, 30, 58)",
+      "ok": false
+    },
+    {
+      "text": "Mám vlastní pozemek",
+      "pressed": true,
+      "disabled": false,
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "ok": true
+    },
+    {
+      "text": "Hledám vhodnou parcelu",
+      "pressed": false,
+      "disabled": false,
+      "bg": "rgb(227, 227, 227)",
+      "color": "rgb(0, 30, 58)",
+      "ok": true
+    }
+  ]
+}

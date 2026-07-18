@@ -6,7 +6,8 @@ export function createInitialWalkthroughState(defaultRoomId: string): Walkthroug
   return {
     mode: 'ready',
     mediaMode: 'video',
-    activeRoomId: null,
+    /** Default room selected so the rail shows video + photos on first paint. */
+    activeRoomId: defaultRoomId,
     activeMediaIndex: 0,
     defaultRoomId,
   };

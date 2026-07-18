@@ -1,8 +1,7 @@
+import { PrimaryButton } from '@embed-engine/ui';
+
 import { DecisionProgress } from './DecisionProgress';
-import {
-  PRIORITY_ENGINE_ACTION_AREA_CLASS,
-  PRIORITY_ENGINE_CONFIRM_PLACEHOLDER_CLASS,
-} from './priority-engine-layout';
+import { PRIORITY_ENGINE_ACTION_AREA_CLASS } from './priority-engine-layout';
 
 type DecisionActionAreaProps = {
   minimumMet: boolean;
@@ -22,9 +21,14 @@ export function DecisionActionArea({
         minimumSelection={minimumSelection}
         selectedCount={selectedCount}
       />
-      <button type="button" disabled className={PRIORITY_ENGINE_CONFIRM_PLACEHOLDER_CLASS}>
+      <PrimaryButton
+        type="button"
+        size="sm"
+        disabled
+        className="w-[120px] shrink-0 rounded-[8px] px-0 py-2 text-xs font-medium tracking-wide"
+      >
         Pokračovat
-      </button>
+      </PrimaryButton>
     </div>
   );
 }

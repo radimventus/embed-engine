@@ -13,7 +13,7 @@ export function MediaExplorer() {
       className={SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS}
     >
       <div
-        className={`${SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS} grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_100px] content-start`}
+        className={`${SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS} grid min-h-0 grid-rows-[auto_auto_auto] content-start`}
       >
         <SectionHeader title="PROCHÁZKA DOMEM" />
         <MainMedia />

@@ -1,6 +1,6 @@
 export function ContactCard() {
   return (
-    <div className="mt-section border-t border-embed-white pt-section">
+    <div className="mt-[84px] border-t border-embed-white pt-section">
       <div className="grid grid-cols-2 gap-section text-sm leading-relaxed text-embed-white mobile:grid-cols-1 mobile:text-center">
         <div>
           <p>Asrav s.r.o.</p>

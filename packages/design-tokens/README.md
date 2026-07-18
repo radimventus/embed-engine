@@ -6,9 +6,22 @@ Immutable design tokens for the EMBED Engine.
 
 This package defines the shared visual language of the platform: colors, typography, spacing, radius, shadows, and motion. It is the single source of truth for design values consumed by UI layers and applications.
 
+## Color system
+
+One palette — four values only:
+
+| Token | Hex |
+|-------|-----|
+| `palette.navy` | `#001325` |
+| `palette.warmWhite` | `#FAF9F6` |
+| `palette.lightGray` | `#E3E3E3` |
+| `palette.gold` | `#C8A165` |
+
+All semantic tokens (`background`, `foreground`, `border`, `brand`, `surface`, `neutral`, `status`) resolve exclusively to these four values. Applications must not introduce local hex colors or default Tailwind gray/white utilities.
+
 ## Responsibilities
 
-- Export immutable token constants (`colors`, `typography`, `spacing`, `radius`, `shadows`, `motion`)
+- Export immutable token constants (`palette`, `colors`, `typography`, `spacing`, `radius`, `shadows`, `motion`)
 - Provide a single public API via `src/index.ts`
 - Remain framework and runtime independent
 
@@ -29,15 +42,8 @@ Only pure TypeScript constants are permitted.
 ## Usage
 
 ```typescript
-import { colors, typography, spacing } from '@embed-engine/design-tokens';
+import { colors, palette, typography, spacing } from '@embed-engine/design-tokens';
 
-const brandColor = colors.foreground.primary;
-const fontFamily = typography.fontFamily.sans;
-const padding = spacing[4];
+const brandColor = colors.brand.navy;
+const surface = palette.warmWhite;
 ```
-
-## Design Notes
-
-- Tokens are defined with `as const` for immutability and strict typing.
-- Semantic tokens (`background`, `foreground`, `status`) sit above primitive scales (`neutral`).
-- Values align with the EMBED Platform boot screen and professional software UI conventions.

@@ -1,22 +1,10 @@
 import type { ReactNode } from 'react';
 
-import { HOUSE_PACKAGE } from '../../../walkthrough';
-
 type HeroSurfaceProps = {
   children: ReactNode;
 };
 
+/** Opening hero shell — height from h-hero-image; layout owned by children. */
 export function HeroSurface({ children }: HeroSurfaceProps) {
-  const heroSrc = HOUSE_PACKAGE.openingHeroSrc;
-
-  return (
-    <div
-      role="img"
-      aria-label="Rodinný dům MODERN A01"
-      className="relative bg-cover bg-[center_42%] bg-no-repeat"
-      style={{ backgroundImage: `url('${heroSrc}')` }}
-    >
-      {children}
-    </div>
-  );
+  return <div className="relative h-hero-image w-full overflow-hidden">{children}</div>;
 }

@@ -43,7 +43,7 @@ export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
         aria-valuenow={Math.round(value * 100)}
         aria-label="Decision importance"
         tabIndex={0}
-        className="group relative flex h-7 w-full cursor-pointer touch-none items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-navy/25 focus-visible:ring-offset-2"
+        className="group relative flex h-7 w-full cursor-pointer touch-none items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2"
         onKeyDown={(event) => {
           if (event.key === 'ArrowLeft') {
             event.preventDefault();
@@ -67,9 +67,9 @@ export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
           event.currentTarget.releasePointerCapture(event.pointerId);
         }}
       >
-        <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-embed-neutral-200" />
+        <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-embed-border-default" />
         <div
-          className={`absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-embed-brand-navy ${DECISION_TRANSITION_CLASS} transition-[width]`}
+          className={`absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-embed-brand-gold ${DECISION_TRANSITION_CLASS} transition-[width]`}
           style={{ width: `${value * 100}%` }}
         />
         <div
@@ -77,7 +77,7 @@ export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
           style={{ left: `${value * 100}%` }}
         >
           <div className="flex h-7 w-7 items-center justify-center">
-            <div className="h-3.5 w-3.5 rounded-full border-2 border-embed-brand-navy bg-embed-white shadow-[0_1px_4px_rgba(26,58,108,0.18)] transition-shadow group-hover:shadow-[0_2px_6px_rgba(26,58,108,0.22)]" />
+            <div className="h-3.5 w-3.5 rounded-full border-2 border-embed-brand-gold bg-embed-background-primary shadow-[0_1px_4px_rgba(0,30,58,0.12)] transition-shadow group-hover:shadow-[0_2px_6px_rgba(0,30,58,0.16)]" />
           </div>
         </div>
       </div>

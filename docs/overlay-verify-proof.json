@@ -1,0 +1,304 @@
+{
+  "html": {
+    "overflow": "visible",
+    "height": "3010.25px"
+  },
+  "body": {
+    "overflow": "visible",
+    "height": "3010.25px"
+  },
+  "root": {
+    "overflow": "visible",
+    "height": "3010.25px",
+    "bg": "rgb(250, 249, 246)"
+  },
+  "shell": {
+    "cls": "flex min-h-screen",
+    "overflow": "visible"
+  },
+  "main": {
+    "cls": "flex flex-1 justify-center",
+    "overflowY": "visible",
+    "scrollH": 3010,
+    "clientH": 3010,
+    "mainScrollsPage": false
+  },
+  "scrollers": [],
+  "stickyFixed": [
+    {
+      "tag": "DIV",
+      "cls": "sticky top-0 h-screen shrink-0 self-start overflow-y-auto",
+      "pos": "sticky",
+      "bg": "rgba(0, 0, 0, 0)",
+      "top": 0,
+      "bottom": 900,
+      "h": 900
+    }
+  ],
+  "docScrollH": 3010,
+  "maxWindowScroll": 2110,
+  "toggles": [
+    {
+      "text": "Mám vlastní pozemek",
+      "bg": "rgb(0, 30, 58)",
+      "color": "rgb(255, 255, 255)",
+      "pressed": "true"
+    },
+    {
+      "text": "Hledám vhodnou parcelu",
+      "bg": "rgb(227, 227, 227)",
+      "color": "rgb(0, 30, 58)",
+      "pressed": "false"
+    }
+  ],
+  "toggleShellBg": "rgba(0, 0, 0, 0)",
+  "steps": [
+    {
+      "scrollY": 0,
+      "hit": {
+        "tag": "H2",
+        "aria": "Media Explorer",
+        "cls": "flex h-chapter-title shrink-0 items-center overflow-hidden t",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "DIV",
+        "id": "walkthrough",
+        "aria": null,
+        "bg": "rgb(255, 255, 255)",
+        "pos": "static",
+        "top": 802,
+        "h": 539,
+        "cls": "scroll-mt-header grid min-h-spatial-terminal-surface w-full min-w-0 it"
+      }
+    },
+    {
+      "scrollY": 176,
+      "hit": {
+        "tag": "BUTTON",
+        "aria": "Přehrát video",
+        "cls": "group absolute inset-0 flex cursor-pointer items-center just",
+        "pos": "absolute"
+      },
+      "opaque": {
+        "tag": "DIV",
+        "id": "",
+        "aria": null,
+        "bg": "rgb(227, 227, 227)",
+        "pos": "relative",
+        "top": 686,
+        "h": 354,
+        "cls": "relative box-border h-full min-h-0 w-[690px] min-w-[690px] max-w-[690p"
+      }
+    },
+    {
+      "scrollY": 352,
+      "hit": {
+        "tag": "BUTTON",
+        "aria": "Přehrát video",
+        "cls": "group absolute inset-0 flex cursor-pointer items-center just",
+        "pos": "absolute"
+      },
+      "opaque": {
+        "tag": "DIV",
+        "id": "",
+        "aria": null,
+        "bg": "rgb(227, 227, 227)",
+        "pos": "relative",
+        "top": 510,
+        "h": 354,
+        "cls": "relative box-border h-full min-h-0 w-[690px] min-w-[690px] max-w-[690p"
+      }
+    },
+    {
+      "scrollY": 528,
+      "hit": {
+        "tag": "DIV",
+        "aria": "Priority Engine",
+        "cls": "box-border flex h-[60px] min-h-[60px] max-h-[60px] shrink-0 ",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "SECTION",
+        "id": "",
+        "aria": "Priority Engine",
+        "bg": "rgb(255, 255, 255)",
+        "pos": "relative",
+        "top": 843,
+        "h": 407,
+        "cls": "relative border-b border-embed-border-default bg-[#FFFFFF] px-[21px] p"
+      }
+    },
+    {
+      "scrollY": 703,
+      "hit": {
+        "tag": "DIV",
+        "aria": "Decision Surface",
+        "cls": "grid shrink-0 items-center justify-items-center overflow-vis",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "SECTION",
+        "id": "",
+        "aria": "Priority Engine",
+        "bg": "rgb(255, 255, 255)",
+        "pos": "relative",
+        "top": 668,
+        "h": 407,
+        "cls": "relative border-b border-embed-border-default bg-[#FFFFFF] px-[21px] p"
+      }
+    },
+    {
+      "scrollY": 879,
+      "hit": {
+        "tag": "BUTTON",
+        "aria": "Priority Engine",
+        "cls": "inline-flex items-center justify-center text-center font-san",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "BUTTON",
+        "id": "",
+        "aria": null,
+        "bg": "rgb(250, 249, 246)",
+        "pos": "static",
+        "top": 836,
+        "h": 42,
+        "cls": "inline-flex items-center justify-center text-center font-sans font-med"
+      }
+    },
+    {
+      "scrollY": 1055,
+      "hit": {
+        "tag": "BUTTON",
+        "aria": "AI Advisor",
+        "cls": "flex h-full w-full cursor-pointer items-center justify-betwe",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "LI",
+        "id": "",
+        "aria": null,
+        "bg": "rgb(250, 249, 246)",
+        "pos": "static",
+        "top": 826,
+        "h": 55,
+        "cls": "bg-embed-surface-card h-faq-row shrink-0"
+      }
+    },
+    {
+      "scrollY": 1231,
+      "hit": {
+        "tag": "BUTTON",
+        "aria": "AI Advisor",
+        "cls": "flex h-full w-full cursor-pointer items-center justify-betwe",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "LI",
+        "id": "",
+        "aria": null,
+        "bg": "rgb(250, 249, 246)",
+        "pos": "static",
+        "top": 815,
+        "h": 55,
+        "cls": "bg-embed-surface-card h-faq-row shrink-0"
+      }
+    },
+    {
+      "scrollY": 1407,
+      "hit": {
+        "tag": "DIV",
+        "aria": "AI Advisor",
+        "cls": "grid min-h-faq-ai grid-cols-[690px_minmax(0,1fr)] items-stre",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "SECTION",
+        "id": "",
+        "aria": "AI Advisor",
+        "bg": "rgb(255, 255, 255)",
+        "pos": "static",
+        "top": 401,
+        "h": 484.5,
+        "cls": "border-b border-embed-border-default bg-[#FFFFFF]"
+      }
+    },
+    {
+      "scrollY": 1583,
+      "hit": {
+        "tag": "BUTTON",
+        "aria": "Typ pozemku",
+        "cls": "flex-1 px-section py-3 text-center text-sm font-medium trans",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "BUTTON",
+        "id": "",
+        "aria": null,
+        "bg": "rgb(0, 30, 58)",
+        "pos": "static",
+        "top": 825,
+        "h": 44,
+        "cls": "flex-1 px-section py-3 text-center text-sm font-medium transition-colo"
+      }
+    },
+    {
+      "scrollY": 1758,
+      "hit": {
+        "tag": "INPUT",
+        "aria": "Audit and Lead Capture",
+        "cls": "w-full px-4 py-3 text-sm text-embed-foreground-primary place",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "INPUT",
+        "id": "contact-phone",
+        "aria": null,
+        "bg": "rgb(255, 255, 255)",
+        "pos": "static",
+        "top": 850,
+        "h": 44,
+        "cls": "w-full px-4 py-3 text-sm text-embed-foreground-primary placeholder:tex"
+      }
+    },
+    {
+      "scrollY": 1934,
+      "hit": {
+        "tag": "DIV",
+        "aria": "Audit and Lead Capture",
+        "cls": "bg-embed-brand-navy px-section py-16",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "DIV",
+        "id": "",
+        "aria": null,
+        "bg": "rgb(0, 30, 58)",
+        "pos": "static",
+        "top": 358.5,
+        "h": 716.8,
+        "cls": "bg-embed-brand-navy px-section py-16"
+      }
+    },
+    {
+      "scrollY": 2110,
+      "hit": {
+        "tag": "DIV",
+        "aria": "Audit and Lead Capture",
+        "cls": "bg-embed-brand-navy px-section py-16",
+        "pos": "static"
+      },
+      "opaque": {
+        "tag": "DIV",
+        "id": "",
+        "aria": null,
+        "bg": "rgb(0, 30, 58)",
+        "pos": "static",
+        "top": 182.5,
+        "h": 716.8,
+        "cls": "bg-embed-brand-navy px-section py-16"
+      }
+    }
+  ]
+}

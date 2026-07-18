@@ -1,6 +1,5 @@
+import { PrimaryLink } from '@embed-engine/ui';
 import type { MouseEvent } from 'react';
-
-import { CHAPTER_CTA_CLASS, CHAPTER_CTA_FOCUS_CLASS } from '../../chapter-layout';
 
 export function HeroCTA() {
   const handleNavigate = (event: MouseEvent<HTMLAnchorElement>) => {
@@ -18,12 +17,8 @@ export function HeroCTA() {
   };
 
   return (
-    <a
-      href="#walkthrough"
-      onClick={handleNavigate}
-      className={`${CHAPTER_CTA_CLASS} ${CHAPTER_CTA_FOCUS_CLASS}`}
-    >
-      Podívat se dovnitř – video
-    </a>
+    <PrimaryLink href="#walkthrough" onClick={handleNavigate}>
+      Podívat se dovnitř – video →
+    </PrimaryLink>
   );
 }

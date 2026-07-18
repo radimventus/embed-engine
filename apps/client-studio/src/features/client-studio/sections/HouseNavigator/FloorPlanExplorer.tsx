@@ -2,22 +2,28 @@ import { FloorPlan } from './FloorPlan';
 import { FloorSelector } from './FloorSelector';
 import { SectionHeader } from './SectionHeader';
 import {
+  HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS,
   SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS,
-  SPATIAL_TERMINAL_CONTROL_GAP_CLASS,
+  SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS,
+  SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS,
 } from '../spatial-terminal-layout';
 
 export function FloorPlanExplorer() {
   return (
     <section
       aria-label="Floor Plan Explorer"
-      className={`grid h-full w-full min-w-0 grid-rows-[1fr_auto] content-start items-start overflow-x-hidden px-section pb-section pt-5 ${SPATIAL_TERMINAL_CONTROL_GAP_CLASS}`}
+      className={SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS}
     >
       <div className="relative flex min-h-0 flex-col justify-end">
         <SectionHeader className="pointer-events-none absolute inset-x-0 top-0 z-10" />
         <FloorPlan />
       </div>
-      <div className={SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS}>
-        <FloorSelector />
+      <div className={`flex ${SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS} flex-col justify-end`}>
+        <div className={`${SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS} justify-center`}>
+          <div className={HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS}>
+            <FloorSelector />
+          </div>
+        </div>
       </div>
     </section>
   );

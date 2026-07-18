@@ -2,7 +2,11 @@ import { colors, typography } from '@embed-engine/design-tokens';
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: [
+    './index.html',
+    './src/**/*.{js,ts,jsx,tsx}',
+    '../../packages/ui/src/**/*.{js,ts,jsx,tsx}',
+  ],
   theme: {
     extend: {
       colors: {
@@ -15,6 +19,8 @@ export default {
           foreground: colors.foreground,
           border: colors.border,
           brand: colors.brand,
+          surface: colors.surface,
+          action: colors.action,
         },
       },
       spacing: {
@@ -43,7 +49,7 @@ export default {
         'chapter-title': '60px',
         'spatial-terminal-surface': '484px',
         'thumbnail-rail': '80px',
-        'faq-row': '55px',
+        'faq-row': '45px',
         'property-explorer': '44rem',
         'ai-conversation': '24rem',
         'faq-ai': '480px',

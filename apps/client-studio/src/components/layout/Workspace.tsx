@@ -6,10 +6,10 @@ type WorkspaceProps = {
 
 export function Workspace({ children }: WorkspaceProps) {
   return (
-    <main className="flex flex-1 scroll-smooth items-start justify-center overflow-x-auto overflow-y-auto bg-embed-background-secondary">
+    <main className="flex flex-1 justify-center">
       {children ?? (
         <div className="flex flex-1 items-center justify-center">
-          <p className="text-sm text-embed-foreground-tertiary">Workspace</p>
+          <p className="text-sm text-embed-foreground-primary/45">Workspace</p>
         </div>
       )}
     </main>

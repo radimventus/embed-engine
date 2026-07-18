@@ -12,15 +12,26 @@ function joinPackagePath(basePath: string, relativePath: string): string {
   return `${normalizedBase}/${normalizedRelative}`;
 }
 
+function filenameFromPath(path: string): string {
+  const segments = path.split('/');
+  return segments[segments.length - 1] ?? path;
+}
+
 function resolveRoomMedia(basePath: string, room: HousePackageRoom): ResolvedHousePackageRoom {
   const mediaBase = joinPackagePath(basePath, room.media.folder);
   const heroSrc = `${mediaBase}/${room.media.hero}`;
-  const gallerySrcs = room.media.gallery.map((filename) => `${mediaBase}/${filename}`);
-  const photos = [heroSrc, ...gallerySrcs];
+  const gallerySrcs = [...room.media.gallery]
+    .sort((left, right) => left.localeCompare(right, 'cs'))
+    .map((filename) => `${mediaBase}/${filename}`);
+
+  /** All still photos — hero + gallery — ordered by filename. */
+  const photoSrcs = [heroSrc, ...gallerySrcs].sort((left, right) =>
+    filenameFromPath(left).localeCompare(filenameFromPath(right), 'cs'),
+  );
+
   const mediaItems = [
     { kind: 'video' as const, src: `${mediaBase}/${room.media.video}`, thumbnailSrc: heroSrc },
-    { kind: 'photo' as const, src: heroSrc, thumbnailSrc: heroSrc },
-    ...gallerySrcs.map((src) => ({ kind: 'photo' as const, src, thumbnailSrc: src })),
+    ...photoSrcs.map((src) => ({ kind: 'photo' as const, src, thumbnailSrc: src })),
   ];
 
   return {
@@ -30,7 +41,7 @@ function resolveRoomMedia(basePath: string, room: HousePackageRoom): ResolvedHou
     decisionCanvasSrc: joinPackagePath(basePath, room.decisionCanvas),
     heroSrc,
     gallerySrcs,
-    photos,
+    photos: photoSrcs,
     mediaItems,
     videoSrc: `${mediaBase}/${room.media.video}`,
     floorPlanRegion: room.floorPlanRegion ?? null,

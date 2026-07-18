@@ -1,8 +1,8 @@
 export function ClientStudioHeader() {
   return (
-    <header className="grid h-header shrink-0 grid-cols-[1fr_auto_1fr] items-center border-b border-embed-border-default bg-embed-background-primary px-section">
+    <header className="grid h-header shrink-0 grid-cols-[1fr_auto_1fr] items-center bg-[#F7F6F4] px-section">
       <p className="text-base font-semibold text-embed-foreground-primary">ASTAV s.r.o.</p>
-      <p className="text-base text-embed-foreground-secondary">Client studio</p>
+      <p className="text-base text-embed-foreground-primary/70">Client studio</p>
       <div className="flex items-center justify-end gap-section">
         <button
           type="button"
