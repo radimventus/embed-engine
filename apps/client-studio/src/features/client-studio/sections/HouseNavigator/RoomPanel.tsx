@@ -15,8 +15,8 @@ export function RoomPanel() {
             aria-pressed={active}
             className={`w-full rounded-[8px] border-l-2 border-transparent py-2.5 pl-3 pr-2 text-left text-sm tracking-wide transition-colors duration-[125ms] ease-out ${
               active
-                ? 'bg-[#E8E5E0] font-semibold text-[#001E3A]'
-                : 'font-normal text-embed-foreground-primary/45 hover:bg-[#001E3A] hover:text-[#FFFFFF]'
+                ? 'bg-[#E8E5E0] font-semibold text-[#001930]'
+                : 'font-normal text-embed-foreground-primary/45 hover:bg-[#001930] hover:text-[#FFFFFF]'
             }`}
             onClick={() => selectRoom(room.id)}
           >

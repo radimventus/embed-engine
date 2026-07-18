@@ -77,7 +77,7 @@ export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
           style={{ left: `${value * 100}%` }}
         >
           <div className="flex h-7 w-7 items-center justify-center">
-            <div className="h-3.5 w-3.5 rounded-full border-2 border-embed-brand-gold bg-embed-background-primary shadow-[0_1px_4px_rgba(0,30,58,0.12)] transition-shadow group-hover:shadow-[0_2px_6px_rgba(0,30,58,0.16)]" />
+            <div className="h-3.5 w-3.5 rounded-full border-2 border-embed-brand-gold bg-embed-background-primary shadow-[0_1px_4px_rgba(0,25,48,0.12)] transition-shadow group-hover:shadow-[0_2px_6px_rgba(0,25,48,0.16)]" />
           </div>
         </div>
       </div>

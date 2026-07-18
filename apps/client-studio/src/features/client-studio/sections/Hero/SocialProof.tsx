@@ -18,9 +18,9 @@ function SocialProofItem({ icon, value, label }: SocialProofItemProps) {
     <div className="flex h-social-proof items-center justify-center px-section">
       <div className="flex max-w-full items-center gap-3">
         <SocialProofIcon name={icon} />
-        <p className="text-left text-sm leading-snug text-[#001E3A]">
+        <p className="text-left text-sm leading-snug text-[#001930]">
           <span className="text-2xl font-bold tracking-tight">{value}</span>
-          <span className="ml-2 text-[#001E3A]/70">{label}</span>
+          <span className="ml-2 text-[#001930]/70">{label}</span>
         </p>
       </div>
     </div>
@@ -51,7 +51,7 @@ export function SocialProof() {
       as="section"
       aria-label="Social Proof"
       variant="elevated"
-      className="relative grid grid-cols-3 !bg-[#FFFFFF] text-[#001E3A] mobile:grid-cols-1"
+      className="relative grid grid-cols-3 !bg-[#FFFFFF] text-[#001930] mobile:grid-cols-1"
     >
       <div
         aria-hidden="true"

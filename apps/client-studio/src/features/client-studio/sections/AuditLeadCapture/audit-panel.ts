@@ -1,41 +1,90 @@
 import { colors } from '@embed-engine/design-tokens';
 
-/** Matches VIDEO/FOTKY compact SegmentedControl width. */
-export const AUDIT_CONTROL_WIDTH_CLASS = 'w-full max-w-[161px]';
+/** Primary content band — situation cards + metro. */
+export const AUDIT_PANEL_MAX_WIDTH_CLASS = 'mx-auto w-full max-w-5xl';
 
-export const AUDIT_PANEL_MAX_WIDTH_CLASS = 'mx-auto w-full max-w-xl';
+/** Form band — optically narrower than metro/cards. */
+export const AUDIT_FORM_MAX_WIDTH_CLASS = 'mx-auto w-full max-w-2xl';
 
-export const AUDIT_PANEL_SURFACE_CLASS = 'rounded-[8px] p-[10px]';
-
-/** Form panel — spectrum dark gray (interactive / warmGray) */
-export const AUDIT_FORM_PANEL_STYLE = {
-  backgroundColor: colors.surface.interactive,
+export const AUDIT_SECTION_STYLE = {
+  backgroundColor: colors.brand.navy,
 } as const;
 
-/** Inputs — white fill + goldIntense border (inline color beats base gray) */
-export const AUDIT_INPUT_CLASS = 'border bg-embed-action-secondary';
-
-export const AUDIT_INPUT_STYLE = {
-  borderColor: colors.action.accent,
-} as const;
+/** Single gold — muted bronze. */
+export const AUDIT_ACCENT = colors.action.accent;
+export const AUDIT_ON_ACCENT = colors.action.onAccent;
+export const AUDIT_WHITE = colors.action.onPrimary;
+export const AUDIT_MUTED = colors.border.default;
 
 export const LAND_OPTIONS = [
-  { value: 'owned', label: 'MÁM' },
-  { value: 'seeking', label: 'HLEDÁM' },
+  { value: 'owned', label: 'MÁM POZEMEK', description: 'Chci ověřit konkrétní pozemek.' },
+  { value: 'seeking', label: 'HLEDÁM POZEMEK', description: 'Ještě hledám vhodnou lokalitu.' },
 ] as const;
 
 export type LandOption = (typeof LAND_OPTIONS)[number]['value'];
 
-/** Sentence-broken copy for calmer reading beside the plot illustration. */
-export const LAND_OPTION_COPY: Record<LandOption, readonly [string, string]> = {
+/** Shared metro stations — icon motif is fixed; copy follows land mode. */
+export type StationMotif = 'house' | 'pin' | 'document' | 'check';
+
+export type WorkflowStation = {
+  motif: StationMotif;
+  title: string;
+  lines: readonly string[];
+};
+
+export const WORKFLOW_BY_LAND: Record<LandOption, readonly WorkflowStation[]> = {
   owned: [
-    'Prověříme umístění domu na Váš pozemek.',
-    'Vyplňte formulář — ozveme se.',
+    {
+      motif: 'house',
+      title: 'Mám pozemek',
+      lines: ['Získáme informace', 'o vašem pozemku.'],
+    },
+    {
+      motif: 'pin',
+      title: 'Osazení domu',
+      lines: ['Navrhneme optimální', 'umístění domu', 'na pozemku.'],
+    },
+    {
+      motif: 'document',
+      title: 'Stanoviska',
+      lines: ['Prověříme podmínky', 'a regulace.'],
+    },
+    {
+      motif: 'check',
+      title: 'Doporučení',
+      lines: ['Navrhneme dům,', 'který sedí', 'na váš pozemek.'],
+    },
   ],
   seeking: [
-    'Najdeme vhodnou parcelu pro tento dům.',
-    'Vyplňte formulář — ozveme se.',
+    {
+      motif: 'house',
+      title: 'Hledám pozemek',
+      lines: ['Najdeme vhodnou', 'parcelu', 'pro váš záměr.'],
+    },
+    {
+      motif: 'pin',
+      title: 'Lokalita',
+      lines: ['Prověříme lokalitu', 'a její možnosti.'],
+    },
+    {
+      motif: 'document',
+      title: 'Stanoviska',
+      lines: ['Ověříme podmínky', 'a omezení.'],
+    },
+    {
+      motif: 'check',
+      title: 'Doporučení',
+      lines: ['Navrhneme vhodnější dům', 'nebo doporučíme', 'další postup.'],
+    },
   ],
 };
 
-export const AUDIT_LAND_PROMPT = 'MÁTE VLASTNÍ POZEMEK?';
+export const AUDIT_INPUT_HEIGHT_PX = 54;
+
+export const AUDIT_INPUT_CLASS = 'h-[54px] border';
+
+export const AUDIT_INPUT_STYLE = {
+  backgroundColor: colors.surface.interactive,
+  borderColor: colors.action.accent,
+  color: colors.action.onSecondary,
+} as const;

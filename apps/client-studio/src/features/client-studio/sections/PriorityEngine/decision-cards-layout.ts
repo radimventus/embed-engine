@@ -18,10 +18,10 @@ export const DECISION_CARD_IDLE_CLASS =
   'border-embed-border-default bg-[#F4F3F1] shadow-none';
 
 export const DECISION_CARD_HOVER_CLASS =
-  'hover:cursor-pointer hover:border-embed-border-strong hover:shadow-[0_4px_14px_rgba(0,30,58,0.06)]';
+  'hover:cursor-pointer hover:border-embed-border-strong hover:shadow-[0_4px_14px_rgba(0,25,48,0.06)]';
 
 export const DECISION_CARD_ACTIVE_CLASS =
-  'z-10 scale-[1.12] border-[#D4AF37] shadow-[0_8px_24px_rgba(0,30,58,0.08)]';
+  'z-10 scale-[1.12] border-[#D4AF37] shadow-[0_8px_24px_rgba(0,25,48,0.08)]';
 
 export const DECISION_CTA_ENABLED_CLASS = primaryButtonClass({ size: 'md' });
 

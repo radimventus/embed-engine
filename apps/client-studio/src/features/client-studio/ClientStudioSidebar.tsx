@@ -12,17 +12,23 @@ const HOUSE_MENU_ITEMS = [
 const SIDEBAR_COLLAPSED_WIDTH_PX = 48;
 const SIDEBAR_EXPANDED_WIDTH_PX = 220;
 
+/**
+ * Hamburger sits on the same vertical axis as the canvas header:
+ * canvas `pt-section` (24px) + `h-header` (72px) centered.
+ */
 export function ClientStudioSidebar() {
   const [expanded, setExpanded] = useState(false);
 
   return (
     <aside
-      className="flex h-full min-h-screen shrink-0 flex-col bg-embed-brand-navy py-section transition-[width] duration-200 ease-out"
+      className="flex h-full min-h-screen shrink-0 flex-col bg-embed-brand-navy transition-[width] duration-200 ease-out"
       style={{
         width: expanded ? SIDEBAR_EXPANDED_WIDTH_PX : SIDEBAR_COLLAPSED_WIDTH_PX,
       }}
     >
-      <div className={`flex ${expanded ? 'justify-start px-4' : 'justify-center'}`}>
+      <div
+        className={`flex h-header shrink-0 -translate-y-[3px] items-center ${expanded ? 'justify-start px-4' : 'justify-center'}`}
+      >
         <button
           type="button"
           aria-label={expanded ? 'Zavřít menu' : 'Otevřít menu'}

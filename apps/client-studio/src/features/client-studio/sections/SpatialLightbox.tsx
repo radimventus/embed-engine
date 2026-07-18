@@ -57,7 +57,7 @@ export function SpatialLightbox({
         <button
           type="button"
           aria-label="Zavřít"
-          className="absolute right-0 top-0 z-20 flex h-10 w-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#001E3A] text-xl leading-none text-white shadow-sm transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2"
+          className="absolute right-0 top-0 z-20 flex h-10 w-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#001930] text-xl leading-none text-white shadow-sm transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2"
           onClick={onClose}
         >
           ×
