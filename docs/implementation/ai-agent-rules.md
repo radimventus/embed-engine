@@ -24,11 +24,20 @@ The goal is to deliver a product that can be shown to the first paying customer.
 
 Always read these documents before implementing anything:
 
-1. Product Bible
-2. Client Studio Geometry Specification
-3. Client Studio Design Language
-4. Frontend Implementation Guide
-5. Relevant Wireframe
+1. Engineering Playbook (`docs/implementation/engineering-playbook.md`)
+2. Post-Foundation Development Policy (`docs/product/post-foundation-development-policy.md`)
+3. Product Vision (`docs/product/vision/product-vision.md`)
+4. Product Constitution (`docs/product/constitution/product-constitution.md`)
+5. Client Studio Geometry Specification (`docs/design/geometry/client-studio-geometry-spec.md`)
+6. Embed Engine Design Language (`docs/design/language/embed-engine-design-language-v1.md`)
+7. Frontend Implementation Guide (`docs/implementation/frontend-implementation-guide.md`)
+8. Relevant Wireframe
+
+See also `docs/README.md` and `docs/PROJECT-MAP.md`.
+
+Follow the Playbook AI Agent Workflow and Decision Gate before proposing changes.
+
+Architecture freeze areas require an ADR before change.
 
 Implementation must follow this order.
 

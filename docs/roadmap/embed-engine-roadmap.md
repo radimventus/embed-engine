@@ -70,7 +70,7 @@ Build the architectural foundation of the platform.
 
 ### Deliverables
 
-✓ Product Bible
+✓ Product Constitution (migrated from Product Bible)
 
 ✓ Geometry Specification
 
