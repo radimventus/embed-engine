@@ -34,6 +34,7 @@ export {
 } from './house-decision-flow';
 export { DecisionInterpreter } from './DecisionInterpreter';
 export { interpretDecision } from './interpretDecision';
+export { projectReactExperience } from './projectReactExperience';
 export {
   SET_ANSWER_COMMAND_TYPE,
   SetAnswerCommandHandler,
