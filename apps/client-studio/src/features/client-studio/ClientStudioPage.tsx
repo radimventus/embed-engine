@@ -1,5 +1,5 @@
 import type { Runtime } from '@embed-engine/core';
-import type { ExperienceModel } from '@embed-engine/model';
+import type { ReactExperienceModel } from '@embed-engine/model';
 
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
@@ -13,7 +13,7 @@ import { WalkthroughProvider } from '../walkthrough';
 
 type ClientStudioPageProps = {
   runtime: Runtime;
-  experience: ExperienceModel | null;
+  experience: ReactExperienceModel | null;
   onSelectChoice: (decisionId: string, choiceId: string) => void;
   onContinue: () => void;
 };

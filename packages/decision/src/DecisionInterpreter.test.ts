@@ -8,7 +8,7 @@ import { interpretDecision } from "./interpretDecision";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 describe("interpretDecision", () => {
-  it("produces the same ExperienceModel for the same DecisionState", () => {
+  it("produces the same ReactExperienceModel for the same DecisionState", () => {
     const registry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
     const state: DecisionState = {
       answers: new Map([["priority-focus", "price"]]),

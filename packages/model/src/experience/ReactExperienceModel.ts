@@ -79,7 +79,7 @@ export interface ExperienceHighlight {
   readonly reason: string;
 }
 
-export interface ExperienceModel {
+export interface ReactExperienceModel {
   /** Current scene from Runtime ExecutionContext. */
   readonly currentSceneId: string;
   /** Snapshot of DecisionState.answers. */

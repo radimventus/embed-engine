@@ -1,4 +1,4 @@
-import type { ExperienceModel } from "@embed-engine/model";
+import type { ReactExperienceModel } from "@embed-engine/model";
 
 import type { Command } from "./Command";
 import type { CommandResolver } from "./CommandResolver";
@@ -35,7 +35,7 @@ export class Runtime {
   /**
    * Sole future public entry API for the Runtime Kernel.
    */
-  dispatch(command: Command): ExperienceModel {
+  dispatch(command: Command): ReactExperienceModel {
     return this.workflow.run(command);
   }
 

@@ -19,8 +19,8 @@ export type {
   ExperienceHouse,
   ExperienceHouseMedia,
   ExperienceHouseRoom,
-  ExperienceModel,
-} from './experience/ExperienceModel';
+  ReactExperienceModel,
+} from './experience/ReactExperienceModel';
 
 export { Area, type AreaUnit } from './value-objects/Area';
 export { Coordinates } from './value-objects/Coordinates';

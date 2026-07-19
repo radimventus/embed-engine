@@ -1,14 +1,14 @@
-import type { ExperienceModel } from "@embed-engine/model";
+import type { ReactExperienceModel } from "@embed-engine/model";
 
 import type { ExecutionContext } from "./ExecutionContext";
 import type { Interpreter } from "./Interpreter";
 
 /**
  * Minimal domain-agnostic Interpreter.
- * Returns an empty ExperienceModel shaped projection.
+ * Returns an empty ReactExperienceModel shaped projection.
  */
 export class DefaultInterpreter implements Interpreter {
-  interpret(context: ExecutionContext): ExperienceModel {
+  interpret(context: ExecutionContext): ReactExperienceModel {
     return {
       currentSceneId: context.currentSceneId,
       answers: {},

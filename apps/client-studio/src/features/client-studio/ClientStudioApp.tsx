@@ -8,7 +8,7 @@ import {
   type SetAnswerCommand,
   type StartDecisionFlowCommand,
 } from '@embed-engine/decision';
-import type { ExperienceModel } from '@embed-engine/model';
+import type { ReactExperienceModel } from '@embed-engine/model';
 
 import { AppShell } from '../../components/layout/AppShell';
 import { ClientStudioPage } from './ClientStudioPage';
@@ -23,11 +23,11 @@ const PLACEHOLDER_SCENE_GRAPH: SceneGraph = {
 
 /**
  * Composition root for Client Studio Runtime + Experience rendering.
- * Navigation state lives only in Runtime; React holds the latest ExperienceModel.
+ * Navigation state lives only in Runtime; React holds the latest ReactExperienceModel.
  */
 export function ClientStudioApp() {
   const runtimeRef = useRef<Runtime | null>(null);
-  const [experience, setExperience] = useState<ExperienceModel | null>(null);
+  const [experience, setExperience] = useState<ReactExperienceModel | null>(null);
 
   if (runtimeRef.current === null) {
     runtimeRef.current = createDecisionRuntime(PLACEHOLDER_SCENE_GRAPH);

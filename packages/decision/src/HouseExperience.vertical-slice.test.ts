@@ -120,7 +120,7 @@ describe("Minimal House Decision Experience", () => {
     );
   });
 
-  it("reproduces the same ExperienceModel for the same answer sequence", () => {
+  it("reproduces the same ReactExperienceModel for the same answer sequence", () => {
     const sequence = [
       startFlow(),
       goNext(),

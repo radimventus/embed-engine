@@ -1,16 +1,16 @@
-import type { ExperienceModel } from '@embed-engine/model';
+import type { ReactExperienceModel } from '@embed-engine/model';
 
 import { DecisionFlowList } from './DecisionFlowList';
 
 type DecisionFlowNavigatorProps = {
-  experience: ExperienceModel;
+  experience: ReactExperienceModel;
   onSelectDecision: (decisionId: string) => void;
 };
 
 /**
  * Read-only Decision Flow Navigator.
  *
- * Consumes only ExperienceModel.decisionFlow.
+ * Consumes only ReactExperienceModel.decisionFlow.
  * Does not access DecisionRegistry, DecisionState, or reconstruct the graph.
  *
  * UI tests: Client Studio has no component-test infrastructure yet.

@@ -1,4 +1,4 @@
-import type { ExperienceModel } from "@embed-engine/model";
+import type { ReactExperienceModel } from "@embed-engine/model";
 import type { HousePackage } from "@embed-engine/object-house";
 import type { ExecutionContext, Interpreter } from "@embed-engine/core";
 
@@ -21,7 +21,7 @@ export class DecisionInterpreter implements Interpreter {
     this.house = house;
   }
 
-  interpret(context: ExecutionContext): ExperienceModel {
+  interpret(context: ExecutionContext): ReactExperienceModel {
     return interpretDecision(
       this.registry,
       context.state as DecisionState,

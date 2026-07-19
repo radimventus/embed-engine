@@ -82,7 +82,7 @@ function answersOf(runtime: Runtime): [string, unknown][] {
 }
 
 describe("Runtime determinism (core)", () => {
-  it("same command on two fresh Runtimes yields equal ExperienceModel", () => {
+  it("same command on two fresh Runtimes yields equal ReactExperienceModel", () => {
     const runtimeA = createTestRuntime();
     const runtimeB = createTestRuntime();
     const command = setValue("a", 1);

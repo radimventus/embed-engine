@@ -34,7 +34,7 @@ function answersOf(runtime: Runtime): [string, unknown][] {
 
 describe("Runtime determinism", () => {
   describe("same input → same output", () => {
-    it("two fresh Runtimes produce equal ExperienceModel for the same command", () => {
+    it("two fresh Runtimes produce equal ReactExperienceModel for the same command", () => {
       const runtimeA = createDecisionRuntime(SCENE_GRAPH);
       const runtimeB = createDecisionRuntime(SCENE_GRAPH);
       const command = setAnswer("priority-focus", "price");
@@ -44,7 +44,7 @@ describe("Runtime determinism", () => {
   });
 
   describe("deterministic sequence", () => {
-    it("the same command sequence yields equal final ExperienceModel and DecisionState", () => {
+    it("the same command sequence yields equal final ReactExperienceModel and DecisionState", () => {
       const sequence = [
         setAnswer("priority-focus", "price"),
         setAnswer("garden-importance", "yes"),
@@ -130,7 +130,7 @@ describe("Runtime determinism", () => {
     });
   });
 
-  describe("ExperienceModel is a pure projection", () => {
+  describe("ReactExperienceModel is a pure projection", () => {
     it("two consecutive interpretations of the same state are equal", () => {
       const runtime = createDecisionRuntime(SCENE_GRAPH);
       runtime.dispatch(setAnswer("priority-focus", "price"));

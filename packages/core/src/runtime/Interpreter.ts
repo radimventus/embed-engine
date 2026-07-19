@@ -1,11 +1,11 @@
-import type { ExperienceModel } from "@embed-engine/model";
+import type { ReactExperienceModel } from "@embed-engine/model";
 
 import type { ExecutionContext } from "./ExecutionContext";
 
 /**
  * Domain-agnostic interpretation contract.
- * Converts ExecutionContext into ExperienceModel.
+ * Converts ExecutionContext into ReactExperienceModel.
  */
 export interface Interpreter {
-  interpret(context: ExecutionContext): ExperienceModel;
+  interpret(context: ExecutionContext): ReactExperienceModel;
 }

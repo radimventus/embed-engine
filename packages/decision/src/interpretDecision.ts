@@ -1,6 +1,6 @@
 import type {
   ExperienceDecision,
-  ExperienceModel,
+  ReactExperienceModel,
 } from "@embed-engine/model";
 import type { HousePackage } from "@embed-engine/object-house";
 
@@ -76,14 +76,14 @@ function projectDecisionFlow(
 
 /**
  * Pure interpretation: DecisionRegistry + DecisionState (+ scene, house)
- * → ExperienceModel.
+ * → ReactExperienceModel.
  */
 export function interpretDecision(
   registry: DecisionRegistry,
   state: DecisionState,
   currentSceneId: string,
   house: HousePackage | null = null,
-): ExperienceModel {
+): ReactExperienceModel {
   const answers: Record<string, unknown> = Object.fromEntries(
     state.answers.entries(),
   );

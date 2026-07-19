@@ -1,16 +1,16 @@
-import type { ExperienceModel } from '@embed-engine/model';
+import type { ReactExperienceModel } from '@embed-engine/model';
 
 import { SECTION_SURFACE_CLASS } from '../section-surface';
 
 type HouseDecisionExperienceProps = {
-  experience: ExperienceModel;
+  experience: ReactExperienceModel;
   onSelectChoice: (decisionId: string, choiceId: string) => void;
   onContinue: () => void;
 };
 
 /**
  * Passive House Experience renderer.
- * Consumes ExperienceModel only — no Object Package, no interpretation.
+ * Consumes ReactExperienceModel only — no Object Package, no interpretation.
  */
 export function HouseDecisionExperience({
   experience,
