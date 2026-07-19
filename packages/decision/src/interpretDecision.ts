@@ -4,7 +4,7 @@ import type {
 } from "@embed-engine/model";
 import type { HousePackage } from "@embed-engine/object-house";
 
-import { buildDecisionFilter } from "./buildDecisionFilter";
+import { buildInterpretation } from "./buildInterpretation";
 import type { DecisionRegistry } from "./DecisionRegistry";
 import type { DecisionState } from "./DecisionState";
 import { interpretHouseHighlights } from "./interpretHouseHighlights";
@@ -117,17 +117,12 @@ export function interpretDecision(
     ];
   });
 
-  const hasPriorityAnswer = state.answers.has("priority-focus");
-  const hasGardenAnswer = state.answers.has("garden-importance");
-  const decisionFilter =
-    hasPriorityAnswer || hasGardenAnswer
-      ? buildDecisionFilter(state.answers)
-      : null;
+  const interpretation = buildInterpretation(state);
 
-  const interpretation =
-    decisionFilter === null || house === null
+  const houseInterpretation =
+    interpretation.decisionFilter === null || house === null
       ? { highlights: [], recommendedRooms: [] }
-      : interpretHouseHighlights(decisionFilter, house);
+      : interpretHouseHighlights(interpretation.decisionFilter, house);
 
   return {
     currentSceneId,
@@ -138,9 +133,9 @@ export function interpretDecision(
     currentDecision,
     decisionFlow,
     house: projectHouse(house),
-    decisionFilter,
-    highlights: interpretation.highlights,
-    recommendedRooms: interpretation.recommendedRooms,
+    decisionFilter: interpretation.decisionFilter,
+    highlights: houseInterpretation.highlights,
+    recommendedRooms: houseInterpretation.recommendedRooms,
     summaryReady: state.currentDecisionId === "summary",
   };
 }
