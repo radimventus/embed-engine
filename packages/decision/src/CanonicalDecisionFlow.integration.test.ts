@@ -14,7 +14,7 @@ import { DefaultDecisionRegistry } from "./DefaultDecisionRegistry";
 import {
   HOUSE_DECISION_FLOW,
   HOUSE_DECISION_FLOW_START_ID,
-} from "./house-decision-flow";
+} from "@embed-engine/object-house";
 import type { GoNextCommand } from "./GoNextCommand";
 import type { SetAnswerCommand } from "./SetAnswerCommand";
 import type { StartDecisionFlowCommand } from "./StartDecisionFlowCommand";

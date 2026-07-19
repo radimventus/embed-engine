@@ -27,11 +27,6 @@ export {
   PRIORITY_FOCUS_PRICE,
   PRIORITY_FOCUS_SPACE,
 } from './buildDecisionFilter';
-export { interpretHouseHighlights } from './interpretHouseHighlights';
-export {
-  HOUSE_DECISION_FLOW,
-  HOUSE_DECISION_FLOW_START_ID,
-} from './house-decision-flow';
 export { DecisionInterpreter } from './DecisionInterpreter';
 export { interpretDecision } from './interpretDecision';
 export { projectReactExperience } from './projectReactExperience';

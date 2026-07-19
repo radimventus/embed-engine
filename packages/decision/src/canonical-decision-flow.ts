@@ -1,7 +1,7 @@
 import {
   HOUSE_DECISION_FLOW,
   HOUSE_DECISION_FLOW_START_ID,
-} from "./house-decision-flow";
+} from "@embed-engine/object-house";
 
 /**
  * Canonical reference flow — currently the Minimal House Decision Experience.

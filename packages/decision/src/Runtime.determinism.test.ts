@@ -8,7 +8,7 @@ import { createDecisionRuntime } from "./createDecisionRuntime";
 import { DecisionInterpreter } from "./DecisionInterpreter";
 import { DefaultDecisionRegistry } from "./DefaultDecisionRegistry";
 import type { DecisionState } from "./DecisionState";
-import { HOUSE_DECISION_FLOW } from "./house-decision-flow";
+import { HOUSE_DECISION_FLOW } from "@embed-engine/object-house";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 import type { SetAnswerCommand } from "./SetAnswerCommand";
 

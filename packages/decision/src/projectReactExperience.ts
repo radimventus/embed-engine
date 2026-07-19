@@ -2,12 +2,14 @@ import type {
   ExperienceDecision,
   ReactExperienceModel,
 } from "@embed-engine/model";
-import type { HousePackage } from "@embed-engine/object-house";
+import {
+  interpretHouseHighlights,
+  type HousePackage,
+} from "@embed-engine/object-house";
 
 import type { DecisionRegistry } from "./DecisionRegistry";
 import type { DecisionState } from "./DecisionState";
 import type { Interpretation } from "./Interpretation";
-import { interpretHouseHighlights } from "./interpretHouseHighlights";
 import { projectHouse } from "./projectHouse";
 
 /**

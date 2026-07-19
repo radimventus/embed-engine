@@ -4,7 +4,10 @@ import {
   type ExecutionContext,
   type SceneGraph,
 } from "@embed-engine/core";
-import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
+import {
+  HOUSE_DECISION_FLOW,
+  REFERENCE_HOUSE_PACKAGE,
+} from "@embed-engine/object-house";
 
 import { DecisionInterpreter } from "./DecisionInterpreter";
 import { DefaultDecisionRegistry } from "./DefaultDecisionRegistry";
@@ -21,7 +24,6 @@ import {
   GO_TO_DECISION_COMMAND_TYPE,
   GoToDecisionCommandHandler,
 } from "./GoToDecisionCommand";
-import { HOUSE_DECISION_FLOW } from "./house-decision-flow";
 import {
   SET_ANSWER_COMMAND_TYPE,
   SetAnswerCommandHandler,

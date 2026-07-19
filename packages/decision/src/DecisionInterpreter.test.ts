@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 
 import { DefaultDecisionRegistry } from "./DefaultDecisionRegistry";
 import type { DecisionState } from "./DecisionState";
-import { HOUSE_DECISION_FLOW } from "./house-decision-flow";
+import { HOUSE_DECISION_FLOW } from "@embed-engine/object-house";
 import { interpretDecision } from "./interpretDecision";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 

@@ -13,7 +13,7 @@ import {
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 import { createDecisionRuntime } from "./createDecisionRuntime";
-import { HOUSE_DECISION_FLOW_START_ID } from "./house-decision-flow";
+import { HOUSE_DECISION_FLOW_START_ID } from "@embed-engine/object-house";
 import type { GoNextCommand } from "./GoNextCommand";
 import type { SetAnswerCommand } from "./SetAnswerCommand";
 import type { StartDecisionFlowCommand } from "./StartDecisionFlowCommand";

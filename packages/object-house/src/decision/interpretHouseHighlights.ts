@@ -2,9 +2,8 @@ import type {
   ExperienceHighlight,
   ExperienceHouseRoom,
 } from "@embed-engine/model";
-import type { HousePackage } from "@embed-engine/object-house";
 
-import type { DecisionFilter } from "./DecisionFilter";
+import type { HousePackage } from "../HousePackage";
 
 const LIVING_ROOM_IDS = new Set(["room-living"]);
 const CHILDREN_ROOM_IDS = new Set(["room-children"]);
@@ -19,7 +18,11 @@ export type HouseInterpretation = {
  * DecisionFilter × HousePackage → highlights + recommended room order.
  */
 export function interpretHouseHighlights(
-  filter: DecisionFilter,
+  filter: {
+    readonly preferPrice: boolean;
+    readonly preferSpace: boolean;
+    readonly preferGarden: boolean;
+  },
   house: HousePackage,
 ): HouseInterpretation {
   const highlights: ExperienceHighlight[] = [];

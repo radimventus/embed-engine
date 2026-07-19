@@ -137,6 +137,10 @@ importers:
         version: 5.9.3
 
   packages/object-house:
+    dependencies:
+      '@embed-engine/model':
+        specifier: workspace:*
+        version: link:../model
     devDependencies:
       typescript:
         specifier: ^5.9.2
