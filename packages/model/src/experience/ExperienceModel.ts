@@ -1,11 +1,20 @@
 /**
  * Platform-independent projection of Runtime interpretation.
- * MVP: only data already available from DecisionState + ExecutionContext + Registry.
+ * Renderers consume this contract only — never reconstruct domain state.
+ */
+
+export type DecisionId = string;
+
+/**
+ * Projected decision step for rendering.
+ * visited/current are computed during projection, not stored as domain truth.
  */
 export interface ExperienceDecision {
-  readonly id: string;
-  readonly question: string;
-  readonly type: "single-choice" | "multi-choice" | "number" | "text";
+  readonly id: DecisionId;
+  readonly title: string;
+  readonly description?: string;
+  readonly visited: boolean;
+  readonly current: boolean;
 }
 
 export interface ExperienceModel {
@@ -14,8 +23,19 @@ export interface ExperienceModel {
   /** Snapshot of DecisionState.answers. */
   readonly answers: Readonly<Record<string, unknown>>;
   /**
-   * Registry definitions resolved for answered decision ids.
-   * Unknown ids (no registry entry) are omitted.
+   * Answered decisions projected for convenience.
+   * Prefer decisionFlow for complete flow rendering.
    */
   readonly decisions: readonly ExperienceDecision[];
+  /** Current decision id from DecisionState. */
+  readonly currentDecisionId: string | null;
+  /** Navigation history from DecisionState (oldest → newest). */
+  readonly history: readonly string[];
+  /** Current step from decisionFlow, if any. */
+  readonly currentDecision: ExperienceDecision | null;
+  /**
+   * Complete Decision Flow in presentation order.
+   * Ordering comes from the Decision Graph / Registry.
+   */
+  readonly decisionFlow: readonly ExperienceDecision[];
 }

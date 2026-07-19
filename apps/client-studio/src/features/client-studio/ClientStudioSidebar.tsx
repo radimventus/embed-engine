@@ -1,23 +1,25 @@
 import { useState } from 'react';
+import type { ExperienceModel } from '@embed-engine/model';
 
-const HOUSE_MENU_ITEMS = [
-  'MODERN 01',
-  'MODERN 02',
-  'MODERN 03',
-  'MODERN 04',
-  'MODERN 05',
-  'MODERN 06',
-] as const;
+import { DecisionFlowNavigator } from './decision-flow/DecisionFlowNavigator';
 
 const SIDEBAR_COLLAPSED_WIDTH_PX = 48;
 const SIDEBAR_EXPANDED_WIDTH_PX = 220;
 
+type ClientStudioSidebarProps = {
+  experience: ExperienceModel | null;
+  onSelectDecision: (decisionId: string) => void;
+};
+
 /**
- * Hamburger sits on the same vertical axis as the canvas header:
- * canvas `pt-section` (24px) + `h-header` (72px) centered.
+ * Left shell: presentation expand/collapse only.
+ * Decision Flow navigation state comes exclusively from ExperienceModel.
  */
-export function ClientStudioSidebar() {
-  const [expanded, setExpanded] = useState(false);
+export function ClientStudioSidebar({
+  experience,
+  onSelectDecision,
+}: ClientStudioSidebarProps) {
+  const [expanded, setExpanded] = useState(true);
 
   return (
     <aside
@@ -42,18 +44,13 @@ export function ClientStudioSidebar() {
         </button>
       </div>
 
-      {expanded ? (
-        <nav aria-label="Domy" className="mt-section flex flex-col px-2">
-          {HOUSE_MENU_ITEMS.map((house) => (
-            <button
-              key={house}
-              type="button"
-              className="w-full rounded-md px-3 py-2.5 text-left text-sm tracking-wide text-embed-background-primary transition-opacity duration-150 ease-out hover:bg-embed-background-primary/10 hover:opacity-95"
-            >
-              {house}
-            </button>
-          ))}
-        </nav>
+      {expanded && experience !== null ? (
+        <div className="mt-section">
+          <DecisionFlowNavigator
+            experience={experience}
+            onSelectDecision={onSelectDecision}
+          />
+        </div>
       ) : null}
     </aside>
   );

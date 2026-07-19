@@ -45,6 +45,10 @@ const testInterpreter: Interpreter = {
       currentSceneId: context.currentSceneId,
       answers: Object.fromEntries(state.answers.entries()),
       decisions: [],
+      currentDecisionId: null,
+      history: [],
+      currentDecision: null,
+      decisionFlow: [],
     };
   },
 };

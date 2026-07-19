@@ -13,6 +13,10 @@ export class DefaultInterpreter implements Interpreter {
       currentSceneId: context.currentSceneId,
       answers: {},
       decisions: [],
+      currentDecisionId: null,
+      history: [],
+      currentDecision: null,
+      decisionFlow: [],
     };
   }
 }

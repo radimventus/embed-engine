@@ -4,4 +4,6 @@
  */
 export interface DecisionState {
   answers: Map<string, unknown>;
+  currentDecisionId: string | null;
+  history: string[];
 }

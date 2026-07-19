@@ -110,6 +110,12 @@ operace.
 
 Nikdy nemění `DecisionState`.
 
+Interpreter v Decision modulu plní roli Projection Layer. Závazná
+pravidla projekce jsou v
+[Experience Projection Principles v1.0](./experience-projection.md).
+
+Projection belongs outside Runtime.
+
 ------------------------------------------------------------------------
 
 # DecisionState
@@ -143,6 +149,11 @@ Je jediným Single Source of Truth pro:
 -   Voice
 
 Neobsahuje UI komponenty.
+
+> ExperienceModel is the only public contract between Engine and
+> Renderer. Renderers must never reconstruct domain state.
+
+Podrobnosti: [Experience Projection Principles v1.0](./experience-projection.md).
 
 ------------------------------------------------------------------------
 
@@ -216,6 +227,8 @@ externích vedlejších efektech.
 -   UI
 -   vizualizace
 -   platform-specific rendering
+-   pasivní konzument `ExperienceModel`
+-   žádná rekonstrukce domény
 
 Tyto vrstvy musí zůstat striktně oddělené.
 
@@ -225,6 +238,20 @@ Tyto vrstvy musí zůstat striktně oddělené.
 
 Nové moduly (Priority, Finance, Lead, Media, AI a další) musí být
 implementovány bez změny Runtime Kernelu.
+
+Nové architektonické abstrakce se zavádějí až poté, co se stejný pattern
+objeví ve více nezávislých modulech.
+
+------------------------------------------------------------------------
+
+# Quality Gate
+
+Při review každého PR:
+
+1.  Does this change violate Runtime determinism? If yes: redesign.
+2.  Does this require the renderer to reconstruct domain knowledge? If
+    yes: extend the Experience projection instead of adding renderer
+    logic.
 
 ------------------------------------------------------------------------
 
@@ -237,6 +264,7 @@ Architektura Runtime je správná, pokud:
 -   `dispatch()` vrací `ExperienceModel`.
 -   `ExperienceModel` je jediný veřejný výstup Runtime.
 -   Renderer nezná interní stav Runtime.
+-   Renderer nerekonstruuje doménovou znalost.
 -   Runtime nezná konkrétní renderer.
 -   Nový modul lze přidat bez změny Runtime.
 

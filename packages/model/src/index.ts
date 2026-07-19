@@ -10,6 +10,7 @@ export { Room } from './entities/Room';
 export { Theme } from './entities/Theme';
 
 export type {
+  DecisionId,
   ExperienceDecision,
   ExperienceModel,
 } from './experience/ExperienceModel';

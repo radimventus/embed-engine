@@ -1,6 +1,4 @@
-import { useRef } from 'react';
-import type { Runtime, SceneGraph } from '@embed-engine/core';
-import { createDecisionRuntime } from '@embed-engine/decision';
+import type { Runtime } from '@embed-engine/core';
 
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
@@ -11,23 +9,11 @@ import { PriorityEngine } from './sections/PriorityEngine/PriorityEngine';
 import { PropertyExplorer } from './sections/PropertyExplorer/PropertyExplorer';
 import { WalkthroughProvider } from '../walkthrough';
 
-/** Temporary placeholder — replaced when real Client Studio scene graph is wired. */
-const PLACEHOLDER_SCENE_GRAPH: SceneGraph = {
-  start: 'start',
-  scenes: {
-    start: { id: 'start' },
-  },
+type ClientStudioPageProps = {
+  runtime: Runtime;
 };
 
-export function ClientStudioPage() {
-  const runtimeRef = useRef<Runtime | null>(null);
-
-  if (runtimeRef.current === null) {
-    runtimeRef.current = createDecisionRuntime(PLACEHOLDER_SCENE_GRAPH);
-  }
-
-  const runtime = runtimeRef.current;
-
+export function ClientStudioPage({ runtime }: ClientStudioPageProps) {
   return (
     <WalkthroughProvider>
       <DesktopCanvas>

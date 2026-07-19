@@ -14,7 +14,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/DecisionInterpreter.test.ts src/Runtime.determinism.test.ts"
+    "test": "tsx --test src/DecisionInterpreter.test.ts src/Runtime.determinism.test.ts src/DecisionNavigation.determinism.test.ts src/DecisionGraph.determinism.test.ts src/CanonicalDecisionFlow.integration.test.ts src/DecisionFlow.projection.test.ts"
   },
   "dependencies": {
     "@embed-engine/core": "workspace:*",
