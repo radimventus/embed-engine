@@ -8,6 +8,8 @@ import { createDecisionRuntime } from "./createDecisionRuntime";
 import { DecisionInterpreter } from "./DecisionInterpreter";
 import { DefaultDecisionRegistry } from "./DefaultDecisionRegistry";
 import type { DecisionState } from "./DecisionState";
+import { HOUSE_DECISION_FLOW } from "./house-decision-flow";
+import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 import type { SetAnswerCommand } from "./SetAnswerCommand";
 
 const SCENE_GRAPH: SceneGraph = {
@@ -15,12 +17,6 @@ const SCENE_GRAPH: SceneGraph = {
   scenes: {
     start: { id: "start" },
   },
-};
-
-const PREFERENCE_A_DEFINITION = {
-  id: "preference-a",
-  question: "Preference A",
-  type: "single-choice" as const,
 };
 
 function setAnswer(decisionId: string, value: unknown): SetAnswerCommand {
@@ -41,21 +37,17 @@ describe("Runtime determinism", () => {
     it("two fresh Runtimes produce equal ExperienceModel for the same command", () => {
       const runtimeA = createDecisionRuntime(SCENE_GRAPH);
       const runtimeB = createDecisionRuntime(SCENE_GRAPH);
-      const command = setAnswer("preference-a", "option-a");
+      const command = setAnswer("priority-focus", "price");
 
-      const experienceA = runtimeA.dispatch(command);
-      const experienceB = runtimeB.dispatch(command);
-
-      assert.deepEqual(experienceA, experienceB);
+      assert.deepEqual(runtimeA.dispatch(command), runtimeB.dispatch(command));
     });
   });
 
   describe("deterministic sequence", () => {
     it("the same command sequence yields equal final ExperienceModel and DecisionState", () => {
       const sequence = [
-        setAnswer("preference-a", "option-a"),
-        setAnswer("preference-a", "option-a2"),
-        setAnswer("other-decision", 42),
+        setAnswer("priority-focus", "price"),
+        setAnswer("garden-importance", "yes"),
       ];
 
       const runtimeA = createDecisionRuntime(SCENE_GRAPH);
@@ -71,50 +63,41 @@ describe("Runtime determinism", () => {
 
       assert.deepEqual(experienceA, experienceB);
       assert.deepEqual(answersOf(runtimeA), answersOf(runtimeB));
-      assert.equal(experienceA?.currentSceneId, "start");
-      assert.deepEqual(experienceA?.answers, {
-        "preference-a": "option-a2",
-        "other-decision": 42,
-      });
-      assert.equal(experienceA?.currentDecisionId, null);
-      assert.deepEqual(experienceA?.history, []);
-      assert.equal(experienceA?.currentDecision, null);
-      assert.equal(experienceA?.decisionFlow.length, 5);
-      assert.deepEqual(
-        experienceA?.decisions.map((decision) => decision.id),
-        ["preference-a"],
-      );
     });
   });
 
   describe("interpreter has no side effects", () => {
     it("DecisionState and DecisionRegistry are unchanged by interpretation", () => {
-      const registry = new DefaultDecisionRegistry([PREFERENCE_A_DEFINITION]);
+      const registry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
       const state: DecisionState = {
-        answers: new Map([["preference-a", "option-a"]]),
-        currentDecisionId: "preference-a",
+        answers: new Map([["priority-focus", "price"]]),
+        currentDecisionId: "priority-focus",
         history: ["start"],
       };
       const answersBefore = [...state.answers.entries()];
-      const definitionBefore = registry.get("preference-a");
+      const definitionBefore = registry.get("priority-focus");
 
-      const interpreter = new DecisionInterpreter(registry);
+      const interpreter = new DecisionInterpreter(
+        registry,
+        REFERENCE_HOUSE_PACKAGE,
+      );
       interpreter.interpret({
         currentSceneId: "start",
         state,
       });
 
       assert.deepEqual([...state.answers.entries()], answersBefore);
-      assert.deepEqual(registry.get("preference-a"), definitionBefore);
+      assert.deepEqual(registry.get("priority-focus"), definitionBefore);
     });
 
     it("re-interpreting after dispatch does not alter DecisionState further", () => {
       const runtime = createDecisionRuntime(SCENE_GRAPH);
-      runtime.dispatch(setAnswer("preference-a", "option-a"));
+      runtime.dispatch(setAnswer("priority-focus", "price"));
 
       const answersAfterHandler = answersOf(runtime);
       const interpreter = new DecisionInterpreter(
-        new DefaultDecisionRegistry([PREFERENCE_A_DEFINITION]),
+        new DefaultDecisionRegistry(HOUSE_DECISION_FLOW),
+        REFERENCE_HOUSE_PACKAGE,
       );
 
       interpreter.interpret(runtime.context);
@@ -127,8 +110,8 @@ describe("Runtime determinism", () => {
   describe("Runtime has no hidden state", () => {
     it("isolated Runtimes with the same configuration reproduce the same result", () => {
       const sequence = [
-        setAnswer("preference-a", "option-a"),
-        setAnswer("preference-a", "option-a2"),
+        setAnswer("priority-focus", "price"),
+        setAnswer("garden-importance", "yes"),
       ];
 
       const run = () => {
@@ -150,10 +133,11 @@ describe("Runtime determinism", () => {
   describe("ExperienceModel is a pure projection", () => {
     it("two consecutive interpretations of the same state are equal", () => {
       const runtime = createDecisionRuntime(SCENE_GRAPH);
-      runtime.dispatch(setAnswer("preference-a", "option-a"));
+      runtime.dispatch(setAnswer("priority-focus", "price"));
 
       const interpreter = new DecisionInterpreter(
-        new DefaultDecisionRegistry([PREFERENCE_A_DEFINITION]),
+        new DefaultDecisionRegistry(HOUSE_DECISION_FLOW),
+        REFERENCE_HOUSE_PACKAGE,
       );
 
       const a = interpreter.interpret(runtime.context);

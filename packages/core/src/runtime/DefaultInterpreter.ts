@@ -17,6 +17,11 @@ export class DefaultInterpreter implements Interpreter {
       history: [],
       currentDecision: null,
       decisionFlow: [],
+      house: null,
+      decisionFilter: null,
+      highlights: [],
+      recommendedRooms: [],
+      summaryReady: false,
     };
   }
 }

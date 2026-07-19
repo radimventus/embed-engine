@@ -1,7 +1,9 @@
 import type { Runtime } from '@embed-engine/core';
+import type { ExperienceModel } from '@embed-engine/model';
 
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
+import { HouseDecisionExperience } from './house-decision/HouseDecisionExperience';
 import { AIAdvisor } from './sections/AIAdvisor/AIAdvisor';
 import { Hero } from './sections/Hero/Hero';
 import { AuditLeadCapture } from './sections/AuditLeadCapture/AuditLeadCapture';
@@ -11,13 +13,34 @@ import { WalkthroughProvider } from '../walkthrough';
 
 type ClientStudioPageProps = {
   runtime: Runtime;
+  experience: ExperienceModel | null;
+  onSelectChoice: (decisionId: string, choiceId: string) => void;
+  onContinue: () => void;
 };
 
-export function ClientStudioPage({ runtime }: ClientStudioPageProps) {
+export function ClientStudioPage({
+  runtime,
+  experience,
+  onSelectChoice,
+  onContinue,
+}: ClientStudioPageProps) {
   return (
     <WalkthroughProvider>
       <DesktopCanvas>
         <ClientStudioHeader />
+        {experience ? (
+          <>
+            <HouseDecisionExperience
+              experience={experience}
+              onSelectChoice={onSelectChoice}
+              onContinue={onContinue}
+            />
+            <div
+              aria-hidden="true"
+              className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+            />
+          </>
+        ) : null}
         <Hero />
         <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
         <PropertyExplorer />

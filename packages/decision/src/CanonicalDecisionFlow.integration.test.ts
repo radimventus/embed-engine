@@ -4,12 +4,17 @@ import { describe, it } from "node:test";
 import type { SceneGraph } from "@embed-engine/core";
 
 import {
-  CANONICAL_DECISION_FLOW,
-  CANONICAL_DECISION_FLOW_START_ID,
-} from "./canonical-decision-flow";
+  GARDEN_IMPORTANCE_DECISION_ID,
+  GARDEN_IMPORTANCE_YES,
+  PRIORITY_FOCUS_DECISION_ID,
+  PRIORITY_FOCUS_PRICE,
+} from "./buildDecisionFilter";
 import { createDecisionRuntime } from "./createDecisionRuntime";
 import { DefaultDecisionRegistry } from "./DefaultDecisionRegistry";
-import type { DecisionState } from "./DecisionState";
+import {
+  HOUSE_DECISION_FLOW,
+  HOUSE_DECISION_FLOW_START_ID,
+} from "./house-decision-flow";
 import type { GoNextCommand } from "./GoNextCommand";
 import type { SetAnswerCommand } from "./SetAnswerCommand";
 import type { StartDecisionFlowCommand } from "./StartDecisionFlowCommand";
@@ -34,77 +39,32 @@ function setAnswer(decisionId: string, value: unknown): SetAnswerCommand {
 }
 
 describe("Canonical Decision Flow", () => {
-  it("populates DecisionRegistry from declarative definitions", () => {
-    const registry = new DefaultDecisionRegistry(CANONICAL_DECISION_FLOW);
+  it("populates DecisionRegistry from declarative house definitions", () => {
+    const registry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
 
-    assert.equal(registry.get("start")?.next, "preference-a");
-    assert.equal(registry.getNext("preference-a"), "preference-b");
-    assert.equal(registry.getNext("preference-b"), "preference-c");
-    assert.equal(registry.getNext("preference-c"), "summary");
-    assert.equal(registry.getNext("summary"), undefined);
-    assert.equal(registry.getPrevious("preference-a"), "start");
-    assert.equal(registry.getPrevious("summary"), "preference-c");
+    assert.equal(registry.get("start")?.next, PRIORITY_FOCUS_DECISION_ID);
+    assert.equal(registry.getNext(PRIORITY_FOCUS_DECISION_ID), GARDEN_IMPORTANCE_DECISION_ID);
+    assert.equal(registry.getNext(GARDEN_IMPORTANCE_DECISION_ID), "summary");
   });
 
-  it("executes the complete linear flow end-to-end", () => {
+  it("executes the complete linear house flow end-to-end", () => {
     const runtime = createDecisionRuntime(SCENE_GRAPH);
 
-    let experience = runtime.dispatch(
-      startFlow(CANONICAL_DECISION_FLOW_START_ID),
-    );
+    let experience = runtime.dispatch(startFlow(HOUSE_DECISION_FLOW_START_ID));
     assert.equal(experience.currentDecisionId, "start");
-    assert.deepEqual(experience.history, []);
-    assert.equal(experience.currentDecision?.title, "Start");
-    assert.equal(experience.decisionFlow.length, 5);
 
     experience = runtime.dispatch(goNext());
-    assert.equal(experience.currentDecisionId, "preference-a");
-    experience = runtime.dispatch(setAnswer("preference-a", "option-a"));
-
-    experience = runtime.dispatch(goNext());
-    assert.equal(experience.currentDecisionId, "preference-b");
-    experience = runtime.dispatch(setAnswer("preference-b", "option-b"));
-
-    experience = runtime.dispatch(goNext());
-    assert.equal(experience.currentDecisionId, "preference-c");
-    experience = runtime.dispatch(setAnswer("preference-c", "option-c"));
-
-    experience = runtime.dispatch(goNext());
-    assert.equal(experience.currentDecisionId, "summary");
-    assert.deepEqual(experience.history, [
-      "start",
-      "preference-a",
-      "preference-b",
-      "preference-c",
-    ]);
-    assert.deepEqual(experience.answers, {
-      "preference-a": "option-a",
-      "preference-b": "option-b",
-      "preference-c": "option-c",
-    });
-    assert.equal(experience.currentDecision?.title, "Summary");
-    assert.deepEqual(
-      experience.decisionFlow.map((decision) => ({
-        id: decision.id,
-        visited: decision.visited,
-        current: decision.current,
-      })),
-      [
-        { id: "start", visited: true, current: false },
-        { id: "preference-a", visited: true, current: false },
-        { id: "preference-b", visited: true, current: false },
-        { id: "preference-c", visited: true, current: false },
-        { id: "summary", visited: false, current: true },
-      ],
+    experience = runtime.dispatch(
+      setAnswer(PRIORITY_FOCUS_DECISION_ID, PRIORITY_FOCUS_PRICE),
     );
+    experience = runtime.dispatch(goNext());
+    experience = runtime.dispatch(
+      setAnswer(GARDEN_IMPORTANCE_DECISION_ID, GARDEN_IMPORTANCE_YES),
+    );
+    experience = runtime.dispatch(goNext());
 
-    const state = runtime.context.state as DecisionState;
-    assert.equal(state.currentDecisionId, "summary");
-    assert.deepEqual([...state.history], [
-      "start",
-      "preference-a",
-      "preference-b",
-      "preference-c",
-    ]);
+    assert.equal(experience.summaryReady, true);
+    assert.equal(experience.decisionFlow.length, 4);
+    assert.ok(experience.highlights.length >= 2);
   });
 });

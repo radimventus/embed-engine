@@ -11,7 +11,14 @@ export { Theme } from './entities/Theme';
 
 export type {
   DecisionId,
+  ExperienceChoice,
   ExperienceDecision,
+  ExperienceDecisionFilter,
+  ExperienceHighlight,
+  ExperienceHighlightTarget,
+  ExperienceHouse,
+  ExperienceHouseMedia,
+  ExperienceHouseRoom,
   ExperienceModel,
 } from './experience/ExperienceModel';
 

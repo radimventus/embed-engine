@@ -4,8 +4,8 @@ import {
   type ExecutionContext,
   type SceneGraph,
 } from "@embed-engine/core";
+import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
-import { CANONICAL_DECISION_FLOW } from "./canonical-decision-flow";
 import { DecisionInterpreter } from "./DecisionInterpreter";
 import { DefaultDecisionRegistry } from "./DefaultDecisionRegistry";
 import type { DecisionState } from "./DecisionState";
@@ -21,6 +21,7 @@ import {
   GO_TO_DECISION_COMMAND_TYPE,
   GoToDecisionCommandHandler,
 } from "./GoToDecisionCommand";
+import { HOUSE_DECISION_FLOW } from "./house-decision-flow";
 import {
   SET_ANSWER_COMMAND_TYPE,
   SetAnswerCommandHandler,
@@ -31,11 +32,11 @@ import {
 } from "./StartDecisionFlowCommand";
 
 /**
- * Composition root for a Decision-domain Runtime.
- * Populates DecisionRegistry from the canonical reference flow.
+ * Composition root for the House Decision Experience.
+ * Object Package is injected into projection — never exposed to renderers.
  */
 export function createDecisionRuntime(sceneGraph: SceneGraph): Runtime {
-  const decisionRegistry = new DefaultDecisionRegistry(CANONICAL_DECISION_FLOW);
+  const decisionRegistry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
 
   const decisionState: DecisionState = {
     answers: new Map(),
@@ -67,6 +68,9 @@ export function createDecisionRuntime(sceneGraph: SceneGraph): Runtime {
   return new Runtime(sceneGraph, {
     executionContext,
     resolver,
-    interpreter: new DecisionInterpreter(decisionRegistry),
+    interpreter: new DecisionInterpreter(
+      decisionRegistry,
+      REFERENCE_HOUSE_PACKAGE,
+    ),
   });
 }

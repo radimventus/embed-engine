@@ -3,7 +3,9 @@ import type { Runtime, SceneGraph } from '@embed-engine/core';
 import {
   CANONICAL_DECISION_FLOW_START_ID,
   createDecisionRuntime,
+  type GoNextCommand,
   type GoToDecisionCommand,
+  type SetAnswerCommand,
   type StartDecisionFlowCommand,
 } from '@embed-engine/decision';
 import type { ExperienceModel } from '@embed-engine/model';
@@ -49,6 +51,23 @@ export function ClientStudioApp() {
     setExperience(runtime.dispatch(command));
   };
 
+  const handleSelectChoice = (decisionId: string, choiceId: string) => {
+    const answer: SetAnswerCommand = {
+      type: 'set-answer',
+      decisionId,
+      value: choiceId,
+    };
+    runtime.dispatch(answer);
+
+    const next: GoNextCommand = { type: 'go-next' };
+    setExperience(runtime.dispatch(next));
+  };
+
+  const handleContinue = () => {
+    const next: GoNextCommand = { type: 'go-next' };
+    setExperience(runtime.dispatch(next));
+  };
+
   return (
     <AppShell
       sidebar={
@@ -60,7 +79,12 @@ export function ClientStudioApp() {
       showStatusBar={false}
       header={<></>}
     >
-      <ClientStudioPage runtime={runtime} />
+      <ClientStudioPage
+        runtime={runtime}
+        experience={experience}
+        onSelectChoice={handleSelectChoice}
+        onContinue={handleContinue}
+      />
     </AppShell>
   );
 }

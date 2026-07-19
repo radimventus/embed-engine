@@ -1,7 +1,14 @@
-import type { ExperienceDecision, ExperienceModel } from "@embed-engine/model";
+import type {
+  ExperienceDecision,
+  ExperienceModel,
+} from "@embed-engine/model";
+import type { HousePackage } from "@embed-engine/object-house";
 
+import { buildDecisionFilter } from "./buildDecisionFilter";
 import type { DecisionRegistry } from "./DecisionRegistry";
 import type { DecisionState } from "./DecisionState";
+import { interpretHouseHighlights } from "./interpretHouseHighlights";
+import { projectHouse } from "./projectHouse";
 
 /**
  * Presentation order from the Decision Graph.
@@ -58,19 +65,24 @@ function projectDecisionFlow(
         title: definition.question,
         visited: visitedIds.has(id),
         current: state.currentDecisionId === id,
+        choices: definition.choices?.map((choice) => ({
+          id: choice.id,
+          label: choice.label,
+        })),
       },
     ];
   });
 }
 
 /**
- * Pure interpretation: DecisionRegistry + DecisionState (+ scene) → ExperienceModel.
- * No mutation, no IO, no Runtime services.
+ * Pure interpretation: DecisionRegistry + DecisionState (+ scene, house)
+ * → ExperienceModel.
  */
 export function interpretDecision(
   registry: DecisionRegistry,
   state: DecisionState,
   currentSceneId: string,
+  house: HousePackage | null = null,
 ): ExperienceModel {
   const answers: Record<string, unknown> = Object.fromEntries(
     state.answers.entries(),
@@ -97,9 +109,25 @@ export function interpretDecision(
         title: definition.question,
         visited: state.history.includes(id),
         current: state.currentDecisionId === id,
+        choices: definition.choices?.map((choice) => ({
+          id: choice.id,
+          label: choice.label,
+        })),
       },
     ];
   });
+
+  const hasPriorityAnswer = state.answers.has("priority-focus");
+  const hasGardenAnswer = state.answers.has("garden-importance");
+  const decisionFilter =
+    hasPriorityAnswer || hasGardenAnswer
+      ? buildDecisionFilter(state.answers)
+      : null;
+
+  const interpretation =
+    decisionFilter === null || house === null
+      ? { highlights: [], recommendedRooms: [] }
+      : interpretHouseHighlights(decisionFilter, house);
 
   return {
     currentSceneId,
@@ -109,5 +137,10 @@ export function interpretDecision(
     history: [...state.history],
     currentDecision,
     decisionFlow,
+    house: projectHouse(house),
+    decisionFilter,
+    highlights: interpretation.highlights,
+    recommendedRooms: interpretation.recommendedRooms,
+    summaryReady: state.currentDecisionId === "summary",
   };
 }

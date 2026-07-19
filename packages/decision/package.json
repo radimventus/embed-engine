@@ -14,12 +14,14 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/DecisionInterpreter.test.ts src/Runtime.determinism.test.ts src/DecisionNavigation.determinism.test.ts src/DecisionGraph.determinism.test.ts src/CanonicalDecisionFlow.integration.test.ts src/DecisionFlow.projection.test.ts"
+    "test": "tsx --test src/DecisionInterpreter.test.ts src/Runtime.determinism.test.ts src/DecisionNavigation.determinism.test.ts src/DecisionGraph.determinism.test.ts src/CanonicalDecisionFlow.integration.test.ts src/DecisionFlow.projection.test.ts src/HouseExperience.vertical-slice.test.ts"
   },
   "dependencies": {
     "@embed-engine/core": "workspace:*",
-    "@embed-engine/model": "workspace:*"
+    "@embed-engine/model": "workspace:*",
+    "@embed-engine/object-house": "workspace:*"
   },
+
   "devDependencies": {
     "tsx": "^4.20.3",
     "typescript": "^5.9.2"

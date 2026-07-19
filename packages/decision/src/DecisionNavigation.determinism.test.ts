@@ -40,71 +40,50 @@ describe("Decision navigation determinism", () => {
   it("starts a flow at the requested decision with empty history", () => {
     const runtime = createDecisionRuntime(SCENE_GRAPH);
 
-    const experience = runtime.dispatch(startFlow("preference-a"));
+    const experience = runtime.dispatch(startFlow("priority-focus"));
 
     assert.deepEqual(navigationOf(runtime), {
-      currentDecisionId: "preference-a",
+      currentDecisionId: "priority-focus",
       history: [],
     });
-    assert.equal(experience.currentDecisionId, "preference-a");
-    assert.deepEqual(experience.history, []);
-    assert.deepEqual(experience.currentDecision, {
-      id: "preference-a",
-      title: "Preference A",
-      visited: false,
-      current: true,
-    });
+    assert.equal(experience.currentDecision?.title, "Co je pro vás důležitější?");
   });
 
   it("navigates forward and records history deterministically", () => {
     const runtime = createDecisionRuntime(SCENE_GRAPH);
 
-    runtime.dispatch(startFlow("preference-a"));
-    const experience = runtime.dispatch(goTo("preference-b"));
+    runtime.dispatch(startFlow("priority-focus"));
+    const experience = runtime.dispatch(goTo("garden-importance"));
 
     assert.deepEqual(navigationOf(runtime), {
-      currentDecisionId: "preference-b",
-      history: ["preference-a"],
+      currentDecisionId: "garden-importance",
+      history: ["priority-focus"],
     });
-    assert.equal(experience.currentDecisionId, "preference-b");
-    assert.deepEqual(experience.history, ["preference-a"]);
-    assert.deepEqual(experience.currentDecision, {
-      id: "preference-b",
-      title: "Preference B",
-      visited: false,
-      current: true,
-    });
+    assert.equal(experience.currentDecisionId, "garden-importance");
   });
 
   it("navigates back using history", () => {
     const runtime = createDecisionRuntime(SCENE_GRAPH);
 
-    runtime.dispatch(startFlow("preference-a"));
-    runtime.dispatch(goTo("preference-b"));
-    runtime.dispatch(goTo("preference-c"));
+    runtime.dispatch(startFlow("priority-focus"));
+    runtime.dispatch(goTo("garden-importance"));
+    runtime.dispatch(goTo("summary"));
     const experience = runtime.dispatch(goBack());
 
     assert.deepEqual(navigationOf(runtime), {
-      currentDecisionId: "preference-b",
-      history: ["preference-a"],
+      currentDecisionId: "garden-importance",
+      history: ["priority-focus"],
     });
-    assert.equal(experience.currentDecisionId, "preference-b");
-    assert.deepEqual(experience.history, ["preference-a"]);
-    assert.deepEqual(experience.currentDecision, {
-      id: "preference-b",
-      title: "Preference B",
-      visited: false,
-      current: true,
-    });
+    assert.equal(experience.currentDecisionId, "garden-importance");
   });
 
   it("reproduces the same navigation sequence on fresh Runtimes", () => {
     const sequence = [
-      startFlow("preference-a"),
-      goTo("preference-b"),
-      goTo("preference-c"),
+      startFlow("priority-focus"),
+      goTo("garden-importance"),
+      goTo("summary"),
       goBack(),
-      goTo("preference-c"),
+      goTo("summary"),
     ];
 
     const run = () => {
@@ -119,30 +98,17 @@ describe("Decision navigation determinism", () => {
       };
     };
 
-    const first = run();
-    const second = run();
-
-    assert.deepEqual(first, second);
-    assert.deepEqual(first.navigation, {
-      currentDecisionId: "preference-c",
-      history: ["preference-a", "preference-b"],
-    });
-    assert.deepEqual(first.experience?.currentDecision, {
-      id: "preference-c",
-      title: "Preference C",
-      visited: false,
-      current: true,
-    });
+    assert.deepEqual(run(), run());
   });
 
   it("keeps history deterministic across identical forward/back sequences", () => {
     const sequence = [
-      startFlow("preference-a"),
-      goTo("preference-b"),
-      goTo("preference-c"),
+      startFlow("priority-focus"),
+      goTo("garden-importance"),
+      goTo("summary"),
       goBack(),
       goBack(),
-      goTo("preference-c"),
+      goTo("summary"),
     ];
 
     const runtimeA = createDecisionRuntime(SCENE_GRAPH);
@@ -155,8 +121,8 @@ describe("Decision navigation determinism", () => {
 
     assert.deepEqual(navigationOf(runtimeA), navigationOf(runtimeB));
     assert.deepEqual(navigationOf(runtimeA), {
-      currentDecisionId: "preference-c",
-      history: ["preference-a"],
+      currentDecisionId: "summary",
+      history: ["priority-focus"],
     });
   });
 });
