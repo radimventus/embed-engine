@@ -16,6 +16,7 @@ export type { DecisionRegistry } from './DecisionRegistry';
 export { DefaultDecisionRegistry } from './DefaultDecisionRegistry';
 export type { DecisionState } from './DecisionState';
 export type { DecisionFilter } from './DecisionFilter';
+export type { Interpretation } from './Interpretation';
 export {
   buildDecisionFilter,
   GARDEN_IMPORTANCE_DECISION_ID,
