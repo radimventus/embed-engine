@@ -1,4 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
+import type { Runtime } from '@embed-engine/core';
+
 import {
   DECISION_CARD_IMPORTANCE_DEFAULT,
   DECISION_CATEGORIES,
@@ -19,28 +21,36 @@ function createInitialState(): Record<string, DecisionCardState> {
   );
 }
 
-export function useDecisionCards() {
+export function useDecisionCards(runtime: Runtime) {
   const [cards, setCards] = useState<Record<string, DecisionCardState>>(createInitialState);
 
-  const toggleCard = useCallback((id: string) => {
-    setCards((previous) => ({
-      ...previous,
-      [id]: {
-        ...previous[id],
-        selected: !previous[id].selected,
-      },
-    }));
-  }, []);
+  const toggleCard = useCallback(
+    (id: string) => {
+      void runtime;
+      setCards((previous) => ({
+        ...previous,
+        [id]: {
+          ...previous[id],
+          selected: !previous[id].selected,
+        },
+      }));
+    },
+    [runtime],
+  );
 
-  const setImportance = useCallback((id: string, importance: number) => {
-    setCards((previous) => ({
-      ...previous,
-      [id]: {
-        ...previous[id],
-        importance,
-      },
-    }));
-  }, []);
+  const setImportance = useCallback(
+    (id: string, importance: number) => {
+      void runtime;
+      setCards((previous) => ({
+        ...previous,
+        [id]: {
+          ...previous[id],
+          importance,
+        },
+      }));
+    },
+    [runtime],
+  );
 
   const selectedCount = useMemo(
     () => Object.values(cards).filter((card) => card.selected).length,

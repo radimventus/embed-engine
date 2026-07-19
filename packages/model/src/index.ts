@@ -9,6 +9,8 @@ export { Recommendation } from './entities/Recommendation';
 export { Room } from './entities/Room';
 export { Theme } from './entities/Theme';
 
+export type { ExperienceModel } from './experience/ExperienceModel';
+
 export { Area, type AreaUnit } from './value-objects/Area';
 export { Coordinates } from './value-objects/Coordinates';
 export { Id } from './value-objects/Id';

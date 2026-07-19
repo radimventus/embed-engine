@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@embed-engine/contracts": "workspace:*",
+    "@embed-engine/core": "workspace:*",
     "@embed-engine/design-tokens": "workspace:*",
     "@embed-engine/kernel": "workspace:*",
     "@embed-engine/ui": "workspace:*",

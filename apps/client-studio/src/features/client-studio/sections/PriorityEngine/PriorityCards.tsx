@@ -1,3 +1,5 @@
+import type { Runtime } from '@embed-engine/core';
+
 import { DecisionActionArea } from './DecisionActionArea';
 import { DecisionCard } from './DecisionCard';
 import {
@@ -8,7 +10,11 @@ import {
 } from './decision-cards-layout';
 import { useDecisionCards } from './useDecisionCards';
 
-export function PriorityCards() {
+type PriorityCardsProps = {
+  runtime: Runtime;
+};
+
+export function PriorityCards({ runtime }: PriorityCardsProps) {
   const {
     cards,
     categories,
@@ -17,7 +23,7 @@ export function PriorityCards() {
     selectedCount,
     setImportance,
     toggleCard,
-  } = useDecisionCards();
+  } = useDecisionCards(runtime);
 
   return (
     <div className="flex min-w-0 flex-col self-start">

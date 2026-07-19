@@ -1,3 +1,5 @@
+import type { Runtime } from '@embed-engine/core';
+
 import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
 import { IntroText } from './IntroText';
 import {
@@ -11,7 +13,11 @@ import { RecommendationPanel } from './RecommendationPanel';
 import { SectionHeader } from './SectionHeader';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 
-export function PriorityEngine() {
+type PriorityEngineProps = {
+  runtime: Runtime;
+};
+
+export function PriorityEngine({ runtime }: PriorityEngineProps) {
   return (
     <section
       aria-label="Priority Engine"
@@ -19,7 +25,7 @@ export function PriorityEngine() {
     >
       <SectionHeader />
       <div className="grid grid-cols-[52fr_48fr] items-stretch gap-section mobile:grid-cols-1">
-        <PriorityCards />
+        <PriorityCards runtime={runtime} />
         <IntroText />
       </div>
       {PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL ? <RecommendationPanel /> : null}
