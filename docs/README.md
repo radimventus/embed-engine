@@ -11,7 +11,7 @@ Navigation index for project documentation. This file is not product documentati
 | `design/` | Design language, geometry, design system tokens |
 | `implementation/` | How to implement (frontend rules, AI agent rules) |
 | `roadmap/` | Long-term product development phases |
-| `adr/` | Architecture Decision Records |
+| `architecture/adr/` | Architecture Decision Records |
 | `sprints/` | Active sprint working notes (not SSOT) |
 | `archive/` | Historical documents, reviews, changelogs, evidence — not active SSOT |
 
@@ -31,6 +31,7 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Roadmap | `roadmap/embed-engine-roadmap.md` |
 | Runtime | `architecture/runtime-decisions.md` |
 | Projection / Experience contract | `architecture/experience-projection.md` |
+| ADR-006 Interpretation & Projection | `architecture/adr/ADR-006-interpretation-projection-layer.md` |
 | Builder workflow | `product/builder/Builder_Workflow_Specification_BWS_v0.1.md` |
 | Design Language | `design/language/embed-engine-design-language-v1.md` |
 | Geometry | `design/geometry/client-studio-geometry-spec.md` |
