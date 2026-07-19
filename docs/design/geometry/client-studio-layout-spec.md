@@ -22,7 +22,7 @@ Responsive behaviour is introduced only below tablet breakpoint.
 
 Priority order
 
-1. Product Bible
+1. Product Constitution
 
 2. UI Blueprint (SSOT)
 

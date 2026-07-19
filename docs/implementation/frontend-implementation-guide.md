@@ -12,9 +12,9 @@ This document defines how Client Studio and future EMBED applications must be im
 
 It complements:
 
-- Product Bible
-- Client Studio Geometry Specification
-- Client Studio Design Language
+- Product Constitution (`docs/product/constitution/product-constitution.md`)
+- Client Studio Geometry Specification (`docs/design/geometry/client-studio-geometry-spec.md`)
+- Embed Engine Design Language (`docs/design/language/embed-engine-design-language-v1.md`)
 
 This document defines implementation rules.
 
@@ -28,7 +28,7 @@ Not visual design.
 
 Implementation must always follow this priority:
 
-1. Product Bible
+1. Product Constitution
 2. Geometry Specification
 3. Design Language
 4. Wireframes
