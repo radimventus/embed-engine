@@ -6,6 +6,10 @@ Active product SSOT lives here.
 | --- | --- |
 | `constitution/` | Product principles, flywheel, moat, governance, CTO principles |
 | `vision/` | Executive summary, vision, business model, founder vision |
+| `object-package.md` | Object Package product contract (SSOT) |
+| `knowledge/` | Knowledge Foundation (SSOT) |
+| `pilots/` | Pilot Foundation (SSOT) |
+| `post-foundation-development-policy.md` | Post-Foundation development policy (SSOT) |
 | `builder/` | Builder product spec and workflow SSOT |
 | `backlog/` | Product backlog (slot; may be empty) |
 
