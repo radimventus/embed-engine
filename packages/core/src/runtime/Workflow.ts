@@ -4,29 +4,30 @@ import type { Command } from "./Command";
 import type { CommandResolver } from "./CommandResolver";
 import type { ExecutionContext } from "./ExecutionContext";
 import type { Interpreter } from "./Interpreter";
-import { MapCommandResolver } from "./MapCommandResolver";
+import { UnknownCommandError } from "./UnknownCommandError";
 import { validate } from "./validate";
 
 export interface WorkflowDependencies {
-  readonly interpreter?: Interpreter;
-  readonly resolver?: CommandResolver;
+  readonly interpreter: Interpreter;
+  readonly resolver: CommandResolver;
 }
 
 /**
  * Sole orchestrator of the Runtime pipeline.
+ * Does not construct its own dependencies.
  */
 export class Workflow {
   private readonly executionContext: ExecutionContext;
-  private readonly interpreter: Interpreter | undefined;
+  private readonly interpreter: Interpreter;
   private readonly resolver: CommandResolver;
 
   constructor(
     executionContext: ExecutionContext,
-    dependencies: WorkflowDependencies = {},
+    dependencies: WorkflowDependencies,
   ) {
     this.executionContext = executionContext;
     this.interpreter = dependencies.interpreter;
-    this.resolver = dependencies.resolver ?? new MapCommandResolver();
+    this.resolver = dependencies.resolver;
   }
 
   run(command: Command): ExperienceModel {
@@ -34,16 +35,14 @@ export class Workflow {
 
     const handler = this.resolver.resolve(command);
 
-    // TODO: execute handler
-    // TODO: interpretation (Interpreter)
-    // TODO: build experience
+    if (!handler) {
+      throw new UnknownCommandError(command.type);
+    }
+
+    handler.execute(command, this.executionContext);
+
     // TODO: publish events
 
-    void handler;
-    void this.executionContext;
-    void this.interpreter;
-
-    const experience: ExperienceModel = {};
-    return experience;
+    return this.interpreter.interpret(this.executionContext);
   }
 }

@@ -13,12 +13,14 @@
   },
   "scripts": {
     "build": "tsc",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/runtime/Runtime.determinism.test.ts"
   },
   "dependencies": {
     "@embed-engine/model": "workspace:*"
   },
   "devDependencies": {
+    "tsx": "^4.20.3",
     "typescript": "^5.9.2"
   }
 }

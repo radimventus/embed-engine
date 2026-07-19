@@ -3,8 +3,8 @@ import type { ExecutionContext } from "./ExecutionContext";
 
 /**
  * Domain-agnostic command handler contract.
- * Concrete handlers live outside this step.
+ * Concrete handlers live outside packages/core (except demo Noop).
  */
 export interface CommandHandler {
-  handle(command: Command, context: ExecutionContext): void;
+  execute(command: Command, context: ExecutionContext): void;
 }

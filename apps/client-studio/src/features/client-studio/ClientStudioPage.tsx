@@ -1,5 +1,6 @@
 import { useRef } from 'react';
-import { Runtime, type SceneGraph } from '@embed-engine/core';
+import type { Runtime, SceneGraph } from '@embed-engine/core';
+import { createDecisionRuntime } from '@embed-engine/decision';
 
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
@@ -22,7 +23,7 @@ export function ClientStudioPage() {
   const runtimeRef = useRef<Runtime | null>(null);
 
   if (runtimeRef.current === null) {
-    runtimeRef.current = new Runtime(PLACEHOLDER_SCENE_GRAPH);
+    runtimeRef.current = createDecisionRuntime(PLACEHOLDER_SCENE_GRAPH);
   }
 
   const runtime = runtimeRef.current;
