@@ -3,9 +3,11 @@ import { describe, it } from "node:test";
 
 import {
   createInitialDecisionState,
+  createInitialFocus,
   createSignal,
   SignalType,
   type DecisionState,
+  type Focus,
   type Signal,
 } from "@embed-engine/core/cognitive";
 
@@ -15,6 +17,15 @@ describe("cognitive public API", () => {
 
     assert.equal(typeof createInitialDecisionState, "function");
     assert.equal(state.objectId, "public-api");
+  });
+
+  it("exports Focus typing and createInitialFocus", () => {
+    const focus: Focus = createInitialFocus();
+    const state = createInitialDecisionState("with-focus");
+
+    assert.equal(typeof createInitialFocus, "function");
+    assert.deepEqual(focus, {});
+    assert.deepEqual(state.focus, {});
   });
 
   it("exports Signal typing, SignalType, and createSignal", () => {

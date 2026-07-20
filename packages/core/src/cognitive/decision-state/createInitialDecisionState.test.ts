@@ -13,6 +13,7 @@ describe("createInitialDecisionState", () => {
     assert.deepEqual(state, {
       objectId: "house-modern-01",
       environment: {},
+      focus: {},
       signals: [],
       priorities: [],
       facts: [],
@@ -27,6 +28,7 @@ describe("createInitialDecisionState", () => {
 
     assert.ok(Object.isFrozen(state));
     assert.ok(Object.isFrozen(state.environment));
+    assert.ok(Object.isFrozen(state.focus));
     assert.ok(Object.isFrozen(state.signals));
     assert.ok(Object.isFrozen(state.priorities));
     assert.ok(Object.isFrozen(state.facts));
@@ -47,7 +49,15 @@ describe("createInitialDecisionState", () => {
     assert.notEqual(first.facts, second.facts);
     assert.notEqual(first.conflicts, second.conflicts);
     assert.notEqual(first.environment, second.environment);
+    assert.notEqual(first.focus, second.focus);
     assert.notEqual(first.metadata, second.metadata);
+  });
+
+  it("initializes Focus via createInitialFocus", () => {
+    const state = createInitialDecisionState("object-1");
+
+    assert.deepEqual(state.focus, {});
+    assert.ok(Object.isFrozen(state.focus));
   });
   it("keeps a stable public decision-state API", () => {
     assert.equal(typeof decisionStateApi.createInitialDecisionState, "function");

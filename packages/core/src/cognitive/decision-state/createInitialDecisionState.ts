@@ -1,3 +1,4 @@
+import { createInitialFocus } from "../focus/createInitialFocus";
 import type { DecisionState } from "./DecisionState";
 
 /**
@@ -7,6 +8,7 @@ export function createInitialDecisionState(objectId: string): DecisionState {
   return Object.freeze({
     objectId,
     environment: Object.freeze({}),
+    focus: createInitialFocus(),
     signals: Object.freeze([]),
     priorities: Object.freeze([]),
     facts: Object.freeze([]),

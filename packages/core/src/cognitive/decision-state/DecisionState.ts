@@ -1,3 +1,4 @@
+import type { Focus } from "../focus/Focus";
 import type { Signal } from "../signals/Signal";
 import type {
   DecisionConflict,
@@ -15,6 +16,7 @@ import type {
 export type DecisionState = {
   readonly objectId: string;
   readonly environment: Environment;
+  readonly focus: Focus;
   readonly signals: readonly Signal[];
   readonly priorities: readonly Priority[];
   readonly facts: readonly DecisionFact[];

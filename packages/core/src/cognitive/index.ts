@@ -11,6 +11,9 @@ export type {
 } from "./decision-state/types";
 export { createInitialDecisionState } from "./decision-state/createInitialDecisionState";
 
+export type { Focus } from "./focus/Focus";
+export { createInitialFocus } from "./focus/createInitialFocus";
+
 export type { Signal, SignalMetadata, SignalPayload } from "./signals/Signal";
 export { SignalType } from "./signals/SignalType";
 export { createSignal } from "./signals/createSignal";
