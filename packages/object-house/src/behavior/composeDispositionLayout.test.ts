@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { composeDecisionStory } from "@embed-engine/core/decision-layer";
 
 import { DISPOSITION_LAYOUT_PACK } from "./disposition-layout-pack";
+import { HOUSEHOLD_PROFILE_FACT_KEY } from "./household-outcome";
 
 function startStory() {
   return composeDecisionStory(DISPOSITION_LAYOUT_PACK, {
@@ -12,6 +13,38 @@ function startStory() {
     signalPayload: { questionId: "layout" },
     previous: null,
   });
+}
+
+function advanceToHousehold() {
+  let story = startStory();
+  story = composeDecisionStory(DISPOSITION_LAYOUT_PACK, {
+    interpretationActiveTopic: "Layout",
+    signalType: "ROOM_VIEWED",
+    signalPayload: { roomId: "living-room" },
+    previous: story,
+  });
+  story = composeDecisionStory(DISPOSITION_LAYOUT_PACK, {
+    interpretationActiveTopic: "Layout",
+    signalType: "ROOM_VIEWED",
+    signalPayload: { roomId: "bedroom" },
+    previous: story,
+  });
+
+  for (const moveId of [
+    "layout.interpret-day-night-split",
+    "layout.compare-living-kitchen",
+    "layout.compare-indoor-garden",
+    "layout.warn-bath-contention",
+  ] as const) {
+    story = composeDecisionStory(DISPOSITION_LAYOUT_PACK, {
+      interpretationActiveTopic: "Layout",
+      signalType: "QUESTION_OPENED",
+      signalPayload: { questionId: moveId },
+      previous: story,
+    });
+  }
+
+  return story;
 }
 
 describe("disposition layout composer", () => {
@@ -33,43 +66,65 @@ describe("disposition layout composer", () => {
     assert.equal(afterDay?.activeMoveId, "layout.discover-night-zone");
   });
 
-  it("completes night discover with bedroom id and reaches outcome via CTAs", () => {
-    let story = startStory();
+  it("personalizes outcome from household profile", () => {
+    let story = advanceToHousehold();
+    assert.equal(story?.activeMoveId, "layout.ask-household-shape");
+
     story = composeDecisionStory(DISPOSITION_LAYOUT_PACK, {
       interpretationActiveTopic: "Layout",
-      signalType: "ROOM_VIEWED",
-      signalPayload: { roomId: "living-room" },
+      signalType: "QUESTION_OPENED",
+      signalPayload: {
+        questionId: "layout.ask-household-shape",
+        householdProfile: "family-wfh",
+      },
+      facts: { [HOUSEHOLD_PROFILE_FACT_KEY]: "family-wfh" },
+      previous: story,
+    });
+    assert.equal(story?.activeMoveId, "layout.recommend-disposition-fit");
+
+    story = composeDecisionStory(DISPOSITION_LAYOUT_PACK, {
+      interpretationActiveTopic: "Layout",
+      signalType: "QUESTION_OPENED",
+      signalPayload: { questionId: "layout.recommend-disposition-fit" },
+      facts: { [HOUSEHOLD_PROFILE_FACT_KEY]: "family-wfh" },
+      previous: story,
+    });
+
+    assert.equal(story?.outcome?.status, "weak-fit");
+    assert.match(story?.outcome?.summary ?? "", /Why this matches your household/);
+  });
+
+  it("returns strong-fit for couple household", () => {
+    let story = advanceToHousehold();
+    story = composeDecisionStory(DISPOSITION_LAYOUT_PACK, {
+      interpretationActiveTopic: "Layout",
+      signalType: "QUESTION_OPENED",
+      signalPayload: {
+        questionId: "layout.ask-household-shape",
+        householdProfile: "couple",
+      },
+      facts: { [HOUSEHOLD_PROFILE_FACT_KEY]: "couple" },
       previous: story,
     });
     story = composeDecisionStory(DISPOSITION_LAYOUT_PACK, {
       interpretationActiveTopic: "Layout",
-      signalType: "ROOM_VIEWED",
-      signalPayload: { roomId: "bedroom" },
+      signalType: "QUESTION_OPENED",
+      signalPayload: { questionId: "layout.recommend-disposition-fit" },
+      facts: { [HOUSEHOLD_PROFILE_FACT_KEY]: "couple" },
       previous: story,
     });
-    assert.equal(story?.activeMoveId, "layout.interpret-day-night-split");
+    assert.equal(story?.outcome?.status, "strong-fit");
+    assert.match(story?.outcome?.summary ?? "", /Why it fits you/);
+  });
 
-    const acknowledgeSpine = [
-      "layout.interpret-day-night-split",
-      "layout.compare-living-kitchen",
-      "layout.compare-indoor-garden",
-      "layout.warn-bath-contention",
-      "layout.ask-household-shape",
-      "layout.recommend-disposition-fit",
-    ] as const;
-
-    for (const moveId of acknowledgeSpine) {
-      assert.equal(story?.activeMoveId, moveId);
-      story = composeDecisionStory(DISPOSITION_LAYOUT_PACK, {
-        interpretationActiveTopic: "Layout",
-        signalType: "QUESTION_OPENED",
-        signalPayload: { questionId: moveId },
-        previous: story,
-      });
-    }
-
-    assert.equal(story?.outcome?.status, "conditional-fit");
-    assert.equal(story?.activeMoveId, null);
+  it("does not complete household step without a profile", () => {
+    const stuck = composeDecisionStory(DISPOSITION_LAYOUT_PACK, {
+      interpretationActiveTopic: "Layout",
+      signalType: "QUESTION_OPENED",
+      signalPayload: { questionId: "layout.ask-household-shape" },
+      previous: advanceToHousehold(),
+    });
+    assert.equal(stuck?.activeMoveId, "layout.ask-household-shape");
   });
 
   it("allows acknowledge escape on discover so Terminal never dead-ends", () => {

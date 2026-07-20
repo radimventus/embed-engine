@@ -3,12 +3,32 @@ import type {
   DecisionStoryPack,
 } from "@embed-engine/core/decision-layer";
 
+import {
+  isHouseholdProfile,
+  recommendPromptFor,
+  resolveDispositionOutcome,
+  HOUSEHOLD_PROFILE_FACT_KEY,
+  type HouseholdProfile,
+} from "./household-outcome";
+
 function payloadString(
   input: DecisionStoryComposeInput,
   key: string,
 ): string | undefined {
   const value = input.signalPayload[key];
   return typeof value === "string" ? value : undefined;
+}
+
+function readHouseholdProfile(
+  input: DecisionStoryComposeInput,
+): HouseholdProfile | undefined {
+  const fromPayload = payloadString(input, "householdProfile");
+  if (isHouseholdProfile(fromPayload)) {
+    return fromPayload;
+  }
+
+  const fromFacts = input.facts?.[HOUSEHOLD_PROFILE_FACT_KEY];
+  return isHouseholdProfile(fromFacts) ? fromFacts : undefined;
 }
 
 /** Client Studio walkthrough ids + object-house fixture ids. */
@@ -29,7 +49,7 @@ const NIGHT_ROOMS = new Set([
 const UPPER_FLOORS = new Set(["1", "upper-floor", "first-floor", "floor-1"]);
 
 /**
- * CAP-P03 Behavior Pack data for Disposition (Layout).
+ * Disposition (Layout) Behavior Pack — Runtime Strategy data.
  * Knowledge source: docs/pilot/behavior-packs/disposition-layout-v1.md
  */
 export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
@@ -110,15 +130,14 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       intent: "discover",
       purpose: "Load who will live here before a fit verdict.",
       advisorPrompt:
-        "Tell the real household — headcount, work-from-home, overnight guests, second child. Disposition is judged against that. Acknowledge when ready.",
+        "Tell the real household — not the brochure family. Pick the closest shape so disposition is judged against your mornings, not an average.",
       tradeOff: "Aspirational family story versus plan capacity.",
     },
     {
       id: "layout.recommend-disposition-fit",
       intent: "recommend",
       purpose: "Deliver a disposition fit conclusion.",
-      advisorPrompt:
-        "Conditional fit for a typical family path: day/night split works; accept modest kitchen, one bath, stairs, and no dedicated study — or walk away on layout grounds. Confirm the verdict.",
+      advisorPrompt: recommendPromptFor(undefined),
       tradeOff: "Pursue with conditions versus layout-based rejection.",
     },
   ]),
@@ -154,22 +173,22 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
             floorId !== undefined &&
             UPPER_FLOORS.has(floorId))
         );
+      case "layout.ask-household-shape":
+        return (
+          acknowledged &&
+          isHouseholdProfile(payloadString(input, "householdProfile"))
+        );
       case "layout.interpret-day-night-split":
       case "layout.compare-living-kitchen":
       case "layout.compare-indoor-garden":
       case "layout.warn-bath-contention":
-      case "layout.ask-household-shape":
       case "layout.recommend-disposition-fit":
         return acknowledged;
       default:
         return false;
     }
   },
-  resolveOutcome() {
-    return Object.freeze({
-      status: "conditional-fit" as const,
-      summary:
-        "Conditional fit: day/night split can work. Accept modest kitchen, one upstairs bath, daily stairs, and no dedicated study — or reject on disposition grounds.",
-    });
+  resolveOutcome(input) {
+    return resolveDispositionOutcome(readHouseholdProfile(input));
   },
 };

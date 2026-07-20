@@ -75,11 +75,12 @@ export function applyQuestionOpened(
   apply: (signal: Signal) => void,
   questionId: string,
   label: string,
+  extra: Readonly<Record<string, unknown>> = {},
 ) {
   apply(
     createSignal({
       type: SignalType.QUESTION_OPENED,
-      payload: { questionId, label },
+      payload: { questionId, label, ...extra },
     }),
   );
 }

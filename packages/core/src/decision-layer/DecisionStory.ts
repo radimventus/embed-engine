@@ -60,5 +60,7 @@ export type DecisionStoryComposeInput = {
   readonly focusMediaId?: string;
   readonly signalType: string;
   readonly signalPayload: Readonly<Record<string, unknown>>;
+  /** Session DecisionState facts (e.g. household.profile) — not persisted. */
+  readonly facts?: Readonly<Record<string, unknown>>;
   readonly previous: DecisionStory | null;
 };

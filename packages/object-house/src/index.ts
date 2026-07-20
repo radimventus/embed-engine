@@ -12,4 +12,9 @@ export {
   DISPOSITION_LAYOUT_PACK,
   createDispositionLayoutComposer,
   getDispositionMove,
+  HOUSEHOLD_CHOICES,
+  HOUSEHOLD_PROFILE_FACT_KEY,
+  isHouseholdProfile,
+  recommendPromptFor,
+  type HouseholdProfile,
 } from "./behavior";

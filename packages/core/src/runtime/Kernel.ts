@@ -112,6 +112,11 @@ export class Kernel {
             focusMediaId: decisionState.focus.mediaId,
             signalType: signal.type,
             signalPayload: signal.payload,
+            facts: Object.freeze(
+              Object.fromEntries(
+                decisionState.facts.map((fact) => [fact.key, fact.value]),
+              ),
+            ),
             previous: current.decisionStory ?? null,
           })
         : (current.decisionStory ?? null);
