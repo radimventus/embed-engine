@@ -16,3 +16,20 @@ export * from "./runtime/validate";
 export * from "./runtime/ExecutionContext";
 export * from "./runtime/SceneGraph";
 export * from "./runtime/evaluate";
+
+export type {
+  DecisionMoveDefinition,
+  DecisionMoveSlot,
+  DecisionOutcome,
+  DecisionOutcomeStatus,
+  DecisionStory,
+  DecisionStoryComposeInput,
+  DecisionStoryPack,
+  DecisionStoryComposer,
+  MoveIntent,
+  MoveSlotStatus,
+} from "./decision-layer";
+export {
+  composeDecisionStory,
+  createPackStoryComposer,
+} from "./decision-layer";

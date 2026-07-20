@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { CommandRuntime, Runtime, SceneGraph } from '@embed-engine/core';
 import { createRuntime } from '@embed-engine/core';
+import { createDispositionLayoutComposer } from '@embed-engine/object-house';
 import {
   CANONICAL_DECISION_FLOW_START_ID,
   createDecisionRuntime,
@@ -38,7 +39,9 @@ export function ClientStudioApp() {
   }
 
   if (cognitiveRuntimeRef.current === null) {
-    cognitiveRuntimeRef.current = createRuntime();
+    cognitiveRuntimeRef.current = createRuntime({
+      storyComposer: createDispositionLayoutComposer(),
+    });
   }
 
   const runtime = runtimeRef.current;

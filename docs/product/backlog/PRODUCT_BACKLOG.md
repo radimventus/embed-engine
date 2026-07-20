@@ -11,16 +11,17 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 
 | ID | Item | Notes |
 | --- | --- | --- |
-| CAP-P02 | Layout Decision Dialogue validation | `docs/pilot/dialogues/layout-dialogue-v1.md` |
-| CAP-P03 | Energy Conscious Buyer pack **or** wire Layout Story (DL-01 + Terminal) | See open-questions |
-| DL-01 | Decision Move / Story / Strategy data contracts | Hosting/transport R1–R2; no UI redesign |
+| CAP-P03 | Decision Runtime MVP | `docs/pilot/cap-p03-decision-runtime-mvp.md` |
+| CAP-P04 | Household branching + stairs splice + richer outcome | After CAP-P03 |
+| DL-01 | Decision Move / Story / Strategy data contracts polish | Hosting settled via Runtime.decisionStory |
 
 ## Done (product)
 
 | ID | Item |
 | --- | --- |
-| CAP-P01 | First Pilot Object `house-modern-01` + Disposition Layout Behavior Pack v1 — `docs/pilot/` |
-| CAP-P02 | Layout Decision Dialogue v1 — `docs/pilot/dialogues/layout-dialogue-v1.md` |
+| CAP-P01 | First Pilot Object `house-modern-01` + Disposition Layout Behavior Pack v1 |
+| CAP-P02 | Layout Decision Dialogue v1 |
+| CAP-P03 | Decision Runtime MVP — Strategy → Story → Terminal |
 
 ---
 

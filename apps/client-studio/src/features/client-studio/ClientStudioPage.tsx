@@ -2,6 +2,7 @@ import type { Runtime } from '@embed-engine/core';
 import type { ReactExperienceModel } from '@embed-engine/model';
 
 import { CognitiveRuntimeProvider } from './cognitive/CognitiveRuntimeContext';
+import { DecisionStoryProvider } from './cognitive/DecisionStoryProvider';
 import { InterpretationProvider } from './cognitive/InterpretationProvider';
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
@@ -29,6 +30,7 @@ export function ClientStudioPage({
   return (
     <CognitiveRuntimeProvider runtime={cognitiveRuntime}>
       <InterpretationProvider>
+        <DecisionStoryProvider>
         <WalkthroughProvider>
           <DesktopCanvas>
             <ClientStudioHeader />
@@ -56,6 +58,7 @@ export function ClientStudioPage({
             <AuditLeadCapture />
           </DesktopCanvas>
         </WalkthroughProvider>
+        </DecisionStoryProvider>
       </InterpretationProvider>
     </CognitiveRuntimeProvider>
   );

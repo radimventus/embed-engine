@@ -2,6 +2,7 @@ import { createInitialDecisionState } from "../cognitive/decision-state/createIn
 import { project } from "../cognitive/interpretation/project";
 import { reduce } from "../cognitive/reducer/reduce";
 import type { Signal } from "../cognitive/signals/Signal";
+import type { DecisionStoryComposer } from "../decision-layer/composeDecisionStory";
 import { EventDispatcher } from "./EventDispatcher";
 import { ModuleRegistry } from "./ModuleRegistry";
 import { StateManager } from "./StateManager";
@@ -26,15 +27,23 @@ function resolveObjectId(objectPackage: RuntimeObjectPackage | undefined): strin
   return "default";
 }
 
+export type KernelOptions = {
+  readonly storyComposer?: DecisionStoryComposer;
+};
+
 /**
  * Internal orchestrator owned by Runtime.
- * Coordinates infrastructure services and cognitive pipeline orchestration.
- * Contains no domain scoring rules — delegates to reduce/project.
+ * Coordinates infrastructure, cognitive pipeline, and optional Decision Story composition.
  */
 export class Kernel {
   private readonly eventDispatcher = new EventDispatcher();
   private readonly stateManager = new StateManager();
   private readonly moduleRegistry = new ModuleRegistry();
+  private readonly storyComposer: DecisionStoryComposer | undefined;
+
+  constructor(options: KernelOptions = {}) {
+    this.storyComposer = options.storyComposer;
+  }
 
   getState(): RuntimeState {
     return this.stateManager.getState();
@@ -65,6 +74,7 @@ export class Kernel {
       objectPackage,
       decisionState,
       interpretation,
+      decisionStory: null,
     });
   }
 
@@ -77,7 +87,8 @@ export class Kernel {
   }
 
   /**
-   * Orchestrates Signal → reduce → DecisionState → project → Interpretation.
+   * Orchestrates Signal → reduce → DecisionState → project → Interpretation
+   * → (optional) Decision Strategy → Decision Story.
    */
   applySignal(signal: Signal): void {
     const current = this.stateManager.getState();
@@ -91,12 +102,27 @@ export class Kernel {
     const decisionState = reduce(previous, signal);
     const interpretation = project(decisionState);
 
+    const decisionStory =
+      this.storyComposer !== undefined
+        ? this.storyComposer({
+            interpretationActiveTopic: interpretation.activeTopic,
+            focusQuestionId: decisionState.focus.questionId,
+            focusRoomId: decisionState.focus.roomId,
+            focusFloorId: decisionState.focus.floorId,
+            focusMediaId: decisionState.focus.mediaId,
+            signalType: signal.type,
+            signalPayload: signal.payload,
+            previous: current.decisionStory ?? null,
+          })
+        : (current.decisionStory ?? null);
+
     this.stateManager.replaceState({
       status: current.status === "idle" ? "ready" : current.status,
       objectPackage: current.objectPackage,
       version: current.version + 1,
       decisionState,
       interpretation,
+      decisionStory,
     });
   }
 

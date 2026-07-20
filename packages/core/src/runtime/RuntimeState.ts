@@ -1,5 +1,6 @@
 import type { DecisionState } from "../cognitive/decision-state/DecisionState";
 import type { Interpretation } from "../cognitive/interpretation/Interpretation";
+import type { DecisionStory } from "../decision-layer/DecisionStory";
 
 /**
  * Opaque Object Package bound to the Runtime.
@@ -26,6 +27,7 @@ export type RuntimeStatus =
  * Single source of truth for the platform Runtime.
  * Owned exclusively by StateManager.
  * Cognitive fields are orchestrated snapshots (written only via reduce/project).
+ * decisionStory is Strategy output (Decision Layer) — not Interpretation.
  */
 export interface RuntimeState {
   readonly status: RuntimeStatus;
@@ -33,6 +35,7 @@ export interface RuntimeState {
   readonly version: number;
   readonly decisionState?: DecisionState;
   readonly interpretation?: Interpretation;
+  readonly decisionStory?: DecisionStory | null;
 }
 
 export type RuntimeListener = (state: RuntimeState) => void;

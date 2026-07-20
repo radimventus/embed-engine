@@ -8,3 +8,8 @@ export {
   interpretHouseHighlights,
   type HouseInterpretation,
 } from "./decision";
+export {
+  DISPOSITION_LAYOUT_PACK,
+  createDispositionLayoutComposer,
+  getDispositionMove,
+} from "./behavior";

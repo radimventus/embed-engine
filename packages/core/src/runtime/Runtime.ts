@@ -1,4 +1,5 @@
 import type { Signal } from "../cognitive/signals/Signal";
+import type { DecisionStoryComposer } from "../decision-layer/composeDecisionStory";
 import { Kernel } from "./Kernel";
 import type {
   RuntimeEvent,
@@ -8,13 +9,20 @@ import type {
   Unsubscribe,
 } from "./RuntimeState";
 
+export type RuntimeOptions = {
+  readonly storyComposer?: DecisionStoryComposer;
+};
+
 /**
  * Public Runtime façade.
  * Owns Kernel. Exposes lifecycle, signal application, and state access.
- * Cognitive domain rules live in reduce/project — Runtime only orchestrates.
  */
 export class Runtime {
-  private readonly kernel = new Kernel();
+  private readonly kernel: Kernel;
+
+  constructor(options: RuntimeOptions = {}) {
+    this.kernel = new Kernel(options);
+  }
 
   async load(objectPackage: RuntimeObjectPackage): Promise<void> {
     this.assertNotDestroyed();
@@ -27,7 +35,7 @@ export class Runtime {
   }
 
   /**
-   * Apply a Cognitive Signal through reduce → project.
+   * Apply a Cognitive Signal through reduce → project → (optional) Strategy.
    */
   applySignal(signal: Signal): void {
     this.assertNotDestroyed();

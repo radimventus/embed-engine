@@ -7,11 +7,13 @@ import type {
 } from "./RuntimeState";
 import type { DecisionState } from "../cognitive/decision-state/DecisionState";
 import type { Interpretation } from "../cognitive/interpretation/Interpretation";
+import type { DecisionStory } from "../decision-layer/DecisionStory";
 
 function createInitialState(): RuntimeState {
   return {
     status: "idle",
     version: 0,
+    decisionStory: null,
   };
 }
 
@@ -44,13 +46,14 @@ export class StateManager {
 
   /**
    * Advance status/package and bump version by one.
-   * Preserves cognitive snapshots unless explicitly replaced.
+   * Preserves cognitive / story snapshots unless explicitly replaced.
    */
   advance(next: {
     readonly status: RuntimeStatus;
     readonly objectPackage?: RuntimeObjectPackage;
     readonly decisionState?: DecisionState;
     readonly interpretation?: Interpretation;
+    readonly decisionStory?: DecisionStory | null;
   }): void {
     this.replaceState({
       status: next.status,
@@ -64,6 +67,10 @@ export class StateManager {
         next.interpretation !== undefined
           ? next.interpretation
           : this.state.interpretation,
+      decisionStory:
+        next.decisionStory !== undefined
+          ? next.decisionStory
+          : this.state.decisionStory ?? null,
     });
   }
 
@@ -78,6 +85,7 @@ export class StateManager {
       version: this.state.version,
       decisionState: this.state.decisionState,
       interpretation: this.state.interpretation,
+      decisionStory: this.state.decisionStory ?? null,
     });
   }
 

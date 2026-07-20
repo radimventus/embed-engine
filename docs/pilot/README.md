@@ -20,7 +20,8 @@ It is documentation / knowledge — not Runtime or React implementation.
 | [stories/layout-decision-story-v1.md](./stories/layout-decision-story-v1.md) | First complete Layout Decision Story |
 | [strategy/layout-strategy-composition.md](./strategy/layout-strategy-composition.md) | How Strategy composes this Story |
 | [terminal/layout-terminal-experience.md](./terminal/layout-terminal-experience.md) | Decision Terminal interaction (no UI mockups) |
-| [dialogues/layout-dialogue-v1.md](./dialogues/layout-dialogue-v1.md) | **CAP-P02** — complete Layout decision dialogue (mind → decision) |
+| [dialogues/layout-dialogue-v1.md](./dialogues/layout-dialogue-v1.md) | **CAP-P02** — complete Layout decision dialogue |
+| [cap-p03-decision-runtime-mvp.md](./cap-p03-decision-runtime-mvp.md) | **CAP-P03** — Decision Runtime MVP (working) |
 | [validation.md](./validation.md) | Buyer decision-quality validation |
 | [open-questions.md](./open-questions.md) | Architecture limitations discovered — **not fixed** |
 
