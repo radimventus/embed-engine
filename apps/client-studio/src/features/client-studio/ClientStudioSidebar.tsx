@@ -1,28 +1,36 @@
 import { useState } from 'react';
+import type { ReactExperienceModel } from '@embed-engine/model';
 
-const HOUSE_MENU_ITEMS = [
-  'MODERN 01',
-  'MODERN 02',
-  'MODERN 03',
-  'MODERN 04',
-  'MODERN 05',
-  'MODERN 06',
-] as const;
+import { DecisionFlowNavigator } from './decision-flow/DecisionFlowNavigator';
 
 const SIDEBAR_COLLAPSED_WIDTH_PX = 48;
 const SIDEBAR_EXPANDED_WIDTH_PX = 220;
 
-export function ClientStudioSidebar() {
-  const [expanded, setExpanded] = useState(false);
+type ClientStudioSidebarProps = {
+  experience: ReactExperienceModel | null;
+  onSelectDecision: (decisionId: string) => void;
+};
+
+/**
+ * Left shell: presentation expand/collapse only.
+ * Decision Flow navigation state comes exclusively from ReactExperienceModel.
+ */
+export function ClientStudioSidebar({
+  experience,
+  onSelectDecision,
+}: ClientStudioSidebarProps) {
+  const [expanded, setExpanded] = useState(true);
 
   return (
     <aside
-      className="flex h-full min-h-screen shrink-0 flex-col bg-embed-brand-navy py-section transition-[width] duration-200 ease-out"
+      className="flex h-full min-h-screen shrink-0 flex-col bg-embed-brand-navy transition-[width] duration-200 ease-out"
       style={{
         width: expanded ? SIDEBAR_EXPANDED_WIDTH_PX : SIDEBAR_COLLAPSED_WIDTH_PX,
       }}
     >
-      <div className={`flex ${expanded ? 'justify-start px-4' : 'justify-center'}`}>
+      <div
+        className={`flex h-header shrink-0 -translate-y-[3px] items-center ${expanded ? 'justify-start px-4' : 'justify-center'}`}
+      >
         <button
           type="button"
           aria-label={expanded ? 'Zavřít menu' : 'Otevřít menu'}
@@ -36,18 +44,13 @@ export function ClientStudioSidebar() {
         </button>
       </div>
 
-      {expanded ? (
-        <nav aria-label="Domy" className="mt-section flex flex-col px-2">
-          {HOUSE_MENU_ITEMS.map((house) => (
-            <button
-              key={house}
-              type="button"
-              className="w-full rounded-md px-3 py-2.5 text-left text-sm tracking-wide text-embed-background-primary transition-opacity duration-150 ease-out hover:bg-embed-background-primary/10 hover:opacity-95"
-            >
-              {house}
-            </button>
-          ))}
-        </nav>
+      {expanded && experience !== null ? (
+        <div className="mt-section">
+          <DecisionFlowNavigator
+            experience={experience}
+            onSelectDecision={onSelectDecision}
+          />
+        </div>
       ) : null}
     </aside>
   );

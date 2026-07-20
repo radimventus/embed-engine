@@ -69,15 +69,15 @@ export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
       >
         <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-embed-border-default" />
         <div
-          className={`absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-embed-brand-gold ${DECISION_TRANSITION_CLASS} transition-[width]`}
+          className={`absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-embed-brand-gold transition-[width] duration-300 ease-out ${DECISION_TRANSITION_CLASS}`}
           style={{ width: `${value * 100}%` }}
         />
         <div
-          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 ${DECISION_TRANSITION_CLASS} transition-[left]`}
+          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 transition-[left] duration-300 ease-out ${DECISION_TRANSITION_CLASS}`}
           style={{ left: `${value * 100}%` }}
         >
           <div className="flex h-7 w-7 items-center justify-center">
-            <div className="h-3.5 w-3.5 rounded-full border-2 border-embed-brand-gold bg-embed-background-primary shadow-[0_1px_4px_rgba(0,30,58,0.12)] transition-shadow group-hover:shadow-[0_2px_6px_rgba(0,30,58,0.16)]" />
+            <div className="h-3.5 w-3.5 rounded-full border-2 border-embed-brand-gold bg-embed-background-primary shadow-[0_1px_4px_rgba(0,25,48,0.12)] transition-shadow group-hover:shadow-[0_2px_6px_rgba(0,25,48,0.16)]" />
           </div>
         </div>
       </div>

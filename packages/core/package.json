@@ -1,0 +1,37 @@
+{
+  "name": "@embed-engine/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./cognitive": {
+      "types": "./dist/cognitive/index.d.ts",
+      "import": "./dist/cognitive/index.js",
+      "default": "./dist/cognitive/index.js"
+    },
+    "./decision-layer": {
+      "types": "./dist/decision-layer/index.d.ts",
+      "import": "./dist/decision-layer/index.js",
+      "default": "./dist/decision-layer/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/runtime/CommandRuntime.determinism.test.ts src/runtime/Runtime.cognitive.test.ts src/cognitive/decision-state/DecisionState.test.ts src/cognitive/decision-state/createInitialDecisionState.test.ts src/cognitive/signals/Signal.test.ts src/cognitive/signals/createSignal.test.ts src/cognitive/focus/Focus.test.ts src/cognitive/focus/createInitialFocus.test.ts src/cognitive/reducer/reduce.test.ts src/cognitive/interpretation/project.test.ts src/cognitive/cognitive.public-api.test.ts src/decision-layer/composeDecisionStory.test.ts"
+  },
+  "dependencies": {
+    "@embed-engine/model": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  }
+}

@@ -27,7 +27,7 @@ export function primaryButtonClass(options: {
     MOTION_CLASS,
     FOCUS_RING_CLASS,
     PRIMARY_SIZE_CLASS[size],
-    'bg-[#001E3A] text-[#FFFFFF]',
+    'bg-[#001930] text-[#FFFFFF]',
     state === 'disabled' && 'cursor-not-allowed',
     options.className,
   );

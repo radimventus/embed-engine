@@ -28,7 +28,7 @@ export const PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_PX = 21;
 export const PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS = 'px-[21px]';
 
 export const PRIORITY_ENGINE_INTRO_PANEL_CLASS =
-  'box-border absolute top-[20px] right-[21px] z-0 flex h-[358px] w-[680px] min-w-[680px] max-w-[680px] flex-col p-section';
+  'box-border relative z-0 flex min-h-[358px] w-full max-w-[680px] flex-col self-start p-section';
 
 export const PRIORITY_ENGINE_ACTION_AREA_CLASS =
   'mt-5 flex w-[680px] shrink-0 items-center justify-between gap-section';

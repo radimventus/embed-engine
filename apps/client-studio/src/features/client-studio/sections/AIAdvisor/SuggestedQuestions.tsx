@@ -1,52 +1,20 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { colors } from '@embed-engine/design-tokens';
+import type { RecommendedQuestion } from '@embed-engine/core/cognitive';
 
+import { useInterpretation } from '../../cognitive/InterpretationProvider';
 import {
   FAQ_ACCORDION_LIST_WIDTH_CLASS,
   FAQ_COLUMN_WIDTH_CLASS,
 } from './ai-advisor-layout';
 
-const FAQ_ITEMS = [
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Curabitur blandit tempus porttitor. Maecenas faucibus mollis interdum. Aenean lacinia bibendum nulla sed consectetur.',
-  },
-] as const;
-
 type SuggestedQuestionsProps = {
-  onQuestionSelect: (question: string) => void;
+  onQuestionSelect: (question: string, topicId: string) => void;
 };
 
 const FAQ_CARET_SIZE = { width: 18, height: 8 } as const;
 
-/** Classic select caret — locked box so flex/CSS never squash aspect ratio. */
 function FaqCaretIcon({ expanded }: { expanded: boolean }) {
   return (
     <span
@@ -81,34 +49,55 @@ function FaqCaretIcon({ expanded }: { expanded: boolean }) {
 }
 
 export function FaqTitle() {
+  const interpretation = useInterpretation();
+
   return (
-    <h2 className={`${FAQ_COLUMN_WIDTH_CLASS} relative z-10 m-0 shrink-0 text-base font-bold leading-none tracking-wide text-embed-foreground-primary`}>
-      CO NAŠE KLIENTY NEJVÍCE ZAJÍMÁ:
-    </h2>
+    <div className={`${FAQ_COLUMN_WIDTH_CLASS} relative z-10 m-0 shrink-0`}>
+      <h2 className="m-0 text-base font-bold leading-none tracking-wide text-embed-foreground-primary">
+        CO NAŠE KLIENTY NEJVÍCE ZAJÍMÁ:
+      </h2>
+      <p
+        className="mt-2 text-[11px] leading-snug text-embed-foreground-primary/55 transition-opacity duration-300"
+        data-testid="faq-active-topic"
+      >
+        Recommended for: {interpretation.activeTopic}
+      </p>
+    </div>
   );
 }
 
 type FaqItemProps = {
-  question: string;
-  answer: string;
-  onQuestionSelect: (question: string) => void;
+  item: RecommendedQuestion;
+  onQuestionSelect: (question: string, topicId: string) => void;
 };
 
-function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
-  const [expanded, setExpanded] = useState(false);
+function FaqItem({ item, onQuestionSelect }: FaqItemProps) {
+  const [expanded, setExpanded] = useState(item.highlighted);
+
+  useEffect(() => {
+    if (item.highlighted) {
+      setExpanded(true);
+    }
+  }, [item.highlighted, item.id]);
 
   return (
     <li
-      className="shrink-0 overflow-hidden rounded-[8px] border border-embed-border-default"
+      className={`shrink-0 overflow-hidden rounded-[8px] border transition-[border-color,box-shadow,transform] duration-300 ${
+        item.highlighted
+          ? 'scale-[1.01] border-embed-brand-gold shadow-[0_0_0_1px_rgba(212,175,55,0.28)]'
+          : 'border-embed-border-default'
+      }`}
       style={{ backgroundColor: colors.surface.card }}
+      data-testid={`faq-item-${item.id}`}
+      data-highlighted={item.highlighted ? 'true' : 'false'}
     >
       <div className="flex h-faq-row items-center gap-3 px-section">
         <button
           type="button"
-          onClick={() => onQuestionSelect(question)}
+          onClick={() => onQuestionSelect(item.question, item.topicId)}
           className="min-w-0 flex-1 cursor-pointer truncate text-left text-sm text-embed-foreground-primary"
         >
-          {question}
+          {item.question}
         </button>
         <button
           type="button"
@@ -122,11 +111,14 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
       </div>
       <div
         className="grid transition-[grid-template-rows] duration-500 ease-out"
-        style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
+        style={{ gridTemplateRows: expanded || item.highlighted ? '1fr' : '0fr' }}
       >
         <div className="min-h-0 overflow-hidden">
-          <p className="border-t border-embed-border-default px-section py-3 text-sm leading-relaxed text-embed-foreground-primary/80">
-            {answer}
+          <p className="border-t border-embed-border-default px-section py-2 text-[11px] leading-relaxed text-embed-brand-gold/90">
+            {item.why}
+          </p>
+          <p className="px-section pb-3 text-sm leading-relaxed text-embed-foreground-primary/80">
+            {item.answer}
           </p>
         </div>
       </div>
@@ -134,17 +126,18 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
   );
 }
 
-/** FAQ topic rows — height 45px header, gap 14px; caret expands answer in 0.5s. */
+/** FAQ rows from Interpretation.recommendedQuestions — no local catalog. */
 export function FaqList({ onQuestionSelect }: SuggestedQuestionsProps) {
+  const interpretation = useInterpretation();
+  const questions = interpretation.recommendedQuestions;
+
   return (
-    <ul className={`${FAQ_ACCORDION_LIST_WIDTH_CLASS} flex shrink-0 flex-col gap-[14px]`}>
-      {FAQ_ITEMS.map((item, index) => (
-        <FaqItem
-          key={index}
-          question={item.question}
-          answer={item.answer}
-          onQuestionSelect={onQuestionSelect}
-        />
+    <ul
+      className={`${FAQ_ACCORDION_LIST_WIDTH_CLASS} flex shrink-0 flex-col gap-[14px]`}
+      data-testid="faq-list"
+    >
+      {questions.map((item) => (
+        <FaqItem key={item.id} item={item} onQuestionSelect={onQuestionSelect} />
       ))}
     </ul>
   );

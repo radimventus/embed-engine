@@ -9,6 +9,19 @@ export { Recommendation } from './entities/Recommendation';
 export { Room } from './entities/Room';
 export { Theme } from './entities/Theme';
 
+export type {
+  DecisionId,
+  ExperienceChoice,
+  ExperienceDecision,
+  ExperienceDecisionFilter,
+  ExperienceHighlight,
+  ExperienceHighlightTarget,
+  ExperienceHouse,
+  ExperienceHouseMedia,
+  ExperienceHouseRoom,
+  ReactExperienceModel,
+} from './experience/ReactExperienceModel';
+
 export { Area, type AreaUnit } from './value-objects/Area';
 export { Coordinates } from './value-objects/Coordinates';
 export { Id } from './value-objects/Id';

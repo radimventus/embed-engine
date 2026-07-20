@@ -39,7 +39,7 @@ function segmentFillStyle(
   if (disabled) {
     return {
       backgroundColor: colors.surface.interactive,
-      color: 'rgb(0 30 58 / 0.3)',
+      color: 'rgb(0 25 48 / 0.3)',
     };
   }
 

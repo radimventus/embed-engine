@@ -1,5 +1,7 @@
+import type { Runtime } from '@embed-engine/core';
+
+import { DecisionTerminal } from '../DecisionTerminal/DecisionTerminal';
 import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
-import { IntroText } from './IntroText';
 import {
   PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS,
   PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS,
@@ -11,16 +13,22 @@ import { RecommendationPanel } from './RecommendationPanel';
 import { SectionHeader } from './SectionHeader';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 
-export function PriorityEngine() {
+type PriorityEngineProps = {
+  runtime: Runtime;
+};
+
+export function PriorityEngine({ runtime }: PriorityEngineProps) {
+  void runtime;
+
   return (
     <section
       aria-label="Priority Engine"
       className={`relative ${SECTION_SURFACE_CLASS} ${PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS} ${PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS}`}
     >
       <SectionHeader />
-      <div className="grid grid-cols-[52fr_48fr] items-stretch gap-section mobile:grid-cols-1">
+      <div className="grid grid-cols-[52fr_48fr] items-start gap-section mobile:grid-cols-1">
         <PriorityCards />
-        <IntroText />
+        <DecisionTerminal />
       </div>
       {PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL ? <RecommendationPanel /> : null}
       {PRIORITY_ENGINE_SHOW_DECISION_REPORT ? <DecisionReportPreview /> : null}

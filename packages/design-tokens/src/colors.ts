@@ -3,14 +3,14 @@
  * Single source of truth — only these palette values exist.
  */
 export const palette = {
-  navy: '#001E3A',
+  navy: '#001930',
   warmWhite: '#F7F6F4',
   /** Interactive secondary surfaces (FAQ rows, segment track, idle segments). */
   warmGray: '#E8E5E0',
   lightGray: '#E3E3E3',
   gold: '#C8A165',
-  /** Strong accent fill (Audit segmented control). */
-  goldIntense: '#D4AF37',
+  /** Muted bronze accent — single Audit / action gold (CTA, workflow, panels). */
+  goldIntense: '#B8922D',
   pureWhite: '#FFFFFF',
 } as const;
 
