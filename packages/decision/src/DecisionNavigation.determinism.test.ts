@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import type { Runtime, SceneGraph } from "@embed-engine/core";
+import type { CommandRuntime, SceneGraph } from "@embed-engine/core";
 
 import { createDecisionRuntime } from "./createDecisionRuntime";
 import type { DecisionState } from "./DecisionState";
@@ -28,7 +28,7 @@ function goBack(): GoBackCommand {
   return { type: "go-back" };
 }
 
-function navigationOf(runtime: Runtime) {
+function navigationOf(runtime: CommandRuntime) {
   const state = runtime.context.state as DecisionState;
   return {
     currentDecisionId: state.currentDecisionId,

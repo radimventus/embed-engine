@@ -1,64 +1,73 @@
-import type { ReactExperienceModel } from "@embed-engine/model";
+import type {
+  RuntimeEvent,
+  RuntimeListener,
+  RuntimeObjectPackage,
+  RuntimeState,
+} from "./RuntimeState";
 
-import type { Command } from "./Command";
-import type { CommandResolver } from "./CommandResolver";
-import { ExecutionContext } from "./ExecutionContext";
-import type { Interpreter } from "./Interpreter";
-import type { SceneGraph } from "./SceneGraph";
-import { Workflow } from "./Workflow";
-
-export interface RuntimeOptions {
-  readonly executionContext: ExecutionContext;
-  readonly resolver: CommandResolver;
-  readonly interpreter: Interpreter;
-}
-
+/**
+ * Platform Runtime skeleton.
+ * Owns lifecycle and state. No business logic in M1.1.
+ */
 export class Runtime {
-  private readonly sceneGraph: SceneGraph;
-  private readonly executionContext: ExecutionContext;
-  private readonly workflow: Workflow;
+  private state: RuntimeState = { loaded: false };
+  private readonly listeners = new Set<RuntimeListener>();
+  private destroyed = false;
 
-  constructor(sceneGraph: SceneGraph, options: RuntimeOptions) {
-    this.sceneGraph = sceneGraph;
-    this.executionContext = options.executionContext;
-
-    this.workflow = new Workflow(this.executionContext, {
-      resolver: options.resolver,
-      interpreter: options.interpreter,
-    });
-  }
-
-  get context(): ExecutionContext {
-    return this.executionContext;
+  /**
+   * Bind an Object Package to this Runtime instance.
+   * TODO: validate and store package; initialize modules.
+   */
+  async load(_objectPackage: RuntimeObjectPackage): Promise<void> {
+    this.assertActive();
+    this.state = { loaded: true };
+    this.notify();
   }
 
   /**
-   * Sole future public entry API for the Runtime Kernel.
+   * Accept a runtime event.
+   * TODO: route to Decision / Intelligence / modules.
    */
-  dispatch(command: Command): ReactExperienceModel {
-    return this.workflow.run(command);
+  async dispatch(_event: RuntimeEvent): Promise<void> {
+    this.assertActive();
+    // Placeholder — no behavior in M1.1.
+    this.notify();
   }
 
-  /** @deprecated Legacy scene API — retained until Workflow replaces it. */
-  start(): void {
-    this.executionContext.currentSceneId = this.sceneGraph.start;
+  getState(): RuntimeState {
+    this.assertActive();
+    return this.state;
   }
 
-  /** @deprecated Legacy scene API — retained until Workflow replaces it. */
-  next(): void {
-    const current =
-      this.sceneGraph.scenes[this.executionContext.currentSceneId];
+  /**
+   * Subscribe to state changes.
+   * Returns an unsubscribe function.
+   */
+  subscribe(listener: RuntimeListener): () => void {
+    this.assertActive();
+    this.listeners.add(listener);
+    return () => {
+      this.listeners.delete(listener);
+    };
+  }
 
-    if (!current?.next) {
+  destroy(): void {
+    if (this.destroyed) {
       return;
     }
-
-    this.executionContext.currentSceneId = current.next;
+    this.listeners.clear();
+    this.destroyed = true;
   }
 
-  /**
-   * @deprecated Legacy scene API — use dispatch with a domain command instead.
-   * Domain answers are owned by DecisionState outside Core.
-   */
-  answer(_key: string, _value: unknown): void {}
+  private notify(): void {
+    for (const listener of this.listeners) {
+      listener(this.state);
+    }
+  }
+
+  private assertActive(): void {
+    if (this.destroyed) {
+      throw new Error("Runtime has been destroyed");
+    }
+  }
 }

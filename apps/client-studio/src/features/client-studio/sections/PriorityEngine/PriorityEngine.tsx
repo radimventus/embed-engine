@@ -1,4 +1,4 @@
-import type { Runtime } from '@embed-engine/core';
+import type { CommandRuntime } from '@embed-engine/core';
 
 import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
 import { IntroText } from './IntroText';
@@ -14,7 +14,7 @@ import { SectionHeader } from './SectionHeader';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 
 type PriorityEngineProps = {
-  runtime: Runtime;
+  runtime: CommandRuntime;
 };
 
 export function PriorityEngine({ runtime }: PriorityEngineProps) {

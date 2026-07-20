@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import type { Runtime } from "@embed-engine/core";
+import type { CommandRuntime } from "@embed-engine/core";
 import type { SceneGraph } from "@embed-engine/core";
 
 import { createDecisionRuntime } from "./createDecisionRuntime";
@@ -27,12 +27,12 @@ function setAnswer(decisionId: string, value: unknown): SetAnswerCommand {
   };
 }
 
-function answersOf(runtime: Runtime): [string, unknown][] {
+function answersOf(runtime: CommandRuntime): [string, unknown][] {
   const state = runtime.context.state as DecisionState;
   return [...state.answers.entries()];
 }
 
-describe("Runtime determinism", () => {
+describe("CommandRuntime determinism", () => {
   describe("same input → same output", () => {
     it("two fresh Runtimes produce equal ReactExperienceModel for the same command", () => {
       const runtimeA = createDecisionRuntime(SCENE_GRAPH);
@@ -107,7 +107,7 @@ describe("Runtime determinism", () => {
     });
   });
 
-  describe("Runtime has no hidden state", () => {
+  describe("CommandRuntime has no hidden state", () => {
     it("isolated Runtimes with the same configuration reproduce the same result", () => {
       const sequence = [
         setAnswer("priority-focus", "price"),

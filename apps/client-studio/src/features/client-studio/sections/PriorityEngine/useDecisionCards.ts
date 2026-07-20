@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import type { Runtime } from '@embed-engine/core';
+import type { CommandRuntime } from '@embed-engine/core';
 
 import {
   DECISION_CARD_IMPORTANCE_DEFAULT,
@@ -21,7 +21,7 @@ function createInitialState(): Record<string, DecisionCardState> {
   );
 }
 
-export function useDecisionCards(runtime: Runtime) {
+export function useDecisionCards(runtime: CommandRuntime) {
   const [cards, setCards] = useState<Record<string, DecisionCardState>>(createInitialState);
 
   const toggleCard = useCallback(

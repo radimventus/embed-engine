@@ -1,4 +1,4 @@
-import type { Runtime } from '@embed-engine/core';
+import type { CommandRuntime } from '@embed-engine/core';
 import type { ReactExperienceModel } from '@embed-engine/model';
 
 import { ClientStudioHeader } from './ClientStudioHeader';
@@ -12,7 +12,7 @@ import { PropertyExplorer } from './sections/PropertyExplorer/PropertyExplorer';
 import { WalkthroughProvider } from '../walkthrough';
 
 type ClientStudioPageProps = {
-  runtime: Runtime;
+  runtime: CommandRuntime;
   experience: ReactExperienceModel | null;
   onSelectChoice: (decisionId: string, choiceId: string) => void;
   onContinue: () => void;

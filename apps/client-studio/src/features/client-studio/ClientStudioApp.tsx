@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { Runtime, SceneGraph } from '@embed-engine/core';
+import type { CommandRuntime, SceneGraph } from '@embed-engine/core';
 import {
   CANONICAL_DECISION_FLOW_START_ID,
   createDecisionRuntime,
@@ -22,11 +22,11 @@ const PLACEHOLDER_SCENE_GRAPH: SceneGraph = {
 };
 
 /**
- * Composition root for Client Studio Runtime + Experience rendering.
- * Navigation state lives only in Runtime; React holds the latest ReactExperienceModel.
+ * Composition root for Client Studio CommandRuntime + Experience rendering.
+ * Navigation state lives only in CommandRuntime; React holds the latest ReactExperienceModel.
  */
 export function ClientStudioApp() {
-  const runtimeRef = useRef<Runtime | null>(null);
+  const runtimeRef = useRef<CommandRuntime | null>(null);
   const [experience, setExperience] = useState<ReactExperienceModel | null>(null);
 
   if (runtimeRef.current === null) {

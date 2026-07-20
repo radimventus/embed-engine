@@ -1,6 +1,6 @@
 import {
   MapCommandResolver,
-  Runtime,
+  CommandRuntime,
   type ExecutionContext,
   type SceneGraph,
 } from "@embed-engine/core";
@@ -37,7 +37,7 @@ import {
  * Composition root for the House Decision Experience.
  * Object Package is injected into projection — never exposed to renderers.
  */
-export function createDecisionRuntime(sceneGraph: SceneGraph): Runtime {
+export function createDecisionRuntime(sceneGraph: SceneGraph): CommandRuntime {
   const decisionRegistry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
 
   const decisionState: DecisionState = {
@@ -67,7 +67,7 @@ export function createDecisionRuntime(sceneGraph: SceneGraph): Runtime {
   );
   resolver.register(GO_BACK_COMMAND_TYPE, new GoBackCommandHandler());
 
-  return new Runtime(sceneGraph, {
+  return new CommandRuntime(sceneGraph, {
     executionContext,
     resolver,
     interpreter: new DecisionInterpreter(

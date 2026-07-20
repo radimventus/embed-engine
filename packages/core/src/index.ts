@@ -4,7 +4,10 @@ export * from "./runtime/CommandResolver";
 export * from "./runtime/MapCommandResolver";
 export * from "./runtime/UnknownCommandError";
 
+export * from "./runtime/CommandRuntime";
 export * from "./runtime/Runtime";
+export * from "./runtime/RuntimeState";
+export * from "./runtime/createRuntime";
 export * from "./runtime/Workflow";
 export * from "./runtime/Interpreter";
 export * from "./runtime/DefaultInterpreter";

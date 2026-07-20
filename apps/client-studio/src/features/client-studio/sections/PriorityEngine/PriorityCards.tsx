@@ -1,4 +1,4 @@
-import type { Runtime } from '@embed-engine/core';
+import type { CommandRuntime } from '@embed-engine/core';
 
 import { DecisionActionArea } from './DecisionActionArea';
 import { DecisionCard } from './DecisionCard';
@@ -11,7 +11,7 @@ import {
 import { useDecisionCards } from './useDecisionCards';
 
 type PriorityCardsProps = {
-  runtime: Runtime;
+  runtime: CommandRuntime;
 };
 
 export function PriorityCards({ runtime }: PriorityCardsProps) {
