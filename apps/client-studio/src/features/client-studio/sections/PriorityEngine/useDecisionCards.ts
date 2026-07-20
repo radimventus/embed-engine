@@ -1,48 +1,22 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import type { Runtime } from '@embed-engine/core';
-import type { Interpretation } from '@embed-engine/core/cognitive';
+import { useCallback, useMemo } from 'react';
 
 import {
   applyQuestionOpened,
   useApplyCognitiveSignal,
 } from '../../cognitive/CognitiveRuntimeContext';
+import { useInterpretation } from '../../cognitive/InterpretationProvider';
 import {
   DECISION_CATEGORIES,
   DECISION_MINIMUM_SELECTION,
 } from './decision-cards.constants';
 
-function emptyInterpretation(): Interpretation {
-  return {
-    priorities: DECISION_CATEGORIES.map((category) => ({
-      id: category.id,
-      weight: 0.35,
-    })),
-    events: [],
-  };
-}
-
 /**
- * Priority Engine reads Interpretation from Runtime.
- * Writes happen only via Signal → reduce → project.
+ * Priority renderer — reads shared Interpretation only.
  */
-export function useDecisionCards(runtime: Runtime) {
+export function useDecisionCards() {
+  const interpretation = useInterpretation();
   const applySignal = useApplyCognitiveSignal();
-  const [interpretation, setInterpretation] = useState<Interpretation>(
-    () => runtime.getState().interpretation ?? emptyInterpretation(),
-  );
-  const [questionId, setQuestionId] = useState<string | undefined>(
-    () => runtime.getState().decisionState?.focus.questionId,
-  );
-
-  useEffect(() => {
-    setInterpretation(runtime.getState().interpretation ?? emptyInterpretation());
-    setQuestionId(runtime.getState().decisionState?.focus.questionId);
-
-    return runtime.subscribe((state) => {
-      setInterpretation(state.interpretation ?? emptyInterpretation());
-      setQuestionId(state.decisionState?.focus.questionId);
-    });
-  }, [runtime]);
+  const questionId = interpretation.priorities.find((priority) => priority.weight === 1)?.id;
 
   const priorityById = useMemo(() => {
     return Object.fromEntries(

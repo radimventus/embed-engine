@@ -18,6 +18,8 @@ type PriorityEngineProps = {
 };
 
 export function PriorityEngine({ runtime }: PriorityEngineProps) {
+  void runtime;
+
   return (
     <section
       aria-label="Priority Engine"
@@ -25,7 +27,7 @@ export function PriorityEngine({ runtime }: PriorityEngineProps) {
     >
       <SectionHeader />
       <div className="grid grid-cols-[52fr_48fr] items-start gap-section mobile:grid-cols-1">
-        <PriorityCards runtime={runtime} />
+        <PriorityCards />
         <IntroText />
       </div>
       {PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL ? <RecommendationPanel /> : null}

@@ -15,6 +15,7 @@ type DecisionCardProps = {
   importance: number;
   isActive: boolean;
   isHighlighted: boolean;
+  rank?: number;
   reason?: string;
   onToggle: () => void;
 };
@@ -27,6 +28,7 @@ export function DecisionCard({
   importance,
   isActive,
   isHighlighted,
+  rank,
   reason,
   onToggle,
 }: DecisionCardProps) {
@@ -54,6 +56,11 @@ export function DecisionCard({
         }`}
         style={{ transformOrigin: 'center center' }}
       >
+        {rank !== undefined ? (
+          <span className="absolute right-1.5 top-1.5 text-[9px] font-semibold tabular-nums text-embed-brand-gold">
+            #{rank}
+          </span>
+        ) : null}
         <div className="flex flex-col items-center gap-2.5">
           <span
             className={`-mt-0.5 flex items-center justify-center leading-none ${

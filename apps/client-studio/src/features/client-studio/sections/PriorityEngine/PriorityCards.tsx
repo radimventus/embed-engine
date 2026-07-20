@@ -1,5 +1,3 @@
-import type { Runtime } from '@embed-engine/core';
-
 import { DecisionActionArea } from './DecisionActionArea';
 import { DecisionCard } from './DecisionCard';
 import {
@@ -12,11 +10,7 @@ import { EventTimeline } from './EventTimeline';
 import { PriorityReasons } from './PriorityReasons';
 import { useDecisionCards } from './useDecisionCards';
 
-type PriorityCardsProps = {
-  runtime: Runtime;
-};
-
-export function PriorityCards({ runtime }: PriorityCardsProps) {
+export function PriorityCards() {
   const {
     categories,
     elevatedPriorities,
@@ -27,7 +21,7 @@ export function PriorityCards({ runtime }: PriorityCardsProps) {
     questionId,
     selectedCount,
     toggleCard,
-  } = useDecisionCards(runtime);
+  } = useDecisionCards();
 
   return (
     <div className="flex min-w-0 flex-col self-start">
@@ -52,6 +46,7 @@ export function PriorityCards({ runtime }: PriorityCardsProps) {
               importance={importance}
               isActive={questionId === category.id}
               isHighlighted={priority?.highlighted === true}
+              rank={priority?.rank}
               reason={priority?.reason}
               onToggle={() => toggleCard(category.id)}
             />

@@ -20,9 +20,10 @@ describe("project", () => {
     assert.ok(Object.isFrozen(first));
     assert.ok(Object.isFrozen(first.priorities));
     assert.ok(Object.isFrozen(first.events));
+    assert.ok(Object.isFrozen(first.recommendedQuestions));
   });
 
-  it("boosts layout with a reason when Focus.roomId is set", () => {
+  it("projects shared FAQ + AI fields from one DecisionState", () => {
     const state = reduce(
       createInitialDecisionState("object-1"),
       createSignal({
@@ -31,10 +32,17 @@ describe("project", () => {
       }),
     );
 
-    const layout = project(state).priorities.find((item) => item.id === "layout");
+    const interpretation = project(state);
+    const layout = interpretation.priorities.find((item) => item.id === "layout");
+
     assert.equal(layout?.weight, 0.92);
-    assert.ok(layout?.reason?.includes("room"));
-    assert.equal(layout?.highlighted, true);
+    assert.equal(layout?.rank, 1);
+    assert.equal(interpretation.activeTopic, "Layout");
+    assert.ok(interpretation.conversationContext.includes("Layout"));
+    assert.ok(interpretation.recommendedQuestions.length > 0);
+    assert.equal(interpretation.recommendedQuestions[0]?.highlighted, true);
+    assert.ok(interpretation.nextAction.includes("Layout"));
+    assert.equal(interpretation.priorities.length, INTERPRETATION_PRIORITY_IDS.length);
   });
 
   it("projects a timeline from DecisionState.signals", () => {
@@ -51,6 +59,6 @@ describe("project", () => {
     const interpretation = project(state);
     assert.equal(interpretation.events.length, 1);
     assert.equal(interpretation.events[0]?.label, "Floor selected");
-    assert.equal(interpretation.priorities.length, INTERPRETATION_PRIORITY_IDS.length);
+    assert.equal(interpretation.activeTopic, "Plot");
   });
 });

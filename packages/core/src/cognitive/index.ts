@@ -25,6 +25,7 @@ export type {
   Interpretation,
   InterpretationEvent,
   InterpretationPriority,
+  RecommendedQuestion,
 } from "./interpretation/Interpretation";
 export {
   INTERPRETATION_PRIORITY_IDS,
