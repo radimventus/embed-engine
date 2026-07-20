@@ -1,106 +1,252 @@
+import { useEffect, useState } from 'react';
+import { PrimaryButton } from '@embed-engine/ui';
+
 import {
   applyQuestionOpened,
   useApplyCognitiveSignal,
 } from '../../cognitive/CognitiveRuntimeContext';
 import { useActiveDecisionMove } from '../../cognitive/DecisionStoryProvider';
+import { useWalkthrough } from '../../../walkthrough';
 import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from '../PriorityEngine/priority-engine-layout';
+
+const AUDIT_SECTION_ID = 'audit-lead-capture';
+
+type TerminalAction = {
+  readonly label: string;
+  readonly run: () => void;
+};
 
 /**
  * Decision Terminal — Experience Surface for the active Decision Story.
- * Renders Strategy output only. No local decision reasoning.
+ * Demo-hardened: every state has exactly one primary CTA and a valid transition.
  */
 export function DecisionTerminal() {
   const applySignal = useApplyCognitiveSignal();
+  const walkthrough = useWalkthrough();
   const { story, definition, outcome, activeMoveId } = useActiveDecisionMove();
+  const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    setPending(false);
+  }, [activeMoveId, outcome?.status, story?.id]);
+
+  const withTransition = (action: () => void) => {
+    if (pending) {
+      return;
+    }
+    setPending(true);
+    action();
+  };
 
   if (outcome) {
     return (
-      <aside
-        aria-label="Decision Terminal"
-        className={PRIORITY_ENGINE_INTRO_PANEL_CLASS}
-        data-testid="decision-terminal"
-        data-outcome={outcome.status}
-      >
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
-          Decision outcome
-        </p>
-        <p className="mt-2 text-sm font-medium text-embed-foreground-primary">
-          {outcome.status.replace('-', ' ')}
-        </p>
-        <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">
-          {outcome.summary}
-        </p>
-      </aside>
+      <TerminalShell
+        testId="decision-terminal"
+        outcome={outcome.status}
+        pending={pending}
+        eyebrow="Decision outcome"
+        title={outcome.status.replace('-', ' ')}
+        body={outcome.summary}
+        action={{
+          label: pending ? 'Opening audit…' : 'Continue to site audit',
+          run: () => {
+            withTransition(() => {
+              document
+                .getElementById(AUDIT_SECTION_ID)
+                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              window.setTimeout(() => setPending(false), 600);
+            });
+          },
+        }}
+        hint="Run again: select Dispozice in Priority."
+      />
     );
   }
 
   if (story === null || definition === null || activeMoveId === null) {
     return (
-      <aside
-        aria-label="Decision Terminal"
-        className={PRIORITY_ENGINE_INTRO_PANEL_CLASS}
-        data-testid="decision-terminal"
-        data-empty="true"
-      >
-        <p className="text-sm font-medium leading-relaxed text-embed-foreground-primary">
-          Decision Terminal
-        </p>
-        <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/70">
-          Select <span className="font-semibold text-embed-brand-gold">Dispozice</span> in
-          Priority to start the Layout decision dialogue.
-        </p>
-      </aside>
+      <TerminalShell
+        testId="decision-terminal"
+        empty
+        pending={pending}
+        eyebrow="Decision Terminal"
+        title="Start the Layout decision dialogue"
+        body="Disposition first. Beauty second. One guided path from Priority to a clear layout verdict."
+        action={{
+          label: pending ? 'Starting…' : 'Start disposition dialogue',
+          run: () => {
+            withTransition(() => {
+              applyQuestionOpened(
+                applySignal,
+                'layout',
+                'Priority focus: Dispozice',
+              );
+            });
+          },
+        }}
+      />
     );
   }
 
-  const exploreToComplete =
-    activeMoveId === 'layout.discover-day-zone' ||
-    activeMoveId === 'layout.discover-night-zone';
-
   const completedCount = story.slots.filter((slot) => slot.status === 'completed').length;
+  const action = resolveMoveAction(activeMoveId, {
+    pending,
+    withTransition,
+    applySignal,
+    selectRoom: walkthrough.selectRoom,
+    purpose: definition.purpose,
+  });
 
+  return (
+    <TerminalShell
+      testId="decision-terminal"
+      activeMove={activeMoveId}
+      pending={pending}
+      eyebrow={`Decision Terminal · Move ${completedCount + 1}/${story.slots.length}`}
+      intent={definition.intent}
+      title={definition.purpose}
+      body={definition.advisorPrompt}
+      tradeOff={definition.tradeOff}
+      action={action}
+    />
+  );
+}
+
+function resolveMoveAction(
+  activeMoveId: string,
+  ctx: {
+    pending: boolean;
+    withTransition: (action: () => void) => void;
+    applySignal: ReturnType<typeof useApplyCognitiveSignal>;
+    selectRoom: (roomId: string) => void;
+    purpose: string;
+  },
+): TerminalAction {
+  const { pending, withTransition, applySignal, selectRoom, purpose } = ctx;
+
+  if (activeMoveId === 'layout.discover-day-zone') {
+    return {
+      label: pending ? 'Updating…' : 'Open living room',
+      run: () => {
+        withTransition(() => {
+          selectRoom('living-room');
+        });
+      },
+    };
+  }
+
+  if (activeMoveId === 'layout.discover-night-zone') {
+    return {
+      label: pending ? 'Updating…' : 'Open bedroom',
+      run: () => {
+        withTransition(() => {
+          selectRoom('bedroom');
+        });
+      },
+    };
+  }
+
+  if (activeMoveId === 'layout.recommend-disposition-fit') {
+    return {
+      label: pending ? 'Updating…' : 'Confirm verdict',
+      run: () => {
+        withTransition(() => {
+          applyQuestionOpened(
+            applySignal,
+            activeMoveId,
+            `Move acknowledged: ${purpose}`,
+          );
+        });
+      },
+    };
+  }
+
+  return {
+    label: pending ? 'Updating…' : 'Continue',
+    run: () => {
+      withTransition(() => {
+        applyQuestionOpened(
+          applySignal,
+          activeMoveId,
+          `Move acknowledged: ${purpose}`,
+        );
+      });
+    },
+  };
+}
+
+type TerminalShellProps = {
+  testId: string;
+  pending: boolean;
+  eyebrow: string;
+  title: string;
+  body: string;
+  action: TerminalAction;
+  intent?: string;
+  tradeOff?: string;
+  hint?: string;
+  empty?: boolean;
+  outcome?: string;
+  activeMove?: string;
+};
+
+function TerminalShell({
+  testId,
+  pending,
+  eyebrow,
+  title,
+  body,
+  action,
+  intent,
+  tradeOff,
+  hint,
+  empty,
+  outcome,
+  activeMove,
+}: TerminalShellProps) {
   return (
     <aside
       aria-label="Decision Terminal"
-      className={PRIORITY_ENGINE_INTRO_PANEL_CLASS}
-      data-testid="decision-terminal"
-      data-active-move={activeMoveId}
+      aria-busy={pending}
+      className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} overflow-y-auto`}
+      data-testid={testId}
+      data-empty={empty ? 'true' : undefined}
+      data-outcome={outcome}
+      data-active-move={activeMove}
+      data-pending={pending ? 'true' : undefined}
     >
       <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
-        Decision Terminal · Move {completedCount + 1}/{story.slots.length}
+        {eyebrow}
       </p>
-      <p className="mt-1 text-[10px] uppercase tracking-wide text-embed-foreground-primary/45">
-        {definition.intent}
-      </p>
-      <p className="mt-2 text-sm font-medium text-embed-foreground-primary">{definition.purpose}</p>
-      <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">
-        {definition.advisorPrompt}
-      </p>
-      {definition.tradeOff ? (
-        <p className="mt-3 text-xs leading-relaxed text-embed-foreground-primary/55">
-          Trade-off: {definition.tradeOff}
+      {intent ? (
+        <p className="mt-1 text-[10px] uppercase tracking-wide text-embed-foreground-primary/45">
+          {intent}
         </p>
       ) : null}
-      {exploreToComplete ? (
-        <p className="mt-4 text-xs text-embed-brand-gold/90">
-          Explore the house (room or floor) to complete this move.
+      <p className="mt-2 text-sm font-medium text-embed-foreground-primary">{title}</p>
+      <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">{body}</p>
+      {tradeOff ? (
+        <p className="mt-3 text-xs leading-relaxed text-embed-foreground-primary/55">
+          Trade-off: {tradeOff}
         </p>
-      ) : (
-        <button
-          type="button"
-          className="mt-4 rounded-[8px] border border-embed-brand-gold/40 bg-embed-brand-gold/10 px-3 py-2 text-xs font-semibold text-embed-foreground-primary hover:bg-embed-brand-gold/20"
-          data-testid="decision-terminal-complete"
-          onClick={() => {
-            applyQuestionOpened(
-              applySignal,
-              activeMoveId,
-              `Move acknowledged: ${definition.purpose}`,
-            );
-          }}
-        >
-          Acknowledge & continue
-        </button>
-      )}
+      ) : null}
+      {hint ? (
+        <p className="mt-3 text-xs text-embed-foreground-primary/55">{hint}</p>
+      ) : null}
+      {pending ? (
+        <p className="mt-3 text-xs font-medium text-embed-brand-gold" data-testid="decision-terminal-pending">
+          Advancing…
+        </p>
+      ) : null}
+      <PrimaryButton
+        size="sm"
+        className="mt-4 self-start"
+        disabled={pending}
+        data-testid="decision-terminal-cta"
+        onClick={action.run}
+      >
+        {action.label}
+      </PrimaryButton>
     </aside>
   );
 }

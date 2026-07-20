@@ -11,12 +11,22 @@ function payloadString(
   return typeof value === "string" ? value : undefined;
 }
 
-const DAY_ROOMS = new Set(["room-living", "room-kitchen"]);
+/** Client Studio walkthrough ids + object-house fixture ids. */
+const DAY_ROOMS = new Set([
+  "living-room",
+  "kitchen",
+  "terrace",
+  "room-living",
+  "room-kitchen",
+]);
 const NIGHT_ROOMS = new Set([
+  "bedroom",
+  "bathroom",
   "room-bedroom",
   "room-children",
   "room-bath",
 ]);
+const UPPER_FLOORS = new Set(["1", "upper-floor", "first-floor", "floor-1"]);
 
 /**
  * CAP-P03 Behavior Pack data for Disposition (Layout).
@@ -52,15 +62,15 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       intent: "discover",
       purpose: "Build a mental model of the ground-floor day zone.",
       advisorPrompt:
-        "Stand in the day zone. Living is generous — 32 m². Kitchen is 14 m². Notice that gap now, not after you buy curtains. Open living or kitchen to continue.",
+        "Stand in the day zone. Living is generous — 32 m². Kitchen is 14 m². Notice that gap now, not after you buy curtains. Open living or kitchen — or continue below.",
       tradeOff: "Gathering scale versus cooking workspace.",
     },
     {
       id: "layout.discover-night-zone",
       intent: "discover",
-      purpose: "Experience the upper night zone as rest and privacy.",
+      purpose: "Experience the night zone as rest and privacy.",
       advisorPrompt:
-        "Upstairs is for ending the day. Parents, child, one bath. Ask yourself: who fights for the bathroom at 7:15? Open a night room or switch floor.",
+        "Night rooms are for ending the day. Parents, child, one bath. Ask yourself: who fights for the bathroom at 7:15? Open a bedroom or bathroom — or continue below.",
       tradeOff: "Acoustic privacy versus vertical living and a shared wet core.",
     },
     {
@@ -118,6 +128,8 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       payloadString(input, "roomId") ?? input.focusRoomId;
     const floorId =
       payloadString(input, "floorId") ?? input.focusFloorId;
+    const acknowledged =
+      input.signalType === "QUESTION_OPENED" && questionId === moveId;
 
     switch (moveId) {
       case "layout.confirm-focus":
@@ -127,16 +139,20 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
         );
       case "layout.discover-day-zone":
         return (
-          input.signalType === "ROOM_VIEWED" &&
-          roomId !== undefined &&
-          DAY_ROOMS.has(roomId)
+          acknowledged ||
+          (input.signalType === "ROOM_VIEWED" &&
+            roomId !== undefined &&
+            DAY_ROOMS.has(roomId))
         );
       case "layout.discover-night-zone":
         return (
+          acknowledged ||
           (input.signalType === "ROOM_VIEWED" &&
             roomId !== undefined &&
             NIGHT_ROOMS.has(roomId)) ||
-          (input.signalType === "FLOOR_CHANGED" && floorId === "1")
+          (input.signalType === "FLOOR_CHANGED" &&
+            floorId !== undefined &&
+            UPPER_FLOORS.has(floorId))
         );
       case "layout.interpret-day-night-split":
       case "layout.compare-living-kitchen":
@@ -144,9 +160,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       case "layout.warn-bath-contention":
       case "layout.ask-household-shape":
       case "layout.recommend-disposition-fit":
-        return (
-          input.signalType === "QUESTION_OPENED" && questionId === moveId
-        );
+        return acknowledged;
       default:
         return false;
     }

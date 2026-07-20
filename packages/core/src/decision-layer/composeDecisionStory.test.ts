@@ -103,4 +103,62 @@ describe("composeDecisionStory", () => {
     assert.equal(done.outcome?.status, "conditional-fit");
     assert.equal(done.activeMoveId, null);
   });
+
+  it("restarts after outcome when layout priority is clicked again", () => {
+    const done = composeDecisionStory(pack, {
+      interpretationActiveTopic: "Layout",
+      signalType: "QUESTION_OPENED",
+      signalPayload: { questionId: "m3" },
+      previous: composeDecisionStory(pack, {
+        interpretationActiveTopic: "Layout",
+        signalType: "ROOM_VIEWED",
+        signalPayload: { roomId: "room-living" },
+        previous: composeDecisionStory(pack, {
+          interpretationActiveTopic: "Layout",
+          signalType: "QUESTION_OPENED",
+          signalPayload: { questionId: "layout" },
+          previous: null,
+        }),
+      }),
+    });
+    assert.ok(done?.outcome);
+
+    const restarted = composeDecisionStory(pack, {
+      interpretationActiveTopic: "Layout",
+      signalType: "QUESTION_OPENED",
+      signalPayload: { questionId: "layout" },
+      previous: done,
+    });
+    assert.ok(restarted);
+    assert.equal(restarted.outcome, null);
+    assert.equal(restarted.activeMoveId, "m2");
+  });
+
+  it("keeps completed outcome when a non-start signal arrives", () => {
+    const done = composeDecisionStory(pack, {
+      interpretationActiveTopic: "Layout",
+      signalType: "QUESTION_OPENED",
+      signalPayload: { questionId: "m3" },
+      previous: composeDecisionStory(pack, {
+        interpretationActiveTopic: "Layout",
+        signalType: "ROOM_VIEWED",
+        signalPayload: { roomId: "room-living" },
+        previous: composeDecisionStory(pack, {
+          interpretationActiveTopic: "Layout",
+          signalType: "QUESTION_OPENED",
+          signalPayload: { questionId: "layout" },
+          previous: null,
+        }),
+      }),
+    });
+    assert.ok(done?.outcome);
+
+    const kept = composeDecisionStory(pack, {
+      interpretationActiveTopic: "Energy",
+      signalType: "QUESTION_OPENED",
+      signalPayload: { questionId: "energy" },
+      previous: done,
+    });
+    assert.equal(kept?.outcome?.status, "conditional-fit");
+  });
 });

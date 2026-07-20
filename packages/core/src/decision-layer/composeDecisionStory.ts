@@ -59,15 +59,12 @@ export function composeDecisionStory(
 
   let story = input.previous;
 
-  if (story === null) {
+  // Fresh start, or restart after outcome (demo re-runs / Priority layout again).
+  if (story === null || story.outcome !== null) {
     if (!shouldStartStory(pack, input)) {
-      return null;
+      return story;
     }
     story = createInitialStory(pack);
-  }
-
-  if (story.outcome !== null) {
-    return story;
   }
 
   const slots = story.slots.map((slot) => ({ ...slot }));

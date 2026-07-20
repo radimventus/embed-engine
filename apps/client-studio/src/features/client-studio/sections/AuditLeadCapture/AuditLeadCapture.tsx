@@ -11,7 +11,7 @@ export function AuditLeadCapture() {
   const [landOption, setLandOption] = useState<LandOption>('owned');
 
   return (
-    <section aria-label="Audit — posouzení umístění domu">
+    <section aria-label="Audit — posouzení umístění domu" id="audit-lead-capture">
       <div
         className="overflow-hidden rounded-[11px] pb-8 shadow-[0_1px_11px_rgba(0,25,48,0.044)]"
         style={AUDIT_SECTION_STYLE}
