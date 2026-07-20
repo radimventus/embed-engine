@@ -13,12 +13,27 @@ export type RuntimeEvent = {
   readonly type: string;
 };
 
+export type RuntimeStatus =
+  | "idle"
+  | "loading"
+  | "ready"
+  | "destroyed";
+
 /**
- * Snapshot owned by Runtime.
- * Empty in M1.1 — filled by later milestones.
+ * Single source of truth owned by Runtime.
+ * Domain-agnostic. Intentionally minimal.
  */
 export interface RuntimeState {
-  readonly loaded: boolean;
+  readonly status: RuntimeStatus;
+  readonly objectPackage?: RuntimeObjectPackage;
+  readonly version: number;
 }
 
 export type RuntimeListener = (state: RuntimeState) => void;
+
+export function createInitialRuntimeState(): RuntimeState {
+  return {
+    status: "idle",
+    version: 0,
+  };
+}
