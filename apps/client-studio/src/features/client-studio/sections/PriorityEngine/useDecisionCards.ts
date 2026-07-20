@@ -1,71 +1,78 @@
-import { useCallback, useMemo, useState } from 'react';
-import type { CommandRuntime } from '@embed-engine/core';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import type { Runtime } from '@embed-engine/core';
+import {
+  createSignal,
+  SignalType,
+  type Interpretation,
+} from '@embed-engine/core/cognitive';
 
 import {
-  DECISION_CARD_IMPORTANCE_DEFAULT,
   DECISION_CATEGORIES,
   DECISION_MINIMUM_SELECTION,
 } from './decision-cards.constants';
 
-type DecisionCardState = {
-  selected: boolean;
-  importance: number;
-};
-
-function createInitialState(): Record<string, DecisionCardState> {
-  return Object.fromEntries(
-    DECISION_CATEGORIES.map((category) => [
-      category.id,
-      { selected: false, importance: DECISION_CARD_IMPORTANCE_DEFAULT },
-    ]),
-  );
+function emptyInterpretation(): Interpretation {
+  return {
+    priorities: DECISION_CATEGORIES.map((category) => ({
+      id: category.id,
+      weight: 0.35,
+    })),
+  };
 }
 
-export function useDecisionCards(runtime: CommandRuntime) {
-  const [cards, setCards] = useState<Record<string, DecisionCardState>>(createInitialState);
+/**
+ * Priority Engine reads Interpretation from Runtime.
+ * Writes happen only via Signal → reduce → project.
+ */
+export function useDecisionCards(runtime: Runtime) {
+  const [interpretation, setInterpretation] = useState<Interpretation>(
+    () => runtime.getState().interpretation ?? emptyInterpretation(),
+  );
+  const [questionId, setQuestionId] = useState<string | undefined>(
+    () => runtime.getState().decisionState?.focus.questionId,
+  );
+
+  useEffect(() => {
+    setInterpretation(runtime.getState().interpretation ?? emptyInterpretation());
+    setQuestionId(runtime.getState().decisionState?.focus.questionId);
+
+    return runtime.subscribe((state) => {
+      setInterpretation(state.interpretation ?? emptyInterpretation());
+      setQuestionId(state.decisionState?.focus.questionId);
+    });
+  }, [runtime]);
+
+  const weightById = useMemo(() => {
+    return Object.fromEntries(
+      interpretation.priorities.map((priority) => [priority.id, priority.weight]),
+    );
+  }, [interpretation]);
 
   const toggleCard = useCallback(
     (id: string) => {
-      void runtime;
-      setCards((previous) => ({
-        ...previous,
-        [id]: {
-          ...previous[id],
-          selected: !previous[id].selected,
-        },
-      }));
-    },
-    [runtime],
-  );
-
-  const setImportance = useCallback(
-    (id: string, importance: number) => {
-      void runtime;
-      setCards((previous) => ({
-        ...previous,
-        [id]: {
-          ...previous[id],
-          importance,
-        },
-      }));
+      runtime.applySignal(
+        createSignal({
+          type: SignalType.QUESTION_OPENED,
+          payload: { questionId: id },
+        }),
+      );
     },
     [runtime],
   );
 
   const selectedCount = useMemo(
-    () => Object.values(cards).filter((card) => card.selected).length,
-    [cards],
+    () => interpretation.priorities.filter((priority) => priority.weight > 0.5).length,
+    [interpretation],
   );
-
   const minimumMet = selectedCount >= DECISION_MINIMUM_SELECTION;
 
   return {
-    cards,
     categories: DECISION_CATEGORIES,
+    importanceById: weightById,
     minimumMet,
     minimumSelection: DECISION_MINIMUM_SELECTION,
+    questionId,
     selectedCount,
-    setImportance,
     toggleCard,
   };
 }

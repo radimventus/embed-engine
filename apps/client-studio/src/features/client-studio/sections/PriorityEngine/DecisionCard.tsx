@@ -14,7 +14,6 @@ type DecisionCardProps = {
   category: DecisionCategory;
   importance: number;
   isActive: boolean;
-  onImportanceChange: (value: number) => void;
   onToggle: () => void;
 };
 
@@ -25,9 +24,10 @@ export function DecisionCard({
   category,
   importance,
   isActive,
-  onImportanceChange,
   onToggle,
 }: DecisionCardProps) {
+  const percent = Math.round(importance * 100);
+
   return (
     <div
       className="relative shrink-0"
@@ -36,7 +36,7 @@ export function DecisionCard({
       <button
         type="button"
         aria-pressed={isActive}
-        aria-label={`${category.title} decision category`}
+        aria-label={`${category.title} decision category, priority ${percent}`}
         onClick={onToggle}
         className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-[8px] border px-2.5 transition-[transform,box-shadow,border-color] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${
           isActive
@@ -63,6 +63,12 @@ export function DecisionCard({
           >
             {category.title}
           </span>
+          <span
+            className="text-[11px] font-semibold tabular-nums text-embed-brand-gold"
+            data-testid={`priority-${category.id}`}
+          >
+            {percent}
+          </span>
         </div>
         <div
           className={`w-full transition-[opacity,transform,max-height] ${DECISION_TRANSITION_CLASS} ${
@@ -73,7 +79,9 @@ export function DecisionCard({
           onClick={(event) => event.stopPropagation()}
           onKeyDown={(event) => event.stopPropagation()}
         >
-          {isActive ? <DecisionSlider value={importance} onChange={onImportanceChange} /> : null}
+          {isActive ? (
+            <DecisionSlider value={importance} onChange={() => undefined} />
+          ) : null}
         </div>
       </button>
     </div>

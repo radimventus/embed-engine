@@ -5,6 +5,7 @@ import {
   createInitialDecisionState,
   createInitialFocus,
   createSignal,
+  project,
   reduce,
   SignalType,
   type DecisionState,
@@ -49,5 +50,14 @@ describe("cognitive public API", () => {
 
     assert.equal(typeof reduce, "function");
     assert.equal(next.focus.floorId, "floor-0");
+  });
+
+  it("exports project and Interpretation priorities", () => {
+    const state = createInitialDecisionState("project-api");
+    const interpretation = project(state);
+
+    assert.equal(typeof project, "function");
+    assert.ok(Array.isArray(interpretation.priorities));
+    assert.equal(interpretation.priorities.length, 10);
   });
 });

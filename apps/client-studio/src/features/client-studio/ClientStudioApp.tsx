@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import type { CommandRuntime, SceneGraph } from '@embed-engine/core';
+import type { CommandRuntime, Runtime, SceneGraph } from '@embed-engine/core';
+import { createRuntime } from '@embed-engine/core';
 import {
   CANONICAL_DECISION_FLOW_START_ID,
   createDecisionRuntime,
@@ -22,18 +23,26 @@ const PLACEHOLDER_SCENE_GRAPH: SceneGraph = {
 };
 
 /**
- * Composition root for Client Studio CommandRuntime + Experience rendering.
- * Navigation state lives only in CommandRuntime; React holds the latest ReactExperienceModel.
+ * Composition root for Client Studio.
+ * CommandRuntime drives decision-flow Experience.
+ * Platform Runtime orchestrates Cognitive Signal → reduce → project.
  */
 export function ClientStudioApp() {
   const runtimeRef = useRef<CommandRuntime | null>(null);
+  const cognitiveRuntimeRef = useRef<Runtime | null>(null);
   const [experience, setExperience] = useState<ReactExperienceModel | null>(null);
+  const [cognitiveReady, setCognitiveReady] = useState(false);
 
   if (runtimeRef.current === null) {
     runtimeRef.current = createDecisionRuntime(PLACEHOLDER_SCENE_GRAPH);
   }
 
+  if (cognitiveRuntimeRef.current === null) {
+    cognitiveRuntimeRef.current = createRuntime();
+  }
+
   const runtime = runtimeRef.current;
+  const cognitiveRuntime = cognitiveRuntimeRef.current;
 
   useEffect(() => {
     const command: StartDecisionFlowCommand = {
@@ -42,6 +51,20 @@ export function ClientStudioApp() {
     };
     setExperience(runtime.dispatch(command));
   }, [runtime]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void cognitiveRuntime.load({ objectId: 'house-modern-01' }).then(() => {
+      if (!cancelled) {
+        setCognitiveReady(true);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [cognitiveRuntime]);
 
   const handleSelectDecision = (decisionId: string) => {
     const command: GoToDecisionCommand = {
@@ -80,7 +103,7 @@ export function ClientStudioApp() {
       header={<></>}
     >
       <ClientStudioPage
-        runtime={runtime}
+        cognitiveRuntime={cognitiveReady ? cognitiveRuntime : null}
         experience={experience}
         onSelectChoice={handleSelectChoice}
         onContinue={handleContinue}

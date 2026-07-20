@@ -1,3 +1,4 @@
+import type { Signal } from "../cognitive/signals/Signal";
 import { Kernel } from "./Kernel";
 import type {
   RuntimeEvent,
@@ -9,7 +10,8 @@ import type {
 
 /**
  * Public Runtime façade.
- * Owns Kernel. Exposes lifecycle and state access only.
+ * Owns Kernel. Exposes lifecycle, signal application, and state access.
+ * Cognitive domain rules live in reduce/project — Runtime only orchestrates.
  */
 export class Runtime {
   private readonly kernel = new Kernel();
@@ -22,6 +24,14 @@ export class Runtime {
   async dispatch(event: RuntimeEvent): Promise<void> {
     this.assertNotDestroyed();
     await this.kernel.dispatch(event);
+  }
+
+  /**
+   * Apply a Cognitive Signal through reduce → project.
+   */
+  applySignal(signal: Signal): void {
+    this.assertNotDestroyed();
+    this.kernel.applySignal(signal);
   }
 
   getState(): RuntimeState {

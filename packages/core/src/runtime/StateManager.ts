@@ -5,6 +5,8 @@ import type {
   RuntimeObjectPackage,
   Unsubscribe,
 } from "./RuntimeState";
+import type { DecisionState } from "../cognitive/decision-state/DecisionState";
+import type { Interpretation } from "../cognitive/interpretation/Interpretation";
 
 function createInitialState(): RuntimeState {
   return {
@@ -42,15 +44,26 @@ export class StateManager {
 
   /**
    * Advance status/package and bump version by one.
+   * Preserves cognitive snapshots unless explicitly replaced.
    */
   advance(next: {
     readonly status: RuntimeStatus;
     readonly objectPackage?: RuntimeObjectPackage;
+    readonly decisionState?: DecisionState;
+    readonly interpretation?: Interpretation;
   }): void {
     this.replaceState({
       status: next.status,
       objectPackage: next.objectPackage,
       version: this.state.version + 1,
+      decisionState:
+        next.decisionState !== undefined
+          ? next.decisionState
+          : this.state.decisionState,
+      interpretation:
+        next.interpretation !== undefined
+          ? next.interpretation
+          : this.state.interpretation,
     });
   }
 
@@ -63,6 +76,8 @@ export class StateManager {
       status: this.state.status,
       objectPackage: this.state.objectPackage,
       version: this.state.version,
+      decisionState: this.state.decisionState,
+      interpretation: this.state.interpretation,
     });
   }
 

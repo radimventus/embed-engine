@@ -20,3 +20,13 @@ export { createSignal } from "./signals/createSignal";
 export type { CreateSignalInput } from "./signals/createSignal";
 
 export { reduce } from "./reducer/reduce";
+
+export type {
+  Interpretation,
+  InterpretationPriority,
+} from "./interpretation/Interpretation";
+export {
+  INTERPRETATION_PRIORITY_IDS,
+  project,
+  type InterpretationPriorityId,
+} from "./interpretation/project";

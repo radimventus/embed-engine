@@ -1,4 +1,4 @@
-import type { CommandRuntime } from '@embed-engine/core';
+import type { Runtime } from '@embed-engine/core';
 import type { ReactExperienceModel } from '@embed-engine/model';
 
 import { ClientStudioHeader } from './ClientStudioHeader';
@@ -12,14 +12,14 @@ import { PropertyExplorer } from './sections/PropertyExplorer/PropertyExplorer';
 import { WalkthroughProvider } from '../walkthrough';
 
 type ClientStudioPageProps = {
-  runtime: CommandRuntime;
+  cognitiveRuntime: Runtime | null;
   experience: ReactExperienceModel | null;
   onSelectChoice: (decisionId: string, choiceId: string) => void;
   onContinue: () => void;
 };
 
 export function ClientStudioPage({
-  runtime,
+  cognitiveRuntime,
   experience,
   onSelectChoice,
   onContinue,
@@ -45,7 +45,7 @@ export function ClientStudioPage({
         <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
         <PropertyExplorer />
         <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
-        <PriorityEngine runtime={runtime} />
+        {cognitiveRuntime ? <PriorityEngine runtime={cognitiveRuntime} /> : null}
         <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
         <AIAdvisor />
         <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />

@@ -1,3 +1,6 @@
+import type { DecisionState } from "../cognitive/decision-state/DecisionState";
+import type { Interpretation } from "../cognitive/interpretation/Interpretation";
+
 /**
  * Opaque Object Package bound to the Runtime.
  * Concrete shapes live in domain packages (e.g. object-house).
@@ -22,11 +25,14 @@ export type RuntimeStatus =
 /**
  * Single source of truth for the platform Runtime.
  * Owned exclusively by StateManager.
+ * Cognitive fields are orchestrated snapshots (written only via reduce/project).
  */
 export interface RuntimeState {
   readonly status: RuntimeStatus;
   readonly objectPackage?: RuntimeObjectPackage;
   readonly version: number;
+  readonly decisionState?: DecisionState;
+  readonly interpretation?: Interpretation;
 }
 
 export type RuntimeListener = (state: RuntimeState) => void;
