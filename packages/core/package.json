@@ -8,13 +8,19 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./cognitive": {
+      "types": "./dist/cognitive/index.d.ts",
+      "import": "./dist/cognitive/index.js",
+      "default": "./dist/cognitive/index.js"
     }
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/runtime/CommandRuntime.determinism.test.ts"
+    "test": "tsx --test src/runtime/CommandRuntime.determinism.test.ts src/cognitive/decision-state/DecisionState.test.ts src/cognitive/decision-state/createInitialDecisionState.test.ts src/cognitive/cognitive.public-api.test.ts"
   },
   "dependencies": {
     "@embed-engine/model": "workspace:*"
