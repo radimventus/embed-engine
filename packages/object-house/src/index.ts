@@ -16,5 +16,8 @@ export {
   HOUSEHOLD_PROFILE_FACT_KEY,
   isHouseholdProfile,
   recommendPromptFor,
+  getDecisionFactors,
+  storyConsideredStairs,
   type HouseholdProfile,
+  type DecisionFactor,
 } from "./behavior";

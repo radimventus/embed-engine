@@ -16,6 +16,12 @@ export {
   type HouseholdProfile,
 } from "./household-outcome";
 export {
+  getDecisionFactors,
+  storyConsideredStairs,
+  type DecisionFactor,
+  type DecisionFactorTone,
+} from "./decision-factors";
+export {
   STAIRS_WARN_MOVE_ID,
   spliceStairsWarnIfNeeded,
 } from "./splice-stairs-warn";
