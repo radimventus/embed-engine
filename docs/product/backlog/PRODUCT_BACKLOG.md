@@ -1,7 +1,8 @@
 # Product Backlog
 
 **Status:** Living  
-**Aligned with:** Living Experience v0.1 Freeze, ADR-007 Priority MVP Policy
+**Aligned with:** Living Experience v0.1 Freeze, ADR-007 Priority MVP Policy  
+**Phase complete:** CAP-P01 → CAP-P03 — first end-to-end Decision Runtime MVP
 
 Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 
@@ -11,9 +12,17 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 
 | ID | Item | Notes |
 | --- | --- | --- |
-| CAP-P03 | Decision Runtime MVP | `docs/pilot/cap-p03-decision-runtime-mvp.md` |
-| CAP-P04 | Household branching + stairs splice + richer outcome | After CAP-P03 |
-| DL-01 | Decision Move / Story / Strategy data contracts polish | Hosting settled via Runtime.decisionStory |
+| CAP-P04 | Pilot validation + household branching + stairs splice + richer outcome | Founding Partner #1 readiness; builds on live Runtime |
+| CAP-P05 | Energy Conscious Buyer Behavior Pack | Same Object (`house-modern-01`); was OQ-P05 |
+| OQ-P01 | Move-completion Signal (or standardized moveId payloads) | Today overloads `QUESTION_OPENED` |
+| OQ-P03 | Room-level media enrichment on Pilot Object | Floorplan + room ids only today |
+| OQ-P04 | Household-shape → DecisionState.facts mapping | Ask Move exists; facts unused in reduce |
+| OQ-P06 | Dialogue position memory across Moves | Provisional trade-offs as Signals only |
+| OQ-P07 | Advisor voice ownership (Pack vs Terminal copy) | Meaning in Pack; phrasing projection |
+| DL-01 | Decision Move / Story / Strategy contracts polish | MVP contracts live; polish only |
+| RT-01 | Unify dual CommandRuntime vs Cognitive Runtime paths | MVP keeps both |
+
+---
 
 ## Done (product)
 
@@ -21,7 +30,9 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 | --- | --- |
 | CAP-P01 | First Pilot Object `house-modern-01` + Disposition Layout Behavior Pack v1 |
 | CAP-P02 | Layout Decision Dialogue v1 |
-| CAP-P03 | Decision Runtime MVP — Strategy → Story → Terminal |
+| CAP-P03 | Decision Runtime MVP — Priority → Strategy → Story → Terminal → Outcome |
+| DT-01 | Decision Terminal renderer (MVP — Layout Story) |
+| DT-02 | Wire Strategy output to Terminal via `RuntimeState.decisionStory` |
 
 ---
 
@@ -44,6 +55,7 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 | PRI-FR-02 | Advisor-as-actor Signal attribution | Depends on PRI-PM-02 |
 | PRI-FR-03 | Cross-session Priority profiles | Depends on PRI-PM-03 / PRI-PM-04 |
 | PRI-FR-04 | Hybrid absolute + relative weight modes | Product experiment; not default |
+| DT-FR-01 | Decision Trajectory | Future — not MVP |
 
 ---
 
@@ -59,11 +71,3 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 | DL-GOV-v1 | Decision Layer governance documentation freeze · tag `architecture-decision-layer-v1` |
 
 ---
-
-## Deferred implementation (architecture ready)
-
-| ID | Item | Notes |
-| --- | --- | --- |
-| DT-01 | Decision Terminal renderer | After ADR-008 Accepted. Renders Stories; any modality. |
-| DT-02 | Wire Strategy output to Terminal | Depends on DL-01 / U2. |
-| DT-FR-01 | Decision Trajectory | Future — not MVP. |

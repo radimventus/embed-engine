@@ -1,12 +1,12 @@
 # Pilot CAP-P01 — First Pilot Object + Behavior Pack
 
-**Status:** CAP-P01 complete · CAP-P02 dialogue validation in `dialogues/`  
+**Status:** CAP-P01–P03 complete — knowledge + Decision Runtime MVP live  
 **Date:** 2026-07-20  
 **Architecture:** Frozen — [Decision Layer SSOT](../architecture/decision-layer/README.md)  
 **Principle:** Help a real buyer make a better decision than browsing photos alone.
 
 This folder holds the **first production-quality knowledge model** for one real pilot house.  
-It is documentation / knowledge — not Runtime or React implementation.
+Runtime wiring for the Layout Story is delivered in CAP-P03 (`cap-p03-decision-runtime-mvp.md`).
 
 ---
 
@@ -50,5 +50,6 @@ Object Package product contract: [object-package.md](../product/object-package.m
 
 ## Implementation note
 
-Code fixture already exists: `packages/object-house` → `REFERENCE_HOUSE_PACKAGE` (`house-modern-01`).  
-This pilot docs set is the **product knowledge SSOT** for that object’s first Behavior Pack. Wiring Strategy/Terminal remains a later implementation epic (ADR-008 / DL-01).
+Code fixture: `packages/object-house` → `REFERENCE_HOUSE_PACKAGE` (`house-modern-01`).  
+Disposition Layout Strategy composer: `createDispositionLayoutComposer()`.  
+This pilot docs set remains the **product knowledge SSOT**. Remaining gaps (branching, media, persistence) live in [`../product/backlog/PRODUCT_BACKLOG.md`](../product/backlog/PRODUCT_BACKLOG.md).

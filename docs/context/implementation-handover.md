@@ -1,24 +1,21 @@
-# CONTEXT — P-001 / CAP-P01
+# CONTEXT — Embed Engine (CAP-P01 → CAP-P03 closed)
 # Embed Engine
 
-_Last update: po Architecture Freeze A-004_
+_Last update: CAP-P03 Decision Runtime MVP milestone complete_
 
 ---
 
 # Aktuální stav projektu
 
-Architektura platformy byla během posledních dní stabilizována.
+Architektura platformy je stabilní (Decision Layer + Decision Strategy freeze).
 
-Proběhly dva zásadní Architecture Freeze workshopy:
+První implementační fáze je uzavřena:
 
-- A-003 Decision Layer
-- A-004 Decision Strategy
+Priority → Decision Strategy → Decision Story → Decision Terminal → Decision Outcome
 
-Oba byly přijaty jako nové SSOT.
+je LIVE na Pilot Object `house-modern-01` (Disposition Layout).
 
-Architektura se nyní považuje za stabilní.
-
-Další práce se přesouvá z návrhu architektury na tvorbu prvního kompletního pilotního produktu.
+Další práce je produktová (CAP-P04+), ne architektonická.
 
 ---
 
@@ -352,59 +349,33 @@ without hardcoded business logic outside Behavior Pack.
 
 ---
 
-# CAP-P01
+# Completed phase (CAP-P01 → CAP-P03)
 
-Pilot Object + Behavior Pack
+| Cap | Deliverable | Status |
+| --- | --- | --- |
+| CAP-P01 | Pilot Object + Disposition Layout Behavior Pack | Done |
+| CAP-P02 | Layout Decision Dialogue | Done |
+| CAP-P03 | Decision Runtime MVP (Priority → Story → Terminal → Outcome) | Done |
 
-Current milestone.
-
-Mission
-
-Create the first production-quality knowledge model for one real family house.
-
-Deliverables
-
-- Pilot Object
-- Behavior Pack
-- Decision knowledge
-- Recommendation rules
-- Trade-offs
-- Decision Move library
-- Story composition rules
-
-No Runtime implementation.
-
-No UI implementation.
-
-No architecture redesign.
+First end-to-end Decision Runtime is live. Architecture remains frozen.
 
 ---
 
-# Next planned milestones
-
-CAP-P02
-
-Decision Experience
-
-Design the first complete Story.
-
----
-
-CAP-P03
-
-Runtime Integration
-
-Connect the complete pipeline.
-
----
+# Next planned milestone
 
 CAP-P04
 
-Pilot Validation
+Pilot Validation + branching richness
 
-Run with a real user.
+Run with a real user / Founding Partner readiness.
+
+Household branching, stairs splice, richer outcome.
 
 Measure decision quality.
+
+Do not start until this handover phase is closed.
+
+Backlog SSOT: `docs/product/backlog/PRODUCT_BACKLOG.md`
 
 ---
 

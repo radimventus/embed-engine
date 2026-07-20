@@ -1,6 +1,6 @@
 # CAP-P03 — Decision Runtime MVP
 
-**Status:** Implemented (minimal)  
+**Status:** Complete — first end-to-end Decision Runtime milestone  
 **Architecture:** Frozen — no new layers
 
 ## Implemented Runtime diagram
@@ -46,11 +46,15 @@ Priority click (layout)
 9. Click **Acknowledge & continue** through compare/warn/ask/recommend.
 10. Terminal shows **Decision outcome** (conditional fit).
 
-## Remaining gaps before Pilot #1
+## Remaining gaps (moved to backlog)
 
-- Stairs branch Move not spliced dynamically
-- Outcome always conditional-fit (no household branching)
-- Move-completion still overloads `QUESTION_OPENED` (OQ-P01)
-- Room media still thin (OQ-P03)
-- Dual CommandRuntime path unchanged
-- No persistence (ADR-007)
+Tracked in [`../product/backlog/PRODUCT_BACKLOG.md`](../product/backlog/PRODUCT_BACKLOG.md) — not unfinished CAP-P03 work:
+
+| Gap | Backlog |
+| --- | --- |
+| Stairs Move splice + household branching + richer outcome | CAP-P04 |
+| Energy Conscious Buyer pack | CAP-P05 |
+| Move-completion Signal overload | OQ-P01 |
+| Room media thin | OQ-P03 |
+| Dual CommandRuntime path | RT-01 |
+| No persistence | PRI-PM-03 / PRI-PM-04 (ADR-007) |

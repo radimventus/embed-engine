@@ -20,11 +20,11 @@ Risks R1–R8: [Decision Strategy](../architecture/decision-layer/decision-strat
 
 ## OQ-P02 — Story transport to Decision Terminal (R2)
 
-**Problem:** Story is Strategy output, not Interpretation field; Runtime hosting/transport unresolved.  
+**Problem:** Story is Strategy output, not Interpretation field; Runtime hosting/transport was unresolved at CAP-P01.  
 
-**Impact:** Terminal cannot yet be wired in code without picking an implementation host (R1/R2).  
+**Status (CAP-P03):** Resolved for MVP — `RuntimeState.decisionStory` hosts Strategy output; Decision Terminal subscribes. Do not embed Story in `project()`.  
 
-**Recommendation:** Resolve in DL-01 data contracts + ADR-008 implementation epic — not by embedding Story in `project()`.
+**Remaining:** Contract polish only (backlog DL-01).
 
 ---
 
@@ -54,7 +54,7 @@ Risks R1–R8: [Decision Strategy](../architecture/decision-layer/decision-strat
 
 **Impact:** Energy pack still valuable; order changed for product value.  
 
-**Recommendation:** CAP-P03 — Energy Conscious Buyer pack on same Object (after dialogue validation).
+**Recommendation:** CAP-P05 — Energy Conscious Buyer pack on same Object (after Layout Runtime validation).
 
 ---
 
