@@ -3,8 +3,11 @@
  * Data contracts only — no behavior.
  */
 
-/** Current decision environment. */
-export type Context = {
+/**
+ * Execution metadata for the decision process.
+ * Not the user's decision focus (ADR-002 Context).
+ */
+export type Environment = {
   readonly locale?: string;
   readonly channel?: string;
 };

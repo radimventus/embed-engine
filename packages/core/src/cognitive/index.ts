@@ -3,10 +3,10 @@
  */
 export type { DecisionState } from "./decision-state/DecisionState";
 export type {
-  Context,
   DecisionConflict,
   DecisionFact,
   DecisionMetadata,
+  Environment,
   Priority,
 } from "./decision-state/types";
 export { createInitialDecisionState } from "./decision-state/createInitialDecisionState";

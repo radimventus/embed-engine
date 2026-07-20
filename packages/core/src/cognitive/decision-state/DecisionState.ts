@@ -1,9 +1,9 @@
 import type { Signal } from "../signals/Signal";
 import type {
-  Context,
   DecisionConflict,
   DecisionFact,
   DecisionMetadata,
+  Environment,
   Priority,
 } from "./types";
 
@@ -14,7 +14,7 @@ import type {
  */
 export type DecisionState = {
   readonly objectId: string;
-  readonly context: Context;
+  readonly environment: Environment;
   readonly signals: readonly Signal[];
   readonly priorities: readonly Priority[];
   readonly facts: readonly DecisionFact[];

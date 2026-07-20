@@ -6,7 +6,7 @@ import type { DecisionState } from "./DecisionState";
 export function createInitialDecisionState(objectId: string): DecisionState {
   return Object.freeze({
     objectId,
-    context: Object.freeze({}),
+    environment: Object.freeze({}),
     signals: Object.freeze([]),
     priorities: Object.freeze([]),
     facts: Object.freeze([]),

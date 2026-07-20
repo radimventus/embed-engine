@@ -12,7 +12,7 @@ describe("createInitialDecisionState", () => {
 
     assert.deepEqual(state, {
       objectId: "house-modern-01",
-      context: {},
+      environment: {},
       signals: [],
       priorities: [],
       facts: [],
@@ -26,7 +26,7 @@ describe("createInitialDecisionState", () => {
     const state = createInitialDecisionState("object-1");
 
     assert.ok(Object.isFrozen(state));
-    assert.ok(Object.isFrozen(state.context));
+    assert.ok(Object.isFrozen(state.environment));
     assert.ok(Object.isFrozen(state.signals));
     assert.ok(Object.isFrozen(state.priorities));
     assert.ok(Object.isFrozen(state.facts));
@@ -46,10 +46,9 @@ describe("createInitialDecisionState", () => {
     assert.notEqual(first.priorities, second.priorities);
     assert.notEqual(first.facts, second.facts);
     assert.notEqual(first.conflicts, second.conflicts);
-    assert.notEqual(first.context, second.context);
+    assert.notEqual(first.environment, second.environment);
     assert.notEqual(first.metadata, second.metadata);
   });
-
   it("keeps a stable public decision-state API", () => {
     assert.equal(typeof decisionStateApi.createInitialDecisionState, "function");
     assert.equal(

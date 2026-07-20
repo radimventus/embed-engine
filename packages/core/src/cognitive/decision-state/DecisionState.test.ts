@@ -9,7 +9,7 @@ describe("DecisionState", () => {
     const state: DecisionState = createInitialDecisionState("object-1");
 
     assert.equal(typeof state.objectId, "string");
-    assert.equal(typeof state.context, "object");
+    assert.equal(typeof state.environment, "object");
     assert.ok(Array.isArray(state.signals));
     assert.ok(Array.isArray(state.priorities));
     assert.ok(Array.isArray(state.facts));
