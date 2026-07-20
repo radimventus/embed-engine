@@ -1,17 +1,24 @@
-import {
-  createInitialRuntimeState,
-  type RuntimeListener,
-  type RuntimeState,
+import type {
+  RuntimeListener,
+  RuntimeState,
+  RuntimeStatus,
+  RuntimeObjectPackage,
+  Unsubscribe,
 } from "./RuntimeState";
 
-export type Unsubscribe = () => void;
+function createInitialState(): RuntimeState {
+  return {
+    status: "idle",
+    version: 0,
+  };
+}
 
 /**
- * Internal owner of RuntimeState.
- * Sole service allowed to replace state and notify listeners.
+ * Sole owner of RuntimeState.
+ * Performs atomic replacement and listener notification.
  */
 export class StateManager {
-  private state: RuntimeState = createInitialRuntimeState();
+  private state: RuntimeState = createInitialState();
   private readonly listeners = new Set<RuntimeListener>();
 
   getState(): RuntimeState {
@@ -25,9 +32,26 @@ export class StateManager {
     };
   }
 
+  /**
+   * Replace the full state atomically and notify listeners.
+   */
   replaceState(next: RuntimeState): void {
     this.state = next;
     this.notify();
+  }
+
+  /**
+   * Advance status/package and bump version by one.
+   */
+  advance(next: {
+    readonly status: RuntimeStatus;
+    readonly objectPackage?: RuntimeObjectPackage;
+  }): void {
+    this.replaceState({
+      status: next.status,
+      objectPackage: next.objectPackage,
+      version: this.state.version + 1,
+    });
   }
 
   clearListeners(): void {

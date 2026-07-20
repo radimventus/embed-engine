@@ -4,31 +4,21 @@ import type {
   RuntimeListener,
   RuntimeObjectPackage,
   RuntimeState,
+  Unsubscribe,
 } from "./RuntimeState";
 
 /**
- * Platform Runtime.
- * Public façade: API and Kernel ownership.
- * State access delegates to Kernel → StateManager.
+ * Public Runtime façade.
+ * Owns Kernel. Exposes lifecycle and state access only.
  */
 export class Runtime {
-  private readonly kernel: Kernel;
+  private readonly kernel = new Kernel();
 
-  constructor() {
-    this.kernel = new Kernel();
-  }
-
-  /**
-   * Bind an Object Package to this Runtime instance.
-   */
   async load(objectPackage: RuntimeObjectPackage): Promise<void> {
     this.assertNotDestroyed();
     await this.kernel.load(objectPackage);
   }
 
-  /**
-   * Accept a runtime event.
-   */
   async dispatch(event: RuntimeEvent): Promise<void> {
     this.assertNotDestroyed();
     await this.kernel.dispatch(event);
@@ -38,11 +28,7 @@ export class Runtime {
     return this.kernel.getState();
   }
 
-  /**
-   * Subscribe to RuntimeState changes.
-   * Returns an unsubscribe function.
-   */
-  subscribe(listener: RuntimeListener): () => void {
+  subscribe(listener: RuntimeListener): Unsubscribe {
     this.assertNotDestroyed();
     return this.kernel.subscribe(listener);
   }

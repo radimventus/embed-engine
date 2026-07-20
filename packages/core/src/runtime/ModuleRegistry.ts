@@ -1,8 +1,8 @@
 import type { RuntimeModule } from "./RuntimeModule";
 
 /**
- * Internal Kernel service for module registration and lookup.
- * No orchestration or business logic in M1.6.
+ * Stores registered RuntimeModule entries.
+ * Lookup and registration only — no orchestration.
  */
 export class ModuleRegistry {
   private readonly modules = new Map<string, RuntimeModule>();

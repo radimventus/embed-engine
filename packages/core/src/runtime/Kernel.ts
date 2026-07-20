@@ -1,71 +1,57 @@
 import { EventDispatcher } from "./EventDispatcher";
 import { ModuleRegistry } from "./ModuleRegistry";
 import { StateManager } from "./StateManager";
-import type { RuntimeEvent, RuntimeObjectPackage } from "./RuntimeState";
+import type {
+  RuntimeEvent,
+  RuntimeListener,
+  RuntimeObjectPackage,
+  RuntimeState,
+  Unsubscribe,
+} from "./RuntimeState";
 
 /**
- * Internal orchestration layer owned by Runtime.
- * Owns EventDispatcher, StateManager, and ModuleRegistry.
+ * Internal orchestrator owned by Runtime.
+ * Coordinates EventDispatcher, StateManager, and ModuleRegistry.
  */
 export class Kernel {
-  private readonly dispatcher: EventDispatcher;
-  private readonly stateManager: StateManager;
-  private readonly moduleRegistry: ModuleRegistry;
+  private readonly eventDispatcher = new EventDispatcher();
+  private readonly stateManager = new StateManager();
+  private readonly moduleRegistry = new ModuleRegistry();
 
-  constructor() {
-    this.dispatcher = new EventDispatcher();
-    this.stateManager = new StateManager();
-    this.moduleRegistry = new ModuleRegistry();
-  }
-
-  /**
-   * Internal registry for Kernel module wiring.
-   * Not part of the public Runtime API.
-   */
-  getModules(): ModuleRegistry {
-    return this.moduleRegistry;
-  }
-
-  getState() {
+  getState(): RuntimeState {
     return this.stateManager.getState();
   }
 
-  subscribe(listener: Parameters<StateManager["subscribe"]>[0]) {
+  subscribe(listener: RuntimeListener): Unsubscribe {
     return this.stateManager.subscribe(listener);
   }
 
   /**
-   * Transitions: idle|ready → loading → ready.
-   * TODO: initialize modules after package bind.
+   * idle|ready → loading → ready
    */
   async load(objectPackage: RuntimeObjectPackage): Promise<void> {
     const current = this.stateManager.getState();
 
-    this.stateManager.replaceState({
+    this.stateManager.advance({
       status: "loading",
       objectPackage: current.objectPackage,
-      version: current.version + 1,
     });
 
-    // TODO: bind Object Package; initialize modules.
+    // Future: bind package; initialize registered modules.
+    void this.moduleRegistry.getAll();
 
-    this.stateManager.replaceState({
+    this.stateManager.advance({
       status: "ready",
       objectPackage,
-      version: this.stateManager.getState().version + 1,
     });
   }
 
-  /**
-   * Routes the event through EventDispatcher.
-   */
   async dispatch(event: RuntimeEvent): Promise<void> {
-    await this.dispatcher.dispatch(event);
+    await this.eventDispatcher.dispatch(event);
   }
 
   /**
-   * Transitions: * → destroyed.
-   * TODO: tear down modules and pipeline resources.
+   * * → destroyed
    */
   destroy(): void {
     const current = this.stateManager.getState();
@@ -73,12 +59,12 @@ export class Kernel {
       return;
     }
 
-    // TODO: tear down modules and pipeline resources.
+    // Future: tear down registered modules.
+    void this.moduleRegistry.getAll();
 
-    this.stateManager.replaceState({
+    this.stateManager.advance({
       status: "destroyed",
       objectPackage: current.objectPackage,
-      version: current.version + 1,
     });
 
     this.stateManager.clearListeners();

@@ -22,7 +22,6 @@ export type RuntimeStatus =
 /**
  * Single source of truth for the platform Runtime.
  * Owned exclusively by StateManager.
- * Domain-agnostic. Intentionally minimal.
  */
 export interface RuntimeState {
   readonly status: RuntimeStatus;
@@ -32,9 +31,4 @@ export interface RuntimeState {
 
 export type RuntimeListener = (state: RuntimeState) => void;
 
-export function createInitialRuntimeState(): RuntimeState {
-  return {
-    status: "idle",
-    version: 0,
-  };
-}
+export type Unsubscribe = () => void;

@@ -1,8 +1,6 @@
 import { Runtime } from "./Runtime";
 
-/**
- * Creates a fresh platform Runtime instance.
- */
+/** Creates a platform Runtime with an internal Kernel. */
 export function createRuntime(): Runtime {
   return new Runtime();
 }
