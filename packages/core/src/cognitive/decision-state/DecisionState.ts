@@ -1,10 +1,10 @@
+import type { Signal } from "../signals/Signal";
 import type {
   Context,
   DecisionConflict,
   DecisionFact,
   DecisionMetadata,
   Priority,
-  Signal,
 } from "./types";
 
 /**

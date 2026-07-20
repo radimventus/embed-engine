@@ -5,6 +5,5 @@ export type {
   DecisionFact,
   DecisionMetadata,
   Priority,
-  Signal,
 } from "./types";
 export { createInitialDecisionState } from "./createInitialDecisionState";

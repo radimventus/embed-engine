@@ -10,15 +10,6 @@ export type Context = {
 };
 
 /**
- * Meaningful interaction event.
- * Signal processing is out of scope for CAP-02.
- */
-export type Signal = {
-  readonly id: string;
-  readonly type: string;
-};
-
-/**
  * User preference entry stored in Decision State.
  * Not an engine or service.
  */

@@ -8,6 +8,10 @@ export type {
   DecisionFact,
   DecisionMetadata,
   Priority,
-  Signal,
 } from "./decision-state/types";
 export { createInitialDecisionState } from "./decision-state/createInitialDecisionState";
+
+export type { Signal, SignalMetadata, SignalPayload } from "./signals/Signal";
+export { SignalType } from "./signals/SignalType";
+export { createSignal } from "./signals/createSignal";
+export type { CreateSignalInput } from "./signals/createSignal";

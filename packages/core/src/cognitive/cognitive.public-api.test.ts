@@ -3,7 +3,10 @@ import { describe, it } from "node:test";
 
 import {
   createInitialDecisionState,
+  createSignal,
+  SignalType,
   type DecisionState,
+  type Signal,
 } from "@embed-engine/core/cognitive";
 
 describe("cognitive public API", () => {
@@ -12,5 +15,13 @@ describe("cognitive public API", () => {
 
     assert.equal(typeof createInitialDecisionState, "function");
     assert.equal(state.objectId, "public-api");
+  });
+
+  it("exports Signal typing, SignalType, and createSignal", () => {
+    const signal: Signal = createSignal({ type: SignalType.ROOM_VIEWED });
+
+    assert.equal(typeof createSignal, "function");
+    assert.equal(SignalType.ROOM_VIEWED, "ROOM_VIEWED");
+    assert.equal(signal.type, SignalType.ROOM_VIEWED);
   });
 });
