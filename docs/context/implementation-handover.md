@@ -1,52 +1,72 @@
-# Embed Engine -- Implementation Handover
+# Embed Engine – Implementation Handover
 
-## Mission
+## Baseline
 
-Implement the CORE. Documentation must never become the bottleneck.
+**Living Experience v0.1 is FROZEN.**
 
-## Current Status
+SSOT:
 
--   Architecture is stable enough for implementation.
--   Missing architectural ideas are archived as short records only.
--   Reference Architecture/Bible is postponed until after
-    implementation.
--   Development proceeds in small, reviewable commits.
+- [`docs/architecture/living-experience-v0.1-freeze.md`](../architecture/living-experience-v0.1-freeze.md)
+- [`docs/architecture/behavior-pack-contract.md`](../architecture/behavior-pack-contract.md)
 
-## Working Mode
+Tag: `v0.1-living-experience`
 
--   Agent: implementation, refactoring, repetitive changes.
--   ChatGPT: architecture review, API contracts, code review, design
-    decisions.
--   If implementation uncovers an architectural gap:
-    1.  Decide (max 10 minutes)
-    2.  Archive (1 page)
-    3.  Continue coding
+### Rule for all future work
 
-## Immediate Goal
+Extend **behavior** (Behavior Packs).
 
-Milestone 1 -- Runtime Skeleton
+Do **not** redesign the architecture unless a new ADR explicitly approves it.
 
-Target public API:
+---
 
-``` ts
-const runtime = createRuntime();
+## Frozen pipeline
 
-await runtime.load(objectPackage);
-await runtime.dispatch(event);
-
-runtime.getState();
-runtime.subscribe(listener);
-runtime.destroy();
+```text
+Signal
+  ↓
+reduce()
+  ↓
+DecisionState
+  ↓
+project()
+  ↓
+Interpretation
+  ↓
+React (Priority · FAQ · AI Advisor)
 ```
 
-## First Commit
+### Completed
 
-feat(core): bootstrap runtime skeleton
+- Runtime orchestration (`applySignal`)
+- Signal / DecisionState / Environment / Focus
+- `reduce()` — sole writer of DecisionState
+- `project()` — sole Interpretation producer
+- Synchronized Decision Experience (Priority / FAQ / AI)
 
-## Rules
+### Invariants
 
--   Small commits only.
--   No scope creep.
--   Runtime first.
--   Features later.
--   Archive knowledge, then continue implementation.
+1. DecisionState is the only cognitive aggregate.
+2. `reduce()` is the only writer.
+3. `project()` is the only Interpretation producer.
+4. Runtime contains orchestration only.
+5. React contains rendering only.
+6. Interpretation is the only source consumed by the three Pilot renderers.
+
+---
+
+## Next phase
+
+**Behavior Packs** — primary evolution mechanism.
+
+First recommended pack: **Energy Conscious Buyer** (contract only until implemented).
+
+Do not start with component-driven features. Start with reaction-driven Behavior Pack work.
+
+---
+
+## Workflow
+
+1. Read Living Experience v0.1 freeze
+2. Extend via Behavior Pack contract
+3. Architecture review only if ADR change is required
+4. Implement → review → commit → push
