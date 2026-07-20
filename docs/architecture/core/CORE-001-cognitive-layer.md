@@ -111,6 +111,8 @@ Do Cognitive Layer nepatří:
 -   Analytics
 -   Telemetry
 
+**MVP persistence policy (ADR-007):** DecisionState exists only for the active Experience in Runtime memory. LocalStorage, URL, and backend restore are out of MVP scope. Persistence—if added later—stays outside Cognitive Layer and may only rehydrate DecisionState before `project()`.
+
 ------------------------------------------------------------------------
 
 # Canonical pipeline

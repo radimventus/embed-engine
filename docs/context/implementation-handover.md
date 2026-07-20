@@ -54,6 +54,14 @@ React (Priority · FAQ · AI Advisor)
 
 ---
 
+## Priority MVP policy (closed)
+
+See **ADR-007** — no open questions remain:
+
+- Absolute / independent weights (not sum=100%)
+- Single visitor only (no couple / multi-actor Priorities in MVP)
+- DecisionState = active Experience only (no LocalStorage / URL / backend in MVP)
+
 ## Next phase
 
 **Behavior Packs** — primary evolution mechanism.

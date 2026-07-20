@@ -11,6 +11,8 @@ Active product SSOT lives here.
 | `pilots/` | Pilot Foundation (SSOT) |
 | `post-foundation-development-policy.md` | Post-Foundation development policy (SSOT) |
 | `builder/` | Builder product spec and workflow SSOT |
-| `backlog/` | Product backlog (slot; may be empty) |
+| `backlog/` | Product backlog (reaction-driven; includes Post-MVP Priority items) |
 
 Historical Product Bible monolith: `../archive/product-bible/PRODUCT-BIBLE.md`
+
+**Priority MVP policy (SSOT):** [`../architecture/adr/ADR-007-priority-mvp-policy.md`](../architecture/adr/ADR-007-priority-mvp-policy.md) — absolute weights, single visitor, active-Experience-only DecisionState. Do not treat archived Product Bible Priority notes as authoritative when they conflict with ADR-007.

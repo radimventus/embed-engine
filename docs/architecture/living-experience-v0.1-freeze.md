@@ -15,7 +15,22 @@ Related:
 - [Behavior Pack Contract](./behavior-pack-contract.md) (next phase — contract only)
 - [ADR-002](./adr/ADR-002-decision-state.md) — DecisionState Aggregate
 - [ADR-003](./adr/ADR-003-cognitive-processing-pipeline.md) — Cognitive Processing Pipeline
+- [ADR-007](./adr/ADR-007-priority-mvp-policy.md) — Priority MVP policy (closed open questions)
 - [CORE-001](./core/CORE-001-cognitive-layer.md) — Cognitive Layer
+
+---
+
+## Priority MVP — closed open questions
+
+Historical Priority research questions are **resolved** for Pilot / MVP. Full rationale: **ADR-007**.
+
+| Question | MVP decision | Classification |
+| --- | --- | --- |
+| Absolute vs relative weights | **Absolute / independent** weights (Option A) | **Accepted** |
+| Multi-user / couple Priorities | Single visitor only | **Postponed** |
+| Persistence | DecisionState for **active Experience only** (Runtime memory) | **Accepted** |
+
+Relative budget mode, collaborative actors, and durable restore are **not** open — they are postponed / future research with backlog ids in [`PRODUCT_BACKLOG.md`](../product/backlog/PRODUCT_BACKLOG.md).
 
 ---
 
@@ -100,7 +115,9 @@ Proof artifacts:
 - Behavior Packs (contract defined; no implementation)
 - Dedicated Signal types for priority preference / AI turn
 - Merging CommandRuntime into Cognitive Runtime
-- Persisted DecisionState / multi-session memory
+- Persisted DecisionState / multi-session memory (**ADR-007**: rejected for MVP; Post-MVP backlog)
+- Multi-user / couple Priority collaboration (**ADR-007**: postponed)
+- Relative weight budget sum=100% (**ADR-007**: rejected for MVP; Post-MVP / research)
 - Real LLM for AI Advisor replies
 - Additional Behavior profiles (Young Family, Investor, Luxury Buyer, …)
 - Manager Studio / Sales Studio consumption of Interpretation
