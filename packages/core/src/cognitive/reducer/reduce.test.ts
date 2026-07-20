@@ -139,6 +139,24 @@ describe("reduce", () => {
     assert.equal(next.focus.mediaId, "media-1");
   });
 
+  it("stores household.profile fact from QUESTION_OPENED payload", () => {
+    const next = reduce(
+      createInitialDecisionState("object-1"),
+      createSignal({
+        type: SignalType.QUESTION_OPENED,
+        payload: {
+          questionId: "layout.ask-household-shape",
+          householdProfile: "family",
+        },
+      }),
+    );
+
+    assert.equal(next.focus.questionId, "layout.ask-household-shape");
+    assert.equal(next.facts.length, 1);
+    assert.equal(next.facts[0]?.key, "household.profile");
+    assert.equal(next.facts[0]?.value, "family");
+  });
+
   it("appends Signal into DecisionState.signals on successful reduce", () => {
     const state = createInitialDecisionState("object-1");
     const signal = createSignal({

@@ -1,9 +1,17 @@
 import { useEffect, useState } from 'react';
+import {
+  HOUSEHOLD_CHOICES,
+  HOUSEHOLD_PROFILE_FACT_KEY,
+  isHouseholdProfile,
+  recommendPromptFor,
+  type HouseholdProfile,
+} from '@embed-engine/object-house';
 import { PrimaryButton } from '@embed-engine/ui';
 
 import {
   applyQuestionOpened,
   useApplyCognitiveSignal,
+  useCognitiveRuntime,
 } from '../../cognitive/CognitiveRuntimeContext';
 import { useActiveDecisionMove } from '../../cognitive/DecisionStoryProvider';
 import { useWalkthrough } from '../../../walkthrough';
@@ -14,21 +22,38 @@ const AUDIT_SECTION_ID = 'audit-lead-capture';
 type TerminalAction = {
   readonly label: string;
   readonly run: () => void;
+  readonly disabled?: boolean;
 };
 
 /**
  * Decision Terminal — Experience Surface for the active Decision Story.
- * Demo-hardened: every state has exactly one primary CTA and a valid transition.
+ * Slice B: household capture personalizes Outcome within the session.
  */
 export function DecisionTerminal() {
+  const runtime = useCognitiveRuntime();
   const applySignal = useApplyCognitiveSignal();
   const walkthrough = useWalkthrough();
   const { story, definition, outcome, activeMoveId } = useActiveDecisionMove();
   const [pending, setPending] = useState(false);
+  const [householdProfile, setHouseholdProfile] = useState<HouseholdProfile | null>(
+    null,
+  );
+
+  const sessionProfile = readSessionHouseholdProfile(runtime);
 
   useEffect(() => {
     setPending(false);
   }, [activeMoveId, outcome?.status, story?.id]);
+
+  useEffect(() => {
+    if (activeMoveId === 'layout.ask-household-shape') {
+      setHouseholdProfile(sessionProfile);
+      return;
+    }
+    if (story === null || outcome !== null) {
+      setHouseholdProfile(null);
+    }
+  }, [activeMoveId, outcome, sessionProfile, story]);
 
   const withTransition = (action: () => void) => {
     if (pending) {
@@ -45,7 +70,7 @@ export function DecisionTerminal() {
         outcome={outcome.status}
         pending={pending}
         eyebrow="Decision outcome"
-        title={outcome.status.replace('-', ' ')}
+        title={formatOutcomeTitle(outcome.status)}
         body={outcome.summary}
         action={{
           label: pending ? 'Opening audit…' : 'Continue to site audit',
@@ -89,6 +114,45 @@ export function DecisionTerminal() {
   }
 
   const completedCount = story.slots.filter((slot) => slot.status === 'completed').length;
+  const body =
+    activeMoveId === 'layout.recommend-disposition-fit'
+      ? recommendPromptFor(sessionProfile ?? undefined)
+      : definition.advisorPrompt;
+
+  if (activeMoveId === 'layout.ask-household-shape') {
+    return (
+      <TerminalShell
+        testId="decision-terminal"
+        activeMove={activeMoveId}
+        pending={pending}
+        eyebrow={`Decision Terminal · Move ${completedCount + 1}/${story.slots.length}`}
+        intent={definition.intent}
+        title={definition.purpose}
+        body={definition.advisorPrompt}
+        tradeOff={definition.tradeOff}
+        householdProfile={householdProfile}
+        onSelectHousehold={setHouseholdProfile}
+        action={{
+          label: pending ? 'Updating…' : 'Continue with this household',
+          disabled: householdProfile === null || pending,
+          run: () => {
+            if (householdProfile === null) {
+              return;
+            }
+            withTransition(() => {
+              applyQuestionOpened(
+                applySignal,
+                activeMoveId,
+                `Household: ${householdProfile}`,
+                { householdProfile },
+              );
+            });
+          },
+        }}
+      />
+    );
+  }
+
   const action = resolveMoveAction(activeMoveId, {
     pending,
     withTransition,
@@ -105,11 +169,25 @@ export function DecisionTerminal() {
       eyebrow={`Decision Terminal · Move ${completedCount + 1}/${story.slots.length}`}
       intent={definition.intent}
       title={definition.purpose}
-      body={definition.advisorPrompt}
+      body={body}
       tradeOff={definition.tradeOff}
       action={action}
     />
   );
+}
+
+function readSessionHouseholdProfile(
+  runtime: ReturnType<typeof useCognitiveRuntime>,
+): HouseholdProfile | null {
+  const value = runtime
+    ?.getState()
+    .decisionState?.facts.find((fact) => fact.key === HOUSEHOLD_PROFILE_FACT_KEY)
+    ?.value;
+  return isHouseholdProfile(value) ? value : null;
+}
+
+function formatOutcomeTitle(status: string): string {
+  return status.replace(/-/g, ' ');
 }
 
 function resolveMoveAction(
@@ -188,6 +266,8 @@ type TerminalShellProps = {
   empty?: boolean;
   outcome?: string;
   activeMove?: string;
+  householdProfile?: HouseholdProfile | null;
+  onSelectHousehold?: (profile: HouseholdProfile) => void;
 };
 
 function TerminalShell({
@@ -203,6 +283,8 @@ function TerminalShell({
   empty,
   outcome,
   activeMove,
+  householdProfile,
+  onSelectHousehold,
 }: TerminalShellProps) {
   return (
     <aside
@@ -214,6 +296,7 @@ function TerminalShell({
       data-outcome={outcome}
       data-active-move={activeMove}
       data-pending={pending ? 'true' : undefined}
+      data-household={householdProfile ?? undefined}
     >
       <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
         {eyebrow}
@@ -230,18 +313,51 @@ function TerminalShell({
           Trade-off: {tradeOff}
         </p>
       ) : null}
+      {onSelectHousehold ? (
+        <div
+          className="mt-3 flex flex-col gap-2"
+          role="radiogroup"
+          aria-label="Household shape"
+          data-testid="decision-terminal-household"
+        >
+          {HOUSEHOLD_CHOICES.map((choice) => {
+            const selected = householdProfile === choice.id;
+            return (
+              <button
+                key={choice.id}
+                type="button"
+                role="radio"
+                aria-checked={selected}
+                data-testid={`household-choice-${choice.id}`}
+                className={`rounded-[8px] border px-3 py-2 text-left transition-colors ${
+                  selected
+                    ? 'border-embed-brand-gold bg-embed-brand-gold/15 text-embed-foreground-primary'
+                    : 'border-embed-foreground-primary/15 bg-transparent text-embed-foreground-primary/80 hover:border-embed-brand-gold/40'
+                }`}
+                onClick={() => onSelectHousehold(choice.id)}
+              >
+                <span className="block text-xs font-semibold">{choice.label}</span>
+                <span className="mt-0.5 block text-[11px] opacity-70">{choice.detail}</span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
       {hint ? (
         <p className="mt-3 text-xs text-embed-foreground-primary/55">{hint}</p>
       ) : null}
       {pending ? (
-        <p className="mt-3 text-xs font-medium text-embed-brand-gold" data-testid="decision-terminal-pending">
+        <p
+          className="mt-3 text-xs font-medium text-embed-brand-gold"
+          data-testid="decision-terminal-pending"
+        >
           Advancing…
         </p>
       ) : null}
       <PrimaryButton
         size="sm"
         className="mt-4 self-start"
-        disabled={pending}
+        disabled={action.disabled === true || pending}
         data-testid="decision-terminal-cta"
         onClick={action.run}
       >
