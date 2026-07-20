@@ -24,7 +24,7 @@ export function PriorityEngine({ runtime }: PriorityEngineProps) {
       className={`relative ${SECTION_SURFACE_CLASS} ${PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS} ${PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS}`}
     >
       <SectionHeader />
-      <div className="grid grid-cols-[52fr_48fr] items-stretch gap-section mobile:grid-cols-1">
+      <div className="grid grid-cols-[52fr_48fr] items-start gap-section mobile:grid-cols-1">
         <PriorityCards runtime={runtime} />
         <IntroText />
       </div>

@@ -1,5 +1,4 @@
 import type { Runtime } from '@embed-engine/core';
-import { createSignal, SignalType } from '@embed-engine/core/cognitive';
 
 import { DecisionActionArea } from './DecisionActionArea';
 import { DecisionCard } from './DecisionCard';
@@ -9,6 +8,8 @@ import {
   DECISION_SURFACE_HEIGHT_PX,
   DECISION_SURFACE_WIDTH_PX,
 } from './decision-cards-layout';
+import { EventTimeline } from './EventTimeline';
+import { PriorityReasons } from './PriorityReasons';
 import { useDecisionCards } from './useDecisionCards';
 
 type PriorityCardsProps = {
@@ -18,9 +19,11 @@ type PriorityCardsProps = {
 export function PriorityCards({ runtime }: PriorityCardsProps) {
   const {
     categories,
-    importanceById,
+    elevatedPriorities,
+    events,
     minimumMet,
     minimumSelection,
+    priorityById,
     questionId,
     selectedCount,
     toggleCard,
@@ -28,50 +31,6 @@ export function PriorityCards({ runtime }: PriorityCardsProps) {
 
   return (
     <div className="flex min-w-0 flex-col self-start">
-      <div className="mb-3 flex flex-wrap gap-2" aria-label="Cognitive signal demo">
-        <button
-          type="button"
-          className="rounded border border-embed-border-default bg-white px-2.5 py-1 text-[11px] text-embed-foreground-primary"
-          onClick={() =>
-            runtime.applySignal(
-              createSignal({
-                type: SignalType.ROOM_VIEWED,
-                payload: { roomId: 'room-living' },
-              }),
-            )
-          }
-        >
-          Signal: room
-        </button>
-        <button
-          type="button"
-          className="rounded border border-embed-border-default bg-white px-2.5 py-1 text-[11px] text-embed-foreground-primary"
-          onClick={() =>
-            runtime.applySignal(
-              createSignal({
-                type: SignalType.MEDIA_OPENED,
-                payload: { mediaId: 'media-exterior' },
-              }),
-            )
-          }
-        >
-          Signal: media
-        </button>
-        <button
-          type="button"
-          className="rounded border border-embed-border-default bg-white px-2.5 py-1 text-[11px] text-embed-foreground-primary"
-          onClick={() =>
-            runtime.applySignal(
-              createSignal({
-                type: SignalType.FLOOR_CHANGED,
-                payload: { floorId: 'floor-1' },
-              }),
-            )
-          }
-        >
-          Signal: floor
-        </button>
-      </div>
       <div
         aria-label="Decision Surface"
         className="grid shrink-0 items-center justify-items-center overflow-visible"
@@ -83,7 +42,8 @@ export function PriorityCards({ runtime }: PriorityCardsProps) {
         }}
       >
         {categories.map((category) => {
-          const importance = importanceById[category.id] ?? 0.35;
+          const priority = priorityById[category.id];
+          const importance = priority?.weight ?? 0.35;
 
           return (
             <DecisionCard
@@ -91,6 +51,8 @@ export function PriorityCards({ runtime }: PriorityCardsProps) {
               category={category}
               importance={importance}
               isActive={questionId === category.id}
+              isHighlighted={priority?.highlighted === true}
+              reason={priority?.reason}
               onToggle={() => toggleCard(category.id)}
             />
           );
@@ -101,6 +63,10 @@ export function PriorityCards({ runtime }: PriorityCardsProps) {
         minimumSelection={minimumSelection}
         selectedCount={selectedCount}
       />
+      <div className="mt-5 grid w-[680px] grid-cols-2 gap-4">
+        <EventTimeline events={events} />
+        <PriorityReasons priorities={elevatedPriorities} />
+      </div>
     </div>
   );
 }

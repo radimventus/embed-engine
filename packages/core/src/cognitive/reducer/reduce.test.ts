@@ -139,6 +139,21 @@ describe("reduce", () => {
     assert.equal(next.focus.mediaId, "media-1");
   });
 
+  it("appends Signal into DecisionState.signals on successful reduce", () => {
+    const state = createInitialDecisionState("object-1");
+    const signal = createSignal({
+      type: SignalType.ROOM_VIEWED,
+      id: "signal-room-1",
+      payload: { roomId: "room-living", label: "Living room" },
+    });
+
+    const next = reduce(state, signal);
+
+    assert.equal(next.signals.length, 1);
+    assert.equal(next.signals[0]?.id, "signal-room-1");
+    assert.equal(state.signals.length, 0);
+  });
+
   it("keeps a stable reducer module API", () => {
     assert.equal(typeof reducerApi.reduce, "function");
     assert.equal(reducerApi.reduce, reduce);

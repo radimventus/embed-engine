@@ -1,5 +1,6 @@
 export type {
   Interpretation,
+  InterpretationEvent,
   InterpretationPriority,
 } from "./Interpretation";
 export {

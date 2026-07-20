@@ -19,32 +19,38 @@ describe("project", () => {
     assert.deepEqual(state, before);
     assert.ok(Object.isFrozen(first));
     assert.ok(Object.isFrozen(first.priorities));
+    assert.ok(Object.isFrozen(first.events));
   });
 
-  it("boosts layout when Focus.roomId is set", () => {
+  it("boosts layout with a reason when Focus.roomId is set", () => {
     const state = reduce(
       createInitialDecisionState("object-1"),
       createSignal({
         type: SignalType.ROOM_VIEWED,
-        payload: { roomId: "room-living" },
+        payload: { roomId: "room-living", label: "Living room opened" },
       }),
     );
 
     const layout = project(state).priorities.find((item) => item.id === "layout");
     assert.equal(layout?.weight, 0.92);
+    assert.ok(layout?.reason?.includes("room"));
+    assert.equal(layout?.highlighted, true);
   });
 
-  it("boosts the selected question priority to 1", () => {
+  it("projects a timeline from DecisionState.signals", () => {
     const state = reduce(
       createInitialDecisionState("object-1"),
       createSignal({
-        type: SignalType.QUESTION_OPENED,
-        payload: { questionId: "energy" },
+        type: SignalType.FLOOR_CHANGED,
+        id: "evt-1",
+        timestamp: 10,
+        payload: { floorId: "floor-1", label: "Floor selected" },
       }),
     );
 
-    const energy = project(state).priorities.find((item) => item.id === "energy");
-    assert.equal(energy?.weight, 1);
-    assert.equal(project(state).priorities.length, INTERPRETATION_PRIORITY_IDS.length);
+    const interpretation = project(state);
+    assert.equal(interpretation.events.length, 1);
+    assert.equal(interpretation.events[0]?.label, "Floor selected");
+    assert.equal(interpretation.priorities.length, INTERPRETATION_PRIORITY_IDS.length);
   });
 });

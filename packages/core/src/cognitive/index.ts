@@ -23,6 +23,7 @@ export { reduce } from "./reducer/reduce";
 
 export type {
   Interpretation,
+  InterpretationEvent,
   InterpretationPriority,
 } from "./interpretation/Interpretation";
 export {

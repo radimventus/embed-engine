@@ -28,5 +28,13 @@ export function reduce(state: DecisionState, signal: Signal): DecisionState {
     return state;
   }
 
-  return signalReducer(state, signal);
+  const next = signalReducer(state, signal);
+  if (next === state) {
+    return state;
+  }
+
+  return Object.freeze({
+    ...next,
+    signals: Object.freeze([...state.signals, signal]),
+  });
 }

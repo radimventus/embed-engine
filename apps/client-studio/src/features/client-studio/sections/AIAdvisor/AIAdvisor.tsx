@@ -1,5 +1,9 @@
 import { useState } from 'react';
 
+import {
+  applyQuestionOpened,
+  useApplyCognitiveSignal,
+} from '../../cognitive/CognitiveRuntimeContext';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import {
   AI_ADVISOR_CONVERSATION_CELL_CLASS,
@@ -26,9 +30,15 @@ import type { Message } from './types';
 export function AIAdvisor() {
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const applySignal = useApplyCognitiveSignal();
 
   const handleQuestionSelect = (question: string) => {
     setInputValue(question);
+    applyQuestionOpened(
+      applySignal,
+      'investment',
+      `Question opened: ${question.slice(0, 48)}`,
+    );
   };
 
   const handleSend = () => {
@@ -36,6 +46,8 @@ export function AIAdvisor() {
     if (!text) {
       return;
     }
+
+    applyQuestionOpened(applySignal, 'investment', `Question asked: ${text.slice(0, 48)}`);
 
     const now = new Date();
     const time = formatMessageTime(now);
