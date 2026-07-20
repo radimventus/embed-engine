@@ -1,7 +1,20 @@
 # ADR-006 — Interpretation & Projection Layer
 
 **Status:** Accepted (Soft Freeze)  
-**Date:** 2026-07-19
+**Date:** 2026-07-19  
+
+---
+
+## Annotation (Decision Layer governance v1 — 2026-07-20)
+
+This ADR remains historical for the **ExperienceModel / ReactProjector** path.
+
+For the **Living Experience / Decision Layer** path, the canonical stack is:
+
+Interpretation → Decision Strategy → Decision Story → Decision Move → Experience surfaces  
+(SSOT: [`../decision-layer/README.md`](../decision-layer/README.md)).
+
+Do not treat the ADR-006 diagram as the sole platform architecture. Cognitive Interpretation (`project()`) and Decision Layer guidance supersede for Decision Experience. Legacy sidebar ExperienceModel may coexist until unified (risk R7).
 
 ---
 

@@ -6,14 +6,15 @@ Navigation index for project documentation. This file is not product documentati
 
 | Folder | Purpose |
 | --- | --- |
-| `architecture/` | Technical SSOT for Runtime Kernel and Experience projection |
+| `architecture/` | Runtime, Cognitive, **Decision Layer SSOT**, Experience projection |
 | `product/` | Product principles, vision, Object Package, Knowledge, Pilots, Builder, backlog |
 | `design/` | Design language, geometry, design system tokens |
 | `implementation/` | How to implement (frontend rules, AI agent rules) |
 | `roadmap/` | Long-term product development phases |
 | `architecture/adr/` | Architecture Decision Records |
+| `architecture/decision-layer/` | **Canonical vocabulary** for Strategy · Story · Move · Terminal · Trajectory |
 | `sprints/` | Active sprint working notes (not SSOT) |
-| `archive/` | Historical documents, reviews, changelogs, evidence — not active SSOT |
+| `archive/` | Historical documents — not active SSOT |
 
 ## SSOT
 
@@ -29,18 +30,16 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Post-Foundation Development Policy | `product/post-foundation-development-policy.md` |
 | Foundation Milestone (v0.3) | `roadmap/milestone-v0.3-foundation-complete.md` |
 | Roadmap | `roadmap/embed-engine-roadmap.md` |
+| Architecture overview | `architecture/README.md` |
 | Runtime | `architecture/runtime-decisions.md` |
-| ADR-001 Runtime Architecture | `architecture/adr/ADR-001-runtime-architecture.md` |
-| ADR-002 DecisionState Aggregate | `architecture/adr/ADR-002-decision-state.md` |
-| ADR-003 Cognitive Processing Pipeline | `architecture/adr/ADR-003-cognitive-processing-pipeline.md` |
-| Projection / Experience contract | `architecture/experience-projection.md` |
-| Decision Layer | `architecture/decision-layer/decision-layer.md` |
-| Decision Strategy (DT-002) | `architecture/decision-layer/decision-strategy.md` |
-| Decision Terminal (Experience Surface) | `architecture/experience/decision-terminal.md` |
+| Decision Layer vocabulary (SSOT) | `architecture/decision-layer/README.md` |
+| Decision Layer governance v1 | `architecture/decision-layer/decision-layer-governance-v1.md` |
+| Decision Strategy detail (DT-002) | `architecture/decision-layer/decision-strategy.md` |
 | Behavior Pack contract | `architecture/behavior-pack-contract.md` |
-| ADR-006 Interpretation & Projection | `architecture/adr/ADR-006-interpretation-projection-layer.md` |
-| ADR-009 Decision Layer | `architecture/adr/ADR-009-decision-layer.md` |
-| ADR-010 Decision Strategy | `architecture/adr/ADR-010-decision-strategy.md` |
+| Living Experience v0.1 | `architecture/living-experience-v0.1-freeze.md` |
+| Experience projection | `architecture/experience-projection.md` |
+| Decision Terminal modalities | `architecture/experience/decision-terminal.md` (defs → Decision Layer) |
+| ADR index | `architecture/adr/README.md` |
 | Builder workflow | `product/builder/Builder_Workflow_Specification_BWS_v0.1.md` |
 | Design Language | `design/language/embed-engine-design-language-v1.md` |
 | Geometry | `design/geometry/client-studio-geometry-spec.md` |
@@ -50,22 +49,12 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 ## Recommended reading order
 
 1. [PROJECT-MAP.md](./PROJECT-MAP.md)
-2. [Product Constitution](./product/constitution/product-constitution.md)
-3. [Product Vision](./product/vision/product-vision.md)
-4. [Roadmap](./roadmap/embed-engine-roadmap.md)
-5. [Foundation Complete (v0.3)](./roadmap/milestone-v0.3-foundation-complete.md)
-6. [Post-Foundation Development Policy](./product/post-foundation-development-policy.md)
-7. [Engineering Playbook](./implementation/engineering-playbook.md)
-8. [Object Package](./product/object-package.md)
-9. [Knowledge Foundation](./product/knowledge/README.md)
-10. [Pilot Foundation](./product/pilots/README.md)
-11. [Runtime Decisions](./architecture/runtime-decisions.md)
-12. [Experience Projection](./architecture/experience-projection.md)
-13. [Design Language](./design/language/embed-engine-design-language-v1.md)
-14. [Geometry Specification](./design/geometry/client-studio-geometry-spec.md)
-15. [Frontend Implementation Guide](./implementation/frontend-implementation-guide.md)
-16. [AI Agent Rules](./implementation/ai-agent-rules.md)
-17. [Builder Workflow](./product/builder/Builder_Workflow_Specification_BWS_v0.1.md) — when implementing projects
+2. [Decision Layer vocabulary](./architecture/decision-layer/README.md)
+3. [Decision Layer governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
+4. [Product Constitution](./product/constitution/product-constitution.md)
+5. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
+6. [Runtime Decisions](./architecture/runtime-decisions.md)
+7. Active design / implementation guides as needed
 
 Do not start with `archive/`.
 

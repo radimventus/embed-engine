@@ -16,6 +16,8 @@ It contains no UI, Runtime, AI or interpretation logic.
 
 Structural authority: **ADR-002**.
 
+Decision Layer vocabulary (Strategy / Story / Move / Terminal / Trajectory) is **not** defined here — see [`../decision-layer/README.md`](../decision-layer/README.md).
+
 ------------------------------------------------------------------------
 
 ## Architecture

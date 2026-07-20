@@ -79,7 +79,7 @@ Experience requires both, joined by interpretation.
 | About | One concrete object | How the Engine understands decisions and objects over time |
 | Question | What is true about this object? | What do we know about deciding and interpreting? |
 | Instance | Per project / object | Product-level (and later validated via pilots) |
-| Consumed by | Interpretation / Decision Strategy / Experience surfaces (Terminal, Priority, FAQ, AI) | Product design of Decision Layer + Interpretation |
+| Consumed by | Interpretation / Decision Strategy / Experience surfaces | See [Decision Layer SSOT](../../architecture/decision-layer/README.md) |
 | Replaces the other? | No | No |
 
 Object Package is **encoded object truth**.  

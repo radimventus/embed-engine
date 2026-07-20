@@ -7,7 +7,11 @@
 **ADR:** [ADR-010 — Decision Strategy](../adr/ADR-010-decision-strategy.md)  
 **Freeze summary:** [decision-strategy-dt-002-freeze.md](./decision-strategy-dt-002-freeze.md)
 
-This document defines **Decision Strategy** — the missing domain artifact between Interpretation and Experience.
+This document defines **Decision Strategy** in detail (DT-002).
+
+**Canonical one-liner:** The orchestration layer that composes the active Decision Story from Interpretation and Behavior Pack.
+
+Move / Story / Terminal / Trajectory definitions: [README.md](./README.md) — do not treat this file as SSOT for those terms.
 
 No Runtime, React, or UI implementation is authorized by this document alone.
 
@@ -193,7 +197,9 @@ Narrative language in Terminal may group by intent; architecture does not requir
 
 ### Simplified definition
 
-**Decision Move** = the smallest reusable guided step that can change the user’s decision state.
+**Decision Move** = the smallest guided step that can change the user's decision state.
+
+(Canonical wording: [decision-layer.md](./decision-layer.md#decision-move).)
 
 ### Minimal shape (conceptual contract)
 

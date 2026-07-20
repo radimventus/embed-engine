@@ -47,6 +47,7 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 | DT-v0.1 | Decision Terminal surface freeze (superseded in part by Decision Layer v1) |
 | DL-v1 | Decision Layer architecture freeze (ADR-009) |
 | DT-002 | Decision Strategy architecture freeze (ADR-010) |
+| DL-GOV-v1 | Decision Layer governance documentation freeze · tag `architecture-decision-layer-v1` |
 
 ---
 

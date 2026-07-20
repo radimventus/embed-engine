@@ -2,7 +2,12 @@
 
 ## Foundation Freeze v0.2
 
-# Reference Architecture
+> **Historical diagram.** Superseded for platform architecture by  
+> [Decision Layer governance v1](../architecture/decision-layer/decision-layer-governance-v1.md).  
+> “Decision Strategy” below is **not** the canonical DT-002 definition — see  
+> [`architecture/decision-layer/decision-strategy.md`](../architecture/decision-layer/decision-strategy.md).
+
+# Reference Architecture (archived conceptual draft)
 
 ``` text
 Interaction

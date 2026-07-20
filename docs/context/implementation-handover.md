@@ -2,68 +2,44 @@
 
 ## Baseline
 
-**Living Experience v0.1** — cognitive sync frozen.  
-**Decision Layer v1** — ADR-009.  
-**Decision Strategy DT-002** — ADR-010.
+| Freeze | Tag / ADR |
+| --- | --- |
+| Living Experience v0.1 | cognitive sync |
+| Decision Layer governance v1 | `architecture-decision-layer-v1` |
+| Decision Strategy DT-002 | ADR-010 |
 
-SSOT:
+**Vocabulary SSOT (start here):** [`docs/architecture/decision-layer/README.md`](../architecture/decision-layer/README.md)  
+**Governance review:** [`decision-layer-governance-v1.md`](../architecture/decision-layer/decision-layer-governance-v1.md)
 
-- [`docs/architecture/living-experience-v0.1-freeze.md`](../architecture/living-experience-v0.1-freeze.md)
-- [`docs/architecture/decision-layer/decision-layer.md`](../architecture/decision-layer/decision-layer.md)
-- [`docs/architecture/decision-layer/decision-strategy.md`](../architecture/decision-layer/decision-strategy.md)
-- [`docs/architecture/behavior-pack-contract.md`](../architecture/behavior-pack-contract.md)
-- [`docs/architecture/experience/decision-terminal.md`](../architecture/experience/decision-terminal.md)
+### Rules
 
-### Rule for all future work
-
-Extend **behavior** (Behavior Packs + Decision Layer contracts).
-
-Do **not** redesign the cognitive pipeline unless a new ADR explicitly approves it.  
-Do **not** put Decision Strategy or Move libraries in React.  
-Do **not** put Decision Terminal in Kernel.  
-Do **not** embed Story inside Interpretation.
+- Extend via Behavior Packs + Decision Layer contracts.  
+- Do not redesign the cognitive pipeline without ADR.  
+- Do not put Strategy / Move libraries in React.  
+- Do not put Decision Terminal in Kernel.  
+- Do not embed Story in Interpretation.  
+- Do not implement Decision Trajectory (Future Architecture).  
+- Do not treat Behavior Pack as a UI modifier.
 
 ---
 
-## Frozen cognitive pipeline
+## Canonical stack
 
 ```text
-Signal → reduce() → DecisionState → project() → Interpretation
+Knowledge:      Object Package + Behavior Pack
+Kernel:         Signal → reduce → DecisionState → project → Interpretation
+Decision Layer: Decision Strategy → Decision Story → Decision Move
+Experience:     Decision Terminal · Priority · FAQ · AI · …
+Future:         Decision Trajectory
 ```
 
-## Decision Layer
+## Next milestone
 
-```text
-Interpretation + Behavior Pack
-  → Decision Strategy  (compose active Story — ADR-010)
-  → Decision Story     (Moves + cursor)
-  → Decision Move
-```
-
-Kernel ends at Interpretation. Strategy is not Kernel.
-
-Experience Layer renders (Decision Terminal, Priority, FAQ, AI, …).
-
-Decision Trajectory = **future optional Strategy input only**.
-
----
-
-## Priority MVP policy (closed)
-
-ADR-007: absolute weights; single visitor; active-Experience-only DecisionState.
-
-## Next milestones (recommended order)
-
-1. **DL-01** Move / Story / Strategy data contracts (R1–R2 still open)  
-2. Behavior Pack Move library + composition  
-3. ADR-008 Acceptance + Decision Terminal renderer epic  
-4. First Behavior Pack: Energy Conscious Buyer  
-
----
+**DL-01** — Move / Story / Strategy data contracts (no UI). Risks R1–R8 remain open for implementation hosting/transport.
 
 ## Workflow
 
-1. Read Decision Strategy DT-002 + Decision Layer + Living Experience freezes  
-2. Extend via Behavior Pack / Decision Layer contracts  
-3. Architecture review only if ADR change is required  
+1. Read Decision Layer vocabulary + governance  
+2. Extend via Pack / contracts  
+3. ADR only if CORE concepts change  
 4. Implement → review → commit → push

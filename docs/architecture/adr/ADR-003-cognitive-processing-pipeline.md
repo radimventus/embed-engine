@@ -1,8 +1,21 @@
 # ADR-003 — Cognitive Processing Pipeline
 
-**Status:** Proposed  
+**Status:** Proposed → treat as Accepted with Living Experience v0.1 + Decision Layer governance v1  
 **Date:** 2026-07-20  
-**Depends on:** ADR-001 — Runtime Architecture, ADR-002 — DecisionState Aggregate, CORE-001 — Cognitive Layer
+**Depends on:** ADR-001 — Runtime Architecture, ADR-002 — DecisionState Aggregate, CORE-001 — Cognitive Layer  
+
+---
+
+## Annotation (2026-07-20)
+
+This ADR freezes the **cognitive** pipeline ending at Interpretation.
+
+Guided dialogue composition is **not** part of this ADR. See:
+
+- [Decision Layer](../decision-layer/README.md)  
+- [ADR-009](./ADR-009-decision-layer.md) · [ADR-010](./ADR-010-decision-strategy.md)
+
+Kernel does **not** author Decision Stories.
 
 ---
 

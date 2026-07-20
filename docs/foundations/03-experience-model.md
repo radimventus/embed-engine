@@ -142,29 +142,17 @@ The same experience may be delivered through:
 -   Report
 -   Multiple surfaces together
 
-Decision Terminal **renders Decision Stories** (ordered Decision Moves + cursor).  
-Story composition is **Decision Strategy** (Decision Layer), not UI.  
-See [`docs/architecture/decision-layer/decision-strategy.md`](../architecture/decision-layer/decision-strategy.md).
+Decision Terminal **renders Decision Stories**.  
+Story composition is **Decision Strategy**.  
+Canonical vocabulary: [`architecture/decision-layer/README.md`](../architecture/decision-layer/README.md).
 
 ------------------------------------------------------------------------
 
-## Decision Story (Decision Layer)
+## Decision Story / Strategy
 
-A Decision Story is an ordered sequence of **Decision Moves** plus cursor/status.
+Canonical definitions: [`architecture/decision-layer/README.md`](../architecture/decision-layer/README.md).
 
-It is composed by **Decision Strategy** (hybrid select/compose) from Interpretation + Behavior Pack.
-
-**Stages / Acts / Chapters are not first-class.** Optional Move intents may exist.
-
-SSOT: [`docs/architecture/decision-layer/decision-strategy.md`](../architecture/decision-layer/decision-strategy.md).
-
-------------------------------------------------------------------------
-
-## Decision Strategy (foundations alignment)
-
-Decision Strategy’s single responsibility: **compose the active Decision Story**.
-
-Kernel ends at Interpretation. Strategy is not UI and not `project()`.
+Do not redefine Decision Story, Decision Strategy, Decision Move, Decision Terminal, or Decision Trajectory in this foundations document.
 
 ------------------------------------------------------------------------
 

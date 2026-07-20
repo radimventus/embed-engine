@@ -2,64 +2,38 @@
 
 One-page orientation for Embed Engine. Not a specification.
 
+**Canonical architecture:** [architecture/README.md](./architecture/README.md) · [Decision Layer SSOT](./architecture/decision-layer/README.md) · [Governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
+
 ```text
-                    Product (why / what)
-                           │
-              Knowledge ◄──Pilots──► validated lessons
-                           │
-                     Object Package
-                      Behavior Pack
-                           │
-              ┌────────────┴────────────┐
-              ▼                         ▼
-         Architecture              Builder
-      (Runtime Kernel)        (encode object truth)
-              │
-         DecisionState
-              │
-         Interpretation          ← reasoning
-              │
-         Decision Strategy       ← guidance orchestration
-              │
-         Decision Story / Moves
-              │
-         Experience Layer
-              │
-         Decision Terminal · Priority · FAQ · AI · …
-              │
-         Client Studio (pixels)
+Knowledge:      Object Package + Behavior Pack
+Kernel:         Signal → reduce → DecisionState → project → Interpretation
+Decision Layer: Decision Strategy → Decision Story → Decision Move
+Experience:     Decision Terminal · Priority · FAQ · AI · Recommendation · …
+Future:         Decision Trajectory (not MVP)
 ```
 
 ## Relationships
 
-| Concept | Role |
-| --- | --- |
-| **Product** | Principles and vision. Governs what may enter the Engine. |
-| **Object Package** | Source of truth about a concrete object. |
-| **Behavior Pack** | Domain knowledge, decision rules, Move library, Story composition — not UI. |
-| **Knowledge** | How the Engine understands deciding and interpreting. |
-| **Pilots** | Real-world process that validates and grows Knowledge. |
-| **Roadmap** | Phases and sequencing. |
-| **Architecture** | Runtime Kernel + Decision Layer + Experience contracts. |
-| **DecisionState / Interpretation** | Cognitive reasoning pipeline (ADR-002 / ADR-003). |
-| **Decision Layer** | Strategy → Story → Move. SSOT: `architecture/decision-layer/decision-layer.md`. |
-| **Decision Terminal** | Experience Surface that renders Stories (any modality). |
-| **Experience** | Surfaces: Terminal, Priority, FAQ, AI, Recommendation, explorers. |
-| **Builder** | Encodes object truth and project content. |
-| **Client Studio** | Application renderer. No domain reconstruction. |
-| **Archive** | History only. Never active SSOT. |
+| Concept | Role | Canonical source |
+| --- | --- | --- |
+| **Product** | Principles and vision | `product/` |
+| **Object Package** | Object truth | `product/object-package.md` |
+| **Behavior Pack** | Knowledge, rules, Move library, composition — not UI | `architecture/behavior-pack-contract.md` |
+| **Decision Layer** | Strategy · Story · Move · Terminal · Trajectory | `architecture/decision-layer/` |
+| **Interpretation** | Reasoning snapshot | ADR-003 / CORE-001 |
+| **Experience** | Surfaces that render | Experience Layer |
+| **Client Studio** | Application renderer | apps — no domain reconstruction |
+| **Archive** | History only | `archive/` |
 
 ## Rule of thumb
 
-> Object Package holds object truth.  
-> Behavior Pack holds how a profile decides and is guided.  
-> Interpretation is what we understand now.  
-> Decision Strategy chooses the guided Story.  
-> Experience surfaces only render and emit Signals.
+> Knowledge holds truth and profile guidance vocabulary.  
+> Kernel produces Interpretation.  
+> Decision Strategy composes the dialogue Story.  
+> Experience only renders and emits Signals.
 
 ## Start here
 
-1. [README.md](./README.md)  
-2. This map  
-3. [Decision Layer](./architecture/decision-layer/decision-layer.md)  
-4. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
+1. [architecture/decision-layer/README.md](./architecture/decision-layer/README.md)  
+2. [architecture/decision-layer/decision-layer-governance-v1.md](./architecture/decision-layer/decision-layer-governance-v1.md)  
+3. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)

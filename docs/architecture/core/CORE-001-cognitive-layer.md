@@ -49,8 +49,9 @@ Runtime → Kernel → EventDispatcher / StateManager / ModuleRegistry
 ```
 
 Canonical processing order is defined in **ADR-003**.  
-Decision guidance stack is defined in **Decision Layer** / **ADR-009**.  
-Decision Terminal is Experience Layer only — never Kernel.
+Decision guidance stack is defined in **Decision Layer** — [vocabulary SSOT](../decision-layer/README.md) / **ADR-009** / **ADR-010**.  
+Decision Terminal is Experience Layer only — never Kernel.  
+Decision Trajectory is **Future Architecture** — not MVP.
 
 DecisionState structure is defined in **ADR-002**.
 

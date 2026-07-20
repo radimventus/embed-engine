@@ -1,12 +1,17 @@
 # Decision Layer
 
-**Status:** Architecture Freeze v1 + DT-002 Strategy (documentation only)  
+**Status:** CORE — Architecture Freeze v1 (documentation only)  
 **Date:** 2026-07-20  
-**Depends on:** Living Experience v0.1, ADR-002, ADR-003, ADR-007  
-**Related:** [Decision Strategy DT-002](./decision-strategy.md) (SSOT for Strategy), [Behavior Pack Contract](../behavior-pack-contract.md), [Decision Terminal](../experience/decision-terminal.md), [ADR-009](../adr/ADR-009-decision-layer.md), [ADR-010](../adr/ADR-010-decision-strategy.md)  
-**Freeze + review:** [Decision Layer v1 Freeze](./decision-layer-v1-freeze.md) · [DT-002 Freeze](./decision-strategy-dt-002-freeze.md)
+**SSOT index:** [README.md](./README.md)  
+**Governance review:** [decision-layer-governance-v1.md](./decision-layer-governance-v1.md)  
+**Strategy detail:** [decision-strategy.md](./decision-strategy.md) (DT-002)  
+**Behavior Pack:** [../behavior-pack-contract.md](../behavior-pack-contract.md)  
+**ADRs:** [ADR-009](../adr/ADR-009-decision-layer.md) · [ADR-010](../adr/ADR-010-decision-strategy.md) · [ADR-008](../adr/ADR-008-decision-terminal.md) (Proposed)
 
-This document is the SSOT for the **Decision Layer**: guided decision-making as domain architecture — not UI.
+This document is the **canonical source** for Decision Move, Decision Story, Decision Terminal, and Decision Trajectory.  
+Decision Strategy’s full contract lives in [decision-strategy.md](./decision-strategy.md); do not redefine Strategy elsewhere.
+
+Other docs must **link** here — not copy definitions.
 
 It does **not** authorize Runtime or React implementation by itself.
 
@@ -86,7 +91,7 @@ Do not collapse these four into UI components or into Kernel.
 
 ### Definition
 
-**Decision Move** is the smallest guided step that can change the user’s decision state.
+**Decision Move** is the smallest guided step that can change the user's decision state.
 
 It is a **domain primitive**.
 
@@ -176,9 +181,11 @@ It does not author Stories.
 
 ## Decision Strategy
 
-**SSOT:** [decision-strategy.md](./decision-strategy.md) (DT-002 / ADR-010).
+**Canonical definition:** The orchestration layer that composes the active Decision Story from Interpretation and Behavior Pack.
 
 **Single responsibility:** Compose the active Decision Story for the current Interpretation.
+
+**Full contract (SSOT detail):** [decision-strategy.md](./decision-strategy.md) (ADR-010).
 
 ```text
 Interpretation + Behavior Pack
@@ -197,9 +204,7 @@ Strategy owns Move continuation via recomposition; Moves do not own `next` graph
 
 **Status: Future Architecture — NOT MVP.**
 
-### Definition
-
-**Decision Trajectory** represents the long-term evolution of the user’s decision process.
+**Canonical definition:** Decision Trajectory represents the long-term evolution of the user’s decision process.
 
 ### Potential inputs
 
@@ -218,29 +223,28 @@ Interpretation is a **snapshot** of understanding. Trajectory is the **history a
 
 - Trajectory **extends** the platform; it does **not** replace Interpretation  
 - Trajectory is **not** a second DecisionState  
-- Persistence of Trajectory requires a future ADR (MVP remains active-Experience-only per ADR-007)  
-- Do not implement under Living Experience or Decision Terminal epics without that ADR  
+- Future optional **input to Decision Strategy** (ADR-010)  
+- Persistence requires a future ADR (MVP: active Experience only — ADR-007)  
+- **Do not implement** under Living Experience or Decision Terminal epics without that ADR  
 
 ---
 
 ## Decision Terminal (Experience Layer)
 
-Full SSOT for the surface: [Decision Terminal](../experience/decision-terminal.md).
+**Canonical definition:** Decision Terminal is an Experience Surface that renders Decision Stories.
 
-Summary for Decision Layer:
-
-- **Experience Surface** that renders Decision Stories (and related Interpretation context)  
+- Belongs **exclusively** to the Experience Layer  
 - **Not** part of Kernel or Runtime  
 - **Not** synonymous with any one layout  
 
-May be rendered as:
+May be rendered as: right panel · fullscreen · bottom sheet · AI conversation · voice · future interfaces.
 
-- right panel  
-- fullscreen  
-- bottom sheet  
-- AI conversation  
-- voice  
-- future interfaces  
+**Responsibilities:** present the active Story; collect Move completion/skip/defer → Signals; stay coherent with peer surfaces.
+
+**Non-responsibilities:** composing Stories; owning Pack rules; writing DecisionState; implementing Trajectory.
+
+Experience modality notes (non-definitional): [../experience/decision-terminal.md](../experience/decision-terminal.md).  
+Implementation gate: [ADR-008](../adr/ADR-008-decision-terminal.md) (Proposed).
 
 ---
 

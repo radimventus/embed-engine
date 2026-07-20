@@ -3,9 +3,18 @@
 **Status:** Accepted (definitions freeze)  
 **Date:** 2026-07-20  
 **Depends on:** Living Experience v0.1, ADR-002, ADR-003, ADR-007  
-**SSOT:** [Decision Layer](../decision-layer/decision-layer.md)  
+**SSOT:** [Decision Layer](../decision-layer/decision-layer.md) · [Vocabulary index](../decision-layer/README.md)  
+**Strategy detail:** [Decision Strategy DT-002](../decision-layer/decision-strategy.md) (ADR-010)  
+**Governance:** [Decision Layer Governance v1](../decision-layer/decision-layer-governance-v1.md)  
 **Freeze / review:** [Decision Layer v1 Freeze](../decision-layer/decision-layer-v1-freeze.md)  
-**Related:** ADR-008 (Decision Terminal — Proposed), Behavior Pack Contract
+**Related:** ADR-008 (Decision Terminal — Proposed), ADR-010, Behavior Pack Contract
+
+---
+
+# Annotation (2026-07-20)
+
+Canonical one-line definitions and CORE classification live in the Decision Layer vocabulary index.  
+This ADR remains the acceptance record for introducing the Decision Layer; do not treat ADR table rows as competing definitions.
 
 ---
 

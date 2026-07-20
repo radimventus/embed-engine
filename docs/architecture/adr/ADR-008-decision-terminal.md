@@ -3,14 +3,16 @@
 **Status:** Proposed  
 **Date:** 2026-07-20  
 **Depends on:** Living Experience v0.1, ADR-009 Decision Layer, ADR-002, ADR-003, ADR-007  
-**Concept SSOT:** [Decision Terminal](../experience/decision-terminal.md)  
-**Decision Layer SSOT:** [Decision Layer](../decision-layer/decision-layer.md)
+**Concept SSOT:** [Decision Layer — Terminal](../decision-layer/decision-layer.md#decision-terminal-experience-layer) · [Vocabulary index](../decision-layer/README.md)  
+**Experience modalities:** [Decision Terminal modalities](../experience/decision-terminal.md)  
+**Decision Layer SSOT:** [Decision Layer](../decision-layer/decision-layer.md)  
+**Supersedes (terminology):** earlier wording that treated “right panel” as the architecture for guidance.
 
 ---
 
 # Context
 
-ADR-009 freezes Decision Move / Story / Strategy as domain guidance.
+ADR-009 / ADR-010 freeze Decision Move / Story / Strategy.
 
 Decision Terminal is the **Experience Surface** that renders Decision Stories. It is not Kernel, not Strategy, and not synonymous with a right panel.
 

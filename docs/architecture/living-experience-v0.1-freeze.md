@@ -12,13 +12,11 @@ Everything after this milestone must **extend behavior**, not architecture.
 
 Related:
 
-- [Decision Layer](./decision-layer/decision-layer.md) — Strategy → Story → Move (ADR-009)
-- [Behavior Pack Contract](./behavior-pack-contract.md) — knowledge, rules, Move library, composition
-- [Decision Terminal](./experience/decision-terminal.md) — Experience Surface (ADR-008 Proposed)
-- [ADR-002](./adr/ADR-002-decision-state.md) — DecisionState Aggregate
-- [ADR-003](./adr/ADR-003-cognitive-processing-pipeline.md) — Cognitive Processing Pipeline
-- [ADR-007](./adr/ADR-007-priority-mvp-policy.md) — Priority MVP policy (closed open questions)
-- [CORE-001](./core/CORE-001-cognitive-layer.md) — Cognitive Layer
+- [Decision Layer vocabulary SSOT](./decision-layer/README.md)
+- [Decision Layer governance v1](./decision-layer/decision-layer-governance-v1.md)
+- [Behavior Pack Contract](./behavior-pack-contract.md)
+- [ADR-002](./adr/ADR-002-decision-state.md) · [ADR-003](./adr/ADR-003-cognitive-processing-pipeline.md) · [ADR-007](./adr/ADR-007-priority-mvp-policy.md)
+- [CORE-001](./core/CORE-001-cognitive-layer.md)
 
 ---
 

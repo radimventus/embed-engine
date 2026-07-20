@@ -11,18 +11,26 @@ Active product SSOT lives here.
 | `pilots/` | Pilot Foundation (SSOT) |
 | `post-foundation-development-policy.md` | Post-Foundation development policy (SSOT) |
 | `builder/` | Builder product spec and workflow SSOT |
-| `backlog/` | Product backlog (reaction-driven; includes Post-MVP Priority items) |
+| `backlog/` | Product backlog (reaction-driven) |
 
-Historical Product Bible monolith: `../archive/product-bible/PRODUCT-BIBLE.md`
+## Architecture vocabulary (do not redefine in product docs)
 
-**Priority MVP policy (SSOT):** [`../architecture/adr/ADR-007-priority-mvp-policy.md`](../architecture/adr/ADR-007-priority-mvp-policy.md) — absolute weights, single visitor, active-Experience-only DecisionState. Do not treat archived Product Bible Priority notes as authoritative when they conflict with ADR-007.
+**Canonical source:** [`../architecture/decision-layer/README.md`](../architecture/decision-layer/README.md)
 
-**Decision Layer (SSOT):** [`../architecture/decision-layer/decision-layer.md`](../architecture/decision-layer/decision-layer.md) — Strategy → Story → Move.
+| Concept | One-line (link only — full text in SSOT) |
+| --- | --- |
+| Decision Move | Smallest guided step that can change the user's decision state |
+| Decision Story | Ordered sequence of Decision Moves |
+| Decision Strategy | Orchestration layer that composes the active Decision Story |
+| Decision Terminal | Experience Surface that renders Decision Stories |
+| Decision Trajectory | Future Architecture — not MVP |
+| Behavior Pack | Knowledge, rules, Move library, composition — **not** UI |
 
-**Decision Strategy (DT-002):** [`../architecture/decision-layer/decision-strategy.md`](../architecture/decision-layer/decision-strategy.md) — single responsibility: compose active Story. ADR-010 Accepted.
+**Governance:** [`../architecture/decision-layer/decision-layer-governance-v1.md`](../architecture/decision-layer/decision-layer-governance-v1.md)  
+**Priority MVP:** [`../architecture/adr/ADR-007-priority-mvp-policy.md`](../architecture/adr/ADR-007-priority-mvp-policy.md)
 
-**Decision Terminal (Experience Surface):** [`../architecture/experience/decision-terminal.md`](../architecture/experience/decision-terminal.md) — renders Stories; may appear as panel/sheet/voice/…. ADR-008 Proposed.
+## Product Bible
 
-**Behavior Pack:** knowledge, decision rules, Move library, Story composition — not UI. Contract: [`../architecture/behavior-pack-contract.md`](../architecture/behavior-pack-contract.md).
+Historical monolith: [`../archive/product-bible/PRODUCT-BIBLE.md`](../archive/product-bible/PRODUCT-BIBLE.md)
 
-Archived Product Bible remains historical; ADR-007 / ADR-009 / ADR-010 / Decision Layer supersede conflicting Priority / “right panel” / static-flow / Stage-as-container language.
+**Not authoritative** for Decision Layer vocabulary. Where the Bible says “right panel”, “Priority Detail”, or static flows, prefer Decision Layer SSOT / ADR-007–010.

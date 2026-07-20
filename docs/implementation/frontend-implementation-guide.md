@@ -22,6 +22,10 @@ Not product strategy.
 
 Not visual design.
 
+Not Decision Layer vocabulary — see [`docs/architecture/decision-layer/README.md`](../architecture/decision-layer/README.md).
+
+Client Studio authors Object Package knowledge and Behavior Packs; it does **not** own Decision Strategy and must **not** hardcode Decision Stories as page flows.
+
 ---
 
 # 1. General Principles

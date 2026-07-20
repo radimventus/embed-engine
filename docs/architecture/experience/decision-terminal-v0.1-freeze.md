@@ -1,23 +1,9 @@
-# Decision Terminal v0.1 — Architecture Freeze
+# Decision Terminal v0.1 — Architecture Freeze (Historical)
 
-**Status:** SUPERSEDED IN PART by Decision Layer v1  
-**Date:** 2026-07-20  
+**Status:** SUPERSEDED by Decision Layer governance v1  
 
-Retain as historical surface freeze. Canonical guidance stack:
+Canonical vocabulary: [../decision-layer/README.md](../decision-layer/README.md)  
+Governance: [../decision-layer/decision-layer-governance-v1.md](../decision-layer/decision-layer-governance-v1.md)  
+Modalities only: [decision-terminal.md](./decision-terminal.md)
 
-→ [Decision Layer](../decision-layer/decision-layer.md)  
-→ [Decision Layer v1 Freeze](../decision-layer/decision-layer-v1-freeze.md)
-
-Updated Terminal SSOT: [decision-terminal.md](./decision-terminal.md)
-
----
-
-## Corrections under Decision Layer v1
-
-| v0.1 wording | Decision Layer v1 |
-| --- | --- |
-| Terminal is “not a right panel” | Terminal **may** render as right panel; panel ≠ concept |
-| Decision Story = conceptual stages | Story = ordered **Decision Moves**; stages optional narrative |
-| Terminal “hosts” Story | Terminal **renders**; **Strategy** composes |
-
-Decision Trajectory remains **future / not MVP**.
+Kept for history. Do not use as SSOT.

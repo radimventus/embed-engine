@@ -2,8 +2,10 @@
 
 **Status:** CONTRACT ONLY (not implemented)  
 **Date:** 2026-07-20  
-**Depends on:** [Living Experience v0.1 Freeze](./living-experience-v0.1-freeze.md), [Decision Layer](./decision-layer/decision-layer.md), ADR-002, ADR-003, ADR-009  
-**Rule:** Behavior Packs extend **behavior**. They must not change the cognitive pipeline and must not modify UI.
+**Depends on:** [Living Experience v0.1 Freeze](./living-experience-v0.1-freeze.md), [Decision Layer vocabulary](./decision-layer/README.md), ADR-002, ADR-003, ADR-009, ADR-010  
+**Rule:** Behavior Packs extend **behavior**. They must not change the cognitive pipeline and must **not** modify UI.
+
+Decision Move / Story / Strategy definitions: **link only** — [decision-layer/README.md](./decision-layer/README.md).
 
 ```text
 Signal → reduce() → DecisionState → project() → Interpretation

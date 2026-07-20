@@ -12,6 +12,11 @@ These documents do **not** describe implementation.
 They define the architectural principles from which every lower layer is
 derived.
 
+**Platform Decision Layer vocabulary (canonical):**  
+[`../architecture/decision-layer/README.md`](../architecture/decision-layer/README.md)
+
+Foundations diagrams that conflict with Decision Layer governance v1 are **historical** and must not be treated as competing SSOTs.
+
 ------------------------------------------------------------------------
 
 # Architectural Hierarchy
