@@ -27,6 +27,7 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Object Package | `product/object-package.md` |
 | Knowledge Foundation | `product/knowledge/README.md` |
 | Pilot Foundation | `product/pilots/README.md` |
+| First Pilot (CAP-P01) | `pilot/README.md` |
 | Post-Foundation Development Policy | `product/post-foundation-development-policy.md` |
 | Foundation Milestone (v0.3) | `roadmap/milestone-v0.3-foundation-complete.md` |
 | Roadmap | `roadmap/embed-engine-roadmap.md` |
