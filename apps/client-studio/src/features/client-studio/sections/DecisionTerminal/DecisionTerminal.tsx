@@ -19,6 +19,9 @@ import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from '../PriorityEngine/priority-en
 
 const AUDIT_SECTION_ID = 'audit-lead-capture';
 
+const STAIRS_WHY_NOW =
+  'Because you just explored another floor, there is one additional aspect worth considering.';
+
 type TerminalAction = {
   readonly label: string;
   readonly run: () => void;
@@ -114,6 +117,7 @@ export function DecisionTerminal() {
   }
 
   const completedCount = story.slots.filter((slot) => slot.status === 'completed').length;
+  const isStairsWarn = activeMoveId === 'layout.warn-stairs-mobility';
   const body =
     activeMoveId === 'layout.recommend-disposition-fit'
       ? recommendPromptFor(sessionProfile ?? undefined)
@@ -169,6 +173,7 @@ export function DecisionTerminal() {
       eyebrow={`Decision Terminal · Move ${completedCount + 1}/${story.slots.length}`}
       intent={definition.intent}
       title={definition.purpose}
+      whyNow={isStairsWarn ? STAIRS_WHY_NOW : undefined}
       body={body}
       tradeOff={definition.tradeOff}
       action={action}
@@ -263,6 +268,7 @@ type TerminalShellProps = {
   intent?: string;
   tradeOff?: string;
   hint?: string;
+  whyNow?: string;
   empty?: boolean;
   outcome?: string;
   activeMove?: string;
@@ -280,6 +286,7 @@ function TerminalShell({
   intent,
   tradeOff,
   hint,
+  whyNow,
   empty,
   outcome,
   activeMove,
@@ -297,6 +304,7 @@ function TerminalShell({
       data-active-move={activeMove}
       data-pending={pending ? 'true' : undefined}
       data-household={householdProfile ?? undefined}
+      data-reactive={whyNow ? 'true' : undefined}
     >
       <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
         {eyebrow}
@@ -307,6 +315,14 @@ function TerminalShell({
         </p>
       ) : null}
       <p className="mt-2 text-sm font-medium text-embed-foreground-primary">{title}</p>
+      {whyNow ? (
+        <p
+          className="mt-3 text-xs font-medium leading-relaxed text-embed-brand-gold"
+          data-testid="decision-terminal-why-now"
+        >
+          {whyNow}
+        </p>
+      ) : null}
       <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">{body}</p>
       {tradeOff ? (
         <p className="mt-3 text-xs leading-relaxed text-embed-foreground-primary/55">
