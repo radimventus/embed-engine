@@ -20,7 +20,8 @@ export type RuntimeStatus =
   | "destroyed";
 
 /**
- * Single source of truth owned by Runtime.
+ * Single source of truth for the platform Runtime.
+ * Owned exclusively by StateManager.
  * Domain-agnostic. Intentionally minimal.
  */
 export interface RuntimeState {
