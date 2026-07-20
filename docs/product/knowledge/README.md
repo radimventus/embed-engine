@@ -79,7 +79,7 @@ Experience requires both, joined by interpretation.
 | About | One concrete object | How the Engine understands decisions and objects over time |
 | Question | What is true about this object? | What do we know about deciding and interpreting? |
 | Instance | Per project / object | Product-level (and later validated via pilots) |
-| Consumed by | Interpretation / projection | Product design of Decision + Interpretation |
+| Consumed by | Interpretation / projection; Decision Terminal (planned surface) | Product design of Decision + Interpretation |
 | Replaces the other? | No | No |
 
 Object Package is **encoded object truth**.  

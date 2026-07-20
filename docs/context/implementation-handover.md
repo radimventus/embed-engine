@@ -62,6 +62,16 @@ See **ADR-007** — no open questions remain:
 - Single visitor only (no couple / multi-actor Priorities in MVP)
 - DecisionState = active Experience only (no LocalStorage / URL / backend in MVP)
 
+## Decision Terminal (docs freeze)
+
+See **Decision Terminal** + **ADR-008 (Proposed)**.
+
+- Reusable interpretation surface — **not** a right panel
+- Decision Story stages are conceptual
+- Decision Trajectory is future-only
+
+No UI / Runtime implementation until ADR-008 is Accepted and an epic is approved.
+
 ## Next phase
 
 **Behavior Packs** — primary evolution mechanism.

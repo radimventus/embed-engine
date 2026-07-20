@@ -13,6 +13,7 @@ Everything after this milestone must **extend behavior**, not architecture.
 Related:
 
 - [Behavior Pack Contract](./behavior-pack-contract.md) (next phase — contract only)
+- [Decision Terminal](./experience/decision-terminal.md) — interpretation surface (docs freeze; ADR-008 Proposed)
 - [ADR-002](./adr/ADR-002-decision-state.md) — DecisionState Aggregate
 - [ADR-003](./adr/ADR-003-cognitive-processing-pipeline.md) — Cognitive Processing Pipeline
 - [ADR-007](./adr/ADR-007-priority-mvp-policy.md) — Priority MVP policy (closed open questions)

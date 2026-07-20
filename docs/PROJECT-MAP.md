@@ -38,7 +38,8 @@ One-page orientation for Embed Engine. Not a specification.
 | **Roadmap** | Phases and sequencing. Does not override Product or Architecture. |
 | **Architecture** | Runtime Kernel boundaries. Domain-agnostic orchestration. |
 | **Decision** | Domain module: answers, flow, filters. Lives outside Core. |
-| **Experience** | Public projection (`ExperienceModel`). Sole contract for renderers. |
+| **Experience** | Public projection for renderers. Decision Experience uses **Interpretation**; legacy flow may still use `ExperienceModel`. |
+| **Decision Terminal** | Reusable interpretation surface (not a right panel). Docs: `architecture/experience/decision-terminal.md`. |
 | **Builder** | Implementation workflow that encodes object truth and project content for Client Studio. |
 | **Client Studio** | Application renderer. Passive consumer of Experience. No domain reconstruction. |
 | **Implementation** | Rules for building UI and using assistants — follows Product, Geometry, Design Language. |

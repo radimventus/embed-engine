@@ -16,3 +16,5 @@ Active product SSOT lives here.
 Historical Product Bible monolith: `../archive/product-bible/PRODUCT-BIBLE.md`
 
 **Priority MVP policy (SSOT):** [`../architecture/adr/ADR-007-priority-mvp-policy.md`](../architecture/adr/ADR-007-priority-mvp-policy.md) — absolute weights, single visitor, active-Experience-only DecisionState. Do not treat archived Product Bible Priority notes as authoritative when they conflict with ADR-007.
+
+**Decision Terminal (SSOT):** [`../architecture/experience/decision-terminal.md`](../architecture/experience/decision-terminal.md) — reusable interpretation surface (not a “right panel”). Freeze: [`decision-terminal-v0.1-freeze.md`](../architecture/experience/decision-terminal-v0.1-freeze.md). ADR-008 Proposed — no implementation yet.

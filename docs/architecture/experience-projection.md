@@ -18,8 +18,14 @@ Doplňuje Runtime Decisions. Nemění Runtime Kernel.
 
 # 1. Experience Projection Principle
 
-> **ExperienceModel is the only public contract between Engine and
-> Renderer. Renderers must never reconstruct domain state.**
+> **Interpretation (Decision Experience) / ExperienceModel (legacy decision-flow) are the
+> contracts renderers consume. Renderers must never reconstruct domain state.**
+
+For the synchronized Decision Experience (Living Experience v0.1):
+
+- Priority, FAQ, AI Advisor, and the planned **Decision Terminal** consume **Interpretation**.
+- Decision Terminal is a reusable **interpretation surface**, not a layout “right panel”.
+  See [Decision Terminal](./experience/decision-terminal.md).
 
 Důsledky:
 
@@ -30,20 +36,22 @@ Důsledky:
 -   Renderer never computes graph traversal.
 -   Renderer only renders the supplied projection.
 
-Pipeline:
+Pipeline (cognitive Decision Experience):
 
 ``` text
 DecisionState
         │
         ▼
-Decision Projection
+     project()
         │
         ▼
-ExperienceModel
+  Interpretation
         │
         ▼
-Renderer
+  Renderers (Priority · FAQ · AI · Decision Terminal · …)
 ```
+
+Legacy decision-flow path may still project `ExperienceModel` for sidebar navigation until unified.
 
 ------------------------------------------------------------------------
 

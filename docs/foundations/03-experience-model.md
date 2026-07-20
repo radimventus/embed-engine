@@ -135,10 +135,25 @@ The same experience may be delivered through:
 
 -   AI
 -   Priority
+-   FAQ
+-   **Decision Terminal** (reusable interpretation surface — not a fixed “right panel”)
 -   Video
 -   Gallery
 -   Report
 -   Multiple renderers together
+
+Decision Terminal narrates **Active Focus** and **Decision Story** from Interpretation.
+See [`docs/architecture/experience/decision-terminal.md`](../architecture/experience/decision-terminal.md).
+
+------------------------------------------------------------------------
+
+## Decision Story (conceptual)
+
+Understanding deepens through conceptual stages (not fixed UI screens):
+
+Confirmation → Discovery → Interpretation → Reality Check → Recommendation
+
+These stages describe Experience rhythm. They do not mandate a five-step wizard.
 
 ------------------------------------------------------------------------
 

@@ -43,3 +43,14 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 | --- | --- |
 | LE-v0.1 | Living Experience v0.1 — synchronized Priority / FAQ / AI |
 | ADR-007 | Priority MVP open questions closed |
+| DT-v0.1 | Decision Terminal architecture freeze (docs only; ADR-008 Proposed) |
+
+---
+
+## Deferred implementation (architecture ready)
+
+| ID | Item | Notes |
+| --- | --- | --- |
+| DT-01 | Decision Terminal renderer | After ADR-008 Accepted. Consumes Interpretation / Active Focus only. |
+| DT-02 | Decision Story stage projection | Conceptual stages → optional Interpretation fields. |
+| DT-FR-01 | Decision Trajectory | Future — extends Interpretation; not MVP. |
