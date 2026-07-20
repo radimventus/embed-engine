@@ -1,18 +1,29 @@
 import { EventDispatcher } from "./EventDispatcher";
+import { ModuleRegistry } from "./ModuleRegistry";
 import { StateManager } from "./StateManager";
 import type { RuntimeEvent, RuntimeObjectPackage } from "./RuntimeState";
 
 /**
  * Internal orchestration layer owned by Runtime.
- * Owns EventDispatcher and StateManager. Coordinates state transitions.
+ * Owns EventDispatcher, StateManager, and ModuleRegistry.
  */
 export class Kernel {
   private readonly dispatcher: EventDispatcher;
   private readonly stateManager: StateManager;
+  private readonly moduleRegistry: ModuleRegistry;
 
   constructor() {
     this.dispatcher = new EventDispatcher();
     this.stateManager = new StateManager();
+    this.moduleRegistry = new ModuleRegistry();
+  }
+
+  /**
+   * Internal registry for Kernel module wiring.
+   * Not part of the public Runtime API.
+   */
+  getModules(): ModuleRegistry {
+    return this.moduleRegistry;
   }
 
   getState() {
