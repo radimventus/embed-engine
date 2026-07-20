@@ -16,8 +16,7 @@ import {
 import { useActiveDecisionMove } from '../../cognitive/DecisionStoryProvider';
 import { useWalkthrough } from '../../../walkthrough';
 import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from '../PriorityEngine/priority-engine-layout';
-
-const AUDIT_SECTION_ID = 'audit-lead-capture';
+import { OutcomeCommitment } from './OutcomeCommitment';
 
 const STAIRS_WHY_NOW =
   'Because you just explored another floor, there is one additional aspect worth considering.';
@@ -30,7 +29,7 @@ type TerminalAction = {
 
 /**
  * Decision Terminal — Experience Surface for the active Decision Story.
- * Slice B: household capture personalizes Outcome within the session.
+ * Slice D: Outcome is a Decision Commitment (layout closed → site evaluation).
  */
 export function DecisionTerminal() {
   const runtime = useCognitiveRuntime();
@@ -66,27 +65,16 @@ export function DecisionTerminal() {
     action();
   };
 
-  if (outcome) {
+  if (outcome && story) {
     return (
-      <TerminalShell
-        testId="decision-terminal"
-        outcome={outcome.status}
+      <OutcomeCommitment
+        outcome={outcome}
+        profile={sessionProfile}
+        slots={story.slots}
+        storyId={story.id}
         pending={pending}
-        eyebrow="Decision outcome"
-        title={formatOutcomeTitle(outcome.status)}
-        body={outcome.summary}
-        action={{
-          label: pending ? 'Opening audit…' : 'Continue to site audit',
-          run: () => {
-            withTransition(() => {
-              document
-                .getElementById(AUDIT_SECTION_ID)
-                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-              window.setTimeout(() => setPending(false), 600);
-            });
-          },
-        }}
-        hint="Run again: select Dispozice in Priority."
+        withTransition={withTransition}
+        onPendingClear={() => setPending(false)}
       />
     );
   }
@@ -189,10 +177,6 @@ function readSessionHouseholdProfile(
     .decisionState?.facts.find((fact) => fact.key === HOUSEHOLD_PROFILE_FACT_KEY)
     ?.value;
   return isHouseholdProfile(value) ? value : null;
-}
-
-function formatOutcomeTitle(status: string): string {
-  return status.replace(/-/g, ' ');
 }
 
 function resolveMoveAction(
