@@ -1,19 +1,28 @@
+import { EventDispatcher } from "./EventDispatcher";
 import type { RuntimeEvent, RuntimeObjectPackage } from "./RuntimeState";
 
 /**
  * Internal orchestration layer owned by Runtime.
- * Placeholder skeleton — no business logic in M1.3.
+ * Owns EventDispatcher. No business logic in M1.4.
  */
 export class Kernel {
+  private readonly dispatcher: EventDispatcher;
+
+  constructor() {
+    this.dispatcher = new EventDispatcher();
+  }
+
   /**
    * TODO: bind Object Package; initialize modules.
    */
   async load(_objectPackage: RuntimeObjectPackage): Promise<void> {}
 
   /**
-   * TODO: event orchestration / intelligence pipeline.
+   * Routes the event through EventDispatcher.
    */
-  async dispatch(_event: RuntimeEvent): Promise<void> {}
+  async dispatch(event: RuntimeEvent): Promise<void> {
+    await this.dispatcher.dispatch(event);
+  }
 
   /**
    * TODO: tear down modules and pipeline resources.
