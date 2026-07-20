@@ -35,7 +35,7 @@
     {
       "id": "bathroom",
       "title": "Koupelna",
-      "floor": "ground-floor",
+      "floor": "upper-floor",
       "decisionCanvas": "decision-canvas/bathroom.svg",
       "media": {
         "folder": "media/bathroom",
@@ -53,7 +53,7 @@
     {
       "id": "bedroom",
       "title": "Ložnice",
-      "floor": "ground-floor",
+      "floor": "upper-floor",
       "decisionCanvas": "decision-canvas/bedroom.svg",
       "media": {
         "folder": "media/bedroom",

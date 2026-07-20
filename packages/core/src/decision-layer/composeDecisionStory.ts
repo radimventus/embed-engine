@@ -53,7 +53,7 @@ export function composeDecisionStory(
   input: DecisionStoryComposeInput,
   depth = 0,
 ): DecisionStory | null {
-  if (depth > pack.spine.length + 1) {
+  if (depth > pack.spine.length + 5) {
     return input.previous;
   }
 

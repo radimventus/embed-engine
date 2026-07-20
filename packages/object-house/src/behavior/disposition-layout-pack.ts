@@ -126,6 +126,14 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       tradeOff: "Compact wet core versus parallel morning demand.",
     },
     {
+      id: "layout.warn-stairs-mobility",
+      intent: "interpret",
+      purpose: "Make stairs between day and night an explicit life choice.",
+      advisorPrompt:
+        "Every night ends upstairs. Every morning starts with a descent. With a child that’s normal. With a guest on crutches, it’s a negotiation. Decide with eyes open.",
+      tradeOff: "Zone clarity versus continuous stair dependence.",
+    },
+    {
       id: "layout.ask-household-shape",
       intent: "discover",
       purpose: "Load who will live here before a fit verdict.",
@@ -182,6 +190,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       case "layout.compare-living-kitchen":
       case "layout.compare-indoor-garden":
       case "layout.warn-bath-contention":
+      case "layout.warn-stairs-mobility":
       case "layout.recommend-disposition-fit":
         return acknowledged;
       default:
