@@ -11,7 +11,8 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 
 | ID | Item | Notes |
 | --- | --- | --- |
-| CAP-P02 | Enrich Pilot Object media + Energy Conscious Buyer pack **or** wire Layout Story (DL-01 + Terminal) | See `docs/pilot/open-questions.md` |
+| CAP-P02 | Layout Decision Dialogue validation | `docs/pilot/dialogues/layout-dialogue-v1.md` |
+| CAP-P03 | Energy Conscious Buyer pack **or** wire Layout Story (DL-01 + Terminal) | See open-questions |
 | DL-01 | Decision Move / Story / Strategy data contracts | Hosting/transport R1–R2; no UI redesign |
 
 ## Done (product)
@@ -19,6 +20,7 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 | ID | Item |
 | --- | --- |
 | CAP-P01 | First Pilot Object `house-modern-01` + Disposition Layout Behavior Pack v1 — `docs/pilot/` |
+| CAP-P02 | Layout Decision Dialogue v1 — `docs/pilot/dialogues/layout-dialogue-v1.md` |
 
 ---
 

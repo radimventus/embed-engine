@@ -54,4 +54,24 @@ Risks R1–R8: [Decision Strategy](../architecture/decision-layer/decision-strat
 
 **Impact:** Energy pack still valuable; order changed for product value.  
 
-**Recommendation:** CAP-P02 or CAP-P03 — Energy Conscious Buyer pack on same Object.
+**Recommendation:** CAP-P03 — Energy Conscious Buyer pack on same Object (after dialogue validation).
+
+---
+
+## OQ-P06 — Dialogue state vs Signal-only cognition (CAP-P02)
+
+**Problem:** The Layout Decision Dialogue needs the system to *remember* household answers and provisional trade-off positions across Moves (e.g. “dining in living accepted”). Today that may only exist as ephemeral Signals / questions.  
+
+**Impact:** Strategy continuation branches that depend on buyer positions are product-clear in `dialogues/layout-dialogue-v1.md` but under-specified in reduce/facts.  
+
+**Recommendation:** Do not redesign architecture here. When implementing, map dialogue positions onto existing DecisionState.facts or Signal payloads — escalate to ADR only if a new aggregate is proposed.
+
+---
+
+## OQ-P07 — Advisor voice ownership (copy vs Pack)
+
+**Problem:** CAP-P02 dialogue includes advisor phrasing. Unclear whether long-form coach language lives in Behavior Pack knowledge, Move metadata, or Experience Terminal copy.  
+
+**Impact:** Risk of UI teams inventing divergent “sales voice.”  
+
+**Recommendation:** Keep meaning and trade-offs in Pack/Moves; treat spoken phrasing as Experience projection of those meanings — no new layer.

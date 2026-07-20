@@ -1,6 +1,6 @@
 # Pilot CAP-P01 — First Pilot Object + Behavior Pack
 
-**Status:** Product milestone CAP-P01 / P-001  
+**Status:** CAP-P01 complete · CAP-P02 dialogue validation in `dialogues/`  
 **Date:** 2026-07-20  
 **Architecture:** Frozen — [Decision Layer SSOT](../architecture/decision-layer/README.md)  
 **Principle:** Help a real buyer make a better decision than browsing photos alone.
@@ -20,6 +20,7 @@ It is documentation / knowledge — not Runtime or React implementation.
 | [stories/layout-decision-story-v1.md](./stories/layout-decision-story-v1.md) | First complete Layout Decision Story |
 | [strategy/layout-strategy-composition.md](./strategy/layout-strategy-composition.md) | How Strategy composes this Story |
 | [terminal/layout-terminal-experience.md](./terminal/layout-terminal-experience.md) | Decision Terminal interaction (no UI mockups) |
+| [dialogues/layout-dialogue-v1.md](./dialogues/layout-dialogue-v1.md) | **CAP-P02** — complete Layout decision dialogue (mind → decision) |
 | [validation.md](./validation.md) | Buyer decision-quality validation |
 | [open-questions.md](./open-questions.md) | Architecture limitations discovered — **not fixed** |
 
