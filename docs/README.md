@@ -30,6 +30,7 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Foundation Milestone (v0.3) | `roadmap/milestone-v0.3-foundation-complete.md` |
 | Roadmap | `roadmap/embed-engine-roadmap.md` |
 | Runtime | `architecture/runtime-decisions.md` |
+| ADR-001 Runtime Architecture | `architecture/adr/ADR-001-runtime-architecture.md` |
 | Projection / Experience contract | `architecture/experience-projection.md` |
 | ADR-006 Interpretation & Projection | `architecture/adr/ADR-006-interpretation-projection-layer.md` |
 | Builder workflow | `product/builder/Builder_Workflow_Specification_BWS_v0.1.md` |
