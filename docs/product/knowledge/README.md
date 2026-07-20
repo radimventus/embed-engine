@@ -61,7 +61,8 @@ Decision Knowledge lives conceptually between Object Package truth and Experienc
 | | **Data** | **Knowledge** |
 | --- | --- | --- |
 | Nature | Recorded facts or events | Interpreted, reusable meaning |
-| Example | Price = 6 900 000; answer = “space” | “Space preference → emphasize layout and living/children rooms” |
+| Example | Price = 6 900 000; layout rooms on house-modern-01 | CAP-P01 Disposition Pack reasons about day/night zones — [`../../pilot/`](../../pilot/) |
+
 | Change trigger | Fact or event changes | Understanding improves |
 | Primary home | Object Package, answers, media references | Decision Knowledge / Product Knowledge |
 | Alone sufficient for Experience? | No | No — needs Object Package + Decision state + projection rules |

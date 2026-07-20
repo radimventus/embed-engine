@@ -35,7 +35,9 @@ Future:         Decision Trajectory
 
 ## Next milestone
 
-**DL-01** — Move / Story / Strategy data contracts (no UI). Risks R1–R8 remain open for implementation hosting/transport.
+**CAP-P02** — see `docs/pilot/open-questions.md` and product backlog (media enrichment and/or Energy pack and/or Layout Story wiring).
+
+**DL-01** — Move / Story / Strategy data contracts (R1–R2 still open for hosting/transport).
 
 ## Workflow
 

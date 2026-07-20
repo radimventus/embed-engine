@@ -11,8 +11,14 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 
 | ID | Item | Notes |
 | --- | --- | --- |
-| DL-01 | Decision Move / Story / Strategy data contracts | After ADR-010; risks R1–R2 remain for hosting/transport. No UI. |
-| BP-01 | First Behavior Pack: **Energy Conscious Buyer** | Includes Move library + Story composition sections. |
+| CAP-P02 | Enrich Pilot Object media + Energy Conscious Buyer pack **or** wire Layout Story (DL-01 + Terminal) | See `docs/pilot/open-questions.md` |
+| DL-01 | Decision Move / Story / Strategy data contracts | Hosting/transport R1–R2; no UI redesign |
+
+## Done (product)
+
+| ID | Item |
+| --- | --- |
+| CAP-P01 | First Pilot Object `house-modern-01` + Disposition Layout Behavior Pack v1 — `docs/pilot/` |
 
 ---
 

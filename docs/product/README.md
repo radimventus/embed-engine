@@ -8,12 +8,14 @@ Active product SSOT lives here.
 | `vision/` | Executive summary, vision, business model, founder vision |
 | `object-package.md` | Object Package product contract (SSOT) |
 | `knowledge/` | Knowledge Foundation (SSOT) |
-| `pilots/` | Pilot Foundation (SSOT) |
+| `pilots/` | Pilot Foundation (SSOT process) |
+| `../pilot/` | **CAP-P01 knowledge model** — first Pilot Object + Behavior Pack |
 | `post-foundation-development-policy.md` | Post-Foundation development policy (SSOT) |
 | `builder/` | Builder product spec and workflow SSOT |
 | `backlog/` | Product backlog (reaction-driven) |
 
-## Architecture vocabulary (do not redefine in product docs)
+**First pilot knowledge (CAP-P01):** [`../pilot/README.md`](../pilot/README.md) — Object `house-modern-01` + Behavior Pack `disposition-layout-v1`.
+
 
 **Canonical source:** [`../architecture/decision-layer/README.md`](../architecture/decision-layer/README.md)
 
