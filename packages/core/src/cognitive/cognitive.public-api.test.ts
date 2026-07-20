@@ -5,6 +5,7 @@ import {
   createInitialDecisionState,
   createInitialFocus,
   createSignal,
+  reduce,
   SignalType,
   type DecisionState,
   type Focus,
@@ -34,5 +35,19 @@ describe("cognitive public API", () => {
     assert.equal(typeof createSignal, "function");
     assert.equal(SignalType.ROOM_VIEWED, "ROOM_VIEWED");
     assert.equal(signal.type, SignalType.ROOM_VIEWED);
+  });
+
+  it("exports reduce", () => {
+    const state = createInitialDecisionState("reduce-api");
+    const next = reduce(
+      state,
+      createSignal({
+        type: SignalType.FLOOR_CHANGED,
+        payload: { floorId: "floor-0" },
+      }),
+    );
+
+    assert.equal(typeof reduce, "function");
+    assert.equal(next.focus.floorId, "floor-0");
   });
 });

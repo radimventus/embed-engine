@@ -18,3 +18,5 @@ export type { Signal, SignalMetadata, SignalPayload } from "./signals/Signal";
 export { SignalType } from "./signals/SignalType";
 export { createSignal } from "./signals/createSignal";
 export type { CreateSignalInput } from "./signals/createSignal";
+
+export { reduce } from "./reducer/reduce";

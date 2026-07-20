@@ -20,7 +20,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/runtime/CommandRuntime.determinism.test.ts src/cognitive/decision-state/DecisionState.test.ts src/cognitive/decision-state/createInitialDecisionState.test.ts src/cognitive/signals/Signal.test.ts src/cognitive/signals/createSignal.test.ts src/cognitive/focus/Focus.test.ts src/cognitive/focus/createInitialFocus.test.ts src/cognitive/cognitive.public-api.test.ts"
+    "test": "tsx --test src/runtime/CommandRuntime.determinism.test.ts src/cognitive/decision-state/DecisionState.test.ts src/cognitive/decision-state/createInitialDecisionState.test.ts src/cognitive/signals/Signal.test.ts src/cognitive/signals/createSignal.test.ts src/cognitive/focus/Focus.test.ts src/cognitive/focus/createInitialFocus.test.ts src/cognitive/reducer/reduce.test.ts src/cognitive/cognitive.public-api.test.ts"
   },
   "dependencies": {
     "@embed-engine/model": "workspace:*"
