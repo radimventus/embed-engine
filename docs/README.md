@@ -31,6 +31,8 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Roadmap | `roadmap/embed-engine-roadmap.md` |
 | Runtime | `architecture/runtime-decisions.md` |
 | ADR-001 Runtime Architecture | `architecture/adr/ADR-001-runtime-architecture.md` |
+| ADR-002 DecisionState Aggregate | `architecture/adr/ADR-002-decision-state.md` |
+| ADR-003 Cognitive Processing Pipeline | `architecture/adr/ADR-003-cognitive-processing-pipeline.md` |
 | Projection / Experience contract | `architecture/experience-projection.md` |
 | ADR-006 Interpretation & Projection | `architecture/adr/ADR-006-interpretation-projection-layer.md` |
 | Builder workflow | `product/builder/Builder_Workflow_Specification_BWS_v0.1.md` |

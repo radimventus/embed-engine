@@ -1,8 +1,9 @@
 # CORE-002 --- Decision State
 
 **Status:** Draft\
-**Version:** 0.1\
-**Depends on:** CORE-001 -- Cognitive Layer
+**Version:** 0.2\
+**Depends on:** CORE-001 -- Cognitive Layer, ADR-002 -- DecisionState Aggregate\
+**Pipeline:** ADR-003 -- Cognitive Processing Pipeline
 
 ------------------------------------------------------------------------
 
@@ -13,21 +14,16 @@ the single source of truth for the user's decision process.
 
 It contains no UI, Runtime, AI or interpretation logic.
 
+Structural authority: **ADR-002**.
+
 ------------------------------------------------------------------------
 
 ## Architecture
 
+Processing order is defined in **ADR-003** (not duplicated here):
+
 ``` text
-Signals
-    │
-    ▼
-Decision State
-    │
-    ▼
-Interpretation Engine
-    │
-    ▼
-Interpretation
+Signal → reduce() → DecisionState → project() → Interpretation
 ```
 
 ------------------------------------------------------------------------
@@ -48,7 +44,7 @@ produces recommendations
 ``` ts
 interface DecisionState {
   objectId: string;
-  context: Context;
+  environment: Environment;
   signals: Signal[];
   priorities: Priority[];
   facts: DecisionFact[];
@@ -60,12 +56,15 @@ interface DecisionState {
 
 Data only. No methods.
 
+`environment` is execution metadata (e.g. locale, channel) inside
+DecisionState. It is not a separate cognitive aggregate.
+
 ------------------------------------------------------------------------
 
 ## MVP
 
 -   objectId
--   context
+-   environment
 -   signals
 -   priorities
 

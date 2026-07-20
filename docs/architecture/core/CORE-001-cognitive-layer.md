@@ -1,8 +1,9 @@
 # CORE-001 --- Cognitive Layer
 
 **Status:** Draft\
-**Version:** 0.1\
+**Version:** 0.2\
 **Depends on:** ADR-001 -- Runtime Architecture\
+**References:** ADR-002 -- DecisionState Aggregate; ADR-003 -- Cognitive Processing Pipeline\
 **Next Milestone:** M2 -- Cognitive Layer
 
 ------------------------------------------------------------------------
@@ -12,7 +13,7 @@
 Runtime zajišťuje, aby systém běžel.
 
 Cognitive Layer zajišťuje, aby systém rozuměl objektu i uživateli a
-vytvářel interpretaci objektu podle aktuálního kontextu rozhodování.
+vytvářel interpretaci objektu podle aktuálního DecisionState.
 
 ------------------------------------------------------------------------
 
@@ -30,10 +31,10 @@ Experience Layer
 ──────────────────────────────
         ▲
         │
-  Decision State
+  DecisionState   ← sole cognitive aggregate
         ▲
         │
-Context ◄──► Signals
+     Signals
         │
         ▼
  Object Package
@@ -43,11 +44,17 @@ Context ◄──► Signals
 Runtime → Kernel → EventDispatcher / StateManager / ModuleRegistry
 ```
 
+Canonical processing order is defined in **ADR-003**.
+
+DecisionState structure is defined in **ADR-002**.
+
+Runtime remains independent of Cognitive reduce/project logic.
+
 ------------------------------------------------------------------------
 
 # Základní princip
 
-Objekt + Uživatel + Kontext → Interpretace
+Objekt + Uživatel + DecisionState → Interpretace
 
 Objekt se nemění.
 
@@ -61,22 +68,17 @@ Mění se pouze jeho interpretace.
 
 Neměnná fakta o objektu.
 
-## Context
-
-Aktuální prostředí rozhodování.
-
 ## Signal
 
-Významová událost vzniklá z interakce uživatele.
+Neměnná významová událost (immutable domain data).
 
-## Decision State
+## DecisionState
 
-Centrální agregát rozhodovacího procesu obsahující preference, historii,
-konflikty a priority.
+Jediný kognitivní agregát. Struktura: **ADR-002**.
 
 ## Interpretation
 
-Odvozený pohled na Object Package vzniklý z Decision State a Context.
+Odvozené, read-only porozumění. Vzniká přes `project()` podle **ADR-003**.
 
 ------------------------------------------------------------------------
 
@@ -84,7 +86,7 @@ Odvozený pohled na Object Package vzniklý z Decision State a Context.
 
 Priority nejsou engine ani služba.
 
-Priority jsou součástí Decision State.
+Priority jsou součástí DecisionState (viz ADR-002).
 
 ------------------------------------------------------------------------
 
@@ -111,29 +113,20 @@ Do Cognitive Layer nepatří:
 
 ------------------------------------------------------------------------
 
-# MVP
+# Canonical pipeline
 
-Context
+Viz **ADR-003**:
 
-↓
+Signal → reduce() → DecisionState → project() → Interpretation
 
-Signal
-
-↓
-
-Decision State
-
-↓
-
-Interpretation
+CORE-001 nedefinuje vlastní pipeline a neobsahuje samostatný Context agregát.
 
 ------------------------------------------------------------------------
 
 # Implementační roadmapa
 
--   M2.1 Decision State
--   M2.2 Signals
--   M2.3 Context
--   M2.4 Interpretation Engine
--   M2.5 Interpretation Model
--   M2.6 Experience Binding
+-   M2.1 Decision State (CAP-02)
+-   M2.2 Signals (CAP-03)
+-   M2.3 reduce()
+-   M2.4 project() / Interpretation
+-   M2.5 Experience Binding
