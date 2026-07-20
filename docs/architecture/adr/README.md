@@ -11,11 +11,13 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 | [ADR-007](./ADR-007-priority-mvp-policy.md) | Priority MVP Policy (weights, multi-user, persistence) | Accepted |
 | [ADR-008](./ADR-008-decision-terminal.md) | Decision Terminal (Experience Surface) | Proposed |
 | [ADR-009](./ADR-009-decision-layer.md) | Decision Layer (Move · Story · Strategy) | Accepted (definitions freeze) |
+| [ADR-010](./ADR-010-decision-strategy.md) | Decision Strategy (DT-002) | Accepted (definitions freeze) |
 
 **Milestone freezes**
 
 - [Living Experience v0.1 Freeze](../living-experience-v0.1-freeze.md) — pipeline + synchronized Decision Experience
 - [Decision Layer v1 Freeze](../decision-layer/decision-layer-v1-freeze.md) — guided decision architecture
+- [DT-002 Decision Strategy Freeze](../decision-layer/decision-strategy-dt-002-freeze.md) — Strategy inputs/outputs/lifecycle
 - [Behavior Pack Contract](../behavior-pack-contract.md) — knowledge, rules, Move library, Story composition
 - [ADR-007](./ADR-007-priority-mvp-policy.md) — Priority MVP open questions closed
 - [Decision Terminal](../experience/decision-terminal.md) — Experience Surface (ADR-008 Proposed)

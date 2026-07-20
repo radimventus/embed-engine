@@ -142,31 +142,29 @@ The same experience may be delivered through:
 -   Report
 -   Multiple surfaces together
 
-Decision Terminal **renders Decision Stories** (ordered Decision Moves).  
+Decision Terminal **renders Decision Stories** (ordered Decision Moves + cursor).  
 Story composition is **Decision Strategy** (Decision Layer), not UI.  
-See [`docs/architecture/decision-layer/decision-layer.md`](../architecture/decision-layer/decision-layer.md).
+See [`docs/architecture/decision-layer/decision-strategy.md`](../architecture/decision-layer/decision-strategy.md).
 
 ------------------------------------------------------------------------
 
 ## Decision Story (Decision Layer)
 
-A Decision Story is an ordered sequence of **Decision Moves**.
+A Decision Story is an ordered sequence of **Decision Moves** plus cursor/status.
 
-It may be assembled dynamically from Interpretation via Decision Strategy.
+It is composed by **Decision Strategy** (hybrid select/compose) from Interpretation + Behavior Pack.
 
-Optional narrative stages (Confirmation → Discovery → Interpretation → Reality Check → Recommendation)
-are vocabulary aids — **not** fixed UI screens and **not** a substitute for Moves.
+**Stages / Acts / Chapters are not first-class.** Optional Move intents may exist.
+
+SSOT: [`docs/architecture/decision-layer/decision-strategy.md`](../architecture/decision-layer/decision-strategy.md).
 
 ------------------------------------------------------------------------
 
 ## Decision Strategy (foundations alignment)
 
-Foundations historically named “Decision Strategy” as part of Experience Pipeline.
-Under Decision Layer v1, Decision Strategy is the **guidance orchestrator**:
+Decision Strategy’s single responsibility: **compose the active Decision Story**.
 
-Interpretation → Decision Strategy → Decision Story → Decision Move → Experience surfaces.
-
-It does not render UI.
+Kernel ends at Interpretation. Strategy is not UI and not `project()`.
 
 ------------------------------------------------------------------------
 

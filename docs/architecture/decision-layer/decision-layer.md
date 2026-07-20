@@ -1,10 +1,10 @@
 # Decision Layer
 
-**Status:** Architecture Freeze v1 (documentation only)  
+**Status:** Architecture Freeze v1 + DT-002 Strategy (documentation only)  
 **Date:** 2026-07-20  
 **Depends on:** Living Experience v0.1, ADR-002, ADR-003, ADR-007  
-**Related:** [Behavior Pack Contract](../behavior-pack-contract.md), [Decision Terminal](../experience/decision-terminal.md), [ADR-009](../adr/ADR-009-decision-layer.md)  
-**Freeze + review:** [Decision Layer v1 Freeze](./decision-layer-v1-freeze.md)
+**Related:** [Decision Strategy DT-002](./decision-strategy.md) (SSOT for Strategy), [Behavior Pack Contract](../behavior-pack-contract.md), [Decision Terminal](../experience/decision-terminal.md), [ADR-009](../adr/ADR-009-decision-layer.md), [ADR-010](../adr/ADR-010-decision-strategy.md)  
+**Freeze + review:** [Decision Layer v1 Freeze](./decision-layer-v1-freeze.md) · [DT-002 Freeze](./decision-strategy-dt-002-freeze.md)
 
 This document is the SSOT for the **Decision Layer**: guided decision-making as domain architecture — not UI.
 
@@ -154,15 +154,18 @@ It represents **one guided decision scenario**.
 
 ### Properties
 
-- May be **assembled dynamically** from a Move library + composition rules  
+- May be **assembled dynamically** from a Move library + composition rules (hybrid select/compose — ADR-010)  
 - Is **not** a hardcoded page flow  
 - Is **not** a fixed Client Studio route  
 - May differ according to Interpretation (and Behavior Pack)  
 - May be re-composed when Interpretation changes  
+- Carries **cursor** + per-Move status (`pending` | `active` | `completed` | `skipped` | `deferred`)  
+- Contains **only Moves** — not Stages, Acts, or Chapters  
 
-### Conceptual stages (optional vocabulary)
+### Move intents (optional metadata)
 
-Stories may be *described* using stage language (Confirmation, Discovery, Interpretation, Reality Check, Recommendation). Those labels are **narrative aids**, not mandatory UI screens and not a substitute for Moves.
+Moves may carry intent labels (`confirm`, `discover`, `interpret`, `compare`, `recommend`, …).  
+Intents are **not** Story containers. Former “stage” language is demoted to Move intent metadata (ADR-010).
 
 ### Relationship to Terminal
 
@@ -173,39 +176,20 @@ It does not author Stories.
 
 ## Decision Strategy
 
-### Definition
+**SSOT:** [decision-strategy.md](./decision-strategy.md) (DT-002 / ADR-010).
 
-**Decision Strategy** selects or composes the appropriate Decision Story based on the current **Interpretation**.
-
-### Responsibility
-
-**Orchestration of decision guidance** — the adaptive brain between understanding and guided steps.
+**Single responsibility:** Compose the active Decision Story for the current Interpretation.
 
 ```text
-Interpretation
+Interpretation + Behavior Pack
       ↓
 Decision Strategy
       ↓
-Decision Story (sequence of Decision Moves)
+Decision Story (Moves + cursor)
 ```
 
-### Does
-
-- Choose Story templates or compose Moves dynamically  
-- Adapt when Interpretation changes  
-- Apply Behavior Pack Story composition rules  
-- Decide emphasis, ordering, and which Moves are eligible  
-
-### Does not
-
-- Render UI  
-- Write DecisionState  
-- Replace `project()`  
-- Live inside React components  
-
-### Future adaptive behavior
-
-This is where long-horizon adaptive guidance will live (together with future Decision Trajectory inputs). Strategy is the extension point for “the Experience guides differently for different minds” without redesigning Kernel.
+Kernel ends at Interpretation. Strategy does not live in Kernel, `project()`, or React.  
+Strategy owns Move continuation via recomposition; Moves do not own `next` graphs.
 
 ---
 
@@ -290,6 +274,8 @@ It does **not** modify UI. Experience surfaces only render composed Stories / In
 | Right panel (as architecture) | One possible **rendering** of Decision Terminal |
 | Priority Detail | Not a domain concept; use Active Focus + Moves / Story |
 | Static Story / hardcoded flow | **Rejected** — Stories are composed sequences of Moves |
-| Decision Story = five UI screens | **Rejected** — stages are optional narrative; Moves are primitives |
+| Decision Story = five UI screens / Stages | **Rejected** — Story = Moves + cursor; optional Move intents only |
 | Behavior Pack changes UI | **Rejected** — Pack supplies knowledge, rules, Moves, composition |
 | Terminal in Kernel | **Rejected** — Experience Layer only |
+| Kernel authors Decision Stories | **Rejected** — Decision Strategy does (ADR-010) |
+| Story embedded in Interpretation | **Rejected** — Story is Strategy output |

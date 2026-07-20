@@ -11,7 +11,7 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 
 | ID | Item | Notes |
 | --- | --- | --- |
-| DL-01 | Decision Move / Story / Strategy data contracts | After ADR-009; resolve freeze unknowns U1–U2. No UI. |
+| DL-01 | Decision Move / Story / Strategy data contracts | After ADR-010; risks R1–R2 remain for hosting/transport. No UI. |
 | BP-01 | First Behavior Pack: **Energy Conscious Buyer** | Includes Move library + Story composition sections. |
 
 ---
@@ -46,6 +46,7 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 | ADR-007 | Priority MVP open questions closed |
 | DT-v0.1 | Decision Terminal surface freeze (superseded in part by Decision Layer v1) |
 | DL-v1 | Decision Layer architecture freeze (ADR-009) |
+| DT-002 | Decision Strategy architecture freeze (ADR-010) |
 
 ---
 

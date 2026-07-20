@@ -174,14 +174,16 @@ Moves are domain primitives — not cards or screens.
 
 ### 3.9 Story composition rules
 
-How **Decision Strategy** should assemble Moves into a **Decision Story** for this profile.
+How **Decision Strategy** assembles Moves into a **Decision Story** for this profile (ADR-010).
 
 Must define:
 
-- ordering / branching preferences  
+- hybrid selection spines / templates (optional)  
+- compose rules from the Move library given Interpretation  
 - when to recompose on Interpretation change  
-- optional mapping to narrative stages (Confirmation, Discovery, …) without mandating UI screens  
+- optional **Move intent** preferences — **not** first-class Stages/Acts/Chapters  
 
+Strategy applies these rules; the Pack does not execute Strategy and does not modify UI.
 ### 3.10 Required Knowledge
 
 Object / product knowledge required for honest guidance.
