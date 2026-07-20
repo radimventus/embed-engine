@@ -7,6 +7,7 @@ export * from "./runtime/UnknownCommandError";
 export * from "./runtime/CommandRuntime";
 export * from "./runtime/Runtime";
 export * from "./runtime/RuntimeState";
+export * from "./runtime/Kernel";
 export * from "./runtime/createRuntime";
 export * from "./runtime/Workflow";
 export * from "./runtime/Interpreter";

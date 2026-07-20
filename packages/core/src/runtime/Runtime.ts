@@ -1,3 +1,4 @@
+import { Kernel } from "./Kernel";
 import {
   createInitialRuntimeState,
   type RuntimeEvent,
@@ -7,12 +8,18 @@ import {
 } from "./RuntimeState";
 
 /**
- * Platform Runtime skeleton.
- * Owns lifecycle and RuntimeState. No business logic in M1.2.
+ * Platform Runtime.
+ * Public façade: API, lifecycle, state ownership.
+ * Orchestration is delegated to Kernel.
  */
 export class Runtime {
   private state: RuntimeState = createInitialRuntimeState();
   private readonly listeners = new Set<RuntimeListener>();
+  private readonly kernel: Kernel;
+
+  constructor() {
+    this.kernel = new Kernel();
+  }
 
   /**
    * Bind an Object Package to this Runtime instance.
@@ -27,6 +34,8 @@ export class Runtime {
       version: this.state.version + 1,
     });
 
+    await this.kernel.load(objectPackage);
+
     this.replaceState({
       status: "ready",
       objectPackage,
@@ -36,11 +45,11 @@ export class Runtime {
 
   /**
    * Accept a runtime event.
-   * TODO: route to Decision / Intelligence / modules.
+   * Delegates orchestration to Kernel.
    */
-  async dispatch(_event: RuntimeEvent): Promise<void> {
+  async dispatch(event: RuntimeEvent): Promise<void> {
     this.assertNotDestroyed();
-    // Placeholder — no state change in M1.2.
+    await this.kernel.dispatch(event);
   }
 
   getState(): RuntimeState {
@@ -66,6 +75,8 @@ export class Runtime {
     if (this.state.status === "destroyed") {
       return;
     }
+
+    this.kernel.destroy();
 
     this.replaceState({
       status: "destroyed",
