@@ -133,27 +133,40 @@ current decision process.
 
 The same experience may be delivered through:
 
--   AI
+-   Decision Terminal (Experience Surface — panel, fullscreen, sheet, conversation, voice, …)
+-   AI Advisor
 -   Priority
 -   FAQ
--   **Decision Terminal** (reusable interpretation surface — not a fixed “right panel”)
--   Video
--   Gallery
+-   Recommendation
+-   Video / Gallery explorers
 -   Report
--   Multiple renderers together
+-   Multiple surfaces together
 
-Decision Terminal narrates **Active Focus** and **Decision Story** from Interpretation.
-See [`docs/architecture/experience/decision-terminal.md`](../architecture/experience/decision-terminal.md).
+Decision Terminal **renders Decision Stories** (ordered Decision Moves).  
+Story composition is **Decision Strategy** (Decision Layer), not UI.  
+See [`docs/architecture/decision-layer/decision-layer.md`](../architecture/decision-layer/decision-layer.md).
 
 ------------------------------------------------------------------------
 
-## Decision Story (conceptual)
+## Decision Story (Decision Layer)
 
-Understanding deepens through conceptual stages (not fixed UI screens):
+A Decision Story is an ordered sequence of **Decision Moves**.
 
-Confirmation → Discovery → Interpretation → Reality Check → Recommendation
+It may be assembled dynamically from Interpretation via Decision Strategy.
 
-These stages describe Experience rhythm. They do not mandate a five-step wizard.
+Optional narrative stages (Confirmation → Discovery → Interpretation → Reality Check → Recommendation)
+are vocabulary aids — **not** fixed UI screens and **not** a substitute for Moves.
+
+------------------------------------------------------------------------
+
+## Decision Strategy (foundations alignment)
+
+Foundations historically named “Decision Strategy” as part of Experience Pipeline.
+Under Decision Layer v1, Decision Strategy is the **guidance orchestrator**:
+
+Interpretation → Decision Strategy → Decision Story → Decision Move → Experience surfaces.
+
+It does not render UI.
 
 ------------------------------------------------------------------------
 

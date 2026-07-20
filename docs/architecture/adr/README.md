@@ -9,13 +9,15 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 | [ADR-003](./ADR-003-cognitive-processing-pipeline.md) | Cognitive Processing Pipeline | Proposed → accept with [Living Experience v0.1 Freeze](../living-experience-v0.1-freeze.md) |
 | [ADR-006](./ADR-006-interpretation-projection-layer.md) | Interpretation & Projection Layer | Accepted (Soft Freeze) — reconcile with cognitive Interpretation |
 | [ADR-007](./ADR-007-priority-mvp-policy.md) | Priority MVP Policy (weights, multi-user, persistence) | Accepted |
-| [ADR-008](./ADR-008-decision-terminal.md) | Decision Terminal | Proposed |
+| [ADR-008](./ADR-008-decision-terminal.md) | Decision Terminal (Experience Surface) | Proposed |
+| [ADR-009](./ADR-009-decision-layer.md) | Decision Layer (Move · Story · Strategy) | Accepted (definitions freeze) |
 
 **Milestone freezes**
 
 - [Living Experience v0.1 Freeze](../living-experience-v0.1-freeze.md) — pipeline + synchronized Decision Experience
-- [Behavior Pack Contract](../behavior-pack-contract.md) — next phase (contract only)
+- [Decision Layer v1 Freeze](../decision-layer/decision-layer-v1-freeze.md) — guided decision architecture
+- [Behavior Pack Contract](../behavior-pack-contract.md) — knowledge, rules, Move library, Story composition
 - [ADR-007](./ADR-007-priority-mvp-policy.md) — Priority MVP open questions closed
-- [Decision Terminal v0.1 Freeze](../experience/decision-terminal-v0.1-freeze.md) — interpretation surface concepts (docs only)
+- [Decision Terminal](../experience/decision-terminal.md) — Experience Surface (ADR-008 Proposed)
 
 Legacy empty stub (superseded location): `docs/adr/0001-platform.md`

@@ -2,57 +2,47 @@
 
 **Status:** Proposed  
 **Date:** 2026-07-20  
-**Depends on:** Living Experience v0.1 Freeze, ADR-002, ADR-003, ADR-007  
+**Depends on:** Living Experience v0.1, ADR-009 Decision Layer, ADR-002, ADR-003, ADR-007  
 **Concept SSOT:** [Decision Terminal](../experience/decision-terminal.md)  
-**Freeze:** [Decision Terminal v0.1 Freeze](../experience/decision-terminal-v0.1-freeze.md)
+**Decision Layer SSOT:** [Decision Layer](../decision-layer/decision-layer.md)
 
 ---
 
 # Context
 
-Living Experience v0.1 synchronized Priority, FAQ, and AI Advisor on one Interpretation.
+ADR-009 freezes Decision Move / Story / Strategy as domain guidance.
 
-Product architecture now needs a named **interpretation surface** — Decision Terminal — that narrates Active Focus and Decision Story without being a fixed “right panel” and without becoming a second intelligence.
+Decision Terminal is the **Experience Surface** that renders Decision Stories. It is not Kernel, not Strategy, and not synonymous with a right panel.
 
 ---
 
 # Decision (proposed — not implemented)
 
-Accept Decision Terminal as an Experience Layer concept:
+Accept Decision Terminal as an Experience Layer surface that:
 
-- consumes Interpretation only  
-- reacts to Active Focus  
-- hosts Decision Story (conceptual stages)  
-- peer to Priority / FAQ / AI / explorers  
+- renders Decision Stories (sequences of Decision Moves)  
+- may be presented as right panel, fullscreen, bottom sheet, AI conversation, voice, or future channels  
+- emits Signals when Moves are completed / skipped / deferred  
+- stays peer-coherent with Priority, FAQ, AI Advisor, Recommendation  
 
-Decision Trajectory is explicitly **out of MVP** and must not be implemented under this ADR without a follow-up.
-
----
-
-# Status of this ADR
-
-**Proposed.**  
-
-No Runtime, DecisionState, Interpretation, or UI implementation is authorized by this document alone.
-
-Before **Accepted**:
-
-1. Confirm projected fields needed for Story stages (if any).  
-2. Confirm first Client Studio placement without freezing layout as architecture.  
-3. Align Behavior Pack “Output to Interpretation” with Terminal copy needs.
+Decision Trajectory remains out of scope.
 
 ---
 
-# Consequences (when Accepted)
+# Status
 
-- Product and design docs use Decision Terminal language.  
-- Implementation epic may add Terminal renderer behind shared Interpretation subscription.  
-- Pipeline remains frozen unless a separate ADR says otherwise.
+**Proposed.** No UI or Runtime implementation authorized until Accepted and an epic is approved.
+
+Before Accepted:
+
+1. Contract how Story reaches Terminal (ADR-009 unknown U2).  
+2. Confirm first modality without freezing layout as architecture.  
+3. Align Behavior Pack Move library with Terminal rendering needs.
 
 ---
 
 # Non-goals
 
-- Implementing UI in this ADR  
-- Introducing Decision Trajectory persistence  
-- Replacing Priority, FAQ, or AI Advisor
+- Implementing Strategy or Move engines in this ADR  
+- Placing Terminal in Kernel  
+- Equating Terminal with “Priority Detail” or a static page flow

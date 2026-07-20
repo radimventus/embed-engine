@@ -21,6 +21,10 @@ vytvářel interpretaci objektu podle aktuálního DecisionState.
 
 ``` text
 Experience Layer
+  Decision Terminal · Priority · FAQ · AI · …
+        ▲
+        │
+ Decision Layer          ← Strategy → Story → Move (ADR-009; not Kernel)
         ▲
         │
  Interpretation
@@ -37,14 +41,16 @@ Experience Layer
      Signals
         │
         ▼
- Object Package
+ Object Package + Behavior Pack
 ──────────────────────────────
  Runtime Infrastructure
 ──────────────────────────────
 Runtime → Kernel → EventDispatcher / StateManager / ModuleRegistry
 ```
 
-Canonical processing order is defined in **ADR-003**.
+Canonical processing order is defined in **ADR-003**.  
+Decision guidance stack is defined in **Decision Layer** / **ADR-009**.  
+Decision Terminal is Experience Layer only — never Kernel.
 
 DecisionState structure is defined in **ADR-002**.
 

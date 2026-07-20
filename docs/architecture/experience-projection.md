@@ -18,25 +18,42 @@ Doplňuje Runtime Decisions. Nemění Runtime Kernel.
 
 # 1. Experience Projection Principle
 
-> **Interpretation (Decision Experience) / ExperienceModel (legacy decision-flow) are the
-> contracts renderers consume. Renderers must never reconstruct domain state.**
+> **Interpretation (Decision Experience) is the cognitive contract renderers share.
+> Decision Stories (Decision Layer) are the guidance contract Decision Terminal renders.
+> Legacy decision-flow may still use ExperienceModel for sidebar navigation until unified.**
 
-For the synchronized Decision Experience (Living Experience v0.1):
+Canonical stack:
 
-- Priority, FAQ, AI Advisor, and the planned **Decision Terminal** consume **Interpretation**.
-- Decision Terminal is a reusable **interpretation surface**, not a layout “right panel”.
-  See [Decision Terminal](./experience/decision-terminal.md).
+``` text
+Object Package + Behavior Pack
+        │
+        ▼
+     Kernel
+        │
+        ▼
+  DecisionState → project() → Interpretation
+        │
+        ▼
+  Decision Strategy → Decision Story → Decision Move
+══════════════════════
+  Experience Layer
+        │
+        ▼
+  Decision Terminal · Priority · FAQ · AI · Recommendation · …
+```
+
+- Decision Terminal is an **Experience Surface** (may appear as right panel, sheet, voice, …).
+- See [Decision Layer](./decision-layer/decision-layer.md) and [Decision Terminal](./experience/decision-terminal.md).
 
 Důsledky:
 
 -   Renderer never reads `DecisionState`.
--   Renderer never reads `DecisionRegistry`.
--   Renderer never computes navigation.
--   Renderer never computes history.
--   Renderer never computes graph traversal.
--   Renderer only renders the supplied projection.
+-   Renderer never owns Decision Strategy or Move libraries.
+-   Renderer never computes graph traversal from domain registries.
+-   Renderer only renders supplied Interpretation / Story projections.
+-   Completing a Move emits Signals; it does not write DecisionState in UI.
 
-Pipeline (cognitive Decision Experience):
+Pipeline (cognitive + guidance):
 
 ``` text
 DecisionState
@@ -48,7 +65,13 @@ DecisionState
   Interpretation
         │
         ▼
-  Renderers (Priority · FAQ · AI · Decision Terminal · …)
+  Decision Strategy
+        │
+        ▼
+  Decision Story / Moves
+        │
+        ▼
+  Experience Surfaces
 ```
 
 Legacy decision-flow path may still project `ExperienceModel` for sidebar navigation until unified.

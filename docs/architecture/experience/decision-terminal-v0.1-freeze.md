@@ -1,41 +1,23 @@
 # Decision Terminal v0.1 — Architecture Freeze
 
-**Status:** FROZEN (documentation only)  
+**Status:** SUPERSEDED IN PART by Decision Layer v1  
 **Date:** 2026-07-20  
-**Code:** none — no UI / Runtime changes in this milestone
 
-SSOT concept: [decision-terminal.md](./decision-terminal.md)  
-ADR stub: [ADR-008](../adr/ADR-008-decision-terminal.md) (Proposed)
+Retain as historical surface freeze. Canonical guidance stack:
 
----
+→ [Decision Layer](../decision-layer/decision-layer.md)  
+→ [Decision Layer v1 Freeze](../decision-layer/decision-layer-v1-freeze.md)
 
-## New concepts introduced
-
-| Concept | One-line meaning | MVP? |
-| --- | --- | --- |
-| **Decision Terminal** | Reusable interpretation surface — not a right panel | Architecture yes; UI later |
-| **Decision Story** | Conceptual stages: Confirmation → Discovery → Interpretation → Reality Check → Recommendation | Conceptual only |
-| **Active Focus** | Terminal reacts to decision-process focus (priority → combination → conflict → recommendation), not to a single card | Aligns with Focus / Interpretation today |
-| **Decision Trajectory** | Evolution of deciding across time; extends Interpretation | **Future** — not MVP |
+Updated Terminal SSOT: [decision-terminal.md](./decision-terminal.md)
 
 ---
 
-## Architectural consequences
+## Corrections under Decision Layer v1
 
-- Living Experience pipeline unchanged: Signal → reduce → DecisionState → project → Interpretation → surfaces.  
-- Decision Terminal is a **peer surface** beside Priority, FAQ, and AI Advisor.  
-- Product language: prefer **Decision Terminal** over “right panel” for this intent.  
-- No new cognitive aggregate. Trajectory must not replace Interpretation.  
-- Persistence still ADR-007 (active Experience only) until a future ADR.
+| v0.1 wording | Decision Layer v1 |
+| --- | --- |
+| Terminal is “not a right panel” | Terminal **may** render as right panel; panel ≠ concept |
+| Decision Story = conceptual stages | Story = ordered **Decision Moves**; stages optional narrative |
+| Terminal “hosts” Story | Terminal **renders**; **Strategy** composes |
 
----
-
-## Open questions
-
-None blocking this freeze. Remaining choices are implementation timing and projected Story-stage fields (ADR-008 + backlog).
-
----
-
-## Freeze rule
-
-Document now. Implement only after ADR-008 moves beyond Proposed and an explicit implementation epic is approved.
+Decision Trajectory remains **future / not MVP**.

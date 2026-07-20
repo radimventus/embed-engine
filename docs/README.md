@@ -34,7 +34,11 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | ADR-002 DecisionState Aggregate | `architecture/adr/ADR-002-decision-state.md` |
 | ADR-003 Cognitive Processing Pipeline | `architecture/adr/ADR-003-cognitive-processing-pipeline.md` |
 | Projection / Experience contract | `architecture/experience-projection.md` |
+| Decision Layer | `architecture/decision-layer/decision-layer.md` |
+| Decision Terminal (Experience Surface) | `architecture/experience/decision-terminal.md` |
+| Behavior Pack contract | `architecture/behavior-pack-contract.md` |
 | ADR-006 Interpretation & Projection | `architecture/adr/ADR-006-interpretation-projection-layer.md` |
+| ADR-009 Decision Layer | `architecture/adr/ADR-009-decision-layer.md` |
 | Builder workflow | `product/builder/Builder_Workflow_Specification_BWS_v0.1.md` |
 | Design Language | `design/language/embed-engine-design-language-v1.md` |
 | Geometry | `design/geometry/client-studio-geometry-spec.md` |

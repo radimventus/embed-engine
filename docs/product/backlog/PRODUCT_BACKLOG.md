@@ -11,7 +11,8 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 
 | ID | Item | Notes |
 | --- | --- | --- |
-| BP-01 | First Behavior Pack: **Energy Conscious Buyer** | Contract: `docs/architecture/behavior-pack-contract.md`. Implement behavior only; do not redesign pipeline. |
+| DL-01 | Decision Move / Story / Strategy data contracts | After ADR-009; resolve freeze unknowns U1–U2. No UI. |
+| BP-01 | First Behavior Pack: **Energy Conscious Buyer** | Includes Move library + Story composition sections. |
 
 ---
 
@@ -43,7 +44,8 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 | --- | --- |
 | LE-v0.1 | Living Experience v0.1 — synchronized Priority / FAQ / AI |
 | ADR-007 | Priority MVP open questions closed |
-| DT-v0.1 | Decision Terminal architecture freeze (docs only; ADR-008 Proposed) |
+| DT-v0.1 | Decision Terminal surface freeze (superseded in part by Decision Layer v1) |
+| DL-v1 | Decision Layer architecture freeze (ADR-009) |
 
 ---
 
@@ -51,6 +53,6 @@ Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
 
 | ID | Item | Notes |
 | --- | --- | --- |
-| DT-01 | Decision Terminal renderer | After ADR-008 Accepted. Consumes Interpretation / Active Focus only. |
-| DT-02 | Decision Story stage projection | Conceptual stages → optional Interpretation fields. |
-| DT-FR-01 | Decision Trajectory | Future — extends Interpretation; not MVP. |
+| DT-01 | Decision Terminal renderer | After ADR-008 Accepted. Renders Stories; any modality. |
+| DT-02 | Wire Strategy output to Terminal | Depends on DL-01 / U2. |
+| DT-FR-01 | Decision Trajectory | Future — not MVP. |

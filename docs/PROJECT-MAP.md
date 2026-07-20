@@ -8,23 +8,26 @@ One-page orientation for Embed Engine. Not a specification.
               Knowledge ◄──Pilots──► validated lessons
                            │
                      Object Package
-                           │
-                     Roadmap (when)
+                      Behavior Pack
                            │
               ┌────────────┴────────────┐
               ▼                         ▼
          Architecture              Builder
       (Runtime Kernel)        (encode object truth)
-              │                         │
-         Decision ──► Interpretation ──► Experience
-              │                         │
-              └────────────┬────────────┘
-                           ▼
-                    Implementation
-                           │
-                           ▼
-                     Client Studio
-                      (renderer)
+              │
+         DecisionState
+              │
+         Interpretation          ← reasoning
+              │
+         Decision Strategy       ← guidance orchestration
+              │
+         Decision Story / Moves
+              │
+         Experience Layer
+              │
+         Decision Terminal · Priority · FAQ · AI · …
+              │
+         Client Studio (pixels)
 ```
 
 ## Relationships
@@ -32,31 +35,31 @@ One-page orientation for Embed Engine. Not a specification.
 | Concept | Role |
 | --- | --- |
 | **Product** | Principles and vision. Governs what may enter the Engine. |
-| **Object Package** | Source of truth about a concrete object. Product contract: `product/object-package.md`. |
-| **Knowledge** | How the Engine understands deciding and interpreting. Framework: `product/knowledge/README.md`. |
-| **Pilots** | Real-world process that validates and grows Knowledge. Framework: `product/pilots/README.md`. |
-| **Roadmap** | Phases and sequencing. Does not override Product or Architecture. |
-| **Architecture** | Runtime Kernel boundaries. Domain-agnostic orchestration. |
-| **Decision** | Domain module: answers, flow, filters. Lives outside Core. |
-| **Experience** | Public projection for renderers. Decision Experience uses **Interpretation**; legacy flow may still use `ExperienceModel`. |
-| **Decision Terminal** | Reusable interpretation surface (not a right panel). Docs: `architecture/experience/decision-terminal.md`. |
-| **Builder** | Implementation workflow that encodes object truth and project content for Client Studio. |
-| **Client Studio** | Application renderer. Passive consumer of Experience. No domain reconstruction. |
-| **Implementation** | Rules for building UI and using assistants — follows Product, Geometry, Design Language. |
+| **Object Package** | Source of truth about a concrete object. |
+| **Behavior Pack** | Domain knowledge, decision rules, Move library, Story composition — not UI. |
+| **Knowledge** | How the Engine understands deciding and interpreting. |
+| **Pilots** | Real-world process that validates and grows Knowledge. |
+| **Roadmap** | Phases and sequencing. |
+| **Architecture** | Runtime Kernel + Decision Layer + Experience contracts. |
+| **DecisionState / Interpretation** | Cognitive reasoning pipeline (ADR-002 / ADR-003). |
+| **Decision Layer** | Strategy → Story → Move. SSOT: `architecture/decision-layer/decision-layer.md`. |
+| **Decision Terminal** | Experience Surface that renders Stories (any modality). |
+| **Experience** | Surfaces: Terminal, Priority, FAQ, AI, Recommendation, explorers. |
+| **Builder** | Encodes object truth and project content. |
+| **Client Studio** | Application renderer. No domain reconstruction. |
 | **Archive** | History only. Never active SSOT. |
-| **Post-Foundation Policy** | Capability-first / pilot-first / knowledge-first rules after v0.3. Freeze requires ADR. |
-| **Engineering Playbook** | Shared development process: Decision Gate, DoR/DoD, AI agent workflow. |
 
 ## Rule of thumb
 
-> Object Package is the source of truth about an object.  
-> Knowledge is how we interpret that truth for decisions.  
-> Experience is the projected result.  
-> Runtime delivers Experience. Client Studio paints pixels.  
-> Pilots turn reality into Knowledge — not into Runtime features.
+> Object Package holds object truth.  
+> Behavior Pack holds how a profile decides and is guided.  
+> Interpretation is what we understand now.  
+> Decision Strategy chooses the guided Story.  
+> Experience surfaces only render and emit Signals.
 
 ## Start here
 
-1. [README.md](./README.md) — folder index and SSOT table  
-2. This map — relationships  
-3. Reading order in README — active documents only  
+1. [README.md](./README.md)  
+2. This map  
+3. [Decision Layer](./architecture/decision-layer/decision-layer.md)  
+4. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
