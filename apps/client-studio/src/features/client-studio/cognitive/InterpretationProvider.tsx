@@ -1,14 +1,7 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import type { Interpretation } from '@embed-engine/core/cognitive';
 
-import { useCognitiveRuntime } from './CognitiveRuntimeContext';
+import { useExperienceSession } from './ExperienceBindingProvider';
 
 const EMPTY_INTERPRETATION: Interpretation = Object.freeze({
   priorities: Object.freeze([]),
@@ -27,32 +20,17 @@ type InterpretationProviderProps = {
 };
 
 /**
- * Single Interpretation subscription for Priority, FAQ, and AI renderers.
- * One Runtime notify → one React state update → all three re-render together.
+ * Interpretation selector over the shared Experience Session snapshot (EX-01).
+ * Does not subscribe to Runtime separately — ExperienceBindingProvider owns subscription.
  */
 export function InterpretationProvider({ children }: InterpretationProviderProps) {
-  const runtime = useCognitiveRuntime();
-  const [interpretation, setInterpretation] = useState<Interpretation>(() => {
-    return runtime?.getState().interpretation ?? EMPTY_INTERPRETATION;
-  });
-
-  useEffect(() => {
-    if (runtime === null) {
-      setInterpretation(EMPTY_INTERPRETATION);
-      return;
-    }
-
-    setInterpretation(runtime.getState().interpretation ?? EMPTY_INTERPRETATION);
-
-    return runtime.subscribe((state) => {
-      setInterpretation(state.interpretation ?? EMPTY_INTERPRETATION);
-    });
-  }, [runtime]);
-
-  const value = useMemo(() => interpretation, [interpretation]);
+  const session = useExperienceSession();
+  const interpretation = session.interpretation ?? EMPTY_INTERPRETATION;
 
   return (
-    <InterpretationContext.Provider value={value}>{children}</InterpretationContext.Provider>
+    <InterpretationContext.Provider value={interpretation}>
+      {children}
+    </InterpretationContext.Provider>
   );
 }
 

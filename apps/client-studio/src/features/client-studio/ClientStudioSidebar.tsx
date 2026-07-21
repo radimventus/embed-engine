@@ -13,7 +13,9 @@ type ClientStudioSidebarProps = {
 
 /**
  * Left shell: presentation expand/collapse only.
- * Decision Flow navigation state comes exclusively from ReactExperienceModel.
+ *
+ * LEGACY — Decision Flow navigation from CommandRuntime ReactExperienceModel.
+ * Not Cognitive Session / Interpretation (EX-01 quarantine).
  */
 export function ClientStudioSidebar({
   experience,

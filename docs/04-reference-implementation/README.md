@@ -10,6 +10,8 @@ These documents do **not** change Reference Architecture, Platform Canon, ESS, o
 | [RI-002](./RI-002-Decision-Session.md) | Decision Session | Frozen | 1.0 | **Decision Session SSOT** |
 | [RI-003](./RI-003-Experience-Kernel.md) | Experience Kernel | Frozen | 1.0 | **Experience Layer implementation contract** |
 
+**Implementation:** EX-01 Cognitive Experience binding — `createExperienceBinding` in `@embed-engine/core` / `@embed-engine/core/experience`; Client Studio `ExperienceBindingProvider` (canonical). CommandRuntime `ReactExperienceModel` is quarantined under `apps/client-studio/.../legacy/`.
+
 ## Authority order
 
 1. Platform Canon (when published as a discrete artifact)

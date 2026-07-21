@@ -13,6 +13,9 @@ export * from "./runtime/Interpreter";
 export * from "./runtime/DefaultInterpreter";
 export * from "./runtime/validate";
 
+export * from "./experience/ExperienceSessionSnapshot";
+export * from "./experience/createExperienceBinding";
+
 export * from "./runtime/ExecutionContext";
 export * from "./runtime/SceneGraph";
 export * from "./runtime/evaluate";

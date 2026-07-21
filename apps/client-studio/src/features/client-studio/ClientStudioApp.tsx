@@ -25,8 +25,10 @@ const PLACEHOLDER_SCENE_GRAPH: SceneGraph = {
 
 /**
  * Composition root for Client Studio.
- * CommandRuntime drives decision-flow Experience.
- * Platform Runtime orchestrates Cognitive Signal → reduce → project.
+ *
+ * Cognitive path (canonical): Platform Runtime → ExperienceBinding → Surfaces.
+ * LEGACY path (quarantined): CommandRuntime → ReactExperienceModel → sidebar / house block.
+ * Do not merge these contracts.
  */
 export function ClientStudioApp() {
   const runtimeRef = useRef<CommandRuntime | null>(null);

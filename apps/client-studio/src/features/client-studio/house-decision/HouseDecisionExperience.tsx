@@ -10,7 +10,10 @@ type HouseDecisionExperienceProps = {
 
 /**
  * Passive House Experience renderer.
- * Consumes ReactExperienceModel only — no Object Package, no interpretation.
+ *
+ * LEGACY — consumes CommandRuntime `ReactExperienceModel` only.
+ * Isolated from Cognitive Session / Interpretation (EX-01 quarantine).
+ * No Object Package, no DecisionState, no Cognitive Signals.
  */
 export function HouseDecisionExperience({
   experience,

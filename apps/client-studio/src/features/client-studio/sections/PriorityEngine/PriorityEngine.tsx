@@ -1,5 +1,3 @@
-import type { Runtime } from '@embed-engine/core';
-
 import { DecisionTerminal } from '../DecisionTerminal/DecisionTerminal';
 import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
 import {
@@ -13,13 +11,11 @@ import { RecommendationPanel } from './RecommendationPanel';
 import { SectionHeader } from './SectionHeader';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 
-type PriorityEngineProps = {
-  runtime: Runtime;
-};
-
-export function PriorityEngine({ runtime }: PriorityEngineProps) {
-  void runtime;
-
+/**
+ * Priority Engine — Interpretation peer + Decision Terminal.
+ * Reads Session via Experience binding only (no Runtime prop).
+ */
+export function PriorityEngine() {
   return (
     <section
       aria-label="Priority Engine"

@@ -11,8 +11,8 @@ import { PrimaryButton } from '@embed-engine/ui';
 import {
   applyQuestionOpened,
   useApplyCognitiveSignal,
-  useCognitiveRuntime,
 } from '../../cognitive/CognitiveRuntimeContext';
+import { useExperienceSession } from '../../cognitive/ExperienceBindingProvider';
 import { useActiveDecisionMove } from '../../cognitive/DecisionStoryProvider';
 import { useWalkthrough } from '../../../walkthrough';
 import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from '../PriorityEngine/priority-engine-layout';
@@ -32,8 +32,8 @@ type TerminalAction = {
  * Slice D: Outcome is a Decision Commitment (layout closed → site evaluation).
  */
 export function DecisionTerminal() {
-  const runtime = useCognitiveRuntime();
   const applySignal = useApplyCognitiveSignal();
+  const session = useExperienceSession();
   const walkthrough = useWalkthrough();
   const { story, definition, outcome, activeMoveId } = useActiveDecisionMove();
   const [pending, setPending] = useState(false);
@@ -41,7 +41,7 @@ export function DecisionTerminal() {
     null,
   );
 
-  const sessionProfile = readSessionHouseholdProfile(runtime);
+  const sessionProfile = readSessionHouseholdProfile(session.facts);
 
   useEffect(() => {
     setPending(false);
@@ -170,12 +170,9 @@ export function DecisionTerminal() {
 }
 
 function readSessionHouseholdProfile(
-  runtime: ReturnType<typeof useCognitiveRuntime>,
+  facts: Readonly<Record<string, unknown>>,
 ): HouseholdProfile | null {
-  const value = runtime
-    ?.getState()
-    .decisionState?.facts.find((fact) => fact.key === HOUSEHOLD_PROFILE_FACT_KEY)
-    ?.value;
+  const value = facts[HOUSEHOLD_PROFILE_FACT_KEY];
   return isHouseholdProfile(value) ? value : null;
 }
 

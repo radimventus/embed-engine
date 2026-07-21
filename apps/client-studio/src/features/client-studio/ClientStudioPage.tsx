@@ -1,12 +1,12 @@
 import type { Runtime } from '@embed-engine/core';
 import type { ReactExperienceModel } from '@embed-engine/model';
 
-import { CognitiveRuntimeProvider } from './cognitive/CognitiveRuntimeContext';
 import { DecisionStoryProvider } from './cognitive/DecisionStoryProvider';
+import { ExperienceBindingProvider } from './cognitive/ExperienceBindingProvider';
 import { InterpretationProvider } from './cognitive/InterpretationProvider';
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
-import { HouseDecisionExperience } from './house-decision/HouseDecisionExperience';
+import { LegacyCommandExperience } from './legacy/LegacyCommandExperience';
 import { AIAdvisor } from './sections/AIAdvisor/AIAdvisor';
 import { Hero } from './sections/Hero/Hero';
 import { AuditLeadCapture } from './sections/AuditLeadCapture/AuditLeadCapture';
@@ -16,11 +16,16 @@ import { WalkthroughProvider } from '../walkthrough';
 
 type ClientStudioPageProps = {
   cognitiveRuntime: Runtime | null;
+  /** @deprecated LEGACY CommandRuntime ExperienceModel — not Cognitive Session. */
   experience: ReactExperienceModel | null;
   onSelectChoice: (decisionId: string, choiceId: string) => void;
   onContinue: () => void;
 };
 
+/**
+ * Cognitive Experience host (RI-003 EX-01).
+ * Surfaces read Session snapshots via ExperienceBindingProvider only.
+ */
 export function ClientStudioPage({
   cognitiveRuntime,
   experience,
@@ -28,38 +33,42 @@ export function ClientStudioPage({
   onContinue,
 }: ClientStudioPageProps) {
   return (
-    <CognitiveRuntimeProvider runtime={cognitiveRuntime}>
+    <ExperienceBindingProvider runtime={cognitiveRuntime}>
       <InterpretationProvider>
         <DecisionStoryProvider>
-        <WalkthroughProvider>
-          <DesktopCanvas>
-            <ClientStudioHeader />
-            {experience ? (
-              <>
-                <HouseDecisionExperience
-                  experience={experience}
-                  onSelectChoice={onSelectChoice}
-                  onContinue={onContinue}
-                />
-                <div
-                  aria-hidden="true"
-                  className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
-                />
-              </>
-            ) : null}
-            <Hero />
-            <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
-            <PropertyExplorer />
-            <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
-            {cognitiveRuntime ? <PriorityEngine runtime={cognitiveRuntime} /> : null}
-            <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
-            <AIAdvisor />
-            <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
-            <AuditLeadCapture />
-          </DesktopCanvas>
-        </WalkthroughProvider>
+          <WalkthroughProvider>
+            <DesktopCanvas>
+              <ClientStudioHeader />
+              <LegacyCommandExperience
+                experience={experience}
+                onSelectChoice={onSelectChoice}
+                onContinue={onContinue}
+              />
+              <Hero />
+              <div
+                aria-hidden="true"
+                className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+              />
+              <PropertyExplorer />
+              <div
+                aria-hidden="true"
+                className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+              />
+              <PriorityEngine />
+              <div
+                aria-hidden="true"
+                className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+              />
+              <AIAdvisor />
+              <div
+                aria-hidden="true"
+                className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+              />
+              <AuditLeadCapture />
+            </DesktopCanvas>
+          </WalkthroughProvider>
         </DecisionStoryProvider>
       </InterpretationProvider>
-    </CognitiveRuntimeProvider>
+    </ExperienceBindingProvider>
   );
 }

@@ -1,15 +1,8 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from 'react';
+import { createContext, useContext, type ReactNode } from 'react';
 import type { DecisionStory } from '@embed-engine/core/decision-layer';
 import { getDispositionMove } from '@embed-engine/object-house';
 
-import { useCognitiveRuntime } from './CognitiveRuntimeContext';
+import { useExperienceSession } from './ExperienceBindingProvider';
 
 const DecisionStoryContext = createContext<DecisionStory | null>(null);
 
@@ -18,30 +11,14 @@ type DecisionStoryProviderProps = {
 };
 
 /**
- * Subscribes to Runtime.decisionStory (Strategy output).
+ * Decision Story selector over the shared Experience Session snapshot (EX-01).
  */
 export function DecisionStoryProvider({ children }: DecisionStoryProviderProps) {
-  const runtime = useCognitiveRuntime();
-  const [story, setStory] = useState<DecisionStory | null>(
-    () => runtime?.getState().decisionStory ?? null,
-  );
-
-  useEffect(() => {
-    if (runtime === null) {
-      setStory(null);
-      return;
-    }
-
-    setStory(runtime.getState().decisionStory ?? null);
-    return runtime.subscribe((state) => {
-      setStory(state.decisionStory ?? null);
-    });
-  }, [runtime]);
-
-  const value = useMemo(() => story, [story]);
+  const session = useExperienceSession();
+  const story = session.decisionStory ?? null;
 
   return (
-    <DecisionStoryContext.Provider value={value}>{children}</DecisionStoryContext.Provider>
+    <DecisionStoryContext.Provider value={story}>{children}</DecisionStoryContext.Provider>
   );
 }
 
