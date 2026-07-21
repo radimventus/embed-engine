@@ -167,6 +167,7 @@ Future development continues with the Intelligence Layer while preserving the Ru
 
 # Related
 
+* [RI-001 — Runtime Kernel](../../04-reference-implementation/RI-001-Runtime-Kernel.md) — Frozen Reference Implementation Specification (Public Contract)
 * [Runtime Decisions v1.0](../runtime-decisions.md) — historical Decision Runtime contract (CommandRuntime path)
 * [ADR-006 — Interpretation & Projection Layer](./ADR-006-interpretation-projection-layer.md)
 * [Post-Foundation Development Policy](../../product/post-foundation-development-policy.md)

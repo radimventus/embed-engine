@@ -14,6 +14,7 @@ Navigation index for project documentation. This file is not product documentati
 | `architecture/adr/` | Architecture Decision Records |
 | `architecture/decision-layer/` | **Canonical vocabulary** for Strategy · Story · Move · Terminal · Trajectory |
 | `03-specification-standard/` | ESS / EQS — specification writing and engineering quality standards |
+| `04-reference-implementation/` | Epoch II Reference Implementation specifications (e.g. RI-001 Runtime Kernel) |
 | `00-project/` | Project Principles (governance, not architecture) |
 | `sprints/` | Active sprint working notes (not SSOT) |
 | `archive/` | Historical documents — not active SSOT |
@@ -34,12 +35,14 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Foundation Milestone (v0.3) | `roadmap/milestone-v0.3-foundation-complete.md` |
 | Roadmap | `roadmap/embed-engine-roadmap.md` |
 | Architecture overview | `architecture/README.md` |
-| Runtime | `architecture/runtime-decisions.md` |
+| Runtime (Cognitive / ADR-001 path) | `04-reference-implementation/RI-001-Runtime-Kernel.md` |
+| Runtime (historical CommandRuntime) | `architecture/runtime-decisions.md` |
 | Decision Layer vocabulary (SSOT) | `architecture/decision-layer/README.md` |
 | Decision Layer governance v1 | `architecture/decision-layer/decision-layer-governance-v1.md` |
 | Decision Strategy detail (DT-002) | `architecture/decision-layer/decision-strategy.md` |
 | Embed Specification Standard (ESS-001) | `03-specification-standard/ESS-001-Embed-Specification-Standard.md` |
 | Engineering Quality Standard (EQS-001) | `03-specification-standard/EQS-001-Engineering-Quality-Standard.md` |
+| Runtime Kernel (RI-001) | `04-reference-implementation/RI-001-Runtime-Kernel.md` |
 | Project Principles (PP-001) | `00-project/PROJECT-PRINCIPLES.md` |
 | Behavior Pack contract | `architecture/behavior-pack-contract.md` |
 | Living Experience v0.1 | `architecture/living-experience-v0.1-freeze.md` |
@@ -59,8 +62,9 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 3. [Decision Layer governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
 4. [Product Constitution](./product/constitution/product-constitution.md)
 5. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
-6. [Runtime Decisions](./architecture/runtime-decisions.md)
-7. Active design / implementation guides as needed
+6. [RI-001 — Runtime Kernel](./04-reference-implementation/RI-001-Runtime-Kernel.md)
+7. [Runtime Decisions](./architecture/runtime-decisions.md) (historical CommandRuntime)
+8. Active design / implementation guides as needed
 
 Do not start with `archive/`.
 

@@ -14,7 +14,8 @@
 | `experience/` | Experience projection notes; Terminal **modalities** only (defs → Decision Layer) |
 | `living-experience-v0.1-freeze.md` | Cognitive sync freeze |
 | `behavior-pack-contract.md` | Behavior Pack contract (not UI) |
-| `runtime-*.md` | Runtime / Kernel boundaries |
+| `runtime-*.md` | Runtime / Kernel boundaries (historical + package notes) |
+| [`../04-reference-implementation/RI-001-Runtime-Kernel.md`](../04-reference-implementation/RI-001-Runtime-Kernel.md) | **RI-001** — Runtime Kernel Public Contract (Frozen) |
 | `archive/` | Historical only |
 
 ## Canonical architecture (one diagram)
