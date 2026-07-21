@@ -30,7 +30,7 @@ Other documents must **link here**. They must **not** redefine these terms.
 | --- | --- |
 | [ADR-009](../adr/ADR-009-decision-layer.md) | Decision Layer definitions |
 | [ADR-010](../adr/ADR-010-decision-strategy.md) | Decision Strategy (DT-002) |
-| [ADR-008](../adr/ADR-008-decision-terminal.md) | Terminal implementation authorization (Proposed) |
+| [ADR-008](../adr/ADR-008-decision-terminal.md) | Terminal implementation authorization (Accepted) |
 
 ---
 

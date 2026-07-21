@@ -7,7 +7,7 @@
 **Strategy detail:** [Decision Strategy DT-002](../decision-layer/decision-strategy.md) (ADR-010)  
 **Governance:** [Decision Layer Governance v1](../decision-layer/decision-layer-governance-v1.md)  
 **Freeze / review:** [Decision Layer v1 Freeze](../decision-layer/decision-layer-v1-freeze.md)  
-**Related:** ADR-008 (Decision Terminal — Proposed), ADR-010, Behavior Pack Contract
+**Related:** ADR-008 (Decision Terminal — Accepted), ADR-010, Behavior Pack Contract
 
 ---
 

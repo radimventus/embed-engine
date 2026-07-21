@@ -6,7 +6,7 @@
 **Governance review:** [decision-layer-governance-v1.md](./decision-layer-governance-v1.md)  
 **Strategy detail:** [decision-strategy.md](./decision-strategy.md) (DT-002)  
 **Behavior Pack:** [../behavior-pack-contract.md](../behavior-pack-contract.md)  
-**ADRs:** [ADR-009](../adr/ADR-009-decision-layer.md) · [ADR-010](../adr/ADR-010-decision-strategy.md) · [ADR-008](../adr/ADR-008-decision-terminal.md) (Proposed)
+**ADRs:** [ADR-009](../adr/ADR-009-decision-layer.md) · [ADR-010](../adr/ADR-010-decision-strategy.md) · [ADR-008](../adr/ADR-008-decision-terminal.md) (Accepted)
 
 This document is the **canonical source** for Decision Move, Decision Story, Decision Terminal, and Decision Trajectory.  
 Decision Strategy’s full contract lives in [decision-strategy.md](./decision-strategy.md); do not redefine Strategy elsewhere.
@@ -244,7 +244,7 @@ May be rendered as: right panel · fullscreen · bottom sheet · AI conversation
 **Non-responsibilities:** composing Stories; owning Pack rules; writing DecisionState; implementing Trajectory.
 
 Experience modality notes (non-definitional): [../experience/decision-terminal.md](../experience/decision-terminal.md).  
-Implementation gate: [ADR-008](../adr/ADR-008-decision-terminal.md) (Proposed).
+Implementation gate: [ADR-008](../adr/ADR-008-decision-terminal.md) (Accepted).
 
 ---
 

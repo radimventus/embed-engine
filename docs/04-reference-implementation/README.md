@@ -10,7 +10,7 @@ These documents do **not** change Reference Architecture, Platform Canon, ESS, o
 | [RI-002](./RI-002-Decision-Session.md) | Decision Session | Frozen | 1.0 | **Decision Session SSOT** |
 | [RI-003](./RI-003-Experience-Kernel.md) | Experience Kernel | Frozen | 1.0 | **Experience Layer implementation contract** |
 
-**Implementation:** EX-01 binding + S-002 consolidation + **S-003 Priority Experience MVP** — Interpretation-driven Priority surface (`usePriorityExperience`). Default demo is Cognitive-only. CommandRuntime opt-in via `?legacyCommandRuntime=1`.
+**Implementation:** EX-01 + S-002 + S-003 Priority MVP + **S-004 Decision Terminal MVP** (ADR-008 Accepted). Default demo is Cognitive-only. CommandRuntime opt-in via `?legacyCommandRuntime=1`.
 
 ## Authority order
 

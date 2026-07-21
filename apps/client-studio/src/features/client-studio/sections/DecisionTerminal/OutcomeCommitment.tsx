@@ -20,12 +20,15 @@ type OutcomeCommitmentProps = {
   slots: readonly { readonly moveId: string; readonly status: string }[];
   storyId: string;
   pending: boolean;
+  nextAction?: string;
+  onCommit: (commitment: LayoutCommitment) => void;
   withTransition: (action: () => void) => void;
   onPendingClear: () => void;
 };
 
 /**
- * FP-01 Slice D — Outcome as Decision Commitment (Experience only).
+ * Outcome as Decision Commitment — Story outcome + presentation commitment.
+ * Commitment emits Signal via `onCommit`; scroll to audit is presentation-only.
  */
 export function OutcomeCommitment({
   outcome,
@@ -33,6 +36,8 @@ export function OutcomeCommitment({
   slots,
   storyId,
   pending,
+  nextAction,
+  onCommit,
   withTransition,
   onPendingClear,
 }: OutcomeCommitmentProps) {
@@ -47,6 +52,14 @@ export function OutcomeCommitment({
   });
 
   const layoutClosed = commitment !== null;
+
+  const choose = (next: LayoutCommitment) => {
+    if (pending) {
+      return;
+    }
+    setCommitment(next);
+    onCommit(next);
+  };
 
   if (layoutClosed) {
     return (
@@ -71,6 +84,11 @@ export function OutcomeCommitment({
           Both paths are a successful decision. Layout is complete. The next chapter is site
           evaluation — whether the plot supports how you want to live.
         </p>
+        {nextAction ? (
+          <p className="mt-2 text-xs leading-relaxed text-embed-foreground-primary/55">
+            {nextAction}
+          </p>
+        ) : null}
         <PrimaryButton
           size="sm"
           className="mt-4 self-start"
@@ -132,26 +150,16 @@ export function OutcomeCommitment({
         className="mt-4 self-start"
         disabled={pending}
         data-testid="decision-terminal-cta"
-        onClick={() => {
-          if (pending) {
-            return;
-          }
-          setCommitment('continue-with-layout');
-        }}
+        onClick={() => choose('continue-with-layout')}
       >
         Continue with this layout
       </PrimaryButton>
       <button
         type="button"
-        className="mt-2 self-start text-left text-xs font-medium text-embed-foreground-primary/65 underline-offset-2 hover:text-embed-foreground-primary hover:underline disabled:opacity-50"
+        className="mt-2 self-start text-left text-xs font-medium text-embed-foreground-primary/65 underline-offset-2 hover:text-embed-foreground-primary hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/40 disabled:opacity-50"
         data-testid="decision-terminal-secondary"
         disabled={pending}
-        onClick={() => {
-          if (pending) {
-            return;
-          }
-          setCommitment('layout-does-not-fit');
-        }}
+        onClick={() => choose('layout-does-not-fit')}
       >
         This layout doesn&apos;t fit my needs
       </button>

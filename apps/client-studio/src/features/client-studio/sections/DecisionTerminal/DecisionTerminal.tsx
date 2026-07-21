@@ -1,71 +1,67 @@
-import { useEffect, useState } from 'react';
-import {
-  HOUSEHOLD_CHOICES,
-  HOUSEHOLD_PROFILE_FACT_KEY,
-  isHouseholdProfile,
-  recommendPromptFor,
-  type HouseholdProfile,
-} from '@embed-engine/object-house';
-import { PrimaryButton } from '@embed-engine/ui';
-
-import {
-  applyQuestionOpened,
-  useApplyCognitiveSignal,
-} from '../../cognitive/CognitiveRuntimeContext';
-import { useExperienceSession } from '../../cognitive/ExperienceBindingProvider';
-import { useActiveDecisionMove } from '../../cognitive/DecisionStoryProvider';
-import { useWalkthrough } from '../../../walkthrough';
-import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from '../PriorityEngine/priority-engine-layout';
 import { OutcomeCommitment } from './OutcomeCommitment';
-
-const STAIRS_WHY_NOW =
-  'Because you just explored another floor, there is one additional aspect worth considering.';
-
-type TerminalAction = {
-  readonly label: string;
-  readonly run: () => void;
-  readonly disabled?: boolean;
-};
+import { TerminalShell } from './TerminalShell';
+import { STAIRS_WHY_NOW, useDecisionTerminal } from './useDecisionTerminal';
 
 /**
- * Decision Terminal — Experience Surface for the active Decision Story (RI-003).
- * Reads Session snapshot (Story + facts); emits Signals only.
+ * Decision Terminal MVP (S-004 / ADR-008 Accepted).
+ * Session Story + Interpretation context; Signals only for cognitive intent.
  */
 export function DecisionTerminal() {
-  const applySignal = useApplyCognitiveSignal();
-  const session = useExperienceSession();
-  const walkthrough = useWalkthrough();
-  const { story, definition, outcome, activeMoveId } = useActiveDecisionMove();
-  const [pending, setPending] = useState(false);
-  const [householdProfile, setHouseholdProfile] = useState<HouseholdProfile | null>(
-    null,
-  );
+  const terminal = useDecisionTerminal();
+  const {
+    phase,
+    pending,
+    clearPending,
+    withTransition,
+    story,
+    definition,
+    outcome,
+    activeMoveId,
+    completedCount,
+    totalMoves,
+    sessionProfile,
+    householdDraft,
+    setHouseholdDraft,
+    interpretation,
+    startDialogue,
+    submitHousehold,
+    commitLayout,
+    moveBody,
+    moveAction,
+    isStairsWarn,
+  } = terminal;
 
-  const sessionProfile = readSessionHouseholdProfile(session.facts);
+  if (phase === 'loading') {
+    return (
+      <TerminalShell
+        testId="decision-terminal"
+        loading
+        pending={false}
+        eyebrow="Decision Terminal"
+        title="Preparing your decision path"
+        body="The session is loading. Priority and Terminal will sync on the same Interpretation."
+      />
+    );
+  }
 
-  useEffect(() => {
-    setPending(false);
-  }, [activeMoveId, outcome?.status, story?.id]);
+  if (phase === 'error') {
+    return (
+      <TerminalShell
+        testId="decision-terminal"
+        error
+        pending={false}
+        eyebrow="Decision Terminal"
+        title="Decision path unavailable"
+        body={
+          definition === null && activeMoveId !== null
+            ? `Move “${activeMoveId}” has no presentation definition in the Behavior Pack.`
+            : 'Reload the experience to continue the guided dialogue.'
+        }
+      />
+    );
+  }
 
-  useEffect(() => {
-    if (activeMoveId === 'layout.ask-household-shape') {
-      setHouseholdProfile(sessionProfile);
-      return;
-    }
-    if (story === null || outcome !== null) {
-      setHouseholdProfile(null);
-    }
-  }, [activeMoveId, outcome, sessionProfile, story]);
-
-  const withTransition = (action: () => void) => {
-    if (pending) {
-      return;
-    }
-    setPending(true);
-    action();
-  };
-
-  if (outcome && story) {
+  if (phase === 'outcome' && outcome && story) {
     return (
       <OutcomeCommitment
         outcome={outcome}
@@ -73,293 +69,88 @@ export function DecisionTerminal() {
         slots={story.slots}
         storyId={story.id}
         pending={pending}
+        nextAction={interpretation?.nextAction}
+        onCommit={commitLayout}
         withTransition={withTransition}
-        onPendingClear={() => setPending(false)}
+        onPendingClear={clearPending}
       />
     );
   }
 
-  if (story === null || definition === null || activeMoveId === null) {
+  if (phase === 'idle') {
+    const topic = interpretation?.activeTopic;
+    const next = interpretation?.nextAction;
     return (
       <TerminalShell
         testId="decision-terminal"
         empty
         pending={pending}
         eyebrow="Decision Terminal"
-        title="Start the Layout decision dialogue"
-        body="Disposition first. Beauty second. One guided path from Priority to a clear layout verdict."
+        title={topic ? `Guide your ${topic} decision` : 'Start the disposition dialogue'}
+        body={
+          next ??
+          'Disposition first. Beauty second. One guided path from Priority to a clear layout verdict.'
+        }
+        hint={
+          topic
+            ? 'Starts from your current Priority focus — peers stay synchronized.'
+            : undefined
+        }
         action={{
           label: pending ? 'Starting…' : 'Start disposition dialogue',
-          run: () => {
-            withTransition(() => {
-              applyQuestionOpened(
-                applySignal,
-                'layout',
-                'Priority focus: Dispozice',
-              );
-            });
-          },
+          run: startDialogue,
         }}
       />
     );
   }
 
-  const completedCount = story.slots.filter((slot) => slot.status === 'completed').length;
-  const isStairsWarn = activeMoveId === 'layout.warn-stairs-mobility';
-  const body =
-    activeMoveId === 'layout.recommend-disposition-fit'
-      ? recommendPromptFor(sessionProfile ?? undefined)
-      : definition.advisorPrompt;
-
-  if (activeMoveId === 'layout.ask-household-shape') {
+  if (phase === 'household' && definition && activeMoveId) {
     return (
       <TerminalShell
         testId="decision-terminal"
         activeMove={activeMoveId}
         pending={pending}
-        eyebrow={`Decision Terminal · Move ${completedCount + 1}/${story.slots.length}`}
+        eyebrow={`Decision Terminal · Move ${completedCount + 1}/${totalMoves}`}
         intent={definition.intent}
         title={definition.purpose}
         body={definition.advisorPrompt}
         tradeOff={definition.tradeOff}
-        householdProfile={householdProfile}
-        onSelectHousehold={setHouseholdProfile}
+        householdProfile={householdDraft}
+        onSelectHousehold={setHouseholdDraft}
         action={{
           label: pending ? 'Updating…' : 'Continue with this household',
-          disabled: householdProfile === null || pending,
-          run: () => {
-            if (householdProfile === null) {
-              return;
-            }
-            withTransition(() => {
-              applyQuestionOpened(
-                applySignal,
-                activeMoveId,
-                `Household: ${householdProfile}`,
-                { householdProfile },
-              );
-            });
-          },
+          disabled: householdDraft === null || pending,
+          run: submitHousehold,
         }}
       />
     );
   }
 
-  const action = resolveMoveAction(activeMoveId, {
-    pending,
-    withTransition,
-    applySignal,
-    selectRoom: walkthrough.selectRoom,
-    purpose: definition.purpose,
-  });
+  if (phase === 'move' && definition && activeMoveId && moveAction && moveBody) {
+    return (
+      <TerminalShell
+        testId="decision-terminal"
+        activeMove={activeMoveId}
+        pending={pending}
+        eyebrow={`Decision Terminal · Move ${completedCount + 1}/${totalMoves}`}
+        intent={definition.intent}
+        title={definition.purpose}
+        whyNow={isStairsWarn ? STAIRS_WHY_NOW : undefined}
+        body={moveBody}
+        tradeOff={definition.tradeOff}
+        action={moveAction}
+      />
+    );
+  }
 
   return (
     <TerminalShell
       testId="decision-terminal"
-      activeMove={activeMoveId}
-      pending={pending}
-      eyebrow={`Decision Terminal · Move ${completedCount + 1}/${story.slots.length}`}
-      intent={definition.intent}
-      title={definition.purpose}
-      whyNow={isStairsWarn ? STAIRS_WHY_NOW : undefined}
-      body={body}
-      tradeOff={definition.tradeOff}
-      action={action}
+      error
+      pending={false}
+      eyebrow="Decision Terminal"
+      title="Unable to render this step"
+      body="The active Story step could not be presented. Try restarting from Priority."
     />
-  );
-}
-
-function readSessionHouseholdProfile(
-  facts: Readonly<Record<string, unknown>>,
-): HouseholdProfile | null {
-  const value = facts[HOUSEHOLD_PROFILE_FACT_KEY];
-  return isHouseholdProfile(value) ? value : null;
-}
-
-function resolveMoveAction(
-  activeMoveId: string,
-  ctx: {
-    pending: boolean;
-    withTransition: (action: () => void) => void;
-    applySignal: ReturnType<typeof useApplyCognitiveSignal>;
-    selectRoom: (roomId: string) => void;
-    purpose: string;
-  },
-): TerminalAction {
-  const { pending, withTransition, applySignal, selectRoom, purpose } = ctx;
-
-  if (activeMoveId === 'layout.discover-day-zone') {
-    return {
-      label: pending ? 'Updating…' : 'Open living room',
-      run: () => {
-        withTransition(() => {
-          selectRoom('living-room');
-        });
-      },
-    };
-  }
-
-  if (activeMoveId === 'layout.discover-night-zone') {
-    return {
-      label: pending ? 'Updating…' : 'Open bedroom',
-      run: () => {
-        withTransition(() => {
-          selectRoom('bedroom');
-        });
-      },
-    };
-  }
-
-  if (activeMoveId === 'layout.recommend-disposition-fit') {
-    return {
-      label: pending ? 'Updating…' : 'Confirm verdict',
-      run: () => {
-        withTransition(() => {
-          applyQuestionOpened(
-            applySignal,
-            activeMoveId,
-            `Move acknowledged: ${purpose}`,
-          );
-        });
-      },
-    };
-  }
-
-  return {
-    label: pending ? 'Updating…' : 'Continue',
-    run: () => {
-      withTransition(() => {
-        applyQuestionOpened(
-          applySignal,
-          activeMoveId,
-          `Move acknowledged: ${purpose}`,
-        );
-      });
-    },
-  };
-}
-
-type TerminalShellProps = {
-  testId: string;
-  pending: boolean;
-  eyebrow: string;
-  title: string;
-  body: string;
-  action: TerminalAction;
-  intent?: string;
-  tradeOff?: string;
-  hint?: string;
-  whyNow?: string;
-  empty?: boolean;
-  outcome?: string;
-  activeMove?: string;
-  householdProfile?: HouseholdProfile | null;
-  onSelectHousehold?: (profile: HouseholdProfile) => void;
-};
-
-function TerminalShell({
-  testId,
-  pending,
-  eyebrow,
-  title,
-  body,
-  action,
-  intent,
-  tradeOff,
-  hint,
-  whyNow,
-  empty,
-  outcome,
-  activeMove,
-  householdProfile,
-  onSelectHousehold,
-}: TerminalShellProps) {
-  return (
-    <aside
-      aria-label="Decision Terminal"
-      aria-busy={pending}
-      className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} overflow-y-auto`}
-      data-testid={testId}
-      data-empty={empty ? 'true' : undefined}
-      data-outcome={outcome}
-      data-active-move={activeMove}
-      data-pending={pending ? 'true' : undefined}
-      data-household={householdProfile ?? undefined}
-      data-reactive={whyNow ? 'true' : undefined}
-    >
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
-        {eyebrow}
-      </p>
-      {intent ? (
-        <p className="mt-1 text-[10px] uppercase tracking-wide text-embed-foreground-primary/45">
-          {intent}
-        </p>
-      ) : null}
-      <p className="mt-2 text-sm font-medium text-embed-foreground-primary">{title}</p>
-      {whyNow ? (
-        <p
-          className="mt-3 text-xs font-medium leading-relaxed text-embed-brand-gold"
-          data-testid="decision-terminal-why-now"
-        >
-          {whyNow}
-        </p>
-      ) : null}
-      <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">{body}</p>
-      {tradeOff ? (
-        <p className="mt-3 text-xs leading-relaxed text-embed-foreground-primary/55">
-          Trade-off: {tradeOff}
-        </p>
-      ) : null}
-      {onSelectHousehold ? (
-        <div
-          className="mt-3 flex flex-col gap-2"
-          role="radiogroup"
-          aria-label="Household shape"
-          data-testid="decision-terminal-household"
-        >
-          {HOUSEHOLD_CHOICES.map((choice) => {
-            const selected = householdProfile === choice.id;
-            return (
-              <button
-                key={choice.id}
-                type="button"
-                role="radio"
-                aria-checked={selected}
-                data-testid={`household-choice-${choice.id}`}
-                className={`rounded-[8px] border px-3 py-2 text-left transition-colors ${
-                  selected
-                    ? 'border-embed-brand-gold bg-embed-brand-gold/15 text-embed-foreground-primary'
-                    : 'border-embed-foreground-primary/15 bg-transparent text-embed-foreground-primary/80 hover:border-embed-brand-gold/40'
-                }`}
-                onClick={() => onSelectHousehold(choice.id)}
-              >
-                <span className="block text-xs font-semibold">{choice.label}</span>
-                <span className="mt-0.5 block text-[11px] opacity-70">{choice.detail}</span>
-              </button>
-            );
-          })}
-        </div>
-      ) : null}
-      {hint ? (
-        <p className="mt-3 text-xs text-embed-foreground-primary/55">{hint}</p>
-      ) : null}
-      {pending ? (
-        <p
-          className="mt-3 text-xs font-medium text-embed-brand-gold"
-          data-testid="decision-terminal-pending"
-        >
-          Advancing…
-        </p>
-      ) : null}
-      <PrimaryButton
-        size="sm"
-        className="mt-4 self-start"
-        disabled={action.disabled === true || pending}
-        data-testid="decision-terminal-cta"
-        onClick={action.run}
-      >
-        {action.label}
-      </PrimaryButton>
-    </aside>
   );
 }

@@ -1,8 +1,9 @@
 # ADR-008 — Decision Terminal
 
-**Status:** Proposed  
+**Status:** Accepted  
 **Date:** 2026-07-20  
-**Depends on:** Living Experience v0.1, ADR-009 Decision Layer, ADR-002, ADR-003, ADR-007  
+**Accepted:** 2026-07-21 (S-004 — Decision Terminal Production)  
+**Depends on:** Living Experience v0.1, ADR-009 Decision Layer, ADR-002, ADR-003, ADR-007, RI-001, RI-002, RI-003  
 **Concept SSOT:** [Decision Layer — Terminal](../decision-layer/decision-layer.md#decision-terminal-experience-layer) · [Vocabulary index](../decision-layer/README.md)  
 **Experience modalities:** [Decision Terminal modalities](../experience/decision-terminal.md)  
 **Decision Layer SSOT:** [Decision Layer](../decision-layer/decision-layer.md)  
@@ -18,33 +19,40 @@ Decision Terminal is the **Experience Surface** that renders Decision Stories. I
 
 ---
 
-# Decision (proposed — not implemented)
+# Decision
 
 Accept Decision Terminal as an Experience Layer surface that:
 
-- renders Decision Stories (sequences of Decision Moves)  
-- may be presented as right panel, fullscreen, bottom sheet, AI conversation, voice, or future channels  
-- emits Signals when Moves are completed / skipped / deferred  
-- stays peer-coherent with Priority, FAQ, AI Advisor, Recommendation  
+- renders Decision Stories (sequences of Decision Moves)
+- may be presented as right panel, fullscreen, bottom sheet, AI conversation, voice, or future channels
+- emits Signals when Moves are completed / skipped / deferred (and related user intents)
+- stays peer-coherent with Priority, FAQ, AI Advisor, Recommendation
 
 Decision Trajectory remains out of scope.
 
 ---
 
-# Status
+# Acceptance resolutions (S-004)
 
-**Proposed.** No UI or Runtime implementation authorized until Accepted and an epic is approved.
+Former gate items, closed without architecture redesign:
 
-Before Accepted:
-
-1. Contract how Story reaches Terminal (ADR-009 unknown U2).  
-2. Confirm first modality without freezing layout as architecture.  
-3. Align Behavior Pack Move library with Terminal rendering needs.
+| Gate | Resolution |
+| --- | --- |
+| How Story reaches Terminal (U2) | Session snapshot `decisionStory` via Runtime / Experience Binding (RI-001, RI-002, EX-01). Terminal does not call Strategy. |
+| First modality | Co-located panel beside Priority Experience (Client Studio). Layout is presentation, not architecture. |
+| Pack ↔ Terminal | Terminal reads Move presentation fields from Behavior Pack Move library (`advisorPrompt`, intent, purpose, tradeOff). Pack does not modify UI chrome. |
 
 ---
 
 # Non-goals
 
-- Implementing Strategy or Move engines in this ADR  
-- Placing Terminal in Kernel  
+- Implementing Strategy or Move engines in this ADR
+- Placing Terminal in Kernel
 - Equating Terminal with “Priority Detail” or a static page flow
+
+---
+
+# Related
+
+- [RI-003 — Experience Kernel](../../04-reference-implementation/RI-003-Experience-Kernel.md)
+- Implementation: Client Studio `sections/DecisionTerminal/`

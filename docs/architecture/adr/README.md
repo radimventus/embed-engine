@@ -9,7 +9,7 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 | [ADR-003](./ADR-003-cognitive-processing-pipeline.md) | Cognitive Processing Pipeline | Proposed → Accepted w/ Living Experience (annotated) |
 | [ADR-006](./ADR-006-interpretation-projection-layer.md) | Interpretation & Projection Layer | Accepted (Soft Freeze) — annotated; Decision Layer is canonical for guidance |
 | [ADR-007](./ADR-007-priority-mvp-policy.md) | Priority MVP Policy | Accepted |
-| [ADR-008](./ADR-008-decision-terminal.md) | Decision Terminal implementation gate | Proposed |
+| [ADR-008](./ADR-008-decision-terminal.md) | Decision Terminal implementation gate | Accepted |
 | [ADR-009](./ADR-009-decision-layer.md) | Decision Layer | Accepted (definitions freeze) |
 | [ADR-010](./ADR-010-decision-strategy.md) | Decision Strategy (DT-002) | Accepted (definitions freeze) |
 

@@ -3,7 +3,7 @@
 **Status:** Experience Layer notes (not definitional SSOT)  
 **Canonical definition SSOT:** [../decision-layer/README.md](../decision-layer/README.md) · [../decision-layer/decision-layer.md § Terminal](../decision-layer/decision-layer.md#decision-terminal-experience-layer)  
 **Experience implementation contract:** [../../04-reference-implementation/RI-003-Experience-Kernel.md](../../04-reference-implementation/RI-003-Experience-Kernel.md)  
-**ADR:** [ADR-008](../adr/ADR-008-decision-terminal.md) (Proposed — implementation gate)
+**ADR:** [ADR-008](../adr/ADR-008-decision-terminal.md) (Accepted — S-004)
 
 > **Do not redefine Decision Terminal here.**  
 > Canonical: *An Experience Surface that renders Decision Stories. Not Kernel.*
