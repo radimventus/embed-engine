@@ -171,3 +171,14 @@ describe("experience confidence", () => {
     assert.notDeepEqual(family.confidence, design.confidence);
   });
 });
+
+describe("experience fragments", () => {
+  it("assembles the same Experience fields via fragment composition", () => {
+    const family = composeExperience(inputWith(["layout"]));
+    assert.equal(family.id, "experience.house-modern-01.family");
+    assert.equal(family.title, "Family living interpretation");
+    assert.equal(family.evidence[0]?.title, "Four bedrooms");
+    assert.equal(family.concerns[0]?.title, "Children's room on upper floor");
+    assert.equal(family.confidence.score, 92);
+  });
+});

@@ -1,5 +1,10 @@
 import type { Experience } from "./Experience";
-import { resolveInterpretationRule } from "./interpretationRules";
+import {
+  LENS_KEY_BY_PRIORITY,
+  mergeExperiencePartials,
+  resolveActiveLens,
+  selectExperienceFragments,
+} from "./experienceFragments";
 import type { PrioritySelection } from "./PrioritySelection";
 
 /**
@@ -16,21 +21,22 @@ export type ExperienceComposeInput = {
 };
 
 /**
- * Deterministic Experience from Object identity + PrioritySelection.
- * Interpretation rules are hardcoded; priorities select the lens only.
+ * Assembles Experience from selected ExperienceFragments.
+ * Behaviour matches the previous monolithic interpretation mapping.
  */
 export function composeExperience(input: ExperienceComposeInput): Experience {
-  const rule = resolveInterpretationRule(input.priorities.selected);
+  const activeLens = resolveActiveLens(input.priorities.selected);
+  const fragments = selectExperienceFragments(activeLens);
+  const partials = fragments.map((entry) => entry.build());
+  const assembled = mergeExperiencePartials(partials);
+  const lensKey =
+    activeLens === null
+      ? "baseline"
+      : (LENS_KEY_BY_PRIORITY[activeLens] ?? "baseline");
 
   return Object.freeze({
-    id: `experience.${input.object.id}.${rule.key}`,
-    title: rule.title,
-    summary: rule.summary,
-    focus: rule.focus,
-    recommendations: rule.recommendations,
-    evidence: rule.evidence,
-    concerns: rule.concerns,
-    confidence: rule.confidence,
+    id: `experience.${input.object.id}.${lensKey}`,
+    ...assembled,
   });
 }
 

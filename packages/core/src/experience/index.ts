@@ -4,6 +4,7 @@ export type {
   ExperienceConfidence,
   ExperienceEvidence,
 } from "./Experience";
+export type { ExperienceFragment } from "./ExperienceFragment";
 export type {
   PriorityId,
   PrioritySelection,
