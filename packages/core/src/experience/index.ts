@@ -1,4 +1,4 @@
-export type { Experience } from "./Experience";
+export type { Experience, ExperienceEvidence } from "./Experience";
 export type {
   PriorityId,
   PrioritySelection,

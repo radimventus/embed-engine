@@ -1,8 +1,9 @@
+import type { ExperienceEvidence } from "./Experience";
 import type { PriorityId } from "./PrioritySelection";
 
 /**
  * Hardcoded interpretation fragment for one Priority lens.
- * Slice 3 — not a rule engine.
+ * Not a rule engine.
  */
 export type InterpretationRule = {
   readonly key: string;
@@ -10,7 +11,16 @@ export type InterpretationRule = {
   readonly summary: string;
   readonly focus: readonly string[];
   readonly recommendations: readonly string[];
+  readonly evidence: readonly ExperienceEvidence[];
 };
+
+function evidence(
+  id: string,
+  title: string,
+  description: string,
+): ExperienceEvidence {
+  return Object.freeze({ id, title, description });
+}
 
 const FAMILY_RULE: InterpretationRule = Object.freeze({
   key: "family",
@@ -21,6 +31,23 @@ const FAMILY_RULE: InterpretationRule = Object.freeze({
   recommendations: Object.freeze([
     "Walk the day and night zones in order",
     "Confirm household shape before layout commitment",
+  ]),
+  evidence: Object.freeze([
+    evidence(
+      "family.bedrooms",
+      "Four bedrooms",
+      "Enough private rooms for a growing household without forced sharing.",
+    ),
+    evidence(
+      "family.garden",
+      "Safe private garden",
+      "Enclosed outdoor space supports children and quiet evening use.",
+    ),
+    evidence(
+      "family.bathrooms",
+      "Two bathrooms",
+      "Morning routines stay parallel instead of competing for one bath.",
+    ),
   ]),
 });
 
@@ -34,6 +61,23 @@ const INVESTMENT_RULE: InterpretationRule = Object.freeze({
     "Compare operating costs against investment thesis",
     "Check which layout choices lock or preserve value",
   ]),
+  evidence: Object.freeze([
+    evidence(
+      "investment.opex",
+      "Low operating costs",
+      "Efficient systems protect yield against rising utility pressure.",
+    ),
+    evidence(
+      "investment.rental",
+      "Strong rental potential",
+      "Layout and location support demand from long-stay tenants.",
+    ),
+    evidence(
+      "investment.location",
+      "Attractive location",
+      "Site context supports liquidity if the holding period ends early.",
+    ),
+  ]),
 });
 
 const DESIGN_RULE: InterpretationRule = Object.freeze({
@@ -45,6 +89,23 @@ const DESIGN_RULE: InterpretationRule = Object.freeze({
   recommendations: Object.freeze([
     "Review design coherence room by room",
     "Separate aesthetic preference from layout fit",
+  ]),
+  evidence: Object.freeze([
+    evidence(
+      "design.materials",
+      "Premium materials",
+      "Finish quality carries the architectural intent through daily use.",
+    ),
+    evidence(
+      "design.open-living",
+      "Open living space",
+      "Primary living volume reads as one composed spatial gesture.",
+    ),
+    evidence(
+      "design.details",
+      "Architectural details",
+      "Edges, openings and transitions reinforce a deliberate design language.",
+    ),
   ]),
 });
 
@@ -58,6 +119,23 @@ const SUSTAINABILITY_RULE: InterpretationRule = Object.freeze({
     "Inspect energy systems before emotional fit",
     "Weigh maintenance load against operating-cost savings",
   ]),
+  evidence: Object.freeze([
+    evidence(
+      "sustainability.envelope",
+      "Energy-efficient envelope",
+      "Fabric performance reduces heat loss before active systems work harder.",
+    ),
+    evidence(
+      "sustainability.heat-pump",
+      "Heat pump",
+      "Primary heating path is sized for efficient low-temperature operation.",
+    ),
+    evidence(
+      "sustainability.solar",
+      "Solar-ready roof",
+      "Roof geometry leaves a clear path for future generation without rework.",
+    ),
+  ]),
 });
 
 const DEFAULT_RULE: InterpretationRule = Object.freeze({
@@ -68,6 +146,18 @@ const DEFAULT_RULE: InterpretationRule = Object.freeze({
   focus: Object.freeze(["disposition", "layout"]),
   recommendations: Object.freeze([
     "Select at least one priority to open an interpretation",
+  ]),
+  evidence: Object.freeze([
+    evidence(
+      "baseline.select",
+      "No lens selected yet",
+      "Evidence appears once a priority opens an interpretation of this object.",
+    ),
+    evidence(
+      "baseline.object-stable",
+      "Object stays fixed",
+      "Changing priorities changes interpretation only — never the object itself.",
+    ),
   ]),
 });
 

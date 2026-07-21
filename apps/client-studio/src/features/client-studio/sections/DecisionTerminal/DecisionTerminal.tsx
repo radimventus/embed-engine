@@ -28,6 +28,24 @@ export function DecisionTerminal({ experience }: DecisionTerminalProps) {
         {experience.summary}
       </p>
       <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
+        Why this recommendation
+      </p>
+      <ul
+        className="mt-1 list-disc space-y-2 pl-4 text-sm text-embed-foreground-primary/70"
+        data-testid="decision-terminal-evidence"
+      >
+        {experience.evidence.map((item) => (
+          <li key={item.id}>
+            <span className="font-medium text-embed-foreground-primary">
+              {item.title}
+            </span>
+            <span className="mt-0.5 block text-embed-foreground-primary/70">
+              {item.description}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
         Focus
       </p>
       <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-embed-foreground-primary/70">

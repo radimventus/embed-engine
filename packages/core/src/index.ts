@@ -13,7 +13,7 @@ export * from "./runtime/Interpreter";
 export * from "./runtime/DefaultInterpreter";
 export * from "./runtime/validate";
 
-export type { Experience } from "./experience/Experience";
+export type { Experience, ExperienceEvidence } from "./experience/Experience";
 export type {
   PriorityId,
   PrioritySelection,

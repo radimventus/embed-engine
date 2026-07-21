@@ -29,6 +29,8 @@ describe("composeExperience", () => {
     assert.ok(Array.isArray(experience.focus));
     assert.ok(experience.focus.length > 0);
     assert.ok(Array.isArray(experience.recommendations));
+    assert.ok(Array.isArray(experience.evidence));
+    assert.ok(experience.evidence.length >= 2);
   });
 
   it("is deterministic for the same input", () => {
@@ -59,6 +61,7 @@ describe("first interpretation", () => {
     assert.notEqual(family.summary, design.summary);
     assert.notDeepEqual(family.focus, sustainability.focus);
     assert.notDeepEqual(investment.recommendations, design.recommendations);
+    assert.notDeepEqual(family.evidence, investment.evidence);
 
     assert.equal(family.title, "Family living interpretation");
     assert.equal(investment.title, "Investment interpretation");
@@ -71,5 +74,30 @@ describe("first interpretation", () => {
       inputWith(["energy", "layout", "design"]),
     );
     assert.equal(experience.title, "Family living interpretation");
+  });
+});
+
+describe("experience evidence", () => {
+  it("produces different Evidence for different PrioritySelections", () => {
+    const family = composeExperience(inputWith(["layout"]));
+    const investment = composeExperience(inputWith(["investment"]));
+    const design = composeExperience(inputWith(["design"]));
+    const sustainability = composeExperience(inputWith(["energy"]));
+
+    for (const experience of [family, investment, design, sustainability]) {
+      assert.ok(experience.evidence.length >= 2);
+      assert.ok(experience.evidence.length <= 4);
+      for (const item of experience.evidence) {
+        assert.equal(typeof item.id, "string");
+        assert.equal(typeof item.title, "string");
+        assert.equal(typeof item.description, "string");
+      }
+    }
+
+    assert.equal(family.evidence[0]?.title, "Four bedrooms");
+    assert.equal(investment.evidence[0]?.title, "Low operating costs");
+    assert.equal(design.evidence[0]?.title, "Premium materials");
+    assert.equal(sustainability.evidence[0]?.title, "Energy-efficient envelope");
+    assert.notDeepEqual(family.evidence, design.evidence);
   });
 });
