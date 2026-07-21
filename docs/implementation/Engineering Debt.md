@@ -7,11 +7,12 @@ Items here are candidates for later milestones / ADRs.
 
 | ID | Item | Why deferred |
 | --- | --- | --- |
-| ED-DIST-01 | GitHub Pages hosting of `packages/embed/dist` | M3 publish slice — not this package-definition slice |
+| ED-DIST-01 | GitHub Pages hosting of `packages/embed/dist` | **In progress / see** [GitHub Pages Distribution](../releases/GitHub%20Pages%20Distribution.md) |
 | ED-DIST-02 | GitHub Actions release workflow | Publishing automation out of scope |
 | ED-DIST-03 | CDN / npm publish of `@embed-engine/embed` | Requires auth, semver policy, changelog process |
 | ED-DIST-04 | Single bundled `embed.d.ts` (rollup-types) | Current multi-file public `.d.ts` graph is sufficient for MVP |
 | ED-DIST-05 | Auto-generate `src/version.ts` from `package.json` | Build already fails on mismatch; codegen can wait |
+| ED-DIST-06 | Private-repo anonymous Pages access | Public HTTPS for anonymous users requires public repo or paid Pages visibility |
 
 ## Embed / Runtime (known TODOs)
 

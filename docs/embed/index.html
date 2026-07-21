@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Embed Engine — Distribution 0.1.0</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; color: #1c2b22; }
+    code, pre { background: #f0f4f1; padding: 0.15rem 0.35rem; border-radius: 0.25rem; }
+    pre { padding: 0.75rem 1rem; overflow: auto; }
+    a { color: #2f6b4f; }
+  </style>
+</head>
+<body>
+  <h1>Embed Engine distribution</h1>
+  <p>Version <strong>0.1.0</strong> — public artifacts for host pages.</p>
+  <ul>
+    <li><a href="./embed.iife.js"><code>embed.iife.js</code></a> — global <code>Embed</code></li>
+    <li><a href="./embed.es.js"><code>embed.es.js</code></a> — ESM</li>
+    <li><a href="./version.json"><code>version.json</code></a> — manifest</li>
+  </ul>
+  <h2>Usage</h2>
+  <pre>&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  Embed.mount({ target: "#embed", fixture: "garden" });
+&lt;/script&gt;</pre>
+</body>
+</html>

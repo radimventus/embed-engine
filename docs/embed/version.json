@@ -1,0 +1,20 @@
+{
+  "name": "@embed-engine/embed",
+  "version": "0.1.0",
+  "apiVersion": "0.1.0",
+  "freeze": "Architecture Freeze v0.1",
+  "artifacts": {
+    "esm": "embed.es.js",
+    "iife": "embed.iife.js",
+    "types": "index.d.ts",
+    "sourcemaps": [
+      "embed.es.js.map",
+      "embed.iife.js.map"
+    ]
+  },
+  "publicApi": [
+    "Embed.mount",
+    "Embed.unmount",
+    "Embed.version"
+  ]
+}

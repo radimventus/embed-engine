@@ -9,7 +9,7 @@ This document defines the **production distribution package** produced by:
 pnpm --filter @embed-engine/embed build
 ```
 
-It does **not** publish to npm, GitHub Pages, or a CDN. It only standardizes `packages/embed/dist/`.
+It standardizes `packages/embed/dist/` and feeds the GitHub Pages copy under `docs/embed/` (see [GitHub Pages Distribution](../../docs/releases/GitHub%20Pages%20Distribution.md)).
 
 ---
 
