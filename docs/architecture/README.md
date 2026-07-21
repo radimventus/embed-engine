@@ -16,6 +16,7 @@
 | `adr/` | Architecture Decision Records ([ADR-001](./adr/ADR-001-runtime-architecture.md) Runtime) |
 | `contracts/` | Cross-layer runtime contracts (e.g. [Priority Experience Runtime Contract](./contracts/Priority%20Experience%20Runtime%20Contract.md)) |
 | [Priority Experience Integration Model](./Priority%20Experience%20Integration%20Model.md) | End-to-end integration of Priority Experience SSOTs + OQ resolution |
+| `domain/` | Domain models (e.g. [Priority Domain Model](./domain/Priority%20Domain%20Model.md)) |
 | `experience/` | Experience projection notes; Terminal **modalities** only (defs → Decision Layer) |
 | `living-experience-v0.1-freeze.md` | Cognitive sync freeze |
 | `behavior-pack-contract.md` | Behavior Pack contract (not UI) |

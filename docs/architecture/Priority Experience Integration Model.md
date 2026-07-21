@@ -18,6 +18,7 @@
 | [ADR-012](./adr/ADR-012-interpretation-first-class-artifact.md) | Interpretation → Experience pipeline |
 | [ADR-007](./adr/ADR-007-priority-mvp-policy.md) | MVP Priority policy |
 | [RI-003](../04-reference-implementation/RI-003-Experience-Kernel.md) | Experience Layer responsibilities |
+| [Priority Domain Model](./domain/Priority%20Domain%20Model.md) | Domain entities, invariants, aggregates (tech-independent) |
 
 This document **does not invent** new architecture. It connects existing SSOTs and classifies open items as **Resolved**, **Deferred**, or **Needs ADR**.
 
