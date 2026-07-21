@@ -17,6 +17,7 @@ Future:         Decision Trajectory (not MVP)
 | Concept | Role | Canonical source |
 | --- | --- | --- |
 | **Product** | Principles and vision | `product/` |
+| **Decision Experience Grammar (DEG)** | Product layer — Mental State / Experience operations | [`product/decision-experience-grammar/DEG.md`](./product/decision-experience-grammar/DEG.md) |
 | **Object Package** | Object truth | `product/object-package.md` |
 | **Behavior Pack** | Knowledge, rules, Move library, composition — not UI | `architecture/behavior-pack-contract.md` |
 | **Runtime / Kernel** | Public façade + internal orchestration | **[RI-001](./04-reference-implementation/RI-001-Runtime-Kernel.md)** · [RUNTIME.md](./architecture/RUNTIME.md) · [ADR-001](./architecture/adr/ADR-001-runtime-architecture.md) |
@@ -25,12 +26,13 @@ Future:         Decision Trajectory (not MVP)
 | **Decision Layer** | Strategy · Story · Move · Terminal · Trajectory | `architecture/decision-layer/` |
 | **Interpretation** | Reasoning snapshot | ADR-003 / CORE-001 |
 | **Experience** | Surfaces that render; emit Signals | **[RI-003](./04-reference-implementation/RI-003-Experience-Kernel.md)** · Experience Layer |
-| **Client Studio** | Application renderer | apps — no domain reconstruction |
+| **Client Studio** | Decision Workspace (not page builder) | apps — Experience host; product intent → DEG |
 | **Archive** | History only (incl. CommandRuntime) | `archive/` · `architecture/archive/` |
 
 ## Rule of thumb
 
 > Knowledge holds truth and profile guidance vocabulary.  
+> DEG designs Mental State transitions.  
 > Kernel produces Interpretation.  
 > Decision Strategy composes the dialogue Story.  
 > Experience only renders and emits Signals.

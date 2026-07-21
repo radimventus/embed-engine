@@ -6,6 +6,7 @@ Active product SSOT lives here.
 | --- | --- |
 | `constitution/` | Product principles, flywheel, moat, governance, CTO principles |
 | `vision/` | Executive summary, vision, business model, founder vision |
+| **`decision-experience-grammar/`** | **Decision Experience Grammar (DEG) — product layer SSOT** |
 | `object-package.md` | Object Package product contract (SSOT) |
 | `knowledge/` | Knowledge Foundation (SSOT) |
 | `pilots/` | Pilot Foundation (SSOT process) |
@@ -16,6 +17,26 @@ Active product SSOT lives here.
 
 **First pilot knowledge (CAP-P01):** [`../pilot/README.md`](../pilot/README.md) — Object `house-modern-01` + Behavior Pack `disposition-layout-v1`.
 
+---
+
+## Decision Experience Grammar (product layer)
+
+**Canonical source:** [`decision-experience-grammar/DEG.md`](./decision-experience-grammar/DEG.md)
+
+After architecture stabilization, product evolution is **DEG-led**:
+
+```text
+Product Vision → DEG → Decision Story → Experience Chapters → Modules → UI → Runtime
+```
+
+Canonical product criterion:
+
+> We do not want the best real-estate configurator.  
+> We want the best environment for changing a decision.
+
+---
+
+## Decision Layer (architecture vocabulary)
 
 **Canonical source:** [`../architecture/decision-layer/README.md`](../architecture/decision-layer/README.md)
 
@@ -35,4 +56,6 @@ Active product SSOT lives here.
 
 Historical monolith: [`../archive/product-bible/PRODUCT-BIBLE.md`](../archive/product-bible/PRODUCT-BIBLE.md)
 
-**Not authoritative** for Decision Layer vocabulary. Where the Bible says “right panel”, “Priority Detail”, or static flows, prefer Decision Layer SSOT / ADR-007–010.
+**Active Product Bible product layer:** [Decision Experience Grammar](./decision-experience-grammar/DEG.md)
+
+**Not authoritative** (historical Bible) for Decision Layer vocabulary or DEG. Where the archive says “right panel”, “Priority Detail”, or page-builder flows, prefer DEG + Decision Layer SSOT / ADR-007–010.

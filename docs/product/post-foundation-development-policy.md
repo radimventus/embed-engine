@@ -93,3 +93,26 @@ Embed Engine není cílem sám o sobě.
 Je to platforma pro systematické převádění expertních znalostí do personalizovaných rozhodovacích zkušeností.
 
 Každá další etapa vývoje musí tuto vizi posilovat, nikoli rozmělňovat.
+
+---
+
+# Product-led evolution (DEG)
+
+Architektura je stabilní. Další evoluce je řízena produktem.
+
+Produktová vrstva SSOT: [Decision Experience Grammar (DEG)](./decision-experience-grammar/DEG.md)
+
+Návrh vždy začíná:
+
+Desired Outcome → Mental Transformation → Experience Grammar → Chapter → Module → UI → Implementation
+
+Nikdy komponentou.
+
+Backlog se prioritizuje podle:
+
+Business Value × Pilot Experience × User Transformation
+
+Kanonická věta:
+
+> Nechceme vytvořit nejlepší konfigurátor nemovitostí.  
+> Chceme vytvořit nejlepší prostředí pro změnu rozhodnutí.

@@ -6,6 +6,8 @@ Nothing in this folder is an active Single Source of Truth.
 
 Use active documentation via [../README.md](../README.md), [../PROJECT-MAP.md](../PROJECT-MAP.md), [../architecture/RUNTIME.md](../architecture/RUNTIME.md) (Runtime SSOT → RI-001), and [../architecture/decision-layer/README.md](../architecture/decision-layer/README.md).
 
+**Active Product Bible product layer:** [Decision Experience Grammar (DEG)](../product/decision-experience-grammar/DEG.md) — not the archived Product Bible monolith.
+
 Architecture-level historical Runtime records also live under [`../architecture/archive/`](../architecture/archive/) (e.g. CommandRuntime Runtime Decisions).
 
 ### Obsolete architectural language in archives

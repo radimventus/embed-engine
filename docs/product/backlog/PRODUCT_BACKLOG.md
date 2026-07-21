@@ -1,10 +1,12 @@
 # Product Backlog
 
 **Status:** Living  
-**Aligned with:** Living Experience v0.1 Freeze, ADR-007 Priority MVP Policy  
-**Phase complete:** CAP-P01 → CAP-P03 — first end-to-end Decision Runtime MVP
+**Aligned with:** Living Experience v0.1 Freeze, ADR-007 Priority MVP Policy, [Decision Experience Grammar (DEG)](../decision-experience-grammar/DEG.md)  
+**Phase complete:** CAP-P01 → CAP-P03 — first end-to-end Decision Runtime MVP · S-005/S-006A commercial pilot
 
-Reaction-driven backlog. Prefer Behavior Packs over architecture changes.
+Reaction-driven backlog. Prefer Behavior Packs and **User Transformation** over architecture changes.
+
+**Prioritization (DEG):** Business Value × Pilot Experience × User Transformation — not technical components.
 
 ---
 
