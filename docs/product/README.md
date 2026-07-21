@@ -8,6 +8,7 @@ Active product SSOT lives here.
 | `vision/` | Executive summary, vision, business model, founder vision |
 | **`decision-experience-grammar/`** | **Decision Experience Grammar (DEG) — product layer SSOT** |
 | **`Priority Experience Bible.md`** | **Priority Experience — filozofie, principy, jazyk, MVP Journey** |
+| **`Priority Decision Journey Blueprint.md`** | **Univerzální kostra všech Priority Journey (fáze + kontrakty)** |
 | **`content/priority-garden.md`** | **Garden Decision Journey — referenční obsahový scénář (první Priority)** |
 | **`decision-journey/`** | **Decision Journey Specification (DJS) — UX-001 Proposed draft** |
 | `object-package.md` | Object Package product contract (SSOT) |

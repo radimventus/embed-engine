@@ -10,6 +10,7 @@
 **Navazuje na:**
 
 - [Priority Experience Bible](../Priority%20Experience%20Bible.md) — filozofie, Journey, jazyk, interpretační pravidla
+- [Priority Decision Journey Blueprint](../Priority%20Decision%20Journey%20Blueprint.md) — univerzální kostra fází
 - [Decision Experience Grammar (DEG)](../decision-experience-grammar/DEG.md)
 - Pilot Object: `house-modern-01` (referenční dům pro House Mapping)
 
