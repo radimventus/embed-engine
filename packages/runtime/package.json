@@ -15,12 +15,17 @@
       "types": "./dist/priority/index.d.ts",
       "import": "./dist/priority/index.js",
       "default": "./dist/priority/index.js"
+    },
+    "./priority/mock": {
+      "types": "./dist/priority/mock/index.d.ts",
+      "import": "./dist/priority/mock/index.js",
+      "default": "./dist/priority/mock/index.js"
     }
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/priority/PriorityRuntimeEngine.test.ts"
+    "test": "tsx --test src/priority/PriorityRuntimeEngine.test.ts src/priority/mock/createGardenJourneyRun.test.ts"
   },
   "dependencies": {
     "@embed-engine/core": "workspace:*"

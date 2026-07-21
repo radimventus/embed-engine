@@ -22,3 +22,18 @@ export {
   type PriorityTransitionError,
   type PriorityTransitionErrorCode,
 } from "./priority";
+
+export {
+  GARDEN_OBJECT_ID,
+  GARDEN_PRIORITY_ID,
+  GARDEN_PRIMARY_FOLLOWUP_TARGET_ID,
+  createGardenEngineEvents,
+  createGardenJourneyRun,
+  gardenContentPackage,
+  gardenExperience,
+  gardenFollowUps,
+  gardenHouseMapping,
+  gardenInterpretation,
+  gardenPrioritySelection,
+  gardenTransitionMessage,
+} from "./priority/mock";
