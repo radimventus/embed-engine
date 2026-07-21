@@ -18,6 +18,8 @@ export {
   recommendPromptFor,
   getDecisionFactors,
   storyConsideredStairs,
+  DISPOSITION_PRIORITY_LABELS_CS,
+  dispositionPriorityLabel,
   type HouseholdProfile,
   type DecisionFactor,
 } from "./behavior";

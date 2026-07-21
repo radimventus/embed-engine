@@ -76,6 +76,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
         "Before we fall for the living room light — let’s decide whether this plan fits your week. Disposition first. Beauty second.",
       tradeOff:
         "Attention on layout now versus discovering layout regret after emotional commitment.",
+      ctaLabel: "Continue",
     },
     {
       id: "layout.discover-day-zone",
@@ -84,6 +85,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       advisorPrompt:
         "Stand in the day zone. Living is generous — 32 m². Kitchen is 14 m². Notice that gap now, not after you buy curtains. Open living or kitchen — or continue below.",
       tradeOff: "Gathering scale versus cooking workspace.",
+      ctaLabel: "Open living room",
     },
     {
       id: "layout.discover-night-zone",
@@ -92,6 +94,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       advisorPrompt:
         "Night rooms are for ending the day. Parents, child, one bath. Ask yourself: who fights for the bathroom at 7:15? Open a bedroom or bathroom — or continue below.",
       tradeOff: "Acoustic privacy versus vertical living and a shared wet core.",
+      ctaLabel: "Open bedroom",
     },
     {
       id: "layout.interpret-day-night-split",
@@ -100,6 +103,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       advisorPrompt:
         "This house separates together from alone. Day downstairs. Sleep upstairs. Strength if evenings are social and nights need quiet — tax if you hate stairs.",
       tradeOff: "Zone clarity versus stair friction every day.",
+      ctaLabel: "Continue",
     },
     {
       id: "layout.compare-living-kitchen",
@@ -108,6 +112,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       advisorPrompt:
         "Be honest: does cooking need a big stage, or does gathering? This plan bets on gathering. Kitchen stays modest. Acknowledge to continue.",
       tradeOff: "Hosting comfort versus cooking workspace dignity.",
+      ctaLabel: "Continue",
     },
     {
       id: "layout.compare-indoor-garden",
@@ -116,6 +121,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       advisorPrompt:
         "The day zone wants to spill outside. Garden rewards people who go out — it does not erase kitchen or bath limits. Acknowledge to continue.",
       tradeOff: "Indoor constraints versus outdoor compensation.",
+      ctaLabel: "Continue",
     },
     {
       id: "layout.warn-bath-contention",
@@ -124,6 +130,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       advisorPrompt:
         "One bath upstairs for the household. If mornings are already tense, this amplifies it. Acknowledge the risk to continue.",
       tradeOff: "Compact wet core versus parallel morning demand.",
+      ctaLabel: "Continue",
     },
     {
       id: "layout.warn-stairs-mobility",
@@ -132,6 +139,9 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       advisorPrompt:
         "Every night ends upstairs. Every morning starts with a descent. With a child that’s normal. With a guest on crutches, it’s a negotiation. Decide with eyes open.",
       tradeOff: "Zone clarity versus continuous stair dependence.",
+      ctaLabel: "Continue",
+      whyNow:
+        "Because you just explored another floor, there is one additional aspect worth considering.",
     },
     {
       id: "layout.ask-household-shape",
@@ -140,6 +150,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       advisorPrompt:
         "Tell the real household — not the brochure family. Pick the closest shape so disposition is judged against your mornings, not an average.",
       tradeOff: "Aspirational family story versus plan capacity.",
+      ctaLabel: "Continue with this household",
     },
     {
       id: "layout.recommend-disposition-fit",
@@ -147,6 +158,7 @@ export const DISPOSITION_LAYOUT_PACK: DecisionStoryPack = {
       purpose: "Deliver a disposition fit conclusion.",
       advisorPrompt: recommendPromptFor(undefined),
       tradeOff: "Pursue with conditions versus layout-based rejection.",
+      ctaLabel: "Confirm verdict",
     },
   ]),
   isMoveComplete(moveId, input) {

@@ -35,7 +35,7 @@ export function PriorityCards() {
         data-testid="priority-loading"
       >
         <p className="text-sm text-embed-foreground-primary/60">
-          Calibrating priorities…
+          Loading Priorities…
         </p>
       </div>
     );
@@ -48,7 +48,7 @@ export function PriorityCards() {
         data-testid="priority-empty"
       >
         <p className="text-sm text-embed-foreground-primary/60">
-          No priorities available yet. Reload the experience or explore the house.
+          No Priorities yet. Explore the house, then return here.
         </p>
       </div>
     );

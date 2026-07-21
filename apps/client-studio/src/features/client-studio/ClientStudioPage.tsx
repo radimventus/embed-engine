@@ -63,12 +63,12 @@ export function ClientStudioPage({
                 aria-hidden="true"
                 className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
               />
-              <AIAdvisor />
+              <AuditLeadCapture />
               <div
                 aria-hidden="true"
                 className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
               />
-              <AuditLeadCapture />
+              <AIAdvisor />
             </DesktopCanvas>
           </WalkthroughProvider>
         </DecisionStoryProvider>

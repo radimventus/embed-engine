@@ -143,7 +143,7 @@ export function AIAdvisor() {
             className="mt-2 text-[11px] leading-snug text-embed-foreground-primary/55"
             data-testid="ai-active-topic"
           >
-            Active topic: {interpretation.activeTopic}
+            Active Priority: {interpretation.activeTopic}
           </p>
           <p
             className="mt-1 text-xs leading-relaxed text-embed-foreground-primary/70 transition-opacity duration-300"
@@ -164,7 +164,7 @@ export function AIAdvisor() {
             className="mb-2 text-[11px] text-embed-brand-gold"
             data-testid="ai-next-action"
           >
-            Suggested: {interpretation.nextAction}
+            Next Step: {interpretation.nextAction}
           </p>
           <InputBar value={inputValue} onChange={setInputValue} onSend={handleSend} />
         </div>

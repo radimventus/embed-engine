@@ -25,6 +25,10 @@ export {
   STAIRS_WARN_MOVE_ID,
   spliceStairsWarnIfNeeded,
 } from "./splice-stairs-warn";
+export {
+  DISPOSITION_PRIORITY_LABELS_CS,
+  dispositionPriorityLabel,
+} from "./priority-labels";
 
 /**
  * Disposition Layout Strategy composer.

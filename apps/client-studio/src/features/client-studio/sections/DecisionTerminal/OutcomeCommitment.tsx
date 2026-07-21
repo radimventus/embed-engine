@@ -8,9 +8,8 @@ import {
 } from '@embed-engine/object-house';
 import { PrimaryButton } from '@embed-engine/ui';
 
+import { PILOT_SECTION_IDS, PILOT_TERMS } from '../../pilot/pilotVocabulary';
 import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from '../PriorityEngine/priority-engine-layout';
-
-const AUDIT_SECTION_ID = 'audit-lead-capture';
 
 export type LayoutCommitment = 'continue-with-layout' | 'layout-does-not-fit';
 
@@ -28,7 +27,7 @@ type OutcomeCommitmentProps = {
 
 /**
  * Outcome as Decision Commitment — Story outcome + presentation commitment.
- * Commitment emits Signal via `onCommit`; scroll to audit is presentation-only.
+ * Commitment emits Signal via `onCommit`; scroll to Audit is presentation-only.
  */
 export function OutcomeCommitment({
   outcome,
@@ -64,7 +63,7 @@ export function OutcomeCommitment({
   if (layoutClosed) {
     return (
       <aside
-        aria-label="Decision Terminal"
+        aria-label={PILOT_TERMS.decisionTerminal}
         aria-busy={pending}
         className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} overflow-y-auto`}
         data-testid="decision-terminal"
@@ -73,7 +72,7 @@ export function OutcomeCommitment({
         data-layout-closed="true"
       >
         <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
-          Layout decision closed
+          Commitment recorded
         </p>
         <p className="mt-2 text-sm font-medium text-embed-foreground-primary">
           {commitment === 'continue-with-layout'
@@ -81,8 +80,8 @@ export function OutcomeCommitment({
             : 'You decided this layout does not fit your needs.'}
         </p>
         <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">
-          Both paths are a successful decision. Layout is complete. The next chapter is site
-          evaluation — whether the plot supports how you want to live.
+          Both paths are a successful Decision. Layout is complete. Next Step:{' '}
+          {PILOT_TERMS.audit} — whether the plot supports how you want to live.
         </p>
         {nextAction ? (
           <p className="mt-2 text-xs leading-relaxed text-embed-foreground-primary/55">
@@ -97,13 +96,13 @@ export function OutcomeCommitment({
           onClick={() => {
             withTransition(() => {
               document
-                .getElementById(AUDIT_SECTION_ID)
+                .getElementById(PILOT_SECTION_IDS.audit)
                 ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
               window.setTimeout(onPendingClear, 600);
             });
           }}
         >
-          {pending ? 'Opening site evaluation…' : 'Continue to Site Evaluation'}
+          {pending ? `Opening ${PILOT_TERMS.audit}…` : `Continue to ${PILOT_TERMS.audit}`}
         </PrimaryButton>
       </aside>
     );
@@ -111,7 +110,7 @@ export function OutcomeCommitment({
 
   return (
     <aside
-      aria-label="Decision Terminal"
+      aria-label={PILOT_TERMS.decisionTerminal}
       aria-busy={pending}
       className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} overflow-y-auto`}
       data-testid="decision-terminal"
@@ -119,7 +118,7 @@ export function OutcomeCommitment({
       data-commitment="pending"
     >
       <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
-        Your layout decision
+        Your layout {PILOT_TERMS.outcome}
       </p>
       <p className="mt-2 text-sm font-medium capitalize text-embed-foreground-primary">
         {formatFitClass(outcome.status)}
@@ -138,11 +137,11 @@ export function OutcomeCommitment({
       </ul>
 
       <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
-        Your commitment
+        Your {PILOT_TERMS.commitment}
       </p>
       <p className="mt-1 text-xs leading-relaxed text-embed-foreground-primary/60">
-        This is your decision about the layout — not a score to accept. Either choice is a
-        successful outcome.
+        This is your Decision about the layout — not a score to accept. Either
+        choice is a successful Outcome.
       </p>
 
       <PrimaryButton

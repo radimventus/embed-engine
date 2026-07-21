@@ -14,14 +14,14 @@ export function SectionHeader() {
     <div className={PRIORITY_ENGINE_TITLE_BAND_CLASS}>
       <div className="flex min-w-0 flex-col justify-center gap-0.5">
         <h2 className={PRIORITY_ENGINE_TITLE_CLASS}>
-          What matters to you?
+          Priority — what matters to you?
         </h2>
         {status === 'ready' && activeTopic ? (
           <p
             className="m-0 truncate text-xs font-medium tracking-wide text-embed-foreground-primary/55"
             data-testid="priority-active-topic"
           >
-            Leading topic: {activeTopic}
+            Active Priority: {activeTopic}
           </p>
         ) : null}
       </div>

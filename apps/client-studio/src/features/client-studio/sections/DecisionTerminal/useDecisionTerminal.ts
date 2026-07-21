@@ -13,10 +13,7 @@ import {
 import { useExperienceSession } from '../../cognitive/ExperienceBindingProvider';
 import { useActiveDecisionMove } from '../../cognitive/DecisionStoryProvider';
 import { useWalkthrough } from '../../../walkthrough';
-
-/** Pack-adjacent presentation for reactive stairs splice — not Cognitive truth. */
-export const STAIRS_WHY_NOW =
-  'Because you just explored another floor, there is one additional aspect worth considering.';
+import { PILOT_TERMS } from '../../pilot/pilotVocabulary';
 
 export type TerminalPhase =
   | 'loading'
@@ -33,8 +30,8 @@ export type TerminalAction = {
 };
 
 /**
- * Decision Terminal view-model from Session snapshot + Story (S-004).
- * No DecisionState / Runtime coupling.
+ * Decision Terminal view-model from Session snapshot + Story (S-004 / S-005).
+ * CTA labels and whyNow from Behavior Pack when present — no DecisionState coupling.
  */
 export function useDecisionTerminal() {
   const session = useExperienceSession();
@@ -164,6 +161,9 @@ export function useDecisionTerminal() {
       ? recommendPromptFor(sessionProfile ?? undefined)
       : definition?.advisorPrompt;
 
+  const packCta = definition?.ctaLabel ?? 'Continue';
+  const pendingLabel = 'Updating…';
+
   const moveAction: TerminalAction | null = useMemo(() => {
     if (phase !== 'move' || activeMoveId === null || definition === null) {
       return null;
@@ -171,24 +171,18 @@ export function useDecisionTerminal() {
 
     if (activeMoveId === 'layout.discover-day-zone') {
       return {
-        label: pending ? 'Updating…' : 'Open living room',
+        label: pending ? pendingLabel : (definition.ctaLabel ?? 'Open living room'),
         run: () => openRoom('living-room'),
       };
     }
     if (activeMoveId === 'layout.discover-night-zone') {
       return {
-        label: pending ? 'Updating…' : 'Open bedroom',
+        label: pending ? pendingLabel : (definition.ctaLabel ?? 'Open bedroom'),
         run: () => openRoom('bedroom'),
       };
     }
-    if (activeMoveId === 'layout.recommend-disposition-fit') {
-      return {
-        label: pending ? 'Updating…' : 'Confirm verdict',
-        run: () => acknowledgeMove(activeMoveId, definition.purpose),
-      };
-    }
     return {
-      label: pending ? 'Updating…' : 'Continue',
+      label: pending ? pendingLabel : packCta,
       run: () => acknowledgeMove(activeMoveId, definition.purpose),
     };
   }, [
@@ -196,6 +190,7 @@ export function useDecisionTerminal() {
     activeMoveId,
     definition,
     openRoom,
+    packCta,
     pending,
     phase,
   ]);
@@ -220,6 +215,7 @@ export function useDecisionTerminal() {
     commitLayout,
     moveBody,
     moveAction,
-    isStairsWarn: activeMoveId === 'layout.warn-stairs-mobility',
+    whyNow: definition?.whyNow,
+    terms: PILOT_TERMS,
   };
 }

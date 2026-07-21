@@ -1,10 +1,12 @@
 import { OutcomeCommitment } from './OutcomeCommitment';
 import { TerminalShell } from './TerminalShell';
-import { STAIRS_WHY_NOW, useDecisionTerminal } from './useDecisionTerminal';
+import { useDecisionTerminal } from './useDecisionTerminal';
+import { PILOT_TERMS } from '../../pilot/pilotVocabulary';
 
 /**
  * Decision Terminal MVP (S-004 / ADR-008 Accepted).
  * Session Story + Interpretation context; Signals only for cognitive intent.
+ * Pack supplies advisorPrompt, ctaLabel, whyNow where present (S-005).
  */
 export function DecisionTerminal() {
   const terminal = useDecisionTerminal();
@@ -28,7 +30,7 @@ export function DecisionTerminal() {
     commitLayout,
     moveBody,
     moveAction,
-    isStairsWarn,
+    whyNow,
   } = terminal;
 
   if (phase === 'loading') {
@@ -37,9 +39,9 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         loading
         pending={false}
-        eyebrow="Decision Terminal"
-        title="Preparing your decision path"
-        body="The session is loading. Priority and Terminal will sync on the same Interpretation."
+        eyebrow={PILOT_TERMS.decisionTerminal}
+        title="Preparing your Decision path"
+        body="The session is loading. Priority and Decision Terminal sync on the same Interpretation."
       />
     );
   }
@@ -50,12 +52,12 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         error
         pending={false}
-        eyebrow="Decision Terminal"
+        eyebrow={PILOT_TERMS.decisionTerminal}
         title="Decision path unavailable"
         body={
           definition === null && activeMoveId !== null
             ? `Move “${activeMoveId}” has no presentation definition in the Behavior Pack.`
-            : 'Reload the experience to continue the guided dialogue.'
+            : 'Reload the experience to continue the guided Decision.'
         }
       />
     );
@@ -85,19 +87,23 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         empty
         pending={pending}
-        eyebrow="Decision Terminal"
-        title={topic ? `Guide your ${topic} decision` : 'Start the disposition dialogue'}
+        eyebrow={PILOT_TERMS.decisionTerminal}
+        title={
+          topic
+            ? `Guide your ${topic} Decision`
+            : 'Start the disposition Decision'
+        }
         body={
           next ??
-          'Disposition first. Beauty second. One guided path from Priority to a clear layout verdict.'
+          'Disposition first. Beauty second. One guided path from Priority to a clear layout Outcome.'
         }
         hint={
           topic
-            ? 'Starts from your current Priority focus — peers stay synchronized.'
+            ? 'Starts from your active Priority — peers stay synchronized.'
             : undefined
         }
         action={{
-          label: pending ? 'Starting…' : 'Start disposition dialogue',
+          label: pending ? 'Starting…' : 'Start disposition Decision',
           run: startDialogue,
         }}
       />
@@ -110,7 +116,7 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         activeMove={activeMoveId}
         pending={pending}
-        eyebrow={`Decision Terminal · Move ${completedCount + 1}/${totalMoves}`}
+        eyebrow={`${PILOT_TERMS.decisionTerminal} · Move ${completedCount + 1}/${totalMoves}`}
         intent={definition.intent}
         title={definition.purpose}
         body={definition.advisorPrompt}
@@ -118,7 +124,9 @@ export function DecisionTerminal() {
         householdProfile={householdDraft}
         onSelectHousehold={setHouseholdDraft}
         action={{
-          label: pending ? 'Updating…' : 'Continue with this household',
+          label: pending
+            ? 'Updating…'
+            : (definition.ctaLabel ?? 'Continue with this household'),
           disabled: householdDraft === null || pending,
           run: submitHousehold,
         }}
@@ -132,10 +140,10 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         activeMove={activeMoveId}
         pending={pending}
-        eyebrow={`Decision Terminal · Move ${completedCount + 1}/${totalMoves}`}
+        eyebrow={`${PILOT_TERMS.decisionTerminal} · Move ${completedCount + 1}/${totalMoves}`}
         intent={definition.intent}
         title={definition.purpose}
-        whyNow={isStairsWarn ? STAIRS_WHY_NOW : undefined}
+        whyNow={whyNow}
         body={moveBody}
         tradeOff={definition.tradeOff}
         action={moveAction}
@@ -148,7 +156,7 @@ export function DecisionTerminal() {
       testId="decision-terminal"
       error
       pending={false}
-      eyebrow="Decision Terminal"
+      eyebrow={PILOT_TERMS.decisionTerminal}
       title="Unable to render this step"
       body="The active Story step could not be presented. Try restarting from Priority."
     />

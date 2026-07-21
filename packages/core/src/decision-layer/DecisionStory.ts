@@ -29,6 +29,10 @@ export type DecisionMoveDefinition = {
   /** Advisor language for Decision Terminal (Experience projection of Pack meaning). */
   readonly advisorPrompt: string;
   readonly tradeOff?: string;
+  /** Optional Terminal primary CTA label (Pack presentation). */
+  readonly ctaLabel?: string;
+  /** Optional reactive “why now” line (Pack presentation). */
+  readonly whyNow?: string;
 };
 
 export type DecisionMoveSlot = {

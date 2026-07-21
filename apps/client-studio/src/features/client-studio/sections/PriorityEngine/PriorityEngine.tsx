@@ -1,5 +1,6 @@
 import { DecisionTerminal } from '../DecisionTerminal/DecisionTerminal';
 import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
+import { PILOT_SECTION_IDS, PILOT_TERMS } from '../../pilot/pilotVocabulary';
 import {
   PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS,
   PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS,
@@ -21,11 +22,13 @@ export function PriorityEngine() {
 
   return (
     <section
-      aria-label="Priority Experience"
+      id={PILOT_SECTION_IDS.priority}
+      tabIndex={-1}
+      aria-label={`${PILOT_TERMS.priority} Experience`}
       aria-busy={status === 'loading'}
       data-testid="priority-experience"
       data-priority-status={status}
-      className={`relative ${SECTION_SURFACE_CLASS} ${PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS} ${PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS}`}
+      className={`relative scroll-mt-header ${SECTION_SURFACE_CLASS} ${PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS} ${PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS}`}
     >
       <SectionHeader />
       <div className="grid grid-cols-[52fr_48fr] items-start gap-section mobile:grid-cols-1">

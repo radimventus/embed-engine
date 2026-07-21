@@ -1,5 +1,6 @@
 import { useState } from 'react';
 
+import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import { AssessmentWorkflow } from './AssessmentWorkflow';
 import { AuditContact } from './AuditContact';
 import { AuditTransition } from './AuditTransition';
@@ -11,7 +12,11 @@ export function AuditLeadCapture() {
   const [landOption, setLandOption] = useState<LandOption>('owned');
 
   return (
-    <section aria-label="Audit — posouzení umístění domu" id="audit-lead-capture">
+    <section
+      aria-label="Audit — posouzení umístění domu"
+      id={PILOT_SECTION_IDS.audit}
+      className="scroll-mt-header"
+    >
       <div
         className="overflow-hidden rounded-[11px] pb-8 shadow-[0_1px_11px_rgba(0,25,48,0.044)]"
         style={AUDIT_SECTION_STYLE}
@@ -26,10 +31,6 @@ export function AuditLeadCapture() {
 
         <ContactCard />
       </div>
-
-      <p className="bg-[#F7F6F4] py-section text-center text-xs font-bold text-embed-brand-navy">
-        Client studio – created by Radim Věntus © 2026.
-      </p>
     </section>
   );
 }

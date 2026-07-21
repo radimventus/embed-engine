@@ -126,7 +126,7 @@ export function TerminalShell({
           data-testid="decision-terminal-pending"
           aria-live="polite"
         >
-          Advancing…
+          Advancing Decision…
         </p>
       ) : null}
       {action ? (

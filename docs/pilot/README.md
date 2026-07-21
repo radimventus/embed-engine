@@ -1,12 +1,27 @@
 # Pilot CAP-P01 — First Pilot Object + Behavior Pack
 
-**Status:** CAP-P01–P03 complete — knowledge + Decision Runtime MVP live  
-**Date:** 2026-07-20  
+**Status:** CAP-P01–P03 complete · Guided pilot story polished (S-005)  
+**Date:** 2026-07-21  
 **Architecture:** Frozen — [Decision Layer SSOT](../architecture/decision-layer/README.md)  
 **Principle:** Help a real buyer make a better decision than browsing photos alone.
 
 This folder holds the **first production-quality knowledge model** for one real pilot house.  
-Runtime wiring for the Layout Story is delivered in CAP-P03 (`cap-p03-decision-runtime-mvp.md`).
+Runtime wiring for the Layout Story is delivered in CAP-P03 (`cap-p03-decision-runtime-mvp.md`).  
+Client Studio guided journey continuity is S-005 (presentation only — no Runtime redesign).
+
+---
+
+## Guided story (Client Studio)
+
+```text
+Landing (Hero)
+  → Media + House Navigator (#walkthrough)
+  → Priority + Decision Terminal (#priority-experience)
+  → Audit + Lead (#audit-lead-capture)
+  → AI Advisor (optional questions)
+```
+
+Vocabulary (one term per concept): Priority · Decision · Reason · Next Step · Outcome · Commitment · Audit · Lead.
 
 ---
 
@@ -52,4 +67,5 @@ Object Package product contract: [object-package.md](../product/object-package.m
 
 Code fixture: `packages/object-house` → `REFERENCE_HOUSE_PACKAGE` (`house-modern-01`).  
 Disposition Layout Strategy composer: `createDispositionLayoutComposer()`.  
+Priority titles / Terminal CTA + whyNow: Pack presentation fields (`ctaLabel`, `whyNow`, `dispositionPriorityLabel`).  
 This pilot docs set remains the **product knowledge SSOT**. Remaining gaps (branching, media, persistence) live in [`../product/backlog/PRODUCT_BACKLOG.md`](../product/backlog/PRODUCT_BACKLOG.md).

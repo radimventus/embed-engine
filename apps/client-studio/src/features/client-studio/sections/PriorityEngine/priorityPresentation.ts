@@ -1,27 +1,15 @@
+import { dispositionPriorityLabel } from '@embed-engine/object-house';
 import type { InterpretationPriorityId } from '@embed-engine/core/cognitive';
 import { INTERPRETATION_PRIORITY_IDS } from '@embed-engine/core/cognitive';
 
 /**
  * Presentation chrome for Priority cards (labels only).
- * Not Cognitive truth — Interpretation owns weights / rank / reason / highlight.
- * Isolated temporary catalog until Behavior Pack / i18n supplies titles (Living Experience debt).
+ * Titles from Behavior Pack presentation (`dispositionPriorityLabel`).
+ * Interpretation owns weights / rank / reason / highlight.
  */
 export type PriorityPresentation = {
   readonly id: InterpretationPriorityId | string;
   readonly title: string;
-};
-
-const PRIORITY_TITLES_CS: Record<string, string> = {
-  energy: 'Energie',
-  'operating-costs': 'Provozní náklady',
-  layout: 'Dispozice',
-  privacy: 'Soukromí',
-  design: 'Design',
-  quality: 'Kvalita',
-  plot: 'Pozemek',
-  investment: 'Investice',
-  maintenance: 'Údržba',
-  flexibility: 'Flexibilita',
 };
 
 /** Presentation threshold: “selected” for pilot progress chrome (not Cognitive). */
@@ -31,7 +19,7 @@ export const PRIORITY_SELECTED_WEIGHT = 0.5;
 export const PRIORITY_MINIMUM_SELECTION = 3;
 
 export function titleForPriorityId(id: string): string {
-  return PRIORITY_TITLES_CS[id] ?? id;
+  return dispositionPriorityLabel(id);
 }
 
 export function presentationForPriorityId(id: string): PriorityPresentation {
