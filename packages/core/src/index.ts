@@ -36,6 +36,18 @@ export {
 export * from "./experience/ExperienceSessionSnapshot";
 export * from "./experience/createExperienceBinding";
 
+export type {
+  Interpretation,
+  InterpretationConfidenceInput,
+  InterpretationFactor,
+  InterpretationRecommendedIntent,
+  InterpretationTradeOff,
+} from "./interpretation/Interpretation";
+export {
+  INTERPRETATION_FORBIDDEN_PRESENTATION_KEYS,
+  createInterpretation,
+} from "./interpretation/Interpretation";
+
 export * from "./runtime/ExecutionContext";
 export * from "./runtime/SceneGraph";
 export * from "./runtime/evaluate";
