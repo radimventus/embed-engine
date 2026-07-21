@@ -30,6 +30,11 @@
       "types": "./dist/interpretation/index.d.ts",
       "import": "./dist/interpretation/index.js",
       "default": "./dist/interpretation/index.js"
+    },
+    "./priority": {
+      "types": "./dist/priority/index.d.ts",
+      "import": "./dist/priority/index.js",
+      "default": "./dist/priority/index.js"
     }
   },
   "scripts": {

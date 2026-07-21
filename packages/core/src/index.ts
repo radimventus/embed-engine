@@ -110,3 +110,36 @@ export {
   composeDecisionStory,
   createPackStoryComposer,
 } from "./decision-layer";
+
+/**
+ * Priority Domain Model contracts (`@embed-engine/core/priority`).
+ * Journey `PrioritySelection` (`selectedPriorityIds` + `dominantPriorityId`)
+ * is distinct from experience composer `PrioritySelection` (`selected`).
+ */
+export type {
+  ObjectRef,
+  ConfirmationMicrocopy,
+  PriorityDefinition,
+  PriorityIntentContent,
+  PriorityPossibleMeanings,
+  PriorityStageMicrocopy,
+  Confirmation,
+  ConfirmationPresentationPayload,
+  ConfirmedDecisionContext,
+  JourneyStage,
+  PriorityJourneyRun,
+  ExperienceClaimRef,
+  ObjectAnchor,
+  ObjectAnchorKind,
+  MappingEntry,
+  HouseMappingSet,
+  FollowUpHandoff,
+  TransitionMessage,
+  PriorityJourneyEvent,
+  PriorityJourneyEventType,
+} from "./priority";
+export {
+  JOURNEY_STAGES,
+  OBJECT_ANCHOR_KINDS,
+  PRIORITY_JOURNEY_EVENTS,
+} from "./priority";
