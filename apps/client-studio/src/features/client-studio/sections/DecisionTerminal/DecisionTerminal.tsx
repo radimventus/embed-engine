@@ -1,156 +1,48 @@
-import { OutcomeCommitment } from './OutcomeCommitment';
-import { TerminalShell } from './TerminalShell';
-import { useDecisionTerminal } from './useDecisionTerminal';
-import { PILOT_TERMS } from '../../pilot/pilotVocabulary';
+import type { Experience } from '@embed-engine/core/experience';
+
+import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from '../PriorityEngine/priority-engine-layout';
+
+export type DecisionTerminalProps = {
+  experience: Experience;
+};
 
 /**
- * Decision Terminal MVP — Pack copy + Czech chrome (S-006A).
+ * Decision Terminal — pure Experience presentation.
+ * Owns no Priority, Object, or interpretation logic.
  */
-export function DecisionTerminal() {
-  const terminal = useDecisionTerminal();
-  const {
-    phase,
-    pending,
-    clearPending,
-    withTransition,
-    story,
-    definition,
-    outcome,
-    activeMoveId,
-    completedCount,
-    totalMoves,
-    sessionProfile,
-    householdDraft,
-    setHouseholdDraft,
-    interpretation,
-    experience,
-    startDialogue,
-    submitHousehold,
-    commitLayout,
-    moveBody,
-    moveAction,
-    whyNow,
-  } = terminal;
-
-  if (phase === 'loading') {
-    return (
-      <TerminalShell
-        testId="decision-terminal"
-        loading
-        pending={false}
-        experienceId={experience.id}
-        eyebrow={PILOT_TERMS.decisionTerminal}
-        title="Připravujeme cestu Rozhodnutí"
-        body="Načítá se session. Priorita a Rozhodovací terminál sdílejí stejnou Interpretaci."
-      />
-    );
-  }
-
-  if (phase === 'error') {
-    return (
-      <TerminalShell
-        testId="decision-terminal"
-        error
-        pending={false}
-        experienceId={experience.id}
-        eyebrow={PILOT_TERMS.decisionTerminal}
-        title="Cesta Rozhodnutí není dostupná"
-        body={
-          definition === null && activeMoveId !== null
-            ? `Krok „${activeMoveId}“ nemá prezentaci v Behavior Packu.`
-            : 'Obnovte experience a pokračujte v průvodci Rozhodnutí.'
-        }
-      />
-    );
-  }
-
-  if (phase === 'outcome' && outcome && story) {
-    return (
-      <OutcomeCommitment
-        outcome={outcome}
-        profile={sessionProfile}
-        slots={story.slots}
-        storyId={story.id}
-        pending={pending}
-        nextAction={interpretation?.nextAction}
-        onCommit={commitLayout}
-        withTransition={withTransition}
-        onPendingClear={clearPending}
-      />
-    );
-  }
-
-  if (phase === 'idle') {
-    return (
-      <TerminalShell
-        testId="decision-terminal"
-        empty
-        pending={pending}
-        experienceId={experience.id}
-        eyebrow={PILOT_TERMS.decisionTerminal}
-        title={experience.title}
-        body={experience.summary}
-        hint={`Focus: ${experience.focus.join(' · ')}`}
-        action={{
-          label: pending ? 'Spouštím…' : 'Začít Rozhodnutí o dispozici',
-          run: startDialogue,
-        }}
-      />
-    );
-  }
-
-  if (phase === 'household' && definition && activeMoveId) {
-    return (
-      <TerminalShell
-        testId="decision-terminal"
-        activeMove={activeMoveId}
-        pending={pending}
-        experienceId={experience.id}
-        eyebrow={`${PILOT_TERMS.decisionTerminal} · Krok ${completedCount + 1}/${totalMoves}`}
-        intent={definition.intent}
-        title={definition.purpose}
-        body={definition.advisorPrompt}
-        tradeOff={definition.tradeOff}
-        householdProfile={householdDraft}
-        onSelectHousehold={setHouseholdDraft}
-        action={{
-          label: pending
-            ? 'Aktualizuji…'
-            : (definition.ctaLabel ?? 'Pokračovat s touto domácností'),
-          disabled: householdDraft === null || pending,
-          run: submitHousehold,
-        }}
-      />
-    );
-  }
-
-  if (phase === 'move' && definition && activeMoveId && moveAction && moveBody) {
-    return (
-      <TerminalShell
-        testId="decision-terminal"
-        activeMove={activeMoveId}
-        pending={pending}
-        experienceId={experience.id}
-        eyebrow={`${PILOT_TERMS.decisionTerminal} · Krok ${completedCount + 1}/${totalMoves}`}
-        intent={definition.intent}
-        title={definition.purpose}
-        whyNow={whyNow}
-        body={moveBody}
-        tradeOff={definition.tradeOff}
-        action={moveAction}
-      />
-    );
-  }
-
+export function DecisionTerminal({ experience }: DecisionTerminalProps) {
   return (
-    <TerminalShell
-      testId="decision-terminal"
-      error
-      pending={false}
-      experienceId={experience.id}
-      eyebrow={PILOT_TERMS.decisionTerminal}
-      title="Tento krok nelze zobrazit"
-      body="Aktivní krok Story se nepodařilo prezentovat. Zkuste znovu od Priority."
-    />
+    <aside
+      className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} overflow-y-auto`}
+      data-experience-id={experience.id}
+      data-testid="decision-terminal"
+      aria-label="Decision Terminal"
+    >
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
+        Decision Terminal
+      </p>
+      <p className="mt-2 text-sm font-medium text-embed-foreground-primary">
+        {experience.title}
+      </p>
+      <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">
+        {experience.summary}
+      </p>
+      <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
+        Focus
+      </p>
+      <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-embed-foreground-primary/70">
+        {experience.focus.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+      <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
+        Recommendations
+      </p>
+      <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-embed-foreground-primary/70">
+        {experience.recommendations.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </aside>
   );
 }
