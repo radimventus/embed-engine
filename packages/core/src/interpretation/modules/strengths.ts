@@ -1,5 +1,6 @@
 import type { InterpretationFactor } from "../Interpretation";
 import type { ResolvedLens } from "./lens";
+import { evaluateLayout001 } from "../rules/evaluateLayout001";
 
 function factor(
   id: string,
@@ -11,13 +12,15 @@ function factor(
 
 /**
  * Semantic module — strengths only.
+ * Orchestrates rule evaluation + remaining procedural contributions.
  */
 export function resolveStrengths(
   lens: ResolvedLens,
 ): readonly InterpretationFactor[] {
   if (lens === "layout") {
+    const layout001 = evaluateLayout001({ lens });
     return Object.freeze([
-      factor("s.bedrooms", "family.bedrooms", 0.9),
+      ...(layout001 === null ? [] : [layout001.factor]),
       factor("s.garden", "family.garden", 0.85),
       factor("s.bathrooms", "family.bathrooms", 0.8),
     ]);
