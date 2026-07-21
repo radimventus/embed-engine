@@ -57,7 +57,7 @@ export function PriorityCards() {
   return (
     <div className="flex min-w-0 flex-col self-start" data-testid="priority-ready">
       <div
-        aria-label="Priority Surface"
+        aria-label="Plocha Priorit"
         className="grid shrink-0 items-center justify-items-center overflow-visible"
         style={{
           gap: DECISION_GRID_GAP_PX,
