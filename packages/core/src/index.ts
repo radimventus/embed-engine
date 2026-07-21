@@ -52,6 +52,11 @@ export {
   interpretObject,
   type InterpretObjectInput,
 } from "./interpretation/interpretObject";
+export {
+  createInterpretationEngine,
+  interpretationEngine,
+  type InterpretationEngine,
+} from "./interpretation/InterpretationEngine";
 
 export * from "./runtime/ExecutionContext";
 export * from "./runtime/SceneGraph";

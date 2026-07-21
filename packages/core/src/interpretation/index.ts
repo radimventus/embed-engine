@@ -13,3 +13,8 @@ export {
   interpretObject,
   type InterpretObjectInput,
 } from "./interpretObject";
+export {
+  createInterpretationEngine,
+  interpretationEngine,
+  type InterpretationEngine,
+} from "./InterpretationEngine";

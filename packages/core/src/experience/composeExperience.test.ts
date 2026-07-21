@@ -8,6 +8,7 @@ import {
   type ExperienceComposeInput,
 } from "./composeExperience";
 import { interpretObject } from "../interpretation/interpretObject";
+import { interpretationEngine } from "../interpretation/InterpretationEngine";
 
 const OBJECT = Object.freeze({ id: "house-modern-01" });
 
@@ -216,9 +217,9 @@ describe("experience actions", () => {
 });
 
 describe("ADR-012 runtime pipeline", () => {
-  it("routes Object → Interpretation → Experience as the canonical path", () => {
+  it("routes Object → InterpretationEngine → Experience as the canonical path", () => {
     const input = inputWith(["layout"]);
-    const interpretation = interpretObject({
+    const interpretation = interpretationEngine.interpret({
       objectId: input.object.id,
       priorityIds: input.priorities.selected,
     });
@@ -231,7 +232,7 @@ describe("ADR-012 runtime pipeline", () => {
     assert.deepEqual(viaInterpretation, viaCompose);
   });
 
-  it("keeps Experience snapshots identical across lenses when routed through Interpretation", () => {
+  it("keeps Experience snapshots identical across lenses when routed through InterpretationEngine", () => {
     for (const selected of [
       [],
       ["layout"],
@@ -241,13 +242,20 @@ describe("ADR-012 runtime pipeline", () => {
       ["energy", "layout", "design"],
     ] as const) {
       const input = inputWith(selected);
-      const interpretation = interpretObject({
+      const interpretation = interpretationEngine.interpret({
         objectId: input.object.id,
         priorityIds: input.priorities.selected,
       });
       assert.deepEqual(
         createExperienceFromInterpretation(interpretation),
         composeExperience(input),
+      );
+      assert.deepEqual(
+        interpretation,
+        interpretObject({
+          objectId: input.object.id,
+          priorityIds: input.priorities.selected,
+        }),
       );
     }
   });

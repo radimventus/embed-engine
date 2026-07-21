@@ -7,7 +7,7 @@ import {
 } from "./experienceFragments";
 import type { PriorityId, PrioritySelection } from "./PrioritySelection";
 import {
-  interpretObject,
+  interpretationEngine,
   type Interpretation,
 } from "../interpretation";
 
@@ -49,11 +49,11 @@ export function createExperienceFromInterpretation(
 }
 
 /**
- * Canonical runtime path (ADR-012):
- * Object + PrioritySelection → Interpretation → Experience
+ * Canonical runtime path (ADR-012 / PT15):
+ * Object + PrioritySelection → InterpretationEngine → Experience
  */
 export function composeExperience(input: ExperienceComposeInput): Experience {
-  const interpretation = interpretObject({
+  const interpretation = interpretationEngine.interpret({
     objectId: input.object.id,
     priorityIds: input.priorities.selected,
   });
