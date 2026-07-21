@@ -7,6 +7,7 @@ Active product SSOT lives here.
 | `constitution/` | Product principles, flywheel, moat, governance, CTO principles |
 | `vision/` | Executive summary, vision, business model, founder vision |
 | **`decision-experience-grammar/`** | **Decision Experience Grammar (DEG) — product layer SSOT** |
+| **`decision-journey/`** | **Decision Journey Specification (DJS) — UX-001 Proposed draft** |
 | `object-package.md` | Object Package product contract (SSOT) |
 | `knowledge/` | Knowledge Foundation (SSOT) |
 | `pilots/` | Pilot Foundation (SSOT process) |
@@ -26,8 +27,10 @@ Active product SSOT lives here.
 After architecture stabilization, product evolution is **DEG-led**:
 
 ```text
-Product Vision → DEG → Decision Story → Experience Chapters → Modules → UI → Runtime
+Product Vision → DEG → DJS (journey) → Decision Story → Experience Chapters → Modules → UI → Runtime
 ```
+
+**Decision Journey (Proposed):** [`decision-journey/DJS.md`](./decision-journey/DJS.md) — UX-001 trajektorie mentální změny jedné návštěvy.
 
 Canonical product criterion:
 

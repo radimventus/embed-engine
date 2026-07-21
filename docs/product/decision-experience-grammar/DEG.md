@@ -15,6 +15,7 @@
 - Decision Layer vocabulary (architecture): [../../architecture/decision-layer/README.md](../../architecture/decision-layer/README.md)
 - Experience Kernel (impl contract): [../../04-reference-implementation/RI-003-Experience-Kernel.md](../../04-reference-implementation/RI-003-Experience-Kernel.md)
 - First pilot story: [../../pilot/README.md](../../pilot/README.md)
+- Decision Journey (draft): [../decision-journey/DJS.md](../decision-journey/DJS.md)
 
 ---
 
@@ -64,6 +65,8 @@ This sentence is the primary product criterion for all future product decisions.
 Product Vision
       ↓
 Decision Experience Grammar     ← this SSOT
+      ↓
+Decision Journey (DJS)          ← UX-001 (Proposed)
       ↓
 Decision Story
       ↓

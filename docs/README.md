@@ -29,6 +29,7 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Product Principles | `product/constitution/product-constitution.md` |
 | Product Vision | `product/vision/product-vision.md` |
 | **Decision Experience Grammar (DEG)** | **`product/decision-experience-grammar/DEG.md`** |
+| Decision Journey Specification (DJS) | `product/decision-journey/DJS.md` (Proposed v0.1 — not yet Approved SSOT) |
 | Object Package | `product/object-package.md` |
 | Knowledge Foundation | `product/knowledge/README.md` |
 | Pilot Foundation | `product/pilots/README.md` |
@@ -83,8 +84,9 @@ See **[architecture/RUNTIME.md](./architecture/RUNTIME.md)** (one-minute Runtime
 7. [Decision Layer governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
 8. [Product Constitution](./product/constitution/product-constitution.md)
 9. [Decision Experience Grammar (DEG)](./product/decision-experience-grammar/DEG.md) — **product layer SSOT**
-10. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
-11. Active design / implementation guides as needed
+10. [Decision Journey Specification (DJS)](./product/decision-journey/DJS.md) — UX-001 Proposed
+11. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
+12. Active design / implementation guides as needed
 
 Do not start with `archive/` or treat CommandRuntime docs as current.
 
