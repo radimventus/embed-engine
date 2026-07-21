@@ -3,11 +3,11 @@
 ## Status
 
 **Status:** Proposed Product Domain Model  
-**Version:** 0.1  
+**Version:** 0.2  
 **Date:** 2026-07-21  
 **ID:** UX-002  
-**Layer:** UX 2.0 — Decision Workspace Meta-Model  
-**Not SSOT for:** wireframes, layout, components, graphic design, frontend, implementation, Runtime algorithms
+**Layer:** UX 2.0 — Decision Workspace Meta-Model (product only)  
+**Not SSOT for:** wireframes, layout, components, graphic design, frontend, implementation, Runtime, Kernel, Platform Architecture
 
 **Navazuje na:**
 
@@ -26,10 +26,12 @@ Workspace není layout.
 
 Workspace není sada komponent.
 
+Workspace není modul ani frontendový kontejner.
+
 Workspace je **prostředí pro podporu rozhodování**.
 
 Drží stabilní mentální mapu (UX-001 — Structural Stability).
-Uvnitř této mapy probíhá adaptivní interpretace (UX-001 — Adaptive Interpretation).
+Uvnitř této mapy se mění interpretace obsahu (UX-001 — Adaptive Interpretation).
 
 Client Studio je jedna implementace Decision Workspace.
 Není definiční hranicí modelu.
@@ -40,9 +42,19 @@ Není definiční hranicí modelu.
 
 Workspace se skládá **pouze ze stabilních Sections**.
 
-Section má rozhodovací účel.
-Section je část mentální mapy Workspace.
-Section se mezi návštěvami **nemění**.
+### Co je Section
+
+Section:
+
+- není stránka
+- není modul
+- není komponenta
+
+Section je **stabilní rozhodovací prostor**.
+
+Má rozhodovací účel.
+Je částí mentální mapy Workspace.
+Mezi návštěvami se **nemění**.
 
 ### Default Section set
 
@@ -76,9 +88,10 @@ Mění se interpretace obsahu uvnitř Section — ne existence ani pořadí Sect
 
 **Tools** tento účel realizují.
 
-Section odpovídá na otázku: *proč je tato část Workspace potřeba?*
-
-Tool odpovídá na otázku: *čím člověk v této části pracuje?*
+| Concept | Question | Stability |
+| --- | --- | --- |
+| **Section** | *Proč je tato část Workspace potřeba?* | Stabilní |
+| **Tool** | *Čím člověk v této části pracuje?* | Zaměnitelné |
 
 ### Examples
 
@@ -132,14 +145,14 @@ Tools jsou zaměnitelné.
 
 Section zůstává.
 
-Nová technologie nevytváří novou Section.
-Vytváří nové Tool uvnitř existující Section — nebo zůstává mimo model, dokud nemá rozhodovací účel.
+Nová funkce znamená nové Tool — ne novou Section.
+Nová technologie (AR, VR, Voice AI, …) vstupuje jako Tool uvnitř existující Section.
 
 ---
 
 ## 4. Structural Model
 
-První osa UX 2.0 — **statická struktura Experience**:
+Produktový model organizace Experience:
 
 ```text
 Decision Workspace
@@ -155,140 +168,101 @@ Decision Workspace
 - **Sections** tvoří stabilní mentální mapu.
 - **Tools** jsou vyměnitelné prostředky interakce uvnitř Sections.
 
-Structural Model popisuje, **jak je Experience organizována**.
+Structural Model popisuje **Structure**:
 
-Nepopisuje, jak Experience reaguje.
-Nepopisuje, proč reaguje.
+> Jak je Experience organizována.
 
----
-
-## 5. Runtime Model
-
-Druhá osa UX 2.0 — **chování Experience**:
-
-```text
-Interaction
-     ↓
-  Signal
-     ↓
-Interpretation
-     ↓
- Adaptation
-     ↓
-Updated Tool
-     ↓
-  Outcome
-```
-
-### Meaning
-
-- **Interaction** — člověk jedná v Tool.
-- **Signal** — jednání je pozorováno jako vstup.
-- **Interpretation** — Kernel čte význam jednání.
-- **Adaptation** — mění se obsah, důraz, pořadí informací uvnitř Tool / Section.
-- **Updated Tool** — člověk vidí upravenou realizaci stejného účelu.
-- **Outcome** — rozhodovací stav se posouvá.
-
-Runtime Model popisuje, **jak Experience reaguje**.
-
-Nepopisuje strukturu Workspace.
-Nemění Sections.
-Nemění mentální mapu.
+Nepopisuje Behavior platformy.
+Nepopisuje Runtime pipeline.
+Nepopisuje Kernel ani Decision State.
 
 ---
 
-## 6. Separation of Concerns
+## 5. Product Responsibilities
+
+UX-002 definuje pouze produktové odpovědnosti Decision Workspace.
 
 | Layer | Responsibility |
 | --- | --- |
-| **Workspace** | organizuje Experience |
-| **Section** | rozhodovací účel |
-| **Tool** | umožňuje interakci |
-| **Runtime** | pozoruje |
-| **Kernel** | interpretuje |
-| **Adaptation** | mění obsah |
+| **Workspace** | organizuje Experience jako prostředí pro rozhodnutí |
+| **Section** | drží stabilní rozhodovací účel |
+| **Tool** | realizuje účel Section zaměnitelným způsobem |
 
-### Rules
+### Product rules
 
-- Workspace nevysvětluje chování.
-- Section nevymýšlí UI.
+- Workspace nevysvětluje platformní chování.
+- Section nevymýšlí UI ani komponenty.
 - Tool nevytváří nový rozhodovací účel.
-- Runtime nevymýšlí strukturu Workspace.
-- Kernel neřeší layout.
-- Adaptation nemění Sections.
+- Nová feature ≠ nová Section.
+- Layout panel ≠ Section.
+- Komponenta ≠ Section.
 
-Toto rozdělení chrání Structural Stability (UX-001)
-a umožňuje Adaptive Interpretation (UX-001) bez chaosu ve struktuře.
+### Boundary with Platform
 
----
-
-## 7. Three Fundamental Axes
-
-UX 2.0 stojí na třech oddělených dimenzích:
-
-### Structure
-
-**Jak je Experience organizována.**
-
-Workspace → Sections → Tools.
-
-Stabilní mentální mapa.
-Nemění se mezi návštěvami.
-
-### Behavior
-
-**Jak Experience reaguje na uživatele.**
-
-Interaction → Signal → … → Updated Tool → Outcome.
-
-Dynamika běhu.
-Mění se v čase jedné Session i napříč návštěvami.
-
-### Interpretation
-
-**Proč Experience reaguje právě tímto způsobem.**
-
-Význam Signalů, Progressive Understanding, sdílený rozhodovací kontext.
-
-Interpretation spojuje Behavior se smyslem rozhodnutí.
-Není synonymem Structure.
-Není synonymem Behavior.
-
-### Separation rule
-
-Tyto tři dimenze musí zůstat oddělené.
-
-Smíchání Structure a Behavior vytváří nestabilní produkt.
-Smíchání Behavior a Interpretation vytváří nepochopitelnou adaptaci.
-Smíchání Structure a Interpretation vytváří „inteligentní layout“, který ničí důvěru.
-
----
-
-## 8. Product Consequences
-
-| Consequence | Meaning |
+| Product (UX / Experience) | Platform Architecture |
 | --- | --- |
-| Nové funkce = nová Tools | Ne nové Sections. Section vzniká jen s novým rozhodovacím účelem. |
-| Adaptuje se obsah | Ne struktura. Mentální mapa zůstává. |
-| UX je dlouhodobě stabilní | Učení Workspace se amortizuje napříč návštěvami a lidmi. |
-| Runtime může růst | Evoluce Runtime / Kernel / Adaptation nemění Workspace mapu. |
-| Nové technologie = Tools | AR, VR, Voice AI a další vstupují jako Tools uvnitř existujících Sections. |
+| Workspace, Sections, Tools | Workspace Engine, Runtime, Kernel |
+| Experience Blueprint (budoucí UX-003+) | Blueprint Schema, Tool Contracts |
+| Konkrétní slovník Sections a Tools | Unverzální mechanismy, Session, Signals |
+| Strategie a kompozice Experience | Interpretation, Event Pipeline, Rendering |
 
-### Forbidden shortcuts
+Hlavní rozhodnutí sprintu:
 
-- Přidat „novou sekci“, protože existuje nová komponenta.
-- Měnit pořadí Sections podle A/B testu bez změny rozhodovacího účelu.
-- Pojmenovat Tool jako Section.
-- Pojmenovat layout panel jako Section.
+> Platforma definuje mechanismy, kontrakty a jazyky.  
+> Produkt definuje jejich konkrétní slovník, strategii a kompozici.
 
 ---
 
-## 9. Relationship to UX-001
+## 6. Design Principles
+
+Tyto principy řídí produktový model Workspace.
+Vycházejí z UX-001 a z objevů UX 2.0 sprintu.
+
+### Structural Stability
+
+Experience má stabilní strukturu.
+
+Nemění se Sections.
+Mění se pouze interpretace obsahu uvnitř Sections / Tools.
+
+### Sections vs Tools
+
+Section = stabilní rozhodovací účel.
+Tool = zaměnitelná realizace.
+
+Toto oddělení je hlavní produktový objev modelu.
+
+### Section is not a component
+
+Section není stránka, modul ani komponenta.
+Section je stabilní rozhodovací prostor.
+
+### Structure is product concern
+
+Structure (Workspace → Sections → Tools) patří do produktu.
+
+Behavior (reakce systému, Runtime, Kernel, Adaptation) patří do Platform Architecture — ne do UX-002.
+
+### Decision Before Conversion
+
+Workspace nejdřív podporuje kvalitní rozhodnutí.
+Konverze je důsledek — ne cíl struktury.
+
+### Shared Decision Context
+
+Jedna Decision Session je sdílena mezi kupujícím, AI a obchodníkem.
+Perspektivy se liší.
+Kontext zůstává společný.
+Struktura Workspace to umožňuje tím, že zůstává stejná mapa.
+
+---
+
+## 7. Relationship to UX-001
 
 | Document | Answers |
 | --- | --- |
 | **UX-001** | *Proč* Workspace existuje |
-| **UX-002** | *Jak* je Workspace modelován |
+| **UX-002** | *Jak* je Workspace modelován (produktově) |
 
 UX-001 definuje filozofii:
 
@@ -298,11 +272,11 @@ UX-001 definuje filozofii:
 - Decision Before Conversion
 - Shared Decision Context
 
-UX-002 převádí tuto filozofii do doménového modelu:
+UX-002 převádí filozofii do produktového modelu:
 
 - stabilní **Sections** = mentální mapa
-- zaměnitelné **Tools** = adaptivní realizace
-- **Structure / Behavior / Interpretation** = tři oddělené osy
+- zaměnitelné **Tools** = realizace účelu
+- **Structural Model** = organizace Experience
 
 ### Terminology continuity
 
@@ -310,37 +284,62 @@ UX-001 používá příklady jako Hero, Priority, FAQ, AI, Audit, Report ve smys
 
 UX-002 zpřesňuje stejný princip:
 
-- **Hero, Priority, Audit** zůstávají **Sections** (rozhodovací účel).
+- **Hero, Priority, Audit** zůstávají **Sections**.
 - **FAQ, AI** patří do Section **Racio** jako **Tools**.
 - **Report** patří do Section **Audit** (nebo Closing) jako **Tool**.
-- **Tour** sjednocuje prohlídkové Tools (Gallery, Floor Plan, …).
+- **Tour** sjednocuje prohlídkové Tools.
 - **Header** a **Closing** doplňují stabilní mapu Workspace.
 
 Filozofie se nemění.
 Model se zpřesňuje.
+Platformní chování se z modelu odkládá.
 
 > Stabilní je struktura (Sections).  
 > Adaptivní je interpretace (obsah Tools).
 
 ---
 
-## Out of scope
+## Out of Scope
 
 Tento dokument **neřeší**:
+
+### UX / design
 
 - wireframy
 - layout a rozmístění panelů
 - komponenty a frontend
-- implementaci
-- Runtime algoritmy
-- konkrétní Tool katalog mimo ilustrativní příklady
+- grafický design
+
+### Platform Architecture (samostatná větev)
+
+Tyto koncepty **nepatří do UX-002** a budou řešeny mimo UX dokumenty:
+
+- Runtime
+- Kernel
+- Decision State
+- Event Pipeline
+- Interpretation (platformní mechanismus)
+- Adaptation
+- Session
+- Blueprint Schema
+- Tool Runtime
+- Rendering
+- Behavior jako platformní dimenze
+
+### Budoucí UX dokumenty
+
+- UX-003 — Experience Blueprint
+- UX-004 — Section Contract
+- UX-005 — Tool Contract
+- UX-006 — Experience Flow
 
 ---
 
 ## Governance
 
-- UX-002 je **Proposed** referenční meta-model pro Decision Experiences.
-- Budoucí Decision Experiences musí používat Vocabulary: Workspace, Section, Tool, Structure, Behavior, Interpretation.
-- Default Section set (Header, Hero, Tour, Priority, Racio, Audit, Closing) je výchozí mentální mapa.
+- UX-002 je **Proposed** referenční produktový meta-model Decision Workspace.
+- Vocabulary: Workspace, Section, Tool, Structural Model.
+- Default Section set: Header, Hero, Tour, Priority, Racio, Audit, Closing.
 - Změna Section setu je produktové rozhodnutí — ne UI experiment.
 - Konflikty „nová feature = nová Section“: **UX-002 vyhrává** (feature = Tool).
+- Konflikty „UX dokument má popisovat Runtime“: **Out of Scope** — Platform Architecture.
