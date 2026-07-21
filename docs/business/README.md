@@ -55,6 +55,7 @@ Neither is marketing copy.
 | BUS-005 | [Opportunity Model](./BUS-005-opportunity-model.md) | Discrete commercial chances and entry strategies |
 | BUS-006 | [GTM Playbook](./BUS-006-gtm-playbook.md) | Repeatable plays and decision processes |
 | — | [Templates](./templates/) | Operational capture without inventing CRM |
+| — | [**Data / Portfolio**](./data/portfolio.md) | Seeded Strategic Account Cards (WP-BUS-002) |
 
 ```text
 Strategic Account Map (BUS-001)
@@ -84,6 +85,7 @@ Business Intelligence (compounding knowledge)
 6. [BUS-004 Account Lifecycle](./BUS-004-account-lifecycle.md)  
 7. [BUS-006 GTM Playbook](./BUS-006-gtm-playbook.md)  
 8. [Templates](./templates/) — start capturing knowledge immediately  
+9. [Portfolio dashboard](./data/portfolio.md) — seeded Strategic Accounts (WP-BUS-002)
 
 Product context (optional, parallel): [DEG](../product/decision-experience-grammar/DEG.md) · [Product Constitution](../product/constitution/product-constitution.md)
 
