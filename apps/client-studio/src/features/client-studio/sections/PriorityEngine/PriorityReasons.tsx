@@ -1,14 +1,10 @@
 import type { InterpretationPriority } from '@embed-engine/core/cognitive';
 
-import { DECISION_CATEGORIES } from './decision-cards.constants';
+import { titleForPriorityId } from './priorityPresentation';
 
 type PriorityReasonsProps = {
   priorities: readonly InterpretationPriority[];
 };
-
-function titleFor(id: string): string {
-  return DECISION_CATEGORIES.find((category) => category.id === id)?.title ?? id;
-}
 
 export function PriorityReasons({ priorities }: PriorityReasonsProps) {
   return (
@@ -22,7 +18,7 @@ export function PriorityReasons({ priorities }: PriorityReasonsProps) {
       </p>
       {priorities.length === 0 ? (
         <p className="mt-2 text-xs leading-relaxed text-embed-foreground-primary/45">
-          Interact with the property to see why priorities change.
+          Open a room, change floor, or tap a priority — reasons appear here.
         </p>
       ) : (
         <ul className="mt-2 flex flex-col gap-2">
@@ -33,7 +29,7 @@ export function PriorityReasons({ priorities }: PriorityReasonsProps) {
               data-testid={`reason-${priority.id}`}
             >
               <span className="font-semibold text-embed-brand-gold">
-                {titleFor(priority.id)} ↑ {Math.round(priority.weight * 100)}
+                {titleForPriorityId(priority.id)} ↑ {Math.round(priority.weight * 100)}
               </span>
               {priority.reason ? (
                 <span className="mt-0.5 block text-embed-foreground-primary/65">

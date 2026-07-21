@@ -16,7 +16,7 @@ export function EventTimeline({ events }: EventTimelineProps) {
       </p>
       {events.length === 0 ? (
         <p className="mt-2 text-xs leading-relaxed text-embed-foreground-primary/45">
-          Explore the house — rooms, floors, gallery — and watch priorities adapt.
+          Explore rooms, floors, or gallery — your path appears here.
         </p>
       ) : (
         <ul className="mt-2 flex flex-col gap-1.5">

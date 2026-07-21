@@ -1,11 +1,9 @@
-import type { DecisionCategory } from './decision-cards.constants';
-
 const ICON_STROKE = '#D4AF37';
 /** ~20% smaller than h-10 (40px) → 32px; same size in both card states */
 const ICON_SIZE_CLASS = 'h-8 w-8';
 
 type DecisionCategoryIconProps = {
-  categoryId: DecisionCategory['id'];
+  categoryId: string;
 };
 
 /** Uniform outline icon set — gold stroke, no fills. */

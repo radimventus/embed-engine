@@ -10,15 +10,21 @@ import { PriorityCards } from './PriorityCards';
 import { RecommendationPanel } from './RecommendationPanel';
 import { SectionHeader } from './SectionHeader';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
+import { usePriorityExperience } from './usePriorityExperience';
 
 /**
- * Priority Engine — Interpretation peer + Decision Terminal.
- * Reads Session via Experience binding only (no Runtime prop).
+ * Priority Experience MVP (S-003) — Interpretation peer + Decision Terminal.
+ * Session snapshot only; Signals for cognitive intent.
  */
 export function PriorityEngine() {
+  const { status } = usePriorityExperience();
+
   return (
     <section
-      aria-label="Priority Engine"
+      aria-label="Priority Experience"
+      aria-busy={status === 'loading'}
+      data-testid="priority-experience"
+      data-priority-status={status}
       className={`relative ${SECTION_SURFACE_CLASS} ${PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS} ${PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS}`}
     >
       <SectionHeader />
