@@ -11,5 +11,5 @@ Related:
 
 - [Project Principles](../00-project/PROJECT-PRINCIPLES.md)
 - [Architecture overview](../architecture/README.md)
-- [Reference Implementation](../04-reference-implementation/README.md) (RI-001 Runtime Kernel)
+- [Reference Implementation](../04-reference-implementation/README.md) (RI-001 Runtime Kernel · RI-002 Decision Session)
 - ADR index: `docs/architecture/adr/`

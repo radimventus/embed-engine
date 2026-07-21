@@ -7,6 +7,7 @@ These documents do **not** change Reference Architecture, Platform Canon, ESS, o
 | ID | Title | Status | Version | Role |
 | --- | --- | --- | --- | --- |
 | [RI-001](./RI-001-Runtime-Kernel.md) | Runtime Kernel | Frozen | 1.0 | **Runtime SSOT** |
+| [RI-002](./RI-002-Decision-Session.md) | Decision Session | Frozen | 1.0 | **Decision Session SSOT** |
 
 ## Authority order
 
@@ -14,15 +15,18 @@ These documents do **not** change Reference Architecture, Platform Canon, ESS, o
 2. Reference Architecture v1.0 (Conceptual Freeze)
 3. [ESS-001](../03-specification-standard/ESS-001-Embed-Specification-Standard.md)
 4. [EQS-001](../03-specification-standard/EQS-001-Engineering-Quality-Standard.md)
-5. Accepted ADRs ([ADR-001](../architecture/adr/ADR-001-runtime-architecture.md) for Runtime)
-6. Reference Implementation specifications (this folder) — **RI-001 is Runtime SSOT**
+5. Accepted ADRs ([ADR-001](../architecture/adr/ADR-001-runtime-architecture.md) for Runtime; [ADR-002](../architecture/adr/ADR-002-decision-state.md) for DecisionState)
+6. Reference Implementation specifications (this folder)
 
-## Runtime navigation
+## Runtime / Session navigation
 
-- Index: [architecture/RUNTIME.md](../architecture/RUNTIME.md)
+- Runtime index: [architecture/RUNTIME.md](../architecture/RUNTIME.md)
+- Runtime SSOT: [RI-001](./RI-001-Runtime-Kernel.md)
+- Decision Session SSOT: [RI-002](./RI-002-Decision-Session.md)
 - Historical CommandRuntime: [archive/runtime-decisions-command-runtime-v1.md](../architecture/archive/runtime-decisions-command-runtime-v1.md)
 
 ## Related
 
 - [ADR-001 — Runtime Architecture](../architecture/adr/ADR-001-runtime-architecture.md)
+- [ADR-002 — DecisionState Aggregate](../architecture/adr/ADR-002-decision-state.md)
 - [Living Experience v0.1 Freeze](../architecture/living-experience-v0.1-freeze.md)

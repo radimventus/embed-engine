@@ -31,10 +31,17 @@ Historical (not normative):
 | **Runtime** | Public CORE façade (`createRuntime`, lifecycle, state access) |
 | **Kernel** | Internal orchestrator owned by Runtime; not a public API |
 | **Signal** | Immutable Cognitive input |
-| **DecisionState** | Sole Cognitive aggregate (normative name; prefer over “Decision Session”) |
+| **Decision Session** | One active Experience decision journey ([RI-002](../04-reference-implementation/RI-002-Decision-Session.md)); hosted by Runtime |
+| **DecisionState** | Sole Cognitive aggregate — authoritative contents of a Decision Session ([ADR-002](./adr/ADR-002-decision-state.md)) |
 | **Interpretation** | Derived Cognitive output from `project()` |
 | **Experience** | Presentation layer; renders and emits Signals |
 | **dispatch** | Opaque RuntimeEvent routing on Cognitive Runtime; **not** the historical `dispatch(command) → ExperienceModel` CommandRuntime API |
+
+## Decision Session
+
+**SSOT:** [RI-002 — Decision Session](../04-reference-implementation/RI-002-Decision-Session.md)
+
+Decision Session is the named boundary of one active visitor journey. It does **not** introduce a second Cognitive aggregate. DecisionState remains the sole Cognitive aggregate inside the Session.
 
 ## Rule
 

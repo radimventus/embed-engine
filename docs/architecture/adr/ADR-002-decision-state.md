@@ -121,3 +121,13 @@ DecisionState never:
 * No parallel “Context” aggregate in the Cognitive Layer
 * Terminology “Environment” is reserved for DecisionState.environment
 * Pipeline authority lives in ADR-003
+
+---
+
+# Related
+
+* [RI-002 — Decision Session](../../04-reference-implementation/RI-002-Decision-Session.md) — Session boundary SSOT (DecisionState remains sole Cognitive aggregate)
+* [RI-001 — Runtime Kernel](../../04-reference-implementation/RI-001-Runtime-Kernel.md)
+* [ADR-003 — Cognitive Processing Pipeline](./ADR-003-cognitive-processing-pipeline.md)
+* [CORE-002 — Decision State](../core/CORE-002-decision-state.md)
+* [Living Experience v0.1 Freeze](../living-experience-v0.1-freeze.md)

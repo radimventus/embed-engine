@@ -20,7 +20,8 @@
 | `experience-projection.md` | Supporting — Experience projection principles |
 | `runtime-decisions.md` | Stub → historical CommandRuntime archive |
 | `archive/` | Historical only (includes CommandRuntime Runtime Decisions) |
-| [`../04-reference-implementation/RI-001-Runtime-Kernel.md`](../04-reference-implementation/RI-001-Runtime-Kernel.md) | **RI-001** — Runtime Kernel Public Contract (**SSOT**) |
+| [`../04-reference-implementation/RI-001-Runtime-Kernel.md`](../04-reference-implementation/RI-001-Runtime-Kernel.md) | **RI-001** — Runtime Kernel Public Contract (**Runtime SSOT**) |
+| [`../04-reference-implementation/RI-002-Decision-Session.md`](../04-reference-implementation/RI-002-Decision-Session.md) | **RI-002** — Decision Session (**Session SSOT**) |
 
 ## Canonical architecture (one diagram)
 

@@ -321,11 +321,11 @@ ModuleRegistry stores Runtime modules (registration, lookup, duplicate preventio
 - Experience MUST NOT depend on Kernel internals.
 - Multiple Experience surfaces (Priority, FAQ, AI, Terminal) share one mind: one RuntimeState / Interpretation stream (Living Experience v0.1).
 
-### 8.5 Interaction with Decision Session / DecisionState
+### 8.5 Interaction with Decision Session
 
-Reference Architecture vocabulary for the Cognitive aggregate is **DecisionState** (ADR-002). Kernel orchestrates replacement of DecisionState snapshots inside RuntimeState.
+The **Decision Session** is the named boundary of one active Experience decision journey. Normative specification: [RI-002](../../04-reference-implementation/RI-002-Decision-Session.md).
 
-**Note:** Epoch I retrospective language also uses “Decision Session.” This RI does not redefine that term. Implementers MUST treat DecisionState as the normative Cognitive aggregate unless a future ADR freezes Decision Session as a distinct public type.
+Cognitive contents of the Session are **DecisionState** (sole Cognitive aggregate — ADR-002), hosted in RuntimeState with derived Interpretation and optional Decision Story. Kernel orchestrates replacement of those snapshots; it does not invent a second aggregate.
 
 ### 8.6 State boundaries
 
@@ -567,7 +567,7 @@ Ambiguities recorded at freeze. Resolved documentation items are marked; remaini
 | Q6 | `applySignal` is frozen by Living Experience but not listed in ADR-001’s original API bullet list. | Editorial ADR-001 amendment listing `applySignal` without behavior change. |
 | Q7 | Strategy composer failure / partial commit policy is not frozen. | Specify reject-without-commit for Story errors. |
 | Q8 | Concurrent mutating calls are undefined. | Specify single-flight / queue semantics if hosts need guarantees. |
-| Q9 | “Decision Session” vs DecisionState terminology from Epoch I retrospective. | ADR if Session becomes a distinct public type; otherwise treat as historical wording. |
+| Q9 | ~~“Decision Session” vs DecisionState~~ | **Addressed by [RI-002](./RI-002-Decision-Session.md):** Session = active journey boundary; DecisionState remains sole Cognitive aggregate. Remaining: whether Session is a distinct public *type* (RI-002 Q1). |
 
 ---
 

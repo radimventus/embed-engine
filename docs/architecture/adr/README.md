@@ -15,6 +15,7 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 
 **Vocabulary SSOT (not an ADR):** [../decision-layer/README.md](../decision-layer/README.md)  
 **Runtime SSOT:** [../../04-reference-implementation/RI-001-Runtime-Kernel.md](../../04-reference-implementation/RI-001-Runtime-Kernel.md) · [../RUNTIME.md](../RUNTIME.md)  
+**Decision Session SSOT:** [../../04-reference-implementation/RI-002-Decision-Session.md](../../04-reference-implementation/RI-002-Decision-Session.md)  
 **Governance freeze:** [../decision-layer/decision-layer-governance-v1.md](../decision-layer/decision-layer-governance-v1.md) · tag `architecture-decision-layer-v1`
 
 **Milestone freezes**
