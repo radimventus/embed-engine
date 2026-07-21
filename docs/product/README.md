@@ -10,6 +10,7 @@ Active product SSOT lives here.
 | **`Priority Experience Bible.md`** | **Priority Experience — filozofie, principy, jazyk, MVP Journey** |
 | **`Priority Decision Journey Blueprint.md`** | **Univerzální kostra všech Priority Journey (fáze + kontrakty)** |
 | **`Priority Experience Content Model.md`** | **Obsahová vrstva Priority Experience (texty, tón, locale, AI rules)** |
+| **`../architecture/Priority Experience Integration Model.md`** | **Integrace product + runtime vrstev Priority Experience** |
 | **`../architecture/contracts/Priority Experience Runtime Contract.md`** | **Runtime kontrakt Kernel/Interpretation ↔ Priority Experience** |
 | **`content/priority-garden.md`** | **Garden Decision Journey — referenční obsahový scénář (první Priority)** |
 | **`decision-journey/`** | **Decision Journey Specification (DJS) — UX-001 Proposed draft** |
