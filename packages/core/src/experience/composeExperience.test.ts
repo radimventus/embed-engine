@@ -7,6 +7,7 @@ import {
   createExperienceFromInterpretation,
   type ExperienceComposeInput,
 } from "./composeExperience";
+import { createDecisionContext } from "../interpretation/DecisionContext";
 import { interpretObject } from "../interpretation/interpretObject";
 import { interpretationEngine } from "../interpretation/InterpretationEngine";
 
@@ -217,11 +218,11 @@ describe("experience actions", () => {
 });
 
 describe("ADR-012 runtime pipeline", () => {
-  it("routes Object → InterpretationEngine → Experience as the canonical path", () => {
+  it("routes Object + DecisionContext → InterpretationEngine → Experience", () => {
     const input = inputWith(["layout"]);
     const interpretation = interpretationEngine.interpret({
-      objectId: input.object.id,
-      priorityIds: input.priorities.selected,
+      object: input.object,
+      context: createDecisionContext({ priorities: input.priorities }),
     });
     const viaInterpretation = createExperienceFromInterpretation(interpretation);
     const viaCompose = composeExperience(input);
@@ -244,8 +245,8 @@ describe("ADR-012 runtime pipeline", () => {
     ] as const) {
       const input = inputWith(selected);
       const interpretation = interpretationEngine.interpret({
-        objectId: input.object.id,
-        priorityIds: input.priorities.selected,
+        object: input.object,
+        context: createDecisionContext({ priorities: input.priorities }),
       });
       assert.deepEqual(
         createExperienceFromInterpretation(interpretation),

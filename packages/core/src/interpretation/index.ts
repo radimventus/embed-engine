@@ -10,6 +10,12 @@ export {
   createInterpretation,
 } from "./Interpretation";
 export type {
+  DecisionContext,
+  DecisionContextPriorities,
+  CreateDecisionContextInput,
+} from "./DecisionContext";
+export { createDecisionContext } from "./DecisionContext";
+export type {
   InterpretationTrace,
   InterpretationTraceConclusionKind,
   InterpretationTraceContribution,
@@ -38,5 +44,8 @@ export {
 export {
   createInterpretationEngine,
   interpretationEngine,
+  toInterpretInput,
   type InterpretationEngine,
+  type InterpretationObjectRef,
+  type InterpretInput,
 } from "./InterpretationEngine";
