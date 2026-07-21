@@ -8,7 +8,8 @@ Navigation index for project documentation. This file is not product documentati
 | --- | --- |
 | `architecture/` | Cognitive, Decision Layer SSOT, Experience projection, Runtime index |
 | `04-reference-implementation/` | Epoch II RIs (**RI-001** Runtime · **RI-002** Session · **RI-003** Experience) |
-| `product/` | Product principles, vision, **DEG**, Object Package, Knowledge, Pilots, Builder, backlog |
+| `product/` | Product principles, vision, **DEG**, DJS, Object Package, Knowledge, Pilots, Builder, backlog |
+| `business/` | **Business Intelligence Layer** — Strategic Accounts, Relationships, GTM, BI SSOT |
 | `design/` | Design language, geometry, design system tokens |
 | `implementation/` | How to implement (frontend rules, AI agent rules) |
 | `roadmap/` | Long-term product development phases |
@@ -30,6 +31,13 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Product Vision | `product/vision/product-vision.md` |
 | **Decision Experience Grammar (DEG)** | **`product/decision-experience-grammar/DEG.md`** |
 | Decision Journey Specification (DJS) | `product/decision-journey/DJS.md` (Proposed v0.1 — not yet Approved SSOT) |
+| **Business Intelligence Layer** | **`business/README.md`** |
+| Strategic Account Map | `business/BUS-001-strategic-account-map.md` |
+| Relationship Model | `business/BUS-002-relationship-model.md` |
+| GTM Pipeline | `business/BUS-003-gtm-pipeline.md` |
+| Account Lifecycle | `business/BUS-004-account-lifecycle.md` |
+| Opportunity Model | `business/BUS-005-opportunity-model.md` |
+| GTM Playbook | `business/BUS-006-gtm-playbook.md` |
 | Object Package | `product/object-package.md` |
 | Knowledge Foundation | `product/knowledge/README.md` |
 | Pilot Foundation | `product/pilots/README.md` |
@@ -85,8 +93,9 @@ See **[architecture/RUNTIME.md](./architecture/RUNTIME.md)** (one-minute Runtime
 8. [Product Constitution](./product/constitution/product-constitution.md)
 9. [Decision Experience Grammar (DEG)](./product/decision-experience-grammar/DEG.md) — **product layer SSOT**
 10. [Decision Journey Specification (DJS)](./product/decision-journey/DJS.md) — UX-001 Proposed
-11. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
-12. Active design / implementation guides as needed
+11. [Business Intelligence Layer](./business/README.md) — Business Architecture SSOT
+12. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
+13. Active design / implementation guides as needed
 
 Do not start with `archive/` or treat CommandRuntime docs as current.
 

@@ -19,6 +19,7 @@ Future:         Decision Trajectory (not MVP)
 | **Product** | Principles and vision | `product/` |
 | **Decision Experience Grammar (DEG)** | Product layer — Mental State / Experience operations | [`product/decision-experience-grammar/DEG.md`](./product/decision-experience-grammar/DEG.md) |
 | **Decision Journey (DJS)** | Visit trajectory of mental transformations (Proposed) | [`product/decision-journey/DJS.md`](./product/decision-journey/DJS.md) |
+| **Business Intelligence** | Market, Strategic Accounts, Relationships, GTM knowledge | [`business/README.md`](./business/README.md) |
 | **Object Package** | Object truth | `product/object-package.md` |
 | **Behavior Pack** | Knowledge, rules, Move library, composition — not UI | `architecture/behavior-pack-contract.md` |
 | **Runtime / Kernel** | Public façade + internal orchestration | **[RI-001](./04-reference-implementation/RI-001-Runtime-Kernel.md)** · [RUNTIME.md](./architecture/RUNTIME.md) · [ADR-001](./architecture/adr/ADR-001-runtime-architecture.md) |
