@@ -9,14 +9,14 @@ describe("decision factors (Slice D)", () => {
     const factors = getDecisionFactors("family", { stairsConsidered: false });
     assert.ok(factors.some((factor) => factor.tone === "support"));
     assert.ok(factors.some((factor) => factor.tone === "attention"));
-    assert.ok(factors.some((factor) => /Children/.test(factor.label)));
+    assert.ok(factors.some((factor) => /Dětský/.test(factor.label)));
   });
 
   it("marks stairs attention when stairs warn was considered", () => {
     const factors = getDecisionFactors("couple", { stairsConsidered: true });
     const stairs = factors.find((factor) => factor.id === "stairs");
     assert.equal(stairs?.tone, "attention");
-    assert.match(stairs?.label ?? "", /long-term comfort/);
+    assert.match(stairs?.label ?? "", /dlouhodobý komfort/);
   });
 
   it("detects stairs consideration from story slots", () => {

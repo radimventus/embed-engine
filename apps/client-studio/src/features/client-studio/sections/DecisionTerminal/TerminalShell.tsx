@@ -7,6 +7,14 @@ import { PrimaryButton } from '@embed-engine/ui';
 import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from '../PriorityEngine/priority-engine-layout';
 import type { TerminalAction } from './useDecisionTerminal';
 
+const INTENT_LABEL_CS: Record<string, string> = {
+  confirm: 'potvrzení',
+  discover: 'objevování',
+  interpret: 'interpretace',
+  compare: 'porovnání',
+  recommend: 'doporučení',
+};
+
 export type TerminalShellProps = {
   testId: string;
   pending: boolean;
@@ -49,9 +57,11 @@ export function TerminalShell({
   householdProfile,
   onSelectHousehold,
 }: TerminalShellProps) {
+  const intentLabel = intent ? (INTENT_LABEL_CS[intent] ?? intent) : undefined;
+
   return (
     <aside
-      aria-label="Decision Terminal"
+      aria-label="Rozhodovací terminál"
       aria-busy={pending || loading === true}
       className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} overflow-y-auto`}
       data-testid={testId}
@@ -67,9 +77,9 @@ export function TerminalShell({
       <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
         {eyebrow}
       </p>
-      {intent ? (
+      {intentLabel ? (
         <p className="mt-1 text-[10px] uppercase tracking-wide text-embed-foreground-primary/45">
-          {intent}
+          {intentLabel}
         </p>
       ) : null}
       <p className="mt-2 text-sm font-medium text-embed-foreground-primary">{title}</p>
@@ -84,14 +94,14 @@ export function TerminalShell({
       <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">{body}</p>
       {tradeOff ? (
         <p className="mt-3 text-xs leading-relaxed text-embed-foreground-primary/55">
-          Trade-off: {tradeOff}
+          Kompromis: {tradeOff}
         </p>
       ) : null}
       {onSelectHousehold ? (
         <div
           className="mt-3 flex flex-col gap-2"
           role="radiogroup"
-          aria-label="Household shape"
+          aria-label="Tvar domácnosti"
           data-testid="decision-terminal-household"
         >
           {HOUSEHOLD_CHOICES.map((choice) => {
@@ -126,7 +136,7 @@ export function TerminalShell({
           data-testid="decision-terminal-pending"
           aria-live="polite"
         >
-          Advancing Decision…
+          Posouvám Rozhodnutí…
         </p>
       ) : null}
       {action ? (

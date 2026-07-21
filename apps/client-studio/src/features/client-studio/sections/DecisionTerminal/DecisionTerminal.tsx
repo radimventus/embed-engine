@@ -4,9 +4,7 @@ import { useDecisionTerminal } from './useDecisionTerminal';
 import { PILOT_TERMS } from '../../pilot/pilotVocabulary';
 
 /**
- * Decision Terminal MVP (S-004 / ADR-008 Accepted).
- * Session Story + Interpretation context; Signals only for cognitive intent.
- * Pack supplies advisorPrompt, ctaLabel, whyNow where present (S-005).
+ * Decision Terminal MVP — Pack copy + Czech chrome (S-006A).
  */
 export function DecisionTerminal() {
   const terminal = useDecisionTerminal();
@@ -40,8 +38,8 @@ export function DecisionTerminal() {
         loading
         pending={false}
         eyebrow={PILOT_TERMS.decisionTerminal}
-        title="Preparing your Decision path"
-        body="The session is loading. Priority and Decision Terminal sync on the same Interpretation."
+        title="Připravujeme cestu Rozhodnutí"
+        body="Načítá se session. Priorita a Rozhodovací terminál sdílejí stejnou Interpretaci."
       />
     );
   }
@@ -53,11 +51,11 @@ export function DecisionTerminal() {
         error
         pending={false}
         eyebrow={PILOT_TERMS.decisionTerminal}
-        title="Decision path unavailable"
+        title="Cesta Rozhodnutí není dostupná"
         body={
           definition === null && activeMoveId !== null
-            ? `Move “${activeMoveId}” has no presentation definition in the Behavior Pack.`
-            : 'Reload the experience to continue the guided Decision.'
+            ? `Krok „${activeMoveId}“ nemá prezentaci v Behavior Packu.`
+            : 'Obnovte experience a pokračujte v průvodci Rozhodnutí.'
         }
       />
     );
@@ -90,20 +88,20 @@ export function DecisionTerminal() {
         eyebrow={PILOT_TERMS.decisionTerminal}
         title={
           topic
-            ? `Guide your ${topic} Decision`
-            : 'Start the disposition Decision'
+            ? `Veďte Rozhodnutí: ${topic}`
+            : 'Začněte Rozhodnutí o dispozici'
         }
         body={
           next ??
-          'Disposition first. Beauty second. One guided path from Priority to a clear layout Outcome.'
+          'Dispozice první. Krása druhá. Jedna cesta od Priority k jasnému Výsledku dispozice.'
         }
         hint={
           topic
-            ? 'Starts from your active Priority — peers stay synchronized.'
+            ? 'Navazuje na aktivní Prioritu — ostatní plochy zůstávají synchronní.'
             : undefined
         }
         action={{
-          label: pending ? 'Starting…' : 'Start disposition Decision',
+          label: pending ? 'Spouštím…' : 'Začít Rozhodnutí o dispozici',
           run: startDialogue,
         }}
       />
@@ -116,7 +114,7 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         activeMove={activeMoveId}
         pending={pending}
-        eyebrow={`${PILOT_TERMS.decisionTerminal} · Move ${completedCount + 1}/${totalMoves}`}
+        eyebrow={`${PILOT_TERMS.decisionTerminal} · Krok ${completedCount + 1}/${totalMoves}`}
         intent={definition.intent}
         title={definition.purpose}
         body={definition.advisorPrompt}
@@ -125,8 +123,8 @@ export function DecisionTerminal() {
         onSelectHousehold={setHouseholdDraft}
         action={{
           label: pending
-            ? 'Updating…'
-            : (definition.ctaLabel ?? 'Continue with this household'),
+            ? 'Aktualizuji…'
+            : (definition.ctaLabel ?? 'Pokračovat s touto domácností'),
           disabled: householdDraft === null || pending,
           run: submitHousehold,
         }}
@@ -140,7 +138,7 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         activeMove={activeMoveId}
         pending={pending}
-        eyebrow={`${PILOT_TERMS.decisionTerminal} · Move ${completedCount + 1}/${totalMoves}`}
+        eyebrow={`${PILOT_TERMS.decisionTerminal} · Krok ${completedCount + 1}/${totalMoves}`}
         intent={definition.intent}
         title={definition.purpose}
         whyNow={whyNow}
@@ -157,8 +155,8 @@ export function DecisionTerminal() {
       error
       pending={false}
       eyebrow={PILOT_TERMS.decisionTerminal}
-      title="Unable to render this step"
-      body="The active Story step could not be presented. Try restarting from Priority."
+      title="Tento krok nelze zobrazit"
+      body="Aktivní krok Story se nepodařilo prezentovat. Zkuste znovu od Priority."
     />
   );
 }

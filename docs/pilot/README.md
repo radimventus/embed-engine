@@ -1,6 +1,6 @@
 # Pilot CAP-P01 — First Pilot Object + Behavior Pack
 
-**Status:** CAP-P01–P03 complete · Guided pilot story polished (S-005)  
+**Status:** CAP-P01–P03 complete · Guided pilot (S-005) · Commercial readiness (S-006A)  
 **Date:** 2026-07-21  
 **Architecture:** Frozen — [Decision Layer SSOT](../architecture/decision-layer/README.md)  
 **Principle:** Help a real buyer make a better decision than browsing photos alone.
@@ -18,10 +18,13 @@ Landing (Hero)
   → Media + House Navigator (#walkthrough)
   → Priority + Decision Terminal (#priority-experience)
   → Audit + Lead (#audit-lead-capture)
-  → AI Advisor (optional questions)
 ```
 
-Vocabulary (one term per concept): Priority · Decision · Reason · Next Step · Outcome · Commitment · Audit · Lead.
+Locale: Czech throughout the customer-facing pilot (S-006A).  
+AI Advisor is hidden by default (`PILOT_FLAGS.showAiAdvisor`) until real answers exist.  
+Lead Capture uses mailto handoff (`kontakt@astav.cz`) until a backend is wired.
+
+Vocabulary (one term per concept): Priorita · Rozhodnutí · Důvod · Další krok · Výsledek · Závazek · Audit · Poptávka.
 
 ---
 

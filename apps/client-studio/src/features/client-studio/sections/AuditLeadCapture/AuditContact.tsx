@@ -1,6 +1,7 @@
 import { useState, type ChangeEvent, type FormEvent } from 'react';
 import { Input } from '@embed-engine/ui';
 
+import { PILOT_FLAGS, PILOT_LEAD_MAILTO } from '../../pilot/pilotVocabulary';
 import {
   AUDIT_ACCENT,
   AUDIT_FORM_MAX_WIDTH_CLASS,
@@ -14,15 +15,63 @@ import {
 import { LockIcon, UserIcon } from './AuditIcons';
 import { SuccessState } from './SuccessState';
 
+type LeadPhase = 'idle' | 'loading' | 'success' | 'error';
+
+/**
+ * Lead Capture — operational mailto handoff until a backend exists (S-006A).
+ * Never claims a server received the request when none exists.
+ */
 export function AuditContact() {
-  const [submitted, setSubmitted] = useState(false);
+  const [phase, setPhase] = useState<LeadPhase>('idle');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmitted(true);
+    setErrorMessage(null);
+
+    if (PILOT_FLAGS.leadCaptureMode !== 'mailto') {
+      setPhase('error');
+      setErrorMessage(
+        'Odesílání poptávek zatím není aktivní. Použijte kontakt níže.',
+      );
+      return;
+    }
+
+    const trimmedName = name.trim();
+    const trimmedEmail = email.trim();
+    if (!trimmedName || !trimmedEmail) {
+      setPhase('error');
+      setErrorMessage('Vyplňte jméno a e-mail.');
+      return;
+    }
+
+    setPhase('loading');
+
+    const subject = encodeURIComponent('Poptávka — posouzení umístění domu');
+    const body = encodeURIComponent(
+      [
+        `Jméno: ${trimmedName}`,
+        `E-mail: ${trimmedEmail}`,
+        phone.trim() ? `Telefon: ${phone.trim()}` : null,
+        '',
+        'Zdroj: Client Studio — Audit / Lead',
+      ]
+        .filter((line): line is string => line !== null)
+        .join('\n'),
+    );
+
+    try {
+      window.location.href = `mailto:${PILOT_LEAD_MAILTO}?subject=${subject}&body=${body}`;
+      window.setTimeout(() => setPhase('success'), 400);
+    } catch {
+      setPhase('error');
+      setErrorMessage(
+        `Nepodařilo se otevřít e-mail. Napište nám na ${PILOT_LEAD_MAILTO}.`,
+      );
+    }
   };
 
   return (
@@ -36,11 +85,11 @@ export function AuditContact() {
         className="mx-auto mt-3 max-w-xl text-center text-sm leading-snug"
         style={{ color: AUDIT_MUTED }}
       >
-        Po odeslání vám zašleme další postup a informace, které budeme potřebovat pro
-        zpracování posouzení.
+        Po odeslání vám zašleme další postup a informace potřebné pro zpracování
+        posouzení. Poptávku otevřete ve svém e-mailu — odeslání potvrďte tam.
       </p>
 
-      {submitted ? (
+      {phase === 'success' ? (
         <div className="mt-5">
           <SuccessState />
         </div>
@@ -55,6 +104,7 @@ export function AuditContact() {
             required
             value={name}
             placeholder="Jméno a příjmení"
+            disabled={phase === 'loading'}
             className={AUDIT_INPUT_CLASS}
             style={{ ...AUDIT_INPUT_STYLE, height: AUDIT_INPUT_HEIGHT_PX }}
             onChange={(event: ChangeEvent<HTMLInputElement>) => setName(event.target.value)}
@@ -69,6 +119,7 @@ export function AuditContact() {
             required
             value={email}
             placeholder="E-mail"
+            disabled={phase === 'loading'}
             className={AUDIT_INPUT_CLASS}
             style={{ ...AUDIT_INPUT_STYLE, height: AUDIT_INPUT_HEIGHT_PX }}
             onChange={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
@@ -82,6 +133,7 @@ export function AuditContact() {
             type="tel"
             value={phone}
             placeholder="Telefon (volitelné)"
+            disabled={phase === 'loading'}
             className={AUDIT_INPUT_CLASS}
             style={{ ...AUDIT_INPUT_STYLE, height: AUDIT_INPUT_HEIGHT_PX }}
             onChange={(event: ChangeEvent<HTMLInputElement>) => setPhone(event.target.value)}
@@ -89,17 +141,29 @@ export function AuditContact() {
 
           <button
             type="submit"
-            className="flex w-full items-center justify-center rounded-[8px] px-4 text-center text-sm font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001930]"
+            disabled={phase === 'loading'}
+            className="flex w-full items-center justify-center rounded-[8px] px-4 text-center text-sm font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001930] disabled:opacity-60"
             style={{
               height: AUDIT_INPUT_HEIGHT_PX,
               backgroundColor: AUDIT_ACCENT,
               color: AUDIT_ON_ACCENT,
             }}
           >
-            ODESLAT POŽADAVEK →
+            {phase === 'loading' ? 'Otevírám e-mail…' : 'ODESLAT POPTÁVKU →'}
           </button>
         </form>
       )}
+
+      {phase === 'error' && errorMessage ? (
+        <p
+          className="mt-3 text-center text-sm"
+          style={{ color: AUDIT_ACCENT }}
+          role="alert"
+          data-testid="lead-capture-error"
+        >
+          {errorMessage}
+        </p>
+      ) : null}
 
       <div className="mt-5 grid grid-cols-2 gap-6 mobile:grid-cols-1">
         <div className="flex gap-3">

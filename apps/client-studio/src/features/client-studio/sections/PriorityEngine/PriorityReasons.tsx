@@ -9,16 +9,16 @@ type PriorityReasonsProps = {
 export function PriorityReasons({ priorities }: PriorityReasonsProps) {
   return (
     <aside
-      aria-label="Priority reasons"
+      aria-label="Důvody Priorit"
       className="rounded-[8px] border border-embed-border-default bg-white/70 p-3"
       data-testid="priority-reasons"
     >
       <p className="m-0 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/55">
-        Reasons
+        Důvody
       </p>
       {priorities.length === 0 ? (
         <p className="mt-2 text-xs leading-relaxed text-embed-foreground-primary/45">
-          Open a room, change floor, or focus a Priority — Reasons appear here.
+          Otevřete místnost, změňte patro nebo zvolte Prioritu — Důvody se objeví zde.
         </p>
       ) : (
         <ul className="mt-2 flex flex-col gap-2">

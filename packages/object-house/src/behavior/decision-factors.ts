@@ -21,15 +21,15 @@ export function getDecisionFactors(
     {
       id: "living",
       tone: "support",
-      label: "Generous living supports everyday gathering.",
+      label: "Velkorysý obývák podporuje každodenní setkávání.",
     },
     {
       id: "kitchen",
       tone: profile === "couple" ? "support" : "attention",
       label:
         profile === "couple"
-          ? "Kitchen supports everyday living for two."
-          : "Kitchen stays modest — dining lives with living.",
+          ? "Kuchyně stačí na každodenní provoz pro dva."
+          : "Kuchyně zůstává skromná — stolování žije s obývákem.",
     },
   ];
 
@@ -37,24 +37,24 @@ export function getDecisionFactors(
     factors.push({
       id: "household",
       tone: "support",
-      label: "No school-morning bath rush for this household.",
+      label: "Pro tuto domácnost není školní nápor na koupelnu.",
     });
   } else if (profile === "family" || profile === "family-wfh") {
     factors.push({
       id: "rooms",
       tone: "support",
-      label: "Children's room matches a family night zone.",
+      label: "Dětský pokoj sedí na noční zónu rodiny.",
     });
     factors.push({
       id: "bath",
       tone: "attention",
-      label: "One bath deserves consideration on school mornings.",
+      label: "Jedna koupelna zaslouží pozornost o školních ránech.",
     });
   } else {
     factors.push({
       id: "zones",
       tone: "support",
-      label: "Day and night zones stay clearly separated.",
+      label: "Denní a noční zóna zůstávají jasně oddělené.",
     });
   }
 
@@ -62,7 +62,7 @@ export function getDecisionFactors(
     factors.push({
       id: "study",
       tone: "attention",
-      label: "No dedicated study — WFH will borrow living or bedroom.",
+      label: "Chybí samostatná pracovna — práce z domu si vypůjčí obývák nebo ložnici.",
     });
   }
 
@@ -70,8 +70,8 @@ export function getDecisionFactors(
     id: "stairs",
     tone: "attention",
     label: options.stairsConsidered
-      ? "Stairs deserve consideration for long-term comfort."
-      : "Daily stairs between day and night life remain part of this plan.",
+      ? "Schody zaslouží zvážení pro dlouhodobý komfort."
+      : "Každodenní schody mezi denním a nočním životem zůstávají součástí plánu.",
   });
 
   return Object.freeze(factors);

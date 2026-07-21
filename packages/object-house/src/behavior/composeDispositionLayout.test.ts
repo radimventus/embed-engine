@@ -91,7 +91,7 @@ describe("disposition layout composer", () => {
     });
 
     assert.equal(story?.outcome?.status, "weak-fit");
-    assert.match(story?.outcome?.summary ?? "", /Why this matches your household/);
+    assert.match(story?.outcome?.summary ?? "", /Proč to sedí na vaši domácnost/);
   });
 
   it("returns strong-fit for couple household", () => {
@@ -114,7 +114,7 @@ describe("disposition layout composer", () => {
       previous: story,
     });
     assert.equal(story?.outcome?.status, "strong-fit");
-    assert.match(story?.outcome?.summary ?? "", /Why it fits you/);
+    assert.match(story?.outcome?.summary ?? "", /Proč vám to sedí/);
   });
 
   it("does not complete household step without a profile", () => {

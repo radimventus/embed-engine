@@ -7,10 +7,10 @@ const EMPTY_INTERPRETATION: Interpretation = Object.freeze({
   priorities: Object.freeze([]),
   events: Object.freeze([]),
   recommendedQuestions: Object.freeze([]),
-  conversationContext: 'Calibrating your decision filter.',
+  conversationContext: 'Kalibrujeme váš filtr rozhodování.',
   recommendations: Object.freeze([]),
-  activeTopic: 'Layout',
-  nextAction: 'Explore the house or select a priority.',
+  activeTopic: 'Dispozice',
+  nextAction: 'Projděte dům nebo vyberte Prioritu.',
 });
 
 const InterpretationContext = createContext<Interpretation>(EMPTY_INTERPRETATION);

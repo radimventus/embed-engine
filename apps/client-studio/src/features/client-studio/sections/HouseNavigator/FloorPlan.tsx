@@ -24,7 +24,7 @@ function FloorPlanCanvas({
     <svg
       viewBox={`0 0 ${viewBox} ${viewBox}`}
       preserveAspectRatio={preserveAspectRatio}
-      aria-label="Decision Canvas"
+      aria-label="Plocha dispozice"
       className={className}
       role="img"
     >

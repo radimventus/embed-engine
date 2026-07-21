@@ -37,11 +37,11 @@ describe("project", () => {
 
     assert.equal(layout?.weight, 0.92);
     assert.equal(layout?.rank, 1);
-    assert.equal(interpretation.activeTopic, "Layout");
-    assert.ok(interpretation.conversationContext.includes("Layout"));
+    assert.equal(interpretation.activeTopic, "Dispozice");
+    assert.ok(interpretation.conversationContext.includes("Dispozice"));
     assert.ok(interpretation.recommendedQuestions.length > 0);
     assert.equal(interpretation.recommendedQuestions[0]?.highlighted, true);
-    assert.ok(interpretation.nextAction.includes("Layout"));
+    assert.ok(interpretation.nextAction.includes("Dispozice"));
     assert.equal(interpretation.priorities.length, INTERPRETATION_PRIORITY_IDS.length);
   });
 
@@ -59,6 +59,6 @@ describe("project", () => {
     const interpretation = project(state);
     assert.equal(interpretation.events.length, 1);
     assert.equal(interpretation.events[0]?.label, "Floor selected");
-    assert.equal(interpretation.activeTopic, "Plot");
+    assert.equal(interpretation.activeTopic, "Pozemek");
   });
 });

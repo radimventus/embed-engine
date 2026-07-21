@@ -10,7 +10,7 @@ import {
 export function RoomIndex() {
   return (
     <section
-      aria-label="Room Index"
+      aria-label="Seznam místností"
       className="grid h-full min-w-0 shrink-0 -translate-x-[5px] grid-rows-[auto_1fr_100px] content-start items-start gap-0 overflow-x-hidden px-section pb-section"
     >
       <div className={SPATIAL_TERMINAL_HEADER_CLASS} aria-hidden="true">

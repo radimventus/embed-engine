@@ -30,17 +30,18 @@ export type InterpretationPriorityId =
 
 const BASE_WEIGHT = 0.35;
 
+/** Customer-facing Priority titles (pilot locale: Czech). */
 const PRIORITY_TITLES: Record<InterpretationPriorityId, string> = {
-  energy: "Energy",
-  "operating-costs": "Operating costs",
-  layout: "Layout",
-  privacy: "Privacy",
+  energy: "Energie",
+  "operating-costs": "Provozní náklady",
+  layout: "Dispozice",
+  privacy: "Soukromí",
   design: "Design",
-  quality: "Quality",
-  plot: "Plot",
-  investment: "Investment",
-  maintenance: "Maintenance",
-  flexibility: "Flexibility",
+  quality: "Kvalita",
+  plot: "Pozemek",
+  investment: "Investice",
+  maintenance: "Údržba",
+  flexibility: "Flexibilita",
 };
 
 type QuestionSeed = {
@@ -57,14 +58,14 @@ const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
       question: "Jaký je energetický standard a náklady na vytápění?",
       answer:
         "Modulární skladba umožňuje cílit nízkoenergetický provoz — konkrétní bilanci upřesníme podle orientace a skladby obálky.",
-      why: "Energy is now a leading priority in your decision filter.",
+      why: "Energie je teď vedoucí Prioritou ve vašem filtru.",
     },
     {
       id: "energy-solar",
       question: "Lze připravit dům na fotovoltaiku?",
       answer:
         "Ano — střecha a rozvody lze připravit tak, aby FVE byla přirozeným dalším krokem bez zásahů do dispozice.",
-      why: "Recommended because you are focusing on technical / energy parameters.",
+      why: "Doporučeno, protože se soustředíte na technické a energetické parametry.",
     },
   ],
   "operating-costs": [
@@ -73,7 +74,7 @@ const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
       question: "Jaké jsou typické provozní a servisní náklady?",
       answer:
         "Provoz držíme predikovatelný modularitou a jednoduchou údržbou — detailní model ukážeme v rozhodnutí o prioritách.",
-      why: "Operating costs rose in your Interpretation.",
+      why: "Provozní náklady vystoupily ve vaší Interpretaci.",
     },
   ],
   layout: [
@@ -82,14 +83,14 @@ const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
       question: "Jak spolu fungují denní a noční zóna?",
       answer:
         "Dispozice odděluje společný život od klidu — po prohlídce místností je to přesně to, na co se teď díváte.",
-      why: "Because you explored rooms / the floor plan.",
+      why: "Protože jste prošli místnosti / půdorys.",
     },
     {
       id: "layout-flex",
       question: "Lze dispozici upravit bez změny celkové stopy?",
       answer:
         "Ano v rámci modulární mřížky — změny zůstávají kontrolované a čitelné.",
-      why: "Layout is active in your current Focus.",
+      why: "Dispozice je aktivní ve vašem současném Focusu.",
     },
   ],
   privacy: [
@@ -98,7 +99,7 @@ const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
       question: "Jak je řešeno soukromí vůči ulici a sousedům?",
       answer:
         "Orientace oken a vstupních zón chrání intimitu — upravitelná podle pozemku.",
-      why: "Privacy became relevant in your decision filter.",
+      why: "Soukromí se stalo relevantní ve vašem filtru.",
     },
   ],
   design: [
@@ -107,7 +108,7 @@ const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
       question: "Jaký charakter má exteriér a materiály?",
       answer:
         "Exteriér drží klidnou soudobou řeč — galerie ukazuje přesně ten vizuální tón.",
-      why: "Because you opened gallery or media.",
+      why: "Protože jste otevřeli galerii nebo média.",
     },
   ],
   quality: [
@@ -116,7 +117,7 @@ const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
       question: "Jak je zajištěna kvalita provedení?",
       answer:
         "Výroba modulů probíhá v kontrolovaném prostředí — méně rizik než čistě staveništní stavba.",
-      why: "Quality is part of your elevated priorities.",
+      why: "Kvalita je součástí vašich zvýšených Priorit.",
     },
   ],
   plot: [
@@ -125,7 +126,7 @@ const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
       question: "Hodí se dům i na užší pozemek?",
       answer:
         "Ano — stopa a úrovně lze sladit s pozemkem; právě prohlížíte prostorové úrovně domu.",
-      why: "Because you switched floors / spatial levels.",
+      why: "Protože jste přepnuli patro / prostorové úrovně.",
     },
   ],
   investment: [
@@ -134,14 +135,14 @@ const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
       question: "Jaká je logika návratnosti při více jednotkách?",
       answer:
         "Rozhodnutí o investici navazujeme na vaše priority — ne na obecné marketingové sliby.",
-      why: "Investment / financing is your active topic.",
+      why: "Investice / financování je vaše aktivní téma.",
     },
     {
       id: "invest-finance",
       question: "Jak probíhá financování a splátkový scénář?",
       answer:
-        "Scénář sestavíme podle vašeho filtru priorit — AI kontext už na to reaguje.",
-      why: "Recommended from your current decision focus.",
+        "Scénář sestavíme podle vašeho filtru priorit — kontext průvodce na to už reaguje.",
+      why: "Doporučeno z vašeho aktuálního Focusu.",
     },
   ],
   maintenance: [
@@ -150,7 +151,7 @@ const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
       question: "Jak náročná je dlouhodobá údržba?",
       answer:
         "Cílem je nízká zátěž — materiály a detaily volíme s ohledem na životní cyklus.",
-      why: "Maintenance appears in your Interpretation.",
+      why: "Údržba se objevuje ve vaší Interpretaci.",
     },
   ],
   flexibility: [
@@ -159,7 +160,7 @@ const QUESTION_BANK: Record<InterpretationPriorityId, readonly QuestionSeed[]> =
       question: "Jak dům poroste s rodinou v čase?",
       answer:
         "Flexibilita modulů umožňuje fáze — dnešní Focus určuje, co řešíme jako první.",
-      why: "Flexibility is elevated in your filter.",
+      why: "Flexibilita je zvýšená ve vašem filtru.",
     },
   ],
 };
@@ -169,15 +170,15 @@ const DEFAULT_QUESTIONS: readonly QuestionSeed[] = [
     id: "default-start",
     question: "Čím mám začít prohlídku domu?",
     answer:
-      "Začněte místnostmi a patrem, které vás zajímají — Interpretation podle toho nastaví priority a doporučení.",
-    why: "Start here to teach the engine what matters to you.",
+      "Začněte místnostmi a patrem, které vás zajímají — Interpretace podle toho nastaví Priority a doporučení.",
+    why: "Začněte zde, abyste systému ukázali, co je pro vás důležité.",
   },
   {
     id: "default-priority",
     question: "Jak si nastavím vlastní priority rozhodování?",
     answer:
-      "Klikněte na karty priorit nebo procházejte dům — obojí posílá Signaly do stejného DecisionState.",
-    why: "Helps you drive the shared Decision Experience.",
+      "Klikněte na karty Priorit nebo procházejte dům — obojí posílá Signaly do stejného DecisionState.",
+    why: "Pomáhá řídit společnou rozhodovací Experience.",
   },
 ];
 
@@ -211,19 +212,19 @@ function reasonFor(
   }
 
   if (focus.questionId === id) {
-    return `You selected ${PRIORITY_TITLES[id]} as a decision focus.`;
+    return `Zvolili jste Prioritu ${PRIORITY_TITLES[id]} jako Focus rozhodování.`;
   }
 
   if (id === "layout" && focus.roomId !== undefined) {
-    return "Because you explored a room / floor plan.";
+    return "Protože jste prošli místnost / půdorys.";
   }
 
   if (id === "design" && focus.mediaId !== undefined) {
-    return "Because you opened gallery or media.";
+    return "Protože jste otevřeli galerii nebo média.";
   }
 
   if (id === "plot" && focus.floorId !== undefined) {
-    return "Because you switched floors / spatial levels.";
+    return "Protože jste přepnuli patro / prostorové úrovně.";
   }
 
   return undefined;
@@ -258,20 +259,20 @@ function eventLabel(signal: Signal): string {
   switch (signal.type) {
     case SignalType.ROOM_VIEWED:
       return typeof signal.payload.roomId === "string"
-        ? `Room: ${signal.payload.roomId}`
-        : "Room viewed";
+        ? `Místnost: ${signal.payload.roomId}`
+        : "Prohlédnuta místnost";
     case SignalType.MEDIA_OPENED:
       return typeof signal.payload.mediaId === "string"
-        ? `Media: ${signal.payload.mediaId}`
-        : "Media opened";
+        ? `Média: ${signal.payload.mediaId}`
+        : "Otevřena média";
     case SignalType.FLOOR_CHANGED:
       return typeof signal.payload.floorId === "string"
-        ? `Floor: ${signal.payload.floorId}`
-        : "Floor changed";
+        ? `Patro: ${signal.payload.floorId}`
+        : "Změněno patro";
     case SignalType.QUESTION_OPENED:
       return typeof signal.payload.questionId === "string"
-        ? `Priority: ${signal.payload.questionId}`
-        : "Question opened";
+        ? `Priorita: ${signal.payload.questionId}`
+        : "Otevřena otázka";
     default:
       return signal.type;
   }
@@ -354,31 +355,31 @@ function projectConversation(
 
   const focusBits: string[] = [];
   if (focus.roomId) {
-    focusBits.push(`room ${focus.roomId}`);
+    focusBits.push(`místnost ${focus.roomId}`);
   }
   if (focus.floorId) {
-    focusBits.push(`floor ${focus.floorId}`);
+    focusBits.push(`patro ${focus.floorId}`);
   }
   if (focus.mediaId) {
-    focusBits.push(`media ${focus.mediaId}`);
+    focusBits.push(`média ${focus.mediaId}`);
   }
 
   const conversationContext =
     focusBits.length > 0
-      ? `You are deciding with emphasis on ${title}. Current focus: ${focusBits.join(", ")}.`
-      : `You are calibrating priorities. Leading topic: ${title}.`;
+      ? `Rozhodujete s důrazem na ${title}. Aktuální Focus: ${focusBits.join(", ")}.`
+      : `Kalibrujete Priority. Vedoucí téma: ${title}.`;
 
   const recommendations = Object.freeze(
     top.map(
       (priority) =>
-        `Lean into ${PRIORITY_TITLES[priority.id as InterpretationPriorityId]} (${Math.round(priority.weight * 100)}).`,
+        `Soustřeďte se na ${PRIORITY_TITLES[priority.id as InterpretationPriorityId]} (${Math.round(priority.weight * 100)}).`,
     ),
   );
 
   const nextAction =
     top[0] !== undefined
-      ? `Ask about ${PRIORITY_TITLES[top[0].id as InterpretationPriorityId]} — it leads your filter.`
-      : "Explore a room or select a priority card to teach the engine.";
+      ? `Zeptejte se na ${PRIORITY_TITLES[top[0].id as InterpretationPriorityId]} — vede váš filtr.`
+      : "Projděte místnost nebo vyberte kartu Priority, ať systém ví, co je důležité.";
 
   return {
     conversationContext,

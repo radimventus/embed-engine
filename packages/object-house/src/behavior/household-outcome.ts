@@ -27,18 +27,18 @@ export type HouseholdChoice = {
 export const HOUSEHOLD_CHOICES: readonly HouseholdChoice[] = Object.freeze([
   {
     id: "couple",
-    label: "Couple",
-    detail: "Two adults · no children · light WFH",
+    label: "Pár",
+    detail: "Dva dospělí · bez dětí · občasná práce z domu",
   },
   {
     id: "family",
-    label: "Family",
-    detail: "Parents + child · school mornings",
+    label: "Rodina",
+    detail: "Rodiče + dítě · školní rána",
   },
   {
     id: "family-wfh",
-    label: "Family + WFH",
-    detail: "Family · heavy work-from-home",
+    label: "Rodina + práce z domu",
+    detail: "Rodina · intenzivní práce z domu",
   },
 ]);
 
@@ -54,25 +54,25 @@ export function resolveDispositionOutcome(
       return Object.freeze({
         status: "strong-fit" as const,
         summary:
-          "Strong fit for a couple: day/night split and a generous living room match quiet evenings together. Why it fits you: no school-morning bath rush, and WFH can borrow living without competing with children. Still accept a modest kitchen and daily stairs.",
+          "Silná shoda pro pár: denní a noční zóna a velkorysý obývací pokoj sedí na klidné večery spolu. Proč vám to sedí: žádný školní nápor na koupelnu a práci z domu lze přesunout do obýváku. Počítejte s menší kuchyní a každodenními schody.",
       });
     case "family-wfh":
       return Object.freeze({
         status: "weak-fit" as const,
         summary:
-          "Weak fit for a family with heavy WFH: the plan has no dedicated study. Why this matches your household: parents, child, and work will compete for living and bedroom space, on top of one bath and daily stairs. Pursue only if you accept serious compromises — or walk away on layout grounds.",
+          "Slabá shoda pro rodinu s intenzivní prací z domu: plán nemá samostatnou pracovnu. Proč to sedí na vaši domácnost: rodiče, dítě a práce se potkají v obýváku nebo ložnici — navíc jedna koupelna a každodenní schody. Pokračujte jen pokud tyto kompromisy přijmete, nebo dispozici odmítněte.",
       });
     case "family":
       return Object.freeze({
         status: "conditional-fit" as const,
         summary:
-          "Conditional fit for a typical family path: day/night split supports social evenings and quiet nights. Why it fits you: a child gets their own room and zones stay clear. Conditions: modest kitchen, one bath on school mornings, daily stairs, and no true study.",
+          "Podmíněná shoda pro typickou rodinu: denní a noční zóna podporuje společné večery i klidný spánek. Proč vám to sedí: dítě má vlastní pokoj a zóny zůstávají čisté. Podmínky: menší kuchyně, jedna koupelna o školních ránech, každodenní schody a žádná opravdová pracovna.",
       });
     default:
       return Object.freeze({
         status: "conditional-fit" as const,
         summary:
-          "Conditional fit: day/night split can work. Accept modest kitchen, one bath, daily stairs, and no dedicated study — or reject on disposition grounds. Tell us your household next time for a sharper verdict.",
+          "Podmíněná shoda: denní a noční zóna může fungovat. Přijměte menší kuchyni, jednu koupelnu, každodenní schody a absenci pracovny — nebo dispozici odmítněte. Až příště uveďte domácnost, bude verdikt přesnější.",
       });
   }
 }
@@ -82,12 +82,12 @@ export function recommendPromptFor(
 ): string {
   switch (profile) {
     case "couple":
-      return "For a couple, this layout leans strong: quiet nights upstairs and a generous living room downstairs. Confirm if you accept a modest kitchen and stairs.";
+      return "Pro pár dispozice vychází silně: klid nahoře a velkorysý obývák dole. Potvrďte, pokud přijmete menší kuchyni a schody.";
     case "family-wfh":
-      return "For a family with heavy WFH, this layout leans weak: no study means work borrows living or bedroom. Confirm only if those compromises are acceptable.";
+      return "Pro rodinu s intenzivní prací z domu dispozice vychází slabě: bez pracovny se práce stěhuje do obýváku nebo ložnice. Potvrďte jen pokud kompromisy přijmete.";
     case "family":
-      return "For a family with a child, this layout is conditional: zones work, but kitchen, bath, and stairs are real conditions. Confirm the verdict.";
+      return "Pro rodinu s dítětem je dispozice podmíněná: zóny fungují, ale kuchyně, koupelna a schody jsou reálné podmínky. Potvrďte verdikt.";
     default:
-      return "Confirm the disposition verdict for your household — or walk away on layout grounds.";
+      return "Potvrďte verdikt dispozice pro vaši domácnost — nebo dispozici odmítněte.";
   }
 }

@@ -22,18 +22,18 @@ export function PriorityProgress({
       <div className="flex min-w-0 flex-col gap-1">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1" aria-live="polite">
           <p className="text-sm leading-none text-embed-foreground-primary/70">
-            <span className="font-medium tracking-wide">Priorities elevated</span>{' '}
+            <span className="font-medium tracking-wide">Zvýšené Priority</span>{' '}
             <span className="tabular-nums font-semibold text-embed-foreground-primary">
               {selectedCount} / {minimumSelection}
             </span>
           </p>
           {minimumMet ? (
             <p className="text-sm font-medium leading-none tracking-wide text-embed-foreground-primary">
-              ✓ Ready for Decision Terminal
+              ✓ Připraveno pro Rozhodovací terminál
             </p>
           ) : (
             <p className="text-sm leading-none text-embed-foreground-primary/55">
-              Raise Priorities or explore the house
+              Zvyšte Priority nebo procházejte dům
             </p>
           )}
         </div>

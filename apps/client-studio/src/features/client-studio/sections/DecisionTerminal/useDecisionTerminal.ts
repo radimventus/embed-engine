@@ -161,8 +161,8 @@ export function useDecisionTerminal() {
       ? recommendPromptFor(sessionProfile ?? undefined)
       : definition?.advisorPrompt;
 
-  const packCta = definition?.ctaLabel ?? 'Continue';
-  const pendingLabel = 'Updating…';
+  const packCta = definition?.ctaLabel ?? 'Pokračovat';
+  const pendingLabel = 'Aktualizuji…';
 
   const moveAction: TerminalAction | null = useMemo(() => {
     if (phase !== 'move' || activeMoveId === null || definition === null) {
@@ -171,13 +171,13 @@ export function useDecisionTerminal() {
 
     if (activeMoveId === 'layout.discover-day-zone') {
       return {
-        label: pending ? pendingLabel : (definition.ctaLabel ?? 'Open living room'),
+        label: pending ? pendingLabel : (definition.ctaLabel ?? 'Otevřít obývací pokoj'),
         run: () => openRoom('living-room'),
       };
     }
     if (activeMoveId === 'layout.discover-night-zone') {
       return {
-        label: pending ? pendingLabel : (definition.ctaLabel ?? 'Open bedroom'),
+        label: pending ? pendingLabel : (definition.ctaLabel ?? 'Otevřít ložnici'),
         run: () => openRoom('bedroom'),
       };
     }

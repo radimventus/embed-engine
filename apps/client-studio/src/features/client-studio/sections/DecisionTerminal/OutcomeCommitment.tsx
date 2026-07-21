@@ -8,7 +8,11 @@ import {
 } from '@embed-engine/object-house';
 import { PrimaryButton } from '@embed-engine/ui';
 
-import { PILOT_SECTION_IDS, PILOT_TERMS } from '../../pilot/pilotVocabulary';
+import {
+  formatOutcomeStatusCs,
+  PILOT_SECTION_IDS,
+  PILOT_TERMS,
+} from '../../pilot/pilotVocabulary';
 import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from '../PriorityEngine/priority-engine-layout';
 
 export type LayoutCommitment = 'continue-with-layout' | 'layout-does-not-fit';
@@ -72,16 +76,17 @@ export function OutcomeCommitment({
         data-layout-closed="true"
       >
         <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
-          Commitment recorded
+          {PILOT_TERMS.commitment} zaznamenán
         </p>
         <p className="mt-2 text-sm font-medium text-embed-foreground-primary">
           {commitment === 'continue-with-layout'
-            ? 'You chose to continue with this layout.'
-            : 'You decided this layout does not fit your needs.'}
+            ? 'Zvolili jste pokračovat s touto dispozicí.'
+            : 'Rozhodli jste, že tato dispozice vám nevyhovuje.'}
         </p>
         <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">
-          Both paths are a successful Decision. Layout is complete. Next Step:{' '}
-          {PILOT_TERMS.audit} — whether the plot supports how you want to live.
+          Obě cesty jsou úspěšné {PILOT_TERMS.decision.toLowerCase()}. Dispozice je
+          uzavřená. {PILOT_TERMS.nextStep}: {PILOT_TERMS.audit} — zda pozemek
+          podporuje, jak chcete bydlet.
         </p>
         {nextAction ? (
           <p className="mt-2 text-xs leading-relaxed text-embed-foreground-primary/55">
@@ -102,7 +107,9 @@ export function OutcomeCommitment({
             });
           }}
         >
-          {pending ? `Opening ${PILOT_TERMS.audit}…` : `Continue to ${PILOT_TERMS.audit}`}
+          {pending
+            ? `Otevírám ${PILOT_TERMS.audit}…`
+            : `Pokračovat k ${PILOT_TERMS.audit}u`}
         </PrimaryButton>
       </aside>
     );
@@ -118,17 +125,17 @@ export function OutcomeCommitment({
       data-commitment="pending"
     >
       <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
-        Your layout {PILOT_TERMS.outcome}
+        Váš {PILOT_TERMS.outcome.toLowerCase()} dispozice
       </p>
-      <p className="mt-2 text-sm font-medium capitalize text-embed-foreground-primary">
-        {formatFitClass(outcome.status)}
+      <p className="mt-2 text-sm font-medium text-embed-foreground-primary">
+        {formatOutcomeStatusCs(outcome.status)}
       </p>
       <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">
         {outcome.summary}
       </p>
 
       <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
-        Decision factors
+        Faktory Rozhodnutí
       </p>
       <ul className="mt-2 flex flex-col gap-1.5" data-testid="decision-factors">
         {factors.map((factor) => (
@@ -137,11 +144,11 @@ export function OutcomeCommitment({
       </ul>
 
       <p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
-        Your {PILOT_TERMS.commitment}
+        Váš {PILOT_TERMS.commitment}
       </p>
       <p className="mt-1 text-xs leading-relaxed text-embed-foreground-primary/60">
-        This is your Decision about the layout — not a score to accept. Either
-        choice is a successful Outcome.
+        Toto je vaše Rozhodnutí o dispozici — ne skóre k přijetí. Obě volby jsou
+        úspěšný {PILOT_TERMS.outcome.toLowerCase()}.
       </p>
 
       <PrimaryButton
@@ -151,7 +158,7 @@ export function OutcomeCommitment({
         data-testid="decision-terminal-cta"
         onClick={() => choose('continue-with-layout')}
       >
-        Continue with this layout
+        Pokračovat s touto dispozicí
       </PrimaryButton>
       <button
         type="button"
@@ -160,7 +167,7 @@ export function OutcomeCommitment({
         disabled={pending}
         onClick={() => choose('layout-does-not-fit')}
       >
-        This layout doesn&apos;t fit my needs
+        Tato dispozice mi nevyhovuje
       </button>
     </aside>
   );
@@ -176,8 +183,4 @@ function DecisionFactorRow({ factor }: { factor: DecisionFactor }) {
       <span>{factor.label}</span>
     </li>
   );
-}
-
-function formatFitClass(status: string): string {
-  return status.replace(/-/g, ' ');
 }

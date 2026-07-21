@@ -11,7 +11,7 @@ import {
 export function FloorPlanExplorer() {
   return (
     <section
-      aria-label="Floor Plan Explorer"
+      aria-label="Půdorys"
       className={SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS}
     >
       <div className="relative flex min-h-0 flex-col justify-end">
