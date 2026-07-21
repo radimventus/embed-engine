@@ -81,8 +81,6 @@ export function DecisionTerminal() {
   }
 
   if (phase === 'idle') {
-    const topic = interpretation?.activeTopic;
-    const next = interpretation?.nextAction;
     return (
       <TerminalShell
         testId="decision-terminal"
@@ -90,20 +88,9 @@ export function DecisionTerminal() {
         pending={pending}
         experienceId={experience.id}
         eyebrow={PILOT_TERMS.decisionTerminal}
-        title={
-          topic
-            ? `Veďte Rozhodnutí: ${topic}`
-            : 'Začněte Rozhodnutí o dispozici'
-        }
-        body={
-          next ??
-          'Dispozice první. Krása druhá. Jedna cesta od Priority k jasnému Výsledku dispozice.'
-        }
-        hint={
-          topic
-            ? 'Navazuje na aktivní Prioritu — ostatní plochy zůstávají synchronní.'
-            : undefined
-        }
+        title={experience.title}
+        body={experience.summary}
+        hint={`Focus: ${experience.focus.join(' · ')}`}
         action={{
           label: pending ? 'Spouštím…' : 'Začít Rozhodnutí o dispozici',
           run: startDialogue,

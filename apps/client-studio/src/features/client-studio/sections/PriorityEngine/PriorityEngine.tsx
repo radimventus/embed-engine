@@ -24,8 +24,7 @@ import { useDecisionCards } from './useDecisionCards';
 const PILOT_OBJECT_ID = 'house-modern-01';
 
 /**
- * Priority Engine — approved Client Studio baseline (MVP v1.0).
- * Cards + IntroText; PrioritySelection → ExperienceComposer → Experience.
+ * Priority Engine — PrioritySelection → ExperienceComposer → Experience → Terminal.
  */
 export function PriorityEngine() {
   const { cards, categories, setImportance, toggleCard } = useDecisionCards();

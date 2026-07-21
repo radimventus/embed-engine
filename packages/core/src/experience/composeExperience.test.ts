@@ -6,7 +6,6 @@ import {
   createExperienceComposer,
   type ExperienceComposeInput,
 } from "./composeExperience";
-import { createEmptyPrioritySelection } from "./PrioritySelection";
 
 const OBJECT = Object.freeze({ id: "house-modern-01" });
 
@@ -29,6 +28,7 @@ describe("composeExperience", () => {
     assert.equal(typeof experience.summary, "string");
     assert.ok(Array.isArray(experience.focus));
     assert.ok(experience.focus.length > 0);
+    assert.ok(Array.isArray(experience.recommendations));
   });
 
   it("is deterministic for the same input", () => {
@@ -41,29 +41,35 @@ describe("composeExperience", () => {
     const input = inputWith([]);
     assert.deepEqual(composer(input), composeExperience(input));
   });
+
+  it("keeps object identity in Experience id without changing Object", () => {
+    const experience = composeExperience(inputWith(["design"]));
+    assert.match(experience.id, /^experience\.house-modern-01\./);
+  });
 });
 
-describe("priority → ExperienceComposer pipeline", () => {
-  it("accepts changing PrioritySelection while Experience stays identical", () => {
-    const empty = inputWith([]);
-    const selected = inputWith(["layout", "energy", "privacy"]);
+describe("first interpretation", () => {
+  it("produces different Experiences for different PrioritySelections", () => {
+    const family = composeExperience(inputWith(["layout"]));
+    const investment = composeExperience(inputWith(["investment"]));
+    const design = composeExperience(inputWith(["design"]));
+    const sustainability = composeExperience(inputWith(["energy"]));
 
-    assert.notDeepEqual(empty.priorities, selected.priorities);
-    assert.notDeepEqual(
-      empty.priorities.selected,
-      selected.priorities.selected,
+    assert.notEqual(family.title, investment.title);
+    assert.notEqual(family.summary, design.summary);
+    assert.notDeepEqual(family.focus, sustainability.focus);
+    assert.notDeepEqual(investment.recommendations, design.recommendations);
+
+    assert.equal(family.title, "Family living interpretation");
+    assert.equal(investment.title, "Investment interpretation");
+    assert.equal(design.title, "Design interpretation");
+    assert.equal(sustainability.title, "Sustainability interpretation");
+  });
+
+  it("resolves mapped priority by deterministic precedence", () => {
+    const experience = composeExperience(
+      inputWith(["energy", "layout", "design"]),
     );
-
-    const experienceEmpty = composeExperience(empty);
-    const experienceSelected = composeExperience(selected);
-
-    assert.deepEqual(experienceEmpty, experienceSelected);
-    assert.deepEqual(
-      experienceEmpty,
-      composeExperience({
-        object: OBJECT,
-        priorities: createEmptyPrioritySelection(),
-      }),
-    );
+    assert.equal(experience.title, "Family living interpretation");
   });
 });

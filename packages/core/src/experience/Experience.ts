@@ -7,4 +7,5 @@ export type Experience = {
   readonly title: string;
   readonly summary: string;
   readonly focus: readonly string[];
+  readonly recommendations: readonly string[];
 };

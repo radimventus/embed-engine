@@ -7,25 +7,42 @@ type IntroTextProps = {
 };
 
 /**
- * Placeholder terminal surface — receives composed Experience without changing copy.
+ * Decision Terminal placeholder — renders composed Experience only.
+ * Does not interpret Priority; PriorityEngine owns composition.
  */
 export function IntroText({ experience }: IntroTextProps) {
   return (
-    <div
-      className={PRIORITY_ENGINE_INTRO_PANEL_CLASS}
+    <aside
+      className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} overflow-y-auto`}
       data-experience-id={experience.id}
-      data-testid="experience-placeholder"
+      data-testid="decision-terminal"
+      aria-label="Decision Terminal"
     >
-      <p className="text-sm font-medium leading-relaxed text-embed-foreground-primary">
-        Calibrate your decision filter
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
+        Decision Terminal
       </p>
-      <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/70">
-        Select the priorities that matter most to you. Your choices define how this property will
-        be interpreted — not how it is scored.
+      <p className="mt-2 text-sm font-medium text-embed-foreground-primary">
+        {experience.title}
       </p>
-      <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/70">
-        Adjust importance for each selected priority to reflect what truly influences your decision.
+      <p className="mt-3 text-sm leading-relaxed text-embed-foreground-primary/80">
+        {experience.summary}
       </p>
-    </div>
+      <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
+        Focus
+      </p>
+      <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-embed-foreground-primary/70">
+        {experience.focus.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+      <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
+        Recommendations
+      </p>
+      <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-embed-foreground-primary/70">
+        {experience.recommendations.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ul>
+    </aside>
   );
 }
