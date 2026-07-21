@@ -132,6 +132,30 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           <p className="leading-relaxed">{experience.confidence.explanation}</p>
         </div>
       </section>
+
+      <section className="mt-section" aria-labelledby="decision-report-actions">
+        <h3
+          id="decision-report-actions"
+          className="text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45"
+        >
+          Recommended next steps
+        </h3>
+        <ul
+          className="mt-2 list-disc space-y-2 pl-5 text-sm text-embed-foreground-primary/70"
+          data-testid="decision-report-actions"
+        >
+          {experience.actions.map((item) => (
+            <li key={item.id}>
+              <span className="font-medium text-embed-foreground-primary">
+                {item.label}
+              </span>
+              <span className="mt-0.5 block text-[11px] uppercase tracking-wide text-embed-foreground-primary/45">
+                {item.type} · {item.intent}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </section>
     </article>
   );
 }

@@ -1,5 +1,6 @@
 import type {
   Experience,
+  ExperienceAction,
   ExperienceConcern,
   ExperienceConfidence,
   ExperienceEvidence,
@@ -30,6 +31,15 @@ function confidence(
   explanation: string,
 ): ExperienceConfidence {
   return Object.freeze({ level, score, explanation });
+}
+
+function action(
+  id: string,
+  label: string,
+  type: ExperienceAction["type"],
+  intent: ExperienceAction["intent"],
+): ExperienceAction {
+  return Object.freeze({ id, label, type, intent });
 }
 
 function fragment(
@@ -121,6 +131,25 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       ),
     }),
   ),
+  fragment("family.actions", ["layout"], () =>
+    Object.freeze({
+      actions: Object.freeze([
+        action("family.viewing", "Schedule a viewing", "primary", "explore"),
+        action(
+          "family.schools",
+          "Explore nearby schools",
+          "secondary",
+          "explore",
+        ),
+        action(
+          "family.compare",
+          "Compare with similar homes",
+          "secondary",
+          "compare",
+        ),
+      ]),
+    }),
+  ),
 
   fragment("investment.narrative", ["investment"], () =>
     Object.freeze({
@@ -180,6 +209,25 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
         76,
         "Most investment indicators are positive.",
       ),
+    }),
+  ),
+  fragment("investment.actions", ["investment"], () =>
+    Object.freeze({
+      actions: Object.freeze([
+        action("investment.roi", "Calculate ROI", "primary", "calculate"),
+        action(
+          "investment.opex",
+          "Compare operating costs",
+          "secondary",
+          "compare",
+        ),
+        action(
+          "investment.advisor",
+          "Contact advisor",
+          "secondary",
+          "contact",
+        ),
+      ]),
     }),
   ),
 
@@ -243,6 +291,19 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       ),
     }),
   ),
+  fragment("design.actions", ["design"], () =>
+    Object.freeze({
+      actions: Object.freeze([
+        action(
+          "design.gallery",
+          "View architectural gallery",
+          "primary",
+          "explore",
+        ),
+        action("design.materials", "Explore materials", "secondary", "explore"),
+      ]),
+    }),
+  ),
 
   fragment("sustainability.narrative", ["energy"], () =>
     Object.freeze({
@@ -304,6 +365,24 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       ),
     }),
   ),
+  fragment("sustainability.actions", ["energy"], () =>
+    Object.freeze({
+      actions: Object.freeze([
+        action(
+          "sustainability.energy",
+          "Review energy details",
+          "primary",
+          "explore",
+        ),
+        action(
+          "sustainability.opex",
+          "Calculate operating costs",
+          "secondary",
+          "calculate",
+        ),
+      ]),
+    }),
+  ),
 
   fragment("baseline.narrative", [], () =>
     Object.freeze({
@@ -353,6 +432,24 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       ),
     }),
   ),
+  fragment("baseline.actions", [], () =>
+    Object.freeze({
+      actions: Object.freeze([
+        action(
+          "baseline.select-priority",
+          "Select a priority lens",
+          "primary",
+          "explore",
+        ),
+        action(
+          "baseline.compare-later",
+          "Compare after interpretation opens",
+          "secondary",
+          "compare",
+        ),
+      ]),
+    }),
+  ),
 ]);
 
 export function resolveActiveLens(
@@ -393,6 +490,7 @@ export function mergeExperiencePartials(
   let evidence: Experience["evidence"] | undefined;
   let concerns: Experience["concerns"] | undefined;
   let confidence: Experience["confidence"] | undefined;
+  let actions: Experience["actions"] | undefined;
 
   for (const part of parts) {
     if (part.title !== undefined) title = part.title;
@@ -404,6 +502,7 @@ export function mergeExperiencePartials(
     if (part.evidence !== undefined) evidence = part.evidence;
     if (part.concerns !== undefined) concerns = part.concerns;
     if (part.confidence !== undefined) confidence = part.confidence;
+    if (part.actions !== undefined) actions = part.actions;
   }
 
   if (
@@ -413,7 +512,8 @@ export function mergeExperiencePartials(
     recommendations === undefined ||
     evidence === undefined ||
     concerns === undefined ||
-    confidence === undefined
+    confidence === undefined ||
+    actions === undefined
   ) {
     throw new Error("Experience fragments did not assemble a complete Experience");
   }
@@ -426,5 +526,6 @@ export function mergeExperiencePartials(
     evidence,
     concerns,
     confidence,
+    actions,
   });
 }

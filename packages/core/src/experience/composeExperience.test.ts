@@ -38,6 +38,8 @@ describe("composeExperience", () => {
     assert.ok(Number.isInteger(experience.confidence.score));
     assert.ok(experience.confidence.score >= 0);
     assert.ok(experience.confidence.score <= 100);
+    assert.ok(Array.isArray(experience.actions));
+    assert.ok(experience.actions.length >= 2);
   });
 
   it("is deterministic for the same input", () => {
@@ -180,5 +182,33 @@ describe("experience fragments", () => {
     assert.equal(family.evidence[0]?.title, "Four bedrooms");
     assert.equal(family.concerns[0]?.title, "Children's room on upper floor");
     assert.equal(family.confidence.score, 92);
+  });
+});
+
+describe("experience actions", () => {
+  it("produces different Actions for different PrioritySelections", () => {
+    const family = composeExperience(inputWith(["layout"]));
+    const investment = composeExperience(inputWith(["investment"]));
+    const design = composeExperience(inputWith(["design"]));
+    const sustainability = composeExperience(inputWith(["energy"]));
+
+    for (const experience of [family, investment, design, sustainability]) {
+      assert.ok(experience.actions.length >= 2);
+      assert.ok(experience.actions.length <= 3);
+      for (const item of experience.actions) {
+        assert.equal(typeof item.id, "string");
+        assert.equal(typeof item.label, "string");
+        assert.ok(["primary", "secondary"].includes(item.type));
+        assert.ok(
+          ["explore", "compare", "contact", "calculate"].includes(item.intent),
+        );
+      }
+    }
+
+    assert.equal(family.actions[0]?.label, "Schedule a viewing");
+    assert.equal(investment.actions[0]?.label, "Calculate ROI");
+    assert.equal(design.actions[0]?.label, "View architectural gallery");
+    assert.equal(sustainability.actions[0]?.label, "Review energy details");
+    assert.notDeepEqual(family.actions, design.actions);
   });
 });

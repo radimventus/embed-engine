@@ -1,5 +1,6 @@
 export type {
   Experience,
+  ExperienceAction,
   ExperienceConcern,
   ExperienceConfidence,
   ExperienceEvidence,
