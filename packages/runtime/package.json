@@ -1,0 +1,32 @@
+{
+  "name": "@embed-engine/runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./priority": {
+      "types": "./dist/priority/index.d.ts",
+      "import": "./dist/priority/index.js",
+      "default": "./dist/priority/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/priority/PriorityRuntimeEngine.test.ts"
+  },
+  "dependencies": {
+    "@embed-engine/core": "workspace:*"
+  },
+  "devDependencies": {
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  }
+}
