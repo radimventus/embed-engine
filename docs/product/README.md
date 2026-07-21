@@ -16,6 +16,7 @@ Active product SSOT lives here.
 | **`content/priority-garden.md`** | **Garden Decision Journey — referenční obsahový scénář (první Priority)** |
 | **`decision-journey/`** | **Decision Journey Specification (DJS) — UX-001 Proposed draft** |
 | `object-package.md` | Object Package product contract (SSOT) |
+| **`../03-specification-standard/HP-001-House-Package-Specification.md`** | **House Package distribution contract (logical + physical + `house.json`)** |
 | `knowledge/` | Knowledge Foundation (SSOT) |
 | `pilots/` | Pilot Foundation (SSOT process) |
 | `../pilot/` | **CAP-P01 knowledge model** — first Pilot Object + Behavior Pack |

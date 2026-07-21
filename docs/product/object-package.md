@@ -12,6 +12,7 @@
 - Experience: [Experience Projection Principles](../architecture/experience-projection.md)
 - Knowledge: [Knowledge Foundation](./knowledge/README.md)
 - Builder: [Builder Workflow](./builder/Builder_Workflow_Specification_BWS_v0.1.md)
+- House vertical distribution: [HP-001 — House Package Specification](../03-specification-standard/HP-001-House-Package-Specification.md)
 - Historical CommandRuntime: [archive/runtime-decisions-command-runtime-v1.md](../architecture/archive/runtime-decisions-command-runtime-v1.md)
 
 ---
@@ -169,7 +170,8 @@ Object Package          Decision answers
 
 | Use | Do not use for this meaning |
 | --- | --- |
-| Object Package | House Package (unqualified) |
+| Object Package | Competing product-truth SSOT |
+| House Package | Object Package product meaning (use Object Package); House Package = HP-001 distribution encoding for the house vertical |
 | Media Package | Object Package |
 | ExperienceHouse (projected) | Object Package |
 
