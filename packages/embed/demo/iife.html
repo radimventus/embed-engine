@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Embed Loader — IIFE smoke</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="host-header">
+      <p class="host-eyebrow">Host page · IIFE</p>
+      <h1>Embed.iife.js</h1>
+      <p>Po <code>pnpm build</code> v balíčku embed otevři tento soubor přes static server.</p>
+    </header>
+    <div id="demo"></div>
+    <script src="../dist/embed.iife.js"></script>
+    <script>
+      Embed.mount({
+        target: "#demo",
+        fixture: "garden",
+      });
+    </script>
+  </body>
+</html>
