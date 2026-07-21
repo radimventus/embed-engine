@@ -2,11 +2,11 @@
 
 Normative governance for Epoch II. These documents do **not** change Reference Architecture.
 
-| ID | Document | Role |
-| --- | --- | --- |
-| ESS-001 | [Embed Specification Standard](./ESS-001-Embed-Specification-Standard.md) | How Reference Specifications are written and conformed |
-| EQS-001 | [Engineering Quality Standard](./EQS-001-Engineering-Quality-Standard.md) | Definition of Done and quality gates for engineering work |
-| HP-001 | [House Package Specification](./HP-001-House-Package-Specification.md) | House vertical Object Package distribution contract (`house.json`) |
+| ID | Document | Status | Role |
+| --- | --- | --- | --- |
+| ESS-001 | [Embed Specification Standard](./ESS-001-Embed-Specification-Standard.md) | Frozen | How Reference Specifications are written and conformed |
+| EQS-001 | [Engineering Quality Standard](./EQS-001-Engineering-Quality-Standard.md) | Frozen | Definition of Done and quality gates for engineering work |
+| HP-001 | [House Package Specification](./HP-001-House-Package-Specification.md) | Approved | House vertical Object Package distribution contract (`house.json`) — authoritative SSOT |
 
 Related:
 

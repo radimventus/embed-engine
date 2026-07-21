@@ -4,14 +4,27 @@
 | --- | --- |
 | **ID** | HP-001 |
 | **Title** | House Package Specification |
-| **Status** | Proposed → **APPROVED (v0.1)** |
+| **Status** | Approved |
 | **Version** | 0.1 |
+| **Owner** | Platform Architecture |
 | **Date** | 2026-07-21 |
+| **Approved** | 2026-07-21 |
+| **Document type** | Reference Specification (ESS-001) |
 | **Normative for** | House Package producers and consumers (loaders, exporters, importers, Client Studio authoring) |
 | **Depends on** | [Object Package — Product Contract](../product/object-package.md), [ESS-001](./ESS-001-Embed-Specification-Standard.md), [Architecture Freeze v0.1](../releases/Architecture%20Freeze%20v0.1.md) |
 | **RFC 2119** | MUST, MUST NOT, SHOULD, SHOULD NOT, MAY (per ESS-001 §3) |
 | **SSOT for** | House Package logical model, physical layout, `house.json` contract, asset and versioning rules |
 | **Not SSOT for** | Runtime Kernel API, Interpretation algorithms, Behavior Packs, Experience projection, React/UI, Cognitive Signals |
+
+---
+
+## Approval Note
+
+HP-001 v0.1 is **Approved** as the authoritative architectural specification for House Package.
+
+This document is the **Single Source of Truth** for the House Package distribution contract (logical model, physical layout, `house.json`, assets, and versioning). Producers and consumers MUST treat HP-001 as normative until a later controlled revision (ESS-001 lifecycle: Approved → Frozen) supersedes it.
+
+Approval covers status and governance only. Specification content, schema, and scope of v0.1 are unchanged by this approval action.
 
 ---
 
