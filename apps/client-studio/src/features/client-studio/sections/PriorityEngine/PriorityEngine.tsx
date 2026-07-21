@@ -24,7 +24,7 @@ import { useDecisionCards } from './useDecisionCards';
 const PILOT_OBJECT_ID = 'house-modern-01';
 
 /**
- * Priority Engine — PrioritySelection → ExperienceComposer → Experience
+ * Priority Engine — Object → PrioritySelection → Interpretation → Experience
  * → DecisionTerminal + DecisionReport (same Experience, two renderers).
  */
 export function PriorityEngine() {

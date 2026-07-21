@@ -5,7 +5,11 @@ import {
   resolveActiveLens,
   selectExperienceFragments,
 } from "./experienceFragments";
-import type { PrioritySelection } from "./PrioritySelection";
+import type { PriorityId, PrioritySelection } from "./PrioritySelection";
+import {
+  interpretObject,
+  type Interpretation,
+} from "../interpretation";
 
 /**
  * Object reference for Experience composition.
@@ -21,11 +25,15 @@ export type ExperienceComposeInput = {
 };
 
 /**
- * Assembles Experience from selected ExperienceFragments.
- * Behaviour matches the previous monolithic interpretation mapping.
+ * Builds Experience from Interpretation (ADR-012 communication layer).
+ * Does not read Object facts — only Interpretation meaning + fragment communication.
  */
-export function composeExperience(input: ExperienceComposeInput): Experience {
-  const activeLens = resolveActiveLens(input.priorities.selected);
+export function createExperienceFromInterpretation(
+  interpretation: Interpretation,
+): Experience {
+  const activeLens = resolveActiveLens(
+    interpretation.priorityIds as readonly PriorityId[],
+  );
   const fragments = selectExperienceFragments(activeLens);
   const partials = fragments.map((entry) => entry.build());
   const assembled = mergeExperiencePartials(partials);
@@ -35,9 +43,21 @@ export function composeExperience(input: ExperienceComposeInput): Experience {
       : (LENS_KEY_BY_PRIORITY[activeLens] ?? "baseline");
 
   return Object.freeze({
-    id: `experience.${input.object.id}.${lensKey}`,
+    id: `experience.${interpretation.objectId}.${lensKey}`,
     ...assembled,
   });
+}
+
+/**
+ * Canonical runtime path (ADR-012):
+ * Object + PrioritySelection → Interpretation → Experience
+ */
+export function composeExperience(input: ExperienceComposeInput): Experience {
+  const interpretation = interpretObject({
+    objectId: input.object.id,
+    priorityIds: input.priorities.selected,
+  });
+  return createExperienceFromInterpretation(interpretation);
 }
 
 export type ExperienceComposer = (

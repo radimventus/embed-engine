@@ -29,6 +29,7 @@ export { createEmptyPrioritySelection } from "./experience/PrioritySelection";
 export {
   composeExperience,
   createExperienceComposer,
+  createExperienceFromInterpretation,
   type ExperienceComposer,
   type ExperienceComposeInput,
   type ExperienceObjectRef,
@@ -47,6 +48,10 @@ export {
   INTERPRETATION_FORBIDDEN_PRESENTATION_KEYS,
   createInterpretation,
 } from "./interpretation/Interpretation";
+export {
+  interpretObject,
+  type InterpretObjectInput,
+} from "./interpretation/interpretObject";
 
 export * from "./runtime/ExecutionContext";
 export * from "./runtime/SceneGraph";

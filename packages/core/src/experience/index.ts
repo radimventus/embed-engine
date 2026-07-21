@@ -14,6 +14,7 @@ export { createEmptyPrioritySelection } from "./PrioritySelection";
 export {
   composeExperience,
   createExperienceComposer,
+  createExperienceFromInterpretation,
   type ExperienceComposer,
   type ExperienceComposeInput,
   type ExperienceObjectRef,

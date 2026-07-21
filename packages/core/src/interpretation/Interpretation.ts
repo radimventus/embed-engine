@@ -7,8 +7,6 @@
  * Distinct from Cognitive projection `Interpretation` (`@embed-engine/core/cognitive`).
  */
 
-import type { PriorityId } from "../experience/PrioritySelection";
-
 /**
  * Weighted machine factor (strength, friction, opportunity, …).
  * `code` is a stable machine key — not user-facing copy.
@@ -51,7 +49,8 @@ export type InterpretationRecommendedIntent = string;
 export type Interpretation = {
   readonly id: string;
   readonly objectId: string;
-  readonly priorityIds: readonly PriorityId[];
+  /** Selected Priority identifiers (machine ids — not UI labels). */
+  readonly priorityIds: readonly string[];
   readonly strengths: readonly InterpretationFactor[];
   readonly frictions: readonly InterpretationFactor[];
   readonly opportunities: readonly InterpretationFactor[];
