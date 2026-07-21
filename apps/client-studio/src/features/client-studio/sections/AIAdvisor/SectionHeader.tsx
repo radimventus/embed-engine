@@ -7,7 +7,7 @@ export function SectionHeader() {
   return (
     <div className="relative z-20 bg-[#FFFFFF]">
       <h2 className="pb-section text-base font-bold tracking-wide text-embed-foreground-primary">
-        AI PRŮVODCE — DOPLŇUJÍCÍ OTÁZKY
+        AI PRŮVODCE – ZEPTEJTE SE NA COKOLI
       </h2>
       <div
         aria-hidden="true"

@@ -7,7 +7,6 @@ import { InterpretationProvider } from './cognitive/InterpretationProvider';
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
 import { LegacyCommandExperience } from './legacy/LegacyCommandExperience';
-import { PILOT_FLAGS } from './pilot/pilotVocabulary';
 import { AIAdvisor } from './sections/AIAdvisor/AIAdvisor';
 import { Hero } from './sections/Hero/Hero';
 import { AuditLeadCapture } from './sections/AuditLeadCapture/AuditLeadCapture';
@@ -64,16 +63,12 @@ export function ClientStudioPage({
                 aria-hidden="true"
                 className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
               />
+              <AIAdvisor />
+              <div
+                aria-hidden="true"
+                className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+              />
               <AuditLeadCapture />
-              {PILOT_FLAGS.showAiAdvisor ? (
-                <>
-                  <div
-                    aria-hidden="true"
-                    className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
-                  />
-                  <AIAdvisor />
-                </>
-              ) : null}
             </DesktopCanvas>
           </WalkthroughProvider>
         </DecisionStoryProvider>

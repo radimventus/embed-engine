@@ -4,10 +4,9 @@
  */
 export const PILOT_FLAGS = {
   /**
-   * AI free-form replies are placeholder — hide from default pilot.
-   * Set true only for internal FAQ experiments.
+   * FAQ + AI Chat section visibility (approved Client Studio baseline).
    */
-  showAiAdvisor: false,
+  showAiAdvisor: true,
   /**
    * Lead backend is not wired. Use mailto handoff (operational) instead of
    * fake success that pretends a server received the request.

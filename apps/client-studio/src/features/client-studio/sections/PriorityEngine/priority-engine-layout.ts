@@ -10,7 +10,7 @@ export const PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS = 'pb-5';
 export const PRIORITY_ENGINE_TITLE_BAND_PX = 60;
 
 export const PRIORITY_ENGINE_TITLE_BAND_CLASS =
-  'box-border flex min-h-[60px] shrink-0 grow-0 items-center overflow-visible py-2';
+  'box-border flex h-[60px] min-h-[60px] max-h-[60px] shrink-0 grow-0 items-center overflow-hidden';
 
 export const PRIORITY_ENGINE_TITLE_CLASS =
   'm-0 p-0 text-base font-bold leading-none tracking-wide text-embed-foreground-primary';

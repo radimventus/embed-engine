@@ -1,61 +1,17 @@
+import { DecisionCard } from './DecisionCard';
 import {
   DECISION_GRID_COLUMN_SIZE_PX,
   DECISION_GRID_GAP_PX,
   DECISION_SURFACE_HEIGHT_PX,
   DECISION_SURFACE_WIDTH_PX,
 } from './decision-cards-layout';
-import { EventTimeline } from './EventTimeline';
-import { PriorityCard } from './PriorityCard';
-import { PriorityProgress } from './PriorityProgress';
-import { PriorityReasons } from './PriorityReasons';
-import { usePriorityExperience } from './usePriorityExperience';
+import { useDecisionCards } from './useDecisionCards';
 
-/**
- * Priority cards grid — Interpretation-driven (S-003 MVP).
- */
 export function PriorityCards() {
-  const {
-    status,
-    cards,
-    elevatedPriorities,
-    events,
-    minimumMet,
-    minimumSelection,
-    selectedCount,
-    nextAction,
-    focusPriority,
-  } = usePriorityExperience();
-
-  if (status === 'loading') {
-    return (
-      <div
-        className="flex min-h-[200px] min-w-0 flex-col justify-center self-start"
-        aria-busy="true"
-        aria-live="polite"
-        data-testid="priority-loading"
-      >
-        <p className="text-sm text-embed-foreground-primary/60">
-          Načítám Priority…
-        </p>
-      </div>
-    );
-  }
-
-  if (status === 'empty') {
-    return (
-      <div
-        className="flex min-h-[200px] min-w-0 flex-col justify-center self-start"
-        data-testid="priority-empty"
-      >
-        <p className="text-sm text-embed-foreground-primary/60">
-          Zatím žádné Priority. Projděte dům a vraťte se sem.
-        </p>
-      </div>
-    );
-  }
+  const { cards, categories, setImportance, toggleCard } = useDecisionCards();
 
   return (
-    <div className="flex min-w-0 flex-col self-start" data-testid="priority-ready">
+    <div className="flex min-w-0 flex-col self-start">
       <div
         aria-label="Plocha Priorit"
         className="grid shrink-0 items-center justify-items-center overflow-visible"
@@ -66,23 +22,20 @@ export function PriorityCards() {
           width: DECISION_SURFACE_WIDTH_PX,
         }}
       >
-        {cards.map((card) => (
-          <PriorityCard
-            key={card.presentation.id}
-            card={card}
-            onFocusPriority={() => focusPriority(card.presentation.id)}
-          />
-        ))}
-      </div>
-      <PriorityProgress
-        minimumMet={minimumMet}
-        minimumSelection={minimumSelection}
-        selectedCount={selectedCount}
-        nextAction={nextAction}
-      />
-      <div className="mt-5 grid w-[680px] grid-cols-2 gap-4 mobile:w-full mobile:grid-cols-1">
-        <EventTimeline events={events} />
-        <PriorityReasons priorities={elevatedPriorities} />
+        {categories.map((category) => {
+          const card = cards[category.id];
+
+          return (
+            <DecisionCard
+              key={category.id}
+              category={category}
+              importance={card.importance}
+              isActive={card.selected}
+              onImportanceChange={(value) => setImportance(category.id, value)}
+              onToggle={() => toggleCard(category.id)}
+            />
+          );
+        })}
       </div>
     </div>
   );
