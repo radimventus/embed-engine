@@ -9,6 +9,7 @@ import {
   type InterpretationTrace,
   type InterpretationTraceContribution,
 } from "../InterpretationTrace";
+import { resolveSemanticRuleId } from "../rules/semanticRuleCatalog";
 import type { ResolvedLens } from "./lens";
 
 export type BuildInterpretationTraceInput = {
@@ -27,23 +28,43 @@ export type BuildInterpretationTraceInput = {
 };
 
 function contribution(
-  partial: Omit<InterpretationTraceContribution, "confidenceFactors"> & {
+  partial: Omit<InterpretationTraceContribution, "confidenceFactors" | "ruleId"> & {
     readonly confidenceFactors?: readonly string[];
+    readonly ruleMeaning?: string;
   },
 ): InterpretationTraceContribution {
-  return Object.freeze({
+  const ruleId =
+    partial.ruleMeaning === undefined
+      ? undefined
+      : resolveSemanticRuleId(partial.ruleMeaning);
+
+  const base: InterpretationTraceContribution = {
     id: partial.id,
     kind: partial.kind,
     module: partial.module,
     inputs: Object.freeze([...partial.inputs]),
     evidence: Object.freeze([...partial.evidence]),
     confidenceFactors: Object.freeze([...(partial.confidenceFactors ?? [])]),
+  };
+
+  if (ruleId === undefined) {
+    return Object.freeze(base);
+  }
+
+  return Object.freeze({
+    ...base,
+    ruleId,
   });
+}
+
+function lensMeaning(lens: ResolvedLens): string {
+  return lens === null ? "lens.baseline" : `lens.${lens}`;
 }
 
 /**
  * Builds a deterministic InterpretationTrace from module outputs.
  * Explainability only — does not alter semantic conclusions.
+ * References SemanticRuleContract identities where catalogued.
  */
 export function buildInterpretationTrace(
   input: BuildInterpretationTraceInput,
@@ -60,6 +81,7 @@ export function buildInterpretationTrace(
       module: "lens",
       inputs: priorityInputs,
       evidence: [lensInput],
+      ruleMeaning: lensMeaning(input.lens),
     }),
   ];
 
@@ -72,6 +94,7 @@ export function buildInterpretationTrace(
         inputs: moduleInputs,
         evidence: [factor.code],
         confidenceFactors: [`weight:${factor.weight}`],
+        ruleMeaning: factor.code,
       }),
     );
   }
@@ -85,6 +108,7 @@ export function buildInterpretationTrace(
         inputs: moduleInputs,
         evidence: [factor.code],
         confidenceFactors: [`weight:${factor.weight}`],
+        ruleMeaning: factor.code,
       }),
     );
   }
@@ -98,6 +122,7 @@ export function buildInterpretationTrace(
         inputs: moduleInputs,
         evidence: [factor.code],
         confidenceFactors: [`weight:${factor.weight}`],
+        ruleMeaning: factor.code,
       }),
     );
   }
@@ -110,6 +135,7 @@ export function buildInterpretationTrace(
         module: "tradeOffs",
         inputs: moduleInputs,
         evidence: [item.code, `favors:${item.favors}`, `against:${item.against}`],
+        ruleMeaning: item.code,
       }),
     );
   }
@@ -126,6 +152,7 @@ export function buildInterpretationTrace(
           `contribution:${item.contribution}`,
           `matchScore:${input.matchScore}`,
         ],
+        ruleMeaning: item.code,
       }),
     );
   }
@@ -137,6 +164,7 @@ export function buildInterpretationTrace(
       module: "intent",
       inputs: moduleInputs,
       evidence: [`intent:${input.recommendedIntent}`],
+      ruleMeaning: `intent.${input.recommendedIntent}`,
     }),
   );
 

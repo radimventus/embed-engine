@@ -19,6 +19,18 @@ export {
   INTERPRETATION_TRACE_FORBIDDEN_PRESENTATION_KEYS,
   createInterpretationTrace,
 } from "./InterpretationTrace";
+export type {
+  SemanticRuleContract,
+  SemanticRuleId,
+} from "./rules/SemanticRuleContract";
+export {
+  SEMANTIC_RULE_CATALOG,
+  createSemanticRuleContract,
+  getSemanticRuleById,
+  getSemanticRuleByMeaning,
+  listSemanticRuleIds,
+  resolveSemanticRuleId,
+} from "./rules";
 export {
   interpretObject,
   type InterpretObjectInput,

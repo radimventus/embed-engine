@@ -5,6 +5,8 @@
  * Renderer-independent. No UI / localization / presentation fields.
  */
 
+import type { SemanticRuleId } from "./rules/SemanticRuleContract";
+
 export type InterpretationTraceConclusionKind =
   | "lens"
   | "strength"
@@ -22,6 +24,11 @@ export type InterpretationTraceContribution = {
   readonly kind: InterpretationTraceConclusionKind;
   /** Semantic module that produced the conclusion. */
   readonly module: string;
+  /**
+   * Canonical semantic rule identity when the conclusion maps to the catalog.
+   * Stable vocabulary shared with future Rule Engine / analytics / AI.
+   */
+  readonly ruleId?: SemanticRuleId;
   /** Machine input keys that influenced the conclusion. */
   readonly inputs: readonly string[];
   /** Machine evidence codes (typically factor / rule codes). */
@@ -66,13 +73,22 @@ export const INTERPRETATION_TRACE_FORBIDDEN_PRESENTATION_KEYS = Object.freeze([
 function freezeContribution(
   item: InterpretationTraceContribution,
 ): InterpretationTraceContribution {
-  return Object.freeze({
+  const frozen: InterpretationTraceContribution = {
     id: item.id,
     kind: item.kind,
     module: item.module,
     inputs: Object.freeze([...item.inputs]),
     evidence: Object.freeze([...item.evidence]),
     confidenceFactors: Object.freeze([...item.confidenceFactors]),
+  };
+
+  if (item.ruleId === undefined) {
+    return Object.freeze(frozen);
+  }
+
+  return Object.freeze({
+    ...frozen,
+    ruleId: item.ruleId,
   });
 }
 
