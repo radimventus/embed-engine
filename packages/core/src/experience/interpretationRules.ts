@@ -1,4 +1,4 @@
-import type { ExperienceEvidence } from "./Experience";
+import type { ExperienceConcern, ExperienceEvidence } from "./Experience";
 import type { PriorityId } from "./PrioritySelection";
 
 /**
@@ -12,6 +12,7 @@ export type InterpretationRule = {
   readonly focus: readonly string[];
   readonly recommendations: readonly string[];
   readonly evidence: readonly ExperienceEvidence[];
+  readonly concerns: readonly ExperienceConcern[];
 };
 
 function evidence(
@@ -20,6 +21,15 @@ function evidence(
   description: string,
 ): ExperienceEvidence {
   return Object.freeze({ id, title, description });
+}
+
+function concern(
+  id: string,
+  title: string,
+  description: string,
+  severity: ExperienceConcern["severity"],
+): ExperienceConcern {
+  return Object.freeze({ id, title, description, severity });
 }
 
 const FAMILY_RULE: InterpretationRule = Object.freeze({
@@ -47,6 +57,20 @@ const FAMILY_RULE: InterpretationRule = Object.freeze({
       "family.bathrooms",
       "Two bathrooms",
       "Morning routines stay parallel instead of competing for one bath.",
+    ),
+  ]),
+  concerns: Object.freeze([
+    concern(
+      "family.upper-floor",
+      "Children's room on upper floor",
+      "Night zone upstairs means stairs in every bedtime and night routine.",
+      "medium",
+    ),
+    concern(
+      "family.storage",
+      "Smaller storage space",
+      "Built-in storage is limited relative to a full family inventory.",
+      "low",
     ),
   ]),
 });
@@ -78,6 +102,20 @@ const INVESTMENT_RULE: InterpretationRule = Object.freeze({
       "Site context supports liquidity if the holding period ends early.",
     ),
   ]),
+  concerns: Object.freeze([
+    concern(
+      "investment.price",
+      "Higher purchase price",
+      "Entry cost sits above the local median and stretches initial capital.",
+      "high",
+    ),
+    concern(
+      "investment.roi",
+      "Longer ROI",
+      "Payback assumes a longer holding period before yield stabilizes.",
+      "medium",
+    ),
+  ]),
 });
 
 const DESIGN_RULE: InterpretationRule = Object.freeze({
@@ -105,6 +143,20 @@ const DESIGN_RULE: InterpretationRule = Object.freeze({
       "design.details",
       "Architectural details",
       "Edges, openings and transitions reinforce a deliberate design language.",
+    ),
+  ]),
+  concerns: Object.freeze([
+    concern(
+      "design.storage",
+      "Minimal storage",
+      "Visual clarity comes with fewer concealed storage surfaces.",
+      "medium",
+    ),
+    concern(
+      "design.glazing",
+      "Large glazed surfaces require maintenance",
+      "Expansive glass needs regular cleaning and seasonal performance checks.",
+      "low",
     ),
   ]),
 });
@@ -136,6 +188,20 @@ const SUSTAINABILITY_RULE: InterpretationRule = Object.freeze({
       "Roof geometry leaves a clear path for future generation without rework.",
     ),
   ]),
+  concerns: Object.freeze([
+    concern(
+      "sustainability.solar-not-included",
+      "Solar installation not included",
+      "Generation capacity is prepared but panels are not part of the base scope.",
+      "medium",
+    ),
+    concern(
+      "sustainability.rainwater",
+      "Rainwater system optional",
+      "Water reuse depends on an optional package rather than a default install.",
+      "low",
+    ),
+  ]),
 });
 
 const DEFAULT_RULE: InterpretationRule = Object.freeze({
@@ -157,6 +223,14 @@ const DEFAULT_RULE: InterpretationRule = Object.freeze({
       "baseline.object-stable",
       "Object stays fixed",
       "Changing priorities changes interpretation only — never the object itself.",
+    ),
+  ]),
+  concerns: Object.freeze([
+    concern(
+      "baseline.open-lens",
+      "Interpretation not opened",
+      "Concerns appear after a priority selects a decision lens on this object.",
+      "low",
     ),
   ]),
 });

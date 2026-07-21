@@ -29,6 +29,7 @@ export function composeExperience(input: ExperienceComposeInput): Experience {
     focus: rule.focus,
     recommendations: rule.recommendations,
     evidence: rule.evidence,
+    concerns: rule.concerns,
   });
 }
 
