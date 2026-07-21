@@ -51,13 +51,42 @@ Reaction-driven backlog. Prefer Behavior Packs and **User Transformation** over 
 
 ## Future research
 
-| ID | Item | Notes |
+| ID | Item | Status | Notes |
+| --- | --- | --- | --- |
+| PRI-FR-01 | Household Interpretation vs per-person views | Research | Depends on PRI-PM-02 |
+| PRI-FR-02 | Advisor-as-actor Signal attribution | Research | Depends on PRI-PM-02 |
+| PRI-FR-03 | Cross-session Priority profiles | Research | Depends on PRI-PM-03 / PRI-PM-04 |
+| PRI-FR-04 | Hybrid absolute + relative weight modes | Research | Product experiment; not default |
+| DT-FR-01 | Decision Trajectory | Research | Future — not MVP; long-horizon across sessions |
+| DJS-FR-01 | Decision Journey vs. Decision Conversation | Research | Journey remains canonical; Conversation not introduced. Distinct from DT-FR-01 |
+
+### DJS-FR-01 — Decision Journey vs. Decision Conversation
+
+**Status:** Research
+
+**Description:** Ověřit, zda je **Decision Journey** dostatečný model i pro nelineární rozhodování a AI asistenci, nebo zda bude Embed Engine v budoucnu potřebovat obecnější koncept **Decision Conversation**.
+
+Hypotéza vznikla během návrhu Decision Workspace a UX 2.0.
+
+V této fázi se **Decision Conversation nezavádí**.  
+Decision Journey zůstává kanonickým produkčním modelem.
+
+**Scope**
+
+- validovat vůči DEG
+- validovat vůči DJS
+- ověřit na několika reálných Experience scénářích
+- ověřit na AI asistenci
+- explicitně odlišit od `DT-FR-01` (Decision Trajectory), který řeší dlouhodobou evoluci napříč session
+
+**Exit criteria** — uzavřít pouze jedním výsledkem:
+
+| Result | Meaning | Action |
 | --- | --- | --- |
-| PRI-FR-01 | Household Interpretation vs per-person views | Depends on PRI-PM-02 |
-| PRI-FR-02 | Advisor-as-actor Signal attribution | Depends on PRI-PM-02 |
-| PRI-FR-03 | Cross-session Priority profiles | Depends on PRI-PM-03 / PRI-PM-04 |
-| PRI-FR-04 | Hybrid absolute + relative weight modes | Product experiment; not default |
-| DT-FR-01 | Decision Trajectory | Future — not MVP |
+| **A — Journey potvrzen** | UX 2.0 a AI scénáře prokážou, že Decision Journey stačí | Uzavřít položku |
+| **B — Conversation potvrzena** | Opakovaně scénáře, které nelze přirozeně modelovat DEG + DJS + Chapters + Session | Teprve poté Proposed Product Specification pro Decision Conversation |
+
+Do not change SSOT or ADR while this item is Research.
 
 ---
 

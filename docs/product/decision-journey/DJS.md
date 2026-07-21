@@ -339,3 +339,11 @@ DJS nenahrazuje DEG. DEG definuje *jak mluvíme o změně rozhodování*. DJS de
 - Po schválení (Status → Approved) se DJS stane SSOT pro Decision Journey.
 - Konflikty s Runtime / Session / Experience Public Contracts: architektura vítězí; změna kontraktu vyžaduje ADR.
 - UX 2.0 a Decision Workspace návrhy musí být konzistentní s touto trajektorií (i ve stavu Proposed, jako referenční směr).
+
+---
+
+# 11. Open Product Hypotheses
+
+Evidence žije v Product Backlog — Future research. Zde pouze index.
+
+- [DJS-FR-01 — Decision Journey vs. Decision Conversation](../backlog/PRODUCT_BACKLOG.md#djs-fr-01--decision-journey-vs-decision-conversation)
