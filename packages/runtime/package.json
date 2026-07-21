@@ -20,18 +20,25 @@
       "types": "./dist/priority/mock/index.d.ts",
       "import": "./dist/priority/mock/index.js",
       "default": "./dist/priority/mock/index.js"
+    },
+    "./priority/html-renderer": {
+      "types": "./dist/priority/html-renderer/index.d.ts",
+      "import": "./dist/priority/html-renderer/index.js",
+      "default": "./dist/priority/html-renderer/index.js"
     }
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/priority/PriorityRuntimeEngine.test.ts src/priority/mock/createGardenJourneyRun.test.ts"
+    "test": "tsx --test src/priority/PriorityRuntimeEngine.test.ts src/priority/mock/createGardenJourneyRun.test.ts src/priority/html-renderer/renderPriorityJourney.test.ts",
+    "demo:priority": "vite --config demo/priority-html/vite.config.ts"
   },
   "dependencies": {
     "@embed-engine/core": "workspace:*"
   },
   "devDependencies": {
     "tsx": "^4.20.3",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vite": "^6.0.0"
   }
 }

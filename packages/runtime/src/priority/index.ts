@@ -48,3 +48,8 @@ export {
   gardenPrioritySelection,
   gardenTransitionMessage,
 } from "./mock";
+
+export {
+  renderPriorityJourney,
+  type PriorityRenderModel,
+} from "./html-renderer";
