@@ -39,23 +39,113 @@ Architecture changes still require ADR. Product design no longer waits on archit
 
 ---
 
-## 2. New principle
+## 2. Product positioning
 
-Embed Engine is **not** a system for presenting information.
+Embed Engine is **not** primarily a presentation platform.
 
-Embed Engine is a system for **governing decision experience**.
+Canonical positioning:
 
-| Not the goal | The goal |
+> **Embed Engine is an interpretation platform that transforms structured facts about an object into a personalized Decision Experience.**
+
+| Not the primary responsibility | Primary responsibility |
 | --- | --- |
-| Present the object | Change how the user thinks about the object |
-| Showcase media and specs | Reach an informed decision |
+| Present the object | Interpret the object for a decision context |
+| Showcase media and specs | Produce a Decision Experience |
+| Render UI surfaces | Change how the user understands the object |
+
+Embed Engine remains a system for **governing decision experience**.
+
+Presentation is how Experience becomes visible — not the core product responsibility.
 
 Canonical sentence (platform North Star):
 
 > **We do not want to build the best real-estate configurator.**  
 > **We want to build the best environment for changing a decision.**
 
-This sentence is the primary product criterion for all future product decisions.
+This sentence remains the primary product criterion for all future product decisions.
+
+### 2.1 Core responsibilities
+
+Validated separation of responsibilities:
+
+| Responsibility | Owns | Does not own |
+| --- | --- | --- |
+| **Object** | Facts about the thing under decision | Interpretation |
+| **PrioritySelection** | User intent for the decision context | Object facts; Experience meaning |
+| **ExperienceComposer** | Interpretation | Presentation |
+| **Experience** | Interpreted meaning of the Object for a specific Priority | UI; report layout; session mechanics |
+| **Renderer** | Presentation of Experience | Interpretation |
+
+Object contains facts. It never contains interpretation.
+
+PrioritySelection represents user intent.
+
+ExperienceComposer performs interpretation.
+
+Experience represents the interpreted meaning of the object for a specific priority.
+
+Renderer presents Experience. It never performs interpretation.
+
+### 2.2 Canonical interpretation pipeline
+
+```text
+Object
+    ↓
+PrioritySelection
+    ↓
+ExperienceComposer
+    ↓
+Experience
+       ├──► DecisionTerminal
+       └──► DecisionReport
+```
+
+Additional renderers may be added in the future without changing the Experience model.
+
+The pipeline is the canonical product description of how Embed Engine produces Decision Experience.
+
+### 2.3 Experience as a first-class domain artifact
+
+Experience is a first-class domain artifact.
+
+Experience is **not** UI.
+
+Experience is **not** a report.
+
+Experience is **not** a session.
+
+Experience is the interpreted representation of an object for a specific decision context.
+
+Current Experience contains:
+
+- title
+- summary
+- focus
+- recommendations
+- evidence
+- concerns
+- confidence
+- actions
+
+The internal structure may evolve while the concept remains stable.
+
+### 2.4 Architectural principle — interpretation vs presentation
+
+**Interpretation and presentation are independent responsibilities.**
+
+Changing a renderer must never change interpretation.
+
+Changing interpretation must never require renderer redesign.
+
+### 2.5 Validation note
+
+This architecture was validated during the implementation hackathon.
+
+Recorded outcomes:
+
+- Experience proved to be an independent domain artifact.
+- Multiple renderers successfully consumed the same Experience.
+- Interpretation remained isolated from presentation.
 
 ---
 
@@ -287,7 +377,7 @@ Decision Layer tells **how** Runtime executes Story and Move.
 ## 13. Governance
 
 - DEG is **APPROVED** product direction for Embed Engine.
-- Conflicts with historical Product Bible presentation chapters: **DEG wins** for product design intent.
+- Conflicts with historical Product Bible presentation chapters: **DEG wins** for product design intent (including interpretation-platform positioning and the Experience / Renderer separation).
 - Conflicts with Decision Layer / RI Public Contracts: **architecture SSOTs win** for contracts; raise ADR if product intent requires contract change.
 - Future UX 2.0 work must start from Desired Outcome → Mental Transformation → Experience Grammar (this document).
 
@@ -295,4 +385,4 @@ Decision Layer tells **how** Runtime executes Story and Move.
 
 ## 14. One-line summary
 
-**Embed Engine designs Mental State transitions; UI is only how those transitions become visible.**
+**Embed Engine interprets objects into Decision Experiences; renderers only present them. UI is how Mental State transitions become visible.**

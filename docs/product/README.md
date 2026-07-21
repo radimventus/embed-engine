@@ -61,4 +61,14 @@ Historical monolith: [`../archive/product-bible/PRODUCT-BIBLE.md`](../archive/pr
 
 **Active Product Bible product layer:** [Decision Experience Grammar](./decision-experience-grammar/DEG.md)
 
-**Not authoritative** (historical Bible) for Decision Layer vocabulary or DEG. Where the archive says “right panel”, “Priority Detail”, or page-builder flows, prefer DEG + Decision Layer SSOT / ADR-007–010.
+Canonical positioning (validated):
+
+> Embed Engine is an interpretation platform that transforms structured facts about an object into a personalized Decision Experience.
+
+Canonical pipeline:
+
+```text
+Object → PrioritySelection → ExperienceComposer → Experience → Renderer(s)
+```
+
+**Not authoritative** (historical Bible) for Decision Layer vocabulary, DEG, or interpretation-vs-presentation ownership. Where the archive says “right panel”, “Priority Detail”, or page-builder flows, prefer DEG + Decision Layer SSOT / ADR-007–010.
