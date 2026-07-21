@@ -34,7 +34,7 @@ Historical (not normative):
 | **Decision Session** | One active Experience decision journey ([RI-002](../04-reference-implementation/RI-002-Decision-Session.md)); hosted by Runtime |
 | **DecisionState** | Sole Cognitive aggregate — authoritative contents of a Decision Session ([ADR-002](./adr/ADR-002-decision-state.md)) |
 | **Interpretation** | Derived Cognitive output from `project()` |
-| **Experience** | Presentation layer; renders and emits Signals |
+| **Experience** | Presentation layer; renders and emits Signals ([RI-003](../04-reference-implementation/RI-003-Experience-Kernel.md)) |
 | **dispatch** | Opaque RuntimeEvent routing on Cognitive Runtime; **not** the historical `dispatch(command) → ExperienceModel` CommandRuntime API |
 
 ## Decision Session
@@ -42,6 +42,17 @@ Historical (not normative):
 **SSOT:** [RI-002 — Decision Session](../04-reference-implementation/RI-002-Decision-Session.md)
 
 Decision Session is the named boundary of one active visitor journey. It does **not** introduce a second Cognitive aggregate. DecisionState remains the sole Cognitive aggregate inside the Session.
+
+## Experience
+
+**Implementation contract:** [RI-003 — Experience Kernel](../04-reference-implementation/RI-003-Experience-Kernel.md)
+
+Experience Layer = Experience Surfaces that render Interpretation / Story and emit Signals. Not Runtime Kernel.
+
+| Term | Meaning |
+| --- | --- |
+| **Experience Surface** | Terminal, Priority, FAQ, AI, Recommendation, … |
+| **Experience-local state** | Presentation only — not Decision Session truth |
 
 ## Rule
 

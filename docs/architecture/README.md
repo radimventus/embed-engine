@@ -22,6 +22,7 @@
 | `archive/` | Historical only (includes CommandRuntime Runtime Decisions) |
 | [`../04-reference-implementation/RI-001-Runtime-Kernel.md`](../04-reference-implementation/RI-001-Runtime-Kernel.md) | **RI-001** — Runtime Kernel Public Contract (**Runtime SSOT**) |
 | [`../04-reference-implementation/RI-002-Decision-Session.md`](../04-reference-implementation/RI-002-Decision-Session.md) | **RI-002** — Decision Session (**Session SSOT**) |
+| [`../04-reference-implementation/RI-003-Experience-Kernel.md`](../04-reference-implementation/RI-003-Experience-Kernel.md) | **RI-003** — Experience Layer implementation contract |
 
 ## Canonical architecture (one diagram)
 

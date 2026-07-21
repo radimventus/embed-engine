@@ -7,7 +7,7 @@ Navigation index for project documentation. This file is not product documentati
 | Folder | Purpose |
 | --- | --- |
 | `architecture/` | Cognitive, Decision Layer SSOT, Experience projection, Runtime index |
-| `04-reference-implementation/` | Epoch II Reference Implementations (**Runtime SSOT: RI-001**; **Decision Session SSOT: RI-002**) |
+| `04-reference-implementation/` | Epoch II RIs (**RI-001** Runtime · **RI-002** Session · **RI-003** Experience) |
 | `product/` | Product principles, vision, Object Package, Knowledge, Pilots, Builder, backlog |
 | `design/` | Design language, geometry, design system tokens |
 | `implementation/` | How to implement (frontend rules, AI agent rules) |
@@ -38,6 +38,7 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Architecture overview | `architecture/README.md` |
 | **Runtime** | **`04-reference-implementation/RI-001-Runtime-Kernel.md`** |
 | **Decision Session** | **`04-reference-implementation/RI-002-Decision-Session.md`** |
+| **Experience Layer (impl contract)** | **`04-reference-implementation/RI-003-Experience-Kernel.md`** |
 | DecisionState (Cognitive aggregate) | `architecture/adr/ADR-002-decision-state.md` (structure); Session boundary → RI-002 |
 | Decision Layer vocabulary | `architecture/decision-layer/README.md` |
 | Decision Layer governance v1 | `architecture/decision-layer/decision-layer-governance-v1.md` |
@@ -64,6 +65,7 @@ See **[architecture/RUNTIME.md](./architecture/RUNTIME.md)** (one-minute Runtime
 | --- | --- |
 | **Runtime SSOT** | [RI-001 — Runtime Kernel](./04-reference-implementation/RI-001-Runtime-Kernel.md) |
 | **Decision Session SSOT** | [RI-002 — Decision Session](./04-reference-implementation/RI-002-Decision-Session.md) |
+| **Experience contract** | [RI-003 — Experience Kernel](./04-reference-implementation/RI-003-Experience-Kernel.md) |
 | Architecture decision (Runtime) | [ADR-001](./architecture/adr/ADR-001-runtime-architecture.md) |
 | Cognitive aggregate | [ADR-002](./architecture/adr/ADR-002-decision-state.md) |
 | Supporting | [runtime-boundaries.md](./architecture/runtime-boundaries.md), [experience-projection.md](./architecture/experience-projection.md) |
@@ -75,11 +77,12 @@ See **[architecture/RUNTIME.md](./architecture/RUNTIME.md)** (one-minute Runtime
 2. [architecture/RUNTIME.md](./architecture/RUNTIME.md) — Runtime SSOT pointer
 3. [RI-001 — Runtime Kernel](./04-reference-implementation/RI-001-Runtime-Kernel.md)
 4. [RI-002 — Decision Session](./04-reference-implementation/RI-002-Decision-Session.md)
-5. [Decision Layer vocabulary](./architecture/decision-layer/README.md)
-6. [Decision Layer governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
-7. [Product Constitution](./product/constitution/product-constitution.md)
-8. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
-9. Active design / implementation guides as needed
+5. [RI-003 — Experience Kernel](./04-reference-implementation/RI-003-Experience-Kernel.md)
+6. [Decision Layer vocabulary](./architecture/decision-layer/README.md)
+7. [Decision Layer governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
+8. [Product Constitution](./product/constitution/product-constitution.md)
+9. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
+10. Active design / implementation guides as needed
 
 Do not start with `archive/` or treat CommandRuntime docs as current.
 

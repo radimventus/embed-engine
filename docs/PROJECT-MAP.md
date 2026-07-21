@@ -24,7 +24,7 @@ Future:         Decision Trajectory (not MVP)
 | **DecisionState** | Sole Cognitive aggregate (Session core) | ADR-002 / CORE-002 |
 | **Decision Layer** | Strategy · Story · Move · Terminal · Trajectory | `architecture/decision-layer/` |
 | **Interpretation** | Reasoning snapshot | ADR-003 / CORE-001 |
-| **Experience** | Surfaces that render; emit Signals | Experience Layer |
+| **Experience** | Surfaces that render; emit Signals | **[RI-003](./04-reference-implementation/RI-003-Experience-Kernel.md)** · Experience Layer |
 | **Client Studio** | Application renderer | apps — no domain reconstruction |
 | **Archive** | History only (incl. CommandRuntime) | `archive/` · `architecture/archive/` |
 
@@ -40,6 +40,7 @@ Future:         Decision Trajectory (not MVP)
 1. [architecture/RUNTIME.md](./architecture/RUNTIME.md) — Runtime SSOT in one page  
 2. [RI-001 — Runtime Kernel](./04-reference-implementation/RI-001-Runtime-Kernel.md)  
 3. [RI-002 — Decision Session](./04-reference-implementation/RI-002-Decision-Session.md)  
-4. [architecture/decision-layer/README.md](./architecture/decision-layer/README.md)  
-5. [architecture/decision-layer/decision-layer-governance-v1.md](./architecture/decision-layer/decision-layer-governance-v1.md)  
-6. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
+4. [RI-003 — Experience Kernel](./04-reference-implementation/RI-003-Experience-Kernel.md)  
+5. [architecture/decision-layer/README.md](./architecture/decision-layer/README.md)  
+6. [architecture/decision-layer/decision-layer-governance-v1.md](./architecture/decision-layer/decision-layer-governance-v1.md)  
+7. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)

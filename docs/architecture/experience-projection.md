@@ -4,7 +4,7 @@
 **Version:** 1.1  
 **Scope:** Experience projection between Domain and Renderer  
 **Not SSOT for:** Runtime Public Contract  
-**Related:** [RI-001 — Runtime Kernel](../04-reference-implementation/RI-001-Runtime-Kernel.md) · [RUNTIME.md](./RUNTIME.md) · [Decision Layer SSOT](./decision-layer/README.md) · [CommandRuntime archive](./archive/runtime-decisions-command-runtime-v1.md) (historical)
+**Related:** [RI-001 — Runtime Kernel](../04-reference-implementation/RI-001-Runtime-Kernel.md) · [RI-003 — Experience Kernel](../04-reference-implementation/RI-003-Experience-Kernel.md) · [RUNTIME.md](./RUNTIME.md) · [Decision Layer SSOT](./decision-layer/README.md) · [CommandRuntime archive](./archive/runtime-decisions-command-runtime-v1.md) (historical)
 
 ------------------------------------------------------------------------
 
