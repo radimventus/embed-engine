@@ -11,7 +11,7 @@
 | **Document type** | Reference Implementation Specification (documentation-only) |
 | **Conforms to** | [ESS-001](../03-specification-standard/ESS-001-Embed-Specification-Standard.md) v1.0, [EQS-001](../03-specification-standard/EQS-001-Engineering-Quality-Standard.md) v1.0 |
 | **Depends On** | Reference Architecture v1.0 (Conceptual Freeze), [ADR-001](../architecture/adr/ADR-001-runtime-architecture.md), [ADR-002](../architecture/adr/ADR-002-decision-state.md), [ADR-003](../architecture/adr/ADR-003-cognitive-processing-pipeline.md), [Living Experience v0.1 Freeze](../architecture/living-experience-v0.1-freeze.md), [Decision Layer Governance v1](../architecture/decision-layer/decision-layer-governance-v1.md) |
-| **Referenced Documents** | [ADR-006](../architecture/adr/ADR-006-interpretation-projection-layer.md), [ADR-009](../architecture/adr/ADR-009-decision-layer.md), [ADR-010](../architecture/adr/ADR-010-decision-strategy.md), [Runtime Decisions v1.0](../architecture/runtime-decisions.md) (historical CommandRuntime path), [Runtime Boundaries](../architecture/runtime-boundaries.md), [PROJECT-MAP](../PROJECT-MAP.md), [architecture/README.md](../architecture/README.md) |
+| **Referenced Documents** | [ADR-006](../architecture/adr/ADR-006-interpretation-projection-layer.md), [ADR-009](../architecture/adr/ADR-009-decision-layer.md), [ADR-010](../architecture/adr/ADR-010-decision-strategy.md), [RUNTIME.md](../architecture/RUNTIME.md), [Runtime Boundaries](../architecture/runtime-boundaries.md) (supporting), [CommandRuntime archive](../architecture/archive/runtime-decisions-command-runtime-v1.md) (historical), [PROJECT-MAP](../PROJECT-MAP.md), [architecture/README.md](../architecture/README.md) |
 | **RFC 2119** | Per ESS-001 §3 |
 
 ---
@@ -128,7 +128,7 @@ Runtime / Kernel MUST NOT:
 
 | Non-responsibility | Source |
 | --- | --- |
-| Contain business / domain rules | ADR-001, Runtime Decisions Core Mission |
+| Contain business / domain rules | ADR-001; CommandRuntime-era Core Mission (historical) |
 | Contain UI, React, HTML, widgets, layout | Living Experience v0.1; Foundation Runtime ≠ UI |
 | Implement Cognitive `reduce` / `project` logic | ADR-003 |
 | Author Decision Stories or Move graphs | Decision Layer Governance v1; ADR-010 |
@@ -555,13 +555,13 @@ runtime.applySignal(signal)  // throws; state unchanged
 
 ## 17. Open Questions
 
-Unresolved ambiguities. **Do not treat as resolved by this RI.**
+Ambiguities recorded at freeze. Resolved documentation items are marked; remaining items MUST NOT be treated as decided by this RI.
 
 | # | Ambiguity | Smallest clarification candidate |
 | --- | --- | --- |
 | Q1 | **Platform Canon** is named in Epoch I retrospective but no discrete Canon document was found in-repo for normative citation. | Publish or point to the frozen Canon artifact path. |
-| Q2 | **Dual Runtime:** ADR-001 Cognitive façade vs Runtime Decisions / Object Package `dispatch(command): ExperienceModel` (CommandRuntime). Living Experience lists merge as postponed debt. | Single ADR declaring long-term public contract and deprecation path. |
-| Q3 | **docs/README SSOT** lists `runtime-decisions.md` as Runtime SSOT while ADR-001 Related marks it historical CommandRuntime. | Update documentation index to name ADR-001 + this RI as Cognitive Runtime SSOT. |
+| Q2 | **Dual Runtime:** ADR-001 Cognitive façade vs archived CommandRuntime `dispatch(command): ExperienceModel`. Living Experience lists merge as postponed debt. | Single ADR declaring long-term public contract and deprecation path. |
+| Q3 | ~~**docs/README SSOT** listed `runtime-decisions.md` as Runtime SSOT~~ | **Resolved (WP-002):** RI-001 is sole Runtime SSOT; CommandRuntime archived; see [RUNTIME.md](../architecture/RUNTIME.md). |
 | Q4 | ADR-001 Out of Scope lists Interpretation as outside Runtime Infrastructure, while Living Experience requires Kernel **orchestration** of `project`. | Clarify “out of scope” = no authorship / no rules in Kernel; orchestration remains in scope. |
 | Q5 | ADR-010 **R1** — Runtime hosting of Strategy remains an open implementation risk. | Separate RI or ADR for Strategy injection contract (inputs, error policy, purity). |
 | Q6 | `applySignal` is frozen by Living Experience but not listed in ADR-001’s original API bullet list. | Editorial ADR-001 amendment listing `applySignal` without behavior change. |
@@ -583,6 +583,7 @@ Unresolved ambiguities. **Do not treat as resolved by this RI.**
 | Version | Date | Notes |
 | --- | --- | --- |
 | 1.0 | 2026-07-21 | Initial Frozen Reference Implementation Specification for Runtime Kernel |
+| 1.0 | 2026-07-21 | Editorial (WP-002): cross-refs + Q3 resolved; Public Contract unchanged |
 
 ---
 

@@ -273,14 +273,19 @@ Architektura bude považována za uzavřenou, pokud budou splněny všechny nás
 
 * Soft freeze of Interpretation / Projection boundaries until Sprint 1 acceptance criteria are met.
 * Existing `ExperienceModel` as the sole Engine→Renderer contract is superseded for new work by channel-specific models produced in `packages/experience`.
-* Related documents (`experience-projection.md`, Runtime Decisions) remain historical SSOT until updated under a follow-up docs task aligned with this ADR.
+* Related CommandRuntime-era documents are **historical** and archived:
+  [runtime-decisions-command-runtime-v1.md](../archive/runtime-decisions-command-runtime-v1.md).
+  Normative Runtime Public Contract is [RI-001](../../04-reference-implementation/RI-001-Runtime-Kernel.md).
+  See [RUNTIME.md](../RUNTIME.md).
 * Implementation must not begin until this ADR is committed.
 
 ---
 
 ## Related
 
-* [Runtime Decisions](../runtime-decisions.md)
+* [RI-001 — Runtime Kernel](../../04-reference-implementation/RI-001-Runtime-Kernel.md) — Runtime SSOT
+* [RUNTIME.md](../RUNTIME.md)
+* [Runtime Decisions (CommandRuntime — Historical)](../archive/runtime-decisions-command-runtime-v1.md)
 * [Experience Projection Principles](../experience-projection.md)
 * [Object Package Product Contract](../../product/object-package.md)
 * [Post-Foundation Development Policy](../../product/post-foundation-development-policy.md)

@@ -3,7 +3,8 @@
 **Status:** APPROVED (annotated for Decision Layer governance v1)  
 **Version:** 1.1  
 **Scope:** Experience projection between Domain and Renderer  
-**Related:** [Runtime Decisions](./runtime-decisions.md) · [Decision Layer SSOT](./decision-layer/README.md)
+**Not SSOT for:** Runtime Public Contract  
+**Related:** [RI-001 — Runtime Kernel](../04-reference-implementation/RI-001-Runtime-Kernel.md) · [RUNTIME.md](./RUNTIME.md) · [Decision Layer SSOT](./decision-layer/README.md) · [CommandRuntime archive](./archive/runtime-decisions-command-runtime-v1.md) (historical)
 
 ------------------------------------------------------------------------
 

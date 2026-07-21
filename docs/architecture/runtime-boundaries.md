@@ -1,13 +1,18 @@
 # Runtime Boundaries
 
-> **Status:** Active Reference\
-> **Scope:** Embed Engine Runtime Architecture
+> **Status:** Supporting (package ownership)  
+> **Scope:** Package boundaries and dependency direction after CAP-01  
+> **Not SSOT for:** Runtime Public Contract — see [RI-001](../04-reference-implementation/RI-001-Runtime-Kernel.md) · [RUNTIME.md](./RUNTIME.md)
+>
+> Presentation pipeline examples that end in `ReactExperienceModel` reflect the
+> CAP-01 / ADR-006 era. Cognitive Experience surfaces consume **Interpretation**
+> (Living Experience v0.1). Do not treat this file as the Runtime API contract.
 
 ## Purpose
 
-This document defines the architectural boundaries of the Runtime after
-the CAP-01 refactoring. It complements ADR-006 and serves as the primary
-reference for package ownership, dependency rules and runtime layering.
+This document records package ownership, dependency rules, and layering
+notes after the CAP-01 refactoring. It complements ADR-006 for **package**
+boundaries. Runtime behaviour and Public Contract are defined by RI-001.
 
 ------------------------------------------------------------------------
 

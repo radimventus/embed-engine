@@ -1,7 +1,8 @@
 # ADR-001 — Runtime Architecture
 
 **Status:** Accepted  
-**Date:** 2026-07-20
+**Date:** 2026-07-20  
+**Runtime SSOT (Public Contract):** [RI-001 — Runtime Kernel](../../04-reference-implementation/RI-001-Runtime-Kernel.md) · [RUNTIME.md](../RUNTIME.md)
 
 ---
 
@@ -167,8 +168,9 @@ Future development continues with the Intelligence Layer while preserving the Ru
 
 # Related
 
-* [RI-001 — Runtime Kernel](../../04-reference-implementation/RI-001-Runtime-Kernel.md) — Frozen Reference Implementation Specification (Public Contract)
-* [Runtime Decisions v1.0](../runtime-decisions.md) — historical Decision Runtime contract (CommandRuntime path)
+* [RI-001 — Runtime Kernel](../../04-reference-implementation/RI-001-Runtime-Kernel.md) — **Runtime SSOT** (Frozen Public Contract)
+* [RUNTIME.md](../RUNTIME.md) — Runtime documentation hierarchy
+* [Runtime Decisions v1.0 (CommandRuntime — Historical)](../archive/runtime-decisions-command-runtime-v1.md)
 * [ADR-006 — Interpretation & Projection Layer](./ADR-006-interpretation-projection-layer.md)
 * [Post-Foundation Development Policy](../../product/post-foundation-development-policy.md)
 * Implementation: `packages/core` (`createRuntime`, `Runtime`, internal Kernel services)

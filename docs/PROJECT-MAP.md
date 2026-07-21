@@ -2,7 +2,7 @@
 
 One-page orientation for Embed Engine. Not a specification.
 
-**Canonical architecture:** [architecture/README.md](./architecture/README.md) · [Decision Layer SSOT](./architecture/decision-layer/README.md) · [Governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
+**Canonical architecture:** [architecture/README.md](./architecture/README.md) · [RUNTIME.md](./architecture/RUNTIME.md) · [Decision Layer SSOT](./architecture/decision-layer/README.md) · [Governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
 
 ```text
 Knowledge:      Object Package + Behavior Pack
@@ -19,11 +19,13 @@ Future:         Decision Trajectory (not MVP)
 | **Product** | Principles and vision | `product/` |
 | **Object Package** | Object truth | `product/object-package.md` |
 | **Behavior Pack** | Knowledge, rules, Move library, composition — not UI | `architecture/behavior-pack-contract.md` |
+| **Runtime / Kernel** | Public façade + internal orchestration | **[RI-001](./04-reference-implementation/RI-001-Runtime-Kernel.md)** · [RUNTIME.md](./architecture/RUNTIME.md) · [ADR-001](./architecture/adr/ADR-001-runtime-architecture.md) |
 | **Decision Layer** | Strategy · Story · Move · Terminal · Trajectory | `architecture/decision-layer/` |
+| **DecisionState** | Sole Cognitive aggregate | ADR-002 / CORE-002 |
 | **Interpretation** | Reasoning snapshot | ADR-003 / CORE-001 |
-| **Experience** | Surfaces that render | Experience Layer |
+| **Experience** | Surfaces that render; emit Signals | Experience Layer |
 | **Client Studio** | Application renderer | apps — no domain reconstruction |
-| **Archive** | History only | `archive/` |
+| **Archive** | History only (incl. CommandRuntime) | `archive/` · `architecture/archive/` |
 
 ## Rule of thumb
 
@@ -34,6 +36,8 @@ Future:         Decision Trajectory (not MVP)
 
 ## Start here
 
-1. [architecture/decision-layer/README.md](./architecture/decision-layer/README.md)  
-2. [architecture/decision-layer/decision-layer-governance-v1.md](./architecture/decision-layer/decision-layer-governance-v1.md)  
-3. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
+1. [architecture/RUNTIME.md](./architecture/RUNTIME.md) — Runtime SSOT in one page  
+2. [RI-001 — Runtime Kernel](./04-reference-implementation/RI-001-Runtime-Kernel.md)  
+3. [architecture/decision-layer/README.md](./architecture/decision-layer/README.md)  
+4. [architecture/decision-layer/decision-layer-governance-v1.md](./architecture/decision-layer/decision-layer-governance-v1.md)  
+5. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)

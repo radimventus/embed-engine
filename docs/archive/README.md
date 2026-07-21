@@ -4,7 +4,9 @@ Historical documents, reviews, changelogs, and evidence artifacts.
 
 Nothing in this folder is an active Single Source of Truth.
 
-Use active documentation via [../README.md](../README.md), [../PROJECT-MAP.md](../PROJECT-MAP.md), and especially [../architecture/decision-layer/README.md](../architecture/decision-layer/README.md).
+Use active documentation via [../README.md](../README.md), [../PROJECT-MAP.md](../PROJECT-MAP.md), [../architecture/RUNTIME.md](../architecture/RUNTIME.md) (Runtime SSOT → RI-001), and [../architecture/decision-layer/README.md](../architecture/decision-layer/README.md).
+
+Architecture-level historical Runtime records also live under [`../architecture/archive/`](../architecture/archive/) (e.g. CommandRuntime Runtime Decisions).
 
 ### Obsolete architectural language in archives
 

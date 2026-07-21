@@ -229,7 +229,7 @@ See also section F in the freeze deliverable summary. Documents that **should be
 | `docs/architecture/core/CORE-002-decision-state.md` | Cross-link freeze; confirm sole-aggregate wording |
 | `docs/architecture/adr/ADR-006-interpretation-projection-layer.md` | Reconcile with cognitive Interpretation; mark ExperienceModel path as legacy / parallel until unified |
 | `docs/architecture/experience-projection.md` | Update public contract: Interpretation for Decision Experience renderers; avoid contradicting ADR-003 |
-| `docs/architecture/runtime-decisions.md` / `runtime-boundaries.md` | Note Cognitive `applySignal` orchestration vs CommandRuntime |
+| `docs/architecture/runtime-decisions.md` / `runtime-boundaries.md` | **Done (WP-002):** CommandRuntime archived; RI-001 is Runtime SSOT; see [RUNTIME.md](./RUNTIME.md) |
 | `docs/foundations/03-experience-model.md` | Align Experience pipeline language with Signal → reduce → project → Interpretation |
 | `docs/product/pilots/README.md` | Add Living Experience v0.1 as validated Pilot path; Behavior Pack as next knowledge unit |
 | `docs/product/post-foundation-development-policy.md` | State: extend via Behavior Packs, not architecture |

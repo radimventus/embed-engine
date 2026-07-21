@@ -8,10 +8,11 @@
 
 **Related**
 
-- Runtime: [Runtime Decisions](../architecture/runtime-decisions.md)
+- Runtime SSOT: [RI-001 — Runtime Kernel](../04-reference-implementation/RI-001-Runtime-Kernel.md) · [RUNTIME.md](../architecture/RUNTIME.md)
 - Experience: [Experience Projection Principles](../architecture/experience-projection.md)
 - Knowledge: [Knowledge Foundation](./knowledge/README.md)
 - Builder: [Builder Workflow](./builder/Builder_Workflow_Specification_BWS_v0.1.md)
+- Historical CommandRuntime: [archive/runtime-decisions-command-runtime-v1.md](../architecture/archive/runtime-decisions-command-runtime-v1.md)
 
 ---
 
@@ -102,21 +103,18 @@ Product owns the contract. Implementations must remain faithful to this document
 
 ## 6. What Runtime May Read
 
-Runtime Kernel:
+Runtime Kernel (normative: [RI-001](../04-reference-implementation/RI-001-Runtime-Kernel.md)):
 
-- orchestrates commands and returns ExperienceModel,
+- binds an opaque Object Package via `load`,
+- orchestrates Cognitive Signals (`applySignal` / Cognitive `dispatch`),
 - **does not own** Object Package,
 - **does not define** object-domain rules.
 
 Domain modules (outside Core) may receive an Object Package as an injected input to interpretation/projection.
 
-Runtime therefore never treats Object Package as part of its public API.
+Runtime therefore never treats Object Package shape as part of its public type contract beyond opaque binding.
 
-Public Runtime contract remains:
-
-```text
-dispatch(command): ExperienceModel
-```
+**Historical note (CommandRuntime era — not normative):** earlier documentation described `dispatch(command): ExperienceModel`. That contract is archived and MUST NOT override RI-001.
 
 ---
 

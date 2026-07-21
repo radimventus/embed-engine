@@ -10,7 +10,7 @@
 
 - Object Package: [Object Package Product Contract](../object-package.md)
 - Pilots: [Pilot Foundation](../pilots/README.md)
-- Runtime: [Runtime Decisions](../../architecture/runtime-decisions.md)
+- Runtime SSOT: [RI-001 — Runtime Kernel](../../04-reference-implementation/RI-001-Runtime-Kernel.md) · [RUNTIME.md](../../architecture/RUNTIME.md)
 - Experience: [Experience Projection Principles](../../architecture/experience-projection.md)
 - Product: [Product Constitution](../constitution/product-constitution.md)
 

@@ -14,6 +14,7 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 | [ADR-010](./ADR-010-decision-strategy.md) | Decision Strategy (DT-002) | Accepted (definitions freeze) |
 
 **Vocabulary SSOT (not an ADR):** [../decision-layer/README.md](../decision-layer/README.md)  
+**Runtime SSOT:** [../../04-reference-implementation/RI-001-Runtime-Kernel.md](../../04-reference-implementation/RI-001-Runtime-Kernel.md) · [../RUNTIME.md](../RUNTIME.md)  
 **Governance freeze:** [../decision-layer/decision-layer-governance-v1.md](../decision-layer/decision-layer-governance-v1.md) · tag `architecture-decision-layer-v1`
 
 **Milestone freezes**
@@ -23,5 +24,6 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 - [DT-002 Strategy](../decision-layer/decision-strategy-dt-002-freeze.md)
 - [Behavior Pack Contract](../behavior-pack-contract.md)
 - [Architecture overview](../README.md)
+- [Runtime documentation index](../RUNTIME.md)
 
 Legacy empty stub: `docs/adr/0001-platform.md`
