@@ -5,6 +5,7 @@ import {
   type PrioritySelection,
 } from '@embed-engine/core/experience';
 
+import { DecisionReport } from '../DecisionReport/DecisionReport';
 import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
 import { DecisionTerminal } from '../DecisionTerminal/DecisionTerminal';
 import { PILOT_SECTION_IDS, PILOT_TERMS } from '../../pilot/pilotVocabulary';
@@ -23,7 +24,8 @@ import { useDecisionCards } from './useDecisionCards';
 const PILOT_OBJECT_ID = 'house-modern-01';
 
 /**
- * Priority Engine — PrioritySelection → ExperienceComposer → Experience → Terminal.
+ * Priority Engine — PrioritySelection → ExperienceComposer → Experience
+ * → DecisionTerminal + DecisionReport (same Experience, two renderers).
  */
 export function PriorityEngine() {
   const { cards, categories, setImportance, toggleCard } = useDecisionCards();
@@ -65,6 +67,7 @@ export function PriorityEngine() {
         />
         <DecisionTerminal experience={experience} />
       </div>
+      <DecisionReport experience={experience} />
       {PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL ? <RecommendationPanel /> : null}
       {PRIORITY_ENGINE_SHOW_DECISION_REPORT ? <DecisionReportPreview /> : null}
     </section>
