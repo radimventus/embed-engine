@@ -16,6 +16,7 @@ export * from "./runtime/validate";
 export type {
   Experience,
   ExperienceConcern,
+  ExperienceConfidence,
   ExperienceEvidence,
 } from "./experience/Experience";
 export type {

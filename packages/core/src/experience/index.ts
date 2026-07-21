@@ -1,6 +1,7 @@
 export type {
   Experience,
   ExperienceConcern,
+  ExperienceConfidence,
   ExperienceEvidence,
 } from "./Experience";
 export type {

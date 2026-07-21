@@ -1,4 +1,8 @@
-import type { ExperienceConcern, ExperienceEvidence } from "./Experience";
+import type {
+  ExperienceConcern,
+  ExperienceConfidence,
+  ExperienceEvidence,
+} from "./Experience";
 import type { PriorityId } from "./PrioritySelection";
 
 /**
@@ -13,6 +17,7 @@ export type InterpretationRule = {
   readonly recommendations: readonly string[];
   readonly evidence: readonly ExperienceEvidence[];
   readonly concerns: readonly ExperienceConcern[];
+  readonly confidence: ExperienceConfidence;
 };
 
 function evidence(
@@ -30,6 +35,14 @@ function concern(
   severity: ExperienceConcern["severity"],
 ): ExperienceConcern {
   return Object.freeze({ id, title, description, severity });
+}
+
+function confidence(
+  level: ExperienceConfidence["level"],
+  score: number,
+  explanation: string,
+): ExperienceConfidence {
+  return Object.freeze({ level, score, explanation });
 }
 
 const FAMILY_RULE: InterpretationRule = Object.freeze({
@@ -73,6 +86,11 @@ const FAMILY_RULE: InterpretationRule = Object.freeze({
       "low",
     ),
   ]),
+  confidence: confidence(
+    "high",
+    92,
+    "The property strongly matches the selected priorities.",
+  ),
 });
 
 const INVESTMENT_RULE: InterpretationRule = Object.freeze({
@@ -116,6 +134,11 @@ const INVESTMENT_RULE: InterpretationRule = Object.freeze({
       "medium",
     ),
   ]),
+  confidence: confidence(
+    "medium",
+    76,
+    "Most investment indicators are positive.",
+  ),
 });
 
 const DESIGN_RULE: InterpretationRule = Object.freeze({
@@ -159,6 +182,11 @@ const DESIGN_RULE: InterpretationRule = Object.freeze({
       "low",
     ),
   ]),
+  confidence: confidence(
+    "high",
+    88,
+    "Architectural quality consistently supports this interpretation.",
+  ),
 });
 
 const SUSTAINABILITY_RULE: InterpretationRule = Object.freeze({
@@ -202,6 +230,11 @@ const SUSTAINABILITY_RULE: InterpretationRule = Object.freeze({
       "low",
     ),
   ]),
+  confidence: confidence(
+    "medium",
+    71,
+    "Energy features are present but not comprehensive.",
+  ),
 });
 
 const DEFAULT_RULE: InterpretationRule = Object.freeze({
@@ -233,6 +266,11 @@ const DEFAULT_RULE: InterpretationRule = Object.freeze({
       "low",
     ),
   ]),
+  confidence: confidence(
+    "low",
+    40,
+    "No priority lens is active yet; confidence rises after interpretation opens.",
+  ),
 });
 
 /**

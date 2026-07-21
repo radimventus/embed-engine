@@ -33,6 +33,11 @@ describe("composeExperience", () => {
     assert.ok(experience.evidence.length >= 2);
     assert.ok(Array.isArray(experience.concerns));
     assert.ok(experience.concerns.length >= 1);
+    assert.ok(experience.confidence);
+    assert.ok(["low", "medium", "high"].includes(experience.confidence.level));
+    assert.ok(Number.isInteger(experience.confidence.score));
+    assert.ok(experience.confidence.score >= 0);
+    assert.ok(experience.confidence.score <= 100);
   });
 
   it("is deterministic for the same input", () => {
@@ -65,6 +70,7 @@ describe("first interpretation", () => {
     assert.notDeepEqual(investment.recommendations, design.recommendations);
     assert.notDeepEqual(family.evidence, investment.evidence);
     assert.notDeepEqual(family.concerns, investment.concerns);
+    assert.notDeepEqual(family.confidence, investment.confidence);
 
     assert.equal(family.title, "Family living interpretation");
     assert.equal(investment.title, "Investment interpretation");
@@ -131,5 +137,37 @@ describe("experience concerns", () => {
       "Solar installation not included",
     );
     assert.notDeepEqual(family.concerns, design.concerns);
+  });
+});
+
+describe("experience confidence", () => {
+  it("produces different Confidence for different PrioritySelections", () => {
+    const family = composeExperience(inputWith(["layout"]));
+    const investment = composeExperience(inputWith(["investment"]));
+    const design = composeExperience(inputWith(["design"]));
+    const sustainability = composeExperience(inputWith(["energy"]));
+
+    assert.deepEqual(family.confidence, {
+      level: "high",
+      score: 92,
+      explanation: "The property strongly matches the selected priorities.",
+    });
+    assert.deepEqual(investment.confidence, {
+      level: "medium",
+      score: 76,
+      explanation: "Most investment indicators are positive.",
+    });
+    assert.deepEqual(design.confidence, {
+      level: "high",
+      score: 88,
+      explanation:
+        "Architectural quality consistently supports this interpretation.",
+    });
+    assert.deepEqual(sustainability.confidence, {
+      level: "medium",
+      score: 71,
+      explanation: "Energy features are present but not comprehensive.",
+    });
+    assert.notDeepEqual(family.confidence, design.confidence);
   });
 });

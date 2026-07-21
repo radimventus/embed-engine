@@ -67,6 +67,18 @@ export function DecisionTerminal({ experience }: DecisionTerminalProps) {
         ))}
       </ul>
       <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
+        Recommendation confidence
+      </p>
+      <div
+        className="mt-1 space-y-1 text-sm text-embed-foreground-primary/70"
+        data-testid="decision-terminal-confidence"
+      >
+        <p className="font-medium text-embed-foreground-primary">
+          {experience.confidence.level} · {experience.confidence.score}
+        </p>
+        <p className="leading-relaxed">{experience.confidence.explanation}</p>
+      </div>
+      <p className="mt-3 text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
         Focus
       </p>
       <ul className="mt-1 list-disc space-y-1 pl-4 text-sm text-embed-foreground-primary/70">

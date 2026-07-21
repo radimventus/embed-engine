@@ -30,6 +30,7 @@ export function composeExperience(input: ExperienceComposeInput): Experience {
     recommendations: rule.recommendations,
     evidence: rule.evidence,
     concerns: rule.concerns,
+    confidence: rule.confidence,
   });
 }
 

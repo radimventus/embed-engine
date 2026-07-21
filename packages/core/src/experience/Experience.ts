@@ -20,6 +20,17 @@ export type ExperienceConcern = {
 };
 
 /**
+ * Confidence signal for an interpreted Experience.
+ * Domain artefact — not a UI model.
+ * score is an integer in the range 0–100.
+ */
+export type ExperienceConfidence = {
+  readonly level: "low" | "medium" | "high";
+  readonly score: number;
+  readonly explanation: string;
+};
+
+/**
  * Interpreted representation of an Object.
  * Domain artefact — not a UI model.
  */
@@ -31,4 +42,5 @@ export type Experience = {
   readonly recommendations: readonly string[];
   readonly evidence: readonly ExperienceEvidence[];
   readonly concerns: readonly ExperienceConcern[];
+  readonly confidence: ExperienceConfidence;
 };
