@@ -31,6 +31,7 @@ export default defineConfig({
     rollupOptions: {
       output: {
         exports: "default",
+        sourcemapExcludeSources: true,
       },
     },
   },

@@ -14,10 +14,11 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "DISTRIBUTION.md"
   ],
   "scripts": {
-    "build": "vite build && vite build --config vite.iife.config.ts && tsc --emitDeclarationOnly",
+    "build": "node ./scripts/build-distribution.mjs",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts",
     "demo": "vite --config demo/vite.config.ts"
