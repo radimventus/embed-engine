@@ -6,6 +6,30 @@ export type DecisionReportProps = {
   experience: Experience;
 };
 
+const SEVERITY_CS = {
+  low: 'nízká',
+  medium: 'střední',
+  high: 'vysoká',
+} as const;
+
+const LEVEL_CS = {
+  low: 'nízká',
+  medium: 'střední',
+  high: 'vysoká',
+} as const;
+
+const ACTION_TYPE_CS = {
+  primary: 'primární',
+  secondary: 'sekundární',
+} as const;
+
+const ACTION_INTENT_CS = {
+  explore: 'prozkoumat',
+  compare: 'porovnat',
+  contact: 'kontaktovat',
+  calculate: 'spočítat',
+} as const;
+
 /**
  * Decision Report — structured Experience presentation.
  * Pure renderer; owns no Priority, Object, Composer, or Fragments.
@@ -16,11 +40,11 @@ export function DecisionReport({ experience }: DecisionReportProps) {
       className={`mt-section ${SECTION_SURFACE_CLASS} p-section`}
       data-experience-id={experience.id}
       data-testid="decision-report"
-      aria-label="Decision Report"
+      aria-label="Report rozhodnutí"
     >
       <header className="border-b border-embed-foreground-primary/10 pb-section">
         <p className="text-[11px] font-semibold uppercase tracking-wide text-embed-brand-gold">
-          Decision Report
+          Report rozhodnutí
         </p>
         <h2 className="mt-2 text-base font-semibold text-embed-foreground-primary">
           {experience.title}
@@ -35,7 +59,7 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           id="decision-report-focus"
           className="text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45"
         >
-          Focus
+          Zaměření
         </h3>
         <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-embed-foreground-primary/70">
           {experience.focus.map((item) => (
@@ -49,7 +73,7 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           id="decision-report-evidence"
           className="text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45"
         >
-          Evidence
+          Proč toto doporučení
         </h3>
         <dl
           className="mt-2 space-y-3 text-sm"
@@ -73,7 +97,7 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           id="decision-report-concerns"
           className="text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45"
         >
-          Concerns
+          Na co si dát pozor
         </h3>
         <dl
           className="mt-2 space-y-3 text-sm"
@@ -84,7 +108,7 @@ export function DecisionReport({ experience }: DecisionReportProps) {
               <dt className="font-medium text-embed-foreground-primary">
                 {item.title}{' '}
                 <span className="text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
-                  ({item.severity})
+                  ({SEVERITY_CS[item.severity]})
                 </span>
               </dt>
               <dd className="mt-0.5 text-embed-foreground-primary/70">
@@ -103,7 +127,7 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           id="decision-report-recommendations"
           className="text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45"
         >
-          Recommendations
+          Doporučení
         </h3>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-embed-foreground-primary/70">
           {experience.recommendations.map((item) => (
@@ -120,14 +144,15 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           id="decision-report-confidence"
           className="text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45"
         >
-          Confidence
+          Míra jistoty doporučení
         </h3>
         <div
           className="mt-2 space-y-1 text-sm text-embed-foreground-primary/70"
           data-testid="decision-report-confidence"
         >
           <p className="font-medium text-embed-foreground-primary">
-            {experience.confidence.level} · {experience.confidence.score}
+            {LEVEL_CS[experience.confidence.level]} ·{' '}
+            {experience.confidence.score}
           </p>
           <p className="leading-relaxed">{experience.confidence.explanation}</p>
         </div>
@@ -138,7 +163,7 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           id="decision-report-actions"
           className="text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45"
         >
-          Recommended next steps
+          Doporučené další kroky
         </h3>
         <ul
           className="mt-2 list-disc space-y-2 pl-5 text-sm text-embed-foreground-primary/70"
@@ -150,7 +175,7 @@ export function DecisionReport({ experience }: DecisionReportProps) {
                 {item.label}
               </span>
               <span className="mt-0.5 block text-[11px] uppercase tracking-wide text-embed-foreground-primary/45">
-                {item.type} · {item.intent}
+                {ACTION_TYPE_CS[item.type]} · {ACTION_INTENT_CS[item.intent]}
               </span>
             </li>
           ))}

@@ -74,17 +74,17 @@ describe("first interpretation", () => {
     assert.notDeepEqual(family.concerns, investment.concerns);
     assert.notDeepEqual(family.confidence, investment.confidence);
 
-    assert.equal(family.title, "Family living interpretation");
-    assert.equal(investment.title, "Investment interpretation");
-    assert.equal(design.title, "Design interpretation");
-    assert.equal(sustainability.title, "Sustainability interpretation");
+    assert.equal(family.title, "Interpretace pro rodinné bydlení");
+    assert.equal(investment.title, "Investiční interpretace");
+    assert.equal(design.title, "Designová interpretace");
+    assert.equal(sustainability.title, "Udržitelnostní interpretace");
   });
 
   it("resolves mapped priority by deterministic precedence", () => {
     const experience = composeExperience(
       inputWith(["energy", "layout", "design"]),
     );
-    assert.equal(experience.title, "Family living interpretation");
+    assert.equal(experience.title, "Interpretace pro rodinné bydlení");
   });
 });
 
@@ -105,10 +105,10 @@ describe("experience evidence", () => {
       }
     }
 
-    assert.equal(family.evidence[0]?.title, "Four bedrooms");
-    assert.equal(investment.evidence[0]?.title, "Low operating costs");
-    assert.equal(design.evidence[0]?.title, "Premium materials");
-    assert.equal(sustainability.evidence[0]?.title, "Energy-efficient envelope");
+    assert.equal(family.evidence[0]?.title, "Čtyři ložnice");
+    assert.equal(investment.evidence[0]?.title, "Nízké provozní náklady");
+    assert.equal(design.evidence[0]?.title, "Prémiové materiály");
+    assert.equal(sustainability.evidence[0]?.title, "Energeticky účinná obálka");
     assert.notDeepEqual(family.evidence, design.evidence);
   });
 });
@@ -131,12 +131,12 @@ describe("experience concerns", () => {
       }
     }
 
-    assert.equal(family.concerns[0]?.title, "Children's room on upper floor");
-    assert.equal(investment.concerns[0]?.title, "Higher purchase price");
-    assert.equal(design.concerns[0]?.title, "Minimal storage");
+    assert.equal(family.concerns[0]?.title, "Dětský pokoj v patře");
+    assert.equal(investment.concerns[0]?.title, "Vyšší kupní cena");
+    assert.equal(design.concerns[0]?.title, "Minimální úložné prostory");
     assert.equal(
       sustainability.concerns[0]?.title,
-      "Solar installation not included",
+      "Solární instalace není součástí",
     );
     assert.notDeepEqual(family.concerns, design.concerns);
   });
@@ -152,23 +152,23 @@ describe("experience confidence", () => {
     assert.deepEqual(family.confidence, {
       level: "high",
       score: 92,
-      explanation: "The property strongly matches the selected priorities.",
+      explanation: "Objekt silně odpovídá vybraným prioritám.",
     });
     assert.deepEqual(investment.confidence, {
       level: "medium",
       score: 76,
-      explanation: "Most investment indicators are positive.",
+      explanation: "Většina investičních indikátorů je pozitivní.",
     });
     assert.deepEqual(design.confidence, {
       level: "high",
       score: 88,
       explanation:
-        "Architectural quality consistently supports this interpretation.",
+        "Architektonická kvalita konzistentně podporuje tuto interpretaci.",
     });
     assert.deepEqual(sustainability.confidence, {
       level: "medium",
       score: 71,
-      explanation: "Energy features are present but not comprehensive.",
+      explanation: "Energetické prvky jsou přítomné, ale ne kompletní.",
     });
     assert.notDeepEqual(family.confidence, design.confidence);
   });
@@ -178,9 +178,9 @@ describe("experience fragments", () => {
   it("assembles the same Experience fields via fragment composition", () => {
     const family = composeExperience(inputWith(["layout"]));
     assert.equal(family.id, "experience.house-modern-01.family");
-    assert.equal(family.title, "Family living interpretation");
-    assert.equal(family.evidence[0]?.title, "Four bedrooms");
-    assert.equal(family.concerns[0]?.title, "Children's room on upper floor");
+    assert.equal(family.title, "Interpretace pro rodinné bydlení");
+    assert.equal(family.evidence[0]?.title, "Čtyři ložnice");
+    assert.equal(family.concerns[0]?.title, "Dětský pokoj v patře");
     assert.equal(family.confidence.score, 92);
   });
 });
@@ -205,10 +205,10 @@ describe("experience actions", () => {
       }
     }
 
-    assert.equal(family.actions[0]?.label, "Schedule a viewing");
-    assert.equal(investment.actions[0]?.label, "Calculate ROI");
-    assert.equal(design.actions[0]?.label, "View architectural gallery");
-    assert.equal(sustainability.actions[0]?.label, "Review energy details");
+    assert.equal(family.actions[0]?.label, "Naplánovat prohlídku");
+    assert.equal(investment.actions[0]?.label, "Spočítat návratnost");
+    assert.equal(design.actions[0]?.label, "Prohlédnout architektonickou galerii");
+    assert.equal(sustainability.actions[0]?.label, "Projít energetické detaily");
     assert.notDeepEqual(family.actions, design.actions);
   });
 });

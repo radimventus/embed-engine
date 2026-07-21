@@ -69,17 +69,18 @@ export const LENS_KEY_BY_PRIORITY: Readonly<
 
 /**
  * Baseline fragments use empty appliesTo — selected when no mapped priority is active.
+ * User-facing copy is Czech (MVP localization).
  */
 export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze([
   fragment("family.narrative", ["layout"], () =>
     Object.freeze({
-      title: "Family living interpretation",
+      title: "Interpretace pro rodinné bydlení",
       summary:
-        "This object is read through daily living: zones, privacy between rooms, and how the layout supports a household over time.",
-      focus: Object.freeze(["layout", "privacy", "flexibility"]),
+        "Objekt se čte přes každodenní život: zóny, soukromí mezi místnostmi a to, jak dispozice podporuje domácnost v čase.",
+      focus: Object.freeze(["Dispozice", "Soukromí", "Flexibilita"]),
       recommendations: Object.freeze([
-        "Walk the day and night zones in order",
-        "Confirm household shape before layout commitment",
+        "Projděte denní a noční zónu v tomto pořadí",
+        "Před závazkem k dispozici potvrďte tvar domácnosti",
       ]),
     }),
   ),
@@ -88,18 +89,18 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       evidence: Object.freeze([
         evidence(
           "family.bedrooms",
-          "Four bedrooms",
-          "Enough private rooms for a growing household without forced sharing.",
+          "Čtyři ložnice",
+          "Dostatek soukromých pokojů pro rostoucí domácnost bez nuceného sdílení.",
         ),
         evidence(
           "family.garden",
-          "Safe private garden",
-          "Enclosed outdoor space supports children and quiet evening use.",
+          "Bezpečná soukromá zahrada",
+          "Uzavřený venkovní prostor podporuje děti i klidné večerní využití.",
         ),
         evidence(
           "family.bathrooms",
-          "Two bathrooms",
-          "Morning routines stay parallel instead of competing for one bath.",
+          "Dvě koupelny",
+          "Ranní rutiny mohou běžet paralelně místo soupeření o jednu koupelnu.",
         ),
       ]),
     }),
@@ -109,14 +110,14 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       concerns: Object.freeze([
         concern(
           "family.upper-floor",
-          "Children's room on upper floor",
-          "Night zone upstairs means stairs in every bedtime and night routine.",
+          "Dětský pokoj v patře",
+          "Noční zóna nahoře znamená schody při každém usínání i noční rutině.",
           "medium",
         ),
         concern(
           "family.storage",
-          "Smaller storage space",
-          "Built-in storage is limited relative to a full family inventory.",
+          "Menší úložný prostor",
+          "Vestavěné úložné prostory jsou omezené vůči plnému inventáři rodiny.",
           "low",
         ),
       ]),
@@ -127,23 +128,23 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       confidence: confidence(
         "high",
         92,
-        "The property strongly matches the selected priorities.",
+        "Objekt silně odpovídá vybraným prioritám.",
       ),
     }),
   ),
   fragment("family.actions", ["layout"], () =>
     Object.freeze({
       actions: Object.freeze([
-        action("family.viewing", "Schedule a viewing", "primary", "explore"),
+        action("family.viewing", "Naplánovat prohlídku", "primary", "explore"),
         action(
           "family.schools",
-          "Explore nearby schools",
+          "Prozkoumat okolní školy",
           "secondary",
           "explore",
         ),
         action(
           "family.compare",
-          "Compare with similar homes",
+          "Porovnat s podobnými domy",
           "secondary",
           "compare",
         ),
@@ -153,13 +154,13 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
 
   fragment("investment.narrative", ["investment"], () =>
     Object.freeze({
-      title: "Investment interpretation",
+      title: "Investiční interpretace",
       summary:
-        "This object is read through holding value: cost of ownership, long-term flexibility, and what preserves resale clarity.",
-      focus: Object.freeze(["investment", "operating-costs", "quality"]),
+        "Objekt se čte přes držení hodnoty: náklady vlastnictví, dlouhodobou flexibilitu a to, co zachovává srozumitelnost při dalším prodeji.",
+      focus: Object.freeze(["Investice", "Provozní náklady", "Kvalita"]),
       recommendations: Object.freeze([
-        "Compare operating costs against investment thesis",
-        "Check which layout choices lock or preserve value",
+        "Porovnejte provozní náklady s investiční tezí",
+        "Ověřte, které volby dispozice hodnotu uzamykají nebo zachovávají",
       ]),
     }),
   ),
@@ -168,18 +169,18 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       evidence: Object.freeze([
         evidence(
           "investment.opex",
-          "Low operating costs",
-          "Efficient systems protect yield against rising utility pressure.",
+          "Nízké provozní náklady",
+          "Efektivní systémy chrání výnos před tlakem rostoucích energií.",
         ),
         evidence(
           "investment.rental",
-          "Strong rental potential",
-          "Layout and location support demand from long-stay tenants.",
+          "Silný nájemní potenciál",
+          "Dispozice a lokalita podporují poptávku dlouhodobých nájemců.",
         ),
         evidence(
           "investment.location",
-          "Attractive location",
-          "Site context supports liquidity if the holding period ends early.",
+          "Atraktivní lokalita",
+          "Kontext místa podporuje likviditu, pokud se doba držení zkrátí.",
         ),
       ]),
     }),
@@ -189,14 +190,14 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       concerns: Object.freeze([
         concern(
           "investment.price",
-          "Higher purchase price",
-          "Entry cost sits above the local median and stretches initial capital.",
+          "Vyšší kupní cena",
+          "Vstupní cena je nad místním mediánem a napíná počáteční kapitál.",
           "high",
         ),
         concern(
           "investment.roi",
-          "Longer ROI",
-          "Payback assumes a longer holding period before yield stabilizes.",
+          "Delší návratnost",
+          "Návratnost předpokládá delší dobu držení, než se výnos stabilizuje.",
           "medium",
         ),
       ]),
@@ -207,23 +208,23 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       confidence: confidence(
         "medium",
         76,
-        "Most investment indicators are positive.",
+        "Většina investičních indikátorů je pozitivní.",
       ),
     }),
   ),
   fragment("investment.actions", ["investment"], () =>
     Object.freeze({
       actions: Object.freeze([
-        action("investment.roi", "Calculate ROI", "primary", "calculate"),
+        action("investment.roi", "Spočítat návratnost", "primary", "calculate"),
         action(
           "investment.opex",
-          "Compare operating costs",
+          "Porovnat provozní náklady",
           "secondary",
           "compare",
         ),
         action(
           "investment.advisor",
-          "Contact advisor",
+          "Kontaktovat poradce",
           "secondary",
           "contact",
         ),
@@ -233,13 +234,13 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
 
   fragment("design.narrative", ["design"], () =>
     Object.freeze({
-      title: "Design interpretation",
+      title: "Designová interpretace",
       summary:
-        "This object is read through material and spatial expression: coherence of design language, quality of finish, and how the plot frames the form.",
-      focus: Object.freeze(["design", "quality", "plot"]),
+        "Objekt se čte přes materiál a prostorový výraz: soudržnost designového jazyka, kvalitu povrchů a to, jak pozemek rámuje formu.",
+      focus: Object.freeze(["Design", "Kvalita", "Pozemek"]),
       recommendations: Object.freeze([
-        "Review design coherence room by room",
-        "Separate aesthetic preference from layout fit",
+        "Prověřte soudržnost designu místnost po místnosti",
+        "Oddělte estetickou preferenci od vhodnosti dispozice",
       ]),
     }),
   ),
@@ -248,18 +249,18 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       evidence: Object.freeze([
         evidence(
           "design.materials",
-          "Premium materials",
-          "Finish quality carries the architectural intent through daily use.",
+          "Prémiové materiály",
+          "Kvalita povrchů nese architektonický záměr i v každodenním užívání.",
         ),
         evidence(
           "design.open-living",
-          "Open living space",
-          "Primary living volume reads as one composed spatial gesture.",
+          "Otevřený obytný prostor",
+          "Hlavní obytný objem působí jako jeden komponovaný prostorový gestus.",
         ),
         evidence(
           "design.details",
-          "Architectural details",
-          "Edges, openings and transitions reinforce a deliberate design language.",
+          "Architektonické detaily",
+          "Hrany, otvory a přechody posilují záměrný designový jazyk.",
         ),
       ]),
     }),
@@ -269,14 +270,14 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       concerns: Object.freeze([
         concern(
           "design.storage",
-          "Minimal storage",
-          "Visual clarity comes with fewer concealed storage surfaces.",
+          "Minimální úložné prostory",
+          "Vizuální čistota znamená méně skrytých úložných ploch.",
           "medium",
         ),
         concern(
           "design.glazing",
-          "Large glazed surfaces require maintenance",
-          "Expansive glass needs regular cleaning and seasonal performance checks.",
+          "Velké prosklené plochy vyžadují údržbu",
+          "Rozsáhlé sklo potřebuje pravidelné čištění a sezónní kontroly výkonu.",
           "low",
         ),
       ]),
@@ -287,7 +288,7 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       confidence: confidence(
         "high",
         88,
-        "Architectural quality consistently supports this interpretation.",
+        "Architektonická kvalita konzistentně podporuje tuto interpretaci.",
       ),
     }),
   ),
@@ -296,24 +297,24 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       actions: Object.freeze([
         action(
           "design.gallery",
-          "View architectural gallery",
+          "Prohlédnout architektonickou galerii",
           "primary",
           "explore",
         ),
-        action("design.materials", "Explore materials", "secondary", "explore"),
+        action("design.materials", "Prozkoumat materiály", "secondary", "explore"),
       ]),
     }),
   ),
 
   fragment("sustainability.narrative", ["energy"], () =>
     Object.freeze({
-      title: "Sustainability interpretation",
+      title: "Udržitelnostní interpretace",
       summary:
-        "This object is read through energy and upkeep: efficiency, operating load, and how maintenance shapes long-term living cost.",
-      focus: Object.freeze(["energy", "operating-costs", "maintenance"]),
+        "Objekt se čte přes energii a údržbu: efektivitu, provozní zátěž a to, jak údržba formuje dlouhodobé náklady bydlení.",
+      focus: Object.freeze(["Energie", "Provozní náklady", "Údržba"]),
       recommendations: Object.freeze([
-        "Inspect energy systems before emotional fit",
-        "Weigh maintenance load against operating-cost savings",
+        "Prověřte energetické systémy dříve než emocionální fit",
+        "Zvažte zátěž údržby vůči úsporám provozních nákladů",
       ]),
     }),
   ),
@@ -322,18 +323,18 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       evidence: Object.freeze([
         evidence(
           "sustainability.envelope",
-          "Energy-efficient envelope",
-          "Fabric performance reduces heat loss before active systems work harder.",
+          "Energeticky účinná obálka",
+          "Výkon konstrukce snižuje tepelné ztráty dříve, než aktivní systémy pracují více.",
         ),
         evidence(
           "sustainability.heat-pump",
-          "Heat pump",
-          "Primary heating path is sized for efficient low-temperature operation.",
+          "Tepelné čerpadlo",
+          "Primární vytápění je dimenzované na efektivní nízkoteplotní provoz.",
         ),
         evidence(
           "sustainability.solar",
-          "Solar-ready roof",
-          "Roof geometry leaves a clear path for future generation without rework.",
+          "Střecha připravená na solár",
+          "Geometrie střechy ponechává jasnou cestu pro budoucí výrobu bez přestaveb.",
         ),
       ]),
     }),
@@ -343,14 +344,14 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       concerns: Object.freeze([
         concern(
           "sustainability.solar-not-included",
-          "Solar installation not included",
-          "Generation capacity is prepared but panels are not part of the base scope.",
+          "Solární instalace není součástí",
+          "Kapacita výroby je připravená, ale panely nejsou v základní dodávce.",
           "medium",
         ),
         concern(
           "sustainability.rainwater",
-          "Rainwater system optional",
-          "Water reuse depends on an optional package rather than a default install.",
+          "Dešťová voda je volitelná",
+          "Opětovné využití vody závisí na volitelném balíčku, ne na výchozí instalaci.",
           "low",
         ),
       ]),
@@ -361,7 +362,7 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       confidence: confidence(
         "medium",
         71,
-        "Energy features are present but not comprehensive.",
+        "Energetické prvky jsou přítomné, ale ne kompletní.",
       ),
     }),
   ),
@@ -370,13 +371,13 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       actions: Object.freeze([
         action(
           "sustainability.energy",
-          "Review energy details",
+          "Projít energetické detaily",
           "primary",
           "explore",
         ),
         action(
           "sustainability.opex",
-          "Calculate operating costs",
+          "Spočítat provozní náklady",
           "secondary",
           "calculate",
         ),
@@ -386,12 +387,12 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
 
   fragment("baseline.narrative", [], () =>
     Object.freeze({
-      title: "Baseline object interpretation",
+      title: "Základní interpretace objektu",
       summary:
-        "Select priorities to open a decision lens. The object stays the same; only the interpretation changes.",
-      focus: Object.freeze(["disposition", "layout"]),
+        "Vyberte priority a otevřete rozhodovací perspektivu. Objekt zůstává stejný; mění se jen interpretace.",
+      focus: Object.freeze(["Dispozice", "Interpretace"]),
       recommendations: Object.freeze([
-        "Select at least one priority to open an interpretation",
+        "Vyberte alespoň jednu prioritu a otevřete interpretaci",
       ]),
     }),
   ),
@@ -400,13 +401,13 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       evidence: Object.freeze([
         evidence(
           "baseline.select",
-          "No lens selected yet",
-          "Evidence appears once a priority opens an interpretation of this object.",
+          "Perspektiva ještě není vybraná",
+          "Důkazy se objeví, jakmile priorita otevře interpretaci tohoto objektu.",
         ),
         evidence(
           "baseline.object-stable",
-          "Object stays fixed",
-          "Changing priorities changes interpretation only — never the object itself.",
+          "Objekt zůstává pevný",
+          "Změna priorit mění jen interpretaci — nikdy samotný objekt.",
         ),
       ]),
     }),
@@ -416,8 +417,8 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       concerns: Object.freeze([
         concern(
           "baseline.open-lens",
-          "Interpretation not opened",
-          "Concerns appear after a priority selects a decision lens on this object.",
+          "Interpretace není otevřená",
+          "Upozornění se objeví poté, co priorita vybere rozhodovací perspektivu.",
           "low",
         ),
       ]),
@@ -428,7 +429,7 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       confidence: confidence(
         "low",
         40,
-        "No priority lens is active yet; confidence rises after interpretation opens.",
+        "Žádná prioritní perspektiva ještě není aktivní; jistota vzroste po otevření interpretace.",
       ),
     }),
   ),
@@ -437,13 +438,13 @@ export const EXPERIENCE_FRAGMENTS: readonly ExperienceFragment[] = Object.freeze
       actions: Object.freeze([
         action(
           "baseline.select-priority",
-          "Select a priority lens",
+          "Vybrat prioritní perspektivu",
           "primary",
           "explore",
         ),
         action(
           "baseline.compare-later",
-          "Compare after interpretation opens",
+          "Porovnat po otevření interpretace",
           "secondary",
           "compare",
         ),
