@@ -1,8 +1,21 @@
+import type { Experience } from '@embed-engine/core/experience';
+
 import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from './priority-engine-layout';
 
-export function IntroText() {
+type IntroTextProps = {
+  experience: Experience;
+};
+
+/**
+ * Placeholder terminal surface — receives composed Experience without changing copy.
+ */
+export function IntroText({ experience }: IntroTextProps) {
   return (
-    <div className={PRIORITY_ENGINE_INTRO_PANEL_CLASS}>
+    <div
+      className={PRIORITY_ENGINE_INTRO_PANEL_CLASS}
+      data-experience-id={experience.id}
+      data-testid="experience-placeholder"
+    >
       <p className="text-sm font-medium leading-relaxed text-embed-foreground-primary">
         Calibrate your decision filter
       </p>

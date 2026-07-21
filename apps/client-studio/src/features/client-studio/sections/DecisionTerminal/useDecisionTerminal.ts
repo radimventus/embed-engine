@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { composeExperience } from '@embed-engine/core/experience';
 import {
   HOUSEHOLD_PROFILE_FACT_KEY,
   isHouseholdProfile,
@@ -14,6 +15,7 @@ import { useExperienceSession } from '../../cognitive/ExperienceBindingProvider'
 import { useActiveDecisionMove } from '../../cognitive/DecisionStoryProvider';
 import { useWalkthrough } from '../../../walkthrough';
 import { PILOT_TERMS } from '../../pilot/pilotVocabulary';
+import { usePrioritySelection } from '../PriorityEngine/PrioritySelectionContext';
 
 export type TerminalPhase =
   | 'loading'
@@ -29,9 +31,11 @@ export type TerminalAction = {
   readonly disabled?: boolean;
 };
 
+const PILOT_OBJECT_ID = 'house-modern-01';
+
 /**
  * Decision Terminal view-model from Session snapshot + Story (S-004 / S-005).
- * CTA labels and whyNow from Behavior Pack when present — no DecisionState coupling.
+ * Slice 2: PrioritySelection → ExperienceComposer → Experience (output unchanged).
  */
 export function useDecisionTerminal() {
   const session = useExperienceSession();
@@ -39,6 +43,15 @@ export function useDecisionTerminal() {
   const walkthrough = useWalkthrough();
   const { story, definition, outcome, activeMoveId } = useActiveDecisionMove();
   const interpretation = session.interpretation;
+  const priorities = usePrioritySelection();
+  const experience = useMemo(
+    () =>
+      composeExperience({
+        object: { id: PILOT_OBJECT_ID },
+        priorities,
+      }),
+    [priorities],
+  );
 
   const pendingRef = useRef(false);
   const [pending, setPending] = useState(false);
@@ -210,6 +223,7 @@ export function useDecisionTerminal() {
     householdDraft,
     setHouseholdDraft,
     interpretation,
+    experience,
     startDialogue,
     submitHousehold,
     commitLayout,

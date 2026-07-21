@@ -5,11 +5,29 @@ import {
   DECISION_SURFACE_HEIGHT_PX,
   DECISION_SURFACE_WIDTH_PX,
 } from './decision-cards-layout';
-import { useDecisionCards } from './useDecisionCards';
+import type { DecisionCategory } from './decision-cards.constants';
 
-export function PriorityCards() {
-  const { cards, categories, setImportance, toggleCard } = useDecisionCards();
+type DecisionCardState = {
+  selected: boolean;
+  importance: number;
+};
 
+type PriorityCardsProps = {
+  cards: Record<string, DecisionCardState>;
+  categories: readonly DecisionCategory[];
+  setImportance: (id: string, importance: number) => void;
+  toggleCard: (id: string) => void;
+};
+
+/**
+ * Priority cards surface — presentation only; state owned by PriorityEngine.
+ */
+export function PriorityCards({
+  cards,
+  categories,
+  setImportance,
+  toggleCard,
+}: PriorityCardsProps) {
   return (
     <div className="flex min-w-0 flex-col self-start">
       <div

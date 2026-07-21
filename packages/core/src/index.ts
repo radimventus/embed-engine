@@ -13,6 +13,19 @@ export * from "./runtime/Interpreter";
 export * from "./runtime/DefaultInterpreter";
 export * from "./runtime/validate";
 
+export type { Experience } from "./experience/Experience";
+export type {
+  PriorityId,
+  PrioritySelection,
+} from "./experience/PrioritySelection";
+export { createEmptyPrioritySelection } from "./experience/PrioritySelection";
+export {
+  composeExperience,
+  createExperienceComposer,
+  type ExperienceComposer,
+  type ExperienceComposeInput,
+  type ExperienceObjectRef,
+} from "./experience/composeExperience";
 export * from "./experience/ExperienceSessionSnapshot";
 export * from "./experience/createExperienceBinding";
 

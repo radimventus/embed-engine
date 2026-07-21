@@ -23,6 +23,7 @@ export function DecisionTerminal() {
     householdDraft,
     setHouseholdDraft,
     interpretation,
+    experience,
     startDialogue,
     submitHousehold,
     commitLayout,
@@ -37,6 +38,7 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         loading
         pending={false}
+        experienceId={experience.id}
         eyebrow={PILOT_TERMS.decisionTerminal}
         title="Připravujeme cestu Rozhodnutí"
         body="Načítá se session. Priorita a Rozhodovací terminál sdílejí stejnou Interpretaci."
@@ -50,6 +52,7 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         error
         pending={false}
+        experienceId={experience.id}
         eyebrow={PILOT_TERMS.decisionTerminal}
         title="Cesta Rozhodnutí není dostupná"
         body={
@@ -85,6 +88,7 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         empty
         pending={pending}
+        experienceId={experience.id}
         eyebrow={PILOT_TERMS.decisionTerminal}
         title={
           topic
@@ -114,6 +118,7 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         activeMove={activeMoveId}
         pending={pending}
+        experienceId={experience.id}
         eyebrow={`${PILOT_TERMS.decisionTerminal} · Krok ${completedCount + 1}/${totalMoves}`}
         intent={definition.intent}
         title={definition.purpose}
@@ -138,6 +143,7 @@ export function DecisionTerminal() {
         testId="decision-terminal"
         activeMove={activeMoveId}
         pending={pending}
+        experienceId={experience.id}
         eyebrow={`${PILOT_TERMS.decisionTerminal} · Krok ${completedCount + 1}/${totalMoves}`}
         intent={definition.intent}
         title={definition.purpose}
@@ -154,6 +160,7 @@ export function DecisionTerminal() {
       testId="decision-terminal"
       error
       pending={false}
+      experienceId={experience.id}
       eyebrow={PILOT_TERMS.decisionTerminal}
       title="Tento krok nelze zobrazit"
       body="Aktivní krok Story se nepodařilo prezentovat. Zkuste znovu od Priority."

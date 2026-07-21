@@ -31,6 +31,7 @@ export type TerminalShellProps = {
   error?: boolean;
   outcome?: string;
   activeMove?: string;
+  experienceId?: string;
   householdProfile?: HouseholdProfile | null;
   onSelectHousehold?: (profile: HouseholdProfile) => void;
 };
@@ -54,6 +55,7 @@ export function TerminalShell({
   error,
   outcome,
   activeMove,
+  experienceId,
   householdProfile,
   onSelectHousehold,
 }: TerminalShellProps) {
@@ -65,6 +67,7 @@ export function TerminalShell({
       aria-busy={pending || loading === true}
       className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} overflow-y-auto`}
       data-testid={testId}
+      data-experience-id={experienceId}
       data-empty={empty ? 'true' : undefined}
       data-loading={loading ? 'true' : undefined}
       data-error={error ? 'true' : undefined}

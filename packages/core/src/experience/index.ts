@@ -1,3 +1,16 @@
+export type { Experience } from "./Experience";
+export type {
+  PriorityId,
+  PrioritySelection,
+} from "./PrioritySelection";
+export { createEmptyPrioritySelection } from "./PrioritySelection";
+export {
+  composeExperience,
+  createExperienceComposer,
+  type ExperienceComposer,
+  type ExperienceComposeInput,
+  type ExperienceObjectRef,
+} from "./composeExperience";
 export type {
   ExperienceSessionSnapshot,
 } from "./ExperienceSessionSnapshot";
