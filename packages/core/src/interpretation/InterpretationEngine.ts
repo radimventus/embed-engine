@@ -33,6 +33,7 @@ export function createInterpretationEngine(): InterpretationEngine {
       return assembleInterpretation({
         objectId: input.objectId,
         priorityIds: input.priorityIds,
+        lens,
         lensKey: lensKeyFor(lens),
         strengths: resolveStrengths(lens),
         frictions: resolveFrictions(lens),

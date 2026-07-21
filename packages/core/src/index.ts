@@ -48,6 +48,16 @@ export {
   INTERPRETATION_FORBIDDEN_PRESENTATION_KEYS,
   createInterpretation,
 } from "./interpretation/Interpretation";
+export type {
+  InterpretationTrace,
+  InterpretationTraceConclusionKind,
+  InterpretationTraceContribution,
+  InterpretationTraceMetadata,
+} from "./interpretation/InterpretationTrace";
+export {
+  INTERPRETATION_TRACE_FORBIDDEN_PRESENTATION_KEYS,
+  createInterpretationTrace,
+} from "./interpretation/InterpretationTrace";
 export {
   interpretObject,
   type InterpretObjectInput,

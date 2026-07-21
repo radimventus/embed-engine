@@ -9,6 +9,16 @@ export {
   INTERPRETATION_FORBIDDEN_PRESENTATION_KEYS,
   createInterpretation,
 } from "./Interpretation";
+export type {
+  InterpretationTrace,
+  InterpretationTraceConclusionKind,
+  InterpretationTraceContribution,
+  InterpretationTraceMetadata,
+} from "./InterpretationTrace";
+export {
+  INTERPRETATION_TRACE_FORBIDDEN_PRESENTATION_KEYS,
+  createInterpretationTrace,
+} from "./InterpretationTrace";
 export {
   interpretObject,
   type InterpretObjectInput,

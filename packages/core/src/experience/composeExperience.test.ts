@@ -229,6 +229,7 @@ describe("ADR-012 runtime pipeline", () => {
     assert.equal(interpretation.objectId, "house-modern-01");
     assert.ok(interpretation.id.startsWith("interpretation."));
     assert.equal(interpretation.matchScore, 92);
+    assert.ok(interpretation.trace);
     assert.deepEqual(viaInterpretation, viaCompose);
   });
 
@@ -257,6 +258,12 @@ describe("ADR-012 runtime pipeline", () => {
           priorityIds: input.priorities.selected,
         }),
       );
+      assert.ok(interpretation.trace);
     }
+  });
+
+  it("does not leak InterpretationTrace into Experience", () => {
+    const experience = composeExperience(inputWith(["layout"]));
+    assert.equal("trace" in experience, false);
   });
 });

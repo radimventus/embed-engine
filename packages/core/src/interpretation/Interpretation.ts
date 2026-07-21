@@ -7,6 +7,11 @@
  * Distinct from Cognitive projection `Interpretation` (`@embed-engine/core/cognitive`).
  */
 
+import {
+  createInterpretationTrace,
+  type InterpretationTrace,
+} from "./InterpretationTrace";
+
 /**
  * Weighted machine factor (strength, friction, opportunity, …).
  * `code` is a stable machine key — not user-facing copy.
@@ -59,6 +64,11 @@ export type Interpretation = {
   /** Integer match score in the range 0–100. */
   readonly matchScore: number;
   readonly recommendedIntent: InterpretationRecommendedIntent;
+  /**
+   * Optional explainability payload — why this Interpretation was produced.
+   * Not used by Experience / renderers.
+   */
+  readonly trace?: InterpretationTrace;
 };
 
 /**
@@ -80,7 +90,7 @@ export const INTERPRETATION_FORBIDDEN_PRESENTATION_KEYS = Object.freeze([
 export function createInterpretation(
   input: Interpretation,
 ): Interpretation {
-  return Object.freeze({
+  const interpretation: Interpretation = {
     id: input.id,
     objectId: input.objectId,
     priorityIds: Object.freeze([...input.priorityIds]),
@@ -95,5 +105,14 @@ export function createInterpretation(
     ),
     matchScore: input.matchScore,
     recommendedIntent: input.recommendedIntent,
+  };
+
+  if (input.trace === undefined) {
+    return Object.freeze(interpretation);
+  }
+
+  return Object.freeze({
+    ...interpretation,
+    trace: createInterpretationTrace(input.trace),
   });
 }

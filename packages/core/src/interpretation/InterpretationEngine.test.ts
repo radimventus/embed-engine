@@ -47,4 +47,17 @@ describe("InterpretationEngine", () => {
       assert.equal(keys.includes(forbidden), false);
     }
   });
+
+  it("attaches InterpretationTrace without changing semantic conclusions", () => {
+    const interpretation = interpretationEngine.interpret({
+      objectId: "house-modern-01",
+      priorityIds: ["layout"],
+    });
+
+    assert.ok(interpretation.trace);
+    assert.equal(interpretation.matchScore, 92);
+    assert.equal(interpretation.recommendedIntent, "explore-layout");
+    assert.equal(interpretation.strengths[0]?.code, "family.bedrooms");
+    assert.equal(interpretation.trace?.contributions[0]?.kind, "lens");
+  });
 });
