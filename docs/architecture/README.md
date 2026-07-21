@@ -11,7 +11,8 @@
 | --- | --- |
 | [RUNTIME.md](./RUNTIME.md) | **Runtime documentation index** (SSOT hierarchy) |
 | `decision-layer/` | **SSOT** for Strategy, Story, Move, Terminal, Trajectory |
-| `core/` | Cognitive Layer (CORE-001 / CORE-002) |
+| `platform/` | Platform Architecture Overview (CORE-001) |
+| `core/` | Cognitive Layer & Decision State (CORE-101 / CORE-002) |
 | `adr/` | Architecture Decision Records ([ADR-001](./adr/ADR-001-runtime-architecture.md) Runtime) |
 | `experience/` | Experience projection notes; Terminal **modalities** only (defs → Decision Layer) |
 | `living-experience-v0.1-freeze.md` | Cognitive sync freeze |

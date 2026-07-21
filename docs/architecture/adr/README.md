@@ -12,6 +12,7 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 | [ADR-008](./ADR-008-decision-terminal.md) | Decision Terminal implementation gate | Accepted |
 | [ADR-009](./ADR-009-decision-layer.md) | Decision Layer | Accepted (definitions freeze) |
 | [ADR-010](./ADR-010-decision-strategy.md) | Decision Strategy (DT-002) | Accepted (definitions freeze) |
+| [ADR-011](./ADR-011-core-001-platform-overview.md) | Renumber Cognitive Layer to CORE-101 | Accepted |
 
 **Vocabulary SSOT (not an ADR):** [../decision-layer/README.md](../decision-layer/README.md)  
 **Runtime SSOT:** [../../04-reference-implementation/RI-001-Runtime-Kernel.md](../../04-reference-implementation/RI-001-Runtime-Kernel.md) · [../RUNTIME.md](../RUNTIME.md)  

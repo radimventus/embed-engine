@@ -26,7 +26,7 @@ Future:         Decision Trajectory (not MVP)
 | **Decision Session** | One active Experience decision journey | **[RI-002](./04-reference-implementation/RI-002-Decision-Session.md)** |
 | **DecisionState** | Sole Cognitive aggregate (Session core) | ADR-002 / CORE-002 |
 | **Decision Layer** | Strategy · Story · Move · Terminal · Trajectory | `architecture/decision-layer/` |
-| **Interpretation** | Reasoning snapshot | ADR-003 / CORE-001 |
+| **Interpretation** | Reasoning snapshot | ADR-003 / CORE-101 |
 | **Experience** | Surfaces that render; emit Signals | **[RI-003](./04-reference-implementation/RI-003-Experience-Kernel.md)** · Experience Layer |
 | **Client Studio** | Decision Workspace (not page builder) | apps — Experience host; product intent → DEG |
 | **Archive** | History only (incl. CommandRuntime) | `archive/` · `architecture/archive/` |

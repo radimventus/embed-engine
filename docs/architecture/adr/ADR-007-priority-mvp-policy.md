@@ -137,7 +137,7 @@ Reload, new tab, or Runtime `destroy` starts a **fresh** DecisionState (via `loa
 
 ### Why
 
-1. Aligns with CORE-001: Persistence is **outside** the Cognitive Layer.  
+1. Aligns with CORE-101: Persistence is **outside** the Cognitive Layer.  
 2. Pilot proves reaction quality, not resume / CRM continuity.  
 3. Avoids premature schema, privacy, and restore-conflict design.  
 4. Keeps debugging deterministic: empty Focus → known initial Interpretation.
@@ -177,4 +177,4 @@ Optional **session restore** or **backend DecisionState** may be proposed later 
 - [Living Experience v0.1 Freeze](../living-experience-v0.1-freeze.md)  
 - [Behavior Pack Contract](../behavior-pack-contract.md)  
 - [Product Backlog](../../product/backlog/PRODUCT_BACKLOG.md)  
-- [CORE-001 Cognitive Layer](../core/CORE-001-cognitive-layer.md)
+- [CORE-101 Cognitive Layer](../core/CORE-101-cognitive-layer.md)

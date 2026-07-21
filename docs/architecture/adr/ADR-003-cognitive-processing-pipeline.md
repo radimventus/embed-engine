@@ -2,7 +2,7 @@
 
 **Status:** Proposed → treat as Accepted with Living Experience v0.1 + Decision Layer governance v1  
 **Date:** 2026-07-20  
-**Depends on:** ADR-001 — Runtime Architecture, ADR-002 — DecisionState Aggregate, CORE-001 — Cognitive Layer  
+**Depends on:** ADR-001 — Runtime Architecture, ADR-002 — DecisionState Aggregate, CORE-101 — Cognitive Layer  
 
 ---
 

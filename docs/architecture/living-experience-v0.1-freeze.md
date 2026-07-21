@@ -16,7 +16,7 @@ Related:
 - [Decision Layer governance v1](./decision-layer/decision-layer-governance-v1.md)
 - [Behavior Pack Contract](./behavior-pack-contract.md)
 - [ADR-002](./adr/ADR-002-decision-state.md) · [ADR-003](./adr/ADR-003-cognitive-processing-pipeline.md) · [ADR-007](./adr/ADR-007-priority-mvp-policy.md)
-- [CORE-001](./core/CORE-001-cognitive-layer.md)
+- [CORE-101](./core/CORE-101-cognitive-layer.md)
 
 ---
 
@@ -225,7 +225,7 @@ See also section F in the freeze deliverable summary. Documents that **should be
 | `docs/architecture/adr/ADR-002-decision-state.md` | Promote **Proposed → Accepted**; freeze status aligned with Living Experience v0.1 |
 | `docs/architecture/adr/ADR-003-cognitive-processing-pipeline.md` | Promote **Proposed → Accepted**; note Runtime orchestrates but does not own reduce/project logic |
 | `docs/architecture/adr/README.md` | Reflect Accepted statuses; link Living Experience freeze + Behavior Pack contract |
-| `docs/architecture/core/CORE-001-cognitive-layer.md` | Status Draft → aligned with freeze; mention synchronized Experience + Behavior Packs as next extension point |
+| `docs/architecture/core/CORE-101-cognitive-layer.md` | Status Draft → aligned with freeze; mention synchronized Experience + Behavior Packs as next extension point |
 | `docs/architecture/core/CORE-002-decision-state.md` | Cross-link freeze; confirm sole-aggregate wording |
 | `docs/architecture/adr/ADR-006-interpretation-projection-layer.md` | Reconcile with cognitive Interpretation; mark ExperienceModel path as legacy / parallel until unified |
 | `docs/architecture/experience-projection.md` | Update public contract: Interpretation for Decision Experience renderers; avoid contradicting ADR-003 |

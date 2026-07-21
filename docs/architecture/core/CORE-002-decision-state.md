@@ -2,7 +2,7 @@
 
 **Status:** Draft\
 **Version:** 0.2\
-**Depends on:** CORE-001 -- Cognitive Layer, ADR-002 -- DecisionState Aggregate\
+**Depends on:** CORE-101 -- Cognitive Layer, ADR-002 -- DecisionState Aggregate\
 **Pipeline:** ADR-003 -- Cognitive Processing Pipeline
 
 ------------------------------------------------------------------------

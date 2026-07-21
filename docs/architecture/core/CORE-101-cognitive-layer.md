@@ -1,8 +1,10 @@
-# CORE-001 --- Cognitive Layer
+# CORE-101 --- Cognitive Layer
 
 **Status:** Draft\
-**Version:** 0.2\
-**Depends on:** ADR-001 -- Runtime Architecture\
+**Version:** 0.3\
+**ID:** CORE-101\
+**Formerly:** CORE-001 (renumbered — ADR-011)\
+**Depends on:** ADR-001 -- Runtime Architecture; CORE-001 -- Platform Architecture Overview\
 **References:** ADR-002 -- DecisionState Aggregate; ADR-003 -- Cognitive Processing Pipeline\
 **Next Milestone:** M2 -- Cognitive Layer
 
@@ -128,7 +130,7 @@ Viz **ADR-003**:
 
 Signal → reduce() → DecisionState → project() → Interpretation
 
-CORE-001 nedefinuje vlastní pipeline a neobsahuje samostatný Context agregát.
+CORE-101 nedefinuje vlastní pipeline a neobsahuje samostatný Context agregát.
 
 ------------------------------------------------------------------------
 

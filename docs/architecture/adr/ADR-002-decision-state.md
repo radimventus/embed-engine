@@ -2,7 +2,7 @@
 
 **Status:** Proposed → treat as Accepted with Living Experience v0.1  
 **Date:** 2026-07-20  
-**Depends on:** ADR-001 — Runtime Architecture, CORE-001 — Cognitive Layer, CAP-02, CAP-03  
+**Depends on:** ADR-001 — Runtime Architecture, CORE-101 — Cognitive Layer, CAP-02, CAP-03  
 **Supersedes:** earlier ADR-002 draft titled “Context Model”
 
 ---

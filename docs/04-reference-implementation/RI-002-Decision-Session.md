@@ -11,7 +11,7 @@
 | **Document type** | Reference Implementation Specification (documentation-only) |
 | **Conforms to** | [ESS-001](../03-specification-standard/ESS-001-Embed-Specification-Standard.md) v1.0, [EQS-001](../03-specification-standard/EQS-001-Engineering-Quality-Standard.md) v1.0 |
 | **Depends On** | Reference Architecture v1.0 (Conceptual Freeze), [RI-001 — Runtime Kernel](./RI-001-Runtime-Kernel.md), [ADR-001](../architecture/adr/ADR-001-runtime-architecture.md), [ADR-002](../architecture/adr/ADR-002-decision-state.md), [ADR-003](../architecture/adr/ADR-003-cognitive-processing-pipeline.md), [ADR-007](../architecture/adr/ADR-007-priority-mvp-policy.md), [Living Experience v0.1 Freeze](../architecture/living-experience-v0.1-freeze.md), [Decision Layer Governance v1](../architecture/decision-layer/decision-layer-governance-v1.md) |
-| **Related Documents** | [RUNTIME.md](../architecture/RUNTIME.md), [CORE-001](../architecture/core/CORE-001-cognitive-layer.md), [CORE-002](../architecture/core/CORE-002-decision-state.md), [ADR-009](../architecture/adr/ADR-009-decision-layer.md), [ADR-010](../architecture/adr/ADR-010-decision-strategy.md), Epoch I retrospective (`docs/00-foundation/FOUNDATION-EPOCH-I.md`) |
+| **Related Documents** | [RUNTIME.md](../architecture/RUNTIME.md), [CORE-101](../architecture/core/CORE-101-cognitive-layer.md), [CORE-002](../architecture/core/CORE-002-decision-state.md), [ADR-009](../architecture/adr/ADR-009-decision-layer.md), [ADR-010](../architecture/adr/ADR-010-decision-strategy.md), Epoch I retrospective (`docs/00-foundation/FOUNDATION-EPOCH-I.md`) |
 | **RFC 2119** | Per ESS-001 §3 |
 
 ---
