@@ -9,6 +9,7 @@ import type { PriorityId, PrioritySelection } from "./PrioritySelection";
 import {
   createDecisionContext,
   interpretationEngine,
+  type DecisionContext,
   type Interpretation,
 } from "../interpretation";
 
@@ -23,6 +24,11 @@ export type ExperienceObjectRef = {
 export type ExperienceComposeInput = {
   readonly object: ExperienceObjectRef;
   readonly priorities: PrioritySelection;
+};
+
+export type InterpretedExperience = {
+  readonly interpretation: Interpretation;
+  readonly experience: Experience;
 };
 
 /**
@@ -50,15 +56,32 @@ export function createExperienceFromInterpretation(
 }
 
 /**
- * Canonical runtime path (ADR-012):
- * Object + DecisionContext → InterpretationEngine → Experience
+ * Canonical reactive pipeline step:
+ * Object + DecisionContext → InterpretationEngine → ExperienceComposer
  */
-export function composeExperience(input: ExperienceComposeInput): Experience {
+export function interpretAndCompose(input: {
+  readonly object: ExperienceObjectRef;
+  readonly context: DecisionContext;
+}): InterpretedExperience {
   const interpretation = interpretationEngine.interpret({
     object: input.object,
-    context: createDecisionContext({ priorities: input.priorities }),
+    context: input.context,
   });
-  return createExperienceFromInterpretation(interpretation);
+  return Object.freeze({
+    interpretation,
+    experience: createExperienceFromInterpretation(interpretation),
+  });
+}
+
+/**
+ * Canonical runtime path (ADR-012):
+ * Object + PrioritySelection → DecisionContext → Interpretation → Experience
+ */
+export function composeExperience(input: ExperienceComposeInput): Experience {
+  return interpretAndCompose({
+    object: input.object,
+    context: createDecisionContext({ priorities: input.priorities }),
+  }).experience;
 }
 
 export type ExperienceComposer = (

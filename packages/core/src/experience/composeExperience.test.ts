@@ -5,6 +5,7 @@ import {
   composeExperience,
   createExperienceComposer,
   createExperienceFromInterpretation,
+  interpretAndCompose,
   type ExperienceComposeInput,
 } from "./composeExperience";
 import { createDecisionContext } from "../interpretation/DecisionContext";
@@ -266,5 +267,49 @@ describe("ADR-012 runtime pipeline", () => {
   it("does not leak InterpretationTrace into Experience", () => {
     const experience = composeExperience(inputWith(["layout"]));
     assert.equal("trace" in experience, false);
+  });
+});
+
+describe("reactive Priority → DecisionContext → Interpretation → Experience", () => {
+  it("reinterprets when PrioritySelection changes", () => {
+    const object = OBJECT;
+
+    const contextA = createDecisionContext({
+      priorities: { selected: ["layout"] },
+    });
+    const contextB = createDecisionContext({
+      priorities: { selected: ["design"] },
+    });
+
+    assert.notDeepEqual(contextA, contextB);
+
+    const runA = interpretAndCompose({ object, context: contextA });
+    const runB = interpretAndCompose({ object, context: contextB });
+
+    assert.notEqual(runA.interpretation.id, runB.interpretation.id);
+    assert.notDeepEqual(runA.interpretation, runB.interpretation);
+    assert.notDeepEqual(runA.experience, runB.experience);
+    assert.equal(runA.interpretation.matchScore, 92);
+    assert.equal(runB.interpretation.matchScore, 88);
+    assert.match(runA.experience.id, /\.family$/);
+    assert.match(runB.experience.id, /\.design$/);
+
+    assert.deepEqual(
+      runA.experience,
+      composeExperience(inputWith(["layout"])),
+    );
+    assert.deepEqual(
+      runB.experience,
+      createExperienceFromInterpretation(runB.interpretation),
+    );
+  });
+
+  it("keeps Experience identical for the same DecisionContext", () => {
+    const context = createDecisionContext({
+      priorities: { selected: ["investment"] },
+    });
+    const first = interpretAndCompose({ object: OBJECT, context });
+    const second = interpretAndCompose({ object: OBJECT, context });
+    assert.deepEqual(first, second);
   });
 });

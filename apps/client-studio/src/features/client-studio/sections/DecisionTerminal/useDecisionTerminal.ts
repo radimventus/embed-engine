@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { composeExperience } from '@embed-engine/core/experience';
+import { createDecisionContext } from '@embed-engine/core';
+import { interpretAndCompose } from '@embed-engine/core/experience';
 import {
   HOUSEHOLD_PROFILE_FACT_KEY,
   isHouseholdProfile,
@@ -35,7 +36,7 @@ const PILOT_OBJECT_ID = 'house-modern-01';
 
 /**
  * Decision Terminal view-model from Session snapshot + Story (S-004 / S-005).
- * Slice 2: PrioritySelection → ExperienceComposer → Experience (output unchanged).
+ * Experience is always recomposed from PrioritySelection → DecisionContext → Interpretation.
  */
 export function useDecisionTerminal() {
   const session = useExperienceSession();
@@ -44,14 +45,14 @@ export function useDecisionTerminal() {
   const { story, definition, outcome, activeMoveId } = useActiveDecisionMove();
   const interpretation = session.interpretation;
   const priorities = usePrioritySelection();
-  const experience = useMemo(
-    () =>
-      composeExperience({
-        object: { id: PILOT_OBJECT_ID },
-        priorities,
-      }),
-    [priorities],
-  );
+  const { experience } = useMemo(() => {
+    const context = createDecisionContext({ priorities });
+    return interpretAndCompose({
+      object: { id: PILOT_OBJECT_ID },
+      context,
+    });
+  }, [priorities]);
+
 
   const pendingRef = useRef(false);
   const [pending, setPending] = useState(false);

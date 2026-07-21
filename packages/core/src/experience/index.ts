@@ -15,9 +15,11 @@ export {
   composeExperience,
   createExperienceComposer,
   createExperienceFromInterpretation,
+  interpretAndCompose,
   type ExperienceComposer,
   type ExperienceComposeInput,
   type ExperienceObjectRef,
+  type InterpretedExperience,
 } from "./composeExperience";
 export type {
   ExperienceSessionSnapshot,

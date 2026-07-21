@@ -30,6 +30,7 @@ export {
   composeExperience,
   createExperienceComposer,
   createExperienceFromInterpretation,
+  interpretAndCompose,
   type ExperienceComposer,
   type ExperienceComposeInput,
   type ExperienceObjectRef,
