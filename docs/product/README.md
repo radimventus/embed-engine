@@ -7,6 +7,7 @@ Active product SSOT lives here.
 | `constitution/` | Product principles, flywheel, moat, governance, CTO principles |
 | `vision/` | Executive summary, vision, business model, founder vision |
 | **`decision-experience-grammar/`** | **Decision Experience Grammar (DEG) — product layer SSOT** |
+| **`Priority Experience Bible.md`** | **Priority Experience — filozofie, principy, jazyk, MVP Journey** |
 | **`decision-journey/`** | **Decision Journey Specification (DJS) — UX-001 Proposed draft** |
 | `object-package.md` | Object Package product contract (SSOT) |
 | `knowledge/` | Knowledge Foundation (SSOT) |
@@ -60,6 +61,8 @@ Canonical product criterion:
 Historical monolith: [`../archive/product-bible/PRODUCT-BIBLE.md`](../archive/product-bible/PRODUCT-BIBLE.md)
 
 **Active Product Bible product layer:** [Decision Experience Grammar](./decision-experience-grammar/DEG.md)
+
+**Priority Experience SSOT:** [Priority Experience Bible](./Priority%20Experience%20Bible.md)
 
 Canonical positioning (validated):
 
