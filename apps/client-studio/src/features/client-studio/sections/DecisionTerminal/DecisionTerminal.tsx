@@ -28,8 +28,8 @@ type TerminalAction = {
 };
 
 /**
- * Decision Terminal — Experience Surface for the active Decision Story.
- * Slice D: Outcome is a Decision Commitment (layout closed → site evaluation).
+ * Decision Terminal — Experience Surface for the active Decision Story (RI-003).
+ * Reads Session snapshot (Story + facts); emits Signals only.
  */
 export function DecisionTerminal() {
   const applySignal = useApplyCognitiveSignal();

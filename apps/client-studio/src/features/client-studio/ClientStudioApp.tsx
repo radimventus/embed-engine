@@ -1,44 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
-import type { CommandRuntime, Runtime, SceneGraph } from '@embed-engine/core';
+import type { Runtime } from '@embed-engine/core';
 import { createRuntime } from '@embed-engine/core';
 import { createDispositionLayoutComposer } from '@embed-engine/object-house';
-import {
-  CANONICAL_DECISION_FLOW_START_ID,
-  createDecisionRuntime,
-  type GoNextCommand,
-  type GoToDecisionCommand,
-  type SetAnswerCommand,
-  type StartDecisionFlowCommand,
-} from '@embed-engine/decision';
-import type { ReactExperienceModel } from '@embed-engine/model';
 
 import { AppShell } from '../../components/layout/AppShell';
 import { ClientStudioPage } from './ClientStudioPage';
 import { ClientStudioSidebar } from './ClientStudioSidebar';
-
-const PLACEHOLDER_SCENE_GRAPH: SceneGraph = {
-  start: 'start',
-  scenes: {
-    start: { id: 'start' },
-  },
-};
+import { LegacyCommandRuntimeHost } from './legacy/LegacyCommandRuntimeHost';
+import { isLegacyCommandRuntimeEnabled } from './legacy/isLegacyCommandRuntimeEnabled';
 
 /**
- * Composition root for Client Studio.
+ * Composition root for Client Studio (S-002).
  *
- * Cognitive path (canonical): Platform Runtime → ExperienceBinding → Surfaces.
- * LEGACY path (quarantined): CommandRuntime → ReactExperienceModel → sidebar / house block.
- * Do not merge these contracts.
+ * Default: Cognitive Runtime only (RI-001 → Experience Binding → Surfaces).
+ * Legacy CommandRuntime is unreachable unless explicitly enabled.
  */
 export function ClientStudioApp() {
-  const runtimeRef = useRef<CommandRuntime | null>(null);
   const cognitiveRuntimeRef = useRef<Runtime | null>(null);
-  const [experience, setExperience] = useState<ReactExperienceModel | null>(null);
   const [cognitiveReady, setCognitiveReady] = useState(false);
-
-  if (runtimeRef.current === null) {
-    runtimeRef.current = createDecisionRuntime(PLACEHOLDER_SCENE_GRAPH);
-  }
+  const [legacyEnabled] = useState(() => isLegacyCommandRuntimeEnabled());
 
   if (cognitiveRuntimeRef.current === null) {
     cognitiveRuntimeRef.current = createRuntime({
@@ -46,16 +26,7 @@ export function ClientStudioApp() {
     });
   }
 
-  const runtime = runtimeRef.current;
   const cognitiveRuntime = cognitiveRuntimeRef.current;
-
-  useEffect(() => {
-    const command: StartDecisionFlowCommand = {
-      type: 'start-decision-flow',
-      decisionId: CANONICAL_DECISION_FLOW_START_ID,
-    };
-    setExperience(runtime.dispatch(command));
-  }, [runtime]);
 
   useEffect(() => {
     let cancelled = false;
@@ -71,48 +42,21 @@ export function ClientStudioApp() {
     };
   }, [cognitiveRuntime]);
 
-  const handleSelectDecision = (decisionId: string) => {
-    const command: GoToDecisionCommand = {
-      type: 'go-to-decision',
-      decisionId,
-    };
-    setExperience(runtime.dispatch(command));
-  };
-
-  const handleSelectChoice = (decisionId: string, choiceId: string) => {
-    const answer: SetAnswerCommand = {
-      type: 'set-answer',
-      decisionId,
-      value: choiceId,
-    };
-    runtime.dispatch(answer);
-
-    const next: GoNextCommand = { type: 'go-next' };
-    setExperience(runtime.dispatch(next));
-  };
-
-  const handleContinue = () => {
-    const next: GoNextCommand = { type: 'go-next' };
-    setExperience(runtime.dispatch(next));
-  };
+  if (legacyEnabled) {
+    return (
+      <LegacyCommandRuntimeHost
+        cognitiveRuntime={cognitiveReady ? cognitiveRuntime : null}
+      />
+    );
+  }
 
   return (
     <AppShell
-      sidebar={
-        <ClientStudioSidebar
-          experience={experience}
-          onSelectDecision={handleSelectDecision}
-        />
-      }
+      sidebar={<ClientStudioSidebar />}
       showStatusBar={false}
       header={<></>}
     >
-      <ClientStudioPage
-        cognitiveRuntime={cognitiveReady ? cognitiveRuntime : null}
-        experience={experience}
-        onSelectChoice={handleSelectChoice}
-        onContinue={handleContinue}
-      />
+      <ClientStudioPage cognitiveRuntime={cognitiveReady ? cognitiveRuntime : null} />
     </AppShell>
   );
 }

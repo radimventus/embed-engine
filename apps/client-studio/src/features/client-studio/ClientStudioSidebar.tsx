@@ -7,21 +7,22 @@ const SIDEBAR_COLLAPSED_WIDTH_PX = 48;
 const SIDEBAR_EXPANDED_WIDTH_PX = 220;
 
 type ClientStudioSidebarProps = {
-  experience: ReactExperienceModel | null;
-  onSelectDecision: (decisionId: string) => void;
+  /** LEGACY Decision Flow model — only when CommandRuntime host is enabled. */
+  legacyExperience?: ReactExperienceModel | null;
+  onSelectDecision?: (decisionId: string) => void;
 };
 
 /**
- * Left shell: presentation expand/collapse only.
- *
- * LEGACY — Decision Flow navigation from CommandRuntime ReactExperienceModel.
- * Not Cognitive Session / Interpretation (EX-01 quarantine).
+ * Left shell: presentation expand/collapse.
+ * Default Cognitive demo: chrome only (no CommandRuntime Decision Flow).
  */
 export function ClientStudioSidebar({
-  experience,
+  legacyExperience = null,
   onSelectDecision,
 }: ClientStudioSidebarProps) {
   const [expanded, setExpanded] = useState(true);
+  const showLegacyFlow =
+    legacyExperience !== null && onSelectDecision !== undefined;
 
   return (
     <aside
@@ -29,6 +30,7 @@ export function ClientStudioSidebar({
       style={{
         width: expanded ? SIDEBAR_EXPANDED_WIDTH_PX : SIDEBAR_COLLAPSED_WIDTH_PX,
       }}
+      data-cognitive-shell="true"
     >
       <div
         className={`flex h-header shrink-0 -translate-y-[3px] items-center ${expanded ? 'justify-start px-4' : 'justify-center'}`}
@@ -46,10 +48,10 @@ export function ClientStudioSidebar({
         </button>
       </div>
 
-      {expanded && experience !== null ? (
-        <div className="mt-section">
+      {expanded && showLegacyFlow ? (
+        <div className="mt-section" data-legacy-experience="command-runtime-sidebar">
           <DecisionFlowNavigator
-            experience={experience}
+            experience={legacyExperience}
             onSelectDecision={onSelectDecision}
           />
         </div>

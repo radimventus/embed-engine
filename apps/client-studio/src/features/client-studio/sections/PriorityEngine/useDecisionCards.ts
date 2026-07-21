@@ -11,7 +11,8 @@ import {
 } from './decision-cards.constants';
 
 /**
- * Priority renderer — reads shared Interpretation only.
+ * Priority renderer — shared Session Interpretation via Experience binding (EX-02).
+ * Card toggles emit Signals only.
  */
 export function useDecisionCards() {
   const interpretation = useInterpretation();

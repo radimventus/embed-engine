@@ -1,30 +1,43 @@
 import { Panel, PrimaryButton } from '@embed-engine/ui';
 
+import { useInterpretation } from '../../cognitive/InterpretationProvider';
 import {
   CHAPTER_PANEL_DIVIDER_CLASS,
   CHAPTER_PANEL_LABEL_CLASS,
 } from '../../chapter-layout';
 import {
-  MOCK_RECOMMENDATION_VIEW_MODEL,
   RECOMMENDATION_MAX_CONSIDERATIONS,
   RECOMMENDATION_MAX_STRENGTHS,
   type RecommendationViewModel,
 } from './RecommendationViewModel';
-
-type RecommendationPanelProps = {
-  viewModel?: RecommendationViewModel;
-};
 
 function renderStars(score: number): string {
   const filled = Math.min(5, Math.max(0, Math.round(score)));
   return `${'★'.repeat(filled)}${'☆'.repeat(5 - filled)}`;
 }
 
-export function RecommendationPanel({
-  viewModel = MOCK_RECOMMENDATION_VIEW_MODEL,
-}: RecommendationPanelProps) {
-  const strengths = viewModel.strengths.slice(0, RECOMMENDATION_MAX_STRENGTHS);
-  const considerations = viewModel.considerations.slice(0, RECOMMENDATION_MAX_CONSIDERATIONS);
+/**
+ * Recommendation peer — Session Interpretation only (RI-003 / EX-02).
+ * No mock Cognitive meaning; no Runtime / DecisionState access.
+ */
+export function RecommendationPanel() {
+  const interpretation = useInterpretation();
+  const leading =
+    interpretation.priorities.find((priority) => priority.weight === 1) ??
+    interpretation.priorities.find((priority) => priority.highlighted);
+
+  const viewModel: RecommendationViewModel = {
+    title: `${interpretation.activeTopic} recommendation`,
+    score: Math.max(1, Math.round((leading?.weight ?? 0.4) * 5)),
+    strengths: interpretation.recommendations.slice(0, RECOMMENDATION_MAX_STRENGTHS),
+    considerations: interpretation.recommendedQuestions
+      .slice(0, RECOMMENDATION_MAX_CONSIDERATIONS)
+      .map((question) => question.why),
+    nextStep: interpretation.nextAction,
+  };
+
+  const strengths = viewModel.strengths;
+  const considerations = viewModel.considerations;
 
   return (
     <Panel as="section" aria-label="Recommendation" variant="inset" className="mt-section">

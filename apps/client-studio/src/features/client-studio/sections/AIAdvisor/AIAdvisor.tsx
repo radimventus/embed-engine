@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import type { Interpretation } from '@embed-engine/core/cognitive';
 
 import {
   applyQuestionOpened,
@@ -27,8 +28,28 @@ import {
 } from './types';
 
 /**
- * AI renderer — conversation framing comes from Interpretation.
- * Local messages are only the chat transcript, not decision reasoning.
+ * Resolve Signal topicId from Interpretation only (no DecisionState / Runtime).
+ */
+function topicIdFromInterpretation(interpretation: Interpretation): string {
+  const focused = interpretation.priorities.find((priority) => priority.weight === 1);
+  if (focused !== undefined) {
+    return focused.id;
+  }
+
+  const highlightedFaq = interpretation.recommendedQuestions.find(
+    (question) => question.highlighted,
+  );
+  if (highlightedFaq !== undefined) {
+    return highlightedFaq.topicId;
+  }
+
+  return interpretation.recommendedQuestions[0]?.topicId ?? 'layout';
+}
+
+/**
+ * AI + FAQ renderer — conversation framing from Interpretation.
+ * Local messages are presentation transcript only (not Cognitive truth).
+ * Intents leave only as Signals via Runtime binding.
  */
 export function AIAdvisor() {
   const interpretation = useInterpretation();
@@ -85,10 +106,7 @@ export function AIAdvisor() {
       return;
     }
 
-    const topicId =
-      interpretation.priorities.find((priority) => priority.weight === 1)?.id ??
-      interpretation.recommendedQuestions[0]?.topicId ??
-      'investment';
+    const topicId = topicIdFromInterpretation(interpretation);
 
     applyQuestionOpened(applySignal, topicId, `Question asked: ${text.slice(0, 48)}`);
 

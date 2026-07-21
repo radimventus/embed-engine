@@ -126,7 +126,10 @@ function FaqItem({ item, onQuestionSelect }: FaqItemProps) {
   );
 }
 
-/** FAQ rows from Interpretation.recommendedQuestions — no local catalog. */
+/**
+ * FAQ rows from Interpretation.recommendedQuestions — shared Session snapshot (EX-02).
+ * Question select emits Signals via parent; no DecisionState access.
+ */
 export function FaqList({ onQuestionSelect }: SuggestedQuestionsProps) {
   const interpretation = useInterpretation();
   const questions = interpretation.recommendedQuestions;

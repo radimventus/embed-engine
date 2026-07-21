@@ -16,21 +16,21 @@ import { WalkthroughProvider } from '../walkthrough';
 
 type ClientStudioPageProps = {
   cognitiveRuntime: Runtime | null;
-  /** @deprecated LEGACY CommandRuntime ExperienceModel — not Cognitive Session. */
-  experience: ReactExperienceModel | null;
-  onSelectChoice: (decisionId: string, choiceId: string) => void;
-  onContinue: () => void;
+  /** LEGACY only — set when CommandRuntime host is explicitly enabled. */
+  legacyExperience?: ReactExperienceModel | null;
+  onLegacySelectChoice?: (decisionId: string, choiceId: string) => void;
+  onLegacyContinue?: () => void;
 };
 
 /**
- * Cognitive Experience host (RI-003 EX-01).
+ * Cognitive Experience host (RI-003).
  * Surfaces read Session snapshots via ExperienceBindingProvider only.
  */
 export function ClientStudioPage({
   cognitiveRuntime,
-  experience,
-  onSelectChoice,
-  onContinue,
+  legacyExperience = null,
+  onLegacySelectChoice,
+  onLegacyContinue,
 }: ClientStudioPageProps) {
   return (
     <ExperienceBindingProvider runtime={cognitiveRuntime}>
@@ -39,11 +39,15 @@ export function ClientStudioPage({
           <WalkthroughProvider>
             <DesktopCanvas>
               <ClientStudioHeader />
-              <LegacyCommandExperience
-                experience={experience}
-                onSelectChoice={onSelectChoice}
-                onContinue={onContinue}
-              />
+              {legacyExperience !== null &&
+              onLegacySelectChoice !== undefined &&
+              onLegacyContinue !== undefined ? (
+                <LegacyCommandExperience
+                  experience={legacyExperience}
+                  onSelectChoice={onLegacySelectChoice}
+                  onContinue={onLegacyContinue}
+                />
+              ) : null}
               <Hero />
               <div
                 aria-hidden="true"

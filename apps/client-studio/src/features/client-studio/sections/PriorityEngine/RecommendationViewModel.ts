@@ -6,6 +6,7 @@ export interface RecommendationViewModel {
   nextStep: string;
 }
 
+/** LEGACY mock — unused by Cognitive RecommendationPanel (kept for reference only). */
 export const MOCK_RECOMMENDATION_VIEW_MODEL: RecommendationViewModel = {
   title: 'Recommendation',
   score: 5,
