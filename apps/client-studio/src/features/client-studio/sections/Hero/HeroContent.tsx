@@ -13,7 +13,7 @@ const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
   backgroundImage: `linear-gradient(to top, color-mix(in srgb, ${colors.border.default} 30%, #FFFFFF), #FFFFFF)`,
 } as const;
 
-/** Left third — solid white information block with copy + CTA. */
+/** Left third — Object fact presentation (identity / specs). Not Experience semantics. */
 export function HeroContent() {
   return (
     <section

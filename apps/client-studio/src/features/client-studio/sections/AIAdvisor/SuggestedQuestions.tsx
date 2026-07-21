@@ -6,41 +6,10 @@ import {
   FAQ_ACCORDION_LIST_WIDTH_CLASS,
   FAQ_COLUMN_WIDTH_CLASS,
 } from './ai-advisor-layout';
-
-const FAQ_ITEMS = [
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Cras mattis consectetur purus sit amet fermentum.',
-  },
-  {
-    question: 'Lorem ipsum dolor sit amet?',
-    answer:
-      'Curabitur blandit tempus porttitor. Maecenas faucibus mollis interdum. Aenean lacinia bibendum nulla sed consectetur.',
-  },
-] as const;
+import type { ExperienceFaqItem } from './experiencePresentation';
 
 type SuggestedQuestionsProps = {
+  items: readonly ExperienceFaqItem[];
   onQuestionSelect: (question: string) => void;
 };
 
@@ -82,7 +51,9 @@ function FaqCaretIcon({ expanded }: { expanded: boolean }) {
 
 export function FaqTitle() {
   return (
-    <h2 className={`${FAQ_COLUMN_WIDTH_CLASS} relative z-10 m-0 shrink-0 text-base font-bold leading-none tracking-wide text-embed-foreground-primary`}>
+    <h2
+      className={`${FAQ_COLUMN_WIDTH_CLASS} relative z-10 m-0 shrink-0 text-base font-bold leading-none tracking-wide text-embed-foreground-primary`}
+    >
       CO NAŠE KLIENTY NEJVÍCE ZAJÍMÁ:
     </h2>
   );
@@ -134,13 +105,15 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
   );
 }
 
-/** FAQ topic rows — height 45px header, gap 14px; caret expands answer in 0.5s. */
-export function FaqList({ onQuestionSelect }: SuggestedQuestionsProps) {
+/** FAQ topic rows projected from Experience evidence. */
+export function FaqList({ items, onQuestionSelect }: SuggestedQuestionsProps) {
   return (
-    <ul className={`${FAQ_ACCORDION_LIST_WIDTH_CLASS} flex shrink-0 flex-col gap-[14px]`}>
-      {FAQ_ITEMS.map((item, index) => (
+    <ul
+      className={`${FAQ_ACCORDION_LIST_WIDTH_CLASS} flex shrink-0 flex-col gap-[14px]`}
+    >
+      {items.map((item) => (
         <FaqItem
-          key={index}
+          key={item.id}
           question={item.question}
           answer={item.answer}
           onQuestionSelect={onQuestionSelect}
@@ -151,12 +124,15 @@ export function FaqList({ onQuestionSelect }: SuggestedQuestionsProps) {
 }
 
 /** @deprecated Prefer FaqTitle + FaqList in the shared AI Advisor grid. */
-export function SuggestedQuestions({ onQuestionSelect }: SuggestedQuestionsProps) {
+export function SuggestedQuestions({
+  items,
+  onQuestionSelect,
+}: SuggestedQuestionsProps) {
   return (
     <div className="flex min-h-faq-ai flex-col py-section pl-section pr-0">
       <FaqTitle />
       <div className="mt-section flex flex-1 items-end">
-        <FaqList onQuestionSelect={onQuestionSelect} />
+        <FaqList items={items} onQuestionSelect={onQuestionSelect} />
       </div>
     </div>
   );

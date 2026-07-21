@@ -1,59 +1,50 @@
 import { FramedInput, Panel, PrimaryButton } from '@embed-engine/ui';
+import type { Experience } from '@embed-engine/core/experience';
 
 import {
   CHAPTER_PANEL_DIVIDER_CLASS,
   CHAPTER_PANEL_LABEL_CLASS,
 } from '../../chapter-layout';
 import { CHAPTER_HEADER_CLASS } from '../spatial-terminal-layout';
-import {
-  MOCK_DECISION_REPORT_PREVIEW,
-  type DecisionReportPreviewViewModel,
-} from './DecisionReportPreviewViewModel';
+import { decisionReportPreviewFromExperience } from './DecisionReportPreviewViewModel';
 
-type DecisionReportPreviewProps = {
-  viewModel?: DecisionReportPreviewViewModel;
+export type DecisionReportPreviewProps = {
+  experience: Experience;
 };
 
-export function DecisionReportPreview({
-  viewModel = MOCK_DECISION_REPORT_PREVIEW,
-}: DecisionReportPreviewProps) {
+/**
+ * Decision Report Preview — pure Experience renderer (lead-capture chrome only).
+ */
+export function DecisionReportPreview({ experience }: DecisionReportPreviewProps) {
+  const viewModel = decisionReportPreviewFromExperience(experience);
+
   return (
     <section
-      aria-label="Decision Report Preview"
+      aria-label="Náhled reportu rozhodnutí"
       className="border-b border-embed-border-default px-section py-section"
+      data-experience-id={experience.id}
     >
       <header>
-        <h2 className={CHAPTER_HEADER_CLASS}>Decision Report</h2>
-        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-embed-foreground-primary/70">
-          Your personalized report is almost ready.
-        </p>
-        <p className="mt-1 max-w-2xl text-sm leading-relaxed text-embed-foreground-primary/70">
-          This report summarizes your selected priorities and the most relevant aspects of this
-          property.
-        </p>
+        <h2 className={CHAPTER_HEADER_CLASS}>Report rozhodnutí</h2>
       </header>
 
-      <Panel as="article" variant="inset" className="mt-section" aria-label="Report preview">
+      <Panel as="article" variant="inset" className="mt-section" aria-label="Náhled reportu">
         <h3 className="text-sm font-semibold tracking-wide text-embed-foreground-primary">
-          Decision Report
+          {viewModel.title}
         </h3>
 
         <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
-          <p className={CHAPTER_PANEL_LABEL_CLASS}>Property</p>
-          <p className="mt-1 text-sm font-medium text-embed-foreground-primary">
-            {viewModel.propertyName}
-          </p>
-        </div>
-
-        <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
-          <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Selected Priorities</h4>
-          <ul className="mt-2 space-y-1.5" aria-label="Selected priorities">
+          <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Zaměření</h4>
+          <ul className="mt-2 space-y-1.5" aria-label="Zaměření">
             {viewModel.priorities.map((priority) => (
               <li
                 key={priority}
                 className="flex items-start gap-2 text-sm leading-snug text-embed-foreground-primary"
               >
-                <span className="mt-px shrink-0 text-embed-brand-gold" aria-hidden="true">
+                <span
+                  className="mt-px shrink-0 text-embed-brand-gold"
+                  aria-hidden="true"
+                >
                   ✓
                 </span>
                 <span>{priority}</span>
@@ -63,21 +54,24 @@ export function DecisionReportPreview({
         </div>
 
         <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
-          <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Summary</h4>
+          <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Shrnutí</h4>
           <p className="mt-2 text-sm leading-relaxed text-embed-foreground-primary/70">
             {viewModel.summary}
           </p>
         </div>
 
         <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
-          <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Included in the report</h4>
-          <ul className="mt-2 space-y-1.5" aria-label="Included in the report">
+          <h4 className={CHAPTER_PANEL_LABEL_CLASS}>Obsah reportu</h4>
+          <ul className="mt-2 space-y-1.5" aria-label="Obsah reportu">
             {viewModel.includedItems.map((item) => (
               <li
                 key={item}
                 className="flex items-start gap-2 text-sm leading-snug text-embed-foreground-primary"
               >
-                <span className="mt-px shrink-0 text-embed-brand-gold" aria-hidden="true">
+                <span
+                  className="mt-px shrink-0 text-embed-brand-gold"
+                  aria-hidden="true"
+                >
                   ✓
                 </span>
                 <span>{item}</span>
@@ -87,36 +81,24 @@ export function DecisionReportPreview({
         </div>
 
         <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
-          <button
-            type="button"
-            className="flex items-center gap-2 text-sm font-medium text-embed-foreground-primary transition-opacity duration-200 ease-out hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2"
-          >
-            <span
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-embed-border-default bg-embed-background-tertiary text-xs"
-              aria-hidden="true"
-            >
-              PDF
-            </span>
-            Download Preview
-          </button>
-        </div>
-
-        <div className={CHAPTER_PANEL_DIVIDER_CLASS}>
           <h4 className="text-sm font-medium text-embed-foreground-primary">
-            Send report to email
+            Odeslat report e-mailem
           </h4>
-          <label className="mt-3 block text-sm text-embed-foreground-primary/70" htmlFor="report-email">
+          <label
+            className="mt-3 block text-sm text-embed-foreground-primary/70"
+            htmlFor="report-email"
+          >
             Email
             <FramedInput
               id="report-email"
               type="email"
-              placeholder="your@email.com"
+              placeholder="vas@email.cz"
               autoComplete="email"
               className="mt-1.5 max-w-md"
             />
           </label>
           <PrimaryButton type="button" className="mt-4">
-            Send Report
+            Odeslat report
           </PrimaryButton>
         </div>
       </Panel>

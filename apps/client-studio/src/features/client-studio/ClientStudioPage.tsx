@@ -11,6 +11,7 @@ import { AIAdvisor } from './sections/AIAdvisor/AIAdvisor';
 import { Hero } from './sections/Hero/Hero';
 import { AuditLeadCapture } from './sections/AuditLeadCapture/AuditLeadCapture';
 import { PriorityEngine } from './sections/PriorityEngine/PriorityEngine';
+import { PriorityExperienceProvider } from './sections/PriorityEngine/PriorityExperienceProvider';
 import { PropertyExplorer } from './sections/PropertyExplorer/PropertyExplorer';
 import { WalkthroughProvider } from '../walkthrough';
 
@@ -25,6 +26,7 @@ type ClientStudioPageProps = {
 /**
  * Cognitive Experience host (RI-003).
  * Surfaces read Session snapshots via ExperienceBindingProvider only.
+ * Priority → Experience presentation shared via PriorityExperienceProvider.
  */
 export function ClientStudioPage({
   cognitiveRuntime,
@@ -58,12 +60,14 @@ export function ClientStudioPage({
                 aria-hidden="true"
                 className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
               />
-              <PriorityEngine />
-              <div
-                aria-hidden="true"
-                className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
-              />
-              <AIAdvisor />
+              <PriorityExperienceProvider>
+                <PriorityEngine />
+                <div
+                  aria-hidden="true"
+                  className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+                />
+                <AIAdvisor />
+              </PriorityExperienceProvider>
               <div
                 aria-hidden="true"
                 className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"

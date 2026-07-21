@@ -1,19 +1,49 @@
-export interface RecommendationViewModel {
-  title: string;
-  score: number;
-  strengths: string[];
-  considerations: string[];
-  nextStep: string;
-}
+import type { Experience } from '@embed-engine/core/experience';
 
-/** LEGACY mock — unused by Cognitive RecommendationPanel (kept for reference only). */
-export const MOCK_RECOMMENDATION_VIEW_MODEL: RecommendationViewModel = {
-  title: 'Recommendation',
-  score: 5,
-  strengths: ['Low operating costs', 'Efficient layout', 'Good privacy'],
-  considerations: ['Garden orientation', 'Future flexibility'],
-  nextStep: 'Continue to your personalized report.',
+/**
+ * Pure presentation projection from Experience — no semantic invention in UI.
+ */
+export type RecommendationViewModel = {
+  readonly title: string;
+  readonly matchLabel: string;
+  readonly matchScore: number;
+  readonly matchExplanation: string;
+  readonly strengths: readonly string[];
+  readonly considerations: readonly string[];
+  readonly nextStep: string;
+  readonly primaryActionLabel: string | null;
 };
 
-export const RECOMMENDATION_MAX_STRENGTHS = 3;
-export const RECOMMENDATION_MAX_CONSIDERATIONS = 2;
+const LEVEL_CS = {
+  low: 'nízká',
+  medium: 'střední',
+  high: 'vysoká',
+} as const;
+
+/**
+ * Maps Experience fields to Recommendation panel presentation.
+ * Does not reorder priorities or invent meaning.
+ */
+export function recommendationViewFromExperience(
+  experience: Experience,
+): RecommendationViewModel {
+  const primary = experience.actions.find((action) => action.type === 'primary');
+
+  return Object.freeze({
+    title: experience.title,
+    matchLabel: LEVEL_CS[experience.confidence.level],
+    matchScore: experience.confidence.score,
+    matchExplanation: experience.confidence.explanation,
+    strengths: Object.freeze(
+      experience.evidence.map((item) => item.title),
+    ),
+    considerations: Object.freeze(
+      experience.concerns.map((item) => item.title),
+    ),
+    nextStep:
+      experience.recommendations[0] ??
+      primary?.label ??
+      experience.summary,
+    primaryActionLabel: primary?.label ?? null,
+  });
+}

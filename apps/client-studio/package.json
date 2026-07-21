@@ -7,7 +7,8 @@
   "dev": "vite",
   "build": "tsc -b && vite build",
   "preview": "vite preview",
-  "typecheck": "tsc --noEmit"
+  "typecheck": "tsc --noEmit",
+  "test": "tsx --test src/features/client-studio/sections/AIAdvisor/experiencePresentationOwnership.test.ts"
   },
   "dependencies": {
     "@embed-engine/contracts": "workspace:*",
@@ -30,6 +31,7 @@
     "playwright": "1.61.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.20.3",
     "typescript": "^5.9.2",
     "vite": "^7.0.0"
   }

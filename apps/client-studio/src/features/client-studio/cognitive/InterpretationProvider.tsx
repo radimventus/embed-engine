@@ -3,14 +3,18 @@ import type { Interpretation } from '@embed-engine/core/cognitive';
 
 import { useExperienceSession } from './ExperienceBindingProvider';
 
+/**
+ * Neutral empty cognitive Interpretation — no invented presentation copy.
+ * Presentation semantics belong on Experience, not this fallback.
+ */
 const EMPTY_INTERPRETATION: Interpretation = Object.freeze({
   priorities: Object.freeze([]),
   events: Object.freeze([]),
   recommendedQuestions: Object.freeze([]),
-  conversationContext: 'Kalibrujeme váš filtr rozhodování.',
+  conversationContext: '',
   recommendations: Object.freeze([]),
-  activeTopic: 'Dispozice',
-  nextAction: 'Projděte dům nebo vyberte Prioritu.',
+  activeTopic: '',
+  nextAction: '',
 });
 
 const InterpretationContext = createContext<Interpretation>(EMPTY_INTERPRETATION);
@@ -20,8 +24,8 @@ type InterpretationProviderProps = {
 };
 
 /**
- * Interpretation selector over the shared Experience Session snapshot (EX-01).
- * Does not subscribe to Runtime separately — ExperienceBindingProvider owns subscription.
+ * Cognitive Interpretation selector over the shared Experience Session snapshot.
+ * Not a presentation source for Priority / Recommendation / Advisor UI.
  */
 export function InterpretationProvider({ children }: InterpretationProviderProps) {
   const session = useExperienceSession();
