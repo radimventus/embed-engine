@@ -13,6 +13,8 @@ Navigation index for project documentation. This file is not product documentati
 | `roadmap/` | Long-term product development phases |
 | `architecture/adr/` | Architecture Decision Records |
 | `architecture/decision-layer/` | **Canonical vocabulary** for Strategy · Story · Move · Terminal · Trajectory |
+| `03-specification-standard/` | ESS / EQS — specification writing and engineering quality standards |
+| `00-project/` | Project Principles (governance, not architecture) |
 | `sprints/` | Active sprint working notes (not SSOT) |
 | `archive/` | Historical documents — not active SSOT |
 
@@ -36,6 +38,9 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Decision Layer vocabulary (SSOT) | `architecture/decision-layer/README.md` |
 | Decision Layer governance v1 | `architecture/decision-layer/decision-layer-governance-v1.md` |
 | Decision Strategy detail (DT-002) | `architecture/decision-layer/decision-strategy.md` |
+| Embed Specification Standard (ESS-001) | `03-specification-standard/ESS-001-Embed-Specification-Standard.md` |
+| Engineering Quality Standard (EQS-001) | `03-specification-standard/EQS-001-Engineering-Quality-Standard.md` |
+| Project Principles (PP-001) | `00-project/PROJECT-PRINCIPLES.md` |
 | Behavior Pack contract | `architecture/behavior-pack-contract.md` |
 | Living Experience v0.1 | `architecture/living-experience-v0.1-freeze.md` |
 | Experience projection | `architecture/experience-projection.md` |
