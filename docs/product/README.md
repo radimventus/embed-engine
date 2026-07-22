@@ -22,6 +22,7 @@ Active product SSOT lives here.
 | **`../architecture/pt/PT-003-decision-sessions-are-reproducible.md`** | **Platform theory — Decision Sessions are reproducible** |
 | **`../architecture/pt/PT-004-decision-story-is-the-product.md`** | **Platform theory — Decision Story is the product** |
 | **`../architecture/pt/PT-005-decision-experience-composed-from-moves.md`** | **Platform theory — Decision Experience composed from Moves** |
+| **`../architecture/pt/PT-006-ai-explains-never-decides.md`** | **Platform theory — AI explains, never decides** |
 | `knowledge/` | Knowledge Foundation (SSOT) |
 | `pilots/` | Pilot Foundation (SSOT process) |
 | `../pilot/` | **CAP-P01 knowledge model** — first Pilot Object + Behavior Pack |

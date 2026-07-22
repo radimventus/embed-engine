@@ -246,6 +246,7 @@ The following MUST always remain true:
 | [ADR-009](../adr/ADR-009-decision-layer.md) | Decision Layer definitions freeze |
 | CAP-DST-001 | Decision Story Engine |
 | CAP-DST-002 | Decision Move Engine (authorized here) |
+| [PT-006](./PT-006-ai-explains-never-decides.md) | AI explains Moves; never authors them |
 
 ### Why this PT matters
 
@@ -298,6 +299,7 @@ The Experience evolves from presenting information to orchestrating a guided dec
 - [PT-002 — Interpretation is the Product](./PT-002-interpretation-is-the-product.md)
 - [PT-003 — Decision Sessions are Reproducible](./PT-003-decision-sessions-are-reproducible.md)
 - [PT-004 — Decision Story is the Product](./PT-004-decision-story-is-the-product.md)
+- [PT-006 — AI Explains, Never Decides](./PT-006-ai-explains-never-decides.md)
 - [Decision Layer vocabulary](../decision-layer/README.md)
 - [ADR-009 — Decision Layer](../adr/ADR-009-decision-layer.md)
 - [Behavior Pack Contract](../behavior-pack-contract.md)
