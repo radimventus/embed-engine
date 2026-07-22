@@ -11,7 +11,9 @@
       "typecheck": "turbo run typecheck",
       "format": "prettier --write .",
       "reference": "pnpm --filter @embed-engine/client-studio reference",
-      "reference:freeze": "pnpm --filter @embed-engine/client-studio reference:freeze"
+      "reference:freeze": "pnpm --filter @embed-engine/client-studio reference:freeze",
+      "cs:gen1": "pnpm --filter @embed-engine/client-studio gen1",
+      "cs:gen1:freeze": "pnpm --filter @embed-engine/client-studio gen1:freeze"
     },
     "devDependencies": {
       "prettier": "^3.6.2",
