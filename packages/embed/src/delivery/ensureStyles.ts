@@ -17,14 +17,28 @@ const FONT_HREF =
 /**
  * Maps standalone `html/body/#root` assumptions onto the embed mount node
  * and reduces accidental host-page inheritance inside the Experience.
+ *
+ * Scroll: do NOT set `overflow-x: auto` alone on the mount root.
+ * CSS forces `overflow-y` to `auto` as well, creating a wheel scrollport.
+ * Combined with `overscroll-behavior: none`, wheel/touchpad cannot chain to
+ * the document — scrollbar drag and keyboard still work (different path).
+ * Use `overflow-y: clip` so horizontal overflow can scroll without trapping
+ * vertical wheel; keep document/viewport as the single vertical scrollport.
  */
 const SHELL_CSS = `
+html {
+  overscroll-behavior: auto;
+}
+body {
+  overscroll-behavior: auto;
+}
 [data-client-studio-root] {
   display: block;
   min-height: 100vh;
   width: 100%;
   overflow-x: auto;
-  overscroll-behavior: none;
+  overflow-y: clip;
+  overscroll-behavior: auto;
   color: rgb(0 25 48);
   background-color: #f7f6f4;
   font-family: Inter, system-ui, sans-serif;
