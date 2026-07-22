@@ -18011,12 +18011,19 @@ function uw(i) {
 }
 let us = null;
 const op = "embed-client-studio-fonts", dw = "embed-client-studio-css", fw = "embed-client-studio-shell-css", mw = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap", pw = `
+html {
+  overscroll-behavior: auto;
+}
+body {
+  overscroll-behavior: auto;
+}
 [data-client-studio-root] {
   display: block;
   min-height: 100vh;
   width: 100%;
   overflow-x: auto;
-  overscroll-behavior: none;
+  overflow-y: clip;
+  overscroll-behavior: auto;
   color: rgb(0 25 48);
   background-color: #f7f6f4;
   font-family: Inter, system-ui, sans-serif;
