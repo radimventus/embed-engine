@@ -39,6 +39,13 @@ function parsePhotoSrc(displayKey: string): string | null {
 /**
  * Media Explorer viewport — Experience Context room media only (CAP-HP-003.5).
  */
+function isWistiaEmbedUrl(url: string): boolean {
+  return (
+    url.includes('fast.wistia.net/embed') ||
+    url.includes('wistia.com/embed')
+  );
+}
+
 export function MainMedia() {
   const { experience } = useDecisionSessionRuntime();
   const gallery = experience.context.roomMedia;
@@ -104,8 +111,12 @@ export function MainMedia() {
 
   const photoSrc = parsePhotoSrc(displayKey);
   const showPhoto = photoSrc !== null;
-  const showPlayControl = mediaMode === 'video' && !hasStartedPlayback;
-  const showNativeControls = mediaMode === 'video' && hasStartedPlayback;
+  const isWistiaVideo =
+    mediaMode === 'video' && !showPhoto && isWistiaEmbedUrl(videoSrc);
+  const showPlayControl =
+    mediaMode === 'video' && !hasStartedPlayback && !isWistiaVideo;
+  const showNativeControls =
+    mediaMode === 'video' && hasStartedPlayback && !isWistiaVideo;
   const previewAlt = showPhoto
     ? (gallery.title ?? 'Fotografie místnosti')
     : 'Náhled procházky domem';
@@ -165,6 +176,21 @@ export function MainMedia() {
               setMediaFailed(true);
             }}
           />
+        ) : isWistiaVideo ? (
+          <iframe
+            key={videoKey}
+            src={videoSrc}
+            title={gallery.title ?? 'Video prohlídka'}
+            className="h-full w-full border-0"
+            allow="autoplay; fullscreen"
+            allowFullScreen
+            onLoad={() => {
+              setMediaPending(false);
+              setHasStartedPlayback(true);
+            }}
+            data-walkthrough-mode={mode}
+            data-media-mode={mediaMode}
+          />
         ) : (
           <>
             <video
@@ -199,12 +225,12 @@ export function MainMedia() {
           </div>
         ) : null}
       </div>
-      {!mediaFailed ? (
+      {!mediaFailed && !isWistiaVideo ? (
         <MediaZoomControl onClick={() => setIsLightboxOpen(true)} />
       ) : null}
       <MediaLightbox
         alt={previewAlt}
-        isOpen={isLightboxOpen && !mediaFailed}
+        isOpen={isLightboxOpen && !mediaFailed && !isWistiaVideo}
         kind={showPhoto ? 'photo' : 'video'}
         poster={videoPoster}
         src={showPhoto ? photoSrc : videoSrc}

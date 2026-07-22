@@ -13,7 +13,9 @@
       "reference": "pnpm --filter @embed-engine/client-studio reference",
       "reference:freeze": "pnpm --filter @embed-engine/client-studio reference:freeze",
       "cs:gen1": "pnpm --filter @embed-engine/client-studio gen1",
-      "cs:gen1:freeze": "pnpm --filter @embed-engine/client-studio gen1:freeze"
+      "cs:gen1:freeze": "pnpm --filter @embed-engine/client-studio gen1:freeze",
+      "cs:baseline": "pnpm --filter @embed-engine/client-studio baseline",
+      "sync:reference-house": "node ./scripts/sync-reference-house-public.mjs"
     },
     "devDependencies": {
       "prettier": "^3.6.2",

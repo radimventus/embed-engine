@@ -1,9 +1,9 @@
 /**
- * Media catalog adapter for `projectSynchronizedExperience` only (ED-DA-02).
- * Not Object Package SSOT — residual until ED-DA-02 Object-owned projection closes.
+ * Media catalog adapter for Tour chrome only (hotspot regions / viewBox).
+ * Object Package (`REFERENCE_HOUSE_PACKAGE` / `/reference-house`) owns photos,
+ * video, floorplan image, and decision-canvas SVG paths (PT-TOUR-01).
  *
  * Media UI modules must not import this file; they read Experience Context.
- * Maps Object Package RoomId → catalog assets under /house-package.
  */
 import type {
   HousePackageManifest,

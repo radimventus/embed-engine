@@ -36,5 +36,14 @@ export function projectHouse(house: HousePackage | null): ExperienceHouse | null
       area: room.area,
       floor: room.floor,
     })),
+    ...(house.documents !== undefined
+      ? {
+          documents: house.documents.map((doc) => ({
+            id: doc.id,
+            title: doc.title,
+            url: doc.url,
+          })),
+        }
+      : {}),
   };
 }

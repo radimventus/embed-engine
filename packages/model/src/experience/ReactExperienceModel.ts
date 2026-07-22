@@ -37,6 +37,12 @@ export interface ExperienceHouseMedia {
   readonly url: string;
 }
 
+export interface ExperienceHouseDocument {
+  readonly id: string;
+  readonly title: string;
+  readonly url: string;
+}
+
 /**
  * Projected house for Experience rendering.
  * Derived from Object Package — never the Object Package itself.
@@ -56,6 +62,8 @@ export interface ExperienceHouse {
   readonly construction: string;
   readonly media: readonly ExperienceHouseMedia[];
   readonly rooms: readonly ExperienceHouseRoom[];
+  /** Optional documents projected from Object Package (HP-001). */
+  readonly documents?: readonly ExperienceHouseDocument[];
 }
 
 /** Projected visitor filter for rendering. */

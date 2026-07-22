@@ -7,7 +7,21 @@ Platform role: [PT-001](../../docs/architecture/pt/PT-001-house-package-canonica
 
 ```text
 house.json          # HP-001 manifest
-assets/             # referenced media / documents / floorplans
+assets/             # media / documents / floorplans / svg overlays
 ```
 
-Load via `@embed-engine/object-house/loader` — Runtime never reads this tree directly.
+## Consumption
+
+| Path | Role |
+| --- | --- |
+| `loadHousePackage(packages/reference-house)` | Node loader / validation (`@embed-engine/object-house/loader`) |
+| `REFERENCE_HOUSE_PACKAGE` | Browser Runtime fixture (`@embed-engine/object-house`) |
+| `apps/client-studio/public/reference-house/` | Published SPA assets for Tour |
+
+Publish after asset changes:
+
+```bash
+node scripts/sync-reference-house-public.mjs
+```
+
+Runtime never reads the on-disk tree directly. Tour reads projected Experience Context fed by the fixture + published `/reference-house/` URLs.

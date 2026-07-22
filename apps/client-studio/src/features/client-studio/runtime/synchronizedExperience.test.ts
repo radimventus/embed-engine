@@ -52,10 +52,22 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     assert.equal(living.context.hero.title, REFERENCE_HOUSE_PACKAGE.identity.title);
     assert.equal(living.context.roomMedia.roomId, 'room-living');
     assert.equal(living.context.navigation.currentFloor, '0');
-    assert.equal(living.context.hero.heroMedia?.id, 'media-exterior');
-    assert.notEqual(
-      living.context.hero.primaryMediaUrl,
-      living.context.roomMedia.heroUrl,
+    assert.equal(living.context.hero.heroMedia?.id, 'hero-image');
+    assert.match(
+      living.context.hero.primaryMediaUrl ?? '',
+      /\/reference-house\/assets\/media\/hero\/hero\.webp$/,
+    );
+    assert.match(
+      living.context.roomMedia.heroUrl ?? '',
+      /\/reference-house\/assets\/media\//,
+    );
+    assert.ok(
+      (living.context.roomMedia.gallery?.length ?? 0) >= 15,
+      'Tour gallery must expose Reference House Package photos',
+    );
+    assert.ok(
+      (living.context.roomMedia.videos?.length ?? 0) >= 1,
+      'Tour must expose Reference House Package video',
     );
   });
 
@@ -92,9 +104,9 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     assert.deepEqual(first.context.roomMedia, second.context.roomMedia);
     assert.equal(
       first.context.roomMedia.heroMedia?.url,
-      '/media/house-modern-01/exterior.webp',
+      '/reference-house/assets/media/hero/hero.webp',
     );
-    assert.equal(first.context.hero.heroMedia?.id, 'media-exterior');
+    assert.equal(first.context.hero.heroMedia?.id, 'hero-image');
   });
 
   it('ChangePriority reshapes Experience Context hero and gallery ordering', () => {
@@ -174,7 +186,7 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     assert.equal(hero.title, REFERENCE_HOUSE_PACKAGE.identity.title);
     assert.match(hero.eyebrow, /ASTAV-M01/);
     assert.ok(synced.context.activeRoom.room?.heroMedia !== null);
-    assert.equal(hero.heroMedia?.id, 'media-exterior');
+    assert.equal(hero.heroMedia?.id, 'hero-image');
     assert.equal(hero.primaryMediaUrl, hero.heroMedia?.url);
   });
 
@@ -190,8 +202,12 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
 
     assert.ok(media.heroMedia !== null);
     assert.ok(Array.isArray(media.gallery));
+    assert.ok(media.gallery.length >= 15);
     assert.ok(Array.isArray(media.videos));
+    assert.ok(media.videos.length >= 1);
+    assert.match(media.videos[0]?.url ?? '', /wistia\.net/);
     assert.ok(Array.isArray(media.documents));
+    assert.ok(media.documents.length >= 1);
     assert.ok(Array.isArray(media.thumbnails));
   });
 
@@ -207,7 +223,10 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
 
     assert.deepEqual(first.context.floorPlan, second.context.floorPlan);
     assert.ok(first.context.floorPlan.src.length > 0);
-    assert.match(first.context.floorPlan.src, /\/media\/house-modern-01\/floorplan/);
+    assert.match(
+      first.context.floorPlan.src,
+      /\/reference-house\/assets\/floorplans\/pudorys\.webp$/,
+    );
     assert.ok(first.context.floorPlan.viewBox > 0);
     assert.equal(
       first.context.floorPlan.rooms.length,
@@ -218,6 +237,10 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     );
     assert.ok(living !== undefined);
     assert.equal(living?.title, 'Obývací pokoj');
+    assert.match(
+      living?.decisionCanvasSrc ?? '',
+      /\/reference-house\/assets\/floorplans\/svg\/room-living\.svg$/,
+    );
     assert.ok(living?.floorPlanRegion !== null);
   });
 });

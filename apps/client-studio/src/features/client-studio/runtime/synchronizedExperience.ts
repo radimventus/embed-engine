@@ -140,90 +140,105 @@ function houseFallbackHero(experience: SessionExperience): ProjectedMediaAsset |
     });
   }
 
-  const opening = getPresentationAssets().openingHeroSrc;
-  if (opening.length === 0) {
-    return null;
-  }
+  return null;
+}
 
-  return Object.freeze({
-    id: 'fallback-opening-hero',
-    kind: 'image' as const,
-    url: opening,
-    thumbnailUrl: opening,
-    title: experience.house.title,
-  });
+function projectHouseGallery(
+  experience: SessionExperience,
+): readonly ProjectedMediaAsset[] {
+  return Object.freeze(
+    experience.house.media
+      .filter((asset) => asset.type === 'image')
+      .map((asset) => {
+        const url = resolvePublicAssetUrl(asset.url);
+        return Object.freeze({
+          id: asset.id,
+          kind: 'image' as const,
+          url,
+          thumbnailUrl: url,
+          title: asset.title,
+        });
+      }),
+  );
+}
+
+function projectHouseVideos(
+  experience: SessionExperience,
+): readonly ProjectedMediaAsset[] {
+  return Object.freeze(
+    experience.house.media
+      .filter((asset) => asset.type === 'video')
+      .map((asset) => {
+        const url = resolvePublicAssetUrl(asset.url);
+        return Object.freeze({
+          id: asset.id,
+          kind: 'video' as const,
+          url,
+          thumbnailUrl: houseFallbackHero(experience)?.url ?? url,
+          title: asset.title,
+        });
+      }),
+  );
+}
+
+function projectHouseDocuments(
+  experience: SessionExperience,
+): readonly ProjectedMediaAsset[] {
+  const docs = experience.house.documents ?? [];
+  return Object.freeze(
+    docs.map((doc) => {
+      const url = resolvePublicAssetUrl(doc.url);
+      return Object.freeze({
+        id: doc.id,
+        kind: 'document' as const,
+        url,
+        thumbnailUrl: url,
+        title: doc.title,
+      });
+    }),
+  );
+}
+
+function referenceDecisionCanvasSrc(roomId: string): string {
+  return resolvePublicAssetUrl(
+    `/reference-house/assets/floorplans/svg/${roomId}.svg`,
+  );
 }
 
 function projectRoomContext(
   room: ExperienceHouseRoom,
   experience: SessionExperience,
 ): ContextualActiveRoom {
-  const assets = getMediaRoom(room.id);
   const fallbackHero = houseFallbackHero(experience);
-
-  const gallery: ProjectedMediaAsset[] = (assets?.gallerySrcs ?? []).map(
-    (url, index) =>
-      Object.freeze({
-        id: `${room.id}-gallery-${index + 1}`,
-        kind: 'image' as const,
-        url,
-        thumbnailUrl: url,
-        title: `${room.name} · ${index + 1}`,
-      }),
-  );
-
-  const videos: ProjectedMediaAsset[] =
-    assets?.videoSrc !== undefined && assets.videoSrc.length > 0
-      ? [
-          Object.freeze({
-            id: `${room.id}-video`,
-            kind: 'video' as const,
-            url: assets.videoSrc,
-            thumbnailUrl: assets.heroSrc || fallbackHero?.url || assets.videoSrc,
-            title: `${room.name} · video`,
-          }),
-        ]
-      : [];
-
-  const documents: ProjectedMediaAsset[] = [];
-
-  const heroFromRoom =
-    assets?.heroSrc !== undefined && assets.heroSrc.length > 0
-      ? Object.freeze({
-          id: `${room.id}-hero`,
-          kind: 'image' as const,
-          url: assets.heroSrc,
-          thumbnailUrl: assets.heroSrc,
-          title: room.name,
-        })
-      : null;
+  const gallery = projectHouseGallery(experience);
+  const videos = projectHouseVideos(experience);
+  const documents = projectHouseDocuments(experience);
 
   const heroMedia =
-    heroFromRoom ??
-    (gallery[0] !== undefined
-      ? Object.freeze({ ...gallery[0], id: `${room.id}-hero-fallback` })
-      : fallbackHero);
+    gallery.find((asset) => asset.id === 'hero-image') ??
+    gallery[0] ??
+    fallbackHero;
 
-  const thumbnails: HousePackageMediaItem[] =
-    assets?.mediaItems !== undefined && assets.mediaItems.length > 0
-      ? [...assets.mediaItems]
-      : heroMedia !== null
-        ? [
-            {
-              kind: 'photo',
-              src: heroMedia.url,
-              thumbnailSrc: heroMedia.thumbnailUrl,
-            },
-          ]
-        : [];
+  const thumbnails: HousePackageMediaItem[] = [
+    ...videos.map((video) => ({
+      kind: 'video' as const,
+      src: video.url,
+      thumbnailSrc: video.thumbnailUrl,
+    })),
+    ...gallery.map((photo) => ({
+      kind: 'photo' as const,
+      src: photo.url,
+      thumbnailSrc: photo.thumbnailUrl,
+    })),
+  ];
 
   return Object.freeze({
     ...room,
     description: `${room.name} · ${room.area} m² · patro ${room.floor}`,
     heroMedia,
-    gallery: Object.freeze(gallery),
-    videos: Object.freeze(videos),
-    documents: Object.freeze(documents),
+    gallery,
+    videos,
+    documents,
     thumbnails: Object.freeze(thumbnails),
     metrics: Object.freeze([
       { label: 'Plocha', value: `${room.area} m²` },
@@ -243,27 +258,32 @@ function emptyRoomMedia(
   experience: SessionExperience,
 ): ExperienceRoomMediaContext {
   const idleHero = houseFallbackHero(experience);
-  const thumbnails: HousePackageMediaItem[] =
-    idleHero !== null
-      ? [
-          {
-            kind: 'photo',
-            src: idleHero.url,
-            thumbnailSrc: idleHero.thumbnailUrl,
-          },
-        ]
-      : [];
+  const gallery = projectHouseGallery(experience);
+  const videos = projectHouseVideos(experience);
+  const documents = projectHouseDocuments(experience);
+  const thumbnails: HousePackageMediaItem[] = [
+    ...videos.map((video) => ({
+      kind: 'video' as const,
+      src: video.url,
+      thumbnailSrc: video.thumbnailUrl,
+    })),
+    ...gallery.map((photo) => ({
+      kind: 'photo' as const,
+      src: photo.url,
+      thumbnailSrc: photo.thumbnailUrl,
+    })),
+  ];
 
   return Object.freeze({
     roomId: null,
     title: idleHero?.title ?? experience.house.title,
     heroMedia: idleHero,
-    gallery: Object.freeze(idleHero !== null ? [idleHero] : []),
-    videos: Object.freeze([]),
-    documents: Object.freeze([]),
+    gallery,
+    videos,
+    documents,
     thumbnails: Object.freeze(thumbnails),
     heroUrl: idleHero?.url ?? null,
-    videoUrl: null,
+    videoUrl: videos[0]?.url ?? null,
   });
 }
 
@@ -394,13 +414,15 @@ function projectFloorPlan(
       id: room.id,
       title: room.name,
       floor: String(room.floor),
-      decisionCanvasSrc: chrome?.decisionCanvasSrc ?? '',
+      decisionCanvasSrc: referenceDecisionCanvasSrc(room.id),
       floorPlanRegion: chrome?.floorPlanRegion ?? null,
     });
   });
 
   return Object.freeze({
-    src: resolvePublicAssetUrl(objectFloorplan?.url ?? assets.floorPlanSrc),
+    src: resolvePublicAssetUrl(
+      objectFloorplan?.url ?? assets.floorPlanSrc,
+    ),
     viewBox: assets.floorPlanViewBox,
     rooms: Object.freeze(rooms),
   });

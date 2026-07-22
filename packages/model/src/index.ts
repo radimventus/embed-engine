@@ -17,6 +17,7 @@ export type {
   ExperienceHighlight,
   ExperienceHighlightTarget,
   ExperienceHouse,
+  ExperienceHouseDocument,
   ExperienceHouseMedia,
   ExperienceHouseRoom,
   ReactExperienceModel,
