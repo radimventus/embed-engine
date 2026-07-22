@@ -27,7 +27,11 @@ export function bootstrapClientStudioDelivery(
 
   const housePackage = resolveObjectPackage(options.objectId);
   const runtime = createDeliveryRuntime(housePackage);
-  const handle = mountClientStudio({ target: host, runtime });
+  const handle = mountClientStudio({
+    target: host,
+    runtime,
+    assetBase: options.assetBase,
+  });
 
   return {
     kind: "client-studio",

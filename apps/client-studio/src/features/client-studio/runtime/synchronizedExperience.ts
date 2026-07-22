@@ -10,6 +10,7 @@ import {
   getMediaRoom,
   getPresentationAssets,
 } from './presentation-assets';
+import { resolvePublicAssetUrl } from './presentationAssetBase';
 
 /**
  * First-class projected media asset (CAP-HP-003.4).
@@ -117,22 +118,24 @@ export type SynchronizedExperience = {
 function houseFallbackHero(experience: SessionExperience): ProjectedMediaAsset | null {
   const houseImage = experience.house.media.find((asset) => asset.type === 'image');
   if (houseImage !== undefined) {
+    const url = resolvePublicAssetUrl(houseImage.url);
     return Object.freeze({
       id: houseImage.id,
       kind: 'image' as const,
-      url: houseImage.url,
-      thumbnailUrl: houseImage.url,
+      url,
+      thumbnailUrl: url,
       title: houseImage.title,
     });
   }
 
   const houseVideo = experience.house.media.find((asset) => asset.type === 'video');
   if (houseVideo !== undefined) {
+    const url = resolvePublicAssetUrl(houseVideo.url);
     return Object.freeze({
       id: houseVideo.id,
       kind: 'video' as const,
-      url: houseVideo.url,
-      thumbnailUrl: houseVideo.url,
+      url,
+      thumbnailUrl: url,
       title: houseVideo.title,
     });
   }
@@ -397,7 +400,7 @@ function projectFloorPlan(
   });
 
   return Object.freeze({
-    src: objectFloorplan?.url ?? assets.floorPlanSrc,
+    src: resolvePublicAssetUrl(objectFloorplan?.url ?? assets.floorPlanSrc),
     viewBox: assets.floorPlanViewBox,
     rooms: Object.freeze(rooms),
   });

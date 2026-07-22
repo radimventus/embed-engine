@@ -84,8 +84,9 @@ function writeIndexHtml(version) {
   <pre>&lt;div id="embed"&gt;&lt;/div&gt;
 &lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  Embed.mount({ target: "#embed", objectId: "house-modern-01" });
+  Embed.mount({ target: "#embed", objectId: "house-modern-01", assetBase: "https://radimventus.github.io/embed-engine" });
 &lt;/script&gt;</pre>
+  <p>Hosts that already serve <code>/media</code> and <code>/house-package</code> may omit <code>assetBase</code>.</p>
   <p>Legacy Garden (explicit opt-in only): <code>Embed.mount({ target: "#embed", fixture: "garden" })</code></p>
 </body>
 </html>
@@ -112,6 +113,7 @@ function writeLiveHtml() {
     Embed.mount({
       target: "#embed",
       objectId: "house-modern-01",
+      assetBase: "https://radimventus.github.io/embed-engine",
     });
   </script>
 </body>
@@ -143,6 +145,17 @@ for (const file of PUBLIC_FILES) {
 writeIndexHtml(versionJson.version);
 writeLiveHtml();
 writeNoJekyll();
+
+// Hero / Object media used by root-absolute `/media/...` URLs (not the full house-package catalog).
+const mediaSource = path.join(
+  rootDir,
+  "apps/client-studio/public/media",
+);
+const mediaTarget = path.join(rootDir, "docs/media");
+if (existsSync(mediaSource)) {
+  rmSync(mediaTarget, { recursive: true, force: true });
+  cpSync(mediaSource, mediaTarget, { recursive: true });
+}
 
 const publishedIife = path.join(pagesDir, "embed.iife.js");
 const publishedVersion = JSON.parse(

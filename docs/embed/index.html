@@ -24,8 +24,9 @@
   <pre>&lt;div id="embed"&gt;&lt;/div&gt;
 &lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  Embed.mount({ target: "#embed", objectId: "house-modern-01" });
+  Embed.mount({ target: "#embed", objectId: "house-modern-01", assetBase: "https://radimventus.github.io/embed-engine" });
 &lt;/script&gt;</pre>
+  <p>Hosts that already serve <code>/media</code> and <code>/house-package</code> may omit <code>assetBase</code>.</p>
   <p>Legacy Garden (explicit opt-in only): <code>Embed.mount({ target: "#embed", fixture: "garden" })</code></p>
 </body>
 </html>

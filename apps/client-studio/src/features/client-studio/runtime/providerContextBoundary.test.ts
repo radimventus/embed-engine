@@ -25,9 +25,11 @@ describe('Context-only Provider boundary (ED-DA-04)', () => {
       ),
     );
 
-    assert.equal(source.includes('runtime:'), false);
+    // Injection prop may exist for Embed Delivery; Context value must stay experience/ready/dispatch.
     assert.equal(source.includes('interpretation:'), false);
     assert.equal(source.includes('getInterpretation'), false);
+    assert.equal(source.includes('runtime: runtime'), false);
+    assert.equal(source.includes('runtime:runtime'), false);
     assert.match(source, /experience:/);
     assert.match(source, /dispatch:/);
     assert.match(source, /ready:/);

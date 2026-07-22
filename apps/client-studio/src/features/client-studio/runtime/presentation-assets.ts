@@ -14,7 +14,10 @@ import { resolveHousePackage } from '@embed-engine/kernel';
 
 import manifest from '../../../../public/house-package/manifest.json';
 
-const MEDIA_PACKAGE = resolveHousePackage(manifest as HousePackageManifest);
+import { getPresentationAssetBase } from './presentationAssetBase';
+
+const BASE_MANIFEST = manifest as HousePackageManifest;
+const DEFAULT_MEDIA_PACKAGE = resolveHousePackage(BASE_MANIFEST);
 
 /** Object Package room id → media catalog room id. */
 const OBJECT_ROOM_TO_MEDIA_ROOM: Readonly<Record<string, string>> = {
@@ -36,9 +39,17 @@ export function getMediaRoom(
   if (mediaRoomId === null) {
     return null;
   }
-  return MEDIA_PACKAGE.rooms.find((room) => room.id === mediaRoomId) ?? null;
+  return getPresentationAssets().rooms.find((room) => room.id === mediaRoomId) ?? null;
 }
 
 export function getPresentationAssets(): ResolvedHousePackage {
-  return MEDIA_PACKAGE;
+  const assetBase = getPresentationAssetBase();
+  if (assetBase === null) {
+    return DEFAULT_MEDIA_PACKAGE;
+  }
+
+  return resolveHousePackage({
+    ...BASE_MANIFEST,
+    basePath: `${assetBase}${BASE_MANIFEST.basePath}`,
+  });
 }

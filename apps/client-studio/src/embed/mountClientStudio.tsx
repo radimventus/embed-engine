@@ -5,11 +5,17 @@ import type { DecisionSessionRuntime } from '@embed-engine/runtime';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ClientStudioApp } from '../features/client-studio/ClientStudioApp';
 import { CLIENT_STUDIO_RELEASE } from '../features/client-studio/pilot/productionConfig';
+import { setPresentationAssetBase } from '../features/client-studio/runtime/presentationAssetBase';
 
 export type MountClientStudioOptions = {
   readonly target: HTMLElement;
   /** Single Decision Session Runtime owned by the Embed delivery session. */
   readonly runtime: DecisionSessionRuntime;
+  /**
+   * Optional origin for `/media` and `/house-package` assets (no trailing slash).
+   * Required when the host origin does not serve Client Studio public assets.
+   */
+  readonly assetBase?: string;
 };
 
 export type ClientStudioMountHandle = {
@@ -24,7 +30,9 @@ export type ClientStudioMountHandle = {
 export function mountClientStudio(
   options: MountClientStudioOptions,
 ): ClientStudioMountHandle {
-  const { target, runtime } = options;
+  const { target, runtime, assetBase } = options;
+
+  setPresentationAssetBase(assetBase);
 
   target.setAttribute('data-embed-root', '');
   target.setAttribute('data-client-studio-root', '');
@@ -45,6 +53,7 @@ export function mountClientStudio(
     rootElement: target,
     dispose: () => {
       reactRoot.unmount();
+      setPresentationAssetBase(undefined);
       target.removeAttribute('data-embed-root');
       target.removeAttribute('data-client-studio-root');
       delete target.dataset.clientStudioVersion;
