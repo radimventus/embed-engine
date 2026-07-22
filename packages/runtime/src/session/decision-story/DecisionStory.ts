@@ -2,7 +2,8 @@
  * Decision Story — canonical semantic narrative of the current decision state (CAP-DST-001 / PT-004).
  * Deterministic Runtime artifact — never UI, never AI authorship.
  *
- * Move slots / progression units belong to CAP-DST-002 and are intentionally absent here.
+ * Move slots / progression units are produced by CAP-DST-002 from this Story
+ * (`composeDecisionMoves(story)`). Moves MUST NOT be composed from Interpretation.
  */
 
 export const DECISION_STORY_SCHEMA_VERSION = 1 as const;

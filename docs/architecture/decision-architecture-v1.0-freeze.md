@@ -68,7 +68,7 @@ Decision Outcome        ← CAP-OUT-001 (artifact)
 ## Implementation roadmap (frozen order)
 
 1. ~~CAP-DST-001 — Decision Story Engine~~ **Done** (`@embed-engine/runtime` session pipeline)  
-2. CAP-DST-002 — Decision Move Engine  
+2. ~~CAP-DST-002 — Decision Move Engine~~ **Done** (Story → Moves only)  
 3. CAP-OUT-001 — Decision Outcome Engine  
 4. CAP-DTR-001 — Decision Terminal Engine  
 5. CAP-AI-001 — AI Context Reader  

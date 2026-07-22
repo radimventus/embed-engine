@@ -8,6 +8,8 @@ import {
 } from "../decision-focus";
 import type { DecisionStory } from "../decision-story";
 import { composeDecisionStory } from "../decision-story";
+import type { DecisionMoveSequence } from "../decision-moves";
+import { composeDecisionMoves } from "../decision-moves";
 import type { DecisionSession } from "../DecisionSession";
 import {
   createInterpretationContext,
@@ -26,7 +28,8 @@ import {
 /**
  * Session Interpretation — meaning derived from
  * Object Package + Runtime State + Priority Signals + Interpretation Rules
- * + Decision Focus (CAP-PRI-002) + Decision Story (CAP-DST-001).
+ * + Decision Focus (CAP-PRI-002) + Decision Story (CAP-DST-001)
+ * + Decision Moves (CAP-DST-002).
  * Never validates commands. Never projects UI.
  */
 export type SessionInterpretation = {
@@ -55,6 +58,8 @@ export type SessionInterpretation = {
   readonly decisionFocus: DecisionFocus;
   /** Canonical semantic narrative (CAP-DST-001 / PT-004). */
   readonly decisionStory: DecisionStory;
+  /** Ordered Moves derived solely from Decision Story (CAP-DST-002 / PT-005). */
+  readonly decisionMoves: DecisionMoveSequence;
 };
 
 export type InterpretDecisionSessionOptions = {
@@ -68,6 +73,7 @@ function buildSummary(
   signals: readonly PrioritySignal[],
   decisionFocus: DecisionFocus,
   decisionStory: DecisionStory,
+  decisionMoves: DecisionMoveSequence,
 ): string {
   return [
     `object:${session.objectId}`,
@@ -76,6 +82,7 @@ function buildSummary(
     `decisionFocus:${decisionFocus.focusRoomId ?? "none"}:${decisionFocus.focusReason}:${decisionFocus.confidence}`,
     `action:${decisionFocus.recommendedAction}`,
     `story:${decisionStory.id}`,
+    `moves:${decisionMoves.activeMoveId ?? "none"}:${decisionMoves.moves.length}`,
     `reason:${semantics.primaryReason}`,
     `highlights:${semantics.highlights.join(",") || "none"}`,
     `media:${semantics.recommendedMedia.map((item) => item.role).join(",") || "none"}`,
@@ -132,6 +139,9 @@ export function interpretDecisionSession(
     rulesetVersion: rules.version,
   });
 
+  // CAP-DST-002: Moves derive only from Story — never from Interpretation directly.
+  const decisionMoves = composeDecisionMoves(decisionStory);
+
   const activeRoomId = session.runtimeState.activeRoomId;
   const activeRoomName =
     activeRoomId === null
@@ -155,6 +165,7 @@ export function interpretDecisionSession(
       prioritySignals,
       decisionFocus,
       decisionStory,
+      decisionMoves,
     ),
     rulesetId: rules.id,
     rulesetVersion: rules.version,
@@ -166,5 +177,6 @@ export function interpretDecisionSession(
     appliedRuleIds: semantics.appliedRuleIds,
     decisionFocus,
     decisionStory,
+    decisionMoves,
   });
 }

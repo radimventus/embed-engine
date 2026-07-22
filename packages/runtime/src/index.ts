@@ -44,6 +44,7 @@ export {
 } from "./priority/html-renderer";
 
 export {
+  DECISION_MOVE_SCHEMA_VERSION,
   DECISION_SESSION_FORMAT,
   DECISION_SESSION_SCHEMA_VERSION,
   DECISION_STORY_SCHEMA_VERSION,
@@ -51,6 +52,7 @@ export {
   applyDecisionEvent,
   cloneDecisionSession,
   commandToEvent,
+  composeDecisionMoves,
   composeDecisionStory,
   createDecisionSession,
   createDecisionSessionRuntime,
@@ -85,6 +87,10 @@ export {
   type DecisionEvent,
   type DecisionEventType,
   type DecisionFocus,
+  type DecisionMove,
+  type DecisionMoveContract,
+  type DecisionMoveSequence,
+  type DecisionMoveStatus,
   type DecisionSession,
   type DecisionSessionRuntimeOptions,
   type DecisionStory,

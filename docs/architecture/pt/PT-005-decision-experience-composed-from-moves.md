@@ -285,6 +285,8 @@ Implement the deterministic Decision Move Engine that:
 - remains presentation-independent and AI-independent,
 - enables Analytics to record Move completion as the primary behavioral unit.
 
+**Implementation status:** Done in `@embed-engine/runtime` (`session/decision-moves`, `composeDecisionMoves(story)` only — never Interpretation → Moves).
+
 ---
 
 ## Success Criteria

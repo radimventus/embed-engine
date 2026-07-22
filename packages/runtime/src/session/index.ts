@@ -102,6 +102,14 @@ export {
   type DecisionStoryProvenance,
 } from "./decision-story";
 export {
+  composeDecisionMoves,
+  DECISION_MOVE_SCHEMA_VERSION,
+  type DecisionMove,
+  type DecisionMoveContract,
+  type DecisionMoveSequence,
+  type DecisionMoveStatus,
+} from "./decision-moves";
+export {
   DecisionSessionRuntime,
   applyDecisionEvent,
   commandToEvent,
