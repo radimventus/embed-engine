@@ -18,7 +18,7 @@ Other documents must **link here**. They must **not** redefine these terms.
 | **Decision Move** | The smallest guided step that can change the user's decision state. | [decision-layer.md § Move](./decision-layer.md#decision-move) · theory [PT-005](../pt/PT-005-decision-experience-composed-from-moves.md) | **CORE** |
 | **Decision Story** | An ordered sequence of Decision Moves (plus cursor/status). | [decision-layer.md § Story](./decision-layer.md#decision-story) · theory [PT-004](../pt/PT-004-decision-story-is-the-product.md) | **CORE** |
 | **Decision Strategy** | The orchestration layer that composes the active Decision Story from Interpretation and Behavior Pack. | [decision-strategy.md](./decision-strategy.md) | **CORE** |
-| **Decision Terminal** | An Experience Surface that renders Decision Stories. Not Kernel. | [decision-layer.md § Terminal](./decision-layer.md#decision-terminal-experience-layer) | **CORE** |
+| **Decision Terminal** | An Experience Surface that renders Decision Stories. Not Kernel. Semantic outcome thesis: [PT-007](../pt/PT-007-decision-terminal-is-the-outcome.md). | [decision-layer.md § Terminal](./decision-layer.md#decision-terminal-experience-layer) | **CORE** |
 | **Decision Trajectory** | Long-term evolution of the decision process. | [decision-layer.md § Trajectory](./decision-layer.md#decision-trajectory) | **Future Architecture** (not MVP) |
 | **Behavior Pack** | Provides domain knowledge, decision rules, Decision Move library, Story composition rules. Does **not** modify UI. | [../behavior-pack-contract.md](../behavior-pack-contract.md) | **CORE** (responsibilities) |
 

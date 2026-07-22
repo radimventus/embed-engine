@@ -296,5 +296,6 @@ The decision itself never does.
 - [PT-003 — Decision Sessions are Reproducible](./PT-003-decision-sessions-are-reproducible.md)
 - [PT-004 — Decision Story is the Product](./PT-004-decision-story-is-the-product.md)
 - [PT-005 — Decision Experience is Composed from Decision Moves](./PT-005-decision-experience-composed-from-moves.md)
+- [PT-007 — Decision Terminal is the Outcome](./PT-007-decision-terminal-is-the-outcome.md)
 - [ADR-012 — Interpretation as first-class artifact](../adr/ADR-012-interpretation-first-class-artifact.md)
 - [Living Experience v0.1 Freeze](../living-experience-v0.1-freeze.md)

@@ -10,6 +10,7 @@ Platform Theory documents establish **long-lived invariants** for how Embed Engi
 | PT-004 | [Decision Story is the Product](./PT-004-decision-story-is-the-product.md) | Proposed | Decision Story as the canonical semantic narrative; authorizes CAP-DST-001 |
 | PT-005 | [Decision Experience is Composed from Decision Moves](./PT-005-decision-experience-composed-from-moves.md) | Proposed | Decision Move as progression unit; Story = ordered Moves; authorizes CAP-DST-002 |
 | PT-006 | [AI Explains, Never Decides](./PT-006-ai-explains-never-decides.md) | Proposed | AI as semantic explainer; Runtime remains decision authority; authorizes CAP-AI-001 |
+| PT-007 | [Decision Terminal is the Outcome](./PT-007-decision-terminal-is-the-outcome.md) | Proposed | Decision Terminal as canonical semantic outcome; authorizes CAP-DTR-001 |
 
 **Related**
 
