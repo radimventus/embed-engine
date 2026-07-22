@@ -31,8 +31,8 @@ Hardening report: [ED-DA-01 Boundary Hardening](../architecture/review/ED-DA-01-
 
 | ID | Item | Notes |
 | --- | --- | --- |
-| ED-DA-01 | Unify Client Studio on Decision Session Runtime only | **Partial** — session ownership map + export policy + dual-stack documentation done; residual: retire Priority `interpretAndCompose` producer |
-| ED-DA-02 | Move room media / hero projection out of walkthrough catalog ownership | Prefer Object / Runtime projection |
+| ED-DA-01 | Unify Client Studio on Decision Session Runtime only | **Done (ED-DA-01R)** — `interpretAndCompose` dual stack retired in Client Studio |
+| ED-DA-02 | Move room media / hero projection out of walkthrough catalog ownership | **Partial** — media UI consumes Experience Context only; catalog confined to `projectSynchronizedExperience` seam ([ED-DA-02 report](../architecture/review/ED-DA-02-media-projection-boundary.md)); Object-owned assets still open |
 | ED-DA-03 | Narrow `@embed-engine/runtime` public exports | Façade documented; breaking narrowing deferred |
 | ED-DA-04 | Stop exposing `runtime` / raw `interpretation` to presentation modules | Prefer-`experience.context` documented on Provider; removal deferred |
 | ED-DA-05 | Converge flat `SessionExperience` fields into `experience.context` | Remove duplicate contracts |

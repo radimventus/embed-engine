@@ -1,8 +1,9 @@
 /**
- * Presentation asset catalog for Client Studio media / floor-plan chrome.
- * Not the Object Package SSOT — room selection ownership is Decision Session Runtime.
+ * Media catalog adapter for `projectSynchronizedExperience` only (ED-DA-02).
+ * Not Object Package SSOT — residual until ED-DA-02 Object-owned projection closes.
  *
- * Maps Object Package RoomId → walkthrough media assets under /house-package.
+ * Media UI modules must not import this file; they read Experience Context.
+ * Maps Object Package RoomId → catalog assets under /house-package.
  */
 import type {
   HousePackageManifest,
@@ -11,7 +12,7 @@ import type {
 } from '@embed-engine/contracts';
 import { resolveHousePackage } from '@embed-engine/kernel';
 
-import manifest from '../../../public/house-package/manifest.json';
+import manifest from '../../../../public/house-package/manifest.json';
 
 const MEDIA_PACKAGE = resolveHousePackage(manifest as HousePackageManifest);
 

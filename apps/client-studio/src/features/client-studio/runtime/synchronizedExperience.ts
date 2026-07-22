@@ -10,7 +10,7 @@ import { projectExperienceContext } from '@embed-engine/runtime';
 import {
   getMediaRoom,
   getPresentationAssets,
-} from '../../walkthrough/presentation-assets';
+} from './presentation-assets';
 
 /**
  * First-class projected media asset (CAP-HP-003.4).
@@ -72,9 +72,30 @@ export type ExperienceHeroContext = {
   readonly focusRoomName: string | null;
 };
 
+/** Floor-plan projection — assets + hotspot regions (ED-DA-02). */
+export type ExperienceFloorPlanRoom = {
+  readonly id: string;
+  readonly title: string;
+  readonly floor: string;
+  readonly decisionCanvasSrc: string;
+  readonly floorPlanRegion: {
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+  } | null;
+};
+
+export type ExperienceFloorPlanContext = {
+  readonly src: string;
+  readonly viewBox: number;
+  readonly rooms: readonly ExperienceFloorPlanRoom[];
+};
+
 /**
- * Client Studio Experience Context — Runtime semantic context + room media.
- * Canonical input for Hero, Gallery, Media Explorer, Navigator, and future modules.
+ * Client Studio Experience Context — Runtime semantic context + media projection.
+ * Canonical input for Hero, Gallery, Media Explorer, FloorPlan, Navigator.
+ * Media modules render this context only — never compose semantics (ED-DA-02).
  */
 export type SynchronizedExperienceContext = Omit<ExperienceContext, 'activeRoom'> & {
   readonly activeRoom: {
@@ -84,6 +105,7 @@ export type SynchronizedExperienceContext = Omit<ExperienceContext, 'activeRoom'
   };
   readonly roomMedia: ExperienceRoomMediaContext;
   readonly hero: ExperienceHeroContext;
+  readonly floorPlan: ExperienceFloorPlanContext;
 };
 
 /**
@@ -364,6 +386,28 @@ function projectHeroContext(
   });
 }
 
+function projectFloorPlan(
+  experience: SessionExperience,
+): ExperienceFloorPlanContext {
+  const assets = getPresentationAssets();
+  const rooms = experience.house.rooms.map((room) => {
+    const chrome = getMediaRoom(room.id);
+    return Object.freeze({
+      id: room.id,
+      title: room.name,
+      floor: String(room.floor),
+      decisionCanvasSrc: chrome?.decisionCanvasSrc ?? '',
+      floorPlanRegion: chrome?.floorPlanRegion ?? null,
+    });
+  });
+
+  return Object.freeze({
+    src: assets.floorPlanSrc,
+    viewBox: assets.floorPlanViewBox,
+    rooms: Object.freeze(rooms),
+  });
+}
+
 function projectSynchronizedContext(
   experience: SessionExperience,
   activeRoom: ContextualActiveRoom | null,
@@ -402,6 +446,7 @@ function projectSynchronizedContext(
     }),
     roomMedia: projectRoomMedia(activeRoom, experience),
     hero: projectHeroContext(experience, activeRoom),
+    floorPlan: projectFloorPlan(experience),
   });
 }
 

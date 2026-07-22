@@ -1,5 +1,1 @@
-export {
-  WalkthroughProvider,
-  useWalkthrough,
-  getHousePresentationAssets,
-} from './WalkthroughProvider';
+export { WalkthroughProvider, useWalkthrough } from './WalkthroughProvider';

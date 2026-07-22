@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
-import { getHousePresentationAssets, useWalkthrough } from '../../../walkthrough';
+import { useWalkthrough } from '../../../walkthrough';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 
 import { FloorPlanLightbox } from './FloorPlanLightbox';
 import { FloorPlanZoomControl } from './FloorPlanZoomControl';
@@ -11,15 +12,20 @@ type FloorPlanCanvasProps = {
   preserveAspectRatio?: string;
 };
 
+/**
+ * Floor-plan canvas — renders projected `context.floorPlan` only (ED-DA-02).
+ * Interaction dispatches SelectRoom via walkthrough chrome; no catalog access.
+ */
 function FloorPlanCanvas({
   interactive,
   className,
   preserveAspectRatio = 'xMaxYMid slice',
 }: FloorPlanCanvasProps) {
-  const { rooms, activeRoom, selectRoom } = useWalkthrough();
-  const assets = getHousePresentationAssets();
-  const viewBox = assets.floorPlanViewBox;
-  const canvasRooms = rooms.filter((room) => room.floorPlanRegion !== null);
+  const { experience } = useDecisionSessionRuntime();
+  const { activeRoom, selectRoom } = useWalkthrough();
+  const floorPlan = experience.context.floorPlan;
+  const viewBox = floorPlan.viewBox;
+  const canvasRooms = floorPlan.rooms.filter((room) => room.floorPlanRegion !== null);
 
   return (
     <svg
@@ -30,7 +36,7 @@ function FloorPlanCanvas({
       role="img"
     >
       <image
-        href={assets.floorPlanSrc}
+        href={floorPlan.src}
         width={viewBox}
         height={viewBox}
         preserveAspectRatio={preserveAspectRatio}

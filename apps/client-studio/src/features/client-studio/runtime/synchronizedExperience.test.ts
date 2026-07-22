@@ -174,4 +174,28 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     assert.ok(Array.isArray(media.documents));
     assert.ok(Array.isArray(media.thumbnails));
   });
+
+  it('floorPlan is projected on Experience Context (ED-DA-02)', () => {
+    const runtime = createDecisionSessionRuntime({
+      housePackage: REFERENCE_HOUSE_PACKAGE,
+      now: 1,
+    });
+    runtime.dispatch({ type: 'SelectRoom', roomId: 'room-living' }, 2);
+    const first = projectSynchronizedExperience(runtime.getExperience()!);
+    const second = projectSynchronizedExperience(runtime.getExperience()!);
+
+    assert.deepEqual(first.context.floorPlan, second.context.floorPlan);
+    assert.ok(first.context.floorPlan.src.length > 0);
+    assert.ok(first.context.floorPlan.viewBox > 0);
+    assert.equal(
+      first.context.floorPlan.rooms.length,
+      REFERENCE_HOUSE_PACKAGE.rooms.length,
+    );
+    const living = first.context.floorPlan.rooms.find(
+      (room) => room.id === 'room-living',
+    );
+    assert.ok(living !== undefined);
+    assert.equal(living?.title, 'Obývací pokoj');
+    assert.ok(living?.floorPlanRegion !== null);
+  });
 });

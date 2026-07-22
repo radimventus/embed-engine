@@ -10,31 +10,22 @@ import {
 import type {
   HousePackageMediaItem,
   MediaMode,
-  ResolvedHousePackageRoom,
   WalkthroughState,
 } from '@embed-engine/contracts';
-import type { ExperienceHouseRoom } from '@embed-engine/model';
 
 import {
   applyFloorChanged,
-  applyMediaOpened,
   applyRoomViewed,
   useApplyCognitiveSignal,
 } from '../client-studio/cognitive/CognitiveRuntimeContext';
 import { useDecisionSessionRuntime } from '../client-studio/runtime/DecisionSessionRuntimeProvider';
-import { getMediaRoom } from './presentation-assets';
+import type { ExperienceFloorPlanRoom } from '../client-studio/runtime/synchronizedExperience';
 
 /**
- * Walkthrough room chrome for FloorPlan SVG only.
- * Contextual media (hero / gallery / video) lives on SynchronizedExperience.activeRoom.
+ * Walkthrough room chrome for FloorPlan interaction only.
+ * Assets come from Experience Context floorPlan projection (ED-DA-02).
  */
-type WalkthroughRoom = {
-  readonly id: string;
-  readonly title: string;
-  readonly floor: string;
-  readonly decisionCanvasSrc: string;
-  readonly floorPlanRegion: ResolvedHousePackageRoom['floorPlanRegion'];
-};
+type WalkthroughRoom = ExperienceFloorPlanRoom;
 
 type WalkthroughContextValue = {
   mode: WalkthroughState['mode'];
@@ -63,10 +54,6 @@ type WalkthroughProviderProps = {
   children: ReactNode;
 };
 
-function floorKey(floor: number): string {
-  return String(floor);
-}
-
 function floorLabel(floor: string): string {
   if (floor === '0') {
     return 'Přízemí selected';
@@ -74,32 +61,17 @@ function floorLabel(floor: string): string {
   return 'Upper floor selected';
 }
 
-/** Floor-plan chrome only — never resolves gallery / hero media. */
-function toWalkthroughRoom(room: ExperienceHouseRoom): WalkthroughRoom {
-  const chrome = getMediaRoom(room.id);
-  return {
-    id: room.id,
-    title: room.name,
-    floor: floorKey(room.floor),
-    decisionCanvasSrc: chrome?.decisionCanvasSrc ?? '',
-    floorPlanRegion: chrome?.floorPlanRegion ?? null,
-  };
-}
-
 /**
  * Media chrome adapter (mode / index / play).
- * Room media + navigation come from Experience Context (CAP-HP-003.5).
+ * Room media + floor-plan assets come from Experience Context (ED-DA-02).
+ * Media index / mode are presentation-only — never write cognitive semantics.
  */
 export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const { experience, dispatch } = useDecisionSessionRuntime();
   const applySignal = useApplyCognitiveSignal();
   const { context } = experience;
   const projectedThumbnails = context.roomMedia.thumbnails;
-
-  const rooms = useMemo(
-    () => context.navigation.rooms.map(toWalkthroughRoom),
-    [context.navigation.rooms],
-  );
+  const rooms = context.floorPlan.rooms;
 
   const floors = context.navigation.floors;
 
@@ -167,22 +139,9 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       },
       selectMediaIndex: (mediaIndex: number) => {
         setActiveMediaIndex(mediaIndex);
-        const media = roomMediaItems[mediaIndex];
-        applyMediaOpened(
-          applySignal,
-          `media-${mediaIndex}`,
-          media?.kind === 'video' ? 'Video opened' : `Photo ${mediaIndex + 1} opened`,
-        );
       },
       setMediaMode: (nextMode: MediaMode) => {
         setMediaModeState(nextMode);
-        applyMediaOpened(
-          applySignal,
-          `mode-${nextMode}`,
-          nextMode === 'photo'
-            ? 'Photos / interior-exterior gallery'
-            : 'Video walkthrough',
-        );
       },
       selectFloor: (floorId: string) => {
         applyFloorChanged(applySignal, floorId, floorLabel(floorId));
@@ -226,5 +185,3 @@ export function useWalkthrough(): WalkthroughContextValue {
 
   return context;
 }
-
-export { getPresentationAssets as getHousePresentationAssets } from './presentation-assets';

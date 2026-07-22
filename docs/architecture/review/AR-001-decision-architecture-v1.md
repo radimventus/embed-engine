@@ -429,8 +429,8 @@ Captured for non-blocking follow-up (also listed in [Engineering Debt](../../imp
 
 | ID | Item |
 | --- | --- |
-| ED-DA-01 | Unify Client Studio on Decision Session Runtime only (retire Priority `interpretAndCompose` as semantic producer) |
-| ED-DA-02 | Move room media / hero projection into Runtime or Object-owned projection (out of walkthrough catalog ownership) |
+| ED-DA-01 | Unify Client Studio on Decision Session Runtime only — **Done (ED-DA-01R)** |
+| ED-DA-02 | Move room media / hero projection into Runtime or Object-owned projection — **Partial** ([ED-DA-02 report](./ED-DA-02-media-projection-boundary.md)); Object-owned assets still open |
 | ED-DA-03 | Narrow `@embed-engine/runtime` public exports to façade + Experience Context + Outcome |
 | ED-DA-04 | Remove Provider exposure of `runtime` / raw `interpretation` to presentation modules |
 | ED-DA-05 | Converge flat `SessionExperience` fields into `experience.context` only |
