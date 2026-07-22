@@ -16,8 +16,7 @@ Decision Architecture v1.0 is closed as a **foundational generation**.
 
 From this point:
 
-- Do **not** introduce new Product Theses that add core Decision Architecture layers or semantic authorities.
-- Constraint PTs that formalize presentation / integration boundaries without authorizing new foundations (e.g. [PT-009](./pt/PT-009-experience-is-the-product-surface.md)) are allowed.
+- Do **not** introduce new Product Theses for core Decision Architecture concepts.
 - Do **not** redesign Runtime / Interpretation / Experience Context ownership.
 - Do **not** add parallel semantic authorities.
 - All progress proceeds as **CAPs**, **Engineering Debt (ED-DA-\*)**, or **reference implementation** work.
