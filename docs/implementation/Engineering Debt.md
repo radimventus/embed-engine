@@ -7,12 +7,12 @@ Items here are candidates for later milestones / ADRs.
 
 | ID | Item | Why deferred |
 | --- | --- | --- |
-| ED-DIST-01 | GitHub Pages hosting of `packages/embed/dist` | **In progress / see** [GitHub Pages Distribution](../releases/GitHub%20Pages%20Distribution.md) |
+| ED-DIST-01 | GitHub Pages hosting of `packages/embed/dist` | **Done (M3/S2)** — published under `docs/embed/` at https://radimventus.github.io/embed-engine/embed/ |
 | ED-DIST-02 | GitHub Actions release workflow | Publishing automation out of scope |
 | ED-DIST-03 | CDN / npm publish of `@embed-engine/embed` | Requires auth, semver policy, changelog process |
 | ED-DIST-04 | Single bundled `embed.d.ts` (rollup-types) | Current multi-file public `.d.ts` graph is sufficient for MVP |
 | ED-DIST-05 | Auto-generate `src/version.ts` from `package.json` | Build already fails on mismatch; codegen can wait |
-| ED-DIST-06 | Private-repo anonymous Pages access | Public HTTPS for anonymous users requires public repo or paid Pages visibility |
+| ED-DIST-06 | Retarget Pages source to `main` `/docs` after merge | Pages currently builds from `feature/cap-p04-founding-partner` for M3/S2 verification |
 
 ## Embed / Runtime (known TODOs)
 
@@ -22,6 +22,19 @@ Items here are candidates for later milestones / ADRs.
 | ED-EMB-02 | Remote / CMS / Object Package fixture loading | Marked TODO(ADR) in fixtures |
 | ED-RT-01 | Journey events → Cognitive Signals | Architecture Freeze open item |
 | ED-RT-02 | Production Experience Composer (non-mock) | Architecture Freeze open item |
+
+## Decision Architecture (AR-001)
+
+Deferred boundary work from [Architecture Review v1.0](../architecture/review/AR-001-decision-architecture-v1.md). Do **not** invent new foundational PTs — execute via CAPs + these items.
+
+| ID | Item | Notes |
+| --- | --- | --- |
+| ED-DA-01 | Unify Client Studio on Decision Session Runtime only | Retire Priority `interpretAndCompose` as semantic producer |
+| ED-DA-02 | Move room media / hero projection out of walkthrough catalog ownership | Prefer Object / Runtime projection |
+| ED-DA-03 | Narrow `@embed-engine/runtime` public exports | Façade + Experience Context + Outcome |
+| ED-DA-04 | Stop exposing `runtime` / raw `interpretation` to presentation modules | Provider contract = Experience Context |
+| ED-DA-05 | Converge flat `SessionExperience` fields into `experience.context` | Remove duplicate contracts |
+| ED-DA-06 | Require injectable clock on production create/dispatch | Reproducibility demos / replay |
 
 ## Process
 
