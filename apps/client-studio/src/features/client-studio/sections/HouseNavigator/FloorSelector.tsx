@@ -3,7 +3,7 @@ import { SegmentedControl } from '@embed-engine/ui';
 import { useWalkthrough } from '../../../walkthrough';
 
 function floorLabel(floor: string): string {
-  if (floor === 'ground-floor') {
+  if (floor === '0') {
     return 'PŘÍZEMÍ';
   }
 

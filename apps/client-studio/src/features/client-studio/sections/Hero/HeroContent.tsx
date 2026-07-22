@@ -1,20 +1,24 @@
 import { colors } from '@embed-engine/design-tokens';
 
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { HeroCTA } from './HeroCTA';
-
-const HERO_FEATURES = [
-  { value: '124 m2', label: 'Užitná plocha' },
-  { value: 'A ++', label: 'Energetická třída' },
-  { value: 'Dřevostavba', label: 'Difuzně otevřená' },
-] as const;
 
 /** Same veil as former Social Proof divider — anchored to gold line, fading upward. */
 const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
   backgroundImage: `linear-gradient(to top, color-mix(in srgb, ${colors.border.default} 30%, #FFFFFF), #FFFFFF)`,
 } as const;
 
-/** Left third — Object fact presentation (identity / specs). Not Experience semantics. */
+/** Left third — Object facts from projected Experience (CAP-HP-003.1). */
 export function HeroContent() {
+  const { experience } = useDecisionSessionRuntime();
+  const { house } = experience;
+
+  const features = [
+    { value: `${house.usableArea} m2`, label: 'Užitná plocha' },
+    { value: house.energyClass, label: 'Energetická třída' },
+    { value: house.construction, label: 'Konstrukce' },
+  ] as const;
+
   return (
     <section
       aria-label="Hero Content"
@@ -22,15 +26,15 @@ export function HeroContent() {
     >
       <div className="translate-x-[10px]">
         <p className="text-sm font-bold uppercase tracking-wide text-[#D4AF37]">
-          MODERN A01 – 4+kk
+          {house.reference} – {house.title}
         </p>
 
         <h1 className="mt-3 font-sans text-[2.52rem] font-black leading-[1.15] tracking-tight text-embed-foreground-primary">
-          Rodinný dům, kde to dýchá štěstím
+          {house.city}, {house.district}
         </h1>
 
         <dl className="mt-8 grid grid-cols-3 divide-x divide-embed-border-default">
-          {HERO_FEATURES.map((feature) => (
+          {features.map((feature) => (
             <div key={feature.label} className="flex flex-col px-3 first:pl-0 last:pr-0">
               <dd className="order-1 text-base font-bold leading-tight text-[#D4AF37]">
                 {feature.value}

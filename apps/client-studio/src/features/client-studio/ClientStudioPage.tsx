@@ -4,6 +4,7 @@ import type { ReactExperienceModel } from '@embed-engine/model';
 import { DecisionStoryProvider } from './cognitive/DecisionStoryProvider';
 import { ExperienceBindingProvider } from './cognitive/ExperienceBindingProvider';
 import { InterpretationProvider } from './cognitive/InterpretationProvider';
+import { DecisionSessionRuntimeProvider } from './runtime/DecisionSessionRuntimeProvider';
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
 import { LegacyCommandExperience } from './legacy/LegacyCommandExperience';
@@ -24,9 +25,8 @@ type ClientStudioPageProps = {
 };
 
 /**
- * Cognitive Experience host (RI-003).
- * Surfaces read Session snapshots via ExperienceBindingProvider only.
- * Priority → Experience presentation shared via PriorityExperienceProvider.
+ * Cognitive Experience host (RI-003) + Decision Session Runtime (CAP-HP-003.1).
+ * Room selection and house projection come from DecisionSessionRuntime.
  */
 export function ClientStudioPage({
   cognitiveRuntime,
@@ -38,43 +38,45 @@ export function ClientStudioPage({
     <ExperienceBindingProvider runtime={cognitiveRuntime}>
       <InterpretationProvider>
         <DecisionStoryProvider>
-          <WalkthroughProvider>
-            <DesktopCanvas>
-              <ClientStudioHeader />
-              {legacyExperience !== null &&
-              onLegacySelectChoice !== undefined &&
-              onLegacyContinue !== undefined ? (
-                <LegacyCommandExperience
-                  experience={legacyExperience}
-                  onSelectChoice={onLegacySelectChoice}
-                  onContinue={onLegacyContinue}
-                />
-              ) : null}
-              <Hero />
-              <div
-                aria-hidden="true"
-                className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
-              />
-              <PropertyExplorer />
-              <div
-                aria-hidden="true"
-                className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
-              />
-              <PriorityExperienceProvider>
-                <PriorityEngine />
+          <DecisionSessionRuntimeProvider>
+            <WalkthroughProvider>
+              <DesktopCanvas>
+                <ClientStudioHeader />
+                {legacyExperience !== null &&
+                onLegacySelectChoice !== undefined &&
+                onLegacyContinue !== undefined ? (
+                  <LegacyCommandExperience
+                    experience={legacyExperience}
+                    onSelectChoice={onLegacySelectChoice}
+                    onContinue={onLegacyContinue}
+                  />
+                ) : null}
+                <Hero />
                 <div
                   aria-hidden="true"
                   className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
                 />
-                <AIAdvisor />
-              </PriorityExperienceProvider>
-              <div
-                aria-hidden="true"
-                className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
-              />
-              <AuditLeadCapture />
-            </DesktopCanvas>
-          </WalkthroughProvider>
+                <PropertyExplorer />
+                <div
+                  aria-hidden="true"
+                  className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+                />
+                <PriorityExperienceProvider>
+                  <PriorityEngine />
+                  <div
+                    aria-hidden="true"
+                    className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+                  />
+                  <AIAdvisor />
+                </PriorityExperienceProvider>
+                <div
+                  aria-hidden="true"
+                  className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+                />
+                <AuditLeadCapture />
+              </DesktopCanvas>
+            </WalkthroughProvider>
+          </DecisionSessionRuntimeProvider>
         </DecisionStoryProvider>
       </InterpretationProvider>
     </ExperienceBindingProvider>

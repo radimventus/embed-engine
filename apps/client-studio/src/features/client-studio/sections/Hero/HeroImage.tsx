@@ -1,27 +1,22 @@
-import { HOUSE_PACKAGE } from '../../../walkthrough';
+import { getHousePresentationAssets } from '../../../walkthrough';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 
-/**
- * Right two-thirds — photography plane.
- * Soft edge: two 1/12-section white veils on the photo’s left edge
- * (photo is 8/12 of section → each veil is 12.5% of this column).
- */
+/** Opening visual — prefers projected house media, falls back to presentation catalog. */
 export function HeroImage() {
-  const heroSrc = HOUSE_PACKAGE.openingHeroSrc;
+  const { experience } = useDecisionSessionRuntime();
+  const assets = getHousePresentationAssets();
+  const projectedImage = experience.house.media.find(
+    (asset) => asset.type === 'image',
+  );
+  const heroSrc = projectedImage?.url || assets.openingHeroSrc;
 
   return (
-    <section
-      role="img"
-      aria-label="Rodinný dům MODERN A01"
-      className="relative h-full min-h-0 w-full bg-cover bg-[center_42%] bg-no-repeat"
-      style={{ backgroundImage: `url('${heroSrc}')` }}
-    >
-      <div
-        aria-hidden="true"
-        className="animate-hero-photo-veil pointer-events-none absolute inset-y-0 left-0 z-10 w-1/4 mobile:hidden"
-      >
-        <div className="absolute inset-y-0 left-0 w-1/2 bg-white/65" />
-        <div className="absolute inset-y-0 left-1/2 w-1/2 bg-white/45" />
-      </div>
-    </section>
+    <div className="relative h-full min-h-0 w-full overflow-hidden bg-embed-surface-muted">
+      <img
+        src={heroSrc}
+        alt={experience.house.title}
+        className="h-full w-full object-cover"
+      />
+    </div>
   );
 }

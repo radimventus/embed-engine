@@ -41,6 +41,9 @@ importers:
       '@embed-engine/object-house':
         specifier: workspace:*
         version: link:../../packages/object-house
+      '@embed-engine/runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
       '@embed-engine/ui':
         specifier: workspace:*
         version: link:../../packages/ui

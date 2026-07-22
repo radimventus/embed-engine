@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { HOUSE_PACKAGE, useWalkthrough } from '../../../walkthrough';
+import { getHousePresentationAssets, useWalkthrough } from '../../../walkthrough';
 
 import { FloorPlanLightbox } from './FloorPlanLightbox';
 import { FloorPlanZoomControl } from './FloorPlanZoomControl';
@@ -17,7 +17,8 @@ function FloorPlanCanvas({
   preserveAspectRatio = 'xMaxYMid slice',
 }: FloorPlanCanvasProps) {
   const { rooms, activeRoom, selectRoom } = useWalkthrough();
-  const viewBox = HOUSE_PACKAGE.floorPlanViewBox;
+  const assets = getHousePresentationAssets();
+  const viewBox = assets.floorPlanViewBox;
   const canvasRooms = rooms.filter((room) => room.floorPlanRegion !== null);
 
   return (
@@ -29,12 +30,12 @@ function FloorPlanCanvas({
       role="img"
     >
       <image
-        href={HOUSE_PACKAGE.floorPlanSrc}
+        href={assets.floorPlanSrc}
         width={viewBox}
         height={viewBox}
         preserveAspectRatio={preserveAspectRatio}
       />
-      {activeRoom !== null ? (
+      {activeRoom !== null && activeRoom.decisionCanvasSrc !== '' ? (
         <image
           key={activeRoom.id}
           href={activeRoom.decisionCanvasSrc}

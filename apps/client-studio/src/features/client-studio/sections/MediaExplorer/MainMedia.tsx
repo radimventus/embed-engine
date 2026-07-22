@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { HOUSE_PACKAGE, useWalkthrough } from '../../../walkthrough';
+import { getHousePresentationAssets, useWalkthrough } from '../../../walkthrough';
 import { DECISION_TRANSITION_EASING } from '../../../walkthrough/transition-tokens';
 import { useDecisionCrossfade } from '../../../walkthrough/useDecisionCrossfade';
 
@@ -45,17 +45,18 @@ export function MainMedia() {
     play,
     onVideoEnded,
   } = useWalkthrough();
+  const assets = getHousePresentationAssets();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasStartedPlayback, setHasStartedPlayback] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
   const isRoomVideo = activeRoomId !== null && mediaMode === 'video';
   const videoSrc = isRoomVideo
-    ? (activeRoom?.videoSrc ?? HOUSE_PACKAGE.walkthroughVideoSrc)
-    : HOUSE_PACKAGE.walkthroughVideoSrc;
+    ? (activeRoom?.videoSrc || assets.walkthroughVideoSrc)
+    : assets.walkthroughVideoSrc;
   const videoPoster = isRoomVideo
-    ? (activeRoom?.heroSrc ?? HOUSE_PACKAGE.walkthroughVideoPoster)
-    : HOUSE_PACKAGE.walkthroughVideoPoster;
+    ? (activeRoom?.heroSrc || assets.walkthroughVideoPoster)
+    : assets.walkthroughVideoPoster;
   const videoKey = `${videoSrc}|${activeRoomId ?? 'intro'}|${mediaMode}`;
 
   const mediaKey = buildMediaKey(mediaMode, mode, activeRoomId, activeMediaSrc);
