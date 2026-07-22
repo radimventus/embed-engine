@@ -30,6 +30,7 @@ export {
 export { DecisionInterpreter } from './DecisionInterpreter';
 export { interpretDecision } from './interpretDecision';
 export { projectReactExperience } from './projectReactExperience';
+export { projectHouse } from './projectHouse';
 export {
   SET_ANSWER_COMMAND_TYPE,
   SetAnswerCommandHandler,

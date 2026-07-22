@@ -1,0 +1,77 @@
+{
+  "packageFormat": "house-package",
+  "schemaVersion": "0.1",
+  "contentVersion": "1.0.0",
+  "identity": {
+    "id": "house-modern-01",
+    "title": "Modern 01",
+    "reference": "ASTAV-M01"
+  },
+  "overview": {
+    "price": 6900000,
+    "usableArea": 142,
+    "landArea": 620,
+    "rooms": 5,
+    "hasGarden": true
+  },
+  "location": {
+    "city": "Praha",
+    "district": "Západ"
+  },
+  "metadata": {
+    "energyClass": "B",
+    "construction": "Zděná"
+  },
+  "rooms": [
+    { "id": "room-living", "name": "Obývací pokoj", "area": 32, "floor": 0 },
+    { "id": "room-kitchen", "name": "Kuchyně", "area": 14, "floor": 0 },
+    { "id": "room-bedroom", "name": "Ložnice", "area": 18, "floor": 1 },
+    { "id": "room-children", "name": "Dětský pokoj", "area": 16, "floor": 1 },
+    { "id": "room-bath", "name": "Koupelna", "area": 8, "floor": 1 }
+  ],
+  "media": [
+    {
+      "id": "hero-image",
+      "type": "image",
+      "title": "Hero",
+      "url": "assets/media/hero/hero.webp"
+    },
+    {
+      "id": "media-floorplan",
+      "type": "floorplan",
+      "title": "Půdorys",
+      "url": "assets/floorplans/pudorys.webp"
+    },
+    {
+      "id": "intro-video",
+      "type": "video",
+      "title": "Intro video",
+      "url": "https://fast.wistia.net/embed/iframe/sxe3yw702e"
+    },
+    {
+      "id": "gallery-01",
+      "type": "image",
+      "title": "Galerie 01",
+      "url": "assets/media/gallery/01.webp"
+    },
+    {
+      "id": "gallery-02",
+      "type": "image",
+      "title": "Galerie 02",
+      "url": "assets/media/gallery/02.webp"
+    },
+    {
+      "id": "gallery-03",
+      "type": "image",
+      "title": "Galerie 03",
+      "url": "assets/media/gallery/03.webp"
+    }
+  ],
+  "documents": [
+    {
+      "id": "technical-document",
+      "title": "Bungalov 4KK",
+      "url": "assets/documents/Bungalov 4KK.pdf"
+    }
+  ]
+}

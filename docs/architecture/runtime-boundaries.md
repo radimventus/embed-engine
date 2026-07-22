@@ -67,7 +67,9 @@ These layers must never be merged.
                          decision flow,      
                          interpretation      
                          rules, house        
-                         projections         
+                         projections,        
+                         House Package       
+                         Loader (FS I/O)     
 
   `experience`           React/PDF/AI/REST   Decision logic
   *(planned)*            projectors          

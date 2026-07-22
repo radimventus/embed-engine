@@ -457,7 +457,7 @@ A loader claiming HP-001 v0.1 conformance MUST pass:
 
 - Status lifecycle follows ESS-001 (Proposed → Approved → Frozen).
 - v0.1 is **Approved** for independent loader design; breaking changes require HP-001 v0.2+ and explicit migration notes.
-- TypeScript fixtures (e.g. `@embed-engine/object-house`) are **implementations**, not this SSOT. Drift MUST be resolved toward HP-001 once a loader lands.
+- TypeScript fixtures (e.g. `@embed-engine/object-house`) and the on-disk Reference Package (`packages/reference-house`) are **implementations** of this SSOT. Loader: `@embed-engine/object-house/loader`.
 
 ---
 

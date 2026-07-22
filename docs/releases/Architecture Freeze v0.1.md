@@ -97,7 +97,7 @@ Tyto principy se **bez ADR nemění**:
 
 Neřešeno v tomto freeze (další vývoj):
 
-- Object Package Loader
+- Object Package Loader — **implemented** as `@embed-engine/object-house/loader` (CAP-HP-002.2); Runtime still must not access files directly
 - Experience Composer (produkční, ne mock)
 - AI Interpretation
 - React Renderer

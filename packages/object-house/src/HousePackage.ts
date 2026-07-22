@@ -27,6 +27,13 @@ export interface HouseMetadata {
   readonly construction: string;
 }
 
+/** Additive document reference (HP-001 §11) — facts only, no binaries. */
+export interface HouseDocument {
+  readonly id: string;
+  readonly title: string;
+  readonly url: string;
+}
+
 /**
  * Object Package — source of truth about a house.
  * Experience interprets this package; renderers never read it directly.
@@ -38,4 +45,6 @@ export interface HousePackage {
   readonly rooms: readonly Room[];
   readonly location: HouseLocation;
   readonly metadata: HouseMetadata;
+  /** Optional documents extension — package-relative or absolute references. */
+  readonly documents?: readonly HouseDocument[];
 }
