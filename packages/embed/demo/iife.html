@@ -10,14 +10,17 @@
     <header class="host-header">
       <p class="host-eyebrow">Host page · IIFE</p>
       <h1>Embed.iife.js</h1>
-      <p>Po <code>pnpm build</code> v balíčku embed otevři tento soubor přes static server.</p>
+      <p>
+        Po <code>pnpm build</code> v balíčku embed otevři tento soubor přes static
+        server s media z Client Studio <code>public/</code>.
+      </p>
     </header>
     <div id="demo"></div>
     <script src="../dist/embed.iife.js"></script>
     <script>
       Embed.mount({
         target: "#demo",
-        fixture: "garden",
+        objectId: "house-modern-01",
       });
     </script>
   </body>

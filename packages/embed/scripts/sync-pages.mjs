@@ -37,6 +37,7 @@ const PUBLIC_FILES = [
   "mount.d.ts",
   "unmount.d.ts",
   "version.d.ts",
+  "delivery/types.d.ts",
   // declaration maps for editors (optional but small)
   "index.d.ts.map",
   "Embed.d.ts.map",
@@ -44,6 +45,7 @@ const PUBLIC_FILES = [
   "mount.d.ts.map",
   "unmount.d.ts.map",
   "version.d.ts.map",
+  "delivery/types.d.ts.map",
 ];
 
 function assertDistReady() {
@@ -80,8 +82,9 @@ function writeIndexHtml(version) {
   <h2>Usage</h2>
   <pre>&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  Embed.mount({ target: "#embed", fixture: "garden" });
+  Embed.mount({ target: "#embed", objectId: "house-modern-01" });
 &lt;/script&gt;</pre>
+  <p>Legacy Garden (explicit opt-in only): <code>Embed.mount({ target: "#embed", fixture: "garden" })</code></p>
 </body>
 </html>
 `;

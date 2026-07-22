@@ -1,21 +1,16 @@
 /**
- * Fixture resolution for Embed.mount — no content generation.
+ * Fixture resolution for Embed.mount — legacy Priority Journey path only.
  *
- * TODO(ADR): remote / CMS / Object Package loading of Experience fixtures.
+ * Production Client Studio mounts resolve Object Packages via
+ * `delivery/resolveObjectPackage` — not this module.
  */
 import type { PriorityJourneyRun } from "@embed-engine/core/priority";
 import type { PriorityEngineEvent } from "@embed-engine/runtime";
+import type { EmbedLegacyExperienceMountOptions, EmbedLegacyMountOptions, EmbedMountOptions } from "./delivery/types";
+/** @deprecated Use EmbedLegacyFixtureId — kept for declaration compatibility. */
 export type EmbedFixtureId = "garden";
-export type EmbedMountOptions = {
-    readonly target: string | HTMLElement;
-} & ({
-    readonly fixture: EmbedFixtureId;
-    readonly experience?: never;
-} | {
-    readonly experience: PriorityJourneyRun;
-    readonly fixture?: never;
-});
-export declare function resolveJourneyFixture(options: EmbedMountOptions): PriorityJourneyRun;
+export type { EmbedMountOptions } from "./delivery/types";
+export declare function resolveJourneyFixture(options: EmbedLegacyMountOptions | EmbedLegacyExperienceMountOptions): PriorityJourneyRun;
 /**
  * Build Runtime event catalog from a Journey run snapshot.
  * Used to wire UI actions → engine.dispatch without business logic.

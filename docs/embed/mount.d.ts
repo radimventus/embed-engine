@@ -1,9 +1,12 @@
 /**
- * Embed.mount — public entry: Host → Loader → Runtime → HTML Renderer.
+ * Embed.mount — public entry.
+ *
+ * Production: Delivery Layer → Object Package → Runtime → ClientStudioApp.
+ * Legacy: explicit `fixture: "garden"` or `experience` → Priority HTML renderer.
  */
-import { type EmbedMountOptions } from "./fixtures";
+import { type EmbedMountOptions } from "./delivery/types";
 /**
- * Mount Priority Experience into a host element.
+ * Mount Embed into a host element.
  * Replaces any previously active Embed session.
  */
 export declare function mount(options: EmbedMountOptions): void;
