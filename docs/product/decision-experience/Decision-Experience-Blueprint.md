@@ -281,3 +281,140 @@ Priority change never:
 - creates a fork of the application.
 
 ---
+
+## 5. Controlled Experience Adaptation
+
+### 5.1 Governing rule
+
+**Decision Experience does not change the structure of Client Studio.**
+
+Client Studio remains the same informational architecture for all users. Personalization happens **only** inside predefined **Adaptation Surfaces**.
+
+Anything not listed as an Adaptation Surface is **Immutable Experience** (Section 6).
+
+### 5.2 What must not change (preview)
+
+Do not personalize:
+
+- Hero structure and placement,
+- House Navigator structure and placement,
+- Priority **section structure** (input model / layout contract of Priority),
+- Racio **section placement** in the Studio,
+- Audit **section structure** (beyond the CTA surface defined below),
+- overall section order and primary navigation.
+
+Gen1 freezes the last static Studio image before Decision Experience ([Client Studio Gen1](../../reference/Client-Studio-Gen1.md)). Post-Gen1 Decision Experience evolves **outside** the Gen1 artifact while respecting this structural contract.
+
+### 5.3 Adaptation Surface — definition
+
+An **Adaptation Surface** is a bounded region of the Experience where content, emphasis, order, or messaging may vary according to Decision Session / Interpretation — without changing Client Studio information architecture or inventing new application branches.
+
+Every adaptation must be:
+
+- **explainable** (traceable to Interpretation / Session),
+- **non-authoritative** over facts (Runtime / Object Package remain truth),
+- **local** to the named surface,
+- **reversible** when Session inputs change (e.g. priorities).
+
+### 5.4 Surface A — Priority (interpretation panel)
+
+| Rule | Specification |
+| --- | --- |
+| **May adapt** | The right-hand (or equivalent) **interpretation panel** that explains what selected priorities mean for this object. |
+| **Must not adapt** | Priority section structure, priority input model as Studio IA, placement of Priority in the Studio. |
+| **Purpose** | Explain significance of chosen priorities; connect PrioritySelection to Interpretation. |
+| **Forbidden** | New Priority subsections that fork the app; hiding Priority for some users; inventing priorities the user did not select. |
+
+### 5.5 Surface B — Racio / FAQ
+
+| Rule | Specification |
+| --- | --- |
+| **May adapt** | FAQ order; FAQ selection; structure of thematic FAQ blocks. |
+| **Must not adapt** | Placement of the Racio section in Client Studio; inventing answers that contradict Object Package / Runtime. |
+| **Purpose** | Surface the questions most relevant to current Interpretation and priorities. |
+| **Forbidden** | Relocating Racio; replacing Racio with a different section; user-specific Studio IA. |
+
+### 5.6 Surface C — Racio / AI Chat
+
+| Rule | Specification |
+| --- | --- |
+| **May adapt** | AI replies; conversational context; suggested questions. |
+| **Must not adapt** | Runtime state ownership; Object facts; creation of new canonical meaning. |
+| **Purpose** | Explain and expand context around Interpretation for the active Session. |
+| **Hard constraint** | AI **must not** mutate Runtime, author DecisionState, or create new facts. AI explains what Runtime already projected (see Section 8). |
+
+### 5.7 Surface D — Audit
+
+| Rule | Specification |
+| --- | --- |
+| **May adapt** | The **closing call to action** only (e.g. “I already have land” vs “I am looking for land”). |
+| **Must not adapt** | Audit section existence, placement, or overall structure; creation of new application branches per CTA. |
+| **Purpose** | Align next-step language with Decision Session stance without forking the product. |
+| **Forbidden** | Separate Audit trees per persona; CTA that implies different Studio structures. |
+
+### 5.8 Surface E — PDF Report
+
+| Rule | Specification |
+| --- | --- |
+| **May adapt** | Interpretation narrative; chapter order; summary; recommendations. |
+| **Must not adapt** | Technical facts derived from Object Package; inventing measurements, specs, or claims absent from Runtime truth. |
+| **Purpose** | Portable Decision Outcome / report that reflects Session Interpretation. |
+| **Forbidden** | Fact tables that differ by visitor when underlying Object Package is identical; “personalized” false specs. |
+
+### 5.9 Surface F — Messenger / SMS
+
+| Rule | Specification |
+| --- | --- |
+| **May adapt** | Outbound message **content** derived from Decision Session (summary, stance, next step wording). |
+| **Must not adapt** | Operational workflow of messaging systems; Session mechanics; Runtime authority. |
+| **Purpose** | Carry Session meaning into human follow-up channels. |
+| **Forbidden** | Channel-specific decision logic that bypasses Runtime; messages that invent facts. |
+
+### 5.10 Adaptation inventory (normative)
+
+| ID | Surface | Adapts | Does not adapt |
+| --- | --- | --- | --- |
+| A | Priority | Interpretation panel | Priority IA / structure |
+| B | Racio / FAQ | Order, selection, thematic blocks | Racio placement |
+| C | Racio / AI Chat | Answers, context, suggested questions | Runtime / facts |
+| D | Audit | Closing CTA copy/intent | Audit structure / new branches |
+| E | PDF Report | Interpretation, chapter order, summary, recommendations | Technical facts |
+| F | Messenger / SMS | Message content from Session | Workflow / system ownership |
+
+**No other Adaptation Surfaces exist** until this Blueprint is amended by an explicit product decision (and recorded here).
+
+---
+
+## 6. Immutable Experience
+
+### 6.1 Definition
+
+**Immutable Experience** is the set of Client Studio and platform properties that Decision Experience **never** personalizes, reorders, forks, or replaces per visitor.
+
+If a proposed feature requires changing an Immutable property, it is **out of scope** for Decision Experience adaptation and must be rejected or escalated as a separate Studio generation / ADR — not as “personalization.”
+
+### 6.2 Immutable inventory
+
+| Domain | Immutable |
+| --- | --- |
+| **Client Studio IA** | Overall Studio structure; order of primary sections; primary navigation model |
+| **Primary sections** | Hero; House Navigator; Priority (structure); Racio (placement); Audit (structure) |
+| **Object** | The object under decision (identity); Object Package as fact source |
+| **Technical data** | Specs, measurements, and factual claims from Object Package / Knowledge Model |
+| **Media** | Canonical media set of the Object Package (presentation chrome may vary only if later explicitly allowed — default: media facts immutable) |
+| **Runtime** | Runtime as sole semantic mutation authority; DecisionState aggregate; cognitive pipeline |
+| **Gen1 contract** | Gen1 artifact is not evolved in place; DE develops outside `gen1/` |
+
+### 6.3 Immutable behavioral rules
+
+1. Same Studio skeleton for all visitors.
+2. No per-user section trees.
+3. No “hidden mode” that removes core sections for personalization.
+4. No second semantic authority beside Runtime.
+5. No Adaptation Surface may expand itself into a new Studio section without amending DEB-01.
+
+### 6.4 Relationship to Gen1
+
+Client Studio Gen1 is the **structural baseline** of the static Studio before Decision Experience. Decision Experience **adds interpretation and adaptation inside Surfaces A–F**; it does **not** redefine Gen1’s role as frozen etalon.
+
+---
