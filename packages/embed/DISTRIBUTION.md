@@ -68,16 +68,21 @@ Written on every build. Example shape:
 ## Public API
 
 ```ts
-Embed.mount({ target: "#embed", objectId?: "house-modern-01" })
+Embed.mount({
+  target: "#embed",
+  objectId?: "house-modern-01",
+  assetBase?: "https://radimventus.github.io/embed-engine",
+})
 Embed.unmount()
 Embed.version
 ```
 
-Production mount resolves the Object Package, creates one Decision Session Runtime, and mounts Client Studio.
+Production mount resolves the Object Package, creates one Decision Session Runtime, and mounts Client Studio with full Experience CSS.
 
-Legacy Garden HTML requires explicit opt-in: `{ fixture: "garden" }`.
+- `assetBase` — optional origin for `/media` and `/house-package` when the host does not serve them.
+- Legacy Garden HTML requires explicit opt-in: `{ fixture: "garden" }`.
 
-See [Embed Delivery → Client Studio](../../docs/reviews/Embed-Delivery-Client-Studio.md).
+See [Embed Delivery → Client Studio](../../docs/reviews/Embed-Delivery-Client-Studio.md) and [Rendering Parity](../../docs/reviews/Embed-Rendering-Parity.md).
 
 ---
 

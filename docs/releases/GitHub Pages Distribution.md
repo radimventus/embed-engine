@@ -39,12 +39,15 @@ https://radimventus.github.io/embed-engine/embed/version.json
 <script>
   Embed.mount({
     target: "#embed",
-    objectId: "house-modern-01"
+    objectId: "house-modern-01",
+    assetBase: "https://radimventus.github.io/embed-engine"
   });
 </script>
 ```
 
-Serve Object Package media (`/house-package`, `/media`) from the host origin (same assets as Client Studio `public/`).
+`assetBase` is required when the host origin does not serve `/media` and `/house-package`. Omit it when those paths are already available (local Client Studio `public/`).
+
+Do not constrain the mount node below the desktop canvas width (1432px) if full desktop parity is required.
 
 Legacy Garden (opt-in only):
 
