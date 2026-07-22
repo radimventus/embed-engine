@@ -24,16 +24,15 @@ import {
 import { useDecisionSessionRuntime } from '../client-studio/runtime/DecisionSessionRuntimeProvider';
 import { getMediaRoom } from './presentation-assets';
 
+/**
+ * Walkthrough room chrome for FloorPlan SVG only.
+ * Contextual media (hero / gallery / video) lives on SynchronizedExperience.activeRoom.
+ */
 type WalkthroughRoom = {
   readonly id: string;
   readonly title: string;
   readonly floor: string;
   readonly decisionCanvasSrc: string;
-  readonly heroSrc: string;
-  readonly gallerySrcs: readonly string[];
-  readonly photos: readonly string[];
-  readonly mediaItems: readonly HousePackageMediaItem[];
-  readonly videoSrc: string;
   readonly floorPlanRegion: ResolvedHousePackageRoom['floorPlanRegion'];
 };
 
@@ -75,30 +74,26 @@ function floorLabel(floor: string): string {
   return 'Upper floor selected';
 }
 
+/** Floor-plan chrome only — never resolves gallery / hero media. */
 function toWalkthroughRoom(room: ExperienceHouseRoom): WalkthroughRoom {
-  const media = getMediaRoom(room.id);
+  const chrome = getMediaRoom(room.id);
   return {
     id: room.id,
     title: room.name,
     floor: floorKey(room.floor),
-    decisionCanvasSrc: media?.decisionCanvasSrc ?? '',
-    heroSrc: media?.heroSrc ?? '',
-    gallerySrcs: media?.gallerySrcs ?? [],
-    photos: media?.photos ?? [],
-    mediaItems: media?.mediaItems ?? [],
-    videoSrc: media?.videoSrc ?? '',
-    floorPlanRegion: media?.floorPlanRegion ?? null,
+    decisionCanvasSrc: chrome?.decisionCanvasSrc ?? '',
+    floorPlanRegion: chrome?.floorPlanRegion ?? null,
   };
 }
 
 /**
  * Media chrome adapter (mode / index / play).
- * Room media content comes from SynchronizedExperience.roomMedia (CAP-HP-003.3).
+ * Room media content comes from SynchronizedExperience.activeRoom (CAP-HP-003.4).
  */
 export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const { experience, dispatch } = useDecisionSessionRuntime();
   const applySignal = useApplyCognitiveSignal();
-  const projectedMedia = experience.roomMedia;
+  const projectedThumbnails = experience.activeRoom?.thumbnails ?? [];
 
   const rooms = useMemo(
     () => experience.house.rooms.map(toWalkthroughRoom),
@@ -142,7 +137,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   }, [experience.activeRoomId, mediaMode]);
 
   const value = useMemo((): WalkthroughContextValue => {
-    const roomMediaItems = projectedMedia?.mediaItems ?? [];
+    const roomMediaItems = projectedThumbnails;
     const activeMediaItem = roomMediaItems[activeMediaIndex] ?? null;
     const activeMediaSrc = activeMediaItem?.src ?? null;
     const activeRoom =
@@ -221,7 +216,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     experience.activeRoomId,
     mediaMode,
     mode,
-    projectedMedia,
+    projectedThumbnails,
     rooms,
     selectedFloor,
   ]);

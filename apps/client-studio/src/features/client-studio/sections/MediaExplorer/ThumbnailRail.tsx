@@ -105,7 +105,7 @@ export function ThumbnailRail() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const thumbRefs = useRef(new Map<number, HTMLButtonElement>());
 
-  const roomMediaItems = gallery.mediaItems;
+  const roomMediaItems = gallery.thumbnails;
   const activeRoomId = gallery.roomId;
   const itemCount = roomMediaItems.length;
 

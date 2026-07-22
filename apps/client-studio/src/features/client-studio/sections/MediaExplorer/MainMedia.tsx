@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { getHousePresentationAssets, useWalkthrough } from '../../../walkthrough';
+import { useWalkthrough } from '../../../walkthrough';
 import { DECISION_TRANSITION_EASING } from '../../../walkthrough/transition-tokens';
 import { useDecisionCrossfade } from '../../../walkthrough/useDecisionCrossfade';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
@@ -38,7 +38,7 @@ function parsePhotoSrc(displayKey: string): string | null {
 }
 
 /**
- * Media Explorer viewport — projected gallery assets only (CAP-HP-003.3).
+ * Media Explorer viewport — projected gallery assets only (CAP-HP-003.4).
  */
 export function MainMedia() {
   const { experience } = useDecisionSessionRuntime();
@@ -50,22 +50,21 @@ export function MainMedia() {
     play,
     onVideoEnded,
   } = useWalkthrough();
-  const assets = getHousePresentationAssets();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasStartedPlayback, setHasStartedPlayback] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
-  const activeMediaItem = gallery.mediaItems[activeMediaIndex] ?? null;
+  const activeMediaItem = gallery.thumbnails[activeMediaIndex] ?? null;
   const activeMediaSrc = activeMediaItem?.src ?? null;
   const activeRoomId = gallery.roomId;
 
   const isRoomVideo = activeRoomId !== null && mediaMode === 'video';
   const videoSrc = isRoomVideo
-    ? (gallery.videoUrl || assets.walkthroughVideoSrc)
-    : assets.walkthroughVideoSrc;
+    ? (gallery.videoUrl ?? gallery.videos[0]?.url ?? '')
+    : (gallery.videos[0]?.url ?? '');
   const videoPoster = isRoomVideo
-    ? (gallery.heroUrl || assets.walkthroughVideoPoster)
-    : assets.walkthroughVideoPoster;
+    ? (gallery.heroUrl ?? gallery.heroMedia?.thumbnailUrl ?? '')
+    : (gallery.heroUrl ?? '');
   const videoKey = `${videoSrc}|${activeRoomId ?? 'intro'}|${mediaMode}`;
 
   const mediaKey = buildMediaKey(mediaMode, mode, activeRoomId, activeMediaSrc);

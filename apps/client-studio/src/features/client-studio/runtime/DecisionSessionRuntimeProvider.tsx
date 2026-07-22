@@ -37,8 +37,8 @@ type DecisionSessionRuntimeProviderProps = {
 };
 
 /**
- * Decision Session Runtime + synchronized media projection (CAP-HP-003.3).
- * All Experience modules consume `experience` — never each other.
+ * Decision Session Runtime + contextual media projection (CAP-HP-003.4).
+ * All Experience modules consume `experience.activeRoom` media — never each other.
  */
 export function DecisionSessionRuntimeProvider({
   children,

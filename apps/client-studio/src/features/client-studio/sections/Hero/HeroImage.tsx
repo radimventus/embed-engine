@@ -1,13 +1,17 @@
-import { getHousePresentationAssets } from '../../../walkthrough';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { getHeroMediaProjection } from '../../runtime/synchronizedExperience';
 
-/** Primary visual from projected room media (CAP-HP-003.3). */
+/** Primary visual from projected `activeRoom.heroMedia`. */
 export function HeroImage() {
   const { experience } = useDecisionSessionRuntime();
   const hero = getHeroMediaProjection(experience);
-  const assets = getHousePresentationAssets();
-  const heroSrc = hero.primaryMediaUrl || assets.openingHeroSrc;
+  const heroSrc = hero.primaryMediaUrl;
+
+  if (heroSrc === null) {
+    return (
+      <div className="relative h-full min-h-0 w-full overflow-hidden bg-embed-surface-muted" />
+    );
+  }
 
   return (
     <div className="relative h-full min-h-0 w-full overflow-hidden bg-embed-surface-muted">
@@ -15,7 +19,8 @@ export function HeroImage() {
         src={heroSrc}
         alt={hero.title}
         className="h-full w-full object-cover"
-        data-room-id={experience.roomMedia?.roomId ?? undefined}
+        data-room-id={experience.activeRoom?.id ?? undefined}
+        data-media-id={hero.heroMedia?.id ?? undefined}
       />
     </div>
   );

@@ -4,12 +4,11 @@ import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeP
 import { getHeroMediaProjection } from '../../runtime/synchronizedExperience';
 import { HeroCTA } from './HeroCTA';
 
-/** Same veil as former Social Proof divider — anchored to gold line, fading upward. */
 const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
   backgroundImage: `linear-gradient(to top, color-mix(in srgb, ${colors.border.default} 30%, #FFFFFF), #FFFFFF)`,
 } as const;
 
-/** Hero content from synchronized SessionExperience (CAP-HP-003.3). */
+/** Hero — projected contextual room media only (CAP-HP-003.4). */
 export function HeroContent() {
   const { experience } = useDecisionSessionRuntime();
   const hero = getHeroMediaProjection(experience);
