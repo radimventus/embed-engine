@@ -11,7 +11,7 @@ import {
   restoreDecisionSessionFromJson,
   selectRoom,
   serializeDecisionSessionToJson,
-} from "./index";
+} from "./testing";
 
 const HOUSE: HousePackage = {
   identity: {

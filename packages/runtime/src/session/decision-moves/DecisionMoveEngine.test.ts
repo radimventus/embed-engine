@@ -8,7 +8,7 @@ import {
   createDecisionSessionRuntime,
   DECISION_MOVE_SCHEMA_VERSION,
   interpretDecisionSession,
-} from "../index";
+} from "../testing";
 
 describe("Decision Move Engine (CAP-DST-002)", () => {
   it("identical Stories produce identical Move sequences", () => {

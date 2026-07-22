@@ -7,7 +7,7 @@ import {
   createDecisionSessionRuntime,
   projectFromInterpretation,
   interpretDecisionSession,
-} from "../index";
+} from "../testing";
 
 describe("Experience Context projection (CAP-HP-003.5)", () => {
   it("identical Runtime state produces identical Experience Context", () => {

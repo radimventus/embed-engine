@@ -8,7 +8,7 @@ import {
   createPriorityProfile,
   evaluatePrioritySignals,
   evaluatePrioritySignalsFromIds,
-} from "../index";
+} from "../testing";
 
 describe("Priority Signal Engine (CAP-PRI-001)", () => {
   it("identical Priority Profile produces identical signals", () => {

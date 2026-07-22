@@ -10,7 +10,7 @@ import {
   composeDecisionTerminal,
   createDecisionSessionRuntime,
   interpretDecisionSession,
-} from "../index";
+} from "../testing";
 
 /**
  * ED-DA-01 — ownership / dependency direction guards (no behavioural change).

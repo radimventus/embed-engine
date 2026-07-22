@@ -8,7 +8,7 @@ import {
   composeAIContext,
   createDecisionSessionRuntime,
   interpretDecisionSession,
-} from "../index";
+} from "../testing";
 
 describe("AI Context Reader (CAP-AI-001)", () => {
   it("identical Terminals produce identical AI Contexts", () => {

@@ -8,7 +8,7 @@ import {
   createDecisionSessionRuntime,
   DECISION_TERMINAL_SCHEMA_VERSION,
   interpretDecisionSession,
-} from "../index";
+} from "../testing";
 
 describe("Decision Terminal Engine (CAP-DTR-001)", () => {
   it("identical Outcomes produce identical Terminals", () => {

@@ -9,7 +9,7 @@ import {
   DEFAULT_HOUSE_INTERPRETATION_RULES,
   interpretDecisionSession,
   projectFromInterpretation,
-} from "../index";
+} from "../testing";
 
 describe("Interpretation Rules Engine (CAP-HP-003.5)", () => {
   it("identical inputs produce identical interpretation", () => {

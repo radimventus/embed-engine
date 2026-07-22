@@ -8,7 +8,7 @@ import {
   createDecisionSessionRuntime,
   DECISION_OUTCOME_SCHEMA_VERSION,
   interpretDecisionSession,
-} from "../index";
+} from "../testing";
 
 describe("Decision Outcome Engine (CAP-OUT-001)", () => {
   it("identical Move sequences produce identical Outcomes", () => {

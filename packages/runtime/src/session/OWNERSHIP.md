@@ -26,12 +26,23 @@ Forbidden:
 
 ## Experience modules
 
-May consume: `ExperienceContext` (`experience.context`).
+May consume: `ExperienceContext` (`experience.context`) via `@embed-engine/runtime`
+(public façade / contracts only — ED-DA-03).
 
 Must not compose: Story, Moves, Outcome, Terminal, AIContext.
 
+Must not import: `@embed-engine/runtime/testing` (pipeline helpers).
+
 Must not mutate Runtime except via `dispatch(command)`.
+
+## Export surface (ED-DA-03)
+
+| Entry | Contents |
+| --- | --- |
+| `@embed-engine/runtime` | Priority Journey + Decision Session **public** façade / contracts |
+| `@embed-engine/runtime/session` | Decision Session public API only |
+| `@embed-engine/runtime/testing` | `compose*` / `evaluate*` / low-level session — tests & advanced only |
 
 ## Legacy note
 
-`@embed-engine/core` cognitive `interpretAndCompose` / pack `composeDecisionStory` is a **parallel legacy producer**, not the session SSOT. Retirement: remaining ED-DA-01 work (Client Studio dual-stack).
+`@embed-engine/core` cognitive packs are **not** the session SSOT (ED-DA-01R retired Client Studio dual stack).

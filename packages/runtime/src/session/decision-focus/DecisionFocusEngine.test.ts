@@ -3,7 +3,7 @@ import { describe, it } from "node:test";
 
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
-import { createDecisionSessionRuntime } from "../index";
+import { createDecisionSessionRuntime } from "../testing";
 
 describe("Decision Focus Engine (CAP-PRI-002)", () => {
   it("identical priorities produce identical Decision Focus", () => {

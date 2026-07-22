@@ -16,6 +16,11 @@
       "import": "./dist/session/index.js",
       "default": "./dist/session/index.js"
     },
+    "./testing": {
+      "types": "./dist/testing.d.ts",
+      "import": "./dist/testing.js",
+      "default": "./dist/testing.js"
+    },
     "./priority": {
       "types": "./dist/priority/index.d.ts",
       "import": "./dist/priority/index.js",
@@ -35,7 +40,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/priority/PriorityRuntimeEngine.test.ts src/priority/mock/createGardenJourneyRun.test.ts src/priority/html-renderer/renderPriorityJourney.test.ts src/session/DecisionSession.test.ts src/session/pipeline/EventPipeline.test.ts src/session/interpretation/InterpretationRulesEngine.test.ts src/session/ExperienceContext.test.ts src/session/priority-signals/PrioritySignalEngine.test.ts src/session/decision-focus/DecisionFocusEngine.test.ts src/session/decision-story/DecisionStoryEngine.test.ts src/session/decision-moves/DecisionMoveEngine.test.ts src/session/decision-outcome/DecisionOutcomeEngine.test.ts src/session/decision-terminal/DecisionTerminalEngine.test.ts src/session/ai-context/AIContextReader.test.ts src/session/BoundaryOwnership.test.ts",
+    "test": "tsx --test src/ExportSurface.test.ts src/priority/PriorityRuntimeEngine.test.ts src/priority/mock/createGardenJourneyRun.test.ts src/priority/html-renderer/renderPriorityJourney.test.ts src/session/DecisionSession.test.ts src/session/pipeline/EventPipeline.test.ts src/session/interpretation/InterpretationRulesEngine.test.ts src/session/ExperienceContext.test.ts src/session/priority-signals/PrioritySignalEngine.test.ts src/session/decision-focus/DecisionFocusEngine.test.ts src/session/decision-story/DecisionStoryEngine.test.ts src/session/decision-moves/DecisionMoveEngine.test.ts src/session/decision-outcome/DecisionOutcomeEngine.test.ts src/session/decision-terminal/DecisionTerminalEngine.test.ts src/session/ai-context/AIContextReader.test.ts src/session/BoundaryOwnership.test.ts",
     "demo:priority": "vite --config demo/priority-html/vite.config.ts"
   },
   "dependencies": {

@@ -8,7 +8,7 @@ import {
   createDecisionSessionRuntime,
   dispatchCommand,
   replayDecisionSession,
-} from "../index";
+} from "../testing";
 
 const HOUSE: HousePackage = {
   identity: {

@@ -8,7 +8,7 @@ import {
   createDecisionSessionRuntime,
   DECISION_STORY_SCHEMA_VERSION,
   interpretDecisionSession,
-} from "../index";
+} from "../testing";
 
 describe("Decision Story Engine (CAP-DST-001)", () => {
   it("identical Interpretation inputs produce identical Decision Stories", () => {

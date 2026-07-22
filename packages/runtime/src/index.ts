@@ -1,13 +1,15 @@
 /**
- * @embed-engine/runtime — Runtime packages (Priority Journey + Decision Session).
+ * @embed-engine/runtime — public Runtime API (ED-DA-03).
  *
- * Decision Session export policy (ED-DA-01):
- * - Experience modules SHOULD use: DecisionSessionRuntime, createDecisionSessionRuntime,
- *   ExperienceContext / SessionExperience types, contract types (*Contract), schema versions.
- * - Prefer experience.context over raw interpretation / pipeline helpers.
- * - compose* / evaluate* / validateCommand / applyDecisionEvent / interpretDecisionSession
- *   are pipeline surfaces for tests and advanced integrations — do NOT call from UI modules
- *   (bypasses canonical chain ownership; see session/OWNERSHIP.md).
+ * Decision Session (canonical):
+ * - Façade: `createDecisionSessionRuntime`, `DecisionSessionRuntime`, `dispatch`
+ * - Contracts: Story / Moves / Outcome / Terminal / AIContext / ExperienceContext
+ * - Session serialize / restore / replay
+ *
+ * Experience modules MUST NOT import `@embed-engine/runtime/testing`
+ * (pipeline compose / evaluate / low-level session helpers).
+ *
+ * @see session/OWNERSHIP.md
  */
 
 export {
@@ -31,19 +33,10 @@ export {
   type PriorityTransitionErrorCode,
 } from "./priority";
 
+/** Embed fixture helpers — intentional public Priority Journey surface. */
 export {
-  GARDEN_OBJECT_ID,
-  GARDEN_PRIORITY_ID,
-  GARDEN_PRIMARY_FOLLOWUP_TARGET_ID,
   createGardenEngineEvents,
   createGardenJourneyRun,
-  gardenContentPackage,
-  gardenExperience,
-  gardenFollowUps,
-  gardenHouseMapping,
-  gardenInterpretation,
-  gardenPrioritySelection,
-  gardenTransitionMessage,
 } from "./priority/mock";
 
 export {
@@ -60,48 +53,17 @@ export {
   DECISION_STORY_SCHEMA_VERSION,
   DECISION_TERMINAL_SCHEMA_VERSION,
   DecisionSessionRuntime,
-  applyDecisionEvent,
   cloneDecisionSession,
-  commandToEvent,
-  composeAIContext,
-  composeDecisionMoves,
-  composeDecisionOutcome,
-  composeDecisionStory,
-  composeDecisionTerminal,
-  createDecisionSession,
   createDecisionSessionRuntime,
-  createInitialSessionRuntimeState,
-  createInterpretationContext,
-  createInterpretationRuleset,
-  createPriorityProfile,
-  DEFAULT_HOUSE_INTERPRETATION_RULES,
-  dispatchCommand,
-  evaluateDecisionFocus,
-  evaluateInterpretationRules,
-  evaluatePrioritySignals,
-  evaluatePrioritySignalsFromIds,
-  freezeDecisionSession,
-  interpretDecisionSession,
-  orderHighlightsByDecisionFocus,
-  orderMediaByDecisionFocus,
-  projectDecisionSession,
   projectExperienceContext,
-  projectFromInterpretation,
-  PRIORITY_SIGNAL_KIND_BY_ID,
   replayDecisionSession,
-  resolvePrioritySignalKind,
   restoreDecisionSession,
   restoreDecisionSessionFromJson,
-  selectRoom,
   serializeDecisionSession,
   serializeDecisionSessionToJson,
-  validateCommand,
   type AIContext,
   type AIContextContract,
-  type ComposeDecisionStoryInput,
-  type CreateDecisionSessionInput,
   type DecisionEvent,
-  type DecisionEventType,
   type DecisionFocus,
   type DecisionMove,
   type DecisionMoveContract,
@@ -120,7 +82,6 @@ export {
   type DecisionStoryProvenance,
   type DecisionTerminal,
   type DecisionTerminalContract,
-  type DispatchCommandInput,
   type DispatchFailure,
   type DispatchResult,
   type DispatchSuccess,
@@ -130,10 +91,6 @@ export {
   type ExperienceNavigationContext,
   type ExperienceObjectContext,
   type FocusRoom,
-  type InterpretationContext,
-  type InterpretationRule,
-  type InterpretationRuleset,
-  type InterpretedSemantics,
   type ObjectId,
   type PipelineError,
   type PipelineErrorCode,
@@ -141,18 +98,12 @@ export {
   type PriorityProfile,
   type PrioritySignal,
   type PrioritySignalKind,
-  type ProjectSessionResult,
   type RecommendedMediaRef,
   type RecommendedMediaRole,
   type ReplaySessionResult,
   type RestoreSessionResult,
   type RoomId,
   type RuntimeCommand,
-  type RuntimeCommandType,
-  type SelectRoomFailure,
-  type SelectRoomInput,
-  type SelectRoomResult,
-  type SelectRoomSuccess,
   type SerializeSessionResult,
   type SerializedDecisionSession,
   type SessionExperience,
@@ -160,4 +111,4 @@ export {
   type SessionRuntimeState,
   type Timestamp,
   type ValidationResult,
-} from "./session";
+} from "./session/public-api";
