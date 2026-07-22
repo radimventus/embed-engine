@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Embed — Client Studio (live)</title>
+  <style>
+    html, body { margin: 0; min-height: 100%; }
+    #embed { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="embed"></div>
+  <script src="./embed.iife.js"></script>
+  <script>
+    Embed.mount({
+      target: "#embed",
+      objectId: "house-modern-01",
+    });
+  </script>
+</body>
+</html>

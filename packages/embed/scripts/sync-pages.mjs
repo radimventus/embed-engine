@@ -75,12 +75,14 @@ function writeIndexHtml(version) {
   <h1>Embed Engine distribution</h1>
   <p>Version <strong>${version}</strong> — public artifacts for host pages.</p>
   <ul>
+    <li><a href="./live.html"><strong>Live mount</strong></a> — Client Studio via Embed</li>
     <li><a href="./embed.iife.js"><code>embed.iife.js</code></a> — global <code>Embed</code></li>
     <li><a href="./embed.es.js"><code>embed.es.js</code></a> — ESM</li>
     <li><a href="./version.json"><code>version.json</code></a> — manifest</li>
   </ul>
   <h2>Usage</h2>
-  <pre>&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js"&gt;&lt;/script&gt;
+  <pre>&lt;div id="embed"&gt;&lt;/div&gt;
+&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js"&gt;&lt;/script&gt;
 &lt;script&gt;
   Embed.mount({ target: "#embed", objectId: "house-modern-01" });
 &lt;/script&gt;</pre>
@@ -89,6 +91,33 @@ function writeIndexHtml(version) {
 </html>
 `;
   writeFileSync(path.join(pagesDir, "index.html"), html, "utf8");
+}
+
+function writeLiveHtml() {
+  const html = `<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Embed — Client Studio (live)</title>
+  <style>
+    html, body { margin: 0; min-height: 100%; }
+    #embed { min-height: 100vh; }
+  </style>
+</head>
+<body>
+  <div id="embed"></div>
+  <script src="./embed.iife.js"></script>
+  <script>
+    Embed.mount({
+      target: "#embed",
+      objectId: "house-modern-01",
+    });
+  </script>
+</body>
+</html>
+`;
+  writeFileSync(path.join(pagesDir, "live.html"), html, "utf8");
 }
 
 function writeNoJekyll() {
@@ -112,6 +141,7 @@ for (const file of PUBLIC_FILES) {
 }
 
 writeIndexHtml(versionJson.version);
+writeLiveHtml();
 writeNoJekyll();
 
 const publishedIife = path.join(pagesDir, "embed.iife.js");
@@ -134,4 +164,5 @@ for (const file of PUBLIC_FILES) {
   }
 }
 console.log("  - index.html");
+console.log("  - live.html");
 console.log("  - ../.nojekyll");
