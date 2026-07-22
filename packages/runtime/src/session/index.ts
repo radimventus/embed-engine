@@ -43,6 +43,27 @@ export {
   type ReplaySessionResult,
 } from "./replay";
 export {
+  createInterpretationContext,
+  createInterpretationRuleset,
+  DEFAULT_HOUSE_INTERPRETATION_RULES,
+  evaluateInterpretationRules,
+  type ContextualMessagingConfig,
+  type FocusRoom,
+  type HeroEmphasisConfig,
+  type InterpretationContext,
+  type InterpretationRule,
+  type InterpretationRuleConfig,
+  type InterpretationRuleId,
+  type InterpretationRuleKind,
+  type InterpretationRuleset,
+  type InterpretedSemantics,
+  type MediaPrioritizationConfig,
+  type RecommendationOrderingConfig,
+  type RecommendedMediaRef,
+  type RecommendedMediaRole,
+  type RoomImportanceConfig,
+} from "./interpretation";
+export {
   DecisionSessionRuntime,
   applyDecisionEvent,
   commandToEvent,

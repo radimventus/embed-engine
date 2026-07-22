@@ -2,22 +2,26 @@ import type { HousePackage } from "@embed-engine/object-house";
 
 import { createDecisionSession } from "../createDecisionSession";
 import type { DecisionSession } from "../DecisionSession";
+import type { InterpretationRuleset } from "../interpretation";
+import { DEFAULT_HOUSE_INTERPRETATION_RULES } from "../interpretation";
 import type { SessionExperience } from "../projectDecisionSession";
+import { projectFromInterpretation } from "../projectDecisionSession";
 import {
   dispatchCommand,
   type DispatchResult,
 } from "./dispatch";
-import type { SessionInterpretation } from "./interpretSession";
-import type { RuntimeCommand } from "./RuntimeCommand";
 import {
   interpretDecisionSession,
+  type SessionInterpretation,
 } from "./interpretSession";
-import { projectFromInterpretation } from "../projectDecisionSession";
+import type { RuntimeCommand } from "./RuntimeCommand";
 
 export type DecisionSessionRuntimeOptions = {
   readonly housePackage: HousePackage;
   readonly session?: DecisionSession;
   readonly now?: number;
+  /** Optional Interpretation Rules — defaults to house session ruleset. */
+  readonly rules?: InterpretationRuleset;
 };
 
 /**
@@ -26,12 +30,14 @@ export type DecisionSessionRuntimeOptions = {
  */
 export class DecisionSessionRuntime {
   private readonly housePackage: HousePackage;
+  private readonly rules: InterpretationRuleset;
   private session: DecisionSession;
   private interpretation: SessionInterpretation | null = null;
   private experience: SessionExperience | null = null;
 
   constructor(options: DecisionSessionRuntimeOptions) {
     this.housePackage = options.housePackage;
+    this.rules = options.rules ?? DEFAULT_HOUSE_INTERPRETATION_RULES;
     this.session =
       options.session ??
       createDecisionSession({
@@ -42,6 +48,7 @@ export class DecisionSessionRuntime {
     this.interpretation = interpretDecisionSession(
       this.session,
       this.housePackage,
+      { rules: this.rules },
     );
     const projected = projectFromInterpretation(
       this.interpretation,
@@ -59,6 +66,7 @@ export class DecisionSessionRuntime {
       housePackage: this.housePackage,
       command,
       now,
+      rules: this.rules,
     });
 
     if (result.ok) {
@@ -84,6 +92,10 @@ export class DecisionSessionRuntime {
 
   getHousePackage(): HousePackage {
     return this.housePackage;
+  }
+
+  getRules(): InterpretationRuleset {
+    return this.rules;
   }
 }
 

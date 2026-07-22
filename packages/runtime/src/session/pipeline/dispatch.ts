@@ -2,6 +2,7 @@ import type { HousePackage } from "@embed-engine/object-house";
 
 import type { DecisionEvent } from "../DecisionEvent";
 import type { DecisionSession } from "../DecisionSession";
+import type { InterpretationRuleset } from "../interpretation";
 import {
   projectFromInterpretation,
   type SessionExperience,
@@ -40,11 +41,12 @@ export type DispatchCommandInput = {
   readonly housePackage: HousePackage;
   readonly command: RuntimeCommand;
   readonly now?: number;
+  readonly rules?: InterpretationRuleset;
 };
 
 /**
- * Canonical Runtime Event Pipeline (CAP-HP-002.5):
- * Command → Validation → Decision Event → Mutation → Interpretation → Projection
+ * Canonical Runtime Event Pipeline (CAP-HP-002.5 / CAP-HP-003.5):
+ * Command → Validation → Decision Event → Mutation → Interpretation Rules → Projection
  *
  * Synchronous and deterministic. No UI may bypass this path.
  */
@@ -63,7 +65,9 @@ export function dispatchCommand(input: DispatchCommandInput): DispatchResult {
 
   const event = commandToEvent(command, now);
   const nextSession = applyDecisionEvent(session, event);
-  const interpretation = interpretDecisionSession(nextSession, housePackage);
+  const interpretation = interpretDecisionSession(nextSession, housePackage, {
+    rules: input.rules,
+  });
   const projected = projectFromInterpretation(interpretation, housePackage);
 
   if (!projected.ok) {

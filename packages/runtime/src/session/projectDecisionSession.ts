@@ -6,6 +6,11 @@ import type { HousePackage } from "@embed-engine/object-house";
 import { projectHouse } from "@embed-engine/object-house";
 
 import type { DecisionSession } from "./DecisionSession";
+import type {
+  FocusRoom,
+  InterpretationRuleset,
+  RecommendedMediaRef,
+} from "./interpretation";
 import {
   interpretDecisionSession,
   type SessionInterpretation,
@@ -14,6 +19,8 @@ import {
 /**
  * Experience projection for an active Decision Session.
  * Derived from Interpretation (+ Object Package) — never UI state, never mutates Runtime.
+ *
+ * Semantic fields are interpreted meaning, not raw Object Package passthrough.
  */
 export type SessionExperience = {
   readonly house: ExperienceHouse;
@@ -23,6 +30,15 @@ export type SessionExperience = {
   readonly variantId: string | null;
   readonly scenarioId: string | null;
   readonly interpretationSummary: string;
+  /** Interpreted focus — may differ from activeRoom when no room is selected. */
+  readonly focusRoom: FocusRoom | null;
+  readonly primaryReason: string;
+  readonly highlights: readonly string[];
+  readonly recommendedMedia: readonly RecommendedMediaRef[];
+  readonly roomImportanceRank: readonly string[];
+  readonly appliedRuleIds: readonly string[];
+  readonly rulesetId: string;
+  readonly rulesetVersion: number;
 };
 
 export type ProjectSessionResult =
@@ -35,7 +51,7 @@ export type ProjectSessionResult =
 
 /**
  * Projection step — consumes Interpretation (and house facts for ExperienceHouse).
- * MUST NOT mutate Runtime.
+ * MUST NOT mutate Runtime. MUST NOT re-evaluate rules.
  */
 export function projectFromInterpretation(
   interpretation: SessionInterpretation,
@@ -74,6 +90,14 @@ export function projectFromInterpretation(
       variantId: interpretation.variantId,
       scenarioId: interpretation.scenarioId,
       interpretationSummary: interpretation.summary,
+      focusRoom: interpretation.focusRoom,
+      primaryReason: interpretation.primaryReason,
+      highlights: interpretation.highlights,
+      recommendedMedia: interpretation.recommendedMedia,
+      roomImportanceRank: interpretation.roomImportanceRank,
+      appliedRuleIds: interpretation.appliedRuleIds,
+      rulesetId: interpretation.rulesetId,
+      rulesetVersion: interpretation.rulesetVersion,
     }),
   };
 }
@@ -85,6 +109,7 @@ export function projectFromInterpretation(
 export function projectDecisionSession(
   session: DecisionSession,
   housePackage: HousePackage,
+  rules?: InterpretationRuleset,
 ): ProjectSessionResult {
   if (housePackage.identity.id !== session.objectId) {
     return {
@@ -94,6 +119,8 @@ export function projectDecisionSession(
     };
   }
 
-  const interpretation = interpretDecisionSession(session, housePackage);
+  const interpretation = interpretDecisionSession(session, housePackage, {
+    rules,
+  });
   return projectFromInterpretation(interpretation, housePackage);
 }

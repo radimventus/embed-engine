@@ -1,9 +1,19 @@
 import type { HousePackage } from "@embed-engine/object-house";
 
 import type { DecisionSession } from "../DecisionSession";
+import {
+  createInterpretationContext,
+  DEFAULT_HOUSE_INTERPRETATION_RULES,
+  evaluateInterpretationRules,
+  type FocusRoom,
+  type InterpretationRuleset,
+  type InterpretedSemantics,
+  type RecommendedMediaRef,
+} from "../interpretation";
 
 /**
- * Session Interpretation — meaning derived from Object Package + Runtime State.
+ * Session Interpretation — meaning derived from
+ * Object Package + Runtime State + Interpretation Rules.
  * Never validates commands. Never projects UI.
  */
 export type SessionInterpretation = {
@@ -16,12 +26,56 @@ export type SessionInterpretation = {
   readonly runtimeVersion: number;
   /** Deterministic meaning summary for reproducibility checks. */
   readonly summary: string;
+  /** Ruleset identity that produced this interpretation. */
+  readonly rulesetId: string;
+  readonly rulesetVersion: number;
+  /** Semantic outputs from the Interpretation Rules Engine. */
+  readonly focusRoom: FocusRoom | null;
+  readonly primaryReason: string;
+  readonly highlights: readonly string[];
+  readonly recommendedMedia: readonly RecommendedMediaRef[];
+  readonly roomImportanceRank: readonly string[];
+  readonly appliedRuleIds: readonly string[];
 };
+
+export type InterpretDecisionSessionOptions = {
+  readonly rules?: InterpretationRuleset;
+};
+
+function buildSummary(
+  session: DecisionSession,
+  semantics: InterpretedSemantics,
+  rules: InterpretationRuleset,
+): string {
+  return [
+    `object:${session.objectId}`,
+    `room:${session.runtimeState.activeRoomId ?? "none"}`,
+    `focus:${semantics.focusRoom?.id ?? "none"}`,
+    `reason:${semantics.primaryReason}`,
+    `highlights:${semantics.highlights.join(",") || "none"}`,
+    `media:${semantics.recommendedMedia.map((item) => item.role).join(",") || "none"}`,
+    `priorities:${session.runtimeState.priorityIds.join(",") || "none"}`,
+    `variant:${session.runtimeState.variantId ?? "none"}`,
+    `scenario:${session.runtimeState.scenarioId ?? "none"}`,
+    `rules:${rules.id}@${rules.version}`,
+    `applied:${semantics.appliedRuleIds.join(",") || "none"}`,
+    `v:${session.runtimeState.version}`,
+  ].join("|");
+}
 
 export function interpretDecisionSession(
   session: DecisionSession,
   housePackage: HousePackage,
+  options?: InterpretDecisionSessionOptions,
 ): SessionInterpretation {
+  const rules = options?.rules ?? DEFAULT_HOUSE_INTERPRETATION_RULES;
+  const context = createInterpretationContext({
+    housePackage,
+    runtimeState: session.runtimeState,
+    rules,
+  });
+  const semantics = evaluateInterpretationRules(context);
+
   const activeRoomId = session.runtimeState.activeRoomId;
   const activeRoomName =
     activeRoomId === null
@@ -29,27 +83,22 @@ export function interpretDecisionSession(
       : (housePackage.rooms.find((room) => room.id === activeRoomId)?.name ??
         null);
 
-  const priorityIds = session.runtimeState.priorityIds;
-  const variantId = session.runtimeState.variantId;
-  const scenarioId = session.runtimeState.scenarioId;
-
-  const summary = [
-    `object:${session.objectId}`,
-    `room:${activeRoomId ?? "none"}`,
-    `priorities:${priorityIds.join(",") || "none"}`,
-    `variant:${variantId ?? "none"}`,
-    `scenario:${scenarioId ?? "none"}`,
-    `v:${session.runtimeState.version}`,
-  ].join("|");
-
   return Object.freeze({
     objectId: session.objectId,
     activeRoomId,
     activeRoomName,
-    priorityIds: Object.freeze([...priorityIds]),
-    variantId,
-    scenarioId,
+    priorityIds: Object.freeze([...session.runtimeState.priorityIds]),
+    variantId: session.runtimeState.variantId,
+    scenarioId: session.runtimeState.scenarioId,
     runtimeVersion: session.runtimeState.version,
-    summary,
+    summary: buildSummary(session, semantics, rules),
+    rulesetId: rules.id,
+    rulesetVersion: rules.version,
+    focusRoom: semantics.focusRoom,
+    primaryReason: semantics.primaryReason,
+    highlights: semantics.highlights,
+    recommendedMedia: semantics.recommendedMedia,
+    roomImportanceRank: semantics.roomImportanceRank,
+    appliedRuleIds: semantics.appliedRuleIds,
   });
 }

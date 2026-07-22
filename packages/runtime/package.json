@@ -35,7 +35,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/priority/PriorityRuntimeEngine.test.ts src/priority/mock/createGardenJourneyRun.test.ts src/priority/html-renderer/renderPriorityJourney.test.ts src/session/DecisionSession.test.ts src/session/pipeline/EventPipeline.test.ts",
+    "test": "tsx --test src/priority/PriorityRuntimeEngine.test.ts src/priority/mock/createGardenJourneyRun.test.ts src/priority/html-renderer/renderPriorityJourney.test.ts src/session/DecisionSession.test.ts src/session/pipeline/EventPipeline.test.ts src/session/interpretation/InterpretationRulesEngine.test.ts",
     "demo:priority": "vite --config demo/priority-html/vite.config.ts"
   },
   "dependencies": {
