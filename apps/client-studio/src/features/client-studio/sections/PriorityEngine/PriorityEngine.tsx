@@ -15,8 +15,8 @@ import { SectionHeader } from './SectionHeader';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 
 /**
- * Priority Engine — renders Priority UI + Experience-only semantic surfaces.
- * Pipeline owned by PriorityExperienceProvider.
+ * Priority Engine — card UI that emits Priority Signals into Decision Session Runtime.
+ * Visible Experience changes flow through Experience Context (Hero, Gallery, …).
  */
 export function PriorityEngine() {
   const {

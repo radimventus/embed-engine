@@ -81,6 +81,32 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     assert.equal(first.context.hero.heroMedia?.id, 'media-exterior');
   });
 
+  it('ChangePriority reshapes Experience Context hero and gallery ordering', () => {
+    const runtime = createDecisionSessionRuntime({
+      housePackage: REFERENCE_HOUSE_PACKAGE,
+      now: 1,
+    });
+    runtime.dispatch({ type: 'SelectRoom', roomId: 'room-living' }, 2);
+    const before = projectSynchronizedExperience(runtime.getExperience()!);
+
+    assert.equal(before.context.hero.primaryReason, 'primary-living-volume');
+    assert.equal(before.context.roomMedia.thumbnails[0]?.kind, 'video');
+
+    runtime.dispatch(
+      { type: 'ChangePriority', priorityIds: ['plot', 'layout'] },
+      3,
+    );
+    const after = projectSynchronizedExperience(runtime.getExperience()!);
+
+    assert.equal(after.context.decision.prioritySignals[0]?.kind, 'emphasize-outdoor');
+    assert.equal(after.context.hero.primaryReason, 'outdoor-led-exploration');
+    assert.match(after.context.hero.eyebrow, /Orientace na zahradu/);
+    assert.ok(after.context.hero.highlights.includes('outdoor-connection'));
+    assert.equal(after.context.decision.recommendedMedia[0]?.role, 'gallery');
+    assert.equal(after.context.roomMedia.thumbnails[0]?.kind, 'photo');
+    assert.notEqual(before.context.hero.eyebrow, after.context.hero.eyebrow);
+  });
+
   it('adapters read the same contract as experience.context', () => {
     const runtime = createDecisionSessionRuntime({
       housePackage: REFERENCE_HOUSE_PACKAGE,

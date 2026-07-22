@@ -16,6 +16,7 @@ import { DECISION_CATEGORIES } from './decision-cards.constants';
 import { PrioritySelectionProvider } from './PrioritySelectionContext';
 import { useDecisionCards } from './useDecisionCards';
 import { usePriorityReactiveExperience } from './usePriorityReactiveExperience';
+import { usePrioritySignalBridge } from './usePrioritySignalBridge';
 
 type DecisionCardState = {
   selected: boolean;
@@ -42,13 +43,14 @@ type PriorityExperienceProviderProps = {
 };
 
 /**
- * Owns Priority UI state and the reactive Experience pipeline.
- * Experience is the only semantic presentation contract for child surfaces.
+ * Priority Engine façade: card UI → Priority Signals (via Runtime) + legacy Experience compose.
+ * Hero / Gallery / Navigator react only through Experience Context — never from cards directly.
  */
 export function PriorityExperienceProvider({
   children,
 }: PriorityExperienceProviderProps) {
   const { cards, categories, setImportance, toggleCard } = useDecisionCards();
+  usePrioritySignalBridge(cards);
   const { priorities, context, interpretation, experience } =
     usePriorityReactiveExperience(cards);
 

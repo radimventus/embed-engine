@@ -26,7 +26,7 @@ export type PrioritySignal = {
   readonly strength: number;
 };
 
-/** Catalog: known priority ids → signal kinds. */
+/** Catalog: known priority ids → signal kinds (Runtime + Pilot card ids). */
 export const PRIORITY_SIGNAL_KIND_BY_ID: Readonly<
   Record<string, PrioritySignalKind>
 > = Object.freeze({
@@ -34,6 +34,16 @@ export const PRIORITY_SIGNAL_KIND_BY_ID: Readonly<
   garden: "emphasize-outdoor",
   space: "emphasize-space",
   privacy: "emphasize-privacy",
+  // Pilot Priority Engine card ids → same signal vocabulary
+  investment: "emphasize-value",
+  "operating-costs": "emphasize-value",
+  energy: "emphasize-value",
+  maintenance: "emphasize-value",
+  layout: "emphasize-space",
+  flexibility: "emphasize-space",
+  plot: "emphasize-outdoor",
+  design: "priority-generic",
+  quality: "priority-generic",
 });
 
 export function resolvePrioritySignalKind(

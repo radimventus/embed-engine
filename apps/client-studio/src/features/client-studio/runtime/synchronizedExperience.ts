@@ -63,6 +63,10 @@ export type ExperienceHeroContext = {
   readonly metrics: readonly { readonly label: string; readonly value: string }[];
   readonly heroMedia: ProjectedMediaAsset | null;
   readonly primaryMediaUrl: string | null;
+  /** Decision reason from Interpretation (priority-signal driven). */
+  readonly primaryReason: string;
+  /** Ordered semantic highlights from Interpretation. */
+  readonly highlights: readonly string[];
 };
 
 /**
@@ -215,12 +219,47 @@ function emptyRoomMedia(): ExperienceRoomMediaContext {
   });
 }
 
+function orderThumbnailsByRecommendation(
+  thumbnails: readonly HousePackageMediaItem[],
+  recommendedMedia: SessionExperience['recommendedMedia'],
+): readonly HousePackageMediaItem[] {
+  const topRole = recommendedMedia[0]?.role;
+  if (topRole === undefined || thumbnails.length === 0) {
+    return thumbnails;
+  }
+
+  const preferVideo = topRole === 'video';
+  const preferStill =
+    topRole === 'gallery' || topRole === 'hero' || topRole === 'thumbnail';
+
+  if (!preferVideo && !preferStill) {
+    return thumbnails;
+  }
+
+  return Object.freeze(
+    [...thumbnails].sort((left, right) => {
+      const leftVideo = left.kind === 'video' ? 0 : 1;
+      const rightVideo = right.kind === 'video' ? 0 : 1;
+      if (preferVideo) {
+        return leftVideo - rightVideo;
+      }
+      return rightVideo - leftVideo;
+    }),
+  );
+}
+
 function projectRoomMedia(
   activeRoom: ContextualActiveRoom | null,
+  experience: SessionExperience,
 ): ExperienceRoomMediaContext {
   if (activeRoom === null) {
     return emptyRoomMedia();
   }
+
+  const thumbnails = orderThumbnailsByRecommendation(
+    activeRoom.thumbnails,
+    experience.recommendedMedia,
+  );
 
   return Object.freeze({
     roomId: activeRoom.id,
@@ -229,33 +268,66 @@ function projectRoomMedia(
     gallery: activeRoom.gallery,
     videos: activeRoom.videos,
     documents: activeRoom.documents,
-    thumbnails: activeRoom.thumbnails,
+    thumbnails,
     heroUrl: activeRoom.heroMedia?.url ?? null,
     videoUrl: activeRoom.videos[0]?.url ?? null,
   });
+}
+
+/** Presentation labels for machine reason keys — projection-owned, not UI logic. */
+const PRIMARY_REASON_LABELS: Readonly<Record<string, string>> = {
+  'explore-house-structure': 'Prohlídka struktury domu',
+  'primary-living-volume': 'Hlavní obytný prostor',
+  'daily-workflow-core': 'Denní provoz a kuchyně',
+  'private-rest-zone': 'Soukromí a odpočinek',
+  'service-wet-zone': 'Servisní zóna',
+  'flexible-secondary-space': 'Flexibilní sekundární prostor',
+  'value-led-exploration': 'Orientace na hodnotu a efektivitu',
+  'outdoor-led-exploration': 'Orientace na zahradu a venkovní propojení',
+  'space-led-exploration': 'Orientace na prostorovou velkorysost',
+  'privacy-led-exploration': 'Orientace na soukromí',
+};
+
+function reasonLabel(primaryReason: string): string {
+  return PRIMARY_REASON_LABELS[primaryReason] ?? primaryReason;
 }
 
 function projectHeroContext(
   experience: SessionExperience,
   activeRoom: ContextualActiveRoom | null,
 ): ExperienceHeroContext {
-  const { house } = experience;
+  const { house, primaryReason, highlights } = experience;
+  const reason = reasonLabel(primaryReason);
+
   if (activeRoom !== null) {
+    const signalLed = experience.prioritySignals.length > 0;
     return Object.freeze({
-      eyebrow: `${house.reference} · ${activeRoom.name}`,
+      eyebrow: signalLed
+        ? `${house.reference} · ${reason}`
+        : `${house.reference} · ${activeRoom.name}`,
       title: activeRoom.name,
-      description: activeRoom.description,
+      description: signalLed
+        ? `${activeRoom.description} · ${reason}`
+        : activeRoom.description,
       metrics: activeRoom.metrics,
       heroMedia: activeRoom.heroMedia,
       primaryMediaUrl: activeRoom.heroMedia?.url ?? null,
+      primaryReason,
+      highlights,
     });
   }
 
   const fallback = houseFallbackHero(experience);
   return Object.freeze({
-    eyebrow: `${house.reference} – ${house.title}`,
+    eyebrow:
+      experience.prioritySignals.length > 0
+        ? `${house.reference} · ${reason}`
+        : `${house.reference} – ${house.title}`,
     title: `${house.city}, ${house.district}`,
-    description: house.title,
+    description:
+      experience.prioritySignals.length > 0
+        ? `${house.title} · ${reason}`
+        : house.title,
     metrics: Object.freeze([
       { label: 'Užitná plocha', value: `${house.usableArea} m2` },
       { label: 'Energetická třída', value: house.energyClass },
@@ -263,6 +335,8 @@ function projectHeroContext(
     ]),
     heroMedia: fallback,
     primaryMediaUrl: fallback?.url ?? null,
+    primaryReason,
+    highlights,
   });
 }
 
@@ -296,7 +370,7 @@ function projectSynchronizedContext(
       room: activeRoom,
       focusRoom: experience.focusRoom,
     }),
-    roomMedia: projectRoomMedia(activeRoom),
+    roomMedia: projectRoomMedia(activeRoom, experience),
     hero: projectHeroContext(experience, activeRoom),
   });
 }

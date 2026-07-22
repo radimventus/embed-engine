@@ -117,4 +117,26 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
     assert.deepEqual(experience.prioritySignals, []);
     assert.equal(experience.context.decision.prioritySignals.length, 0);
   });
+
+  it("ChangePriority → signals → Experience Context decision slice", () => {
+    const runtime = createDecisionSessionRuntime({
+      housePackage: REFERENCE_HOUSE_PACKAGE,
+      now: 1,
+    });
+    runtime.dispatch({ type: "SelectRoom", roomId: "room-living" }, 2);
+    runtime.dispatch(
+      { type: "ChangePriority", priorityIds: ["investment", "privacy"] },
+      3,
+    );
+    const context = runtime.getExperience()!.context;
+
+    assert.equal(context.decision.prioritySignals[0]?.kind, "emphasize-value");
+    assert.equal(context.decision.primaryReason, "value-led-exploration");
+    assert.ok(context.decision.highlights.includes("value-efficiency"));
+    assert.ok(
+      context.decision.prioritySignals.some(
+        (signal) => signal.kind === "emphasize-privacy",
+      ),
+    );
+  });
 });

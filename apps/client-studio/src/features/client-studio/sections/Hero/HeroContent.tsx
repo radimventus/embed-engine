@@ -7,10 +7,11 @@ const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
   backgroundImage: `linear-gradient(to top, color-mix(in srgb, ${colors.border.default} 30%, #FFFFFF), #FFFFFF)`,
 } as const;
 
-/** Hero — renders Experience Context only (CAP-HP-003.5). */
+/** Hero — Experience Context only; priority signals reshape eyebrow/description/highlights. */
 export function HeroContent() {
   const { experience } = useDecisionSessionRuntime();
   const hero = experience.context.hero;
+  const highlights = hero.highlights.slice(0, 3);
 
   return (
     <section
@@ -29,6 +30,23 @@ export function HeroContent() {
         <p className="mt-3 max-w-md text-sm leading-relaxed text-embed-foreground-primary/70">
           {hero.description}
         </p>
+
+        {highlights.length > 0 ? (
+          <ul
+            aria-label="Interpretation highlights"
+            className="mt-4 flex flex-wrap gap-2"
+            data-primary-reason={hero.primaryReason}
+          >
+            {highlights.map((highlight) => (
+              <li
+                key={highlight}
+                className="text-xs tracking-wide text-embed-foreground-primary/55"
+              >
+                {highlight}
+              </li>
+            ))}
+          </ul>
+        ) : null}
 
         <dl className="mt-8 grid grid-cols-3 divide-x divide-embed-border-default">
           {hero.metrics.map((feature) => (
