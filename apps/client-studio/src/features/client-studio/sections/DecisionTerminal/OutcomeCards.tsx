@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react';
 
+import {
+  DECISION_TERMINAL_CHROME_CS,
+  formatDecisionKeyCs,
+} from '../../pilot/decisionTerminalLabels';
 import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
 import type { DecisionPresentation } from '../../runtime/projectDecisionPresentation';
 
@@ -24,48 +28,57 @@ function OutcomeCard({ title, children }: CardProps) {
 }
 
 /**
- * Outcome Cards — structured Runtime Outcome fields (CSCB-05).
+ * Trade-off / Outcome Cards — structured Runtime Outcome fields (CSCB-05 / 05A).
  */
 export function OutcomeCards({ outcome }: OutcomeCardsProps) {
+  const strengths = outcome.strengths.slice(0, 5).map(formatDecisionKeyCs);
+  const considerations = outcome.considerations
+    .slice(0, 5)
+    .map(formatDecisionKeyCs);
+
   return (
     <section
-      aria-label="Outcome Cards"
+      aria-label={DECISION_TERMINAL_CHROME_CS.outcomes}
       className="mt-5 grid grid-cols-2 gap-3 mobile:grid-cols-1"
     >
-      <OutcomeCard title="Výsledek">
+      <OutcomeCard title={DECISION_TERMINAL_CHROME_CS.outcomeStatus}>
         <p className="font-medium text-embed-foreground-primary">
           {formatOutcomeStatusCs(outcome.status)}
         </p>
         <p className="mt-1 text-xs">
-          Jistota {Math.round(outcome.confidence * 100)} %
+          {DECISION_TERMINAL_CHROME_CS.confidence}{' '}
+          {Math.round(outcome.confidence * 100)} %
         </p>
       </OutcomeCard>
 
-      <OutcomeCard title="Doporučení">
+      <OutcomeCard title={DECISION_TERMINAL_CHROME_CS.recommendation}>
         <p className="font-medium text-embed-foreground-primary">
-          {outcome.recommendation}
+          {formatDecisionKeyCs(outcome.recommendation)}
         </p>
-        <p className="mt-1 text-xs">Další: {outcome.recommendedNextAction}</p>
+        <p className="mt-1 text-xs">
+          {DECISION_TERMINAL_CHROME_CS.nextStep}:{' '}
+          {formatDecisionKeyCs(outcome.recommendedNextAction)}
+        </p>
       </OutcomeCard>
 
-      <OutcomeCard title="Silné stránky">
-        {outcome.strengths.length === 0 ? (
+      <OutcomeCard title={DECISION_TERMINAL_CHROME_CS.strengths}>
+        {strengths.length === 0 ? (
           <p className="text-xs text-embed-foreground-primary/55">—</p>
         ) : (
           <ul className="list-disc space-y-1 pl-4">
-            {outcome.strengths.map((item) => (
+            {strengths.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>
         )}
       </OutcomeCard>
 
-      <OutcomeCard title="Na co si dát pozor">
-        {outcome.considerations.length === 0 ? (
+      <OutcomeCard title={DECISION_TERMINAL_CHROME_CS.considerations}>
+        {considerations.length === 0 ? (
           <p className="text-xs text-embed-foreground-primary/55">—</p>
         ) : (
           <ul className="list-disc space-y-1 pl-4">
-            {outcome.considerations.map((item) => (
+            {considerations.map((item) => (
               <li key={item}>{item}</li>
             ))}
           </ul>

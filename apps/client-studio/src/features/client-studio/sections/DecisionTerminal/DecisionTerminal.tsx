@@ -7,10 +7,11 @@ import { DecisionSummary } from './DecisionSummary';
 import { OutcomeCards } from './OutcomeCards';
 
 /**
- * Decision Terminal — canonical Runtime presentation surface (CSCB-05).
+ * Decision Terminal — canonical Runtime presentation surface (CSCB-05 / 05A).
  *
- * Answers: given exploration + priorities, what should you pay attention to?
- * Pure projection of Runtime Context — no interpretation, ranking, or composition.
+ * First view: Summary → Drivers → Trade-offs.
+ * Story / Moves remain available via progressive disclosure (Runtime order).
+ * Pure projection — no interpretation, ranking, or composition.
  */
 export function DecisionTerminal() {
   const { experience } = useDecisionSessionRuntime();
@@ -31,9 +32,9 @@ export function DecisionTerminal() {
       aria-label="Rozhodovací terminál"
     >
       <DecisionSummary summary={view.summary} />
-      <DecisionStoryPanel story={view.story} moves={view.moves} />
       <DecisionDrivers drivers={view.drivers} />
       <OutcomeCards outcome={view.outcome} />
+      <DecisionStoryPanel story={view.story} moves={view.moves} />
     </aside>
   );
 }

@@ -1,5 +1,9 @@
 import type { DecisionTerminalContract } from '@embed-engine/runtime';
 
+import {
+  formatDecisionKeyCs,
+} from '../../pilot/decisionTerminalLabels';
+import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
 import { projectTerminalPresentation } from '../../runtime/projectTerminalPresentation';
 
 /**
@@ -18,21 +22,26 @@ export type RecommendationViewModel = {
 
 /**
  * Maps Terminal Outcome fields to Recommendation panel presentation.
- * Does not invent meaning beyond Runtime keys.
+ * Czech labels only — does not invent meaning beyond Runtime keys.
  */
 export function recommendationViewFromTerminal(
   terminal: DecisionTerminalContract,
 ): RecommendationViewModel {
   const view = projectTerminalPresentation(terminal);
+  const nextStep = formatDecisionKeyCs(view.recommendedNextAction);
 
   return Object.freeze({
-    title: view.recommendation,
-    matchLabel: view.status,
-    matchScore: view.confidence,
-    matchExplanation: view.status,
-    strengths: Object.freeze([...view.rationale]),
-    considerations: Object.freeze([...view.unresolvedQuestions]),
-    nextStep: view.recommendedNextAction,
-    primaryActionLabel: view.recommendedNextAction,
+    title: formatDecisionKeyCs(view.recommendation),
+    matchLabel: formatOutcomeStatusCs(view.status),
+    matchScore: Math.round(view.confidence * 100),
+    matchExplanation: formatOutcomeStatusCs(view.status),
+    strengths: Object.freeze(
+      view.rationale.map((key) => formatDecisionKeyCs(key)),
+    ),
+    considerations: Object.freeze(
+      view.unresolvedQuestions.map((key) => formatDecisionKeyCs(key)),
+    ),
+    nextStep,
+    primaryActionLabel: nextStep.length > 0 ? nextStep : null,
   });
 }

@@ -1,5 +1,9 @@
 import { colors } from '@embed-engine/design-tokens';
 
+import {
+  formatDecisionKeyCs,
+  DECISION_TERMINAL_CHROME_CS,
+} from '../../pilot/decisionTerminalLabels';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { HeroDecisionEntries } from './HeroDecisionEntries';
 
@@ -8,8 +12,8 @@ const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
 } as const;
 
 /**
- * Hero — Object Discovery Decision Surface (CSCB-02 / SR-002).
- * Reads Runtime Context only. Does not compose or interpret semantics.
+ * Hero — Object Discovery Decision Surface (CSCB-02 / Experience Integration Pack 1).
+ * Reads Runtime Context only. Surfaces Focus already projected on `hero`.
  */
 export function HeroContent() {
   const { experience } = useDecisionSessionRuntime();
@@ -17,12 +21,17 @@ export function HeroContent() {
   const hero = experience.context.hero;
   const location = `${object.city} – ${object.district}`;
 
+  const focusReason = hero.primaryReason.trim();
+  const nextStep = hero.recommendedAction.trim();
+  const showFocus = focusReason.length > 0 || hero.focusRoomName !== null;
+
   return (
     <section
       aria-label="Hero Content"
       className="relative flex h-full min-h-0 w-full flex-col justify-center bg-white px-section py-section mobile:py-8"
       data-object-id={object.id}
       data-object-reference={object.reference}
+      data-focus-room={hero.focusRoomName ?? undefined}
     >
       <div className="translate-x-[10px] mobile:translate-x-0">
         <p className="text-sm font-bold uppercase tracking-wide text-embed-brand-gold">
@@ -48,6 +57,41 @@ export function HeroContent() {
         <p className="mt-3 max-w-md text-sm leading-relaxed text-embed-foreground-primary/70">
           {hero.description}
         </p>
+
+        {showFocus ? (
+          <p
+            className="mt-4 max-w-md text-sm leading-relaxed text-embed-foreground-primary"
+            data-testid="hero-runtime-focus"
+            aria-label="Začátek Decision Story"
+          >
+            {hero.focusRoomName !== null ? (
+              <>
+                <span className="font-medium text-embed-brand-gold">
+                  {DECISION_TERMINAL_CHROME_CS.focus}: {hero.focusRoomName}
+                </span>
+                {focusReason.length > 0 ? (
+                  <span className="text-embed-foreground-primary/70">
+                    {' '}
+                    · {formatDecisionKeyCs(focusReason)}
+                  </span>
+                ) : null}
+              </>
+            ) : (
+              <span className="text-embed-foreground-primary/70">
+                {formatDecisionKeyCs(focusReason)}
+              </span>
+            )}
+            {nextStep.length > 0 ? (
+              <>
+                <br />
+                <span className="text-embed-foreground-primary/80">
+                  {DECISION_TERMINAL_CHROME_CS.nextStep}:{' '}
+                  {formatDecisionKeyCs(nextStep)}
+                </span>
+              </>
+            ) : null}
+          </p>
+        ) : null}
 
         <dl className="mt-8 grid grid-cols-3 divide-x divide-embed-border-default mobile:grid-cols-1 mobile:gap-3 mobile:divide-x-0">
           {hero.metrics.map((feature) => (

@@ -24,7 +24,7 @@ export function SectionHeader() {
         aria-live="polite"
       >
         {minimumMet
-          ? `Vybráno ${selectedCount}. Upravte intenzitu — Runtime přizpůsobí Experience.`
+          ? `Vybráno ${selectedCount}. Rozhodovací terminál vpravo reaguje na vaše priority.`
           : `Vybráno ${selectedCount} z ${minimumSelection}. Volby můžete kdykoli změnit.`}
       </p>
     </div>

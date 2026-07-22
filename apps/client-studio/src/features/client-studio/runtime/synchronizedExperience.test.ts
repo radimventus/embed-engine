@@ -90,7 +90,10 @@ describe('Experience Context (CAP-HP-003.5)', () => {
 
     assert.deepEqual(first.context.hero, second.context.hero);
     assert.deepEqual(first.context.roomMedia, second.context.roomMedia);
-    assert.equal(first.context.roomMedia.gallery.length, 0);
+    assert.equal(
+      first.context.roomMedia.heroMedia?.url,
+      '/media/house-modern-01/exterior.webp',
+    );
     assert.equal(first.context.hero.heroMedia?.id, 'media-exterior');
   });
 
@@ -204,6 +207,7 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
 
     assert.deepEqual(first.context.floorPlan, second.context.floorPlan);
     assert.ok(first.context.floorPlan.src.length > 0);
+    assert.match(first.context.floorPlan.src, /\/media\/house-modern-01\/floorplan/);
     assert.ok(first.context.floorPlan.viewBox > 0);
     assert.equal(
       first.context.floorPlan.rooms.length,

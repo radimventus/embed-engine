@@ -122,8 +122,14 @@ describe('Decision Terminal (CSCB-05)', () => {
     const terminal = read('DecisionTerminal.tsx');
     assert.match(terminal, /projectDecisionPresentation/);
     assert.match(terminal, /DecisionSummary/);
-    assert.match(terminal, /DecisionStoryPanel/);
     assert.match(terminal, /DecisionDrivers/);
     assert.match(terminal, /OutcomeCards/);
+    assert.match(terminal, /DecisionStoryPanel/);
+    // First-view hierarchy: Summary → Drivers → Outcomes → Story (CSCB-05A)
+    const summaryAt = terminal.indexOf('<DecisionSummary');
+    const driversAt = terminal.indexOf('<DecisionDrivers');
+    const outcomesAt = terminal.indexOf('<OutcomeCards');
+    const storyAt = terminal.indexOf('<DecisionStoryPanel');
+    assert.ok(summaryAt < driversAt && driversAt < outcomesAt && outcomesAt < storyAt);
   });
 });

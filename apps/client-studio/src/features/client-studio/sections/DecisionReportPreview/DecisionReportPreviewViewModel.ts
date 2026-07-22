@@ -1,5 +1,7 @@
 import type { DecisionTerminalContract } from '@embed-engine/runtime';
 
+import { formatDecisionKeyCs } from '../../pilot/decisionTerminalLabels';
+import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
 import { projectTerminalPresentation } from '../../runtime/projectTerminalPresentation';
 
 /**
@@ -13,8 +15,7 @@ export type DecisionReportPreviewViewModel = {
 };
 
 /**
- * Maps Terminal to the lead-capture style report preview.
- * No mock property names or invented priorities.
+ * Maps Terminal to the lead-capture style report preview (Czech labels).
  */
 export function decisionReportPreviewFromTerminal(
   terminal: DecisionTerminalContract,
@@ -22,13 +23,15 @@ export function decisionReportPreviewFromTerminal(
   const view = projectTerminalPresentation(terminal);
 
   return Object.freeze({
-    title: view.recommendation,
-    summary: view.status,
-    priorities: Object.freeze([...view.completedMoveIds]),
+    title: formatDecisionKeyCs(view.recommendation),
+    summary: formatOutcomeStatusCs(view.status),
+    priorities: Object.freeze(
+      view.completedMoveIds.map((id) => formatDecisionKeyCs(id)),
+    ),
     includedItems: Object.freeze([
-      ...view.rationale,
-      ...view.unresolvedQuestions,
-      view.recommendedNextAction,
+      ...view.rationale.map((key) => formatDecisionKeyCs(key)),
+      ...view.unresolvedQuestions.map((key) => formatDecisionKeyCs(key)),
+      formatDecisionKeyCs(view.recommendedNextAction),
     ]),
   });
 }

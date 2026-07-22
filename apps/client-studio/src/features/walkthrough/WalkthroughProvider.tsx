@@ -73,17 +73,6 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const [mode, setMode] = useState<WalkthroughState['mode']>('ready');
 
   useEffect(() => {
-    if (activeRoomId !== null) {
-      return;
-    }
-    const defaultRoom = rooms[0];
-    if (defaultRoom === undefined) {
-      return;
-    }
-    dispatch({ type: 'SelectRoom', roomId: defaultRoom.id });
-  }, [dispatch, activeRoomId, rooms]);
-
-  useEffect(() => {
     // Photo mode must never land on a video URL rendered as <img> (BUG-001).
     if (mediaMode === 'photo') {
       const firstPhotoIndex = projectedThumbnails.findIndex(

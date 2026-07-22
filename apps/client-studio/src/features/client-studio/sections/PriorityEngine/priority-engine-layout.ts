@@ -33,7 +33,7 @@ export const PRIORITY_ENGINE_INTRO_PANEL_CLASS =
 export const PRIORITY_ENGINE_ACTION_AREA_CLASS =
   'mt-5 flex w-[680px] shrink-0 items-center justify-between gap-section';
 
-export const PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL = false;
+export const PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL = true;
 
 export const PRIORITY_ENGINE_SHOW_DECISION_REPORT = false;
 

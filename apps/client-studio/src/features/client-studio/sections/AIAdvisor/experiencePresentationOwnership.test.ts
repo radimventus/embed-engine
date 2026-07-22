@@ -8,6 +8,10 @@ import {
 } from '@embed-engine/runtime';
 
 import {
+  formatDecisionKeyCs,
+} from '../../pilot/decisionTerminalLabels';
+import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
+import {
   advisorIntroFromAiContext,
   faqItemsFromAiContext,
 } from './experiencePresentation';
@@ -40,32 +44,54 @@ describe('Runtime presentation ownership (ED-DA-01R)', () => {
     const design = designRuntime.getExperience()!.context.decision;
 
     const recommendation = recommendationViewFromTerminal(layout.terminal);
-    assert.equal(recommendation.title, layout.terminal.outcome.recommendation);
-    assert.equal(recommendation.matchScore, layout.terminal.outcome.confidence);
+    assert.equal(
+      recommendation.title,
+      formatDecisionKeyCs(layout.terminal.outcome.recommendation),
+    );
+    assert.equal(
+      recommendation.matchScore,
+      Math.round(layout.terminal.outcome.confidence * 100),
+    );
     assert.deepEqual(
       recommendation.strengths,
-      layout.terminal.outcome.rationale,
+      layout.terminal.outcome.rationale.map((key) => formatDecisionKeyCs(key)),
     );
     assert.deepEqual(
       recommendation.considerations,
-      layout.terminal.outcome.unresolvedQuestions,
+      layout.terminal.outcome.unresolvedQuestions.map((key) =>
+        formatDecisionKeyCs(key),
+      ),
     );
 
     const faq = faqItemsFromAiContext(layout.ai);
     assert.equal(faq.length, layout.ai.outcome.rationale.length);
-    assert.equal(faq[0]?.question, layout.ai.outcome.rationale[0]);
-    assert.equal(faq[0]?.answer, layout.ai.outcome.status);
+    assert.equal(
+      faq[0]?.question,
+      formatDecisionKeyCs(layout.ai.outcome.rationale[0]!),
+    );
+    assert.equal(
+      faq[0]?.answer,
+      formatOutcomeStatusCs(layout.ai.outcome.status),
+    );
     assert.equal(
       advisorIntroFromAiContext(layout.ai),
-      layout.ai.outcome.recommendation,
+      formatDecisionKeyCs(layout.ai.outcome.recommendation),
     );
 
     const preview = decisionReportPreviewFromTerminal(layout.terminal);
-    assert.equal(preview.title, layout.terminal.outcome.recommendation);
-    assert.equal(preview.summary, layout.terminal.outcome.status);
+    assert.equal(
+      preview.title,
+      formatDecisionKeyCs(layout.terminal.outcome.recommendation),
+    );
+    assert.equal(
+      preview.summary,
+      formatOutcomeStatusCs(layout.terminal.outcome.status),
+    );
     assert.deepEqual(
       preview.priorities,
-      layout.terminal.outcome.completedMoveIds,
+      layout.terminal.outcome.completedMoveIds.map((id) =>
+        formatDecisionKeyCs(id),
+      ),
     );
 
     assert.notEqual(

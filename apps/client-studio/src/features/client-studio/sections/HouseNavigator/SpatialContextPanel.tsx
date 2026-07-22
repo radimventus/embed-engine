@@ -21,7 +21,7 @@ export function SpatialContextPanel() {
         className="flex min-h-[3.5rem] flex-col justify-center gap-1 px-0 py-2"
       >
         <p className="text-sm text-embed-foreground-primary/55">
-          Vyberte místnost pro prohlídku
+          Objektový pohled — vyberte místnost pro prohlídku
         </p>
         <p className="text-xs text-embed-foreground-primary/40">
           Patro {navigation.currentFloor ?? '—'}

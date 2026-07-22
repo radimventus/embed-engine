@@ -55,12 +55,15 @@ describe('Hero Experience (CSCB-02 / SR-002)', () => {
     }
   });
 
-  it('binds object identity and Decision Entry CTAs', () => {
+  it('binds object identity, Runtime Focus, and Decision Entry CTAs', () => {
     const content = read('HeroContent.tsx');
     const entries = read('HeroDecisionEntries.tsx');
     const image = read('HeroImage.tsx');
 
     assert.match(content, /context\.object/);
+    assert.match(content, /hero\.primaryReason/);
+    assert.match(content, /hero-runtime-focus/);
+    assert.match(content, /formatDecisionKeyCs/);
     assert.match(content, /HeroDecisionEntries/);
     assert.match(entries, /Prozkoumat dům/);
     assert.match(entries, /PILOT_SECTION_IDS\.propertyExplorer/);

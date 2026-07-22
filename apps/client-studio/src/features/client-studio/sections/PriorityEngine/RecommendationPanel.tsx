@@ -32,9 +32,9 @@ export function RecommendationPanel() {
         <p className={CHAPTER_PANEL_LABEL_CLASS}>Míra jistoty doporučení</p>
         <p
           className="mt-1 text-base leading-none tracking-wide text-embed-brand-gold"
-          aria-label={`Míra jistoty: ${viewModel.matchLabel}, skóre ${viewModel.matchScore}`}
+          aria-label={`Míra jistoty: ${viewModel.matchLabel}, skóre ${viewModel.matchScore} %`}
         >
-          {viewModel.matchLabel} · {viewModel.matchScore}
+          {viewModel.matchLabel} · {viewModel.matchScore} %
         </p>
         <p className="mt-2 text-sm leading-relaxed text-embed-foreground-primary/70">
           {viewModel.matchExplanation}

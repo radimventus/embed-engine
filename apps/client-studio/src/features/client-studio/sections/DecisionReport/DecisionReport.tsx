@@ -1,14 +1,21 @@
+import {
+  formatDecisionKeyCs,
+} from '../../pilot/decisionTerminalLabels';
+import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { projectTerminalPresentation } from '../../runtime/projectTerminalPresentation';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 
 /**
- * Decision Report — structured Terminal presentation.
- * Pure renderer; owns no Priority, Object, Composer, or Fragments (ED-DA-01R).
+ * Decision Report — structured Terminal presentation (Experience Integration Pack 1).
+ * Pure renderer with Czech presentation mapping — no semantic invention.
  */
 export function DecisionReport() {
   const { experience } = useDecisionSessionRuntime();
   const view = projectTerminalPresentation(experience.context.decision.terminal);
+  const recommendation = formatDecisionKeyCs(view.recommendation);
+  const status = formatOutcomeStatusCs(view.status);
+  const nextAction = formatDecisionKeyCs(view.recommendedNextAction);
 
   return (
     <article
@@ -22,10 +29,10 @@ export function DecisionReport() {
           Report rozhodnutí
         </p>
         <h2 className="mt-2 text-base font-semibold text-embed-foreground-primary">
-          {view.recommendation}
+          {recommendation}
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-embed-foreground-primary/80">
-          {view.status}
+          {status}
         </p>
       </header>
 
@@ -38,7 +45,7 @@ export function DecisionReport() {
         </h3>
         <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-embed-foreground-primary/70">
           {view.completedMoveIds.map((item) => (
-            <li key={item}>{item}</li>
+            <li key={item}>{formatDecisionKeyCs(item)}</li>
           ))}
         </ol>
       </section>
@@ -56,7 +63,9 @@ export function DecisionReport() {
         >
           {view.rationale.map((key) => (
             <div key={key}>
-              <dt className="font-medium text-embed-foreground-primary">{key}</dt>
+              <dt className="font-medium text-embed-foreground-primary">
+                {formatDecisionKeyCs(key)}
+              </dt>
             </div>
           ))}
         </dl>
@@ -75,7 +84,9 @@ export function DecisionReport() {
         >
           {view.unresolvedQuestions.map((key) => (
             <div key={key}>
-              <dt className="font-medium text-embed-foreground-primary">{key}</dt>
+              <dt className="font-medium text-embed-foreground-primary">
+                {formatDecisionKeyCs(key)}
+              </dt>
             </div>
           ))}
         </dl>
@@ -92,7 +103,7 @@ export function DecisionReport() {
           Doporučení
         </h3>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-embed-foreground-primary/70">
-          <li>{view.recommendation}</li>
+          <li>{recommendation}</li>
         </ul>
       </section>
 
@@ -111,7 +122,7 @@ export function DecisionReport() {
           data-testid="decision-report-confidence"
         >
           <p className="font-medium text-embed-foreground-primary">
-            {view.confidence}
+            {Math.round(view.confidence * 100)} %
           </p>
         </div>
       </section>
@@ -129,7 +140,7 @@ export function DecisionReport() {
         >
           <li>
             <span className="font-medium text-embed-foreground-primary">
-              {view.recommendedNextAction}
+              {nextAction}
             </span>
           </li>
         </ul>

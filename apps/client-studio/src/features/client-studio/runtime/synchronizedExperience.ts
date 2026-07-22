@@ -236,16 +236,30 @@ function projectRoomContext(
   });
 }
 
-function emptyRoomMedia(): ExperienceRoomMediaContext {
+function emptyRoomMedia(
+  experience: SessionExperience,
+): ExperienceRoomMediaContext {
+  const idleHero = houseFallbackHero(experience);
+  const thumbnails: HousePackageMediaItem[] =
+    idleHero !== null
+      ? [
+          {
+            kind: 'photo',
+            src: idleHero.url,
+            thumbnailSrc: idleHero.thumbnailUrl,
+          },
+        ]
+      : [];
+
   return Object.freeze({
     roomId: null,
-    title: null,
-    heroMedia: null,
-    gallery: Object.freeze([]),
+    title: idleHero?.title ?? experience.house.title,
+    heroMedia: idleHero,
+    gallery: Object.freeze(idleHero !== null ? [idleHero] : []),
     videos: Object.freeze([]),
     documents: Object.freeze([]),
-    thumbnails: Object.freeze([]),
-    heroUrl: null,
+    thumbnails: Object.freeze(thumbnails),
+    heroUrl: idleHero?.url ?? null,
     videoUrl: null,
   });
 }
@@ -285,7 +299,7 @@ function projectRoomMedia(
   experience: SessionExperience,
 ): ExperienceRoomMediaContext {
   if (activeRoom === null) {
-    return emptyRoomMedia();
+    return emptyRoomMedia(experience);
   }
 
   const thumbnails = orderThumbnailsByRecommendation(
@@ -294,15 +308,29 @@ function projectRoomMedia(
     experience.context.decision.focus.recommendedMediaRole,
   );
 
+  const preferredStill =
+    thumbnails.find((item) => item.kind === 'photo') ?? null;
+  const preferredHeroUrl = preferredStill?.src ?? activeRoom.heroMedia?.url ?? null;
+  const preferredHero =
+    preferredHeroUrl !== null
+      ? Object.freeze({
+          id: `${activeRoom.id}-focus-hero`,
+          kind: 'image' as const,
+          url: preferredHeroUrl,
+          thumbnailUrl: preferredStill?.thumbnailSrc ?? preferredHeroUrl,
+          title: activeRoom.name,
+        })
+      : activeRoom.heroMedia;
+
   return Object.freeze({
     roomId: activeRoom.id,
     title: activeRoom.name,
-    heroMedia: activeRoom.heroMedia,
+    heroMedia: preferredHero,
     gallery: activeRoom.gallery,
     videos: activeRoom.videos,
     documents: activeRoom.documents,
     thumbnails,
-    heroUrl: activeRoom.heroMedia?.url ?? null,
+    heroUrl: preferredHero?.url ?? null,
     videoUrl: activeRoom.videos[0]?.url ?? null,
   });
 }
@@ -354,6 +382,9 @@ function projectFloorPlan(
   experience: SessionExperience,
 ): ExperienceFloorPlanContext {
   const assets = getPresentationAssets();
+  const objectFloorplan = experience.house.media.find(
+    (asset) => asset.type === 'floorplan',
+  );
   const rooms = experience.house.rooms.map((room) => {
     const chrome = getMediaRoom(room.id);
     return Object.freeze({
@@ -366,7 +397,7 @@ function projectFloorPlan(
   });
 
   return Object.freeze({
-    src: assets.floorPlanSrc,
+    src: objectFloorplan?.url ?? assets.floorPlanSrc,
     viewBox: assets.floorPlanViewBox,
     rooms: Object.freeze(rooms),
   });
