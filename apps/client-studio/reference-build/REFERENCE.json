@@ -1,0 +1,22 @@
+{
+  "id": "client-studio-reference-build",
+  "title": "Client Studio Reference Build",
+  "purpose": "Frozen visual / UX etalon for regression and comparison",
+  "package": "@embed-engine/client-studio",
+  "packageVersion": "0.1.0",
+  "frozenAt": "2026-07-22T18:07:26.719Z",
+  "sourceCommit": "fd066b08935a9244017b9d592772a253dfc4d0f4",
+  "sourceBranch": "feature/cap-p04-founding-partner",
+  "serve": {
+    "command": "pnpm --filter @embed-engine/client-studio reference",
+    "url": "http://127.0.0.1:5174/",
+    "host": "127.0.0.1",
+    "port": 5174
+  },
+  "updatePolicy": "Replace only after an explicit team decision. Never auto-update from day-to-day development. Procedure: pnpm --filter @embed-engine/client-studio reference:freeze && commit reference-build/.",
+  "notFor": [
+    "day-to-day development",
+    "experimental feature flags",
+    "production Embed delivery (use GitHub Pages IIFE)"
+  ]
+}
