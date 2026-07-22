@@ -1,0 +1,114 @@
+{
+  "version": "1",
+  "basePath": "/house-package",
+  "defaultRoomId": "living-room",
+  "floorPlan": {
+    "path": "floor-plan/ground-floor.png",
+    "viewBox": 400
+  },
+  "walkthrough": {
+    "roomId": "living-room"
+  },
+  "opening": {
+    "roomId": "living-room",
+    "asset": "hero"
+  },
+  "rooms": [
+    {
+      "id": "kitchen",
+      "title": "Kuchyně",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/kitchen.svg",
+      "media": {
+        "folder": "media/kitchen",
+        "hero": "hero.jpg",
+        "gallery": ["01.jpg", "02.jpg", "03.jpg"],
+        "video": "video.mp4"
+      },
+      "floorPlanRegion": {
+        "x": 85.6747,
+        "y": 93.32788,
+        "width": 119.33859,
+        "height": 114.17323
+      }
+    },
+    {
+      "id": "bathroom",
+      "title": "Koupelna",
+      "floor": "upper-floor",
+      "decisionCanvas": "decision-canvas/bathroom.svg",
+      "media": {
+        "folder": "media/bathroom",
+        "hero": "hero.jpg",
+        "gallery": ["01.jpg", "02.jpg", "03.jpg"],
+        "video": "video.mp4"
+      },
+      "floorPlanRegion": {
+        "x": 205.01329,
+        "y": 93.32788,
+        "width": 119.33858,
+        "height": 114.17323
+      }
+    },
+    {
+      "id": "bedroom",
+      "title": "Ložnice",
+      "floor": "upper-floor",
+      "decisionCanvas": "decision-canvas/bedroom.svg",
+      "media": {
+        "folder": "media/bedroom",
+        "hero": "hero.jpg",
+        "gallery": ["01.jpg", "02.jpg", "03.jpg"],
+        "video": "video.mp4"
+      },
+      "floorPlanRegion": {
+        "x": 85.6747,
+        "y": 207.50111,
+        "width": 119.33859,
+        "height": 114.17323
+      }
+    },
+    {
+      "id": "living-room",
+      "title": "Obývací pokoj",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/living-room.svg",
+      "media": {
+        "folder": "media/living-room",
+        "hero": "hero.jpg",
+        "gallery": ["01.jpg", "02.jpg", "03.jpg"],
+        "video": "video.mp4"
+      },
+      "floorPlanRegion": {
+        "x": 205.01329,
+        "y": 207.50111,
+        "width": 119.33858,
+        "height": 114.17323
+      }
+    },
+    {
+      "id": "hall",
+      "title": "Chodba",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/hall.svg",
+      "media": {
+        "folder": "media/hall",
+        "hero": "hero.jpg",
+        "gallery": ["01.jpg", "02.jpg", "03.jpg"],
+        "video": "video.mp4"
+      }
+    },
+    {
+      "id": "terrace",
+      "title": "Terasa",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/terrace.svg",
+      "media": {
+        "folder": "media/terrace",
+        "hero": "hero.jpg",
+        "gallery": ["01.jpg", "02.jpg", "03.jpg"],
+        "video": "video.mp4"
+      }
+    }
+  ]
+}
