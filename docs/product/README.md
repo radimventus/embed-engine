@@ -20,6 +20,7 @@ Active product SSOT lives here.
 | **`../architecture/pt/PT-001-house-package-canonical-object-contract.md`** | **Platform theory — House Package as canonical object contract** |
 | **`../architecture/pt/PT-002-interpretation-is-the-product.md`** | **Platform theory — Interpretation is the product** |
 | **`../architecture/pt/PT-003-decision-sessions-are-reproducible.md`** | **Platform theory — Decision Sessions are reproducible** |
+| **`../architecture/pt/PT-004-decision-story-is-the-product.md`** | **Platform theory — Decision Story is the product** |
 | `knowledge/` | Knowledge Foundation (SSOT) |
 | `pilots/` | Pilot Foundation (SSOT process) |
 | `../pilot/` | **CAP-P01 knowledge model** — first Pilot Object + Behavior Pack |
