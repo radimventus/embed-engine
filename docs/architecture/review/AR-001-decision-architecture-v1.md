@@ -260,7 +260,7 @@ Modules may not consume: `runtime.state`, raw `interpretation`, signals, story i
 | Decision Focus | CAP-PRI-002 | **Done** |
 | Decision Story | CAP-DST-001 | **Done** |
 | Decision Moves | CAP-DST-002 | **Done** |
-| AI Context Reader | CAP-AI-001 | **Not done** |
+| AI Context Reader | CAP-AI-001 | **Done** |
 | Decision Terminal Engine | CAP-DTR-001 | **Done** |
 | Decision Outcome Engine | CAP-OUT-001 | **Done** |
 
@@ -457,8 +457,8 @@ Ordered roadmap after this review — **no new foundational architecture**:
 2. ~~**CAP-DST-002** — Decision Move Engine~~ **Done**
 3. ~~**CAP-OUT-001** — Decision Outcome Engine~~ **Done**
 4. ~~**CAP-DTR-001** — Decision Terminal Engine~~ **Done**
-5. **CAP-AI-001** — AI Context Reader (read Context/Story/Outcome only; commands via Runtime)
-6. **ED-DA-01…06** — boundary hardening in parallel or immediately after DST-001
+5. ~~**CAP-AI-001** — AI Context Reader~~ **Done**
+6. **ED-DA-01…06** — boundary hardening
 
 ---
 

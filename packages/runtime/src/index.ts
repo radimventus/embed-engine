@@ -44,6 +44,7 @@ export {
 } from "./priority/html-renderer";
 
 export {
+  AI_CONTEXT_SCHEMA_VERSION,
   DECISION_MOVE_SCHEMA_VERSION,
   DECISION_OUTCOME_SCHEMA_VERSION,
   DECISION_SESSION_FORMAT,
@@ -54,6 +55,7 @@ export {
   applyDecisionEvent,
   cloneDecisionSession,
   commandToEvent,
+  composeAIContext,
   composeDecisionMoves,
   composeDecisionOutcome,
   composeDecisionStory,
@@ -86,6 +88,8 @@ export {
   serializeDecisionSession,
   serializeDecisionSessionToJson,
   validateCommand,
+  type AIContext,
+  type AIContextContract,
   type ComposeDecisionStoryInput,
   type CreateDecisionSessionInput,
   type DecisionEvent,

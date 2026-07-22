@@ -124,6 +124,12 @@ export {
   type DecisionTerminalContract,
 } from "./decision-terminal";
 export {
+  composeAIContext,
+  AI_CONTEXT_SCHEMA_VERSION,
+  type AIContext,
+  type AIContextContract,
+} from "./ai-context";
+export {
   DecisionSessionRuntime,
   applyDecisionEvent,
   commandToEvent,

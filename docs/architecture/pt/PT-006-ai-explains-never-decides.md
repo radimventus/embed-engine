@@ -278,6 +278,8 @@ Implement an AI Context Reader that:
 - routes user intent into explicit Runtime commands,
 - remains interchangeable across LLM providers without changing semantic outputs.
 
+**Implementation status:** Done in `@embed-engine/runtime` (`session/ai-context`, `composeAIContext(terminal)` only — structured Terminal projection; no prompts, NL, or semantic authorship). LLM calls / chat remain out of scope.
+
 ---
 
 ## Success Criteria

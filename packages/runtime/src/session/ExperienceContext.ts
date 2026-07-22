@@ -1,5 +1,6 @@
 import type { ExperienceHouse, ExperienceHouseRoom } from "@embed-engine/model";
 
+import type { AIContextContract } from "./ai-context";
 import type { DecisionFocus } from "./decision-focus";
 import type { DecisionMoveContract } from "./decision-moves";
 import type { DecisionOutcomeContract } from "./decision-outcome";
@@ -72,6 +73,8 @@ export type ExperienceDecisionContext = {
   readonly outcome: DecisionOutcomeContract;
   /** Completion surface wrapping Outcome (CAP-DTR-001 / PT-007). */
   readonly terminal: DecisionTerminalContract;
+  /** Structured AI projection of Terminal (CAP-AI-001 / PT-006). */
+  readonly ai: AIContextContract;
 };
 
 /**
@@ -111,6 +114,7 @@ export type ProjectExperienceContextInput = {
   readonly decisionMoves: DecisionMoveContract;
   readonly decisionOutcome: DecisionOutcomeContract;
   readonly decisionTerminal: DecisionTerminalContract;
+  readonly aiContext: AIContextContract;
 };
 
 /**
@@ -177,6 +181,7 @@ export function projectExperienceContext(
       moves: input.decisionMoves,
       outcome: input.decisionOutcome,
       terminal: input.decisionTerminal,
+      ai: input.aiContext,
     }),
   });
 }

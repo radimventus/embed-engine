@@ -14,6 +14,8 @@ import type { DecisionOutcome } from "../decision-outcome";
 import { composeDecisionOutcome } from "../decision-outcome";
 import type { DecisionTerminal } from "../decision-terminal";
 import { composeDecisionTerminal } from "../decision-terminal";
+import type { AIContext } from "../ai-context";
+import { composeAIContext } from "../ai-context";
 import type { DecisionSession } from "../DecisionSession";
 import {
   createInterpretationContext,
@@ -34,7 +36,7 @@ import {
  * Object Package + Runtime State + Priority Signals + Interpretation Rules
  * + Decision Focus (CAP-PRI-002) + Decision Story (CAP-DST-001)
  * + Decision Moves (CAP-DST-002) + Decision Outcome (CAP-OUT-001)
- * + Decision Terminal (CAP-DTR-001).
+ * + Decision Terminal (CAP-DTR-001) + AI Context Reader (CAP-AI-001).
  * Never validates commands. Never projects UI.
  */
 export type SessionInterpretation = {
@@ -69,6 +71,8 @@ export type SessionInterpretation = {
   readonly decisionOutcome: DecisionOutcome;
   /** Completion surface wrapping Outcome (CAP-DTR-001 / PT-007). */
   readonly decisionTerminal: DecisionTerminal;
+  /** Structured AI projection of Terminal (CAP-AI-001 / PT-006). */
+  readonly aiContext: AIContext;
 };
 
 export type InterpretDecisionSessionOptions = {
@@ -85,6 +89,7 @@ function buildSummary(
   decisionMoves: DecisionMoveSequence,
   decisionOutcome: DecisionOutcome,
   decisionTerminal: DecisionTerminal,
+  aiContext: AIContext,
 ): string {
   return [
     `object:${session.objectId}`,
@@ -96,6 +101,7 @@ function buildSummary(
     `moves:${decisionMoves.activeMoveId ?? "none"}:${decisionMoves.moves.length}`,
     `outcome:${decisionOutcome.id}`,
     `terminal:${decisionTerminal.id}`,
+    `ai:${aiContext.id}`,
     `reason:${semantics.primaryReason}`,
     `highlights:${semantics.highlights.join(",") || "none"}`,
     `media:${semantics.recommendedMedia.map((item) => item.role).join(",") || "none"}`,
@@ -161,6 +167,9 @@ export function interpretDecisionSession(
   // CAP-DTR-001: Terminal wraps Outcome only — no semantic enrichment.
   const decisionTerminal = composeDecisionTerminal(decisionOutcome);
 
+  // CAP-AI-001: AI Context projects Terminal only — no prompts / NL / new semantics.
+  const aiContext = composeAIContext(decisionTerminal);
+
   const activeRoomId = session.runtimeState.activeRoomId;
   const activeRoomName =
     activeRoomId === null
@@ -187,6 +196,7 @@ export function interpretDecisionSession(
       decisionMoves,
       decisionOutcome,
       decisionTerminal,
+      aiContext,
     ),
     rulesetId: rules.id,
     rulesetVersion: rules.version,
@@ -201,5 +211,6 @@ export function interpretDecisionSession(
     decisionMoves,
     decisionOutcome,
     decisionTerminal,
+    aiContext,
   });
 }

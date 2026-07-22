@@ -5,6 +5,7 @@ import type {
 import type { HousePackage } from "@embed-engine/object-house";
 import { projectHouse } from "@embed-engine/object-house";
 
+import type { AIContext } from "./ai-context";
 import type { DecisionSession } from "./DecisionSession";
 import type { DecisionFocus } from "./decision-focus";
 import type { DecisionMoveSequence } from "./decision-moves";
@@ -60,6 +61,8 @@ export type SessionExperience = {
   readonly decisionOutcome: DecisionOutcome;
   /** Completion surface wrapping Outcome (CAP-DTR-001 / PT-007). */
   readonly decisionTerminal: DecisionTerminal;
+  /** Structured AI projection of Terminal (CAP-AI-001 / PT-006). */
+  readonly aiContext: AIContext;
   /** Unified semantic view model — preferred module input. */
   readonly context: ExperienceContext;
 };
@@ -125,6 +128,7 @@ export function projectFromInterpretation(
     decisionMoves: interpretation.decisionMoves,
     decisionOutcome: interpretation.decisionOutcome,
     decisionTerminal: interpretation.decisionTerminal,
+    aiContext: interpretation.aiContext,
   });
 
   return {
@@ -151,6 +155,7 @@ export function projectFromInterpretation(
       decisionMoves: interpretation.decisionMoves,
       decisionOutcome: interpretation.decisionOutcome,
       decisionTerminal: interpretation.decisionTerminal,
+      aiContext: interpretation.aiContext,
       context,
     }),
   };
