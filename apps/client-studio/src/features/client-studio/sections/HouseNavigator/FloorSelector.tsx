@@ -1,6 +1,6 @@
 import { SegmentedControl } from '@embed-engine/ui';
 
-import { useWalkthrough } from '../../../walkthrough';
+import { useHouseNavigator } from './useHouseNavigator';
 
 function floorLabel(floor: string): string {
   if (floor === '0') {
@@ -10,9 +10,11 @@ function floorLabel(floor: string): string {
   return 'PATRO';
 }
 
+/**
+ * Floor filter derived from projected activeRoom — no local selectedFloor state.
+ */
 export function FloorSelector() {
-  const { rooms, selectedFloor, selectFloor } = useWalkthrough();
-  const floors = [...new Set(rooms.map((room) => room.floor))];
+  const { floors, selectedFloor, selectFloor } = useHouseNavigator();
 
   if (floors.length < 2) {
     return null;
