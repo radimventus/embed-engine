@@ -1,3 +1,10 @@
+/**
+ * Decision Session barrel — see OWNERSHIP.md for canonical composer map (ED-DA-01).
+ *
+ * Experience modules: prefer ExperienceContext contract types + DecisionSessionRuntime.
+ * Do not call compose* / evaluate* from presentation code.
+ */
+
 export type {
   DecisionEvent,
   DecisionEventType,

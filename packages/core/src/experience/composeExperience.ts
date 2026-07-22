@@ -34,6 +34,10 @@ export type InterpretedExperience = {
 /**
  * Builds Experience from Interpretation (ADR-012 communication layer).
  * Does not read Object facts — only Interpretation meaning + fragment communication.
+ *
+ * ED-DA-01: Legacy cognitive pipeline — parallel to `@embed-engine/runtime` Decision Session.
+ * Not the canonical Story / Moves / Outcome / Terminal producer.
+ * Tracked for Client Studio dual-stack retirement under ED-DA-01.
  */
 export function createExperienceFromInterpretation(
   interpretation: Interpretation,
@@ -56,8 +60,11 @@ export function createExperienceFromInterpretation(
 }
 
 /**
- * Canonical reactive pipeline step:
+ * Canonical reactive pipeline step (legacy cognitive stack):
  * Object + DecisionContext → InterpretationEngine → ExperienceComposer
+ *
+ * ED-DA-01: Not the Decision Session Runtime pipeline. Prefer
+ * `@embed-engine/runtime` DecisionSessionRuntime for Story→Moves→Outcome→Terminal→AIContext.
  */
 export function interpretAndCompose(input: {
   readonly object: ExperienceObjectRef;

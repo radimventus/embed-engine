@@ -44,6 +44,13 @@ type PriorityExperienceProviderProps = {
 
 /**
  * Priority Engine façade: card UI → Priority Signals (via Runtime) + legacy Experience compose.
+ *
+ * ED-DA-01: `interpretation` / `experience` here are the **legacy cognitive stack**
+ * (`@embed-engine/core` interpretAndCompose) — NOT Decision Session Runtime artifacts.
+ * Canonical Story / Moves / Outcome / Terminal / AIContext live on
+ * `DecisionSessionRuntimeProvider` → `experience.context.decision.*`.
+ * Dual-stack retirement remains open under ED-DA-01.
+ *
  * Hero / Gallery / Navigator react only through Experience Context — never from cards directly.
  */
 export function PriorityExperienceProvider({

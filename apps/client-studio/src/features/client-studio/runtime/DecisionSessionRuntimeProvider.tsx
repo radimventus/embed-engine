@@ -22,9 +22,20 @@ import {
 } from './synchronizedExperience';
 
 type DecisionSessionRuntimeContextValue = {
+  /**
+   * Session Runtime façade — prefer `dispatch` + `experience`.
+   * Do not reach into pipeline composers from presentation (ED-DA-01 / ED-DA-04).
+   */
   readonly runtime: DecisionSessionRuntime;
-  /** Canonical projected Experience for all Client Studio modules. */
+  /**
+   * Canonical projected Experience for Client Studio modules.
+   * Prefer `experience.context` (Experience Context) as the presentation contract.
+   */
   readonly experience: SynchronizedExperience;
+  /**
+   * Raw SessionInterpretation — legacy bridging / diagnostics only.
+   * Prefer `experience.context`; do not treat as a public Experience contract (ED-DA-04).
+   */
   readonly interpretation: SessionInterpretation | null;
   readonly dispatch: (command: RuntimeCommand, now?: number) => DispatchResult;
 };

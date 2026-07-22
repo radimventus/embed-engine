@@ -27,12 +27,14 @@ Items here are candidates for later milestones / ADRs.
 
 Deferred boundary work from [Architecture Review v1.0](../architecture/review/AR-001-decision-architecture-v1.md) (**PASSED Conditional**; architecture [FROZEN](../architecture/decision-architecture-v1.0-freeze.md)). Do **not** invent new foundational PTs — execute via CAPs + these items.
 
+Hardening report: [ED-DA-01 Boundary Hardening](../architecture/review/ED-DA-01-boundary-hardening.md)
+
 | ID | Item | Notes |
 | --- | --- | --- |
-| ED-DA-01 | Unify Client Studio on Decision Session Runtime only | Retire Priority `interpretAndCompose` as semantic producer |
+| ED-DA-01 | Unify Client Studio on Decision Session Runtime only | **Partial** — session ownership map + export policy + dual-stack documentation done; residual: retire Priority `interpretAndCompose` producer |
 | ED-DA-02 | Move room media / hero projection out of walkthrough catalog ownership | Prefer Object / Runtime projection |
-| ED-DA-03 | Narrow `@embed-engine/runtime` public exports | Façade + Experience Context + Outcome |
-| ED-DA-04 | Stop exposing `runtime` / raw `interpretation` to presentation modules | Provider contract = Experience Context |
+| ED-DA-03 | Narrow `@embed-engine/runtime` public exports | Façade documented; breaking narrowing deferred |
+| ED-DA-04 | Stop exposing `runtime` / raw `interpretation` to presentation modules | Prefer-`experience.context` documented on Provider; removal deferred |
 | ED-DA-05 | Converge flat `SessionExperience` fields into `experience.context` | Remove duplicate contracts |
 | ED-DA-06 | Require injectable clock on production create/dispatch | Reproducibility demos / replay |
 

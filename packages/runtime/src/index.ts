@@ -1,5 +1,13 @@
 /**
  * @embed-engine/runtime — Runtime packages (Priority Journey + Decision Session).
+ *
+ * Decision Session export policy (ED-DA-01):
+ * - Experience modules SHOULD use: DecisionSessionRuntime, createDecisionSessionRuntime,
+ *   ExperienceContext / SessionExperience types, contract types (*Contract), schema versions.
+ * - Prefer experience.context over raw interpretation / pipeline helpers.
+ * - compose* / evaluate* / validateCommand / applyDecisionEvent / interpretDecisionSession
+ *   are pipeline surfaces for tests and advanced integrations — do NOT call from UI modules
+ *   (bypasses canonical chain ownership; see session/OWNERSHIP.md).
  */
 
 export {

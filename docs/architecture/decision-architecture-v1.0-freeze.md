@@ -72,7 +72,7 @@ Decision Outcome        ← CAP-OUT-001 (artifact)
 3. ~~CAP-OUT-001 — Decision Outcome Engine~~ **Done** (Moves → Outcome only)  
 4. ~~CAP-DTR-001 — Decision Terminal Engine~~ **Done** (Outcome → Terminal only)  
 5. ~~CAP-AI-001 — AI Context Reader~~ **Done** (Terminal → AIContext only)  
-6. ED-DA-01…06 — boundary hardening  
+6. ED-DA-01…06 — boundary hardening ([ED-DA-01 report](./review/ED-DA-01-boundary-hardening.md) — **partial**)  
 
 Full findings: [AR-001](./review/AR-001-decision-architecture-v1.md)  
 Debt register: [Engineering Debt](../implementation/Engineering%20Debt.md)

@@ -5,6 +5,12 @@ import type {
 } from "./DecisionStory";
 import type { DecisionStoryPack } from "./DecisionStoryPack";
 
+/**
+ * ED-DA-01: Legacy pack/spine Decision Story composer (`@embed-engine/core`).
+ * Parallel to `@embed-engine/runtime` `composeDecisionStory` (session pipeline SSOT).
+ * Same English name, different shape — do not extend as the canonical Story producer.
+ */
+
 function readString(
   payload: Readonly<Record<string, unknown>>,
   key: string,
