@@ -12,14 +12,19 @@ import {
   createDecisionSessionRuntime,
   type DecisionSessionRuntime,
   type RuntimeCommand,
-  type SessionExperience,
   type SessionInterpretation,
   type DispatchResult,
 } from '@embed-engine/runtime';
 
+import {
+  projectSynchronizedExperience,
+  type SynchronizedExperience,
+} from './synchronizedExperience';
+
 type DecisionSessionRuntimeContextValue = {
   readonly runtime: DecisionSessionRuntime;
-  readonly experience: SessionExperience;
+  /** Canonical projected Experience for all Client Studio modules. */
+  readonly experience: SynchronizedExperience;
   readonly interpretation: SessionInterpretation | null;
   readonly dispatch: (command: RuntimeCommand, now?: number) => DispatchResult;
 };
@@ -32,8 +37,8 @@ type DecisionSessionRuntimeProviderProps = {
 };
 
 /**
- * Binds Client Studio to the real Decision Session Runtime (CAP-HP-003.1).
- * Object Package: REFERENCE_HOUSE_PACKAGE. UI consumes projection only.
+ * Decision Session Runtime + synchronized media projection (CAP-HP-003.3).
+ * All Experience modules consume `experience` — never each other.
  */
 export function DecisionSessionRuntimeProvider({
   children,
@@ -62,13 +67,13 @@ export function DecisionSessionRuntimeProvider({
 
   const value = useMemo((): DecisionSessionRuntimeContextValue => {
     void revision;
-    const experience = runtime.getExperience();
-    if (experience === null) {
+    const base = runtime.getExperience();
+    if (base === null) {
       throw new Error('DecisionSessionRuntime produced no Experience projection.');
     }
     return {
       runtime,
-      experience,
+      experience: projectSynchronizedExperience(base),
       interpretation: runtime.getInterpretation(),
       dispatch,
     };

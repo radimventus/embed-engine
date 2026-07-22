@@ -1,21 +1,21 @@
 import { getHousePresentationAssets } from '../../../walkthrough';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { getHeroMediaProjection } from '../../runtime/synchronizedExperience';
 
-/** Opening visual — prefers projected house media, falls back to presentation catalog. */
+/** Primary visual from projected room media (CAP-HP-003.3). */
 export function HeroImage() {
   const { experience } = useDecisionSessionRuntime();
+  const hero = getHeroMediaProjection(experience);
   const assets = getHousePresentationAssets();
-  const projectedImage = experience.house.media.find(
-    (asset) => asset.type === 'image',
-  );
-  const heroSrc = projectedImage?.url || assets.openingHeroSrc;
+  const heroSrc = hero.primaryMediaUrl || assets.openingHeroSrc;
 
   return (
     <div className="relative h-full min-h-0 w-full overflow-hidden bg-embed-surface-muted">
       <img
         src={heroSrc}
-        alt={experience.house.title}
+        alt={hero.title}
         className="h-full w-full object-cover"
+        data-room-id={experience.roomMedia?.roomId ?? undefined}
       />
     </div>
   );

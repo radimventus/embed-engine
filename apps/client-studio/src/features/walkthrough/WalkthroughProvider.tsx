@@ -47,7 +47,6 @@ type WalkthroughContextValue = {
   activeMediaSrc: string | null;
   roomMediaItems: readonly HousePackageMediaItem[];
   rooms: readonly WalkthroughRoom[];
-  /** Derived from projected activeRoom — not local selection ownership. */
   selectedFloor: string;
   isRoomActive: (roomId: string) => boolean;
   isMediaActive: (mediaIndex: number) => boolean;
@@ -93,12 +92,13 @@ function toWalkthroughRoom(room: ExperienceHouseRoom): WalkthroughRoom {
 }
 
 /**
- * Media / presentation adapter over Decision Session projection.
- * Room selection ownership remains on DecisionSessionRuntime (CAP-HP-003.2).
+ * Media chrome adapter (mode / index / play).
+ * Room media content comes from SynchronizedExperience.roomMedia (CAP-HP-003.3).
  */
 export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const { experience, dispatch } = useDecisionSessionRuntime();
   const applySignal = useApplyCognitiveSignal();
+  const projectedMedia = experience.roomMedia;
 
   const rooms = useMemo(
     () => experience.house.rooms.map(toWalkthroughRoom),
@@ -142,13 +142,13 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   }, [experience.activeRoomId, mediaMode]);
 
   const value = useMemo((): WalkthroughContextValue => {
+    const roomMediaItems = projectedMedia?.mediaItems ?? [];
+    const activeMediaItem = roomMediaItems[activeMediaIndex] ?? null;
+    const activeMediaSrc = activeMediaItem?.src ?? null;
     const activeRoom =
       experience.activeRoomId === null
         ? null
         : (rooms.find((room) => room.id === experience.activeRoomId) ?? null);
-    const roomMediaItems = activeRoom?.mediaItems ?? [];
-    const activeMediaItem = roomMediaItems[activeMediaIndex] ?? null;
-    const activeMediaSrc = activeMediaItem?.src ?? null;
 
     return {
       mode,
@@ -179,11 +179,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       },
       selectMediaIndex: (mediaIndex: number) => {
         setActiveMediaIndex(mediaIndex);
-        const room =
-          experience.activeRoomId === null
-            ? null
-            : (rooms.find((item) => item.id === experience.activeRoomId) ?? null);
-        const media = room?.mediaItems[mediaIndex];
+        const media = roomMediaItems[mediaIndex];
         applyMediaOpened(
           applySignal,
           `media-${mediaIndex}`,
@@ -225,6 +221,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     experience.activeRoomId,
     mediaMode,
     mode,
+    projectedMedia,
     rooms,
     selectedFloor,
   ]);

@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from 'react';
 import { getHousePresentationAssets, useWalkthrough } from '../../../walkthrough';
 import { DECISION_TRANSITION_EASING } from '../../../walkthrough/transition-tokens';
 import { useDecisionCrossfade } from '../../../walkthrough/useDecisionCrossfade';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { getGalleryMediaProjection } from '../../runtime/synchronizedExperience';
 
 import { MediaLightbox } from './MediaLightbox';
 import { MediaZoomControl } from './MediaZoomControl';
@@ -35,13 +37,16 @@ function parsePhotoSrc(displayKey: string): string | null {
   return parts[2] ?? null;
 }
 
+/**
+ * Media Explorer viewport — projected gallery assets only (CAP-HP-003.3).
+ */
 export function MainMedia() {
+  const { experience } = useDecisionSessionRuntime();
+  const gallery = getGalleryMediaProjection(experience);
   const {
     mode,
     mediaMode,
-    activeMediaSrc,
-    activeRoomId,
-    activeRoom,
+    activeMediaIndex,
     play,
     onVideoEnded,
   } = useWalkthrough();
@@ -50,12 +55,16 @@ export function MainMedia() {
   const [hasStartedPlayback, setHasStartedPlayback] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
 
+  const activeMediaItem = gallery.mediaItems[activeMediaIndex] ?? null;
+  const activeMediaSrc = activeMediaItem?.src ?? null;
+  const activeRoomId = gallery.roomId;
+
   const isRoomVideo = activeRoomId !== null && mediaMode === 'video';
   const videoSrc = isRoomVideo
-    ? (activeRoom?.videoSrc || assets.walkthroughVideoSrc)
+    ? (gallery.videoUrl || assets.walkthroughVideoSrc)
     : assets.walkthroughVideoSrc;
   const videoPoster = isRoomVideo
-    ? (activeRoom?.heroSrc || assets.walkthroughVideoPoster)
+    ? (gallery.heroUrl || assets.walkthroughVideoPoster)
     : assets.walkthroughVideoPoster;
   const videoKey = `${videoSrc}|${activeRoomId ?? 'intro'}|${mediaMode}`;
 
@@ -87,7 +96,7 @@ export function MainMedia() {
   const showPlayControl = mediaMode === 'video' && !hasStartedPlayback;
   const showNativeControls = mediaMode === 'video' && hasStartedPlayback;
   const previewAlt = showPhoto
-    ? (activeRoom?.title ?? 'Fotografie místnosti')
+    ? (gallery.title ?? 'Fotografie místnosti')
     : 'Náhled procházky domem';
 
   const handlePlay = () => {
@@ -122,6 +131,7 @@ export function MainMedia() {
           transitionDuration: `${phaseMs}ms`,
           transitionTimingFunction: DECISION_TRANSITION_EASING,
         }}
+        data-room-id={activeRoomId ?? undefined}
       >
         {showPhoto ? (
           <img

@@ -1,6 +1,7 @@
 import { colors } from '@embed-engine/design-tokens';
 
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { getHeroMediaProjection } from '../../runtime/synchronizedExperience';
 import { HeroCTA } from './HeroCTA';
 
 /** Same veil as former Social Proof divider — anchored to gold line, fading upward. */
@@ -8,16 +9,10 @@ const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
   backgroundImage: `linear-gradient(to top, color-mix(in srgb, ${colors.border.default} 30%, #FFFFFF), #FFFFFF)`,
 } as const;
 
-/** Left third — Object facts from projected Experience (CAP-HP-003.1). */
+/** Hero content from synchronized SessionExperience (CAP-HP-003.3). */
 export function HeroContent() {
   const { experience } = useDecisionSessionRuntime();
-  const { house } = experience;
-
-  const features = [
-    { value: `${house.usableArea} m2`, label: 'Užitná plocha' },
-    { value: house.energyClass, label: 'Energetická třída' },
-    { value: house.construction, label: 'Konstrukce' },
-  ] as const;
+  const hero = getHeroMediaProjection(experience);
 
   return (
     <section
@@ -26,15 +21,19 @@ export function HeroContent() {
     >
       <div className="translate-x-[10px]">
         <p className="text-sm font-bold uppercase tracking-wide text-[#D4AF37]">
-          {house.reference} – {house.title}
+          {hero.eyebrow}
         </p>
 
         <h1 className="mt-3 font-sans text-[2.52rem] font-black leading-[1.15] tracking-tight text-embed-foreground-primary">
-          {house.city}, {house.district}
+          {hero.title}
         </h1>
 
+        <p className="mt-3 max-w-md text-sm leading-relaxed text-embed-foreground-primary/70">
+          {hero.description}
+        </p>
+
         <dl className="mt-8 grid grid-cols-3 divide-x divide-embed-border-default">
-          {features.map((feature) => (
+          {hero.metrics.map((feature) => (
             <div key={feature.label} className="flex flex-col px-3 first:pl-0 last:pr-0">
               <dd className="order-1 text-base font-bold leading-tight text-[#D4AF37]">
                 {feature.value}
