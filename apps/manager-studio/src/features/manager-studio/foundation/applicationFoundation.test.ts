@@ -1,0 +1,101 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { describe, it } from 'node:test';
+
+const here = dirname(fileURLToPath(import.meta.url));
+const managerStudioRoot = join(here, '../../../..');
+
+function readSource(relativeFromManagerStudio: string): string {
+  return readFileSync(join(managerStudioRoot, relativeFromManagerStudio), 'utf8');
+}
+
+function stripComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*\/\/.*$/gm, '');
+}
+
+describe('Application Foundation (MSCB-01)', () => {
+  it('mounts through a single main entry and AppShell', () => {
+    const main = readSource('src/main.tsx');
+    const app = readSource(
+      'src/features/manager-studio/ManagerStudioApp.tsx',
+    );
+
+    assert.match(main, /ErrorBoundary/);
+    assert.match(main, /ManagerStudioApp/);
+    assert.equal(main.includes('createRoot'), true);
+    assert.match(app, /AppShell/);
+    assert.match(app, /ManagerStudioHeader/);
+    assert.match(app, /ManagerStudioSidebar/);
+    assert.match(app, /ManagerStudioPage/);
+  });
+
+  it('bootstraps Decision Session Runtime only via the Provider', () => {
+    const provider = readSource(
+      'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+    );
+    const page = readSource(
+      'src/features/manager-studio/ManagerStudioPage.tsx',
+    );
+    const app = stripComments(
+      readSource('src/features/manager-studio/ManagerStudioApp.tsx'),
+    );
+
+    assert.match(provider, /createDecisionSessionRuntime/);
+    assert.match(provider, /createSystemClock/);
+    assert.match(page, /DecisionSessionRuntimeProvider/);
+    assert.match(page, /RuntimeBootstrapGate/);
+    assert.equal(app.includes('createDecisionSessionRuntime'), false);
+  });
+
+  it('keeps shell navigation wired to operations section ids', () => {
+    const vocabulary = readSource(
+      'src/features/manager-studio/operations/operationsVocabulary.ts',
+    );
+    const sidebar = readSource(
+      'src/features/manager-studio/ManagerStudioSidebar.tsx',
+    );
+    const canvas = readSource(
+      'src/features/manager-studio/operations/OperationsCanvas.tsx',
+    );
+
+    assert.match(vocabulary, /OPERATIONS_SECTION_NAV/);
+    assert.match(vocabulary, /live-overview/);
+    assert.match(vocabulary, /attention-queue/);
+    assert.match(sidebar, /OPERATIONS_SECTION_NAV/);
+    assert.match(sidebar, /useActiveSection/);
+    assert.match(sidebar, /scrollToSection/);
+    assert.match(canvas, /LiveOverview/);
+    assert.match(canvas, /Timeline/);
+    assert.match(canvas, /Actions/);
+  });
+
+  it('does not expose Interpretation or compose semantics in the Provider', () => {
+    const provider = stripComments(
+      readSource(
+        'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+      ),
+    );
+
+    assert.match(provider, /projectOperationsOverview/);
+    assert.equal(provider.includes('getInterpretation'), false);
+    assert.equal(provider.includes('interpretDecisionSession'), false);
+    assert.equal(provider.includes('composeDecision'), false);
+  });
+
+  it('does not depend on Client Studio application modules', () => {
+    const page = readSource(
+      'src/features/manager-studio/ManagerStudioPage.tsx',
+    );
+    const provider = readSource(
+      'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+    );
+
+    assert.equal(page.includes('client-studio'), false);
+    assert.equal(provider.includes('client-studio'), false);
+    assert.equal(provider.includes('synchronizedExperience'), false);
+  });
+});

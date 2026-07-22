@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: #e3e3e3;
+  }
+
+  html,
+  body,
+  #root {
+    @apply min-h-screen overscroll-none text-embed-foreground-primary;
+    background-color: #f7f6f4;
+  }
+
+  body {
+    @apply font-sans antialiased;
+  }
+}
