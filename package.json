@@ -9,7 +9,9 @@
       "lint": "turbo run lint",
       "test": "turbo run test",
       "typecheck": "turbo run typecheck",
-      "format": "prettier --write ."
+      "format": "prettier --write .",
+      "reference": "pnpm --filter @embed-engine/client-studio reference",
+      "reference:freeze": "pnpm --filter @embed-engine/client-studio reference:freeze"
     },
     "devDependencies": {
       "prettier": "^3.6.2",
