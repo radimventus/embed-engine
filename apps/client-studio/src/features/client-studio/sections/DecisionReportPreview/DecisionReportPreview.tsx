@@ -1,28 +1,26 @@
 import { FramedInput, Panel, PrimaryButton } from '@embed-engine/ui';
-import type { Experience } from '@embed-engine/core/experience';
 
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import {
   CHAPTER_PANEL_DIVIDER_CLASS,
   CHAPTER_PANEL_LABEL_CLASS,
 } from '../../chapter-layout';
 import { CHAPTER_HEADER_CLASS } from '../spatial-terminal-layout';
-import { decisionReportPreviewFromExperience } from './DecisionReportPreviewViewModel';
-
-export type DecisionReportPreviewProps = {
-  experience: Experience;
-};
+import { decisionReportPreviewFromTerminal } from './DecisionReportPreviewViewModel';
 
 /**
- * Decision Report Preview — pure Experience renderer (lead-capture chrome only).
+ * Decision Report Preview — pure Terminal renderer (lead-capture chrome only).
  */
-export function DecisionReportPreview({ experience }: DecisionReportPreviewProps) {
-  const viewModel = decisionReportPreviewFromExperience(experience);
+export function DecisionReportPreview() {
+  const { experience } = useDecisionSessionRuntime();
+  const terminal = experience.context.decision.terminal;
+  const viewModel = decisionReportPreviewFromTerminal(terminal);
 
   return (
     <section
       aria-label="Náhled reportu rozhodnutí"
       className="border-b border-embed-border-default px-section py-section"
-      data-experience-id={experience.id}
+      data-terminal-id={terminal.id}
     >
       <header>
         <h2 className={CHAPTER_HEADER_CLASS}>Report rozhodnutí</h2>

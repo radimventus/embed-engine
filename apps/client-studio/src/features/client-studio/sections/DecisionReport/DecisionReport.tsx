@@ -1,44 +1,19 @@
-import type { Experience } from '@embed-engine/core/experience';
-
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { projectTerminalPresentation } from '../../runtime/projectTerminalPresentation';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 
-export type DecisionReportProps = {
-  experience: Experience;
-};
-
-const SEVERITY_CS = {
-  low: 'nízká',
-  medium: 'střední',
-  high: 'vysoká',
-} as const;
-
-const LEVEL_CS = {
-  low: 'nízká',
-  medium: 'střední',
-  high: 'vysoká',
-} as const;
-
-const ACTION_TYPE_CS = {
-  primary: 'primární',
-  secondary: 'sekundární',
-} as const;
-
-const ACTION_INTENT_CS = {
-  explore: 'prozkoumat',
-  compare: 'porovnat',
-  contact: 'kontaktovat',
-  calculate: 'spočítat',
-} as const;
-
 /**
- * Decision Report — structured Experience presentation.
- * Pure renderer; owns no Priority, Object, Composer, or Fragments.
+ * Decision Report — structured Terminal presentation.
+ * Pure renderer; owns no Priority, Object, Composer, or Fragments (ED-DA-01R).
  */
-export function DecisionReport({ experience }: DecisionReportProps) {
+export function DecisionReport() {
+  const { experience } = useDecisionSessionRuntime();
+  const view = projectTerminalPresentation(experience.context.decision.terminal);
+
   return (
     <article
       className={`mt-section ${SECTION_SURFACE_CLASS} p-section`}
-      data-experience-id={experience.id}
+      data-terminal-id={view.id}
       data-testid="decision-report"
       aria-label="Report rozhodnutí"
     >
@@ -47,10 +22,10 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           Report rozhodnutí
         </p>
         <h2 className="mt-2 text-base font-semibold text-embed-foreground-primary">
-          {experience.title}
+          {view.recommendation}
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-embed-foreground-primary/80">
-          {experience.summary}
+          {view.status}
         </p>
       </header>
 
@@ -59,10 +34,10 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           id="decision-report-focus"
           className="text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45"
         >
-          Zaměření
+          Dokončené kroky
         </h3>
         <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-embed-foreground-primary/70">
-          {experience.focus.map((item) => (
+          {view.completedMoveIds.map((item) => (
             <li key={item}>{item}</li>
           ))}
         </ol>
@@ -79,14 +54,9 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           className="mt-2 space-y-3 text-sm"
           data-testid="decision-report-evidence"
         >
-          {experience.evidence.map((item) => (
-            <div key={item.id}>
-              <dt className="font-medium text-embed-foreground-primary">
-                {item.title}
-              </dt>
-              <dd className="mt-0.5 text-embed-foreground-primary/70">
-                {item.description}
-              </dd>
+          {view.rationale.map((key) => (
+            <div key={key}>
+              <dt className="font-medium text-embed-foreground-primary">{key}</dt>
             </div>
           ))}
         </dl>
@@ -103,17 +73,9 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           className="mt-2 space-y-3 text-sm"
           data-testid="decision-report-concerns"
         >
-          {experience.concerns.map((item) => (
-            <div key={item.id}>
-              <dt className="font-medium text-embed-foreground-primary">
-                {item.title}{' '}
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-embed-foreground-primary/45">
-                  ({SEVERITY_CS[item.severity]})
-                </span>
-              </dt>
-              <dd className="mt-0.5 text-embed-foreground-primary/70">
-                {item.description}
-              </dd>
+          {view.unresolvedQuestions.map((key) => (
+            <div key={key}>
+              <dt className="font-medium text-embed-foreground-primary">{key}</dt>
             </div>
           ))}
         </dl>
@@ -130,9 +92,7 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           Doporučení
         </h3>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-embed-foreground-primary/70">
-          {experience.recommendations.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
+          <li>{view.recommendation}</li>
         </ul>
       </section>
 
@@ -151,10 +111,8 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           data-testid="decision-report-confidence"
         >
           <p className="font-medium text-embed-foreground-primary">
-            {LEVEL_CS[experience.confidence.level]} ·{' '}
-            {experience.confidence.score}
+            {view.confidence}
           </p>
-          <p className="leading-relaxed">{experience.confidence.explanation}</p>
         </div>
       </section>
 
@@ -169,16 +127,11 @@ export function DecisionReport({ experience }: DecisionReportProps) {
           className="mt-2 list-disc space-y-2 pl-5 text-sm text-embed-foreground-primary/70"
           data-testid="decision-report-actions"
         >
-          {experience.actions.map((item) => (
-            <li key={item.id}>
-              <span className="font-medium text-embed-foreground-primary">
-                {item.label}
-              </span>
-              <span className="mt-0.5 block text-[11px] uppercase tracking-wide text-embed-foreground-primary/45">
-                {ACTION_TYPE_CS[item.type]} · {ACTION_INTENT_CS[item.intent]}
-              </span>
-            </li>
-          ))}
+          <li>
+            <span className="font-medium text-embed-foreground-primary">
+              {view.recommendedNextAction}
+            </span>
+          </li>
         </ul>
       </section>
     </article>

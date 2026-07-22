@@ -1,4 +1,6 @@
-import type { Experience } from '@embed-engine/core/experience';
+import type { AIContextContract } from '@embed-engine/runtime';
+
+import { projectAiAdvisorPresentation } from '../../runtime/projectTerminalPresentation';
 
 export type ExperienceFaqItem = {
   readonly id: string;
@@ -7,25 +9,17 @@ export type ExperienceFaqItem = {
 };
 
 /**
- * FAQ topics projected from Experience evidence — no invented Q&A copy.
+ * FAQ topics projected from AIContext rationale keys — no invented Q&A copy.
  */
-export function faqItemsFromExperience(
-  experience: Experience,
+export function faqItemsFromAiContext(
+  ai: AIContextContract,
 ): readonly ExperienceFaqItem[] {
-  return Object.freeze(
-    experience.evidence.map((item) =>
-      Object.freeze({
-        id: item.id,
-        question: item.title,
-        answer: item.description,
-      }),
-    ),
-  );
+  return projectAiAdvisorPresentation(ai).faqItems;
 }
 
 /**
- * Opening assistant line from Experience summary.
+ * Opening assistant line from AIContext recommendation key.
  */
-export function advisorIntroFromExperience(experience: Experience): string {
-  return experience.summary;
+export function advisorIntroFromAiContext(ai: AIContextContract): string {
+  return projectAiAdvisorPresentation(ai).intro;
 }

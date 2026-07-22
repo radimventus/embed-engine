@@ -1,6 +1,4 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { createDecisionContext } from '@embed-engine/core';
-import { interpretAndCompose } from '@embed-engine/core/experience';
 import {
   HOUSEHOLD_PROFILE_FACT_KEY,
   isHouseholdProfile,
@@ -16,7 +14,7 @@ import { useExperienceSession } from '../../cognitive/ExperienceBindingProvider'
 import { useActiveDecisionMove } from '../../cognitive/DecisionStoryProvider';
 import { useWalkthrough } from '../../../walkthrough';
 import { PILOT_TERMS } from '../../pilot/pilotVocabulary';
-import { usePrioritySelection } from '../PriorityEngine/PrioritySelectionContext';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 
 export type TerminalPhase =
   | 'loading'
@@ -32,11 +30,10 @@ export type TerminalAction = {
   readonly disabled?: boolean;
 };
 
-const PILOT_OBJECT_ID = 'house-modern-01';
-
 /**
- * Decision Terminal view-model from Session snapshot + Story (S-004 / S-005).
- * Experience is always recomposed from PrioritySelection → DecisionContext → Interpretation.
+ * Dialogue Terminal view-model from Session snapshot + Story (S-004 / S-005).
+ * Semantic recommendation surface is Runtime Terminal only (ED-DA-01R) —
+ * this hook no longer composes Experience via interpretAndCompose.
  */
 export function useDecisionTerminal() {
   const session = useExperienceSession();
@@ -44,15 +41,8 @@ export function useDecisionTerminal() {
   const walkthrough = useWalkthrough();
   const { story, definition, outcome, activeMoveId } = useActiveDecisionMove();
   const interpretation = session.interpretation;
-  const priorities = usePrioritySelection();
-  const { experience } = useMemo(() => {
-    const context = createDecisionContext({ priorities });
-    return interpretAndCompose({
-      object: { id: PILOT_OBJECT_ID },
-      context,
-    });
-  }, [priorities]);
-
+  const { experience: runtimeExperience } = useDecisionSessionRuntime();
+  const terminal = runtimeExperience.context.decision.terminal;
 
   const pendingRef = useRef(false);
   const [pending, setPending] = useState(false);
@@ -224,7 +214,7 @@ export function useDecisionTerminal() {
     householdDraft,
     setHouseholdDraft,
     interpretation,
-    experience,
+    terminal,
     startDialogue,
     submitHousehold,
     commitLayout,

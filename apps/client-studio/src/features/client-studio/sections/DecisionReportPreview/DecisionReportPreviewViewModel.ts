@@ -1,7 +1,9 @@
-import type { Experience } from '@embed-engine/core/experience';
+import type { DecisionTerminalContract } from '@embed-engine/runtime';
+
+import { projectTerminalPresentation } from '../../runtime/projectTerminalPresentation';
 
 /**
- * Decision Report Preview — presentation projection from Experience only.
+ * Decision Report Preview — presentation projection from Terminal only.
  */
 export type DecisionReportPreviewViewModel = {
   readonly title: string;
@@ -11,20 +13,22 @@ export type DecisionReportPreviewViewModel = {
 };
 
 /**
- * Maps Experience to the lead-capture style report preview.
+ * Maps Terminal to the lead-capture style report preview.
  * No mock property names or invented priorities.
  */
-export function decisionReportPreviewFromExperience(
-  experience: Experience,
+export function decisionReportPreviewFromTerminal(
+  terminal: DecisionTerminalContract,
 ): DecisionReportPreviewViewModel {
+  const view = projectTerminalPresentation(terminal);
+
   return Object.freeze({
-    title: experience.title,
-    summary: experience.summary,
-    priorities: Object.freeze([...experience.focus]),
+    title: view.recommendation,
+    summary: view.status,
+    priorities: Object.freeze([...view.completedMoveIds]),
     includedItems: Object.freeze([
-      ...experience.evidence.map((item) => item.title),
-      ...experience.concerns.map((item) => item.title),
-      ...experience.actions.map((item) => item.label),
+      ...view.rationale,
+      ...view.unresolvedQuestions,
+      view.recommendedNextAction,
     ]),
   });
 }

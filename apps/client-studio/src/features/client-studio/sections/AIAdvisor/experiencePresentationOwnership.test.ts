@@ -1,57 +1,79 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { composeExperience } from '@embed-engine/core/experience';
+import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
+import { createDecisionSessionRuntime } from '@embed-engine/runtime';
 
 import {
-  advisorIntroFromExperience,
-  faqItemsFromExperience,
+  advisorIntroFromAiContext,
+  faqItemsFromAiContext,
 } from './experiencePresentation';
-import { decisionReportPreviewFromExperience } from '../DecisionReportPreview/DecisionReportPreviewViewModel';
-import { recommendationViewFromExperience } from '../PriorityEngine/RecommendationViewModel';
+import { decisionReportPreviewFromTerminal } from '../DecisionReportPreview/DecisionReportPreviewViewModel';
+import { recommendationViewFromTerminal } from '../PriorityEngine/RecommendationViewModel';
 
-describe('Experience presentation ownership', () => {
-  it('recommendation / FAQ / report preview project Experience only', () => {
-    const layout = composeExperience({
-      object: { id: 'house-modern-01' },
-      priorities: { selected: ['layout'] },
+describe('Runtime presentation ownership (ED-DA-01R)', () => {
+  it('recommendation / FAQ / report preview project Terminal / AIContext only', () => {
+    const layoutRuntime = createDecisionSessionRuntime({
+      housePackage: REFERENCE_HOUSE_PACKAGE,
+      now: 1,
     });
-    const design = composeExperience({
-      object: { id: 'house-modern-01' },
-      priorities: { selected: ['design'] },
-    });
+    layoutRuntime.dispatch(
+      { type: 'ChangePriority', priorityIds: ['layout'] },
+      2,
+    );
 
-    const recommendation = recommendationViewFromExperience(layout);
-    assert.equal(recommendation.title, layout.title);
-    assert.equal(recommendation.matchScore, layout.confidence.score);
+    const designRuntime = createDecisionSessionRuntime({
+      housePackage: REFERENCE_HOUSE_PACKAGE,
+      now: 1,
+    });
+    designRuntime.dispatch(
+      { type: 'ChangePriority', priorityIds: ['design'] },
+      2,
+    );
+
+    const layout = layoutRuntime.getExperience()!.context.decision;
+    const design = designRuntime.getExperience()!.context.decision;
+
+    const recommendation = recommendationViewFromTerminal(layout.terminal);
+    assert.equal(recommendation.title, layout.terminal.outcome.recommendation);
+    assert.equal(recommendation.matchScore, layout.terminal.outcome.confidence);
     assert.deepEqual(
       recommendation.strengths,
-      layout.evidence.map((item) => item.title),
+      layout.terminal.outcome.rationale,
     );
     assert.deepEqual(
       recommendation.considerations,
-      layout.concerns.map((item) => item.title),
+      layout.terminal.outcome.unresolvedQuestions,
     );
 
-    const faq = faqItemsFromExperience(layout);
-    assert.equal(faq.length, layout.evidence.length);
-    assert.equal(faq[0]?.question, layout.evidence[0]?.title);
-    assert.equal(faq[0]?.answer, layout.evidence[0]?.description);
-    assert.equal(advisorIntroFromExperience(layout), layout.summary);
+    const faq = faqItemsFromAiContext(layout.ai);
+    assert.equal(faq.length, layout.ai.outcome.rationale.length);
+    assert.equal(faq[0]?.question, layout.ai.outcome.rationale[0]);
+    assert.equal(faq[0]?.answer, layout.ai.outcome.status);
+    assert.equal(
+      advisorIntroFromAiContext(layout.ai),
+      layout.ai.outcome.recommendation,
+    );
 
-    const preview = decisionReportPreviewFromExperience(layout);
-    assert.equal(preview.title, layout.title);
-    assert.equal(preview.summary, layout.summary);
-    assert.deepEqual(preview.priorities, layout.focus);
+    const preview = decisionReportPreviewFromTerminal(layout.terminal);
+    assert.equal(preview.title, layout.terminal.outcome.recommendation);
+    assert.equal(preview.summary, layout.terminal.outcome.status);
+    assert.deepEqual(
+      preview.priorities,
+      layout.terminal.outcome.completedMoveIds,
+    );
 
-    assert.notEqual(layout.title, design.title);
-    assert.notDeepEqual(
-      recommendationViewFromExperience(layout),
-      recommendationViewFromExperience(design),
+    assert.notEqual(
+      layout.terminal.outcome.recommendation,
+      design.terminal.outcome.recommendation,
     );
     assert.notDeepEqual(
-      faqItemsFromExperience(layout),
-      faqItemsFromExperience(design),
+      recommendationViewFromTerminal(layout.terminal),
+      recommendationViewFromTerminal(design.terminal),
+    );
+    assert.notDeepEqual(
+      faqItemsFromAiContext(layout.ai),
+      faqItemsFromAiContext(design.ai),
     );
   });
 });

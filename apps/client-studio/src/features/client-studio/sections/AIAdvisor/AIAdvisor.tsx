@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
-import { usePriorityExperience } from '../PriorityEngine/PriorityExperienceProvider';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import {
   AI_ADVISOR_CONVERSATION_CELL_CLASS,
   AI_ADVISOR_DISCLAIMER_CELL_CLASS,
@@ -14,8 +14,8 @@ import {
 import { Conversation } from './Conversation';
 import { Disclaimer } from './Disclaimer';
 import {
-  advisorIntroFromExperience,
-  faqItemsFromExperience,
+  advisorIntroFromAiContext,
+  faqItemsFromAiContext,
 } from './experiencePresentation';
 import { InputBar } from './InputBar';
 import { SectionHeader } from './SectionHeader';
@@ -28,21 +28,19 @@ import {
 } from './types';
 
 /**
- * AI Advisor — FAQ + intro render from shared Experience.
- * No hardcoded semantic Q&A or seed conversation copy.
+ * AI Advisor — FAQ + intro render from Runtime AIContext.
+ * No hardcoded semantic Q&A or seed conversation copy (ED-DA-01R).
  */
 export function AIAdvisor() {
-  const { experience } = usePriorityExperience();
-  const faqItems = useMemo(
-    () => faqItemsFromExperience(experience),
-    [experience],
-  );
+  const { experience } = useDecisionSessionRuntime();
+  const ai = experience.context.decision.ai;
+  const faqItems = useMemo(() => faqItemsFromAiContext(ai), [ai]);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Message[]>(() => [
     {
       id: createMessageId(),
       role: 'assistant',
-      text: advisorIntroFromExperience(experience),
+      text: advisorIntroFromAiContext(ai),
       time: formatMessageTime(new Date()),
     },
   ]);
@@ -52,11 +50,11 @@ export function AIAdvisor() {
       {
         id: createMessageId(),
         role: 'assistant',
-        text: advisorIntroFromExperience(experience),
+        text: advisorIntroFromAiContext(ai),
         time: formatMessageTime(new Date()),
       },
     ]);
-  }, [experience.id]);
+  }, [ai.id]);
 
   const handleQuestionSelect = (question: string) => {
     setInputValue(question);
@@ -93,7 +91,7 @@ export function AIAdvisor() {
     <section
       aria-label="AI Advisor"
       className={SECTION_SURFACE_CLASS}
-      data-experience-id={experience.id}
+      data-ai-context-id={ai.id}
     >
       <div className={AI_ADVISOR_GRID_CLASS}>
         <div className={AI_ADVISOR_FAQ_COLUMN_CELL_CLASS}>

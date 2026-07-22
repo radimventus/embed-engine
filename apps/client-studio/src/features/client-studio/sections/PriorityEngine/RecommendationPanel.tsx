@@ -1,22 +1,20 @@
 import { Panel, PrimaryButton } from '@embed-engine/ui';
-import type { Experience } from '@embed-engine/core/experience';
 
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import {
   CHAPTER_PANEL_DIVIDER_CLASS,
   CHAPTER_PANEL_LABEL_CLASS,
 } from '../../chapter-layout';
-import { recommendationViewFromExperience } from './RecommendationViewModel';
-
-export type RecommendationPanelProps = {
-  experience: Experience;
-};
+import { recommendationViewFromTerminal } from './RecommendationViewModel';
 
 /**
- * Recommendation peer — pure Experience renderer.
- * No Interpretation scoring, no mock semantics.
+ * Recommendation peer — pure Terminal renderer.
+ * No Interpretation scoring, no mock semantics (ED-DA-01R).
  */
-export function RecommendationPanel({ experience }: RecommendationPanelProps) {
-  const viewModel = recommendationViewFromExperience(experience);
+export function RecommendationPanel() {
+  const { experience } = useDecisionSessionRuntime();
+  const terminal = experience.context.decision.terminal;
+  const viewModel = recommendationViewFromTerminal(terminal);
 
   return (
     <Panel
@@ -24,7 +22,7 @@ export function RecommendationPanel({ experience }: RecommendationPanelProps) {
       aria-label="Doporučení"
       variant="inset"
       className="mt-section"
-      data-experience-id={experience.id}
+      data-terminal-id={terminal.id}
     >
       <h3 className="text-sm font-semibold tracking-wide text-embed-foreground-primary">
         {viewModel.title}
