@@ -26,6 +26,7 @@ These documents do **not** change Reference Architecture, Platform Canon, ESS, o
 - Runtime index: [architecture/RUNTIME.md](../architecture/RUNTIME.md)
 - Runtime SSOT: [RI-001](./RI-001-Runtime-Kernel.md)
 - Decision Session SSOT: [RI-002](./RI-002-Decision-Session.md)
+- Session philosophy: [PT-003 — Decision Sessions are Reproducible](../architecture/pt/PT-003-decision-sessions-are-reproducible.md)
 - Experience contract: [RI-003](./RI-003-Experience-Kernel.md)
 - Historical CommandRuntime: [archive/runtime-decisions-command-runtime-v1.md](../architecture/archive/runtime-decisions-command-runtime-v1.md)
 

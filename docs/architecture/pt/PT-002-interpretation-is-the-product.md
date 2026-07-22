@@ -246,6 +246,7 @@ The following MUST always remain true:
 | [HP-001](../../03-specification-standard/HP-001-House-Package-Specification.md) | House Package schema / distribution |
 | [PT-001](./PT-001-house-package-canonical-object-contract.md) | Canonical Object Contract |
 | **PT-002 (this document)** | Interpretation execution philosophy |
+| [PT-003](./PT-003-decision-sessions-are-reproducible.md) | Decision Session reproducibility philosophy |
 | [ADR-012](../adr/ADR-012-interpretation-first-class-artifact.md) | Interpretation as first-class domain artifact |
 | [ADR-013](../adr/ADR-013-room-selection-semantic.md) | Semantic Room Selection |
 | [RI-001](../../04-reference-implementation/RI-001-Runtime-Kernel.md) | Runtime Kernel public contract |
@@ -287,6 +288,7 @@ Presentation
 ## Related documents
 
 - [PT-001 — House Package as the Canonical Object Contract](./PT-001-house-package-canonical-object-contract.md)
+- [PT-003 — Decision Sessions are Reproducible](./PT-003-decision-sessions-are-reproducible.md)
 - [Object Package — Product Contract](../../product/object-package.md)
 - [HP-001 — House Package Specification](../../03-specification-standard/HP-001-House-Package-Specification.md)
 - [ADR-012 — Interpretation as first-class artifact](../adr/ADR-012-interpretation-first-class-artifact.md)

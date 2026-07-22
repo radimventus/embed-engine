@@ -395,6 +395,7 @@ This yields a clear division of responsibility among data (House Package), inter
 - [HP-001 — House Package Specification](../../03-specification-standard/HP-001-House-Package-Specification.md)
 - [Object Package — Product Contract](../../product/object-package.md)
 - [PT-002 — Interpretation is the Product](./PT-002-interpretation-is-the-product.md)
+- [PT-003 — Decision Sessions are Reproducible](./PT-003-decision-sessions-are-reproducible.md)
 - [ADR-013 — Room Selection is Semantic, not Graphical](../adr/ADR-013-room-selection-semantic.md)
 - [ADR-012 — Interpretation as first-class artifact](../adr/ADR-012-interpretation-first-class-artifact.md)
 - [Experience Projection Principles](../experience-projection.md)

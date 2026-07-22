@@ -97,4 +97,4 @@ Existing signals such as `ROOM_VIEWED` with payload `roomId` are compatible with
 
 **Accepted.** This principle is binding for Runtime, Input Adapters, and Experience surfaces that select rooms.
 
-This ADR is the binding decision record for [PT-001 Principle 8](../pt/PT-001-house-package-canonical-object-contract.md) and aligns with [PT-002](../pt/PT-002-interpretation-is-the-product.md) (Inputs modify Runtime; Experiences are disposable projections).
+This ADR is the binding decision record for [PT-001 Principle 8](../pt/PT-001-house-package-canonical-object-contract.md) and aligns with [PT-002](../pt/PT-002-interpretation-is-the-product.md) (Inputs modify Runtime; Experiences are disposable projections) and [PT-003](../pt/PT-003-decision-sessions-are-reproducible.md) (sessions persist semantic events such as room selection, never UI gestures).

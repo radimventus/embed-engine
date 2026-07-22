@@ -16,7 +16,7 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 | [ADR-012](./ADR-012-interpretation-first-class-artifact.md) | Interpretation as first-class domain artifact | Accepted |
 | [ADR-013](./ADR-013-room-selection-semantic.md) | Room Selection is Semantic, not Graphical | Accepted |
 
-**Platform Theory:** [../pt/README.md](../pt/README.md) (PT-001 Object Contract · PT-002 Interpretation Product)
+**Platform Theory:** [../pt/README.md](../pt/README.md) (PT-001 Object · PT-002 Interpretation · PT-003 Sessions)
 
 **Vocabulary SSOT (not an ADR):** [../decision-layer/README.md](../decision-layer/README.md)  
 **Runtime SSOT:** [../../04-reference-implementation/RI-001-Runtime-Kernel.md](../../04-reference-implementation/RI-001-Runtime-Kernel.md) · [../RUNTIME.md](../RUNTIME.md)  
