@@ -39,9 +39,17 @@ https://radimventus.github.io/embed-engine/embed/version.json
 <script>
   Embed.mount({
     target: "#embed",
-    fixture: "garden"
+    objectId: "house-modern-01"
   });
 </script>
+```
+
+Serve Object Package media (`/house-package`, `/media`) from the host origin (same assets as Client Studio `public/`).
+
+Legacy Garden (opt-in only):
+
+```js
+Embed.mount({ target: "#embed", fixture: "garden" });
 ```
 
 ## What is published
@@ -67,18 +75,23 @@ pnpm --filter @embed-engine/embed build
 pnpm --filter @embed-engine/embed sync:pages
 ```
 
-Commit `docs/embed/**` and `docs/.nojekyll`, merge to the branch configured for Pages (`main`, source = `/docs`), then enable Pages in repository settings if not already active:
+Commit `docs/embed/**` and `docs/.nojekyll`, then ensure GitHub Pages is enabled:
 
 - Source: Deploy from a branch  
-- Branch: `main`  
+- Branch: currently `feature/cap-p04-founding-partner` (M3/S2 verification); switch to `main` after merge  
 - Folder: `/docs`
 
-## Verification
+**Visibility:** GitHub Free requires a **public** repository for GitHub Pages. This repo was set to public to activate Pages.
+
+## Verification (confirmed 2026-07-21)
 
 ```bash
 curl -sI https://radimventus.github.io/embed-engine/embed/embed.iife.js
-# expect: HTTP/2 200  and content-type including javascript
+# HTTP/2 200
+# content-type: application/javascript; charset=utf-8
+
 curl -s https://radimventus.github.io/embed-engine/embed/version.json
+# version 0.1.0 matches packages/embed/dist/version.json
 ```
 
 ## Out of scope (this slice)

@@ -65,15 +65,19 @@ Written on every build. Example shape:
 
 ---
 
-## Public API (unchanged)
+## Public API
 
 ```ts
-Embed.mount(...)
-Embed.unmount(...)
+Embed.mount({ target: "#embed", objectId?: "house-modern-01" })
+Embed.unmount()
 Embed.version
 ```
 
-This slice does not change the Embed public API.
+Production mount resolves the Object Package, creates one Decision Session Runtime, and mounts Client Studio.
+
+Legacy Garden HTML requires explicit opt-in: `{ fixture: "garden" }`.
+
+See [Embed Delivery → Client Studio](../../docs/reviews/Embed-Delivery-Client-Studio.md).
 
 ---
 
