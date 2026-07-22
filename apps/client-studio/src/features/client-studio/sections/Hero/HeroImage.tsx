@@ -1,17 +1,21 @@
 import { useState } from 'react';
 
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { resolvePublicAssetUrl } from '../../runtime/presentationAssetBase';
 
 /**
- * Primary visual from Experience Context hero media (Object Package projection).
- * Supports image / render URL and video; empty surface as fallback (BUG-001).
+ * Primary visual from Experience Context hero media (Reference House Package).
+ * Keeps Hero layout; only ensures the reference hero image paints (PT-TOUR-01B).
  */
 export function HeroImage() {
   const { experience } = useDecisionSessionRuntime();
   const hero = experience.context.hero;
   const object = experience.context.object;
   const media = hero.heroMedia;
-  const mediaSrc = hero.primaryMediaUrl;
+  const mediaSrc =
+    hero.primaryMediaUrl !== null
+      ? resolvePublicAssetUrl(hero.primaryMediaUrl)
+      : null;
   const alt = media?.title ?? object.title;
   const [failed, setFailed] = useState(false);
 
@@ -32,7 +36,11 @@ export function HeroImage() {
         <video
           className="h-full w-full object-cover"
           src={mediaSrc}
-          poster={media.thumbnailUrl !== mediaSrc ? media.thumbnailUrl : undefined}
+          poster={
+            media.thumbnailUrl !== mediaSrc
+              ? resolvePublicAssetUrl(media.thumbnailUrl)
+              : undefined
+          }
           controls
           playsInline
           preload="metadata"
@@ -46,15 +54,20 @@ export function HeroImage() {
   }
 
   return (
-    <div className="relative h-full min-h-[16rem] w-full overflow-hidden bg-embed-surface-muted">
+    <section
+      role="img"
+      aria-label={alt}
+      className="relative h-full min-h-0 w-full bg-cover bg-[center_42%] bg-no-repeat"
+      style={{ backgroundImage: `url('${mediaSrc}')` }}
+      data-object-id={object.id}
+      data-media-id={media.id}
+    >
       <img
         src={mediaSrc}
         alt={alt}
-        className="h-full w-full object-cover"
-        data-object-id={object.id}
-        data-media-id={media.id}
+        className="pointer-events-none absolute h-px w-px opacity-0"
         onError={() => setFailed(true)}
       />
-    </div>
+    </section>
   );
 }

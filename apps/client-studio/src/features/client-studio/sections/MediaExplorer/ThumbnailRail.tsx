@@ -118,7 +118,7 @@ export function ThumbnailRail() {
 
   /** VIDEO → slot 0 (video first left); FOTKY → shift one slot (video exits left). */
   useEffect(() => {
-    if (activeRoomId === null || itemCount === 0) {
+    if (itemCount === 0) {
       return;
     }
 
@@ -141,7 +141,7 @@ export function ThumbnailRail() {
     };
   }, []);
 
-  if (activeRoomId === null || itemCount === 0) {
+  if (itemCount === 0) {
     return (
       <div
         className={THUMBNAIL_RAIL_ROW_CLASS}

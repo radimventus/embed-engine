@@ -75,13 +75,9 @@ export function MainMedia() {
   const activeMediaSrc = activeMediaItem?.src ?? null;
   const activeRoomId = gallery.roomId;
 
-  const isRoomVideo = activeRoomId !== null && mediaMode === 'video';
-  const videoSrc = isRoomVideo
-    ? (gallery.videoUrl ?? gallery.videos[0]?.url ?? '')
-    : (gallery.videos[0]?.url ?? '');
-  const videoPoster = isRoomVideo
-    ? (gallery.heroUrl ?? gallery.heroMedia?.thumbnailUrl ?? '')
-    : (gallery.heroUrl ?? '');
+  const videoSrc = gallery.videoUrl ?? gallery.videos[0]?.url ?? '';
+  const videoPoster =
+    gallery.heroUrl ?? gallery.heroMedia?.thumbnailUrl ?? '';
   const videoKey = `${videoSrc}|${activeRoomId ?? 'intro'}|${mediaMode}`;
 
   const mediaKey = buildMediaKey(mediaMode, mode, activeRoomId, activeMediaSrc);
@@ -110,7 +106,7 @@ export function MainMedia() {
   }, [mediaMode, mode, videoKey, videoSrc]);
 
   const photoSrc = parsePhotoSrc(displayKey);
-  const showPhoto = photoSrc !== null;
+  const showPhoto = mediaMode === 'photo' && photoSrc !== null;
   const isWistiaVideo =
     mediaMode === 'video' && !showPhoto && isWistiaEmbedUrl(videoSrc);
   const showPlayControl =

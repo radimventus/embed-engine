@@ -10,23 +10,20 @@ import { FloorPlanZoomControl } from './FloorPlanZoomControl';
 type FloorPlanCanvasProps = {
   interactive: boolean;
   className?: string;
-  preserveAspectRatio?: string;
 };
 
 /**
  * Floor-plan canvas — renders projected `context.floorPlan` only (ED-DA-02 / CSCB-03).
- * Interaction dispatches SelectRoom via House Navigator; no catalog access.
+ * Image + SVG overlays share one viewBox and `xMidYMid meet` so the full plan is
+ * visible (no horizontal crop) and overlays stay aligned (PT-TOUR-01B).
  */
-function FloorPlanCanvas({
-  interactive,
-  className,
-  preserveAspectRatio = 'xMaxYMid slice',
-}: FloorPlanCanvasProps) {
+function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
   const { experience } = useDecisionSessionRuntime();
   const { selectedFloor, selectRoom, isRoomActive, activeRoomId } =
     useHouseNavigator();
   const floorPlan = experience.context.floorPlan;
-  const viewBox = floorPlan.viewBox;
+  const viewBoxWidth = floorPlan.viewBoxWidth;
+  const viewBoxHeight = floorPlan.viewBoxHeight;
   const [hoveredRoomId, setHoveredRoomId] = useState<string | null>(null);
 
   const canvasRooms = floorPlan.rooms.filter(
@@ -41,26 +38,26 @@ function FloorPlanCanvas({
 
   return (
     <svg
-      viewBox={`0 0 ${viewBox} ${viewBox}`}
-      preserveAspectRatio={preserveAspectRatio}
+      viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}
+      preserveAspectRatio="xMidYMid meet"
       aria-label={`Půdorys · patro ${selectedFloor}`}
       className={className}
       role="img"
     >
       <image
         href={floorPlan.src}
-        width={viewBox}
-        height={viewBox}
-        preserveAspectRatio={preserveAspectRatio}
+        width={viewBoxWidth}
+        height={viewBoxHeight}
+        preserveAspectRatio="xMidYMid meet"
       />
       {activeOverlayRoom !== null &&
       activeOverlayRoom.decisionCanvasSrc !== '' ? (
         <image
           key={activeOverlayRoom.id}
           href={activeOverlayRoom.decisionCanvasSrc}
-          width={viewBox}
-          height={viewBox}
-          preserveAspectRatio={preserveAspectRatio}
+          width={viewBoxWidth}
+          height={viewBoxHeight}
+          preserveAspectRatio="xMidYMid meet"
           className="transition-opacity duration-[125ms] ease-out"
         />
       ) : null}
@@ -90,7 +87,7 @@ function FloorPlanCanvas({
                   : 'transparent'
             }
             stroke={active ? 'rgba(200, 161, 101, 0.9)' : 'none'}
-            strokeWidth={active ? 2 : 0}
+            strokeWidth={active ? Math.max(2, viewBoxWidth / 400) : 0}
             className={
               interactive
                 ? 'cursor-pointer touch-manipulation transition-[fill] duration-125 ease-out'
@@ -119,20 +116,22 @@ function FloorPlanCanvas({
 }
 
 export function FloorPlan() {
+  const { experience } = useDecisionSessionRuntime();
+  const { viewBoxWidth, viewBoxHeight } = experience.context.floorPlan;
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const aspectRatio = `${viewBoxWidth} / ${viewBoxHeight}`;
 
   return (
-    <div className="relative -ml-[30px] w-[calc(100%+30px)] min-w-0 max-w-none overflow-hidden mobile:ml-0 mobile:w-full">
-      <div className="aspect-square w-full min-w-0 max-w-none">
-        <FloorPlanCanvas interactive className="block h-full w-full" />
+    <div className="relative -ml-[30px] flex w-[calc(100%+30px)] min-w-0 max-w-none items-center justify-center overflow-hidden mobile:ml-0 mobile:w-full">
+      <div className="w-full min-w-0 max-w-none" style={{ aspectRatio }}>
+        <FloorPlanCanvas
+          interactive
+          className="block h-full w-full"
+        />
       </div>
       <FloorPlanZoomControl onClick={() => setIsLightboxOpen(true)} />
       <FloorPlanLightbox isOpen={isLightboxOpen} onClose={() => setIsLightboxOpen(false)}>
-        <FloorPlanCanvas
-          interactive={false}
-          preserveAspectRatio="xMidYMid meet"
-          className="block h-full w-full"
-        />
+        <FloorPlanCanvas interactive={false} className="block h-full w-full" />
       </FloorPlanLightbox>
     </div>
   );

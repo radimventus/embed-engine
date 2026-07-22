@@ -68,7 +68,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const selectedFloor =
     context.navigation.currentFloor ?? floors[0] ?? '0';
 
-  const [mediaMode, setMediaModeState] = useState<MediaMode>('photo');
+  const [mediaMode, setMediaModeState] = useState<MediaMode>('video');
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [mode, setMode] = useState<WalkthroughState['mode']>('ready');
 

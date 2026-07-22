@@ -227,6 +227,8 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
       first.context.floorPlan.src,
       /\/reference-house\/assets\/floorplans\/pudorys\.webp$/,
     );
+    assert.equal(first.context.floorPlan.viewBoxWidth, 3450);
+    assert.equal(first.context.floorPlan.viewBoxHeight, 1938);
     assert.ok(first.context.floorPlan.viewBox > 0);
     assert.equal(
       first.context.floorPlan.rooms.length,
@@ -241,6 +243,7 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
       living?.decisionCanvasSrc ?? '',
       /\/reference-house\/assets\/floorplans\/svg\/room-living\.svg$/,
     );
+    assert.ok(living?.floorPlanRegion !== null);
     assert.ok(living?.floorPlanRegion !== null);
   });
 });

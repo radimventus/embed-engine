@@ -11,6 +11,12 @@ import {
   getPresentationAssets,
 } from './presentation-assets';
 import { resolvePublicAssetUrl } from './presentationAssetBase';
+import {
+  REFERENCE_FLOORPLAN_HEIGHT,
+  REFERENCE_FLOORPLAN_REGIONS,
+  REFERENCE_FLOORPLAN_WIDTH,
+  referenceFloorPlanSvgPath,
+} from './referenceFloorPlanGeometry';
 
 /**
  * First-class projected media asset (CAP-HP-003.4).
@@ -87,6 +93,13 @@ export type ExperienceFloorPlanRoom = {
 
 export type ExperienceFloorPlanContext = {
   readonly src: string;
+  /** Natural floorplan width in viewBox units (Reference House: 3450). */
+  readonly viewBoxWidth: number;
+  /** Natural floorplan height in viewBox units (Reference House: 1938). */
+  readonly viewBoxHeight: number;
+  /**
+   * @deprecated Prefer viewBoxWidth — retained as width for older adapters.
+   */
   readonly viewBox: number;
   readonly rooms: readonly ExperienceFloorPlanRoom[];
 };
@@ -200,9 +213,7 @@ function projectHouseDocuments(
 }
 
 function referenceDecisionCanvasSrc(roomId: string): string {
-  return resolvePublicAssetUrl(
-    `/reference-house/assets/floorplans/svg/${roomId}.svg`,
-  );
+  return resolvePublicAssetUrl(referenceFloorPlanSvgPath(roomId));
 }
 
 function projectRoomContext(
@@ -408,14 +419,27 @@ function projectFloorPlan(
   const objectFloorplan = experience.house.media.find(
     (asset) => asset.type === 'floorplan',
   );
+  const useReferenceGeometry = objectFloorplan !== undefined;
+  const viewBoxWidth = useReferenceGeometry
+    ? REFERENCE_FLOORPLAN_WIDTH
+    : assets.floorPlanViewBox;
+  const viewBoxHeight = useReferenceGeometry
+    ? REFERENCE_FLOORPLAN_HEIGHT
+    : assets.floorPlanViewBox;
+
   const rooms = experience.house.rooms.map((room) => {
     const chrome = getMediaRoom(room.id);
+    const referenceRegion = REFERENCE_FLOORPLAN_REGIONS[room.id] ?? null;
     return Object.freeze({
       id: room.id,
       title: room.name,
       floor: String(room.floor),
-      decisionCanvasSrc: referenceDecisionCanvasSrc(room.id),
-      floorPlanRegion: chrome?.floorPlanRegion ?? null,
+      decisionCanvasSrc: useReferenceGeometry
+        ? referenceDecisionCanvasSrc(room.id)
+        : (chrome?.decisionCanvasSrc ?? ''),
+      floorPlanRegion: useReferenceGeometry
+        ? referenceRegion
+        : (chrome?.floorPlanRegion ?? null),
     });
   });
 
@@ -423,7 +447,9 @@ function projectFloorPlan(
     src: resolvePublicAssetUrl(
       objectFloorplan?.url ?? assets.floorPlanSrc,
     ),
-    viewBox: assets.floorPlanViewBox,
+    viewBoxWidth,
+    viewBoxHeight,
+    viewBox: viewBoxWidth,
     rooms: Object.freeze(rooms),
   });
 }
