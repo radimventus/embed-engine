@@ -52,7 +52,7 @@ Every capability may span multiple UI surfaces while sharing the same Runtime se
 | [CSCB-04](#cscb-04--decision-discovery) | Decision Discovery | Capture customer priorities | Decision Signals only | 6 | **Done** ([report](./client-studio/CSCB-04-priority-experience.md)) |
 | [CSCB-05](#cscb-05--decision-presentation) | Decision Presentation | Present Runtime conclusions | Presentation only | 4 | **Done** ([report](./client-studio/CSCB-05-decision-terminal.md)) |
 | [CSCB-06](#cscb-06--ai-assistance) | AI Assistance | Explain Runtime decisions | AI consumes Runtime | 5 | Pending |
-| [CSCB-07](#cscb-07--commercial-conversion) | Commercial Conversion | Convert journey to business outcome | Consume Decision Session | 3 | Pending |
+| [CSCB-07](#cscb-07--commercial-conversion) | Commercial Conversion | Convert journey to business outcome | Consume Decision Session | 3 | **Done** ([report](./client-studio/CSCB-07-commercial-conversion.md)) |
 | [CSCB-08](#cscb-08--decision-analytics) | Decision Analytics | Measure customer behaviour | Read-only | 4 | Pending |
 | [CSCB-09](#cscb-09--production-readiness) | Production Readiness | Pilot deployment readiness | — | 6 | Pending |
 | | | | **Total** | **43** | |
@@ -184,6 +184,8 @@ Every capability may span multiple UI surfaces while sharing the same Runtime se
 
 **Goal:** Convert Decision Journey into business outcome.
 
+**Status:** **DONE** — [CSCB-07-commercial-conversion.md](./client-studio/CSCB-07-commercial-conversion.md)
+
 **Scope**
 
 - Lead Capture
@@ -192,7 +194,7 @@ Every capability may span multiple UI surfaces while sharing the same Runtime se
 - validation
 - CRM integration
 
-**Runtime dependency:** Consume Decision Session only.
+**Runtime dependency:** Consume Decision Session only. CRM remains out of Client Studio (mailto transport).
 
 **Estimate:** 3 slices
 
