@@ -92,6 +92,16 @@ export {
   type EvaluateDecisionFocusInput,
 } from "./decision-focus";
 export {
+  composeDecisionStory,
+  DECISION_STORY_SCHEMA_VERSION,
+  type ComposeDecisionStoryInput,
+  type DecisionStory,
+  type DecisionStoryChapter,
+  type DecisionStoryChapterKind,
+  type DecisionStoryContract,
+  type DecisionStoryProvenance,
+} from "./decision-story";
+export {
   DecisionSessionRuntime,
   applyDecisionEvent,
   commandToEvent,

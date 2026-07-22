@@ -6,6 +6,8 @@ import {
   orderHighlightsByDecisionFocus,
   orderMediaByDecisionFocus,
 } from "../decision-focus";
+import type { DecisionStory } from "../decision-story";
+import { composeDecisionStory } from "../decision-story";
 import type { DecisionSession } from "../DecisionSession";
 import {
   createInterpretationContext,
@@ -24,7 +26,7 @@ import {
 /**
  * Session Interpretation — meaning derived from
  * Object Package + Runtime State + Priority Signals + Interpretation Rules
- * + Decision Focus (CAP-PRI-002).
+ * + Decision Focus (CAP-PRI-002) + Decision Story (CAP-DST-001).
  * Never validates commands. Never projects UI.
  */
 export type SessionInterpretation = {
@@ -51,6 +53,8 @@ export type SessionInterpretation = {
   readonly appliedRuleIds: readonly string[];
   /** Canonical decision attention entry point (CAP-PRI-002). */
   readonly decisionFocus: DecisionFocus;
+  /** Canonical semantic narrative (CAP-DST-001 / PT-004). */
+  readonly decisionStory: DecisionStory;
 };
 
 export type InterpretDecisionSessionOptions = {
@@ -63,6 +67,7 @@ function buildSummary(
   rules: InterpretationRuleset,
   signals: readonly PrioritySignal[],
   decisionFocus: DecisionFocus,
+  decisionStory: DecisionStory,
 ): string {
   return [
     `object:${session.objectId}`,
@@ -70,6 +75,7 @@ function buildSummary(
     `focus:${semantics.focusRoom?.id ?? "none"}`,
     `decisionFocus:${decisionFocus.focusRoomId ?? "none"}:${decisionFocus.focusReason}:${decisionFocus.confidence}`,
     `action:${decisionFocus.recommendedAction}`,
+    `story:${decisionStory.id}`,
     `reason:${semantics.primaryReason}`,
     `highlights:${semantics.highlights.join(",") || "none"}`,
     `media:${semantics.recommendedMedia.map((item) => item.role).join(",") || "none"}`,
@@ -115,6 +121,17 @@ export function interpretDecisionSession(
     decisionFocus,
   );
 
+  const decisionStory = composeDecisionStory({
+    objectId: session.objectId,
+    prioritySignals,
+    semantics: { ...semantics, highlights, recommendedMedia },
+    decisionFocus,
+    highlights,
+    recommendedMedia,
+    rulesetId: rules.id,
+    rulesetVersion: rules.version,
+  });
+
   const activeRoomId = session.runtimeState.activeRoomId;
   const activeRoomName =
     activeRoomId === null
@@ -137,6 +154,7 @@ export function interpretDecisionSession(
       rules,
       prioritySignals,
       decisionFocus,
+      decisionStory,
     ),
     rulesetId: rules.id,
     rulesetVersion: rules.version,
@@ -147,5 +165,6 @@ export function interpretDecisionSession(
     roomImportanceRank: semantics.roomImportanceRank,
     appliedRuleIds: semantics.appliedRuleIds,
     decisionFocus,
+    decisionStory,
   });
 }

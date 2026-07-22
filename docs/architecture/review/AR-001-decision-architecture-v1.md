@@ -91,7 +91,7 @@ Decision Terminal / Decision Outcome
 | Single responsibility for House Package | **Pass** — PT-001 / HP-001 |
 | Runtime owns state + commands + events | **Pass** — CAP-HP-002.5 pipeline |
 | Interpretation owns meaning | **Pass** — rules + signals + focus |
-| Decision Story / Moves ownership | **Theory Pass / Implementation Gap** — PT-004 / PT-005 authorize CAP-DST-001/002; not on session Runtime yet |
+| Decision Story / Moves ownership | **Story Done / Moves Gap** — CAP-DST-001 on session Runtime; CAP-DST-002 not yet |
 | Experience Context ownership | **Pass** — Runtime projection + Client Studio enrichment |
 | Terminal vs Outcome | **Pass with clarification** — PT-007 = surface; PT-008 = portable artifact (must not collapse into one concept) |
 
@@ -258,7 +258,7 @@ Modules may not consume: `runtime.state`, raw `interpretation`, signals, story i
 | Interpretation Rules + Context | CAP-HP-003.x | **Done** |
 | Priority Signals | CAP-PRI-001 | **Done** |
 | Decision Focus | CAP-PRI-002 | **Done** |
-| Decision Story | CAP-DST-001 | **Not done** |
+| Decision Story | CAP-DST-001 | **Done** |
 | Decision Moves | CAP-DST-002 | **Not done** |
 | AI Context Reader | CAP-AI-001 | **Not done** |
 | Decision Terminal Engine | CAP-DTR-001 | **Not done** (UI only) |
@@ -453,7 +453,7 @@ Captured for non-blocking follow-up (also listed in [Engineering Debt](../../imp
 
 Ordered roadmap after this review — **no new foundational architecture**:
 
-1. **CAP-DST-001** — Decision Story Engine (on Decision Session pipeline)
+1. ~~**CAP-DST-001** — Decision Story Engine~~ **Done**
 2. **CAP-DST-002** — Decision Move Engine
 3. **CAP-OUT-001** — Decision Outcome Engine
 4. **CAP-DTR-001** — Decision Terminal Engine (consume Outcome via Experience Context)

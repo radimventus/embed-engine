@@ -1,6 +1,7 @@
 import type { ExperienceHouse, ExperienceHouseRoom } from "@embed-engine/model";
 
 import type { DecisionFocus } from "./decision-focus";
+import type { DecisionStoryContract } from "./decision-story";
 import type {
   FocusRoom,
   RecommendedMediaRef,
@@ -60,6 +61,8 @@ export type ExperienceDecisionContext = {
   readonly appliedRuleIds: readonly string[];
   /** Canonical decision attention entry point (CAP-PRI-002). */
   readonly focus: DecisionFocus;
+  /** Canonical Decision Story narrative (CAP-DST-001 / PT-004). */
+  readonly story: DecisionStoryContract;
 };
 
 /**
@@ -95,6 +98,7 @@ export type ProjectExperienceContextInput = {
   readonly rulesetId: string;
   readonly rulesetVersion: number;
   readonly decisionFocus: DecisionFocus;
+  readonly decisionStory: DecisionStoryContract;
 };
 
 /**
@@ -157,6 +161,7 @@ export function projectExperienceContext(
       rulesetVersion: input.rulesetVersion,
       appliedRuleIds: input.appliedRuleIds,
       focus: input.decisionFocus,
+      story: input.decisionStory,
     }),
   });
 }

@@ -276,6 +276,8 @@ Implement the deterministic Decision Story Engine that:
 - remains presentation-independent and AI-independent,
 - enables Hero, Gallery, AI Advisor, Decision Terminal, and Decision Report to consume one narrative.
 
+**Implementation status:** Done in `@embed-engine/runtime` (`session/decision-story`, wired through `interpretDecisionSession` → `ExperienceContext.decision.story`).
+
 ---
 
 ## Success Criteria
