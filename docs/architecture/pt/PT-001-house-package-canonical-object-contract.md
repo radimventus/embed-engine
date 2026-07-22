@@ -49,6 +49,7 @@ Each of these systems works against the **same** contract.
 | [Object Package](../../product/object-package.md) | Product-meaning SSOT — what object truth is |
 | [HP-001](../../03-specification-standard/HP-001-House-Package-Specification.md) | Distribution / schema SSOT — logical model, physical layout, `house.json` |
 | **PT-001 (this document)** | Platform theory — invariants for how the whole platform uses that contract |
+| [PT-002](./PT-002-interpretation-is-the-product.md) | Platform theory — Interpretation as the product; execution philosophy |
 | [ADR-013](../adr/ADR-013-room-selection-semantic.md) | Binding decision for semantic room selection (Principle 8) |
 
 A conforming House Package **is** an Object Package instance for the house vertical ([HP-001](../../03-specification-standard/HP-001-House-Package-Specification.md)).
@@ -393,6 +394,7 @@ This yields a clear division of responsibility among data (House Package), inter
 
 - [HP-001 — House Package Specification](../../03-specification-standard/HP-001-House-Package-Specification.md)
 - [Object Package — Product Contract](../../product/object-package.md)
+- [PT-002 — Interpretation is the Product](./PT-002-interpretation-is-the-product.md)
 - [ADR-013 — Room Selection is Semantic, not Graphical](../adr/ADR-013-room-selection-semantic.md)
 - [ADR-012 — Interpretation as first-class artifact](../adr/ADR-012-interpretation-first-class-artifact.md)
 - [Experience Projection Principles](../experience-projection.md)

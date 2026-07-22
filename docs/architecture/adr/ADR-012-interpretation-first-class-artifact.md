@@ -244,6 +244,7 @@ Presentation
 | Cognitive `Interpretation` (CORE-101 / ADR-003) | Existing Runtime projection type; not redefined here. Future alignment may map Cognitive projection into or beside this Core Interpretation DTO — raise a follow-up ADR if contracts must change |
 | [DEG](../../product/decision-experience-grammar/DEG.md) | Product positioning of interpretation vs presentation remains authoritative; this ADR freezes the Core artifact split |
 | [CORE-001](../platform/CORE-001-Platform-Architecture-Overview.md) | Platform layers remain; Interpretation sits in the interpretation responsibility, Experience in the Experience Layer communication role |
+| [PT-002](../pt/PT-002-interpretation-is-the-product.md) | Platform theory — Interpretation is the product; this ADR supplies the artifact decision |
 
 ---
 
@@ -253,3 +254,4 @@ Presentation
 - [DEG — Product positioning](../../product/decision-experience-grammar/DEG.md)
 - [ADR-006 Interpretation & Projection Layer](./ADR-006-interpretation-projection-layer.md)
 - [ADR-003 Cognitive Processing Pipeline](./ADR-003-cognitive-processing-pipeline.md)
+- [PT-002 — Interpretation is the Product](../pt/PT-002-interpretation-is-the-product.md)

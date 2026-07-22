@@ -14,7 +14,7 @@
 | `platform/` | Platform Architecture Overview (CORE-001) |
 | `core/` | Cognitive Layer & Decision State (CORE-101 / CORE-002) |
 | `adr/` | Architecture Decision Records ([ADR-001](./adr/ADR-001-runtime-architecture.md) Runtime · [ADR-013](./adr/ADR-013-room-selection-semantic.md) Room Selection) |
-| `pt/` | Platform Theory ([PT-001](./pt/PT-001-house-package-canonical-object-contract.md) House Package canonical contract) |
+| `pt/` | Platform Theory ([PT-001](./pt/PT-001-house-package-canonical-object-contract.md) Object Contract · [PT-002](./pt/PT-002-interpretation-is-the-product.md) Interpretation Product) |
 | `contracts/` | Cross-layer runtime contracts (e.g. [Priority Experience Runtime Contract](./contracts/Priority%20Experience%20Runtime%20Contract.md)) |
 | [Priority Experience Integration Model](./Priority%20Experience%20Integration%20Model.md) | End-to-end integration of Priority Experience SSOTs + OQ resolution |
 | `domain/` | Domain models (e.g. [Priority Domain Model](./domain/Priority%20Domain%20Model.md)) |

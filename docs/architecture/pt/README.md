@@ -5,6 +5,7 @@ Platform Theory documents establish **long-lived invariants** for how Embed Engi
 | ID | Document | Status | Role |
 | --- | --- | --- | --- |
 | PT-001 | [House Package as the Canonical Object Contract](./PT-001-house-package-canonical-object-contract.md) | Approved | House Package as the shared object contract across Builder, Runtime, Experience, Manager, AI |
+| PT-002 | [Interpretation is the Product](./PT-002-interpretation-is-the-product.md) | Approved | Interpretation as the canonical platform product; Runtime → Interpretation → Projection → Experience |
 
 **Related**
 

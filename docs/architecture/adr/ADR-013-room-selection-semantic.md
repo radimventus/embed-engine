@@ -89,6 +89,7 @@ Existing signals such as `ROOM_VIEWED` with payload `roomId` are compatible with
 | [ADR-012](./ADR-012-interpretation-first-class-artifact.md) | Selection changes feed Interpretation; Experience communicates, does not decide |
 | [experience-projection.md](../experience-projection.md) | Renderers consume Experience; they do not reconstruct domain selection |
 | [RI-001](../../04-reference-implementation/RI-001-Runtime-Kernel.md) | Runtime owns orchestration; this ADR constrains room-focus input shape |
+| [PT-002](../pt/PT-002-interpretation-is-the-product.md) | Input → Runtime → Interpretation → Projection → Experience (Principle 7) |
 
 ---
 
@@ -96,4 +97,4 @@ Existing signals such as `ROOM_VIEWED` with payload `roomId` are compatible with
 
 **Accepted.** This principle is binding for Runtime, Input Adapters, and Experience surfaces that select rooms.
 
-This ADR is the binding decision record for [PT-001 Principle 8](../pt/PT-001-house-package-canonical-object-contract.md).
+This ADR is the binding decision record for [PT-001 Principle 8](../pt/PT-001-house-package-canonical-object-contract.md) and aligns with [PT-002](../pt/PT-002-interpretation-is-the-product.md) (Inputs modify Runtime; Experiences are disposable projections).

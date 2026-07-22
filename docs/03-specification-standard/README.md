@@ -8,7 +8,7 @@ Normative governance for Epoch II. These documents do **not** change Reference A
 | EQS-001 | [Engineering Quality Standard](./EQS-001-Engineering-Quality-Standard.md) | Frozen | Definition of Done and quality gates for engineering work |
 | HP-001 | [House Package Specification](./HP-001-House-Package-Specification.md) | Approved | House vertical Object Package distribution contract (`house.json`) — authoritative SSOT |
 
-Platform theory (not a schema): [PT-001 — House Package Canonical Object Contract](../architecture/pt/PT-001-house-package-canonical-object-contract.md)
+Platform theory (not a schema): [PT-001](../architecture/pt/PT-001-house-package-canonical-object-contract.md) · [PT-002 — Interpretation is the Product](../architecture/pt/PT-002-interpretation-is-the-product.md)
 
 Related:
 

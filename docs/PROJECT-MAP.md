@@ -22,6 +22,7 @@ Future:         Decision Trajectory (not MVP)
 | **Business Intelligence** | Market, Strategic Accounts, Relationships, GTM knowledge | [`business/README.md`](./business/README.md) |
 | **Object Package** | Object truth | `product/object-package.md` |
 | **House Package** | House-vertical object distribution contract | [HP-001](./03-specification-standard/HP-001-House-Package-Specification.md) · platform theory [PT-001](./architecture/pt/PT-001-house-package-canonical-object-contract.md) |
+| **Interpretation** | Canonical platform product (meaning) | [PT-002](./architecture/pt/PT-002-interpretation-is-the-product.md) · [ADR-012](./architecture/adr/ADR-012-interpretation-first-class-artifact.md) |
 | **Behavior Pack** | Knowledge, rules, Move library, composition — not UI | `architecture/behavior-pack-contract.md` |
 | **Runtime / Kernel** | Public façade + internal orchestration | **[RI-001](./04-reference-implementation/RI-001-Runtime-Kernel.md)** · [RUNTIME.md](./architecture/RUNTIME.md) · [ADR-001](./architecture/adr/ADR-001-runtime-architecture.md) |
 | **Decision Session** | One active Experience decision journey | **[RI-002](./04-reference-implementation/RI-002-Decision-Session.md)** |
