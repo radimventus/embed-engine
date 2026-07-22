@@ -157,6 +157,17 @@ if (existsSync(mediaSource)) {
   cpSync(mediaSource, mediaTarget, { recursive: true });
 }
 
+// Reference House Package assets for Tour (`/reference-house/...` + assetBase).
+const referenceHouseSource = path.join(
+  rootDir,
+  "apps/client-studio/public/reference-house",
+);
+const referenceHouseTarget = path.join(rootDir, "docs/reference-house");
+if (existsSync(referenceHouseSource)) {
+  rmSync(referenceHouseTarget, { recursive: true, force: true });
+  cpSync(referenceHouseSource, referenceHouseTarget, { recursive: true });
+}
+
 const publishedIife = path.join(pagesDir, "embed.iife.js");
 const publishedVersion = JSON.parse(
   readFileSync(path.join(pagesDir, "version.json"), "utf8"),
@@ -179,3 +190,6 @@ for (const file of PUBLIC_FILES) {
 console.log("  - index.html");
 console.log("  - live.html");
 console.log("  - ../.nojekyll");
+if (existsSync(referenceHouseTarget)) {
+  console.log("  - ../reference-house/ (Tour assets)");
+}
