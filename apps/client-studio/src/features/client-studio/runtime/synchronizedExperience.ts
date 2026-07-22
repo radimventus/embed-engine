@@ -388,6 +388,7 @@ function projectSynchronizedContext(
     decisionFocus: experience.decisionFocus,
     decisionStory: experience.decisionStory,
     decisionMoves: experience.decisionMoves,
+    decisionOutcome: experience.decisionOutcome,
   });
 
   return Object.freeze({

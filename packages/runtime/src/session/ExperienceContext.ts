@@ -2,6 +2,7 @@ import type { ExperienceHouse, ExperienceHouseRoom } from "@embed-engine/model";
 
 import type { DecisionFocus } from "./decision-focus";
 import type { DecisionMoveContract } from "./decision-moves";
+import type { DecisionOutcomeContract } from "./decision-outcome";
 import type { DecisionStoryContract } from "./decision-story";
 import type {
   FocusRoom,
@@ -66,6 +67,8 @@ export type ExperienceDecisionContext = {
   readonly story: DecisionStoryContract;
   /** Ordered Moves derived from Story (CAP-DST-002 / PT-005). */
   readonly moves: DecisionMoveContract;
+  /** Canonical Outcome derived from Moves (CAP-OUT-001 / PT-008). */
+  readonly outcome: DecisionOutcomeContract;
 };
 
 /**
@@ -103,6 +106,7 @@ export type ProjectExperienceContextInput = {
   readonly decisionFocus: DecisionFocus;
   readonly decisionStory: DecisionStoryContract;
   readonly decisionMoves: DecisionMoveContract;
+  readonly decisionOutcome: DecisionOutcomeContract;
 };
 
 /**
@@ -167,6 +171,7 @@ export function projectExperienceContext(
       focus: input.decisionFocus,
       story: input.decisionStory,
       moves: input.decisionMoves,
+      outcome: input.decisionOutcome,
     }),
   });
 }

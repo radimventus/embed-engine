@@ -259,6 +259,8 @@ Implement the deterministic Decision Outcome Engine that:
 - serializes as the primary integration contract,
 - emits Outcome creation as the primary analytics completion event.
 
+**Implementation status:** Done in `@embed-engine/runtime` (`session/decision-outcome`, `composeDecisionOutcome(moves)` only — never Story → Outcome / Interpretation → Outcome).
+
 ---
 
 ## Success Criteria

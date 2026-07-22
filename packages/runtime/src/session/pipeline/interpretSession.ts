@@ -10,6 +10,8 @@ import type { DecisionStory } from "../decision-story";
 import { composeDecisionStory } from "../decision-story";
 import type { DecisionMoveSequence } from "../decision-moves";
 import { composeDecisionMoves } from "../decision-moves";
+import type { DecisionOutcome } from "../decision-outcome";
+import { composeDecisionOutcome } from "../decision-outcome";
 import type { DecisionSession } from "../DecisionSession";
 import {
   createInterpretationContext,
@@ -29,7 +31,7 @@ import {
  * Session Interpretation — meaning derived from
  * Object Package + Runtime State + Priority Signals + Interpretation Rules
  * + Decision Focus (CAP-PRI-002) + Decision Story (CAP-DST-001)
- * + Decision Moves (CAP-DST-002).
+ * + Decision Moves (CAP-DST-002) + Decision Outcome (CAP-OUT-001).
  * Never validates commands. Never projects UI.
  */
 export type SessionInterpretation = {
@@ -60,6 +62,8 @@ export type SessionInterpretation = {
   readonly decisionStory: DecisionStory;
   /** Ordered Moves derived solely from Decision Story (CAP-DST-002 / PT-005). */
   readonly decisionMoves: DecisionMoveSequence;
+  /** Canonical Outcome derived solely from Decision Moves (CAP-OUT-001 / PT-008). */
+  readonly decisionOutcome: DecisionOutcome;
 };
 
 export type InterpretDecisionSessionOptions = {
@@ -74,6 +78,7 @@ function buildSummary(
   decisionFocus: DecisionFocus,
   decisionStory: DecisionStory,
   decisionMoves: DecisionMoveSequence,
+  decisionOutcome: DecisionOutcome,
 ): string {
   return [
     `object:${session.objectId}`,
@@ -83,6 +88,7 @@ function buildSummary(
     `action:${decisionFocus.recommendedAction}`,
     `story:${decisionStory.id}`,
     `moves:${decisionMoves.activeMoveId ?? "none"}:${decisionMoves.moves.length}`,
+    `outcome:${decisionOutcome.id}`,
     `reason:${semantics.primaryReason}`,
     `highlights:${semantics.highlights.join(",") || "none"}`,
     `media:${semantics.recommendedMedia.map((item) => item.role).join(",") || "none"}`,
@@ -142,6 +148,9 @@ export function interpretDecisionSession(
   // CAP-DST-002: Moves derive only from Story — never from Interpretation directly.
   const decisionMoves = composeDecisionMoves(decisionStory);
 
+  // CAP-OUT-001: Outcome derives only from Moves — never from Story or Interpretation.
+  const decisionOutcome = composeDecisionOutcome(decisionMoves);
+
   const activeRoomId = session.runtimeState.activeRoomId;
   const activeRoomName =
     activeRoomId === null
@@ -166,6 +175,7 @@ export function interpretDecisionSession(
       decisionFocus,
       decisionStory,
       decisionMoves,
+      decisionOutcome,
     ),
     rulesetId: rules.id,
     rulesetVersion: rules.version,
@@ -178,5 +188,6 @@ export function interpretDecisionSession(
     decisionFocus,
     decisionStory,
     decisionMoves,
+    decisionOutcome,
   });
 }

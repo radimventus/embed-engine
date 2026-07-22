@@ -110,6 +110,14 @@ export {
   type DecisionMoveStatus,
 } from "./decision-moves";
 export {
+  composeDecisionOutcome,
+  DECISION_OUTCOME_SCHEMA_VERSION,
+  type DecisionOutcome,
+  type DecisionOutcomeContract,
+  type DecisionOutcomeMoveRef,
+  type DecisionOutcomeStatus,
+} from "./decision-outcome";
+export {
   DecisionSessionRuntime,
   applyDecisionEvent,
   commandToEvent,

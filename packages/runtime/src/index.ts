@@ -45,6 +45,7 @@ export {
 
 export {
   DECISION_MOVE_SCHEMA_VERSION,
+  DECISION_OUTCOME_SCHEMA_VERSION,
   DECISION_SESSION_FORMAT,
   DECISION_SESSION_SCHEMA_VERSION,
   DECISION_STORY_SCHEMA_VERSION,
@@ -53,6 +54,7 @@ export {
   cloneDecisionSession,
   commandToEvent,
   composeDecisionMoves,
+  composeDecisionOutcome,
   composeDecisionStory,
   createDecisionSession,
   createDecisionSessionRuntime,
@@ -91,6 +93,10 @@ export {
   type DecisionMoveContract,
   type DecisionMoveSequence,
   type DecisionMoveStatus,
+  type DecisionOutcome,
+  type DecisionOutcomeContract,
+  type DecisionOutcomeMoveRef,
+  type DecisionOutcomeStatus,
   type DecisionSession,
   type DecisionSessionRuntimeOptions,
   type DecisionStory,

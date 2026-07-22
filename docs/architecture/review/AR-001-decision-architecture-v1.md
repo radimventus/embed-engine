@@ -262,7 +262,7 @@ Modules may not consume: `runtime.state`, raw `interpretation`, signals, story i
 | Decision Moves | CAP-DST-002 | **Done** |
 | AI Context Reader | CAP-AI-001 | **Not done** |
 | Decision Terminal Engine | CAP-DTR-001 | **Not done** (UI only) |
-| Decision Outcome Engine | CAP-OUT-001 | **Not done** |
+| Decision Outcome Engine | CAP-OUT-001 | **Done** |
 
 No CAP without a principle was found.
 
@@ -455,7 +455,7 @@ Ordered roadmap after this review — **no new foundational architecture**:
 
 1. ~~**CAP-DST-001** — Decision Story Engine~~ **Done**
 2. ~~**CAP-DST-002** — Decision Move Engine~~ **Done**
-3. **CAP-OUT-001** — Decision Outcome Engine
+3. ~~**CAP-OUT-001** — Decision Outcome Engine~~ **Done**
 4. **CAP-DTR-001** — Decision Terminal Engine (consume Outcome via Experience Context)
 5. **CAP-AI-001** — AI Context Reader (read Context/Story/Outcome only; commands via Runtime)
 6. **ED-DA-01…06** — boundary hardening in parallel or immediately after DST-001
