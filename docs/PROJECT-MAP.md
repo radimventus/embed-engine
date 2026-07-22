@@ -21,6 +21,7 @@ Future:         Decision Trajectory (not MVP)
 | **Decision Journey (DJS)** | Visit trajectory of mental transformations (Proposed) | [`product/decision-journey/DJS.md`](./product/decision-journey/DJS.md) |
 | **Business Intelligence** | Market, Strategic Accounts, Relationships, GTM knowledge | [`business/README.md`](./business/README.md) |
 | **Object Package** | Object truth | `product/object-package.md` |
+| **House Package** | House-vertical object distribution contract | [HP-001](./03-specification-standard/HP-001-House-Package-Specification.md) · platform theory [PT-001](./architecture/pt/PT-001-house-package-canonical-object-contract.md) |
 | **Behavior Pack** | Knowledge, rules, Move library, composition — not UI | `architecture/behavior-pack-contract.md` |
 | **Runtime / Kernel** | Public façade + internal orchestration | **[RI-001](./04-reference-implementation/RI-001-Runtime-Kernel.md)** · [RUNTIME.md](./architecture/RUNTIME.md) · [ADR-001](./architecture/adr/ADR-001-runtime-architecture.md) |
 | **Decision Session** | One active Experience decision journey | **[RI-002](./04-reference-implementation/RI-002-Decision-Session.md)** |

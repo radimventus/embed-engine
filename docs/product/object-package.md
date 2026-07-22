@@ -13,6 +13,7 @@
 - Knowledge: [Knowledge Foundation](./knowledge/README.md)
 - Builder: [Builder Workflow](./builder/Builder_Workflow_Specification_BWS_v0.1.md)
 - House vertical distribution: [HP-001 — House Package Specification](../03-specification-standard/HP-001-House-Package-Specification.md)
+- Platform theory: [PT-001 — House Package as the Canonical Object Contract](../architecture/pt/PT-001-house-package-canonical-object-contract.md)
 - Historical CommandRuntime: [archive/runtime-decisions-command-runtime-v1.md](../architecture/archive/runtime-decisions-command-runtime-v1.md)
 
 ---

@@ -14,6 +14,9 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 | [ADR-010](./ADR-010-decision-strategy.md) | Decision Strategy (DT-002) | Accepted (definitions freeze) |
 | [ADR-011](./ADR-011-core-001-platform-overview.md) | Renumber Cognitive Layer to CORE-101 | Accepted |
 | [ADR-012](./ADR-012-interpretation-first-class-artifact.md) | Interpretation as first-class domain artifact | Accepted |
+| [ADR-013](./ADR-013-room-selection-semantic.md) | Room Selection is Semantic, not Graphical | Accepted |
+
+**Platform Theory:** [../pt/README.md](../pt/README.md) (PT-001 House Package canonical contract)
 
 **Vocabulary SSOT (not an ADR):** [../decision-layer/README.md](../decision-layer/README.md)  
 **Runtime SSOT:** [../../04-reference-implementation/RI-001-Runtime-Kernel.md](../../04-reference-implementation/RI-001-Runtime-Kernel.md) · [../RUNTIME.md](../RUNTIME.md)  

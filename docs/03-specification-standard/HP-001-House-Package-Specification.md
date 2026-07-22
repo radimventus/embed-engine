@@ -476,6 +476,7 @@ A loader claiming HP-001 v0.1 conformance MUST pass:
 ## Related documents
 
 - [Object Package — Product Contract](../product/object-package.md)
+- Platform theory: [PT-001 — House Package as the Canonical Object Contract](../architecture/pt/PT-001-house-package-canonical-object-contract.md)
 - Pilot object: [house-modern-01](../pilot/object/house-modern-01.md)
 - [Architecture Freeze v0.1](../releases/Architecture%20Freeze%20v0.1.md) — Object Package Loader still open
 - Priority mapping anchors: Integration Model OQ-03 / Domain Model DM-OQ-06 (future `anchors` extension)
