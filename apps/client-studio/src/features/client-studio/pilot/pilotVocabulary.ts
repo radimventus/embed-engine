@@ -33,6 +33,7 @@ export const PILOT_TERMS = {
 export const PILOT_SECTION_IDS = {
   hero: 'hero',
   walkthrough: 'walkthrough',
+  floorPlan: 'floor-plan',
   priority: 'priority-experience',
   aiAdvisor: 'ai-advisor',
   audit: 'audit-lead-capture',

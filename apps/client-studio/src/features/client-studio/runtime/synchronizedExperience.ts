@@ -54,7 +54,7 @@ export type ExperienceRoomMediaContext = {
   readonly videoUrl: string | null;
 };
 
-/** Hero presentation slice — projected from Decision Focus + room media. */
+/** Hero presentation slice — Object Discovery opening (CSCB-02). */
 export type ExperienceHeroContext = {
   readonly eyebrow: string;
   readonly title: string;
@@ -62,9 +62,8 @@ export type ExperienceHeroContext = {
   readonly metrics: readonly { readonly label: string; readonly value: string }[];
   readonly heroMedia: ProjectedMediaAsset | null;
   readonly primaryMediaUrl: string | null;
-  /** Decision reason from Interpretation / Decision Focus. */
+  /** Decision Focus metadata retained for adapters — Hero UI does not interpret it. */
   readonly primaryReason: string;
-  /** Ordered semantic highlights (Decision Focus ordered). */
   readonly highlights: readonly string[];
   readonly focusConfidence: number;
   readonly recommendedAction: string;
@@ -124,6 +123,17 @@ function houseFallbackHero(experience: SessionExperience): ProjectedMediaAsset |
       url: houseImage.url,
       thumbnailUrl: houseImage.url,
       title: houseImage.title,
+    });
+  }
+
+  const houseVideo = experience.house.media.find((asset) => asset.type === 'video');
+  if (houseVideo !== undefined) {
+    return Object.freeze({
+      id: houseVideo.id,
+      kind: 'video' as const,
+      url: houseVideo.url,
+      thumbnailUrl: houseVideo.url,
+      title: houseVideo.title,
     });
   }
 
@@ -297,84 +307,41 @@ function projectRoomMedia(
   });
 }
 
-/** Presentation labels for machine reason keys — projection-owned, not UI logic. */
-const PRIMARY_REASON_LABELS: Readonly<Record<string, string>> = {
-  'explore-house-structure': 'Prohlídka struktury domu',
-  'primary-living-volume': 'Hlavní obytný prostor',
-  'daily-workflow-core': 'Denní provoz a kuchyně',
-  'private-rest-zone': 'Soukromí a odpočinek',
-  'service-wet-zone': 'Servisní zóna',
-  'flexible-secondary-space': 'Flexibilní sekundární prostor',
-  'value-led-exploration': 'Orientace na hodnotu a efektivitu',
-  'outdoor-led-exploration': 'Orientace na zahradu a venkovní propojení',
-  'space-led-exploration': 'Orientace na prostorovou velkorysost',
-  'privacy-led-exploration': 'Orientace na soukromí',
-};
-
-const ACTION_LABELS: Readonly<Record<string, string>> = {
-  'explore-house-structure': 'Začněte prohlídkou struktury domu',
-  'explore-primary-room': 'Soustřeďte se na prioritní místnost',
-  'inspect-value-drivers': 'Prověřte hodnotové a nákladové faktory',
-  'inspect-outdoor-connection': 'Prověřte propojení se zahradou',
-  'inspect-spatial-volume': 'Prověřte prostorovou velkorysost',
-  'inspect-privacy-zones': 'Prověřte zóny soukromí',
-  'compare-priority-tradeoffs': 'Porovnejte kompromisy priorit',
-};
-
-function reasonLabel(primaryReason: string): string {
-  return PRIMARY_REASON_LABELS[primaryReason] ?? primaryReason;
+function formatArea(m2: number): string {
+  return `${m2} m²`;
 }
 
-function actionLabel(action: string): string {
-  return ACTION_LABELS[action] ?? action;
+function formatPriceCzk(price: number): string {
+  return `${price.toLocaleString('cs-CZ')} Kč`;
 }
 
+/**
+ * Opening Hero projection — Object Discovery (CSCB-02 / SR-002).
+ * Identity + primary media from Object / house projection.
+ * Decision Focus metadata is retained for adapters but does not rewrite identity.
+ */
 function projectHeroContext(
   experience: SessionExperience,
-  activeRoom: ContextualActiveRoom | null,
+  _activeRoom: ContextualActiveRoom | null,
 ): ExperienceHeroContext {
   const { house } = experience;
+  const object = experience.context.object;
   const { highlights, focus: decisionFocus } = experience.context.decision;
-  const reason = reasonLabel(decisionFocus.focusReason);
-  const action = actionLabel(decisionFocus.recommendedAction);
-  const focusName =
-    decisionFocus.focusRoomName ?? activeRoom?.name ?? house.title;
-  const guided = decisionFocus.focusSignalKind !== null;
+  const heroMedia = houseFallbackHero(experience);
 
-  if (activeRoom !== null) {
-    return Object.freeze({
-      eyebrow: guided
-        ? `${house.reference} · ${reason}`
-        : `${house.reference} · ${activeRoom.name}`,
-      title: guided ? focusName : activeRoom.name,
-      description: guided
-        ? `${action} · ${activeRoom.description}`
-        : activeRoom.description,
-      metrics: activeRoom.metrics,
-      heroMedia: activeRoom.heroMedia,
-      primaryMediaUrl: activeRoom.heroMedia?.url ?? null,
-      primaryReason: decisionFocus.focusReason,
-      highlights,
-      focusConfidence: decisionFocus.confidence,
-      recommendedAction: decisionFocus.recommendedAction,
-      focusRoomName: decisionFocus.focusRoomName,
-    });
-  }
-
-  const fallback = houseFallbackHero(experience);
   return Object.freeze({
-    eyebrow: guided
-      ? `${house.reference} · ${reason}`
-      : `${house.reference} – ${house.title}`,
-    title: guided ? focusName : `${house.city}, ${house.district}`,
-    description: guided ? `${action} · ${house.title}` : house.title,
+    eyebrow: `${object.reference} · ${object.construction}`,
+    title: object.title,
+    description: house.hasGarden
+      ? `${house.roomCount} místností · se zahradou`
+      : `${house.roomCount} místností`,
     metrics: Object.freeze([
-      { label: 'Užitná plocha', value: `${house.usableArea} m2` },
-      { label: 'Energetická třída', value: house.energyClass },
-      { label: 'Konstrukce', value: house.construction },
+      { label: 'Užitná plocha', value: formatArea(object.usableArea) },
+      { label: 'Pozemek', value: formatArea(house.landArea) },
+      { label: 'Cena', value: formatPriceCzk(house.price) },
     ]),
-    heroMedia: fallback,
-    primaryMediaUrl: fallback?.url ?? null,
+    heroMedia,
+    primaryMediaUrl: heroMedia?.url ?? null,
     primaryReason: decisionFocus.focusReason,
     highlights,
     focusConfidence: decisionFocus.confidence,

@@ -44,15 +44,16 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     runtime.dispatch({ type: 'SelectRoom', roomId: 'room-bedroom' }, 11);
     const bedroom = projectSynchronizedExperience(runtime.getExperience()!);
     assert.equal(bedroom.context.activeRoom.id, 'room-bedroom');
-    assert.equal(bedroom.context.hero.title, 'Ložnice');
+    assert.equal(bedroom.context.hero.title, REFERENCE_HOUSE_PACKAGE.identity.title);
     assert.equal(bedroom.context.roomMedia.roomId, 'room-bedroom');
 
     runtime.dispatch({ type: 'SelectRoom', roomId: 'room-living' }, 12);
     const living = projectSynchronizedExperience(runtime.getExperience()!);
-    assert.equal(living.context.hero.title, 'Obývací pokoj');
+    assert.equal(living.context.hero.title, REFERENCE_HOUSE_PACKAGE.identity.title);
     assert.equal(living.context.roomMedia.roomId, 'room-living');
     assert.equal(living.context.navigation.currentFloor, '0');
-    assert.equal(
+    assert.equal(living.context.hero.heroMedia?.id, 'media-exterior');
+    assert.notEqual(
       living.context.hero.primaryMediaUrl,
       living.context.roomMedia.heroUrl,
     );
@@ -114,12 +115,11 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     assert.equal(after.context.decision.focus.focusSignalKind, 'emphasize-outdoor');
     assert.equal(after.context.decision.focus.recommendedAction, 'inspect-outdoor-connection');
     assert.equal(after.context.hero.primaryReason, 'outdoor-led-exploration');
-    assert.match(after.context.hero.eyebrow, /Orientace na zahradu/);
-    assert.match(after.context.hero.description, /Prověřte propojení se zahradou/);
+    assert.equal(after.context.hero.title, REFERENCE_HOUSE_PACKAGE.identity.title);
+    assert.equal(after.context.hero.eyebrow, before.context.hero.eyebrow);
     assert.ok(after.context.hero.highlights.includes('outdoor-connection'));
     assert.equal(after.context.decision.focus.recommendedMediaRole, 'gallery');
     assert.equal(after.context.roomMedia.thumbnails[0]?.kind, 'photo');
-    assert.notEqual(before.context.hero.eyebrow, after.context.hero.eyebrow);
     assert.equal(
       after.context.hero.focusConfidence,
       after.context.decision.focus.confidence,
@@ -168,10 +168,11 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     const hero = synced.context.hero;
 
     assert.equal(synced.context.activeRoom.id, 'room-kitchen');
-    assert.equal(hero.title, 'Kuchyně');
-    assert.match(hero.eyebrow, /Kuchyně/);
+    assert.equal(hero.title, REFERENCE_HOUSE_PACKAGE.identity.title);
+    assert.match(hero.eyebrow, /ASTAV-M01/);
     assert.ok(synced.context.activeRoom.room?.heroMedia !== null);
-    assert.equal(hero.primaryMediaUrl, synced.context.activeRoom.room?.heroMedia?.url);
+    assert.equal(hero.heroMedia?.id, 'media-exterior');
+    assert.equal(hero.primaryMediaUrl, hero.heroMedia?.url);
   });
 
   it('projection owns media — consumers read context.roomMedia', () => {

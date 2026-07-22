@@ -1,6 +1,7 @@
 import { FloorPlan } from './FloorPlan';
 import { FloorSelector } from './FloorSelector';
 import { SectionHeader } from './SectionHeader';
+import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import {
   HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS,
   SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS,
@@ -11,8 +12,10 @@ import {
 export function FloorPlanExplorer() {
   return (
     <section
+      id={PILOT_SECTION_IDS.floorPlan}
+      tabIndex={-1}
       aria-label="Půdorys"
-      className={SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS}
+      className={`scroll-mt-header ${SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS}`}
     >
       <div className="relative flex min-h-0 flex-col justify-end">
         <SectionHeader className="pointer-events-none absolute inset-x-0 top-0 z-10" />
