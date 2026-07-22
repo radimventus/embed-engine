@@ -432,7 +432,7 @@ Captured for non-blocking follow-up (also listed in [Engineering Debt](../../imp
 | ED-DA-01 | Unify Client Studio on Decision Session Runtime only — **Done (ED-DA-01R)** |
 | ED-DA-02 | Move room media / hero projection into Runtime or Object-owned projection — **Partial** ([ED-DA-02 report](./ED-DA-02-media-projection-boundary.md)); Object-owned assets still open |
 | ED-DA-03 | Narrow `@embed-engine/runtime` public exports to façade + Experience Context + Outcome — **Done** ([ED-DA-03 report](./ED-DA-03-export-surface-hardening.md)) |
-| ED-DA-04 | Remove Provider exposure of `runtime` / raw `interpretation` to presentation modules |
+| ED-DA-04 | Remove Provider exposure of `runtime` / raw `interpretation` to presentation modules — **Done** ([ED-DA-04 report](./ED-DA-04-context-only-provider.md)) |
 | ED-DA-05 | Converge flat `SessionExperience` fields into `experience.context` only |
 | ED-DA-06 | Clock injection required in production create/dispatch paths (no silent `Date.now()` for reproducibility demos) |
 

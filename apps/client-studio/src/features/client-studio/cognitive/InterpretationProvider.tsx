@@ -24,8 +24,9 @@ type InterpretationProviderProps = {
 };
 
 /**
- * Cognitive Interpretation selector over the shared Experience Session snapshot.
- * Not a presentation source for Priority / Recommendation / Advisor UI.
+ * LEGACY — Cognitive Interpretation selector (ED-DA-04).
+ * Not mounted on the live Decision Session path.
+ * @see ./LEGACY.md
  */
 export function InterpretationProvider({ children }: InterpretationProviderProps) {
   const session = useExperienceSession();

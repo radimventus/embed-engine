@@ -31,9 +31,11 @@ export type TerminalAction = {
 };
 
 /**
- * Dialogue Terminal view-model from Session snapshot + Story (S-004 / S-005).
- * Semantic recommendation surface is Runtime Terminal only (ED-DA-01R) —
- * this hook no longer composes Experience via interpretAndCompose.
+ * LEGACY dialogue Terminal view-model (ED-DA-04).
+ *
+ * Not mounted on the live Client Studio page. Still depends on cognitive
+ * ExperienceBinding / DecisionStory providers if remounted.
+ * Live Decision Terminal UI uses `context.decision.terminal` only.
  */
 export function useDecisionTerminal() {
   const session = useExperienceSession();

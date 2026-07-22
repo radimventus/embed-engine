@@ -1,7 +1,7 @@
 /**
- * Cognitive Runtime host helpers (EX-01).
- * Prefer ExperienceBindingProvider for Session snapshots.
- * Re-exports Signal helpers for Experience Surfaces.
+ * LEGACY — Cognitive Runtime host helpers (ED-DA-04).
+ * Not mounted on the live Decision Session path.
+ * @see ./LEGACY.md
  */
 export {
   ExperienceBindingProvider,

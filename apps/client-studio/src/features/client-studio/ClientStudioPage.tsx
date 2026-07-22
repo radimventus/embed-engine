@@ -1,9 +1,5 @@
-import type { Runtime } from '@embed-engine/core';
 import type { ReactExperienceModel } from '@embed-engine/model';
 
-import { DecisionStoryProvider } from './cognitive/DecisionStoryProvider';
-import { ExperienceBindingProvider } from './cognitive/ExperienceBindingProvider';
-import { InterpretationProvider } from './cognitive/InterpretationProvider';
 import { DecisionSessionRuntimeProvider } from './runtime/DecisionSessionRuntimeProvider';
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
@@ -17,7 +13,6 @@ import { PropertyExplorer } from './sections/PropertyExplorer/PropertyExplorer';
 import { WalkthroughProvider } from '../walkthrough';
 
 type ClientStudioPageProps = {
-  cognitiveRuntime: Runtime | null;
   /** LEGACY only — set when CommandRuntime host is explicitly enabled. */
   legacyExperience?: ReactExperienceModel | null;
   onLegacySelectChoice?: (decisionId: string, choiceId: string) => void;
@@ -25,60 +20,56 @@ type ClientStudioPageProps = {
 };
 
 /**
- * Cognitive Experience host (RI-003) + Decision Session Runtime (CAP-HP-003.1).
- * Room selection and house projection come from DecisionSessionRuntime.
+ * Decision Session Experience host (ED-DA-04).
+ *
+ * Provider tree is Context transport only:
+ * DecisionSessionRuntimeProvider → WalkthroughProvider → PriorityExperienceProvider.
+ * Cognitive Interpretation / Story providers are not mounted on the live path.
  */
 export function ClientStudioPage({
-  cognitiveRuntime,
   legacyExperience = null,
   onLegacySelectChoice,
   onLegacyContinue,
 }: ClientStudioPageProps) {
   return (
-    <ExperienceBindingProvider runtime={cognitiveRuntime}>
-      <InterpretationProvider>
-        <DecisionStoryProvider>
-          <DecisionSessionRuntimeProvider>
-            <WalkthroughProvider>
-              <DesktopCanvas>
-                <ClientStudioHeader />
-                {legacyExperience !== null &&
-                onLegacySelectChoice !== undefined &&
-                onLegacyContinue !== undefined ? (
-                  <LegacyCommandExperience
-                    experience={legacyExperience}
-                    onSelectChoice={onLegacySelectChoice}
-                    onContinue={onLegacyContinue}
-                  />
-                ) : null}
-                <Hero />
-                <div
-                  aria-hidden="true"
-                  className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
-                />
-                <PropertyExplorer />
-                <div
-                  aria-hidden="true"
-                  className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
-                />
-                <PriorityExperienceProvider>
-                  <PriorityEngine />
-                  <div
-                    aria-hidden="true"
-                    className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
-                  />
-                  <AIAdvisor />
-                </PriorityExperienceProvider>
-                <div
-                  aria-hidden="true"
-                  className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
-                />
-                <AuditLeadCapture />
-              </DesktopCanvas>
-            </WalkthroughProvider>
-          </DecisionSessionRuntimeProvider>
-        </DecisionStoryProvider>
-      </InterpretationProvider>
-    </ExperienceBindingProvider>
+    <DecisionSessionRuntimeProvider>
+      <WalkthroughProvider>
+        <DesktopCanvas>
+          <ClientStudioHeader />
+          {legacyExperience !== null &&
+          onLegacySelectChoice !== undefined &&
+          onLegacyContinue !== undefined ? (
+            <LegacyCommandExperience
+              experience={legacyExperience}
+              onSelectChoice={onLegacySelectChoice}
+              onContinue={onLegacyContinue}
+            />
+          ) : null}
+          <Hero />
+          <div
+            aria-hidden="true"
+            className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+          />
+          <PropertyExplorer />
+          <div
+            aria-hidden="true"
+            className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+          />
+          <PriorityExperienceProvider>
+            <PriorityEngine />
+            <div
+              aria-hidden="true"
+              className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+            />
+            <AIAdvisor />
+          </PriorityExperienceProvider>
+          <div
+            aria-hidden="true"
+            className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+          />
+          <AuditLeadCapture />
+        </DesktopCanvas>
+      </WalkthroughProvider>
+    </DecisionSessionRuntimeProvider>
   );
 }

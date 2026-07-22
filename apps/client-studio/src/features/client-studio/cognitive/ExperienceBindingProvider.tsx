@@ -32,9 +32,12 @@ type ExperienceBindingProviderProps = {
 };
 
 /**
- * Canonical Cognitive Experience root (RI-003 EX-01).
- * One Runtime subscription → one Session snapshot → all surfaces.
- * Signals return only through Runtime.applySignal.
+ * LEGACY — Cognitive Experience root (RI-003 EX-01).
+ *
+ * Not mounted on the live Decision Session path (ED-DA-04).
+ * Prefer `DecisionSessionRuntimeProvider` + `experience.context`.
+ *
+ * @see ./LEGACY.md
  */
 export function ExperienceBindingProvider({
   runtime,

@@ -13,11 +13,6 @@ import type {
   WalkthroughState,
 } from '@embed-engine/contracts';
 
-import {
-  applyFloorChanged,
-  applyRoomViewed,
-  useApplyCognitiveSignal,
-} from '../client-studio/cognitive/CognitiveRuntimeContext';
 import { useDecisionSessionRuntime } from '../client-studio/runtime/DecisionSessionRuntimeProvider';
 import type { ExperienceFloorPlanRoom } from '../client-studio/runtime/synchronizedExperience';
 
@@ -54,21 +49,15 @@ type WalkthroughProviderProps = {
   children: ReactNode;
 };
 
-function floorLabel(floor: string): string {
-  if (floor === '0') {
-    return 'Přízemí selected';
-  }
-  return 'Upper floor selected';
-}
-
 /**
- * Media chrome adapter (mode / index / play).
- * Room media + floor-plan assets come from Experience Context (ED-DA-02).
- * Media index / mode are presentation-only — never write cognitive semantics.
+ * Media / navigation chrome adapter (ED-DA-04).
+ *
+ * Transports Experience Context media + local UI chrome (mode / index / play).
+ * Mutations go only through Decision Session `dispatch(SelectRoom)`.
+ * Does not write cognitive signals or compose Runtime semantics.
  */
 export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const { experience, dispatch } = useDecisionSessionRuntime();
-  const applySignal = useApplyCognitiveSignal();
   const { context } = experience;
   const projectedThumbnails = context.roomMedia.thumbnails;
   const rooms = context.floorPlan.rooms;
@@ -90,11 +79,8 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     if (defaultRoom === undefined) {
       return;
     }
-    const result = dispatch({ type: 'SelectRoom', roomId: defaultRoom.id });
-    if (result.ok) {
-      applyRoomViewed(applySignal, defaultRoom.id, `${defaultRoom.title} opened`);
-    }
-  }, [applySignal, dispatch, experience.activeRoomId, rooms]);
+    dispatch({ type: 'SelectRoom', roomId: defaultRoom.id });
+  }, [dispatch, experience.activeRoomId, rooms]);
 
   useEffect(() => {
     setActiveMediaIndex(0);
@@ -126,16 +112,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       play: () => setMode('playing'),
       onVideoEnded: () => setMode('ready'),
       selectRoom: (roomId: string) => {
-        const result = dispatch({ type: 'SelectRoom', roomId });
-        if (!result.ok) {
-          return;
-        }
-        const room = rooms.find((item) => item.id === roomId);
-        applyRoomViewed(
-          applySignal,
-          roomId,
-          room ? `${room.title} opened` : 'Room opened',
-        );
+        dispatch({ type: 'SelectRoom', roomId });
       },
       selectMediaIndex: (mediaIndex: number) => {
         setActiveMediaIndex(mediaIndex);
@@ -144,26 +121,17 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
         setMediaModeState(nextMode);
       },
       selectFloor: (floorId: string) => {
-        applyFloorChanged(applySignal, floorId, floorLabel(floorId));
         const roomOnFloor = rooms.find((room) => room.floor === floorId);
         if (roomOnFloor) {
-          const result = dispatch({
+          dispatch({
             type: 'SelectRoom',
             roomId: roomOnFloor.id,
           });
-          if (result.ok) {
-            applyRoomViewed(
-              applySignal,
-              roomOnFloor.id,
-              `${roomOnFloor.title} opened`,
-            );
-          }
         }
       },
     };
   }, [
     activeMediaIndex,
-    applySignal,
     dispatch,
     experience.activeRoomId,
     mediaMode,

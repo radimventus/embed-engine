@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { CommandRuntime, Runtime, SceneGraph } from '@embed-engine/core';
+import type { CommandRuntime, SceneGraph } from '@embed-engine/core';
 import {
   CANONICAL_DECISION_FLOW_START_ID,
   createDecisionRuntime,
@@ -21,18 +21,12 @@ const PLACEHOLDER_SCENE_GRAPH: SceneGraph = {
   },
 };
 
-type LegacyCommandRuntimeHostProps = {
-  cognitiveRuntime: Runtime | null;
-};
-
 /**
  * LEGACY host — CommandRuntime + ReactExperienceModel (EX-04 quarantine).
  * Mounted only when `isLegacyCommandRuntimeEnabled()` is true.
- * Not part of the default Cognitive demo path.
+ * Not part of the default Decision Session path (ED-DA-04).
  */
-export function LegacyCommandRuntimeHost({
-  cognitiveRuntime,
-}: LegacyCommandRuntimeHostProps) {
+export function LegacyCommandRuntimeHost() {
   const runtimeRef = useRef<CommandRuntime | null>(null);
   const [experience, setExperience] = useState<ReactExperienceModel | null>(null);
 
@@ -87,7 +81,6 @@ export function LegacyCommandRuntimeHost({
       header={<></>}
     >
       <ClientStudioPage
-        cognitiveRuntime={cognitiveRuntime}
         legacyExperience={experience}
         onLegacySelectChoice={handleSelectChoice}
         onLegacyContinue={handleContinue}

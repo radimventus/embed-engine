@@ -11,7 +11,10 @@ type DecisionStoryProviderProps = {
 };
 
 /**
- * Decision Story selector over the shared Experience Session snapshot (EX-01).
+ * LEGACY — Cognitive Decision Story selector (ED-DA-04).
+ * Not mounted on the live Decision Session path.
+ * Canonical Story: `experience.context.decision.story`.
+ * @see ./LEGACY.md
  */
 export function DecisionStoryProvider({ children }: DecisionStoryProviderProps) {
   const session = useExperienceSession();

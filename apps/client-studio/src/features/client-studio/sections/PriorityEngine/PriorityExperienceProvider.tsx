@@ -36,11 +36,11 @@ type PriorityExperienceProviderProps = {
 };
 
 /**
- * Priority Engine façade: card UI → Priority Signals (via Runtime).
+ * Priority card UI state + signal bridge into Decision Session Runtime (ED-DA-04).
  *
- * ED-DA-01R: does not compose Experience / Interpretation.
- * Canonical semantics live on DecisionSessionRuntimeProvider →
- * `experience.context.decision.{terminal,ai}`.
+ * Context transport for card chrome only — does not compose Experience /
+ * Interpretation / Story / Outcome / Terminal / AIContext.
+ * Canonical semantics: `DecisionSessionRuntimeProvider` → `experience.context`.
  */
 export function PriorityExperienceProvider({
   children,

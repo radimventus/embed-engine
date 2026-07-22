@@ -12,7 +12,6 @@ import {
   createDecisionSessionRuntime,
   type DecisionSessionRuntime,
   type RuntimeCommand,
-  type SessionInterpretation,
   type DispatchResult,
 } from '@embed-engine/runtime';
 
@@ -21,22 +20,21 @@ import {
   type SynchronizedExperience,
 } from './synchronizedExperience';
 
-type DecisionSessionRuntimeContextValue = {
+/**
+ * Context-only transport for Decision Session Experience (ED-DA-04).
+ *
+ * Exposes projected Experience + command dispatch only.
+ * Does not expose raw Runtime instance or SessionInterpretation.
+ */
+export type DecisionSessionRuntimeContextValue = {
   /**
-   * Session Runtime façade — prefer `dispatch` + `experience`.
-   * Do not reach into pipeline composers from presentation (ED-DA-01 / ED-DA-04).
-   */
-  readonly runtime: DecisionSessionRuntime;
-  /**
-   * Canonical projected Experience for Client Studio modules.
-   * Prefer `experience.context` (Experience Context) as the presentation contract.
+   * Canonical Client Studio Experience (includes `context` presentation contract).
+   * UI modules read `experience.context` — never compose semantics here.
    */
   readonly experience: SynchronizedExperience;
-  /**
-   * Raw SessionInterpretation — legacy bridging / diagnostics only.
-   * Prefer `experience.context`; do not treat as a public Experience contract (ED-DA-04).
-   */
-  readonly interpretation: SessionInterpretation | null;
+  /** Availability — true once Experience projection is ready. */
+  readonly ready: boolean;
+  /** Dispatch Runtime commands (SelectRoom, ChangePriority, …). */
   readonly dispatch: (command: RuntimeCommand, now?: number) => DispatchResult;
 };
 
@@ -48,8 +46,12 @@ type DecisionSessionRuntimeProviderProps = {
 };
 
 /**
- * Decision Session Runtime + Experience Context projection (CAP-HP-003.5).
- * All Experience modules consume `experience.context` — never each other.
+ * Pure Context Provider — transports Decision Session Runtime state to React.
+ *
+ * Owns: Runtime instance lifecycle, revision notifications, Experience projection call.
+ * Does not: compose Interpretation / Story / Moves / Outcome / Terminal / AIContext.
+ * Projection helper `projectSynchronizedExperience` is presentation media binding only
+ * (ED-DA-02); semantic ownership remains in Runtime.
  */
 export function DecisionSessionRuntimeProvider({
   children,
@@ -83,9 +85,8 @@ export function DecisionSessionRuntimeProvider({
       throw new Error('DecisionSessionRuntime produced no Experience projection.');
     }
     return {
-      runtime,
       experience: projectSynchronizedExperience(base),
-      interpretation: runtime.getInterpretation(),
+      ready: true,
       dispatch,
     };
   }, [dispatch, revision, runtime]);
