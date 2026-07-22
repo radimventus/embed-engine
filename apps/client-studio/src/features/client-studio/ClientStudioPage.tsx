@@ -1,4 +1,5 @@
 import type { ReactExperienceModel } from '@embed-engine/model';
+import type { DecisionSessionRuntime } from '@embed-engine/runtime';
 
 import {
   DecisionAnalyticsProvider,
@@ -26,6 +27,8 @@ type ClientStudioPageProps = {
   legacyExperience?: ReactExperienceModel | null;
   onLegacySelectChoice?: (decisionId: string, choiceId: string) => void;
   onLegacyContinue?: () => void;
+  /** Shared Runtime from Embed Delivery Layer (optional for standalone SPA). */
+  runtime?: DecisionSessionRuntime;
 };
 
 /**
@@ -35,17 +38,19 @@ type ClientStudioPageProps = {
  * DecisionAnalyticsProvider → DecisionSessionRuntimeProvider → WalkthroughProvider → PriorityExperienceProvider.
  * Cognitive Interpretation / Story providers are not mounted on the live path.
  *
- * Runtime is bootstrapped exactly once via DecisionSessionRuntimeProvider.
+ * Runtime is bootstrapped exactly once via DecisionSessionRuntimeProvider
+ * (or injected once by Embed delivery).
  * Analytics observes passively (CSCB-08) and never mutates Runtime.
  */
 export function ClientStudioPage({
   legacyExperience = null,
   onLegacySelectChoice,
   onLegacyContinue,
+  runtime,
 }: ClientStudioPageProps) {
   return (
     <DecisionAnalyticsProvider>
-      <DecisionSessionRuntimeProvider>
+      <DecisionSessionRuntimeProvider runtime={runtime}>
         <RuntimeBootstrapGate>
           <WalkthroughProvider>
             <JourneySurfaceObserver />

@@ -43,6 +43,10 @@ const INTERNAL_DECLARATIONS = [
   "styles.d.ts.map",
   "iife.d.ts",
   "iife.d.ts.map",
+  "embed.bundle.d.ts",
+  "embed.bundle.d.ts.map",
+  "iife.bundle.d.ts",
+  "iife.bundle.d.ts.map",
 ];
 
 function run(command, args) {

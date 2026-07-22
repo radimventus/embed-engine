@@ -45,17 +45,23 @@ const DecisionSessionRuntimeContext =
 
 type DecisionSessionRuntimeProviderProps = {
   readonly children: ReactNode;
+  /**
+   * Optional Runtime from Embed Delivery Layer.
+   * When provided, this instance is the sole semantic authority for the tree.
+   * When omitted, the Provider creates exactly one Runtime (standalone SPA).
+   */
+  readonly runtime?: DecisionSessionRuntime;
 };
 
 /**
  * Pure Context Provider — transports Decision Session Runtime state to React.
  *
- * Owns: Runtime instance lifecycle, revision notifications, Experience projection call.
+ * Owns: Runtime instance lifecycle (unless injected), revision notifications, Experience projection call.
  * Does not: compose Interpretation / Story / Moves / Outcome / Terminal / AIContext.
  * Projection helper `projectSynchronizedExperience` is presentation media binding only
  * (ED-DA-02); semantic ownership remains in Runtime.
  *
- * Injects `createSystemClock()` at the adapter boundary (ED-DA-06).
+ * Injects `createSystemClock()` at the adapter boundary (ED-DA-06) when creating Runtime.
  * Runtime never reads the host clock itself.
  *
  * CSCB-08: successful dispatches are observed by Decision Analytics when present.
@@ -63,8 +69,9 @@ type DecisionSessionRuntimeProviderProps = {
  */
 export function DecisionSessionRuntimeProvider({
   children,
+  runtime: injectedRuntime,
 }: DecisionSessionRuntimeProviderProps) {
-  const runtimeRef = useRef<DecisionSessionRuntime | null>(null);
+  const runtimeRef = useRef<DecisionSessionRuntime | null>(injectedRuntime ?? null);
   if (runtimeRef.current === null) {
     runtimeRef.current = createDecisionSessionRuntime({
       housePackage: REFERENCE_HOUSE_PACKAGE,

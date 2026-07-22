@@ -39,7 +39,7 @@ describe("Embed.mount / Embed.unmount", () => {
     assert.equal(typeof Embed.version, "string");
   });
 
-  it("mounts Garden Experience into the target element", () => {
+  it("legacy fixture garden still mounts Priority Journey HTML", () => {
     installDom();
     Embed.mount({ target: "#demo", fixture: "garden" });
 
@@ -50,7 +50,7 @@ describe("Embed.mount / Embed.unmount", () => {
     assert.match(root!.innerHTML, /Zvolit prioritu: garden/);
   });
 
-  it("unmount removes the renderer from the host", () => {
+  it("unmount removes the legacy renderer from the host", () => {
     installDom();
     Embed.mount({ target: "#demo", fixture: "garden" });
     assert.ok(document.querySelector("[data-embed-root]"));
@@ -60,7 +60,7 @@ describe("Embed.mount / Embed.unmount", () => {
     assert.equal(document.getElementById("demo")?.innerHTML, "");
   });
 
-  it("repeated mount replaces the previous session", () => {
+  it("repeated legacy mount replaces the previous session", () => {
     installDom();
     Embed.mount({ target: "#demo", fixture: "garden" });
     const first = document.querySelector("[data-embed-root]");
@@ -72,7 +72,7 @@ describe("Embed.mount / Embed.unmount", () => {
     assert.match(roots[0]!.innerHTML, /data-stage="Selection"/);
   });
 
-  it("clicking through Selection advances via Runtime (not loader logic)", () => {
+  it("legacy garden click advances via Priority Runtime", () => {
     installDom();
     Embed.mount({ target: "#demo", fixture: "garden" });
 
