@@ -12,6 +12,7 @@ import type {
   RoomImportanceConfig,
 } from "./InterpretationRule";
 import type { InterpretationContext } from "./InterpretationContext";
+import type { PrioritySignal } from "../priority-signals";
 
 type MutableSemantics = {
   focusRoom: FocusRoom | null;
@@ -43,6 +44,13 @@ function compareRules(left: InterpretationRule, right: InterpretationRule): numb
   return left.id.localeCompare(right.id);
 }
 
+/** Signals already sorted by strength desc; preserve that order. */
+function strongestSignals(
+  signals: readonly PrioritySignal[],
+): readonly PrioritySignal[] {
+  return signals;
+}
+
 function resolveRoomName(
   housePackage: InterpretationContext["housePackage"],
   roomId: string,
@@ -58,7 +66,30 @@ function applyRoomImportance(
   const config = rule.config as RoomImportanceConfig;
   const packageRoomIds = context.housePackage.rooms.map((room) => room.id);
   const packageSet = new Set(packageRoomIds);
-  const rankedPreferred = config.order.filter((roomId) => packageSet.has(roomId));
+  let rankedPreferred = config.order.filter((roomId) => packageSet.has(roomId));
+
+  const boosts = config.boostBySignalKind;
+  if (boosts !== undefined) {
+    const boosted: string[] = [];
+    for (const signal of strongestSignals(context.prioritySignals)) {
+      const rooms = boosts[signal.kind];
+      if (rooms === undefined) {
+        continue;
+      }
+      for (const roomId of rooms) {
+        if (packageSet.has(roomId) && !boosted.includes(roomId)) {
+          boosted.push(roomId);
+        }
+      }
+    }
+    if (boosted.length > 0) {
+      rankedPreferred = [
+        ...boosted,
+        ...rankedPreferred.filter((roomId) => !boosted.includes(roomId)),
+      ];
+    }
+  }
+
   const remainder = packageRoomIds.filter(
     (roomId) => !rankedPreferred.includes(roomId),
   );
@@ -95,12 +126,23 @@ function applyHeroEmphasis(
 ): void {
   const config = rule.config as HeroEmphasisConfig;
   const focusId = draft.focusRoom?.id ?? context.runtimeState.activeRoomId;
-  if (focusId === null) {
-    draft.primaryReason = config.defaultReason;
-    return;
+  let reason =
+    focusId === null
+      ? config.defaultReason
+      : (config.reasonsByRoomId[focusId] ?? config.defaultReason);
+
+  const bySignal = config.reasonBySignalKind;
+  if (bySignal !== undefined) {
+    for (const signal of strongestSignals(context.prioritySignals)) {
+      const signalReason = bySignal[signal.kind];
+      if (signalReason !== undefined) {
+        reason = signalReason;
+        break;
+      }
+    }
   }
-  draft.primaryReason =
-    config.reasonsByRoomId[focusId] ?? config.defaultReason;
+
+  draft.primaryReason = reason;
 }
 
 function applyMediaPrioritization(
@@ -110,10 +152,21 @@ function applyMediaPrioritization(
 ): void {
   const config = rule.config as MediaPrioritizationConfig;
   const focusId = draft.focusRoom?.id ?? context.runtimeState.activeRoomId;
-  const roleOrder: readonly RecommendedMediaRole[] =
+  let roleOrder: readonly RecommendedMediaRole[] =
     focusId !== null && config.roleOrderByRoomId?.[focusId] !== undefined
       ? config.roleOrderByRoomId[focusId]!
       : config.roleOrder;
+
+  const bySignal = config.roleOrderBySignalKind;
+  if (bySignal !== undefined) {
+    for (const signal of strongestSignals(context.prioritySignals)) {
+      const override = bySignal[signal.kind];
+      if (override !== undefined) {
+        roleOrder = override;
+        break;
+      }
+    }
+  }
 
   draft.recommendedMedia = roleOrder.map((role, index) =>
     Object.freeze({
@@ -136,18 +189,23 @@ function applyContextualMessaging(
       ? (config.messagesByRoomId[focusId] ?? config.defaultMessages)
       : config.defaultMessages;
 
-  const priorityMessages: string[] = [];
-  const byPriority = config.messagesByPriorityId;
-  if (byPriority !== undefined) {
-    for (const priorityId of context.runtimeState.priorityIds) {
-      const message = byPriority[priorityId];
-      if (message !== undefined) {
-        priorityMessages.push(message);
-      }
+  const signalMessages: string[] = [];
+  const bySignalKind = config.messagesBySignalKind;
+  const byPriorityId = config.messagesByPriorityId;
+
+  for (const signal of strongestSignals(context.prioritySignals)) {
+    const fromKind = bySignalKind?.[signal.kind];
+    if (fromKind !== undefined) {
+      signalMessages.push(fromKind);
+      continue;
+    }
+    const fromPriority = byPriorityId?.[signal.priorityId];
+    if (fromPriority !== undefined) {
+      signalMessages.push(fromPriority);
     }
   }
 
-  draft.highlights = [...roomMessages, ...priorityMessages];
+  draft.highlights = [...roomMessages, ...signalMessages];
 }
 
 function applyRecommendationOrdering(
@@ -200,7 +258,7 @@ function applyRule(
 }
 
 /**
- * Evaluate Interpretation Rules against Object Package + Runtime State.
+ * Evaluate Interpretation Rules against Object Package + Runtime State + Priority Signals.
  * Deterministic: identical context → identical InterpretedSemantics.
  *
  * Evaluation order: ascending priority (low → high).

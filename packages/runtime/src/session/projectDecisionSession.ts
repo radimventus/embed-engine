@@ -15,6 +15,7 @@ import type {
   InterpretationRuleset,
   RecommendedMediaRef,
 } from "./interpretation";
+import type { PrioritySignal } from "./priority-signals";
 import {
   interpretDecisionSession,
   type SessionInterpretation,
@@ -31,6 +32,7 @@ export type SessionExperience = {
   readonly activeRoomId: string | null;
   readonly activeRoom: ExperienceHouseRoom | null;
   readonly priorityIds: readonly string[];
+  readonly prioritySignals: readonly PrioritySignal[];
   readonly variantId: string | null;
   readonly scenarioId: string | null;
   readonly interpretationSummary: string;
@@ -92,6 +94,7 @@ export function projectFromInterpretation(
     activeRoom,
     focusRoom: interpretation.focusRoom,
     priorityIds: interpretation.priorityIds,
+    prioritySignals: interpretation.prioritySignals,
     variantId: interpretation.variantId,
     scenarioId: interpretation.scenarioId,
     primaryReason: interpretation.primaryReason,
@@ -111,6 +114,7 @@ export function projectFromInterpretation(
       activeRoomId,
       activeRoom,
       priorityIds: interpretation.priorityIds,
+      prioritySignals: interpretation.prioritySignals,
       variantId: interpretation.variantId,
       scenarioId: interpretation.scenarioId,
       interpretationSummary: interpretation.summary,

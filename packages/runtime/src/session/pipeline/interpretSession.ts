@@ -10,10 +10,14 @@ import {
   type InterpretedSemantics,
   type RecommendedMediaRef,
 } from "../interpretation";
+import {
+  evaluatePrioritySignalsFromIds,
+  type PrioritySignal,
+} from "../priority-signals";
 
 /**
  * Session Interpretation — meaning derived from
- * Object Package + Runtime State + Interpretation Rules.
+ * Object Package + Runtime State + Priority Signals + Interpretation Rules.
  * Never validates commands. Never projects UI.
  */
 export type SessionInterpretation = {
@@ -21,6 +25,8 @@ export type SessionInterpretation = {
   readonly activeRoomId: string | null;
   readonly activeRoomName: string | null;
   readonly priorityIds: readonly string[];
+  /** Active Priority Signals feeding Interpretation Rules (CAP-PRI-001). */
+  readonly prioritySignals: readonly PrioritySignal[];
   readonly variantId: string | null;
   readonly scenarioId: string | null;
   readonly runtimeVersion: number;
@@ -46,6 +52,7 @@ function buildSummary(
   session: DecisionSession,
   semantics: InterpretedSemantics,
   rules: InterpretationRuleset,
+  signals: readonly PrioritySignal[],
 ): string {
   return [
     `object:${session.objectId}`,
@@ -55,6 +62,7 @@ function buildSummary(
     `highlights:${semantics.highlights.join(",") || "none"}`,
     `media:${semantics.recommendedMedia.map((item) => item.role).join(",") || "none"}`,
     `priorities:${session.runtimeState.priorityIds.join(",") || "none"}`,
+    `signals:${signals.map((signal) => `${signal.kind}:${signal.strength}`).join(",") || "none"}`,
     `variant:${session.runtimeState.variantId ?? "none"}`,
     `scenario:${session.runtimeState.scenarioId ?? "none"}`,
     `rules:${rules.id}@${rules.version}`,
@@ -69,10 +77,14 @@ export function interpretDecisionSession(
   options?: InterpretDecisionSessionOptions,
 ): SessionInterpretation {
   const rules = options?.rules ?? DEFAULT_HOUSE_INTERPRETATION_RULES;
+  const prioritySignals = evaluatePrioritySignalsFromIds(
+    session.runtimeState.priorityIds,
+  );
   const context = createInterpretationContext({
     housePackage,
     runtimeState: session.runtimeState,
     rules,
+    prioritySignals,
   });
   const semantics = evaluateInterpretationRules(context);
 
@@ -88,10 +100,11 @@ export function interpretDecisionSession(
     activeRoomId,
     activeRoomName,
     priorityIds: Object.freeze([...session.runtimeState.priorityIds]),
+    prioritySignals,
     variantId: session.runtimeState.variantId,
     scenarioId: session.runtimeState.scenarioId,
     runtimeVersion: session.runtimeState.version,
-    summary: buildSummary(session, semantics, rules),
+    summary: buildSummary(session, semantics, rules, prioritySignals),
     rulesetId: rules.id,
     rulesetVersion: rules.version,
     focusRoom: semantics.focusRoom,

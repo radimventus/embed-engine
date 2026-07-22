@@ -276,6 +276,7 @@ function projectSynchronizedContext(
     activeRoom,
     focusRoom: experience.focusRoom,
     priorityIds: experience.priorityIds,
+    prioritySignals: experience.prioritySignals,
     variantId: experience.variantId,
     scenarioId: experience.scenarioId,
     primaryReason: experience.primaryReason,

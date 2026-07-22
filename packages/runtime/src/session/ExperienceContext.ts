@@ -4,6 +4,7 @@ import type {
   FocusRoom,
   RecommendedMediaRef,
 } from "./interpretation";
+import type { PrioritySignal } from "./priority-signals";
 
 /**
  * Object metadata slice of Experience Context (CAP-HP-003.5 Experience Context).
@@ -46,6 +47,7 @@ export type ExperienceNavigationContext = {
  */
 export type ExperienceDecisionContext = {
   readonly priorityIds: readonly string[];
+  readonly prioritySignals: readonly PrioritySignal[];
   readonly variantId: string | null;
   readonly scenarioId: string | null;
   readonly primaryReason: string;
@@ -78,6 +80,7 @@ export type ProjectExperienceContextInput = {
   readonly activeRoom: ExperienceHouseRoom | null;
   readonly focusRoom: FocusRoom | null;
   readonly priorityIds: readonly string[];
+  readonly prioritySignals: readonly PrioritySignal[];
   readonly variantId: string | null;
   readonly scenarioId: string | null;
   readonly primaryReason: string;
@@ -139,6 +142,7 @@ export function projectExperienceContext(
     }),
     decision: Object.freeze({
       priorityIds: input.priorityIds,
+      prioritySignals: input.prioritySignals,
       variantId: input.variantId,
       scenarioId: input.scenarioId,
       primaryReason: input.primaryReason,

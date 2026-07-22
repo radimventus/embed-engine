@@ -46,6 +46,12 @@ export const DEFAULT_HOUSE_INTERPRETATION_RULES: InterpretationRuleset =
             "room-children",
             "room-bath",
           ],
+          boostBySignalKind: {
+            "emphasize-space": ["room-living", "room-children"],
+            "emphasize-outdoor": ["room-living", "room-kitchen"],
+            "emphasize-privacy": ["room-bedroom", "room-bath"],
+            "emphasize-value": ["room-kitchen", "room-living"],
+          },
         },
       },
       {
@@ -63,6 +69,12 @@ export const DEFAULT_HOUSE_INTERPRETATION_RULES: InterpretationRuleset =
             "room-bath": "service-wet-zone",
             "room-children": "flexible-secondary-space",
           },
+          reasonBySignalKind: {
+            "emphasize-value": "value-led-exploration",
+            "emphasize-outdoor": "outdoor-led-exploration",
+            "emphasize-space": "space-led-exploration",
+            "emphasize-privacy": "privacy-led-exploration",
+          },
         },
       },
       {
@@ -76,6 +88,22 @@ export const DEFAULT_HOUSE_INTERPRETATION_RULES: InterpretationRuleset =
           roleOrderByRoomId: {
             "room-living": ["video", "hero", "gallery", "thumbnail", "document"],
             "room-kitchen": ["hero", "gallery", "video", "thumbnail", "document"],
+          },
+          roleOrderBySignalKind: {
+            "emphasize-outdoor": [
+              "gallery",
+              "hero",
+              "video",
+              "thumbnail",
+              "document",
+            ],
+            "emphasize-space": [
+              "video",
+              "gallery",
+              "hero",
+              "thumbnail",
+              "document",
+            ],
           },
         },
       },
@@ -94,10 +122,11 @@ export const DEFAULT_HOUSE_INTERPRETATION_RULES: InterpretationRuleset =
             "room-bath": ["finishes", "storage"],
             "room-children": ["flexibility", "growth"],
           },
-          messagesByPriorityId: {
-            price: "value-efficiency",
-            garden: "outdoor-connection",
-            space: "spatial-generosity",
+          messagesBySignalKind: {
+            "emphasize-value": "value-efficiency",
+            "emphasize-outdoor": "outdoor-connection",
+            "emphasize-space": "spatial-generosity",
+            "emphasize-privacy": "privacy",
           },
         },
       },

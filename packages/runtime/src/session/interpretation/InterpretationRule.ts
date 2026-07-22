@@ -45,12 +45,22 @@ export type FocusRoom = {
 export type RoomImportanceConfig = {
   /** Highest importance first. Unknown rooms sort after listed ones by package order. */
   readonly order: readonly string[];
+  /**
+   * When a Priority Signal kind is active, boost these room ids to the front
+   * (strongest signal first). Domain config only — no UI knowledge.
+   */
+  readonly boostBySignalKind?: Readonly<Record<string, readonly string[]>>;
 };
 
 export type HeroEmphasisConfig = {
   /** Machine reason keys keyed by room id. */
   readonly reasonsByRoomId: Readonly<Record<string, string>>;
   readonly defaultReason: string;
+  /**
+   * When a Priority Signal kind is active, override / append reason
+   * (strongest matching signal wins).
+   */
+  readonly reasonBySignalKind?: Readonly<Record<string, string>>;
 };
 
 export type MediaPrioritizationConfig = {
@@ -58,6 +68,10 @@ export type MediaPrioritizationConfig = {
   readonly roleOrder: readonly RecommendedMediaRole[];
   /** Optional per-room overrides of role order. */
   readonly roleOrderByRoomId?: Readonly<
+    Record<string, readonly RecommendedMediaRole[]>
+  >;
+  /** Optional media role order overrides driven by Priority Signal kinds. */
+  readonly roleOrderBySignalKind?: Readonly<
     Record<string, readonly RecommendedMediaRole[]>
   >;
 };
@@ -70,7 +84,14 @@ export type RecommendationOrderingConfig = {
 export type ContextualMessagingConfig = {
   readonly messagesByRoomId: Readonly<Record<string, readonly string[]>>;
   readonly defaultMessages: readonly string[];
-  /** Optional messages when priority ids are active (appended, deterministic). */
+  /**
+   * Messages keyed by Priority Signal kind (preferred).
+   * Rules never read UI priority collection — only signals.
+   */
+  readonly messagesBySignalKind?: Readonly<Record<string, string>>;
+  /**
+   * @deprecated Prefer messagesBySignalKind. Kept for backward-compatible configs.
+   */
   readonly messagesByPriorityId?: Readonly<Record<string, string>>;
 };
 

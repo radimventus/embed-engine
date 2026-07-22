@@ -73,6 +73,18 @@ export {
   type RoomImportanceConfig,
 } from "./interpretation";
 export {
+  createPriorityProfile,
+  evaluatePrioritySignals,
+  evaluatePrioritySignalsFromIds,
+  PRIORITY_SIGNAL_KIND_BY_ID,
+  resolvePrioritySignalKind,
+  type PriorityId,
+  type PriorityProfile,
+  type PriorityProfileEntry,
+  type PrioritySignal,
+  type PrioritySignalKind,
+} from "./priority-signals";
+export {
   DecisionSessionRuntime,
   applyDecisionEvent,
   commandToEvent,
