@@ -25,7 +25,7 @@ Items here are candidates for later milestones / ADRs.
 
 ## Decision Architecture (AR-001)
 
-Deferred boundary work from [Architecture Review v1.0](../architecture/review/AR-001-decision-architecture-v1.md). Do **not** invent new foundational PTs — execute via CAPs + these items.
+Deferred boundary work from [Architecture Review v1.0](../architecture/review/AR-001-decision-architecture-v1.md) (**PASSED Conditional**; architecture [FROZEN](../architecture/decision-architecture-v1.0-freeze.md)). Do **not** invent new foundational PTs — execute via CAPs + these items.
 
 | ID | Item | Notes |
 | --- | --- | --- |

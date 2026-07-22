@@ -58,6 +58,8 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Project Principles (PP-001) | `00-project/PROJECT-PRINCIPLES.md` |
 | Behavior Pack contract | `architecture/behavior-pack-contract.md` |
 | Living Experience v0.1 | `architecture/living-experience-v0.1-freeze.md` |
+| Decision Architecture v1.0 | `architecture/decision-architecture-v1.0-freeze.md` (**FROZEN** · AR-001 PASSED Conditional) |
+| Architecture Reviews | `architecture/review/` |
 | Experience projection | `architecture/experience-projection.md` |
 | Decision Terminal modalities | `architecture/experience/decision-terminal.md` (defs → Decision Layer) |
 | ADR index | `architecture/adr/README.md` |
@@ -95,7 +97,8 @@ See **[architecture/RUNTIME.md](./architecture/RUNTIME.md)** (one-minute Runtime
 10. [Decision Journey Specification (DJS)](./product/decision-journey/DJS.md) — UX-001 Proposed
 11. [Business Intelligence Layer](./business/README.md) — Business Architecture SSOT
 12. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
-13. Active design / implementation guides as needed
+13. [Decision Architecture v1.0 Freeze](./architecture/decision-architecture-v1.0-freeze.md) — **FROZEN** · [AR-001](./architecture/review/AR-001-decision-architecture-v1.md)
+14. Active design / implementation guides as needed
 
 Do not start with `archive/` or treat CommandRuntime docs as current.
 

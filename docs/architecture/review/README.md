@@ -6,7 +6,9 @@ They evaluate principles, boundaries, and readiness — not UI polish.
 
 | ID | Document | Status | Scope |
 | --- | --- | --- | --- |
-| AR-001 | [Decision Architecture Review v1.0](./AR-001-decision-architecture-v1.md) | Proposed | PT-001–008, Runtime session pipeline, Experience Context, CAP roadmap |
+| AR-001 | [Decision Architecture Review v1.0](./AR-001-decision-architecture-v1.md) | **PASSED (Conditional)** | PT-001–008, Runtime session pipeline, Experience Context, CAP roadmap |
+
+**Architecture state:** [Decision Architecture v1.0 — FROZEN](../decision-architecture-v1.0-freeze.md) · Remaining work: **implementation only**
 
 **Related**
 

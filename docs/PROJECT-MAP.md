@@ -4,6 +4,8 @@ One-page orientation for Embed Engine. Not a specification.
 
 **Canonical architecture:** [architecture/README.md](./architecture/README.md) · [RUNTIME.md](./architecture/RUNTIME.md) · [Decision Layer SSOT](./architecture/decision-layer/README.md) · [Governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
 
+**Decision Architecture v1.0:** **FROZEN** · Review **PASSED (Conditional)** · [freeze](./architecture/decision-architecture-v1.0-freeze.md) · [AR-001](./architecture/review/AR-001-decision-architecture-v1.md) · remaining work: **implementation only**
+
 ```text
 Knowledge:      Object Package + Behavior Pack
 Kernel:         Signal → reduce → DecisionState → project → Interpretation
@@ -50,3 +52,4 @@ Future:         Decision Trajectory (not MVP)
 5. [architecture/decision-layer/README.md](./architecture/decision-layer/README.md)  
 6. [architecture/decision-layer/decision-layer-governance-v1.md](./architecture/decision-layer/decision-layer-governance-v1.md)  
 7. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
+8. [Decision Architecture v1.0 Freeze](./architecture/decision-architecture-v1.0-freeze.md) — **FROZEN** · [AR-001](./architecture/review/AR-001-decision-architecture-v1.md)

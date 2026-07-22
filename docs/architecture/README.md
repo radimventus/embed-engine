@@ -5,6 +5,15 @@
 **Decision Layer SSOT:** [decision-layer/](./decision-layer/)  
 **Governance freeze:** [decision-layer/decision-layer-governance-v1.md](./decision-layer/decision-layer-governance-v1.md)
 
+### Decision Architecture v1.0
+
+| | |
+| --- | --- |
+| **State** | **ARCHITECTURE FROZEN** |
+| **Review** | **PASSED (Conditional)** — [AR-001](./review/AR-001-decision-architecture-v1.md) |
+| **Freeze** | [decision-architecture-v1.0-freeze.md](./decision-architecture-v1.0-freeze.md) |
+| **Remaining work** | Implementation only (CAPs + ED-DA-\*) |
+
 ## Folders
 
 | Path | Role |
@@ -20,6 +29,7 @@
 | [Priority Experience Integration Model](./Priority%20Experience%20Integration%20Model.md) | End-to-end integration of Priority Experience SSOTs + OQ resolution |
 | `domain/` | Domain models (e.g. [Priority Domain Model](./domain/Priority%20Domain%20Model.md)) |
 | `experience/` | Experience projection notes; Terminal **modalities** only (defs → Decision Layer) |
+| `decision-architecture-v1.0-freeze.md` | **Decision Architecture v1.0 — FROZEN** |
 | `living-experience-v0.1-freeze.md` | Cognitive sync freeze |
 | `behavior-pack-contract.md` | Behavior Pack contract (not UI) |
 | `runtime-boundaries.md` | Supporting — package ownership / dependency direction |

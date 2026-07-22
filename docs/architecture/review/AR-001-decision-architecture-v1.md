@@ -4,13 +4,15 @@
 | --- | --- |
 | **ID** | AR-001 |
 | **Title** | Decision Architecture Review v1.0 |
-| **Status** | Proposed |
+| **Status** | **PASSED (Conditional)** |
+| **Architecture state** | **FROZEN** — [Decision Architecture v1.0 Freeze](../decision-architecture-v1.0-freeze.md) |
 | **Type** | Architecture Review (AR) |
 | **Version** | 1.0 |
 | **Date** | 2026-07-22 |
 | **Owner** | Platform Architecture |
 | **Scope** | First-generation Decision Architecture — Product Theses, Runtime, semantic pipeline, Experience projection, public contracts, layer boundaries, extension points |
 | **Out of scope** | UI polish, performance optimization, visual design, pilot-specific content |
+| **Remaining work** | Implementation only (CAPs + ED-DA-\*) |
 
 ---
 
@@ -39,7 +41,9 @@ This review evaluates **architectural integrity** rather than implementation qua
 
 ## Executive Verdict
 
-**Conditional Pass — foundations strong; narrative layer not yet on the session pipeline.**
+**PASSED (Conditional).** Architecture **FROZEN** at v1.0 — remaining work is implementation only.
+
+Foundations strong; narrative layer (Story / Moves / Outcome / Terminal) not yet on the session pipeline — authorized as CAP work, not open architecture.
 
 The Decision Session Runtime correctly implements:
 
@@ -470,14 +474,21 @@ Ordered roadmap after this review — **no new foundational architecture**:
 | Every completed Decision Session produces a deterministic Decision Terminal | **Not met** — Terminal engine / Outcome not on session pipeline |
 | Remaining work proceeds via CAPs without new foundations | **Met** |
 
-### Overall exit status
+### Overall disposition
 
-**Not closed.** Foundations are reviewable and largely correct. Close AR-001 when CAP-DST-001 + dual-stack retirement land, or reopen a delta review (AR-001.1) at that milestone.
+| Gate | Status |
+| --- | --- |
+| Architecture review | **PASSED (Conditional)** |
+| Architecture freeze | **FROZEN** — [v1.0 freeze](../decision-architecture-v1.0-freeze.md) |
+| Implementation completeness | **Open** — CAP-DST-001…CAP-AI-001 + ED-DA-01…06 |
+
+Conditional gaps do **not** reopen foundations. Reopen only via ADR + AR-001.1 if a CAP proves a frozen invariant wrong.
 
 ---
 
 ## Related documents
 
+- [Decision Architecture v1.0 Freeze](../decision-architecture-v1.0-freeze.md)
 - [Platform Theory index](../pt/README.md)
 - [Decision Layer vocabulary](../decision-layer/README.md)
 - [RI-001 Runtime Kernel](../../04-reference-implementation/RI-001-Runtime-Kernel.md)
