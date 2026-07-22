@@ -239,7 +239,7 @@ The following MUST always remain true:
 | [PT-003](./PT-003-decision-sessions-are-reproducible.md) | Session reproducibility |
 | **PT-004 (this document)** | Decision Story as canonical narrative |
 | CAP-DST-001 | Decision Story Engine (implementation) |
-| Runtime Decision Focus (CAP-PRI-002) | Attention entry point feeding Story composition |
+| [PT-005](./PT-005-decision-experience-composed-from-moves.md) | Decision Moves as Experience composition |
 
 ### Why this PT matters
 
@@ -291,6 +291,7 @@ It produces a **deterministic decision narrative** that every module presents co
 - [PT-001 — House Package as the Canonical Object Contract](./PT-001-house-package-canonical-object-contract.md)
 - [PT-002 — Interpretation is the Product](./PT-002-interpretation-is-the-product.md)
 - [PT-003 — Decision Sessions are Reproducible](./PT-003-decision-sessions-are-reproducible.md)
+- [PT-005 — Decision Experience is Composed from Decision Moves](./PT-005-decision-experience-composed-from-moves.md)
 - [ADR-012 — Interpretation as first-class artifact](../adr/ADR-012-interpretation-first-class-artifact.md)
 - [ADR-006 — Interpretation & Projection Layer](../adr/ADR-006-interpretation-projection-layer.md)
 - [Experience Projection Principles](../experience-projection.md)

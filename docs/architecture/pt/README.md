@@ -8,6 +8,7 @@ Platform Theory documents establish **long-lived invariants** for how Embed Engi
 | PT-002 | [Interpretation is the Product](./PT-002-interpretation-is-the-product.md) | Approved | Interpretation as the canonical platform product; Runtime → Interpretation → Projection → Experience |
 | PT-003 | [Decision Sessions are Reproducible](./PT-003-decision-sessions-are-reproducible.md) | Proposed | Decision Session as semantic Runtime history — deterministic, serializable, replayable |
 | PT-004 | [Decision Story is the Product](./PT-004-decision-story-is-the-product.md) | Proposed | Decision Story as the canonical semantic narrative; authorizes CAP-DST-001 |
+| PT-005 | [Decision Experience is Composed from Decision Moves](./PT-005-decision-experience-composed-from-moves.md) | Proposed | Decision Move as progression unit; Story = ordered Moves; authorizes CAP-DST-002 |
 
 **Related**
 
