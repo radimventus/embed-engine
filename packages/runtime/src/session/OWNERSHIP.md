@@ -43,6 +43,17 @@ Must not mutate Runtime except via `dispatch(command)`.
 | `@embed-engine/runtime/session` | Decision Session public API only |
 | `@embed-engine/runtime/testing` | `compose*` / `evaluate*` / low-level session — tests & advanced only |
 
+## Time (ED-DA-06)
+
+Runtime must not call `Date.now()` / `new Date()` / `performance.now()`.
+
+Time enters only via:
+
+- explicit `now` on create / dispatch, or
+- injected `RuntimeClock` on `createDecisionSessionRuntime({ clock })`
+
+`createSystemClock()` belongs at application adapters (Client Studio Provider), never inside pipeline helpers.
+
 ## Legacy note
 
 `@embed-engine/core` cognitive packs are **not** the session SSOT (ED-DA-01R retired Client Studio dual stack).

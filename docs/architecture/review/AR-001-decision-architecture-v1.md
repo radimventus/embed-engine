@@ -434,7 +434,7 @@ Captured for non-blocking follow-up (also listed in [Engineering Debt](../../imp
 | ED-DA-03 | Narrow `@embed-engine/runtime` public exports to façade + Experience Context + Outcome — **Done** ([ED-DA-03 report](./ED-DA-03-export-surface-hardening.md)) |
 | ED-DA-04 | Remove Provider exposure of `runtime` / raw `interpretation` to presentation modules — **Done** ([ED-DA-04 report](./ED-DA-04-context-only-provider.md)) |
 | ED-DA-05 | Converge flat `SessionExperience` fields into `experience.context` only — **Done** ([ED-DA-05 report](./ED-DA-05-flatten-session-experience.md)) |
-| ED-DA-06 | Clock injection required in production create/dispatch paths (no silent `Date.now()` for reproducibility demos) |
+| ED-DA-06 | Clock injection required in production create/dispatch paths — **Done** ([ED-DA-06 report](./ED-DA-06-injectable-clock.md)) |
 
 ---
 

@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
-import { createDecisionSessionRuntime } from '@embed-engine/runtime';
+import {
+  createFixedClock,
+  createDecisionSessionRuntime,
+} from '@embed-engine/runtime';
 import type { SessionExperience } from '@embed-engine/runtime';
 
 import {
@@ -14,6 +17,7 @@ import {
 describe('Experience Context (CAP-HP-003.5)', () => {
   it('identical Runtime → identical synchronized context', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -32,6 +36,7 @@ describe('Experience Context (CAP-HP-003.5)', () => {
 
   it('room change updates unified context for Hero and Gallery', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(10),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 10,
     });
@@ -55,6 +60,7 @@ describe('Experience Context (CAP-HP-003.5)', () => {
 
   it('fallback hero context remains deterministic without catalog media', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -89,6 +95,7 @@ describe('Experience Context (CAP-HP-003.5)', () => {
 
   it('ChangePriority reshapes Experience Context hero and gallery ordering', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -121,6 +128,7 @@ describe('Experience Context (CAP-HP-003.5)', () => {
 
   it('adapters read the same contract as experience.context', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -142,6 +150,7 @@ describe('Experience Context (CAP-HP-003.5)', () => {
 describe('Contextual Media Projection (CAP-HP-003.4)', () => {
   it('SelectRoom updates Hero media through projected activeRoom', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -167,6 +176,7 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
 
   it('projection owns media — consumers read context.roomMedia', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -183,6 +193,7 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
 
   it('floorPlan is projected on Experience Context (ED-DA-02)', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

@@ -1,5 +1,6 @@
 import type { HousePackage } from "@embed-engine/object-house";
 
+import type { RuntimeClock } from "./clock";
 import { createDecisionSession } from "./createDecisionSession";
 import type { DecisionEvent } from "./DecisionEvent";
 import type { DecisionSession } from "./DecisionSession";
@@ -17,16 +18,30 @@ export type ReplaySessionResult =
 /**
  * Deterministic replay: empty session + ordered semantic events → Runtime State.
  * Mutations occur only via applyDecisionEvent (never via Commands).
+ * Time from `createdAt`, first event `.at`, or injected `clock` (ED-DA-06).
  */
 export function replayDecisionSession(input: {
   readonly housePackage: HousePackage;
   readonly events: readonly DecisionEvent[];
   readonly createdAt?: number;
+  readonly clock?: RuntimeClock;
 }): ReplaySessionResult {
   const { housePackage, events } = input;
-  const createdAt =
-    input.createdAt ??
-    (events[0] !== undefined ? events[0].at : Date.now());
+  let createdAt = input.createdAt;
+  if (createdAt === undefined && events[0] !== undefined) {
+    createdAt = events[0].at;
+  }
+  if (createdAt === undefined) {
+    if (input.clock === undefined) {
+      return {
+        ok: false,
+        code: "MISSING_CLOCK",
+        message:
+          "replayDecisionSession requires createdAt, event timestamps, or an injectable clock (ED-DA-06).",
+      };
+    }
+    createdAt = input.clock.now();
+  }
 
   let session = createDecisionSession({
     housePackage,

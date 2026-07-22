@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 import {
+  createFixedClock,
   AI_CONTEXT_SCHEMA_VERSION,
   composeAIContext,
   createDecisionSessionRuntime,
@@ -13,10 +14,12 @@ import {
 describe("AI Context Reader (CAP-AI-001)", () => {
   it("identical Terminals produce identical AI Contexts", () => {
     const a = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
     const b = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -35,6 +38,7 @@ describe("AI Context Reader (CAP-AI-001)", () => {
 
   it("AIContext projects Terminal only — no new semantics", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -53,6 +57,7 @@ describe("AI Context Reader (CAP-AI-001)", () => {
 
   it("composeAIContext accepts only Terminal (Terminal → AIContext)", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -74,6 +79,7 @@ describe("AI Context Reader (CAP-AI-001)", () => {
 
   it("AIContext contains no prompt or natural-language fields", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

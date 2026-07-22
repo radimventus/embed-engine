@@ -25,11 +25,13 @@ export type SelectRoomInput = {
   readonly housePackage: HousePackage;
   readonly roomId: RoomId;
   readonly now?: number;
+  readonly clock?: import("./clock").RuntimeClock;
 };
 
 /**
  * Compatibility façade — routes through the canonical Event Pipeline.
  * Prefer DecisionSessionRuntime.dispatch({ type: "SelectRoom", roomId }).
+ * Requires `now` or `clock` (ED-DA-06).
  */
 export function selectRoom(input: SelectRoomInput): SelectRoomResult {
   const result = dispatchCommand({
@@ -37,6 +39,7 @@ export function selectRoom(input: SelectRoomInput): SelectRoomResult {
     housePackage: input.housePackage,
     command: { type: "SelectRoom", roomId: input.roomId },
     now: input.now,
+    clock: input.clock,
   });
 
   if (!result.ok) {

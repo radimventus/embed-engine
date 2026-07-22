@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import type { HousePackage } from "@embed-engine/object-house";
 
 import {
+  createFixedClock,
   createDecisionSession,
   createDecisionSessionRuntime,
   dispatchCommand,
@@ -53,6 +54,7 @@ describe("Runtime Event Pipeline", () => {
 
   it("valid SelectRoomCommand → one RoomSelected → Runtime → Interpretation → Bedroom Experience", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(10),
       housePackage: HOUSE,
       now: 10,
     });
@@ -79,6 +81,7 @@ describe("Runtime Event Pipeline", () => {
 
   it("ChangePriorityCommand → PriorityChanged → updated Experience", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: HOUSE,
       now: 1,
     });
@@ -101,8 +104,16 @@ describe("Runtime Event Pipeline", () => {
   });
 
   it("mutation → Interpretation → Projection is deterministic", () => {
-    const a = createDecisionSessionRuntime({ housePackage: HOUSE, now: 100 });
-    const b = createDecisionSessionRuntime({ housePackage: HOUSE, now: 100 });
+    const a = createDecisionSessionRuntime({
+      clock: createFixedClock(100),
+      housePackage: HOUSE,
+      now: 100,
+    });
+    const b = createDecisionSessionRuntime({
+      clock: createFixedClock(100),
+      housePackage: HOUSE,
+      now: 100,
+    });
 
     const firstA = a.dispatch(
       { type: "SelectRoom", roomId: "room-kitchen" },
@@ -138,6 +149,7 @@ describe("Runtime Event Pipeline", () => {
 
   it("replay of pipeline events restores identical Runtime and Experience meaning", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: HOUSE,
       now: 1,
     });
@@ -163,6 +175,7 @@ describe("Runtime Event Pipeline", () => {
     assert.deepEqual(replayed.session.runtimeState, final.session.runtimeState);
 
     const restoredRuntime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: HOUSE,
       session: replayed.session,
     });

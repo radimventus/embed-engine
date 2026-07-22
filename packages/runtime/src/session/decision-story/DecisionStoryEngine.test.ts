@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 import {
+  createFixedClock,
   composeDecisionStory,
   createDecisionSessionRuntime,
   DECISION_STORY_SCHEMA_VERSION,
@@ -13,10 +14,12 @@ import {
 describe("Decision Story Engine (CAP-DST-001)", () => {
   it("identical Interpretation inputs produce identical Decision Stories", () => {
     const a = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
     const b = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -39,6 +42,7 @@ describe("Decision Story Engine (CAP-DST-001)", () => {
 
   it("different priorities produce different Decision Stories", () => {
     const outdoor = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -46,6 +50,7 @@ describe("Decision Story Engine (CAP-DST-001)", () => {
     outdoor.dispatch({ type: "ChangePriority", priorityIds: ["plot"] }, 3);
 
     const privacy = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -69,6 +74,7 @@ describe("Decision Story Engine (CAP-DST-001)", () => {
 
   it("Story exposes PT-004 narrative fields in chapter order", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -95,6 +101,7 @@ describe("Decision Story Engine (CAP-DST-001)", () => {
 
   it("Experience Context exposes Story; Interpretation attaches Story", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -120,6 +127,7 @@ describe("Decision Story Engine (CAP-DST-001)", () => {
 
   it("composeDecisionStory is a pure deterministic function", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

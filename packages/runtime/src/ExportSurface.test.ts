@@ -64,6 +64,9 @@ describe("Runtime public export surface (ED-DA-03)", () => {
       false,
     );
     assert.match(indexCode, /createDecisionSessionRuntime/);
+    assert.match(indexCode, /createFixedClock/);
+    assert.match(indexCode, /createSystemClock/);
+    assert.match(indexCode, /RuntimeClock/);
     assert.match(indexCode, /ExperienceContext/);
     assert.match(indexCode, /DecisionTerminalContract/);
     assert.match(indexCode, /AIContextContract/);

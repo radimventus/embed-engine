@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 import {
+  createFixedClock,
   composeDecisionMoves,
   createDecisionSessionRuntime,
   DECISION_MOVE_SCHEMA_VERSION,
@@ -13,10 +14,12 @@ import {
 describe("Decision Move Engine (CAP-DST-002)", () => {
   it("identical Stories produce identical Move sequences", () => {
     const a = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
     const b = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -38,6 +41,7 @@ describe("Decision Move Engine (CAP-DST-002)", () => {
 
   it("Moves always reference parent Story and never exist without it", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -58,6 +62,7 @@ describe("Decision Move Engine (CAP-DST-002)", () => {
 
   it("Move ordering is stable and successor-linked", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -84,6 +89,7 @@ describe("Decision Move Engine (CAP-DST-002)", () => {
 
   it("different Stories produce different Move sequences", () => {
     const outdoor = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -91,6 +97,7 @@ describe("Decision Move Engine (CAP-DST-002)", () => {
     outdoor.dispatch({ type: "ChangePriority", priorityIds: ["plot"] }, 3);
 
     const privacy = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -109,6 +116,7 @@ describe("Decision Move Engine (CAP-DST-002)", () => {
 
   it("composeDecisionMoves accepts only Story (Story → Moves)", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

@@ -5,7 +5,10 @@ import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 
 import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
-import { createDecisionSessionRuntime } from '@embed-engine/runtime';
+import {
+  createFixedClock,
+  createDecisionSessionRuntime,
+} from '@embed-engine/runtime';
 
 import { projectSynchronizedExperience } from './synchronizedExperience';
 
@@ -59,6 +62,7 @@ describe('Media projection boundary (ED-DA-02)', () => {
 
   it('media projection never invents Decision Session semantics', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

@@ -10,6 +10,12 @@
  * @see OWNERSHIP.md
  */
 
+export {
+  createFixedClock,
+  createSystemClock,
+  type RuntimeClock,
+} from "./clock";
+
 export type {
   DecisionEvent,
   ObjectId,

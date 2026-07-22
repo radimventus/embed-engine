@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 import {
+  createFixedClock,
   composeDecisionTerminal,
   createDecisionSessionRuntime,
   DECISION_TERMINAL_SCHEMA_VERSION,
@@ -13,10 +14,12 @@ import {
 describe("Decision Terminal Engine (CAP-DTR-001)", () => {
   it("identical Outcomes produce identical Terminals", () => {
     const a = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
     const b = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -38,6 +41,7 @@ describe("Decision Terminal Engine (CAP-DTR-001)", () => {
 
   it("Terminal wraps Outcome without enriching semantics", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -59,6 +63,7 @@ describe("Decision Terminal Engine (CAP-DTR-001)", () => {
 
   it("composeDecisionTerminal accepts only Outcome (Outcome → Terminal)", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -80,6 +85,7 @@ describe("Decision Terminal Engine (CAP-DTR-001)", () => {
 
   it("different Outcomes produce different Terminals", () => {
     const outdoor = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -87,6 +93,7 @@ describe("Decision Terminal Engine (CAP-DTR-001)", () => {
     outdoor.dispatch({ type: "ChangePriority", priorityIds: ["plot"] }, 3);
 
     const privacy = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

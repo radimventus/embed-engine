@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 import {
+  createFixedClock,
   createDecisionSessionRuntime,
   createPriorityProfile,
   evaluatePrioritySignals,
@@ -36,6 +37,7 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
 
   it("ChangePriority → signals → Interpretation → Experience changes", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -76,6 +78,7 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
 
   it("different priority order yields different signal strengths and Experience", () => {
     const gardenFirst = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -86,6 +89,7 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
     );
 
     const priceFirst = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -110,6 +114,7 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
     assert.deepEqual(signals, []);
 
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -120,6 +125,7 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
 
   it("ChangePriority → signals → Experience Context decision slice", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

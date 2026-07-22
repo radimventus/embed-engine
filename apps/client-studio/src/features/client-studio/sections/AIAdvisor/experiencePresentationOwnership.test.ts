@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
-import { createDecisionSessionRuntime } from '@embed-engine/runtime';
+import {
+  createFixedClock,
+  createDecisionSessionRuntime,
+} from '@embed-engine/runtime';
 
 import {
   advisorIntroFromAiContext,
@@ -14,6 +17,7 @@ import { recommendationViewFromTerminal } from '../PriorityEngine/Recommendation
 describe('Runtime presentation ownership (ED-DA-01R)', () => {
   it('recommendation / FAQ / report preview project Terminal / AIContext only', () => {
     const layoutRuntime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -23,6 +27,7 @@ describe('Runtime presentation ownership (ED-DA-01R)', () => {
     );
 
     const designRuntime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

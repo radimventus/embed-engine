@@ -3,7 +3,10 @@ import { describe, it } from "node:test";
 
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
-import { createDecisionSessionRuntime } from "../testing";
+import {
+  createFixedClock,
+  createDecisionSessionRuntime,
+} from "../testing";
 
 /**
  * ED-DA-05 — SessionExperience is { house, context } only.
@@ -11,6 +14,7 @@ import { createDecisionSessionRuntime } from "../testing";
 describe("SessionExperience flatten (ED-DA-05)", () => {
   it("SessionExperience exposes only house + context keys", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -29,6 +33,7 @@ describe("SessionExperience flatten (ED-DA-05)", () => {
 
   it("does not retain flat decisionStory / priorityIds duplicates", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

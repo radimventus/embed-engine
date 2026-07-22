@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 import {
+  createFixedClock,
   composeDecisionOutcome,
   createDecisionSessionRuntime,
   DECISION_OUTCOME_SCHEMA_VERSION,
@@ -13,10 +14,12 @@ import {
 describe("Decision Outcome Engine (CAP-OUT-001)", () => {
   it("identical Move sequences produce identical Outcomes", () => {
     const a = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
     const b = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -38,6 +41,7 @@ describe("Decision Outcome Engine (CAP-OUT-001)", () => {
 
   it("Outcome is derived from Moves and references the Move sequence", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -67,6 +71,7 @@ describe("Decision Outcome Engine (CAP-OUT-001)", () => {
 
   it("different Move sequences produce different Outcomes", () => {
     const outdoor = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -74,6 +79,7 @@ describe("Decision Outcome Engine (CAP-OUT-001)", () => {
     outdoor.dispatch({ type: "ChangePriority", priorityIds: ["plot"] }, 3);
 
     const privacy = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -96,6 +102,7 @@ describe("Decision Outcome Engine (CAP-OUT-001)", () => {
 
   it("composeDecisionOutcome accepts only Moves (Moves → Outcome)", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

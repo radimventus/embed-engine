@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 import {
+  createFixedClock,
   composeAIContext,
   composeDecisionMoves,
   composeDecisionOutcome,
@@ -18,6 +19,7 @@ import {
 describe("Decision Architecture boundaries (ED-DA-01)", () => {
   it("enforces Story → Moves → Outcome → Terminal → AIContext ownership chain", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -49,6 +51,7 @@ describe("Decision Architecture boundaries (ED-DA-01)", () => {
 
   it("Experience Context exposes owned Story / Moves / Outcome / Terminal / AI", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

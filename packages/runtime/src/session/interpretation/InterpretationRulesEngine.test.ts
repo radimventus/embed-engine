@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 import {
+  createFixedClock,
   createDecisionSessionRuntime,
   createInterpretationRuleset,
   DEFAULT_HOUSE_INTERPRETATION_RULES,
@@ -14,6 +15,7 @@ import {
 describe("Interpretation Rules Engine (CAP-HP-003.5)", () => {
   it("identical inputs produce identical interpretation", () => {
     const selected = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -37,6 +39,7 @@ describe("Interpretation Rules Engine (CAP-HP-003.5)", () => {
 
   it("higher rule priority overrides conflicting semantic outputs", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -96,6 +99,7 @@ describe("Interpretation Rules Engine (CAP-HP-003.5)", () => {
 
   it("projection changes when interpretation rules change", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -205,6 +209,7 @@ describe("Interpretation Rules Engine (CAP-HP-003.5)", () => {
 
   it("projection is unchanged when interpretation is unchanged", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
       rules: DEFAULT_HOUSE_INTERPRETATION_RULES,
@@ -250,6 +255,7 @@ describe("Interpretation Rules Engine (CAP-HP-003.5)", () => {
 
   it("without active room, focusRoom comes from room-importance rules", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

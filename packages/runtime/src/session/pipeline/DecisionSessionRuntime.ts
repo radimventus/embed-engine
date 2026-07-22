@@ -1,5 +1,6 @@
 import type { HousePackage } from "@embed-engine/object-house";
 
+import type { RuntimeClock } from "../clock";
 import { createDecisionSession } from "../createDecisionSession";
 import type { DecisionSession } from "../DecisionSession";
 import type { InterpretationRuleset } from "../interpretation";
@@ -19,6 +20,12 @@ import type { RuntimeCommand } from "./RuntimeCommand";
 export type DecisionSessionRuntimeOptions = {
   readonly housePackage: HousePackage;
   readonly session?: DecisionSession;
+  /**
+   * Injectable Runtime clock (ED-DA-06).
+   * Used when `now` / dispatch timestamps are omitted.
+   */
+  readonly clock: RuntimeClock;
+  /** Initial session time; defaults to `clock.now()`. */
   readonly now?: number;
   /** Optional Interpretation Rules — defaults to house session ruleset. */
   readonly rules?: InterpretationRuleset;
@@ -27,10 +34,12 @@ export type DecisionSessionRuntimeOptions = {
 /**
  * Command-oriented Runtime façade for an active Decision Session.
  * Public surface: dispatch(command). Internal mutation methods are not exposed.
+ * Time is supplied only via injected `clock` or explicit `now` (ED-DA-06).
  */
 export class DecisionSessionRuntime {
   private readonly housePackage: HousePackage;
   private readonly rules: InterpretationRuleset;
+  private readonly clock: RuntimeClock;
   private session: DecisionSession;
   private interpretation: SessionInterpretation | null = null;
   private experience: SessionExperience | null = null;
@@ -38,11 +47,13 @@ export class DecisionSessionRuntime {
   constructor(options: DecisionSessionRuntimeOptions) {
     this.housePackage = options.housePackage;
     this.rules = options.rules ?? DEFAULT_HOUSE_INTERPRETATION_RULES;
+    this.clock = options.clock;
     this.session =
       options.session ??
       createDecisionSession({
         housePackage: options.housePackage,
         now: options.now,
+        clock: options.clock,
       });
 
     this.interpretation = interpretDecisionSession(
@@ -59,6 +70,7 @@ export class DecisionSessionRuntime {
 
   /**
    * Canonical entry point for all semantic mutations.
+   * When `now` is omitted, uses the injected Runtime clock.
    */
   dispatch(command: RuntimeCommand, now?: number): DispatchResult {
     const result = dispatchCommand({
@@ -66,6 +78,7 @@ export class DecisionSessionRuntime {
       housePackage: this.housePackage,
       command,
       now,
+      clock: this.clock,
       rules: this.rules,
     });
 
@@ -96,6 +109,10 @@ export class DecisionSessionRuntime {
 
   getRules(): InterpretationRuleset {
     return this.rules;
+  }
+
+  getClock(): RuntimeClock {
+    return this.clock;
   }
 }
 

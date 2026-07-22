@@ -4,6 +4,7 @@ import { describe, it } from "node:test";
 import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 import {
+  createFixedClock,
   createDecisionSessionRuntime,
   projectFromInterpretation,
   interpretDecisionSession,
@@ -12,6 +13,7 @@ import {
 describe("Experience Context projection (CAP-HP-003.5)", () => {
   it("identical Runtime state produces identical Experience Context", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -34,6 +36,7 @@ describe("Experience Context projection (CAP-HP-003.5)", () => {
 
   it("room change updates Experience Context", () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -55,10 +58,12 @@ describe("Experience Context projection (CAP-HP-003.5)", () => {
 
   it("fallback context remains deterministic when no room is selected", () => {
     const a = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
     const b = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

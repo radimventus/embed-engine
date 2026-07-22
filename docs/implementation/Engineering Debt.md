@@ -36,7 +36,7 @@ Hardening report: [ED-DA-01 Boundary Hardening](../architecture/review/ED-DA-01-
 | ED-DA-03 | Narrow `@embed-engine/runtime` public exports | **Done** — public façade/contracts only; pipeline on `@embed-engine/runtime/testing` ([ED-DA-03 report](../architecture/review/ED-DA-03-export-surface-hardening.md)) |
 | ED-DA-04 | Stop exposing `runtime` / raw `interpretation` to presentation modules | **Done** — Context transports `experience` + `dispatch` only ([ED-DA-04 report](../architecture/review/ED-DA-04-context-only-provider.md)) |
 | ED-DA-05 | Converge flat `SessionExperience` fields into `experience.context` | **Done** — `SessionExperience = { house, context }` ([ED-DA-05 report](../architecture/review/ED-DA-05-flatten-session-experience.md)) |
-| ED-DA-06 | Require injectable clock on production create/dispatch | Reproducibility demos / replay |
+| ED-DA-06 | Require injectable clock on production create/dispatch | **Done** — `RuntimeClock` DI; no Runtime `Date.now()` ([ED-DA-06 report](../architecture/review/ED-DA-06-injectable-clock.md)) |
 
 ## Process
 

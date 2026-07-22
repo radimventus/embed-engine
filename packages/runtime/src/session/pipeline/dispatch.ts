@@ -1,5 +1,7 @@
 import type { HousePackage } from "@embed-engine/object-house";
 
+import type { RuntimeClock } from "../clock";
+import { resolveRuntimeTimestamp } from "../clock";
 import type { DecisionEvent } from "../DecisionEvent";
 import type { DecisionSession } from "../DecisionSession";
 import type { InterpretationRuleset } from "../interpretation";
@@ -41,6 +43,7 @@ export type DispatchCommandInput = {
   readonly housePackage: HousePackage;
   readonly command: RuntimeCommand;
   readonly now?: number;
+  readonly clock?: RuntimeClock;
   readonly rules?: InterpretationRuleset;
 };
 
@@ -49,10 +52,15 @@ export type DispatchCommandInput = {
  * Command → Validation → Decision Event → Mutation → Interpretation Rules → Projection
  *
  * Synchronous and deterministic. No UI may bypass this path.
+ * Time from `now` or injected `clock` only (ED-DA-06).
  */
 export function dispatchCommand(input: DispatchCommandInput): DispatchResult {
   const { session, housePackage, command } = input;
-  const now = input.now ?? Date.now();
+  const now = resolveRuntimeTimestamp({
+    now: input.now,
+    clock: input.clock,
+    label: "dispatchCommand",
+  });
 
   const validated = validateCommand({ session, housePackage, command });
   if (!validated.ok) {

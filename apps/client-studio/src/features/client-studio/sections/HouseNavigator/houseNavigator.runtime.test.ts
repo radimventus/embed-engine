@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
-import { createDecisionSessionRuntime } from '@embed-engine/runtime';
+import {
+  createFixedClock,
+  createDecisionSessionRuntime,
+} from '@embed-engine/runtime';
 
 import {
   createHouseNavigatorViewModel,
@@ -13,6 +16,7 @@ import {
 describe('House Navigator Runtime integration', () => {
   it('selecting a room updates Runtime → Projection → Navigator view model', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -40,6 +44,7 @@ describe('House Navigator Runtime integration', () => {
 
   it('external Runtime changes update Navigator without local state', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(10),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 10,
     });
@@ -60,6 +65,7 @@ describe('House Navigator Runtime integration', () => {
 
   it('uses a single Room Registry from projected ExperienceHouse', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
@@ -74,6 +80,7 @@ describe('House Navigator Runtime integration', () => {
 
   it('selectFloor resolves to first projected room on that floor via SelectRoom', () => {
     const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });

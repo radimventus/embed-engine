@@ -76,6 +76,7 @@ None retained for SessionExperience flat fields.
 | ID | Status |
 | --- | --- |
 | ED-DA-05 | **Done** |
-| ED-DA-06 | Injectable clock |
+| ED-DA-06 | **Done** — [ED-DA-06 report](./ED-DA-06-injectable-clock.md) |
 | ED-DA-02 residual | Object-owned media catalog |
+| RAR | Runtime Architecture Review (certify hardening) |
 | Legacy cognitive modules | Delete when dialogue Terminal retired |

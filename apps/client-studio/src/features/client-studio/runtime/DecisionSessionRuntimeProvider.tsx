@@ -10,6 +10,7 @@ import {
 import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
 import {
   createDecisionSessionRuntime,
+  createSystemClock,
   type DecisionSessionRuntime,
   type RuntimeCommand,
   type DispatchResult,
@@ -52,6 +53,9 @@ type DecisionSessionRuntimeProviderProps = {
  * Does not: compose Interpretation / Story / Moves / Outcome / Terminal / AIContext.
  * Projection helper `projectSynchronizedExperience` is presentation media binding only
  * (ED-DA-02); semantic ownership remains in Runtime.
+ *
+ * Injects `createSystemClock()` at the adapter boundary (ED-DA-06).
+ * Runtime never reads the host clock itself.
  */
 export function DecisionSessionRuntimeProvider({
   children,
@@ -60,6 +64,7 @@ export function DecisionSessionRuntimeProvider({
   if (runtimeRef.current === null) {
     runtimeRef.current = createDecisionSessionRuntime({
       housePackage: REFERENCE_HOUSE_PACKAGE,
+      clock: createSystemClock(),
       now: 1,
     });
   }
@@ -69,7 +74,8 @@ export function DecisionSessionRuntimeProvider({
 
   const dispatch = useCallback(
     (command: RuntimeCommand, now?: number): DispatchResult => {
-      const result = runtime.dispatch(command, now ?? Date.now());
+      // When `now` is omitted, Runtime uses the injected system clock.
+      const result = runtime.dispatch(command, now);
       if (result.ok) {
         setRevision((value) => value + 1);
       }
