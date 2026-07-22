@@ -11,7 +11,7 @@
     "price": 6900000,
     "usableArea": 142,
     "landArea": 620,
-    "rooms": 5,
+    "rooms": 8,
     "hasGarden": true
   },
   "location": {
@@ -25,9 +25,12 @@
   "rooms": [
     { "id": "room-living", "name": "Obývací pokoj", "area": 32, "floor": 0 },
     { "id": "room-kitchen", "name": "Kuchyně", "area": 14, "floor": 0 },
-    { "id": "room-bedroom", "name": "Ložnice", "area": 18, "floor": 1 },
-    { "id": "room-children", "name": "Dětský pokoj", "area": 16, "floor": 1 },
-    { "id": "room-bath", "name": "Koupelna", "area": 8, "floor": 1 }
+    { "id": "room-bedroom", "name": "Ložnice", "area": 18, "floor": 0 },
+    { "id": "room-children", "name": "Dětský pokoj", "area": 16, "floor": 0 },
+    { "id": "room-bath", "name": "Koupelna", "area": 8, "floor": 0 },
+    { "id": "room-office", "name": "Pracovna", "area": 12, "floor": 0 },
+    { "id": "room-toilet", "name": "WC", "area": 3, "floor": 0 },
+    { "id": "room-hallway-entrance", "name": "Vstupní chodba", "area": 10, "floor": 0 }
   ],
   "media": [
     {
