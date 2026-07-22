@@ -68,13 +68,13 @@ describe("Runtime Event Pipeline", () => {
     assert.equal(result.session.events.length, 1);
     assert.equal(result.session.runtimeState.activeRoomId, "room-bedroom");
     assert.equal(result.interpretation.activeRoomName, "Ložnice");
-    assert.equal(result.experience.activeRoomId, "room-bedroom");
-    assert.equal(result.experience.activeRoom?.name, "Ložnice");
+    assert.equal(result.experience.context.activeRoom.id, "room-bedroom");
+    assert.equal(result.experience.context.activeRoom.room?.name, "Ložnice");
     assert.equal(
-      result.experience.interpretationSummary,
+      result.experience.context.decision.interpretationSummary,
       result.interpretation.summary,
     );
-    assert.equal(runtime.getExperience()?.activeRoomId, "room-bedroom");
+    assert.equal(runtime.getExperience()?.context.activeRoom.id, "room-bedroom");
   });
 
   it("ChangePriorityCommand → PriorityChanged → updated Experience", () => {
@@ -96,7 +96,7 @@ describe("Runtime Event Pipeline", () => {
       "garden",
     ]);
     assert.deepEqual(result.interpretation.priorityIds, ["price", "garden"]);
-    assert.deepEqual(result.experience.priorityIds, ["price", "garden"]);
+    assert.deepEqual(result.experience.context.decision.priorityIds, ["price", "garden"]);
     assert.match(result.interpretation.summary, /priorities:price,garden/);
   });
 
@@ -171,7 +171,7 @@ describe("Runtime Event Pipeline", () => {
       final.interpretation.summary,
     );
     assert.equal(
-      restoredRuntime.getExperience()?.activeRoomId,
+      restoredRuntime.getExperience()?.context.activeRoom.id,
       "room-bedroom",
     );
   });

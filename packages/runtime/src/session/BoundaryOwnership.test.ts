@@ -47,7 +47,7 @@ describe("Decision Architecture boundaries (ED-DA-01)", () => {
     assert.deepEqual(ai, interpretation.aiContext);
   });
 
-  it("Experience Context exposes the same owned artifacts", () => {
+  it("Experience Context exposes owned Story / Moves / Outcome / Terminal / AI", () => {
     const runtime = createDecisionSessionRuntime({
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
@@ -55,12 +55,16 @@ describe("Decision Architecture boundaries (ED-DA-01)", () => {
     runtime.dispatch({ type: "SelectRoom", roomId: "room-living" }, 2);
 
     const experience = runtime.getExperience()!;
+    const interpretation = interpretDecisionSession(
+      runtime.getSession(),
+      REFERENCE_HOUSE_PACKAGE,
+    );
     const decision = experience.context.decision;
 
-    assert.deepEqual(decision.story, experience.decisionStory);
-    assert.deepEqual(decision.moves, experience.decisionMoves);
-    assert.deepEqual(decision.outcome, experience.decisionOutcome);
-    assert.deepEqual(decision.terminal, experience.decisionTerminal);
-    assert.deepEqual(decision.ai, experience.aiContext);
+    assert.deepEqual(decision.story, interpretation.decisionStory);
+    assert.deepEqual(decision.moves, interpretation.decisionMoves);
+    assert.deepEqual(decision.outcome, interpretation.decisionOutcome);
+    assert.deepEqual(decision.terminal, interpretation.decisionTerminal);
+    assert.deepEqual(decision.ai, interpretation.aiContext);
   });
 });

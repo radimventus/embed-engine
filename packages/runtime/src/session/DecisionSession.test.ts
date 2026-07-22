@@ -53,8 +53,8 @@ describe("DecisionSession execution model", () => {
     assert.equal(session.runtimeState.activeRoomId, "room-bedroom");
     assert.equal(session.events.length, 1);
     assert.equal(session.events[0]?.type, "RoomSelected");
-    assert.equal(bedroom.experience.activeRoomId, "room-bedroom");
-    assert.equal(bedroom.experience.activeRoom?.name, "Ložnice");
+    assert.equal(bedroom.experience.context.activeRoom.id, "room-bedroom");
+    assert.equal(bedroom.experience.context.activeRoom.room?.name, "Ložnice");
     assert.equal(bedroom.experience.house.id, "house-modern-01");
 
     const kitchen = selectRoom({
@@ -69,7 +69,7 @@ describe("DecisionSession execution model", () => {
     }
     assert.equal(kitchen.session.runtimeState.activeRoomId, "room-kitchen");
     assert.equal(kitchen.session.events.length, 2);
-    assert.equal(kitchen.experience.activeRoomId, "room-kitchen");
+    assert.equal(kitchen.experience.context.activeRoom.id, "room-kitchen");
     assert.deepEqual(
       kitchen.session.events.map((event) => event.type),
       ["RoomSelected", "RoomSelected"],

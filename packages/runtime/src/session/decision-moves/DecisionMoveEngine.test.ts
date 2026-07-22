@@ -27,8 +27,8 @@ describe("Decision Move Engine (CAP-DST-002)", () => {
     b.dispatch({ type: "ChangePriority", priorityIds: ["garden", "space"] }, 3);
 
     assert.deepEqual(
-      a.getExperience()!.decisionMoves,
-      b.getExperience()!.decisionMoves,
+      a.getExperience()!.context.decision.moves,
+      b.getExperience()!.context.decision.moves,
     );
     assert.deepEqual(
       a.getExperience()!.context.decision.moves,
@@ -45,7 +45,7 @@ describe("Decision Move Engine (CAP-DST-002)", () => {
     runtime.dispatch({ type: "ChangePriority", priorityIds: ["investment"] }, 3);
 
     const experience = runtime.getExperience()!;
-    const { decisionStory, decisionMoves } = experience;
+    const { story: decisionStory, moves: decisionMoves } = experience.context.decision;
 
     assert.equal(decisionMoves.storyId, decisionStory.id);
     assert.equal(decisionMoves.schemaVersion, DECISION_MOVE_SCHEMA_VERSION);
@@ -64,9 +64,9 @@ describe("Decision Move Engine (CAP-DST-002)", () => {
     runtime.dispatch({ type: "SelectRoom", roomId: "room-living" }, 2);
     runtime.dispatch({ type: "ChangePriority", priorityIds: ["space"] }, 3);
 
-    const moves = runtime.getExperience()!.decisionMoves.moves;
+    const moves = runtime.getExperience()!.context.decision.moves.moves;
     assert.equal(moves[0]?.status, "active");
-    assert.equal(runtime.getExperience()!.decisionMoves.activeMoveId, moves[0]?.id);
+    assert.equal(runtime.getExperience()!.context.decision.moves.activeMoveId, moves[0]?.id);
 
     for (let index = 0; index < moves.length; index += 1) {
       const move = moves[index]!;
@@ -98,12 +98,12 @@ describe("Decision Move Engine (CAP-DST-002)", () => {
     privacy.dispatch({ type: "ChangePriority", priorityIds: ["privacy"] }, 3);
 
     assert.notEqual(
-      outdoor.getExperience()!.decisionStory.id,
-      privacy.getExperience()!.decisionStory.id,
+      outdoor.getExperience()!.context.decision.story.id,
+      privacy.getExperience()!.context.decision.story.id,
     );
     assert.notDeepEqual(
-      outdoor.getExperience()!.decisionMoves,
-      privacy.getExperience()!.decisionMoves,
+      outdoor.getExperience()!.context.decision.moves,
+      privacy.getExperience()!.context.decision.moves,
     );
   });
 

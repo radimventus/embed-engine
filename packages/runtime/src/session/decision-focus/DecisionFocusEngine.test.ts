@@ -22,8 +22,8 @@ describe("Decision Focus Engine (CAP-PRI-002)", () => {
     b.dispatch({ type: "ChangePriority", priorityIds: ["garden", "space"] }, 3);
 
     assert.deepEqual(
-      a.getExperience()!.decisionFocus,
-      b.getExperience()!.decisionFocus,
+      a.getExperience()!.context.decision.focus,
+      b.getExperience()!.context.decision.focus,
     );
     assert.deepEqual(
       a.getExperience()!.context.decision.focus,
@@ -46,8 +46,8 @@ describe("Decision Focus Engine (CAP-PRI-002)", () => {
     privacy.dispatch({ type: "SelectRoom", roomId: "room-living" }, 2);
     privacy.dispatch({ type: "ChangePriority", priorityIds: ["privacy"] }, 3);
 
-    const outdoorFocus = outdoor.getExperience()!.decisionFocus;
-    const privacyFocus = privacy.getExperience()!.decisionFocus;
+    const outdoorFocus = outdoor.getExperience()!.context.decision.focus;
+    const privacyFocus = privacy.getExperience()!.context.decision.focus;
 
     assert.equal(outdoorFocus.focusSignalKind, "emphasize-outdoor");
     assert.equal(privacyFocus.focusSignalKind, "emphasize-privacy");
@@ -70,7 +70,7 @@ describe("Decision Focus Engine (CAP-PRI-002)", () => {
       3,
     );
 
-    const focus = runtime.getExperience()!.decisionFocus;
+    const focus = runtime.getExperience()!.context.decision.focus;
     assert.equal(focus.confidence, Number(focus.confidence.toFixed(2)));
     assert.ok(focus.confidence >= 0 && focus.confidence <= 1);
     assert.equal(focus.focusRoomId, "room-kitchen");
@@ -85,7 +85,7 @@ describe("Decision Focus Engine (CAP-PRI-002)", () => {
       { type: "ChangePriority", priorityIds: ["investment", "layout"] },
       3,
     );
-    assert.equal(again.getExperience()!.decisionFocus.confidence, focus.confidence);
+    assert.equal(again.getExperience()!.context.decision.focus.confidence, focus.confidence);
   });
 
   it("Experience Context exposes focus and orders recommendations", () => {
@@ -101,8 +101,8 @@ describe("Decision Focus Engine (CAP-PRI-002)", () => {
 
     assert.equal(focus.focusSignalKind, "emphasize-space");
     assert.equal(focus.recommendedMediaRole, "video");
-    assert.equal(experience.recommendedMedia[0]?.role, "video");
-    assert.equal(experience.highlights[0], "spatial-generosity");
+    assert.equal(experience.context.decision.recommendedMedia[0]?.role, "video");
+    assert.equal(experience.context.decision.highlights[0], "spatial-generosity");
     assert.equal(experience.context.decision.focus.recommendedAction, "inspect-spatial-volume");
   });
 });

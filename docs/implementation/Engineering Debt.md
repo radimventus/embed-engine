@@ -35,7 +35,7 @@ Hardening report: [ED-DA-01 Boundary Hardening](../architecture/review/ED-DA-01-
 | ED-DA-02 | Move room media / hero projection out of walkthrough catalog ownership | **Partial** — media UI consumes Experience Context only; catalog confined to `projectSynchronizedExperience` seam ([ED-DA-02 report](../architecture/review/ED-DA-02-media-projection-boundary.md)); Object-owned assets still open |
 | ED-DA-03 | Narrow `@embed-engine/runtime` public exports | **Done** — public façade/contracts only; pipeline on `@embed-engine/runtime/testing` ([ED-DA-03 report](../architecture/review/ED-DA-03-export-surface-hardening.md)) |
 | ED-DA-04 | Stop exposing `runtime` / raw `interpretation` to presentation modules | **Done** — Context transports `experience` + `dispatch` only ([ED-DA-04 report](../architecture/review/ED-DA-04-context-only-provider.md)) |
-| ED-DA-05 | Converge flat `SessionExperience` fields into `experience.context` | Remove duplicate contracts |
+| ED-DA-05 | Converge flat `SessionExperience` fields into `experience.context` | **Done** — `SessionExperience = { house, context }` ([ED-DA-05 report](../architecture/review/ED-DA-05-flatten-session-experience.md)) |
 | ED-DA-06 | Require injectable clock on production create/dispatch | Reproducibility demos / replay |
 
 ## Process

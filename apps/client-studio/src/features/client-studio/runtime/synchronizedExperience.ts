@@ -1,11 +1,10 @@
 import type { HousePackageMediaItem } from '@embed-engine/contracts';
-import type { ExperienceHouseRoom } from '@embed-engine/model';
+import type { ExperienceHouse, ExperienceHouseRoom } from '@embed-engine/model';
 import type {
   ExperienceContext,
   FocusRoom,
   SessionExperience,
 } from '@embed-engine/runtime';
-import { projectExperienceContext } from '@embed-engine/runtime';
 
 import {
   getMediaRoom,
@@ -109,13 +108,10 @@ export type SynchronizedExperienceContext = Omit<ExperienceContext, 'activeRoom'
 };
 
 /**
- * Canonical Client Studio Experience — semantic state + contextual media.
+ * Canonical Client Studio Experience — Object house + synchronized Context (ED-DA-05).
  */
-export type SynchronizedExperience = Omit<
-  SessionExperience,
-  'activeRoom' | 'context'
-> & {
-  readonly activeRoom: ContextualActiveRoom | null;
+export type SynchronizedExperience = {
+  readonly house: ExperienceHouse;
   readonly context: SynchronizedExperienceContext;
 };
 
@@ -246,8 +242,8 @@ function emptyRoomMedia(): ExperienceRoomMediaContext {
 
 function orderThumbnailsByRecommendation(
   thumbnails: readonly HousePackageMediaItem[],
-  recommendedMedia: SessionExperience['recommendedMedia'],
-  preferredRole?: SessionExperience['decisionFocus']['recommendedMediaRole'],
+  recommendedMedia: SessionExperience['context']['decision']['recommendedMedia'],
+  preferredRole?: SessionExperience['context']['decision']['focus']['recommendedMediaRole'],
 ): readonly HousePackageMediaItem[] {
   const topRole = preferredRole ?? recommendedMedia[0]?.role;
   if (topRole === undefined || thumbnails.length === 0) {
@@ -284,8 +280,8 @@ function projectRoomMedia(
 
   const thumbnails = orderThumbnailsByRecommendation(
     activeRoom.thumbnails,
-    experience.recommendedMedia,
-    experience.decisionFocus.recommendedMediaRole,
+    experience.context.decision.recommendedMedia,
+    experience.context.decision.focus.recommendedMediaRole,
   );
 
   return Object.freeze({
@@ -337,7 +333,8 @@ function projectHeroContext(
   experience: SessionExperience,
   activeRoom: ContextualActiveRoom | null,
 ): ExperienceHeroContext {
-  const { house, highlights, decisionFocus } = experience;
+  const { house } = experience;
+  const { highlights, focus: decisionFocus } = experience.context.decision;
   const reason = reasonLabel(decisionFocus.focusReason);
   const action = actionLabel(decisionFocus.recommendedAction);
   const focusName =
@@ -412,37 +409,14 @@ function projectSynchronizedContext(
   experience: SessionExperience,
   activeRoom: ContextualActiveRoom | null,
 ): SynchronizedExperienceContext {
-  const base = projectExperienceContext({
-    house: experience.house,
-    activeRoomId: experience.activeRoomId,
-    activeRoom,
-    focusRoom: experience.focusRoom,
-    priorityIds: experience.priorityIds,
-    prioritySignals: experience.prioritySignals,
-    variantId: experience.variantId,
-    scenarioId: experience.scenarioId,
-    primaryReason: experience.primaryReason,
-    highlights: experience.highlights,
-    recommendedMedia: experience.recommendedMedia,
-    interpretationSummary: experience.interpretationSummary,
-    roomImportanceRank: experience.roomImportanceRank,
-    appliedRuleIds: experience.appliedRuleIds,
-    rulesetId: experience.rulesetId,
-    rulesetVersion: experience.rulesetVersion,
-    decisionFocus: experience.decisionFocus,
-    decisionStory: experience.decisionStory,
-    decisionMoves: experience.decisionMoves,
-    decisionOutcome: experience.decisionOutcome,
-    decisionTerminal: experience.decisionTerminal,
-    aiContext: experience.aiContext,
-  });
+  const { context } = experience;
 
   return Object.freeze({
-    ...base,
+    ...context,
     activeRoom: Object.freeze({
-      id: experience.activeRoomId,
+      id: context.activeRoom.id,
       room: activeRoom,
-      focusRoom: experience.focusRoom,
+      focusRoom: context.activeRoom.focusRoom,
     }),
     roomMedia: projectRoomMedia(activeRoom, experience),
     hero: projectHeroContext(experience, activeRoom),
@@ -452,20 +426,20 @@ function projectSynchronizedContext(
 
 /**
  * Project synchronized Experience with unified Experience Context (CAP-HP-003.5).
- * Owns semantic grouping, media, defaults, and context completeness.
+ * Reads Runtime `context` as-is; adds presentation media slices only (ED-DA-05).
  */
 export function projectSynchronizedExperience(
   experience: SessionExperience,
 ): SynchronizedExperience {
-  const baseRoom = experience.activeRoom;
+  const baseRoom = experience.context.activeRoom.room;
+  const activeRoomId = experience.context.activeRoom.id;
   const activeRoom =
-    baseRoom === null || experience.activeRoomId === null
+    baseRoom === null || activeRoomId === null
       ? null
       : projectRoomContext(baseRoom, experience);
 
   return Object.freeze({
-    ...experience,
-    activeRoom,
+    house: experience.house,
     context: projectSynchronizedContext(experience, activeRoom),
   });
 }

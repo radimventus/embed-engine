@@ -192,14 +192,14 @@ describe("Interpretation Rules Engine (CAP-HP-003.5)", () => {
       return;
     }
 
-    assert.equal(defaultProjection.experience.primaryReason, "private-rest-zone");
-    assert.equal(altProjection.experience.primaryReason, "alt-bedroom-reason");
-    assert.deepEqual(altProjection.experience.highlights, ["alt-privacy"]);
-    assert.equal(altProjection.experience.recommendedMedia[0]?.role, "thumbnail");
-    assert.equal(altProjection.experience.rulesetId, "alt-importance");
+    assert.equal(defaultProjection.experience.context.decision.primaryReason, "private-rest-zone");
+    assert.equal(altProjection.experience.context.decision.primaryReason, "alt-bedroom-reason");
+    assert.deepEqual(altProjection.experience.context.decision.highlights, ["alt-privacy"]);
+    assert.equal(altProjection.experience.context.decision.recommendedMedia[0]?.role, "thumbnail");
+    assert.equal(altProjection.experience.context.decision.rulesetId, "alt-importance");
     assert.notDeepEqual(
-      defaultProjection.experience.primaryReason,
-      altProjection.experience.primaryReason,
+      defaultProjection.experience.context.decision.primaryReason,
+      altProjection.experience.context.decision.primaryReason,
     );
   });
 
@@ -226,11 +226,26 @@ describe("Interpretation Rules Engine (CAP-HP-003.5)", () => {
       return;
     }
 
-    assert.deepEqual(first.focusRoom, second.experience.focusRoom);
-    assert.equal(first.primaryReason, second.experience.primaryReason);
-    assert.deepEqual(first.highlights, second.experience.highlights);
-    assert.deepEqual(first.recommendedMedia, second.experience.recommendedMedia);
-    assert.deepEqual(first.appliedRuleIds, second.experience.appliedRuleIds);
+    assert.deepEqual(
+      first.context.activeRoom.focusRoom,
+      second.experience.context.activeRoom.focusRoom,
+    );
+    assert.equal(
+      first.context.decision.primaryReason,
+      second.experience.context.decision.primaryReason,
+    );
+    assert.deepEqual(
+      first.context.decision.highlights,
+      second.experience.context.decision.highlights,
+    );
+    assert.deepEqual(
+      first.context.decision.recommendedMedia,
+      second.experience.context.decision.recommendedMedia,
+    );
+    assert.deepEqual(
+      first.context.decision.appliedRuleIds,
+      second.experience.context.decision.appliedRuleIds,
+    );
   });
 
   it("without active room, focusRoom comes from room-importance rules", () => {
@@ -240,9 +255,9 @@ describe("Interpretation Rules Engine (CAP-HP-003.5)", () => {
     });
     const experience = runtime.getExperience();
     assert.ok(experience !== null);
-    assert.equal(experience?.activeRoomId, null);
-    assert.equal(experience?.focusRoom?.id, "room-living");
-    assert.equal(experience?.primaryReason, "primary-living-volume");
-    assert.equal(experience?.roomImportanceRank[0], "room-living");
+    assert.equal(experience?.context.activeRoom.id, null);
+    assert.equal(experience?.context.activeRoom.focusRoom?.id, "room-living");
+    assert.equal(experience?.context.decision.primaryReason, "primary-living-volume");
+    assert.equal(experience?.context.navigation.roomImportanceRank[0], "room-living");
   });
 });

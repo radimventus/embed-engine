@@ -27,8 +27,8 @@ describe("Decision Outcome Engine (CAP-OUT-001)", () => {
     b.dispatch({ type: "ChangePriority", priorityIds: ["garden", "space"] }, 3);
 
     assert.deepEqual(
-      a.getExperience()!.decisionOutcome,
-      b.getExperience()!.decisionOutcome,
+      a.getExperience()!.context.decision.outcome,
+      b.getExperience()!.context.decision.outcome,
     );
     assert.deepEqual(
       a.getExperience()!.context.decision.outcome,
@@ -44,8 +44,8 @@ describe("Decision Outcome Engine (CAP-OUT-001)", () => {
     runtime.dispatch({ type: "SelectRoom", roomId: "room-kitchen" }, 2);
     runtime.dispatch({ type: "ChangePriority", priorityIds: ["investment"] }, 3);
 
-    const { decisionMoves, decisionOutcome, decisionStory } =
-      runtime.getExperience()!;
+    const { moves: decisionMoves, outcome: decisionOutcome, story: decisionStory } =
+      runtime.getExperience()!.context.decision;
 
     assert.equal(decisionOutcome.schemaVersion, DECISION_OUTCOME_SCHEMA_VERSION);
     assert.equal(decisionOutcome.storyId, decisionMoves.storyId);
@@ -81,16 +81,16 @@ describe("Decision Outcome Engine (CAP-OUT-001)", () => {
     privacy.dispatch({ type: "ChangePriority", priorityIds: ["privacy"] }, 3);
 
     assert.notDeepEqual(
-      outdoor.getExperience()!.decisionMoves,
-      privacy.getExperience()!.decisionMoves,
+      outdoor.getExperience()!.context.decision.moves,
+      privacy.getExperience()!.context.decision.moves,
     );
     assert.notDeepEqual(
-      outdoor.getExperience()!.decisionOutcome,
-      privacy.getExperience()!.decisionOutcome,
+      outdoor.getExperience()!.context.decision.outcome,
+      privacy.getExperience()!.context.decision.outcome,
     );
     assert.notEqual(
-      outdoor.getExperience()!.decisionOutcome.recommendation,
-      privacy.getExperience()!.decisionOutcome.recommendation,
+      outdoor.getExperience()!.context.decision.outcome.recommendation,
+      privacy.getExperience()!.context.decision.outcome.recommendation,
     );
   });
 

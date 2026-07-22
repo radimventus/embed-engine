@@ -62,13 +62,19 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     const base = runtime.getExperience()!;
 
     const withoutCatalog: SessionExperience = {
-      ...base,
-      activeRoomId: 'room-unmapped',
-      activeRoom: {
-        id: 'room-unmapped',
-        name: 'Neznámá místnost',
-        area: 10,
-        floor: 0,
+      house: base.house,
+      context: {
+        ...base.context,
+        activeRoom: {
+          id: 'room-unmapped',
+          room: {
+            id: 'room-unmapped',
+            name: 'Neznámá místnost',
+            area: 10,
+            floor: 0,
+          },
+          focusRoom: base.context.activeRoom.focusRoom,
+        },
       },
     };
 
@@ -152,11 +158,11 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     const synced = projectSynchronizedExperience(kitchen.experience);
     const hero = synced.context.hero;
 
-    assert.equal(synced.activeRoom?.id, 'room-kitchen');
+    assert.equal(synced.context.activeRoom.id, 'room-kitchen');
     assert.equal(hero.title, 'Kuchyně');
     assert.match(hero.eyebrow, /Kuchyně/);
-    assert.ok(synced.activeRoom?.heroMedia !== null);
-    assert.equal(hero.primaryMediaUrl, synced.activeRoom?.heroMedia?.url);
+    assert.ok(synced.context.activeRoom.room?.heroMedia !== null);
+    assert.equal(hero.primaryMediaUrl, synced.context.activeRoom.room?.heroMedia?.url);
   });
 
   it('projection owns media — consumers read context.roomMedia', () => {

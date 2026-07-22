@@ -59,6 +59,7 @@ type WalkthroughProviderProps = {
 export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const { experience, dispatch } = useDecisionSessionRuntime();
   const { context } = experience;
+  const activeRoomId = context.activeRoom.id;
   const projectedThumbnails = context.roomMedia.thumbnails;
   const rooms = context.floorPlan.rooms;
 
@@ -72,7 +73,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const [mode, setMode] = useState<WalkthroughState['mode']>('ready');
 
   useEffect(() => {
-    if (experience.activeRoomId !== null) {
+    if (activeRoomId !== null) {
       return;
     }
     const defaultRoom = rooms[0];
@@ -80,26 +81,26 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       return;
     }
     dispatch({ type: 'SelectRoom', roomId: defaultRoom.id });
-  }, [dispatch, experience.activeRoomId, rooms]);
+  }, [dispatch, activeRoomId, rooms]);
 
   useEffect(() => {
     setActiveMediaIndex(0);
     setMode('ready');
-  }, [experience.activeRoomId, mediaMode]);
+  }, [activeRoomId, mediaMode]);
 
   const value = useMemo((): WalkthroughContextValue => {
     const roomMediaItems = projectedThumbnails;
     const activeMediaItem = roomMediaItems[activeMediaIndex] ?? null;
     const activeMediaSrc = activeMediaItem?.src ?? null;
     const activeRoom =
-      experience.activeRoomId === null
+      activeRoomId === null
         ? null
-        : (rooms.find((room) => room.id === experience.activeRoomId) ?? null);
+        : (rooms.find((room) => room.id === activeRoomId) ?? null);
 
     return {
       mode,
       mediaMode,
-      activeRoomId: experience.activeRoomId,
+      activeRoomId,
       activeRoom,
       activeMediaIndex,
       activeMediaItem,
@@ -107,7 +108,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       roomMediaItems,
       rooms,
       selectedFloor,
-      isRoomActive: (roomId: string) => experience.activeRoomId === roomId,
+      isRoomActive: (roomId: string) => activeRoomId === roomId,
       isMediaActive: (mediaIndex: number) => activeMediaIndex === mediaIndex,
       play: () => setMode('playing'),
       onVideoEnded: () => setMode('ready'),
@@ -132,8 +133,8 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     };
   }, [
     activeMediaIndex,
+    activeRoomId,
     dispatch,
-    experience.activeRoomId,
     mediaMode,
     mode,
     projectedThumbnails,

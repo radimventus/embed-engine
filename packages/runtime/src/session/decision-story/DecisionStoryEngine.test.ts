@@ -26,8 +26,8 @@ describe("Decision Story Engine (CAP-DST-001)", () => {
     a.dispatch({ type: "ChangePriority", priorityIds: ["garden", "space"] }, 3);
     b.dispatch({ type: "ChangePriority", priorityIds: ["garden", "space"] }, 3);
 
-    const storyA = a.getExperience()!.decisionStory;
-    const storyB = b.getExperience()!.decisionStory;
+    const storyA = a.getExperience()!.context.decision.story;
+    const storyB = b.getExperience()!.context.decision.story;
 
     assert.deepEqual(storyA, storyB);
     assert.deepEqual(
@@ -52,8 +52,8 @@ describe("Decision Story Engine (CAP-DST-001)", () => {
     privacy.dispatch({ type: "SelectRoom", roomId: "room-living" }, 2);
     privacy.dispatch({ type: "ChangePriority", priorityIds: ["privacy"] }, 3);
 
-    const outdoorStory = outdoor.getExperience()!.decisionStory;
-    const privacyStory = privacy.getExperience()!.decisionStory;
+    const outdoorStory = outdoor.getExperience()!.context.decision.story;
+    const privacyStory = privacy.getExperience()!.context.decision.story;
 
     assert.notEqual(outdoorStory.id, privacyStory.id);
     assert.notDeepEqual(outdoorStory, privacyStory);
@@ -78,7 +78,7 @@ describe("Decision Story Engine (CAP-DST-001)", () => {
       3,
     );
 
-    const story = runtime.getExperience()!.decisionStory;
+    const story = runtime.getExperience()!.context.decision.story;
 
     assert.equal(story.primaryExplanation, story.chapters[0]?.key);
     assert.equal(story.chapters[0]?.kind, "primary-explanation");
@@ -107,7 +107,7 @@ describe("Decision Story Engine (CAP-DST-001)", () => {
       REFERENCE_HOUSE_PACKAGE,
     );
 
-    assert.deepEqual(experience.decisionStory, interpretation.decisionStory);
+    assert.deepEqual(experience.context.decision.story, interpretation.decisionStory);
     assert.deepEqual(
       experience.context.decision.story,
       interpretation.decisionStory,

@@ -1,69 +1,32 @@
 import type {
   ExperienceHouse,
-  ExperienceHouseRoom,
 } from "@embed-engine/model";
 import type { HousePackage } from "@embed-engine/object-house";
 import { projectHouse } from "@embed-engine/object-house";
 
-import type { AIContext } from "./ai-context";
 import type { DecisionSession } from "./DecisionSession";
-import type { DecisionFocus } from "./decision-focus";
-import type { DecisionMoveSequence } from "./decision-moves";
-import type { DecisionOutcome } from "./decision-outcome";
-import type { DecisionStory } from "./decision-story";
-import type { DecisionTerminal } from "./decision-terminal";
 import {
   projectExperienceContext,
   type ExperienceContext,
 } from "./ExperienceContext";
-import type {
-  FocusRoom,
-  InterpretationRuleset,
-  RecommendedMediaRef,
-} from "./interpretation";
-import type { PrioritySignal } from "./priority-signals";
+import type { InterpretationRuleset } from "./interpretation";
 import {
   interpretDecisionSession,
   type SessionInterpretation,
 } from "./pipeline/interpretSession";
 
 /**
- * Experience projection for an active Decision Session.
- * Derived from Interpretation (+ Object Package) — never UI state, never mutates Runtime.
+ * Canonical Experience projection for an active Decision Session (ED-DA-05).
  *
- * `context` is the canonical semantic contract for Experience modules.
+ * Flat duplicate fields (decisionStory, priorityIds, …) were removed —
+ * all semantics live under `context`.
+ *
+ * Categories:
+ * - `house` — Object Package / presentation projection
+ * - `context` — Experience projection (navigation + decision semantics)
  */
 export type SessionExperience = {
   readonly house: ExperienceHouse;
-  readonly activeRoomId: string | null;
-  readonly activeRoom: ExperienceHouseRoom | null;
-  readonly priorityIds: readonly string[];
-  readonly prioritySignals: readonly PrioritySignal[];
-  readonly variantId: string | null;
-  readonly scenarioId: string | null;
-  readonly interpretationSummary: string;
-  /** Interpreted focus — may differ from activeRoom when no room is selected. */
-  readonly focusRoom: FocusRoom | null;
-  readonly primaryReason: string;
-  readonly highlights: readonly string[];
-  readonly recommendedMedia: readonly RecommendedMediaRef[];
-  readonly roomImportanceRank: readonly string[];
-  readonly appliedRuleIds: readonly string[];
-  readonly rulesetId: string;
-  readonly rulesetVersion: number;
-  /** Canonical decision attention entry point (CAP-PRI-002). */
-  readonly decisionFocus: DecisionFocus;
-  /** Canonical semantic narrative (CAP-DST-001 / PT-004). */
-  readonly decisionStory: DecisionStory;
-  /** Ordered Moves derived solely from Decision Story (CAP-DST-002 / PT-005). */
-  readonly decisionMoves: DecisionMoveSequence;
-  /** Canonical Outcome derived solely from Decision Moves (CAP-OUT-001 / PT-008). */
-  readonly decisionOutcome: DecisionOutcome;
-  /** Completion surface wrapping Outcome (CAP-DTR-001 / PT-007). */
-  readonly decisionTerminal: DecisionTerminal;
-  /** Structured AI projection of Terminal (CAP-AI-001 / PT-006). */
-  readonly aiContext: AIContext;
-  /** Unified semantic view model — preferred module input. */
   readonly context: ExperienceContext;
 };
 
@@ -135,27 +98,6 @@ export function projectFromInterpretation(
     ok: true,
     experience: Object.freeze({
       house,
-      activeRoomId,
-      activeRoom,
-      priorityIds: interpretation.priorityIds,
-      prioritySignals: interpretation.prioritySignals,
-      variantId: interpretation.variantId,
-      scenarioId: interpretation.scenarioId,
-      interpretationSummary: interpretation.summary,
-      focusRoom: interpretation.focusRoom,
-      primaryReason: interpretation.primaryReason,
-      highlights: interpretation.highlights,
-      recommendedMedia: interpretation.recommendedMedia,
-      roomImportanceRank: interpretation.roomImportanceRank,
-      appliedRuleIds: interpretation.appliedRuleIds,
-      rulesetId: interpretation.rulesetId,
-      rulesetVersion: interpretation.rulesetVersion,
-      decisionFocus: interpretation.decisionFocus,
-      decisionStory: interpretation.decisionStory,
-      decisionMoves: interpretation.decisionMoves,
-      decisionOutcome: interpretation.decisionOutcome,
-      decisionTerminal: interpretation.decisionTerminal,
-      aiContext: interpretation.aiContext,
       context,
     }),
   };

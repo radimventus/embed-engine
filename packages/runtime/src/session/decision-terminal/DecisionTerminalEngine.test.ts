@@ -27,8 +27,8 @@ describe("Decision Terminal Engine (CAP-DTR-001)", () => {
     b.dispatch({ type: "ChangePriority", priorityIds: ["garden", "space"] }, 3);
 
     assert.deepEqual(
-      a.getExperience()!.decisionTerminal,
-      b.getExperience()!.decisionTerminal,
+      a.getExperience()!.context.decision.terminal,
+      b.getExperience()!.context.decision.terminal,
     );
     assert.deepEqual(
       a.getExperience()!.context.decision.terminal,
@@ -44,7 +44,8 @@ describe("Decision Terminal Engine (CAP-DTR-001)", () => {
     runtime.dispatch({ type: "SelectRoom", roomId: "room-kitchen" }, 2);
     runtime.dispatch({ type: "ChangePriority", priorityIds: ["investment"] }, 3);
 
-    const { decisionOutcome, decisionTerminal } = runtime.getExperience()!;
+    const { outcome: decisionOutcome, terminal: decisionTerminal } =
+      runtime.getExperience()!.context.decision;
 
     assert.equal(decisionTerminal.schemaVersion, DECISION_TERMINAL_SCHEMA_VERSION);
     assert.equal(decisionTerminal.id, `terminal:${decisionOutcome.id}`);
@@ -93,12 +94,12 @@ describe("Decision Terminal Engine (CAP-DTR-001)", () => {
     privacy.dispatch({ type: "ChangePriority", priorityIds: ["privacy"] }, 3);
 
     assert.notDeepEqual(
-      outdoor.getExperience()!.decisionOutcome,
-      privacy.getExperience()!.decisionOutcome,
+      outdoor.getExperience()!.context.decision.outcome,
+      privacy.getExperience()!.context.decision.outcome,
     );
     assert.notDeepEqual(
-      outdoor.getExperience()!.decisionTerminal,
-      privacy.getExperience()!.decisionTerminal,
+      outdoor.getExperience()!.context.decision.terminal,
+      privacy.getExperience()!.context.decision.terminal,
     );
   });
 });

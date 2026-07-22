@@ -66,10 +66,10 @@ describe('Media projection boundary (ED-DA-02)', () => {
     const base = runtime.getExperience()!;
     const synced = projectSynchronizedExperience(base);
 
-    assert.deepEqual(synced.context.decision.terminal, base.decisionTerminal);
-    assert.deepEqual(synced.context.decision.ai, base.aiContext);
-    assert.deepEqual(synced.context.decision.outcome, base.decisionOutcome);
-    assert.deepEqual(synced.context.decision.story, base.decisionStory);
-    assert.deepEqual(synced.context.decision.moves, base.decisionMoves);
+    assert.deepEqual(synced.context.decision.terminal, base.context.decision.terminal);
+    assert.deepEqual(synced.context.decision.ai, base.context.decision.ai);
+    assert.deepEqual(synced.context.decision.outcome, base.context.decision.outcome);
+    assert.deepEqual(synced.context.decision.story, base.context.decision.story);
+    assert.deepEqual(synced.context.decision.moves, base.context.decision.moves);
   });
 });

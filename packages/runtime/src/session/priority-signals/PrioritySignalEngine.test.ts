@@ -41,7 +41,7 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
     });
     runtime.dispatch({ type: "SelectRoom", roomId: "room-living" }, 2);
 
-    const before = runtime.getExperience()!;
+    const before = runtime.getExperience()!.context.decision;
     assert.equal(before.prioritySignals.length, 0);
     assert.equal(before.primaryReason, "primary-living-volume");
     assert.ok(!before.highlights.includes("outdoor-connection"));
@@ -55,7 +55,7 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
       return;
     }
 
-    const after = changed.experience;
+    const after = changed.experience.context.decision;
     assert.equal(after.prioritySignals.length, 2);
     assert.equal(after.prioritySignals[0]?.kind, "emphasize-outdoor");
     assert.deepEqual(
@@ -67,7 +67,7 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
     assert.ok(after.highlights.includes("spatial-generosity"));
     assert.equal(after.recommendedMedia[0]?.role, "gallery");
     assert.equal(
-      after.context.decision.prioritySignals[0]?.kind,
+      after.prioritySignals[0]?.kind,
       "emphasize-outdoor",
     );
     assert.notEqual(before.primaryReason, after.primaryReason);
@@ -95,8 +95,8 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
       3,
     );
 
-    const a = gardenFirst.getExperience()!;
-    const b = priceFirst.getExperience()!;
+    const a = gardenFirst.getExperience()!.context.decision;
+    const b = priceFirst.getExperience()!.context.decision;
 
     assert.equal(a.prioritySignals[0]?.kind, "emphasize-outdoor");
     assert.equal(b.prioritySignals[0]?.kind, "emphasize-value");
@@ -114,7 +114,7 @@ describe("Priority Signal Engine (CAP-PRI-001)", () => {
       now: 1,
     });
     const experience = runtime.getExperience()!;
-    assert.deepEqual(experience.prioritySignals, []);
+    assert.deepEqual(experience.context.decision.prioritySignals, []);
     assert.equal(experience.context.decision.prioritySignals.length, 0);
   });
 

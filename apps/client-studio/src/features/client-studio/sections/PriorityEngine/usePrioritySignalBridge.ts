@@ -41,7 +41,7 @@ export function usePrioritySignalBridge(
       return;
     }
 
-    const currentKey = experience.priorityIds.join(',');
+    const currentKey = experience.context.decision.priorityIds.join(',');
     if (key === currentKey) {
       lastDispatchedKey.current = key;
       return;
@@ -54,5 +54,5 @@ export function usePrioritySignalBridge(
     if (result.ok) {
       lastDispatchedKey.current = key;
     }
-  }, [dispatch, experience.priorityIds, profileIds]);
+  }, [dispatch, experience.context.decision.priorityIds, profileIds]);
 }

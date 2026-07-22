@@ -26,7 +26,7 @@ describe("AI Context Reader (CAP-AI-001)", () => {
     a.dispatch({ type: "ChangePriority", priorityIds: ["garden", "space"] }, 3);
     b.dispatch({ type: "ChangePriority", priorityIds: ["garden", "space"] }, 3);
 
-    assert.deepEqual(a.getExperience()!.aiContext, b.getExperience()!.aiContext);
+    assert.deepEqual(a.getExperience()!.context.decision.ai, b.getExperience()!.context.decision.ai);
     assert.deepEqual(
       a.getExperience()!.context.decision.ai,
       b.getExperience()!.context.decision.ai,
@@ -41,7 +41,8 @@ describe("AI Context Reader (CAP-AI-001)", () => {
     runtime.dispatch({ type: "SelectRoom", roomId: "room-kitchen" }, 2);
     runtime.dispatch({ type: "ChangePriority", priorityIds: ["investment"] }, 3);
 
-    const { decisionTerminal, aiContext } = runtime.getExperience()!;
+    const { terminal: decisionTerminal, ai: aiContext } =
+      runtime.getExperience()!.context.decision;
 
     assert.equal(aiContext.schemaVersion, AI_CONTEXT_SCHEMA_VERSION);
     assert.equal(aiContext.id, `ai-context:${decisionTerminal.id}`);
@@ -78,7 +79,7 @@ describe("AI Context Reader (CAP-AI-001)", () => {
     });
     runtime.dispatch({ type: "SelectRoom", roomId: "room-living" }, 2);
 
-    const keys = Object.keys(runtime.getExperience()!.aiContext).sort();
+    const keys = Object.keys(runtime.getExperience()!.context.decision.ai).sort();
     assert.deepEqual(keys, ["id", "outcome", "schemaVersion", "terminal"]);
   });
 });
