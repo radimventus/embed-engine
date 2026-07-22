@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
@@ -50,9 +50,14 @@ export function AIAdvisor() {
       time: formatMessageTime(new Date()),
     },
   ]);
+  const conversationLengthRef = useRef(1);
+  conversationLengthRef.current = messages.length;
 
   useEffect(() => {
     analytics?.aiSessionOpened(ai.id);
+    return () => {
+      analytics?.aiSessionEnded(conversationLengthRef.current);
+    };
   }, [ai.id, analytics]);
 
   useEffect(() => {

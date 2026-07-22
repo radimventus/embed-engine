@@ -57,7 +57,25 @@ export function DecisionAnalyticsProvider({
 
   useEffect(() => {
     collector.startJourney();
+
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') {
+        collector.abandonJourney();
+      } else {
+        collector.resumeJourney();
+      }
+    };
+    const onPageHide = () => {
+      collector.abandonJourney();
+      collector.flush();
+    };
+
+    document.addEventListener('visibilitychange', onVisibility);
+    window.addEventListener('pagehide', onPageHide);
+
     return () => {
+      document.removeEventListener('visibilitychange', onVisibility);
+      window.removeEventListener('pagehide', onPageHide);
       collector.flush();
     };
   }, [collector]);

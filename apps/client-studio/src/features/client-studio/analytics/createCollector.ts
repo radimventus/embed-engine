@@ -1,22 +1,30 @@
 import type { DecisionEvent, DispatchResult } from '@embed-engine/runtime';
 
-import type {
-  AnalyticsExportAdapter,
-} from './exportAdapter';
+import type { AnalyticsExportAdapter } from './exportAdapter';
 import { deriveSessionMetrics } from './exportAdapter';
 import type {
   AnalyticsEvent,
+  AnalyticsEventBase,
   AnalyticsTimestamp,
   JourneySurfaceId,
+  RuntimeContextRef,
   SessionMetricsSnapshot,
 } from './types';
 
 export type DecisionAnalyticsCollector = {
   readonly sessionId: string;
+  readonly getDecisionSessionId: () => string;
   readonly getEvents: () => readonly AnalyticsEvent[];
   readonly getMetrics: () => SessionMetricsSnapshot;
+  readonly bindDecisionSession: (input: {
+    readonly decisionSessionId: string;
+    readonly runtimeContextRef?: RuntimeContextRef | null;
+  }) => void;
+  readonly setActiveSurface: (surfaceId: JourneySurfaceId | null) => void;
   readonly startJourney: (at?: AnalyticsTimestamp) => void;
+  readonly resumeJourney: (at?: AnalyticsTimestamp) => void;
   readonly completeJourney: (at?: AnalyticsTimestamp) => void;
+  readonly abandonJourney: (at?: AnalyticsTimestamp) => void;
   readonly enterSurface: (surfaceId: JourneySurfaceId, at?: AnalyticsTimestamp) => void;
   readonly exitSurface: (surfaceId: JourneySurfaceId, at?: AnalyticsTimestamp) => void;
   readonly observeDispatch: (result: DispatchResult, at?: AnalyticsTimestamp) => void;
@@ -25,6 +33,7 @@ export type DecisionAnalyticsCollector = {
     readonly recommendationKey: string;
     readonly at?: AnalyticsTimestamp;
   }) => void;
+  readonly storyViewed: (storyId: string, at?: AnalyticsTimestamp) => void;
   readonly aiSessionOpened: (aiContextId: string, at?: AnalyticsTimestamp) => void;
   readonly aiInteraction: (input: {
     readonly questionCategory: string;
@@ -33,13 +42,18 @@ export type DecisionAnalyticsCollector = {
     readonly conversationLength: number;
     readonly at?: AnalyticsTimestamp;
   }) => void;
+  readonly aiSessionEnded: (conversationLength: number, at?: AnalyticsTimestamp) => void;
   readonly conversionStarted: (ctaId: string, at?: AnalyticsTimestamp) => void;
+  readonly conversionFormOpened: (ctaId: string, at?: AnalyticsTimestamp) => void;
+  readonly conversionConsentAccepted: (ctaId: string, at?: AnalyticsTimestamp) => void;
   readonly conversionCompleted: (ctaId: string, at?: AnalyticsTimestamp) => void;
+  readonly conversionCancelled: (ctaId: string, at?: AnalyticsTimestamp) => void;
   readonly flush: () => void;
 };
 
 export type CreateCollectorInput = {
   readonly sessionId: string;
+  readonly decisionSessionId?: string;
   readonly adapter: AnalyticsExportAdapter;
   readonly now?: () => number;
 };
@@ -54,8 +68,22 @@ export function createDecisionAnalyticsCollector(
   const now = input.now ?? (() => Date.now());
   const events: AnalyticsEvent[] = [];
   const surfaceEnteredAt = new Map<JourneySurfaceId, number>();
+  let decisionSessionId = input.decisionSessionId ?? 'decision-session:pending';
+  let runtimeContextRef: RuntimeContextRef | null = null;
+  let activeSurface: JourneySurfaceId | null = null;
   let journeyStarted = false;
+  let journeyCompleted = false;
   let terminalViewedOnce = false;
+  let storyViewedOnce = false;
+
+  const base = (at: number): AnalyticsEventBase =>
+    Object.freeze({
+      sessionId,
+      decisionSessionId,
+      at,
+      surfaceId: activeSurface,
+      runtimeContextRef,
+    });
 
   const emit = (event: AnalyticsEvent): void => {
     events.push(event);
@@ -68,22 +96,46 @@ export function createDecisionAnalyticsCollector(
 
   return {
     sessionId,
+    getDecisionSessionId: () => decisionSessionId,
     getEvents: () => events.slice(),
     getMetrics: () => deriveSessionMetrics(sessionId, events),
+    bindDecisionSession(bindInput) {
+      decisionSessionId = bindInput.decisionSessionId;
+      if (bindInput.runtimeContextRef !== undefined) {
+        runtimeContextRef = bindInput.runtimeContextRef;
+      }
+    },
+    setActiveSurface(surfaceId) {
+      activeSurface = surfaceId;
+    },
     startJourney(at = now()) {
       if (journeyStarted) {
         return;
       }
       journeyStarted = true;
-      emit({ type: 'journey.started', at, sessionId });
+      emit({ ...base(at), type: 'journey.started' });
+    },
+    resumeJourney(at = now()) {
+      if (!journeyStarted || journeyCompleted) {
+        return;
+      }
+      emit({ ...base(at), type: 'journey.resumed' });
     },
     completeJourney(at = now()) {
-      emit({ type: 'journey.completed', at, sessionId });
+      journeyCompleted = true;
+      emit({ ...base(at), type: 'journey.completed' });
+    },
+    abandonJourney(at = now()) {
+      if (!journeyStarted || journeyCompleted) {
+        return;
+      }
+      emit({ ...base(at), type: 'journey.abandoned' });
     },
     enterSurface(surfaceId, at = now()) {
       if (!surfaceEnteredAt.has(surfaceId)) {
         surfaceEnteredAt.set(surfaceId, at);
-        emit({ type: 'surface.entered', at, sessionId, surfaceId });
+        activeSurface = surfaceId;
+        emit({ ...base(at), type: 'surface.entered', surfaceId });
       }
     },
     exitSurface(surfaceId, at = now()) {
@@ -92,10 +144,12 @@ export function createDecisionAnalyticsCollector(
         return;
       }
       surfaceEnteredAt.delete(surfaceId);
+      if (activeSurface === surfaceId) {
+        activeSurface = null;
+      }
       emit({
+        ...base(at),
         type: 'surface.exited',
-        at,
-        sessionId,
         surfaceId,
         dwellMs: Math.max(0, at - entered),
       });
@@ -104,55 +158,139 @@ export function createDecisionAnalyticsCollector(
       if (!result.ok) {
         return;
       }
-      emit({
-        type: 'runtime.signal',
-        at,
-        sessionId,
-        runtimeEventType: result.event.type,
-        payload: payloadFromDecisionEvent(result.event),
+
+      const decision = result.experience.context.decision;
+      const objectId = result.experience.context.object.id;
+      decisionSessionId = `${objectId}:${result.session.createdAt}`;
+      runtimeContextRef = Object.freeze({
+        terminalId: decision.terminal.id,
+        storyId: decision.story.id,
+        activeRoomId: result.experience.context.activeRoom.id,
+        objectId,
       });
 
-      const terminal = result.experience.context.decision.terminal;
+      const payload = {
+        ...payloadFromDecisionEvent(result.event),
+        floor:
+          result.experience.context.navigation.currentFloor ??
+          (result.experience.context.activeRoom.room !== null
+            ? String(result.experience.context.activeRoom.room.floor)
+            : null),
+      };
+
+      emit({
+        ...base(at),
+        type: 'runtime.signal',
+        runtimeEventType: result.event.type,
+        payload: Object.freeze(payload),
+      });
+
       if (!terminalViewedOnce) {
         terminalViewedOnce = true;
         emit({
+          ...base(at),
           type: 'terminal.viewed',
-          at,
-          sessionId,
-          terminalId: terminal.id,
-          recommendationKey: terminal.outcome.recommendation,
+          surfaceId: 'decision-terminal',
+          terminalId: decision.terminal.id,
+          recommendationKey: decision.terminal.outcome.recommendation,
+        });
+      }
+
+      if (!storyViewedOnce) {
+        storyViewedOnce = true;
+        emit({
+          ...base(at),
+          type: 'story.viewed',
+          surfaceId: 'decision-terminal',
+          storyId: decision.story.id,
         });
       }
     },
     terminalViewed(input) {
       emit({
+        ...base(input.at ?? now()),
         type: 'terminal.viewed',
-        at: input.at ?? now(),
-        sessionId,
+        surfaceId: 'decision-terminal',
         terminalId: input.terminalId,
         recommendationKey: input.recommendationKey,
       });
     },
+    storyViewed(storyId, at = now()) {
+      emit({
+        ...base(at),
+        type: 'story.viewed',
+        surfaceId: 'decision-terminal',
+        storyId,
+      });
+    },
     aiSessionOpened(aiContextId, at = now()) {
-      emit({ type: 'ai.session.opened', at, sessionId, aiContextId });
+      emit({
+        ...base(at),
+        type: 'ai.session.opened',
+        surfaceId: 'ai-advisor',
+        aiContextId,
+      });
     },
     aiInteraction(input) {
       emit({
+        ...base(input.at ?? now()),
         type: 'ai.interaction',
-        at: input.at ?? now(),
-        sessionId,
+        surfaceId: 'ai-advisor',
         questionCategory: input.questionCategory,
         responseGenerated: input.responseGenerated,
         clarificationRequested: input.clarificationRequested,
         conversationLength: input.conversationLength,
       });
     },
+    aiSessionEnded(conversationLength, at = now()) {
+      emit({
+        ...base(at),
+        type: 'ai.session.ended',
+        surfaceId: 'ai-advisor',
+        conversationLength,
+      });
+    },
     conversionStarted(ctaId, at = now()) {
-      emit({ type: 'conversion.started', at, sessionId, ctaId });
+      emit({
+        ...base(at),
+        type: 'conversion.started',
+        surfaceId: 'audit-lead-capture',
+        ctaId,
+      });
+    },
+    conversionFormOpened(ctaId, at = now()) {
+      emit({
+        ...base(at),
+        type: 'conversion.form.opened',
+        surfaceId: 'audit-lead-capture',
+        ctaId,
+      });
+    },
+    conversionConsentAccepted(ctaId, at = now()) {
+      emit({
+        ...base(at),
+        type: 'conversion.consent.accepted',
+        surfaceId: 'audit-lead-capture',
+        ctaId,
+      });
     },
     conversionCompleted(ctaId, at = now()) {
-      emit({ type: 'conversion.completed', at, sessionId, ctaId });
-      emit({ type: 'journey.completed', at, sessionId });
+      emit({
+        ...base(at),
+        type: 'conversion.completed',
+        surfaceId: 'audit-lead-capture',
+        ctaId,
+      });
+      journeyCompleted = true;
+      emit({ ...base(at), type: 'journey.completed' });
+    },
+    conversionCancelled(ctaId, at = now()) {
+      emit({
+        ...base(at),
+        type: 'conversion.cancelled',
+        surfaceId: 'audit-lead-capture',
+        ctaId,
+      });
     },
     flush() {
       adapter.flush?.();
@@ -162,26 +300,26 @@ export function createDecisionAnalyticsCollector(
 
 function payloadFromDecisionEvent(
   event: DecisionEvent,
-): Readonly<Record<string, string | number | boolean | null>> {
+): Record<string, string | number | boolean | null> {
   switch (event.type) {
     case 'RoomSelected':
-      return Object.freeze({ roomId: event.roomId });
+      return { roomId: event.roomId };
     case 'PriorityChanged':
-      return Object.freeze({
+      return {
         priorityCount: event.priorityIds.length,
         priorityIds: event.priorityIds.join(','),
-      });
+      };
     case 'VariantSelected':
-      return Object.freeze({ variantId: event.variantId });
+      return { variantId: event.variantId };
     case 'ScenarioActivated':
-      return Object.freeze({ scenarioId: event.scenarioId });
+      return { scenarioId: event.scenarioId };
     case 'QuestionAnswered':
-      return Object.freeze({
+      return {
         questionId: event.questionId,
         answerId: event.answerId,
-      });
+      };
     default:
-      return Object.freeze({});
+      return {};
   }
 }
 

@@ -1,4 +1,9 @@
-export type { AnalyticsEvent, JourneySurfaceId, SessionMetricsSnapshot } from './types';
+export type {
+  AnalyticsEvent,
+  JourneySurfaceId,
+  RuntimeContextRef,
+  SessionMetricsSnapshot,
+} from './types';
 export type { AnalyticsExportAdapter } from './exportAdapter';
 export {
   createMemoryExportAdapter,

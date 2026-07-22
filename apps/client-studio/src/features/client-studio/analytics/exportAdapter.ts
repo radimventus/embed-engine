@@ -2,7 +2,7 @@ import type { AnalyticsEvent, SessionMetricsSnapshot } from './types';
 
 /**
  * Export boundary for Decision Analytics (CSCB-08).
- * Client Studio emits structured events only — destination is external.
+ * Transport only — GA4 / PostHog / Mixpanel / internal API plug in here.
  */
 export type AnalyticsExportAdapter = {
   readonly name: string;
@@ -83,20 +83,24 @@ export function deriveSessionMetrics(
 ): SessionMetricsSnapshot {
   let startedAt: number | null = null;
   let endedAt: number | null = null;
+  let decisionSessionId = '';
   const surfaceEnterCounts: Record<string, number> = {};
   const surfaceDwellMs: Record<string, number> = {};
   const runtimeSignalCounts: Record<string, number> = {};
   let terminalViewCount = 0;
+  let storyViewCount = 0;
   let aiSessionOpenCount = 0;
   let aiInteractionCount = 0;
   let conversionStartedCount = 0;
   let conversionCompletedCount = 0;
   let journeyCompleted = false;
+  let journeyAbandoned = false;
 
   for (const event of events) {
     if (event.sessionId !== sessionId) {
       continue;
     }
+    decisionSessionId = event.decisionSessionId;
     endedAt = event.at;
     switch (event.type) {
       case 'journey.started':
@@ -104,6 +108,9 @@ export function deriveSessionMetrics(
         break;
       case 'journey.completed':
         journeyCompleted = true;
+        break;
+      case 'journey.abandoned':
+        journeyAbandoned = true;
         break;
       case 'surface.entered':
         surfaceEnterCounts[event.surfaceId] =
@@ -119,6 +126,9 @@ export function deriveSessionMetrics(
         break;
       case 'terminal.viewed':
         terminalViewCount += 1;
+        break;
+      case 'story.viewed':
+        storyViewCount += 1;
         break;
       case 'ai.session.opened':
         aiSessionOpenCount += 1;
@@ -139,6 +149,7 @@ export function deriveSessionMetrics(
 
   return Object.freeze({
     sessionId,
+    decisionSessionId,
     startedAt,
     endedAt,
     durationMs:
@@ -147,11 +158,13 @@ export function deriveSessionMetrics(
     surfaceDwellMs: Object.freeze({ ...surfaceDwellMs }),
     runtimeSignalCounts: Object.freeze({ ...runtimeSignalCounts }),
     terminalViewCount,
+    storyViewCount,
     aiSessionOpenCount,
     aiInteractionCount,
     conversionStartedCount,
     conversionCompletedCount,
     journeyCompleted,
+    journeyAbandoned,
     eventCount: events.filter((event) => event.sessionId === sessionId).length,
   });
 }

@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { Input } from '@embed-engine/ui';
 
 import {
@@ -49,6 +49,17 @@ export function ConversionLeadForm({ ctaId, snapshot }: ConversionLeadFormProps)
   const [contactMethod, setContactMethod] = useState<ContactMethodId>('email');
   const [consent, setConsent] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const completedRef = useRef(false);
+
+  useEffect(() => {
+    analytics?.conversionFormOpened(ctaId);
+    completedRef.current = false;
+    return () => {
+      if (!completedRef.current) {
+        analytics?.conversionCancelled(ctaId);
+      }
+    };
+  }, [analytics, ctaId]);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -110,6 +121,7 @@ export function ConversionLeadForm({ ctaId, snapshot }: ConversionLeadFormProps)
     try {
       window.location.href = `mailto:${PILOT_LEAD_MAILTO}?subject=${subject}&body=${body}`;
       window.setTimeout(() => {
+        completedRef.current = true;
         analytics?.conversionCompleted(cta.id);
         setPhase('success');
       }, 400);
@@ -249,9 +261,13 @@ export function ConversionLeadForm({ ctaId, snapshot }: ConversionLeadFormProps)
               disabled={phase === 'loading'}
               className="mt-0.5 h-4 w-4 shrink-0"
               data-testid="conversion-consent"
-              onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                setConsent(event.target.checked)
-              }
+              onChange={(event: ChangeEvent<HTMLInputElement>) => {
+                const checked = event.target.checked;
+                setConsent(checked);
+                if (checked) {
+                  analytics?.conversionConsentAccepted(cta.id);
+                }
+              }}
             />
             <span>{COMMERCIAL_CONSENT_TEXT_CS}</span>
           </label>

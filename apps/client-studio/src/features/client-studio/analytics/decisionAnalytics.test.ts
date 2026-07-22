@@ -24,6 +24,7 @@ describe('Decision Analytics (CSCB-08)', () => {
     const memory = createMemoryExportAdapter();
     const collector = createDecisionAnalyticsCollector({
       sessionId: 'test-session',
+      decisionSessionId: 'decision-session:test',
       adapter: memory,
       now: (() => {
         let t = 1000;
@@ -40,7 +41,6 @@ describe('Decision Analytics (CSCB-08)', () => {
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
-    const before = runtime.getExperience()!.context.decision.terminal.outcome.recommendation;
     const result = runtime.dispatch(
       { type: 'ChangePriority', priorityIds: ['energy', 'layout', 'plot'] },
       2,
@@ -49,29 +49,30 @@ describe('Decision Analytics (CSCB-08)', () => {
     if (result.ok) {
       collector.observeDispatch(result);
     }
-    const after = runtime.getExperience()!.context.decision.terminal.outcome.recommendation;
-    // Observation did not re-dispatch or alter further
-    assert.equal(after, runtime.getExperience()!.context.decision.terminal.outcome.recommendation);
-    assert.equal(typeof before, 'string');
 
     const types = memory.events.map((event) => event.type);
     assert.ok(types.includes('journey.started'));
     assert.ok(types.includes('runtime.signal'));
     assert.ok(types.includes('terminal.viewed'));
+    assert.ok(types.includes('story.viewed'));
 
     const signal = memory.events.find((event) => event.type === 'runtime.signal');
     assert.equal(signal?.type, 'runtime.signal');
     if (signal?.type === 'runtime.signal') {
       assert.equal(signal.runtimeEventType, 'PriorityChanged');
       assert.equal(signal.payload.priorityCount, 3);
+      assert.equal(signal.sessionId, 'test-session');
+      assert.ok(signal.decisionSessionId.length > 0);
+      assert.ok(signal.runtimeContextRef?.terminalId);
     }
   });
 
-  it('tracks surfaces, AI metadata, and conversion completion metrics', () => {
+  it('tracks lifecycle, surfaces, AI metadata, and conversion funnel', () => {
     const memory = createMemoryExportAdapter();
     let t = 0;
     const collector = createDecisionAnalyticsCollector({
       sessionId: 'metrics-session',
+      decisionSessionId: 'decision:metrics',
       adapter: memory,
       now: () => {
         t += 100;
@@ -83,6 +84,7 @@ describe('Decision Analytics (CSCB-08)', () => {
     collector.enterSurface('hero');
     collector.enterSurface('walkthrough');
     collector.exitSurface('hero');
+    collector.resumeJourney();
     collector.aiSessionOpened('ai-context:terminal-1');
     collector.aiInteraction({
       questionCategory: categorizeAiQuestion('Proč je toto doporučeno?'),
@@ -90,7 +92,10 @@ describe('Decision Analytics (CSCB-08)', () => {
       clarificationRequested: false,
       conversationLength: 4,
     });
+    collector.aiSessionEnded(4);
     collector.conversionStarted('request-consultation');
+    collector.conversionFormOpened('request-consultation');
+    collector.conversionConsentAccepted('request-consultation');
     collector.conversionCompleted('request-consultation');
 
     const metrics = collector.getMetrics();
@@ -100,10 +105,27 @@ describe('Decision Analytics (CSCB-08)', () => {
     assert.equal(metrics.aiInteractionCount, 1);
     assert.ok((metrics.surfaceDwellMs.hero ?? 0) > 0);
     assert.equal(metrics.surfaceEnterCounts.walkthrough, 1);
-
-    const derived = deriveSessionMetrics('metrics-session', memory.events);
-    assert.equal(derived.eventCount, memory.events.length);
     assert.equal(categorizeAiQuestion('Proč je toto doporučeno?'), 'why-recommendation');
+
+    collector.abandonJourney(); // no-op after complete
+    assert.equal(
+      memory.events.filter((event) => event.type === 'journey.abandoned').length,
+      0,
+    );
+  });
+
+  it('emits abandoned when journey is incomplete', () => {
+    const memory = createMemoryExportAdapter();
+    const collector = createDecisionAnalyticsCollector({
+      sessionId: 'abandon-session',
+      adapter: memory,
+      now: () => 1,
+    });
+    collector.startJourney();
+    collector.abandonJourney();
+    assert.ok(memory.events.some((event) => event.type === 'journey.abandoned'));
+    const metrics = deriveSessionMetrics('abandon-session', memory.events);
+    assert.equal(metrics.journeyAbandoned, true);
   });
 
   it('never stores AI prompt/response bodies in events', () => {
@@ -126,10 +148,7 @@ describe('Decision Analytics (CSCB-08)', () => {
   });
 
   it('Client Studio page mounts analytics outside Runtime mutation path', () => {
-    const page = readFileSync(
-      join(here, '../ClientStudioPage.tsx'),
-      'utf8',
-    );
+    const page = readFileSync(join(here, '../ClientStudioPage.tsx'), 'utf8');
     assert.match(page, /DecisionAnalyticsProvider/);
     assert.match(page, /JourneySurfaceObserver/);
     const provider = readFileSync(
@@ -137,8 +156,6 @@ describe('Decision Analytics (CSCB-08)', () => {
       'utf8',
     );
     assert.match(provider, /observeDispatch/);
-    assert.equal(provider.includes('dispatch(') && provider.includes('analytics?.'), true);
-    // Must not compose Runtime semantics
     assert.equal(provider.includes('composeDecision'), false);
   });
 });

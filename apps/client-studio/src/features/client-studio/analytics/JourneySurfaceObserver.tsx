@@ -39,13 +39,15 @@ export function JourneySurfaceObserver() {
               visible.add(id);
               analytics.enterSurface(id);
               if (id === PILOT_SECTION_IDS.priority) {
-                // Terminal lives in Priority Experience — record view on enter
-                // Recommendation key filled by Runtime observe on first dispatch;
-                // surface enter alone marks engagement with the terminal host.
+                // Decision Terminal is hosted inside Priority Experience.
+                analytics.enterSurface('decision-terminal');
               }
             }
           } else if (visible.has(id)) {
             visible.delete(id);
+            if (id === PILOT_SECTION_IDS.priority) {
+              analytics.exitSurface('decision-terminal');
+            }
             analytics.exitSurface(id);
           }
         }

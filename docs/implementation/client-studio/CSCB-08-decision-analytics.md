@@ -5,20 +5,13 @@
 | **Capability** | CSCB-08 — Decision Analytics |
 | **Status** | **DONE** |
 | **Date** | 2026-07-22 |
-| **Commit** | `feat(client-studio): implement decision analytics` |
+| **Commits** | `feat(client-studio): implement decision analytics` · schema hardening |
 
 ---
 
 ## Implementation summary
 
-Decision Analytics is a **passive observational layer** over the Decision Journey.
-
-It records structured events for product improvement and never:
-
-- mutates Runtime,
-- personalizes the session,
-- scores leads,
-- feeds conclusions back into Interpretation.
+Decision Analytics is a **passive observational layer**. It records structured events for product improvement and never mutates Runtime, personalizes the session, or scores leads.
 
 ```text
 Decision Journey
@@ -30,43 +23,95 @@ User Behaviour + Runtime DecisionEvents
 Analytics Events (collector)
         │
         ▼
-Export Adapter (memory / console / composite)
+Analytics Adapter (transport only)
         │
         ▼
-External Analysis (out of Client Studio)
+External Analytics (GA4 / PostHog / Mixpanel / API)
 ```
 
 ---
 
-## Event model
+## Event taxonomy
 
-| Type | Source |
+| Family | Types |
 | --- | --- |
-| `journey.started` / `journey.completed` | Analytics session lifecycle |
-| `surface.entered` / `surface.exited` | IntersectionObserver on `PILOT_SECTION_IDS` |
-| `runtime.signal` | Successful `dispatch` → canonical `DecisionEvent` |
-| `terminal.viewed` | First successful dispatch (Terminal present) |
-| `ai.session.opened` | AI Advisor mount |
-| `ai.interaction` | Metadata only (category, length, flags) — **no** prompt/response body |
-| `conversion.started` / `conversion.completed` | Commercial CTA + mailto success |
+| Lifecycle | `journey.started`, `journey.resumed`, `journey.completed`, `journey.abandoned` |
+| Surfaces | `surface.entered`, `surface.exited` (+ dwellMs) |
+| Runtime | `runtime.signal` (canonical `DecisionEvent` type + payload) |
+| Decision presentation | `terminal.viewed`, `story.viewed` |
+| AI (metadata only) | `ai.session.opened`, `ai.interaction`, `ai.session.ended` |
+| Commercial | `conversion.started`, `conversion.form.opened`, `conversion.consent.accepted`, `conversion.completed`, `conversion.cancelled` |
+
+Surfaces: `hero`, `property-explorer`, `walkthrough`, `priority-experience`, `decision-terminal`, `ai-advisor`, `audit-lead-capture`.
 
 ---
 
-## Modules
+## Analytics schema (envelope)
 
-| Path | Role |
+Every event includes:
+
+| Field | Meaning |
 | --- | --- |
-| `analytics/types.ts` | Event + metrics types |
-| `analytics/createCollector.ts` | Passive collector |
-| `analytics/exportAdapter.ts` | Export interface + memory/console/composite |
-| `analytics/DecisionAnalyticsProvider.tsx` | React context |
-| `analytics/JourneySurfaceObserver.tsx` | Surface enter/exit |
-| `DecisionSessionRuntimeProvider.tsx` | Passive `observeDispatch` after success |
-| `ClientStudioPage.tsx` | Mount Analytics provider + observer |
+| `sessionId` | Analytics session id |
+| `decisionSessionId` | Runtime journey id (`objectId:createdAt`) |
+| `type` | Event type |
+| `at` | Timestamp (ms) |
+| `surfaceId` | Current / related Experience Surface (nullable) |
+| `runtimeContextRef` | Optional `{ terminalId, storyId, activeRoomId, objectId }` — **not** a state dump |
 
 ---
 
-## Export boundary
+## Exported payload examples
+
+```json
+{
+  "type": "journey.started",
+  "sessionId": "analytics-m1abc",
+  "decisionSessionId": "decision-session:pending",
+  "at": 1721660000000,
+  "surfaceId": null,
+  "runtimeContextRef": null
+}
+```
+
+```json
+{
+  "type": "runtime.signal",
+  "sessionId": "analytics-m1abc",
+  "decisionSessionId": "house-modern-01:1",
+  "at": 1721660001200,
+  "surfaceId": "walkthrough",
+  "runtimeContextRef": {
+    "terminalId": "terminal:…",
+    "storyId": "story:…",
+    "activeRoomId": "room-living",
+    "objectId": "house-modern-01"
+  },
+  "runtimeEventType": "RoomSelected",
+  "payload": { "roomId": "room-living", "floor": "0" }
+}
+```
+
+```json
+{
+  "type": "ai.interaction",
+  "sessionId": "analytics-m1abc",
+  "decisionSessionId": "house-modern-01:1",
+  "at": 1721660005400,
+  "surfaceId": "ai-advisor",
+  "runtimeContextRef": { "terminalId": "…", "storyId": "…", "activeRoomId": "…", "objectId": "…" },
+  "questionCategory": "why-recommendation",
+  "responseGenerated": true,
+  "clarificationRequested": false,
+  "conversationLength": 4
+}
+```
+
+Prompt / response **bodies are never stored**.
+
+---
+
+## Adapter interface
 
 ```ts
 type AnalyticsExportAdapter = {
@@ -76,31 +121,33 @@ type AnalyticsExportAdapter = {
 }
 ```
 
-Default: in-memory sink (+ console in Vite `import.meta.env.DEV`).
-
-Destinations (DB, warehouse, dashboards) are **outside** Client Studio — plug a new adapter.
+Built-ins: `memory`, `console`, `composite`.  
+Production destinations (GA4, PostHog, Mixpanel, internal API) implement the same interface — transport only.
 
 ---
 
-## Session metrics
+## Modules
 
-`deriveSessionMetrics` / `collector.getMetrics()` exposes:
-
-- duration,
-- surface enter counts + dwell ms,
-- runtime signal counts,
-- terminal / AI / conversion counters,
-- journey completion flag.
+| Path | Role |
+| --- | --- |
+| `analytics/types.ts` | Schema + taxonomy |
+| `analytics/createCollector.ts` | Passive collector |
+| `analytics/exportAdapter.ts` | Export boundary + metrics |
+| `analytics/DecisionAnalyticsProvider.tsx` | Context + lifecycle (resume/abandon) |
+| `analytics/JourneySurfaceObserver.tsx` | Surface dwell |
+| Provider `dispatch` wrap | `observeDispatch` after success |
 
 ---
 
 ## Acceptance checklist
 
-- [x] Canonical events emitted  
-- [x] Journey metrics captured  
-- [x] Runtime semantics unchanged  
-- [x] Pipeline passive (no feedback loop)  
-- [x] Export interface documented  
+- [x] Lifecycle events (started / resumed / completed / abandoned)  
+- [x] Experience Surface events + dwell  
+- [x] Runtime interaction events (canonical DecisionEvents)  
+- [x] AI metadata only  
+- [x] Commercial funnel events  
+- [x] Export adapter interface  
+- [x] Runtime behaviour unchanged  
 
 ---
 
@@ -109,12 +156,11 @@ Destinations (DB, warehouse, dashboards) are **outside** Client Studio — plug 
 | Check | Result |
 | --- | --- |
 | Typecheck | **PASS** |
-| Tests | **PASS** — 51/51 |
+| Tests | **PASS** — 52/52 |
 
 ---
 
 ## Follow-up
 
-- Wire production warehouse adapter (ops / CSCB-09)  
-- Optional ADR if non-React hosts need Runtime-level subscribe  
+- Production warehouse / GA4 adapter (ops / CSCB-09)  
 - Next: **CSCB-09 — Production Readiness**
