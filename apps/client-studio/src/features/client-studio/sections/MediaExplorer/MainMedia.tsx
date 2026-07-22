@@ -52,8 +52,19 @@ export function MainMedia() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasStartedPlayback, setHasStartedPlayback] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [mediaFailed, setMediaFailed] = useState(false);
+  const [mediaPending, setMediaPending] = useState(true);
 
-  const activeMediaItem = gallery.thumbnails[activeMediaIndex] ?? null;
+  const activeMediaItem = (() => {
+    const selected = gallery.thumbnails[activeMediaIndex] ?? null;
+    if (mediaMode !== 'photo') {
+      return selected;
+    }
+    if (selected !== null && selected.kind === 'photo') {
+      return selected;
+    }
+    return gallery.thumbnails.find((item) => item.kind === 'photo') ?? selected;
+  })();
   const activeMediaSrc = activeMediaItem?.src ?? null;
   const activeRoomId = gallery.roomId;
 
@@ -71,7 +82,9 @@ export function MainMedia() {
 
   useEffect(() => {
     setHasStartedPlayback(false);
-  }, [mediaMode, videoSrc, activeRoomId, mode]);
+    setMediaFailed(false);
+    setMediaPending(true);
+  }, [mediaMode, videoSrc, activeRoomId, mode, activeMediaSrc]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -131,13 +144,26 @@ export function MainMedia() {
         }}
         data-room-id={activeRoomId ?? undefined}
       >
-        {showPhoto ? (
+        {mediaFailed ? (
+          <div
+            className="flex h-full w-full items-center justify-center bg-embed-surface-muted px-4 text-center text-sm text-embed-foreground-primary/55"
+            role="status"
+            aria-live="polite"
+          >
+            Médium se nepodařilo načíst
+          </div>
+        ) : showPhoto ? (
           <img
             src={photoSrc}
-            alt=""
+            alt={previewAlt}
             className="h-full w-full object-cover"
             data-walkthrough-mode={mode}
             data-media-mode={mediaMode}
+            onLoad={() => setMediaPending(false)}
+            onError={() => {
+              setMediaPending(false);
+              setMediaFailed(true);
+            }}
           />
         ) : (
           <>
@@ -152,17 +178,33 @@ export function MainMedia() {
               preload="metadata"
               onPlay={handleVideoPlay}
               onEnded={handleVideoEnded}
+              onLoadedData={() => setMediaPending(false)}
+              onError={() => {
+                setMediaPending(false);
+                setMediaFailed(true);
+              }}
               data-walkthrough-mode={mode}
               data-media-mode={mediaMode}
             />
             {showPlayControl ? <PlayControl onPlay={handlePlay} /> : null}
           </>
         )}
+        {mediaPending && !mediaFailed ? (
+          <div
+            className="pointer-events-none absolute inset-0 flex items-center justify-center bg-embed-surface-muted/80 text-sm text-embed-foreground-primary/55"
+            role="status"
+            aria-live="polite"
+          >
+            Načítám médium…
+          </div>
+        ) : null}
       </div>
-      <MediaZoomControl onClick={() => setIsLightboxOpen(true)} />
+      {!mediaFailed ? (
+        <MediaZoomControl onClick={() => setIsLightboxOpen(true)} />
+      ) : null}
       <MediaLightbox
         alt={previewAlt}
-        isOpen={isLightboxOpen}
+        isOpen={isLightboxOpen && !mediaFailed}
         kind={showPhoto ? 'photo' : 'video'}
         poster={videoPoster}
         src={showPhoto ? photoSrc : videoSrc}

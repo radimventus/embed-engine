@@ -21,8 +21,10 @@ Landing (Hero)
 ```
 
 Locale: Czech throughout the customer-facing pilot (S-006A).  
-AI Advisor is hidden by default (`PILOT_FLAGS.showAiAdvisor`) until real answers exist.  
+AI Advisor is **visible** (`PILOT_FLAGS.showAiAdvisor: true`). Chat replies are still a Generation‑1 placeholder; FAQ / intro project Runtime AIContext only — see CSCB-06 discovery.  
 Lead Capture uses mailto handoff (`kontakt@astav.cz`) until a backend is wired.
+
+Operational docs for pilot deployment: [implementation/client-studio/production/](../implementation/client-studio/production/).
 
 Vocabulary (one term per concept): Priorita · Rozhodnutí · Důvod · Další krok · Výsledek · Závazek · Audit · Poptávka.
 

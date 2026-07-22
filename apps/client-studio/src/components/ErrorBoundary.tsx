@@ -1,5 +1,7 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 
+import { CLIENT_STUDIO_RELEASE } from '../features/client-studio/pilot/productionConfig';
+
 type ErrorBoundaryProps = {
   readonly children: ReactNode;
 };
@@ -9,8 +11,9 @@ type ErrorBoundaryState = {
 };
 
 /**
- * App-level error boundary (CSCB-01 / SR-001).
+ * App-level error boundary (CSCB-01 / CSCB-09).
  * Catches render failures so Client Studio never fails silently.
+ * Logs diagnostics without Runtime payloads or customer PII.
  */
 export class ErrorBoundary extends Component<
   ErrorBoundaryProps,
@@ -23,7 +26,12 @@ export class ErrorBoundary extends Component<
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
-    console.error('[ClientStudio] Uncaught render error', error, info);
+    console.error('[ClientStudio] Uncaught render error', {
+      version: CLIENT_STUDIO_RELEASE.version,
+      product: CLIENT_STUDIO_RELEASE.product,
+      message: error.message,
+      componentStack: info.componentStack,
+    });
   }
 
   render(): ReactNode {
@@ -47,6 +55,9 @@ export class ErrorBoundary extends Component<
           >
             Obnovit stránku
           </button>
+          <p className="text-xs text-embed-foreground-primary/40">
+            {CLIENT_STUDIO_RELEASE.product} v{CLIENT_STUDIO_RELEASE.version}
+          </p>
         </div>
       );
     }

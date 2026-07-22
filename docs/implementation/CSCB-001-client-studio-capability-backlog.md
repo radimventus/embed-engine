@@ -54,7 +54,7 @@ Every capability may span multiple UI surfaces while sharing the same Runtime se
 | [CSCB-06](#cscb-06--ai-assistance) | AI Assistance | Explain Runtime decisions | AI consumes Runtime | 5 | Pending |
 | [CSCB-07](#cscb-07--commercial-conversion) | Commercial Conversion | Convert journey to business outcome | Consume Decision Session | 3 | **Done** ([report](./client-studio/CSCB-07-commercial-conversion.md)) |
 | [CSCB-08](#cscb-08--decision-analytics) | Decision Analytics | Measure customer behaviour | Read-only | 4 | **Done** ([report](./client-studio/CSCB-08-decision-analytics.md)) |
-| [CSCB-09](#cscb-09--production-readiness) | Production Readiness | Pilot deployment readiness | — | 6 | Pending |
+| [CSCB-09](#cscb-09--production-readiness) | Production Readiness | Pilot deployment readiness | — | 6 | **Done** |
 | | | | **Total** | **43** | |
 
 ---
@@ -225,6 +225,8 @@ Every capability may span multiple UI surfaces while sharing the same Runtime se
 
 **Goal:** Prepare Client Studio for pilot deployment.
 
+**Status:** **DONE** — see [client-studio/production/](./client-studio/production/) and [CSCB-09 report](./client-studio/CSCB-09-production-readiness.md).
+
 **Scope**
 
 - UX polish
@@ -236,6 +238,8 @@ Every capability may span multiple UI surfaces while sharing the same Runtime se
 - pilot checklist
 
 **Estimate:** 6 slices
+
+**Unlocks:** RR-001 — Release Readiness Review (Client Studio v1)
 
 ---
 

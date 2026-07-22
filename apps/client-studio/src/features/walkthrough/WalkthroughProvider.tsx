@@ -84,8 +84,18 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   }, [dispatch, activeRoomId, rooms]);
 
   useEffect(() => {
-    setActiveMediaIndex(0);
+    // Photo mode must never land on a video URL rendered as <img> (BUG-001).
+    if (mediaMode === 'photo') {
+      const firstPhotoIndex = projectedThumbnails.findIndex(
+        (item) => item.kind === 'photo',
+      );
+      setActiveMediaIndex(firstPhotoIndex >= 0 ? firstPhotoIndex : 0);
+    } else {
+      setActiveMediaIndex(0);
+    }
     setMode('ready');
+    // Reset only on room / mode change — not on every thumbnail reorder.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- projectedThumbnails read intentionally
   }, [activeRoomId, mediaMode]);
 
   const value = useMemo((): WalkthroughContextValue => {

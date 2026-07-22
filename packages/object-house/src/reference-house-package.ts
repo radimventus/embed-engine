@@ -19,13 +19,13 @@ export const REFERENCE_HOUSE_PACKAGE: HousePackage = {
       id: "media-exterior",
       type: "image",
       title: "Exteriér",
-      url: "/media/house-modern-01/exterior.jpg",
+      url: "/media/house-modern-01/exterior.webp",
     },
     {
       id: "media-floorplan",
       type: "floorplan",
       title: "Půdorys",
-      url: "/media/house-modern-01/floorplan.svg",
+      url: "/media/house-modern-01/floorplan.png",
     },
   ],
   rooms: [
