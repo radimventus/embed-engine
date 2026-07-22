@@ -25,6 +25,7 @@ Active product SSOT lives here.
 | **`../architecture/pt/PT-006-ai-explains-never-decides.md`** | **Platform theory — AI explains, never decides** |
 | **`../architecture/pt/PT-007-decision-terminal-is-the-outcome.md`** | **Platform theory — Decision Terminal is the outcome** |
 | **`../architecture/pt/PT-008-every-decision-experience-produces-outcome.md`** | **Platform theory — Decision Outcome as canonical session output** |
+| **`../architecture/pt/PT-009-experience-is-the-product-surface.md`** | **Platform theory — Experience as the product surface** |
 | `knowledge/` | Knowledge Foundation (SSOT) |
 | `pilots/` | Pilot Foundation (SSOT process) |
 | `../pilot/` | **CAP-P01 knowledge model** — first Pilot Object + Behavior Pack |

@@ -12,6 +12,7 @@ Platform Theory documents establish **long-lived invariants** for how Embed Engi
 | PT-006 | [AI Explains, Never Decides](./PT-006-ai-explains-never-decides.md) | Proposed | AI as semantic explainer; Runtime remains decision authority; authorizes CAP-AI-001 |
 | PT-007 | [Decision Terminal is the Outcome](./PT-007-decision-terminal-is-the-outcome.md) | Proposed | Decision Terminal as canonical semantic destination / surface; authorizes CAP-DTR-001 |
 | PT-008 | [Every Decision Experience Produces a Decision Outcome](./PT-008-every-decision-experience-produces-outcome.md) | Proposed | Decision Outcome as canonical session output artifact; authorizes CAP-OUT-001 |
+| PT-009 | [The Experience is the Product Surface](./PT-009-experience-is-the-product-surface.md) | Proposed | Experience as exclusive presentation surface; constrains all CAPs (authorizes none) |
 
 **Related**
 
