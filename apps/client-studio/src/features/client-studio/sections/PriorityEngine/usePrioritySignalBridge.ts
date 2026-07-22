@@ -2,15 +2,15 @@ import { useEffect, useMemo, useRef } from 'react';
 
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { DECISION_CATEGORIES } from './decision-cards.constants';
-
-type DecisionCardState = {
-  selected: boolean;
-  importance: number;
-};
+import type { DecisionCardState } from './useDecisionCards';
 
 /**
- * Priority Profile from card selection → ChangePriority command.
- * Priority Engine produces signals only; it does not reshape Hero/Gallery itself.
+ * Priority Profile from card selection → ChangePriority command (CSCB-04).
+ *
+ * Decision Signals / interaction only:
+ * - selected ids + intensity order → `priorityIds` (highest importance first)
+ * - Runtime owns signal strength / Interpretation
+ * - Empty local selection does not clear Runtime (Command rejects empty arrays)
  */
 export function usePrioritySignalBridge(
   cards: Record<string, DecisionCardState>,

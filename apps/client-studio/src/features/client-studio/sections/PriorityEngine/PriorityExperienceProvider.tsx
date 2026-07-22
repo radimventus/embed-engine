@@ -11,13 +11,11 @@ import type {
 
 import { DECISION_CATEGORIES } from './decision-cards.constants';
 import { PrioritySelectionProvider } from './PrioritySelectionContext';
-import { useDecisionCards } from './useDecisionCards';
+import {
+  useDecisionCards,
+  type DecisionCardState,
+} from './useDecisionCards';
 import { usePrioritySignalBridge } from './usePrioritySignalBridge';
-
-type DecisionCardState = {
-  selected: boolean;
-  importance: number;
-};
 
 export type PriorityExperienceValue = {
   readonly cards: Record<string, DecisionCardState>;
@@ -25,6 +23,9 @@ export type PriorityExperienceValue = {
   readonly setImportance: (id: string, importance: number) => void;
   readonly toggleCard: (id: string) => void;
   readonly priorities: PrioritySelection;
+  readonly selectedCount: number;
+  readonly minimumSelection: number;
+  readonly minimumMet: boolean;
 };
 
 const PriorityExperienceContext = createContext<PriorityExperienceValue | null>(
@@ -36,16 +37,23 @@ type PriorityExperienceProviderProps = {
 };
 
 /**
- * Priority card UI state + signal bridge into Decision Session Runtime (ED-DA-04).
+ * Priority Experience — interaction chrome + Decision Signal bridge (CSCB-04).
  *
- * Context transport for card chrome only — does not compose Experience /
- * Interpretation / Story / Outcome / Terminal / AIContext.
- * Canonical semantics: `DecisionSessionRuntimeProvider` → `experience.context`.
+ * Captures user intent only. Does not interpret, score, or recommend.
+ * Canonical semantics: Decision Session Runtime → `experience.context`.
  */
 export function PriorityExperienceProvider({
   children,
 }: PriorityExperienceProviderProps) {
-  const { cards, categories, setImportance, toggleCard } = useDecisionCards();
+  const {
+    cards,
+    categories,
+    setImportance,
+    toggleCard,
+    selectedCount,
+    minimumSelection,
+    minimumMet,
+  } = useDecisionCards();
   usePrioritySignalBridge(cards);
 
   const priorities = useMemo((): PrioritySelection => {
@@ -64,6 +72,9 @@ export function PriorityExperienceProvider({
     setImportance,
     toggleCard,
     priorities,
+    selectedCount,
+    minimumSelection,
+    minimumMet,
   };
 
   return (

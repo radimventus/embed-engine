@@ -38,7 +38,7 @@ export function DecisionCard({
         aria-pressed={isActive}
         aria-label={`${category.title} decision category`}
         onClick={onToggle}
-        className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-[8px] border px-2.5 transition-[transform,box-shadow,border-color] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${
+        className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-[8px] border px-2.5 touch-manipulation transition-[transform,box-shadow,border-color] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${
           isActive
             ? `${DECISION_CARD_ACTIVE_CLASS} justify-between py-2.5`
             : `${DECISION_CARD_IDLE_CLASS} ${DECISION_CARD_HOVER_CLASS} z-0 scale-100 justify-center py-3`

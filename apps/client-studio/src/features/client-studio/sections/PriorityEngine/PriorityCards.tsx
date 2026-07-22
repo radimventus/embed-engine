@@ -1,16 +1,9 @@
 import { DecisionCard } from './DecisionCard';
 import {
-  DECISION_GRID_COLUMN_SIZE_PX,
   DECISION_GRID_GAP_PX,
-  DECISION_SURFACE_HEIGHT_PX,
-  DECISION_SURFACE_WIDTH_PX,
 } from './decision-cards-layout';
 import type { DecisionCategory } from './decision-cards.constants';
-
-type DecisionCardState = {
-  selected: boolean;
-  importance: number;
-};
+import type { DecisionCardState } from './useDecisionCards';
 
 type PriorityCardsProps = {
   cards: Record<string, DecisionCardState>;
@@ -20,7 +13,8 @@ type PriorityCardsProps = {
 };
 
 /**
- * Priority cards surface — presentation only; state owned by PriorityEngine.
+ * Priority catalogue surface — presentation only (CSCB-04).
+ * Responsive grid; intensity via DecisionSlider on selected cards.
  */
 export function PriorityCards({
   cards,
@@ -31,17 +25,15 @@ export function PriorityCards({
   return (
     <div className="flex min-w-0 flex-col self-start">
       <div
-        aria-label="Plocha Priorit"
-        className="grid shrink-0 items-center justify-items-center overflow-visible"
-        style={{
-          gap: DECISION_GRID_GAP_PX,
-          gridTemplateColumns: `repeat(5, ${DECISION_GRID_COLUMN_SIZE_PX}px)`,
-          height: DECISION_SURFACE_HEIGHT_PX,
-          width: DECISION_SURFACE_WIDTH_PX,
-        }}
+        aria-label="Katalog priorit"
+        className="grid w-full max-w-[685px] grid-cols-5 justify-items-center overflow-visible mobile:grid-cols-2 tablet:grid-cols-3"
+        style={{ gap: DECISION_GRID_GAP_PX }}
       >
         {categories.map((category) => {
           const card = cards[category.id];
+          if (card === undefined) {
+            return null;
+          }
 
           return (
             <DecisionCard
