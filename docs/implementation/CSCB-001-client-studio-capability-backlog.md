@@ -53,7 +53,7 @@ Every capability may span multiple UI surfaces while sharing the same Runtime se
 | [CSCB-05](#cscb-05--decision-presentation) | Decision Presentation | Present Runtime conclusions | Presentation only | 4 | **Done** ([report](./client-studio/CSCB-05-decision-terminal.md)) |
 | [CSCB-06](#cscb-06--ai-assistance) | AI Assistance | Explain Runtime decisions | AI consumes Runtime | 5 | Pending |
 | [CSCB-07](#cscb-07--commercial-conversion) | Commercial Conversion | Convert journey to business outcome | Consume Decision Session | 3 | **Done** ([report](./client-studio/CSCB-07-commercial-conversion.md)) |
-| [CSCB-08](#cscb-08--decision-analytics) | Decision Analytics | Measure customer behaviour | Read-only | 4 | Pending |
+| [CSCB-08](#cscb-08--decision-analytics) | Decision Analytics | Measure customer behaviour | Read-only | 4 | **Done** ([report](./client-studio/CSCB-08-decision-analytics.md)) |
 | [CSCB-09](#cscb-09--production-readiness) | Production Readiness | Pilot deployment readiness | — | 6 | Pending |
 | | | | **Total** | **43** | |
 
@@ -202,9 +202,12 @@ Every capability may span multiple UI surfaces while sharing the same Runtime se
 
 ### CSCB-08 — Decision Analytics
 
-**Goal:** Measure customer behaviour.
+**Goal:** Measure customer behaviour across Decision Sessions.
+
+**Status:** **DONE** — [CSCB-08-decision-analytics.md](./client-studio/CSCB-08-decision-analytics.md)
 
 **Scope**
+
 
 - telemetry
 - analytics events

@@ -5,6 +5,7 @@ import {
   type CommercialCtaId,
 } from '../../pilot/commercialConversion';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
+import { useOptionalDecisionAnalytics } from '../../analytics/DecisionAnalyticsProvider';
 import { AUDIT_SECTION_STYLE } from './audit-panel';
 import { AuditTransition } from './AuditTransition';
 import { ContactCard } from './ContactCard';
@@ -18,11 +19,17 @@ import { ConversionLeadForm } from './ConversionLeadForm';
  */
 export function AuditLeadCapture() {
   const snapshot = useConversionRuntimeSnapshot();
+  const analytics = useOptionalDecisionAnalytics();
   const primaryCtaId =
     enabledCommercialCtas()[0]?.id ?? ('request-consultation' as CommercialCtaId);
   const [selectedCtaId, setSelectedCtaId] = useState<CommercialCtaId | null>(
     null,
   );
+
+  const handleSelectCta = (id: CommercialCtaId) => {
+    setSelectedCtaId(id);
+    analytics?.conversionStarted(id);
+  };
 
   return (
     <section
@@ -42,7 +49,7 @@ export function AuditLeadCapture() {
           <ConversionCtaSelect
             selectedCtaId={selectedCtaId}
             primaryCtaId={primaryCtaId}
-            onSelect={setSelectedCtaId}
+            onSelect={handleSelectCta}
           />
           {selectedCtaId !== null ? (
             <ConversionLeadForm ctaId={selectedCtaId} snapshot={snapshot} />

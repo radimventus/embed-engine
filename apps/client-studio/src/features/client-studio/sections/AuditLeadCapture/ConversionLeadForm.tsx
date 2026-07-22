@@ -25,6 +25,7 @@ import {
 } from './ConversionContextStrip';
 import { LockIcon, UserIcon } from './AuditIcons';
 import { SuccessState } from './SuccessState';
+import { useOptionalDecisionAnalytics } from '../../analytics/DecisionAnalyticsProvider';
 
 type LeadPhase = 'idle' | 'loading' | 'success' | 'error';
 
@@ -39,6 +40,7 @@ type ConversionLeadFormProps = {
  */
 export function ConversionLeadForm({ ctaId, snapshot }: ConversionLeadFormProps) {
   const cta = findCommercialCta(ctaId);
+  const analytics = useOptionalDecisionAnalytics();
   const [phase, setPhase] = useState<LeadPhase>('idle');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -107,7 +109,10 @@ export function ConversionLeadForm({ ctaId, snapshot }: ConversionLeadFormProps)
 
     try {
       window.location.href = `mailto:${PILOT_LEAD_MAILTO}?subject=${subject}&body=${body}`;
-      window.setTimeout(() => setPhase('success'), 400);
+      window.setTimeout(() => {
+        analytics?.conversionCompleted(cta.id);
+        setPhase('success');
+      }, 400);
     } catch {
       setPhase('error');
       setErrorMessage(

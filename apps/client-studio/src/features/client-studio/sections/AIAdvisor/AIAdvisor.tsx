@@ -4,6 +4,10 @@ import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import {
+  categorizeAiQuestion,
+  useOptionalDecisionAnalytics,
+} from '../../analytics';
+import {
   AI_ADVISOR_CONVERSATION_CELL_CLASS,
   AI_ADVISOR_DISCLAIMER_CELL_CLASS,
   AI_ADVISOR_FAQ_COLUMN_CELL_CLASS,
@@ -34,6 +38,7 @@ import {
  */
 export function AIAdvisor() {
   const { experience } = useDecisionSessionRuntime();
+  const analytics = useOptionalDecisionAnalytics();
   const ai = experience.context.decision.ai;
   const faqItems = useMemo(() => faqItemsFromAiContext(ai), [ai]);
   const [inputValue, setInputValue] = useState('');
@@ -45,6 +50,10 @@ export function AIAdvisor() {
       time: formatMessageTime(new Date()),
     },
   ]);
+
+  useEffect(() => {
+    analytics?.aiSessionOpened(ai.id);
+  }, [ai.id, analytics]);
 
   useEffect(() => {
     setMessages([
@@ -69,6 +78,7 @@ export function AIAdvisor() {
 
     const now = new Date();
     const time = formatMessageTime(now);
+    const nextLength = messages.length + 2;
 
     setMessages((current) => [
       ...current,
@@ -85,6 +95,12 @@ export function AIAdvisor() {
         time,
       },
     ]);
+    analytics?.aiInteraction({
+      questionCategory: categorizeAiQuestion(text),
+      responseGenerated: true,
+      clarificationRequested: false,
+      conversationLength: nextLength,
+    });
     setInputValue('');
   };
 

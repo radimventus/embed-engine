@@ -1,5 +1,9 @@
 import type { ReactExperienceModel } from '@embed-engine/model';
 
+import {
+  DecisionAnalyticsProvider,
+  JourneySurfaceObserver,
+} from './analytics';
 import { DecisionSessionRuntimeProvider } from './runtime/DecisionSessionRuntimeProvider';
 import { DesktopCanvas } from './DesktopCanvas';
 import {
@@ -28,10 +32,11 @@ type ClientStudioPageProps = {
  * Decision Session Experience host (ED-DA-04 / CSCB-01).
  *
  * Provider tree is Context transport only:
- * DecisionSessionRuntimeProvider → WalkthroughProvider → PriorityExperienceProvider.
+ * DecisionAnalyticsProvider → DecisionSessionRuntimeProvider → WalkthroughProvider → PriorityExperienceProvider.
  * Cognitive Interpretation / Story providers are not mounted on the live path.
  *
  * Runtime is bootstrapped exactly once via DecisionSessionRuntimeProvider.
+ * Analytics observes passively (CSCB-08) and never mutates Runtime.
  */
 export function ClientStudioPage({
   legacyExperience = null,
@@ -39,39 +44,42 @@ export function ClientStudioPage({
   onLegacyContinue,
 }: ClientStudioPageProps) {
   return (
-    <DecisionSessionRuntimeProvider>
-      <RuntimeBootstrapGate>
-        <WalkthroughProvider>
-          <DesktopCanvas>
-            {legacyExperience !== null &&
-            onLegacySelectChoice !== undefined &&
-            onLegacyContinue !== undefined ? (
-              <LegacyCommandExperience
-                experience={legacyExperience}
-                onSelectChoice={onLegacySelectChoice}
-                onContinue={onLegacyContinue}
-              />
-            ) : null}
-            <Hero />
-            <ChapterSpacer />
-            <PropertyExplorer />
-            <ChapterSpacer />
-            <SpatialTerminal />
-            <ChapterSpacer />
-            <PriorityExperienceProvider>
-              <PriorityEngine />
-              {PILOT_FLAGS.showAiAdvisor ? (
-                <>
-                  <ChapterSpacer />
-                  <AIAdvisor />
-                </>
+    <DecisionAnalyticsProvider>
+      <DecisionSessionRuntimeProvider>
+        <RuntimeBootstrapGate>
+          <WalkthroughProvider>
+            <JourneySurfaceObserver />
+            <DesktopCanvas>
+              {legacyExperience !== null &&
+              onLegacySelectChoice !== undefined &&
+              onLegacyContinue !== undefined ? (
+                <LegacyCommandExperience
+                  experience={legacyExperience}
+                  onSelectChoice={onLegacySelectChoice}
+                  onContinue={onLegacyContinue}
+                />
               ) : null}
-            </PriorityExperienceProvider>
-            <ChapterSpacer />
-            <AuditLeadCapture />
-          </DesktopCanvas>
-        </WalkthroughProvider>
-      </RuntimeBootstrapGate>
-    </DecisionSessionRuntimeProvider>
+              <Hero />
+              <ChapterSpacer />
+              <PropertyExplorer />
+              <ChapterSpacer />
+              <SpatialTerminal />
+              <ChapterSpacer />
+              <PriorityExperienceProvider>
+                <PriorityEngine />
+                {PILOT_FLAGS.showAiAdvisor ? (
+                  <>
+                    <ChapterSpacer />
+                    <AIAdvisor />
+                  </>
+                ) : null}
+              </PriorityExperienceProvider>
+              <ChapterSpacer />
+              <AuditLeadCapture />
+            </DesktopCanvas>
+          </WalkthroughProvider>
+        </RuntimeBootstrapGate>
+      </DecisionSessionRuntimeProvider>
+    </DecisionAnalyticsProvider>
   );
 }

@@ -16,6 +16,7 @@ import {
   type DispatchResult,
 } from '@embed-engine/runtime';
 
+import { useOptionalDecisionAnalytics } from '../analytics/DecisionAnalyticsProvider';
 import {
   projectSynchronizedExperience,
   type SynchronizedExperience,
@@ -56,6 +57,9 @@ type DecisionSessionRuntimeProviderProps = {
  *
  * Injects `createSystemClock()` at the adapter boundary (ED-DA-06).
  * Runtime never reads the host clock itself.
+ *
+ * CSCB-08: successful dispatches are observed by Decision Analytics when present.
+ * Observation is passive — analytics never feeds back into Runtime.
  */
 export function DecisionSessionRuntimeProvider({
   children,
@@ -71,17 +75,19 @@ export function DecisionSessionRuntimeProvider({
 
   const runtime = runtimeRef.current;
   const [revision, setRevision] = useState(0);
+  const analytics = useOptionalDecisionAnalytics();
 
   const dispatch = useCallback(
     (command: RuntimeCommand, now?: number): DispatchResult => {
       // When `now` is omitted, Runtime uses the injected system clock.
       const result = runtime.dispatch(command, now);
       if (result.ok) {
+        analytics?.observeDispatch(result);
         setRevision((value) => value + 1);
       }
       return result;
     },
-    [runtime],
+    [analytics, runtime],
   );
 
   const value = useMemo((): DecisionSessionRuntimeContextValue => {
