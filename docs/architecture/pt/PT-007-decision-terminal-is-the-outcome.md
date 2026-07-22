@@ -243,6 +243,7 @@ The following MUST always remain true:
 | [Decision Layer](../decision-layer/README.md) | Vocabulary — Terminal as Experience Surface |
 | [ADR-009](../adr/ADR-009-decision-layer.md) | Decision Layer definitions freeze |
 | CAP-DTR-001 | Decision Terminal Engine (authorized here) |
+| [PT-008](./PT-008-every-decision-experience-produces-outcome.md) | Decision Outcome as portable semantic artifact Terminal presents |
 
 ### Why this PT matters
 
@@ -293,6 +294,7 @@ Every Decision Session concludes with a deterministic Decision Terminal that ful
 - [PT-004 — Decision Story is the Product](./PT-004-decision-story-is-the-product.md)
 - [PT-005 — Decision Experience is Composed from Decision Moves](./PT-005-decision-experience-composed-from-moves.md)
 - [PT-006 — AI Explains, Never Decides](./PT-006-ai-explains-never-decides.md)
+- [PT-008 — Every Decision Experience Produces a Decision Outcome](./PT-008-every-decision-experience-produces-outcome.md)
 - [Decision Layer vocabulary](../decision-layer/README.md)
 - [ADR-009 — Decision Layer](../adr/ADR-009-decision-layer.md)
 - [RI-002 — Decision Session](../../04-reference-implementation/RI-002-Decision-Session.md)
