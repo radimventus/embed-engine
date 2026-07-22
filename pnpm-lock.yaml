@@ -180,6 +180,9 @@ importers:
       '@embed-engine/core':
         specifier: workspace:*
         version: link:../core
+      '@embed-engine/object-house':
+        specifier: workspace:*
+        version: link:../object-house
       '@embed-engine/runtime':
         specifier: workspace:*
         version: link:../runtime

@@ -6,7 +6,14 @@
 
 export { Embed } from "./Embed";
 export type { EmbedApi } from "./Embed";
-export type { EmbedMountOptions, EmbedFixtureId } from "./fixtures";
+export type {
+  EmbedMountOptions,
+  EmbedProductionMountOptions,
+  EmbedLegacyMountOptions,
+  EmbedLegacyFixtureId,
+} from "./delivery/types";
+/** @deprecated Prefer EmbedLegacyFixtureId */
+export type { EmbedFixtureId } from "./fixtures";
 
 import { Embed } from "./Embed";
 export default Embed;

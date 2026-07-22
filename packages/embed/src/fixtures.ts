@@ -1,7 +1,8 @@
 /**
- * Fixture resolution for Embed.mount — no content generation.
+ * Fixture resolution for Embed.mount — legacy Priority Journey path only.
  *
- * TODO(ADR): remote / CMS / Object Package loading of Experience fixtures.
+ * Production Client Studio mounts resolve Object Packages via
+ * `delivery/resolveObjectPackage` — not this module.
  */
 
 import type { PriorityJourneyRun } from "@embed-engine/core/priority";
@@ -11,23 +12,19 @@ import {
   createGardenJourneyRun,
 } from "@embed-engine/runtime";
 
+import type {
+  EmbedLegacyExperienceMountOptions,
+  EmbedLegacyMountOptions,
+  EmbedMountOptions,
+} from "./delivery/types";
+
+/** @deprecated Use EmbedLegacyFixtureId — kept for declaration compatibility. */
 export type EmbedFixtureId = "garden";
 
-export type EmbedMountOptions = {
-  readonly target: string | HTMLElement;
-} & (
-  | {
-      readonly fixture: EmbedFixtureId;
-      readonly experience?: never;
-    }
-  | {
-      readonly experience: PriorityJourneyRun;
-      readonly fixture?: never;
-    }
-);
+export type { EmbedMountOptions } from "./delivery/types";
 
 export function resolveJourneyFixture(
-  options: EmbedMountOptions,
+  options: EmbedLegacyMountOptions | EmbedLegacyExperienceMountOptions,
 ): PriorityJourneyRun {
   if ("fixture" in options && options.fixture === "garden") {
     return createGardenJourneyRun();
@@ -38,7 +35,7 @@ export function resolveJourneyFixture(
   }
 
   throw new Error(
-    'Embed.mount requires either { fixture: "garden" } or { experience: PriorityJourneyRun }',
+    'Embed legacy mount requires either { fixture: "garden" } or { experience: PriorityJourneyRun }',
   );
 }
 
@@ -96,7 +93,6 @@ export function resolveEngineEvents(
   run: PriorityJourneyRun,
 ): readonly PriorityEngineEvent[] {
   if ("fixture" in options && options.fixture === "garden") {
-    // Drop terminal followup.selected — selected dynamically from UI targetId.
     return createGardenEngineEvents().filter(
       (event) => event.type !== "priority.followup.selected",
     );
