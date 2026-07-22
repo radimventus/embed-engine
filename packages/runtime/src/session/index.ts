@@ -85,6 +85,13 @@ export {
   type PrioritySignalKind,
 } from "./priority-signals";
 export {
+  evaluateDecisionFocus,
+  orderHighlightsByDecisionFocus,
+  orderMediaByDecisionFocus,
+  type DecisionFocus,
+  type EvaluateDecisionFocusInput,
+} from "./decision-focus";
+export {
   DecisionSessionRuntime,
   applyDecisionEvent,
   commandToEvent,

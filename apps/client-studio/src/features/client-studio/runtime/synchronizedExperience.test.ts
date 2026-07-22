@@ -98,13 +98,19 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     );
     const after = projectSynchronizedExperience(runtime.getExperience()!);
 
-    assert.equal(after.context.decision.prioritySignals[0]?.kind, 'emphasize-outdoor');
+    assert.equal(after.context.decision.focus.focusSignalKind, 'emphasize-outdoor');
+    assert.equal(after.context.decision.focus.recommendedAction, 'inspect-outdoor-connection');
     assert.equal(after.context.hero.primaryReason, 'outdoor-led-exploration');
     assert.match(after.context.hero.eyebrow, /Orientace na zahradu/);
+    assert.match(after.context.hero.description, /Prověřte propojení se zahradou/);
     assert.ok(after.context.hero.highlights.includes('outdoor-connection'));
-    assert.equal(after.context.decision.recommendedMedia[0]?.role, 'gallery');
+    assert.equal(after.context.decision.focus.recommendedMediaRole, 'gallery');
     assert.equal(after.context.roomMedia.thumbnails[0]?.kind, 'photo');
     assert.notEqual(before.context.hero.eyebrow, after.context.hero.eyebrow);
+    assert.equal(
+      after.context.hero.focusConfidence,
+      after.context.decision.focus.confidence,
+    );
   });
 
   it('adapters read the same contract as experience.context', () => {

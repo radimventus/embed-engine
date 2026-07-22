@@ -55,7 +55,7 @@ export type ExperienceRoomMediaContext = {
   readonly videoUrl: string | null;
 };
 
-/** Hero presentation slice — projected, not derived in UI. */
+/** Hero presentation slice — projected from Decision Focus + room media. */
 export type ExperienceHeroContext = {
   readonly eyebrow: string;
   readonly title: string;
@@ -63,10 +63,13 @@ export type ExperienceHeroContext = {
   readonly metrics: readonly { readonly label: string; readonly value: string }[];
   readonly heroMedia: ProjectedMediaAsset | null;
   readonly primaryMediaUrl: string | null;
-  /** Decision reason from Interpretation (priority-signal driven). */
+  /** Decision reason from Interpretation / Decision Focus. */
   readonly primaryReason: string;
-  /** Ordered semantic highlights from Interpretation. */
+  /** Ordered semantic highlights (Decision Focus ordered). */
   readonly highlights: readonly string[];
+  readonly focusConfidence: number;
+  readonly recommendedAction: string;
+  readonly focusRoomName: string | null;
 };
 
 /**
@@ -222,8 +225,9 @@ function emptyRoomMedia(): ExperienceRoomMediaContext {
 function orderThumbnailsByRecommendation(
   thumbnails: readonly HousePackageMediaItem[],
   recommendedMedia: SessionExperience['recommendedMedia'],
+  preferredRole?: SessionExperience['decisionFocus']['recommendedMediaRole'],
 ): readonly HousePackageMediaItem[] {
-  const topRole = recommendedMedia[0]?.role;
+  const topRole = preferredRole ?? recommendedMedia[0]?.role;
   if (topRole === undefined || thumbnails.length === 0) {
     return thumbnails;
   }
@@ -259,6 +263,7 @@ function projectRoomMedia(
   const thumbnails = orderThumbnailsByRecommendation(
     activeRoom.thumbnails,
     experience.recommendedMedia,
+    experience.decisionFocus.recommendedMediaRole,
   );
 
   return Object.freeze({
@@ -288,46 +293,62 @@ const PRIMARY_REASON_LABELS: Readonly<Record<string, string>> = {
   'privacy-led-exploration': 'Orientace na soukromí',
 };
 
+const ACTION_LABELS: Readonly<Record<string, string>> = {
+  'explore-house-structure': 'Začněte prohlídkou struktury domu',
+  'explore-primary-room': 'Soustřeďte se na prioritní místnost',
+  'inspect-value-drivers': 'Prověřte hodnotové a nákladové faktory',
+  'inspect-outdoor-connection': 'Prověřte propojení se zahradou',
+  'inspect-spatial-volume': 'Prověřte prostorovou velkorysost',
+  'inspect-privacy-zones': 'Prověřte zóny soukromí',
+  'compare-priority-tradeoffs': 'Porovnejte kompromisy priorit',
+};
+
 function reasonLabel(primaryReason: string): string {
   return PRIMARY_REASON_LABELS[primaryReason] ?? primaryReason;
+}
+
+function actionLabel(action: string): string {
+  return ACTION_LABELS[action] ?? action;
 }
 
 function projectHeroContext(
   experience: SessionExperience,
   activeRoom: ContextualActiveRoom | null,
 ): ExperienceHeroContext {
-  const { house, primaryReason, highlights } = experience;
-  const reason = reasonLabel(primaryReason);
+  const { house, highlights, decisionFocus } = experience;
+  const reason = reasonLabel(decisionFocus.focusReason);
+  const action = actionLabel(decisionFocus.recommendedAction);
+  const focusName =
+    decisionFocus.focusRoomName ?? activeRoom?.name ?? house.title;
+  const guided = decisionFocus.focusSignalKind !== null;
 
   if (activeRoom !== null) {
-    const signalLed = experience.prioritySignals.length > 0;
     return Object.freeze({
-      eyebrow: signalLed
+      eyebrow: guided
         ? `${house.reference} · ${reason}`
         : `${house.reference} · ${activeRoom.name}`,
-      title: activeRoom.name,
-      description: signalLed
-        ? `${activeRoom.description} · ${reason}`
+      title: guided ? focusName : activeRoom.name,
+      description: guided
+        ? `${action} · ${activeRoom.description}`
         : activeRoom.description,
       metrics: activeRoom.metrics,
       heroMedia: activeRoom.heroMedia,
       primaryMediaUrl: activeRoom.heroMedia?.url ?? null,
-      primaryReason,
+      primaryReason: decisionFocus.focusReason,
       highlights,
+      focusConfidence: decisionFocus.confidence,
+      recommendedAction: decisionFocus.recommendedAction,
+      focusRoomName: decisionFocus.focusRoomName,
     });
   }
 
   const fallback = houseFallbackHero(experience);
   return Object.freeze({
-    eyebrow:
-      experience.prioritySignals.length > 0
-        ? `${house.reference} · ${reason}`
-        : `${house.reference} – ${house.title}`,
-    title: `${house.city}, ${house.district}`,
-    description:
-      experience.prioritySignals.length > 0
-        ? `${house.title} · ${reason}`
-        : house.title,
+    eyebrow: guided
+      ? `${house.reference} · ${reason}`
+      : `${house.reference} – ${house.title}`,
+    title: guided ? focusName : `${house.city}, ${house.district}`,
+    description: guided ? `${action} · ${house.title}` : house.title,
     metrics: Object.freeze([
       { label: 'Užitná plocha', value: `${house.usableArea} m2` },
       { label: 'Energetická třída', value: house.energyClass },
@@ -335,8 +356,11 @@ function projectHeroContext(
     ]),
     heroMedia: fallback,
     primaryMediaUrl: fallback?.url ?? null,
-    primaryReason,
+    primaryReason: decisionFocus.focusReason,
     highlights,
+    focusConfidence: decisionFocus.confidence,
+    recommendedAction: decisionFocus.recommendedAction,
+    focusRoomName: decisionFocus.focusRoomName,
   });
 }
 
@@ -361,6 +385,7 @@ function projectSynchronizedContext(
     appliedRuleIds: experience.appliedRuleIds,
     rulesetId: experience.rulesetId,
     rulesetVersion: experience.rulesetVersion,
+    decisionFocus: experience.decisionFocus,
   });
 
   return Object.freeze({

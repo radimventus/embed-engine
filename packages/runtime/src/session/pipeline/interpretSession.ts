@@ -1,5 +1,11 @@
 import type { HousePackage } from "@embed-engine/object-house";
 
+import type { DecisionFocus } from "../decision-focus";
+import {
+  evaluateDecisionFocus,
+  orderHighlightsByDecisionFocus,
+  orderMediaByDecisionFocus,
+} from "../decision-focus";
 import type { DecisionSession } from "../DecisionSession";
 import {
   createInterpretationContext,
@@ -17,7 +23,8 @@ import {
 
 /**
  * Session Interpretation — meaning derived from
- * Object Package + Runtime State + Priority Signals + Interpretation Rules.
+ * Object Package + Runtime State + Priority Signals + Interpretation Rules
+ * + Decision Focus (CAP-PRI-002).
  * Never validates commands. Never projects UI.
  */
 export type SessionInterpretation = {
@@ -42,6 +49,8 @@ export type SessionInterpretation = {
   readonly recommendedMedia: readonly RecommendedMediaRef[];
   readonly roomImportanceRank: readonly string[];
   readonly appliedRuleIds: readonly string[];
+  /** Canonical decision attention entry point (CAP-PRI-002). */
+  readonly decisionFocus: DecisionFocus;
 };
 
 export type InterpretDecisionSessionOptions = {
@@ -53,11 +62,14 @@ function buildSummary(
   semantics: InterpretedSemantics,
   rules: InterpretationRuleset,
   signals: readonly PrioritySignal[],
+  decisionFocus: DecisionFocus,
 ): string {
   return [
     `object:${session.objectId}`,
     `room:${session.runtimeState.activeRoomId ?? "none"}`,
     `focus:${semantics.focusRoom?.id ?? "none"}`,
+    `decisionFocus:${decisionFocus.focusRoomId ?? "none"}:${decisionFocus.focusReason}:${decisionFocus.confidence}`,
+    `action:${decisionFocus.recommendedAction}`,
     `reason:${semantics.primaryReason}`,
     `highlights:${semantics.highlights.join(",") || "none"}`,
     `media:${semantics.recommendedMedia.map((item) => item.role).join(",") || "none"}`,
@@ -87,6 +99,21 @@ export function interpretDecisionSession(
     prioritySignals,
   });
   const semantics = evaluateInterpretationRules(context);
+  const decisionFocus = evaluateDecisionFocus({
+    housePackage,
+    activeRoomId: session.runtimeState.activeRoomId,
+    prioritySignals,
+    semantics,
+  });
+
+  const highlights = orderHighlightsByDecisionFocus(
+    semantics.highlights,
+    decisionFocus,
+  );
+  const recommendedMedia = orderMediaByDecisionFocus(
+    semantics.recommendedMedia,
+    decisionFocus,
+  );
 
   const activeRoomId = session.runtimeState.activeRoomId;
   const activeRoomName =
@@ -104,14 +131,21 @@ export function interpretDecisionSession(
     variantId: session.runtimeState.variantId,
     scenarioId: session.runtimeState.scenarioId,
     runtimeVersion: session.runtimeState.version,
-    summary: buildSummary(session, semantics, rules, prioritySignals),
+    summary: buildSummary(
+      session,
+      { ...semantics, highlights, recommendedMedia },
+      rules,
+      prioritySignals,
+      decisionFocus,
+    ),
     rulesetId: rules.id,
     rulesetVersion: rules.version,
     focusRoom: semantics.focusRoom,
     primaryReason: semantics.primaryReason,
-    highlights: semantics.highlights,
-    recommendedMedia: semantics.recommendedMedia,
+    highlights,
+    recommendedMedia,
     roomImportanceRank: semantics.roomImportanceRank,
     appliedRuleIds: semantics.appliedRuleIds,
+    decisionFocus,
   });
 }

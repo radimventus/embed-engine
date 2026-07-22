@@ -7,16 +7,20 @@ const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
   backgroundImage: `linear-gradient(to top, color-mix(in srgb, ${colors.border.default} 30%, #FFFFFF), #FFFFFF)`,
 } as const;
 
-/** Hero — Experience Context only; priority signals reshape eyebrow/description/highlights. */
+/** Hero — Decision Focus via Experience Context (CAP-PRI-002). */
 export function HeroContent() {
   const { experience } = useDecisionSessionRuntime();
   const hero = experience.context.hero;
+  const focus = experience.context.decision.focus;
   const highlights = hero.highlights.slice(0, 3);
 
   return (
     <section
       aria-label="Hero Content"
       className="relative flex h-full min-h-0 w-full flex-col justify-center bg-white px-section py-section mobile:py-8"
+      data-decision-focus-room={focus.focusRoomId ?? undefined}
+      data-decision-focus-action={focus.recommendedAction}
+      data-decision-focus-confidence={String(focus.confidence)}
     >
       <div className="translate-x-[10px]">
         <p className="text-sm font-bold uppercase tracking-wide text-[#D4AF37]">
@@ -33,7 +37,7 @@ export function HeroContent() {
 
         {highlights.length > 0 ? (
           <ul
-            aria-label="Interpretation highlights"
+            aria-label="Decision focus highlights"
             className="mt-4 flex flex-wrap gap-2"
             data-primary-reason={hero.primaryReason}
           >

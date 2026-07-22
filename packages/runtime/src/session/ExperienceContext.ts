@@ -1,5 +1,6 @@
 import type { ExperienceHouse, ExperienceHouseRoom } from "@embed-engine/model";
 
+import type { DecisionFocus } from "./decision-focus";
 import type {
   FocusRoom,
   RecommendedMediaRef,
@@ -57,6 +58,8 @@ export type ExperienceDecisionContext = {
   readonly rulesetId: string;
   readonly rulesetVersion: number;
   readonly appliedRuleIds: readonly string[];
+  /** Canonical decision attention entry point (CAP-PRI-002). */
+  readonly focus: DecisionFocus;
 };
 
 /**
@@ -91,6 +94,7 @@ export type ProjectExperienceContextInput = {
   readonly appliedRuleIds: readonly string[];
   readonly rulesetId: string;
   readonly rulesetVersion: number;
+  readonly decisionFocus: DecisionFocus;
 };
 
 /**
@@ -152,6 +156,7 @@ export function projectExperienceContext(
       rulesetId: input.rulesetId,
       rulesetVersion: input.rulesetVersion,
       appliedRuleIds: input.appliedRuleIds,
+      focus: input.decisionFocus,
     }),
   });
 }

@@ -6,6 +6,7 @@ import type { HousePackage } from "@embed-engine/object-house";
 import { projectHouse } from "@embed-engine/object-house";
 
 import type { DecisionSession } from "./DecisionSession";
+import type { DecisionFocus } from "./decision-focus";
 import {
   projectExperienceContext,
   type ExperienceContext,
@@ -45,6 +46,8 @@ export type SessionExperience = {
   readonly appliedRuleIds: readonly string[];
   readonly rulesetId: string;
   readonly rulesetVersion: number;
+  /** Canonical decision attention entry point (CAP-PRI-002). */
+  readonly decisionFocus: DecisionFocus;
   /** Unified semantic view model — preferred module input. */
   readonly context: ExperienceContext;
 };
@@ -105,6 +108,7 @@ export function projectFromInterpretation(
     appliedRuleIds: interpretation.appliedRuleIds,
     rulesetId: interpretation.rulesetId,
     rulesetVersion: interpretation.rulesetVersion,
+    decisionFocus: interpretation.decisionFocus,
   });
 
   return {
@@ -126,6 +130,7 @@ export function projectFromInterpretation(
       appliedRuleIds: interpretation.appliedRuleIds,
       rulesetId: interpretation.rulesetId,
       rulesetVersion: interpretation.rulesetVersion,
+      decisionFocus: interpretation.decisionFocus,
       context,
     }),
   };
