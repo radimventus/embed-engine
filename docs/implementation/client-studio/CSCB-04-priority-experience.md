@@ -106,5 +106,5 @@ Empty local selection does **not** dispatch (Runtime rejects empty arrays) — l
 ## Follow-up
 
 - First-class intensity on Runtime command would require ADR (out of CSCB-04)  
-- Decision Terminal / Report remain projection peers in the same section — full Terminal work is CSCB-05  
-- Next: **CSCB-05 — Decision Presentation**
+- Decision Terminal delivered in **CSCB-05** ([report](./CSCB-05-decision-terminal.md))  
+- Next: **CSCB-06 — AI Assistance**
