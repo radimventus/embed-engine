@@ -37,10 +37,10 @@ type WalkthroughContextValue = {
   isMediaActive: (mediaIndex: number) => boolean;
   play: () => void;
   onVideoEnded: () => void;
+  /** @deprecated Prefer useHouseNavigator().selectRoom — kept for media chrome callers. */
   selectRoom: (roomId: string) => void;
   selectMediaIndex: (mediaIndex: number) => void;
   setMediaMode: (mediaMode: MediaMode) => void;
-  selectFloor: (floorId: string) => void;
 };
 
 const WalkthroughContext = createContext<WalkthroughContextValue | null>(null);
@@ -120,15 +120,6 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       },
       setMediaMode: (nextMode: MediaMode) => {
         setMediaModeState(nextMode);
-      },
-      selectFloor: (floorId: string) => {
-        const roomOnFloor = rooms.find((room) => room.floor === floorId);
-        if (roomOnFloor) {
-          dispatch({
-            type: 'SelectRoom',
-            roomId: roomOnFloor.id,
-          });
-        }
       },
     };
   }, [

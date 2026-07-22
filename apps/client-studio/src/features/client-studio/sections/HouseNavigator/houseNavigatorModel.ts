@@ -13,7 +13,7 @@ export type HouseNavigatorViewModel = {
   readonly floors: readonly string[];
 };
 
-export function floorKey(floor: number): string {
+export function floorKey(floor: number | string): string {
   return String(floor);
 }
 
@@ -37,9 +37,18 @@ export function isNavigatorRoomActive(
   return viewModel.activeRoomId === roomId;
 }
 
+export function roomsOnFloor(
+  viewModel: HouseNavigatorViewModel,
+  floorId: string,
+): readonly ExperienceHouseRoom[] {
+  return Object.freeze(
+    viewModel.rooms.filter((room) => floorKey(room.floor) === floorId),
+  );
+}
+
 export function firstRoomOnFloor(
   viewModel: HouseNavigatorViewModel,
   floorId: string,
 ): ExperienceHouseRoom | undefined {
-  return viewModel.rooms.find((room) => floorKey(room.floor) === floorId);
+  return roomsOnFloor(viewModel, floorId)[0];
 }

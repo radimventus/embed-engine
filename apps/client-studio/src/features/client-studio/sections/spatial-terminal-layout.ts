@@ -34,7 +34,7 @@ export const SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS =
   'box-border flex h-full w-full min-w-0 flex-col content-start items-start gap-0 overflow-x-hidden pb-section pl-[20px] mobile:px-section';
 
 export const SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS =
-  'grid w-[690px] min-w-[690px] max-w-[690px] shrink-0 content-start items-start gap-0';
+  'grid w-[690px] min-w-[690px] max-w-[690px] shrink-0 content-start items-start gap-0 mobile:w-full mobile:min-w-0 mobile:max-w-none';
 
 export const SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS =
   'grid h-full w-full min-w-0 grid-rows-[1fr_100px] content-start items-start overflow-x-hidden pl-section pb-section pt-5 pr-[40px]';

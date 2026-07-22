@@ -5,17 +5,21 @@ import {
   createHouseNavigatorViewModel,
   firstRoomOnFloor,
   isNavigatorRoomActive,
+  roomsOnFloor,
   type HouseNavigatorViewModel,
 } from './houseNavigatorModel';
+import type { ExperienceHouseRoom } from '@embed-engine/model';
 
 export type UseHouseNavigatorResult = HouseNavigatorViewModel & {
+  /** Rooms on the currently selected floor (spatial list). */
+  readonly floorRooms: readonly ExperienceHouseRoom[];
   readonly selectRoom: (roomId: string) => void;
   readonly selectFloor: (floorId: string) => void;
   readonly isRoomActive: (roomId: string) => boolean;
 };
 
 /**
- * House Navigator Runtime integration (CAP-HP-003.2).
+ * House Navigator Runtime integration (CAP-HP-003.2 / CSCB-03).
  * Renders projected Experience; mutates only via SelectRoom commands.
  */
 export function useHouseNavigator(): UseHouseNavigatorResult {
@@ -24,6 +28,11 @@ export function useHouseNavigator(): UseHouseNavigatorResult {
   const viewModel = useMemo(
     () => createHouseNavigatorViewModel(experience.context),
     [experience.context],
+  );
+
+  const floorRooms = useMemo(
+    () => roomsOnFloor(viewModel, viewModel.selectedFloor),
+    [viewModel],
   );
 
   const selectRoom = useCallback(
@@ -51,6 +60,7 @@ export function useHouseNavigator(): UseHouseNavigatorResult {
 
   return {
     ...viewModel,
+    floorRooms,
     selectRoom,
     selectFloor,
     isRoomActive,

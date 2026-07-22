@@ -1,18 +1,20 @@
 import { useHouseNavigator } from './useHouseNavigator';
 
 /**
- * Runtime-driven room list — reference Experience module (CAP-HP-003.2).
+ * Runtime-driven room list for the active floor (CSCB-03).
  * Highlight derives solely from projected activeRoomId.
  */
 export function RoomPanel() {
-  const { rooms, isRoomActive, selectRoom } = useHouseNavigator();
+  const { floorRooms, isRoomActive, selectRoom, selectedFloor } =
+    useHouseNavigator();
 
   return (
     <nav
       aria-label="Místnosti"
-      className="ml-[15px] flex min-h-0 min-w-0 flex-col justify-start gap-1 overflow-x-hidden overflow-y-auto"
+      data-floor={selectedFloor}
+      className="ml-[15px] flex min-h-0 min-w-0 flex-col justify-start gap-1 overflow-x-hidden overflow-y-auto mobile:ml-0"
     >
-      {rooms.map((room) => {
+      {floorRooms.map((room) => {
         const active = isRoomActive(room.id);
 
         return (
@@ -22,7 +24,7 @@ export function RoomPanel() {
             aria-pressed={active}
             data-room-id={room.id}
             data-active={active ? 'true' : 'false'}
-            className={`w-full rounded-[8px] border-l-2 border-transparent py-2.5 pl-3 pr-2 text-left text-sm tracking-wide transition-colors duration-[125ms] ease-out ${
+            className={`min-h-11 w-full rounded-[8px] border-l-2 border-transparent py-2.5 pl-3 pr-2 text-left text-sm tracking-wide transition-colors duration-[125ms] ease-out touch-manipulation ${
               active
                 ? 'bg-[#E8E5E0] font-semibold text-[#001930]'
                 : 'font-normal text-embed-foreground-primary/45 hover:bg-[#001930] hover:text-[#FFFFFF]'

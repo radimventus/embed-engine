@@ -8,7 +8,7 @@
   "build": "tsc -b && vite build",
   "preview": "vite preview",
   "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/features/client-studio/sections/AIAdvisor/experiencePresentationOwnership.test.ts src/features/client-studio/sections/HouseNavigator/houseNavigator.runtime.test.ts src/features/client-studio/runtime/synchronizedExperience.test.ts src/features/client-studio/runtime/mediaProjectionBoundary.test.ts src/features/client-studio/runtime/providerContextBoundary.test.ts src/features/client-studio/foundation/applicationFoundation.test.ts src/features/client-studio/sections/Hero/heroExperience.test.ts"
+    "test": "tsx --test src/features/client-studio/sections/AIAdvisor/experiencePresentationOwnership.test.ts src/features/client-studio/sections/HouseNavigator/houseNavigator.runtime.test.ts src/features/client-studio/sections/HouseNavigator/spatialNavigation.test.ts src/features/client-studio/runtime/synchronizedExperience.test.ts src/features/client-studio/runtime/mediaProjectionBoundary.test.ts src/features/client-studio/runtime/providerContextBoundary.test.ts src/features/client-studio/foundation/applicationFoundation.test.ts src/features/client-studio/sections/Hero/heroExperience.test.ts"
   },
   "dependencies": {
     "@embed-engine/contracts": "workspace:*",

@@ -11,6 +11,7 @@ import {
   createHouseNavigatorViewModel,
   firstRoomOnFloor,
   isNavigatorRoomActive,
+  roomsOnFloor,
 } from './houseNavigatorModel';
 
 describe('House Navigator Runtime integration', () => {
@@ -100,5 +101,22 @@ describe('House Navigator Runtime integration', () => {
     const view = createHouseNavigatorViewModel(result.experience.context);
     assert.equal(view.selectedFloor, '1');
     assert.equal(view.activeRoomId, upstairs!.id);
+  });
+
+  it('roomsOnFloor filters the projected room registry by floor', () => {
+    const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
+      housePackage: REFERENCE_HOUSE_PACKAGE,
+      now: 1,
+    });
+    runtime.dispatch({ type: 'SelectRoom', roomId: 'room-living' }, 2);
+    const view = createHouseNavigatorViewModel(runtime.getExperience()!.context);
+    const ground = roomsOnFloor(view, '0');
+    const upper = roomsOnFloor(view, '1');
+
+    assert.ok(ground.every((room) => room.floor === 0));
+    assert.ok(upper.every((room) => room.floor === 1));
+    assert.ok(ground.some((room) => room.id === 'room-living'));
+    assert.ok(upper.some((room) => room.id === 'room-bedroom'));
   });
 });

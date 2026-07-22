@@ -1,11 +1,16 @@
 import { MainMedia } from './MainMedia';
 import { SectionHeader } from './SectionHeader';
 import { ThumbnailRail } from './ThumbnailRail';
+import { SpatialContextPanel } from '../HouseNavigator/SpatialContextPanel';
 import {
   SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS,
   SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS,
 } from '../spatial-terminal-layout';
 
+/**
+ * Media projection column (CSCB-03).
+ * Room media comes from Experience Context after SelectRoom.
+ */
 export function MediaExplorer() {
   return (
     <section
@@ -13,9 +18,10 @@ export function MediaExplorer() {
       className={SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS}
     >
       <div
-        className={`${SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS} grid min-h-0 grid-rows-[auto_auto_auto] content-start`}
+        className={`${SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS} grid min-h-0 grid-rows-[auto_auto_auto_auto] content-start`}
       >
         <SectionHeader title="PROCHÁZKA DOMEM" />
+        <SpatialContextPanel />
         <MainMedia />
         <ThumbnailRail />
       </div>
