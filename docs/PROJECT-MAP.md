@@ -25,7 +25,7 @@ Future:         Decision Trajectory (not MVP)
 | **Interpretation** | Canonical platform product (meaning) | [PT-002](./architecture/pt/PT-002-interpretation-is-the-product.md) · [ADR-012](./architecture/adr/ADR-012-interpretation-first-class-artifact.md) |
 | **Behavior Pack** | Knowledge, rules, Move library, composition — not UI | `architecture/behavior-pack-contract.md` |
 | **Runtime / Kernel** | Public façade + internal orchestration | **[RI-001](./04-reference-implementation/RI-001-Runtime-Kernel.md)** · [RUNTIME.md](./architecture/RUNTIME.md) · [ADR-001](./architecture/adr/ADR-001-runtime-architecture.md) |
-| **Decision Session** | One active Experience decision journey | **[RI-002](./04-reference-implementation/RI-002-Decision-Session.md)** · theory [PT-003](./architecture/pt/PT-003-decision-sessions-are-reproducible.md) |
+| **Decision Session** | One active Experience decision journey | **[RI-002](./04-reference-implementation/RI-002-Decision-Session.md)** · theory [PT-003](./architecture/pt/PT-003-decision-sessions-are-reproducible.md) · exec `@embed-engine/runtime` session |
 | **DecisionState** | Sole Cognitive aggregate (Session core) | ADR-002 / CORE-002 |
 | **Decision Layer** | Strategy · Story · Move · Terminal · Trajectory | `architecture/decision-layer/` |
 | **Interpretation** | Reasoning snapshot | ADR-003 / CORE-101 |

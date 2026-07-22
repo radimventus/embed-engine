@@ -292,7 +292,7 @@ PT-003 may be promoted from **Proposed** to **Approved** once architecture confi
 4. The execution model is deterministic and replayable.
 5. No presentation technology becomes part of the canonical session model.
 
-Until Approved, PT-003 is normative intent for design; [RI-002](../../04-reference-implementation/RI-002-Decision-Session.md) remains the Session contract SSOT for implementation boundaries.
+Until Approved, PT-003 is normative intent for design; [RI-002](../../04-reference-implementation/RI-002-Decision-Session.md) remains the Session contract SSOT for Cognitive Runtime boundaries. Executable session container (semantic events, `selectRoom`, serialize/replay): `@embed-engine/runtime` (`createDecisionSession` / `selectRoom` / `replayDecisionSession`).
 
 ---
 
