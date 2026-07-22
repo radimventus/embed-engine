@@ -80,6 +80,11 @@ export function LegacyCommandRuntimeHost() {
       showStatusBar={false}
       header={<></>}
     >
+      {/*
+        Legacy quarantine only: still mounts DecisionSessionRuntimeProvider
+        via ClientStudioPage for modern sections. Default production path
+        (ClientStudioApp) never enables this host — single Runtime bootstrap.
+      */}
       <ClientStudioPage
         legacyExperience={experience}
         onLegacySelectChoice={handleSelectChoice}

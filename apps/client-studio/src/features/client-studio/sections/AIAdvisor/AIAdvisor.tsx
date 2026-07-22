@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import {
   AI_ADVISOR_CONVERSATION_CELL_CLASS,
   AI_ADVISOR_DISCLAIMER_CELL_CLASS,
@@ -89,8 +90,10 @@ export function AIAdvisor() {
 
   return (
     <section
+      id={PILOT_SECTION_IDS.aiAdvisor}
+      tabIndex={-1}
       aria-label="AI Advisor"
-      className={SECTION_SURFACE_CLASS}
+      className={`scroll-mt-header ${SECTION_SURFACE_CLASS}`}
       data-ai-context-id={ai.id}
     >
       <div className={AI_ADVISOR_GRID_CLASS}>

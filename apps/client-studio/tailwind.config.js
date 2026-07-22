@@ -25,6 +25,7 @@ export default {
       },
       spacing: {
         section: '24px',
+        header: '72px',
       },
       screens: {
         mobile: { max: '767px' },

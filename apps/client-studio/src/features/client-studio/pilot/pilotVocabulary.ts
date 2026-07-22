@@ -29,12 +29,26 @@ export const PILOT_TERMS = {
   decisionTerminal: 'Rozhodovací terminál',
 } as const;
 
-/** Section / scroll anchors for the guided story. */
+/** Section / scroll anchors for the guided Decision Journey (CSCB-01). */
 export const PILOT_SECTION_IDS = {
+  hero: 'hero',
   walkthrough: 'walkthrough',
   priority: 'priority-experience',
+  aiAdvisor: 'ai-advisor',
   audit: 'audit-lead-capture',
 } as const;
+
+export type PilotSectionId =
+  (typeof PILOT_SECTION_IDS)[keyof typeof PILOT_SECTION_IDS];
+
+/** Ordered shell navigation — labels are Czech, customer-facing. */
+export const PILOT_SECTION_NAV = [
+  { id: PILOT_SECTION_IDS.hero, label: 'Úvod', short: 'Ú' },
+  { id: PILOT_SECTION_IDS.walkthrough, label: 'Prohlídka', short: 'D' },
+  { id: PILOT_SECTION_IDS.priority, label: 'Priority', short: 'P' },
+  { id: PILOT_SECTION_IDS.aiAdvisor, label: 'AI poradce', short: 'A' },
+  { id: PILOT_SECTION_IDS.audit, label: 'Kontakt', short: 'K' },
+] as const;
 
 export function formatOutcomeStatusCs(status: string): string {
   switch (status) {

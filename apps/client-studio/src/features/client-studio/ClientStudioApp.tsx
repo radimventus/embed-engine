@@ -1,15 +1,16 @@
 import { useState } from 'react';
 
 import { AppShell } from '../../components/layout/AppShell';
+import { ClientStudioHeader } from './ClientStudioHeader';
 import { ClientStudioPage } from './ClientStudioPage';
 import { ClientStudioSidebar } from './ClientStudioSidebar';
 import { LegacyCommandRuntimeHost } from './legacy/LegacyCommandRuntimeHost';
 import { isLegacyCommandRuntimeEnabled } from './legacy/isLegacyCommandRuntimeEnabled';
 
 /**
- * Composition root for Client Studio (ED-DA-04).
+ * Composition root for Client Studio (ED-DA-04 / CSCB-01).
  *
- * Default: Decision Session Runtime Context Providers only.
+ * Single AppShell entry for the default Decision Session path.
  * Legacy CommandRuntime is unreachable unless explicitly enabled.
  */
 export function ClientStudioApp() {
@@ -22,8 +23,8 @@ export function ClientStudioApp() {
   return (
     <AppShell
       sidebar={<ClientStudioSidebar />}
+      header={<ClientStudioHeader />}
       showStatusBar={false}
-      header={<></>}
     >
       <ClientStudioPage />
     </AppShell>
