@@ -3,8 +3,7 @@ import type { HousePackage } from "@embed-engine/object-house";
 import { createDecisionSession } from "./createDecisionSession";
 import type { DecisionEvent } from "./DecisionEvent";
 import type { DecisionSession } from "./DecisionSession";
-import { selectRoom } from "./selectRoom";
-import { freezeDecisionSession } from "./DecisionSession";
+import { applyDecisionEvent } from "./pipeline/applyEvent";
 
 export type ReplaySessionResult =
   | { readonly ok: true; readonly session: DecisionSession }
@@ -17,7 +16,7 @@ export type ReplaySessionResult =
 
 /**
  * Deterministic replay: empty session + ordered semantic events → Runtime State.
- * Uses event timestamps so createdAt/updatedAt match the original timeline.
+ * Mutations occur only via applyDecisionEvent (never via Commands).
  */
 export function replayDecisionSession(input: {
   readonly housePackage: HousePackage;
@@ -36,73 +35,50 @@ export function replayDecisionSession(input: {
 
   for (let index = 0; index < events.length; index += 1) {
     const event = events[index];
-    const applied = applyDecisionEvent(session, housePackage, event);
-    if (!applied.ok) {
+    const checked = assertEventApplicable(session, housePackage, event);
+    if (!checked.ok) {
       return {
         ok: false,
-        code: applied.code,
-        message: applied.message,
+        code: checked.code,
+        message: checked.message,
         index,
       };
     }
-    session = applied.session;
+    session = applyDecisionEvent(session, event);
   }
 
   return { ok: true, session };
 }
 
-type ApplyEventResult =
-  | { readonly ok: true; readonly session: DecisionSession }
+type CheckResult =
+  | { readonly ok: true }
   | { readonly ok: false; readonly code: string; readonly message: string };
 
-function applyDecisionEvent(
+function assertEventApplicable(
   session: DecisionSession,
   housePackage: HousePackage,
   event: DecisionEvent,
-): ApplyEventResult {
-  switch (event.type) {
-    case "RoomSelected": {
-      const result = selectRoom({
-        session,
-        housePackage,
-        roomId: event.roomId,
-        now: event.at,
-      });
-      if (!result.ok) {
-        return {
-          ok: false,
-          code: result.code,
-          message: result.message,
-        };
-      }
-      return { ok: true, session: result.session };
-    }
-    case "PriorityChanged":
-    case "VariantSelected":
-    case "ScenarioActivated":
-    case "QuestionAnswered": {
-      // Reserved semantic events — append + bump version without domain rules yet.
-      return {
-        ok: true,
-        session: freezeDecisionSession({
-          objectId: session.objectId,
-          runtimeState: {
-            ...session.runtimeState,
-            version: session.runtimeState.version + 1,
-          },
-          events: [...session.events, event],
-          createdAt: session.createdAt,
-          updatedAt: event.at,
-        }),
-      };
-    }
-    default: {
-      const _exhaustive: never = event;
+): CheckResult {
+  if (housePackage.identity.id !== session.objectId) {
+    return {
+      ok: false,
+      code: "HP_OBJECT_MISMATCH",
+      message: `HousePackage id mismatch during replay.`,
+    };
+  }
+
+  if (event.type === "RoomSelected") {
+    const room = housePackage.rooms.find(
+      (candidate) => candidate.id === event.roomId,
+    );
+    if (room === undefined) {
       return {
         ok: false,
-        code: "HP_UNKNOWN_EVENT",
-        message: `Unsupported event: ${JSON.stringify(_exhaustive)}`,
+        code: "HP_UNKNOWN_ROOM",
+        message: `RoomId "${event.roomId}" is not in the Object Package Room Registry.`,
       };
     }
   }
+
+  return { ok: true };
 }

@@ -22,6 +22,7 @@ export {
 } from "./selectRoom";
 export {
   projectDecisionSession,
+  projectFromInterpretation,
   type ProjectSessionResult,
   type SessionExperience,
 } from "./projectDecisionSession";
@@ -41,3 +42,24 @@ export {
   replayDecisionSession,
   type ReplaySessionResult,
 } from "./replay";
+export {
+  DecisionSessionRuntime,
+  applyDecisionEvent,
+  commandToEvent,
+  createDecisionSessionRuntime,
+  dispatchCommand,
+  interpretDecisionSession,
+  validateCommand,
+  type CommandContext,
+  type DecisionSessionRuntimeOptions,
+  type DispatchCommandInput,
+  type DispatchFailure,
+  type DispatchResult,
+  type DispatchSuccess,
+  type PipelineError,
+  type PipelineErrorCode,
+  type RuntimeCommand,
+  type RuntimeCommandType,
+  type SessionInterpretation,
+  type ValidationResult,
+} from "./pipeline";

@@ -1,11 +1,10 @@
 import type { HousePackage } from "@embed-engine/object-house";
 
-import { freezeDecisionSession, type DecisionSession } from "./DecisionSession";
+import type { DecisionSession } from "./DecisionSession";
 import type { RoomId } from "./DecisionEvent";
-import {
-  projectDecisionSession,
-  type SessionExperience,
-} from "./projectDecisionSession";
+import type { SessionExperience } from "./projectDecisionSession";
+import { dispatchCommand } from "./pipeline/dispatch";
+import type { PipelineErrorCode } from "./pipeline/validateCommand";
 
 export type SelectRoomSuccess = {
   readonly ok: true;
@@ -15,10 +14,7 @@ export type SelectRoomSuccess = {
 
 export type SelectRoomFailure = {
   readonly ok: false;
-  readonly code:
-    | "HP_OBJECT_MISMATCH"
-    | "HP_UNKNOWN_ROOM"
-    | "HP_PROJECTION_FAILED";
+  readonly code: PipelineErrorCode;
   readonly message: string;
 };
 
@@ -32,60 +28,29 @@ export type SelectRoomInput = {
 };
 
 /**
- * Semantic room selection (ADR-013).
- * Validates → mutates SessionRuntimeState → appends RoomSelected → projects Experience.
+ * Compatibility façade — routes through the canonical Event Pipeline.
+ * Prefer DecisionSessionRuntime.dispatch({ type: "SelectRoom", roomId }).
  */
 export function selectRoom(input: SelectRoomInput): SelectRoomResult {
-  const { session, housePackage, roomId } = input;
-  const now = input.now ?? Date.now();
-
-  if (housePackage.identity.id !== session.objectId) {
-    return {
-      ok: false,
-      code: "HP_OBJECT_MISMATCH",
-      message: `HousePackage id "${housePackage.identity.id}" does not match session objectId "${session.objectId}".`,
-    };
-  }
-
-  const room = housePackage.rooms.find((candidate) => candidate.id === roomId);
-  if (room === undefined) {
-    return {
-      ok: false,
-      code: "HP_UNKNOWN_ROOM",
-      message: `RoomId "${roomId}" is not in the Object Package Room Registry.`,
-    };
-  }
-
-  const nextSession = freezeDecisionSession({
-    objectId: session.objectId,
-    runtimeState: {
-      activeRoomId: roomId,
-      version: session.runtimeState.version + 1,
-    },
-    events: [
-      ...session.events,
-      {
-        type: "RoomSelected",
-        roomId,
-        at: now,
-      },
-    ],
-    createdAt: session.createdAt,
-    updatedAt: now,
+  const result = dispatchCommand({
+    session: input.session,
+    housePackage: input.housePackage,
+    command: { type: "SelectRoom", roomId: input.roomId },
+    now: input.now,
   });
 
-  const projected = projectDecisionSession(nextSession, housePackage);
-  if (!projected.ok) {
+  if (!result.ok) {
+    const error = result.errors[0];
     return {
       ok: false,
-      code: "HP_PROJECTION_FAILED",
-      message: projected.message,
+      code: error?.code ?? "HP_UNKNOWN_COMMAND",
+      message: error?.message ?? "SelectRoom command failed.",
     };
   }
 
   return {
     ok: true,
-    session: nextSession,
-    experience: projected.experience,
+    session: result.session,
+    experience: result.experience,
   };
 }

@@ -119,9 +119,16 @@ export function restoreDecisionSession(
     return { ok: false, message: "runtimeState is required." };
   }
   const activeRoomId = raw.runtimeState.activeRoomId;
+  const priorityIds = raw.runtimeState.priorityIds;
+  const variantId = raw.runtimeState.variantId;
+  const scenarioId = raw.runtimeState.scenarioId;
   if (
     !(activeRoomId === null || typeof activeRoomId === "string") ||
-    typeof raw.runtimeState.version !== "number"
+    typeof raw.runtimeState.version !== "number" ||
+    !Array.isArray(priorityIds) ||
+    !priorityIds.every((id) => typeof id === "string") ||
+    !(variantId === null || typeof variantId === "string") ||
+    !(scenarioId === null || typeof scenarioId === "string")
   ) {
     return { ok: false, message: "runtimeState shape is invalid." };
   }
@@ -138,6 +145,9 @@ export function restoreDecisionSession(
       objectId: raw.objectId,
       runtimeState: {
         activeRoomId,
+        priorityIds: Object.freeze([...priorityIds]),
+        variantId,
+        scenarioId,
         version: raw.runtimeState.version,
       },
       events: raw.events,
@@ -166,7 +176,10 @@ export function restoreDecisionSessionFromJson(
 export function cloneDecisionSession(session: DecisionSession): DecisionSession {
   return freezeDecisionSession({
     objectId: session.objectId,
-    runtimeState: { ...session.runtimeState },
+    runtimeState: {
+      ...session.runtimeState,
+      priorityIds: [...session.runtimeState.priorityIds],
+    },
     events: session.events.map((event) => ({ ...event })),
     createdAt: session.createdAt,
     updatedAt: session.updatedAt,
