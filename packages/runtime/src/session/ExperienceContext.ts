@@ -4,6 +4,7 @@ import type { DecisionFocus } from "./decision-focus";
 import type { DecisionMoveContract } from "./decision-moves";
 import type { DecisionOutcomeContract } from "./decision-outcome";
 import type { DecisionStoryContract } from "./decision-story";
+import type { DecisionTerminalContract } from "./decision-terminal";
 import type {
   FocusRoom,
   RecommendedMediaRef,
@@ -69,6 +70,8 @@ export type ExperienceDecisionContext = {
   readonly moves: DecisionMoveContract;
   /** Canonical Outcome derived from Moves (CAP-OUT-001 / PT-008). */
   readonly outcome: DecisionOutcomeContract;
+  /** Completion surface wrapping Outcome (CAP-DTR-001 / PT-007). */
+  readonly terminal: DecisionTerminalContract;
 };
 
 /**
@@ -107,6 +110,7 @@ export type ProjectExperienceContextInput = {
   readonly decisionStory: DecisionStoryContract;
   readonly decisionMoves: DecisionMoveContract;
   readonly decisionOutcome: DecisionOutcomeContract;
+  readonly decisionTerminal: DecisionTerminalContract;
 };
 
 /**
@@ -172,6 +176,7 @@ export function projectExperienceContext(
       story: input.decisionStory,
       moves: input.decisionMoves,
       outcome: input.decisionOutcome,
+      terminal: input.decisionTerminal,
     }),
   });
 }

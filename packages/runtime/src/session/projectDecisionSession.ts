@@ -10,6 +10,7 @@ import type { DecisionFocus } from "./decision-focus";
 import type { DecisionMoveSequence } from "./decision-moves";
 import type { DecisionOutcome } from "./decision-outcome";
 import type { DecisionStory } from "./decision-story";
+import type { DecisionTerminal } from "./decision-terminal";
 import {
   projectExperienceContext,
   type ExperienceContext,
@@ -57,6 +58,8 @@ export type SessionExperience = {
   readonly decisionMoves: DecisionMoveSequence;
   /** Canonical Outcome derived solely from Decision Moves (CAP-OUT-001 / PT-008). */
   readonly decisionOutcome: DecisionOutcome;
+  /** Completion surface wrapping Outcome (CAP-DTR-001 / PT-007). */
+  readonly decisionTerminal: DecisionTerminal;
   /** Unified semantic view model — preferred module input. */
   readonly context: ExperienceContext;
 };
@@ -121,6 +124,7 @@ export function projectFromInterpretation(
     decisionStory: interpretation.decisionStory,
     decisionMoves: interpretation.decisionMoves,
     decisionOutcome: interpretation.decisionOutcome,
+    decisionTerminal: interpretation.decisionTerminal,
   });
 
   return {
@@ -146,6 +150,7 @@ export function projectFromInterpretation(
       decisionStory: interpretation.decisionStory,
       decisionMoves: interpretation.decisionMoves,
       decisionOutcome: interpretation.decisionOutcome,
+      decisionTerminal: interpretation.decisionTerminal,
       context,
     }),
   };

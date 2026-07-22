@@ -279,6 +279,8 @@ Implement the deterministic Decision Terminal Engine that:
 - serializes as the integration contract for CRM, reports, lead capture, and analytics,
 - treats Terminal completion as the primary semantic completion event.
 
+**Implementation status:** Done in `@embed-engine/runtime` (`session/decision-terminal`, `composeDecisionTerminal(outcome)` only — wraps immutable Outcome; no semantic enrichment). Semantic payload SSOT remains [PT-008](./PT-008-every-decision-experience-produces-outcome.md) Decision Outcome.
+
 ---
 
 ## Success Criteria

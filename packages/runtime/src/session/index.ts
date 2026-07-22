@@ -118,6 +118,12 @@ export {
   type DecisionOutcomeStatus,
 } from "./decision-outcome";
 export {
+  composeDecisionTerminal,
+  DECISION_TERMINAL_SCHEMA_VERSION,
+  type DecisionTerminal,
+  type DecisionTerminalContract,
+} from "./decision-terminal";
+export {
   DecisionSessionRuntime,
   applyDecisionEvent,
   commandToEvent,
