@@ -73,6 +73,18 @@ GitHub Pages serves a copy under `docs/embed/`:
 
 ## Operator steps (no GitHub Actions)
 
+### Reference House assets (Tour media / floorplans)
+
+After changing files under `packages/reference-house/`:
+
+```bash
+pnpm publish:reference-house
+```
+
+This syncs packages → `public/reference-house` → `docs/reference-house`, builds embed dist only when missing, and verifies SHA-256 equality across all three trees. Then commit the synced paths and push the Pages branch.
+
+### Embed distribution only
+
 ```bash
 pnpm --filter @embed-engine/embed build
 pnpm --filter @embed-engine/embed sync:pages

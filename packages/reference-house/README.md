@@ -18,10 +18,33 @@ assets/             # media / documents / floorplans / svg overlays
 | `REFERENCE_HOUSE_PACKAGE` | Browser Runtime fixture (`@embed-engine/object-house`) |
 | `apps/client-studio/public/reference-house/` | Published SPA assets for Tour |
 
-Publish after asset changes:
+## Publish (GitHub Pages)
+
+After changing any asset under `assets/` (or `house.json`), run **one** command from the repo root:
 
 ```bash
-node scripts/sync-reference-house-public.mjs
+pnpm publish:reference-house
+```
+
+This orchestrates:
+
+1. `packages/reference-house` → `apps/client-studio/public/reference-house` (`sync:reference-house`)
+2. Ensures `packages/embed/dist` exists (builds embed only when needed)
+3. `public/reference-house` → `docs/reference-house` (`sync:pages`)
+4. SHA-256 content validation across packages / public / docs (fails on mismatch)
+
+Validate existing trees without re-syncing:
+
+```bash
+node ./scripts/publish-reference-house.mjs --validate-only
+```
+
+Then commit the synced copies and push the GitHub Pages branch (`/docs`).
+
+Low-level sync only (no Pages docs sync / no validation):
+
+```bash
+pnpm sync:reference-house
 ```
 
 Runtime never reads the on-disk tree directly. Tour reads projected Experience Context fed by the fixture + published `/reference-house/` URLs.
