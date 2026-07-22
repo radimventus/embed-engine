@@ -1,9 +1,9 @@
 import type { ExperienceHouseRoom } from '@embed-engine/model';
-import type { SessionExperience } from '@embed-engine/runtime';
+import type { ExperienceContext } from '@embed-engine/runtime';
 
 /**
- * Pure view model for House Navigator — projected Experience only.
- * No Runtime internals. No duplicated Room Registry.
+ * Pure view model for House Navigator — Experience Context only.
+ * No Runtime internals. No duplicated Room Registry derivation.
  */
 export type HouseNavigatorViewModel = {
   readonly rooms: readonly ExperienceHouseRoom[];
@@ -18,24 +18,15 @@ export function floorKey(floor: number): string {
 }
 
 export function createHouseNavigatorViewModel(
-  experience: SessionExperience,
+  context: ExperienceContext,
 ): HouseNavigatorViewModel {
-  const rooms = experience.house.rooms;
-  const floors = Object.freeze(
-    [...new Set(rooms.map((room) => floorKey(room.floor)))],
-  );
-  const activeRoom = experience.activeRoom;
-  const selectedFloor =
-    activeRoom !== null
-      ? floorKey(activeRoom.floor)
-      : (floors[0] ?? '0');
-
+  const { navigation, activeRoom } = context;
   return Object.freeze({
-    rooms,
-    activeRoom,
-    activeRoomId: experience.activeRoomId,
-    selectedFloor,
-    floors,
+    rooms: navigation.rooms,
+    activeRoom: activeRoom.room,
+    activeRoomId: activeRoom.id,
+    selectedFloor: navigation.currentFloor ?? navigation.floors[0] ?? '0',
+    floors: navigation.floors,
   });
 }
 

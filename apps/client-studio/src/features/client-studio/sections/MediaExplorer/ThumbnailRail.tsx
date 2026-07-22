@@ -12,7 +12,6 @@ import {
 } from '../../../walkthrough/useThumbnailRailScroll';
 import { useWalkthrough } from '../../../walkthrough';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
-import { getGalleryMediaProjection } from '../../runtime/synchronizedExperience';
 import { SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS } from '../spatial-terminal-layout';
 
 /** Gap between thumbnails inside the 4-slot viewport. */
@@ -95,7 +94,7 @@ function ChevronSpacer() {
 
 export function ThumbnailRail() {
   const { experience } = useDecisionSessionRuntime();
-  const gallery = getGalleryMediaProjection(experience);
+  const gallery = experience.context.roomMedia;
   const {
     activeMediaIndex,
     mediaMode,

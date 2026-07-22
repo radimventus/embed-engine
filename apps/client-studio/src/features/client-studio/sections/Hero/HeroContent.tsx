@@ -1,17 +1,16 @@
 import { colors } from '@embed-engine/design-tokens';
 
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
-import { getHeroMediaProjection } from '../../runtime/synchronizedExperience';
 import { HeroCTA } from './HeroCTA';
 
 const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
   backgroundImage: `linear-gradient(to top, color-mix(in srgb, ${colors.border.default} 30%, #FFFFFF), #FFFFFF)`,
 } as const;
 
-/** Hero — projected contextual room media only (CAP-HP-003.4). */
+/** Hero — renders Experience Context only (CAP-HP-003.5). */
 export function HeroContent() {
   const { experience } = useDecisionSessionRuntime();
-  const hero = getHeroMediaProjection(experience);
+  const hero = experience.context.hero;
 
   return (
     <section

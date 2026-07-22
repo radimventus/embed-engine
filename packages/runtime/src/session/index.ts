@@ -27,6 +27,15 @@ export {
   type SessionExperience,
 } from "./projectDecisionSession";
 export {
+  projectExperienceContext,
+  type ExperienceActiveRoomContext,
+  type ExperienceContext,
+  type ExperienceDecisionContext,
+  type ExperienceNavigationContext,
+  type ExperienceObjectContext,
+  type ProjectExperienceContextInput,
+} from "./ExperienceContext";
+export {
   DECISION_SESSION_FORMAT,
   DECISION_SESSION_SCHEMA_VERSION,
   cloneDecisionSession,

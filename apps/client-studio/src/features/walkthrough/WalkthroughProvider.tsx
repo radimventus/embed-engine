@@ -88,30 +88,23 @@ function toWalkthroughRoom(room: ExperienceHouseRoom): WalkthroughRoom {
 
 /**
  * Media chrome adapter (mode / index / play).
- * Room media content comes from SynchronizedExperience.activeRoom (CAP-HP-003.4).
+ * Room media + navigation come from Experience Context (CAP-HP-003.5).
  */
 export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const { experience, dispatch } = useDecisionSessionRuntime();
   const applySignal = useApplyCognitiveSignal();
-  const projectedThumbnails = experience.activeRoom?.thumbnails ?? [];
+  const { context } = experience;
+  const projectedThumbnails = context.roomMedia.thumbnails;
 
   const rooms = useMemo(
-    () => experience.house.rooms.map(toWalkthroughRoom),
-    [experience.house.rooms],
+    () => context.navigation.rooms.map(toWalkthroughRoom),
+    [context.navigation.rooms],
   );
 
-  const floors = useMemo(
-    () => [...new Set(rooms.map((room) => room.floor))],
-    [rooms],
-  );
+  const floors = context.navigation.floors;
 
-  const selectedFloor = useMemo(() => {
-    if (experience.activeRoomId === null) {
-      return floors[0] ?? '0';
-    }
-    const active = rooms.find((room) => room.id === experience.activeRoomId);
-    return active?.floor ?? floors[0] ?? '0';
-  }, [experience.activeRoomId, floors, rooms]);
+  const selectedFloor =
+    context.navigation.currentFloor ?? floors[0] ?? '0';
 
   const [mediaMode, setMediaModeState] = useState<MediaMode>('photo');
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);

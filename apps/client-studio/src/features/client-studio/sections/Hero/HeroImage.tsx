@@ -1,10 +1,9 @@
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
-import { getHeroMediaProjection } from '../../runtime/synchronizedExperience';
 
-/** Primary visual from projected `activeRoom.heroMedia`. */
+/** Primary visual from Experience Context hero media. */
 export function HeroImage() {
   const { experience } = useDecisionSessionRuntime();
-  const hero = getHeroMediaProjection(experience);
+  const hero = experience.context.hero;
   const heroSrc = hero.primaryMediaUrl;
 
   if (heroSrc === null) {
@@ -19,7 +18,7 @@ export function HeroImage() {
         src={heroSrc}
         alt={hero.title}
         className="h-full w-full object-cover"
-        data-room-id={experience.activeRoom?.id ?? undefined}
+        data-room-id={experience.context.activeRoom.id ?? undefined}
         data-media-id={hero.heroMedia?.id ?? undefined}
       />
     </div>

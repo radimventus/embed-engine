@@ -4,7 +4,6 @@ import { useWalkthrough } from '../../../walkthrough';
 import { DECISION_TRANSITION_EASING } from '../../../walkthrough/transition-tokens';
 import { useDecisionCrossfade } from '../../../walkthrough/useDecisionCrossfade';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
-import { getGalleryMediaProjection } from '../../runtime/synchronizedExperience';
 
 import { MediaLightbox } from './MediaLightbox';
 import { MediaZoomControl } from './MediaZoomControl';
@@ -38,11 +37,11 @@ function parsePhotoSrc(displayKey: string): string | null {
 }
 
 /**
- * Media Explorer viewport — projected gallery assets only (CAP-HP-003.4).
+ * Media Explorer viewport — Experience Context room media only (CAP-HP-003.5).
  */
 export function MainMedia() {
   const { experience } = useDecisionSessionRuntime();
-  const gallery = getGalleryMediaProjection(experience);
+  const gallery = experience.context.roomMedia;
   const {
     mode,
     mediaMode,

@@ -11,34 +11,26 @@ import {
   projectSynchronizedExperience,
 } from './synchronizedExperience';
 
-describe('Contextual Media Projection (CAP-HP-003.4)', () => {
-  it('SelectRoom updates Hero media through projected activeRoom', () => {
+describe('Experience Context (CAP-HP-003.5)', () => {
+  it('identical Runtime → identical synchronized context', () => {
     const runtime = createDecisionSessionRuntime({
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
+    runtime.dispatch({ type: 'SelectRoom', roomId: 'room-bath' }, 2);
+    const experience = runtime.getExperience()!;
 
-    const kitchen = runtime.dispatch(
-      { type: 'SelectRoom', roomId: 'room-kitchen' },
-      2,
-    );
-    assert.ok(kitchen.ok);
-    if (!kitchen.ok) {
-      return;
-    }
+    const first = projectSynchronizedExperience(experience);
+    const second = projectSynchronizedExperience(experience);
 
-    const synced = projectSynchronizedExperience(kitchen.experience);
-    const hero = getHeroMediaProjection(synced);
-
-    assert.equal(synced.activeRoom?.id, 'room-kitchen');
-    assert.equal(hero.title, 'Kuchyně');
-    assert.match(hero.eyebrow, /Kuchyně/);
-    assert.ok(synced.activeRoom?.heroMedia !== null);
-    assert.equal(hero.primaryMediaUrl, synced.activeRoom?.heroMedia?.url);
-    assert.equal(hero.heroMedia?.id, synced.activeRoom?.heroMedia?.id);
+    assert.deepEqual(first.context, second.context);
+    assert.deepEqual(first.context.hero, second.context.hero);
+    assert.deepEqual(first.context.roomMedia, second.context.roomMedia);
+    assert.deepEqual(first.context.navigation, second.context.navigation);
+    assert.deepEqual(first.context.decision, second.context.decision);
   });
 
-  it('SelectRoom updates Gallery through the same projected model', () => {
+  it('room change updates unified context for Hero and Gallery', () => {
     const runtime = createDecisionSessionRuntime({
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 10,
@@ -46,25 +38,22 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
 
     runtime.dispatch({ type: 'SelectRoom', roomId: 'room-bedroom' }, 11);
     const bedroom = projectSynchronizedExperience(runtime.getExperience()!);
-    assert.equal(getGalleryMediaProjection(bedroom).roomId, 'room-bedroom');
-    assert.ok(bedroom.activeRoom!.gallery.length > 0);
+    assert.equal(bedroom.context.activeRoom.id, 'room-bedroom');
+    assert.equal(bedroom.context.hero.title, 'Ložnice');
+    assert.equal(bedroom.context.roomMedia.roomId, 'room-bedroom');
 
     runtime.dispatch({ type: 'SelectRoom', roomId: 'room-living' }, 12);
     const living = projectSynchronizedExperience(runtime.getExperience()!);
-    const gallery = getGalleryMediaProjection(living);
-    const hero = getHeroMediaProjection(living);
-
-    assert.equal(gallery.roomId, 'room-living');
-    assert.equal(living.activeRoom?.name, hero.title);
-    assert.deepEqual(
-      gallery.gallery.map((asset) => asset.url),
-      living.activeRoom?.gallery.map((asset) => asset.url),
+    assert.equal(living.context.hero.title, 'Obývací pokoj');
+    assert.equal(living.context.roomMedia.roomId, 'room-living');
+    assert.equal(living.context.navigation.currentFloor, '0');
+    assert.equal(
+      living.context.hero.primaryMediaUrl,
+      living.context.roomMedia.heroUrl,
     );
-    assert.deepEqual(gallery.thumbnails, living.activeRoom?.thumbnails);
-    assert.equal(hero.primaryMediaUrl, gallery.heroUrl);
   });
 
-  it('room without gallery uses projected fallback for hero and thumbnails', () => {
+  it('fallback hero context remains deterministic without catalog media', () => {
     const runtime = createDecisionSessionRuntime({
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
@@ -83,64 +72,74 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
       },
     };
 
-    const synced = projectSynchronizedExperience(withoutCatalog);
-    assert.equal(synced.activeRoom?.gallery.length, 0);
-    assert.equal(synced.activeRoom?.videos.length, 0);
-    assert.ok(synced.activeRoom?.heroMedia !== null);
-    assert.equal(synced.activeRoom?.heroMedia?.id, 'media-exterior');
-    assert.equal(synced.activeRoom?.thumbnails.length, 1);
-    assert.equal(
-      synced.activeRoom?.thumbnails[0]?.src,
-      synced.activeRoom?.heroMedia?.url,
-    );
+    const first = projectSynchronizedExperience(withoutCatalog);
+    const second = projectSynchronizedExperience(withoutCatalog);
+
+    assert.deepEqual(first.context.hero, second.context.hero);
+    assert.deepEqual(first.context.roomMedia, second.context.roomMedia);
+    assert.equal(first.context.roomMedia.gallery.length, 0);
+    assert.equal(first.context.hero.heroMedia?.id, 'media-exterior');
   });
 
-  it('identical Runtime state produces identical media projection', () => {
-    const runtime = createDecisionSessionRuntime({
-      housePackage: REFERENCE_HOUSE_PACKAGE,
-      now: 1,
-    });
-    runtime.dispatch({ type: 'SelectRoom', roomId: 'room-bath' }, 2);
-    const experience = runtime.getExperience()!;
-
-    const first = projectSynchronizedExperience(experience);
-    const second = projectSynchronizedExperience(experience);
-
-    assert.deepEqual(first.activeRoom?.heroMedia, second.activeRoom?.heroMedia);
-    assert.deepEqual(first.activeRoom?.gallery, second.activeRoom?.gallery);
-    assert.deepEqual(first.activeRoom?.videos, second.activeRoom?.videos);
-    assert.deepEqual(first.activeRoom?.documents, second.activeRoom?.documents);
-    assert.deepEqual(first.activeRoom?.thumbnails, second.activeRoom?.thumbnails);
-
-    const again = createDecisionSessionRuntime({
-      housePackage: REFERENCE_HOUSE_PACKAGE,
-      now: 1,
-    });
-    again.dispatch({ type: 'SelectRoom', roomId: 'room-bath' }, 2);
-    const twin = projectSynchronizedExperience(again.getExperience()!);
-
-    assert.deepEqual(twin.activeRoom?.heroMedia, first.activeRoom?.heroMedia);
-    assert.deepEqual(twin.activeRoom?.gallery, first.activeRoom?.gallery);
-    assert.deepEqual(twin.activeRoom?.thumbnails, first.activeRoom?.thumbnails);
-  });
-
-  it('projection owns media — consumers read activeRoom fields only', () => {
+  it('adapters read the same contract as experience.context', () => {
     const runtime = createDecisionSessionRuntime({
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
     runtime.dispatch({ type: 'SelectRoom', roomId: 'room-kitchen' }, 2);
     const synced = projectSynchronizedExperience(runtime.getExperience()!);
-    const room = synced.activeRoom!;
 
-    assert.ok(room.heroMedia !== null);
-    assert.ok(Array.isArray(room.gallery));
-    assert.ok(Array.isArray(room.videos));
-    assert.ok(Array.isArray(room.documents));
-    assert.ok(Array.isArray(room.thumbnails));
+    assert.deepEqual(getHeroMediaProjection(synced), synced.context.hero);
     assert.equal(
-      getGalleryMediaProjection(synced).mediaItems.length,
-      room.thumbnails.length,
+      getGalleryMediaProjection(synced).roomId,
+      synced.context.roomMedia.roomId,
     );
+    assert.deepEqual(
+      getGalleryMediaProjection(synced).thumbnails,
+      synced.context.roomMedia.thumbnails,
+    );
+  });
+});
+
+describe('Contextual Media Projection (CAP-HP-003.4)', () => {
+  it('SelectRoom updates Hero media through projected activeRoom', () => {
+    const runtime = createDecisionSessionRuntime({
+      housePackage: REFERENCE_HOUSE_PACKAGE,
+      now: 1,
+    });
+
+    const kitchen = runtime.dispatch(
+      { type: 'SelectRoom', roomId: 'room-kitchen' },
+      2,
+    );
+    assert.ok(kitchen.ok);
+    if (!kitchen.ok) {
+      return;
+    }
+
+    const synced = projectSynchronizedExperience(kitchen.experience);
+    const hero = synced.context.hero;
+
+    assert.equal(synced.activeRoom?.id, 'room-kitchen');
+    assert.equal(hero.title, 'Kuchyně');
+    assert.match(hero.eyebrow, /Kuchyně/);
+    assert.ok(synced.activeRoom?.heroMedia !== null);
+    assert.equal(hero.primaryMediaUrl, synced.activeRoom?.heroMedia?.url);
+  });
+
+  it('projection owns media — consumers read context.roomMedia', () => {
+    const runtime = createDecisionSessionRuntime({
+      housePackage: REFERENCE_HOUSE_PACKAGE,
+      now: 1,
+    });
+    runtime.dispatch({ type: 'SelectRoom', roomId: 'room-kitchen' }, 2);
+    const synced = projectSynchronizedExperience(runtime.getExperience()!);
+    const media = synced.context.roomMedia;
+
+    assert.ok(media.heroMedia !== null);
+    assert.ok(Array.isArray(media.gallery));
+    assert.ok(Array.isArray(media.videos));
+    assert.ok(Array.isArray(media.documents));
+    assert.ok(Array.isArray(media.thumbnails));
   });
 });

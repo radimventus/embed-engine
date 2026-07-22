@@ -17,7 +17,7 @@ describe('House Navigator Runtime integration', () => {
       now: 1,
     });
 
-    const before = createHouseNavigatorViewModel(runtime.getExperience()!);
+    const before = createHouseNavigatorViewModel(runtime.getExperience()!.context);
     assert.equal(before.activeRoomId, null);
 
     const result = runtime.dispatch(
@@ -29,7 +29,7 @@ describe('House Navigator Runtime integration', () => {
       return;
     }
 
-    const view = createHouseNavigatorViewModel(result.experience);
+    const view = createHouseNavigatorViewModel(result.experience.context);
     assert.equal(view.activeRoomId, 'room-bedroom');
     assert.equal(view.activeRoom?.name, 'Ložnice');
     assert.equal(view.selectedFloor, '1');
@@ -45,13 +45,13 @@ describe('House Navigator Runtime integration', () => {
     });
 
     runtime.dispatch({ type: 'SelectRoom', roomId: 'room-kitchen' }, 11);
-    const kitchenView = createHouseNavigatorViewModel(runtime.getExperience()!);
+    const kitchenView = createHouseNavigatorViewModel(runtime.getExperience()!.context);
     assert.equal(kitchenView.activeRoomId, 'room-kitchen');
     assert.equal(kitchenView.selectedFloor, '0');
 
     // Simulate another module (Gallery / AI / Story) changing the room.
     runtime.dispatch({ type: 'SelectRoom', roomId: 'room-living' }, 12);
-    const livingView = createHouseNavigatorViewModel(runtime.getExperience()!);
+    const livingView = createHouseNavigatorViewModel(runtime.getExperience()!.context);
     assert.equal(livingView.activeRoomId, 'room-living');
     assert.equal(livingView.activeRoom?.name, 'Obývací pokoj');
     assert.equal(isNavigatorRoomActive(livingView, 'room-living'), true);
@@ -64,7 +64,7 @@ describe('House Navigator Runtime integration', () => {
       now: 1,
     });
     runtime.dispatch({ type: 'SelectRoom', roomId: 'room-bath' }, 2);
-    const view = createHouseNavigatorViewModel(runtime.getExperience()!);
+    const view = createHouseNavigatorViewModel(runtime.getExperience()!.context);
 
     assert.deepEqual(
       view.rooms.map((room) => room.id),
@@ -77,7 +77,7 @@ describe('House Navigator Runtime integration', () => {
       housePackage: REFERENCE_HOUSE_PACKAGE,
       now: 1,
     });
-    const empty = createHouseNavigatorViewModel(runtime.getExperience()!);
+    const empty = createHouseNavigatorViewModel(runtime.getExperience()!.context);
     const upstairs = firstRoomOnFloor(empty, '1');
     assert.ok(upstairs);
     assert.equal(upstairs?.floor, 1);
@@ -90,7 +90,7 @@ describe('House Navigator Runtime integration', () => {
     if (!result.ok) {
       return;
     }
-    const view = createHouseNavigatorViewModel(result.experience);
+    const view = createHouseNavigatorViewModel(result.experience.context);
     assert.equal(view.selectedFloor, '1');
     assert.equal(view.activeRoomId, upstairs!.id);
   });

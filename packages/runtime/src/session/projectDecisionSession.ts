@@ -6,6 +6,10 @@ import type { HousePackage } from "@embed-engine/object-house";
 import { projectHouse } from "@embed-engine/object-house";
 
 import type { DecisionSession } from "./DecisionSession";
+import {
+  projectExperienceContext,
+  type ExperienceContext,
+} from "./ExperienceContext";
 import type {
   FocusRoom,
   InterpretationRuleset,
@@ -20,7 +24,7 @@ import {
  * Experience projection for an active Decision Session.
  * Derived from Interpretation (+ Object Package) — never UI state, never mutates Runtime.
  *
- * Semantic fields are interpreted meaning, not raw Object Package passthrough.
+ * `context` is the canonical semantic contract for Experience modules.
  */
 export type SessionExperience = {
   readonly house: ExperienceHouse;
@@ -39,6 +43,8 @@ export type SessionExperience = {
   readonly appliedRuleIds: readonly string[];
   readonly rulesetId: string;
   readonly rulesetVersion: number;
+  /** Unified semantic view model — preferred module input. */
+  readonly context: ExperienceContext;
 };
 
 export type ProjectSessionResult =
@@ -80,6 +86,24 @@ export function projectFromInterpretation(
       ? null
       : (house.rooms.find((room) => room.id === activeRoomId) ?? null);
 
+  const context = projectExperienceContext({
+    house,
+    activeRoomId,
+    activeRoom,
+    focusRoom: interpretation.focusRoom,
+    priorityIds: interpretation.priorityIds,
+    variantId: interpretation.variantId,
+    scenarioId: interpretation.scenarioId,
+    primaryReason: interpretation.primaryReason,
+    highlights: interpretation.highlights,
+    recommendedMedia: interpretation.recommendedMedia,
+    interpretationSummary: interpretation.summary,
+    roomImportanceRank: interpretation.roomImportanceRank,
+    appliedRuleIds: interpretation.appliedRuleIds,
+    rulesetId: interpretation.rulesetId,
+    rulesetVersion: interpretation.rulesetVersion,
+  });
+
   return {
     ok: true,
     experience: Object.freeze({
@@ -98,6 +122,7 @@ export function projectFromInterpretation(
       appliedRuleIds: interpretation.appliedRuleIds,
       rulesetId: interpretation.rulesetId,
       rulesetVersion: interpretation.rulesetVersion,
+      context,
     }),
   };
 }

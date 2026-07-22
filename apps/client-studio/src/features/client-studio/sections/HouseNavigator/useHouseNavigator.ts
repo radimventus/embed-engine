@@ -22,8 +22,8 @@ export function useHouseNavigator(): UseHouseNavigatorResult {
   const { experience, dispatch } = useDecisionSessionRuntime();
 
   const viewModel = useMemo(
-    () => createHouseNavigatorViewModel(experience),
-    [experience],
+    () => createHouseNavigatorViewModel(experience.context),
+    [experience.context],
   );
 
   const selectRoom = useCallback(

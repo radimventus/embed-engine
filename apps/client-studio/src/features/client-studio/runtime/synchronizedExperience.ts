@@ -1,6 +1,11 @@
 import type { HousePackageMediaItem } from '@embed-engine/contracts';
 import type { ExperienceHouseRoom } from '@embed-engine/model';
-import type { SessionExperience } from '@embed-engine/runtime';
+import type {
+  ExperienceContext,
+  FocusRoom,
+  SessionExperience,
+} from '@embed-engine/runtime';
+import { projectExperienceContext } from '@embed-engine/runtime';
 
 import {
   getMediaRoom,
@@ -37,11 +42,52 @@ export type ContextualActiveRoom = ExperienceHouseRoom & {
   }[];
 };
 
+/** Room media slice of the unified Experience Context. */
+export type ExperienceRoomMediaContext = {
+  readonly roomId: string | null;
+  readonly title: string | null;
+  readonly heroMedia: ProjectedMediaAsset | null;
+  readonly gallery: readonly ProjectedMediaAsset[];
+  readonly videos: readonly ProjectedMediaAsset[];
+  readonly documents: readonly ProjectedMediaAsset[];
+  readonly thumbnails: readonly HousePackageMediaItem[];
+  readonly heroUrl: string | null;
+  readonly videoUrl: string | null;
+};
+
+/** Hero presentation slice — projected, not derived in UI. */
+export type ExperienceHeroContext = {
+  readonly eyebrow: string;
+  readonly title: string;
+  readonly description: string;
+  readonly metrics: readonly { readonly label: string; readonly value: string }[];
+  readonly heroMedia: ProjectedMediaAsset | null;
+  readonly primaryMediaUrl: string | null;
+};
+
+/**
+ * Client Studio Experience Context — Runtime semantic context + room media.
+ * Canonical input for Hero, Gallery, Media Explorer, Navigator, and future modules.
+ */
+export type SynchronizedExperienceContext = Omit<ExperienceContext, 'activeRoom'> & {
+  readonly activeRoom: {
+    readonly id: string | null;
+    readonly room: ContextualActiveRoom | null;
+    readonly focusRoom: FocusRoom | null;
+  };
+  readonly roomMedia: ExperienceRoomMediaContext;
+  readonly hero: ExperienceHeroContext;
+};
+
 /**
  * Canonical Client Studio Experience — semantic state + contextual media.
  */
-export type SynchronizedExperience = Omit<SessionExperience, 'activeRoom'> & {
+export type SynchronizedExperience = Omit<
+  SessionExperience,
+  'activeRoom' | 'context'
+> & {
   readonly activeRoom: ContextualActiveRoom | null;
+  readonly context: SynchronizedExperienceContext;
 };
 
 function houseFallbackHero(experience: SessionExperience): ProjectedMediaAsset | null {
@@ -155,103 +201,137 @@ function projectRoomContext(
   });
 }
 
-/**
- * Project contextual room media into Experience (CAP-HP-003.4).
- * Owns ordering, primary asset, fallback, and room-specific collections.
- */
-export function projectSynchronizedExperience(
-  experience: SessionExperience,
-): SynchronizedExperience {
-  const baseRoom = experience.activeRoom;
-  if (baseRoom === null || experience.activeRoomId === null) {
-    return Object.freeze({
-      ...experience,
-      activeRoom: null,
-    });
-  }
-
+function emptyRoomMedia(): ExperienceRoomMediaContext {
   return Object.freeze({
-    ...experience,
-    activeRoom: projectRoomContext(baseRoom, experience),
+    roomId: null,
+    title: null,
+    heroMedia: null,
+    gallery: Object.freeze([]),
+    videos: Object.freeze([]),
+    documents: Object.freeze([]),
+    thumbnails: Object.freeze([]),
+    heroUrl: null,
+    videoUrl: null,
   });
 }
 
-/** Hero consumes projected contextual media only. */
-export function getHeroMediaProjection(experience: SynchronizedExperience): {
-  readonly eyebrow: string;
-  readonly title: string;
-  readonly description: string;
-  readonly metrics: readonly { readonly label: string; readonly value: string }[];
-  readonly heroMedia: ProjectedMediaAsset | null;
-  readonly primaryMediaUrl: string | null;
-} {
-  const { house, activeRoom } = experience;
+function projectRoomMedia(
+  activeRoom: ContextualActiveRoom | null,
+): ExperienceRoomMediaContext {
+  if (activeRoom === null) {
+    return emptyRoomMedia();
+  }
+
+  return Object.freeze({
+    roomId: activeRoom.id,
+    title: activeRoom.name,
+    heroMedia: activeRoom.heroMedia,
+    gallery: activeRoom.gallery,
+    videos: activeRoom.videos,
+    documents: activeRoom.documents,
+    thumbnails: activeRoom.thumbnails,
+    heroUrl: activeRoom.heroMedia?.url ?? null,
+    videoUrl: activeRoom.videos[0]?.url ?? null,
+  });
+}
+
+function projectHeroContext(
+  experience: SessionExperience,
+  activeRoom: ContextualActiveRoom | null,
+): ExperienceHeroContext {
+  const { house } = experience;
   if (activeRoom !== null) {
-    return {
+    return Object.freeze({
       eyebrow: `${house.reference} · ${activeRoom.name}`,
       title: activeRoom.name,
       description: activeRoom.description,
       metrics: activeRoom.metrics,
       heroMedia: activeRoom.heroMedia,
       primaryMediaUrl: activeRoom.heroMedia?.url ?? null,
-    };
+    });
   }
 
   const fallback = houseFallbackHero(experience);
-  return {
+  return Object.freeze({
     eyebrow: `${house.reference} – ${house.title}`,
     title: `${house.city}, ${house.district}`,
     description: house.title,
-    metrics: [
+    metrics: Object.freeze([
       { label: 'Užitná plocha', value: `${house.usableArea} m2` },
       { label: 'Energetická třída', value: house.energyClass },
       { label: 'Konstrukce', value: house.construction },
-    ],
+    ]),
     heroMedia: fallback,
     primaryMediaUrl: fallback?.url ?? null,
-  };
+  });
 }
 
-/** Gallery / Media Explorer consume projected collections only. */
-export function getGalleryMediaProjection(experience: SynchronizedExperience): {
-  readonly roomId: string | null;
-  readonly title: string | null;
-  readonly gallery: readonly ProjectedMediaAsset[];
-  readonly videos: readonly ProjectedMediaAsset[];
-  readonly documents: readonly ProjectedMediaAsset[];
-  readonly thumbnails: readonly HousePackageMediaItem[];
-  readonly heroMedia: ProjectedMediaAsset | null;
-  /** @deprecated Prefer thumbnails / gallery — kept for rail compatibility. */
-  readonly mediaItems: readonly HousePackageMediaItem[];
-  readonly heroUrl: string | null;
-  readonly videoUrl: string | null;
-} {
-  const { activeRoom } = experience;
-  if (activeRoom === null) {
-    return {
-      roomId: null,
-      title: null,
-      gallery: Object.freeze([]),
-      videos: Object.freeze([]),
-      documents: Object.freeze([]),
-      thumbnails: Object.freeze([]),
-      heroMedia: null,
-      mediaItems: Object.freeze([]),
-      heroUrl: null,
-      videoUrl: null,
-    };
-  }
+function projectSynchronizedContext(
+  experience: SessionExperience,
+  activeRoom: ContextualActiveRoom | null,
+): SynchronizedExperienceContext {
+  const base = projectExperienceContext({
+    house: experience.house,
+    activeRoomId: experience.activeRoomId,
+    activeRoom,
+    focusRoom: experience.focusRoom,
+    priorityIds: experience.priorityIds,
+    variantId: experience.variantId,
+    scenarioId: experience.scenarioId,
+    primaryReason: experience.primaryReason,
+    highlights: experience.highlights,
+    recommendedMedia: experience.recommendedMedia,
+    interpretationSummary: experience.interpretationSummary,
+    roomImportanceRank: experience.roomImportanceRank,
+    appliedRuleIds: experience.appliedRuleIds,
+    rulesetId: experience.rulesetId,
+    rulesetVersion: experience.rulesetVersion,
+  });
 
+  return Object.freeze({
+    ...base,
+    activeRoom: Object.freeze({
+      id: experience.activeRoomId,
+      room: activeRoom,
+      focusRoom: experience.focusRoom,
+    }),
+    roomMedia: projectRoomMedia(activeRoom),
+    hero: projectHeroContext(experience, activeRoom),
+  });
+}
+
+/**
+ * Project synchronized Experience with unified Experience Context (CAP-HP-003.5).
+ * Owns semantic grouping, media, defaults, and context completeness.
+ */
+export function projectSynchronizedExperience(
+  experience: SessionExperience,
+): SynchronizedExperience {
+  const baseRoom = experience.activeRoom;
+  const activeRoom =
+    baseRoom === null || experience.activeRoomId === null
+      ? null
+      : projectRoomContext(baseRoom, experience);
+
+  return Object.freeze({
+    ...experience,
+    activeRoom,
+    context: projectSynchronizedContext(experience, activeRoom),
+  });
+}
+
+/** @deprecated Prefer `experience.context.hero` — kept for thin adapters. */
+export function getHeroMediaProjection(experience: SynchronizedExperience): ExperienceHeroContext {
+  return experience.context.hero;
+}
+
+/** @deprecated Prefer `experience.context.roomMedia` — kept for thin adapters. */
+export function getGalleryMediaProjection(experience: SynchronizedExperience): ExperienceRoomMediaContext & {
+  readonly mediaItems: readonly HousePackageMediaItem[];
+} {
+  const { roomMedia } = experience.context;
   return {
-    roomId: activeRoom.id,
-    title: activeRoom.name,
-    gallery: activeRoom.gallery,
-    videos: activeRoom.videos,
-    documents: activeRoom.documents,
-    thumbnails: activeRoom.thumbnails,
-    heroMedia: activeRoom.heroMedia,
-    mediaItems: activeRoom.thumbnails,
-    heroUrl: activeRoom.heroMedia?.url ?? null,
-    videoUrl: activeRoom.videos[0]?.url ?? null,
+    ...roomMedia,
+    mediaItems: roomMedia.thumbnails,
   };
 }
