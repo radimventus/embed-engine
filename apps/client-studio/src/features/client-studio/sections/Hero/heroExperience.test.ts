@@ -63,9 +63,9 @@ describe('Hero Experience (CSCB-02 / SR-002)', () => {
     assert.match(content, /context\.object/);
     assert.match(content, /HeroDecisionEntries/);
     assert.match(entries, /Prozkoumat dům/);
+    assert.match(entries, /PILOT_SECTION_IDS\.propertyExplorer/);
     assert.match(entries, /Podívat se na dispozici/);
     assert.match(entries, /Objevit priority/);
-    assert.match(entries, /PILOT_SECTION_IDS\.walkthrough/);
     assert.match(entries, /PILOT_SECTION_IDS\.floorPlan/);
     assert.match(entries, /PILOT_SECTION_IDS\.priority/);
     assert.match(image, /media\.kind === 'video'/);

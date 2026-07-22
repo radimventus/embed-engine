@@ -13,6 +13,7 @@ import { AuditLeadCapture } from './sections/AuditLeadCapture/AuditLeadCapture';
 import { PriorityEngine } from './sections/PriorityEngine/PriorityEngine';
 import { PriorityExperienceProvider } from './sections/PriorityEngine/PriorityExperienceProvider';
 import { PropertyExplorer } from './sections/PropertyExplorer/PropertyExplorer';
+import { SpatialTerminal } from './sections/SpatialTerminal/SpatialTerminal';
 import { WalkthroughProvider } from '../walkthrough';
 import { PILOT_FLAGS } from './pilot/pilotVocabulary';
 
@@ -54,6 +55,8 @@ export function ClientStudioPage({
             <Hero />
             <ChapterSpacer />
             <PropertyExplorer />
+            <ChapterSpacer />
+            <SpatialTerminal />
             <ChapterSpacer />
             <PriorityExperienceProvider>
               <PriorityEngine />

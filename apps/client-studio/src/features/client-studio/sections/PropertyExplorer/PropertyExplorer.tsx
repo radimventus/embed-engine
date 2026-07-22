@@ -1,26 +1,44 @@
-import { FloorPlanExplorer } from '../HouseNavigator/FloorPlanExplorer';
-import { MediaExplorer } from '../MediaExplorer/MediaExplorer';
-import { RoomIndex } from '../HouseNavigator/RoomIndex';
-import {
-  SPATIAL_TERMINAL_FLOOR_PLAN_WIDTH_PX,
-  SPATIAL_TERMINAL_MEDIA_COLUMN_WIDTH_PX,
-  SPATIAL_TERMINAL_ROOM_INDEX_WIDTH_PX,
-} from '../../chapter-layout';
-import { SECTION_SURFACE_CLASS } from '../../section-surface';
+import { useMemo, useState } from 'react';
 
+import { SECTION_SURFACE_CLASS } from '../../section-surface';
+import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
+import { FeatureGroups } from './FeatureGroups';
+import { KeyMetrics } from './KeyMetrics';
+import { ObjectSummary } from './ObjectSummary';
+import { PropertyExplorerNav } from './PropertyExplorerNav';
+import type { PropertyFeatureGroupId } from './propertyExplorerModel';
+import { usePropertyFeatureGroups } from './usePropertyFeatureGroups';
+
+/**
+ * Property Explorer — Object Discovery Decision Surface (CSCB-02 / SR-003).
+ * Answers: “Co tento dům skutečně nabízí?”
+ * Reads Runtime Context / house projection only. No Object Package. No dispatch.
+ */
 export function PropertyExplorer() {
+  const groups = usePropertyFeatureGroups();
+  const [activeGroupId, setActiveGroupId] =
+    useState<PropertyFeatureGroupId>('layout');
+
+  const activeGroup = useMemo(
+    () => groups.find((group) => group.id === activeGroupId) ?? groups[0]!,
+    [activeGroupId, groups],
+  );
+
   return (
-    <div
-      id="walkthrough"
+    <section
+      id={PILOT_SECTION_IDS.propertyExplorer}
       tabIndex={-1}
-      className={`scroll-mt-header grid min-h-spatial-terminal-surface w-full min-w-0 items-stretch gap-0 ${SECTION_SURFACE_CLASS} max-[1279px]:grid-cols-1 max-[1279px]:divide-y max-[1279px]:divide-embed-border-default mobile:grid-cols-1 mobile:divide-y mobile:divide-embed-border-default [&>[aria-label='Seznam místností']]:border-r [&>[aria-label='Seznam místností']]:border-embed-border-default max-[1279px]:[&>[aria-label='Seznam místností']]:border-r-0 mobile:[&>[aria-label='Seznam místností']]:border-r-0`}
-      style={{
-        gridTemplateColumns: `${SPATIAL_TERMINAL_MEDIA_COLUMN_WIDTH_PX}px ${SPATIAL_TERMINAL_ROOM_INDEX_WIDTH_PX}px ${SPATIAL_TERMINAL_FLOOR_PLAN_WIDTH_PX}px`,
-      }}
+      aria-label="Property Explorer"
+      className={`scroll-mt-header ${SECTION_SURFACE_CLASS}`}
     >
-      <MediaExplorer />
-      <RoomIndex />
-      <FloorPlanExplorer />
-    </div>
+      <ObjectSummary />
+      <KeyMetrics />
+      <PropertyExplorerNav
+        groups={groups}
+        activeId={activeGroup.id}
+        onSelect={setActiveGroupId}
+      />
+      <FeatureGroups group={activeGroup} />
+    </section>
   );
 }

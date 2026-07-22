@@ -47,7 +47,7 @@ Every capability may span multiple UI surfaces while sharing the same Runtime se
 | ID | Capability | Goal | Runtime dependency | Slices | Status |
 | --- | --- | --- | --- | --- | --- |
 | [CSCB-01](#cscb-01--application-foundation) | Application Foundation | Complete the application shell | Bootstrap / Runtime init | 4 | **Done** ([report](./client-studio/CSCB-01-application-foundation.md)) |
-| [CSCB-02](#cscb-02--object-discovery) | Object Discovery | Understand the property | Read-only Runtime Context | 5 | **In progress** — SR-002 Hero Done ([report](./client-studio/CSCB-02-hero-experience.md)) |
+| [CSCB-02](#cscb-02--object-discovery) | Object Discovery | Understand the property | Read-only Runtime Context | 5 | **In progress** — Hero + Property Explorer Done ([SR-002](./client-studio/CSCB-02-hero-experience.md), [SR-003](./client-studio/CSCB-02-property-explorer.md)) |
 | [CSCB-03](#cscb-03--spatial-navigation) | Spatial Navigation | Spatial exploration | Projection only | 6 | **Done** ([report](./client-studio/CSCB-03-spatial-navigation.md)) |
 | [CSCB-04](#cscb-04--decision-discovery) | Decision Discovery | Capture customer priorities | Decision Signals only | 6 | Pending |
 | [CSCB-05](#cscb-05--decision-presentation) | Decision Presentation | Present Runtime conclusions | Presentation only | 4 | Pending |
@@ -84,7 +84,7 @@ Every capability may span multiple UI surfaces while sharing the same Runtime se
 
 **Goal:** Allow the user to understand the property.
 
-**Status:** **In progress** — SR-002 Hero Done ([report](./client-studio/CSCB-02-hero-experience.md))
+**Status:** **In progress** — Hero + Property Explorer Done ([SR-002](./client-studio/CSCB-02-hero-experience.md), [SR-003](./client-studio/CSCB-02-property-explorer.md))
 
 **Scope**
 

@@ -12,9 +12,9 @@ type DecisionEntry = {
 
 const DECISION_ENTRIES: readonly DecisionEntry[] = [
   {
-    id: 'explore-house',
+    id: 'explore-property',
     label: 'Prozkoumat dům',
-    href: `#${PILOT_SECTION_IDS.walkthrough}`,
+    href: `#${PILOT_SECTION_IDS.propertyExplorer}`,
     primary: true,
   },
   {
