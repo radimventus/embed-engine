@@ -418,3 +418,188 @@ If a proposed feature requires changing an Immutable property, it is **out of sc
 Client Studio Gen1 is the **structural baseline** of the static Studio before Decision Experience. Decision Experience **adds interpretation and adaptation inside Surfaces A–F**; it does **not** redefine Gen1’s role as frozen etalon.
 
 ---
+
+## 7. Runtime Integration
+
+### 7.1 Authority
+
+**Runtime is the sole source of truth for decision semantics.**
+
+Decision Experience **only interprets and presents** what Runtime has already established through the frozen cognitive pipeline:
+
+```text
+Signal → reduce() → DecisionState → project() → Interpretation
+```
+
+Contracts: [RI-001](../../04-reference-implementation/RI-001-Runtime-Kernel.md), [RI-002](../../04-reference-implementation/RI-002-Decision-Session.md), [ADR-003](../../architecture/adr/ADR-003-cognitive-processing-pipeline.md).
+
+### 7.2 Normative statements
+
+1. **Runtime is the only source of truth** for Object-bound decision meaning under Session.
+2. **Decision Experience Runtime only interprets** — product language: Experience consumes Interpretation / Experience Context; it does not recompute domain meaning.
+3. **No business logic may live outside Runtime** for decision semantics (scoring of meaning, inventing Interpretation, mutating DecisionState from UI).
+4. Object Package / Knowledge Model remain **passive fact inputs**; Behavior Packs supply decision profile inputs to Strategy — they do not become a second Runtime.
+5. Studios and Adaptation Surfaces **emit Signals**; they never own Cognition.
+
+### 7.3 Forbidden parallel models
+
+Decision Experience must not introduce:
+
+- a second DecisionState,
+- UI-owned “interpretation caches” that diverge from Runtime,
+- analytics-driven meaning that bypasses Session,
+- Behavior Packs that modify UI structure (rejected; see Behavior Pack contract).
+
+### 7.4 Stack (frozen Decision Architecture alignment)
+
+```text
+Object Package
+  → Runtime (+ Decision Session)
+  → Interpretation
+  → Decision Strategy + Behavior Pack
+  → Decision Story / Decision Moves
+  → Experience Context
+  → Adaptation Surfaces (A–F) + Decision Terminal
+  → Decision Outcome
+```
+
+DEB-01 governs the **product constraints** on Experience and Adaptation. It does not replace Decision Architecture freeze documents.
+
+---
+
+## 8. AI Role
+
+### 8.1 Decision
+
+AI is an **explanatory assistant** inside Adaptation Surface C (and may assist wording on E/F only when grounded in Session Interpretation). AI is not a cognitive authority.
+
+Aligned with [PT-006](../../architecture/pt/PT-006-ai-explains-never-decides.md).
+
+### 8.2 AI may
+
+- explain Interpretation in natural language,
+- answer questions using Object Package facts + current Interpretation,
+- expand context and suggest relevant questions,
+- help the visitor validate understanding (Validate stage).
+
+### 8.3 AI must not
+
+| Forbidden | Why |
+| --- | --- |
+| Create facts | Object Package / Runtime own truth |
+| Own state | Decision Session / DecisionState own state |
+| Own Interpretation | `project()` owns meaning |
+| Decide for the user | User controls the decision |
+| Mutate Runtime | Signals from governed Experience actions only |
+| Invent recommendations that contradict Interpretation | Recommendations are Strategy/Outcome concerns, not freeform AI |
+
+### 8.4 Product rule
+
+> AI explains. AI answers. AI expands context.  
+> AI never becomes the semantic authority.
+
+---
+
+## 9. Decision Terminal
+
+### 9.1 Concept
+
+**Decision Terminal** is the Experience Surface that presents the **Decision Outcome** of the Session — the moment where guided progression becomes an actionable, portable stance.
+
+Canonical vocabulary: [Decision Layer — Decision Terminal](../../architecture/decision-layer/README.md). Theses: [PT-007](../../architecture/pt/PT-007-decision-terminal-is-the-outcome.md), [PT-008](../../architecture/pt/PT-008-every-decision-experience-produces-outcome.md).
+
+Terminal is **Experience Layer**, not Kernel.
+
+### 9.2 When it appears
+
+Terminal becomes relevant when the Journey reaches **Decide → Commit** readiness — i.e. when Decision Story progress and Interpretation support an Outcome, not merely exploration.
+
+Exact trigger policy (always visible vs progressive reveal) is an Open Question for implementation PT; product constraint: Terminal must not rewrite Studio IA or invent a parallel app.
+
+### 9.3 What it contains (product, not UI)
+
+Conceptually, Terminal surfaces:
+
+- Session-grounded **Outcome** (stance / readiness),
+- short **rationale** tied to Interpretation and priorities,
+- **next-step intents** consistent with Surface D (CTA),
+- pointers to portable artifacts (Surface E report) and follow-up channels (Surface F) when applicable.
+
+It does **not** contain new facts, alternate Object Packages, or AI-authored truth.
+
+### 9.4 Relationship to Decision Session
+
+Terminal **presents** Session Outcome.  
+Session **owns** journey boundary and continuity.  
+Runtime **owns** DecisionState underlying that Outcome.
+
+### 9.5 Preparing the user for action
+
+Terminal prepares Commit by:
+
+- making the decision stance explicit,
+- naming what is known vs open,
+- offering next actions that match Session (without forking Studio),
+- preserving explainability (“why this outcome”).
+
+---
+
+## 10. Design Principles
+
+1. **Information before persuasion.** Facts and clear meaning precede selling language.
+2. **Interpretation before recommendation.** Recommend only after Interpretation exists.
+3. **Facts remain immutable.** Object Package technical truth does not personalize.
+4. **Every adaptation must be explainable.** Traceable to Session / Interpretation.
+5. **User controls the decision.** System guides; user decides.
+6. **Runtime is the semantic authority.** No parallel cognition in Experience or AI.
+7. **Client Studio remains structurally stable.** IA is shared by all visitors.
+8. **Personalization occurs only inside predefined Adaptation Surfaces.** Surfaces A–F only.
+9. **Decision Experience is composed from Moves.** Progression is semantic, not page-chasing.
+10. **Every Decision Experience produces an Outcome.** Terminal / portable result, not endless browse.
+11. **Behavior Packs never modify UI structure.** They supply knowledge, rules, Moves, composition.
+12. **Simplify under doubt.** Architecture and this Blueprint outrank feature speed.
+
+---
+
+## 11. Open Questions
+
+Topics for subsequent product/architecture PTs (not resolved by DEB-01):
+
+| Topic | Question |
+| --- | --- |
+| **Behavior Packs** | First production Pack set for Client Studio DE; composition rules vs Priority Experience. |
+| **Recommendation Strategy** | When and how recommendations appear after Interpretation without violating principles. |
+| **Decision Confidence** | Product model for confidence / uncertainty; relation to Validate stage. |
+| **Comparison Sessions** | Multi-object Compare stage — Session model, Outcome shape, Studio constraints. |
+| **AI Coaching** | Boundaries of proactive coaching vs Q&A inside Surface C. |
+| **Shared Sessions** | Sharing / resuming Session across devices or people. |
+| **Team Decision Making** | Multi-stakeholder priorities and Outcomes. |
+| **Constraints** | Explicit constraint model (budget, land, timeline) as Signals vs UI-only. |
+| **Experience State Machine** | Product→implementation mapping from Journey stages to Experience-local progression (recommended first implementation PT). |
+| **Terminal trigger policy** | Progressive reveal vs persistent Terminal; relationship to Audit CTA (Surface D). |
+| **DJS alignment** | Formal merge/supersede of [DJS](../decision-journey/DJS.md) stage names with DEB-01 Journey. |
+| **BH-003 Adaptation Model** | Formalization of Surfaces A–F as platform Adaptation Model if required beyond DEB-01. |
+| **Media emphasis** | Whether limited media *order emphasis* may become a future Surface without breaking immutability of media facts. |
+
+---
+
+## Appendix A — Document control
+
+| Field | Value |
+| --- | --- |
+| ID | DEB-01 |
+| Title | Decision Experience Blueprint |
+| Status | APPROVED (Product SSOT) |
+| Supersedes | — (complements DEG, UX-003, DJS; does not replace Runtime/Decision Layer SSOTs) |
+| Amend via | Product decision + update to this file; architecture impacts require ADR |
+
+### Appendix B — Validation checklist
+
+- [x] End-to-end Decision Journey (Unknown → Commit)
+- [x] No duplicate Runtime model
+- [x] Client Studio IA declared stable (Immutable Experience)
+- [x] Adaptation Surfaces A–F specified
+- [x] Usable as SSOT for Decision Experience product work
+- [x] Open Questions seed follow-on implementation PTs
+
+---
