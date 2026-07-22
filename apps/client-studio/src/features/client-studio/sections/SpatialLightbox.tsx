@@ -65,6 +65,6 @@ export function SpatialLightbox({
         {children}
       </div>
     </div>,
-    document.body,
+    document.querySelector('[data-client-studio-root]') ?? document.body,
   );
 }
