@@ -68,7 +68,10 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(sidebar, /useActiveSection/);
     assert.match(sidebar, /scrollToSection/);
     assert.match(header, /PILOT_SECTION_IDS\.audit/);
+    assert.match(header, /PILOT_SECTION_IDS\.priority/);
     assert.match(header, /scrollToSection/);
+    assert.match(header, /data-experience-header/);
+    assert.match(header, /data-embed-close/);
   });
 
   it('does not change Runtime package APIs from the app shell', () => {

@@ -3,12 +3,18 @@
  *
  * Starts only after Runtime Ready + Studio Ready (state sync — no fixed delays).
  * Runtime remains unaware of Reveal.
+ *
+ * UX settle: open at document start (Hero), then smooth-scroll (~500ms) so the
+ * Landing Anchor aligns just below the sticky Experience header.
  */
 
 import {
   landingAnchorSelector,
   resolveLandingAnchorId,
 } from "./landingAnchorResolver";
+
+/** Smooth landing reveal duration (presentation only — not a public mount option). */
+export const LANDING_REVEAL_DURATION_MS = 500;
 
 export type RevealState =
   | "idle"
@@ -38,6 +44,17 @@ export type RevealEngineResult = {
   readonly degraded: boolean;
 };
 
+export type SettleViewportOptions = {
+  readonly signal?: AbortSignal;
+  /** Scroll animation length in ms. Use `0` for instant settle (tests). */
+  readonly durationMs?: number;
+  /**
+   * When true (default), jump to top first so Hero is the initial view,
+   * then animate to the Landing Anchor.
+   */
+  readonly fromTop?: boolean;
+};
+
 function setState(
   options: RevealEngineOptions,
   state: RevealState,
@@ -48,6 +65,89 @@ function setState(
 
 function isAborted(signal: AbortSignal): boolean {
   return signal.aborted;
+}
+
+function waitForNextPaint(): Promise<void> {
+  return new Promise((resolve) => {
+    if (typeof requestAnimationFrame !== "function") {
+      resolve();
+      return;
+    }
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        resolve();
+      });
+    });
+  });
+}
+
+/**
+ * Sticky Experience header height inside the Delivery scrollport.
+ * Landing Anchor settle subtracts this so content sits just below the header.
+ */
+export function readStickyHeaderOffset(scrollContainer: HTMLElement): number {
+  const header = scrollContainer.querySelector<HTMLElement>(
+    "[data-experience-header]",
+  );
+  if (!header) {
+    return 0;
+  }
+  return Math.ceil(header.getBoundingClientRect().height);
+}
+
+/**
+ * Ease-in-out cubic for a natural vertical reveal (no fade / no library).
+ */
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+/**
+ * Animate `scrollTop` over `durationMs`. Resolves early when aborted.
+ */
+export function animateScrollTop(
+  scrollContainer: HTMLElement,
+  targetTop: number,
+  durationMs: number,
+  signal: AbortSignal,
+): Promise<void> {
+  const from = scrollContainer.scrollTop;
+  const to = Math.max(0, targetTop);
+
+  if (durationMs <= 0 || Math.abs(to - from) < 1) {
+    scrollContainer.scrollTo({ top: to, left: 0, behavior: "auto" });
+    return Promise.resolve();
+  }
+
+  if (typeof requestAnimationFrame !== "function") {
+    scrollContainer.scrollTo({ top: to, left: 0, behavior: "auto" });
+    return Promise.resolve();
+  }
+
+  return new Promise((resolve) => {
+    const start =
+      typeof performance !== "undefined" && typeof performance.now === "function"
+        ? performance.now()
+        : Date.now();
+
+    const tick = (now: number): void => {
+      if (signal.aborted) {
+        resolve();
+        return;
+      }
+      const elapsed = now - start;
+      const t = Math.min(1, elapsed / durationMs);
+      scrollContainer.scrollTop = from + (to - from) * easeInOutCubic(t);
+      if (t < 1) {
+        requestAnimationFrame(tick);
+        return;
+      }
+      scrollContainer.scrollTop = to;
+      resolve();
+    };
+
+    requestAnimationFrame(tick);
+  });
 }
 
 /**
@@ -130,23 +230,36 @@ export function waitForSelector(
 }
 
 /**
- * Scroll Delivery scrollport so `element` is the intentional first view.
- * Instant settle — deterministic completion (no animation library).
+ * Scroll Delivery scrollport so `element` sits just below the sticky header.
+ * Default: start at Hero (top), then smooth-scroll ~500ms to the Landing Anchor.
  */
-export function settleViewportToElement(
+export async function settleViewportToElement(
   scrollContainer: HTMLElement,
   element: HTMLElement,
-): void {
+  settleOptions: SettleViewportOptions = {},
+): Promise<void> {
+  const signal = settleOptions.signal ?? new AbortController().signal;
+  const durationMs = settleOptions.durationMs ?? LANDING_REVEAL_DURATION_MS;
+  const fromTop = settleOptions.fromTop !== false;
+
+  if (fromTop) {
+    scrollContainer.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    await waitForNextPaint();
+  }
+
+  if (isAborted(signal)) {
+    return;
+  }
+
+  const headerOffset = readStickyHeaderOffset(scrollContainer);
   const containerRect = scrollContainer.getBoundingClientRect();
   const elementRect = element.getBoundingClientRect();
   const nextTop =
-    scrollContainer.scrollTop + (elementRect.top - containerRect.top);
+    scrollContainer.scrollTop +
+    (elementRect.top - containerRect.top) -
+    headerOffset;
 
-  scrollContainer.scrollTo({
-    top: Math.max(0, nextTop),
-    left: 0,
-    behavior: "auto",
-  });
+  await animateScrollTop(scrollContainer, nextTop, durationMs, signal);
 
   if (typeof element.focus === "function") {
     try {
@@ -253,7 +366,20 @@ export async function runRevealEngine(
   }
 
   setState(options, "revealing");
-  settleViewportToElement(options.scrollContainer, target);
+  await settleViewportToElement(options.scrollContainer, target, {
+    signal: options.signal,
+    durationMs: LANDING_REVEAL_DURATION_MS,
+    fromTop: true,
+  });
+
+  if (isAborted(options.signal)) {
+    setState(options, "aborted");
+    return {
+      state: "aborted",
+      anchorId: resolved.elementId,
+      degraded: true,
+    };
+  }
 
   const degraded =
     resolved.usedDefault ||

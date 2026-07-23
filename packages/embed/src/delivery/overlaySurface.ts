@@ -1,6 +1,6 @@
 /**
  * Fullscreen Experience overlay surface (Delivery infrastructure only).
- * No Reveal animation — mount target for Client Studio.
+ * Mount target for Client Studio — Close lives in the sticky Experience header.
  */
 
 import {
@@ -25,22 +25,10 @@ export type OverlaySurface = {
   readonly dispose: () => void;
 };
 
-function createCloseControl(onClose: () => void): HTMLButtonElement {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.setAttribute(OVERLAY_CLOSE_ATTR, "");
-  button.setAttribute("aria-label", "Zavřít Client Studio");
-  button.textContent = "Zavřít Client Studio";
-  button.addEventListener("click", (event) => {
-    event.preventDefault();
-    onClose();
-  });
-  return button;
-}
-
 /**
  * Append a viewport-sized overlay above the host page and lock host scroll.
- * Always creates a dedicated mount container for Client Studio (never reuses Host nodes).
+ * Close is not rendered here — Client Studio sticky header owns the × control;
+ * clicks on `[data-embed-close]` inside the overlay are delegated to `onClose`.
  */
 export function createOverlaySurface(options: {
   readonly onClose: () => void;
@@ -55,14 +43,27 @@ export function createOverlaySurface(options: {
   root.setAttribute("aria-modal", "true");
   root.setAttribute("aria-label", "Client Studio");
 
-  const chrome = document.createElement("div");
-  chrome.setAttribute("data-embed-overlay-chrome", "");
-  chrome.appendChild(createCloseControl(options.onClose));
-
   const mountTarget = document.createElement("div");
   mountTarget.setAttribute(OVERLAY_MOUNT_ATTR, "");
 
-  appendNodes(root, chrome, mountTarget);
+  const onCloseClick = (event: Event): void => {
+    const target = event.target;
+    if (
+      target == null ||
+      typeof (target as { closest?: unknown }).closest !== "function"
+    ) {
+      return;
+    }
+    const el = target as Element;
+    if (!el.closest(`[${OVERLAY_CLOSE_ATTR}]`)) {
+      return;
+    }
+    event.preventDefault();
+    options.onClose();
+  };
+  root.addEventListener("click", onCloseClick);
+
+  appendNodes(root, mountTarget);
   mountParent.appendChild(root);
 
   if (typeof mountTarget.setAttribute !== "function") {
@@ -78,6 +79,7 @@ export function createOverlaySurface(options: {
     mountTarget,
     scrollSnapshot,
     dispose: () => {
+      root.removeEventListener("click", onCloseClick);
       if (root.parentNode) {
         root.parentNode.removeChild(root);
       }

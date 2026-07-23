@@ -8,6 +8,7 @@ import {
   landingAnchorSelector,
 } from "./landingAnchorResolver";
 import {
+  LANDING_REVEAL_DURATION_MS,
   runRevealEngine,
   settleViewportToElement,
   waitForSelector,
@@ -44,6 +45,18 @@ function installDom(): Window {
   });
 
   document.body.innerHTML = "";
+
+  Object.defineProperty(globalThis, "requestAnimationFrame", {
+    value: (callback: (time: number) => void) =>
+      setTimeout(() => callback(Date.now()), 0),
+    configurable: true,
+  });
+  Object.defineProperty(globalThis, "performance", {
+    value: { now: () => Date.now() },
+    configurable: true,
+    writable: true,
+  });
+
   return window;
 }
 
@@ -78,6 +91,19 @@ describe("Reveal Engine", () => {
 
   it("waits for Landing Anchor then settles scroll without timers", async () => {
     installDom();
+    let now = 0;
+    Object.defineProperty(globalThis, "performance", {
+      value: { now: () => now },
+      configurable: true,
+    });
+    Object.defineProperty(globalThis, "requestAnimationFrame", {
+      value: (callback: (time: number) => void) => {
+        now += LANDING_REVEAL_DURATION_MS;
+        return setTimeout(() => callback(now), 0);
+      },
+      configurable: true,
+    });
+
     const scroll = document.createElement("div");
     scroll.setAttribute("data-client-studio-root", "");
     scroll.style.cssText = "height:200px;overflow:auto;";
@@ -189,7 +215,7 @@ describe("Reveal Engine", () => {
     assert.ok(result.state === "aborted" || result.state === "degraded");
   });
 
-  it("settleViewportToElement adjusts scrollTop", () => {
+  it("settleViewportToElement adjusts scrollTop below sticky header", async () => {
     installDom();
     const container = document.createElement("div");
     let scrolledTo = 0;
@@ -210,13 +236,25 @@ describe("Reveal Engine", () => {
       value: () => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }),
       configurable: true,
     });
+
+    const header = document.createElement("header");
+    header.setAttribute("data-experience-header", "");
+    Object.defineProperty(header, "getBoundingClientRect", {
+      value: () => ({ top: 0, left: 0, bottom: 72, right: 100, width: 100, height: 72 }),
+      configurable: true,
+    });
+    container.appendChild(header);
+
     const el = document.createElement("div");
     Object.defineProperty(el, "getBoundingClientRect", {
       value: () => ({ top: 250, left: 0, bottom: 350, right: 100, width: 100, height: 100 }),
       configurable: true,
     });
-    settleViewportToElement(container, el);
-    assert.equal(scrolledTo, 250);
+    await settleViewportToElement(container, el, {
+      durationMs: 0,
+      fromTop: false,
+    });
+    assert.equal(scrolledTo, 250 - 72);
   });
 
   it("waitForSelector resolves when node is inserted", async () => {
