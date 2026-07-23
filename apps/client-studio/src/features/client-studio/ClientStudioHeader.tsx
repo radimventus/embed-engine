@@ -75,7 +75,7 @@ export function ClientStudioHeader() {
             aria-hidden="true"
             className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-embed-action-primary text-embed-action-onPrimary shadow-embed-soft"
           >
-            <span className="flex h-[1em] w-[1em] items-center justify-center text-[2rem] font-bold leading-none text-embed-action-onPrimary [translate:0_2px]">
+            <span className="flex h-[1em] w-[1em] items-center justify-center text-[2rem] font-bold leading-none text-embed-action-onPrimary [translate:2px_0]">
               ×
             </span>
           </span>
