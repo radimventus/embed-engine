@@ -5,7 +5,8 @@
  */
 export { Embed } from "./Embed";
 export type { EmbedApi } from "./Embed";
-export type { EmbedMountOptions, EmbedProductionMountOptions, EmbedLegacyMountOptions, EmbedLegacyFixtureId, } from "./delivery/types";
+export type { EmbedMountOptions, EmbedProductionMountOptions, EmbedLegacyMountOptions, EmbedLegacyFixtureId, ExperienceMode, } from "./delivery/types";
+export type { LaunchContext, ExperiencePresentationConfig } from "./delivery/presentation";
 /** @deprecated Prefer EmbedLegacyFixtureId */
 export type { EmbedFixtureId } from "./fixtures";
 import { Embed } from "./Embed";

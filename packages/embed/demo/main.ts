@@ -1,6 +1,7 @@
 /**
- * Embed demo — Launcher Mode foundation (LRI-01).
- * Partner-like host page → CTA → Delivery overlay → Client Studio.
+ * Embed demo — Launcher Experience Flow (PT-INTEGRATION-01).
+ * Partner host → Hero CTA → Delivery overlay → Reveal → Close → Host restored.
+ * No inline Client Studio mount on page load.
  */
 
 import clientStudioCss from "../../../apps/client-studio/src/index.css?inline";
@@ -20,5 +21,5 @@ Embed.mount({
 });
 
 console.info(
-  `Embed Loader ${Embed.version} — Launcher armed (click #open-client-studio)`,
+  `Embed Loader ${Embed.version} — Launcher Mode armed (no inline mount)`,
 );

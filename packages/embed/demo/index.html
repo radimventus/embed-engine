@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Embed — Launcher Overlay Foundation</title>
+    <title>Embed — Launcher Experience Flow</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
@@ -11,8 +11,8 @@
       <p class="host-eyebrow">Partner website (host)</p>
       <h1>Reference House</h1>
       <p>
-        Experience Launcher → Delivery overlay → Client Studio → Runtime.
-        Host chrome stays underneath; Close restores this page.
+        Launcher Mode: stránka se načte bez Client Studia. CTA otevře fullscreen
+        Delivery Overlay → Reveal → Landing Anchor → Experience. Close obnoví host.
       </p>
     </header>
 
@@ -20,24 +20,19 @@
       <section class="host-hero" id="host-hero">
         <h2>Prozkoumejte dům v Client Studio</h2>
         <p>
-          Kliknutím spustíte Experience přes Delivery Layer (Launcher Mode).
-          Reveal / Landing Anchor scroll přijde v dalším PT.
+          Jediný vstupní bod na hostitelské stránce. Client Studio se nespouští
+          automaticky — až po kliknutí na CTA.
         </p>
         <button type="button" id="open-client-studio" class="host-launcher">
-          Otevřít Client Studio
+          Prozkoumat dům
         </button>
       </section>
 
-      <section class="host-copy">
-        <p>
-          Tato stránka simuluje partnerský web. Scrollujte dolů, otevřete Studio,
-          zavřete ho — host scroll se musí obnovit.
-        </p>
+      <section class="host-copy" aria-hidden="true">
         <p class="host-filler">
-          Lorem host content — partner header, footer a layout zůstávají
-          beze změny. Delivery pouze překryje viewport.
+          Partnerský obsah pod Hero — slouží k ověření scroll lock / restore po Close.
         </p>
-        <p class="host-filler">Další obsah hostitele pro ověření scroll lock / restore.</p>
+        <p class="host-filler">Další blok hostitelské stránky.</p>
         <p class="host-filler">Ještě jeden blok, aby stránka byla delší než viewport.</p>
       </section>
     </main>

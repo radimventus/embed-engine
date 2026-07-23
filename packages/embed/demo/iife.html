@@ -3,24 +3,40 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Embed Loader — IIFE smoke</title>
+    <title>Embed Loader — IIFE Launcher smoke</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <header class="host-header">
       <p class="host-eyebrow">Host page · IIFE</p>
-      <h1>Embed.iife.js</h1>
+      <h1>Embed.iife.js — Launcher Mode</h1>
       <p>
-        Po <code>pnpm build</code> v balíčku embed otevři tento soubor přes static
-        server s media z Client Studio <code>public/</code>.
+        Po <code>pnpm build</code> otevři přes static server. Žádný inline mount —
+        CTA armí Launcher.
       </p>
     </header>
-    <div id="demo"></div>
+
+    <main class="host-main">
+      <section class="host-hero" id="host-hero">
+        <h2>Prozkoumejte dům v Client Studio</h2>
+        <button type="button" id="open-client-studio" class="host-launcher">
+          Prozkoumat dům
+        </button>
+      </section>
+      <section class="host-copy">
+        <p class="host-filler">Host content for scroll restore checks.</p>
+        <p class="host-filler">Second filler block.</p>
+      </section>
+    </main>
+
     <script src="../dist/embed.iife.js"></script>
     <script>
       Embed.mount({
-        target: "#demo",
+        mode: "launcher",
+        launcher: "#open-client-studio",
         objectId: "house-modern-01",
+        entryPoint: "hero-cta",
+        launcherId: "open-client-studio",
       });
     </script>
   </body>

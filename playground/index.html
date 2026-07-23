@@ -1,26 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Embed Engine Playground — Client Studio</title>
-    <style>
-      html, body { margin: 0; min-height: 100%; }
-      #embed { min-height: 100vh; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Embed Engine Playground — Launcher</title>
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, sans-serif;
+      background: #f7f6f4;
+      color: #001930;
+    }
+    .host-header {
+      width: min(920px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1.25rem 0 0.75rem;
+    }
+    .host-eyebrow {
+      margin: 0 0 0.35rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      color: #5a6b60;
+      font-weight: 700;
+    }
+    .host-main {
+      width: min(920px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 1rem 0 4rem;
+    }
+    .host-hero {
+      padding: 2rem 0 1.5rem;
+      border-top: 1px solid #e3e3e3;
+    }
+    .host-hero h2 {
+      margin: 0;
+      font-size: 1.75rem;
+      line-height: 1.2;
+    }
+    .host-hero p {
+      margin: 0.75rem 0 1.25rem;
+      color: #4a5c52;
+      max-width: 36rem;
+    }
+    .host-launcher {
+      appearance: none;
+      border: none;
+      background: #001930;
+      color: #f7f6f4;
+      font: inherit;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.85rem 1.25rem;
+      cursor: pointer;
+    }
+    .host-filler {
+      margin-top: 3rem;
+      padding: 2rem 0;
+      border-top: 1px solid #e3e3e3;
+      color: #4a5c52;
+    }
+  </style>
 </head>
 <body>
+  <header class="host-header">
+    <p class="host-eyebrow">Partner website · playground</p>
+    <h1>Reference House</h1>
+  </header>
 
-<div id="embed"></div>
+  <main class="host-main">
+    <section class="host-hero" id="host-hero">
+      <h2>Prozkoumejte dům v Client Studio</h2>
+      <p>
+        Launcher Mode — žádný automatický inline mount. CTA otevře fullscreen
+        Delivery Overlay.
+      </p>
+      <button type="button" id="open-client-studio" class="host-launcher">
+        Prozkoumat dům
+      </button>
+    </section>
+    <p class="host-filler">Host content below Hero for scroll restore validation.</p>
+    <p class="host-filler">Second host block.</p>
+  </main>
 
-<script src="../packages/embed/dist/embed.iife.js"></script>
-
-<script>
-Embed.mount({
-    target: "#embed",
-    objectId: "house-modern-01"
-});
-</script>
-
+  <script src="../packages/embed/dist/embed.iife.js"></script>
+  <script>
+    Embed.mount({
+      mode: "launcher",
+      launcher: "#open-client-studio",
+      objectId: "house-modern-01",
+      entryPoint: "hero-cta",
+      launcherId: "open-client-studio",
+    });
+  </script>
 </body>
 </html>

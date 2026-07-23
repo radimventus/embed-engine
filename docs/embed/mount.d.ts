@@ -1,12 +1,13 @@
 /**
  * Embed.mount — public entry.
  *
- * Production: Delivery Layer → Object Package → Runtime → ClientStudioApp.
+ * Production inline: Delivery Layer → Object Package → Runtime → ClientStudioApp.
+ * Production launcher: bind Experience Launcher → Launch on click → overlay Delivery.
  * Legacy: explicit `fixture: "garden"` or `experience` → Priority HTML renderer.
  */
 import { type EmbedMountOptions } from "./delivery/types";
 /**
- * Mount Embed into a host element.
+ * Mount Embed into a host element, or arm an Experience Launcher.
  * Replaces any previously active Embed session.
  */
 export declare function mount(options: EmbedMountOptions): void;
