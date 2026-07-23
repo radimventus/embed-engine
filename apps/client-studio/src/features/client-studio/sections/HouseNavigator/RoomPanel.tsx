@@ -1,4 +1,5 @@
 import { useHouseNavigator } from './useHouseNavigator';
+import { HOUSE_NAVIGATOR_ROOM_CONTROL_WIDTH_CLASS } from '../spatial-terminal-layout';
 
 /**
  * Runtime-driven room list for the active floor (CSCB-03).
@@ -13,7 +14,7 @@ export function RoomPanel() {
     <nav
       aria-label="Místnosti"
       data-floor={selectedFloor}
-      className="ml-[15px] flex min-h-0 min-w-0 flex-col justify-start gap-1 overflow-x-hidden overflow-y-auto mobile:ml-0"
+      className={`${HOUSE_NAVIGATOR_ROOM_CONTROL_WIDTH_CLASS} flex min-h-0 min-w-0 flex-col justify-start gap-1 overflow-x-hidden overflow-y-auto mobile:ml-0 mobile:w-full`}
     >
       {floorRooms.map((room) => {
         const active = isRoomActive(room.id);

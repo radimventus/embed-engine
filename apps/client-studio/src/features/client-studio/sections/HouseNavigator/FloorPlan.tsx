@@ -176,7 +176,7 @@ export function FloorPlan() {
   return (
     <div
       ref={displayRef}
-      className={`relative flex min-h-0 w-full min-w-0 max-w-none overflow-hidden mobile:items-center ${
+      className={`relative flex h-full min-h-0 w-full min-w-0 max-w-none flex-1 overflow-hidden mobile:items-center ${
         align === 'end' ? 'items-end' : 'items-center'
       }`}
     >

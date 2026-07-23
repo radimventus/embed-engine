@@ -22,10 +22,13 @@ export const SPATIAL_TERMINAL_CONTROL_GAP_CLASS = 'gap-5';
 export const SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS = 'h-[100px]';
 
 /**
- * Matches room-list row width inside Room Index (full content width).
- * Shared by VIDEO/FOTKY and PŘÍZEMÍ/PATRO.
+ * Full content width of the parent column.
+ * Shared by VIDEO/FOTKY (with room-index inset) and PŘÍZEMÍ/PATRO.
  */
 export const HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS = 'w-full';
+
+/** Room Index inset — room rows and VIDEO/FOTKY share the same width (PT-TOUR-LAYOUT-01). */
+export const HOUSE_NAVIGATOR_ROOM_CONTROL_WIDTH_CLASS = 'ml-[15px] w-[calc(100%-15px)]';
 
 export const SPATIAL_TERMINAL_SECTION_CLASS =
   'grid w-full min-w-0 content-start items-start gap-0 overflow-x-hidden px-section pb-section';
@@ -38,7 +41,7 @@ export const SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS =
 
 /** Floor plan column: 30px from menu, 20px to section right edge. */
 export const SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS =
-  'grid h-full w-full min-w-0 grid-rows-[1fr_100px] content-start items-start overflow-x-hidden pl-[30px] pr-[20px] pb-section pt-5';
+  'grid h-full w-full min-w-0 grid-rows-[minmax(0,1fr)_100px] items-stretch overflow-x-hidden pl-[30px] pr-[20px] pb-section pt-5';
 
 export const SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS =
   'relative box-border aspect-video w-[690px] min-w-[690px] max-w-[690px] shrink-0 overflow-hidden rounded-[8px] bg-embed-surface-placeholder';

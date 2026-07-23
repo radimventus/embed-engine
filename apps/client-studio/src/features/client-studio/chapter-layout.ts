@@ -19,7 +19,7 @@ export const SPATIAL_TERMINAL_MEDIA_LEFT_GUTTER_PX = 20;
 export const SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX = 690;
 export const SPATIAL_TERMINAL_MEDIA_COLUMN_WIDTH_PX =
   SPATIAL_TERMINAL_MEDIA_LEFT_GUTTER_PX + SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX;
-/** Narrowed room index; +15px (PT-TOUR-REDESIGN-01) so list matches VIDEO/FOTKY width. */
+/** Room index column: left pad + shared control width (PT-TOUR-LAYOUT-01). */
 export const SPATIAL_TERMINAL_ROOM_INDEX_WIDTH_PX = 224;
 export const SPATIAL_TERMINAL_FLOOR_PLAN_RIGHT_GUTTER_PX = 20;
 /** Gap between room menu column and floor-plan display. */

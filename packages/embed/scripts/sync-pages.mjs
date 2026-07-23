@@ -32,7 +32,7 @@ const PAGES_ORIGIN = "https://radimventus.github.io/embed-engine";
  * Cache-bust query for production IIFE.
  * PT-RELEASE-TOUR-01 — Tour redesign (7bdbd12) published into distribution.
  */
-const IIFE_CACHE_BUST = "tour-01";
+const IIFE_CACHE_BUST = "tour-layout-01";
 
 /**
  * Official partner distribution fragment — derived from Embed.mount launcher API:
