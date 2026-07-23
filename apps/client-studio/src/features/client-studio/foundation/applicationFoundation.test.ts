@@ -70,8 +70,10 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(header, /PILOT_SECTION_IDS\.audit/);
     assert.match(header, /PILOT_SECTION_IDS\.priority/);
     assert.match(header, /scrollToSection/);
-    assert.match(header, /data-experience-header/);
-    assert.match(header, /data-embed-close/);
+    assert.match(header, /formatExperienceHeaderTitle/);
+    assert.match(header, /w-canvas/);
+    assert.match(header, /bg-embed-action-primary/);
+    assert.match(header, /text-embed-action-onPrimary/);
   });
 
   it('does not change Runtime package APIs from the app shell', () => {

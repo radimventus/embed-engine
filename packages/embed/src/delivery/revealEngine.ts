@@ -4,7 +4,7 @@
  * Starts only after Runtime Ready + Studio Ready (state sync — no fixed delays).
  * Runtime remains unaware of Reveal.
  *
- * UX settle: open at document start (Hero), then smooth-scroll (~500ms) so the
+ * UX settle: open at document start (Hero), then smooth-scroll (~750ms) so the
  * Landing Anchor aligns just below the sticky Experience header.
  */
 
@@ -14,7 +14,7 @@ import {
 } from "./landingAnchorResolver";
 
 /** Smooth landing reveal duration (presentation only — not a public mount option). */
-export const LANDING_REVEAL_DURATION_MS = 500;
+export const LANDING_REVEAL_DURATION_MS = 750;
 
 export type RevealState =
   | "idle"
@@ -231,7 +231,7 @@ export function waitForSelector(
 
 /**
  * Scroll Delivery scrollport so `element` sits just below the sticky header.
- * Default: start at Hero (top), then smooth-scroll ~500ms to the Landing Anchor.
+ * Default: start at Hero (top), then smooth-scroll ~750ms to the Landing Anchor.
  */
 export async function settleViewportToElement(
   scrollContainer: HTMLElement,
