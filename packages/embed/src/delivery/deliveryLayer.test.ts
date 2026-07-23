@@ -114,6 +114,14 @@ describe("Delivery overlay surface", () => {
 
     assert.ok(document.querySelector("[data-embed-overlay]"));
     assert.ok(document.querySelector("[data-embed-overlay-mount]"));
+    assert.ok(
+      overlay.root.hasAttribute("data-embed-boundary"),
+      "overlay root must be an Embed CSS isolation boundary",
+    );
+    assert.ok(
+      overlay.mountTarget.hasAttribute("data-embed-boundary"),
+      "overlay mount must be an Embed CSS isolation boundary",
+    );
     assert.equal(typeof overlay.mountTarget.setAttribute, "function");
     assert.equal(document.body.style.overflow, "hidden");
     assert.equal(document.querySelector("[data-embed-overlay-chrome]"), null);

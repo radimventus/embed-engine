@@ -21,7 +21,7 @@
     "build": "node ./scripts/build-distribution.mjs",
     "sync:pages": "node ./scripts/sync-pages.mjs",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts src/delivery/deliveryLayer.test.ts src/delivery/revealEngine.test.ts",
+    "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts src/delivery/deliveryLayer.test.ts src/delivery/revealEngine.test.ts src/delivery/cssIsolation.test.ts",
     "demo": "vite --config demo/vite.config.ts"
   },
   "dependencies": {

@@ -3,6 +3,7 @@
  * Mount target for Client Studio — Close lives in the sticky Experience header.
  */
 
+import { markEmbedBoundary } from "./ensureStyles";
 import {
   appendNodes,
   resolveHostMountParent,
@@ -39,12 +40,14 @@ export function createOverlaySurface(options: {
 
   const root = document.createElement("div");
   root.setAttribute(OVERLAY_ROOT_ATTR, "");
+  markEmbedBoundary(root);
   root.setAttribute("role", "dialog");
   root.setAttribute("aria-modal", "true");
   root.setAttribute("aria-label", "Client Studio");
 
   const mountTarget = document.createElement("div");
   mountTarget.setAttribute(OVERLAY_MOUNT_ATTR, "");
+  markEmbedBoundary(mountTarget);
 
   const onCloseClick = (event: Event): void => {
     const target = event.target;

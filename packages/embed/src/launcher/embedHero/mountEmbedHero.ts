@@ -5,7 +5,10 @@
 import { createRoot, type Root } from "react-dom/client";
 import { createElement } from "react";
 
-import { ensureClientStudioStyles } from "../../delivery/ensureStyles";
+import {
+  ensureClientStudioStyles,
+  markEmbedBoundary,
+} from "../../delivery/ensureStyles";
 import { EmbedHero } from "./EmbedHero";
 
 export type MountEmbedHeroOptions = {
@@ -27,6 +30,7 @@ export function mountEmbedHero(options: MountEmbedHeroOptions): MountedEmbedHero
 
   const { host, assetBase, onOpenExperience } = options;
   host.setAttribute("data-embed-hero-host", "");
+  markEmbedBoundary(host);
   host.replaceChildren();
 
   const mountNode = document.createElement("div");
@@ -47,6 +51,7 @@ export function mountEmbedHero(options: MountEmbedHeroOptions): MountedEmbedHero
       root.unmount();
       mountNode.remove();
       host.removeAttribute("data-embed-hero-host");
+      host.removeAttribute("data-embed-boundary");
       host.replaceChildren();
     },
   };

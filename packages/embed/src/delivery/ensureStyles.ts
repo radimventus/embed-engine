@@ -1,9 +1,15 @@
 /**
- * Client Studio styles for Embed Delivery (fonts, shell, host isolation).
+ * Client Studio styles for Embed Delivery (fonts, shell, CSS isolation).
  * Main Tailwind CSS is registered by the Vite bundle via registerClientStudioCss.
  */
 
+import {
+  CSS_ISOLATION_POLICY,
+  EMBED_BOUNDARY_ATTR,
+} from "./cssIsolation";
 import { appendNodes, resolveHostHead } from "./hostDocument";
+
+export { EMBED_BOUNDARY_ATTR } from "./cssIsolation";
 
 let registeredCss: string | null = null;
 let injected = false;
@@ -11,6 +17,7 @@ let injected = false;
 const FONT_LINK_ID = "embed-client-studio-fonts";
 const STYLE_ID = "embed-client-studio-css";
 const SHELL_STYLE_ID = "embed-client-studio-shell-css";
+const ISOLATION_STYLE_ID = "embed-css-isolation";
 
 /** Inter — same weights as standalone Client Studio index.html. */
 const FONT_HREF =
@@ -18,7 +25,8 @@ const FONT_HREF =
 
 /**
  * Maps standalone `html/body/#root` assumptions onto the embed mount node
- * and reduces accidental host-page inheritance inside the Experience.
+ * and wires overlay geometry. Visual reclaim of host `a`/`button` lives in
+ * `CSS_ISOLATION_POLICY` (PT-EMBED-02A).
  *
  * Scroll: do NOT set `overflow-x: auto` alone on the mount root.
  * CSS forces `overflow-y` to `auto` as well, creating a wheel scrollport.
@@ -26,6 +34,9 @@ const FONT_HREF =
  * the document — scrollbar drag and keyboard still work (different path).
  * Use `overflow-y: clip` so horizontal overflow can scroll without trapping
  * vertical wheel; keep document/viewport as the single vertical scrollport.
+ *
+ * `html`/`body` overscroll rules are host scroll coordination only — not
+ * Experience visual identity (see CSS Isolation Policy).
  */
 const SHELL_CSS = `
 html {
@@ -84,27 +95,6 @@ body {
   overflow-x: auto;
   overflow-y: visible;
 }
-[data-client-studio-root],
-[data-client-studio-root] *,
-[data-client-studio-root] *::before,
-[data-client-studio-root] *::after {
-  box-sizing: border-box;
-  border-color: #e3e3e3;
-}
-[data-client-studio-root] img,
-[data-client-studio-root] svg,
-[data-client-studio-root] video,
-[data-client-studio-root] canvas {
-  display: block;
-  vertical-align: middle;
-}
-[data-client-studio-root] button,
-[data-client-studio-root] input,
-[data-client-studio-root] textarea,
-[data-client-studio-root] select {
-  font: inherit;
-  color: inherit;
-}
 `;
 
 export function registerClientStudioCss(css: string): void {
@@ -150,13 +140,21 @@ function upsertStyle(id: string, css: string): void {
     head.appendChild(style);
   }
   style.textContent = css;
-  // Keep Embed styles after host styles so utilities win collisions.
+  // Keep Embed styles after host styles so utilities / isolation win collisions.
   head.appendChild(style);
 }
 
 /**
- * Inject fonts + full Client Studio CSS + embed shell bridge.
+ * Mark a surface root as an Embed Experience boundary (CSS Isolation Policy).
+ */
+export function markEmbedBoundary(element: HTMLElement): void {
+  element.setAttribute(EMBED_BOUNDARY_ATTR, "");
+}
+
+/**
+ * Inject fonts + full Client Studio CSS + shell + CSS isolation policy.
  * Idempotent; safe to call on every production mount.
+ * Isolation stylesheet is always re-appended last so it beats late host CSS.
  */
 export function ensureClientStudioStyles(): void {
   if (typeof document === "undefined") {
@@ -170,6 +168,8 @@ export function ensureClientStudioStyles(): void {
   }
 
   upsertStyle(SHELL_STYLE_ID, SHELL_CSS);
+  // Isolation last: reclaim host a/button after utilities are present.
+  upsertStyle(ISOLATION_STYLE_ID, CSS_ISOLATION_POLICY);
   injected = true;
 }
 

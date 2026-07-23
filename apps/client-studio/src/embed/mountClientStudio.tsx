@@ -46,6 +46,7 @@ export function mountClientStudio(
 
   target.setAttribute('data-embed-root', '');
   target.setAttribute('data-client-studio-root', '');
+  target.setAttribute('data-embed-boundary', '');
   target.dataset.clientStudioVersion = CLIENT_STUDIO_RELEASE.version;
   target.dataset.clientStudioGeneration = CLIENT_STUDIO_RELEASE.generation;
   target.dataset.objectId = runtime.getSession().objectId;
@@ -66,6 +67,7 @@ export function mountClientStudio(
       setPresentationAssetBase(undefined);
       target.removeAttribute('data-embed-root');
       target.removeAttribute('data-client-studio-root');
+      target.removeAttribute('data-embed-boundary');
       delete target.dataset.clientStudioVersion;
       delete target.dataset.clientStudioGeneration;
       delete target.dataset.objectId;
