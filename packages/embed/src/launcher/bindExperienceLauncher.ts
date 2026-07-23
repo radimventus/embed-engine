@@ -21,9 +21,15 @@ import {
   setArmedLauncher,
 } from "../session";
 import { unmount } from "../unmount";
+import {
+  mountEmbedHero,
+  type MountedEmbedHero,
+} from "./embedHero/mountEmbedHero";
 
 export type BindExperienceLauncherOptions = {
-  readonly trigger: HTMLElement;
+  readonly trigger?: HTMLElement;
+  /** Partner slot for Embed Hero projection (PT-EMBED-01). */
+  readonly heroHost?: HTMLElement;
   readonly objectId?: string;
   readonly assetBase?: string;
   readonly launchContext?: LaunchContext;
@@ -31,6 +37,7 @@ export type BindExperienceLauncherOptions = {
 
 function buildLaunchRequest(
   options: BindExperienceLauncherOptions,
+  restoreFocusTo: HTMLElement,
 ): LaunchRequest {
   return {
     presentation: LAUNCHER_DEFAULT_PRESENTATION,
@@ -41,7 +48,7 @@ function buildLaunchRequest(
     },
     objectId: options.objectId,
     assetBase: options.assetBase,
-    restoreFocusTo: options.trigger,
+    restoreFocusTo,
   };
 }
 
@@ -56,22 +63,27 @@ function isLauncherExperience(
 }
 
 /**
- * Bind a host CTA so click → Launch Request → Delivery launchExperience.
+ * Bind a host CTA (and optional Embed Hero) so activation → Launch Request → Delivery.
  */
 export function bindExperienceLauncher(
   options: BindExperienceLauncherOptions,
 ): LauncherArmedSession {
-  const { trigger } = options;
+  const focusHost = options.trigger ?? options.heroHost;
+  if (focusHost === undefined) {
+    throw new Error(
+      "Embed.mount: Launcher Mode requires `launcher` and/or `target` (Embed Hero host)",
+    );
+  }
 
-  const onActivate = (event: Event): void => {
-    event.preventDefault();
+  let hero: MountedEmbedHero | undefined;
 
+  const openExperience = (): void => {
     if (isLauncherExperience(getActiveSession())) {
       return;
     }
 
     try {
-      const request = buildLaunchRequest(options);
+      const request = buildLaunchRequest(options, focusHost);
       const session = launchExperience(request, {
         onClose: () => {
           unmount();
@@ -83,20 +95,40 @@ export function bindExperienceLauncher(
     }
   };
 
-  trigger.addEventListener("click", onActivate);
-  trigger.setAttribute("data-embed-launcher", "");
-  trigger.setAttribute("aria-haspopup", "dialog");
+  if (options.heroHost !== undefined) {
+    hero = mountEmbedHero({
+      host: options.heroHost,
+      assetBase: options.assetBase,
+      onOpenExperience: openExperience,
+    });
+  }
+
+  const onActivate = (event: Event): void => {
+    event.preventDefault();
+    openExperience();
+  };
+
+  const trigger = options.trigger;
+  if (trigger !== undefined) {
+    trigger.addEventListener("click", onActivate);
+    trigger.setAttribute("data-embed-launcher", "");
+    trigger.setAttribute("aria-haspopup", "dialog");
+  }
 
   const unbind = (): void => {
-    trigger.removeEventListener("click", onActivate);
-    trigger.removeAttribute("data-embed-launcher");
-    trigger.removeAttribute("aria-haspopup");
+    if (trigger !== undefined) {
+      trigger.removeEventListener("click", onActivate);
+      trigger.removeAttribute("data-embed-launcher");
+      trigger.removeAttribute("aria-haspopup");
+    }
+    hero?.dispose();
+    hero = undefined;
   };
 
   const armed: LauncherArmedSession = {
     kind: "launcher-armed",
-    host: trigger,
-    root: trigger,
+    host: focusHost,
+    root: options.heroHost ?? trigger ?? focusHost,
     styleElement: document.createElement("style"),
     unbind,
     dispose: () => {

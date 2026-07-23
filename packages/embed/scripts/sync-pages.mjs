@@ -80,18 +80,20 @@ function writeIndexHtml(version) {
     <li><a href="./embed.es.js"><code>embed.es.js</code></a> — ESM</li>
     <li><a href="./version.json"><code>version.json</code></a> — manifest</li>
   </ul>
-  <h2>Usage (Launcher Mode — partner default)</h2>
-  <pre>&lt;button type="button" id="open-client-studio"&gt;Prozkoumat dům&lt;/button&gt;
-&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=hero-00a"&gt;&lt;/script&gt;
+  <h2>Usage (Launcher Mode — Embed Hero)</h2>
+  <pre>&lt;div id="embed-hero"&gt;&lt;/div&gt;
+&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=embed-01"&gt;&lt;/script&gt;
 &lt;script&gt;
   Embed.mount({
     mode: "launcher",
-    launcher: "#open-client-studio",
+    target: "#embed-hero",
     objectId: "house-modern-01",
     assetBase: "https://radimventus.github.io/embed-engine",
+    entryPoint: "hero-cta",
   });
 &lt;/script&gt;</pre>
-  <p>No inline Client Studio on load — CTA arms the Launcher. Hosts that already serve <code>/media</code> may omit <code>assetBase</code>.</p>
+  <p>Embed Hero projects the Reference Hero onto the partner page. CTA opens fullscreen Client Studio.</p>
+  <p>Legacy button launcher: <code>launcher: "#open-client-studio"</code> (no Embed Hero).</p>
   <p>After publishing a new IIFE, bump the <code>?v=</code> query (or hard-refresh) so hosts are not stuck on a cached bundle.</p>
   <p>Inline / Standalone (explicit): <code>Embed.mount({ target: "#embed", objectId: "house-modern-01" })</code></p>
   <p>Legacy Garden (explicit opt-in only): <code>Embed.mount({ target: "#embed", fixture: "garden" })</code></p>
@@ -117,7 +119,7 @@ function writeLiveHtml() {
       color: #001930;
     }
     .host-header {
-      width: min(920px, calc(100% - 2rem));
+      width: min(1432px, calc(100% - 2rem));
       margin: 0 auto;
       padding: 1.25rem 0 0.75rem;
     }
@@ -130,34 +132,9 @@ function writeLiveHtml() {
       font-weight: 700;
     }
     .host-main {
-      width: min(920px, calc(100% - 2rem));
+      width: min(1432px, calc(100% - 2rem));
       margin: 0 auto;
       padding: 1rem 0 4rem;
-    }
-    .host-hero {
-      padding: 2rem 0 1.5rem;
-      border-top: 1px solid #e3e3e3;
-    }
-    .host-hero h2 {
-      margin: 0;
-      font-size: 1.75rem;
-      line-height: 1.2;
-    }
-    .host-hero p {
-      margin: 0.75rem 0 1.25rem;
-      color: #4a5c52;
-      max-width: 36rem;
-    }
-    .host-launcher {
-      appearance: none;
-      border: none;
-      background: #001930;
-      color: #f7f6f4;
-      font: inherit;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 0.85rem 1.25rem;
-      cursor: pointer;
     }
     .host-filler {
       margin-top: 3rem;
@@ -172,22 +149,13 @@ function writeLiveHtml() {
     <p class="host-eyebrow">Partner website (host)</p>
     <h1>Reference House</h1>
     <p>
-      Launcher Mode: žádný automatický inline mount. CTA otevře fullscreen
-      Delivery Overlay → Reveal → social-proof → Experience. Close obnoví host.
+      Embed Hero je první scéna Experience na partnerské stránce.
+      CTA otevře Client Studio jako plynulé pokračování.
     </p>
   </header>
 
   <main class="host-main">
-    <section class="host-hero" id="host-hero">
-      <h2>Prozkoumejte dům v Client Studio</h2>
-      <p>
-        Jediný vstupní bod. Client Studio není součástí stránky, dokud
-        nekliknete na CTA.
-      </p>
-      <button type="button" id="open-client-studio" class="host-launcher">
-        Prozkoumat dům
-      </button>
-    </section>
+    <div id="embed-hero"></div>
     <p class="host-filler">
       Partnerský obsah pod Hero — ověření scroll lock / restore po Close.
     </p>
@@ -195,15 +163,15 @@ function writeLiveHtml() {
     <p class="host-filler">Ještě jeden blok, aby stránka byla delší než viewport.</p>
   </main>
 
-  <script src="./embed.iife.js?v=hero-00a"></script>
+  <script src="./embed.iife.js?v=embed-01"></script>
   <script>
     Embed.mount({
       mode: "launcher",
-      launcher: "#open-client-studio",
+      target: "#embed-hero",
       objectId: "house-modern-01",
       assetBase: "https://radimventus.github.io/embed-engine",
       entryPoint: "hero-cta",
-      launcherId: "open-client-studio",
+      launcherId: "embed-hero",
     });
   </script>
 </body>

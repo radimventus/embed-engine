@@ -41,14 +41,22 @@ function resolveElement(
   return element;
 }
 
-function resolveLauncherTrigger(options: EmbedProductionMountOptions): HTMLElement {
-  const source = options.launcher ?? options.target;
-  if (source === undefined) {
-    throw new Error(
-      'Embed.mount: Launcher Mode requires `launcher` (or `target`) for the CTA element',
-    );
+function resolveLauncherTrigger(
+  options: EmbedProductionMountOptions,
+): HTMLElement | undefined {
+  if (options.launcher === undefined) {
+    return undefined;
   }
-  return resolveElement(source, "launcher");
+  return resolveElement(options.launcher, "launcher");
+}
+
+function resolveOptionalTarget(
+  options: EmbedProductionMountOptions,
+): HTMLElement | undefined {
+  if (options.target === undefined) {
+    return undefined;
+  }
+  return resolveElement(options.target, "target");
 }
 
 function resolveInlineTarget(options: EmbedProductionMountOptions): HTMLElement {
@@ -79,8 +87,15 @@ export function mount(options: EmbedMountOptions): void {
 
     if (mode === "launcher") {
       const trigger = resolveLauncherTrigger(options);
+      const heroHost = resolveOptionalTarget(options);
+      if (trigger === undefined && heroHost === undefined) {
+        throw new Error(
+          "Embed.mount: Launcher Mode requires `launcher` and/or `target` (Embed Hero host)",
+        );
+      }
       const armed = bindExperienceLauncher({
         trigger,
+        heroHost,
         objectId: options.objectId,
         assetBase: options.assetBase,
         launchContext: toLaunchContext(options),
