@@ -25,6 +25,40 @@ const pagesDir = path.join(rootDir, "docs/embed");
 
 const REQUIRED = ["embed.es.js", "embed.iife.js", "index.d.ts", "version.json"];
 
+/** Public Pages origin for production partner hosts (absolute URLs required). */
+const PAGES_ORIGIN = "https://radimventus.github.io/embed-engine";
+
+/**
+ * Cache-bust query for production IIFE.
+ * Derived from current distribution publish train (PT-EMBED-01 / PT-INT-02).
+ */
+const IIFE_CACHE_BUST = "embed-01";
+
+/**
+ * Official partner distribution fragment — derived from Embed.mount launcher API:
+ * - mode: "launcher" + target → mountEmbedHero (PT-EMBED-01)
+ * - objectId defaults to house-modern-01 (resolveObjectPackage)
+ * - assetBase required on foreign origins so /media/* resolves to Pages
+ * - script must be absolute (relative ./embed.iife.js breaks on WordPress/DSE)
+ */
+function buildOfficialPartnerSnippet() {
+  const scriptSrc = `${PAGES_ORIGIN}/embed/embed.iife.js?v=${IIFE_CACHE_BUST}`;
+  return `<!-- BEGIN OFFICIAL PARTNER SNIPPET -->
+<div id="embed-hero"></div>
+<script src="${scriptSrc}"></script>
+<script>
+  Embed.mount({
+    mode: "launcher",
+    target: "#embed-hero",
+    objectId: "house-modern-01",
+    assetBase: "${PAGES_ORIGIN}",
+    entryPoint: "hero-cta",
+    launcherId: "embed-hero"
+  });
+</script>
+<!-- END OFFICIAL PARTNER SNIPPET -->`;
+}
+
 const PUBLIC_FILES = [
   "embed.es.js",
   "embed.es.js.map",
@@ -82,18 +116,10 @@ function writeIndexHtml(version) {
     <li><a href="./version.json"><code>version.json</code></a> — manifest</li>
   </ul>
   <h2>Usage (Launcher Mode — Embed Hero)</h2>
-  <pre>&lt;div id="embed-hero"&gt;&lt;/div&gt;
-&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=embed-01"&gt;&lt;/script&gt;
-&lt;script&gt;
-  Embed.mount({
-    mode: "launcher",
-    target: "#embed-hero",
-    objectId: "house-modern-01",
-    assetBase: "https://radimventus.github.io/embed-engine",
-    entryPoint: "hero-cta",
-  });
-&lt;/script&gt;</pre>
-  <p>Embed Hero projects the Reference Hero onto the partner page. CTA opens fullscreen Client Studio.</p>
+  <pre>${buildOfficialPartnerSnippet()
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")}</pre>
+  <p>Copy the official snippet from <a href="./OFFICIAL-PARTNER-SNIPPET.html">OFFICIAL-PARTNER-SNIPPET.html</a> (absolute script URL required on partner hosts).</p>
   <p>Legacy button launcher: <code>launcher: "#open-client-studio"</code> (no Embed Hero).</p>
   <p>After publishing a new IIFE, bump the <code>?v=</code> query (or hard-refresh) so hosts are not stuck on a cached bundle.</p>
   <p>Inline / Standalone (explicit): <code>Embed.mount({ target: "#embed", objectId: "house-modern-01" })</code></p>
@@ -164,13 +190,13 @@ function writeLiveHtml() {
     <p class="host-filler">Ještě jeden blok, aby stránka byla delší než viewport.</p>
   </main>
 
-  <script src="./embed.iife.js?v=embed-01"></script>
+  <script src="${PAGES_ORIGIN}/embed/embed.iife.js?v=${IIFE_CACHE_BUST}"></script>
   <script>
     Embed.mount({
       mode: "launcher",
       target: "#embed-hero",
       objectId: "house-modern-01",
-      assetBase: "https://radimventus.github.io/embed-engine",
+      assetBase: "${PAGES_ORIGIN}",
       entryPoint: "hero-cta",
       launcherId: "embed-hero",
     });
@@ -182,38 +208,23 @@ function writeLiveHtml() {
 }
 
 function writePartnerSnippetHtml() {
+  const snippet = buildOfficialPartnerSnippet();
+  writeFileSync(path.join(pagesDir, "OFFICIAL-PARTNER-SNIPPET.html"), `${snippet}\n`, "utf8");
+
   const html = `<!DOCTYPE html>
 <html lang="cs">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Partner Embed Snippet — Embed Hero</title>
+  <title>Partner Embed — Official Snippet Harness</title>
   <style>
     body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f7f6f4; color: #001930; }
     main { width: min(1432px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 4rem; }
-    .note { margin-bottom: 1.5rem; color: #4a5c52; max-width: 42rem; line-height: 1.5; }
-    code { background: #fff; padding: 0.1rem 0.35rem; }
   </style>
 </head>
 <body>
   <main>
-    <p class="note">
-      Canonical partner integration for <strong>Embed Hero</strong> (PT-INT-01).
-      Paste into WordPress/DSE Custom HTML. Legacy
-      <code>#open-client-studio</code> alone does <em>not</em> project Embed Hero.
-    </p>
-    <div id="embed-hero"></div>
-    <script src="./embed.iife.js?v=embed-01"></script>
-    <script>
-      Embed.mount({
-        mode: "launcher",
-        target: "#embed-hero",
-        objectId: "house-modern-01",
-        assetBase: "https://radimventus.github.io/embed-engine",
-        entryPoint: "hero-cta",
-        launcherId: "embed-hero",
-      });
-    </script>
+${snippet}
   </main>
 </body>
 </html>
@@ -290,6 +301,7 @@ for (const file of PUBLIC_FILES) {
 console.log("  - index.html");
 console.log("  - live.html");
 console.log("  - partner-snippet.html");
+console.log("  - OFFICIAL-PARTNER-SNIPPET.html");
 console.log("  - ../.nojekyll");
 if (existsSync(referenceHouseTarget)) {
   console.log("  - ../reference-house/ (Tour assets)");

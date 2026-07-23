@@ -22,7 +22,8 @@
     <li><a href="./version.json"><code>version.json</code></a> — manifest</li>
   </ul>
   <h2>Usage (Launcher Mode — Embed Hero)</h2>
-  <pre>&lt;div id="embed-hero"&gt;&lt;/div&gt;
+  <pre>&lt;!-- BEGIN OFFICIAL PARTNER SNIPPET --&gt;
+&lt;div id="embed-hero"&gt;&lt;/div&gt;
 &lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=embed-01"&gt;&lt;/script&gt;
 &lt;script&gt;
   Embed.mount({
@@ -31,9 +32,11 @@
     objectId: "house-modern-01",
     assetBase: "https://radimventus.github.io/embed-engine",
     entryPoint: "hero-cta",
+    launcherId: "embed-hero"
   });
-&lt;/script&gt;</pre>
-  <p>Embed Hero projects the Reference Hero onto the partner page. CTA opens fullscreen Client Studio.</p>
+&lt;/script&gt;
+&lt;!-- END OFFICIAL PARTNER SNIPPET --&gt;</pre>
+  <p>Copy the official snippet from <a href="./OFFICIAL-PARTNER-SNIPPET.html">OFFICIAL-PARTNER-SNIPPET.html</a> (absolute script URL required on partner hosts).</p>
   <p>Legacy button launcher: <code>launcher: "#open-client-studio"</code> (no Embed Hero).</p>
   <p>After publishing a new IIFE, bump the <code>?v=</code> query (or hard-refresh) so hosts are not stuck on a cached bundle.</p>
   <p>Inline / Standalone (explicit): <code>Embed.mount({ target: "#embed", objectId: "house-modern-01" })</code></p>

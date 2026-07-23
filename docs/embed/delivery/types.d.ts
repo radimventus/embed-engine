@@ -11,13 +11,14 @@ export type ExperienceMode = "standalone" | "launcher" | "inline";
  *
  * Modes (EMB-01):
  * - `inline` (default): mount into `target` immediately
- * - `launcher`: bind `launcher` (or `target`) CTA; open overlay on click
+ * - `launcher`: open overlay on CTA click; optional `target` mounts Embed Hero
+ *   (PT-EMBED-01). `launcher` arms an existing host CTA when provided.
  * - `standalone`: same delivery path as inline for dedicated hosts
  */
 export type EmbedProductionMountOptions = {
     readonly target?: string | HTMLElement;
     readonly mode?: ExperienceMode;
-    /** Launcher CTA element (Launcher Mode). Falls back to `target` when mode is launcher. */
+    /** Launcher CTA element (Launcher Mode). Optional when `target` mounts Embed Hero. */
     readonly launcher?: string | HTMLElement;
     readonly objectId?: string;
     /**
