@@ -13,12 +13,16 @@
     "./loader": {
       "types": "./dist/loader/index.d.ts",
       "import": "./dist/loader/index.js"
+    },
+    "./builder-package": {
+      "types": "./dist/builder-package/index.d.ts",
+      "import": "./dist/builder-package/index.js"
     }
   },
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/behavior/composeDispositionLayout.test.ts src/behavior/spliceStairsWarn.test.ts src/behavior/decisionFactors.test.ts src/loader/loadHousePackage.test.ts src/projectHouse.test.ts"
+    "test": "tsx --test src/behavior/composeDispositionLayout.test.ts src/behavior/spliceStairsWarn.test.ts src/behavior/decisionFactors.test.ts src/loader/loadHousePackage.test.ts src/projectHouse.test.ts src/builder-package/importBuilderHousePackage.test.ts"
   },
   "dependencies": {
     "@embed-engine/core": "workspace:*",
