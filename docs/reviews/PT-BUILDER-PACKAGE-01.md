@@ -14,7 +14,7 @@ Implemented a deterministic importer in `@embed-engine/object-house/builder-pack
 
 ## Spec
 
-- [HP-002 Builder House Package Input Format](../03-specification-standard/HP-002-Builder-House-Package-Input.md)
+- [HP-002 Builder House Package Input Format](../03-specification-standard/HP-002-Builder-House-Package-Input.md) — finalized as locked SSOT in [PT-BUILDER-PACKAGE-02](./PT-BUILDER-PACKAGE-02.md)
 
 ## Import entrypoint
 
