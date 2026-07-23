@@ -61,6 +61,10 @@ function findRoomById(
   return room;
 }
 
+/**
+ * @deprecated CAP-BP-01 — Client Studio media SSOT is HP-002 Builder Package registries.
+ * Do not use for Runtime presentation. Prefer `@embed-engine/object-house/builder-package`.
+ */
 export function resolveHousePackage(manifest: HousePackageManifest): ResolvedHousePackage {
   const rooms = manifest.rooms.map((room) => resolveRoomMedia(manifest.basePath, room));
   const walkthroughRoom = findRoomById(rooms, manifest.walkthrough.roomId);

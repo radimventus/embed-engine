@@ -65,7 +65,8 @@ describe('Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)', (
     assert.match(content, /HeroCTA/);
     assert.match(cta, /Podívat se dovnitř/);
     assert.match(cta, /PILOT_SECTION_IDS\.walkthrough/);
-    assert.match(image, /house-modern-01\/exterior\.webp/);
+    assert.match(image, /useDecisionSessionRuntime/);
+    assert.match(image, /context\.hero\.primaryMediaUrl/);
     assert.match(image, /animate-hero-photo-veil/);
   });
 

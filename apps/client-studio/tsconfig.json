@@ -3,6 +3,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "types": ["vite/client", "node"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
@@ -10,7 +11,12 @@
     "declarationMap": false,
     "isolatedModules": true,
     "useDefineForClassFields": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@client-studio/builder-package-csv": [
+        "./src/features/client-studio/runtime/builderPackageCsv.ts"
+      ]
+    }
   },
   "include": ["src"],
   "exclude": ["src/**/*.test.ts"],

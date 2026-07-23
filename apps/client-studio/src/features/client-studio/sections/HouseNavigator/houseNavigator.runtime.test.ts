@@ -37,7 +37,7 @@ describe('House Navigator Runtime integration', () => {
     const view = createHouseNavigatorViewModel(result.experience.context);
     assert.equal(view.activeRoomId, 'room-bedroom');
     assert.equal(view.activeRoom?.name, 'Ložnice');
-    assert.equal(view.selectedFloor, '1');
+    assert.equal(view.selectedFloor, '0');
     assert.equal(isNavigatorRoomActive(view, 'room-bedroom'), true);
     assert.equal(isNavigatorRoomActive(view, 'room-kitchen'), false);
     assert.equal(view.rooms.length, REFERENCE_HOUSE_PACKAGE.rooms.length);
@@ -86,12 +86,12 @@ describe('House Navigator Runtime integration', () => {
       now: 1,
     });
     const empty = createHouseNavigatorViewModel(runtime.getExperience()!.context);
-    const upstairs = firstRoomOnFloor(empty, '1');
-    assert.ok(upstairs);
-    assert.equal(upstairs?.floor, 1);
+    const ground = firstRoomOnFloor(empty, '0');
+    assert.ok(ground);
+    assert.equal(ground?.floor, 0);
 
     const result = runtime.dispatch(
-      { type: 'SelectRoom', roomId: upstairs!.id },
+      { type: 'SelectRoom', roomId: ground!.id },
       2,
     );
     assert.ok(result.ok);
@@ -99,8 +99,8 @@ describe('House Navigator Runtime integration', () => {
       return;
     }
     const view = createHouseNavigatorViewModel(result.experience.context);
-    assert.equal(view.selectedFloor, '1');
-    assert.equal(view.activeRoomId, upstairs!.id);
+    assert.equal(view.selectedFloor, '0');
+    assert.equal(view.activeRoomId, ground!.id);
   });
 
   it('roomsOnFloor filters the projected room registry by floor', () => {
@@ -115,8 +115,8 @@ describe('House Navigator Runtime integration', () => {
     const upper = roomsOnFloor(view, '1');
 
     assert.ok(ground.every((room) => room.floor === 0));
-    assert.ok(upper.every((room) => room.floor === 1));
+    assert.equal(upper.length, 0);
     assert.ok(ground.some((room) => room.id === 'room-living'));
-    assert.ok(upper.some((room) => room.id === 'room-bedroom'));
+    assert.ok(ground.some((room) => room.id === 'room-bedroom'));
   });
 });

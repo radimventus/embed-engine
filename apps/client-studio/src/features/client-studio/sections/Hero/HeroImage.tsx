@@ -1,21 +1,23 @@
 import { resolvePublicAssetUrl } from '../../runtime/presentationAssetBase';
-
-/** Morning Baseline opening hero photograph (PT-HERO-00 / 5176 reference). */
-const REFERENCE_HERO_SRC = '/media/house-modern-01/exterior.webp';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 
 /**
  * Right two-thirds — photography plane (Morning Baseline reference).
  * Soft edge: white veils on the photo’s left edge.
+ * Image source: Builder Package Hero Registry via Experience Context (CAP-BP-01).
  */
 export function HeroImage() {
-  const heroSrc = resolvePublicAssetUrl(REFERENCE_HERO_SRC);
+  const { experience } = useDecisionSessionRuntime();
+  const heroSrc = resolvePublicAssetUrl(
+    experience.context.hero.primaryMediaUrl ?? experience.context.hero.heroMedia?.url ?? '',
+  );
 
   return (
     <section
       role="img"
       aria-label="Rodinný dům MODERN A01"
       className="relative h-full min-h-0 w-full bg-cover bg-[center_42%] bg-no-repeat"
-      style={{ backgroundImage: `url('${heroSrc}')` }}
+      style={heroSrc ? { backgroundImage: `url('${heroSrc}')` } : undefined}
     >
       <div
         aria-hidden="true"

@@ -52,27 +52,27 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     assert.equal(living.context.hero.title, REFERENCE_HOUSE_PACKAGE.identity.title);
     assert.equal(living.context.roomMedia.roomId, 'room-living');
     assert.equal(living.context.navigation.currentFloor, '0');
-    assert.equal(living.context.hero.heroMedia?.id, 'hero-image');
+    assert.equal(living.context.hero.heroMedia?.id, 'builder-package-hero');
     assert.match(
       living.context.hero.primaryMediaUrl ?? '',
-      /\/reference-house\/assets\/media\/hero\/hero\.webp$/,
+      /\/house-package\/media\/hero\/hero\.webp$/,
     );
     assert.match(
       living.context.roomMedia.heroUrl ?? '',
-      /\/house-package\/media\/living-room\//,
+      /\/house-package\/media\/gallery\//,
     );
     assert.ok(
-      (living.context.roomMedia.gallery?.length ?? 0) >= 3,
-      'Tour gallery must expose room-scoped house-package photos',
+      (living.context.roomMedia.gallery?.length ?? 0) >= 1,
+      'Tour gallery must expose CSV-ordered house-package photos',
     );
     assert.ok(
       (living.context.roomMedia.videos?.length ?? 0) >= 1,
-      'Tour must expose room-scoped house-package video',
+      'Tour must expose videos.csv provider media',
     );
     assert.match(
       living.context.roomMedia.thumbnails.find((item) => item.kind === 'photo')
         ?.src ?? '',
-      /\/house-package\/media\/living-room\//,
+      /\/house-package\/media\/gallery\//,
     );
   });
 
@@ -109,9 +109,9 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     assert.deepEqual(first.context.roomMedia, second.context.roomMedia);
     assert.equal(
       first.context.roomMedia.heroMedia?.url,
-      '/reference-house/assets/media/hero/hero.webp',
+      '/house-package/media/hero/hero.webp',
     );
-    assert.equal(first.context.hero.heroMedia?.id, 'hero-image');
+    assert.equal(first.context.hero.heroMedia?.id, 'builder-package-hero');
   });
 
   it('ChangePriority reshapes Experience Context hero and gallery ordering', () => {
@@ -191,7 +191,7 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     assert.equal(hero.title, REFERENCE_HOUSE_PACKAGE.identity.title);
     assert.match(hero.eyebrow, /ASTAV-M01/);
     assert.ok(synced.context.activeRoom.room?.heroMedia !== null);
-    assert.equal(hero.heroMedia?.id, 'hero-image');
+    assert.equal(hero.heroMedia?.id, 'builder-package-hero');
     assert.equal(hero.primaryMediaUrl, hero.heroMedia?.url);
   });
 
@@ -208,18 +208,18 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     assert.ok(media.heroMedia !== null);
     assert.ok(Array.isArray(media.gallery));
     assert.ok(
-      media.gallery.length >= 3,
-      'Room-scoped kitchen gallery from house-package',
+      media.gallery.length >= 1,
+      'Room-scoped kitchen gallery from gallery.csv',
     );
     assert.ok(Array.isArray(media.videos));
     assert.ok(media.videos.length >= 1);
     assert.match(
       media.videos[0]?.url ?? '',
-      /\/house-package\/media\/kitchen\/video\.mp4$/,
+      /fast\.wistia\.net\/embed\/iframe\//,
     );
     assert.match(
       media.gallery[0]?.url ?? '',
-      /\/house-package\/media\/kitchen\//,
+      /\/house-package\/media\/gallery\//,
     );
     assert.ok(Array.isArray(media.documents));
     assert.ok(media.documents.length >= 1);

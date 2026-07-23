@@ -8,6 +8,7 @@ import type {
 
 import {
   getMediaRoom,
+  getOpeningHeroSrc,
   getPresentationAssets,
 } from './presentation-assets';
 import { resolvePublicAssetUrl } from './presentationAssetBase';
@@ -128,70 +129,20 @@ export type SynchronizedExperience = {
   readonly context: SynchronizedExperienceContext;
 };
 
-function houseFallbackHero(experience: SessionExperience): ProjectedMediaAsset | null {
-  const houseImage = experience.house.media.find((asset) => asset.type === 'image');
-  if (houseImage !== undefined) {
-    const url = resolvePublicAssetUrl(houseImage.url);
-    return Object.freeze({
-      id: houseImage.id,
-      kind: 'image' as const,
-      url,
-      thumbnailUrl: url,
-      title: houseImage.title,
-    });
+/** Opening Hero from Builder Package Hero Registry (CAP-BP-01). */
+function packageHeroMedia(): ProjectedMediaAsset | null {
+  const src = getOpeningHeroSrc();
+  if (src.length === 0) {
+    return null;
   }
-
-  const houseVideo = experience.house.media.find((asset) => asset.type === 'video');
-  if (houseVideo !== undefined) {
-    const url = resolvePublicAssetUrl(houseVideo.url);
-    return Object.freeze({
-      id: houseVideo.id,
-      kind: 'video' as const,
-      url,
-      thumbnailUrl: url,
-      title: houseVideo.title,
-    });
-  }
-
-  return null;
-}
-
-function projectHouseGallery(
-  experience: SessionExperience,
-): readonly ProjectedMediaAsset[] {
-  return Object.freeze(
-    experience.house.media
-      .filter((asset) => asset.type === 'image')
-      .map((asset) => {
-        const url = resolvePublicAssetUrl(asset.url);
-        return Object.freeze({
-          id: asset.id,
-          kind: 'image' as const,
-          url,
-          thumbnailUrl: url,
-          title: asset.title,
-        });
-      }),
-  );
-}
-
-function projectHouseVideos(
-  experience: SessionExperience,
-): readonly ProjectedMediaAsset[] {
-  return Object.freeze(
-    experience.house.media
-      .filter((asset) => asset.type === 'video')
-      .map((asset) => {
-        const url = resolvePublicAssetUrl(asset.url);
-        return Object.freeze({
-          id: asset.id,
-          kind: 'video' as const,
-          url,
-          thumbnailUrl: houseFallbackHero(experience)?.url ?? url,
-          title: asset.title,
-        });
-      }),
-  );
+  const url = resolvePublicAssetUrl(src);
+  return Object.freeze({
+    id: 'builder-package-hero',
+    kind: 'image' as const,
+    url,
+    thumbnailUrl: url,
+    title: 'Hero',
+  });
 }
 
 function projectHouseDocuments(
@@ -220,7 +171,7 @@ function projectRoomContext(
   room: ExperienceHouseRoom,
   experience: SessionExperience,
 ): ContextualActiveRoom {
-  const fallbackHero = houseFallbackHero(experience);
+  const fallbackHero = packageHeroMedia();
   const documents = projectHouseDocuments(experience);
   const mediaRoom = getMediaRoom(room.id);
 
@@ -238,7 +189,7 @@ function projectRoomContext(
             });
           }),
         )
-      : projectHouseGallery(experience);
+      : Object.freeze([]);
 
   const videos: readonly ProjectedMediaAsset[] =
     mediaRoom !== null && mediaRoom.videoSrc.length > 0
@@ -253,7 +204,7 @@ function projectRoomContext(
             title: room.name,
           }),
         ])
-      : projectHouseVideos(experience);
+      : Object.freeze([]);
 
   const heroMedia =
     mediaRoom !== null && mediaRoom.heroSrc.length > 0
@@ -304,22 +255,11 @@ function projectRoomContext(
 function emptyRoomMedia(
   experience: SessionExperience,
 ): ExperienceRoomMediaContext {
-  const idleHero = houseFallbackHero(experience);
-  const gallery = projectHouseGallery(experience);
-  const videos = projectHouseVideos(experience);
+  const idleHero = packageHeroMedia();
+  const gallery = Object.freeze([]) as readonly ProjectedMediaAsset[];
+  const videos = Object.freeze([]) as readonly ProjectedMediaAsset[];
   const documents = projectHouseDocuments(experience);
-  const thumbnails: HousePackageMediaItem[] = [
-    ...videos.map((video) => ({
-      kind: 'video' as const,
-      src: video.url,
-      thumbnailSrc: video.thumbnailUrl,
-    })),
-    ...gallery.map((photo) => ({
-      kind: 'photo' as const,
-      src: photo.url,
-      thumbnailSrc: photo.thumbnailUrl,
-    })),
-  ];
+  const thumbnails = Object.freeze([]) as readonly HousePackageMediaItem[];
 
   return Object.freeze({
     roomId: null,
@@ -328,9 +268,9 @@ function emptyRoomMedia(
     gallery,
     videos,
     documents,
-    thumbnails: Object.freeze(thumbnails),
+    thumbnails,
     heroUrl: idleHero?.url ?? null,
-    videoUrl: videos[0]?.url ?? null,
+    videoUrl: null,
   });
 }
 
@@ -415,7 +355,7 @@ function formatPriceCzk(price: number): string {
 
 /**
  * Opening Hero projection — Object Discovery (CSCB-02 / SR-002).
- * Identity + primary media from Object / house projection.
+ * Identity from Object; primary media from Builder Package Hero Registry (CAP-BP-01).
  * Decision Focus metadata is retained for adapters but does not rewrite identity.
  */
 function projectHeroContext(
@@ -425,7 +365,7 @@ function projectHeroContext(
   const { house } = experience;
   const object = experience.context.object;
   const { highlights, focus: decisionFocus } = experience.context.decision;
-  const heroMedia = houseFallbackHero(experience);
+  const heroMedia = packageHeroMedia();
 
   return Object.freeze({
     eyebrow: `${object.reference} · ${object.construction}`,

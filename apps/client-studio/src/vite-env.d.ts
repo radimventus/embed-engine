@@ -1,5 +1,10 @@
 /// <reference types="vite/client" />
 
+declare module '*.csv?raw' {
+  const content: string;
+  export default content;
+}
+
 declare const __CLIENT_STUDIO_VERSION__: string;
 
 interface ImportMetaEnv {
