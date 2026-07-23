@@ -7,8 +7,8 @@ import { PILOT_SECTION_IDS } from './pilot/pilotVocabulary';
 
 /**
  * AppShell top navigation (CSCB-01) — single sticky Experience header.
- * Inner rail matches DesktopCanvas width + `px-section` so logo/actions share
- * the same content axis as Experience sections.
+ * Content rail matches DesktopCanvas; Close sits on the viewport edge as a
+ * system action, outside the experience content grid.
  */
 export function ClientStudioHeader() {
   const [title, setTitle] = useState('Client Studio');
@@ -27,9 +27,15 @@ export function ClientStudioHeader() {
   return (
     <header
       data-experience-header=""
-      className="sticky top-0 z-50 h-header shrink-0 border-b border-embed-border-default bg-embed-background-primary"
+      className="relative sticky top-0 z-50 h-header shrink-0 border-b border-embed-border-default bg-embed-background-primary"
     >
-      <div className="mx-auto grid h-full w-canvas min-w-0 max-w-canvas grid-cols-[1fr_auto_1fr] items-center px-section mobile:w-full mobile:max-w-none mobile:min-w-0">
+      <div
+        className={[
+          'mx-auto grid h-full w-canvas min-w-0 max-w-canvas grid-cols-[1fr_auto_1fr] items-center px-section mobile:w-full mobile:max-w-none mobile:min-w-0',
+          // Clear absolute Close when the canvas spans near the header edge.
+          showClose ? 'max-[1499px]:pr-16' : '',
+        ].join(' ')}
+      >
         <div className="justify-self-start">
           <AstavLogo />
         </div>
@@ -55,20 +61,24 @@ export function ClientStudioHeader() {
           >
             Uložit
           </button>
-          {showClose ? (
-            <button
-              type="button"
-              data-embed-close=""
-              aria-label="Zavřít Client Studio"
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-embed-action-primary text-[1.35rem] leading-none text-embed-action-onPrimary transition-opacity hover:opacity-90"
-            >
-              <span aria-hidden="true" className="text-embed-action-onPrimary">
-                ×
-              </span>
-            </button>
-          ) : null}
         </div>
       </div>
+
+      {showClose ? (
+        <button
+          type="button"
+          data-embed-close=""
+          aria-label="Zavřít Client Studio"
+          className="absolute right-section top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-embed-action-primary text-embed-action-onPrimary transition-opacity hover:opacity-90"
+        >
+          <span
+            aria-hidden="true"
+            className="block translate-y-[-0.05em] text-[2rem] font-bold leading-none text-embed-action-onPrimary"
+          >
+            ×
+          </span>
+        </button>
+      ) : null}
     </header>
   );
 }
