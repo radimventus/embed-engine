@@ -16,11 +16,16 @@ function buildMediaKey(
   activeRoomId: string | null,
   activeMediaSrc: string | null,
 ): string {
-  if (mediaMode === 'photo' && activeMediaSrc !== null) {
+  if (mediaMode === 'photo' && activeMediaSrc !== null && activeMediaSrc.length > 0) {
     return `photo|${activeRoomId ?? 'none'}|${activeMediaSrc}`;
   }
 
-  if (mediaMode === 'video' && activeRoomId !== null && activeMediaSrc !== null) {
+  if (
+    mediaMode === 'video' &&
+    activeRoomId !== null &&
+    activeMediaSrc !== null &&
+    activeMediaSrc.length > 0
+  ) {
     return `video|${activeRoomId}|${activeMediaSrc}`;
   }
 
@@ -33,7 +38,11 @@ function parsePhotoSrc(displayKey: string): string | null {
   }
 
   const parts = displayKey.split('|');
-  return parts[2] ?? null;
+  const src = parts.slice(2).join('|');
+  if (src.length === 0 || src === 'null' || src === 'undefined') {
+    return null;
+  }
+  return src;
 }
 
 /**
@@ -105,8 +114,11 @@ export function MainMedia() {
     }
   }, [mediaMode, mode, videoKey, videoSrc]);
 
-  const photoSrc = parsePhotoSrc(displayKey);
-  const showPhoto = mediaMode === 'photo' && photoSrc !== null;
+  const photoSrc =
+    parsePhotoSrc(displayKey) ??
+    (mediaMode === 'photo' ? activeMediaSrc : null);
+  const showPhoto =
+    mediaMode === 'photo' && photoSrc !== null && photoSrc.length > 0;
   const isWistiaVideo =
     mediaMode === 'video' && !showPhoto && isWistiaEmbedUrl(videoSrc);
   const showPlayControl =

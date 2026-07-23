@@ -6,7 +6,6 @@ import type { JourneySurfaceId } from './types';
 
 const SURFACE_IDS: readonly JourneySurfaceId[] = [
   PILOT_SECTION_IDS.hero,
-  PILOT_SECTION_IDS.propertyExplorer,
   PILOT_SECTION_IDS.walkthrough,
   PILOT_SECTION_IDS.priority,
   PILOT_SECTION_IDS.aiAdvisor,

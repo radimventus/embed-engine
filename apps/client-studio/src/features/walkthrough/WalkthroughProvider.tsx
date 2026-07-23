@@ -3,6 +3,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -71,6 +72,19 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const [mediaMode, setMediaModeState] = useState<MediaMode>('video');
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [mode, setMode] = useState<WalkthroughState['mode']>('ready');
+  const previousRoomIdRef = useRef<string | null>(activeRoomId);
+
+  useEffect(() => {
+    // Selecting a room (menu or SVG) must leave VIDEO and show that room’s photo.
+    if (
+      activeRoomId !== null &&
+      previousRoomIdRef.current !== activeRoomId
+    ) {
+      setMediaModeState('photo');
+      setMode('ready');
+    }
+    previousRoomIdRef.current = activeRoomId;
+  }, [activeRoomId]);
 
   useEffect(() => {
     // Photo mode must never land on a video URL rendered as <img> (BUG-001).

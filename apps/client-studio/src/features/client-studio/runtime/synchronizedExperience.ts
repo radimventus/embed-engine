@@ -221,14 +221,50 @@ function projectRoomContext(
   experience: SessionExperience,
 ): ContextualActiveRoom {
   const fallbackHero = houseFallbackHero(experience);
-  const gallery = projectHouseGallery(experience);
-  const videos = projectHouseVideos(experience);
   const documents = projectHouseDocuments(experience);
+  const mediaRoom = getMediaRoom(room.id);
+
+  const gallery: readonly ProjectedMediaAsset[] =
+    mediaRoom !== null && mediaRoom.photos.length > 0
+      ? Object.freeze(
+          mediaRoom.photos.map((url, index) => {
+            const resolved = resolvePublicAssetUrl(url);
+            return Object.freeze({
+              id: `${room.id}-photo-${index}`,
+              kind: 'image' as const,
+              url: resolved,
+              thumbnailUrl: resolved,
+              title: room.name,
+            });
+          }),
+        )
+      : projectHouseGallery(experience);
+
+  const videos: readonly ProjectedMediaAsset[] =
+    mediaRoom !== null && mediaRoom.videoSrc.length > 0
+      ? Object.freeze([
+          Object.freeze({
+            id: `${room.id}-video`,
+            kind: 'video' as const,
+            url: resolvePublicAssetUrl(mediaRoom.videoSrc),
+            thumbnailUrl: resolvePublicAssetUrl(
+              mediaRoom.heroSrc || mediaRoom.photos[0] || mediaRoom.videoSrc,
+            ),
+            title: room.name,
+          }),
+        ])
+      : projectHouseVideos(experience);
 
   const heroMedia =
-    gallery.find((asset) => asset.id === 'hero-image') ??
-    gallery[0] ??
-    fallbackHero;
+    mediaRoom !== null && mediaRoom.heroSrc.length > 0
+      ? Object.freeze({
+          id: `${room.id}-hero`,
+          kind: 'image' as const,
+          url: resolvePublicAssetUrl(mediaRoom.heroSrc),
+          thumbnailUrl: resolvePublicAssetUrl(mediaRoom.heroSrc),
+          title: room.name,
+        })
+      : (gallery[0] ?? fallbackHero);
 
   const thumbnails: HousePackageMediaItem[] = [
     ...videos.map((video) => ({

@@ -59,15 +59,20 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     );
     assert.match(
       living.context.roomMedia.heroUrl ?? '',
-      /\/reference-house\/assets\/media\//,
+      /\/house-package\/media\/living-room\//,
     );
     assert.ok(
-      (living.context.roomMedia.gallery?.length ?? 0) >= 15,
-      'Tour gallery must expose Reference House Package photos',
+      (living.context.roomMedia.gallery?.length ?? 0) >= 3,
+      'Tour gallery must expose room-scoped house-package photos',
     );
     assert.ok(
       (living.context.roomMedia.videos?.length ?? 0) >= 1,
-      'Tour must expose Reference House Package video',
+      'Tour must expose room-scoped house-package video',
+    );
+    assert.match(
+      living.context.roomMedia.thumbnails.find((item) => item.kind === 'photo')
+        ?.src ?? '',
+      /\/house-package\/media\/living-room\//,
     );
   });
 
@@ -202,10 +207,20 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
 
     assert.ok(media.heroMedia !== null);
     assert.ok(Array.isArray(media.gallery));
-    assert.ok(media.gallery.length >= 15);
+    assert.ok(
+      media.gallery.length >= 3,
+      'Room-scoped kitchen gallery from house-package',
+    );
     assert.ok(Array.isArray(media.videos));
     assert.ok(media.videos.length >= 1);
-    assert.match(media.videos[0]?.url ?? '', /wistia\.net/);
+    assert.match(
+      media.videos[0]?.url ?? '',
+      /\/house-package\/media\/kitchen\/video\.mp4$/,
+    );
+    assert.match(
+      media.gallery[0]?.url ?? '',
+      /\/house-package\/media\/kitchen\//,
+    );
     assert.ok(Array.isArray(media.documents));
     assert.ok(media.documents.length >= 1);
     assert.ok(Array.isArray(media.thumbnails));

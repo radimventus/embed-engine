@@ -47,7 +47,6 @@ export type PilotSectionId =
 /** Ordered shell navigation — labels are Czech, customer-facing. */
 export const PILOT_SECTION_NAV = [
   { id: PILOT_SECTION_IDS.hero, label: 'Úvod', short: 'Ú' },
-  { id: PILOT_SECTION_IDS.propertyExplorer, label: 'Objekt', short: 'O' },
   { id: PILOT_SECTION_IDS.walkthrough, label: 'Prohlídka', short: 'D' },
   { id: PILOT_SECTION_IDS.priority, label: 'Priority', short: 'P' },
   { id: PILOT_SECTION_IDS.aiAdvisor, label: 'AI poradce', short: 'A' },

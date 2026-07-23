@@ -23,24 +23,63 @@ const CHEVRON_COLUMN_PX = 48;
 const MAX_VIEWPORT_WIDTH_PX =
   SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX - CHEVRON_COLUMN_PX * 2;
 
-const IDEAL_VIEWPORT_WIDTH_PX =
-  THUMBNAIL_SLOT_COUNT * SPATIAL_TERMINAL_THUMBNAIL_WIDTH_PX +
-  (THUMBNAIL_SLOT_COUNT - 1) * THUMB_GAP_PX;
-
-const THUMBNAIL_VIEWPORT_WIDTH_PX = Math.min(IDEAL_VIEWPORT_WIDTH_PX, MAX_VIEWPORT_WIDTH_PX);
-
-const THUMB_WIDTH_PX = Math.floor(
-  (THUMBNAIL_VIEWPORT_WIDTH_PX - (THUMBNAIL_SLOT_COUNT - 1) * THUMB_GAP_PX) /
+const FITTED_THUMB_WIDTH_PX = Math.floor(
+  (Math.min(
+    THUMBNAIL_SLOT_COUNT * SPATIAL_TERMINAL_THUMBNAIL_WIDTH_PX +
+      (THUMBNAIL_SLOT_COUNT - 1) * THUMB_GAP_PX,
+    MAX_VIEWPORT_WIDTH_PX,
+  ) -
+    (THUMBNAIL_SLOT_COUNT - 1) * THUMB_GAP_PX) /
     THUMBNAIL_SLOT_COUNT,
 );
 
-const SLOT_STEP_PX = THUMB_WIDTH_PX + THUMB_GAP_PX;
+/** Viewport shows exactly four full thumbnails — no partial fifth. */
+const THUMBNAIL_VIEWPORT_WIDTH_PX =
+  THUMBNAIL_SLOT_COUNT * FITTED_THUMB_WIDTH_PX +
+  (THUMBNAIL_SLOT_COUNT - 1) * THUMB_GAP_PX;
+
+const SLOT_STEP_PX = FITTED_THUMB_WIDTH_PX + THUMB_GAP_PX;
 
 /** Same gold as SpatialZoomControl loupe (`#D4AF37`). */
 const LOUPE_GOLD = '#D4AF37';
 
 /** Video is index 0 — FOTKY shifts the rail by one slot so the first photo leads. */
 const PHOTO_MODE_SLOT_OFFSET = 1;
+
+/**
+ * Scroll so the two most relevant thumbnails sit in the center pair of the
+ * 4-slot viewport (slots 1–2).
+ */
+function scrollRelevantToCenter(
+  scrollToSlot: (slot: number, behavior?: ScrollBehavior) => void,
+  roomMediaItems: readonly { kind: string }[],
+  mediaMode: string,
+): void {
+  const relevantIndices: number[] = [];
+  for (let index = 0; index < roomMediaItems.length; index += 1) {
+    const item = roomMediaItems[index];
+    if (item === undefined) {
+      continue;
+    }
+    if (mediaMode === 'photo' && item.kind !== 'photo') {
+      continue;
+    }
+    relevantIndices.push(index);
+    if (relevantIndices.length >= 2) {
+      break;
+    }
+  }
+
+  if (relevantIndices.length === 0) {
+    scrollToSlot(mediaMode === 'photo' ? PHOTO_MODE_SLOT_OFFSET : 0, 'smooth');
+    return;
+  }
+
+  const firstRelevant = relevantIndices[0] ?? 0;
+  // Viewport slots: [s, s+1, s+2, s+3] — center pair is s+1, s+2.
+  const startSlot = Math.max(0, firstRelevant - 1);
+  scrollToSlot(startSlot, 'smooth');
+}
 
 const THUMBNAIL_RAIL_ROW_CLASS = `box-border w-full min-w-0 shrink-0 ${SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS}`;
 
@@ -116,19 +155,14 @@ export function ThumbnailRail() {
     SLOT_STEP_PX,
   );
 
-  /** VIDEO → slot 0 (video first left); FOTKY → shift one slot (video exits left). */
+  /** On room / mode change: show four full thumbs with two relevant centered. */
   useEffect(() => {
     if (itemCount === 0) {
       return;
     }
 
-    if (mediaMode === 'video') {
-      scrollToSlot(0, 'smooth');
-      return;
-    }
-
-    scrollToSlot(PHOTO_MODE_SLOT_OFFSET, 'smooth');
-  }, [activeRoomId, itemCount, mediaMode, scrollToSlot]);
+    scrollRelevantToCenter(scrollToSlot, roomMediaItems, mediaMode);
+  }, [activeRoomId, itemCount, mediaMode, roomMediaItems, scrollToSlot]);
 
   const setThumbRef = useCallback((mediaIndex: number) => {
     return (element: HTMLButtonElement | null) => {
@@ -157,7 +191,7 @@ export function ThumbnailRail() {
               <div
                 key={index}
                 className="rounded-[8px] border border-embed-border-default bg-embed-background-tertiary/60"
-                style={{ width: THUMB_WIDTH_PX, height: 80 }}
+                style={{ width: FITTED_THUMB_WIDTH_PX, height: 80 }}
               />
             ))}
           </div>
@@ -167,7 +201,8 @@ export function ThumbnailRail() {
     );
   }
 
-  const trackWidthPx = itemCount * THUMB_WIDTH_PX + Math.max(0, itemCount - 1) * THUMB_GAP_PX;
+  const trackWidthPx =
+    itemCount * FITTED_THUMB_WIDTH_PX + Math.max(0, itemCount - 1) * THUMB_GAP_PX;
 
   return (
     <div
@@ -210,7 +245,10 @@ export function ThumbnailRail() {
                       ? 'border-embed-brand-gold'
                       : 'border-embed-border-default hover:border-embed-brand-gold/50'
                   }`}
-                  style={{ width: THUMB_WIDTH_PX, minWidth: THUMB_WIDTH_PX }}
+                  style={{
+                    width: FITTED_THUMB_WIDTH_PX,
+                    minWidth: FITTED_THUMB_WIDTH_PX,
+                  }}
                   onClick={() => selectMediaIndex(mediaIndex)}
                 >
                   {item.kind === 'video' ? (

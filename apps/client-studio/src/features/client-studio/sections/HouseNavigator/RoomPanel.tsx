@@ -3,6 +3,7 @@ import { useHouseNavigator } from './useHouseNavigator';
 /**
  * Runtime-driven room list for the active floor (CSCB-03).
  * Highlight derives solely from projected activeRoomId.
+ * PT-TOUR-REDESIGN-01: compact rows (~−12%), navy default label color.
  */
 export function RoomPanel() {
   const { floorRooms, isRoomActive, selectRoom, selectedFloor } =
@@ -24,10 +25,10 @@ export function RoomPanel() {
             aria-pressed={active}
             data-room-id={room.id}
             data-active={active ? 'true' : 'false'}
-            className={`min-h-11 w-full rounded-[8px] border-l-2 border-transparent py-2.5 pl-3 pr-2 text-left text-sm tracking-wide transition-colors duration-[125ms] ease-out touch-manipulation ${
+            className={`min-h-[39px] w-full rounded-[8px] border-l-2 border-transparent py-2 pl-3 pr-2 text-left text-sm tracking-wide transition-colors duration-[125ms] ease-out touch-manipulation ${
               active
                 ? 'bg-[#E8E5E0] font-semibold text-[#001930]'
-                : 'font-normal text-embed-foreground-primary/45 hover:bg-[#001930] hover:text-[#FFFFFF]'
+                : 'font-normal text-[#001930] hover:bg-[#001930] hover:text-[#FFFFFF]'
             }`}
             onClick={() => selectRoom(room.id)}
           >
