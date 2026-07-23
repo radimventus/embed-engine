@@ -5,10 +5,12 @@ import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { projectTerminalPresentation } from '../../runtime/projectTerminalPresentation';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
+import { PRIORITY_ENGINE_DECISION_REPORT_MAX_HEIGHT_PX } from '../PriorityEngine/priority-engine-layout';
 
 /**
  * Decision Report — structured Terminal presentation (Experience Integration Pack 1).
  * Pure renderer with Czech presentation mapping — no semantic invention.
+ * Max height constrained for Priority composition (PT-PRIORITY-REDESIGN-01).
  */
 export function DecisionReport() {
   const { experience } = useDecisionSessionRuntime();
@@ -19,7 +21,8 @@ export function DecisionReport() {
 
   return (
     <article
-      className={`mt-section ${SECTION_SURFACE_CLASS} p-section`}
+      className={`mt-section overflow-y-auto ${SECTION_SURFACE_CLASS} p-section`}
+      style={{ maxHeight: PRIORITY_ENGINE_DECISION_REPORT_MAX_HEIGHT_PX }}
       data-terminal-id={view.id}
       data-testid="decision-report"
       aria-label="Report rozhodnutí"

@@ -26,7 +26,7 @@ export function PriorityCards({
     <div className="flex min-w-0 flex-col self-start">
       <div
         aria-label="Katalog priorit"
-        className="grid w-full max-w-[685px] grid-cols-5 justify-items-center overflow-visible mobile:grid-cols-2 tablet:grid-cols-3"
+        className="grid w-full max-w-[685px] grid-cols-5 justify-items-center overflow-visible mobile:grid-cols-2"
         style={{ gap: DECISION_GRID_GAP_PX }}
       >
         {categories.map((category) => {

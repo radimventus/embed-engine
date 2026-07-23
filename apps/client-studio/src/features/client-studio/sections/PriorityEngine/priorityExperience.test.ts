@@ -72,12 +72,17 @@ describe('Priority Experience (CSCB-04)', () => {
     }
   });
 
-  it('exposes intensity control and progressive selection chrome', () => {
+  it('exposes intensity control and 5-column priority grid', () => {
     assert.ok(readdirSync(here).includes('DecisionSlider.tsx'));
     const header = read('SectionHeader.tsx');
-    assert.match(header, /selectedCount/);
-    assert.match(header, /minimumMet/);
+    assert.match(header, /minimumSelection/);
+    assert.equal(header.includes('Vybráno'), false);
     const cards = read('PriorityCards.tsx');
+    assert.match(cards, /grid-cols-5/);
     assert.match(cards, /mobile:grid-cols-2/);
+    assert.equal(cards.includes('tablet:grid-cols-3'), false);
+    const layout = read('decision-cards-layout.ts');
+    assert.match(layout, /DECISION_GRID_GAP_PX = 22/);
+    assert.match(layout, /border-\[#D4AF37\]/);
   });
 });

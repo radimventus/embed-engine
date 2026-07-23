@@ -1,6 +1,9 @@
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { projectDecisionPresentation } from '../../runtime/projectDecisionPresentation';
-import { PRIORITY_ENGINE_INTRO_PANEL_CLASS } from '../PriorityEngine/priority-engine-layout';
+import {
+  PRIORITY_ENGINE_INTRO_HEIGHT_PX,
+  PRIORITY_ENGINE_INTRO_PANEL_CLASS,
+} from '../PriorityEngine/priority-engine-layout';
 import { DecisionDrivers } from './DecisionDrivers';
 import { DecisionStoryPanel } from './DecisionStoryPanel';
 import { DecisionSummary } from './DecisionSummary';
@@ -12,6 +15,7 @@ import { OutcomeCards } from './OutcomeCards';
  * First view: Summary → Drivers → Trade-offs.
  * Story / Moves remain available via progressive disclosure (Runtime order).
  * Pure projection — no interpretation, ranking, or composition.
+ * Height matches two Priority card rows (PT-PRIORITY-REDESIGN-01).
  */
 export function DecisionTerminal() {
   const { experience } = useDecisionSessionRuntime();
@@ -26,7 +30,8 @@ export function DecisionTerminal() {
 
   return (
     <aside
-      className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} max-h-[70vh] overflow-y-auto mobile:max-h-none`}
+      className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} mobile:h-auto mobile:max-h-none`}
+      style={{ height: PRIORITY_ENGINE_INTRO_HEIGHT_PX }}
       data-terminal-id={view.terminalId}
       data-testid="decision-terminal"
       aria-label="Rozhodovací terminál"
