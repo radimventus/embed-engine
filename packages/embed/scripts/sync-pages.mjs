@@ -82,7 +82,7 @@ function writeIndexHtml(version) {
   </ul>
   <h2>Usage (Launcher Mode — partner default)</h2>
   <pre>&lt;button type="button" id="open-client-studio"&gt;Prozkoumat dům&lt;/button&gt;
-&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js"&gt;&lt;/script&gt;
+&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=ux-01"&gt;&lt;/script&gt;
 &lt;script&gt;
   Embed.mount({
     mode: "launcher",
@@ -92,6 +92,7 @@ function writeIndexHtml(version) {
   });
 &lt;/script&gt;</pre>
   <p>No inline Client Studio on load — CTA arms the Launcher. Hosts that already serve <code>/media</code> may omit <code>assetBase</code>.</p>
+  <p>After publishing a new IIFE, bump the <code>?v=</code> query (or hard-refresh) so hosts are not stuck on a cached bundle.</p>
   <p>Inline / Standalone (explicit): <code>Embed.mount({ target: "#embed", objectId: "house-modern-01" })</code></p>
   <p>Legacy Garden (explicit opt-in only): <code>Embed.mount({ target: "#embed", fixture: "garden" })</code></p>
 </body>
@@ -194,7 +195,7 @@ function writeLiveHtml() {
     <p class="host-filler">Ještě jeden blok, aby stránka byla delší než viewport.</p>
   </main>
 
-  <script src="./embed.iife.js"></script>
+  <script src="./embed.iife.js?v=ux-01"></script>
   <script>
     Embed.mount({
       mode: "launcher",
