@@ -1,8 +1,8 @@
 # PT-VERIFY-UX-01 — Acceptance Validation Failure
 
-**Status:** ROOT CAUSE FOUND · ACTIVATION REQUIRED  
+**Status:** ROOT CAUSE CONFIRMED · PUBLISHED (`f75b8eb` on Pages branch)  
 **Date:** 2026-07-23  
-**Related:** `d31d046` (`feat(ux): polish landing reveal and unify experience header`)
+**Related:** `d31d046` (implementation) · `f75b8eb` (activation)
 
 ---
 
