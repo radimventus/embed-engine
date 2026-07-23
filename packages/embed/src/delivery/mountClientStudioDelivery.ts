@@ -21,7 +21,7 @@ export type ClientStudioDeliverySession = EmbedSession & {
  */
 export function bootstrapClientStudioDelivery(
   host: HTMLElement,
-  options: EmbedProductionMountOptions,
+  options: Pick<EmbedProductionMountOptions, "objectId" | "assetBase">,
 ): ClientStudioDeliverySession {
   ensureClientStudioStyles();
 

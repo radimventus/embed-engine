@@ -1,6 +1,6 @@
 /**
- * Embed demo — production Delivery Layer → Client Studio.
- * Uses Vite alias for Client Studio mount + inlined styles.
+ * Embed demo — Launcher Mode foundation (LRI-01).
+ * Partner-like host page → CTA → Delivery overlay → Client Studio.
  */
 
 import clientStudioCss from "../../../apps/client-studio/src/index.css?inline";
@@ -11,8 +11,14 @@ import { registerClientStudioCss } from "../src/delivery/ensureStyles";
 registerClientStudioCss(clientStudioCss);
 
 Embed.mount({
-  target: "#demo",
+  mode: "launcher",
+  launcher: "#open-client-studio",
   objectId: "house-modern-01",
+  hostId: "embed-demo-host",
+  entryPoint: "hero-cta",
+  launcherId: "open-client-studio",
 });
 
-console.info(`Embed Loader ${Embed.version} mounted (Client Studio)`);
+console.info(
+  `Embed Loader ${Embed.version} — Launcher armed (click #open-client-studio)`,
+);

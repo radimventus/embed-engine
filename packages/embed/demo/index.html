@@ -3,20 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Embed Loader MVP — Client Studio</title>
+    <title>Embed — Launcher Overlay Foundation</title>
     <link rel="stylesheet" href="./style.css" />
   </head>
   <body>
     <header class="host-header">
-      <p class="host-eyebrow">Host page</p>
-      <h1>Embed Loader demo</h1>
+      <p class="host-eyebrow">Partner website (host)</p>
+      <h1>Reference House</h1>
       <p>
-        Production mount:
-        <code>Embed.mount({ target, objectId })</code>
-        → Client Studio.
+        Experience Launcher → Delivery overlay → Client Studio → Runtime.
+        Host chrome stays underneath; Close restores this page.
       </p>
     </header>
-    <div id="demo"></div>
+
+    <main class="host-main">
+      <section class="host-hero" id="host-hero">
+        <h2>Prozkoumejte dům v Client Studio</h2>
+        <p>
+          Kliknutím spustíte Experience přes Delivery Layer (Launcher Mode).
+          Reveal / Landing Anchor scroll přijde v dalším PT.
+        </p>
+        <button type="button" id="open-client-studio" class="host-launcher">
+          Otevřít Client Studio
+        </button>
+      </section>
+
+      <section class="host-copy">
+        <p>
+          Tato stránka simuluje partnerský web. Scrollujte dolů, otevřete Studio,
+          zavřete ho — host scroll se musí obnovit.
+        </p>
+        <p class="host-filler">
+          Lorem host content — partner header, footer a layout zůstávají
+          beze změny. Delivery pouze překryje viewport.
+        </p>
+        <p class="host-filler">Další obsah hostitele pro ověření scroll lock / restore.</p>
+        <p class="host-filler">Ještě jeden blok, aby stránka byla delší než viewport.</p>
+      </section>
+    </main>
+
     <script type="module" src="./main.ts"></script>
   </body>
 </html>

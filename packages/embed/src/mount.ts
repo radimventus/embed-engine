@@ -1,7 +1,8 @@
 /**
  * Embed.mount — public entry.
  *
- * Production: Delivery Layer → Object Package → Runtime → ClientStudioApp.
+ * Production inline: Delivery Layer → Object Package → Runtime → ClientStudioApp.
+ * Production launcher: bind Experience Launcher → Launch on click → overlay Delivery.
  * Legacy: explicit `fixture: "garden"` or `experience` → Priority HTML renderer.
  */
 
@@ -11,36 +12,57 @@ import {
   isLegacyExperienceMount,
   isLegacyGardenMount,
   isProductionMount,
+  resolveExperienceMode,
+  toLaunchContext,
   type EmbedMountOptions,
+  type EmbedProductionMountOptions,
 } from "./delivery/types";
 import { resolveEngineEvents, resolveJourneyFixture } from "./fixtures";
-import { getActiveSession, setActiveSession } from "./session";
-import { unmount } from "./unmount";
+import { bindExperienceLauncher } from "./launcher/bindExperienceLauncher";
+import { setActiveSession } from "./session";
+import { teardownEmbed } from "./teardown";
 
-function resolveTarget(target: string | HTMLElement): HTMLElement {
+function resolveElement(
+  target: string | HTMLElement,
+  label: string,
+): HTMLElement {
   if (typeof target !== "string") {
     return target;
   }
 
   const element = document.querySelector<HTMLElement>(target);
   if (!element) {
-    throw new Error(`Embed.mount: target not found: ${target}`);
+    throw new Error(`Embed.mount: ${label} not found: ${target}`);
   }
   return element;
 }
 
+function resolveLauncherTrigger(options: EmbedProductionMountOptions): HTMLElement {
+  const source = options.launcher ?? options.target;
+  if (source === undefined) {
+    throw new Error(
+      'Embed.mount: Launcher Mode requires `launcher` (or `target`) for the CTA element',
+    );
+  }
+  return resolveElement(source, "launcher");
+}
+
+function resolveInlineTarget(options: EmbedProductionMountOptions): HTMLElement {
+  if (options.target === undefined) {
+    throw new Error('Embed.mount: inline/standalone mode requires `target`');
+  }
+  return resolveElement(options.target, "target");
+}
+
 /**
- * Mount Embed into a host element.
+ * Mount Embed into a host element, or arm an Experience Launcher.
  * Replaces any previously active Embed session.
  */
 export function mount(options: EmbedMountOptions): void {
-  if (getActiveSession()) {
-    unmount();
-  }
-
-  const host = resolveTarget(options.target);
+  teardownEmbed();
 
   if (isLegacyGardenMount(options) || isLegacyExperienceMount(options)) {
+    const host = resolveElement(options.target, "target");
     const fixture = resolveJourneyFixture(options);
     const engineEvents = resolveEngineEvents(options, fixture);
     const session = bootstrapLegacyGardenEmbed(host, fixture, engineEvents);
@@ -49,7 +71,25 @@ export function mount(options: EmbedMountOptions): void {
   }
 
   if (isProductionMount(options)) {
-    const session = bootstrapClientStudioDelivery(host, options);
+    const mode = resolveExperienceMode(options);
+
+    if (mode === "launcher") {
+      const trigger = resolveLauncherTrigger(options);
+      const armed = bindExperienceLauncher({
+        trigger,
+        objectId: options.objectId,
+        assetBase: options.assetBase,
+        launchContext: toLaunchContext(options),
+      });
+      setActiveSession(armed);
+      return;
+    }
+
+    const host = resolveInlineTarget(options);
+    const session = bootstrapClientStudioDelivery(host, {
+      objectId: options.objectId,
+      assetBase: options.assetBase,
+    });
     setActiveSession(session);
     return;
   }

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
 import { Window } from "happy-dom";
 import { Embed } from "./Embed";
+import { teardownEmbed } from "./teardown";
 
 function installDom(): Window {
   const window = new Window({ url: "https://embed.local/" });
@@ -23,13 +24,13 @@ function installDom(): Window {
     writable: true,
   });
 
-  document.body.innerHTML = `<div id="demo"></div>`;
+  document.body.innerHTML = `<div id="demo"></div><button type="button" id="cta">Open</button>`;
   return window;
 }
 
 describe("Embed.mount / Embed.unmount", () => {
   afterEach(() => {
-    Embed.unmount();
+    teardownEmbed();
   });
 
   it("exposes only mount, unmount, and version on the public object", () => {
@@ -85,5 +86,19 @@ describe("Embed.mount / Embed.unmount", () => {
     const root = document.querySelector("[data-embed-root]");
     assert.match(root!.innerHTML, /data-stage="Confirmation"/);
     assert.match(root!.innerHTML, /Zahrada je pro vás podstatná/);
+  });
+
+  it("launcher mode arms the CTA without opening an overlay", () => {
+    installDom();
+    Embed.mount({
+      mode: "launcher",
+      launcher: "#cta",
+      objectId: "house-modern-01",
+    });
+
+    const cta = document.getElementById("cta");
+    assert.ok(cta);
+    assert.equal(cta!.getAttribute("data-embed-launcher"), "");
+    assert.equal(document.querySelector("[data-embed-overlay]"), null);
   });
 });

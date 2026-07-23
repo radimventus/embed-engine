@@ -31,9 +31,58 @@ body {
   color: #4a5c52;
 }
 
+.host-main {
+  width: min(920px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 1rem 0 4rem;
+}
+
+.host-hero {
+  padding: 2rem 0 1.5rem;
+  border-top: 1px solid #e3e3e3;
+}
+
+.host-hero h2 {
+  margin: 0;
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+.host-hero p {
+  margin: 0.75rem 0 1.25rem;
+  color: #4a5c52;
+  max-width: 36rem;
+}
+
+.host-launcher {
+  appearance: none;
+  border: none;
+  background: #001930;
+  color: #f7f6f4;
+  font: inherit;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 0.85rem 1.25rem;
+  cursor: pointer;
+}
+
+.host-launcher:hover {
+  background: #0a2a44;
+}
+
+.host-copy {
+  margin-top: 2rem;
+  color: #4a5c52;
+}
+
+.host-filler {
+  margin-top: 3rem;
+  padding: 2rem 0;
+  border-top: 1px solid #e3e3e3;
+}
+
 /**
- * Production host must not constrain Client Studio width.
- * Canvas is fixed at 1432px; a narrow wrapper collapses the Experience.
+ * Legacy inline demo host (kept for optional inline checks).
  */
 #demo {
   width: 100%;

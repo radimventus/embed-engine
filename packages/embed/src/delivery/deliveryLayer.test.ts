@@ -1,12 +1,57 @@
 import assert from "node:assert/strict";
-import { describe, it } from "node:test";
+import { afterEach, describe, it } from "node:test";
+import { Window } from "happy-dom";
 
-import { resolveObjectPackage, DEFAULT_OBJECT_ID } from "./resolveObjectPackage";
 import { createDeliveryRuntime } from "./createDeliveryRuntime";
+import {
+  captureHostScroll,
+  lockHostScroll,
+  unlockHostScroll,
+} from "./hostScrollLock";
+import { launchExperience } from "./launchExperience";
+import { createOverlaySurface } from "./overlaySurface";
+import { LAUNCHER_DEFAULT_PRESENTATION } from "./presentation";
+import { resolveObjectPackage, DEFAULT_OBJECT_ID } from "./resolveObjectPackage";
 import {
   isLegacyGardenMount,
   isProductionMount,
+  resolveExperienceMode,
 } from "./types";
+
+function installDom(): Window {
+  const window = new Window({ url: "https://embed.local/" });
+  const { document } = window;
+
+  Object.defineProperty(globalThis, "window", {
+    value: window,
+    configurable: true,
+    writable: true,
+  });
+  Object.defineProperty(globalThis, "document", {
+    value: document,
+    configurable: true,
+    writable: true,
+  });
+  Object.defineProperty(globalThis, "HTMLElement", {
+    value: window.HTMLElement,
+    configurable: true,
+    writable: true,
+  });
+
+  document.body.innerHTML = `<div id="demo"></div><button id="cta">Open</button>`;
+  Object.defineProperty(window, "scrollX", { value: 0, configurable: true });
+  Object.defineProperty(window, "scrollY", {
+    value: 120,
+    configurable: true,
+    writable: true,
+  });
+  window.scrollTo = ((x: number, y: number) => {
+    Object.defineProperty(window, "scrollX", { value: x, configurable: true });
+    Object.defineProperty(window, "scrollY", { value: y, configurable: true });
+  }) as typeof window.scrollTo;
+
+  return window;
+}
 
 describe("Embed delivery layer preparation", () => {
   it("resolves the pilot Object Package by default", () => {
@@ -33,5 +78,106 @@ describe("Embed delivery layer preparation", () => {
     );
     assert.equal(isLegacyGardenMount({ target: "#x", fixture: "garden" }), true);
     assert.equal(isProductionMount({ target: "#x", fixture: "garden" }), false);
+  });
+
+  it("resolves Experience Mode defaults for launcher vs inline", () => {
+    assert.equal(resolveExperienceMode({ target: "#x" }), "inline");
+    assert.equal(
+      resolveExperienceMode({ mode: "launcher", launcher: "#cta" }),
+      "launcher",
+    );
+    assert.equal(
+      resolveExperienceMode({ launcher: "#cta", objectId: "house-modern-01" }),
+      "launcher",
+    );
+  });
+});
+
+describe("Delivery overlay surface", () => {
+  afterEach(() => {
+    document.body.replaceChildren();
+    document.body.style.cssText = "";
+    document.documentElement.style.cssText = "";
+  });
+
+  it("creates a fullscreen overlay and restores host scroll on dispose", () => {
+    installDom();
+    const snapshot = captureHostScroll();
+    assert.equal(snapshot.scrollY, 120);
+
+    let closed = false;
+    const overlay = createOverlaySurface({
+      onClose: () => {
+        closed = true;
+      },
+    });
+
+    assert.ok(document.querySelector("[data-embed-overlay]"));
+    assert.ok(document.querySelector("[data-embed-overlay-mount]"));
+    assert.equal(document.body.style.overflow, "hidden");
+
+    const close = document.querySelector<HTMLButtonElement>("[data-embed-close]");
+    assert.ok(close);
+    close!.click();
+    assert.equal(closed, true);
+
+    overlay.dispose();
+    assert.equal(document.querySelector("[data-embed-overlay]"), null);
+    assert.equal(window.scrollY, 120);
+  });
+
+  it("lock/unlock host scroll is idempotent with snapshot", () => {
+    installDom();
+    const snapshot = captureHostScroll();
+    lockHostScroll(snapshot);
+    assert.equal(document.body.style.position, "fixed");
+    unlockHostScroll(snapshot);
+    assert.equal(document.body.style.position, "");
+    assert.equal(window.scrollY, 120);
+  });
+});
+
+describe("Launcher launch failure recovery", () => {
+  afterEach(() => {
+    document.body.replaceChildren();
+    document.body.style.cssText = "";
+    document.documentElement.style.cssText = "";
+  });
+
+  it("bootstrap failure (unknown objectId) restores host without leftover overlay", () => {
+    installDom();
+    assert.throws(
+      () =>
+        launchExperience(
+          {
+            presentation: LAUNCHER_DEFAULT_PRESENTATION,
+            launchContext: { hostKind: "partner-website" },
+            objectId: "does-not-exist",
+          },
+          { onClose: () => undefined },
+        ),
+      /unknown objectId/,
+    );
+    assert.equal(document.querySelector("[data-embed-overlay]"), null);
+    assert.equal(document.body.style.position, "");
+    assert.equal(window.scrollY, 120);
+  });
+
+  it("studio mount failure (Node stub) restores host without leftover overlay", () => {
+    installDom();
+    assert.throws(
+      () =>
+        launchExperience(
+          {
+            presentation: LAUNCHER_DEFAULT_PRESENTATION,
+            launchContext: { hostKind: "partner-website" },
+            objectId: "house-modern-01",
+          },
+          { onClose: () => undefined },
+        ),
+      /Vite bundle/,
+    );
+    assert.equal(document.querySelector("[data-embed-overlay]"), null);
+    assert.equal(document.body.style.position, "");
   });
 });

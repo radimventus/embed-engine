@@ -11,7 +11,9 @@ export type {
   EmbedProductionMountOptions,
   EmbedLegacyMountOptions,
   EmbedLegacyFixtureId,
+  ExperienceMode,
 } from "./delivery/types";
+export type { LaunchContext, ExperiencePresentationConfig } from "./delivery/presentation";
 /** @deprecated Prefer EmbedLegacyFixtureId */
 export type { EmbedFixtureId } from "./fixtures";
 

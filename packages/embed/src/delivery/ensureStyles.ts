@@ -50,6 +50,57 @@ body {
   text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
 }
+[data-embed-overlay] {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  background: #f7f6f4;
+  color: rgb(0 25 48);
+  isolation: isolate;
+}
+[data-embed-overlay-chrome] {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e3e3e3;
+  background: #f7f6f4;
+}
+[data-embed-close] {
+  appearance: none;
+  border: 1px solid #c9c4bc;
+  background: #fff;
+  color: #001930;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 0.5rem 0.85rem;
+  cursor: pointer;
+}
+[data-embed-close]:hover {
+  border-color: #001930;
+}
+[data-embed-overlay-mount] {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+[data-embed-overlay-mount][data-client-studio-root],
+[data-embed-overlay] [data-client-studio-root] {
+  min-height: 100%;
+  height: auto;
+  overflow-x: auto;
+  overflow-y: visible;
+}
 [data-client-studio-root],
 [data-client-studio-root] *,
 [data-client-studio-root] *::before,
