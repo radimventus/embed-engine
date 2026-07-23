@@ -59,7 +59,7 @@ No Vite HMR. Static production assets from `apps/client-studio/reference-build/`
 
 Snapshot of Client Studio at freeze time:
 
-- Hero
+- Hero (**pilot Reference Implementation v1.0** — see [Hero-v1.0.md](./Hero-v1.0.md) / [HERO-V1-FREEZE.md](../architecture/HERO-V1-FREEZE.md))
 - Sidebar / App Shell / layout
 - House Navigator / Media Explorer
 - Priority Experience

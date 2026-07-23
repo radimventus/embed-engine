@@ -8,6 +8,9 @@ import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 /**
  * Opening Decision Surface — Object Discovery (CSCB-02 / SR-002).
  * Hero Card = photo plane + Social Proof (Morning Baseline / PT-HERO-00A).
+ *
+ * Reference Implementation v1.0 — design frozen (PT-HERO-FREEZE-01).
+ * SSOT: docs/architecture/HERO-V1-FREEZE.md
  */
 export function Hero() {
   return (

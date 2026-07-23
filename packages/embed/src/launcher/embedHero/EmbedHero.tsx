@@ -300,8 +300,9 @@ function useCompactLayout(host: HTMLElement | null): boolean {
 }
 
 /**
- * Partner-page projection of the Reference Hero (PT-EMBED-01).
- * Visual identity matches Client Studio / Morning Baseline Hero.
+ * Partner-page projection of Hero Reference Implementation v1.0 (PT-EMBED-01).
+ * Projects Client Studio Hero identity — do not redesign (PT-HERO-FREEZE-01).
+ * SSOT: docs/architecture/HERO-V1-FREEZE.md
  * CTA opens Experience — does not scroll inside Studio.
  */
 export function EmbedHero({ assetBase, onOpenExperience }: EmbedHeroProps) {
