@@ -69,13 +69,15 @@ export function ClientStudioHeader() {
           type="button"
           data-embed-close=""
           aria-label="Zavřít Client Studio"
-          className="absolute right-section top-1/2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-embed-action-primary text-embed-action-onPrimary transition-opacity hover:opacity-90"
+          className="absolute right-section top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-transparent p-0 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-embed-action-primary"
         >
           <span
             aria-hidden="true"
-            className="block translate-y-[-0.05em] text-[2rem] font-bold leading-none text-embed-action-onPrimary"
+            className="grid h-8 w-8 place-items-center overflow-hidden rounded-full bg-embed-action-primary text-embed-action-onPrimary shadow-embed-soft"
           >
-            ×
+            <span className="flex h-[1em] w-[1em] items-center justify-center text-[2rem] font-bold leading-none text-embed-action-onPrimary [translate:0_-0.06em]">
+              ×
+            </span>
           </span>
         </button>
       ) : null}
