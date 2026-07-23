@@ -31,6 +31,8 @@ IIFE size: **456 576 B**
 
 ## Commit
 
-See git tip after this release (must be the commit that contains both LAYOUT sources and `docs/embed/embed.iife.js`).
+**`9f95667`** — `build(embed): publish tour layout fix to pages`
 
-Pages must be built from **that commit**, not from an uncommitted tree.
+Contains LAYOUT-01 sources **and** `docs/embed/embed.iife.js` / `live.html?v=tour-layout-01` in the **same** commit (not built from an uncommitted tree).
+
+Parent: `96b4e8d` (prior tour-01 redesign publish).
