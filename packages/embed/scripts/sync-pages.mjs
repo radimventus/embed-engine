@@ -75,7 +75,8 @@ function writeIndexHtml(version) {
   <h1>Embed Engine distribution</h1>
   <p>Version <strong>${version}</strong> — public artifacts for host pages.</p>
   <ul>
-    <li><a href="./live.html"><strong>Live Launcher</strong></a> — Hero CTA → fullscreen Delivery Overlay</li>
+    <li><a href="./live.html"><strong>Live Launcher</strong></a> — Embed Hero → fullscreen Delivery Overlay</li>
+    <li><a href="./partner-snippet.html"><strong>Partner snippet</strong></a> — copy-paste for DSE / WordPress</li>
     <li><a href="./embed.iife.js"><code>embed.iife.js</code></a> — global <code>Embed</code></li>
     <li><a href="./embed.es.js"><code>embed.es.js</code></a> — ESM</li>
     <li><a href="./version.json"><code>version.json</code></a> — manifest</li>
@@ -180,6 +181,46 @@ function writeLiveHtml() {
   writeFileSync(path.join(pagesDir, "live.html"), html, "utf8");
 }
 
+function writePartnerSnippetHtml() {
+  const html = `<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Partner Embed Snippet — Embed Hero</title>
+  <style>
+    body { margin: 0; font-family: Inter, system-ui, sans-serif; background: #f7f6f4; color: #001930; }
+    main { width: min(1432px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 4rem; }
+    .note { margin-bottom: 1.5rem; color: #4a5c52; max-width: 42rem; line-height: 1.5; }
+    code { background: #fff; padding: 0.1rem 0.35rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <p class="note">
+      Canonical partner integration for <strong>Embed Hero</strong> (PT-INT-01).
+      Paste into WordPress/DSE Custom HTML. Legacy
+      <code>#open-client-studio</code> alone does <em>not</em> project Embed Hero.
+    </p>
+    <div id="embed-hero"></div>
+    <script src="./embed.iife.js?v=embed-01"></script>
+    <script>
+      Embed.mount({
+        mode: "launcher",
+        target: "#embed-hero",
+        objectId: "house-modern-01",
+        assetBase: "https://radimventus.github.io/embed-engine",
+        entryPoint: "hero-cta",
+        launcherId: "embed-hero",
+      });
+    </script>
+  </main>
+</body>
+</html>
+`;
+  writeFileSync(path.join(pagesDir, "partner-snippet.html"), html, "utf8");
+}
+
 function writeNoJekyll() {
   // Ensure GitHub Pages does not process artifacts with Jekyll.
   writeFileSync(path.join(rootDir, "docs/.nojekyll"), "", "utf8");
@@ -202,6 +243,7 @@ for (const file of PUBLIC_FILES) {
 
 writeIndexHtml(versionJson.version);
 writeLiveHtml();
+writePartnerSnippetHtml();
 writeNoJekyll();
 
 // Hero / Object media used by root-absolute `/media/...` URLs (not the full house-package catalog).
@@ -247,6 +289,7 @@ for (const file of PUBLIC_FILES) {
 }
 console.log("  - index.html");
 console.log("  - live.html");
+console.log("  - partner-snippet.html");
 console.log("  - ../.nojekyll");
 if (existsSync(referenceHouseTarget)) {
   console.log("  - ../reference-house/ (Tour assets)");
