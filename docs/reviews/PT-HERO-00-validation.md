@@ -29,7 +29,7 @@ Synchronize the approved Reference Hero (local Morning Baseline at `http://127.0
 |-------------|-----------------|--------|------------|
 | Local 5176 (SoT) | reference | baseline static | n/a |
 | Local `docs/embed/live.html` | PASS (measured on `#hero`) | local IIFE | `hero-00` |
-| GitHub Pages `live.html` | PASS after publish push | Pages IIFE | `hero-00` |
+| GitHub Pages `live.html` | **PASS** (measured 2026-07-23) | Pages IIFE | `hero-00` |
 | Partner Render | PASS when script uses Pages IIFE `?v=hero-00` | same as Pages | must bump `?v=` |
 
 ## Shell features retained on Pages / partner Embed
