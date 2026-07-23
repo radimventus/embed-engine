@@ -82,7 +82,7 @@ function writeIndexHtml(version) {
   </ul>
   <h2>Usage (Launcher Mode — partner default)</h2>
   <pre>&lt;button type="button" id="open-client-studio"&gt;Prozkoumat dům&lt;/button&gt;
-&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=ux-01c"&gt;&lt;/script&gt;
+&lt;script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=ux-01d"&gt;&lt;/script&gt;
 &lt;script&gt;
   Embed.mount({
     mode: "launcher",
@@ -195,7 +195,7 @@ function writeLiveHtml() {
     <p class="host-filler">Ještě jeden blok, aby stránka byla delší než viewport.</p>
   </main>
 
-  <script src="./embed.iife.js?v=ux-01c"></script>
+  <script src="./embed.iife.js?v=ux-01d"></script>
   <script>
     Embed.mount({
       mode: "launcher",
