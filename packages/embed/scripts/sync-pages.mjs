@@ -268,6 +268,17 @@ if (existsSync(mediaSource)) {
   cpSync(mediaSource, mediaTarget, { recursive: true });
 }
 
+// Tour media catalog (`/house-package/...` + assetBase) — room photos/video for Embed IIFE.
+const housePackageSource = path.join(
+  rootDir,
+  "apps/client-studio/public/house-package",
+);
+const housePackageTarget = path.join(rootDir, "docs/house-package");
+if (existsSync(housePackageSource)) {
+  rmSync(housePackageTarget, { recursive: true, force: true });
+  cpSync(housePackageSource, housePackageTarget, { recursive: true });
+}
+
 // Reference House Package assets for Tour (`/reference-house/...` + assetBase).
 const referenceHouseSource = path.join(
   rootDir,
@@ -303,6 +314,9 @@ console.log("  - live.html");
 console.log("  - partner-snippet.html");
 console.log("  - OFFICIAL-PARTNER-SNIPPET.html");
 console.log("  - ../.nojekyll");
+if (existsSync(housePackageTarget)) {
+  console.log("  - ../house-package/ (Tour media catalog)");
+}
 if (existsSync(referenceHouseTarget)) {
   console.log("  - ../reference-house/ (Tour assets)");
 }
