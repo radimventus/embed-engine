@@ -15,6 +15,9 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 | [ADR-011](./ADR-011-core-001-platform-overview.md) | Renumber Cognitive Layer to CORE-101 | Accepted |
 | [ADR-012](./ADR-012-interpretation-first-class-artifact.md) | Interpretation as first-class domain artifact | Accepted |
 | [ADR-013](./ADR-013-room-selection-semantic.md) | Room Selection is Semantic, not Graphical | Accepted |
+| [ADR-014](./ADR-014-experience-launcher.md) | Experience Launcher as default partner entry | Accepted |
+| [ADR-015](./ADR-015-experience-modes-builder.md) | Experience Modes & Builder presentation configuration | Accepted |
+| [ADR-016](./ADR-016-experience-delivery-layer.md) | Experience Delivery Layer | Accepted |
 
 **Platform Theory:** [../pt/README.md](../pt/README.md) (PT-001 Object · PT-002 Interpretation · PT-003 Sessions · PT-004 Decision Story · PT-005 Decision Moves · PT-006 AI Explains · PT-007 Decision Terminal · PT-008 Decision Outcome)
 
