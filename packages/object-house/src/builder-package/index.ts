@@ -6,6 +6,10 @@ export type {
   BuilderPackageImportSuccess,
 } from "./errors";
 export { bpError } from "./errors";
+export {
+  buildBuilderPackageRegistries,
+  type BuilderPackageSources,
+} from "./buildRegistries";
 export { importBuilderHousePackage } from "./importBuilderHousePackage";
 export { parseCsv } from "./parse-csv";
 export type {

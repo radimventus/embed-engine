@@ -1,5 +1,5 @@
 floor,room,name
-P1,exterior,Exteriér
-P1,living-room,Obývací pokoj
-P1,kitchen,Kuchyně
-P2,bedroom,Ložnice
+p1,exterior,Exteriér
+p1,living-room,Obývací pokoj
+p1,kitchen,Kuchyně
+p2,bedroom,Ložnice
