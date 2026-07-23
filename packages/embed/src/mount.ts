@@ -23,9 +23,13 @@ import { setActiveSession } from "./session";
 import { teardownEmbed } from "./teardown";
 
 function resolveElement(
-  target: string | HTMLElement,
+  target: string | HTMLElement | null | undefined,
   label: string,
 ): HTMLElement {
+  if (target == null) {
+    throw new Error(`Embed.mount: ${label} is required`);
+  }
+
   if (typeof target !== "string") {
     return target;
   }

@@ -114,6 +114,7 @@ describe("Delivery overlay surface", () => {
 
     assert.ok(document.querySelector("[data-embed-overlay]"));
     assert.ok(document.querySelector("[data-embed-overlay-mount]"));
+    assert.equal(typeof overlay.mountTarget.setAttribute, "function");
     assert.equal(document.body.style.overflow, "hidden");
 
     const close = document.querySelector<HTMLButtonElement>("[data-embed-close]");
@@ -124,6 +125,29 @@ describe("Delivery overlay surface", () => {
     overlay.dispose();
     assert.equal(document.querySelector("[data-embed-overlay]"), null);
     assert.equal(window.scrollY, 120);
+  });
+
+  it("initializes mount container when ParentNode.append is missing", () => {
+    installDom();
+    const proto = window.Element.prototype as Element & {
+      append?: (...nodes: Node[]) => void;
+    };
+    const original = proto.append;
+    delete proto.append;
+
+    try {
+      const overlay = createOverlaySurface({ onClose: () => undefined });
+      assert.ok(overlay.mountTarget);
+      assert.equal(
+        overlay.mountTarget.getAttribute("data-embed-overlay-mount"),
+        "",
+      );
+      overlay.dispose();
+    } finally {
+      if (original) {
+        proto.append = original;
+      }
+    }
   });
 
   it("lock/unlock host scroll is idempotent with snapshot", () => {

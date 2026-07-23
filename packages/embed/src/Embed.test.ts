@@ -101,4 +101,26 @@ describe("Embed.mount / Embed.unmount", () => {
     assert.equal(cta!.getAttribute("data-embed-launcher"), "");
     assert.equal(document.querySelector("[data-embed-overlay]"), null);
   });
+
+  it("rejects nullish launcher / target instead of mounting into undefined", () => {
+    installDom();
+    assert.throws(
+      () =>
+        Embed.mount({
+          mode: "inline",
+          target: undefined,
+          objectId: "house-modern-01",
+        }),
+      /requires `target`/,
+    );
+    assert.throws(
+      () =>
+        Embed.mount({
+          mode: "launcher",
+          launcher: undefined,
+          objectId: "house-modern-01",
+        }),
+      /requires `launcher`/,
+    );
+  });
 });

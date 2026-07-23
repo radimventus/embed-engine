@@ -68,19 +68,26 @@ export function launchExperience(
 
     overlay = createOverlaySurface({ onClose: options.onClose });
 
+    const mountTarget = overlay.mountTarget;
+    if (mountTarget == null || typeof mountTarget.setAttribute !== "function") {
+      throw new Error(
+        "Embed: launcher mount container is unavailable after overlay initialization",
+      );
+    }
+
     const housePackage = resolveObjectPackage(request.objectId);
     const runtime = createDeliveryRuntime(housePackage);
     const runtimeReady = runtime.getExperience() !== null;
 
     const handle = mountClientStudio({
-      target: overlay.mountTarget,
+      target: mountTarget,
       runtime,
       assetBase: request.assetBase,
     });
     studioDispose = handle.dispose;
 
-    overlay.mountTarget.dataset.experienceMode = request.presentation.mode;
-    overlay.mountTarget.dataset.landingAnchorId =
+    mountTarget.dataset.experienceMode = request.presentation.mode;
+    mountTarget.dataset.landingAnchorId =
       request.presentation.landingAnchorId;
     overlay.root.setAttribute("data-embed-reveal-pending", "");
 
@@ -88,8 +95,8 @@ export function launchExperience(
     const overlayRef = overlay;
 
     void runRevealEngine({
-      studioRoot: overlay.mountTarget,
-      scrollContainer: overlay.mountTarget,
+      studioRoot: mountTarget,
+      scrollContainer: mountTarget,
       runtimeReady,
       configuredLandingAnchorId: request.presentation.landingAnchorId,
       modeDefaultLandingAnchorId: LAUNCHER_DEFAULT_LANDING_ANCHOR,

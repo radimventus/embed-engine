@@ -9,9 +9,20 @@ export type HostScrollSnapshot = {
   readonly htmlOverflow: string;
 };
 
-export function captureHostScroll(): HostScrollSnapshot {
-  const body = document.body;
+function resolveScrollElements(): {
+  readonly body: HTMLElement;
+  readonly html: HTMLElement;
+} {
   const html = document.documentElement;
+  const body = document.body ?? html;
+  if (!body || !html) {
+    throw new Error("Embed: cannot lock host scroll — document is unavailable");
+  }
+  return { body, html };
+}
+
+export function captureHostScroll(): HostScrollSnapshot {
+  const { body, html } = resolveScrollElements();
   return {
     scrollX: window.scrollX,
     scrollY: window.scrollY,
@@ -21,8 +32,7 @@ export function captureHostScroll(): HostScrollSnapshot {
 }
 
 export function lockHostScroll(snapshot: HostScrollSnapshot): void {
-  const body = document.body;
-  const html = document.documentElement;
+  const { body, html } = resolveScrollElements();
   html.style.overflow = "hidden";
   body.style.overflow = "hidden";
   // Preserve visual position while locked.
@@ -34,8 +44,7 @@ export function lockHostScroll(snapshot: HostScrollSnapshot): void {
 }
 
 export function unlockHostScroll(snapshot: HostScrollSnapshot): void {
-  const body = document.body;
-  const html = document.documentElement;
+  const { body, html } = resolveScrollElements();
   body.style.position = "";
   body.style.top = "";
   body.style.left = "";

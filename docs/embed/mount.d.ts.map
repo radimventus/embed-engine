@@ -1,1 +1,1 @@
-{"version":3,"file":"mount.d.ts","sourceRoot":"","sources":["../src/mount.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAIH,OAAO,EAML,KAAK,iBAAiB,EAEvB,MAAM,kBAAkB,CAAC;AAsC1B;;;GAGG;AACH,wBAAgB,KAAK,CAAC,OAAO,EAAE,iBAAiB,GAAG,IAAI,CAqCtD;AAED,YAAY,EAAE,iBAAiB,EAAE,CAAC"}
+{"version":3,"file":"mount.d.ts","sourceRoot":"","sources":["../src/mount.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AAIH,OAAO,EAML,KAAK,iBAAiB,EAEvB,MAAM,kBAAkB,CAAC;AA0C1B;;;GAGG;AACH,wBAAgB,KAAK,CAAC,OAAO,EAAE,iBAAiB,GAAG,IAAI,CAqCtD;AAED,YAAY,EAAE,iBAAiB,EAAE,CAAC"}

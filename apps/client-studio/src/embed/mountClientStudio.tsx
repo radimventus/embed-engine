@@ -23,6 +23,15 @@ export type ClientStudioMountHandle = {
   readonly rootElement: HTMLElement;
 };
 
+function assertMountTarget(target: HTMLElement | null | undefined): HTMLElement {
+  if (target == null || typeof target.setAttribute !== 'function') {
+    throw new Error(
+      'Embed: Client Studio mount target is missing — Delivery Layer must provide a mount container',
+    );
+  }
+  return target;
+}
+
 /**
  * Mount Client Studio into a host element (Embed Delivery Layer).
  * Does not create Runtime — the delivery layer supplies the shared instance.
@@ -30,7 +39,8 @@ export type ClientStudioMountHandle = {
 export function mountClientStudio(
   options: MountClientStudioOptions,
 ): ClientStudioMountHandle {
-  const { target, runtime, assetBase } = options;
+  const { runtime, assetBase } = options;
+  const target = assertMountTarget(options.target);
 
   setPresentationAssetBase(assetBase);
 

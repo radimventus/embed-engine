@@ -4,6 +4,10 @@
  */
 
 import {
+  appendNodes,
+  resolveHostMountParent,
+} from "./hostDocument";
+import {
   captureHostScroll,
   lockHostScroll,
   unlockHostScroll,
@@ -36,10 +40,12 @@ function createCloseControl(onClose: () => void): HTMLButtonElement {
 
 /**
  * Append a viewport-sized overlay above the host page and lock host scroll.
+ * Always creates a dedicated mount container for Client Studio (never reuses Host nodes).
  */
 export function createOverlaySurface(options: {
   readonly onClose: () => void;
 }): OverlaySurface {
+  const mountParent = resolveHostMountParent();
   const scrollSnapshot = captureHostScroll();
   lockHostScroll(scrollSnapshot);
 
@@ -56,15 +62,25 @@ export function createOverlaySurface(options: {
   const mountTarget = document.createElement("div");
   mountTarget.setAttribute(OVERLAY_MOUNT_ATTR, "");
 
-  root.append(chrome, mountTarget);
-  document.body.appendChild(root);
+  appendNodes(root, chrome, mountTarget);
+  mountParent.appendChild(root);
+
+  if (typeof mountTarget.setAttribute !== "function") {
+    if (root.parentNode) {
+      root.parentNode.removeChild(root);
+    }
+    unlockHostScroll(scrollSnapshot);
+    throw new Error("Embed: launcher mount container failed to initialize");
+  }
 
   return {
     root,
     mountTarget,
     scrollSnapshot,
     dispose: () => {
-      root.remove();
+      if (root.parentNode) {
+        root.parentNode.removeChild(root);
+      }
       unlockHostScroll(scrollSnapshot);
     },
   };

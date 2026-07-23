@@ -3,6 +3,8 @@
  * Main Tailwind CSS is registered by the Vite bundle via registerClientStudioCss.
  */
 
+import { appendNodes, resolveHostHead } from "./hostDocument";
+
 let registeredCss: string | null = null;
 let injected = false;
 
@@ -150,19 +152,25 @@ function ensureFonts(): void {
   fontLink.rel = "stylesheet";
   fontLink.href = FONT_HREF;
 
-  document.head.append(preconnectGoogle, preconnectGstatic, fontLink);
+  appendNodes(
+    resolveHostHead(),
+    preconnectGoogle,
+    preconnectGstatic,
+    fontLink,
+  );
 }
 
 function upsertStyle(id: string, css: string): void {
+  const head = resolveHostHead();
   let style = document.getElementById(id) as HTMLStyleElement | null;
   if (!style) {
     style = document.createElement("style");
     style.id = id;
-    document.head.appendChild(style);
+    head.appendChild(style);
   }
   style.textContent = css;
   // Keep Embed styles after host styles so utilities win collisions.
-  document.head.appendChild(style);
+  head.appendChild(style);
 }
 
 /**
