@@ -16,8 +16,8 @@ function stripComments(source: string): string {
     .replace(/^\s*\/\/.*$/gm, '');
 }
 
-describe('Hero Experience (CSCB-02 / SR-002)', () => {
-  it('reads Runtime Context only — no semantic composition', () => {
+describe('Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)', () => {
+  it('reads no Decision composition APIs', () => {
     const files = readdirSync(here).filter(
       (name) => name.endsWith('.tsx') || name.endsWith('.ts'),
     );
@@ -55,23 +55,18 @@ describe('Hero Experience (CSCB-02 / SR-002)', () => {
     }
   });
 
-  it('binds object identity, Runtime Focus, and Decision Entry CTAs', () => {
+  it('binds Morning Baseline reference copy and CTA', () => {
     const content = read('HeroContent.tsx');
-    const entries = read('HeroDecisionEntries.tsx');
+    const cta = read('HeroCTA.tsx');
     const image = read('HeroImage.tsx');
 
-    assert.match(content, /context\.object/);
-    assert.match(content, /hero\.primaryReason/);
-    assert.match(content, /hero-runtime-focus/);
-    assert.match(content, /formatDecisionKeyCs/);
-    assert.match(content, /HeroDecisionEntries/);
-    assert.match(entries, /Prozkoumat dům/);
-    assert.match(entries, /PILOT_SECTION_IDS\.propertyExplorer/);
-    assert.match(entries, /Podívat se na dispozici/);
-    assert.match(entries, /Objevit priority/);
-    assert.match(entries, /PILOT_SECTION_IDS\.floorPlan/);
-    assert.match(entries, /PILOT_SECTION_IDS\.priority/);
-    assert.match(image, /media\.kind === 'video'/);
+    assert.match(content, /MODERN A01/);
+    assert.match(content, /Rodinný dům, kde to dýchá štěstím/);
+    assert.match(content, /HeroCTA/);
+    assert.match(cta, /Podívat se dovnitř/);
+    assert.match(cta, /PILOT_SECTION_IDS\.walkthrough/);
+    assert.match(image, /house-modern-01\/exterior\.webp/);
+    assert.match(image, /animate-hero-photo-veil/);
   });
 
   it('does not mount hardcoded SocialProof on the opening surface', () => {
