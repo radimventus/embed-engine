@@ -14,7 +14,6 @@ export type LaunchContext = {
 
 /**
  * Experience presentation flags interpreted by Delivery (Builder-declared shape).
- * Foundation: Mode + Landing Anchor id only — Reveal deferred.
  */
 export type ExperiencePresentationConfig = {
   readonly mode: "standalone" | "launcher" | "inline";

@@ -49,9 +49,12 @@ export function SocialProof() {
   return (
     <Panel
       as="section"
+      id="social-proof"
+      tabIndex={-1}
       aria-label="Social Proof"
+      data-landing-anchor="social-proof"
       variant="elevated"
-      className="relative grid grid-cols-3 !bg-[#FFFFFF] text-[#001930] mobile:grid-cols-1"
+      className="relative grid scroll-mt-header grid-cols-3 !bg-[#FFFFFF] text-[#001930] mobile:grid-cols-1"
     >
       <div
         aria-hidden="true"

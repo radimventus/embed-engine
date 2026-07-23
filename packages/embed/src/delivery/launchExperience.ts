@@ -1,8 +1,7 @@
 /**
  * Launcher Mode bootstrap — Delivery Pipeline (LRI-01).
  *
- * Launcher → Delivery → Runtime Bootstrap → Client Studio Mount → Active
- * Reveal is a no-op settle (no animation) for this foundation PT.
+ * Launcher → Delivery → Runtime Bootstrap → Client Studio Mount → Reveal → Active
  */
 
 import { mountClientStudio } from "@client-studio/embed-mount";
@@ -10,8 +9,12 @@ import { mountClientStudio } from "@client-studio/embed-mount";
 import type { EmbedSession } from "../bootstrap";
 import { createDeliveryRuntime } from "./createDeliveryRuntime";
 import { ensureClientStudioStyles } from "./ensureStyles";
+import {
+  LAUNCHER_DEFAULT_LANDING_ANCHOR,
+} from "./landingAnchorResolver";
 import type { LaunchRequest } from "./launchRequest";
 import { createOverlaySurface, type OverlaySurface } from "./overlaySurface";
+import { runRevealEngine } from "./revealEngine";
 import { resolveObjectPackage } from "./resolveObjectPackage";
 
 export type LauncherDeliverySession = EmbedSession & {
@@ -25,7 +28,16 @@ export type LauncherArmedSession = EmbedSession & {
   readonly unbind: () => void;
 };
 
-function failSafeDispose(overlay: OverlaySurface | null, studioDispose?: () => void): void {
+function failSafeDispose(
+  overlay: OverlaySurface | null,
+  studioDispose?: () => void,
+  abortReveal?: AbortController,
+): void {
+  try {
+    abortReveal?.abort();
+  } catch {
+    // best-effort
+  }
   try {
     studioDispose?.();
   } catch {
@@ -39,8 +51,9 @@ function failSafeDispose(overlay: OverlaySurface | null, studioDispose?: () => v
 }
 
 /**
- * Execute Launch Request: overlay → Runtime → Studio mount → Active.
+ * Execute Launch Request: overlay → Runtime → Studio mount → Reveal → Active.
  * On bootstrap/runtime/mount failure: dispose partial surface and restore Host.
+ * Reveal runs asynchronously after mount; Close aborts in-flight Reveal.
  */
 export function launchExperience(
   request: LaunchRequest,
@@ -48,6 +61,7 @@ export function launchExperience(
 ): LauncherDeliverySession {
   let overlay: OverlaySurface | null = null;
   let studioDispose: (() => void) | undefined;
+  const revealAbort = new AbortController();
 
   try {
     ensureClientStudioStyles();
@@ -56,6 +70,7 @@ export function launchExperience(
 
     const housePackage = resolveObjectPackage(request.objectId);
     const runtime = createDeliveryRuntime(housePackage);
+    const runtimeReady = runtime.getExperience() !== null;
 
     const handle = mountClientStudio({
       target: overlay.mountTarget,
@@ -64,13 +79,39 @@ export function launchExperience(
     });
     studioDispose = handle.dispose;
 
-    // Reveal deferred — mark Active without Landing Anchor scroll.
-    overlay.root.setAttribute("data-embed-experience-active", "");
+    overlay.mountTarget.dataset.experienceMode = request.presentation.mode;
     overlay.mountTarget.dataset.landingAnchorId =
       request.presentation.landingAnchorId;
-    overlay.mountTarget.dataset.experienceMode = request.presentation.mode;
+    overlay.root.setAttribute("data-embed-reveal-pending", "");
 
     const restoreFocusTo = request.restoreFocusTo ?? null;
+    const overlayRef = overlay;
+
+    void runRevealEngine({
+      studioRoot: overlay.mountTarget,
+      scrollContainer: overlay.mountTarget,
+      runtimeReady,
+      configuredLandingAnchorId: request.presentation.landingAnchorId,
+      modeDefaultLandingAnchorId: LAUNCHER_DEFAULT_LANDING_ANCHOR,
+      signal: revealAbort.signal,
+      onStateChange: (state) => {
+        overlayRef.root.dataset.embedRevealState = state;
+      },
+    })
+      .then((result) => {
+        if (revealAbort.signal.aborted) {
+          return;
+        }
+        overlayRef.root.removeAttribute("data-embed-reveal-pending");
+        overlayRef.root.setAttribute("data-embed-experience-active", "");
+        if (result.degraded) {
+          overlayRef.root.setAttribute("data-embed-reveal-degraded", "");
+        }
+        overlayRef.root.dataset.landingAnchorId = result.anchorId;
+      })
+      .catch(() => {
+        // Aborted or unexpected — Close path owns cleanup.
+      });
 
     return {
       kind: "client-studio-launcher",
@@ -80,7 +121,7 @@ export function launchExperience(
       objectId: housePackage.identity.id,
       overlay,
       dispose: () => {
-        failSafeDispose(overlay, studioDispose);
+        failSafeDispose(overlay, studioDispose, revealAbort);
         if (restoreFocusTo && typeof restoreFocusTo.focus === "function") {
           try {
             restoreFocusTo.focus();
@@ -91,7 +132,7 @@ export function launchExperience(
       },
     };
   } catch (error) {
-    failSafeDispose(overlay, studioDispose);
+    failSafeDispose(overlay, studioDispose, revealAbort);
     throw error;
   }
 }

@@ -32,6 +32,7 @@ export const PILOT_TERMS = {
 /** Section / scroll anchors for the guided Decision Journey (CSCB-01). */
 export const PILOT_SECTION_IDS = {
   hero: 'hero',
+  socialProof: 'social-proof',
   propertyExplorer: 'property-explorer',
   walkthrough: 'walkthrough',
   floorPlan: 'floor-plan',
