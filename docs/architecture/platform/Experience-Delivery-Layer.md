@@ -18,6 +18,9 @@
 
 **Principle:** Delivery **delivers** the Experience. Runtime **means** the Experience. Builder **declares** presentation. Host **starts** the Experience.
 
+**Companion contract:** [EDIC-01 — Experience Delivery Implementation Contract](./Experience-Delivery-Implementation-Contract.md) (Accepted — Launch/Close/Events).  
+**Companion impl. spec:** [LRI-01 — Launcher Runtime Integration](./Launcher-Runtime-Integration-Specification.md) (Accepted — ordered bootstrap / Reveal / Close for Launcher Mode).
+
 ---
 
 ## 1. Purpose
@@ -313,8 +316,10 @@ New Hosts extend **Launch Context** and choose **Mode** + mount target. They do 
 | **ELA-01** | Launcher UX, Landing Anchor, Launch → Reveal → Experience meaning |
 | **EMB-01** | Experience Host catalogue, Modes, Builder config, Launch Context rules |
 | **EDL-01** | Delivery subsystem: lifecycle, states, envelope, mount/dispose, renderer independence |
+| **EDIC-01** | Implementation contracts: Launch/Close API, events, Builder/Studio/Runtime handoffs |
+| **LRI-01** | Ordered Launcher Mode integration: bootstrap, Reveal, Close, acceptance scenario |
 
-Conflicts: prefer **EDL-01** for Delivery state/lifecycle naming; prefer **ELA-01** for user-facing Launch/Reveal/Experience wording; prefer **EMB-01** for Host/Builder/Mode matrix.
+Conflicts: prefer **EDL-01** for Delivery state/lifecycle naming; prefer **ELA-01** for user-facing Launch/Reveal/Experience wording; prefer **EMB-01** for Host/Builder/Mode matrix; prefer **EDIC-01** for implementer message contracts; prefer **LRI-01** for step order in implementation PTs.
 
 ---
 

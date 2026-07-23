@@ -77,6 +77,8 @@ UX lifecycle terms: **Launch → Reveal → Experience** (then Close).
 
 Implementations of Launcher Mode MUST follow [ELA-01](../platform/Experience-Launcher-Architecture.md).
 
+Ordered integration sequencing for implementers: [LRI-01](../platform/Launcher-Runtime-Integration-Specification.md) (Accepted). Implementation contract: [EDIC-01](../platform/Experience-Delivery-Implementation-Contract.md) · [ADR-017](./ADR-017-experience-delivery-implementation-contract.md) (Accepted).
+
 This ADR is **Accepted** as part of the Experience Delivery architecture freeze (with ADR-015 / ADR-016). Implementations of Launcher Mode MUST follow [ELA-01](../platform/Experience-Launcher-Architecture.md).
 
 ---

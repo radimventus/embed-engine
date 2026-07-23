@@ -21,6 +21,8 @@
 
 **Principle:** One Client Studio. One Runtime. **Experience Host** owns where the Experience starts; **Modes** configure how it is presented; neither changes what the Experience means.
 
+**Companion:** [EDL-01](./Experience-Delivery-Layer.md) · [EDIC-01](./Experience-Delivery-Implementation-Contract.md) (Accepted) · [LRI-01](./Launcher-Runtime-Integration-Specification.md) (Accepted).
+
 ---
 
 ## 1. Purpose
@@ -608,5 +610,7 @@ EMB-01 is complete when:
 | **ELA-01** | Launcher concept, Launcher Mode lifecycle detail, Landing Anchor, Launch → Reveal → Experience |
 | **EMB-01** | Experience Host, full mode set, Builder schema, Launch Context, chrome flags |
 | **EDL-01** | Delivery Layer lifecycle, states, Session bootstrap / Envelope, renderer independence |
+| **EDIC-01** | Binding Launch/Close/Event contracts between Builder, Delivery, Studio, Runtime |
+| **LRI-01** | Ordered Launcher Mode bootstrap / Reveal / Close / acceptance scenario |
 
-Conflicts: prefer **EMB-01** for Host/Builder/mode matrix; prefer **ELA-01** for Launcher UX wording; prefer **EDL-01** for Delivery states and bootstrap. This trio is **Accepted** under the Experience Delivery architecture freeze.
+Conflicts: prefer **EMB-01** for Host/Builder/mode matrix; prefer **ELA-01** for Launcher UX wording; prefer **EDL-01** for Delivery states and bootstrap; prefer **EDIC-01** for implementation message contracts; prefer **LRI-01** for step order in implementation PTs.

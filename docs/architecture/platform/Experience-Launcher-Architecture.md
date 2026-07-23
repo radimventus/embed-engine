@@ -20,7 +20,7 @@
 
 **Product driver:** Pilot partner sites already own header, footer, navigation, and layout. Full inline Client Studio collides with host UX. Default entry must be **Launcher → fullscreen Experience**, not permanent inline CS.
 
-**Companion SSOT:** [EMB-01 — Experience Modes & Builder Integration](./Experience-Modes-and-Builder-Integration.md) · [EDL-01 — Experience Delivery Layer](./Experience-Delivery-Layer.md).
+**Companion SSOT:** [EMB-01](./Experience-Modes-and-Builder-Integration.md) · [EDL-01](./Experience-Delivery-Layer.md) · [EDIC-01 — Delivery Implementation Contract](./Experience-Delivery-Implementation-Contract.md) (Accepted) · [LRI-01 — Launcher Runtime Integration](./Launcher-Runtime-Integration-Specification.md) (Accepted).
 
 ---
 

@@ -61,6 +61,9 @@ Today’s Embed mount path is an embryonic Delivery Layer. Without an explicit a
 
 Implementations MUST follow [EDL-01](../platform/Experience-Delivery-Layer.md) and remain consistent with ELA-01 / EMB-01.
 
+Binding Launch/Close/Event message contracts: [EDIC-01](../platform/Experience-Delivery-Implementation-Contract.md) · [ADR-017](./ADR-017-experience-delivery-implementation-contract.md) (Accepted).  
+Launcher Mode sequencing: [LRI-01](../platform/Launcher-Runtime-Integration-Specification.md) (Accepted).
+
 This ADR is **Accepted** as part of the Experience Delivery architecture freeze (with ADR-014 / ADR-015).
 
 ---
