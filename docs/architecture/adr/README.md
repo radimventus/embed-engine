@@ -19,6 +19,7 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 | [ADR-015](./ADR-015-experience-modes-builder.md) | Experience Modes & Builder presentation configuration | Accepted |
 | [ADR-016](./ADR-016-experience-delivery-layer.md) | Experience Delivery Layer | Accepted |
 | [ADR-017](./ADR-017-experience-delivery-implementation-contract.md) | Experience Delivery Implementation Contract | Accepted |
+| [ADR-018](./ADR-018-experience-contract-governance.md) | Experience Contract Governance | Accepted |
 
 **Platform Theory:** [../pt/README.md](../pt/README.md) (PT-001 Object · PT-002 Interpretation · PT-003 Sessions · PT-004 Decision Story · PT-005 Decision Moves · PT-006 AI Explains · PT-007 Decision Terminal · PT-008 Decision Outcome)
 
@@ -26,7 +27,8 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 **Runtime SSOT:** [../../04-reference-implementation/RI-001-Runtime-Kernel.md](../../04-reference-implementation/RI-001-Runtime-Kernel.md) · [../RUNTIME.md](../RUNTIME.md)  
 **Decision Session SSOT:** [../../04-reference-implementation/RI-002-Decision-Session.md](../../04-reference-implementation/RI-002-Decision-Session.md)  
 **Governance freeze:** [../decision-layer/decision-layer-governance-v1.md](../decision-layer/decision-layer-governance-v1.md) · tag `architecture-decision-layer-v1`  
-**Implementation contract:** [../platform/Experience-Delivery-Implementation-Contract.md](../platform/Experience-Delivery-Implementation-Contract.md) (EDIC-01) · [../platform/Launcher-Runtime-Integration-Specification.md](../platform/Launcher-Runtime-Integration-Specification.md) (LRI-01) · [ADR-017](./ADR-017-experience-delivery-implementation-contract.md)
+**Implementation contract:** [../platform/Experience-Delivery-Implementation-Contract.md](../platform/Experience-Delivery-Implementation-Contract.md) (EDIC-01) · [../platform/Launcher-Runtime-Integration-Specification.md](../platform/Launcher-Runtime-Integration-Specification.md) (LRI-01) · [ADR-017](./ADR-017-experience-delivery-implementation-contract.md)  
+**Experience contract governance:** [../platform/Experience-Contract-Governance.md](../platform/Experience-Contract-Governance.md) (ECG-01) · [ADR-018](./ADR-018-experience-contract-governance.md) (Accepted) · Viewport Ownership §9A
 
 **Milestone freezes**
 

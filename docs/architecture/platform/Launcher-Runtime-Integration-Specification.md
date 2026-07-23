@@ -18,6 +18,8 @@
 
 **Governing ADR (contract):** [ADR-017](../adr/ADR-017-experience-delivery-implementation-contract.md) (Accepted)
 
+**Viewport ownership (governance):** [ECG-01 §9A — Viewport Ownership Contract](./Experience-Contract-Governance.md) ([ADR-018](../adr/ADR-018-experience-contract-governance.md) Accepted) — Delivery owns the browser viewport from Launch until Close completion; other layers use declarative requests only. LRI-01 does not redefine that rule.
+
 **Principle:** This document is the **direct input to an implementation PT**. It sequences already-accepted architecture. It introduces **no** new layers, Modes, or domain concepts.
 
 **Scope of this specification:** **Launcher Mode** on an Experience Host (partner website default). Standalone / Inline follow the same Delivery lifecycle with Mode-specific Reveal/Close deltas already defined in EMB-01 — not re-specified here except where needed for contrast.
@@ -45,8 +47,10 @@ and the reverse Close path — without further architectural debate.
 | **Experience Host** | Launch intent, Launch Context, host page chrome | Decision Session, Reveal |
 | **Experience Launcher** | Entry CTA / trigger; may gather mount options | Overlay policy, Runtime domain commands |
 | **Delivery Layer** | Delivery surface, lifecycle, Delivery Envelope, Host lock/restore, Reveal coordination | Domain Interpretation, Journey order |
-| **Client Studio** | Journey UI, Close chrome (Launcher Mode), Landing Anchor cooperation | Overlay ownership, Session factory (when Host-launched) |
-| **Runtime** | Runtime Session + Decision Session (RI-002) | Mode / Host / overlay awareness as meaning |
+| **Client Studio** | Journey UI, Close chrome (Launcher Mode), Landing Anchor cooperation (declarative) | Overlay ownership, Host/browser viewport manipulation, Session factory (when Host-launched) |
+| **Runtime** | Runtime Session + Decision Session (RI-002) | Mode / Host / overlay awareness as meaning; browser viewport manipulation |
+
+**Viewport:** Per [ECG-01 §9A](./Experience-Contract-Governance.md), Delivery is the sole browser-viewport authority from successful Launch until Close completion. Launcher / Studio / Runtime / modules may only issue declarative requests (Reveal, Scroll, Focus, Highlight).
 
 ---
 
@@ -206,6 +210,8 @@ Studio internal scroll is independent of Host scroll. Reveal moves the **Experie
 
 **Rule:** Changing animation technique must not change Launch → Reveal → Experience meaning.
 
+**Ownership:** Reveal settle is a **Delivery** viewport action ([ECG-01 §9A](./Experience-Contract-Governance.md)). Studio cooperates by exposing Landing Anchor targets; it does not perform Host/`window` scroll itself.
+
 ---
 
 ## 6. Session Bootstrap
@@ -267,8 +273,8 @@ Resume Host
 | 1 | **Close Request** | Studio chrome or Host | User: „Zavřít Client Studio“ (left nav + footer; Escape recommended). Host may also request Close. Emit CloseRequested. |
 | 2 | **Freeze Runtime** | Delivery → Runtime | Stop accepting new domain work for this Experience; prepare Session for end. Pilot: **end Session** (no orphaned Session after Dispose). |
 | 3 | **Dispose Delivery** | Delivery | Unmount Client Studio; release overlay surface; emit Disposed. Delivery state → Disposed. |
-| 4 | **Restore Host** | Delivery | Unlock Host scroll; restore captured scroll position; return focus to Launcher control (or documented fallback). |
-| 5 | **Resume Host** | Host | Host page is interactive again. Emit ReturnedToHost. Delivery → Idle. |
+| 4 | **Restore Host** | Delivery | Unlock Host scroll; restore captured scroll position; return focus to Launcher control (or documented fallback). **Release** browser viewport ownership ([ECG-01 §9A](./Experience-Contract-Governance.md)). |
+| 5 | **Resume Host** | Host | Host page is interactive again. Emit ReturnedToHost. Delivery → Idle. Host owns viewport. |
 
 ### 7.3 Close affordances (Launcher Mode — required)
 
@@ -349,6 +355,7 @@ Resume Host
 | Mode defaults, Builder config, Launch Context | ADR-015 / EMB-01 |
 | Delivery phases, Envelope, states | ADR-016 / EDL-01 |
 | Launch/Close/Event message contract | EDIC-01 (companion) |
+| Viewport ownership during Launch→Close | ECG-01 §9A (governance; no architecture change) |
 | Decision Session semantics | RI-002 / ADR-001 |
 
 LRI-01 **sequences** these; it does not replace them.

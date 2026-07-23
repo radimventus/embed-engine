@@ -18,6 +18,8 @@
 
 **Companion sequencing:** [LRI-01 — Launcher Runtime Integration Specification](./Launcher-Runtime-Integration-Specification.md) (Accepted — ordered Launcher Mode bootstrap / Reveal / Close).
 
+**Contract evolution:** [ECG-01 — Experience Contract Governance](./Experience-Contract-Governance.md) · [ADR-018](../adr/ADR-018-experience-contract-governance.md) (Accepted) — versioning, compatibility, deprecation, Viewport Ownership §9A.
+
 **Principle:** This contract is binding for every Delivery implementation. It specifies **what** must be exchanged and **when** — not **how** it is coded.
 
 ---
