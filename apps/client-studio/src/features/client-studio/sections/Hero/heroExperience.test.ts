@@ -69,8 +69,10 @@ describe('Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)', (
     assert.match(image, /animate-hero-photo-veil/);
   });
 
-  it('does not mount hardcoded SocialProof on the opening surface', () => {
+  it('keeps Social Proof inside the Hero card (reference parity)', () => {
     const hero = read('Hero.tsx');
-    assert.equal(hero.includes('SocialProof'), false);
+    assert.match(hero, /SocialProof/);
+    assert.match(hero, /grid-cols-\[minmax\(0,1fr\)_minmax\(0,2fr\)\]/);
+    assert.equal(hero.includes('tablet:grid-cols'), false);
   });
 });

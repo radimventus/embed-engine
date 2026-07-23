@@ -14,7 +14,6 @@ import {
 import { LegacyCommandExperience } from './legacy/LegacyCommandExperience';
 import { AIAdvisor } from './sections/AIAdvisor/AIAdvisor';
 import { Hero } from './sections/Hero/Hero';
-import { SocialProof } from './sections/Hero/SocialProof';
 import { AuditLeadCapture } from './sections/AuditLeadCapture/AuditLeadCapture';
 import { PriorityEngine } from './sections/PriorityEngine/PriorityEngine';
 import { PriorityExperienceProvider } from './sections/PriorityEngine/PriorityExperienceProvider';
@@ -66,7 +65,6 @@ export function ClientStudioPage({
                 />
               ) : null}
               <Hero />
-              <SocialProof />
               <ChapterSpacer />
               <PropertyExplorer />
               <ChapterSpacer />
