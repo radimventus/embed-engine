@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 
 import {
   SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX,
@@ -43,46 +43,7 @@ const SLOT_STEP_PX = FITTED_THUMB_WIDTH_PX + THUMB_GAP_PX;
 /** Same gold as SpatialZoomControl loupe (`#D4AF37`). */
 const LOUPE_GOLD = '#D4AF37';
 
-/** Video is index 0 — FOTKY shifts the rail by one slot so the first photo leads. */
-const PHOTO_MODE_SLOT_OFFSET = 1;
-
-/**
- * Scroll so the two most relevant thumbnails sit in the center pair of the
- * 4-slot viewport (slots 1–2).
- */
-function scrollRelevantToCenter(
-  scrollToSlot: (slot: number, behavior?: ScrollBehavior) => void,
-  roomMediaItems: readonly { kind: string }[],
-  mediaMode: string,
-): void {
-  const relevantIndices: number[] = [];
-  for (let index = 0; index < roomMediaItems.length; index += 1) {
-    const item = roomMediaItems[index];
-    if (item === undefined) {
-      continue;
-    }
-    if (mediaMode === 'photo' && item.kind !== 'photo') {
-      continue;
-    }
-    relevantIndices.push(index);
-    if (relevantIndices.length >= 2) {
-      break;
-    }
-  }
-
-  if (relevantIndices.length === 0) {
-    scrollToSlot(mediaMode === 'photo' ? PHOTO_MODE_SLOT_OFFSET : 0, 'smooth');
-    return;
-  }
-
-  const firstRelevant = relevantIndices[0] ?? 0;
-  // Viewport slots: [s, s+1, s+2, s+3] — center pair is s+1, s+2.
-  const startSlot = Math.max(0, firstRelevant - 1);
-  scrollToSlot(startSlot, 'smooth');
-}
-
 const THUMBNAIL_RAIL_ROW_CLASS = `box-border w-full min-w-0 shrink-0 ${SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS}`;
-
 const THUMB_BASE_CLASS =
   'h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out';
 
@@ -136,33 +97,23 @@ export function ThumbnailRail() {
   const gallery = experience.context.roomMedia;
   const {
     activeMediaIndex,
-    mediaMode,
     isMediaActive,
     selectMediaIndex,
   } = useWalkthrough();
   const scrollRef = useRef<HTMLDivElement>(null);
   const thumbRefs = useRef(new Map<number, HTMLButtonElement>());
 
-  const roomMediaItems = gallery.thumbnails;
-  const activeRoomId = gallery.roomId;
-  const itemCount = roomMediaItems.length;
+  /** Global Media Timeline — identical for every room; only activeIndex changes. */
+  const mediaTimeline = gallery.thumbnails;
+  const itemCount = mediaTimeline.length;
 
   useHorizontalWheelScroll(scrollRef);
   useActiveThumbnailScroll(scrollRef, thumbRefs, activeMediaIndex, itemCount);
-  const { canScrollLeft, canScrollRight, scrollGroup, scrollToSlot } = useThumbnailRailNavigation(
+  const { canScrollLeft, canScrollRight, scrollGroup } = useThumbnailRailNavigation(
     scrollRef,
     itemCount,
     SLOT_STEP_PX,
   );
-
-  /** On room / mode change: show four full thumbs with two relevant centered. */
-  useEffect(() => {
-    if (itemCount === 0) {
-      return;
-    }
-
-    scrollRelevantToCenter(scrollToSlot, roomMediaItems, mediaMode);
-  }, [activeRoomId, itemCount, mediaMode, roomMediaItems, scrollToSlot]);
 
   const setThumbRef = useCallback((mediaIndex: number) => {
     return (element: HTMLButtonElement | null) => {
@@ -230,7 +181,7 @@ export function ThumbnailRail() {
               minWidth: trackWidthPx,
             }}
           >
-            {roomMediaItems.map((item, mediaIndex) => {
+            {mediaTimeline.map((item, mediaIndex) => {
               const active = isMediaActive(mediaIndex);
 
               return (
@@ -238,7 +189,7 @@ export function ThumbnailRail() {
                   key={mediaIndex}
                   ref={setThumbRef(mediaIndex)}
                   type="button"
-                  aria-label={item.kind === 'video' ? 'Video místnosti' : 'Fotografie'}
+                  aria-label={item.kind === 'video' ? 'Video prohlídky' : 'Fotografie'}
                   aria-pressed={active}
                   className={`${THUMB_BASE_CLASS} ${
                     active

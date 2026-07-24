@@ -15,6 +15,7 @@ import type {
 } from '@embed-engine/contracts';
 
 import { useDecisionSessionRuntime } from '../client-studio/runtime/DecisionSessionRuntimeProvider';
+import { firstPhotoTimelineIndexForRoom } from '../client-studio/runtime/experienceHouseMedia';
 import type { ExperienceFloorPlanRoom } from '../client-studio/runtime/synchronizedExperience';
 
 /**
@@ -50,12 +51,18 @@ type WalkthroughProviderProps = {
   children: ReactNode;
 };
 
+function firstPhotoIndex(
+  thumbnails: readonly HousePackageMediaItem[],
+): number {
+  const index = thumbnails.findIndex((item) => item.kind === 'photo');
+  return index >= 0 ? index : 0;
+}
+
 /**
- * Media / navigation chrome adapter (ED-DA-04).
+ * Media / navigation chrome adapter (ED-DA-04 / TOUR-GALLERY-ARCH-01).
  *
- * Transports Experience Context media + local UI chrome (mode / index / play).
- * Mutations go only through Decision Session `dispatch(SelectRoom)`.
- * Does not write cognitive signals or compose Runtime semantics.
+ * The thumbnail strip is the global Media Timeline — immutable.
+ * Only activeMediaIndex / mediaMode / selected room change.
  */
 export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const { experience, dispatch } = useDecisionSessionRuntime();
@@ -75,31 +82,26 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const previousRoomIdRef = useRef<string | null>(activeRoomId);
 
   useEffect(() => {
-    // Selecting a room (menu or SVG) must leave VIDEO and show that room’s photo.
     if (
-      activeRoomId !== null &&
-      previousRoomIdRef.current !== activeRoomId
+      activeRoomId === null ||
+      previousRoomIdRef.current === activeRoomId
     ) {
-      setMediaModeState('photo');
-      setMode('ready');
+      previousRoomIdRef.current = activeRoomId;
+      return;
     }
-    previousRoomIdRef.current = activeRoomId;
-  }, [activeRoomId]);
 
-  useEffect(() => {
-    // Photo mode must never land on a video URL rendered as <img> (BUG-001).
-    if (mediaMode === 'photo') {
-      const firstPhotoIndex = projectedThumbnails.findIndex(
-        (item) => item.kind === 'photo',
-      );
-      setActiveMediaIndex(firstPhotoIndex >= 0 ? firstPhotoIndex : 0);
-    } else {
-      setActiveMediaIndex(0);
-    }
+    previousRoomIdRef.current = activeRoomId;
+    setMediaModeState('photo');
     setMode('ready');
-    // Reset only on room / mode change — not on every thumbnail reorder.
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- projectedThumbnails read intentionally
-  }, [activeRoomId, mediaMode]);
+
+    const roomPhotoIndex = firstPhotoTimelineIndexForRoom(
+      experience.house,
+      activeRoomId,
+    );
+    setActiveMediaIndex(
+      roomPhotoIndex ?? firstPhotoIndex(projectedThumbnails),
+    );
+  }, [activeRoomId, experience.house, projectedThumbnails]);
 
   const value = useMemo((): WalkthroughContextValue => {
     const roomMediaItems = projectedThumbnails;
@@ -130,9 +132,22 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       },
       selectMediaIndex: (mediaIndex: number) => {
         setActiveMediaIndex(mediaIndex);
+        const item = roomMediaItems[mediaIndex];
+        if (item?.kind === 'video') {
+          setMediaModeState('video');
+        } else if (item?.kind === 'photo') {
+          setMediaModeState('photo');
+        }
+        setMode('ready');
       },
       setMediaMode: (nextMode: MediaMode) => {
         setMediaModeState(nextMode);
+        setMode('ready');
+        if (nextMode === 'video') {
+          setActiveMediaIndex(0);
+          return;
+        }
+        setActiveMediaIndex(firstPhotoIndex(roomMediaItems));
       },
     };
   }, [

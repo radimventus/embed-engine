@@ -14,20 +14,18 @@ import { SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS } from '../spatial-terminal-layou
 function buildMediaKey(
   mediaMode: string,
   mode: string,
-  activeRoomId: string | null,
   activeMediaSrc: string | null,
 ): string {
   if (mediaMode === 'photo' && activeMediaSrc !== null && activeMediaSrc.length > 0) {
-    return `photo|${activeRoomId ?? 'none'}|${activeMediaSrc}`;
+    return `photo|${activeMediaSrc}`;
   }
 
   if (
     mediaMode === 'video' &&
-    activeRoomId !== null &&
     activeMediaSrc !== null &&
     activeMediaSrc.length > 0
   ) {
-    return `video|${activeRoomId}|${activeMediaSrc}`;
+    return `video|${activeMediaSrc}`;
   }
 
   return `video|intro|${mode}`;
@@ -38,8 +36,7 @@ function parsePhotoSrc(displayKey: string): string | null {
     return null;
   }
 
-  const parts = displayKey.split('|');
-  const src = parts.slice(2).join('|');
+  const src = displayKey.slice('photo|'.length);
   if (src.length === 0 || src === 'null' || src === 'undefined') {
     return null;
   }
@@ -84,7 +81,7 @@ export function MainMedia() {
         src: item.src,
       })),
       houseMediaIds: experience.house.media.map((asset) => asset.id),
-      roomScopedPhotos: gallery.gallery.map((item) => ({
+      globalGalleryPhotos: gallery.gallery.map((item) => ({
         id: item.id,
         url: item.url,
       })),
@@ -115,19 +112,27 @@ export function MainMedia() {
   const activeMediaSrc = activeMediaItem?.src ?? null;
   const activeRoomId = gallery.roomId;
 
-  const videoSrc = gallery.videoUrl ?? gallery.videos[0]?.url ?? '';
+  /** Single Tour video from the global timeline — never remounted on room change. */
+  const videoSrc =
+    gallery.thumbnails.find((item) => item.kind === 'video')?.src ??
+    gallery.videoUrl ??
+    gallery.videos[0]?.url ??
+    '';
   const videoPoster =
-    gallery.heroUrl ?? gallery.heroMedia?.thumbnailUrl ?? '';
-  const videoKey = `${videoSrc}|${activeRoomId ?? 'intro'}|${mediaMode}`;
+    gallery.thumbnails.find((item) => item.kind === 'photo')?.thumbnailSrc ??
+    gallery.heroUrl ??
+    gallery.heroMedia?.thumbnailUrl ??
+    '';
+  const videoKey = `${videoSrc}|${mediaMode}`;
 
-  const mediaKey = buildMediaKey(mediaMode, mode, activeRoomId, activeMediaSrc);
+  const mediaKey = buildMediaKey(mediaMode, mode, activeMediaSrc);
   const { displayKey, opacity, phaseMs } = useDecisionCrossfade(mediaKey);
 
   useEffect(() => {
     setHasStartedPlayback(false);
     setMediaFailed(false);
     setMediaPending(true);
-  }, [mediaMode, videoSrc, activeRoomId, mode, activeMediaSrc]);
+  }, [mediaMode, videoSrc, mode, activeMediaSrc]);
 
   useEffect(() => {
     const video = videoRef.current;

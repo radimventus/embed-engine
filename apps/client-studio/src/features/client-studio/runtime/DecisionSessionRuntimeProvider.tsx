@@ -188,14 +188,13 @@ export function DecisionSessionRuntimeProvider({
       ),
     ];
     const activeRoomId = experience.context.activeRoom.id;
-    const galleryAssets =
-      activeRoomId === null
-        ? experience.house.media.filter((asset) =>
-            asset.id.startsWith('gallery:'),
-          )
-        : experience.house.media.filter((asset) =>
-            asset.id.startsWith(`gallery:${activeRoomId}:`),
-          );
+    /** Global Media Timeline assets — never room-filtered. */
+    const globalGalleryAssets = experience.house.media.filter((asset) =>
+      asset.id.startsWith('gallery:'),
+    );
+    const globalVideoAssets = experience.house.media.filter((asset) =>
+      asset.id.startsWith('video:'),
+    );
 
     console.log(
       `${prefix}Runtime source:`,
@@ -215,11 +214,21 @@ export function DecisionSessionRuntimeProvider({
       experience.context.navigation.rooms.length,
     );
     console.log('Gallery rooms:', galleryRooms);
+    console.log(
+      `${prefix}global Media Timeline:`,
+      {
+        videoCount: globalVideoAssets.length,
+        photoCount: globalGalleryAssets.length,
+        thumbnails: experience.context.roomMedia.thumbnails.map(
+          (item, index) => ({ index, kind: item.kind, src: item.src }),
+        ),
+      },
+    );
     if (isEmbed) {
       console.log('Embed active room id:', activeRoomId);
       console.log(
-        'Embed gallery assets:',
-        galleryAssets.map((asset) => ({
+        'Embed gallery assets (global):',
+        globalGalleryAssets.map((asset) => ({
           id: asset.id,
           url: asset.url,
           type: asset.type,

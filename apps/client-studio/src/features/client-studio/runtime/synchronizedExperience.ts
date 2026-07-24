@@ -10,8 +10,9 @@ import {
   decisionCanvasUrlForRoom,
   getFloorPlanUrlFromHouse,
   getOpeningHeroUrlFromHouse,
+  listGlobalGalleryPhotos,
   listRoomGalleryUrls,
-  listRoomVideoUrls,
+  listTourVideos,
 } from './experienceHouseMedia';
 import { resolvePublicAssetUrl } from './presentationAssetBase';
 import {
@@ -42,7 +43,7 @@ export type ContextualActiveRoom = ExperienceHouseRoom & {
   readonly gallery: readonly ProjectedMediaAsset[];
   readonly videos: readonly ProjectedMediaAsset[];
   readonly documents: readonly ProjectedMediaAsset[];
-  /** Ordered rail items (video first, then gallery photos). */
+  /** Global Media Timeline (video first, then all gallery photos). Identical for every room. */
   readonly thumbnails: readonly HousePackageMediaItem[];
   readonly metrics: readonly {
     readonly label: string;
@@ -163,58 +164,44 @@ function projectHouseDocuments(
   );
 }
 
-function projectRoomContext(
-  room: ExperienceHouseRoom,
-  experience: SessionExperience,
-): ContextualActiveRoom {
-  const fallbackHero = packageHeroMedia(experience.house);
-  const documents = projectHouseDocuments(experience);
-  const photoUrls = listRoomGalleryUrls(experience.house, room.id);
-  const videoUrls = listRoomVideoUrls(experience.house, room.id);
+/**
+ * Global Media Timeline — video(s) then all gallery photos in CSV order.
+ * Identical for every room. Never filtered, reordered, or rebuilt per room.
+ */
+function projectGlobalMediaTimeline(house: ExperienceHouse): {
+  readonly gallery: readonly ProjectedMediaAsset[];
+  readonly videos: readonly ProjectedMediaAsset[];
+  readonly thumbnails: readonly HousePackageMediaItem[];
+} {
+  const photos = listGlobalGalleryPhotos(house);
+  const tourVideos = listTourVideos(house);
+  const firstPhotoUrl = photos[0]?.url;
 
-  const gallery: readonly ProjectedMediaAsset[] =
-    photoUrls.length > 0
-      ? Object.freeze(
-          photoUrls.map((url, index) =>
-            Object.freeze({
-              id: `${room.id}-photo-${index}`,
-              kind: 'image' as const,
-              url,
-              thumbnailUrl: url,
-              title: room.name,
-            }),
-          ),
-        )
-      : Object.freeze([]);
+  const gallery = Object.freeze(
+    photos.map((photo, index) =>
+      Object.freeze({
+        id: `gallery-photo-${photo.order}-${index}`,
+        kind: 'image' as const,
+        url: photo.url,
+        thumbnailUrl: photo.url,
+        title: photo.roomId,
+      }),
+    ),
+  );
 
-  const videos: readonly ProjectedMediaAsset[] =
-    videoUrls.length > 0
-      ? Object.freeze(
-          videoUrls.map((url, index) =>
-            Object.freeze({
-              id: `${room.id}-video-${index}`,
-              kind: 'video' as const,
-              url,
-              thumbnailUrl: photoUrls[0] ?? url,
-              title: room.name,
-            }),
-          ),
-        )
-      : Object.freeze([]);
+  const videos = Object.freeze(
+    tourVideos.map((video, index) =>
+      Object.freeze({
+        id: `tour-video-${video.order}-${index}`,
+        kind: 'video' as const,
+        url: video.url,
+        thumbnailUrl: firstPhotoUrl ?? video.url,
+        title: 'Tour',
+      }),
+    ),
+  );
 
-  const roomHeroUrl = photoUrls[0];
-  const heroMedia =
-    roomHeroUrl !== undefined
-      ? Object.freeze({
-          id: `${room.id}-hero`,
-          kind: 'image' as const,
-          url: roomHeroUrl,
-          thumbnailUrl: roomHeroUrl,
-          title: room.name,
-        })
-      : (gallery[0] ?? fallbackHero);
-
-  const thumbnails: HousePackageMediaItem[] = [
+  const thumbnails = Object.freeze([
     ...videos.map((video) => ({
       kind: 'video' as const,
       src: video.url,
@@ -225,16 +212,39 @@ function projectRoomContext(
       src: photo.url,
       thumbnailSrc: photo.thumbnailUrl,
     })),
-  ];
+  ] satisfies HousePackageMediaItem[]);
+
+  return { gallery, videos, thumbnails };
+}
+
+function projectRoomContext(
+  room: ExperienceHouseRoom,
+  experience: SessionExperience,
+  globalMedia: ReturnType<typeof projectGlobalMediaTimeline>,
+): ContextualActiveRoom {
+  const fallbackHero = packageHeroMedia(experience.house);
+  const documents = projectHouseDocuments(experience);
+  const roomPhotoUrls = listRoomGalleryUrls(experience.house, room.id);
+  const roomHeroUrl = roomPhotoUrls[0];
+  const heroMedia =
+    roomHeroUrl !== undefined
+      ? Object.freeze({
+          id: `${room.id}-hero`,
+          kind: 'image' as const,
+          url: roomHeroUrl,
+          thumbnailUrl: roomHeroUrl,
+          title: room.name,
+        })
+      : fallbackHero;
 
   return Object.freeze({
     ...room,
     description: `${room.name} · ${room.area} m² · patro ${room.floor}`,
     heroMedia,
-    gallery,
-    videos,
+    gallery: globalMedia.gallery,
+    videos: globalMedia.videos,
     documents,
-    thumbnails: Object.freeze(thumbnails),
+    thumbnails: globalMedia.thumbnails,
     metrics: Object.freeze([
       { label: 'Plocha', value: `${room.area} m²` },
       {
@@ -243,105 +253,47 @@ function projectRoomContext(
       },
       {
         label: 'Média',
-        value: String(gallery.length + videos.length),
+        value: String(globalMedia.gallery.length + globalMedia.videos.length),
       },
     ]),
   });
 }
 
-function emptyRoomMedia(
-  experience: SessionExperience,
-): ExperienceRoomMediaContext {
-  const idleHero = packageHeroMedia(experience.house);
-  const gallery = Object.freeze([]) as readonly ProjectedMediaAsset[];
-  const videos = Object.freeze([]) as readonly ProjectedMediaAsset[];
-  const documents = projectHouseDocuments(experience);
-  const thumbnails = Object.freeze([]) as readonly HousePackageMediaItem[];
-
-  return Object.freeze({
-    roomId: null,
-    title: idleHero?.title ?? experience.house.title,
-    heroMedia: idleHero,
-    gallery,
-    videos,
-    documents,
-    thumbnails,
-    heroUrl: idleHero?.url ?? null,
-    videoUrl: null,
-  });
-}
-
-function orderThumbnailsByRecommendation(
-  thumbnails: readonly HousePackageMediaItem[],
-  recommendedMedia: SessionExperience['context']['decision']['recommendedMedia'],
-  preferredRole?: SessionExperience['context']['decision']['focus']['recommendedMediaRole'],
-): readonly HousePackageMediaItem[] {
-  const topRole = preferredRole ?? recommendedMedia[0]?.role;
-  if (topRole === undefined || thumbnails.length === 0) {
-    return thumbnails;
-  }
-
-  const preferVideo = topRole === 'video';
-  const preferStill =
-    topRole === 'gallery' || topRole === 'hero' || topRole === 'thumbnail';
-
-  if (!preferVideo && !preferStill) {
-    return thumbnails;
-  }
-
-  return Object.freeze(
-    [...thumbnails].sort((left, right) => {
-      const leftVideo = left.kind === 'video' ? 0 : 1;
-      const rightVideo = right.kind === 'video' ? 0 : 1;
-      if (preferVideo) {
-        return leftVideo - rightVideo;
-      }
-      return rightVideo - leftVideo;
-    }),
-  );
-}
-
 function projectRoomMedia(
   activeRoom: ContextualActiveRoom | null,
   experience: SessionExperience,
+  globalMedia: ReturnType<typeof projectGlobalMediaTimeline>,
 ): ExperienceRoomMediaContext {
+  const documents =
+    activeRoom?.documents ?? projectHouseDocuments(experience);
+  const idleHero = packageHeroMedia(experience.house);
+
   if (activeRoom === null) {
-    return emptyRoomMedia(experience);
+    return Object.freeze({
+      roomId: null,
+      title: idleHero?.title ?? experience.house.title,
+      heroMedia: idleHero,
+      gallery: globalMedia.gallery,
+      videos: globalMedia.videos,
+      documents,
+      thumbnails: globalMedia.thumbnails,
+      heroUrl: idleHero?.url ?? null,
+      videoUrl: globalMedia.videos[0]?.url ?? null,
+    });
   }
-
-  const thumbnails = orderThumbnailsByRecommendation(
-    activeRoom.thumbnails,
-    experience.context.decision.recommendedMedia,
-    experience.context.decision.focus.recommendedMediaRole,
-  );
-
-  const preferredStill =
-    thumbnails.find((item) => item.kind === 'photo') ?? null;
-  const preferredHeroUrl = preferredStill?.src ?? activeRoom.heroMedia?.url ?? null;
-  const preferredHero =
-    preferredHeroUrl !== null
-      ? Object.freeze({
-          id: `${activeRoom.id}-focus-hero`,
-          kind: 'image' as const,
-          url: preferredHeroUrl,
-          thumbnailUrl: preferredStill?.thumbnailSrc ?? preferredHeroUrl,
-          title: activeRoom.name,
-        })
-      : activeRoom.heroMedia;
 
   return Object.freeze({
     roomId: activeRoom.id,
     title: activeRoom.name,
-    heroMedia: preferredHero,
-    gallery: activeRoom.gallery,
-    videos: activeRoom.videos,
-    documents: activeRoom.documents,
-    thumbnails,
-    heroUrl: preferredHero?.url ?? null,
-    videoUrl: activeRoom.videos[0]?.url ?? null,
+    heroMedia: activeRoom.heroMedia,
+    gallery: globalMedia.gallery,
+    videos: globalMedia.videos,
+    documents,
+    thumbnails: globalMedia.thumbnails,
+    heroUrl: activeRoom.heroMedia?.url ?? null,
+    videoUrl: globalMedia.videos[0]?.url ?? null,
   });
 }
-
 function formatArea(m2: number): string {
   return `${m2} m²`;
 }
@@ -420,6 +372,7 @@ function projectFloorPlan(
 function projectSynchronizedContext(
   experience: SessionExperience,
   activeRoom: ContextualActiveRoom | null,
+  globalMedia: ReturnType<typeof projectGlobalMediaTimeline>,
 ): SynchronizedExperienceContext {
   const { context } = experience;
 
@@ -430,7 +383,7 @@ function projectSynchronizedContext(
       room: activeRoom,
       focusRoom: context.activeRoom.focusRoom,
     }),
-    roomMedia: projectRoomMedia(activeRoom, experience),
+    roomMedia: projectRoomMedia(activeRoom, experience, globalMedia),
     hero: projectHeroContext(experience, activeRoom),
     floorPlan: projectFloorPlan(experience),
   });
@@ -439,23 +392,24 @@ function projectSynchronizedContext(
 /**
  * Project synchronized Experience with unified Experience Context (CAP-HP-003.5).
  * Reads Runtime `context` as-is; adds presentation media slices only (ED-DA-05).
+ * Gallery thumbnails are the global Media Timeline — navigation changes activeIndex only.
  */
 export function projectSynchronizedExperience(
   experience: SessionExperience,
 ): SynchronizedExperience {
+  const globalMedia = projectGlobalMediaTimeline(experience.house);
   const baseRoom = experience.context.activeRoom.room;
   const activeRoomId = experience.context.activeRoom.id;
   const activeRoom =
     baseRoom === null || activeRoomId === null
       ? null
-      : projectRoomContext(baseRoom, experience);
+      : projectRoomContext(baseRoom, experience, globalMedia);
 
   return Object.freeze({
     house: experience.house,
-    context: projectSynchronizedContext(experience, activeRoom),
+    context: projectSynchronizedContext(experience, activeRoom, globalMedia),
   });
 }
-
 /** @deprecated Prefer `experience.context.hero` — kept for thin adapters. */
 export function getHeroMediaProjection(experience: SynchronizedExperience): ExperienceHeroContext {
   return experience.context.hero;

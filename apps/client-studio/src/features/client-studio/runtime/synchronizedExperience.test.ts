@@ -9,6 +9,11 @@ import {
   installBuilderPackageRegistriesForTests,
 } from './builderPackageTestInstall';
 import {
+  firstPhotoTimelineIndexForRoom,
+  listGlobalGalleryPhotos,
+  listTourVideos,
+} from './experienceHouseMedia';
+import {
   getGalleryMediaProjection,
   getHeroMediaProjection,
   projectSynchronizedExperience,
@@ -107,7 +112,7 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     assert.equal(first.context.hero.heroMedia?.id, 'builder-package-hero');
   });
 
-  it('ChangePriority reshapes Experience Context hero and gallery ordering', () => {
+  it('ChangePriority updates decision focus without reordering the Media Timeline', () => {
     const house = getTestBuilderHousePackage();
     const runtime = createTestBuilderRuntime();
     runtime.dispatch({ type: 'SelectRoom', roomId: 'living-room' }, 2);
@@ -115,6 +120,7 @@ describe('Experience Context (CAP-HP-003.5)', () => {
 
     assert.equal(before.context.hero.primaryReason, 'primary-living-volume');
     assert.equal(before.context.roomMedia.thumbnails[0]?.kind, 'video');
+    const timelineBefore = before.context.roomMedia.thumbnails.map((item) => item.src);
 
     runtime.dispatch(
       { type: 'ChangePriority', priorityIds: ['plot', 'layout'] },
@@ -129,7 +135,12 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     assert.equal(after.context.hero.eyebrow, before.context.hero.eyebrow);
     assert.ok(after.context.hero.highlights.includes('outdoor-connection'));
     assert.equal(after.context.decision.focus.recommendedMediaRole, 'gallery');
-    assert.equal(after.context.roomMedia.thumbnails[0]?.kind, 'photo');
+    assert.equal(after.context.roomMedia.thumbnails[0]?.kind, 'video');
+    assert.deepEqual(
+      after.context.roomMedia.thumbnails.map((item) => item.src),
+      timelineBefore,
+      'Global Media Timeline must remain immutable across priority changes',
+    );
     assert.equal(
       after.context.hero.focusConfidence,
       after.context.decision.focus.confidence,
@@ -175,7 +186,7 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     assert.equal(hero.primaryMediaUrl, hero.heroMedia?.url);
   });
 
-  it('projection owns media — consumers read context.roomMedia', () => {
+  it('projection owns the global Media Timeline — consumers read context.roomMedia', () => {
     const runtime = createTestBuilderRuntime();
     runtime.dispatch({ type: 'SelectRoom', roomId: 'kitchen' }, 2);
     const synced = projectSynchronizedExperience(runtime.getExperience()!);
@@ -185,10 +196,11 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     assert.ok(Array.isArray(media.gallery));
     assert.ok(
       media.gallery.length >= 1,
-      'Room-scoped kitchen gallery from gallery.csv',
+      'Global gallery from gallery.csv (not room-filtered)',
     );
     assert.ok(Array.isArray(media.videos));
     assert.ok(media.videos.length >= 1);
+    assert.equal(media.videos.length, 1, 'exactly one Tour video');
     assert.match(
       media.videos[0]?.url ?? '',
       /fast\.wistia\.net\/embed\/iframe\//,
@@ -200,6 +212,72 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     assert.ok(Array.isArray(media.documents));
     assert.ok(media.documents.length >= 1);
     assert.ok(Array.isArray(media.thumbnails));
+    assert.equal(media.thumbnails[0]?.kind, 'video');
+    assert.ok(
+      media.thumbnails.some((item) => item.kind === 'photo'),
+      'timeline includes photos after the Tour video',
+    );
+  });
+
+  it('SelectRoom keeps the same Media Timeline and only updates room pointer', () => {
+    const runtime = createTestBuilderRuntime();
+    runtime.dispatch({ type: 'SelectRoom', roomId: 'kitchen' }, 2);
+    const kitchen = projectSynchronizedExperience(runtime.getExperience()!);
+    const kitchenTimeline = kitchen.context.roomMedia.thumbnails.map(
+      (item) => `${item.kind}:${item.src}`,
+    );
+
+    runtime.dispatch({ type: 'SelectRoom', roomId: 'bedroom' }, 3);
+    const bedroom = projectSynchronizedExperience(runtime.getExperience()!);
+    const bedroomTimeline = bedroom.context.roomMedia.thumbnails.map(
+      (item) => `${item.kind}:${item.src}`,
+    );
+
+    assert.deepEqual(
+      bedroomTimeline,
+      kitchenTimeline,
+      'Thumbnail strip must be identical across rooms',
+    );
+    assert.equal(bedroom.context.roomMedia.roomId, 'bedroom');
+    assert.notEqual(
+      bedroom.context.roomMedia.heroUrl,
+      kitchen.context.roomMedia.heroUrl,
+    );
+    assert.ok(
+      kitchen.context.roomMedia.thumbnails.some(
+        (item) => item.src === kitchen.context.roomMedia.heroUrl,
+      ),
+      'Room hero must be a pointer into the global timeline',
+    );
+  });
+
+  it('room selection maps to the first photo index inside the global timeline', () => {
+    const house = getTestBuilderHousePackage();
+    const photos = listGlobalGalleryPhotos(house);
+    const videos = listTourVideos(house);
+
+    assert.equal(videos.length, 1, 'exactly one Tour video');
+    assert.ok(photos.length >= 5, 'gallery.csv photos present');
+
+    const livingIndex = firstPhotoTimelineIndexForRoom(house, 'living-room');
+    const kitchenIndex = firstPhotoTimelineIndexForRoom(house, 'kitchen');
+    const bedroomIndex = firstPhotoTimelineIndexForRoom(house, 'bedroom');
+
+    assert.equal(livingIndex, videos.length + photos.findIndex((p) => p.roomId === 'living-room'));
+    assert.equal(kitchenIndex, videos.length + photos.findIndex((p) => p.roomId === 'kitchen'));
+    assert.equal(bedroomIndex, videos.length + photos.findIndex((p) => p.roomId === 'bedroom'));
+    assert.ok(kitchenIndex !== null && kitchenIndex > 0);
+    assert.ok(livingIndex !== null && livingIndex > kitchenIndex!);
+    assert.ok(bedroomIndex !== null && bedroomIndex > livingIndex!);
+
+    const synced = projectSynchronizedExperience(
+      createTestBuilderRuntime().getExperience()!,
+    );
+    assert.equal(synced.context.roomMedia.thumbnails[0]?.kind, 'video');
+    assert.equal(
+      synced.context.roomMedia.thumbnails[kitchenIndex!]?.src,
+      photos.find((p) => p.roomId === 'kitchen')?.url,
+    );
   });
 
   it('every gallery.csv room is reachable via Runtime navigation rooms', () => {
@@ -227,7 +305,12 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
       assert.equal(synced.context.roomMedia.roomId, roomId);
       assert.ok(
         (synced.context.roomMedia.gallery?.length ?? 0) >= 1,
-        `${roomId} must expose gallery photos`,
+        `${roomId} must expose the global gallery timeline`,
+      );
+      assert.equal(
+        synced.context.roomMedia.thumbnails[0]?.kind,
+        'video',
+        'Tour video remains first in the global timeline',
       );
     }
   });
