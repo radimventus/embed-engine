@@ -20,15 +20,6 @@ const packageJson = JSON.parse(
 export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
   plugins: [react()],
-  resolve: {
-    alias: {
-      // Browser/Vite: inline HP-002 CSVs (no node:fs).
-      '@client-studio/builder-package-csv': join(
-        rootDir,
-        'src/features/client-studio/runtime/builderPackageCsv.vite.ts',
-      ),
-    },
-  },
   define: {
     __CLIENT_STUDIO_VERSION__: JSON.stringify(packageJson.version),
   },

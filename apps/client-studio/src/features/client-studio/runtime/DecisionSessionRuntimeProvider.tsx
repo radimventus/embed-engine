@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
@@ -17,6 +18,7 @@ import {
 } from '@embed-engine/runtime';
 
 import { useOptionalDecisionAnalytics } from '../analytics/DecisionAnalyticsProvider';
+import { ensureBuilderPackageBootstrapped } from './builderPackageBootstrap';
 import {
   projectSynchronizedExperience,
   type SynchronizedExperience,
@@ -34,7 +36,7 @@ export type DecisionSessionRuntimeContextValue = {
    * UI modules read `experience.context` — never compose semantics here.
    */
   readonly experience: SynchronizedExperience;
-  /** Availability — true once Experience projection is ready. */
+  /** Availability — true once Builder Package registries + Experience projection are ready. */
   readonly ready: boolean;
   /** Dispatch Runtime commands (SelectRoom, ChangePriority, …). */
   readonly dispatch: (command: RuntimeCommand, now?: number) => DispatchResult;
@@ -82,7 +84,29 @@ export function DecisionSessionRuntimeProvider({
 
   const runtime = runtimeRef.current;
   const [revision, setRevision] = useState(0);
+  const [packageReady, setPackageReady] = useState(false);
+  const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const analytics = useOptionalDecisionAnalytics();
+
+  useEffect(() => {
+    let cancelled = false;
+    void ensureBuilderPackageBootstrapped()
+      .then(() => {
+        if (!cancelled) {
+          setPackageReady(true);
+          setBootstrapError(null);
+        }
+      })
+      .catch((error: unknown) => {
+        if (!cancelled) {
+          setBootstrapError(error instanceof Error ? error.message : String(error));
+          setPackageReady(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const dispatch = useCallback(
     (command: RuntimeCommand, now?: number): DispatchResult => {
@@ -97,7 +121,10 @@ export function DecisionSessionRuntimeProvider({
     [analytics, runtime],
   );
 
-  const value = useMemo((): DecisionSessionRuntimeContextValue => {
+  const value = useMemo((): DecisionSessionRuntimeContextValue | null => {
+    if (!packageReady) {
+      return null;
+    }
     void revision;
     const base = runtime.getExperience();
     if (base === null) {
@@ -108,7 +135,19 @@ export function DecisionSessionRuntimeProvider({
       ready: true,
       dispatch,
     };
-  }, [dispatch, revision, runtime]);
+  }, [dispatch, packageReady, revision, runtime]);
+
+  if (bootstrapError !== null) {
+    return (
+      <div role="alert" data-builder-package-bootstrap-error="">
+        Builder House Package bootstrap failed: {bootstrapError}
+      </div>
+    );
+  }
+
+  if (value === null) {
+    return null;
+  }
 
   return (
     <DecisionSessionRuntimeContext.Provider value={value}>

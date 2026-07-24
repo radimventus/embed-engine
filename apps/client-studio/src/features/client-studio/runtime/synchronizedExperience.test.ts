@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { describe, it } from 'node:test';
+import { before, describe, it } from 'node:test';
 
 import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
 import {
@@ -8,11 +8,16 @@ import {
 } from '@embed-engine/runtime';
 import type { SessionExperience } from '@embed-engine/runtime';
 
+import { installBuilderPackageRegistriesForTests } from './builderPackageTestInstall';
 import {
   getGalleryMediaProjection,
   getHeroMediaProjection,
   projectSynchronizedExperience,
 } from './synchronizedExperience';
+
+before(() => {
+  installBuilderPackageRegistriesForTests();
+});
 
 describe('Experience Context (CAP-HP-003.5)', () => {
   it('identical Runtime → identical synchronized context', () => {

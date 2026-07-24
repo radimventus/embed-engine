@@ -1,0 +1,250 @@
+{
+  "console": [
+    {
+      "type": "debug",
+      "text": "[vite] connecting..."
+    },
+    {
+      "type": "debug",
+      "text": "[vite] connected."
+    },
+    {
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+    },
+    {
+      "type": "info",
+      "text": "[decision-analytics] journey.started {sessionId: analytics-mry835xz, decisionSessionId: decision-session:pending, at: 1784854167791, surfaceId: null, runtimeContextRef: null}"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 1.BuilderPackage {packageRoot: /house-package, galleryCsvPath: /house-package/gallery.csv, roomsCsvPath: /house-package/rooms.csv, videosCsvPath: /house-package/videos.csv, heroPath: /house-package/media/hero/hero.webp}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 2.RuntimeRegistry {gallery: Object, hero: Object, rooms: Object, videos: Object, floors: Object}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 6.RuntimeSource {usesBuilderPackageRegistry: true, usesManifestJson: false, manifestImportInPresentationAssets: false, csvLoadMode: http-fetch-public-house-package}"
+    },
+    {
+      "type": "error",
+      "text": "An empty string (\"\") was passed to the %s attribute. This may cause the browser to download the whole page again over the network. To fix this, either do not render the element at all or pass null to %s instead of an empty string. src src"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 4.HeroRuntime.beforeHeroImage {resolvedHeroAsset: /house-package/media/hero/hero.webp, source: experience.context.hero.primaryMediaUrl | heroMedia.url, absoluteRuntimePath: /house-package/media/hero/hero.webp, heroMediaId: builder-package-hero, primaryMediaUrl: /house-package/media/hero/hero.webp}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.HeroImage {backgroundImageUrl: /house-package/media/hero/hero.webp, title: Modern 01, eyebrow: ASTAV-M01 · Zděná}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 3.GalleryRuntime.beforeMainMedia {activeRoomId: null, roomMediaTitle: Hero, heroUrl: /house-package/media/hero/hero.webp, videoUrl: null, thumbnails: Array(0)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.MainMedia {roomId: null, title: Hero, heroUrl: /house-package/media/hero/hero.webp, videoUrl: null, photoCount: 0}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.FloorPlan {src: /reference-house/assets/floorplans/pudorys.webp, viewBoxWidth: 3450, viewBoxHeight: 1938, roomCount: 8, firstRoom: Object}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[decision-analytics] ai.session.opened {sessionId: analytics-mry835xz, decisionSessionId: decision-session:pending, at: 1784854167861, surfaceId: ai-advisor, runtimeContextRef: null}"
+    },
+    {
+      "type": "info",
+      "text": "[decision-analytics] ai.session.ended {sessionId: analytics-mry835xz, decisionSessionId: decision-session:pending, at: 1784854167862, surfaceId: ai-advisor, runtimeContextRef: null}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 4.HeroRuntime.beforeHeroImage {resolvedHeroAsset: /house-package/media/hero/hero.webp, source: experience.context.hero.primaryMediaUrl | heroMedia.url, absoluteRuntimePath: /house-package/media/hero/hero.webp, heroMediaId: builder-package-hero, primaryMediaUrl: /house-package/media/hero/hero.webp}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.HeroImage {backgroundImageUrl: /house-package/media/hero/hero.webp, title: Modern 01, eyebrow: ASTAV-M01 · Zděná}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 3.GalleryRuntime.beforeMainMedia {activeRoomId: null, roomMediaTitle: Hero, heroUrl: /house-package/media/hero/hero.webp, videoUrl: null, thumbnails: Array(0)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.MainMedia {roomId: null, title: Hero, heroUrl: /house-package/media/hero/hero.webp, videoUrl: null, photoCount: 0}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.FloorPlan {src: /reference-house/assets/floorplans/pudorys.webp, viewBoxWidth: 3450, viewBoxHeight: 1938, roomCount: 8, firstRoom: Object}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[decision-analytics] ai.session.opened {sessionId: analytics-mry835xz, decisionSessionId: decision-session:pending, at: 1784854167864, surfaceId: ai-advisor, runtimeContextRef: null}"
+    },
+    {
+      "type": "info",
+      "text": "[decision-analytics] surface.entered {sessionId: analytics-mry835xz, decisionSessionId: decision-session:pending, at: 1784854167872, surfaceId: hero, runtimeContextRef: null}"
+    }
+  ],
+  "pageErrors": [],
+  "networkCsv": [
+    {
+      "url": "http://127.0.0.1:4173/house-package/gallery.csv",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/rooms.csv",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/videos.csv",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/media/hero/hero.webp",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/gallery.csv",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/rooms.csv",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/videos.csv",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/media/hero/hero.webp",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/gallery.csv",
+      "status": 200
+    }
+  ],
+  "bootstrapOk": true,
+  "dom": {
+    "bodyHasAlert": false,
+    "heroBackground": "url(\"http://127.0.0.1:4173/house-package/media/hero/hero.webp\")",
+    "housePackageImgs": [],
+    "evidenceHeroLogged": true
+  },
+  "httpReflectsDisk": {
+    "galleryHasSwap": true,
+    "roomsHasMarker": true,
+    "videosHasMarker": true,
+    "heroChanged": true
+  },
+  "registries": {
+    "galleryFirst": {
+      "order": 1,
+      "roomId": "exterior",
+      "file": "02.webp",
+      "path": "media/gallery/02.webp"
+    },
+    "galleryOrderMatchesSwap": true,
+    "rooms": [
+      {
+        "id": "exterior",
+        "name": "Exteriér"
+      },
+      {
+        "id": "kitchen",
+        "name": "Kuchyně PT-FIX"
+      },
+      {
+        "id": "living-room",
+        "name": "Obývací pokoj"
+      },
+      {
+        "id": "vestibule",
+        "name": "Zádveří a chodba"
+      },
+      {
+        "id": "wardrobe",
+        "name": "Šatna"
+      },
+      {
+        "id": "bedroom",
+        "name": "Ložnice"
+      },
+      {
+        "id": "bathroom",
+        "name": "Koupelna"
+      },
+      {
+        "id": "toilet",
+        "name": "Toaleta"
+      },
+      {
+        "id": "children-room",
+        "name": "Dětský pokoj"
+      },
+      {
+        "id": "office",
+        "name": "Pracovna"
+      }
+    ],
+    "videosFirst": {
+      "order": 1,
+      "roomId": "exterior",
+      "provider": "wistia",
+      "mediaId": "ptfix01marker"
+    },
+    "videoMarker": true,
+    "hero": {
+      "id": "hero-1",
+      "file": "hero.webp",
+      "path": "media/hero/hero.webp"
+    },
+    "counts": {
+      "gallery": 15,
+      "rooms": 10,
+      "videos": 3,
+      "hero": 1
+    }
+  },
+  "reload": {
+    "bootstrapError": 0,
+    "consoleErrors": [
+      "An empty string (\"\") was passed to the %s attribute. This may cause the browser to download the whole page again over the network. To fix this, either do not render the element at all or pass null to %s instead of an empty string. src src"
+    ],
+    "galleryFirst": "1,exterior,02.webp",
+    "heroSrc": null
+  },
+  "viteImportErrors": []
+}

@@ -41,3 +41,9 @@ Hardening report: [ED-DA-01 Boundary Hardening](../architecture/review/ED-DA-01-
 ## Process
 
 When closing a slice: add deferred items here instead of expanding DoD.
+
+## ED-BP-01 — Builder Package Hot Reload
+
+Track changes to `gallery.csv`, `rooms.csv`, `videos.csv`, and `media/`, regenerate Runtime registries, and refresh Experience without a manual reload (development only).
+
+Priority: Low–Medium (not required for pilot).

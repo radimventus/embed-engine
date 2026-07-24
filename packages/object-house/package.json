@@ -16,7 +16,13 @@
     },
     "./builder-package": {
       "types": "./dist/builder-package/index.d.ts",
-      "import": "./dist/builder-package/index.js"
+      "import": "./dist/builder-package/index.js",
+      "default": "./dist/builder-package/index.js"
+    },
+    "./builder-package/node": {
+      "types": "./dist/builder-package/node.d.ts",
+      "import": "./dist/builder-package/node.js",
+      "default": "./dist/builder-package/node.js"
     }
   },
   "scripts": {

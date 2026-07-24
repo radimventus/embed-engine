@@ -10,7 +10,7 @@ import {
   buildBuilderPackageRegistries,
   importBuilderHousePackage,
   parseCsv,
-} from "./index";
+} from "./node";
 
 const fixtureRoot = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),

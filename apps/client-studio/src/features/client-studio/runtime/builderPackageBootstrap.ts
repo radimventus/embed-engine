@@ -4,7 +4,7 @@ import {
   type BuilderHousePackageImport,
 } from '@embed-engine/object-house/builder-package';
 
-import { galleryCsv, roomsCsv, videosCsv } from '@client-studio/builder-package-csv';
+import { getPresentationAssetBase } from './presentationAssetBase';
 import { projectRegistriesToResolvedPackage } from './projectRegistriesToResolvedPackage';
 import {
   evidenceLog,
@@ -16,10 +16,16 @@ import {
 const PACKAGE_ROOT_LABEL = '/house-package';
 const HERO_PATH = 'media/hero/hero.webp';
 
-const GALLERY_CSV_PATH = '/house-package/gallery.csv';
-const ROOMS_CSV_PATH = '/house-package/rooms.csv';
-const VIDEOS_CSV_PATH = '/house-package/videos.csv';
+export const GALLERY_CSV_PATH = '/house-package/gallery.csv';
+export const ROOMS_CSV_PATH = '/house-package/rooms.csv';
+export const VIDEOS_CSV_PATH = '/house-package/videos.csv';
 const HERO_PUBLIC_PATH = '/house-package/media/hero/hero.webp';
+
+export type BuilderPackageCsvTexts = {
+  readonly galleryCsv: string;
+  readonly roomsCsv: string;
+  readonly videosCsv: string;
+};
 
 function planPairsFromRooms(roomsCsvText: string): {
   readonly floorId: string;
@@ -44,13 +50,77 @@ function planPairsFromRooms(roomsCsvText: string): {
     }));
 }
 
-function logBuilderPackageEvidence(registries: BuilderHousePackageImport): void {
+function resolvePackageUrl(absolutePath: string): string {
+  const assetBase = getPresentationAssetBase();
+  if (assetBase === null || assetBase.length === 0) {
+    return absolutePath;
+  }
+  if (
+    absolutePath.startsWith('https://') ||
+    absolutePath.startsWith('http://') ||
+    absolutePath.startsWith('data:') ||
+    absolutePath.startsWith('blob:')
+  ) {
+    return absolutePath;
+  }
+  if (absolutePath.startsWith('/')) {
+    return `${assetBase}${absolutePath}`;
+  }
+  return absolutePath;
+}
+
+async function fetchCsvText(absolutePath: string): Promise<string> {
+  const url = resolvePackageUrl(absolutePath);
+  const response = await fetch(url, { cache: 'no-store' });
+  if (!response.ok) {
+    throw new Error(
+      `Failed to load Builder Package CSV ${url}: HTTP ${response.status}`,
+    );
+  }
+  return response.text();
+}
+
+/**
+ * Vite 7–compatible loader: HTTP fetch of public HP-002 CSVs (no public/?raw imports).
+ */
+export async function loadBuilderPackageCsvTexts(): Promise<BuilderPackageCsvTexts> {
+  const [galleryCsv, roomsCsv, videosCsv] = await Promise.all([
+    fetchCsvText(GALLERY_CSV_PATH),
+    fetchCsvText(ROOMS_CSV_PATH),
+    fetchCsvText(VIDEOS_CSV_PATH),
+  ]);
+  return { galleryCsv, roomsCsv, videosCsv };
+}
+
+function buildRegistriesFromTexts(
+  texts: BuilderPackageCsvTexts,
+): BuilderHousePackageImport {
+  const result = buildBuilderPackageRegistries({
+    packageRoot: PACKAGE_ROOT_LABEL,
+    galleryCsv: texts.galleryCsv,
+    roomsCsv: texts.roomsCsv,
+    videosCsv: texts.videosCsv,
+    heroPath: HERO_PATH,
+    planPairs: planPairsFromRooms(texts.roomsCsv),
+  });
+
+  if (!result.ok) {
+    const detail = result.errors
+      .map((error) => `${error.code}: ${error.message}`)
+      .join('; ');
+    throw new Error(`Builder House Package bootstrap failed: ${detail}`);
+  }
+
+  return result.result;
+}
+
+function logBuilderPackageEvidence(
+  registries: BuilderHousePackageImport,
+  texts: BuilderPackageCsvTexts,
+): void {
   if (!isRuntimeEvidenceEnabled()) {
     return;
   }
-
-  const galleryFp = fingerprintText(galleryCsv);
-  const galleryEntries = registries.gallery.entries;
 
   evidenceLog('1.BuilderPackage', {
     packageRoot: PACKAGE_ROOT_LABEL,
@@ -58,14 +128,14 @@ function logBuilderPackageEvidence(registries: BuilderHousePackageImport): void 
     roomsCsvPath: ROOMS_CSV_PATH,
     videosCsvPath: VIDEOS_CSV_PATH,
     heroPath: HERO_PUBLIC_PATH,
-    galleryCsvSource:
-      'bundled via @client-studio/builder-package-csv (?raw / fs at bootstrap) — NOT a live Network fetch',
-    galleryCsvFingerprint: galleryFp,
-    galleryItemCount: galleryEntries.length,
-    galleryFirst: galleryEntries[0] ?? null,
-    galleryLast: galleryEntries[galleryEntries.length - 1] ?? null,
-    roomsCsvFingerprint: fingerprintText(roomsCsv),
-    videosCsvFingerprint: fingerprintText(videosCsv),
+    galleryCsvSource: 'HTTP fetch of public/house-package/*.csv (Vite 7 compatible)',
+    galleryCsvFingerprint: fingerprintText(texts.galleryCsv),
+    galleryItemCount: registries.gallery.entries.length,
+    galleryFirst: registries.gallery.entries[0] ?? null,
+    galleryLast:
+      registries.gallery.entries[registries.gallery.entries.length - 1] ?? null,
+    roomsCsvFingerprint: fingerprintText(texts.roomsCsv),
+    videosCsvFingerprint: fingerprintText(texts.videosCsv),
   });
 
   evidenceLog('2.RuntimeRegistry', {
@@ -80,76 +150,72 @@ function logBuilderPackageEvidence(registries: BuilderHousePackageImport): void 
     usesBuilderPackageRegistry: true,
     usesManifestJson: false,
     manifestImportInPresentationAssets: false,
-    csvLoadMode: 'module-inlined-at-bundle-or-node-read',
-    note:
-      'Editing public/house-package/gallery.csv does not change Runtime until Vite rebuild/HMR refreshes the inlined CSV module.',
+    csvLoadMode: 'http-fetch-public-house-package',
   });
-
-  if (typeof window !== 'undefined') {
-    void fetch(GALLERY_CSV_PATH, { cache: 'no-store' })
-      .then(async (response) => {
-        const diskText = response.ok ? await response.text() : null;
-        const diskFp = diskText !== null ? fingerprintText(diskText) : null;
-        evidenceLog('1.BuilderPackage.networkCompare', {
-          fetchedUrl: GALLERY_CSV_PATH,
-          httpStatus: response.status,
-          bundledFingerprint: galleryFp,
-          fetchedFingerprint: diskFp,
-          fingerprintsMatch: diskFp === galleryFp,
-          breakIfMismatch:
-            diskFp !== null && diskFp !== galleryFp
-              ? 'PŘERUŠENÍ TOKU: disk gallery.csv ≠ bundled galleryCsv used by Runtime'
-              : null,
-        });
-      })
-      .catch((error: unknown) => {
-        evidenceLog('1.BuilderPackage.networkCompare', {
-          fetchedUrl: GALLERY_CSV_PATH,
-          error: String(error),
-        });
-      });
-  }
 }
 
 let cachedRegistries: BuilderHousePackageImport | null = null;
+let bootstrapPromise: Promise<BuilderHousePackageImport> | null = null;
 
 /**
- * Bootstrap Runtime registries from Builder House Package CSVs (HP-002).
- * Runs at first access — sole media SSOT for Client Studio.
+ * Ensure Runtime registries exist (async). Safe to call multiple times.
+ * Browser: fetches HP-002 CSVs over HTTP. Tests: use bootstrapBuilderPackageRegistriesSyncForTests.
  */
-export function bootstrapBuilderPackageRegistries(): BuilderHousePackageImport {
+export async function ensureBuilderPackageBootstrapped(): Promise<BuilderHousePackageImport> {
   if (cachedRegistries !== null) {
     return cachedRegistries;
   }
-
-  const result = buildBuilderPackageRegistries({
-    packageRoot: PACKAGE_ROOT_LABEL,
-    galleryCsv,
-    roomsCsv,
-    videosCsv,
-    heroPath: HERO_PATH,
-    planPairs: planPairsFromRooms(roomsCsv),
-  });
-
-  if (!result.ok) {
-    const detail = result.errors.map((error) => `${error.code}: ${error.message}`).join('; ');
-    throw new Error(`Builder House Package bootstrap failed: ${detail}`);
+  if (bootstrapPromise !== null) {
+    return bootstrapPromise;
   }
 
-  cachedRegistries = result.result;
-  logBuilderPackageEvidence(cachedRegistries);
-  return cachedRegistries;
+  bootstrapPromise = (async () => {
+    const texts = await loadBuilderPackageCsvTexts();
+    const registries = buildRegistriesFromTexts(texts);
+    cachedRegistries = registries;
+    logBuilderPackageEvidence(registries, texts);
+    return registries;
+  })();
+
+  try {
+    return await bootstrapPromise;
+  } catch (error) {
+    bootstrapPromise = null;
+    throw error;
+  }
 }
 
+/**
+ * Sync access after bootstrap. Throws if ensureBuilderPackageBootstrapped has not completed.
+ */
 export function getBuilderPackageRegistries(): BuilderHousePackageImport {
-  return bootstrapBuilderPackageRegistries();
+  if (cachedRegistries === null) {
+    throw new Error(
+      'Builder House Package registries are not ready. Await ensureBuilderPackageBootstrapped() first.',
+    );
+  }
+  return cachedRegistries;
 }
 
 export function getBuilderResolvedPackage() {
   return projectRegistriesToResolvedPackage(getBuilderPackageRegistries());
 }
 
+/**
+ * Node/unit-test bootstrap — inject CSV texts without HTTP (no Vite public/?raw).
+ */
+export function bootstrapBuilderPackageRegistriesSyncForTests(
+  texts: BuilderPackageCsvTexts,
+): BuilderHousePackageImport {
+  const registries = buildRegistriesFromTexts(texts);
+  cachedRegistries = registries;
+  bootstrapPromise = Promise.resolve(registries);
+  logBuilderPackageEvidence(registries, texts);
+  return registries;
+}
+
 /** Test helper — clear memoized registries. */
 export function resetBuilderPackageBootstrapForTests(): void {
   cachedRegistries = null;
+  bootstrapPromise = null;
 }

@@ -1,0 +1,115 @@
+<!doctype html><meta charset="utf-8"><title>PT-RUNTIME-FIX-01 console</title>
+<style>body{font:14px/1.45 ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f1115;color:#e8eaed;padding:28px}h1{font:600 18px system-ui;color:#fff}.ok{color:#7dffa3}.err{color:#ff8a8a}pre{white-space:pre-wrap;background:#1a1d24;padding:16px;border-radius:8px}</style>
+<h1>PT-RUNTIME-FIX-01 — browser console (no bootstrap error)</h1>
+<p class="ok">bootstrapOk = true</p>
+<p>pageErrors = 0 · viteImportErrors = 0 · CSV GETs = 4</p>
+<pre>{
+  "pageErrors": [],
+  "viteImportErrors": [],
+  "networkCsv": [
+    {
+      "url": "http://127.0.0.1:4173/house-package/gallery.csv",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/rooms.csv",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/videos.csv",
+      "status": 200
+    },
+    {
+      "url": "http://127.0.0.1:4173/house-package/media/hero/hero.webp",
+      "status": 200
+    }
+  ],
+  "consoleErrors": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "type": "error",
+      "text": "An empty string (\"\") was passed to the %s attribute. This may cause the browser to download the whole page again over the network. To fix this, either do not render the element at all or pass null to %s instead of an empty string. src src"
+    }
+  ],
+  "evidenceOrBootstrap": [
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 1.BuilderPackage {packageRoot: /house-package, galleryCsvPath: /house-package/gallery.csv, roomsCsvPath: /house-package/rooms.csv, videosCsvPath: /house-package/videos.csv, heroPath: /house-package/media/hero/hero.webp}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 2.RuntimeRegistry {gallery: Object, hero: Object, rooms: Object, videos: Object, floors: Object}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 6.RuntimeSource {usesBuilderPackageRegistry: true, usesManifestJson: false, manifestImportInPresentationAssets: false, csvLoadMode: http-fetch-public-house-package}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 4.HeroRuntime.beforeHeroImage {resolvedHeroAsset: /house-package/media/hero/hero.webp, source: experience.context.hero.primaryMediaUrl | heroMedia.url, absoluteRuntimePath: /house-package/media/hero/hero.webp, heroMediaId: builder-package-hero, primaryMediaUrl: /house-package/media/hero/hero.webp}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.HeroImage {backgroundImageUrl: /house-package/media/hero/hero.webp, title: Modern 01, eyebrow: ASTAV-M01 · Zděná}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 3.GalleryRuntime.beforeMainMedia {activeRoomId: null, roomMediaTitle: Hero, heroUrl: /house-package/media/hero/hero.webp, videoUrl: null, thumbnails: Array(0)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.MainMedia {roomId: null, title: Hero, heroUrl: /house-package/media/hero/hero.webp, videoUrl: null, photoCount: 0}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.FloorPlan {src: /reference-house/assets/floorplans/pudorys.webp, viewBoxWidth: 3450, viewBoxHeight: 1938, roomCount: 8, firstRoom: Object}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 4.HeroRuntime.beforeHeroImage {resolvedHeroAsset: /house-package/media/hero/hero.webp, source: experience.context.hero.primaryMediaUrl | heroMedia.url, absoluteRuntimePath: /house-package/media/hero/hero.webp, heroMediaId: builder-package-hero, primaryMediaUrl: /house-package/media/hero/hero.webp}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.HeroImage {backgroundImageUrl: /house-package/media/hero/hero.webp, title: Modern 01, eyebrow: ASTAV-M01 · Zděná}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 3.GalleryRuntime.beforeMainMedia {activeRoomId: null, roomMediaTitle: Hero, heroUrl: /house-package/media/hero/hero.webp, videoUrl: null, thumbnails: Array(0)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.MainMedia {roomId: null, title: Hero, heroUrl: /house-package/media/hero/hero.webp, videoUrl: null, photoCount: 0}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.FloorPlan {src: /reference-house/assets/floorplans/pudorys.webp, viewBoxWidth: 3450, viewBoxHeight: 1938, roomCount: 8, firstRoom: Object}"
+    },
+    {
+      "type": "info",
+      "text": "[PT-RUNTIME-EVIDENCE-01] 5.ComponentEvidence.Navigator {activeRoomId: null, selectedFloor: 0, floors: Array(1), roomIds: Array(8), roomNames: Array(8)}"
+    }
+  ]
+}</pre>

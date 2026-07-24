@@ -11,12 +11,7 @@
     "declarationMap": false,
     "isolatedModules": true,
     "useDefineForClassFields": true,
-    "resolveJsonModule": true,
-    "paths": {
-      "@client-studio/builder-package-csv": [
-        "./src/features/client-studio/runtime/builderPackageCsv.ts"
-      ]
-    }
+    "resolveJsonModule": true
   },
   "include": ["src"],
   "exclude": ["src/**/*.test.ts"],

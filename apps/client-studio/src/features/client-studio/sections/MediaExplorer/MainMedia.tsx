@@ -74,39 +74,43 @@ export function MainMedia() {
   const [mediaPending, setMediaPending] = useState(true);
 
   useEffect(() => {
-    const registry = getBuilderPackageRegistries();
-    evidenceLog('3.GalleryRuntime.beforeMainMedia', {
-      activeRoomId: gallery.roomId,
-      roomMediaTitle: gallery.title,
-      heroUrl: gallery.heroUrl,
-      videoUrl: gallery.videoUrl,
-      thumbnails: gallery.thumbnails.map((item, index) => ({
-        index,
-        kind: item.kind,
-        src: item.src,
-      })),
-      galleryRegistryOrder: registry.gallery.entries.map((entry) => ({
-        order: entry.order,
-        room: entry.roomId,
-        file: entry.file,
-        path: entry.path,
-      })),
-      roomScopedPhotos: gallery.gallery.map((item) => ({
-        id: item.id,
-        url: item.url,
-      })),
-    });
-    evidenceLog('5.ComponentEvidence.MainMedia', {
-      roomId: gallery.roomId,
-      title: gallery.title,
-      heroUrl: gallery.heroUrl,
-      videoUrl: gallery.videoUrl,
-      photoCount: gallery.gallery.length,
-      videoCount: gallery.videos.length,
-      thumbnailCount: gallery.thumbnails.length,
-      firstThumbnail: gallery.thumbnails[0] ?? null,
-      lastThumbnail: gallery.thumbnails[gallery.thumbnails.length - 1] ?? null,
-    });
+    try {
+      const registry = getBuilderPackageRegistries();
+      evidenceLog('3.GalleryRuntime.beforeMainMedia', {
+        activeRoomId: gallery.roomId,
+        roomMediaTitle: gallery.title,
+        heroUrl: gallery.heroUrl,
+        videoUrl: gallery.videoUrl,
+        thumbnails: gallery.thumbnails.map((item, index) => ({
+          index,
+          kind: item.kind,
+          src: item.src,
+        })),
+        galleryRegistryOrder: registry.gallery.entries.map((entry) => ({
+          order: entry.order,
+          room: entry.roomId,
+          file: entry.file,
+          path: entry.path,
+        })),
+        roomScopedPhotos: gallery.gallery.map((item) => ({
+          id: item.id,
+          url: item.url,
+        })),
+      });
+      evidenceLog('5.ComponentEvidence.MainMedia', {
+        roomId: gallery.roomId,
+        title: gallery.title,
+        heroUrl: gallery.heroUrl,
+        videoUrl: gallery.videoUrl,
+        photoCount: gallery.gallery.length,
+        videoCount: gallery.videos.length,
+        thumbnailCount: gallery.thumbnails.length,
+        firstThumbnail: gallery.thumbnails[0] ?? null,
+        lastThumbnail: gallery.thumbnails[gallery.thumbnails.length - 1] ?? null,
+      });
+    } catch {
+      // Registries not ready — Provider gates mount until bootstrap completes.
+    }
   }, [gallery]);
 
   const activeMediaItem = (() => {

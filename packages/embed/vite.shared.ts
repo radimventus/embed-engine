@@ -16,10 +16,6 @@ const aliases = {
     clientStudioSrc,
     "embed/mountClientStudio.tsx",
   ),
-  "@client-studio/builder-package-csv": path.resolve(
-    clientStudioSrc,
-    "features/client-studio/runtime/builderPackageCsv.vite.ts",
-  ),
 };
 
 /**

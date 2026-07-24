@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { describe, it } from 'node:test';
+import { before, describe, it } from 'node:test';
 
 import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
 import {
@@ -10,6 +10,7 @@ import {
   createDecisionSessionRuntime,
 } from '@embed-engine/runtime';
 
+import { installBuilderPackageRegistriesForTests } from './builderPackageTestInstall';
 import { projectSynchronizedExperience } from './synchronizedExperience';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -18,6 +19,10 @@ const clientStudioRoot = join(here, '../../../..');
 function readSource(relativeFromClientStudio: string): string {
   return readFileSync(join(clientStudioRoot, relativeFromClientStudio), 'utf8');
 }
+
+before(() => {
+  installBuilderPackageRegistriesForTests();
+});
 
 describe('Media projection boundary (ED-DA-02)', () => {
   it('media UI modules do not import the presentation catalog', () => {

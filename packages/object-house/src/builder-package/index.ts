@@ -1,3 +1,8 @@
+/**
+ * Browser-safe Builder Package surface (no node:fs).
+ * Disk importer: `@embed-engine/object-house/builder-package/node`
+ */
+
 export type {
   BuilderPackageErrorCode,
   BuilderPackageImportError,
@@ -10,7 +15,6 @@ export {
   buildBuilderPackageRegistries,
   type BuilderPackageSources,
 } from "./buildRegistries";
-export { importBuilderHousePackage } from "./importBuilderHousePackage";
 export { parseCsv } from "./parse-csv";
 export type {
   BuilderHousePackageImport,
