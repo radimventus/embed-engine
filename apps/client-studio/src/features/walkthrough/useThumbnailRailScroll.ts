@@ -1,11 +1,54 @@
-import { useCallback, useEffect, useState, type RefObject } from 'react';
+import { useCallback, useEffect, useRef, useState, type RefObject } from 'react';
 
 export const THUMBNAIL_SLOT_COUNT = 4;
 export const THUMBNAIL_GAP_PX = 16;
 
+/** Apple-like rail motion (TOUR-14). */
+export const THUMBNAIL_SCROLL_DURATION_MS = 220;
+
+const scrollAnimationIds = new WeakMap<HTMLElement, number>();
+
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+}
+
+function animateScrollLeft(
+  container: HTMLElement,
+  targetLeft: number,
+  durationMs: number,
+): void {
+  const startLeft = container.scrollLeft;
+  const delta = targetLeft - startLeft;
+  if (Math.abs(delta) < 0.5 || durationMs <= 0) {
+    container.scrollLeft = targetLeft;
+    return;
+  }
+
+  const existing = scrollAnimationIds.get(container);
+  if (existing !== undefined) {
+    window.cancelAnimationFrame(existing);
+  }
+
+  const startTime = performance.now();
+
+  const step = (now: number) => {
+    const elapsed = now - startTime;
+    const progress = Math.min(1, elapsed / durationMs);
+    container.scrollLeft = startLeft + delta * easeInOutCubic(progress);
+    if (progress < 1) {
+      scrollAnimationIds.set(container, window.requestAnimationFrame(step));
+      return;
+    }
+    scrollAnimationIds.delete(container);
+  };
+
+  scrollAnimationIds.set(container, window.requestAnimationFrame(step));
+}
+
 export function scrollThumbnailIntoView(
   container: HTMLElement,
   thumbnail: HTMLElement,
+  durationMs: number = THUMBNAIL_SCROLL_DURATION_MS,
 ): void {
   const thumbnailStart = thumbnail.offsetLeft;
   const thumbnailEnd = thumbnailStart + thumbnail.offsetWidth;
@@ -13,12 +56,16 @@ export function scrollThumbnailIntoView(
   const viewportEnd = viewportStart + container.clientWidth;
 
   if (thumbnailStart < viewportStart) {
-    container.scrollLeft = thumbnailStart;
+    animateScrollLeft(container, thumbnailStart, durationMs);
     return;
   }
 
   if (thumbnailEnd > viewportEnd) {
-    container.scrollLeft = thumbnailEnd - container.clientWidth;
+    animateScrollLeft(
+      container,
+      thumbnailEnd - container.clientWidth,
+      durationMs,
+    );
   }
 }
 
@@ -57,6 +104,8 @@ export function useActiveThumbnailScroll(
   activeMediaIndex: number,
   itemCount: number,
 ): void {
+  const previousIndexRef = useRef(activeMediaIndex);
+
   useEffect(() => {
     const container = containerRef.current;
     const thumbnail = thumbRefs.current.get(activeMediaIndex);
@@ -65,7 +114,14 @@ export function useActiveThumbnailScroll(
       return;
     }
 
-    scrollThumbnailIntoView(container, thumbnail);
+    const isInitial = previousIndexRef.current === activeMediaIndex;
+    previousIndexRef.current = activeMediaIndex;
+
+    scrollThumbnailIntoView(
+      container,
+      thumbnail,
+      isInitial ? 0 : THUMBNAIL_SCROLL_DURATION_MS,
+    );
   }, [activeMediaIndex, containerRef, itemCount, thumbRefs]);
 }
 
@@ -114,7 +170,7 @@ export function useThumbnailRailNavigation(
   }, [containerRef, maxSlotOffset, slotStepPx]);
 
   const scrollToSlot = useCallback(
-    (slotIndex: number, behavior: ScrollBehavior = 'smooth') => {
+    (slotIndex: number, _behavior: ScrollBehavior = 'smooth') => {
       const container = containerRef.current;
       const next = Math.min(maxSlotOffset, Math.max(0, slotIndex));
       setSlotOffset(next);
@@ -123,10 +179,7 @@ export function useThumbnailRailNavigation(
         return;
       }
 
-      container.scrollTo({
-        left: next * slotStepPx,
-        behavior,
-      });
+      animateScrollLeft(container, next * slotStepPx, THUMBNAIL_SCROLL_DURATION_MS);
     },
     [containerRef, maxSlotOffset, slotStepPx],
   );

@@ -17,9 +17,9 @@ const GALLERY_CSV = `order,room,file
 4,kitchen,11.webp
 `;
 
-const ROOMS_CSV = `floor,room,name
-p1,exterior,Exteriér
-p1,kitchen,Kuchyně
+const ROOMS_CSV = `floor,room,name,area
+p1,exterior,Exteriér,0
+p1,kitchen,Kuchyně,14
 `;
 
 const VIDEOS_CSV = `order,room,provider,mediaId
@@ -71,6 +71,7 @@ describe("projectBuilderImportToHousePackage", () => {
     });
 
     assert.equal(house.rooms.length, 2);
+    assert.equal(house.rooms.find((room) => room.id === "kitchen")?.area, 14);
     assert.deepEqual(
       house.rooms.map((room) => room.id),
       ["exterior", "kitchen"],

@@ -21,6 +21,8 @@ export type RoomCsvRow = {
   readonly floor: string;
   readonly room: string;
   readonly name: string;
+  /** Usable area in m² from rooms.csv. */
+  readonly area: number;
 };
 
 export type VideoCsvRow = {
@@ -56,6 +58,7 @@ export type RoomRegistryEntry = {
   readonly floorId: string;
   readonly roomId: string;
   readonly name: string;
+  readonly area: number;
 };
 
 export type RoomRegistry = {

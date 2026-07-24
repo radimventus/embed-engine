@@ -37,7 +37,7 @@ describe("buildBuilderPackageRegistries", () => {
   it("orders gallery strictly by CSV order", () => {
     const result = buildBuilderPackageRegistries({
       packageRoot: "/virtual",
-      roomsCsv: "floor,room,name\np1,exterior,Exteriér\np1,kitchen,Kuchyně\n",
+      roomsCsv: "floor,room,name,area\np1,exterior,Exteriér,0\np1,kitchen,Kuchyně,14\n",
       galleryCsv: "order,room,file\n10,kitchen,01.webp\n1,exterior,03.webp\n5,kitchen,02.webp\n",
       videosCsv: "order,room,provider,mediaId\n1,exterior,wistia,abc\n",
       heroPath: "media/hero/hero.webp",

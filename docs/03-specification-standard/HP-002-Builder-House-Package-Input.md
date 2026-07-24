@@ -162,18 +162,20 @@ order,room,file
 | `floor` | MUST | Floor id matching plan basename (e.g. `p1`, `p2`) |
 | `room` | MUST | Internal room id (stable, kebab-case recommended) |
 | `name` | MUST | Czech display name |
+| `area` | MUST | Usable area in m² (decimal allowed; Czech `,` or `.`) |
 
 Example:
 
 ```csv
-floor,room,name
-p1,exterior,Exteriér
-p1,living-room,Obývací pokoj
-p1,kitchen,Kuchyně
-p2,bedroom,Ložnice
+floor,room,name,area
+p1,exterior,Exteriér,0
+p1,living-room,Obývací pokoj,32
+p1,kitchen,Kuchyně,14
+p2,bedroom,Ložnice,18.4
 ```
 
 Runtime uses `room` to bind: navigator labels, gallery/video room scope, plan floor membership.  
+`area` projects into Runtime room facts for Tour room list display.  
 Room-specific SVG overlays beyond floor `p*.svg` are not required in v1.
 
 ### 3.4 `videos.csv` (package root)

@@ -10,7 +10,7 @@ type FloorPlanZoomControlProps = {
 
 export function FloorPlanZoomControl({
   onClick,
-  className,
+  className = 'relative z-10',
   style,
 }: FloorPlanZoomControlProps) {
   return (

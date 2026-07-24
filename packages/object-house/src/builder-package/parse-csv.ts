@@ -94,3 +94,20 @@ export function parsePositiveInt(raw: string, field: string, path: string): numb
   }
   return value;
 }
+
+/** Non-negative area in m² — accepts `.` or Czech `,` decimals. */
+export function parseNonNegativeNumber(
+  raw: string,
+  field: string,
+  path: string,
+): number | string {
+  const normalized = raw.replace(",", ".");
+  if (!/^\d+(\.\d+)?$/.test(normalized)) {
+    return `Invalid number for "${field}" in ${path}: ${raw}`;
+  }
+  const value = Number(normalized);
+  if (!Number.isFinite(value) || value < 0) {
+    return `Number out of range for "${field}" in ${path}: ${raw}`;
+  }
+  return value;
+}

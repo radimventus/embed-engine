@@ -3,7 +3,12 @@ import {
   type BuilderPackageImportError,
   type BuilderPackageImportResult,
 } from "./errors";
-import { parseCsv, parsePositiveInt, requireHeaders } from "./parse-csv";
+import {
+  parseCsv,
+  parseNonNegativeNumber,
+  parsePositiveInt,
+  requireHeaders,
+} from "./parse-csv";
 import {
   BUILDER_PACKAGE_FORMAT,
   BUILDER_PACKAGE_SCHEMA_VERSION,
@@ -100,7 +105,11 @@ function parseRoomRows(
   errors: BuilderPackageImportError[],
 ): RoomCsvRow[] {
   const table = parseCsv(text);
-  const headerError = requireHeaders(table, ["floor", "room", "name"], csvPath);
+  const headerError = requireHeaders(
+    table,
+    ["floor", "room", "name", "area"],
+    csvPath,
+  );
   if (headerError) {
     errors.push(bpError("BP_INVALID_CSV", headerError, csvPath));
     return [];
@@ -114,10 +123,19 @@ function parseRoomRows(
     const floor = row.floor ?? "";
     const room = row.room ?? "";
     const name = row.name ?? "";
+    const areaRaw = row.area ?? "";
     const loc = `${csvPath}:row ${i + 2}`;
 
-    if (!floor || !room || !name) {
-      errors.push(bpError("BP_MISSING_FIELD", "Missing floor, room, or name.", loc));
+    if (!floor || !room || !name || !areaRaw) {
+      errors.push(
+        bpError("BP_MISSING_FIELD", "Missing floor, room, name, or area.", loc),
+      );
+      continue;
+    }
+
+    const area = parseNonNegativeNumber(areaRaw, "area", loc);
+    if (typeof area === "string") {
+      errors.push(bpError("BP_INVALID_TYPE", area, loc));
       continue;
     }
 
@@ -126,7 +144,7 @@ function parseRoomRows(
       continue;
     }
     seenRooms.add(room);
-    rows.push({ floor, room, name });
+    rows.push({ floor, room, name, area });
   }
 
   return rows;
@@ -320,6 +338,7 @@ export function buildBuilderPackageRegistries(
       floorId: row.floor,
       roomId: row.room,
       name: row.name,
+      area: row.area,
     })),
   };
 

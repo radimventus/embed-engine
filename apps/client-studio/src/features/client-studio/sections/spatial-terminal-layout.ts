@@ -37,14 +37,14 @@ export const SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS =
   'box-border flex h-full w-full min-w-0 flex-col content-start items-start gap-0 overflow-x-hidden pb-section pl-[20px] mobile:px-section';
 
 export const SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS =
-  'grid w-[690px] min-w-[690px] max-w-[690px] shrink-0 content-start items-start gap-0 mobile:w-full mobile:min-w-0 mobile:max-w-none';
+  'grid w-[600px] min-w-[600px] max-w-[600px] shrink-0 content-start items-start gap-0 mobile:w-full mobile:min-w-0 mobile:max-w-none';
 
-/** Floor plan column: 30px from menu, 20px to section right edge. */
+/** Floor plan column: 40px from menu, 20px to section right edge (TOUR-10). */
 export const SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS =
-  'grid h-full w-full min-w-0 grid-rows-[minmax(0,1fr)_100px] items-stretch overflow-x-hidden pl-[30px] pr-[20px] pb-section pt-5';
+  'grid h-full w-full min-w-0 grid-rows-[minmax(0,1fr)_100px] items-stretch overflow-x-hidden pl-[40px] pr-[20px] pb-section pt-5';
 
 export const SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS =
-  'relative box-border aspect-video w-[690px] min-w-[690px] max-w-[690px] shrink-0 overflow-hidden rounded-[8px] bg-embed-surface-placeholder';
+  'relative box-border aspect-video w-[600px] min-w-[600px] max-w-[600px] shrink-0 overflow-hidden rounded-[8px] bg-embed-surface-placeholder';
 
 /** Shared bottom baseline for thumbnails + VIDEO/FOTKY + PŘÍZEMÍ/PATRO. */
 export const SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS =

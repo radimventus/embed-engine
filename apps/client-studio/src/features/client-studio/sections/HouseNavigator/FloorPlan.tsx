@@ -13,8 +13,8 @@ const FLOOR_HOVER_FILL = '#f5b90040';
 /** Selected room overlay — gold @ 50%. */
 const FLOOR_ACTIVE_FILL = '#f5b9007f';
 
-/** Loupe inset from the floor-plan’s right edge. */
-const LOUPE_RIGHT_INSET_PX = 20;
+/** Gap between floor-plan drawing and loupe (TOUR-11). */
+const LOUPE_BELOW_GAP_PX = 20;
 
 type FloorPlanCanvasProps = {
   interactive: boolean;
@@ -124,8 +124,7 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
 }
 
 /**
- * Floor plan display — expands into column gaps; vertical align A/B;
- * loupe anchored to the plan’s right edge (−20px).
+ * Floor plan display — enlarged ~20% column (TOUR-10); loupe below plan (TOUR-11).
  */
 export function FloorPlan() {
   const { experience } = useDecisionSessionRuntime();
@@ -136,6 +135,8 @@ export function FloorPlan() {
   const [align, setAlign] = useState<'end' | 'center'>('center');
 
   const aspectRatio = `${viewBoxWidth} / ${viewBoxHeight}`;
+  const aspectRatioNumber =
+    viewBoxHeight > 0 ? viewBoxWidth / viewBoxHeight : 1;
 
   useEffect(() => {
     const floorPlan = experience.context.floorPlan;
@@ -162,8 +163,6 @@ export function FloorPlan() {
     const measure = () => {
       const displayHeight = display.clientHeight;
       const planHeight = plan.getBoundingClientRect().height;
-      // Variant A: plan taller than display → bottom-align with display.
-      // Variant B: plan shorter → center on display axis.
       setAlign(planHeight > displayHeight + 0.5 ? 'end' : 'center');
     };
 
@@ -175,7 +174,6 @@ export function FloorPlan() {
   }, [aspectRatio]);
 
   useEffect(() => {
-    // Re-measure after fonts / image decode.
     const id = window.requestAnimationFrame(() => {
       const display = displayRef.current;
       const plan = planRef.current;
@@ -192,8 +190,8 @@ export function FloorPlan() {
   return (
     <div
       ref={displayRef}
-      className={`relative flex h-full min-h-0 w-full min-w-0 max-w-none flex-1 overflow-hidden mobile:items-center ${
-        align === 'end' ? 'items-end' : 'items-center'
+      className={`relative flex h-full min-h-0 w-full min-w-0 max-w-none flex-1 flex-col overflow-hidden mobile:justify-center ${
+        align === 'end' ? 'justify-end' : 'justify-center'
       }`}
     >
       <div
@@ -202,13 +200,18 @@ export function FloorPlan() {
         style={{ aspectRatio }}
       >
         <FloorPlanCanvas interactive className="block h-full w-full" />
-        <FloorPlanZoomControl
-          className="absolute bottom-3 z-10"
-          style={{ right: LOUPE_RIGHT_INSET_PX }}
-          onClick={() => setIsLightboxOpen(true)}
-        />
       </div>
-      <FloorPlanLightbox isOpen={isLightboxOpen} onClose={() => setIsLightboxOpen(false)}>
+      <div
+        className="flex w-full shrink-0 justify-end"
+        style={{ marginTop: LOUPE_BELOW_GAP_PX }}
+      >
+        <FloorPlanZoomControl onClick={() => setIsLightboxOpen(true)} />
+      </div>
+      <FloorPlanLightbox
+        aspectRatio={aspectRatioNumber}
+        isOpen={isLightboxOpen}
+        onClose={() => setIsLightboxOpen(false)}
+      >
         <FloorPlanCanvas interactive={false} className="block h-full w-full" />
       </FloorPlanLightbox>
     </div>

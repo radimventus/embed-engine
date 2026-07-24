@@ -1,11 +1,11 @@
-floor,room,name
-p1,exterior,Exteriér
-p1,kitchen,Kuchyně
-p1,living-room,Obývací pokoj
-p1,vestibule,Zádveří a chodba
-p1,wardrobe,Šatna
-p1,bedroom,Ložnice
-p1,bathroom,Koupelna
-p1,toilet,Toaleta
-p1,children-room,Dětský pokoj
-p1,office,Pracovna
+floor,room,name,area
+p1,exterior,Exteriér,0
+p1,kitchen,Kuchyně,14
+p1,living-room,Obývací pokoj,32
+p1,vestibule,Zádveří a chodba,10
+p1,wardrobe,Šatna,4
+p1,bedroom,Ložnice,18.4
+p1,bathroom,Koupelna,8
+p1,toilet,Toaleta,3
+p1,children-room,Dětský pokoj,16
+p1,office,Pracovna,12

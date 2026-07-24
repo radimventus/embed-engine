@@ -122,7 +122,7 @@ export function projectBuilderImportToHousePackage(
     Object.freeze({
       id: room.roomId,
       name: room.name,
-      area: 0,
+      area: room.area,
       floor: builderFloorIdToNumber(room.floorId),
     }),
   );

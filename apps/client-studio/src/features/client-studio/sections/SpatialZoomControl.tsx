@@ -18,7 +18,7 @@ export function SpatialZoomControl({
     <button
       type="button"
       aria-label={label}
-      className={`${className} flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-[8px] border border-[#D4AF37] bg-white/90 transition-opacity duration-150 ease-out hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2`}
+      className={`flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-[8px] border border-[#D4AF37] bg-white/90 transition-opacity duration-150 ease-out hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 ${className}`}
       style={style}
       onClick={(event) => {
         event.stopPropagation();

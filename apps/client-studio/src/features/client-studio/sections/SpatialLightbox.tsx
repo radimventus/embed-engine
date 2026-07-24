@@ -1,9 +1,10 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 
 type SpatialLightboxProps = {
   children: ReactNode;
   frameClassName: string;
+  frameStyle?: CSSProperties;
   isOpen: boolean;
   label: string;
   onClose: () => void;
@@ -16,6 +17,7 @@ type SpatialLightboxProps = {
 export function SpatialLightbox({
   children,
   frameClassName,
+  frameStyle,
   isOpen,
   label,
   onClose,
@@ -52,6 +54,7 @@ export function SpatialLightbox({
     >
       <div
         className={`relative ${frameClassName}`}
+        style={frameStyle}
         onClick={(event) => event.stopPropagation()}
       >
         <button

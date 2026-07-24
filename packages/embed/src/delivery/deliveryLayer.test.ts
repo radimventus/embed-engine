@@ -62,9 +62,9 @@ describe("Embed delivery layer preparation", () => {
 1,exterior,01.webp
 2,kitchen,11.webp
 `,
-    roomsCsv: `floor,room,name
-p1,exterior,Exteriér
-p1,kitchen,Kuchyně
+    roomsCsv: `floor,room,name,area
+p1,exterior,Exteriér,0
+p1,kitchen,Kuchyně,14
 `,
     videosCsv: `order,room,provider,mediaId
 1,kitchen,wistia,abc
@@ -83,7 +83,7 @@ p1,kitchen,Kuchyně
         projectRuntimeHousePackageFromCsvTexts(
           {
             galleryCsv: "order,room,file\n",
-            roomsCsv: "floor,room,name\n",
+            roomsCsv: "floor,room,name,area\n",
             videosCsv: "order,room,provider,mediaId\n",
           },
           "garden",
