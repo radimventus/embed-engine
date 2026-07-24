@@ -1,0 +1,280 @@
+{
+  "label": "harness",
+  "url": "http://127.0.0.1:8765/embed/audit-harness.html",
+  "selector": "[data-embed-hero-cta]",
+  "beforeDom": {
+    "heroCta": true,
+    "overlay": false,
+    "studioRoot": false,
+    "embedRoot": false,
+    "ctaText": "Podívat se dovnitř – video →"
+  },
+  "dispatchResult": {
+    "ok": false,
+    "reason": "dispatch-evaluate-blocked-8s"
+  },
+  "mainThread": {
+    "status": "blocked-or-slow",
+    "waitedMs": 5000
+  },
+  "networkTimeline": [
+    {
+      "i": 0,
+      "elapsedMs": 8257,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 1,
+      "elapsedMs": 8511,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 2,
+      "elapsedMs": 8764,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 3,
+      "elapsedMs": 9044,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 4,
+      "elapsedMs": 9346,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 5,
+      "elapsedMs": 9600,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 6,
+      "elapsedMs": 9894,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 7,
+      "elapsedMs": 10208,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 8,
+      "elapsedMs": 10473,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 9,
+      "elapsedMs": 10724,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 10,
+      "elapsedMs": 10975,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 11,
+      "elapsedMs": 11240,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 12,
+      "elapsedMs": 11712,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 13,
+      "elapsedMs": 11963,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 14,
+      "elapsedMs": 12215,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 15,
+      "elapsedMs": 12467,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 16,
+      "elapsedMs": 12718,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 17,
+      "elapsedMs": 12969,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 18,
+      "elapsedMs": 13221,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 19,
+      "elapsedMs": 13472,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 20,
+      "elapsedMs": 13722,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 21,
+      "elapsedMs": 13973,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 22,
+      "elapsedMs": 14224,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    },
+    {
+      "i": 23,
+      "elapsedMs": 14476,
+      "requestCount": 0,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": []
+    }
+  ],
+  "consoleAll": [
+    {
+      "t": 1784873227164,
+      "type": "info",
+      "text": "Embed Runtime"
+    },
+    {
+      "t": 1784873227164,
+      "type": "info",
+      "text": "Build: 40bfd9e"
+    },
+    {
+      "t": 1784873227164,
+      "type": "info",
+      "text": "Runtime: builder-package/projectBuilderImportToHousePackage"
+    },
+    {
+      "t": 1784873227165,
+      "type": "info",
+      "text": "Built: 2026-07-24T05:17:33Z"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "requestFails": [],
+  "failedResponses": [],
+  "postClickRequests": [],
+  "postClickResponses": [],
+  "csvHits": [],
+  "firstFailedPostClick": null,
+  "runtimeConsole": [
+    {
+      "t": 1784873227164,
+      "type": "info",
+      "text": "Embed Runtime"
+    },
+    {
+      "t": 1784873227164,
+      "type": "info",
+      "text": "Runtime: builder-package/projectBuilderImportToHousePackage"
+    }
+  ]
+}

@@ -1,12 +1,12 @@
 /**
- * Reveal Engine — Delivery-owned viewport settle to Landing Anchor (LRI-01 / ADR-014).
+ * Reveal Engine — Delivery-owned viewport settle after Experience readiness
+ * (LRI-01 / ADR-014 / PT-BOOTSTRAP-READY-01).
  *
- * Starts only after Runtime Ready + Studio Ready (state sync — no fixed delays).
- * Runtime remains unaware of Reveal.
- *
- * UX settle: open at document start (Hero), then smooth-scroll (~1125ms) so the
- * Landing Anchor aligns just below the sticky Experience header.
+ * Waits only on EXPERIENCE_READY (lifecycle bus). Never polls the DOM.
+ * Optional one-shot Landing Anchor settle is presentation only — not a sync gate.
  */
+
+import { bootstrapEvents } from "@client-studio/bootstrap-events";
 
 import {
   landingAnchorSelector,
@@ -30,8 +30,6 @@ export type RevealEngineOptions = {
   readonly studioRoot: HTMLElement;
   /** Scrollport owned by Delivery (usually the overlay mount). */
   readonly scrollContainer: HTMLElement;
-  /** True when Delivery Runtime Session has Experience projection. */
-  readonly runtimeReady: boolean;
   readonly configuredLandingAnchorId: string;
   readonly modeDefaultLandingAnchorId: string;
   readonly signal: AbortSignal;
@@ -151,85 +149,6 @@ export function animateScrollTop(
 }
 
 /**
- * Wait until `selector` exists under `root` (Studio Ready for that anchor).
- * Resolves immediately if already present. Abort ends the wait.
- * Uses MutationObserver when available; otherwise microtask polling (still state-based).
- */
-export function waitForSelector(
-  root: ParentNode,
-  selector: string,
-  signal: AbortSignal,
-): Promise<Element> {
-  const existing = root.querySelector(selector);
-  if (existing) {
-    return Promise.resolve(existing);
-  }
-
-  return new Promise((resolve, reject) => {
-    if (signal.aborted) {
-      reject(new DOMException("Reveal aborted", "AbortError"));
-      return;
-    }
-
-    let settled = false;
-    let observer: MutationObserver | null = null;
-
-    const cleanup = (): void => {
-      observer?.disconnect();
-      signal.removeEventListener("abort", failAbort);
-    };
-
-    const finish = (el: Element): void => {
-      if (settled) {
-        return;
-      }
-      settled = true;
-      cleanup();
-      resolve(el);
-    };
-
-    const failAbort = (): void => {
-      if (settled) {
-        return;
-      }
-      settled = true;
-      cleanup();
-      reject(new DOMException("Reveal aborted", "AbortError"));
-    };
-
-    const poll = (): void => {
-      if (settled) {
-        return;
-      }
-      if (signal.aborted) {
-        failAbort();
-        return;
-      }
-      const found = root.querySelector(selector);
-      if (found) {
-        finish(found);
-        return;
-      }
-      queueMicrotask(poll);
-    };
-
-    signal.addEventListener("abort", failAbort);
-
-    if (typeof MutationObserver !== "undefined") {
-      observer = new MutationObserver(() => {
-        const found = root.querySelector(selector);
-        if (found) {
-          finish(found);
-        }
-      });
-      observer.observe(root, { childList: true, subtree: true });
-    }
-
-    queueMicrotask(poll);
-  });
-}
-
-/**
  * Scroll Delivery scrollport so `element` sits just below the sticky header.
  * Default: start at Hero (top), then smooth-scroll ~1125ms to the Landing Anchor.
  */
@@ -271,7 +190,46 @@ export async function settleViewportToElement(
 }
 
 /**
- * Run Reveal pipeline to Landing Anchor. Does not touch Runtime semantics.
+ * One-shot query for a settle target after Experience is ready.
+ * Never waits — missing nodes degrade to scroll-top.
+ */
+function resolveSettleTarget(
+  studioRoot: HTMLElement,
+  configuredLandingAnchorId: string,
+  modeDefaultLandingAnchorId: string,
+): { readonly element: HTMLElement | null; readonly anchorId: string; readonly usedDefault: boolean } {
+  const resolved = resolveLandingAnchorId({
+    configuredId: configuredLandingAnchorId,
+    modeDefaultId: modeDefaultLandingAnchorId,
+  });
+  const primary = studioRoot.querySelector(
+    landingAnchorSelector(resolved.elementId),
+  );
+  if (primary instanceof HTMLElement) {
+    return {
+      element: primary,
+      anchorId: primary.id || resolved.elementId,
+      usedDefault: resolved.usedDefault,
+    };
+  }
+  const hero = studioRoot.querySelector("#hero");
+  if (hero instanceof HTMLElement) {
+    return {
+      element: hero,
+      anchorId: resolved.elementId,
+      usedDefault: true,
+    };
+  }
+  return {
+    element: null,
+    anchorId: resolved.elementId,
+    usedDefault: true,
+  };
+}
+
+/**
+ * Run Reveal after EXPERIENCE_READY. Does not touch Runtime semantics.
+ * Does not poll the DOM or busy-loop microtasks.
  */
 export async function runRevealEngine(
   options: RevealEngineOptions,
@@ -287,71 +245,13 @@ export async function runRevealEngine(
 
   setState(options, "waiting-ready");
 
-  if (!options.runtimeReady) {
-    setState(options, "degraded");
-    return {
-      state: "degraded",
-      anchorId: options.modeDefaultLandingAnchorId,
-      degraded: true,
-    };
-  }
-
-  // Studio Ready: Client Studio root is mounted (attribute set synchronously on mount).
-  if (!options.studioRoot.hasAttribute("data-client-studio-root")) {
-    await waitForSelector(
-      options.studioRoot.parentNode ?? options.studioRoot,
-      "[data-client-studio-root]",
-      options.signal,
-    ).catch(() => null);
-    if (isAborted(options.signal)) {
-      setState(options, "aborted");
-      return {
-        state: "aborted",
-        anchorId: options.modeDefaultLandingAnchorId,
-        degraded: true,
-      };
-    }
-  }
-
-  setState(options, "resolving-anchor");
-
-  const resolved = resolveLandingAnchorId({
-    configuredId: options.configuredLandingAnchorId,
-    modeDefaultId: options.modeDefaultLandingAnchorId,
-  });
-
-  const primarySelector = landingAnchorSelector(resolved.elementId);
-  let target: Element | null = null;
-
   try {
-    target = await waitForSelector(
-      options.studioRoot,
-      primarySelector,
-      options.signal,
-    );
+    await bootstrapEvents.waitFor("EXPERIENCE_READY", options.signal);
   } catch {
-    if (isAborted(options.signal)) {
-      setState(options, "aborted");
-      return {
-        state: "aborted",
-        anchorId: resolved.elementId,
-        degraded: true,
-      };
-    }
-  }
-
-  if (!target) {
-    // Degrade to hero / document start inside Experience surface.
-    const hero = options.studioRoot.querySelector("#hero");
-    target = hero;
-  }
-
-  if (!target || !(target instanceof HTMLElement)) {
-    setState(options, "degraded");
-    options.scrollContainer.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    setState(options, "aborted");
     return {
-      state: "degraded",
-      anchorId: resolved.elementId,
+      state: "aborted",
+      anchorId: options.modeDefaultLandingAnchorId,
       degraded: true,
     };
   }
@@ -360,13 +260,42 @@ export async function runRevealEngine(
     setState(options, "aborted");
     return {
       state: "aborted",
-      anchorId: resolved.elementId,
+      anchorId: options.modeDefaultLandingAnchorId,
+      degraded: true,
+    };
+  }
+
+  setState(options, "resolving-anchor");
+  const settle = resolveSettleTarget(
+    options.studioRoot,
+    options.configuredLandingAnchorId,
+    options.modeDefaultLandingAnchorId,
+  );
+
+  if (settle.element === null) {
+    setState(options, "degraded");
+    options.scrollContainer.scrollTo({ top: 0, left: 0, behavior: "auto" });
+    bootstrapEvents.emit("REVEAL_READY");
+    options.scrollContainer.dataset.viewportReady = "true";
+    options.scrollContainer.dataset.landingAnchorId = settle.anchorId;
+    return {
+      state: "degraded",
+      anchorId: settle.anchorId,
+      degraded: true,
+    };
+  }
+
+  if (isAborted(options.signal)) {
+    setState(options, "aborted");
+    return {
+      state: "aborted",
+      anchorId: settle.anchorId,
       degraded: true,
     };
   }
 
   setState(options, "revealing");
-  await settleViewportToElement(options.scrollContainer, target, {
+  await settleViewportToElement(options.scrollContainer, settle.element, {
     signal: options.signal,
     durationMs: LANDING_REVEAL_DURATION_MS,
     fromTop: true,
@@ -376,22 +305,22 @@ export async function runRevealEngine(
     setState(options, "aborted");
     return {
       state: "aborted",
-      anchorId: resolved.elementId,
+      anchorId: settle.anchorId,
       degraded: true,
     };
   }
 
   const degraded =
-    resolved.usedDefault ||
-    target.id !== resolved.elementId;
+    settle.usedDefault || settle.element.id !== settle.anchorId;
 
   setState(options, degraded ? "degraded" : "active");
-  options.scrollContainer.dataset.landingAnchorId = target.id || resolved.elementId;
+  options.scrollContainer.dataset.landingAnchorId = settle.anchorId;
   options.scrollContainer.dataset.viewportReady = "true";
+  bootstrapEvents.emit("REVEAL_READY");
 
   return {
     state: degraded ? "degraded" : "active",
-    anchorId: target.id || resolved.elementId,
+    anchorId: settle.anchorId,
     degraded,
   };
 }

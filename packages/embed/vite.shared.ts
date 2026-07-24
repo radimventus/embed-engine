@@ -18,6 +18,10 @@ const aliases = {
     clientStudioSrc,
     "embed/mountClientStudio.tsx",
   ),
+  "@client-studio/bootstrap-events": path.resolve(
+    clientStudioSrc,
+    "features/client-studio/runtime/bootstrapEvents.ts",
+  ),
 };
 
 function readBuildFingerprintDefine(): string {

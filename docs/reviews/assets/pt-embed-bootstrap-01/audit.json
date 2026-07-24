@@ -1,0 +1,214 @@
+{
+  "url": "http://127.0.0.1:8765/embed/audit-harness.html",
+  "before": {
+    "heroCta": true,
+    "overlay": false,
+    "studioRoot": false
+  },
+  "mainThread": {
+    "status": "blocked-or-slow",
+    "waitedMs": 5000
+  },
+  "networkTimeline": [
+    {
+      "i": 0,
+      "elapsedMs": 252,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 1,
+      "elapsedMs": 504,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 2,
+      "elapsedMs": 816,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 3,
+      "elapsedMs": 1108,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 4,
+      "elapsedMs": 1380,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 5,
+      "elapsedMs": 1634,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 6,
+      "elapsedMs": 1885,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 7,
+      "elapsedMs": 2138,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 8,
+      "elapsedMs": 2389,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 9,
+      "elapsedMs": 2659,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 10,
+      "elapsedMs": 2917,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 11,
+      "elapsedMs": 3170,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 12,
+      "elapsedMs": 3528,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 13,
+      "elapsedMs": 3789,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 14,
+      "elapsedMs": 4042,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 15,
+      "elapsedMs": 4296,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 16,
+      "elapsedMs": 4549,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 17,
+      "elapsedMs": 4803,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 18,
+      "elapsedMs": 5055,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 19,
+      "elapsedMs": 5307,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 20,
+      "elapsedMs": 5559,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 21,
+      "elapsedMs": 5810,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 22,
+      "elapsedMs": 6060,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    },
+    {
+      "i": 23,
+      "elapsedMs": 6315,
+      "responseCount": 0,
+      "csv": [],
+      "failed": []
+    }
+  ],
+  "consoleAll": [
+    {
+      "type": "info",
+      "text": "Embed Runtime",
+      "t": 1784872187109
+    },
+    {
+      "type": "info",
+      "text": "Build: 40bfd9e",
+      "t": 1784872187110
+    },
+    {
+      "type": "info",
+      "text": "Runtime: builder-package/projectBuilderImportToHousePackage",
+      "t": 1784872187110
+    },
+    {
+      "type": "info",
+      "text": "Built: 2026-07-24T05:17:33Z",
+      "t": 1784872187110
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (File not found)",
+      "t": 1784872187227
+    }
+  ],
+  "pageErrors": [],
+  "requestFails": [],
+  "csvHits": [],
+  "failedResponses": [],
+  "postClickResponses": []
+}

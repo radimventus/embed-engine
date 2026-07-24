@@ -18,6 +18,8 @@ import {
 import { RUNTIME_HOUSE_PACKAGE_SOURCE } from '@embed-engine/object-house/builder-package';
 
 import { useOptionalDecisionAnalytics } from '../analytics/DecisionAnalyticsProvider';
+import { StudioLoading } from '../foundation/StudioLoading';
+import { bootstrapEvents } from './bootstrapEvents';
 import {
   ensureBuilderPackageBootstrapped,
   getBuilderRuntimeHousePackage,
@@ -59,6 +61,17 @@ type DecisionSessionRuntimeProviderProps = {
 };
 
 /**
+ * Publishes EXPERIENCE_READY once after the Experience tree has committed.
+ * Delivery Reveal waits on this event — never on DOM polling.
+ */
+function ExperienceReadyPublisher() {
+  useEffect(() => {
+    bootstrapEvents.emit('EXPERIENCE_READY');
+  }, []);
+  return null;
+}
+
+/**
  * Pure Context Provider — transports Decision Session Runtime state to React.
  *
  * Owns: Runtime instance lifecycle (unless injected), revision notifications, Experience projection call.
@@ -71,6 +84,8 @@ type DecisionSessionRuntimeProviderProps = {
  *
  * CSCB-08: successful dispatches are observed by Decision Analytics when present.
  * Observation is passive — analytics never feeds back into Runtime.
+ *
+ * PT-BOOTSTRAP-READY-01: emits RUNTIME_READY / EXPERIENCE_READY on the shared bootstrap bus.
  */
 export function DecisionSessionRuntimeProvider({
   children,
@@ -87,8 +102,11 @@ export function DecisionSessionRuntimeProvider({
       runtimeRef.current = injectedRuntime;
       setPackageReady(true);
       setBootstrapError(null);
+      bootstrapEvents.emit('RUNTIME_READY');
       return;
     }
+
+    bootstrapEvents.emit('BOOTSTRAP_LOADING');
 
     let cancelled = false;
     void ensureBuilderPackageBootstrapped()
@@ -104,6 +122,7 @@ export function DecisionSessionRuntimeProvider({
         setPackageReady(true);
         setBootstrapError(null);
         setRevision((value) => value + 1);
+        bootstrapEvents.emit('RUNTIME_READY');
       })
       .catch((error: unknown) => {
         if (!cancelled) {
@@ -218,11 +237,12 @@ export function DecisionSessionRuntimeProvider({
   }
 
   if (value === null) {
-    return null;
+    return <StudioLoading label="Připravuji Decision Session…" />;
   }
 
   return (
     <DecisionSessionRuntimeContext.Provider value={value}>
+      <ExperienceReadyPublisher />
       {children}
     </DecisionSessionRuntimeContext.Provider>
   );

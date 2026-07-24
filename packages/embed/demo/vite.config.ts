@@ -22,6 +22,10 @@ export default defineConfig({
         repoRoot,
         "apps/client-studio/src/embed/mountClientStudio.tsx",
       ),
+      "@client-studio/bootstrap-events": path.resolve(
+        repoRoot,
+        "apps/client-studio/src/features/client-studio/runtime/bootstrapEvents.ts",
+      ),
     },
     dedupe: ["react", "react-dom"],
   },

@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
 import { Window } from "happy-dom";
 
+import { bootstrapEvents } from "./bootstrapEvents";
 import {
   LAUNCHER_DEFAULT_LANDING_ANCHOR,
   resolveLandingAnchorId,
@@ -11,7 +12,6 @@ import {
   LANDING_REVEAL_DURATION_MS,
   runRevealEngine,
   settleViewportToElement,
-  waitForSelector,
 } from "./revealEngine";
 
 function installDom(): Window {
@@ -35,11 +35,6 @@ function installDom(): Window {
   });
   Object.defineProperty(globalThis, "DOMException", {
     value: window.DOMException,
-    configurable: true,
-    writable: true,
-  });
-  Object.defineProperty(globalThis, "MutationObserver", {
-    value: window.MutationObserver,
     configurable: true,
     writable: true,
   });
@@ -84,12 +79,13 @@ describe("Landing Anchor resolver", () => {
   });
 });
 
-describe("Reveal Engine", () => {
+describe("Reveal Engine (event-driven)", () => {
   afterEach(() => {
     document.body.replaceChildren();
+    bootstrapEvents.reset();
   });
 
-  it("waits for Landing Anchor then settles scroll without timers", async () => {
+  it("waits for EXPERIENCE_READY then settles without DOM polling", async () => {
     installDom();
     let now = 0;
     Object.defineProperty(globalThis, "performance", {
@@ -127,6 +123,24 @@ describe("Reveal Engine", () => {
       configurable: true,
     });
 
+    const hero = document.createElement("section");
+    hero.id = "hero";
+    hero.style.height = "400px";
+    const proof = document.createElement("section");
+    proof.id = "social-proof";
+    proof.style.height = "200px";
+    Object.defineProperty(proof, "getBoundingClientRect", {
+      value: () => ({
+        top: 400,
+        left: 0,
+        bottom: 600,
+        right: 200,
+        width: 200,
+        height: 200,
+      }),
+      configurable: true,
+    });
+    scroll.append(hero, proof);
     document.body.appendChild(scroll);
 
     const controller = new AbortController();
@@ -135,7 +149,6 @@ describe("Reveal Engine", () => {
     const revealPromise = runRevealEngine({
       studioRoot: scroll,
       scrollContainer: scroll,
-      runtimeReady: true,
       configuredLandingAnchorId: "social-proof",
       modeDefaultLandingAnchorId: "social-proof",
       signal: controller.signal,
@@ -144,26 +157,8 @@ describe("Reveal Engine", () => {
       },
     });
 
-    // Studio becomes ready asynchronously (no fixed delay in engine — MutationObserver).
     queueMicrotask(() => {
-      const hero = document.createElement("section");
-      hero.id = "hero";
-      hero.style.height = "400px";
-      const proof = document.createElement("section");
-      proof.id = "social-proof";
-      proof.style.height = "200px";
-      Object.defineProperty(proof, "getBoundingClientRect", {
-        value: () => ({
-          top: 400,
-          left: 0,
-          bottom: 600,
-          right: 200,
-          width: 200,
-          height: 200,
-        }),
-        configurable: true,
-      });
-      scroll.append(hero, proof);
+      bootstrapEvents.emit("EXPERIENCE_READY");
     });
 
     const result = await revealPromise;
@@ -174,45 +169,54 @@ describe("Reveal Engine", () => {
     assert.ok(states.includes("revealing"));
     assert.ok(states.includes("active"));
     assert.equal(scroll.dataset.viewportReady, "true");
+    assert.equal(bootstrapEvents.hasEmitted("REVEAL_READY"), true);
   });
 
-  it("degrades when anchor never appears but hero exists", async () => {
+  it("aborts cleanly when signal fires before EXPERIENCE_READY", async () => {
     installDom();
     const scroll = document.createElement("div");
     scroll.setAttribute("data-client-studio-root", "");
-    const hero = document.createElement("section");
-    hero.id = "hero";
-    Object.defineProperty(hero, "getBoundingClientRect", {
-      value: () => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }),
-      configurable: true,
+    document.body.appendChild(scroll);
+
+    const controller = new AbortController();
+    queueMicrotask(() => controller.abort());
+
+    const result = await runRevealEngine({
+      studioRoot: scroll,
+      scrollContainer: scroll,
+      configuredLandingAnchorId: "social-proof",
+      modeDefaultLandingAnchorId: "social-proof",
+      signal: controller.signal,
     });
-    Object.defineProperty(scroll, "getBoundingClientRect", {
-      value: () => ({ top: 0, left: 0, bottom: 100, right: 100, width: 100, height: 100 }),
-      configurable: true,
-    });
+
+    assert.equal(result.state, "aborted");
+  });
+
+  it("degrades to scroll-top when Experience is ready but no settle target exists", async () => {
+    installDom();
+    const scroll = document.createElement("div");
+    scroll.setAttribute("data-client-studio-root", "");
     Object.defineProperty(scroll, "scrollTo", {
       value() {
         /* no-op */
       },
       configurable: true,
     });
-    scroll.appendChild(hero);
     document.body.appendChild(scroll);
 
     const controller = new AbortController();
-    // Abort wait shortly so test does not hang — simulates Close / timeout bound.
-    queueMicrotask(() => controller.abort());
-
-    const result = await runRevealEngine({
+    const revealPromise = runRevealEngine({
       studioRoot: scroll,
       scrollContainer: scroll,
-      runtimeReady: true,
       configuredLandingAnchorId: "social-proof",
       modeDefaultLandingAnchorId: "social-proof",
       signal: controller.signal,
     });
 
-    assert.ok(result.state === "aborted" || result.state === "degraded");
+    bootstrapEvents.emit("EXPERIENCE_READY");
+    const result = await revealPromise;
+    assert.equal(result.state, "degraded");
+    assert.equal(bootstrapEvents.hasEmitted("REVEAL_READY"), true);
   });
 
   it("settleViewportToElement adjusts scrollTop below sticky header", async () => {
@@ -257,18 +261,21 @@ describe("Reveal Engine", () => {
     assert.equal(scrolledTo, 250 - 72);
   });
 
-  it("waitForSelector resolves when node is inserted", async () => {
-    installDom();
-    const root = document.createElement("div");
-    document.body.appendChild(root);
-    const controller = new AbortController();
-    const pending = waitForSelector(root, "#social-proof", controller.signal);
-    queueMicrotask(() => {
-      const el = document.createElement("div");
-      el.id = "social-proof";
-      root.appendChild(el);
+  it("bootstrapEvents emits RUNTIME_READY and EXPERIENCE_READY only once", () => {
+    bootstrapEvents.reset();
+    let runtimeCount = 0;
+    let experienceCount = 0;
+    bootstrapEvents.on("RUNTIME_READY", () => {
+      runtimeCount += 1;
     });
-    const found = await pending;
-    assert.equal(found.id, "social-proof");
+    bootstrapEvents.on("EXPERIENCE_READY", () => {
+      experienceCount += 1;
+    });
+    bootstrapEvents.emit("RUNTIME_READY");
+    bootstrapEvents.emit("RUNTIME_READY");
+    bootstrapEvents.emit("EXPERIENCE_READY");
+    bootstrapEvents.emit("EXPERIENCE_READY");
+    assert.equal(runtimeCount, 1);
+    assert.equal(experienceCount, 1);
   });
 });

@@ -7,6 +7,7 @@
  * Client Studio Provider is the sole Runtime initializer (same as standalone CS).
  */
 
+import { bootstrapEvents } from "@client-studio/bootstrap-events";
 import { mountClientStudio } from "@client-studio/embed-mount";
 
 import type { EmbedSession } from "../bootstrap";
@@ -80,6 +81,9 @@ export async function launchExperience(
   const revealAbort = new AbortController();
 
   try {
+    bootstrapEvents.reset();
+    bootstrapEvents.emit("BOOTSTRAP_STARTED");
+
     ensureClientStudioStyles();
 
     const objectId = resolvePilotObjectId(request.objectId);
@@ -92,6 +96,8 @@ export async function launchExperience(
         "Embed: launcher mount container is unavailable after overlay initialization",
       );
     }
+
+    bootstrapEvents.emit("BOOTSTRAP_LOADING");
 
     const handle = mountClientStudio({
       target: mountTarget,
@@ -108,11 +114,10 @@ export async function launchExperience(
     const restoreFocusTo = request.restoreFocusTo ?? null;
     const overlayRef = overlay;
 
-    // Runtime Ready: Provider bootstraps async; Reveal waits for Studio DOM (landing anchor).
+    // Reveal waits on EXPERIENCE_READY (Provider lifecycle) — never DOM polls.
     void runRevealEngine({
       studioRoot: mountTarget,
       scrollContainer: mountTarget,
-      runtimeReady: true,
       configuredLandingAnchorId: request.presentation.landingAnchorId,
       modeDefaultLandingAnchorId: LAUNCHER_DEFAULT_LANDING_ANCHOR,
       signal: revealAbort.signal,

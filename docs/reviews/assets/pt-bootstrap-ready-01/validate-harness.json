@@ -1,0 +1,61 @@
+{
+  "label": "harness",
+  "url": "http://127.0.0.1:8765/embed/audit-harness.html",
+  "elapsedMs": 2680,
+  "finalState": {
+    "overlay": true,
+    "studio": true,
+    "rooms": 10,
+    "experienceActive": true,
+    "revealState": "active",
+    "bootstrapError": null,
+    "social": true,
+    "loading": false,
+    "mountLen": 81236
+  },
+  "csv": [
+    {
+      "url": "http://127.0.0.1:8765/house-package/gallery.csv",
+      "status": 200,
+      "t": 1784876124681
+    },
+    {
+      "url": "http://127.0.0.1:8765/house-package/rooms.csv",
+      "status": 200,
+      "t": 1784876124883
+    },
+    {
+      "url": "http://127.0.0.1:8765/house-package/videos.csv",
+      "status": 200,
+      "t": 1784876124883
+    }
+  ],
+  "runtimeLogs": [
+    {
+      "type": "info",
+      "text": "Embed Runtime"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+    },
+    {
+      "type": "log",
+      "text": "Embed Runtime source: builder-package/projectBuilderImportToHousePackage"
+    },
+    {
+      "type": "log",
+      "text": "Embed room count: 10"
+    },
+    {
+      "type": "log",
+      "text": "Embed navigation room count: 10"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (File not found)"
+    }
+  ]
+}

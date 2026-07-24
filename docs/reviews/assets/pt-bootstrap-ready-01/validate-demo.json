@@ -1,0 +1,69 @@
+{
+  "label": "demo",
+  "url": "http://127.0.0.1:5180/",
+  "elapsedMs": 3574,
+  "finalState": {
+    "overlay": true,
+    "studio": true,
+    "rooms": 10,
+    "experienceActive": true,
+    "revealState": "active",
+    "bootstrapError": null,
+    "social": true,
+    "loading": false,
+    "mountLen": 81236
+  },
+  "csv": [
+    {
+      "url": "http://127.0.0.1:5180/house-package/gallery.csv",
+      "status": 200,
+      "t": 1784876141055
+    },
+    {
+      "url": "http://127.0.0.1:5180/house-package/rooms.csv",
+      "status": 200,
+      "t": 1784876141055
+    },
+    {
+      "url": "http://127.0.0.1:5180/house-package/videos.csv",
+      "status": 200,
+      "t": 1784876141217
+    }
+  ],
+  "runtimeLogs": [
+    {
+      "type": "info",
+      "text": "Embed Runtime"
+    },
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "type": "info",
+      "text": "[decision-analytics] journey.started {sessionId: analytics-mryl64a7, decisionSessionId: decision-session:pending, at: 1784876140596, surfaceId: null, runtimeContextRef: null}"
+    },
+    {
+      "type": "log",
+      "text": "Embed Runtime source: builder-package/projectBuilderImportToHousePackage"
+    },
+    {
+      "type": "log",
+      "text": "Embed room count: 10"
+    },
+    {
+      "type": "log",
+      "text": "Embed navigation room count: 10"
+    }
+  ],
+  "consoleErrors": [
+    {
+      "type": "error",
+      "text": "Failed to load resource: the server responded with a status of 404 (Not Found)"
+    },
+    {
+      "type": "error",
+      "text": "An empty string (\"\") was passed to the %s attribute. This may cause the browser to download the whole page again over the network. To fix this, either do not render the element at all or pass null to %s instead of an empty string. src src"
+    }
+  ]
+}

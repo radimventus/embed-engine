@@ -8,6 +8,7 @@ export function StudioLoading({ label = 'Načítání Client Studia…' }: {
     <div
       role="status"
       aria-live="polite"
+      data-studio-loading=""
       className="flex min-h-[50vh] w-full items-center justify-center bg-embed-background-primary px-section"
     >
       <p className="text-sm text-embed-foreground-primary/60">{label}</p>

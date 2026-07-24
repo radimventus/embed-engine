@@ -9,7 +9,8 @@
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "paths": {
-      "@client-studio/embed-mount": ["./src/delivery/clientStudioMount.stub.ts"]
+      "@client-studio/embed-mount": ["./src/delivery/clientStudioMount.stub.ts"],
+      "@client-studio/bootstrap-events": ["./src/delivery/bootstrapEvents.ts"]
     }
   },
   "include": ["src"],

@@ -1,0 +1,460 @@
+{
+  "label": "demo",
+  "url": "http://127.0.0.1:5180/",
+  "selector": "#open-client-studio",
+  "beforeDom": {
+    "heroCta": true,
+    "overlay": false,
+    "studioRoot": false,
+    "embedRoot": false,
+    "ctaText": "Prozkoumat dům"
+  },
+  "dispatchResult": {
+    "ok": false,
+    "reason": "dispatch-evaluate-blocked-8s"
+  },
+  "mainThread": {
+    "status": "blocked-or-slow",
+    "waitedMs": 5000
+  },
+  "networkTimeline": [
+    {
+      "i": 0,
+      "elapsedMs": 8260,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 1,
+      "elapsedMs": 8515,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 2,
+      "elapsedMs": 8782,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 3,
+      "elapsedMs": 9042,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 4,
+      "elapsedMs": 9330,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 5,
+      "elapsedMs": 9582,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 6,
+      "elapsedMs": 9833,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 7,
+      "elapsedMs": 10089,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 8,
+      "elapsedMs": 10361,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 9,
+      "elapsedMs": 10612,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 10,
+      "elapsedMs": 10875,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 11,
+      "elapsedMs": 11148,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 12,
+      "elapsedMs": 11484,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 13,
+      "elapsedMs": 11734,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 14,
+      "elapsedMs": 11986,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 15,
+      "elapsedMs": 12238,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 16,
+      "elapsedMs": 12489,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 17,
+      "elapsedMs": 12740,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 18,
+      "elapsedMs": 12991,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 19,
+      "elapsedMs": 13242,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 20,
+      "elapsedMs": 13493,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 21,
+      "elapsedMs": 13755,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 22,
+      "elapsedMs": 14048,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    },
+    {
+      "i": 23,
+      "elapsedMs": 14318,
+      "requestCount": 4,
+      "responseCount": 0,
+      "csv": [],
+      "failed": [],
+      "urls": [
+        "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+        "http://127.0.0.1:5180/house-package/gallery.csv",
+        "http://127.0.0.1:5180/house-package/rooms.csv",
+        "http://127.0.0.1:5180/house-package/videos.csv"
+      ]
+    }
+  ],
+  "consoleAll": [
+    {
+      "t": 1784873255501,
+      "type": "debug",
+      "text": "[vite] connecting..."
+    },
+    {
+      "t": 1784873255520,
+      "type": "debug",
+      "text": "[vite] connected."
+    },
+    {
+      "t": 1784873255988,
+      "type": "info",
+      "text": "%cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold"
+    },
+    {
+      "t": 1784873255992,
+      "type": "info",
+      "text": "Embed Runtime"
+    },
+    {
+      "t": 1784873255992,
+      "type": "info",
+      "text": "Build: dev"
+    },
+    {
+      "t": 1784873255992,
+      "type": "info",
+      "text": "Runtime: builder-package/projectBuilderImportToHousePackage"
+    },
+    {
+      "t": 1784873255992,
+      "type": "info",
+      "text": "Built: dev"
+    },
+    {
+      "t": 1784873255992,
+      "type": "info",
+      "text": "Embed Loader 0.1.0 — Launcher Mode armed (no inline mount)"
+    },
+    {
+      "t": 1784873256734,
+      "type": "info",
+      "text": "[decision-analytics] journey.started {sessionId: analytics-mryjgb2v, decisionSessionId: decision-session:pending, at: 1784873256731, surfaceId: null, runtimeContextRef: null}"
+    }
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "requestFails": [],
+  "failedResponses": [],
+  "postClickRequests": [
+    {
+      "t": 1784873256734,
+      "url": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap",
+      "method": "GET",
+      "resourceType": "stylesheet"
+    },
+    {
+      "t": 1784873256734,
+      "url": "http://127.0.0.1:5180/house-package/gallery.csv",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "t": 1784873256734,
+      "url": "http://127.0.0.1:5180/house-package/rooms.csv",
+      "method": "GET",
+      "resourceType": "fetch"
+    },
+    {
+      "t": 1784873256734,
+      "url": "http://127.0.0.1:5180/house-package/videos.csv",
+      "method": "GET",
+      "resourceType": "fetch"
+    }
+  ],
+  "postClickResponses": [],
+  "csvHits": [],
+  "firstFailedPostClick": null,
+  "runtimeConsole": [
+    {
+      "t": 1784873255992,
+      "type": "info",
+      "text": "Embed Runtime"
+    },
+    {
+      "t": 1784873255992,
+      "type": "info",
+      "text": "Runtime: builder-package/projectBuilderImportToHousePackage"
+    },
+    {
+      "t": 1784873255992,
+      "type": "info",
+      "text": "Embed Loader 0.1.0 — Launcher Mode armed (no inline mount)"
+    },
+    {
+      "t": 1784873256734,
+      "type": "info",
+      "text": "[decision-analytics] journey.started {sessionId: analytics-mryjgb2v, decisionSessionId: decision-session:pending, at: 1784873256731, surfaceId: null, runtimeContextRef: null}"
+    }
+  ]
+}
