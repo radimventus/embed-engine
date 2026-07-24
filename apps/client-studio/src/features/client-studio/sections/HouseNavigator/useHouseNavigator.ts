@@ -1,6 +1,7 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { evidenceLog } from '../../runtime/runtimeEvidence';
 import {
   createHouseNavigatorViewModel,
   firstRoomOnFloor,
@@ -34,6 +35,17 @@ export function useHouseNavigator(): UseHouseNavigatorResult {
     () => roomsOnFloor(viewModel, viewModel.selectedFloor),
     [viewModel],
   );
+
+  useEffect(() => {
+    evidenceLog('5.ComponentEvidence.Navigator', {
+      activeRoomId: viewModel.activeRoomId,
+      selectedFloor: viewModel.selectedFloor,
+      floors: viewModel.floors,
+      roomIds: viewModel.rooms.map((room) => room.id),
+      roomNames: viewModel.rooms.map((room) => room.name),
+      floorRoomIds: floorRooms.map((room) => room.id),
+    });
+  }, [floorRooms, viewModel]);
 
   const selectRoom = useCallback(
     (roomId: string) => {

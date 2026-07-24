@@ -1,0 +1,255 @@
+
+=== 1.BuilderPackage ===
+{
+  "packageRoot": "/house-package",
+  "galleryCsvPath": "/house-package/gallery.csv",
+  "roomsCsvPath": "/house-package/rooms.csv",
+  "videosCsvPath": "/house-package/videos.csv",
+  "heroPath": "/house-package/media/hero/hero.webp",
+  "galleryCsvFingerprint": "sha256-2050d18c69517aa6-len312",
+  "galleryItemCount": 15,
+  "galleryFirst": {
+    "order": 1,
+    "room": "exterior",
+    "file": "01.webp"
+  },
+  "galleryLast": {
+    "order": 15,
+    "room": "office",
+    "file": "22.webp"
+  },
+  "roomsCsvFingerprint": "sha256-b61fad9e0286960f-len240",
+  "videosCsvFingerprint": "sha256-32ddcb5ab5337624-len117",
+  "browserCsvLoadMode": "Vite inlines CSV via apps/client-studio/src/features/client-studio/runtime/builderPackageCsv.vite.ts (?raw)"
+}
+
+=== 2.RuntimeRegistry ===
+{
+  "gallery": {
+    "count": 15,
+    "first": {
+      "order": 1,
+      "room": "exterior",
+      "file": "01.webp"
+    },
+    "last": {
+      "order": 15,
+      "room": "office",
+      "file": "22.webp"
+    }
+  },
+  "hero": {
+    "count": 1,
+    "first": {
+      "id": "hero-1",
+      "file": "hero.webp",
+      "path": "media/hero/hero.webp"
+    },
+    "last": {
+      "id": "hero-1",
+      "file": "hero.webp",
+      "path": "media/hero/hero.webp"
+    }
+  },
+  "rooms": {
+    "count": 10,
+    "first": {
+      "floor": "p1",
+      "room": "exterior",
+      "name": "Exteriér"
+    },
+    "last": {
+      "floor": "p1",
+      "room": "office",
+      "name": "Pracovna"
+    }
+  },
+  "videos": {
+    "count": 3,
+    "first": {
+      "order": 1,
+      "room": "exterior",
+      "provider": "wistia",
+      "mediaId": "0w5cd0e1n2"
+    },
+    "last": {
+      "order": 3,
+      "room": "kitchen",
+      "provider": "wistia",
+      "mediaId": "0w5cd0e1n2"
+    }
+  },
+  "floors": {
+    "count": 1,
+    "first": {
+      "floorId": "p1",
+      "planPng": "media/plans/p1.webp",
+      "planSvg": "media/plans/p1.svg"
+    },
+    "last": {
+      "floorId": "p1",
+      "planPng": "media/plans/p1.webp",
+      "planSvg": "media/plans/p1.svg"
+    }
+  }
+}
+
+=== 3.GalleryRuntime.order ===
+[
+  {
+    "order": 1,
+    "room": "exterior",
+    "file": "01.webp"
+  },
+  {
+    "order": 2,
+    "room": "exterior",
+    "file": "02.webp"
+  },
+  {
+    "order": 3,
+    "room": "exterior",
+    "file": "03.webp"
+  },
+  {
+    "order": 4,
+    "room": "kitchen",
+    "file": "11.webp"
+  },
+  {
+    "order": 5,
+    "room": "living-room",
+    "file": "12.webp"
+  },
+  {
+    "order": 6,
+    "room": "vestibule",
+    "file": "13.webp"
+  },
+  {
+    "order": 7,
+    "room": "wardrobe",
+    "file": "14.webp"
+  },
+  {
+    "order": 8,
+    "room": "bedroom",
+    "file": "15.webp"
+  },
+  {
+    "order": 9,
+    "room": "bedroom",
+    "file": "16.webp"
+  },
+  {
+    "order": 10,
+    "room": "bathroom",
+    "file": "17.webp"
+  },
+  {
+    "order": 11,
+    "room": "toilet",
+    "file": "18.webp"
+  },
+  {
+    "order": 12,
+    "room": "children-room",
+    "file": "19.webp"
+  },
+  {
+    "order": 13,
+    "room": "children-room",
+    "file": "20.webp"
+  },
+  {
+    "order": 14,
+    "room": "office",
+    "file": "21.webp"
+  },
+  {
+    "order": 15,
+    "room": "office",
+    "file": "22.webp"
+  }
+]
+
+=== 4.HeroRuntime ===
+{
+  "resolvedHeroAsset": "/house-package/media/hero/hero.webp",
+  "source": "Hero Registry / experience.context.hero.primaryMediaUrl",
+  "absoluteRuntimePath": "/house-package/media/hero/hero.webp"
+}
+
+=== 5.ComponentEvidence.expectedBindings ===
+{
+  "MainMedia": "experience.context.roomMedia from Gallery+Video registries (getMediaRoom)",
+  "HeroImage": "experience.context.hero.primaryMediaUrl → /house-package/media/hero/hero.webp",
+  "FloorPlan": "experience.context.floorPlan (Object Package floorplan URL preferred when present)",
+  "Navigator": "experience.context.navigation from Object Package rooms"
+}
+
+=== 6.RuntimeSource ===
+{
+  "usesBuilderPackageRegistry": true,
+  "usesManifestJson": false,
+  "codeEvidence": {
+    "presentationAssets": "apps/client-studio/src/features/client-studio/runtime/presentation-assets.ts → getBuilderResolvedPackage()",
+    "noManifestImport": true,
+    "deprecatedResolver": "packages/kernel/.../resolve-house-package.ts marked @deprecated"
+  }
+}
+
+=== 7.NetworkProbe ===
+[
+  {
+    "url": "/house-package/gallery.csv",
+    "error": "TypeError: fetch failed"
+  },
+  {
+    "url": "/house-package/rooms.csv",
+    "error": "TypeError: fetch failed"
+  },
+  {
+    "url": "/house-package/videos.csv",
+    "error": "TypeError: fetch failed"
+  },
+  {
+    "url": "/house-package/manifest.json",
+    "error": "TypeError: fetch failed"
+  },
+  {
+    "url": "/house-package/media/hero/hero.webp",
+    "error": "TypeError: fetch failed"
+  },
+  {
+    "url": "/house-package/media/gallery/01.webp",
+    "error": "TypeError: fetch failed"
+  },
+  {
+    "url": "/src/main.tsx",
+    "error": "TypeError: fetch failed"
+  },
+  {
+    "url": "/src/features/client-studio/runtime/builderPackageCsv.vite.ts",
+    "error": "TypeError: fetch failed"
+  },
+  {
+    "url": "/src/features/client-studio/runtime/builderPackageBootstrap.ts",
+    "error": "TypeError: fetch failed"
+  },
+  {
+    "url": "/src/features/client-studio/runtime/presentation-assets.ts",
+    "error": "TypeError: fetch failed"
+  }
+]
+
+=== 8.Interruption ===
+{
+  "label": "PŘERUŠENÍ TOKU",
+  "file": "apps/client-studio/src/features/client-studio/runtime/builderPackageCsv.vite.ts",
+  "function": "ESM static import (gallery.csv?raw)",
+  "line": "import galleryCsv from '../../../../public/house-package/gallery.csv?raw'",
+  "reason": "Registry bootstrap uses the Vite-inlined CSV string. Disk edits to public/house-package/gallery.csv do not update a running session until the ?raw module is invalidated/rebuilt. Static Network GET of /house-package/gallery.csv can show new bytes while UI still renders the previously inlined registry — this is the observed visual-review disconnect, not a return to manifest.json."
+}
+
+Wrote /Users/radimventus/embed-engine/docs/reviews/assets/pt-runtime-evidence-01

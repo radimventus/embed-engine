@@ -1,6 +1,7 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { evidenceLog } from '../../runtime/runtimeEvidence';
 import { useHouseNavigator } from './useHouseNavigator';
 import { floorKey } from './houseNavigatorModel';
 
@@ -135,6 +136,21 @@ export function FloorPlan() {
   const [align, setAlign] = useState<'end' | 'center'>('center');
 
   const aspectRatio = `${viewBoxWidth} / ${viewBoxHeight}`;
+
+  useEffect(() => {
+    const floorPlan = experience.context.floorPlan;
+    evidenceLog('5.ComponentEvidence.FloorPlan', {
+      src: floorPlan.src,
+      viewBoxWidth: floorPlan.viewBoxWidth,
+      viewBoxHeight: floorPlan.viewBoxHeight,
+      roomCount: floorPlan.rooms.length,
+      firstRoom: floorPlan.rooms[0] ?? null,
+      lastRoom: floorPlan.rooms[floorPlan.rooms.length - 1] ?? null,
+      roomsWithRegions: floorPlan.rooms
+        .filter((room) => room.floorPlanRegion !== null)
+        .map((room) => room.id),
+    });
+  }, [experience.context.floorPlan]);
 
   useLayoutEffect(() => {
     const display = displayRef.current;

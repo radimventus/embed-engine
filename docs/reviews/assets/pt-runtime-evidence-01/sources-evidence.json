@@ -1,0 +1,11 @@
+{
+  "interruption": {
+    "label": "PŘERUŠENÍ TOKU",
+    "file": "apps/client-studio/src/features/client-studio/runtime/builderPackageCsv.vite.ts",
+    "function": "ESM static import (gallery.csv?raw)",
+    "line": "import galleryCsv from '../../../../public/house-package/gallery.csv?raw'",
+    "reason": "Registry bootstrap uses the Vite-inlined CSV string. Disk edits to public/house-package/gallery.csv do not update a running session until the ?raw module is invalidated/rebuilt. Static Network GET of /house-package/gallery.csv can show new bytes while UI still renders the previously inlined registry — this is the observed visual-review disconnect, not a return to manifest.json."
+  },
+  "presentationAssets": "Builder registries",
+  "manifestUnused": true
+}

@@ -1,0 +1,69 @@
+[
+  {
+    "url": "/house-package/gallery.csv",
+    "status": 200,
+    "contentType": "text/csv",
+    "bytes": 312,
+    "textPreview": "order,room,file\\n1,exterior,01.webp\\n2,exterior,02.webp\\n3,exterior,03.webp\\n4,kitchen,11.webp\\n5,living-room,12.webp\\n6,vestibule,13.webp\\n7,wardrobe,14.webp\\n8,bedroom,15.webp\\n9,bedroom,16.webp\\n10,bathroom,"
+  },
+  {
+    "url": "/house-package/rooms.csv",
+    "status": 200,
+    "contentType": "text/csv",
+    "bytes": 251,
+    "textPreview": "floor,room,name\\np1,exterior,Exteri\u00e9r\\np1,kitchen,Kuchyn\u011b\\np1,living-room,Ob\u00fdvac\u00ed pokoj\\np1,vestibule,Z\u00e1dve\u0159\u00ed a chodba\\np1,wardrobe,\u0160atna\\np1,bedroom,Lo\u017enice\\np1,bathroom,Koupelna\\np1,toilet,Toaleta\\n"
+  },
+  {
+    "url": "/house-package/videos.csv",
+    "status": 200,
+    "contentType": "text/csv",
+    "bytes": 117,
+    "textPreview": "order,room,provider,mediaId\\n1,exterior,wistia,0w5cd0e1n2\\n2,living-room,wistia,0w5cd0e1n2\\n3,kitchen,wistia,0w5cd0e1n2\\n"
+  },
+  {
+    "url": "/house-package/manifest.json",
+    "status": 200,
+    "contentType": "application/json",
+    "bytes": 5698,
+    "textPreview": null
+  },
+  {
+    "url": "/house-package/media/hero/hero.webp",
+    "status": 200,
+    "contentType": "image/webp",
+    "bytes": 298296,
+    "textPreview": null
+  },
+  {
+    "url": "/house-package/media/gallery/01.webp",
+    "status": 200,
+    "contentType": "image/webp",
+    "bytes": 1050452,
+    "textPreview": null
+  },
+  {
+    "url": "/public/house-package/gallery.csv?import&raw",
+    "status": 200,
+    "contentType": "text/javascript",
+    "bytes": 1936,
+    "textPreview": "export default \"order,room,file\\n1,exterior,01.webp\\n2,exterior,02.webp\\n3,exterior,03.webp\\n4,kitchen,11.webp\\n5,living-room,12.webp\\n6,vestibule,13.webp\\n7,wardrobe,14.webp\\n8,bedroom,15.webp\\n9,bed"
+  },
+  {
+    "url": "/src/features/client-studio/runtime/builderPackageCsv.vite.ts",
+    "status": 200,
+    "contentType": "text/javascript",
+    "bytes": 1090,
+    "textPreview": "import galleryCsv from \"/public/house-package/gallery.csv?import&raw\";\\nimport roomsCsv from \"/public/house-package/rooms.csv?import&raw\";\\nimport videosCsv from \"/public/house-package/videos.csv?import"
+  },
+  {
+    "url": "/src/features/client-studio/runtime/presentation-assets.ts",
+    "status": 200,
+    "contentType": "text/javascript",
+    "bytes": 8474,
+    "textPreview": "import {\\n  getBuilderPackageRegistries,\\n  getBuilderResolvedPackage\\n} from \"/src/features/client-studio/runtime/builderPackageBootstrap.ts?t=1784851791534\";\\nimport { getPresentationAssetBase } from \"/"
+  },
+  {
+    "url": "/src/features/client-studio/runtime/builderPackageBootstrap.ts",
+    "error": "HTTP Error 500: Internal Server Error"
+  }
+]

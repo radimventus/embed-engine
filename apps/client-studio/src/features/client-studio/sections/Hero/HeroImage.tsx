@@ -1,5 +1,8 @@
+import { useEffect } from 'react';
+
 import { resolvePublicAssetUrl } from '../../runtime/presentationAssetBase';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { evidenceLog } from '../../runtime/runtimeEvidence';
 
 /**
  * Right two-thirds — photography plane (Morning Baseline reference).
@@ -11,6 +14,22 @@ export function HeroImage() {
   const heroSrc = resolvePublicAssetUrl(
     experience.context.hero.primaryMediaUrl ?? experience.context.hero.heroMedia?.url ?? '',
   );
+
+  useEffect(() => {
+    evidenceLog('4.HeroRuntime.beforeHeroImage', {
+      resolvedHeroAsset: heroSrc,
+      source: 'experience.context.hero.primaryMediaUrl | heroMedia.url',
+      absoluteRuntimePath: heroSrc,
+      heroMediaId: experience.context.hero.heroMedia?.id ?? null,
+      primaryMediaUrl: experience.context.hero.primaryMediaUrl,
+      heroMediaUrl: experience.context.hero.heroMedia?.url ?? null,
+    });
+    evidenceLog('5.ComponentEvidence.HeroImage', {
+      backgroundImageUrl: heroSrc,
+      title: experience.context.hero.title,
+      eyebrow: experience.context.hero.eyebrow,
+    });
+  }, [experience.context.hero, heroSrc]);
 
   return (
     <section
