@@ -19,8 +19,8 @@ export const SPATIAL_TERMINAL_MEDIA_LEFT_GUTTER_PX = 20;
 export const SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX = 600;
 export const SPATIAL_TERMINAL_MEDIA_COLUMN_WIDTH_PX =
   SPATIAL_TERMINAL_MEDIA_LEFT_GUTTER_PX + SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX;
-/** Room index column: left pad + shared control width (PT-TOUR-LAYOUT-01). */
-export const SPATIAL_TERMINAL_ROOM_INDEX_WIDTH_PX = 224;
+/** Room index column: left pad + shared control width (TOUR-20 wider rows). */
+export const SPATIAL_TERMINAL_ROOM_INDEX_WIDTH_PX = 240;
 export const SPATIAL_TERMINAL_FLOOR_PLAN_RIGHT_GUTTER_PX = 20;
 /** Gap between room menu column and floor-plan display (TOUR-10). */
 export const SPATIAL_TERMINAL_FLOOR_PLAN_LEFT_GAP_PX = 40;

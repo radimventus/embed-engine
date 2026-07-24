@@ -11,8 +11,8 @@ type SpatialLightboxProps = {
 };
 
 /**
- * Full-viewport overlay. Close control is centered on the top-right corner
- * of the media frame (`frameClassName`), not the outer stage.
+ * Full-viewport overlay. Close is centered on the top-right corner of the
+ * media frame (the real rendered plan box — TOUR-22).
  */
 export function SpatialLightbox({
   children,
@@ -55,6 +55,7 @@ export function SpatialLightbox({
       <div
         className={`relative ${frameClassName}`}
         style={frameStyle}
+        data-lightbox-frame=""
         onClick={(event) => event.stopPropagation()}
       >
         <button
@@ -65,7 +66,7 @@ export function SpatialLightbox({
         >
           ×
         </button>
-        {children}
+        <div className="h-full w-full">{children}</div>
       </div>
     </div>,
     document.querySelector('[data-client-studio-root]') ?? document.body,

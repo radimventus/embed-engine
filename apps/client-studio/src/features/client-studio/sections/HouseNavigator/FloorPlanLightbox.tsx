@@ -6,13 +6,13 @@ type FloorPlanLightboxProps = {
   children: ReactNode;
   isOpen: boolean;
   onClose: () => void;
-  /** width / height — keeps the popup image fully visible (TOUR-15). */
+  /** Real floorplan width/height ratio — never a virtual 16:9 box (TOUR-17 / TOUR-22). */
   aspectRatio: number;
 };
 
 /**
- * Floor-plan popup — image uses ~90% of the limiting viewport axis,
- * preserves aspect ratio, and stays fully on-screen (TOUR-15).
+ * Floor-plan popup sized to the real plan aspect (~90% limiting viewport axis).
+ * Close control is anchored to the rendered plan frame corner (TOUR-22).
  */
 export function FloorPlanLightbox({
   children,
@@ -29,7 +29,7 @@ export function FloorPlanLightbox({
 
   return (
     <SpatialLightbox
-      frameClassName="max-h-[90vh] max-w-[90vw]"
+      frameClassName="overflow-hidden"
       frameStyle={frameStyle}
       isOpen={isOpen}
       label="Zvětšený půdorys"

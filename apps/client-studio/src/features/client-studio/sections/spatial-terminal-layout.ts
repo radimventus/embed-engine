@@ -4,7 +4,8 @@ export const SPATIAL_TERMINAL_HEADER_CLASS =
 export const SPATIAL_TERMINAL_WALKTHROUGH_TITLE_CLASS =
   'flex h-chapter-title shrink-0 items-center overflow-hidden text-base font-bold leading-none tracking-wide text-embed-foreground-primary';
 
-export const DECISION_CANVAS_CHAPTER_TITLE_CLASS = `${SPATIAL_TERMINAL_HEADER_CLASS} box-border w-[calc(100%+(15/35)*100%+24px+1px)] max-w-none -ml-[calc((15/35)*100%+24px+1px)]`;
+/** Title stays inside the floor-plan column — no bleed over VIDEO/FOTKY (TOUR-16). */
+export const DECISION_CANVAS_CHAPTER_TITLE_CLASS = `${SPATIAL_TERMINAL_HEADER_CLASS} box-border w-full max-w-none`;
 
 export const CHAPTER_HEADER_CLASS =
   'flex h-chapter-title shrink-0 items-end text-base font-bold leading-none tracking-wide text-embed-foreground-primary';
@@ -27,8 +28,8 @@ export const SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS = 'h-[100px]';
  */
 export const HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS = 'w-full';
 
-/** Room Index inset — room rows and VIDEO/FOTKY share the same width (PT-TOUR-LAYOUT-01). */
-export const HOUSE_NAVIGATOR_ROOM_CONTROL_WIDTH_CLASS = 'ml-[15px] w-[calc(100%-15px)]';
+/** Room Index inset — wider usable row for name + area (TOUR-20). */
+export const HOUSE_NAVIGATOR_ROOM_CONTROL_WIDTH_CLASS = 'ml-[8px] w-[calc(100%-8px)]';
 
 export const SPATIAL_TERMINAL_SECTION_CLASS =
   'grid w-full min-w-0 content-start items-start gap-0 overflow-x-hidden px-section pb-section';
@@ -41,11 +42,11 @@ export const SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS =
 
 /** Floor plan column: 40px from menu, 20px to section right edge (TOUR-10). */
 export const SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS =
-  'grid h-full w-full min-w-0 grid-rows-[minmax(0,1fr)_100px] items-stretch overflow-x-hidden pl-[40px] pr-[20px] pb-section pt-5';
+  'relative z-0 grid h-full w-full min-w-0 grid-rows-[minmax(0,1fr)_100px] items-stretch overflow-x-hidden pl-[40px] pr-[20px] pb-section pt-5';
 
 export const SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS =
   'relative box-border aspect-video w-[600px] min-w-[600px] max-w-[600px] shrink-0 overflow-hidden rounded-[8px] bg-embed-surface-placeholder';
 
 /** Shared bottom baseline for thumbnails + VIDEO/FOTKY + PŘÍZEMÍ/PATRO. */
 export const SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS =
-  'relative z-10 flex w-full shrink-0 items-end';
+  'relative flex w-full shrink-0 items-end';

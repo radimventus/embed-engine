@@ -120,8 +120,6 @@ export function MainMedia() {
     '';
   const videoPoster =
     gallery.thumbnails.find((item) => item.kind === 'photo')?.thumbnailSrc ??
-    gallery.heroUrl ??
-    gallery.heroMedia?.thumbnailUrl ??
     '';
   const videoKey = `${videoSrc}|${mediaMode}`;
 

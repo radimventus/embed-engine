@@ -22,9 +22,8 @@ type FloorPlanCanvasProps = {
 };
 
 /**
- * Floor-plan canvas — renders projected `context.floorPlan` only (ED-DA-02 / CSCB-03).
- * Image + SVG overlays share one viewBox and identical preserveAspectRatio so
- * scale/position stay locked (PT-TOUR-01B / PT-TOUR-REDESIGN-01).
+ * Floor-plan canvas — one raster for the active floor + at most one room overlay.
+ * ViewBox matches the real plan raster (TOUR-17 / TOUR-18).
  */
 function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
   const { experience } = useDecisionSessionRuntime();
@@ -52,8 +51,11 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
       aria-label={`Půdorys · patro ${selectedFloor}`}
       className={className}
       role="img"
+      data-floorplan-src={floorPlan.src}
+      data-floor={selectedFloor}
     >
       <image
+        key={floorPlan.src}
         href={floorPlan.src}
         width={viewBoxWidth}
         height={viewBoxHeight}
@@ -62,7 +64,7 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
       {activeOverlayRoom !== null &&
       activeOverlayRoom.decisionCanvasSrc !== '' ? (
         <image
-          key={activeOverlayRoom.id}
+          key={`overlay-${activeOverlayRoom.id}`}
           href={activeOverlayRoom.decisionCanvasSrc}
           width={viewBoxWidth}
           height={viewBoxHeight}
@@ -124,7 +126,8 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
 }
 
 /**
- * Floor plan display — enlarged ~20% column (TOUR-10); loupe below plan (TOUR-11).
+ * Floor plan display sized to the real raster aspect (TOUR-17).
+ * Loupe and popup close anchor to the rendered SVG box (TOUR-11 / TOUR-22).
  */
 export function FloorPlan() {
   const { experience } = useDecisionSessionRuntime();
@@ -134,9 +137,9 @@ export function FloorPlan() {
   const planRef = useRef<HTMLDivElement>(null);
   const [align, setAlign] = useState<'end' | 'center'>('center');
 
-  const aspectRatio = `${viewBoxWidth} / ${viewBoxHeight}`;
   const aspectRatioNumber =
     viewBoxHeight > 0 ? viewBoxWidth / viewBoxHeight : 1;
+  const aspectRatio = `${viewBoxWidth} / ${viewBoxHeight}`;
 
   useEffect(() => {
     const floorPlan = experience.context.floorPlan;
@@ -198,6 +201,7 @@ export function FloorPlan() {
         ref={planRef}
         className="relative w-full min-w-0 max-w-none"
         style={{ aspectRatio }}
+        data-floorplan-aspect={aspectRatioNumber.toFixed(4)}
       >
         <FloorPlanCanvas interactive className="block h-full w-full" />
       </div>

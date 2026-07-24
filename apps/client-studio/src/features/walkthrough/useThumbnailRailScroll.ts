@@ -3,8 +3,8 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from 'react'
 export const THUMBNAIL_SLOT_COUNT = 4;
 export const THUMBNAIL_GAP_PX = 16;
 
-/** Apple-like rail motion (TOUR-14). */
-export const THUMBNAIL_SCROLL_DURATION_MS = 220;
+/** Apple-like rail motion — ~50% slower than TOUR-14 (TOUR-21). */
+export const THUMBNAIL_SCROLL_DURATION_MS = 330;
 
 const scrollAnimationIds = new WeakMap<HTMLElement, number>();
 

@@ -328,7 +328,7 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
       first.context.floorPlan.src,
       /\/house-package\/media\/plans\/p1\.webp$/,
     );
-    assert.equal(first.context.floorPlan.viewBoxWidth, 3450);
+    assert.equal(first.context.floorPlan.viewBoxWidth, 2790);
     assert.equal(first.context.floorPlan.viewBoxHeight, 1938);
     assert.ok(first.context.floorPlan.viewBox > 0);
     assert.equal(first.context.floorPlan.rooms.length, house.rooms.length);

@@ -8,6 +8,7 @@ import type {
 
 import {
   decisionCanvasUrlForRoom,
+  getFloorPlanUrlForFloor,
   getFloorPlanUrlFromHouse,
   getOpeningHeroUrlFromHouse,
   listGlobalGalleryPhotos,
@@ -340,7 +341,13 @@ function projectHeroContext(
 function projectFloorPlan(
   experience: SessionExperience,
 ): ExperienceFloorPlanContext {
-  const floorPlanSrc = getFloorPlanUrlFromHouse(experience.house);
+  const currentFloor =
+    experience.context.navigation.currentFloor ??
+    experience.context.navigation.floors[0] ??
+    '0';
+  const floorPlanSrc =
+    getFloorPlanUrlForFloor(experience.house, currentFloor) ||
+    getFloorPlanUrlFromHouse(experience.house);
   const hasBuilderFloorplan = floorPlanSrc.length > 0;
   const viewBoxWidth = hasBuilderFloorplan
     ? REFERENCE_FLOORPLAN_WIDTH

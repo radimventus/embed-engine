@@ -17,13 +17,13 @@ export function FloorPlanExplorer() {
       aria-label="Půdorys"
       className={`scroll-mt-header ${SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS}`}
     >
-      <div className="relative flex min-h-0 flex-1 flex-col">
-        <SectionHeader className="pointer-events-none absolute inset-x-0 top-0 z-10" />
+      <div className="relative z-0 flex min-h-0 flex-1 flex-col">
+        <SectionHeader className="pointer-events-none absolute inset-x-0 top-0 z-[1]" />
         <div className="flex min-h-0 flex-1 flex-col">
           <FloorPlan />
         </div>
       </div>
-      <div className={`flex ${SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS} flex-col justify-end`}>
+      <div className={`relative z-0 flex ${SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS} flex-col justify-end`}>
         <div className={`${SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS} justify-center`}>
           <div className={HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS}>
             <FloorSelector />

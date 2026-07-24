@@ -127,6 +127,42 @@ export function getFloorPlanUrlFromHouse(house: ExperienceHouse): string {
   return floorplan !== undefined ? resolvePublicAssetUrl(floorplan.url) : '';
 }
 
+/**
+ * Floorplan raster for a Runtime floor key (`0`, `1`, …).
+ * Falls back to the first floorplan asset when a per-floor id is missing.
+ */
+export function getFloorPlanUrlForFloor(
+  house: ExperienceHouse,
+  floorKeyValue: string,
+): string {
+  const floorNumber = Number.parseInt(floorKeyValue, 10);
+  const builderFloorId = Number.isFinite(floorNumber)
+    ? `p${floorNumber + 1}`
+    : `p${floorKeyValue}`;
+  const exact = house.media.find(
+    (asset) => asset.id === `floorplan:${builderFloorId}`,
+  );
+  if (exact !== undefined) {
+    return resolvePublicAssetUrl(exact.url);
+  }
+  return getFloorPlanUrlFromHouse(house);
+}
+
+/**
+ * Room id owning the photo at a global Media Timeline index, or null for video / miss.
+ */
+export function roomIdForTimelineIndex(
+  house: ExperienceHouse,
+  timelineIndex: number,
+): string | null {
+  const videos = listTourVideos(house);
+  if (timelineIndex < videos.length) {
+    return null;
+  }
+  const photo = listGlobalGalleryPhotos(house)[timelineIndex - videos.length];
+  return photo?.roomId ?? null;
+}
+
 export function decisionCanvasUrlForRoom(roomId: string): string {
   const fileId = DECISION_CANVAS_ALIAS[roomId] ?? roomId;
   return resolvePublicAssetUrl(`/house-package/decision-canvas/${fileId}.svg`);

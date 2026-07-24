@@ -15,7 +15,10 @@ import type {
 } from '@embed-engine/contracts';
 
 import { useDecisionSessionRuntime } from '../client-studio/runtime/DecisionSessionRuntimeProvider';
-import { firstPhotoTimelineIndexForRoom } from '../client-studio/runtime/experienceHouseMedia';
+import {
+  firstPhotoTimelineIndexForRoom,
+  roomIdForTimelineIndex,
+} from '../client-studio/runtime/experienceHouseMedia';
 import type { ExperienceFloorPlanRoom } from '../client-studio/runtime/synchronizedExperience';
 
 /**
@@ -80,6 +83,8 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [mode, setMode] = useState<WalkthroughState['mode']>('ready');
   const previousRoomIdRef = useRef<string | null>(activeRoomId);
+  const activeMediaIndexRef = useRef(activeMediaIndex);
+  activeMediaIndexRef.current = activeMediaIndex;
 
   useEffect(() => {
     if (
@@ -93,6 +98,15 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     previousRoomIdRef.current = activeRoomId;
     setMediaModeState('photo');
     setMode('ready');
+
+    /** Thumbnail already selected a photo of this room — keep that index (TOUR-18). */
+    const roomForActivePhoto = roomIdForTimelineIndex(
+      experience.house,
+      activeMediaIndexRef.current,
+    );
+    if (roomForActivePhoto === activeRoomId) {
+      return;
+    }
 
     const roomPhotoIndex = firstPhotoTimelineIndexForRoom(
       experience.house,
@@ -137,6 +151,10 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
           setMediaModeState('video');
         } else if (item?.kind === 'photo') {
           setMediaModeState('photo');
+          const roomId = roomIdForTimelineIndex(experience.house, mediaIndex);
+          if (roomId !== null && roomId !== activeRoomId) {
+            dispatch({ type: 'SelectRoom', roomId });
+          }
         }
         setMode('ready');
       },
@@ -154,6 +172,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     activeMediaIndex,
     activeRoomId,
     dispatch,
+    experience.house,
     mediaMode,
     mode,
     projectedThumbnails,
