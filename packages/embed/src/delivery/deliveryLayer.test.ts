@@ -11,7 +11,10 @@ import {
 import { launchExperience } from "./launchExperience";
 import { createOverlaySurface } from "./overlaySurface";
 import { LAUNCHER_DEFAULT_PRESENTATION } from "./presentation";
-import { resolveObjectPackage, DEFAULT_OBJECT_ID } from "./resolveObjectPackage";
+import {
+  DEFAULT_OBJECT_ID,
+  projectRuntimeHousePackageFromCsvTexts,
+} from "./resolveObjectPackage";
 import {
   isLegacyGardenMount,
   isProductionMount,
@@ -54,18 +57,43 @@ function installDom(): Window {
 }
 
 describe("Embed delivery layer preparation", () => {
+  const fixturePackage = projectRuntimeHousePackageFromCsvTexts({
+    galleryCsv: `order,room,file
+1,exterior,01.webp
+2,kitchen,11.webp
+`,
+    roomsCsv: `floor,room,name
+p1,exterior,Exteriér
+p1,kitchen,Kuchyně
+`,
+    videosCsv: `order,room,provider,mediaId
+1,kitchen,wistia,abc
+`,
+  });
+
   it("resolves the pilot Object Package by default", () => {
-    const pack = resolveObjectPackage();
-    assert.equal(pack.identity.id, DEFAULT_OBJECT_ID);
-    assert.equal(pack.identity.id, "house-modern-01");
+    assert.equal(fixturePackage.identity.id, DEFAULT_OBJECT_ID);
+    assert.equal(fixturePackage.identity.id, "house-modern-01");
+    assert.equal(fixturePackage.rooms.length, 2);
   });
 
   it("rejects unknown object ids without Garden fallback", () => {
-    assert.throws(() => resolveObjectPackage("garden"), /unknown objectId/);
+    assert.throws(
+      () =>
+        projectRuntimeHousePackageFromCsvTexts(
+          {
+            galleryCsv: "order,room,file\n",
+            roomsCsv: "floor,room,name\n",
+            videosCsv: "order,room,provider,mediaId\n",
+          },
+          "garden",
+        ),
+      /unknown objectId/,
+    );
   });
 
   it("creates a Decision Session Runtime for delivery", () => {
-    const runtime = createDeliveryRuntime(resolveObjectPackage());
+    const runtime = createDeliveryRuntime(fixturePackage);
     const experience = runtime.getExperience();
     assert.ok(experience);
     assert.equal(experience!.context.object.id, "house-modern-01");
@@ -181,9 +209,9 @@ describe("Launcher launch failure recovery", () => {
     document.documentElement.style.cssText = "";
   });
 
-  it("bootstrap failure (unknown objectId) restores host without leftover overlay", () => {
+  it("bootstrap failure (unknown objectId) restores host without leftover overlay", async () => {
     installDom();
-    assert.throws(
+    await assert.rejects(
       () =>
         launchExperience(
           {
@@ -200,9 +228,10 @@ describe("Launcher launch failure recovery", () => {
     assert.equal(window.scrollY, 120);
   });
 
-  it("studio mount failure (Node stub) restores host without leftover overlay", () => {
+  it("studio mount failure (Node stub) restores host without leftover overlay", async () => {
     installDom();
-    assert.throws(
+    // Production path mounts Client Studio immediately (Provider owns Builder bootstrap).
+    await assert.rejects(
       () =>
         launchExperience(
           {

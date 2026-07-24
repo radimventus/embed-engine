@@ -20,6 +20,9 @@
   "scripts": {
     "build": "node ./scripts/build-distribution.mjs",
     "sync:pages": "node ./scripts/sync-pages.mjs",
+    "smoke:runtime": "node ./scripts/smoke-runtime.mjs",
+    "validate:pages": "node ./scripts/validate-pages.mjs",
+    "deploy:pages": "pnpm run build && pnpm run sync:pages",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts src/delivery/deliveryLayer.test.ts src/delivery/revealEngine.test.ts src/delivery/cssIsolation.test.ts",
     "demo": "vite --config demo/vite.config.ts"

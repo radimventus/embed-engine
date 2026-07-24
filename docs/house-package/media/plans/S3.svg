@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1500"
+     height="900"
+     viewBox="0 0 1500 900">
+
+  <path
+    fill="#f5b9007f"
+    d="
+      M 362 450
+      H 562
+      V 692
+      H 838
+      V 840
+      H 218
+      V 450
+      Z
+    "/>
+
+</svg>

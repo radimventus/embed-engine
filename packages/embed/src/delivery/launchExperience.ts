@@ -1,13 +1,15 @@
 /**
  * Launcher Mode bootstrap — Delivery Pipeline (LRI-01).
  *
- * Launcher → Delivery → Runtime Bootstrap → Client Studio Mount → Reveal → Active
+ * Launcher → Delivery → Client Studio Mount → (Provider) Runtime Bootstrap → Reveal → Active
+ *
+ * PT-EMBED-RUNTIME-INTEGRATION-01: Embed does not create HousePackage / Runtime.
+ * Client Studio Provider is the sole Runtime initializer (same as standalone CS).
  */
 
 import { mountClientStudio } from "@client-studio/embed-mount";
 
 import type { EmbedSession } from "../bootstrap";
-import { createDeliveryRuntime } from "./createDeliveryRuntime";
 import { ensureClientStudioStyles } from "./ensureStyles";
 import {
   LAUNCHER_DEFAULT_LANDING_ANCHOR,
@@ -15,7 +17,7 @@ import {
 import type { LaunchRequest } from "./launchRequest";
 import { createOverlaySurface, type OverlaySurface } from "./overlaySurface";
 import { runRevealEngine } from "./revealEngine";
-import { resolveObjectPackage } from "./resolveObjectPackage";
+import { DEFAULT_OBJECT_ID } from "./resolveObjectPackage";
 
 export type LauncherDeliverySession = EmbedSession & {
   readonly kind: "client-studio-launcher";
@@ -50,21 +52,37 @@ function failSafeDispose(
   }
 }
 
+function resolvePilotObjectId(objectId: string | undefined): string {
+  const resolved =
+    objectId === undefined || objectId.trim().length === 0
+      ? DEFAULT_OBJECT_ID
+      : objectId.trim();
+  if (resolved !== DEFAULT_OBJECT_ID) {
+    throw new Error(
+      `Embed.mount: unknown objectId "${resolved}". Known: ${DEFAULT_OBJECT_ID}`,
+    );
+  }
+  return resolved;
+}
+
 /**
- * Execute Launch Request: overlay → Runtime → Studio mount → Reveal → Active.
+ * Execute Launch Request: overlay → Studio mount → Reveal → Active.
+ * Runtime is created inside Client Studio Provider from Builder Package.
  * On bootstrap/runtime/mount failure: dispose partial surface and restore Host.
  * Reveal runs asynchronously after mount; Close aborts in-flight Reveal.
  */
-export function launchExperience(
+export async function launchExperience(
   request: LaunchRequest,
   options: { readonly onClose: () => void },
-): LauncherDeliverySession {
+): Promise<LauncherDeliverySession> {
   let overlay: OverlaySurface | null = null;
   let studioDispose: (() => void) | undefined;
   const revealAbort = new AbortController();
 
   try {
     ensureClientStudioStyles();
+
+    const objectId = resolvePilotObjectId(request.objectId);
 
     overlay = createOverlaySurface({ onClose: options.onClose });
 
@@ -75,13 +93,9 @@ export function launchExperience(
       );
     }
 
-    const housePackage = resolveObjectPackage(request.objectId);
-    const runtime = createDeliveryRuntime(housePackage);
-    const runtimeReady = runtime.getExperience() !== null;
-
     const handle = mountClientStudio({
       target: mountTarget,
-      runtime,
+      objectId,
       assetBase: request.assetBase,
     });
     studioDispose = handle.dispose;
@@ -94,10 +108,11 @@ export function launchExperience(
     const restoreFocusTo = request.restoreFocusTo ?? null;
     const overlayRef = overlay;
 
+    // Runtime Ready: Provider bootstraps async; Reveal waits for Studio DOM (landing anchor).
     void runRevealEngine({
       studioRoot: mountTarget,
       scrollContainer: mountTarget,
-      runtimeReady,
+      runtimeReady: true,
       configuredLandingAnchorId: request.presentation.landingAnchorId,
       modeDefaultLandingAnchorId: LAUNCHER_DEFAULT_LANDING_ANCHOR,
       signal: revealAbort.signal,
@@ -125,7 +140,7 @@ export function launchExperience(
       host: restoreFocusTo ?? overlay.root,
       root: handle.rootElement,
       styleElement: document.createElement("style"),
-      objectId: housePackage.identity.id,
+      objectId,
       overlay,
       dispose: () => {
         failSafeDispose(overlay, studioDispose, revealAbort);

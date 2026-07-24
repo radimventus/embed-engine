@@ -1,7 +1,7 @@
 # GitHub Pages — Embed Distribution
 
 **Status:** PUBLISH PATH  
-**Aligned with:** [Distribution Package v0.1](./Distribution%20Package%20v0.1.md), [Architecture Freeze v0.1](./Architecture%20Freeze%20v0.1.md)
+**Aligned with:** [Distribution Package v0.1](./Distribution%20Package%20v0.1.md), [Architecture Freeze v0.1](./Architecture%20Freeze%20v0.1.md), **PT-DEPLOY-EMBED-01**
 
 ## Public URL
 
@@ -23,7 +23,7 @@ IIFE (primary host script):
 https://radimventus.github.io/embed-engine/embed/embed.iife.js
 ```
 
-Manifest:
+Manifest (+ Runtime fingerprint):
 
 ```text
 https://radimventus.github.io/embed-engine/embed/version.json
@@ -31,11 +31,63 @@ https://radimventus.github.io/embed-engine/embed/version.json
 
 > **Note:** The repository must allow GitHub Pages (public repo, or private repo on a plan that includes Pages). Anonymous HTTPS `200` for the IIFE is the publish acceptance check.
 
+---
+
+## Build → Pages pipeline
+
+```text
+Source (packages/embed/src + Client Studio mount)
+        │
+        ▼
+pnpm --filter @embed-engine/embed build
+  · generate .build/fingerprint.json (commit + builtAt + Runtime source)
+  · vite → packages/embed/dist/embed.es.js
+  · vite → packages/embed/dist/embed.iife.js   ← production IIFE
+  · tsc → declarations + version.json (incl. iifeSha256)
+  · smoke-runtime (Rooms 10, gallery exterior 01–03, Hero, fingerprint in IIFE)
+        │
+        ▼
+pnpm --filter @embed-engine/embed sync:pages
+  · copy dist → docs/embed/
+  · regenerate live.html / partner snippet (?v=<commit>)
+  · assert SHA-256(docs/embed/embed.iife.js) === SHA-256(dist/embed.iife.js)
+  · assert fingerprint marker present in published IIFE
+  · validate-pages (local)
+        │
+        ▼
+git commit docs/embed/** (+ house-package / media as needed) → push
+        │
+        ▼
+GitHub Pages (/docs) → Browser loads embed.iife.js
+```
+
+### Scripts & directories
+
+| Role | Path |
+| --- | --- |
+| Build orchestrator | `packages/embed/scripts/build-distribution.mjs` |
+| Fingerprint helpers | `packages/embed/scripts/lib/buildFingerprint.mjs` |
+| Runtime smoke | `packages/embed/scripts/smoke-runtime.mjs` |
+| Pages sync | `packages/embed/scripts/sync-pages.mjs` |
+| Pages validate | `packages/embed/scripts/validate-pages.mjs` |
+| Vite ESM/IIFE | `packages/embed/vite.config.ts`, `vite.iife.config.ts`, `vite.shared.ts` |
+| Build output | `packages/embed/dist/` |
+| Fingerprint (gitignored) | `packages/embed/.build/fingerprint.json` |
+| Pages publish tree | `docs/embed/` |
+| Local Vite demo (not IIFE) | `packages/embed/demo/` (`validate.html` = source via Vite) |
+
+**Two artifacts:**
+
+1. **Production IIFE/ESM** — `dist/` → `docs/embed/` → GitHub Pages (partners).
+2. **Vite demo** — `pnpm demo` serves TypeScript source; **does not** use `docs/embed/embed.iife.js`.
+
+---
+
 ## Host usage
 
 ```html
 <div id="embed"></div>
-<script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js"></script>
+<script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=<commit>"></script>
 <script>
   Embed.mount({
     target: "#embed",
@@ -45,73 +97,66 @@ https://radimventus.github.io/embed-engine/embed/version.json
 </script>
 ```
 
-`assetBase` is required when the host origin does not serve `/media` and `/house-package`. Omit it when those paths are already available (local Client Studio `public/`).
+On mount the console must show:
 
-Do not constrain the mount node below the desktop canvas width (1432px) if full desktop parity is required.
-
-Legacy Garden (opt-in only):
-
-```js
-Embed.mount({ target: "#embed", fixture: "garden" });
+```text
+Embed Runtime
+Build: <short-sha>
+Runtime: builder-package/projectBuilderImportToHousePackage
+Built: <ISO-8601 Z>
 ```
 
-## What is published
+Also available as `Embed.build` (`commit`, `builtAt`, `runtimeSource`, `marker`).
 
-Source of truth remains `packages/embed/dist/` (M3/S1).  
-GitHub Pages serves a copy under `docs/embed/`:
+`assetBase` is required when the host origin does not serve `/media` and `/house-package`.
+
+---
+
+## Operator steps
+
+```bash
+pnpm --filter @embed-engine/embed deploy:pages
+# equivalent: build && sync:pages (smoke + hash checks included)
+```
+
+Commit `docs/embed/**` (and synced media trees if changed), push the Pages branch:
+
+- Source: Deploy from a branch  
+- Folder: `/docs`
+
+### Verify Pages runs the latest build
+
+```bash
+# Local docs/embed == dist (always after sync:pages)
+pnpm --filter @embed-engine/embed validate:pages
+
+# After push + Pages rebuild — compare live site to this build
+pnpm --filter @embed-engine/embed validate:pages -- --remote
+
+# Or manually:
+curl -s https://radimventus.github.io/embed-engine/embed/version.json
+# fingerprint.commit / marker / iifeSha256 must match packages/embed/dist/version.json
+```
+
+If `sync:pages` detects a SHA or fingerprint mismatch, it **exits non-zero** and must not be ignored.
+
+---
+
+## What is published
 
 | Artifact | Published |
 | --- | --- |
 | `embed.iife.js` | yes |
 | `embed.es.js` | yes |
-| `version.json` | yes |
+| `version.json` (incl. fingerprint + hashes) | yes |
 | public `.d.ts` | yes |
 | source maps | yes (optional debug) |
 | internal demo / Vite / monorepo sources | **no** |
 
 `docs/.nojekyll` disables Jekyll processing so `.js` / `.json` are served as static files.
 
-## Operator steps (no GitHub Actions)
-
-### Reference House assets (Tour media / floorplans)
-
-After changing files under `packages/reference-house/`:
-
-```bash
-pnpm publish:reference-house
-```
-
-This syncs packages → `public/reference-house` → `docs/reference-house`, builds embed dist only when missing, and verifies SHA-256 equality across all three trees. Then commit the synced paths and push the Pages branch.
-
-### Embed distribution only
-
-```bash
-pnpm --filter @embed-engine/embed build
-pnpm --filter @embed-engine/embed sync:pages
-```
-
-Commit `docs/embed/**` and `docs/.nojekyll`, then ensure GitHub Pages is enabled:
-
-- Source: Deploy from a branch  
-- Branch: currently `feature/cap-p04-founding-partner` (M3/S2 verification); switch to `main` after merge  
-- Folder: `/docs`
-
-**Visibility:** GitHub Free requires a **public** repository for GitHub Pages. This repo was set to public to activate Pages.
-
-## Verification (confirmed 2026-07-21)
-
-```bash
-curl -sI https://radimventus.github.io/embed-engine/embed/embed.iife.js
-# HTTP/2 200
-# content-type: application/javascript; charset=utf-8
-
-curl -s https://radimventus.github.io/embed-engine/embed/version.json
-# version 0.1.0 matches packages/embed/dist/version.json
-```
-
-## Out of scope (this slice)
+## Out of scope
 
 - GitHub Actions auto-publish  
 - CDN  
 - Custom domain  
-- Embed public API changes  

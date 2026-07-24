@@ -1,11 +1,12 @@
 /**
  * Embed.mount — public entry.
  *
- * Production inline: Delivery Layer → Object Package → Runtime → ClientStudioApp.
+ * Production inline: Delivery Layer → ClientStudioApp (Provider → Builder Runtime).
  * Production launcher: bind Experience Launcher → Launch on click → overlay Delivery.
  * Legacy: explicit `fixture: "garden"` or `experience` → Priority HTML renderer.
  */
 
+import { logEmbedRuntimeBuild } from "./buildFingerprint";
 import { bootstrapLegacyGardenEmbed } from "./delivery/legacyGarden";
 import { bootstrapClientStudioDelivery } from "./delivery/mountClientStudioDelivery";
 import {
@@ -72,6 +73,7 @@ function resolveInlineTarget(options: EmbedProductionMountOptions): HTMLElement 
  */
 export function mount(options: EmbedMountOptions): void {
   teardownEmbed();
+  logEmbedRuntimeBuild("Embed Runtime");
 
   if (isLegacyGardenMount(options) || isLegacyExperienceMount(options)) {
     const host = resolveElement(options.target, "target");
@@ -105,11 +107,16 @@ export function mount(options: EmbedMountOptions): void {
     }
 
     const host = resolveInlineTarget(options);
-    const session = bootstrapClientStudioDelivery(host, {
+    void bootstrapClientStudioDelivery(host, {
       objectId: options.objectId,
       assetBase: options.assetBase,
-    });
-    setActiveSession(session);
+    })
+      .then((session) => {
+        setActiveSession(session);
+      })
+      .catch((error: unknown) => {
+        console.error("Embed.mount: Client Studio delivery failed", error);
+      });
     return;
   }
 

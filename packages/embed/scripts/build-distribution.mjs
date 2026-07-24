@@ -2,8 +2,9 @@
 /**
  * Build the production distribution package for @embed-engine/embed.
  *
- * Produces a deterministic `dist/` layout suitable for future GitHub Pages / CDN
- * publishing. Does not publish anywhere.
+ * Produces a deterministic `dist/` layout suitable for GitHub Pages / CDN.
+ * PT-DEPLOY-EMBED-01: generates Runtime build fingerprint, verifies package,
+ * runs Runtime smoke — does not publish anywhere.
  */
 
 import { spawnSync } from "node:child_process";
@@ -11,8 +12,15 @@ import { readFileSync, writeFileSync, rmSync, existsSync, readdirSync } from "no
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-const rootDir = path.dirname(fileURLToPath(import.meta.url));
-const packageDir = path.resolve(rootDir, "..");
+import {
+  createBuildFingerprint,
+  packageDir,
+  readFingerprint,
+  sha256File,
+  writeFingerprint,
+  RUNTIME_HOUSE_PACKAGE_SOURCE,
+} from "./lib/buildFingerprint.mjs";
+
 const distDir = path.join(packageDir, "dist");
 
 const packageJson = JSON.parse(
@@ -69,25 +77,38 @@ function readEmbedVersionFromSource() {
   return match[1];
 }
 
-function writeVersionJson(apiVersion) {
+function writeVersionJson(apiVersion, fingerprint) {
   if (apiVersion !== packageJson.version) {
     throw new Error(
       `Version mismatch: package.json=${packageJson.version} EMBED_VERSION=${apiVersion}. Keep them identical.`,
     );
   }
 
+  const iifePath = path.join(distDir, "embed.iife.js");
+  const esmPath = path.join(distDir, "embed.es.js");
+  const iifeSha256 = sha256File(iifePath);
+  const esmSha256 = sha256File(esmPath);
+
   const manifest = {
     name: packageJson.name,
     version: packageJson.version,
     apiVersion,
     freeze: "Architecture Freeze v0.1",
+    fingerprint: {
+      commit: fingerprint.commit,
+      builtAt: fingerprint.builtAt,
+      runtimeSource: fingerprint.runtimeSource,
+      marker: fingerprint.marker,
+      iifeSha256,
+      esmSha256,
+    },
     artifacts: {
       esm: "embed.es.js",
       iife: "embed.iife.js",
       types: "index.d.ts",
       sourcemaps: OPTIONAL_ARTIFACTS,
     },
-    publicApi: ["Embed.mount", "Embed.unmount", "Embed.version"],
+    publicApi: ["Embed.mount", "Embed.unmount", "Embed.version", "Embed.build"],
   };
 
   writeFileSync(
@@ -106,7 +127,7 @@ function pruneInternalDeclarations() {
   }
 }
 
-function assertCompletePackage() {
+function assertCompletePackage(fingerprint) {
   const missing = REQUIRED_ARTIFACTS.filter(
     (file) => !existsSync(path.join(distDir, file)),
   );
@@ -116,13 +137,18 @@ function assertCompletePackage() {
     );
   }
 
-  // Guard against accidental absolute host paths in shippable JS.
   for (const file of ["embed.es.js", "embed.iife.js"]) {
     const content = readFileSync(path.join(distDir, file), "utf8");
     if (content.includes("/Users/") || content.includes("C:\\\\Users\\\\")) {
       throw new Error(
         `${file} contains absolute user path markers — refusing to ship.`,
       );
+    }
+    if (!content.includes(fingerprint.marker)) {
+      throw new Error(`${file} missing build fingerprint marker — refusing to ship.`);
+    }
+    if (!content.includes(RUNTIME_HOUSE_PACKAGE_SOURCE)) {
+      throw new Error(`${file} missing Runtime source string — refusing to ship.`);
     }
   }
 
@@ -136,7 +162,17 @@ function assertCompletePackage() {
         : "support";
     console.log(`  [${marker}] ${file}`);
   }
+  console.log(
+    `  fingerprint: ${fingerprint.commit} @ ${fingerprint.builtAt} (${RUNTIME_HOUSE_PACKAGE_SOURCE})`,
+  );
 }
+
+console.log("→ Runtime build fingerprint");
+const fingerprint = createBuildFingerprint();
+writeFingerprint(fingerprint);
+console.log(`  commit=${fingerprint.commit}`);
+console.log(`  builtAt=${fingerprint.builtAt}`);
+console.log(`  runtimeSource=${fingerprint.runtimeSource}`);
 
 console.log("→ ESM bundle");
 run("pnpm", ["exec", "vite", "build"]);
@@ -149,10 +185,13 @@ run("pnpm", ["exec", "tsc", "--emitDeclarationOnly"]);
 
 const apiVersion = readEmbedVersionFromSource();
 console.log("→ version.json");
-writeVersionJson(apiVersion);
+writeVersionJson(apiVersion, readFingerprint());
 
 console.log("→ prune internal declarations");
 pruneInternalDeclarations();
 
 console.log("→ verify package");
-assertCompletePackage();
+assertCompletePackage(readFingerprint());
+
+console.log("→ Runtime smoke");
+run("node", ["./scripts/smoke-runtime.mjs"]);

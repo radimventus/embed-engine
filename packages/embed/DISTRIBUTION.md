@@ -1,7 +1,7 @@
 # Embed Distribution Package
 
 **Package:** `@embed-engine/embed`  
-**Aligned with:** [Architecture Freeze v0.1](../../docs/releases/Architecture%20Freeze%20v0.1.md)
+**Aligned with:** [Architecture Freeze v0.1](../../docs/releases/Architecture%20Freeze%20v0.1.md), **PT-DEPLOY-EMBED-01**
 
 This document defines the **production distribution package** produced by:
 
@@ -13,104 +13,119 @@ It standardizes `packages/embed/dist/` and feeds the GitHub Pages copy under `do
 
 ---
 
+## Pipeline diagram
+
+```text
+Source
+  packages/embed/src/*
+  apps/client-studio/src/embed/mountClientStudio.tsx
+        │
+        ▼
+build-distribution.mjs
+  1. create .build/fingerprint.json   (git commit + UTC time + Runtime source)
+  2. vite build → dist/embed.es.js    (__EMBED_RUNTIME_BUILD__ injected)
+  3. vite build → dist/embed.iife.js
+  4. tsc declarations
+  5. version.json (+ iifeSha256 / esmSha256 / fingerprint)
+  6. smoke-runtime.mjs                FAIL → build fails
+        │
+        ▼
+sync-pages.mjs
+  copy dist → docs/embed/
+  assert byte-identical IIFE/ESM/version.json
+  assert fingerprint marker inside published IIFE
+  validate-pages.mjs
+        │
+        ▼
+GitHub Pages (/docs) → Browser
+```
+
+---
+
 ## Build output (`dist/`)
 
 ### Required artifacts
 
 | File | Purpose |
 | --- | --- |
-| `embed.es.js` | ESM bundle for modern hosts / bundlers (`import { Embed } from "…"`) |
-| `embed.iife.js` | IIFE bundle exposing global `Embed` for plain `<script>` tags |
+| `embed.es.js` | ESM bundle |
+| `embed.iife.js` | IIFE (`global Embed`) — **partner production script** |
 | `index.d.ts` | Public TypeScript entry types |
-| `version.json` | Machine-readable package / API version + artifact manifest |
-
-Supporting public declaration files referenced by `index.d.ts` (for example `Embed.d.ts`, `fixtures.d.ts`, `mount.d.ts`) are also emitted as part of the types surface.
+| `version.json` | Version + **Runtime fingerprint** + artifact SHA-256 |
 
 ### Optional debug artifacts
 
 | File | Purpose |
 | --- | --- |
-| `embed.es.js.map` | Source map for ESM (sources excluded from map payload) |
-| `embed.iife.js.map` | Source map for IIFE (sources excluded from map payload) |
+| `embed.es.js.map` / `embed.iife.js.map` | Source maps |
 
-Host pages do **not** need source maps to run Embed.
+### Not the production IIFE
 
-### Not part of the public package
-
-Internal implementation declarations (`bootstrap`, `session`, `styles`, `iife` entry) are pruned after `tsc` and must not be consumed by hosts.
+| Path | Role |
+| --- | --- |
+| `packages/embed/demo/` (`validate.html`) | Local Vite **source** demo — not `docs/embed/embed.iife.js` |
 
 ---
 
-## `version.json`
+## Runtime fingerprint
 
-Written on every build. Example shape:
+Generated automatically on every `build` (never hand-edited):
+
+| Field | Source |
+| --- | --- |
+| `commit` | `git rev-parse --short HEAD` |
+| `builtAt` | UTC ISO-8601 at build time |
+| `runtimeSource` | `builder-package/projectBuilderImportToHousePackage` |
+| `marker` | `EMBED_RUNTIME_BUILD:<commit>@<builtAt>` baked into JS |
+| `iifeSha256` / `esmSha256` | SHA-256 of shipped bundles |
+
+On `Embed.mount`:
+
+```text
+Embed Runtime
+Build: <commit>
+Runtime: builder-package/projectBuilderImportToHousePackage
+Built: <builtAt>
+```
+
+Public API: `Embed.build`.
+
+---
+
+## `version.json` (shape)
 
 ```json
 {
   "name": "@embed-engine/embed",
   "version": "0.1.0",
   "apiVersion": "0.1.0",
-  "freeze": "Architecture Freeze v0.1",
+  "fingerprint": {
+    "commit": "abc1234",
+    "builtAt": "2026-07-24T04:32:00Z",
+    "runtimeSource": "builder-package/projectBuilderImportToHousePackage",
+    "marker": "EMBED_RUNTIME_BUILD:abc1234@2026-07-24T04:32:00Z",
+    "iifeSha256": "…",
+    "esmSha256": "…"
+  },
   "artifacts": {
     "esm": "embed.es.js",
     "iife": "embed.iife.js",
-    "types": "index.d.ts",
-    "sourcemaps": ["embed.es.js.map", "embed.iife.js.map"]
+    "types": "index.d.ts"
   },
-  "publicApi": ["Embed.mount", "Embed.unmount", "Embed.version"]
+  "publicApi": ["Embed.mount", "Embed.unmount", "Embed.version", "Embed.build"]
 }
 ```
 
-`package.json` `version` and `Embed.version` (`src/version.ts` → `EMBED_VERSION`) must match or the build fails.
-
 ---
 
-## Public API
-
-```ts
-Embed.mount({
-  target: "#embed",
-  objectId?: "house-modern-01",
-  assetBase?: "https://radimventus.github.io/embed-engine",
-})
-Embed.unmount()
-Embed.version
-```
-
-Production mount resolves the Object Package, creates one Decision Session Runtime, and mounts Client Studio with full Experience CSS.
-
-- `assetBase` — optional origin for `/media` and `/house-package` when the host does not serve them.
-- Legacy Garden HTML requires explicit opt-in: `{ fixture: "garden" }`.
-
-See [Embed Delivery → Client Studio](../../docs/reviews/Embed-Delivery-Client-Studio.md) and [Rendering Parity](../../docs/reviews/Embed-Rendering-Parity.md).
-
----
-
-## Reproducibility notes
-
-- Bundles are built with Vite library mode; workspace packages are **bundled in** so IIFE/ESM are self-contained for hosts.
-- Absolute host filesystem paths must not appear in shippable JS (build asserts this).
-- Source maps use relative `sources` paths and exclude inline `sourcesContent`.
-
----
-
-## How to build
-
-From the monorepo root:
+## Commands
 
 ```bash
-pnpm --filter @embed-engine/embed build
+pnpm --filter @embed-engine/embed build           # fingerprint + bundles + smoke
+pnpm --filter @embed-engine/embed sync:pages      # copy + hash/fingerprint gate
+pnpm --filter @embed-engine/embed validate:pages  # docs/embed == dist
+pnpm --filter @embed-engine/embed validate:pages -- --remote  # live Pages
+pnpm --filter @embed-engine/embed deploy:pages    # build && sync:pages
 ```
 
-Or via Turbo (builds dependencies first):
-
-```bash
-pnpm build --filter @embed-engine/embed
-```
-
-Verify locally with the standalone playground (serve repository root):
-
-```bash
-python3 -m http.server
-# open http://localhost:8000/playground/
-```
+Stale publish is refused: `sync:pages` fails if `docs/embed/embed.iife.js` would not match `dist/embed.iife.js` after copy, or if the fingerprint marker / Runtime source string is missing.

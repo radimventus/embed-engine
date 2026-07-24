@@ -1,6 +1,6 @@
 /**
- * Create the single Decision Session Runtime for production Embed delivery.
- * Runtime is owned by the delivery session and passed into Client Studio.
+ * Create Decision Session Runtime from a HousePackage (unit tests / fixtures).
+ * Production Embed does not call this — Provider bootstraps Builder Package.
  */
 
 import type { HousePackage } from "@embed-engine/object-house";

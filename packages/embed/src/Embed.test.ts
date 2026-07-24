@@ -33,11 +33,16 @@ describe("Embed.mount / Embed.unmount", () => {
     teardownEmbed();
   });
 
-  it("exposes only mount, unmount, and version on the public object", () => {
-    assert.deepEqual(Object.keys(Embed).sort(), ["mount", "unmount", "version"]);
+  it("exposes mount, unmount, version, and build fingerprint on the public object", () => {
+    assert.deepEqual(Object.keys(Embed).sort(), ["build", "mount", "unmount", "version"]);
     assert.equal(typeof Embed.mount, "function");
     assert.equal(typeof Embed.unmount, "function");
     assert.equal(typeof Embed.version, "string");
+    assert.equal(typeof Embed.build.commit, "string");
+    assert.equal(
+      Embed.build.runtimeSource,
+      "builder-package/projectBuilderImportToHousePackage",
+    );
   });
 
   it("legacy fixture garden still mounts Priority Journey HTML", () => {

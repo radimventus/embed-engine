@@ -7,7 +7,8 @@ import type { DecisionSessionRuntime } from "@embed-engine/runtime";
 
 export type MountClientStudioOptions = {
   readonly target: HTMLElement;
-  readonly runtime: DecisionSessionRuntime;
+  readonly runtime?: DecisionSessionRuntime;
+  readonly objectId?: string;
   readonly assetBase?: string;
 };
 

@@ -9,11 +9,21 @@ import { setPresentationAssetBase } from '../features/client-studio/runtime/pres
 
 export type MountClientStudioOptions = {
   readonly target: HTMLElement;
-  /** Single Decision Session Runtime owned by the Embed delivery session. */
-  readonly runtime: DecisionSessionRuntime;
+  /**
+   * Optional Runtime from delivery tests / specialized hosts.
+   * Production Embed omits this — Client Studio Provider bootstraps Builder Package
+   * the same way as standalone Client Studio (PT-EMBED-RUNTIME-INTEGRATION-01).
+   */
+  readonly runtime?: DecisionSessionRuntime;
+  /**
+   * Object id stamped on the mount root when Runtime is not injected yet.
+   * Defaults to the pilot Builder identity.
+   */
+  readonly objectId?: string;
   /**
    * Optional origin for `/media` and `/house-package` assets (no trailing slash).
    * Required when the host origin does not serve Client Studio public assets.
+   * Must be set before Provider bootstrap so CSV fetch resolves against the same base.
    */
   readonly assetBase?: string;
 };
@@ -34,7 +44,10 @@ function assertMountTarget(target: HTMLElement | null | undefined): HTMLElement 
 
 /**
  * Mount Client Studio into a host element (Embed Delivery Layer).
- * Does not create Runtime — the delivery layer supplies the shared instance.
+ *
+ * Production: omit `runtime` so DecisionSessionRuntimeProvider creates Runtime from
+ * Builder Package (`ensureBuilderPackageBootstrapped` → `projectBuilderImportToHousePackage`)
+ * — identical to standalone Client Studio.
  */
 export function mountClientStudio(
   options: MountClientStudioOptions,
@@ -44,12 +57,17 @@ export function mountClientStudio(
 
   setPresentationAssetBase(assetBase);
 
+  const objectId =
+    runtime?.getSession().objectId ??
+    options.objectId ??
+    'house-modern-01';
+
   target.setAttribute('data-embed-root', '');
   target.setAttribute('data-client-studio-root', '');
   target.setAttribute('data-embed-boundary', '');
   target.dataset.clientStudioVersion = CLIENT_STUDIO_RELEASE.version;
   target.dataset.clientStudioGeneration = CLIENT_STUDIO_RELEASE.generation;
-  target.dataset.objectId = runtime.getSession().objectId;
+  target.dataset.objectId = objectId;
 
   const reactRoot: Root = createRoot(target);
   reactRoot.render(

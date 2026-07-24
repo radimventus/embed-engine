@@ -1,7 +1,7 @@
 /**
  * Embed.mount — public entry.
  *
- * Production inline: Delivery Layer → Object Package → Runtime → ClientStudioApp.
+ * Production inline: Delivery Layer → ClientStudioApp (Provider → Builder Runtime).
  * Production launcher: bind Experience Launcher → Launch on click → overlay Delivery.
  * Legacy: explicit `fixture: "garden"` or `experience` → Priority HTML renderer.
  */

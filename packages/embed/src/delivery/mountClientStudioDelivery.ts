@@ -1,13 +1,14 @@
 /**
- * Production delivery — mount Client Studio with a shared Decision Session Runtime.
+ * Production delivery — mount Client Studio; Runtime from Builder via Provider.
+ *
+ * PT-EMBED-RUNTIME-INTEGRATION-01: Embed does not create HousePackage / Runtime.
  */
 
 import { mountClientStudio } from "@client-studio/embed-mount";
 
 import type { EmbedSession } from "../bootstrap";
-import { createDeliveryRuntime } from "./createDeliveryRuntime";
 import { ensureClientStudioStyles } from "./ensureStyles";
-import { resolveObjectPackage } from "./resolveObjectPackage";
+import { DEFAULT_OBJECT_ID } from "./resolveObjectPackage";
 import type { EmbedProductionMountOptions } from "./types";
 
 export type ClientStudioDeliverySession = EmbedSession & {
@@ -15,21 +16,34 @@ export type ClientStudioDeliverySession = EmbedSession & {
   readonly objectId: string;
 };
 
+function resolvePilotObjectId(objectId: string | undefined): string {
+  const resolved =
+    objectId === undefined || objectId.trim().length === 0
+      ? DEFAULT_OBJECT_ID
+      : objectId.trim();
+  if (resolved !== DEFAULT_OBJECT_ID) {
+    throw new Error(
+      `Embed.mount: unknown objectId "${resolved}". Known: ${DEFAULT_OBJECT_ID}`,
+    );
+  }
+  return resolved;
+}
+
 /**
- * Resolve Object Package → create Runtime → mount ClientStudioApp.
- * Single Runtime instance for the session (not duplicated inside Provider).
+ * Mount ClientStudioApp. Provider creates Decision Session Runtime from Builder Package
+ * (`ensureBuilderPackageBootstrapped` → `projectBuilderImportToHousePackage`) — same as
+ * standalone Client Studio.
  */
-export function bootstrapClientStudioDelivery(
+export async function bootstrapClientStudioDelivery(
   host: HTMLElement,
   options: Pick<EmbedProductionMountOptions, "objectId" | "assetBase">,
-): ClientStudioDeliverySession {
+): Promise<ClientStudioDeliverySession> {
   ensureClientStudioStyles();
 
-  const housePackage = resolveObjectPackage(options.objectId);
-  const runtime = createDeliveryRuntime(housePackage);
+  const objectId = resolvePilotObjectId(options.objectId);
   const handle = mountClientStudio({
     target: host,
-    runtime,
+    objectId,
     assetBase: options.assetBase,
   });
 
@@ -38,7 +52,7 @@ export function bootstrapClientStudioDelivery(
     host,
     root: handle.rootElement,
     styleElement: document.createElement("style"),
-    objectId: housePackage.identity.id,
+    objectId,
     dispose: () => {
       handle.dispose();
     },
