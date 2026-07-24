@@ -1,16 +1,11 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
-import {
-  createFixedClock,
-  createDecisionSessionRuntime,
-} from '@embed-engine/runtime';
-
 import {
   formatDecisionKeyCs,
 } from '../../pilot/decisionTerminalLabels';
 import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
+import { createTestBuilderRuntime } from '../../runtime/builderPackageTestInstall';
 import {
   advisorIntroFromAiContext,
   faqItemsFromAiContext,
@@ -20,21 +15,13 @@ import { recommendationViewFromTerminal } from '../PriorityEngine/Recommendation
 
 describe('Runtime presentation ownership (ED-DA-01R)', () => {
   it('recommendation / FAQ / report preview project Terminal / AIContext only', () => {
-    const layoutRuntime = createDecisionSessionRuntime({
-      clock: createFixedClock(1),
-      housePackage: REFERENCE_HOUSE_PACKAGE,
-      now: 1,
-    });
+    const layoutRuntime = createTestBuilderRuntime();
     layoutRuntime.dispatch(
       { type: 'ChangePriority', priorityIds: ['layout'] },
       2,
     );
 
-    const designRuntime = createDecisionSessionRuntime({
-      clock: createFixedClock(1),
-      housePackage: REFERENCE_HOUSE_PACKAGE,
-      now: 1,
-    });
+    const designRuntime = createTestBuilderRuntime();
     designRuntime.dispatch(
       { type: 'ChangePriority', priorityIds: ['design'] },
       2,

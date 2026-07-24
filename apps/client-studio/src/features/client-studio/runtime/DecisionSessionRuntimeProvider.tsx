@@ -8,7 +8,6 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
 import {
   createDecisionSessionRuntime,
   createSystemClock,
@@ -16,9 +15,13 @@ import {
   type RuntimeCommand,
   type DispatchResult,
 } from '@embed-engine/runtime';
+import { RUNTIME_HOUSE_PACKAGE_SOURCE } from '@embed-engine/object-house/builder-package';
 
 import { useOptionalDecisionAnalytics } from '../analytics/DecisionAnalyticsProvider';
-import { ensureBuilderPackageBootstrapped } from './builderPackageBootstrap';
+import {
+  ensureBuilderPackageBootstrapped,
+  getBuilderRuntimeHousePackage,
+} from './builderPackageBootstrap';
 import {
   projectSynchronizedExperience,
   type SynchronizedExperience,
@@ -36,7 +39,7 @@ export type DecisionSessionRuntimeContextValue = {
    * UI modules read `experience.context` — never compose semantics here.
    */
   readonly experience: SynchronizedExperience;
-  /** Availability — true once Builder Package registries + Experience projection are ready. */
+  /** Availability — true once Builder Package → Runtime HousePackage is ready. */
   readonly ready: boolean;
   /** Dispatch Runtime commands (SelectRoom, ChangePriority, …). */
   readonly dispatch: (command: RuntimeCommand, now?: number) => DispatchResult;
@@ -48,9 +51,9 @@ const DecisionSessionRuntimeContext =
 type DecisionSessionRuntimeProviderProps = {
   readonly children: ReactNode;
   /**
-   * Optional Runtime from Embed Delivery Layer.
-   * When provided, this instance is the sole semantic authority for the tree.
-   * When omitted, the Provider creates exactly one Runtime (standalone SPA).
+   * Optional Runtime (tests / specialized hosts only).
+   * Production Embed and standalone Client Studio both omit this — Provider creates
+   * Runtime from Builder Package import (`projectBuilderImportToHousePackage`).
    */
   readonly runtime?: DecisionSessionRuntime;
 };
@@ -74,28 +77,33 @@ export function DecisionSessionRuntimeProvider({
   runtime: injectedRuntime,
 }: DecisionSessionRuntimeProviderProps) {
   const runtimeRef = useRef<DecisionSessionRuntime | null>(injectedRuntime ?? null);
-  if (runtimeRef.current === null) {
-    runtimeRef.current = createDecisionSessionRuntime({
-      housePackage: REFERENCE_HOUSE_PACKAGE,
-      clock: createSystemClock(),
-      now: 1,
-    });
-  }
-
-  const runtime = runtimeRef.current;
   const [revision, setRevision] = useState(0);
-  const [packageReady, setPackageReady] = useState(false);
+  const [packageReady, setPackageReady] = useState(injectedRuntime !== undefined);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const analytics = useOptionalDecisionAnalytics();
 
   useEffect(() => {
+    if (injectedRuntime !== undefined) {
+      runtimeRef.current = injectedRuntime;
+      setPackageReady(true);
+      setBootstrapError(null);
+      return;
+    }
+
     let cancelled = false;
     void ensureBuilderPackageBootstrapped()
       .then(() => {
-        if (!cancelled) {
-          setPackageReady(true);
-          setBootstrapError(null);
+        if (cancelled) {
+          return;
         }
+        runtimeRef.current = createDecisionSessionRuntime({
+          housePackage: getBuilderRuntimeHousePackage(),
+          clock: createSystemClock(),
+          now: 1,
+        });
+        setPackageReady(true);
+        setBootstrapError(null);
+        setRevision((value) => value + 1);
       })
       .catch((error: unknown) => {
         if (!cancelled) {
@@ -106,11 +114,14 @@ export function DecisionSessionRuntimeProvider({
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [injectedRuntime]);
 
   const dispatch = useCallback(
     (command: RuntimeCommand, now?: number): DispatchResult => {
-      // When `now` is omitted, Runtime uses the injected system clock.
+      const runtime = runtimeRef.current;
+      if (runtime === null) {
+        throw new Error('Decision Session Runtime is not ready.');
+      }
       const result = runtime.dispatch(command, now);
       if (result.ok) {
         analytics?.observeDispatch(result);
@@ -118,15 +129,15 @@ export function DecisionSessionRuntimeProvider({
       }
       return result;
     },
-    [analytics, runtime],
+    [analytics],
   );
 
   const value = useMemo((): DecisionSessionRuntimeContextValue | null => {
-    if (!packageReady) {
+    if (!packageReady || runtimeRef.current === null) {
       return null;
     }
     void revision;
-    const base = runtime.getExperience();
+    const base = runtimeRef.current.getExperience();
     if (base === null) {
       throw new Error('DecisionSessionRuntime produced no Experience projection.');
     }
@@ -135,7 +146,68 @@ export function DecisionSessionRuntimeProvider({
       ready: true,
       dispatch,
     };
-  }, [dispatch, packageReady, revision, runtime]);
+  }, [dispatch, packageReady, revision]);
+
+  // PT-RUNTIME-TRACE-01 / PT-EMBED-RUNTIME-INTEGRATION-01 — live Runtime proof.
+  useEffect(() => {
+    if (value === null) {
+      return;
+    }
+    const { experience } = value;
+    const isEmbed =
+      typeof document !== 'undefined' &&
+      document.querySelector('[data-embed-root]') !== null;
+    const prefix = isEmbed ? 'Embed ' : '';
+    const galleryRooms = [
+      ...new Set(
+        experience.house.media
+          .map((asset) => {
+            const match = /^gallery:([^:]+):/.exec(asset.id);
+            return match?.[1] ?? null;
+          })
+          .filter((roomId): roomId is string => roomId !== null),
+      ),
+    ];
+    const activeRoomId = experience.context.activeRoom.id;
+    const galleryAssets =
+      activeRoomId === null
+        ? experience.house.media.filter((asset) =>
+            asset.id.startsWith('gallery:'),
+          )
+        : experience.house.media.filter((asset) =>
+            asset.id.startsWith(`gallery:${activeRoomId}:`),
+          );
+
+    console.log(
+      `${prefix}Runtime source:`,
+      RUNTIME_HOUSE_PACKAGE_SOURCE,
+    );
+    console.log(
+      `${prefix}rooms:`,
+      experience.house.rooms.map((room) => room.id),
+    );
+    console.log(
+      `${prefix}navigation:`,
+      experience.context.navigation.rooms.map((room) => room.id),
+    );
+    console.log(`${prefix}room count:`, experience.house.rooms.length);
+    console.log(
+      `${prefix}navigation room count:`,
+      experience.context.navigation.rooms.length,
+    );
+    console.log('Gallery rooms:', galleryRooms);
+    if (isEmbed) {
+      console.log('Embed active room id:', activeRoomId);
+      console.log(
+        'Embed gallery assets:',
+        galleryAssets.map((asset) => ({
+          id: asset.id,
+          url: asset.url,
+          type: asset.type,
+        })),
+      );
+    }
+  }, [value]);
 
   if (bootstrapError !== null) {
     return (

@@ -1,11 +1,13 @@
 import {
   buildBuilderPackageRegistries,
   parseCsv,
+  projectBuilderImportToHousePackage,
   type BuilderHousePackageImport,
 } from '@embed-engine/object-house/builder-package';
+import type { HousePackage } from '@embed-engine/object-house';
 
+import { BUILDER_RUNTIME_HOUSE_DEFAULTS } from './builderRuntimeHouseDefaults';
 import { getPresentationAssetBase } from './presentationAssetBase';
-import { projectRegistriesToResolvedPackage } from './projectRegistriesToResolvedPackage';
 import {
   evidenceLog,
   fingerprintText,
@@ -148,17 +150,30 @@ function logBuilderPackageEvidence(
 
   evidenceLog('6.RuntimeSource', {
     usesBuilderPackageRegistry: true,
+    usesRuntimeHousePackageFromBuilder: true,
     usesManifestJson: false,
-    manifestImportInPresentationAssets: false,
+    usesReferenceHousePackage: false,
     csvLoadMode: 'http-fetch-public-house-package',
   });
 }
 
 let cachedRegistries: BuilderHousePackageImport | null = null;
+let cachedHousePackage: HousePackage | null = null;
 let bootstrapPromise: Promise<BuilderHousePackageImport> | null = null;
 
+function projectCachedHousePackage(
+  registries: BuilderHousePackageImport,
+): HousePackage {
+  const housePackage = projectBuilderImportToHousePackage(registries, {
+    ...BUILDER_RUNTIME_HOUSE_DEFAULTS,
+    packagePublicRoot: '/house-package',
+  });
+  cachedHousePackage = housePackage;
+  return housePackage;
+}
+
 /**
- * Ensure Runtime registries exist (async). Safe to call multiple times.
+ * Ensure Builder registries + Runtime HousePackage exist (async).
  * Browser: fetches HP-002 CSVs over HTTP. Tests: use bootstrapBuilderPackageRegistriesSyncForTests.
  */
 export async function ensureBuilderPackageBootstrapped(): Promise<BuilderHousePackageImport> {
@@ -173,6 +188,7 @@ export async function ensureBuilderPackageBootstrapped(): Promise<BuilderHousePa
     const texts = await loadBuilderPackageCsvTexts();
     const registries = buildRegistriesFromTexts(texts);
     cachedRegistries = registries;
+    projectCachedHousePackage(registries);
     logBuilderPackageEvidence(registries, texts);
     return registries;
   })();
@@ -197,8 +213,14 @@ export function getBuilderPackageRegistries(): BuilderHousePackageImport {
   return cachedRegistries;
 }
 
-export function getBuilderResolvedPackage() {
-  return projectRegistriesToResolvedPackage(getBuilderPackageRegistries());
+/**
+ * Runtime HousePackage projected from Builder registries (sole Client Studio object SSOT).
+ */
+export function getBuilderRuntimeHousePackage(): HousePackage {
+  if (cachedHousePackage !== null) {
+    return cachedHousePackage;
+  }
+  return projectCachedHousePackage(getBuilderPackageRegistries());
 }
 
 /**
@@ -210,6 +232,7 @@ export function bootstrapBuilderPackageRegistriesSyncForTests(
   const registries = buildRegistriesFromTexts(texts);
   cachedRegistries = registries;
   bootstrapPromise = Promise.resolve(registries);
+  projectCachedHousePackage(registries);
   logBuilderPackageEvidence(registries, texts);
   return registries;
 }
@@ -217,5 +240,6 @@ export function bootstrapBuilderPackageRegistriesSyncForTests(
 /** Test helper — clear memoized registries. */
 export function resetBuilderPackageBootstrapForTests(): void {
   cachedRegistries = null;
+  cachedHousePackage = null;
   bootstrapPromise = null;
 }

@@ -15,6 +15,8 @@ Supporting (not SSOT):
 
 | Document | Role |
 | --- | --- |
+| [Current-Runtime-Baseline.md](./Current-Runtime-Baseline.md) | Product baseline: Builder → HousePackage → CS + Embed + deploy gates |
+| [RUNTIME-STATUS.md](./RUNTIME-STATUS.md) | Certification status (RAR-001) + pointer to product baseline |
 | [runtime-boundaries.md](./runtime-boundaries.md) | Package ownership / dependency direction after CAP-01 |
 | [experience-projection.md](./experience-projection.md) | Experience projection principles (Interpretation / Story → surfaces) |
 

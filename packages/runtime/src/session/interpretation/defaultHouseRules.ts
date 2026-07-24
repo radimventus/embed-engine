@@ -40,6 +40,12 @@ export const DEFAULT_HOUSE_INTERPRETATION_RULES: InterpretationRuleset =
         version: 1,
         config: {
           order: [
+            "living-room",
+            "kitchen",
+            "bedroom",
+            "children-room",
+            "bathroom",
+            // Legacy Object Package ids (Runtime unit fixtures).
             "room-living",
             "room-kitchen",
             "room-bedroom",
@@ -47,10 +53,30 @@ export const DEFAULT_HOUSE_INTERPRETATION_RULES: InterpretationRuleset =
             "room-bath",
           ],
           boostBySignalKind: {
-            "emphasize-space": ["room-living", "room-children"],
-            "emphasize-outdoor": ["room-living", "room-kitchen"],
-            "emphasize-privacy": ["room-bedroom", "room-bath"],
-            "emphasize-value": ["room-kitchen", "room-living"],
+            "emphasize-space": [
+              "living-room",
+              "children-room",
+              "room-living",
+              "room-children",
+            ],
+            "emphasize-outdoor": [
+              "living-room",
+              "kitchen",
+              "room-living",
+              "room-kitchen",
+            ],
+            "emphasize-privacy": [
+              "bedroom",
+              "bathroom",
+              "room-bedroom",
+              "room-bath",
+            ],
+            "emphasize-value": [
+              "kitchen",
+              "living-room",
+              "room-kitchen",
+              "room-living",
+            ],
           },
         },
       },
@@ -63,6 +89,11 @@ export const DEFAULT_HOUSE_INTERPRETATION_RULES: InterpretationRuleset =
         config: {
           defaultReason: "explore-house-structure",
           reasonsByRoomId: {
+            "living-room": "primary-living-volume",
+            kitchen: "daily-workflow-core",
+            bedroom: "private-rest-zone",
+            bathroom: "service-wet-zone",
+            "children-room": "flexible-secondary-space",
             "room-living": "primary-living-volume",
             "room-kitchen": "daily-workflow-core",
             "room-bedroom": "private-rest-zone",
@@ -86,6 +117,8 @@ export const DEFAULT_HOUSE_INTERPRETATION_RULES: InterpretationRuleset =
         config: {
           roleOrder: ["hero", "gallery", "video", "thumbnail", "document"],
           roleOrderByRoomId: {
+            "living-room": ["video", "hero", "gallery", "thumbnail", "document"],
+            kitchen: ["hero", "gallery", "video", "thumbnail", "document"],
             "room-living": ["video", "hero", "gallery", "thumbnail", "document"],
             "room-kitchen": ["hero", "gallery", "video", "thumbnail", "document"],
           },
@@ -116,6 +149,11 @@ export const DEFAULT_HOUSE_INTERPRETATION_RULES: InterpretationRuleset =
         config: {
           defaultMessages: ["inspect-layout", "compare-rooms"],
           messagesByRoomId: {
+            "living-room": ["day-zone-openness", "family-gathering"],
+            kitchen: ["workflow-efficiency", "natural-light"],
+            bedroom: ["privacy", "morning-light"],
+            bathroom: ["finishes", "storage"],
+            "children-room": ["flexibility", "growth"],
             "room-living": ["day-zone-openness", "family-gathering"],
             "room-kitchen": ["workflow-efficiency", "natural-light"],
             "room-bedroom": ["privacy", "morning-light"],

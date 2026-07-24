@@ -1,0 +1,47 @@
+{
+  "runtimeSource": "builder-package/projectBuilderImportToHousePackage",
+  "roomCount": 10,
+  "rooms": [
+    "exterior",
+    "kitchen",
+    "living-room",
+    "vestibule",
+    "wardrobe",
+    "bedroom",
+    "bathroom",
+    "toilet",
+    "children-room",
+    "office"
+  ],
+  "galleryDetails": [
+    {
+      "id": "gallery:exterior:1",
+      "url": "/house-package/media/gallery/01.webp",
+      "type": "image"
+    },
+    {
+      "id": "gallery:exterior:2",
+      "url": "/house-package/media/gallery/02.webp",
+      "type": "image"
+    },
+    {
+      "id": "gallery:exterior:3",
+      "url": "/house-package/media/gallery/03.webp",
+      "type": "image"
+    }
+  ],
+  "dump": {
+    "roomCount": 10,
+    "gallerySrcs": [
+      "/house-package/media/gallery/01.webp",
+      "/house-package/media/gallery/02.webp",
+      "/house-package/media/gallery/03.webp"
+    ],
+    "heroSrc": null
+  },
+  "galleryCsvExterior": [
+    "01.webp",
+    "02.webp",
+    "03.webp"
+  ]
+}

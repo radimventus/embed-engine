@@ -7,16 +7,17 @@ import type {
 } from '@embed-engine/runtime';
 
 import {
-  getMediaRoom,
-  getOpeningHeroSrc,
-  getPresentationAssets,
-} from './presentation-assets';
+  decisionCanvasUrlForRoom,
+  getFloorPlanUrlFromHouse,
+  getOpeningHeroUrlFromHouse,
+  listRoomGalleryUrls,
+  listRoomVideoUrls,
+} from './experienceHouseMedia';
 import { resolvePublicAssetUrl } from './presentationAssetBase';
 import {
   REFERENCE_FLOORPLAN_HEIGHT,
   REFERENCE_FLOORPLAN_REGIONS,
   REFERENCE_FLOORPLAN_WIDTH,
-  referenceFloorPlanSvgPath,
 } from './referenceFloorPlanGeometry';
 
 /**
@@ -129,18 +130,17 @@ export type SynchronizedExperience = {
   readonly context: SynchronizedExperienceContext;
 };
 
-/** Opening Hero from Builder Package Hero Registry (CAP-BP-01). */
-function packageHeroMedia(): ProjectedMediaAsset | null {
-  const src = getOpeningHeroSrc();
+/** Opening Hero from Runtime HousePackage media (Builder-derived). */
+function packageHeroMedia(house: ExperienceHouse): ProjectedMediaAsset | null {
+  const src = getOpeningHeroUrlFromHouse(house);
   if (src.length === 0) {
     return null;
   }
-  const url = resolvePublicAssetUrl(src);
   return Object.freeze({
     id: 'builder-package-hero',
     kind: 'image' as const,
-    url,
-    thumbnailUrl: url,
+    url: src,
+    thumbnailUrl: src,
     title: 'Hero',
   });
 }
@@ -163,56 +163,53 @@ function projectHouseDocuments(
   );
 }
 
-function referenceDecisionCanvasSrc(roomId: string): string {
-  return resolvePublicAssetUrl(referenceFloorPlanSvgPath(roomId));
-}
-
 function projectRoomContext(
   room: ExperienceHouseRoom,
   experience: SessionExperience,
 ): ContextualActiveRoom {
-  const fallbackHero = packageHeroMedia();
+  const fallbackHero = packageHeroMedia(experience.house);
   const documents = projectHouseDocuments(experience);
-  const mediaRoom = getMediaRoom(room.id);
+  const photoUrls = listRoomGalleryUrls(experience.house, room.id);
+  const videoUrls = listRoomVideoUrls(experience.house, room.id);
 
   const gallery: readonly ProjectedMediaAsset[] =
-    mediaRoom !== null && mediaRoom.photos.length > 0
+    photoUrls.length > 0
       ? Object.freeze(
-          mediaRoom.photos.map((url, index) => {
-            const resolved = resolvePublicAssetUrl(url);
-            return Object.freeze({
+          photoUrls.map((url, index) =>
+            Object.freeze({
               id: `${room.id}-photo-${index}`,
               kind: 'image' as const,
-              url: resolved,
-              thumbnailUrl: resolved,
+              url,
+              thumbnailUrl: url,
               title: room.name,
-            });
-          }),
+            }),
+          ),
         )
       : Object.freeze([]);
 
   const videos: readonly ProjectedMediaAsset[] =
-    mediaRoom !== null && mediaRoom.videoSrc.length > 0
-      ? Object.freeze([
-          Object.freeze({
-            id: `${room.id}-video`,
-            kind: 'video' as const,
-            url: resolvePublicAssetUrl(mediaRoom.videoSrc),
-            thumbnailUrl: resolvePublicAssetUrl(
-              mediaRoom.heroSrc || mediaRoom.photos[0] || mediaRoom.videoSrc,
-            ),
-            title: room.name,
-          }),
-        ])
+    videoUrls.length > 0
+      ? Object.freeze(
+          videoUrls.map((url, index) =>
+            Object.freeze({
+              id: `${room.id}-video-${index}`,
+              kind: 'video' as const,
+              url,
+              thumbnailUrl: photoUrls[0] ?? url,
+              title: room.name,
+            }),
+          ),
+        )
       : Object.freeze([]);
 
+  const roomHeroUrl = photoUrls[0];
   const heroMedia =
-    mediaRoom !== null && mediaRoom.heroSrc.length > 0
+    roomHeroUrl !== undefined
       ? Object.freeze({
           id: `${room.id}-hero`,
           kind: 'image' as const,
-          url: resolvePublicAssetUrl(mediaRoom.heroSrc),
-          thumbnailUrl: resolvePublicAssetUrl(mediaRoom.heroSrc),
+          url: roomHeroUrl,
+          thumbnailUrl: roomHeroUrl,
           title: room.name,
         })
       : (gallery[0] ?? fallbackHero);
@@ -255,7 +252,7 @@ function projectRoomContext(
 function emptyRoomMedia(
   experience: SessionExperience,
 ): ExperienceRoomMediaContext {
-  const idleHero = packageHeroMedia();
+  const idleHero = packageHeroMedia(experience.house);
   const gallery = Object.freeze([]) as readonly ProjectedMediaAsset[];
   const videos = Object.freeze([]) as readonly ProjectedMediaAsset[];
   const documents = projectHouseDocuments(experience);
@@ -365,7 +362,7 @@ function projectHeroContext(
   const { house } = experience;
   const object = experience.context.object;
   const { highlights, focus: decisionFocus } = experience.context.decision;
-  const heroMedia = packageHeroMedia();
+  const heroMedia = packageHeroMedia(house);
 
   return Object.freeze({
     eyebrow: `${object.reference} · ${object.construction}`,
@@ -391,38 +388,28 @@ function projectHeroContext(
 function projectFloorPlan(
   experience: SessionExperience,
 ): ExperienceFloorPlanContext {
-  const assets = getPresentationAssets();
-  const objectFloorplan = experience.house.media.find(
-    (asset) => asset.type === 'floorplan',
-  );
-  const useReferenceGeometry = objectFloorplan !== undefined;
-  const viewBoxWidth = useReferenceGeometry
+  const floorPlanSrc = getFloorPlanUrlFromHouse(experience.house);
+  const hasBuilderFloorplan = floorPlanSrc.length > 0;
+  const viewBoxWidth = hasBuilderFloorplan
     ? REFERENCE_FLOORPLAN_WIDTH
-    : assets.floorPlanViewBox;
-  const viewBoxHeight = useReferenceGeometry
+    : 400;
+  const viewBoxHeight = hasBuilderFloorplan
     ? REFERENCE_FLOORPLAN_HEIGHT
-    : assets.floorPlanViewBox;
+    : 400;
 
   const rooms = experience.house.rooms.map((room) => {
-    const chrome = getMediaRoom(room.id);
     const referenceRegion = REFERENCE_FLOORPLAN_REGIONS[room.id] ?? null;
     return Object.freeze({
       id: room.id,
       title: room.name,
       floor: String(room.floor),
-      decisionCanvasSrc: useReferenceGeometry
-        ? referenceDecisionCanvasSrc(room.id)
-        : (chrome?.decisionCanvasSrc ?? ''),
-      floorPlanRegion: useReferenceGeometry
-        ? referenceRegion
-        : (chrome?.floorPlanRegion ?? null),
+      decisionCanvasSrc: decisionCanvasUrlForRoom(room.id),
+      floorPlanRegion: referenceRegion,
     });
   });
 
   return Object.freeze({
-    src: resolvePublicAssetUrl(
-      objectFloorplan?.url ?? assets.floorPlanSrc,
-    ),
+    src: floorPlanSrc,
     viewBoxWidth,
     viewBoxHeight,
     viewBox: viewBoxWidth,

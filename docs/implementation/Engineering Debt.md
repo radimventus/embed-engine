@@ -13,6 +13,15 @@ Items here are candidates for later milestones / ADRs.
 | ED-DIST-04 | Single bundled `embed.d.ts` (rollup-types) | Current multi-file public `.d.ts` graph is sufficient for MVP |
 | ED-DIST-05 | Auto-generate `src/version.ts` from `package.json` | Build already fails on mismatch; codegen can wait |
 | ED-DIST-06 | Retarget Pages source to `main` `/docs` after merge | Pages currently builds from `feature/cap-p04-founding-partner` for M3/S2 verification |
+| ED-DIST-07 | Stale Embed IIFE on Pages vs local Runtime | **Done (PT-DEPLOY-EMBED-01)** — fingerprint + SHA-256 sync gates; see [Current Runtime Baseline](../architecture/Current-Runtime-Baseline.md) |
+
+## Engineering baseline (product Runtime)
+
+| ID | Item | Notes |
+| --- | --- | --- |
+| EB-RT-01 | Dual SSOT (REFERENCE_HOUSE + Builder registries) | **Done (PT-RUNTIME-UNIFY-01)** |
+| EB-RT-02 | Embed vs Client Studio Runtime init divergence | **Done (PT-EMBED-RUNTIME-INTEGRATION-01)** |
+| EB-RT-03 | Reproducible HEAD = validated tree + Pages | **Done (CAP-RUNTIME-BASELINE-01 / PT-RUNTIME-UNIFY-02)** |
 
 ## Embed / Runtime (known TODOs)
 

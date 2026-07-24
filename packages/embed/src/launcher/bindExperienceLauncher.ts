@@ -82,17 +82,18 @@ export function bindExperienceLauncher(
       return;
     }
 
-    try {
-      const request = buildLaunchRequest(options, focusHost);
-      const session = launchExperience(request, {
-        onClose: () => {
-          unmount();
-        },
+    const request = buildLaunchRequest(options, focusHost);
+    void launchExperience(request, {
+      onClose: () => {
+        unmount();
+      },
+    })
+      .then((session) => {
+        setActiveSession(session);
+      })
+      .catch((error: unknown) => {
+        console.error("Embed.launch: failed to open Experience", error);
       });
-      setActiveSession(session);
-    } catch (error) {
-      console.error("Embed.launch: failed to open Experience", error);
-    }
   };
 
   if (options.heroHost !== undefined) {

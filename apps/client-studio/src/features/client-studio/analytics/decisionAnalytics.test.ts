@@ -4,18 +4,13 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 
-import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
-import {
-  createFixedClock,
-  createDecisionSessionRuntime,
-} from '@embed-engine/runtime';
-
 import {
   categorizeAiQuestion,
   createDecisionAnalyticsCollector,
   createMemoryExportAdapter,
   deriveSessionMetrics,
 } from './index';
+import { createTestBuilderRuntime } from '../runtime/builderPackageTestInstall';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -36,11 +31,7 @@ describe('Decision Analytics (CSCB-08)', () => {
     });
 
     collector.startJourney();
-    const runtime = createDecisionSessionRuntime({
-      clock: createFixedClock(1),
-      housePackage: REFERENCE_HOUSE_PACKAGE,
-      now: 1,
-    });
+    const runtime = createTestBuilderRuntime();
     const result = runtime.dispatch(
       { type: 'ChangePriority', priorityIds: ['energy', 'layout', 'plot'] },
       2,

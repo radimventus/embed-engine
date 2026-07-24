@@ -1,0 +1,1822 @@
+{
+  "runtimeLogs": [
+    "Runtime rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Navigation rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Gallery rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Runtime source: builder-package/projectBuilderImportToHousePackage",
+    "Runtime room count: 10",
+    "Navigation room count: 10",
+    "Runtime rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Navigation rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Gallery rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Runtime source: builder-package/projectBuilderImportToHousePackage",
+    "Runtime room count: 10",
+    "Navigation room count: 10",
+    "Runtime rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Navigation rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Gallery rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Runtime source: builder-package/projectBuilderImportToHousePackage",
+    "Runtime room count: 10",
+    "Navigation room count: 10",
+    "Runtime rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Navigation rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Gallery rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Runtime source: builder-package/projectBuilderImportToHousePackage",
+    "Runtime room count: 10",
+    "Navigation room count: 10",
+    "Runtime rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Navigation rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Gallery rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Runtime source: builder-package/projectBuilderImportToHousePackage",
+    "Runtime room count: 10",
+    "Navigation room count: 10"
+  ],
+  "initial": {
+    "tag": "initial",
+    "activeRoomId": "exterior",
+    "activeLabel": "Exteriér",
+    "allDataRoomIdNodes": [
+      {
+        "tag": "DIV",
+        "id": "exterior",
+        "role": null,
+        "type": null,
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "id": "exterior",
+        "role": null,
+        "type": "button",
+        "text": "Exteriér"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "kitchen",
+        "role": null,
+        "type": "button",
+        "text": "Kuchyně"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "living-room",
+        "role": null,
+        "type": "button",
+        "text": "Obývací pokoj"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "vestibule",
+        "role": null,
+        "type": "button",
+        "text": "Zádveří a chodba"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "wardrobe",
+        "role": null,
+        "type": "button",
+        "text": "Šatna"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "bedroom",
+        "role": null,
+        "type": "button",
+        "text": "Ložnice"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "bathroom",
+        "role": null,
+        "type": "button",
+        "text": "Koupelna"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "toilet",
+        "role": null,
+        "type": "button",
+        "text": "Toaleta"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "children-room",
+        "role": null,
+        "type": "button",
+        "text": "Dětský pokoj"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "office",
+        "role": null,
+        "type": "button",
+        "text": "Pracovna"
+      }
+    ],
+    "rooms": [
+      {
+        "index": 1,
+        "dataRoomId": "exterior",
+        "label": "Exteriér",
+        "active": "true",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 474,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 2,
+        "dataRoomId": "kitchen",
+        "label": "Kuchyně",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 517,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 3,
+        "dataRoomId": "living-room",
+        "label": "Obývací pokoj",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 560,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 4,
+        "dataRoomId": "vestibule",
+        "label": "Zádveří a chodba",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 603,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 5,
+        "dataRoomId": "wardrobe",
+        "label": "Šatna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 646,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 6,
+        "dataRoomId": "bedroom",
+        "label": "Ložnice",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 689,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 7,
+        "dataRoomId": "bathroom",
+        "label": "Koupelna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 732,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 8,
+        "dataRoomId": "toilet",
+        "label": "Toaleta",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 775,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 9,
+        "dataRoomId": "children-room",
+        "label": "Dětský pokoj",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 818,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 10,
+        "dataRoomId": "office",
+        "label": "Pracovna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 861,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      }
+    ],
+    "visibleLabels": [
+      "1 Exteriér",
+      "2 Kuchyně",
+      "3 Obývací pokoj",
+      "4 Zádveří a chodba",
+      "5 Šatna",
+      "6 Ložnice",
+      "7 Koupelna",
+      "8 Toaleta",
+      "9 Dětský pokoj",
+      "10 Pracovna"
+    ],
+    "notUserVisible": [],
+    "navOverflow": {
+      "overflow": "hidden auto",
+      "overflowY": "auto",
+      "maxHeight": "none",
+      "height": 426,
+      "scrollHeight": 426,
+      "clientHeight": 426
+    },
+    "visibleThumbs": [
+      {
+        "index": 1,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 49,
+          "y": 474,
+          "w": 690,
+          "h": 388
+        },
+        "parent": "DIV",
+        "parentClass": "absolute inset-0 transition-opacity"
+      },
+      {
+        "index": 2,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 100,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-brand-gold"
+      },
+      {
+        "index": 3,
+        "src": "/house-package/media/gallery/02.webp",
+        "file": "02.webp",
+        "galleryFile": "02.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 252,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-border-default hover:border-embed-bran"
+      },
+      {
+        "index": 4,
+        "src": "/house-package/media/gallery/03.webp",
+        "file": "03.webp",
+        "galleryFile": "03.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 404,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-border-default hover:border-embed-bran"
+      },
+      {
+        "index": 5,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 556,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "DIV",
+        "parentClass": "relative h-full w-full bg-embed-background-tertiary"
+      }
+    ],
+    "allThumbsWithHousePackage": [
+      {
+        "index": 1,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 49,
+          "y": 474,
+          "w": 690,
+          "h": 388
+        },
+        "parent": "DIV",
+        "parentClass": "absolute inset-0 transition-opacity"
+      },
+      {
+        "index": 2,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 100,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-brand-gold"
+      },
+      {
+        "index": 3,
+        "src": "/house-package/media/gallery/02.webp",
+        "file": "02.webp",
+        "galleryFile": "02.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 252,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-border-default hover:border-embed-bran"
+      },
+      {
+        "index": 4,
+        "src": "/house-package/media/gallery/03.webp",
+        "file": "03.webp",
+        "galleryFile": "03.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 404,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-border-default hover:border-embed-bran"
+      },
+      {
+        "index": 5,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 556,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "DIV",
+        "parentClass": "relative h-full w-full bg-embed-background-tertiary"
+      }
+    ],
+    "bg": [
+      {
+        "url": "http://127.0.0.1:4173/house-package/media/hero/hero.webp",
+        "userSees": true,
+        "tag": "SECTION",
+        "className": "relative h-full min-h-0 w-full bg-cover bg-[center_42%] bg-no-repeat"
+      }
+    ]
+  },
+  "exterior": {
+    "tag": "exterior",
+    "activeRoomId": "exterior",
+    "activeLabel": "Exteriér",
+    "allDataRoomIdNodes": [
+      {
+        "tag": "DIV",
+        "id": "exterior",
+        "role": null,
+        "type": null,
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "id": "exterior",
+        "role": null,
+        "type": "button",
+        "text": "Exteriér"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "kitchen",
+        "role": null,
+        "type": "button",
+        "text": "Kuchyně"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "living-room",
+        "role": null,
+        "type": "button",
+        "text": "Obývací pokoj"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "vestibule",
+        "role": null,
+        "type": "button",
+        "text": "Zádveří a chodba"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "wardrobe",
+        "role": null,
+        "type": "button",
+        "text": "Šatna"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "bedroom",
+        "role": null,
+        "type": "button",
+        "text": "Ložnice"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "bathroom",
+        "role": null,
+        "type": "button",
+        "text": "Koupelna"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "toilet",
+        "role": null,
+        "type": "button",
+        "text": "Toaleta"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "children-room",
+        "role": null,
+        "type": "button",
+        "text": "Dětský pokoj"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "office",
+        "role": null,
+        "type": "button",
+        "text": "Pracovna"
+      }
+    ],
+    "rooms": [
+      {
+        "index": 1,
+        "dataRoomId": "exterior",
+        "label": "Exteriér",
+        "active": "true",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 474,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 2,
+        "dataRoomId": "kitchen",
+        "label": "Kuchyně",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 517,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 3,
+        "dataRoomId": "living-room",
+        "label": "Obývací pokoj",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 560,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 4,
+        "dataRoomId": "vestibule",
+        "label": "Zádveří a chodba",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 603,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 5,
+        "dataRoomId": "wardrobe",
+        "label": "Šatna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 646,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 6,
+        "dataRoomId": "bedroom",
+        "label": "Ložnice",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 689,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 7,
+        "dataRoomId": "bathroom",
+        "label": "Koupelna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 732,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 8,
+        "dataRoomId": "toilet",
+        "label": "Toaleta",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 775,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 9,
+        "dataRoomId": "children-room",
+        "label": "Dětský pokoj",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 818,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 10,
+        "dataRoomId": "office",
+        "label": "Pracovna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 861,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      }
+    ],
+    "visibleLabels": [
+      "1 Exteriér",
+      "2 Kuchyně",
+      "3 Obývací pokoj",
+      "4 Zádveří a chodba",
+      "5 Šatna",
+      "6 Ložnice",
+      "7 Koupelna",
+      "8 Toaleta",
+      "9 Dětský pokoj",
+      "10 Pracovna"
+    ],
+    "notUserVisible": [],
+    "navOverflow": {
+      "overflow": "hidden auto",
+      "overflowY": "auto",
+      "maxHeight": "none",
+      "height": 426,
+      "scrollHeight": 426,
+      "clientHeight": 426
+    },
+    "visibleThumbs": [
+      {
+        "index": 1,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 49,
+          "y": 474,
+          "w": 690,
+          "h": 388
+        },
+        "parent": "DIV",
+        "parentClass": "absolute inset-0 transition-opacity"
+      },
+      {
+        "index": 2,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 100,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-brand-gold"
+      },
+      {
+        "index": 3,
+        "src": "/house-package/media/gallery/02.webp",
+        "file": "02.webp",
+        "galleryFile": "02.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 252,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-border-default hover:border-embed-bran"
+      },
+      {
+        "index": 4,
+        "src": "/house-package/media/gallery/03.webp",
+        "file": "03.webp",
+        "galleryFile": "03.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 404,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-border-default hover:border-embed-bran"
+      },
+      {
+        "index": 5,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 556,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "DIV",
+        "parentClass": "relative h-full w-full bg-embed-background-tertiary"
+      }
+    ],
+    "allThumbsWithHousePackage": [
+      {
+        "index": 1,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 49,
+          "y": 474,
+          "w": 690,
+          "h": 388
+        },
+        "parent": "DIV",
+        "parentClass": "absolute inset-0 transition-opacity"
+      },
+      {
+        "index": 2,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 100,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-brand-gold"
+      },
+      {
+        "index": 3,
+        "src": "/house-package/media/gallery/02.webp",
+        "file": "02.webp",
+        "galleryFile": "02.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 252,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-border-default hover:border-embed-bran"
+      },
+      {
+        "index": 4,
+        "src": "/house-package/media/gallery/03.webp",
+        "file": "03.webp",
+        "galleryFile": "03.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 404,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-border-default hover:border-embed-bran"
+      },
+      {
+        "index": 5,
+        "src": "/house-package/media/gallery/01.webp",
+        "file": "01.webp",
+        "galleryFile": "01.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 556,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "DIV",
+        "parentClass": "relative h-full w-full bg-embed-background-tertiary"
+      }
+    ],
+    "bg": [
+      {
+        "url": "http://127.0.0.1:4173/house-package/media/hero/hero.webp",
+        "userSees": true,
+        "tag": "SECTION",
+        "className": "relative h-full min-h-0 w-full bg-cover bg-[center_42%] bg-no-repeat"
+      }
+    ]
+  },
+  "kitchen": {
+    "tag": "kitchen",
+    "activeRoomId": "kitchen",
+    "activeLabel": "Kuchyně",
+    "allDataRoomIdNodes": [
+      {
+        "tag": "DIV",
+        "id": "kitchen",
+        "role": null,
+        "type": null,
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "id": "exterior",
+        "role": null,
+        "type": "button",
+        "text": "Exteriér"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "kitchen",
+        "role": null,
+        "type": "button",
+        "text": "Kuchyně"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "living-room",
+        "role": null,
+        "type": "button",
+        "text": "Obývací pokoj"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "vestibule",
+        "role": null,
+        "type": "button",
+        "text": "Zádveří a chodba"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "wardrobe",
+        "role": null,
+        "type": "button",
+        "text": "Šatna"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "bedroom",
+        "role": null,
+        "type": "button",
+        "text": "Ložnice"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "bathroom",
+        "role": null,
+        "type": "button",
+        "text": "Koupelna"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "toilet",
+        "role": null,
+        "type": "button",
+        "text": "Toaleta"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "children-room",
+        "role": null,
+        "type": "button",
+        "text": "Dětský pokoj"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "office",
+        "role": null,
+        "type": "button",
+        "text": "Pracovna"
+      }
+    ],
+    "rooms": [
+      {
+        "index": 1,
+        "dataRoomId": "exterior",
+        "label": "Exteriér",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 474,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 2,
+        "dataRoomId": "kitchen",
+        "label": "Kuchyně",
+        "active": "true",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 517,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 3,
+        "dataRoomId": "living-room",
+        "label": "Obývací pokoj",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 560,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 4,
+        "dataRoomId": "vestibule",
+        "label": "Zádveří a chodba",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 603,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 5,
+        "dataRoomId": "wardrobe",
+        "label": "Šatna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 646,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 6,
+        "dataRoomId": "bedroom",
+        "label": "Ložnice",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 689,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 7,
+        "dataRoomId": "bathroom",
+        "label": "Koupelna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 732,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 8,
+        "dataRoomId": "toilet",
+        "label": "Toaleta",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 775,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 9,
+        "dataRoomId": "children-room",
+        "label": "Dětský pokoj",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 818,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 10,
+        "dataRoomId": "office",
+        "label": "Pracovna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 861,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      }
+    ],
+    "visibleLabels": [
+      "1 Exteriér",
+      "2 Kuchyně",
+      "3 Obývací pokoj",
+      "4 Zádveří a chodba",
+      "5 Šatna",
+      "6 Ložnice",
+      "7 Koupelna",
+      "8 Toaleta",
+      "9 Dětský pokoj",
+      "10 Pracovna"
+    ],
+    "notUserVisible": [],
+    "navOverflow": {
+      "overflow": "hidden auto",
+      "overflowY": "auto",
+      "maxHeight": "none",
+      "height": 426,
+      "scrollHeight": 426,
+      "clientHeight": 426
+    },
+    "visibleThumbs": [
+      {
+        "index": 1,
+        "src": "/house-package/media/gallery/11.webp",
+        "file": "11.webp",
+        "galleryFile": "11.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 49,
+          "y": 474,
+          "w": 690,
+          "h": 388
+        },
+        "parent": "DIV",
+        "parentClass": "absolute inset-0 transition-opacity"
+      },
+      {
+        "index": 2,
+        "src": "/house-package/media/gallery/11.webp",
+        "file": "11.webp",
+        "galleryFile": "11.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 100,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-brand-gold"
+      },
+      {
+        "index": 3,
+        "src": "/house-package/media/gallery/11.webp",
+        "file": "11.webp",
+        "galleryFile": "11.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 252,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "DIV",
+        "parentClass": "relative h-full w-full bg-embed-background-tertiary"
+      }
+    ],
+    "allThumbsWithHousePackage": [
+      {
+        "index": 1,
+        "src": "/house-package/media/gallery/11.webp",
+        "file": "11.webp",
+        "galleryFile": "11.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 49,
+          "y": 474,
+          "w": 690,
+          "h": 388
+        },
+        "parent": "DIV",
+        "parentClass": "absolute inset-0 transition-opacity"
+      },
+      {
+        "index": 2,
+        "src": "/house-package/media/gallery/11.webp",
+        "file": "11.webp",
+        "galleryFile": "11.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 100,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-brand-gold"
+      },
+      {
+        "index": 3,
+        "src": "/house-package/media/gallery/11.webp",
+        "file": "11.webp",
+        "galleryFile": "11.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 252,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "DIV",
+        "parentClass": "relative h-full w-full bg-embed-background-tertiary"
+      }
+    ],
+    "bg": [
+      {
+        "url": "http://127.0.0.1:4173/house-package/media/hero/hero.webp",
+        "userSees": true,
+        "tag": "SECTION",
+        "className": "relative h-full min-h-0 w-full bg-cover bg-[center_42%] bg-no-repeat"
+      }
+    ]
+  },
+  "living": {
+    "tag": "living-room",
+    "activeRoomId": "living-room",
+    "activeLabel": "Obývací pokoj",
+    "allDataRoomIdNodes": [
+      {
+        "tag": "DIV",
+        "id": "living-room",
+        "role": null,
+        "type": null,
+        "text": ""
+      },
+      {
+        "tag": "BUTTON",
+        "id": "exterior",
+        "role": null,
+        "type": "button",
+        "text": "Exteriér"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "kitchen",
+        "role": null,
+        "type": "button",
+        "text": "Kuchyně"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "living-room",
+        "role": null,
+        "type": "button",
+        "text": "Obývací pokoj"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "vestibule",
+        "role": null,
+        "type": "button",
+        "text": "Zádveří a chodba"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "wardrobe",
+        "role": null,
+        "type": "button",
+        "text": "Šatna"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "bedroom",
+        "role": null,
+        "type": "button",
+        "text": "Ložnice"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "bathroom",
+        "role": null,
+        "type": "button",
+        "text": "Koupelna"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "toilet",
+        "role": null,
+        "type": "button",
+        "text": "Toaleta"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "children-room",
+        "role": null,
+        "type": "button",
+        "text": "Dětský pokoj"
+      },
+      {
+        "tag": "BUTTON",
+        "id": "office",
+        "role": null,
+        "type": "button",
+        "text": "Pracovna"
+      }
+    ],
+    "rooms": [
+      {
+        "index": 1,
+        "dataRoomId": "exterior",
+        "label": "Exteriér",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 474,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 2,
+        "dataRoomId": "kitchen",
+        "label": "Kuchyně",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 517,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 3,
+        "dataRoomId": "living-room",
+        "label": "Obývací pokoj",
+        "active": "true",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 560,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 4,
+        "dataRoomId": "vestibule",
+        "label": "Zádveří a chodba",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 603,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 5,
+        "dataRoomId": "wardrobe",
+        "label": "Šatna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 646,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 6,
+        "dataRoomId": "bedroom",
+        "label": "Ložnice",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 689,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 7,
+        "dataRoomId": "bathroom",
+        "label": "Koupelna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 732,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 8,
+        "dataRoomId": "toilet",
+        "label": "Toaleta",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 775,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 9,
+        "dataRoomId": "children-room",
+        "label": "Dětský pokoj",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 818,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      },
+      {
+        "index": 10,
+        "dataRoomId": "office",
+        "label": "Pracovna",
+        "active": "false",
+        "reasons": [],
+        "inViewport": true,
+        "visuallyHidden": false,
+        "userSees": true,
+        "rect": {
+          "x": 778,
+          "y": 861,
+          "w": 185,
+          "h": 39
+        },
+        "display": "block",
+        "visibility": "visible",
+        "opacity": "1",
+        "transform": "none"
+      }
+    ],
+    "visibleLabels": [
+      "1 Exteriér",
+      "2 Kuchyně",
+      "3 Obývací pokoj",
+      "4 Zádveří a chodba",
+      "5 Šatna",
+      "6 Ložnice",
+      "7 Koupelna",
+      "8 Toaleta",
+      "9 Dětský pokoj",
+      "10 Pracovna"
+    ],
+    "notUserVisible": [],
+    "navOverflow": {
+      "overflow": "hidden auto",
+      "overflowY": "auto",
+      "maxHeight": "none",
+      "height": 426,
+      "scrollHeight": 426,
+      "clientHeight": 426
+    },
+    "visibleThumbs": [
+      {
+        "index": 1,
+        "src": "/house-package/media/gallery/12.webp",
+        "file": "12.webp",
+        "galleryFile": "12.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 49,
+          "y": 474,
+          "w": 690,
+          "h": 388
+        },
+        "parent": "DIV",
+        "parentClass": "absolute inset-0 transition-opacity"
+      },
+      {
+        "index": 2,
+        "src": "/house-package/media/gallery/12.webp",
+        "file": "12.webp",
+        "galleryFile": "12.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 100,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "DIV",
+        "parentClass": "relative h-full w-full bg-embed-background-tertiary"
+      },
+      {
+        "index": 3,
+        "src": "/house-package/media/gallery/12.webp",
+        "file": "12.webp",
+        "galleryFile": "12.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 252,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-brand-gold"
+      }
+    ],
+    "allThumbsWithHousePackage": [
+      {
+        "index": 1,
+        "src": "/house-package/media/gallery/12.webp",
+        "file": "12.webp",
+        "galleryFile": "12.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 49,
+          "y": 474,
+          "w": 690,
+          "h": 388
+        },
+        "parent": "DIV",
+        "parentClass": "absolute inset-0 transition-opacity"
+      },
+      {
+        "index": 2,
+        "src": "/house-package/media/gallery/12.webp",
+        "file": "12.webp",
+        "galleryFile": "12.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 100,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "DIV",
+        "parentClass": "relative h-full w-full bg-embed-background-tertiary"
+      },
+      {
+        "index": 3,
+        "src": "/house-package/media/gallery/12.webp",
+        "file": "12.webp",
+        "galleryFile": "12.webp",
+        "userSees": true,
+        "reasons": [],
+        "rect": {
+          "x": 252,
+          "y": 884,
+          "w": 132,
+          "h": 76
+        },
+        "parent": "BUTTON",
+        "parentClass": "h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out border-embed-brand-gold"
+      }
+    ],
+    "bg": [
+      {
+        "url": "http://127.0.0.1:4173/house-package/media/hero/hero.webp",
+        "userSees": true,
+        "tag": "SECTION",
+        "className": "relative h-full min-h-0 w-full bg-cover bg-[center_42%] bg-no-repeat"
+      }
+    ]
+  }
+}

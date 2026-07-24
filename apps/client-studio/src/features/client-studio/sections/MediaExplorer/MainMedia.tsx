@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import { useWalkthrough } from '../../../walkthrough';
 import { DECISION_TRANSITION_EASING } from '../../../walkthrough/transition-tokens';
 import { useDecisionCrossfade } from '../../../walkthrough/useDecisionCrossfade';
-import { getBuilderPackageRegistries } from '../../runtime/builderPackageBootstrap';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { evidenceLog } from '../../runtime/runtimeEvidence';
 
@@ -74,44 +73,34 @@ export function MainMedia() {
   const [mediaPending, setMediaPending] = useState(true);
 
   useEffect(() => {
-    try {
-      const registry = getBuilderPackageRegistries();
-      evidenceLog('3.GalleryRuntime.beforeMainMedia', {
-        activeRoomId: gallery.roomId,
-        roomMediaTitle: gallery.title,
-        heroUrl: gallery.heroUrl,
-        videoUrl: gallery.videoUrl,
-        thumbnails: gallery.thumbnails.map((item, index) => ({
-          index,
-          kind: item.kind,
-          src: item.src,
-        })),
-        galleryRegistryOrder: registry.gallery.entries.map((entry) => ({
-          order: entry.order,
-          room: entry.roomId,
-          file: entry.file,
-          path: entry.path,
-        })),
-        roomScopedPhotos: gallery.gallery.map((item) => ({
-          id: item.id,
-          url: item.url,
-        })),
-      });
-      evidenceLog('5.ComponentEvidence.MainMedia', {
-        roomId: gallery.roomId,
-        title: gallery.title,
-        heroUrl: gallery.heroUrl,
-        videoUrl: gallery.videoUrl,
-        photoCount: gallery.gallery.length,
-        videoCount: gallery.videos.length,
-        thumbnailCount: gallery.thumbnails.length,
-        firstThumbnail: gallery.thumbnails[0] ?? null,
-        lastThumbnail: gallery.thumbnails[gallery.thumbnails.length - 1] ?? null,
-      });
-    } catch {
-      // Registries not ready — Provider gates mount until bootstrap completes.
-    }
-  }, [gallery]);
+    evidenceLog('3.GalleryRuntime.beforeMainMedia', {
+      activeRoomId: gallery.roomId,
+      roomMediaTitle: gallery.title,
+      heroUrl: gallery.heroUrl,
+      videoUrl: gallery.videoUrl,
+      thumbnails: gallery.thumbnails.map((item, index) => ({
+        index,
+        kind: item.kind,
+        src: item.src,
+      })),
+      houseMediaIds: experience.house.media.map((asset) => asset.id),
+      roomScopedPhotos: gallery.gallery.map((item) => ({
+        id: item.id,
+        url: item.url,
+      })),
+    });
+    evidenceLog('5.ComponentEvidence.MainMedia', {
+      roomId: gallery.roomId,
+      title: gallery.title,
+      heroUrl: gallery.heroUrl,
+      videoUrl: gallery.videoUrl,
+      photoCount: gallery.gallery.length,
+      videoCount: gallery.videos.length,
+      thumbnailCount: gallery.thumbnails.length,
+      firstThumbnail: gallery.thumbnails[0] ?? null,
+      lastThumbnail: gallery.thumbnails[gallery.thumbnails.length - 1] ?? null,
+    });
+  }, [experience.house.media, gallery]);
 
   const activeMediaItem = (() => {
     const selected = gallery.thumbnails[activeMediaIndex] ?? null;

@@ -4,17 +4,12 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 
-import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
-import {
-  createFixedClock,
-  createDecisionSessionRuntime,
-} from '@embed-engine/runtime';
-
 import {
   COMMERCIAL_CTAS,
   enabledCommercialCtas,
   findCommercialCta,
 } from '../../pilot/commercialConversion';
+import { createTestBuilderRuntime } from '../../runtime/builderPackageTestInstall';
 import {
   buildConversionRuntimeSnapshot,
   formatSnapshotForMailto,
@@ -44,11 +39,7 @@ describe('Commercial Conversion (CSCB-07)', () => {
   });
 
   it('projects Runtime snapshot without reinterpretation', () => {
-    const runtime = createDecisionSessionRuntime({
-      clock: createFixedClock(1),
-      housePackage: REFERENCE_HOUSE_PACKAGE,
-      now: 1,
-    });
+    const runtime = createTestBuilderRuntime();
     runtime.dispatch(
       { type: 'ChangePriority', priorityIds: ['energy', 'layout', 'plot'] },
       2,

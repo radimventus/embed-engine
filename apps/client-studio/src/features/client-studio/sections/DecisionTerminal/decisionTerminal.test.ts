@@ -4,12 +4,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 
-import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
-import {
-  createFixedClock,
-  createDecisionSessionRuntime,
-} from '@embed-engine/runtime';
-
+import { createTestBuilderRuntime } from '../../runtime/builderPackageTestInstall';
 import { projectDecisionPresentation } from '../../runtime/projectDecisionPresentation';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -26,12 +21,8 @@ function stripComments(source: string): string {
 
 describe('Decision Terminal (CSCB-05)', () => {
   it('projects Story / Moves / Drivers / Outcome from Runtime Context only', () => {
-    const runtime = createDecisionSessionRuntime({
-      clock: createFixedClock(1),
-      housePackage: REFERENCE_HOUSE_PACKAGE,
-      now: 1,
-    });
-    runtime.dispatch({ type: 'SelectRoom', roomId: 'room-living' }, 2);
+    const runtime = createTestBuilderRuntime();
+    runtime.dispatch({ type: 'SelectRoom', roomId: 'living-room' }, 2);
     runtime.dispatch(
       { type: 'ChangePriority', priorityIds: ['plot', 'layout', 'energy'] },
       3,
@@ -66,11 +57,7 @@ describe('Decision Terminal (CSCB-05)', () => {
   });
 
   it('preserves Runtime Story and Move order without local reordering', () => {
-    const runtime = createDecisionSessionRuntime({
-      clock: createFixedClock(10),
-      housePackage: REFERENCE_HOUSE_PACKAGE,
-      now: 10,
-    });
+    const runtime = createTestBuilderRuntime(10);
     runtime.dispatch({ type: 'ChangePriority', priorityIds: ['privacy'] }, 11);
     const decision = runtime.getExperience()!.context.decision;
     const view = projectDecisionPresentation({

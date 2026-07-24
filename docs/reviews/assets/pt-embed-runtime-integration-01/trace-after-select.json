@@ -1,0 +1,30 @@
+{
+  "lastBatch": [
+    "Embed Runtime source: builder-package/projectBuilderImportToHousePackage",
+    "Embed rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Embed navigation: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Embed room count: 10",
+    "Embed navigation room count: 10",
+    "Gallery rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Embed active room id: exterior",
+    "Embed gallery assets: [Object, Object, Object]"
+  ],
+  "allRelevant": [
+    "Embed Runtime source: builder-package/projectBuilderImportToHousePackage",
+    "Embed rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Embed navigation: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Embed room count: 10",
+    "Embed navigation room count: 10",
+    "Gallery rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Embed active room id: null",
+    "Embed gallery assets: [Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object, Object]",
+    "Embed Runtime source: builder-package/projectBuilderImportToHousePackage",
+    "Embed rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Embed navigation: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Embed room count: 10",
+    "Embed navigation room count: 10",
+    "Gallery rooms: [exterior, kitchen, living-room, vestibule, wardrobe, bedroom, bathroom, toilet, children-room, office]",
+    "Embed active room id: exterior",
+    "Embed gallery assets: [Object, Object, Object]"
+  ]
+}

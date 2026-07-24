@@ -4,13 +4,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { before, describe, it } from 'node:test';
 
-import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
-import {
-  createFixedClock,
-  createDecisionSessionRuntime,
-} from '@embed-engine/runtime';
-
-import { installBuilderPackageRegistriesForTests } from './builderPackageTestInstall';
+import { installBuilderPackageRegistriesForTests, createTestBuilderRuntime } from './builderPackageTestInstall';
 import { projectSynchronizedExperience } from './synchronizedExperience';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -66,12 +60,8 @@ describe('Media projection boundary (ED-DA-02)', () => {
   });
 
   it('media projection never invents Decision Session semantics', () => {
-    const runtime = createDecisionSessionRuntime({
-      clock: createFixedClock(1),
-      housePackage: REFERENCE_HOUSE_PACKAGE,
-      now: 1,
-    });
-    runtime.dispatch({ type: 'SelectRoom', roomId: 'room-kitchen' }, 2);
+    const runtime = createTestBuilderRuntime();
+    runtime.dispatch({ type: 'SelectRoom', roomId: 'kitchen' }, 2);
     const base = runtime.getExperience()!;
     const synced = projectSynchronizedExperience(base);
 
