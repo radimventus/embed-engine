@@ -119,3 +119,8 @@ export {
   type SessionInterpretation,
   type ValidationResult,
 } from "./pipeline";
+
+export {
+  projectPriorityPipelineStory,
+  type PriorityPipelineDecisionStory,
+} from "./priority-pipeline-mvp";

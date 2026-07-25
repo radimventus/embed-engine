@@ -4,18 +4,18 @@ import {
   PRIORITY_ENGINE_INTRO_HEIGHT_PX,
   PRIORITY_ENGINE_INTRO_PANEL_CLASS,
 } from '../PriorityEngine/priority-engine-layout';
+import { PriorityDecisionStoryPanel } from '../PriorityEngine/PriorityDecisionStoryPanel';
 import { DecisionDrivers } from './DecisionDrivers';
 import { DecisionStoryPanel } from './DecisionStoryPanel';
 import { DecisionSummary } from './DecisionSummary';
 import { OutcomeCards } from './OutcomeCards';
 
 /**
- * Decision Terminal — canonical Runtime presentation surface (CSCB-05 / 05A).
+ * Decision Terminal — canonical Runtime presentation surface (CSCB-05 / 05A / PT-001).
  *
- * First view: Summary → Drivers → Trade-offs.
- * Story / Moves remain available via progressive disclosure (Runtime order).
+ * PT-001: Priority Decision Story projection is always visible so priority changes
+ * are immediately obvious. Story / Moves remain via progressive disclosure.
  * Pure projection — no interpretation, ranking, or composition.
- * Height matches two Priority card rows (PT-PRIORITY-REDESIGN-01).
  */
 export function DecisionTerminal() {
   const { experience } = useDecisionSessionRuntime();
@@ -34,8 +34,10 @@ export function DecisionTerminal() {
       style={{ height: PRIORITY_ENGINE_INTRO_HEIGHT_PX }}
       data-terminal-id={view.terminalId}
       data-testid="decision-terminal"
+      data-priority-ids={decision.priorityIds.join(',')}
       aria-label="Rozhodovací terminál"
     >
+      <PriorityDecisionStoryPanel />
       <DecisionSummary summary={view.summary} />
       <DecisionDrivers drivers={view.drivers} />
       <OutcomeCards outcome={view.outcome} />
