@@ -3,7 +3,9 @@
 **Canonical platform map:** [PROJECT-MAP.md](../PROJECT-MAP.md)  
 **Runtime docs (start here):** [RUNTIME.md](./RUNTIME.md) — SSOT → [RI-001](../04-reference-implementation/RI-001-Runtime-Kernel.md)  
 **Host / delivery Runtime SSOT:** [runtime-ssot.md](./runtime-ssot.md)  
+**Runtime vs Release (ADR-019):** [adr/ADR-019-runtime-vs-release.md](./adr/ADR-019-runtime-vs-release.md)  
 **Embed Release Snapshot:** [embed-release-workflow.md](./embed-release-workflow.md)  
+**Embed parity troubleshooting:** [troubleshooting/embed-parity.md](./troubleshooting/embed-parity.md)  
 **Decision Layer SSOT:** [decision-layer/](./decision-layer/)  
 **Governance freeze:** [decision-layer/decision-layer-governance-v1.md](./decision-layer/decision-layer-governance-v1.md)
 
@@ -53,7 +55,8 @@
 | `decision-layer/` | **SSOT** for Strategy, Story, Move, Terminal, Trajectory |
 | `platform/` | Platform Architecture Overview (CORE-001) · [Experience Launcher (ELA-01)](./platform/Experience-Launcher-Architecture.md) · [Experience Modes & Builder (EMB-01)](./platform/Experience-Modes-and-Builder-Integration.md) · [Experience Delivery Layer (EDL-01)](./platform/Experience-Delivery-Layer.md) · [Delivery Implementation Contract (EDIC-01)](./platform/Experience-Delivery-Implementation-Contract.md) · [Launcher Runtime Integration (LRI-01)](./platform/Launcher-Runtime-Integration-Specification.md) · [Experience Contract Governance (ECG-01)](./platform/Experience-Contract-Governance.md) |
 | `core/` | Cognitive Layer & Decision State (CORE-101 / CORE-002) |
-| `adr/` | Architecture Decision Records ([ADR-001](./adr/ADR-001-runtime-architecture.md) Runtime · [ADR-013](./adr/ADR-013-room-selection-semantic.md) Room Selection · [ADR-014](./adr/ADR-014-experience-launcher.md)–[ADR-018](./adr/ADR-018-experience-contract-governance.md) Experience Delivery stack + implementation contract + governance) |
+| `adr/` | Architecture Decision Records ([ADR-001](./adr/ADR-001-runtime-architecture.md) Runtime · [ADR-013](./adr/ADR-013-room-selection-semantic.md) Room Selection · [ADR-014](./adr/ADR-014-experience-launcher.md)–[ADR-018](./adr/ADR-018-experience-contract-governance.md) Experience Delivery · [ADR-019](./adr/ADR-019-runtime-vs-release.md) Runtime vs Release) |
+| `troubleshooting/` | Ordered diagnosis ([embed-parity](./troubleshooting/embed-parity.md) — Local → Demo → publish → Pages) |
 | `pt/` | Platform Theory ([PT-001](./pt/PT-001-house-package-canonical-object-contract.md) Object · [PT-002](./pt/PT-002-interpretation-is-the-product.md) Interpretation · [PT-003](./pt/PT-003-decision-sessions-are-reproducible.md) Sessions · [PT-004](./pt/PT-004-decision-story-is-the-product.md) Decision Story · [PT-005](./pt/PT-005-decision-experience-composed-from-moves.md) Decision Moves · [PT-006](./pt/PT-006-ai-explains-never-decides.md) AI Explains · [PT-007](./pt/PT-007-decision-terminal-is-the-outcome.md) Decision Terminal · [PT-008](./pt/PT-008-every-decision-experience-produces-outcome.md) Decision Outcome) |
 | `review/` | Architecture Reviews ([AR-001 Decision Architecture v1.0](./review/AR-001-decision-architecture-v1.md)) |
 | `contracts/` | Cross-layer runtime contracts (e.g. [Priority Experience Runtime Contract](./contracts/Priority%20Experience%20Runtime%20Contract.md)) |

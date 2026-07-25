@@ -6,7 +6,7 @@
 
 `ensureBuilderPackageBootstrapped` → `projectBuilderImportToHousePackage` → `createDecisionSessionRuntime`.
 
-Live Embed demo (`http://localhost:5180/validate.html`): **10 rooms**, Runtime source `builder-package/projectBuilderImportToHousePackage`, exterior gallery `01/02/03.webp` matching `gallery.csv`.
+Embed Demo (`http://localhost:5180/validate.html`; historically phrased “Live Embed”): **10 rooms**, Runtime source `builder-package/projectBuilderImportToHousePackage`, exterior gallery `01/02/03.webp` matching `gallery.csv`.
 
 ---
 

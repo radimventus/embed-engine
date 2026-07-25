@@ -79,6 +79,7 @@ See **[architecture/RUNTIME.md](./architecture/RUNTIME.md)** (one-minute Runtime
 | **Decision Session SSOT** | [RI-002 — Decision Session](./04-reference-implementation/RI-002-Decision-Session.md) |
 | **Experience contract** | [RI-003 — Experience Kernel](./04-reference-implementation/RI-003-Experience-Kernel.md) |
 | Architecture decision (Runtime) | [ADR-001](./architecture/adr/ADR-001-runtime-architecture.md) |
+| Runtime vs Release | [ADR-019](./architecture/adr/ADR-019-runtime-vs-release.md) · [embed-release-workflow.md](./architecture/embed-release-workflow.md) · [embed-parity troubleshooting](./architecture/troubleshooting/embed-parity.md) |
 | Cognitive aggregate | [ADR-002](./architecture/adr/ADR-002-decision-state.md) |
 | Supporting | [runtime-boundaries.md](./architecture/runtime-boundaries.md), [experience-projection.md](./architecture/experience-projection.md) |
 | Historical (CommandRuntime) | [archive/runtime-decisions-command-runtime-v1.md](./architecture/archive/runtime-decisions-command-runtime-v1.md) |
@@ -87,18 +88,19 @@ See **[architecture/RUNTIME.md](./architecture/RUNTIME.md)** (one-minute Runtime
 
 1. [PROJECT-MAP.md](./PROJECT-MAP.md)
 2. [architecture/RUNTIME.md](./architecture/RUNTIME.md) — Runtime SSOT pointer
-3. [RI-001 — Runtime Kernel](./04-reference-implementation/RI-001-Runtime-Kernel.md)
-4. [RI-002 — Decision Session](./04-reference-implementation/RI-002-Decision-Session.md)
-5. [RI-003 — Experience Kernel](./04-reference-implementation/RI-003-Experience-Kernel.md)
-6. [Decision Layer vocabulary](./architecture/decision-layer/README.md)
-7. [Decision Layer governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
-8. [Product Constitution](./product/constitution/product-constitution.md)
-9. [Decision Experience Grammar (DEG)](./product/decision-experience-grammar/DEG.md) — **product layer SSOT**
-10. [Decision Journey Specification (DJS)](./product/decision-journey/DJS.md) — UX-001 Proposed
-11. [Business Intelligence Layer](./business/README.md) — Business Architecture SSOT
-12. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
-13. [Decision Architecture v1.0 Freeze](./architecture/decision-architecture-v1.0-freeze.md) — **FROZEN** · [AR-001](./architecture/review/AR-001-decision-architecture-v1.md)
-14. Active design / implementation guides as needed
+3. [ADR-019 — Runtime vs Release](./architecture/adr/ADR-019-runtime-vs-release.md) + [embed-release-workflow.md](./architecture/embed-release-workflow.md) — where to develop vs how to publish
+4. [RI-001 — Runtime Kernel](./04-reference-implementation/RI-001-Runtime-Kernel.md)
+5. [RI-002 — Decision Session](./04-reference-implementation/RI-002-Decision-Session.md)
+6. [RI-003 — Experience Kernel](./04-reference-implementation/RI-003-Experience-Kernel.md)
+7. [Decision Layer vocabulary](./architecture/decision-layer/README.md)
+8. [Decision Layer governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
+9. [Product Constitution](./product/constitution/product-constitution.md)
+10. [Decision Experience Grammar (DEG)](./product/decision-experience-grammar/DEG.md) — **product layer SSOT**
+11. [Decision Journey Specification (DJS)](./product/decision-journey/DJS.md) — UX-001 Proposed
+12. [Business Intelligence Layer](./business/README.md) — Business Architecture SSOT
+13. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
+14. [Decision Architecture v1.0 Freeze](./architecture/decision-architecture-v1.0-freeze.md) — **FROZEN** · [AR-001](./architecture/review/AR-001-decision-architecture-v1.md)
+15. Active design / implementation guides as needed
 
 Do not start with `archive/` or treat CommandRuntime docs as current.
 

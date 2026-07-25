@@ -7,13 +7,16 @@ alwaysApply: true
 
 This repository contains the EMBED Engine.
 
-The engine powers:
+Production product surface:
 
-- Client Studio
-- Sales Studio
-- Manager Studio
+- Embed Experience
 
-Every implementation must respect the architecture defined below.
+Internal / non-product:
+
+- Client Studio (Local) — developer workspace only
+- Sales Studio / Manager Studio — separate studio surfaces when in scope
+
+Every implementation must respect the architecture defined below and the **Embed First** directive.
 
 ---
 
@@ -31,7 +34,7 @@ packages/
 
 Applications never contain business logic.
 
-Business logic belongs only to packages.
+Business logic belongs only to packages — primarily `packages/core` and `packages/runtime` (Shared Runtime).
 
 ---
 
@@ -142,7 +145,9 @@ No commented code.
 
 The engine must remain usable for products other than real estate.
 
-Client Studio is only one implementation.
+**Embed** is the canonical production Experience.
+
+Client Studio (Local) is a developer shell — never the product reference.
 
 Never hardcode real-estate assumptions into Kernel.
 

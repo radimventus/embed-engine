@@ -1,30 +1,73 @@
 # Embed Release Workflow
 
-**CAP:** CAP-RLS-01  
+**CAP:** CAP-RLS-01 / CAP-GOV-01  
 **Status:** Accepted  
-**Related:** [runtime-ssot.md](./runtime-ssot.md)
+**Related:** [ADR-019](./adr/ADR-019-runtime-vs-release.md) · [runtime-ssot.md](./runtime-ssot.md) · [troubleshooting/embed-parity.md](./troubleshooting/embed-parity.md)
 
 ## Účel
 
-Oddělit **Live Runtime** (vývoj) od **Release Snapshot** (GitHub Pages) a dát týmu **jednu oficiální cestu publikování**.
+Oddělit **živý Runtime** (vývoj na hostitelích) od **Release Snapshot** / **Published Embed** a dát týmu **jednu oficiální cestu publikování**.
+
+## Terminologie
+
+| Termín | Význam |
+| --- | --- |
+| **Runtime** | Jediný živý source Runtime (+ Experience mount path) |
+| **Local Runtime** | Vite host Local (`client-studio` dev) |
+| **Embed Demo** | Vite host Embed Demo |
+| **Release Snapshot** | Strom `docs/embed/` po `pnpm embed:publish` |
+| **Published Embed** | Tentýž snapshot na GitHub Pages / partner URL |
+
+**Nepoužívat bez upřesnění:** „Live Embed“ (historicky matoucí). Pokud se výraz ještě objeví, vždy mapujte na jeden ze čtyř termínů výše.
 
 ## Runtime vs Release
 
-| | Live Runtime | Release Snapshot |
+| | Local Runtime / Embed Demo | Release Snapshot → Published Embed |
 |---|--------------|------------------|
-| Co to je | Aktuální source (`packages/*/src` + Experience) | Zkompilovaný `docs/embed/` |
-| Kde | Local, Embed Demo, Playground | GitHub Pages / partner IIFE |
-| Aktualizace | Okamžitě (Vite) | Pouze přes publish |
+| Co to je | Hostitelé živého Runtime (Vite + source) | Zkompilovaný `docs/embed/` → Pages |
+| Aktualizace | Okamžitě | Pouze přes publish + commit + push |
 | Příkaz | `dev` / `demo` | `pnpm embed:publish` |
+
+## Developer workflow (oficiální)
+
+```text
+Local Runtime
+     ↓
+Embed Demo
+     ↓
+pnpm embed:publish
+     ↓
+Release Validation
+     ↓
+Commit
+     ↓
+Push
+     ↓
+GitHub Pages
+     ↓
+Remote Validation
+     ↓
+Published Embed
+```
+
+| Krok | Co ověřuješ |
+| --- | --- |
+| Local Runtime | Denní vývoj Experience / Runtime |
+| Embed Demo | Stejný Runtime v partner-style hostiteli |
+| `pnpm embed:publish` | Sestavení Release Snapshotu |
+| Release Validation | Snapshot READY (fingerprint, strom, hashe) |
+| Commit + Push | Nasazení snapshotu do Pages source |
+| Remote Validation | Pages slouží očekávaný fingerprint |
+| Published Embed | Browser: title, CTA, fingerprint, Experience |
 
 ## Kdy co používat
 
 | Cíl | Použij |
 |-----|--------|
-| Denní vývoj Experience / Runtime | **Local** (`:4173`) |
-| Ověření Embed hostitele (launcher) | **Embed Demo** |
-| Partner / produkční IIFE | **GitHub Pages** (po publish + push) |
-| „Vidím změnu v Local, ne na Pages?“ | Nejdřív **Publish** — teprve pak hledej bug |
+| Denní vývoj | **Local Runtime** |
+| Ověření launcher hostitele bez publish | **Embed Demo** |
+| Partner / produkční IIFE | **Published Embed** (po publish + push) |
+| „Vidím změnu v Local, ne na Pages?“ | Nejdřív **Publish** — viz [embed-parity](./troubleshooting/embed-parity.md) |
 
 ## Diagnostické pravidlo
 
@@ -38,9 +81,11 @@ Při hlášení:
 
 Teprve po potvrzení publikování se hledá chyba v Runtime nebo Experience.
 
-- **Ne** → očekávané: Pages ukazuje starý snapshot. Spusť publish.  
-- **Ano** + remote validate PASS → hledej Runtime / Experience.  
-- **Ano** ale remote fingerprint ≠ local → push / Pages build ještě nedobehl.
+- **Ne** → očekávané: Published Embed ukazuje starý snapshot. Spusť publish.  
+- **Ano** + Remote Validation PASS → hledej Runtime / Experience.  
+- **Ano** ale remote fingerprint ≠ Release Snapshot → push / Pages build ještě nedobehl.
+
+Pořadí diagnózy: [troubleshooting/embed-parity.md](./troubleshooting/embed-parity.md).
 
 ## Oficiální příkaz
 
@@ -48,7 +93,7 @@ Teprve po potvrzení publikování se hledá chyba v Runtime nebo Experience.
 pnpm embed:publish
 ```
 
-Jediná podporovaná cesta přípravy Release Snapshotu.
+**Jediná podporovaná cesta** přípravy Release Snapshotu.
 
 Po nasazení na Pages (commit + push `docs/embed`):
 
@@ -56,9 +101,18 @@ Po nasazení na Pages (commit + push `docs/embed`):
 pnpm embed:publish -- --remote
 ```
 
+**Kontrakt Remote Validation:**
+
+- **Nikdy nespouští build** a nemění `docs/embed/`.
+- Čte existující Release Snapshot (`docs/embed/version.json` + IIFE).
+- Porovná ho s **Published Embed** na GitHub Pages.
+- Nový snapshot vzniká **jen** explicitním `pnpm embed:publish` (bez `--remote`).
+
 ## Co publish dělá
 
-1. Build aktuálního Live Runtime source → `docs/embed/` (`embed.iife.js`, `embed.es.js`, types, `version.json`)
+### `pnpm embed:publish` (build)
+
+1. Build aktuálního Runtime source → `docs/embed/` (`embed.iife.js`, `embed.es.js`, types, `version.json`)
 2. Finalize Pages host HTML (`live.html`, partner snippet, …)
 3. **Release Validation** (local):
    - `docs/embed` ≡ `packages/embed/dist` (symlink)
@@ -68,6 +122,13 @@ pnpm embed:publish -- --remote
 4. Výstup **Release Snapshot READY** nebo **Publish FAILED**
 
 Publish **necommituje** a **nepushuje**. Deploy = git push `docs/embed` (Pages source `/docs`).
+
+### `pnpm embed:publish -- --remote` (validate only)
+
+1. **Skip build**
+2. Local Release Validation nad existujícím `docs/embed/`
+3. Remote Validation proti GitHub Pages
+4. Výstup **Remote Validation READY** nebo **Validation FAILED**
 
 ## Ověření úspěšného release
 
@@ -86,11 +147,13 @@ Po push + Pages build:
 pnpm embed:publish -- --remote
 ```
 
-Remote PASS = GitHub Pages slouží právě tento snapshot.
+Remote PASS = **Published Embed** slouží právě tento Release Snapshot.
+
+Pak Browser Verification na Pages (title, CTA, fingerprint, Experience).
 
 ## Zakázané postupy
 
 - Ruční editace `docs/embed/*.js`
 - Volání ad-hoc `sync:pages` / dílčích build kroků místo `embed:publish`
-- Ověřování Experience změn proti Pages bez předchozího publish
-- Zaměňování Embed Demo (Live) s `docs/embed/live.html` (Release Snapshot)
+- Ověřování Experience změn proti Published Embed bez předchozího publish
+- Zaměňování **Embed Demo** (živý hostitel) s `docs/embed/live.html` (**Release Snapshot** / Published Embed)

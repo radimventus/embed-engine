@@ -1,0 +1,121 @@
+---
+description: Embed First — Embed is the only production application; Local is developer workspace
+alwaysApply: true
+---
+
+# Embed First Architecture Directive
+
+The Conis Pilot target product is **Embed** (the partner-facing Experience delivered through Embed.mount).
+
+All analysis, architecture, implementation proposals, refactoring, component design and documentation must treat **Embed as the only production application**.
+
+Client Studio (**Local Runtime**) is **not** the reference implementation. It exists only as an internal developer workspace for debugging, testing and Runtime inspection.
+
+## Delivery surfaces (do not confuse)
+
+| Term | Role |
+| --- | --- |
+| **Local Runtime** | Developer host of the live Runtime |
+| **Embed Demo** | Live Vite partner-style host of the same Runtime |
+| **Release Snapshot** | `docs/embed/` from `pnpm embed:publish` |
+| **Published Embed** | That snapshot on GitHub Pages / partner URL |
+
+Release Snapshot / Published Embed are **not** Live Runtime. Publish only via `pnpm embed:publish`. See [ADR-019](../../docs/architecture/adr/ADR-019-runtime-vs-release.md).
+
+---
+
+# Two production layers
+
+## 1. Shared Runtime
+
+- `packages/core`
+- `packages/runtime`
+
+Runtime owns: Decision Session, Interpretation, Story, Outcome, Terminal, AIContext, Priority processing, Decision Signals.
+
+Runtime is the single source of truth. No business logic may exist outside Runtime.
+
+## 2. Embed Experience
+
+Embed owns: UX, Experience flow, presentation, interaction, surfaces.
+
+Experience flow: Priority → FAQ → Chat → Audit → Report.
+
+Embed consumes Runtime. It never recreates Runtime logic.
+
+---
+
+# Client Studio (Local)
+
+Local is **not** a product. Treat it only as:
+
+- developer workspace
+- runtime debugger
+- testing environment
+- visualization tool
+
+Do **not** use Local as:
+
+- UX reference
+- architecture reference
+- implementation target
+- feature roadmap
+
+---
+
+# Mandatory rules
+
+- Every new feature must be designed for **Embed first**. Never implement features primarily in Local.
+- Business logic belongs only to Runtime. Never move Runtime logic into Embed or Local.
+- Experience exists only once — Embed is that Experience. Local may visualize it for development only.
+- Product-facing components belong to Embed. Developer-facing components belong to Local. Never duplicate product components between them.
+- When functionality exists only in Client Studio: do **not** extend it. Classify as: migrate to Embed | move into Runtime | remove | keep as Developer Tool.
+
+---
+
+# Decision rule
+
+Before every proposal, verify:
+
+1. Is this needed in Embed?
+2. Does business logic belong in Runtime?
+3. Is Local only consuming it?
+
+If any answer is "no", redesign.
+
+---
+
+# Refactoring policy
+
+When Local and Embed differ: **Embed is the reference**.
+
+Objective: eliminate duplicate product implementations — not synchronize two applications.
+
+---
+
+# Long-term target
+
+```text
+Shared Runtime
+      ↓
+Embed Experience
+      ↓
+Developer Workspace (Local)
+```
+
+Local becomes a thin developer shell over the same Runtime and Experience components.
+
+---
+
+# Agent behaviour
+
+- Never propose Local-first implementations.
+- Never reference Client Studio as the desired UX.
+- Never introduce Local-only product functionality.
+- Always optimize for Embed.
+- Prefer migration over duplication.
+- Prefer Runtime reuse over new abstractions.
+
+When uncertain, ask: **"How would this work in Embed?"** — not "How is this currently implemented in Local?"
+
+Embed is the canonical product.
