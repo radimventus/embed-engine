@@ -17,6 +17,8 @@ import {
   type DecisionSessionRuntime,
 } from "../pipeline";
 import type { PipelineError } from "../pipeline/validateCommand";
+import type { DecisionContext } from "./DecisionContext";
+import { buildDecisionContext as buildDecisionContextFromStory } from "./buildDecisionContext";
 
 export type PriorityId = string;
 
@@ -85,6 +87,7 @@ export class PriorityDecisionSession {
   private selectedPriorities: PriorityId[] = [];
   private signals: PriorityPipelineSignal[] = [];
   private story: PriorityPipelineDecisionStory;
+  private context: DecisionContext;
   private signalSeq = 0;
 
   constructor(options: CreateDecisionSessionOptions) {
@@ -95,6 +98,7 @@ export class PriorityDecisionSession {
       now: options.now,
     });
     this.story = buildStory([], this.clock.now());
+    this.context = buildDecisionContextFromStory(this.story);
   }
 
   /** Underlying certified Runtime — Experience reads ExperienceContext from here. */
@@ -186,6 +190,7 @@ export class PriorityDecisionSession {
       // Certified Runtime rejects empty ChangePriority — local story clears; Runtime keeps last profile.
       this.selectedPriorities = [];
       this.story = buildStory([], this.clock.now());
+      this.context = buildDecisionContextFromStory(this.story);
       return { ok: true, story: this.story, signal };
     }
 
@@ -206,11 +211,25 @@ export class PriorityDecisionSession {
   /** Rebuild MVP Decision Story from PriorityState (order = truth). */
   buildDecisionStory(): PriorityPipelineDecisionStory {
     this.story = buildStory(this.selectedPriorities, this.clock.now());
+    this.context = buildDecisionContextFromStory(this.story);
     return this.story;
   }
 
   getDecisionStory(): PriorityPipelineDecisionStory {
     return this.story;
+  }
+
+  /**
+   * PT-003 — rebuild Decision Context from current Decision Story.
+   * Pure mapping via buildDecisionContext(story).
+   */
+  buildDecisionContext(): DecisionContext {
+    this.context = buildDecisionContextFromStory(this.story);
+    return this.context;
+  }
+
+  getDecisionContext(): DecisionContext {
+    return this.context;
   }
 }
 

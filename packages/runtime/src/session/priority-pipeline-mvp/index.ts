@@ -9,3 +9,6 @@ export {
   type PriorityPipelineSignal,
   type PriorityState,
 } from "./PriorityDecisionSession";
+
+export type { DecisionContext } from "./DecisionContext";
+export { buildDecisionContext } from "./buildDecisionContext";

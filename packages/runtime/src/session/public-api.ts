@@ -122,5 +122,7 @@ export {
 
 export {
   projectPriorityPipelineStory,
+  buildDecisionContext,
   type PriorityPipelineDecisionStory,
+  type DecisionContext,
 } from "./priority-pipeline-mvp";
