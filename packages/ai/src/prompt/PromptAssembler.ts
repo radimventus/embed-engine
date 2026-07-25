@@ -9,6 +9,7 @@ import type { ChatMessage } from "../models/ChatRequest";
 import type { PromptContext } from "../models/PromptContext";
 import type { SystemPrompt } from "../models/SystemPrompt";
 import { formatConversationContextSection } from "./builders/ConversationContextBuilder";
+import { formatMemoryContextSection } from "./builders/MemoryContextBuilder";
 import { formatObjectContextSection } from "./builders/ObjectContextBuilder";
 import type { DecisionMemory } from "./models/DecisionMemory";
 import {
@@ -48,26 +49,7 @@ export function formatDecisionContextSection(decision: DecisionContext): string 
 }
 
 export function formatDecisionMemorySection(memory: DecisionMemory): string {
-  return [
-    "Decision Memory",
-    formatMemoryBucket("facts", memory.facts),
-    formatMemoryBucket("preferences", memory.preferences),
-    formatMemoryBucket("constraints", memory.constraints),
-    formatMemoryBucket("goals", memory.goals),
-    formatMemoryBucket("concerns", memory.concerns),
-    formatMemoryBucket("acceptedOptions", memory.acceptedOptions),
-    formatMemoryBucket("rejectedOptions", memory.rejectedOptions),
-  ].join("\n");
-}
-
-function formatMemoryBucket(
-  label: string,
-  items: readonly { readonly key: string; readonly value: string | number | boolean }[],
-): string {
-  if (items.length === 0) {
-    return `${label}: (none)`;
-  }
-  return `${label}: ${items.map((item) => `${item.key}=${String(item.value)}`).join(" | ")}`;
+  return formatMemoryContextSection(memory);
 }
 
 export function formatPartnerIdentitySection(partnerIdentity: string): string {

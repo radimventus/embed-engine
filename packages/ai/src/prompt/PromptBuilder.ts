@@ -13,11 +13,15 @@ import {
   buildConversationContext,
   DEFAULT_CONVERSATION_WINDOW,
 } from "./builders/ConversationContextBuilder";
+import { buildMemoryContext } from "./builders/MemoryContextBuilder";
 import {
   buildObjectContext,
   type ObjectContextInput,
 } from "./builders/ObjectContextBuilder";
-import { emptyDecisionMemory } from "./models/DecisionMemory";
+import {
+  emptyDecisionMemory,
+  type DecisionMemory,
+} from "./models/DecisionMemory";
 import { emptyKnowledgeContext } from "./models/KnowledgeContext";
 import type { PromptPackage } from "./models/PromptPackage";
 import { assemblePromptPackage } from "./PromptAssembler";
@@ -30,6 +34,8 @@ export type PromptBuilderInput = {
   readonly sessionId: string;
   readonly decision: DecisionContext;
   readonly object?: ObjectContextInput;
+  /** Decision Memory to include in PromptPackage (PT-008). */
+  readonly memory?: DecisionMemory;
   /** Prior conversation turns (excluding the current user message). */
   readonly conversationMessages?: readonly ChatMessage[];
   readonly currentUserMessage: string;
@@ -65,7 +71,7 @@ export class PromptBuilder {
       messages: history,
       maxMessages: max,
     });
-    const memory = emptyDecisionMemory();
+    const memory = buildMemoryContext(input.memory ?? emptyDecisionMemory());
     const knowledge = emptyKnowledgeContext();
 
     const context: PromptContext = Object.freeze({

@@ -58,11 +58,14 @@ export {
   DEFAULT_SYSTEM_PROMPT_LINES,
   buildObjectContext,
   buildConversationContext,
+  buildMemoryContext,
+  formatMemoryContextSection,
   DEFAULT_CONVERSATION_WINDOW,
   emptyDecisionMemory,
   mergeDecisionMemory,
   emptyKnowledgeContext,
   PROMPT_SECTION_ORDER,
+  MEMORY_SECTION_ORDER,
   type PromptBuilderInput,
   type PromptBuilderOptions,
   type PromptPackage,
@@ -75,6 +78,7 @@ export {
   type KnowledgeEntry,
   type ObjectContextInput,
   type ConversationContextInput,
+  type MemorySectionId,
 } from "./prompt";
 
 export {

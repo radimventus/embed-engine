@@ -32,6 +32,13 @@ export {
 } from "./builders/ObjectContextBuilder";
 
 export {
+  buildMemoryContext,
+  formatMemoryContextSection,
+  MEMORY_SECTION_ORDER,
+  type MemorySectionId,
+} from "./builders/MemoryContextBuilder";
+
+export {
   buildConversationContext,
   formatConversationContextSection,
   DEFAULT_CONVERSATION_WINDOW,
