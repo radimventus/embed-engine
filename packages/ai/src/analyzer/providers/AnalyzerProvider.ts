@@ -11,8 +11,8 @@ import { createSystemPrompt } from "../../models/SystemPrompt";
 import type { ChatRequest } from "../../models/ChatRequest";
 import type { PromptContext } from "../../models/PromptContext";
 import type { LLMProvider } from "../../providers/LLMProvider";
-import { emptyDecisionMemory } from "../../prompt/models/DecisionMemory";
 import { emptyKnowledgeContext } from "../../prompt/models/KnowledgeContext";
+import { emptyResolvedMemory } from "../../memory/models/ResolvedMemory";
 import { deterministicAnalyze } from "../deterministicFallback";
 import type { AnalysisRequest } from "../models/AnalysisRequest";
 import {
@@ -105,8 +105,8 @@ function toAnalyzerChatRequest(request: AnalysisRequest): ChatRequest {
       turnCount: recent.length + 1,
       recentMessages: recent,
     },
-    memory: emptyDecisionMemory(),
-    knowledge: emptyKnowledgeContext(),
+      memory: emptyResolvedMemory(),
+      knowledge: emptyKnowledgeContext(),
   } as PromptContext;
 
   return {

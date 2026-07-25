@@ -1,8 +1,9 @@
 /**
- * PT-005 / PT-007 / PT-009 — Decision Memory model.
+ * PT-005 / PT-007 / PT-009 / PT-010 — Decision Memory model.
  *
- * Source of truth for decision knowledge.
- * Writes MUST go through DecisionMemoryService only (PT-009).
+ * DecisionMemory = append-only history (never rewritten).
+ * Writes MUST go through DecisionMemoryService only.
+ * Active interpretation is ResolvedMemory (computed, PT-010).
  */
 
 export type MemoryValue = string | number | boolean;
@@ -10,6 +11,8 @@ export type MemoryValue = string | number | boolean;
 export type MemoryItem = {
   readonly key: string;
   readonly value: MemoryValue;
+  /** Monotonic temporal order within the history (PT-010). */
+  readonly at: number;
 };
 
 export type DecisionMemory = {

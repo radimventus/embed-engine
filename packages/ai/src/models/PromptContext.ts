@@ -1,14 +1,15 @@
 /**
- * PT-004 / PT-005 — Prompt context for LLM chat.
+ * PT-004 / PT-005 / PT-010 — Prompt context for LLM chat.
  *
  * Carries interpretive Runtime context into AI without vendor coupling.
  * Assembled only by PromptBuilder — never by Providers.
+ * memory is ResolvedMemory (active view), not DecisionMemory history.
  */
 
 import type { DecisionContext } from "@embed-engine/runtime";
 
 import type { ChatMessage } from "./ChatRequest";
-import type { DecisionMemory } from "../prompt/models/DecisionMemory";
+import type { ResolvedMemory } from "../memory/models/ResolvedMemory";
 import type { KnowledgeContext } from "../prompt/models/KnowledgeContext";
 
 /** Object slice available to prompts. */
@@ -34,6 +35,6 @@ export type PromptContext = {
   readonly decision: DecisionContext;
   readonly object: ObjectContext;
   readonly conversation: ConversationContext;
-  readonly memory: DecisionMemory;
+  readonly memory: ResolvedMemory;
   readonly knowledge: KnowledgeContext;
 };

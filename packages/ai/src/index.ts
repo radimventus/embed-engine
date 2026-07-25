@@ -83,9 +83,18 @@ export {
 export {
   createDecisionMemoryService,
   DecisionMemoryService,
+  createMemoryResolutionEngine,
+  MemoryResolutionEngine,
+  resolveMemory,
+  emptyResolvedMemory,
+  LastWriteWinsResolutionStrategy,
   type DecisionMemoryServiceOptions,
   type MemoryUpdateRequest,
   type MemoryUpdateResult,
+  type MemoryResolutionEngineOptions,
+  type ResolvedMemory,
+  type ResolvedMemoryItem,
+  type MemoryResolutionStrategy,
 } from "./memory";
 
 export {

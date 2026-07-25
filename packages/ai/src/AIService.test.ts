@@ -6,8 +6,8 @@ import type { DecisionContext } from "@embed-engine/runtime";
 import type { ChatRequest } from "./models/ChatRequest";
 import type { ChatResponse } from "./models/ChatResponse";
 import { createSystemPrompt } from "./models/SystemPrompt";
-import { emptyDecisionMemory } from "./prompt/models/DecisionMemory";
 import { emptyKnowledgeContext } from "./prompt/models/KnowledgeContext";
+import { emptyResolvedMemory } from "./memory/models/ResolvedMemory";
 import type { LLMProvider } from "./providers/LLMProvider";
 import { MockProvider } from "./providers/MockProvider";
 import { createAIService } from "./services/AIService";
@@ -40,7 +40,7 @@ function sampleRequest(): ChatRequest {
         turnCount: 0,
         recentMessages: [],
       },
-      memory: emptyDecisionMemory(),
+      memory: emptyResolvedMemory(),
       knowledge: emptyKnowledgeContext(),
     },
     messages: [{ role: "user", content: "Jaké jsou provozní náklady?" }],

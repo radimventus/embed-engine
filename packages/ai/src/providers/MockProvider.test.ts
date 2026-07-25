@@ -5,8 +5,8 @@ import type { DecisionContext } from "@embed-engine/runtime";
 
 import type { ChatRequest } from "../models/ChatRequest";
 import { createSystemPrompt } from "../models/SystemPrompt";
-import { emptyDecisionMemory } from "../prompt/models/DecisionMemory";
 import { emptyKnowledgeContext } from "../prompt/models/KnowledgeContext";
+import { emptyResolvedMemory } from "../memory/models/ResolvedMemory";
 import {
   MOCK_RESPONSE_CONTENT,
   MockProvider,
@@ -40,7 +40,7 @@ function sampleRequest(userText: string): ChatRequest {
         turnCount: 1,
         recentMessages: [],
       },
-      memory: emptyDecisionMemory(),
+      memory: emptyResolvedMemory(),
       knowledge: emptyKnowledgeContext(),
     },
     messages: [{ role: "user", content: userText }],

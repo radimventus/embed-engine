@@ -12,6 +12,7 @@ import { formatConversationContextSection } from "./builders/ConversationContext
 import { formatMemoryContextSection } from "./builders/MemoryContextBuilder";
 import { formatObjectContextSection } from "./builders/ObjectContextBuilder";
 import type { DecisionMemory } from "./models/DecisionMemory";
+import type { ResolvedMemory } from "../memory/models/ResolvedMemory";
 import {
   PROMPT_SECTION_ORDER,
   type PromptPackage,
@@ -48,7 +49,9 @@ export function formatDecisionContextSection(decision: DecisionContext): string 
   return lines.join("\n");
 }
 
-export function formatDecisionMemorySection(memory: DecisionMemory): string {
+export function formatDecisionMemorySection(
+  memory: DecisionMemory | ResolvedMemory,
+): string {
   return formatMemoryContextSection(memory);
 }
 

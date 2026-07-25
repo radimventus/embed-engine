@@ -1,10 +1,8 @@
 /**
- * PT-009 — Decision Memory Service.
+ * PT-009 / PT-010 — Decision Memory Service.
  *
- * Sole writer of DecisionMemory lifecycle.
- * Analyzer / PromptBuilder / Runtime / Providers must never mutate Memory.
- *
- * Strategy: append-only, no delete, no overwrite, dedupe by key.
+ * Sole writer of DecisionMemory lifecycle (append-only history).
+ * Same key may appear multiple times — ResolutionEngine interprets currency.
  */
 
 import type { AnalysisResult } from "../analyzer/models/AnalysisResult";
@@ -44,19 +42,21 @@ const BUCKETS: readonly BucketId[] = [
 
 export class DecisionMemoryService {
   private memory: DecisionMemory;
+  private seq: number;
 
   constructor(options: DecisionMemoryServiceOptions = {}) {
     this.memory = options.initial ?? emptyDecisionMemory();
+    this.seq = maxAt(this.memory);
   }
 
-  /** Read-only snapshot for PromptBuilder / consumers. */
+  /** Read-only historical snapshot. */
   getMemory(): DecisionMemory {
     return this.memory;
   }
 
   /**
-   * Apply AnalysisResult into Memory.
-   * Append-only: existing keys are never overwritten or deleted.
+   * Append AnalysisResult into history.
+   * Never deletes. Never overwrites prior rows. Same key may reappear.
    */
   update(request: MemoryUpdateRequest): MemoryUpdateResult {
     const analysis = request.analysis;
@@ -78,10 +78,12 @@ export class DecisionMemoryService {
       const existingKeys = new Set(
         nextBuckets[bucket].map((item) => item.key),
       );
-      const incoming = analysis[bucket];
 
-      for (const entry of incoming) {
-        const validated = validateEntry(entry);
+      for (const entry of analysis[bucket]) {
+        const validated = validateEntry(entry, () => {
+          this.seq += 1;
+          return this.seq;
+        });
         if (validated === null) {
           skipped += 1;
           continue;
@@ -89,7 +91,6 @@ export class DecisionMemoryService {
 
         if (existingKeys.has(validated.key)) {
           duplicated += 1;
-          continue;
         }
 
         nextBuckets[bucket].push(validated);
@@ -118,10 +119,25 @@ export function createDecisionMemoryService(
   return new DecisionMemoryService(options);
 }
 
-function validateEntry(entry: {
-  readonly key: string;
-  readonly value: AnalysisResult["facts"][number]["value"];
-}): MemoryItem | null {
+function maxAt(memory: DecisionMemory): number {
+  let max = 0;
+  for (const bucket of BUCKETS) {
+    for (const item of memory[bucket]) {
+      if (item.at > max) {
+        max = item.at;
+      }
+    }
+  }
+  return max;
+}
+
+function validateEntry(
+  entry: {
+    readonly key: string;
+    readonly value: AnalysisResult["facts"][number]["value"];
+  },
+  nextAt: () => number,
+): MemoryItem | null {
   if (typeof entry.key !== "string" || entry.key.trim().length === 0) {
     return null;
   }
@@ -131,6 +147,7 @@ function validateEntry(entry: {
   return Object.freeze({
     key: entry.key.trim(),
     value: entry.value,
+    at: nextAt(),
   });
 }
 

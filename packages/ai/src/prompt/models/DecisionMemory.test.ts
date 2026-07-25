@@ -18,8 +18,8 @@ describe("DecisionMemory model + Service write path (PT-009)", () => {
       },
     });
 
-    assert.deepEqual(service.getMemory().facts, [
-      { key: "familySize", value: 4 },
-    ]);
+    assert.equal(service.getMemory().facts[0]?.key, "familySize");
+    assert.equal(service.getMemory().facts[0]?.value, 4);
+    assert.ok((service.getMemory().facts[0]?.at ?? 0) > 0);
   });
 });

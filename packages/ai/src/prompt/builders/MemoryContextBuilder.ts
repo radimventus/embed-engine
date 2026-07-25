@@ -1,17 +1,16 @@
 /**
- * PT-008 — MemoryContextBuilder.
+ * PT-008 / PT-010 — MemoryContextBuilder.
  *
- * Prepares DecisionMemory for PromptPackage (not a Memory Resolution Engine).
- * Deduplicates by key (last value wins), sorts keys for deterministic order.
- * Does not know vendors. Does not edit Memory.
+ * Serializes ResolvedMemory into PromptPackage memory section.
+ * Conflict resolution is owned by MemoryResolutionEngine — not here.
  */
 
-import type {
-  DecisionMemory,
-  MemoryItem,
-} from "../models/DecisionMemory";
+import type { DecisionMemory } from "../models/DecisionMemory";
+import {
+  resolveMemory,
+} from "../../memory/MemoryResolutionEngine";
+import type { ResolvedMemory } from "../../memory/models/ResolvedMemory";
 
-/** Fixed section order inside the Memory prompt block (PT-008). */
 export const MEMORY_SECTION_ORDER = [
   "facts",
   "preferences",
@@ -35,33 +34,28 @@ const MEMORY_SECTION_LABELS: Readonly<Record<MemorySectionId, string>> = {
 };
 
 /**
- * Build Memory Context for prompts from DecisionMemory.
- * - remove duplicate keys (keep last value)
- * - stable key order within each bucket
- * - fixed bucket order
+ * Resolve history → ResolvedMemory for PromptPackage context.
+ * PromptBuilder passes history; this is the only place history becomes active view.
  */
-export function buildMemoryContext(memory: DecisionMemory): DecisionMemory {
-  return Object.freeze({
-    facts: prepareBucket(memory.facts),
-    preferences: prepareBucket(memory.preferences),
-    constraints: prepareBucket(memory.constraints),
-    goals: prepareBucket(memory.goals),
-    concerns: prepareBucket(memory.concerns),
-    acceptedOptions: prepareBucket(memory.acceptedOptions),
-    rejectedOptions: prepareBucket(memory.rejectedOptions),
-  });
+export function buildMemoryContext(history: DecisionMemory): ResolvedMemory {
+  return resolveMemory(history);
 }
 
 /**
- * Serialize prepared Memory Context for the PromptPackage memory section.
+ * Serialize ResolvedMemory (or resolve history first) for the prompt section.
  */
-export function formatMemoryContextSection(memory: DecisionMemory): string {
-  const prepared = buildMemoryContext(memory);
+export function formatMemoryContextSection(
+  memory: DecisionMemory | ResolvedMemory,
+): string {
+  const resolved = isResolvedMemory(memory)
+    ? memory
+    : buildMemoryContext(memory);
+
   const lines = ["Decision Memory"];
 
   for (const sectionId of MEMORY_SECTION_ORDER) {
     const label = MEMORY_SECTION_LABELS[sectionId];
-    const items = prepared[sectionId];
+    const items = resolved[sectionId];
     if (items.length === 0) {
       lines.push(`${label}: (none)`);
     } else {
@@ -75,27 +69,21 @@ export function formatMemoryContextSection(memory: DecisionMemory): string {
   return lines.join("\n");
 }
 
-function prepareBucket(
-  items: readonly MemoryItem[],
-): readonly MemoryItem[] {
-  const byKey = new Map<string, MemoryItem>();
-  for (const item of items) {
-    byKey.set(
-      item.key,
-      Object.freeze({ key: item.key, value: item.value }),
-    );
+function isResolvedMemory(
+  memory: DecisionMemory | ResolvedMemory,
+): memory is ResolvedMemory {
+  const sample =
+    memory.facts[0] ??
+    memory.preferences[0] ??
+    memory.constraints[0] ??
+    memory.goals[0] ??
+    memory.concerns[0] ??
+    memory.acceptedOptions[0] ??
+    memory.rejectedOptions[0];
+  if (sample === undefined) {
+    return true;
   }
-
-  const keys = [...byKey.keys()].sort((a, b) =>
-    a < b ? -1 : a > b ? 1 : 0,
-  );
-
-  return Object.freeze(
-    keys.map((key) => {
-      const item = byKey.get(key)!;
-      return Object.freeze({ key: item.key, value: item.value });
-    }),
-  );
+  return !("at" in sample);
 }
 
 function formatValue(value: string | number | boolean): string {
