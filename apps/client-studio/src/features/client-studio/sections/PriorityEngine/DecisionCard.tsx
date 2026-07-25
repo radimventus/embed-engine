@@ -4,6 +4,8 @@ import {
   DECISION_CARD_FOCUS_CLASS,
   DECISION_CARD_HOVER_CLASS,
   DECISION_CARD_IDLE_CLASS,
+  DECISION_CARD_PRIMARY_CLASS,
+  DECISION_CARD_RELATED_CLASS,
   DECISION_CARD_SIZE_PX,
   DECISION_TRANSITION_CLASS,
 } from './decision-cards-layout';
@@ -14,6 +16,10 @@ type DecisionCardProps = {
   category: DecisionCategory;
   importance: number;
   isActive: boolean;
+  /** PT-002 — Runtime Decision Story primary. */
+  isPrimary?: boolean;
+  /** PT-002 — content related to primary priority. */
+  isRelated?: boolean;
   onImportanceChange: (value: number) => void;
   onToggle: () => void;
 };
@@ -25,20 +31,39 @@ export function DecisionCard({
   category,
   importance,
   isActive,
+  isPrimary = false,
+  isRelated = false,
   onImportanceChange,
   onToggle,
 }: DecisionCardProps) {
+  const highlightClass = isPrimary
+    ? DECISION_CARD_PRIMARY_CLASS
+    : isRelated
+      ? DECISION_CARD_RELATED_CLASS
+      : '';
+
   return (
     <div
       className="relative shrink-0"
       style={{ height: DECISION_CARD_SIZE_PX, width: DECISION_CARD_SIZE_PX }}
+      data-pt002-highlight={
+        isPrimary ? 'primary' : isRelated ? 'related' : undefined
+      }
     >
+      {isPrimary ? (
+        <span
+          className="pointer-events-none absolute -top-2 left-1/2 z-20 -translate-x-1/2 rounded-sm bg-embed-brand-gold px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#001930]"
+          aria-hidden="true"
+        >
+          Hlavní
+        </span>
+      ) : null}
       <button
         type="button"
         aria-pressed={isActive}
-        aria-label={`${category.title} decision category`}
+        aria-label={`${category.title} decision category${isPrimary ? ', hlavní priorita' : ''}`}
         onClick={onToggle}
-        className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-[8px] px-2.5 touch-manipulation transition-[transform,box-shadow,border-color,border-width] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${
+        className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-[8px] px-2.5 touch-manipulation transition-[transform,box-shadow,border-color,border-width] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${highlightClass} ${
           isActive
             ? `${DECISION_CARD_ACTIVE_CLASS} justify-between py-2.5`
             : `${DECISION_CARD_IDLE_CLASS} ${DECISION_CARD_HOVER_CLASS} z-0 scale-100 justify-center py-3`

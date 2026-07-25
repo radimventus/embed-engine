@@ -2,23 +2,26 @@ import { DecisionReport } from '../DecisionReport/DecisionReport';
 import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
 import { DecisionTerminal } from '../DecisionTerminal/DecisionTerminal';
 import { PILOT_SECTION_IDS, PILOT_TERMS } from '../../pilot/pilotVocabulary';
+import { useExperienceProjection } from '../../runtime/useExperienceProjection';
 import {
   PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS,
   PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS,
   PRIORITY_ENGINE_SHOW_DECISION_REPORT,
   PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL,
 } from './priority-engine-layout';
+import { DecisionStoryRecommendationBanner } from './DecisionStoryRecommendationBanner';
 import { PriorityCards } from './PriorityCards';
 import { usePriorityExperience } from './PriorityExperienceProvider';
 import { RecommendationPanel } from './RecommendationPanel';
+import { RecommendedSectionOrder } from './RecommendedSectionOrder';
 import { SectionHeader } from './SectionHeader';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 
 /**
- * Priority Engine — Decision Discovery surface (CSCB-04).
+ * Priority Engine — Decision Discovery surface (CSCB-04 / PT-002).
  * Cards emit ChangePriority Decision Signals into Runtime.
- * Terminal / Report read Runtime Context only (projection peers; not CSCB-04 scope).
+ * ExperienceProjection surfaces read Runtime Decision Story only.
  */
 export function PriorityEngine() {
   const {
@@ -29,6 +32,7 @@ export function PriorityEngine() {
     minimumMet,
   } = usePriorityExperience();
   const { experience } = useDecisionSessionRuntime();
+  const projection = useExperienceProjection();
   const terminalId = experience.context.decision.terminal.id;
 
   return (
@@ -39,9 +43,14 @@ export function PriorityEngine() {
       data-testid="priority-experience"
       data-terminal-id={terminalId}
       data-minimum-met={minimumMet ? 'true' : 'false'}
+      data-pt002-primary={projection.story.primaryPriority ?? ''}
+      data-pt002-section-order={projection.recommendedSectionOrder
+        .map((s) => s.id)
+        .join(',')}
       className={`relative scroll-mt-header ${SECTION_SURFACE_CLASS} ${PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS} ${PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS}`}
     >
       <SectionHeader />
+      <DecisionStoryRecommendationBanner />
       <div className="grid grid-cols-[52fr_48fr] items-stretch gap-section mobile:grid-cols-1">
         <PriorityCards
           cards={cards}
@@ -51,6 +60,7 @@ export function PriorityEngine() {
         />
         <DecisionTerminal />
       </div>
+      <RecommendedSectionOrder />
       <DecisionReport />
       {PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL ? <RecommendationPanel /> : null}
       {PRIORITY_ENGINE_SHOW_DECISION_REPORT ? <DecisionReportPreview /> : null}

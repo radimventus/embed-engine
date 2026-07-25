@@ -28,6 +28,14 @@ export const DECISION_CARD_HOVER_CLASS =
 export const DECISION_CARD_ACTIVE_CLASS =
   'z-10 scale-[1.12] border-2 border-[#D4AF37] shadow-[0_8px_24px_rgba(0,25,48,0.08)]';
 
+/** PT-002 — primary Decision Story priority (Runtime-driven highlight). */
+export const DECISION_CARD_PRIMARY_CLASS =
+  'ring-2 ring-embed-brand-gold ring-offset-2 ring-offset-[#F4F3F1]';
+
+/** PT-002 — related content for primary priority. */
+export const DECISION_CARD_RELATED_CLASS =
+  'ring-1 ring-embed-brand-gold/40 ring-offset-1 ring-offset-[#F4F3F1]';
+
 export const DECISION_CTA_ENABLED_CLASS = primaryButtonClass({ size: 'md' });
 
 export const DECISION_CTA_DISABLED_CLASS = primaryButtonClass({ size: 'md', state: 'disabled' });

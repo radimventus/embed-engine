@@ -1,3 +1,4 @@
+import { useExperienceProjection } from '../../runtime/useExperienceProjection';
 import { DecisionCard } from './DecisionCard';
 import {
   DECISION_GRID_GAP_PX,
@@ -13,8 +14,8 @@ type PriorityCardsProps = {
 };
 
 /**
- * Priority catalogue surface — presentation only (CSCB-04).
- * Responsive grid; intensity via DecisionSlider on selected cards.
+ * Priority catalogue surface — presentation only (CSCB-04 / PT-002).
+ * Primary / related highlights come from ExperienceProjection (Runtime Story).
  */
 export function PriorityCards({
   cards,
@@ -22,10 +23,15 @@ export function PriorityCards({
   setImportance,
   toggleCard,
 }: PriorityCardsProps) {
+  const { highlight } = useExperienceProjection();
+  const relatedSet = new Set(highlight.relatedPriorityIds);
+
   return (
     <div className="flex min-w-0 flex-col self-start">
       <div
         aria-label="Katalog priorit"
+        data-pt002-primary={highlight.primaryPriorityId ?? ''}
+        data-pt002-related={highlight.relatedPriorityIds.join(',')}
         className="grid w-full max-w-[685px] grid-cols-5 justify-items-center overflow-visible mobile:grid-cols-2"
         style={{ gap: DECISION_GRID_GAP_PX }}
       >
@@ -35,12 +41,17 @@ export function PriorityCards({
             return null;
           }
 
+          const isPrimary = highlight.primaryPriorityId === category.id;
+          const isRelated = !isPrimary && relatedSet.has(category.id);
+
           return (
             <DecisionCard
               key={category.id}
               category={category}
               importance={card.importance}
               isActive={card.selected}
+              isPrimary={isPrimary}
+              isRelated={isRelated}
               onImportanceChange={(value) => setImportance(category.id, value)}
               onToggle={() => toggleCard(category.id)}
             />
