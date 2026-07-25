@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/AIService.test.ts src/providers/MockProvider.test.ts src/providers/OpenAIProvider.test.ts src/VendorNeutrality.test.ts src/prompt/PromptBuilder.test.ts src/prompt/models/DecisionMemory.test.ts src/prompt/builders/MemoryContextBuilder.test.ts src/analyzer/ConversationAnalyzer.test.ts src/memory/DecisionMemoryService.test.ts src/memory/MemoryResolutionEngine.test.ts src/ConversationPipeline.test.ts"
+    "test": "tsx --test src/AIService.test.ts src/providers/MockProvider.test.ts src/providers/OpenAIProvider.test.ts src/VendorNeutrality.test.ts src/prompt/PromptBuilder.test.ts src/prompt/models/DecisionMemory.test.ts src/prompt/builders/MemoryContextBuilder.test.ts src/analyzer/ConversationAnalyzer.test.ts src/memory/DecisionMemoryService.test.ts src/memory/MemoryResolutionEngine.test.ts src/ConversationPipeline.test.ts src/diagnostics/AIDiagnostics.test.ts"
   },
   "dependencies": {
     "@embed-engine/runtime": "workspace:*"

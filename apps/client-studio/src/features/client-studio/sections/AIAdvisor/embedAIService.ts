@@ -1,11 +1,13 @@
 /**
- * PT-011 — Bootstrap AIService for Embed Experience (Client Studio).
+ * PT-011 / PT-012 — Bootstrap AIService for Embed Experience (Client Studio).
  *
  * Creates transport once per page load. Session lives in AIService memory only.
  * Chat UI uses getEmbedAIService() — never constructs Provider in the chat component.
+ * Diagnostics are passive and disableable via VITE_AI_DIAGNOSTICS=0.
  */
 
 import {
+  createAIDiagnostics,
   createAIService,
   OpenAIProvider,
   type AIService,
@@ -25,7 +27,14 @@ export function getEmbedAIService(): AIService {
     return embedAIService;
   }
 
-  embedAIService = createAIService(createEmbedProvider());
+  const diagnosticsEnabled = readViteEnv('VITE_AI_DIAGNOSTICS') !== '0';
+
+  embedAIService = createAIService(createEmbedProvider(), {
+    diagnostics: createAIDiagnostics({
+      enabled: diagnosticsEnabled,
+      console: diagnosticsEnabled,
+    }),
+  });
   return embedAIService;
 }
 
@@ -54,7 +63,7 @@ function createEmbedProvider(): LLMProvider {
 }
 
 function readViteEnv(
-  name: 'VITE_OPENAI_API_KEY' | 'VITE_OPENAI_MODEL',
+  name: 'VITE_OPENAI_API_KEY' | 'VITE_OPENAI_MODEL' | 'VITE_AI_DIAGNOSTICS',
 ): string | undefined {
   const value = import.meta.env[name];
   if (typeof value !== 'string' || value.trim().length === 0) {

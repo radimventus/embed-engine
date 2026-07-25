@@ -55,7 +55,7 @@ type OpenAIChatCompletionResponse = {
 export class OpenAIProvider implements LLMProvider {
   readonly id = OPENAI_PROVIDER_ID;
   private readonly apiKey: string;
-  private readonly model: string;
+  readonly model: string;
   private readonly baseUrl: string;
   private readonly fetchImpl: typeof fetch;
 

@@ -59,6 +59,32 @@ export {
 } from "./services/ConversationError";
 
 export {
+  AIDiagnostics,
+  createAIDiagnostics,
+  createDisabledDiagnostics,
+  createLatencyTrace,
+  createPromptTrace,
+  createProviderTrace,
+  createTokenTrace,
+  createMemoryTrace,
+  measurePromptPackage,
+  countMemoryBuckets,
+  countActiveResolved,
+  readProviderMeta,
+  type AIDiagnosticsOptions,
+  type DiagnosticListener,
+  type ConversationTrace,
+  type LatencyTrace,
+  type PromptTrace,
+  type ProviderTrace,
+  type TokenTrace,
+  type MemoryTrace,
+  type ConversationTurnTrace,
+  type DiagnosticPhase,
+  type DiagnosticEvent,
+} from "./diagnostics";
+
+export {
   createPromptBuilder,
   promptPackageToChatRequest,
   PromptBuilder,

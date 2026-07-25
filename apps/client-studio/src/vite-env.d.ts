@@ -8,6 +8,8 @@ interface ImportMetaEnv {
   readonly VITE_RUNTIME_EVIDENCE?: string;
   readonly VITE_OPENAI_API_KEY?: string;
   readonly VITE_OPENAI_MODEL?: string;
+  /** Set to "0" to disable AI diagnostics (PT-012). Default: enabled. */
+  readonly VITE_AI_DIAGNOSTICS?: string;
 }
 
 interface ImportMeta {
