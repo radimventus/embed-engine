@@ -50,18 +50,24 @@ export function formatDecisionContextSection(decision: DecisionContext): string 
 export function formatDecisionMemorySection(memory: DecisionMemory): string {
   return [
     "Decision Memory",
-    `facts: ${memory.facts.length === 0 ? "(none)" : memory.facts.join(" | ")}`,
-    `preferences: ${
-      memory.preferences.length === 0
-        ? "(none)"
-        : memory.preferences.join(" | ")
-    }`,
-    `constraints: ${
-      memory.constraints.length === 0
-        ? "(none)"
-        : memory.constraints.join(" | ")
-    }`,
+    formatMemoryBucket("facts", memory.facts),
+    formatMemoryBucket("preferences", memory.preferences),
+    formatMemoryBucket("constraints", memory.constraints),
+    formatMemoryBucket("goals", memory.goals),
+    formatMemoryBucket("concerns", memory.concerns),
+    formatMemoryBucket("acceptedOptions", memory.acceptedOptions),
+    formatMemoryBucket("rejectedOptions", memory.rejectedOptions),
   ].join("\n");
+}
+
+function formatMemoryBucket(
+  label: string,
+  items: readonly { readonly key: string; readonly value: string | number | boolean }[],
+): string {
+  if (items.length === 0) {
+    return `${label}: (none)`;
+  }
+  return `${label}: ${items.map((item) => `${item.key}=${String(item.value)}`).join(" | ")}`;
 }
 
 export function formatPartnerIdentitySection(partnerIdentity: string): string {
