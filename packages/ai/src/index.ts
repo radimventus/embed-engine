@@ -202,22 +202,27 @@ export {
   type AnalysisServiceOptions,
 } from "./analyzer";
 
-/** WP-A / WP-B / CAP-AI-ADAPTER-01 — boundaries + Delivery + Adapter. */
+/** WP-A / WP-B / CAP-AI-ADAPTER-01 / CAP-AI-PUBLISH-01 */
 export { AI_RUNTIME_BOUNDARY } from "./runtime";
 export {
   AI_DELIVERY_BOUNDARY,
   createDirectAdapterDelivery,
+  createEmbedAIDelivery,
+  createNotConfiguredDelivery,
+  createRemoteDelivery,
   DirectAdapterDelivery,
   isDirectAdapterDelivery,
   readDeliveryMeta,
+  RemoteDelivery,
+  resolveEmbedAIDeliveryBinding,
   type AIDelivery,
   type AIDeliveryMeta,
-} from "./delivery";
-export {
-  AI_ADAPTER_BOUNDARY,
-  createEmbedAIDelivery,
+  type EmbedAIDeliveryBinding,
   type EmbedAIDeliveryConfig,
-} from "./adapter";
+  type EmbedAIDeliveryMode,
+  type RemoteDeliveryOptions,
+} from "./delivery";
+export { AI_ADAPTER_BOUNDARY } from "./adapter";
 export {
   AI_CONTRACT_BOUNDARY,
   AI_CONTRACT_VERSION,

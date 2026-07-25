@@ -14,6 +14,7 @@ Items here are candidates for later milestones / ADRs.
 | ED-DIST-05 | Auto-generate `src/version.ts` from `package.json` | Build already fails on mismatch; codegen can wait |
 | ED-DIST-06 | Retarget Pages source to `main` `/docs` after merge | Pages currently builds from `feature/cap-p04-founding-partner` for M3/S2 verification |
 | ED-DIST-07 | Stale Embed IIFE on Pages vs local Runtime | **Done (PT-DEPLOY-EMBED-01)** — fingerprint + SHA-256 sync gates; see [Current Runtime Baseline](../architecture/Current-Runtime-Baseline.md) |
+| DEPLOY-FP-01 | `fingerprint.commit` cannot equal containing Git HEAD | **Structural** (not a Runtime bug). Fingerprint is embedded in versioned `docs/embed` artifacts (`version.json` + IIFE). Git content-addressing means the short hash *inside* the tree cannot generally equal the hash *of* the commit that contains it. Close gates must treat tip-artifact identity (SHA-256 / `validate:pages --remote`) as authority; do not require `fingerprint.commit == HEAD`. Revisit in a future infra iteration. **Priority: Low.** See [PT-DEPLOY-CLOSE-01](../reviews/PT-DEPLOY-CLOSE-01.md). |
 
 ## Engineering baseline (product Runtime)
 
@@ -50,6 +51,21 @@ Hardening report: [ED-DA-01 Boundary Hardening](../architecture/review/ED-DA-01-
 ## Process
 
 When closing a slice: add deferred items here instead of expanding DoD.
+
+## AI Delivery / ACC alignment (CAP-AI-DELIVERY-01)
+
+Source: [CAP-AI-DELIVERY-01 mapping](../architecture/ai/CAP-AI-DELIVERY-01-runtime-delivery-mapping.md).
+
+| ID | Item | Notes |
+| --- | --- | --- |
+| ED-AI-01 | Missing AI Delivery; Runtime calls Adapter directly | **Closed** (WP-B) |
+| ED-AI-02 | Pre-ACC ChatRequest/ChatResponse vs ACC-01 | Still open — CAP-AI-ACC-WIRE-01 |
+| ED-AI-03 | Experience constructs OpenAIProvider / Published config gap | **Closed** (CAP-AI-PUBLISH-01) |
+| ED-AI-04 | ConversationError vendor string coupling | Partial — AdapterFailure primary; residual regex |
+| ED-AI-05 | Provider vs Adapter terminology | Partial — AIAdapter + aliases remain |
+| ED-AI-06 | DecisionMemory naming vs AIS-01 Memory | Optional naming pass |
+| ED-AI-07 | No Capability negotiation / streaming Events | Future |
+| ED-AI-12 | Experience injects secrets into Delivery bootstrap | **Closed** (CAP-AI-PUBLISH-01) |
 
 ## ED-BP-01 — Builder Package Hot Reload
 

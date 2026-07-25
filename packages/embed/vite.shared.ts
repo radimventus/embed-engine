@@ -64,8 +64,12 @@ export function createEmbedViteConfig(options: {
       __CLIENT_STUDIO_VERSION__: JSON.stringify("0.1.0"),
       __EMBED_RUNTIME_BUILD__: readBuildFingerprintDefine(),
       "process.env.NODE_ENV": JSON.stringify("production"),
-      // Strip OpenAI key from public IIFE/ESM (partner hosts supply their own later).
+      // Strip OpenAI key from public IIFE/ESM — secrets live on Delivery edge only.
       "import.meta.env.VITE_OPENAI_API_KEY": JSON.stringify(""),
+      // Public Delivery edge URL (optional). Never a model secret.
+      "import.meta.env.VITE_AI_DELIVERY_URL": JSON.stringify(
+        process.env.VITE_AI_DELIVERY_URL?.trim() ?? "",
+      ),
     },
     build: {
       // SSOT: only docs/embed — packages/embed/dist is a symlink to this tree.

@@ -12,9 +12,9 @@ export {
 } from "./OpenAIAdapter";
 
 export {
-  createEmbedAIDelivery,
-  type EmbedAIDeliveryConfig,
-} from "./createEmbedAIDelivery";
+  tryCreateLocalDevDelivery,
+  createMissingLocalCredentialDelivery,
+} from "./createLocalDevDelivery";
 
 export {
   OPENAI_MISSING_API_KEY_MESSAGE,

@@ -225,8 +225,9 @@ describe("PT-011 Architecture Validation", () => {
     assert.doesNotMatch(advisor, /createAnalyzerProvider|DecisionMemoryService|resolveMemory/);
     assert.match(advisor, /getEmbedAIService|AIService|sendMessage/);
     assert.match(bootstrap, /createAIServiceFromDelivery|createAIService/);
-    assert.match(bootstrap, /createEmbedAIDelivery/);
-    assert.doesNotMatch(bootstrap, /OpenAIProvider/);
+    assert.match(bootstrap, /createEmbedAIDelivery\(\)/);
+    assert.doesNotMatch(bootstrap, /OpenAIProvider|OpenAIAdapter/);
+    assert.doesNotMatch(bootstrap, /VITE_OPENAI|apiKey|OPENAI_API_KEY/);
   });
 
   it("AIService Runtime must not import OpenAI Adapter", () => {

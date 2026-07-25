@@ -1,0 +1,29 @@
+{
+  "name": "@embed-engine/ai-delivery-edge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/server.js",
+  "types": "./dist/server.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/server.d.ts",
+      "import": "./dist/server.js",
+      "default": "./dist/server.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "start": "tsx src/server.ts",
+    "test": "tsx --test src/server.test.ts src/published-e2e.test.ts"
+  },
+  "dependencies": {
+    "@embed-engine/ai": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  }
+}

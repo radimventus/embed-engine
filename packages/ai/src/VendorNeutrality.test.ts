@@ -28,11 +28,20 @@ function isOpenAIVendorFile(file: string): boolean {
   return /[/\\]adapter[/\\]openai[/\\]/.test(file);
 }
 
+function isDeliveryHostBinding(file: string): boolean {
+  return /[/\\]delivery[/\\]createEmbedAIDelivery\.ts$/.test(file);
+}
+
+function isRemoteDeliveryClient(file: string): boolean {
+  return /[/\\]delivery[/\\]RemoteDelivery\.ts$/.test(file);
+}
+
 /**
- * PT-004 / PT-006 / CAP-AI-ADAPTER-01 — vendor neutrality.
+ * PT-004 / PT-006 / CAP-AI-ADAPTER-01 / CAP-AI-PUBLISH-01 — vendor neutrality.
  * OpenAI mapping may live only inside adapter/openai.
+ * Delivery may fetch a public Delivery edge URL (not OpenAI).
  */
-describe("PT-004 / PT-006 / CAP-AI-ADAPTER-01 vendor neutrality", () => {
+describe("PT-004 / PT-006 / CAP-AI-PUBLISH-01 vendor neutrality", () => {
   it("non-adapter sources omit vendor SDK imports and API secrets", () => {
     const forbiddenEverywhere = [
       'from "openai"',
@@ -95,7 +104,7 @@ describe("PT-004 / PT-006 / CAP-AI-ADAPTER-01 vendor neutrality", () => {
     }
   });
 
-  it("Delivery and Runtime do not import OpenAI Adapter", () => {
+  it("Delivery stays free of OpenAI secrets; RemoteDelivery may use platform fetch", () => {
     const deliveryDir = join(packageRoot, "src", "delivery");
     const runtimeService = join(
       packageRoot,
@@ -107,11 +116,31 @@ describe("PT-004 / PT-006 / CAP-AI-ADAPTER-01 vendor neutrality", () => {
     for (const file of listSourceFiles(deliveryDir)) {
       const code = readFileSync(file, "utf8");
       assert.equal(
-        /from\s+["'][^"']*openai|OpenAIAdapter|OpenAIProvider|OPENAI_|api\.openai\.com/i.test(
+        /OpenAIAdapter|OpenAIProvider|api\.openai\.com|OPENAI_API_KEY|OPENAI_MODEL/i.test(
           code,
         ),
         false,
-        `${file} must stay vendor-neutral`,
+        `${file} must not embed OpenAI vendor details`,
+      );
+
+      if (isDeliveryHostBinding(file)) {
+        assert.match(
+          code,
+          /createLocalDevDelivery|tryCreateLocalDevDelivery/,
+        );
+        continue;
+      }
+
+      if (isRemoteDeliveryClient(file)) {
+        assert.match(code, /\bfetch\b/);
+        assert.doesNotMatch(code, /Bearer /);
+        continue;
+      }
+
+      assert.equal(
+        /from\s+["'][^"']*adapter\/openai/i.test(code),
+        false,
+        `${file} must not import openai adapter`,
       );
       assert.equal(
         /\bfetch\s*\(|authorization|Bearer /i.test(code),

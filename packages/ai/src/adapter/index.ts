@@ -5,8 +5,7 @@
  * - OpenAI Adapter: `adapter/openai/`
  * - Mock Adapter: `adapter/mock/`
  *
- * Delivery may import the Adapter port + DirectAdapterDelivery wiring.
- * Concrete vendor bootstrap (`createEmbedAIDelivery`) lives under openai/.
+ * Host Delivery binding (`createEmbedAIDelivery`) lives under `delivery/`.
  */
 
 export const AI_ADAPTER_BOUNDARY = "AID-01/adapter" as const;
@@ -34,8 +33,6 @@ export {
   OpenAIProvider,
   OPENAI_ADAPTER_ID,
   OPENAI_PROVIDER_ID,
-  createEmbedAIDelivery,
   type OpenAIAdapterOptions,
   type OpenAIProviderOptions,
-  type EmbedAIDeliveryConfig,
 } from "./openai";

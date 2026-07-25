@@ -1,9 +1,8 @@
 /**
- * PT-011 / PT-012 — Bootstrap AIService for Embed Experience (Client Studio).
+ * PT-011 / CAP-AI-PUBLISH-01 — Bootstrap AIService for Embed Experience.
  *
- * Creates transport once per page load. Session lives in AIService memory only.
- * Chat UI uses getEmbedAIService() — never constructs Adapter / Provider.
- * Delivery owns Adapter bootstrap (WP-B).
+ * Secret-free: Experience never reads API keys or constructs Adapters.
+ * Delivery host binding chooses Local vs Published vs disabled.
  */
 
 import {
@@ -25,32 +24,26 @@ export function getEmbedAIService(): AIService {
     return embedAIService;
   }
 
-  const diagnosticsEnabled = readViteEnv('VITE_AI_DIAGNOSTICS') !== '0';
-  const recorderEnabled = readViteEnv('VITE_AI_RECORDER') !== '0';
+  const diagnosticsEnabled = readPublicFlag('VITE_AI_DIAGNOSTICS') !== '0';
+  const recorderEnabled = readPublicFlag('VITE_AI_RECORDER') !== '0';
 
   const sessionId =
     typeof crypto !== 'undefined' && 'randomUUID' in crypto
       ? `embed-${crypto.randomUUID()}`
       : `embed-${Date.now().toString(36)}`;
 
-  embedAIService = createAIServiceFromDelivery(
-    createEmbedAIDelivery({
-      apiKey: readViteEnv('VITE_OPENAI_API_KEY'),
-      model: readViteEnv('VITE_OPENAI_MODEL'),
+  embedAIService = createAIServiceFromDelivery(createEmbedAIDelivery(), {
+    sessionId,
+    diagnostics: createAIDiagnostics({
+      enabled: diagnosticsEnabled,
+      console: diagnosticsEnabled,
     }),
-    {
+    recorder: createConversationRecorder({
       sessionId,
-      diagnostics: createAIDiagnostics({
-        enabled: diagnosticsEnabled,
-        console: diagnosticsEnabled,
-      }),
-      recorder: createConversationRecorder({
-        sessionId,
-        conversationId: sessionId,
-        enabled: recorderEnabled,
-      }),
-    },
-  );
+      conversationId: sessionId,
+      enabled: recorderEnabled,
+    }),
+  });
   return embedAIService;
 }
 
@@ -64,12 +57,9 @@ export function setEmbedAIServiceForTests(service: AIService | null): void {
   embedAIService = service;
 }
 
-function readViteEnv(
-  name:
-    | 'VITE_OPENAI_API_KEY'
-    | 'VITE_OPENAI_MODEL'
-    | 'VITE_AI_DIAGNOSTICS'
-    | 'VITE_AI_RECORDER',
+/** Non-secret public flags only — never API keys. */
+function readPublicFlag(
+  name: 'VITE_AI_DIAGNOSTICS' | 'VITE_AI_RECORDER',
 ): string | undefined {
   const value = import.meta.env[name];
   if (typeof value !== 'string' || value.trim().length === 0) {
