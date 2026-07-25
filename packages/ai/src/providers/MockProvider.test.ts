@@ -5,6 +5,8 @@ import type { DecisionContext } from "@embed-engine/runtime";
 
 import type { ChatRequest } from "../models/ChatRequest";
 import { createSystemPrompt } from "../models/SystemPrompt";
+import { emptyDecisionMemory } from "../prompt/models/DecisionMemory";
+import { emptyKnowledgeContext } from "../prompt/models/KnowledgeContext";
 import {
   MOCK_RESPONSE_CONTENT,
   MockProvider,
@@ -29,11 +31,17 @@ function sampleRequest(userText: string): ChatRequest {
         objectId: "obj-1",
         reference: "ASTAV-M01",
         title: "Reference house",
+        attributes: {},
+        knowledge: emptyKnowledgeContext(),
+        mediaReferences: [],
       },
       conversation: {
         sessionId: "session-mock-1",
         turnCount: 1,
+        recentMessages: [],
       },
+      memory: emptyDecisionMemory(),
+      knowledge: emptyKnowledgeContext(),
     },
     messages: [{ role: "user", content: userText }],
   };

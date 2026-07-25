@@ -1,0 +1,110 @@
+/**
+ * PT-005 — PromptBuilder.
+ *
+ * Sole translator: Decision Runtime data → PromptPackage → LLM transport.
+ * LLM never reads Runtime or UI components directly.
+ */
+
+import type { DecisionContext } from "@embed-engine/runtime";
+
+import type { ChatMessage, ChatRequest } from "../models/ChatRequest";
+import type { PromptContext } from "../models/PromptContext";
+import {
+  buildConversationContext,
+  DEFAULT_CONVERSATION_WINDOW,
+} from "./builders/ConversationContextBuilder";
+import {
+  buildObjectContext,
+  type ObjectContextInput,
+} from "./builders/ObjectContextBuilder";
+import { emptyDecisionMemory } from "./models/DecisionMemory";
+import { emptyKnowledgeContext } from "./models/KnowledgeContext";
+import type { PromptPackage } from "./models/PromptPackage";
+import { assemblePromptPackage } from "./PromptAssembler";
+import { createSystemPromptFactory } from "./SystemPromptFactory";
+
+export const DEFAULT_PARTNER_IDENTITY =
+  "Partner: EMBED / Conis Decision Experience.";
+
+export type PromptBuilderInput = {
+  readonly sessionId: string;
+  readonly decision: DecisionContext;
+  readonly object?: ObjectContextInput;
+  /** Prior conversation turns (excluding the current user message). */
+  readonly conversationMessages?: readonly ChatMessage[];
+  readonly currentUserMessage: string;
+  readonly partnerIdentity?: string;
+  readonly maxConversationMessages?: number;
+  readonly systemPromptLines?: readonly string[];
+};
+
+export type PromptBuilderOptions = {
+  readonly partnerIdentity?: string;
+  readonly maxConversationMessages?: number;
+};
+
+export class PromptBuilder {
+  private readonly partnerIdentity: string;
+  private readonly maxConversationMessages: number;
+
+  constructor(options: PromptBuilderOptions = {}) {
+    this.partnerIdentity =
+      options.partnerIdentity ?? DEFAULT_PARTNER_IDENTITY;
+    this.maxConversationMessages =
+      options.maxConversationMessages ?? DEFAULT_CONVERSATION_WINDOW;
+  }
+
+  build(input: PromptBuilderInput): PromptPackage {
+    const history = input.conversationMessages ?? [];
+    const max =
+      input.maxConversationMessages ?? this.maxConversationMessages;
+
+    const object = buildObjectContext(input.object);
+    const conversation = buildConversationContext({
+      sessionId: input.sessionId,
+      messages: history,
+      maxMessages: max,
+    });
+    const memory = emptyDecisionMemory();
+    const knowledge = emptyKnowledgeContext();
+
+    const context: PromptContext = Object.freeze({
+      decision: input.decision,
+      object,
+      conversation,
+      memory,
+      knowledge,
+    });
+
+    const systemPrompt = createSystemPromptFactory({
+      lines: input.systemPromptLines,
+    });
+
+    return assemblePromptPackage({
+      systemPrompt,
+      partnerIdentity: input.partnerIdentity ?? this.partnerIdentity,
+      context,
+      currentUserMessage: input.currentUserMessage,
+      historyMessages: conversation.recentMessages,
+    });
+  }
+}
+
+export function createPromptBuilder(
+  options?: PromptBuilderOptions,
+): PromptBuilder {
+  return new PromptBuilder(options);
+}
+
+/** Convert PromptPackage → ChatRequest for LLMProvider transport. */
+export function promptPackageToChatRequest(
+  sessionId: string,
+  promptPackage: PromptPackage,
+): ChatRequest {
+  return Object.freeze({
+    sessionId,
+    systemPrompt: promptPackage.systemPrompt,
+    context: promptPackage.context,
+    messages: promptPackage.messages,
+  });
+}

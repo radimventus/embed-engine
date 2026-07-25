@@ -6,6 +6,8 @@ import type { DecisionContext } from "@embed-engine/runtime";
 import type { ChatRequest } from "./models/ChatRequest";
 import type { ChatResponse } from "./models/ChatResponse";
 import { createSystemPrompt } from "./models/SystemPrompt";
+import { emptyDecisionMemory } from "./prompt/models/DecisionMemory";
+import { emptyKnowledgeContext } from "./prompt/models/KnowledgeContext";
 import type { LLMProvider } from "./providers/LLMProvider";
 import { MockProvider } from "./providers/MockProvider";
 import { createAIService } from "./services/AIService";
@@ -25,8 +27,21 @@ function sampleRequest(): ChatRequest {
     systemPrompt: createSystemPrompt("System"),
     context: {
       decision,
-      object: { objectId: null, reference: null, title: null },
-      conversation: { sessionId: "session-ai-1", turnCount: 0 },
+      object: {
+        objectId: null,
+        reference: null,
+        title: null,
+        attributes: {},
+        knowledge: emptyKnowledgeContext(),
+        mediaReferences: [],
+      },
+      conversation: {
+        sessionId: "session-ai-1",
+        turnCount: 0,
+        recentMessages: [],
+      },
+      memory: emptyDecisionMemory(),
+      knowledge: emptyKnowledgeContext(),
     },
     messages: [{ role: "user", content: "Jaké jsou provozní náklady?" }],
   };

@@ -1,8 +1,8 @@
 /**
- * PT-004 — LLM Foundation public surface.
+ * PT-004 / PT-005 — LLM Foundation + Prompt Builder public surface.
  * @embed-engine/ai
  *
- * Vendor-neutral contracts + MockProvider.
+ * Vendor-neutral contracts, MockProvider, PromptBuilder.
  * No vendor SDKs in this package.
  */
 
@@ -41,3 +41,29 @@ export {
   createAIService,
   type AIServiceOptions,
 } from "./services/AIService";
+
+export {
+  createPromptBuilder,
+  promptPackageToChatRequest,
+  PromptBuilder,
+  DEFAULT_PARTNER_IDENTITY,
+  assemblePromptPackage,
+  createSystemPromptFactory,
+  DEFAULT_SYSTEM_PROMPT_LINES,
+  buildObjectContext,
+  buildConversationContext,
+  DEFAULT_CONVERSATION_WINDOW,
+  emptyDecisionMemory,
+  emptyKnowledgeContext,
+  PROMPT_SECTION_ORDER,
+  type PromptBuilderInput,
+  type PromptBuilderOptions,
+  type PromptPackage,
+  type PromptSection,
+  type PromptSectionId,
+  type DecisionMemory,
+  type KnowledgeContext,
+  type KnowledgeEntry,
+  type ObjectContextInput,
+  type ConversationContextInput,
+} from "./prompt";
