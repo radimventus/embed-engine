@@ -2,7 +2,7 @@ import { DecisionReport } from '../DecisionReport/DecisionReport';
 import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
 import { DecisionTerminal } from '../DecisionTerminal/DecisionTerminal';
 import { PILOT_SECTION_IDS, PILOT_TERMS } from '../../pilot/pilotVocabulary';
-import { useExperienceProjection } from '../../runtime/useExperienceProjection';
+import { useDecisionContext } from '../../runtime/useDecisionContext';
 import {
   PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS,
   PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS,
@@ -19,9 +19,9 @@ import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 
 /**
- * Priority Engine — Decision Discovery surface (CSCB-04 / PT-002).
- * Cards emit ChangePriority Decision Signals into Runtime.
- * ExperienceProjection surfaces read Runtime Decision Story only.
+ * Priority Engine — Decision Discovery surface (CSCB-04 / PT-002 / PT-003).
+ * Cards emit ChangePriority into Runtime.
+ * Interpretive surfaces read DecisionContext only.
  */
 export function PriorityEngine() {
   const {
@@ -32,7 +32,7 @@ export function PriorityEngine() {
     minimumMet,
   } = usePriorityExperience();
   const { experience } = useDecisionSessionRuntime();
-  const projection = useExperienceProjection();
+  const context = useDecisionContext();
   const terminalId = experience.context.decision.terminal.id;
 
   return (
@@ -43,10 +43,9 @@ export function PriorityEngine() {
       data-testid="priority-experience"
       data-terminal-id={terminalId}
       data-minimum-met={minimumMet ? 'true' : 'false'}
-      data-pt002-primary={projection.story.primaryPriority ?? ''}
-      data-pt002-section-order={projection.recommendedSectionOrder
-        .map((s) => s.id)
-        .join(',')}
+      data-pt002-primary={context.focusPriority ?? ''}
+      data-pt003-focus={context.focusPriority ?? ''}
+      data-pt003-recommendations={context.recommendations.join('|')}
       className={`relative scroll-mt-header ${SECTION_SURFACE_CLASS} ${PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS} ${PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS}`}
     >
       <SectionHeader />

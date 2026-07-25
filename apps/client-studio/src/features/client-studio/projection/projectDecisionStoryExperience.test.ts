@@ -1,36 +1,36 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { projectPriorityPipelineStory } from '@embed-engine/runtime';
+import {
+  buildDecisionContext,
+  projectPriorityPipelineStory,
+} from '@embed-engine/runtime';
 
 import {
-  projectDecisionStoryExperience,
+  projectExperienceFromDecisionContext,
   projectExperienceFromPriorityIds,
 } from './projectDecisionStoryExperience';
 
-describe('PT-002 Decision Story Experience Projection', () => {
-  it('projects interpretation, section order, and highlight from Decision Story', () => {
+describe('PT-003 Experience reads Decision Context', () => {
+  it('projection texts come from DecisionContext only', () => {
     const story = projectPriorityPipelineStory(
       ['energy', 'layout', 'privacy'],
       10,
     );
-    const projection = projectDecisionStoryExperience(story);
+    const context = buildDecisionContext(story);
+    const projection = projectExperienceFromDecisionContext(context);
 
-    assert.equal(projection.story.primaryPriority, 'energy');
-    assert.equal(projection.story.secondaryPriority, 'layout');
-    assert.match(projection.interpretation.headline, /Energie/i);
-    assert.match(projection.interpretation.body, /energet/i);
-    assert.equal(projection.interpretation.primaryLabel, 'Energie');
-    assert.equal(projection.highlight.primaryPriorityId, 'energy');
-    assert.ok(projection.highlight.relatedPriorityIds.includes('operating-costs'));
-    assert.equal(projection.recommendedSectionOrder[0]?.id, 'ai-advisor');
-    assert.match(
-      projection.recommendedSectionOrder[0]?.label ?? '',
-      /energie/i,
+    assert.equal(projection.interpretation.headline, context.headline);
+    assert.equal(projection.interpretation.body, context.summary);
+    assert.deepEqual(
+      projection.recommendedSectionOrder.map((s) => s.label),
+      [...context.recommendations],
     );
+    assert.equal(projection.highlight.primaryPriorityId, context.focusPriority);
+    assert.equal(projection.context, context);
   });
 
-  it('energy vs design projections are visibly different (PT-002 validation)', () => {
+  it('energy vs design Context projections differ without UI rules', () => {
     const energy = projectExperienceFromPriorityIds([
       'energy',
       'layout',
@@ -48,22 +48,10 @@ describe('PT-002 Decision Story Experience Projection', () => {
     );
     assert.notEqual(energy.interpretation.body, design.interpretation.body);
     assert.notDeepEqual(
-      energy.recommendedSectionOrder.map((s) => s.label),
-      design.recommendedSectionOrder.map((s) => s.label),
+      energy.context.recommendations,
+      design.context.recommendations,
     );
-    assert.equal(energy.highlight.primaryPriorityId, 'energy');
-    assert.equal(design.highlight.primaryPriorityId, 'design');
-    assert.notDeepEqual(
-      energy.highlight.relatedPriorityIds,
-      design.highlight.relatedPriorityIds,
-    );
-  });
-
-  it('does not invent primary when Decision Story is empty', () => {
-    const projection = projectExperienceFromPriorityIds([]);
-    assert.equal(projection.story.primaryPriority, null);
-    assert.equal(projection.highlight.primaryPriorityId, null);
-    assert.equal(projection.interpretation.primaryLabel, null);
-    assert.equal(projection.recommendedSectionOrder.length, 3);
+    assert.equal(energy.context.focusPriority, 'energy');
+    assert.equal(design.context.focusPriority, 'design');
   });
 });

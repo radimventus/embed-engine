@@ -1,14 +1,10 @@
-import { projectExperienceFromPriorityIds } from '../projection/projectDecisionStoryExperience';
+import { useDecisionContext } from './useDecisionContext';
+import { projectExperienceFromDecisionContext } from '../projection/projectDecisionStoryExperience';
 import type { ExperienceProjection } from '../projection/projectDecisionStoryExperience';
-import { useDecisionSessionRuntime } from './DecisionSessionRuntimeProvider';
 
 /**
- * PT-002 — read-only Experience Projection from Runtime Decision Story.
- * Components must not invent primary/secondary; Runtime priorityIds are SSOT.
+ * PT-002 / PT-003 — Experience view model from Decision Context only.
  */
 export function useExperienceProjection(): ExperienceProjection {
-  const { experience } = useDecisionSessionRuntime();
-  return projectExperienceFromPriorityIds(
-    experience.context.decision.priorityIds,
-  );
+  return projectExperienceFromDecisionContext(useDecisionContext());
 }

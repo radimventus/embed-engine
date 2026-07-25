@@ -1,18 +1,18 @@
 import {
+  buildDecisionContext,
   projectPriorityPipelineStory,
-  type PriorityId,
-  type PriorityPipelineDecisionStory,
+  type DecisionContext,
 } from '@embed-engine/runtime';
 
 import { PILOT_SECTION_IDS } from '../pilot/pilotVocabulary';
 import { formatPriorityIdCs } from '../pilot/decisionTerminalLabels';
 
 /**
- * PT-002 — Experience Projection from MVP Decision Story.
+ * PT-002 / PT-003 — Experience view from Runtime Decision Context.
  *
- * Pure presentation mapping. Does not invent primary/secondary —
- * those come from Runtime Decision Story (order only).
- * Does not score, rank, or call AI.
+ * Interpretation texts come only from DecisionContext (Runtime).
+ * This module maps Context → UI view models (labels, anchors).
+ * No priorityId → copy rules live here.
  */
 
 export type ExperienceSectionRef = {
@@ -29,214 +29,77 @@ export type ExperienceInterpretation = {
 };
 
 export type ExperienceHighlight = {
-  readonly primaryPriorityId: PriorityId | null;
-  readonly relatedPriorityIds: readonly PriorityId[];
+  readonly primaryPriorityId: string | null;
+  readonly relatedPriorityIds: readonly string[];
 };
 
 export type ExperienceProjection = {
-  readonly story: PriorityPipelineDecisionStory;
+  readonly context: DecisionContext;
   readonly interpretation: ExperienceInterpretation;
   readonly recommendedSectionOrder: readonly ExperienceSectionRef[];
   readonly highlight: ExperienceHighlight;
 };
 
-type PriorityPresentation = {
-  readonly interpretationHeadline: string;
-  readonly interpretationBody: string;
-  readonly relatedPriorityIds: readonly PriorityId[];
-  readonly recommendedSectionOrder: readonly ExperienceSectionRef[];
-};
-
-const SECTION_SPATIAL: ExperienceSectionRef = {
-  id: 'spatial',
-  href: `#${PILOT_SECTION_IDS.walkthrough}`,
-  label: 'Prohlídka objektu',
-};
-
-const SECTION_AI: ExperienceSectionRef = {
-  id: 'ai-advisor',
-  href: `#${PILOT_SECTION_IDS.aiAdvisor}`,
-  label: 'AI poradce',
-};
-
-const SECTION_AUDIT: ExperienceSectionRef = {
-  id: 'audit',
-  href: `#${PILOT_SECTION_IDS.audit}`,
-  label: 'Audit / kontakt',
-};
-
-/** Presentation catalogue keyed by Runtime priority id — not business ranking. */
-const PRIORITY_PRESENTATION: Readonly<Record<string, PriorityPresentation>> = {
-  energy: {
-    interpretationHeadline: 'Energie řídí Decision Story',
-    interpretationBody:
-      'Experience čte energetiku jako hlavní čočku: efektivita, provoz a technické řešení objektu.',
-    relatedPriorityIds: ['operating-costs', 'maintenance'],
-    recommendedSectionOrder: [
-      { ...SECTION_AI, label: 'AI poradce — energie a provoz' },
-      { ...SECTION_SPATIAL, label: 'Prohlídka — technické detaily' },
-      { ...SECTION_AUDIT, label: 'Audit energetiky' },
-    ],
-  },
-  'operating-costs': {
-    interpretationHeadline: 'Provozní náklady řídí Decision Story',
-    interpretationBody:
-      'Experience zdůrazňuje dlouhodobé náklady bydlení a provozní dopady rozhodnutí.',
-    relatedPriorityIds: ['energy', 'maintenance'],
-    recommendedSectionOrder: [
-      { ...SECTION_AI, label: 'AI poradce — provozní náklady' },
-      { ...SECTION_AUDIT, label: 'Audit provozu' },
-      SECTION_SPATIAL,
-    ],
-  },
-  layout: {
-    interpretationHeadline: 'Dispozice řídí Decision Story',
-    interpretationBody:
-      'Experience zvýrazňuje uspořádání místností, tok prostoru a každodenní použití domu.',
-    relatedPriorityIds: ['privacy', 'flexibility'],
-    recommendedSectionOrder: [
-      { ...SECTION_SPATIAL, label: 'Prohlídka — dispozice a místnosti' },
-      SECTION_AI,
-      SECTION_AUDIT,
-    ],
-  },
-  privacy: {
-    interpretationHeadline: 'Soukromí řídí Decision Story',
-    interpretationBody:
-      'Experience čte dům přes klidové zóny, oddělení a ochranu před okolím.',
-    relatedPriorityIds: ['layout', 'plot'],
-    recommendedSectionOrder: [
-      { ...SECTION_SPATIAL, label: 'Prohlídka — klidové zóny' },
-      SECTION_AI,
-      SECTION_AUDIT,
-    ],
-  },
-  design: {
-    interpretationHeadline: 'Design řídí Decision Story',
-    interpretationBody:
-      'Experience zvýrazňuje formu, materiály a vizuální charakter — estetika je primární čočkou.',
-    relatedPriorityIds: ['quality', 'layout'],
-    recommendedSectionOrder: [
-      { ...SECTION_SPATIAL, label: 'Prohlídka — materiál a forma' },
-      { ...SECTION_AI, label: 'AI poradce — design' },
-      { ...SECTION_AUDIT, label: 'Konzultace designu' },
-    ],
-  },
-  quality: {
-    interpretationHeadline: 'Kvalita řídí Decision Story',
-    interpretationBody:
-      'Experience zdůrazňuje provedení, detaily a dlouhodobou hodnotu řešení.',
-    relatedPriorityIds: ['design', 'maintenance'],
-    recommendedSectionOrder: [SECTION_SPATIAL, SECTION_AUDIT, SECTION_AI],
-  },
-  plot: {
-    interpretationHeadline: 'Pozemek řídí Decision Story',
-    interpretationBody:
-      'Experience čte vztah domu k pozemku, orientaci a okolí jako hlavní rámec.',
-    relatedPriorityIds: ['privacy', 'layout'],
-    recommendedSectionOrder: [
-      { ...SECTION_SPATIAL, label: 'Prohlídka — vztah k pozemku' },
-      SECTION_AUDIT,
-      SECTION_AI,
-    ],
-  },
-  investment: {
-    interpretationHeadline: 'Investice řídí Decision Story',
-    interpretationBody:
-      'Experience zvýrazňuje kapitálový rámec, návratnost a obchodní dopady rozhodnutí.',
-    relatedPriorityIds: ['operating-costs', 'quality'],
-    recommendedSectionOrder: [
-      { ...SECTION_AUDIT, label: 'Audit investice' },
-      SECTION_AI,
-      SECTION_SPATIAL,
-    ],
-  },
-  maintenance: {
-    interpretationHeadline: 'Údržba řídí Decision Story',
-    interpretationBody:
-      'Experience zdůrazňuje dlouhodobou správu, servisovatelnost a provozní zátěž.',
-    relatedPriorityIds: ['energy', 'operating-costs'],
-    recommendedSectionOrder: [SECTION_AI, SECTION_AUDIT, SECTION_SPATIAL],
-  },
-  flexibility: {
-    interpretationHeadline: 'Flexibilita řídí Decision Story',
-    interpretationBody:
-      'Experience čte dům jako přizpůsobitelný rámec — změna použití v čase.',
-    relatedPriorityIds: ['layout', 'design'],
-    recommendedSectionOrder: [SECTION_SPATIAL, SECTION_AI, SECTION_AUDIT],
-  },
-};
-
-const EMPTY_SECTIONS: readonly ExperienceSectionRef[] = Object.freeze([
-  SECTION_SPATIAL,
-  SECTION_AI,
-  SECTION_AUDIT,
-]);
-
-function presentationFor(
-  primaryPriority: PriorityId | null,
-): PriorityPresentation | null {
-  if (primaryPriority === null) {
-    return null;
-  }
-  return PRIORITY_PRESENTATION[primaryPriority] ?? null;
-}
+/** Stable journey anchors — presentation only, not interpretive ranking. */
+const JOURNEY_ANCHORS = [
+  { id: 'ai-advisor', href: `#${PILOT_SECTION_IDS.aiAdvisor}` },
+  { id: 'spatial', href: `#${PILOT_SECTION_IDS.walkthrough}` },
+  { id: 'audit', href: `#${PILOT_SECTION_IDS.audit}` },
+] as const;
 
 /**
- * Project MVP Decision Story → Experience surfaces (PT-002).
- * Input is Runtime story only — UI must not recompute primary/secondary.
+ * Project Runtime Decision Context → Experience surfaces.
+ * Does not invent headline/summary/recommendations.
  */
-export function projectDecisionStoryExperience(
-  story: PriorityPipelineDecisionStory,
+export function projectExperienceFromDecisionContext(
+  context: DecisionContext,
 ): ExperienceProjection {
-  const presentation = presentationFor(story.primaryPriority);
-  const primaryLabel =
-    story.primaryPriority === null
-      ? null
-      : formatPriorityIdCs(story.primaryPriority);
-  const secondaryLabel =
-    story.secondaryPriority === null
-      ? null
-      : formatPriorityIdCs(story.secondaryPriority);
+  const interpretation: ExperienceInterpretation = {
+    headline: context.headline,
+    body: context.summary,
+    primaryLabel:
+      context.focusPriority === null
+        ? null
+        : formatPriorityIdCs(context.focusPriority),
+    secondaryLabel:
+      context.secondaryPriority === null
+        ? null
+        : formatPriorityIdCs(context.secondaryPriority),
+  };
 
-  const interpretation: ExperienceInterpretation = presentation
-    ? {
-        headline: presentation.interpretationHeadline,
-        body: presentation.interpretationBody,
-        primaryLabel,
-        secondaryLabel,
-      }
-    : {
-        headline: 'Decision Story ještě neurčuje čočku',
-        body: 'Vyberte priority — Experience se přizpůsobí primární prioritě z Runtime.',
-        primaryLabel: null,
-        secondaryLabel: null,
-      };
-
-  const related =
-    presentation?.relatedPriorityIds.filter(
-      (id) => id !== story.primaryPriority,
-    ) ?? [];
+  const recommendedSectionOrder: ExperienceSectionRef[] =
+    context.recommendations.length === 0
+      ? JOURNEY_ANCHORS.map((anchor) => ({
+          ...anchor,
+          label: anchor.id,
+        }))
+      : context.recommendations.map((label, index) => {
+          const anchor = JOURNEY_ANCHORS[index % JOURNEY_ANCHORS.length]!;
+          return {
+            id: `recommendation-${index}`,
+            href: anchor.href,
+            label,
+          };
+        });
 
   return Object.freeze({
-    story,
+    context,
     interpretation: Object.freeze(interpretation),
-    recommendedSectionOrder: Object.freeze([
-      ...(presentation?.recommendedSectionOrder ?? EMPTY_SECTIONS),
-    ]),
+    recommendedSectionOrder: Object.freeze(recommendedSectionOrder),
     highlight: Object.freeze({
-      primaryPriorityId: story.primaryPriority,
-      relatedPriorityIds: Object.freeze([...related]),
+      primaryPriorityId: context.focusPriority,
+      relatedPriorityIds: Object.freeze(
+        context.selectedPriorities.filter((id) => id !== context.focusPriority),
+      ),
     }),
   });
 }
 
-/** Convenience: Experience Context priorityIds → full Experience Projection. */
+/** Live Experience: priorityIds (Runtime) → DecisionContext → projection. */
 export function projectExperienceFromPriorityIds(
-  priorityIds: readonly PriorityId[],
+  priorityIds: readonly string[],
   updatedAt = 0,
 ): ExperienceProjection {
-  return projectDecisionStoryExperience(
-    projectPriorityPipelineStory(priorityIds, updatedAt),
-  );
+  const story = projectPriorityPipelineStory(priorityIds, updatedAt);
+  return projectExperienceFromDecisionContext(buildDecisionContext(story));
 }
