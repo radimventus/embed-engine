@@ -37,8 +37,10 @@ Other documents must **link here**. They must **not** redefine these terms.
 ARCH-AI-01      AI Delivery Architecture     ✅
 CAP-AI-SEM-01   AI Semantic Model            ✅
 CAP-AI-ACC-01   Conversation Contract Freeze ✅
-CAP-AI-DELIVERY-01  Runtime ↔ Delivery
-CAP-AI-ADAPTER-01   Adapter Framework
+CAP-AI-DELIVERY-01  Runtime ↔ Delivery       ✅ analysis — [mapping report](./CAP-AI-DELIVERY-01-runtime-delivery-mapping.md)
+WP-A                Package boundaries       ✅ — [compliance](./WP-A-boundaries-compliance.md)
+CAP-AI-ADAPTER-01   Adapter Framework        ← after WP-B (Runtime↔Delivery port)
+
 CAP-AI-PUBLISH-01   Publish Binding
 CAP-AI-SEC-01       Security
 CAP-GOV-AI-01       Constitution

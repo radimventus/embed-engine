@@ -4,6 +4,9 @@
  *
  * Vendor-neutral contracts, MockProvider, PromptBuilder.
  * No vendor SDKs in this package.
+ *
+ * WP-A: architectural boundaries under runtime/ delivery/ adapter/ contract/
+ * (placeholders + Runtime re-exports). Root export list below is preserved.
  */
 
 export type { SystemPrompt } from "./models/SystemPrompt";
@@ -186,3 +189,12 @@ export {
   type ConversationAnalyzerOptions,
   type AnalysisServiceOptions,
 } from "./analyzer";
+
+/** WP-A — architectural boundary markers (additive; non-breaking). */
+export { AI_RUNTIME_BOUNDARY } from "./runtime";
+export { AI_DELIVERY_BOUNDARY } from "./delivery";
+export { AI_ADAPTER_BOUNDARY } from "./adapter";
+export {
+  AI_CONTRACT_BOUNDARY,
+  AI_CONTRACT_VERSION,
+} from "./contract";
