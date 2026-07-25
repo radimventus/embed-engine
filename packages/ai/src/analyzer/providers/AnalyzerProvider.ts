@@ -1,31 +1,35 @@
 /**
- * PT-007 — AnalyzerProvider.
+ * PT-007A — AnalyzerProvider.
  *
- * Uses LLM Foundation for structured extraction.
+ * Uses LLM Foundation for structured extraction only.
  * Falls back to deterministic rules when LLM output is unusable.
  * Never produces user-facing chat replies.
+ * Does not import Runtime. Does not write Memory.
  */
 
 import { createSystemPrompt } from "../../models/SystemPrompt";
 import type { ChatRequest } from "../../models/ChatRequest";
+import type { PromptContext } from "../../models/PromptContext";
 import type { LLMProvider } from "../../providers/LLMProvider";
 import { emptyDecisionMemory } from "../../prompt/models/DecisionMemory";
 import { emptyKnowledgeContext } from "../../prompt/models/KnowledgeContext";
 import { deterministicAnalyze } from "../deterministicFallback";
-import type {
-  AnalysisRequest,
-  AnalysisResult,
-} from "../models/AnalysisRequest";
-import { emptyAnalysisResult } from "../models/AnalysisRequest";
-import type { MemoryItem } from "../../prompt/models/DecisionMemory";
+import type { AnalysisRequest } from "../models/AnalysisRequest";
+import {
+  emptyAnalysisResult,
+  type AnalysisResult,
+  type AnalysisValue,
+  type Fact,
+} from "../models/AnalysisResult";
 
+/** Dedicated extraction prompt — never a conversational reply. */
 export const ANALYZER_SYSTEM_PROMPT = [
-  "Extrahuj pouze rozhodovací informace.",
+  "Extrahuj pouze informace důležité pro budoucí rozhodování.",
   "Nevysvětluj.",
-  "Neodpovídej uživateli.",
-  "Vrať pouze strukturovaná data jako JSON objekt s poli:",
-  "facts, preferences, constraints, goals, concerns, rejectedOptions, acceptedOptions, confidence.",
-  "Každá položka v polích je { \"key\": string, \"value\": string | number | boolean }.",
+  "Neodpovídej.",
+  "Vrať pouze strukturovaná data.",
+  "JSON objekt s poli: facts, preferences, constraints, goals, concerns, rejectedOptions, acceptedOptions, confidence.",
+  "Každá položka je { \"key\": string, \"value\": string | number | boolean }.",
   "confidence je číslo 0..1.",
 ].join(" ");
 
@@ -73,29 +77,42 @@ export function createAnalyzerProvider(
   return new LlmAnalyzerProvider(options);
 }
 
+/**
+ * Transport stub for LLMProvider ChatRequest.
+ * Analyzer does not read Runtime DecisionContext — empty snapshot for transport only.
+ */
 function toAnalyzerChatRequest(request: AnalysisRequest): ChatRequest {
   const recent = request.recentMessages ?? [];
+  const context = {
+    decision: {
+      headline: "",
+      summary: "",
+      focusPriority: null,
+      secondaryPriority: null,
+      selectedPriorities: Object.freeze([] as string[]),
+      recommendations: Object.freeze([] as string[]),
+    },
+    object: {
+      objectId: null,
+      reference: null,
+      title: null,
+      attributes: {},
+      knowledge: emptyKnowledgeContext(),
+      mediaReferences: [],
+    },
+    conversation: {
+      sessionId: "analyzer",
+      turnCount: recent.length + 1,
+      recentMessages: recent,
+    },
+    memory: emptyDecisionMemory(),
+    knowledge: emptyKnowledgeContext(),
+  } as PromptContext;
+
   return {
     sessionId: `analyze:${hashMessage(request.message)}`,
     systemPrompt: createSystemPrompt(ANALYZER_SYSTEM_PROMPT),
-    context: {
-      decision: request.decision,
-      object: {
-        objectId: null,
-        reference: null,
-        title: null,
-        attributes: {},
-        knowledge: emptyKnowledgeContext(),
-        mediaReferences: [],
-      },
-      conversation: {
-        sessionId: "analyzer",
-        turnCount: recent.length + 1,
-        recentMessages: recent,
-      },
-      memory: emptyDecisionMemory(),
-      knowledge: emptyKnowledgeContext(),
-    },
+    context,
     messages: [
       ...recent.map((message) =>
         Object.freeze({ role: message.role, content: message.content }),
@@ -153,13 +170,13 @@ function normalizeAnalysisResult(
       : 0.5;
 
   const result = Object.freeze({
-    facts: Object.freeze(normalizeItems(raw.facts)),
-    preferences: Object.freeze(normalizeItems(raw.preferences)),
-    constraints: Object.freeze(normalizeItems(raw.constraints)),
-    goals: Object.freeze(normalizeItems(raw.goals)),
-    concerns: Object.freeze(normalizeItems(raw.concerns)),
-    rejectedOptions: Object.freeze(normalizeItems(raw.rejectedOptions)),
-    acceptedOptions: Object.freeze(normalizeItems(raw.acceptedOptions)),
+    facts: Object.freeze(normalizeEntries(raw.facts)),
+    preferences: Object.freeze(normalizeEntries(raw.preferences)),
+    constraints: Object.freeze(normalizeEntries(raw.constraints)),
+    goals: Object.freeze(normalizeEntries(raw.goals)),
+    concerns: Object.freeze(normalizeEntries(raw.concerns)),
+    rejectedOptions: Object.freeze(normalizeEntries(raw.rejectedOptions)),
+    acceptedOptions: Object.freeze(normalizeEntries(raw.acceptedOptions)),
     confidence,
   });
 
@@ -179,11 +196,11 @@ function normalizeAnalysisResult(
   return result;
 }
 
-function normalizeItems(value: unknown): MemoryItem[] {
+function normalizeEntries(value: unknown): Fact[] {
   if (!Array.isArray(value)) {
     return [];
   }
-  const items: MemoryItem[] = [];
+  const items: Fact[] = [];
   for (const entry of value) {
     if (entry === null || typeof entry !== "object") {
       continue;
@@ -194,14 +211,18 @@ function normalizeItems(value: unknown): MemoryItem[] {
     if (typeof key !== "string" || key.length === 0) {
       continue;
     }
-    if (
-      typeof itemValue !== "string" &&
-      typeof itemValue !== "number" &&
-      typeof itemValue !== "boolean"
-    ) {
+    if (!isAnalysisValue(itemValue)) {
       continue;
     }
     items.push(Object.freeze({ key, value: itemValue }));
   }
   return items;
+}
+
+function isAnalysisValue(value: unknown): value is AnalysisValue {
+  return (
+    typeof value === "string" ||
+    typeof value === "number" ||
+    typeof value === "boolean"
+  );
 }

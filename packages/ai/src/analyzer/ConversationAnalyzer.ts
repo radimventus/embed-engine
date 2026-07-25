@@ -1,15 +1,13 @@
 /**
- * PT-007 — ConversationAnalyzer.
+ * PT-007A — ConversationAnalyzer.
  *
- * Decision Interpreter: extracts structured decision knowledge from a message.
- * Does not answer the user. Does not mutate Runtime or UI.
+ * Extracts structured AnalysisResult from one user message.
+ * Does not answer the user. Does not write Memory. Does not touch Runtime/UI.
  */
 
 import type { AnalyzerProvider } from "./providers/AnalyzerProvider";
-import type {
-  AnalysisRequest,
-  AnalysisResult,
-} from "./models/AnalysisRequest";
+import type { AnalysisRequest } from "./models/AnalysisRequest";
+import type { AnalysisResult } from "./models/AnalysisResult";
 
 export type ConversationAnalyzerOptions = {
   readonly provider: AnalyzerProvider;

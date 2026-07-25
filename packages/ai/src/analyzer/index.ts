@@ -1,12 +1,21 @@
 /**
- * PT-007 — Conversation Analyzer public surface.
+ * PT-007A — Conversation Extraction public surface.
  */
 
+export type { AnalysisRequest } from "./models/AnalysisRequest";
+
 export type {
-  AnalysisRequest,
   AnalysisResult,
-} from "./models/AnalysisRequest";
-export { emptyAnalysisResult } from "./models/AnalysisRequest";
+  AnalysisValue,
+  Fact,
+  Preference,
+  Constraint,
+  Goal,
+  Concern,
+  AcceptedOption,
+  RejectedOption,
+} from "./models/AnalysisResult";
+export { emptyAnalysisResult } from "./models/AnalysisResult";
 
 export {
   ConversationAnalyzer,
@@ -18,7 +27,6 @@ export {
   AnalysisService,
   createAnalysisService,
   type AnalysisServiceOptions,
-  type AnalyzeAndMergeResult,
 } from "./AnalysisService";
 
 export {

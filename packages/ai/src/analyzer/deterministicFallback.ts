@@ -1,15 +1,26 @@
 /**
- * PT-007 — Deterministic analysis fallback (no LLM required).
- * Extracts structured decision signals from common Czech / EN patterns.
+ * PT-007A — Deterministic extraction fallback (no LLM required).
  */
 
-import type { AnalysisResult } from "./models/AnalysisRequest";
-import type { MemoryItem } from "../prompt/models/DecisionMemory";
+import type {
+  AcceptedOption,
+  AnalysisResult,
+  AnalysisValue,
+  Concern,
+  Constraint,
+  Fact,
+  Goal,
+  Preference,
+  RejectedOption,
+} from "./models/AnalysisResult";
 
 const FALLBACK_CONFIDENCE = 0.72;
 
-function item(key: string, value: string | number | boolean): MemoryItem {
-  return Object.freeze({ key, value });
+function entry<T extends { readonly key: string; readonly value: AnalysisValue }>(
+  key: string,
+  value: AnalysisValue,
+): T {
+  return Object.freeze({ key, value }) as T;
 }
 
 /**
@@ -19,26 +30,24 @@ export function deterministicAnalyze(message: string): AnalysisResult {
   const text = message.trim();
   const lower = text.toLowerCase();
 
-  const facts: MemoryItem[] = [];
-  const preferences: MemoryItem[] = [];
-  const constraints: MemoryItem[] = [];
-  const goals: MemoryItem[] = [];
-  const concerns: MemoryItem[] = [];
-  const rejectedOptions: MemoryItem[] = [];
-  const acceptedOptions: MemoryItem[] = [];
+  const facts: Fact[] = [];
+  const preferences: Preference[] = [];
+  const constraints: Constraint[] = [];
+  const goals: Goal[] = [];
+  const concerns: Concern[] = [];
+  const rejectedOptions: RejectedOption[] = [];
+  const acceptedOptions: AcceptedOption[] = [];
 
-  // "dvě děti" / "2 děti" → household of 4 (2 adults + 2 children) per PT-007 scenario.
+  // Family / children → fact
   if (
     /\b(dvě|dve|2)\s+dět/i.test(text) ||
     /\b(two|2)\s+(kids|children)\b/i.test(lower)
   ) {
-    facts.push(item("familySize", 4));
+    facts.push(entry("familySize", 4));
   }
 
-  // Budget: "6,5 milionu" / "6.5 million" / "6500000"
-  const budgetMillion = text.match(
-    /(\d+[.,]\d+)\s*milion/i,
-  );
+  // Budget constraint: "6,5 milionu" / "6.5 million"
+  const budgetMillion = text.match(/(\d+[.,]\d+)\s*milion/i);
   const budgetPlain = text.match(
     /\b(rozpočet|budget)\b[^0-9]{0,24}(\d[\d\s.,]{3,})\b/i,
   );
@@ -46,17 +55,17 @@ export function deterministicAnalyze(message: string): AnalysisResult {
     const raw = budgetMillion[1]!.replace(",", ".");
     const millions = Number.parseFloat(raw);
     if (Number.isFinite(millions)) {
-      constraints.push(item("budget", Math.round(millions * 1_000_000)));
+      constraints.push(entry("budget", Math.round(millions * 1_000_000)));
     }
   } else if (budgetPlain) {
     const digits = budgetPlain[2]!.replace(/[\s.]/g, "").replace(",", "");
     const value = Number.parseInt(digits, 10);
     if (Number.isFinite(value)) {
-      constraints.push(item("budget", value));
+      constraints.push(entry("budget", value));
     }
   }
 
-  // Reject heat pump
+  // Rejected heating option
   const rejectsHeatPump =
     /(nechceme|nechci|nechce|without|don't want|do not want|no)\b[\s\S]{0,40}(tepelné\s+čerpadlo|tepelne\s+cerpadlo|heat[\s-]?pump)/i.test(
       text,
@@ -65,7 +74,7 @@ export function deterministicAnalyze(message: string): AnalysisResult {
       text,
     );
   if (rejectsHeatPump) {
-    rejectedOptions.push(item("heating", "heat-pump"));
+    rejectedOptions.push(entry("heating", "heat-pump"));
   }
 
   const extracted =
