@@ -1,0 +1,13 @@
+# PT-OPS-AI-EDGE-01 — Production AI Delivery Edge (Cloudflare Workers)
+name = "embed-ai-delivery"
+main = "src/worker.ts"
+compatibility_date = "2026-07-25"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+# Optional model override (non-secret). Secret OPENAI_API_KEY is set via wrangler secret.
+OPENAI_MODEL = "gpt-4o-mini"
+
+# Keep Workers build scoped to this package + workspace AI dependency.
+[build]
+command = ""

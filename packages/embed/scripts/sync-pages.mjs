@@ -36,14 +36,36 @@ const REQUIRED = ["embed.es.js", "embed.iife.js", "index.d.ts", "version.json"];
 const PAGES_ORIGIN = "https://radimventus.github.io/embed-engine";
 
 /**
+ * Public AI Delivery Edge URL (Method A host bootstrap).
+ * Prefer VITE_AI_DELIVERY_URL (same as IIFE bake) or EMBED_AI_DELIVERY_URL.
+ * Never an OpenAI secret.
+ */
+const AI_DELIVERY_URL = (
+  process.env.VITE_AI_DELIVERY_URL?.trim() ||
+  process.env.EMBED_AI_DELIVERY_URL?.trim() ||
+  ""
+).replace(/\/$/, "");
+
+function aiDeliveryHostBootstrap() {
+  if (AI_DELIVERY_URL.length === 0) {
+    return "";
+  }
+  return `<script>
+  window.__EMBED_AI_DELIVERY__ = { deliveryUrl: ${JSON.stringify(AI_DELIVERY_URL)} };
+</script>
+`;
+}
+
+/**
  * Official partner distribution fragment — derived from Embed.mount launcher API.
  * Cache-bust query is the build commit from the automatic fingerprint.
  */
 function buildOfficialPartnerSnippet(cacheBust) {
   const scriptSrc = `${PAGES_ORIGIN}/embed/embed.iife.js?v=${cacheBust}`;
+  const deliveryBootstrap = aiDeliveryHostBootstrap();
   return `<!-- BEGIN OFFICIAL PARTNER SNIPPET -->
 <div id="embed-hero"></div>
-<script src="${scriptSrc}"></script>
+${deliveryBootstrap}<script src="${scriptSrc}"></script>
 <script>
   Embed.mount({
     mode: "launcher",
@@ -204,7 +226,7 @@ function writeLiveHtml(cacheBust) {
   </main>
 
   <script src="${PAGES_ORIGIN}/embed/embed.iife.js?v=${cacheBust}"></script>
-  <script>
+  ${aiDeliveryHostBootstrap()}  <script>
     Embed.mount({
       mode: "launcher",
       target: "#embed-hero",

@@ -9,8 +9,11 @@
 
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import { pathToFileURL } from "node:url";
-import { OpenAIAdapter } from "@embed-engine/ai";
 import type { ChatRequest, ChatResponse } from "@embed-engine/ai";
+import {
+  createDeliveryEdgeContext,
+  handleDeliveryRequest,
+} from "./handler";
 
 const DEFAULT_PORT = 8787;
 
@@ -33,56 +36,34 @@ export type AiDeliveryEdgeHandle = {
 export function startAiDeliveryEdge(
   options: AiDeliveryEdgeOptions = {},
 ): Promise<AiDeliveryEdgeHandle> {
-  const apiKey =
-    options.apiKey?.trim() ||
-    process.env.OPENAI_API_KEY?.trim() ||
-    process.env.AI_DELIVERY_OPENAI_API_KEY?.trim() ||
-    "";
-  const model =
-    options.model?.trim() ||
-    process.env.OPENAI_MODEL?.trim() ||
-    process.env.AI_DELIVERY_OPENAI_MODEL?.trim() ||
-    undefined;
-
-  const allowedOrigins = options.allowedOrigins ?? [
-    "http://localhost:4173",
-    "http://localhost:5173",
-    "http://localhost:5180",
-    "http://127.0.0.1:4173",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:5180",
-    "https://radimventus.github.io",
-  ];
-
-  const adapter =
-    options.chat !== undefined
-      ? null
-      : apiKey.length > 0
-        ? new OpenAIAdapter({
-            apiKey,
-            ...(model !== undefined && model.length > 0 ? { model } : {}),
-          })
-        : null;
-
-  const chatHandler =
-    options.chat ??
-    (adapter !== null
-      ? (request: ChatRequest) => adapter.chat(request)
-      : null);
+  const ctx = createDeliveryEdgeContext(process.env, {
+    apiKey: options.apiKey,
+    model: options.model,
+    allowedOrigins: options.allowedOrigins,
+    chat: options.chat,
+  });
 
   const port = options.port ?? Number(process.env.PORT ?? DEFAULT_PORT);
-  const host = options.host ?? "127.0.0.1";
+  const host =
+    options.host ??
+    process.env.HOST?.trim() ??
+    process.env.AI_DELIVERY_HOST?.trim() ??
+    "127.0.0.1";
 
   const server = createServer(async (req, res) => {
     try {
-      await handleRequest(req, res, {
-        chatHandler,
-        allowedOrigins,
-      });
+      const request = await incomingToRequest(req, host, port);
+      const response = await handleDeliveryRequest(request, ctx);
+      await writeNodeResponse(res, response);
     } catch (error) {
       console.error("ai-delivery-edge: unhandled", error);
       if (!res.headersSent) {
-        sendJson(res, 500, { error: "internal_error" });
+        const payload = JSON.stringify({ error: "internal_error" });
+        res.writeHead(500, {
+          "content-type": "application/json; charset=utf-8",
+          "content-length": Buffer.byteLength(payload),
+        });
+        res.end(payload);
       }
     }
   });
@@ -93,7 +74,7 @@ export function startAiDeliveryEdge(
       const address = server.address();
       const boundPort =
         typeof address === "object" && address !== null ? address.port : port;
-      const url = `http://${host}:${boundPort}`;
+      const url = `http://${host === "0.0.0.0" ? "127.0.0.1" : host}:${boundPort}`;
       resolve({
         url,
         port: boundPort,
@@ -106,94 +87,46 @@ export function startAiDeliveryEdge(
   });
 }
 
-async function handleRequest(
+async function incomingToRequest(
   req: IncomingMessage,
+  host: string,
+  port: number,
+): Promise<Request> {
+  const url = new URL(req.url ?? "/", `http://${host}:${port}`);
+  const headers = new Headers();
+  for (const [key, value] of Object.entries(req.headers)) {
+    if (value === undefined) {
+      continue;
+    }
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        headers.append(key, item);
+      }
+    } else {
+      headers.set(key, value);
+    }
+  }
+
+  const method = req.method ?? "GET";
+  if (method === "GET" || method === "HEAD") {
+    return new Request(url, { method, headers });
+  }
+
+  const body = await readBody(req);
+  return new Request(url, { method, headers, body });
+}
+
+async function writeNodeResponse(
   res: ServerResponse,
-  ctx: {
-    readonly chatHandler: ((request: ChatRequest) => Promise<ChatResponse>) | null;
-    readonly allowedOrigins: readonly string[];
-  },
+  response: Response,
 ): Promise<void> {
-  const origin = req.headers.origin;
-  applyCors(res, origin, ctx.allowedOrigins);
-
-  if (req.method === "OPTIONS") {
-    res.writeHead(204);
-    res.end();
-    return;
-  }
-
-  const path = (req.url ?? "/").split("?")[0];
-  if (req.method === "GET" && (path === "/health" || path === "/v1/health")) {
-    sendJson(res, 200, {
-      ok: true,
-      configured: ctx.chatHandler !== null,
-    });
-    return;
-  }
-
-  if (req.method === "POST" && path === "/v1/chat") {
-    if (ctx.chatHandler === null) {
-      sendJson(res, 503, { error: "not_configured" });
-      return;
-    }
-    const body = await readBody(req);
-    let request: ChatRequest;
-    try {
-      request = JSON.parse(body) as ChatRequest;
-    } catch {
-      sendJson(res, 400, { error: "invalid_request" });
-      return;
-    }
-    if (
-      request === null ||
-      typeof request !== "object" ||
-      typeof request.sessionId !== "string" ||
-      !Array.isArray(request.messages)
-    ) {
-      sendJson(res, 400, { error: "invalid_request" });
-      return;
-    }
-
-    try {
-      const response: ChatResponse = await ctx.chatHandler(request);
-      sendJson(res, 200, response);
-    } catch (error) {
-      console.error("ai-delivery-edge: adapter failure", error);
-      sendJson(res, 502, { error: "adapter_unavailable" });
-    }
-    return;
-  }
-
-  sendJson(res, 404, { error: "not_found" });
-}
-
-function applyCors(
-  res: ServerResponse,
-  origin: string | undefined,
-  allowedOrigins: readonly string[],
-): void {
-  if (origin !== undefined && isOriginAllowed(origin, allowedOrigins)) {
-    res.setHeader("access-control-allow-origin", origin);
-    res.setHeader("vary", "origin");
-  }
-  res.setHeader("access-control-allow-methods", "GET, POST, OPTIONS");
-  res.setHeader("access-control-allow-headers", "content-type, accept");
-}
-
-function isOriginAllowed(
-  origin: string,
-  allowedOrigins: readonly string[],
-): boolean {
-  if (allowedOrigins.includes(origin)) {
-    return true;
-  }
-  if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(origin)) {
-    return true;
-  }
-  return allowedOrigins.some(
-    (allowed) => origin === allowed || origin.startsWith(`${allowed}/`),
-  );
+  const headers: Record<string, string> = {};
+  response.headers.forEach((value, key) => {
+    headers[key] = value;
+  });
+  const buffer = Buffer.from(await response.arrayBuffer());
+  res.writeHead(response.status, headers);
+  res.end(buffer);
 }
 
 function readBody(req: IncomingMessage): Promise<string> {
@@ -207,19 +140,6 @@ function readBody(req: IncomingMessage): Promise<string> {
     });
     req.on("error", reject);
   });
-}
-
-function sendJson(
-  res: ServerResponse,
-  status: number,
-  body: unknown,
-): void {
-  const payload = JSON.stringify(body);
-  res.writeHead(status, {
-    "content-type": "application/json; charset=utf-8",
-    "content-length": Buffer.byteLength(payload),
-  });
-  res.end(payload);
 }
 
 const isDirectRun =

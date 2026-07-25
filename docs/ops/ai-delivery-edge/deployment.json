@@ -1,0 +1,60 @@
+{
+  "platform": "cloudflare-workers",
+  "accountMode": "temporary-preview",
+  "workerName": "embed-ai-delivery",
+  "url": "https://embed-ai-delivery.northern-paste.workers.dev",
+  "healthUrl": "https://embed-ai-delivery.northern-paste.workers.dev/health",
+  "chatUrl": "https://embed-ai-delivery.northern-paste.workers.dev/v1/chat",
+  "configured": true,
+  "openaiModel": "gpt-4o-mini",
+  "corsAllowedOriginSample": "https://radimventus.github.io",
+  "sampleReplySnippet": "Provozní náklady zahrnují",
+  "health": {
+    "ok": true,
+    "configured": true,
+    "status": 200
+  },
+  "validatedAt": "2026-07-25T14:51:58.489501+00:00",
+  "notes": "Validated production AI Delivery Edge end-to-end (health, chat, CORS, createEmbedAIDelivery method A/B, Playwright Pages-origin CORS). Temporary Cloudflare preview — claim within ~1h if retaining; claimUrl not recoverable from /tmp wrangler logs.",
+  "claimUrl": null,
+  "claimUrlNote": "No claim URL found under /tmp wrangler logs (only dry-run + DNS-failure attempts; successful temporary deploy stdout not retained).",
+  "chat": {
+    "status": 200,
+    "finishReason": "stop",
+    "contentSnippet": "Provozní náklady zahrnují výdaje spojené s každodenním chodem firmy",
+    "usage": {
+      "promptTokens": 39,
+      "completionTokens": 44,
+      "totalTokens": 83
+    }
+  },
+  "corsPreflight": {
+    "status": 204,
+    "accessControlAllowOrigin": "https://radimventus.github.io",
+    "accessControlAllowMethods": "GET, POST, OPTIONS",
+    "accessControlAllowHeaders": "content-type, accept"
+  },
+  "methodA": {
+    "ok": true,
+    "deliveryId": "published-remote",
+    "contentSnippet": "Omlouvám se, ale nemám konkrétní informace o provozních nákladech. Mohu však říci, že v kontextu rozhodování je nejvyšší prioritou energetická efektivita"
+  },
+  "methodB": {
+    "ok": true,
+    "bindingMode": "published",
+    "deliveryId": "published-remote",
+    "idIsPublishedRemote": true,
+    "deliveryUrl": "https://embed-ai-delivery.northern-paste.workers.dev"
+  },
+  "browserCors": {
+    "ok": true,
+    "page": "https://radimventus.github.io/embed-engine/embed/live.html",
+    "initScriptDeliveryUrl": "https://embed-ai-delivery.northern-paste.workers.dev",
+    "healthStatus": 200,
+    "chatStatus": 200,
+    "edgeChatPostCount": 1,
+    "contentSnippet": "Provozní náklady zahrnují výdaje na běžný chod firmy",
+    "iifeHasEmptyOpenAiKey": true
+  },
+  "noOpenAiFromBrowser": true
+}

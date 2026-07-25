@@ -16,7 +16,9 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "start": "tsx src/server.ts",
-    "test": "tsx --test src/server.test.ts src/published-e2e.test.ts"
+    "test": "tsx --test src/server.test.ts src/published-e2e.test.ts src/handler.test.ts",
+    "deploy": "npx --yes wrangler@4 deploy",
+    "deploy:dry": "npx --yes wrangler@4 deploy --dry-run"
   },
   "dependencies": {
     "@embed-engine/ai": "workspace:*"
