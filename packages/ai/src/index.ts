@@ -30,21 +30,32 @@ export type {
   TokenUsage,
 } from "./models/ChatResponse";
 
-export type { LLMProvider } from "./providers/LLMProvider";
+export type { AIAdapter, LLMProvider } from "./adapter/port";
 
 export {
+  MockAdapter,
   MockProvider,
+  MOCK_ADAPTER_ID,
   MOCK_PROVIDER_ID,
   MOCK_RESPONSE_CONTENT,
+  type MockAdapterOptions,
   type MockProviderOptions,
-} from "./providers/MockProvider";
+} from "./adapter/mock";
 
 export {
+  OpenAIAdapter,
   OpenAIProvider,
+  OPENAI_ADAPTER_ID,
   OPENAI_PROVIDER_ID,
+  type OpenAIAdapterOptions,
   type OpenAIProviderOptions,
-} from "./providers/OpenAIProvider";
+} from "./adapter/openai";
 
+export {
+  AdapterFailure,
+  isAdapterFailure,
+  type AdapterFailureCode,
+} from "./adapter/AdapterFailure";
 export {
   AIService,
   createAIService,
@@ -191,20 +202,22 @@ export {
   type AnalysisServiceOptions,
 } from "./analyzer";
 
-/** WP-A / WP-B — architectural boundaries + Delivery Port (additive). */
+/** WP-A / WP-B / CAP-AI-ADAPTER-01 — boundaries + Delivery + Adapter. */
 export { AI_RUNTIME_BOUNDARY } from "./runtime";
 export {
   AI_DELIVERY_BOUNDARY,
   createDirectAdapterDelivery,
-  createEmbedAIDelivery,
   DirectAdapterDelivery,
   isDirectAdapterDelivery,
   readDeliveryMeta,
   type AIDelivery,
   type AIDeliveryMeta,
-  type EmbedAIDeliveryConfig,
 } from "./delivery";
-export { AI_ADAPTER_BOUNDARY } from "./adapter";
+export {
+  AI_ADAPTER_BOUNDARY,
+  createEmbedAIDelivery,
+  type EmbedAIDeliveryConfig,
+} from "./adapter";
 export {
   AI_CONTRACT_BOUNDARY,
   AI_CONTRACT_VERSION,

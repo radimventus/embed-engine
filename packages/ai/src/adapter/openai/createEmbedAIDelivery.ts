@@ -1,15 +1,16 @@
 /**
- * Embed Delivery bootstrap (WP-B).
+ * Embed Delivery bootstrap — OpenAI Adapter wiring (CAP-AI-ADAPTER-01).
  *
- * Owns Adapter selection for Embed hosts. Experience passes config only —
- * never constructs OpenAIProvider.
+ * Lives under adapter/openai so Delivery stays vendor-neutral.
+ * Experience passes config only — never constructs OpenAIAdapter.
  */
 
-import type { ChatRequest } from "../models/ChatRequest";
-import type { ChatResponse } from "../models/ChatResponse";
-import { OpenAIProvider } from "../providers/OpenAIProvider";
-import type { AIDelivery } from "./AIDelivery";
-import { createDirectAdapterDelivery } from "./DirectAdapterDelivery";
+import type { ChatRequest } from "../../models/ChatRequest";
+import type { ChatResponse } from "../../models/ChatResponse";
+import type { AIDelivery } from "../../delivery/AIDelivery";
+import { createDirectAdapterDelivery } from "../../delivery/DirectAdapterDelivery";
+import { OpenAIAdapter } from "./OpenAIAdapter";
+import { missingOpenAIApiKeyFailure } from "./errors";
 
 export type EmbedAIDeliveryConfig = {
   /** When missing/empty → same missing-key failure as previous Experience bootstrap. */
@@ -28,16 +29,14 @@ export function createEmbedAIDelivery(
   if (apiKey.length === 0) {
     return createDirectAdapterDelivery({
       async chat(_request: ChatRequest): Promise<ChatResponse> {
-        throw new Error(
-          "OpenAIProvider: missing API key. Set OPENAI_API_KEY or pass apiKey.",
-        );
+        throw missingOpenAIApiKeyFailure();
       },
     });
   }
 
   const model = config.model?.trim();
   return createDirectAdapterDelivery(
-    new OpenAIProvider({
+    new OpenAIAdapter({
       apiKey,
       ...(model !== undefined && model.length > 0 ? { model } : {}),
     }),

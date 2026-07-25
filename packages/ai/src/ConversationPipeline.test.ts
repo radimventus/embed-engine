@@ -234,9 +234,28 @@ describe("PT-011 Architecture Validation", () => {
       join(ROOT, "src/services/AIService.ts"),
       "utf8",
     );
-    assert.doesNotMatch(source, /OpenAIProvider/);
+    assert.doesNotMatch(source, /OpenAIProvider|OpenAIAdapter/);
     assert.doesNotMatch(source, /from "\.\.\/providers\/OpenAI/);
+    assert.doesNotMatch(source, /from "\.\.\/adapter\/openai/);
     assert.match(source, /AIDelivery|delivery\.chat/);
+  });
+
+  it("Delivery must not import OpenAI Adapter", () => {
+    const deliveryIndex = readFileSync(
+      join(ROOT, "src/delivery/index.ts"),
+      "utf8",
+    );
+    const direct = readFileSync(
+      join(ROOT, "src/delivery/DirectAdapterDelivery.ts"),
+      "utf8",
+    );
+    const port = readFileSync(join(ROOT, "src/delivery/AIDelivery.ts"), "utf8");
+    for (const source of [deliveryIndex, direct, port]) {
+      assert.doesNotMatch(
+        source,
+        /from\s+["'][^"']*openai|OpenAIAdapter|OpenAIProvider|OPENAI_|api\.openai\.com/i,
+      );
+    }
   });
 
   it("AIService source wires Analyzer + Memory + PromptBuilder", () => {

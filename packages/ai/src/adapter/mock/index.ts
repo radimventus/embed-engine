@@ -1,6 +1,5 @@
 /**
- * Compat re-export — Mock Adapter lives under `adapter/mock/`.
- * @deprecated Import from `@embed-engine/ai` or `adapter/mock`.
+ * Mock Adapter package surface.
  */
 
 export {
@@ -11,4 +10,4 @@ export {
   MOCK_RESPONSE_CONTENT,
   type MockAdapterOptions,
   type MockProviderOptions,
-} from "../adapter/mock";
+} from "./MockAdapter";

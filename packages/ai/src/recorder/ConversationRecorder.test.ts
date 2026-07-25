@@ -175,7 +175,7 @@ describe("PT-012 Recorder Architecture Validation", () => {
   it("PromptBuilder, Provider, and Memory do not import recorder", () => {
     for (const relative of [
       "src/prompt/PromptBuilder.ts",
-      "src/providers/OpenAIProvider.ts",
+      "src/adapter/openai/OpenAIAdapter.ts",
       "src/memory/DecisionMemoryService.ts",
     ]) {
       const source = readFileSync(join(PACKAGE_ROOT, relative), "utf8");

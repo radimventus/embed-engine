@@ -1,13 +1,6 @@
 /**
- * PT-004 — LLM Provider interface.
- *
- * Sole bridge from Conis AI to any language model.
- * Implementations are swappable — Runtime and AIService must not know which.
+ * Compat re-export — Adapter Contract lives under `adapter/port.ts`.
+ * @deprecated Import from `../adapter/port` or package root `LLMProvider` / `AIAdapter`.
  */
 
-import type { ChatRequest } from "../models/ChatRequest";
-import type { ChatResponse } from "../models/ChatResponse";
-
-export interface LLMProvider {
-  chat(request: ChatRequest): Promise<ChatResponse>;
-}
+export type { AIAdapter, LLMProvider } from "../adapter/port";

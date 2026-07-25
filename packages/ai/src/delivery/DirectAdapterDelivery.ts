@@ -1,21 +1,21 @@
 /**
- * Direct Adapter Delivery — wraps today's Adapter port (LLMProvider).
+ * Direct Adapter Delivery — wraps AIAdapter behind AIDelivery.
  *
  * Default Delivery mode for Local/tests until ACC-01 wire + Gateway exist.
- * Runtime depends on AIDelivery only; this module may know LLMProvider.
+ * Runtime depends on AIDelivery only; this module may know AIAdapter port only.
  */
 
 import type { ChatRequest } from "../models/ChatRequest";
 import type { ChatResponse } from "../models/ChatResponse";
-import type { LLMProvider } from "../providers/LLMProvider";
+import type { AIAdapter } from "../adapter/port";
 import type { AIDelivery } from "./AIDelivery";
 
 export class DirectAdapterDelivery implements AIDelivery {
   readonly id: string;
   readonly model: string | null;
 
-  constructor(readonly adapter: LLMProvider) {
-    const meta = adapter as LLMProvider & {
+  constructor(readonly adapter: AIAdapter) {
+    const meta = adapter as AIAdapter & {
       readonly id?: unknown;
       readonly model?: unknown;
     };
@@ -29,7 +29,7 @@ export class DirectAdapterDelivery implements AIDelivery {
 }
 
 export function createDirectAdapterDelivery(
-  adapter: LLMProvider,
+  adapter: AIAdapter,
 ): DirectAdapterDelivery {
   return new DirectAdapterDelivery(adapter);
 }

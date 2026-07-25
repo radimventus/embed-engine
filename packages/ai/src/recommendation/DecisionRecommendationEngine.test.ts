@@ -202,9 +202,9 @@ describe("PT-013 Architecture Validation", () => {
     assert.match(builder, /recommendation/);
   });
 
-  it("OpenAIProvider does not know RecommendationContext", () => {
+  it("OpenAIAdapter does not know RecommendationContext", () => {
     const provider = readFileSync(
-      join(PACKAGE_ROOT, "src/providers/OpenAIProvider.ts"),
+      join(PACKAGE_ROOT, "src/adapter/openai/OpenAIAdapter.ts"),
       "utf8",
     );
     assert.doesNotMatch(provider, /Recommendation|recommendation/);

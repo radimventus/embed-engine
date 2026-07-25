@@ -2,7 +2,7 @@
  * AI Delivery Port (AID-01 / WP-B).
  *
  * Vendor-neutral boundary between AI Runtime and Delivery.
- * No OpenAI, HTTP, Gateway, REST, or API keys here.
+ * No vendor SDKs, HTTP transport, Gateway, REST, or API keys here.
  */
 
 import type { ChatRequest } from "../models/ChatRequest";

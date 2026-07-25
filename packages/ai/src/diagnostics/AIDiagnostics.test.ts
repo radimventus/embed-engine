@@ -185,13 +185,13 @@ describe("PT-012 AI Diagnostics", () => {
 });
 
 describe("PT-012 Architecture Validation", () => {
-  it("PromptBuilder and OpenAIProvider do not import diagnostics", () => {
+  it("PromptBuilder and OpenAIAdapter do not import diagnostics", () => {
     const promptBuilder = readFileSync(
       join(PACKAGE_ROOT, "src/prompt/PromptBuilder.ts"),
       "utf8",
     );
     const provider = readFileSync(
-      join(PACKAGE_ROOT, "src/providers/OpenAIProvider.ts"),
+      join(PACKAGE_ROOT, "src/adapter/openai/OpenAIAdapter.ts"),
       "utf8",
     );
     const memory = readFileSync(

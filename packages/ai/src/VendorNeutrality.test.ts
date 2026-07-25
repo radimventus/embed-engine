@@ -25,18 +25,15 @@ function listSourceFiles(dir: string): string[] {
 }
 
 function isOpenAIVendorFile(file: string): boolean {
-  return (
-    file.endsWith(`${join("providers", "OpenAIProvider.ts")}`) ||
-    file.endsWith(`${join("delivery", "createEmbedAIDelivery.ts")}`)
-  );
+  return /[/\\]adapter[/\\]openai[/\\]/.test(file);
 }
 
 /**
- * PT-004 / PT-006 / WP-B — vendor neutrality.
- * OpenAI mapping may live only inside OpenAIProvider (+ Delivery Embed bootstrap wiring).
+ * PT-004 / PT-006 / CAP-AI-ADAPTER-01 — vendor neutrality.
+ * OpenAI mapping may live only inside adapter/openai.
  */
-describe("PT-004 / PT-006 vendor neutrality", () => {
-  it("non-provider sources omit vendor SDK imports and API secrets", () => {
+describe("PT-004 / PT-006 / CAP-AI-ADAPTER-01 vendor neutrality", () => {
+  it("non-adapter sources omit vendor SDK imports and API secrets", () => {
     const forbiddenEverywhere = [
       'from "openai"',
       "from 'openai'",
@@ -45,7 +42,7 @@ describe("PT-004 / PT-006 vendor neutrality", () => {
       "@google/generative-ai",
     ];
 
-    const forbiddenOutsideOpenAIProvider = [
+    const forbiddenOutsideOpenAIAdapter = [
       "api.openai.com",
       "OPENAI_API_KEY",
       "OPENAI_MODEL",
@@ -70,11 +67,11 @@ describe("PT-004 / PT-006 vendor neutrality", () => {
         continue;
       }
 
-      for (const token of forbiddenOutsideOpenAIProvider) {
+      for (const token of forbiddenOutsideOpenAIAdapter) {
         assert.equal(
           code.includes(token),
           false,
-          `${file} must not contain ${token} (OpenAI stays in Adapter/Delivery bootstrap)`,
+          `${file} must not contain ${token} (OpenAI stays in adapter/openai)`,
         );
       }
     }
@@ -96,6 +93,35 @@ describe("PT-004 / PT-006 vendor neutrality", () => {
         `package.json must not depend on ${name}`,
       );
     }
+  });
+
+  it("Delivery and Runtime do not import OpenAI Adapter", () => {
+    const deliveryDir = join(packageRoot, "src", "delivery");
+    const runtimeService = join(
+      packageRoot,
+      "src",
+      "services",
+      "AIService.ts",
+    );
+
+    for (const file of listSourceFiles(deliveryDir)) {
+      const code = readFileSync(file, "utf8");
+      assert.equal(
+        /from\s+["'][^"']*openai|OpenAIAdapter|OpenAIProvider|OPENAI_|api\.openai\.com/i.test(
+          code,
+        ),
+        false,
+        `${file} must stay vendor-neutral`,
+      );
+      assert.equal(
+        /\bfetch\s*\(|authorization|Bearer /i.test(code),
+        false,
+        `${file} must not contain HTTP transport`,
+      );
+    }
+
+    const aiService = readFileSync(runtimeService, "utf8");
+    assert.doesNotMatch(aiService, /OpenAI|adapter\/openai|OPENAI_/);
   });
 
   it("Runtime package does not depend on @embed-engine/ai", () => {

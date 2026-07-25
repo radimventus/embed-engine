@@ -3,15 +3,16 @@ import { describe, it } from "node:test";
 
 import type { DecisionContext } from "@embed-engine/runtime";
 
-import type { ChatRequest } from "../models/ChatRequest";
-import { createSystemPrompt } from "../models/SystemPrompt";
-import { emptyKnowledgeContext } from "../prompt/models/KnowledgeContext";
-import { emptyResolvedMemory } from "../memory/models/ResolvedMemory";
-import { emptyRecommendationContext } from "../recommendation/models/RecommendationContext";
+import type { ChatRequest } from "../../models/ChatRequest";
+import { createSystemPrompt } from "../../models/SystemPrompt";
+import { emptyKnowledgeContext } from "../../prompt/models/KnowledgeContext";
+import { emptyResolvedMemory } from "../../memory/models/ResolvedMemory";
+import { emptyRecommendationContext } from "../../recommendation/models/RecommendationContext";
 import {
   MOCK_RESPONSE_CONTENT,
+  MockAdapter,
   MockProvider,
-} from "./MockProvider";
+} from "./MockAdapter";
 
 function sampleRequest(userText: string): ChatRequest {
   const decision: DecisionContext = {
@@ -49,9 +50,9 @@ function sampleRequest(userText: string): ChatRequest {
   };
 }
 
-describe("PT-004 MockProvider", () => {
+describe("CAP-AI-ADAPTER-01 Mock Adapter", () => {
   it("returns a valid ChatResponse without network", async () => {
-    const provider = new MockProvider();
+    const provider = new MockAdapter();
     const response = await provider.chat(
       sampleRequest("Jaké jsou provozní náklady?"),
     );
@@ -68,9 +69,15 @@ describe("PT-004 MockProvider", () => {
   });
 
   it("allows custom mock content", async () => {
-    const provider = new MockProvider({ content: "custom-mock" });
+    const provider = new MockAdapter({ content: "custom-mock" });
     const response = await provider.chat(sampleRequest("hello"));
     assert.match(response.content, /custom-mock/);
     assert.equal(MOCK_RESPONSE_CONTENT.includes("[Mock Response]"), true);
+  });
+
+  it("MockProvider alias implements the same Adapter Contract", async () => {
+    const provider = new MockProvider();
+    const response = await provider.chat(sampleRequest("alias"));
+    assert.match(response.content, /Mock Response/);
   });
 });
