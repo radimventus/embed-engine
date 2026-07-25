@@ -53,10 +53,7 @@ export type {
 export { PROMPT_SECTION_ORDER } from "./models/PromptPackage";
 
 export type { DecisionMemory, MemoryItem, MemoryValue } from "./models/DecisionMemory";
-export {
-  emptyDecisionMemory,
-  mergeDecisionMemory,
-} from "./models/DecisionMemory";
+export { emptyDecisionMemory } from "./models/DecisionMemory";
 
 export type {
   KnowledgeContext,

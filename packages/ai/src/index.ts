@@ -62,7 +62,6 @@ export {
   formatMemoryContextSection,
   DEFAULT_CONVERSATION_WINDOW,
   emptyDecisionMemory,
-  mergeDecisionMemory,
   emptyKnowledgeContext,
   PROMPT_SECTION_ORDER,
   MEMORY_SECTION_ORDER,
@@ -80,6 +79,14 @@ export {
   type ConversationContextInput,
   type MemorySectionId,
 } from "./prompt";
+
+export {
+  createDecisionMemoryService,
+  DecisionMemoryService,
+  type DecisionMemoryServiceOptions,
+  type MemoryUpdateRequest,
+  type MemoryUpdateResult,
+} from "./memory";
 
 export {
   createConversationAnalyzer,

@@ -1,21 +1,25 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import {
-  emptyDecisionMemory,
-  mergeDecisionMemory,
-} from "./DecisionMemory";
+import { emptyAnalysisResult } from "../../analyzer/models/AnalysisResult";
+import { emptyDecisionMemory } from "./DecisionMemory";
+import { createDecisionMemoryService } from "../../memory/DecisionMemoryService";
 
-describe("DecisionMemory merge (PT-007 stub / future 007B)", () => {
-  it("mergeDecisionMemory only appends new keys", () => {
-    const base = mergeDecisionMemory(emptyDecisionMemory(), {
-      facts: [{ key: "familySize", value: 4 }],
+describe("DecisionMemory model + Service write path (PT-009)", () => {
+  it("writes only through DecisionMemoryService", () => {
+    const service = createDecisionMemoryService({
+      initial: emptyDecisionMemory(),
     });
-    const merged = mergeDecisionMemory(base, {
-      facts: [{ key: "familySize", value: 5 }],
-      preferences: [{ key: "style", value: "modern" }],
+
+    service.update({
+      analysis: {
+        ...emptyAnalysisResult(1),
+        facts: [{ key: "familySize", value: 4 }],
+      },
     });
-    assert.deepEqual(merged.facts, [{ key: "familySize", value: 4 }]);
-    assert.deepEqual(merged.preferences, [{ key: "style", value: "modern" }]);
+
+    assert.deepEqual(service.getMemory().facts, [
+      { key: "familySize", value: 4 },
+    ]);
   });
 });
