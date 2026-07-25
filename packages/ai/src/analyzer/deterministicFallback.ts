@@ -65,6 +65,18 @@ export function deterministicAnalyze(message: string): AnalysisResult {
     }
   }
 
+  // Accepted heating (opinion change) — check before reject so "vlastně nevadí" wins
+  const acceptsHeatPump =
+    /(vlastně|už|now|actually)[\s\S]{0,48}(nevadí|nevadilo|ok|souhlas)/i.test(
+      text,
+    ) ||
+    /(nevadí|nevadilo|akceptujeme|souhlasíme)[\s\S]{0,40}(tepelné\s+čerpadlo|tepelne\s+cerpadlo|heat[\s-]?pump)/i.test(
+      text,
+    ) ||
+    /(tepelné\s+čerpadlo|tepelne\s+cerpadlo|heat[\s-]?pump)[\s\S]{0,40}(nevadí|ok|accept)/i.test(
+      text,
+    );
+
   // Rejected heating option
   const rejectsHeatPump =
     /(nechceme|nechci|nechce|without|don't want|do not want|no)\b[\s\S]{0,40}(tepelné\s+čerpadlo|tepelne\s+cerpadlo|heat[\s-]?pump)/i.test(
@@ -73,7 +85,10 @@ export function deterministicAnalyze(message: string): AnalysisResult {
     /(tepelné\s+čerpadlo|tepelne\s+cerpadlo|heat[\s-]?pump)\b[\s\S]{0,40}(nechceme|nechci|ne)/i.test(
       text,
     );
-  if (rejectsHeatPump) {
+
+  if (acceptsHeatPump) {
+    acceptedOptions.push(entry("heating", "heat-pump"));
+  } else if (rejectsHeatPump) {
     rejectedOptions.push(entry("heating", "heat-pump"));
   }
 

@@ -20,6 +20,9 @@ importers:
 
   apps/client-studio:
     dependencies:
+      '@embed-engine/ai':
+        specifier: workspace:*
+        version: link:../../packages/ai
       '@embed-engine/contracts':
         specifier: workspace:*
         version: link:../../packages/contracts

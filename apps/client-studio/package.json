@@ -15,6 +15,7 @@
     "test": "tsx --test src/features/client-studio/sections/AIAdvisor/experiencePresentationOwnership.test.ts src/features/client-studio/sections/HouseNavigator/houseNavigator.runtime.test.ts src/features/client-studio/sections/HouseNavigator/spatialNavigation.test.ts src/features/client-studio/runtime/synchronizedExperience.test.ts src/features/client-studio/runtime/mediaProjectionBoundary.test.ts src/features/client-studio/runtime/providerContextBoundary.test.ts src/features/client-studio/foundation/applicationFoundation.test.ts src/features/client-studio/sections/Hero/heroExperience.test.ts src/features/client-studio/sections/PropertyExplorer/propertyExplorer.test.ts src/features/client-studio/sections/PriorityEngine/priorityExperience.test.ts src/features/client-studio/sections/DecisionTerminal/decisionTerminal.test.ts src/features/client-studio/pilot/decisionTerminalLabels.test.ts src/features/client-studio/sections/AuditLeadCapture/commercialConversion.test.ts src/features/client-studio/analytics/decisionAnalytics.test.ts src/features/client-studio/projection/projectDecisionStoryExperience.test.ts"
   },
   "dependencies": {
+    "@embed-engine/ai": "workspace:*",
     "@embed-engine/contracts": "workspace:*",
     "@embed-engine/core": "workspace:*",
     "@embed-engine/decision": "workspace:*",

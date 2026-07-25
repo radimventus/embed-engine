@@ -45,8 +45,18 @@ export {
 export {
   AIService,
   createAIService,
+  DEFAULT_CONVERSATION_TIMEOUT_MS,
   type AIServiceOptions,
+  type SendMessageInput,
+  type SendMessageResult,
 } from "./services/AIService";
+
+export {
+  ConversationError,
+  conversationUserMessage,
+  mapConversationError,
+  type ConversationErrorCode,
+} from "./services/ConversationError";
 
 export {
   createPromptBuilder,

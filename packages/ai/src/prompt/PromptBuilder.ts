@@ -9,6 +9,7 @@ import type { DecisionContext } from "@embed-engine/runtime";
 
 import type { ChatMessage, ChatRequest } from "../models/ChatRequest";
 import type { PromptContext } from "../models/PromptContext";
+import { createSystemPrompt } from "../models/SystemPrompt";
 import {
   buildConversationContext,
   DEFAULT_CONVERSATION_WINDOW,
@@ -107,9 +108,16 @@ export function promptPackageToChatRequest(
   sessionId: string,
   promptPackage: PromptPackage,
 ): ChatRequest {
+  // Provider is pure transport: fold assembled sections into system content.
+  // Conversation turns stay in messages; user-message section is duplicated there.
+  const systemContent = promptPackage.sections
+    .filter((section) => section.id !== "user-message")
+    .map((section) => section.content)
+    .join("\n\n");
+
   return Object.freeze({
     sessionId,
-    systemPrompt: promptPackage.systemPrompt,
+    systemPrompt: createSystemPrompt(systemContent),
     context: promptPackage.context,
     messages: promptPackage.messages,
   });

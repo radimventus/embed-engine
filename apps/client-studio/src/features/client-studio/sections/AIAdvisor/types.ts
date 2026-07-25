@@ -5,9 +5,8 @@ export type Message = {
   time: string;
 };
 
-/** Non-semantic system chrome — not an interpretation claim. */
-export const AI_PLACEHOLDER_RESPONSE =
-  'AI odpověď bude implementována v další fázi.';
+/** Non-semantic chrome while AIService processes a turn (PT-011). */
+export const AI_LOADING_RESPONSE = 'Přemýšlím…';
 
 export function formatMessageTime(date: Date): string {
   const hours = date.getHours().toString().padStart(2, '0');

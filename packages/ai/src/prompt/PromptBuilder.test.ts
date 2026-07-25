@@ -106,7 +106,9 @@ describe("PT-005 Prompt Builder", () => {
     });
 
     const request = promptPackageToChatRequest("sess-mock", promptPackage);
-    assert.equal(request.systemPrompt, promptPackage.systemPrompt);
+    assert.match(request.systemPrompt.content, /Decision Memory/);
+    assert.match(request.systemPrompt.content, /Decision Context/);
+    assert.match(request.systemPrompt.content, /ASTAV-M01/);
     assert.equal(request.context, promptPackage.context);
     assert.equal(request.messages, promptPackage.messages);
 

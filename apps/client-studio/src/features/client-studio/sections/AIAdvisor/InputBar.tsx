@@ -8,14 +8,15 @@ type InputBarProps = {
   value: string;
   onChange: (value: string) => void;
   onSend: () => void;
+  disabled?: boolean;
 };
 
 /**
  * Light field: transparent fill, goldIntense border only.
  * Row width matches FAQ (680px). Height stays 50px.
  */
-export function InputBar({ value, onChange, onSend }: InputBarProps) {
-  const canSend = value.trim().length > 0;
+export function InputBar({ value, onChange, onSend, disabled = false }: InputBarProps) {
+  const canSend = !disabled && value.trim().length > 0;
 
   return (
     <div className={`${AI_ADVISOR_INPUT_GAP_CLASS} ${FAQ_ACCORDION_LIST_WIDTH_CLASS} flex items-stretch gap-3`}>
@@ -27,7 +28,14 @@ export function InputBar({ value, onChange, onSend }: InputBarProps) {
           rows={1}
           value={value}
           placeholder="Zadejte svůj dotaz"
+          disabled={disabled}
           onChange={(event) => onChange(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' && !event.shiftKey && canSend) {
+              event.preventDefault();
+              onSend();
+            }
+          }}
           className="h-[50px] min-h-[50px] w-full min-w-0 resize-none border-0 bg-transparent px-0 py-0 leading-[50px]"
         />
       </div>
