@@ -26,7 +26,6 @@ import {
   measurePromptPackage,
   countActiveResolved,
   countMemoryBuckets,
-  readProviderMeta,
   type AIDiagnostics,
   type ConversationTrace,
   type ConversationTurnTrace,
@@ -56,6 +55,14 @@ import {
   promptPackageToChatRequest,
   type PromptBuilder,
 } from "../prompt/PromptBuilder";
+import type {
+  AIDelivery,
+} from "../delivery/AIDelivery";
+import { readDeliveryMeta } from "../delivery/AIDelivery";
+import {
+  createDirectAdapterDelivery,
+  isDirectAdapterDelivery,
+} from "../delivery/DirectAdapterDelivery";
 import type { LLMProvider } from "../providers/LLMProvider";
 import {
   ConversationError,
@@ -66,7 +73,8 @@ import {
 export const DEFAULT_CONVERSATION_TIMEOUT_MS = 30_000;
 
 export type AIServiceOptions = {
-  readonly provider: LLMProvider;
+  /** Vendor-neutral Delivery Port (AID-01 / WP-B). */
+  readonly delivery: AIDelivery;
   /** In-memory pilot session id (new on each page load by default). */
   readonly sessionId?: string;
   readonly requestTimeoutMs?: number;
@@ -102,7 +110,7 @@ export type SendMessageResult = {
 };
 
 export class AIService {
-  private provider: LLMProvider;
+  private delivery: AIDelivery;
   private analyzer: ConversationAnalyzer;
   private readonly memoryService: DecisionMemoryService;
   private readonly promptBuilder: PromptBuilder;
@@ -116,7 +124,7 @@ export class AIService {
   private history: ChatMessage[] = [];
 
   constructor(options: AIServiceOptions) {
-    this.provider = options.provider;
+    this.delivery = options.delivery;
     this.sessionId = options.sessionId ?? createSessionId();
     this.conversationId = this.sessionId;
     this.requestTimeoutMs =
@@ -129,7 +137,9 @@ export class AIService {
     this.analyzer =
       options.analyzer ??
       createConversationAnalyzer(
-        createAnalyzerProvider({ llm: options.provider }),
+        createAnalyzerProvider({
+          llm: { chat: (request) => this.delivery.chat(request) },
+        }),
       );
     this.diagnostics =
       options.diagnostics === false
@@ -149,17 +159,40 @@ export class AIService {
           }));
   }
 
-  /** Current provider (for tests / diagnostics — not vendor-specific). */
-  getProvider(): LLMProvider {
-    return this.provider;
+  /** Current Delivery Port. */
+  getDelivery(): AIDelivery {
+    return this.delivery;
   }
 
-  /** Swap provider without changing callers (PT-004 validation). */
-  setProvider(provider: LLMProvider): void {
-    this.provider = provider;
+  /** Swap Delivery without changing callers. */
+  setDelivery(delivery: AIDelivery): void {
+    this.delivery = delivery;
     this.analyzer = createConversationAnalyzer(
-      createAnalyzerProvider({ llm: provider }),
+      createAnalyzerProvider({
+        llm: { chat: (request) => this.delivery.chat(request) },
+      }),
     );
+  }
+
+  /**
+   * Compat: unwrap Direct Adapter Delivery to Adapter port (tests / PT-004).
+   * Prefer getDelivery().
+   */
+  getProvider(): LLMProvider {
+    if (isDirectAdapterDelivery(this.delivery)) {
+      return this.delivery.adapter;
+    }
+    return {
+      chat: (request) => this.delivery.chat(request),
+    };
+  }
+
+  /**
+   * Compat: wrap Adapter as Direct Adapter Delivery.
+   * Prefer setDelivery().
+   */
+  setProvider(provider: LLMProvider): void {
+    this.setDelivery(createDirectAdapterDelivery(provider));
   }
 
   getSessionId(): string {
@@ -192,12 +225,12 @@ export class AIService {
   }
 
   chat(request: ChatRequest): Promise<ChatResponse> {
-    return this.provider.chat(request);
+    return this.delivery.chat(request);
   }
 
   /**
    * Transport a PromptPackage assembled by PromptBuilder.
-   * Provider never composes prompts — only receives the package as ChatRequest.
+   * Delivery/Adapter never compose prompts — only receive ChatRequest.
    */
   chatWithPackage(
     sessionId: string,
@@ -208,7 +241,7 @@ export class AIService {
 
   /**
    * PT-011 — Full conversation turn:
-   * Analyzer → DecisionMemoryService → PromptBuilder (ResolvedMemory) → Provider.
+   * Analyzer → DecisionMemoryService → PromptBuilder (ResolvedMemory) → Delivery.
    * PT-012 — Observes latencies / tokens / memory counts without changing results.
    * PT-012 Recorder — optional full audit snapshots for debug / replay.
    */
@@ -223,6 +256,7 @@ export class AIService {
 
     const conversation = this.createConversationTrace();
     const totalStart = nowMs();
+    const deliveryMeta = readDeliveryMeta(this.delivery);
     let analyzerMs = 0;
     let memoryMs = 0;
     let resolutionMs = 0;
@@ -317,7 +351,6 @@ export class AIService {
       this.diagnostics.emitPhase(conversation, "prompt", promptBuilderMs);
       promptTrace = measurePromptPackage(promptPackage);
 
-      const providerMeta = readProviderMeta(this.provider);
       const providerStart = nowMs();
       let response: ChatResponse;
       try {
@@ -326,11 +359,12 @@ export class AIService {
           this.requestTimeoutMs,
         );
       } catch (providerError) {
+        console.error("AIService: provider error", providerError);
         providerMs = elapsedMs(providerStart);
         const mapped = mapConversationError(providerError);
         providerTrace = createProviderTrace({
-          providerId: providerMeta.providerId,
-          model: providerMeta.model,
+          providerId: deliveryMeta.deliveryId,
+          model: deliveryMeta.model,
           requestDurationMs: providerMs,
           responseDurationMs: providerMs,
           errorCode: mapped.code,
@@ -357,8 +391,8 @@ export class AIService {
           error: mapped.code,
           promptTokens: null,
           completionTokens: null,
-          providerId: providerMeta.providerId,
-          model: providerMeta.model,
+          providerId: deliveryMeta.deliveryId,
+          model: deliveryMeta.model,
         });
         throw mapped;
       }
@@ -367,8 +401,8 @@ export class AIService {
       this.diagnostics.emitPhase(conversation, "provider", providerMs);
 
       providerTrace = createProviderTrace({
-        providerId: providerMeta.providerId,
-        model: providerMeta.model,
+        providerId: deliveryMeta.deliveryId,
+        model: deliveryMeta.model,
         requestDurationMs: providerMs,
         responseDurationMs: providerMs,
         errorCode: null,
@@ -410,8 +444,8 @@ export class AIService {
           error: invalid.code,
           promptTokens: response.usage.promptTokens,
           completionTokens: response.usage.completionTokens,
-          providerId: providerMeta.providerId,
-          model: providerMeta.model,
+          providerId: deliveryMeta.deliveryId,
+          model: deliveryMeta.model,
         });
         throw invalid;
       }
@@ -446,8 +480,8 @@ export class AIService {
         error: null,
         promptTokens: response.usage.promptTokens,
         completionTokens: response.usage.completionTokens,
-        providerId: providerMeta.providerId,
-        model: providerMeta.model,
+        providerId: deliveryMeta.deliveryId,
+        model: deliveryMeta.model,
       });
 
       return Object.freeze({
@@ -479,14 +513,13 @@ export class AIService {
           errorCode: mapped.code,
         });
       }
-      const providerMeta = readProviderMeta(this.provider);
       recordAudit({
         response: null,
         error: mapped.code,
         promptTokens: tokenTrace?.promptTokens ?? null,
         completionTokens: tokenTrace?.completionTokens ?? null,
-        providerId: providerMeta.providerId,
-        model: providerMeta.model,
+        providerId: deliveryMeta.deliveryId,
+        model: deliveryMeta.model,
       });
       throw mapped;
     }
@@ -537,11 +570,25 @@ export class AIService {
   }
 }
 
+export function createAIServiceFromDelivery(
+  delivery: AIDelivery,
+  options: Omit<AIServiceOptions, "delivery"> = {},
+): AIService {
+  return new AIService({ delivery, ...options });
+}
+
+/**
+ * Compat factory — wraps Adapter (LLMProvider) as Direct Adapter Delivery.
+ * Prefer createAIServiceFromDelivery for new call sites.
+ */
 export function createAIService(
   provider: LLMProvider,
-  options: Omit<AIServiceOptions, "provider"> = {},
+  options: Omit<AIServiceOptions, "delivery"> = {},
 ): AIService {
-  return new AIService({ provider, ...options });
+  return createAIServiceFromDelivery(
+    createDirectAdapterDelivery(provider),
+    options,
+  );
 }
 
 function createSessionId(): string {

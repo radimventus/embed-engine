@@ -24,13 +24,16 @@ function listSourceFiles(dir: string): string[] {
   return files;
 }
 
-function isOpenAIProviderFile(file: string): boolean {
-  return file.endsWith(`${join("providers", "OpenAIProvider.ts")}`);
+function isOpenAIVendorFile(file: string): boolean {
+  return (
+    file.endsWith(`${join("providers", "OpenAIProvider.ts")}`) ||
+    file.endsWith(`${join("delivery", "createEmbedAIDelivery.ts")}`)
+  );
 }
 
 /**
- * PT-004 / PT-006 — vendor neutrality.
- * OpenAI mapping may live only inside OpenAIProvider.
+ * PT-004 / PT-006 / WP-B — vendor neutrality.
+ * OpenAI mapping may live only inside OpenAIProvider (+ Delivery Embed bootstrap wiring).
  */
 describe("PT-004 / PT-006 vendor neutrality", () => {
   it("non-provider sources omit vendor SDK imports and API secrets", () => {
@@ -63,7 +66,7 @@ describe("PT-004 / PT-006 vendor neutrality", () => {
         );
       }
 
-      if (isOpenAIProviderFile(file)) {
+      if (isOpenAIVendorFile(file)) {
         continue;
       }
 
@@ -71,7 +74,7 @@ describe("PT-004 / PT-006 vendor neutrality", () => {
         assert.equal(
           code.includes(token),
           false,
-          `${file} must not contain ${token} (OpenAI stays in OpenAIProvider)`,
+          `${file} must not contain ${token} (OpenAI stays in Adapter/Delivery bootstrap)`,
         );
       }
     }

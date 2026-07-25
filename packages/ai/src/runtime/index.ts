@@ -15,6 +15,7 @@ export const AI_RUNTIME_BOUNDARY = "AID-01/runtime" as const;
 export {
   AIService,
   createAIService,
+  createAIServiceFromDelivery,
   DEFAULT_CONVERSATION_TIMEOUT_MS,
   type AIServiceOptions,
   type SendMessageInput,

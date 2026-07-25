@@ -2,19 +2,16 @@
  * PT-011 / PT-012 — Bootstrap AIService for Embed Experience (Client Studio).
  *
  * Creates transport once per page load. Session lives in AIService memory only.
- * Chat UI uses getEmbedAIService() — never constructs Provider in the chat component.
- * Diagnostics / Recorder are passive and disableable via env flags.
+ * Chat UI uses getEmbedAIService() — never constructs Adapter / Provider.
+ * Delivery owns Adapter bootstrap (WP-B).
  */
 
 import {
   createAIDiagnostics,
-  createAIService,
+  createAIServiceFromDelivery,
   createConversationRecorder,
-  OpenAIProvider,
+  createEmbedAIDelivery,
   type AIService,
-  type ChatRequest,
-  type ChatResponse,
-  type LLMProvider,
 } from '@embed-engine/ai';
 
 let embedAIService: AIService | null = null;
@@ -36,18 +33,24 @@ export function getEmbedAIService(): AIService {
       ? `embed-${crypto.randomUUID()}`
       : `embed-${Date.now().toString(36)}`;
 
-  embedAIService = createAIService(createEmbedProvider(), {
-    sessionId,
-    diagnostics: createAIDiagnostics({
-      enabled: diagnosticsEnabled,
-      console: diagnosticsEnabled,
+  embedAIService = createAIServiceFromDelivery(
+    createEmbedAIDelivery({
+      apiKey: readViteEnv('VITE_OPENAI_API_KEY'),
+      model: readViteEnv('VITE_OPENAI_MODEL'),
     }),
-    recorder: createConversationRecorder({
+    {
       sessionId,
-      conversationId: sessionId,
-      enabled: recorderEnabled,
-    }),
-  });
+      diagnostics: createAIDiagnostics({
+        enabled: diagnosticsEnabled,
+        console: diagnosticsEnabled,
+      }),
+      recorder: createConversationRecorder({
+        sessionId,
+        conversationId: sessionId,
+        enabled: recorderEnabled,
+      }),
+    },
+  );
   return embedAIService;
 }
 
@@ -59,25 +62,6 @@ export function exportEmbedConversationJSON(pretty = true): string {
 /** Test escape hatch — replace singleton. */
 export function setEmbedAIServiceForTests(service: AIService | null): void {
   embedAIService = service;
-}
-
-function createEmbedProvider(): LLMProvider {
-  const apiKey = readViteEnv('VITE_OPENAI_API_KEY');
-  if (apiKey === undefined) {
-    return {
-      async chat(_request: ChatRequest): Promise<ChatResponse> {
-        throw new Error(
-          'OpenAIProvider: missing API key. Set OPENAI_API_KEY or pass apiKey.',
-        );
-      },
-    };
-  }
-
-  const model = readViteEnv('VITE_OPENAI_MODEL');
-  return new OpenAIProvider({
-    apiKey,
-    ...(model !== undefined ? { model } : {}),
-  });
 }
 
 function readViteEnv(

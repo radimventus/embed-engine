@@ -48,6 +48,7 @@ export {
 export {
   AIService,
   createAIService,
+  createAIServiceFromDelivery,
   DEFAULT_CONVERSATION_TIMEOUT_MS,
   type AIServiceOptions,
   type SendMessageInput,
@@ -190,9 +191,19 @@ export {
   type AnalysisServiceOptions,
 } from "./analyzer";
 
-/** WP-A — architectural boundary markers (additive; non-breaking). */
+/** WP-A / WP-B — architectural boundaries + Delivery Port (additive). */
 export { AI_RUNTIME_BOUNDARY } from "./runtime";
-export { AI_DELIVERY_BOUNDARY } from "./delivery";
+export {
+  AI_DELIVERY_BOUNDARY,
+  createDirectAdapterDelivery,
+  createEmbedAIDelivery,
+  DirectAdapterDelivery,
+  isDirectAdapterDelivery,
+  readDeliveryMeta,
+  type AIDelivery,
+  type AIDeliveryMeta,
+  type EmbedAIDeliveryConfig,
+} from "./delivery";
 export { AI_ADAPTER_BOUNDARY } from "./adapter";
 export {
   AI_CONTRACT_BOUNDARY,
