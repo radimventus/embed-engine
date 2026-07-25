@@ -7,12 +7,24 @@
  * - disabled  — not_configured (graceful UX)
  *
  * Experience must call this with no secrets.
+ *
+ * auto:
+ * - deliveryUrl present → published (RemoteDelivery)
+ * - production / published host without URL → disabled (never LocalDelivery)
+ * - development host → local (LocalDelivery when credentials exist)
  */
 
 import type { AIDelivery } from "./AIDelivery";
-import { createNotConfiguredDelivery } from "./NotConfiguredDelivery";
+import { readDeliveryMeta } from "./AIDelivery";
+import {
+  createNotConfiguredDelivery,
+  type NotConfiguredReason,
+} from "./NotConfiguredDelivery";
 import { createRemoteDelivery } from "./RemoteDelivery";
-import { tryCreateLocalDevDelivery } from "../adapter/openai/createLocalDevDelivery";
+import {
+  detectLocalOpenAiCredentialSource,
+  tryCreateLocalDevDelivery,
+} from "../adapter/openai/createLocalDevDelivery";
 
 export type EmbedAIDeliveryMode = "local" | "published" | "disabled";
 
@@ -20,8 +32,8 @@ export type EmbedAIDeliveryConfig = {
   /**
    * Force mode. Default: auto
    * - published when a public delivery URL is available
-   * - else local when trusted-host credentials exist
-   * - else disabled
+   * - production host without URL → disabled (no LocalDelivery fallback)
+   * - else local when on a trusted Dev host
    */
   readonly mode?: EmbedAIDeliveryMode | "auto";
   /**
@@ -72,6 +84,12 @@ export function resolveEmbedAIDeliveryBinding(
   if (deliveryUrl.length > 0) {
     return { mode: "published", deliveryUrl };
   }
+
+  // Published / production hosts must not silently fall back to LocalDelivery.
+  if (isProductionHost()) {
+    return { mode: "disabled", deliveryUrl: null };
+  }
+
   return { mode: "local", deliveryUrl: null };
 }
 
@@ -83,23 +101,64 @@ export function createEmbedAIDelivery(
   config: EmbedAIDeliveryConfig = {},
 ): AIDelivery {
   const binding = resolveEmbedAIDeliveryBinding(config);
+  const credentials = detectLocalOpenAiCredentialSource();
 
   if (binding.mode === "published" && binding.deliveryUrl !== null) {
-    return createRemoteDelivery({
+    const delivery = createRemoteDelivery({
       deliveryUrl: binding.deliveryUrl,
       id: "published-remote",
     });
+    logDeliveryDiagnostics({
+      mode: binding.mode,
+      implementation: readDeliveryMeta(delivery).deliveryId,
+      reason: "public deliveryUrl resolved",
+      deliveryUrl: binding.deliveryUrl,
+      credentials,
+    });
+    return delivery;
   }
 
   if (binding.mode === "local") {
     const local = tryCreateLocalDevDelivery();
     if (local !== null) {
+      logDeliveryDiagnostics({
+        mode: binding.mode,
+        implementation: readDeliveryMeta(local).deliveryId,
+        reason: "local credentials present",
+        deliveryUrl: null,
+        credentials,
+      });
       return local;
     }
-    return createNotConfiguredDelivery();
+
+    const notConfigured = createNotConfiguredDelivery(
+      "missing_local_credentials",
+    );
+    logDeliveryDiagnostics({
+      mode: binding.mode,
+      implementation: readDeliveryMeta(notConfigured).deliveryId,
+      reason: "local credentials missing",
+      deliveryUrl: null,
+      credentials,
+    });
+    return notConfigured;
   }
 
-  return createNotConfiguredDelivery();
+  const reason: NotConfiguredReason =
+    config.mode === "disabled" ? "disabled" : "missing_delivery_url";
+
+  const notConfigured = createNotConfiguredDelivery(reason);
+  logDeliveryDiagnostics({
+    mode: binding.mode,
+    implementation: readDeliveryMeta(notConfigured).deliveryId,
+    reason:
+      reason === "missing_delivery_url"
+        ? "published host without deliveryUrl"
+        : "delivery explicitly disabled",
+    deliveryUrl: binding.deliveryUrl,
+    credentials,
+  });
+  return notConfigured;
 }
 
 function resolveDeliveryUrl(config: EmbedAIDeliveryConfig): string {
@@ -113,7 +172,7 @@ function resolveDeliveryUrl(config: EmbedAIDeliveryConfig): string {
     return fromWindow;
   }
 
-  const fromEnv = readPublicEnv("VITE_AI_DELIVERY_URL");
+  const fromEnv = readViteAiDeliveryUrl();
   if (fromEnv.length > 0) {
     return fromEnv.replace(/\/$/, "");
   }
@@ -135,12 +194,10 @@ function readWindowDeliveryUrl(): string {
   return value.trim().replace(/\/$/, "");
 }
 
-function readPublicEnv(name: string): string {
+/** Static member access — required for Vite env injection. */
+function readViteAiDeliveryUrl(): string {
   try {
-    const meta = import.meta as ImportMeta & {
-      readonly env?: Record<string, string | undefined>;
-    };
-    const value = meta.env?.[name];
+    const value = import.meta.env.VITE_AI_DELIVERY_URL;
     if (typeof value !== "string" || value.trim().length === 0) {
       return "";
     }
@@ -148,4 +205,56 @@ function readPublicEnv(name: string): string {
   } catch {
     return "";
   }
+}
+
+/**
+ * Production / Published Embed hosts (IIFE Release Snapshot).
+ * Dev Client Studio and Embed Demo stay on the LocalDelivery path.
+ */
+function isProductionHost(): boolean {
+  try {
+    if (import.meta.env.PROD === true) {
+      return true;
+    }
+    return import.meta.env.MODE === "production";
+  } catch {
+    return false;
+  }
+}
+
+function isDevDiagnosticsEnabled(): boolean {
+  try {
+    if (import.meta.env.DEV === true) {
+      return true;
+    }
+    return import.meta.env.MODE === "development";
+  } catch {
+    return false;
+  }
+}
+
+function logDeliveryDiagnostics(info: {
+  readonly mode: EmbedAIDeliveryMode;
+  readonly implementation: string;
+  readonly reason: string;
+  readonly deliveryUrl: string | null;
+  readonly credentials: {
+    readonly viteApiKey: "present" | "missing";
+    readonly processApiKey: "present" | "missing";
+  };
+}): void {
+  if (!isDevDiagnosticsEnabled()) {
+    return;
+  }
+  console.info(
+    [
+      "[AI Delivery]",
+      `mode=${info.mode}`,
+      `deliveryUrl=${info.deliveryUrl ?? "<missing>"}`,
+      `implementation=${info.implementation}`,
+      `reason=${info.reason}`,
+      `viteOpenAiKey=${info.credentials.viteApiKey}`,
+      `processOpenAiKey=${info.credentials.processApiKey}`,
+    ].join(" "),
+  );
 }

@@ -11,6 +11,7 @@ import {
   resolveEmbedAIDeliveryBinding,
 } from "./createEmbedAIDelivery";
 import { createRemoteDelivery } from "./RemoteDelivery";
+import { readDeliveryMeta } from "./AIDelivery";
 import { mapConversationError } from "../services/ConversationError";
 
 function sampleRequest(): ChatRequest {
@@ -83,18 +84,44 @@ describe("CAP-AI-PUBLISH-01 Delivery binding", () => {
     assert.equal(response.finishReason, "stop");
   });
 
-  it("disabled / missing config maps to graceful missing_api_key UX", async () => {
+  it("disabled maps to Delivery-not-configured UX (not browser API key copy)", async () => {
     const delivery = createEmbedAIDelivery({ mode: "disabled" });
+    assert.equal(readDeliveryMeta(delivery).deliveryId, "not-configured");
     await assert.rejects(
       () => delivery.chat(sampleRequest()),
       (error: unknown) => {
         const mapped = mapConversationError(error);
         assert.equal(mapped.code, "missing_api_key");
-        assert.match(mapped.userMessage, /API klíč|API kl/);
+        assert.match(mapped.userMessage, /AI Delivery není nakonfigurovaná/);
+        assert.equal(mapped.userMessage.includes("API klíč"), false);
         assert.equal(mapped.userMessage.includes("sk-"), false);
         return true;
       },
     );
+  });
+
+  it("published without deliveryUrl never selects LocalDelivery", async () => {
+    const binding = resolveEmbedAIDeliveryBinding({ mode: "published" });
+    assert.equal(binding.mode, "disabled");
+    assert.equal(binding.deliveryUrl, null);
+
+    const delivery = createEmbedAIDelivery({ mode: "published" });
+    assert.equal(readDeliveryMeta(delivery).deliveryId, "not-configured");
+    await assert.rejects(
+      () => delivery.chat(sampleRequest()),
+      (error: unknown) => {
+        const mapped = mapConversationError(error);
+        assert.match(mapped.userMessage, /AI Delivery není nakonfigurovaná/);
+        return true;
+      },
+    );
+  });
+
+  it("auto with deliveryUrl selects published RemoteDelivery", () => {
+    const delivery = createEmbedAIDelivery({
+      deliveryUrl: "https://edge.example",
+    });
+    assert.equal(readDeliveryMeta(delivery).deliveryId, "published-remote");
   });
 
   it("createEmbedAIDelivery config type has no apiKey field", () => {

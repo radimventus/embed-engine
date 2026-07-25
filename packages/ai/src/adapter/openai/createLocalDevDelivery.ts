@@ -17,16 +17,12 @@ import type { ChatResponse } from "../../models/ChatResponse";
  * Returns null when no key is available (caller uses not_configured).
  */
 export function tryCreateLocalDevDelivery(): AIDelivery | null {
-  const apiKey =
-    readViteEnv("VITE_OPENAI_API_KEY") ??
-    readProcessEnv("OPENAI_API_KEY") ??
-    "";
+  const apiKey = readViteOpenAiApiKey() ?? readProcessEnv("OPENAI_API_KEY") ?? "";
   if (apiKey.length === 0) {
     return null;
   }
 
-  const model =
-    readViteEnv("VITE_OPENAI_MODEL") ?? readProcessEnv("OPENAI_MODEL");
+  const model = readViteOpenAiModel() ?? readProcessEnv("OPENAI_MODEL");
 
   return createDirectAdapterDelivery(
     new OpenAIAdapter({
@@ -45,6 +41,19 @@ export function createMissingLocalCredentialDelivery(): AIDelivery {
   });
 }
 
+/** Dev diagnostics — presence only, never the secret value. */
+export function detectLocalOpenAiCredentialSource(): {
+  readonly viteApiKey: "present" | "missing";
+  readonly processApiKey: "present" | "missing";
+} {
+  return {
+    viteApiKey:
+      readViteOpenAiApiKey() !== undefined ? "present" : "missing",
+    processApiKey:
+      readProcessEnv("OPENAI_API_KEY") !== undefined ? "present" : "missing",
+  };
+}
+
 function readProcessEnv(name: string): string | undefined {
   const value = process.env[name];
   if (value === undefined || value.trim().length === 0) {
@@ -53,12 +62,25 @@ function readProcessEnv(name: string): string | undefined {
   return value.trim();
 }
 
-function readViteEnv(name: string): string | undefined {
+/**
+ * Static `import.meta.env.VITE_*` member access — required for Vite injection.
+ * Dynamic `env[name]` is not rewritten by Vite and silently returns undefined.
+ */
+function readViteOpenAiApiKey(): string | undefined {
   try {
-    const meta = import.meta as ImportMeta & {
-      readonly env?: Record<string, string | undefined>;
-    };
-    const value = meta.env?.[name];
+    const value = import.meta.env.VITE_OPENAI_API_KEY;
+    if (typeof value !== "string" || value.trim().length === 0) {
+      return undefined;
+    }
+    return value.trim();
+  } catch {
+    return undefined;
+  }
+}
+
+function readViteOpenAiModel(): string | undefined {
+  try {
+    const value = import.meta.env.VITE_OPENAI_MODEL;
     if (typeof value !== "string" || value.trim().length === 0) {
       return undefined;
     }

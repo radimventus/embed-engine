@@ -61,18 +61,13 @@ export function mapConversationError(error: unknown): ConversationError {
 
   if (isAdapterFailure(error)) {
     const code = toConversationCode(error.code);
-    if (code === "missing_api_key") {
-      return new ConversationError(
-        code,
-        conversationUserMessage(code),
-        { cause: error },
-      );
-    }
     const userMessage =
       error.diagnostic ??
-      (error.message.trim().length > 0
-        ? error.message
-        : conversationUserMessage(code));
+      (code === "missing_api_key"
+        ? conversationUserMessage(code)
+        : error.message.trim().length > 0
+          ? error.message
+          : conversationUserMessage(code));
     return new ConversationError(code, userMessage, { cause: error });
   }
 
