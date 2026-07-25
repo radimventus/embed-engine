@@ -1,38 +1,34 @@
 #!/usr/bin/env node
 /**
- * Sync production distribution package into the GitHub Pages publish directory.
+ * Finalize GitHub Pages host surfaces in the single distribution tree.
  *
- * Source: packages/embed/dist/
- * Target: docs/embed/     (served when Pages source = /docs)
- *
- * PT-DEPLOY-EMBED-01: refuses to publish when Pages artifacts would diverge from
- * the just-built dist (SHA-256 + Runtime fingerprint). Does not push to remote.
+ * JS/types are already written by Vite/tsc into docs/embed.
+ * packages/embed/dist is a symlink to that tree — this script does NOT copy bundles.
  */
 
 import {
   cpSync,
   existsSync,
-  mkdirSync,
   readFileSync,
   rmSync,
   writeFileSync,
 } from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { spawnSync } from "node:child_process";
 
 import {
   assertFileContains,
-  assertFilesIdentical,
   packageDir,
   readFingerprint,
   repoRoot,
   RUNTIME_HOUSE_PACKAGE_SOURCE,
   sha256File,
 } from "./lib/buildFingerprint.mjs";
-
-const distDir = path.join(packageDir, "dist");
-const pagesDir = path.join(repoRoot, "docs/embed");
+import {
+  assertSingleDistributionTree,
+  distDir,
+  pagesDir,
+} from "./lib/distributionTree.mjs";
 
 const REQUIRED = ["embed.es.js", "embed.iife.js", "index.d.ts", "version.json"];
 
@@ -61,68 +57,48 @@ function buildOfficialPartnerSnippet(cacheBust) {
 <!-- END OFFICIAL PARTNER SNIPPET -->`;
 }
 
-const PUBLIC_FILES = [
-  "embed.es.js",
-  "embed.es.js.map",
-  "embed.iife.js",
-  "embed.iife.js.map",
-  "version.json",
-  "index.d.ts",
-  "Embed.d.ts",
-  "fixtures.d.ts",
-  "mount.d.ts",
-  "unmount.d.ts",
-  "version.d.ts",
-  "delivery/types.d.ts",
-  "index.d.ts.map",
-  "Embed.d.ts.map",
-  "fixtures.d.ts.map",
-  "mount.d.ts.map",
-  "unmount.d.ts.map",
-  "version.d.ts.map",
-  "delivery/types.d.ts.map",
-];
+function assertTreeReady() {
+  assertSingleDistributionTree();
 
-function assertDistReady() {
-  const missing = REQUIRED.filter((file) => !existsSync(path.join(distDir, file)));
+  const missing = REQUIRED.filter((file) => !existsSync(path.join(pagesDir, file)));
   if (missing.length > 0) {
     throw new Error(
-      `Missing dist artifacts: ${missing.join(", ")}. Run: pnpm --filter @embed-engine/embed build`,
+      `Missing distribution artifacts: ${missing.join(", ")}. Run: pnpm --filter @embed-engine/embed build`,
     );
   }
 
   const fingerprint = readFingerprint();
   const versionJson = JSON.parse(
-    readFileSync(path.join(distDir, "version.json"), "utf8"),
+    readFileSync(path.join(pagesDir, "version.json"), "utf8"),
   );
 
   if (!versionJson.fingerprint) {
     throw new Error(
-      "dist/version.json missing fingerprint — rebuild with current build-distribution.mjs",
+      "version.json missing fingerprint — rebuild with current build-distribution.mjs",
     );
   }
   if (versionJson.fingerprint.marker !== fingerprint.marker) {
     throw new Error(
-      "dist/version.json fingerprint does not match .build/fingerprint.json — rebuild",
+      "version.json fingerprint does not match .build/fingerprint.json — rebuild",
     );
   }
   if (versionJson.fingerprint.runtimeSource !== RUNTIME_HOUSE_PACKAGE_SOURCE) {
-    throw new Error("dist/version.json Runtime source mismatch");
+    throw new Error("version.json Runtime source mismatch");
   }
 
-  const iifePath = path.join(distDir, "embed.iife.js");
+  const iifePath = path.join(pagesDir, "embed.iife.js");
   const iifeSha = sha256File(iifePath);
   if (versionJson.fingerprint.iifeSha256 !== iifeSha) {
     throw new Error(
-      "dist/version.json iifeSha256 does not match dist/embed.iife.js — rebuild",
+      "version.json iifeSha256 does not match embed.iife.js — rebuild",
     );
   }
 
-  assertFileContains(iifePath, fingerprint.marker, "dist IIFE fingerprint");
+  assertFileContains(iifePath, fingerprint.marker, "IIFE fingerprint");
   assertFileContains(
     iifePath,
     RUNTIME_HOUSE_PACKAGE_SOURCE,
-    "dist IIFE Runtime source",
+    "IIFE Runtime source",
   );
 
   return { fingerprint, versionJson };
@@ -173,7 +149,7 @@ function writeLiveHtml(cacheBust) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Embed — Launcher Experience (live)</title>
+  <title>Embed — Release snapshot launcher (not Live Runtime)</title>
   <style>
     body {
       margin: 0;
@@ -210,7 +186,7 @@ function writeLiveHtml(cacheBust) {
 </head>
 <body>
   <header class="host-header">
-    <p class="host-eyebrow">Partner website (host)</p>
+    <p class="host-eyebrow">Partner website (host) · RELEASE SNAPSHOT (docs/embed IIFE)</p>
     <h1>Reference House</h1>
     <p>
       Embed Hero je první scéna Experience na partnerské stránce.
@@ -273,88 +249,47 @@ function writeNoJekyll() {
   writeFileSync(path.join(repoRoot, "docs/.nojekyll"), "", "utf8");
 }
 
-function assertPublishedMatchesDist(fingerprint, versionJson) {
-  console.log("→ Deploy validation (published == local build)");
-
-  for (const file of ["embed.iife.js", "embed.es.js", "version.json"]) {
-    assertFilesIdentical(
-      path.join(distDir, file),
-      path.join(pagesDir, file),
-      `sync ${file}`,
-    );
+function syncStaticHostAssets() {
+  const mediaSource = path.join(repoRoot, "apps/client-studio/public/media");
+  const mediaTarget = path.join(repoRoot, "docs/media");
+  if (existsSync(mediaSource)) {
+    rmSync(mediaTarget, { recursive: true, force: true });
+    cpSync(mediaSource, mediaTarget, { recursive: true });
   }
 
-  const publishedIife = path.join(pagesDir, "embed.iife.js");
-  assertFileContains(publishedIife, fingerprint.marker, "published IIFE fingerprint");
-  assertFileContains(
-    publishedIife,
-    RUNTIME_HOUSE_PACKAGE_SOURCE,
-    "published IIFE Runtime source",
+  const housePackageSource = path.join(
+    repoRoot,
+    "apps/client-studio/public/house-package",
   );
+  const housePackageTarget = path.join(repoRoot, "docs/house-package");
+  if (existsSync(housePackageSource)) {
+    rmSync(housePackageTarget, { recursive: true, force: true });
+    cpSync(housePackageSource, housePackageTarget, { recursive: true });
+  }
 
-  const publishedVersion = JSON.parse(
-    readFileSync(path.join(pagesDir, "version.json"), "utf8"),
+  const referenceHouseSource = path.join(
+    repoRoot,
+    "apps/client-studio/public/reference-house",
   );
-  if (publishedVersion.version !== versionJson.version) {
-    throw new Error("Published version.json does not match dist version.json");
-  }
-  if (publishedVersion.fingerprint?.marker !== fingerprint.marker) {
-    throw new Error("Published fingerprint marker does not match build");
-  }
-  if (publishedVersion.fingerprint?.iifeSha256 !== sha256File(publishedIife)) {
-    throw new Error("Published iifeSha256 does not match published embed.iife.js");
+  const referenceHouseTarget = path.join(repoRoot, "docs/reference-house");
+  if (existsSync(referenceHouseSource)) {
+    rmSync(referenceHouseTarget, { recursive: true, force: true });
+    cpSync(referenceHouseSource, referenceHouseTarget, { recursive: true });
   }
 
-  console.log("Deploy validation PASS");
+  return { housePackageTarget, referenceHouseTarget };
 }
 
-const { fingerprint, versionJson } = assertDistReady();
+const { fingerprint, versionJson } = assertTreeReady();
 const cacheBust = fingerprint.commit;
-
-rmSync(pagesDir, { recursive: true, force: true });
-mkdirSync(pagesDir, { recursive: true });
-
-for (const file of PUBLIC_FILES) {
-  const source = path.join(distDir, file);
-  if (!existsSync(source)) continue;
-  const target = path.join(pagesDir, file);
-  mkdirSync(path.dirname(target), { recursive: true });
-  cpSync(source, target);
-}
 
 writeIndexHtml(versionJson.version, cacheBust);
 writeLiveHtml(cacheBust);
 writePartnerSnippetHtml(cacheBust);
 writeNoJekyll();
+const { housePackageTarget, referenceHouseTarget } = syncStaticHostAssets();
 
-const mediaSource = path.join(repoRoot, "apps/client-studio/public/media");
-const mediaTarget = path.join(repoRoot, "docs/media");
-if (existsSync(mediaSource)) {
-  rmSync(mediaTarget, { recursive: true, force: true });
-  cpSync(mediaSource, mediaTarget, { recursive: true });
-}
-
-const housePackageSource = path.join(
-  repoRoot,
-  "apps/client-studio/public/house-package",
-);
-const housePackageTarget = path.join(repoRoot, "docs/house-package");
-if (existsSync(housePackageSource)) {
-  rmSync(housePackageTarget, { recursive: true, force: true });
-  cpSync(housePackageSource, housePackageTarget, { recursive: true });
-}
-
-const referenceHouseSource = path.join(
-  repoRoot,
-  "apps/client-studio/public/reference-house",
-);
-const referenceHouseTarget = path.join(repoRoot, "docs/reference-house");
-if (existsSync(referenceHouseSource)) {
-  rmSync(referenceHouseTarget, { recursive: true, force: true });
-  cpSync(referenceHouseSource, referenceHouseTarget, { recursive: true });
-}
-
-assertPublishedMatchesDist(fingerprint, versionJson);
+assertSingleDistributionTree();
 
 const validate = spawnSync(
   process.execPath,
@@ -366,22 +301,13 @@ if (validate.status !== 0) {
 }
 
 console.log(
-  `Synced distribution ${versionJson.version} (${fingerprint.commit}) → docs/embed/`,
+  `Pages host finalized ${versionJson.version} (${fingerprint.commit}) in docs/embed/`,
 );
-console.log("Public files:");
-for (const file of PUBLIC_FILES) {
-  if (existsSync(path.join(pagesDir, file))) {
-    console.log(`  - ${file}`);
-  }
-}
-console.log("  - index.html");
-console.log("  - live.html");
-console.log("  - partner-snippet.html");
-console.log("  - OFFICIAL-PARTNER-SNIPPET.html");
-console.log("  - ../.nojekyll");
+console.log(`  dist symlink → ${distDir}`);
+console.log("  - index.html / live.html / partner-snippet.html");
 if (existsSync(housePackageTarget)) {
-  console.log("  - ../house-package/ (Tour media catalog)");
+  console.log("  - ../house-package/");
 }
 if (existsSync(referenceHouseTarget)) {
-  console.log("  - ../reference-house/ (Tour assets)");
+  console.log("  - ../reference-house/");
 }

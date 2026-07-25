@@ -35,6 +35,9 @@ importers:
       '@embed-engine/design-tokens':
         specifier: workspace:*
         version: link:../../packages/design-tokens
+      '@embed-engine/embed':
+        specifier: workspace:*
+        version: link:../../packages/embed
       '@embed-engine/kernel':
         specifier: workspace:*
         version: link:../../packages/kernel

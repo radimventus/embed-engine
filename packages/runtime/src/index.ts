@@ -12,6 +12,9 @@
  * @see session/OWNERSHIP.md
  */
 
+/** Live-source identity — Vite hosts resolve this module from packages/runtime/src. */
+export const RUNTIME_LIVE_SOURCE = "packages/runtime/src" as const;
+
 export {
   applyPriorityEvent,
   createInitialPriorityRuntimeState,

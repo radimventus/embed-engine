@@ -2,12 +2,22 @@
 /**
  * CAP-RLS-01 — Official Embed Release Snapshot publish.
  *
- * Single entry for preparing docs/embed from the current Live Runtime source.
+ * Single entry for preparing docs/embed from the current Runtime source.
  * Does not push to git / GitHub Pages (operator commits + pushes docs/embed).
  *
  * Usage:
  *   pnpm embed:publish
- *   pnpm embed:publish -- --remote   # also validate live GitHub Pages after push
+ *     → build Release Snapshot into docs/embed + Release Validation
+ *
+ *   pnpm embed:publish -- --remote
+ *     → Remote Validation only (never builds)
+ *     → validates existing docs/embed against GitHub Pages
+ *
+ *   pnpm embed:publish -- --validate-only
+ *     → local Release Validation only (never builds)
+ *
+ * If a new snapshot is required, run `pnpm embed:publish` (without --remote)
+ * explicitly first, then commit/push, then `--remote`.
  */
 
 import { spawnSync } from "node:child_process";
@@ -31,6 +41,9 @@ const PAGES_ORIGIN = "https://radimventus.github.io/embed-engine";
 const ARTIFACTS = ["embed.iife.js", "embed.es.js", "version.json"];
 
 const wantRemote = process.argv.includes("--remote");
+const validateOnly = process.argv.includes("--validate-only");
+/** Remote / validate-only must never mint a new fingerprint. */
+const skipBuild = wantRemote || validateOnly;
 
 function banner(title) {
   const line = "═".repeat(56);
@@ -40,9 +53,11 @@ function banner(title) {
 }
 
 function fail(message) {
-  banner("Publish FAILED");
+  banner(wantRemote || validateOnly ? "Validation FAILED" : "Publish FAILED");
   console.error(message);
-  console.error("\nRelease Snapshot was NOT marked READY.");
+  if (!skipBuild) {
+    console.error("\nRelease Snapshot was NOT marked READY.");
+  }
   process.exit(1);
 }
 
@@ -58,11 +73,52 @@ function run(label, command, args, cwd = packageDir) {
   }
 }
 
+function readVersionJson() {
+  const versionPath = path.join(pagesDir, "version.json");
+  if (!existsSync(versionPath)) {
+    fail(
+      `Missing docs/embed/version.json.\nRun \`pnpm embed:publish\` first to create a Release Snapshot.`,
+    );
+  }
+  return JSON.parse(readFileSync(versionPath, "utf8"));
+}
+
+/**
+ * Fingerprint for validation:
+ * - after build → packages/embed/.build/fingerprint.json
+ * - --remote / --validate-only → docs/embed/version.json (Release Snapshot SSOT)
+ */
+function resolveValidationFingerprint(versionJson) {
+  if (skipBuild) {
+    const fp = versionJson.fingerprint;
+    if (
+      !fp ||
+      typeof fp.commit !== "string" ||
+      typeof fp.builtAt !== "string" ||
+      typeof fp.marker !== "string" ||
+      fp.runtimeSource !== RUNTIME_HOUSE_PACKAGE_SOURCE
+    ) {
+      fail(
+        "docs/embed/version.json fingerprint is incomplete or invalid.\nRun `pnpm embed:publish` to rebuild the Release Snapshot.",
+      );
+    }
+    return {
+      commit: fp.commit,
+      builtAt: fp.builtAt,
+      runtimeSource: fp.runtimeSource,
+      marker: fp.marker,
+    };
+  }
+  return readFingerprint();
+}
+
 function validateLocalRelease() {
   console.log("\n→ Release Validation (local snapshot)");
   assertSingleDistributionTree();
 
-  const fingerprint = readFingerprint();
+  const versionJson = readVersionJson();
+  const fingerprint = resolveValidationFingerprint(versionJson);
+
   for (const file of ARTIFACTS) {
     const pagesFile = path.join(pagesDir, file);
     if (!existsSync(pagesFile)) {
@@ -71,13 +127,10 @@ function validateLocalRelease() {
   }
 
   const iife = path.join(pagesDir, "embed.iife.js");
-  const versionJson = JSON.parse(
-    readFileSync(path.join(pagesDir, "version.json"), "utf8"),
-  );
 
   if (versionJson.fingerprint?.marker !== fingerprint.marker) {
     fail(
-      `version.json fingerprint does not match build fingerprint\n  build:   ${fingerprint.marker}\n  version: ${versionJson.fingerprint?.marker ?? "(missing)"}`,
+      `version.json fingerprint does not match expected fingerprint\n  expected: ${fingerprint.marker}\n  version:  ${versionJson.fingerprint?.marker ?? "(missing)"}`,
     );
   }
   if (versionJson.fingerprint?.runtimeSource !== RUNTIME_HOUSE_PACKAGE_SOURCE) {
@@ -104,7 +157,6 @@ function validateLocalRelease() {
     );
   }
 
-  // dist symlink must resolve to the same bytes
   const distIife = path.join(packageDir, "dist", "embed.iife.js");
   if (sha256File(distIife) !== iifeSha) {
     fail("packages/embed/dist/embed.iife.js ≠ docs/embed/embed.iife.js");
@@ -120,7 +172,7 @@ function validateLocalRelease() {
 }
 
 async function validateRemotePages(fingerprint, versionJson) {
-  console.log("\n→ Release Validation (GitHub Pages remote)");
+  console.log("\n→ Remote Validation (GitHub Pages — no rebuild)");
   const versionUrl = `${PAGES_ORIGIN}/embed/version.json`;
   const iifeUrl = `${PAGES_ORIGIN}/embed/embed.iife.js`;
 
@@ -132,7 +184,7 @@ async function validateRemotePages(fingerprint, versionJson) {
 
   if (remoteVersion.fingerprint?.marker !== fingerprint.marker) {
     fail(
-      `Remote Pages fingerprint mismatch.\n  local:  ${fingerprint.marker}\n  remote: ${remoteVersion.fingerprint?.marker ?? "(missing)"}\n\nCommit + push docs/embed, wait for Pages build, then re-run:\n  pnpm embed:publish -- --remote`,
+      `Remote Pages fingerprint mismatch.\n  local Release Snapshot: ${fingerprint.marker}\n  Published Embed:        ${remoteVersion.fingerprint?.marker ?? "(missing)"}\n\nIf you need a new snapshot, run \`pnpm embed:publish\` (build), commit + push docs/embed,\nwait for Pages, then re-run:\n  pnpm embed:publish -- --remote`,
     );
   }
 
@@ -142,30 +194,45 @@ async function validateRemotePages(fingerprint, versionJson) {
   }
   const remoteIife = await iifeRes.text();
   if (!remoteIife.includes(fingerprint.marker)) {
-    fail("Remote IIFE does not contain local build fingerprint marker");
+    fail("Remote IIFE does not contain Release Snapshot fingerprint marker");
   }
 
   const { createHash } = await import("node:crypto");
   const hash = createHash("sha256").update(remoteIife).digest("hex");
   if (hash !== versionJson.fingerprint.iifeSha256) {
     fail(
-      `Remote IIFE SHA-256 mismatch\n  local:  ${versionJson.fingerprint.iifeSha256}\n  remote: ${hash}`,
+      `Remote IIFE SHA-256 mismatch\n  local Release Snapshot: ${versionJson.fingerprint.iifeSha256}\n  Published Embed:        ${hash}`,
     );
   }
 
   console.log(`  remote marker matches ${fingerprint.commit}`);
-  console.log("  Remote Pages Validation PASS");
+  console.log("  Remote Validation PASS");
 }
 
-banner("CAP-RLS-01 — Embed Release Snapshot publish");
+banner(
+  skipBuild
+    ? "CAP-RLS-01 — Embed Release Validation (no build)"
+    : "CAP-RLS-01 — Embed Release Snapshot publish",
+);
 console.log("Official path: pnpm embed:publish");
 console.log(`Repo: ${repoRoot}`);
+if (wantRemote) {
+  console.log(
+    "Mode: Remote Validation — existing docs/embed vs GitHub Pages (never rebuilds)",
+  );
+} else if (validateOnly) {
+  console.log("Mode: local Release Validation only (never rebuilds)");
+}
 
-run(
-  "Build Release Snapshot (docs/embed)",
-  "node",
-  ["./scripts/build-distribution.mjs"],
-);
+if (!skipBuild) {
+  run(
+    "Build Release Snapshot (docs/embed)",
+    "node",
+    ["./scripts/build-distribution.mjs"],
+  );
+} else {
+  console.log("\n→ Skip build (validate existing Release Snapshot in docs/embed)");
+}
 
 let release;
 try {
@@ -182,18 +249,24 @@ if (wantRemote) {
   }
 }
 
-banner("Release Snapshot READY");
+banner(wantRemote ? "Remote Validation READY" : "Release Snapshot READY");
 console.log(`marker:     ${release.fingerprint.marker}`);
 console.log(`builtAt:    ${release.fingerprint.builtAt}`);
 console.log(`iifeSha256: ${release.iifeSha}`);
 console.log(`artifacts:  ${path.relative(repoRoot, pagesDir)}/`);
 console.log("");
-console.log("Next (GitHub Pages deploy):");
-console.log("  1. git add docs/embed docs/house-package docs/media docs/reference-house docs/.nojekyll");
-console.log("  2. git commit -m \"chore(embed): publish release snapshot\"");
-console.log("  3. git push");
-console.log("  4. pnpm embed:publish -- --remote   # after Pages build finishes");
-console.log("");
-console.log("Live Runtime (no publish needed):");
+if (!skipBuild) {
+  console.log("Next (GitHub Pages deploy):");
+  console.log(
+    "  1. git add docs/embed docs/house-package docs/media docs/reference-house docs/.nojekyll",
+  );
+  console.log('  2. git commit -m "chore(embed): publish release snapshot"');
+  console.log("  3. git push");
+  console.log(
+    "  4. pnpm embed:publish -- --remote   # Remote Validation only (never rebuilds)",
+  );
+  console.log("");
+}
+console.log("Local Runtime / Embed Demo (no publish needed):");
 console.log("  Local:      pnpm --filter @embed-engine/client-studio dev");
 console.log("  Embed Demo: pnpm --filter @embed-engine/embed demo");

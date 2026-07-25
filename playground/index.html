@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Embed Engine Playground — Launcher</title>
+  <title>Embed Engine Playground — SSOT host</title>
   <style>
     body {
       margin: 0;
@@ -65,7 +65,7 @@
 </head>
 <body>
   <header class="host-header">
-    <p class="host-eyebrow">Partner website · playground</p>
+    <p class="host-eyebrow">Partner website · playground · SSOT live host</p>
     <h1>Reference House</h1>
   </header>
 
@@ -73,8 +73,8 @@
     <section class="host-hero" id="host-hero">
       <h2>Prozkoumejte dům v Client Studio</h2>
       <p>
-        Launcher Mode — žádný automatický inline mount. CTA otevře fullscreen
-        Delivery Overlay.
+        Launcher Mode — stejný Embed.mount Runtime jako Local a Embed demo.
+        Žádný IIFE.
       </p>
       <button type="button" id="open-client-studio" class="host-launcher">
         Prozkoumat dům
@@ -84,15 +84,6 @@
     <p class="host-filler">Second host block.</p>
   </main>
 
-  <script src="../packages/embed/dist/embed.iife.js"></script>
-  <script>
-    Embed.mount({
-      mode: "launcher",
-      launcher: "#open-client-studio",
-      objectId: "house-modern-01",
-      entryPoint: "hero-cta",
-      launcherId: "open-client-studio",
-    });
-  </script>
+  <script type="module" src="./main.ts"></script>
 </body>
 </html>

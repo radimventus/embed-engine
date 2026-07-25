@@ -1,44 +1,14 @@
-# Embed Engine Playground
+# Playground (SSOT Embed host)
 
-Standalone check that `embed.iife.js` mounts **Client Studio** on a plain HTML page — no Vite, no TypeScript, no `@embed-engine/embed` demo runner.
-
-## Prerequisites
+Live Vite host of the **same Runtime** as **Local Runtime** and **Embed Demo** — not a Release Snapshot, not Published Embed.
 
 ```bash
-pnpm --filter @embed-engine/embed build
+pnpm exec vite --config playground/vite.config.ts
 ```
 
-Media assets (`/house-package`, `/media`) must be served from the repository root (Client Studio `public/` is copied or linked — see below).
+Opens at `http://127.0.0.1:5185/`.
 
-## Run
+This host uses `Embed.mount` + Vite SSOT aliases (`packages/*/src`).
+It does **not** load `embed.iife.js` (Release Snapshot only, produced by `pnpm embed:publish` into `docs/embed`).
 
-Serve the **repository root** (not `playground/` alone). The page loads the bundle via `../packages/embed/dist/embed.iife.js`.
-
-```bash
-# from repository root — expose Client Studio public assets at /
-# Option A: symlink once
-ln -sfn apps/client-studio/public/house-package house-package
-ln -sfn apps/client-studio/public/media media
-
-python3 -m http.server
-```
-
-Open:
-
-[http://localhost:8000/playground/](http://localhost:8000/playground/)
-
-> If you start `python3 -m http.server` inside `playground/`, the browser requests `/packages/embed/dist/embed.iife.js` relative to that folder and gets **404**. That is a static-server path issue, not an Embed SDK defect.
-
-## What this proves
-
-- Page is plain HTML (no bundler)
-- Only external script: `embed.iife.js`
-- Global `Embed` with `mount` / `unmount` / `version`
-- `Embed.mount({ target: "#embed", objectId: "house-modern-01" })` mounts Client Studio
-- Garden is **not** the production path (use explicit `fixture: "garden"` only for legacy)
-
-Legacy Garden (opt-in):
-
-```js
-Embed.mount({ target: "#embed", fixture: "garden" });
-```
+See [ADR-019](../docs/architecture/adr/ADR-019-runtime-vs-release.md) · [embed-release-workflow.md](../docs/architecture/embed-release-workflow.md).

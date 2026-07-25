@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARCHIVE — frozen IIFE local parity (not Live Embed Demo)</title>
+    <style>
+      .archive-banner {
+        margin: 0;
+        padding: 0.75rem 1rem;
+        background: #3b1f1f;
+        color: #f7e8e8;
+        font: 600 0.875rem/1.4 Inter, system-ui, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="archive-banner">
+      ARCHIVAL SNAPSHOT — frozen <code>embed.iife.js</code>. Not Live Runtime /
+      Embed Demo / Playground. Not for Runtime SSOT checks.
+    </p>
+
+    <button type="button" id="open-client-studio">Prozkoumat dům</button>
+    <script src="../../../docs/embed/embed.iife.js"></script>
+    <script>
+      Embed.mount({
+        mode: "launcher",
+        launcher: "#open-client-studio",
+        objectId: "house-modern-01",
+        assetBase: "http://127.0.0.1:4173",
+        entryPoint: "hero-cta",
+        launcherId: "open-client-studio",
+      });
+    </script>
+  </body>
+</html>

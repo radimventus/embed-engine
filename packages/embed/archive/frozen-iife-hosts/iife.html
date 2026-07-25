@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="cs">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ARCHIVE — frozen IIFE launcher (not Live Embed Demo)</title>
+    <link rel="stylesheet" href="../../demo/style.css" />
+    <style>
+      .archive-banner {
+        margin: 0;
+        padding: 0.75rem 1rem;
+        background: #3b1f1f;
+        color: #f7e8e8;
+        font: 600 0.875rem/1.4 Inter, system-ui, sans-serif;
+      }
+      .archive-banner code {
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <p class="archive-banner">
+      ARCHIVAL SNAPSHOT — loads <code>docs/embed/embed.iife.js</code> (release freeze).
+      Not Live Runtime. Not Embed Demo (<code>pnpm demo</code> → <code>demo/index.html</code>).
+      Not for day-to-day development or Runtime SSOT verification.
+    </p>
+
+    <header class="host-header">
+      <p class="host-eyebrow">Archive · frozen IIFE host</p>
+      <h1>embed.iife.js — Launcher smoke (archive)</h1>
+      <p>
+        Explicit archive only. Serve this folder with a static server after
+        <code>pnpm --filter @embed-engine/embed build</code>. Do not use the Vite
+        Embed Demo server for this page.
+      </p>
+    </header>
+
+    <main class="host-main">
+      <section class="host-hero" id="host-hero">
+        <h2>Prozkoumejte dům v Client Studio</h2>
+        <button type="button" id="open-client-studio" class="host-launcher">
+          Prozkoumat dům
+        </button>
+      </section>
+      <section class="host-copy">
+        <p class="host-filler">Host content for scroll restore checks.</p>
+        <p class="host-filler">Second filler block.</p>
+      </section>
+    </main>
+
+    <!-- Release tree: packages/embed/dist → docs/embed (symlink). -->
+    <script src="../../../docs/embed/embed.iife.js"></script>
+    <script>
+      Embed.mount({
+        mode: "launcher",
+        launcher: "#open-client-studio",
+        objectId: "house-modern-01",
+        assetBase: "http://127.0.0.1:4173",
+        entryPoint: "hero-cta",
+        launcherId: "open-client-studio",
+      });
+    </script>
+  </body>
+</html>

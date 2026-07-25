@@ -3,16 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EMBED Platform | Klientské studio</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
+  <title>EMBED — Live host (SSOT Runtime)</title>
+  <link rel="stylesheet" href="/host.css" />
+</head>
+<body>
+  <header class="host-header">
+    <p class="host-eyebrow">Local host · Live Embed Runtime (packages/*/src)</p>
+      <h1>Reference House</h1>
+      <p>
+        SSOT: Local is an Embed host only. Experience mounts through
+        <code>Embed.mount</code> — the same path as Embed demo / production.
+      </p>
+    </header>
+
+    <main class="host-main">
+      <section class="host-hero" id="host-hero">
+        <h2>Prozkoumejte dům v Client Studio</h2>
+        <button type="button" id="open-client-studio" class="host-launcher">
+          Prozkoumat dům
+        </button>
+      </section>
+      <section class="host-copy">
+        <p class="host-filler">Host content for scroll restore checks.</p>
+      </section>
+    </main>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

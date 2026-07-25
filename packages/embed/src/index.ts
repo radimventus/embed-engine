@@ -14,6 +14,8 @@ export type {
   ExperienceMode,
 } from "./delivery/types";
 export type { LaunchContext, ExperiencePresentationConfig } from "./delivery/presentation";
+/** Host CSS injection — Local / Embed demo register Client Studio styles once. */
+export { registerClientStudioCss } from "./delivery/ensureStyles";
 /** @deprecated Prefer EmbedLegacyFixtureId */
 export type { EmbedFixtureId } from "./fixtures";
 

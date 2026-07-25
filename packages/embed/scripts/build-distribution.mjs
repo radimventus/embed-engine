@@ -2,9 +2,9 @@
 /**
  * Build the production distribution package for @embed-engine/embed.
  *
- * Produces a deterministic `dist/` layout suitable for GitHub Pages / CDN.
+ * SSOT: writes once into docs/embed. packages/embed/dist is a symlink to that tree.
  * PT-DEPLOY-EMBED-01: generates Runtime build fingerprint, verifies package,
- * runs Runtime smoke — does not publish anywhere.
+ * runs Runtime smoke — does not push to remote.
  */
 
 import { spawnSync } from "node:child_process";
@@ -20,8 +20,11 @@ import {
   writeFingerprint,
   RUNTIME_HOUSE_PACKAGE_SOURCE,
 } from "./lib/buildFingerprint.mjs";
-
-const distDir = path.join(packageDir, "dist");
+import {
+  assertSingleDistributionTree,
+  distDir,
+  ensureSingleDistributionTree,
+} from "./lib/distributionTree.mjs";
 
 const packageJson = JSON.parse(
   readFileSync(path.join(packageDir, "package.json"), "utf8"),
@@ -167,6 +170,10 @@ function assertCompletePackage(fingerprint) {
   );
 }
 
+console.log("→ Single distribution tree (docs/embed ≡ packages/embed/dist)");
+ensureSingleDistributionTree();
+assertSingleDistributionTree();
+
 console.log("→ Runtime build fingerprint");
 const fingerprint = createBuildFingerprint();
 writeFingerprint(fingerprint);
@@ -195,3 +202,8 @@ assertCompletePackage(readFingerprint());
 
 console.log("→ Runtime smoke");
 run("node", ["./scripts/smoke-runtime.mjs"]);
+
+// Host HTML + static assets only — JS already lives in docs/embed (no copy).
+console.log("→ Finalize Pages host surfaces (same tree)");
+run("node", ["./scripts/sync-pages.mjs"]);
+assertSingleDistributionTree();

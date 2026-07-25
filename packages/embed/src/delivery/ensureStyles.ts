@@ -76,7 +76,7 @@ body {
   color: rgb(0 25 48);
   isolation: isolate;
 }
-/* Close lives in Client Studio sticky header ([data-embed-close]). */
+/* Close lives on Delivery overlay ([data-embed-close]), not Client Studio header. */
 [data-embed-overlay-mount] {
   flex: 1 1 auto;
   min-height: 0;

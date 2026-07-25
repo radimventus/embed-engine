@@ -1,5 +1,5 @@
 /**
- * PT-DEPLOY-EMBED-01 — Validate docs/embed (Pages source) against local dist.
+ * PT-DEPLOY-EMBED-01 — Validate the single distribution tree (docs/embed).
  * Optional: --remote to fetch published GitHub Pages artifacts.
  */
 
@@ -8,34 +8,29 @@ import path from "node:path";
 
 import {
   assertFileContains,
-  assertFilesIdentical,
-  packageDir,
   readFingerprint,
-  repoRoot,
   RUNTIME_HOUSE_PACKAGE_SOURCE,
   sha256File,
 } from "./lib/buildFingerprint.mjs";
+import {
+  assertSingleDistributionTree,
+  pagesDir,
+} from "./lib/distributionTree.mjs";
 
 const PAGES_ORIGIN = "https://radimventus.github.io/embed-engine";
-const distDir = path.join(packageDir, "dist");
-const pagesDir = path.join(repoRoot, "docs/embed");
 
 const ARTIFACTS = ["embed.iife.js", "embed.es.js", "version.json"];
 
-function assertLocalPagesMatchDist() {
+function assertLocalDistribution() {
+  assertSingleDistributionTree();
   const fingerprint = readFingerprint();
-  console.log("→ Validate local Pages source (docs/embed) vs dist");
+  console.log("→ Validate single distribution tree (docs/embed ≡ dist)");
 
   for (const file of ARTIFACTS) {
-    const distFile = path.join(distDir, file);
     const pagesFile = path.join(pagesDir, file);
-    if (!existsSync(distFile)) {
-      throw new Error(`Missing dist/${file} — run build first`);
-    }
     if (!existsSync(pagesFile)) {
-      throw new Error(`Missing docs/embed/${file} — run sync:pages first`);
+      throw new Error(`Missing docs/embed/${file} — run build first`);
     }
-    assertFilesIdentical(distFile, pagesFile, `docs/embed/${file}`);
   }
 
   const iife = path.join(pagesDir, "embed.iife.js");
@@ -55,7 +50,7 @@ function assertLocalPagesMatchDist() {
   console.log(`  commit: ${fingerprint.commit}`);
   console.log(`  builtAt: ${fingerprint.builtAt}`);
   console.log(`  iifeSha256: ${versionJson.fingerprint.iifeSha256}`);
-  console.log("Local Pages validation PASS");
+  console.log("Local distribution validation PASS");
   return { fingerprint, versionJson };
 }
 
@@ -105,11 +100,9 @@ async function assertRemotePages(fingerprint, versionJson) {
 
 async function main() {
   const remote = process.argv.includes("--remote");
-  const { fingerprint, versionJson } = assertLocalPagesMatchDist();
+  const { fingerprint, versionJson } = assertLocalDistribution();
   if (remote) {
     await assertRemotePages(fingerprint, versionJson);
-  } else {
-    console.log("Tip: re-run with --remote after pushing docs/embed to verify live Pages.");
   }
 }
 

@@ -1,13 +1,11 @@
 /**
- * Embed demo — Launcher Experience Flow (PT-INTEGRATION-01).
- * Partner host → Hero CTA → Delivery overlay → Reveal → Close → Host restored.
- * No inline Client Studio mount on page load.
+ * Embed demo — SSOT development host.
+ * Same Embed.mount path as Local Client Studio host.
  */
 
 import clientStudioCss from "../../../apps/client-studio/src/index.css?inline";
 
-import { Embed } from "../src/index";
-import { registerClientStudioCss } from "../src/delivery/ensureStyles";
+import { Embed, registerClientStudioCss } from "../src/index";
 
 registerClientStudioCss(clientStudioCss);
 
@@ -21,5 +19,5 @@ Embed.mount({
 });
 
 console.info(
-  `Embed Loader ${Embed.version} — Launcher Mode armed (no inline mount)`,
+  `SSOT Embed demo — Embed ${Embed.version} (launcher; same Runtime as Local host)`,
 );

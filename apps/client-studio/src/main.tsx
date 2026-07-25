@@ -1,30 +1,24 @@
-import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
+/**
+ * SSOT Local host — Client Studio is not a parallel product.
+ *
+ * Experience mounts exclusively through Embed.mount → Delivery → mountClientStudio.
+ */
 
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { ClientStudioApp } from './features/client-studio/ClientStudioApp';
-import { CLIENT_STUDIO_RELEASE } from './features/client-studio/pilot/productionConfig';
-import { bootstrapEvents } from './features/client-studio/runtime/bootstrapEvents';
-import './index.css';
+import clientStudioCss from "./index.css?inline";
 
-const rootElement = document.getElementById('root');
+import { Embed, registerClientStudioCss } from "@embed-engine/embed";
 
-if (rootElement === null) {
-  throw new Error('Root element not found');
-}
+registerClientStudioCss(clientStudioCss);
 
-document.documentElement.dataset.clientStudioVersion =
-  CLIENT_STUDIO_RELEASE.version;
-document.documentElement.dataset.clientStudioGeneration =
-  CLIENT_STUDIO_RELEASE.generation;
+Embed.mount({
+  mode: "launcher",
+  launcher: "#open-client-studio",
+  objectId: "house-modern-01",
+  hostId: "client-studio-local-host",
+  entryPoint: "hero-cta",
+  launcherId: "open-client-studio",
+});
 
-bootstrapEvents.reset();
-bootstrapEvents.emit('BOOTSTRAP_STARTED');
-
-createRoot(rootElement).render(
-  <StrictMode>
-    <ErrorBoundary>
-      <ClientStudioApp />
-    </ErrorBoundary>
-  </StrictMode>,
+console.info(
+  `SSOT Local host — Embed ${Embed.version} (launcher; same Runtime as Embed demo)`,
 );

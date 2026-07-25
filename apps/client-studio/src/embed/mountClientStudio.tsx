@@ -52,22 +52,24 @@ function assertMountTarget(target: HTMLElement | null | undefined): HTMLElement 
 export function mountClientStudio(
   options: MountClientStudioOptions,
 ): ClientStudioMountHandle {
-  const { runtime, assetBase } = options;
+  const { runtime, assetBase, objectId } = options;
   const target = assertMountTarget(options.target);
 
   setPresentationAssetBase(assetBase);
 
-  const objectId =
-    runtime?.getSession().objectId ??
-    options.objectId ??
-    'house-modern-01';
-
+  // Mount-root contract for Experience chrome (Local / Embed Demo / Playground / IIFE).
   target.setAttribute('data-embed-root', '');
   target.setAttribute('data-client-studio-root', '');
   target.setAttribute('data-embed-boundary', '');
   target.dataset.clientStudioVersion = CLIENT_STUDIO_RELEASE.version;
   target.dataset.clientStudioGeneration = CLIENT_STUDIO_RELEASE.generation;
-  target.dataset.objectId = objectId;
+  if (objectId != null && objectId.trim().length > 0) {
+    target.dataset.objectId = objectId.trim();
+  }
+  document.documentElement.dataset.clientStudioVersion =
+    CLIENT_STUDIO_RELEASE.version;
+  document.documentElement.dataset.clientStudioGeneration =
+    CLIENT_STUDIO_RELEASE.generation;
 
   const reactRoot: Root = createRoot(target);
   reactRoot.render(

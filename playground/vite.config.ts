@@ -6,23 +6,22 @@ import react from "@vitejs/plugin-react";
 import {
   createSsotResolveAliases,
   repoRoot,
-} from "../vite.ssot-aliases";
+} from "../packages/embed/vite.ssot-aliases";
 
 const rootDir = fileURLToPath(new URL(".", import.meta.url));
-const packageRoot = path.resolve(rootDir, "..");
+const embedPackageRoot = path.resolve(repoRoot, "packages/embed");
 const clientStudioPublic = path.resolve(
   repoRoot,
   "apps/client-studio/public",
 );
 
 /**
- * Embed demo — SSOT development host (same aliases as Local Client Studio host).
- * MPA: unknown routes 404 (no SPA fallback to index that could mask removed freeze pages).
+ * Playground — third Embed host surface, identical live Runtime aliases.
+ * Not an IIFE sandbox (IIFE is release-only via docs/embed after build).
  */
 export default defineConfig({
   root: rootDir,
   envDir: repoRoot,
-  appType: "mpa",
   plugins: [react()],
   publicDir: clientStudioPublic,
   resolve: {
@@ -30,7 +29,7 @@ export default defineConfig({
     dedupe: ["react", "react-dom"],
   },
   css: {
-    postcss: path.resolve(packageRoot, "postcss.config.js"),
+    postcss: path.resolve(embedPackageRoot, "postcss.config.js"),
   },
   define: {
     __CLIENT_STUDIO_VERSION__: JSON.stringify("0.1.0"),
@@ -38,7 +37,7 @@ export default defineConfig({
   },
   server: {
     host: "127.0.0.1",
-    port: 5180,
+    port: 5185,
     strictPort: true,
     fs: {
       allow: [repoRoot],
