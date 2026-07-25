@@ -37,6 +37,12 @@ export {
 } from "./providers/MockProvider";
 
 export {
+  OpenAIProvider,
+  OPENAI_PROVIDER_ID,
+  type OpenAIProviderOptions,
+} from "./providers/OpenAIProvider";
+
+export {
   AIService,
   createAIService,
   type AIServiceOptions,

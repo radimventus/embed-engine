@@ -24,19 +24,28 @@ function listSourceFiles(dir: string): string[] {
   return files;
 }
 
+function isOpenAIProviderFile(file: string): boolean {
+  return file.endsWith(`${join("providers", "OpenAIProvider.ts")}`);
+}
+
 /**
- * PT-004 — no vendor lock-in in LLM Foundation or Runtime.
+ * PT-004 / PT-006 — vendor neutrality.
+ * OpenAI mapping may live only inside OpenAIProvider.
  */
-describe("PT-004 vendor neutrality", () => {
-  it("AI package sources omit vendor SDK imports and API key env names", () => {
-    const forbidden = [
+describe("PT-004 / PT-006 vendor neutrality", () => {
+  it("non-provider sources omit vendor SDK imports and API secrets", () => {
+    const forbiddenEverywhere = [
       'from "openai"',
       "from 'openai'",
       'from "@anthropic',
       "from '@anthropic",
       "@google/generative-ai",
+    ];
+
+    const forbiddenOutsideOpenAIProvider = [
       "api.openai.com",
       "OPENAI_API_KEY",
+      "OPENAI_MODEL",
       "ANTHROPIC_API_KEY",
       "GOOGLE_API_KEY",
     ];
@@ -46,11 +55,23 @@ describe("PT-004 vendor neutrality", () => {
 
     for (const file of sources) {
       const code = readFileSync(file, "utf8");
-      for (const token of forbidden) {
+      for (const token of forbiddenEverywhere) {
         assert.equal(
           code.includes(token),
           false,
           `${file} must not contain ${token}`,
+        );
+      }
+
+      if (isOpenAIProviderFile(file)) {
+        continue;
+      }
+
+      for (const token of forbiddenOutsideOpenAIProvider) {
+        assert.equal(
+          code.includes(token),
+          false,
+          `${file} must not contain ${token} (OpenAI stays in OpenAIProvider)`,
         );
       }
     }
