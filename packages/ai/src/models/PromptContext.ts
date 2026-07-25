@@ -11,6 +11,7 @@ import type { DecisionContext } from "@embed-engine/runtime";
 import type { ChatMessage } from "./ChatRequest";
 import type { ResolvedMemory } from "../memory/models/ResolvedMemory";
 import type { KnowledgeContext } from "../prompt/models/KnowledgeContext";
+import type { RecommendationContext } from "../recommendation/models/RecommendationContext";
 
 /** Object slice available to prompts. */
 export type ObjectContext = {
@@ -36,5 +37,7 @@ export type PromptContext = {
   readonly object: ObjectContext;
   readonly conversation: ConversationContext;
   readonly memory: ResolvedMemory;
+  /** Deterministic recommendation guidance (PT-013) — LLM explains, does not invent. */
+  readonly recommendation: RecommendationContext;
   readonly knowledge: KnowledgeContext;
 };

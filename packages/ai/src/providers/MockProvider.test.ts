@@ -7,6 +7,7 @@ import type { ChatRequest } from "../models/ChatRequest";
 import { createSystemPrompt } from "../models/SystemPrompt";
 import { emptyKnowledgeContext } from "../prompt/models/KnowledgeContext";
 import { emptyResolvedMemory } from "../memory/models/ResolvedMemory";
+import { emptyRecommendationContext } from "../recommendation/models/RecommendationContext";
 import {
   MOCK_RESPONSE_CONTENT,
   MockProvider,
@@ -41,6 +42,7 @@ function sampleRequest(userText: string): ChatRequest {
         recentMessages: [],
       },
       memory: emptyResolvedMemory(),
+      recommendation: emptyRecommendationContext(),
       knowledge: emptyKnowledgeContext(),
     },
     messages: [{ role: "user", content: userText }],

@@ -13,6 +13,7 @@ import type { PromptContext } from "../../models/PromptContext";
 import type { LLMProvider } from "../../providers/LLMProvider";
 import { emptyKnowledgeContext } from "../../prompt/models/KnowledgeContext";
 import { emptyResolvedMemory } from "../../memory/models/ResolvedMemory";
+import { emptyRecommendationContext } from "../../recommendation/models/RecommendationContext";
 import { deterministicAnalyze } from "../deterministicFallback";
 import type { AnalysisRequest } from "../models/AnalysisRequest";
 import {
@@ -106,6 +107,7 @@ function toAnalyzerChatRequest(request: AnalysisRequest): ChatRequest {
       recentMessages: recent,
     },
       memory: emptyResolvedMemory(),
+      recommendation: emptyRecommendationContext(),
       knowledge: emptyKnowledgeContext(),
   } as PromptContext;
 

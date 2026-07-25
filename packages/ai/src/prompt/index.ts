@@ -16,6 +16,7 @@ export {
   formatDecisionContextSection,
   formatDecisionMemorySection,
   formatPartnerIdentitySection,
+  formatRecommendationSection,
   type PromptAssemblerInput,
 } from "./PromptAssembler";
 
@@ -44,6 +45,8 @@ export {
   DEFAULT_CONVERSATION_WINDOW,
   type ConversationContextInput,
 } from "./builders/ConversationContextBuilder";
+
+export { formatRecommendationContextSection } from "./builders/RecommendationContextBuilder";
 
 export type {
   PromptPackage,

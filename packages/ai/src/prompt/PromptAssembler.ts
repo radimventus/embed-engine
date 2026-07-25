@@ -11,8 +11,10 @@ import type { SystemPrompt } from "../models/SystemPrompt";
 import { formatConversationContextSection } from "./builders/ConversationContextBuilder";
 import { formatMemoryContextSection } from "./builders/MemoryContextBuilder";
 import { formatObjectContextSection } from "./builders/ObjectContextBuilder";
+import { formatRecommendationContextSection } from "./builders/RecommendationContextBuilder";
 import type { DecisionMemory } from "./models/DecisionMemory";
 import type { ResolvedMemory } from "../memory/models/ResolvedMemory";
+import type { RecommendationContext } from "../recommendation/models/RecommendationContext";
 import {
   PROMPT_SECTION_ORDER,
   type PromptPackage,
@@ -59,6 +61,12 @@ export function formatPartnerIdentitySection(partnerIdentity: string): string {
   return ["Partner Identity", partnerIdentity].join("\n");
 }
 
+export function formatRecommendationSection(
+  recommendation: RecommendationContext,
+): string {
+  return formatRecommendationContextSection(recommendation);
+}
+
 /**
  * Assemble PromptPackage. Section order is fixed by PROMPT_SECTION_ORDER.
  */
@@ -85,6 +93,10 @@ export function assemblePromptPackage(
     {
       id: "decision-memory",
       content: formatDecisionMemorySection(input.context.memory),
+    },
+    {
+      id: "recommendation-context",
+      content: formatRecommendationSection(input.context.recommendation),
     },
     {
       id: "conversation-context",

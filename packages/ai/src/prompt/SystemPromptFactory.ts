@@ -9,6 +9,8 @@ export const DEFAULT_SYSTEM_PROMPT_LINES = [
   "Jsi AI poradce partnera.",
   "Nevymýšlej informace.",
   "Odpovídej pouze z poskytnutého kontextu.",
+  "Doporučení ber pouze z Recommendation Context — nevymýšlej nové možnosti.",
+  "Vysvětluj a formuluj; nerozhoduj mimo Recommendation Context.",
   "Pokud odpověď neznáš, přiznej to.",
 ] as const;
 

@@ -8,6 +8,7 @@ import type { ChatResponse } from "./models/ChatResponse";
 import { createSystemPrompt } from "./models/SystemPrompt";
 import { emptyKnowledgeContext } from "./prompt/models/KnowledgeContext";
 import { emptyResolvedMemory } from "./memory/models/ResolvedMemory";
+import { emptyRecommendationContext } from "./recommendation/models/RecommendationContext";
 import type { LLMProvider } from "./providers/LLMProvider";
 import { MockProvider } from "./providers/MockProvider";
 import { createAIService } from "./services/AIService";
@@ -41,6 +42,7 @@ function sampleRequest(): ChatRequest {
         recentMessages: [],
       },
       memory: emptyResolvedMemory(),
+      recommendation: emptyRecommendationContext(),
       knowledge: emptyKnowledgeContext(),
     },
     messages: [{ role: "user", content: "Jaké jsou provozní náklady?" }],

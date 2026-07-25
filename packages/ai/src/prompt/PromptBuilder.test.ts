@@ -64,9 +64,10 @@ describe("PT-005 Prompt Builder", () => {
     assert.match(promptPackage.sections[3]!.content, /energy/);
     assert.match(promptPackage.sections[4]!.content, /Decision Memory/);
     assert.match(promptPackage.sections[4]!.content, /\(none\)/);
-    assert.match(promptPackage.sections[5]!.content, /Conversation Context/);
+    assert.match(promptPackage.sections[5]!.content, /Recommendation Context/);
+    assert.match(promptPackage.sections[6]!.content, /Conversation Context/);
     assert.equal(
-      promptPackage.sections[6]!.content,
+      promptPackage.sections[7]!.content,
       "Jaké jsou provozní náklady?",
     );
     assert.equal(promptPackage.context.memory.facts.length, 0);

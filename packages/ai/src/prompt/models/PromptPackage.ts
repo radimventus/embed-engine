@@ -16,6 +16,7 @@ export const PROMPT_SECTION_ORDER = [
   "object-context",
   "decision-context",
   "decision-memory",
+  "recommendation-context",
   "conversation-context",
   "user-message",
 ] as const;

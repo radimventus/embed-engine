@@ -94,6 +94,25 @@ export {
 } from "./recorder";
 
 export {
+  DecisionRecommendationEngine,
+  createDecisionRecommendationEngine,
+  recommendDecision,
+  emptyRecommendationContext,
+  DEFAULT_RECOMMENDATION_RULES,
+  budgetConflictRule,
+  heatingPreferenceRule,
+  energyPriorityRule,
+  familySizeRule,
+  type DecisionRecommendationInput,
+  type DecisionRecommendationEngineOptions,
+  type RecommendationContext,
+  type RecommendationItem,
+  type RecommendationRule,
+  type RecommendationRuleInput,
+  type RecommendationRuleContribution,
+} from "./recommendation";
+
+export {
   createPromptBuilder,
   promptPackageToChatRequest,
   PromptBuilder,

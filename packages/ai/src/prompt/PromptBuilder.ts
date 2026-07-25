@@ -27,6 +27,10 @@ import { emptyKnowledgeContext } from "./models/KnowledgeContext";
 import type { PromptPackage } from "./models/PromptPackage";
 import { assemblePromptPackage } from "./PromptAssembler";
 import { createSystemPromptFactory } from "./SystemPromptFactory";
+import {
+  emptyRecommendationContext,
+  type RecommendationContext,
+} from "../recommendation/models/RecommendationContext";
 
 export const DEFAULT_PARTNER_IDENTITY =
   "Partner: EMBED / Conis Decision Experience.";
@@ -37,6 +41,11 @@ export type PromptBuilderInput = {
   readonly object?: ObjectContextInput;
   /** Decision Memory to include in PromptPackage (PT-008). */
   readonly memory?: DecisionMemory;
+  /**
+   * PT-013 — precomputed RecommendationContext (engine output).
+   * PromptBuilder only serializes — never scores.
+   */
+  readonly recommendation?: RecommendationContext;
   /** Prior conversation turns (excluding the current user message). */
   readonly conversationMessages?: readonly ChatMessage[];
   readonly currentUserMessage: string;
@@ -73,6 +82,8 @@ export class PromptBuilder {
       maxMessages: max,
     });
     const memory = buildMemoryContext(input.memory ?? emptyDecisionMemory());
+    const recommendation =
+      input.recommendation ?? emptyRecommendationContext();
     const knowledge = emptyKnowledgeContext();
 
     const context: PromptContext = Object.freeze({
@@ -80,6 +91,7 @@ export class PromptBuilder {
       object,
       conversation,
       memory,
+      recommendation,
       knowledge,
     });
 

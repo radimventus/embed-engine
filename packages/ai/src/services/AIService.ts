@@ -36,7 +36,12 @@ import {
   createDisabledConversationRecorder,
   type ConversationRecorder,
 } from "../recorder";
+import {
+  createDecisionRecommendationEngine,
+  type DecisionRecommendationEngine,
+} from "../recommendation";
 import type { AnalysisResult } from "../analyzer/models/AnalysisResult";
+import { buildObjectContext } from "../prompt/builders/ObjectContextBuilder";
 import {
   createDecisionMemoryService,
   type DecisionMemoryService,
@@ -78,6 +83,8 @@ export type AIServiceOptions = {
    * Pass `false` or disabled recorder to turn off.
    */
   readonly recorder?: ConversationRecorder | false;
+  /** PT-013 — deterministic recommendation engine (default: built-in rules). */
+  readonly recommendationEngine?: DecisionRecommendationEngine;
 };
 
 export type SendMessageInput = {
@@ -104,6 +111,7 @@ export class AIService {
   private readonly conversationId: string;
   private readonly diagnostics: AIDiagnostics;
   private readonly recorder: ConversationRecorder;
+  private readonly recommendationEngine: DecisionRecommendationEngine;
   /** Prior turns only (excludes in-flight user message). */
   private history: ChatMessage[] = [];
 
@@ -116,6 +124,8 @@ export class AIService {
     this.memoryService =
       options.memoryService ?? createDecisionMemoryService();
     this.promptBuilder = options.promptBuilder ?? createPromptBuilder();
+    this.recommendationEngine =
+      options.recommendationEngine ?? createDecisionRecommendationEngine();
     this.analyzer =
       options.analyzer ??
       createConversationAnalyzer(
@@ -287,11 +297,18 @@ export class AIService {
       });
 
       const promptStart = nowMs();
+      const objectContext = buildObjectContext(input.object);
+      const recommendation = this.recommendationEngine.recommend({
+        memory: resolvedForTrace,
+        object: objectContext,
+        decision: input.decision,
+      });
       const promptPackage = this.promptBuilder.build({
         sessionId: this.sessionId,
         decision: input.decision,
         object: input.object,
         memory: historySnapshot,
+        recommendation,
         conversationMessages: this.history,
         currentUserMessage: text,
       });
