@@ -3,12 +3,13 @@
  *
  * Creates transport once per page load. Session lives in AIService memory only.
  * Chat UI uses getEmbedAIService() — never constructs Provider in the chat component.
- * Diagnostics are passive and disableable via VITE_AI_DIAGNOSTICS=0.
+ * Diagnostics / Recorder are passive and disableable via env flags.
  */
 
 import {
   createAIDiagnostics,
   createAIService,
+  createConversationRecorder,
   OpenAIProvider,
   type AIService,
   type ChatRequest,
@@ -28,14 +29,31 @@ export function getEmbedAIService(): AIService {
   }
 
   const diagnosticsEnabled = readViteEnv('VITE_AI_DIAGNOSTICS') !== '0';
+  const recorderEnabled = readViteEnv('VITE_AI_RECORDER') !== '0';
+
+  const sessionId =
+    typeof crypto !== 'undefined' && 'randomUUID' in crypto
+      ? `embed-${crypto.randomUUID()}`
+      : `embed-${Date.now().toString(36)}`;
 
   embedAIService = createAIService(createEmbedProvider(), {
+    sessionId,
     diagnostics: createAIDiagnostics({
       enabled: diagnosticsEnabled,
       console: diagnosticsEnabled,
     }),
+    recorder: createConversationRecorder({
+      sessionId,
+      conversationId: sessionId,
+      enabled: recorderEnabled,
+    }),
   });
   return embedAIService;
+}
+
+/** Export current conversation audit JSON (empty when recorder disabled). */
+export function exportEmbedConversationJSON(pretty = true): string {
+  return getEmbedAIService().exportConversationJSON(pretty);
 }
 
 /** Test escape hatch — replace singleton. */
@@ -63,7 +81,11 @@ function createEmbedProvider(): LLMProvider {
 }
 
 function readViteEnv(
-  name: 'VITE_OPENAI_API_KEY' | 'VITE_OPENAI_MODEL' | 'VITE_AI_DIAGNOSTICS',
+  name:
+    | 'VITE_OPENAI_API_KEY'
+    | 'VITE_OPENAI_MODEL'
+    | 'VITE_AI_DIAGNOSTICS'
+    | 'VITE_AI_RECORDER',
 ): string | undefined {
   const value = import.meta.env[name];
   if (typeof value !== 'string' || value.trim().length === 0) {

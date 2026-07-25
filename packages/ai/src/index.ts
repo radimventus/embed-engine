@@ -85,6 +85,15 @@ export {
 } from "./diagnostics";
 
 export {
+  ConversationRecorder,
+  createConversationRecorder,
+  createDisabledConversationRecorder,
+  type ConversationRecorderOptions,
+  type ConversationRecord,
+  type ConversationExport,
+} from "./recorder";
+
+export {
   createPromptBuilder,
   promptPackageToChatRequest,
   PromptBuilder,

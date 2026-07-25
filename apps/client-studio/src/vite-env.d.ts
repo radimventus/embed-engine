@@ -10,6 +10,8 @@ interface ImportMetaEnv {
   readonly VITE_OPENAI_MODEL?: string;
   /** Set to "0" to disable AI diagnostics (PT-012). Default: enabled. */
   readonly VITE_AI_DIAGNOSTICS?: string;
+  /** Set to "0" to disable conversation recorder (PT-012). Default: enabled. */
+  readonly VITE_AI_RECORDER?: string;
 }
 
 interface ImportMeta {

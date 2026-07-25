@@ -32,6 +32,12 @@ import {
   type ConversationTurnTrace,
 } from "../diagnostics";
 import {
+  createConversationRecorder,
+  createDisabledConversationRecorder,
+  type ConversationRecorder,
+} from "../recorder";
+import type { AnalysisResult } from "../analyzer/models/AnalysisResult";
+import {
   createDecisionMemoryService,
   type DecisionMemoryService,
 } from "../memory/DecisionMemoryService";
@@ -67,6 +73,11 @@ export type AIServiceOptions = {
    * Pass `createDisabledDiagnostics()` or omit/`diagnostics: false` to disable.
    */
   readonly diagnostics?: AIDiagnostics | false;
+  /**
+   * PT-012 — optional conversation audit recorder (full snapshots for debug/replay).
+   * Pass `false` or disabled recorder to turn off.
+   */
+  readonly recorder?: ConversationRecorder | false;
 };
 
 export type SendMessageInput = {
@@ -92,6 +103,7 @@ export class AIService {
   private readonly sessionId: string;
   private readonly conversationId: string;
   private readonly diagnostics: AIDiagnostics;
+  private readonly recorder: ConversationRecorder;
   /** Prior turns only (excludes in-flight user message). */
   private history: ChatMessage[] = [];
 
@@ -113,6 +125,18 @@ export class AIService {
       options.diagnostics === false
         ? createDisabledDiagnostics()
         : (options.diagnostics ?? createAIDiagnostics({ enabled: true }));
+    this.recorder =
+      options.recorder === false
+        ? createDisabledConversationRecorder({
+            sessionId: this.sessionId,
+            conversationId: this.conversationId,
+          })
+        : (options.recorder ??
+          createConversationRecorder({
+            sessionId: this.sessionId,
+            conversationId: this.conversationId,
+            enabled: true,
+          }));
   }
 
   /** Current provider (for tests / diagnostics — not vendor-specific). */
@@ -134,6 +158,15 @@ export class AIService {
 
   getDiagnostics(): AIDiagnostics {
     return this.diagnostics;
+  }
+
+  getRecorder(): ConversationRecorder {
+    return this.recorder;
+  }
+
+  /** Export full conversation audit JSON (empty when recorder disabled). */
+  exportConversationJSON(pretty = true): string {
+    return this.recorder.exportJSON(pretty);
   }
 
   getHistory(): readonly ChatMessage[] {
@@ -167,6 +200,7 @@ export class AIService {
    * PT-011 — Full conversation turn:
    * Analyzer → DecisionMemoryService → PromptBuilder (ResolvedMemory) → Provider.
    * PT-012 — Observes latencies / tokens / memory counts without changing results.
+   * PT-012 Recorder — optional full audit snapshots for debug / replay.
    */
   async sendMessage(input: SendMessageInput): Promise<SendMessageResult> {
     const text = input.message.trim();
@@ -188,6 +222,40 @@ export class AIService {
     let memoryTrace = null as ReturnType<typeof createMemoryTrace> | null;
     let providerTrace = null as ReturnType<typeof createProviderTrace> | null;
     let tokenTrace = null as ReturnType<typeof createTokenTrace> | null;
+    let analysisSnapshot: AnalysisResult | null = null;
+    let resolvedSnapshot: ResolvedMemory | null = null;
+    let promptPackageSnapshot: PromptPackage | null = null;
+    let recorded = false;
+
+    const recordAudit = (parts: {
+      readonly response: string | null;
+      readonly error: string | null;
+      readonly promptTokens: number | null;
+      readonly completionTokens: number | null;
+      readonly providerId: string | null;
+      readonly model: string | null;
+    }): void => {
+      if (recorded || !this.recorder.isEnabled()) {
+        return;
+      }
+      recorded = true;
+      this.recorder.record({
+        sessionId: conversation.sessionId,
+        messageId: conversation.messageId,
+        timestamp: Date.now(),
+        userMessage: text,
+        analysis: analysisSnapshot,
+        resolvedMemory: resolvedSnapshot,
+        promptPackage: promptPackageSnapshot,
+        provider: parts.providerId,
+        model: parts.model,
+        promptTokens: parts.promptTokens,
+        completionTokens: parts.completionTokens,
+        latency: elapsedMs(totalStart),
+        response: parts.response,
+        error: parts.error,
+      });
+    };
 
     try {
       const analyzerStart = nowMs();
@@ -195,6 +263,7 @@ export class AIService {
         message: text,
         recentMessages: this.history,
       });
+      analysisSnapshot = analysis;
       analyzerMs = elapsedMs(analyzerStart);
       this.diagnostics.emitPhase(conversation, "analyzer", analyzerMs);
 
@@ -206,6 +275,7 @@ export class AIService {
       const historySnapshot = this.memoryService.getMemory();
       const resolutionStart = nowMs();
       const resolvedForTrace = resolveMemory(historySnapshot);
+      resolvedSnapshot = resolvedForTrace;
       resolutionMs = elapsedMs(resolutionStart);
       this.diagnostics.emitPhase(conversation, "resolution", resolutionMs);
 
@@ -225,6 +295,7 @@ export class AIService {
         conversationMessages: this.history,
         currentUserMessage: text,
       });
+      promptPackageSnapshot = promptPackage;
       promptBuilderMs = elapsedMs(promptStart);
       this.diagnostics.emitPhase(conversation, "prompt", promptBuilderMs);
       promptTrace = measurePromptPackage(promptPackage);
@@ -263,6 +334,14 @@ export class AIService {
           tokenTrace: null,
           ok: false,
           errorCode: mapped.code,
+        });
+        recordAudit({
+          response: null,
+          error: mapped.code,
+          promptTokens: null,
+          completionTokens: null,
+          providerId: providerMeta.providerId,
+          model: providerMeta.model,
         });
         throw mapped;
       }
@@ -309,6 +388,14 @@ export class AIService {
           ok: false,
           errorCode: invalid.code,
         });
+        recordAudit({
+          response: null,
+          error: invalid.code,
+          promptTokens: response.usage.promptTokens,
+          completionTokens: response.usage.completionTokens,
+          providerId: providerMeta.providerId,
+          model: providerMeta.model,
+        });
         throw invalid;
       }
 
@@ -336,6 +423,14 @@ export class AIService {
         tokenTrace,
         ok: true,
         errorCode: null,
+      });
+      recordAudit({
+        response: content,
+        error: null,
+        promptTokens: response.usage.promptTokens,
+        completionTokens: response.usage.completionTokens,
+        providerId: providerMeta.providerId,
+        model: providerMeta.model,
       });
 
       return Object.freeze({
@@ -367,6 +462,15 @@ export class AIService {
           errorCode: mapped.code,
         });
       }
+      const providerMeta = readProviderMeta(this.provider);
+      recordAudit({
+        response: null,
+        error: mapped.code,
+        promptTokens: tokenTrace?.promptTokens ?? null,
+        completionTokens: tokenTrace?.completionTokens ?? null,
+        providerId: providerMeta.providerId,
+        model: providerMeta.model,
+      });
       throw mapped;
     }
   }
