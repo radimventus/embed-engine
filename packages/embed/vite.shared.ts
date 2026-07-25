@@ -4,25 +4,12 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import react from "@vitejs/plugin-react";
 
+import { createSsotResolveAliases } from "./vite.ssot-aliases";
+
 const rootDir = fileURLToPath(new URL(".", import.meta.url));
 const repoRoot = path.resolve(rootDir, "../..");
 const clientStudioSrc = path.resolve(repoRoot, "apps/client-studio/src");
 const fingerprintFile = path.join(rootDir, ".build/fingerprint.json");
-
-/**
- * Resolve workspace packages via package.json exports (built `dist/`).
- * Only alias the Client Studio mount bridge (app code, not a package).
- */
-const aliases = {
-  "@client-studio/embed-mount": path.resolve(
-    clientStudioSrc,
-    "embed/mountClientStudio.tsx",
-  ),
-  "@client-studio/bootstrap-events": path.resolve(
-    clientStudioSrc,
-    "features/client-studio/runtime/bootstrapEvents.ts",
-  ),
-};
 
 function readBuildFingerprintDefine(): string {
   if (!existsSync(fingerprintFile)) {
@@ -48,7 +35,11 @@ function readBuildFingerprintDefine(): string {
 }
 
 /**
- * Shared resolve/build fragments for Embed ESM + IIFE that include Client Studio.
+ * Embed production ESM/IIFE — compiles the SAME live source aliases as Local / demo.
+ * No parallel Runtime implementation.
+ *
+ * Public Release Snapshot must NOT bake developer secrets from repo `.env*`.
+ * Live Local / Embed Demo still load keys via their own Vite `envDir`.
  */
 export function createEmbedViteConfig(options: {
   readonly emptyOutDir: boolean;
@@ -60,8 +51,10 @@ export function createEmbedViteConfig(options: {
 }) {
   return defineConfig({
     plugins: [react()],
+    // Sterile env: do not load repo-root `.env.local` into public Pages artifacts.
+    envDir: path.join(rootDir, ".build"),
     resolve: {
-      alias: aliases,
+      alias: createSsotResolveAliases(),
       dedupe: ["react", "react-dom"],
     },
     css: {
@@ -71,8 +64,12 @@ export function createEmbedViteConfig(options: {
       __CLIENT_STUDIO_VERSION__: JSON.stringify("0.1.0"),
       __EMBED_RUNTIME_BUILD__: readBuildFingerprintDefine(),
       "process.env.NODE_ENV": JSON.stringify("production"),
+      // Strip OpenAI key from public IIFE/ESM (partner hosts supply their own later).
+      "import.meta.env.VITE_OPENAI_API_KEY": JSON.stringify(""),
     },
     build: {
+      // SSOT: only docs/embed — packages/embed/dist is a symlink to this tree.
+      outDir: path.resolve(repoRoot, "docs/embed"),
       emptyOutDir: options.emptyOutDir,
       sourcemap: true,
       cssCodeSplit: false,

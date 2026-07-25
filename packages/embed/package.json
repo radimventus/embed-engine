@@ -19,12 +19,14 @@
   ],
   "scripts": {
     "build": "node ./scripts/build-distribution.mjs",
-    "sync:pages": "node ./scripts/sync-pages.mjs",
+    "publish:release": "node ./scripts/publish-release.mjs",
+    "sync:pages": "pnpm run publish:release",
     "smoke:runtime": "node ./scripts/smoke-runtime.mjs",
     "validate:pages": "node ./scripts/validate-pages.mjs",
-    "deploy:pages": "pnpm run build && pnpm run sync:pages",
+    "deploy:pages": "pnpm run publish:release",
+    "ssot:guard": "tsx --test scripts/ssot-guard.test.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts src/delivery/deliveryLayer.test.ts src/delivery/revealEngine.test.ts src/delivery/cssIsolation.test.ts",
+    "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts src/delivery/deliveryLayer.test.ts src/delivery/revealEngine.test.ts src/delivery/cssIsolation.test.ts scripts/ssot-guard.test.ts",
     "demo": "vite --config demo/vite.config.ts"
   },
   "dependencies": {

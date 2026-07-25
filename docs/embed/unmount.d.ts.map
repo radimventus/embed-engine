@@ -1,1 +1,1 @@
-{"version":3,"file":"unmount.d.ts","sourceRoot":"","sources":["../src/unmount.ts"],"names":[],"mappings":"AAAA;;;;;GAKG;AA2BH;;GAEG;AACH,wBAAgB,OAAO,CAAC,MAAM,CAAC,EAAE,MAAM,GAAG,WAAW,GAAG,IAAI,CAiC3D"}
+{"version":3,"file":"unmount.d.ts","sourceRoot":"","sources":["../../packages/embed/src/unmount.ts"],"names":[],"mappings":"AAAA;;;;;GAKG;AA2BH;;GAEG;AACH,wBAAgB,OAAO,CAAC,MAAM,CAAC,EAAE,MAAM,GAAG,WAAW,GAAG,IAAI,CAiC3D"}

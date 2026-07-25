@@ -2,6 +2,8 @@
 
 **Canonical platform map:** [PROJECT-MAP.md](../PROJECT-MAP.md)  
 **Runtime docs (start here):** [RUNTIME.md](./RUNTIME.md) — SSOT → [RI-001](../04-reference-implementation/RI-001-Runtime-Kernel.md)  
+**Host / delivery Runtime SSOT:** [runtime-ssot.md](./runtime-ssot.md)  
+**Embed Release Snapshot:** [embed-release-workflow.md](./embed-release-workflow.md)  
 **Decision Layer SSOT:** [decision-layer/](./decision-layer/)  
 **Governance freeze:** [decision-layer/decision-layer-governance-v1.md](./decision-layer/decision-layer-governance-v1.md)
 

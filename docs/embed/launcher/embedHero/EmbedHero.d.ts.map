@@ -1,0 +1,1 @@
+{"version":3,"file":"EmbedHero.d.ts","sourceRoot":"","sources":["../../../../packages/embed/src/launcher/embedHero/EmbedHero.tsx"],"names":[],"mappings":"AA0BA,MAAM,MAAM,cAAc,GAAG;IAC3B,QAAQ,CAAC,SAAS,CAAC,EAAE,MAAM,CAAC;IAC5B,mEAAmE;IACnE,QAAQ,CAAC,gBAAgB,EAAE,MAAM,IAAI,CAAC;CACvC,CAAC;AA+QF;;;;;GAKG;AACH,wBAAgB,SAAS,CAAC,EAAE,SAAS,EAAE,gBAAgB,EAAE,EAAE,cAAc,+BAuCxE"}
