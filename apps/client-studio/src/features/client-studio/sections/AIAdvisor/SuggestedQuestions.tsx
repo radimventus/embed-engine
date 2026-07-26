@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { colors } from '@embed-engine/design-tokens';
 
@@ -7,6 +7,15 @@ import {
   FAQ_COLUMN_WIDTH_CLASS,
 } from './ai-advisor-layout';
 import type { ExperienceFaqItem } from './experiencePresentation';
+import {
+  hasMoreFaqItems,
+  initialFaqVisibleCount,
+  nextFaqVisibleCount,
+} from './faqProgressiveLoading';
+
+export { FAQ_VISIBLE_PAGE_SIZE } from './faqProgressiveLoading';
+
+const LOAD_MORE_LABEL = 'Načíst další';
 
 type SuggestedQuestionsProps = {
   items: readonly ExperienceFaqItem[];
@@ -105,21 +114,47 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
   );
 }
 
-/** FAQ topic rows projected from Experience evidence. */
+/** FAQ topic rows projected from Experience evidence — progressive reveal by page. */
 export function FaqList({ items, onQuestionSelect }: SuggestedQuestionsProps) {
+  const [visibleCount, setVisibleCount] = useState(() =>
+    initialFaqVisibleCount(items.length),
+  );
+
+  useEffect(() => {
+    setVisibleCount(initialFaqVisibleCount(items.length));
+  }, [items]);
+
+  const visibleItems = items.slice(0, visibleCount);
+  const hasMore = hasMoreFaqItems(visibleCount, items.length);
+
   return (
-    <ul
+    <div
       className={`${FAQ_ACCORDION_LIST_WIDTH_CLASS} flex shrink-0 flex-col gap-[14px]`}
     >
-      {items.map((item) => (
-        <FaqItem
-          key={item.id}
-          question={item.question}
-          answer={item.answer}
-          onQuestionSelect={onQuestionSelect}
-        />
-      ))}
-    </ul>
+      <ul className="m-0 flex list-none flex-col gap-[14px] p-0">
+        {visibleItems.map((item) => (
+          <FaqItem
+            key={item.id}
+            question={item.question}
+            answer={item.answer}
+            onQuestionSelect={onQuestionSelect}
+          />
+        ))}
+      </ul>
+      {hasMore ? (
+        <button
+          type="button"
+          onClick={() =>
+            setVisibleCount((current) =>
+              nextFaqVisibleCount(current, items.length),
+            )
+          }
+          className="self-start cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-embed-foreground-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2"
+        >
+          {LOAD_MORE_LABEL}
+        </button>
+      ) : null}
+    </div>
   );
 }
 
