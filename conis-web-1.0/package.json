@@ -1,0 +1,13 @@
+{
+  "name": "conis-web-1.0",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CONIS marketing website + qualification mock API",
+  "scripts": {
+    "start": "node server/index.js",
+    "server": "node server/index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
