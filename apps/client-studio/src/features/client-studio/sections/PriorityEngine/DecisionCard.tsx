@@ -68,7 +68,13 @@ export function DecisionCard({
             ? `${DECISION_CARD_ACTIVE_CLASS} justify-between py-2.5`
             : `${DECISION_CARD_IDLE_CLASS} ${DECISION_CARD_HOVER_CLASS} z-0 scale-100 justify-center py-3`
         }`}
-        style={{ transformOrigin: 'center center' }}
+        style={{
+          transformOrigin: 'center center',
+          // Explicit solid border — embed boundary resets button border-style to none.
+          borderStyle: 'solid',
+          borderWidth: isActive ? 2 : 1,
+          borderColor: '#D4AF37',
+        }}
       >
         <div className="flex flex-col items-center gap-2.5">
           <span

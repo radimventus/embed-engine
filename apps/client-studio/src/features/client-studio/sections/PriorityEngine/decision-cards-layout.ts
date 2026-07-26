@@ -17,16 +17,16 @@ export const DECISION_TRANSITION_CLASS = MOTION_DURATION_CLASS;
 export const DECISION_CARD_FOCUS_CLASS =
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2';
 
-/** Default card — 1 px gold border. */
+/** Default card — 1 px gold border (solid required under embed boundary button reset). */
 export const DECISION_CARD_IDLE_CLASS =
-  'border border-[#D4AF37] bg-[#F4F3F1] shadow-none';
+  'border border-solid border-[#D4AF37] bg-[#F4F3F1] shadow-none';
 
 export const DECISION_CARD_HOVER_CLASS =
-  'hover:cursor-pointer hover:border-[#D4AF37] hover:shadow-[0_4px_14px_rgba(0,25,48,0.06)]';
+  'hover:cursor-pointer hover:border-solid hover:border-[#D4AF37] hover:shadow-[0_4px_14px_rgba(0,25,48,0.06)]';
 
 /** Open / selected card — 2 px gold border. */
 export const DECISION_CARD_ACTIVE_CLASS =
-  'z-10 scale-[1.12] border-2 border-[#D4AF37] shadow-[0_8px_24px_rgba(0,25,48,0.08)]';
+  'z-10 scale-[1.12] border-2 border-solid border-[#D4AF37] shadow-[0_8px_24px_rgba(0,25,48,0.08)]';
 
 /** PT-002 — primary Decision Story priority (Runtime-driven highlight). */
 export const DECISION_CARD_PRIMARY_CLASS =

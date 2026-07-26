@@ -1,0 +1,232 @@
+{
+  "task": "PT-PRIORITY-REDESIGN-01",
+  "source": "docs/reviews/PT-PRIORITY-REDESIGN-01.md",
+  "url": "http://127.0.0.1:5180/",
+  "surface": "Embed Demo / Local Live Runtime",
+  "how": "Playwright + .playwright-browsers Chromium-1228; open #open-client-studio; scroll [data-testid=priority-experience]",
+  "timestamp": "2026-07-26T09:04:57.602Z",
+  "viewport": {
+    "width": 1440,
+    "height": 900
+  },
+  "overall": "PASS",
+  "summary": {
+    "text_Vybrano_absent": "PASS",
+    "text_Volby_muzete_absent": "PASS",
+    "text_Prozkoumejte_recommendation_chrome_absent": "PASS",
+    "title_to_cards_directly": "PASS",
+    "grid_5x2": "PASS",
+    "gap_22px": "PASS",
+    "idle_border_1px_gold": "PASS",
+    "active_border_2px_gold": "PASS",
+    "terminal_height_two_card_rows": "PASS",
+    "report_maxheight_350": "PASS"
+  },
+  "acceptance": {
+    "text_Vybrano_absent": {
+      "status": "PASS",
+      "criterion": "Selection info copy \"Vybráno\" must not appear (removed from SectionHeader)",
+      "detail": {
+        "inHeaderBand": false,
+        "inSection": false,
+        "headerBandText": "CO JE PRO VÁS PODSTATNÉ? VYBERTE 3 PRIORITY."
+      }
+    },
+    "text_Volby_muzete_absent": {
+      "status": "PASS",
+      "criterion": "Selection helper \"Volby můžete…\" must not appear between title and cards",
+      "detail": {
+        "inHeaderBand": false,
+        "inSection": false
+      }
+    },
+    "text_Prozkoumejte_recommendation_chrome_absent": {
+      "status": "PASS",
+      "criterion": "End recommendation chrome (\"Prozkoumejte strukturu domu\" RecommendationPanel) must be hidden (PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL=false)",
+      "detail": {
+        "inHeaderBand": false,
+        "endRecommendationPanelPresent": false,
+        "stillPresentInTerminalContent": true,
+        "stillPresentInReportContent": true,
+        "note": "PT out of scope: Terminal UX/content · Report UX/logic — phrase may remain as Runtime label inside Terminal/Report"
+      }
+    },
+    "title_to_cards_directly": {
+      "status": "PASS",
+      "criterion": "Title → cards directly (no info chrome in header band)",
+      "detail": {
+        "headerBand": {
+          "text": "CO JE PRO VÁS PODSTATNÉ? VYBERTE 3 PRIORITY.",
+          "Vybrano": false,
+          "VolbyMuzete": false,
+          "ProzkoumejteStrukturuDomu": false
+        }
+      }
+    },
+    "grid_5x2": {
+      "status": "PASS",
+      "criterion": "5×2 layout (desktop)",
+      "detail": {
+        "columns": 5,
+        "rows": 2,
+        "cardCount": 10
+      }
+    },
+    "gap_22px": {
+      "status": "PASS",
+      "criterion": "Gap ~22 px between cards",
+      "detail": {
+        "gapX": 22.41,
+        "gapY": 22
+      }
+    },
+    "idle_border_1px_gold": {
+      "status": "PASS",
+      "criterion": "Idle card: 1 px gold border (#D4AF37)",
+      "detail": {
+        "expected": {
+          "width": "1px",
+          "color": "rgb(212, 175, 55)",
+          "style": "solid"
+        },
+        "measured": {
+          "ariaPressed": "false",
+          "classes": {
+            "border": true,
+            "border2": false,
+            "gold": true
+          },
+          "borderTopWidth": "1px",
+          "borderTopStyle": "solid",
+          "borderTopColor": "rgb(212, 175, 55)",
+          "boxBorderDiff": 2,
+          "transform": "matrix(1, 0, 0, 1, 0, 0)"
+        },
+        "classUtilitiesPresent": {
+          "border": true,
+          "border2": false,
+          "gold": true
+        },
+        "rootCause": null,
+        "buttonResetRule": "[data-embed-boundary] button { color: inherit; background-color: transparent; background-image: none; font-family: inherit; font-size: inherit; font-weight: inherit; line-height: inherit; letter-spacing: inherit; text-transform: none; borde",
+        "borderUtilityRule": "[data-embed-boundary] .border { border-width: 1px !important; }"
+      }
+    },
+    "active_border_2px_gold": {
+      "status": "PASS",
+      "criterion": "Active/selected card: 2 px gold border (#D4AF37)",
+      "detail": {
+        "expected": {
+          "width": "2px",
+          "color": "rgb(212, 175, 55)",
+          "style": "solid"
+        },
+        "measured": {
+          "ariaPressed": "true",
+          "classes": {
+            "border": false,
+            "border2": true,
+            "gold": true
+          },
+          "borderTopWidth": "2px",
+          "borderTopStyle": "solid",
+          "borderTopColor": "rgb(212, 175, 55)",
+          "boxBorderDiff": 4,
+          "transform": "matrix(1.12, 0, 0, 1.12, 0, 0)"
+        },
+        "selectionConfirmed": true,
+        "classUtilitiesPresent": {
+          "border": false,
+          "border2": true,
+          "gold": true
+        },
+        "sameRootCauseAsIdle": false
+      }
+    },
+    "terminal_height_two_card_rows": {
+      "status": "PASS",
+      "criterion": "Decision Terminal height = two card rows (2×119+22 = 260 px)",
+      "detail": {
+        "terminalHeight": 260,
+        "twoRowsHeight": 260,
+        "styleHeight": "260px",
+        "overflowY": "auto"
+      }
+    },
+    "report_maxheight_350": {
+      "status": "PASS",
+      "criterion": "Decision Report maxHeight 350 px + overflow-y auto",
+      "detail": {
+        "present": true,
+        "maxHeight": "350px",
+        "styleMaxHeight": "350px",
+        "height": 350,
+        "overflowY": "auto"
+      }
+    }
+  },
+  "measurements": {
+    "sectionId": "priority-experience",
+    "grid": {
+      "columns": 5,
+      "rows": 2,
+      "cardCount": 10,
+      "gapX": 22.41,
+      "gapY": 22,
+      "twoRowsHeight": 260
+    },
+    "idleBorder": {
+      "ariaPressed": "false",
+      "classes": {
+        "border": true,
+        "border2": false,
+        "gold": true
+      },
+      "borderTopWidth": "1px",
+      "borderTopStyle": "solid",
+      "borderTopColor": "rgb(212, 175, 55)",
+      "boxBorderDiff": 2,
+      "transform": "matrix(1, 0, 0, 1, 0, 0)"
+    },
+    "selectedBorder": {
+      "ariaPressed": "true",
+      "classes": {
+        "border": false,
+        "border2": true,
+        "gold": true
+      },
+      "borderTopWidth": "2px",
+      "borderTopStyle": "solid",
+      "borderTopColor": "rgb(212, 175, 55)",
+      "boxBorderDiff": 4,
+      "transform": "matrix(1.12, 0, 0, 1.12, 0, 0)"
+    },
+    "terminal": {
+      "height": 260,
+      "styleHeight": "260px",
+      "overflowY": "auto"
+    },
+    "report": {
+      "present": true,
+      "maxHeight": "350px",
+      "styleMaxHeight": "350px",
+      "height": 350,
+      "overflowY": "auto"
+    },
+    "texts": {
+      "Vybrano": false,
+      "VolbyMuzete": false,
+      "ProzkoumejteStrukturuDomu": true,
+      "ProzkoumejteInTerminal": true,
+      "ProzkoumejteInReport": true
+    },
+    "headerBand": {
+      "text": "CO JE PRO VÁS PODSTATNÉ? VYBERTE 3 PRIORITY.",
+      "Vybrano": false,
+      "VolbyMuzete": false,
+      "ProzkoumejteStrukturuDomu": false
+    }
+  },
+  "pageErrors": [],
+  "screenshot": "priority-section.png"
+}

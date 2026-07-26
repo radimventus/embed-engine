@@ -1,5 +1,4 @@
 import { DecisionReport } from '../DecisionReport/DecisionReport';
-import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
 import { DecisionTerminal } from '../DecisionTerminal/DecisionTerminal';
 import { PILOT_SECTION_IDS, PILOT_TERMS } from '../../pilot/pilotVocabulary';
 import { useDecisionContext } from '../../runtime/useDecisionContext';
@@ -9,7 +8,6 @@ import {
   PRIORITY_ENGINE_SHOW_DECISION_REPORT,
   PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL,
 } from './priority-engine-layout';
-import { DecisionStoryRecommendationBanner } from './DecisionStoryRecommendationBanner';
 import { PriorityCards } from './PriorityCards';
 import { usePriorityExperience } from './PriorityExperienceProvider';
 import { RecommendationPanel } from './RecommendationPanel';
@@ -17,11 +15,13 @@ import { RecommendedSectionOrder } from './RecommendedSectionOrder';
 import { SectionHeader } from './SectionHeader';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
 
 /**
  * Priority Engine — Decision Discovery surface (CSCB-04 / PT-002 / PT-003).
  * Cards emit ChangePriority into Runtime.
  * Interpretive surfaces read DecisionContext only.
+ * Layout: title → cards + terminal (PT-PRIORITY-REDESIGN-01) — no info chrome between.
  */
 export function PriorityEngine() {
   const {
@@ -49,7 +49,6 @@ export function PriorityEngine() {
       className={`relative scroll-mt-header ${SECTION_SURFACE_CLASS} ${PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS} ${PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS}`}
     >
       <SectionHeader />
-      <DecisionStoryRecommendationBanner />
       <div className="grid grid-cols-[52fr_48fr] items-stretch gap-section mobile:grid-cols-1">
         <PriorityCards
           cards={cards}

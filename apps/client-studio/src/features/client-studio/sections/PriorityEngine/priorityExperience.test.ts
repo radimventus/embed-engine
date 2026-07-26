@@ -84,5 +84,11 @@ describe('Priority Experience (CSCB-04)', () => {
     const layout = read('decision-cards-layout.ts');
     assert.match(layout, /DECISION_GRID_GAP_PX = 22/);
     assert.match(layout, /border-\[#D4AF37\]/);
+    assert.match(layout, /border-solid/);
+    const card = read('DecisionCard.tsx');
+    assert.match(card, /borderStyle:\s*'solid'/);
+    assert.match(card, /borderWidth:\s*isActive \? 2 : 1/);
+    const engine = read('PriorityEngine.tsx');
+    assert.equal(engine.includes('DecisionStoryRecommendationBanner'), false);
   });
 });
