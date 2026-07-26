@@ -1,6 +1,6 @@
 # CONIS Web 1.0
 
-Editorial marketing site with a short partner qualification flow.
+Manifest site with partner qualification and optional lead capture.
 
 ## Requirements
 
@@ -15,47 +15,56 @@ npm start
 
 Open: [http://127.0.0.1:3000](http://127.0.0.1:3000)
 
-Optional port:
-
 ```bash
 PORT=8080 npm start
 ```
 
-## Stop
+Stop: `Ctrl+C`
 
-In the terminal running the server press `Ctrl+C`.
+## APIs
 
-## Structure
+### `POST /qualification`
 
-```text
-conis-web-1.0/
-  index.html
-  css/style.css
-  js/app.js
-  js/quiz.js
-  public/favicon.svg
-  robots.txt
-  sitemap.xml
-  manifest.webmanifest
-  server/index.js          # static host + mock POST /qualification
-  package.json
-  README.md
+Body: qualification answers JSON.  
+Response: `{ status: "A" | "B" | "C", calendlyUrl?: string }`
+
+Decision stays on the server. Qualification works without contact.
+
+### `POST /lead`
+
+Body:
+
+```json
+{
+  "name": "",
+  "company": "",
+  "email": "",
+  "phone": "",
+  "status": "B",
+  "answers": {},
+  "userAgent": ""
+}
 ```
 
-## Qualification API
+Pipeline:
 
-Frontend only:
+1. Validate
+2. Append `data/leads.jsonl`
+3. Send e-mail (SMTP) or log to `data/outbound-mail.log`
+4. Append Google Sheet via webhook or queue `data/sheets-queue.jsonl`
 
-1. Renders questions
-2. `POST /qualification` with JSON answers
-3. Renders server response `{ status: "A" | "B" | "C", calendlyUrl?: string }`
+Configure via `.env` (see `.env.example`).
 
-Decision A/B/C is made on the server (`server/index.js` → `decideQualification`).
+### Google Sheets webhook
 
-Replace the mock function with a production backend without changing the frontend contract.
+Deploy an Apps Script web app that accepts JSON POST and appends a row:
+
+`timestamp | name | company | email | phone | answers | status | userAgent | ip`
+
+Set `GOOGLE_SHEETS_WEBHOOK_URL` to the web app URL.
 
 ## Production notes
 
-- Update absolute URLs in `robots.txt`, `sitemap.xml`, and HTML canonical/Open Graph tags to the live domain.
+- Copy `.env.example` → `.env` and set SMTP + Sheets webhook.
+- Update absolute URLs in `robots.txt`, `sitemap.xml`, and Open Graph tags.
 - Serve over HTTPS.
-- Point `/qualification` to the real backend.

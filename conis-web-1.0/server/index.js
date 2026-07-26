@@ -1,19 +1,20 @@
 'use strict';
 
 /**
- * CONIS local static server + mock POST /qualification
- * Replace decideQualification() with production backend without changing the frontend contract.
+ * CONIS static server + qualification + lead capture
  *
- * Contract:
- *   POST /qualification
- *   Body: JSON answers object
- *   Response: { status: "A" | "B" | "C", calendlyUrl?: string }
+ * POST /qualification  → { status: "A"|"B"|"C", calendlyUrl? }
+ * POST /lead           → { ok: true, mail, sheet }
  */
 
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
+const { loadEnv } = require('./env');
+const { processLead } = require('./lead');
+
+loadEnv();
 
 const ROOT = path.resolve(__dirname, '..');
 const PORT = Number(process.env.PORT) || 3000;
@@ -31,10 +32,6 @@ const MIME = {
   '.xml': 'application/xml; charset=utf-8',
 };
 
-/**
- * Mock decision engine — replaceable production implementation.
- * Frontend must not embed this logic.
- */
 function decideQualification(answers) {
   if (!answers || typeof answers !== 'object') {
     return { status: 'B' };
@@ -95,10 +92,21 @@ function readBody(req) {
   });
 }
 
+function clientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (typeof forwarded === 'string' && forwarded.length > 0) {
+    return forwarded.split(',')[0].trim();
+  }
+  return req.socket.remoteAddress || '';
+}
+
 function safeResolve(requestPath) {
   const decoded = decodeURIComponent(requestPath.split('?')[0]);
   const normalized = path.normalize(decoded).replace(/^(\.\.[/\\])+/, '');
-  const absolute = path.join(ROOT, normalized === path.sep ? 'index.html' : normalized);
+  const absolute = path.join(
+    ROOT,
+    normalized === path.sep ? 'index.html' : normalized,
+  );
   if (!absolute.startsWith(ROOT)) {
     return null;
   }
@@ -123,8 +131,30 @@ async function handleQualification(req, res) {
   }
 }
 
+async function handleLead(req, res) {
+  if (req.method !== 'POST') {
+    res.writeHead(405, { Allow: 'POST' });
+    res.end('Method Not Allowed');
+    return;
+  }
+
+  try {
+    const raw = await readBody(req);
+    const body = raw ? JSON.parse(raw) : {};
+    const outcome = await processLead(body, clientIp(req));
+    if (!outcome.ok) {
+      sendJson(res, outcome.statusCode || 400, { error: outcome.error });
+      return;
+    }
+    sendJson(res, 200, outcome.result);
+  } catch (error) {
+    console.error('[lead]', error.message);
+    sendJson(res, 500, { error: 'Lead processing failed.' });
+  }
+}
+
 function serveStatic(req, res, pathname) {
-  let filePath = safeResolve(pathname === '/' ? '/index.html' : pathname);
+  const filePath = safeResolve(pathname === '/' ? '/index.html' : pathname);
   if (!filePath) {
     res.writeHead(403);
     res.end('Forbidden');
@@ -155,6 +185,11 @@ const server = http.createServer((req, res) => {
 
   if (url.pathname === '/qualification') {
     handleQualification(req, res);
+    return;
+  }
+
+  if (url.pathname === '/lead') {
+    handleLead(req, res);
     return;
   }
 

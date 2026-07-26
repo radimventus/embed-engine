@@ -295,9 +295,69 @@
         <div id="resultAction" style="margin-top: 40px;"></div>
       </div>
     </section>
+
+    <section class="lead-capture" id="leadSection" aria-label="Kontakt" hidden>
+      <div class="container narrow-center">
+        <div id="leadFormWrap">
+          <p class="lead lead-invite fade visible">
+            Pokud dává myšlenka CONIS smysl i vám, zanechte na sebe kontakt.
+            Ozveme se během několika dnů.
+          </p>
+          <form id="leadForm" class="lead-form" novalidate>
+            <label class="lead-field">
+              <span>Jméno</span>
+              <input type="text" name="name" autocomplete="name" required maxlength="120">
+            </label>
+            <label class="lead-field">
+              <span>Firma</span>
+              <input type="text" name="company" autocomplete="organization" required maxlength="160">
+            </label>
+            <label class="lead-field">
+              <span>E-mail</span>
+              <input type="email" name="email" autocomplete="email" required maxlength="160">
+            </label>
+            <label class="lead-field">
+              <span>Telefon <em>(volitelné)</em></span>
+              <input type="tel" name="phone" autocomplete="tel" maxlength="40">
+            </label>
+            <p class="lead-error" id="leadError" role="alert" hidden></p>
+            <button type="submit" class="cta-button lead-submit" id="leadSubmit">
+              Odeslat
+            </button>
+          </form>
+        </div>
+        <div id="leadThanks" class="lead-thanks" hidden>
+          <h2 tabindex="-1">Děkujeme.</h2>
+          <p class="lead">Ozveme se během několika dnů.</p>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <footer class="site-footer" role="contentinfo">
+    <div class="container footer-inner">
+      <p class="footer-brand">CONIS</p>
+      <p class="footer-line">Rozumíme tomu, co rozhoduje.</p>
+      <p class="footer-line soft">Platforma porozumění mezi člověkem a produktem.</p>
+
+      <div class="footer-contact">
+        <p>Radim Věntus</p>
+        <p><a href="tel:+420725020757">+420 725 020 757</a></p>
+        <p><a href="mailto:kontakt@conis.cz">kontakt@conis.cz</a></p>
+        <p>
+          Stratilova 2<br>
+          746 01 Opava
+        </p>
+        <p><a href="https://www.conis.cz">www.conis.cz</a></p>
+      </div>
+
+      <p class="footer-line">Dáváme produktům schopnost rozumět lidem.</p>
+      <p class="footer-mark">CONIS • Platforma porozumění mezi člověkem a produktem.</p>
+    </div>
+  </footer>
 
   <script src="js/app.js" defer></script>
   <script src="js/quiz.js" defer></script>
+  <script src="js/lead.js" defer></script>
 </body>
 </html>

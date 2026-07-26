@@ -162,6 +162,10 @@ function handleServerResult(status, calendlyUrl) {
     link.textContent = "Rezervovat online schůzku";
     resultAction.appendChild(link);
   }
+
+  if (window.ConisLead && typeof window.ConisLead.prepare === "function") {
+    window.ConisLead.prepare(status, userAnswers);
+  }
 }
 
 document.addEventListener("DOMContentLoaded", render);
