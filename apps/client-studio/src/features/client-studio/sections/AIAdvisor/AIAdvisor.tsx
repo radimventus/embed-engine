@@ -25,6 +25,7 @@ import { getEmbedAIService } from './embedAIService';
 import {
   advisorIntroFromAiContext,
   faqItemsFromAiContext,
+  orderFaqItemsForPriorities,
 } from './experiencePresentation';
 import { InputBar } from './InputBar';
 import { SectionHeader } from './SectionHeader';
@@ -44,7 +45,13 @@ export function AIAdvisor() {
   const decision = useDecisionContext();
   const analytics = useOptionalDecisionAnalytics();
   const ai = experience.context.decision.ai;
-  const faqItems = useMemo(() => faqItemsFromAiContext(ai), [ai]);
+  const faqItems = useMemo(() => {
+    const projected = faqItemsFromAiContext(ai);
+    return orderFaqItemsForPriorities(
+      projected,
+      experience.context.decision.priorityIds,
+    );
+  }, [ai, experience.context.decision.priorityIds]);
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Message[]>(() => [
     {

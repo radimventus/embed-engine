@@ -1,0 +1,23 @@
+{
+  "overall": "PASS",
+  "summary": {
+    "avatar_larger": "PASS",
+    "intro_structure": "PASS",
+    "no_hlavni": "PASS",
+    "clarification_for_layout": "PASS",
+    "quiz_paced": "PASS",
+    "audit_transition": "PASS",
+    "faq_title_softened": "PASS"
+  },
+  "accept": {
+    "avatar_larger": true,
+    "intro_structure": true,
+    "no_hlavni": true,
+    "clarification_for_layout": true,
+    "quiz_paced": true,
+    "audit_transition": true,
+    "faq_title_softened": true
+  },
+  "elapsed": 1527,
+  "pageErrors": []
+}

@@ -57,7 +57,7 @@ export type PriorityConversationEvent =
     }
   | {
       readonly type: 'completion-path';
-      readonly path: 'faq' | 'chat';
+      readonly path: 'faq' | 'chat' | 'audit';
       readonly at: number;
     };
 

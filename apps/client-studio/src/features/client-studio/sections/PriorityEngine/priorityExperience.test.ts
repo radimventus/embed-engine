@@ -24,13 +24,13 @@ describe('Priority Experience (CSCB-04)', () => {
     assert.deepEqual(
       DECISION_CATEGORIES.map((category) => category.id),
       [
-        'energy',
-        'operating-costs',
+        'plot',
         'layout',
         'privacy',
+        'energy',
+        'operating-costs',
         'design',
         'quality',
-        'plot',
         'investment',
         'maintenance',
         'flexibility',

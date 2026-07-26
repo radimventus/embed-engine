@@ -60,11 +60,14 @@ function FaqCaretIcon({ expanded }: { expanded: boolean }) {
 
 export function FaqTitle() {
   return (
-    <h2
-      className={`${FAQ_COLUMN_WIDTH_CLASS} relative z-10 m-0 shrink-0 text-base font-bold leading-none tracking-wide text-embed-foreground-primary`}
-    >
-      CO NAŠE KLIENTY NEJVÍCE ZAJÍMÁ:
-    </h2>
+    <div className={`${FAQ_COLUMN_WIDTH_CLASS} relative z-10 m-0 shrink-0`}>
+      <h2 className="m-0 text-[17px] font-semibold leading-snug tracking-wide text-embed-foreground-primary">
+        Otázky, které vám pomohou jít dál
+      </h2>
+      <p className="mt-1.5 text-[13px] leading-relaxed text-embed-foreground-primary/60">
+        Vycházejí z vašich priorit a připravují vás na Audit.
+      </p>
+    </div>
   );
 }
 
@@ -86,7 +89,7 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
         <button
           type="button"
           onClick={() => onQuestionSelect(question)}
-          className="min-w-0 flex-1 cursor-pointer truncate text-left text-sm text-embed-foreground-primary"
+          className="min-w-0 flex-1 cursor-pointer truncate text-left text-[15px] leading-snug text-embed-foreground-primary"
         >
           {question}
         </button>
@@ -105,7 +108,7 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
         style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
       >
         <div className="min-h-0 overflow-hidden">
-          <p className="border-t border-embed-border-default px-section py-3 text-sm leading-relaxed text-embed-foreground-primary/80">
+          <p className="border-t border-embed-border-default px-section py-3.5 text-[14px] leading-relaxed text-embed-foreground-primary/80">
             {answer}
           </p>
         </div>

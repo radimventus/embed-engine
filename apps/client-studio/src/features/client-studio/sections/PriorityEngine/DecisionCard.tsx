@@ -50,18 +50,10 @@ export function DecisionCard({
         isPrimary ? 'primary' : isRelated ? 'related' : undefined
       }
     >
-      {isPrimary ? (
-        <span
-          className="pointer-events-none absolute -top-2 left-1/2 z-20 -translate-x-1/2 rounded-sm bg-embed-brand-gold px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-[#001930]"
-          aria-hidden="true"
-        >
-          Hlavní
-        </span>
-      ) : null}
       <button
         type="button"
         aria-pressed={isActive}
-        aria-label={`${category.title} decision category${isPrimary ? ', hlavní priorita' : ''}`}
+        aria-label={`${category.title} decision category`}
         onClick={onToggle}
         className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-[8px] px-2.5 touch-manipulation transition-[transform,box-shadow,border-color,border-width] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${highlightClass} ${
           isActive

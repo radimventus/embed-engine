@@ -1,19 +1,24 @@
 import { DECISION_CATEGORIES } from './decision-cards.constants';
 
-/** Pause after confirmation before the next mental step (PT-PRIORITY-TUNING-02). */
-export const CONIS_MICROINTERACTION_MS = 500;
+/** General confirmation pause — ~50% slower than prior 500 ms. */
+export const CONIS_MICROINTERACTION_MS = 750;
 
-/** Opening introduction — presence, not instruction. */
+/** Quiz answer → next question rhythm (pilot readiness). */
+export const CONIS_QUIZ_ADVANCE_MS = 1500;
+
+/** Opening introduction — clear who / what / next within first glance. */
 export const PRIORITY_CONVERSATION_INTRO_LINES = Object.freeze([
-  'Dobrý den, jmenuji se Conis.',
-  'Pomohu vám lépe porozumět tomu, co je při výběru domu opravdu důležité.',
-  'Občas se vás na něco zeptám, abych lépe porozuměl, jak přemýšlíte.',
+  'Dobrý den.',
+  'Jmenuji se Conis.',
+  'Pomohu vám porozumět tomu, co je při výběru domu opravdu důležité.',
 ] as const);
 
-/** Tinted guidance block under the introduction. */
+/** Tinted guidance — structured next step, not more prose. */
+export const PRIORITY_CONVERSATION_START_HEADING = 'Váš další krok';
+
 export const PRIORITY_CONVERSATION_START_LINES = Object.freeze([
-  'Začněte alespoň třemi prioritami.',
-  'Intenzitu můžete kdykoli upravit.',
+  'Označte alespoň tři priority vlevo.',
+  'Intenzitu upravíte, až kartu otevřete.',
 ] as const);
 
 /** @deprecated Prefer PRIORITY_CONVERSATION_START_LINES */
@@ -67,12 +72,17 @@ export const PRIORITY_CONVERSATION_PREP_CONTINUE = 'Pojďme dál';
 export const PRIORITY_CONVERSATION_ANSWER_ACK = 'Rozumím.';
 
 export const PRIORITY_CONVERSATION_SUMMARY_LINES = Object.freeze([
-  'Děkuji.',
-  'Teď máme společný základ.',
+  'Teď už vám lépe rozumím.',
+  'Můžeme jít více do hloubky.',
 ] as const);
 
+export const PRIORITY_CONVERSATION_AUDIT_PROMPT =
+  'Priority jsou první krok. Audit vám ukáže dům v souvislostech, které jste právě zvolili.';
+
+export const PRIORITY_CONVERSATION_CONTINUE_AUDIT = 'Pokračovat k Auditu';
+
 export const PRIORITY_CONVERSATION_NEXT_PATHS_PROMPT =
-  'Kde chcete pokračovat?';
+  'Nebo se nejdřív zeptejte:';
 
 export const PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL = 'Časté otázky';
 
@@ -93,7 +103,7 @@ export type PriorityDialogQuestion = {
 };
 
 /**
- * Short guided questions — 2–3 options each.
+ * Short guided questions — clearer pilot phrasing (2–3 options).
  * UX copy only; not Decision Runtime / Strategy.
  */
 export const PRIORITY_DIALOG_QUESTIONS: Readonly<
@@ -101,92 +111,92 @@ export const PRIORITY_DIALOG_QUESTIONS: Readonly<
 > = Object.freeze({
   energy: Object.freeze({
     priorityId: 'energy',
-    prompt: 'Co je pro vás u energie nejdůležitější?',
+    prompt: 'U energie — co je pro vás nejdůležitější?',
     options: Object.freeze([
-      Object.freeze({ id: 'low-cost', label: 'nízké náklady' }),
-      Object.freeze({ id: 'independence', label: 'nezávislost' }),
-      Object.freeze({ id: 'comfort', label: 'komfort' }),
+      Object.freeze({ id: 'low-cost', label: 'Nižší náklady' }),
+      Object.freeze({ id: 'independence', label: 'Větší nezávislost' }),
+      Object.freeze({ id: 'comfort', label: 'Každodenní komfort' }),
     ]),
   }),
   'operating-costs': Object.freeze({
     priorityId: 'operating-costs',
-    prompt: 'U provozních nákladů vás nejvíce zajímá?',
+    prompt: 'U provozních nákladů — co vás nejvíce zajímá?',
     options: Object.freeze([
-      Object.freeze({ id: 'predictability', label: 'předvídatelnost' }),
-      Object.freeze({ id: 'low-monthly', label: 'nízké měsíční výdaje' }),
-      Object.freeze({ id: 'long-term', label: 'dlouhodobá úspora' }),
+      Object.freeze({ id: 'predictability', label: 'Stabilní výdaje' }),
+      Object.freeze({ id: 'low-monthly', label: 'Nízké měsíční náklady' }),
+      Object.freeze({ id: 'long-term', label: 'Úspora v čase' }),
     ]),
   }),
   layout: Object.freeze({
     priorityId: 'layout',
-    prompt: 'U dispozice je pro vás klíčové?',
+    prompt: 'Jak má dům podporovat váš každodenní život?',
     options: Object.freeze([
-      Object.freeze({ id: 'day-night', label: 'oddělení dne a noci' }),
-      Object.freeze({ id: 'open-space', label: 'otevřený prostor' }),
-      Object.freeze({ id: 'flexibility', label: 'flexibilita místností' }),
+      Object.freeze({ id: 'day-night', label: 'Oddělený den a noc' }),
+      Object.freeze({ id: 'open-space', label: 'Otevřený společný prostor' }),
+      Object.freeze({ id: 'flexibility', label: 'Místnosti, které se dají měnit' }),
     ]),
   }),
   privacy: Object.freeze({
     priorityId: 'privacy',
-    prompt: 'U soukromí vám nejvíce záleží na?',
+    prompt: 'Kde je pro vás soukromí nejdůležitější?',
     options: Object.freeze([
-      Object.freeze({ id: 'neighbors', label: 'odclonění od sousedů' }),
-      Object.freeze({ id: 'garden', label: 'klidná zahrada' }),
-      Object.freeze({ id: 'interior', label: 'soukromí uvnitř domu' }),
+      Object.freeze({ id: 'neighbors', label: 'Odclonění od sousedů' }),
+      Object.freeze({ id: 'garden', label: 'Klidná zahrada' }),
+      Object.freeze({ id: 'interior', label: 'Soukromí uvnitř domu' }),
     ]),
   }),
   design: Object.freeze({
     priorityId: 'design',
-    prompt: 'U designu je pro vás podstatné?',
+    prompt: 'Co má design domu vyjádřit?',
     options: Object.freeze([
-      Object.freeze({ id: 'timeless', label: 'nadčasovost' }),
-      Object.freeze({ id: 'character', label: 'výrazný charakter' }),
-      Object.freeze({ id: 'materials', label: 'kvalita materiálů' }),
+      Object.freeze({ id: 'timeless', label: 'Nadčasový klid' }),
+      Object.freeze({ id: 'character', label: 'Výrazný charakter' }),
+      Object.freeze({ id: 'materials', label: 'Poctivé materiály' }),
     ]),
   }),
   quality: Object.freeze({
     priorityId: 'quality',
-    prompt: 'U kvality hledáte především?',
+    prompt: 'Co pro vás znamená kvalita?',
     options: Object.freeze([
-      Object.freeze({ id: 'durability', label: 'trvanlivost' }),
-      Object.freeze({ id: 'detail', label: 'pečlivé detaily' }),
-      Object.freeze({ id: 'warranty', label: 'jistotu záruky' }),
+      Object.freeze({ id: 'durability', label: 'Trvanlivost' }),
+      Object.freeze({ id: 'detail', label: 'Pečlivé detaily' }),
+      Object.freeze({ id: 'warranty', label: 'Jistotu záruky' }),
     ]),
   }),
   plot: Object.freeze({
     priorityId: 'plot',
-    prompt: 'U pozemku je pro vás zásadní?',
+    prompt: 'Co je u pozemku zásadní?',
     options: Object.freeze([
-      Object.freeze({ id: 'orientation', label: 'orientace ke slunci' }),
-      Object.freeze({ id: 'size', label: 'velikost pozemku' }),
-      Object.freeze({ id: 'access', label: 'přístup a okolí' }),
+      Object.freeze({ id: 'orientation', label: 'Orientace ke slunci' }),
+      Object.freeze({ id: 'size', label: 'Velikost pozemku' }),
+      Object.freeze({ id: 'access', label: 'Přístup a okolí' }),
     ]),
   }),
   investment: Object.freeze({
     priorityId: 'investment',
-    prompt: 'U investice je pro vás důležité?',
+    prompt: 'Co chcete od investice do bydlení?',
     options: Object.freeze([
-      Object.freeze({ id: 'value-hold', label: 'udržení hodnoty' }),
-      Object.freeze({ id: 'budget', label: 'jasný rozpočet' }),
-      Object.freeze({ id: 'return', label: 'návratnost' }),
+      Object.freeze({ id: 'value-hold', label: 'Udržet hodnotu' }),
+      Object.freeze({ id: 'budget', label: 'Jasný rozpočet' }),
+      Object.freeze({ id: 'return', label: 'Dlouhodobou jistotu' }),
     ]),
   }),
   maintenance: Object.freeze({
     priorityId: 'maintenance',
-    prompt: 'U údržby preferujete?',
+    prompt: 'Jak chcete o dům pečovat?',
     options: Object.freeze([
-      Object.freeze({ id: 'low-effort', label: 'minimální péči' }),
-      Object.freeze({ id: 'predictable', label: 'předvídatelné náklady' }),
-      Object.freeze({ id: 'self-service', label: 'svépomocné řešení' }),
+      Object.freeze({ id: 'low-effort', label: 'Co nejméně starostí' }),
+      Object.freeze({ id: 'predictable', label: 'Předvídatelné náklady' }),
+      Object.freeze({ id: 'self-service', label: 'Možnost řešit sám' }),
     ]),
   }),
   flexibility: Object.freeze({
     priorityId: 'flexibility',
-    prompt: 'U flexibility je pro vás důležité?',
+    prompt: 'K čemu má být dům připravený?',
     options: Object.freeze([
-      Object.freeze({ id: 'lifecycle', label: 'změny v čase' }),
-      Object.freeze({ id: 'work-home', label: 'práce z domova' }),
-      Object.freeze({ id: 'guests', label: 'prostor pro hosty' }),
+      Object.freeze({ id: 'lifecycle', label: 'Změny během let' }),
+      Object.freeze({ id: 'work-home', label: 'Práci z domova' }),
+      Object.freeze({ id: 'guests', label: 'Prostor pro hosty' }),
     ]),
   }),
 });

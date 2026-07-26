@@ -4,6 +4,7 @@ import { scrollToSection } from '../../foundation/scrollToSection';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import {
   CONIS_MICROINTERACTION_MS,
+  CONIS_QUIZ_ADVANCE_MS,
   dialogQuestionFor,
   pickDialogPriorityIds,
   PRIORITY_CONVERSATION_MINIMUM,
@@ -40,6 +41,7 @@ export type PriorityConversationView = {
   readonly answerQuestion: (priorityId: string, optionId: string) => void;
   readonly continueToFaq: () => void;
   readonly askConis: () => void;
+  readonly continueToAudit: () => void;
 };
 
 function focusAdvisorChat(): void {
@@ -82,18 +84,21 @@ export function usePriorityConversation(): PriorityConversationView {
     };
   }, []);
 
-  const runAfterConfirmation = useCallback((action: () => void) => {
-    if (advanceTimerRef.current !== null) {
-      window.clearTimeout(advanceTimerRef.current);
-    }
-    setIsAdvancing(true);
-    advanceTimerRef.current = window.setTimeout(() => {
-      action();
-      setPendingOptionId(null);
-      setIsAdvancing(false);
-      advanceTimerRef.current = null;
-    }, CONIS_MICROINTERACTION_MS);
-  }, []);
+  const runAfterConfirmation = useCallback(
+    (action: () => void, delayMs: number = CONIS_MICROINTERACTION_MS) => {
+      if (advanceTimerRef.current !== null) {
+        window.clearTimeout(advanceTimerRef.current);
+      }
+      setIsAdvancing(true);
+      advanceTimerRef.current = window.setTimeout(() => {
+        action();
+        setPendingOptionId(null);
+        setIsAdvancing(false);
+        advanceTimerRef.current = null;
+      }, delayMs);
+    },
+    [],
+  );
 
   useEffect(() => {
     const selectedIds = Object.entries(cards)
@@ -286,7 +291,7 @@ export function usePriorityConversation(): PriorityConversationView {
         optionId,
         at: Date.now(),
       });
-    });
+    }, CONIS_QUIZ_ADVANCE_MS);
   };
 
   const continueToFaq = () => {
@@ -297,6 +302,11 @@ export function usePriorityConversation(): PriorityConversationView {
   const askConis = () => {
     progress.record({ type: 'completion-path', path: 'chat', at: Date.now() });
     focusAdvisorChat();
+  };
+
+  const continueToAudit = () => {
+    progress.record({ type: 'completion-path', path: 'audit', at: Date.now() });
+    scrollToSection(PILOT_SECTION_IDS.audit);
   };
 
   return {
@@ -316,5 +326,6 @@ export function usePriorityConversation(): PriorityConversationView {
     answerQuestion,
     continueToFaq,
     askConis,
+    continueToAudit,
   };
 }

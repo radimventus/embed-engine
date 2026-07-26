@@ -6,6 +6,7 @@ import { describe, it } from 'node:test';
 
 import {
   CONIS_MICROINTERACTION_MS,
+  CONIS_QUIZ_ADVANCE_MS,
   dialogQuestionFor,
   pickDialogPriorityIds,
   PRIORITY_CONVERSATION_INTRO_LINES,
@@ -38,8 +39,8 @@ const FORBIDDEN_TECHNICAL = [
   'VYBERTE',
 ];
 
-describe('PT-PRIORITY-TUNING-02 CONIS Constitution integration', () => {
-  it('keeps dialog questions short and caps refinement at 3', () => {
+describe('PT-PRIORITY-PILOT-READY-01 CONIS pilot readiness', () => {
+  it('keeps dialog questions short and uses slower quiz pacing', () => {
     for (const question of Object.values(PRIORITY_DIALOG_QUESTIONS)) {
       assert.ok(question.options.length >= 2 && question.options.length <= 3);
       assert.ok(question.prompt.length > 0);
@@ -47,10 +48,10 @@ describe('PT-PRIORITY-TUNING-02 CONIS Constitution integration', () => {
     }
     assert.equal(PRIORITY_CONVERSATION_MINIMUM, 3);
     assert.equal(PRIORITY_DIALOG_QUESTION_COUNT, 3);
-    assert.equal(CONIS_MICROINTERACTION_MS >= 400, true);
-    assert.equal(CONIS_MICROINTERACTION_MS <= 600, true);
-    assert.match(PRIORITY_CONVERSATION_INTRO_LINES[0] ?? '', /Conis/i);
-    assert.match(PRIORITY_CONVERSATION_START_LINES.join(' '), /třemi priorit/i);
+    assert.equal(CONIS_MICROINTERACTION_MS, 750);
+    assert.equal(CONIS_QUIZ_ADVANCE_MS, 1500);
+    assert.match(PRIORITY_CONVERSATION_INTRO_LINES[1] ?? '', /Conis/i);
+    assert.match(PRIORITY_CONVERSATION_START_LINES.join(' '), /tři priorit/i);
     assert.ok(dialogQuestionFor('energy')?.options.length === 3);
 
     const picked = pickDialogPriorityIds(
@@ -80,45 +81,46 @@ describe('PT-PRIORITY-TUNING-02 CONIS Constitution integration', () => {
     assert.equal(progress.events().length, 2);
   });
 
-  it('wires Constitution presentation: avatar, intro, paced answers, unified paths', () => {
+  it('wires pilot readiness presentation cues', () => {
     const panel = stripComments(read('PriorityConversationPanel.tsx'));
-    assert.match(panel, /ConisMessage/);
-    assert.match(panel, /priority-conversation-instruction/);
     assert.match(panel, /priority-conversation-start-block/);
-    assert.match(panel, /priority-conversation-next-paths/);
-    assert.match(panel, /priority-conversation-answer-ack/);
-    assert.match(panel, /conis-avatar|ConisAvatar|ConisMessage/);
+    assert.match(panel, /priority-conversation-audit/);
+    assert.match(panel, /priority-conversation-clarification/);
+    assert.match(panel, /ConisMessage/);
+    assert.equal(panel.includes('Hlavní'), false);
+
+    const card = stripComments(read('DecisionCard.tsx'));
+    assert.equal(card.includes('Hlavní'), false);
 
     const avatar = stripComments(read('ConisAvatar.tsx'));
     assert.match(avatar, /conis-avatar/);
-    assert.equal(avatar.includes('img'), false);
-    assert.equal(avatar.toLowerCase().includes('face'), false);
+    assert.match(avatar, /size = 40/);
 
     const hook = stripComments(read('usePriorityConversation.ts'));
-    assert.match(hook, /CONIS_MICROINTERACTION_MS/);
+    assert.match(hook, /CONIS_QUIZ_ADVANCE_MS/);
+    assert.match(hook, /continueToAudit/);
     assert.equal(hook.includes('dispatch('), false);
-    assert.equal(hook.includes('ChangePriority'), false);
     assert.equal(hook.includes('@embed-engine/runtime'), false);
 
-    const header = stripComments(read('SectionHeader.tsx'));
-    assert.equal(header.includes('VYBERTE'), false);
+    const categories = stripComments(read('decision-cards.constants.ts'));
+    assert.match(categories, /PRIORITY_CLARIFICATIONS/);
+    assert.match(categories, /id: 'plot'/);
 
-    const conversationFiles = readdirSync(here).filter(
-      (name) =>
-        (name.toLowerCase().includes('conversation') ||
-          name.startsWith('Conis') ||
-          name === 'SectionHeader.tsx') &&
-        (name.endsWith('.ts') || name.endsWith('.tsx')) &&
-        !name.endsWith('.test.ts'),
-    );
-    for (const name of conversationFiles) {
+    for (const name of readdirSync(here).filter(
+      (file) =>
+        (file.toLowerCase().includes('conversation') ||
+          file.startsWith('Conis') ||
+          file === 'SectionHeader.tsx') &&
+        (file.endsWith('.ts') || file.endsWith('.tsx')) &&
+        !file.endsWith('.test.ts'),
+    )) {
       const source = stripComments(read(name));
       assert.equal(source.includes('Lorem'), false, `${name} placeholder`);
       for (const phrase of FORBIDDEN_TECHNICAL) {
         assert.equal(
           source.includes(phrase),
           false,
-          `${name} must not include technical phrase: ${phrase}`,
+          `${name} must not include: ${phrase}`,
         );
       }
     }
