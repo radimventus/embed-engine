@@ -1,5 +1,4 @@
 import { DecisionReport } from '../DecisionReport/DecisionReport';
-import { DecisionTerminal } from '../DecisionTerminal/DecisionTerminal';
 import { PILOT_SECTION_IDS, PILOT_TERMS } from '../../pilot/pilotVocabulary';
 import { useDecisionContext } from '../../runtime/useDecisionContext';
 import {
@@ -9,6 +8,7 @@ import {
   PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL,
 } from './priority-engine-layout';
 import { PriorityCards } from './PriorityCards';
+import { PriorityConversationPanel } from './PriorityConversationPanel';
 import { usePriorityExperience } from './PriorityExperienceProvider';
 import { RecommendationPanel } from './RecommendationPanel';
 import { RecommendedSectionOrder } from './RecommendedSectionOrder';
@@ -20,8 +20,7 @@ import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPr
 /**
  * Priority Engine — Decision Discovery surface (CSCB-04 / PT-002 / PT-003).
  * Cards emit ChangePriority into Runtime.
- * Interpretive surfaces read DecisionContext only.
- * Layout: title → cards + terminal (PT-PRIORITY-REDESIGN-01) — no info chrome between.
+ * Right panel: Conis conversation UX (PT-PRIORITY-DESIGN-02).
  */
 export function PriorityEngine() {
   const {
@@ -56,7 +55,7 @@ export function PriorityEngine() {
           setImportance={setImportance}
           toggleCard={toggleCard}
         />
-        <DecisionTerminal />
+        <PriorityConversationPanel />
       </div>
       <RecommendedSectionOrder />
       <DecisionReport />

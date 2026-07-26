@@ -1,0 +1,32 @@
+{
+  "task": "PT-PRIORITY-DESIGN-02",
+  "url": "http://127.0.0.1:5180/",
+  "overall": "PASS",
+  "summary": {
+    "starts_with_instruction": "PASS",
+    "tags_update_on_selection": "PASS",
+    "dialog_after_third": "PASS",
+    "questions_short_2_to_3": "PASS",
+    "communication_right_panel_only": "PASS",
+    "faq_chat_only_at_end": "PASS",
+    "no_modal_tooltip": "PASS",
+    "runtime_untouched_shell": "PASS"
+  },
+  "accept": {
+    "starts_with_instruction": true,
+    "tags_update_on_selection": true,
+    "dialog_after_third": true,
+    "questions_short_2_to_3": true,
+    "communication_right_panel_only": true,
+    "faq_chat_only_at_end": true,
+    "no_modal_tooltip": true,
+    "runtime_untouched_shell": true
+  },
+  "measurements": {
+    "instruction": "Vyberte alespoň tři oblasti, které budou nejvíce ovlivňovat vaše budoucí bydlení.",
+    "phaseFinal": "complete",
+    "optionCount": 3,
+    "panelHeight": "260px",
+    "pageErrors": []
+  }
+}
