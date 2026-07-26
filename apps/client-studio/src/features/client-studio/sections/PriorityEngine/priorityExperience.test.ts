@@ -75,8 +75,9 @@ describe('Priority Experience (CSCB-04)', () => {
   it('exposes intensity control and 5-column priority grid', () => {
     assert.ok(readdirSync(here).includes('DecisionSlider.tsx'));
     const header = read('SectionHeader.tsx');
-    assert.match(header, /minimumSelection/);
+    assert.match(header, /podstatné/i);
     assert.equal(header.includes('Vybráno'), false);
+    assert.equal(header.includes('VYBERTE'), false);
     const cards = read('PriorityCards.tsx');
     assert.match(cards, /grid-cols-5/);
     assert.match(cards, /mobile:grid-cols-2/);

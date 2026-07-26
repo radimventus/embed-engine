@@ -1,11 +1,13 @@
 /**
- * UX-layer progress capture for Priority conversation (PT-PRIORITY-DESIGN-02).
+ * UX-layer progress capture for Priority conversation.
  * Records journey events only — no Decision Runtime evaluation.
  */
 
 export type PriorityConversationPhase =
   | 'instruction'
-  | 'confirmation'
+  | 'collecting'
+  | 'collection-gate'
+  | 'prep'
   | 'dialog'
   | 'complete';
 
@@ -30,6 +32,15 @@ export type PriorityConversationEvent =
       readonly added: readonly string[];
       readonly removed: readonly string[];
       readonly order: readonly string[];
+      readonly at: number;
+    }
+  | {
+      readonly type: 'selection-finished';
+      readonly order: readonly string[];
+      readonly at: number;
+    }
+  | {
+      readonly type: 'add-more';
       readonly at: number;
     }
   | {

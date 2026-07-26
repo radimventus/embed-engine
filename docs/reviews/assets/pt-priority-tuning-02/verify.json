@@ -1,0 +1,22 @@
+{
+  "task": "PT-PRIORITY-TUNING-02",
+  "overall": "PASS",
+  "summary": {
+    "intro_present": "PASS",
+    "avatar_present": "PASS",
+    "no_technical_language": "PASS",
+    "dialog_after_finish_only": "PASS",
+    "paced_answer": "PASS",
+    "unified_faq_chat": "PASS"
+  },
+  "accept": {
+    "intro_present": true,
+    "avatar_present": true,
+    "no_technical_language": true,
+    "dialog_after_finish_only": true,
+    "paced_answer": true,
+    "unified_faq_chat": true
+  },
+  "pageErrors": [],
+  "elapsed": 674
+}

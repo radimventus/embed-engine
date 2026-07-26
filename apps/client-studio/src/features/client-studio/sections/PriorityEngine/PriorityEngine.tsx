@@ -1,21 +1,15 @@
-import { DecisionReport } from '../DecisionReport/DecisionReport';
 import { PILOT_SECTION_IDS, PILOT_TERMS } from '../../pilot/pilotVocabulary';
 import { useDecisionContext } from '../../runtime/useDecisionContext';
 import {
   PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS,
   PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS,
-  PRIORITY_ENGINE_SHOW_DECISION_REPORT,
-  PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL,
 } from './priority-engine-layout';
 import { PriorityCards } from './PriorityCards';
 import { PriorityConversationPanel } from './PriorityConversationPanel';
 import { usePriorityExperience } from './PriorityExperienceProvider';
-import { RecommendationPanel } from './RecommendationPanel';
-import { RecommendedSectionOrder } from './RecommendedSectionOrder';
 import { SectionHeader } from './SectionHeader';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
-import { DecisionReportPreview } from '../DecisionReportPreview/DecisionReportPreview';
 
 /**
  * Priority Engine — Decision Discovery surface (CSCB-04 / PT-002 / PT-003).
@@ -48,7 +42,7 @@ export function PriorityEngine() {
       className={`relative scroll-mt-header ${SECTION_SURFACE_CLASS} ${PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS} ${PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS}`}
     >
       <SectionHeader />
-      <div className="grid grid-cols-[52fr_48fr] items-stretch gap-section mobile:grid-cols-1">
+      <div className="grid grid-cols-[52fr_48fr] items-start gap-section mobile:grid-cols-1">
         <PriorityCards
           cards={cards}
           categories={categories}
@@ -57,10 +51,6 @@ export function PriorityEngine() {
         />
         <PriorityConversationPanel />
       </div>
-      <RecommendedSectionOrder />
-      <DecisionReport />
-      {PRIORITY_ENGINE_SHOW_RECOMMENDATION_PANEL ? <RecommendationPanel /> : null}
-      {PRIORITY_ENGINE_SHOW_DECISION_REPORT ? <DecisionReportPreview /> : null}
     </section>
   );
 }

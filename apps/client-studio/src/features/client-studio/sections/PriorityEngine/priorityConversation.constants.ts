@@ -1,17 +1,85 @@
 import { DECISION_CATEGORIES } from './decision-cards.constants';
 
-/** Opening instruction — State A (no interpretation). */
+/** Pause after confirmation before the next mental step (PT-PRIORITY-TUNING-02). */
+export const CONIS_MICROINTERACTION_MS = 500;
+
+/** Opening introduction — presence, not instruction. */
+export const PRIORITY_CONVERSATION_INTRO_LINES = Object.freeze([
+  'Dobrý den, jmenuji se Conis.',
+  'Pomohu vám lépe porozumět tomu, co je při výběru domu opravdu důležité.',
+  'Občas se vás na něco zeptám, abych lépe porozuměl, jak přemýšlíte.',
+] as const);
+
+/** Tinted guidance block under the introduction. */
+export const PRIORITY_CONVERSATION_START_LINES = Object.freeze([
+  'Začněte alespoň třemi prioritami.',
+  'Intenzitu můžete kdykoli upravit.',
+] as const);
+
+/** @deprecated Prefer PRIORITY_CONVERSATION_START_LINES */
+export const PRIORITY_CONVERSATION_INSTRUCTION_LINES =
+  PRIORITY_CONVERSATION_START_LINES;
+
+/** @deprecated Prefer PRIORITY_CONVERSATION_START_LINES */
 export const PRIORITY_CONVERSATION_INSTRUCTION =
-  'Vyberte alespoň tři oblasti, které budou nejvíce ovlivňovat vaše budoucí bydlení.';
+  PRIORITY_CONVERSATION_START_LINES.join(' ');
 
 export const PRIORITY_CONVERSATION_MINIMUM = 3;
 
-export const PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL = 'Pokračovat do FAQ';
+export const PRIORITY_CONVERSATION_MAXIMUM = 10;
 
-export const PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL = 'Zeptat se Conisu';
+export const PRIORITY_DIALOG_QUESTION_COUNT = 3;
+
+export const PRIORITY_CONVERSATION_COLLECT_LINES = Object.freeze([
+  'Dobře.',
+  'Mám to.',
+] as const);
+
+export const PRIORITY_CONVERSATION_COLLECT_HINT =
+  'Až budete mít alespoň tři, můžeme jít dál.';
+
+export const PRIORITY_CONVERSATION_GATE_LINES = Object.freeze([
+  'Už mám první představu.',
+] as const);
+
+export const PRIORITY_CONVERSATION_GATE_PROMPT = (count: number): string => {
+  if (count === 1) {
+    return 'Máte jednu prioritu. Stačí takto, nebo chcete ještě něco doplnit?';
+  }
+  if (count >= 2 && count <= 4) {
+    return `Máte ${count} priority. Stačí takto, nebo chcete ještě něco doplnit?`;
+  }
+  return `Máte ${count} priorit. Stačí takto, nebo chcete ještě něco doplnit?`;
+};
+
+export const PRIORITY_CONVERSATION_FINISH_SELECTION = 'Stačí takto';
+
+export const PRIORITY_CONVERSATION_ADD_MORE = 'Ještě doplním';
+
+export const PRIORITY_CONVERSATION_PREP_LINES = Object.freeze([
+  'Děkuji.',
+  'Už rozumím, co je pro vás důležité.',
+  'Ještě si ověřím několik souvislostí.',
+] as const);
+
+export const PRIORITY_CONVERSATION_PREP_CONTINUE = 'Pojďme dál';
+
+export const PRIORITY_CONVERSATION_ANSWER_ACK = 'Rozumím.';
+
+export const PRIORITY_CONVERSATION_SUMMARY_LINES = Object.freeze([
+  'Děkuji.',
+  'Teď máme společný základ.',
+] as const);
+
+export const PRIORITY_CONVERSATION_NEXT_PATHS_PROMPT =
+  'Kde chcete pokračovat?';
+
+export const PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL = 'Časté otázky';
+
+export const PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL = 'Zeptat se mě';
 
 export const PRIORITY_CONVERSATION_PDF_NOTE =
-  'Na konci celé Experience si budete moci stáhnout osobní zprávu s doporučením.';
+  'Na konci Experience si budete moci stáhnout osobní zprávu.';
 
 export type PriorityDialogOption = {
   readonly id: string;
@@ -130,6 +198,30 @@ export function priorityTitleForId(priorityId: string): string {
   );
 }
 
+export function intensityPercent(importance: number): number {
+  return Math.round(Math.min(1, Math.max(0, importance)) * 100);
+}
+
 export function dialogQuestionFor(priorityId: string): PriorityDialogQuestion | null {
   return PRIORITY_DIALOG_QUESTIONS[priorityId] ?? null;
+}
+
+/**
+ * Pick up to 3 priorities for refinement — highest intensity, selection order as tiebreak.
+ */
+export function pickDialogPriorityIds(
+  selectionOrder: readonly string[],
+  intensityById: Readonly<Record<string, number>>,
+  limit: number = PRIORITY_DIALOG_QUESTION_COUNT,
+): string[] {
+  return [...selectionOrder]
+    .sort((left, right) => {
+      const intensityDelta =
+        (intensityById[right] ?? 0) - (intensityById[left] ?? 0);
+      if (intensityDelta !== 0) {
+        return intensityDelta;
+      }
+      return selectionOrder.indexOf(left) - selectionOrder.indexOf(right);
+    })
+    .slice(0, limit);
 }
