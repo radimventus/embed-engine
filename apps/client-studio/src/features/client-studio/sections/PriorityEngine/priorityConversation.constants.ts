@@ -3,9 +3,12 @@ import { DECISION_CATEGORIES } from './decision-cards.constants';
 /** Soft confirmation pause — used for gate / prep transitions only. */
 export const CONIS_MICROINTERACTION_MS = 750;
 
+/** Conis thinking beat before interpretation (presentation only). */
+export const CONIS_THINKING_MS = 850;
+
 /**
- * @deprecated Auto quiz advance replaced by user-paced Continue
- * (PT-PRIORITY-DIALOGUE-01). Kept for compatibility with older tests.
+ * @deprecated Auto quiz advance replaced by user-paced Continue.
+ * Kept for compatibility with older tests.
  */
 export const CONIS_QUIZ_ADVANCE_MS = 1500;
 
@@ -63,8 +66,10 @@ export const PRIORITY_CONVERSATION_FINISH_SELECTION = 'Pojďme s tímto dál';
 
 export const PRIORITY_CONVERSATION_ADD_MORE = 'Ještě něco doplním';
 
+export const PRIORITY_CONVERSATION_PREP_TITLE =
+  'Už rozumím tomu, co je pro vás důležité.';
+
 export const PRIORITY_CONVERSATION_PREP_LINES = Object.freeze([
-  'Už rozumím, co je pro vás důležité.',
   'Pomozte mi lépe porozumět tomu, jak přemýšlíte — ověřím ještě několik souvislostí.',
 ] as const);
 
@@ -74,30 +79,52 @@ export const PRIORITY_CONVERSATION_ANSWER_ACK = 'Rozumím.';
 
 export const PRIORITY_CONVERSATION_DIALOG_CONTINUE = 'Pokračovat';
 
-export const PRIORITY_CONVERSATION_SUMMARY_LINES = Object.freeze([
-  'Teď už vám lépe rozumím.',
-  'Můžeme jít více do hloubky.',
-] as const);
+export const PRIORITY_CONVERSATION_COMPLETE_PANEL_TITLE =
+  'První kapitola je hotová.';
 
-export const PRIORITY_CONVERSATION_AUDIT_HEADING = 'Audit jako další společná práce';
-
-export const PRIORITY_CONVERSATION_AUDIT_LINES = Object.freeze([
-  'Audit nevzniká jako další formulář.',
-  'Vzniká proto, abychom ověřili vaše priority na konkrétním domě a pozemku.',
-  'Můžeme validovat váš pozemek, pomoci s výběrem pozemku, nebo pokračovat ve společné práci — podle toho, kde právě jste.',
-] as const);
-
-export const PRIORITY_CONVERSATION_CONTINUE_AUDIT = 'Pokračovat v Auditu';
+export const PRIORITY_CONVERSATION_COMPLETE_PANEL_LINE =
+  'Níže shrnuji, co už o vás vím — a co můžete získat dál.';
 
 export const PRIORITY_CONVERSATION_NEXT_PATHS_PROMPT =
-  'Nebo nejdřív otevřeme otázky či krátký rozhovor:';
+  'Chcete nejdřív pokračovat v rozhovoru?';
 
 export const PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL = 'Otázky z našich priorit';
 
 export const PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL = 'Pokračovat v rozhovoru';
 
-export const PRIORITY_CONVERSATION_PDF_NOTE =
-  'Na konci Experience obdržíte osobní PDF — priority, způsob rozhodování, doporučení a shrnutí našeho rozhovoru.';
+/** Full-width chapter bridge — value language, never internal „Audit“. */
+export const PRIORITY_BRIDGE_TITLE =
+  'Už rozumím tomu, co je pro vás důležité.';
+
+export const PRIORITY_BRIDGE_SUMMARY =
+  'Díky našemu rozhovoru už vidím první obraz toho, jak se rozhodujete. To je základ, na kterém můžeme stavět dál.';
+
+export const PRIORITY_BRIDGE_KNOW_HEADING = 'Co už o vás vím';
+
+export const PRIORITY_BRIDGE_GAIN_HEADING = 'Co získáte';
+
+export const PRIORITY_BRIDGE_REPORT_TITLE = 'Osobní Decision Report';
+
+export const PRIORITY_BRIDGE_REPORT_LINES = Object.freeze([
+  'Na konci Experience obdržíte osobní Decision Report (PDF).',
+  'Shrnutí priorit, interpretaci způsobu rozhodování, doporučení vhodných domů i další kroky — hmatatelná hodnota za dokončení Experience.',
+] as const);
+
+export const PRIORITY_BRIDGE_NEXT_HEADING = 'Co bude následovat';
+
+export const PRIORITY_BRIDGE_NEXT_LINES = Object.freeze([
+  'Můžete ověřit, zda je váš pozemek vhodný právě pro vybraný dům.',
+  'Pokud pozemek ještě nemáte, pomůžeme vám pochopit, jaký hledat — případně vás propojíme s lidmi, kteří s hledáním pomohou.',
+  'A pokud teď nechcete řešit pozemek, nechte si zaslat svůj osobní Decision Report.',
+] as const);
+
+export const PRIORITY_BRIDGE_CTA_PLOT = 'Ověřit svůj pozemek';
+
+export const PRIORITY_BRIDGE_CTA_FIND = 'Pomoc s hledáním pozemku';
+
+export const PRIORITY_BRIDGE_CTA_REPORT = 'Nechat si zaslat Decision Report';
+
+export const PRIORITY_BRIDGE_CTA_CONTINUE = 'Pokračovat dál';
 
 export type PriorityDialogOption = {
   readonly id: string;

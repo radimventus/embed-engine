@@ -50,6 +50,11 @@ export type PriorityConversationEvent =
       readonly at: number;
     }
   | {
+      readonly type: 'dialog-thinking';
+      readonly priorityId: string;
+      readonly at: number;
+    }
+  | {
       readonly type: 'dialog-continue';
       readonly priorityId: string;
       readonly at: number;
@@ -62,7 +67,7 @@ export type PriorityConversationEvent =
     }
   | {
       readonly type: 'completion-path';
-      readonly path: 'faq' | 'chat' | 'audit';
+      readonly path: 'faq' | 'chat' | 'next' | 'plot-check' | 'plot-find' | 'report';
       readonly at: number;
     };
 

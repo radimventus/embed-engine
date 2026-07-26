@@ -65,7 +65,7 @@ export function FaqTitle() {
         Otázky, které navazují na náš rozhovor
       </h2>
       <p className="mt-1.5 text-[13px] leading-relaxed text-embed-foreground-primary/60">
-        Vycházejí z vašich priorit a připravují vás na Audit.
+        Vycházejí z vašich priorit a připravují vás na další společný krok.
       </p>
     </div>
   );
@@ -85,11 +85,11 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
       className="shrink-0 overflow-hidden rounded-[8px] border border-embed-border-default"
       style={{ backgroundColor: colors.surface.card }}
     >
-      <div className="flex h-faq-row items-center gap-3 px-section">
+      <div className="flex min-h-faq-row items-center gap-3 px-section py-3">
         <button
           type="button"
           onClick={() => onQuestionSelect(question)}
-          className="min-w-0 flex-1 cursor-pointer truncate text-left text-[15px] leading-snug text-embed-foreground-primary"
+          className="min-w-0 flex-1 cursor-pointer text-left text-[16px] font-semibold leading-snug text-embed-foreground-primary"
         >
           {question}
         </button>

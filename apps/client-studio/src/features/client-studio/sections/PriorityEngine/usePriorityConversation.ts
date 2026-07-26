@@ -11,6 +11,7 @@ import {
 } from './priorityCoachingDialogue';
 import {
   CONIS_MICROINTERACTION_MS,
+  CONIS_THINKING_MS,
   dialogQuestionFor,
   pickDialogPriorityIds,
   PRIORITY_CONVERSATION_MINIMUM,
@@ -30,7 +31,7 @@ export type PriorityTagView = {
   readonly percent: number;
 };
 
-export type DialogBeat = 'question' | 'interpretation';
+export type DialogBeat = 'question' | 'thinking' | 'interpretation';
 
 export type PriorityConversationView = {
   readonly phase: PriorityConversationPhase;
@@ -55,7 +56,10 @@ export type PriorityConversationView = {
   readonly continueDialog: () => void;
   readonly continueToFaq: () => void;
   readonly askConis: () => void;
-  readonly continueToAudit: () => void;
+  readonly continueToNextChapter: () => void;
+  readonly continueWithPlotCheck: () => void;
+  readonly continueWithPlotFind: () => void;
+  readonly continueWithReport: () => void;
 };
 
 function focusAdvisorChat(): void {
@@ -67,9 +71,13 @@ function focusAdvisorChat(): void {
   }, 450);
 }
 
+function scrollToConversion(): void {
+  scrollToSection(PILOT_SECTION_IDS.audit);
+}
+
 /**
- * Priority right-panel coaching dialogue (PT-PRIORITY-DIALOGUE-01).
- * User-paced interpretation beats — no Runtime dispatch.
+ * Priority coaching dialogue (PT-PRIORITY-CONVERSATION-03).
+ * User-paced beats with thinking pause — no Runtime dispatch.
  */
 export function usePriorityConversation(): PriorityConversationView {
   const { cards, selectedCount, categories } = usePriorityExperience();
@@ -78,6 +86,7 @@ export function usePriorityConversation(): PriorityConversationView {
   );
   const progress = progressRef.current;
   const advanceTimerRef = useRef<number | null>(null);
+  const thinkingTimerRef = useRef<number | null>(null);
 
   const [selectionOrder, setSelectionOrder] = useState<string[]>([]);
   const [selectionClosed, setSelectionClosed] = useState(false);
@@ -87,21 +96,24 @@ export function usePriorityConversation(): PriorityConversationView {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [dialogBeat, setDialogBeat] = useState<DialogBeat>('question');
   const [interpretation, setInterpretation] = useState<string | null>(null);
-  const [interpretedPriorityId, setInterpretedPriorityId] = useState<
-    string | null
-  >(null);
+  const [activePriorityId, setActivePriorityId] = useState<string | null>(null);
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [pendingOptionId, setPendingOptionId] = useState<string | null>(null);
   const phaseRef = useRef<PriorityConversationPhase>('instruction');
   const intensityRef = useRef<Record<string, number>>({});
 
-  useEffect(() => {
-    return () => {
-      if (advanceTimerRef.current !== null) {
-        window.clearTimeout(advanceTimerRef.current);
-      }
-    };
+  const clearTimers = useCallback(() => {
+    if (advanceTimerRef.current !== null) {
+      window.clearTimeout(advanceTimerRef.current);
+      advanceTimerRef.current = null;
+    }
+    if (thinkingTimerRef.current !== null) {
+      window.clearTimeout(thinkingTimerRef.current);
+      thinkingTimerRef.current = null;
+    }
   }, []);
+
+  useEffect(() => clearTimers, [clearTimers]);
 
   const runAfterConfirmation = useCallback(
     (action: () => void, delayMs: number = CONIS_MICROINTERACTION_MS) => {
@@ -117,6 +129,16 @@ export function usePriorityConversation(): PriorityConversationView {
     },
     [],
   );
+
+  const resetDialogState = useCallback(() => {
+    clearTimers();
+    setDialogQueue([]);
+    setAnswers({});
+    setDialogBeat('question');
+    setInterpretation(null);
+    setActivePriorityId(null);
+    setPendingOptionId(null);
+  }, [clearTimers]);
 
   useEffect(() => {
     const selectedIds = Object.entries(cards)
@@ -158,12 +180,7 @@ export function usePriorityConversation(): PriorityConversationView {
       if (next.order.length < PRIORITY_CONVERSATION_MINIMUM) {
         setSelectionClosed(false);
         setPrepAcknowledged(false);
-        setDialogQueue([]);
-        setAnswers({});
-        setDialogBeat('question');
-        setInterpretation(null);
-        setInterpretedPriorityId(null);
-        setPendingOptionId(null);
+        resetDialogState();
       }
 
       if (next.removed.length > 0) {
@@ -178,7 +195,7 @@ export function usePriorityConversation(): PriorityConversationView {
 
       return next.order;
     });
-  }, [cards, progress]);
+  }, [cards, progress, resetDialogState]);
 
   useEffect(() => {
     for (const [priorityId, card] of Object.entries(cards)) {
@@ -206,7 +223,7 @@ export function usePriorityConversation(): PriorityConversationView {
     if (dialogQueue.length === 0) {
       return false;
     }
-    if (dialogBeat === 'interpretation') {
+    if (dialogBeat === 'interpretation' || dialogBeat === 'thinking') {
       return false;
     }
     return dialogQueue.every((id) => answers[id] !== undefined);
@@ -257,15 +274,18 @@ export function usePriorityConversation(): PriorityConversationView {
     if (phase !== 'dialog') {
       return null;
     }
-    if (dialogBeat === 'interpretation' && interpretedPriorityId) {
-      return dialogQuestionFor(interpretedPriorityId);
+    if (
+      (dialogBeat === 'thinking' || dialogBeat === 'interpretation') &&
+      activePriorityId
+    ) {
+      return dialogQuestionFor(activePriorityId);
     }
     const nextId = dialogQueue.find((id) => answers[id] === undefined);
     if (nextId === undefined) {
       return null;
     }
     return dialogQuestionFor(nextId);
-  }, [answers, dialogBeat, dialogQueue, interpretedPriorityId, phase]);
+  }, [activePriorityId, answers, dialogBeat, dialogQueue, phase]);
 
   const questionIntent = useMemo(() => {
     if (phase !== 'dialog' || dialogBeat !== 'question' || !currentQuestion) {
@@ -281,14 +301,17 @@ export function usePriorityConversation(): PriorityConversationView {
     return buildPriorityHypothesisSummary({ tags, answers });
   }, [answers, phase, tags]);
 
+  const committedDialogAnswers = Object.keys(answers).filter((id) =>
+    dialogQueue.includes(id),
+  ).length;
+
   const progressPercent = coachingProgressPercent({
     phase,
     selectedCount,
-    dialogAnswered: Object.keys(answers).filter((id) =>
-      dialogQueue.includes(id),
-    ).length,
+    dialogAnswered: committedDialogAnswers,
     dialogTotal: dialogQueue.length,
     isInterpreting: dialogBeat === 'interpretation',
+    isThinking: dialogBeat === 'thinking',
   });
 
   const finishSelection = () => {
@@ -304,7 +327,7 @@ export function usePriorityConversation(): PriorityConversationView {
       setAnswers({});
       setDialogBeat('question');
       setInterpretation(null);
-      setInterpretedPriorityId(null);
+      setActivePriorityId(null);
       setPendingOptionId(null);
       setSelectionClosed(true);
       setAwaitingMore(false);
@@ -333,33 +356,45 @@ export function usePriorityConversation(): PriorityConversationView {
       setPrepAcknowledged(true);
       setDialogBeat('question');
       setInterpretation(null);
-      setInterpretedPriorityId(null);
+      setActivePriorityId(null);
       setPendingOptionId(null);
     });
   };
 
   const answerQuestion = (priorityId: string, optionId: string) => {
-    if (isAdvancing || dialogBeat === 'interpretation') {
+    if (dialogBeat !== 'question' || isAdvancing || thinkingTimerRef.current) {
       return;
     }
+
     setPendingOptionId(optionId);
-    setAnswers((current) => ({ ...current, [priorityId]: optionId }));
-    setInterpretation(interpretationFor(priorityId, optionId));
-    setInterpretedPriorityId(priorityId);
-    setDialogBeat('interpretation');
+    setActivePriorityId(priorityId);
+    setInterpretation(null);
+    setDialogBeat('thinking');
     progress.record({
       type: 'dialog-answer',
       priorityId,
       optionId,
       at: Date.now(),
     });
+    progress.record({
+      type: 'dialog-thinking',
+      priorityId,
+      at: Date.now(),
+    });
+
+    thinkingTimerRef.current = window.setTimeout(() => {
+      setAnswers((current) => ({ ...current, [priorityId]: optionId }));
+      setInterpretation(interpretationFor(priorityId, optionId));
+      setDialogBeat('interpretation');
+      thinkingTimerRef.current = null;
+    }, CONIS_THINKING_MS);
   };
 
   const continueDialog = () => {
-    if (dialogBeat !== 'interpretation' || interpretedPriorityId === null) {
+    if (dialogBeat !== 'interpretation' || activePriorityId === null) {
       return;
     }
-    const priorityId = interpretedPriorityId;
+    const priorityId = activePriorityId;
     progress.record({
       type: 'dialog-continue',
       priorityId,
@@ -367,7 +402,7 @@ export function usePriorityConversation(): PriorityConversationView {
     });
     setDialogBeat('question');
     setInterpretation(null);
-    setInterpretedPriorityId(null);
+    setActivePriorityId(null);
     setPendingOptionId(null);
   };
 
@@ -381,9 +416,36 @@ export function usePriorityConversation(): PriorityConversationView {
     focusAdvisorChat();
   };
 
-  const continueToAudit = () => {
-    progress.record({ type: 'completion-path', path: 'audit', at: Date.now() });
-    scrollToSection(PILOT_SECTION_IDS.audit);
+  const continueToNextChapter = () => {
+    progress.record({ type: 'completion-path', path: 'next', at: Date.now() });
+    scrollToConversion();
+  };
+
+  const continueWithPlotCheck = () => {
+    progress.record({
+      type: 'completion-path',
+      path: 'plot-check',
+      at: Date.now(),
+    });
+    scrollToConversion();
+  };
+
+  const continueWithPlotFind = () => {
+    progress.record({
+      type: 'completion-path',
+      path: 'plot-find',
+      at: Date.now(),
+    });
+    scrollToConversion();
+  };
+
+  const continueWithReport = () => {
+    progress.record({
+      type: 'completion-path',
+      path: 'report',
+      at: Date.now(),
+    });
+    scrollToConversion();
   };
 
   return {
@@ -409,6 +471,9 @@ export function usePriorityConversation(): PriorityConversationView {
     continueDialog,
     continueToFaq,
     askConis,
-    continueToAudit,
+    continueToNextChapter,
+    continueWithPlotCheck,
+    continueWithPlotFind,
+    continueWithReport,
   };
 }

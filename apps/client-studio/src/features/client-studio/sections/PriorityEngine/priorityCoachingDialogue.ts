@@ -18,9 +18,16 @@ export function coachingProgressPercent(input: {
   readonly dialogAnswered: number;
   readonly dialogTotal: number;
   readonly isInterpreting: boolean;
+  readonly isThinking?: boolean;
 }): number {
-  const { phase, selectedCount, dialogAnswered, dialogTotal, isInterpreting } =
-    input;
+  const {
+    phase,
+    selectedCount,
+    dialogAnswered,
+    dialogTotal,
+    isInterpreting,
+    isThinking = false,
+  } = input;
 
   switch (phase) {
     case 'instruction':
@@ -35,14 +42,18 @@ export function coachingProgressPercent(input: {
       if (dialogTotal <= 0) {
         return 45;
       }
-      const answered = isInterpreting
-        ? Math.max(0, dialogAnswered - 1)
-        : dialogAnswered;
+      const answered =
+        isInterpreting || isThinking
+          ? Math.max(0, dialogAnswered - (isInterpreting ? 1 : 0))
+          : dialogAnswered;
       const base = 45 + Math.round((answered / dialogTotal) * 40);
+      if (isThinking) {
+        return Math.min(84, base + 3);
+      }
       return isInterpreting ? Math.min(84, base + 5) : Math.min(84, base);
     }
     case 'complete':
-      return 90;
+      return 100;
     default:
       return 5;
   }
@@ -197,6 +208,7 @@ export function interpretationFor(
 }
 
 export type PriorityHypothesisSummary = {
+  readonly title: string;
   readonly lead: string;
   readonly prioritiesLine: string;
   readonly pictureLine: string;
@@ -222,10 +234,11 @@ export function buildPriorityHypothesisSummary(input: {
 
   const picture =
     pictureParts.length > 0
-      ? `První obraz rozhodování: ${pictureParts.join('; ')}.`
+      ? `Zdá se, že ve vašem rozhodování hraje roli především ${pictureParts.join('; ')}.`
       : 'První obraz rozhodování se teprve rýsuje — a to je v pořádku.';
 
   return {
+    title: 'Už rozumím tomu, co je pro vás důležité.',
     lead: 'Děkuji.',
     prioritiesLine:
       list.length > 0
@@ -244,7 +257,7 @@ export const PRIORITY_COACH_FAQ: Readonly<
   plot: Object.freeze({
     question: 'Jak poznám, že je pozemek opravdu vhodný?',
     answer:
-      'Vhodný pozemek není jen o metrech. V Auditu společně ověříme orientaci, okolí a to, jak pozemek ladí s tím, co je pro vás důležité.',
+      'Vhodný pozemek není jen o metrech. Společně ověříme orientaci, okolí a to, jak pozemek ladí s tím, co je pro vás důležité.',
   }),
   layout: Object.freeze({
     question: 'Jak velký dům budu ve skutečnosti potřebovat?',
@@ -264,7 +277,7 @@ export const PRIORITY_COACH_FAQ: Readonly<
   'operating-costs': Object.freeze({
     question: 'Co nejvíce ovlivní provozní náklady v čase?',
     answer:
-      'Provozní náklady rostou z návyků i z domu samotného. Audit pomůže oddělit to, co můžete ovlivnit hned, od dlouhodobých souvislostí.',
+      'Provozní náklady rostou z návyků i z domu samotného. Další krok pomůže oddělit to, co můžete ovlivnit hned, od dlouhodobých souvislostí.',
   }),
   design: Object.freeze({
     question: 'Jak poznám design, který ke mně opravdu patří?',
@@ -274,7 +287,7 @@ export const PRIORITY_COACH_FAQ: Readonly<
   quality: Object.freeze({
     question: 'Kde se kvalita pozná dřív, než se v domě bydlí?',
     answer:
-      'Kvalita se často ukáže v detailech, trvanlivosti a jistotě. Audit pomůže pojmenovat, co je pro vás „dost dobré“ — a co už ne.',
+      'Kvalita se často ukáže v detailech, trvanlivosti a jistotě. Společně pojmenujeme, co je pro vás „dost dobré“ — a co už ne.',
   }),
   investment: Object.freeze({
     question: 'Jak mám investici do bydlení vnímat bez zbytečného tlaku?',
@@ -289,7 +302,7 @@ export const PRIORITY_COACH_FAQ: Readonly<
   flexibility: Object.freeze({
     question: 'Jak připravit dům na změny, které ještě neznám?',
     answer:
-      'Flexibilita je o prostoru, který unese práci, hosty i životní etapy. Audit ukáže, kde dům nabízí rezervu — a kde je pevný.',
+      'Flexibilita je o prostoru, který unese práci, hosty i životní etapy. Společně uvidíme, kde dům nabízí rezervu — a kde je pevný.',
   }),
 });
 
@@ -346,7 +359,9 @@ export function coachChatOpeningFromPriorities(
   return [
     `Z našeho dosavadního rozhovoru vnímám, že jsou pro vás nejdůležitější ${list}.`,
     '',
-    'To je zajímavá kombinace.',
+    'To je zajímavá kombinace — říká mi něco o tom, jak přemýšlíte o domě.',
+    '',
+    'Rád bych to s vámi ještě krátce doladil.',
     '',
     'Co z toho je pro vás při skutečném výběru domu úplně nejdůležitější?',
   ].join('\n');

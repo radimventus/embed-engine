@@ -1,0 +1,29 @@
+{
+  "overall": "PASS",
+  "summary": {
+    "thinking_before_interpretation": "PASS",
+    "no_flash_to_previous": "PASS",
+    "user_paced_continue": "PASS",
+    "adaptive_panel": "PASS",
+    "prep_title_hierarchy": "PASS",
+    "chapter_bridge": "PASS",
+    "decision_report_value": "PASS",
+    "no_audit_copy": "PASS",
+    "chat_seeded_paragraphs": "PASS",
+    "faq_emphasized": "PASS"
+  },
+  "accept": {
+    "thinking_before_interpretation": true,
+    "no_flash_to_previous": true,
+    "user_paced_continue": true,
+    "adaptive_panel": true,
+    "prep_title_hierarchy": true,
+    "chapter_bridge": true,
+    "decision_report_value": true,
+    "no_audit_copy": true,
+    "chat_seeded_paragraphs": true,
+    "faq_emphasized": true
+  },
+  "promptBefore": "Tahle otázka mi pomůže pochopit, co pro vás znamená soukromí.",
+  "pageErrors": []
+}
