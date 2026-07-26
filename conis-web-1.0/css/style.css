@@ -337,6 +337,18 @@ EXCLUSIVE, PAUSE & QUESTIONS
   opacity: 0.9;
 }
 
+.lead-follow {
+  margin-top: 28px;
+}
+
+.lead-follow-sm {
+  margin-top: 24px;
+}
+
+.closing-lead {
+  margin-top: 24px;
+}
+
 /************************************************
 QUALIFICATION & QUIZ MODULE
 ************************************************/
@@ -377,8 +389,28 @@ MANIFEST CLARITY LAYERS
   margin: 0 auto;
 }
 
+/************************************************
+CLOSING — one continuous finale
+************************************************/
+
+.closing {
+  display: block;
+  padding: 180px 0 0;
+}
+
+.closing-stage {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.closing-intro {
+  padding: 40px 0 48px;
+}
+
 .quiz-section {
-  padding: 40px 0 160px;
+  padding: 24px 0 100px;
 }
 
 .quiz {
@@ -399,7 +431,7 @@ MANIFEST CLARITY LAYERS
   transition: width 0.5s ease;
 }
 
-.quiz .question h3 {
+.quiz-question h3 {
   font-size: clamp(28px, 3.5vw, 48px);
   font-weight: 500;
   margin-bottom: 60px;
@@ -485,12 +517,24 @@ img {
 
 .result {
   display: none;
-  padding: 180px 0;
+  padding: 72px 0 32px;
   text-align: center;
 }
 
+.closing.is-complete .closing-intro {
+  display: none;
+}
+
 .result h2 {
-  margin-bottom: 30px;
+  margin-bottom: 28px;
+}
+
+.result .lead {
+  margin: 0 auto;
+}
+
+.result-action {
+  margin-top: 40px;
 }
 
 .cta-button {
@@ -523,7 +567,7 @@ LEAD CAPTURE
 
 .lead-capture {
   display: none;
-  padding: 80px 0 180px;
+  padding: 48px 0 160px;
   text-align: center;
 }
 
@@ -601,11 +645,15 @@ LEAD CAPTURE
 }
 
 .lead-thanks {
-  padding-top: 40px;
+  padding: 24px 0 40px;
 }
 
 .lead-thanks h2 {
   margin-bottom: 24px;
+}
+
+.lead-thanks .lead {
+  margin: 0 auto;
 }
 
 /************************************************
@@ -613,43 +661,52 @@ FOOTER
 ************************************************/
 
 .site-footer {
-  padding: 120px 0 80px;
-  border-top: 1px solid var(--line);
+  padding: 160px 0 96px;
   background: var(--bg);
 }
 
 .footer-inner {
-  max-width: 720px;
+  max-width: 640px;
+  margin: 0;
+}
+
+.footer-identity {
+  margin-bottom: 72px;
 }
 
 .footer-brand {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
   letter-spacing: 0.34em;
   text-transform: uppercase;
-  margin-bottom: 28px;
+  margin-bottom: 36px;
 }
 
 .footer-line {
-  font-size: clamp(18px, 2vw, 22px);
-  line-height: 1.6;
-  margin-bottom: 12px;
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.55;
+  margin-bottom: 14px;
   max-width: 560px;
 }
 
 .footer-line.soft {
-  opacity: 0.7;
-  margin-bottom: 48px;
+  opacity: 0.62;
+  margin-bottom: 0;
 }
 
 .footer-contact {
-  margin: 48px 0;
+  margin: 0 0 80px;
   font-size: clamp(16px, 1.8vw, 18px);
-  line-height: 1.8;
+  line-height: 1.85;
 }
 
 .footer-contact p {
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+}
+
+.footer-address {
+  margin-top: 18px;
+  margin-bottom: 18px !important;
 }
 
 .footer-contact a {
@@ -665,11 +722,19 @@ FOOTER
   border-bottom-color: rgba(184, 146, 45, 0.45);
 }
 
+.footer-closing {
+  padding-top: 8px;
+}
+
+.footer-closing .footer-line {
+  margin-bottom: 28px;
+}
+
 .footer-mark {
-  margin-top: 56px;
   font-size: 13px;
   letter-spacing: 0.06em;
-  opacity: 0.45;
+  opacity: 0.42;
+  line-height: 1.6;
 }
 
 /************************************************
@@ -714,8 +779,16 @@ RESPONSIVE DESIGN
     padding: 100px 0;
   }
 
-  .qualification-intro {
-    padding-top: 120px;
+  .closing {
+    padding: 100px 0 0;
+  }
+
+  .closing-intro {
+    padding-top: 24px;
+  }
+
+  .desire {
+    padding: 100px 0 24px;
   }
 }
 
@@ -737,11 +810,35 @@ RESPONSIVE DESIGN
     padding-left: 28px;
   }
 
+  .quiz-section {
+    padding-bottom: 72px;
+  }
+
+  .result {
+    padding: 48px 0 24px;
+  }
+
   .lead-capture {
-    padding: 60px 0 120px;
+    padding: 32px 0 100px;
+  }
+
+  .lead-invite {
+    margin-bottom: 40px;
   }
 
   .site-footer {
-    padding: 80px 0 56px;
+    padding: 100px 0 64px;
+  }
+
+  .footer-identity {
+    margin-bottom: 56px;
+  }
+
+  .footer-contact {
+    margin-bottom: 64px;
+  }
+
+  .footer-brand {
+    letter-spacing: 0.28em;
   }
 }

@@ -114,7 +114,7 @@
           <p class="lead fade">
             Většina digitálních produktů přidává další obsah. Další funkce. Další konfigurátory. Další možnosti.
           </p>
-          <p class="lead fade" style="margin-top: 28px;">
+          <p class="lead lead-follow fade">
             My věříme, že skutečná hodnota nevzniká množstvím informací, ale jejich pochopením.
           </p>
         </div>
@@ -156,7 +156,7 @@
             <p class="lead">
               Lidé se nerozhodují, když mají dostatek informací.
             </p>
-            <p class="lead gold" style="margin-top: 24px;">
+            <p class="lead gold lead-follow-sm">
               Rozhodují se, když jim informace začnou dávat smysl.
             </p>
           </div>
@@ -207,7 +207,7 @@
         <div class="exclusive-content">
           <p class="eyebrow fade">CONIS</p>
           <h2 class="fade">Není pro každého.</h2>
-          <p class="lead fade" style="margin-top: 28px;">
+          <p class="lead lead-follow fade">
             Je pro ty, kdo chtějí, aby jejich zákazníci skutečně rozuměli.
           </p>
         </div>
@@ -250,85 +250,87 @@
       </div>
     </section>
 
-    <section class="qualification-intro" aria-label="Kvalifikace úvod">
-      <div class="container narrow-center">
-        <p class="eyebrow fade">DALŠÍ KROK</p>
-        <h2 class="fade">
-          CONIS není řešením pro každou firmu.
-        </h2>
-        <p class="lead fade" style="margin-top: 24px;">
-          Proto jsme připravili krátkou kvalifikaci. Zabere přibližně dvě minuty.
-        </p>
-      </div>
-    </section>
-
-    <section class="quiz-section" id="quizContainer" aria-label="Kvalifikace">
-      <div class="quiz container">
-        <div
-          class="progress"
-          role="progressbar"
-          aria-valuemin="1"
-          aria-valuemax="5"
-          aria-valuenow="1"
-          aria-labelledby="questionTitle"
-          id="progressTrack"
-        >
-          <div id="progressBar"></div>
-        </div>
-
-        <div class="question" aria-live="polite">
-          <h3 id="questionTitle">Kolik domů ročně prodáváte?</h3>
-          <div id="answers" role="group" aria-labelledby="questionTitle"></div>
-        </div>
-      </div>
-    </section>
-
-    <section
-      class="result"
-      id="resultSection"
-      aria-live="polite"
-      aria-atomic="true"
-    >
-      <div class="container narrow-center">
-        <h2 id="resultTitle" tabindex="-1"></h2>
-        <p class="lead" id="resultText"></p>
-        <div id="resultAction" style="margin-top: 40px;"></div>
-      </div>
-    </section>
-
-    <section class="lead-capture" id="leadSection" aria-label="Kontakt" hidden>
-      <div class="container narrow-center">
-        <div id="leadFormWrap">
-          <p class="lead lead-invite fade visible">
-            Pokud dává myšlenka CONIS smysl i vám, zanechte na sebe kontakt.
-            Ozveme se během několika dnů.
+    <section class="closing" id="closing" aria-label="Závěr">
+      <div class="closing-stage closing-intro" aria-label="Kvalifikace úvod">
+        <div class="container narrow-center">
+          <p class="eyebrow fade">DALŠÍ KROK</p>
+          <h2 class="fade">
+            CONIS není řešením pro každou firmu.
+          </h2>
+          <p class="lead closing-lead fade">
+            Proto jsme připravili krátkou kvalifikaci. Zabere přibližně dvě minuty.
           </p>
-          <form id="leadForm" class="lead-form" novalidate>
-            <label class="lead-field">
-              <span>Jméno</span>
-              <input type="text" name="name" autocomplete="name" required maxlength="120">
-            </label>
-            <label class="lead-field">
-              <span>Firma</span>
-              <input type="text" name="company" autocomplete="organization" required maxlength="160">
-            </label>
-            <label class="lead-field">
-              <span>E-mail</span>
-              <input type="email" name="email" autocomplete="email" required maxlength="160">
-            </label>
-            <label class="lead-field">
-              <span>Telefon <em>(volitelné)</em></span>
-              <input type="tel" name="phone" autocomplete="tel" maxlength="40">
-            </label>
-            <p class="lead-error" id="leadError" role="alert" hidden></p>
-            <button type="submit" class="cta-button lead-submit" id="leadSubmit">
-              Odeslat
-            </button>
-          </form>
         </div>
-        <div id="leadThanks" class="lead-thanks" hidden>
-          <h2 tabindex="-1">Děkujeme.</h2>
-          <p class="lead">Ozveme se během několika dnů.</p>
+      </div>
+
+      <div class="closing-stage quiz-section" id="quizContainer" aria-label="Kvalifikace">
+        <div class="quiz container">
+          <div
+            class="progress"
+            role="progressbar"
+            aria-valuemin="1"
+            aria-valuemax="5"
+            aria-valuenow="1"
+            aria-labelledby="questionTitle"
+            id="progressTrack"
+          >
+            <div id="progressBar"></div>
+          </div>
+
+          <div class="quiz-question" aria-live="polite">
+            <h3 id="questionTitle">Kolik domů ročně prodáváte?</h3>
+            <div id="answers" role="group" aria-labelledby="questionTitle"></div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        class="closing-stage result"
+        id="resultSection"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <div class="container narrow-center">
+          <h2 id="resultTitle" tabindex="-1"></h2>
+          <p class="lead" id="resultText"></p>
+          <div class="result-action" id="resultAction"></div>
+        </div>
+      </div>
+
+      <div class="closing-stage lead-capture" id="leadSection" aria-label="Kontakt" hidden>
+        <div class="container narrow-center">
+          <div id="leadFormWrap">
+            <p class="lead lead-invite">
+              Pokud dává myšlenka CONIS smysl i vám, zanechte na sebe kontakt.
+              Ozveme se během několika dnů.
+            </p>
+            <form id="leadForm" class="lead-form" novalidate>
+              <label class="lead-field">
+                <span>Jméno</span>
+                <input type="text" name="name" autocomplete="name" required maxlength="120">
+              </label>
+              <label class="lead-field">
+                <span>Firma</span>
+                <input type="text" name="company" autocomplete="organization" required maxlength="160">
+              </label>
+              <label class="lead-field">
+                <span>E-mail</span>
+                <input type="email" name="email" autocomplete="email" required maxlength="160">
+              </label>
+              <label class="lead-field">
+                <span>Telefon <em>(volitelné)</em></span>
+                <input type="tel" name="phone" autocomplete="tel" maxlength="40">
+              </label>
+              <p class="lead-error" id="leadError" role="alert" hidden></p>
+              <button type="submit" class="cta-button lead-submit" id="leadSubmit">
+                Odeslat
+              </button>
+            </form>
+          </div>
+          <div id="leadThanks" class="lead-thanks" hidden>
+            <h2 tabindex="-1">Děkujeme.</h2>
+            <p class="lead">Ozveme se během několika dnů.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -336,23 +338,27 @@
 
   <footer class="site-footer" role="contentinfo">
     <div class="container footer-inner">
-      <p class="footer-brand">CONIS</p>
-      <p class="footer-line">Rozumíme tomu, co rozhoduje.</p>
-      <p class="footer-line soft">Platforma porozumění mezi člověkem a produktem.</p>
+      <div class="footer-identity">
+        <p class="footer-brand">CONIS</p>
+        <p class="footer-line">Rozumíme tomu, co rozhoduje.</p>
+        <p class="footer-line soft">Platforma porozumění mezi člověkem a produktem.</p>
+      </div>
 
       <div class="footer-contact">
         <p>Radim Věntus</p>
         <p><a href="tel:+420725020757">+420 725 020 757</a></p>
         <p><a href="mailto:kontakt@conis.cz">kontakt@conis.cz</a></p>
-        <p>
+        <p class="footer-address">
           Stratilova 2<br>
           746 01 Opava
         </p>
         <p><a href="https://www.conis.cz">www.conis.cz</a></p>
       </div>
 
-      <p class="footer-line">Dáváme produktům schopnost rozumět lidem.</p>
-      <p class="footer-mark">CONIS • Platforma porozumění mezi člověkem a produktem.</p>
+      <div class="footer-closing">
+        <p class="footer-line">Dáváme produktům schopnost rozumět lidem.</p>
+        <p class="footer-mark">CONIS • Platforma porozumění mezi člověkem a produktem.</p>
+      </div>
     </div>
   </footer>
 

@@ -4,7 +4,9 @@
  * CONIS static server + qualification + lead capture
  *
  * POST /qualification  → { status: "A"|"B"|"C", calendlyUrl? }
- * POST /lead           → { ok: true, mail, sheet }
+ * POST /lead           → leadService (email / sheets / archive)
+ *
+ * HTTP layer does not talk to destinations directly.
  */
 
 const http = require('http');
@@ -12,7 +14,7 @@ const fs = require('fs');
 const path = require('path');
 const { URL } = require('url');
 const { loadEnv } = require('./env');
-const { processLead } = require('./lead');
+const { submitLead } = require('./services/leadService');
 
 loadEnv();
 
@@ -141,7 +143,7 @@ async function handleLead(req, res) {
   try {
     const raw = await readBody(req);
     const body = raw ? JSON.parse(raw) : {};
-    const outcome = await processLead(body, clientIp(req));
+    const outcome = await submitLead(body, { ip: clientIp(req) });
     if (!outcome.ok) {
       sendJson(res, outcome.statusCode || 400, { error: outcome.error });
       return;

@@ -130,7 +130,7 @@ function handleServerResult(status, calendlyUrl) {
 
   if (!resultSection || !resultTitle || !resultText || !resultAction) return;
 
-  resultSection.style.display = "block";
+  resultSection.style.display = "flex";
   resultSection.scrollIntoView({ behavior: "smooth" });
   resultTitle.focus?.();
 
@@ -141,8 +141,8 @@ function handleServerResult(status, calendlyUrl) {
     resultAction.replaceChildren();
   } else if (status === "B") {
     resultTitle.textContent = "Děkujeme.";
-    resultText.innerHTML =
-      "Vaše odpovědi jsou zajímavé.<br><br><span class='gold'>Ozveme se vám během několika dnů.</span>";
+    resultText.textContent =
+      "Vaše odpovědi jsou zajímavé. Rádi je s vámi projdeme v klidu.";
     resultAction.replaceChildren();
   } else if (status === "C") {
     const bookingLink = safeUrl(
@@ -162,6 +162,8 @@ function handleServerResult(status, calendlyUrl) {
     link.textContent = "Rezervovat online schůzku";
     resultAction.appendChild(link);
   }
+
+  document.getElementById("closing")?.classList.add("is-complete");
 
   if (window.ConisLead && typeof window.ConisLead.prepare === "function") {
     window.ConisLead.prepare(status, userAnswers);

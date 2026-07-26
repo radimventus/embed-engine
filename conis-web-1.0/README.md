@@ -21,14 +21,31 @@ PORT=8080 npm start
 
 Stop: `Ctrl+C`
 
+## Architecture
+
+```text
+Web UI
+  → POST /qualification   (decision A/B/C)
+  → POST /lead            (voluntary contact)
+
+HTTP (server/index.js)
+  → services/leadService  (orchestration)
+
+Destinations (pluggable)
+  → localArchive
+  → email
+  → googleSheets
+  → (future: CRM, database, …)
+```
+
+UI never talks to e-mail or Sheets directly.
+
 ## APIs
 
 ### `POST /qualification`
 
 Body: qualification answers JSON.  
 Response: `{ status: "A" | "B" | "C", calendlyUrl?: string }`
-
-Decision stays on the server. Qualification works without contact.
 
 ### `POST /lead`
 
@@ -46,25 +63,20 @@ Body:
 }
 ```
 
-Pipeline:
-
-1. Validate
-2. Append `data/leads.jsonl`
-3. Send e-mail (SMTP) or log to `data/outbound-mail.log`
-4. Append Google Sheet via webhook or queue `data/sheets-queue.jsonl`
+`leadService` validates, archives locally, then fans out to configured destinations.
 
 Configure via `.env` (see `.env.example`).
 
 ### Google Sheets webhook
 
-Deploy an Apps Script web app that accepts JSON POST and appends a row:
+Apps Script web app accepting JSON POST and appending:
 
 `timestamp | name | company | email | phone | answers | status | userAgent | ip`
 
-Set `GOOGLE_SHEETS_WEBHOOK_URL` to the web app URL.
+Set `GOOGLE_SHEETS_WEBHOOK_URL`.
 
 ## Production notes
 
-- Copy `.env.example` → `.env` and set SMTP + Sheets webhook.
+- Copy `.env.example` → `.env` for SMTP + Sheets.
 - Update absolute URLs in `robots.txt`, `sitemap.xml`, and Open Graph tags.
 - Serve over HTTPS.
