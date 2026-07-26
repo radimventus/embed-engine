@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Embed Engine – Operations & Sales Workspace v1.0</title>
+<style>
+body{margin:0;font-family:Inter,Arial,sans-serif;background:#eef2f6;color:#222}
+header{height:64px;background:#1f2937;color:#fff;display:flex;align-items:center;padding:0 24px;font-size:22px;font-weight:700}
+.toolbar{background:#fff;padding:10px 20px;border-bottom:1px solid #d7dce2}
+button{padding:8px 14px;margin-right:8px;border:1px solid #c8d0da;border-radius:8px;background:#fff;cursor:pointer}
+.active{background:#2563eb;color:#fff}
+#ops,#sales{display:none;height:calc(100vh - 110px)}
+.show{display:grid;grid-template-columns:260px 1fr 320px}
+.col{padding:16px;overflow:auto}
+.left{background:#fff;border-right:1px solid #d7dce2}
+.center{background:#f8fafc}
+.right{background:#fff;border-left:1px solid #d7dce2}
+.card{background:#fff;border:1px solid #d7dce2;border-radius:10px;padding:14px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+h3{margin:0 0 10px}
+small{color:#666}
+</style>
+<script>
+function sw(id){
+ document.getElementById('ops').className='';
+ document.getElementById('sales').className='';
+ document.getElementById(id).className='show';
+ document.getElementById('bops').className='';
+ document.getElementById('bsales').className='';
+ document.getElementById(id==='ops'?'bops':'bsales').className='active';
+}
+</script>
+</head>
+<body onload="sw('ops')">
+<header>Embed Engine – Operations & Sales Workspace v1.0</header>
+<div class="toolbar">
+<button id="bops" onclick="sw('ops')">Operations Terminal</button>
+<button id="bsales" onclick="sw('sales')">Sales Terminal</button>
+</div>
+
+<div id="ops">
+<div class="col left">
+<div class="card"><h3>Navigace</h3>Live Overview<br>Timeline<br>Decision Journey<br>Fronta pozornosti<br>Úkoly</div>
+</div>
+<div class="col center">
+<div class="card"><h3>Live Overview</h3><small>Aktuální stav Runtime.</small></div>
+<div class="card"><h3>Timeline</h3><small>Události Runtime v chronologii.</small></div>
+<div class="card"><h3>Aktivní Decision Journey</h3></div>
+</div>
+<div class="col right">
+<div class="card"><h3>AI Souhrn</h3></div>
+<div class="card"><h3>Doporučené akce</h3></div>
+<div class="card"><h3>Upozornění</h3></div>
+</div>
+</div>
+
+<div id="sales">
+<div class="col left">
+<div class="card"><h3>Navigace</h3>Dashboard<br>Decision Identity<br>Decision Journey<br>Signály<br>AI Copilot<br>Follow-up</div>
+</div>
+<div class="col center">
+<div class="card"><h3>Decision Identity</h3></div>
+<div class="card"><h3>Decision Journey</h3></div>
+<div class="card"><h3>Příležitosti</h3></div>
+</div>
+<div class="col right">
+<div class="card"><h3>AI Copilot</h3></div>
+<div class="card"><h3>Next Best Action</h3></div>
+<div class="card"><h3>Signály</h3></div>
+</div>
+</div>
+</body></html>

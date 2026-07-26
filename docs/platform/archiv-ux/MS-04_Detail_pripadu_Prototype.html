@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Embed Engine Workspace – Detail případu</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:#eef3f8;color:#1f2937}
+header{height:64px;background:#111827;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:0 24px}
+.shell{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 64px)}
+aside{background:#17212b;color:#d1d5db;padding:18px}
+aside h3{margin:0 0 12px;color:#fff}
+.item{padding:10px;border-radius:8px;margin:6px 0}
+.item.active,.item:hover{background:#243243}
+main{display:flex;flex-direction:column}
+.top{background:#fff;border-bottom:1px solid #d7dde6;padding:12px 18px;display:flex;gap:10px}
+.badge{background:#eef2ff;padding:8px 12px;border-radius:20px}
+.content{display:grid;grid-template-columns:2fr 1fr;gap:16px;padding:16px}
+.card{background:#fff;border:1px solid #d9e0e8;border-radius:12px;padding:16px;box-shadow:0 2px 6px rgba(0,0,0,.05);margin-bottom:16px}
+.timeline{border-left:3px solid #d7dde6;padding-left:16px}
+.event{margin:14px 0}
+.event strong{display:block}
+.aicase{padding:10px;border:1px solid #d7dde6;border-radius:8px;margin-top:8px;background:#f8fafc;cursor:pointer}
+.actions button{display:block;width:100%;margin:8px 0;padding:10px;border:none;border-radius:8px;background:#2563eb;color:#fff}
+.small{color:#64748b;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<div><strong>Embed Engine Workspace</strong></div>
+<div>Operations • Detail případu</div>
+</header>
+
+<div class="shell">
+<aside>
+<h3>Platforma</h3>
+<div class="item">🏠 Přehled</div>
+<div class="item active">⚙️ Operations</div>
+<div class="item">💼 Obchod</div>
+<div class="item">🏡 Klienti</div>
+<div class="item">📊 Analytika</div>
+</aside>
+
+<main>
+
+<div class="top">
+<div class="badge">Případ: RD Novák</div>
+<div class="badge">Priorita: Vysoká</div>
+<div class="badge">Poslední aktivita: 09:42</div>
+</div>
+
+<div class="content">
+
+<div>
+
+<div class="card">
+<h2>Souhrn případu</h2>
+<p><strong>Zákazník:</strong> Jan Novák</p>
+<p><strong>Projekt:</strong> Rodinný dům 128</p>
+<p><strong>Odpovědný obchodník:</strong> Petr Svoboda</p>
+<p><strong>Další doporučený krok:</strong> Telefonický kontakt dnes.</p>
+</div>
+
+<div class="card">
+<h2>Průběh rozhodování</h2>
+<div class="timeline">
+<div class="event">
+<strong>09:42 • Dokončeno porovnání dispozic</strong>
+<div class="small">Klient se rozhoduje mezi dvěma variantami.</div>
+</div>
+<div class="event">
+<strong>09:30 • Návrat na prezentaci</strong>
+<div class="small">Znovu otevřen půdorys a technické parametry.</div>
+</div>
+<div class="event">
+<strong>09:18 • Změna priorit</strong>
+<div class="small">Vyšší důraz na provozní náklady.</div>
+</div>
+</div>
+</div>
+
+</div>
+
+<div>
+
+<div class="card">
+<h2>AI souhrn</h2>
+<p>Klient vykazuje vysokou pravděpodobnost rozhodnutí během 24 hodin.</p>
+
+<h3>Případy a důvody</h3>
+
+<div class="aicase">
+<strong>✓ Návrat na prezentaci</strong>
+<div class="small">Klient se vrátil po 2 hodinách.</div>
+</div>
+
+<div class="aicase">
+<strong>✓ Opakované otevření půdorysu</strong>
+<div class="small">Stejná dispozice otevřena třikrát.</div>
+</div>
+
+<div class="aicase">
+<strong>✓ Změna priorit</strong>
+<div class="small">Provozní náklady mají nově nejvyšší váhu.</div>
+</div>
+
+</div>
+
+<div class="card actions">
+<h2>Doporučené akce</h2>
+<button>Zavolat zákazníkovi</button>
+<button>Předat obchodníkovi</button>
+<button>Naplánovat schůzku</button>
+<button>Přidat poznámku</button>
+<button>Uzavřít případ</button>
+</div>
+
+</div>
+
+</div>
+
+</main>
+</div>
+</body>
+</html>

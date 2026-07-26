@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Embed Engine Workspace – Denní briefing</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:#eef3f8;color:#1f2937}
+header{height:64px;background:#111827;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:0 24px}
+.shell{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 64px)}
+aside{background:#17212b;color:#d1d5db;padding:18px}
+.item{padding:10px;border-radius:8px;margin:6px 0}
+.item.active{background:#243243}
+main{padding:32px}
+.card{max-width:900px;background:#fff;border:1px solid #d9e0e8;border-radius:16px;padding:28px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.hero{font-size:30px;font-weight:700;margin-bottom:6px}
+.sub{color:#64748b;margin-bottom:24px}
+.priority{border:1px solid #dbeafe;background:#f8fbff;border-radius:12px;padding:18px;margin:14px 0}
+.priority h3{margin:0 0 6px}
+.reason{color:#64748b;font-size:14px}
+.ai{margin:28px 0;padding:18px;background:#f9fafb;border-left:4px solid #2563eb;border-radius:8px}
+button{margin-top:14px;padding:14px 24px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px;cursor:pointer}
+.footer{margin-top:18px;color:#64748b;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<div><strong>Embed Engine Workspace</strong></div>
+<div>Operations • Denní briefing</div>
+</header>
+
+<div class="shell">
+<aside>
+<div class="item">🏠 Přehled</div>
+<div class="item active">⚙️ Operations</div>
+<div class="item">💼 Obchod</div>
+<div class="item">📊 Analytika</div>
+</aside>
+
+<main>
+
+<div class="card">
+
+<div class="hero">Dobré ráno, Petře.</div>
+<div class="sub">Dnes doporučujeme soustředit se na následující tři kroky.</div>
+
+<div class="priority">
+<h3>1. Zavolat Janu Novákovi</h3>
+<div class="reason">Pravděpodobnost uzavření případu je vysoká. Poslední aktivita proběhla před 18 minutami.</div>
+</div>
+
+<div class="priority">
+<h3>2. Dokončit nabídku pro RD Alfa</h3>
+<div class="reason">Klient čeká druhý den na finální kalkulaci.</div>
+</div>
+
+<div class="priority">
+<h3>3. Reagovat na nový lead</h3>
+<div class="reason">Nová poptávka přišla před 22 minutami a zatím nemá přiřazeného vlastníka.</div>
+</div>
+
+<div class="ai">
+<strong>AI briefing</strong>
+<p>Dnes očekáváme tři případy s vysokou pravděpodobností uzavření. Dva klienti změnili své priority a jeden nový lead vyžaduje reakci do jedné hodiny.</p>
+</div>
+
+<button>Začít pracovat</button>
+
+<div class="footer">
+Po kliknutí se automaticky otevře první doporučený případ. Runtime průběžně přepočítává pořadí podle aktuální situace.
+</div>
+
+</div>
+
+</main>
+</div>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Embed Engine Workspace – Dnešní posun</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:#eef3f8;color:#1f2937}
+header{height:64px;background:#111827;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:0 24px}
+.shell{display:grid;grid-template-columns:260px 1fr;height:calc(100vh - 64px)}
+aside{background:#17212b;color:#d1d5db;padding:18px}
+.item{padding:10px;border-radius:8px;margin:6px 0}.active{background:#243243}
+main{padding:32px}
+.card{max-width:920px;background:#fff;border:1px solid #d9e0e8;border-radius:16px;padding:28px;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.hero h1{margin:0;font-size:32px}
+.hero p{color:#64748b;margin:8px 0 24px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:24px}
+.stat{background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:18px;text-align:center}
+.num{font-size:30px;font-weight:700}
+.label{margin-top:6px;color:#64748b;font-size:14px}
+.ai{background:#f9fafb;border-left:4px solid #2563eb;border-radius:10px;padding:18px;margin:24px 0}
+button{padding:14px 24px;background:#2563eb;color:#fff;border:none;border-radius:10px;font-size:16px}
+.footer{margin-top:18px;color:#64748b;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<div><strong>Embed Engine Workspace</strong></div>
+<div>Operations • Dnešní posun</div>
+</header>
+
+<div class="shell">
+<aside>
+<div class="item">🏠 Přehled</div>
+<div class="item active">⚙️ Operations</div>
+<div class="item">💼 Obchod</div>
+<div class="item">📊 Analytika</div>
+</aside>
+
+<main>
+<div class="card">
+<div class="hero">
+<h1>Dnešní posun</h1>
+<p>Souhrn změn, které Runtime během dne skutečně zaznamenal.</p>
+</div>
+
+<div class="stats">
+<div class="stat"><div class="num">4</div><div class="label">Převzaté případy</div></div>
+<div class="stat"><div class="num">7</div><div class="label">Interakce s případy</div></div>
+<div class="stat"><div class="num">5</div><div class="label">Nové poznámky</div></div>
+<div class="stat"><div class="num">3</div><div class="label">Změny priorit</div></div>
+</div>
+
+<div class="ai">
+<strong>AI souhrn dne</strong>
+<p>Dnes se podařilo zpracovat všechny nově převzaté případy. U tří klientů došlo ke změně priorit a dva případy doporučujeme zařadit na zítřejší začátek dne.</p>
+</div>
+
+<button>Pokračovat zítra</button>
+
+<div class="footer">
+Souhrn vzniká automaticky z Runtime: převzetí případů, interakcí, poznámek a změn v Decision Runtime. Nezobrazuje metriky, které systém neumí spolehlivě ověřit.
+</div>
+
+</div>
+</main>
+</div>
+</body>
+</html>

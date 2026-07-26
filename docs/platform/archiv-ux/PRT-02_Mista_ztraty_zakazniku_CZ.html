@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRT-02 • Místa ztráty zákazníků</title>
+<style>
+body{margin:0;background:#eef3f8;font-family:Inter,Arial,sans-serif;color:#1f2937}
+.wrapper{max-width:1100px;margin:40px auto;padding:0 24px}
+.card{background:#fff;border-radius:18px;box-shadow:0 8px 30px rgba(0,0,0,.08);padding:32px}
+.header{display:flex;justify-content:space-between;align-items:flex-start}
+.badge{background:#fff4e5;color:#b45309;padding:6px 12px;border-radius:999px;font-size:13px}
+h1{margin:16px 0 8px;font-size:32px}
+.desc{color:#64748b}
+.chart{margin-top:28px}
+.row{display:grid;grid-template-columns:180px 1fr 80px;align-items:center;gap:18px;margin:18px 0}
+.label{font-weight:600}
+.barwrap{height:22px;background:#edf2f7;border-radius:999px;overflow:hidden}
+.bar{height:100%;background:#2563eb;border-radius:999px}
+.value{text-align:right;font-weight:bold}
+.metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+.metric{background:#f8fafc;padding:16px;border-radius:12px}
+.metric b{display:block;font-size:28px;margin-top:6px}
+.callout{margin-top:28px;background:#fff8f2;border-left:4px solid #f59e0b;padding:16px}
+.highlight{background:#fee2e2}
+</style>
+</head>
+<body>
+<div class="wrapper">
+<div class="card">
+
+<div class="header">
+<div>
+<div class="badge">Manažerský přehled</div>
+<h1>Místa ztráty zákazníků</h1>
+<p class="desc">Ve kterých částech Experience zákazníci nejčastěji odcházejí.</p>
+</div>
+<div style="text-align:right">
+<div style="font-size:14px;color:#64748b">Největší ztráta</div>
+<div style="font-size:40px;font-weight:bold;color:#dc2626">−38 %</div>
+</div>
+</div>
+
+<div class="chart">
+
+<div class="row">
+<div class="label">Experience</div>
+<div class="barwrap"><div class="bar" style="width:100%"></div></div>
+<div class="value">1000</div>
+</div>
+
+<div class="row">
+<div class="label">Priority</div>
+<div class="barwrap"><div class="bar" style="width:87%"></div></div>
+<div class="value">870</div>
+</div>
+
+<div class="row">
+<div class="label">Navigátor</div>
+<div class="barwrap"><div class="bar" style="width:69%"></div></div>
+<div class="value">690</div>
+</div>
+
+<div class="row highlight">
+<div class="label">Finance</div>
+<div class="barwrap"><div class="bar" style="width:43%;background:#dc2626"></div></div>
+<div class="value">430</div>
+</div>
+
+<div class="row">
+<div class="label">Nabídka</div>
+<div class="barwrap"><div class="bar" style="width:31%"></div></div>
+<div class="value">310</div>
+</div>
+
+<div class="row">
+<div class="label">Rezervace</div>
+<div class="barwrap"><div class="bar" style="width:19%"></div></div>
+<div class="value">190</div>
+</div>
+
+</div>
+
+<div class="metrics">
+<div class="metric">Nejkritičtější krok<b>Finance</b></div>
+<div class="metric">Celková konverze<b>19 %</b></div>
+<div class="metric">Potenciál zlepšení<b>+31 %</b></div>
+</div>
+
+<div class="callout">
+<strong>Poznatek AI</strong><br>
+Největší úbytek zákazníků nastává mezi <strong>Navigátorem</strong> a <strong>Financemi</strong>. Doporučujeme zjednodušit finanční kalkulaci nebo nabídnout alternativní scénáře financování.
+</div>
+
+</div>
+</div>
+</body>
+</html>
