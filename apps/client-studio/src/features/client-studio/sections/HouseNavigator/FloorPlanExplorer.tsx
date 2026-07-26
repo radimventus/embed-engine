@@ -1,14 +1,19 @@
 import { FloorPlan } from './FloorPlan';
 import { FloorSelector } from './FloorSelector';
-import { SectionHeader } from './SectionHeader';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import {
   HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS,
   SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS,
   SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS,
-  SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS,
+  SPATIAL_TERMINAL_PLAN_TOGGLE_GAP_CLASS,
+  SPATIAL_TERMINAL_WALKTHROUGH_TITLE_CLASS,
 } from '../spatial-terminal-layout';
 
+/**
+ * Floorplan column (TOUR-27 / TOUR-31).
+ * Plan fills width at real aspect; 40 px from menu (TOUR-31).
+ * Toggle sits on the shared baseline with VIDEO/FOTKY (min 50 px below plan).
+ */
 export function FloorPlanExplorer() {
   return (
     <section
@@ -17,17 +22,15 @@ export function FloorPlanExplorer() {
       aria-label="Půdorys"
       className={`scroll-mt-header ${SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS}`}
     >
-      <div className="relative z-0 flex min-h-0 flex-1 flex-col">
-        <SectionHeader className="pointer-events-none absolute inset-x-0 top-0 z-[1]" />
-        <div className="flex min-h-0 flex-1 flex-col">
-          <FloorPlan />
-        </div>
+      {/* Align plan top with Media Display (same title band as Room Menu). */}
+      <div className={SPATIAL_TERMINAL_WALKTHROUGH_TITLE_CLASS} aria-hidden="true">
+        <span className="invisible">.</span>
       </div>
-      <div className={`relative z-0 flex ${SPATIAL_TERMINAL_THUMBNAIL_ROW_CLASS} flex-col justify-end`}>
-        <div className={`${SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS} justify-center`}>
-          <div className={HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS}>
-            <FloorSelector />
-          </div>
+      <FloorPlan />
+      <div className={SPATIAL_TERMINAL_PLAN_TOGGLE_GAP_CLASS} aria-hidden="true" />
+      <div className={`${SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS} justify-center pb-1`}>
+        <div className={HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS}>
+          <FloorSelector />
         </div>
       </div>
     </section>

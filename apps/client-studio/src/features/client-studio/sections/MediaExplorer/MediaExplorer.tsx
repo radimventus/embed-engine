@@ -7,9 +7,9 @@ import {
 } from '../spatial-terminal-layout';
 
 /**
- * Media projection column (CSCB-03).
- * Room media comes from Experience Context after SelectRoom.
- * PT-TOUR-REDESIGN-01: SpatialContextPanel removed from Experience chrome.
+ * Media projection column (CSCB-03 / TOUR-29).
+ * Thumbnail rail sits on the shared bottom baseline with Tour toggles
+ * when the floorplan column drives section height.
  */
 export function MediaExplorer() {
   return (
@@ -18,11 +18,13 @@ export function MediaExplorer() {
       className={SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS}
     >
       <div
-        className={`${SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS} grid min-h-0 grid-rows-[auto_auto_auto] content-start`}
+        className={`${SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS} flex min-h-0 flex-1 flex-col content-start`}
       >
         <SectionHeader title="PROCHÁZKA DOMEM" />
         <MainMedia />
-        <ThumbnailRail />
+        <div className="mt-auto w-full shrink-0">
+          <ThumbnailRail />
+        </div>
       </div>
     </section>
   );

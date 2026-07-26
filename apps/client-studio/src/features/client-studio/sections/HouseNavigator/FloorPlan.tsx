@@ -1,5 +1,6 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import { useWalkthrough } from '../../../walkthrough';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { evidenceLog } from '../../runtime/runtimeEvidence';
 import { useHouseNavigator } from './useHouseNavigator';
@@ -27,8 +28,8 @@ type FloorPlanCanvasProps = {
  */
 function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
   const { experience } = useDecisionSessionRuntime();
-  const { selectedFloor, selectRoom, isRoomActive, activeRoomId } =
-    useHouseNavigator();
+  const { selectedFloor, isRoomActive, activeRoomId } = useHouseNavigator();
+  const { selectRoom } = useWalkthrough();
   const floorPlan = experience.context.floorPlan;
   const viewBoxWidth = floorPlan.viewBoxWidth;
   const viewBoxHeight = floorPlan.viewBoxHeight;
@@ -126,16 +127,13 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
 }
 
 /**
- * Floor plan display sized to the real raster aspect (TOUR-17).
- * Loupe and popup close anchor to the rendered SVG box (TOUR-11 / TOUR-22).
+ * Floor plan display — fills column width, keeps real aspect (TOUR-17 / TOUR-27).
+ * Rendered height drives Tour section height; not forced into a virtual box.
  */
 export function FloorPlan() {
   const { experience } = useDecisionSessionRuntime();
   const { viewBoxWidth, viewBoxHeight } = experience.context.floorPlan;
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
-  const displayRef = useRef<HTMLDivElement>(null);
-  const planRef = useRef<HTMLDivElement>(null);
-  const [align, setAlign] = useState<'end' | 'center'>('center');
 
   const aspectRatioNumber =
     viewBoxHeight > 0 ? viewBoxWidth / viewBoxHeight : 1;
@@ -156,49 +154,9 @@ export function FloorPlan() {
     });
   }, [experience.context.floorPlan]);
 
-  useLayoutEffect(() => {
-    const display = displayRef.current;
-    const plan = planRef.current;
-    if (display === null || plan === null) {
-      return;
-    }
-
-    const measure = () => {
-      const displayHeight = display.clientHeight;
-      const planHeight = plan.getBoundingClientRect().height;
-      setAlign(planHeight > displayHeight + 0.5 ? 'end' : 'center');
-    };
-
-    measure();
-    const observer = new ResizeObserver(measure);
-    observer.observe(display);
-    observer.observe(plan);
-    return () => observer.disconnect();
-  }, [aspectRatio]);
-
-  useEffect(() => {
-    const id = window.requestAnimationFrame(() => {
-      const display = displayRef.current;
-      const plan = planRef.current;
-      if (display === null || plan === null) {
-        return;
-      }
-      const displayHeight = display.clientHeight;
-      const planHeight = plan.getBoundingClientRect().height;
-      setAlign(planHeight > displayHeight + 0.5 ? 'end' : 'center');
-    });
-    return () => window.cancelAnimationFrame(id);
-  }, [aspectRatio]);
-
   return (
-    <div
-      ref={displayRef}
-      className={`relative flex h-full min-h-0 w-full min-w-0 max-w-none flex-1 flex-col overflow-hidden mobile:justify-center ${
-        align === 'end' ? 'justify-end' : 'justify-center'
-      }`}
-    >
+    <div className="relative flex w-full min-w-0 max-w-none shrink-0 flex-col">
       <div
-        ref={planRef}
         className="relative w-full min-w-0 max-w-none"
         style={{ aspectRatio }}
         data-floorplan-aspect={aspectRatioNumber.toFixed(4)}
