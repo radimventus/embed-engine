@@ -62,7 +62,7 @@ export function FaqTitle() {
   return (
     <div className={`${FAQ_COLUMN_WIDTH_CLASS} relative z-10 m-0 shrink-0`}>
       <h2 className="m-0 text-[17px] font-semibold leading-snug tracking-wide text-embed-foreground-primary">
-        Otázky, které vám pomohou jít dál
+        Otázky, které navazují na náš rozhovor
       </h2>
       <p className="mt-1.5 text-[13px] leading-relaxed text-embed-foreground-primary/60">
         Vycházejí z vašich priorit a připravují vás na Audit.

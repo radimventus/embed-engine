@@ -4,6 +4,10 @@ import { formatDecisionKeyCs } from '../../pilot/decisionTerminalLabels';
 import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
 import { projectAiAdvisorPresentation } from '../../runtime/projectTerminalPresentation';
 import { DECISION_CATEGORIES } from '../PriorityEngine/decision-cards.constants';
+import {
+  coachChatOpeningFromPriorities,
+  coachFaqItemsFromPriorities,
+} from '../PriorityEngine/priorityCoachingDialogue';
 
 export type ExperienceFaqItem = {
   readonly id: string;
@@ -23,6 +27,23 @@ export function faqItemsFromAiContext(
       question: formatDecisionKeyCs(item.question),
       answer: formatOutcomeStatusCs(item.answer),
     }),
+  );
+}
+
+/**
+ * Coaching FAQ from selected priorities — dialogue continuation (presentation).
+ * Falls back to Runtime FAQ projection when no priorities are selected.
+ */
+export function faqItemsForExperience(input: {
+  readonly ai: AIContextContract;
+  readonly priorityIds: readonly string[];
+}): readonly ExperienceFaqItem[] {
+  if (input.priorityIds.length > 0) {
+    return coachFaqItemsFromPriorities(input.priorityIds);
+  }
+  return orderFaqItemsForPriorities(
+    faqItemsFromAiContext(input.ai),
+    input.priorityIds,
   );
 }
 
@@ -62,4 +83,17 @@ export function orderFaqItemsForPriorities(
  */
 export function advisorIntroFromAiContext(ai: AIContextContract): string {
   return formatDecisionKeyCs(projectAiAdvisorPresentation(ai).intro);
+}
+
+/**
+ * Chat opening — Priority summary + invitation to discuss (presentation).
+ */
+export function advisorOpeningForExperience(input: {
+  readonly ai: AIContextContract;
+  readonly priorityIds: readonly string[];
+}): string {
+  return (
+    coachChatOpeningFromPriorities(input.priorityIds) ??
+    advisorIntroFromAiContext(input.ai)
+  );
 }

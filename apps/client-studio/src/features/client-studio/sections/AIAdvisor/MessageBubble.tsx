@@ -9,7 +9,7 @@ type MessageBubbleProps = {
 export function MessageBubble({ role, text, time }: MessageBubbleProps) {
   return (
     <ChatBubble role={role} time={time}>
-      {text}
+      <span className="whitespace-pre-line">{text}</span>
     </ChatBubble>
   );
 }

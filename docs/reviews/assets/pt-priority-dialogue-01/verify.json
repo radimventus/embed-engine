@@ -1,0 +1,28 @@
+{
+  "overall": "PASS",
+  "summary": {
+    "coach_intro": "PASS",
+    "progress_soft": "PASS",
+    "question_intent": "PASS",
+    "interpretation_then_continue": "PASS",
+    "user_paced": "PASS",
+    "hypothesis_summary": "PASS",
+    "audit_as_service": "PASS",
+    "pdf_promise": "PASS",
+    "chat_seeded": "PASS",
+    "faq_natural": "PASS"
+  },
+  "accept": {
+    "coach_intro": true,
+    "progress_soft": true,
+    "question_intent": true,
+    "interpretation_then_continue": true,
+    "user_paced": true,
+    "hypothesis_summary": true,
+    "audit_as_service": true,
+    "pdf_promise": true,
+    "chat_seeded": true,
+    "faq_natural": true
+  },
+  "pageErrors": []
+}

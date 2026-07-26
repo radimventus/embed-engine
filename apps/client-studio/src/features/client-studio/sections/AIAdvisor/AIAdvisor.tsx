@@ -23,9 +23,8 @@ import { Conversation } from './Conversation';
 import { Disclaimer } from './Disclaimer';
 import { getEmbedAIService } from './embedAIService';
 import {
-  advisorIntroFromAiContext,
-  faqItemsFromAiContext,
-  orderFaqItemsForPriorities,
+  advisorOpeningForExperience,
+  faqItemsForExperience,
 } from './experiencePresentation';
 import { InputBar } from './InputBar';
 import { SectionHeader } from './SectionHeader';
@@ -37,34 +36,41 @@ import {
   type Message,
 } from './types';
 
+function createAssistantSeed(text: string): Message {
+  return {
+    id: createMessageId(),
+    role: 'assistant',
+    text,
+    time: formatMessageTime(new Date()),
+  };
+}
+
 /**
- * AI Advisor — FAQ + intro from Runtime AIContext; live chat via AIService (PT-011).
+ * AI Advisor — Priority coaching FAQ + seeded chat; live replies via AIService.
  */
 export function AIAdvisor() {
   const { experience } = useDecisionSessionRuntime();
   const decision = useDecisionContext();
   const analytics = useOptionalDecisionAnalytics();
   const ai = experience.context.decision.ai;
-  const faqItems = useMemo(() => {
-    const projected = faqItemsFromAiContext(ai);
-    return orderFaqItemsForPriorities(
-      projected,
-      experience.context.decision.priorityIds,
-    );
-  }, [ai, experience.context.decision.priorityIds]);
+  const priorityIds = experience.context.decision.priorityIds;
+  const faqItems = useMemo(
+    () => faqItemsForExperience({ ai, priorityIds }),
+    [ai, priorityIds],
+  );
+  const openingText = useMemo(
+    () => advisorOpeningForExperience({ ai, priorityIds }),
+    [ai, priorityIds],
+  );
   const [inputValue, setInputValue] = useState('');
   const [messages, setMessages] = useState<Message[]>(() => [
-    {
-      id: createMessageId(),
-      role: 'assistant',
-      text: advisorIntroFromAiContext(ai),
-      time: formatMessageTime(new Date()),
-    },
+    createAssistantSeed(openingText),
   ]);
   const [isLoading, setIsLoading] = useState(false);
   const conversationLengthRef = useRef(1);
   conversationLengthRef.current = messages.length;
   const sendLockRef = useRef(false);
+  const userHasSpokenRef = useRef(false);
 
   useEffect(() => {
     analytics?.aiSessionOpened(ai.id);
@@ -74,15 +80,11 @@ export function AIAdvisor() {
   }, [ai.id, analytics]);
 
   useEffect(() => {
-    setMessages([
-      {
-        id: createMessageId(),
-        role: 'assistant',
-        text: advisorIntroFromAiContext(ai),
-        time: formatMessageTime(new Date()),
-      },
-    ]);
-  }, [ai.id]);
+    if (userHasSpokenRef.current) {
+      return;
+    }
+    setMessages([createAssistantSeed(openingText)]);
+  }, [ai.id, openingText]);
 
   const handleQuestionSelect = (question: string) => {
     setInputValue(question);
@@ -94,6 +96,7 @@ export function AIAdvisor() {
       return;
     }
 
+    userHasSpokenRef.current = true;
     sendLockRef.current = true;
     setIsLoading(true);
     setInputValue('');

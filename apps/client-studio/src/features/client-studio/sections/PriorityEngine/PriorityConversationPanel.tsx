@@ -1,12 +1,14 @@
 import {
   PRIORITY_CONVERSATION_ADD_MORE,
   PRIORITY_CONVERSATION_ANSWER_ACK,
-  PRIORITY_CONVERSATION_AUDIT_PROMPT,
+  PRIORITY_CONVERSATION_AUDIT_HEADING,
+  PRIORITY_CONVERSATION_AUDIT_LINES,
   PRIORITY_CONVERSATION_COLLECT_HINT,
   PRIORITY_CONVERSATION_COLLECT_LINES,
   PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL,
   PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL,
   PRIORITY_CONVERSATION_CONTINUE_AUDIT,
+  PRIORITY_CONVERSATION_DIALOG_CONTINUE,
   PRIORITY_CONVERSATION_FINISH_SELECTION,
   PRIORITY_CONVERSATION_GATE_LINES,
   PRIORITY_CONVERSATION_GATE_PROMPT,
@@ -17,7 +19,6 @@ import {
   PRIORITY_CONVERSATION_PREP_LINES,
   PRIORITY_CONVERSATION_START_HEADING,
   PRIORITY_CONVERSATION_START_LINES,
-  PRIORITY_CONVERSATION_SUMMARY_LINES,
 } from './priorityConversation.constants';
 import { PRIORITY_CLARIFICATIONS } from './decision-cards.constants';
 import { ConisMessage } from './ConisMessage';
@@ -44,15 +45,20 @@ const primaryNavClass = `${navButtonClass} border-[#D4AF37] bg-[#D4AF37]/15 text
 const secondaryNavClass = `${navButtonClass} border-embed-foreground-primary/20 bg-transparent text-embed-foreground-primary hover:border-[#D4AF37]/50`;
 
 /**
- * Right-panel Conis presence — pilot readiness (PT-PRIORITY-PILOT-READY-01).
+ * Right-panel Conis coaching dialogue (PT-PRIORITY-DIALOGUE-01).
  */
 export function PriorityConversationPanel() {
   const {
     phase,
+    dialogBeat,
     selectedCount,
     selectionOrder,
     tags,
     currentQuestion,
+    questionIntent,
+    interpretation,
+    hypothesis,
+    progressPercent,
     canAddMore,
     isAdvancing,
     pendingOptionId,
@@ -60,6 +66,7 @@ export function PriorityConversationPanel() {
     addMorePriorities,
     acknowledgePrep,
     answerQuestion,
+    continueDialog,
     continueToFaq,
     askConis,
     continueToAudit,
@@ -81,15 +88,27 @@ export function PriorityConversationPanel() {
       className={`${PRIORITY_ENGINE_INTRO_PANEL_CLASS} self-start mobile:h-auto mobile:max-h-none`}
       style={{
         minHeight: PRIORITY_ENGINE_INTRO_HEIGHT_PX,
-        maxHeight: 420,
+        maxHeight: 480,
       }}
       data-testid="priority-conversation"
       data-conversation-phase={phase}
+      data-dialog-beat={dialogBeat}
+      data-progress-percent={progressPercent}
       data-advancing={isAdvancing ? 'true' : 'false'}
-      aria-label="Conis — dialog priorit"
+      aria-label="Conis — koučovací dialog priorit"
       aria-live="polite"
       aria-busy={isAdvancing}
     >
+      <div
+        className="mb-3 flex items-center justify-end"
+        data-testid="priority-conversation-progress"
+        aria-label={`Průběh ${progressPercent} procent`}
+      >
+        <span className="text-[12px] font-medium tabular-nums tracking-wide text-embed-foreground-primary/45">
+          {progressPercent} %
+        </span>
+      </div>
+
       {phase === 'instruction' ? (
         <ConisMessage testId="priority-conversation-instruction">
           <p className={leadTextClass}>{PRIORITY_CONVERSATION_INTRO_LINES[0]}</p>
@@ -103,7 +122,10 @@ export function PriorityConversationPanel() {
               {PRIORITY_CONVERSATION_START_HEADING}
             </p>
             {PRIORITY_CONVERSATION_START_LINES.map((line) => (
-              <p key={line} className={`${bodyTextClass} text-embed-foreground-primary/90`}>
+              <p
+                key={line}
+                className={`${bodyTextClass} text-embed-foreground-primary/90`}
+              >
                 {line}
               </p>
             ))}
@@ -217,14 +239,43 @@ export function PriorityConversationPanel() {
         </ConisMessage>
       ) : null}
 
-      {phase === 'dialog' && currentQuestion !== null ? (
+      {phase === 'dialog' &&
+      dialogBeat === 'interpretation' &&
+      interpretation !== null ? (
+        <ConisMessage testId="priority-conversation-interpretation">
+          <p
+            className={`${leadTextClass} text-embed-brand-gold`}
+            data-testid="priority-conversation-answer-ack"
+          >
+            {PRIORITY_CONVERSATION_ANSWER_ACK}
+          </p>
+          <p
+            className={bodyTextClass}
+            data-testid="priority-conversation-interpretation-text"
+          >
+            {interpretation}
+          </p>
+          <button
+            type="button"
+            data-testid="priority-conversation-dialog-continue"
+            className={`${primaryNavClass} mt-2`}
+            onClick={continueDialog}
+          >
+            {PRIORITY_CONVERSATION_DIALOG_CONTINUE}
+          </button>
+        </ConisMessage>
+      ) : null}
+
+      {phase === 'dialog' &&
+      dialogBeat === 'question' &&
+      currentQuestion !== null ? (
         <ConisMessage testId="priority-conversation-dialog">
-          {isAdvancing && pendingOptionId !== null ? (
+          {questionIntent ? (
             <p
-              className={`${leadTextClass} text-embed-brand-gold`}
-              data-testid="priority-conversation-answer-ack"
+              className={softTextClass}
+              data-testid="priority-conversation-question-intent"
             >
-              {PRIORITY_CONVERSATION_ANSWER_ACK}
+              {questionIntent}
             </p>
           ) : null}
           <div className="rounded-[10px] border border-[#D4AF37]/40 bg-[#D4AF37]/12 p-3.5 shadow-[0_1px_0_rgba(0,25,48,0.04)]">
@@ -270,30 +321,49 @@ export function PriorityConversationPanel() {
         </ConisMessage>
       ) : null}
 
-      {phase === 'complete' ? (
+      {phase === 'complete' && hypothesis !== null ? (
         <ConisMessage testId="priority-conversation-complete">
-          {PRIORITY_CONVERSATION_SUMMARY_LINES.map((line) => (
-            <p
-              key={line}
-              className={line === PRIORITY_CONVERSATION_SUMMARY_LINES[0] ? leadTextClass : bodyTextClass}
-              data-testid={
-                line === PRIORITY_CONVERSATION_SUMMARY_LINES[0]
-                  ? 'priority-conversation-summary'
-                  : undefined
-              }
-            >
-              {line}
-            </p>
-          ))}
-          <p className={softTextClass}>{PRIORITY_CONVERSATION_AUDIT_PROMPT}</p>
-          <button
-            type="button"
-            data-testid="priority-conversation-audit"
-            className={`${primaryNavClass} mt-1`}
-            onClick={continueToAudit}
+          <p
+            className={leadTextClass}
+            data-testid="priority-conversation-summary"
           >
-            {PRIORITY_CONVERSATION_CONTINUE_AUDIT}
-          </button>
+            {hypothesis.lead}
+          </p>
+          <p className={bodyTextClass}>{hypothesis.prioritiesLine}</p>
+          <p
+            className={bodyTextClass}
+            data-testid="priority-conversation-hypothesis"
+          >
+            {hypothesis.pictureLine}
+          </p>
+          <p className={softTextClass}>{hypothesis.thanksLine}</p>
+          <p
+            className={`${softTextClass} mt-1`}
+            data-testid="priority-conversation-pdf-note"
+          >
+            {PRIORITY_CONVERSATION_PDF_NOTE}
+          </p>
+          <div
+            className="mt-2 rounded-[10px] border border-[#D4AF37]/35 bg-[#D4AF37]/10 p-3.5"
+            data-testid="priority-conversation-audit-service"
+          >
+            <p className="mb-1.5 text-[14px] font-semibold text-embed-brand-gold">
+              {PRIORITY_CONVERSATION_AUDIT_HEADING}
+            </p>
+            {PRIORITY_CONVERSATION_AUDIT_LINES.map((line) => (
+              <p key={line} className={bodyTextClass}>
+                {line}
+              </p>
+            ))}
+            <button
+              type="button"
+              data-testid="priority-conversation-audit"
+              className={`${primaryNavClass} mt-2.5`}
+              onClick={continueToAudit}
+            >
+              {PRIORITY_CONVERSATION_CONTINUE_AUDIT}
+            </button>
+          </div>
           <div
             className="mt-2 rounded-[10px] border border-embed-foreground-primary/12 bg-embed-surface-elevated/80 p-3.5"
             data-testid="priority-conversation-next-paths"
@@ -320,12 +390,6 @@ export function PriorityConversationPanel() {
               </button>
             </div>
           </div>
-          <p
-            className="text-[12px] leading-[1.5] text-embed-foreground-primary/50"
-            data-testid="priority-conversation-pdf-note"
-          >
-            {PRIORITY_CONVERSATION_PDF_NOTE}
-          </p>
         </ConisMessage>
       ) : null}
     </aside>

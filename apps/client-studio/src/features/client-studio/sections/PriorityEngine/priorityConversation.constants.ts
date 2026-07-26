@@ -1,24 +1,26 @@
 import { DECISION_CATEGORIES } from './decision-cards.constants';
 
-/** General confirmation pause — ~50% slower than prior 500 ms. */
+/** Soft confirmation pause — used for gate / prep transitions only. */
 export const CONIS_MICROINTERACTION_MS = 750;
 
-/** Quiz answer → next question rhythm (pilot readiness). */
+/**
+ * @deprecated Auto quiz advance replaced by user-paced Continue
+ * (PT-PRIORITY-DIALOGUE-01). Kept for compatibility with older tests.
+ */
 export const CONIS_QUIZ_ADVANCE_MS = 1500;
 
-/** Opening introduction — clear who / what / next within first glance. */
+/** Opening — who Conis is, what follows, without commands. */
 export const PRIORITY_CONVERSATION_INTRO_LINES = Object.freeze([
   'Dobrý den.',
   'Jmenuji se Conis.',
-  'Pomohu vám porozumět tomu, co je při výběru domu opravdu důležité.',
+  'Jsem tu proto, abych vám pomohl porozumět tomu, jak se rozhodujete o domě.',
 ] as const);
 
-/** Tinted guidance — structured next step, not more prose. */
-export const PRIORITY_CONVERSATION_START_HEADING = 'Váš další krok';
+export const PRIORITY_CONVERSATION_START_HEADING = 'Začněme společně';
 
 export const PRIORITY_CONVERSATION_START_LINES = Object.freeze([
-  'Označte alespoň tři priority vlevo.',
-  'Intenzitu upravíte, až kartu otevřete.',
+  'Zkusme společně zjistit, co je pro vás při výběru domu opravdu důležité.',
+  'Vlevo jsou témata — označíme alespoň tři, která k vám patří.',
 ] as const);
 
 /** @deprecated Prefer PRIORITY_CONVERSATION_START_LINES */
@@ -37,59 +39,65 @@ export const PRIORITY_DIALOG_QUESTION_COUNT = 3;
 
 export const PRIORITY_CONVERSATION_COLLECT_LINES = Object.freeze([
   'Dobře.',
-  'Mám to.',
+  'Už vidím, kudy vaše uvažování míří.',
 ] as const);
 
 export const PRIORITY_CONVERSATION_COLLECT_HINT =
-  'Až budete mít alespoň tři, můžeme jít dál.';
+  'Až budeme mít alespoň tři priority, můžeme jít o krok dál.';
 
 export const PRIORITY_CONVERSATION_GATE_LINES = Object.freeze([
-  'Už mám první představu.',
+  'Už mám první představu o tom, jak přemýšlíte.',
 ] as const);
 
 export const PRIORITY_CONVERSATION_GATE_PROMPT = (count: number): string => {
   if (count === 1) {
-    return 'Máte jednu prioritu. Stačí takto, nebo chcete ještě něco doplnit?';
+    return 'Máte jednu prioritu. Stačí nám to takto, nebo chcete ještě něco doplnit?';
   }
   if (count >= 2 && count <= 4) {
-    return `Máte ${count} priority. Stačí takto, nebo chcete ještě něco doplnit?`;
+    return `Máte ${count} priority. Stačí nám to takto, nebo chcete ještě něco doplnit?`;
   }
-  return `Máte ${count} priorit. Stačí takto, nebo chcete ještě něco doplnit?`;
+  return `Máte ${count} priorit. Stačí nám to takto, nebo chcete ještě něco doplnit?`;
 };
 
-export const PRIORITY_CONVERSATION_FINISH_SELECTION = 'Stačí takto';
+export const PRIORITY_CONVERSATION_FINISH_SELECTION = 'Pojďme s tímto dál';
 
-export const PRIORITY_CONVERSATION_ADD_MORE = 'Ještě doplním';
+export const PRIORITY_CONVERSATION_ADD_MORE = 'Ještě něco doplním';
 
 export const PRIORITY_CONVERSATION_PREP_LINES = Object.freeze([
-  'Děkuji.',
   'Už rozumím, co je pro vás důležité.',
-  'Ještě si ověřím několik souvislostí.',
+  'Pomozte mi lépe porozumět tomu, jak přemýšlíte — ověřím ještě několik souvislostí.',
 ] as const);
 
 export const PRIORITY_CONVERSATION_PREP_CONTINUE = 'Pojďme dál';
 
 export const PRIORITY_CONVERSATION_ANSWER_ACK = 'Rozumím.';
 
+export const PRIORITY_CONVERSATION_DIALOG_CONTINUE = 'Pokračovat';
+
 export const PRIORITY_CONVERSATION_SUMMARY_LINES = Object.freeze([
   'Teď už vám lépe rozumím.',
   'Můžeme jít více do hloubky.',
 ] as const);
 
-export const PRIORITY_CONVERSATION_AUDIT_PROMPT =
-  'Priority jsou první krok. Audit vám ukáže dům v souvislostech, které jste právě zvolili.';
+export const PRIORITY_CONVERSATION_AUDIT_HEADING = 'Audit jako další společná práce';
 
-export const PRIORITY_CONVERSATION_CONTINUE_AUDIT = 'Pokračovat k Auditu';
+export const PRIORITY_CONVERSATION_AUDIT_LINES = Object.freeze([
+  'Audit nevzniká jako další formulář.',
+  'Vzniká proto, abychom ověřili vaše priority na konkrétním domě a pozemku.',
+  'Můžeme validovat váš pozemek, pomoci s výběrem pozemku, nebo pokračovat ve společné práci — podle toho, kde právě jste.',
+] as const);
+
+export const PRIORITY_CONVERSATION_CONTINUE_AUDIT = 'Pokračovat v Auditu';
 
 export const PRIORITY_CONVERSATION_NEXT_PATHS_PROMPT =
-  'Nebo se nejdřív zeptejte:';
+  'Nebo nejdřív otevřeme otázky či krátký rozhovor:';
 
-export const PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL = 'Časté otázky';
+export const PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL = 'Otázky z našich priorit';
 
-export const PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL = 'Zeptat se mě';
+export const PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL = 'Pokračovat v rozhovoru';
 
 export const PRIORITY_CONVERSATION_PDF_NOTE =
-  'Na konci Experience si budete moci stáhnout osobní zprávu.';
+  'Na konci Experience obdržíte osobní PDF — priority, způsob rozhodování, doporučení a shrnutí našeho rozhovoru.';
 
 export type PriorityDialogOption = {
   readonly id: string;
@@ -103,7 +111,7 @@ export type PriorityDialogQuestion = {
 };
 
 /**
- * Short guided questions — clearer pilot phrasing (2–3 options).
+ * Short guided questions — coaching phrasing (2–3 options).
  * UX copy only; not Decision Runtime / Strategy.
  */
 export const PRIORITY_DIALOG_QUESTIONS: Readonly<
@@ -111,7 +119,7 @@ export const PRIORITY_DIALOG_QUESTIONS: Readonly<
 > = Object.freeze({
   energy: Object.freeze({
     priorityId: 'energy',
-    prompt: 'U energie — co je pro vás nejdůležitější?',
+    prompt: 'Co je pro vás u energie nejdůležitější?',
     options: Object.freeze([
       Object.freeze({ id: 'low-cost', label: 'Nižší náklady' }),
       Object.freeze({ id: 'independence', label: 'Větší nezávislost' }),
@@ -120,7 +128,7 @@ export const PRIORITY_DIALOG_QUESTIONS: Readonly<
   }),
   'operating-costs': Object.freeze({
     priorityId: 'operating-costs',
-    prompt: 'U provozních nákladů — co vás nejvíce zajímá?',
+    prompt: 'Jak přemýšlíte o provozních nákladech?',
     options: Object.freeze([
       Object.freeze({ id: 'predictability', label: 'Stabilní výdaje' }),
       Object.freeze({ id: 'low-monthly', label: 'Nízké měsíční náklady' }),
@@ -165,7 +173,7 @@ export const PRIORITY_DIALOG_QUESTIONS: Readonly<
   }),
   plot: Object.freeze({
     priorityId: 'plot',
-    prompt: 'Co je u pozemku zásadní?',
+    prompt: 'Co je u pozemku pro vás zásadní?',
     options: Object.freeze([
       Object.freeze({ id: 'orientation', label: 'Orientace ke slunci' }),
       Object.freeze({ id: 'size', label: 'Velikost pozemku' }),

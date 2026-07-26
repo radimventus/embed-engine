@@ -50,6 +50,11 @@ export type PriorityConversationEvent =
       readonly at: number;
     }
   | {
+      readonly type: 'dialog-continue';
+      readonly priorityId: string;
+      readonly at: number;
+    }
+  | {
       readonly type: 'intensity';
       readonly priorityId: string;
       readonly value: number;

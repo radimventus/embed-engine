@@ -8,10 +8,12 @@ import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
 import { createTestBuilderRuntime } from '../../runtime/builderPackageTestInstall';
 import {
   advisorIntroFromAiContext,
+  faqItemsForExperience,
   faqItemsFromAiContext,
 } from './experiencePresentation';
 import { decisionReportPreviewFromTerminal } from '../DecisionReportPreview/DecisionReportPreviewViewModel';
 import { recommendationViewFromTerminal } from '../PriorityEngine/RecommendationViewModel';
+import { coachFaqItemsFromPriorities } from '../PriorityEngine/priorityCoachingDialogue';
 
 describe('Runtime presentation ownership (ED-DA-01R)', () => {
   it('recommendation / FAQ / report preview project Terminal / AIContext only', () => {
@@ -93,5 +95,24 @@ describe('Runtime presentation ownership (ED-DA-01R)', () => {
       faqItemsFromAiContext(layout.ai),
       faqItemsFromAiContext(design.ai),
     );
+  });
+
+  it('presentation coaching FAQ derives from priorities without Runtime mutation', () => {
+    const coach = coachFaqItemsFromPriorities(['privacy', 'plot']);
+    assert.equal(coach.length, 2);
+    assert.match(coach[0]!.question, /soukromí/i);
+
+    const layoutRuntime = createTestBuilderRuntime();
+    layoutRuntime.dispatch(
+      { type: 'ChangePriority', priorityIds: ['layout', 'privacy'] },
+      2,
+    );
+    const decision = layoutRuntime.getExperience()!.context.decision;
+    const experienceFaq = faqItemsForExperience({
+      ai: decision.ai,
+      priorityIds: decision.priorityIds,
+    });
+    assert.equal(experienceFaq.length, 2);
+    assert.match(experienceFaq[0]!.question, /\?$/);
   });
 });

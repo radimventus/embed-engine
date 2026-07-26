@@ -3,8 +3,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { scrollToSection } from '../../foundation/scrollToSection';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import {
+  buildPriorityHypothesisSummary,
+  coachingProgressPercent,
+  interpretationFor,
+  questionIntentFor,
+  type PriorityHypothesisSummary,
+} from './priorityCoachingDialogue';
+import {
   CONIS_MICROINTERACTION_MS,
-  CONIS_QUIZ_ADVANCE_MS,
   dialogQuestionFor,
   pickDialogPriorityIds,
   PRIORITY_CONVERSATION_MINIMUM,
@@ -24,13 +30,20 @@ export type PriorityTagView = {
   readonly percent: number;
 };
 
+export type DialogBeat = 'question' | 'interpretation';
+
 export type PriorityConversationView = {
   readonly phase: PriorityConversationPhase;
+  readonly dialogBeat: DialogBeat;
   readonly selectionOrder: readonly string[];
   readonly selectedCount: number;
   readonly tags: readonly PriorityTagView[];
   readonly currentQuestion: PriorityDialogQuestion | null;
+  readonly questionIntent: string | null;
+  readonly interpretation: string | null;
   readonly answers: Readonly<Record<string, string>>;
+  readonly hypothesis: PriorityHypothesisSummary | null;
+  readonly progressPercent: number;
   readonly canAddMore: boolean;
   readonly isAdvancing: boolean;
   readonly pendingOptionId: string | null;
@@ -39,6 +52,7 @@ export type PriorityConversationView = {
   readonly addMorePriorities: () => void;
   readonly acknowledgePrep: () => void;
   readonly answerQuestion: (priorityId: string, optionId: string) => void;
+  readonly continueDialog: () => void;
   readonly continueToFaq: () => void;
   readonly askConis: () => void;
   readonly continueToAudit: () => void;
@@ -54,8 +68,8 @@ function focusAdvisorChat(): void {
 }
 
 /**
- * Priority right-panel dramaturgy (PT-PRIORITY-TUNING-02).
- * Presentation pacing only — Conis never interrupts mid-task; no Runtime dispatch.
+ * Priority right-panel coaching dialogue (PT-PRIORITY-DIALOGUE-01).
+ * User-paced interpretation beats — no Runtime dispatch.
  */
 export function usePriorityConversation(): PriorityConversationView {
   const { cards, selectedCount, categories } = usePriorityExperience();
@@ -71,6 +85,11 @@ export function usePriorityConversation(): PriorityConversationView {
   const [prepAcknowledged, setPrepAcknowledged] = useState(false);
   const [dialogQueue, setDialogQueue] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [dialogBeat, setDialogBeat] = useState<DialogBeat>('question');
+  const [interpretation, setInterpretation] = useState<string | null>(null);
+  const [interpretedPriorityId, setInterpretedPriorityId] = useState<
+    string | null
+  >(null);
   const [isAdvancing, setIsAdvancing] = useState(false);
   const [pendingOptionId, setPendingOptionId] = useState<string | null>(null);
   const phaseRef = useRef<PriorityConversationPhase>('instruction');
@@ -92,7 +111,6 @@ export function usePriorityConversation(): PriorityConversationView {
       setIsAdvancing(true);
       advanceTimerRef.current = window.setTimeout(() => {
         action();
-        setPendingOptionId(null);
         setIsAdvancing(false);
         advanceTimerRef.current = null;
       }, delayMs);
@@ -142,6 +160,10 @@ export function usePriorityConversation(): PriorityConversationView {
         setPrepAcknowledged(false);
         setDialogQueue([]);
         setAnswers({});
+        setDialogBeat('question');
+        setInterpretation(null);
+        setInterpretedPriorityId(null);
+        setPendingOptionId(null);
       }
 
       if (next.removed.length > 0) {
@@ -184,8 +206,11 @@ export function usePriorityConversation(): PriorityConversationView {
     if (dialogQueue.length === 0) {
       return false;
     }
+    if (dialogBeat === 'interpretation') {
+      return false;
+    }
     return dialogQueue.every((id) => answers[id] !== undefined);
-  }, [answers, dialogQueue]);
+  }, [answers, dialogBeat, dialogQueue]);
 
   const phase: PriorityConversationPhase = (() => {
     if (selectedCount <= 0) {
@@ -232,12 +257,39 @@ export function usePriorityConversation(): PriorityConversationView {
     if (phase !== 'dialog') {
       return null;
     }
+    if (dialogBeat === 'interpretation' && interpretedPriorityId) {
+      return dialogQuestionFor(interpretedPriorityId);
+    }
     const nextId = dialogQueue.find((id) => answers[id] === undefined);
     if (nextId === undefined) {
       return null;
     }
     return dialogQuestionFor(nextId);
-  }, [answers, dialogQueue, phase]);
+  }, [answers, dialogBeat, dialogQueue, interpretedPriorityId, phase]);
+
+  const questionIntent = useMemo(() => {
+    if (phase !== 'dialog' || dialogBeat !== 'question' || !currentQuestion) {
+      return null;
+    }
+    return questionIntentFor(currentQuestion.priorityId);
+  }, [currentQuestion, dialogBeat, phase]);
+
+  const hypothesis = useMemo((): PriorityHypothesisSummary | null => {
+    if (phase !== 'complete') {
+      return null;
+    }
+    return buildPriorityHypothesisSummary({ tags, answers });
+  }, [answers, phase, tags]);
+
+  const progressPercent = coachingProgressPercent({
+    phase,
+    selectedCount,
+    dialogAnswered: Object.keys(answers).filter((id) =>
+      dialogQueue.includes(id),
+    ).length,
+    dialogTotal: dialogQueue.length,
+    isInterpreting: dialogBeat === 'interpretation',
+  });
 
   const finishSelection = () => {
     if (selectedCount < PRIORITY_CONVERSATION_MINIMUM || isAdvancing) {
@@ -250,6 +302,10 @@ export function usePriorityConversation(): PriorityConversationView {
       const queue = pickDialogPriorityIds(selectionOrder, intensityById);
       setDialogQueue(queue);
       setAnswers({});
+      setDialogBeat('question');
+      setInterpretation(null);
+      setInterpretedPriorityId(null);
+      setPendingOptionId(null);
       setSelectionClosed(true);
       setAwaitingMore(false);
       setPrepAcknowledged(false);
@@ -275,23 +331,44 @@ export function usePriorityConversation(): PriorityConversationView {
     }
     runAfterConfirmation(() => {
       setPrepAcknowledged(true);
+      setDialogBeat('question');
+      setInterpretation(null);
+      setInterpretedPriorityId(null);
+      setPendingOptionId(null);
     });
   };
 
   const answerQuestion = (priorityId: string, optionId: string) => {
-    if (isAdvancing) {
+    if (isAdvancing || dialogBeat === 'interpretation') {
       return;
     }
     setPendingOptionId(optionId);
-    runAfterConfirmation(() => {
-      setAnswers((current) => ({ ...current, [priorityId]: optionId }));
-      progress.record({
-        type: 'dialog-answer',
-        priorityId,
-        optionId,
-        at: Date.now(),
-      });
-    }, CONIS_QUIZ_ADVANCE_MS);
+    setAnswers((current) => ({ ...current, [priorityId]: optionId }));
+    setInterpretation(interpretationFor(priorityId, optionId));
+    setInterpretedPriorityId(priorityId);
+    setDialogBeat('interpretation');
+    progress.record({
+      type: 'dialog-answer',
+      priorityId,
+      optionId,
+      at: Date.now(),
+    });
+  };
+
+  const continueDialog = () => {
+    if (dialogBeat !== 'interpretation' || interpretedPriorityId === null) {
+      return;
+    }
+    const priorityId = interpretedPriorityId;
+    progress.record({
+      type: 'dialog-continue',
+      priorityId,
+      at: Date.now(),
+    });
+    setDialogBeat('question');
+    setInterpretation(null);
+    setInterpretedPriorityId(null);
+    setPendingOptionId(null);
   };
 
   const continueToFaq = () => {
@@ -311,11 +388,16 @@ export function usePriorityConversation(): PriorityConversationView {
 
   return {
     phase,
+    dialogBeat,
     selectionOrder,
     selectedCount,
     tags,
     currentQuestion,
+    questionIntent,
+    interpretation,
     answers,
+    hypothesis,
+    progressPercent,
     canAddMore: selectedCount < categories.length,
     isAdvancing,
     pendingOptionId,
@@ -324,6 +406,7 @@ export function usePriorityConversation(): PriorityConversationView {
     addMorePriorities,
     acknowledgePrep,
     answerQuestion,
+    continueDialog,
     continueToFaq,
     askConis,
     continueToAudit,
