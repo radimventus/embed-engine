@@ -35,9 +35,8 @@ function buildMailBody(record) {
     'Výsledky kvalifikace:',
     formatAnswers(record.answers) || '—',
     '',
-    `Výsledek: ${record.status}`,
+    `Segment: ${record.status}`,
     `Datum: ${record.timestamp}`,
-    `IP: ${record.ip || '—'}`,
     `User-Agent: ${record.userAgent || '—'}`,
   ].join('\n');
 }

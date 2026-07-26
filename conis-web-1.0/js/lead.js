@@ -1,5 +1,5 @@
 /**
- * Lead capture — separate from qualification.
+ * Lead capture UI — posts to leadService via POST /lead.
  * Qualification can complete without contact.
  * Lead is created only after voluntary form submit.
  */
@@ -14,6 +14,7 @@
   const leadError = document.getElementById("leadError");
   const leadThanks = document.getElementById("leadThanks");
   const leadSubmit = document.getElementById("leadSubmit");
+  const leadBridge = document.getElementById("leadBridge");
 
   window.ConisLead = {
     prepare(status, answers) {
@@ -24,6 +25,7 @@
   };
 
   function showLeadSection() {
+    if (leadBridge) leadBridge.hidden = false;
     if (!leadSection) return;
     leadSection.hidden = false;
     leadSection.classList.add("is-visible");
@@ -70,6 +72,7 @@
       phone: String(data.get("phone") || "").trim(),
       status: qualificationStatus,
       answers: qualificationAnswers || {},
+      timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent
     };
 
@@ -96,6 +99,7 @@
         throw new Error(body.error || "Odeslání se nezdařilo.");
       }
 
+      if (leadBridge) leadBridge.hidden = true;
       if (leadFormWrap) leadFormWrap.hidden = true;
       if (leadThanks) {
         leadThanks.hidden = false;

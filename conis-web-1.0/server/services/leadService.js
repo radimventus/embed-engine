@@ -3,13 +3,29 @@
 /**
  * Lead Service — integration layer between web UI and destinations.
  *
- * UI posts contact + qualification outcome here.
+ * Accepts:
+ * - contact details
+ * - complete qualification answers
+ * - resulting segment
+ * - timestamp
+ * - user-agent
+ *
  * Destinations (email, sheets, archive, future CRM) plug in without UI changes.
  */
 
 const { archiveLead } = require('../destinations/localArchive');
 const { deliverEmail } = require('../destinations/email');
 const { deliverSheet } = require('../destinations/googleSheets');
+
+function resolveTimestamp(value) {
+  if (typeof value === 'string' && value.trim()) {
+    const parsed = Date.parse(value);
+    if (!Number.isNaN(parsed)) {
+      return new Date(parsed).toISOString();
+    }
+  }
+  return new Date().toISOString();
+}
 
 function validateLeadInput(body) {
   if (!body || typeof body !== 'object') {
@@ -24,6 +40,7 @@ function validateLeadInput(body) {
   const answers =
     body.answers && typeof body.answers === 'object' ? body.answers : {};
   const userAgent = String(body.userAgent || '').trim();
+  const timestamp = resolveTimestamp(body.timestamp);
 
   if (!name || !company || !email) {
     return { ok: false, error: 'Vyplňte jméno, firmu a e-mail.' };
@@ -38,12 +55,13 @@ function validateLeadInput(body) {
     contact: { name, company, email, phone },
     qualification: { status, answers },
     userAgent,
+    timestamp,
   };
 }
 
 /**
- * @param {object} body - Contact fields + qualification status/answers from the web
- * @param {{ ip?: string }} meta - Request metadata (IP, etc.)
+ * @param {object} body - Contact + qualification payload from the web
+ * @param {{ ip?: string }} meta - Request metadata
  */
 async function submitLead(body, meta = {}) {
   const checked = validateLeadInput(body);
@@ -52,7 +70,7 @@ async function submitLead(body, meta = {}) {
   }
 
   const record = {
-    timestamp: new Date().toISOString(),
+    timestamp: checked.timestamp,
     name: checked.contact.name,
     company: checked.contact.company,
     email: checked.contact.email,

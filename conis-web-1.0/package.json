@@ -1,8 +1,8 @@
 {
   "name": "conis-web-1.0",
-  "version": "1.0.0",
+  "version": "1.0.0-rc.1",
   "private": true,
-  "description": "CONIS manifesto site with qualification and lead capture",
+  "description": "CONIS Web 1.0 — production release candidate",
   "scripts": {
     "start": "node server/index.js",
     "server": "node server/index.js"
