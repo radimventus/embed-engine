@@ -246,7 +246,7 @@ export function buildPriorityHypothesisSummary(input: {
         : 'Už mám první obrys vašich priorit.',
     pictureLine: picture,
     thanksLine:
-      'Díky vašim odpovědím už dokážu připravit mnohem přesnější doporučení — jako první hypotézu, ne jako hotový verdikt.',
+      'Díky vašim odpovědím už dokážu připravit přesnější doporučení — jako první odhad, ne jako hotový závěr.',
   };
 }
 

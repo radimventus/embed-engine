@@ -13,9 +13,9 @@ export const PRIORITY_ENGINE_SECTION_BOTTOM_OFFSET_CLASS = 'pb-5';
 
 export const PRIORITY_ENGINE_TITLE_BAND_PX = 60;
 
-/** Title band — original vertical rhythm after removing selection copy. */
+/** Title band — vertically centered between section top and card top. */
 export const PRIORITY_ENGINE_TITLE_BAND_CLASS =
-  'box-border flex min-h-[60px] shrink-0 grow-0 items-end overflow-visible pb-2';
+  'box-border flex min-h-[60px] shrink-0 grow-0 items-center overflow-visible';
 
 export const PRIORITY_ENGINE_TITLE_CLASS =
   'm-0 p-0 text-base font-bold leading-none tracking-wide text-embed-foreground-primary';
@@ -36,9 +36,12 @@ export const PRIORITY_ENGINE_SECTION_HORIZONTAL_PADDING_CLASS = 'px-[21px]';
 export const PRIORITY_ENGINE_INTRO_PANEL_CLASS =
   'box-border relative z-0 flex w-full max-w-[680px] flex-col self-stretch overflow-visible p-section';
 
-/** Adaptive conversation panel — height follows content, no internal scroll. */
+/**
+ * Conversation panel — top edge flush with cards (no top padding / no % row in flow).
+ * Stretched 30 px left into the gap; page-bg fill.
+ */
 export const PRIORITY_ENGINE_CONVERSATION_PANEL_CLASS =
-  'box-border relative z-0 flex h-auto w-full max-w-[680px] flex-col self-start overflow-visible p-section';
+  'box-border relative z-0 -ml-[30px] flex h-auto w-[calc(100%+30px)] max-w-[710px] flex-col self-start overflow-visible bg-transparent px-section pb-section pt-0';
 
 export const PRIORITY_ENGINE_ACTION_AREA_CLASS =
   'mt-5 flex w-[680px] shrink-0 items-center justify-between gap-section';

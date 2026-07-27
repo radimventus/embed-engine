@@ -62,9 +62,9 @@ export const PRIORITY_CONVERSATION_GATE_PROMPT = (count: number): string => {
   return `Máte ${count} priorit. Stačí nám to takto, nebo chcete ještě něco doplnit?`;
 };
 
-export const PRIORITY_CONVERSATION_FINISH_SELECTION = 'Pojďme s tímto dál';
+export const PRIORITY_CONVERSATION_FINISH_SELECTION = 'Potvrdit nastavení';
 
-export const PRIORITY_CONVERSATION_ADD_MORE = 'Ještě něco doplním';
+export const PRIORITY_CONVERSATION_ADD_MORE = 'Ještě to doplním';
 
 export const PRIORITY_CONVERSATION_PREP_TITLE =
   'Už rozumím tomu, co je pro vás důležité.';
@@ -86,7 +86,7 @@ export const PRIORITY_CONVERSATION_COMPLETE_PANEL_LINE =
   'Níže shrnuji, co už o vás vím — a co můžete získat dál.';
 
 export const PRIORITY_CONVERSATION_NEXT_PATHS_PROMPT =
-  'Chcete nejdřív pokračovat v rozhovoru?';
+  'Čím budeme pokračovat?';
 
 export const PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL = 'Otázky z našich priorit';
 
@@ -103,11 +103,11 @@ export const PRIORITY_BRIDGE_KNOW_HEADING = 'Co už o vás vím';
 
 export const PRIORITY_BRIDGE_GAIN_HEADING = 'Co získáte';
 
-export const PRIORITY_BRIDGE_REPORT_TITLE = 'Osobní Decision Report';
+export const PRIORITY_BRIDGE_REPORT_TITLE = 'Osobní rozhodovací zpráva';
 
 export const PRIORITY_BRIDGE_REPORT_LINES = Object.freeze([
-  'Na konci Experience obdržíte osobní Decision Report (PDF).',
-  'Shrnutí priorit, interpretaci způsobu rozhodování, doporučení vhodných domů i další kroky — hmatatelná hodnota za dokončení Experience.',
+  'Na konci naší cesty obdržíte osobní rozhodovací zprávu (PDF).',
+  'Shrnutí priorit, výklad způsobu rozhodování a doporučení vhodných domů.',
 ] as const);
 
 export const PRIORITY_BRIDGE_NEXT_HEADING = 'Co bude následovat';
@@ -115,16 +115,7 @@ export const PRIORITY_BRIDGE_NEXT_HEADING = 'Co bude následovat';
 export const PRIORITY_BRIDGE_NEXT_LINES = Object.freeze([
   'Můžete ověřit, zda je váš pozemek vhodný právě pro vybraný dům.',
   'Pokud pozemek ještě nemáte, pomůžeme vám pochopit, jaký hledat — případně vás propojíme s lidmi, kteří s hledáním pomohou.',
-  'A pokud teď nechcete řešit pozemek, nechte si zaslat svůj osobní Decision Report.',
 ] as const);
-
-export const PRIORITY_BRIDGE_CTA_PLOT = 'Ověřit svůj pozemek';
-
-export const PRIORITY_BRIDGE_CTA_FIND = 'Pomoc s hledáním pozemku';
-
-export const PRIORITY_BRIDGE_CTA_REPORT = 'Nechat si zaslat Decision Report';
-
-export const PRIORITY_BRIDGE_CTA_CONTINUE = 'Pokračovat dál';
 
 export type PriorityDialogOption = {
   readonly id: string;

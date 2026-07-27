@@ -1,18 +1,18 @@
+import type { ReactNode } from 'react';
+
+import { palette } from '@embed-engine/design-tokens';
+
 import {
   PRIORITY_CONVERSATION_ADD_MORE,
   PRIORITY_CONVERSATION_ANSWER_ACK,
   PRIORITY_CONVERSATION_COLLECT_HINT,
   PRIORITY_CONVERSATION_COLLECT_LINES,
-  PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL,
-  PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL,
   PRIORITY_CONVERSATION_COMPLETE_PANEL_LINE,
   PRIORITY_CONVERSATION_COMPLETE_PANEL_TITLE,
-  PRIORITY_CONVERSATION_DIALOG_CONTINUE,
   PRIORITY_CONVERSATION_FINISH_SELECTION,
   PRIORITY_CONVERSATION_GATE_LINES,
   PRIORITY_CONVERSATION_GATE_PROMPT,
   PRIORITY_CONVERSATION_INTRO_LINES,
-  PRIORITY_CONVERSATION_NEXT_PATHS_PROMPT,
   PRIORITY_CONVERSATION_PREP_CONTINUE,
   PRIORITY_CONVERSATION_PREP_LINES,
   PRIORITY_CONVERSATION_PREP_TITLE,
@@ -37,12 +37,102 @@ const titleTextClass =
 const softTextClass =
   'text-[13px] leading-[1.55] text-embed-foreground-primary/65';
 
-const navButtonClass =
-  'rounded-[8px] border px-3.5 py-3 text-left text-[15px] font-medium leading-snug transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 disabled:opacity-55';
+/** Match Tour VIDEO/FOTKY — palette SSOT (CAP UX 29). */
+const SWITCH_SHELL_BG = palette.lightGray;
+const SWITCH_ACTIVE_BG = palette.warmGray;
+const SWITCH_IDLE_BG = palette.pureWhite;
+const SWITCH_TEXT = palette.navy;
+/** Idle white segment — inline; Delivery CSS isolation zeros button border-radius. */
+const SWITCH_IDLE_RADIUS_PX = 4.8;
+const SWITCH_FONT_SIZE_PX = 12.5;
+const SWITCH_FONT_WEIGHT = 600;
 
-const primaryNavClass = `${navButtonClass} border-[#D4AF37] bg-[#D4AF37]/15 text-embed-foreground-primary hover:bg-[#D4AF37]/25`;
+/** Quiz popup scrim — page light gray at full opacity. */
+const QUIZ_POPUP_SCRIM = palette.warmWhite;
+const QUIZ_THINKING_SCRIM = `${palette.lightGray}8C`;
 
-const secondaryNavClass = `${navButtonClass} border-embed-foreground-primary/20 bg-transparent text-embed-foreground-primary hover:border-[#D4AF37]/50`;
+type PriorityWhiteActionProps = {
+  testId: string;
+  label: string;
+  onClick: () => void;
+  disabled?: boolean;
+};
+
+/** White idle segment / CTA — Tour-aligned; navy hover. */
+function PriorityWhiteActionButton({
+  testId,
+  label,
+  onClick,
+  disabled,
+}: PriorityWhiteActionProps) {
+  return (
+    <button
+      type="button"
+      data-testid={testId}
+      className="min-w-0 flex-1 touch-manipulation px-2 py-[6.4px] text-center font-medium leading-normal tracking-wide disabled:opacity-55"
+      style={{
+        backgroundColor: SWITCH_IDLE_BG,
+        color: SWITCH_TEXT,
+        fontSize: SWITCH_FONT_SIZE_PX,
+        fontWeight: SWITCH_FONT_WEIGHT,
+        borderRadius: SWITCH_IDLE_RADIUS_PX,
+        borderStyle: 'solid',
+        borderWidth: 1,
+        borderColor: SWITCH_SHELL_BG,
+        transition: 'background-color 125ms ease-out, color 125ms ease-out',
+      }}
+      disabled={disabled}
+      onClick={onClick}
+      onMouseEnter={(event) => {
+        event.currentTarget.style.backgroundColor = SWITCH_TEXT;
+        event.currentTarget.style.color = palette.pureWhite;
+      }}
+      onMouseLeave={(event) => {
+        event.currentTarget.style.backgroundColor = SWITCH_IDLE_BG;
+        event.currentTarget.style.color = SWITCH_TEXT;
+      }}
+    >
+      {label}
+    </button>
+  );
+}
+
+/** Tour-style gray track hosting label + white action (or white action alone). */
+function PrioritySwitchTrack({
+  children,
+  ariaLabel,
+  className = 'mt-3',
+  shift = null,
+}: {
+  children: ReactNode;
+  ariaLabel?: string;
+  className?: string;
+  /** Pixel shift from natural centered placement. */
+  shift?: { readonly x: number; readonly y: number } | null;
+}) {
+  return (
+    <div
+      className={`${className} flex w-full justify-center`}
+      style={
+        shift
+          ? { marginLeft: shift.x, marginTop: shift.y }
+          : undefined
+      }
+    >
+      <div
+        className="flex w-1/2 min-w-0 shrink-0 items-stretch gap-[1.6px] rounded-[6.4px] border border-solid p-[1.6px]"
+        style={{
+          backgroundColor: SWITCH_SHELL_BG,
+          borderColor: SWITCH_SHELL_BG,
+        }}
+        role={ariaLabel ? 'group' : undefined}
+        aria-label={ariaLabel}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
 
 /**
  * Right-panel Conis coaching dialogue (PT-PRIORITY-CONVERSATION-03).
@@ -63,12 +153,9 @@ export function PriorityConversationPanel() {
     isAdvancing,
     pendingOptionId,
     finishSelection,
-    addMorePriorities,
     acknowledgePrep,
     answerQuestion,
     continueDialog,
-    continueToFaq,
-    askConis,
   } = usePriorityConversationContext();
 
   const showTags =
@@ -85,7 +172,9 @@ export function PriorityConversationPanel() {
   const showQuestionShell =
     phase === 'dialog' &&
     currentQuestion !== null &&
-    (dialogBeat === 'question' || dialogBeat === 'thinking');
+    (dialogBeat === 'question' ||
+      dialogBeat === 'thinking' ||
+      dialogBeat === 'interpretation');
 
   return (
     <aside
@@ -100,7 +189,7 @@ export function PriorityConversationPanel() {
       aria-busy={isAdvancing || dialogBeat === 'thinking'}
     >
       <div
-        className="mb-3 flex items-center justify-end"
+        className="pointer-events-none absolute right-section top-0 z-10 flex items-center justify-end"
         data-testid="priority-conversation-progress"
         aria-label={`Průběh ${progressPercent} procent`}
       >
@@ -115,7 +204,7 @@ export function PriorityConversationPanel() {
           <p className={leadTextClass}>{PRIORITY_CONVERSATION_INTRO_LINES[1]}</p>
           <p className={bodyTextClass}>{PRIORITY_CONVERSATION_INTRO_LINES[2]}</p>
           <div
-            className="mt-1 rounded-[8px] border border-[#D4AF37]/35 bg-[#D4AF37]/12 px-3.5 py-3"
+            className="mt-1 rounded-[8px] border border-[#E3E3E3] bg-[#F7F6F4] px-3.5 py-3"
             data-testid="priority-conversation-start-block"
           >
             <p className="mb-1.5 text-[14px] font-semibold tracking-wide text-embed-brand-gold">
@@ -144,7 +233,7 @@ export function PriorityConversationPanel() {
                 key={tag.id}
                 data-priority-tag={tag.id}
                 data-intensity-percent={tag.percent}
-                className="rounded-md border border-[#D4AF37]/55 bg-[#D4AF37]/12 px-2.5 py-1 text-[12px] font-medium leading-tight text-embed-foreground-primary/85"
+                className="rounded-md border border-[#E3E3E3] bg-[#F7F6F4] px-2.5 py-1 text-[12px] font-medium leading-tight text-embed-foreground-primary/85"
               >
                 {tag.title}
                 <span className="ml-1.5 tabular-nums text-embed-foreground-primary/45">
@@ -195,28 +284,32 @@ export function PriorityConversationPanel() {
               {line}
             </p>
           ))}
-          <div className="mt-2 flex flex-col gap-2.5">
-            <button
-              type="button"
-              data-testid="priority-conversation-finish-selection"
-              className={primaryNavClass}
-              disabled={isAdvancing}
-              onClick={finishSelection}
-            >
-              {PRIORITY_CONVERSATION_FINISH_SELECTION}
-            </button>
+          <PrioritySwitchTrack
+            ariaLabel="Nastavení priorit"
+            shift={{ x: -40, y: 40 }}
+          >
             {canAddMore ? (
-              <button
-                type="button"
+              <span
                 data-testid="priority-conversation-add-more"
-                className={secondaryNavClass}
-                disabled={isAdvancing}
-                onClick={addMorePriorities}
+                className="flex min-w-0 flex-1 items-center justify-center px-2 py-[6.4px] text-center font-medium leading-normal tracking-wide"
+                style={{
+                  backgroundColor: SWITCH_ACTIVE_BG,
+                  color: SWITCH_TEXT,
+                  fontSize: SWITCH_FONT_SIZE_PX,
+                  fontWeight: SWITCH_FONT_WEIGHT,
+                  borderRadius: 0,
+                }}
               >
                 {PRIORITY_CONVERSATION_ADD_MORE}
-              </button>
+              </span>
             ) : null}
-          </div>
+            <PriorityWhiteActionButton
+              testId="priority-conversation-finish-selection"
+              label={PRIORITY_CONVERSATION_FINISH_SELECTION}
+              onClick={finishSelection}
+              disabled={isAdvancing}
+            />
+          </PrioritySwitchTrack>
         </ConisMessage>
       ) : null}
 
@@ -233,15 +326,14 @@ export function PriorityConversationPanel() {
               {line}
             </p>
           ))}
-          <button
-            type="button"
-            data-testid="priority-conversation-prep-continue"
-            className={`${primaryNavClass} mt-1`}
-            disabled={isAdvancing}
-            onClick={acknowledgePrep}
-          >
-            {PRIORITY_CONVERSATION_PREP_CONTINUE}
-          </button>
+          <PrioritySwitchTrack shift={{ x: -40, y: 40 }}>
+            <PriorityWhiteActionButton
+              testId="priority-conversation-prep-continue"
+              label={PRIORITY_CONVERSATION_PREP_CONTINUE}
+              onClick={acknowledgePrep}
+              disabled={isAdvancing}
+            />
+          </PrioritySwitchTrack>
         </ConisMessage>
       ) : null}
 
@@ -257,7 +349,14 @@ export function PriorityConversationPanel() {
                   {questionIntent}
                 </p>
               ) : null}
-              <div className="rounded-[10px] border border-[#D4AF37]/40 bg-[#D4AF37]/12 p-3.5 shadow-[0_1px_0_rgba(0,25,48,0.04)]">
+              <div
+                className="relative overflow-hidden rounded-[10px] border border-[#E3E3E3] bg-[#F7F6F4] p-3.5 shadow-[0_1px_0_rgba(0,25,48,0.04)]"
+                style={
+                  dialogBeat === 'interpretation' || dialogBeat === 'thinking'
+                    ? { marginRight: 80 }
+                    : undefined
+                }
+              >
                 <p className={`${bodyTextClass} font-medium`}>
                   {currentQuestion.prompt}
                 </p>
@@ -296,39 +395,50 @@ export function PriorityConversationPanel() {
                     );
                   })}
                 </div>
+
+                {dialogBeat === 'thinking' ? (
+                  <div
+                    className="absolute inset-0 z-10 flex items-center justify-center rounded-[10px]"
+                    style={{ backgroundColor: QUIZ_THINKING_SCRIM }}
+                    aria-live="polite"
+                  >
+                    <ConisThinkingDots />
+                  </div>
+                ) : null}
+
+                {dialogBeat === 'interpretation' && interpretation !== null ? (
+                  <div
+                    className="absolute inset-0 z-10 flex flex-col justify-between gap-3 rounded-[10px] p-3.5"
+                    style={{ backgroundColor: QUIZ_POPUP_SCRIM }}
+                    data-testid="priority-conversation-interpretation"
+                  >
+                    <div className="space-y-2 pt-1">
+                      <p
+                        className="text-[16px] font-medium leading-[1.45]"
+                        style={{ color: palette.navy }}
+                        data-testid="priority-conversation-answer-ack"
+                      >
+                        {PRIORITY_CONVERSATION_ANSWER_ACK}
+                      </p>
+                      <p
+                        className="text-[15px] leading-[1.6]"
+                        style={{ color: palette.navy }}
+                        data-testid="priority-conversation-interpretation-text"
+                      >
+                        {interpretation}
+                      </p>
+                    </div>
+                    <PrioritySwitchTrack className="mt-1">
+                      <PriorityWhiteActionButton
+                        testId="priority-conversation-dialog-continue"
+                        label={PRIORITY_CONVERSATION_PREP_CONTINUE}
+                        onClick={continueDialog}
+                      />
+                    </PrioritySwitchTrack>
+                  </div>
+                ) : null}
               </div>
             </>
-          ) : null}
-
-          {dialogBeat === 'thinking' ? (
-            <div className="pt-1">
-              <ConisThinkingDots />
-            </div>
-          ) : null}
-
-          {dialogBeat === 'interpretation' && interpretation !== null ? (
-            <div data-testid="priority-conversation-interpretation">
-              <p
-                className={`${leadTextClass} text-embed-brand-gold`}
-                data-testid="priority-conversation-answer-ack"
-              >
-                {PRIORITY_CONVERSATION_ANSWER_ACK}
-              </p>
-              <p
-                className={bodyTextClass}
-                data-testid="priority-conversation-interpretation-text"
-              >
-                {interpretation}
-              </p>
-              <button
-                type="button"
-                data-testid="priority-conversation-dialog-continue"
-                className={`${primaryNavClass} mt-2`}
-                onClick={continueDialog}
-              >
-                {PRIORITY_CONVERSATION_DIALOG_CONTINUE}
-              </button>
-            </div>
           ) : null}
         </ConisMessage>
       ) : null}
@@ -344,32 +454,6 @@ export function PriorityConversationPanel() {
           <p className={bodyTextClass}>
             {PRIORITY_CONVERSATION_COMPLETE_PANEL_LINE}
           </p>
-          <div
-            className="mt-2 rounded-[10px] border border-embed-foreground-primary/12 bg-embed-surface-elevated/80 p-3.5"
-            data-testid="priority-conversation-next-paths"
-          >
-            <p className={bodyTextClass}>
-              {PRIORITY_CONVERSATION_NEXT_PATHS_PROMPT}
-            </p>
-            <div className="mt-2.5 flex flex-col gap-2.5">
-              <button
-                type="button"
-                data-testid="priority-conversation-faq"
-                className={secondaryNavClass}
-                onClick={continueToFaq}
-              >
-                {PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL}
-              </button>
-              <button
-                type="button"
-                data-testid="priority-conversation-chat"
-                className={secondaryNavClass}
-                onClick={askConis}
-              >
-                {PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL}
-              </button>
-            </div>
-          </div>
         </ConisMessage>
       ) : null}
     </aside>

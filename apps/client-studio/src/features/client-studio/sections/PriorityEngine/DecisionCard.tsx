@@ -65,7 +65,11 @@ export function DecisionCard({
           // Explicit solid border — embed boundary resets button border-style to none.
           borderStyle: 'solid',
           borderWidth: isActive ? 2 : 1,
-          borderColor: '#D4AF37',
+          // Active gold; latent = Tour switcher track (#E3E3E3).
+          borderColor: isActive ? '#D4AF37' : '#E3E3E3',
+          // Page background (warmWhite).
+          backgroundColor: '#F7F6F4',
+          borderRadius: 8,
         }}
       >
         <div className="flex flex-col items-center gap-2.5">

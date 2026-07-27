@@ -5,6 +5,8 @@ export {
   RuntimeBootstrapGate,
 } from './RuntimeBootstrapGate';
 export {
+  PRIORITY_BRIDGE_ANCHOR_ID,
+  scrollElementIntoView,
   scrollToSection,
 } from './scrollToSection';
 export {

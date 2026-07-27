@@ -86,6 +86,8 @@ describe('Priority Experience (CSCB-04)', () => {
     assert.match(layout, /DECISION_GRID_GAP_PX = 22/);
     assert.match(layout, /border-\[#D4AF37\]/);
     assert.match(layout, /border-solid/);
+    assert.match(layout, /bg-\[#F7F6F4\]/);
+    assert.match(layout, /border-\[#E3E3E3\]/);
     const card = read('DecisionCard.tsx');
     assert.match(card, /borderStyle:\s*'solid'/);
     assert.match(card, /borderWidth:\s*isActive \? 2 : 1/);

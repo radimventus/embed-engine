@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { scrollToSection } from '../../foundation/scrollToSection';
+import { scrollToSection, scrollElementIntoView, PRIORITY_BRIDGE_ANCHOR_ID } from '../../foundation/scrollToSection';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import {
   buildPriorityHypothesisSummary,
@@ -87,6 +87,7 @@ export function usePriorityConversation(): PriorityConversationView {
   const progress = progressRef.current;
   const advanceTimerRef = useRef<number | null>(null);
   const thinkingTimerRef = useRef<number | null>(null);
+  const pendingBridgeScrollRef = useRef(false);
 
   const [selectionOrder, setSelectionOrder] = useState<string[]>([]);
   const [selectionClosed, setSelectionClosed] = useState(false);
@@ -259,6 +260,28 @@ export function usePriorityConversation(): PriorityConversationView {
     progress.record({ type: 'phase', phase, at: Date.now() });
   }, [phase, progress]);
 
+  useEffect(() => {
+    if (phase !== 'complete' || !pendingBridgeScrollRef.current) {
+      return;
+    }
+    pendingBridgeScrollRef.current = false;
+    let cancelled = false;
+    const delayMs = 1500;
+    const timer = window.setTimeout(() => {
+      if (cancelled) {
+        return;
+      }
+      const target = document.getElementById(PRIORITY_BRIDGE_ANCHOR_ID);
+      if (target) {
+        scrollElementIntoView(target, 600);
+      }
+    }, delayMs);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [phase]);
+
   const tags = useMemo((): PriorityTagView[] => {
     const titleById = Object.fromEntries(
       categories.map((category) => [category.id, category.title]),
@@ -395,11 +418,17 @@ export function usePriorityConversation(): PriorityConversationView {
       return;
     }
     const priorityId = activePriorityId;
+    const finishesQuiz =
+      dialogQueue.length > 0 &&
+      dialogQueue.every((id) => answers[id] !== undefined);
     progress.record({
       type: 'dialog-continue',
       priorityId,
       at: Date.now(),
     });
+    if (finishesQuiz) {
+      pendingBridgeScrollRef.current = true;
+    }
     setDialogBeat('question');
     setInterpretation(null);
     setActivePriorityId(null);

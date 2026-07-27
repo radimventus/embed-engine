@@ -1,6 +1,5 @@
 /**
- * Minimalist Conis mark — calm geometric symbol, not a face or illustration.
- * Lighter field + clearer gold nodes for pilot trust (PT-PRIORITY-PILOT-READY-01).
+ * Conis avatar — face-on bust; navy field, gold ring, page-bg figure.
  */
 export function ConisAvatar({ size = 40 }: { size?: number }) {
   return (
@@ -17,17 +16,14 @@ export function ConisAvatar({ size = 40 }: { size?: number }) {
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <circle cx="16" cy="16" r="15" fill="#2A4A66" />
-        <circle cx="16" cy="16" r="15" stroke="#E2C56A" strokeWidth="1.35" />
-        <circle cx="16" cy="11" r="2.4" fill="#E8D28A" />
-        <circle cx="11" cy="19.5" r="2.4" fill="#E8D28A" opacity="0.92" />
-        <circle cx="21" cy="19.5" r="2.4" fill="#E8D28A" opacity="0.92" />
+        <circle cx="16" cy="16" r="15" fill="#001930" />
+        <circle cx="16" cy="16" r="15" stroke="#D4AF37" strokeWidth="1.5" />
+        {/* Head — page background */}
+        <circle cx="16" cy="12" r="5.25" fill="#F7F6F4" />
+        {/* Shoulders / bust — page background */}
         <path
-          d="M16 13.2L11.8 18.2M16 13.2L20.2 18.2M12.8 19.5H19.2"
-          stroke="#E8D28A"
-          strokeWidth="1.15"
-          strokeLinecap="round"
-          opacity="0.8"
+          d="M6.5 27.5C7.2 22.8 10.6 19.75 16 19.75C21.4 19.75 24.8 22.8 25.5 27.5"
+          fill="#F7F6F4"
         />
       </svg>
     </span>

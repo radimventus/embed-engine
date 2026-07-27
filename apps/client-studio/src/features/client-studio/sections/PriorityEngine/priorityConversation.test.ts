@@ -164,7 +164,7 @@ describe('PT-PRIORITY-CONVERSATION-03 decision conversation', () => {
     assert.equal(bridge.includes('Audit'), false);
     assert.match(
       read('priorityConversation.constants.ts'),
-      /Osobní Decision Report/,
+      /Osobní rozhodovací zpráva/,
     );
 
     const hook = stripComments(read('usePriorityConversation.ts'));

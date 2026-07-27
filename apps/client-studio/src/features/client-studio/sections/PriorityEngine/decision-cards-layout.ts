@@ -17,24 +17,24 @@ export const DECISION_TRANSITION_CLASS = MOTION_DURATION_CLASS;
 export const DECISION_CARD_FOCUS_CLASS =
   'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2';
 
-/** Default card — 1 px gold border (solid required under embed boundary button reset). */
+/** Default / latent card — page bg fill; Tour-switcher gray border (1 px). */
 export const DECISION_CARD_IDLE_CLASS =
-  'border border-solid border-[#D4AF37] bg-[#F4F3F1] shadow-none';
+  'rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] shadow-none';
 
 export const DECISION_CARD_HOVER_CLASS =
-  'hover:cursor-pointer hover:border-solid hover:border-[#D4AF37] hover:shadow-[0_4px_14px_rgba(0,25,48,0.06)]';
+  'hover:cursor-pointer hover:border-solid hover:border-[#E3E3E3] hover:shadow-[0_4px_14px_rgba(0,25,48,0.06)]';
 
-/** Open / selected card — 2 px gold border. */
+/** Open / selected card — page bg fill, 2 px gold border, rounded in both states. */
 export const DECISION_CARD_ACTIVE_CLASS =
-  'z-10 scale-[1.12] border-2 border-solid border-[#D4AF37] shadow-[0_8px_24px_rgba(0,25,48,0.08)]';
+  'z-10 scale-[1.12] rounded-[8px] border-2 border-solid border-[#D4AF37] bg-[#F7F6F4] shadow-[0_8px_24px_rgba(0,25,48,0.08)]';
 
 /** PT-002 — primary Decision Story priority (Runtime-driven highlight). */
 export const DECISION_CARD_PRIMARY_CLASS =
-  'ring-2 ring-embed-brand-gold ring-offset-2 ring-offset-[#F4F3F1]';
+  'ring-2 ring-embed-brand-gold ring-offset-2 ring-offset-[#F7F6F4]';
 
 /** PT-002 — related content for primary priority. */
 export const DECISION_CARD_RELATED_CLASS =
-  'ring-1 ring-embed-brand-gold/40 ring-offset-1 ring-offset-[#F4F3F1]';
+  'ring-1 ring-embed-brand-gold/40 ring-offset-1 ring-offset-[#F7F6F4]';
 
 export const DECISION_CTA_ENABLED_CLASS = primaryButtonClass({ size: 'md' });
 

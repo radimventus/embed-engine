@@ -55,9 +55,9 @@ export function PriorityEngine() {
           />
           <PriorityConversationPanel />
         </div>
+        <PriorityChapterBridge />
       </section>
       <ChapterSpacer />
-      <PriorityChapterBridge />
     </PriorityConversationProvider>
   );
 }
