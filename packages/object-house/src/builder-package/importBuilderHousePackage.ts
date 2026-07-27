@@ -121,9 +121,14 @@ async function resolveHeroPath(
   errors: BuilderPackageImportError[],
 ): Promise<string | undefined> {
   const heroDir = path.join(packageRoot, "media", "hero");
-  const preferred = path.join(heroDir, "hero.webp");
-  if (await pathExists(preferred)) {
-    return packageRelative(packageRoot, preferred);
+  const preferredPng = path.join(heroDir, "hero.png");
+  if (await pathExists(preferredPng)) {
+    return packageRelative(packageRoot, preferredPng);
+  }
+
+  const preferredWebp = path.join(heroDir, "hero.webp");
+  if (await pathExists(preferredWebp)) {
+    return packageRelative(packageRoot, preferredWebp);
   }
 
   if (!(await pathExists(heroDir))) {

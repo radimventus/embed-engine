@@ -16,12 +16,12 @@ import {
 } from './runtimeEvidence';
 
 const PACKAGE_ROOT_LABEL = '/house-package';
-const HERO_PATH = 'media/hero/hero.webp';
+const HERO_PATH = 'media/hero/hero.png';
 
 export const GALLERY_CSV_PATH = '/house-package/gallery.csv';
 export const ROOMS_CSV_PATH = '/house-package/rooms.csv';
 export const VIDEOS_CSV_PATH = '/house-package/videos.csv';
-const HERO_PUBLIC_PATH = '/house-package/media/hero/hero.webp';
+const HERO_PUBLIC_PATH = '/house-package/media/hero/hero.png';
 
 export type BuilderPackageCsvTexts = {
   readonly galleryCsv: string;

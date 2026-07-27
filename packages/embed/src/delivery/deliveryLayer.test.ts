@@ -152,16 +152,13 @@ describe("Delivery overlay surface", () => {
     );
     assert.equal(typeof overlay.mountTarget.setAttribute, "function");
     assert.equal(document.body.style.overflow, "hidden");
-    assert.equal(
+    assert.ok(
       document.querySelector("[data-embed-close]"),
-      null,
-      "Delivery overlay must not render Close — Experience header owns it",
+      "Delivery overlay owns Close chrome",
     );
 
-    const close = document.createElement("button");
-    close.type = "button";
-    close.setAttribute("data-embed-close", "");
-    overlay.root.appendChild(close);
+    const close = document.querySelector<HTMLButtonElement>("[data-embed-close]");
+    assert.ok(close);
     close.dispatchEvent(
       new window.Event("click", { bubbles: true, cancelable: true }),
     );

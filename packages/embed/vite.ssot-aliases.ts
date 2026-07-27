@@ -73,6 +73,7 @@ export const workspaceSourceAliases: Record<string, string> = {
   "@embed-engine/decision": pkgSrc("decision"),
   "@embed-engine/kernel": pkgSrc("kernel"),
   "@embed-engine/design-tokens": pkgSrc("design-tokens"),
+  "@embed-engine/ui/visual": pkgSrc("ui", "visual/index.ts"),
   "@embed-engine/ui": pkgSrc("ui"),
 };
 

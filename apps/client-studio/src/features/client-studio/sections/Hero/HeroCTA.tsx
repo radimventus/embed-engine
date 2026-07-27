@@ -30,6 +30,7 @@ export function HeroCTA() {
   return (
     <PrimaryLink
       href={`#${PILOT_SECTION_IDS.walkthrough}`}
+      data-embed-hero-cta=""
       onClick={handleNavigate}
     >
       Podívat se dovnitř – video →

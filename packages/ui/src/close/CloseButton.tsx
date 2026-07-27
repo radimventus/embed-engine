@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes } from 'react';
 
 import { cn } from '../lib/cn';
-import { CLOSE_HIT_AREA_PX } from './closeAsset';
+import { getVisualMetrics } from '../visual/createVisual';
 import { CloseIcon } from './CloseIcon';
 
 export type CloseButtonProps = Omit<
@@ -12,14 +12,15 @@ export type CloseButtonProps = Omit<
 };
 
 /**
- * Platform Close control — shared PNG inside a ≥44×44 hit area.
- * Hover may change opacity/cursor only; the PNG is unmodified.
+ * Platform Close control — Visual API glyph inside hit area.
+ * Hover may change opacity/cursor only; the glyph is unmodified.
  */
 export function CloseButton({
   className,
   'aria-label': ariaLabel = 'Zavřít',
   ...props
 }: CloseButtonProps) {
+  const { hitAreaPx } = getVisualMetrics('close');
   return (
     <button
       type="button"
@@ -29,10 +30,10 @@ export function CloseButton({
         className,
       )}
       style={{
-        width: CLOSE_HIT_AREA_PX,
-        height: CLOSE_HIT_AREA_PX,
-        minWidth: CLOSE_HIT_AREA_PX,
-        minHeight: CLOSE_HIT_AREA_PX,
+        width: hitAreaPx,
+        height: hitAreaPx,
+        minWidth: hitAreaPx,
+        minHeight: hitAreaPx,
       }}
       {...props}
     >

@@ -57,7 +57,7 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     assert.equal(living.context.hero.heroMedia?.id, 'builder-package-hero');
     assert.match(
       living.context.hero.primaryMediaUrl ?? '',
-      /\/house-package\/media\/hero\/hero\.webp$/,
+      /\/house-package\/media\/hero\/hero\.png$/,
     );
     assert.match(
       living.context.roomMedia.heroUrl ?? '',
@@ -107,7 +107,7 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     assert.deepEqual(first.context.roomMedia, second.context.roomMedia);
     assert.equal(
       first.context.roomMedia.heroMedia?.url,
-      '/house-package/media/hero/hero.webp',
+      '/house-package/media/hero/hero.png',
     );
     assert.equal(first.context.hero.heroMedia?.id, 'builder-package-hero');
   });

@@ -33,14 +33,13 @@ export {
 } from './input/Input';
 export { ChatBubble, chatBubbleClass, type ChatBubbleRole } from './chat/ChatBubble';
 export { Panel, panelClass, type PanelVariant } from './panel/Panel';
-export {
-  CloseButton,
-  type CloseButtonProps,
-} from './close/CloseButton';
+export { CloseButton, type CloseButtonProps } from './close/CloseButton';
 export { CloseIcon } from './close/CloseIcon';
 export {
-  CLOSE_HIT_AREA_PX,
-  CLOSE_ICON_DISPLAY_PX,
-  CLOSE_ICON_SRC,
-} from './close/closeAsset';
-
+  appendVisual,
+  createVisual,
+  getVisualMetrics,
+  type CreateVisualOptions,
+  type VisualMetrics,
+  type VisualName,
+} from './visual';

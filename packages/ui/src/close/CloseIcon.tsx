@@ -1,4 +1,12 @@
-import { CLOSE_ICON_DISPLAY_PX, CLOSE_ICON_SRC } from './closeAsset';
+import {
+  CLOSE_VISUAL_CIRCLE,
+  CLOSE_VISUAL_CIRCLE_FILL,
+  CLOSE_VISUAL_CROSS_BARS,
+  CLOSE_VISUAL_CROSS_FILL,
+  CLOSE_VISUAL_CROSS_ROTATION,
+  CLOSE_VISUAL_METRICS,
+  CLOSE_VISUAL_VIEWBOX,
+} from '../visual/elements/close';
 import { cn } from '../lib/cn';
 
 type CloseIconProps = {
@@ -6,26 +14,43 @@ type CloseIconProps = {
 };
 
 /**
- * Platform Close glyph — shared PNG, no chrome.
- * Display size is fixed at 30×30 px.
+ * Platform Close glyph — Visual API SSOT (inline SVG), no asset loader.
+ * Navy circle + white X matching the original platform close glyph.
  */
 export function CloseIcon({ className }: CloseIconProps) {
+  const { displayPx } = CLOSE_VISUAL_METRICS;
   return (
-    <img
-      src={CLOSE_ICON_SRC}
-      alt=""
-      width={CLOSE_ICON_DISPLAY_PX}
-      height={CLOSE_ICON_DISPLAY_PX}
-      className={cn(
-        'pointer-events-none select-none object-contain',
-        className,
-      )}
+    <svg
+      width={displayPx}
+      height={displayPx}
+      viewBox={CLOSE_VISUAL_VIEWBOX}
+      className={cn('pointer-events-none select-none', className)}
       style={{
-        width: CLOSE_ICON_DISPLAY_PX,
-        height: CLOSE_ICON_DISPLAY_PX,
+        width: displayPx,
+        height: displayPx,
+        flexShrink: 0,
+        display: 'block',
       }}
       aria-hidden="true"
-      draggable={false}
-    />
+      focusable="false"
+    >
+      <circle
+        cx={CLOSE_VISUAL_CIRCLE.cx}
+        cy={CLOSE_VISUAL_CIRCLE.cy}
+        r={CLOSE_VISUAL_CIRCLE.r}
+        fill={CLOSE_VISUAL_CIRCLE_FILL}
+      />
+      <g transform={CLOSE_VISUAL_CROSS_ROTATION} fill={CLOSE_VISUAL_CROSS_FILL}>
+        {CLOSE_VISUAL_CROSS_BARS.map((bar) => (
+          <rect
+            key={`${bar.x}-${bar.y}`}
+            x={bar.x}
+            y={bar.y}
+            width={bar.width}
+            height={bar.height}
+          />
+        ))}
+      </g>
+    </svg>
   );
 }

@@ -10,6 +10,11 @@
       "types": "./src/index.ts",
       "import": "./src/index.ts",
       "default": "./src/index.ts"
+    },
+    "./visual": {
+      "types": "./src/visual/index.ts",
+      "import": "./src/visual/index.ts",
+      "default": "./src/visual/index.ts"
     }
   },
   "files": [
