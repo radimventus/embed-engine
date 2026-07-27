@@ -62,8 +62,7 @@ function firstPhotoIndex(
 }
 
 /**
- * Media / navigation chrome adapter (ED-DA-04 / TOUR-GALLERY-ARCH-01).
- *
+ * Media / navigation chrome adapter.
  * The thumbnail strip is the global Media Timeline — immutable.
  * Only activeMediaIndex / mediaMode / selected room change.
  */
@@ -73,7 +72,6 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const activeRoomId = context.activeRoom.id;
   const projectedThumbnails = context.roomMedia.thumbnails;
   const rooms = context.floorPlan.rooms;
-
   const floors = context.navigation.floors;
 
   const selectedFloor =
@@ -83,8 +81,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [mode, setMode] = useState<WalkthroughState['mode']>('ready');
   const previousRoomIdRef = useRef<string | null>(activeRoomId);
-  const activeMediaIndexRef = useRef(activeMediaIndex);
-  activeMediaIndexRef.current = activeMediaIndex;
+  const pendingPhotoIndexRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (
@@ -99,13 +96,14 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     setMediaModeState('photo');
     setMode('ready');
 
-    /** Thumbnail already selected a photo of this room — keep that index (TOUR-18). */
-    const roomForActivePhoto = roomIdForTimelineIndex(
-      experience.house,
-      activeMediaIndexRef.current,
-    );
-    if (roomForActivePhoto === activeRoomId) {
-      return;
+    const pendingPhotoIndex = pendingPhotoIndexRef.current;
+    if (pendingPhotoIndex !== null) {
+      const pendingRoomId = roomIdForTimelineIndex(experience.house, pendingPhotoIndex);
+      if (pendingRoomId === activeRoomId) {
+        setActiveMediaIndex(pendingPhotoIndex);
+        pendingPhotoIndexRef.current = null;
+        return;
+      }
     }
 
     const roomPhotoIndex = firstPhotoTimelineIndexForRoom(
@@ -115,6 +113,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     setActiveMediaIndex(
       roomPhotoIndex ?? firstPhotoIndex(projectedThumbnails),
     );
+    pendingPhotoIndexRef.current = null;
   }, [activeRoomId, experience.house, projectedThumbnails]);
 
   const value = useMemo((): WalkthroughContextValue => {
@@ -142,23 +141,29 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       play: () => setMode('playing'),
       onVideoEnded: () => setMode('ready'),
       selectRoom: (roomId: string) => {
+        pendingPhotoIndexRef.current = null;
         dispatch({ type: 'SelectRoom', roomId });
       },
       selectMediaIndex: (mediaIndex: number) => {
         setActiveMediaIndex(mediaIndex);
         const item = roomMediaItems[mediaIndex];
         if (item?.kind === 'video') {
+          pendingPhotoIndexRef.current = null;
           setMediaModeState('video');
         } else if (item?.kind === 'photo') {
           setMediaModeState('photo');
           const roomId = roomIdForTimelineIndex(experience.house, mediaIndex);
           if (roomId !== null && roomId !== activeRoomId) {
+            pendingPhotoIndexRef.current = mediaIndex;
             dispatch({ type: 'SelectRoom', roomId });
+          } else {
+            pendingPhotoIndexRef.current = null;
           }
         }
         setMode('ready');
       },
       setMediaMode: (nextMode: MediaMode) => {
+        pendingPhotoIndexRef.current = null;
         setMediaModeState(nextMode);
         setMode('ready');
         if (nextMode === 'video') {

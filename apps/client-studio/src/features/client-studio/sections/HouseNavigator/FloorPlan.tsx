@@ -9,12 +9,12 @@ import { floorKey } from './houseNavigatorModel';
 import { FloorPlanLightbox } from './FloorPlanLightbox';
 import { FloorPlanZoomControl } from './FloorPlanZoomControl';
 
-/** Hover overlay — gold @ 25% (PT-TOUR-REDESIGN-01). */
+/** Hover overlay — gold @ 25%. */
 const FLOOR_HOVER_FILL = '#f5b90040';
 /** Selected room overlay — gold @ 50%. */
 const FLOOR_ACTIVE_FILL = '#f5b9007f';
 
-/** Gap between floor-plan drawing and loupe (TOUR-11). */
+/** Gap between floor-plan drawing and loupe. */
 const LOUPE_BELOW_GAP_PX = 20;
 
 type FloorPlanCanvasProps = {
@@ -23,8 +23,8 @@ type FloorPlanCanvasProps = {
 };
 
 /**
- * Floor-plan canvas — one raster for the active floor + at most one room overlay.
- * ViewBox matches the real plan raster (TOUR-17 / TOUR-18).
+ * Floor-plan canvas — Runtime floorplan raster + Runtime hotspot regions only.
+ * Legacy SVG overlays are intentionally removed.
  */
 function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
   const { experience } = useDecisionSessionRuntime();
@@ -36,14 +36,8 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
   const [hoveredRoomId, setHoveredRoomId] = useState<string | null>(null);
 
   const canvasRooms = floorPlan.rooms.filter(
-    (room) =>
-      room.floorPlanRegion !== null && floorKey(room.floor) === selectedFloor,
+    (room) => room.floorPlanRegion !== null && floorKey(room.floor) === selectedFloor,
   );
-
-  const activeOverlayRoom =
-    activeRoomId === null
-      ? null
-      : (canvasRooms.find((room) => room.id === activeRoomId) ?? null);
 
   return (
     <svg
@@ -62,17 +56,6 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
         height={viewBoxHeight}
         preserveAspectRatio="xMidYMid meet"
       />
-      {activeOverlayRoom !== null &&
-      activeOverlayRoom.decisionCanvasSrc !== '' ? (
-        <image
-          key={`overlay-${activeOverlayRoom.id}`}
-          href={activeOverlayRoom.decisionCanvasSrc}
-          width={viewBoxWidth}
-          height={viewBoxHeight}
-          preserveAspectRatio="xMidYMid meet"
-          className="transition-opacity duration-[125ms] ease-out"
-        />
-      ) : null}
       {canvasRooms.map((room) => {
         const region = room.floorPlanRegion;
         if (region === null) {
@@ -80,7 +63,7 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
         }
 
         const { x, y, width, height } = region;
-        const active = isRoomActive(room.id);
+        const active = activeRoomId !== null && isRoomActive(room.id);
         const hovered = interactive && hoveredRoomId === room.id;
 
         return (
@@ -127,8 +110,8 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
 }
 
 /**
- * Floor plan display — fills column width, keeps real aspect (TOUR-17 / TOUR-27).
- * Rendered height drives Tour section height; not forced into a virtual box.
+ * Floor plan display — fills column width, keeps real aspect.
+ * Rendered height drives Tour section height.
  */
 export function FloorPlan() {
   const { experience } = useDecisionSessionRuntime();

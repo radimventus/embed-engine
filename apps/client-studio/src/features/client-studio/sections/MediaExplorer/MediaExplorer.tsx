@@ -7,9 +7,8 @@ import {
 } from '../spatial-terminal-layout';
 
 /**
- * Media projection column (CSCB-03 / TOUR-29).
- * Thumbnail rail sits on the shared bottom baseline with Tour toggles
- * when the floorplan column drives section height.
+ * Media projection column.
+ * Thumbnail rail sits on the shared bottom baseline with Tour toggles.
  */
 export function MediaExplorer() {
   return (
