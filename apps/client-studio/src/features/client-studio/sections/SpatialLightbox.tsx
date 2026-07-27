@@ -1,5 +1,6 @@
 import { useEffect, type CSSProperties, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
+import { CloseButton } from '@embed-engine/ui';
 
 type SpatialLightboxProps = {
   children: ReactNode;
@@ -13,6 +14,7 @@ type SpatialLightboxProps = {
 /**
  * Full-viewport overlay. Close is centered on the top-right corner of the
  * media frame (the real rendered plan box — TOUR-22).
+ * Close glyph: platform CloseButton (CAP-UX-PLATFORM-01).
  */
 export function SpatialLightbox({
   children,
@@ -58,14 +60,11 @@ export function SpatialLightbox({
         data-lightbox-frame=""
         onClick={(event) => event.stopPropagation()}
       >
-        <button
-          type="button"
+        <CloseButton
           aria-label="Zavřít"
-          className="absolute right-0 top-0 z-20 flex h-10 w-10 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#001930] text-xl leading-none text-white shadow-sm transition-opacity duration-150 ease-out hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2"
+          className="absolute right-0 top-0 z-20 translate-x-1/2 -translate-y-1/2"
           onClick={onClose}
-        >
-          ×
-        </button>
+        />
         <div className="h-full w-full">{children}</div>
       </div>
     </div>,

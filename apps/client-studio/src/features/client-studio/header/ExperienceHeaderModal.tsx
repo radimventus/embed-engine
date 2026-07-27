@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { useEffect } from 'react';
+import { CloseButton } from '@embed-engine/ui';
 
 type ExperienceHeaderModalProps = {
   readonly title: string;
@@ -34,21 +35,18 @@ export function ExperienceHeaderModal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="w-full max-w-md rounded-card border border-embed-border-default bg-embed-background-primary p-section shadow-embed-soft"
+        className="relative w-full max-w-md rounded-card border border-embed-border-default bg-embed-background-primary p-section shadow-embed-soft"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="mb-section flex items-start justify-between gap-section">
+        <CloseButton
+          aria-label="Zavřít"
+          className="absolute right-3 top-3"
+          onClick={onClose}
+        />
+        <div className="mb-section pr-12">
           <h2 className="text-lg font-medium text-embed-foreground-primary">
             {title}
           </h2>
-          <button
-            type="button"
-            aria-label="Zavřít"
-            className="text-sm text-embed-foreground-primary/60 underline decoration-embed-border-strong underline-offset-4"
-            onClick={onClose}
-          >
-            Zavřít
-          </button>
         </div>
         {children}
       </div>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
+import { CloseButton } from '@embed-engine/ui';
 
-import { EXPERIENCE_ICONS } from '../../assets/icons';
 import { AstavLogo } from './AstavLogo';
 import { formatExperienceHeaderTitle } from './foundation/formatExperienceHeaderTitle';
 import { CallModal } from './header/CallModal';
@@ -11,9 +11,7 @@ type HeaderModal = 'call' | 'pdf' | null;
 
 /**
  * AppShell top navigation (CSCB-01) — single sticky Experience header.
- * HDR-01…04: shared PNG close, communication actions, call/PDF modals.
- * Content rail matches DesktopCanvas; Close sits on the viewport edge as a
- * system action, outside the experience content grid.
+ * Close uses platform CloseButton (CAP-UX-PLATFORM-01).
  */
 export function ClientStudioHeader() {
   const [title, setTitle] = useState('Client Studio');
@@ -55,21 +53,11 @@ export function ClientStudioHeader() {
         </div>
 
         {showClose ? (
-          <button
-            type="button"
+          <CloseButton
             data-embed-close=""
             aria-label="Zavřít Client Studio"
-            className="absolute right-section top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-transparent p-0 transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-embed-action-primary"
-          >
-            <img
-              src={EXPERIENCE_ICONS.close}
-              alt=""
-              width={32}
-              height={32}
-              className="h-8 w-8 object-contain"
-              aria-hidden="true"
-            />
-          </button>
+            className="absolute right-section top-1/2 z-10 -translate-y-1/2"
+          />
         ) : null}
       </header>
 
