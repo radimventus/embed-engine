@@ -7,7 +7,12 @@ type SpatialZoomControlProps = {
   style?: CSSProperties;
 };
 
-/** Gold outline loupe on a white rounded square — shared media / floor-plan control. */
+const LOUPE_GOLD = '#D4AF37';
+
+/**
+ * Gold outline loupe on a white rounded square — shared media / floor-plan control.
+ * Inline border/background beat Delivery button CSS reset.
+ */
 export function SpatialZoomControl({
   onClick,
   label = 'Zvětšit náhled',
@@ -18,8 +23,15 @@ export function SpatialZoomControl({
     <button
       type="button"
       aria-label={label}
-      className={`flex h-[42px] w-[42px] cursor-pointer items-center justify-center rounded-[8px] border border-[#D4AF37] bg-white/90 transition-opacity duration-150 ease-out hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 ${className}`}
-      style={style}
+      className={`flex h-[42px] w-[42px] cursor-pointer items-center justify-center transition-opacity duration-150 ease-out hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 ${className}`}
+      style={{
+        backgroundColor: '#FFFFFF',
+        borderWidth: 1,
+        borderStyle: 'solid',
+        borderColor: LOUPE_GOLD,
+        borderRadius: 8,
+        ...style,
+      }}
       onClick={(event) => {
         event.stopPropagation();
         onClick();
@@ -30,7 +42,7 @@ export function SpatialZoomControl({
         aria-hidden="true"
         className="h-[38px] w-[38px]"
         fill="none"
-        stroke="#D4AF37"
+        stroke={LOUPE_GOLD}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"

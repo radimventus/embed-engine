@@ -140,7 +140,7 @@ export function FloorPlan() {
   return (
     <div className="relative flex w-full min-w-0 max-w-none shrink-0 flex-col">
       <div
-        className="relative w-full min-w-0 max-w-none"
+        className="relative w-full min-w-0 max-w-none overflow-hidden rounded-[8px]"
         style={{ aspectRatio }}
         data-floorplan-aspect={aspectRatioNumber.toFixed(4)}
       >

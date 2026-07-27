@@ -1,6 +1,6 @@
-import { useEffect, type CSSProperties, type ReactNode } from 'react';
-import { createPortal } from 'react-dom';
 import { CloseButton } from '@embed-engine/ui';
+import { useEffect, useRef, type CSSProperties, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 
 type SpatialLightboxProps = {
   children: ReactNode;
@@ -14,7 +14,6 @@ type SpatialLightboxProps = {
 /**
  * Full-viewport overlay. Close is centered on the top-right corner of the
  * media frame (the real rendered plan box — TOUR-22).
- * Close glyph: platform CloseButton (CAP-UX-PLATFORM-01).
  */
 export function SpatialLightbox({
   children,
@@ -24,10 +23,35 @@ export function SpatialLightbox({
   label,
   onClose,
 }: SpatialLightboxProps) {
+  const prevOverlayCloseStylesRef = useRef<
+    Array<{
+      el: HTMLElement;
+      display: string;
+      visibility: string;
+      opacity: string;
+    }>
+  >([]);
+
   useEffect(() => {
     if (!isOpen) {
       return;
     }
+
+    // Popups should visually own the "X" (PNG on the image corner).
+    // When running inside Delivery overlay, we hide the overlay-level close
+    // to avoid a second X outside the image.
+    const overlayCloseEls = Array.from(
+      document.querySelectorAll<HTMLElement>('[data-embed-close]'),
+    );
+    prevOverlayCloseStylesRef.current = overlayCloseEls.map((el) => ({
+      el,
+      display: el.style.display,
+      visibility: el.style.visibility,
+      opacity: el.style.opacity,
+    }));
+    overlayCloseEls.forEach((el) => {
+      el.style.display = 'none';
+    });
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
@@ -39,6 +63,16 @@ export function SpatialLightbox({
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+
+      // Restore overlay close styles.
+      prevOverlayCloseStylesRef.current.forEach(
+        ({ el, display, visibility, opacity }) => {
+          el.style.display = display;
+          el.style.visibility = visibility;
+          el.style.opacity = opacity;
+        },
+      );
+      prevOverlayCloseStylesRef.current = [];
     };
   }, [isOpen, onClose]);
 
@@ -54,18 +88,20 @@ export function SpatialLightbox({
       role="dialog"
       onClick={onClose}
     >
-      <div
-        className={`relative ${frameClassName}`}
-        style={frameStyle}
-        data-lightbox-frame=""
-        onClick={(event) => event.stopPropagation()}
-      >
+      {/* Wrapper keeps CloseButton outside overflow-hidden so it stays fully visible. */}
+      <div className="relative" onClick={(event) => event.stopPropagation()}>
         <CloseButton
           aria-label="Zavřít"
           className="absolute right-0 top-0 z-20 translate-x-1/2 -translate-y-1/2"
           onClick={onClose}
         />
-        <div className="h-full w-full">{children}</div>
+        <div
+          className={frameClassName}
+          style={frameStyle}
+          data-lightbox-frame=""
+        >
+          <div className="h-full w-full">{children}</div>
+        </div>
       </div>
     </div>,
     document.querySelector('[data-client-studio-root]') ?? document.body,

@@ -19,12 +19,14 @@ export const OPENING_SOCIAL_PROOF_PX = 90;
 export const SPATIAL_TERMINAL_SURFACE_PX = 484;
 /** Media block keeps a 20 px gutter from the shell edge. */
 export const SPATIAL_TERMINAL_MEDIA_LEFT_GUTTER_PX = 20;
-/** Media display width — Tour visual polish baseline. */
-export const SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX = 580;
+/** Media display width. */
+export const SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX = 600;
 /** Media column stays visually aligned; content can shift 2 px within it. */
 export const SPATIAL_TERMINAL_MEDIA_COLUMN_WIDTH_PX =
   SPATIAL_TERMINAL_MEDIA_LEFT_GUTTER_PX + SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX;
-/** Room index column width remains unchanged. */
+/**
+ * Room menu column — expanded; gaps to display / plan are 20 px paddings.
+ */
 export const SPATIAL_TERMINAL_ROOM_INDEX_WIDTH_PX = 240;
 export const SPATIAL_TERMINAL_FLOOR_PLAN_RIGHT_GUTTER_PX = 20;
 /** Floor plan keeps a 20 px gap from the room menu. */

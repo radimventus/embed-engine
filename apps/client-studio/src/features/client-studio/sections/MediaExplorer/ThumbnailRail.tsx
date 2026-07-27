@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import {
   SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX,
@@ -6,12 +6,12 @@ import {
 } from '../../chapter-layout';
 import {
   THUMBNAIL_SLOT_COUNT,
-  useActiveThumbnailScroll,
   useHorizontalWheelScroll,
   useThumbnailRailNavigation,
 } from '../../../walkthrough/useThumbnailRailScroll';
 import { useWalkthrough } from '../../../walkthrough';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { firstPhotoTimelineIndexForRoom, roomIdForTimelineIndex } from '../../runtime/experienceHouseMedia';
 import { SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS } from '../spatial-terminal-layout';
 
 /** Gap between thumbnails inside the 4-slot viewport. */
@@ -19,6 +19,19 @@ const THUMB_GAP_PX = 16;
 
 /** Side control columns — keeps chevrons outside the 4 visible thumbs. */
 const CHEVRON_COLUMN_PX = 48;
+
+/** First photo in the global timeline (video is #1). */
+const FIRST_PHOTO_SLOT_INDEX = 1;
+
+/** Active border only — idle stays borderless (transparent keeps layout stable). */
+const THUMB_BORDER_PX = 4;
+/** White ring between gold border and thumb body (active); idle keeps transparent padding for stable size. */
+const THUMB_INNER_WHITE_PX = 1;
+const THUMB_RADIUS_PX = 8;
+const THUMB_BORDER_ACTIVE = '#D4AF37';
+const THUMB_BORDER_IDLE = 'transparent';
+const THUMB_INNER_ACTIVE = '#FFFFFF';
+const THUMB_INNER_IDLE = 'transparent';
 
 const MAX_VIEWPORT_WIDTH_PX =
   SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX - CHEVRON_COLUMN_PX * 2;
@@ -45,7 +58,13 @@ const LOUPE_GOLD = '#D4AF37';
 
 const THUMBNAIL_RAIL_ROW_CLASS = `box-border w-full min-w-0 shrink-0 ${SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS}`;
 const THUMB_BASE_CLASS =
-  'h-[80px] shrink-0 overflow-hidden rounded-[8px] border-2 transition-[border-color] duration-[125ms] ease-out';
+  'box-border h-[80px] shrink-0 overflow-hidden transition-[border-color] duration-[125ms] ease-out';
+
+function isWistiaEmbedUrl(url: string): boolean {
+  return (
+    url.includes('fast.wistia.net/embed') || url.includes('wistia.com/embed')
+  );
+}
 
 function GoldChevronIcon({ direction }: { direction: 'left' | 'right' }) {
   return (
@@ -92,28 +111,142 @@ function ChevronSpacer() {
   return <div aria-hidden="true" className="shrink-0" style={{ width: CHEVRON_COLUMN_PX }} />;
 }
 
+/**
+ * Video thumbnail — real video/iframe with a blocking overlay (no controls).
+ * Click is handled by the parent button → plays in the main display.
+ */
+function VideoThumbnailPreview({
+  src,
+  poster,
+}: {
+  src: string;
+  poster: string;
+}) {
+  const wistia = isWistiaEmbedUrl(src);
+
+  return (
+    <div className="relative h-full w-full bg-embed-background-tertiary">
+      {wistia ? (
+        <iframe
+          src={src}
+          title=""
+          tabIndex={-1}
+          className="pointer-events-none h-full w-full border-0"
+          allow="autoplay; fullscreen"
+        />
+      ) : (
+        <video
+          src={src}
+          poster={poster}
+          muted
+          playsInline
+          preload="metadata"
+          className="pointer-events-none h-full w-full object-cover"
+        />
+      )}
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 z-10 bg-embed-foreground-primary/10"
+      />
+    </div>
+  );
+}
+
 export function ThumbnailRail() {
   const { experience } = useDecisionSessionRuntime();
   const gallery = experience.context.roomMedia;
   const {
     activeMediaIndex,
+    activeRoomId,
     isMediaActive,
+    mediaMode,
+    mediaModeEpoch,
     selectMediaIndex,
   } = useWalkthrough();
   const scrollRef = useRef<HTMLDivElement>(null);
   const thumbRefs = useRef(new Map<number, HTMLButtonElement>());
+  const previousMediaModeEpochRef = useRef(mediaModeEpoch);
+  const previousRoomIdRef = useRef(activeRoomId);
+  const previousActiveIndexRef = useRef(activeMediaIndex);
+  const skipNextIndexScrollRef = useRef(false);
 
   /** Global Media Timeline — identical for every room; only activeIndex changes. */
   const mediaTimeline = gallery.thumbnails;
   const itemCount = mediaTimeline.length;
 
   useHorizontalWheelScroll(scrollRef);
-  useActiveThumbnailScroll(scrollRef, thumbRefs, activeMediaIndex, itemCount);
-  const { canScrollLeft, canScrollRight, scrollGroup } = useThumbnailRailNavigation(
-    scrollRef,
+  const { canScrollLeft, canScrollRight, scrollGroup, scrollToSlot } =
+    useThumbnailRailNavigation(scrollRef, itemCount, SLOT_STEP_PX);
+
+  /**
+   * Slot-aligned rail anchors (always 4 full thumbnails — never mid-slot):
+   * - VIDEO / FOTKY toggles → video first / first photo first
+   * - Exteriér → first photo first
+   * - other rooms / floorplan → room's first photo in second slot
+   * - thumb click → active thumb in second slot (video → first)
+   */
+  useEffect(() => {
+    const modeEpochChanged =
+      previousMediaModeEpochRef.current !== mediaModeEpoch;
+    const roomChanged = previousRoomIdRef.current !== activeRoomId;
+    const indexChanged = previousActiveIndexRef.current !== activeMediaIndex;
+    previousMediaModeEpochRef.current = mediaModeEpoch;
+    previousRoomIdRef.current = activeRoomId;
+    previousActiveIndexRef.current = activeMediaIndex;
+
+    if (itemCount === 0) {
+      return;
+    }
+
+    // VIDEO / FOTKY — highest priority when user toggles the switch.
+    if (modeEpochChanged) {
+      if (!indexChanged) {
+        skipNextIndexScrollRef.current = true;
+      }
+      scrollToSlot(mediaMode === 'video' ? 0 : FIRST_PHOTO_SLOT_INDEX);
+      return;
+    }
+
+    // Room menu / floorplan zone — compute from room, not stale index.
+    if (roomChanged && activeRoomId !== null) {
+      if (!indexChanged) {
+        skipNextIndexScrollRef.current = true;
+      }
+      if (activeRoomId === 'exterior') {
+        scrollToSlot(FIRST_PHOTO_SLOT_INDEX);
+        return;
+      }
+      const roomPhotoIndex = firstPhotoTimelineIndexForRoom(
+        experience.house,
+        activeRoomId,
+      );
+      const activeBelongsToRoom =
+        roomIdForTimelineIndex(experience.house, activeMediaIndex) ===
+        activeRoomId;
+      const anchorIndex = activeBelongsToRoom
+        ? activeMediaIndex
+        : (roomPhotoIndex ?? activeMediaIndex);
+      scrollToSlot(Math.max(0, anchorIndex - 1));
+      return;
+    }
+
+    // Direct thumbnail click — keep active in second visible slot.
+    if (indexChanged) {
+      if (skipNextIndexScrollRef.current) {
+        skipNextIndexScrollRef.current = false;
+        return;
+      }
+      scrollToSlot(activeMediaIndex === 0 ? 0 : Math.max(0, activeMediaIndex - 1));
+    }
+  }, [
+    activeMediaIndex,
+    activeRoomId,
+    experience.house,
     itemCount,
-    SLOT_STEP_PX,
-  );
+    mediaMode,
+    mediaModeEpoch,
+    scrollToSlot,
+  ]);
 
   const setThumbRef = useCallback((mediaIndex: number) => {
     return (element: HTMLButtonElement | null) => {
@@ -191,32 +324,33 @@ export function ThumbnailRail() {
                   type="button"
                   aria-label={item.kind === 'video' ? 'Video prohlídky' : 'Fotografie'}
                   aria-pressed={active}
-                  className={`${THUMB_BASE_CLASS} ${
-                    active
-                      ? 'border-embed-brand-gold'
-                      : 'border-embed-border-default hover:border-embed-brand-gold/50'
-                  }`}
+                  className={THUMB_BASE_CLASS}
                   style={{
                     width: FITTED_THUMB_WIDTH_PX,
                     minWidth: FITTED_THUMB_WIDTH_PX,
+                    borderWidth: THUMB_BORDER_PX,
+                    borderStyle: 'solid',
+                    borderRadius: THUMB_RADIUS_PX,
+                    borderColor: active ? THUMB_BORDER_ACTIVE : THUMB_BORDER_IDLE,
+                    // Padding + fill = white ring; inset box-shadow is covered by <img> and
+                    // also reset by Delivery `[data-embed-boundary] button { box-shadow: none }`.
+                    padding: THUMB_INNER_WHITE_PX,
+                    backgroundColor: active ? THUMB_INNER_ACTIVE : THUMB_INNER_IDLE,
+                    boxSizing: 'border-box',
                   }}
                   onClick={() => selectMediaIndex(mediaIndex)}
                 >
                   {item.kind === 'video' ? (
-                    <div className="relative h-full w-full bg-embed-background-tertiary">
-                      <img src={item.thumbnailSrc} alt="" className="h-full w-full object-cover" />
-                      <span className="absolute inset-0 flex items-center justify-center bg-embed-foreground-primary/10">
-                        <svg
-                          viewBox="0 0 24 24"
-                          aria-hidden="true"
-                          className="h-5 w-5 fill-embed-foreground-primary"
-                        >
-                          <path d="M8 5.14v13.72L19 12 8 5.14z" />
-                        </svg>
-                      </span>
-                    </div>
+                    <VideoThumbnailPreview
+                      src={item.src}
+                      poster={item.thumbnailSrc}
+                    />
                   ) : (
-                    <img src={item.thumbnailSrc} alt="" className="h-full w-full object-cover" />
+                    <img
+                      src={item.thumbnailSrc}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
                   )}
                 </button>
               );

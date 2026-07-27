@@ -4,7 +4,8 @@ import { formatAreaM2 } from '../PropertyExplorer/propertyExplorerModel';
 
 /**
  * Runtime-driven room list.
- * Visual polish only: separators, rounded hover, filled active row.
+ * Visual style: borderless + dividers + active fill (Tour polish).
+ * Typography / cell height: original compact sizing.
  */
 export function RoomPanel() {
   const { floorRooms, isRoomActive, selectedFloor } = useHouseNavigator();
@@ -22,23 +23,24 @@ export function RoomPanel() {
         return (
           <div
             key={room.id}
-            className={index === 0 ? 'pt-0' : 'border-t border-embed-border-default pt-1.5'}
+            className={index === 0 ? 'pt-0' : 'border-t border-embed-border-default pt-1'}
           >
             <button
               type="button"
               aria-pressed={active}
               data-room-id={room.id}
               data-active={active ? 'true' : 'false'}
-              className={`flex min-h-[38px] w-full items-baseline justify-between gap-2 rounded-[10px] border-0 py-2 pl-3 pr-2.5 text-left text-[13px] leading-snug tracking-wide shadow-none transition-colors duration-[125ms] ease-out touch-manipulation ${
+              className={`flex min-h-[32px] w-full items-baseline justify-between gap-2 rounded-[10px] border-0 py-1 pl-2.5 pr-2 text-left leading-snug tracking-wide shadow-none transition-colors duration-[125ms] ease-out touch-manipulation ${
                 active
                   ? 'bg-embed-surface-interactive font-semibold text-embed-foreground-primary'
                   : 'bg-transparent font-normal text-embed-foreground-primary hover:bg-embed-surface-interactive'
               }`}
+              style={{ fontSize: 13 }}
               onClick={() => selectRoom(room.id)}
             >
-              <span className="min-w-0 translate-y-[2px] truncate">{room.name}</span>
+              <span className="min-w-0 truncate">{room.name}</span>
               {room.area > 0 ? (
-                <span className="shrink-0 translate-y-[2px] tabular-nums opacity-80">
+                <span className="shrink-0 tabular-nums opacity-80">
                   {formatAreaM2(room.area)}
                 </span>
               ) : null}

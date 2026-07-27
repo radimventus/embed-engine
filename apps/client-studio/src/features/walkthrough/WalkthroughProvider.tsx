@@ -38,6 +38,8 @@ type WalkthroughContextValue = {
   roomMediaItems: readonly HousePackageMediaItem[];
   rooms: readonly WalkthroughRoom[];
   selectedFloor: string;
+  /** Increments on every VIDEO/FOTKY toggle — forces rail re-anchor. */
+  mediaModeEpoch: number;
   isRoomActive: (roomId: string) => boolean;
   isMediaActive: (mediaIndex: number) => boolean;
   play: () => void;
@@ -80,8 +82,10 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const [mediaMode, setMediaModeState] = useState<MediaMode>('video');
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [mode, setMode] = useState<WalkthroughState['mode']>('ready');
+  const [mediaModeEpoch, setMediaModeEpoch] = useState(0);
   const previousRoomIdRef = useRef<string | null>(activeRoomId);
-  const pendingPhotoIndexRef = useRef<number | null>(null);
+  const activeMediaIndexRef = useRef(activeMediaIndex);
+  activeMediaIndexRef.current = activeMediaIndex;
 
   useEffect(() => {
     if (
@@ -96,14 +100,13 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     setMediaModeState('photo');
     setMode('ready');
 
-    const pendingPhotoIndex = pendingPhotoIndexRef.current;
-    if (pendingPhotoIndex !== null) {
-      const pendingRoomId = roomIdForTimelineIndex(experience.house, pendingPhotoIndex);
-      if (pendingRoomId === activeRoomId) {
-        setActiveMediaIndex(pendingPhotoIndex);
-        pendingPhotoIndexRef.current = null;
-        return;
-      }
+    /** Thumbnail already selected a photo of this room — keep that index. */
+    const roomForActivePhoto = roomIdForTimelineIndex(
+      experience.house,
+      activeMediaIndexRef.current,
+    );
+    if (roomForActivePhoto === activeRoomId) {
+      return;
     }
 
     const roomPhotoIndex = firstPhotoTimelineIndexForRoom(
@@ -113,7 +116,6 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     setActiveMediaIndex(
       roomPhotoIndex ?? firstPhotoIndex(projectedThumbnails),
     );
-    pendingPhotoIndexRef.current = null;
   }, [activeRoomId, experience.house, projectedThumbnails]);
 
   const value = useMemo((): WalkthroughContextValue => {
@@ -136,34 +138,33 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       roomMediaItems,
       rooms,
       selectedFloor,
+      mediaModeEpoch,
       isRoomActive: (roomId: string) => activeRoomId === roomId,
       isMediaActive: (mediaIndex: number) => activeMediaIndex === mediaIndex,
       play: () => setMode('playing'),
       onVideoEnded: () => setMode('ready'),
       selectRoom: (roomId: string) => {
-        pendingPhotoIndexRef.current = null;
         dispatch({ type: 'SelectRoom', roomId });
       },
       selectMediaIndex: (mediaIndex: number) => {
         setActiveMediaIndex(mediaIndex);
         const item = roomMediaItems[mediaIndex];
         if (item?.kind === 'video') {
-          pendingPhotoIndexRef.current = null;
           setMediaModeState('video');
-        } else if (item?.kind === 'photo') {
+          setMode('playing');
+          return;
+        }
+        if (item?.kind === 'photo') {
           setMediaModeState('photo');
           const roomId = roomIdForTimelineIndex(experience.house, mediaIndex);
           if (roomId !== null && roomId !== activeRoomId) {
-            pendingPhotoIndexRef.current = mediaIndex;
             dispatch({ type: 'SelectRoom', roomId });
-          } else {
-            pendingPhotoIndexRef.current = null;
           }
         }
         setMode('ready');
       },
       setMediaMode: (nextMode: MediaMode) => {
-        pendingPhotoIndexRef.current = null;
+        setMediaModeEpoch((value) => value + 1);
         setMediaModeState(nextMode);
         setMode('ready');
         if (nextMode === 'video') {
@@ -179,6 +180,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     dispatch,
     experience.house,
     mediaMode,
+    mediaModeEpoch,
     mode,
     projectedThumbnails,
     rooms,

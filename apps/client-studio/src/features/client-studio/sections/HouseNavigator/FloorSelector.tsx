@@ -1,8 +1,5 @@
 import { useHouseNavigator } from './useHouseNavigator';
-import {
-  TOUR_SEGMENTED_SHELL_CLASS,
-  tourSegmentedButtonClass,
-} from './MediaModeToggle';
+import { TourSegmentedControl } from './TourSegmentedControl';
 
 function floorLabel(floor: string): string {
   if (floor === '0') {
@@ -24,24 +21,17 @@ export function FloorSelector() {
   }
 
   const activeFloor = selectedFloor || floors[0];
+  const options = floors.map((floor) => ({
+    value: floor,
+    label: floorLabel(floor),
+  }));
 
   return (
-    <div aria-label="Výběr patra" className={TOUR_SEGMENTED_SHELL_CLASS}>
-      {floors.map((floor) => {
-        const active = floor === activeFloor;
-
-        return (
-          <button
-            key={floor}
-            type="button"
-            aria-pressed={active}
-            className={tourSegmentedButtonClass(active)}
-            onClick={() => selectFloor(floor)}
-          >
-            {floorLabel(floor)}
-          </button>
-        );
-      })}
-    </div>
+    <TourSegmentedControl
+      aria-label="Výběr patra"
+      value={activeFloor}
+      options={options}
+      onChange={selectFloor}
+    />
   );
 }

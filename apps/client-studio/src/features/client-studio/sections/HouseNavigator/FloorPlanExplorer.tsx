@@ -10,8 +10,8 @@ import {
 } from '../spatial-terminal-layout';
 
 /**
- * Floorplan column (TOUR-27 / TOUR-31).
- * Plan fills width at real aspect; 40 px from menu (TOUR-31).
+ * Floorplan column.
+ * Plan fills width at real aspect; 20 px from menu (pl on this column).
  * Toggle sits on the shared baseline with VIDEO/FOTKY (min 50 px below plan).
  */
 export function FloorPlanExplorer() {

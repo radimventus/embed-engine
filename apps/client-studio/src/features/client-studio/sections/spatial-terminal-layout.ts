@@ -38,7 +38,7 @@ export const SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS =
   'box-border flex h-full w-full min-w-0 flex-col content-start items-start gap-0 overflow-x-hidden pb-section pl-[20px] mobile:px-section';
 
 export const SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS =
-  'grid w-[580px] min-w-[580px] max-w-[580px] shrink-0 content-start items-start gap-0 translate-x-[2px] mobile:w-full mobile:min-w-0 mobile:max-w-none mobile:translate-x-0';
+  'grid w-[600px] min-w-[600px] max-w-[600px] shrink-0 content-start items-start gap-0 mobile:w-full mobile:min-w-0 mobile:max-w-none';
 
 /**
  * Floor plan column:
@@ -48,7 +48,7 @@ export const SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS =
   'relative z-0 flex h-full w-full min-w-0 flex-col items-stretch overflow-x-hidden pl-[20px] pr-[20px] pb-section';
 
 export const SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS =
-  'relative box-border aspect-video w-[580px] min-w-[580px] max-w-[580px] shrink-0 overflow-hidden rounded-[8px] bg-embed-surface-placeholder';
+  'relative box-border aspect-video w-[600px] min-w-[600px] max-w-[600px] shrink-0 overflow-hidden rounded-[8px] bg-embed-surface-placeholder';
 
 /** Shared bottom baseline for thumbnails + VIDEO/FOTKY + PŘÍZEMÍ/PATRO. */
 export const SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS =
