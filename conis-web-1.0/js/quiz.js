@@ -1,7 +1,7 @@
 /**
  * CONIS Qualification Engine
- * Sends qualification answers to POST /qualification and renders server status.
- * Frontend does not decide A/B/C — server does.
+ * Sends answers to POST /qualification (server decides A/B/C).
+ * After quiz → contact form (no intermediate thank-you).
  */
 
 const questions = [
@@ -40,7 +40,6 @@ const answersEl = document.getElementById("answers");
 const progressEl = document.getElementById("progressBar");
 const progressTrack = document.getElementById("progressTrack");
 const quizContainer = document.getElementById("quizContainer");
-const resultSection = document.getElementById("resultSection");
 
 function render() {
   if (!titleEl || !answersEl) return;
@@ -101,6 +100,10 @@ function safeUrl(url) {
 
 async function submitQualification() {
   if (quizContainer) quizContainer.style.display = "none";
+  document.getElementById("closing")?.classList.add("is-complete");
+
+  let status = "B";
+  let calendlyUrl = null;
 
   try {
     const response = await fetch("/qualification", {
@@ -113,60 +116,17 @@ async function submitQualification() {
 
     if (response.ok) {
       const data = await response.json();
-      handleServerResult(data.status, data.calendlyUrl);
-    } else {
-      handleServerResult("B");
+      status = data.status || "B";
+      calendlyUrl = data.calendlyUrl || null;
     }
   } catch (error) {
-    console.warn("Backend unavailable, showing default review status.", error);
-    handleServerResult("B");
+    console.warn("Backend unavailable, using default review status.", error);
   }
-}
-
-function handleServerResult(status, calendlyUrl) {
-  const resultTitle = document.getElementById("resultTitle");
-  const resultText = document.getElementById("resultText");
-  const resultAction = document.getElementById("resultAction");
-
-  if (!resultSection || !resultTitle || !resultText || !resultAction) return;
-
-  resultSection.style.display = "flex";
-  resultSection.scrollIntoView({ behavior: "smooth" });
-  resultTitle.focus?.();
-
-  if (status === "A") {
-    resultTitle.textContent = "Děkujeme.";
-    resultText.textContent =
-      "V tuto chvíli pravděpodobně nejsme správným partnerem pro vaši firmu.";
-    resultAction.replaceChildren();
-  } else if (status === "B") {
-    resultTitle.textContent = "Děkujeme.";
-    resultText.textContent =
-      "Vaše odpovědi jsou zajímavé. Rádi je s vámi projdeme v klidu.";
-    resultAction.replaceChildren();
-  } else if (status === "C") {
-    const bookingLink = safeUrl(
-      calendlyUrl || "https://calendly.com/conis/rezervace-schuzky"
-    );
-
-    resultTitle.textContent = "Zdá se, že bychom si mohli rozumět.";
-    resultText.textContent =
-      "Vaše zadání přesně odpovídá parametrům úspěšného pilotního nasazení systému CONIS.";
-    resultAction.replaceChildren();
-
-    const link = document.createElement("a");
-    link.href = bookingLink;
-    link.target = "_blank";
-    link.rel = "noopener noreferrer";
-    link.className = "cta-button";
-    link.textContent = "Rezervovat online schůzku";
-    resultAction.appendChild(link);
-  }
-
-  document.getElementById("closing")?.classList.add("is-complete");
 
   if (window.ConisLead && typeof window.ConisLead.prepare === "function") {
-    window.ConisLead.prepare(status, userAnswers);
+    window.ConisLead.prepare(status, userAnswers, {
+      calendlyUrl: calendlyUrl ? safeUrl(calendlyUrl) : null
+    });
   }
 }
 

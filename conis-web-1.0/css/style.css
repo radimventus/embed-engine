@@ -272,8 +272,22 @@ DECISION & CHANGES SECTIONS
 .compare {
   margin-top: 70px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 100px;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 48px 40px;
+  align-items: center;
+}
+
+.compare-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 12px;
+}
+
+.compare-arrow span {
+  font-size: 28px;
+  color: var(--gold);
+  line-height: 1;
 }
 
 .compare h3 {
@@ -286,6 +300,14 @@ DECISION & CHANGES SECTIONS
   font-size: clamp(18px, 2vw, 24px);
   line-height: 1.8;
   opacity: 0.85;
+}
+
+.compare-after {
+  border: 1px solid rgba(184, 146, 45, 0.55);
+  border-radius: 8px;
+  padding: 48px 40px;
+  background: transparent;
+  box-shadow: none;
 }
 
 /************************************************
@@ -518,20 +540,10 @@ img {
 
 .result {
   display: none;
-  padding: 72px 0 0;
-  text-align: center;
 }
 
 .closing.is-complete .closing-intro {
   display: none;
-}
-
-.result h2 {
-  margin-bottom: 28px;
-}
-
-.result .lead {
-  margin: 0 auto;
 }
 
 .result-action {
@@ -544,7 +556,7 @@ img {
 }
 
 .lead-bridge {
-  margin: 56px auto 0;
+  margin: 0 auto 56px;
   max-width: 640px;
 }
 
@@ -578,7 +590,7 @@ LEAD CAPTURE
 
 .lead-capture {
   display: none;
-  padding: 40px 0 140px;
+  padding: 64px 0 120px;
   text-align: center;
 }
 
@@ -667,13 +679,15 @@ FOOTER
 ************************************************/
 
 .site-footer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
   padding: 180px 0 100px;
   background: var(--bg);
 }
 
-.footer-inner {
+.footer-content {
   max-width: 760px;
-  margin: 0;
 }
 
 .footer-identity {
@@ -777,9 +791,27 @@ RESPONSIVE DESIGN
     height: 480px;
   }
 
-  .decision-grid, .compare {
+  .decision-grid {
     grid-template-columns: 1fr;
     gap: 50px;
+  }
+
+  .compare {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+
+  .compare-arrow {
+    padding: 8px 0;
+    justify-content: flex-start;
+  }
+
+  .compare-arrow span {
+    margin-left: 24px;
+  }
+
+  .compare-after {
+    padding: 40px 32px;
   }
 
   section {
@@ -843,16 +875,12 @@ RESPONSIVE DESIGN
     padding-bottom: 72px;
   }
 
-  .result {
-    padding: 48px 0 0;
+  .lead-capture {
+    padding: 28px 0 96px;
   }
 
   .lead-bridge {
-    margin-top: 40px;
-  }
-
-  .lead-capture {
-    padding: 28px 0 96px;
+    margin-bottom: 40px;
   }
 
   .site-footer {

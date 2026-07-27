@@ -171,7 +171,7 @@
         </h2>
 
         <div class="compare fade">
-          <div>
+          <div class="compare-before">
             <div class="label">DNES</div>
             <h3>Lidé hledají.</h3>
             <p>
@@ -182,7 +182,11 @@
             </p>
           </div>
 
-          <div>
+          <div class="compare-arrow" aria-hidden="true">
+            <span>↓</span>
+          </div>
+
+          <div class="compare-after">
             <div class="label gold">S CONIS</div>
             <h3>Lidé rozumí.</h3>
             <p class="gold">
@@ -284,26 +288,13 @@
         </div>
       </div>
 
-      <div
-        class="closing-stage result"
-        id="resultSection"
-        aria-live="polite"
-        aria-atomic="true"
-      >
-        <div class="container narrow-center">
-          <h2 id="resultTitle" tabindex="-1"></h2>
-          <p class="lead" id="resultText"></p>
-          <div class="result-action" id="resultAction"></div>
-          <p class="lead lead-bridge" id="leadBridge" hidden>
-            Pokud dává myšlenka CONIS smysl i vám, zanechte na sebe kontakt.
-            Ozveme se během několika dnů.
-          </p>
-        </div>
-      </div>
-
       <div class="closing-stage lead-capture" id="leadSection" aria-label="Kontakt" hidden>
         <div class="container narrow-center">
           <div id="leadFormWrap">
+            <p class="lead lead-bridge" id="leadBridge">
+              Pokud dává myšlenka CONIS smysl i vám, zanechte na sebe kontakt.
+              Ozveme se během několika dnů.
+            </p>
             <form id="leadForm" class="lead-form" novalidate>
               <label class="lead-field">
                 <span>Jméno</span>
@@ -329,7 +320,12 @@
           </div>
           <div id="leadThanks" class="lead-thanks" hidden>
             <h2 tabindex="-1">Děkujeme.</h2>
-            <p class="lead">Ozveme se během několika dnů.</p>
+            <p class="lead">
+              Vaše odpovědi jsme přijali.<br><br>
+              Ozveme se vám během několika dnů.<br><br>
+              Mezitím děkujeme za důvěru.
+            </p>
+            <div class="result-action" id="thanksAction"></div>
           </div>
         </div>
       </div>
@@ -337,27 +333,29 @@
   </main>
 
   <footer class="site-footer" role="contentinfo">
-    <div class="container footer-inner">
-      <div class="footer-identity">
-        <p class="footer-brand">CONIS</p>
-        <p class="footer-line">Rozumíme tomu, co rozhoduje.</p>
-        <p class="footer-line soft">Platforma porozumění mezi člověkem a produktem.</p>
-      </div>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-identity">
+          <p class="footer-brand">CONIS</p>
+          <p class="footer-line">Rozumíme tomu, co rozhoduje.</p>
+          <p class="footer-line soft">Platforma porozumění mezi člověkem a produktem.</p>
+        </div>
 
-      <div class="footer-contact">
-        <p>Radim Věntus</p>
-        <p><a href="tel:+420725020757">+420 725 020 757</a></p>
-        <p><a href="mailto:kontakt@conis.cz">kontakt@conis.cz</a></p>
-        <p class="footer-address">
-          Stratilova 2<br>
-          746 01 Opava
-        </p>
-        <p><a href="https://www.conis.cz">www.conis.cz</a></p>
-      </div>
+        <div class="footer-contact">
+          <p>Radim Věntus</p>
+          <p><a href="tel:+420725020757">+420 725 020 757</a></p>
+          <p><a href="mailto:kontakt@conis.cz">kontakt@conis.cz</a></p>
+          <p class="footer-address">
+            Stratilova 2<br>
+            746 01 Opava
+          </p>
+          <p><a href="https://www.conis.cz">www.conis.cz</a></p>
+        </div>
 
-      <div class="footer-closing">
-        <p class="footer-line">Dáváme produktům schopnost rozumět lidem.</p>
-        <p class="footer-mark">CONIS • Platforma porozumění mezi člověkem a produktem.</p>
+        <div class="footer-closing">
+          <p class="footer-line">Dáváme produktům schopnost rozumět lidem.</p>
+          <p class="footer-mark">CONIS • Platforma porozumění mezi člověkem a produktem.</p>
+        </div>
       </div>
     </div>
   </footer>
