@@ -206,3 +206,17 @@ export {
   createRuleEvaluationApi,
   type RuleEvaluationApi,
 } from './rule-evaluation/rule-evaluation-api';
+export {
+  createDecisionStoryComposer,
+  type DecisionStoryComposer,
+} from './decision-story/decision-story-composer';
+export {
+  createDecisionStoryApi,
+  type DecisionStoryApi,
+} from './decision-story/decision-story-api';
+export {
+  buildStoryGraph,
+  composeMovesFromEvaluation,
+  createStoryValidator,
+  type StoryValidator,
+} from './decision-story/story-validator';

@@ -12,10 +12,12 @@ import type {
   DecisionKnowledgePackage,
   DecisionModel,
   DecisionRuntimeEvent,
+  DecisionStory,
   EvaluationEvent,
   EvaluationResult,
   KnowledgeEvent,
   RuntimeModel,
+  StoryEvent,
   KnowledgeLayerBundle,
   KnowledgeLayerDefinition,
   KnowledgeLayerEvent,
@@ -42,6 +44,7 @@ import { ExperienceComposer } from './ExperienceComposer';
 import { AIContextPreview } from './AIContextPreview';
 import { DecisionEngineOverview } from './DecisionEngineOverview';
 import { DecisionRuntimeOverview } from './DecisionRuntimeOverview';
+import { DecisionStoryOverview } from './DecisionStoryOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -89,6 +92,9 @@ type WorkspaceCanvasProps = {
   readonly evaluationResult: EvaluationResult | null;
   readonly evaluationEvents: readonly EvaluationEvent[];
   readonly evaluationValidationMessage: string | null;
+  readonly decisionStory: DecisionStory | null;
+  readonly storyEvents: readonly StoryEvent[];
+  readonly storyMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -151,6 +157,9 @@ type WorkspaceCanvasProps = {
   readonly onEvaluateRules: () => void;
   readonly onValidateEvaluation: () => void;
   readonly onDisposeEvaluation: () => void;
+  readonly onComposeStory: () => void;
+  readonly onValidateStory: () => void;
+  readonly onDisposeStory: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -181,6 +190,9 @@ export function WorkspaceCanvas({
   evaluationResult,
   evaluationEvents,
   evaluationValidationMessage,
+  decisionStory,
+  storyEvents,
+  storyMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -233,6 +245,9 @@ export function WorkspaceCanvas({
   onEvaluateRules,
   onValidateEvaluation,
   onDisposeEvaluation,
+  onComposeStory,
+  onValidateStory,
+  onDisposeStory,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -416,6 +431,17 @@ export function WorkspaceCanvas({
             onValidate={onValidateEvaluation}
             onDispose={onDisposeEvaluation}
             validationMessage={evaluationValidationMessage}
+          />
+        ) : null}
+
+        {activeSection === 'decision-story' ? (
+          <DecisionStoryOverview
+            decisionStory={decisionStory}
+            events={storyEvents}
+            onCompose={onComposeStory}
+            onValidate={onValidateStory}
+            onDispose={onDisposeStory}
+            message={storyMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

@@ -18,11 +18,14 @@ import type {
   DecisionKnowledgePackage,
   DecisionModel,
   DecisionRuntimeEvent,
+  ComposeStoryInput,
+  DecisionStory,
   EvaluationEvent,
   EvaluationResult,
   KnowledgeEvent,
   RuleEvaluationInput,
   RuntimeModel,
+  StoryEvent,
   KnowledgeLayerBundle,
   KnowledgeLayerDefinition,
   KnowledgeLayerEvent,
@@ -66,6 +69,8 @@ import {
   createDecisionRuntimeApi,
   createRuleEvaluationApi,
   createRuleEvaluationEngine,
+  createDecisionStoryApi,
+  createDecisionStoryComposer,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -130,6 +135,9 @@ export type BuilderStudioViewModel = {
   readonly evaluationResult: EvaluationResult | null;
   readonly evaluationEvents: readonly EvaluationEvent[];
   readonly evaluationValidationMessage: string | null;
+  readonly decisionStory: DecisionStory | null;
+  readonly storyEvents: readonly StoryEvent[];
+  readonly storyMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -203,6 +211,9 @@ export type BuilderStudioViewModel = {
   readonly evaluateRules: () => void;
   readonly validateEvaluation: () => void;
   readonly disposeEvaluation: () => void;
+  readonly composeStory: () => void;
+  readonly validateStory: () => void;
+  readonly disposeStory: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -324,6 +335,32 @@ function toRuleEvaluationInput(
         priority: rule.priority,
         weight: rule.weight,
       })) ?? [],
+  };
+}
+
+
+function toComposeStoryInput(
+  evaluation: EvaluationResult,
+): ComposeStoryInput {
+  return {
+    decisionModelId: evaluation.decisionModelId,
+    evaluationId: evaluation.id,
+    title: `${evaluation.metadata.title} Story`,
+    ruleResults: evaluation.ruleResults.map((rule) => ({
+      ruleId: rule.ruleId,
+      status: rule.status,
+      score: rule.score,
+      matchedSignals: rule.matchedSignals,
+      reason: rule.reason,
+      condition: rule.metadata.condition,
+      outcome: rule.metadata.outcome,
+    })),
+    evaluationSummary: {
+      passed: evaluation.summary.passed,
+      failed: evaluation.summary.failed,
+      skipped: evaluation.summary.skipped,
+      averageScore: evaluation.summary.averageScore,
+    },
   };
 }
 
@@ -637,6 +674,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const decisionRuntimeApi = createDecisionRuntimeApi(decisionRuntime);
     const ruleEvaluationEngine = createRuleEvaluationEngine();
     const ruleEvaluationApi = createRuleEvaluationApi(ruleEvaluationEngine);
+    const decisionStoryComposer = createDecisionStoryComposer();
+    const decisionStoryApi = createDecisionStoryApi(decisionStoryComposer);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -678,6 +717,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       decisionRuntimeApi,
       ruleEvaluationEngine,
       ruleEvaluationApi,
+      decisionStoryComposer,
+      decisionStoryApi,
     };
   }, []);
 
@@ -830,6 +871,11 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   >([]);
   const [evaluationValidationMessage, setEvaluationValidationMessage] =
     useState<string | null>(null);
+  const [decisionStory, setDecisionStory] = useState<DecisionStory | null>(
+    null,
+  );
+  const [storyEvents, setStoryEvents] = useState<readonly StoryEvent[]>([]);
+  const [storyMessage, setStoryMessage] = useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -1140,6 +1186,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     evaluationResult,
     evaluationEvents,
     evaluationValidationMessage,
+    decisionStory,
+    storyEvents,
+    storyMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -1823,6 +1872,46 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setEvaluationResult(null);
       setEvaluationEvents([]);
       setEvaluationValidationMessage(null);
+    },
+    composeStory(): void {
+      if (evaluationResult === null) {
+        setStoryMessage(
+          'Nejdřív vyhodnoťte pravidla (Evaluation → Evaluate Rules).',
+        );
+        return;
+      }
+      const composed = services.decisionStoryApi.composeStory(
+        toComposeStoryInput(evaluationResult),
+      );
+      setDecisionStory(composed);
+      setStoryEvents(services.decisionStoryComposer.getHistory(composed.id));
+      setStoryMessage(null);
+    },
+    validateStory(): void {
+      if (decisionStory === null) {
+        setStoryMessage('Nejdřív složte Decision Story (Compose Story).');
+        return;
+      }
+      const validated = services.decisionStoryComposer.validateStory(
+        decisionStory.id,
+      );
+      setDecisionStory(validated);
+      setStoryEvents(services.decisionStoryComposer.getHistory(validated.id));
+      setStoryMessage(
+        validated.validation?.valid
+          ? 'Validation OK — Decision Story is structurally sound.'
+          : (validated.validation?.issues.map((issue) => issue.message).join(' ') ??
+            'Validation failed.'),
+      );
+    },
+    disposeStory(): void {
+      if (decisionStory === null) {
+        return;
+      }
+      services.decisionStoryComposer.dispose(decisionStory.id);
+      setDecisionStory(null);
+      setStoryEvents([]);
+      setStoryMessage(null);
     },
     buildProject(): void {
       const projectId =

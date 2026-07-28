@@ -261,6 +261,28 @@ export type {
   RuleResultStatus,
 } from './rule-evaluation-types';
 
+export type {
+  ActionNode,
+  ComposeStoryInput,
+  DecisionMove,
+  DecisionMoveType,
+  DecisionStory,
+  DecisionStorySummary,
+  InsightNode,
+  RecommendationNode,
+  StoryEdge,
+  StoryEvent,
+  StoryEventType,
+  StoryGraph,
+  StoryMetadata,
+  StoryNode,
+  StoryNodeType,
+  StoryTimestamps,
+  StoryValidation,
+  StoryValidationIssue,
+  SummaryNode,
+} from './decision-story-types';
+
 export {
   ASSET_CATEGORY_ORDER,
   createEmptyAssetCollections,

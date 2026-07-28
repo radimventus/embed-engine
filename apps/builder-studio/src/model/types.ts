@@ -28,6 +28,7 @@ export type WorkspaceSectionId =
   | 'decision-engine'
   | 'decision-runtime'
   | 'rule-evaluation'
+  | 'decision-story'
   | 'media'
   | 'layout'
   | 'knowledge';
