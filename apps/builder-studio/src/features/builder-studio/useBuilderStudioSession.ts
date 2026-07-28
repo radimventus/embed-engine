@@ -39,6 +39,8 @@ import type {
   SynthesizedKnowledgeBase,
   AIDecisionGatewayEvent,
   GatewayAIContextPackage,
+  PersonalizationEngineEvent,
+  PersonalizationPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -118,6 +120,8 @@ import {
   createKnowledgeSynthesisEngine,
   createAIDecisionGatewayApi,
   createAIDecisionGateway,
+  createPersonalizationEngineApi,
+  createPersonalizationEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -225,6 +229,10 @@ export type BuilderStudioViewModel = {
   readonly aiDecisionGatewayEvents: readonly AIDecisionGatewayEvent[];
   readonly aiDecisionGatewayIndexCount: number;
   readonly aiDecisionGatewayMessage: string | null;
+  readonly personalizationPackage: PersonalizationPackage | null;
+  readonly personalizationEngineEvents: readonly PersonalizationEngineEvent[];
+  readonly personalizationIndexCount: number;
+  readonly personalizationEngineMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -348,6 +356,11 @@ export type BuilderStudioViewModel = {
   readonly validateGatewayAIContext: () => void;
   readonly publishGatewayAIContext: () => void;
   readonly disposeGatewayAIContext: () => void;
+  readonly personalizeContext: () => void;
+  readonly rankPersonalization: () => void;
+  readonly validatePersonalization: () => void;
+  readonly publishPersonalization: () => void;
+  readonly disposePersonalization: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -994,6 +1007,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     );
     const aiDecisionGateway = createAIDecisionGateway();
     const aiDecisionGatewayApi = createAIDecisionGatewayApi(aiDecisionGateway);
+    const personalizationEngine = createPersonalizationEngine();
+    const personalizationEngineApi = createPersonalizationEngineApi(
+      personalizationEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1057,6 +1074,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       knowledgeSynthesisApi,
       aiDecisionGateway,
       aiDecisionGatewayApi,
+      personalizationEngine,
+      personalizationEngineApi,
     };
   }, []);
 
@@ -1314,6 +1333,13 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [aiDecisionGatewayMessage, setAIDecisionGatewayMessage] = useState<
     string | null
   >(null);
+  const [personalizationPackage, setPersonalizationPackage] =
+    useState<PersonalizationPackage | null>(null);
+  const [personalizationEngineEvents, setPersonalizationEngineEvents] =
+    useState<readonly PersonalizationEngineEvent[]>([]);
+  const [personalizationIndexCount, setPersonalizationIndexCount] = useState(0);
+  const [personalizationEngineMessage, setPersonalizationEngineMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -1667,6 +1693,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     aiDecisionGatewayEvents,
     aiDecisionGatewayIndexCount,
     aiDecisionGatewayMessage,
+    personalizationPackage,
+    personalizationEngineEvents,
+    personalizationIndexCount,
+    personalizationEngineMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3465,6 +3495,136 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.aiDecisionGateway.getIndex().list(disposed.id).length,
       );
       setAIDecisionGatewayMessage(null);
+    },
+    personalizeContext(): void {
+      const knowledgeEntries =
+        gatewayAIContextPackage !== null
+          ? gatewayAIContextPackage.context.knowledgeEntries.map(
+              (entryId, index) => ({
+                id: entryId,
+                confidence: Math.max(
+                  0.3,
+                  gatewayAIContextPackage.context.confidence -
+                    index * 0.05,
+                ),
+              }),
+            )
+          : [
+              { id: 'knowledge-entry-1', confidence: 0.4 },
+              { id: 'knowledge-entry-2', confidence: 0.5 },
+              { id: 'knowledge-entry-3', confidence: 0.45 },
+            ];
+
+      const sessionId =
+        runtimeSession?.id ?? 'runtime-session-demo';
+      const aiContextPackageId =
+        gatewayAIContextPackage?.id ?? 'ai-context-package-demo';
+      const aiContextTitle =
+        gatewayAIContextPackage?.metadata.title ?? 'Demo AI Context';
+
+      const currentMoveIndex =
+        runtimeSession === null || runtimeSession.currentMoveId === null
+          ? 0
+          : Math.max(
+              0,
+              runtimeSession.moveIds.indexOf(runtimeSession.currentMoveId),
+            );
+
+      const personalized = services.personalizationEngineApi.personalize({
+        aiContextPackageId,
+        aiContextTitle,
+        sessionId,
+        title: `${aiContextTitle} Personalization`,
+        priorityProfile: ['price', 'layout', 'location'],
+        knowledgeEntries,
+        sessionState: runtimeSession?.status ?? 'Running',
+        currentMoveIndex,
+      });
+      setPersonalizationPackage(personalized);
+      setPersonalizationEngineEvents(
+        services.personalizationEngine.getHistory(personalized.id),
+      );
+      setPersonalizationIndexCount(
+        services.personalizationEngine.getIndex().list(personalized.id)
+          .length,
+      );
+      setPersonalizationEngineMessage(
+        `Personalized for session ${sessionId}. AI Context and Runtime unchanged.`,
+      );
+    },
+    rankPersonalization(): void {
+      if (personalizationPackage === null) {
+        setPersonalizationEngineMessage('Nejdřív Personalize.');
+        return;
+      }
+      const ranked = services.personalizationEngine.rank(
+        personalizationPackage.id,
+      );
+      setPersonalizationPackage(ranked);
+      setPersonalizationEngineEvents(
+        services.personalizationEngine.getHistory(ranked.id),
+      );
+      setPersonalizationIndexCount(
+        services.personalizationEngine.getIndex().list(ranked.id).length,
+      );
+      setPersonalizationEngineMessage('Ranking refreshed.');
+    },
+    validatePersonalization(): void {
+      if (personalizationPackage === null) {
+        setPersonalizationEngineMessage('Nejdřív Personalize.');
+        return;
+      }
+      const validated =
+        services.personalizationEngineApi.validatePersonalization(
+          personalizationPackage.id,
+        );
+      setPersonalizationPackage(validated);
+      setPersonalizationEngineEvents(
+        services.personalizationEngine.getHistory(validated.id),
+      );
+      setPersonalizationEngineMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    publishPersonalization(): void {
+      if (personalizationPackage === null) {
+        setPersonalizationEngineMessage('Nejdřív Personalize.');
+        return;
+      }
+      const published =
+        services.personalizationEngineApi.publishPersonalization(
+          personalizationPackage.id,
+        );
+      setPersonalizationPackage(published);
+      setPersonalizationEngineEvents(
+        services.personalizationEngine.getHistory(published.id),
+      );
+      setPersonalizationIndexCount(
+        services.personalizationEngine.getIndex().list(published.id).length,
+      );
+      setPersonalizationEngineMessage(
+        published.metadata.status === 'Published'
+          ? `Published package @ ${published.version}`
+          : 'Publish blocked by validation.',
+      );
+    },
+    disposePersonalization(): void {
+      if (personalizationPackage === null) {
+        return;
+      }
+      const disposed = services.personalizationEngine.dispose(
+        personalizationPackage.id,
+      );
+      setPersonalizationPackage(disposed);
+      setPersonalizationEngineEvents(
+        services.personalizationEngine.getHistory(disposed.id),
+      );
+      setPersonalizationIndexCount(
+        services.personalizationEngine.getIndex().list(disposed.id).length,
+      );
+      setPersonalizationEngineMessage(null);
     },
     buildProject(): void {
       const projectId =

@@ -419,3 +419,16 @@ export type {
   GatewayAIContextValidation,
   GatewayAIContextValidationIssue,
 } from './ai-decision-gateway-types';
+
+export type {
+  PersonalizedContext,
+  PersonalizedRankingItem,
+  PersonalizationEngineEvent,
+  PersonalizationEngineEventType,
+  PersonalizationIndexEntry,
+  PersonalizationPackage,
+  PersonalizationRule,
+  PersonalizationValidation,
+  PersonalizationValidationIssue,
+  PersonalizeInput,
+} from './personalization-engine-types';

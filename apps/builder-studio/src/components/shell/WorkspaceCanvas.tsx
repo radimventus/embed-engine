@@ -32,6 +32,8 @@ import type {
   SynthesizedKnowledgeBase,
   AIDecisionGatewayEvent,
   GatewayAIContextPackage,
+  PersonalizationEngineEvent,
+  PersonalizationPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -78,6 +80,7 @@ import { PatternIntelligenceOverview } from './PatternIntelligenceOverview';
 import { HeuristicEngineOverview } from './HeuristicEngineOverview';
 import { KnowledgeSynthesisOverview } from './KnowledgeSynthesisOverview';
 import { AIDecisionGatewayOverview } from './AIDecisionGatewayOverview';
+import { PersonalizationEngineOverview } from './PersonalizationEngineOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -168,6 +171,10 @@ type WorkspaceCanvasProps = {
   readonly aiDecisionGatewayEvents: readonly AIDecisionGatewayEvent[];
   readonly aiDecisionGatewayIndexCount: number;
   readonly aiDecisionGatewayMessage: string | null;
+  readonly personalizationPackage: PersonalizationPackage | null;
+  readonly personalizationEngineEvents: readonly PersonalizationEngineEvent[];
+  readonly personalizationIndexCount: number;
+  readonly personalizationEngineMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -280,6 +287,11 @@ type WorkspaceCanvasProps = {
   readonly onValidateGatewayAIContext: () => void;
   readonly onPublishGatewayAIContext: () => void;
   readonly onDisposeGatewayAIContext: () => void;
+  readonly onPersonalizeContext: () => void;
+  readonly onRankPersonalization: () => void;
+  readonly onValidatePersonalization: () => void;
+  readonly onPublishPersonalization: () => void;
+  readonly onDisposePersonalization: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -353,6 +365,10 @@ export function WorkspaceCanvas({
   aiDecisionGatewayEvents,
   aiDecisionGatewayIndexCount,
   aiDecisionGatewayMessage,
+  personalizationPackage,
+  personalizationEngineEvents,
+  personalizationIndexCount,
+  personalizationEngineMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -455,6 +471,11 @@ export function WorkspaceCanvas({
   onValidateGatewayAIContext,
   onPublishGatewayAIContext,
   onDisposeGatewayAIContext,
+  onPersonalizeContext,
+  onRankPersonalization,
+  onValidatePersonalization,
+  onPublishPersonalization,
+  onDisposePersonalization,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -790,6 +811,20 @@ export function WorkspaceCanvas({
             onPublish={onPublishGatewayAIContext}
             onDispose={onDisposeGatewayAIContext}
             message={aiDecisionGatewayMessage}
+          />
+        ) : null}
+
+        {activeSection === 'personalization-engine' ? (
+          <PersonalizationEngineOverview
+            personalizationPackage={personalizationPackage}
+            events={personalizationEngineEvents}
+            indexCount={personalizationIndexCount}
+            onPersonalize={onPersonalizeContext}
+            onRank={onRankPersonalization}
+            onValidate={onValidatePersonalization}
+            onPublish={onPublishPersonalization}
+            onDispose={onDisposePersonalization}
+            message={personalizationEngineMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

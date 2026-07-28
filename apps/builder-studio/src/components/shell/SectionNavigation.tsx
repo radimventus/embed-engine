@@ -25,6 +25,7 @@ const SECTIONS: readonly {
   { id: 'heuristic-engine', label: 'Heuristics' },
   { id: 'knowledge-synthesis', label: 'Base' },
   { id: 'ai-decision-gateway', label: 'AI Gateway' },
+  { id: 'personalization-engine', label: 'Personalization' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

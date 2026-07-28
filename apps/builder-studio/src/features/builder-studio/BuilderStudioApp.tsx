@@ -112,6 +112,10 @@ export function BuilderStudioApp() {
         aiDecisionGatewayEvents={session.aiDecisionGatewayEvents}
         aiDecisionGatewayIndexCount={session.aiDecisionGatewayIndexCount}
         aiDecisionGatewayMessage={session.aiDecisionGatewayMessage}
+        personalizationPackage={session.personalizationPackage}
+        personalizationEngineEvents={session.personalizationEngineEvents}
+        personalizationIndexCount={session.personalizationIndexCount}
+        personalizationEngineMessage={session.personalizationEngineMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -214,6 +218,11 @@ export function BuilderStudioApp() {
         onValidateGatewayAIContext={session.validateGatewayAIContext}
         onPublishGatewayAIContext={session.publishGatewayAIContext}
         onDisposeGatewayAIContext={session.disposeGatewayAIContext}
+        onPersonalizeContext={session.personalizeContext}
+        onRankPersonalization={session.rankPersonalization}
+        onValidatePersonalization={session.validatePersonalization}
+        onPublishPersonalization={session.publishPersonalization}
+        onDisposePersonalization={session.disposePersonalization}
       />
     </AppShell>
   );

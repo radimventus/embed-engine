@@ -392,3 +392,22 @@ export {
   createGatewayAIContextIndex,
   type GatewayAIContextIndex,
 } from './ai-decision-gateway/ai-context-index';
+
+export {
+  createPersonalizationEngine,
+  type PersonalizationEngine,
+} from './personalization-engine/personalization-engine';
+export {
+  createPersonalizationEngineApi,
+  type PersonalizationEngineApi,
+} from './personalization-engine/personalization-engine-api';
+export {
+  createBasicPersonalizationStrategy,
+  createPersonalizationValidator,
+  type PersonalizationStrategy,
+  type PersonalizationValidator,
+} from './personalization-engine/basic-personalization-strategy';
+export {
+  createPersonalizationIndex,
+  type PersonalizationIndex,
+} from './personalization-engine/personalization-index';
