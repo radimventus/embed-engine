@@ -373,3 +373,22 @@ export {
   createKnowledgeSynthesisIndex,
   type KnowledgeSynthesisIndex,
 } from './knowledge-synthesis/knowledge-synthesis-index';
+
+export {
+  createAIDecisionGateway,
+  type AIDecisionGateway,
+} from './ai-decision-gateway/ai-decision-gateway';
+export {
+  createAIDecisionGatewayApi,
+  type AIDecisionGatewayApi,
+} from './ai-decision-gateway/ai-decision-gateway-api';
+export {
+  createBasicAIContextBuilder,
+  createGatewayAIContextValidator,
+  type GatewayAIContextBuilder,
+  type GatewayAIContextValidator,
+} from './ai-decision-gateway/basic-ai-context-builder';
+export {
+  createGatewayAIContextIndex,
+  type GatewayAIContextIndex,
+} from './ai-decision-gateway/ai-context-index';

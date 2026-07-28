@@ -37,6 +37,8 @@ import type {
   HeuristicEngineEvent,
   KnowledgeSynthesisEvent,
   SynthesizedKnowledgeBase,
+  AIDecisionGatewayEvent,
+  GatewayAIContextPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -114,6 +116,8 @@ import {
   createHeuristicEngine,
   createKnowledgeSynthesisApi,
   createKnowledgeSynthesisEngine,
+  createAIDecisionGatewayApi,
+  createAIDecisionGateway,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -217,6 +221,10 @@ export type BuilderStudioViewModel = {
   readonly knowledgeSynthesisEvents: readonly KnowledgeSynthesisEvent[];
   readonly knowledgeSynthesisIndexCount: number;
   readonly knowledgeSynthesisMessage: string | null;
+  readonly gatewayAIContextPackage: GatewayAIContextPackage | null;
+  readonly aiDecisionGatewayEvents: readonly AIDecisionGatewayEvent[];
+  readonly aiDecisionGatewayIndexCount: number;
+  readonly aiDecisionGatewayMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -335,6 +343,11 @@ export type BuilderStudioViewModel = {
   readonly validateSynthesizedKnowledge: () => void;
   readonly publishSynthesizedKnowledge: () => void;
   readonly disposeSynthesizedKnowledge: () => void;
+  readonly buildGatewayAIContext: () => void;
+  readonly filterGatewayAIContext: () => void;
+  readonly validateGatewayAIContext: () => void;
+  readonly publishGatewayAIContext: () => void;
+  readonly disposeGatewayAIContext: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -979,6 +992,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const knowledgeSynthesisApi = createKnowledgeSynthesisApi(
       knowledgeSynthesisEngine,
     );
+    const aiDecisionGateway = createAIDecisionGateway();
+    const aiDecisionGatewayApi = createAIDecisionGatewayApi(aiDecisionGateway);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1040,6 +1055,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       heuristicEngineApi,
       knowledgeSynthesisEngine,
       knowledgeSynthesisApi,
+      aiDecisionGateway,
+      aiDecisionGatewayApi,
     };
   }, []);
 
@@ -1285,6 +1302,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [knowledgeSynthesisIndexCount, setKnowledgeSynthesisIndexCount] =
     useState(0);
   const [knowledgeSynthesisMessage, setKnowledgeSynthesisMessage] = useState<
+    string | null
+  >(null);
+  const [gatewayAIContextPackage, setGatewayAIContextPackage] =
+    useState<GatewayAIContextPackage | null>(null);
+  const [aiDecisionGatewayEvents, setAIDecisionGatewayEvents] = useState<
+    readonly AIDecisionGatewayEvent[]
+  >([]);
+  const [aiDecisionGatewayIndexCount, setAIDecisionGatewayIndexCount] =
+    useState(0);
+  const [aiDecisionGatewayMessage, setAIDecisionGatewayMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1636,6 +1663,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     knowledgeSynthesisEvents,
     knowledgeSynthesisIndexCount,
     knowledgeSynthesisMessage,
+    gatewayAIContextPackage,
+    aiDecisionGatewayEvents,
+    aiDecisionGatewayIndexCount,
+    aiDecisionGatewayMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3297,6 +3328,143 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           .length,
       );
       setKnowledgeSynthesisMessage(null);
+    },
+    buildGatewayAIContext(): void {
+      const entries =
+        synthesizedKnowledgeBase !== null &&
+        synthesizedKnowledgeBase.entries.length > 0
+          ? synthesizedKnowledgeBase.entries.map((entry) => ({
+              id: entry.id,
+              title: entry.title,
+              description: entry.description,
+              confidence: entry.confidence,
+              sourceHeuristics: entry.sourceHeuristics,
+            }))
+          : [
+              {
+                id: 'knowledge-entry-1',
+                title: 'Knowledge: Repeated source',
+                description: 'Demo synthesized knowledge.',
+                confidence: 0.4,
+                sourceHeuristics: ['derived-heuristic-1'],
+              },
+              {
+                id: 'knowledge-entry-2',
+                title: 'Knowledge: Multi-record package',
+                description: 'Demo synthesized knowledge.',
+                confidence: 0.5,
+                sourceHeuristics: ['derived-heuristic-2'],
+              },
+              {
+                id: 'knowledge-entry-3',
+                title: 'Catalog knowledge summary',
+                description: 'Demo catalog summary.',
+                confidence: 0.45,
+                sourceHeuristics: [
+                  'derived-heuristic-1',
+                  'derived-heuristic-2',
+                ],
+              },
+            ];
+
+      const knowledgeBaseId =
+        synthesizedKnowledgeBase?.id ?? 'knowledge-base-demo';
+      const knowledgeBaseTitle =
+        synthesizedKnowledgeBase?.metadata.title ?? 'Demo Knowledge Base';
+
+      const built = services.aiDecisionGatewayApi.buildAIContext({
+        knowledgeBaseId,
+        knowledgeBaseTitle,
+        title: `${knowledgeBaseTitle} AI Context`,
+        maxEntries: 8,
+        minConfidence: 0.25,
+        entries,
+      });
+      setGatewayAIContextPackage(built);
+      setAIDecisionGatewayEvents(
+        services.aiDecisionGateway.getHistory(built.id),
+      );
+      setAIDecisionGatewayIndexCount(
+        services.aiDecisionGateway.getIndex().list(built.id).length,
+      );
+      setAIDecisionGatewayMessage(
+        `Built context with ${built.context.knowledgeEntries.length} entr(y/ies). Knowledge Base unchanged.`,
+      );
+    },
+    filterGatewayAIContext(): void {
+      if (gatewayAIContextPackage === null) {
+        setAIDecisionGatewayMessage('Nejdřív Build Context.');
+        return;
+      }
+      const filtered = services.aiDecisionGateway.filter(
+        gatewayAIContextPackage.id,
+        { maxEntries: 2, minConfidence: 0.35 },
+      );
+      setGatewayAIContextPackage(filtered);
+      setAIDecisionGatewayEvents(
+        services.aiDecisionGateway.getHistory(filtered.id),
+      );
+      setAIDecisionGatewayIndexCount(
+        services.aiDecisionGateway.getIndex().list(filtered.id).length,
+      );
+      setAIDecisionGatewayMessage(
+        `Filtered to ${filtered.context.knowledgeEntries.length} entr(y/ies).`,
+      );
+    },
+    validateGatewayAIContext(): void {
+      if (gatewayAIContextPackage === null) {
+        setAIDecisionGatewayMessage('Nejdřív Build Context.');
+        return;
+      }
+      const validated = services.aiDecisionGatewayApi.validateAIContext(
+        gatewayAIContextPackage.id,
+      );
+      setGatewayAIContextPackage(validated);
+      setAIDecisionGatewayEvents(
+        services.aiDecisionGateway.getHistory(validated.id),
+      );
+      setAIDecisionGatewayMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    publishGatewayAIContext(): void {
+      if (gatewayAIContextPackage === null) {
+        setAIDecisionGatewayMessage('Nejdřív Build Context.');
+        return;
+      }
+      const published = services.aiDecisionGatewayApi.publishAIContext(
+        gatewayAIContextPackage.id,
+      );
+      setGatewayAIContextPackage(published);
+      setAIDecisionGatewayEvents(
+        services.aiDecisionGateway.getHistory(published.id),
+      );
+      setAIDecisionGatewayIndexCount(
+        services.aiDecisionGateway.getIndex().list(published.id).length,
+      );
+      setAIDecisionGatewayMessage(
+        published.metadata.status === 'Published'
+          ? `Published package @ ${published.version}`
+          : 'Publish blocked by validation.',
+      );
+    },
+    disposeGatewayAIContext(): void {
+      if (gatewayAIContextPackage === null) {
+        return;
+      }
+      const disposed = services.aiDecisionGateway.dispose(
+        gatewayAIContextPackage.id,
+      );
+      setGatewayAIContextPackage(disposed);
+      setAIDecisionGatewayEvents(
+        services.aiDecisionGateway.getHistory(disposed.id),
+      );
+      setAIDecisionGatewayIndexCount(
+        services.aiDecisionGateway.getIndex().list(disposed.id).length,
+      );
+      setAIDecisionGatewayMessage(null);
     },
     buildProject(): void {
       const projectId =

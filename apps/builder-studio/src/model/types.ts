@@ -38,6 +38,7 @@ export type WorkspaceSectionId =
   | 'pattern-intelligence'
   | 'heuristic-engine'
   | 'knowledge-synthesis'
+  | 'ai-decision-gateway'
   | 'media'
   | 'layout'
   | 'knowledge';

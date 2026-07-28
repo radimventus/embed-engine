@@ -24,6 +24,7 @@ const SECTIONS: readonly {
   { id: 'pattern-intelligence', label: 'Patterns' },
   { id: 'heuristic-engine', label: 'Heuristics' },
   { id: 'knowledge-synthesis', label: 'Base' },
+  { id: 'ai-decision-gateway', label: 'AI Gateway' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

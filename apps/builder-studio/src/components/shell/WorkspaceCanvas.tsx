@@ -30,6 +30,8 @@ import type {
   HeuristicEngineEvent,
   KnowledgeSynthesisEvent,
   SynthesizedKnowledgeBase,
+  AIDecisionGatewayEvent,
+  GatewayAIContextPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -75,6 +77,7 @@ import { PatternExtractionOverview } from './PatternExtractionOverview';
 import { PatternIntelligenceOverview } from './PatternIntelligenceOverview';
 import { HeuristicEngineOverview } from './HeuristicEngineOverview';
 import { KnowledgeSynthesisOverview } from './KnowledgeSynthesisOverview';
+import { AIDecisionGatewayOverview } from './AIDecisionGatewayOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -161,6 +164,10 @@ type WorkspaceCanvasProps = {
   readonly knowledgeSynthesisEvents: readonly KnowledgeSynthesisEvent[];
   readonly knowledgeSynthesisIndexCount: number;
   readonly knowledgeSynthesisMessage: string | null;
+  readonly gatewayAIContextPackage: GatewayAIContextPackage | null;
+  readonly aiDecisionGatewayEvents: readonly AIDecisionGatewayEvent[];
+  readonly aiDecisionGatewayIndexCount: number;
+  readonly aiDecisionGatewayMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -268,6 +275,11 @@ type WorkspaceCanvasProps = {
   readonly onValidateSynthesizedKnowledge: () => void;
   readonly onPublishSynthesizedKnowledge: () => void;
   readonly onDisposeSynthesizedKnowledge: () => void;
+  readonly onBuildGatewayAIContext: () => void;
+  readonly onFilterGatewayAIContext: () => void;
+  readonly onValidateGatewayAIContext: () => void;
+  readonly onPublishGatewayAIContext: () => void;
+  readonly onDisposeGatewayAIContext: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -337,6 +349,10 @@ export function WorkspaceCanvas({
   knowledgeSynthesisEvents,
   knowledgeSynthesisIndexCount,
   knowledgeSynthesisMessage,
+  gatewayAIContextPackage,
+  aiDecisionGatewayEvents,
+  aiDecisionGatewayIndexCount,
+  aiDecisionGatewayMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -434,6 +450,11 @@ export function WorkspaceCanvas({
   onValidateSynthesizedKnowledge,
   onPublishSynthesizedKnowledge,
   onDisposeSynthesizedKnowledge,
+  onBuildGatewayAIContext,
+  onFilterGatewayAIContext,
+  onValidateGatewayAIContext,
+  onPublishGatewayAIContext,
+  onDisposeGatewayAIContext,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -755,6 +776,20 @@ export function WorkspaceCanvas({
             onPublish={onPublishSynthesizedKnowledge}
             onDispose={onDisposeSynthesizedKnowledge}
             message={knowledgeSynthesisMessage}
+          />
+        ) : null}
+
+        {activeSection === 'ai-decision-gateway' ? (
+          <AIDecisionGatewayOverview
+            aiContextPackage={gatewayAIContextPackage}
+            events={aiDecisionGatewayEvents}
+            indexCount={aiDecisionGatewayIndexCount}
+            onBuild={onBuildGatewayAIContext}
+            onFilter={onFilterGatewayAIContext}
+            onValidate={onValidateGatewayAIContext}
+            onPublish={onPublishGatewayAIContext}
+            onDispose={onDisposeGatewayAIContext}
+            message={aiDecisionGatewayMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

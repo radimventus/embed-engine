@@ -407,3 +407,15 @@ export type {
   SynthesizedKnowledgeBase,
   SynthesizedKnowledgeReference,
 } from './knowledge-synthesis-types';
+
+export type {
+  AIDecisionGatewayEvent,
+  AIDecisionGatewayEventType,
+  BuildGatewayAIContextInput,
+  GatewayAIContext,
+  GatewayAIContextIndexEntry,
+  GatewayAIContextPackage,
+  GatewayAIContextReference,
+  GatewayAIContextValidation,
+  GatewayAIContextValidationIssue,
+} from './ai-decision-gateway-types';

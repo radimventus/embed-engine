@@ -108,6 +108,10 @@ export function BuilderStudioApp() {
         knowledgeSynthesisEvents={session.knowledgeSynthesisEvents}
         knowledgeSynthesisIndexCount={session.knowledgeSynthesisIndexCount}
         knowledgeSynthesisMessage={session.knowledgeSynthesisMessage}
+        gatewayAIContextPackage={session.gatewayAIContextPackage}
+        aiDecisionGatewayEvents={session.aiDecisionGatewayEvents}
+        aiDecisionGatewayIndexCount={session.aiDecisionGatewayIndexCount}
+        aiDecisionGatewayMessage={session.aiDecisionGatewayMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -205,6 +209,11 @@ export function BuilderStudioApp() {
         onValidateSynthesizedKnowledge={session.validateSynthesizedKnowledge}
         onPublishSynthesizedKnowledge={session.publishSynthesizedKnowledge}
         onDisposeSynthesizedKnowledge={session.disposeSynthesizedKnowledge}
+        onBuildGatewayAIContext={session.buildGatewayAIContext}
+        onFilterGatewayAIContext={session.filterGatewayAIContext}
+        onValidateGatewayAIContext={session.validateGatewayAIContext}
+        onPublishGatewayAIContext={session.publishGatewayAIContext}
+        onDisposeGatewayAIContext={session.disposeGatewayAIContext}
       />
     </AppShell>
   );
