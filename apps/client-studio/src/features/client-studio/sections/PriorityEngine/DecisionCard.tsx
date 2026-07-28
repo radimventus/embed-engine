@@ -29,8 +29,7 @@ type DecisionCardProps = {
 const ACTIVE_ICON_COUNTER_SCALE = 'scale-[0.893]';
 
 const IDLE_BORDER = '#E3E3E3';
-/** Idle hover — navy border (CAP UX 54 / design system). */
-const HOVER_BORDER = '#001930';
+const HOVER_BORDER = '#D4AF37';
 const ACTIVE_BORDER = '#D4AF37';
 const CARD_BG = '#F7F6F4';
 
@@ -43,11 +42,13 @@ export function DecisionCard({
   onImportanceChange,
   onToggle,
 }: DecisionCardProps) {
-  const highlightClass = isPrimary
-    ? DECISION_CARD_PRIMARY_CLASS
-    : isRelated
-      ? DECISION_CARD_RELATED_CLASS
-      : '';
+  const highlightClass = isActive
+    ? ''
+    : isPrimary
+      ? DECISION_CARD_PRIMARY_CLASS
+      : isRelated
+        ? DECISION_CARD_RELATED_CLASS
+        : '';
 
   return (
     <div
@@ -81,10 +82,9 @@ export function DecisionCard({
             return;
           }
           event.currentTarget.style.borderColor = HOVER_BORDER;
-          event.currentTarget.style.borderWidth = '2px';
-          event.currentTarget.style.boxShadow =
-            '0 8px 22px rgba(0,25,48,0.14)';
-          event.currentTarget.style.transform = 'scale(1.06)';
+          event.currentTarget.style.borderWidth = '1px';
+          event.currentTarget.style.boxShadow = 'none';
+          event.currentTarget.style.transform = 'translateY(-2px) scale(1.01)';
           event.currentTarget.style.zIndex = '5';
         }}
         onMouseLeave={(event) => {
@@ -94,7 +94,7 @@ export function DecisionCard({
           event.currentTarget.style.borderColor = IDLE_BORDER;
           event.currentTarget.style.borderWidth = '1px';
           event.currentTarget.style.boxShadow = 'none';
-          event.currentTarget.style.transform = 'scale(1)';
+          event.currentTarget.style.transform = 'translateY(0) scale(1)';
           event.currentTarget.style.zIndex = '0';
         }}
       >
@@ -123,8 +123,6 @@ export function DecisionCard({
               ? 'max-h-10 translate-y-0 pt-2 opacity-100'
               : 'pointer-events-none max-h-0 translate-y-1 opacity-0'
           }`}
-          onClick={(event) => event.stopPropagation()}
-          onKeyDown={(event) => event.stopPropagation()}
         >
           {isActive ? <DecisionSlider value={importance} onChange={onImportanceChange} /> : null}
         </div>

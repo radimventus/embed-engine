@@ -212,6 +212,8 @@ export type PriorityHypothesisSummary = {
   readonly lead: string;
   readonly prioritiesLine: string;
   readonly pictureLine: string;
+  /** Per-answer insight lines — expands „Co už o vás vím“ (CAP UX3 07). */
+  readonly insightLines: readonly string[];
   readonly thanksLine: string;
 };
 
@@ -221,20 +223,39 @@ export function buildPriorityHypothesisSummary(input: {
 }): PriorityHypothesisSummary {
   const titles = input.tags.map((tag) => tag.title);
   const list = formatPriorityListCs(titles);
-  const pictureParts: string[] = [];
+  const insightLines: string[] = [];
 
-  for (const [priorityId, optionId] of Object.entries(input.answers)) {
-    const question = dialogQuestionFor(priorityId);
+  for (const tag of input.tags) {
+    const optionId = input.answers[tag.id];
+    if (!optionId) {
+      continue;
+    }
+    const question = dialogQuestionFor(tag.id);
     const option = question?.options.find((item) => item.id === optionId);
-    const title = priorityTitleForId(priorityId);
     if (option) {
-      pictureParts.push(`${title.toLowerCase()}: ${option.label.toLowerCase()}`);
+      insightLines.push(
+        `U priority ${tag.title.toLowerCase()} vnímám důraz na „${option.label.toLowerCase()}“.`,
+      );
+    }
+  }
+
+  // Fallback when answers are missing ids that don't match tag order.
+  if (insightLines.length === 0) {
+    for (const [priorityId, optionId] of Object.entries(input.answers)) {
+      const question = dialogQuestionFor(priorityId);
+      const option = question?.options.find((item) => item.id === optionId);
+      const title = priorityTitleForId(priorityId);
+      if (option) {
+        insightLines.push(
+          `U priority ${title.toLowerCase()} vnímám důraz na „${option.label.toLowerCase()}“.`,
+        );
+      }
     }
   }
 
   const picture =
-    pictureParts.length > 0
-      ? `Zdá se, že ve vašem rozhodování hraje roli především ${pictureParts.join('; ')}.`
+    insightLines.length > 0
+      ? 'Zdá se, že ve vašem rozhodování hraje roli především tohle:'
       : 'První obraz rozhodování se teprve rýsuje — a to je v pořádku.';
 
   return {
@@ -245,8 +266,9 @@ export function buildPriorityHypothesisSummary(input: {
         ? `Vaše hlavní priority teď vnímám jako ${list}.`
         : 'Už mám první obrys vašich priorit.',
     pictureLine: picture,
+    insightLines,
     thanksLine:
-      'Díky vašim odpovědím už dokážu připravit přesnější doporučení — jako první odhad, ne jako hotový závěr.',
+      'Díky vašim odpovědím už dokážu připravit přesnější doporučení — jako první odhad, ne jako hotový závěr. Budeme z toho vycházet v další kapitole.',
   };
 }
 

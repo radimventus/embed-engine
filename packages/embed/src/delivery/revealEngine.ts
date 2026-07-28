@@ -13,8 +13,10 @@ import {
   resolveLandingAnchorId,
 } from "./landingAnchorResolver";
 
-/** Smooth landing reveal duration (presentation only — not a public mount option). */
-export const LANDING_REVEAL_DURATION_MS = 1125;
+/** Static Hero hold before landing roll (CAP UX3 08) — 0,5 s statický obrázek. */
+export const LANDING_STATIC_HOLD_MS = 500;
+/** Linear landing roll after hold — lands ~1 s from ready (CAP UX3 08). */
+export const LANDING_REVEAL_DURATION_MS = 500;
 
 export type RevealState =
   | "idle"
@@ -46,6 +48,8 @@ export type SettleViewportOptions = {
   readonly signal?: AbortSignal;
   /** Scroll animation length in ms. Use `0` for instant settle (tests). */
   readonly durationMs?: number;
+  /** Static hold at Hero before rolling (default LANDING_STATIC_HOLD_MS). */
+  readonly staticHoldMs?: number;
   /**
    * When true (default), jump to top first so Hero is the initial view,
    * then animate to the Landing Anchor.
@@ -79,6 +83,24 @@ function waitForNextPaint(): Promise<void> {
   });
 }
 
+function waitMs(ms: number, signal: AbortSignal): Promise<void> {
+  if (ms <= 0) {
+    return Promise.resolve();
+  }
+  return new Promise((resolve) => {
+    if (signal.aborted) {
+      resolve();
+      return;
+    }
+    const timer = setTimeout(() => resolve(), ms);
+    const onAbort = (): void => {
+      clearTimeout(timer);
+      resolve();
+    };
+    signal.addEventListener("abort", onAbort, { once: true });
+  });
+}
+
 /**
  * Sticky Experience header height inside the Delivery scrollport.
  * Landing Anchor settle subtracts this so content sits just below the header.
@@ -94,14 +116,8 @@ export function readStickyHeaderOffset(scrollContainer: HTMLElement): number {
 }
 
 /**
- * Ease-in-out cubic for a natural vertical reveal (no fade / no library).
- */
-function easeInOutCubic(t: number): number {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-}
-
-/**
- * Animate `scrollTop` over `durationMs`. Resolves early when aborted.
+ * Animate `scrollTop` with linear tempo (CAP UX3 08).
+ * Forces scroll-behavior:auto so CSS smooth cannot re-ease each frame.
  */
 export function animateScrollTop(
   scrollContainer: HTMLElement,
@@ -111,14 +127,25 @@ export function animateScrollTop(
 ): Promise<void> {
   const from = scrollContainer.scrollTop;
   const to = Math.max(0, targetTop);
+  const previousBehavior = scrollContainer.style.scrollBehavior;
+  const previousPadding = scrollContainer.style.scrollPaddingTop;
+  scrollContainer.style.scrollBehavior = "auto";
+  scrollContainer.style.scrollPaddingTop = "0px";
+
+  const restore = (): void => {
+    scrollContainer.style.scrollBehavior = previousBehavior;
+    scrollContainer.style.scrollPaddingTop = previousPadding;
+  };
 
   if (durationMs <= 0 || Math.abs(to - from) < 1) {
     scrollContainer.scrollTo({ top: to, left: 0, behavior: "auto" });
+    restore();
     return Promise.resolve();
   }
 
   if (typeof requestAnimationFrame !== "function") {
     scrollContainer.scrollTo({ top: to, left: 0, behavior: "auto" });
+    restore();
     return Promise.resolve();
   }
 
@@ -130,17 +157,20 @@ export function animateScrollTop(
 
     const tick = (now: number): void => {
       if (signal.aborted) {
+        restore();
         resolve();
         return;
       }
       const elapsed = now - start;
       const t = Math.min(1, elapsed / durationMs);
-      scrollContainer.scrollTop = from + (to - from) * easeInOutCubic(t);
+      // Linear — ease-in-out felt stuck then rushed (CAP UX3 08).
+      scrollContainer.scrollTop = from + (to - from) * t;
       if (t < 1) {
         requestAnimationFrame(tick);
         return;
       }
       scrollContainer.scrollTop = to;
+      restore();
       resolve();
     };
 
@@ -149,8 +179,8 @@ export function animateScrollTop(
 }
 
 /**
- * Scroll Delivery scrollport so `element` sits just below the sticky header.
- * Default: start at Hero (top), then smooth-scroll ~1125ms to the Landing Anchor.
+ * Scroll Delivery scrollport so `element` sits flush under the sticky header.
+ * Default: Hero static hold → linear roll to Landing Anchor (CAP UX3 08).
  */
 export async function settleViewportToElement(
   scrollContainer: HTMLElement,
@@ -159,12 +189,21 @@ export async function settleViewportToElement(
 ): Promise<void> {
   const signal = settleOptions.signal ?? new AbortController().signal;
   const durationMs = settleOptions.durationMs ?? LANDING_REVEAL_DURATION_MS;
+  const staticHoldMs = settleOptions.staticHoldMs ?? LANDING_STATIC_HOLD_MS;
   const fromTop = settleOptions.fromTop !== false;
 
   if (fromTop) {
+    scrollContainer.style.scrollBehavior = "auto";
     scrollContainer.scrollTo({ top: 0, left: 0, behavior: "auto" });
     await waitForNextPaint();
   }
+
+  if (isAborted(signal)) {
+    return;
+  }
+
+  // Static Hero first (0.5 s), then linear roll — Social Proof flush under header.
+  await waitMs(staticHoldMs, signal);
 
   if (isAborted(signal)) {
     return;

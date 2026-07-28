@@ -51,6 +51,8 @@ export type PriorityConversationView = {
   readonly progress: PriorityConversationProgress;
   readonly finishSelection: () => void;
   readonly addMorePriorities: () => void;
+  /** Scrolls to chapter summary — only on explicit Pokračovat (CAP UX3 08). */
+  readonly continueToSummary: () => void;
   readonly acknowledgePrep: () => void;
   readonly answerQuestion: (priorityId: string, optionId: string) => void;
   readonly continueDialog: () => void;
@@ -87,7 +89,6 @@ export function usePriorityConversation(): PriorityConversationView {
   const progress = progressRef.current;
   const advanceTimerRef = useRef<number | null>(null);
   const thinkingTimerRef = useRef<number | null>(null);
-  const pendingBridgeScrollRef = useRef(false);
 
   const [selectionOrder, setSelectionOrder] = useState<string[]>([]);
   const [selectionClosed, setSelectionClosed] = useState(false);
@@ -260,28 +261,6 @@ export function usePriorityConversation(): PriorityConversationView {
     progress.record({ type: 'phase', phase, at: Date.now() });
   }, [phase, progress]);
 
-  useEffect(() => {
-    if (phase !== 'complete' || !pendingBridgeScrollRef.current) {
-      return;
-    }
-    pendingBridgeScrollRef.current = false;
-    let cancelled = false;
-    const delayMs = 1500;
-    const timer = window.setTimeout(() => {
-      if (cancelled) {
-        return;
-      }
-      const target = document.getElementById(PRIORITY_BRIDGE_ANCHOR_ID);
-      if (target) {
-        scrollElementIntoView(target, 600);
-      }
-    }, delayMs);
-    return () => {
-      cancelled = true;
-      window.clearTimeout(timer);
-    };
-  }, [phase]);
-
   const tags = useMemo((): PriorityTagView[] => {
     const titleById = Object.fromEntries(
       categories.map((category) => [category.id, category.title]),
@@ -371,6 +350,17 @@ export function usePriorityConversation(): PriorityConversationView {
     progress.record({ type: 'add-more', at: Date.now() });
   };
 
+  /** After quiz complete — scroll to summary only when user clicks Pokračovat. */
+  const continueToSummary = () => {
+    if (phase !== 'complete' || isAdvancing) {
+      return;
+    }
+    const target = document.getElementById(PRIORITY_BRIDGE_ANCHOR_ID);
+    if (target) {
+      scrollElementIntoView(target, 700, { easing: 'linear' });
+    }
+  };
+
   const acknowledgePrep = () => {
     if (isAdvancing) {
       return;
@@ -418,17 +408,11 @@ export function usePriorityConversation(): PriorityConversationView {
       return;
     }
     const priorityId = activePriorityId;
-    const finishesQuiz =
-      dialogQueue.length > 0 &&
-      dialogQueue.every((id) => answers[id] !== undefined);
     progress.record({
       type: 'dialog-continue',
       priorityId,
       at: Date.now(),
     });
-    if (finishesQuiz) {
-      pendingBridgeScrollRef.current = true;
-    }
     setDialogBeat('question');
     setInterpretation(null);
     setActivePriorityId(null);
@@ -495,6 +479,7 @@ export function usePriorityConversation(): PriorityConversationView {
     progress,
     finishSelection,
     addMorePriorities,
+    continueToSummary,
     acknowledgePrep,
     answerQuestion,
     continueDialog,

@@ -256,6 +256,7 @@ describe("Reveal Engine (event-driven)", () => {
     });
     await settleViewportToElement(container, el, {
       durationMs: 0,
+      staticHoldMs: 0,
       fromTop: false,
     });
     assert.equal(scrolledTo, 250 - 72);

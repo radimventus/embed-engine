@@ -46,15 +46,19 @@ export function PriorityChapterBridge() {
       data-testid="priority-chapter-bridge"
       aria-label="Shrnutí priorit a další hodnota"
     >
-      <div className="mx-auto flex w-[75%] flex-col gap-5">
-        <header className="flex flex-col gap-3">
+      <div className="flex flex-col gap-5">
+        <header className="mx-auto flex w-[75%] flex-col gap-3">
           <h2 className={titleClass} data-testid="priority-bridge-title">
             {PRIORITY_BRIDGE_TITLE}
           </h2>
           <p className={bodyClass}>{PRIORITY_BRIDGE_SUMMARY}</p>
         </header>
 
-        <div className="flex flex-col gap-3" data-testid="priority-bridge-know">
+        {/* Full card width + expanded insight lines (CAP UX3 07). */}
+        <div
+          className="flex w-full flex-col gap-3"
+          data-testid="priority-bridge-know"
+        >
           <h3 className={goldHeadingClass}>{PRIORITY_BRIDGE_KNOW_HEADING}</h3>
           <p className={bodyClass}>{hypothesis.prioritiesLine}</p>
           <p
@@ -63,12 +67,23 @@ export function PriorityChapterBridge() {
           >
             {hypothesis.pictureLine}
           </p>
+          {hypothesis.insightLines.map((line) => (
+            <p key={line} className={bodyClass}>
+              {line}
+            </p>
+          ))}
           <p className={softClass}>{hypothesis.thanksLine}</p>
         </div>
 
-        <div className="flex flex-col gap-2" data-testid="priority-bridge-report">
+        <div
+          className="mx-auto flex w-[75%] flex-col gap-2"
+          data-testid="priority-bridge-report"
+        >
           <h3 className={goldHeadingClass}>{PRIORITY_BRIDGE_GAIN_HEADING}</h3>
-          <p className={`${bodyClass} font-medium`}>
+          <p
+            className={bodyClass}
+            style={{ fontWeight: 700 }}
+          >
             {PRIORITY_BRIDGE_REPORT_TITLE}
           </p>
           {PRIORITY_BRIDGE_REPORT_LINES.map((line) => (
@@ -78,7 +93,10 @@ export function PriorityChapterBridge() {
           ))}
         </div>
 
-        <div className="flex flex-col gap-2" data-testid="priority-bridge-next">
+        <div
+          className="mx-auto flex w-[75%] flex-col gap-2"
+          data-testid="priority-bridge-next"
+        >
           <h3 className={goldHeadingClass}>{PRIORITY_BRIDGE_NEXT_HEADING}</h3>
           {PRIORITY_BRIDGE_NEXT_LINES.map((line) => (
             <p key={line} className={bodyClass}>
@@ -88,7 +106,7 @@ export function PriorityChapterBridge() {
         </div>
 
         <div
-          className="border-t border-[#E3E3E3] pt-4 text-center"
+          className="mx-auto w-[75%] border-t border-[#E3E3E3] pt-4 text-center"
           data-testid="priority-bridge-crossroads"
         >
           <p className={goldHeadingClass}>

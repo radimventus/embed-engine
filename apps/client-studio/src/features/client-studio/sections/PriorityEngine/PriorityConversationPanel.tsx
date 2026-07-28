@@ -16,6 +16,8 @@ import {
   PRIORITY_CONVERSATION_PREP_CONTINUE,
   PRIORITY_CONVERSATION_PREP_LINES,
   PRIORITY_CONVERSATION_PREP_TITLE,
+  PRIORITY_CONVERSATION_REVISIT_CONTINUE,
+  PRIORITY_CONVERSATION_REVISIT_PROMPT,
   PRIORITY_CONVERSATION_START_HEADING,
   PRIORITY_CONVERSATION_START_LINES,
 } from './priorityConversation.constants';
@@ -105,21 +107,28 @@ function PrioritySwitchTrack({
   ariaLabel,
   className = 'mt-3',
   shift = null,
+  /** Vertical offset in line-heights of body text (1 line ≈ 1.6em). */
+  offsetLines = 0,
 }: {
   children: ReactNode;
   ariaLabel?: string;
   className?: string;
-  /** Pixel shift from natural centered placement. */
+  /** Pixel shift from natural centered placement (horizontal only when offsetLines is used). */
   shift?: { readonly x: number; readonly y: number } | null;
+  offsetLines?: number;
 }) {
   return (
     <div
       className={`${className} flex w-full justify-center`}
-      style={
-        shift
-          ? { marginLeft: shift.x, marginTop: shift.y }
-          : undefined
-      }
+      style={{
+        ...(shift ? { marginLeft: shift.x } : {}),
+        // Use paddingTop — ConisMessage space-y utilities set margin-top !important.
+        ...(offsetLines > 0
+          ? { paddingTop: `${offsetLines * 1.6}em` }
+          : shift && shift.y !== 0
+            ? { paddingTop: shift.y }
+            : {}),
+      }}
     >
       <div
         className="flex w-1/2 min-w-0 shrink-0 items-stretch gap-[1.6px] rounded-[6.4px] border border-solid p-[1.6px]"
@@ -158,6 +167,7 @@ export function PriorityConversationPanel() {
     acknowledgePrep,
     answerQuestion,
     continueDialog,
+    continueToSummary,
   } = usePriorityConversationContext();
 
   const showTags =
@@ -293,7 +303,9 @@ export function PriorityConversationPanel() {
           ))}
           <PrioritySwitchTrack
             ariaLabel="Nastavení priorit"
-            shift={{ x: -40, y: 40 }}
+            className=""
+            shift={{ x: -40, y: 0 }}
+            offsetLines={3}
           >
             {canAddMore ? (
               <span
@@ -333,7 +345,11 @@ export function PriorityConversationPanel() {
               {line}
             </p>
           ))}
-          <PrioritySwitchTrack shift={{ x: -40, y: 40 }}>
+          <PrioritySwitchTrack
+            className=""
+            shift={{ x: -40, y: 0 }}
+            offsetLines={2}
+          >
             <PriorityWhiteActionButton
               testId="priority-conversation-prep-continue"
               label={PRIORITY_CONVERSATION_PREP_CONTINUE}
@@ -458,8 +474,8 @@ export function PriorityConversationPanel() {
                         {interpretation}
                       </p>
                     </div>
-                    <div className="mt-1 flex w-full justify-center">
-                      <div className="w-1/2 min-w-0">
+                    <div className="mt-1 flex w-full items-center justify-center">
+                      <div className="flex w-[75%] min-w-0">
                         <PriorityWhiteActionButton
                           testId="priority-conversation-dialog-continue"
                           label={PRIORITY_CONVERSATION_PREP_CONTINUE}
@@ -486,6 +502,24 @@ export function PriorityConversationPanel() {
           <p className={bodyTextClass}>
             {PRIORITY_CONVERSATION_COMPLETE_PANEL_LINE}
           </p>
+          <p
+            className={bodyTextClass}
+            data-testid="priority-conversation-revisit-prompt"
+          >
+            {PRIORITY_CONVERSATION_REVISIT_PROMPT}
+          </p>
+          <PrioritySwitchTrack
+            className=""
+            offsetLines={1}
+            shift={{ x: -60, y: 0 }}
+          >
+            <PriorityWhiteActionButton
+              testId="priority-conversation-revisit-continue"
+              label={PRIORITY_CONVERSATION_REVISIT_CONTINUE}
+              onClick={continueToSummary}
+              disabled={isAdvancing}
+            />
+          </PrioritySwitchTrack>
         </ConisMessage>
       ) : null}
     </aside>

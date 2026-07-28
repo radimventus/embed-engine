@@ -118,6 +118,8 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(journey, /Rozhodnutí/);
     assert.match(sceneFrame, /Pokračovat/);
     assert.match(sceneFrame, /Zpět/);
+    assert.match(sceneFrame, /40px/);
+    assert.match(sceneFrame, /CAP UX3 09/);
     assert.match(root, /snapEnabled/);
     assert.match(css, /scroll-snap-type: y proximity/);
     assert.equal(page.includes('DecisionJourneyIndicator'), false);

@@ -44,19 +44,27 @@ export function scrollToSection(sectionId: string): void {
 /** Priority chapter bridge block — CAP UX 39 scroll target. */
 export const PRIORITY_BRIDGE_ANCHOR_ID = 'priority-chapter-bridge';
 
+export type ScrollElementIntoViewOptions = {
+  /** Constant-speed roll (default). Ease-in-out feels stuck then rushes. */
+  readonly easing?: 'linear' | 'ease-in-out';
+};
+
 /**
- * Timed smooth scroll for Priority bridge anchor (CAP UX 39).
- * Does not change default scrollToSection behavior for other sections.
+ * Timed scroll for Priority bridge anchor (CAP UX 39 / CAP UX3 07).
+ * Caller holds the target statically first; this only performs the roll.
+ * Default easing is linear so tempo stays even for the whole distance.
  */
 export function scrollElementIntoView(
   target: HTMLElement,
   durationMs: number = 600,
+  options: ScrollElementIntoViewOptions = {},
 ): void {
   const header = document.querySelector<HTMLElement>('[data-experience-header]');
   const safeOffset = 20;
   const headerOffset = header
     ? Math.ceil(header.getBoundingClientRect().height) + safeOffset
     : safeOffset;
+  const easing = options.easing ?? 'linear';
 
   const overlayMount = document.querySelector<HTMLElement>(
     '[data-embed-overlay-mount]',
@@ -73,11 +81,17 @@ export function scrollElementIntoView(
       overlayMount.scrollTop +
       (elementRect.top - containerRect.top) -
       headerOffset;
-    animateScroll(overlayMount, Math.max(0, nextTop), durationMs, reducedMotion);
+    animateScroll(
+      overlayMount,
+      Math.max(0, nextTop),
+      durationMs,
+      reducedMotion,
+      easing,
+    );
   } else {
     const top =
       window.scrollY + target.getBoundingClientRect().top - headerOffset;
-    animateScroll(window, Math.max(0, top), durationMs, reducedMotion);
+    animateScroll(window, Math.max(0, top), durationMs, reducedMotion, easing);
   }
 
   if (typeof target.focus === 'function') {
@@ -85,11 +99,24 @@ export function scrollElementIntoView(
   }
 }
 
+function easeProgress(
+  progress: number,
+  easing: 'linear' | 'ease-in-out',
+): number {
+  if (easing === 'linear') {
+    return progress;
+  }
+  return progress < 0.5
+    ? 2 * progress * progress
+    : 1 - (-2 * progress + 2) ** 2 / 2;
+}
+
 function animateScroll(
   scroller: HTMLElement | Window,
   to: number,
   durationMs: number,
   reducedMotion: boolean,
+  easing: 'linear' | 'ease-in-out',
 ): void {
   const from =
     scroller instanceof Window ? scroller.scrollY : scroller.scrollTop;
@@ -112,11 +139,7 @@ function animateScroll(
 
   const tick = (now: number) => {
     const progress = Math.min(1, (now - startedAt) / durationMs);
-    const eased =
-      progress < 0.5
-        ? 2 * progress * progress
-        : 1 - (-2 * progress + 2) ** 2 / 2;
-    const next = from + delta * eased;
+    const next = from + delta * easeProgress(progress, easing);
     if (scroller instanceof Window) {
       scroller.scrollTo({ top: next, left: 0, behavior: 'auto' });
     } else {

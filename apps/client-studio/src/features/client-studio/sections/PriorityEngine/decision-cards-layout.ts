@@ -22,15 +22,15 @@ export const DECISION_CARD_IDLE_CLASS =
   'rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] shadow-none';
 
 export const DECISION_CARD_HOVER_CLASS =
-  'hover:z-[5] hover:cursor-pointer hover:scale-[1.06] hover:border-solid hover:border-[#001930] hover:shadow-[0_8px_22px_rgba(0,25,48,0.14)]';
+  'hover:z-[5] hover:cursor-pointer hover:border-solid hover:border-[#D4AF37]';
 
-/** Idle attention nudge — paused while hovered or active (CAP UX 52). */
+/** Latent cards stay visually calm; interactivity comes from subtle transform only. */
 export const DECISION_CARD_ATTENTION_CLASS =
   'animate-priority-card-attention hover:[animation-play-state:paused]';
 
 /** Open / selected card — page bg fill, 2 px gold border, rounded in both states. */
 export const DECISION_CARD_ACTIVE_CLASS =
-  'z-10 scale-[1.12] rounded-[8px] border-2 border-solid border-[#D4AF37] bg-[#F7F6F4] shadow-[0_8px_24px_rgba(0,25,48,0.08)]';
+  'z-10 scale-[1.10] rounded-[8px] border-2 border-solid border-[#D4AF37] bg-[#F7F6F4] shadow-none';
 
 /** PT-002 — primary Decision Story priority (Runtime-driven highlight). */
 export const DECISION_CARD_PRIMARY_CLASS =

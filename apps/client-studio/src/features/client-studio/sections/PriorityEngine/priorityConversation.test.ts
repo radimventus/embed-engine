@@ -158,6 +158,8 @@ describe('PT-PRIORITY-CONVERSATION-03 decision conversation', () => {
     assert.match(panel, /priority-conversation-thinking|ConisThinkingDots/);
     assert.match(panel, /priority-conversation-interpretation/);
     assert.match(panel, /priority-conversation-dialog-continue/);
+    assert.match(panel, /continueToSummary|priority-conversation-revisit-continue/);
+    assert.match(panel, /x:\s*-60/);
     assert.match(panel, /PRIORITY_ENGINE_CONVERSATION_PANEL_CLASS/);
     assert.equal(panel.includes('maxHeight'), false);
     assert.equal(panel.includes('Pokračovat v Auditu'), false);
@@ -167,18 +169,29 @@ describe('PT-PRIORITY-CONVERSATION-03 decision conversation', () => {
     assert.match(bridge, /priority-chapter-bridge/);
     assert.match(bridge, /priority-bridge-report/);
     assert.match(bridge, /PRIORITY_BRIDGE_REPORT_TITLE/);
+    assert.match(bridge, /insightLines/);
+    assert.match(bridge, /priority-bridge-know/);
     assert.equal(bridge.includes('Audit'), false);
     assert.match(
       read('priorityConversation.constants.ts'),
-      /Osobní rozhodovací zpráva/,
+      /Souhrn s obrázky, čísly a doporučeními dle vašich priorit/,
     );
 
     const hook = stripComments(read('usePriorityConversation.ts'));
-    assert.match(hook, /CONIS_THINKING_MS/);
-    assert.match(hook, /thinking/);
-    assert.match(hook, /continueToNextChapter/);
+    assert.match(hook, /continueToSummary/);
+    assert.match(hook, /PRIORITY_BRIDGE_ANCHOR_ID/);
+    assert.equal(hook.includes('pendingBridgeScrollRef'), false);
+    assert.equal(hook.includes('staticHoldMs'), false);
     assert.equal(hook.includes('dispatch('), false);
     assert.equal(hook.includes('@embed-engine/runtime'), false);
+
+    const scroll = stripComments(
+      readFileSync(
+        join(here, '../../foundation/scrollToSection.ts'),
+        'utf8',
+      ),
+    );
+    assert.match(scroll, /easing === 'linear'/);
 
     const engine = stripComments(read('PriorityEngine.tsx'));
     assert.match(engine, /PriorityConversationProvider/);

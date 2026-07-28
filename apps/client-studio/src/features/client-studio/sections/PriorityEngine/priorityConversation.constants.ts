@@ -84,6 +84,12 @@ export const PRIORITY_CONVERSATION_COMPLETE_PANEL_TITLE =
 export const PRIORITY_CONVERSATION_COMPLETE_PANEL_LINE =
   'Níže shrnuji, co už o vás vím — a co můžete získat dál.';
 
+export const PRIORITY_CONVERSATION_REVISIT_PROMPT =
+  'Je to v pořádku, nebo chcete ještě něco upravit?';
+
+/** Continues to chapter summary — scroll only on this click (CAP UX3 08). */
+export const PRIORITY_CONVERSATION_REVISIT_CONTINUE = 'Pokračovat';
+
 export const PRIORITY_CONVERSATION_NEXT_PATHS_PROMPT =
   'Čím budeme pokračovat?';
 
@@ -102,11 +108,11 @@ export const PRIORITY_BRIDGE_KNOW_HEADING = 'Co už o vás vím';
 
 export const PRIORITY_BRIDGE_GAIN_HEADING = 'Co získáte';
 
-export const PRIORITY_BRIDGE_REPORT_TITLE = 'Osobní rozhodovací zpráva';
+export const PRIORITY_BRIDGE_REPORT_TITLE =
+  'Souhrn s obrázky, čísly a doporučeními dle vašich priorit';
 
 export const PRIORITY_BRIDGE_REPORT_LINES = Object.freeze([
-  'Na konci naší cesty obdržíte osobní rozhodovací zprávu (PDF).',
-  'Shrnutí priorit, výklad způsobu rozhodování a doporučení vhodných domů.',
+  'Na konci naší cesty obdržíte osobní rozhodovací zprávu ve formátu PDF. Jde o celkové shrnutí na základě vašich priorit, výklad způsobu vašeho uvažování a „mapu pro vaše rozhodování“. V příloze také bude doporučení dalších vhodných domů.',
 ] as const);
 
 export const PRIORITY_BRIDGE_NEXT_HEADING = 'Co bude následovat';

@@ -1,3 +1,5 @@
+import { palette } from '@embed-engine/design-tokens';
+
 import { useWalkthrough } from '../../../walkthrough';
 import { useHouseNavigator } from './useHouseNavigator';
 import { formatAreaM2 } from '../PropertyExplorer/propertyExplorerModel';
@@ -23,19 +25,23 @@ export function RoomPanel() {
         return (
           <div
             key={room.id}
-            className={index === 0 ? 'pt-0' : 'border-t border-embed-border-default pt-1'}
+            className={index === 0 ? '' : 'border-t border-embed-border-default'}
           >
             <button
               type="button"
               aria-pressed={active}
               data-room-id={room.id}
               data-active={active ? 'true' : 'false'}
-              className={`flex min-h-[32px] w-full items-baseline justify-between gap-2 rounded-[10px] border-0 py-1 pl-2.5 pr-2 text-left leading-snug tracking-wide shadow-none transition-colors duration-[125ms] ease-out touch-manipulation ${
+              className={`flex min-h-[36px] w-full items-baseline justify-between gap-2 rounded-[10px] border-0 py-1.5 pl-2.5 pr-2 text-left leading-snug tracking-wide shadow-none transition-colors duration-[125ms] ease-out touch-manipulation ${
                 active
-                  ? 'bg-embed-surface-interactive font-semibold text-embed-foreground-primary'
-                  : 'bg-transparent font-normal text-embed-foreground-primary hover:bg-embed-surface-interactive'
+                  ? 'font-semibold text-embed-foreground-primary'
+                  : 'bg-transparent font-normal text-embed-foreground-primary hover:bg-[#001930] hover:text-[#FFFFFF]'
               }`}
-              style={{ fontSize: 13 }}
+              style={{
+                backgroundColor: active ? palette.warmGray : 'transparent',
+                color: active ? palette.navy : palette.navy,
+                fontSize: 13,
+              }}
               onClick={() => selectRoom(room.id)}
             >
               <span className="min-w-0 truncate">{room.name}</span>

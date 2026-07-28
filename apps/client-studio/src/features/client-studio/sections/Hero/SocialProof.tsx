@@ -10,8 +10,8 @@ const SOCIAL_PROOF_DIVIDER_STYLE = {
   backgroundColor: colors.action.accent,
 } as const;
 
-const FEED_TICKER_PAUSE_MS = 4000;
-const FEED_TICKER_SLIDE_MS = 800;
+const FEED_TICKER_PAUSE_MS = 8000;
+const FEED_TICKER_SLIDE_MS = 400;
 const FEED_VISIBLE_ITEM_COUNT = 3;
 /** Same message must not reappear until at least five others were shown. */
 const MIN_MESSAGES_BEFORE_REPEAT = 5;

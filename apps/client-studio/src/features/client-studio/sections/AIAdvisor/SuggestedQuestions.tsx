@@ -9,6 +9,9 @@ import {
 import type { ExperienceFaqItem } from './experiencePresentation';
 import {
   FAQ_VISIBLE_PAGE_SIZE,
+  hasMoreFaqItems,
+  initialFaqVisibleCount,
+  nextFaqVisibleCount,
 } from './faqProgressiveLoading';
 
 export { FAQ_VISIBLE_PAGE_SIZE } from './faqProgressiveLoading';
@@ -18,14 +21,9 @@ const LOAD_MORE_LABEL = 'Zobrazit další';
 /** RAC-06 — answer body 20% larger than the prior 14px baseline. */
 const FAQ_ANSWER_FONT_SIZE_PX = 16.8;
 
-/** Solo CTA metrics — navy + white hover, no border (CAP UX 52). */
-const SWITCH_IDLE_BG = palette.navy;
-const SWITCH_IDLE_TEXT = palette.pureWhite;
-const SWITCH_HOVER_BG = palette.gold;
-const SWITCH_HOVER_TEXT = palette.navy;
-const SWITCH_IDLE_RADIUS_PX = 4.8;
-const SWITCH_FONT_SIZE_PX = 12.5;
-const SWITCH_FONT_WEIGHT = 600;
+/** Match Experience scene nav buttons (Pokračovat / Zpět), centered under FAQ. */
+const FAQ_LOAD_MORE_BUTTON_CLASS =
+  'inline-flex min-h-[38px] w-auto self-center items-center justify-center rounded-[8px] bg-[#001930] px-[19px] text-[13px] font-medium text-[#FFFFFF] transition-colors duration-150 hover:bg-embed-brand-gold hover:text-[#001930] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 disabled:cursor-default disabled:opacity-45';
 
 type SuggestedQuestionsProps = {
   items: readonly ExperienceFaqItem[];
@@ -139,25 +137,25 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
   );
 }
 
-/** FAQ topic rows — always a page of 3 + load-more when more remain (CAP UX 53). */
+/** FAQ topic rows — progressive pages of 3; load-more appends the next 3 (CAP UX3 08). */
 export function FaqList({ items, onQuestionSelect }: SuggestedQuestionsProps) {
-  const [pageIndex, setPageIndex] = useState(0);
+  const [visibleCount, setVisibleCount] = useState(() =>
+    initialFaqVisibleCount(items.length),
+  );
 
   useEffect(() => {
-    setPageIndex(0);
+    setVisibleCount(initialFaqVisibleCount(items.length));
   }, [items]);
 
-  const pageSize = FAQ_VISIBLE_PAGE_SIZE;
-  const start = pageIndex * pageSize;
-  const visibleItems = items.slice(start, start + pageSize);
-  const hasMore = start + pageSize < items.length;
-  const showLoadMore = items.length > pageSize;
+  const visibleItems = items.slice(0, visibleCount);
+  const hasMore = hasMoreFaqItems(visibleCount, items.length);
+  const showLoadMore = items.length > FAQ_VISIBLE_PAGE_SIZE;
 
   return (
     <div
-      className={`${FAQ_ACCORDION_LIST_WIDTH_CLASS} flex shrink-0 flex-col gap-[14px]`}
+      className={`${FAQ_ACCORDION_LIST_WIDTH_CLASS} flex shrink-0 flex-col items-center gap-[14px]`}
     >
-      <ul className="m-0 flex list-none flex-col gap-[14px] p-0">
+      <ul className="m-0 flex w-full list-none flex-col gap-[14px] p-0">
         {visibleItems.map((item) => (
           <FaqItem
             key={item.id}
@@ -175,29 +173,19 @@ export function FaqList({ items, onQuestionSelect }: SuggestedQuestionsProps) {
             if (!hasMore) {
               return;
             }
-            setPageIndex((current) => current + 1);
+            setVisibleCount((current) =>
+              nextFaqVisibleCount(current, items.length),
+            );
           }}
-          className="mx-auto cursor-pointer px-5 py-[6.4px] text-center font-medium leading-normal tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 disabled:cursor-default disabled:opacity-45"
+          className={FAQ_LOAD_MORE_BUTTON_CLASS}
           style={{
-            backgroundColor: SWITCH_IDLE_BG,
-            color: SWITCH_IDLE_TEXT,
-            fontSize: SWITCH_FONT_SIZE_PX,
-            fontWeight: SWITCH_FONT_WEIGHT,
-            borderRadius: SWITCH_IDLE_RADIUS_PX,
+            backgroundColor: palette.navy,
+            color: palette.pureWhite,
             borderStyle: 'none',
             borderWidth: 0,
-            transition: 'background-color 125ms ease-out, color 125ms ease-out',
-          }}
-          onMouseEnter={(event) => {
-            if (!hasMore) {
-              return;
-            }
-            event.currentTarget.style.backgroundColor = SWITCH_HOVER_BG;
-            event.currentTarget.style.color = SWITCH_HOVER_TEXT;
-          }}
-          onMouseLeave={(event) => {
-            event.currentTarget.style.backgroundColor = SWITCH_IDLE_BG;
-            event.currentTarget.style.color = SWITCH_IDLE_TEXT;
+            borderRadius: 8,
+            fontSize: 13,
+            fontWeight: 500,
           }}
         >
           {LOAD_MORE_LABEL}
