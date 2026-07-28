@@ -395,3 +395,15 @@ export type {
   HeuristicValidation,
   HeuristicValidationIssue,
 } from './heuristic-engine-types';
+
+export type {
+  KnowledgeEntry,
+  KnowledgeSynthesisEvent,
+  KnowledgeSynthesisEventType,
+  KnowledgeSynthesisIndexEntry,
+  KnowledgeSynthesisValidation,
+  KnowledgeSynthesisValidationIssue,
+  SynthesizeKnowledgeInput,
+  SynthesizedKnowledgeBase,
+  SynthesizedKnowledgeReference,
+} from './knowledge-synthesis-types';

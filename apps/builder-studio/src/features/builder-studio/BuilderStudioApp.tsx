@@ -104,6 +104,10 @@ export function BuilderStudioApp() {
         heuristicEngineEvents={session.heuristicEngineEvents}
         heuristicIndexCount={session.heuristicIndexCount}
         heuristicEngineMessage={session.heuristicEngineMessage}
+        synthesizedKnowledgeBase={session.synthesizedKnowledgeBase}
+        knowledgeSynthesisEvents={session.knowledgeSynthesisEvents}
+        knowledgeSynthesisIndexCount={session.knowledgeSynthesisIndexCount}
+        knowledgeSynthesisMessage={session.knowledgeSynthesisMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -196,6 +200,11 @@ export function BuilderStudioApp() {
         onValidateHeuristics={session.validateHeuristics}
         onPublishHeuristics={session.publishHeuristics}
         onDisposeHeuristics={session.disposeHeuristics}
+        onSynthesizeKnowledge={session.synthesizeKnowledge}
+        onMergeKnowledge={session.mergeKnowledge}
+        onValidateSynthesizedKnowledge={session.validateSynthesizedKnowledge}
+        onPublishSynthesizedKnowledge={session.publishSynthesizedKnowledge}
+        onDisposeSynthesizedKnowledge={session.disposeSynthesizedKnowledge}
       />
     </AppShell>
   );

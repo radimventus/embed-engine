@@ -35,6 +35,8 @@ import type {
   PatternIntelligenceEvent,
   HeuristicCatalog,
   HeuristicEngineEvent,
+  KnowledgeSynthesisEvent,
+  SynthesizedKnowledgeBase,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -110,6 +112,8 @@ import {
   createPatternIntelligenceEngine,
   createHeuristicEngineApi,
   createHeuristicEngine,
+  createKnowledgeSynthesisApi,
+  createKnowledgeSynthesisEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -209,6 +213,10 @@ export type BuilderStudioViewModel = {
   readonly heuristicEngineEvents: readonly HeuristicEngineEvent[];
   readonly heuristicIndexCount: number;
   readonly heuristicEngineMessage: string | null;
+  readonly synthesizedKnowledgeBase: SynthesizedKnowledgeBase | null;
+  readonly knowledgeSynthesisEvents: readonly KnowledgeSynthesisEvent[];
+  readonly knowledgeSynthesisIndexCount: number;
+  readonly knowledgeSynthesisMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -322,6 +330,11 @@ export type BuilderStudioViewModel = {
   readonly validateHeuristics: () => void;
   readonly publishHeuristics: () => void;
   readonly disposeHeuristics: () => void;
+  readonly synthesizeKnowledge: () => void;
+  readonly mergeKnowledge: () => void;
+  readonly validateSynthesizedKnowledge: () => void;
+  readonly publishSynthesizedKnowledge: () => void;
+  readonly disposeSynthesizedKnowledge: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -962,6 +975,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     );
     const heuristicEngine = createHeuristicEngine();
     const heuristicEngineApi = createHeuristicEngineApi(heuristicEngine);
+    const knowledgeSynthesisEngine = createKnowledgeSynthesisEngine();
+    const knowledgeSynthesisApi = createKnowledgeSynthesisApi(
+      knowledgeSynthesisEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1021,6 +1038,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       patternIntelligenceApi,
       heuristicEngine,
       heuristicEngineApi,
+      knowledgeSynthesisEngine,
+      knowledgeSynthesisApi,
     };
   }, []);
 
@@ -1256,6 +1275,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   >([]);
   const [heuristicIndexCount, setHeuristicIndexCount] = useState(0);
   const [heuristicEngineMessage, setHeuristicEngineMessage] = useState<
+    string | null
+  >(null);
+  const [synthesizedKnowledgeBase, setSynthesizedKnowledgeBase] =
+    useState<SynthesizedKnowledgeBase | null>(null);
+  const [knowledgeSynthesisEvents, setKnowledgeSynthesisEvents] = useState<
+    readonly KnowledgeSynthesisEvent[]
+  >([]);
+  const [knowledgeSynthesisIndexCount, setKnowledgeSynthesisIndexCount] =
+    useState(0);
+  const [knowledgeSynthesisMessage, setKnowledgeSynthesisMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1603,6 +1632,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     heuristicEngineEvents,
     heuristicIndexCount,
     heuristicEngineMessage,
+    synthesizedKnowledgeBase,
+    knowledgeSynthesisEvents,
+    knowledgeSynthesisIndexCount,
+    knowledgeSynthesisMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3138,6 +3171,132 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.heuristicEngine.getIndex().list(disposed.id).length,
       );
       setHeuristicEngineMessage(null);
+    },
+    synthesizeKnowledge(): void {
+      const heuristics =
+        heuristicCatalog !== null && heuristicCatalog.heuristics.length > 0
+          ? heuristicCatalog.heuristics.map((heuristic) => ({
+              id: heuristic.id,
+              name: heuristic.name,
+              description: heuristic.description,
+              confidence: heuristic.confidence,
+              priority: heuristic.priority,
+              sourcePatterns: heuristic.sourcePatterns,
+            }))
+          : [
+              {
+                id: 'derived-heuristic-1',
+                name: 'Heuristic: Repeated source',
+                description: 'From pattern.',
+                confidence: 0.4,
+                priority: 1,
+                sourcePatterns: ['extracted-pattern-1'],
+              },
+              {
+                id: 'derived-heuristic-2',
+                name: 'Heuristic: Multi-record package',
+                description: 'From pattern.',
+                confidence: 0.5,
+                priority: 2,
+                sourcePatterns: ['extracted-pattern-2'],
+              },
+            ];
+
+      const catalogId = heuristicCatalog?.id ?? 'heuristic-catalog-demo';
+      const catalogTitle =
+        heuristicCatalog?.metadata.title ?? 'Demo Heuristic Catalog';
+
+      const synthesized = services.knowledgeSynthesisApi.synthesizeKnowledge({
+        catalogId,
+        catalogTitle,
+        title: `${catalogTitle} Knowledge`,
+        heuristics,
+      });
+      setSynthesizedKnowledgeBase(synthesized);
+      setKnowledgeSynthesisEvents(
+        services.knowledgeSynthesisEngine.getHistory(synthesized.id),
+      );
+      setKnowledgeSynthesisIndexCount(
+        services.knowledgeSynthesisEngine.getIndex().list(synthesized.id)
+          .length,
+      );
+      setKnowledgeSynthesisMessage(
+        `Synthesized ${synthesized.entries.length} entr(y/ies). Heuristic Catalog unchanged.`,
+      );
+    },
+    mergeKnowledge(): void {
+      if (synthesizedKnowledgeBase === null) {
+        setKnowledgeSynthesisMessage('Nejdřív Synthesize.');
+        return;
+      }
+      const merged = services.knowledgeSynthesisEngine.merge(
+        synthesizedKnowledgeBase.id,
+      );
+      setSynthesizedKnowledgeBase(merged);
+      setKnowledgeSynthesisEvents(
+        services.knowledgeSynthesisEngine.getHistory(merged.id),
+      );
+      setKnowledgeSynthesisIndexCount(
+        services.knowledgeSynthesisEngine.getIndex().list(merged.id).length,
+      );
+      setKnowledgeSynthesisMessage('Merge complete.');
+    },
+    validateSynthesizedKnowledge(): void {
+      if (synthesizedKnowledgeBase === null) {
+        setKnowledgeSynthesisMessage('Nejdřív Synthesize.');
+        return;
+      }
+      const validated = services.knowledgeSynthesisApi.validateKnowledge(
+        synthesizedKnowledgeBase.id,
+      );
+      setSynthesizedKnowledgeBase(validated);
+      setKnowledgeSynthesisEvents(
+        services.knowledgeSynthesisEngine.getHistory(validated.id),
+      );
+      setKnowledgeSynthesisMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    publishSynthesizedKnowledge(): void {
+      if (synthesizedKnowledgeBase === null) {
+        setKnowledgeSynthesisMessage('Nejdřív Synthesize.');
+        return;
+      }
+      const published = services.knowledgeSynthesisApi.publishKnowledge(
+        synthesizedKnowledgeBase.id,
+      );
+      setSynthesizedKnowledgeBase(published);
+      setKnowledgeSynthesisEvents(
+        services.knowledgeSynthesisEngine.getHistory(published.id),
+      );
+      setKnowledgeSynthesisIndexCount(
+        services.knowledgeSynthesisEngine.getIndex().list(published.id)
+          .length,
+      );
+      setKnowledgeSynthesisMessage(
+        published.metadata.status === 'Published'
+          ? `Published base @ ${published.version}`
+          : 'Publish blocked by validation.',
+      );
+    },
+    disposeSynthesizedKnowledge(): void {
+      if (synthesizedKnowledgeBase === null) {
+        return;
+      }
+      const disposed = services.knowledgeSynthesisEngine.dispose(
+        synthesizedKnowledgeBase.id,
+      );
+      setSynthesizedKnowledgeBase(disposed);
+      setKnowledgeSynthesisEvents(
+        services.knowledgeSynthesisEngine.getHistory(disposed.id),
+      );
+      setKnowledgeSynthesisIndexCount(
+        services.knowledgeSynthesisEngine.getIndex().list(disposed.id)
+          .length,
+      );
+      setKnowledgeSynthesisMessage(null);
     },
     buildProject(): void {
       const projectId =

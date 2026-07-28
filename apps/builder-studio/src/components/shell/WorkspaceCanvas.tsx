@@ -28,6 +28,8 @@ import type {
   PatternIntelligenceEvent,
   HeuristicCatalog,
   HeuristicEngineEvent,
+  KnowledgeSynthesisEvent,
+  SynthesizedKnowledgeBase,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -72,6 +74,7 @@ import { LearningPackageManagerOverview } from './LearningPackageManagerOverview
 import { PatternExtractionOverview } from './PatternExtractionOverview';
 import { PatternIntelligenceOverview } from './PatternIntelligenceOverview';
 import { HeuristicEngineOverview } from './HeuristicEngineOverview';
+import { KnowledgeSynthesisOverview } from './KnowledgeSynthesisOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -154,6 +157,10 @@ type WorkspaceCanvasProps = {
   readonly heuristicEngineEvents: readonly HeuristicEngineEvent[];
   readonly heuristicIndexCount: number;
   readonly heuristicEngineMessage: string | null;
+  readonly synthesizedKnowledgeBase: SynthesizedKnowledgeBase | null;
+  readonly knowledgeSynthesisEvents: readonly KnowledgeSynthesisEvent[];
+  readonly knowledgeSynthesisIndexCount: number;
+  readonly knowledgeSynthesisMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -256,6 +263,11 @@ type WorkspaceCanvasProps = {
   readonly onValidateHeuristics: () => void;
   readonly onPublishHeuristics: () => void;
   readonly onDisposeHeuristics: () => void;
+  readonly onSynthesizeKnowledge: () => void;
+  readonly onMergeKnowledge: () => void;
+  readonly onValidateSynthesizedKnowledge: () => void;
+  readonly onPublishSynthesizedKnowledge: () => void;
+  readonly onDisposeSynthesizedKnowledge: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -321,6 +333,10 @@ export function WorkspaceCanvas({
   heuristicEngineEvents,
   heuristicIndexCount,
   heuristicEngineMessage,
+  synthesizedKnowledgeBase,
+  knowledgeSynthesisEvents,
+  knowledgeSynthesisIndexCount,
+  knowledgeSynthesisMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -413,6 +429,11 @@ export function WorkspaceCanvas({
   onValidateHeuristics,
   onPublishHeuristics,
   onDisposeHeuristics,
+  onSynthesizeKnowledge,
+  onMergeKnowledge,
+  onValidateSynthesizedKnowledge,
+  onPublishSynthesizedKnowledge,
+  onDisposeSynthesizedKnowledge,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -720,6 +741,20 @@ export function WorkspaceCanvas({
             onPublish={onPublishHeuristics}
             onDispose={onDisposeHeuristics}
             message={heuristicEngineMessage}
+          />
+        ) : null}
+
+        {activeSection === 'knowledge-synthesis' ? (
+          <KnowledgeSynthesisOverview
+            knowledgeBase={synthesizedKnowledgeBase}
+            events={knowledgeSynthesisEvents}
+            indexCount={knowledgeSynthesisIndexCount}
+            onSynthesize={onSynthesizeKnowledge}
+            onMerge={onMergeKnowledge}
+            onValidate={onValidateSynthesizedKnowledge}
+            onPublish={onPublishSynthesizedKnowledge}
+            onDispose={onDisposeSynthesizedKnowledge}
+            message={knowledgeSynthesisMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

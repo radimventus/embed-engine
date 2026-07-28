@@ -354,3 +354,22 @@ export {
   createHeuristicIndex,
   type HeuristicIndex,
 } from './heuristic-engine/heuristic-index';
+
+export {
+  createKnowledgeSynthesisEngine,
+  type KnowledgeSynthesisEngine,
+} from './knowledge-synthesis/knowledge-synthesis-engine';
+export {
+  createKnowledgeSynthesisApi,
+  type KnowledgeSynthesisApi,
+} from './knowledge-synthesis/knowledge-synthesis-api';
+export {
+  createBasicKnowledgeSynthesizer,
+  createKnowledgeSynthesisValidator,
+  type KnowledgeSynthesizer,
+  type KnowledgeSynthesisValidator,
+} from './knowledge-synthesis/basic-knowledge-synthesizer';
+export {
+  createKnowledgeSynthesisIndex,
+  type KnowledgeSynthesisIndex,
+} from './knowledge-synthesis/knowledge-synthesis-index';

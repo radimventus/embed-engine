@@ -23,6 +23,7 @@ const SECTIONS: readonly {
   { id: 'pattern-extraction', label: 'Extraction' },
   { id: 'pattern-intelligence', label: 'Patterns' },
   { id: 'heuristic-engine', label: 'Heuristics' },
+  { id: 'knowledge-synthesis', label: 'Base' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },
