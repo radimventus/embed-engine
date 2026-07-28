@@ -20,6 +20,7 @@ import {
   PRIORITY_CONVERSATION_INTRO_LINES,
   PRIORITY_CONVERSATION_MINIMUM,
   PRIORITY_CONVERSATION_PREP_TITLE,
+  PRIORITY_CONVERSATION_START_HEADING,
   PRIORITY_CONVERSATION_START_LINES,
   PRIORITY_DIALOG_QUESTION_COUNT,
   PRIORITY_DIALOG_QUESTIONS,
@@ -66,7 +67,9 @@ describe('PT-PRIORITY-CONVERSATION-03 decision conversation', () => {
     assert.equal(PRIORITY_DIALOG_QUESTION_COUNT, 3);
     assert.ok(CONIS_THINKING_MS >= 700 && CONIS_THINKING_MS <= 1000);
     assert.match(PRIORITY_CONVERSATION_INTRO_LINES.join(' '), /Conis/i);
-    assert.match(PRIORITY_CONVERSATION_START_LINES.join(' '), /Zkusme společně/i);
+    assert.equal(PRIORITY_CONVERSATION_INTRO_LINES[0], 'Dobrý den, jmenuji se Conis.');
+    assert.match(PRIORITY_CONVERSATION_START_LINES.join(' '), /označte alespoň tři/i);
+    assert.match(PRIORITY_CONVERSATION_START_HEADING, /^Začněme$/);
     assert.match(PRIORITY_CONVERSATION_PREP_TITLE, /Už rozumím/);
     assert.match(PRIORITY_BRIDGE_TITLE, /Už rozumím/);
     assert.ok(dialogQuestionFor('privacy')?.options.length === 3);
@@ -107,7 +110,10 @@ describe('PT-PRIORITY-CONVERSATION-03 decision conversation', () => {
 
   it('builds FAQ and chat opening without Audit terminology', () => {
     const faq = coachFaqItemsFromPriorities(['plot', 'layout', 'privacy']);
-    assert.equal(faq.length, 3);
+    assert.ok(faq.length > 3);
+    assert.equal(faq[0]!.id, 'coach-faq:plot');
+    assert.equal(faq[1]!.id, 'coach-faq:layout');
+    assert.equal(faq[2]!.id, 'coach-faq:privacy');
     for (const item of faq) {
       assert.equal(item.question.includes('Audit'), false);
       assert.equal(item.answer.includes('Audit'), false);

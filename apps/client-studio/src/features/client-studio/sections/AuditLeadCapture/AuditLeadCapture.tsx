@@ -1,42 +1,27 @@
 import { useState } from 'react';
 
-import {
-  enabledCommercialCtas,
-  type CommercialCtaId,
-} from '../../pilot/commercialConversion';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
-import { useOptionalDecisionAnalytics } from '../../analytics/DecisionAnalyticsProvider';
-import { AUDIT_SECTION_STYLE } from './audit-panel';
+import { AssessmentWorkflow } from './AssessmentWorkflow';
+import { AuditContact } from './AuditContact';
 import { AuditTransition } from './AuditTransition';
+import { AUDIT_SECTION_STYLE, type LandOption } from './audit-panel';
 import { ContactCard } from './ContactCard';
-import { ConversionContextStrip, useConversionRuntimeSnapshot } from './ConversionContextStrip';
-import { ConversionCtaSelect } from './ConversionCtaSelect';
-import { ConversionLeadForm } from './ConversionLeadForm';
+import { SituationSelect } from './SituationSelect';
 
 /**
- * Commercial Conversion — journey conclusion (CSCB-07).
- * Presentation + mailto transport only. Section id preserved for nav continuity.
+ * Audit — Experience closer (CAP UX 42).
+ * Freeze shell: land panels + workflow + simple form.
+ * Not a second Priority. Not a second AI.
  */
 export function AuditLeadCapture() {
-  const snapshot = useConversionRuntimeSnapshot();
-  const analytics = useOptionalDecisionAnalytics();
-  const primaryCtaId =
-    enabledCommercialCtas()[0]?.id ?? ('request-consultation' as CommercialCtaId);
-  const [selectedCtaId, setSelectedCtaId] = useState<CommercialCtaId | null>(
-    null,
-  );
-
-  const handleSelectCta = (id: CommercialCtaId) => {
-    setSelectedCtaId(id);
-    analytics?.conversionStarted(id);
-  };
+  const [landOption, setLandOption] = useState<LandOption>('owned');
 
   return (
     <section
-      aria-label="Commercial Conversion"
+      aria-label="Audit — posouzení umístění domu"
       id={PILOT_SECTION_IDS.audit}
       className="scroll-mt-header"
-      data-testid="commercial-conversion"
+      data-testid="audit-lead-capture"
     >
       <div
         className="overflow-hidden rounded-[11px] pb-8 shadow-[0_1px_11px_rgba(0,25,48,0.044)]"
@@ -45,19 +30,20 @@ export function AuditLeadCapture() {
         <AuditTransition />
 
         <div className="flex flex-col gap-14 mobile:gap-11">
-          <ConversionContextStrip />
-          <ConversionCtaSelect
-            selectedCtaId={selectedCtaId}
-            primaryCtaId={primaryCtaId}
-            onSelect={handleSelectCta}
-          />
-          {selectedCtaId !== null ? (
-            <ConversionLeadForm ctaId={selectedCtaId} snapshot={snapshot} />
-          ) : null}
+          <SituationSelect value={landOption} onChange={setLandOption} />
+          <AssessmentWorkflow landOption={landOption} />
+          <AuditContact />
         </div>
 
         <ContactCard />
       </div>
+
+      <p
+        className="bg-[#F7F6F4] py-section text-center text-xs font-bold text-embed-brand-navy"
+        data-testid="audit-final-footer"
+      >
+        CONIS • Conversion Intelligence System – created by Radim Věntus © 2026
+      </p>
     </section>
   );
 }

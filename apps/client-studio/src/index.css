@@ -29,26 +29,26 @@
 }
 
 /**
- * Hero photo veils — cycle 14s after 1s delay:
- * shrink L 2s → gone 5s → expand 2s → visible 5s → repeat.
+ * Hero photo veils — cycle 14s:
+ * open 2s → calm 2s → close 2s → calm 8s → repeat.
  */
 @keyframes hero-photo-veil-cycle {
-  /* 0–2s shrink to left */
+  /* 0–2s open (shrink) */
   0% {
     transform: scaleX(1);
   }
   14.2857% {
     transform: scaleX(0);
   }
-  /* 2–7s hold gone */
-  50% {
+  /* 2–4s calm open */
+  28.5714% {
     transform: scaleX(0);
   }
-  /* 7–9s expand */
-  64.2857% {
+  /* 4–6s close (expand) */
+  42.8571% {
     transform: scaleX(1);
   }
-  /* 9–14s hold full */
+  /* 6–14s calm closed */
   100% {
     transform: scaleX(1);
   }
@@ -57,13 +57,39 @@
 @layer utilities {
   .animate-hero-photo-veil {
     transform-origin: left center;
-    animation: hero-photo-veil-cycle 14s linear 1s infinite;
+    animation: hero-photo-veil-cycle 14s linear infinite;
+  }
+
+  /**
+   * Priority idle cards — brief interactivity nudge every 3s (CAP UX 52).
+   * Uses box-shadow only so hover transform still works (CAP UX 53).
+   */
+  @keyframes priority-card-attention {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(0, 25, 48, 0);
+    }
+    6% {
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.35);
+    }
+    12% {
+      box-shadow: 0 0 0 0 rgba(0, 25, 48, 0);
+    }
+  }
+
+  .animate-priority-card-attention {
+    animation: priority-card-attention 3s ease-in-out infinite;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .animate-hero-photo-veil {
       animation: none;
     }
+
+    .animate-priority-card-attention {
+      animation: none;
+    }
   }
 }
+
 

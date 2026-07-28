@@ -7,7 +7,7 @@ export function SectionHeader() {
   return (
     <div className="relative z-20 bg-[#FFFFFF]">
       <h2 className="pb-section text-base font-bold tracking-wide text-embed-foreground-primary">
-        AI PRŮVODCE – ZEPTEJTE SE NA COKOLI
+        CHAT PRŮVODCE CONIS – ZEPTEJTE SE NA COKOLI
       </h2>
       <div
         aria-hidden="true"
@@ -16,9 +16,10 @@ export function SectionHeader() {
       />
       <div
         aria-hidden="true"
-        className={`pointer-events-none absolute left-0 top-full z-20 h-[60px] ${HEADER_RULE_WIDTH_CLASS}`}
+        className={`pointer-events-none absolute left-0 top-full z-20 h-[36px] ${HEADER_RULE_WIDTH_CLASS}`}
         style={{
-          backgroundImage: 'linear-gradient(to bottom, #FFFFFF 0%, rgba(255,255,255,0) 100%)',
+          backgroundImage:
+            'linear-gradient(to bottom, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0) 100%)',
         }}
       />
     </div>

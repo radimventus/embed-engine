@@ -99,7 +99,9 @@ describe('Runtime presentation ownership (ED-DA-01R)', () => {
 
   it('presentation coaching FAQ derives from priorities without Runtime mutation', () => {
     const coach = coachFaqItemsFromPriorities(['privacy', 'plot']);
-    assert.equal(coach.length, 2);
+    assert.ok(coach.length > 3);
+    assert.equal(coach[0]!.id, 'coach-faq:privacy');
+    assert.equal(coach[1]!.id, 'coach-faq:plot');
     assert.match(coach[0]!.question, /soukromí/i);
 
     const layoutRuntime = createTestBuilderRuntime();
@@ -112,7 +114,8 @@ describe('Runtime presentation ownership (ED-DA-01R)', () => {
       ai: decision.ai,
       priorityIds: decision.priorityIds,
     });
-    assert.equal(experienceFaq.length, 2);
+    assert.ok(experienceFaq.length > 3);
+    assert.equal(experienceFaq[0]!.id, 'coach-faq:layout');
     assert.match(experienceFaq[0]!.question, /\?$/);
   });
 });

@@ -312,10 +312,36 @@ export type CoachFaqItem = {
   readonly answer: string;
 };
 
+function pushCoachFaqItem(
+  items: CoachFaqItem[],
+  seen: Set<string>,
+  id: string,
+): void {
+  if (seen.has(id)) {
+    return;
+  }
+  const entry = PRIORITY_COACH_FAQ[id];
+  if (!entry) {
+    return;
+  }
+  seen.add(id);
+  items.push(
+    Object.freeze({
+      id: `coach-faq:${id}`,
+      question: entry.question,
+      answer: entry.answer,
+    }),
+  );
+}
+
+/**
+ * Selected priorities first, then remaining catalogue FAQs.
+ * Always enough for a full page of 3 + „Zobrazit další“ (CAP UX 54).
+ */
 export function coachFaqItemsFromPriorities(
   priorityIds: readonly string[],
 ): readonly CoachFaqItem[] {
-  const ordered =
+  const selectedFirst =
     priorityIds.length > 0
       ? priorityIds
       : DECISION_CATEGORIES.slice(0, 3).map((category) => category.id);
@@ -323,22 +349,12 @@ export function coachFaqItemsFromPriorities(
   const items: CoachFaqItem[] = [];
   const seen = new Set<string>();
 
-  for (const id of ordered) {
-    if (seen.has(id)) {
-      continue;
-    }
-    const entry = PRIORITY_COACH_FAQ[id];
-    if (!entry) {
-      continue;
-    }
-    seen.add(id);
-    items.push(
-      Object.freeze({
-        id: `coach-faq:${id}`,
-        question: entry.question,
-        answer: entry.answer,
-      }),
-    );
+  for (const id of selectedFirst) {
+    pushCoachFaqItem(items, seen, id);
+  }
+
+  for (const category of DECISION_CATEGORIES) {
+    pushCoachFaqItem(items, seen, category.id);
   }
 
   return Object.freeze(items);

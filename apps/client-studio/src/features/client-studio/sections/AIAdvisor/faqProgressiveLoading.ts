@@ -1,6 +1,6 @@
-/** Progressive FAQ reveal helpers (PT-RACIO-REDESIGN-01) — UI-only, no content logic. */
+/** Progressive FAQ reveal helpers (CAP UX 48 / RACIO 05) — UI-only, no content logic. */
 
-export const FAQ_VISIBLE_PAGE_SIZE = 5;
+export const FAQ_VISIBLE_PAGE_SIZE = 3;
 
 export function initialFaqVisibleCount(
   total: number,

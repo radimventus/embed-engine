@@ -12,7 +12,6 @@ import { usePriorityExperience } from './PriorityExperienceProvider';
 import { SectionHeader } from './SectionHeader';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
-import { ChapterSpacer } from '../../foundation';
 
 /**
  * Priority Engine — Decision Discovery surface (CSCB-04 / PT-002 / PT-003).
@@ -57,7 +56,6 @@ export function PriorityEngine() {
         </div>
         <PriorityChapterBridge />
       </section>
-      <ChapterSpacer />
     </PriorityConversationProvider>
   );
 }

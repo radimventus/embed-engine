@@ -7,7 +7,10 @@ import { createSsotResolveAliases, repoRoot } from '../../packages/embed/vite.ss
 const rootDir = dirname(fileURLToPath(import.meta.url));
 const packageJson = JSON.parse(readFileSync(join(rootDir, 'package.json'), 'utf8'));
 /**
- * SSOT Local host Vite config (compiled mirror of vite.config.ts).
+ * SSOT Local host Vite config.
+ *
+ * Local is an Embed host only — same source aliases as Embed demo / Embed build.
+ * There is no parallel Client Studio SPA Runtime entry.
  */
 export default defineConfig({
     base: process.env.VITE_BASE ?? '/',
@@ -21,20 +24,22 @@ export default defineConfig({
         __CLIENT_STUDIO_VERSION__: JSON.stringify(packageJson.version),
         'process.env.NODE_ENV': JSON.stringify('development'),
     },
-    build: {
-        sourcemap: false,
-        target: 'es2022',
-        reportCompressedSize: true,
-    },
     server: {
         host: '127.0.0.1',
         port: 4173,
         strictPort: true,
-        fs: { allow: [repoRoot] },
+        fs: {
+            allow: [repoRoot],
+        },
     },
     preview: {
         host: '127.0.0.1',
         port: 4174,
         strictPort: true,
+    },
+    build: {
+        sourcemap: false,
+        target: 'es2022',
+        reportCompressedSize: true,
     },
 });

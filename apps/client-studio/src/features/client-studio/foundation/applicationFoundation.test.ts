@@ -60,6 +60,15 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     const header = readSource(
       'src/features/client-studio/ClientStudioHeader.tsx',
     );
+    const contactMenu = readSource(
+      'src/features/client-studio/header/HeaderContactMenu.tsx',
+    );
+    const saveMenu = readSource(
+      'src/features/client-studio/header/HeaderSaveMenu.tsx',
+    );
+    const contact = readSource(
+      'src/features/client-studio/header/experienceContact.ts',
+    );
 
     assert.match(vocabulary, /PILOT_SECTION_NAV/);
     assert.match(vocabulary, /hero:/);
@@ -67,14 +76,16 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(sidebar, /PILOT_SECTION_NAV/);
     assert.match(sidebar, /useActiveSection/);
     assert.match(sidebar, /scrollToSection/);
-    assert.match(header, /PILOT_SECTION_IDS\.audit/);
-    assert.match(header, /PILOT_SECTION_IDS\.priority/);
-    assert.match(header, /scrollToSection/);
+    assert.match(header, /HeaderContactMenu/);
+    assert.match(header, /HeaderSaveMenu/);
     assert.match(header, /formatExperienceHeaderTitle/);
     assert.match(header, /w-canvas/);
-    assert.match(header, /absolute right-section/);
-    assert.match(header, /text-\[2rem\]/);
-    assert.match(header, /font-bold/);
+    assert.match(contactMenu, /mailto:/);
+    assert.match(contactMenu, /tel:/);
+    assert.match(saveMenu, /Uložit tuto stránku jako PDF/);
+    assert.match(saveMenu, /window\.print/);
+    assert.match(contact, /kontakt@astav\.cz/);
+    assert.match(contact, /\+420 987 654 321/);
   });
 
   it('does not change Runtime package APIs from the app shell', () => {

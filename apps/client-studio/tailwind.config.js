@@ -53,13 +53,13 @@ export default {
         'faq-row': '45px',
         'property-explorer': '44rem',
         'ai-conversation': '24rem',
-        'faq-ai': '480px',
+        'faq-ai': '400px',
         'chapter-spacing': '30px',
       },
       minHeight: {
         'spatial-terminal-surface': '484px',
         'property-explorer': '44rem',
-        'faq-ai': '480px',
+        'faq-ai': '400px',
         'ai-conversation': '24rem',
       },
       maxHeight: {

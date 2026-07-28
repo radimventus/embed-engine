@@ -1,6 +1,7 @@
 import type { DecisionCategory } from './decision-cards.constants';
 import {
   DECISION_CARD_ACTIVE_CLASS,
+  DECISION_CARD_ATTENTION_CLASS,
   DECISION_CARD_FOCUS_CLASS,
   DECISION_CARD_HOVER_CLASS,
   DECISION_CARD_IDLE_CLASS,
@@ -26,6 +27,12 @@ type DecisionCardProps = {
 
 /** Counters card active scale so icon pixel size stays constant across states. */
 const ACTIVE_ICON_COUNTER_SCALE = 'scale-[0.893]';
+
+const IDLE_BORDER = '#E3E3E3';
+/** CAP UX 54 — hover border matches active gold. */
+const HOVER_BORDER = '#D4AF37';
+const ACTIVE_BORDER = '#D4AF37';
+const CARD_BG = '#F7F6F4';
 
 export function DecisionCard({
   category,
@@ -55,21 +62,40 @@ export function DecisionCard({
         aria-pressed={isActive}
         aria-label={`${category.title} decision category`}
         onClick={onToggle}
-        className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-[8px] px-2.5 touch-manipulation transition-[transform,box-shadow,border-color,border-width] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${highlightClass} ${
+        className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-[8px] px-2.5 touch-manipulation transition-[transform,box-shadow,border-color,border-width,background-color] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${highlightClass} ${
           isActive
             ? `${DECISION_CARD_ACTIVE_CLASS} justify-between py-2.5`
-            : `${DECISION_CARD_IDLE_CLASS} ${DECISION_CARD_HOVER_CLASS} z-0 scale-100 justify-center py-3`
+            : `${DECISION_CARD_IDLE_CLASS} ${DECISION_CARD_HOVER_CLASS} ${DECISION_CARD_ATTENTION_CLASS} z-0 scale-100 justify-center py-3`
         }`}
         style={{
           transformOrigin: 'center center',
           // Explicit solid border — embed boundary resets button border-style to none.
           borderStyle: 'solid',
           borderWidth: isActive ? 2 : 1,
-          // Active gold; latent = Tour switcher track (#E3E3E3).
-          borderColor: isActive ? '#D4AF37' : '#E3E3E3',
-          // Page background (warmWhite).
-          backgroundColor: '#F7F6F4',
+          borderColor: isActive ? ACTIVE_BORDER : IDLE_BORDER,
+          backgroundColor: CARD_BG,
           borderRadius: 8,
+        }}
+        onMouseEnter={(event) => {
+          if (isActive) {
+            return;
+          }
+          event.currentTarget.style.borderColor = HOVER_BORDER;
+          event.currentTarget.style.borderWidth = '2px';
+          event.currentTarget.style.boxShadow =
+            '0 8px 22px rgba(0,25,48,0.14)';
+          event.currentTarget.style.transform = 'scale(1.06)';
+          event.currentTarget.style.zIndex = '5';
+        }}
+        onMouseLeave={(event) => {
+          if (isActive) {
+            return;
+          }
+          event.currentTarget.style.borderColor = IDLE_BORDER;
+          event.currentTarget.style.borderWidth = '1px';
+          event.currentTarget.style.boxShadow = 'none';
+          event.currentTarget.style.transform = 'scale(1)';
+          event.currentTarget.style.zIndex = '0';
         }}
       >
         <div className="flex flex-col items-center gap-2.5">

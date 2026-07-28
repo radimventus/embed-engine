@@ -52,7 +52,7 @@ export const SPATIAL_TERMINAL_THUMBNAIL_WIDTH_PX = Math.round(
 );
 
 export const FAQ_ROW_HEIGHT_PX = 45;
-export const FAQ_CHAPTER_MIN_HEIGHT_PX = 480;
+export const FAQ_CHAPTER_MIN_HEIGHT_PX = 400;
 export const FAQ_COLUMN_WIDTH_PX = 690;
 export const AI_ADVISOR_CHAT_LEFT_INSET_PX = 14;
 

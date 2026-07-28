@@ -10,8 +10,8 @@ import {
 export function SectionHeader() {
   return (
     <div className={PRIORITY_ENGINE_TITLE_BAND_CLASS}>
-      <h2 className={PRIORITY_ENGINE_TITLE_CLASS}>
-        Co je pro vás při bydlení podstatné?
+      <h2 className={`${PRIORITY_ENGINE_TITLE_CLASS} uppercase`}>
+        Nastavte své priority při výběru bydlení
       </h2>
     </div>
   );

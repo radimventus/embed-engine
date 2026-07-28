@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { colors } from '@embed-engine/design-tokens';
+import { colors, palette } from '@embed-engine/design-tokens';
 
 import {
   FAQ_ACCORDION_LIST_WIDTH_CLASS,
@@ -8,14 +8,24 @@ import {
 } from './ai-advisor-layout';
 import type { ExperienceFaqItem } from './experiencePresentation';
 import {
-  hasMoreFaqItems,
-  initialFaqVisibleCount,
-  nextFaqVisibleCount,
+  FAQ_VISIBLE_PAGE_SIZE,
 } from './faqProgressiveLoading';
 
 export { FAQ_VISIBLE_PAGE_SIZE } from './faqProgressiveLoading';
 
-const LOAD_MORE_LABEL = 'Načíst další';
+const LOAD_MORE_LABEL = 'Zobrazit další';
+
+/** RAC-06 — answer body 20% larger than the prior 14px baseline. */
+const FAQ_ANSWER_FONT_SIZE_PX = 16.8;
+
+/** Solo CTA metrics — navy + white hover, no border (CAP UX 52). */
+const SWITCH_IDLE_BG = palette.navy;
+const SWITCH_IDLE_TEXT = palette.pureWhite;
+const SWITCH_HOVER_BG = palette.gold;
+const SWITCH_HOVER_TEXT = palette.navy;
+const SWITCH_IDLE_RADIUS_PX = 4.8;
+const SWITCH_FONT_SIZE_PX = 12.5;
+const SWITCH_FONT_WEIGHT = 600;
 
 type SuggestedQuestionsProps = {
   items: readonly ExperienceFaqItem[];
@@ -61,7 +71,7 @@ function FaqCaretIcon({ expanded }: { expanded: boolean }) {
 export function FaqTitle() {
   return (
     <div className={`${FAQ_COLUMN_WIDTH_CLASS} relative z-10 m-0 shrink-0`}>
-      <h2 className="m-0 text-[17px] font-semibold leading-snug tracking-wide text-embed-foreground-primary">
+      <h2 className="m-0 text-base font-bold uppercase leading-none tracking-wide text-embed-foreground-primary">
         Otázky, které navazují na náš rozhovor
       </h2>
       <p className="mt-1.5 text-[13px] leading-relaxed text-embed-foreground-primary/60">
@@ -80,55 +90,68 @@ type FaqItemProps = {
 function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
   const [expanded, setExpanded] = useState(false);
 
+  const togglePanel = () => {
+    setExpanded((current) => {
+      const next = !current;
+      if (next) {
+        onQuestionSelect(question);
+      }
+      return next;
+    });
+  };
+
   return (
     <li
       className="shrink-0 overflow-hidden rounded-[8px] border border-embed-border-default"
       style={{ backgroundColor: colors.surface.card }}
     >
-      <div className="flex min-h-faq-row items-center gap-3 px-section py-3">
-        <button
-          type="button"
-          onClick={() => onQuestionSelect(question)}
-          className="min-w-0 flex-1 cursor-pointer text-left text-[16px] font-semibold leading-snug text-embed-foreground-primary"
-        >
-          {question}
-        </button>
-        <button
-          type="button"
-          aria-label={expanded ? 'Sbalit odpověď' : 'Rozbalit odpověď'}
-          aria-expanded={expanded}
-          onClick={() => setExpanded((current) => !current)}
-          className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-[6px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2"
-        >
-          <FaqCaretIcon expanded={expanded} />
-        </button>
-      </div>
-      <div
-        className="grid transition-[grid-template-rows] duration-500 ease-out"
-        style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
+      {/* RAC-07 — entire FAQ panel is one hit target (expand + seed input). */}
+      <button
+        type="button"
+        aria-expanded={expanded}
+        aria-label={expanded ? 'Sbalit odpověď' : 'Rozbalit odpověď'}
+        onClick={togglePanel}
+        className="flex w-full cursor-pointer flex-col border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-embed-brand-gold/35"
       >
-        <div className="min-h-0 overflow-hidden">
-          <p className="border-t border-embed-border-default px-section py-3.5 text-[14px] leading-relaxed text-embed-foreground-primary/80">
-            {answer}
-          </p>
+        <div className="flex min-h-faq-row items-center gap-3 px-section py-3">
+          <span className="min-w-0 flex-1 text-[16px] font-semibold leading-snug text-embed-foreground-primary">
+            {question}
+          </span>
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px]">
+            <FaqCaretIcon expanded={expanded} />
+          </span>
         </div>
-      </div>
+        <div
+          className="grid transition-[grid-template-rows] duration-500 ease-out"
+          style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
+        >
+          <div className="min-h-0 overflow-hidden">
+            <p
+              className="border-t border-embed-border-default px-section py-3.5 leading-relaxed text-embed-foreground-primary/80"
+              style={{ fontSize: FAQ_ANSWER_FONT_SIZE_PX }}
+            >
+              {answer}
+            </p>
+          </div>
+        </div>
+      </button>
     </li>
   );
 }
 
-/** FAQ topic rows projected from Experience evidence — progressive reveal by page. */
+/** FAQ topic rows — always a page of 3 + load-more when more remain (CAP UX 53). */
 export function FaqList({ items, onQuestionSelect }: SuggestedQuestionsProps) {
-  const [visibleCount, setVisibleCount] = useState(() =>
-    initialFaqVisibleCount(items.length),
-  );
+  const [pageIndex, setPageIndex] = useState(0);
 
   useEffect(() => {
-    setVisibleCount(initialFaqVisibleCount(items.length));
+    setPageIndex(0);
   }, [items]);
 
-  const visibleItems = items.slice(0, visibleCount);
-  const hasMore = hasMoreFaqItems(visibleCount, items.length);
+  const pageSize = FAQ_VISIBLE_PAGE_SIZE;
+  const start = pageIndex * pageSize;
+  const visibleItems = items.slice(start, start + pageSize);
+  const hasMore = start + pageSize < items.length;
+  const showLoadMore = items.length > pageSize;
 
   return (
     <div
@@ -144,15 +167,38 @@ export function FaqList({ items, onQuestionSelect }: SuggestedQuestionsProps) {
           />
         ))}
       </ul>
-      {hasMore ? (
+      {showLoadMore ? (
         <button
           type="button"
-          onClick={() =>
-            setVisibleCount((current) =>
-              nextFaqVisibleCount(current, items.length),
-            )
-          }
-          className="self-start cursor-pointer border-0 bg-transparent p-0 text-sm font-medium text-embed-foreground-primary underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2"
+          disabled={!hasMore}
+          onClick={() => {
+            if (!hasMore) {
+              return;
+            }
+            setPageIndex((current) => current + 1);
+          }}
+          className="mx-auto cursor-pointer px-5 py-[6.4px] text-center font-medium leading-normal tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 disabled:cursor-default disabled:opacity-45"
+          style={{
+            backgroundColor: SWITCH_IDLE_BG,
+            color: SWITCH_IDLE_TEXT,
+            fontSize: SWITCH_FONT_SIZE_PX,
+            fontWeight: SWITCH_FONT_WEIGHT,
+            borderRadius: SWITCH_IDLE_RADIUS_PX,
+            borderStyle: 'none',
+            borderWidth: 0,
+            transition: 'background-color 125ms ease-out, color 125ms ease-out',
+          }}
+          onMouseEnter={(event) => {
+            if (!hasMore) {
+              return;
+            }
+            event.currentTarget.style.backgroundColor = SWITCH_HOVER_BG;
+            event.currentTarget.style.color = SWITCH_HOVER_TEXT;
+          }}
+          onMouseLeave={(event) => {
+            event.currentTarget.style.backgroundColor = SWITCH_IDLE_BG;
+            event.currentTarget.style.color = SWITCH_IDLE_TEXT;
+          }}
         >
           {LOAD_MORE_LABEL}
         </button>

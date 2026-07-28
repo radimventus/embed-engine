@@ -5,7 +5,6 @@ import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
 import { projectAiAdvisorPresentation } from '../../runtime/projectTerminalPresentation';
 import { DECISION_CATEGORIES } from '../PriorityEngine/decision-cards.constants';
 import {
-  coachChatOpeningFromPriorities,
   coachFaqItemsFromPriorities,
 } from '../PriorityEngine/priorityCoachingDialogue';
 
@@ -86,14 +85,21 @@ export function advisorIntroFromAiContext(ai: AIContextContract): string {
 }
 
 /**
- * Chat opening — Priority summary + invitation to discuss (presentation).
+ * Chat opening — general invitation into the discussion (CAP UX 56).
+ * Priority-aware coaching copy belongs after priorities are set, not as the seed.
  */
-export function advisorOpeningForExperience(input: {
+export const ADVISOR_DISCUSSION_OPENING = [
+  'Jsem tu s vámi i pro volnou diskusi o domě.',
+  '',
+  'Zeptejte se na cokoli — nebo vyberte otázku vlevo, která navazuje na náš rozhovor.',
+].join('\n');
+
+/**
+ * Chat opening for the Racio Experience — always a general discussion intro.
+ */
+export function advisorOpeningForExperience(_input: {
   readonly ai: AIContextContract;
   readonly priorityIds: readonly string[];
 }): string {
-  return (
-    coachChatOpeningFromPriorities(input.priorityIds) ??
-    advisorIntroFromAiContext(input.ai)
-  );
+  return ADVISOR_DISCUSSION_OPENING;
 }

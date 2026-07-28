@@ -37,12 +37,15 @@ const titleTextClass =
 const softTextClass =
   'text-[13px] leading-[1.55] text-embed-foreground-primary/65';
 
-/** Match Tour VIDEO/FOTKY — palette SSOT (CAP UX 29). */
+/** Match Tour VIDEO/FOTKY — palette SSOT (CAP UX 29 / 52). */
 const SWITCH_SHELL_BG = palette.lightGray;
 const SWITCH_ACTIVE_BG = palette.warmGray;
-const SWITCH_IDLE_BG = palette.pureWhite;
-const SWITCH_TEXT = palette.navy;
-/** Idle white segment — inline; Delivery CSS isolation zeros button border-radius. */
+const SWITCH_IDLE_BG = palette.navy;
+const SWITCH_IDLE_TEXT = palette.pureWhite;
+const SWITCH_HOVER_BG = palette.gold;
+const SWITCH_HOVER_TEXT = palette.navy;
+const SWITCH_ACTIVE_TEXT = palette.navy;
+/** Idle segment — inline; Delivery CSS isolation zeros button border-radius. */
 const SWITCH_IDLE_RADIUS_PX = 4.8;
 const SWITCH_FONT_SIZE_PX = 12.5;
 const SWITCH_FONT_WEIGHT = 600;
@@ -58,7 +61,7 @@ type PriorityWhiteActionProps = {
   disabled?: boolean;
 };
 
-/** White idle segment / CTA — Tour-aligned; navy hover. */
+/** Navy idle segment / CTA — Tour-aligned; white hover; no solo border (CAP UX 52). */
 function PriorityWhiteActionButton({
   testId,
   label,
@@ -72,24 +75,23 @@ function PriorityWhiteActionButton({
       className="min-w-0 flex-1 touch-manipulation px-2 py-[6.4px] text-center font-medium leading-normal tracking-wide disabled:opacity-55"
       style={{
         backgroundColor: SWITCH_IDLE_BG,
-        color: SWITCH_TEXT,
+        color: SWITCH_IDLE_TEXT,
         fontSize: SWITCH_FONT_SIZE_PX,
         fontWeight: SWITCH_FONT_WEIGHT,
         borderRadius: SWITCH_IDLE_RADIUS_PX,
-        borderStyle: 'solid',
-        borderWidth: 1,
-        borderColor: SWITCH_SHELL_BG,
+        borderStyle: 'none',
+        borderWidth: 0,
         transition: 'background-color 125ms ease-out, color 125ms ease-out',
       }}
       disabled={disabled}
       onClick={onClick}
       onMouseEnter={(event) => {
-        event.currentTarget.style.backgroundColor = SWITCH_TEXT;
-        event.currentTarget.style.color = palette.pureWhite;
+        event.currentTarget.style.backgroundColor = SWITCH_HOVER_BG;
+        event.currentTarget.style.color = SWITCH_HOVER_TEXT;
       }}
       onMouseLeave={(event) => {
         event.currentTarget.style.backgroundColor = SWITCH_IDLE_BG;
-        event.currentTarget.style.color = SWITCH_TEXT;
+        event.currentTarget.style.color = SWITCH_IDLE_TEXT;
       }}
     >
       {label}
@@ -201,8 +203,7 @@ export function PriorityConversationPanel() {
       {phase === 'instruction' ? (
         <ConisMessage testId="priority-conversation-instruction">
           <p className={leadTextClass}>{PRIORITY_CONVERSATION_INTRO_LINES[0]}</p>
-          <p className={leadTextClass}>{PRIORITY_CONVERSATION_INTRO_LINES[1]}</p>
-          <p className={bodyTextClass}>{PRIORITY_CONVERSATION_INTRO_LINES[2]}</p>
+          <p className={bodyTextClass}>{PRIORITY_CONVERSATION_INTRO_LINES[1]}</p>
           <div
             className="mt-1 rounded-[8px] border border-[#E3E3E3] bg-[#F7F6F4] px-3.5 py-3"
             data-testid="priority-conversation-start-block"
@@ -210,14 +211,20 @@ export function PriorityConversationPanel() {
             <p className="mb-1.5 text-[14px] font-semibold tracking-wide text-embed-brand-gold">
               {PRIORITY_CONVERSATION_START_HEADING}
             </p>
-            {PRIORITY_CONVERSATION_START_LINES.map((line) => (
-              <p
-                key={line}
-                className={`${bodyTextClass} text-embed-foreground-primary/90`}
-              >
-                {line}
-              </p>
-            ))}
+            {PRIORITY_CONVERSATION_START_LINES.map((line, index) => {
+              const isCardInstruction =
+                index === PRIORITY_CONVERSATION_START_LINES.length - 1;
+              return (
+                <p
+                  key={line}
+                  className={`${bodyTextClass} text-embed-foreground-primary/90 ${
+                    isCardInstruction ? 'font-bold' : ''
+                  }`}
+                >
+                  {line}
+                </p>
+              );
+            })}
           </div>
         </ConisMessage>
       ) : null}
@@ -294,7 +301,7 @@ export function PriorityConversationPanel() {
                 className="flex min-w-0 flex-1 items-center justify-center px-2 py-[6.4px] text-center font-medium leading-normal tracking-wide"
                 style={{
                   backgroundColor: SWITCH_ACTIVE_BG,
-                  color: SWITCH_TEXT,
+                  color: SWITCH_ACTIVE_TEXT,
                   fontSize: SWITCH_FONT_SIZE_PX,
                   fontWeight: SWITCH_FONT_WEIGHT,
                   borderRadius: 0,
@@ -375,21 +382,44 @@ export function PriorityConversationPanel() {
                         aria-checked={isPending}
                         disabled={dialogBeat !== 'question'}
                         data-testid={`priority-dialog-option-${option.id}`}
-                        className={`rounded-[8px] border px-3.5 py-3 text-left text-[15px] leading-snug transition-[border-color,background-color] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 disabled:cursor-default ${
+                        className="rounded-[10px] px-3.5 py-3 text-left text-[15px] leading-snug transition-[background-color,color] duration-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 disabled:cursor-default"
+                        style={
                           isPending
-                            ? 'border-[#D4AF37] bg-[#D4AF37]/25 text-embed-foreground-primary shadow-[0_0_0_1px_rgba(212,175,55,0.35)]'
-                            : 'border-embed-foreground-primary/15 bg-embed-background-primary/75 text-embed-foreground-primary/90 hover:border-[#D4AF37]/55'
-                        }`}
+                            ? {
+                                backgroundColor: palette.warmGray,
+                                color: palette.navy,
+                                borderStyle: 'none',
+                                borderWidth: 0,
+                                borderRadius: 10,
+                              }
+                            : {
+                                backgroundColor: palette.navy,
+                                color: palette.pureWhite,
+                                borderStyle: 'none',
+                                borderWidth: 0,
+                                borderRadius: 10,
+                              }
+                        }
+                        onMouseEnter={(event) => {
+                          if (dialogBeat !== 'question' || isPending) {
+                            return;
+                          }
+                          event.currentTarget.style.backgroundColor =
+                            palette.gold;
+                          event.currentTarget.style.color = palette.navy;
+                        }}
+                        onMouseLeave={(event) => {
+                          if (isPending) {
+                            return;
+                          }
+                          event.currentTarget.style.backgroundColor =
+                            palette.navy;
+                          event.currentTarget.style.color = palette.pureWhite;
+                        }}
                         onClick={() =>
                           answerQuestion(currentQuestion.priorityId, option.id)
                         }
                       >
-                        <span
-                          className="mr-2.5 text-embed-foreground-primary/45"
-                          aria-hidden="true"
-                        >
-                          {isPending ? '●' : '○'}
-                        </span>
                         {option.label}
                       </button>
                     );
@@ -428,13 +458,15 @@ export function PriorityConversationPanel() {
                         {interpretation}
                       </p>
                     </div>
-                    <PrioritySwitchTrack className="mt-1">
-                      <PriorityWhiteActionButton
-                        testId="priority-conversation-dialog-continue"
-                        label={PRIORITY_CONVERSATION_PREP_CONTINUE}
-                        onClick={continueDialog}
-                      />
-                    </PrioritySwitchTrack>
+                    <div className="mt-1 flex w-full justify-center">
+                      <div className="w-1/2 min-w-0">
+                        <PriorityWhiteActionButton
+                          testId="priority-conversation-dialog-continue"
+                          label={PRIORITY_CONVERSATION_PREP_CONTINUE}
+                          onClick={continueDialog}
+                        />
+                      </div>
+                    </div>
                   </div>
                 ) : null}
               </div>

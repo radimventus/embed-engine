@@ -1,3 +1,5 @@
+import { EXPERIENCE_CONTACT_EMAIL } from '../header/experienceContact';
+
 /**
  * Pilot commercial flags + Czech vocabulary (S-006A).
  * One term per concept. Customer-facing locale: Czech.
@@ -14,7 +16,7 @@ export const PILOT_FLAGS = {
   leadCaptureMode: 'mailto' as const,
 } as const;
 
-export const PILOT_LEAD_MAILTO = 'kontakt@astav.cz';
+export const PILOT_LEAD_MAILTO = EXPERIENCE_CONTACT_EMAIL;
 
 export const PILOT_TERMS = {
   priority: 'Priorita',

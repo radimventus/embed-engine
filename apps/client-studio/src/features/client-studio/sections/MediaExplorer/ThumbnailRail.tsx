@@ -28,6 +28,11 @@ const THUMB_BORDER_PX = 4;
 /** White ring between gold border and thumb body (active); idle keeps transparent padding for stable size. */
 const THUMB_INNER_WHITE_PX = 1;
 const THUMB_RADIUS_PX = 8;
+/** Inner media radius — outer radius minus border (keeps rounded clip under Delivery CSS). */
+const THUMB_INNER_RADIUS_PX = Math.max(
+  0,
+  THUMB_RADIUS_PX - THUMB_BORDER_PX,
+);
 const THUMB_BORDER_ACTIVE = '#D4AF37';
 const THUMB_BORDER_IDLE = 'transparent';
 const THUMB_INNER_ACTIVE = '#FFFFFF';
@@ -125,7 +130,13 @@ function VideoThumbnailPreview({
   const wistia = isWistiaEmbedUrl(src);
 
   return (
-    <div className="relative h-full w-full bg-embed-background-tertiary">
+    <div
+      className="relative h-full w-full bg-embed-background-tertiary"
+      style={{
+        borderRadius: THUMB_INNER_RADIUS_PX,
+        overflow: 'hidden',
+      }}
+    >
       {wistia ? (
         <iframe
           src={src}
@@ -330,7 +341,9 @@ export function ThumbnailRail() {
                     minWidth: FITTED_THUMB_WIDTH_PX,
                     borderWidth: THUMB_BORDER_PX,
                     borderStyle: 'solid',
+                    // Inline beats Delivery `[data-embed-boundary] button { border-radius: 0 }`.
                     borderRadius: THUMB_RADIUS_PX,
+                    overflow: 'hidden',
                     borderColor: active ? THUMB_BORDER_ACTIVE : THUMB_BORDER_IDLE,
                     // Padding + fill = white ring; inset box-shadow is covered by <img> and
                     // also reset by Delivery `[data-embed-boundary] button { box-shadow: none }`.
@@ -350,6 +363,9 @@ export function ThumbnailRail() {
                       src={item.thumbnailSrc}
                       alt=""
                       className="h-full w-full object-cover"
+                      style={{
+                        borderRadius: THUMB_INNER_RADIUS_PX,
+                      }}
                     />
                   )}
                 </button>

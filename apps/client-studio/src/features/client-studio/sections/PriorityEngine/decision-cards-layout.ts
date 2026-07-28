@@ -22,7 +22,11 @@ export const DECISION_CARD_IDLE_CLASS =
   'rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] shadow-none';
 
 export const DECISION_CARD_HOVER_CLASS =
-  'hover:cursor-pointer hover:border-solid hover:border-[#E3E3E3] hover:shadow-[0_4px_14px_rgba(0,25,48,0.06)]';
+  'hover:z-[5] hover:cursor-pointer hover:scale-[1.06] hover:border-solid hover:border-[#001930] hover:shadow-[0_8px_22px_rgba(0,25,48,0.14)]';
+
+/** Idle attention nudge — paused while hovered or active (CAP UX 52). */
+export const DECISION_CARD_ATTENTION_CLASS =
+  'animate-priority-card-attention hover:[animation-play-state:paused]';
 
 /** Open / selected card — page bg fill, 2 px gold border, rounded in both states. */
 export const DECISION_CARD_ACTIVE_CLASS =

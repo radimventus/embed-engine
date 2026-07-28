@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 
 type SpatialZoomControlProps = {
   onClick: () => void;
@@ -8,10 +8,13 @@ type SpatialZoomControlProps = {
 };
 
 const LOUPE_GOLD = '#D4AF37';
+const LOUPE_NAVY = '#001930';
+const LOUPE_IDLE_BG = '#FFFFFF';
 
 /**
  * Gold outline loupe on a white rounded square — shared media / floor-plan control.
  * Inline border/background beat Delivery button CSS reset.
+ * Hover: gold field + navy loupe (CAP UX 54).
  */
 export function SpatialZoomControl({
   onClick,
@@ -19,19 +22,24 @@ export function SpatialZoomControl({
   className = 'absolute bottom-3 right-3 z-10',
   style,
 }: SpatialZoomControlProps) {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <button
       type="button"
       aria-label={label}
-      className={`flex h-[42px] w-[42px] cursor-pointer items-center justify-center transition-opacity duration-150 ease-out hover:opacity-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 ${className}`}
+      className={`flex h-[42px] w-[42px] cursor-pointer items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 ${className}`}
       style={{
-        backgroundColor: '#FFFFFF',
+        backgroundColor: hovered ? LOUPE_GOLD : LOUPE_IDLE_BG,
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: LOUPE_GOLD,
         borderRadius: 8,
+        transition: 'background-color 125ms ease-out',
         ...style,
       }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
       onClick={(event) => {
         event.stopPropagation();
         onClick();
@@ -42,7 +50,7 @@ export function SpatialZoomControl({
         aria-hidden="true"
         className="h-[38px] w-[38px]"
         fill="none"
-        stroke={LOUPE_GOLD}
+        stroke={hovered ? LOUPE_NAVY : LOUPE_GOLD}
         strokeWidth="1.5"
         strokeLinecap="round"
         strokeLinejoin="round"

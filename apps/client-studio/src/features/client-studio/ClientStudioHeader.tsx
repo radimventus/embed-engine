@@ -5,13 +5,14 @@ import actionPdfUrl from '../../assets/icons/action-pdf.png';
 
 import { AstavLogo } from './AstavLogo';
 import { formatExperienceHeaderTitle } from './foundation/formatExperienceHeaderTitle';
-import { scrollToSection } from './foundation/scrollToSection';
-import { PILOT_SECTION_IDS } from './pilot/pilotVocabulary';
+import { HeaderContactMenu } from './header/HeaderContactMenu';
+import { HeaderSaveMenu } from './header/HeaderSaveMenu';
 
 /**
  * AppShell top navigation (CSCB-01) — single sticky Experience header.
  * Close is owned by the Delivery overlay ([data-embed-close] in overlaySurface),
  * not by this header — no close button rendered here.
+ * Kontakt / Uložit — hover panels (CAP UX 57).
  */
 export function ClientStudioHeader() {
   const [title, setTitle] = useState('Client Studio');
@@ -34,40 +35,30 @@ export function ClientStudioHeader() {
           {title}
         </p>
         <div className="flex items-center justify-end gap-section justify-self-end">
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 text-sm text-embed-foreground-primary underline decoration-embed-border-strong underline-offset-4"
-            onClick={() => {
-              scrollToSection(PILOT_SECTION_IDS.audit);
-            }}
-          >
-            <img
-              src={actionCallUrl}
-              alt=""
-              width={48}
-              height={48}
-              className="h-12 w-12 shrink-0 object-contain"
-              aria-hidden="true"
-            />
-            <span>Kontakt</span>
-          </button>
-          <button
-            type="button"
-            className="inline-flex items-center gap-2 text-sm text-embed-foreground-primary underline decoration-embed-border-strong underline-offset-4"
-            onClick={() => {
-              scrollToSection(PILOT_SECTION_IDS.priority);
-            }}
-          >
-            <img
-              src={actionPdfUrl}
-              alt=""
-              width={32}
-              height={32}
-              className="h-8 w-8 shrink-0 object-contain"
-              aria-hidden="true"
-            />
-            <span>Uložit</span>
-          </button>
+          <HeaderContactMenu
+            icon={
+              <img
+                src={actionCallUrl}
+                alt=""
+                width={48}
+                height={48}
+                className="h-12 w-12 shrink-0 object-contain"
+                aria-hidden="true"
+              />
+            }
+          />
+          <HeaderSaveMenu
+            icon={
+              <img
+                src={actionPdfUrl}
+                alt=""
+                width={32}
+                height={32}
+                className="h-8 w-8 shrink-0 object-contain"
+                aria-hidden="true"
+              />
+            }
+          />
         </div>
       </div>
     </header>

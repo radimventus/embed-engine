@@ -12,18 +12,17 @@ export const CONIS_THINKING_MS = 850;
  */
 export const CONIS_QUIZ_ADVANCE_MS = 1500;
 
-/** Opening — who Conis is, what follows, without commands. */
+/** Opening — who Conis is, what follows, without commands (CAP UX 56). */
 export const PRIORITY_CONVERSATION_INTRO_LINES = Object.freeze([
-  'Dobrý den.',
-  'Jmenuji se Conis.',
-  'Jsem tu proto, abych vám pomohl porozumět tomu, jak se rozhodujete o domě.',
+  'Dobrý den, jmenuji se Conis.',
+  'Pomohu vám porozumět, jak se rozhodujete o domě.',
 ] as const);
 
-export const PRIORITY_CONVERSATION_START_HEADING = 'Začněme společně';
+export const PRIORITY_CONVERSATION_START_HEADING = 'Začněme';
 
 export const PRIORITY_CONVERSATION_START_LINES = Object.freeze([
-  'Zkusme společně zjistit, co je pro vás při výběru domu opravdu důležité.',
-  'Vlevo jsou témata — označíme alespoň tři, která k vám patří.',
+  'Zjistíme spolu, co je pro vás u domu důležité.',
+  'Vlevo označte alespoň tři témata, která k vám patří.',
 ] as const);
 
 /** @deprecated Prefer PRIORITY_CONVERSATION_START_LINES */
