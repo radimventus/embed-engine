@@ -186,6 +186,9 @@ export function ClientStudioPage({
                     compact
                   />
                 ) : null}
+                {sceneStates[scenes[2]!.id] === 'visible' ? (
+                  <div aria-hidden="true" className="h-screen w-full" />
+                ) : null}
               </div>
             </DesktopCanvas>
           </WalkthroughProvider>

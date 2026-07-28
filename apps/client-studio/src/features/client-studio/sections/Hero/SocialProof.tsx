@@ -11,7 +11,7 @@ const SOCIAL_PROOF_DIVIDER_STYLE = {
 } as const;
 
 const FEED_TICKER_PAUSE_MS = 8000;
-const FEED_TICKER_SLIDE_MS = 2000;
+const FEED_TICKER_SLIDE_MS = 1600;
 const FEED_VISIBLE_ITEM_COUNT = 3;
 
 type SocialProofEntry = {
@@ -95,7 +95,11 @@ function visibleFeedWindow(
   startIndex: number,
   visibleCount: number,
 ): readonly SocialProofEntry[] {
-  if (entries.length <= visibleCount) {
+  if (entries.length === 0) {
+    return entries;
+  }
+
+  if (entries.length === 1) {
     return entries;
   }
 
@@ -111,12 +115,7 @@ export function SocialProof() {
   const [isAnimating, setIsAnimating] = useState(false);
   const entries = useMemo(() => activityFeedEntries(activity), [activity]);
   const desktopEntries = useMemo(
-    () =>
-      visibleFeedWindow(
-        entries,
-        startIndex,
-        Math.min(entries.length, FEED_VISIBLE_ITEM_COUNT + 1),
-      ),
+    () => visibleFeedWindow(entries, startIndex, FEED_VISIBLE_ITEM_COUNT + 1),
     [entries, startIndex],
   );
   const mobileEntries = useMemo(
@@ -125,26 +124,36 @@ export function SocialProof() {
   );
 
   useEffect(() => {
-    setStartIndex(0);
-    setIsAnimating(false);
-  }, [entries]);
+    if (entries.length === 0) {
+      setStartIndex(0);
+      setIsAnimating(false);
+      return;
+    }
+    setStartIndex((current) => current % entries.length);
+  }, [entries.length]);
 
   useEffect(() => {
-    if (entries.length <= FEED_VISIBLE_ITEM_COUNT) {
+    if (entries.length <= 1) {
+      return;
+    }
+    if (isAnimating) {
       return;
     }
     const startTimer = window.setTimeout(() => {
       setIsAnimating(true);
     }, FEED_TICKER_PAUSE_MS);
-    const finishTimer = window.setTimeout(() => {
-      setStartIndex((current) => (current + 1) % entries.length);
-      setIsAnimating(false);
-    }, FEED_TICKER_PAUSE_MS + FEED_TICKER_SLIDE_MS);
     return () => {
       window.clearTimeout(startTimer);
-      window.clearTimeout(finishTimer);
     };
-  }, [entries, startIndex]);
+  }, [entries, startIndex, isAnimating]);
+
+  const handleTickerTransitionEnd = () => {
+    if (!isAnimating || entries.length <= 1) {
+      return;
+    }
+    setStartIndex((current) => (current + 1) % entries.length);
+    setIsAnimating(false);
+  };
 
   return (
     <Panel
@@ -167,26 +176,18 @@ export function SocialProof() {
       />
       <div className="hidden h-social-proof items-center overflow-hidden px-section desktop:flex">
         <div className="relative w-full overflow-hidden">
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-1/3 z-10 w-px -translate-x-1/2"
-            style={SOCIAL_PROOF_DIVIDER_STYLE}
-          />
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 left-2/3 z-10 w-px -translate-x-1/2"
-            style={SOCIAL_PROOF_DIVIDER_STYLE}
-          />
           <ul
             className="m-0 flex list-none p-0"
+            data-testid="social-proof-ticker-track"
+            onTransitionEnd={handleTickerTransitionEnd}
             style={{
               width: `${(desktopEntries.length / FEED_VISIBLE_ITEM_COUNT) * 100}%`,
               transform:
-                desktopEntries.length > FEED_VISIBLE_ITEM_COUNT && isAnimating
+                entries.length > 1 && isAnimating
                   ? `translateX(-${100 / desktopEntries.length}%)`
                   : 'translateX(0)',
               transition:
-                desktopEntries.length > FEED_VISIBLE_ITEM_COUNT
+                entries.length > 1
                   ? `transform ${FEED_TICKER_SLIDE_MS}ms linear`
                   : 'none',
             }}
@@ -194,12 +195,17 @@ export function SocialProof() {
             {desktopEntries.map((entry) => (
               <li
                 key={entry.id}
-                className="min-w-0 shrink-0"
+                className="relative min-w-0 shrink-0"
                 style={{ width: `${100 / desktopEntries.length}%` }}
               >
                 <div className="px-4">
                   <SocialProofItem {...entry} />
                 </div>
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-y-0 right-0 w-px"
+                  style={SOCIAL_PROOF_DIVIDER_STYLE}
+                />
               </li>
             ))}
           </ul>

@@ -120,6 +120,7 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(page, /state=\{sceneStates\[scenes\[2\]!\.id\]/);
     assert.match(page, /onNext=\{\(\) => revealScene\(scenes\[1\]\?\.id\)\}/);
     assert.match(page, /onNext=\{\(\) => revealScene\(scenes\[2\]\?\.id\)\}/);
+    assert.match(page, /className="h-screen w-full"/);
     assert.match(page, /<Hero \/>[\s\S]*h-\[50px\][\s\S]*<SpatialTerminal \/>/);
     assert.match(page, /<PriorityEngine \/>[\s\S]*h-\[50px\][\s\S]*<AIAdvisor \/>/);
     assert.match(page, /<AuditLeadCapture \/>/);
@@ -134,7 +135,8 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(sceneTransition, /Pokračovat ↓/);
     assert.match(sceneTransition, /↑ Zpět/);
     assert.match(sceneTransition, /w-\[180px\]/);
-    assert.match(sceneTransition, /active:bg-\[#00101f\]/);
+    assert.match(sceneTransition, /hover:bg-embed-brand-gold/);
+    assert.match(sceneTransition, /active:bg-\[#b8931f\]/);
     assert.equal(root.includes('snapEnabled'), false);
     assert.equal(css.includes('scroll-snap-type'), false);
     assert.equal(page.includes('DecisionJourneyIndicator'), false);
