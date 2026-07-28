@@ -40,6 +40,7 @@ export type WorkspaceSectionId =
   | 'knowledge-synthesis'
   | 'ai-decision-gateway'
   | 'personalization-engine'
+  | 'personalization-runtime'
   | 'media'
   | 'layout'
   | 'knowledge';

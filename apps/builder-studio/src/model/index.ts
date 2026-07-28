@@ -432,3 +432,15 @@ export type {
   PersonalizationValidationIssue,
   PersonalizeInput,
 } from './personalization-engine-types';
+
+export type {
+  PersonalizedContextPackage,
+  PersonalizedDecisionContext,
+  PersonalizationProjection,
+  PersonalizationRuntimeEvent,
+  PersonalizationRuntimeEventType,
+  PersonalizationRuntimeIndexEntry,
+  PersonalizationRuntimeValidation,
+  PersonalizationRuntimeValidationIssue,
+  ProjectDecisionContextInput,
+} from './personalization-runtime-types';

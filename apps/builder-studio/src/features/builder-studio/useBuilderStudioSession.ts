@@ -41,6 +41,8 @@ import type {
   GatewayAIContextPackage,
   PersonalizationEngineEvent,
   PersonalizationPackage,
+  PersonalizedContextPackage,
+  PersonalizationRuntimeEvent,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -122,6 +124,8 @@ import {
   createAIDecisionGateway,
   createPersonalizationEngineApi,
   createPersonalizationEngine,
+  createPersonalizationRuntimeApi,
+  createPersonalizationRuntimeEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -233,6 +237,10 @@ export type BuilderStudioViewModel = {
   readonly personalizationEngineEvents: readonly PersonalizationEngineEvent[];
   readonly personalizationIndexCount: number;
   readonly personalizationEngineMessage: string | null;
+  readonly personalizedContextPackage: PersonalizedContextPackage | null;
+  readonly personalizationRuntimeEvents: readonly PersonalizationRuntimeEvent[];
+  readonly personalizationRuntimeIndexCount: number;
+  readonly personalizationRuntimeMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -361,6 +369,11 @@ export type BuilderStudioViewModel = {
   readonly validatePersonalization: () => void;
   readonly publishPersonalization: () => void;
   readonly disposePersonalization: () => void;
+  readonly projectDecisionContext: () => void;
+  readonly rankDecisionContext: () => void;
+  readonly validateDecisionContext: () => void;
+  readonly publishDecisionContext: () => void;
+  readonly disposeDecisionContext: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1011,6 +1024,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const personalizationEngineApi = createPersonalizationEngineApi(
       personalizationEngine,
     );
+    const personalizationRuntimeEngine = createPersonalizationRuntimeEngine();
+    const personalizationRuntimeApi = createPersonalizationRuntimeApi(
+      personalizationRuntimeEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1076,6 +1093,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       aiDecisionGatewayApi,
       personalizationEngine,
       personalizationEngineApi,
+      personalizationRuntimeEngine,
+      personalizationRuntimeApi,
     };
   }, []);
 
@@ -1339,6 +1358,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     useState<readonly PersonalizationEngineEvent[]>([]);
   const [personalizationIndexCount, setPersonalizationIndexCount] = useState(0);
   const [personalizationEngineMessage, setPersonalizationEngineMessage] =
+    useState<string | null>(null);
+  const [personalizedContextPackage, setPersonalizedContextPackage] =
+    useState<PersonalizedContextPackage | null>(null);
+  const [personalizationRuntimeEvents, setPersonalizationRuntimeEvents] =
+    useState<readonly PersonalizationRuntimeEvent[]>([]);
+  const [
+    personalizationRuntimeIndexCount,
+    setPersonalizationRuntimeIndexCount,
+  ] = useState(0);
+  const [personalizationRuntimeMessage, setPersonalizationRuntimeMessage] =
     useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
@@ -1697,6 +1726,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     personalizationEngineEvents,
     personalizationIndexCount,
     personalizationEngineMessage,
+    personalizedContextPackage,
+    personalizationRuntimeEvents,
+    personalizationRuntimeIndexCount,
+    personalizationRuntimeMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3625,6 +3658,141 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.personalizationEngine.getIndex().list(disposed.id).length,
       );
       setPersonalizationEngineMessage(null);
+    },
+    projectDecisionContext(): void {
+      const knowledgeEntries =
+        gatewayAIContextPackage !== null
+          ? gatewayAIContextPackage.context.knowledgeEntries.map(
+              (entryId, index) => ({
+                id: entryId,
+                confidence: Math.max(
+                  0.3,
+                  gatewayAIContextPackage.context.confidence - index * 0.05,
+                ),
+              }),
+            )
+          : [
+              { id: 'knowledge-entry-1', confidence: 0.4 },
+              { id: 'knowledge-entry-2', confidence: 0.5 },
+              { id: 'knowledge-entry-3', confidence: 0.45 },
+            ];
+
+      const sessionId = runtimeSession?.id ?? 'runtime-session-demo';
+      const aiContextPackageId =
+        gatewayAIContextPackage?.id ?? 'ai-context-package-demo';
+      const aiContextTitle =
+        gatewayAIContextPackage?.metadata.title ?? 'Demo AI Context';
+
+      const signalTypes =
+        (behaviorEvaluation?.context.signals ?? behaviorSignals).map(
+          (signal) => signal.type,
+        );
+
+      const projected = services.personalizationRuntimeApi.projectDecisionContext(
+        {
+          aiContextPackageId,
+          aiContextTitle,
+          sessionId,
+          title: `${aiContextTitle} Decision Context`,
+          decisionProfile: 'price-first',
+          priorityProfile: ['price', 'layout', 'location'],
+          behaviorProfile:
+            signalTypes.length > 0
+              ? signalTypes
+              : ['attentive', 'exploring'],
+          knowledgeEntries,
+          sessionState: runtimeSession?.status ?? 'Running',
+          behaviorSignals: signalTypes,
+        },
+      );
+      setPersonalizedContextPackage(projected);
+      setPersonalizationRuntimeEvents(
+        services.personalizationRuntimeEngine.getHistory(projected.id),
+      );
+      setPersonalizationRuntimeIndexCount(
+        services.personalizationRuntimeEngine.getIndex().list(projected.id)
+          .length,
+      );
+      setPersonalizationRuntimeMessage(
+        `Projected decision context for ${sessionId}. Sources unchanged.`,
+      );
+    },
+    rankDecisionContext(): void {
+      if (personalizedContextPackage === null) {
+        setPersonalizationRuntimeMessage('Nejdřív Project Context.');
+        return;
+      }
+      const ranked = services.personalizationRuntimeEngine.rank(
+        personalizedContextPackage.id,
+      );
+      setPersonalizedContextPackage(ranked);
+      setPersonalizationRuntimeEvents(
+        services.personalizationRuntimeEngine.getHistory(ranked.id),
+      );
+      setPersonalizationRuntimeIndexCount(
+        services.personalizationRuntimeEngine.getIndex().list(ranked.id)
+          .length,
+      );
+      setPersonalizationRuntimeMessage('Ranking refreshed.');
+    },
+    validateDecisionContext(): void {
+      if (personalizedContextPackage === null) {
+        setPersonalizationRuntimeMessage('Nejdřív Project Context.');
+        return;
+      }
+      const validated =
+        services.personalizationRuntimeApi.validateDecisionContext(
+          personalizedContextPackage.id,
+        );
+      setPersonalizedContextPackage(validated);
+      setPersonalizationRuntimeEvents(
+        services.personalizationRuntimeEngine.getHistory(validated.id),
+      );
+      setPersonalizationRuntimeMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    publishDecisionContext(): void {
+      if (personalizedContextPackage === null) {
+        setPersonalizationRuntimeMessage('Nejdřív Project Context.');
+        return;
+      }
+      const published =
+        services.personalizationRuntimeApi.publishDecisionContext(
+          personalizedContextPackage.id,
+        );
+      setPersonalizedContextPackage(published);
+      setPersonalizationRuntimeEvents(
+        services.personalizationRuntimeEngine.getHistory(published.id),
+      );
+      setPersonalizationRuntimeIndexCount(
+        services.personalizationRuntimeEngine.getIndex().list(published.id)
+          .length,
+      );
+      setPersonalizationRuntimeMessage(
+        published.metadata.status === 'Published'
+          ? `Published package @ ${published.version}`
+          : 'Publish blocked by validation.',
+      );
+    },
+    disposeDecisionContext(): void {
+      if (personalizedContextPackage === null) {
+        return;
+      }
+      const disposed = services.personalizationRuntimeEngine.dispose(
+        personalizedContextPackage.id,
+      );
+      setPersonalizedContextPackage(disposed);
+      setPersonalizationRuntimeEvents(
+        services.personalizationRuntimeEngine.getHistory(disposed.id),
+      );
+      setPersonalizationRuntimeIndexCount(
+        services.personalizationRuntimeEngine.getIndex().list(disposed.id)
+          .length,
+      );
+      setPersonalizationRuntimeMessage(null);
     },
     buildProject(): void {
       const projectId =

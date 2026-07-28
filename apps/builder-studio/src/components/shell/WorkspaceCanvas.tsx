@@ -34,6 +34,8 @@ import type {
   GatewayAIContextPackage,
   PersonalizationEngineEvent,
   PersonalizationPackage,
+  PersonalizedContextPackage,
+  PersonalizationRuntimeEvent,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -81,6 +83,7 @@ import { HeuristicEngineOverview } from './HeuristicEngineOverview';
 import { KnowledgeSynthesisOverview } from './KnowledgeSynthesisOverview';
 import { AIDecisionGatewayOverview } from './AIDecisionGatewayOverview';
 import { PersonalizationEngineOverview } from './PersonalizationEngineOverview';
+import { PersonalizationRuntimeOverview } from './PersonalizationRuntimeOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -175,6 +178,10 @@ type WorkspaceCanvasProps = {
   readonly personalizationEngineEvents: readonly PersonalizationEngineEvent[];
   readonly personalizationIndexCount: number;
   readonly personalizationEngineMessage: string | null;
+  readonly personalizedContextPackage: PersonalizedContextPackage | null;
+  readonly personalizationRuntimeEvents: readonly PersonalizationRuntimeEvent[];
+  readonly personalizationRuntimeIndexCount: number;
+  readonly personalizationRuntimeMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -292,6 +299,11 @@ type WorkspaceCanvasProps = {
   readonly onValidatePersonalization: () => void;
   readonly onPublishPersonalization: () => void;
   readonly onDisposePersonalization: () => void;
+  readonly onProjectDecisionContext: () => void;
+  readonly onRankDecisionContext: () => void;
+  readonly onValidateDecisionContext: () => void;
+  readonly onPublishDecisionContext: () => void;
+  readonly onDisposeDecisionContext: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -369,6 +381,10 @@ export function WorkspaceCanvas({
   personalizationEngineEvents,
   personalizationIndexCount,
   personalizationEngineMessage,
+  personalizedContextPackage,
+  personalizationRuntimeEvents,
+  personalizationRuntimeIndexCount,
+  personalizationRuntimeMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -476,6 +492,11 @@ export function WorkspaceCanvas({
   onValidatePersonalization,
   onPublishPersonalization,
   onDisposePersonalization,
+  onProjectDecisionContext,
+  onRankDecisionContext,
+  onValidateDecisionContext,
+  onPublishDecisionContext,
+  onDisposeDecisionContext,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -825,6 +846,20 @@ export function WorkspaceCanvas({
             onPublish={onPublishPersonalization}
             onDispose={onDisposePersonalization}
             message={personalizationEngineMessage}
+          />
+        ) : null}
+
+        {activeSection === 'personalization-runtime' ? (
+          <PersonalizationRuntimeOverview
+            personalizedContextPackage={personalizedContextPackage}
+            events={personalizationRuntimeEvents}
+            indexCount={personalizationRuntimeIndexCount}
+            onProject={onProjectDecisionContext}
+            onRank={onRankDecisionContext}
+            onValidate={onValidateDecisionContext}
+            onPublish={onPublishDecisionContext}
+            onDispose={onDisposeDecisionContext}
+            message={personalizationRuntimeMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

@@ -411,3 +411,22 @@ export {
   createPersonalizationIndex,
   type PersonalizationIndex,
 } from './personalization-engine/personalization-index';
+
+export {
+  createPersonalizationRuntimeEngine,
+  type PersonalizationRuntimeEngine,
+} from './personalization-runtime/personalization-runtime-engine';
+export {
+  createPersonalizationRuntimeApi,
+  type PersonalizationRuntimeApi,
+} from './personalization-runtime/personalization-runtime-api';
+export {
+  createBasicPersonalizationProjector,
+  createPersonalizationRuntimeValidator,
+  type PersonalizationProjector,
+  type PersonalizationRuntimeValidator,
+} from './personalization-runtime/basic-personalization-projector';
+export {
+  createPersonalizationRuntimeIndex,
+  type PersonalizationRuntimeIndex,
+} from './personalization-runtime/personalization-runtime-index';
