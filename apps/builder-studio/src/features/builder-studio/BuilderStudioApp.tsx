@@ -82,6 +82,12 @@ export function BuilderStudioApp() {
         analyticsSnapshot={session.analyticsSnapshot}
         analyticsEvents={session.analyticsEvents}
         analyticsMessage={session.analyticsMessage}
+        learningRecord={session.learningRecord}
+        learningValidation={session.learningValidation}
+        learningImportReport={session.learningImportReport}
+        learningExportPayload={session.learningExportPayload}
+        learningPipelineEvents={session.learningPipelineEvents}
+        learningPipelineMessage={session.learningPipelineMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -150,6 +156,11 @@ export function BuilderStudioApp() {
         onAggregateAnalytics={session.aggregateAnalytics}
         onExportAnalytics={session.exportAnalytics}
         onDisposeAnalytics={session.disposeAnalytics}
+        onImportLearning={session.importLearning}
+        onValidateLearning={session.validateLearningPipeline}
+        onAnonymizeLearning={session.anonymizeLearning}
+        onTransformLearning={session.transformLearning}
+        onDisposeLearningPipeline={session.disposeLearningPipeline}
       />
     </AppShell>
   );

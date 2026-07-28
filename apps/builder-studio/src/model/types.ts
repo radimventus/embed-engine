@@ -32,6 +32,7 @@ export type WorkspaceSectionId =
   | 'runtime-session'
   | 'behavior'
   | 'analytics'
+  | 'learning-pipeline'
   | 'media'
   | 'layout'
   | 'knowledge';

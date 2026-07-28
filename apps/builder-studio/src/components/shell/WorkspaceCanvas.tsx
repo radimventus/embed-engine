@@ -16,6 +16,10 @@ import type {
   EvaluationEvent,
   AnalyticsEngineEvent,
   AnalyticsSnapshot,
+  LearningImportReport,
+  LearningPipelineEvent,
+  LearningRecord,
+  LearningValidationResult,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -55,6 +59,7 @@ import { DecisionStoryOverview } from './DecisionStoryOverview';
 import { RuntimeSessionOverview } from './RuntimeSessionOverview';
 import { BehaviorOverview } from './BehaviorOverview';
 import { AnalyticsOverview } from './AnalyticsOverview';
+import { LearningPipelineOverview } from './LearningPipelineOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -115,6 +120,12 @@ type WorkspaceCanvasProps = {
   readonly analyticsSnapshot: AnalyticsSnapshot | null;
   readonly analyticsEvents: readonly AnalyticsEngineEvent[];
   readonly analyticsMessage: string | null;
+  readonly learningRecord: LearningRecord | null;
+  readonly learningValidation: LearningValidationResult | null;
+  readonly learningImportReport: LearningImportReport | null;
+  readonly learningExportPayload: string | null;
+  readonly learningPipelineEvents: readonly LearningPipelineEvent[];
+  readonly learningPipelineMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -193,6 +204,11 @@ type WorkspaceCanvasProps = {
   readonly onAggregateAnalytics: () => void;
   readonly onExportAnalytics: () => void;
   readonly onDisposeAnalytics: () => void;
+  readonly onImportLearning: () => void;
+  readonly onValidateLearning: () => void;
+  readonly onAnonymizeLearning: () => void;
+  readonly onTransformLearning: () => void;
+  readonly onDisposeLearningPipeline: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -236,6 +252,12 @@ export function WorkspaceCanvas({
   analyticsSnapshot,
   analyticsEvents,
   analyticsMessage,
+  learningRecord,
+  learningValidation,
+  learningImportReport,
+  learningExportPayload,
+  learningPipelineEvents,
+  learningPipelineMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -304,6 +326,11 @@ export function WorkspaceCanvas({
   onAggregateAnalytics,
   onExportAnalytics,
   onDisposeAnalytics,
+  onImportLearning,
+  onValidateLearning,
+  onAnonymizeLearning,
+  onTransformLearning,
+  onDisposeLearningPipeline,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -536,6 +563,25 @@ export function WorkspaceCanvas({
             onExport={onExportAnalytics}
             onDispose={onDisposeAnalytics}
             message={analyticsMessage}
+          />
+        ) : null}
+
+        {activeSection === 'learning-pipeline' ? (
+          <LearningPipelineOverview
+            record={learningRecord}
+            validation={learningValidation}
+            report={learningImportReport}
+            exportPayload={learningExportPayload}
+            events={learningPipelineEvents}
+            snapshotLabel={
+              analyticsSnapshot === null ? null : analyticsSnapshot.id
+            }
+            onImport={onImportLearning}
+            onValidate={onValidateLearning}
+            onAnonymize={onAnonymizeLearning}
+            onTransform={onTransformLearning}
+            onDispose={onDisposeLearningPipeline}
+            message={learningPipelineMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

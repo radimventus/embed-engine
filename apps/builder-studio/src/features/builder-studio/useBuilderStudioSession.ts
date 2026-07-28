@@ -22,6 +22,11 @@ import type {
   AnalyticsEngineEvent,
   AnalyticsSnapshot,
   BehaviorEvaluation,
+  IngestAnalyticsInput,
+  LearningImportReport,
+  LearningPipelineEvent,
+  LearningRecord,
+  LearningValidationResult,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -87,6 +92,8 @@ import {
   createBehaviorEngine,
   createDecisionAnalyticsApi,
   createDecisionAnalyticsEngine,
+  createLearningPipeline,
+  createLearningPipelineApi,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -164,6 +171,12 @@ export type BuilderStudioViewModel = {
   readonly analyticsSnapshot: AnalyticsSnapshot | null;
   readonly analyticsEvents: readonly AnalyticsEngineEvent[];
   readonly analyticsMessage: string | null;
+  readonly learningRecord: LearningRecord | null;
+  readonly learningValidation: LearningValidationResult | null;
+  readonly learningImportReport: LearningImportReport | null;
+  readonly learningExportPayload: string | null;
+  readonly learningPipelineEvents: readonly LearningPipelineEvent[];
+  readonly learningPipelineMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -253,6 +266,11 @@ export type BuilderStudioViewModel = {
   readonly aggregateAnalytics: () => void;
   readonly exportAnalytics: () => void;
   readonly disposeAnalytics: () => void;
+  readonly importLearning: () => void;
+  readonly validateLearningPipeline: () => void;
+  readonly anonymizeLearning: () => void;
+  readonly transformLearning: () => void;
+  readonly disposeLearningPipeline: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -381,6 +399,33 @@ function toRuleEvaluationInput(
 
 
 
+
+
+function toIngestAnalyticsInput(
+  snapshot: AnalyticsSnapshot,
+): IngestAnalyticsInput {
+  return {
+    snapshotId: snapshot.id,
+    sessionId: snapshot.session.runtimeSessionId,
+    storyId: snapshot.session.storyId,
+    title: snapshot.metadata.title,
+    completed: snapshot.summary.completed,
+    events: snapshot.events.map((event) => ({
+      type: event.type,
+      timestamp: event.timestamp,
+      source: event.source,
+      note: event.payload.note,
+      moveId: event.payload.moveId,
+      durationMs: event.payload.durationMs,
+      analyticsSessionId: event.metadata.analyticsSessionId,
+    })),
+    metrics: snapshot.metrics.map((metric) => ({
+      name: metric.name,
+      value: metric.value,
+      unit: metric.unit,
+    })),
+  };
+}
 
 function recordAnalyticsFromRuntime(
   engine: {
@@ -850,6 +895,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const decisionAnalyticsApi = createDecisionAnalyticsApi(
       decisionAnalyticsEngine,
     );
+    const learningPipeline = createLearningPipeline();
+    const learningPipelineApi = createLearningPipelineApi(learningPipeline);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -899,6 +946,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       behaviorApi,
       decisionAnalyticsEngine,
       decisionAnalyticsApi,
+      learningPipeline,
+      learningPipelineApi,
     };
   }, []);
 
@@ -1080,6 +1129,25 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [analyticsMessage, setAnalyticsMessage] = useState<string | null>(
     null,
   );
+  const [learningRecord, setLearningRecord] = useState<LearningRecord | null>(
+    null,
+  );
+  const [learningValidation, setLearningValidation] =
+    useState<LearningValidationResult | null>(null);
+  const [learningImportReport, setLearningImportReport] =
+    useState<LearningImportReport | null>(null);
+  const [learningExportPayload, setLearningExportPayload] = useState<
+    string | null
+  >(null);
+  const [learningPipelineEvents, setLearningPipelineEvents] = useState<
+    readonly LearningPipelineEvent[]
+  >([]);
+  const [learningPipelineId, setLearningPipelineId] = useState<string | null>(
+    null,
+  );
+  const [learningPipelineMessage, setLearningPipelineMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -1403,6 +1471,12 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     analyticsSnapshot,
     analyticsEvents,
     analyticsMessage,
+    learningRecord,
+    learningValidation,
+    learningImportReport,
+    learningExportPayload,
+    learningPipelineEvents,
+    learningPipelineMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -2385,6 +2459,99 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setAnalyticsSnapshot(null);
       setAnalyticsEvents([]);
       setAnalyticsMessage(null);
+    },
+
+    importLearning(): void {
+      if (analyticsSnapshot === null) {
+        setLearningPipelineMessage(
+          'Nejdřív Record Analytics (Analytics → Record Analytics).',
+        );
+        return;
+      }
+      const validation = services.learningPipelineApi.importAnalytics(
+        toIngestAnalyticsInput(analyticsSnapshot),
+      );
+      const pipelineId = `learning-pipeline-${analyticsSnapshot.id}`;
+      setLearningPipelineId(pipelineId);
+      setLearningValidation(validation);
+      setLearningImportReport(
+        services.learningPipeline.getImportReport(pipelineId),
+      );
+      setLearningRecord(null);
+      setLearningExportPayload(null);
+      setLearningPipelineEvents(
+        services.learningPipeline.getHistory(pipelineId),
+      );
+      setLearningPipelineMessage(null);
+    },
+    validateLearningPipeline(): void {
+      if (learningPipelineId === null) {
+        setLearningPipelineMessage('Nejdřív Import Analytics.');
+        return;
+      }
+      const validation =
+        services.learningPipelineApi.validateLearning(learningPipelineId);
+      setLearningValidation(validation);
+      setLearningPipelineEvents(
+        services.learningPipeline.getHistory(learningPipelineId),
+      );
+      setLearningPipelineMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    anonymizeLearning(): void {
+      if (learningPipelineId === null) {
+        setLearningPipelineMessage('Nejdřív Import Analytics.');
+        return;
+      }
+      const validation =
+        services.learningPipeline.anonymize(learningPipelineId);
+      setLearningValidation(validation);
+      setLearningPipelineEvents(
+        services.learningPipeline.getHistory(learningPipelineId),
+      );
+      setLearningPipelineMessage('Anonymized identifiers.');
+    },
+    transformLearning(): void {
+      if (learningPipelineId === null) {
+        setLearningPipelineMessage('Nejdřív Import Analytics.');
+        return;
+      }
+      try {
+        const record =
+          services.learningPipelineApi.transformLearning(learningPipelineId);
+        setLearningRecord(record);
+        setLearningValidation(
+          services.learningPipeline.getValidation(learningPipelineId),
+        );
+        setLearningImportReport(
+          services.learningPipeline.getImportReport(learningPipelineId),
+        );
+        setLearningExportPayload(
+          services.learningPipelineApi.exportLearningRecord(learningPipelineId),
+        );
+        setLearningPipelineEvents(
+          services.learningPipeline.getHistory(learningPipelineId),
+        );
+        setLearningPipelineMessage(null);
+      } catch (error) {
+        setLearningPipelineMessage(
+          error instanceof Error ? error.message : 'Transform failed.',
+        );
+      }
+    },
+    disposeLearningPipeline(): void {
+      if (learningPipelineId === null) {
+        return;
+      }
+      services.learningPipeline.dispose(learningPipelineId);
+      setLearningPipelineId(null);
+      setLearningRecord(null);
+      setLearningValidation(null);
+      setLearningImportReport(null);
+      setLearningExportPayload(null);
+      setLearningPipelineEvents([]);
+      setLearningPipelineMessage(null);
     },
     buildProject(): void {
       const projectId =

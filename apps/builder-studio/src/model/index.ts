@@ -332,3 +332,16 @@ export type {
   InitializeAnalyticsInput,
   RecordAnalyticsEventInput,
 } from './analytics-types';
+
+export type {
+  IngestAnalyticsInput,
+  LearningImportReport,
+  LearningPipelineEvent,
+  LearningPipelineEventType,
+  LearningPipelineTimestamps,
+  LearningRecord,
+  LearningRecordEvent,
+  LearningRecordMetric,
+  LearningValidationIssue,
+  LearningValidationResult,
+} from './learning-pipeline-types';

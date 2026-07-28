@@ -263,3 +263,20 @@ export {
   createJsonAnalyticsExporter,
   type AnalyticsExporter,
 } from './analytics/json-analytics-exporter';
+
+export {
+  createLearningPipeline,
+  type LearningPipeline,
+} from './learning-pipeline/learning-pipeline';
+export {
+  createLearningPipelineApi,
+  type LearningPipelineApi,
+} from './learning-pipeline/learning-pipeline-api';
+export {
+  createLearningAnonymizer,
+  type LearningAnonymizer,
+} from './learning-pipeline/learning-anonymizer';
+export {
+  createLearningTransformer,
+  type LearningTransformer,
+} from './learning-pipeline/learning-transformer';
