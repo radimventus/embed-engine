@@ -20,13 +20,16 @@ function stripComments(source: string): string {
 describe('Application Foundation (CSCB-01 / SR-001)', () => {
   it('mounts through a single main entry and AppShell', () => {
     const main = readSource('src/main.tsx');
+    const mount = readSource('src/embed/mountClientStudio.tsx');
     const app = readSource(
       'src/features/client-studio/ClientStudioApp.tsx',
     );
 
-    assert.match(main, /ErrorBoundary/);
-    assert.match(main, /ClientStudioApp/);
-    assert.equal(main.includes('createRoot'), true);
+    assert.match(main, /Embed\.mount/);
+    assert.match(main, /registerClientStudioCss/);
+    assert.match(mount, /ErrorBoundary/);
+    assert.match(mount, /ClientStudioApp/);
+    assert.match(mount, /createRoot/);
     assert.match(app, /AppShell/);
     assert.match(app, /ClientStudioHeader/);
     assert.match(app, /ClientStudioSidebar/);
@@ -86,6 +89,36 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(saveMenu, /window\.print/);
     assert.match(contact, /kontakt@astav\.cz/);
     assert.match(contact, /\+420 987 654 321/);
+  });
+
+  it('adds guided journey scene shells without changing onepage architecture', () => {
+    const page = readSource(
+      'src/features/client-studio/ClientStudioPage.tsx',
+    );
+    const journey = readSource(
+      'src/features/client-studio/foundation/decisionJourney.ts',
+    );
+    const indicator = readSource(
+      'src/features/client-studio/foundation/DecisionJourneyIndicator.tsx',
+    );
+    const sceneFrame = readSource(
+      'src/features/client-studio/foundation/JourneySceneFrame.tsx',
+    );
+    const css = readSource('src/index.css');
+
+    assert.match(page, /GuidedJourneyRoot/);
+    assert.match(page, /DecisionJourneyIndicator/);
+    assert.match(page, /JourneySceneFrame/);
+    assert.match(page, /data-current-scene/);
+    assert.match(journey, /Hero/);
+    assert.match(journey, /Tour/);
+    assert.match(journey, /Racio/);
+    assert.match(indicator, /Průchod Decision Journey/);
+    assert.match(sceneFrame, /Předchozí/);
+    assert.match(sceneFrame, /Další/);
+    assert.match(css, /scroll-snap-type: y proximity/);
+    assert.equal(page.includes('createBrowserRouter'), false);
+    assert.equal(page.includes('Route'), false);
   });
 
   it('does not change Runtime package APIs from the app shell', () => {

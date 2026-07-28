@@ -8,8 +8,12 @@ import {
 import { DecisionSessionRuntimeProvider } from './runtime/DecisionSessionRuntimeProvider';
 import { DesktopCanvas } from './DesktopCanvas';
 import {
-  ChapterSpacer,
+  DecisionJourneyIndicator,
+  GuidedJourneyRoot,
+  JourneySceneFrame,
   RuntimeBootstrapGate,
+  decisionJourneyScenes,
+  useActiveSection,
 } from './foundation';
 import { LegacyCommandExperience } from './legacy/LegacyCommandExperience';
 import { AIAdvisor } from './sections/AIAdvisor/AIAdvisor';
@@ -19,7 +23,7 @@ import { PriorityEngine } from './sections/PriorityEngine/PriorityEngine';
 import { PriorityExperienceProvider } from './sections/PriorityEngine/PriorityExperienceProvider';
 import { SpatialTerminal } from './sections/SpatialTerminal/SpatialTerminal';
 import { WalkthroughProvider } from '../walkthrough';
-import { PILOT_FLAGS } from './pilot/pilotVocabulary';
+import { PILOT_FLAGS, PILOT_SECTION_IDS } from './pilot/pilotVocabulary';
 
 type ClientStudioPageProps = {
   /** LEGACY only — set when CommandRuntime host is explicitly enabled. */
@@ -47,37 +51,73 @@ export function ClientStudioPage({
   onLegacyContinue,
   runtime,
 }: ClientStudioPageProps) {
+  const scenes = decisionJourneyScenes();
+  const activeSceneId = useActiveSection(scenes.map((scene) => scene.id));
+
   return (
     <DecisionAnalyticsProvider>
       <DecisionSessionRuntimeProvider runtime={runtime}>
         <RuntimeBootstrapGate>
           <WalkthroughProvider>
+            <GuidedJourneyRoot />
             <JourneySurfaceObserver />
             <DesktopCanvas>
-              {legacyExperience !== null &&
-              onLegacySelectChoice !== undefined &&
-              onLegacyContinue !== undefined ? (
-                <LegacyCommandExperience
-                  experience={legacyExperience}
-                  onSelectChoice={onLegacySelectChoice}
-                  onContinue={onLegacyContinue}
+              <div
+                className="relative"
+                data-guided-journey="decision-journey"
+                data-current-scene={activeSceneId ?? ''}
+              >
+                <DecisionJourneyIndicator
+                  scenes={scenes}
+                  activeSceneId={activeSceneId}
                 />
-              ) : null}
-              <Hero />
-              <ChapterSpacer />
-              <SpatialTerminal />
-              <ChapterSpacer />
-              <PriorityExperienceProvider>
-                <PriorityEngine />
-                {PILOT_FLAGS.showAiAdvisor ? (
-                  <>
-                    <ChapterSpacer />
-                    <AIAdvisor />
-                  </>
+                {legacyExperience !== null &&
+                onLegacySelectChoice !== undefined &&
+                onLegacyContinue !== undefined ? (
+                  <LegacyCommandExperience
+                    experience={legacyExperience}
+                    onSelectChoice={onLegacySelectChoice}
+                    onContinue={onLegacyContinue}
+                  />
                 ) : null}
-              </PriorityExperienceProvider>
-              <ChapterSpacer />
-              <AuditLeadCapture />
+                <JourneySceneFrame
+                  sceneId={PILOT_SECTION_IDS.hero}
+                  nextSceneId={scenes[1]?.id}
+                >
+                  <Hero />
+                </JourneySceneFrame>
+                <JourneySceneFrame
+                  sceneId={PILOT_SECTION_IDS.walkthrough}
+                  previousSceneId={scenes[0]?.id}
+                  nextSceneId={scenes[2]?.id}
+                >
+                  <SpatialTerminal />
+                </JourneySceneFrame>
+                <PriorityExperienceProvider>
+                  <JourneySceneFrame
+                    sceneId={PILOT_SECTION_IDS.priority}
+                    previousSceneId={scenes[1]?.id}
+                    nextSceneId={PILOT_FLAGS.showAiAdvisor ? scenes[3]?.id : scenes.at(-1)?.id}
+                  >
+                    <PriorityEngine />
+                  </JourneySceneFrame>
+                  {PILOT_FLAGS.showAiAdvisor ? (
+                    <JourneySceneFrame
+                      sceneId={PILOT_SECTION_IDS.aiAdvisor}
+                      previousSceneId={scenes[2]?.id}
+                      nextSceneId={scenes[4]?.id}
+                    >
+                      <AIAdvisor />
+                    </JourneySceneFrame>
+                  ) : null}
+                </PriorityExperienceProvider>
+                <JourneySceneFrame
+                  sceneId={PILOT_SECTION_IDS.audit}
+                  previousSceneId={scenes.at(-2)?.id}
+                >
+                  <AuditLeadCapture />
+                </JourneySceneFrame>
+              </div>
             </DesktopCanvas>
           </WalkthroughProvider>
         </RuntimeBootstrapGate>

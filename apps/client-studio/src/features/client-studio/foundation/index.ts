@@ -2,8 +2,20 @@ export {
   ChapterSpacer,
 } from './ChapterSpacer';
 export {
+  DecisionJourneyIndicator,
+} from './DecisionJourneyIndicator';
+export {
+  GuidedJourneyRoot,
+} from './GuidedJourneyRoot';
+export {
+  JourneySceneFrame,
+} from './JourneySceneFrame';
+export {
   RuntimeBootstrapGate,
 } from './RuntimeBootstrapGate';
+export {
+  decisionJourneyScenes,
+} from './decisionJourney';
 export {
   PRIORITY_BRIDGE_ANCHOR_ID,
   scrollElementIntoView,

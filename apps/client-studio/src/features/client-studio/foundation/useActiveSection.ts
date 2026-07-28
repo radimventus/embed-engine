@@ -25,6 +25,10 @@ export function useActiveSection(
 
     const visibility = new Map<string, number>();
 
+    const overlayMount = document.querySelector<HTMLElement>(
+      '[data-embed-overlay-mount]',
+    );
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -44,7 +48,7 @@ export function useActiveSection(
         }
       },
       {
-        root: null,
+        root: overlayMount,
         // Account for sticky header so active state tracks the reading frame.
         rootMargin: '-20% 0px -55% 0px',
         threshold: [0, 0.25, 0.5, 0.75, 1],
