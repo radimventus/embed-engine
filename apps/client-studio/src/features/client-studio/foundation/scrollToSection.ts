@@ -9,9 +9,10 @@ export function scrollToSection(sectionId: string): void {
   }
 
   const header = document.querySelector<HTMLElement>('[data-experience-header]');
+  const safeOffset = 20;
   const headerOffset = header
-    ? Math.ceil(header.getBoundingClientRect().height)
-    : 0;
+    ? Math.ceil(header.getBoundingClientRect().height) + safeOffset
+    : safeOffset;
 
   const overlayMount = document.querySelector<HTMLElement>(
     '[data-embed-overlay-mount]',
@@ -52,9 +53,10 @@ export function scrollElementIntoView(
   durationMs: number = 600,
 ): void {
   const header = document.querySelector<HTMLElement>('[data-experience-header]');
+  const safeOffset = 20;
   const headerOffset = header
-    ? Math.ceil(header.getBoundingClientRect().height)
-    : 0;
+    ? Math.ceil(header.getBoundingClientRect().height) + safeOffset
+    : safeOffset;
 
   const overlayMount = document.querySelector<HTMLElement>(
     '[data-embed-overlay-mount]',

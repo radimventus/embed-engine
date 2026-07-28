@@ -2,9 +2,6 @@ export {
   ChapterSpacer,
 } from './ChapterSpacer';
 export {
-  DecisionJourneyIndicator,
-} from './DecisionJourneyIndicator';
-export {
   GuidedJourneyRoot,
 } from './GuidedJourneyRoot';
 export {

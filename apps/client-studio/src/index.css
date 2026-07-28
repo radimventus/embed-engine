@@ -25,10 +25,11 @@
   body[data-guided-journey-root='true'],
   [data-guided-journey-root='true'] {
     scroll-behavior: smooth;
+    scroll-padding-top: var(--guided-journey-header-offset, 92px);
   }
 
-  html[data-guided-journey-root='true'],
-  [data-guided-journey-root='true'] {
+  html[data-guided-journey-root='true'][data-guided-journey-snap='on'],
+  [data-guided-journey-root='true'][data-guided-journey-snap='on'] {
     scroll-snap-type: y proximity;
   }
 
@@ -69,6 +70,7 @@
   [data-journey-scene] {
     scroll-snap-align: start;
     scroll-snap-stop: normal;
+    scroll-margin-top: var(--guided-journey-header-offset, 92px);
   }
 
   .animate-hero-photo-veil {

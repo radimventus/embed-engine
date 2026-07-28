@@ -98,25 +98,29 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     const journey = readSource(
       'src/features/client-studio/foundation/decisionJourney.ts',
     );
-    const indicator = readSource(
-      'src/features/client-studio/foundation/DecisionJourneyIndicator.tsx',
-    );
     const sceneFrame = readSource(
       'src/features/client-studio/foundation/JourneySceneFrame.tsx',
+    );
+    const root = readSource(
+      'src/features/client-studio/foundation/GuidedJourneyRoot.tsx',
     );
     const css = readSource('src/index.css');
 
     assert.match(page, /GuidedJourneyRoot/);
-    assert.match(page, /DecisionJourneyIndicator/);
     assert.match(page, /JourneySceneFrame/);
     assert.match(page, /data-current-scene/);
-    assert.match(journey, /Hero/);
-    assert.match(journey, /Tour/);
-    assert.match(journey, /Racio/);
-    assert.match(indicator, /Průchod Decision Journey/);
-    assert.match(sceneFrame, /Předchozí/);
-    assert.match(sceneFrame, /Další/);
+    assert.match(page, /setSnapEnabled\(true\)/);
+    assert.match(page, /<Hero \/>[\s\S]*<ChapterSpacer \/>[\s\S]*<SpatialTerminal \/>/);
+    assert.match(page, /<PriorityEngine \/>[\s\S]*<ChapterSpacer \/>[\s\S]*<AIAdvisor \/>/);
+    assert.match(page, /<AuditLeadCapture \/>/);
+    assert.match(journey, /Orientace/);
+    assert.match(journey, /Interpretace/);
+    assert.match(journey, /Rozhodnutí/);
+    assert.match(sceneFrame, /Pokračovat/);
+    assert.match(sceneFrame, /Zpět/);
+    assert.match(root, /snapEnabled/);
     assert.match(css, /scroll-snap-type: y proximity/);
+    assert.equal(page.includes('DecisionJourneyIndicator'), false);
     assert.equal(page.includes('createBrowserRouter'), false);
     assert.equal(page.includes('Route'), false);
   });

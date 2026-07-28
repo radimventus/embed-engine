@@ -6,11 +6,14 @@ type JourneySceneFrameProps = {
   readonly sceneId: string;
   readonly previousSceneId?: string;
   readonly nextSceneId?: string;
+  readonly onNavigate?: (sceneId: string) => void;
   readonly children: ReactNode;
 };
 
-const NAV_BUTTON_CLASS =
-  'inline-flex min-h-[40px] items-center rounded-[8px] border border-[#E3E3E3] bg-[#FFFFFF] px-3.5 text-sm font-medium text-embed-foreground-primary transition-colors duration-150 hover:border-embed-brand-gold hover:bg-embed-brand-gold/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2';
+const PRIMARY_NAV_BUTTON_CLASS =
+  'inline-flex min-h-[48px] items-center justify-center rounded-[8px] bg-[#001930] px-6 text-base font-medium text-[#FFFFFF] transition-colors duration-150 hover:bg-embed-brand-gold hover:text-[#001930] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2';
+const SECONDARY_NAV_BUTTON_CLASS =
+  'inline-flex min-h-[40px] items-center text-sm text-embed-foreground-primary/65 transition-colors duration-150 hover:text-embed-foreground-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2';
 
 const SCENE_MIN_HEIGHT_PX = 'calc(100vh - 72px)';
 
@@ -22,23 +25,30 @@ export function JourneySceneFrame({
   sceneId,
   previousSceneId,
   nextSceneId,
+  onNavigate,
   children,
 }: JourneySceneFrameProps) {
+  const navigate = (targetSceneId: string) => {
+    onNavigate?.(targetSceneId);
+    scrollToSection(targetSceneId);
+  };
+
   return (
     <div
+      id={sceneId}
       data-journey-scene={sceneId}
       className="flex w-full snap-start snap-normal flex-col gap-[18px] pb-[30px]"
       style={{ minHeight: SCENE_MIN_HEIGHT_PX }}
     >
       {children}
-      <div className="mt-auto flex items-center justify-between gap-3 px-section mobile:flex-col mobile:items-stretch">
+      <div className="mt-auto grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-section mobile:grid-cols-1">
         {previousSceneId ? (
           <button
             type="button"
-            onClick={() => scrollToSection(previousSceneId)}
-            className={NAV_BUTTON_CLASS}
+            onClick={() => navigate(previousSceneId)}
+            className={`${SECONDARY_NAV_BUTTON_CLASS} justify-self-start mobile:justify-self-stretch`}
           >
-            ← Předchozí
+            ← Zpět
           </button>
         ) : (
           <span aria-hidden="true" className="hidden min-h-[40px] desktop:block" />
@@ -46,11 +56,14 @@ export function JourneySceneFrame({
         {nextSceneId ? (
           <button
             type="button"
-            onClick={() => scrollToSection(nextSceneId)}
-            className={`${NAV_BUTTON_CLASS} ml-auto mobile:ml-0`}
+            onClick={() => navigate(nextSceneId)}
+            className={`${PRIMARY_NAV_BUTTON_CLASS} justify-self-center mobile:justify-self-stretch`}
           >
-            Další →
+            Pokračovat →
           </button>
+        ) : null}
+        {nextSceneId ? (
+          <span aria-hidden="true" className="hidden min-h-[48px] desktop:block" />
         ) : null}
       </div>
     </div>
