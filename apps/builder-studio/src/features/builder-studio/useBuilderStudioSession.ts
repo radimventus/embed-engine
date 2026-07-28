@@ -19,6 +19,9 @@ import type {
   KnowledgeLayerEvent,
   KnowledgePackage,
   KnowledgeReference,
+  LearningEvent,
+  LearningOriginDefinition,
+  LearningPackage,
   ResolvedLayerReferences,
   ObjectEvent,
   PriorityDefinition,
@@ -54,7 +57,10 @@ import {
   createKnowledgeLayerApi,
   createKnowledgeLayerService,
   createKnowledgeService,
+  createLearningApi,
+  createLearningService,
   listKnowledgeLayers,
+  listLearningOrigins,
   createLifecycleService,
   createObjectApi,
   createObjectService,
@@ -99,6 +105,9 @@ export type BuilderStudioViewModel = {
     readonly object: ResolvedLayerReferences;
     readonly session: ResolvedLayerReferences;
   } | null;
+  readonly learningPackage: LearningPackage | null;
+  readonly learningEvents: readonly LearningEvent[];
+  readonly learningOrigins: readonly LearningOriginDefinition[];
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -159,6 +168,10 @@ export type BuilderStudioViewModel = {
   readonly ensureKnowledgeLayers: () => void;
   readonly addDemoLayerReferences: () => void;
   readonly removeLayerReference: (referenceId: string) => void;
+  readonly saveLearning: () => void;
+  readonly addLearningObservation: () => void;
+  readonly addLearningPattern: () => void;
+  readonly addLearningHeuristic: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -468,6 +481,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       knowledgeLayerService,
       knowledgeContextResolver,
     );
+    const learningService = createLearningService();
+    const learningApi = createLearningApi(learningService);
+    learningService.create();
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -501,6 +517,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       knowledgeLayerService,
       knowledgeContextResolver,
       knowledgeLayerApi,
+      learningService,
+      learningApi,
     };
   }, []);
 
@@ -624,6 +642,18 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [knowledgeLayerEvents, setKnowledgeLayerEvents] = useState<
     readonly KnowledgeLayerEvent[]
   >([]);
+  const [learningPackage, setLearningPackage] =
+    useState<LearningPackage | null>(() =>
+      services.learningService.load() ?? services.learningService.create(),
+    );
+  const [learningEvents, setLearningEvents] = useState<
+    readonly LearningEvent[]
+  >(() => {
+    if (learningPackage === null) {
+      return [];
+    }
+    return services.learningService.getHistory(learningPackage.id);
+  });
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -903,6 +933,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     knowledgeLayerBundle,
     knowledgeLayerEvents,
     knowledgeReferences: knowledgePackage?.references ?? [],
+    learningPackage,
+    learningEvents,
+    learningOrigins: listLearningOrigins(),
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -1402,6 +1435,60 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setKnowledgeEvents(services.knowledgeService.getHistory(saved.knowledgeId));
       setKnowledgeLayerEvents(services.knowledgeLayerService.getHistory());
       setObjectPackage(services.objectService.loadObject(saved.objectId));
+    },
+
+    saveLearning(): void {
+      if (learningPackage === null) {
+        return;
+      }
+      const saved = services.learningApi.saveLearning(learningPackage.id);
+      setLearningPackage(saved);
+      setLearningEvents(services.learningService.getHistory(saved.id));
+    },
+    addLearningObservation(): void {
+      if (learningPackage === null) {
+        return;
+      }
+      const next = services.learningService.registerObservation(
+        learningPackage.id,
+        {
+          origin: 'platform',
+          category: 'form-opened',
+          payload: { anonymizedBucket: 'D' },
+          confidence: 0.55,
+          notes: 'Form otevřen (anonymizováno)',
+        },
+      );
+      setLearningPackage(next);
+      setLearningEvents(services.learningService.getHistory(next.id));
+    },
+    addLearningPattern(): void {
+      if (learningPackage === null) {
+        return;
+      }
+      const next = services.learningService.registerPattern(learningPackage.id, {
+        description: `Pattern ${learningPackage.patterns.length + 1}`,
+        observations: learningPackage.observations.slice(0, 2).map((item) => item.id),
+        confidence: 0.5,
+      });
+      setLearningPackage(next);
+      setLearningEvents(services.learningService.getHistory(next.id));
+    },
+    addLearningHeuristic(): void {
+      if (learningPackage === null) {
+        return;
+      }
+      const next = services.learningService.registerHeuristic(
+        learningPackage.id,
+        {
+          title: `Heuristic ${learningPackage.heuristics.length + 1}`,
+          description: 'Autorská heuristika — bez Decision Engine.',
+          scope: 'platform',
+          weight: 0.5,
+        },
+      );
+      setLearningPackage(next);
+      setLearningEvents(services.learningService.getHistory(next.id));
     },
     buildProject(): void {
       const projectId =

@@ -59,6 +59,9 @@ export function BuilderStudioApp() {
         knowledgeLayerEvents={session.knowledgeLayerEvents}
         knowledgeReferences={session.knowledgeReferences}
         resolvedLayers={session.resolvedLayers}
+        learningPackage={session.learningPackage}
+        learningEvents={session.learningEvents}
+        learningOrigins={session.learningOrigins}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -98,6 +101,10 @@ export function BuilderStudioApp() {
         onEnsureKnowledgeLayers={session.ensureKnowledgeLayers}
         onAddDemoLayerReferences={session.addDemoLayerReferences}
         onRemoveLayerReference={session.removeLayerReference}
+        onSaveLearning={session.saveLearning}
+        onAddLearningObservation={session.addLearningObservation}
+        onAddLearningPattern={session.addLearningPattern}
+        onAddLearningHeuristic={session.addLearningHeuristic}
       />
     </AppShell>
   );

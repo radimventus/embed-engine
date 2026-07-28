@@ -160,3 +160,16 @@ export {
   getKnowledgeLayer,
   listKnowledgeLayers,
 } from './knowledge-layers/knowledge-layer-registry';
+export {
+  createLearningService,
+  type LearningService,
+} from './learning/learning-service';
+export {
+  createLearningApi,
+  type LearningApi,
+} from './learning/learning-api';
+export {
+  LEARNING_ORIGIN_REGISTRY,
+  LEARNING_REGISTRY,
+  listLearningOrigins,
+} from './learning/learning-registry';

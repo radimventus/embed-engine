@@ -187,6 +187,27 @@ export type {
   SessionKnowledge,
 } from './knowledge-layer-types';
 
+export type {
+  CreateLearningInput,
+  Heuristic,
+  HeuristicScope,
+  LearningEvent,
+  LearningEventType,
+  LearningMetadata,
+  LearningOrigin,
+  LearningOriginDefinition,
+  LearningPackage,
+  LearningTimestamps,
+  Observation,
+  ObservationCategory,
+  Pattern,
+  PatternStatus,
+  RegisterHeuristicInput,
+  RegisterObservationInput,
+  RegisterPatternInput,
+  UpdateLearningInput,
+} from './learning-types';
+
 export {
   ASSET_CATEGORY_ORDER,
   createEmptyAssetCollections,

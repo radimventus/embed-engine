@@ -15,6 +15,9 @@ import type {
   KnowledgeLayerEvent,
   KnowledgePackage,
   KnowledgeReference,
+  LearningEvent,
+  LearningOriginDefinition,
+  LearningPackage,
   ResolvedLayerReferences,
   PriorityDefinition,
   PriorityId,
@@ -33,6 +36,7 @@ import { ExperienceComposer } from './ExperienceComposer';
 import { AIContextPreview } from './AIContextPreview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
+import { LearningOverview } from './LearningOverview';
 import { KnowledgeOverview } from './KnowledgeOverview';
 import {
   KnowledgeSection,
@@ -66,6 +70,9 @@ type WorkspaceCanvasProps = {
     readonly object: ResolvedLayerReferences;
     readonly session: ResolvedLayerReferences;
   } | null;
+  readonly learningPackage: LearningPackage | null;
+  readonly learningEvents: readonly LearningEvent[];
+  readonly learningOrigins: readonly LearningOriginDefinition[];
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -115,6 +122,10 @@ type WorkspaceCanvasProps = {
   readonly onEnsureKnowledgeLayers: () => void;
   readonly onAddDemoLayerReferences: () => void;
   readonly onRemoveLayerReference: (referenceId: string) => void;
+  readonly onSaveLearning: () => void;
+  readonly onAddLearningObservation: () => void;
+  readonly onAddLearningPattern: () => void;
+  readonly onAddLearningHeuristic: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -135,6 +146,9 @@ export function WorkspaceCanvas({
   knowledgeLayerEvents,
   knowledgeReferences,
   resolvedLayers,
+  learningPackage,
+  learningEvents,
+  learningOrigins,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -174,6 +188,10 @@ export function WorkspaceCanvas({
   onEnsureKnowledgeLayers,
   onAddDemoLayerReferences,
   onRemoveLayerReference,
+  onSaveLearning,
+  onAddLearningObservation,
+  onAddLearningPattern,
+  onAddLearningHeuristic,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -310,6 +328,23 @@ export function WorkspaceCanvas({
             onAddDemoReferences={onAddDemoLayerReferences}
             onRemoveReference={onRemoveLayerReference}
           />
+        ) : null}
+
+        {activeSection === 'learning' && learningPackage !== null ? (
+          <LearningOverview
+            learningPackage={learningPackage}
+            origins={learningOrigins}
+            events={learningEvents}
+            onSave={onSaveLearning}
+            onAddObservation={onAddLearningObservation}
+            onAddPattern={onAddLearningPattern}
+            onAddHeuristic={onAddLearningHeuristic}
+          />
+        ) : null}
+        {activeSection === 'learning' && learningPackage === null ? (
+          <p className="text-builder-muted">
+            Learning Package není k dispozici.
+          </p>
         ) : null}
         {activeSection === 'media' ? (
           <MediaSection
