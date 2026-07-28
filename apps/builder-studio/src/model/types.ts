@@ -19,6 +19,8 @@ export type PublishReadyStatus = 'Ready' | 'Blocked' | 'Idle';
 
 export type WorkspaceSectionId =
   | 'overview'
+  | 'experience'
+  | 'knowledge-package'
   | 'media'
   | 'layout'
   | 'knowledge';

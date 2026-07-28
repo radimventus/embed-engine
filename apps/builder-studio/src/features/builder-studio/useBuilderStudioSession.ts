@@ -5,6 +5,11 @@ import type {
   AssetCategoryId,
   BuildResult,
   BuilderProjectManifest,
+  ComposerEvent,
+  Experience,
+  ExperienceStructureReport,
+  KnowledgeEvent,
+  KnowledgePackage,
   ObjectEvent,
   ObjectModuleDefinition,
   ObjectModuleId,
@@ -26,6 +31,10 @@ import type {
 import {
   createAssetService,
   createBuildService,
+  createExperienceComposerApi,
+  createExperienceComposerService,
+  createKnowledgeApi,
+  createKnowledgeService,
   createLifecycleService,
   createObjectApi,
   createObjectService,
@@ -39,6 +48,8 @@ import {
   isPublishAllowedByQualityGate,
   listObjectModules,
   toTimelineEntries,
+  type ExperienceComposerService,
+  type KnowledgeService,
   type ObjectService,
 } from '../../services';
 
@@ -46,6 +57,12 @@ export type BuilderStudioViewModel = {
   readonly workspace: WorkspaceStructure;
   readonly activeProjectModel: ActiveProjectModel | null;
   readonly objectPackage: ObjectPackage | null;
+  readonly experience: Experience | null;
+  readonly experienceStructure: ExperienceStructureReport | null;
+  readonly composerEvents: readonly ComposerEvent[];
+  readonly selectedSceneId: string | null;
+  readonly knowledgePackage: KnowledgePackage | null;
+  readonly knowledgeEvents: readonly KnowledgeEvent[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
   readonly pipeline: ProjectPipelineSnapshot | null;
@@ -80,6 +97,20 @@ export type BuilderStudioViewModel = {
   readonly toggleObjectModule: (moduleId: ObjectModuleId) => void;
   readonly saveObject: () => void;
   readonly duplicateObject: () => void;
+  readonly selectScene: (sceneId: string) => void;
+  readonly addScene: () => void;
+  readonly renameScene: (sceneId: string, title: string) => void;
+  readonly moveScene: (sceneId: string, direction: 'up' | 'down') => void;
+  readonly removeScene: (sceneId: string) => void;
+  readonly toggleSceneModule: (
+    sceneId: string,
+    moduleId: ObjectModuleId,
+  ) => void;
+  readonly saveKnowledge: () => void;
+  readonly addFact: () => void;
+  readonly addEntity: () => void;
+  readonly addRelationship: () => void;
+  readonly addFaq: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -111,6 +142,47 @@ function ensureObjectPackage(
     objectPackage.objectId,
     project,
   );
+}
+
+function ensureExperience(
+  composer: ExperienceComposerService,
+  objectService: ObjectService,
+  objectPackage: ObjectPackage,
+): Experience {
+  const existing = composer.loadExperienceByObject(objectPackage.objectId);
+  const experience =
+    existing ??
+    composer.createExperience({
+      objectId: objectPackage.objectId,
+      title: `${objectPackage.metadata.name} Experience`,
+      description: objectPackage.metadata.description,
+      availableModules: objectPackage.modules,
+    });
+  objectService.setExperience(objectPackage.objectId, experience);
+  return experience;
+}
+
+
+function ensureKnowledge(
+  knowledgeService: KnowledgeService,
+  objectService: ObjectService,
+  objectPackage: ObjectPackage,
+  project: ActiveProjectModel | null,
+): KnowledgePackage {
+  const existing = knowledgeService.loadKnowledgeByObject(objectPackage.objectId);
+  const knowledge =
+    existing ??
+    knowledgeService.createKnowledge({
+      objectId: objectPackage.objectId,
+      title: `${objectPackage.metadata.name} Knowledge`,
+      description: objectPackage.metadata.description,
+    });
+  const synced =
+    project === null
+      ? knowledge
+      : knowledgeService.syncDocumentsFromProject(knowledge.knowledgeId, project);
+  objectService.setKnowledgePackage(objectPackage.objectId, synced);
+  return synced;
 }
 
 function nextMockFileName(categoryId: AssetCategoryId, count: number): string {
@@ -212,10 +284,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     });
     const objectService = createObjectService();
     const objectApi = createObjectApi(objectService);
+    const composerService = createExperienceComposerService();
+    const composerApi = createExperienceComposerApi(composerService);
+    const knowledgeService = createKnowledgeService();
+    const knowledgeApi = createKnowledgeApi(knowledgeService);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
-        ensureObjectPackage(objectService, project);
+        const objectPackage = ensureObjectPackage(objectService, project);
+        ensureExperience(composerService, objectService, objectPackage);
+        ensureKnowledge(knowledgeService, objectService, objectPackage, project);
       }
     }
     return {
@@ -231,6 +309,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       validationService,
       objectService,
       objectApi,
+      composerService,
+      composerApi,
+      knowledgeService,
+      knowledgeApi,
     };
   }, []);
 
@@ -265,6 +347,65 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         : services.objectService.getHistory(pkg.objectId);
     },
   );
+  const [experience, setExperience] = useState<Experience | null>(() => {
+    const model = services.workspaceService.getActiveProjectModel();
+    if (model === null) {
+      return null;
+    }
+    const pkg = ensureObjectPackage(services.objectService, model);
+    return ensureExperience(
+      services.composerService,
+      services.objectService,
+      pkg,
+    );
+  });
+  const [experienceStructure, setExperienceStructure] =
+    useState<ExperienceStructureReport | null>(() => {
+      const model = services.workspaceService.getActiveProjectModel();
+      if (model === null) {
+        return null;
+      }
+      const pkg = ensureObjectPackage(services.objectService, model);
+      const exp = ensureExperience(
+        services.composerService,
+        services.objectService,
+        pkg,
+      );
+      return services.composerService.validateStructure(exp.experienceId);
+    });
+  const [composerEvents, setComposerEvents] = useState<
+    readonly ComposerEvent[]
+  >(() => {
+    if (experience === null) {
+      return [];
+    }
+    return services.composerService.getHistory(experience.experienceId);
+  });
+  const [selectedSceneId, setSelectedSceneId] = useState<string | null>(
+    () => experience?.navigation.defaultScene ?? null,
+  );
+  const [knowledgePackage, setKnowledgePackage] =
+    useState<KnowledgePackage | null>(() => {
+      const model = services.workspaceService.getActiveProjectModel();
+      if (model === null) {
+        return null;
+      }
+      const pkg = ensureObjectPackage(services.objectService, model);
+      return ensureKnowledge(
+        services.knowledgeService,
+        services.objectService,
+        pkg,
+        model,
+      );
+    });
+  const [knowledgeEvents, setKnowledgeEvents] = useState<
+    readonly KnowledgeEvent[]
+  >(() => {
+    if (knowledgePackage === null) {
+      return [];
+    }
+    return services.knowledgeService.getHistory(knowledgePackage.knowledgeId);
+  });
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -343,17 +484,85 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     if (projectId === null) {
       setObjectPackage(null);
       setObjectEvents([]);
+      setExperience(null);
+      setExperienceStructure(null);
+      setComposerEvents([]);
+      setSelectedSceneId(null);
+      setKnowledgePackage(null);
+      setKnowledgeEvents([]);
       return;
     }
     const model = services.assets.getActiveProject(projectId);
     if (model === null) {
       setObjectPackage(null);
       setObjectEvents([]);
+      setExperience(null);
+      setExperienceStructure(null);
+      setComposerEvents([]);
+      setSelectedSceneId(null);
+      setKnowledgePackage(null);
+      setKnowledgeEvents([]);
       return;
     }
     const pkg = ensureObjectPackage(services.objectService, model);
-    setObjectPackage(pkg);
+    const exp = ensureExperience(
+      services.composerService,
+      services.objectService,
+      pkg,
+    );
+    const refreshed = services.objectService.loadObject(pkg.objectId);
+    setObjectPackage(refreshed);
     setObjectEvents(services.objectService.getHistory(pkg.objectId));
+    setExperience(exp);
+    setExperienceStructure(
+      services.composerService.validateStructure(exp.experienceId),
+    );
+    setComposerEvents(
+      services.composerService.getHistory(exp.experienceId),
+    );
+    setSelectedSceneId((current) => {
+      if (
+        current !== null &&
+        exp.scenes.some((scene) => scene.sceneId === current)
+      ) {
+        return current;
+      }
+      return exp.navigation.defaultScene;
+    });
+    const kp = ensureKnowledge(
+      services.knowledgeService,
+      services.objectService,
+      refreshed ?? pkg,
+      model,
+    );
+    setKnowledgePackage(kp);
+    setKnowledgeEvents(services.knowledgeService.getHistory(kp.knowledgeId));
+    setObjectPackage(services.objectService.loadObject(pkg.objectId));
+  };
+
+  const syncComposer = (experienceId: string): void => {
+    const exp = services.composerService.loadExperience(experienceId);
+    if (exp === null) {
+      return;
+    }
+    services.objectService.setExperience(exp.objectId, exp);
+    setExperience(exp);
+    setObjectPackage(services.objectService.loadObject(exp.objectId));
+    setExperienceStructure(
+      services.composerService.validateStructure(exp.experienceId),
+    );
+    setComposerEvents(
+      services.composerService.getHistory(exp.experienceId),
+    );
+    setSelectedSceneId((current) => {
+      if (
+        current !== null &&
+        exp.scenes.some((scene) => scene.sceneId === current)
+      ) {
+        return current;
+      }
+      return exp.navigation.defaultScene;
+    });
   };
 
   const syncLifecycleView = (
@@ -421,6 +630,12 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     workspace,
     activeProjectModel,
     objectPackage,
+    experience,
+    experienceStructure,
+    composerEvents,
+    selectedSceneId,
+    knowledgePackage,
+    knowledgeEvents,
     moduleRegistry: listObjectModules(),
     objectEvents,
     pipeline,
@@ -464,7 +679,18 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       services.workspaceService.setActiveProject(created.projectId);
       const model = services.workspaceService.getActiveProjectModel();
       if (model !== null) {
-        ensureObjectPackage(services.objectService, model);
+        const pkg = ensureObjectPackage(services.objectService, model);
+        ensureExperience(
+          services.composerService,
+          services.objectService,
+          pkg,
+        );
+        ensureKnowledge(
+          services.knowledgeService,
+          services.objectService,
+          pkg,
+          model,
+        );
       }
       setPipeline(services.workspaceService.getPipelineSnapshot());
       setActiveSection('overview');
@@ -537,6 +763,161 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       }
       services.objectApi.duplicateObject(objectPackage.objectId);
       syncObject(objectPackage.projectId);
+    },
+    selectScene(sceneId: string): void {
+      setSelectedSceneId(sceneId);
+    },
+    addScene(): void {
+      if (experience === null) {
+        return;
+      }
+      const next = services.composerService.addScene(experience.experienceId);
+      const added = next.scenes[next.scenes.length - 1];
+      if (added !== undefined) {
+        setSelectedSceneId(added.sceneId);
+      }
+      syncComposer(next.experienceId);
+    },
+    renameScene(sceneId: string, title: string): void {
+      if (experience === null) {
+        return;
+      }
+      const next = services.composerService.updateScene(
+        experience.experienceId,
+        sceneId,
+        { title },
+      );
+      syncComposer(next.experienceId);
+    },
+    moveScene(sceneId: string, direction: 'up' | 'down'): void {
+      if (experience === null) {
+        return;
+      }
+      const next = services.composerService.moveScene(
+        experience.experienceId,
+        sceneId,
+        direction,
+      );
+      syncComposer(next.experienceId);
+    },
+    removeScene(sceneId: string): void {
+      if (experience === null) {
+        return;
+      }
+      try {
+        const next = services.composerService.removeScene(
+          experience.experienceId,
+          sceneId,
+        );
+        syncComposer(next.experienceId);
+      } catch {
+        // Keep at least one scene — service enforces.
+      }
+    },
+    toggleSceneModule(sceneId: string, moduleId: ObjectModuleId): void {
+      if (experience === null) {
+        return;
+      }
+      const scene = experience.scenes.find((item) => item.sceneId === sceneId);
+      if (scene === undefined) {
+        return;
+      }
+      const next = scene.modules.includes(moduleId)
+        ? services.composerService.unassignModule(
+            experience.experienceId,
+            sceneId,
+            moduleId,
+          )
+        : services.composerService.assignModule(
+            experience.experienceId,
+            sceneId,
+            moduleId,
+          );
+      syncComposer(next.experienceId);
+    },
+
+    saveKnowledge(): void {
+      if (knowledgePackage === null) {
+        return;
+      }
+      const saved = services.knowledgeApi.saveKnowledge(
+        knowledgePackage.knowledgeId,
+      );
+      services.objectService.setKnowledgePackage(saved.objectId, saved);
+      setKnowledgePackage(saved);
+      setKnowledgeEvents(
+        services.knowledgeService.getHistory(saved.knowledgeId),
+      );
+      setObjectPackage(services.objectService.loadObject(saved.objectId));
+    },
+    addFact(): void {
+      if (knowledgePackage === null) {
+        return;
+      }
+      const next = services.knowledgeService.addFact(
+        knowledgePackage.knowledgeId,
+        {
+          title: `Fact ${knowledgePackage.facts.length + 1}`,
+          value: 'Doplňte hodnotu',
+          category: 'other',
+        },
+      );
+      services.objectService.setKnowledgePackage(next.objectId, next);
+      setKnowledgePackage(next);
+      setKnowledgeEvents(services.knowledgeService.getHistory(next.knowledgeId));
+      setObjectPackage(services.objectService.loadObject(next.objectId));
+    },
+    addEntity(): void {
+      if (knowledgePackage === null) {
+        return;
+      }
+      const next = services.knowledgeService.addEntity(
+        knowledgePackage.knowledgeId,
+        {
+          label: `Entity ${knowledgePackage.entities.length + 1}`,
+          type: 'feature',
+        },
+      );
+      services.objectService.setKnowledgePackage(next.objectId, next);
+      setKnowledgePackage(next);
+      setKnowledgeEvents(services.knowledgeService.getHistory(next.knowledgeId));
+      setObjectPackage(services.objectService.loadObject(next.objectId));
+    },
+    addRelationship(): void {
+      if (knowledgePackage === null) {
+        return;
+      }
+      const from = knowledgePackage.entities[0]?.id ?? 'entity-unknown';
+      const to = knowledgePackage.facts[0]?.id ?? 'fact-unknown';
+      const next = services.knowledgeService.addRelationship(
+        knowledgePackage.knowledgeId,
+        {
+          from,
+          to,
+          relation: 'related-to',
+          confidence: 0.8,
+        },
+      );
+      services.objectService.setKnowledgePackage(next.objectId, next);
+      setKnowledgePackage(next);
+      setKnowledgeEvents(services.knowledgeService.getHistory(next.knowledgeId));
+      setObjectPackage(services.objectService.loadObject(next.objectId));
+    },
+    addFaq(): void {
+      if (knowledgePackage === null) {
+        return;
+      }
+      const next = services.knowledgeService.addFaq(
+        knowledgePackage.knowledgeId,
+        {
+          question: `Otázka ${knowledgePackage.faqs.length + 1}?`,
+          answer: 'Doplňte odpověď.',
+        },
+      );
+      services.objectService.setKnowledgePackage(next.objectId, next);
+      setKnowledgePackage(next);
+      setKnowledgeEvents(services.knowledgeService.getHistory(next.knowledgeId));
+      setObjectPackage(services.objectService.loadObject(next.objectId));
     },
     buildProject(): void {
       const projectId =

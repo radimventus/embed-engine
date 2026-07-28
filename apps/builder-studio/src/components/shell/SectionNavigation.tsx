@@ -5,9 +5,11 @@ const SECTIONS: readonly {
   label: string;
 }[] = [
   { id: 'overview', label: 'Overview' },
+  { id: 'experience', label: 'Experience' },
+  { id: 'knowledge-package', label: 'Knowledge' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
-  { id: 'knowledge', label: 'Znalosti' },
+  { id: 'knowledge', label: 'Soubory' },
 ];
 
 type SectionNavigationProps = {

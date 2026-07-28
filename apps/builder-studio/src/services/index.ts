@@ -87,3 +87,24 @@ export {
   snapshotObjectContent,
   withContentSnapshot,
 } from './object/object-content';
+export {
+  createExperienceComposerService,
+  type ExperienceComposerService,
+} from './experience/experience-composer-service';
+export {
+  createExperienceComposerApi,
+  type ExperienceComposerApi,
+} from './experience/experience-api';
+export {
+  buildNavigation,
+  collectExperienceModules,
+  validateExperienceStructure,
+} from './experience/experience-structure';
+export {
+  createKnowledgeService,
+  type KnowledgeService,
+} from './knowledge/knowledge-service';
+export {
+  createKnowledgeApi,
+  type KnowledgeApi,
+} from './knowledge/knowledge-api';

@@ -2,6 +2,11 @@ import type {
   ActiveProjectModel,
   AssetCategoryId,
   BuilderProjectManifest,
+  ComposerEvent,
+  Experience,
+  ExperienceStructureReport,
+  KnowledgeEvent,
+  KnowledgePackage,
   ObjectEvent,
   ObjectModuleDefinition,
   ObjectModuleId,
@@ -13,6 +18,8 @@ import type {
   VersionInfo,
   WorkspaceSectionId,
 } from '../../model';
+import { ExperienceComposer } from './ExperienceComposer';
+import { KnowledgeOverview } from './KnowledgeOverview';
 import {
   KnowledgeSection,
   LayoutSection,
@@ -25,6 +32,12 @@ import { SectionNavigation } from './SectionNavigation';
 type WorkspaceCanvasProps = {
   readonly projectModel: ActiveProjectModel | null;
   readonly objectPackage: ObjectPackage | null;
+  readonly experience: Experience | null;
+  readonly experienceStructure: ExperienceStructureReport | null;
+  readonly composerEvents: readonly ComposerEvent[];
+  readonly selectedSceneId: string | null;
+  readonly knowledgePackage: KnowledgePackage | null;
+  readonly knowledgeEvents: readonly KnowledgeEvent[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
   readonly validationReport: ValidationReport | null;
@@ -48,11 +61,31 @@ type WorkspaceCanvasProps = {
   readonly onToggleModule: (moduleId: ObjectModuleId) => void;
   readonly onSaveObject: () => void;
   readonly onDuplicateObject: () => void;
+  readonly onSelectScene: (sceneId: string) => void;
+  readonly onAddScene: () => void;
+  readonly onRenameScene: (sceneId: string, title: string) => void;
+  readonly onMoveScene: (sceneId: string, direction: 'up' | 'down') => void;
+  readonly onRemoveScene: (sceneId: string) => void;
+  readonly onToggleSceneModule: (
+    sceneId: string,
+    moduleId: ObjectModuleId,
+  ) => void;
+  readonly onSaveKnowledge: () => void;
+  readonly onAddFact: () => void;
+  readonly onAddEntity: () => void;
+  readonly onAddRelationship: () => void;
+  readonly onAddFaq: () => void;
 };
 
 export function WorkspaceCanvas({
   projectModel,
   objectPackage,
+  experience,
+  experienceStructure,
+  composerEvents,
+  selectedSceneId,
+  knowledgePackage,
+  knowledgeEvents,
   moduleRegistry,
   objectEvents,
   validationReport,
@@ -69,6 +102,17 @@ export function WorkspaceCanvas({
   onToggleModule,
   onSaveObject,
   onDuplicateObject,
+  onSelectScene,
+  onAddScene,
+  onRenameScene,
+  onMoveScene,
+  onRemoveScene,
+  onToggleSceneModule,
+  onSaveKnowledge,
+  onAddFact,
+  onAddEntity,
+  onAddRelationship,
+  onAddFaq,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -127,6 +171,44 @@ export function WorkspaceCanvas({
         {activeSection === 'overview' && objectPackage === null ? (
           <p className="text-builder-muted">Object Package není k dispozici.</p>
         ) : null}
+        {activeSection === 'experience' &&
+        experience !== null &&
+        experienceStructure !== null &&
+        objectPackage !== null ? (
+          <ExperienceComposer
+            experience={experience}
+            structure={experienceStructure}
+            moduleRegistry={moduleRegistry}
+            availableModules={objectPackage.modules}
+            events={composerEvents}
+            selectedSceneId={selectedSceneId}
+            onSelectScene={onSelectScene}
+            onAddScene={onAddScene}
+            onRenameScene={onRenameScene}
+            onMoveScene={onMoveScene}
+            onRemoveScene={onRemoveScene}
+            onToggleSceneModule={onToggleSceneModule}
+          />
+        ) : null}
+        {activeSection === 'experience' && experience === null ? (
+          <p className="text-builder-muted">Experience není k dispozici.</p>
+        ) : null}
+        {activeSection === 'knowledge-package' && knowledgePackage !== null ? (
+          <KnowledgeOverview
+            knowledgePackage={knowledgePackage}
+            events={knowledgeEvents}
+            onSaveKnowledge={onSaveKnowledge}
+            onAddFact={onAddFact}
+            onAddEntity={onAddEntity}
+            onAddRelationship={onAddRelationship}
+            onAddFaq={onAddFaq}
+          />
+        ) : null}
+        {activeSection === 'knowledge-package' && knowledgePackage === null ? (
+          <p className="text-builder-muted">
+            Knowledge Package není k dispozici.
+          </p>
+        ) : null}
         {activeSection === 'media' ? (
           <MediaSection
             collections={projectModel.assets.media}
@@ -146,7 +228,10 @@ export function WorkspaceCanvas({
           />
         ) : null}
         <div className="mt-5 flex items-center justify-between border-t border-builder-divider pt-5 text-[13px] text-[#7C879A]">
-          <span>Object Package + lifecycle: session only (bez persistence)</span>
+          <span>
+            Knowledge + Experience + Object Package: session only (bez
+            persistence)
+          </span>
           <span>{manifest.updatedAt}</span>
         </div>
       </div>

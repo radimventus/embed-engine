@@ -1,6 +1,8 @@
 import type {
   ActiveProjectModel,
   CreateObjectInput,
+  Experience,
+  KnowledgePackage,
   ObjectEvent,
   ObjectModuleId,
   ObjectPackage,
@@ -30,6 +32,11 @@ export type ObjectService = {
   setModules(
     objectId: string,
     modules: readonly ObjectModuleId[],
+  ): ObjectPackage;
+  setExperience(objectId: string, experience: Experience | null): ObjectPackage;
+  setKnowledgePackage(
+    objectId: string,
+    knowledgePackage: KnowledgePackage | null,
   ): ObjectPackage;
   syncContentFromProject(
     objectId: string,
@@ -136,6 +143,8 @@ export function createObjectService(options?: {
         layouts: content.layouts,
         knowledge: content.knowledge,
         modules: [...(input.modules ?? DEFAULT_OBJECT_MODULES)],
+        experience: null,
+        knowledgePackage: null,
         tags: [...(input.tags ?? [])],
         version: '1.0.0',
         timestamps: { createdAt: stamp, updatedAt: stamp },
@@ -351,6 +360,35 @@ export function createObjectService(options?: {
       return next;
     },
 
+    setExperience(objectId, experience) {
+      const current = requireObject(objectId);
+      const updatedAt = now().toISOString();
+      const next: ObjectPackage = {
+        ...current,
+        experience,
+        timestamps: {
+          createdAt: current.timestamps.createdAt,
+          updatedAt,
+        },
+      };
+      write(next);
+      return next;
+    },
+
+    setKnowledgePackage(objectId, knowledgePackage) {
+      const current = requireObject(objectId);
+      const updatedAt = now().toISOString();
+      const next: ObjectPackage = {
+        ...current,
+        knowledgePackage,
+        timestamps: {
+          createdAt: current.timestamps.createdAt,
+          updatedAt,
+        },
+      };
+      write(next);
+      return next;
+    },
 
     syncContentFromProject(objectId, project) {
       const current = requireObject(objectId);

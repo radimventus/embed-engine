@@ -44,6 +44,12 @@ export function BuilderStudioApp() {
       <WorkspaceCanvas
         projectModel={session.activeProjectModel}
         objectPackage={session.objectPackage}
+        experience={session.experience}
+        experienceStructure={session.experienceStructure}
+        composerEvents={session.composerEvents}
+        selectedSceneId={session.selectedSceneId}
+        knowledgePackage={session.knowledgePackage}
+        knowledgeEvents={session.knowledgeEvents}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
         validationReport={session.validationReport}
@@ -60,6 +66,17 @@ export function BuilderStudioApp() {
         onToggleModule={session.toggleObjectModule}
         onSaveObject={session.saveObject}
         onDuplicateObject={session.duplicateObject}
+        onSelectScene={session.selectScene}
+        onAddScene={session.addScene}
+        onRenameScene={session.renameScene}
+        onMoveScene={session.moveScene}
+        onRemoveScene={session.removeScene}
+        onToggleSceneModule={session.toggleSceneModule}
+        onSaveKnowledge={session.saveKnowledge}
+        onAddFact={session.addFact}
+        onAddEntity={session.addEntity}
+        onAddRelationship={session.addRelationship}
+        onAddFaq={session.addFaq}
       />
     </AppShell>
   );

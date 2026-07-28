@@ -99,6 +99,43 @@ export type {
   UpdateObjectMetadataInput,
 } from './object-types';
 
+export type {
+  ComposerEvent,
+  ComposerEventType,
+  CreateExperienceInput,
+  Experience,
+  ExperienceMetadata,
+  ExperienceNavigation,
+  ExperienceStructureIssue,
+  ExperienceStructureReport,
+  Scene,
+  SceneSettings,
+  UpdateExperienceInput,
+  UpdateSceneInput,
+} from './experience-types';
+
+export type {
+  AddEntityInput,
+  AddFactInput,
+  AddFaqInput,
+  AddRelationshipInput,
+  CreateKnowledgeInput,
+  Entity,
+  EntityType,
+  Fact,
+  FactCategory,
+  FaqEntry,
+  KnowledgeDocument,
+  KnowledgeDocumentType,
+  KnowledgeEvent,
+  KnowledgeEventType,
+  KnowledgeMetadata,
+  KnowledgePackage,
+  KnowledgeTimestamps,
+  RegisterDocumentInput,
+  Relationship,
+  UpdateKnowledgeInput,
+} from './knowledge-types';
 
 export {
   ASSET_CATEGORY_ORDER,
