@@ -23,7 +23,7 @@ export function JourneySceneFrame({
       id={sceneId}
       data-journey-scene={sceneId}
       data-scene-state={state}
-      className={`flex w-full flex-col transition-all duration-500 ease-in-out ${
+      className={`flex w-full flex-col transition-all duration-[1000ms] ease-in-out ${
         state === 'revealing'
           ? 'translate-y-[24px] opacity-0'
           : 'translate-y-0 opacity-100'

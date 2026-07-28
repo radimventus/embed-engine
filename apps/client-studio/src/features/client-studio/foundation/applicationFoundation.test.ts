@@ -113,7 +113,7 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(page, /JourneySceneFrame/);
     assert.match(page, /JourneySceneTransition/);
     assert.match(page, /data-current-scene/);
-    assert.match(page, /REVEAL_DURATION_MS = 500/);
+    assert.match(page, /REVEAL_DURATION_MS = 1000/);
     assert.match(page, /'hidden' \| 'revealing' \| 'visible'/);
     assert.match(page, /sceneStates/);
     assert.match(page, /state=\{sceneStates\[scenes\[1\]!\.id\]/);
@@ -130,10 +130,11 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(journey, /Rozhodnutí/);
     assert.match(sceneFrame, /state === 'hidden'/);
     assert.match(sceneFrame, /state === 'revealing'/);
-    assert.match(sceneFrame, /duration-500 ease-in-out/);
+    assert.match(sceneFrame, /duration-\[1000ms\] ease-in-out/);
     assert.match(sceneTransition, /Pokračovat ↓/);
     assert.match(sceneTransition, /↑ Zpět/);
     assert.match(sceneTransition, /w-\[180px\]/);
+    assert.match(sceneTransition, /active:bg-\[#00101f\]/);
     assert.equal(root.includes('snapEnabled'), false);
     assert.equal(css.includes('scroll-snap-type'), false);
     assert.equal(page.includes('DecisionJourneyIndicator'), false);

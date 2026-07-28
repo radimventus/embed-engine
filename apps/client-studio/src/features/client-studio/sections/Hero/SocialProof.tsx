@@ -10,7 +10,7 @@ const SOCIAL_PROOF_DIVIDER_STYLE = {
   backgroundColor: colors.action.accent,
 } as const;
 
-const FEED_TICKER_PAUSE_MS = 4000;
+const FEED_TICKER_PAUSE_MS = 8000;
 const FEED_TICKER_SLIDE_MS = 2000;
 const FEED_VISIBLE_ITEM_COUNT = 3;
 
@@ -144,7 +144,7 @@ export function SocialProof() {
       window.clearTimeout(startTimer);
       window.clearTimeout(finishTimer);
     };
-  }, [entries]);
+  }, [entries, startIndex]);
 
   return (
     <Panel
@@ -166,7 +166,17 @@ export function SocialProof() {
         style={{ backgroundColor: colors.action.accent }}
       />
       <div className="hidden h-social-proof items-center overflow-hidden px-section desktop:flex">
-        <div className="w-full overflow-hidden">
+        <div className="relative w-full overflow-hidden">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-1/3 z-10 w-px -translate-x-1/2"
+            style={SOCIAL_PROOF_DIVIDER_STYLE}
+          />
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-y-0 left-2/3 z-10 w-px -translate-x-1/2"
+            style={SOCIAL_PROOF_DIVIDER_STYLE}
+          />
           <ul
             className="m-0 flex list-none p-0"
             style={{
@@ -181,21 +191,14 @@ export function SocialProof() {
                   : 'none',
             }}
           >
-            {desktopEntries.map((entry, index) => (
+            {desktopEntries.map((entry) => (
               <li
                 key={entry.id}
-                className="min-w-0"
+                className="min-w-0 shrink-0"
                 style={{ width: `${100 / desktopEntries.length}%` }}
               >
-                <div className="flex items-center gap-4 pr-4">
+                <div className="px-4">
                   <SocialProofItem {...entry} />
-                  {index < desktopEntries.length - 1 ? (
-                    <div
-                      aria-hidden="true"
-                      className="h-10 w-px shrink-0"
-                      style={SOCIAL_PROOF_DIVIDER_STYLE}
-                    />
-                  ) : null}
                 </div>
               </li>
             ))}

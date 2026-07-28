@@ -27,7 +27,7 @@ import { WalkthroughProvider } from '../walkthrough';
 import { PILOT_FLAGS } from './pilot/pilotVocabulary';
 import { scrollToSection } from './foundation/scrollToSection';
 
-const REVEAL_DURATION_MS = 500;
+const REVEAL_DURATION_MS = 1000;
 
 type SceneVisibilityState = 'hidden' | 'revealing' | 'visible';
 
@@ -183,6 +183,7 @@ export function ClientStudioPage({
                   <JourneySceneTransition
                     previousSceneId={scenes[1]?.id}
                     onPrevious={() => scrollToSection(scenes[1]!.id)}
+                    compact
                   />
                 ) : null}
               </div>
