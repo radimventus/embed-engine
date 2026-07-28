@@ -449,3 +449,22 @@ export {
   createDecisionExecutionIndex,
   type DecisionExecutionIndex,
 } from './decision-orchestrator/decision-execution-index';
+
+export {
+  createExperienceRuntimeOrchestrator,
+  type ExperienceRuntimeOrchestrator,
+} from './experience-runtime/experience-runtime-orchestrator';
+export {
+  createExperienceRuntimeApi,
+  type ExperienceRuntimeApi,
+} from './experience-runtime/experience-runtime-api';
+export {
+  createBasicRuntimeStrategy,
+  createRuntimeValidator,
+  type RuntimeStrategy,
+  type RuntimeValidator,
+} from './experience-runtime/basic-runtime-strategy';
+export {
+  createRuntimeIndex,
+  type RuntimeIndex,
+} from './experience-runtime/runtime-index';

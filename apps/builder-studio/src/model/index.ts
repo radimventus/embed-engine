@@ -459,3 +459,17 @@ export type {
   DecisionStageType,
   StartExecutionInput,
 } from './decision-orchestrator-types';
+
+export type {
+  ExperienceRuntimeEvent,
+  ExperienceRuntimeEventType,
+  ExperienceRuntimeIndexEntry,
+  ExperienceRuntimeValidation,
+  ExperienceRuntimeValidationIssue,
+  RuntimeExecution,
+  RuntimeExecutionPackage,
+  RuntimeExecutionStatus,
+  RuntimeStageKind,
+  RuntimeTransition,
+  StartRuntimeInput,
+} from './experience-runtime-types';

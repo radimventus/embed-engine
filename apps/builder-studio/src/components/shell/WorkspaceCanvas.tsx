@@ -38,6 +38,8 @@ import type {
   PersonalizationRuntimeEvent,
   DecisionExecutionPackage,
   DecisionOrchestratorEvent,
+  RuntimeExecutionPackage,
+  ExperienceRuntimeEvent,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -87,6 +89,7 @@ import { AIDecisionGatewayOverview } from './AIDecisionGatewayOverview';
 import { PersonalizationEngineOverview } from './PersonalizationEngineOverview';
 import { PersonalizationRuntimeOverview } from './PersonalizationRuntimeOverview';
 import { DecisionOrchestratorOverview } from './DecisionOrchestratorOverview';
+import { ExperienceRuntimeOverview } from './ExperienceRuntimeOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -189,6 +192,10 @@ type WorkspaceCanvasProps = {
   readonly decisionOrchestratorEvents: readonly DecisionOrchestratorEvent[];
   readonly decisionOrchestratorIndexCount: number;
   readonly decisionOrchestratorMessage: string | null;
+  readonly runtimeExecutionPackage: RuntimeExecutionPackage | null;
+  readonly experienceRuntimeEvents: readonly ExperienceRuntimeEvent[];
+  readonly experienceRuntimeIndexCount: number;
+  readonly experienceRuntimeMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -317,6 +324,13 @@ type WorkspaceCanvasProps = {
   readonly onCompleteDecisionExecution: () => void;
   readonly onValidateDecisionExecution: () => void;
   readonly onDisposeDecisionExecution: () => void;
+  readonly onStartExperienceRuntime: () => void;
+  readonly onNextExperienceRuntimeMove: () => void;
+  readonly onPreviousExperienceRuntimeMove: () => void;
+  readonly onJumpExperienceRuntimeMove: () => void;
+  readonly onCompleteExperienceRuntime: () => void;
+  readonly onValidateExperienceRuntime: () => void;
+  readonly onDisposeExperienceRuntime: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -402,6 +416,10 @@ export function WorkspaceCanvas({
   decisionOrchestratorEvents,
   decisionOrchestratorIndexCount,
   decisionOrchestratorMessage,
+  runtimeExecutionPackage,
+  experienceRuntimeEvents,
+  experienceRuntimeIndexCount,
+  experienceRuntimeMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -520,6 +538,13 @@ export function WorkspaceCanvas({
   onCompleteDecisionExecution,
   onValidateDecisionExecution,
   onDisposeDecisionExecution,
+  onStartExperienceRuntime,
+  onNextExperienceRuntimeMove,
+  onPreviousExperienceRuntimeMove,
+  onJumpExperienceRuntimeMove,
+  onCompleteExperienceRuntime,
+  onValidateExperienceRuntime,
+  onDisposeExperienceRuntime,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -898,6 +923,22 @@ export function WorkspaceCanvas({
             onValidate={onValidateDecisionExecution}
             onDispose={onDisposeDecisionExecution}
             message={decisionOrchestratorMessage}
+          />
+        ) : null}
+
+        {activeSection === 'experience-runtime' ? (
+          <ExperienceRuntimeOverview
+            executionPackage={runtimeExecutionPackage}
+            events={experienceRuntimeEvents}
+            indexCount={experienceRuntimeIndexCount}
+            onStart={onStartExperienceRuntime}
+            onNext={onNextExperienceRuntimeMove}
+            onPrevious={onPreviousExperienceRuntimeMove}
+            onJump={onJumpExperienceRuntimeMove}
+            onComplete={onCompleteExperienceRuntime}
+            onValidate={onValidateExperienceRuntime}
+            onDispose={onDisposeExperienceRuntime}
+            message={experienceRuntimeMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

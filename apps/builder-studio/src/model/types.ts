@@ -42,6 +42,7 @@ export type WorkspaceSectionId =
   | 'personalization-engine'
   | 'personalization-runtime'
   | 'decision-orchestrator'
+  | 'experience-runtime'
   | 'media'
   | 'layout'
   | 'knowledge';

@@ -45,6 +45,8 @@ import type {
   PersonalizationRuntimeEvent,
   DecisionExecutionPackage,
   DecisionOrchestratorEvent,
+  RuntimeExecutionPackage,
+  ExperienceRuntimeEvent,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -130,6 +132,8 @@ import {
   createPersonalizationRuntimeEngine,
   createDecisionOrchestratorApi,
   createDecisionOrchestrator,
+  createExperienceRuntimeApi,
+  createExperienceRuntimeOrchestrator,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -249,6 +253,10 @@ export type BuilderStudioViewModel = {
   readonly decisionOrchestratorEvents: readonly DecisionOrchestratorEvent[];
   readonly decisionOrchestratorIndexCount: number;
   readonly decisionOrchestratorMessage: string | null;
+  readonly runtimeExecutionPackage: RuntimeExecutionPackage | null;
+  readonly experienceRuntimeEvents: readonly ExperienceRuntimeEvent[];
+  readonly experienceRuntimeIndexCount: number;
+  readonly experienceRuntimeMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -388,6 +396,13 @@ export type BuilderStudioViewModel = {
   readonly completeDecisionExecution: () => void;
   readonly validateDecisionExecution: () => void;
   readonly disposeDecisionExecution: () => void;
+  readonly startExperienceRuntime: () => void;
+  readonly nextExperienceRuntimeMove: () => void;
+  readonly previousExperienceRuntimeMove: () => void;
+  readonly jumpExperienceRuntimeMove: () => void;
+  readonly completeExperienceRuntime: () => void;
+  readonly validateExperienceRuntime: () => void;
+  readonly disposeExperienceRuntime: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1046,6 +1061,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const decisionOrchestratorApi = createDecisionOrchestratorApi(
       decisionOrchestrator,
     );
+    const experienceRuntimeOrchestrator = createExperienceRuntimeOrchestrator();
+    const experienceRuntimeApi = createExperienceRuntimeApi(
+      experienceRuntimeOrchestrator,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1115,6 +1134,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       personalizationRuntimeApi,
       decisionOrchestrator,
       decisionOrchestratorApi,
+      experienceRuntimeOrchestrator,
+      experienceRuntimeApi,
     };
   }, []);
 
@@ -1400,6 +1421,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   ] = useState(0);
   const [decisionOrchestratorMessage, setDecisionOrchestratorMessage] =
     useState<string | null>(null);
+  const [runtimeExecutionPackage, setRuntimeExecutionPackage] =
+    useState<RuntimeExecutionPackage | null>(null);
+  const [experienceRuntimeEvents, setExperienceRuntimeEvents] = useState<
+    readonly ExperienceRuntimeEvent[]
+  >([]);
+  const [experienceRuntimeIndexCount, setExperienceRuntimeIndexCount] =
+    useState(0);
+  const [experienceRuntimeMessage, setExperienceRuntimeMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -1765,6 +1796,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     decisionOrchestratorEvents,
     decisionOrchestratorIndexCount,
     decisionOrchestratorMessage,
+    runtimeExecutionPackage,
+    experienceRuntimeEvents,
+    experienceRuntimeIndexCount,
+    experienceRuntimeMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3972,6 +4007,181 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.decisionOrchestrator.getIndex().list(disposed.id).length,
       );
       setDecisionOrchestratorMessage(null);
+    },
+    startExperienceRuntime(): void {
+      const moveIds =
+        decisionStory !== null && decisionStory.moves.length > 0
+          ? decisionStory.moves.map((move) => move.id)
+          : ['move-1', 'move-2', 'move-3'];
+      const sessionId = runtimeSession?.id ?? 'runtime-session-demo';
+      const storyId = decisionStory?.id ?? 'decision-story-demo';
+      const started = services.experienceRuntimeApi.startRuntime({
+        sessionId,
+        storyId,
+        moveIds,
+        title: `Runtime Execution ${sessionId}`,
+        personalizedContextPackageId: personalizedContextPackage?.id ?? null,
+        behaviorEvaluationId: behaviorEvaluation?.id ?? null,
+        moduleIds: experience?.modules.map((moduleId) => moduleId) ?? [
+          'module-priority',
+          'module-faq',
+        ],
+      });
+      setRuntimeExecutionPackage(started);
+      setExperienceRuntimeEvents(
+        services.experienceRuntimeOrchestrator.getHistory(started.id),
+      );
+      setExperienceRuntimeIndexCount(
+        services.experienceRuntimeOrchestrator.getIndex().list(started.id)
+          .length,
+      );
+      setExperienceRuntimeMessage(
+        `Started runtime for ${sessionId}. Sources unchanged.`,
+      );
+    },
+    nextExperienceRuntimeMove(): void {
+      if (runtimeExecutionPackage === null) {
+        setExperienceRuntimeMessage('Nejdřív Start Runtime.');
+        return;
+      }
+      try {
+        const next = services.experienceRuntimeApi.nextMove(
+          runtimeExecutionPackage.id,
+        );
+        setRuntimeExecutionPackage(next);
+        setExperienceRuntimeEvents(
+          services.experienceRuntimeOrchestrator.getHistory(next.id),
+        );
+        setExperienceRuntimeIndexCount(
+          services.experienceRuntimeOrchestrator.getIndex().list(next.id)
+            .length,
+        );
+        setExperienceRuntimeMessage(
+          next.execution.status === 'Completed'
+            ? 'Runtime completed via next.'
+            : `Next → ${next.execution.currentMove}.`,
+        );
+      } catch (error) {
+        setExperienceRuntimeMessage(
+          error instanceof Error ? error.message : 'Next failed.',
+        );
+      }
+    },
+    previousExperienceRuntimeMove(): void {
+      if (runtimeExecutionPackage === null) {
+        setExperienceRuntimeMessage('Nejdřív Start Runtime.');
+        return;
+      }
+      try {
+        const previous = services.experienceRuntimeApi.previousMove(
+          runtimeExecutionPackage.id,
+        );
+        setRuntimeExecutionPackage(previous);
+        setExperienceRuntimeEvents(
+          services.experienceRuntimeOrchestrator.getHistory(previous.id),
+        );
+        setExperienceRuntimeMessage(
+          `Previous → ${previous.execution.currentMove}.`,
+        );
+      } catch (error) {
+        setExperienceRuntimeMessage(
+          error instanceof Error ? error.message : 'Previous failed.',
+        );
+      }
+    },
+    jumpExperienceRuntimeMove(): void {
+      if (runtimeExecutionPackage === null) {
+        setExperienceRuntimeMessage('Nejdřív Start Runtime.');
+        return;
+      }
+      const moveIds =
+        decisionStory !== null && decisionStory.moves.length > 0
+          ? decisionStory.moves.map((move) => move.id)
+          : ['move-1', 'move-2', 'move-3'];
+      const target =
+        moveIds.find(
+          (moveId) => moveId !== runtimeExecutionPackage.execution.currentMove,
+        ) ?? moveIds[0];
+      if (target === undefined) {
+        setExperienceRuntimeMessage('Žádný jump target.');
+        return;
+      }
+      try {
+        const jumped = services.experienceRuntimeApi.jumpToMove(
+          runtimeExecutionPackage.id,
+          target,
+        );
+        setRuntimeExecutionPackage(jumped);
+        setExperienceRuntimeEvents(
+          services.experienceRuntimeOrchestrator.getHistory(jumped.id),
+        );
+        setExperienceRuntimeMessage(`Jump → ${jumped.execution.currentMove}.`);
+      } catch (error) {
+        setExperienceRuntimeMessage(
+          error instanceof Error ? error.message : 'Jump failed.',
+        );
+      }
+    },
+    completeExperienceRuntime(): void {
+      if (runtimeExecutionPackage === null) {
+        setExperienceRuntimeMessage('Nejdřív Start Runtime.');
+        return;
+      }
+      try {
+        const completed = services.experienceRuntimeApi.completeRuntime(
+          runtimeExecutionPackage.id,
+        );
+        setRuntimeExecutionPackage(completed);
+        setExperienceRuntimeEvents(
+          services.experienceRuntimeOrchestrator.getHistory(completed.id),
+        );
+        setExperienceRuntimeIndexCount(
+          services.experienceRuntimeOrchestrator.getIndex().list(completed.id)
+            .length,
+        );
+        setExperienceRuntimeMessage(
+          `Completed runtime ${completed.execution.id}.`,
+        );
+      } catch (error) {
+        setExperienceRuntimeMessage(
+          error instanceof Error ? error.message : 'Complete failed.',
+        );
+      }
+    },
+    validateExperienceRuntime(): void {
+      if (runtimeExecutionPackage === null) {
+        setExperienceRuntimeMessage('Nejdřív Start Runtime.');
+        return;
+      }
+      const validated = services.experienceRuntimeApi.validateRuntime(
+        runtimeExecutionPackage.id,
+      );
+      setRuntimeExecutionPackage(validated);
+      setExperienceRuntimeEvents(
+        services.experienceRuntimeOrchestrator.getHistory(validated.id),
+      );
+      setExperienceRuntimeMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    disposeExperienceRuntime(): void {
+      if (runtimeExecutionPackage === null) {
+        return;
+      }
+      const disposed = services.experienceRuntimeOrchestrator.dispose(
+        runtimeExecutionPackage.id,
+      );
+      setRuntimeExecutionPackage(disposed);
+      setExperienceRuntimeEvents(
+        services.experienceRuntimeOrchestrator.getHistory(disposed.id),
+      );
+      setExperienceRuntimeIndexCount(
+        services.experienceRuntimeOrchestrator.getIndex().list(disposed.id)
+          .length,
+      );
+      setExperienceRuntimeMessage(null);
     },
     buildProject(): void {
       const projectId =
