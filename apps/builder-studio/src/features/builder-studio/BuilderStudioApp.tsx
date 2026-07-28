@@ -29,6 +29,10 @@ export function BuilderStudioApp() {
           publishHistory={session.publishHistory}
           preview={session.preview}
           previewHistory={session.previewHistory}
+          validationReport={session.validationReport}
+          validationHistory={session.validationHistory}
+          validationEvents={session.validationEvents}
+          onValidateProject={session.validateProject}
           onBuildProject={session.buildProject}
           onPublishPackage={session.publishPackage}
           onOpenPreview={session.openPreview}

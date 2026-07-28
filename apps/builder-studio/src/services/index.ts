@@ -46,6 +46,16 @@ export {
   type ReadinessService,
 } from './lifecycle/readiness-service';
 export { canTransition, assertTransition } from './lifecycle/lifecycle-transitions';
+export {
+  createValidationService,
+  type ValidationService,
+} from './validation/validation-service';
+export {
+  decideQualityGate,
+  isPublishAllowedByQualityGate,
+  buildValidationReport,
+} from './validation/quality-gate';
+export { DEFAULT_VALIDATION_RULES } from './validation/default-rules';
 export type {
   PublishGateway,
   RuntimeGateway,

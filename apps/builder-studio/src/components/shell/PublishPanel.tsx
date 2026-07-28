@@ -4,7 +4,11 @@ import type {
   PreviewSnapshot,
   ProjectPipelineSnapshot,
   PublishResult,
+  ValidationEvent,
+  ValidationReport,
 } from '../../model';
+import { isPublishAllowedByQualityGate } from '../../services';
+import { ValidationDashboard } from './ValidationDashboard';
 
 type PublishPanelProps = {
   readonly pipeline: ProjectPipelineSnapshot | null;
@@ -14,6 +18,10 @@ type PublishPanelProps = {
   readonly publishHistory: readonly PublishResult[];
   readonly preview: PreviewSnapshot;
   readonly previewHistory: readonly PreviewEvent[];
+  readonly validationReport: ValidationReport | null;
+  readonly validationHistory: readonly ValidationReport[];
+  readonly validationEvents: readonly ValidationEvent[];
+  readonly onValidateProject: () => void;
   readonly onBuildProject: () => void;
   readonly onPublishPackage: () => void;
   readonly onOpenPreview: () => void;
@@ -88,6 +96,10 @@ export function PublishPanel({
   publishHistory,
   preview,
   previewHistory,
+  validationReport,
+  validationHistory,
+  validationEvents,
+  onValidateProject,
   onBuildProject,
   onPublishPackage,
   onOpenPreview,
@@ -110,7 +122,9 @@ export function PublishPanel({
   const canPublish =
     latestBuild !== null &&
     latestBuild.success === true &&
-    latestBuild.package.publishable === true;
+    latestBuild.package.publishable === true &&
+    validationReport !== null &&
+    isPublishAllowedByQualityGate(validationReport.qualityGate);
 
   const canOpenPreview =
     latestPublish !== null &&
@@ -132,13 +146,17 @@ export function PublishPanel({
 
       <StatusRow
         label="Validation Status"
-        value={pipeline.validationStatus}
+        value={
+          validationReport?.qualityGate ?? pipeline.validationStatus
+        }
         tone={
-          pipeline.validationStatus === 'Ready'
-            ? 'success'
-            : pipeline.validationStatus === 'Validation Error'
-              ? 'draft'
-              : 'muted'
+          validationReport === null
+            ? 'muted'
+            : validationReport.qualityGate === 'Passed'
+              ? 'success'
+              : validationReport.qualityGate === 'Failed'
+                ? 'draft'
+                : 'navy'
         }
       />
       <StatusRow
@@ -182,6 +200,12 @@ export function PublishPanel({
         />
       </div>
 
+      <ValidationDashboard
+        report={validationReport}
+        history={validationHistory}
+        events={validationEvents}
+        onValidateProject={onValidateProject}
+      />
 
       <section className="mt-8 border-t border-builder-divider pt-6">
         <h4 className="mb-4 text-base font-semibold">Build</h4>

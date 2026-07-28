@@ -72,6 +72,17 @@ export type {
   VersionInfo,
 } from './lifecycle-types';
 
+export type {
+  QualityGate,
+  ValidationCategory,
+  ValidationContext,
+  ValidationEvent,
+  ValidationEventType,
+  ValidationFinding,
+  ValidationReport,
+  ValidationRule,
+  ValidationSeverity,
+} from './validation-types';
 
 
 

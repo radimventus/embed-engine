@@ -12,6 +12,8 @@ import type {
   ReadinessReport,
   TimelineEntry,
   UpdateAssetMetadataInput,
+  ValidationEvent,
+  ValidationReport,
   VersionInfo,
   WorkspaceSectionId,
   WorkspaceStructure,
@@ -25,7 +27,9 @@ import {
   createPublishService,
   createReadinessService,
   createRuntimePreviewService,
+  createValidationService,
   createWorkspaceService,
+  isPublishAllowedByQualityGate,
   toTimelineEntries,
 } from '../../services';
 
@@ -44,6 +48,9 @@ export type BuilderStudioViewModel = {
   readonly versions: VersionInfo | null;
   readonly readiness: ReadinessReport | null;
   readonly timeline: readonly TimelineEntry[];
+  readonly validationReport: ValidationReport | null;
+  readonly validationHistory: readonly ValidationReport[];
+  readonly validationEvents: readonly ValidationEvent[];
   readonly openProject: (projectId: string) => void;
   readonly createProject: () => void;
   readonly selectSection: (sectionId: WorkspaceSectionId) => void;
@@ -57,6 +64,7 @@ export type BuilderStudioViewModel = {
     assetId: string,
     patch: UpdateAssetMetadataInput,
   ) => void;
+  readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
   readonly openPreview: () => void;
@@ -93,11 +101,18 @@ function pipelineFromBuild(
   base: ProjectPipelineSnapshot,
   build: BuildResult,
   publish: PublishResult | null,
+  validation: ValidationReport | null,
 ): ProjectPipelineSnapshot {
   return {
     ...base,
     validationStatus:
-      build.errors.length === 0 ? 'Pending' : 'Validation Error',
+      validation === null
+        ? build.errors.length === 0
+          ? 'Pending'
+          : 'Validation Error'
+        : validation.qualityGate === 'Failed'
+          ? 'Validation Error'
+          : 'Ready',
     buildStatus: build.success ? 'Ready' : 'Failed',
     publishStatus:
       publish === null
@@ -142,6 +157,18 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       getPublishedPackage: (packageId) =>
         publishService.getPublishedPackage(packageId),
     });
+    const validationService = createValidationService({
+      getProject: (projectId) => assets.getActiveProject(projectId),
+      getLatestBuild: (projectId) => buildService.getLatestBuild(projectId),
+      getLatestPublish: (projectId) => {
+        const build = buildService.getLatestBuild(projectId);
+        if (build === null) {
+          return null;
+        }
+        return publishService.getLatestPublish(build.package.packageId);
+      },
+      getPreviewState: () => previewService.getPreviewState(),
+    });
     return {
       registry,
       assets,
@@ -152,6 +179,7 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       buildService,
       publishService,
       previewService,
+      validationService,
     };
   }, []);
 
@@ -212,9 +240,32 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       ? toTimelineEntries(services.events.getHistory(activeId))
       : [];
   });
+  const [validationReport, setValidationReport] =
+    useState<ValidationReport | null>(null);
+  const [validationHistory, setValidationHistory] = useState<
+    readonly ValidationReport[]
+  >([]);
+  const [validationEvents, setValidationEvents] = useState<
+    readonly ValidationEvent[]
+  >([]);
+
   const syncPreview = (): void => {
     setPreview(services.previewService.getPreviewState());
     setPreviewHistory(services.previewService.getPreviewHistory());
+  };
+
+  const syncValidation = (projectId: string | null): void => {
+    if (projectId === null) {
+      setValidationReport(null);
+      setValidationHistory([]);
+      setValidationEvents([]);
+      return;
+    }
+    setValidationReport(
+      services.validationService.getLatestReport(projectId),
+    );
+    setValidationHistory(services.validationService.getHistory(projectId));
+    setValidationEvents(services.validationService.getEvents(projectId));
   };
 
 
@@ -263,6 +314,7 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         setPublishHistory([]);
       }
       syncLifecycleView(activeId, build, publish);
+      syncValidation(activeId);
     } else {
       setLatestBuild(null);
       setBuildHistory([]);
@@ -272,6 +324,7 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setVersions(null);
       setReadiness(null);
       setTimeline([]);
+      syncValidation(null);
     }
     syncPreview();
   };
@@ -291,6 +344,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     versions,
     readiness,
     timeline,
+    validationReport,
+    validationHistory,
+    validationEvents,
     openProject(projectId: string): void {
       services.workspaceService.setActiveProject(projectId);
       const base = services.workspaceService.getPipelineSnapshot();
@@ -300,9 +356,11 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         packageId !== undefined
           ? services.publishService.getLatestPublish(packageId)
           : null;
+      const validation =
+        services.validationService.getLatestReport(projectId);
       setPipeline(
         base !== null && latest !== null
-          ? pipelineFromBuild(base, latest, publish)
+          ? pipelineFromBuild(base, latest, publish, validation)
           : base,
       );
       syncFromServices(projectId);
@@ -365,9 +423,26 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           services.lifecycle.changeStatus(projectId, 'ReadyForPublish');
         }
       }
+      const validation = services.validationService.validateProject(projectId);
       const base = services.workspaceService.getPipelineSnapshot();
       if (base !== null) {
-        setPipeline(pipelineFromBuild(base, result, null));
+        setPipeline(pipelineFromBuild(base, result, null, validation));
+      }
+      syncFromServices(projectId);
+    },
+    validateProject(): void {
+      const projectId =
+        services.workspaceService.getWorkspace().activeProjectId;
+      if (projectId === null) {
+        return;
+      }
+      const report = services.validationService.validateProject(projectId);
+      const base = services.workspaceService.getPipelineSnapshot();
+      const latest = services.buildService.getLatestBuild(projectId);
+      if (base !== null && latest !== null) {
+        const packageId = latest.package.packageId;
+        const publish = services.publishService.getLatestPublish(packageId);
+        setPipeline(pipelineFromBuild(base, latest, publish, report));
       }
       syncFromServices(projectId);
     },
@@ -381,6 +456,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       if (latest === null) {
         return;
       }
+      const report = services.validationService.validateProject(projectId);
+      if (!isPublishAllowedByQualityGate(report.qualityGate)) {
+        const base = services.workspaceService.getPipelineSnapshot();
+        if (base !== null) {
+          setPipeline(pipelineFromBuild(base, latest, null, report));
+        }
+        syncFromServices(projectId);
+        return;
+      }
       const result = services.publishService.publishPackage(
         latest.package.packageId,
       );
@@ -392,7 +476,7 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       }
       const base = services.workspaceService.getPipelineSnapshot();
       if (base !== null) {
-        setPipeline(pipelineFromBuild(base, latest, result));
+        setPipeline(pipelineFromBuild(base, latest, result, report));
       }
       syncFromServices(projectId);
     },
