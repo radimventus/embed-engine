@@ -1,0 +1,29 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    box-sizing: border-box;
+    border-color: #e7ecf3;
+  }
+
+  html,
+  body,
+  #root {
+    @apply min-h-screen overscroll-none text-builder-ink;
+    background-color: #f5f7fb;
+  }
+
+  body {
+    @apply font-sans antialiased;
+    margin: 0;
+  }
+
+  button,
+  textarea {
+    font: inherit;
+  }
+}

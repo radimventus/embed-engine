@@ -1,0 +1,200 @@
+{
+  "projectId": "harmony-124",
+  "manifestId": "manifest-harmony-124",
+  "version": "1.0.0",
+  "buildTime": "2026-08-17T10:43:00.000Z",
+  "assets": {
+    "hero": [
+      {
+        "assetId": "h124-hero-1",
+        "categoryId": "hero",
+        "name": "hero-harmony.jpg",
+        "sizeBytes": 3200000,
+        "mimeType": "image/jpeg",
+        "uploadedAt": "2026-08-13T07:30:00.000Z",
+        "metadata": {
+          "label": "Hero Harmony",
+          "description": "Landing hero",
+          "altText": "Harmony 124 hero"
+        }
+      }
+    ],
+    "photographs": [
+      {
+        "assetId": "h124-photo-1",
+        "categoryId": "photographs",
+        "name": "IMG_001.jpg",
+        "sizeBytes": 2450000,
+        "mimeType": "image/jpeg",
+        "uploadedAt": "2026-08-10T09:00:00.000Z",
+        "metadata": {
+          "label": "Exteriér jih",
+          "description": "Hlavní fasáda",
+          "altText": "Dům Harmony z jihu"
+        }
+      },
+      {
+        "assetId": "h124-photo-2",
+        "categoryId": "photographs",
+        "name": "IMG_002.jpg",
+        "sizeBytes": 1980000,
+        "mimeType": "image/jpeg",
+        "uploadedAt": "2026-08-10T09:05:00.000Z",
+        "metadata": {
+          "label": "Obývací pokoj",
+          "description": "",
+          "altText": ""
+        }
+      },
+      {
+        "assetId": "h124-photo-3",
+        "categoryId": "photographs",
+        "name": "IMG_003.jpg",
+        "sizeBytes": 2120000,
+        "mimeType": "image/jpeg",
+        "uploadedAt": "2026-08-10T09:10:00.000Z",
+        "metadata": {
+          "label": "Kuchyň",
+          "description": "",
+          "altText": ""
+        }
+      },
+      {
+        "assetId": "h124-photo-4",
+        "categoryId": "photographs",
+        "name": "IMG_004.jpg",
+        "sizeBytes": 1760000,
+        "mimeType": "image/jpeg",
+        "uploadedAt": "2026-08-11T11:20:00.000Z",
+        "metadata": {
+          "label": "Ložnice",
+          "description": "",
+          "altText": ""
+        }
+      },
+      {
+        "assetId": "h124-photo-5",
+        "categoryId": "photographs",
+        "name": "IMG_005.jpg",
+        "sizeBytes": 2010000,
+        "mimeType": "image/jpeg",
+        "uploadedAt": "2026-08-11T11:25:00.000Z",
+        "metadata": {
+          "label": "Zahrada",
+          "description": "",
+          "altText": ""
+        }
+      },
+      {
+        "assetId": "h124-photo-6",
+        "categoryId": "photographs",
+        "name": "IMG_006.jpg",
+        "sizeBytes": 1540000,
+        "mimeType": "image/jpeg",
+        "uploadedAt": "2026-08-12T08:40:00.000Z",
+        "metadata": {
+          "label": "Detail terasy",
+          "description": "",
+          "altText": ""
+        }
+      }
+    ],
+    "video": [
+      {
+        "assetId": "h124-video-1",
+        "categoryId": "video",
+        "name": "https://youtu.be/dQw4w9WgXcQ",
+        "sizeBytes": 0,
+        "mimeType": "text/uri-list",
+        "uploadedAt": "2026-08-12T10:00:00.000Z",
+        "metadata": {
+          "label": "Prohlídka Harmony",
+          "description": "YouTube odkaz",
+          "altText": ""
+        }
+      }
+    ]
+  },
+  "layouts": {
+    "svg": [
+      {
+        "assetId": "h124-svg-1",
+        "categoryId": "svg",
+        "name": "harmony-navigator.svg",
+        "sizeBytes": 184000,
+        "mimeType": "image/svg+xml",
+        "uploadedAt": "2026-08-14T12:00:00.000Z",
+        "metadata": {
+          "label": "Navigator SVG",
+          "description": "",
+          "altText": ""
+        }
+      }
+    ],
+    "floorplan": [],
+    "csvRooms": [
+      {
+        "assetId": "h124-rooms-1",
+        "categoryId": "csv-rooms",
+        "name": "rooms.csv",
+        "sizeBytes": 12400,
+        "mimeType": "text/csv",
+        "uploadedAt": "2026-08-14T12:10:00.000Z",
+        "metadata": {
+          "label": "Rooms CSV",
+          "description": "",
+          "altText": ""
+        }
+      }
+    ],
+    "csvImages": [
+      {
+        "assetId": "h124-images-1",
+        "categoryId": "csv-images",
+        "name": "images.csv",
+        "sizeBytes": 9800,
+        "mimeType": "text/csv",
+        "uploadedAt": "2026-08-14T12:15:00.000Z",
+        "metadata": {
+          "label": "Images CSV",
+          "description": "",
+          "altText": ""
+        }
+      }
+    ]
+  },
+  "knowledge": [
+    {
+      "assetId": "h124-pdf-1",
+      "categoryId": "pdf",
+      "name": "technicky-list.pdf",
+      "sizeBytes": 890000,
+      "mimeType": "application/pdf",
+      "uploadedAt": "2026-08-15T09:00:00.000Z",
+      "metadata": {
+        "label": "Technický list",
+        "description": "",
+        "altText": ""
+      }
+    },
+    {
+      "assetId": "h124-docx-1",
+      "categoryId": "docx",
+      "name": "faq-harmony.docx",
+      "sizeBytes": 240000,
+      "mimeType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "uploadedAt": "2026-08-15T09:20:00.000Z",
+      "metadata": {
+        "label": "FAQ",
+        "description": "",
+        "altText": ""
+      }
+    }
+  ],
+  "metadata": {
+    "title": "Harmony 124",
+    "partnerName": "AC Modular",
+    "locationLabel": "Praha-východ",
+    "notes": "Kompletní mock obsah pro Foundation Workspace."
+  }
+}

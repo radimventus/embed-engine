@@ -1,0 +1,9 @@
+{
+  "packageId": "package-pub-test",
+  "version": "1.0.0",
+  "buildVersion": "1.0.0",
+  "manifestVersion": "1.0.0",
+  "publishTime": "2026-08-17T15:00:00.000Z",
+  "checksum": "mock-8d17432f",
+  "runtimeVersion": "runtime-1.0.0-mock"
+}

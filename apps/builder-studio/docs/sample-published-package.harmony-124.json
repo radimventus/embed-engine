@@ -1,0 +1,26 @@
+{
+  "packageId": "package-pub-test",
+  "version": "1.0.0",
+  "runtimeEntry": "runtime://packages/harmony-124/entry.json",
+  "publishedAt": "2026-08-17T15:00:00.000Z",
+  "metadata": {
+    "title": "Harmony 124",
+    "partnerName": "AC Modular",
+    "locationLabel": "Praha-východ",
+    "notes": "Kompletní mock obsah pro Foundation Workspace."
+  },
+  "publishManifest": {
+    "packageId": "package-pub-test",
+    "version": "1.0.0",
+    "buildVersion": "1.0.0",
+    "manifestVersion": "1.0.0",
+    "publishTime": "2026-08-17T15:00:00.000Z",
+    "checksum": "mock-8d17432f",
+    "runtimeVersion": "runtime-1.0.0-mock"
+  },
+  "assetCounts": {
+    "hero": 1,
+    "photographs": 6,
+    "video": 1
+  }
+}
