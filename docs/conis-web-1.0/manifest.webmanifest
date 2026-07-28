@@ -1,0 +1,18 @@
+{
+  "name": "CONIS",
+  "short_name": "CONIS",
+  "description": "Platforma porozumění mezi člověkem a produktem.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#001930",
+  "lang": "cs",
+  "icons": [
+    {
+      "src": "public/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
