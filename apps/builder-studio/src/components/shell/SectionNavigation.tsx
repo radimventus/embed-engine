@@ -13,6 +13,7 @@ const SECTIONS: readonly {
   { id: 'learning', label: 'Learning' },
   { id: 'decision-engine', label: 'Engine' },
   { id: 'decision-runtime', label: 'Runtime' },
+  { id: 'rule-evaluation', label: 'Evaluation' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

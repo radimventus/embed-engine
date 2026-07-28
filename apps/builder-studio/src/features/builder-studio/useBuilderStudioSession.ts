@@ -18,7 +18,10 @@ import type {
   DecisionKnowledgePackage,
   DecisionModel,
   DecisionRuntimeEvent,
+  EvaluationEvent,
+  EvaluationResult,
   KnowledgeEvent,
+  RuleEvaluationInput,
   RuntimeModel,
   KnowledgeLayerBundle,
   KnowledgeLayerDefinition,
@@ -61,6 +64,8 @@ import {
   createDecisionKnowledgeApi,
   createDecisionRuntime,
   createDecisionRuntimeApi,
+  createRuleEvaluationApi,
+  createRuleEvaluationEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -122,6 +127,9 @@ export type BuilderStudioViewModel = {
   readonly decisionEngineEvents: readonly DecisionEngineEvent[];
   readonly runtimeModel: RuntimeModel | null;
   readonly decisionRuntimeEvents: readonly DecisionRuntimeEvent[];
+  readonly evaluationResult: EvaluationResult | null;
+  readonly evaluationEvents: readonly EvaluationEvent[];
+  readonly evaluationValidationMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -192,6 +200,9 @@ export type BuilderStudioViewModel = {
   readonly createDecisionRuntime: () => void;
   readonly validateDecisionRuntime: () => void;
   readonly disposeDecisionRuntime: () => void;
+  readonly evaluateRules: () => void;
+  readonly validateEvaluation: () => void;
+  readonly disposeEvaluation: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -269,6 +280,52 @@ function ensureKnowledge(
 
 
 
+
+
+function toRuleEvaluationInput(
+  decisionModel: DecisionModel,
+  knowledge: KnowledgePackage | null,
+  decision: DecisionKnowledgePackage | null,
+): RuleEvaluationInput {
+  return {
+    decisionModelId: decisionModel.id,
+    objectId: decisionModel.objectId,
+    title: `${decisionModel.metadata.title} Evaluation`,
+    context: {
+      knowledge: {
+        knowledgeId: knowledge?.knowledgeId ?? decisionModel.knowledge,
+        factIds: knowledge?.facts.map((fact) => fact.id) ?? [],
+        faqIds: knowledge?.faqs.map((faq) => faq.id) ?? [],
+      },
+      decisionKnowledge: {
+        decisionKnowledgeId:
+          decision?.id ?? decisionModel.decisionKnowledge,
+        ruleIds: decision?.decisionRules.map((rule) => rule.id) ?? [],
+      },
+      signals:
+        decision?.decisionSignals.map((signal) => ({
+          id: signal.id,
+          source: signal.source,
+          label: signal.label,
+          type: signal.type,
+          importance: signal.importance,
+        })) ?? [],
+      priorities: decision?.priorities ?? [],
+      metadata: {
+        objectId: decisionModel.objectId,
+        notes: 'EvaluationContext from DecisionModel inputs.',
+      },
+    },
+    rules:
+      decision?.decisionRules.map((rule) => ({
+        id: rule.id,
+        condition: rule.condition,
+        outcome: rule.outcome,
+        priority: rule.priority,
+        weight: rule.weight,
+      })) ?? [],
+  };
+}
 
 function toCreateRuntimeInput(model: DecisionModel): CreateRuntimeInput {
   return {
@@ -578,6 +635,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const decisionEngineApi = createDecisionEngineApi(decisionEngine);
     const decisionRuntime = createDecisionRuntime();
     const decisionRuntimeApi = createDecisionRuntimeApi(decisionRuntime);
+    const ruleEvaluationEngine = createRuleEvaluationEngine();
+    const ruleEvaluationApi = createRuleEvaluationApi(ruleEvaluationEngine);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -617,6 +676,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       decisionEngineApi,
       decisionRuntime,
       decisionRuntimeApi,
+      ruleEvaluationEngine,
+      ruleEvaluationApi,
     };
   }, []);
 
@@ -762,6 +823,13 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [decisionRuntimeEvents, setDecisionRuntimeEvents] = useState<
     readonly DecisionRuntimeEvent[]
   >([]);
+  const [evaluationResult, setEvaluationResult] =
+    useState<EvaluationResult | null>(null);
+  const [evaluationEvents, setEvaluationEvents] = useState<
+    readonly EvaluationEvent[]
+  >([]);
+  const [evaluationValidationMessage, setEvaluationValidationMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -856,6 +924,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setDecisionEngineEvents([]);
       setRuntimeModel(null);
       setDecisionRuntimeEvents([]);
+      setEvaluationResult(null);
+      setEvaluationEvents([]);
+      setEvaluationValidationMessage(null);
       return;
     }
     const model = services.assets.getActiveProject(projectId);
@@ -878,6 +949,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setDecisionEngineEvents([]);
       setRuntimeModel(null);
       setDecisionRuntimeEvents([]);
+      setEvaluationResult(null);
+      setEvaluationEvents([]);
+      setEvaluationValidationMessage(null);
       return;
     }
     const pkg = ensureObjectPackage(services.objectService, model);
@@ -946,6 +1020,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     setDecisionEngineEvents([]);
     setRuntimeModel(null);
     setDecisionRuntimeEvents([]);
+    setEvaluationResult(null);
+    setEvaluationEvents([]);
+    setEvaluationValidationMessage(null);
     setObjectPackage(services.objectService.loadObject(pkg.objectId));
   };
 
@@ -1060,6 +1137,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     decisionEngineEvents,
     runtimeModel,
     decisionRuntimeEvents,
+    evaluationResult,
+    evaluationEvents,
+    evaluationValidationMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -1689,6 +1769,60 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setDecisionRuntimeEvents(
         services.decisionRuntime.getHistory(disposed.id),
       );
+    },
+
+    evaluateRules(): void {
+      if (decisionModel === null) {
+        setEvaluationValidationMessage(
+          'Nejdřív vytvořte Decision Model (Engine → Build Model).',
+        );
+        return;
+      }
+      const input = toRuleEvaluationInput(
+        decisionModel,
+        knowledgePackage,
+        decisionKnowledge,
+      );
+      const validation = services.ruleEvaluationApi.validateEvaluation(input);
+      if (!validation.valid) {
+        setEvaluationValidationMessage(validation.issues.join(' '));
+        return;
+      }
+      const evaluated = services.ruleEvaluationApi.evaluateRules(input);
+      setEvaluationResult(evaluated);
+      setEvaluationEvents(
+        services.ruleEvaluationEngine.getHistory(evaluated.id),
+      );
+      setEvaluationValidationMessage(null);
+    },
+    validateEvaluation(): void {
+      if (decisionModel === null) {
+        setEvaluationValidationMessage(
+          'Nejdřív vytvořte Decision Model (Engine → Build Model).',
+        );
+        return;
+      }
+      const validation = services.ruleEvaluationApi.validateEvaluation(
+        toRuleEvaluationInput(
+          decisionModel,
+          knowledgePackage,
+          decisionKnowledge,
+        ),
+      );
+      setEvaluationValidationMessage(
+        validation.valid
+          ? 'Validation OK — rules are evaluable.'
+          : validation.issues.join(' '),
+      );
+    },
+    disposeEvaluation(): void {
+      if (evaluationResult === null) {
+        return;
+      }
+      services.ruleEvaluationEngine.dispose(evaluationResult.id);
+      setEvaluationResult(null);
+      setEvaluationEvents([]);
+      setEvaluationValidationMessage(null);
     },
     buildProject(): void {
       const projectId =

@@ -247,6 +247,20 @@ export type {
   RuntimeValidationIssue,
 } from './decision-runtime-types';
 
+export type {
+  EvaluableRule,
+  EvaluationContext,
+  EvaluationEvent,
+  EvaluationEventType,
+  EvaluationMetadata,
+  EvaluationResult,
+  EvaluationSummary,
+  EvaluationTimestamps,
+  RuleEvaluationInput,
+  RuleResult,
+  RuleResultStatus,
+} from './rule-evaluation-types';
+
 export {
   ASSET_CATEGORY_ORDER,
   createEmptyAssetCollections,

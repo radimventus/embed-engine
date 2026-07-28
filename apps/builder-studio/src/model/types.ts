@@ -27,6 +27,7 @@ export type WorkspaceSectionId =
   | 'learning'
   | 'decision-engine'
   | 'decision-runtime'
+  | 'rule-evaluation'
   | 'media'
   | 'layout'
   | 'knowledge';

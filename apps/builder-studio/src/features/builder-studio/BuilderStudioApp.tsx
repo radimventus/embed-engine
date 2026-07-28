@@ -66,6 +66,9 @@ export function BuilderStudioApp() {
         decisionEngineEvents={session.decisionEngineEvents}
         runtimeModel={session.runtimeModel}
         decisionRuntimeEvents={session.decisionRuntimeEvents}
+        evaluationResult={session.evaluationResult}
+        evaluationEvents={session.evaluationEvents}
+        evaluationValidationMessage={session.evaluationValidationMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -115,6 +118,9 @@ export function BuilderStudioApp() {
         onCreateDecisionRuntime={session.createDecisionRuntime}
         onValidateDecisionRuntime={session.validateDecisionRuntime}
         onDisposeDecisionRuntime={session.disposeDecisionRuntime}
+        onEvaluateRules={session.evaluateRules}
+        onValidateEvaluation={session.validateEvaluation}
+        onDisposeEvaluation={session.disposeEvaluation}
       />
     </AppShell>
   );

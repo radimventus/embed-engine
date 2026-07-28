@@ -194,3 +194,15 @@ export {
   createDecisionRuntimeApi,
   type DecisionRuntimeApi,
 } from './decision-runtime/decision-runtime-api';
+export {
+  createBasicRuleEvaluator,
+  type RuleEvaluator,
+} from './rule-evaluation/basic-rule-evaluator';
+export {
+  createRuleEvaluationEngine,
+  type RuleEvaluationEngine,
+} from './rule-evaluation/rule-evaluation-engine';
+export {
+  createRuleEvaluationApi,
+  type RuleEvaluationApi,
+} from './rule-evaluation/rule-evaluation-api';

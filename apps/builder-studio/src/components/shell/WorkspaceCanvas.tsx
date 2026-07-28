@@ -12,6 +12,8 @@ import type {
   DecisionKnowledgePackage,
   DecisionModel,
   DecisionRuntimeEvent,
+  EvaluationEvent,
+  EvaluationResult,
   KnowledgeEvent,
   RuntimeModel,
   KnowledgeLayerBundle,
@@ -40,6 +42,7 @@ import { ExperienceComposer } from './ExperienceComposer';
 import { AIContextPreview } from './AIContextPreview';
 import { DecisionEngineOverview } from './DecisionEngineOverview';
 import { DecisionRuntimeOverview } from './DecisionRuntimeOverview';
+import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
 import { LearningOverview } from './LearningOverview';
@@ -83,6 +86,9 @@ type WorkspaceCanvasProps = {
   readonly decisionEngineEvents: readonly DecisionEngineEvent[];
   readonly runtimeModel: RuntimeModel | null;
   readonly decisionRuntimeEvents: readonly DecisionRuntimeEvent[];
+  readonly evaluationResult: EvaluationResult | null;
+  readonly evaluationEvents: readonly EvaluationEvent[];
+  readonly evaluationValidationMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -142,6 +148,9 @@ type WorkspaceCanvasProps = {
   readonly onCreateDecisionRuntime: () => void;
   readonly onValidateDecisionRuntime: () => void;
   readonly onDisposeDecisionRuntime: () => void;
+  readonly onEvaluateRules: () => void;
+  readonly onValidateEvaluation: () => void;
+  readonly onDisposeEvaluation: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -169,6 +178,9 @@ export function WorkspaceCanvas({
   decisionEngineEvents,
   runtimeModel,
   decisionRuntimeEvents,
+  evaluationResult,
+  evaluationEvents,
+  evaluationValidationMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -218,6 +230,9 @@ export function WorkspaceCanvas({
   onCreateDecisionRuntime,
   onValidateDecisionRuntime,
   onDisposeDecisionRuntime,
+  onEvaluateRules,
+  onValidateEvaluation,
+  onDisposeEvaluation,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -390,6 +405,17 @@ export function WorkspaceCanvas({
             onCreate={onCreateDecisionRuntime}
             onValidate={onValidateDecisionRuntime}
             onDispose={onDisposeDecisionRuntime}
+          />
+        ) : null}
+
+        {activeSection === 'rule-evaluation' ? (
+          <RuleEvaluationOverview
+            evaluationResult={evaluationResult}
+            events={evaluationEvents}
+            onEvaluate={onEvaluateRules}
+            onValidate={onValidateEvaluation}
+            onDispose={onDisposeEvaluation}
+            validationMessage={evaluationValidationMessage}
           />
         ) : null}
         {activeSection === 'media' ? (
