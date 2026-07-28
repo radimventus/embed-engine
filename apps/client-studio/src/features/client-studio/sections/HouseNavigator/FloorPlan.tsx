@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useWalkthrough } from '../../../walkthrough';
+import { useOptionalDecisionAnalytics } from '../../analytics';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { evidenceLog } from '../../runtime/runtimeEvidence';
 import { useHouseNavigator } from './useHouseNavigator';
@@ -115,8 +116,10 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
  */
 export function FloorPlan() {
   const { experience } = useDecisionSessionRuntime();
+  const analytics = useOptionalDecisionAnalytics();
   const { viewBoxWidth, viewBoxHeight } = experience.context.floorPlan;
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
 
   const aspectRatioNumber =
     viewBoxHeight > 0 ? viewBoxWidth / viewBoxHeight : 1;
@@ -137,8 +140,41 @@ export function FloorPlan() {
     });
   }, [experience.context.floorPlan]);
 
+  useEffect(() => {
+    const element = rootRef.current;
+    if (element === null || typeof IntersectionObserver === 'undefined') {
+      return;
+    }
+    let observed = false;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (observed) {
+          return;
+        }
+        const visible = entries.some(
+          (entry) => entry.isIntersecting && entry.intersectionRatio >= 0.35,
+        );
+        if (!visible) {
+          return;
+        }
+        observed = true;
+        analytics?.experienceEvent({
+          experienceEventType: 'floorplan.opened',
+          surfaceId: 'walkthrough',
+          payload: { floor: experience.context.navigation.currentFloor ?? null },
+        });
+        observer.disconnect();
+      },
+      { threshold: [0.35] },
+    );
+    observer.observe(element);
+    return () => {
+      observer.disconnect();
+    };
+  }, [analytics, experience.context.navigation.currentFloor]);
+
   return (
-    <div className="relative flex w-full min-w-0 max-w-none shrink-0 flex-col">
+    <div ref={rootRef} className="relative flex w-full min-w-0 max-w-none shrink-0 flex-col">
       <div
         className="relative w-full min-w-0 max-w-none overflow-hidden rounded-[8px]"
         style={{ aspectRatio }}
@@ -150,7 +186,16 @@ export function FloorPlan() {
         className="flex w-full shrink-0 justify-end"
         style={{ marginTop: LOUPE_BELOW_GAP_PX }}
       >
-        <FloorPlanZoomControl onClick={() => setIsLightboxOpen(true)} />
+        <FloorPlanZoomControl
+          onClick={() => {
+            analytics?.experienceEvent({
+              experienceEventType: 'floorplan.zoomed',
+              surfaceId: 'walkthrough',
+              payload: { floor: experience.context.navigation.currentFloor ?? null },
+            });
+            setIsLightboxOpen(true);
+          }}
+        />
       </div>
       <FloorPlanLightbox
         aspectRatio={aspectRatioNumber}

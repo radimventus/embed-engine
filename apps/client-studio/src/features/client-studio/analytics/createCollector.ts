@@ -3,6 +3,10 @@ import type { DecisionEvent, DispatchResult } from '@embed-engine/runtime';
 import type { AnalyticsExportAdapter } from './exportAdapter';
 import { deriveSessionMetrics } from './exportAdapter';
 import type {
+  ExperienceEventPayload,
+  ExperienceEventType,
+} from './experienceEvents';
+import type {
   AnalyticsEvent,
   AnalyticsEventBase,
   AnalyticsTimestamp,
@@ -20,6 +24,7 @@ export type DecisionAnalyticsCollector = {
     readonly decisionSessionId: string;
     readonly runtimeContextRef?: RuntimeContextRef | null;
   }) => void;
+  readonly subscribe: (listener: () => void) => () => void;
   readonly setActiveSurface: (surfaceId: JourneySurfaceId | null) => void;
   readonly startJourney: (at?: AnalyticsTimestamp) => void;
   readonly resumeJourney: (at?: AnalyticsTimestamp) => void;
@@ -43,6 +48,12 @@ export type DecisionAnalyticsCollector = {
     readonly at?: AnalyticsTimestamp;
   }) => void;
   readonly aiSessionEnded: (conversationLength: number, at?: AnalyticsTimestamp) => void;
+  readonly experienceEvent: (input: {
+    readonly experienceEventType: ExperienceEventType;
+    readonly payload?: ExperienceEventPayload;
+    readonly surfaceId?: JourneySurfaceId | null;
+    readonly at?: AnalyticsTimestamp;
+  }) => void;
   readonly conversionStarted: (ctaId: string, at?: AnalyticsTimestamp) => void;
   readonly conversionFormOpened: (ctaId: string, at?: AnalyticsTimestamp) => void;
   readonly conversionConsentAccepted: (ctaId: string, at?: AnalyticsTimestamp) => void;
@@ -68,6 +79,7 @@ export function createDecisionAnalyticsCollector(
   const now = input.now ?? (() => Date.now());
   const events: AnalyticsEvent[] = [];
   const surfaceEnteredAt = new Map<JourneySurfaceId, number>();
+  const listeners = new Set<() => void>();
   let decisionSessionId = input.decisionSessionId ?? 'decision-session:pending';
   let runtimeContextRef: RuntimeContextRef | null = null;
   let activeSurface: JourneySurfaceId | null = null;
@@ -87,6 +99,9 @@ export function createDecisionAnalyticsCollector(
 
   const emit = (event: AnalyticsEvent): void => {
     events.push(event);
+    for (const listener of listeners) {
+      listener();
+    }
     try {
       adapter.exportEvent(event);
     } catch {
@@ -99,6 +114,12 @@ export function createDecisionAnalyticsCollector(
     getDecisionSessionId: () => decisionSessionId,
     getEvents: () => events.slice(),
     getMetrics: () => deriveSessionMetrics(sessionId, events),
+    subscribe(listener) {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
     bindDecisionSession(bindInput) {
       decisionSessionId = bindInput.decisionSessionId;
       if (bindInput.runtimeContextRef !== undefined) {
@@ -185,6 +206,40 @@ export function createDecisionAnalyticsCollector(
         payload: Object.freeze(payload),
       });
 
+      if (result.event.type === 'RoomSelected') {
+        emit({
+          ...base(at),
+          type: 'experience.event',
+          experienceEventType: 'room.viewed',
+          payload: Object.freeze({ roomId: result.event.roomId }),
+        });
+      }
+
+      if (result.event.type === 'PriorityChanged') {
+        const priorityCount = result.event.priorityIds.length;
+        const priorityIds = result.event.priorityIds.join(',');
+        emit({
+          ...base(at),
+          type: 'experience.event',
+          experienceEventType: priorityCount > 0 ? 'priority.selected' : 'priority.changed',
+          payload: Object.freeze({ priorityCount, priorityIds }),
+        });
+        emit({
+          ...base(at),
+          type: 'experience.event',
+          experienceEventType: 'priority.changed',
+          payload: Object.freeze({ priorityCount, priorityIds }),
+        });
+        if (priorityCount >= 3) {
+          emit({
+            ...base(at),
+            type: 'experience.event',
+            experienceEventType: 'priority.completed',
+            payload: Object.freeze({ priorityCount, priorityIds }),
+          });
+        }
+      }
+
       if (!terminalViewedOnce) {
         terminalViewedOnce = true;
         emit({
@@ -230,6 +285,12 @@ export function createDecisionAnalyticsCollector(
         surfaceId: 'ai-advisor',
         aiContextId,
       });
+      emit({
+        ...base(at),
+        type: 'experience.event',
+        experienceEventType: 'ai.conversation.started',
+        payload: Object.freeze({ aiContextId }),
+      });
     },
     aiInteraction(input) {
       emit({
@@ -249,6 +310,26 @@ export function createDecisionAnalyticsCollector(
         surfaceId: 'ai-advisor',
         conversationLength,
       });
+      emit({
+        ...base(at),
+        type: 'experience.event',
+        experienceEventType: 'ai.conversation.completed',
+        payload: Object.freeze({ conversationLength }),
+      });
+    },
+    experienceEvent(input) {
+      const at = input.at ?? now();
+      const previousSurface = activeSurface;
+      if (input.surfaceId !== undefined) {
+        activeSurface = input.surfaceId;
+      }
+      emit({
+        ...base(at),
+        type: 'experience.event',
+        experienceEventType: input.experienceEventType,
+        payload: Object.freeze({ ...(input.payload ?? {}) }),
+      });
+      activeSurface = previousSurface;
     },
     conversionStarted(ctaId, at = now()) {
       emit({
@@ -256,6 +337,12 @@ export function createDecisionAnalyticsCollector(
         type: 'conversion.started',
         surfaceId: 'audit-lead-capture',
         ctaId,
+      });
+      emit({
+        ...base(at),
+        type: 'experience.event',
+        experienceEventType: 'contact.opened',
+        payload: Object.freeze({ ctaId }),
       });
     },
     conversionFormOpened(ctaId, at = now()) {
@@ -280,6 +367,12 @@ export function createDecisionAnalyticsCollector(
         type: 'conversion.completed',
         surfaceId: 'audit-lead-capture',
         ctaId,
+      });
+      emit({
+        ...base(at),
+        type: 'experience.event',
+        experienceEventType: 'contact.submitted',
+        payload: Object.freeze({ ctaId }),
       });
       journeyCompleted = true;
       emit({ ...base(at), type: 'journey.completed' });

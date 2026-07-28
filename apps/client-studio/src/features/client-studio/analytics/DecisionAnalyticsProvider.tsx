@@ -57,6 +57,10 @@ export function DecisionAnalyticsProvider({
 
   useEffect(() => {
     collector.startJourney();
+    collector.experienceEvent({
+      experienceEventType: 'experience.opened',
+      surfaceId: 'hero',
+    });
 
     const onVisibility = () => {
       if (document.visibilityState === 'hidden') {

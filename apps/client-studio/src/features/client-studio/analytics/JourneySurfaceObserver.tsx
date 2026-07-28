@@ -36,7 +36,14 @@ export function JourneySurfaceObserver() {
           if (entry.isIntersecting) {
             if (!visible.has(id)) {
               visible.add(id);
+              analytics.setActiveSurface(id);
               analytics.enterSurface(id);
+              if (id === PILOT_SECTION_IDS.walkthrough) {
+                analytics.experienceEvent({
+                  experienceEventType: 'tour.started',
+                  surfaceId: id,
+                });
+              }
               if (id === PILOT_SECTION_IDS.priority) {
                 // Decision Terminal is hosted inside Priority Experience.
                 analytics.enterSurface('decision-terminal');
@@ -47,7 +54,14 @@ export function JourneySurfaceObserver() {
             if (id === PILOT_SECTION_IDS.priority) {
               analytics.exitSurface('decision-terminal');
             }
+            if (id === PILOT_SECTION_IDS.walkthrough) {
+              analytics.experienceEvent({
+                experienceEventType: 'tour.completed',
+                surfaceId: id,
+              });
+            }
             analytics.exitSurface(id);
+            analytics.setActiveSurface(null);
           }
         }
       },

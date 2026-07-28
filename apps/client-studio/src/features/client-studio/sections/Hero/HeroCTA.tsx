@@ -1,6 +1,7 @@
 import { PrimaryLink } from '@embed-engine/ui';
 import type { MouseEvent } from 'react';
 
+import { useOptionalDecisionAnalytics } from '../../analytics';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 
 /**
@@ -8,6 +9,8 @@ import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
  * Opens Spatial Terminal / walkthrough.
  */
 export function HeroCTA() {
+  const analytics = useOptionalDecisionAnalytics();
+
   const handleNavigate = (event: MouseEvent<HTMLAnchorElement>) => {
     event.preventDefault();
 
@@ -22,6 +25,10 @@ export function HeroCTA() {
     target.scrollIntoView({
       behavior: reducedMotion ? 'auto' : 'smooth',
       block: 'start',
+    });
+    analytics?.experienceEvent({
+      experienceEventType: 'hero.video.opened',
+      surfaceId: 'hero',
     });
     target.focus({ preventScroll: true });
     window.history.pushState(null, '', `#${PILOT_SECTION_IDS.walkthrough}`);

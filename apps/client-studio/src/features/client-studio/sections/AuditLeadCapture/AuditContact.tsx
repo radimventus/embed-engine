@@ -1,6 +1,7 @@
-import { useState, type ChangeEvent, type FormEvent } from 'react';
+import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { Input } from '@embed-engine/ui';
 
+import { useOptionalDecisionAnalytics } from '../../analytics';
 import { PILOT_FLAGS, PILOT_LEAD_MAILTO } from '../../pilot/pilotVocabulary';
 import {
   AUDIT_ACCENT,
@@ -24,12 +25,22 @@ type LeadPhase = 'idle' | 'loading' | 'success' | 'error';
  * Never claims a server received the request when none exists.
  */
 export function AuditContact() {
+  const analytics = useOptionalDecisionAnalytics();
   const [phase, setPhase] = useState<LeadPhase>('idle');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [gdprConsent, setGdprConsent] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const contactOpenedRef = useRef(false);
+
+  const trackContactOpened = () => {
+    if (contactOpenedRef.current) {
+      return;
+    }
+    contactOpenedRef.current = true;
+    analytics?.conversionStarted('audit-contact-form');
+  };
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -74,6 +85,7 @@ export function AuditContact() {
     );
 
     try {
+      analytics?.conversionCompleted('audit-contact-form');
       window.location.href = `mailto:${PILOT_LEAD_MAILTO}?subject=${subject}&body=${body}`;
       window.setTimeout(() => setPhase('success'), 400);
     } catch {
@@ -118,6 +130,7 @@ export function AuditContact() {
             className={AUDIT_INPUT_CLASS}
             style={{ ...AUDIT_INPUT_STYLE, height: AUDIT_INPUT_HEIGHT_PX }}
             onChange={(event: ChangeEvent<HTMLInputElement>) => setName(event.target.value)}
+            onFocus={trackContactOpened}
           />
 
           <label className="sr-only" htmlFor="audit-contact-email">
@@ -133,6 +146,7 @@ export function AuditContact() {
             className={AUDIT_INPUT_CLASS}
             style={{ ...AUDIT_INPUT_STYLE, height: AUDIT_INPUT_HEIGHT_PX }}
             onChange={(event: ChangeEvent<HTMLInputElement>) => setEmail(event.target.value)}
+            onFocus={trackContactOpened}
           />
 
           <label className="sr-only" htmlFor="audit-contact-phone">
@@ -147,6 +161,7 @@ export function AuditContact() {
             className={AUDIT_INPUT_CLASS}
             style={{ ...AUDIT_INPUT_STYLE, height: AUDIT_INPUT_HEIGHT_PX }}
             onChange={(event: ChangeEvent<HTMLInputElement>) => setPhone(event.target.value)}
+            onFocus={trackContactOpened}
           />
 
           <button

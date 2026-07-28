@@ -1,3 +1,8 @@
+import type {
+  ExperienceEventPayload,
+  ExperienceEventType,
+} from './experienceEvents';
+
 /**
  * Decision Analytics event model (CSCB-08).
  * Observational only — never influences Runtime semantics.
@@ -77,6 +82,11 @@ export type AnalyticsEvent =
   | (AnalyticsEventBase & {
       readonly type: 'ai.session.ended';
       readonly conversationLength: number;
+    })
+  | (AnalyticsEventBase & {
+      readonly type: 'experience.event';
+      readonly experienceEventType: ExperienceEventType;
+      readonly payload: ExperienceEventPayload;
     })
   | (AnalyticsEventBase & {
       readonly type: 'conversion.started';

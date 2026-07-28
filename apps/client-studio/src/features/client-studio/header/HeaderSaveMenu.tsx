@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+import { useOptionalDecisionAnalytics } from '../analytics';
 import { HeaderHoverMenu } from './HeaderHoverMenu';
 
 type HeaderSaveMenuProps = {
@@ -21,6 +22,8 @@ export function exportExperiencePageAsPdf(): void {
  * Uložit — hover panel with PDF action (CAP UX 57).
  */
 export function HeaderSaveMenu({ icon }: HeaderSaveMenuProps) {
+  const analytics = useOptionalDecisionAnalytics();
+
   return (
     <HeaderHoverMenu label="Uložit" icon={icon} panelTestId="header-save-panel">
       <button
@@ -33,6 +36,10 @@ export function HeaderSaveMenu({ icon }: HeaderSaveMenuProps) {
           color: '#FFFFFF',
         }}
         onClick={() => {
+          analytics?.experienceEvent({
+            experienceEventType: 'house.saved',
+            surfaceId: 'hero',
+          });
           exportExperiencePageAsPdf();
         }}
       >

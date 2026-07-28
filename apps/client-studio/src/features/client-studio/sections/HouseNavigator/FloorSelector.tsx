@@ -1,3 +1,4 @@
+import { useOptionalDecisionAnalytics } from '../../analytics';
 import { useHouseNavigator } from './useHouseNavigator';
 import { TourSegmentedControl } from './TourSegmentedControl';
 
@@ -15,6 +16,7 @@ function floorLabel(floor: string): string {
  */
 export function FloorSelector() {
   const { floors, selectedFloor, selectFloor } = useHouseNavigator();
+  const analytics = useOptionalDecisionAnalytics();
 
   if (floors.length < 2) {
     return null;
@@ -31,7 +33,14 @@ export function FloorSelector() {
       aria-label="Výběr patra"
       value={activeFloor}
       options={options}
-      onChange={selectFloor}
+      onChange={(nextFloor) => {
+        analytics?.experienceEvent({
+          experienceEventType: 'floor.changed',
+          surfaceId: 'walkthrough',
+          payload: { floor: nextFloor },
+        });
+        selectFloor(nextFloor);
+      }}
     />
   );
 }
