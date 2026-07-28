@@ -430,3 +430,22 @@ export {
   createPersonalizationRuntimeIndex,
   type PersonalizationRuntimeIndex,
 } from './personalization-runtime/personalization-runtime-index';
+
+export {
+  createDecisionOrchestrator,
+  type DecisionOrchestrator,
+} from './decision-orchestrator/decision-orchestrator';
+export {
+  createDecisionOrchestratorApi,
+  type DecisionOrchestratorApi,
+} from './decision-orchestrator/decision-orchestrator-api';
+export {
+  createBasicDecisionFlowStrategy,
+  createDecisionExecutionValidator,
+  type DecisionExecutionValidator,
+  type DecisionFlowStrategy,
+} from './decision-orchestrator/basic-decision-flow-strategy';
+export {
+  createDecisionExecutionIndex,
+  type DecisionExecutionIndex,
+} from './decision-orchestrator/decision-execution-index';

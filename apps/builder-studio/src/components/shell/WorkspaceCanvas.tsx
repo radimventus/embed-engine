@@ -36,6 +36,8 @@ import type {
   PersonalizationPackage,
   PersonalizedContextPackage,
   PersonalizationRuntimeEvent,
+  DecisionExecutionPackage,
+  DecisionOrchestratorEvent,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -84,6 +86,7 @@ import { KnowledgeSynthesisOverview } from './KnowledgeSynthesisOverview';
 import { AIDecisionGatewayOverview } from './AIDecisionGatewayOverview';
 import { PersonalizationEngineOverview } from './PersonalizationEngineOverview';
 import { PersonalizationRuntimeOverview } from './PersonalizationRuntimeOverview';
+import { DecisionOrchestratorOverview } from './DecisionOrchestratorOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -182,6 +185,10 @@ type WorkspaceCanvasProps = {
   readonly personalizationRuntimeEvents: readonly PersonalizationRuntimeEvent[];
   readonly personalizationRuntimeIndexCount: number;
   readonly personalizationRuntimeMessage: string | null;
+  readonly decisionExecutionPackage: DecisionExecutionPackage | null;
+  readonly decisionOrchestratorEvents: readonly DecisionOrchestratorEvent[];
+  readonly decisionOrchestratorIndexCount: number;
+  readonly decisionOrchestratorMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -304,6 +311,12 @@ type WorkspaceCanvasProps = {
   readonly onValidateDecisionContext: () => void;
   readonly onPublishDecisionContext: () => void;
   readonly onDisposeDecisionContext: () => void;
+  readonly onStartDecisionExecution: () => void;
+  readonly onAdvanceDecisionExecution: () => void;
+  readonly onTransitionDecisionExecution: () => void;
+  readonly onCompleteDecisionExecution: () => void;
+  readonly onValidateDecisionExecution: () => void;
+  readonly onDisposeDecisionExecution: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -385,6 +398,10 @@ export function WorkspaceCanvas({
   personalizationRuntimeEvents,
   personalizationRuntimeIndexCount,
   personalizationRuntimeMessage,
+  decisionExecutionPackage,
+  decisionOrchestratorEvents,
+  decisionOrchestratorIndexCount,
+  decisionOrchestratorMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -497,6 +514,12 @@ export function WorkspaceCanvas({
   onValidateDecisionContext,
   onPublishDecisionContext,
   onDisposeDecisionContext,
+  onStartDecisionExecution,
+  onAdvanceDecisionExecution,
+  onTransitionDecisionExecution,
+  onCompleteDecisionExecution,
+  onValidateDecisionExecution,
+  onDisposeDecisionExecution,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -860,6 +883,21 @@ export function WorkspaceCanvas({
             onPublish={onPublishDecisionContext}
             onDispose={onDisposeDecisionContext}
             message={personalizationRuntimeMessage}
+          />
+        ) : null}
+
+        {activeSection === 'decision-orchestrator' ? (
+          <DecisionOrchestratorOverview
+            executionPackage={decisionExecutionPackage}
+            events={decisionOrchestratorEvents}
+            indexCount={decisionOrchestratorIndexCount}
+            onStart={onStartDecisionExecution}
+            onAdvance={onAdvanceDecisionExecution}
+            onTransition={onTransitionDecisionExecution}
+            onComplete={onCompleteDecisionExecution}
+            onValidate={onValidateDecisionExecution}
+            onDispose={onDisposeDecisionExecution}
+            message={decisionOrchestratorMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

@@ -122,6 +122,10 @@ export function BuilderStudioApp() {
           session.personalizationRuntimeIndexCount
         }
         personalizationRuntimeMessage={session.personalizationRuntimeMessage}
+        decisionExecutionPackage={session.decisionExecutionPackage}
+        decisionOrchestratorEvents={session.decisionOrchestratorEvents}
+        decisionOrchestratorIndexCount={session.decisionOrchestratorIndexCount}
+        decisionOrchestratorMessage={session.decisionOrchestratorMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -234,6 +238,12 @@ export function BuilderStudioApp() {
         onValidateDecisionContext={session.validateDecisionContext}
         onPublishDecisionContext={session.publishDecisionContext}
         onDisposeDecisionContext={session.disposeDecisionContext}
+        onStartDecisionExecution={session.startDecisionExecution}
+        onAdvanceDecisionExecution={session.advanceDecisionExecution}
+        onTransitionDecisionExecution={session.transitionDecisionExecution}
+        onCompleteDecisionExecution={session.completeDecisionExecution}
+        onValidateDecisionExecution={session.validateDecisionExecution}
+        onDisposeDecisionExecution={session.disposeDecisionExecution}
       />
     </AppShell>
   );

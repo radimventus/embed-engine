@@ -444,3 +444,18 @@ export type {
   PersonalizationRuntimeValidationIssue,
   ProjectDecisionContextInput,
 } from './personalization-runtime-types';
+
+export type {
+  DecisionExecution,
+  DecisionExecutionIndexEntry,
+  DecisionExecutionPackage,
+  DecisionExecutionState,
+  DecisionExecutionValidation,
+  DecisionExecutionValidationIssue,
+  DecisionOrchestratorEvent,
+  DecisionOrchestratorEventType,
+  DecisionStage,
+  DecisionStageStatus,
+  DecisionStageType,
+  StartExecutionInput,
+} from './decision-orchestrator-types';

@@ -41,6 +41,7 @@ export type WorkspaceSectionId =
   | 'ai-decision-gateway'
   | 'personalization-engine'
   | 'personalization-runtime'
+  | 'decision-orchestrator'
   | 'media'
   | 'layout'
   | 'knowledge';

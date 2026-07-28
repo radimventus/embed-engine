@@ -43,6 +43,8 @@ import type {
   PersonalizationPackage,
   PersonalizedContextPackage,
   PersonalizationRuntimeEvent,
+  DecisionExecutionPackage,
+  DecisionOrchestratorEvent,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -126,6 +128,8 @@ import {
   createPersonalizationEngine,
   createPersonalizationRuntimeApi,
   createPersonalizationRuntimeEngine,
+  createDecisionOrchestratorApi,
+  createDecisionOrchestrator,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -241,6 +245,10 @@ export type BuilderStudioViewModel = {
   readonly personalizationRuntimeEvents: readonly PersonalizationRuntimeEvent[];
   readonly personalizationRuntimeIndexCount: number;
   readonly personalizationRuntimeMessage: string | null;
+  readonly decisionExecutionPackage: DecisionExecutionPackage | null;
+  readonly decisionOrchestratorEvents: readonly DecisionOrchestratorEvent[];
+  readonly decisionOrchestratorIndexCount: number;
+  readonly decisionOrchestratorMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -374,6 +382,12 @@ export type BuilderStudioViewModel = {
   readonly validateDecisionContext: () => void;
   readonly publishDecisionContext: () => void;
   readonly disposeDecisionContext: () => void;
+  readonly startDecisionExecution: () => void;
+  readonly advanceDecisionExecution: () => void;
+  readonly transitionDecisionExecution: () => void;
+  readonly completeDecisionExecution: () => void;
+  readonly validateDecisionExecution: () => void;
+  readonly disposeDecisionExecution: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1028,6 +1042,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const personalizationRuntimeApi = createPersonalizationRuntimeApi(
       personalizationRuntimeEngine,
     );
+    const decisionOrchestrator = createDecisionOrchestrator();
+    const decisionOrchestratorApi = createDecisionOrchestratorApi(
+      decisionOrchestrator,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1095,6 +1113,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       personalizationEngineApi,
       personalizationRuntimeEngine,
       personalizationRuntimeApi,
+      decisionOrchestrator,
+      decisionOrchestratorApi,
     };
   }, []);
 
@@ -1368,6 +1388,17 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     setPersonalizationRuntimeIndexCount,
   ] = useState(0);
   const [personalizationRuntimeMessage, setPersonalizationRuntimeMessage] =
+    useState<string | null>(null);
+  const [decisionExecutionPackage, setDecisionExecutionPackage] =
+    useState<DecisionExecutionPackage | null>(null);
+  const [decisionOrchestratorEvents, setDecisionOrchestratorEvents] = useState<
+    readonly DecisionOrchestratorEvent[]
+  >([]);
+  const [
+    decisionOrchestratorIndexCount,
+    setDecisionOrchestratorIndexCount,
+  ] = useState(0);
+  const [decisionOrchestratorMessage, setDecisionOrchestratorMessage] =
     useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
@@ -1730,6 +1761,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     personalizationRuntimeEvents,
     personalizationRuntimeIndexCount,
     personalizationRuntimeMessage,
+    decisionExecutionPackage,
+    decisionOrchestratorEvents,
+    decisionOrchestratorIndexCount,
+    decisionOrchestratorMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3793,6 +3828,150 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           .length,
       );
       setPersonalizationRuntimeMessage(null);
+    },
+    startDecisionExecution(): void {
+      const moveIds =
+        decisionStory !== null && decisionStory.moves.length > 0
+          ? decisionStory.moves.map((move) => move.id)
+          : ['move-1', 'move-2', 'move-3'];
+      const sessionId = runtimeSession?.id ?? 'runtime-session-demo';
+      const storyId = decisionStory?.id ?? 'decision-story-demo';
+      const started = services.decisionOrchestratorApi.startExecution({
+        sessionId,
+        storyId,
+        moveIds,
+        title: `Decision Execution ${sessionId}`,
+        personalizationPackageId:
+          personalizationPackage?.id ??
+          personalizedContextPackage?.id ??
+          null,
+        behaviorEvaluationId: behaviorEvaluation?.id ?? null,
+        experienceId: experience?.experienceId ?? null,
+      });
+      setDecisionExecutionPackage(started);
+      setDecisionOrchestratorEvents(
+        services.decisionOrchestrator.getHistory(started.id),
+      );
+      setDecisionOrchestratorIndexCount(
+        services.decisionOrchestrator.getIndex().list(started.id).length,
+      );
+      setDecisionOrchestratorMessage(
+        `Started execution for ${sessionId}. Sources unchanged.`,
+      );
+    },
+    advanceDecisionExecution(): void {
+      if (decisionExecutionPackage === null) {
+        setDecisionOrchestratorMessage('Nejdřív Start Execution.');
+        return;
+      }
+      try {
+        const advanced = services.decisionOrchestratorApi.advanceExecution(
+          decisionExecutionPackage.id,
+        );
+        setDecisionExecutionPackage(advanced);
+        setDecisionOrchestratorEvents(
+          services.decisionOrchestrator.getHistory(advanced.id),
+        );
+        setDecisionOrchestratorIndexCount(
+          services.decisionOrchestrator.getIndex().list(advanced.id).length,
+        );
+        setDecisionOrchestratorMessage(
+          advanced.execution.state === 'Completed'
+            ? 'Execution completed via advance.'
+            : `Advanced to ${advanced.execution.currentMove}.`,
+        );
+      } catch (error) {
+        setDecisionOrchestratorMessage(
+          error instanceof Error ? error.message : 'Advance failed.',
+        );
+      }
+    },
+    transitionDecisionExecution(): void {
+      if (decisionExecutionPackage === null) {
+        setDecisionOrchestratorMessage('Nejdřív Start Execution.');
+        return;
+      }
+      try {
+        const transitioned = services.decisionOrchestrator.transition(
+          decisionExecutionPackage.id,
+        );
+        setDecisionExecutionPackage(transitioned);
+        setDecisionOrchestratorEvents(
+          services.decisionOrchestrator.getHistory(transitioned.id),
+        );
+        setDecisionOrchestratorIndexCount(
+          services.decisionOrchestrator.getIndex().list(transitioned.id)
+            .length,
+        );
+        setDecisionOrchestratorMessage(
+          transitioned.execution.state === 'Completed'
+            ? 'Execution completed via transition.'
+            : `Transitioned to ${transitioned.execution.currentMove}.`,
+        );
+      } catch (error) {
+        setDecisionOrchestratorMessage(
+          error instanceof Error ? error.message : 'Transition failed.',
+        );
+      }
+    },
+    completeDecisionExecution(): void {
+      if (decisionExecutionPackage === null) {
+        setDecisionOrchestratorMessage('Nejdřív Start Execution.');
+        return;
+      }
+      try {
+        const completed = services.decisionOrchestratorApi.completeExecution(
+          decisionExecutionPackage.id,
+        );
+        setDecisionExecutionPackage(completed);
+        setDecisionOrchestratorEvents(
+          services.decisionOrchestrator.getHistory(completed.id),
+        );
+        setDecisionOrchestratorIndexCount(
+          services.decisionOrchestrator.getIndex().list(completed.id).length,
+        );
+        setDecisionOrchestratorMessage(
+          `Completed execution ${completed.execution.id}.`,
+        );
+      } catch (error) {
+        setDecisionOrchestratorMessage(
+          error instanceof Error ? error.message : 'Complete failed.',
+        );
+      }
+    },
+    validateDecisionExecution(): void {
+      if (decisionExecutionPackage === null) {
+        setDecisionOrchestratorMessage('Nejdřív Start Execution.');
+        return;
+      }
+      const validated = services.decisionOrchestratorApi.validateExecution(
+        decisionExecutionPackage.id,
+      );
+      setDecisionExecutionPackage(validated);
+      setDecisionOrchestratorEvents(
+        services.decisionOrchestrator.getHistory(validated.id),
+      );
+      setDecisionOrchestratorMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    disposeDecisionExecution(): void {
+      if (decisionExecutionPackage === null) {
+        return;
+      }
+      const disposed = services.decisionOrchestrator.dispose(
+        decisionExecutionPackage.id,
+      );
+      setDecisionExecutionPackage(disposed);
+      setDecisionOrchestratorEvents(
+        services.decisionOrchestrator.getHistory(disposed.id),
+      );
+      setDecisionOrchestratorIndexCount(
+        services.decisionOrchestrator.getIndex().list(disposed.id).length,
+      );
+      setDecisionOrchestratorMessage(null);
     },
     buildProject(): void {
       const projectId =

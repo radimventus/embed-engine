@@ -27,6 +27,7 @@ const SECTIONS: readonly {
   { id: 'ai-decision-gateway', label: 'AI Gateway' },
   { id: 'personalization-engine', label: 'Personalize' },
   { id: 'personalization-runtime', label: 'Pers. Runtime' },
+  { id: 'decision-orchestrator', label: 'Orchestrator' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },
