@@ -19,8 +19,12 @@ import type {
   DecisionModel,
   DecisionRuntimeEvent,
   ComposeStoryInput,
+  BehaviorEvaluation,
+  BehaviorEvent,
+  BehaviorSignal,
   CreateSessionInput,
   DecisionStory,
+  EvaluateBehaviorInput,
   EvaluationEvent,
   EvaluationResult,
   KnowledgeEvent,
@@ -76,6 +80,8 @@ import {
   createDecisionStoryComposer,
   createRuntimeSessionApi,
   createRuntimeSessionEngine,
+  createBehaviorApi,
+  createBehaviorEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -146,6 +152,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeSession: RuntimeSession | null;
   readonly sessionEvents: readonly SessionEvent[];
   readonly sessionMessage: string | null;
+  readonly behaviorEvaluation: BehaviorEvaluation | null;
+  readonly behaviorSignals: readonly BehaviorSignal[];
+  readonly behaviorEvents: readonly BehaviorEvent[];
+  readonly behaviorMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -228,6 +238,9 @@ export type BuilderStudioViewModel = {
   readonly previousSessionMove: () => void;
   readonly completeRuntimeSession: () => void;
   readonly disposeRuntimeSession: () => void;
+  readonly evaluateBehavior: () => void;
+  readonly receiveDemoBehaviorSignals: () => void;
+  readonly disposeBehavior: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -353,6 +366,24 @@ function toRuleEvaluationInput(
 }
 
 
+
+
+function toEvaluateBehaviorInput(
+  session: RuntimeSession,
+  signals: readonly BehaviorSignal[] = [],
+): EvaluateBehaviorInput {
+  return {
+    sessionId: session.id,
+    currentMove: session.currentMoveId,
+    history: session.history.map((entry) => ({
+      moveId: entry.moveId,
+      action: entry.action,
+      timestamp: entry.timestamp,
+    })),
+    signals,
+    title: `${session.metadata.title} Behavior`,
+  };
+}
 
 function toCreateSessionInput(
   runtimeId: string,
@@ -705,6 +736,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const decisionStoryApi = createDecisionStoryApi(decisionStoryComposer);
     const runtimeSessionEngine = createRuntimeSessionEngine();
     const runtimeSessionApi = createRuntimeSessionApi(runtimeSessionEngine);
+    const behaviorEngine = createBehaviorEngine();
+    const behaviorApi = createBehaviorApi(behaviorEngine);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -750,6 +783,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       decisionStoryApi,
       runtimeSessionEngine,
       runtimeSessionApi,
+      behaviorEngine,
+      behaviorApi,
     };
   }, []);
 
@@ -914,6 +949,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     [],
   );
   const [sessionMessage, setSessionMessage] = useState<string | null>(null);
+  const [behaviorEvaluation, setBehaviorEvaluation] =
+    useState<BehaviorEvaluation | null>(null);
+  const [behaviorSignals, setBehaviorSignals] = useState<
+    readonly BehaviorSignal[]
+  >([]);
+  const [behaviorEvents, setBehaviorEvents] = useState<
+    readonly BehaviorEvent[]
+  >([]);
+  const [behaviorMessage, setBehaviorMessage] = useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -1230,6 +1274,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeSession,
     sessionEvents,
     sessionMessage,
+    behaviorEvaluation,
+    behaviorSignals,
+    behaviorEvents,
+    behaviorMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -2063,6 +2111,93 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setRuntimeSession(disposed);
       setSessionEvents(services.runtimeSessionEngine.getHistory(disposed.id));
       setSessionMessage(null);
+    },
+
+    evaluateBehavior(): void {
+      if (runtimeSession === null) {
+        setBehaviorMessage(
+          'Nejdřív vytvořte Runtime Session (Session → Create Session).',
+        );
+        return;
+      }
+      services.behaviorEngine.initialize(runtimeSession.id);
+      const evaluated = services.behaviorApi.evaluateBehavior(
+        toEvaluateBehaviorInput(runtimeSession, behaviorSignals),
+      );
+      setBehaviorEvaluation(evaluated);
+      setBehaviorSignals(
+        services.behaviorApi.listBehaviorSignals(runtimeSession.id),
+      );
+      setBehaviorEvents(
+        services.behaviorEngine.getHistory(runtimeSession.id),
+      );
+      setBehaviorMessage(null);
+    },
+    receiveDemoBehaviorSignals(): void {
+      if (runtimeSession === null) {
+        setBehaviorMessage(
+          'Nejdřív vytvořte Runtime Session (Session → Create Session).',
+        );
+        return;
+      }
+      const stamp = new Date().toISOString();
+      const sessionId = runtimeSession.id;
+      const moveId = runtimeSession.currentMoveId;
+      const demos: BehaviorSignal[] = [
+        {
+          id: `signal-move-entered-${Date.now()}`,
+          type: 'MoveEntered',
+          source: 'runtime-session',
+          timestamp: stamp,
+          payload: {
+            moveId,
+            note: 'Demo MoveEntered from Runtime Session.',
+          },
+          metadata: { sessionId },
+        },
+        {
+          id: `signal-timeout-${Date.now() + 1}`,
+          type: 'Timeout',
+          source: 'builder-diagnostic',
+          timestamp: stamp,
+          payload: {
+            moveId,
+            note: 'Demo Timeout — visitor idle.',
+          },
+          metadata: { sessionId },
+        },
+        {
+          id: `signal-pause-${Date.now() + 2}`,
+          type: 'PauseDetected',
+          source: 'builder-diagnostic',
+          timestamp: stamp,
+          payload: {
+            moveId,
+            note: 'Demo PauseDetected.',
+          },
+          metadata: { sessionId },
+        },
+      ];
+      for (const item of demos) {
+        services.behaviorEngine.receiveSignal(item);
+      }
+      setBehaviorSignals(services.behaviorApi.listBehaviorSignals(sessionId));
+      setBehaviorEvents(services.behaviorEngine.getHistory(sessionId));
+      setBehaviorMessage('Demo signals accepted — Behavior Session unchanged.');
+    },
+    disposeBehavior(): void {
+      if (runtimeSession === null && behaviorEvaluation === null) {
+        return;
+      }
+      const sessionId =
+        behaviorEvaluation?.sessionId ?? runtimeSession?.id ?? null;
+      if (sessionId !== null) {
+        services.behaviorEngine.dispose(sessionId);
+      }
+      setBehaviorEvaluation(null);
+      setBehaviorSignals([]);
+      setBehaviorEvents([]);
+      setBehaviorMessage(null);
     },
     buildProject(): void {
       const projectId =

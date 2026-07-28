@@ -237,3 +237,16 @@ export {
   createSessionValidator,
   type SessionValidator,
 } from './runtime-session/session-validator';
+
+export {
+  createBehaviorEngine,
+  type BehaviorEngine,
+} from './behavior/behavior-engine';
+export {
+  createBehaviorApi,
+  type BehaviorApi,
+} from './behavior/behavior-api';
+export {
+  createBasicBehaviorStrategy,
+  type BehaviorStrategy,
+} from './behavior/basic-behavior-strategy';

@@ -16,6 +16,7 @@ const SECTIONS: readonly {
   { id: 'rule-evaluation', label: 'Evaluation' },
   { id: 'decision-story', label: 'Story' },
   { id: 'runtime-session', label: 'Session' },
+  { id: 'behavior', label: 'Behavior' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

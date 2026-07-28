@@ -30,6 +30,7 @@ export type WorkspaceSectionId =
   | 'rule-evaluation'
   | 'decision-story'
   | 'runtime-session'
+  | 'behavior'
   | 'media'
   | 'layout'
   | 'knowledge';

@@ -75,6 +75,10 @@ export function BuilderStudioApp() {
         runtimeSession={session.runtimeSession}
         sessionEvents={session.sessionEvents}
         sessionMessage={session.sessionMessage}
+        behaviorEvaluation={session.behaviorEvaluation}
+        behaviorSignals={session.behaviorSignals}
+        behaviorEvents={session.behaviorEvents}
+        behaviorMessage={session.behaviorMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -136,6 +140,9 @@ export function BuilderStudioApp() {
         onPreviousSessionMove={session.previousSessionMove}
         onCompleteRuntimeSession={session.completeRuntimeSession}
         onDisposeRuntimeSession={session.disposeRuntimeSession}
+        onEvaluateBehavior={session.evaluateBehavior}
+        onReceiveDemoBehaviorSignals={session.receiveDemoBehaviorSignals}
+        onDisposeBehavior={session.disposeBehavior}
       />
     </AppShell>
   );

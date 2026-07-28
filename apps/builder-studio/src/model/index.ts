@@ -304,3 +304,16 @@ export type {
   SessionValidation,
   SessionValidationIssue,
 } from './runtime-session-types';
+
+export type {
+  BehaviorAction,
+  BehaviorActionType,
+  BehaviorContext,
+  BehaviorEvaluation,
+  BehaviorEvent,
+  BehaviorEventType,
+  BehaviorSignal,
+  BehaviorSignalType,
+  BehaviorTimestamps,
+  EvaluateBehaviorInput,
+} from './behavior-types';
