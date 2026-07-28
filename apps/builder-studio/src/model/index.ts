@@ -359,3 +359,14 @@ export type {
   LearningRecordsPackage,
   LearningRecordsPackageMetadata,
 } from './learning-package-manager-types';
+
+export type {
+  ExtractPatternsInput,
+  ExtractedPattern,
+  PatternCollection,
+  PatternEngineEvent,
+  PatternEngineEventType,
+  PatternIndexEntry,
+  PatternValidation,
+  PatternValidationIssue,
+} from './pattern-extraction-types';

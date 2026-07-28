@@ -34,6 +34,7 @@ export type WorkspaceSectionId =
   | 'analytics'
   | 'learning-pipeline'
   | 'learning-package-mgr'
+  | 'pattern-extraction'
   | 'media'
   | 'layout'
   | 'knowledge';

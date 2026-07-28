@@ -297,3 +297,22 @@ export {
   createLearningPackageValidator,
   type LearningPackageValidator,
 } from './learning-package-manager/learning-package-validator';
+
+export {
+  createPatternExtractionEngine,
+  type PatternExtractionEngine,
+} from './pattern-extraction/pattern-extraction-engine';
+export {
+  createPatternExtractionApi,
+  type PatternExtractionApi,
+} from './pattern-extraction/pattern-extraction-api';
+export {
+  createBasicPatternExtractor,
+  createPatternValidator,
+  type PatternExtractor,
+  type PatternValidator,
+} from './pattern-extraction/basic-pattern-extractor';
+export {
+  createPatternIndex,
+  type PatternIndex,
+} from './pattern-extraction/pattern-index';

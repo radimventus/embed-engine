@@ -22,6 +22,8 @@ import type {
   LearningRecord,
   LearningRecordsPackage,
   LearningValidationResult,
+  PatternCollection,
+  PatternEngineEvent,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -63,6 +65,7 @@ import { BehaviorOverview } from './BehaviorOverview';
 import { AnalyticsOverview } from './AnalyticsOverview';
 import { LearningPipelineOverview } from './LearningPipelineOverview';
 import { LearningPackageManagerOverview } from './LearningPackageManagerOverview';
+import { PatternExtractionOverview } from './PatternExtractionOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -133,6 +136,10 @@ type WorkspaceCanvasProps = {
   readonly learningPackageManagerEvents: readonly LearningPackageManagerEvent[];
   readonly learningPackageIndexCount: number;
   readonly learningPackageManagerMessage: string | null;
+  readonly patternCollection: PatternCollection | null;
+  readonly patternExtractionEvents: readonly PatternEngineEvent[];
+  readonly patternIndexCount: number;
+  readonly patternExtractionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -222,6 +229,10 @@ type WorkspaceCanvasProps = {
   readonly onValidateLearningRecordsPackage: () => void;
   readonly onPublishLearningRecordsPackage: () => void;
   readonly onDisposeLearningRecordsPackage: () => void;
+  readonly onExtractPatterns: () => void;
+  readonly onValidatePatterns: () => void;
+  readonly onPublishPatterns: () => void;
+  readonly onDisposePatterns: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -275,6 +286,10 @@ export function WorkspaceCanvas({
   learningPackageManagerEvents,
   learningPackageIndexCount,
   learningPackageManagerMessage,
+  patternCollection,
+  patternExtractionEvents,
+  patternIndexCount,
+  patternExtractionMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -354,6 +369,10 @@ export function WorkspaceCanvas({
   onValidateLearningRecordsPackage,
   onPublishLearningRecordsPackage,
   onDisposeLearningRecordsPackage,
+  onExtractPatterns,
+  onValidatePatterns,
+  onPublishPatterns,
+  onDisposePatterns,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -621,6 +640,19 @@ export function WorkspaceCanvas({
             onPublish={onPublishLearningRecordsPackage}
             onDispose={onDisposeLearningRecordsPackage}
             message={learningPackageManagerMessage}
+          />
+        ) : null}
+
+        {activeSection === 'pattern-extraction' ? (
+          <PatternExtractionOverview
+            patternCollection={patternCollection}
+            events={patternExtractionEvents}
+            indexCount={patternIndexCount}
+            onExtract={onExtractPatterns}
+            onValidate={onValidatePatterns}
+            onPublish={onPublishPatterns}
+            onDispose={onDisposePatterns}
+            message={patternExtractionMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

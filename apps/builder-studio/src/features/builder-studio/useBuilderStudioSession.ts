@@ -29,6 +29,8 @@ import type {
   LearningRecord,
   LearningRecordsPackage,
   LearningValidationResult,
+  PatternCollection,
+  PatternEngineEvent,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -98,6 +100,8 @@ import {
   createLearningPipelineApi,
   createLearningPackageManager,
   createLearningPackageManagerApi,
+  createPatternExtractionApi,
+  createPatternExtractionEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -185,6 +189,10 @@ export type BuilderStudioViewModel = {
   readonly learningPackageManagerEvents: readonly LearningPackageManagerEvent[];
   readonly learningPackageIndexCount: number;
   readonly learningPackageManagerMessage: string | null;
+  readonly patternCollection: PatternCollection | null;
+  readonly patternExtractionEvents: readonly PatternEngineEvent[];
+  readonly patternIndexCount: number;
+  readonly patternExtractionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -285,6 +293,10 @@ export type BuilderStudioViewModel = {
   readonly validateLearningRecordsPackage: () => void;
   readonly publishLearningRecordsPackage: () => void;
   readonly disposeLearningRecordsPackage: () => void;
+  readonly extractPatterns: () => void;
+  readonly validatePatterns: () => void;
+  readonly publishPatterns: () => void;
+  readonly disposePatterns: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -915,6 +927,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const learningPackageManagerApi = createLearningPackageManagerApi(
       learningPackageManager,
     );
+    const patternExtractionEngine = createPatternExtractionEngine();
+    const patternExtractionApi = createPatternExtractionApi(
+      patternExtractionEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -968,6 +984,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       learningPipelineApi,
       learningPackageManager,
       learningPackageManagerApi,
+      patternExtractionEngine,
+      patternExtractionApi,
     };
   }, []);
 
@@ -1176,6 +1194,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     useState(0);
   const [learningPackageManagerMessage, setLearningPackageManagerMessage] =
     useState<string | null>(null);
+  const [patternCollection, setPatternCollection] =
+    useState<PatternCollection | null>(null);
+  const [patternExtractionEvents, setPatternExtractionEvents] = useState<
+    readonly PatternEngineEvent[]
+  >([]);
+  const [patternIndexCount, setPatternIndexCount] = useState(0);
+  const [patternExtractionMessage, setPatternExtractionMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -1509,6 +1536,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     learningPackageManagerEvents,
     learningPackageIndexCount,
     learningPackageManagerMessage,
+    patternCollection,
+    patternExtractionEvents,
+    patternIndexCount,
+    patternExtractionMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -2705,6 +2736,110 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.learningPackageManager.getIndex().list(disposed.id).length,
       );
       setLearningPackageManagerMessage(null);
+    },
+    extractPatterns(): void {
+      const records =
+        learningRecordsPackage !== null &&
+        learningRecordsPackage.records.length > 0
+          ? learningRecordsPackage.records.map((ref) => ({
+              recordId: ref.recordId,
+              source: ref.source,
+              note: ref.metadata.note,
+            }))
+          : [
+              {
+                recordId: 'learning-record-1',
+                source: 'learning-pipeline',
+                note: 'Demo pipeline ref',
+              },
+              {
+                recordId: 'learning-record-2',
+                source: 'learning-pipeline',
+                note: 'Demo pipeline ref',
+              },
+              {
+                recordId: 'learning-record-3',
+                source: 'builder-demo',
+                note: 'Demo',
+              },
+            ];
+
+      const packageId =
+        learningRecordsPackage?.id ?? 'learning-records-package-demo';
+      const packageName =
+        learningRecordsPackage?.name ?? 'Demo Learning Package';
+
+      const extracted = services.patternExtractionApi.extractPatterns({
+        packageId,
+        packageName,
+        title: `${packageName} Patterns`,
+        records,
+      });
+      setPatternCollection(extracted);
+      setPatternExtractionEvents(
+        services.patternExtractionEngine.getHistory(extracted.id),
+      );
+      setPatternIndexCount(
+        services.patternExtractionEngine.getIndex().list(extracted.id).length,
+      );
+      setPatternExtractionMessage(
+        `Extracted ${extracted.patterns.length} pattern(s). Learning Package unchanged.`,
+      );
+    },
+    validatePatterns(): void {
+      if (patternCollection === null) {
+        setPatternExtractionMessage('Nejdřív Extract Patterns.');
+        return;
+      }
+      const validated = services.patternExtractionApi.validatePatterns(
+        patternCollection.id,
+      );
+      setPatternCollection(validated);
+      setPatternExtractionEvents(
+        services.patternExtractionEngine.getHistory(validated.id),
+      );
+      setPatternExtractionMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    publishPatterns(): void {
+      if (patternCollection === null) {
+        setPatternExtractionMessage('Nejdřív Extract Patterns.');
+        return;
+      }
+      const published = services.patternExtractionEngine.publish(
+        patternCollection.id,
+      );
+      setPatternCollection(published);
+      setPatternExtractionEvents(
+        services.patternExtractionEngine.getHistory(published.id),
+      );
+      setPatternIndexCount(
+        services.patternExtractionEngine.getIndex().list(published.id).length,
+      );
+      setPatternExtractionMessage(
+        published.patterns.every((item) => item.metadata.status === 'Published')
+          ? `Published @ ${published.version}`
+          : 'Publish blocked by validation.',
+      );
+    },
+    disposePatterns(): void {
+      if (patternCollection === null) {
+        return;
+      }
+      const disposed = services.patternExtractionEngine.dispose(
+        patternCollection.id,
+      );
+      setPatternCollection(disposed);
+      setPatternExtractionEvents(
+        services.patternExtractionEngine.getHistory(disposed.id),
+      );
+      setPatternIndexCount(
+        services.patternExtractionEngine.getIndex().list(disposed.id).length,
+      );
+      setPatternExtractionMessage(null);
     },
     buildProject(): void {
       const projectId =

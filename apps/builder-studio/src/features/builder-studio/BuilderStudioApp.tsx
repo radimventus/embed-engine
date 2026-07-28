@@ -92,6 +92,10 @@ export function BuilderStudioApp() {
         learningPackageManagerEvents={session.learningPackageManagerEvents}
         learningPackageIndexCount={session.learningPackageIndexCount}
         learningPackageManagerMessage={session.learningPackageManagerMessage}
+        patternCollection={session.patternCollection}
+        patternExtractionEvents={session.patternExtractionEvents}
+        patternIndexCount={session.patternIndexCount}
+        patternExtractionMessage={session.patternExtractionMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -171,6 +175,10 @@ export function BuilderStudioApp() {
         onValidateLearningRecordsPackage={session.validateLearningRecordsPackage}
         onPublishLearningRecordsPackage={session.publishLearningRecordsPackage}
         onDisposeLearningRecordsPackage={session.disposeLearningRecordsPackage}
+        onExtractPatterns={session.extractPatterns}
+        onValidatePatterns={session.validatePatterns}
+        onPublishPatterns={session.publishPatterns}
+        onDisposePatterns={session.disposePatterns}
       />
     </AppShell>
   );

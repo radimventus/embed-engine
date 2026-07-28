@@ -20,6 +20,7 @@ const SECTIONS: readonly {
   { id: 'analytics', label: 'Analytics' },
   { id: 'learning-pipeline', label: 'Pipeline' },
   { id: 'learning-package-mgr', label: 'Package' },
+  { id: 'pattern-extraction', label: 'Patterns' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },
