@@ -5,8 +5,12 @@ import type {
   ComposerEvent,
   Experience,
   ExperienceStructureReport,
+  DecisionEvent,
+  DecisionKnowledgePackage,
   KnowledgeEvent,
   KnowledgePackage,
+  PriorityDefinition,
+  PriorityId,
   ObjectEvent,
   ObjectModuleDefinition,
   ObjectModuleId,
@@ -19,6 +23,7 @@ import type {
   WorkspaceSectionId,
 } from '../../model';
 import { ExperienceComposer } from './ExperienceComposer';
+import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeOverview } from './KnowledgeOverview';
 import {
   KnowledgeSection,
@@ -38,6 +43,9 @@ type WorkspaceCanvasProps = {
   readonly selectedSceneId: string | null;
   readonly knowledgePackage: KnowledgePackage | null;
   readonly knowledgeEvents: readonly KnowledgeEvent[];
+  readonly decisionKnowledge: DecisionKnowledgePackage | null;
+  readonly decisionEvents: readonly DecisionEvent[];
+  readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
   readonly validationReport: ValidationReport | null;
@@ -75,6 +83,11 @@ type WorkspaceCanvasProps = {
   readonly onAddEntity: () => void;
   readonly onAddRelationship: () => void;
   readonly onAddFaq: () => void;
+  readonly onSaveDecision: () => void;
+  readonly onAddDecisionRule: () => void;
+  readonly onAddDecisionSignal: () => void;
+  readonly onAddDecisionStrategy: () => void;
+  readonly onToggleDecisionPriority: (priorityId: PriorityId) => void;
 };
 
 export function WorkspaceCanvas({
@@ -86,6 +99,9 @@ export function WorkspaceCanvas({
   selectedSceneId,
   knowledgePackage,
   knowledgeEvents,
+  decisionKnowledge,
+  decisionEvents,
+  priorityRegistry,
   moduleRegistry,
   objectEvents,
   validationReport,
@@ -113,6 +129,11 @@ export function WorkspaceCanvas({
   onAddEntity,
   onAddRelationship,
   onAddFaq,
+  onSaveDecision,
+  onAddDecisionRule,
+  onAddDecisionSignal,
+  onAddDecisionStrategy,
+  onToggleDecisionPriority,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -209,6 +230,24 @@ export function WorkspaceCanvas({
             Knowledge Package není k dispozici.
           </p>
         ) : null}
+
+        {activeSection === 'decision' && decisionKnowledge !== null ? (
+          <DecisionOverview
+            decisionKnowledge={decisionKnowledge}
+            priorityRegistry={priorityRegistry}
+            events={decisionEvents}
+            onSave={onSaveDecision}
+            onAddRule={onAddDecisionRule}
+            onAddSignal={onAddDecisionSignal}
+            onAddStrategy={onAddDecisionStrategy}
+            onTogglePriority={onToggleDecisionPriority}
+          />
+        ) : null}
+        {activeSection === 'decision' && decisionKnowledge === null ? (
+          <p className="text-builder-muted">
+            Decision Knowledge není k dispozici.
+          </p>
+        ) : null}
         {activeSection === 'media' ? (
           <MediaSection
             collections={projectModel.assets.media}
@@ -229,7 +268,7 @@ export function WorkspaceCanvas({
         ) : null}
         <div className="mt-5 flex items-center justify-between border-t border-builder-divider pt-5 text-[13px] text-[#7C879A]">
           <span>
-            Knowledge + Experience + Object Package: session only (bez
+            Decision + Knowledge + Experience + Object Package: session only (bez
             persistence)
           </span>
           <span>{manifest.updatedAt}</span>

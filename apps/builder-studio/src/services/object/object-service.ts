@@ -1,6 +1,7 @@
 import type {
   ActiveProjectModel,
   CreateObjectInput,
+  DecisionKnowledgePackage,
   Experience,
   KnowledgePackage,
   ObjectEvent,
@@ -37,6 +38,10 @@ export type ObjectService = {
   setKnowledgePackage(
     objectId: string,
     knowledgePackage: KnowledgePackage | null,
+  ): ObjectPackage;
+  setDecisionKnowledge(
+    objectId: string,
+    decisionKnowledge: DecisionKnowledgePackage | null,
   ): ObjectPackage;
   syncContentFromProject(
     objectId: string,
@@ -145,6 +150,7 @@ export function createObjectService(options?: {
         modules: [...(input.modules ?? DEFAULT_OBJECT_MODULES)],
         experience: null,
         knowledgePackage: null,
+        decisionKnowledge: null,
         tags: [...(input.tags ?? [])],
         version: '1.0.0',
         timestamps: { createdAt: stamp, updatedAt: stamp },
@@ -381,6 +387,21 @@ export function createObjectService(options?: {
       const next: ObjectPackage = {
         ...current,
         knowledgePackage,
+        timestamps: {
+          createdAt: current.timestamps.createdAt,
+          updatedAt,
+        },
+      };
+      write(next);
+      return next;
+    },
+
+    setDecisionKnowledge(objectId, decisionKnowledge) {
+      const current = requireObject(objectId);
+      const updatedAt = now().toISOString();
+      const next: ObjectPackage = {
+        ...current,
+        decisionKnowledge,
         timestamps: {
           createdAt: current.timestamps.createdAt,
           updatedAt,

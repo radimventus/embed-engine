@@ -5,6 +5,7 @@
  */
 
 import type { CollectedAssetRef } from './build-types';
+import type { DecisionKnowledgePackage } from './decision-types';
 import type { Experience } from './experience-types';
 import type { KnowledgePackage } from './knowledge-types';
 
@@ -44,7 +45,7 @@ export type ObjectTimestamps = {
 /**
  * Complete authoring model of an object.
  * Runtime never mutates this package.
- * Experience (BLD-09) + Knowledge Package (BLD-11) are authoring layers.
+ * Experience + Knowledge + Decision Knowledge are authoring layers.
  */
 export type ObjectPackage = {
   readonly objectId: string;
@@ -65,6 +66,7 @@ export type ObjectPackage = {
   readonly modules: readonly ObjectModuleId[];
   readonly experience: Experience | null;
   readonly knowledgePackage: KnowledgePackage | null;
+  readonly decisionKnowledge: DecisionKnowledgePackage | null;
   readonly tags: readonly string[];
   readonly version: string;
   readonly timestamps: ObjectTimestamps;

@@ -7,6 +7,7 @@ const SECTIONS: readonly {
   { id: 'overview', label: 'Overview' },
   { id: 'experience', label: 'Experience' },
   { id: 'knowledge-package', label: 'Knowledge' },
+  { id: 'decision', label: 'Decision' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

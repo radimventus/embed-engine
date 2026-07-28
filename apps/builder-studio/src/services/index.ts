@@ -108,3 +108,17 @@ export {
   createKnowledgeApi,
   type KnowledgeApi,
 } from './knowledge/knowledge-api';
+export {
+  createDecisionKnowledgeService,
+  type DecisionKnowledgeService,
+} from './decision/decision-knowledge-service';
+export {
+  createDecisionKnowledgeApi,
+  type DecisionKnowledgeApi,
+} from './decision/decision-knowledge-api';
+export {
+  DEFAULT_PRIORITIES,
+  PRIORITY_REGISTRY,
+  getPriority,
+  listPriorities,
+} from './decision/priority-registry';

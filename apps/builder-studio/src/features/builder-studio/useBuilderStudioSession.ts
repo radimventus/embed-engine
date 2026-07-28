@@ -8,9 +8,13 @@ import type {
   ComposerEvent,
   Experience,
   ExperienceStructureReport,
+  DecisionEvent,
+  DecisionKnowledgePackage,
   KnowledgeEvent,
   KnowledgePackage,
   ObjectEvent,
+  PriorityDefinition,
+  PriorityId,
   ObjectModuleDefinition,
   ObjectModuleId,
   ObjectPackage,
@@ -33,6 +37,8 @@ import {
   createBuildService,
   createExperienceComposerApi,
   createExperienceComposerService,
+  createDecisionKnowledgeApi,
+  createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeService,
   createLifecycleService,
@@ -47,7 +53,9 @@ import {
   createWorkspaceService,
   isPublishAllowedByQualityGate,
   listObjectModules,
+  listPriorities,
   toTimelineEntries,
+  type DecisionKnowledgeService,
   type ExperienceComposerService,
   type KnowledgeService,
   type ObjectService,
@@ -63,6 +71,9 @@ export type BuilderStudioViewModel = {
   readonly selectedSceneId: string | null;
   readonly knowledgePackage: KnowledgePackage | null;
   readonly knowledgeEvents: readonly KnowledgeEvent[];
+  readonly decisionKnowledge: DecisionKnowledgePackage | null;
+  readonly decisionEvents: readonly DecisionEvent[];
+  readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
   readonly pipeline: ProjectPipelineSnapshot | null;
@@ -111,6 +122,11 @@ export type BuilderStudioViewModel = {
   readonly addEntity: () => void;
   readonly addRelationship: () => void;
   readonly addFaq: () => void;
+  readonly saveDecisionKnowledge: () => void;
+  readonly addDecisionRule: () => void;
+  readonly addDecisionSignal: () => void;
+  readonly addDecisionStrategy: () => void;
+  readonly toggleDecisionPriority: (priorityId: PriorityId) => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -183,6 +199,24 @@ function ensureKnowledge(
       : knowledgeService.syncDocumentsFromProject(knowledge.knowledgeId, project);
   objectService.setKnowledgePackage(objectPackage.objectId, synced);
   return synced;
+}
+
+
+function ensureDecisionKnowledge(
+  decisionService: DecisionKnowledgeService,
+  objectService: ObjectService,
+  objectPackage: ObjectPackage,
+): DecisionKnowledgePackage {
+  const existing = decisionService.loadByObject(objectPackage.objectId);
+  const decision =
+    existing ??
+    decisionService.create({
+      objectId: objectPackage.objectId,
+      title: `${objectPackage.metadata.name} Decision Knowledge`,
+      description: objectPackage.metadata.description,
+    });
+  objectService.setDecisionKnowledge(objectPackage.objectId, decision);
+  return decision;
 }
 
 function nextMockFileName(categoryId: AssetCategoryId, count: number): string {
@@ -288,12 +322,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const composerApi = createExperienceComposerApi(composerService);
     const knowledgeService = createKnowledgeService();
     const knowledgeApi = createKnowledgeApi(knowledgeService);
+    const decisionService = createDecisionKnowledgeService();
+    const decisionApi = createDecisionKnowledgeApi(decisionService);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
         const objectPackage = ensureObjectPackage(objectService, project);
         ensureExperience(composerService, objectService, objectPackage);
         ensureKnowledge(knowledgeService, objectService, objectPackage, project);
+        ensureDecisionKnowledge(decisionService, objectService, objectPackage);
       }
     }
     return {
@@ -313,6 +350,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       composerApi,
       knowledgeService,
       knowledgeApi,
+      decisionService,
+      decisionApi,
     };
   }, []);
 
@@ -406,6 +445,27 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     }
     return services.knowledgeService.getHistory(knowledgePackage.knowledgeId);
   });
+  const [decisionKnowledge, setDecisionKnowledge] =
+    useState<DecisionKnowledgePackage | null>(() => {
+      const model = services.workspaceService.getActiveProjectModel();
+      if (model === null) {
+        return null;
+      }
+      const pkg = ensureObjectPackage(services.objectService, model);
+      return ensureDecisionKnowledge(
+        services.decisionService,
+        services.objectService,
+        pkg,
+      );
+    });
+  const [decisionEvents, setDecisionEvents] = useState<
+    readonly DecisionEvent[]
+  >(() => {
+    if (decisionKnowledge === null) {
+      return [];
+    }
+    return services.decisionService.getHistory(decisionKnowledge.id);
+  });
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -490,6 +550,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setSelectedSceneId(null);
       setKnowledgePackage(null);
       setKnowledgeEvents([]);
+      setDecisionKnowledge(null);
+      setDecisionEvents([]);
       return;
     }
     const model = services.assets.getActiveProject(projectId);
@@ -502,6 +564,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setSelectedSceneId(null);
       setKnowledgePackage(null);
       setKnowledgeEvents([]);
+      setDecisionKnowledge(null);
+      setDecisionEvents([]);
       return;
     }
     const pkg = ensureObjectPackage(services.objectService, model);
@@ -537,6 +601,13 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     );
     setKnowledgePackage(kp);
     setKnowledgeEvents(services.knowledgeService.getHistory(kp.knowledgeId));
+    const dk = ensureDecisionKnowledge(
+      services.decisionService,
+      services.objectService,
+      services.objectService.loadObject(pkg.objectId) ?? pkg,
+    );
+    setDecisionKnowledge(dk);
+    setDecisionEvents(services.decisionService.getHistory(dk.id));
     setObjectPackage(services.objectService.loadObject(pkg.objectId));
   };
 
@@ -636,6 +707,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     selectedSceneId,
     knowledgePackage,
     knowledgeEvents,
+    decisionKnowledge,
+    decisionEvents,
+    priorityRegistry: listPriorities(),
     moduleRegistry: listObjectModules(),
     objectEvents,
     pipeline,
@@ -690,6 +764,11 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           services.objectService,
           pkg,
           model,
+        );
+        ensureDecisionKnowledge(
+          services.decisionService,
+          services.objectService,
+          pkg,
         );
       }
       setPipeline(services.workspaceService.getPipelineSnapshot());
@@ -917,6 +996,82 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       services.objectService.setKnowledgePackage(next.objectId, next);
       setKnowledgePackage(next);
       setKnowledgeEvents(services.knowledgeService.getHistory(next.knowledgeId));
+      setObjectPackage(services.objectService.loadObject(next.objectId));
+    },
+
+    saveDecisionKnowledge(): void {
+      if (decisionKnowledge === null) {
+        return;
+      }
+      const saved = services.decisionApi.saveDecisionKnowledge(
+        decisionKnowledge.id,
+      );
+      services.objectService.setDecisionKnowledge(saved.objectId, saved);
+      setDecisionKnowledge(saved);
+      setDecisionEvents(services.decisionService.getHistory(saved.id));
+      setObjectPackage(services.objectService.loadObject(saved.objectId));
+    },
+    addDecisionRule(): void {
+      if (decisionKnowledge === null) {
+        return;
+      }
+      const next = services.decisionService.addRule(decisionKnowledge.id, {
+        condition: `condition-${decisionKnowledge.decisionRules.length + 1}`,
+        outcome: `outcome-${decisionKnowledge.decisionRules.length + 1}`,
+        priority: decisionKnowledge.decisionRules.length + 1,
+        weight: 0.5,
+      });
+      services.objectService.setDecisionKnowledge(next.objectId, next);
+      setDecisionKnowledge(next);
+      setDecisionEvents(services.decisionService.getHistory(next.id));
+      setObjectPackage(services.objectService.loadObject(next.objectId));
+    },
+    addDecisionSignal(): void {
+      if (decisionKnowledge === null) {
+        return;
+      }
+      const next = services.decisionService.addSignal(decisionKnowledge.id, {
+        source: 'form',
+        label: `Signal ${decisionKnowledge.decisionSignals.length + 1}`,
+        type: 'intent',
+      });
+      services.objectService.setDecisionKnowledge(next.objectId, next);
+      setDecisionKnowledge(next);
+      setDecisionEvents(services.decisionService.getHistory(next.id));
+      setObjectPackage(services.objectService.loadObject(next.objectId));
+    },
+    addDecisionStrategy(): void {
+      if (decisionKnowledge === null) {
+        return;
+      }
+      const next = services.decisionService.addStrategy(decisionKnowledge.id, {
+        title: `Strategy ${decisionKnowledge.strategies.length + 1}`,
+        description: 'Autorská strategie — bez Runtime Story.',
+        targetSignals: decisionKnowledge.decisionSignals
+          .slice(0, 2)
+          .map((item) => item.id),
+      });
+      services.objectService.setDecisionKnowledge(next.objectId, next);
+      setDecisionKnowledge(next);
+      setDecisionEvents(services.decisionService.getHistory(next.id));
+      setObjectPackage(services.objectService.loadObject(next.objectId));
+    },
+    toggleDecisionPriority(priorityId: PriorityId): void {
+      if (decisionKnowledge === null) {
+        return;
+      }
+      const next = decisionKnowledge.priorities.includes(priorityId)
+        ? services.decisionService.unregisterPriority(
+            decisionKnowledge.id,
+            priorityId,
+          )
+        : services.decisionService.registerPriority(
+            decisionKnowledge.id,
+            priorityId,
+          );
+      services.objectService.setDecisionKnowledge(next.objectId, next);
+      setDecisionKnowledge(next);
+      setDecisionEvents(services.decisionService.getHistory(next.id));
       setObjectPackage(services.objectService.loadObject(next.objectId));
     },
     buildProject(): void {

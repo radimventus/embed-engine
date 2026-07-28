@@ -21,6 +21,7 @@ export type WorkspaceSectionId =
   | 'overview'
   | 'experience'
   | 'knowledge-package'
+  | 'decision'
   | 'media'
   | 'layout'
   | 'knowledge';

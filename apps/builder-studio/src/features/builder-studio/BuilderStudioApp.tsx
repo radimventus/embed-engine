@@ -50,6 +50,9 @@ export function BuilderStudioApp() {
         selectedSceneId={session.selectedSceneId}
         knowledgePackage={session.knowledgePackage}
         knowledgeEvents={session.knowledgeEvents}
+        decisionKnowledge={session.decisionKnowledge}
+        decisionEvents={session.decisionEvents}
+        priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
         validationReport={session.validationReport}
@@ -77,6 +80,11 @@ export function BuilderStudioApp() {
         onAddEntity={session.addEntity}
         onAddRelationship={session.addRelationship}
         onAddFaq={session.addFaq}
+        onSaveDecision={session.saveDecisionKnowledge}
+        onAddDecisionRule={session.addDecisionRule}
+        onAddDecisionSignal={session.addDecisionSignal}
+        onAddDecisionStrategy={session.addDecisionStrategy}
+        onToggleDecisionPriority={session.toggleDecisionPriority}
       />
     </AppShell>
   );

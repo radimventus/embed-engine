@@ -137,6 +137,26 @@ export type {
   UpdateKnowledgeInput,
 } from './knowledge-types';
 
+export type {
+  AddDecisionRuleInput,
+  AddDecisionSignalInput,
+  AddDecisionStrategyInput,
+  CreateDecisionKnowledgeInput,
+  DecisionEvent,
+  DecisionEventType,
+  DecisionKnowledgeMetadata,
+  DecisionKnowledgePackage,
+  DecisionRule,
+  DecisionSignal,
+  DecisionSignalSource,
+  DecisionSignalType,
+  DecisionStrategy,
+  DecisionTimestamps,
+  PriorityDefinition,
+  PriorityId,
+  UpdateDecisionKnowledgeInput,
+} from './decision-types';
+
 export {
   ASSET_CATEGORY_ORDER,
   createEmptyAssetCollections,
