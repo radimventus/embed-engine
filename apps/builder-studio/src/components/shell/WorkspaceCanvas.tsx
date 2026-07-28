@@ -17,8 +17,10 @@ import type {
   AnalyticsEngineEvent,
   AnalyticsSnapshot,
   LearningImportReport,
+  LearningPackageManagerEvent,
   LearningPipelineEvent,
   LearningRecord,
+  LearningRecordsPackage,
   LearningValidationResult,
   BehaviorEvaluation,
   BehaviorEvent,
@@ -60,6 +62,7 @@ import { RuntimeSessionOverview } from './RuntimeSessionOverview';
 import { BehaviorOverview } from './BehaviorOverview';
 import { AnalyticsOverview } from './AnalyticsOverview';
 import { LearningPipelineOverview } from './LearningPipelineOverview';
+import { LearningPackageManagerOverview } from './LearningPackageManagerOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -126,6 +129,10 @@ type WorkspaceCanvasProps = {
   readonly learningExportPayload: string | null;
   readonly learningPipelineEvents: readonly LearningPipelineEvent[];
   readonly learningPipelineMessage: string | null;
+  readonly learningRecordsPackage: LearningRecordsPackage | null;
+  readonly learningPackageManagerEvents: readonly LearningPackageManagerEvent[];
+  readonly learningPackageIndexCount: number;
+  readonly learningPackageManagerMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -209,6 +216,12 @@ type WorkspaceCanvasProps = {
   readonly onAnonymizeLearning: () => void;
   readonly onTransformLearning: () => void;
   readonly onDisposeLearningPipeline: () => void;
+  readonly onCreateLearningRecordsPackage: () => void;
+  readonly onAddLearningRecordRef: () => void;
+  readonly onRemoveLastLearningRecordRef: () => void;
+  readonly onValidateLearningRecordsPackage: () => void;
+  readonly onPublishLearningRecordsPackage: () => void;
+  readonly onDisposeLearningRecordsPackage: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -258,6 +271,10 @@ export function WorkspaceCanvas({
   learningExportPayload,
   learningPipelineEvents,
   learningPipelineMessage,
+  learningRecordsPackage,
+  learningPackageManagerEvents,
+  learningPackageIndexCount,
+  learningPackageManagerMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -331,6 +348,12 @@ export function WorkspaceCanvas({
   onAnonymizeLearning,
   onTransformLearning,
   onDisposeLearningPipeline,
+  onCreateLearningRecordsPackage,
+  onAddLearningRecordRef,
+  onRemoveLastLearningRecordRef,
+  onValidateLearningRecordsPackage,
+  onPublishLearningRecordsPackage,
+  onDisposeLearningRecordsPackage,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -566,6 +589,7 @@ export function WorkspaceCanvas({
           />
         ) : null}
 
+
         {activeSection === 'learning-pipeline' ? (
           <LearningPipelineOverview
             record={learningRecord}
@@ -582,6 +606,21 @@ export function WorkspaceCanvas({
             onTransform={onTransformLearning}
             onDispose={onDisposeLearningPipeline}
             message={learningPipelineMessage}
+          />
+        ) : null}
+
+        {activeSection === 'learning-package-mgr' ? (
+          <LearningPackageManagerOverview
+            learningRecordsPackage={learningRecordsPackage}
+            events={learningPackageManagerEvents}
+            indexCount={learningPackageIndexCount}
+            onCreate={onCreateLearningRecordsPackage}
+            onAddRecord={onAddLearningRecordRef}
+            onRemoveLastRecord={onRemoveLastLearningRecordRef}
+            onValidate={onValidateLearningRecordsPackage}
+            onPublish={onPublishLearningRecordsPackage}
+            onDispose={onDisposeLearningRecordsPackage}
+            message={learningPackageManagerMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

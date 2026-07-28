@@ -345,3 +345,17 @@ export type {
   LearningValidationIssue,
   LearningValidationResult,
 } from './learning-pipeline-types';
+
+export type {
+  AddLearningRecordRefInput,
+  CreateLearningRecordsPackageInput,
+  LearningPackageIndexEntry,
+  LearningPackageManagerEvent,
+  LearningPackageManagerEventType,
+  LearningPackageValidation,
+  LearningPackageValidationIssue,
+  LearningPackageVersion,
+  LearningRecordReference,
+  LearningRecordsPackage,
+  LearningRecordsPackageMetadata,
+} from './learning-package-manager-types';

@@ -280,3 +280,20 @@ export {
   createLearningTransformer,
   type LearningTransformer,
 } from './learning-pipeline/learning-transformer';
+
+export {
+  createLearningPackageManager,
+  type LearningPackageManager,
+} from './learning-package-manager/learning-package-manager';
+export {
+  createLearningPackageManagerApi,
+  type LearningPackageManagerApi,
+} from './learning-package-manager/learning-package-manager-api';
+export {
+  createLearningIndex,
+  type LearningIndex,
+} from './learning-package-manager/learning-index';
+export {
+  createLearningPackageValidator,
+  type LearningPackageValidator,
+} from './learning-package-manager/learning-package-validator';

@@ -88,6 +88,10 @@ export function BuilderStudioApp() {
         learningExportPayload={session.learningExportPayload}
         learningPipelineEvents={session.learningPipelineEvents}
         learningPipelineMessage={session.learningPipelineMessage}
+        learningRecordsPackage={session.learningRecordsPackage}
+        learningPackageManagerEvents={session.learningPackageManagerEvents}
+        learningPackageIndexCount={session.learningPackageIndexCount}
+        learningPackageManagerMessage={session.learningPackageManagerMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -161,6 +165,12 @@ export function BuilderStudioApp() {
         onAnonymizeLearning={session.anonymizeLearning}
         onTransformLearning={session.transformLearning}
         onDisposeLearningPipeline={session.disposeLearningPipeline}
+        onCreateLearningRecordsPackage={session.createLearningRecordsPackage}
+        onAddLearningRecordRef={session.addLearningRecordRef}
+        onRemoveLastLearningRecordRef={session.removeLastLearningRecordRef}
+        onValidateLearningRecordsPackage={session.validateLearningRecordsPackage}
+        onPublishLearningRecordsPackage={session.publishLearningRecordsPackage}
+        onDisposeLearningRecordsPackage={session.disposeLearningRecordsPackage}
       />
     </AppShell>
   );

@@ -24,8 +24,10 @@ import type {
   BehaviorEvaluation,
   IngestAnalyticsInput,
   LearningImportReport,
+  LearningPackageManagerEvent,
   LearningPipelineEvent,
   LearningRecord,
+  LearningRecordsPackage,
   LearningValidationResult,
   BehaviorEvent,
   BehaviorSignal,
@@ -94,6 +96,8 @@ import {
   createDecisionAnalyticsEngine,
   createLearningPipeline,
   createLearningPipelineApi,
+  createLearningPackageManager,
+  createLearningPackageManagerApi,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -177,6 +181,10 @@ export type BuilderStudioViewModel = {
   readonly learningExportPayload: string | null;
   readonly learningPipelineEvents: readonly LearningPipelineEvent[];
   readonly learningPipelineMessage: string | null;
+  readonly learningRecordsPackage: LearningRecordsPackage | null;
+  readonly learningPackageManagerEvents: readonly LearningPackageManagerEvent[];
+  readonly learningPackageIndexCount: number;
+  readonly learningPackageManagerMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -271,6 +279,12 @@ export type BuilderStudioViewModel = {
   readonly anonymizeLearning: () => void;
   readonly transformLearning: () => void;
   readonly disposeLearningPipeline: () => void;
+  readonly createLearningRecordsPackage: () => void;
+  readonly addLearningRecordRef: () => void;
+  readonly removeLastLearningRecordRef: () => void;
+  readonly validateLearningRecordsPackage: () => void;
+  readonly publishLearningRecordsPackage: () => void;
+  readonly disposeLearningRecordsPackage: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -897,6 +911,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     );
     const learningPipeline = createLearningPipeline();
     const learningPipelineApi = createLearningPipelineApi(learningPipeline);
+    const learningPackageManager = createLearningPackageManager();
+    const learningPackageManagerApi = createLearningPackageManagerApi(
+      learningPackageManager,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -948,6 +966,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       decisionAnalyticsApi,
       learningPipeline,
       learningPipelineApi,
+      learningPackageManager,
+      learningPackageManagerApi,
     };
   }, []);
 
@@ -1148,6 +1168,14 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [learningPipelineMessage, setLearningPipelineMessage] = useState<
     string | null
   >(null);
+  const [learningRecordsPackage, setLearningRecordsPackage] =
+    useState<LearningRecordsPackage | null>(null);
+  const [learningPackageManagerEvents, setLearningPackageManagerEvents] =
+    useState<readonly LearningPackageManagerEvent[]>([]);
+  const [learningPackageIndexCount, setLearningPackageIndexCount] =
+    useState(0);
+  const [learningPackageManagerMessage, setLearningPackageManagerMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -1477,6 +1505,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     learningExportPayload,
     learningPipelineEvents,
     learningPipelineMessage,
+    learningRecordsPackage,
+    learningPackageManagerEvents,
+    learningPackageIndexCount,
+    learningPackageManagerMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -2552,6 +2584,127 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setLearningExportPayload(null);
       setLearningPipelineEvents([]);
       setLearningPipelineMessage(null);
+    },
+
+    createLearningRecordsPackage(): void {
+      const created = services.learningPackageManagerApi.createLearningPackage({
+        name: 'Builder Learning Package',
+        title: 'Builder Learning Package',
+        description:
+          'Versioned Learning Record references from Learning Pipeline.',
+      });
+      setLearningRecordsPackage(created);
+      setLearningPackageManagerEvents(
+        services.learningPackageManager.getHistory(created.id),
+      );
+      setLearningPackageIndexCount(
+        services.learningPackageManager.getIndex().list(created.id).length,
+      );
+      setLearningPackageManagerMessage(null);
+    },
+    addLearningRecordRef(): void {
+      if (learningRecordsPackage === null) {
+        setLearningPackageManagerMessage('Nejdřív Create Package.');
+        return;
+      }
+      const recordId =
+        learningRecord?.id ??
+        `learning-record-demo-${learningRecordsPackage.records.length + 1}`;
+      const next = services.learningPackageManager.addRecord({
+        packageId: learningRecordsPackage.id,
+        recordId,
+        source: learningRecord !== null ? 'learning-pipeline' : 'builder-demo',
+        note:
+          learningRecord !== null
+            ? 'Reference from Learning Pipeline Transform.'
+            : 'Demo Learning Record reference.',
+      });
+      setLearningRecordsPackage(next);
+      setLearningPackageManagerEvents(
+        services.learningPackageManager.getHistory(next.id),
+      );
+      setLearningPackageIndexCount(
+        services.learningPackageManager.getIndex().list(next.id).length,
+      );
+      setLearningPackageManagerMessage(null);
+    },
+    removeLastLearningRecordRef(): void {
+      if (
+        learningRecordsPackage === null ||
+        learningRecordsPackage.records.length === 0
+      ) {
+        return;
+      }
+      const last =
+        learningRecordsPackage.records[
+          learningRecordsPackage.records.length - 1
+        ]!;
+      const next = services.learningPackageManager.removeRecord(
+        learningRecordsPackage.id,
+        last.recordId,
+      );
+      setLearningRecordsPackage(next);
+      setLearningPackageManagerEvents(
+        services.learningPackageManager.getHistory(next.id),
+      );
+      setLearningPackageIndexCount(
+        services.learningPackageManager.getIndex().list(next.id).length,
+      );
+      setLearningPackageManagerMessage(null);
+    },
+    validateLearningRecordsPackage(): void {
+      if (learningRecordsPackage === null) {
+        setLearningPackageManagerMessage('Nejdřív Create Package.');
+        return;
+      }
+      const validated =
+        services.learningPackageManagerApi.validateLearningPackage(
+          learningRecordsPackage.id,
+        );
+      setLearningRecordsPackage(validated);
+      setLearningPackageManagerEvents(
+        services.learningPackageManager.getHistory(validated.id),
+      );
+      setLearningPackageManagerMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    publishLearningRecordsPackage(): void {
+      if (learningRecordsPackage === null) {
+        setLearningPackageManagerMessage('Nejdřív Create Package.');
+        return;
+      }
+      const published =
+        services.learningPackageManagerApi.publishLearningPackage(
+          learningRecordsPackage.id,
+        );
+      setLearningRecordsPackage(published);
+      setLearningPackageManagerEvents(
+        services.learningPackageManager.getHistory(published.id),
+      );
+      setLearningPackageManagerMessage(
+        published.metadata.status === 'Published'
+          ? `Published @ ${published.version}`
+          : 'Publish blocked by validation.',
+      );
+    },
+    disposeLearningRecordsPackage(): void {
+      if (learningRecordsPackage === null) {
+        return;
+      }
+      const disposed = services.learningPackageManager.dispose(
+        learningRecordsPackage.id,
+      );
+      setLearningRecordsPackage(disposed);
+      setLearningPackageManagerEvents(
+        services.learningPackageManager.getHistory(disposed.id),
+      );
+      setLearningPackageIndexCount(
+        services.learningPackageManager.getIndex().list(disposed.id).length,
+      );
+      setLearningPackageManagerMessage(null);
     },
     buildProject(): void {
       const projectId =

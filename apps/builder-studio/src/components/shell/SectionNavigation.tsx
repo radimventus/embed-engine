@@ -19,6 +19,7 @@ const SECTIONS: readonly {
   { id: 'behavior', label: 'Behavior' },
   { id: 'analytics', label: 'Analytics' },
   { id: 'learning-pipeline', label: 'Pipeline' },
+  { id: 'learning-package-mgr', label: 'Package' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

@@ -33,6 +33,7 @@ export type WorkspaceSectionId =
   | 'behavior'
   | 'analytics'
   | 'learning-pipeline'
+  | 'learning-package-mgr'
   | 'media'
   | 'layout'
   | 'knowledge';
