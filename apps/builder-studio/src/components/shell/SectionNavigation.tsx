@@ -8,6 +8,7 @@ const SECTIONS: readonly {
   { id: 'experience', label: 'Experience' },
   { id: 'knowledge-package', label: 'Knowledge' },
   { id: 'decision', label: 'Decision' },
+  { id: 'ai-context', label: 'AI Context' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

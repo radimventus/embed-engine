@@ -157,6 +157,17 @@ export type {
   UpdateDecisionKnowledgeInput,
 } from './decision-types';
 
+export type {
+  AIContextMetadata,
+  AIContextPackage,
+  AIContextTimestamps,
+  BuildAIContextInput,
+  ContextEvent,
+  ContextEventType,
+  ContextFragment,
+  ContextFragmentType,
+} from './ai-context-types';
+
 export {
   ASSET_CATEGORY_ORDER,
   createEmptyAssetCollections,

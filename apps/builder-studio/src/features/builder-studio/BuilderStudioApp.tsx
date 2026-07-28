@@ -52,6 +52,8 @@ export function BuilderStudioApp() {
         knowledgeEvents={session.knowledgeEvents}
         decisionKnowledge={session.decisionKnowledge}
         decisionEvents={session.decisionEvents}
+        aiContext={session.aiContext}
+        contextEvents={session.contextEvents}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -85,6 +87,9 @@ export function BuilderStudioApp() {
         onAddDecisionSignal={session.addDecisionSignal}
         onAddDecisionStrategy={session.addDecisionStrategy}
         onToggleDecisionPriority={session.toggleDecisionPriority}
+        onBuildContext={session.buildAIContext}
+        onRefreshContext={session.refreshAIContext}
+        onClearContext={session.clearAIContext}
       />
     </AppShell>
   );

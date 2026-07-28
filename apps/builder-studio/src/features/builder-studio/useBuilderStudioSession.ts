@@ -2,10 +2,13 @@ import { useMemo, useState } from 'react';
 
 import type {
   ActiveProjectModel,
+  AIContextPackage,
   AssetCategoryId,
+  BuildAIContextInput,
   BuildResult,
   BuilderProjectManifest,
   ComposerEvent,
+  ContextEvent,
   Experience,
   ExperienceStructureReport,
   DecisionEvent,
@@ -37,6 +40,8 @@ import {
   createBuildService,
   createExperienceComposerApi,
   createExperienceComposerService,
+  createAIContextApi,
+  createAIContextBuilderService,
   createDecisionKnowledgeApi,
   createDecisionKnowledgeService,
   createKnowledgeApi,
@@ -73,6 +78,8 @@ export type BuilderStudioViewModel = {
   readonly knowledgeEvents: readonly KnowledgeEvent[];
   readonly decisionKnowledge: DecisionKnowledgePackage | null;
   readonly decisionEvents: readonly DecisionEvent[];
+  readonly aiContext: AIContextPackage | null;
+  readonly contextEvents: readonly ContextEvent[];
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -127,6 +134,9 @@ export type BuilderStudioViewModel = {
   readonly addDecisionSignal: () => void;
   readonly addDecisionStrategy: () => void;
   readonly toggleDecisionPriority: (priorityId: PriorityId) => void;
+  readonly buildAIContext: () => void;
+  readonly refreshAIContext: () => void;
+  readonly clearAIContext: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -201,6 +211,110 @@ function ensureKnowledge(
   return synced;
 }
 
+
+
+function toBuildAIContextInput(
+  objectPackage: ObjectPackage,
+  experience: Experience | null,
+  knowledge: KnowledgePackage | null,
+  decision: DecisionKnowledgePackage | null,
+): BuildAIContextInput {
+  return {
+    objectId: objectPackage.objectId,
+    projectId: objectPackage.projectId,
+    title: `${objectPackage.metadata.name} AI Context`,
+    objectPackage: {
+      objectId: objectPackage.objectId,
+      projectId: objectPackage.projectId,
+      version: objectPackage.version,
+      metadata: {
+        name: objectPackage.metadata.name,
+        objectType: objectPackage.metadata.objectType,
+        location: objectPackage.metadata.location,
+        status: objectPackage.metadata.status,
+        description: objectPackage.metadata.description,
+        tags: objectPackage.metadata.tags,
+      },
+      modules: objectPackage.modules,
+    },
+    experience:
+      experience === null
+        ? null
+        : {
+            experienceId: experience.experienceId,
+            version: experience.version,
+            metadata: {
+              title: experience.metadata.title,
+              description: experience.metadata.description,
+            },
+            scenes: experience.scenes.map((scene) => ({
+              sceneId: scene.sceneId,
+              title: scene.title,
+              modules: scene.modules,
+            })),
+            navigation: {
+              defaultScene: experience.navigation.defaultScene,
+              order: experience.navigation.order,
+            },
+          },
+    knowledge:
+      knowledge === null
+        ? null
+        : {
+            knowledgeId: knowledge.knowledgeId,
+            version: knowledge.version,
+            facts: knowledge.facts.map((fact) => ({
+              id: fact.id,
+              title: fact.title,
+              value: fact.value,
+              category: fact.category,
+            })),
+            entities: knowledge.entities.map((entity) => ({
+              id: entity.id,
+              type: entity.type,
+              label: entity.label,
+            })),
+            faqs: knowledge.faqs.map((faq) => ({
+              id: faq.id,
+              question: faq.question,
+              answer: faq.answer,
+            })),
+            documents: knowledge.documents.map((doc) => ({
+              id: doc.id,
+              title: doc.title,
+              type: doc.type,
+            })),
+          },
+    decision:
+      decision === null
+        ? null
+        : {
+            id: decision.id,
+            version: decision.version,
+            decisionRules: decision.decisionRules.map((rule) => ({
+              id: rule.id,
+              condition: rule.condition,
+              outcome: rule.outcome,
+              priority: rule.priority,
+              weight: rule.weight,
+            })),
+            decisionSignals: decision.decisionSignals.map((signal) => ({
+              id: signal.id,
+              source: signal.source,
+              type: signal.type,
+              label: signal.label,
+              importance: signal.importance,
+            })),
+            priorities: decision.priorities,
+            strategies: decision.strategies.map((strategy) => ({
+              id: strategy.id,
+              title: strategy.title,
+              description: strategy.description,
+              targetSignals: strategy.targetSignals,
+            })),
+          },
+  };
+}
 
 function ensureDecisionKnowledge(
   decisionService: DecisionKnowledgeService,
@@ -324,6 +438,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const knowledgeApi = createKnowledgeApi(knowledgeService);
     const decisionService = createDecisionKnowledgeService();
     const decisionApi = createDecisionKnowledgeApi(decisionService);
+    const aiContextService = createAIContextBuilderService();
+    const aiContextApi = createAIContextApi(aiContextService);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -352,6 +468,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       knowledgeApi,
       decisionService,
       decisionApi,
+      aiContextService,
+      aiContextApi,
     };
   }, []);
 
@@ -466,6 +584,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     }
     return services.decisionService.getHistory(decisionKnowledge.id);
   });
+  const [aiContext, setAIContext] = useState<AIContextPackage | null>(null);
+  const [contextEvents, setContextEvents] = useState<readonly ContextEvent[]>(
+    [],
+  );
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -552,6 +674,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setKnowledgeEvents([]);
       setDecisionKnowledge(null);
       setDecisionEvents([]);
+      setAIContext(null);
+      setContextEvents([]);
       return;
     }
     const model = services.assets.getActiveProject(projectId);
@@ -566,6 +690,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setKnowledgeEvents([]);
       setDecisionKnowledge(null);
       setDecisionEvents([]);
+      setAIContext(null);
+      setContextEvents([]);
       return;
     }
     const pkg = ensureObjectPackage(services.objectService, model);
@@ -608,6 +734,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     );
     setDecisionKnowledge(dk);
     setDecisionEvents(services.decisionService.getHistory(dk.id));
+    services.aiContextService.clear();
+    setAIContext(null);
+    setContextEvents([]);
     setObjectPackage(services.objectService.loadObject(pkg.objectId));
   };
 
@@ -709,6 +838,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     knowledgeEvents,
     decisionKnowledge,
     decisionEvents,
+    aiContext,
+    contextEvents,
     priorityRegistry: listPriorities(),
     moduleRegistry: listObjectModules(),
     objectEvents,
@@ -1073,6 +1204,48 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setDecisionKnowledge(next);
       setDecisionEvents(services.decisionService.getHistory(next.id));
       setObjectPackage(services.objectService.loadObject(next.objectId));
+    },
+
+    buildAIContext(): void {
+      if (objectPackage === null) {
+        return;
+      }
+      const built = services.aiContextApi.buildContext(
+        toBuildAIContextInput(
+          objectPackage,
+          experience,
+          knowledgePackage,
+          decisionKnowledge,
+        ),
+      );
+      setAIContext(built);
+      setContextEvents(services.aiContextService.getHistory(built.id));
+    },
+    refreshAIContext(): void {
+      if (objectPackage === null) {
+        return;
+      }
+      const refreshed = services.aiContextApi.refreshContext(
+        toBuildAIContextInput(
+          objectPackage,
+          experience,
+          knowledgePackage,
+          decisionKnowledge,
+        ),
+      );
+      setAIContext(refreshed);
+      setContextEvents(services.aiContextService.getHistory(refreshed.id));
+    },
+    clearAIContext(): void {
+      const cleared = services.aiContextService.clear(
+        aiContext?.id,
+      );
+      setAIContext(cleared);
+      setContextEvents(
+        cleared === null
+          ? []
+          : services.aiContextService.getHistory(cleared.id),
+      );
     },
     buildProject(): void {
       const projectId =

@@ -1,8 +1,10 @@
 import type {
   ActiveProjectModel,
+  AIContextPackage,
   AssetCategoryId,
   BuilderProjectManifest,
   ComposerEvent,
+  ContextEvent,
   Experience,
   ExperienceStructureReport,
   DecisionEvent,
@@ -23,6 +25,7 @@ import type {
   WorkspaceSectionId,
 } from '../../model';
 import { ExperienceComposer } from './ExperienceComposer';
+import { AIContextPreview } from './AIContextPreview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeOverview } from './KnowledgeOverview';
 import {
@@ -45,6 +48,8 @@ type WorkspaceCanvasProps = {
   readonly knowledgeEvents: readonly KnowledgeEvent[];
   readonly decisionKnowledge: DecisionKnowledgePackage | null;
   readonly decisionEvents: readonly DecisionEvent[];
+  readonly aiContext: AIContextPackage | null;
+  readonly contextEvents: readonly ContextEvent[];
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -88,6 +93,9 @@ type WorkspaceCanvasProps = {
   readonly onAddDecisionSignal: () => void;
   readonly onAddDecisionStrategy: () => void;
   readonly onToggleDecisionPriority: (priorityId: PriorityId) => void;
+  readonly onBuildContext: () => void;
+  readonly onRefreshContext: () => void;
+  readonly onClearContext: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -101,6 +109,8 @@ export function WorkspaceCanvas({
   knowledgeEvents,
   decisionKnowledge,
   decisionEvents,
+  aiContext,
+  contextEvents,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -134,6 +144,9 @@ export function WorkspaceCanvas({
   onAddDecisionSignal,
   onAddDecisionStrategy,
   onToggleDecisionPriority,
+  onBuildContext,
+  onRefreshContext,
+  onClearContext,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -248,6 +261,16 @@ export function WorkspaceCanvas({
             Decision Knowledge není k dispozici.
           </p>
         ) : null}
+
+        {activeSection === 'ai-context' ? (
+          <AIContextPreview
+            aiContext={aiContext}
+            events={contextEvents}
+            onBuild={onBuildContext}
+            onRefresh={onRefreshContext}
+            onClear={onClearContext}
+          />
+        ) : null}
         {activeSection === 'media' ? (
           <MediaSection
             collections={projectModel.assets.media}
@@ -268,8 +291,8 @@ export function WorkspaceCanvas({
         ) : null}
         <div className="mt-5 flex items-center justify-between border-t border-builder-divider pt-5 text-[13px] text-[#7C879A]">
           <span>
-            Decision + Knowledge + Experience + Object Package: session only (bez
-            persistence)
+            AI Context + Decision + Knowledge + Experience + Object: session only
+            (bez persistence)
           </span>
           <span>{manifest.updatedAt}</span>
         </div>

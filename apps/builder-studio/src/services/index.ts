@@ -122,3 +122,23 @@ export {
   getPriority,
   listPriorities,
 } from './decision/priority-registry';
+export {
+  createAIContextBuilderService,
+  type AIContextBuilderService,
+} from './ai-context/ai-context-builder-service';
+export {
+  createAIContextApi,
+  type AIContextApi,
+} from './ai-context/ai-context-api';
+export {
+  createContextComposer,
+  type ContextComposer,
+} from './ai-context/context-composer';
+export {
+  CONTEXT_SOURCES,
+  DecisionContextSource,
+  ExperienceContextSource,
+  KnowledgeContextSource,
+  ObjectContextSource,
+  type ContextSource,
+} from './ai-context/context-sources';
