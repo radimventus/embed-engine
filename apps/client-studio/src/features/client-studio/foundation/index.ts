@@ -8,9 +8,6 @@ export {
   JourneySceneFrame,
 } from './JourneySceneFrame';
 export {
-  JourneySceneTransition,
-} from './JourneySceneTransition';
-export {
   RuntimeBootstrapGate,
 } from './RuntimeBootstrapGate';
 export {

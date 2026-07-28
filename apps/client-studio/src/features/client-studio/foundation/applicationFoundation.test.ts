@@ -101,9 +101,6 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     const sceneFrame = readSource(
       'src/features/client-studio/foundation/JourneySceneFrame.tsx',
     );
-    const sceneTransition = readSource(
-      'src/features/client-studio/foundation/JourneySceneTransition.tsx',
-    );
     const root = readSource(
       'src/features/client-studio/foundation/GuidedJourneyRoot.tsx',
     );
@@ -111,34 +108,18 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
 
     assert.match(page, /GuidedJourneyRoot/);
     assert.match(page, /JourneySceneFrame/);
-    assert.match(page, /JourneySceneTransition/);
     assert.match(page, /data-current-scene/);
-    assert.match(page, /REVEAL_DURATION_MS = 1000/);
-    assert.match(page, /'hidden' \| 'revealing' \| 'visible'/);
-    assert.match(page, /sceneStates/);
-    assert.match(page, /state=\{sceneStates\[scenes\[1\]!\.id\]/);
-    assert.match(page, /state=\{sceneStates\[scenes\[2\]!\.id\]/);
-    assert.match(page, /onNext=\{\(\) => revealScene\(scenes\[1\]\?\.id\)\}/);
-    assert.match(page, /onNext=\{\(\) => revealScene\(scenes\[2\]\?\.id\)\}/);
-    assert.equal(page.includes('h-screen w-full'), false);
-    assert.match(page, /<Hero \/>[\s\S]*h-\[50px\][\s\S]*<SpatialTerminal \/>/);
-    assert.match(page, /<PriorityEngine \/>[\s\S]*h-\[50px\][\s\S]*<AIAdvisor \/>/);
+    assert.match(page, /setSnapEnabled\(true\)/);
+    assert.match(page, /<Hero \/>[\s\S]*<ChapterSpacer \/>[\s\S]*<SpatialTerminal \/>/);
+    assert.match(page, /<PriorityEngine \/>[\s\S]*<ChapterSpacer \/>[\s\S]*<AIAdvisor \/>/);
     assert.match(page, /<AuditLeadCapture \/>/);
-    assert.match(page, /<JourneySceneTransition[\s\S]*nextSceneId=/);
-    assert.match(page, /<JourneySceneTransition[\s\S]*previousSceneId=/);
     assert.match(journey, /Orientace/);
     assert.match(journey, /Interpretace/);
     assert.match(journey, /Rozhodnutí/);
-    assert.match(sceneFrame, /state === 'hidden'/);
-    assert.match(sceneFrame, /state === 'revealing'/);
-    assert.match(sceneFrame, /duration-\[1000ms\] ease-in-out/);
-    assert.match(sceneTransition, /Pokračovat ↓/);
-    assert.match(sceneTransition, /↑ Zpět/);
-    assert.match(sceneTransition, /w-\[180px\]/);
-    assert.match(sceneTransition, /hover:bg-embed-brand-gold/);
-    assert.match(sceneTransition, /active:bg-\[#b8931f\]/);
-    assert.equal(root.includes('snapEnabled'), false);
-    assert.equal(css.includes('scroll-snap-type'), false);
+    assert.match(sceneFrame, /Pokračovat/);
+    assert.match(sceneFrame, /Zpět/);
+    assert.match(root, /snapEnabled/);
+    assert.match(css, /scroll-snap-type: y proximity/);
     assert.equal(page.includes('DecisionJourneyIndicator'), false);
     assert.equal(page.includes('createBrowserRouter'), false);
     assert.equal(page.includes('Route'), false);

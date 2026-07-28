@@ -1,9 +1,14 @@
 import { useEffect } from 'react';
 
+type GuidedJourneyRootProps = {
+  readonly snapEnabled: boolean;
+};
+
 /**
- * Publishes current header offset for smooth guided navigation.
+ * Enables gentle CSS scroll snap on the actual scroll root:
+ * overlay mount in Delivery, otherwise the document root in standalone mode.
  */
-export function GuidedJourneyRoot() {
+export function GuidedJourneyRoot({ snapEnabled }: GuidedJourneyRootProps) {
   useEffect(() => {
     const overlayMount = document.querySelector<HTMLElement>(
       '[data-embed-overlay-mount]',
@@ -43,6 +48,25 @@ export function GuidedJourneyRoot() {
       }
     };
   }, []);
+
+  useEffect(() => {
+    const overlayMount = document.querySelector<HTMLElement>(
+      '[data-embed-overlay-mount]',
+    );
+    const html = document.documentElement;
+    const body = document.body;
+    const roots = [html, body, overlayMount].filter(
+      (root): root is HTMLElement => root !== null,
+    );
+    for (const root of roots) {
+      root.dataset.guidedJourneySnap = snapEnabled ? 'on' : 'off';
+    }
+    return () => {
+      for (const root of roots) {
+        delete root.dataset.guidedJourneySnap;
+      }
+    };
+  }, [snapEnabled]);
 
   return null;
 }

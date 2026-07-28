@@ -64,8 +64,7 @@ describe('Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)', (
     assert.match(content, /Rodinný dům, kde to dýchá štěstím/);
     assert.match(content, /HeroCTA/);
     assert.match(cta, /Podívat se dovnitř/);
-    assert.match(cta, /PILOT_SECTION_IDS\.socialProof/);
-    assert.match(cta, /scrollIntoView/);
+    assert.match(cta, /PILOT_SECTION_IDS\.walkthrough/);
     assert.match(image, /useDecisionSessionRuntime/);
     assert.match(image, /context\.hero\.primaryMediaUrl/);
     assert.match(image, /animate-hero-photo-veil/);

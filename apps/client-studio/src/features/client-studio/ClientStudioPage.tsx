@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { ReactExperienceModel } from '@embed-engine/model';
 import type { DecisionSessionRuntime } from '@embed-engine/runtime';
 
@@ -9,9 +9,9 @@ import {
 import { DecisionSessionRuntimeProvider } from './runtime/DecisionSessionRuntimeProvider';
 import { DesktopCanvas } from './DesktopCanvas';
 import {
+  ChapterSpacer,
   GuidedJourneyRoot,
   JourneySceneFrame,
-  JourneySceneTransition,
   RuntimeBootstrapGate,
   decisionJourneyScenes,
   useActiveSection,
@@ -25,11 +25,6 @@ import { PriorityExperienceProvider } from './sections/PriorityEngine/PriorityEx
 import { SpatialTerminal } from './sections/SpatialTerminal/SpatialTerminal';
 import { WalkthroughProvider } from '../walkthrough';
 import { PILOT_FLAGS } from './pilot/pilotVocabulary';
-import { scrollToSection } from './foundation/scrollToSection';
-
-const REVEAL_DURATION_MS = 1000;
-
-type SceneVisibilityState = 'hidden' | 'revealing' | 'visible';
 
 type ClientStudioPageProps = {
   /** LEGACY only — set when CommandRuntime host is explicitly enabled. */
@@ -59,62 +54,18 @@ export function ClientStudioPage({
 }: ClientStudioPageProps) {
   const scenes = decisionJourneyScenes();
   const activeSceneId = useActiveSection(scenes.map((scene) => scene.id));
-  const revealTimerRef = useRef<number | null>(null);
-  const [sceneStates, setSceneStates] = useState<Record<string, SceneVisibilityState>>(
-    () =>
-      Object.fromEntries(
-        scenes.map((scene, index) => [
-          scene.id,
-          index === 0 ? 'visible' : 'hidden',
-        ]),
-      ) as Record<string, SceneVisibilityState>,
-  );
+  const [snapEnabled, setSnapEnabled] = useState(false);
 
   useEffect(() => {
-    setSceneStates(
-      Object.fromEntries(
-        scenes.map((scene, index) => [scene.id, index === 0 ? 'visible' : 'hidden']),
-      ) as Record<string, SceneVisibilityState>,
-    );
-  }, [scenes]);
-
-  useEffect(() => {
-    return () => {
-      if (revealTimerRef.current !== null) {
-        window.clearTimeout(revealTimerRef.current);
-      }
-    };
-  }, []);
-
-  const revealScene = (sceneId?: string) => {
-    if (!sceneId) {
-      return;
+    if (activeSceneId !== scenes[0]?.id) {
+      setSnapEnabled(true);
     }
-    const currentState = sceneStates[sceneId];
-    if (currentState === 'visible') {
-      scrollToSection(sceneId);
-      return;
-    }
-    if (currentState === 'revealing') {
-      return;
-    }
+  }, [activeSceneId, scenes]);
 
-    if (revealTimerRef.current !== null) {
-      window.clearTimeout(revealTimerRef.current);
+  const handleSceneNavigate = (sceneId: string) => {
+    if (sceneId !== scenes[0]?.id) {
+      setSnapEnabled(true);
     }
-    setSceneStates((current) => ({
-      ...current,
-      [sceneId]: 'revealing',
-    }));
-
-    revealTimerRef.current = window.setTimeout(() => {
-      setSceneStates((current) => ({
-        ...current,
-        [sceneId]: 'visible',
-      }));
-      scrollToSection(sceneId);
-      revealTimerRef.current = null;
-    }, REVEAL_DURATION_MS);
   };
 
   return (
@@ -122,7 +73,7 @@ export function ClientStudioPage({
       <DecisionSessionRuntimeProvider runtime={runtime}>
         <RuntimeBootstrapGate>
           <WalkthroughProvider>
-            <GuidedJourneyRoot />
+            <GuidedJourneyRoot snapEnabled={snapEnabled} />
             <JourneySurfaceObserver />
             <DesktopCanvas>
               <div
@@ -141,53 +92,36 @@ export function ClientStudioPage({
                 ) : null}
                 <JourneySceneFrame
                   sceneId={scenes[0]!.id}
-                  state={sceneStates[scenes[0]!.id] ?? 'visible'}
+                  nextSceneId={scenes[1]?.id}
+                  onNavigate={handleSceneNavigate}
                 >
                   <Hero />
-                  <div aria-hidden="true" className="h-[50px] w-full" />
+                  <ChapterSpacer />
                   <SpatialTerminal />
                 </JourneySceneFrame>
-                <JourneySceneTransition
-                  nextSceneId={scenes[1]?.id}
-                  onNext={() => revealScene(scenes[1]?.id)}
-                />
                 <PriorityExperienceProvider>
                   <JourneySceneFrame
                     sceneId={scenes[1]!.id}
-                    state={sceneStates[scenes[1]!.id] ?? 'hidden'}
+                    previousSceneId={scenes[0]?.id}
+                    nextSceneId={scenes[2]?.id}
+                    onNavigate={handleSceneNavigate}
                   >
                     <PriorityEngine />
                     {PILOT_FLAGS.showAiAdvisor ? (
                       <>
-                        <div aria-hidden="true" className="h-[50px] w-full" />
+                        <ChapterSpacer />
                         <AIAdvisor />
                       </>
                     ) : null}
                   </JourneySceneFrame>
                 </PriorityExperienceProvider>
-                {sceneStates[scenes[1]!.id] !== 'hidden' ? (
-                  <JourneySceneTransition
-                    previousSceneId={scenes[0]?.id}
-                    nextSceneId={scenes[2]?.id}
-                    onPrevious={() => scrollToSection(scenes[0]!.id)}
-                    onNext={() => revealScene(scenes[2]?.id)}
-                  />
-                ) : null}
                 <JourneySceneFrame
                   sceneId={scenes[2]!.id}
-                  state={sceneStates[scenes[2]!.id] ?? 'hidden'}
+                  previousSceneId={scenes[1]?.id}
+                  onNavigate={handleSceneNavigate}
                 >
                   <AuditLeadCapture />
                 </JourneySceneFrame>
-                {sceneStates[scenes[2]!.id] !== 'hidden' ? (
-                  <div className="pb-16">
-                    <JourneySceneTransition
-                      previousSceneId={scenes[1]?.id}
-                      onPrevious={() => scrollToSection(scenes[1]!.id)}
-                      compact
-                    />
-                  </div>
-                ) : null}
               </div>
             </DesktopCanvas>
           </WalkthroughProvider>
