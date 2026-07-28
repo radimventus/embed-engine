@@ -28,11 +28,6 @@
     scroll-padding-top: var(--guided-journey-header-offset, 92px);
   }
 
-  html[data-guided-journey-root='true'][data-guided-journey-snap='on'],
-  [data-guided-journey-root='true'][data-guided-journey-snap='on'] {
-    scroll-snap-type: y proximity;
-  }
-
   input::placeholder,
   textarea::placeholder {
     /* palette.navy @ 40% — overrides Tailwind Preflight #9ca3af */
@@ -68,8 +63,6 @@
 
 @layer utilities {
   [data-journey-scene] {
-    scroll-snap-align: start;
-    scroll-snap-stop: normal;
     scroll-margin-top: var(--guided-journey-header-offset, 92px);
   }
 

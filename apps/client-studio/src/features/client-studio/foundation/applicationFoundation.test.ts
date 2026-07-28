@@ -101,6 +101,9 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     const sceneFrame = readSource(
       'src/features/client-studio/foundation/JourneySceneFrame.tsx',
     );
+    const sceneTransition = readSource(
+      'src/features/client-studio/foundation/JourneySceneTransition.tsx',
+    );
     const root = readSource(
       'src/features/client-studio/foundation/GuidedJourneyRoot.tsx',
     );
@@ -108,18 +111,22 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
 
     assert.match(page, /GuidedJourneyRoot/);
     assert.match(page, /JourneySceneFrame/);
+    assert.match(page, /JourneySceneTransition/);
     assert.match(page, /data-current-scene/);
-    assert.match(page, /setSnapEnabled\(true\)/);
-    assert.match(page, /<Hero \/>[\s\S]*<ChapterSpacer \/>[\s\S]*<SpatialTerminal \/>/);
-    assert.match(page, /<PriorityEngine \/>[\s\S]*<ChapterSpacer \/>[\s\S]*<AIAdvisor \/>/);
+    assert.match(page, /<Hero \/>[\s\S]*h-\[50px\][\s\S]*<SpatialTerminal \/>/);
+    assert.match(page, /<PriorityEngine \/>[\s\S]*h-\[50px\][\s\S]*<AIAdvisor \/>/);
     assert.match(page, /<AuditLeadCapture \/>/);
+    assert.match(page, /<JourneySceneTransition nextSceneId=/);
+    assert.match(page, /<JourneySceneTransition[\s\S]*previousSceneId=/);
     assert.match(journey, /Orientace/);
     assert.match(journey, /Interpretace/);
     assert.match(journey, /Rozhodnutí/);
-    assert.match(sceneFrame, /Pokračovat/);
-    assert.match(sceneFrame, /Zpět/);
-    assert.match(root, /snapEnabled/);
-    assert.match(css, /scroll-snap-type: y proximity/);
+    assert.equal(sceneFrame.includes('Pokračovat'), false);
+    assert.equal(sceneFrame.includes('Zpět'), false);
+    assert.match(sceneTransition, /Pokračovat ↓/);
+    assert.match(sceneTransition, /↑ Zpět/);
+    assert.equal(root.includes('snapEnabled'), false);
+    assert.equal(css.includes('scroll-snap-type'), false);
     assert.equal(page.includes('DecisionJourneyIndicator'), false);
     assert.equal(page.includes('createBrowserRouter'), false);
     assert.equal(page.includes('Route'), false);

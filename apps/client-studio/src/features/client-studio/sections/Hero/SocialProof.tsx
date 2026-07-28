@@ -1,106 +1,150 @@
 import { colors } from '@embed-engine/design-tokens';
+import { useEffect, useMemo, useState } from 'react';
 import { Panel } from '@embed-engine/ui';
 
+import type { DecisionActivityItem } from '../../decision-activity/DecisionActivityEngine';
 import { useDecisionActivityFeed } from '../../decision-activity/useDecisionActivityFeed';
 import { SocialProofIcon, type SocialProofIconName } from './SocialProofIcon';
 
-const SOCIAL_PROOF_COLUMN_DIVIDER_STYLE = {
+const SOCIAL_PROOF_DIVIDER_STYLE = {
   backgroundColor: colors.action.accent,
 } as const;
 
-type SocialProofItemProps = {
+const FEED_TICKER_PAUSE_MS = 4000;
+const FEED_TICKER_SLIDE_MS = 2000;
+const FEED_VISIBLE_ITEM_COUNT = 3;
+
+type SocialProofEntry = {
+  readonly id: string;
   icon: SocialProofIconName;
-  title: string;
-  messages: readonly string[];
+  label: string;
+  message: string;
 };
 
-function SocialProofItem({ icon, title, messages }: SocialProofItemProps) {
+function SocialProofItem({ icon, label, message }: SocialProofEntry) {
   return (
-    <div className="flex min-h-[128px] items-start px-section py-4">
-      <div className="flex max-w-full items-start gap-3">
-        <div className="pt-0.5">
-          <SocialProofIcon name={icon} />
-        </div>
-        <div className="min-w-0">
-          <p className="text-left text-[11px] font-semibold uppercase tracking-wide text-[#001930]/65">
-            {title}
-          </p>
-          <ul className="mt-2 m-0 list-none p-0">
-            {messages.map((message) => (
-              <li key={message} className="text-left text-sm leading-snug text-[#001930]">
-                {message}
-              </li>
-            ))}
-          </ul>
-        </div>
+    <div className="flex min-w-0 items-center gap-3">
+      <div className="shrink-0">
+        <SocialProofIcon name={icon} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-[11px] font-semibold uppercase tracking-wide text-[#001930]/60">
+          {label}
+        </p>
+        <p className="mt-1 text-sm leading-snug text-[#001930]">
+          {message}
+        </p>
       </div>
     </div>
   );
 }
 
-/** Gold column rules — inset 25% from top and bottom of the block. */
-function SocialProofColumnDividers() {
-  return (
-    <>
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-1/4 top-[25%] z-10 h-1/2 w-px -translate-x-1/2 mobile:hidden"
-        style={SOCIAL_PROOF_COLUMN_DIVIDER_STYLE}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-2/4 top-[25%] z-10 h-1/2 w-px -translate-x-1/2 mobile:hidden"
-        style={SOCIAL_PROOF_COLUMN_DIVIDER_STYLE}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute left-3/4 top-[25%] z-10 h-1/2 w-px -translate-x-1/2 mobile:hidden"
-        style={SOCIAL_PROOF_COLUMN_DIVIDER_STYLE}
-      />
-    </>
+function activityFeedEntries(
+  activity: ReturnType<typeof useDecisionActivityFeed>,
+): readonly SocialProofEntry[] {
+  const layerOrder = ['live', 'popularity', 'behavior', 'preference'] as const;
+  const layerLabel = new Map(
+    activity.layers.map((layer) => [layer.id, layer.title] as const),
   );
+  const layerItems = new Map(
+    activity.layers.map((layer) => [layer.id, [...layer.items] as DecisionActivityItem[]] as const),
+  );
+
+  const entries: SocialProofEntry[] = [];
+  let appended = true;
+  while (appended && entries.length < 8) {
+    appended = false;
+    for (const layerId of layerOrder) {
+      const items = layerItems.get(layerId) ?? [];
+      const next = items.shift();
+      if (!next) {
+        continue;
+      }
+      entries.push({
+        id: next.id,
+        icon:
+          layerId === 'live'
+            ? 'viewing'
+            : layerId === 'popularity'
+              ? 'saved'
+              : 'inquiry',
+        label: layerLabel.get(layerId) ?? layerId,
+        message: next.message,
+      });
+      appended = true;
+      layerItems.set(layerId, items);
+    }
+  }
+
+  if (entries.length > 0) {
+    return entries;
+  }
+
+  return [
+    {
+      id: 'bootstrap:live',
+      icon: 'viewing',
+      label: 'Živá aktivita',
+      message: '1 zájemce právě prochází Decision Journey.',
+    },
+  ];
+}
+
+function visibleFeedWindow(
+  entries: readonly SocialProofEntry[],
+  startIndex: number,
+  visibleCount: number,
+): readonly SocialProofEntry[] {
+  if (entries.length <= visibleCount) {
+    return entries;
+  }
+
+  return Array.from({ length: visibleCount }, (_, offset) => {
+    const index = (startIndex + offset) % entries.length;
+    return entries[index]!;
+  });
 }
 
 export function SocialProof() {
   const activity = useDecisionActivityFeed();
-  const popularity = activity.layers.find((layer) => layer.id === 'popularity');
-  const behavior = activity.layers.find((layer) => layer.id === 'behavior');
-  const preference = activity.layers.find((layer) => layer.id === 'preference');
-  const live = activity.layers.find((layer) => layer.id === 'live');
+  const [startIndex, setStartIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const entries = useMemo(() => activityFeedEntries(activity), [activity]);
+  const desktopEntries = useMemo(
+    () =>
+      visibleFeedWindow(
+        entries,
+        startIndex,
+        Math.min(entries.length, FEED_VISIBLE_ITEM_COUNT + 1),
+      ),
+    [entries, startIndex],
+  );
+  const mobileEntries = useMemo(
+    () => visibleFeedWindow(entries, startIndex, FEED_VISIBLE_ITEM_COUNT),
+    [entries, startIndex],
+  );
 
-  const cards = [
-    {
-      key: 'live',
-      icon: 'viewing' as const,
-      title: live?.title ?? 'Živá aktivita',
-      messages:
-        live?.items.map((item) => item.message) ?? ['1 zájemce právě prochází Decision Journey.'],
-    },
-    {
-      key: 'popularity',
-      icon: 'saved' as const,
-      title: popularity?.title ?? 'Popularita',
-      messages:
-        popularity?.items.map((item) => item.message) ??
-        ['Popularita se zobrazí po ověření dostatečného množství událostí.'],
-    },
-    {
-      key: 'behavior',
-      icon: 'inquiry' as const,
-      title: behavior?.title ?? 'Chování návštěvníků',
-      messages:
-        behavior?.items.map((item) => item.message) ??
-        ['Chování se zobrazí po ověření dostatečného množství událostí.'],
-    },
-    {
-      key: 'preference',
-      icon: 'inquiry' as const,
-      title: preference?.title ?? 'Preference',
-      messages:
-        preference?.items.map((item) => item.message) ??
-        ['Preference se zobrazí po získání dostatečných dat z Priority Experience.'],
-    },
-  ];
+  useEffect(() => {
+    setStartIndex(0);
+    setIsAnimating(false);
+  }, [entries]);
+
+  useEffect(() => {
+    if (entries.length <= FEED_VISIBLE_ITEM_COUNT) {
+      return;
+    }
+    const startTimer = window.setTimeout(() => {
+      setIsAnimating(true);
+    }, FEED_TICKER_PAUSE_MS);
+    const finishTimer = window.setTimeout(() => {
+      setStartIndex((current) => (current + 1) % entries.length);
+      setIsAnimating(false);
+    }, FEED_TICKER_PAUSE_MS + FEED_TICKER_SLIDE_MS);
+    return () => {
+      window.clearTimeout(startTimer);
+      window.clearTimeout(finishTimer);
+    };
+  }, [entries]);
 
   return (
     <Panel
@@ -110,7 +154,7 @@ export function SocialProof() {
       aria-label="Social Proof"
       data-landing-anchor="social-proof"
       variant="elevated"
-      className="relative grid scroll-mt-header grid-cols-4 !bg-[#FFFFFF] text-[#001930] mobile:grid-cols-1"
+      className="relative scroll-mt-header !bg-[#FFFFFF] text-[#001930]"
     >
       <div
         aria-hidden="true"
@@ -121,15 +165,52 @@ export function SocialProof() {
         className="pointer-events-none absolute inset-x-0 top-[2px] z-10 h-px"
         style={{ backgroundColor: colors.action.accent }}
       />
-      <SocialProofColumnDividers />
-      {cards.map((card) => (
-        <SocialProofItem
-          key={card.key}
-          icon={card.icon}
-          title={card.title}
-          messages={card.messages}
-        />
-      ))}
+      <div className="hidden h-social-proof items-center overflow-hidden px-section desktop:flex">
+        <div className="w-full overflow-hidden">
+          <ul
+            className="m-0 flex list-none p-0"
+            style={{
+              width: `${(desktopEntries.length / FEED_VISIBLE_ITEM_COUNT) * 100}%`,
+              transform:
+                desktopEntries.length > FEED_VISIBLE_ITEM_COUNT && isAnimating
+                  ? `translateX(-${100 / desktopEntries.length}%)`
+                  : 'translateX(0)',
+              transition:
+                desktopEntries.length > FEED_VISIBLE_ITEM_COUNT
+                  ? `transform ${FEED_TICKER_SLIDE_MS}ms linear`
+                  : 'none',
+            }}
+          >
+            {desktopEntries.map((entry, index) => (
+              <li
+                key={entry.id}
+                className="min-w-0"
+                style={{ width: `${100 / desktopEntries.length}%` }}
+              >
+                <div className="flex items-center gap-4 pr-4">
+                  <SocialProofItem {...entry} />
+                  {index < desktopEntries.length - 1 ? (
+                    <div
+                      aria-hidden="true"
+                      className="h-10 w-px shrink-0"
+                      style={SOCIAL_PROOF_DIVIDER_STYLE}
+                    />
+                  ) : null}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div className="desktop:hidden px-section py-3">
+        <ul className="m-0 flex list-none flex-col gap-3 p-0">
+          {mobileEntries.map((entry) => (
+            <li key={entry.id}>
+              <SocialProofItem {...entry} />
+            </li>
+          ))}
+        </ul>
+      </div>
     </Panel>
   );
 }
