@@ -26,6 +26,8 @@ import type {
   PatternEngineEvent,
   PatternCatalog,
   PatternIntelligenceEvent,
+  HeuristicCatalog,
+  HeuristicEngineEvent,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -69,6 +71,7 @@ import { LearningPipelineOverview } from './LearningPipelineOverview';
 import { LearningPackageManagerOverview } from './LearningPackageManagerOverview';
 import { PatternExtractionOverview } from './PatternExtractionOverview';
 import { PatternIntelligenceOverview } from './PatternIntelligenceOverview';
+import { HeuristicEngineOverview } from './HeuristicEngineOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -147,6 +150,10 @@ type WorkspaceCanvasProps = {
   readonly patternIntelligenceEvents: readonly PatternIntelligenceEvent[];
   readonly patternIntelligenceIndexCount: number;
   readonly patternIntelligenceMessage: string | null;
+  readonly heuristicCatalog: HeuristicCatalog | null;
+  readonly heuristicEngineEvents: readonly HeuristicEngineEvent[];
+  readonly heuristicIndexCount: number;
+  readonly heuristicEngineMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -245,6 +252,10 @@ type WorkspaceCanvasProps = {
   readonly onValidateIntelligencePatterns: () => void;
   readonly onPublishIntelligencePatterns: () => void;
   readonly onDisposeIntelligencePatterns: () => void;
+  readonly onDeriveHeuristics: () => void;
+  readonly onValidateHeuristics: () => void;
+  readonly onPublishHeuristics: () => void;
+  readonly onDisposeHeuristics: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -306,6 +317,10 @@ export function WorkspaceCanvas({
   patternIntelligenceEvents,
   patternIntelligenceIndexCount,
   patternIntelligenceMessage,
+  heuristicCatalog,
+  heuristicEngineEvents,
+  heuristicIndexCount,
+  heuristicEngineMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -394,6 +409,10 @@ export function WorkspaceCanvas({
   onValidateIntelligencePatterns,
   onPublishIntelligencePatterns,
   onDisposeIntelligencePatterns,
+  onDeriveHeuristics,
+  onValidateHeuristics,
+  onPublishHeuristics,
+  onDisposeHeuristics,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -688,6 +707,19 @@ export function WorkspaceCanvas({
             onPublish={onPublishIntelligencePatterns}
             onDispose={onDisposeIntelligencePatterns}
             message={patternIntelligenceMessage}
+          />
+        ) : null}
+
+        {activeSection === 'heuristic-engine' ? (
+          <HeuristicEngineOverview
+            heuristicCatalog={heuristicCatalog}
+            events={heuristicEngineEvents}
+            indexCount={heuristicIndexCount}
+            onDerive={onDeriveHeuristics}
+            onValidate={onValidateHeuristics}
+            onPublish={onPublishHeuristics}
+            onDispose={onDisposeHeuristics}
+            message={heuristicEngineMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

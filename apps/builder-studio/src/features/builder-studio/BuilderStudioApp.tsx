@@ -100,6 +100,10 @@ export function BuilderStudioApp() {
         patternIntelligenceEvents={session.patternIntelligenceEvents}
         patternIntelligenceIndexCount={session.patternIntelligenceIndexCount}
         patternIntelligenceMessage={session.patternIntelligenceMessage}
+        heuristicCatalog={session.heuristicCatalog}
+        heuristicEngineEvents={session.heuristicEngineEvents}
+        heuristicIndexCount={session.heuristicIndexCount}
+        heuristicEngineMessage={session.heuristicEngineMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -188,6 +192,10 @@ export function BuilderStudioApp() {
         onValidateIntelligencePatterns={session.validateIntelligencePatterns}
         onPublishIntelligencePatterns={session.publishIntelligencePatterns}
         onDisposeIntelligencePatterns={session.disposeIntelligencePatterns}
+        onDeriveHeuristics={session.deriveHeuristics}
+        onValidateHeuristics={session.validateHeuristics}
+        onPublishHeuristics={session.publishHeuristics}
+        onDisposeHeuristics={session.disposeHeuristics}
       />
     </AppShell>
   );

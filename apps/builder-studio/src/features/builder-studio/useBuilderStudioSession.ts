@@ -33,6 +33,8 @@ import type {
   PatternEngineEvent,
   PatternCatalog,
   PatternIntelligenceEvent,
+  HeuristicCatalog,
+  HeuristicEngineEvent,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -106,6 +108,8 @@ import {
   createPatternExtractionEngine,
   createPatternIntelligenceApi,
   createPatternIntelligenceEngine,
+  createHeuristicEngineApi,
+  createHeuristicEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -201,6 +205,10 @@ export type BuilderStudioViewModel = {
   readonly patternIntelligenceEvents: readonly PatternIntelligenceEvent[];
   readonly patternIntelligenceIndexCount: number;
   readonly patternIntelligenceMessage: string | null;
+  readonly heuristicCatalog: HeuristicCatalog | null;
+  readonly heuristicEngineEvents: readonly HeuristicEngineEvent[];
+  readonly heuristicIndexCount: number;
+  readonly heuristicEngineMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -310,6 +318,10 @@ export type BuilderStudioViewModel = {
   readonly validateIntelligencePatterns: () => void;
   readonly publishIntelligencePatterns: () => void;
   readonly disposeIntelligencePatterns: () => void;
+  readonly deriveHeuristics: () => void;
+  readonly validateHeuristics: () => void;
+  readonly publishHeuristics: () => void;
+  readonly disposeHeuristics: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -948,6 +960,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const patternIntelligenceApi = createPatternIntelligenceApi(
       patternIntelligenceEngine,
     );
+    const heuristicEngine = createHeuristicEngine();
+    const heuristicEngineApi = createHeuristicEngineApi(heuristicEngine);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1005,6 +1019,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       patternExtractionApi,
       patternIntelligenceEngine,
       patternIntelligenceApi,
+      heuristicEngine,
+      heuristicEngineApi,
     };
   }, []);
 
@@ -1231,6 +1247,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [patternIntelligenceIndexCount, setPatternIntelligenceIndexCount] =
     useState(0);
   const [patternIntelligenceMessage, setPatternIntelligenceMessage] = useState<
+    string | null
+  >(null);
+  const [heuristicCatalog, setHeuristicCatalog] =
+    useState<HeuristicCatalog | null>(null);
+  const [heuristicEngineEvents, setHeuristicEngineEvents] = useState<
+    readonly HeuristicEngineEvent[]
+  >([]);
+  const [heuristicIndexCount, setHeuristicIndexCount] = useState(0);
+  const [heuristicEngineMessage, setHeuristicEngineMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1574,6 +1599,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     patternIntelligenceEvents,
     patternIntelligenceIndexCount,
     patternIntelligenceMessage,
+    heuristicCatalog,
+    heuristicEngineEvents,
+    heuristicIndexCount,
+    heuristicEngineMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3003,6 +3032,112 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           .length,
       );
       setPatternIntelligenceMessage(null);
+    },
+    deriveHeuristics(): void {
+      const patterns =
+        patternCollection !== null && patternCollection.patterns.length > 0
+          ? patternCollection.patterns.map((pattern) => ({
+              id: pattern.id,
+              name: pattern.name,
+              description: pattern.description,
+              confidence: pattern.confidence,
+              sourceRecords: pattern.sourceRecords,
+            }))
+          : [
+              {
+                id: 'extracted-pattern-1',
+                name: 'Repeated source: learning-pipeline',
+                description: '2 Learning Records share source.',
+                confidence: 0.4,
+                sourceRecords: ['learning-record-1', 'learning-record-2'],
+              },
+              {
+                id: 'extracted-pattern-2',
+                name: 'Multi-record package',
+                description: 'Package contains 3 record references.',
+                confidence: 0.5,
+                sourceRecords: [
+                  'learning-record-1',
+                  'learning-record-2',
+                  'learning-record-3',
+                ],
+              },
+            ];
+
+      const collectionId =
+        patternCollection?.id ?? 'pattern-collection-demo';
+      const collectionTitle =
+        patternCollection?.metadata.title ?? 'Demo Pattern Collection';
+
+      const derived = services.heuristicEngineApi.deriveHeuristics({
+        collectionId,
+        collectionTitle,
+        title: `${collectionTitle} Heuristics`,
+        patterns,
+      });
+      setHeuristicCatalog(derived);
+      setHeuristicEngineEvents(
+        services.heuristicEngine.getHistory(derived.id),
+      );
+      setHeuristicIndexCount(
+        services.heuristicEngine.getIndex().list(derived.id).length,
+      );
+      setHeuristicEngineMessage(
+        `Derived ${derived.heuristics.length} heuristic(s). Pattern Collection unchanged.`,
+      );
+    },
+    validateHeuristics(): void {
+      if (heuristicCatalog === null) {
+        setHeuristicEngineMessage('Nejdřív Derive Heuristics.');
+        return;
+      }
+      const validated = services.heuristicEngineApi.validateHeuristics(
+        heuristicCatalog.id,
+      );
+      setHeuristicCatalog(validated);
+      setHeuristicEngineEvents(
+        services.heuristicEngine.getHistory(validated.id),
+      );
+      setHeuristicEngineMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    publishHeuristics(): void {
+      if (heuristicCatalog === null) {
+        setHeuristicEngineMessage('Nejdřív Derive Heuristics.');
+        return;
+      }
+      const published = services.heuristicEngineApi.publishHeuristics(
+        heuristicCatalog.id,
+      );
+      setHeuristicCatalog(published);
+      setHeuristicEngineEvents(
+        services.heuristicEngine.getHistory(published.id),
+      );
+      setHeuristicIndexCount(
+        services.heuristicEngine.getIndex().list(published.id).length,
+      );
+      setHeuristicEngineMessage(
+        published.metadata.status === 'Published'
+          ? `Published catalog @ ${published.version}`
+          : 'Publish blocked by validation.',
+      );
+    },
+    disposeHeuristics(): void {
+      if (heuristicCatalog === null) {
+        return;
+      }
+      const disposed = services.heuristicEngine.dispose(heuristicCatalog.id);
+      setHeuristicCatalog(disposed);
+      setHeuristicEngineEvents(
+        services.heuristicEngine.getHistory(disposed.id),
+      );
+      setHeuristicIndexCount(
+        services.heuristicEngine.getIndex().list(disposed.id).length,
+      );
+      setHeuristicEngineMessage(null);
     },
     buildProject(): void {
       const projectId =

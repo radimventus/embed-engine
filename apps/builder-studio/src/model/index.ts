@@ -383,3 +383,15 @@ export type {
   PatternIntelligenceValidation,
   PatternIntelligenceValidationIssue,
 } from './pattern-intelligence-types';
+
+export type {
+  DeriveHeuristicsInput,
+  DerivedHeuristic,
+  HeuristicCatalog,
+  HeuristicEngineEvent,
+  HeuristicEngineEventType,
+  HeuristicIndexEntry,
+  HeuristicRule,
+  HeuristicValidation,
+  HeuristicValidationIssue,
+} from './heuristic-engine-types';

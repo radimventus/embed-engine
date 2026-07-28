@@ -36,6 +36,7 @@ export type WorkspaceSectionId =
   | 'learning-package-mgr'
   | 'pattern-extraction'
   | 'pattern-intelligence'
+  | 'heuristic-engine'
   | 'media'
   | 'layout'
   | 'knowledge';

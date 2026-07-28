@@ -22,6 +22,7 @@ const SECTIONS: readonly {
   { id: 'learning-package-mgr', label: 'Package' },
   { id: 'pattern-extraction', label: 'Extraction' },
   { id: 'pattern-intelligence', label: 'Patterns' },
+  { id: 'heuristic-engine', label: 'Heuristics' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

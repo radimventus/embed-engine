@@ -335,3 +335,22 @@ export {
   createPatternIntelligenceIndex,
   type PatternIntelligenceIndex,
 } from './pattern-intelligence/pattern-intelligence-index';
+
+export {
+  createHeuristicEngine,
+  type HeuristicEngine,
+} from './heuristic-engine/heuristic-engine';
+export {
+  createHeuristicEngineApi,
+  type HeuristicEngineApi,
+} from './heuristic-engine/heuristic-engine-api';
+export {
+  createBasicHeuristicDeriver,
+  createHeuristicValidator,
+  type HeuristicDeriver,
+  type HeuristicValidator,
+} from './heuristic-engine/basic-heuristic-deriver';
+export {
+  createHeuristicIndex,
+  type HeuristicIndex,
+} from './heuristic-engine/heuristic-index';
