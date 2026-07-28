@@ -3,10 +3,12 @@ import { scrollToSection } from './scrollToSection';
 type JourneySceneTransitionProps = {
   readonly previousSceneId?: string;
   readonly nextSceneId?: string;
+  readonly onPrevious?: () => void;
+  readonly onNext?: () => void;
 };
 
 const NAV_BUTTON_CLASS =
-  'inline-flex min-h-[48px] items-center justify-center rounded-[8px] bg-[#001930] px-5 text-base font-medium text-[#FFFFFF] transition-colors duration-150 hover:bg-embed-brand-gold hover:text-[#001930] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2';
+  'inline-flex h-[48px] w-[180px] items-center justify-center rounded-[8px] bg-[#001930] px-5 text-base font-medium text-[#FFFFFF] transition-colors duration-150 hover:bg-embed-brand-gold hover:text-[#001930] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2';
 
 /**
  * Navigation lives only in the large semantic gaps between scenes.
@@ -14,6 +16,8 @@ const NAV_BUTTON_CLASS =
 export function JourneySceneTransition({
   previousSceneId,
   nextSceneId,
+  onPrevious,
+  onNext,
 }: JourneySceneTransitionProps) {
   return (
     <div className="flex h-[180px] items-center px-section">
@@ -22,8 +26,13 @@ export function JourneySceneTransition({
           {previousSceneId ? (
             <button
               type="button"
-              onClick={() => scrollToSection(previousSceneId)}
-              className={`${NAV_BUTTON_CLASS} min-w-[168px]`}
+              onClick={() => {
+                onPrevious?.();
+                if (!onPrevious) {
+                  scrollToSection(previousSceneId);
+                }
+              }}
+              className={NAV_BUTTON_CLASS}
             >
               ↑ Zpět
             </button>
@@ -33,8 +42,13 @@ export function JourneySceneTransition({
           {nextSceneId ? (
             <button
               type="button"
-              onClick={() => scrollToSection(nextSceneId)}
-              className={`${NAV_BUTTON_CLASS} min-w-[168px]`}
+              onClick={() => {
+                onNext?.();
+                if (!onNext) {
+                  scrollToSection(nextSceneId);
+                }
+              }}
+              className={NAV_BUTTON_CLASS}
             >
               Pokračovat ↓
             </button>

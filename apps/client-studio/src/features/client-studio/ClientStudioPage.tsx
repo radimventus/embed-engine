@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import type { ReactExperienceModel } from '@embed-engine/model';
 import type { DecisionSessionRuntime } from '@embed-engine/runtime';
 
@@ -24,6 +25,11 @@ import { PriorityExperienceProvider } from './sections/PriorityEngine/PriorityEx
 import { SpatialTerminal } from './sections/SpatialTerminal/SpatialTerminal';
 import { WalkthroughProvider } from '../walkthrough';
 import { PILOT_FLAGS } from './pilot/pilotVocabulary';
+import { scrollToSection } from './foundation/scrollToSection';
+
+const REVEAL_DURATION_MS = 500;
+
+type SceneVisibilityState = 'hidden' | 'revealing' | 'visible';
 
 type ClientStudioPageProps = {
   /** LEGACY only — set when CommandRuntime host is explicitly enabled. */
@@ -53,6 +59,63 @@ export function ClientStudioPage({
 }: ClientStudioPageProps) {
   const scenes = decisionJourneyScenes();
   const activeSceneId = useActiveSection(scenes.map((scene) => scene.id));
+  const revealTimerRef = useRef<number | null>(null);
+  const [sceneStates, setSceneStates] = useState<Record<string, SceneVisibilityState>>(
+    () =>
+      Object.fromEntries(
+        scenes.map((scene, index) => [
+          scene.id,
+          index === 0 ? 'visible' : 'hidden',
+        ]),
+      ) as Record<string, SceneVisibilityState>,
+  );
+
+  useEffect(() => {
+    setSceneStates(
+      Object.fromEntries(
+        scenes.map((scene, index) => [scene.id, index === 0 ? 'visible' : 'hidden']),
+      ) as Record<string, SceneVisibilityState>,
+    );
+  }, [scenes]);
+
+  useEffect(() => {
+    return () => {
+      if (revealTimerRef.current !== null) {
+        window.clearTimeout(revealTimerRef.current);
+      }
+    };
+  }, []);
+
+  const revealScene = (sceneId?: string) => {
+    if (!sceneId) {
+      return;
+    }
+    const currentState = sceneStates[sceneId];
+    if (currentState === 'visible') {
+      scrollToSection(sceneId);
+      return;
+    }
+    if (currentState === 'revealing') {
+      return;
+    }
+
+    if (revealTimerRef.current !== null) {
+      window.clearTimeout(revealTimerRef.current);
+    }
+    setSceneStates((current) => ({
+      ...current,
+      [sceneId]: 'revealing',
+    }));
+
+    revealTimerRef.current = window.setTimeout(() => {
+      setSceneStates((current) => ({
+        ...current,
+        [sceneId]: 'visible',
+      }));
+      scrollToSection(sceneId);
+      revealTimerRef.current = null;
+    }, REVEAL_DURATION_MS);
+  };
 
   return (
     <DecisionAnalyticsProvider>
@@ -78,15 +141,20 @@ export function ClientStudioPage({
                 ) : null}
                 <JourneySceneFrame
                   sceneId={scenes[0]!.id}
+                  state={sceneStates[scenes[0]!.id] ?? 'visible'}
                 >
                   <Hero />
                   <div aria-hidden="true" className="h-[50px] w-full" />
                   <SpatialTerminal />
                 </JourneySceneFrame>
-                <JourneySceneTransition nextSceneId={scenes[1]?.id} />
+                <JourneySceneTransition
+                  nextSceneId={scenes[1]?.id}
+                  onNext={() => revealScene(scenes[1]?.id)}
+                />
                 <PriorityExperienceProvider>
                   <JourneySceneFrame
                     sceneId={scenes[1]!.id}
+                    state={sceneStates[scenes[1]!.id] ?? 'hidden'}
                   >
                     <PriorityEngine />
                     {PILOT_FLAGS.showAiAdvisor ? (
@@ -97,15 +165,26 @@ export function ClientStudioPage({
                     ) : null}
                   </JourneySceneFrame>
                 </PriorityExperienceProvider>
-                <JourneySceneTransition
-                  previousSceneId={scenes[0]?.id}
-                  nextSceneId={scenes[2]?.id}
-                />
+                {sceneStates[scenes[1]!.id] !== 'hidden' ? (
+                  <JourneySceneTransition
+                    previousSceneId={scenes[0]?.id}
+                    nextSceneId={scenes[2]?.id}
+                    onPrevious={() => scrollToSection(scenes[0]!.id)}
+                    onNext={() => revealScene(scenes[2]?.id)}
+                  />
+                ) : null}
                 <JourneySceneFrame
                   sceneId={scenes[2]!.id}
+                  state={sceneStates[scenes[2]!.id] ?? 'hidden'}
                 >
                   <AuditLeadCapture />
                 </JourneySceneFrame>
+                {sceneStates[scenes[2]!.id] !== 'hidden' ? (
+                  <JourneySceneTransition
+                    previousSceneId={scenes[1]?.id}
+                    onPrevious={() => scrollToSection(scenes[1]!.id)}
+                  />
+                ) : null}
               </div>
             </DesktopCanvas>
           </WalkthroughProvider>
