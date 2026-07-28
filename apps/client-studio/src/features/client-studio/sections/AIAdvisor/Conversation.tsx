@@ -9,8 +9,8 @@ type ConversationProps = {
 };
 
 /**
- * Full thread, content-sized — section stretches so the latest Q+A is never
- * clipped (CAP UX 54). Welcome seed sits below the header veil (CAP UX 55).
+ * Thread in the fixed FAQ-aligned chat band (reference width on 4173).
+ * Internal scroll keeps bubble max-width stable; welcome seed clears the veil.
  */
 export function Conversation({ messages }: ConversationProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -21,7 +21,6 @@ export function Conversation({ messages }: ConversationProps) {
       return;
     }
 
-    // Welcome-only: keep the greeting at the top of the thread.
     if (messages.length <= 1) {
       container.scrollTop = 0;
       return;
@@ -33,7 +32,7 @@ export function Conversation({ messages }: ConversationProps) {
   return (
     <div
       ref={containerRef}
-      className="flex flex-col space-y-section overflow-x-hidden"
+      className="flex min-h-0 flex-1 flex-col space-y-section overflow-x-hidden overflow-y-auto"
       style={{ paddingTop: AI_CHAT_VEIL_CLEARANCE_PX }}
       data-testid="ai-advisor-conversation"
     >

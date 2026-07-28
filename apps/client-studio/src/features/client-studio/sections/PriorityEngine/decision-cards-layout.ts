@@ -21,8 +21,9 @@ export const DECISION_CARD_FOCUS_CLASS =
 export const DECISION_CARD_IDLE_CLASS =
   'rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] shadow-none';
 
+/** CAP UX 54 — idle hover uses gold border (same family as active). */
 export const DECISION_CARD_HOVER_CLASS =
-  'hover:z-[5] hover:cursor-pointer hover:scale-[1.06] hover:border-solid hover:border-[#001930] hover:shadow-[0_8px_22px_rgba(0,25,48,0.14)]';
+  'hover:z-[5] hover:cursor-pointer hover:scale-[1.06] hover:border-2 hover:border-solid hover:border-[#D4AF37] hover:shadow-[0_8px_22px_rgba(0,25,48,0.14)]';
 
 /** Idle attention nudge — paused while hovered or active (CAP UX 52). */
 export const DECISION_CARD_ATTENTION_CLASS =

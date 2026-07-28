@@ -186,8 +186,10 @@ export function SocialProof() {
                 entries.length > 1 && isAnimating
                   ? `translateX(-${100 / desktopEntries.length}%)`
                   : 'translateX(0)',
+              // Transition only while sliding left. Reset to 0 must be instant
+              // or the browser animates back to the right.
               transition:
-                entries.length > 1
+                entries.length > 1 && isAnimating
                   ? `transform ${FEED_TICKER_SLIDE_MS}ms linear`
                   : 'none',
             }}

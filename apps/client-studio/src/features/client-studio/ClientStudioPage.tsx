@@ -180,14 +180,13 @@ export function ClientStudioPage({
                   <AuditLeadCapture />
                 </JourneySceneFrame>
                 {sceneStates[scenes[2]!.id] !== 'hidden' ? (
-                  <JourneySceneTransition
-                    previousSceneId={scenes[1]?.id}
-                    onPrevious={() => scrollToSection(scenes[1]!.id)}
-                    compact
-                  />
-                ) : null}
-                {sceneStates[scenes[2]!.id] === 'visible' ? (
-                  <div aria-hidden="true" className="h-screen w-full" />
+                  <div className="pb-16">
+                    <JourneySceneTransition
+                      previousSceneId={scenes[1]?.id}
+                      onPrevious={() => scrollToSection(scenes[1]!.id)}
+                      compact
+                    />
+                  </div>
                 ) : null}
               </div>
             </DesktopCanvas>

@@ -3,11 +3,11 @@ import type { MouseEvent } from 'react';
 
 import { useOptionalDecisionAnalytics } from '../../analytics';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
-import { scrollToSection } from '../../foundation/scrollToSection';
 
 /**
  * Primary Hero CTA — Morning Baseline reference (PT-HERO-00).
- * Opens Spatial Terminal / walkthrough.
+ * Lands on Social Proof so Header + full Social Proof + Tour start stay visible.
+ * Uses scrollIntoView + scroll-margin (not scrollToSection) to avoid double header offset.
  */
 export function HeroCTA() {
   const analytics = useOptionalDecisionAnalytics();
@@ -20,7 +20,13 @@ export function HeroCTA() {
       return;
     }
 
-    scrollToSection(PILOT_SECTION_IDS.socialProof);
+    const reducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+    target.scrollIntoView({
+      behavior: reducedMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
     analytics?.experienceEvent({
       experienceEventType: 'hero.video.opened',
       surfaceId: 'hero',

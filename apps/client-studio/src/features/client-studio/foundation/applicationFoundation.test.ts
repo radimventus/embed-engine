@@ -120,7 +120,7 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(page, /state=\{sceneStates\[scenes\[2\]!\.id\]/);
     assert.match(page, /onNext=\{\(\) => revealScene\(scenes\[1\]\?\.id\)\}/);
     assert.match(page, /onNext=\{\(\) => revealScene\(scenes\[2\]\?\.id\)\}/);
-    assert.match(page, /className="h-screen w-full"/);
+    assert.equal(page.includes('h-screen w-full'), false);
     assert.match(page, /<Hero \/>[\s\S]*h-\[50px\][\s\S]*<SpatialTerminal \/>/);
     assert.match(page, /<PriorityEngine \/>[\s\S]*h-\[50px\][\s\S]*<AIAdvisor \/>/);
     assert.match(page, /<AuditLeadCapture \/>/);
