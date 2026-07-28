@@ -230,6 +230,23 @@ export type {
   SignalNode,
 } from './decision-engine-types';
 
+export type {
+  CreateRuntimeInput,
+  DecisionRuntimeEvent,
+  DecisionRuntimeEventType,
+  DecisionRuntimeTimestamps,
+  RuntimeContext,
+  RuntimeContextInputs,
+  RuntimeGraph,
+  RuntimeGraphEdge,
+  RuntimeGraphNode,
+  RuntimeModel,
+  RuntimeModelMetadata,
+  RuntimeState,
+  RuntimeValidation,
+  RuntimeValidationIssue,
+} from './decision-runtime-types';
+
 export {
   ASSET_CATEGORY_ORDER,
   createEmptyAssetCollections,

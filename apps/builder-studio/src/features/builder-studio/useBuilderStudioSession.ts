@@ -12,11 +12,14 @@ import type {
   Experience,
   ExperienceStructureReport,
   BuildDecisionModelInput,
+  CreateRuntimeInput,
   DecisionEngineEvent,
   DecisionEvent,
   DecisionKnowledgePackage,
   DecisionModel,
+  DecisionRuntimeEvent,
   KnowledgeEvent,
+  RuntimeModel,
   KnowledgeLayerBundle,
   KnowledgeLayerDefinition,
   KnowledgeLayerEvent,
@@ -56,6 +59,8 @@ import {
   createDecisionEngine,
   createDecisionEngineApi,
   createDecisionKnowledgeApi,
+  createDecisionRuntime,
+  createDecisionRuntimeApi,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -115,6 +120,8 @@ export type BuilderStudioViewModel = {
   readonly learningOrigins: readonly LearningOriginDefinition[];
   readonly decisionModel: DecisionModel | null;
   readonly decisionEngineEvents: readonly DecisionEngineEvent[];
+  readonly runtimeModel: RuntimeModel | null;
+  readonly decisionRuntimeEvents: readonly DecisionRuntimeEvent[];
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -182,6 +189,9 @@ export type BuilderStudioViewModel = {
   readonly buildDecisionModel: () => void;
   readonly validateDecisionModel: () => void;
   readonly disposeDecisionModel: () => void;
+  readonly createDecisionRuntime: () => void;
+  readonly validateDecisionRuntime: () => void;
+  readonly disposeDecisionRuntime: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -258,6 +268,33 @@ function ensureKnowledge(
 
 
 
+
+
+function toCreateRuntimeInput(model: DecisionModel): CreateRuntimeInput {
+  return {
+    decisionModelId: model.id,
+    objectId: model.objectId,
+    title: `${model.metadata.title} Runtime`,
+    knowledgeId: model.knowledge,
+    decisionKnowledgeId: model.decisionKnowledge,
+    experienceId: model.experience,
+    learningId: model.learning,
+    graph: {
+      nodes: model.graph.nodes.map((node) => ({
+        id: node.id,
+        type: node.type,
+        label: node.label,
+        sourceId: node.sourceId,
+      })),
+      edges: model.graph.edges.map((edge) => ({
+        id: edge.id,
+        from: edge.from,
+        to: edge.to,
+        relation: edge.relation,
+      })),
+    },
+  };
+}
 
 function toBuildDecisionModelInput(
   objectPackage: ObjectPackage,
@@ -539,6 +576,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     learningService.create();
     const decisionEngine = createDecisionEngine();
     const decisionEngineApi = createDecisionEngineApi(decisionEngine);
+    const decisionRuntime = createDecisionRuntime();
+    const decisionRuntimeApi = createDecisionRuntimeApi(decisionRuntime);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -576,6 +615,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       learningApi,
       decisionEngine,
       decisionEngineApi,
+      decisionRuntime,
+      decisionRuntimeApi,
     };
   }, []);
 
@@ -717,6 +758,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [decisionEngineEvents, setDecisionEngineEvents] = useState<
     readonly DecisionEngineEvent[]
   >([]);
+  const [runtimeModel, setRuntimeModel] = useState<RuntimeModel | null>(null);
+  const [decisionRuntimeEvents, setDecisionRuntimeEvents] = useState<
+    readonly DecisionRuntimeEvent[]
+  >([]);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -809,6 +854,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setKnowledgeLayerEvents([]);
       setDecisionModel(null);
       setDecisionEngineEvents([]);
+      setRuntimeModel(null);
+      setDecisionRuntimeEvents([]);
       return;
     }
     const model = services.assets.getActiveProject(projectId);
@@ -829,6 +876,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setKnowledgeLayerEvents([]);
       setDecisionModel(null);
       setDecisionEngineEvents([]);
+      setRuntimeModel(null);
+      setDecisionRuntimeEvents([]);
       return;
     }
     const pkg = ensureObjectPackage(services.objectService, model);
@@ -895,6 +944,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     setKnowledgeLayerEvents(services.knowledgeLayerService.getHistory());
     setDecisionModel(null);
     setDecisionEngineEvents([]);
+    setRuntimeModel(null);
+    setDecisionRuntimeEvents([]);
     setObjectPackage(services.objectService.loadObject(pkg.objectId));
   };
 
@@ -1007,6 +1058,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     learningOrigins: listLearningOrigins(),
     decisionModel,
     decisionEngineEvents,
+    runtimeModel,
+    decisionRuntimeEvents,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -1600,6 +1653,41 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setDecisionModel(disposed);
       setDecisionEngineEvents(
         services.decisionEngine.getHistory(disposed.id),
+      );
+    },
+
+    createDecisionRuntime(): void {
+      if (decisionModel === null) {
+        return;
+      }
+      const created = services.decisionRuntimeApi.createRuntime(
+        toCreateRuntimeInput(decisionModel),
+      );
+      setRuntimeModel(created);
+      setDecisionRuntimeEvents(
+        services.decisionRuntime.getHistory(created.id),
+      );
+    },
+    validateDecisionRuntime(): void {
+      if (runtimeModel === null) {
+        return;
+      }
+      const validated = services.decisionRuntime.validateRuntime(
+        runtimeModel.id,
+      );
+      setRuntimeModel(validated);
+      setDecisionRuntimeEvents(
+        services.decisionRuntime.getHistory(validated.id),
+      );
+    },
+    disposeDecisionRuntime(): void {
+      if (runtimeModel === null) {
+        return;
+      }
+      const disposed = services.decisionRuntime.dispose(runtimeModel.id);
+      setRuntimeModel(disposed);
+      setDecisionRuntimeEvents(
+        services.decisionRuntime.getHistory(disposed.id),
       );
     },
     buildProject(): void {

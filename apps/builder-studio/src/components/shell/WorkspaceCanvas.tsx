@@ -11,7 +11,9 @@ import type {
   DecisionEvent,
   DecisionKnowledgePackage,
   DecisionModel,
+  DecisionRuntimeEvent,
   KnowledgeEvent,
+  RuntimeModel,
   KnowledgeLayerBundle,
   KnowledgeLayerDefinition,
   KnowledgeLayerEvent,
@@ -37,6 +39,7 @@ import type {
 import { ExperienceComposer } from './ExperienceComposer';
 import { AIContextPreview } from './AIContextPreview';
 import { DecisionEngineOverview } from './DecisionEngineOverview';
+import { DecisionRuntimeOverview } from './DecisionRuntimeOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
 import { LearningOverview } from './LearningOverview';
@@ -78,6 +81,8 @@ type WorkspaceCanvasProps = {
   readonly learningOrigins: readonly LearningOriginDefinition[];
   readonly decisionModel: DecisionModel | null;
   readonly decisionEngineEvents: readonly DecisionEngineEvent[];
+  readonly runtimeModel: RuntimeModel | null;
+  readonly decisionRuntimeEvents: readonly DecisionRuntimeEvent[];
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -134,6 +139,9 @@ type WorkspaceCanvasProps = {
   readonly onBuildDecisionModel: () => void;
   readonly onValidateDecisionModel: () => void;
   readonly onDisposeDecisionModel: () => void;
+  readonly onCreateDecisionRuntime: () => void;
+  readonly onValidateDecisionRuntime: () => void;
+  readonly onDisposeDecisionRuntime: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -159,6 +167,8 @@ export function WorkspaceCanvas({
   learningOrigins,
   decisionModel,
   decisionEngineEvents,
+  runtimeModel,
+  decisionRuntimeEvents,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -205,6 +215,9 @@ export function WorkspaceCanvas({
   onBuildDecisionModel,
   onValidateDecisionModel,
   onDisposeDecisionModel,
+  onCreateDecisionRuntime,
+  onValidateDecisionRuntime,
+  onDisposeDecisionRuntime,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -367,6 +380,16 @@ export function WorkspaceCanvas({
             onBuild={onBuildDecisionModel}
             onValidate={onValidateDecisionModel}
             onDispose={onDisposeDecisionModel}
+          />
+        ) : null}
+
+        {activeSection === 'decision-runtime' ? (
+          <DecisionRuntimeOverview
+            runtimeModel={runtimeModel}
+            events={decisionRuntimeEvents}
+            onCreate={onCreateDecisionRuntime}
+            onValidate={onValidateDecisionRuntime}
+            onDispose={onDisposeDecisionRuntime}
           />
         ) : null}
         {activeSection === 'media' ? (

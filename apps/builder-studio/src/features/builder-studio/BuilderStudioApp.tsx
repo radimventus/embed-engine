@@ -64,6 +64,8 @@ export function BuilderStudioApp() {
         learningOrigins={session.learningOrigins}
         decisionModel={session.decisionModel}
         decisionEngineEvents={session.decisionEngineEvents}
+        runtimeModel={session.runtimeModel}
+        decisionRuntimeEvents={session.decisionRuntimeEvents}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -110,6 +112,9 @@ export function BuilderStudioApp() {
         onBuildDecisionModel={session.buildDecisionModel}
         onValidateDecisionModel={session.validateDecisionModel}
         onDisposeDecisionModel={session.disposeDecisionModel}
+        onCreateDecisionRuntime={session.createDecisionRuntime}
+        onValidateDecisionRuntime={session.validateDecisionRuntime}
+        onDisposeDecisionRuntime={session.disposeDecisionRuntime}
       />
     </AppShell>
   );

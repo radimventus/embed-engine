@@ -186,3 +186,11 @@ export {
   type DecisionInputResolver,
 } from './decision-engine/decision-input-resolver';
 export { buildDecisionGraph } from './decision-engine/decision-graph-builder';
+export {
+  createDecisionRuntime,
+  type DecisionRuntime,
+} from './decision-runtime/decision-runtime';
+export {
+  createDecisionRuntimeApi,
+  type DecisionRuntimeApi,
+} from './decision-runtime/decision-runtime-api';

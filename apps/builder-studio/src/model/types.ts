@@ -26,6 +26,7 @@ export type WorkspaceSectionId =
   | 'knowledge-layers'
   | 'learning'
   | 'decision-engine'
+  | 'decision-runtime'
   | 'media'
   | 'layout'
   | 'knowledge';

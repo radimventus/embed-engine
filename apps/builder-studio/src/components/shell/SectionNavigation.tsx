@@ -12,6 +12,7 @@ const SECTIONS: readonly {
   { id: 'knowledge-layers', label: 'Layers' },
   { id: 'learning', label: 'Learning' },
   { id: 'decision-engine', label: 'Engine' },
+  { id: 'decision-runtime', label: 'Runtime' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },
