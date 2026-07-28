@@ -1,5 +1,5 @@
 import { colors } from '@embed-engine/design-tokens';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Panel } from '@embed-engine/ui';
 
 import type { DecisionActivityItem } from '../../decision-activity/DecisionActivityEngine';
@@ -10,9 +10,11 @@ const SOCIAL_PROOF_DIVIDER_STYLE = {
   backgroundColor: colors.action.accent,
 } as const;
 
-const FEED_TICKER_PAUSE_MS = 8000;
-const FEED_TICKER_SLIDE_MS = 1600;
+const FEED_TICKER_PAUSE_MS = 4000;
+const FEED_TICKER_SLIDE_MS = 800;
 const FEED_VISIBLE_ITEM_COUNT = 3;
+/** Same message must not reappear until at least five others were shown. */
+const MIN_MESSAGES_BEFORE_REPEAT = 5;
 
 type SocialProofEntry = {
   readonly id: string;
@@ -52,7 +54,7 @@ function activityFeedEntries(
 
   const entries: SocialProofEntry[] = [];
   let appended = true;
-  while (appended && entries.length < 8) {
+  while (appended && entries.length < 24) {
     appended = false;
     for (const layerId of layerOrder) {
       const items = layerItems.get(layerId) ?? [];
@@ -109,10 +111,33 @@ function visibleFeedWindow(
   });
 }
 
+function nextStartIndex(
+  current: number,
+  entries: readonly SocialProofEntry[],
+  recentMessages: readonly string[],
+): number {
+  if (entries.length <= 1) {
+    return 0;
+  }
+  for (let step = 1; step <= entries.length; step += 1) {
+    const candidate = (current + step) % entries.length;
+    const message = entries[candidate]!.message;
+    const lastIndex = recentMessages.lastIndexOf(message);
+    if (
+      lastIndex === -1 ||
+      recentMessages.length - lastIndex - 1 >= MIN_MESSAGES_BEFORE_REPEAT
+    ) {
+      return candidate;
+    }
+  }
+  return (current + 1) % entries.length;
+}
+
 export function SocialProof() {
   const activity = useDecisionActivityFeed();
   const [startIndex, setStartIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const recentMessagesRef = useRef<string[]>([]);
   const entries = useMemo(() => activityFeedEntries(activity), [activity]);
   const desktopEntries = useMemo(
     () => visibleFeedWindow(entries, startIndex, FEED_VISIBLE_ITEM_COUNT + 1),
@@ -151,7 +176,16 @@ export function SocialProof() {
     if (!isAnimating || entries.length <= 1) {
       return;
     }
-    setStartIndex((current) => (current + 1) % entries.length);
+    setStartIndex((current) => {
+      const next = nextStartIndex(current, entries, recentMessagesRef.current);
+      const message = entries[next]?.message;
+      if (message) {
+        recentMessagesRef.current = [...recentMessagesRef.current, message].slice(
+          -12,
+        );
+      }
+      return next;
+    });
     setIsAnimating(false);
   };
 

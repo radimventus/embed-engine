@@ -12,7 +12,7 @@ type HeaderHoverMenuProps = {
 const PANEL_BG = `rgba(0, 25, 48, 0.7)`;
 
 const TRIGGER_CLASS =
-  'inline-flex items-center gap-2 text-sm text-embed-foreground-primary underline decoration-embed-border-strong underline-offset-4';
+  'inline-flex items-center gap-2 text-sm text-embed-foreground-primary underline decoration-embed-border-strong underline-offset-4 transition-colors hover:text-embed-brand-navy hover:decoration-embed-brand-navy';
 
 /**
  * Header action with hover panel. Leave the whole control to dismiss.

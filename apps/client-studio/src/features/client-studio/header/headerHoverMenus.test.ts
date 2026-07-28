@@ -38,6 +38,8 @@ describe('Header hover menus (CAP UX 57)', () => {
     assert.match(save, /window\.print/);
     assert.match(menu, /onMouseEnter/);
     assert.match(menu, /onMouseLeave/);
+    assert.match(menu, /hover:text-embed-brand-navy/);
+    assert.match(menu, /hover:decoration-embed-brand-navy/);
     assert.match(menu, /rgba\(0, 25, 48, 0\.7\)/);
   });
 });

@@ -80,7 +80,7 @@ export function ClientStudioSidebar({
                   'flex h-9 w-9 items-center justify-center text-xs font-medium transition-colors',
                   isActive
                     ? 'bg-embed-background-primary/15 text-embed-brand-gold'
-                    : 'text-embed-background-primary/70 hover:bg-embed-background-primary/10 hover:text-embed-background-primary',
+                    : 'text-embed-background-primary/70 hover:bg-embed-background-primary hover:text-embed-brand-navy',
                 ].join(' ')}
               >
                 {item.short}

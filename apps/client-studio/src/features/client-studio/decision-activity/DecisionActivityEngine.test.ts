@@ -27,10 +27,9 @@ describe('Decision Activity Engine', () => {
 
     const snapshot = projectDecisionActivity(events);
     assert.equal(snapshot.bootstrapMode, true);
-    assert.equal(
-      snapshot.layers.find((layer) => layer.id === 'live')!.items[0]!.message,
-      '1 zájemce právě otevřel půdorys.',
-    );
+    const liveItems = snapshot.layers.find((layer) => layer.id === 'live')!.items;
+    assert.ok(liveItems.length >= 6);
+    assert.equal(liveItems[0]!.message, '1 zájemce právě otevřel půdorys.');
     assert.equal(
       snapshot.layers.find((layer) => layer.id === 'popularity')!.items.length,
       0,

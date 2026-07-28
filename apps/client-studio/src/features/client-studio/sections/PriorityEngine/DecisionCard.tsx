@@ -29,8 +29,8 @@ type DecisionCardProps = {
 const ACTIVE_ICON_COUNTER_SCALE = 'scale-[0.893]';
 
 const IDLE_BORDER = '#E3E3E3';
-/** CAP UX 54 — hover border matches active gold. */
-const HOVER_BORDER = '#D4AF37';
+/** Idle hover — navy border (CAP UX 54 / design system). */
+const HOVER_BORDER = '#001930';
 const ACTIVE_BORDER = '#D4AF37';
 const CARD_BG = '#F7F6F4';
 

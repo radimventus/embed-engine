@@ -55,7 +55,14 @@ export function projectDecisionActivity(
   const popularity = projectPopularityLayer(events);
   const behavior = projectBehaviorLayer(events);
   const preference = projectPreferenceLayer(events);
-  const live = projectLiveLayer(events);
+  let live = projectLiveLayer(events);
+
+  const bootstrapMode =
+    popularity.length === 0 && behavior.length === 0 && preference.length === 0;
+
+  if (bootstrapMode) {
+    live = mergeBootstrapLiveItems(live);
+  }
 
   const layers: readonly DecisionActivityLayer[] = [
     createLayer('popularity', 'Popularita', popularity),
@@ -65,8 +72,7 @@ export function projectDecisionActivity(
   ];
 
   return Object.freeze({
-    bootstrapMode:
-      popularity.length === 0 && behavior.length === 0 && preference.length === 0,
+    bootstrapMode,
     layers,
   });
 }
@@ -205,6 +211,39 @@ function projectLiveLayer(
     .map(projectLiveItem)
     .filter((item): item is DecisionActivityItem => item !== null)
     .slice(0, 4);
+}
+
+function mergeBootstrapLiveItems(
+  live: readonly DecisionActivityItem[],
+): readonly DecisionActivityItem[] {
+  const seen = new Set(live.map((item) => item.message));
+  const merged = [...live];
+  for (const item of projectBootstrapLiveItems()) {
+    if (seen.has(item.message)) {
+      continue;
+    }
+    seen.add(item.message);
+    merged.push(item);
+  }
+  return merged;
+}
+
+/** First-visitor pool — keeps the ticker diverse before real analytics accumulate. */
+function projectBootstrapLiveItems(): readonly DecisionActivityItem[] {
+  return [
+    liveItem('bootstrap-journey', '1 zájemce právě prochází Decision Journey.'),
+    liveItem('bootstrap-tour', '1 zájemce právě zahájil prohlídku Client Studia.'),
+    liveItem('bootstrap-floorplan', '1 zájemce právě otevřel půdorys.'),
+    liveItem('bootstrap-priority', '1 zájemce právě vybírá své priority.'),
+    liveItem('bootstrap-ai', '1 zájemce právě konzultuje dům s AI poradcem.'),
+    liveItem('bootstrap-video', '1 zájemce právě přehrává úvodní video.'),
+    liveItem('bootstrap-spec', '1 zájemce právě otevřel technické parametry domu.'),
+    liveItem('bootstrap-energy', '1 zájemce právě porovnává energetické parametry domu.'),
+    liveItem('bootstrap-saved', '1 zájemce si právě ukládá tento dům.'),
+    liveItem('bootstrap-contact', '1 zájemce právě požádal o konzultaci.'),
+    liveItem('bootstrap-room', '1 zájemce právě prohlíží obývací pokoj.'),
+    liveItem('bootstrap-completed', '1 zájemce právě dokončil nastavení priorit.'),
+  ];
 }
 
 function projectLiveItem(event: AnalyticsEvent): DecisionActivityItem | null {
