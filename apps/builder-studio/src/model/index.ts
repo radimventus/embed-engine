@@ -370,3 +370,16 @@ export type {
   PatternValidation,
   PatternValidationIssue,
 } from './pattern-extraction-types';
+
+export type {
+  IntelligencePattern,
+  IntelligencePatternType,
+  PatternCatalog,
+  PatternEvidence,
+  PatternIntelligenceEvent,
+  PatternIntelligenceEventType,
+  PatternIntelligenceIndexEntry,
+  PatternIntelligenceInput,
+  PatternIntelligenceValidation,
+  PatternIntelligenceValidationIssue,
+} from './pattern-intelligence-types';

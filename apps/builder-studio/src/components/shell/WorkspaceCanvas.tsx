@@ -24,6 +24,8 @@ import type {
   LearningValidationResult,
   PatternCollection,
   PatternEngineEvent,
+  PatternCatalog,
+  PatternIntelligenceEvent,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -66,6 +68,7 @@ import { AnalyticsOverview } from './AnalyticsOverview';
 import { LearningPipelineOverview } from './LearningPipelineOverview';
 import { LearningPackageManagerOverview } from './LearningPackageManagerOverview';
 import { PatternExtractionOverview } from './PatternExtractionOverview';
+import { PatternIntelligenceOverview } from './PatternIntelligenceOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -140,6 +143,10 @@ type WorkspaceCanvasProps = {
   readonly patternExtractionEvents: readonly PatternEngineEvent[];
   readonly patternIndexCount: number;
   readonly patternExtractionMessage: string | null;
+  readonly patternCatalog: PatternCatalog | null;
+  readonly patternIntelligenceEvents: readonly PatternIntelligenceEvent[];
+  readonly patternIntelligenceIndexCount: number;
+  readonly patternIntelligenceMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -233,6 +240,11 @@ type WorkspaceCanvasProps = {
   readonly onValidatePatterns: () => void;
   readonly onPublishPatterns: () => void;
   readonly onDisposePatterns: () => void;
+  readonly onExtractIntelligencePatterns: () => void;
+  readonly onMergeIntelligencePatterns: () => void;
+  readonly onValidateIntelligencePatterns: () => void;
+  readonly onPublishIntelligencePatterns: () => void;
+  readonly onDisposeIntelligencePatterns: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -290,6 +302,10 @@ export function WorkspaceCanvas({
   patternExtractionEvents,
   patternIndexCount,
   patternExtractionMessage,
+  patternCatalog,
+  patternIntelligenceEvents,
+  patternIntelligenceIndexCount,
+  patternIntelligenceMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -373,6 +389,11 @@ export function WorkspaceCanvas({
   onValidatePatterns,
   onPublishPatterns,
   onDisposePatterns,
+  onExtractIntelligencePatterns,
+  onMergeIntelligencePatterns,
+  onValidateIntelligencePatterns,
+  onPublishIntelligencePatterns,
+  onDisposeIntelligencePatterns,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -653,6 +674,20 @@ export function WorkspaceCanvas({
             onPublish={onPublishPatterns}
             onDispose={onDisposePatterns}
             message={patternExtractionMessage}
+          />
+        ) : null}
+
+        {activeSection === 'pattern-intelligence' ? (
+          <PatternIntelligenceOverview
+            patternCatalog={patternCatalog}
+            events={patternIntelligenceEvents}
+            indexCount={patternIntelligenceIndexCount}
+            onExtract={onExtractIntelligencePatterns}
+            onMerge={onMergeIntelligencePatterns}
+            onValidate={onValidateIntelligencePatterns}
+            onPublish={onPublishIntelligencePatterns}
+            onDispose={onDisposeIntelligencePatterns}
+            message={patternIntelligenceMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

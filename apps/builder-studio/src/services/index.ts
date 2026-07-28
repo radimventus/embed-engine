@@ -316,3 +316,22 @@ export {
   createPatternIndex,
   type PatternIndex,
 } from './pattern-extraction/pattern-index';
+
+export {
+  createPatternIntelligenceEngine,
+  type PatternIntelligenceEngine,
+} from './pattern-intelligence/pattern-intelligence-engine';
+export {
+  createPatternIntelligenceApi,
+  type PatternIntelligenceApi,
+} from './pattern-intelligence/pattern-intelligence-api';
+export {
+  createBasicPatternMatcher,
+  createPatternIntelligenceValidator,
+  type PatternIntelligenceValidator,
+  type PatternMatcher,
+} from './pattern-intelligence/basic-pattern-matcher';
+export {
+  createPatternIntelligenceIndex,
+  type PatternIntelligenceIndex,
+} from './pattern-intelligence/pattern-intelligence-index';

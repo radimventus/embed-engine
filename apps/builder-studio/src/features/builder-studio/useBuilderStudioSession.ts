@@ -31,6 +31,8 @@ import type {
   LearningValidationResult,
   PatternCollection,
   PatternEngineEvent,
+  PatternCatalog,
+  PatternIntelligenceEvent,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -102,6 +104,8 @@ import {
   createLearningPackageManagerApi,
   createPatternExtractionApi,
   createPatternExtractionEngine,
+  createPatternIntelligenceApi,
+  createPatternIntelligenceEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -193,6 +197,10 @@ export type BuilderStudioViewModel = {
   readonly patternExtractionEvents: readonly PatternEngineEvent[];
   readonly patternIndexCount: number;
   readonly patternExtractionMessage: string | null;
+  readonly patternCatalog: PatternCatalog | null;
+  readonly patternIntelligenceEvents: readonly PatternIntelligenceEvent[];
+  readonly patternIntelligenceIndexCount: number;
+  readonly patternIntelligenceMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -297,6 +305,11 @@ export type BuilderStudioViewModel = {
   readonly validatePatterns: () => void;
   readonly publishPatterns: () => void;
   readonly disposePatterns: () => void;
+  readonly extractIntelligencePatterns: () => void;
+  readonly mergeIntelligencePatterns: () => void;
+  readonly validateIntelligencePatterns: () => void;
+  readonly publishIntelligencePatterns: () => void;
+  readonly disposeIntelligencePatterns: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -931,6 +944,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const patternExtractionApi = createPatternExtractionApi(
       patternExtractionEngine,
     );
+    const patternIntelligenceEngine = createPatternIntelligenceEngine();
+    const patternIntelligenceApi = createPatternIntelligenceApi(
+      patternIntelligenceEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -986,6 +1003,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       learningPackageManagerApi,
       patternExtractionEngine,
       patternExtractionApi,
+      patternIntelligenceEngine,
+      patternIntelligenceApi,
     };
   }, []);
 
@@ -1201,6 +1220,17 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   >([]);
   const [patternIndexCount, setPatternIndexCount] = useState(0);
   const [patternExtractionMessage, setPatternExtractionMessage] = useState<
+    string | null
+  >(null);
+  const [patternCatalog, setPatternCatalog] = useState<PatternCatalog | null>(
+    null,
+  );
+  const [patternIntelligenceEvents, setPatternIntelligenceEvents] = useState<
+    readonly PatternIntelligenceEvent[]
+  >([]);
+  const [patternIntelligenceIndexCount, setPatternIntelligenceIndexCount] =
+    useState(0);
+  const [patternIntelligenceMessage, setPatternIntelligenceMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1540,6 +1570,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     patternExtractionEvents,
     patternIndexCount,
     patternExtractionMessage,
+    patternCatalog,
+    patternIntelligenceEvents,
+    patternIntelligenceIndexCount,
+    patternIntelligenceMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -2840,6 +2874,135 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.patternExtractionEngine.getIndex().list(disposed.id).length,
       );
       setPatternExtractionMessage(null);
+    },
+    extractIntelligencePatterns(): void {
+      const records =
+        learningRecordsPackage !== null &&
+        learningRecordsPackage.records.length > 0
+          ? learningRecordsPackage.records.map((ref) => ({
+              recordId: ref.recordId,
+              source: ref.source,
+              note: ref.metadata.note,
+              timestamp: ref.timestamp,
+            }))
+          : [
+              {
+                recordId: 'learning-record-1',
+                source: 'learning-pipeline',
+                note: 'Demo pipeline ref',
+                timestamp: new Date().toISOString(),
+              },
+              {
+                recordId: 'learning-record-2',
+                source: 'learning-pipeline',
+                note: 'Demo pipeline ref',
+                timestamp: new Date().toISOString(),
+              },
+              {
+                recordId: 'learning-record-3',
+                source: 'builder-demo',
+                note: 'Demo',
+                timestamp: new Date().toISOString(),
+              },
+            ];
+
+      const packageId =
+        learningRecordsPackage?.id ?? 'learning-records-package-demo';
+      const packageName =
+        learningRecordsPackage?.name ?? 'Demo Learning Package';
+
+      const extracted = services.patternIntelligenceApi.extractPatterns({
+        packageId,
+        packageName,
+        snapshotId: analyticsSnapshot?.id ?? `snapshot-${packageId}`,
+        title: `${packageName} Catalog`,
+        records,
+      });
+      setPatternCatalog(extracted);
+      setPatternIntelligenceEvents(
+        services.patternIntelligenceEngine.getHistory(extracted.id),
+      );
+      setPatternIntelligenceIndexCount(
+        services.patternIntelligenceEngine.getIndex().list(extracted.id)
+          .length,
+      );
+      setPatternIntelligenceMessage(
+        `Detected ${extracted.patterns.length} pattern(s). Learning Records unchanged.`,
+      );
+    },
+    mergeIntelligencePatterns(): void {
+      if (patternCatalog === null) {
+        setPatternIntelligenceMessage('Nejdřív Extract Patterns.');
+        return;
+      }
+      const merged = services.patternIntelligenceEngine.merge(
+        patternCatalog.id,
+      );
+      setPatternCatalog(merged);
+      setPatternIntelligenceEvents(
+        services.patternIntelligenceEngine.getHistory(merged.id),
+      );
+      setPatternIntelligenceIndexCount(
+        services.patternIntelligenceEngine.getIndex().list(merged.id).length,
+      );
+      setPatternIntelligenceMessage('Merge complete.');
+    },
+    validateIntelligencePatterns(): void {
+      if (patternCatalog === null) {
+        setPatternIntelligenceMessage('Nejdřív Extract Patterns.');
+        return;
+      }
+      const validated = services.patternIntelligenceApi.validatePatterns(
+        patternCatalog.id,
+      );
+      setPatternCatalog(validated);
+      setPatternIntelligenceEvents(
+        services.patternIntelligenceEngine.getHistory(validated.id),
+      );
+      setPatternIntelligenceMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    publishIntelligencePatterns(): void {
+      if (patternCatalog === null) {
+        setPatternIntelligenceMessage('Nejdřív Extract Patterns.');
+        return;
+      }
+      const published = services.patternIntelligenceApi.publishPatterns(
+        patternCatalog.id,
+      );
+      setPatternCatalog(published);
+      setPatternIntelligenceEvents(
+        services.patternIntelligenceEngine.getHistory(published.id),
+      );
+      setPatternIntelligenceIndexCount(
+        services.patternIntelligenceEngine.getIndex().list(published.id)
+          .length,
+      );
+      setPatternIntelligenceMessage(
+        published.metadata.status === 'Published'
+          ? `Published catalog @ ${published.version}`
+          : 'Publish blocked by validation.',
+      );
+    },
+    disposeIntelligencePatterns(): void {
+      if (patternCatalog === null) {
+        return;
+      }
+      const disposed = services.patternIntelligenceEngine.dispose(
+        patternCatalog.id,
+      );
+      setPatternCatalog(disposed);
+      setPatternIntelligenceEvents(
+        services.patternIntelligenceEngine.getHistory(disposed.id),
+      );
+      setPatternIntelligenceIndexCount(
+        services.patternIntelligenceEngine.getIndex().list(disposed.id)
+          .length,
+      );
+      setPatternIntelligenceMessage(null);
     },
     buildProject(): void {
       const projectId =

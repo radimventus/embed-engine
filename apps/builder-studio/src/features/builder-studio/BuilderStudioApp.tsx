@@ -96,6 +96,10 @@ export function BuilderStudioApp() {
         patternExtractionEvents={session.patternExtractionEvents}
         patternIndexCount={session.patternIndexCount}
         patternExtractionMessage={session.patternExtractionMessage}
+        patternCatalog={session.patternCatalog}
+        patternIntelligenceEvents={session.patternIntelligenceEvents}
+        patternIntelligenceIndexCount={session.patternIntelligenceIndexCount}
+        patternIntelligenceMessage={session.patternIntelligenceMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -179,6 +183,11 @@ export function BuilderStudioApp() {
         onValidatePatterns={session.validatePatterns}
         onPublishPatterns={session.publishPatterns}
         onDisposePatterns={session.disposePatterns}
+        onExtractIntelligencePatterns={session.extractIntelligencePatterns}
+        onMergeIntelligencePatterns={session.mergeIntelligencePatterns}
+        onValidateIntelligencePatterns={session.validateIntelligencePatterns}
+        onPublishIntelligencePatterns={session.publishIntelligencePatterns}
+        onDisposeIntelligencePatterns={session.disposeIntelligencePatterns}
       />
     </AppShell>
   );
