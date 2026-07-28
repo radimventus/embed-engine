@@ -69,3 +69,21 @@ export {
   createWorkspaceService,
   type WorkspaceService,
 } from './workspace-service';
+export {
+  createObjectService,
+  type ObjectService,
+} from './object/object-service';
+export {
+  createObjectApi,
+  type ObjectApi,
+} from './object/object-api';
+export {
+  DEFAULT_OBJECT_MODULES,
+  OBJECT_MODULE_REGISTRY,
+  getObjectModule,
+  listObjectModules,
+} from './object/module-registry';
+export {
+  snapshotObjectContent,
+  withContentSnapshot,
+} from './object/object-content';

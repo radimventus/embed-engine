@@ -5,6 +5,10 @@ import type {
   AssetCategoryId,
   BuildResult,
   BuilderProjectManifest,
+  ObjectEvent,
+  ObjectModuleDefinition,
+  ObjectModuleId,
+  ObjectPackage,
   PreviewEvent,
   PreviewSnapshot,
   ProjectPipelineSnapshot,
@@ -12,6 +16,7 @@ import type {
   ReadinessReport,
   TimelineEntry,
   UpdateAssetMetadataInput,
+  UpdateObjectMetadataInput,
   ValidationEvent,
   ValidationReport,
   VersionInfo,
@@ -22,6 +27,8 @@ import {
   createAssetService,
   createBuildService,
   createLifecycleService,
+  createObjectApi,
+  createObjectService,
   createPlatformEventBus,
   createProjectRegistry,
   createPublishService,
@@ -30,12 +37,17 @@ import {
   createValidationService,
   createWorkspaceService,
   isPublishAllowedByQualityGate,
+  listObjectModules,
   toTimelineEntries,
+  type ObjectService,
 } from '../../services';
 
 export type BuilderStudioViewModel = {
   readonly workspace: WorkspaceStructure;
   readonly activeProjectModel: ActiveProjectModel | null;
+  readonly objectPackage: ObjectPackage | null;
+  readonly moduleRegistry: readonly ObjectModuleDefinition[];
+  readonly objectEvents: readonly ObjectEvent[];
   readonly pipeline: ProjectPipelineSnapshot | null;
   readonly activeSection: WorkspaceSectionId;
   readonly latestBuild: BuildResult | null;
@@ -64,6 +76,10 @@ export type BuilderStudioViewModel = {
     assetId: string,
     patch: UpdateAssetMetadataInput,
   ) => void;
+  readonly updateObjectMetadata: (patch: UpdateObjectMetadataInput) => void;
+  readonly toggleObjectModule: (moduleId: ObjectModuleId) => void;
+  readonly saveObject: () => void;
+  readonly duplicateObject: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -71,6 +87,31 @@ export type BuilderStudioViewModel = {
   readonly refreshPreview: () => void;
   readonly closePreview: () => void;
 };
+
+function ensureObjectPackage(
+  objectService: ObjectService,
+  project: ActiveProjectModel,
+): ObjectPackage {
+  const existing = objectService.loadObjectByProject(project.projectId);
+  const objectPackage =
+    existing ??
+    objectService.createObject({
+      projectId: project.projectId,
+      name: project.record.name,
+      location: project.metadata.locationLabel,
+      description: project.metadata.notes,
+      tags:
+        project.projectId === 'harmony-124'
+          ? ['modular', 'harmony']
+          : project.projectId === 'family-98'
+            ? ['family']
+            : [],
+    });
+  return objectService.syncContentFromProject(
+    objectPackage.objectId,
+    project,
+  );
+}
 
 function nextMockFileName(categoryId: AssetCategoryId, count: number): string {
   const stamp = count + 1;
@@ -169,6 +210,14 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       },
       getPreviewState: () => previewService.getPreviewState(),
     });
+    const objectService = createObjectService();
+    const objectApi = createObjectApi(objectService);
+    for (const record of registry.listProjects()) {
+      const project = assets.getActiveProject(record.projectId);
+      if (project !== null) {
+        ensureObjectPackage(objectService, project);
+      }
+    }
     return {
       registry,
       assets,
@@ -180,6 +229,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       publishService,
       previewService,
       validationService,
+      objectService,
+      objectApi,
     };
   }, []);
 
@@ -193,7 +244,27 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     services.workspaceService.getPipelineSnapshot(),
   );
   const [activeSection, setActiveSection] =
-    useState<WorkspaceSectionId>('media');
+    useState<WorkspaceSectionId>('overview');
+  const [objectPackage, setObjectPackage] = useState<ObjectPackage | null>(
+    () => {
+      const model = services.workspaceService.getActiveProjectModel();
+      return model === null
+        ? null
+        : ensureObjectPackage(services.objectService, model);
+    },
+  );
+  const [objectEvents, setObjectEvents] = useState<readonly ObjectEvent[]>(
+    () => {
+      const model = services.workspaceService.getActiveProjectModel();
+      if (model === null) {
+        return [];
+      }
+      const pkg = services.objectService.loadObjectByProject(model.projectId);
+      return pkg === null
+        ? []
+        : services.objectService.getHistory(pkg.objectId);
+    },
+  );
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -268,7 +339,22 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     setValidationEvents(services.validationService.getEvents(projectId));
   };
 
-
+  const syncObject = (projectId: string | null): void => {
+    if (projectId === null) {
+      setObjectPackage(null);
+      setObjectEvents([]);
+      return;
+    }
+    const model = services.assets.getActiveProject(projectId);
+    if (model === null) {
+      setObjectPackage(null);
+      setObjectEvents([]);
+      return;
+    }
+    const pkg = ensureObjectPackage(services.objectService, model);
+    setObjectPackage(pkg);
+    setObjectEvents(services.objectService.getHistory(pkg.objectId));
+  };
 
   const syncLifecycleView = (
     projectId: string,
@@ -315,6 +401,7 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       }
       syncLifecycleView(activeId, build, publish);
       syncValidation(activeId);
+      syncObject(activeId);
     } else {
       setLatestBuild(null);
       setBuildHistory([]);
@@ -325,6 +412,7 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setReadiness(null);
       setTimeline([]);
       syncValidation(null);
+      syncObject(null);
     }
     syncPreview();
   };
@@ -332,6 +420,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   return {
     workspace,
     activeProjectModel,
+    objectPackage,
+    moduleRegistry: listObjectModules(),
+    objectEvents,
     pipeline,
     activeSection,
     latestBuild,
@@ -371,7 +462,12 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         name: `Nový projekt ${count}`,
       });
       services.workspaceService.setActiveProject(created.projectId);
+      const model = services.workspaceService.getActiveProjectModel();
+      if (model !== null) {
+        ensureObjectPackage(services.objectService, model);
+      }
       setPipeline(services.workspaceService.getPipelineSnapshot());
+      setActiveSection('overview');
       syncFromServices(created.projectId);
     },
     selectSection(sectionId: WorkspaceSectionId): void {
@@ -406,6 +502,41 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         patch,
       );
       syncFromServices();
+    },
+    updateObjectMetadata(patch: UpdateObjectMetadataInput): void {
+      if (objectPackage === null) {
+        return;
+      }
+      services.objectService.updateObject(objectPackage.objectId, patch);
+      syncObject(objectPackage.projectId);
+    },
+    toggleObjectModule(moduleId: ObjectModuleId): void {
+      if (objectPackage === null) {
+        return;
+      }
+      if (objectPackage.modules.includes(moduleId)) {
+        services.objectService.unassignModule(
+          objectPackage.objectId,
+          moduleId,
+        );
+      } else {
+        services.objectService.assignModule(objectPackage.objectId, moduleId);
+      }
+      syncObject(objectPackage.projectId);
+    },
+    saveObject(): void {
+      if (objectPackage === null) {
+        return;
+      }
+      services.objectApi.saveObject(objectPackage.objectId);
+      syncObject(objectPackage.projectId);
+    },
+    duplicateObject(): void {
+      if (objectPackage === null) {
+        return;
+      }
+      services.objectApi.duplicateObject(objectPackage.objectId);
+      syncObject(objectPackage.projectId);
     },
     buildProject(): void {
       const projectId =

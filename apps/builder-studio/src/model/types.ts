@@ -17,7 +17,11 @@ export type BuildStatus = 'Idle' | 'Ready' | 'Failed';
 
 export type PublishReadyStatus = 'Ready' | 'Blocked' | 'Idle';
 
-export type WorkspaceSectionId = 'media' | 'layout' | 'knowledge';
+export type WorkspaceSectionId =
+  | 'overview'
+  | 'media'
+  | 'layout'
+  | 'knowledge';
 
 /** Presentation + collection readiness for asset cards. */
 export type AssetUiState = 'Empty' | 'Loading' | 'Ready' | 'Error';

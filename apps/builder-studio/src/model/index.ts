@@ -84,6 +84,20 @@ export type {
   ValidationSeverity,
 } from './validation-types';
 
+export type {
+  CreateObjectInput,
+  ObjectContentSnapshot,
+  ObjectEvent,
+  ObjectEventType,
+  ObjectLifecycleStatus,
+  ObjectMetadata,
+  ObjectModuleDefinition,
+  ObjectModuleId,
+  ObjectPackage,
+  ObjectTimestamps,
+  ObjectType,
+  UpdateObjectMetadataInput,
+} from './object-types';
 
 
 export {

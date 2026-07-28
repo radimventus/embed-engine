@@ -43,6 +43,10 @@ export function BuilderStudioApp() {
     >
       <WorkspaceCanvas
         projectModel={session.activeProjectModel}
+        objectPackage={session.objectPackage}
+        moduleRegistry={session.moduleRegistry}
+        objectEvents={session.objectEvents}
+        validationReport={session.validationReport}
         manifest={session.projectManifest}
         versions={session.versions}
         readiness={session.readiness}
@@ -52,6 +56,10 @@ export function BuilderStudioApp() {
         onAddAsset={session.addAsset}
         onRemoveAsset={session.removeAsset}
         onUpdateMetadata={session.updateAssetMetadata}
+        onUpdateObjectMetadata={session.updateObjectMetadata}
+        onToggleModule={session.toggleObjectModule}
+        onSaveObject={session.saveObject}
+        onDuplicateObject={session.duplicateObject}
       />
     </AppShell>
   );
