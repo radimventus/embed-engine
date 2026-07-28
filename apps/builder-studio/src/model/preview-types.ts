@@ -17,7 +17,7 @@ export type PreviewEventType =
   | 'PreviewReloaded'
   | 'PreviewFailed';
 
-export type RuntimeSession = {
+export type PreviewRuntimeSession = {
   readonly sessionId: string;
   readonly packageId: string;
   readonly previewState: PreviewState;
@@ -64,7 +64,7 @@ export type RuntimeAdapter = {
 
 export type PreviewSnapshot = {
   readonly state: PreviewState;
-  readonly session: RuntimeSession | null;
+  readonly session: PreviewRuntimeSession | null;
   readonly runtimeVersion: string;
   readonly loadedPackageId: string | null;
   readonly lastError: string | null;

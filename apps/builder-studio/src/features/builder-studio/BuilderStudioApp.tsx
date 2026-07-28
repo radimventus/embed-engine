@@ -72,6 +72,9 @@ export function BuilderStudioApp() {
         decisionStory={session.decisionStory}
         storyEvents={session.storyEvents}
         storyMessage={session.storyMessage}
+        runtimeSession={session.runtimeSession}
+        sessionEvents={session.sessionEvents}
+        sessionMessage={session.sessionMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -127,6 +130,12 @@ export function BuilderStudioApp() {
         onComposeStory={session.composeStory}
         onValidateStory={session.validateStory}
         onDisposeStory={session.disposeStory}
+        onCreateRuntimeSession={session.createRuntimeSession}
+        onStartRuntimeSession={session.startRuntimeSession}
+        onNextSessionMove={session.nextSessionMove}
+        onPreviousSessionMove={session.previousSessionMove}
+        onCompleteRuntimeSession={session.completeRuntimeSession}
+        onDisposeRuntimeSession={session.disposeRuntimeSession}
       />
     </AppShell>
   );

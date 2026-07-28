@@ -19,12 +19,15 @@ import type {
   DecisionModel,
   DecisionRuntimeEvent,
   ComposeStoryInput,
+  CreateSessionInput,
   DecisionStory,
   EvaluationEvent,
   EvaluationResult,
   KnowledgeEvent,
   RuleEvaluationInput,
   RuntimeModel,
+  RuntimeSession,
+  SessionEvent,
   StoryEvent,
   KnowledgeLayerBundle,
   KnowledgeLayerDefinition,
@@ -71,6 +74,8 @@ import {
   createRuleEvaluationEngine,
   createDecisionStoryApi,
   createDecisionStoryComposer,
+  createRuntimeSessionApi,
+  createRuntimeSessionEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -138,6 +143,9 @@ export type BuilderStudioViewModel = {
   readonly decisionStory: DecisionStory | null;
   readonly storyEvents: readonly StoryEvent[];
   readonly storyMessage: string | null;
+  readonly runtimeSession: RuntimeSession | null;
+  readonly sessionEvents: readonly SessionEvent[];
+  readonly sessionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -214,6 +222,12 @@ export type BuilderStudioViewModel = {
   readonly composeStory: () => void;
   readonly validateStory: () => void;
   readonly disposeStory: () => void;
+  readonly createRuntimeSession: () => void;
+  readonly startRuntimeSession: () => void;
+  readonly nextSessionMove: () => void;
+  readonly previousSessionMove: () => void;
+  readonly completeRuntimeSession: () => void;
+  readonly disposeRuntimeSession: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -338,6 +352,19 @@ function toRuleEvaluationInput(
   };
 }
 
+
+
+function toCreateSessionInput(
+  runtimeId: string,
+  story: DecisionStory,
+): CreateSessionInput {
+  return {
+    runtimeId,
+    storyId: story.id,
+    title: `${story.metadata.title} Session`,
+    moveIds: story.moves.map((move) => move.id),
+  };
+}
 
 function toComposeStoryInput(
   evaluation: EvaluationResult,
@@ -676,6 +703,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const ruleEvaluationApi = createRuleEvaluationApi(ruleEvaluationEngine);
     const decisionStoryComposer = createDecisionStoryComposer();
     const decisionStoryApi = createDecisionStoryApi(decisionStoryComposer);
+    const runtimeSessionEngine = createRuntimeSessionEngine();
+    const runtimeSessionApi = createRuntimeSessionApi(runtimeSessionEngine);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -719,6 +748,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       ruleEvaluationApi,
       decisionStoryComposer,
       decisionStoryApi,
+      runtimeSessionEngine,
+      runtimeSessionApi,
     };
   }, []);
 
@@ -876,6 +907,13 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   );
   const [storyEvents, setStoryEvents] = useState<readonly StoryEvent[]>([]);
   const [storyMessage, setStoryMessage] = useState<string | null>(null);
+  const [runtimeSession, setRuntimeSession] = useState<RuntimeSession | null>(
+    null,
+  );
+  const [sessionEvents, setSessionEvents] = useState<readonly SessionEvent[]>(
+    [],
+  );
+  const [sessionMessage, setSessionMessage] = useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -1189,6 +1227,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     decisionStory,
     storyEvents,
     storyMessage,
+    runtimeSession,
+    sessionEvents,
+    sessionMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -1912,6 +1953,116 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setDecisionStory(null);
       setStoryEvents([]);
       setStoryMessage(null);
+    },
+
+    createRuntimeSession(): void {
+      if (decisionStory === null) {
+        setSessionMessage(
+          'Nejdřív složte Decision Story (Story → Compose Story).',
+        );
+        return;
+      }
+      const runtimeId =
+        runtimeModel?.id ?? `runtime-${decisionStory.decisionModelId}`;
+      try {
+        const created = services.runtimeSessionApi.createSession(
+          toCreateSessionInput(runtimeId, decisionStory),
+        );
+        setRuntimeSession(created);
+        setSessionEvents(
+          services.runtimeSessionEngine.getHistory(created.id),
+        );
+        setSessionMessage(null);
+      } catch (error) {
+        setSessionMessage(
+          error instanceof Error ? error.message : 'Create Session failed.',
+        );
+      }
+    },
+    startRuntimeSession(): void {
+      if (runtimeSession === null) {
+        setSessionMessage('Nejdřív vytvořte Runtime Session (Create Session).');
+        return;
+      }
+      try {
+        const started = services.runtimeSessionApi.startSession(
+          runtimeSession.id,
+        );
+        setRuntimeSession(started);
+        setSessionEvents(
+          services.runtimeSessionEngine.getHistory(started.id),
+        );
+        setSessionMessage(null);
+      } catch (error) {
+        setSessionMessage(
+          error instanceof Error ? error.message : 'Start Session failed.',
+        );
+      }
+    },
+    nextSessionMove(): void {
+      if (runtimeSession === null) {
+        setSessionMessage('Nejdřív spusťte Session (Start).');
+        return;
+      }
+      try {
+        const next = services.runtimeSessionApi.nextMove(runtimeSession.id);
+        setRuntimeSession(next);
+        setSessionEvents(services.runtimeSessionEngine.getHistory(next.id));
+        setSessionMessage(null);
+      } catch (error) {
+        setSessionMessage(
+          error instanceof Error ? error.message : 'Next Move failed.',
+        );
+      }
+    },
+    previousSessionMove(): void {
+      if (runtimeSession === null) {
+        setSessionMessage('Nejdřív spusťte Session (Start).');
+        return;
+      }
+      try {
+        const previous = services.runtimeSessionApi.previousMove(
+          runtimeSession.id,
+        );
+        setRuntimeSession(previous);
+        setSessionEvents(
+          services.runtimeSessionEngine.getHistory(previous.id),
+        );
+        setSessionMessage(null);
+      } catch (error) {
+        setSessionMessage(
+          error instanceof Error ? error.message : 'Previous Move failed.',
+        );
+      }
+    },
+    completeRuntimeSession(): void {
+      if (runtimeSession === null) {
+        setSessionMessage('Nejdřív spusťte Session (Start).');
+        return;
+      }
+      try {
+        const completed = services.runtimeSessionApi.completeSession(
+          runtimeSession.id,
+        );
+        setRuntimeSession(completed);
+        setSessionEvents(
+          services.runtimeSessionEngine.getHistory(completed.id),
+        );
+        setSessionMessage(null);
+      } catch (error) {
+        setSessionMessage(
+          error instanceof Error ? error.message : 'Complete Session failed.',
+        );
+      }
+    },
+    disposeRuntimeSession(): void {
+      if (runtimeSession === null) {
+        return;
+      }
+      const disposed = services.runtimeSessionEngine.dispose(runtimeSession.id);
+      setRuntimeSession(disposed);
+      setSessionEvents(services.runtimeSessionEngine.getHistory(disposed.id));
+      setSessionMessage(null);
     },
     buildProject(): void {
       const projectId =

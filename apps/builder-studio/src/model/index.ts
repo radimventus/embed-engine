@@ -52,9 +52,9 @@ export type {
   PreviewEventType,
   PreviewSnapshot,
   PreviewState,
+  PreviewRuntimeSession,
   RuntimeAdapter,
   RuntimeAdapterStatus,
-  RuntimeSession,
 } from './preview-types';
 
 export type {
@@ -290,3 +290,17 @@ export {
 } from './asset-catalog';
 
 export { DEPLOYMENT_TARGET_KINDS } from './deployment-targets';
+
+export type {
+  CreateSessionInput,
+  RuntimeSession,
+  SessionEvent,
+  SessionEventType,
+  SessionHistoryAction,
+  SessionHistoryEntry,
+  SessionMetadata,
+  SessionState,
+  SessionTimestamps,
+  SessionValidation,
+  SessionValidationIssue,
+} from './runtime-session-types';

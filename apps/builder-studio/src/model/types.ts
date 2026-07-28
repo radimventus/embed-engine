@@ -29,6 +29,7 @@ export type WorkspaceSectionId =
   | 'decision-runtime'
   | 'rule-evaluation'
   | 'decision-story'
+  | 'runtime-session'
   | 'media'
   | 'layout'
   | 'knowledge';

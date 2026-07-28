@@ -220,3 +220,20 @@ export {
   createStoryValidator,
   type StoryValidator,
 } from './decision-story/story-validator';
+
+export {
+  createRuntimeSessionEngine,
+  type RuntimeSessionEngine,
+} from './runtime-session/runtime-session-engine';
+export {
+  createRuntimeSessionApi,
+  type RuntimeSessionApi,
+} from './runtime-session/runtime-session-api';
+export {
+  createSessionNavigator,
+  type SessionNavigator,
+} from './runtime-session/session-navigator';
+export {
+  createSessionValidator,
+  type SessionValidator,
+} from './runtime-session/session-validator';

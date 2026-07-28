@@ -3,18 +3,18 @@ import type {
   PreviewSnapshot,
   PublishedPackage,
   RuntimeAdapter,
-  RuntimeSession,
+  PreviewRuntimeSession,
 } from '../../model';
 import { createStubRuntimeAdapter } from './stub-runtime-adapter';
 
 const MAX_HISTORY = 20;
 
 export type RuntimePreviewService = {
-  openPreview(packageId: string): RuntimeSession;
-  closePreview(): RuntimeSession | null;
-  refreshPreview(): RuntimeSession | null;
+  openPreview(packageId: string): PreviewRuntimeSession;
+  closePreview(): PreviewRuntimeSession | null;
+  refreshPreview(): PreviewRuntimeSession | null;
   getPreviewState(): PreviewSnapshot;
-  getActiveSession(): RuntimeSession | null;
+  getActiveSession(): PreviewRuntimeSession | null;
   getPreviewHistory(): readonly PreviewEvent[];
 };
 
@@ -42,13 +42,13 @@ export function createRuntimePreviewService(options: {
       return `${prefix}-${stamp}-${String(sequence).padStart(4, '0')}`;
     });
 
-  let session: RuntimeSession | null = null;
+  let session: PreviewRuntimeSession | null = null;
   let lastError: string | null = null;
   const history: PreviewEvent[] = [];
 
   const pushEvent = (
     type: PreviewEvent['type'],
-    active: RuntimeSession,
+    active: PreviewRuntimeSession,
     message: string | null,
   ): void => {
     history.unshift({
@@ -73,7 +73,7 @@ export function createRuntimePreviewService(options: {
   });
 
   return {
-    openPreview(packageId: string): RuntimeSession {
+    openPreview(packageId: string): PreviewRuntimeSession {
       const published = options.getPublishedPackage(packageId);
       const startedAt = now().toISOString();
       const sessionId = createId('preview-session');
@@ -137,12 +137,12 @@ export function createRuntimePreviewService(options: {
       return session;
     },
 
-    closePreview(): RuntimeSession | null {
+    closePreview(): PreviewRuntimeSession | null {
       if (session === null) {
         adapter.unload();
         return null;
       }
-      const closed: RuntimeSession = {
+      const closed: PreviewRuntimeSession = {
         ...session,
         previewState: 'Idle',
         errorMessage: null,
@@ -154,7 +154,7 @@ export function createRuntimePreviewService(options: {
       return closed;
     },
 
-    refreshPreview(): RuntimeSession | null {
+    refreshPreview(): PreviewRuntimeSession | null {
       if (session === null) {
         return null;
       }
@@ -212,7 +212,7 @@ export function createRuntimePreviewService(options: {
       return snapshot();
     },
 
-    getActiveSession(): RuntimeSession | null {
+    getActiveSession(): PreviewRuntimeSession | null {
       return session;
     },
 

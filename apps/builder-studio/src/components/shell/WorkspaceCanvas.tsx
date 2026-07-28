@@ -14,6 +14,8 @@ import type {
   DecisionRuntimeEvent,
   DecisionStory,
   EvaluationEvent,
+  RuntimeSession,
+  SessionEvent,
   EvaluationResult,
   KnowledgeEvent,
   RuntimeModel,
@@ -45,6 +47,7 @@ import { AIContextPreview } from './AIContextPreview';
 import { DecisionEngineOverview } from './DecisionEngineOverview';
 import { DecisionRuntimeOverview } from './DecisionRuntimeOverview';
 import { DecisionStoryOverview } from './DecisionStoryOverview';
+import { RuntimeSessionOverview } from './RuntimeSessionOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -95,6 +98,9 @@ type WorkspaceCanvasProps = {
   readonly decisionStory: DecisionStory | null;
   readonly storyEvents: readonly StoryEvent[];
   readonly storyMessage: string | null;
+  readonly runtimeSession: RuntimeSession | null;
+  readonly sessionEvents: readonly SessionEvent[];
+  readonly sessionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -160,6 +166,12 @@ type WorkspaceCanvasProps = {
   readonly onComposeStory: () => void;
   readonly onValidateStory: () => void;
   readonly onDisposeStory: () => void;
+  readonly onCreateRuntimeSession: () => void;
+  readonly onStartRuntimeSession: () => void;
+  readonly onNextSessionMove: () => void;
+  readonly onPreviousSessionMove: () => void;
+  readonly onCompleteRuntimeSession: () => void;
+  readonly onDisposeRuntimeSession: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -193,6 +205,9 @@ export function WorkspaceCanvas({
   decisionStory,
   storyEvents,
   storyMessage,
+  runtimeSession,
+  sessionEvents,
+  sessionMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -248,6 +263,12 @@ export function WorkspaceCanvas({
   onComposeStory,
   onValidateStory,
   onDisposeStory,
+  onCreateRuntimeSession,
+  onStartRuntimeSession,
+  onNextSessionMove,
+  onPreviousSessionMove,
+  onCompleteRuntimeSession,
+  onDisposeRuntimeSession,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -442,6 +463,20 @@ export function WorkspaceCanvas({
             onValidate={onValidateStory}
             onDispose={onDisposeStory}
             message={storyMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-session' ? (
+          <RuntimeSessionOverview
+            runtimeSession={runtimeSession}
+            events={sessionEvents}
+            onCreate={onCreateRuntimeSession}
+            onStart={onStartRuntimeSession}
+            onNext={onNextSessionMove}
+            onPrevious={onPreviousSessionMove}
+            onComplete={onCompleteRuntimeSession}
+            onDispose={onDisposeRuntimeSession}
+            message={sessionMessage}
           />
         ) : null}
         {activeSection === 'media' ? (
