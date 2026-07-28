@@ -173,3 +173,16 @@ export {
   LEARNING_REGISTRY,
   listLearningOrigins,
 } from './learning/learning-registry';
+export {
+  createDecisionEngine,
+  type DecisionEngine,
+} from './decision-engine/decision-engine';
+export {
+  createDecisionEngineApi,
+  type DecisionEngineApi,
+} from './decision-engine/decision-engine-api';
+export {
+  createDecisionInputResolver,
+  type DecisionInputResolver,
+} from './decision-engine/decision-input-resolver';
+export { buildDecisionGraph } from './decision-engine/decision-graph-builder';

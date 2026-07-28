@@ -25,6 +25,7 @@ export type WorkspaceSectionId =
   | 'ai-context'
   | 'knowledge-layers'
   | 'learning'
+  | 'decision-engine'
   | 'media'
   | 'layout'
   | 'knowledge';

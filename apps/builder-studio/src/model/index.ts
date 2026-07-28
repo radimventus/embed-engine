@@ -208,6 +208,28 @@ export type {
   UpdateLearningInput,
 } from './learning-types';
 
+export type {
+  BuildDecisionModelInput,
+  DecisionEdge,
+  DecisionEngineEvent,
+  DecisionEngineEventType,
+  DecisionEngineTimestamps,
+  DecisionGraph,
+  DecisionModel,
+  DecisionModelInputs,
+  DecisionModelMetadata,
+  DecisionModelValidation,
+  DecisionModelValidationIssue,
+  DecisionNode,
+  DecisionNodeType,
+  ExperienceNode,
+  KnowledgeNode,
+  PriorityNode,
+  ResolvedDecisionInputs,
+  RuleNode,
+  SignalNode,
+} from './decision-engine-types';
+
 export {
   ASSET_CATEGORY_ORDER,
   createEmptyAssetCollections,

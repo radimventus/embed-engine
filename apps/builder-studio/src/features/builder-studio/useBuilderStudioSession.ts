@@ -11,8 +11,11 @@ import type {
   ContextEvent,
   Experience,
   ExperienceStructureReport,
+  BuildDecisionModelInput,
+  DecisionEngineEvent,
   DecisionEvent,
   DecisionKnowledgePackage,
+  DecisionModel,
   KnowledgeEvent,
   KnowledgeLayerBundle,
   KnowledgeLayerDefinition,
@@ -50,6 +53,8 @@ import {
   createExperienceComposerService,
   createAIContextApi,
   createAIContextBuilderService,
+  createDecisionEngine,
+  createDecisionEngineApi,
   createDecisionKnowledgeApi,
   createDecisionKnowledgeService,
   createKnowledgeApi,
@@ -108,6 +113,8 @@ export type BuilderStudioViewModel = {
   readonly learningPackage: LearningPackage | null;
   readonly learningEvents: readonly LearningEvent[];
   readonly learningOrigins: readonly LearningOriginDefinition[];
+  readonly decisionModel: DecisionModel | null;
+  readonly decisionEngineEvents: readonly DecisionEngineEvent[];
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -172,6 +179,9 @@ export type BuilderStudioViewModel = {
   readonly addLearningObservation: () => void;
   readonly addLearningPattern: () => void;
   readonly addLearningHeuristic: () => void;
+  readonly buildDecisionModel: () => void;
+  readonly validateDecisionModel: () => void;
+  readonly disposeDecisionModel: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -247,6 +257,49 @@ function ensureKnowledge(
 }
 
 
+
+
+function toBuildDecisionModelInput(
+  objectPackage: ObjectPackage,
+  experience: Experience | null,
+  knowledge: KnowledgePackage | null,
+  decision: DecisionKnowledgePackage | null,
+  learning: LearningPackage | null,
+): BuildDecisionModelInput {
+  return {
+    objectId: objectPackage.objectId,
+    title: `${objectPackage.metadata.name} Decision Model`,
+    knowledgeId: knowledge?.knowledgeId ?? null,
+    decisionKnowledgeId: decision?.id ?? null,
+    experienceId: experience?.experienceId ?? null,
+    learningId: learning?.id ?? null,
+    knowledgeFacts: knowledge?.facts.map((fact) => ({
+      id: fact.id,
+      title: fact.title,
+    })),
+    knowledgeFaqs: knowledge?.faqs.map((faq) => ({
+      id: faq.id,
+      question: faq.question,
+    })),
+    priorities: decision?.priorities,
+    rules: decision?.decisionRules.map((rule) => ({
+      id: rule.id,
+      condition: rule.condition,
+      outcome: rule.outcome,
+    })),
+    signals: decision?.decisionSignals.map((signal) => ({
+      id: signal.id,
+      label: signal.label,
+      source: signal.source,
+      type: signal.type,
+    })),
+    scenes: experience?.scenes.map((scene) => ({
+      sceneId: scene.sceneId,
+      title: scene.title,
+      modules: scene.modules,
+    })),
+  };
+}
 
 function toBuildAIContextInput(
   objectPackage: ObjectPackage,
@@ -484,6 +537,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const learningService = createLearningService();
     const learningApi = createLearningApi(learningService);
     learningService.create();
+    const decisionEngine = createDecisionEngine();
+    const decisionEngineApi = createDecisionEngineApi(decisionEngine);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -519,6 +574,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       knowledgeLayerApi,
       learningService,
       learningApi,
+      decisionEngine,
+      decisionEngineApi,
     };
   }, []);
 
@@ -654,6 +711,12 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     }
     return services.learningService.getHistory(learningPackage.id);
   });
+  const [decisionModel, setDecisionModel] = useState<DecisionModel | null>(
+    null,
+  );
+  const [decisionEngineEvents, setDecisionEngineEvents] = useState<
+    readonly DecisionEngineEvent[]
+  >([]);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -744,6 +807,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setContextEvents([]);
       setKnowledgeLayerBundle(null);
       setKnowledgeLayerEvents([]);
+      setDecisionModel(null);
+      setDecisionEngineEvents([]);
       return;
     }
     const model = services.assets.getActiveProject(projectId);
@@ -762,6 +827,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setContextEvents([]);
       setKnowledgeLayerBundle(null);
       setKnowledgeLayerEvents([]);
+      setDecisionModel(null);
+      setDecisionEngineEvents([]);
       return;
     }
     const pkg = ensureObjectPackage(services.objectService, model);
@@ -826,6 +893,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setKnowledgeLayerBundle(existingBundle);
     }
     setKnowledgeLayerEvents(services.knowledgeLayerService.getHistory());
+    setDecisionModel(null);
+    setDecisionEngineEvents([]);
     setObjectPackage(services.objectService.loadObject(pkg.objectId));
   };
 
@@ -936,6 +1005,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     learningPackage,
     learningEvents,
     learningOrigins: listLearningOrigins(),
+    decisionModel,
+    decisionEngineEvents,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -1489,6 +1560,47 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       );
       setLearningPackage(next);
       setLearningEvents(services.learningService.getHistory(next.id));
+    },
+
+    buildDecisionModel(): void {
+      if (objectPackage === null) {
+        return;
+      }
+      const built = services.decisionEngineApi.buildDecisionModel(
+        toBuildDecisionModelInput(
+          objectPackage,
+          experience,
+          knowledgePackage,
+          decisionKnowledge,
+          learningPackage,
+        ),
+      );
+      setDecisionModel(built);
+      setDecisionEngineEvents(
+        services.decisionEngine.getHistory(built.id),
+      );
+    },
+    validateDecisionModel(): void {
+      if (decisionModel === null) {
+        return;
+      }
+      const validated = services.decisionEngine.validateDecisionModel(
+        decisionModel.id,
+      );
+      setDecisionModel(validated);
+      setDecisionEngineEvents(
+        services.decisionEngine.getHistory(validated.id),
+      );
+    },
+    disposeDecisionModel(): void {
+      if (decisionModel === null) {
+        return;
+      }
+      const disposed = services.decisionEngine.dispose(decisionModel.id);
+      setDecisionModel(disposed);
+      setDecisionEngineEvents(
+        services.decisionEngine.getHistory(disposed.id),
+      );
     },
     buildProject(): void {
       const projectId =

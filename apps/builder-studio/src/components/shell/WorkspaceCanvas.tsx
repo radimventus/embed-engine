@@ -7,8 +7,10 @@ import type {
   ContextEvent,
   Experience,
   ExperienceStructureReport,
+  DecisionEngineEvent,
   DecisionEvent,
   DecisionKnowledgePackage,
+  DecisionModel,
   KnowledgeEvent,
   KnowledgeLayerBundle,
   KnowledgeLayerDefinition,
@@ -34,6 +36,7 @@ import type {
 } from '../../model';
 import { ExperienceComposer } from './ExperienceComposer';
 import { AIContextPreview } from './AIContextPreview';
+import { DecisionEngineOverview } from './DecisionEngineOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
 import { LearningOverview } from './LearningOverview';
@@ -73,6 +76,8 @@ type WorkspaceCanvasProps = {
   readonly learningPackage: LearningPackage | null;
   readonly learningEvents: readonly LearningEvent[];
   readonly learningOrigins: readonly LearningOriginDefinition[];
+  readonly decisionModel: DecisionModel | null;
+  readonly decisionEngineEvents: readonly DecisionEngineEvent[];
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -126,6 +131,9 @@ type WorkspaceCanvasProps = {
   readonly onAddLearningObservation: () => void;
   readonly onAddLearningPattern: () => void;
   readonly onAddLearningHeuristic: () => void;
+  readonly onBuildDecisionModel: () => void;
+  readonly onValidateDecisionModel: () => void;
+  readonly onDisposeDecisionModel: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -149,6 +157,8 @@ export function WorkspaceCanvas({
   learningPackage,
   learningEvents,
   learningOrigins,
+  decisionModel,
+  decisionEngineEvents,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -192,6 +202,9 @@ export function WorkspaceCanvas({
   onAddLearningObservation,
   onAddLearningPattern,
   onAddLearningHeuristic,
+  onBuildDecisionModel,
+  onValidateDecisionModel,
+  onDisposeDecisionModel,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -345,6 +358,16 @@ export function WorkspaceCanvas({
           <p className="text-builder-muted">
             Learning Package není k dispozici.
           </p>
+        ) : null}
+
+        {activeSection === 'decision-engine' ? (
+          <DecisionEngineOverview
+            decisionModel={decisionModel}
+            events={decisionEngineEvents}
+            onBuild={onBuildDecisionModel}
+            onValidate={onValidateDecisionModel}
+            onDispose={onDisposeDecisionModel}
+          />
         ) : null}
         {activeSection === 'media' ? (
           <MediaSection

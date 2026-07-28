@@ -11,6 +11,7 @@ const SECTIONS: readonly {
   { id: 'ai-context', label: 'AI Context' },
   { id: 'knowledge-layers', label: 'Layers' },
   { id: 'learning', label: 'Learning' },
+  { id: 'decision-engine', label: 'Engine' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

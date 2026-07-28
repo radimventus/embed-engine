@@ -62,6 +62,8 @@ export function BuilderStudioApp() {
         learningPackage={session.learningPackage}
         learningEvents={session.learningEvents}
         learningOrigins={session.learningOrigins}
+        decisionModel={session.decisionModel}
+        decisionEngineEvents={session.decisionEngineEvents}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -105,6 +107,9 @@ export function BuilderStudioApp() {
         onAddLearningObservation={session.addLearningObservation}
         onAddLearningPattern={session.addLearningPattern}
         onAddLearningHeuristic={session.addLearningHeuristic}
+        onBuildDecisionModel={session.buildDecisionModel}
+        onValidateDecisionModel={session.validateDecisionModel}
+        onDisposeDecisionModel={session.disposeDecisionModel}
       />
     </AppShell>
   );
