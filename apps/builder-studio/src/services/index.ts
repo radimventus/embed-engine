@@ -142,3 +142,21 @@ export {
   ObjectContextSource,
   type ContextSource,
 } from './ai-context/context-sources';
+export {
+  createKnowledgeLayerService,
+  type EnsureLayersInput,
+  type KnowledgeLayerService,
+} from './knowledge-layers/knowledge-layer-service';
+export {
+  createKnowledgeLayerApi,
+  type KnowledgeLayerApi,
+} from './knowledge-layers/knowledge-layer-api';
+export {
+  createKnowledgeContextResolver,
+  type KnowledgeContextResolver,
+} from './knowledge-layers/knowledge-context-resolver';
+export {
+  KNOWLEDGE_LAYER_REGISTRY,
+  getKnowledgeLayer,
+  listKnowledgeLayers,
+} from './knowledge-layers/knowledge-layer-registry';

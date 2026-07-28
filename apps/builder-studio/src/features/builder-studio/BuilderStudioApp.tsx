@@ -54,6 +54,11 @@ export function BuilderStudioApp() {
         decisionEvents={session.decisionEvents}
         aiContext={session.aiContext}
         contextEvents={session.contextEvents}
+        knowledgeLayerRegistry={session.knowledgeLayerRegistry}
+        knowledgeLayerBundle={session.knowledgeLayerBundle}
+        knowledgeLayerEvents={session.knowledgeLayerEvents}
+        knowledgeReferences={session.knowledgeReferences}
+        resolvedLayers={session.resolvedLayers}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -90,6 +95,9 @@ export function BuilderStudioApp() {
         onBuildContext={session.buildAIContext}
         onRefreshContext={session.refreshAIContext}
         onClearContext={session.clearAIContext}
+        onEnsureKnowledgeLayers={session.ensureKnowledgeLayers}
+        onAddDemoLayerReferences={session.addDemoLayerReferences}
+        onRemoveLayerReference={session.removeLayerReference}
       />
     </AppShell>
   );

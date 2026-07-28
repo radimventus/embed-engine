@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/services/project-registry-service.test.ts src/services/workspace-service.test.ts src/services/asset-service.test.ts src/services/build/build-service.test.ts src/services/publish/publish-service.test.ts src/services/preview/runtime-preview-service.test.ts src/services/lifecycle/lifecycle-service.test.ts src/services/validation/validation-service.test.ts src/services/object/object-service.test.ts src/services/experience/experience-composer-service.test.ts src/services/knowledge/knowledge-service.test.ts src/services/decision/decision-knowledge-service.test.ts src/services/ai-context/ai-context-builder-service.test.ts"
+    "test": "tsx --test src/services/project-registry-service.test.ts src/services/workspace-service.test.ts src/services/asset-service.test.ts src/services/build/build-service.test.ts src/services/publish/publish-service.test.ts src/services/preview/runtime-preview-service.test.ts src/services/lifecycle/lifecycle-service.test.ts src/services/validation/validation-service.test.ts src/services/object/object-service.test.ts src/services/experience/experience-composer-service.test.ts src/services/knowledge/knowledge-service.test.ts src/services/decision/decision-knowledge-service.test.ts src/services/ai-context/ai-context-builder-service.test.ts src/services/knowledge-layers/knowledge-layer-service.test.ts"
   },
   "dependencies": {
     "@embed-engine/design-tokens": "workspace:*",

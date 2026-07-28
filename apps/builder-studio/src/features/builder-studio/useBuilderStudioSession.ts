@@ -14,7 +14,12 @@ import type {
   DecisionEvent,
   DecisionKnowledgePackage,
   KnowledgeEvent,
+  KnowledgeLayerBundle,
+  KnowledgeLayerDefinition,
+  KnowledgeLayerEvent,
   KnowledgePackage,
+  KnowledgeReference,
+  ResolvedLayerReferences,
   ObjectEvent,
   PriorityDefinition,
   PriorityId,
@@ -45,7 +50,11 @@ import {
   createDecisionKnowledgeApi,
   createDecisionKnowledgeService,
   createKnowledgeApi,
+  createKnowledgeContextResolver,
+  createKnowledgeLayerApi,
+  createKnowledgeLayerService,
   createKnowledgeService,
+  listKnowledgeLayers,
   createLifecycleService,
   createObjectApi,
   createObjectService,
@@ -80,6 +89,16 @@ export type BuilderStudioViewModel = {
   readonly decisionEvents: readonly DecisionEvent[];
   readonly aiContext: AIContextPackage | null;
   readonly contextEvents: readonly ContextEvent[];
+  readonly knowledgeLayerRegistry: readonly KnowledgeLayerDefinition[];
+  readonly knowledgeLayerBundle: KnowledgeLayerBundle | null;
+  readonly knowledgeLayerEvents: readonly KnowledgeLayerEvent[];
+  readonly knowledgeReferences: readonly KnowledgeReference[];
+  readonly resolvedLayers: {
+    readonly platform: ResolvedLayerReferences;
+    readonly company: ResolvedLayerReferences;
+    readonly object: ResolvedLayerReferences;
+    readonly session: ResolvedLayerReferences;
+  } | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -137,6 +156,9 @@ export type BuilderStudioViewModel = {
   readonly buildAIContext: () => void;
   readonly refreshAIContext: () => void;
   readonly clearAIContext: () => void;
+  readonly ensureKnowledgeLayers: () => void;
+  readonly addDemoLayerReferences: () => void;
+  readonly removeLayerReference: (referenceId: string) => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -440,6 +462,12 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const decisionApi = createDecisionKnowledgeApi(decisionService);
     const aiContextService = createAIContextBuilderService();
     const aiContextApi = createAIContextApi(aiContextService);
+    const knowledgeLayerService = createKnowledgeLayerService();
+    const knowledgeContextResolver = createKnowledgeContextResolver();
+    const knowledgeLayerApi = createKnowledgeLayerApi(
+      knowledgeLayerService,
+      knowledgeContextResolver,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -470,6 +498,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       decisionApi,
       aiContextService,
       aiContextApi,
+      knowledgeLayerService,
+      knowledgeContextResolver,
+      knowledgeLayerApi,
     };
   }, []);
 
@@ -588,6 +619,11 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [contextEvents, setContextEvents] = useState<readonly ContextEvent[]>(
     [],
   );
+  const [knowledgeLayerBundle, setKnowledgeLayerBundle] =
+    useState<KnowledgeLayerBundle | null>(null);
+  const [knowledgeLayerEvents, setKnowledgeLayerEvents] = useState<
+    readonly KnowledgeLayerEvent[]
+  >([]);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -676,6 +712,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setDecisionEvents([]);
       setAIContext(null);
       setContextEvents([]);
+      setKnowledgeLayerBundle(null);
+      setKnowledgeLayerEvents([]);
       return;
     }
     const model = services.assets.getActiveProject(projectId);
@@ -692,6 +730,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setDecisionEvents([]);
       setAIContext(null);
       setContextEvents([]);
+      setKnowledgeLayerBundle(null);
+      setKnowledgeLayerEvents([]);
       return;
     }
     const pkg = ensureObjectPackage(services.objectService, model);
@@ -737,6 +777,25 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     services.aiContextService.clear();
     setAIContext(null);
     setContextEvents([]);
+    const companyId = model.record.customer
+      ? `partner-${model.record.customer.toLowerCase().replace(/\s+/g, '-')}`
+      : 'partner-unknown';
+    const existingBundle = services.knowledgeLayerService.getBundle(
+      pkg.objectId,
+      companyId,
+    );
+    if (existingBundle === null) {
+      const ensured = services.knowledgeLayerService.ensureLayers({
+        companyId,
+        companyName: model.record.customer || 'Company',
+        objectId: pkg.objectId,
+        objectName: pkg.metadata.name,
+      });
+      setKnowledgeLayerBundle(ensured);
+    } else {
+      setKnowledgeLayerBundle(existingBundle);
+    }
+    setKnowledgeLayerEvents(services.knowledgeLayerService.getHistory());
     setObjectPackage(services.objectService.loadObject(pkg.objectId));
   };
 
@@ -840,6 +899,31 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     decisionEvents,
     aiContext,
     contextEvents,
+    knowledgeLayerRegistry: listKnowledgeLayers(),
+    knowledgeLayerBundle,
+    knowledgeLayerEvents,
+    knowledgeReferences: knowledgePackage?.references ?? [],
+    resolvedLayers:
+      knowledgeLayerBundle === null
+        ? null
+        : {
+            platform: services.knowledgeContextResolver.resolvePlatform(
+              knowledgePackage?.references ?? [],
+              knowledgeLayerBundle.platform,
+            ),
+            company: services.knowledgeContextResolver.resolveCompany(
+              knowledgePackage?.references ?? [],
+              knowledgeLayerBundle.company,
+            ),
+            object: services.knowledgeContextResolver.resolveObject(
+              knowledgePackage?.references ?? [],
+              knowledgeLayerBundle.object,
+            ),
+            session: services.knowledgeContextResolver.resolveSession(
+              knowledgePackage?.references ?? [],
+              knowledgeLayerBundle.session,
+            ),
+          },
     priorityRegistry: listPriorities(),
     moduleRegistry: listObjectModules(),
     objectEvents,
@@ -1246,6 +1330,78 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           ? []
           : services.aiContextService.getHistory(cleared.id),
       );
+    },
+
+    ensureKnowledgeLayers(): void {
+      if (objectPackage === null || activeProjectModel === null) {
+        return;
+      }
+      const companyId = `partner-${activeProjectModel.record.customer
+        .toLowerCase()
+        .replace(/\s+/g, '-')}`;
+      const ensured = services.knowledgeLayerService.ensureLayers({
+        companyId,
+        companyName: activeProjectModel.record.customer,
+        objectId: objectPackage.objectId,
+        objectName: objectPackage.metadata.name,
+      });
+      setKnowledgeLayerBundle(ensured);
+      setKnowledgeLayerEvents(services.knowledgeLayerService.getHistory());
+    },
+    addDemoLayerReferences(): void {
+      if (knowledgePackage === null || knowledgeLayerBundle === null) {
+        return;
+      }
+      let current = knowledgePackage;
+      if (!current.references.some((item) => item.layer === 'platform')) {
+        current = services.knowledgeLayerService.attachReference(current, {
+          layer: 'platform',
+          targetId: knowledgeLayerBundle.platform.id,
+          type: 'catalog',
+        }).knowledge;
+      }
+      if (!current.references.some((item) => item.layer === 'company')) {
+        current = services.knowledgeLayerService.attachReference(current, {
+          layer: 'company',
+          targetId: knowledgeLayerBundle.company.id,
+          type: 'policy',
+        }).knowledge;
+      }
+      if (!current.references.some((item) => item.layer === 'object')) {
+        current = services.knowledgeLayerService.attachReference(current, {
+          layer: 'object',
+          targetId: knowledgeLayerBundle.object.id,
+          type: 'fact',
+        }).knowledge;
+      }
+      if (!current.references.some((item) => item.layer === 'session')) {
+        current = services.knowledgeLayerService.attachReference(current, {
+          layer: 'session',
+          targetId: knowledgeLayerBundle.session.id,
+          type: 'other',
+        }).knowledge;
+      }
+      const saved = services.knowledgeService.upsertKnowledge(current);
+      services.objectService.setKnowledgePackage(saved.objectId, saved);
+      setKnowledgePackage(saved);
+      setKnowledgeEvents(services.knowledgeService.getHistory(saved.knowledgeId));
+      setKnowledgeLayerEvents(services.knowledgeLayerService.getHistory());
+      setObjectPackage(services.objectService.loadObject(saved.objectId));
+    },
+    removeLayerReference(referenceId: string): void {
+      if (knowledgePackage === null) {
+        return;
+      }
+      const next = services.knowledgeLayerService.detachReference(
+        knowledgePackage,
+        referenceId,
+      );
+      const saved = services.knowledgeService.upsertKnowledge(next);
+      services.objectService.setKnowledgePackage(saved.objectId, saved);
+      setKnowledgePackage(saved);
+      setKnowledgeEvents(services.knowledgeService.getHistory(saved.knowledgeId));
+      setKnowledgeLayerEvents(services.knowledgeLayerService.getHistory());
+      setObjectPackage(services.objectService.loadObject(saved.objectId));
     },
     buildProject(): void {
       const projectId =

@@ -168,6 +168,25 @@ export type {
   ContextFragmentType,
 } from './ai-context-types';
 
+export type {
+  AddKnowledgeReferenceInput,
+  CompanyKnowledge,
+  KnowledgeLayerBundle,
+  KnowledgeLayerDefinition,
+  KnowledgeLayerEvent,
+  KnowledgeLayerEventType,
+  KnowledgeLayerId,
+  KnowledgeLayerMetadata,
+  KnowledgeLayerModel,
+  KnowledgeLayerTimestamps,
+  KnowledgeReference,
+  KnowledgeReferenceType,
+  ObjectKnowledge,
+  PlatformKnowledge,
+  ResolvedLayerReferences,
+  SessionKnowledge,
+} from './knowledge-layer-types';
+
 export {
   ASSET_CATEGORY_ORDER,
   createEmptyAssetCollections,

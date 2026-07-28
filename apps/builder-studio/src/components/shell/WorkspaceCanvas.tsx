@@ -10,7 +10,12 @@ import type {
   DecisionEvent,
   DecisionKnowledgePackage,
   KnowledgeEvent,
+  KnowledgeLayerBundle,
+  KnowledgeLayerDefinition,
+  KnowledgeLayerEvent,
   KnowledgePackage,
+  KnowledgeReference,
+  ResolvedLayerReferences,
   PriorityDefinition,
   PriorityId,
   ObjectEvent,
@@ -27,6 +32,7 @@ import type {
 import { ExperienceComposer } from './ExperienceComposer';
 import { AIContextPreview } from './AIContextPreview';
 import { DecisionOverview } from './DecisionOverview';
+import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
 import { KnowledgeOverview } from './KnowledgeOverview';
 import {
   KnowledgeSection,
@@ -50,6 +56,16 @@ type WorkspaceCanvasProps = {
   readonly decisionEvents: readonly DecisionEvent[];
   readonly aiContext: AIContextPackage | null;
   readonly contextEvents: readonly ContextEvent[];
+  readonly knowledgeLayerRegistry: readonly KnowledgeLayerDefinition[];
+  readonly knowledgeLayerBundle: KnowledgeLayerBundle | null;
+  readonly knowledgeLayerEvents: readonly KnowledgeLayerEvent[];
+  readonly knowledgeReferences: readonly KnowledgeReference[];
+  readonly resolvedLayers: {
+    readonly platform: ResolvedLayerReferences;
+    readonly company: ResolvedLayerReferences;
+    readonly object: ResolvedLayerReferences;
+    readonly session: ResolvedLayerReferences;
+  } | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -96,6 +112,9 @@ type WorkspaceCanvasProps = {
   readonly onBuildContext: () => void;
   readonly onRefreshContext: () => void;
   readonly onClearContext: () => void;
+  readonly onEnsureKnowledgeLayers: () => void;
+  readonly onAddDemoLayerReferences: () => void;
+  readonly onRemoveLayerReference: (referenceId: string) => void;
 };
 
 export function WorkspaceCanvas({
@@ -111,6 +130,11 @@ export function WorkspaceCanvas({
   decisionEvents,
   aiContext,
   contextEvents,
+  knowledgeLayerRegistry,
+  knowledgeLayerBundle,
+  knowledgeLayerEvents,
+  knowledgeReferences,
+  resolvedLayers,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -147,6 +171,9 @@ export function WorkspaceCanvas({
   onBuildContext,
   onRefreshContext,
   onClearContext,
+  onEnsureKnowledgeLayers,
+  onAddDemoLayerReferences,
+  onRemoveLayerReference,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -269,6 +296,19 @@ export function WorkspaceCanvas({
             onBuild={onBuildContext}
             onRefresh={onRefreshContext}
             onClear={onClearContext}
+          />
+        ) : null}
+
+        {activeSection === 'knowledge-layers' ? (
+          <KnowledgeLayersOverview
+            registry={knowledgeLayerRegistry}
+            bundle={knowledgeLayerBundle}
+            references={knowledgeReferences}
+            resolved={resolvedLayers}
+            events={knowledgeLayerEvents}
+            onEnsureLayers={onEnsureKnowledgeLayers}
+            onAddDemoReferences={onAddDemoLayerReferences}
+            onRemoveReference={onRemoveLayerReference}
           />
         ) : null}
         {activeSection === 'media' ? (

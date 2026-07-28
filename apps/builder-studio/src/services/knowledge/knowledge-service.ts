@@ -47,6 +47,7 @@ export type KnowledgeService = {
   getEvents(knowledgeId?: string): readonly KnowledgeEvent[];
   getHistory(knowledgeId?: string): readonly KnowledgeEvent[];
   listKnowledge(): readonly KnowledgePackage[];
+  upsertKnowledge(pkg: KnowledgePackage): KnowledgePackage;
 };
 
 function nextVersion(previous: string): string {
@@ -285,6 +286,7 @@ export function createKnowledgeService(options?: {
         relationships: seedRelationships(input.objectId),
         documents: [],
         faqs: seedFaqs(input.objectId),
+        references: [],
         metadata: {
           title: input.title?.trim() || 'Knowledge Package',
           description: input.description?.trim() || '',
@@ -491,6 +493,10 @@ export function createKnowledgeService(options?: {
 
     listKnowledge() {
       return Array.from(packages.values());
+    },
+
+    upsertKnowledge(pkg) {
+      return write(pkg);
     },
   };
 }

@@ -4,6 +4,8 @@
  * No AI, no embeddings, no Decision Engine, no inference.
  */
 
+import type { KnowledgeReference } from './knowledge-layer-types';
+
 export type KnowledgeTimestamps = {
   readonly createdAt: string;
   readonly updatedAt: string;
@@ -80,6 +82,7 @@ export type KnowledgeDocument = {
 /**
  * Structured authoring knowledge for an object.
  * Belonging to Object Package — Runtime only reads.
+ * Layer links via references only — no cross-layer copies (EPIC-BLD-14).
  */
 export type KnowledgePackage = {
   readonly knowledgeId: string;
@@ -90,6 +93,7 @@ export type KnowledgePackage = {
   readonly relationships: readonly Relationship[];
   readonly documents: readonly KnowledgeDocument[];
   readonly faqs: readonly FaqEntry[];
+  readonly references: readonly KnowledgeReference[];
   readonly metadata: KnowledgeMetadata;
   readonly timestamps: KnowledgeTimestamps;
 };
