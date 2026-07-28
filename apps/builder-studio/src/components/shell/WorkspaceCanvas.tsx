@@ -14,6 +14,8 @@ import type {
   DecisionRuntimeEvent,
   DecisionStory,
   EvaluationEvent,
+  AnalyticsEngineEvent,
+  AnalyticsSnapshot,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -52,6 +54,7 @@ import { DecisionRuntimeOverview } from './DecisionRuntimeOverview';
 import { DecisionStoryOverview } from './DecisionStoryOverview';
 import { RuntimeSessionOverview } from './RuntimeSessionOverview';
 import { BehaviorOverview } from './BehaviorOverview';
+import { AnalyticsOverview } from './AnalyticsOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -109,6 +112,9 @@ type WorkspaceCanvasProps = {
   readonly behaviorSignals: readonly BehaviorSignal[];
   readonly behaviorEvents: readonly BehaviorEvent[];
   readonly behaviorMessage: string | null;
+  readonly analyticsSnapshot: AnalyticsSnapshot | null;
+  readonly analyticsEvents: readonly AnalyticsEngineEvent[];
+  readonly analyticsMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -183,6 +189,10 @@ type WorkspaceCanvasProps = {
   readonly onEvaluateBehavior: () => void;
   readonly onReceiveDemoBehaviorSignals: () => void;
   readonly onDisposeBehavior: () => void;
+  readonly onRecordAnalytics: () => void;
+  readonly onAggregateAnalytics: () => void;
+  readonly onExportAnalytics: () => void;
+  readonly onDisposeAnalytics: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -223,6 +233,9 @@ export function WorkspaceCanvas({
   behaviorSignals,
   behaviorEvents,
   behaviorMessage,
+  analyticsSnapshot,
+  analyticsEvents,
+  analyticsMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -287,6 +300,10 @@ export function WorkspaceCanvas({
   onEvaluateBehavior,
   onReceiveDemoBehaviorSignals,
   onDisposeBehavior,
+  onRecordAnalytics,
+  onAggregateAnalytics,
+  onExportAnalytics,
+  onDisposeAnalytics,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -507,6 +524,18 @@ export function WorkspaceCanvas({
             onReceiveDemoSignals={onReceiveDemoBehaviorSignals}
             onDispose={onDisposeBehavior}
             message={behaviorMessage}
+          />
+        ) : null}
+
+        {activeSection === 'analytics' ? (
+          <AnalyticsOverview
+            snapshot={analyticsSnapshot}
+            events={analyticsEvents}
+            onRecord={onRecordAnalytics}
+            onAggregate={onAggregateAnalytics}
+            onExport={onExportAnalytics}
+            onDispose={onDisposeAnalytics}
+            message={analyticsMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

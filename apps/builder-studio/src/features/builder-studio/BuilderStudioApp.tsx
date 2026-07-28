@@ -79,6 +79,9 @@ export function BuilderStudioApp() {
         behaviorSignals={session.behaviorSignals}
         behaviorEvents={session.behaviorEvents}
         behaviorMessage={session.behaviorMessage}
+        analyticsSnapshot={session.analyticsSnapshot}
+        analyticsEvents={session.analyticsEvents}
+        analyticsMessage={session.analyticsMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -143,6 +146,10 @@ export function BuilderStudioApp() {
         onEvaluateBehavior={session.evaluateBehavior}
         onReceiveDemoBehaviorSignals={session.receiveDemoBehaviorSignals}
         onDisposeBehavior={session.disposeBehavior}
+        onRecordAnalytics={session.recordAnalytics}
+        onAggregateAnalytics={session.aggregateAnalytics}
+        onExportAnalytics={session.exportAnalytics}
+        onDisposeAnalytics={session.disposeAnalytics}
       />
     </AppShell>
   );

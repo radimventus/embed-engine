@@ -317,3 +317,18 @@ export type {
   BehaviorTimestamps,
   EvaluateBehaviorInput,
 } from './behavior-types';
+
+export type {
+  AnalyticsEngineEvent,
+  AnalyticsEngineEventType,
+  AnalyticsEvent,
+  AnalyticsEventType,
+  AnalyticsMetric,
+  AnalyticsMetricName,
+  AnalyticsSession,
+  AnalyticsSnapshot,
+  AnalyticsSummary,
+  AnalyticsTimestamps,
+  InitializeAnalyticsInput,
+  RecordAnalyticsEventInput,
+} from './analytics-types';

@@ -250,3 +250,16 @@ export {
   createBasicBehaviorStrategy,
   type BehaviorStrategy,
 } from './behavior/basic-behavior-strategy';
+
+export {
+  createDecisionAnalyticsEngine,
+  type DecisionAnalyticsEngine,
+} from './analytics/decision-analytics-engine';
+export {
+  createDecisionAnalyticsApi,
+  type DecisionAnalyticsApi,
+} from './analytics/decision-analytics-api';
+export {
+  createJsonAnalyticsExporter,
+  type AnalyticsExporter,
+} from './analytics/json-analytics-exporter';

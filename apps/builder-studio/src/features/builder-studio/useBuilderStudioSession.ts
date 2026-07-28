@@ -19,10 +19,13 @@ import type {
   DecisionModel,
   DecisionRuntimeEvent,
   ComposeStoryInput,
+  AnalyticsEngineEvent,
+  AnalyticsSnapshot,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
+  RecordAnalyticsEventInput,
   DecisionStory,
   EvaluateBehaviorInput,
   EvaluationEvent,
@@ -82,6 +85,8 @@ import {
   createRuntimeSessionEngine,
   createBehaviorApi,
   createBehaviorEngine,
+  createDecisionAnalyticsApi,
+  createDecisionAnalyticsEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -156,6 +161,9 @@ export type BuilderStudioViewModel = {
   readonly behaviorSignals: readonly BehaviorSignal[];
   readonly behaviorEvents: readonly BehaviorEvent[];
   readonly behaviorMessage: string | null;
+  readonly analyticsSnapshot: AnalyticsSnapshot | null;
+  readonly analyticsEvents: readonly AnalyticsEngineEvent[];
+  readonly analyticsMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -241,6 +249,10 @@ export type BuilderStudioViewModel = {
   readonly evaluateBehavior: () => void;
   readonly receiveDemoBehaviorSignals: () => void;
   readonly disposeBehavior: () => void;
+  readonly recordAnalytics: () => void;
+  readonly aggregateAnalytics: () => void;
+  readonly exportAnalytics: () => void;
+  readonly disposeAnalytics: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -367,6 +379,102 @@ function toRuleEvaluationInput(
 
 
 
+
+
+
+function recordAnalyticsFromRuntime(
+  engine: {
+    initialize: (input: {
+      readonly runtimeSessionId: string;
+      readonly storyId: string;
+      readonly runtimeId: string;
+      readonly behaviorId?: string | null;
+      readonly title?: string;
+    }) => { readonly id: string };
+    record: (input: RecordAnalyticsEventInput) => unknown;
+    dispose: (id: string) => void;
+  },
+  session: RuntimeSession,
+  behaviorEvaluationId: string | null,
+): string {
+  // dispose previous analytics session for same runtime session if re-recording
+  const analyticsSessionId = `analytics-session-${session.id}`;
+  engine.dispose(analyticsSessionId);
+
+  const analyticsSession = engine.initialize({
+    runtimeSessionId: session.id,
+    storyId: session.storyId,
+    runtimeId: session.runtimeId,
+    behaviorId: behaviorEvaluationId,
+    title: `${session.metadata.title} Analytics`,
+  });
+
+  const record = (
+    type: RecordAnalyticsEventInput['type'],
+    source: string,
+    moveId: string | null = null,
+    note?: string,
+    durationMs: number | null = null,
+  ): void => {
+    engine.record({
+      analyticsSessionId: analyticsSession.id,
+      type,
+      source,
+      moveId,
+      note,
+      durationMs,
+    });
+  };
+
+  record('SessionStarted', 'runtime-session', null, 'Session started');
+  for (const entry of session.history) {
+    if (
+      entry.action === 'entered' ||
+      entry.action === 'navigated-next' ||
+      entry.action === 'navigated-previous'
+    ) {
+      record(
+        'MoveEntered',
+        'runtime-session',
+        entry.moveId,
+        entry.metadata.note,
+        1000,
+      );
+    }
+    if (entry.action === 'completed-move') {
+      record(
+        'MoveExited',
+        'runtime-session',
+        entry.moveId,
+        entry.metadata.note,
+        1000,
+      );
+    }
+    if (entry.action === 'completed') {
+      record(
+        'SessionCompleted',
+        'runtime-session',
+        entry.moveId,
+        entry.metadata.note,
+      );
+    }
+  }
+  if (behaviorEvaluationId !== null) {
+    record(
+      'BehaviorEvaluated',
+      'behavior',
+      session.currentMoveId,
+      `Behavior evaluation ${behaviorEvaluationId}`,
+    );
+    record(
+      'BehaviorActionProposed',
+      'behavior',
+      session.currentMoveId,
+      'Behavior action proposed',
+    );
+  }
+  return analyticsSession.id;
+}
 
 function toEvaluateBehaviorInput(
   session: RuntimeSession,
@@ -738,6 +846,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeSessionApi = createRuntimeSessionApi(runtimeSessionEngine);
     const behaviorEngine = createBehaviorEngine();
     const behaviorApi = createBehaviorApi(behaviorEngine);
+    const decisionAnalyticsEngine = createDecisionAnalyticsEngine();
+    const decisionAnalyticsApi = createDecisionAnalyticsApi(
+      decisionAnalyticsEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -785,6 +897,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeSessionApi,
       behaviorEngine,
       behaviorApi,
+      decisionAnalyticsEngine,
+      decisionAnalyticsApi,
     };
   }, []);
 
@@ -958,6 +1072,14 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     readonly BehaviorEvent[]
   >([]);
   const [behaviorMessage, setBehaviorMessage] = useState<string | null>(null);
+  const [analyticsSnapshot, setAnalyticsSnapshot] =
+    useState<AnalyticsSnapshot | null>(null);
+  const [analyticsEvents, setAnalyticsEvents] = useState<
+    readonly AnalyticsEngineEvent[]
+  >([]);
+  const [analyticsMessage, setAnalyticsMessage] = useState<string | null>(
+    null,
+  );
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -1278,6 +1400,9 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     behaviorSignals,
     behaviorEvents,
     behaviorMessage,
+    analyticsSnapshot,
+    analyticsEvents,
+    analyticsMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -2198,6 +2323,68 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setBehaviorSignals([]);
       setBehaviorEvents([]);
       setBehaviorMessage(null);
+    },
+
+    recordAnalytics(): void {
+      if (runtimeSession === null) {
+        setAnalyticsMessage(
+          'Nejdřív vytvořte Runtime Session (Session → Create Session).',
+        );
+        return;
+      }
+      const analyticsSessionId = recordAnalyticsFromRuntime(
+        services.decisionAnalyticsEngine,
+        runtimeSession,
+        behaviorEvaluation?.id ?? null,
+      );
+      services.decisionAnalyticsEngine.aggregate(analyticsSessionId);
+      const snapshot =
+        services.decisionAnalyticsApi.createAnalyticsSnapshot(
+          analyticsSessionId,
+        );
+      setAnalyticsSnapshot(snapshot);
+      setAnalyticsEvents(
+        services.decisionAnalyticsEngine.getHistory(analyticsSessionId),
+      );
+      setAnalyticsMessage(null);
+    },
+    aggregateAnalytics(): void {
+      if (analyticsSnapshot === null) {
+        setAnalyticsMessage('Nejdřív Record Analytics.');
+        return;
+      }
+      const sessionId = analyticsSnapshot.session.id;
+      services.decisionAnalyticsEngine.aggregate(sessionId);
+      const snapshot =
+        services.decisionAnalyticsApi.createAnalyticsSnapshot(sessionId);
+      setAnalyticsSnapshot(snapshot);
+      setAnalyticsEvents(
+        services.decisionAnalyticsEngine.getHistory(sessionId),
+      );
+      setAnalyticsMessage(null);
+    },
+    exportAnalytics(): void {
+      if (analyticsSnapshot === null) {
+        setAnalyticsMessage('Nejdřív Record Analytics.');
+        return;
+      }
+      const exported = services.decisionAnalyticsApi.exportAnalytics(
+        analyticsSnapshot.session.id,
+      );
+      setAnalyticsSnapshot(exported);
+      setAnalyticsEvents(
+        services.decisionAnalyticsEngine.getHistory(exported.session.id),
+      );
+      setAnalyticsMessage('JSON export ready.');
+    },
+    disposeAnalytics(): void {
+      if (analyticsSnapshot === null) {
+        return;
+      }
+      services.decisionAnalyticsEngine.dispose(analyticsSnapshot.session.id);
+      setAnalyticsSnapshot(null);
+      setAnalyticsEvents([]);
+      setAnalyticsMessage(null);
     },
     buildProject(): void {
       const projectId =

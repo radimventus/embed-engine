@@ -31,6 +31,7 @@ export type WorkspaceSectionId =
   | 'decision-story'
   | 'runtime-session'
   | 'behavior'
+  | 'analytics'
   | 'media'
   | 'layout'
   | 'knowledge';
