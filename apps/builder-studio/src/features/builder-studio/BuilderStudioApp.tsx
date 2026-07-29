@@ -206,6 +206,10 @@ export function BuilderStudioApp() {
         runtimeIntegrationEvents={session.runtimeIntegrationEvents}
         runtimeIntegrationIndexCount={session.runtimeIntegrationIndexCount}
         runtimeIntegrationMessage={session.runtimeIntegrationMessage}
+        runtimeRegistryPackage={session.runtimeRegistryPackage}
+        runtimeRegistryEvents={session.runtimeRegistryEvents}
+        runtimeRegistryIndexCount={session.runtimeRegistryIndexCount}
+        runtimeRegistryMessage={session.runtimeRegistryMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -428,6 +432,10 @@ export function BuilderStudioApp() {
         onPublishRuntimeIntegration={session.publishRuntimeIntegration}
         onValidateRuntimeIntegration={session.validateRuntimeIntegration}
         onDisposeRuntimeIntegration={session.disposeRuntimeIntegration}
+        onRegisterRuntimeRegistry={session.registerRuntimeRegistry}
+        onPublishRuntimeRegistry={session.publishRuntimeRegistry}
+        onValidateRuntimeRegistry={session.validateRuntimeRegistry}
+        onDisposeRuntimeRegistry={session.disposeRuntimeRegistry}
       />
     </AppShell>
   );

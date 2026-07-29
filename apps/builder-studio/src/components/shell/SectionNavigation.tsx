@@ -44,6 +44,7 @@ const SECTIONS: readonly {
   { id: 'runtime-recovery-reporting', label: 'Recovery Reporting' },
   { id: 'runtime-operations', label: 'Operations' },
   { id: 'runtime-integration', label: 'Runtime Integration' },
+  { id: 'runtime-registry', label: 'Runtime Registry' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

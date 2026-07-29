@@ -777,3 +777,23 @@ export {
   createRuntimeIntegrationIndex,
   type RuntimeIntegrationIndex,
 } from './runtime-integration/runtime-integration-index';
+
+export {
+  createRuntimeIntegrationRegistry,
+  type RuntimeIntegrationRegistry,
+  type RuntimeIntegrationRegistryOptions,
+} from './runtime-registry/runtime-integration-registry';
+export {
+  createRuntimeRegistryApi,
+  type RuntimeRegistryApi,
+} from './runtime-registry/runtime-registry-api';
+export {
+  createBasicRuntimeRegistryStrategy,
+  createRuntimeRegistryValidator,
+  type RuntimeRegistryStrategy,
+  type RuntimeRegistryValidator,
+} from './runtime-registry/basic-runtime-registry-strategy';
+export {
+  createRuntimeRegistryIndex,
+  type RuntimeRegistryIndex,
+} from './runtime-registry/runtime-registry-index';

@@ -79,6 +79,8 @@ import type {
   RuntimeOperationsPackage,
   RuntimeIntegrationEvent,
   RuntimeIntegrationPackage,
+  RuntimeRegistryEvent,
+  RuntimeRegistryPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -197,6 +199,8 @@ import {
   createRuntimeOperationsDashboard,
   createRuntimeIntegrationApi,
   createRuntimeIntegrationHub,
+  createRuntimeRegistryApi,
+  createRuntimeIntegrationRegistry,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -380,6 +384,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeIntegrationEvents: readonly RuntimeIntegrationEvent[];
   readonly runtimeIntegrationIndexCount: number;
   readonly runtimeIntegrationMessage: string | null;
+  readonly runtimeRegistryPackage: RuntimeRegistryPackage | null;
+  readonly runtimeRegistryEvents: readonly RuntimeRegistryEvent[];
+  readonly runtimeRegistryIndexCount: number;
+  readonly runtimeRegistryMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -595,6 +603,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeIntegration: () => void;
   readonly validateRuntimeIntegration: () => void;
   readonly disposeRuntimeIntegration: () => void;
+  readonly registerRuntimeRegistry: () => void;
+  readonly publishRuntimeRegistry: () => void;
+  readonly validateRuntimeRegistry: () => void;
+  readonly disposeRuntimeRegistry: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1312,6 +1324,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeIntegrationApi = createRuntimeIntegrationApi(
       runtimeIntegrationHub,
     );
+    const runtimeIntegrationRegistry = createRuntimeIntegrationRegistry();
+    const runtimeRegistryApi = createRuntimeRegistryApi(
+      runtimeIntegrationRegistry,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1413,6 +1429,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeOperationsApi,
       runtimeIntegrationHub,
       runtimeIntegrationApi,
+      runtimeIntegrationRegistry,
+      runtimeRegistryApi,
     };
   }, []);
 
@@ -1870,6 +1888,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [runtimeIntegrationMessage, setRuntimeIntegrationMessage] = useState<
     string | null
   >(null);
+  const [runtimeRegistryPackage, setRuntimeRegistryPackage] =
+    useState<RuntimeRegistryPackage | null>(null);
+  const [runtimeRegistryEvents, setRuntimeRegistryEvents] = useState<
+    readonly RuntimeRegistryEvent[]
+  >([]);
+  const [runtimeRegistryIndexCount, setRuntimeRegistryIndexCount] =
+    useState(0);
+  const [runtimeRegistryMessage, setRuntimeRegistryMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2299,6 +2327,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeIntegrationEvents,
     runtimeIntegrationIndexCount,
     runtimeIntegrationMessage,
+    runtimeRegistryPackage,
+    runtimeRegistryEvents,
+    runtimeRegistryIndexCount,
+    runtimeRegistryMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -6431,6 +6463,128 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeIntegrationHub.getIndex().length,
       );
       setRuntimeIntegrationMessage(null);
+    },
+    registerRuntimeRegistry(): void {
+      const sessionId =
+        runtimeIntegrationPackage?.metadata.sessionId ??
+        runtimeOperationsPackage?.metadata.sessionId ??
+        'runtime-session-demo';
+      const fromHub =
+        runtimeIntegrationPackage?.catalog.records.map((record) => ({
+          packageId: record.packageId,
+          packageType: record.packageType,
+          version: record.version,
+          source: record.source,
+          publishedAt: record.publishedAt,
+          registeredAt: null,
+          title: record.metadata.title,
+          status: record.metadata.status,
+          notes: record.metadata.notes,
+        })) ?? [];
+      const packages =
+        fromHub.length > 0
+          ? fromHub
+          : [
+              {
+                packageId: 'runtime-policy-package-demo',
+                packageType: 'Policy' as const,
+                version: '1.0.0',
+                source: 'Runtime Integration Hub',
+                publishedAt: null,
+                title: 'Policy Package',
+                status: 'Published',
+              },
+              {
+                packageId: 'runtime-governance-package-demo',
+                packageType: 'Governance' as const,
+                version: '1.0.0',
+                source: 'Runtime Integration Hub',
+                publishedAt: null,
+                title: 'Governance Package',
+                status: 'Published',
+              },
+              {
+                packageId: 'runtime-operations-package-demo',
+                packageType: 'Operations' as const,
+                version: '1.0.0',
+                source: 'Runtime Integration Hub',
+                publishedAt: null,
+                title: 'Operations Package',
+                status: 'Published',
+              },
+            ];
+      const registered = services.runtimeRegistryApi.initialize({
+        sessionId,
+        title: 'Builder Runtime Registry',
+        packages,
+      });
+      setRuntimeRegistryPackage(registered);
+      setRuntimeRegistryEvents(
+        services.runtimeIntegrationRegistry.getEvents(),
+      );
+      setRuntimeRegistryIndexCount(
+        services.runtimeIntegrationRegistry.getIndex().length,
+      );
+      setRuntimeRegistryMessage(
+        `Registry ${registered.catalog.id} · ${registered.catalog.entries.length} package(s).`,
+      );
+    },
+    publishRuntimeRegistry(): void {
+      if (runtimeRegistryPackage === null) {
+        setRuntimeRegistryMessage('Nejdřív Register Packages.');
+        return;
+      }
+      try {
+        const published = services.runtimeRegistryApi.publishRuntimeRegistry(
+          runtimeRegistryPackage.id,
+        );
+        setRuntimeRegistryPackage(published);
+        setRuntimeRegistryEvents(
+          services.runtimeIntegrationRegistry.getEvents(),
+        );
+        setRuntimeRegistryMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeRegistryMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeRegistry(): void {
+      if (runtimeRegistryPackage === null) {
+        setRuntimeRegistryMessage('Nejdřív Register Packages.');
+        return;
+      }
+      const validation = services.runtimeRegistryApi.validateRuntimeRegistry(
+        runtimeRegistryPackage.id,
+      );
+      const previewed = services.runtimeRegistryApi.preview(
+        runtimeRegistryPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeRegistryPackage(previewed);
+      }
+      setRuntimeRegistryEvents(
+        services.runtimeIntegrationRegistry.getEvents(),
+      );
+      setRuntimeRegistryMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeRegistry(): void {
+      if (runtimeRegistryPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeIntegrationRegistry.dispose(
+        runtimeRegistryPackage.id,
+      );
+      setRuntimeRegistryPackage(disposed);
+      setRuntimeRegistryEvents(
+        services.runtimeIntegrationRegistry.getEvents(),
+      );
+      setRuntimeRegistryIndexCount(
+        services.runtimeIntegrationRegistry.getIndex().length,
+      );
+      setRuntimeRegistryMessage(null);
     },
     buildProject(): void {
       const projectId =

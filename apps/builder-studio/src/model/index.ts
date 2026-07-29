@@ -685,3 +685,17 @@ export type {
   RuntimeIntegrationValidation,
   RuntimeIntegrationValidationIssue,
 } from './runtime-integration-types';
+
+export type {
+  InitializeRegistryInput,
+  RegisterRegistryPackageInput,
+  RuntimeRegistryCatalog,
+  RuntimeRegistryEntry,
+  RuntimeRegistryEvent,
+  RuntimeRegistryEventType,
+  RuntimeRegistryIndexEntry,
+  RuntimeRegistryPackage,
+  RuntimeRegistryPackageType,
+  RuntimeRegistryValidation,
+  RuntimeRegistryValidationIssue,
+} from './runtime-registry-types';
