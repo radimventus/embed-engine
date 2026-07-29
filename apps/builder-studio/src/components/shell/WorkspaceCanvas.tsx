@@ -72,6 +72,8 @@ import type {
   RuntimeIntegrationPackage,
   RuntimeRegistryEvent,
   RuntimeRegistryPackage,
+  RuntimeManifestEvent,
+  RuntimeManifestPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -138,6 +140,7 @@ import { RecoveryReportingOverview } from './RecoveryReportingOverview';
 import { OperationsOverview } from './OperationsOverview';
 import { RuntimeIntegrationOverview } from './RuntimeIntegrationOverview';
 import { RuntimeRegistryOverview } from './RuntimeRegistryOverview';
+import { RuntimeManifestOverview } from './RuntimeManifestOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -308,6 +311,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeRegistryEvents: readonly RuntimeRegistryEvent[];
   readonly runtimeRegistryIndexCount: number;
   readonly runtimeRegistryMessage: string | null;
+  readonly runtimeManifestPackage: RuntimeManifestPackage | null;
+  readonly runtimeManifestEvents: readonly RuntimeManifestEvent[];
+  readonly runtimeManifestIndexCount: number;
+  readonly runtimeManifestMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -516,6 +523,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeRegistry: () => void;
   readonly onValidateRuntimeRegistry: () => void;
   readonly onDisposeRuntimeRegistry: () => void;
+  readonly onGenerateRuntimeManifest: () => void;
+  readonly onPublishRuntimeManifest: () => void;
+  readonly onValidateRuntimeManifest: () => void;
+  readonly onDisposeRuntimeManifest: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -669,6 +680,10 @@ export function WorkspaceCanvas({
   runtimeRegistryEvents,
   runtimeRegistryIndexCount,
   runtimeRegistryMessage,
+  runtimeManifestPackage,
+  runtimeManifestEvents,
+  runtimeManifestIndexCount,
+  runtimeManifestMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -867,6 +882,10 @@ export function WorkspaceCanvas({
   onPublishRuntimeRegistry,
   onValidateRuntimeRegistry,
   onDisposeRuntimeRegistry,
+  onGenerateRuntimeManifest,
+  onPublishRuntimeManifest,
+  onValidateRuntimeManifest,
+  onDisposeRuntimeManifest,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1484,6 +1503,19 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeRegistry}
             onDispose={onDisposeRuntimeRegistry}
             message={runtimeRegistryMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-manifest' ? (
+          <RuntimeManifestOverview
+            manifestPackage={runtimeManifestPackage}
+            events={runtimeManifestEvents}
+            indexCount={runtimeManifestIndexCount}
+            onGenerate={onGenerateRuntimeManifest}
+            onPublish={onPublishRuntimeManifest}
+            onValidate={onValidateRuntimeManifest}
+            onDispose={onDisposeRuntimeManifest}
+            message={runtimeManifestMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

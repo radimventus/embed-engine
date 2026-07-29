@@ -81,6 +81,8 @@ import type {
   RuntimeIntegrationPackage,
   RuntimeRegistryEvent,
   RuntimeRegistryPackage,
+  RuntimeManifestEvent,
+  RuntimeManifestPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -201,6 +203,8 @@ import {
   createRuntimeIntegrationHub,
   createRuntimeRegistryApi,
   createRuntimeIntegrationRegistry,
+  createRuntimeManifestApi,
+  createRuntimeManifestEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -388,6 +392,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeRegistryEvents: readonly RuntimeRegistryEvent[];
   readonly runtimeRegistryIndexCount: number;
   readonly runtimeRegistryMessage: string | null;
+  readonly runtimeManifestPackage: RuntimeManifestPackage | null;
+  readonly runtimeManifestEvents: readonly RuntimeManifestEvent[];
+  readonly runtimeManifestIndexCount: number;
+  readonly runtimeManifestMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -607,6 +615,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeRegistry: () => void;
   readonly validateRuntimeRegistry: () => void;
   readonly disposeRuntimeRegistry: () => void;
+  readonly generateRuntimeManifest: () => void;
+  readonly publishRuntimeManifest: () => void;
+  readonly validateRuntimeManifest: () => void;
+  readonly disposeRuntimeManifest: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1328,6 +1340,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeRegistryApi = createRuntimeRegistryApi(
       runtimeIntegrationRegistry,
     );
+    const runtimeManifestEngine = createRuntimeManifestEngine();
+    const runtimeManifestApi = createRuntimeManifestApi(
+      runtimeManifestEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1431,6 +1447,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeIntegrationApi,
       runtimeIntegrationRegistry,
       runtimeRegistryApi,
+      runtimeManifestEngine,
+      runtimeManifestApi,
     };
   }, []);
 
@@ -1898,6 +1916,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [runtimeRegistryMessage, setRuntimeRegistryMessage] = useState<
     string | null
   >(null);
+  const [runtimeManifestPackage, setRuntimeManifestPackage] =
+    useState<RuntimeManifestPackage | null>(null);
+  const [runtimeManifestEvents, setRuntimeManifestEvents] = useState<
+    readonly RuntimeManifestEvent[]
+  >([]);
+  const [runtimeManifestIndexCount, setRuntimeManifestIndexCount] =
+    useState(0);
+  const [runtimeManifestMessage, setRuntimeManifestMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2331,6 +2359,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeRegistryEvents,
     runtimeRegistryIndexCount,
     runtimeRegistryMessage,
+    runtimeManifestPackage,
+    runtimeManifestEvents,
+    runtimeManifestIndexCount,
+    runtimeManifestMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -6585,6 +6617,121 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeIntegrationRegistry.getIndex().length,
       );
       setRuntimeRegistryMessage(null);
+    },
+    generateRuntimeManifest(): void {
+      const sessionId =
+        runtimeRegistryPackage?.metadata.sessionId ??
+        runtimeIntegrationPackage?.metadata.sessionId ??
+        runtimeOperationsPackage?.metadata.sessionId ??
+        'runtime-session-demo';
+      const fromRegistry =
+        runtimeRegistryPackage?.catalog.entries.map((entry) => ({
+          id: `capability-${entry.packageType.toLowerCase()}`,
+          name: entry.packageType,
+          version: entry.version,
+          packageId: entry.packageId,
+          packageType: entry.packageType,
+          source: entry.source,
+          title: entry.metadata.title,
+          notes: entry.metadata.notes,
+        })) ?? [];
+      const capabilities =
+        fromRegistry.length > 0
+          ? fromRegistry
+          : [
+              {
+                id: 'capability-policy',
+                name: 'Policy',
+                version: '1.0.0',
+                packageId: 'runtime-policy-package-demo',
+                packageType: 'Policy',
+                source: 'Runtime Integration Registry',
+                title: 'Policy',
+              },
+              {
+                id: 'capability-governance',
+                name: 'Governance',
+                version: '1.0.0',
+                packageId: 'runtime-governance-package-demo',
+                packageType: 'Governance',
+                source: 'Runtime Integration Registry',
+                title: 'Governance',
+              },
+              {
+                id: 'capability-operations',
+                name: 'Operations',
+                version: '1.0.0',
+                packageId: 'runtime-operations-package-demo',
+                packageType: 'Operations',
+                source: 'Runtime Integration Registry',
+                title: 'Operations',
+              },
+            ];
+      const generated = services.runtimeManifestApi.generateRuntimeManifest({
+        sessionId,
+        title: 'Builder Runtime Manifest',
+        registryVersion: runtimeRegistryPackage?.version ?? '1.0.0',
+        capabilities,
+      });
+      setRuntimeManifestPackage(generated);
+      setRuntimeManifestEvents(services.runtimeManifestEngine.getEvents());
+      setRuntimeManifestIndexCount(
+        services.runtimeManifestEngine.getIndex().length,
+      );
+      setRuntimeManifestMessage(
+        `Manifest ${generated.manifest.id} · ${generated.manifest.capabilities.length} capability(ies).`,
+      );
+    },
+    publishRuntimeManifest(): void {
+      if (runtimeManifestPackage === null) {
+        setRuntimeManifestMessage('Nejdřív Generate Manifest.');
+        return;
+      }
+      try {
+        const published = services.runtimeManifestApi.publishRuntimeManifest(
+          runtimeManifestPackage.id,
+        );
+        setRuntimeManifestPackage(published);
+        setRuntimeManifestEvents(services.runtimeManifestEngine.getEvents());
+        setRuntimeManifestMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeManifestMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeManifest(): void {
+      if (runtimeManifestPackage === null) {
+        setRuntimeManifestMessage('Nejdřív Generate Manifest.');
+        return;
+      }
+      const validation = services.runtimeManifestApi.validateRuntimeManifest(
+        runtimeManifestPackage.id,
+      );
+      const previewed = services.runtimeManifestApi.previewRuntimeManifest(
+        runtimeManifestPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeManifestPackage(previewed);
+      }
+      setRuntimeManifestEvents(services.runtimeManifestEngine.getEvents());
+      setRuntimeManifestMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeManifest(): void {
+      if (runtimeManifestPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeManifestEngine.dispose(
+        runtimeManifestPackage.id,
+      );
+      setRuntimeManifestPackage(disposed);
+      setRuntimeManifestEvents(services.runtimeManifestEngine.getEvents());
+      setRuntimeManifestIndexCount(
+        services.runtimeManifestEngine.getIndex().length,
+      );
+      setRuntimeManifestMessage(null);
     },
     buildProject(): void {
       const projectId =

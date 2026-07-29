@@ -699,3 +699,16 @@ export type {
   RuntimeRegistryValidation,
   RuntimeRegistryValidationIssue,
 } from './runtime-registry-types';
+
+export type {
+  CollectManifestCapabilityInput,
+  CollectManifestInput,
+  RuntimeCapabilityDescriptor,
+  RuntimeManifest,
+  RuntimeManifestEvent,
+  RuntimeManifestEventType,
+  RuntimeManifestIndexEntry,
+  RuntimeManifestPackage,
+  RuntimeManifestValidation,
+  RuntimeManifestValidationIssue,
+} from './runtime-manifest-types';
