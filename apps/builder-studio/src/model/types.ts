@@ -20,6 +20,7 @@ export type PublishReadyStatus = 'Ready' | 'Blocked' | 'Idle';
 export type WorkspaceSectionId =
   | 'projects'
   | 'assets'
+  | 'metadata'
   | 'overview'
   | 'experience'
   | 'knowledge-package'

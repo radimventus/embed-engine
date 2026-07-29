@@ -129,6 +129,11 @@ import type {
   Asset,
   AssetManagerEvent,
   AssetPackage,
+  MetadataEvent,
+  MetadataPackage,
+  MetadataStatus,
+  ObjectAttribute,
+  ObjectMetadataDocument,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -289,6 +294,8 @@ import {
   createExportCertificationApi,
   createAssetManagerService,
   createAssetManagerApi,
+  createMetadataService,
+  createMetadataApi,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -574,6 +581,11 @@ export type BuilderStudioViewModel = {
   readonly assetManagerEvents: readonly AssetManagerEvent[];
   readonly assetManagerIndexCount: number;
   readonly assetManagerMessage: string | null;
+  readonly objectMetadataPackage: MetadataPackage | null;
+  readonly objectMetadataDocument: ObjectMetadataDocument | null;
+  readonly objectMetadataEvents: readonly MetadataEvent[];
+  readonly objectMetadataIndexCount: number;
+  readonly objectMetadataMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -600,6 +612,40 @@ export type BuilderStudioViewModel = {
   readonly renameManagedAsset: (assetId: string) => void;
   readonly archiveManagedAsset: (assetId: string) => void;
   readonly restoreManagedAsset: (assetId: string) => void;
+  readonly createObjectMetadata: () => void;
+  readonly updateObjectMetadataGeneral: (patch: {
+    title: string;
+    slug: string;
+    summary: string;
+    description: string;
+    category: string;
+    language: string;
+    status: MetadataStatus;
+  }) => void;
+  readonly updateObjectMetadataSeo: (patch: {
+    title: string;
+    description: string;
+    keywords: string;
+    canonicalUrl: string;
+    socialImageAssetId: string | null;
+  }) => void;
+  readonly attachObjectMetadataAsset: (assetId: string) => void;
+  readonly detachObjectMetadataAsset: (assetId: string) => void;
+  readonly openObjectMetadataAsset: (assetId: string) => void;
+  readonly addObjectMetadataAttribute: (
+    attribute: Omit<ObjectAttribute, 'id' | 'metadata'> & {
+      readonly id?: string;
+      readonly metadata?: ObjectAttribute['metadata'];
+    },
+  ) => void;
+  readonly editObjectMetadataAttribute: (attribute: ObjectAttribute) => void;
+  readonly removeObjectMetadataAttribute: (key: string) => void;
+  readonly reorderObjectMetadataAttribute: (
+    key: string,
+    direction: 'up' | 'down',
+  ) => void;
+  readonly validateObjectMetadata: () => void;
+  readonly publishObjectMetadataDraft: () => void;
   readonly selectSection: (sectionId: WorkspaceSectionId) => void;
   readonly addAsset: (categoryId: AssetCategoryId) => void;
   readonly removeAsset: (
@@ -1673,6 +1719,11 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     );
     const assetManagerService = createAssetManagerService();
     const assetManagerApi = createAssetManagerApi(assetManagerService);
+    const metadataService = createMetadataService({
+      knownAssetIds: () =>
+        new Set(assetManagerApi.listAssets().map((asset) => asset.id)),
+    });
+    const metadataApi = createMetadataApi(metadataService);
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1822,6 +1873,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       exportCertificationApi,
       assetManagerService,
       assetManagerApi,
+      metadataService,
+      metadataApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -1855,6 +1908,17 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [assetManagerMessage, setAssetManagerMessage] = useState<string | null>(
     null,
   );
+  const [objectMetadataPackage, setObjectMetadataPackage] =
+    useState<MetadataPackage | null>(null);
+  const [objectMetadataDocument, setObjectMetadataDocument] =
+    useState<ObjectMetadataDocument | null>(null);
+  const [objectMetadataEvents, setObjectMetadataEvents] = useState<
+    readonly MetadataEvent[]
+  >([]);
+  const [objectMetadataIndexCount, setObjectMetadataIndexCount] = useState(0);
+  const [objectMetadataMessage, setObjectMetadataMessage] = useState<
+    string | null
+  >(null);
   const [activeProjectModel, setActiveProjectModel] = useState(() =>
     services.workspaceService.getActiveProjectModel(),
   );
@@ -3041,6 +3105,11 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     assetManagerEvents,
     assetManagerIndexCount,
     assetManagerMessage,
+    objectMetadataPackage,
+    objectMetadataDocument,
+    objectMetadataEvents,
+    objectMetadataIndexCount,
+    objectMetadataMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3106,6 +3175,14 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setManagedAssets(services.assetManagerApi.listProjectAssets(projectId));
       setAssetManagerEvents(services.assetManagerApi.listEvents());
       setAssetManagerIndexCount(services.assetManagerApi.listIndex().length);
+      const metadataPkg =
+        services.metadataApi.listPackages().find(
+          (item) => item.metadata.projectId === projectId,
+        ) ?? null;
+      setObjectMetadataPackage(metadataPkg);
+      setObjectMetadataDocument(metadataPkg?.objectMetadata ?? null);
+      setObjectMetadataEvents(services.metadataApi.listEvents());
+      setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
       syncFromServices(projectId);
     },
     createProject(): void {
@@ -3347,6 +3424,312 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setAssetManagerEvents(services.assetManagerApi.listEvents());
       setAssetManagerIndexCount(services.assetManagerApi.listIndex().length);
       setAssetManagerMessage(`Restored ${asset.name}.`);
+    },
+    createObjectMetadata(): void {
+      const projectId =
+        services.workspaceService.getWorkspace().activeProjectId ??
+        'harmony-124';
+      const projectName =
+        services.workspaceService.getActiveProject()?.name ?? projectId;
+      try {
+        const document = services.metadataApi.createMetadata(
+          objectMetadataPackage?.id ?? null,
+          {
+            projectId,
+            title: projectName,
+            slug: projectId,
+            summary: `Overview of ${projectName}`,
+            description: `Metadata for ${projectName}`,
+            category: 'house',
+            language: 'cs',
+            tags: ['builder'],
+            seo: {
+              title: `${projectName} | Builder`,
+              description: `Discover ${projectName}`,
+              keywords: [projectName, 'modular'],
+              canonicalUrl: `https://example.com/${projectId}`,
+              socialImageAssetId: null,
+            },
+            attributes: [
+              {
+                key: 'usable_area',
+                value: '124',
+                type: 'number',
+                group: 'specs',
+                order: 1,
+              },
+            ],
+          },
+          { projectId, title: `Metadata · ${projectId}` },
+        );
+        const pkg =
+          services.metadataApi.listPackages().find(
+            (item) => item.metadata.projectId === projectId,
+          ) ?? null;
+        setObjectMetadataPackage(pkg);
+        setObjectMetadataDocument(document);
+        setObjectMetadataEvents(services.metadataApi.listEvents());
+        setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+        setObjectMetadataMessage(`Metadata created: ${document.slug}.`);
+      } catch (err) {
+        setObjectMetadataMessage(
+          `Create failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    updateObjectMetadataGeneral(patch): void {
+      if (objectMetadataPackage === null) {
+        setObjectMetadataMessage('Create metadata first.');
+        return;
+      }
+      try {
+        const document = services.metadataApi.updateMetadata(
+          objectMetadataPackage.id,
+          patch,
+        );
+        setObjectMetadataPackage(
+          services.metadataApi.getPackage(objectMetadataPackage.id),
+        );
+        setObjectMetadataDocument(document);
+        setObjectMetadataEvents(services.metadataApi.listEvents());
+        setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+        setObjectMetadataMessage('General metadata saved.');
+      } catch (err) {
+        setObjectMetadataMessage(
+          `Update failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    updateObjectMetadataSeo(patch): void {
+      if (objectMetadataPackage === null) {
+        setObjectMetadataMessage('Create metadata first.');
+        return;
+      }
+      try {
+        const document = services.metadataApi.updateMetadata(
+          objectMetadataPackage.id,
+          {
+            seo: {
+              title: patch.title,
+              description: patch.description,
+              keywords: patch.keywords
+                .split(',')
+                .map((item) => item.trim())
+                .filter((item) => item.length > 0),
+              canonicalUrl: patch.canonicalUrl,
+              socialImageAssetId: patch.socialImageAssetId,
+            },
+          },
+        );
+        setObjectMetadataPackage(
+          services.metadataApi.getPackage(objectMetadataPackage.id),
+        );
+        setObjectMetadataDocument(document);
+        setObjectMetadataEvents(services.metadataApi.listEvents());
+        setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+        setObjectMetadataMessage('SEO metadata saved.');
+      } catch (err) {
+        setObjectMetadataMessage(
+          `SEO update failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    attachObjectMetadataAsset(assetId: string): void {
+      if (objectMetadataPackage === null) {
+        setObjectMetadataMessage('Create metadata first.');
+        return;
+      }
+      try {
+        const document = services.metadataApi.attachAssetReference(
+          objectMetadataPackage.id,
+          assetId,
+        );
+        setObjectMetadataPackage(
+          services.metadataApi.getPackage(objectMetadataPackage.id),
+        );
+        setObjectMetadataDocument(document);
+        setObjectMetadataEvents(services.metadataApi.listEvents());
+        setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+        setObjectMetadataMessage(`Asset attached: ${assetId}.`);
+      } catch (err) {
+        setObjectMetadataMessage(
+          `Attach failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    detachObjectMetadataAsset(assetId: string): void {
+      if (objectMetadataPackage === null) return;
+      try {
+        const document = services.metadataApi.detachAssetReference(
+          objectMetadataPackage.id,
+          assetId,
+        );
+        setObjectMetadataPackage(
+          services.metadataApi.getPackage(objectMetadataPackage.id),
+        );
+        setObjectMetadataDocument(document);
+        setObjectMetadataEvents(services.metadataApi.listEvents());
+        setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+        setObjectMetadataMessage(`Asset detached: ${assetId}.`);
+      } catch (err) {
+        setObjectMetadataMessage(
+          `Detach failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    openObjectMetadataAsset(assetId: string): void {
+      const asset = services.assetManagerApi.findAsset(assetId);
+      setActiveSection('assets');
+      setObjectMetadataMessage(
+        asset === null
+          ? `Asset reference ${assetId} — open Assets to inspect.`
+          : `Opened asset ${asset.name} in Assets.`,
+      );
+      if (asset !== null) {
+        setAssetManagerMessage(`Selected from Metadata: ${asset.name}.`);
+      }
+    },
+    addObjectMetadataAttribute(attribute): void {
+      if (objectMetadataPackage === null) return;
+      try {
+        const document = services.metadataApi.addAttribute(
+          objectMetadataPackage.id,
+          attribute,
+        );
+        setObjectMetadataPackage(
+          services.metadataApi.getPackage(objectMetadataPackage.id),
+        );
+        setObjectMetadataDocument(document);
+        setObjectMetadataEvents(services.metadataApi.listEvents());
+        setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+        setObjectMetadataMessage(`Attribute added: ${attribute.key}.`);
+      } catch (err) {
+        setObjectMetadataMessage(
+          `Attribute failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    editObjectMetadataAttribute(attribute): void {
+      if (objectMetadataPackage === null) return;
+      const current =
+        services.metadataApi.getPackage(objectMetadataPackage.id)
+          ?.objectMetadata ?? null;
+      if (current === null) return;
+      try {
+        const document = services.metadataApi.updateMetadata(
+          objectMetadataPackage.id,
+          {
+            attributes: current.attributes.map((item) =>
+              item.id === attribute.id ? attribute : item,
+            ),
+          },
+        );
+        setObjectMetadataPackage(
+          services.metadataApi.getPackage(objectMetadataPackage.id),
+        );
+        setObjectMetadataDocument(document);
+        setObjectMetadataEvents(services.metadataApi.listEvents());
+        setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+        setObjectMetadataMessage(`Attribute updated: ${attribute.key}.`);
+      } catch (err) {
+        setObjectMetadataMessage(
+          `Edit failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    removeObjectMetadataAttribute(key): void {
+      if (objectMetadataPackage === null) return;
+      const document = services.metadataApi.removeAttribute(
+        objectMetadataPackage.id,
+        key,
+      );
+      setObjectMetadataPackage(
+        services.metadataApi.getPackage(objectMetadataPackage.id),
+      );
+      setObjectMetadataDocument(document);
+      setObjectMetadataEvents(services.metadataApi.listEvents());
+      setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+      setObjectMetadataMessage(`Attribute removed: ${key}.`);
+    },
+    reorderObjectMetadataAttribute(key, direction): void {
+      if (objectMetadataPackage === null) return;
+      const current =
+        services.metadataApi.getPackage(objectMetadataPackage.id)
+          ?.objectMetadata ?? null;
+      if (current === null) return;
+      const sorted = [...current.attributes].sort(
+        (left, right) => left.order - right.order,
+      );
+      const index = sorted.findIndex((item) => item.key === key);
+      if (index < 0) return;
+      const swapWith = direction === 'up' ? index - 1 : index + 1;
+      if (swapWith < 0 || swapWith >= sorted.length) return;
+      const next = sorted.map((item, itemIndex) => {
+        if (itemIndex === index) {
+          return { ...item, order: sorted[swapWith]!.order };
+        }
+        if (itemIndex === swapWith) {
+          return { ...item, order: sorted[index]!.order };
+        }
+        return item;
+      });
+      const document = services.metadataApi.updateMetadata(
+        objectMetadataPackage.id,
+        { attributes: next },
+      );
+      setObjectMetadataPackage(
+        services.metadataApi.getPackage(objectMetadataPackage.id),
+      );
+      setObjectMetadataDocument(document);
+      setObjectMetadataEvents(services.metadataApi.listEvents());
+      setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+      setObjectMetadataMessage(`Attribute reordered: ${key}.`);
+    },
+    validateObjectMetadata(): void {
+      if (objectMetadataPackage === null) {
+        setObjectMetadataMessage('Create metadata first.');
+        return;
+      }
+      const validation = services.metadataApi.validateMetadata(
+        objectMetadataPackage.id,
+      );
+      setObjectMetadataPackage(
+        services.metadataApi.getPackage(objectMetadataPackage.id),
+      );
+      setObjectMetadataDocument(
+        services.metadataApi.getPackage(objectMetadataPackage.id)
+          ?.objectMetadata ?? null,
+      );
+      setObjectMetadataEvents(services.metadataApi.listEvents());
+      setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+      setObjectMetadataMessage(
+        validation.valid
+          ? 'Metadata validation OK.'
+          : 'Metadata validation failed.',
+      );
+    },
+    publishObjectMetadataDraft(): void {
+      if (objectMetadataPackage === null) {
+        setObjectMetadataMessage('Create metadata first.');
+        return;
+      }
+      try {
+        services.metadataApi.validateMetadata(objectMetadataPackage.id);
+        const document = services.metadataApi.publishMetadataDraft(
+          objectMetadataPackage.id,
+        );
+        setObjectMetadataPackage(
+          services.metadataApi.getPackage(objectMetadataPackage.id),
+        );
+        setObjectMetadataDocument(document);
+        setObjectMetadataEvents(services.metadataApi.listEvents());
+        setObjectMetadataIndexCount(services.metadataApi.listIndex().length);
+        setObjectMetadataMessage(`Metadata draft published: ${document.slug}.`);
+      } catch (err) {
+        setObjectMetadataMessage(
+          `Publish failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
     },
     selectSection(sectionId: WorkspaceSectionId): void {
       setActiveSection(sectionId);

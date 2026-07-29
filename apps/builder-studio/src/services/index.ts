@@ -101,6 +101,27 @@ export {
   type AssetIndex,
 } from './asset-manager/asset-index';
 export {
+  createMetadataService,
+  type MetadataService,
+  type MetadataServiceOptions,
+} from './object-metadata/metadata-service';
+export {
+  createMetadataApi,
+  type MetadataApi,
+} from './object-metadata/metadata-api';
+export {
+  createBasicMetadataStrategy,
+  type MetadataStrategy,
+} from './object-metadata/basic-metadata-strategy';
+export {
+  createBasicMetadataValidator,
+  type MetadataValidator,
+} from './object-metadata/basic-metadata-validator';
+export {
+  createMetadataIndex,
+  type MetadataIndex,
+} from './object-metadata/metadata-index';
+export {
   createObjectService,
   type ObjectService,
 } from './object/object-service';

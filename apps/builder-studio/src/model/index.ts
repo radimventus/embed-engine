@@ -55,6 +55,24 @@ export type {
   ListManagedAssetsInput,
   UpdateManagedAssetInput,
 } from './asset-manager-types';
+export type {
+  CreateObjectMetadataInput,
+  InitializeMetadataInput,
+  MetadataEvent,
+  MetadataEventType,
+  MetadataIndexEntry,
+  MetadataPackage,
+  MetadataValidation,
+  MetadataValidationIssue,
+  ObjectAttribute,
+  ObjectAttributeType,
+  ObjectAttributes,
+  MetadataStatus,
+  ObjectMetadataDocument,
+  ObjectMetadataStatus,
+  SeoMetadata,
+  UpdateObjectMetadataDocumentInput,
+} from './object-metadata-types';
 
 export type {
   BuildIssue,

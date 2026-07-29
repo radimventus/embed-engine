@@ -120,6 +120,11 @@ import type {
   Asset,
   AssetManagerEvent,
   AssetPackage,
+  MetadataEvent,
+  MetadataPackage,
+  MetadataStatus,
+  ObjectAttribute,
+  ObjectMetadataDocument,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -209,6 +214,7 @@ import { ExportPoliciesOverview } from './ExportPoliciesOverview';
 import { ExportCertificationOverview } from './ExportCertificationOverview';
 import { ProjectsOverview } from './ProjectsOverview';
 import { AssetsOverview } from './AssetsOverview';
+import { MetadataOverview } from './MetadataOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -473,6 +479,11 @@ type WorkspaceCanvasProps = {
   readonly assetManagerEvents: readonly AssetManagerEvent[];
   readonly assetManagerIndexCount: number;
   readonly assetManagerMessage: string | null;
+  readonly objectMetadataPackage: MetadataPackage | null;
+  readonly objectMetadataDocument: ObjectMetadataDocument | null;
+  readonly objectMetadataEvents: readonly MetadataEvent[];
+  readonly objectMetadataIndexCount: number;
+  readonly objectMetadataMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -771,6 +782,40 @@ type WorkspaceCanvasProps = {
   readonly onRenameManagedAsset: (assetId: string) => void;
   readonly onArchiveManagedAsset: (assetId: string) => void;
   readonly onRestoreManagedAsset: (assetId: string) => void;
+  readonly onCreateObjectMetadata: () => void;
+  readonly onUpdateObjectMetadataGeneral: (patch: {
+    title: string;
+    slug: string;
+    summary: string;
+    description: string;
+    category: string;
+    language: string;
+    status: MetadataStatus;
+  }) => void;
+  readonly onUpdateObjectMetadataSeo: (patch: {
+    title: string;
+    description: string;
+    keywords: string;
+    canonicalUrl: string;
+    socialImageAssetId: string | null;
+  }) => void;
+  readonly onAttachObjectMetadataAsset: (assetId: string) => void;
+  readonly onDetachObjectMetadataAsset: (assetId: string) => void;
+  readonly onOpenObjectMetadataAsset: (assetId: string) => void;
+  readonly onAddObjectMetadataAttribute: (
+    attribute: Omit<ObjectAttribute, 'id' | 'metadata'> & {
+      readonly id?: string;
+      readonly metadata?: ObjectAttribute['metadata'];
+    },
+  ) => void;
+  readonly onEditObjectMetadataAttribute: (attribute: ObjectAttribute) => void;
+  readonly onRemoveObjectMetadataAttribute: (key: string) => void;
+  readonly onReorderObjectMetadataAttribute: (
+    key: string,
+    direction: 'up' | 'down',
+  ) => void;
+  readonly onValidateObjectMetadata: () => void;
+  readonly onPublishObjectMetadataDraft: () => void;
   readonly onCertifyExport: () => void;
   readonly onValidateExportCertification: () => void;
   readonly onRevokeExportCertification: () => void;
@@ -1022,6 +1067,11 @@ export function WorkspaceCanvas({
   assetManagerEvents,
   assetManagerIndexCount,
   assetManagerMessage,
+  objectMetadataPackage,
+  objectMetadataDocument,
+  objectMetadataEvents,
+  objectMetadataIndexCount,
+  objectMetadataMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1310,6 +1360,18 @@ export function WorkspaceCanvas({
   onRenameManagedAsset,
   onArchiveManagedAsset,
   onRestoreManagedAsset,
+  onCreateObjectMetadata,
+  onUpdateObjectMetadataGeneral,
+  onUpdateObjectMetadataSeo,
+  onAttachObjectMetadataAsset,
+  onDetachObjectMetadataAsset,
+  onOpenObjectMetadataAsset,
+  onAddObjectMetadataAttribute,
+  onEditObjectMetadataAttribute,
+  onRemoveObjectMetadataAttribute,
+  onReorderObjectMetadataAttribute,
+  onValidateObjectMetadata,
+  onPublishObjectMetadataDraft,
   onCertifyExport,
   onValidateExportCertification,
   onRevokeExportCertification,
@@ -1343,7 +1405,9 @@ export function WorkspaceCanvas({
 
   return (
     <div>
-      {activeSection !== 'projects' && activeSection !== 'assets' ? (
+      {activeSection !== 'projects' &&
+      activeSection !== 'assets' &&
+      activeSection !== 'metadata' ? (
         <ProjectDashboard
           projectName={projectModel.record.name}
           manifest={manifest}
@@ -1383,6 +1447,28 @@ export function WorkspaceCanvas({
             onRenameAsset={onRenameManagedAsset}
             onArchiveAsset={onArchiveManagedAsset}
             onRestoreAsset={onRestoreManagedAsset}
+          />
+        ) : null}
+        {activeSection === 'metadata' ? (
+          <MetadataOverview
+            metadataPackage={objectMetadataPackage}
+            document={objectMetadataDocument}
+            availableAssets={managedAssets}
+            events={objectMetadataEvents}
+            indexCount={objectMetadataIndexCount}
+            message={objectMetadataMessage}
+            onCreateMetadata={onCreateObjectMetadata}
+            onUpdateGeneral={onUpdateObjectMetadataGeneral}
+            onUpdateSeo={onUpdateObjectMetadataSeo}
+            onAttachAsset={onAttachObjectMetadataAsset}
+            onDetachAsset={onDetachObjectMetadataAsset}
+            onOpenAsset={onOpenObjectMetadataAsset}
+            onAddAttribute={onAddObjectMetadataAttribute}
+            onEditAttribute={onEditObjectMetadataAttribute}
+            onRemoveAttribute={onRemoveObjectMetadataAttribute}
+            onReorderAttribute={onReorderObjectMetadataAttribute}
+            onValidate={onValidateObjectMetadata}
+            onPublishDraft={onPublishObjectMetadataDraft}
           />
         ) : null}
         {activeSection === 'overview' && objectPackage !== null ? (
