@@ -1211,3 +1211,25 @@ export {
   createExportPolicyIndex,
   type ExportPolicyIndex,
 } from './export-policy/export-policy-index';
+
+export {
+  createExportCertificationService,
+  type ExportCertificationService,
+  type ExportCertificationServiceOptions,
+} from './export-certification/export-certification-service';
+export {
+  createExportCertificationApi,
+  type ExportCertificationApi,
+} from './export-certification/export-certification-api';
+export {
+  createBasicExportCertificationStrategy,
+  type ExportCertificationStrategy,
+} from './export-certification/basic-export-certification-strategy';
+export {
+  createBasicExportCertificationValidator,
+  type ExportCertificationValidator,
+} from './export-certification/basic-export-certification-validator';
+export {
+  createExportCertificationIndex,
+  type ExportCertificationIndex,
+} from './export-certification/export-certification-index';

@@ -79,6 +79,7 @@ export type WorkspaceSectionId =
   | 'export-compatibility'
   | 'export-capabilities'
   | 'export-policies'
+  | 'export-certification'
   | 'media'
   | 'layout'
   | 'knowledge';

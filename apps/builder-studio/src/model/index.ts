@@ -973,3 +973,15 @@ export type {
   InitializeExportPolicyRegistryInput,
   RegisterExportPolicyInput,
 } from './export-policy-types';
+
+export type {
+  CertifyExportInput,
+  ExportCertificate,
+  ExportCertificationEvent,
+  ExportCertificationEventType,
+  ExportCertificationIndexEntry,
+  ExportCertificationPackage,
+  ExportCertificationValidation,
+  ExportCertificationValidationIssue,
+  InitializeExportCertificationInput,
+} from './export-certification-types';

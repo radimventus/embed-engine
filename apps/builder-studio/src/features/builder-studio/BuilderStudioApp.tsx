@@ -292,6 +292,10 @@ export function BuilderStudioApp() {
         exportPolicyEvents={session.exportPolicyEvents}
         exportPolicyIndexCount={session.exportPolicyIndexCount}
         exportPolicyMessage={session.exportPolicyMessage}
+        exportCertificationPackage={session.exportCertificationPackage}
+        exportCertificationEvents={session.exportCertificationEvents}
+        exportCertificationIndexCount={session.exportCertificationIndexCount}
+        exportCertificationMessage={session.exportCertificationMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -600,6 +604,10 @@ export function BuilderStudioApp() {
         onRegisterExportPolicy={session.registerExportPolicy}
         onValidateExportPolicy={session.validateExportPolicy}
         onDisposeExportPolicy={session.disposeExportPolicy}
+        onCertifyExport={session.certifyExport}
+        onValidateExportCertification={session.validateExportCertification}
+        onRevokeExportCertification={session.revokeExportCertification}
+        onDisposeExportCertification={session.disposeExportCertification}
       />
     </AppShell>
   );

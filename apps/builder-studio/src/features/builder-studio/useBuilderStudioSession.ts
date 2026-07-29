@@ -121,6 +121,8 @@ import type {
   ExportCapabilityPackage,
   ExportPolicyEvent,
   ExportPolicyPackage,
+  ExportCertificationEvent,
+  ExportCertificationPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -277,6 +279,8 @@ import {
   createExportCapabilityApi,
   createExportPolicyRegistry,
   createExportPolicyApi,
+  createExportCertificationService,
+  createExportCertificationApi,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -548,6 +552,10 @@ export type BuilderStudioViewModel = {
   readonly exportPolicyEvents: readonly ExportPolicyEvent[];
   readonly exportPolicyIndexCount: number;
   readonly exportPolicyMessage: string | null;
+  readonly exportCertificationPackage: ExportCertificationPackage | null;
+  readonly exportCertificationEvents: readonly ExportCertificationEvent[];
+  readonly exportCertificationIndexCount: number;
+  readonly exportCertificationMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -849,6 +857,10 @@ export type BuilderStudioViewModel = {
   readonly registerExportPolicy: () => void;
   readonly validateExportPolicy: () => void;
   readonly disposeExportPolicy: () => void;
+  readonly certifyExport: () => void;
+  readonly validateExportCertification: () => void;
+  readonly revokeExportCertification: () => void;
+  readonly disposeExportCertification: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1631,6 +1643,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const exportCapabilityApi = createExportCapabilityApi(exportCapabilityRegistry);
     const exportPolicyRegistry = createExportPolicyRegistry();
     const exportPolicyApi = createExportPolicyApi(exportPolicyRegistry);
+    const exportCertificationService = createExportCertificationService();
+    const exportCertificationApi = createExportCertificationApi(
+      exportCertificationService,
+    );
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1776,6 +1792,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       exportCapabilityApi,
       exportPolicyRegistry,
       exportPolicyApi,
+      exportCertificationService,
+      exportCertificationApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -2432,6 +2450,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [exportPolicyIndexCount, setExportPolicyIndexCount] = useState(0);
   const [exportPolicyMessage, setExportPolicyMessage] =
     useState<string | null>(null);
+  const [exportCertificationPackage, setExportCertificationPackage] =
+    useState<ExportCertificationPackage | null>(null);
+  const [exportCertificationEvents, setExportCertificationEvents] = useState<
+    readonly ExportCertificationEvent[]
+  >([]);
+  const [exportCertificationIndexCount, setExportCertificationIndexCount] =
+    useState(0);
+  const [exportCertificationMessage, setExportCertificationMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2945,6 +2972,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     exportPolicyEvents,
     exportPolicyIndexCount,
     exportPolicyMessage,
+    exportCertificationPackage,
+    exportCertificationEvents,
+    exportCertificationIndexCount,
+    exportCertificationMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -9422,6 +9453,88 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.exportPolicyRegistry.getIndex().length,
       );
       setExportPolicyMessage(null);
+    },
+    certifyExport(): void {
+      try {
+        const input = {
+          artifactId:
+            artifactExportPackage?.exportModel.artifactId ??
+            'artifact-demo-001',
+          schemaVersion:
+            artifactExportPackage?.exportModel.schemaVersion ?? '1',
+          certificationVersion: '1.0.0',
+          title: 'Export readiness certificate',
+        };
+        const pkg = services.exportCertificationApi.certifyExport(
+          exportCertificationPackage?.id ?? null,
+          input,
+        );
+        setExportCertificationPackage(pkg);
+        setExportCertificationEvents(
+          services.exportCertificationService.getEvents(),
+        );
+        setExportCertificationIndexCount(
+          services.exportCertificationService.getIndex().length,
+        );
+        setExportCertificationMessage('Export certified.');
+      } catch (err) {
+        setExportCertificationMessage(
+          `Certification failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    validateExportCertification(): void {
+      if (exportCertificationPackage === null) {
+        setExportCertificationMessage('Certify an export first.');
+        return;
+      }
+      const validation = services.exportCertificationApi.validateExportCertification(
+        exportCertificationPackage.id,
+      );
+      setExportCertificationPackage(
+        services.exportCertificationService.getPackage(
+          exportCertificationPackage.id,
+        ),
+      );
+      setExportCertificationEvents(
+        services.exportCertificationService.getEvents(),
+      );
+      setExportCertificationIndexCount(
+        services.exportCertificationService.getIndex().length,
+      );
+      setExportCertificationMessage(
+        validation.valid
+          ? 'Export certification validation OK.'
+          : 'Export certification validation failed.',
+      );
+    },
+    revokeExportCertification(): void {
+      if (exportCertificationPackage === null) return;
+      const revoked = services.exportCertificationApi.revokeExportCertification(
+        exportCertificationPackage.id,
+      );
+      setExportCertificationPackage(revoked);
+      setExportCertificationEvents(
+        services.exportCertificationService.getEvents(),
+      );
+      setExportCertificationIndexCount(
+        services.exportCertificationService.getIndex().length,
+      );
+      setExportCertificationMessage('Export certification revoked.');
+    },
+    disposeExportCertification(): void {
+      if (exportCertificationPackage === null) return;
+      const disposed = services.exportCertificationApi.disposeExportCertification(
+        exportCertificationPackage.id,
+      );
+      setExportCertificationPackage(disposed);
+      setExportCertificationEvents(
+        services.exportCertificationService.getEvents(),
+      );
+      setExportCertificationIndexCount(
+        services.exportCertificationService.getIndex().length,
+      );
+      setExportCertificationMessage(null);
     },
     buildProject(): void {
       const projectId =
