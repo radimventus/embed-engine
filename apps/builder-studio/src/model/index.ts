@@ -773,3 +773,17 @@ export type {
   RuntimeExtensionValidation,
   RuntimeExtensionValidationIssue,
 } from './runtime-extension-types';
+
+export type {
+  BuildObjectPublicationInput,
+  InitializePublicationInput,
+  ObjectPublicationEvent,
+  ObjectPublicationEventType,
+  PublicationIndexEntry,
+  PublicationManifest,
+  PublicationObjectAsset,
+  PublicationObjectPackage,
+  PublicationPackage,
+  PublicationValidation,
+  PublicationValidationIssue,
+} from './object-publication-types';

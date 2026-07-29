@@ -897,3 +897,23 @@ export {
   createRuntimeExtensionIndex,
   type RuntimeExtensionIndex,
 } from './runtime-extension/runtime-extension-index';
+
+export {
+  createObjectPublicationPipeline,
+  type ObjectPublicationPipeline,
+  type ObjectPublicationPipelineOptions,
+} from './object-publication/object-publication-pipeline';
+export {
+  createObjectPublicationApi,
+  type ObjectPublicationApi,
+} from './object-publication/object-publication-api';
+export {
+  createBasicPublicationStrategy,
+  createPublicationValidator,
+  type PublicationStrategy,
+  type PublicationValidator,
+} from './object-publication/basic-publication-strategy';
+export {
+  createPublicationIndex,
+  type PublicationIndex,
+} from './object-publication/publication-index';

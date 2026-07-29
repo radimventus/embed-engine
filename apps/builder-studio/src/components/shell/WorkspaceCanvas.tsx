@@ -82,6 +82,8 @@ import type {
   RuntimeContractPackage,
   RuntimeExtensionEvent,
   RuntimeExtensionPackage,
+  ObjectPublicationEvent,
+  PublicationPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -153,6 +155,7 @@ import { RuntimeApiOverview } from './RuntimeApiOverview';
 import { RuntimeCompatibilityOverview } from './RuntimeCompatibilityOverview';
 import { RuntimeContractsOverview } from './RuntimeContractsOverview';
 import { RuntimeExtensionsOverview } from './RuntimeExtensionsOverview';
+import { ObjectPublicationOverview } from './ObjectPublicationOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -343,6 +346,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeExtensionEvents: readonly RuntimeExtensionEvent[];
   readonly runtimeExtensionIndexCount: number;
   readonly runtimeExtensionMessage: string | null;
+  readonly objectPublicationPackage: PublicationPackage | null;
+  readonly objectPublicationEvents: readonly ObjectPublicationEvent[];
+  readonly objectPublicationIndexCount: number;
+  readonly objectPublicationMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -574,6 +581,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeExtensions: () => void;
   readonly onValidateRuntimeExtensions: () => void;
   readonly onDisposeRuntimeExtensions: () => void;
+  readonly onBuildObjectPublication: () => void;
+  readonly onValidateObjectPublication: () => void;
+  readonly onPublishObjectPublication: () => void;
+  readonly onDisposeObjectPublication: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -747,6 +758,10 @@ export function WorkspaceCanvas({
   runtimeExtensionEvents,
   runtimeExtensionIndexCount,
   runtimeExtensionMessage,
+  objectPublicationPackage,
+  objectPublicationEvents,
+  objectPublicationIndexCount,
+  objectPublicationMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -968,6 +983,10 @@ export function WorkspaceCanvas({
   onPublishRuntimeExtensions,
   onValidateRuntimeExtensions,
   onDisposeRuntimeExtensions,
+  onBuildObjectPublication,
+  onValidateObjectPublication,
+  onPublishObjectPublication,
+  onDisposeObjectPublication,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1653,6 +1672,19 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeExtensions}
             onDispose={onDisposeRuntimeExtensions}
             message={runtimeExtensionMessage}
+          />
+        ) : null}
+
+        {activeSection === 'object-publication' ? (
+          <ObjectPublicationOverview
+            publicationPackage={objectPublicationPackage}
+            events={objectPublicationEvents}
+            indexCount={objectPublicationIndexCount}
+            onBuild={onBuildObjectPublication}
+            onValidate={onValidateObjectPublication}
+            onPublish={onPublishObjectPublication}
+            onDispose={onDisposeObjectPublication}
+            message={objectPublicationMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

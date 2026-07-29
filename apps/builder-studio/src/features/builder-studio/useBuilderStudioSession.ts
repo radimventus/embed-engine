@@ -91,6 +91,8 @@ import type {
   RuntimeContractPackage,
   RuntimeExtensionEvent,
   RuntimeExtensionPackage,
+  ObjectPublicationEvent,
+  PublicationPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -221,6 +223,8 @@ import {
   createRuntimeContractManager,
   createRuntimeExtensionApi,
   createRuntimeExtensionFramework,
+  createObjectPublicationApi,
+  createObjectPublicationPipeline,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -428,6 +432,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeExtensionEvents: readonly RuntimeExtensionEvent[];
   readonly runtimeExtensionIndexCount: number;
   readonly runtimeExtensionMessage: string | null;
+  readonly objectPublicationPackage: PublicationPackage | null;
+  readonly objectPublicationEvents: readonly ObjectPublicationEvent[];
+  readonly objectPublicationIndexCount: number;
+  readonly objectPublicationMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -670,6 +678,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeExtensions: () => void;
   readonly validateRuntimeExtensions: () => void;
   readonly disposeRuntimeExtensions: () => void;
+  readonly buildObjectPublication: () => void;
+  readonly validateObjectPublication: () => void;
+  readonly publishObjectPublication: () => void;
+  readonly disposeObjectPublication: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1411,6 +1423,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeExtensionApi = createRuntimeExtensionApi(
       runtimeExtensionFramework,
     );
+    const objectPublicationPipeline = createObjectPublicationPipeline();
+    const objectPublicationApi = createObjectPublicationApi(
+      objectPublicationPipeline,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1524,6 +1540,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeContractApi,
       runtimeExtensionFramework,
       runtimeExtensionApi,
+      objectPublicationPipeline,
+      objectPublicationApi,
     };
   }, []);
 
@@ -2041,6 +2059,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [runtimeExtensionMessage, setRuntimeExtensionMessage] = useState<
     string | null
   >(null);
+  const [objectPublicationPackage, setObjectPublicationPackage] =
+    useState<PublicationPackage | null>(null);
+  const [objectPublicationEvents, setObjectPublicationEvents] = useState<
+    readonly ObjectPublicationEvent[]
+  >([]);
+  const [objectPublicationIndexCount, setObjectPublicationIndexCount] =
+    useState(0);
+  const [objectPublicationMessage, setObjectPublicationMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2494,6 +2522,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeExtensionEvents,
     runtimeExtensionIndexCount,
     runtimeExtensionMessage,
+    objectPublicationPackage,
+    objectPublicationEvents,
+    objectPublicationIndexCount,
+    objectPublicationMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -7449,6 +7481,152 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeExtensionFramework.getIndex().length,
       );
       setRuntimeExtensionMessage(null);
+    },
+    buildObjectPublication(): void {
+      const sessionId =
+        runtimeExtensionPackage?.metadata.sessionId ??
+        runtimeContractPackage?.metadata.sessionId ??
+        runtimeCompatibilityPackage?.metadata.sessionId ??
+        'publication-session-demo';
+      const sourceObject = objectPackage;
+      const runtimeVersion =
+        runtimeManifestPackage?.version ??
+        runtimeCompatibilityPackage?.version ??
+        '1.0.0';
+      const contractVersion =
+        runtimeContractPackage?.version ?? '1.0.0';
+      const compatibilityVersion =
+        runtimeCompatibilityPackage?.version ?? '1.0.0';
+      const buildInput =
+        sourceObject !== null
+          ? {
+              objectId: sourceObject.objectId,
+              objectVersion: sourceObject.version,
+              title: sourceObject.metadata.name,
+              runtimeVersion,
+              contractVersion,
+              compatibilityVersion,
+              sourceProjectId: sourceObject.projectId,
+              assets: [
+                {
+                  id: 'asset-hero',
+                  kind: 'media',
+                  label: 'Hero media',
+                  ref: `object://${sourceObject.objectId}/hero`,
+                },
+                {
+                  id: 'asset-layout',
+                  kind: 'layout',
+                  label: 'Floorplan',
+                  ref: `object://${sourceObject.objectId}/layout`,
+                },
+                {
+                  id: 'asset-knowledge',
+                  kind: 'knowledge',
+                  label: 'Knowledge refs',
+                  ref: `object://${sourceObject.objectId}/knowledge`,
+                },
+              ],
+            }
+          : {
+              objectId: 'object-demo-house',
+              objectVersion: '1.0.0',
+              title: 'Demo House',
+              runtimeVersion,
+              contractVersion,
+              compatibilityVersion,
+              sourceProjectId: 'project-demo',
+            };
+      const built = services.objectPublicationApi.buildObjectPublication(
+        null,
+        buildInput,
+        {
+          sessionId,
+          title: 'Builder Object Publication',
+          build: buildInput,
+        },
+      );
+      setObjectPublicationPackage(built);
+      setObjectPublicationEvents(
+        services.objectPublicationPipeline.getEvents(),
+      );
+      setObjectPublicationIndexCount(
+        services.objectPublicationPipeline.getIndex().length,
+      );
+      setObjectPublicationMessage(
+        `Built ${built.objectPackage.id} · ${built.objectPackage.objectId} v${built.objectPackage.version}.`,
+      );
+    },
+    validateObjectPublication(): void {
+      if (objectPublicationPackage === null) {
+        setObjectPublicationMessage('Nejdřív Build Publication.');
+        return;
+      }
+      const validation = services.objectPublicationApi.validatePublication(
+        objectPublicationPackage.id,
+      );
+      const previewed = services.objectPublicationApi.preview(
+        objectPublicationPackage.id,
+      );
+      if (previewed !== null) {
+        setObjectPublicationPackage(previewed);
+      }
+      setObjectPublicationEvents(
+        services.objectPublicationPipeline.getEvents(),
+      );
+      setObjectPublicationMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    publishObjectPublication(): void {
+      if (objectPublicationPackage === null) {
+        setObjectPublicationMessage('Nejdřív Build Publication.');
+        return;
+      }
+      try {
+        const published = services.objectPublicationApi.publishObject(
+          objectPublicationPackage.id,
+        );
+        setObjectPublicationPackage(published);
+        setObjectPublicationEvents(
+          services.objectPublicationPipeline.getEvents(),
+        );
+        setObjectPublicationIndexCount(
+          services.objectPublicationPipeline.getIndex().length,
+        );
+        setObjectPublicationMessage(
+          `Published ${published.objectPackage.id}.`,
+        );
+      } catch (error) {
+        const previewed = services.objectPublicationApi.preview(
+          objectPublicationPackage.id,
+        );
+        if (previewed !== null) {
+          setObjectPublicationPackage(previewed);
+        }
+        setObjectPublicationEvents(
+          services.objectPublicationPipeline.getEvents(),
+        );
+        setObjectPublicationMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    disposeObjectPublication(): void {
+      if (objectPublicationPackage === null) {
+        return;
+      }
+      const disposed = services.objectPublicationPipeline.dispose(
+        objectPublicationPackage.id,
+      );
+      setObjectPublicationPackage(disposed);
+      setObjectPublicationEvents(
+        services.objectPublicationPipeline.getEvents(),
+      );
+      setObjectPublicationIndexCount(
+        services.objectPublicationPipeline.getIndex().length,
+      );
+      setObjectPublicationMessage(null);
     },
     buildProject(): void {
       const projectId =

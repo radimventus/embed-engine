@@ -50,6 +50,7 @@ const SECTIONS: readonly {
   { id: 'runtime-compatibility', label: 'Runtime Compatibility' },
   { id: 'runtime-contracts', label: 'Runtime Contracts' },
   { id: 'runtime-extensions', label: 'Runtime Extensions' },
+  { id: 'object-publication', label: 'Object Publication' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },
