@@ -59,6 +59,7 @@ const SECTIONS: readonly {
   { id: 'artifact-versions', label: 'Artifact Versions' },
   { id: 'artifact-dependencies', label: 'Artifact Dependencies' },
   { id: 'publication-plan', label: 'Publication Plan' },
+  { id: 'publication-execution', label: 'Publication Execution' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

@@ -998,6 +998,27 @@ export {
 } from './publication-readiness/publication-readiness-index';
 
 export {
+  createPublicationExecutionCoordinator,
+  type PublicationExecutionCoordinator,
+  type PublicationExecutionCoordinatorOptions,
+} from './publication-execution/publication-execution-coordinator';
+export {
+  createPublicationExecutionApi,
+  type PublicationExecutionApi,
+} from './publication-execution/publication-execution-api';
+export {
+  buildInitialPublicationExecutionPackage,
+  createBasicPublicationExecutionStrategy,
+  createPublicationExecutionValidator,
+  type PublicationExecutionStrategy,
+  type PublicationExecutionValidator,
+} from './publication-execution/basic-publication-execution-strategy';
+export {
+  createPublicationExecutionIndex,
+  type PublicationExecutionIndex,
+} from './publication-execution/publication-execution-index';
+
+export {
   createPublicationPlanBuilder,
   type PublicationPlanBuilder,
   type PublicationPlanBuilderOptions,

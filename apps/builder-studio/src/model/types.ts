@@ -73,6 +73,7 @@ export type WorkspaceSectionId =
   | 'artifact-versions'
   | 'artifact-dependencies'
   | 'publication-plan'
+  | 'publication-execution'
   | 'media'
   | 'layout'
   | 'knowledge';

@@ -109,6 +109,8 @@ import type {
   ArtifactDependencyPackage,
   PublicationPlanEvent,
   PublicationPlanPackage,
+  PublicationExecutionEvent,
+  PublicationExecutionPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -253,6 +255,8 @@ import {
   createArtifactDependencyRegistry,
   createPublicationPlanApi,
   createPublicationPlanBuilder,
+  createPublicationExecutionApi,
+  createPublicationExecutionCoordinator,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -500,6 +504,10 @@ export type BuilderStudioViewModel = {
   readonly publicationPlanEvents: readonly PublicationPlanEvent[];
   readonly publicationPlanIndexCount: number;
   readonly publicationPlanMessage: string | null;
+  readonly publicationExecutionPackage: PublicationExecutionPackage | null;
+  readonly publicationExecutionEvents: readonly PublicationExecutionEvent[];
+  readonly publicationExecutionIndexCount: number;
+  readonly publicationExecutionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -780,6 +788,11 @@ export type BuilderStudioViewModel = {
   readonly validatePublicationPlan: () => void;
   readonly publishPublicationPlan: () => void;
   readonly disposePublicationPlan: () => void;
+  readonly startPublicationExecution: () => void;
+  readonly executePublicationStep: () => void;
+  readonly completePublicationExecution: () => void;
+  readonly validatePublicationExecution: () => void;
+  readonly disposePublicationExecution: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1547,6 +1560,11 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     );
     const publicationPlanBuilder = createPublicationPlanBuilder();
     const publicationPlanApi = createPublicationPlanApi(publicationPlanBuilder);
+    const publicationExecutionCoordinator =
+      createPublicationExecutionCoordinator();
+    const publicationExecutionApi = createPublicationExecutionApi(
+      publicationExecutionCoordinator,
+    );
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1680,6 +1698,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       artifactDependencyApi,
       publicationPlanBuilder,
       publicationPlanApi,
+      publicationExecutionCoordinator,
+      publicationExecutionApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -2286,6 +2306,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [publicationPlanMessage, setPublicationPlanMessage] = useState<
     string | null
   >(null);
+  const [publicationExecutionPackage, setPublicationExecutionPackage] =
+    useState<PublicationExecutionPackage | null>(null);
+  const [publicationExecutionEvents, setPublicationExecutionEvents] = useState<
+    readonly PublicationExecutionEvent[]
+  >([]);
+  const [publicationExecutionIndexCount, setPublicationExecutionIndexCount] =
+    useState(0);
+  const [publicationExecutionMessage, setPublicationExecutionMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2775,6 +2804,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     publicationPlanEvents,
     publicationPlanIndexCount,
     publicationPlanMessage,
+    publicationExecutionPackage,
+    publicationExecutionEvents,
+    publicationExecutionIndexCount,
+    publicationExecutionMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -8847,6 +8880,121 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.publicationPlanBuilder.getIndex().length,
       );
       setPublicationPlanMessage(null);
+    },
+    startPublicationExecution(): void {
+      const sessionId =
+        publicationExecutionPackage?.metadata.sessionId ??
+        publicationPlanPackage?.metadata.sessionId ??
+        'publication-execution-session-demo';
+      const plan = publicationPlanPackage?.plan ?? null;
+      const input = {
+        planId: plan?.id ?? 'publication-plan-demo',
+        rootArtifactId: plan?.rootArtifactId ?? 'runtime-bootstrap-demo',
+        totalSteps: plan?.steps.length ?? 3,
+        title: `Execution ${plan?.rootArtifactId ?? 'runtime-bootstrap-demo'}`,
+      };
+      const started = services.publicationExecutionApi.startPublicationExecution(
+        publicationExecutionPackage?.id ?? null,
+        input,
+        {
+          sessionId,
+          title: 'Builder Publication Execution',
+          execution: input,
+        },
+      );
+      setPublicationExecutionPackage(started);
+      setPublicationExecutionEvents(
+        services.publicationExecutionCoordinator.getEvents(),
+      );
+      setPublicationExecutionIndexCount(
+        services.publicationExecutionCoordinator.getIndex().length,
+      );
+      setPublicationExecutionMessage(
+        `Started execution for plan ${started.session.planId}.`,
+      );
+    },
+    executePublicationStep(): void {
+      if (publicationExecutionPackage === null) {
+        setPublicationExecutionMessage('Nejdřív Start Execution.');
+        return;
+      }
+      try {
+        const next = services.publicationExecutionApi.executePublicationStep(
+          publicationExecutionPackage.id,
+        );
+        setPublicationExecutionPackage(next);
+        setPublicationExecutionEvents(
+          services.publicationExecutionCoordinator.getEvents(),
+        );
+        setPublicationExecutionIndexCount(
+          services.publicationExecutionCoordinator.getIndex().length,
+        );
+        setPublicationExecutionMessage(
+          `Completed step ${next.session.currentStep}/${next.session.metadata.totalSteps}.`,
+        );
+      } catch (error) {
+        setPublicationExecutionMessage(
+          error instanceof Error ? error.message : 'Step execution failed.',
+        );
+      }
+    },
+    completePublicationExecution(): void {
+      if (publicationExecutionPackage === null) {
+        setPublicationExecutionMessage('Nejdřív Start Execution.');
+        return;
+      }
+      const completed = services.publicationExecutionApi.completePublicationExecution(
+        publicationExecutionPackage.id,
+      );
+      setPublicationExecutionPackage(completed);
+      setPublicationExecutionEvents(
+        services.publicationExecutionCoordinator.getEvents(),
+      );
+      setPublicationExecutionIndexCount(
+        services.publicationExecutionCoordinator.getIndex().length,
+      );
+      setPublicationExecutionMessage(
+        `Execution completed for plan ${completed.session.planId}.`,
+      );
+    },
+    validatePublicationExecution(): void {
+      if (publicationExecutionPackage === null) {
+        setPublicationExecutionMessage('Nejdřív Start Execution.');
+        return;
+      }
+      const validation = services.publicationExecutionApi.validatePublicationExecution(
+        publicationExecutionPackage.id,
+      );
+      setPublicationExecutionPackage(
+        services.publicationExecutionApi.getPackage(publicationExecutionPackage.id),
+      );
+      setPublicationExecutionEvents(
+        services.publicationExecutionCoordinator.getEvents(),
+      );
+      setPublicationExecutionIndexCount(
+        services.publicationExecutionCoordinator.getIndex().length,
+      );
+      setPublicationExecutionMessage(
+        validation.valid
+          ? 'Publication execution validation OK.'
+          : 'Publication execution validation failed.',
+      );
+    },
+    disposePublicationExecution(): void {
+      if (publicationExecutionPackage === null) {
+        return;
+      }
+      const disposed = services.publicationExecutionCoordinator.dispose(
+        publicationExecutionPackage.id,
+      );
+      setPublicationExecutionPackage(disposed);
+      setPublicationExecutionEvents(
+        services.publicationExecutionCoordinator.getEvents(),
+      );
+      setPublicationExecutionIndexCount(
+        services.publicationExecutionCoordinator.getIndex().length,
+      );
+      setPublicationExecutionMessage(null);
     },
     buildProject(): void {
       const projectId =

@@ -845,6 +845,19 @@ export type {
 } from './publication-readiness-types';
 
 export type {
+  InitializePublicationExecutionInput,
+  PublicationExecutionEvent,
+  PublicationExecutionEventType,
+  PublicationExecutionIndexEntry,
+  PublicationExecutionPackage,
+  PublicationExecutionSession,
+  PublicationExecutionStatus,
+  PublicationExecutionValidation,
+  PublicationExecutionValidationIssue,
+  StartPublicationExecutionInput,
+} from './publication-execution-types';
+
+export type {
   BuildPublicationPlanInput,
   InitializePublicationPlanInput,
   PublicationPlan,

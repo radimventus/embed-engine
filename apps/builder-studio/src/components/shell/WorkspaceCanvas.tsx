@@ -100,6 +100,8 @@ import type {
   ArtifactDependencyPackage,
   PublicationPlanEvent,
   PublicationPlanPackage,
+  PublicationExecutionEvent,
+  PublicationExecutionPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -180,6 +182,7 @@ import { RuntimeBootstrapOverview } from './RuntimeBootstrapOverview';
 import { ArtifactVersionsOverview } from './ArtifactVersionsOverview';
 import { ArtifactDependenciesOverview } from './ArtifactDependenciesOverview';
 import { PublicationPlanOverview } from './PublicationPlanOverview';
+import { PublicationExecutionOverview } from './PublicationExecutionOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -406,6 +409,10 @@ type WorkspaceCanvasProps = {
   readonly publicationPlanEvents: readonly PublicationPlanEvent[];
   readonly publicationPlanIndexCount: number;
   readonly publicationPlanMessage: string | null;
+  readonly publicationExecutionPackage: PublicationExecutionPackage | null;
+  readonly publicationExecutionEvents: readonly PublicationExecutionEvent[];
+  readonly publicationExecutionIndexCount: number;
+  readonly publicationExecutionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -675,6 +682,11 @@ type WorkspaceCanvasProps = {
   readonly onValidatePublicationPlan: () => void;
   readonly onPublishPublicationPlan: () => void;
   readonly onDisposePublicationPlan: () => void;
+  readonly onStartPublicationExecution: () => void;
+  readonly onExecutePublicationStep: () => void;
+  readonly onCompletePublicationExecution: () => void;
+  readonly onValidatePublicationExecution: () => void;
+  readonly onDisposePublicationExecution: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -884,6 +896,10 @@ export function WorkspaceCanvas({
   publicationPlanEvents,
   publicationPlanIndexCount,
   publicationPlanMessage,
+  publicationExecutionPackage,
+  publicationExecutionEvents,
+  publicationExecutionIndexCount,
+  publicationExecutionMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1143,6 +1159,11 @@ export function WorkspaceCanvas({
   onValidatePublicationPlan,
   onPublishPublicationPlan,
   onDisposePublicationPlan,
+  onStartPublicationExecution,
+  onExecutePublicationStep,
+  onCompletePublicationExecution,
+  onValidatePublicationExecution,
+  onDisposePublicationExecution,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1941,6 +1962,19 @@ export function WorkspaceCanvas({
             onPublish={onPublishPublicationPlan}
             onDispose={onDisposePublicationPlan}
             message={publicationPlanMessage}
+          />
+        ) : null}
+        {activeSection === 'publication-execution' ? (
+          <PublicationExecutionOverview
+            executionPackage={publicationExecutionPackage}
+            events={publicationExecutionEvents}
+            indexCount={publicationExecutionIndexCount}
+            onStart={onStartPublicationExecution}
+            onExecuteStep={onExecutePublicationStep}
+            onComplete={onCompletePublicationExecution}
+            onValidate={onValidatePublicationExecution}
+            onDispose={onDisposePublicationExecution}
+            message={publicationExecutionMessage}
           />
         ) : null}
         {activeSection === 'media' ? (
