@@ -45,6 +45,7 @@ export type WorkspaceSectionId =
   | 'experience-runtime'
   | 'experience-modules'
   | 'experience-state'
+  | 'observability'
   | 'media'
   | 'layout'
   | 'knowledge';

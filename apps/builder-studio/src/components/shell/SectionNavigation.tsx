@@ -31,6 +31,7 @@ const SECTIONS: readonly {
   { id: 'experience-runtime', label: 'Exp. Runtime' },
   { id: 'experience-modules', label: 'Modules' },
   { id: 'experience-state', label: 'State' },
+  { id: 'observability', label: 'Observability' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

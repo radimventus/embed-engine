@@ -44,6 +44,8 @@ import type {
   ModuleCoordinatorEvent,
   ExperienceStatePackage,
   ExperienceStateEvent,
+  RuntimeObservabilityEvent,
+  RuntimeObservabilityPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -96,6 +98,7 @@ import { DecisionOrchestratorOverview } from './DecisionOrchestratorOverview';
 import { ExperienceRuntimeOverview } from './ExperienceRuntimeOverview';
 import { ExperienceModulesOverview } from './ExperienceModulesOverview';
 import { ExperienceStateOverview } from './ExperienceStateOverview';
+import { ObservabilityOverview } from './ObservabilityOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -210,6 +213,10 @@ type WorkspaceCanvasProps = {
   readonly experienceStateEvents: readonly ExperienceStateEvent[];
   readonly experienceStateIndexCount: number;
   readonly experienceStateMessage: string | null;
+  readonly observabilityPackage: RuntimeObservabilityPackage | null;
+  readonly observabilityEvents: readonly RuntimeObservabilityEvent[];
+  readonly observabilityIndexCount: number;
+  readonly observabilityMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -358,6 +365,10 @@ type WorkspaceCanvasProps = {
   readonly onCompleteExperienceState: () => void;
   readonly onValidateExperienceState: () => void;
   readonly onDisposeExperienceState: () => void;
+  readonly onCollectRuntimeObservability: () => void;
+  readonly onPublishRuntimeObservability: () => void;
+  readonly onValidateRuntimeObservability: () => void;
+  readonly onDisposeRuntimeObservability: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -455,6 +466,10 @@ export function WorkspaceCanvas({
   experienceStateEvents,
   experienceStateIndexCount,
   experienceStateMessage,
+  observabilityPackage,
+  observabilityEvents,
+  observabilityIndexCount,
+  observabilityMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -593,6 +608,10 @@ export function WorkspaceCanvas({
   onCompleteExperienceState,
   onValidateExperienceState,
   onDisposeExperienceState,
+  onCollectRuntimeObservability,
+  onPublishRuntimeObservability,
+  onValidateRuntimeObservability,
+  onDisposeRuntimeObservability,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1018,6 +1037,22 @@ export function WorkspaceCanvas({
             onValidate={onValidateExperienceState}
             onDispose={onDisposeExperienceState}
             message={experienceStateMessage}
+          />
+        ) : null}
+
+        {activeSection === 'observability' ? (
+          <ObservabilityOverview
+            observabilityPackage={observabilityPackage}
+            events={observabilityEvents}
+            indexCount={observabilityIndexCount}
+            activeSessionCount={
+              observabilityPackage?.metrics.sessionCount ?? 0
+            }
+            onCollect={onCollectRuntimeObservability}
+            onPublish={onPublishRuntimeObservability}
+            onValidate={onValidateRuntimeObservability}
+            onDispose={onDisposeRuntimeObservability}
+            message={observabilityMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

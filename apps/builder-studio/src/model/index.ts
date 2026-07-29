@@ -501,3 +501,18 @@ export type {
   ExperienceStateValidationIssue,
   UpdateExperienceStateInput,
 } from './experience-state-types';
+
+export type {
+  CollectRuntimeInput,
+  RuntimeEventSource,
+  RuntimeHealthStatus,
+  RuntimeMetrics,
+  RuntimeObservation,
+  RuntimeObservabilityEvent,
+  RuntimeObservabilityEventType,
+  RuntimeObservabilityIndexEntry,
+  RuntimeObservabilityPackage,
+  RuntimeObservabilityValidation,
+  RuntimeObservabilityValidationIssue,
+  RuntimeTimeline,
+} from './runtime-observability-types';

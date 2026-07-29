@@ -138,6 +138,10 @@ export function BuilderStudioApp() {
         experienceStateEvents={session.experienceStateEvents}
         experienceStateIndexCount={session.experienceStateIndexCount}
         experienceStateMessage={session.experienceStateMessage}
+        observabilityPackage={session.observabilityPackage}
+        observabilityEvents={session.observabilityEvents}
+        observabilityIndexCount={session.observabilityIndexCount}
+        observabilityMessage={session.observabilityMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -276,6 +280,10 @@ export function BuilderStudioApp() {
         onCompleteExperienceState={session.completeExperienceState}
         onValidateExperienceState={session.validateExperienceState}
         onDisposeExperienceState={session.disposeExperienceState}
+        onCollectRuntimeObservability={session.collectRuntimeObservability}
+        onPublishRuntimeObservability={session.publishRuntimeObservability}
+        onValidateRuntimeObservability={session.validateRuntimeObservability}
+        onDisposeRuntimeObservability={session.disposeRuntimeObservability}
       />
     </AppShell>
   );

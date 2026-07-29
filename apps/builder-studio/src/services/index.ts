@@ -507,3 +507,25 @@ export {
   createExperienceStateIndex,
   type ExperienceStateIndex,
 } from './experience-state/experience-state-index';
+
+export {
+  createRuntimeObservabilityEngine,
+  type RuntimeObservabilityEngine,
+  type RuntimeObservabilityEngineOptions,
+} from './runtime-observability/runtime-observability-engine';
+export {
+  createRuntimeObservabilityApi,
+  type RuntimeObservabilityApi,
+} from './runtime-observability/runtime-observability-api';
+export {
+  aggregateMetrics,
+  buildTimeline,
+  createBasicObservationCollector,
+  createRuntimeObservabilityValidator,
+  type ObservationCollector,
+  type RuntimeObservabilityValidator,
+} from './runtime-observability/basic-observation-collector';
+export {
+  createRuntimeObservabilityIndex,
+  type RuntimeObservabilityIndex,
+} from './runtime-observability/runtime-observability-index';

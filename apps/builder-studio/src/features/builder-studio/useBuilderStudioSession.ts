@@ -51,6 +51,9 @@ import type {
   ModuleCoordinatorEvent,
   ExperienceStatePackage,
   ExperienceStateEvent,
+  RuntimeEventSource,
+  RuntimeObservabilityEvent,
+  RuntimeObservabilityPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -143,6 +146,8 @@ import {
   BASIC_MODULE_SEQUENCE,
   createExperienceStateApi,
   createExperienceStateManager,
+  createRuntimeObservabilityApi,
+  createRuntimeObservabilityEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -274,6 +279,10 @@ export type BuilderStudioViewModel = {
   readonly experienceStateEvents: readonly ExperienceStateEvent[];
   readonly experienceStateIndexCount: number;
   readonly experienceStateMessage: string | null;
+  readonly observabilityPackage: RuntimeObservabilityPackage | null;
+  readonly observabilityEvents: readonly RuntimeObservabilityEvent[];
+  readonly observabilityIndexCount: number;
+  readonly observabilityMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -433,6 +442,10 @@ export type BuilderStudioViewModel = {
   readonly completeExperienceState: () => void;
   readonly validateExperienceState: () => void;
   readonly disposeExperienceState: () => void;
+  readonly collectRuntimeObservability: () => void;
+  readonly publishRuntimeObservability: () => void;
+  readonly validateRuntimeObservability: () => void;
+  readonly disposeRuntimeObservability: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1103,6 +1116,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const experienceStateApi = createExperienceStateApi(
       experienceStateManager,
     );
+    const runtimeObservabilityEngine = createRuntimeObservabilityEngine();
+    const runtimeObservabilityApi = createRuntimeObservabilityApi(
+      runtimeObservabilityEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1178,6 +1195,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       experienceModuleCoordinatorApi,
       experienceStateManager,
       experienceStateApi,
+      runtimeObservabilityEngine,
+      runtimeObservabilityApi,
     };
   }, []);
 
@@ -1491,6 +1510,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [experienceStateIndexCount, setExperienceStateIndexCount] =
     useState(0);
   const [experienceStateMessage, setExperienceStateMessage] = useState<
+    string | null
+  >(null);
+  const [observabilityPackage, setObservabilityPackage] =
+    useState<RuntimeObservabilityPackage | null>(null);
+  const [observabilityEvents, setObservabilityEvents] = useState<
+    readonly RuntimeObservabilityEvent[]
+  >([]);
+  const [observabilityIndexCount, setObservabilityIndexCount] = useState(0);
+  const [observabilityMessage, setObservabilityMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1870,6 +1898,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     experienceStateEvents,
     experienceStateIndexCount,
     experienceStateMessage,
+    observabilityPackage,
+    observabilityEvents,
+    observabilityIndexCount,
+    observabilityMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -4587,6 +4619,91 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       );
       setExperienceStateMessage(null);
     },
+    collectRuntimeObservability(): void {
+      const sessionId =
+        experienceStatePackage?.state.sessionId ??
+        runtimeExecutionPackage?.execution.sessionId ??
+        experienceModulePackage?.metadata.sessionId ??
+        decisionExecutionPackage?.execution.sessionId ??
+        'runtime-session-demo';
+      const sources = buildRuntimeEventSources({
+        sessionId,
+        experienceRuntimeEvents,
+        moduleCoordinatorEvents,
+        experienceStateEvents,
+        decisionOrchestratorEvents,
+        runtimeExecutionId:
+          runtimeExecutionPackage?.execution.id ??
+          experienceStatePackage?.state.runtimeExecutionId ??
+          null,
+      });
+      const collected = services.runtimeObservabilityApi.collectRuntime({
+        sessionId,
+        title: 'Builder Runtime Observability',
+        sources,
+      });
+      setObservabilityPackage(collected);
+      setObservabilityEvents(services.runtimeObservabilityEngine.getEvents());
+      setObservabilityIndexCount(
+        services.runtimeObservabilityEngine.getIndex().length,
+      );
+      setObservabilityMessage(
+        `Collected ${collected.timeline.events.length} observations (${collected.metrics.health}).`,
+      );
+    },
+    publishRuntimeObservability(): void {
+      if (observabilityPackage === null) {
+        setObservabilityMessage('Nejdřív Collect Runtime.');
+        return;
+      }
+      try {
+        const published = services.runtimeObservabilityApi.publishObservability(
+          observabilityPackage.id,
+        );
+        setObservabilityPackage(published);
+        setObservabilityEvents(services.runtimeObservabilityEngine.getEvents());
+        setObservabilityMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setObservabilityMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeObservability(): void {
+      if (observabilityPackage === null) {
+        setObservabilityMessage('Nejdřív Collect Runtime.');
+        return;
+      }
+      const validation =
+        services.runtimeObservabilityApi.validateObservability(
+          observabilityPackage.id,
+        );
+      const previewed =
+        services.runtimeObservabilityApi.previewObservability(
+          observabilityPackage.id,
+        );
+      if (previewed !== null) {
+        setObservabilityPackage(previewed);
+      }
+      setObservabilityEvents(services.runtimeObservabilityEngine.getEvents());
+      setObservabilityMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeObservability(): void {
+      if (observabilityPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeObservabilityEngine.dispose(
+        observabilityPackage.id,
+      );
+      setObservabilityPackage(disposed);
+      setObservabilityEvents(services.runtimeObservabilityEngine.getEvents());
+      setObservabilityIndexCount(
+        services.runtimeObservabilityEngine.getIndex().length,
+      );
+      setObservabilityMessage(null);
+    },
     buildProject(): void {
       const projectId =
         services.workspaceService.getWorkspace().activeProjectId;
@@ -4695,4 +4812,88 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       syncPreview();
     },
   };
+}
+
+function buildRuntimeEventSources(input: {
+  readonly sessionId: string;
+  readonly experienceRuntimeEvents: readonly ExperienceRuntimeEvent[];
+  readonly moduleCoordinatorEvents: readonly ModuleCoordinatorEvent[];
+  readonly experienceStateEvents: readonly ExperienceStateEvent[];
+  readonly decisionOrchestratorEvents: readonly DecisionOrchestratorEvent[];
+  readonly runtimeExecutionId: string | null;
+}): RuntimeEventSource[] {
+  const sources: RuntimeEventSource[] = [
+    ...input.experienceRuntimeEvents.map((event) => ({
+      sessionId: input.sessionId,
+      executionId: event.executionId ?? input.runtimeExecutionId,
+      moduleId: null,
+      event: event.type,
+      timestamp: event.at,
+      source: 'experience-runtime',
+    })),
+    ...input.moduleCoordinatorEvents.map((event) => ({
+      sessionId: input.sessionId,
+      executionId: input.runtimeExecutionId,
+      moduleId: event.moduleId,
+      event: event.type,
+      timestamp: event.at,
+      source: 'experience-modules',
+    })),
+    ...input.experienceStateEvents.map((event) => ({
+      sessionId: input.sessionId,
+      executionId: input.runtimeExecutionId,
+      moduleId: null,
+      event: event.type,
+      timestamp: event.at,
+      source: 'experience-state',
+    })),
+    ...input.decisionOrchestratorEvents.map((event) => ({
+      sessionId: input.sessionId,
+      executionId: event.executionId,
+      moduleId: null,
+      event: event.type,
+      timestamp: event.at,
+      source: 'decision-orchestrator',
+    })),
+  ];
+
+  if (sources.length > 0) {
+    return sources;
+  }
+
+  const stamp = new Date().toISOString();
+  return [
+    {
+      sessionId: input.sessionId,
+      executionId: 'runtime-execution-demo',
+      moduleId: null,
+      event: 'RuntimeStarted',
+      timestamp: stamp,
+      source: 'experience-runtime',
+    },
+    {
+      sessionId: input.sessionId,
+      executionId: 'runtime-execution-demo',
+      moduleId: 'hero',
+      event: 'ModuleActivated',
+      timestamp: stamp,
+      source: 'experience-modules',
+    },
+    {
+      sessionId: input.sessionId,
+      executionId: 'runtime-execution-demo',
+      moduleId: 'hero',
+      event: 'ExperienceStateCreated',
+      timestamp: stamp,
+      source: 'experience-state',
+    },
+    {
+      sessionId: input.sessionId,
+      executionId: 'decision-execution-demo',
+      moduleId: null,
+      event: 'DecisionExecutionStarted',
+      timestamp: stamp,
+      source: 'decision-orchestrator',
+    },
+  ];
 }
