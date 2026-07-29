@@ -671,3 +671,17 @@ export type {
   RuntimeOperationsValidation,
   RuntimeOperationsValidationIssue,
 } from './runtime-operations-types';
+
+export type {
+  InitializeIntegrationInput,
+  RegisterRuntimePackageInput,
+  RuntimeIntegrationCatalog,
+  RuntimeIntegrationEvent,
+  RuntimeIntegrationEventType,
+  RuntimeIntegrationIndexEntry,
+  RuntimeIntegrationPackage,
+  RuntimeIntegrationPackageType,
+  RuntimeIntegrationRecord,
+  RuntimeIntegrationValidation,
+  RuntimeIntegrationValidationIssue,
+} from './runtime-integration-types';

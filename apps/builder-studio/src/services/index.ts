@@ -757,3 +757,23 @@ export {
   createRuntimeOperationsIndex,
   type RuntimeOperationsIndex,
 } from './runtime-operations/runtime-operations-index';
+
+export {
+  createRuntimeIntegrationHub,
+  type RuntimeIntegrationHub,
+  type RuntimeIntegrationHubOptions,
+} from './runtime-integration/runtime-integration-hub';
+export {
+  createRuntimeIntegrationApi,
+  type RuntimeIntegrationApi,
+} from './runtime-integration/runtime-integration-api';
+export {
+  createBasicRuntimeIntegrationStrategy,
+  createRuntimeIntegrationValidator,
+  type RuntimeIntegrationStrategy,
+  type RuntimeIntegrationValidator,
+} from './runtime-integration/basic-runtime-integration-strategy';
+export {
+  createRuntimeIntegrationIndex,
+  type RuntimeIntegrationIndex,
+} from './runtime-integration/runtime-integration-index';

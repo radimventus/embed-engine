@@ -68,6 +68,8 @@ import type {
   RuntimeRecoveryReportPackage,
   RuntimeOperationsEvent,
   RuntimeOperationsPackage,
+  RuntimeIntegrationEvent,
+  RuntimeIntegrationPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -132,6 +134,7 @@ import { RecoveryExecutionOverview } from './RecoveryExecutionOverview';
 import { RecoveryCoordinatorOverview } from './RecoveryCoordinatorOverview';
 import { RecoveryReportingOverview } from './RecoveryReportingOverview';
 import { OperationsOverview } from './OperationsOverview';
+import { RuntimeIntegrationOverview } from './RuntimeIntegrationOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -294,6 +297,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeOperationsEvents: readonly RuntimeOperationsEvent[];
   readonly runtimeOperationsIndexCount: number;
   readonly runtimeOperationsMessage: string | null;
+  readonly runtimeIntegrationPackage: RuntimeIntegrationPackage | null;
+  readonly runtimeIntegrationEvents: readonly RuntimeIntegrationEvent[];
+  readonly runtimeIntegrationIndexCount: number;
+  readonly runtimeIntegrationMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -494,6 +501,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeOperations: () => void;
   readonly onValidateRuntimeOperations: () => void;
   readonly onDisposeRuntimeOperations: () => void;
+  readonly onRegisterRuntimeIntegration: () => void;
+  readonly onPublishRuntimeIntegration: () => void;
+  readonly onValidateRuntimeIntegration: () => void;
+  readonly onDisposeRuntimeIntegration: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -639,6 +650,10 @@ export function WorkspaceCanvas({
   runtimeOperationsEvents,
   runtimeOperationsIndexCount,
   runtimeOperationsMessage,
+  runtimeIntegrationPackage,
+  runtimeIntegrationEvents,
+  runtimeIntegrationIndexCount,
+  runtimeIntegrationMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -829,6 +844,10 @@ export function WorkspaceCanvas({
   onPublishRuntimeOperations,
   onValidateRuntimeOperations,
   onDisposeRuntimeOperations,
+  onRegisterRuntimeIntegration,
+  onPublishRuntimeIntegration,
+  onValidateRuntimeIntegration,
+  onDisposeRuntimeIntegration,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1420,6 +1439,19 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeOperations}
             onDispose={onDisposeRuntimeOperations}
             message={runtimeOperationsMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-integration' ? (
+          <RuntimeIntegrationOverview
+            integrationPackage={runtimeIntegrationPackage}
+            events={runtimeIntegrationEvents}
+            indexCount={runtimeIntegrationIndexCount}
+            onRegister={onRegisterRuntimeIntegration}
+            onPublish={onPublishRuntimeIntegration}
+            onValidate={onValidateRuntimeIntegration}
+            onDispose={onDisposeRuntimeIntegration}
+            message={runtimeIntegrationMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

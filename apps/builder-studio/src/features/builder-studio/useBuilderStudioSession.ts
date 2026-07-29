@@ -77,6 +77,8 @@ import type {
   RuntimeRecoveryReportPackage,
   RuntimeOperationsEvent,
   RuntimeOperationsPackage,
+  RuntimeIntegrationEvent,
+  RuntimeIntegrationPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -193,6 +195,8 @@ import {
   createRuntimeRecoveryReportingEngine,
   createRuntimeOperationsApi,
   createRuntimeOperationsDashboard,
+  createRuntimeIntegrationApi,
+  createRuntimeIntegrationHub,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -372,6 +376,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeOperationsEvents: readonly RuntimeOperationsEvent[];
   readonly runtimeOperationsIndexCount: number;
   readonly runtimeOperationsMessage: string | null;
+  readonly runtimeIntegrationPackage: RuntimeIntegrationPackage | null;
+  readonly runtimeIntegrationEvents: readonly RuntimeIntegrationEvent[];
+  readonly runtimeIntegrationIndexCount: number;
+  readonly runtimeIntegrationMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -583,6 +591,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeOperations: () => void;
   readonly validateRuntimeOperations: () => void;
   readonly disposeRuntimeOperations: () => void;
+  readonly registerRuntimeIntegration: () => void;
+  readonly publishRuntimeIntegration: () => void;
+  readonly validateRuntimeIntegration: () => void;
+  readonly disposeRuntimeIntegration: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1296,6 +1308,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeOperationsApi = createRuntimeOperationsApi(
       runtimeOperationsDashboard,
     );
+    const runtimeIntegrationHub = createRuntimeIntegrationHub();
+    const runtimeIntegrationApi = createRuntimeIntegrationApi(
+      runtimeIntegrationHub,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1395,6 +1411,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeRecoveryReportingApi,
       runtimeOperationsDashboard,
       runtimeOperationsApi,
+      runtimeIntegrationHub,
+      runtimeIntegrationApi,
     };
   }, []);
 
@@ -1842,6 +1860,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [runtimeOperationsMessage, setRuntimeOperationsMessage] = useState<
     string | null
   >(null);
+  const [runtimeIntegrationPackage, setRuntimeIntegrationPackage] =
+    useState<RuntimeIntegrationPackage | null>(null);
+  const [runtimeIntegrationEvents, setRuntimeIntegrationEvents] = useState<
+    readonly RuntimeIntegrationEvent[]
+  >([]);
+  const [runtimeIntegrationIndexCount, setRuntimeIntegrationIndexCount] =
+    useState(0);
+  const [runtimeIntegrationMessage, setRuntimeIntegrationMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2267,6 +2295,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeOperationsEvents,
     runtimeOperationsIndexCount,
     runtimeOperationsMessage,
+    runtimeIntegrationPackage,
+    runtimeIntegrationEvents,
+    runtimeIntegrationIndexCount,
+    runtimeIntegrationMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -6213,6 +6245,192 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeOperationsDashboard.getIndex().length,
       );
       setRuntimeOperationsMessage(null);
+    },
+    registerRuntimeIntegration(): void {
+      const sessionId =
+        runtimeOperationsPackage?.metadata.sessionId ??
+        runtimeRecoveryReportingPackage?.report.sessionId ??
+        runtimeEnforcementPackage?.decision.sessionId ??
+        runtimeHealthPackage?.report.sessionId ??
+        'runtime-session-demo';
+      const packages = [
+        {
+          packageId: runtimePolicyPackage?.id ?? 'runtime-policy-package-demo',
+          packageType: 'Policy' as const,
+          version: runtimePolicyPackage?.version ?? '1.0.0',
+          source: 'Runtime Policy Engine',
+          publishedAt: runtimePolicyPackage?.updatedAt ?? null,
+          title: runtimePolicyPackage?.metadata.title ?? 'Policy Package',
+          status: runtimePolicyPackage?.metadata.status ?? 'Published',
+        },
+        {
+          packageId:
+            runtimeGovernancePackage?.id ?? 'runtime-governance-package-demo',
+          packageType: 'Governance' as const,
+          version: runtimeGovernancePackage?.version ?? '1.0.0',
+          source: 'Runtime Governance Engine',
+          publishedAt: runtimeGovernancePackage?.updatedAt ?? null,
+          title:
+            runtimeGovernancePackage?.metadata.title ?? 'Governance Package',
+          status: runtimeGovernancePackage?.metadata.status ?? 'Published',
+        },
+        {
+          packageId: observabilityPackage?.id ?? 'runtime-observability-demo',
+          packageType: 'Observability' as const,
+          version: observabilityPackage?.version ?? '1.0.0',
+          source: 'Runtime Observability',
+          publishedAt: observabilityPackage?.updatedAt ?? null,
+          title: observabilityPackage?.metadata.title ?? 'Observability Package',
+          status: observabilityPackage?.metadata.status ?? 'Published',
+        },
+        {
+          packageId: runtimeHealthPackage?.id ?? 'runtime-health-package-demo',
+          packageType: 'Health' as const,
+          version: runtimeHealthPackage?.version ?? '1.0.0',
+          source: 'Runtime Health Engine',
+          publishedAt: runtimeHealthPackage?.updatedAt ?? null,
+          title: runtimeHealthPackage?.metadata.title ?? 'Health Package',
+          status: runtimeHealthPackage?.metadata.status ?? 'Published',
+        },
+        {
+          packageId: runtimeAuditPackage?.id ?? 'runtime-audit-package-demo',
+          packageType: 'Audit' as const,
+          version: runtimeAuditPackage?.version ?? '1.0.0',
+          source: 'Runtime Audit Engine',
+          publishedAt: runtimeAuditPackage?.updatedAt ?? null,
+          title: runtimeAuditPackage?.metadata.title ?? 'Audit Package',
+          status: runtimeAuditPackage?.metadata.status ?? 'Published',
+        },
+        {
+          packageId:
+            runtimeEnforcementPackage?.id ?? 'runtime-enforcement-package-demo',
+          packageType: 'Enforcement' as const,
+          version: runtimeEnforcementPackage?.version ?? '1.0.0',
+          source: 'Runtime Policy Enforcement',
+          publishedAt: runtimeEnforcementPackage?.updatedAt ?? null,
+          title:
+            runtimeEnforcementPackage?.metadata.title ?? 'Enforcement Package',
+          status: runtimeEnforcementPackage?.metadata.status ?? 'Published',
+        },
+        {
+          packageId:
+            runtimeResiliencePackage?.id ?? 'runtime-resilience-package-demo',
+          packageType: 'Resilience' as const,
+          version: runtimeResiliencePackage?.version ?? '1.0.0',
+          source: 'Runtime Resilience Engine',
+          publishedAt: runtimeResiliencePackage?.updatedAt ?? null,
+          title:
+            runtimeResiliencePackage?.metadata.title ?? 'Resilience Package',
+          status: runtimeResiliencePackage?.metadata.status ?? 'Published',
+        },
+        {
+          packageId:
+            runtimeRecoveryReportingPackage?.id ??
+            runtimeRecoveryPackage?.id ??
+            'runtime-recovery-package-demo',
+          packageType: 'Recovery' as const,
+          version:
+            runtimeRecoveryReportingPackage?.version ??
+            runtimeRecoveryPackage?.version ??
+            '1.0.0',
+          source: 'Runtime Recovery Reporting',
+          publishedAt:
+            runtimeRecoveryReportingPackage?.updatedAt ??
+            runtimeRecoveryPackage?.updatedAt ??
+            null,
+          title:
+            runtimeRecoveryReportingPackage?.metadata.title ??
+            runtimeRecoveryPackage?.metadata.title ??
+            'Recovery Package',
+          status:
+            runtimeRecoveryReportingPackage?.metadata.status ??
+            runtimeRecoveryPackage?.metadata.status ??
+            'Published',
+        },
+        {
+          packageId:
+            runtimeOperationsPackage?.id ?? 'runtime-operations-package-demo',
+          packageType: 'Operations' as const,
+          version: runtimeOperationsPackage?.version ?? '1.0.0',
+          source: 'Runtime Operations Dashboard',
+          publishedAt: runtimeOperationsPackage?.updatedAt ?? null,
+          title:
+            runtimeOperationsPackage?.metadata.title ?? 'Operations Package',
+          status: runtimeOperationsPackage?.metadata.status ?? 'Published',
+        },
+      ];
+      const registered = services.runtimeIntegrationApi.initialize({
+        sessionId,
+        title: 'Builder Runtime Integration',
+        packages,
+      });
+      setRuntimeIntegrationPackage(registered);
+      setRuntimeIntegrationEvents(
+        services.runtimeIntegrationHub.getEvents(),
+      );
+      setRuntimeIntegrationIndexCount(
+        services.runtimeIntegrationHub.getIndex().length,
+      );
+      setRuntimeIntegrationMessage(
+        `Catalog ${registered.catalog.id} · ${registered.catalog.records.length} package(s).`,
+      );
+    },
+    publishRuntimeIntegration(): void {
+      if (runtimeIntegrationPackage === null) {
+        setRuntimeIntegrationMessage('Nejdřív Register Packages.');
+        return;
+      }
+      try {
+        const published = services.runtimeIntegrationApi.publishRuntimeCatalog(
+          runtimeIntegrationPackage.id,
+        );
+        setRuntimeIntegrationPackage(published);
+        setRuntimeIntegrationEvents(
+          services.runtimeIntegrationHub.getEvents(),
+        );
+        setRuntimeIntegrationMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeIntegrationMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeIntegration(): void {
+      if (runtimeIntegrationPackage === null) {
+        setRuntimeIntegrationMessage('Nejdřív Register Packages.');
+        return;
+      }
+      const validation = services.runtimeIntegrationApi.validateRuntimeCatalog(
+        runtimeIntegrationPackage.id,
+      );
+      const previewed = services.runtimeIntegrationApi.preview(
+        runtimeIntegrationPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeIntegrationPackage(previewed);
+      }
+      setRuntimeIntegrationEvents(
+        services.runtimeIntegrationHub.getEvents(),
+      );
+      setRuntimeIntegrationMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeIntegration(): void {
+      if (runtimeIntegrationPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeIntegrationHub.dispose(
+        runtimeIntegrationPackage.id,
+      );
+      setRuntimeIntegrationPackage(disposed);
+      setRuntimeIntegrationEvents(
+        services.runtimeIntegrationHub.getEvents(),
+      );
+      setRuntimeIntegrationIndexCount(
+        services.runtimeIntegrationHub.getIndex().length,
+      );
+      setRuntimeIntegrationMessage(null);
     },
     buildProject(): void {
       const projectId =
