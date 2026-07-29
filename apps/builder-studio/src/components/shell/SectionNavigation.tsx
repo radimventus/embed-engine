@@ -48,6 +48,7 @@ const SECTIONS: readonly {
   { id: 'runtime-manifest', label: 'Runtime Manifest' },
   { id: 'runtime-api', label: 'Runtime API' },
   { id: 'runtime-compatibility', label: 'Runtime Compatibility' },
+  { id: 'runtime-contracts', label: 'Runtime Contracts' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

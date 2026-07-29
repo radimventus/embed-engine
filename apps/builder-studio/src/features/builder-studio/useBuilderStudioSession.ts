@@ -87,6 +87,8 @@ import type {
   RuntimeApiPackage,
   RuntimeCompatibilityEvent,
   RuntimeCompatibilityPackage,
+  RuntimeContractEvent,
+  RuntimeContractPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -213,6 +215,8 @@ import {
   createRuntimeApiGateway,
   createRuntimeCompatibilityApi,
   createRuntimeCompatibilityManager,
+  createRuntimeContractApi,
+  createRuntimeContractManager,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -412,6 +416,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeCompatibilityEvents: readonly RuntimeCompatibilityEvent[];
   readonly runtimeCompatibilityIndexCount: number;
   readonly runtimeCompatibilityMessage: string | null;
+  readonly runtimeContractPackage: RuntimeContractPackage | null;
+  readonly runtimeContractEvents: readonly RuntimeContractEvent[];
+  readonly runtimeContractIndexCount: number;
+  readonly runtimeContractMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -644,6 +652,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeCompatibility: () => void;
   readonly validateRuntimeCompatibility: () => void;
   readonly disposeRuntimeCompatibility: () => void;
+  readonly registerRuntimeContracts: () => void;
+  readonly publishRuntimeContracts: () => void;
+  readonly validateRuntimeContracts: () => void;
+  readonly disposeRuntimeContracts: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1377,6 +1389,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeCompatibilityApi = createRuntimeCompatibilityApi(
       runtimeCompatibilityManager,
     );
+    const runtimeContractManager = createRuntimeContractManager();
+    const runtimeContractApi = createRuntimeContractApi(
+      runtimeContractManager,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1486,6 +1502,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeApiGatewayApi,
       runtimeCompatibilityManager,
       runtimeCompatibilityApi,
+      runtimeContractManager,
+      runtimeContractApi,
     };
   }, []);
 
@@ -1983,6 +2001,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   ] = useState(0);
   const [runtimeCompatibilityMessage, setRuntimeCompatibilityMessage] =
     useState<string | null>(null);
+  const [runtimeContractPackage, setRuntimeContractPackage] =
+    useState<RuntimeContractPackage | null>(null);
+  const [runtimeContractEvents, setRuntimeContractEvents] = useState<
+    readonly RuntimeContractEvent[]
+  >([]);
+  const [runtimeContractIndexCount, setRuntimeContractIndexCount] =
+    useState(0);
+  const [runtimeContractMessage, setRuntimeContractMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2428,6 +2456,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeCompatibilityEvents,
     runtimeCompatibilityIndexCount,
     runtimeCompatibilityMessage,
+    runtimeContractPackage,
+    runtimeContractEvents,
+    runtimeContractIndexCount,
+    runtimeContractMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -7063,6 +7095,151 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeCompatibilityManager.getIndex().length,
       );
       setRuntimeCompatibilityMessage(null);
+    },
+    registerRuntimeContracts(): void {
+      const sessionId =
+        runtimeCompatibilityPackage?.metadata.sessionId ??
+        runtimeApiPackage?.metadata.sessionId ??
+        runtimeManifestPackage?.metadata.sessionId ??
+        'runtime-session-demo';
+      const fromManifest =
+        runtimeManifestPackage?.manifest.capabilities.map((capability) => ({
+          name: `${capability.name} Contract`,
+          version: capability.version,
+          capability: capability.id,
+          operations: [
+            {
+              operation: 'preview',
+              request: `${capability.name}PreviewRequest`,
+              response: `${capability.name}PreviewResponse`,
+              errors: ['NotFound', 'Unavailable'],
+            },
+          ],
+          dependencies: [...capability.dependencies],
+          title: `${capability.name} Contract`,
+          compatibility: 'Compatible',
+          status: 'Draft' as const,
+        })) ?? [];
+      const contracts =
+        fromManifest.length > 0
+          ? fromManifest
+          : [
+              {
+                name: 'Policy Contract',
+                version: '1.0.0',
+                capability: 'capability-policy',
+                operations: [
+                  {
+                    operation: 'preview',
+                    request: 'PolicyPreviewRequest',
+                    response: 'PolicyPreviewResponse',
+                    errors: ['NotFound'],
+                  },
+                ],
+                dependencies: [],
+                title: 'Policy Contract',
+                compatibility: 'Compatible',
+                status: 'Draft' as const,
+              },
+              {
+                name: 'Governance Contract',
+                version: '1.0.0',
+                capability: 'capability-governance',
+                operations: [
+                  {
+                    operation: 'preview',
+                    request: 'GovernancePreviewRequest',
+                    response: 'GovernancePreviewResponse',
+                    errors: ['Unavailable'],
+                  },
+                ],
+                dependencies: ['capability-policy'],
+                title: 'Governance Contract',
+                compatibility: 'Compatible',
+                status: 'Draft' as const,
+              },
+              {
+                name: 'Operations Contract',
+                version: '1.0.0',
+                capability: 'capability-operations',
+                operations: [
+                  {
+                    operation: 'preview',
+                    request: 'OperationsPreviewRequest',
+                    response: 'OperationsPreviewResponse',
+                    errors: ['Unavailable'],
+                  },
+                ],
+                dependencies: ['capability-policy', 'capability-governance'],
+                title: 'Operations Contract',
+                compatibility: 'Compatible',
+                status: 'Draft' as const,
+              },
+            ];
+      const registered = services.runtimeContractApi.initialize({
+        sessionId,
+        title: 'Builder Runtime Contracts',
+        contracts,
+      });
+      setRuntimeContractPackage(registered);
+      setRuntimeContractEvents(services.runtimeContractManager.getEvents());
+      setRuntimeContractIndexCount(
+        services.runtimeContractManager.getIndex().length,
+      );
+      setRuntimeContractMessage(
+        `Contracts package ${registered.id} · ${registered.contracts.length} contract(s).`,
+      );
+    },
+    publishRuntimeContracts(): void {
+      if (runtimeContractPackage === null) {
+        setRuntimeContractMessage('Nejdřív Register Contracts.');
+        return;
+      }
+      try {
+        const published = services.runtimeContractApi.publishRuntimeContract(
+          runtimeContractPackage.id,
+        );
+        setRuntimeContractPackage(published);
+        setRuntimeContractEvents(services.runtimeContractManager.getEvents());
+        setRuntimeContractMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeContractMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeContracts(): void {
+      if (runtimeContractPackage === null) {
+        setRuntimeContractMessage('Nejdřív Register Contracts.');
+        return;
+      }
+      const validation = services.runtimeContractApi.validateRuntimeContract(
+        runtimeContractPackage.id,
+      );
+      const previewed = services.runtimeContractApi.preview(
+        runtimeContractPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeContractPackage(previewed);
+      }
+      setRuntimeContractEvents(services.runtimeContractManager.getEvents());
+      setRuntimeContractMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeContracts(): void {
+      if (runtimeContractPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeContractManager.dispose(
+        runtimeContractPackage.id,
+      );
+      setRuntimeContractPackage(disposed);
+      setRuntimeContractEvents(services.runtimeContractManager.getEvents());
+      setRuntimeContractIndexCount(
+        services.runtimeContractManager.getIndex().length,
+      );
+      setRuntimeContractMessage(null);
     },
     buildProject(): void {
       const projectId =

@@ -744,3 +744,18 @@ export type {
   RuntimeCompatibilityValidation,
   RuntimeCompatibilityValidationIssue,
 } from './runtime-compatibility-types';
+
+export type {
+  InitializeContractInput,
+  RegisterOperationContractInput,
+  RegisterRuntimeContractInput,
+  RuntimeContract,
+  RuntimeContractEvent,
+  RuntimeContractEventType,
+  RuntimeContractIndexEntry,
+  RuntimeContractLifecycle,
+  RuntimeContractPackage,
+  RuntimeContractValidation,
+  RuntimeContractValidationIssue,
+  RuntimeOperationContract,
+} from './runtime-contract-types';

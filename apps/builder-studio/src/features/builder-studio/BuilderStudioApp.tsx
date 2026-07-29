@@ -224,6 +224,10 @@ export function BuilderStudioApp() {
           session.runtimeCompatibilityIndexCount
         }
         runtimeCompatibilityMessage={session.runtimeCompatibilityMessage}
+        runtimeContractPackage={session.runtimeContractPackage}
+        runtimeContractEvents={session.runtimeContractEvents}
+        runtimeContractIndexCount={session.runtimeContractIndexCount}
+        runtimeContractMessage={session.runtimeContractMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -463,6 +467,10 @@ export function BuilderStudioApp() {
         onPublishRuntimeCompatibility={session.publishRuntimeCompatibility}
         onValidateRuntimeCompatibility={session.validateRuntimeCompatibility}
         onDisposeRuntimeCompatibility={session.disposeRuntimeCompatibility}
+        onRegisterRuntimeContracts={session.registerRuntimeContracts}
+        onPublishRuntimeContracts={session.publishRuntimeContracts}
+        onValidateRuntimeContracts={session.validateRuntimeContracts}
+        onDisposeRuntimeContracts={session.disposeRuntimeContracts}
       />
     </AppShell>
   );

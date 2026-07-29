@@ -857,3 +857,23 @@ export {
   createRuntimeCompatibilityIndex,
   type RuntimeCompatibilityIndex,
 } from './runtime-compatibility/runtime-compatibility-index';
+
+export {
+  createRuntimeContractManager,
+  type RuntimeContractManager,
+  type RuntimeContractManagerOptions,
+} from './runtime-contract/runtime-contract-manager';
+export {
+  createRuntimeContractApi,
+  type RuntimeContractApi,
+} from './runtime-contract/runtime-contract-api';
+export {
+  createBasicRuntimeContractStrategy,
+  createRuntimeContractValidator,
+  type RuntimeContractStrategy,
+  type RuntimeContractValidator,
+} from './runtime-contract/basic-runtime-contract-strategy';
+export {
+  createRuntimeContractIndex,
+  type RuntimeContractIndex,
+} from './runtime-contract/runtime-contract-index';

@@ -78,6 +78,8 @@ import type {
   RuntimeApiPackage,
   RuntimeCompatibilityEvent,
   RuntimeCompatibilityPackage,
+  RuntimeContractEvent,
+  RuntimeContractPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -147,6 +149,7 @@ import { RuntimeRegistryOverview } from './RuntimeRegistryOverview';
 import { RuntimeManifestOverview } from './RuntimeManifestOverview';
 import { RuntimeApiOverview } from './RuntimeApiOverview';
 import { RuntimeCompatibilityOverview } from './RuntimeCompatibilityOverview';
+import { RuntimeContractsOverview } from './RuntimeContractsOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -329,6 +332,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeCompatibilityEvents: readonly RuntimeCompatibilityEvent[];
   readonly runtimeCompatibilityIndexCount: number;
   readonly runtimeCompatibilityMessage: string | null;
+  readonly runtimeContractPackage: RuntimeContractPackage | null;
+  readonly runtimeContractEvents: readonly RuntimeContractEvent[];
+  readonly runtimeContractIndexCount: number;
+  readonly runtimeContractMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -550,6 +557,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeCompatibility: () => void;
   readonly onValidateRuntimeCompatibility: () => void;
   readonly onDisposeRuntimeCompatibility: () => void;
+  readonly onRegisterRuntimeContracts: () => void;
+  readonly onPublishRuntimeContracts: () => void;
+  readonly onValidateRuntimeContracts: () => void;
+  readonly onDisposeRuntimeContracts: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -715,6 +726,10 @@ export function WorkspaceCanvas({
   runtimeCompatibilityEvents,
   runtimeCompatibilityIndexCount,
   runtimeCompatibilityMessage,
+  runtimeContractPackage,
+  runtimeContractEvents,
+  runtimeContractIndexCount,
+  runtimeContractMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -926,6 +941,10 @@ export function WorkspaceCanvas({
   onPublishRuntimeCompatibility,
   onValidateRuntimeCompatibility,
   onDisposeRuntimeCompatibility,
+  onRegisterRuntimeContracts,
+  onPublishRuntimeContracts,
+  onValidateRuntimeContracts,
+  onDisposeRuntimeContracts,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1583,6 +1602,19 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeCompatibility}
             onDispose={onDisposeRuntimeCompatibility}
             message={runtimeCompatibilityMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-contracts' ? (
+          <RuntimeContractsOverview
+            contractPackage={runtimeContractPackage}
+            events={runtimeContractEvents}
+            indexCount={runtimeContractIndexCount}
+            onRegister={onRegisterRuntimeContracts}
+            onPublish={onPublishRuntimeContracts}
+            onValidate={onValidateRuntimeContracts}
+            onDispose={onDisposeRuntimeContracts}
+            message={runtimeContractMessage}
           />
         ) : null}
         {activeSection === 'media' ? (
