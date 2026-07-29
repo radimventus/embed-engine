@@ -52,6 +52,7 @@ export type WorkspaceSectionId =
   | 'runtime-policies'
   | 'runtime-enforcement'
   | 'runtime-resilience'
+  | 'runtime-recovery'
   | 'media'
   | 'layout'
   | 'knowledge';

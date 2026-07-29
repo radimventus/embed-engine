@@ -38,6 +38,7 @@ const SECTIONS: readonly {
   { id: 'runtime-policies', label: 'Policies' },
   { id: 'runtime-enforcement', label: 'Enforcement' },
   { id: 'runtime-resilience', label: 'Resilience' },
+  { id: 'runtime-recovery', label: 'Recovery' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

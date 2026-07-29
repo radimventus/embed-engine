@@ -605,3 +605,17 @@ export type {
   RuntimeResilienceValidation,
   RuntimeResilienceValidationIssue,
 } from './runtime-resilience-types';
+
+export type {
+  BuildRecoverySequenceInput,
+  RecoveryRiskLevel,
+  RecoverySequence,
+  RecoveryStep,
+  RecoveryStepAction,
+  RuntimeRecoveryEvent,
+  RuntimeRecoveryEventType,
+  RuntimeRecoveryIndexEntry,
+  RuntimeRecoveryPackage,
+  RuntimeRecoveryValidation,
+  RuntimeRecoveryValidationIssue,
+} from './runtime-recovery-types';
