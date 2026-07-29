@@ -486,3 +486,18 @@ export type {
   ModuleExecutionValidationIssue,
   ModuleTransition,
 } from './experience-module-coordinator-types';
+
+export type {
+  CreateExperienceStateInput,
+  ExperienceCheckpoint,
+  ExperienceState,
+  ExperienceStateEvent,
+  ExperienceStateEventType,
+  ExperienceStateIndexEntry,
+  ExperienceStatePackage,
+  ExperienceStateSnapshot,
+  ExperienceStateStatus,
+  ExperienceStateValidation,
+  ExperienceStateValidationIssue,
+  UpdateExperienceStateInput,
+} from './experience-state-types';

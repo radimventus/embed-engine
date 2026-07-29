@@ -44,6 +44,7 @@ export type WorkspaceSectionId =
   | 'decision-orchestrator'
   | 'experience-runtime'
   | 'experience-modules'
+  | 'experience-state'
   | 'media'
   | 'layout'
   | 'knowledge';

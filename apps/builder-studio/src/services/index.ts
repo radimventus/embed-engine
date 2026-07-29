@@ -488,3 +488,22 @@ export {
   createModuleExecutionIndex,
   type ModuleExecutionIndex,
 } from './experience-module-coordinator/module-execution-index';
+
+export {
+  createExperienceStateManager,
+  type ExperienceStateManager,
+} from './experience-state/experience-state-manager';
+export {
+  createExperienceStateApi,
+  type ExperienceStateApi,
+} from './experience-state/experience-state-api';
+export {
+  createBasicStatePersistenceStrategy,
+  createExperienceStateValidator,
+  type ExperienceStateValidator,
+  type StatePersistenceStrategy,
+} from './experience-state/basic-state-persistence-strategy';
+export {
+  createExperienceStateIndex,
+  type ExperienceStateIndex,
+} from './experience-state/experience-state-index';

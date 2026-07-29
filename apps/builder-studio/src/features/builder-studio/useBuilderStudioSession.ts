@@ -49,6 +49,8 @@ import type {
   ExperienceRuntimeEvent,
   ExperienceModulePackage,
   ModuleCoordinatorEvent,
+  ExperienceStatePackage,
+  ExperienceStateEvent,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -139,6 +141,8 @@ import {
   createExperienceModuleCoordinatorApi,
   createExperienceModuleCoordinator,
   BASIC_MODULE_SEQUENCE,
+  createExperienceStateApi,
+  createExperienceStateManager,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -266,6 +270,10 @@ export type BuilderStudioViewModel = {
   readonly moduleCoordinatorEvents: readonly ModuleCoordinatorEvent[];
   readonly moduleCoordinatorIndexCount: number;
   readonly moduleCoordinatorMessage: string | null;
+  readonly experienceStatePackage: ExperienceStatePackage | null;
+  readonly experienceStateEvents: readonly ExperienceStateEvent[];
+  readonly experienceStateIndexCount: number;
+  readonly experienceStateMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -418,6 +426,13 @@ export type BuilderStudioViewModel = {
   readonly completeExperienceModules: () => void;
   readonly validateExperienceModules: () => void;
   readonly disposeExperienceModules: () => void;
+  readonly createExperienceState: () => void;
+  readonly updateExperienceState: () => void;
+  readonly checkpointExperienceState: () => void;
+  readonly restoreExperienceState: () => void;
+  readonly completeExperienceState: () => void;
+  readonly validateExperienceState: () => void;
+  readonly disposeExperienceState: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1084,6 +1099,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const experienceModuleCoordinatorApi = createExperienceModuleCoordinatorApi(
       experienceModuleCoordinator,
     );
+    const experienceStateManager = createExperienceStateManager();
+    const experienceStateApi = createExperienceStateApi(
+      experienceStateManager,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1157,6 +1176,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       experienceRuntimeApi,
       experienceModuleCoordinator,
       experienceModuleCoordinatorApi,
+      experienceStateManager,
+      experienceStateApi,
     };
   }, []);
 
@@ -1460,6 +1481,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [moduleCoordinatorIndexCount, setModuleCoordinatorIndexCount] =
     useState(0);
   const [moduleCoordinatorMessage, setModuleCoordinatorMessage] = useState<
+    string | null
+  >(null);
+  const [experienceStatePackage, setExperienceStatePackage] =
+    useState<ExperienceStatePackage | null>(null);
+  const [experienceStateEvents, setExperienceStateEvents] = useState<
+    readonly ExperienceStateEvent[]
+  >([]);
+  const [experienceStateIndexCount, setExperienceStateIndexCount] =
+    useState(0);
+  const [experienceStateMessage, setExperienceStateMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1835,6 +1866,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     moduleCoordinatorEvents,
     moduleCoordinatorIndexCount,
     moduleCoordinatorMessage,
+    experienceStatePackage,
+    experienceStateEvents,
+    experienceStateIndexCount,
+    experienceStateMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -4366,6 +4401,183 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           .length,
       );
       setModuleCoordinatorMessage(null);
+    },
+    createExperienceState(): void {
+      const sessionId = runtimeSession?.id ?? 'runtime-session-demo';
+      const created = services.experienceStateApi.createState({
+        sessionId,
+        executionId: decisionExecutionPackage?.execution.id ?? null,
+        activeModule:
+          experienceModulePackage?.metadata.activeModuleId ?? 'hero',
+        activeMove:
+          runtimeExecutionPackage?.execution.currentMove ??
+          decisionExecutionPackage?.execution.currentMove ??
+          'move-1',
+        title: `Experience State ${sessionId}`,
+      });
+      setExperienceStatePackage(created);
+      setExperienceStateEvents(
+        services.experienceStateManager.getHistory(created.id),
+      );
+      setExperienceStateIndexCount(
+        services.experienceStateManager.getIndex().list(created.id).length,
+      );
+      setExperienceStateMessage(
+        `Created state for ${sessionId}. Sources unchanged.`,
+      );
+    },
+    updateExperienceState(): void {
+      if (experienceStatePackage === null) {
+        setExperienceStateMessage('Nejdřív Create State.');
+        return;
+      }
+      try {
+        const nextModule =
+          experienceStatePackage.state.activeModule === 'hero'
+            ? 'priority'
+            : experienceStatePackage.state.activeModule === 'priority'
+              ? 'faq'
+              : 'lead-capture';
+        const nextMove =
+          experienceStatePackage.state.activeMove === 'move-1'
+            ? 'move-2'
+            : 'move-3';
+        const updated = services.experienceStateApi.updateState(
+          experienceStatePackage.id,
+          {
+            activeModule: nextModule,
+            activeMove: nextMove,
+            executionId:
+              decisionExecutionPackage?.execution.id ??
+              experienceStatePackage.state.executionId,
+            notes: 'Updated from diagnostic Overview.',
+          },
+        );
+        setExperienceStatePackage(updated);
+        setExperienceStateEvents(
+          services.experienceStateManager.getHistory(updated.id),
+        );
+        setExperienceStateMessage(
+          `Updated → ${updated.state.activeModule} / ${updated.state.activeMove}.`,
+        );
+      } catch (error) {
+        setExperienceStateMessage(
+          error instanceof Error ? error.message : 'Update failed.',
+        );
+      }
+    },
+    checkpointExperienceState(): void {
+      if (experienceStatePackage === null) {
+        setExperienceStateMessage('Nejdřív Create State.');
+        return;
+      }
+      try {
+        const checked = services.experienceStateApi.checkpoint(
+          experienceStatePackage.id,
+          'overview-checkpoint',
+        );
+        setExperienceStatePackage(checked);
+        setExperienceStateEvents(
+          services.experienceStateManager.getHistory(checked.id),
+        );
+        setExperienceStateIndexCount(
+          services.experienceStateManager.getIndex().list(checked.id).length,
+        );
+        setExperienceStateMessage(
+          `Checkpoint ${checked.state.checkpointId}.`,
+        );
+      } catch (error) {
+        setExperienceStateMessage(
+          error instanceof Error ? error.message : 'Checkpoint failed.',
+        );
+      }
+    },
+    restoreExperienceState(): void {
+      if (experienceStatePackage === null) {
+        setExperienceStateMessage('Nejdřív Create State.');
+        return;
+      }
+      const checkpointId =
+        experienceStatePackage.state.checkpointId ??
+        experienceStatePackage.checkpoints[
+          experienceStatePackage.checkpoints.length - 1
+        ]?.id ??
+        null;
+      if (checkpointId === null) {
+        setExperienceStateMessage('Nejdřív Checkpoint.');
+        return;
+      }
+      try {
+        const restored = services.experienceStateApi.restoreState(
+          experienceStatePackage.id,
+          checkpointId,
+        );
+        setExperienceStatePackage(restored);
+        setExperienceStateEvents(
+          services.experienceStateManager.getHistory(restored.id),
+        );
+        setExperienceStateMessage(
+          `Restored from ${checkpointId} (${restored.state.metadata.restoreStatus}).`,
+        );
+      } catch (error) {
+        setExperienceStateMessage(
+          error instanceof Error ? error.message : 'Restore failed.',
+        );
+      }
+    },
+    completeExperienceState(): void {
+      if (experienceStatePackage === null) {
+        setExperienceStateMessage('Nejdřív Create State.');
+        return;
+      }
+      try {
+        const completed = services.experienceStateManager.complete(
+          experienceStatePackage.id,
+        );
+        setExperienceStatePackage(completed);
+        setExperienceStateEvents(
+          services.experienceStateManager.getHistory(completed.id),
+        );
+        setExperienceStateMessage(`Completed state ${completed.state.id}.`);
+      } catch (error) {
+        setExperienceStateMessage(
+          error instanceof Error ? error.message : 'Complete failed.',
+        );
+      }
+    },
+    validateExperienceState(): void {
+      if (experienceStatePackage === null) {
+        setExperienceStateMessage('Nejdřív Create State.');
+        return;
+      }
+      const validated = services.experienceStateApi.validateState(
+        experienceStatePackage.id,
+      );
+      setExperienceStatePackage(validated);
+      setExperienceStateEvents(
+        services.experienceStateManager.getHistory(validated.id),
+      );
+      setExperienceStateMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    disposeExperienceState(): void {
+      if (experienceStatePackage === null) {
+        return;
+      }
+      const disposed = services.experienceStateManager.dispose(
+        experienceStatePackage.id,
+      );
+      setExperienceStatePackage(disposed);
+      setExperienceStateEvents(
+        services.experienceStateManager.getHistory(disposed.id),
+      );
+      setExperienceStateIndexCount(
+        services.experienceStateManager.getIndex().list(disposed.id).length,
+      );
+      setExperienceStateMessage(null);
     },
     buildProject(): void {
       const projectId =

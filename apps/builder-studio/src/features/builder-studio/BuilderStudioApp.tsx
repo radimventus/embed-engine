@@ -134,6 +134,10 @@ export function BuilderStudioApp() {
         moduleCoordinatorEvents={session.moduleCoordinatorEvents}
         moduleCoordinatorIndexCount={session.moduleCoordinatorIndexCount}
         moduleCoordinatorMessage={session.moduleCoordinatorMessage}
+        experienceStatePackage={session.experienceStatePackage}
+        experienceStateEvents={session.experienceStateEvents}
+        experienceStateIndexCount={session.experienceStateIndexCount}
+        experienceStateMessage={session.experienceStateMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -265,6 +269,13 @@ export function BuilderStudioApp() {
         onCompleteExperienceModules={session.completeExperienceModules}
         onValidateExperienceModules={session.validateExperienceModules}
         onDisposeExperienceModules={session.disposeExperienceModules}
+        onCreateExperienceState={session.createExperienceState}
+        onUpdateExperienceState={session.updateExperienceState}
+        onCheckpointExperienceState={session.checkpointExperienceState}
+        onRestoreExperienceState={session.restoreExperienceState}
+        onCompleteExperienceState={session.completeExperienceState}
+        onValidateExperienceState={session.validateExperienceState}
+        onDisposeExperienceState={session.disposeExperienceState}
       />
     </AppShell>
   );
