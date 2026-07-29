@@ -843,3 +843,15 @@ export type {
   PublicationReadinessStatus,
   ValidatePublicationReadinessInput,
 } from './publication-readiness-types';
+
+export type {
+  BuildRuntimeBootstrapInput,
+  InitializeRuntimeBootstrapInput,
+  RuntimeBootstrapEvent,
+  RuntimeBootstrapEventType,
+  RuntimeBootstrapIndexEntry,
+  RuntimeBootstrapPackage,
+  RuntimeBootstrapValidation,
+  RuntimeBootstrapValidationIssue,
+  RuntimeSessionModel,
+} from './runtime-bootstrap-types';

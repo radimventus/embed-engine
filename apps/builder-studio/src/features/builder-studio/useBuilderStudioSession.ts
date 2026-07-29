@@ -101,6 +101,8 @@ import type {
   ClientPublicationPackage,
   PublicationReadinessEvent,
   PublicationReadinessPackage,
+  RuntimeBootstrapEvent,
+  RuntimeBootstrapPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -241,6 +243,8 @@ import {
   createClientPublicationAdapter,
   createPublicationReadinessApi,
   createPublicationReadinessValidator,
+  createRuntimeBootstrapApi,
+  createRuntimeSessionBootstrap,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -468,6 +472,10 @@ export type BuilderStudioViewModel = {
   readonly publicationReadinessEvents: readonly PublicationReadinessEvent[];
   readonly publicationReadinessIndexCount: number;
   readonly publicationReadinessMessage: string | null;
+  readonly runtimeBootstrapPackage: RuntimeBootstrapPackage | null;
+  readonly runtimeBootstrapEvents: readonly RuntimeBootstrapEvent[];
+  readonly runtimeBootstrapIndexCount: number;
+  readonly runtimeBootstrapMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -731,6 +739,10 @@ export type BuilderStudioViewModel = {
   readonly evaluatePublicationReadiness: () => void;
   readonly publishPublicationReadiness: () => void;
   readonly disposePublicationReadiness: () => void;
+  readonly buildRuntimeBootstrap: () => void;
+  readonly validateRuntimeBootstrap: () => void;
+  readonly publishRuntimeBootstrap: () => void;
+  readonly disposeRuntimeBootstrap: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1492,6 +1504,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const publicationReadinessApi = createPublicationReadinessApi(
       publicationReadinessValidator,
     );
+    const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
+    const runtimeBootstrapApi = createRuntimeBootstrapApi(
+      runtimeSessionBootstrap,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1615,6 +1631,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       clientPublicationApi,
       publicationReadinessValidator,
       publicationReadinessApi,
+      runtimeSessionBootstrap,
+      runtimeBootstrapApi,
     };
   }, []);
 
@@ -2180,6 +2198,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     useState(0);
   const [publicationReadinessMessage, setPublicationReadinessMessage] =
     useState<string | null>(null);
+  const [runtimeBootstrapPackage, setRuntimeBootstrapPackage] =
+    useState<RuntimeBootstrapPackage | null>(null);
+  const [runtimeBootstrapEvents, setRuntimeBootstrapEvents] = useState<
+    readonly RuntimeBootstrapEvent[]
+  >([]);
+  const [runtimeBootstrapIndexCount, setRuntimeBootstrapIndexCount] =
+    useState(0);
+  const [runtimeBootstrapMessage, setRuntimeBootstrapMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2653,6 +2680,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     publicationReadinessEvents,
     publicationReadinessIndexCount,
     publicationReadinessMessage,
+    runtimeBootstrapPackage,
+    runtimeBootstrapEvents,
+    runtimeBootstrapIndexCount,
+    runtimeBootstrapMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -8306,6 +8337,104 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.publicationReadinessValidator.getIndex().length,
       );
       setPublicationReadinessMessage(null);
+    },
+    buildRuntimeBootstrap(): void {
+      const sessionId =
+        publicationReadinessPackage?.metadata.sessionId ??
+        clientPublicationPackage?.metadata.sessionId ??
+        'runtime-bootstrap-session-demo';
+      const source = publicationReadinessPackage?.report ?? null;
+      const input =
+        source !== null
+          ? {
+              publicationId: source.publicationId,
+              objectId: source.metadata.objectId,
+              runtimeVersion: '2026.07',
+              bootstrapVersion: '1.0.0',
+              title: source.metadata.title,
+              readinessStatus: source.status,
+            }
+          : {
+              publicationId: 'platform-publication-demo',
+              objectId: 'object-demo-house',
+              runtimeVersion: '2026.07',
+              bootstrapVersion: '1.0.0',
+              title: 'Demo Runtime Bootstrap',
+              readinessStatus: 'UNKNOWN' as const,
+            };
+      const built = services.runtimeBootstrapApi.buildRuntimeBootstrap(
+        null,
+        input,
+        {
+          sessionId,
+          title: 'Builder Runtime Bootstrap',
+          bootstrap: input,
+        },
+      );
+      setRuntimeBootstrapPackage(built);
+      setRuntimeBootstrapEvents(services.runtimeSessionBootstrap.getEvents());
+      setRuntimeBootstrapIndexCount(
+        services.runtimeSessionBootstrap.getIndex().length,
+      );
+      setRuntimeBootstrapMessage(
+        `Built bootstrap for ${built.runtimeSession.publicationId}.`,
+      );
+    },
+    validateRuntimeBootstrap(): void {
+      if (runtimeBootstrapPackage === null) {
+        setRuntimeBootstrapMessage('Nejdřív Build Bootstrap.');
+        return;
+      }
+      const validation = services.runtimeBootstrapApi.validateRuntimeBootstrap(
+        runtimeBootstrapPackage.id,
+      );
+      setRuntimeBootstrapPackage(
+        services.runtimeBootstrapApi.getPackage(runtimeBootstrapPackage.id),
+      );
+      setRuntimeBootstrapEvents(services.runtimeSessionBootstrap.getEvents());
+      setRuntimeBootstrapIndexCount(
+        services.runtimeSessionBootstrap.getIndex().length,
+      );
+      setRuntimeBootstrapMessage(
+        validation.valid ? 'Bootstrap validation OK.' : 'Bootstrap validation failed.',
+      );
+    },
+    publishRuntimeBootstrap(): void {
+      if (runtimeBootstrapPackage === null) {
+        setRuntimeBootstrapMessage('Nejdřív Build Bootstrap.');
+        return;
+      }
+      try {
+        const published = services.runtimeBootstrapApi.publishRuntimeBootstrap(
+          runtimeBootstrapPackage.id,
+        );
+        setRuntimeBootstrapPackage(published);
+        setRuntimeBootstrapEvents(services.runtimeSessionBootstrap.getEvents());
+        setRuntimeBootstrapIndexCount(
+          services.runtimeSessionBootstrap.getIndex().length,
+        );
+        setRuntimeBootstrapMessage(
+          `Published bootstrap for ${published.runtimeSession.publicationId}.`,
+        );
+      } catch (error) {
+        setRuntimeBootstrapMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    disposeRuntimeBootstrap(): void {
+      if (runtimeBootstrapPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeSessionBootstrap.dispose(
+        runtimeBootstrapPackage.id,
+      );
+      setRuntimeBootstrapPackage(disposed);
+      setRuntimeBootstrapEvents(services.runtimeSessionBootstrap.getEvents());
+      setRuntimeBootstrapIndexCount(
+        services.runtimeSessionBootstrap.getIndex().length,
+      );
+      setRuntimeBootstrapMessage(null);
     },
     buildProject(): void {
       const projectId =

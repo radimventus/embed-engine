@@ -69,6 +69,7 @@ export type WorkspaceSectionId =
   | 'platform-publication'
   | 'client-publication'
   | 'publication-readiness'
+  | 'runtime-bootstrap'
   | 'media'
   | 'layout'
   | 'knowledge';

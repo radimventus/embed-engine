@@ -996,3 +996,24 @@ export {
   createPublicationReadinessIndex,
   type PublicationReadinessIndex,
 } from './publication-readiness/publication-readiness-index';
+
+export {
+  createRuntimeSessionBootstrap,
+  type RuntimeSessionBootstrap,
+  type RuntimeSessionBootstrapOptions,
+} from './runtime-bootstrap/runtime-session-bootstrap';
+export {
+  createRuntimeBootstrapApi,
+  type RuntimeBootstrapApi,
+} from './runtime-bootstrap/runtime-bootstrap-api';
+export {
+  buildInitialRuntimeBootstrapPackage,
+  createBasicRuntimeBootstrapStrategy,
+  createRuntimeBootstrapValidator,
+  type RuntimeBootstrapStrategy,
+  type RuntimeBootstrapValidator,
+} from './runtime-bootstrap/basic-runtime-bootstrap-strategy';
+export {
+  createRuntimeBootstrapIndex,
+  type RuntimeBootstrapIndex,
+} from './runtime-bootstrap/runtime-bootstrap-index';

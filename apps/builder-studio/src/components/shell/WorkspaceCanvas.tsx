@@ -92,6 +92,8 @@ import type {
   ClientPublicationPackage,
   PublicationReadinessEvent,
   PublicationReadinessPackage,
+  RuntimeBootstrapEvent,
+  RuntimeBootstrapPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -168,6 +170,7 @@ import { PublishedObjectsOverview } from './PublishedObjectsOverview';
 import { PlatformPublicationOverview } from './PlatformPublicationOverview';
 import { ClientPublicationOverview } from './ClientPublicationOverview';
 import { PublicationReadinessOverview } from './PublicationReadinessOverview';
+import { RuntimeBootstrapOverview } from './RuntimeBootstrapOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -378,6 +381,10 @@ type WorkspaceCanvasProps = {
   readonly publicationReadinessEvents: readonly PublicationReadinessEvent[];
   readonly publicationReadinessIndexCount: number;
   readonly publicationReadinessMessage: string | null;
+  readonly runtimeBootstrapPackage: RuntimeBootstrapPackage | null;
+  readonly runtimeBootstrapEvents: readonly RuntimeBootstrapEvent[];
+  readonly runtimeBootstrapIndexCount: number;
+  readonly runtimeBootstrapMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -630,6 +637,10 @@ type WorkspaceCanvasProps = {
   readonly onEvaluatePublicationReadiness: () => void;
   readonly onPublishPublicationReadiness: () => void;
   readonly onDisposePublicationReadiness: () => void;
+  readonly onBuildRuntimeBootstrap: () => void;
+  readonly onValidateRuntimeBootstrap: () => void;
+  readonly onPublishRuntimeBootstrap: () => void;
+  readonly onDisposeRuntimeBootstrap: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -823,6 +834,10 @@ export function WorkspaceCanvas({
   publicationReadinessEvents,
   publicationReadinessIndexCount,
   publicationReadinessMessage,
+  runtimeBootstrapPackage,
+  runtimeBootstrapEvents,
+  runtimeBootstrapIndexCount,
+  runtimeBootstrapMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1065,6 +1080,10 @@ export function WorkspaceCanvas({
   onEvaluatePublicationReadiness,
   onPublishPublicationReadiness,
   onDisposePublicationReadiness,
+  onBuildRuntimeBootstrap,
+  onValidateRuntimeBootstrap,
+  onPublishRuntimeBootstrap,
+  onDisposeRuntimeBootstrap,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1814,6 +1833,18 @@ export function WorkspaceCanvas({
             onPublish={onPublishPublicationReadiness}
             onDispose={onDisposePublicationReadiness}
             message={publicationReadinessMessage}
+          />
+        ) : null}
+        {activeSection === 'runtime-bootstrap' ? (
+          <RuntimeBootstrapOverview
+            bootstrapPackage={runtimeBootstrapPackage}
+            events={runtimeBootstrapEvents}
+            indexCount={runtimeBootstrapIndexCount}
+            onBuild={onBuildRuntimeBootstrap}
+            onValidate={onValidateRuntimeBootstrap}
+            onPublish={onPublishRuntimeBootstrap}
+            onDispose={onDisposeRuntimeBootstrap}
+            message={runtimeBootstrapMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

@@ -252,6 +252,10 @@ export function BuilderStudioApp() {
         publicationReadinessEvents={session.publicationReadinessEvents}
         publicationReadinessIndexCount={session.publicationReadinessIndexCount}
         publicationReadinessMessage={session.publicationReadinessMessage}
+        runtimeBootstrapPackage={session.runtimeBootstrapPackage}
+        runtimeBootstrapEvents={session.runtimeBootstrapEvents}
+        runtimeBootstrapIndexCount={session.runtimeBootstrapIndexCount}
+        runtimeBootstrapMessage={session.runtimeBootstrapMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -522,6 +526,10 @@ export function BuilderStudioApp() {
         onEvaluatePublicationReadiness={session.evaluatePublicationReadiness}
         onPublishPublicationReadiness={session.publishPublicationReadiness}
         onDisposePublicationReadiness={session.disposePublicationReadiness}
+        onBuildRuntimeBootstrap={session.buildRuntimeBootstrap}
+        onValidateRuntimeBootstrap={session.validateRuntimeBootstrap}
+        onPublishRuntimeBootstrap={session.publishRuntimeBootstrap}
+        onDisposeRuntimeBootstrap={session.disposeRuntimeBootstrap}
       />
     </AppShell>
   );
