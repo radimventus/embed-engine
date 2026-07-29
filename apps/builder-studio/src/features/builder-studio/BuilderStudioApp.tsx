@@ -150,6 +150,10 @@ export function BuilderStudioApp() {
         runtimeAuditEvents={session.runtimeAuditEvents}
         runtimeAuditIndexCount={session.runtimeAuditIndexCount}
         runtimeAuditMessage={session.runtimeAuditMessage}
+        runtimeGovernancePackage={session.runtimeGovernancePackage}
+        runtimeGovernanceEvents={session.runtimeGovernanceEvents}
+        runtimeGovernanceIndexCount={session.runtimeGovernanceIndexCount}
+        runtimeGovernanceMessage={session.runtimeGovernanceMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -300,6 +304,10 @@ export function BuilderStudioApp() {
         onPublishRuntimeAudit={session.publishRuntimeAudit}
         onValidateRuntimeAudit={session.validateRuntimeAudit}
         onDisposeRuntimeAudit={session.disposeRuntimeAudit}
+        onEvaluateRuntimeGovernance={session.evaluateRuntimeGovernance}
+        onPublishRuntimeGovernance={session.publishRuntimeGovernance}
+        onValidateRuntimeGovernance={session.validateRuntimeGovernance}
+        onDisposeRuntimeGovernance={session.disposeRuntimeGovernance}
       />
     </AppShell>
   );

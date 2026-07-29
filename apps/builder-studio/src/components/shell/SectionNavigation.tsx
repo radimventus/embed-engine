@@ -34,6 +34,7 @@ const SECTIONS: readonly {
   { id: 'observability', label: 'Observability' },
   { id: 'runtime-health', label: 'Health' },
   { id: 'runtime-audit', label: 'Audit' },
+  { id: 'runtime-governance', label: 'Governance' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

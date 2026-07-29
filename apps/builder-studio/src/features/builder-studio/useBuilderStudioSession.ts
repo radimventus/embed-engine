@@ -59,6 +59,8 @@ import type {
   AuditEventSource,
   RuntimeAuditEvent,
   RuntimeAuditPackage,
+  RuntimeGovernanceEvent,
+  RuntimeGovernancePackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -157,6 +159,8 @@ import {
   createRuntimeHealthEngine,
   createRuntimeAuditApi,
   createRuntimeAuditEngine,
+  createRuntimeGovernanceApi,
+  createRuntimeGovernanceEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -300,6 +304,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeAuditEvents: readonly RuntimeAuditEvent[];
   readonly runtimeAuditIndexCount: number;
   readonly runtimeAuditMessage: string | null;
+  readonly runtimeGovernancePackage: RuntimeGovernancePackage | null;
+  readonly runtimeGovernanceEvents: readonly RuntimeGovernanceEvent[];
+  readonly runtimeGovernanceIndexCount: number;
+  readonly runtimeGovernanceMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -471,6 +479,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeAudit: () => void;
   readonly validateRuntimeAudit: () => void;
   readonly disposeRuntimeAudit: () => void;
+  readonly evaluateRuntimeGovernance: () => void;
+  readonly publishRuntimeGovernance: () => void;
+  readonly validateRuntimeGovernance: () => void;
+  readonly disposeRuntimeGovernance: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1149,6 +1161,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeHealthApi = createRuntimeHealthApi(runtimeHealthEngine);
     const runtimeAuditEngine = createRuntimeAuditEngine();
     const runtimeAuditApi = createRuntimeAuditApi(runtimeAuditEngine);
+    const runtimeGovernanceEngine = createRuntimeGovernanceEngine();
+    const runtimeGovernanceApi = createRuntimeGovernanceApi(
+      runtimeGovernanceEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1230,6 +1246,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeHealthApi,
       runtimeAuditEngine,
       runtimeAuditApi,
+      runtimeGovernanceEngine,
+      runtimeGovernanceApi,
     };
   }, []);
 
@@ -1570,6 +1588,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   >([]);
   const [runtimeAuditIndexCount, setRuntimeAuditIndexCount] = useState(0);
   const [runtimeAuditMessage, setRuntimeAuditMessage] = useState<
+    string | null
+  >(null);
+  const [runtimeGovernancePackage, setRuntimeGovernancePackage] =
+    useState<RuntimeGovernancePackage | null>(null);
+  const [runtimeGovernanceEvents, setRuntimeGovernanceEvents] = useState<
+    readonly RuntimeGovernanceEvent[]
+  >([]);
+  const [runtimeGovernanceIndexCount, setRuntimeGovernanceIndexCount] =
+    useState(0);
+  const [runtimeGovernanceMessage, setRuntimeGovernanceMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1961,6 +1989,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeAuditEvents,
     runtimeAuditIndexCount,
     runtimeAuditMessage,
+    runtimeGovernancePackage,
+    runtimeGovernanceEvents,
+    runtimeGovernanceIndexCount,
+    runtimeGovernanceMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -4940,6 +4972,96 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setRuntimeAuditEvents(services.runtimeAuditEngine.getEvents());
       setRuntimeAuditIndexCount(services.runtimeAuditEngine.getIndex().length);
       setRuntimeAuditMessage(null);
+    },
+    evaluateRuntimeGovernance(): void {
+      const sessionId =
+        runtimeAuditPackage?.metadata.sessionId ??
+        runtimeHealthPackage?.metadata.sessionId ??
+        observabilityPackage?.metadata.sessionId ??
+        experienceStatePackage?.state.sessionId ??
+        runtimeExecutionPackage?.execution.sessionId ??
+        'runtime-session-demo';
+      const evaluated = services.runtimeGovernanceApi.evaluateGovernance({
+        sessionId,
+        runtimeExecutionId:
+          runtimeExecutionPackage?.execution.id ??
+          experienceStatePackage?.state.runtimeExecutionId ??
+          runtimeHealthPackage?.report.runtimeExecutionId ??
+          'runtime-execution-demo',
+        title: 'Builder Runtime Governance',
+        hasObservability: true,
+        observabilityHealthy:
+          observabilityPackage?.metrics.health !== 'Degraded',
+        healthScore: runtimeHealthPackage?.report.score ?? 0.8,
+        healthOverall: runtimeHealthPackage?.report.overallHealth ?? 'Healthy',
+        hasAuditTrail: true,
+        auditImmutable: runtimeAuditPackage?.metadata.immutable ?? true,
+        auditValidated: runtimeAuditPackage?.validation?.valid ?? true,
+        healthValidated: runtimeHealthPackage?.validation?.valid ?? true,
+        observabilityValidated:
+          observabilityPackage?.validation?.valid ?? true,
+      });
+      setRuntimeGovernancePackage(evaluated);
+      setRuntimeGovernanceEvents(services.runtimeGovernanceEngine.getEvents());
+      setRuntimeGovernanceIndexCount(
+        services.runtimeGovernanceEngine.getIndex().length,
+      );
+      setRuntimeGovernanceMessage(
+        `Governance ${evaluated.evaluation.overallStatus} (score ${evaluated.evaluation.score}).`,
+      );
+    },
+    publishRuntimeGovernance(): void {
+      if (runtimeGovernancePackage === null) {
+        setRuntimeGovernanceMessage('Nejdřív Evaluate Governance.');
+        return;
+      }
+      try {
+        const published = services.runtimeGovernanceApi.publishGovernance(
+          runtimeGovernancePackage.id,
+        );
+        setRuntimeGovernancePackage(published);
+        setRuntimeGovernanceEvents(
+          services.runtimeGovernanceEngine.getEvents(),
+        );
+        setRuntimeGovernanceMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeGovernanceMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeGovernance(): void {
+      if (runtimeGovernancePackage === null) {
+        setRuntimeGovernanceMessage('Nejdřív Evaluate Governance.');
+        return;
+      }
+      const validation = services.runtimeGovernanceApi.validateGovernance(
+        runtimeGovernancePackage.id,
+      );
+      const previewed = services.runtimeGovernanceApi.previewGovernance(
+        runtimeGovernancePackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeGovernancePackage(previewed);
+      }
+      setRuntimeGovernanceEvents(services.runtimeGovernanceEngine.getEvents());
+      setRuntimeGovernanceMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeGovernance(): void {
+      if (runtimeGovernancePackage === null) {
+        return;
+      }
+      const disposed = services.runtimeGovernanceEngine.dispose(
+        runtimeGovernancePackage.id,
+      );
+      setRuntimeGovernancePackage(disposed);
+      setRuntimeGovernanceEvents(services.runtimeGovernanceEngine.getEvents());
+      setRuntimeGovernanceIndexCount(
+        services.runtimeGovernanceEngine.getIndex().length,
+      );
+      setRuntimeGovernanceMessage(null);
     },
     buildProject(): void {
       const projectId =

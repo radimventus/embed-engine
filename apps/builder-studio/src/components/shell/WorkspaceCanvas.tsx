@@ -50,6 +50,8 @@ import type {
   RuntimeHealthPackage,
   RuntimeAuditEvent,
   RuntimeAuditPackage,
+  RuntimeGovernanceEvent,
+  RuntimeGovernancePackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -105,6 +107,7 @@ import { ExperienceStateOverview } from './ExperienceStateOverview';
 import { ObservabilityOverview } from './ObservabilityOverview';
 import { HealthOverview } from './HealthOverview';
 import { AuditOverview } from './AuditOverview';
+import { GovernanceOverview } from './GovernanceOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -231,6 +234,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeAuditEvents: readonly RuntimeAuditEvent[];
   readonly runtimeAuditIndexCount: number;
   readonly runtimeAuditMessage: string | null;
+  readonly runtimeGovernancePackage: RuntimeGovernancePackage | null;
+  readonly runtimeGovernanceEvents: readonly RuntimeGovernanceEvent[];
+  readonly runtimeGovernanceIndexCount: number;
+  readonly runtimeGovernanceMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -391,6 +398,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeAudit: () => void;
   readonly onValidateRuntimeAudit: () => void;
   readonly onDisposeRuntimeAudit: () => void;
+  readonly onEvaluateRuntimeGovernance: () => void;
+  readonly onPublishRuntimeGovernance: () => void;
+  readonly onValidateRuntimeGovernance: () => void;
+  readonly onDisposeRuntimeGovernance: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -500,6 +511,10 @@ export function WorkspaceCanvas({
   runtimeAuditEvents,
   runtimeAuditIndexCount,
   runtimeAuditMessage,
+  runtimeGovernancePackage,
+  runtimeGovernanceEvents,
+  runtimeGovernanceIndexCount,
+  runtimeGovernanceMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -650,6 +665,10 @@ export function WorkspaceCanvas({
   onPublishRuntimeAudit,
   onValidateRuntimeAudit,
   onDisposeRuntimeAudit,
+  onEvaluateRuntimeGovernance,
+  onPublishRuntimeGovernance,
+  onValidateRuntimeGovernance,
+  onDisposeRuntimeGovernance,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1120,6 +1139,19 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeAudit}
             onDispose={onDisposeRuntimeAudit}
             message={runtimeAuditMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-governance' ? (
+          <GovernanceOverview
+            governancePackage={runtimeGovernancePackage}
+            events={runtimeGovernanceEvents}
+            indexCount={runtimeGovernanceIndexCount}
+            onEvaluate={onEvaluateRuntimeGovernance}
+            onPublish={onPublishRuntimeGovernance}
+            onValidate={onValidateRuntimeGovernance}
+            onDispose={onDisposeRuntimeGovernance}
+            message={runtimeGovernanceMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

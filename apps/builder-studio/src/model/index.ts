@@ -546,3 +546,18 @@ export type {
   RuntimeAuditValidation,
   RuntimeAuditValidationIssue,
 } from './runtime-audit-types';
+
+export type {
+  EvaluateGovernanceInput,
+  GovernanceEvaluation,
+  GovernanceOverallStatus,
+  GovernanceRule,
+  GovernanceRuleCategory,
+  GovernanceSeverity,
+  RuntimeGovernanceEvent,
+  RuntimeGovernanceEventType,
+  RuntimeGovernanceIndexEntry,
+  RuntimeGovernancePackage,
+  RuntimeGovernanceValidation,
+  RuntimeGovernanceValidationIssue,
+} from './runtime-governance-types';

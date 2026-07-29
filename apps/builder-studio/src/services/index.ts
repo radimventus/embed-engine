@@ -572,3 +572,25 @@ export {
   createRuntimeAuditIndex,
   type RuntimeAuditIndex,
 } from './runtime-audit/runtime-audit-index';
+
+export {
+  createRuntimeGovernanceEngine,
+  type RuntimeGovernanceEngine,
+  type RuntimeGovernanceEngineOptions,
+} from './runtime-governance/runtime-governance-engine';
+export {
+  createRuntimeGovernanceApi,
+  type RuntimeGovernanceApi,
+} from './runtime-governance/runtime-governance-api';
+export {
+  BASIC_GOVERNANCE_RULES,
+  buildGovernanceEvaluation,
+  createBasicGovernanceEvaluationStrategy,
+  createRuntimeGovernanceValidator,
+  type GovernanceEvaluationStrategy,
+  type RuntimeGovernanceValidator,
+} from './runtime-governance/basic-governance-evaluation-strategy';
+export {
+  createRuntimeGovernanceIndex,
+  type RuntimeGovernanceIndex,
+} from './runtime-governance/runtime-governance-index';
