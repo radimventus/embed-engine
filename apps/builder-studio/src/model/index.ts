@@ -831,3 +831,15 @@ export type {
   InitializeClientPublicationInput,
   LoadClientPublicationInput,
 } from './client-publication-types';
+
+export type {
+  InitializePublicationReadinessInput,
+  PublicationCheck,
+  PublicationReadinessEvent,
+  PublicationReadinessEventType,
+  PublicationReadinessIndexEntry,
+  PublicationReadinessPackage,
+  PublicationReadinessReport,
+  PublicationReadinessStatus,
+  ValidatePublicationReadinessInput,
+} from './publication-readiness-types';

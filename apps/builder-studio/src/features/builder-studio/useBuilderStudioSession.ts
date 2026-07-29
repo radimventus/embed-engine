@@ -99,6 +99,8 @@ import type {
   PlatformPublicationPackage,
   ClientPublicationEvent,
   ClientPublicationPackage,
+  PublicationReadinessEvent,
+  PublicationReadinessPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -237,6 +239,8 @@ import {
   createPlatformPublicationCatalog,
   createClientPublicationApi,
   createClientPublicationAdapter,
+  createPublicationReadinessApi,
+  createPublicationReadinessValidator,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -460,6 +464,10 @@ export type BuilderStudioViewModel = {
   readonly clientPublicationEvents: readonly ClientPublicationEvent[];
   readonly clientPublicationIndexCount: number;
   readonly clientPublicationMessage: string | null;
+  readonly publicationReadinessPackage: PublicationReadinessPackage | null;
+  readonly publicationReadinessEvents: readonly PublicationReadinessEvent[];
+  readonly publicationReadinessIndexCount: number;
+  readonly publicationReadinessMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -719,6 +727,10 @@ export type BuilderStudioViewModel = {
   readonly publishClientPublication: () => void;
   readonly validateClientPublication: () => void;
   readonly disposeClientPublication: () => void;
+  readonly validatePublicationReadiness: () => void;
+  readonly evaluatePublicationReadiness: () => void;
+  readonly publishPublicationReadiness: () => void;
+  readonly disposePublicationReadiness: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1476,6 +1488,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const clientPublicationApi = createClientPublicationApi(
       clientPublicationAdapter,
     );
+    const publicationReadinessValidator = createPublicationReadinessValidator();
+    const publicationReadinessApi = createPublicationReadinessApi(
+      publicationReadinessValidator,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1597,6 +1613,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       platformPublicationApi,
       clientPublicationAdapter,
       clientPublicationApi,
+      publicationReadinessValidator,
+      publicationReadinessApi,
     };
   }, []);
 
@@ -2153,6 +2171,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [clientPublicationMessage, setClientPublicationMessage] = useState<
     string | null
   >(null);
+  const [publicationReadinessPackage, setPublicationReadinessPackage] =
+    useState<PublicationReadinessPackage | null>(null);
+  const [publicationReadinessEvents, setPublicationReadinessEvents] = useState<
+    readonly PublicationReadinessEvent[]
+  >([]);
+  const [publicationReadinessIndexCount, setPublicationReadinessIndexCount] =
+    useState(0);
+  const [publicationReadinessMessage, setPublicationReadinessMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2622,6 +2649,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     clientPublicationEvents,
     clientPublicationIndexCount,
     clientPublicationMessage,
+    publicationReadinessPackage,
+    publicationReadinessEvents,
+    publicationReadinessIndexCount,
+    publicationReadinessMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -8138,6 +8169,143 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.clientPublicationAdapter.getIndex().length,
       );
       setClientPublicationMessage(null);
+    },
+    validatePublicationReadiness(): void {
+      const sessionId =
+        clientPublicationPackage?.metadata.sessionId ??
+        platformPublicationPackage?.metadata.sessionId ??
+        'publication-readiness-session-demo';
+      const source = clientPublicationPackage?.publicationModel ?? null;
+      const input =
+        source !== null
+          ? {
+              publicationId: source.publicationId,
+              objectId: source.objectId,
+              version: source.version,
+              title: source.metadata.title,
+              checks: [
+                {
+                  id: 'readiness-check-metadata',
+                  name: 'Metadata completeness',
+                  result: 'pass' as const,
+                  severity: 'info' as const,
+                  message: 'Required publication metadata are present.',
+                },
+                {
+                  id: 'readiness-check-assets',
+                  name: 'Asset availability',
+                  result:
+                    source.assets.length > 0 ? ('pass' as const) : ('warning' as const),
+                  severity:
+                    source.assets.length > 0 ? ('info' as const) : ('warning' as const),
+                  message:
+                    source.assets.length > 0
+                      ? 'Assets are available for Client Studio.'
+                      : 'Client publication has no assets.',
+                },
+                {
+                  id: 'readiness-check-status',
+                  name: 'Publication status',
+                  result:
+                    source.metadata.status === 'Published'
+                      ? ('pass' as const)
+                      : ('warning' as const),
+                  severity:
+                    source.metadata.status === 'Published'
+                      ? ('info' as const)
+                      : ('warning' as const),
+                  message:
+                    source.metadata.status === 'Published'
+                      ? 'Client publication is published.'
+                      : 'Client publication is not yet published.',
+                },
+              ],
+            }
+          : {
+              publicationId: 'platform-publication-demo',
+              objectId: 'object-demo-house',
+              version: '1.0.0',
+              title: 'Demo House',
+            };
+      const validated = services.publicationReadinessApi.validatePublicationReadiness(
+        null,
+        input,
+        {
+          sessionId,
+          title: 'Builder Publication Readiness',
+          publication: input,
+        },
+      );
+      setPublicationReadinessPackage(validated);
+      setPublicationReadinessEvents(
+        services.publicationReadinessValidator.getEvents(),
+      );
+      setPublicationReadinessIndexCount(
+        services.publicationReadinessValidator.getIndex().length,
+      );
+      setPublicationReadinessMessage(
+        `Decision ${validated.report.status} for ${validated.report.publicationId}.`,
+      );
+    },
+    evaluatePublicationReadiness(): void {
+      if (publicationReadinessPackage === null) {
+        setPublicationReadinessMessage('Nejdřív Validate Readiness.');
+        return;
+      }
+      const evaluated = services.publicationReadinessApi.evaluatePublicationReadiness(
+        publicationReadinessPackage.id,
+      );
+      setPublicationReadinessPackage(evaluated);
+      setPublicationReadinessEvents(
+        services.publicationReadinessValidator.getEvents(),
+      );
+      setPublicationReadinessIndexCount(
+        services.publicationReadinessValidator.getIndex().length,
+      );
+      setPublicationReadinessMessage(
+        `Evaluated ${evaluated.report.publicationId} → ${evaluated.report.status}.`,
+      );
+    },
+    publishPublicationReadiness(): void {
+      if (publicationReadinessPackage === null) {
+        setPublicationReadinessMessage('Nejdřív Validate Readiness.');
+        return;
+      }
+      try {
+        const published = services.publicationReadinessApi.publishPublicationReadiness(
+          publicationReadinessPackage.id,
+        );
+        setPublicationReadinessPackage(published);
+        setPublicationReadinessEvents(
+          services.publicationReadinessValidator.getEvents(),
+        );
+        setPublicationReadinessIndexCount(
+          services.publicationReadinessValidator.getIndex().length,
+        );
+        setPublicationReadinessMessage(
+          `Published readiness for ${published.report.publicationId}.`,
+        );
+      } catch (error) {
+        setPublicationReadinessMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    disposePublicationReadiness(): void {
+      if (publicationReadinessPackage === null) {
+        return;
+      }
+      const disposed = services.publicationReadinessValidator.dispose(
+        publicationReadinessPackage.id,
+      );
+      setPublicationReadinessPackage(disposed);
+      setPublicationReadinessEvents(
+        services.publicationReadinessValidator.getEvents(),
+      );
+      setPublicationReadinessIndexCount(
+        services.publicationReadinessValidator.getIndex().length,
+      );
+      setPublicationReadinessMessage(null);
     },
     buildProject(): void {
       const projectId =

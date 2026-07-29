@@ -90,6 +90,8 @@ import type {
   PlatformPublicationPackage,
   ClientPublicationEvent,
   ClientPublicationPackage,
+  PublicationReadinessEvent,
+  PublicationReadinessPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -165,6 +167,7 @@ import { ObjectPublicationOverview } from './ObjectPublicationOverview';
 import { PublishedObjectsOverview } from './PublishedObjectsOverview';
 import { PlatformPublicationOverview } from './PlatformPublicationOverview';
 import { ClientPublicationOverview } from './ClientPublicationOverview';
+import { PublicationReadinessOverview } from './PublicationReadinessOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -371,6 +374,10 @@ type WorkspaceCanvasProps = {
   readonly clientPublicationEvents: readonly ClientPublicationEvent[];
   readonly clientPublicationIndexCount: number;
   readonly clientPublicationMessage: string | null;
+  readonly publicationReadinessPackage: PublicationReadinessPackage | null;
+  readonly publicationReadinessEvents: readonly PublicationReadinessEvent[];
+  readonly publicationReadinessIndexCount: number;
+  readonly publicationReadinessMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -619,6 +626,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishClientPublication: () => void;
   readonly onValidateClientPublication: () => void;
   readonly onDisposeClientPublication: () => void;
+  readonly onValidatePublicationReadiness: () => void;
+  readonly onEvaluatePublicationReadiness: () => void;
+  readonly onPublishPublicationReadiness: () => void;
+  readonly onDisposePublicationReadiness: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -808,6 +819,10 @@ export function WorkspaceCanvas({
   clientPublicationEvents,
   clientPublicationIndexCount,
   clientPublicationMessage,
+  publicationReadinessPackage,
+  publicationReadinessEvents,
+  publicationReadinessIndexCount,
+  publicationReadinessMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1046,6 +1061,10 @@ export function WorkspaceCanvas({
   onPublishClientPublication,
   onValidateClientPublication,
   onDisposeClientPublication,
+  onValidatePublicationReadiness,
+  onEvaluatePublicationReadiness,
+  onPublishPublicationReadiness,
+  onDisposePublicationReadiness,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1783,6 +1802,18 @@ export function WorkspaceCanvas({
             onValidate={onValidateClientPublication}
             onDispose={onDisposeClientPublication}
             message={clientPublicationMessage}
+          />
+        ) : null}
+        {activeSection === 'publication-readiness' ? (
+          <PublicationReadinessOverview
+            readinessPackage={publicationReadinessPackage}
+            events={publicationReadinessEvents}
+            indexCount={publicationReadinessIndexCount}
+            onValidate={onValidatePublicationReadiness}
+            onEvaluate={onEvaluatePublicationReadiness}
+            onPublish={onPublishPublicationReadiness}
+            onDispose={onDisposePublicationReadiness}
+            message={publicationReadinessMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

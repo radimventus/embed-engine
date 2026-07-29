@@ -977,3 +977,22 @@ export {
   createClientPublicationIndex,
   type ClientPublicationIndex,
 } from './client-publication/client-publication-index';
+
+export {
+  createPublicationReadinessValidator,
+  type PublicationReadinessValidator,
+  type PublicationReadinessValidatorOptions,
+} from './publication-readiness/publication-readiness-validator';
+export {
+  createPublicationReadinessApi,
+  type PublicationReadinessApi,
+} from './publication-readiness/publication-readiness-api';
+export {
+  buildInitialPublicationReadinessPackage,
+  createBasicPublicationReadinessStrategy,
+  type PublicationReadinessStrategy,
+} from './publication-readiness/basic-publication-readiness-strategy';
+export {
+  createPublicationReadinessIndex,
+  type PublicationReadinessIndex,
+} from './publication-readiness/publication-readiness-index';
