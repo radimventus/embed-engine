@@ -32,8 +32,13 @@ import {
 
 const REQUIRED = ["embed.es.js", "embed.iife.js", "index.d.ts", "version.json"];
 
-/** Public Pages origin for production partner hosts (absolute URLs required). */
-const PAGES_ORIGIN = "https://radimventus.github.io/embed-engine";
+/**
+ * Canonical public distribution origin for production partner hosts.
+ * Must be the custom domain — never the legacy github.io project URL:
+ * Pages 301s that hostname → conis.cz, and browser fetch() refuses
+ * that cross-origin redirect (CORS / Failed to fetch on house-package CSV).
+ */
+const PAGES_ORIGIN = "https://conis.cz";
 
 /**
  * Public AI Delivery Edge URL (Method A host bootstrap).
@@ -60,8 +65,22 @@ function aiDeliveryHostBootstrap() {
  * Official partner distribution fragment — derived from Embed.mount launcher API.
  * Cache-bust query is the build commit from the automatic fingerprint.
  */
+/**
+ * Official partner CMS snippet.
+ * Cache-bust defaults to embed-01 (partner migration pin).
+ * Override with EMBED_PARTNER_CACHE_BUST on publish when bumping partners.
+ */
+function resolvePartnerCacheBust(_fingerprintCacheBust) {
+  const fromEnv = process.env.EMBED_PARTNER_CACHE_BUST?.trim();
+  if (fromEnv && fromEnv.length > 0) {
+    return fromEnv;
+  }
+  return "embed-01";
+}
+
 function buildOfficialPartnerSnippet(cacheBust) {
-  const scriptSrc = `${PAGES_ORIGIN}/embed/embed.iife.js?v=${cacheBust}`;
+  const partnerCacheBust = resolvePartnerCacheBust(cacheBust);
+  const scriptSrc = `${PAGES_ORIGIN}/embed/embed.iife.js?v=${partnerCacheBust}`;
   const deliveryBootstrap = aiDeliveryHostBootstrap();
   return `<!-- BEGIN OFFICIAL PARTNER SNIPPET -->
 <div id="embed-hero"></div>

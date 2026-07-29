@@ -35,7 +35,7 @@ Embed Foundation is closed as a distinct project milestone. Production Embed del
 | Environment | Entry |
 | --- | --- |
 | Development | http://127.0.0.1:4173/ |
-| Production Embed | https://radimventus.github.io/embed-engine/embed/ |
+| Production Embed | https://conis.cz/embed/ |
 | Reference Build | http://127.0.0.1:5174/ |
 
 ---

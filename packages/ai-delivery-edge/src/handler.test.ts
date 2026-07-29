@@ -19,7 +19,7 @@ describe("AI Delivery edge fetch handler", () => {
     assert.equal(body.configured, false);
   });
 
-  it("allows CORS for GitHub Pages origin", async () => {
+  it("allows CORS for conis.cz origin", async () => {
     const ctx = createDeliveryEdgeContext({}, {
       apiKey: "",
       chat: async () => ({
@@ -32,7 +32,7 @@ describe("AI Delivery edge fetch handler", () => {
       new Request("https://edge.test/v1/chat", {
         method: "POST",
         headers: {
-          origin: "https://radimventus.github.io",
+          origin: "https://conis.cz",
           "content-type": "application/json",
         },
         body: JSON.stringify({
@@ -47,7 +47,7 @@ describe("AI Delivery edge fetch handler", () => {
     assert.equal(response.status, 200);
     assert.equal(
       response.headers.get("access-control-allow-origin"),
-      "https://radimventus.github.io",
+      "https://conis.cz",
     );
   });
 });

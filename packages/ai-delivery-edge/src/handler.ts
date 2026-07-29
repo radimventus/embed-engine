@@ -15,7 +15,8 @@ export const DEFAULT_ALLOWED_ORIGINS = [
   "http://127.0.0.1:4173",
   "http://127.0.0.1:5173",
   "http://127.0.0.1:5180",
-  "https://radimventus.github.io",
+  "https://conis.cz",
+  "https://www.conis.cz",
 ] as const;
 
 export type DeliveryEdgeEnv = {

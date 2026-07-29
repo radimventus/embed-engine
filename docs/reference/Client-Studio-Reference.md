@@ -26,7 +26,7 @@ It is **not** for day-to-day development and **not** the production Embed pipeli
 | Environment | How to run | Role |
 | --- | --- | --- |
 | **Development** | `pnpm --filter @embed-engine/client-studio dev` → http://127.0.0.1:4173/ | Working tree; may be incomplete |
-| **Production Embed** | GitHub Pages IIFE → https://radimventus.github.io/embed-engine/embed/ | Host-page delivery |
+| **Production Embed** | conis.cz IIFE → https://conis.cz/embed/ | Host-page delivery |
 | **Reference Build** | `pnpm reference` → http://127.0.0.1:5174/ | Immutable visual etalon |
 
 ---

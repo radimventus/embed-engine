@@ -45,5 +45,5 @@ VITE_AI_DELIVERY_URL=http://127.0.0.1:8787 pnpm embed:publish
 ## Security
 
 - Never ship this process’s env into the Embed Release Snapshot.
-- CORS allowlist includes localhost and `https://radimventus.github.io`.
+- CORS allowlist includes localhost and `https://conis.cz`.
 - Auth between browser and edge is deferred to CAP-AI-SEC-01.

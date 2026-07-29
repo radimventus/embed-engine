@@ -37,7 +37,7 @@ import {
   pagesDir,
 } from "./lib/distributionTree.mjs";
 
-const PAGES_ORIGIN = "https://radimventus.github.io/embed-engine";
+const PAGES_ORIGIN = "https://conis.cz";
 const ARTIFACTS = ["embed.iife.js", "embed.es.js", "version.json"];
 
 const wantRemote = process.argv.includes("--remote");

@@ -36,7 +36,7 @@ Never put `OPENAI_API_KEY` in browser, Embed IIFE, GitHub Pages, or Runtime.
     deliveryUrl: "https://embed-ai-delivery.northern-paste.workers.dev"
   };
 </script>
-<script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=<commit>"></script>
+<script src="https://conis.cz/embed/embed.iife.js?v=<commit>"></script>
 ```
 
 ### Method B — publish-time bake
@@ -68,7 +68,7 @@ pnpm --filter @embed-engine/ai-delivery-edge deploy
 
 - [x] HTTPS only (`*.workers.dev`)
 - [x] Secret held in Worker; sterile Embed `VITE_OPENAI_API_KEY:""`
-- [x] CORS allowlist includes `https://radimventus.github.io` + localhost
+- [x] CORS allowlist includes `https://conis.cz` + localhost
 - [x] Browser talks only to `/v1/chat` — never `api.openai.com`
 
 ## Operational recommendations

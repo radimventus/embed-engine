@@ -85,4 +85,4 @@ Both are frozen artifacts. Prefer **Gen1** as the named baseline for Decision Ex
 | Development | http://127.0.0.1:4173/ |
 | Gen1 (frozen) | http://127.0.0.1:5175/ |
 | Reference Build | http://127.0.0.1:5174/ |
-| Production Embed | https://radimventus.github.io/embed-engine/embed/ |
+| Production Embed | https://conis.cz/embed/ |

@@ -1,10 +1,13 @@
 # PT-INT-02 — Canonical Production Partner Snippet
 
-Date: 2026-07-23
+Date: 2026-07-23  
+**Updated:** 2026-07-29 — **PT-EMBED-MIGRATION-01** (canonical origin → `https://conis.cz`)
 
 ## Verdict
 
-Canonical partner snippet is derived from `packages/embed/scripts/sync-pages.mjs` → `buildOfficialPartnerSnippet()`, which mirrors the current `Embed.mount` launcher API (`mode: "launcher"` + `target: "#embed-hero"` → Embed Hero). Absolute script URL + `assetBase` are required on foreign origins (WordPress / DSE). Relative `./embed.iife.js` was the PT-INT-01 failure mode when the fragment was pasted off GitHub Pages.
+Canonical partner snippet is derived from `packages/embed/scripts/sync-pages.mjs` → `buildOfficialPartnerSnippet()`, which mirrors the current `Embed.mount` launcher API (`mode: "launcher"` + `target: "#embed-hero"` → Embed Hero). Absolute script URL + `assetBase` are required on foreign origins (WordPress / DSE). Relative `./embed.iife.js` was the PT-INT-01 failure mode when the fragment was pasted off the distribution host.
+
+**Do not use** `https://radimventus.github.io/embed-engine` — that hostname 301s to `conis.cz` and breaks CSV `fetch()` (CORS).
 
 Published artifacts:
 
@@ -16,12 +19,12 @@ Published artifacts:
 
 | Requirement | Source | Snippet value |
 |-------------|--------|---------------|
-| Script | Pages IIFE | `https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=embed-01` |
+| Script | Distribution IIFE | `https://conis.cz/embed/embed.iife.js?v=embed-01` |
 | Mount API | `EmbedProductionMountOptions` + `mount.ts` | `Embed.mount({ … })` |
 | Mode | launcher → Embed Hero | `"launcher"` |
 | Mount point | `target` host for `mountEmbedHero` | `#embed-hero` + `<div id="embed-hero">` before mount |
 | Object | `resolveObjectPackage` default / pilot | `"house-modern-01"` |
-| Assets on foreign host | `assetBase` | `https://radimventus.github.io/embed-engine` |
+| Assets on foreign host | `assetBase` | `https://conis.cz` |
 | Entry / launcher ids | production options | `entryPoint: "hero-cta"`, `launcherId: "embed-hero"` |
 | Load order | DOM host → IIFE → `Embed.mount` | div, then script src, then inline mount |
 
@@ -29,13 +32,13 @@ Published artifacts:
 
 <!-- BEGIN OFFICIAL PARTNER SNIPPET -->
 <div id="embed-hero"></div>
-<script src="https://radimventus.github.io/embed-engine/embed/embed.iife.js?v=embed-01"></script>
+<script src="https://conis.cz/embed/embed.iife.js?v=embed-01"></script>
 <script>
   Embed.mount({
     mode: "launcher",
     target: "#embed-hero",
     objectId: "house-modern-01",
-    assetBase: "https://radimventus.github.io/embed-engine",
+    assetBase: "https://conis.cz",
     entryPoint: "hero-cta",
     launcherId: "embed-hero"
   });
@@ -46,25 +49,22 @@ Published artifacts:
 
 | Host | URL / setup | Result |
 |------|-------------|--------|
-| Čistá HTML stránka | `http://127.0.0.1:8770/clean-sim/page.html` (fragment only) | PASS |
-| GitHub Pages | `https://radimventus.github.io/embed-engine/embed/partner-snippet.html` | PASS (absolute IIFE after publish) |
-| WordPress Custom HTML | `http://127.0.0.1:8770/wp-sim/page.html` (theme chrome + fragment) | PASS |
-| DSE | `http://127.0.0.1:8770/dse-sim/page.html` (bare body + fragment) | PASS |
+| Čistá HTML stránka | `http://127.0.0.1:8770/clean-sim/page.html` (fragment only) | PASS (2026-07-23) |
+| Distribution host | `https://conis.cz/embed/partner-snippet.html` | PASS after PT-EMBED-MIGRATION-01 |
+| WordPress Custom HTML | `http://127.0.0.1:8770/wp-sim/page.html` (theme chrome + fragment) | PASS (2026-07-23) |
+| DSE | Partner CMS must paste conis.cz snippet — see [migration checklist](../ops/embed-migration-checklist.md) | CMS cutover required |
 
-Screenshots: `docs/reviews/assets/pt-int-02-{clean,pages,wordpress,dse}{,-open}.png`
+Screenshots: `docs/reviews/assets/pt-int-02-{clean,pages,wordpress,dse}{,-open}.png` (historical; pre-migration host URLs)
 
 ## 3. Validation
 
-On all four hosts above:
+On partner hosts:
 
 | Check | Result |
-|-------|--------|
-| Hero se vykreslí (`[data-embed-hero]`, veil, H1) | PASS |
-| CTA otevře Client Studio (`[data-embed-experience-active]`, overlay) | PASS |
-| Reveal funguje (`data-embed-reveal-state="active"`) | PASS |
-| Social Proof funguje (`[aria-label="Social Proof"]`) | PASS |
-| Konzole bez chyb | PASS (`errors: []`) |
+| --- | --- |
+| IIFE from `https://conis.cz/embed/embed.iife.js` | required |
+| `assetBase: "https://conis.cz"` | required |
+| Zero Network requests to `radimventus.github.io` | required |
+| House-package CSV 200 from conis.cz | required |
 
-## Constraints
-
-No changes to Hero, Client Studio, Runtime, or Delivery Layer behavior — only sync-pages snippet generation + Pages HTML artifacts + this report.
+See also: [Embed Infrastructure Migration](../releases/Embed-Infrastructure-Migration.md).
