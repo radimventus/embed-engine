@@ -33,6 +33,7 @@ const SECTIONS: readonly {
   { id: 'experience-state', label: 'State' },
   { id: 'observability', label: 'Observability' },
   { id: 'runtime-health', label: 'Health' },
+  { id: 'runtime-audit', label: 'Audit' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

@@ -146,6 +146,10 @@ export function BuilderStudioApp() {
         runtimeHealthEvents={session.runtimeHealthEvents}
         runtimeHealthIndexCount={session.runtimeHealthIndexCount}
         runtimeHealthMessage={session.runtimeHealthMessage}
+        runtimeAuditPackage={session.runtimeAuditPackage}
+        runtimeAuditEvents={session.runtimeAuditEvents}
+        runtimeAuditIndexCount={session.runtimeAuditIndexCount}
+        runtimeAuditMessage={session.runtimeAuditMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -292,6 +296,10 @@ export function BuilderStudioApp() {
         onPublishRuntimeHealth={session.publishRuntimeHealth}
         onValidateRuntimeHealth={session.validateRuntimeHealth}
         onDisposeRuntimeHealth={session.disposeRuntimeHealth}
+        onRecordRuntimeAudit={session.recordRuntimeAudit}
+        onPublishRuntimeAudit={session.publishRuntimeAudit}
+        onValidateRuntimeAudit={session.validateRuntimeAudit}
+        onDisposeRuntimeAudit={session.disposeRuntimeAudit}
       />
     </AppShell>
   );

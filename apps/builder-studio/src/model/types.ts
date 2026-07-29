@@ -47,6 +47,7 @@ export type WorkspaceSectionId =
   | 'experience-state'
   | 'observability'
   | 'runtime-health'
+  | 'runtime-audit'
   | 'media'
   | 'layout'
   | 'knowledge';

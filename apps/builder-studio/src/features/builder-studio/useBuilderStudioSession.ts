@@ -56,6 +56,9 @@ import type {
   RuntimeObservabilityPackage,
   RuntimeHealthEvent,
   RuntimeHealthPackage,
+  AuditEventSource,
+  RuntimeAuditEvent,
+  RuntimeAuditPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -152,6 +155,8 @@ import {
   createRuntimeObservabilityEngine,
   createRuntimeHealthApi,
   createRuntimeHealthEngine,
+  createRuntimeAuditApi,
+  createRuntimeAuditEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -291,6 +296,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeHealthEvents: readonly RuntimeHealthEvent[];
   readonly runtimeHealthIndexCount: number;
   readonly runtimeHealthMessage: string | null;
+  readonly runtimeAuditPackage: RuntimeAuditPackage | null;
+  readonly runtimeAuditEvents: readonly RuntimeAuditEvent[];
+  readonly runtimeAuditIndexCount: number;
+  readonly runtimeAuditMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -458,6 +467,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeHealth: () => void;
   readonly validateRuntimeHealth: () => void;
   readonly disposeRuntimeHealth: () => void;
+  readonly recordRuntimeAudit: () => void;
+  readonly publishRuntimeAudit: () => void;
+  readonly validateRuntimeAudit: () => void;
+  readonly disposeRuntimeAudit: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1134,6 +1147,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     );
     const runtimeHealthEngine = createRuntimeHealthEngine();
     const runtimeHealthApi = createRuntimeHealthApi(runtimeHealthEngine);
+    const runtimeAuditEngine = createRuntimeAuditEngine();
+    const runtimeAuditApi = createRuntimeAuditApi(runtimeAuditEngine);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1213,6 +1228,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeObservabilityApi,
       runtimeHealthEngine,
       runtimeHealthApi,
+      runtimeAuditEngine,
+      runtimeAuditApi,
     };
   }, []);
 
@@ -1544,6 +1561,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   >([]);
   const [runtimeHealthIndexCount, setRuntimeHealthIndexCount] = useState(0);
   const [runtimeHealthMessage, setRuntimeHealthMessage] = useState<
+    string | null
+  >(null);
+  const [runtimeAuditPackage, setRuntimeAuditPackage] =
+    useState<RuntimeAuditPackage | null>(null);
+  const [runtimeAuditEvents, setRuntimeAuditEvents] = useState<
+    readonly RuntimeAuditEvent[]
+  >([]);
+  const [runtimeAuditIndexCount, setRuntimeAuditIndexCount] = useState(0);
+  const [runtimeAuditMessage, setRuntimeAuditMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1931,6 +1957,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeHealthEvents,
     runtimeHealthIndexCount,
     runtimeHealthMessage,
+    runtimeAuditPackage,
+    runtimeAuditEvents,
+    runtimeAuditIndexCount,
+    runtimeAuditMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -4823,6 +4853,94 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       );
       setRuntimeHealthMessage(null);
     },
+    recordRuntimeAudit(): void {
+      const sessionId =
+        observabilityPackage?.metadata.sessionId ??
+        runtimeHealthPackage?.metadata.sessionId ??
+        experienceStatePackage?.state.sessionId ??
+        runtimeExecutionPackage?.execution.sessionId ??
+        'runtime-session-demo';
+      const sources = buildAuditEventSources({
+        sessionId,
+        decisionOrchestratorEvents,
+        experienceRuntimeEvents,
+        moduleCoordinatorEvents,
+        experienceStateEvents,
+        observabilityEvents,
+        runtimeHealthEvents,
+        runtimeExecutionId:
+          runtimeExecutionPackage?.execution.id ??
+          experienceStatePackage?.state.runtimeExecutionId ??
+          null,
+        moduleExecutionId:
+          experienceStatePackage?.state.moduleExecutionId ?? null,
+        observabilityPackageId: observabilityPackage?.id ?? null,
+        healthPackageId: runtimeHealthPackage?.id ?? null,
+      });
+      const recorded = services.runtimeAuditApi.recordAudit({
+        sessionId,
+        title: 'Builder Runtime Audit',
+        sources,
+      });
+      setRuntimeAuditPackage(recorded);
+      setRuntimeAuditEvents(services.runtimeAuditEngine.getEvents());
+      setRuntimeAuditIndexCount(services.runtimeAuditEngine.getIndex().length);
+      setRuntimeAuditMessage(
+        `Recorded ${recorded.trail.records.length} audit records.`,
+      );
+    },
+    publishRuntimeAudit(): void {
+      if (runtimeAuditPackage === null) {
+        setRuntimeAuditMessage('Nejdřív Record Audit.');
+        return;
+      }
+      try {
+        const published = services.runtimeAuditApi.publishAudit(
+          runtimeAuditPackage.id,
+        );
+        setRuntimeAuditPackage(published);
+        setRuntimeAuditEvents(services.runtimeAuditEngine.getEvents());
+        setRuntimeAuditIndexCount(
+          services.runtimeAuditEngine.getIndex().length,
+        );
+        setRuntimeAuditMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeAuditMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeAudit(): void {
+      if (runtimeAuditPackage === null) {
+        setRuntimeAuditMessage('Nejdřív Record Audit.');
+        return;
+      }
+      const validation = services.runtimeAuditApi.validateAudit(
+        runtimeAuditPackage.id,
+      );
+      const previewed = services.runtimeAuditApi.previewAudit(
+        runtimeAuditPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeAuditPackage(previewed);
+      }
+      setRuntimeAuditEvents(services.runtimeAuditEngine.getEvents());
+      setRuntimeAuditMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeAudit(): void {
+      if (runtimeAuditPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeAuditEngine.dispose(
+        runtimeAuditPackage.id,
+      );
+      setRuntimeAuditPackage(disposed);
+      setRuntimeAuditEvents(services.runtimeAuditEngine.getEvents());
+      setRuntimeAuditIndexCount(services.runtimeAuditEngine.getIndex().length);
+      setRuntimeAuditMessage(null);
+    },
     buildProject(): void {
       const projectId =
         services.workspaceService.getWorkspace().activeProjectId;
@@ -5013,6 +5131,162 @@ function buildRuntimeEventSources(input: {
       event: 'DecisionExecutionStarted',
       timestamp: stamp,
       source: 'decision-orchestrator',
+    },
+  ];
+}
+
+function buildAuditEventSources(input: {
+  readonly sessionId: string;
+  readonly decisionOrchestratorEvents: readonly DecisionOrchestratorEvent[];
+  readonly experienceRuntimeEvents: readonly ExperienceRuntimeEvent[];
+  readonly moduleCoordinatorEvents: readonly ModuleCoordinatorEvent[];
+  readonly experienceStateEvents: readonly ExperienceStateEvent[];
+  readonly observabilityEvents: readonly RuntimeObservabilityEvent[];
+  readonly runtimeHealthEvents: readonly RuntimeHealthEvent[];
+  readonly runtimeExecutionId: string | null;
+  readonly moduleExecutionId: string | null;
+  readonly observabilityPackageId: string | null;
+  readonly healthPackageId: string | null;
+}): AuditEventSource[] {
+  const sources: AuditEventSource[] = [
+    ...input.decisionOrchestratorEvents.map((event) => ({
+      sessionId: input.sessionId,
+      runtimeExecutionId: event.executionId ?? input.runtimeExecutionId,
+      moduleExecutionId: null,
+      action: event.type,
+      entity: 'DecisionExecution' as const,
+      timestamp: event.at,
+      source: 'decision-orchestrator',
+      packageId: event.packageId,
+    })),
+    ...input.experienceRuntimeEvents.map((event) => ({
+      sessionId: input.sessionId,
+      runtimeExecutionId: event.executionId ?? input.runtimeExecutionId,
+      moduleExecutionId: null,
+      action: event.type,
+      entity: 'RuntimeExecution' as const,
+      timestamp: event.at,
+      source: 'experience-runtime',
+      packageId: event.packageId,
+    })),
+    ...input.moduleCoordinatorEvents.map((event) => ({
+      sessionId: input.sessionId,
+      runtimeExecutionId: input.runtimeExecutionId,
+      moduleExecutionId: input.moduleExecutionId,
+      action: event.type,
+      entity: 'ModuleExecution' as const,
+      timestamp: event.at,
+      source: 'experience-modules',
+      packageId: event.packageId,
+    })),
+    ...input.experienceStateEvents.map((event) => ({
+      sessionId: input.sessionId,
+      runtimeExecutionId: input.runtimeExecutionId,
+      moduleExecutionId: input.moduleExecutionId,
+      action: event.type,
+      entity: 'StateTransition' as const,
+      timestamp: event.at,
+      source: 'experience-state',
+      packageId: event.packageId,
+    })),
+    ...input.observabilityEvents
+      .filter((event) => event.type === 'ObservabilityPublished')
+      .map((event) => ({
+        sessionId: input.sessionId,
+        runtimeExecutionId: input.runtimeExecutionId,
+        moduleExecutionId: null,
+        action: event.type,
+        entity: 'PublishedPackage' as const,
+        timestamp: event.at,
+        source: 'runtime-observability',
+        packageId: event.packageId,
+      })),
+    ...input.runtimeHealthEvents
+      .filter(
+        (event) =>
+          event.type === 'RuntimeHealthPublished' ||
+          event.type === 'RuntimeHealthValidated',
+      )
+      .map((event) => ({
+        sessionId: input.sessionId,
+        runtimeExecutionId: input.runtimeExecutionId,
+        moduleExecutionId: null,
+        action: event.type,
+        entity:
+          event.type === 'RuntimeHealthPublished'
+            ? ('PublishedPackage' as const)
+            : ('ValidationEvent' as const),
+        timestamp: event.at,
+        source: 'runtime-health',
+        packageId: event.packageId,
+      })),
+  ];
+
+  if (sources.length > 0) {
+    return sources;
+  }
+
+  const stamp = new Date().toISOString();
+  return [
+    {
+      sessionId: input.sessionId,
+      runtimeExecutionId: 'runtime-execution-demo',
+      moduleExecutionId: null,
+      action: 'DecisionExecutionStarted',
+      entity: 'DecisionExecution',
+      timestamp: stamp,
+      source: 'decision-orchestrator',
+      packageId: null,
+    },
+    {
+      sessionId: input.sessionId,
+      runtimeExecutionId: 'runtime-execution-demo',
+      moduleExecutionId: null,
+      action: 'RuntimeStarted',
+      entity: 'RuntimeExecution',
+      timestamp: stamp,
+      source: 'experience-runtime',
+      packageId: null,
+    },
+    {
+      sessionId: input.sessionId,
+      runtimeExecutionId: 'runtime-execution-demo',
+      moduleExecutionId: 'module-execution-demo',
+      action: 'ModuleActivated',
+      entity: 'ModuleExecution',
+      timestamp: stamp,
+      source: 'experience-modules',
+      packageId: null,
+    },
+    {
+      sessionId: input.sessionId,
+      runtimeExecutionId: 'runtime-execution-demo',
+      moduleExecutionId: 'module-execution-demo',
+      action: 'ExperienceStateCreated',
+      entity: 'StateTransition',
+      timestamp: stamp,
+      source: 'experience-state',
+      packageId: null,
+    },
+    {
+      sessionId: input.sessionId,
+      runtimeExecutionId: 'runtime-execution-demo',
+      moduleExecutionId: null,
+      action: 'ObservabilityPublished',
+      entity: 'PublishedPackage',
+      timestamp: stamp,
+      source: 'runtime-observability',
+      packageId: input.observabilityPackageId,
+    },
+    {
+      sessionId: input.sessionId,
+      runtimeExecutionId: 'runtime-execution-demo',
+      moduleExecutionId: null,
+      action: 'RuntimeHealthValidated',
+      entity: 'ValidationEvent',
+      timestamp: stamp,
+      source: 'runtime-health',
+      packageId: input.healthPackageId,
     },
   ];
 }

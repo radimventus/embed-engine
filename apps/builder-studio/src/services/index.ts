@@ -551,3 +551,24 @@ export {
   createRuntimeHealthIndex,
   type RuntimeHealthIndex,
 } from './runtime-health/runtime-health-index';
+
+export {
+  createRuntimeAuditEngine,
+  type RuntimeAuditEngine,
+  type RuntimeAuditEngineOptions,
+} from './runtime-audit/runtime-audit-engine';
+export {
+  createRuntimeAuditApi,
+  type RuntimeAuditApi,
+} from './runtime-audit/runtime-audit-api';
+export {
+  buildTrail,
+  createBasicAuditRecordingStrategy,
+  createRuntimeAuditValidator,
+  type AuditRecordingStrategy,
+  type RuntimeAuditValidator,
+} from './runtime-audit/basic-audit-recording-strategy';
+export {
+  createRuntimeAuditIndex,
+  type RuntimeAuditIndex,
+} from './runtime-audit/runtime-audit-index';

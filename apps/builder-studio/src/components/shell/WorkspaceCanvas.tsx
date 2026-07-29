@@ -48,6 +48,8 @@ import type {
   RuntimeObservabilityPackage,
   RuntimeHealthEvent,
   RuntimeHealthPackage,
+  RuntimeAuditEvent,
+  RuntimeAuditPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -102,6 +104,7 @@ import { ExperienceModulesOverview } from './ExperienceModulesOverview';
 import { ExperienceStateOverview } from './ExperienceStateOverview';
 import { ObservabilityOverview } from './ObservabilityOverview';
 import { HealthOverview } from './HealthOverview';
+import { AuditOverview } from './AuditOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -224,6 +227,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeHealthEvents: readonly RuntimeHealthEvent[];
   readonly runtimeHealthIndexCount: number;
   readonly runtimeHealthMessage: string | null;
+  readonly runtimeAuditPackage: RuntimeAuditPackage | null;
+  readonly runtimeAuditEvents: readonly RuntimeAuditEvent[];
+  readonly runtimeAuditIndexCount: number;
+  readonly runtimeAuditMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -380,6 +387,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeHealth: () => void;
   readonly onValidateRuntimeHealth: () => void;
   readonly onDisposeRuntimeHealth: () => void;
+  readonly onRecordRuntimeAudit: () => void;
+  readonly onPublishRuntimeAudit: () => void;
+  readonly onValidateRuntimeAudit: () => void;
+  readonly onDisposeRuntimeAudit: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -485,6 +496,10 @@ export function WorkspaceCanvas({
   runtimeHealthEvents,
   runtimeHealthIndexCount,
   runtimeHealthMessage,
+  runtimeAuditPackage,
+  runtimeAuditEvents,
+  runtimeAuditIndexCount,
+  runtimeAuditMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -631,6 +646,10 @@ export function WorkspaceCanvas({
   onPublishRuntimeHealth,
   onValidateRuntimeHealth,
   onDisposeRuntimeHealth,
+  onRecordRuntimeAudit,
+  onPublishRuntimeAudit,
+  onValidateRuntimeAudit,
+  onDisposeRuntimeAudit,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1085,6 +1104,22 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeHealth}
             onDispose={onDisposeRuntimeHealth}
             message={runtimeHealthMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-audit' ? (
+          <AuditOverview
+            auditPackage={runtimeAuditPackage}
+            events={runtimeAuditEvents}
+            indexCount={runtimeAuditIndexCount}
+            publishedCount={
+              runtimeAuditPackage?.metadata.status === 'Published' ? 1 : 0
+            }
+            onRecord={onRecordRuntimeAudit}
+            onPublish={onPublishRuntimeAudit}
+            onValidate={onValidateRuntimeAudit}
+            onDispose={onDisposeRuntimeAudit}
+            message={runtimeAuditMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

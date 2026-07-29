@@ -531,3 +531,18 @@ export type {
   RuntimeHealthValidationIssue,
   RuntimeOverallHealth,
 } from './runtime-health-types';
+
+export type {
+  AppendAuditInput,
+  AuditEntityKind,
+  AuditEventSource,
+  RecordAuditInput,
+  RuntimeAuditEvent,
+  RuntimeAuditEventType,
+  RuntimeAuditIndexEntry,
+  RuntimeAuditPackage,
+  RuntimeAuditRecord,
+  RuntimeAuditTrail,
+  RuntimeAuditValidation,
+  RuntimeAuditValidationIssue,
+} from './runtime-audit-types';
