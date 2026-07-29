@@ -19,6 +19,7 @@ Future:         Decision Trajectory (not MVP)
 | Concept | Role | Canonical source |
 | --- | --- | --- |
 | **Product** | Principles and vision | `product/` |
+| **CONIS Constitution** | Founding identity and presence rules for Conis | [`product/foundation/CONIS-CONSTITUTION.md`](./product/foundation/CONIS-CONSTITUTION.md) |
 | **Decision Experience Grammar (DEG)** | Product layer — Mental State / Experience operations | [`product/decision-experience-grammar/DEG.md`](./product/decision-experience-grammar/DEG.md) |
 | **Decision Journey (DJS)** | Visit trajectory of mental transformations (Proposed) | [`product/decision-journey/DJS.md`](./product/decision-journey/DJS.md) |
 | **Business Intelligence** | Market, Strategic Accounts, Relationships, GTM knowledge | [`business/README.md`](./business/README.md) |

@@ -1,0 +1,59 @@
+{
+  "id": "PT-UX-SYNC-02",
+  "verdict": "TOUR SYNC COMPLETE",
+  "completedAt": "2026-07-26T08:25:00Z",
+  "commits": {
+    "tourUx": "27d4e4d6011d234411f0c0079927c201b4683deb",
+    "tourUxShort": "27d4e4d",
+    "publish": "3efbeb80ca1373f6aff8686d9d35449adc99a00b",
+    "publishShort": "3efbeb8",
+    "fingerprint": "27d4e4d",
+    "iifeSha256": "8098397800e630b42aabe9a7c94363445ed132ec0bf93fe3e3e96b64621bc935"
+  },
+  "localVerify": {
+    "pass": true,
+    "url": "http://127.0.0.1:5180/",
+    "artifact": "docs/reviews/assets/pt-ux-sync-02/local-verify.json",
+    "screenshot": "docs/reviews/assets/pt-ux-sync-02/local-tour.png",
+    "assertions": {
+      "noInteraktivniPudorys": true,
+      "mediaWidth": 580,
+      "topDeltaPx": 0,
+      "roomNavPresent": true
+    }
+  },
+  "publish": {
+    "command": "pnpm embed:publish",
+    "methodADeliveryUrl": "https://embed-ai-delivery.northern-paste.workers.dev",
+    "methodAPreserved": true,
+    "pagesBuild": {
+      "commit": "3efbeb8",
+      "status": "built"
+    }
+  },
+  "remoteValidation": {
+    "command": "pnpm embed:publish -- --remote",
+    "exitCode": 0,
+    "result": "PASS",
+    "marker": "EMBED_RUNTIME_BUILD:27d4e4d@2026-07-26T08:22:07Z"
+  },
+  "parity": {
+    "localEqualsPublishedTour": true,
+    "fingerprintMatch": true,
+    "localCommit": "27d4e4d",
+    "remoteCommit": "27d4e4d",
+    "iifeShaMatch": true,
+    "noInteraktivniInPublishedIife": true,
+    "media580InPublishedIife": true,
+    "publishedVisual": {
+      "pass": true,
+      "url": "https://radimventus.github.io/embed-engine/embed/live.html",
+      "noInteraktivniPudorys": true,
+      "mediaWidth": 580,
+      "topDeltaPx": 0,
+      "roomButtons": 10,
+      "artifact": "docs/reviews/assets/pt-ux-sync-02/published-tour-verify.json",
+      "screenshot": "docs/reviews/assets/pt-ux-sync-02/published-tour.png"
+    }
+  }
+}

@@ -28,6 +28,7 @@ Each covered area has exactly one Single Source of Truth (SSOT).
 | Area | SSOT |
 | --- | --- |
 | Product Principles | `product/constitution/product-constitution.md` |
+| **CONIS Constitution** | **`product/foundation/CONIS-CONSTITUTION.md`** |
 | Product Vision | `product/vision/product-vision.md` |
 | **Decision Experience Grammar (DEG)** | **`product/decision-experience-grammar/DEG.md`** |
 | Decision Journey Specification (DJS) | `product/decision-journey/DJS.md` (Proposed v0.1 — not yet Approved SSOT) |
@@ -95,12 +96,13 @@ See **[architecture/RUNTIME.md](./architecture/RUNTIME.md)** (one-minute Runtime
 7. [Decision Layer vocabulary](./architecture/decision-layer/README.md)
 8. [Decision Layer governance v1](./architecture/decision-layer/decision-layer-governance-v1.md)
 9. [Product Constitution](./product/constitution/product-constitution.md)
-10. [Decision Experience Grammar (DEG)](./product/decision-experience-grammar/DEG.md) — **product layer SSOT**
-11. [Decision Journey Specification (DJS)](./product/decision-journey/DJS.md) — UX-001 Proposed
-12. [Business Intelligence Layer](./business/README.md) — Business Architecture SSOT
-13. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
-14. [Decision Architecture v1.0 Freeze](./architecture/decision-architecture-v1.0-freeze.md) — **FROZEN** · [AR-001](./architecture/review/AR-001-decision-architecture-v1.md)
-15. Active design / implementation guides as needed
+10. [CONIS Constitution](./product/foundation/CONIS-CONSTITUTION.md) — **zakládající SSOT přítomnosti Conisu**
+11. [Decision Experience Grammar (DEG)](./product/decision-experience-grammar/DEG.md) — **product layer SSOT**
+12. [Decision Journey Specification (DJS)](./product/decision-journey/DJS.md) — UX-001 Proposed
+13. [Business Intelligence Layer](./business/README.md) — Business Architecture SSOT
+14. [Living Experience v0.1 Freeze](./architecture/living-experience-v0.1-freeze.md)
+15. [Decision Architecture v1.0 Freeze](./architecture/decision-architecture-v1.0-freeze.md) — **FROZEN** · [AR-001](./architecture/review/AR-001-decision-architecture-v1.md)
+16. Active design / implementation guides as needed
 
 Do not start with `archive/` or treat CommandRuntime docs as current.
 

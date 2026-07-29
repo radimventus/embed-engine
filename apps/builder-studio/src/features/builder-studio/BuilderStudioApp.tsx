@@ -315,6 +315,13 @@ export function BuilderStudioApp() {
         validationDashboardEvents={session.validationDashboardEvents}
         validationDashboardIndexCount={session.validationDashboardIndexCount}
         validationDashboardMessage={session.validationDashboardMessage}
+        publishWizardSession={session.publishWizardSession}
+        publishWizardSummary={session.publishWizardSummary}
+        publishWizardArtifact={session.publishWizardArtifact}
+        publishWizardEvents={session.publishWizardEvents}
+        publishWizardHistoryCount={session.publishWizardHistoryCount}
+        publishWizardMessage={session.publishWizardMessage}
+        publishWizardCanPublish={session.publishWizardCanPublish}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -645,6 +652,12 @@ export function BuilderStudioApp() {
         onPublishObjectMetadataDraft={session.publishObjectMetadataDraft}
         onEvaluateValidationDashboard={session.evaluateValidationDashboard}
         onRefreshValidationDashboard={session.refreshValidationDashboard}
+        onStartPublishWizard={session.startPublishWizard}
+        onLoadPublishWizardValidation={session.loadPublishWizardValidation}
+        onPreparePublishWizard={session.preparePublishWizard}
+        onRunPublishWizard={session.runPublishWizard}
+        onCopyPublishWizardEmbed={session.copyPublishWizardEmbed}
+        onOpenPublishWizardPreview={session.openPublishWizardPreview}
         onCertifyExport={session.certifyExport}
         onValidateExportCertification={session.validateExportCertification}
         onRevokeExportCertification={session.revokeExportCertification}

@@ -1,0 +1,56 @@
+{
+  "state": {
+    "rooms": 10,
+    "studio": true,
+    "overlay": true,
+    "interaktivni": true,
+    "prochazka": true,
+    "pudorys": true
+  },
+  "metrics": {
+    "interaktivniPudorysVisible": true,
+    "mediaTitle": {
+      "top": 194,
+      "left": 127,
+      "width": 600,
+      "height": 60
+    },
+    "mediaViewport": {
+      "top": 254,
+      "left": 127,
+      "width": 600,
+      "height": 338
+    },
+    "roomList": {
+      "top": 194,
+      "left": 727,
+      "width": 240,
+      "height": 580
+    },
+    "roomNav": {
+      "top": 254,
+      "left": 759,
+      "width": 208,
+      "height": 396
+    },
+    "planSection": {
+      "top": 194,
+      "left": 967,
+      "width": 572,
+      "height": 580
+    },
+    "planDisplay": {
+      "top": 223,
+      "left": 1007,
+      "width": 512,
+      "height": 356
+    },
+    "titleH2": {
+      "top": 214,
+      "left": 1007,
+      "width": 512,
+      "height": 60
+    },
+    "deltaPlanTopVsMediaTop": -31
+  }
+}

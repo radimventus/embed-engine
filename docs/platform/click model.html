@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CONIS Studio • Manager, Sales & Builder</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --navy: #001930;
+    --gold: #B8922D;
+    --gold-light: #FBF7EE;
+    --bg: #F5F7FB;
+    --card-bg: #FFFFFF;
+    --text: #001930;
+    --muted: #64748B;
+    --line: #E2E8F0;
+    --red: #DC2626;
+    --red-bg: #FEF2F2;
+    --green: #138D45;
+    --green-bg: #E6F7ED;
+    --blue: #18428F;
+    --blue-bg: #EEF4FF;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* =======================================================
+   HEADER & ROLE SWITCHER
+   ======================================================= */
+header {
+    height: 70px;
+    background: var(--navy);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    box-shadow: 0 4px 20px rgba(0,25,48,0.15);
+    z-index: 100;
+    flex-shrink: 0;
+}
+
+.logo-conis {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: #fff;
+    text-transform: uppercase;
+}
+.logo-conis span { color: var(--gold); }
+
+.role-switcher {
+    display: flex;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 30px;
+    padding: 4px;
+    gap: 4px;
+}
+
+.role-btn {
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #94A3B8;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.role-btn.active {
+    background: #FFFFFF;
+    color: var(--navy);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.user-badge {
+    font-size: 13px;
+    color: #94A3B8;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+/* =======================================================
+   MAIN WORKSPACE LAYOUT
+   ======================================================= */
+main {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.studio-view {
+    display: none;
+    max-width: 1520px;
+    margin: 0 auto;
+    padding: 28px 32px;
+}
+
+.studio-view.active {
+    display: block;
+}
+
+/* Studio Views without padding wrapper (like Builder) */
+.studio-view-full {
+    display: none;
+    height: 100%;
+}
+.studio-view-full.active {
+    display: grid;
+}
+
+.title-bar {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.title-bar h1 {
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: var(--navy);
+}
+
+.title-bar p {
+    color: var(--muted);
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+/* CARDS & BADGES */
+.card {
+    background: var(--card-bg);
+    border-radius: 18px;
+    padding: 26px;
+    border: 1px solid rgba(0, 25, 48, 0.06);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+}
+
+.card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--navy);
+}
+
+.card-desc {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 2px;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+}
+.badge-warning { background: #FFF4E5; color: #B45309; }
+.badge-blue { background: var(--blue-bg); color: var(--blue); }
+.badge-gold { background: var(--gold-light); color: var(--gold); }
+.badge-green { background: var(--green-bg); color: var(--green); }
+
+/* =======================================================
+   MANAGER STUDIO
+   ======================================================= */
+.grid-manager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.funnel-chart { display: flex; flex-direction: column; gap: 14px; }
+.funnel-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 60px;
+    align-items: center;
+    gap: 16px;
+}
+.funnel-label { font-size: 14px; font-weight: 600; color: var(--navy); }
+.funnel-barwrap { height: 22px; background: #EDF2F7; border-radius: 999px; overflow: hidden; }
+.funnel-bar { height: 100%; background: var(--blue); border-radius: 999px; transition: width 0.6s ease; }
+.funnel-bar.critical { background: var(--red); }
+.funnel-value { font-size: 14px; font-weight: 700; text-align: right; color: var(--navy); }
+
+.metrics-strip {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
+}
+.metric-box {
+    background: #FAFBFD;
+    padding: 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: var(--muted);
+}
+.metric-box b { display: block; font-size: 18px; color: var(--navy); margin-top: 2px; }
+
+.factors-grid { display: grid; grid-template-columns: 1fr 240px; gap: 24px; }
+.factor-row { display: grid; grid-template-columns: 150px 1fr 40px; gap: 14px; align-items: center; margin-bottom: 12px; }
+.factor-barwrap { height: 18px; background: #EDF2F7; border-radius: 999px; overflow: hidden; }
+.factor-bar { height: 100%; background: var(--navy); border-radius: 999px; }
+
+.side-kpi-card {
+    background: #FAFBFD;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.big-stat { font-size: 32px; font-weight: 700; color: var(--gold); margin: 6px 0 16px; }
+
+/* =======================================================
+   SALES STUDIO
+   ======================================================= */
+.grid-sales-3col {
+    display: grid;
+    grid-template-columns: 340px 1.2fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.client-card {
+    padding: 16px;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    background: #fff;
+    transition: all 0.2s ease;
+}
+.client-card:hover, .client-card.active {
+    border-color: var(--gold);
+    background: var(--gold-light);
+}
+.client-card-head { display: flex; justify-content: space-between; align-items: center; }
+.client-name { font-size: 15px; font-weight: 700; color: var(--navy); }
+.client-project { font-size: 13px; color: var(--muted); margin-top: 2px; }
+.intent-score { font-size: 13px; font-weight: 700; color: var(--gold); }
+
+.intent-meter { margin: 16px 0; }
+.meter-header { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+.meter-track { height: 8px; background: #E2E8F0; border-radius: 10px; overflow: hidden; }
+.meter-fill { height: 100%; background: linear-gradient(90deg, var(--navy), var(--gold)); border-radius: 10px; }
+
+.insight-callout {
+    background: #F8FAFC;
+    border-left: 4px solid var(--gold);
+    padding: 16px;
+    border-radius: 10px;
+    margin-top: 18px;
+}
+.insight-callout h4 { font-size: 14px; color: var(--navy); margin-bottom: 4px; }
+.insight-callout p { font-size: 13px; color: #475569; line-height: 1.5; }
+
+.journey-timeline { position: relative; padding-left: 20px; margin-top: 16px; }
+.journey-timeline::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    bottom: 6px;
+    width: 2px;
+    background: var(--line);
+}
+.journey-step { position: relative; margin-bottom: 18px; }
+.journey-node {
+    position: absolute;
+    left: -20px;
+    top: 3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--navy);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--navy);
+}
+.journey-step.completed .journey-node { background: var(--gold); box-shadow: 0 0 0 2px var(--gold); }
+.journey-step.active .journey-node { background: var(--green); box-shadow: 0 0 0 2px var(--green); }
+
+.step-module { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); }
+.step-title { font-size: 13px; font-weight: 600; color: var(--navy); margin-top: 1px; }
+.step-detail { font-size: 12px; color: #64748B; margin-top: 2px; line-height: 1.4; }
+
+/* =======================================================
+   BUILDER STUDIO (Integrated from Builder concept.html)
+   ======================================================= */
+.builder-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr 340px;
+    height: 100%;
+}
+
+.builder-sidebar {
+    background: white;
+    border-right: 1px solid #E7ECF3;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.menuTitle {
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #7D8796;
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.company {
+    background: var(--blue-bg);
+    border: 1px solid #D7E4FF;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 24px;
+    color: var(--navy);
+}
+
+.house {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: .2s;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.house:hover { background: #F7F9FC; }
+.house.active { background: var(--blue); color: white; }
+.house small { display: block; font-size: 11px; opacity: 0.75; font-weight: 400; }
+
+.addHouse {
+    width: 100%;
+    margin-top: 16px;
+    border: none;
+    background: #EEF3FA;
+    color: var(--blue);
+    border-radius: 10px;
+    padding: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.builder-workspace {
+    padding: 28px 32px;
+    overflow-y: auto;
+}
+
+.titleRow { display: flex; align-items: center; gap: 14px; margin-bottom: 6px; }
+.titleRow h2 { font-size: 28px; color: var(--navy); font-weight: 700; }
+
+.syncInfo {
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.syncDot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); display: inline-block; }
+
+.builder-tabs {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--bg);
+    padding-bottom: 16px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.builder-tabs button {
+    border: 1px solid #DDE5EF;
+    background: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
+}
+.builder-tabs button.active {
+    background: var(--blue);
+    color: white;
+    border-color: var(--blue);
+}
+
+.builder-content {
+    background: white;
+    border-radius: 18px;
+    border: 1px solid #E4EAF2;
+    padding: 28px;
+    min-height: 600px;
+}
+
+.builder-section { margin-bottom: 50px; }
+.builder-section h3 { margin-bottom: 6px; font-size: 22px; color: var(--navy); }
+.builder-section p { margin-bottom: 20px; color: var(--muted); font-size: 13px; }
+
+.asset {
+    background: #FAFBFD;
+    border: 1px solid #E6ECF3;
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.assetHeader { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.assetHeader h4 { font-size: 15px; font-weight: 600; color: var(--navy); }
+.assetHeader span { font-size: 12px; color: var(--muted); }
+
+.uploadBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--blue-bg);
+    color: var(--blue);
+    border: 1px solid #D7E4FF;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.uploadBtn:hover { background: var(--blue); color: white; border-color: var(--blue); }
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.thumbCard {
+    background: white;
+    border: 1px solid #E1E8F2;
+    border-radius: 8px;
+    padding: 8px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+}
+.thumbCard:hover { border-color: var(--blue); transform: translateY(-2px); }
+
+.thumbPreview {
+    aspect-ratio: 1;
+    background: #F0F4FA;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 6px;
+}
+.thumbName { font-size: 10px; font-weight: 500; color: #5E6C83; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.input-field {
+    width: 100%;
+    border: 1px solid #DCE5F0;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 13px;
+    color: var(--navy);
+}
+
+.publishPanel {
+    background: white;
+    border-left: 1px solid #E7ECF3;
+    padding: 24px;
+    overflow-y: auto;
+}
+.publishPanel h3 { font-size: 20px; margin-bottom: 24px; color: var(--navy); }
+
+.state-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #EFF2F6;
+}
+.stateLabel { font-size: 13px; color: var(--navy); font-weight: 500; }
+
+.percent { font-weight: 700; font-size: 13px; padding: 3px 8px; border-radius: 10px; }
+.percent.p100 { color: var(--green); background: var(--green-bg); }
+.percent.p75 { color: var(--blue); background: var(--blue-bg); }
+.percent.p40 { color: #E28A00; background: #FFF5E5; }
+
+.btn-builder {
+    width: 100%;
+    border: none;
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    margin-top: 18px;
+    transition: background 0.2s;
+}
+.btn-check { background: var(--blue-bg); color: var(--blue); }
+.btn-publish { background: var(--blue); color: white; }
+.btn-publish:hover { background: #123173; }
+
+.local-url {
+    margin-top: 16px;
+    background: #F7F9FC;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 12px;
+    word-break: break-all;
+    color: #5E6C83;
+}
+
+.embed-box { margin-top: 24px; }
+.embed-box label { display: block; margin-bottom: 8px; font-size: 13px; font-weight: 600; color: var(--navy); }
+.embed-box textarea {
+    width: 100%;
+    height: 100px;
+    border: 1px solid #DDE5EF;
+    border-radius: 10px;
+    padding: 10px;
+    resize: none;
+    font-family: monospace;
+    font-size: 11px;
+    color: #4A5568;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="logo-conis">CON<span>I</span>S</div>
+
+    <div class="role-switcher">
+        <button class="role-btn active" onclick="switchStudio('manager')">Manager Studio</button>
+        <button class="role-btn" onclick="switchStudio('sales')">Sales Studio</button>
+        <button class="role-btn" onclick="switchStudio('builder')">Builder Studio</button>
+    </div>
+
+    <div class="user-badge">
+        <span>Aktivní modul</span>
+        <div class="avatar">CS</div>
+    </div>
+</header>
+
+<main>
+
+    <div id="manager-studio" class="studio-view active">
+        <div class="title-bar">
+            <div>
+                <h1>Manager Studio</h1>
+                <p>Analýza konverzního trychtýře a klíčových rozhodovacích faktorů zákazníků.</p>
+            </div>
+            <span class="badge badge-blue">Živá data z Runtime</span>
+        </div>
+
+        <div class="grid-manager">
+            
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Místa ztráty zákazníků</div>
+                        <div class="card-desc">Kde zájemci opouštějí rozhodovací proces (Decision Journey)</div>
+                    </div>
+                    <span class="badge badge-warning">Pokles ve kroku Finance</span>
+                </div>
+
+                <div class="funnel-chart">
+                    <div class="funnel-row">
+                        <div class="funnel-label">Experience</div>
+                        <div class="funnel-barwrap"><div class="funnel-bar" style="width: 100%;"></div></div>
+                        <div class="funnel-value">1000</div>
+                    </div>
+                    <div class="funnel-row">
+                        <div class="funnel-label">Priority</div>
+                        <div class="funnel-barwrap"><div class="funnel-bar" style="width: 87%;"></div></div>
+                        <div class="funnel-value">870</div>
+                    </div>
+                    <div class="funnel-row">
+                        <div class="funnel-label">Navigátor</div>
+                        <div class="funnel-barwrap"><div class="funnel-bar" style="width: 69%;"></div></div>
+                        <div class="funnel-value">690</div>
+                    </div>
+                    <div class="funnel-row">
+                        <div class="funnel-label" style="color: var(--red);">Finance</div>
+                        <div class="funnel-barwrap"><div class="funnel-bar critical" style="width: 43%;"></div></div>
+                        <div class="funnel-value" style="color: var(--red);">430</div>
+                    </div>
+                    <div class="funnel-row">
+                        <div class="funnel-label">Nabídka</div>
+                        <div class="funnel-barwrap"><div class="funnel-bar" style="width: 31%;"></div></div>
+                        <div class="funnel-value">310</div>
+                    </div>
+                    <div class="funnel-row">
+                        <div class="funnel-label">Rezervace</div>
+                        <div class="funnel-barwrap"><div class="funnel-bar" style="width: 19%;"></div></div>
+                        <div class="funnel-value">190</div>
+                    </div>
+                </div>
+
+                <div class="metrics-strip">
+                    <div class="metric-box">Nejkritičtější krok<b>Finance (-38 %)</b></div>
+                    <div class="metric-box">Celková konverze<b>19 %</b></div>
+                    <div class="metric-box">Doporučení AI<b>Doplnit kalkulačku</b></div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">Co ovlivňuje rozhodnutí zákazníků</div>
+                        <div class="card-desc">Váha parametrů při vytváření osobního Decision Profile</div>
+                    </div>
+                    <span class="badge badge-gold">Top: Cena & Splátka</span>
+                </div>
+
+                <div class="factors-grid">
+                    <div>
+                        <div class="factor-row">
+                            <div class="funnel-label">Celková cena</div>
+                            <div class="factor-barwrap"><div class="factor-bar" style="width: 92%;"></div></div>
+                            <div class="funnel-value">92</div>
+                        </div>
+                        <div class="factor-row">
+                            <div class="funnel-label">Měsíční splátka</div>
+                            <div class="factor-barwrap"><div class="factor-bar" style="width: 87%;"></div></div>
+                            <div class="funnel-value">87</div>
+                        </div>
+                        <div class="factor-row">
+                            <div class="funnel-label">Energetická úspora</div>
+                            <div class="factor-barwrap"><div class="factor-bar" style="width: 76%;"></div></div>
+                            <div class="funnel-value">76</div>
+                        </div>
+                        <div class="factor-row">
+                            <div class="funnel-label">Dispozice domu</div>
+                            <div class="factor-barwrap"><div class="factor-bar" style="width: 69%;"></div></div>
+                            <div class="funnel-value">69</div>
+                        </div>
+                        <div class="factor-row">
+                            <div class="funnel-label">Velikost pozemku</div>
+                            <div class="factor-barwrap"><div class="factor-bar" style="width: 58%;"></div></div>
+                            <div class="funnel-value">58</div>
+                        </div>
+                        <div class="factor-row">
+                            <div class="funnel-label">Design & Architektura</div>
+                            <div class="factor-barwrap"><div class="factor-bar" style="width: 44%;"></div></div>
+                            <div class="funnel-value">44</div>
+                        </div>
+                    </div>
+
+                    <div class="side-kpi-card">
+                        <div>
+                            <div style="font-size: 12px; color: var(--muted);">Nejsilnější faktor</div>
+                            <div class="big-stat">Cena</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: var(--muted); font-weight: 600;">Průměrná změna priorit</div>
+                            <div style="font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 12px;">+31 %</div>
+                            <div style="font-size: 12px; color: var(--muted); font-weight: 600;">Nejcitlivější okamžik</div>
+                            <div style="font-size: 14px; font-weight: 700; color: var(--navy);">Finanční kalkulace</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <div class="card-title">Doporučená vylepšení Experience Layer</div>
+                    <div class="card-desc">Automatická diagnostika z Decision Signals pro zvýšení jistoty klientů</div>
+                </div>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;">
+                <div style="padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #FAFBFD;">
+                    <span class="badge badge-gold" style="margin-bottom: 8px; display: inline-block;">Vysoký dopad</span>
+                    <h4 style="font-size: 15px; margin-bottom: 4px;">Doplnit FAQ k financování</h4>
+                    <p style="font-size: 12px; color: var(--muted);">AI detekuje opuštění ve fázi Finance. Zodpovězení splátek předem odstraní nejistotu.</p>
+                </div>
+                <div style="padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #FAFBFD;">
+                    <span class="badge badge-gold" style="margin-bottom: 8px; display: inline-block;">Vysoký dopad</span>
+                    <h4 style="font-size: 15px; margin-bottom: 4px;">Propojení House Navigatora s FVE</h4>
+                    <p style="font-size: 12px; color: var(--muted);">Klienti řešící energetickou úsporu vyžadují pohled na střechu a orientaci ke světlu.</p>
+                </div>
+                <div style="padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #FAFBFD;">
+                    <span class="badge badge-blue" style="margin-bottom: 8px; display: inline-block;">Střední dopad</span>
+                    <h4 style="font-size: 15px; margin-bottom: 4px;">Rozšíření fotogalerie interiéru</h4>
+                    <p style="font-size: 12px; color: var(--muted);">Opakované návraty do sekce Hero indikují potřebu většího množství reálných detailů.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="sales-studio" class="studio-view">
+        <div class="title-bar">
+            <div>
+                <h1>Sales Studio</h1>
+                <p>Nákupní záměr, Decision Profile a konverzní cesta vašich klientů.</p>
+            </div>
+            <span class="badge badge-gold">● 3 klienti s vysokou rozhodovací jistotou</span>
+        </div>
+
+        <div class="grid-sales-3col">
+            
+            <div class="card" style="padding: 20px;">
+                <div class="card-title" style="margin-bottom: 16px; font-size: 15px;">Případy k hovoru</div>
+
+                <div class="client-card active" onclick="loadClient('novak')">
+                    <div class="client-card-head">
+                        <div class="client-name">Jan Novák</div>
+                        <div class="intent-score">88 % Jistota</div>
+                    </div>
+                    <div class="client-project">RD Harmony 124 • Mám pozemek</div>
+                </div>
+
+                <div class="client-card" onclick="loadClient('dvorak')">
+                    <div class="client-card-head">
+                        <div class="client-name">Petr Dvořák</div>
+                        <div class="intent-score">72 % Jistota</div>
+                    </div>
+                    <div class="client-project">Villa 168 • Hledám pozemek</div>
+                </div>
+
+                <div class="client-card" onclick="loadClient('kucerova')">
+                    <div class="client-card-head">
+                        <div class="client-name">Marie Kučerová</div>
+                        <div class="intent-score">65 % Jistota</div>
+                    </div>
+                    <div class="client-project">Family 98 • Mám pozemek</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="font-size: 15px;">Detail nákupního záměru</div>
+
+                <h2 id="p2-name" style="font-size: 22px; color: var(--navy); margin-top: 8px;">Jan Novák</h2>
+                <p id="p2-project" style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">RD Harmony 124 (Opava)</p>
+
+                <div class="intent-meter">
+                    <div class="meter-header">
+                        <span>Index rozhodovací jistoty</span>
+                        <span id="p2-score">88 %</span>
+                    </div>
+                    <div class="meter-track"><div id="p2-bar" class="meter-fill" style="width: 88%;"></div></div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;">Hlavní deklarované priority</div>
+                    <div id="p2-tags" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <span class="badge badge-gold">Orientace ke světlu</span>
+                        <span class="badge badge-blue">Provozní náklady</span>
+                        <span class="badge badge-blue">Dispozice 4+kk</span>
+                    </div>
+                </div>
+
+                <div class="insight-callout">
+                    <h4>💡 Doporučené téma rozhovoru</h4>
+                    <p id="p2-insight">
+                        Klient strávil nejvíce času sledováním vazby domu na pozemek v House Navigatoru a prosvětlení obývacího pokoje. Doporučujeme začít rozhovor potvrzením správné orientace domu.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title" style="font-size: 15px;">Rozhodovací cesta (Decision Journey)</div>
+                <div class="card-desc">Pasivní chování vs. reálné Decision Signals</div>
+
+                <div class="journey-timeline" id="p3-timeline">
+                    </div>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div id="builder-studio" class="studio-view-full">
+        <div class="builder-layout">
+            
+            <aside class="builder-sidebar">
+                <div class="menuTitle">Partner</div>
+                <div class="company">🏢 AC Modular</div>
+
+                <div class="menuTitle">Domy</div>
+
+                <div class="house active">
+                    <div>🏠</div>
+                    <div>
+                        Harmony 124
+                        <small>Publikováno</small>
+                    </div>
+                </div>
+
+                <div class="house">
+                    <div>🏠</div>
+                    <div>
+                        Family 98
+                        <small>Draft</small>
+                    </div>
+                </div>
+
+                <div class="house">
+                    <div>🏠</div>
+                    <div>
+                        Villa 168
+                        <small>Draft</small>
+                    </div>
+                </div>
+
+                <button class="addHouse">+ Přidat nový dům</button>
+            </aside>
+
+            <main class="builder-workspace">
+                
+                <div class="titleRow">
+                    <h2>Harmony 124</h2>
+                    <span class="badge badge-green">Publikováno</span>
+                </div>
+                
+                <div class="syncInfo">
+                    <span class="syncDot"></span> Synchronizováno 17.8.2026 10:43
+                </div>
+
+                <div class="builder-tabs">
+                    <button class="active" onclick="document.getElementById('b-media').scrollIntoView({behavior:'smooth'})">Média</button>
+                    <button onclick="document.getElementById('b-layout').scrollIntoView({behavior:'smooth'})">Dispozice</button>
+                    <button onclick="document.getElementById('b-knowledge').scrollIntoView({behavior:'smooth'})">Znalosti</button>
+                </div>
+
+                <div class="builder-content">
+
+                    <section id="b-media" class="builder-section">
+                        <h3>Média</h3>
+                        <p>Fotografie a video objektu.</p>
+
+                        <div class="asset">
+                            <div class="assetHeader">
+                                <h4>📷 Fotografie</h4>
+                                <span>28 souborů</span>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <label class="uploadBtn">
+                                    📁 Nahrát fotografie
+                                    <input type="file" multiple accept="image/*" style="display: none;">
+                                </label>
+                            </div>
+
+                            <div class="gallery">
+                                <div class="thumbCard"><div class="thumbPreview">🖼️</div><div class="thumbName">IMG_001.jpg</div></div>
+                                <div class="thumbCard"><div class="thumbPreview">🖼️</div><div class="thumbName">IMG_002.jpg</div></div>
+                                <div class="thumbCard"><div class="thumbPreview">🖼️</div><div class="thumbName">IMG_003.jpg</div></div>
+                                <div class="thumbCard"><div class="thumbPreview">🖼️</div><div class="thumbName">IMG_004.jpg</div></div>
+                                <div class="thumbCard"><div class="thumbPreview">🖼️</div><div class="thumbName">IMG_005.jpg</div></div>
+                                <div class="thumbCard"><div class="thumbPreview">🖼️</div><div class="thumbName">IMG_006.jpg</div></div>
+                            </div>
+                        </div>
+
+                        <div class="asset">
+                            <div class="assetHeader">
+                                <h4>🎬 Video</h4>
+                            </div>
+                            <input class="input-field" placeholder="https://youtu.be/..." value="https://youtu.be/dQw4w9WgXcQ">
+                        </div>
+                    </section>
+
+                    <section id="b-layout" class="builder-section">
+                        <h3>Dispozice</h3>
+                        <p>Data potřebná pro House Navigator.</p>
+
+                        <div class="asset">
+                            <div class="assetHeader"><h4>SVG</h4></div>
+                            <label class="uploadBtn">📄 Nahrát SVG <input type="file" accept=".svg" style="display: none;"></label>
+                        </div>
+
+                        <div class="asset">
+                            <div class="assetHeader"><h4>CSV místností</h4></div>
+                            <label class="uploadBtn">📊 Nahrát CSV <input type="file" accept=".csv" style="display: none;"></label>
+                        </div>
+
+                        <div class="asset">
+                            <div class="assetHeader"><h4>CSV obrázků</h4></div>
+                            <label class="uploadBtn">📊 Nahrát CSV <input type="file" accept=".csv" style="display: none;"></label>
+                        </div>
+
+                        <div class="asset">
+                            <div class="assetHeader"><h4>Půdorys</h4></div>
+                            <label class="uploadBtn">📐 Nahrát půdorys <input type="file" accept="image/*,.pdf" style="display: none;"></label>
+                        </div>
+                    </section>
+
+                    <section id="b-knowledge" class="builder-section">
+                        <h3>Znalosti</h3>
+                        <p>Dokumenty pro AI.</p>
+
+                        <div class="asset">
+                            <div class="assetHeader"><h4>PDF</h4></div>
+                            <label class="uploadBtn">📕 Nahrát PDF <input type="file" accept=".pdf" style="display: none;"></label>
+                        </div>
+
+                        <div class="asset">
+                            <div class="assetHeader"><h4>DOCX</h4></div>
+                            <label class="uploadBtn">📘 Nahrát DOCX <input type="file" accept=".docx,.doc" style="display: none;"></label>
+                        </div>
+
+                        <div class="asset">
+                            <div class="assetHeader"><h4>XLSX</h4></div>
+                            <label class="uploadBtn">📗 Nahrát XLSX <input type="file" accept=".xlsx,.xls" style="display: none;"></label>
+                        </div>
+                    </section>
+
+                </div>
+            </main>
+
+            <aside class="publishPanel">
+                <h3>Připravenost projektu</h3>
+
+                <div class="state-row">
+                    <span class="stateLabel">Média</span>
+                    <span class="percent p100">100 %</span>
+                </div>
+
+                <div class="state-row">
+                    <span class="stateLabel">Dispozice</span>
+                    <span class="percent p75">75 %</span>
+                </div>
+
+                <div class="state-row">
+                    <span class="stateLabel">Znalosti</span>
+                    <span class="percent p40">40 %</span>
+                </div>
+
+                <div class="state-row">
+                    <span class="stateLabel">Runtime</span>
+                    <span style="color: var(--green); font-weight: 600; font-size: 13px;">Ready</span>
+                </div>
+
+                <button class="btn-builder btn-check">Zkontrolovat stav</button>
+
+                <div class="local-url">http://localhost:3000/harmony-124</div>
+
+                <button class="btn-builder btn-publish">Publikovat změny</button>
+
+                <div class="embed-box">
+                    <label>Embed kód</label>
+                    <textarea readonly>&lt;script src="https://embed.conis.ai/harmony124.js"&gt;&lt;/script&gt;</textarea>
+                </div>
+            </aside>
+
+        </div>
+    </div>
+
+</main>
+
+<script>
+const clientData = {
+    novak: {
+        name: "Jan Novák",
+        project: "RD Harmony 124 • Mám pozemek (Opava)",
+        score: "88 %",
+        bar: "88%",
+        tags: ["Orientace ke světlu", "Provozní náklady", "Dispozice 4+kk"],
+        insight: "Klient strávil nejvíce času sledováním vazby domu na pozemek v House Navigatoru a prosvětlení obývacího pokoje. Doporučujeme začít rozhovor potvrzením správné orientace domu na jeho pozemku.",
+        journey: [
+            { module: "Hero Experience", title: "Vstup na prezentaci", detail: "Spuštěno video exteriéru, stráveno 45s", completed: true },
+            { module: "Social Proof", title: "Sociální validace", detail: "Zobrazeny dotazy ostatních na zastavěnou plochu", completed: true },
+            { module: "House Navigator", title: "Prostorové poznání", detail: "4x otevřena obývací část + terasy na JZ", completed: true },
+            { module: "Priority Experience", title: "Nastavení priorit", detail: "Zvýšena váha: Prosvětlení & FVE", completed: true },
+            { module: "AI Advisor", title: "Dotaz na vytápění", detail: "Položen dotaz na roční provozní náklady TČ", completed: true },
+            { module: "Lead Capture", title: "Kvalifikovaný požadavek", detail: "Odeslána žádost o posouzení osazení na pozemek", active: true }
+        ]
+    },
+    dvorak: {
+        name: "Petr Dvořák",
+        project: "Villa 168 • Hledám pozemek",
+        score: "72 %",
+        bar: "72%",
+        tags: ["Tepelné čerpadlo", "Financování", "Garáž"],
+        insight: "Klient se opakovaně vrací k finanční kalkulaci a garážovému stání. V rozhovoru se zaměřte na možnosti fázování stavby a měsíční splátku.",
+        journey: [
+            { module: "Hero Experience", title: "Vstup na prezentaci", detail: "Prohlédnuta fotogalerie interiéru", completed: true },
+            { module: "House Navigator", title: "Půdorys 1.NP", detail: "Detailní průchod garáží a technickou místností", completed: true },
+            { module: "Priority Experience", title: "Nastavení priorit", detail: "Dominantní priorita: Měsíční splátka", completed: true },
+            { module: "Lead Capture", title: "Zanechán kontakt", detail: "Požadavek na konzultaci pozemku", active: true }
+        ]
+    },
+    kucerova: {
+        name: "Marie Kučerová",
+        project: "Family 98 • Mám pozemek",
+        score: "65 %",
+        bar: "65%",
+        tags: ["Kompaktní rozměr", "Dětské pokoje"],
+        insight: "Klientka řeší především velikost dětských pokojů a úložné prostory. Doporučujeme ukázat úpravu dispozice u šatny.",
+        journey: [
+            { module: "Hero Experience", title: "Vstup na prezentaci", detail: "Příchod z mobilního zařízení", completed: true },
+            { module: "House Navigator", title: "Prohlídka 2.NP", detail: "Opakovaný návrat do Dětského pokoje 1 a 2", completed: true },
+            { module: "Priority Experience", title: "Nastavení priorit", detail: "Označena priorita: Úložné prostory", completed: true }
+        ]
+    }
+};
+
+function switchStudio(studio) {
+    document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.studio-view, .studio-view-full').forEach(view => view.classList.remove('active'));
+
+    if (studio === 'manager') {
+        document.querySelectorAll('.role-btn')[0].classList.add('active');
+        document.getElementById('manager-studio').classList.add('active');
+    } else if (studio === 'sales') {
+        document.querySelectorAll('.role-btn')[1].classList.add('active');
+        document.getElementById('sales-studio').classList.add('active');
+    } else if (studio === 'builder') {
+        document.querySelectorAll('.role-btn')[2].classList.add('active');
+        document.getElementById('builder-studio').classList.add('active');
+    }
+}
+
+function loadClient(key) {
+    const data = clientData[key];
+    if (!data) return;
+
+    document.getElementById('p2-name').innerText = data.name;
+    document.getElementById('p2-project').innerText = data.project;
+    document.getElementById('p2-score').innerText = data.score;
+    document.getElementById('p2-bar').style.width = data.bar;
+    document.getElementById('p2-insight').innerText = data.insight;
+
+    const tagsContainer = document.getElementById('p2-tags');
+    tagsContainer.innerHTML = '';
+    data.tags.forEach(tag => {
+        const span = document.createElement('span');
+        span.className = 'badge badge-blue';
+        span.innerText = tag;
+        tagsContainer.appendChild(span);
+    });
+
+    const timeline = document.getElementById('p3-timeline');
+    timeline.innerHTML = '';
+    data.journey.forEach(step => {
+        const stepDiv = document.createElement('div');
+        let statusClass = '';
+        if (step.completed) statusClass = 'completed';
+        if (step.active) statusClass = 'active';
+
+        stepDiv.className = `journey-step ${statusClass}`;
+        stepDiv.innerHTML = `
+            <div class="journey-node"></div>
+            <div class="step-module">${step.module}</div>
+            <div class="step-title">${step.title}</div>
+            <div class="step-detail">${step.detail}</div>
+        `;
+        timeline.appendChild(stepDiv);
+    });
+
+    document.querySelectorAll('.client-card').forEach(card => card.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadClient('novak');
+});
+</script>
+
+</body>
+</html>

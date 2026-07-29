@@ -1,0 +1,31 @@
+{
+  "fingerprintMatch": true,
+  "localCommit": "27d4e4d",
+  "remoteCommit": "27d4e4d",
+  "localIifeSha256": "8098397800e630b42aabe9a7c94363445ed132ec0bf93fe3e3e96b64621bc935",
+  "remoteIifeSha256": "8098397800e630b42aabe9a7c94363445ed132ec0bf93fe3e3e96b64621bc935",
+  "versionIifeSha256": "8098397800e630b42aabe9a7c94363445ed132ec0bf93fe3e3e96b64621bc935",
+  "noInteraktivniInIife": true,
+  "media580InIife": true,
+  "methodAPreserved": true,
+  "remoteLiveHasFingerprint": true,
+  "visual": {
+    "pass": false,
+    "assertions": {
+      "noInteraktivniPudorys": true,
+      "mediaWidthApprox580": false,
+      "planTopAligned": false,
+      "roomNavPresent": false,
+      "mediaWidth": null,
+      "topDeltaPx": null
+    },
+    "metrics": {
+      "interaktivniVisible": false,
+      "mediaViewport": null,
+      "planDisplay": null,
+      "roomButtons": 0,
+      "walkthroughPresent": false
+    },
+    "errors": []
+  }
+}

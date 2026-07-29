@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="cs">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>CONIS Builder</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: Inter, sans-serif;
+    background: #F5F7FB;
+    color: #23334C;
+}
+
+/* =======================================================
+HEADER
+======================================================= */
+
+header {
+    height: 72px;
+    background: white;
+    border-bottom: 1px solid #E6EBF3;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo h1 {
+    font-size: 24px;
+    font-weight: 700;
+}
+
+.partner {
+    color: #7A879B;
+    font-size: 14px;
+}
+
+/* =======================================================
+LAYOUT
+======================================================= */
+
+.layout {
+    display: grid;
+    grid-template-columns: 260px 1fr 360px;
+    height: calc(100vh - 72px);
+}
+
+/* =======================================================
+LEFT SIDEBAR
+======================================================= */
+
+.sidebar {
+    background: white;
+    border-right: 1px solid #E7ECF3;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.menuTitle {
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #7D8796;
+    margin-bottom: 12px;
+}
+
+.company {
+    background: #EEF4FF;
+    border: 1px solid #D7E4FF;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 24px;
+}
+
+.house {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: .2s;
+    margin-bottom: 10px;
+}
+
+.house:hover {
+    background: #F7F9FC;
+}
+
+.house.active {
+    background: #18428F;
+    color: white;
+}
+
+.house small {
+    display: block;
+    font-size: 12px;
+    opacity: .7;
+}
+
+.addHouse {
+    width: 100%;
+    margin-top: 18px;
+    border: none;
+    background: #EEF3FA;
+    color: #18428F;
+    border-radius: 10px;
+    padding: 13px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+/* =======================================================
+CENTER WORKSPACE & HEADER
+======================================================= */
+
+.workspace {
+    padding: 36px;
+    overflow: auto;
+}
+
+.titleRow {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.workspace h2 {
+    font-size: 34px;
+}
+
+.badge {
+    display: inline-block;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.badge.published {
+    background: #E6F7ED;
+    color: #138D45;
+    border: 1px solid #C2ECCF;
+}
+
+.badge.draft {
+    background: #FFF5E5;
+    color: #E28A00;
+    border: 1px solid #FFE3C2;
+}
+
+.syncInfo {
+    color: #7A879B;
+    font-size: 14px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.syncDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #138D45;
+    display: inline-block;
+}
+
+/* =======================================================
+TABS & CONTENT
+======================================================= */
+
+.tabs {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: #F5F7FB;
+    padding-bottom: 18px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 32px;
+}
+
+.tabs button {
+    border: none;
+    background: white;
+    border: 1px solid #DDE5EF;
+    padding: 13px 22px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #23334C;
+}
+
+.tabs button.active {
+    background: #18428F;
+    color: white;
+    border-color: #18428F;
+}
+
+.content {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid #E4EAF2;
+    padding: 34px;
+    min-height: 650px;
+}
+
+.section {
+    margin-bottom: 60px;
+}
+
+.section h3 {
+    margin-bottom: 8px;
+    font-size: 24px;
+}
+
+.section p {
+    margin-bottom: 24px;
+    color: #7A879B;
+}
+
+/* =======================================================
+ASSETS & UPLOAD BUTTONS
+======================================================= */
+
+.asset {
+    background: #FAFBFD;
+    border: 1px solid #E6ECF3;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+.assetHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.assetHeader h4 {
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.assetHeader span {
+    font-size: 13px;
+    color: #7A879B;
+}
+
+.uploadWrapper {
+    margin-bottom: 16px;
+}
+
+.uploadBtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #EEF4FF;
+    color: #18428F;
+    border: 1px solid #D7E4FF;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.uploadBtn:hover {
+    background: #18428F;
+    color: #ffffff;
+    border-color: #18428F;
+}
+
+/* GALLERY WITH THUMBNAILS & FILENAMES */
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 14px;
+    margin-top: 18px;
+}
+
+.thumbCard {
+    background: white;
+    border: 1px solid #E1E8F2;
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transition: transform 0.2s, border-color 0.2s;
+}
+
+.thumbCard:hover {
+    border-color: #18428F;
+    transform: translateY(-2px);
+}
+
+.thumbPreview {
+    aspect-ratio: 1;
+    background: #F0F4FA;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.thumbName {
+    font-size: 11px;
+    font-weight: 500;
+    color: #5E6C83;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.input {
+    width: 100%;
+    border: 1px solid #DCE5F0;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 14px;
+}
+
+.infoFooter {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #EFF2F6;
+    color: #7C879A;
+    font-size: 13px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* =======================================================
+RIGHT PUBLISH PANEL
+======================================================= */
+
+.publishPanel {
+    background: white;
+    border-left: 1px solid #E7ECF3;
+    padding: 28px;
+    overflow-y: auto;
+}
+
+.publishPanel h3 {
+    font-size: 22px;
+    margin-bottom: 30px;
+}
+
+.state {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 0;
+    border-bottom: 1px solid #EFF2F6;
+}
+
+.stateLabel {
+    font-size: 14px;
+    color: #23334C;
+    font-weight: 500;
+}
+
+.percent {
+    font-weight: 700;
+    font-size: 14px;
+    padding: 4px 10px;
+    border-radius: 12px;
+}
+
+.percent.p100 {
+    color: #138D45;
+    background: #E6F7ED;
+}
+
+.percent.p75 {
+    color: #18428F;
+    background: #EEF4FF;
+}
+
+.percent.p40 {
+    color: #E28A00;
+    background: #FFF5E5;
+}
+
+.statusReady {
+    color: #138D45;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.button {
+    width: 100%;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 600;
+    margin-top: 22px;
+    transition: background 0.2s;
+}
+
+.check {
+    background: #EEF4FF;
+    color: #18428F;
+}
+
+.check:hover {
+    background: #D7E4FF;
+}
+
+.publish {
+    background: #18428F;
+    color: white;
+}
+
+.publish:hover {
+    background: #123173;
+}
+
+.local {
+    margin-top: 20px;
+    background: #F7F9FC;
+    border-radius: 10px;
+    padding: 14px;
+    font-size: 13px;
+    word-break: break-all;
+    color: #5E6C83;
+}
+
+.embed {
+    margin-top: 26px;
+}
+
+.embed label {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.embed textarea {
+    width: 100%;
+    height: 120px;
+    border: 1px solid #DDE5EF;
+    border-radius: 12px;
+    padding: 14px;
+    resize: none;
+    font-family: monospace;
+    font-size: 12px;
+    color: #4A5568;
+}
+
+.copy {
+    width: 100%;
+    margin-top: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #EEF3FA;
+    color: #18428F;
+    font-weight: 600;
+    padding: 14px;
+    cursor: pointer;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <div class="logo">
+        <h1>CONIS Builder</h1>
+        <div class="partner">AC Modular</div>
+    </div>
+</header>
+
+<div class="layout">
+    
+    <aside class="sidebar">
+        <div class="menuTitle">Partner</div>
+        <div class="company">🏢 AC Modular</div>
+
+        <div class="menuTitle">Domy</div>
+
+        <div class="house active">
+            <div>🏠</div>
+            <div>
+                Harmony 124
+                <small>Publikováno</small>
+            </div>
+        </div>
+
+        <div class="house">
+            <div>🏠</div>
+            <div>
+                Family 98
+                <small>Draft</small>
+            </div>
+        </div>
+
+        <div class="house">
+            <div>🏠</div>
+            <div>
+                Villa 168
+                <small>Draft</small>
+            </div>
+        </div>
+
+        <button class="addHouse">+ Přidat nový dům</button>
+    </aside>
+
+    <main class="workspace">
+        
+        <div class="titleRow">
+            <h2>Harmony 124</h2>
+            <span class="badge published">Publikováno</span>
+        </div>
+        
+        <div class="syncInfo">
+            <span class="syncDot"></span> Synchronizováno 17.8.2026 10:43
+        </div>
+
+        <div class="tabs">
+            <button class="active" onclick="document.getElementById('media').scrollIntoView({behavior:'smooth'})">Média</button>
+            <button onclick="document.getElementById('layout').scrollIntoView({behavior:'smooth'})">Dispozice</button>
+            <button onclick="document.getElementById('knowledge').scrollIntoView({behavior:'smooth'})">Znalosti</button>
+        </div>
+
+        <div class="content">
+
+            <section id="media" class="section">
+                <h3>Média</h3>
+                <p>Fotografie a video objektu.</p>
+
+                <div class="asset">
+                    <div class="assetHeader">
+                        <h4>📷 Fotografie</h4>
+                        <span>28 souborů</span>
+                    </div>
+                    <div class="uploadWrapper">
+                        <label class="uploadBtn">
+                            📁 Nahrát fotografie
+                            <input type="file" multiple accept="image/*" style="display: none;">
+                        </label>
+                    </div>
+
+                    <div class="gallery">
+                        <div class="thumbCard">
+                            <div class="thumbPreview">🖼️</div>
+                            <div class="thumbName">IMG_001.jpg</div>
+                        </div>
+                        <div class="thumbCard">
+                            <div class="thumbPreview">🖼️</div>
+                            <div class="thumbName">IMG_002.jpg</div>
+                        </div>
+                        <div class="thumbCard">
+                            <div class="thumbPreview">🖼️</div>
+                            <div class="thumbName">IMG_003.jpg</div>
+                        </div>
+                        <div class="thumbCard">
+                            <div class="thumbPreview">🖼️</div>
+                            <div class="thumbName">IMG_004.jpg</div>
+                        </div>
+                        <div class="thumbCard">
+                            <div class="thumbPreview">🖼️</div>
+                            <div class="thumbName">IMG_005.jpg</div>
+                        </div>
+                        <div class="thumbCard">
+                            <div class="thumbPreview">🖼️</div>
+                            <div class="thumbName">IMG_006.jpg</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="asset">
+                    <div class="assetHeader">
+                        <h4>🎬 Video</h4>
+                    </div>
+                    <input class="input" placeholder="https://youtu.be/..." value="https://youtu.be/dQw4w9WgXcQ">
+                </div>
+            </section>
+
+            <section id="layout" class="section">
+                <h3>Dispozice</h3>
+                <p>Data potřebná pro House Navigator.</p>
+
+                <div class="asset">
+                    <div class="assetHeader">
+                        <h4>SVG</h4>
+                    </div>
+                    <div class="uploadWrapper">
+                        <label class="uploadBtn">
+                            📄 Nahrát SVG
+                            <input type="file" accept=".svg" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="asset">
+                    <div class="assetHeader">
+                        <h4>CSV místností</h4>
+                    </div>
+                    <div class="uploadWrapper">
+                        <label class="uploadBtn">
+                            📊 Nahrát CSV
+                            <input type="file" accept=".csv" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="asset">
+                    <div class="assetHeader">
+                        <h4>CSV obrázků</h4>
+                    </div>
+                    <div class="uploadWrapper">
+                        <label class="uploadBtn">
+                            📊 Nahrát CSV
+                            <input type="file" accept=".csv" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="asset">
+                    <div class="assetHeader">
+                        <h4>Půdorys</h4>
+                    </div>
+                    <div class="uploadWrapper">
+                        <label class="uploadBtn">
+                            📐 Nahrát půdorys
+                            <input type="file" accept="image/*,.pdf" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <section id="knowledge" class="section">
+                <h3>Znalosti</h3>
+                <p>Dokumenty pro AI.</p>
+
+                <div class="asset">
+                    <div class="assetHeader">
+                        <h4>PDF</h4>
+                    </div>
+                    <div class="uploadWrapper">
+                        <label class="uploadBtn">
+                            📕 Nahrát PDF
+                            <input type="file" accept=".pdf" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="asset">
+                    <div class="assetHeader">
+                        <h4>DOCX</h4>
+                    </div>
+                    <div class="uploadWrapper">
+                        <label class="uploadBtn">
+                            📘 Nahrát DOCX
+                            <input type="file" accept=".docx,.doc" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+
+                <div class="asset">
+                    <div class="assetHeader">
+                        <h4>XLSX</h4>
+                    </div>
+                    <div class="uploadWrapper">
+                        <label class="uploadBtn">
+                            📗 Nahrát XLSX
+                            <input type="file" accept=".xlsx,.xls" style="display: none;">
+                        </label>
+                    </div>
+                </div>
+            </section>
+
+            <div class="infoFooter">
+                <span>Stav synchronizace: Všechna data uložena</span>
+                <span>17.8.2026 10:43</span>
+            </div>
+
+        </div>
+    </main>
+
+    <aside class="publishPanel">
+        <h3>Připravenost projektu</h3>
+
+        <div class="state">
+            <span class="stateLabel">Média</span>
+            <span class="percent p100">100 %</span>
+        </div>
+
+        <div class="state">
+            <span class="stateLabel">Dispozice</span>
+            <span class="percent p75">75 %</span>
+        </div>
+
+        <div class="state">
+            <span class="stateLabel">Znalosti</span>
+            <span class="percent p40">40 %</span>
+        </div>
+
+        <div class="state">
+            <span class="stateLabel">Runtime</span>
+            <span class="statusReady">Ready</span>
+        </div>
+
+        <button class="button check">Zkontrolovat stav</button>
+
+        <div class="local">http://localhost:3000/harmony-124</div>
+
+        <button class="button publish">Publikovat změny</button>
+
+        <div class="embed">
+            <label>Embed kód</label>
+            <textarea readonly>&lt;script src="https://embed.conis.ai/harmony124.js"&gt;&lt;/script&gt;</textarea>
+            <button class="copy">Kopírovat Embed</button>
+        </div>
+    </aside>
+
+</div>
+
+</body>
+
+</html>

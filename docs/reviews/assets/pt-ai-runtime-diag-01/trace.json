@@ -1,0 +1,245 @@
+{
+  "id": "pt-ai-runtime-diag-01",
+  "generatedAt": "2026-07-25T14:33:44Z",
+  "scope": "Diagnose AI Runtime failure — no product code changes",
+  "serversObserved": {
+    "clientStudio": "http://127.0.0.1:4173 (running)",
+    "embedDemo": "http://127.0.0.1:5180 / 5183 (running)",
+    "localEdgeDiag": "http://127.0.0.1:8799 (started for probe, then killed)"
+  },
+  "bindingSimulation": {
+    "publishedSterileAuto": {
+      "note": "auto with no deliveryUrl → mode local → tryCreateLocal → NotConfigured when no key",
+      "binding": {
+        "mode": "local",
+        "deliveryUrl": null
+      },
+      "deliveryId": "direct-adapter",
+      "chatViaDelivery": {
+        "name": "AdapterFailure",
+        "code": "missing_api_key",
+        "message": "AI Delivery is not configured for this host.",
+        "mapped": {
+          "code": "missing_api_key",
+          "userMessage": "AI není připravená — chybí API klíč. Kontaktujte provozovatele."
+        }
+      },
+      "chatViaService": {
+        "name": "ConversationError",
+        "code": "missing_api_key",
+        "message": "AI není připravená — chybí API klíč. Kontaktujte provozovatele.",
+        "userMessage": "AI není připravená — chybí API klíč. Kontaktujte provozovatele.",
+        "isConversationError": true
+      }
+    },
+    "envLocalFile": {
+      "hasViteKey": true,
+      "viteKeyLen": 164,
+      "model": "gpt-4o-mini",
+      "hasOpenAIKeyInFile": false
+    },
+    "localWithProcessEnv": {
+      "binding": {
+        "mode": "local",
+        "deliveryUrl": null
+      },
+      "deliveryId": "openai",
+      "tryCreateLocalDevDeliveryId": "openai",
+      "tryCreateNull": false,
+      "processEnvOpenAILenWhenSet": 164,
+      "keyResolvesViaProcessEnvOpenAI": true,
+      "viteKeyOnlyInProcessEnv_tryCreate": {
+        "null": true,
+        "id": null,
+        "note": "readProcessEnv checks OPENAI_API_KEY only; VITE_* via import.meta.env dynamic — putting VITE_OPENAI_API_KEY on process.env does NOT work"
+      }
+    },
+    "notConfiguredChat": {
+      "deliveryId": "direct-adapter",
+      "error": {
+        "instanceofConversationError": true,
+        "code": "missing_api_key",
+        "userMessage": "AI není připravená — chybí API klíč. Kontaktujte provozovatele.",
+        "message": "AI není připravená — chybí API klíč. Kontaktujte provozovatele."
+      }
+    },
+    "aiAdvisorFallback": {
+      "rawError_advisorShows": "Došlo k chybě při generování odpovědi. Zkuste to prosím znovu.",
+      "rawError_isFallback": true,
+      "mapped_instanceof": true,
+      "mapped_advisorShows": "boom-raw",
+      "mapped_code": "provider_error",
+      "mapped_userMessage": "boom-raw",
+      "fakeNamedButDifferentClass_advisorShows": "Došlo k chybě při generování odpovědi. Zkuste to prosím znovu.",
+      "fake_isFallback": true,
+      "note": "AIAdvisor uses instanceof ConversationError; non-matching → FALLBACK string identical to provider_error USER_MESSAGES"
+    },
+    "importMetaEnvNode": {
+      "hasImportMetaEnv": false,
+      "type": "undefined",
+      "keys": [],
+      "dynamicViteKeyType": "undefined",
+      "dynamicViteKeyLen": 0
+    },
+    "viteDynamicEnvEvidence": {
+      "transformedModuleKeepsDynamicAccess": true,
+      "evidence": "Vite-served createLocalDevDelivery.ts keeps meta.env?.[name] — no static replacement of VITE_OPENAI_API_KEY literal",
+      "clientStudioDefine": "only process.env.NODE_ENV + __CLIENT_STUDIO_VERSION__; no OPENAI define"
+    }
+  },
+  "browserStudioProbe": {
+    "steps": [
+      "meta-env"
+    ],
+    "dynamicKeyType": "undefined",
+    "dynamicKeyLen": 0,
+    "importMetaEnvDefined": false,
+    "viteKeysSample": [],
+    "hasVITE_OPENAI_API_KEY_in_keys": false,
+    "directMemberType": "throw:TypeError: Cannot read properties of undefined (reading 'VITE_OPENAI_API_KEY')",
+    "processDefined": true,
+    "processNodeEnv": "development",
+    "processOpenAILen": 0,
+    "tryCreateLocalDevDeliveryNull": true,
+    "tryCreateLocalDevDeliveryId": null,
+    "binding": {
+      "mode": "local",
+      "deliveryUrl": null
+    },
+    "autoDeliveryId": "direct-adapter",
+    "transformedKeepsDynamicAccess": true,
+    "transformedHasProcessEnvDynamic": true,
+    "ok": true
+  },
+  "openaiAuth": {
+    "httpStatus": 200,
+    "modelsCount": 123,
+    "keyLen": 164,
+    "keyRedacted": true,
+    "status": "PASS"
+  },
+  "publishedPages": {
+    "liveHtmlUrl": "https://radimventus.github.io/embed-engine/embed/live.html",
+    "setsEmbedAiDeliveryWindow": false,
+    "iifeBaked": {
+      "VITE_AI_DELIVERY_URL": "",
+      "VITE_OPENAI_API_KEY": ""
+    },
+    "docsReadmePublicEdgeUrl": null,
+    "probedUrls": {
+      "https://radimventus.github.io/embed-engine/ai": 404,
+      "https://radimventus.github.io/embed-engine/api/ai": 404,
+      "https://radimventus.github.io/embed-engine/embed/ai": 404
+    }
+  },
+  "errorUxSimulation": {
+    "notConfigured_userMessage": "AI není připravená — chybí API klíč. Kontaktujte provozovatele.",
+    "notConfigured_code": "missing_api_key",
+    "aiAdvisorFallback_nonConversationError": "Došlo k chybě při generování odpovědi. Zkuste to prosím znovu.",
+    "provider_error_USER_MESSAGES_identical_to_fallback": true,
+    "fakeDifferentClass_instanceof_fails_to_fallback": true
+  },
+  "local": {
+    "firstFailingLayer": "L2_import_meta_env_binding",
+    "layers": [
+      {
+        "layer": "L0_env_file",
+        "status": "PASS",
+        "detail": ".env.local has VITE_OPENAI_API_KEY len=164 and VITE_OPENAI_MODEL=gpt-4o-mini; Vite loadEnv(repoRoot) sees key"
+      },
+      {
+        "layer": "L1_vite_host_envDir",
+        "status": "PASS",
+        "detail": "client-studio envDir=repoRoot; @vite/client defines process.env.NODE_ENV only (no OPENAI define)"
+      },
+      {
+        "layer": "L2_import_meta_env_binding",
+        "status": "FAIL",
+        "detail": "readViteEnv uses const meta=import.meta; meta.env?.[name]. Vite-served transform keeps dynamic access; browser probe: tryCreateLocalDevDeliveryNull=true; import.meta.env not resolved for VITE_OPENAI_API_KEY in package module path"
+      },
+      {
+        "layer": "L3_process_env_OPENAI",
+        "status": "FAIL",
+        "detail": "Browser process.env.OPENAI_API_KEY len=0 (only NODE_ENV defined). Node: key resolves when OPENAI_API_KEY set on process.env; VITE_* on process.env alone does NOT work"
+      },
+      {
+        "layer": "L4_tryCreateLocalDevDelivery",
+        "status": "FAIL",
+        "detail": "Returns null in Client Studio browser → createEmbedAIDelivery auto/local → NotConfigured (delivery id direct-adapter)"
+      },
+      {
+        "layer": "L5_NotConfigured_userMessage",
+        "status": "PASS",
+        "detail": "createAIServiceFromDelivery(NotConfigured) → ConversationError missing_api_key userMessage matches Local UX: 'AI není připravená — chybí API klíč.'"
+      },
+      {
+        "layer": "L6_OpenAI_API",
+        "status": "PASS",
+        "detail": "curl api.openai.com/v1/models with .env.local key → HTTP 200, 123 models (auth works)"
+      },
+      {
+        "layer": "L7_local_edge",
+        "status": "PASS",
+        "detail": "ai-delivery-edge on 127.0.0.1:8799 health configured=true; POST /v1/chat → 200 content OK; killed after"
+      }
+    ],
+    "userReportedMessage": "AI není připravená — chybí API klíč.",
+    "verdict": "FAIL at L2/L3/L4 — .env.local present but browser cannot resolve key via dynamic import.meta.env / process.env; lands on NotConfigured → missing_api_key UX"
+  },
+  "published": {
+    "firstFailingLayer": "P1_live_html_window_binding",
+    "layers": [
+      {
+        "layer": "P0_IIFE_baked_env",
+        "status": "PASS",
+        "detail": "Pages+local IIFE has VITE_AI_DELIVERY_URL:\"\" and VITE_OPENAI_API_KEY:\"\""
+      },
+      {
+        "layer": "P1_live_html_window_binding",
+        "status": "FAIL",
+        "detail": "Pages live.html does NOT set window.__EMBED_AI_DELIVERY__; no deliveryUrl"
+      },
+      {
+        "layer": "P2_public_edge_URL",
+        "status": "FAIL",
+        "detail": "docs/README has no public AI Delivery edge URL; guessed Pages /ai /api/ai /embed/ai → 404"
+      },
+      {
+        "layer": "P3_resolve_binding_auto",
+        "status": "FAIL",
+        "detail": "Without deliveryUrl, resolveEmbedAIDeliveryBinding(auto) → mode local (not published); then tryCreateLocalDev fails (empty baked key) → NotConfigured"
+      },
+      {
+        "layer": "P4_NotConfigured_vs_UX",
+        "status": "PASS",
+        "detail": "Service maps NotConfigured to ConversationError missing_api_key (Czech missing-key string). Reported Published UX 'Došlo k chybě…' matches AIAdvisor FALLBACK / provider_error string when instanceof ConversationError fails or non-ConversationError escapes"
+      },
+      {
+        "layer": "P5_OpenAI_direct_from_Pages",
+        "status": "NOT_REACHED",
+        "detail": "By design Published must not call OpenAI from browser; no edge URL configured so RemoteDelivery never selected"
+      },
+      {
+        "layer": "P6_edge_deployed",
+        "status": "FAIL",
+        "detail": "No deployed public edge found; local edge proves OpenAI layer works when configured"
+      }
+    ],
+    "userReportedMessage": "Došlo k chybě při generování odpovědi.",
+    "verdict": "FAIL at P1/P2 — no deliveryUrl / no edge; sterile IIFE; NotConfigured. Reported message matches AIAdvisor fallback/provider_error, while mapped NotConfigured alone would be missing_api_key"
+  },
+  "rootCauses": [
+    {
+      "id": "RC-LOCAL-ENV-DYNAMIC",
+      "summary": "tryCreateLocalDevDelivery readViteEnv uses dynamic meta.env?.[name]; Vite does not expose VITE_OPENAI_API_KEY on that path in Client Studio. process.env.OPENAI_API_KEY also absent in browser."
+    },
+    {
+      "id": "RC-PUBLISHED-NO-EDGE",
+      "summary": "Published snapshot bakes empty VITE_AI_DELIVERY_URL; live.html does not set __EMBED_AI_DELIVERY__; no public edge URL documented or deployed."
+    },
+    {
+      "id": "RC-OPENAI-OK",
+      "summary": "OpenAI API key from .env.local authenticates; local edge /v1/chat succeeds — vendor/network layer is healthy when correctly wired."
+    }
+  ]
+}

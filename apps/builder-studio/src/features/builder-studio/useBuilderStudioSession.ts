@@ -136,6 +136,10 @@ import type {
   ObjectMetadataDocument,
   DashboardValidationReport,
   ValidationDashboardEvent,
+  PublicationSession,
+  PublishSummary,
+  PublishWizardEvent,
+  PublishedArtifact,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -300,6 +304,8 @@ import {
   createMetadataApi,
   createValidationDashboardService,
   createValidationDashboardApi,
+  createPublishWizardService,
+  createPublishWizardApi,
   createWorkspaceValidator,
   createBasicAssetValidator,
   createBasicMetadataValidator,
@@ -598,6 +604,13 @@ export type BuilderStudioViewModel = {
   readonly validationDashboardEvents: readonly ValidationDashboardEvent[];
   readonly validationDashboardIndexCount: number;
   readonly validationDashboardMessage: string | null;
+  readonly publishWizardSession: PublicationSession | null;
+  readonly publishWizardSummary: PublishSummary | null;
+  readonly publishWizardArtifact: PublishedArtifact | null;
+  readonly publishWizardEvents: readonly PublishWizardEvent[];
+  readonly publishWizardHistoryCount: number;
+  readonly publishWizardMessage: string | null;
+  readonly publishWizardCanPublish: boolean;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -660,6 +673,12 @@ export type BuilderStudioViewModel = {
   readonly publishObjectMetadataDraft: () => void;
   readonly evaluateValidationDashboard: () => void;
   readonly refreshValidationDashboard: () => void;
+  readonly startPublishWizard: () => void;
+  readonly loadPublishWizardValidation: () => void;
+  readonly preparePublishWizard: () => void;
+  readonly runPublishWizard: () => void;
+  readonly copyPublishWizardEmbed: () => void;
+  readonly openPublishWizardPreview: () => void;
   readonly selectSection: (sectionId: WorkspaceSectionId) => void;
   readonly addAsset: (categoryId: AssetCategoryId) => void;
   readonly removeAsset: (
@@ -1742,6 +1761,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const validationDashboardApi = createValidationDashboardApi(
       validationDashboardService,
     );
+    const publishWizardService = createPublishWizardService();
+    const publishWizardApi = createPublishWizardApi(publishWizardService);
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1895,6 +1916,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       metadataApi,
       validationDashboardService,
       validationDashboardApi,
+      publishWizardService,
+      publishWizardApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -1947,6 +1970,19 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [validationDashboardIndexCount, setValidationDashboardIndexCount] =
     useState(0);
   const [validationDashboardMessage, setValidationDashboardMessage] = useState<
+    string | null
+  >(null);
+  const [publishWizardSession, setPublishWizardSession] =
+    useState<PublicationSession | null>(null);
+  const [publishWizardSummary, setPublishWizardSummary] =
+    useState<PublishSummary | null>(null);
+  const [publishWizardArtifact, setPublishWizardArtifact] =
+    useState<PublishedArtifact | null>(null);
+  const [publishWizardEvents, setPublishWizardEvents] = useState<
+    readonly PublishWizardEvent[]
+  >([]);
+  const [publishWizardHistoryCount, setPublishWizardHistoryCount] = useState(0);
+  const [publishWizardMessage, setPublishWizardMessage] = useState<
     string | null
   >(null);
   const [activeProjectModel, setActiveProjectModel] = useState(() =>
@@ -3144,6 +3180,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     validationDashboardEvents,
     validationDashboardIndexCount,
     validationDashboardMessage,
+    publishWizardSession,
+    publishWizardSummary,
+    publishWizardArtifact,
+    publishWizardEvents,
+    publishWizardHistoryCount,
+    publishWizardMessage,
+    publishWizardCanPublish:
+      validationDashboardReport?.overallStatus === 'READY' &&
+      exportCertificationPackage?.certificate.id != null,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3885,6 +3930,191 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           `Refresh failed: ${err instanceof Error ? err.message : String(err)}`,
         );
       }
+    },
+    startPublishWizard(): void {
+      const projectId =
+        services.workspaceService.getWorkspace().activeProjectId ??
+        'harmony-124';
+      const projectName =
+        services.workspaceService.getActiveProject()?.name ?? projectId;
+      try {
+        const session = services.publishWizardApi.startPublish(
+          projectId,
+          `Publish · ${projectName}`,
+        );
+        setPublishWizardSession(session);
+        setPublishWizardSummary(null);
+        setPublishWizardArtifact(null);
+        setPublishWizardEvents(services.publishWizardApi.listEvents());
+        setPublishWizardHistoryCount(
+          services.publishWizardApi.listHistory().length,
+        );
+        setPublishWizardMessage(`Publish session started for ${projectId}.`);
+      } catch (err) {
+        setPublishWizardMessage(
+          `Start failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    loadPublishWizardValidation(): void {
+      if (publishWizardSession === null) {
+        setPublishWizardMessage('Start publish first.');
+        return;
+      }
+      const certificationId =
+        exportCertificationPackage?.certificate.id ?? null;
+      const session = services.publishWizardApi.loadValidation(
+        publishWizardSession.id,
+        validationDashboardReport,
+        certificationId,
+      );
+      setPublishWizardSession(session);
+      setPublishWizardEvents(services.publishWizardApi.listEvents());
+      setPublishWizardMessage(
+        session.status === 'VALIDATED'
+          ? 'Validation loaded · READY.'
+          : `Validation gate failed: ${session.metadata.notes}`,
+      );
+    },
+    preparePublishWizard(): void {
+      if (publishWizardSession === null) {
+        setPublishWizardMessage('Start publish first.');
+        return;
+      }
+      if (validationDashboardReport === null) {
+        setPublishWizardMessage('Evaluate Validation Dashboard first.');
+        return;
+      }
+      const certificationId =
+        exportCertificationPackage?.certificate.id ?? null;
+      if (certificationId === null) {
+        setPublishWizardMessage('Export Certification is required.');
+        return;
+      }
+      const manifestId =
+        runtimeManifestPackage?.manifest.id ??
+        `manifest-${publishWizardSession.projectId}`;
+      try {
+        const prepared = services.publishWizardApi.preparePublication(
+          publishWizardSession.id,
+          {
+            validationReportId: validationDashboardReport.id,
+            certificationId,
+            manifestId,
+            projectTitle:
+              services.workspaceService.getActiveProject()?.name ??
+              publishWizardSession.projectId,
+            assetCount: managedAssets.length,
+            metadataSlug:
+              objectMetadataDocument?.slug ?? publishWizardSession.projectId,
+          },
+          validationDashboardReport,
+        );
+        setPublishWizardSession(prepared.session);
+        setPublishWizardSummary(prepared.summary);
+        setPublishWizardEvents(services.publishWizardApi.listEvents());
+        setPublishWizardMessage(
+          `Prepared publication v${prepared.summary.version}.`,
+        );
+      } catch (err) {
+        setPublishWizardMessage(
+          `Prepare failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    runPublishWizard(): void {
+      if (publishWizardSession === null) {
+        setPublishWizardMessage('Start publish first.');
+        return;
+      }
+      if (validationDashboardReport === null) {
+        setPublishWizardMessage('Evaluate Validation Dashboard first.');
+        return;
+      }
+      const certificationId =
+        exportCertificationPackage?.certificate.id ?? null;
+      if (certificationId === null) {
+        setPublishWizardMessage('Export Certification is required.');
+        return;
+      }
+      try {
+        let sessionId = publishWizardSession.id;
+        if (publishWizardSession.status === 'VALIDATED') {
+          const manifestId =
+            runtimeManifestPackage?.manifest.id ??
+            `manifest-${publishWizardSession.projectId}`;
+          const prepared = services.publishWizardApi.preparePublication(
+            sessionId,
+            {
+              validationReportId: validationDashboardReport.id,
+              certificationId,
+              manifestId,
+              projectTitle:
+                services.workspaceService.getActiveProject()?.name ??
+                publishWizardSession.projectId,
+              assetCount: managedAssets.length,
+              metadataSlug:
+                objectMetadataDocument?.slug ?? publishWizardSession.projectId,
+            },
+            validationDashboardReport,
+          );
+          sessionId = prepared.session.id;
+          setPublishWizardSummary(prepared.summary);
+        }
+        const current = services.publishWizardApi.getSession(sessionId);
+        if (current === null || current.status !== 'READY') {
+          setPublishWizardMessage('Prepare publication before publish.');
+          return;
+        }
+        const summary =
+          services.publishWizardApi.getSummary(sessionId) ??
+          publishWizardSummary;
+        const published = services.publishWizardApi.publishProject(
+          current.id,
+          {
+            validationReportId: validationDashboardReport.id,
+            certificationId,
+            manifestId:
+              summary?.manifestId ??
+              runtimeManifestPackage?.manifest.id ??
+              `manifest-${current.projectId}`,
+            version: summary?.version,
+            projectTitle: summary?.projectTitle,
+            assetCount: summary?.assetCount,
+            metadataSlug: summary?.metadataSlug,
+          },
+          validationDashboardReport,
+          certificationId,
+        );
+        setPublishWizardSession(published.session);
+        setPublishWizardSummary(published.summary);
+        setPublishWizardArtifact(published.artifact);
+        setPublishWizardEvents(services.publishWizardApi.listEvents());
+        setPublishWizardHistoryCount(
+          services.publishWizardApi.listHistory().length,
+        );
+        setPublishWizardMessage(
+          `Published ${published.artifact.id} v${published.artifact.version}.`,
+        );
+      } catch (err) {
+        setPublishWizardMessage(
+          `Publish failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    copyPublishWizardEmbed(): void {
+      if (publishWizardArtifact === null) return;
+      const code = publishWizardArtifact.metadata.embedCode;
+      if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+        void navigator.clipboard.writeText(code);
+      }
+      setPublishWizardMessage('Embed code copied.');
+    },
+    openPublishWizardPreview(): void {
+      if (publishWizardArtifact === null) return;
+      setPublishWizardMessage(
+        `Preview: ${publishWizardArtifact.metadata.previewUrl}`,
+      );
     },
     selectSection(sectionId: WorkspaceSectionId): void {
       setActiveSection(sectionId);

@@ -140,6 +140,25 @@ export {
   type ValidationDashboardIndex,
 } from './validation-dashboard/validation-dashboard-index';
 export {
+  createPublishWizardService,
+  type PublishWizardService,
+  type PublishWizardServiceOptions,
+} from './publish-wizard/publish-wizard-service';
+export {
+  createPublishWizardApi,
+  type PublishWizardApi,
+} from './publish-wizard/publish-wizard-api';
+export {
+  createBasicPublishStrategy,
+  createPublishValidator,
+  type PublishStrategy,
+  type PublishValidator,
+} from './publish-wizard/basic-publish-strategy';
+export {
+  createPublicationHistory,
+  type PublicationHistory,
+} from './publish-wizard/publication-history';
+export {
   createObjectService,
   type ObjectService,
 } from './object/object-service';

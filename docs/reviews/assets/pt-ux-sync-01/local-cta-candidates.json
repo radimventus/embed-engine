@@ -1,0 +1,12 @@
+[
+  {
+    "tag": "BUTTON",
+    "text": "Prozkoumat dům",
+    "attrs": {
+      "href": null,
+      "data-embed-hero-cta": null,
+      "class": "host-launcher",
+      "id": "open-client-studio"
+    }
+  }
+]

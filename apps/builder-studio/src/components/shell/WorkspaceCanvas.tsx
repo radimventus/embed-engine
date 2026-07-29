@@ -127,6 +127,10 @@ import type {
   ObjectMetadataDocument,
   DashboardValidationReport,
   ValidationDashboardEvent,
+  PublicationSession,
+  PublishSummary,
+  PublishWizardEvent,
+  PublishedArtifact,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -218,6 +222,7 @@ import { ProjectsOverview } from './ProjectsOverview';
 import { AssetsOverview } from './AssetsOverview';
 import { MetadataOverview } from './MetadataOverview';
 import { ValidationOverview } from './ValidationOverview';
+import { PublishWizardOverview } from './PublishWizardOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -491,6 +496,13 @@ type WorkspaceCanvasProps = {
   readonly validationDashboardEvents: readonly ValidationDashboardEvent[];
   readonly validationDashboardIndexCount: number;
   readonly validationDashboardMessage: string | null;
+  readonly publishWizardSession: PublicationSession | null;
+  readonly publishWizardSummary: PublishSummary | null;
+  readonly publishWizardArtifact: PublishedArtifact | null;
+  readonly publishWizardEvents: readonly PublishWizardEvent[];
+  readonly publishWizardHistoryCount: number;
+  readonly publishWizardMessage: string | null;
+  readonly publishWizardCanPublish: boolean;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -825,6 +837,12 @@ type WorkspaceCanvasProps = {
   readonly onPublishObjectMetadataDraft: () => void;
   readonly onEvaluateValidationDashboard: () => void;
   readonly onRefreshValidationDashboard: () => void;
+  readonly onStartPublishWizard: () => void;
+  readonly onLoadPublishWizardValidation: () => void;
+  readonly onPreparePublishWizard: () => void;
+  readonly onRunPublishWizard: () => void;
+  readonly onCopyPublishWizardEmbed: () => void;
+  readonly onOpenPublishWizardPreview: () => void;
   readonly onCertifyExport: () => void;
   readonly onValidateExportCertification: () => void;
   readonly onRevokeExportCertification: () => void;
@@ -1085,6 +1103,13 @@ export function WorkspaceCanvas({
   validationDashboardEvents,
   validationDashboardIndexCount,
   validationDashboardMessage,
+  publishWizardSession,
+  publishWizardSummary,
+  publishWizardArtifact,
+  publishWizardEvents,
+  publishWizardHistoryCount,
+  publishWizardMessage,
+  publishWizardCanPublish,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1387,6 +1412,12 @@ export function WorkspaceCanvas({
   onPublishObjectMetadataDraft,
   onEvaluateValidationDashboard,
   onRefreshValidationDashboard,
+  onStartPublishWizard,
+  onLoadPublishWizardValidation,
+  onPreparePublishWizard,
+  onRunPublishWizard,
+  onCopyPublishWizardEmbed,
+  onOpenPublishWizardPreview,
   onCertifyExport,
   onValidateExportCertification,
   onRevokeExportCertification,
@@ -1494,6 +1525,24 @@ export function WorkspaceCanvas({
             message={validationDashboardMessage}
             onEvaluate={onEvaluateValidationDashboard}
             onRefresh={onRefreshValidationDashboard}
+          />
+        ) : null}
+        {activeSection === 'publish-wizard' ? (
+          <PublishWizardOverview
+            session={publishWizardSession}
+            summary={publishWizardSummary}
+            artifact={publishWizardArtifact}
+            validationReport={validationDashboardReport}
+            events={publishWizardEvents}
+            historyCount={publishWizardHistoryCount}
+            message={publishWizardMessage}
+            canPublish={publishWizardCanPublish}
+            onStart={onStartPublishWizard}
+            onLoadValidation={onLoadPublishWizardValidation}
+            onPrepare={onPreparePublishWizard}
+            onPublish={onRunPublishWizard}
+            onCopyEmbed={onCopyPublishWizardEmbed}
+            onOpenPreview={onOpenPublishWizardPreview}
           />
         ) : null}
         {activeSection === 'overview' && objectPackage !== null ? (

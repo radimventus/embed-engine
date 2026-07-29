@@ -1,0 +1,37 @@
+{
+  "url": "https://radimventus.github.io/embed-engine/embed/live.html?t=1785054282881",
+  "pass": true,
+  "assertions": {
+    "noInteraktivniPudorys": true,
+    "mediaWidthApprox580": true,
+    "planTopAligned": true,
+    "roomNavPresent": true,
+    "walkthroughPresent": true,
+    "mediaWidth": 580,
+    "topDeltaPx": 0
+  },
+  "metrics": {
+    "interaktivniVisible": false,
+    "mediaViewport": {
+      "top": 133,
+      "left": 129,
+      "width": 580,
+      "height": 326
+    },
+    "planDisplay": {
+      "top": 133,
+      "left": 989,
+      "width": 532,
+      "height": 432
+    },
+    "roomButtons": 10,
+    "walkthroughPresent": true,
+    "overlay": true,
+    "studio": true,
+    "sample": "PARTNER WEBSITE (HOST) · RELEASE SNAPSHOT (DOCS/EMBED IIFE) Reference House Embed Hero je první scéna Experience na partnerské stránce. CTA otevře Client Studio jako plynulé pokračování. MODERN A01 – 4+KK Rodinný dům, kde to dýchá štěstím 124 m2 Užitná plocha A ++ Energetická třída Dřevostavba Difuzně otevřená Podívat se dovnitř – video → 1rodina si právě prohlíží tento dům 18zájemců si uložilo tento dům v minulém měsíci 21 %zájemců se dotazuje na velikost pozemku Partnerský obsah pod Hero — ově"
+  },
+  "errors": [],
+  "notes": [
+    "cta:Podívat se dovnitř – video →"
+  ]
+}

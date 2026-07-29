@@ -1,0 +1,42 @@
+{
+  "task": "PT-AI-FIX-01",
+  "timestamp": "2026-07-25T14:40:54.752052+00:00",
+  "studioUrl": "http://127.0.0.1:4173/",
+  "aiPackageBuild": "PASS",
+  "env": {
+    "viteOpenAiKey": "present",
+    "processOpenAiKey": "missing",
+    "tryCreateLocalDevDeliveryId": "openai",
+    "tryCreateNonNull": true
+  },
+  "localChat": {
+    "verdict": "PASS",
+    "deliveryId": "openai",
+    "replySnippet": "Dům má 5 pokojů.",
+    "replyLen": 16,
+    "ms": 2062,
+    "embedAIServiceOk": true,
+    "embedAIServiceReplySnippet": "Dům má 5 pokojů."
+  },
+  "deliveryDiagnosticLine": "[AI Delivery] mode=local deliveryUrl=<missing> implementation=openai reason=local credentials present viteOpenAiKey=present processOpenAiKey=missing",
+  "publishedWithoutUrl": {
+    "deliveryId": "not-configured",
+    "bindingMode": "disabled",
+    "uxMessage": "AI Delivery není nakonfigurovaná. Kontaktujte provozovatele.",
+    "uxMatches": true,
+    "verdict": "PASS"
+  },
+  "publishedWithEdge": {
+    "deliveryUrl": "http://127.0.0.1:8799",
+    "edgeHealth": {
+      "ok": false,
+      "error": "fetch failed"
+    },
+    "remoteChat": null,
+    "note": "optional"
+  },
+  "summary": {
+    "localChat": "PASS",
+    "publishedSterileUx": "PASS"
+  }
+}

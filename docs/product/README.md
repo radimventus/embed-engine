@@ -4,6 +4,8 @@ Active product SSOT lives here.
 
 | Path | Role |
 | --- | --- |
+| **`foundation/CONIS-CONSTITUTION.md`** | **CONIS Constitution v1.0 — zakládající SSOT identity a přítomnosti Conisu** |
+| `foundation/` | Product foundation documents (constitutional layer) |
 | `constitution/` | Product principles, flywheel, moat, governance, CTO principles |
 | `vision/` | Executive summary, vision, business model, founder vision |
 | **`decision-experience-grammar/`** | **Decision Experience Grammar (DEG) — product layer SSOT** |
@@ -78,6 +80,8 @@ Historical monolith: [`../archive/product-bible/PRODUCT-BIBLE.md`](../archive/pr
 **Active Product Bible product layer:** [Decision Experience Grammar](./decision-experience-grammar/DEG.md)
 
 **Priority Experience SSOT:** [Priority Experience Bible](./Priority%20Experience%20Bible.md)
+
+**CONIS Constitution (founding SSOT):** [foundation/CONIS-CONSTITUTION.md](./foundation/CONIS-CONSTITUTION.md) — závazná filozofie přítomnosti Conisu; přednost před konfliktním UX návrhem.
 
 Canonical positioning (validated):
 

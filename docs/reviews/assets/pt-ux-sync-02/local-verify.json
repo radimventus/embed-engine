@@ -1,0 +1,54 @@
+{
+  "url": "http://127.0.0.1:5180/",
+  "pass": true,
+  "assertions": {
+    "noInteraktivniPudorys": true,
+    "mediaWidthApprox580": true,
+    "planTopAlignedWithMedia": true,
+    "roomNavPresent": true,
+    "walkthroughPresent": true,
+    "mediaWidth": 580,
+    "topDeltaPx": 0
+  },
+  "metrics": {
+    "interaktivniVisible": false,
+    "bodyHasInteraktivni": false,
+    "mediaViewport": {
+      "top": 133,
+      "left": 129,
+      "width": 580,
+      "height": 326
+    },
+    "planSection": {
+      "top": 73,
+      "left": 949,
+      "width": 592,
+      "height": 570
+    },
+    "planDisplay": {
+      "top": 133,
+      "left": 989,
+      "width": 532,
+      "height": 432
+    },
+    "roomList": {
+      "top": 73,
+      "left": 709,
+      "width": 240,
+      "height": 570
+    },
+    "roomNav": {
+      "top": 133,
+      "left": 749,
+      "width": 180,
+      "height": 362
+    },
+    "roomButtons": 10,
+    "walkthroughPresent": true,
+    "studioRoot": true,
+    "overlay": true,
+    "sampleText": "Partner website (host) · Live Runtime — not archive / IIFE freeze Reference House Launcher Mode: stránka se načte bez Client Studia. CTA otevře fullscreen Delivery Overlay → Reveal → Landing Anchor → Experience. Close obnoví host. Prozkoumejte dům v Client Studio Jediný vstupní bod na hostitelské stránce. Client Studio se nespouští automaticky — až po kliknutí na CTA. Prozkoumat dům Partnerský obs"
+  },
+  "errors": [],
+  "screenshot": "local-tour.png"
+}

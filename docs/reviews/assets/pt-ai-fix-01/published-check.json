@@ -1,0 +1,28 @@
+{
+  "task": "PT-AI-FIX-01-published",
+  "scenarios": {
+    "publishedWithoutUrl": {
+      "binding": {
+        "mode": "disabled",
+        "deliveryUrl": null
+      },
+      "deliveryId": "not-configured",
+      "chat": {
+        "code": "missing_api_key",
+        "userMessage": "AI Delivery není nakonfigurovaná. Kontaktujte provozovatele.",
+        "isConversationError": true,
+        "message": "AI Delivery není nakonfigurovaná. Kontaktujte provozovatele."
+      },
+      "uxMatches": true
+    },
+    "publishedWithEdge": {
+      "deliveryUrl": "http://127.0.0.1:8799",
+      "edgeHealth": {
+        "ok": false,
+        "error": "fetch failed"
+      },
+      "remoteChat": null,
+      "note": "optional"
+    }
+  }
+}

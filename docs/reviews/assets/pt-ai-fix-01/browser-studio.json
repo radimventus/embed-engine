@@ -1,0 +1,57 @@
+{
+  "task": "PT-AI-FIX-01",
+  "url": "http://127.0.0.1:4173/",
+  "timestamp": "2026-07-25T14:40:35.695Z",
+  "envAndLocal": {
+    "tryCreateLocalDevDeliveryNull": false,
+    "tryCreateLocalDevDeliveryId": "openai",
+    "credentials": {
+      "viteApiKey": "present",
+      "processApiKey": "missing"
+    },
+    "viteStaticKeyPresentViaModule": true
+  },
+  "delivery": {
+    "binding": {
+      "mode": "local",
+      "deliveryUrl": null
+    },
+    "deliveryId": "openai"
+  },
+  "localChat": {
+    "ok": true,
+    "deliveryId": "openai",
+    "replySnippet": "Dům má 5 pokojů.",
+    "replyLen": 16,
+    "ms": 2062
+  },
+  "embedAIServiceChat": {
+    "ok": true,
+    "replySnippet": "Dům má 5 pokojů.",
+    "replyLen": 16,
+    "ms": 2178
+  },
+  "deliveryDiagnosticLines": [
+    "[AI Delivery] mode=local deliveryUrl=<missing> implementation=openai reason=local credentials present viteOpenAiKey=present processOpenAiKey=missing"
+  ],
+  "consoleSample": [
+    {
+      "type": "info",
+      "text": "[AI Delivery] mode=local deliveryUrl=<missing> implementation=openai reason=local credentials present viteOpenAiKey=present processOpenAiKey=missing"
+    },
+    {
+      "type": "info",
+      "text": "[AI Delivery] mode=local deliveryUrl=<missing> implementation=openai reason=local credentials present viteOpenAiKey=present processOpenAiKey=missing"
+    },
+    {
+      "type": "info",
+      "text": "[AI Delivery] mode=local deliveryUrl=<missing> implementation=openai reason=local credentials present viteOpenAiKey=present processOpenAiKey=missing"
+    }
+  ],
+  "verdict": {
+    "localChat": "PASS",
+    "viteStaticKeyPresent": true,
+    "tryCreateNonNull": true,
+    "diagnosticPresent": true
+  }
+}

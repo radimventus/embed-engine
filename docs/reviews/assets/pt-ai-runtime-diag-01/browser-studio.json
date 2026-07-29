@@ -1,0 +1,28 @@
+{
+  "url": "http://127.0.0.1:4173/pt-ai-diag.html",
+  "note": "Probe page was temporary under apps/client-studio/public and removed after run",
+  "probe": {
+    "steps": [
+      "meta-env"
+    ],
+    "dynamicKeyType": "undefined",
+    "dynamicKeyLen": 0,
+    "importMetaEnvDefined": false,
+    "viteKeysSample": [],
+    "hasVITE_OPENAI_API_KEY_in_keys": false,
+    "directMemberType": "throw:TypeError: Cannot read properties of undefined (reading 'VITE_OPENAI_API_KEY')",
+    "processDefined": true,
+    "processNodeEnv": "development",
+    "processOpenAILen": 0,
+    "tryCreateLocalDevDeliveryNull": true,
+    "tryCreateLocalDevDeliveryId": null,
+    "binding": {
+      "mode": "local",
+      "deliveryUrl": null
+    },
+    "autoDeliveryId": "direct-adapter",
+    "transformedKeepsDynamicAccess": true,
+    "transformedHasProcessEnvDynamic": true,
+    "ok": true
+  }
+}

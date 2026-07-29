@@ -1,0 +1,83 @@
+{
+  "task": "binding-resolution",
+  "scenarios": {
+    "publishedSterileAuto": {
+      "note": "auto with no deliveryUrl → mode local → tryCreateLocal → NotConfigured when no key",
+      "binding": {
+        "mode": "local",
+        "deliveryUrl": null
+      },
+      "deliveryId": "direct-adapter",
+      "chatViaDelivery": {
+        "name": "AdapterFailure",
+        "code": "missing_api_key",
+        "message": "AI Delivery is not configured for this host.",
+        "mapped": {
+          "code": "missing_api_key",
+          "userMessage": "AI není připravená — chybí API klíč. Kontaktujte provozovatele."
+        }
+      },
+      "chatViaService": {
+        "name": "ConversationError",
+        "code": "missing_api_key",
+        "message": "AI není připravená — chybí API klíč. Kontaktujte provozovatele.",
+        "userMessage": "AI není připravená — chybí API klíč. Kontaktujte provozovatele.",
+        "isConversationError": true
+      }
+    },
+    "envLocalFile": {
+      "hasViteKey": true,
+      "viteKeyLen": 164,
+      "model": "gpt-4o-mini",
+      "hasOpenAIKeyInFile": false
+    },
+    "localWithProcessEnv": {
+      "binding": {
+        "mode": "local",
+        "deliveryUrl": null
+      },
+      "deliveryId": "openai",
+      "tryCreateLocalDevDeliveryId": "openai",
+      "tryCreateNull": false,
+      "processEnvOpenAILenWhenSet": 164,
+      "keyResolvesViaProcessEnvOpenAI": true,
+      "viteKeyOnlyInProcessEnv_tryCreate": {
+        "null": true,
+        "id": null,
+        "note": "readProcessEnv checks OPENAI_API_KEY only; VITE_* via import.meta.env dynamic — putting VITE_OPENAI_API_KEY on process.env does NOT work"
+      }
+    },
+    "notConfiguredChat": {
+      "deliveryId": "direct-adapter",
+      "error": {
+        "instanceofConversationError": true,
+        "code": "missing_api_key",
+        "userMessage": "AI není připravená — chybí API klíč. Kontaktujte provozovatele.",
+        "message": "AI není připravená — chybí API klíč. Kontaktujte provozovatele."
+      }
+    },
+    "aiAdvisorFallback": {
+      "rawError_advisorShows": "Došlo k chybě při generování odpovědi. Zkuste to prosím znovu.",
+      "rawError_isFallback": true,
+      "mapped_instanceof": true,
+      "mapped_advisorShows": "boom-raw",
+      "mapped_code": "provider_error",
+      "mapped_userMessage": "boom-raw",
+      "fakeNamedButDifferentClass_advisorShows": "Došlo k chybě při generování odpovědi. Zkuste to prosím znovu.",
+      "fake_isFallback": true,
+      "note": "AIAdvisor uses instanceof ConversationError; non-matching → FALLBACK string identical to provider_error USER_MESSAGES"
+    },
+    "importMetaEnvNode": {
+      "hasImportMetaEnv": false,
+      "type": "undefined",
+      "keys": [],
+      "dynamicViteKeyType": "undefined",
+      "dynamicViteKeyLen": 0
+    },
+    "viteDynamicEnvEvidence": {
+      "transformedModuleKeepsDynamicAccess": true,
+      "evidence": "Vite-served createLocalDevDelivery.ts keeps meta.env?.[name] — no static replacement of VITE_OPENAI_API_KEY literal",
+      "clientStudioDefine": "only process.env.NODE_ENV + __CLIENT_STUDIO_VERSION__; no OPENAI define"
+    }
+  }
+}

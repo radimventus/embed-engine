@@ -1,0 +1,74 @@
+{
+  "protocol": "Publish Protocol",
+  "id": "pt-publish-01",
+  "timestamp": "2026-07-26T05:22:32Z",
+  "branch": "feature/cap-p04-founding-partner",
+  "push": {
+    "result": "success",
+    "range": "1999e91..2782b7b",
+    "commits": [
+      "9fca667",
+      "2782b7b"
+    ],
+    "localHead": "2782b7b7ca2a562b824b502f53cdab869c74e629",
+    "remoteTip": "2782b7b7ca2a562b824b502f53cdab869c74e629",
+    "remoteTipMatch": true,
+    "tracking": "origin/feature/cap-p04-founding-partner"
+  },
+  "pages": {
+    "html_url": "https://radimventus.github.io/embed-engine/",
+    "source": {
+      "branch": "feature/cap-p04-founding-partner",
+      "path": "/docs"
+    },
+    "status": "built",
+    "build": {
+      "commit": "2782b7b7ca2a562b824b502f53cdab869c74e629",
+      "status": "built",
+      "created_at": "2026-07-26T05:22:02Z",
+      "updated_at": "2026-07-26T05:22:35Z"
+    },
+    "rebuildTriggered": false,
+    "note": "Pages auto-built on push; no manual POST /pages/builds needed"
+  },
+  "contentEvidence": {
+    "liveHtmlUrl": "https://radimventus.github.io/embed-engine/embed/live.html",
+    "contains2782b7b": false,
+    "contains__EMBED_AI_DELIVERY__": true,
+    "containsWorkersDev": true,
+    "deliveryUrl": "https://embed-ai-delivery.northern-paste.workers.dev",
+    "versionJsonFingerprint": "93552bc",
+    "versionJsonMarker": "EMBED_RUNTIME_BUILD:93552bc@2026-07-25T14:03:10Z",
+    "note": "Release Snapshot not rebuilt; fingerprint 93552bc expected"
+  },
+  "remoteValidation": {
+    "command": "pnpm embed:publish -- --remote",
+    "exitCode": 0,
+    "result": "PASS",
+    "marker": "EMBED_RUNTIME_BUILD:93552bc@2026-07-25T14:03:10Z",
+    "iifeSha256": "94b0a511eaf8e3c3aead8936c728d8025042bb745ec0c124d657d41f3646ea19"
+  },
+  "parity": {
+    "localHeadEquals2782b7b": true,
+    "pagesDeploymentCommitEquals2782b7b": true,
+    "versionMarkerLocalEqualsRemote": true,
+    "localMarker": "93552bc@2026-07-25T14:03:10Z",
+    "remoteMarker": "93552bc@2026-07-25T14:03:10Z",
+    "methodABootstrapOnRemote": true,
+    "methodAEvidence": {
+      "local": "window.__EMBED_AI_DELIVERY__ = { deliveryUrl: \"https://embed-ai-delivery.northern-paste.workers.dev\" }",
+      "remote": "window.__EMBED_AI_DELIVERY__ = { deliveryUrl: \"https://embed-ai-delivery.northern-paste.workers.dev\" }"
+    },
+    "iifeSha256Local": "94b0a511eaf8e3c3aead8936c728d8025042bb745ec0c124d657d41f3646ea19",
+    "iifeSha256Remote": "94b0a511eaf8e3c3aead8936c728d8025042bb745ec0c124d657d41f3646ea19",
+    "iifeSha256Match": true,
+    "result": "PASS"
+  },
+  "constraintsHonored": {
+    "noRebuildReleaseSnapshot": true,
+    "noCloudflareDeploy": true,
+    "noNewCommits": true,
+    "dirtyWorkingTreeLeftUncommitted": true
+  },
+  "verdict": "PUBLISH COMPLETE"
+}

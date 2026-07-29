@@ -1,0 +1,31 @@
+{
+  "task": "PT-PRIORITY-TUNING-01",
+  "url": "http://127.0.0.1:5180/",
+  "overall": "PASS",
+  "summary": {
+    "collect_without_interrupt": "PASS",
+    "dialog_after_finish_only": "PASS",
+    "questions_highlighted": "PASS",
+    "three_questions_max": "PASS",
+    "tags_with_intensity": "PASS",
+    "natural_stage_transition": "PASS"
+  },
+  "accept": {
+    "collect_without_interrupt": true,
+    "dialog_after_finish_only": true,
+    "questions_highlighted": true,
+    "three_questions_max": true,
+    "tags_with_intensity": true,
+    "natural_stage_transition": true
+  },
+  "measurements": {
+    "afterTwo": "collecting",
+    "afterThree": "collection-gate",
+    "afterFinish": "prep",
+    "afterPrep": "dialog",
+    "answered": 3,
+    "tagPct": "50",
+    "dialogBg": "rgba(212, 175, 55, 0.1)",
+    "pageErrors": []
+  }
+}

@@ -22,6 +22,7 @@ export type WorkspaceSectionId =
   | 'assets'
   | 'metadata'
   | 'validation'
+  | 'publish-wizard'
   | 'overview'
   | 'experience'
   | 'knowledge-package'

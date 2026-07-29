@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Embed Engine Workspace – Clickable Demo</title>
+<style>
+* { box-sizing: border-box; }
+body {
+    margin: 0;
+    font-family: Inter, Arial, sans-serif;
+    background: #eef3f8;
+    color: #1f2937;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* HEADER */
+header {
+    height: 64px;
+    background: #111827;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 24px;
+    z-index: 100;
+}
+.header-title { font-weight: 700; font-size: 16px; }
+.header-perspective { font-size: 14px; color: #9ca3af; }
+.header-perspective b { color: #38bdf8; }
+
+/* LAYOUT SHELL */
+.shell {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    height: calc(100vh - 64px);
+}
+
+/* SIDEBAR ASIDE */
+aside {
+    background: #17212b;
+    color: #d1d5db;
+    padding: 18px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    overflow-y: auto;
+}
+aside h3 {
+    color: #6b7280;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 14px 10px 6px 10px;
+}
+aside .nav-group-title {
+    color: #38bdf8;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 10px 4px 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+aside .item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #cbd5e1;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+aside .item:hover { background: #243243; color: #fff; }
+aside .item.active { background: #2563eb; color: #fff; font-weight: 600; }
+aside hr { border: none; border-top: 1px solid #2d3d4f; margin: 12px 0; }
+
+/* MAIN CONTAINER & VIEWS */
+main {
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    background: #eef3f8;
+}
+
+.view-screen {
+    display: none;
+    width: 100%;
+}
+.view-screen.active {
+    display: block;
+}
+
+/* TOP STATUS BAR */
+.top-bar {
+    background: #fff;
+    border-bottom: 1px solid #d7dde6;
+    padding: 12px 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+.badge-status {
+    background: #eef2ff;
+    color: #1e40af;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid #c7d2fe;
+}
+
+/* GENERAL CARDS & COMPONENTS */
+.content-padding { padding: 24px; }
+.grid-split-2-1 { display: grid; grid-template-columns: 2.2fr 1fr; gap: 20px; }
+.grid-split-equal { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+.card {
+    background: #fff;
+    border: 1px solid #d9e0e8;
+    border-radius: 14px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    margin-bottom: 20px;
+}
+.card h2 { margin-top: 0; font-size: 20px; color: #111827; margin-bottom: 14px; }
+.card h3 { font-size: 16px; margin-bottom: 10px; }
+
+/* BUTTONS */
+button, .btn {
+    padding: 8px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #2563eb;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+button:hover, .btn:hover { background: #1d4ed8; }
+button.btn-secondary { background: #eef2ff; color: #1e3a8a; border-color: #c7d2fe; }
+button.btn-secondary:hover { background: #dbeafe; }
+button.btn-full { width: 100%; display: block; margin-top: 10px; padding: 12px; }
+
+/* TIMELINE (MS-02) */
+.toolbar { display: flex; gap: 8px; margin-bottom: 16px; }
+.filter-chip {
+    padding: 6px 12px;
+    border: 1px solid #d7dde6;
+    border-radius: 20px;
+    background: #f8fafc;
+    font-size: 13px;
+    cursor: pointer;
+}
+.filter-chip.active { background: #2563eb; color: white; border-color: #2563eb; }
+
+.event-row {
+    display: grid;
+    grid-template-columns: 70px 1fr 110px 120px;
+    gap: 12px;
+    padding: 14px 10px;
+    border-bottom: 1px solid #eef2f7;
+    align-items: center;
+}
+.event-row:hover { background: #f8fbff; }
+.time-stamp { font-weight: 700; color: #475569; font-size: 14px; }
+.priority-tag {
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+}
+.priority-tag.high { background: #fee2e2; color: #991b1b; }
+.priority-tag.med { background: #fef3c7; color: #92400e; }
+.priority-tag.low { background: #dcfce7; color: #166534; }
+.sub-state { font-size: 13px; color: #64748b; }
+
+/* TIMELINE VERTICAL (MS-04) */
+.timeline-vertical { border-left: 3px solid #cbd5e1; padding-left: 18px; margin-top: 12px; }
+.timeline-item { position: relative; margin-bottom: 18px; }
+.timeline-item::before {
+    content: "";
+    position: absolute;
+    left: -24px;
+    top: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #2563eb;
+}
+
+/* AI BOXES */
+.ai-box {
+    background: #f8fafc;
+    border-left: 4px solid #2563eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+}
+.ai-case-card {
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-top: 10px;
+    background: #fafbfd;
+}
+
+/* ALERTS & STATS */
+.alert-card {
+    background: #fff;
+    border: 1px solid #d9e0e8;
+    border-left: 6px solid #f59e0b;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 16px;
+}
+.alert-tag {
+    display: inline-block;
+    background: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #fdba74;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+.stat-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; text-align: center; }
+.stat-num { font-size: 32px; font-weight: 700; color: #1e3a8a; }
+.stat-label { margin-top: 6px; color: #64748b; font-size: 13px; }
+
+/* NOTIFICATION TOAST */
+#toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #0f172a;
+    color: #fff;
+    padding: 14px 22px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    display: none;
+    z-index: 1000;
+    font-size: 14px;
+    border-left: 4px solid #10b981;
+}
+</style>
+</head>
+<body>
+
+<header>
+    <div class="header-title">Embed Engine Workspace v2.1</div>
+    <div class="header-perspective">Perspektiva: <b id="headerPerspective">Operations</b></div>
+</header>
+
+<div class="shell">
+    <aside>
+        <div class="nav-group-title">OPERATIONS</div>
+        <div class="item active" onclick="nav('view-timeline', 'Operations • Časová osa')">⚙️ Časová osa</div>
+        <div class="item" onclick="nav('view-briefing', 'Operations • Denní briefing')">📋 Denní briefing</div>
+        <div class="item" onclick="nav('view-attention', 'Operations • Vyžaduje pozornost')">⚠️ Vyžaduje pozornost</div>
+        <div class="item" onclick="nav('view-progress', 'Operations • Dnešní posun')">📈 Dnešní posun</div>
+        <div class="item" onclick="nav('view-weakspots', 'Operations • Slabá místa')">🔍 Slabá místa</div>
+        <div class="item" onclick="nav('view-team', 'Operations • Stav týmu')">👥 Stav týmu</div>
+
+        <hr>
+        <div class="nav-group-title">EXPERIENCE</div>
+        <div class="item" onclick="nav('view-exp-readiness', 'Experience • Připravenost')">🛠️ Připravenost</div>
+        <div class="item" onclick="nav('view-exp-improvements', 'Experience • Doporučení')">💡 Doporučená vylepšení</div>
+
+        <hr>
+        <div class="nav-group-title">PŘÍPADY</div>
+        <div class="item" onclick="nav('view-case-detail', 'Operations • Detail případu')">👤 Detail případu (RD Novák)</div>
+        <div class="item" onclick="nav('view-case-transfer', 'Operations • Předání případu')">🔄 Předání případu</div>
+    </aside>
+
+    <main>
+
+        <div id="view-timeline" class="view-screen active">
+            <div class="top-bar">
+                <span class="badge-status">Runtime: Aktivní</span>
+                <span class="badge-status">Rozpracované případy: 18</span>
+                <span class="badge-status">K vyřízení: 6</span>
+            </div>
+
+            <div class="content-padding grid-split-2-1">
+                <div>
+                    <div class="card">
+                        <h2>Časová osa událostí</h2>
+
+                        <div class="toolbar">
+                            <div class="filter-chip active">Vše</div>
+                            <div class="filter-chip">Dnes</div>
+                            <div class="filter-chip">Vysoká priorita</div>
+                            <div class="filter-chip">Nevyřízené</div>
+                        </div>
+
+                        <div class="event-row">
+                            <div class="time-stamp">09:42</div>
+                            <div>
+                                <strong>Dokončeno rozhodování klienta</strong><br>
+                                <span class="sub-state">Rodinný dům • Journey #2451</span>
+                            </div>
+                            <div class="priority-tag high">Vysoká</div>
+                            <div><button onclick="nav('view-case-detail', 'Operations • Detail případu')">Otevřít</button></div>
+                        </div>
+
+                        <div class="event-row">
+                            <div class="time-stamp">09:30</div>
+                            <div>
+                                <strong>Klient se vrátil na prezentaci</strong><br>
+                                <span class="sub-state">Znovu otevřel půdorys</span>
+                            </div>
+                            <div class="priority-tag med">Střední</div>
+                            <div><button onclick="nav('view-case-detail', 'Operations • Detail případu')">Detail</button></div>
+                        </div>
+
+                        <div class="event-row">
+                            <div class="time-stamp">09:18</div>
+                            <div>
+                                <strong>AI doporučila kontakt</strong><br>
+                                <span class="sub-state">Vysoká pravděpodobnost zájmu</span>
+                            </div>
+                            <div class="priority-tag high">Vysoká</div>
+                            <div><button onclick="nav('view-case-transfer', 'Operations • Předání případu')">Předat obchodu</button></div>
+                        </div>
+
+                        <div class="event-row">
+                            <div class="time-stamp">09:12</div>
+                            <div>
+                                <strong>Změna priority rozhodování</strong><br>
+                                <span class="sub-state">Energetická efektivita ↑</span>
+                            </div>
+                            <div class="priority-tag low">Info</div>
+                            <div><button onclick="nav('view-case-detail', 'Operations • Detail případu')">Detail</button></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <h2>AI souhrn</h2>
+                        <p>Za poslední hodinu byly zaznamenány 2 události s vysokou prioritou. Doporučení: předat případ obchodníkovi ještě dnes.</p>
+                    </div>
+
+                    <div class="card">
+                        <h2>Doporučené akce</h2>
+                        <ul style="padding-left: 18px; line-height: 1.8;">
+                            <li><a href="#" onclick="showToast('Volání zahájeno...'); return false;">Zavolat klientovi</a></li>
+                            <li><a href="#" onclick="showToast('Kalendář otevřen'); return false;">Naplánovat schůzku</a></li>
+                            <li><a href="#" onclick="showToast('Nabídka odeslána na e-mail'); return false;">Odeslat personalizovanou nabídku</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-case-detail" class="view-screen">
+            <div class="top-bar">
+                <div class="badge-status">Případ: RD Novák</div>
+                <div class="badge-status">Priorita: Vysoká</div>
+                <div class="badge-status">Poslední aktivita: 09:42</div>
+            </div>
+
+            <div class="content-padding grid-split-2-1">
+                <div>
+                    <div class="card">
+                        <h2>Souhrn případu</h2>
+                        <p><strong>Zákazník:</strong> Jan Novák</p>
+                        <p><strong>Projekt:</strong> Rodinný dům 128</p>
+                        <p><strong>Odpovědný obchodník:</strong> Petr Svoboda</p>
+                        <p><strong>Další doporučený krok:</strong> Telefonický kontakt dnes.</p>
+                    </div>
+
+                    <div class="card">
+                        <h2>Průběh rozhodování</h2>
+                        <div class="timeline-vertical">
+                            <div class="timeline-item">
+                                <strong>09:42 • Dokončeno porovnání dispozic</strong>
+                                <div class="sub-state">Klient se rozhoduje mezi dvěma variantami.</div>
+                            </div>
+                            <div class="timeline-item">
+                                <strong>09:30 • Návrat na prezentaci</strong>
+                                <div class="sub-state">Znovu otevřen půdorys a technické parametry.</div>
+                            </div>
+                            <div class="timeline-item">
+                                <strong>09:18 • Změna priorit</strong>
+                                <div class="sub-state">Vyšší důraz na provozní náklady.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="card">
+                        <h2>AI souhrn</h2>
+                        <p>Klient vykazuje vysokou pravděpodobnost rozhodnutí během 24 hodin.</p>
+
+                        <h3>Případy a důvody</h3>
+
+                        <div class="ai-case-card">
+                            <strong>✓ Návrat na prezentaci</strong>
+                            <div class="sub-state">Klient se vrátil po 2 hodinách.</div>
+                        </div>
+
+                        <div class="ai-case-card">
+                            <strong>✓ Opakované otevření půdorysu</strong>
+                            <div class="sub-state">Stejná dispozice otevřena třikrát.</div>
+                        </div>
+
+                        <div class="ai-case-card">
+                            <strong>✓ Změna priorit</strong>
+                            <div class="sub-state">Provozní náklady mají nově nejvyšší váhu.</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h2>Doporučené akce</h2>
+                        <button class="btn-full" onclick="showToast('Propojování hovoru s p. Novákem...')">Zavolat zákazníkovi</button>
+                        <button class="btn-full btn-secondary" onclick="nav('view-case-transfer', 'Operations • Předání případu')">Předat obchodníkovi</button>
+                        <button class="btn-full btn-secondary" onclick="showToast('Otevírám rezervační kalendář...')">Naplánovat schůzku</button>
+                        <button class="btn-full btn-secondary" onclick="showToast('Poznámka uložena do záznamu')">Přidat poznámku</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-case-transfer" class="view-screen">
+            <div class="content-padding">
+                <div class="card" style="max-width: 760px; margin: auto;">
+                    <h2>AI doporučuje předání případu</h2>
+                    <p><strong>Doporučený vlastník:</strong> Lucie Dvořáková</p>
+
+                    <div class="ai-box">
+                        <strong>Proč právě ona?</strong>
+                        <ul style="margin-top: 8px; padding-left: 20px; line-height: 1.6;">
+                            <li>Nejnižší aktuální vytížení.</li>
+                            <li>Zkušenost s obdobnými domy.</li>
+                            <li>Klient s ní již komunikoval.</li>
+                        </ul>
+                    </div>
+
+                    <div style="display: flex; gap: 12px; margin-top: 20px;">
+                        <button onclick="showToast('Případ úspešně předán Lucii Dvořákové'); nav('view-timeline', 'Operations • Časová osa');">✓ Potvrdit</button>
+                        <button class="btn-secondary" onclick="showToast('Výběr jiného obchodníka');">Vybrat jiného</button>
+                    </div>
+
+                    <div style="margin-top:20px; padding:12px; background:#ecfeff; border:1px solid #a5f3fc; border-radius:10px; color:#0f172a; font-size: 13px;">
+                        Po potvrzení Runtime automaticky změní vlastníka, zapíše historii, odešle oznámení a přepočítá Frontu pozornosti.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-briefing" class="view-screen">
+            <div class="content-padding">
+                <div class="card" style="max-width: 900px; margin: auto;">
+                    <h1 style="font-size: 28px; margin-bottom: 6px;">Dobré ráno, Petře.</h1>
+                    <div class="sub-state" style="margin-bottom: 24px; font-size: 15px;">Dnes doporučujeme soustředit se na následující tři kroky.</div>
+
+                    <div style="border:1px solid #dbeafe; background:#f8fbff; border-radius:12px; padding:18px; margin:14px 0;">
+                        <h3 style="margin-top:0;">1. Zavolat Janu Novákovi</h3>
+                        <div class="sub-state">Pravděpodobnost uzavření případu je vysoká. Poslední aktivita proběhla před 18 minutami.</div>
+                    </div>
+
+                    <div style="border:1px solid #dbeafe; background:#f8fbff; border-radius:12px; padding:18px; margin:14px 0;">
+                        <h3 style="margin-top:0;">2. Dokončit nabídku pro RD Alfa</h3>
+                        <div class="sub-state">Klient čeká druhý den na finální kalkulaci.</div>
+                    </div>
+
+                    <div style="border:1px solid #dbeafe; background:#f8fbff; border-radius:12px; padding:18px; margin:14px 0;">
+                        <h3 style="margin-top:0;">3. Reagovat na nový lead</h3>
+                        <div class="sub-state">Nová poptávka přišla před 22 minutami a zatím nemá přiřazeného vlastníka.</div>
+                    </div>
+
+                    <div class="ai-box">
+                        <strong>AI briefing</strong>
+                        <p style="margin-bottom:0;">Dnes očekáváme tři případy s vysokou pravděpodobností uzavření. Dva klienti změnili své priority a jeden nový lead vyžaduje reakci do jedné hodiny.</p>
+                    </div>
+
+                    <button style="padding: 12px 24px; font-size: 16px;" onclick="nav('view-case-detail', 'Operations • Detail případu')">Začít pracovat</button>
+
+                    <div class="sub-state" style="margin-top: 16px;">
+                        Po kliknutí se automaticky otevře první doporučený případ. Runtime průběžně přepočítává pořadí podle aktuální situace.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-attention" class="view-screen">
+            <div class="content-padding">
+                <div style="margin-bottom: 20px;">
+                    <h1 style="margin: 0; font-size: 28px;">Vyžaduje pozornost</h1>
+                    <p class="sub-state" style="margin-top: 6px;">Dnes byly nalezeny 3 situace, které mohou ovlivnit obchodní výsledek.</p>
+                </div>
+
+                <div class="alert-card">
+                    <div class="alert-tag">Lead</div>
+                    <h3>Nový lead čeká již 52 minut</h3>
+                    <div class="sub-state" style="margin-bottom: 12px;">AI doporučuje okamžité přiřazení obchodníkovi. Delší prodleva snižuje pravděpodobnost navázání kontaktu.</div>
+                    <button onclick="nav('view-case-detail', 'Operations • Detail případu')">Otevřít případ</button>
+                </div>
+
+                <div class="alert-card">
+                    <div class="alert-tag">Follow-up</div>
+                    <h3>Klient neodpověděl 5 dní</h3>
+                    <div class="sub-state" style="margin-bottom: 12px;">Poslední aktivitou bylo otevření nabídky. AI doporučuje telefonický kontakt místo dalšího e-mailu.</div>
+                    <button onclick="nav('view-case-detail', 'Operations • Detail případu')">Otevřít případ</button>
+                </div>
+
+                <div class="alert-card">
+                    <div class="alert-tag">Riziko</div>
+                    <h3>Klient opakovaně prohlíží stejné informace</h3>
+                    <div class="sub-state" style="margin-bottom: 12px;">Decision Runtime detekoval opakované návštěvy bez posunu v rozhodování. Doporučen je aktivní kontakt.</div>
+                    <button onclick="nav('view-case-detail', 'Operations • Detail případu')">Otevřít případ</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-progress" class="view-screen">
+            <div class="content-padding">
+                <div class="card" style="max-width: 920px; margin: auto;">
+                    <h1 style="margin: 0; font-size: 28px;">Dnešní posun</h1>
+                    <p class="sub-state" style="margin-top: 6px; margin-bottom: 24px;">Souhrn změn, které Runtime během dne skutečně zaznamenal.</p>
+
+                    <div class="stats-grid">
+                        <div class="stat-box"><div class="stat-num">4</div><div class="stat-label">Převzaté případy</div></div>
+                        <div class="stat-box"><div class="stat-num">7</div><div class="stat-label">Interakce s případy</div></div>
+                        <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Nové poznámky</div></div>
+                        <div class="stat-box"><div class="stat-num">3</div><div class="stat-label">Změny priorit</div></div>
+                    </div>
+
+                    <div class="ai-box">
+                        <strong>AI souhrn dne</strong>
+                        <p style="margin-bottom: 0;">Dnes se podařilo zpracovat všechny nově převzaté případy. U tří klientů došlo ke změně priorit a dva případy doporučujeme zařadit na zítřejší začátek dne.</p>
+                    </div>
+
+                    <button style="padding: 12px 24px;" onclick="showToast('Pracovní den uzavřen. Zítra na viděnou!'); nav('view-briefing', 'Operations • Denní briefing');">Pokračovat zítra</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-weakspots" class="view-screen">
+            <div class="content-padding">
+                <div class="card" style="max-width: 980px; margin: auto;">
+                    <h1 style="margin: 0; font-size: 28px;">Slabá místa</h1>
+                    <p class="sub-state" style="margin-top: 6px; margin-bottom: 24px;">Runtime automaticky identifikoval opakující se vzorce, které mohou snižovat efektivitu práce.</p>
+
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 16px; background: #fafbfd;">
+                        <h3 style="margin-top:0;">Reakce na nové případy</h3>
+                        <p>Průměrná doba převzetí nových případů se prodloužila.</p>
+                        <div class="ai-box"><strong>AI doporučení:</strong> Prověřit rozdělení práce na začátku dne.</div>
+                        <button onclick="nav('view-team', 'Operations • Stav týmu')">Prozkoumat</button>
+                    </div>
+
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 16px; background: #fafbfd;">
+                        <h3 style="margin-top:0;">Poznámky po interakcích</h3>
+                        <p>Část interakcí byla uzavřena bez následné poznámky.</p>
+                        <div class="ai-box"><strong>AI doporučení:</strong> Připomenout zapisování výsledku kontaktu.</div>
+                        <button onclick="showToast('Otevírám přehled zápisů kontaktů')">Prozkoumat</button>
+                    </div>
+
+                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; padding: 18px; margin-bottom: 16px; background: #fafbfd;">
+                        <h3 style="margin-top:0;">Opakované předávání případů</h3>
+                        <p>Některé případy změnily vlastníka častěji, než je obvyklé.</p>
+                        <div class="ai-box"><strong>AI doporučení:</strong> Prověřit pravidla přidělování případů.</div>
+                        <button onclick="nav('view-case-transfer', 'Operations • Předání případu')">Prozkoumat</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-team" class="view-screen">
+            <div class="content-padding">
+                <div class="card" style="max-width: 900px; margin: auto;">
+                    <h1 style="margin: 0; font-size: 28px;">Stav týmu</h1>
+                    <p class="sub-state" style="margin-top: 6px;">Runtime vyhodnotil aktuální stav práce napříč týmem.</p>
+                    <div style="font-size: 24px; font-weight: 700; color: #15803d; margin: 16px 0;">🟢 Tým pracuje stabilně.</div>
+
+                    <div class="ai-box">
+                        <strong>AI interpretace</strong>
+                        <p style="margin-bottom: 0;">Zatížení je rovnoměrné, nové případy jsou průběžně přebírány a nebyly zjištěny významné odchylky. Není potřeba žádný zásah.</p>
+                    </div>
+
+                    <button style="padding: 12px 20px;" onclick="nav('view-weakspots', 'Operations • Slabá místa')">Zobrazit doporučení</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-exp-readiness" class="view-screen">
+            <div class="content-padding">
+                <div class="card" style="max-width: 920px; margin: auto;">
+                    <h1 style="margin: 0; font-size: 28px;">Připravenost Experience</h1>
+                    <p class="sub-state" style="margin-top: 6px;">Runtime ověřil obchodní připravenost publikované Experience.</p>
+                    <div style="font-size: 24px; font-weight: 700; color: #ca8a04; margin: 16px 0;">🟠 Experience vyžaduje drobná doplnění.</div>
+
+                    <div style="border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; margin: 12px 0; background: #fafafa;">
+                        <strong>Chybí půdorys</strong>
+                        <div class="ai-box">Bez půdorysu je orientace klienta výrazně složitější.</div>
+                        <button onclick="nav('view-exp-improvements', 'Experience • Doporučení')">Otevřít modul</button>
+                    </div>
+
+                    <div style="border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; margin: 12px 0; background: #fafafa;">
+                        <strong>Doporučeno doplnit FAQ</strong>
+                        <div class="ai-box">AI očekává opakující se dotazy, které lze zodpovědět ještě před kontaktem.</div>
+                        <button onclick="nav('view-exp-improvements', 'Experience • Doporučení')">Otevřít modul</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="view-exp-improvements" class="view-screen">
+            <div class="content-padding">
+                <div class="card" style="max-width: 940px; margin: auto;">
+                    <h1 style="margin: 0; font-size: 28px;">Doporučená vylepšení</h1>
+                    <p class="sub-state" style="margin-top: 6px;">Runtime seřadil doporučení podle očekávaného přínosu pro rozhodovací Experience.</p>
+
+                    <div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 18px; margin: 14px 0;">
+                        <h3 style="margin-top: 0;">Přidat FAQ</h3>
+                        <span style="display:inline-block; padding:4px 10px; border-radius:20px; background:#fef3c7; color:#92400e; font-size:12px; font-weight:600;">Vysoký očekávaný dopad</span>
+                        <div class="ai-box"><strong>AI:</strong> Opakující se dotazy lze zodpovědět ještě před kontaktem, což zjednoduší rozhodování klientů.</div>
+                        <button onclick="showToast('Modul FAQ úspěšně přidán do Experience'); nav('view-exp-readiness', 'Experience • Připravenost');">Provést změnu</button>
+                    </div>
+
+                    <div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 18px; margin: 14px 0;">
+                        <h3 style="margin-top: 0;">Upravit Priority Engine</h3>
+                        <span style="display:inline-block; padding:4px 10px; border-radius:20px; background:#fef3c7; color:#92400e; font-size:12px; font-weight:600;">Vysoký očekávaný dopad</span>
+                        <div class="ai-box"><strong>AI:</strong> Některé priority nejsou propojené s odpovídajícím obsahem Experience.</div>
+                        <button onclick="showToast('Priority Engine aktualizován'); nav('view-exp-readiness', 'Experience • Připravenost');">Provést změnu</button>
+                    </div>
+
+                    <div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 18px; margin: 14px 0;">
+                        <h3 style="margin-top: 0;">Doplnit fotografie interiéru</h3>
+                        <span style="display:inline-block; padding:4px 10px; border-radius:20px; background:#e0f2fe; color:#0369a1; font-size:12px; font-weight:600;">Střední očekávaný dopad</span>
+                        <div class="ai-box"><strong>AI:</strong> Kompletní galerie usnadňuje orientaci a podporuje rozhodování.</div>
+                        <button onclick="showToast('Galerie otevřena k nahrání snímků');">Provést změnu</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<div id="toast">Oznámení</div>
+
+<script>
+function nav(viewId, perspectiveText) {
+    // Hide all view screens
+    document.querySelectorAll('.view-screen').forEach(el => el.classList.remove('active'));
+    
+    // Show selected view
+    const target = document.getElementById(viewId);
+    if(target) target.classList.add('active');
+
+    // Update active state in sidebar
+    document.querySelectorAll('aside .item').forEach(el => {
+        if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(viewId)) {
+            el.classList.add('active');
+        } else {
+            el.classList.remove('active');
+        }
+    });
+
+    // Update Header
+    if(perspectiveText) {
+        document.getElementById('headerPerspective').innerText = perspectiveText;
+    }
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.innerText = '✓ ' + message;
+    toast.style.display = 'block';
+    setTimeout(() => {
+        toast.style.display = 'none';
+    }, 2800);
+}
+</script>
+</body>
+</html>

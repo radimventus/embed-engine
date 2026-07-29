@@ -89,6 +89,20 @@ export type {
 } from './validation-dashboard-types';
 
 export type {
+  InitializePublishWizardInput,
+  PublicationHistoryEntry,
+  PublicationSession,
+  PublicationSessionStatus,
+  PublishPrepareInput,
+  PublishSummary,
+  PublishWizardEvent,
+  PublishWizardEventType,
+  PublishWizardInput,
+  PublishWizardStep,
+  PublishedArtifact,
+} from './publish-wizard-types';
+
+export type {
   BuildIssue,
   BuildIssueSeverity,
   BuildResult,
