@@ -107,6 +107,8 @@ import type {
   ArtifactVersionPackage,
   ArtifactDependencyEvent,
   ArtifactDependencyPackage,
+  PublicationPlanEvent,
+  PublicationPlanPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -249,6 +251,8 @@ import {
   createPublicationReadinessValidator,
   createArtifactDependencyApi,
   createArtifactDependencyRegistry,
+  createPublicationPlanApi,
+  createPublicationPlanBuilder,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -492,6 +496,10 @@ export type BuilderStudioViewModel = {
   readonly artifactDependencyEvents: readonly ArtifactDependencyEvent[];
   readonly artifactDependencyIndexCount: number;
   readonly artifactDependencyMessage: string | null;
+  readonly publicationPlanPackage: PublicationPlanPackage | null;
+  readonly publicationPlanEvents: readonly PublicationPlanEvent[];
+  readonly publicationPlanIndexCount: number;
+  readonly publicationPlanMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -768,6 +776,10 @@ export type BuilderStudioViewModel = {
   readonly removeArtifactDependency: () => void;
   readonly validateArtifactDependencies: () => void;
   readonly disposeArtifactDependency: () => void;
+  readonly buildPublicationPlan: () => void;
+  readonly validatePublicationPlan: () => void;
+  readonly publishPublicationPlan: () => void;
+  readonly disposePublicationPlan: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1533,6 +1545,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const artifactDependencyApi = createArtifactDependencyApi(
       artifactDependencyRegistry,
     );
+    const publicationPlanBuilder = createPublicationPlanBuilder();
+    const publicationPlanApi = createPublicationPlanApi(publicationPlanBuilder);
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1664,6 +1678,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       publicationReadinessApi,
       artifactDependencyRegistry,
       artifactDependencyApi,
+      publicationPlanBuilder,
+      publicationPlanApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -2261,6 +2277,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [artifactDependencyMessage, setArtifactDependencyMessage] = useState<
     string | null
   >(null);
+  const [publicationPlanPackage, setPublicationPlanPackage] =
+    useState<PublicationPlanPackage | null>(null);
+  const [publicationPlanEvents, setPublicationPlanEvents] = useState<
+    readonly PublicationPlanEvent[]
+  >([]);
+  const [publicationPlanIndexCount, setPublicationPlanIndexCount] = useState(0);
+  const [publicationPlanMessage, setPublicationPlanMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2746,6 +2771,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     artifactDependencyEvents,
     artifactDependencyIndexCount,
     artifactDependencyMessage,
+    publicationPlanPackage,
+    publicationPlanEvents,
+    publicationPlanIndexCount,
+    publicationPlanMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -8705,6 +8734,119 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.artifactDependencyRegistry.getIndex().length,
       );
       setArtifactDependencyMessage(null);
+    },
+    buildPublicationPlan(): void {
+      const sessionId =
+        publicationPlanPackage?.metadata.sessionId ??
+        artifactDependencyPackage?.metadata.sessionId ??
+        'publication-plan-session-demo';
+      const rootArtifactId =
+        runtimeBootstrapPackage?.runtimeSession.publicationId ??
+        'runtime-bootstrap-demo';
+      const dependencies =
+        artifactDependencyPackage?.dependencies.map((dependency) => ({
+          sourceArtifactId: dependency.sourceArtifactId,
+          targetArtifactId: dependency.targetArtifactId,
+          dependencyType: dependency.dependencyType,
+          status: dependency.status,
+        })) ?? [
+          {
+            sourceArtifactId: 'runtime-bootstrap-demo',
+            targetArtifactId: 'client-publication-demo',
+            dependencyType: 'REQUIRES' as const,
+            status: 'Active' as const,
+          },
+          {
+            sourceArtifactId: 'client-publication-demo',
+            targetArtifactId: 'published-object-demo',
+            dependencyType: 'DERIVED_FROM' as const,
+            status: 'Active' as const,
+          },
+          {
+            sourceArtifactId: 'published-object-demo',
+            targetArtifactId: 'publication-object-demo',
+            dependencyType: 'DERIVED_FROM' as const,
+            status: 'Active' as const,
+          },
+        ];
+      const input = {
+        rootArtifactId,
+        dependencies,
+        title: `Publication Plan ${rootArtifactId}`,
+      };
+      const built = services.publicationPlanApi.buildPublicationPlan(
+        publicationPlanPackage?.id ?? null,
+        input,
+        {
+          sessionId,
+          title: 'Builder Publication Plan',
+          plan: input,
+        },
+      );
+      setPublicationPlanPackage(built);
+      setPublicationPlanEvents(services.publicationPlanBuilder.getEvents());
+      setPublicationPlanIndexCount(
+        services.publicationPlanBuilder.getIndex().length,
+      );
+      setPublicationPlanMessage(
+        `Built plan for ${built.plan.rootArtifactId}.`,
+      );
+    },
+    validatePublicationPlan(): void {
+      if (publicationPlanPackage === null) {
+        setPublicationPlanMessage('Nejdřív Build Plan.');
+        return;
+      }
+      const validation = services.publicationPlanApi.validatePublicationPlan(
+        publicationPlanPackage.id,
+      );
+      setPublicationPlanPackage(
+        services.publicationPlanApi.getPackage(publicationPlanPackage.id),
+      );
+      setPublicationPlanEvents(services.publicationPlanBuilder.getEvents());
+      setPublicationPlanIndexCount(
+        services.publicationPlanBuilder.getIndex().length,
+      );
+      setPublicationPlanMessage(
+        validation.valid ? 'Publication plan validation OK.' : 'Publication plan validation failed.',
+      );
+    },
+    publishPublicationPlan(): void {
+      if (publicationPlanPackage === null) {
+        setPublicationPlanMessage('Nejdřív Build Plan.');
+        return;
+      }
+      try {
+        const published = services.publicationPlanApi.publishPublicationPlan(
+          publicationPlanPackage.id,
+        );
+        setPublicationPlanPackage(published);
+        setPublicationPlanEvents(services.publicationPlanBuilder.getEvents());
+        setPublicationPlanIndexCount(
+          services.publicationPlanBuilder.getIndex().length,
+        );
+        setPublicationPlanMessage(
+          `Published plan for ${published.plan.rootArtifactId}.`,
+        );
+      } catch (error) {
+        setPublicationPlanMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    disposePublicationPlan(): void {
+      if (publicationPlanPackage === null) {
+        return;
+      }
+      const disposed = services.publicationPlanBuilder.dispose(
+        publicationPlanPackage.id,
+      );
+      setPublicationPlanPackage(disposed);
+      setPublicationPlanEvents(services.publicationPlanBuilder.getEvents());
+      setPublicationPlanIndexCount(
+        services.publicationPlanBuilder.getIndex().length,
+      );
+      setPublicationPlanMessage(null);
     },
     buildProject(): void {
       const projectId =

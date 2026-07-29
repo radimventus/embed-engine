@@ -845,6 +845,20 @@ export type {
 } from './publication-readiness-types';
 
 export type {
+  BuildPublicationPlanInput,
+  InitializePublicationPlanInput,
+  PublicationPlan,
+  PublicationPlanEvent,
+  PublicationPlanEventType,
+  PublicationPlanIndexEntry,
+  PublicationPlanPackage,
+  PublicationPlanStep,
+  PublicationPlanStepOperation,
+  PublicationPlanValidation,
+  PublicationPlanValidationIssue,
+} from './publication-plan-types';
+
+export type {
   ArtifactDependency,
   ArtifactDependencyEvent,
   ArtifactDependencyEventType,

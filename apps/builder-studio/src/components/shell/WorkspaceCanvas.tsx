@@ -98,6 +98,8 @@ import type {
   ArtifactVersionPackage,
   ArtifactDependencyEvent,
   ArtifactDependencyPackage,
+  PublicationPlanEvent,
+  PublicationPlanPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -177,6 +179,7 @@ import { PublicationReadinessOverview } from './PublicationReadinessOverview';
 import { RuntimeBootstrapOverview } from './RuntimeBootstrapOverview';
 import { ArtifactVersionsOverview } from './ArtifactVersionsOverview';
 import { ArtifactDependenciesOverview } from './ArtifactDependenciesOverview';
+import { PublicationPlanOverview } from './PublicationPlanOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -399,6 +402,10 @@ type WorkspaceCanvasProps = {
   readonly artifactDependencyEvents: readonly ArtifactDependencyEvent[];
   readonly artifactDependencyIndexCount: number;
   readonly artifactDependencyMessage: string | null;
+  readonly publicationPlanPackage: PublicationPlanPackage | null;
+  readonly publicationPlanEvents: readonly PublicationPlanEvent[];
+  readonly publicationPlanIndexCount: number;
+  readonly publicationPlanMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -664,6 +671,10 @@ type WorkspaceCanvasProps = {
   readonly onRemoveArtifactDependency: () => void;
   readonly onValidateArtifactDependencies: () => void;
   readonly onDisposeArtifactDependency: () => void;
+  readonly onBuildPublicationPlan: () => void;
+  readonly onValidatePublicationPlan: () => void;
+  readonly onPublishPublicationPlan: () => void;
+  readonly onDisposePublicationPlan: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -869,6 +880,10 @@ export function WorkspaceCanvas({
   artifactDependencyEvents,
   artifactDependencyIndexCount,
   artifactDependencyMessage,
+  publicationPlanPackage,
+  publicationPlanEvents,
+  publicationPlanIndexCount,
+  publicationPlanMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1124,6 +1139,10 @@ export function WorkspaceCanvas({
   onRemoveArtifactDependency,
   onValidateArtifactDependencies,
   onDisposeArtifactDependency,
+  onBuildPublicationPlan,
+  onValidatePublicationPlan,
+  onPublishPublicationPlan,
+  onDisposePublicationPlan,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1910,6 +1929,18 @@ export function WorkspaceCanvas({
             onValidate={onValidateArtifactDependencies}
             onDispose={onDisposeArtifactDependency}
             message={artifactDependencyMessage}
+          />
+        ) : null}
+        {activeSection === 'publication-plan' ? (
+          <PublicationPlanOverview
+            planPackage={publicationPlanPackage}
+            events={publicationPlanEvents}
+            indexCount={publicationPlanIndexCount}
+            onBuild={onBuildPublicationPlan}
+            onValidate={onValidatePublicationPlan}
+            onPublish={onPublishPublicationPlan}
+            onDispose={onDisposePublicationPlan}
+            message={publicationPlanMessage}
           />
         ) : null}
         {activeSection === 'media' ? (
