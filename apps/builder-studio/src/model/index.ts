@@ -561,3 +561,18 @@ export type {
   RuntimeGovernanceValidation,
   RuntimeGovernanceValidationIssue,
 } from './runtime-governance-types';
+
+export type {
+  RegisterPolicyInput,
+  RuntimePolicy,
+  RuntimePolicyCategory,
+  RuntimePolicyEvent,
+  RuntimePolicyEventType,
+  RuntimePolicyIndexEntry,
+  RuntimePolicyPackage,
+  RuntimePolicyRegistry,
+  RuntimePolicyStatus,
+  RuntimePolicyValidation,
+  RuntimePolicyValidationIssue,
+  UpdatePolicyInput,
+} from './runtime-policy-types';

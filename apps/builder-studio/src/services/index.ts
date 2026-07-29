@@ -594,3 +594,25 @@ export {
   createRuntimeGovernanceIndex,
   type RuntimeGovernanceIndex,
 } from './runtime-governance/runtime-governance-index';
+
+export {
+  createRuntimePolicyEngine,
+  type RuntimePolicyEngine,
+  type RuntimePolicyEngineOptions,
+} from './runtime-policy/runtime-policy-engine';
+export {
+  createRuntimePolicyApi,
+  type RuntimePolicyApi,
+} from './runtime-policy/runtime-policy-api';
+export {
+  SEED_POLICIES,
+  applyPolicyUpdate,
+  createBasicPolicyRegistryStrategy,
+  createRuntimePolicyValidator,
+  type PolicyRegistryStrategy,
+  type RuntimePolicyValidator,
+} from './runtime-policy/basic-policy-registry-strategy';
+export {
+  createRuntimePolicyIndex,
+  type RuntimePolicyIndex,
+} from './runtime-policy/runtime-policy-index';

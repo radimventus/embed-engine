@@ -49,6 +49,7 @@ export type WorkspaceSectionId =
   | 'runtime-health'
   | 'runtime-audit'
   | 'runtime-governance'
+  | 'runtime-policies'
   | 'media'
   | 'layout'
   | 'knowledge';

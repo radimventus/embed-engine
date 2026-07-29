@@ -61,6 +61,8 @@ import type {
   RuntimeAuditPackage,
   RuntimeGovernanceEvent,
   RuntimeGovernancePackage,
+  RuntimePolicyEvent,
+  RuntimePolicyPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -161,6 +163,8 @@ import {
   createRuntimeAuditEngine,
   createRuntimeGovernanceApi,
   createRuntimeGovernanceEngine,
+  createRuntimePolicyApi,
+  createRuntimePolicyEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -308,6 +312,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeGovernanceEvents: readonly RuntimeGovernanceEvent[];
   readonly runtimeGovernanceIndexCount: number;
   readonly runtimeGovernanceMessage: string | null;
+  readonly runtimePolicyPackage: RuntimePolicyPackage | null;
+  readonly runtimePolicyEvents: readonly RuntimePolicyEvent[];
+  readonly runtimePolicyIndexCount: number;
+  readonly runtimePolicyMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -483,6 +491,11 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeGovernance: () => void;
   readonly validateRuntimeGovernance: () => void;
   readonly disposeRuntimeGovernance: () => void;
+  readonly initializeRuntimePolicies: () => void;
+  readonly registerRuntimePolicy: () => void;
+  readonly publishRuntimePolicies: () => void;
+  readonly validateRuntimePolicies: () => void;
+  readonly disposeRuntimePolicies: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1165,6 +1178,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeGovernanceApi = createRuntimeGovernanceApi(
       runtimeGovernanceEngine,
     );
+    const runtimePolicyEngine = createRuntimePolicyEngine();
+    const runtimePolicyApi = createRuntimePolicyApi(runtimePolicyEngine);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1248,6 +1263,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeAuditApi,
       runtimeGovernanceEngine,
       runtimeGovernanceApi,
+      runtimePolicyEngine,
+      runtimePolicyApi,
     };
   }, []);
 
@@ -1598,6 +1615,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [runtimeGovernanceIndexCount, setRuntimeGovernanceIndexCount] =
     useState(0);
   const [runtimeGovernanceMessage, setRuntimeGovernanceMessage] = useState<
+    string | null
+  >(null);
+  const [runtimePolicyPackage, setRuntimePolicyPackage] =
+    useState<RuntimePolicyPackage | null>(null);
+  const [runtimePolicyEvents, setRuntimePolicyEvents] = useState<
+    readonly RuntimePolicyEvent[]
+  >([]);
+  const [runtimePolicyIndexCount, setRuntimePolicyIndexCount] = useState(0);
+  const [runtimePolicyMessage, setRuntimePolicyMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1993,6 +2019,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeGovernanceEvents,
     runtimeGovernanceIndexCount,
     runtimeGovernanceMessage,
+    runtimePolicyPackage,
+    runtimePolicyEvents,
+    runtimePolicyIndexCount,
+    runtimePolicyMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -5062,6 +5092,85 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeGovernanceEngine.getIndex().length,
       );
       setRuntimeGovernanceMessage(null);
+    },
+    initializeRuntimePolicies(): void {
+      const initialized = services.runtimePolicyApi.initialize(
+        'Builder Runtime Policies',
+      );
+      setRuntimePolicyPackage(initialized);
+      setRuntimePolicyEvents(services.runtimePolicyEngine.getEvents());
+      setRuntimePolicyIndexCount(
+        services.runtimePolicyEngine.getIndex().length,
+      );
+      setRuntimePolicyMessage(
+        `Initialized registry with ${initialized.registry.policies.length} policies.`,
+      );
+    },
+    registerRuntimePolicy(): void {
+      try {
+        const registered = services.runtimePolicyApi.registerPolicy({
+          name: 'Platform Integrity',
+          category: 'Platform',
+          description: 'Platform policy integrity must remain consistent.',
+          code: `platform-integrity-${Date.now().toString(36)}`,
+          severity: 'warning',
+        });
+        setRuntimePolicyPackage(registered);
+        setRuntimePolicyEvents(services.runtimePolicyEngine.getEvents());
+        setRuntimePolicyIndexCount(
+          services.runtimePolicyEngine.getIndex().length,
+        );
+        setRuntimePolicyMessage(
+          `Registered policy (total ${registered.registry.policies.length}).`,
+        );
+      } catch (error) {
+        setRuntimePolicyMessage(
+          error instanceof Error ? error.message : 'Register failed.',
+        );
+      }
+    },
+    publishRuntimePolicies(): void {
+      if (runtimePolicyPackage === null) {
+        setRuntimePolicyMessage('Nejdřív Initialize Registry.');
+        return;
+      }
+      try {
+        const published = services.runtimePolicyApi.publishPolicies();
+        setRuntimePolicyPackage(published);
+        setRuntimePolicyEvents(services.runtimePolicyEngine.getEvents());
+        setRuntimePolicyMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimePolicyMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimePolicies(): void {
+      if (runtimePolicyPackage === null) {
+        setRuntimePolicyMessage('Nejdřív Initialize Registry.');
+        return;
+      }
+      const validation = services.runtimePolicyApi.validatePolicies();
+      const previewed = services.runtimePolicyApi.preview();
+      if (previewed !== null) {
+        setRuntimePolicyPackage(previewed);
+      }
+      setRuntimePolicyEvents(services.runtimePolicyEngine.getEvents());
+      setRuntimePolicyMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimePolicies(): void {
+      if (runtimePolicyPackage === null) {
+        return;
+      }
+      const disposed = services.runtimePolicyApi.dispose();
+      setRuntimePolicyPackage(disposed);
+      setRuntimePolicyEvents(services.runtimePolicyEngine.getEvents());
+      setRuntimePolicyIndexCount(
+        services.runtimePolicyEngine.getIndex().length,
+      );
+      setRuntimePolicyMessage(null);
     },
     buildProject(): void {
       const projectId =
