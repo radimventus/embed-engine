@@ -529,3 +529,25 @@ export {
   createRuntimeObservabilityIndex,
   type RuntimeObservabilityIndex,
 } from './runtime-observability/runtime-observability-index';
+
+export {
+  createRuntimeHealthEngine,
+  type RuntimeHealthEngine,
+  type RuntimeHealthEngineOptions,
+} from './runtime-health/runtime-health-engine';
+export {
+  createRuntimeHealthApi,
+  type RuntimeHealthApi,
+} from './runtime-health/runtime-health-api';
+export {
+  buildHealthReport,
+  createBasicHealthEvaluationStrategy,
+  createRuntimeHealthValidator,
+  splitFindings,
+  type HealthEvaluationStrategy,
+  type RuntimeHealthValidator,
+} from './runtime-health/basic-health-evaluation-strategy';
+export {
+  createRuntimeHealthIndex,
+  type RuntimeHealthIndex,
+} from './runtime-health/runtime-health-index';

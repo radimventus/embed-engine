@@ -516,3 +516,18 @@ export type {
   RuntimeObservabilityValidationIssue,
   RuntimeTimeline,
 } from './runtime-observability-types';
+
+export type {
+  DiagnosticCategory,
+  DiagnosticFinding,
+  DiagnosticSeverity,
+  InspectRuntimeInput,
+  RuntimeHealthEvent,
+  RuntimeHealthEventType,
+  RuntimeHealthIndexEntry,
+  RuntimeHealthPackage,
+  RuntimeHealthReport,
+  RuntimeHealthValidation,
+  RuntimeHealthValidationIssue,
+  RuntimeOverallHealth,
+} from './runtime-health-types';

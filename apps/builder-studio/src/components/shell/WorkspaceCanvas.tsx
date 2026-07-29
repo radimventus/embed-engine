@@ -46,6 +46,8 @@ import type {
   ExperienceStateEvent,
   RuntimeObservabilityEvent,
   RuntimeObservabilityPackage,
+  RuntimeHealthEvent,
+  RuntimeHealthPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -99,6 +101,7 @@ import { ExperienceRuntimeOverview } from './ExperienceRuntimeOverview';
 import { ExperienceModulesOverview } from './ExperienceModulesOverview';
 import { ExperienceStateOverview } from './ExperienceStateOverview';
 import { ObservabilityOverview } from './ObservabilityOverview';
+import { HealthOverview } from './HealthOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -217,6 +220,10 @@ type WorkspaceCanvasProps = {
   readonly observabilityEvents: readonly RuntimeObservabilityEvent[];
   readonly observabilityIndexCount: number;
   readonly observabilityMessage: string | null;
+  readonly runtimeHealthPackage: RuntimeHealthPackage | null;
+  readonly runtimeHealthEvents: readonly RuntimeHealthEvent[];
+  readonly runtimeHealthIndexCount: number;
+  readonly runtimeHealthMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -369,6 +376,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeObservability: () => void;
   readonly onValidateRuntimeObservability: () => void;
   readonly onDisposeRuntimeObservability: () => void;
+  readonly onInspectRuntimeHealth: () => void;
+  readonly onPublishRuntimeHealth: () => void;
+  readonly onValidateRuntimeHealth: () => void;
+  readonly onDisposeRuntimeHealth: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -470,6 +481,10 @@ export function WorkspaceCanvas({
   observabilityEvents,
   observabilityIndexCount,
   observabilityMessage,
+  runtimeHealthPackage,
+  runtimeHealthEvents,
+  runtimeHealthIndexCount,
+  runtimeHealthMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -612,6 +627,10 @@ export function WorkspaceCanvas({
   onPublishRuntimeObservability,
   onValidateRuntimeObservability,
   onDisposeRuntimeObservability,
+  onInspectRuntimeHealth,
+  onPublishRuntimeHealth,
+  onValidateRuntimeHealth,
+  onDisposeRuntimeHealth,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1053,6 +1072,19 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeObservability}
             onDispose={onDisposeRuntimeObservability}
             message={observabilityMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-health' ? (
+          <HealthOverview
+            healthPackage={runtimeHealthPackage}
+            events={runtimeHealthEvents}
+            indexCount={runtimeHealthIndexCount}
+            onInspect={onInspectRuntimeHealth}
+            onPublish={onPublishRuntimeHealth}
+            onValidate={onValidateRuntimeHealth}
+            onDispose={onDisposeRuntimeHealth}
+            message={runtimeHealthMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

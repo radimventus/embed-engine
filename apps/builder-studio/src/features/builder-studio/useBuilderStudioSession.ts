@@ -54,6 +54,8 @@ import type {
   RuntimeEventSource,
   RuntimeObservabilityEvent,
   RuntimeObservabilityPackage,
+  RuntimeHealthEvent,
+  RuntimeHealthPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -148,6 +150,8 @@ import {
   createExperienceStateManager,
   createRuntimeObservabilityApi,
   createRuntimeObservabilityEngine,
+  createRuntimeHealthApi,
+  createRuntimeHealthEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -283,6 +287,10 @@ export type BuilderStudioViewModel = {
   readonly observabilityEvents: readonly RuntimeObservabilityEvent[];
   readonly observabilityIndexCount: number;
   readonly observabilityMessage: string | null;
+  readonly runtimeHealthPackage: RuntimeHealthPackage | null;
+  readonly runtimeHealthEvents: readonly RuntimeHealthEvent[];
+  readonly runtimeHealthIndexCount: number;
+  readonly runtimeHealthMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -446,6 +454,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeObservability: () => void;
   readonly validateRuntimeObservability: () => void;
   readonly disposeRuntimeObservability: () => void;
+  readonly inspectRuntimeHealth: () => void;
+  readonly publishRuntimeHealth: () => void;
+  readonly validateRuntimeHealth: () => void;
+  readonly disposeRuntimeHealth: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1120,6 +1132,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeObservabilityApi = createRuntimeObservabilityApi(
       runtimeObservabilityEngine,
     );
+    const runtimeHealthEngine = createRuntimeHealthEngine();
+    const runtimeHealthApi = createRuntimeHealthApi(runtimeHealthEngine);
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1197,6 +1211,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       experienceStateApi,
       runtimeObservabilityEngine,
       runtimeObservabilityApi,
+      runtimeHealthEngine,
+      runtimeHealthApi,
     };
   }, []);
 
@@ -1519,6 +1535,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   >([]);
   const [observabilityIndexCount, setObservabilityIndexCount] = useState(0);
   const [observabilityMessage, setObservabilityMessage] = useState<
+    string | null
+  >(null);
+  const [runtimeHealthPackage, setRuntimeHealthPackage] =
+    useState<RuntimeHealthPackage | null>(null);
+  const [runtimeHealthEvents, setRuntimeHealthEvents] = useState<
+    readonly RuntimeHealthEvent[]
+  >([]);
+  const [runtimeHealthIndexCount, setRuntimeHealthIndexCount] = useState(0);
+  const [runtimeHealthMessage, setRuntimeHealthMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1902,6 +1927,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     observabilityEvents,
     observabilityIndexCount,
     observabilityMessage,
+    runtimeHealthPackage,
+    runtimeHealthEvents,
+    runtimeHealthIndexCount,
+    runtimeHealthMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -4703,6 +4732,96 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeObservabilityEngine.getIndex().length,
       );
       setObservabilityMessage(null);
+    },
+    inspectRuntimeHealth(): void {
+      const sessionId =
+        observabilityPackage?.metadata.sessionId ??
+        experienceStatePackage?.state.sessionId ??
+        runtimeExecutionPackage?.execution.sessionId ??
+        'runtime-session-demo';
+      const obs = observabilityPackage;
+      const inspected = services.runtimeHealthApi.inspectRuntime({
+        sessionId,
+        runtimeExecutionId:
+          runtimeExecutionPackage?.execution.id ??
+          experienceStatePackage?.state.runtimeExecutionId ??
+          null,
+        title: 'Builder Runtime Health',
+        observabilityPackageId: obs?.id ?? null,
+        observationCount: obs?.metrics.observationCount ?? 4,
+        executionCount: obs?.metrics.executionCount ?? 2,
+        moduleEventCount: obs?.metrics.moduleEventCount ?? 2,
+        stateEventCount: obs?.metrics.stateEventCount ?? 1,
+        observabilityHealth: obs?.metrics.health ?? 'Healthy',
+        observabilityHealthScore: obs?.metrics.healthScore ?? 0.8,
+        hasTimeline: (obs?.timeline.events.length ?? 4) > 0,
+        stateConsistent:
+          experienceStatePackage?.validation?.valid !== false,
+        transitionConsistent: true,
+        validationPassed:
+          obs?.validation?.valid ??
+          experienceStatePackage?.validation?.valid ??
+          true,
+      });
+      setRuntimeHealthPackage(inspected);
+      setRuntimeHealthEvents(services.runtimeHealthEngine.getEvents());
+      setRuntimeHealthIndexCount(
+        services.runtimeHealthEngine.getIndex().length,
+      );
+      setRuntimeHealthMessage(
+        `Health ${inspected.report.overallHealth} (score ${inspected.report.score}).`,
+      );
+    },
+    publishRuntimeHealth(): void {
+      if (runtimeHealthPackage === null) {
+        setRuntimeHealthMessage('Nejdřív Inspect Runtime.');
+        return;
+      }
+      try {
+        const published = services.runtimeHealthApi.publishHealth(
+          runtimeHealthPackage.id,
+        );
+        setRuntimeHealthPackage(published);
+        setRuntimeHealthEvents(services.runtimeHealthEngine.getEvents());
+        setRuntimeHealthMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeHealthMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeHealth(): void {
+      if (runtimeHealthPackage === null) {
+        setRuntimeHealthMessage('Nejdřív Inspect Runtime.');
+        return;
+      }
+      const validation = services.runtimeHealthApi.validateHealth(
+        runtimeHealthPackage.id,
+      );
+      const previewed = services.runtimeHealthApi.previewHealth(
+        runtimeHealthPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeHealthPackage(previewed);
+      }
+      setRuntimeHealthEvents(services.runtimeHealthEngine.getEvents());
+      setRuntimeHealthMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeHealth(): void {
+      if (runtimeHealthPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeHealthEngine.dispose(
+        runtimeHealthPackage.id,
+      );
+      setRuntimeHealthPackage(disposed);
+      setRuntimeHealthEvents(services.runtimeHealthEngine.getEvents());
+      setRuntimeHealthIndexCount(
+        services.runtimeHealthEngine.getIndex().length,
+      );
+      setRuntimeHealthMessage(null);
     },
     buildProject(): void {
       const projectId =

@@ -142,6 +142,10 @@ export function BuilderStudioApp() {
         observabilityEvents={session.observabilityEvents}
         observabilityIndexCount={session.observabilityIndexCount}
         observabilityMessage={session.observabilityMessage}
+        runtimeHealthPackage={session.runtimeHealthPackage}
+        runtimeHealthEvents={session.runtimeHealthEvents}
+        runtimeHealthIndexCount={session.runtimeHealthIndexCount}
+        runtimeHealthMessage={session.runtimeHealthMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -284,6 +288,10 @@ export function BuilderStudioApp() {
         onPublishRuntimeObservability={session.publishRuntimeObservability}
         onValidateRuntimeObservability={session.validateRuntimeObservability}
         onDisposeRuntimeObservability={session.disposeRuntimeObservability}
+        onInspectRuntimeHealth={session.inspectRuntimeHealth}
+        onPublishRuntimeHealth={session.publishRuntimeHealth}
+        onValidateRuntimeHealth={session.validateRuntimeHealth}
+        onDisposeRuntimeHealth={session.disposeRuntimeHealth}
       />
     </AppShell>
   );
