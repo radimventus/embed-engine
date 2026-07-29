@@ -737,3 +737,23 @@ export {
   createRuntimeRecoveryReportingIndex,
   type RuntimeRecoveryReportingIndex,
 } from './runtime-recovery-reporting/runtime-recovery-reporting-index';
+
+export {
+  createRuntimeOperationsDashboard,
+  type RuntimeOperationsDashboard,
+  type RuntimeOperationsDashboardOptions,
+} from './runtime-operations/runtime-operations-dashboard';
+export {
+  createRuntimeOperationsApi,
+  type RuntimeOperationsApi,
+} from './runtime-operations/runtime-operations-api';
+export {
+  createBasicDashboardAggregationStrategy,
+  createRuntimeOperationsValidator,
+  type DashboardAggregationStrategy,
+  type RuntimeOperationsValidator,
+} from './runtime-operations/basic-dashboard-aggregation-strategy';
+export {
+  createRuntimeOperationsIndex,
+  type RuntimeOperationsIndex,
+} from './runtime-operations/runtime-operations-index';

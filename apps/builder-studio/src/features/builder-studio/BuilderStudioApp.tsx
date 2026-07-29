@@ -198,6 +198,10 @@ export function BuilderStudioApp() {
         runtimeRecoveryReportingMessage={
           session.runtimeRecoveryReportingMessage
         }
+        runtimeOperationsPackage={session.runtimeOperationsPackage}
+        runtimeOperationsEvents={session.runtimeOperationsEvents}
+        runtimeOperationsIndexCount={session.runtimeOperationsIndexCount}
+        runtimeOperationsMessage={session.runtimeOperationsMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -412,6 +416,10 @@ export function BuilderStudioApp() {
         onDisposeRuntimeRecoveryReporting={
           session.disposeRuntimeRecoveryReporting
         }
+        onCollectRuntimeOperations={session.collectRuntimeOperations}
+        onPublishRuntimeOperations={session.publishRuntimeOperations}
+        onValidateRuntimeOperations={session.validateRuntimeOperations}
+        onDisposeRuntimeOperations={session.disposeRuntimeOperations}
       />
     </AppShell>
   );

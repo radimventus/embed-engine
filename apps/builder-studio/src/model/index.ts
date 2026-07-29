@@ -660,3 +660,14 @@ export type {
   RuntimeRecoveryReportingValidation,
   RuntimeRecoveryReportingValidationIssue,
 } from './runtime-recovery-reporting-types';
+
+export type {
+  CollectOperationsInput,
+  OperationsSnapshot,
+  RuntimeOperationsEvent,
+  RuntimeOperationsEventType,
+  RuntimeOperationsIndexEntry,
+  RuntimeOperationsPackage,
+  RuntimeOperationsValidation,
+  RuntimeOperationsValidationIssue,
+} from './runtime-operations-types';

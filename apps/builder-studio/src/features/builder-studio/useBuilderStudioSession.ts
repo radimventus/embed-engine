@@ -75,6 +75,8 @@ import type {
   RuntimeRecoverySummaryPackage,
   RuntimeRecoveryReportingEvent,
   RuntimeRecoveryReportPackage,
+  RuntimeOperationsEvent,
+  RuntimeOperationsPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -189,6 +191,8 @@ import {
   createRuntimeRecoveryCoordinator,
   createRuntimeRecoveryReportingApi,
   createRuntimeRecoveryReportingEngine,
+  createRuntimeOperationsApi,
+  createRuntimeOperationsDashboard,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -364,6 +368,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeRecoveryReportingEvents: readonly RuntimeRecoveryReportingEvent[];
   readonly runtimeRecoveryReportingIndexCount: number;
   readonly runtimeRecoveryReportingMessage: string | null;
+  readonly runtimeOperationsPackage: RuntimeOperationsPackage | null;
+  readonly runtimeOperationsEvents: readonly RuntimeOperationsEvent[];
+  readonly runtimeOperationsIndexCount: number;
+  readonly runtimeOperationsMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -571,6 +579,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeRecoveryReporting: () => void;
   readonly validateRuntimeRecoveryReporting: () => void;
   readonly disposeRuntimeRecoveryReporting: () => void;
+  readonly collectRuntimeOperations: () => void;
+  readonly publishRuntimeOperations: () => void;
+  readonly validateRuntimeOperations: () => void;
+  readonly disposeRuntimeOperations: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1280,6 +1292,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeRecoveryReportingApi = createRuntimeRecoveryReportingApi(
       runtimeRecoveryReportingEngine,
     );
+    const runtimeOperationsDashboard = createRuntimeOperationsDashboard();
+    const runtimeOperationsApi = createRuntimeOperationsApi(
+      runtimeOperationsDashboard,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1377,6 +1393,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeRecoveryCoordinatorApi,
       runtimeRecoveryReportingEngine,
       runtimeRecoveryReportingApi,
+      runtimeOperationsDashboard,
+      runtimeOperationsApi,
     };
   }, []);
 
@@ -1814,6 +1832,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeRecoveryReportingMessage,
     setRuntimeRecoveryReportingMessage,
   ] = useState<string | null>(null);
+  const [runtimeOperationsPackage, setRuntimeOperationsPackage] =
+    useState<RuntimeOperationsPackage | null>(null);
+  const [runtimeOperationsEvents, setRuntimeOperationsEvents] = useState<
+    readonly RuntimeOperationsEvent[]
+  >([]);
+  const [runtimeOperationsIndexCount, setRuntimeOperationsIndexCount] =
+    useState(0);
+  const [runtimeOperationsMessage, setRuntimeOperationsMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2235,6 +2263,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeRecoveryReportingEvents,
     runtimeRecoveryReportingIndexCount,
     runtimeRecoveryReportingMessage,
+    runtimeOperationsPackage,
+    runtimeOperationsEvents,
+    runtimeOperationsIndexCount,
+    runtimeOperationsMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -6078,6 +6110,109 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeRecoveryReportingEngine.getIndex().length,
       );
       setRuntimeRecoveryReportingMessage(null);
+    },
+    collectRuntimeOperations(): void {
+      const collected = services.runtimeOperationsApi.collectOperations({
+        sessionId:
+          runtimeRecoveryCoordinatorPackage?.session.metadata.sessionId ??
+          runtimeRecoveryReportingPackage?.report.sessionId ??
+          runtimeEnforcementPackage?.decision.sessionId ??
+          runtimeHealthPackage?.report.sessionId ??
+          'runtime-session-demo',
+        runtimeExecutionId:
+          runtimeRecoveryCoordinatorPackage?.session.runtimeExecutionId ??
+          runtimeRecoveryReportingPackage?.report.runtimeExecutionId ??
+          runtimeEnforcementPackage?.decision.runtimeExecutionId ??
+          runtimeExecutionPackage?.execution.id ??
+          'runtime-execution-demo',
+        title: 'Builder Runtime Operations',
+        policyStatus:
+          runtimePolicyPackage?.metadata.status ?? 'Unknown',
+        governanceStatus:
+          runtimeGovernancePackage?.evaluation.overallStatus ?? 'Unknown',
+        healthStatus:
+          runtimeHealthPackage?.report.overallHealth ?? 'Unknown',
+        auditStatus: runtimeAuditPackage?.metadata.status ?? 'Unknown',
+        enforcementStatus:
+          runtimeEnforcementPackage?.decision.status ?? 'Unknown',
+        recoveryStatus:
+          runtimeRecoveryReportingPackage?.report.finalStatus ??
+          runtimeRecoveryCoordinatorPackage?.session.status ??
+          runtimeRecoveryExecutionPackage?.execution.status ??
+          'Unknown',
+        observabilityStatus:
+          observabilityPackage?.metadata.status ?? 'Unknown',
+        lastReportId: runtimeRecoveryReportingPackage?.report.id ?? null,
+        lastReportStatus:
+          runtimeRecoveryReportingPackage?.report.finalStatus ?? null,
+      });
+      setRuntimeOperationsPackage(collected);
+      setRuntimeOperationsEvents(
+        services.runtimeOperationsDashboard.getEvents(),
+      );
+      setRuntimeOperationsIndexCount(
+        services.runtimeOperationsDashboard.getIndex().length,
+      );
+      setRuntimeOperationsMessage(
+        `Snapshot ${collected.snapshot.id} · recovery ${collected.snapshot.recoveryStatus}.`,
+      );
+    },
+    publishRuntimeOperations(): void {
+      if (runtimeOperationsPackage === null) {
+        setRuntimeOperationsMessage('Nejdřív Collect Operations.');
+        return;
+      }
+      try {
+        const published = services.runtimeOperationsApi.publishOperations(
+          runtimeOperationsPackage.id,
+        );
+        setRuntimeOperationsPackage(published);
+        setRuntimeOperationsEvents(
+          services.runtimeOperationsDashboard.getEvents(),
+        );
+        setRuntimeOperationsMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeOperationsMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeOperations(): void {
+      if (runtimeOperationsPackage === null) {
+        setRuntimeOperationsMessage('Nejdřív Collect Operations.');
+        return;
+      }
+      const validation = services.runtimeOperationsApi.validateOperations(
+        runtimeOperationsPackage.id,
+      );
+      const previewed = services.runtimeOperationsApi.previewOperations(
+        runtimeOperationsPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeOperationsPackage(previewed);
+      }
+      setRuntimeOperationsEvents(
+        services.runtimeOperationsDashboard.getEvents(),
+      );
+      setRuntimeOperationsMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeOperations(): void {
+      if (runtimeOperationsPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeOperationsDashboard.dispose(
+        runtimeOperationsPackage.id,
+      );
+      setRuntimeOperationsPackage(disposed);
+      setRuntimeOperationsEvents(
+        services.runtimeOperationsDashboard.getEvents(),
+      );
+      setRuntimeOperationsIndexCount(
+        services.runtimeOperationsDashboard.getIndex().length,
+      );
+      setRuntimeOperationsMessage(null);
     },
     buildProject(): void {
       const projectId =

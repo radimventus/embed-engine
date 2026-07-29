@@ -56,6 +56,7 @@ export type WorkspaceSectionId =
   | 'runtime-recovery-execution'
   | 'runtime-recovery-coordinator'
   | 'runtime-recovery-reporting'
+  | 'runtime-operations'
   | 'media'
   | 'layout'
   | 'knowledge';
