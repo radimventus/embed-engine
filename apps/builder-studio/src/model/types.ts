@@ -60,6 +60,7 @@ export type WorkspaceSectionId =
   | 'runtime-integration'
   | 'runtime-registry'
   | 'runtime-manifest'
+  | 'runtime-api'
   | 'media'
   | 'layout'
   | 'knowledge';

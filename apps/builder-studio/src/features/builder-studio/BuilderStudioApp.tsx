@@ -214,6 +214,10 @@ export function BuilderStudioApp() {
         runtimeManifestEvents={session.runtimeManifestEvents}
         runtimeManifestIndexCount={session.runtimeManifestIndexCount}
         runtimeManifestMessage={session.runtimeManifestMessage}
+        runtimeApiPackage={session.runtimeApiPackage}
+        runtimeApiEvents={session.runtimeApiEvents}
+        runtimeApiIndexCount={session.runtimeApiIndexCount}
+        runtimeApiMessage={session.runtimeApiMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -444,6 +448,10 @@ export function BuilderStudioApp() {
         onPublishRuntimeManifest={session.publishRuntimeManifest}
         onValidateRuntimeManifest={session.validateRuntimeManifest}
         onDisposeRuntimeManifest={session.disposeRuntimeManifest}
+        onRegisterRuntimeApi={session.registerRuntimeApi}
+        onPublishRuntimeApi={session.publishRuntimeApi}
+        onValidateRuntimeApi={session.validateRuntimeApi}
+        onDisposeRuntimeApi={session.disposeRuntimeApi}
       />
     </AppShell>
   );

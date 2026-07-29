@@ -46,6 +46,7 @@ const SECTIONS: readonly {
   { id: 'runtime-integration', label: 'Runtime Integration' },
   { id: 'runtime-registry', label: 'Runtime Registry' },
   { id: 'runtime-manifest', label: 'Runtime Manifest' },
+  { id: 'runtime-api', label: 'Runtime API' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

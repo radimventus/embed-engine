@@ -83,6 +83,8 @@ import type {
   RuntimeRegistryPackage,
   RuntimeManifestEvent,
   RuntimeManifestPackage,
+  RuntimeApiEvent,
+  RuntimeApiPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -205,6 +207,8 @@ import {
   createRuntimeIntegrationRegistry,
   createRuntimeManifestApi,
   createRuntimeManifestEngine,
+  createRuntimeApiGatewayApi,
+  createRuntimeApiGateway,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -396,6 +400,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeManifestEvents: readonly RuntimeManifestEvent[];
   readonly runtimeManifestIndexCount: number;
   readonly runtimeManifestMessage: string | null;
+  readonly runtimeApiPackage: RuntimeApiPackage | null;
+  readonly runtimeApiEvents: readonly RuntimeApiEvent[];
+  readonly runtimeApiIndexCount: number;
+  readonly runtimeApiMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -619,6 +627,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeManifest: () => void;
   readonly validateRuntimeManifest: () => void;
   readonly disposeRuntimeManifest: () => void;
+  readonly registerRuntimeApi: () => void;
+  readonly publishRuntimeApi: () => void;
+  readonly validateRuntimeApi: () => void;
+  readonly disposeRuntimeApi: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1344,6 +1356,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeManifestApi = createRuntimeManifestApi(
       runtimeManifestEngine,
     );
+    const runtimeApiGateway = createRuntimeApiGateway();
+    const runtimeApiGatewayApi = createRuntimeApiGatewayApi(
+      runtimeApiGateway,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1449,6 +1465,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeRegistryApi,
       runtimeManifestEngine,
       runtimeManifestApi,
+      runtimeApiGateway,
+      runtimeApiGatewayApi,
     };
   }, []);
 
@@ -1926,6 +1944,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [runtimeManifestMessage, setRuntimeManifestMessage] = useState<
     string | null
   >(null);
+  const [runtimeApiPackage, setRuntimeApiPackage] =
+    useState<RuntimeApiPackage | null>(null);
+  const [runtimeApiEvents, setRuntimeApiEvents] = useState<
+    readonly RuntimeApiEvent[]
+  >([]);
+  const [runtimeApiIndexCount, setRuntimeApiIndexCount] = useState(0);
+  const [runtimeApiMessage, setRuntimeApiMessage] = useState<string | null>(
+    null,
+  );
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2363,6 +2390,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeManifestEvents,
     runtimeManifestIndexCount,
     runtimeManifestMessage,
+    runtimeApiPackage,
+    runtimeApiEvents,
+    runtimeApiIndexCount,
+    runtimeApiMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -6732,6 +6763,115 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeManifestEngine.getIndex().length,
       );
       setRuntimeManifestMessage(null);
+    },
+    registerRuntimeApi(): void {
+      const sessionId =
+        runtimeManifestPackage?.metadata.sessionId ??
+        runtimeRegistryPackage?.metadata.sessionId ??
+        runtimeIntegrationPackage?.metadata.sessionId ??
+        'runtime-session-demo';
+      const fromManifest =
+        runtimeManifestPackage?.manifest.capabilities.map((capability) => ({
+          capability: capability.id,
+          operation: 'preview',
+          version: capability.version,
+          handler: `runtime.${capability.metadata.packageType.toLowerCase()}.preview`,
+          title: `${capability.name} Preview`,
+          packageId: capability.package,
+          status: 'Available',
+          notes: capability.metadata.notes,
+        })) ?? [];
+      const routes =
+        fromManifest.length > 0
+          ? fromManifest
+          : [
+              {
+                capability: 'capability-policy',
+                operation: 'preview',
+                version: '1.0.0',
+                handler: 'runtime.policy.preview',
+                title: 'Policy Preview',
+                packageId: 'runtime-policy-package-demo',
+                status: 'Available',
+              },
+              {
+                capability: 'capability-governance',
+                operation: 'preview',
+                version: '1.0.0',
+                handler: 'runtime.governance.preview',
+                title: 'Governance Preview',
+                packageId: 'runtime-governance-package-demo',
+                status: 'Available',
+              },
+              {
+                capability: 'capability-operations',
+                operation: 'preview',
+                version: '1.0.0',
+                handler: 'runtime.operations.preview',
+                title: 'Operations Preview',
+                packageId: 'runtime-operations-package-demo',
+                status: 'Available',
+              },
+            ];
+      const registered = services.runtimeApiGatewayApi.initialize({
+        sessionId,
+        title: 'Builder Runtime API',
+        manifestId: runtimeManifestPackage?.manifest.id ?? null,
+        routes,
+      });
+      setRuntimeApiPackage(registered);
+      setRuntimeApiEvents(services.runtimeApiGateway.getEvents());
+      setRuntimeApiIndexCount(services.runtimeApiGateway.getIndex().length);
+      setRuntimeApiMessage(
+        `API ${registered.registry.id} · ${registered.registry.routes.length} route(s).`,
+      );
+    },
+    publishRuntimeApi(): void {
+      if (runtimeApiPackage === null) {
+        setRuntimeApiMessage('Nejdřív Register Routes.');
+        return;
+      }
+      try {
+        const published = services.runtimeApiGatewayApi.publishRuntimeApi(
+          runtimeApiPackage.id,
+        );
+        setRuntimeApiPackage(published);
+        setRuntimeApiEvents(services.runtimeApiGateway.getEvents());
+        setRuntimeApiMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeApiMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeApi(): void {
+      if (runtimeApiPackage === null) {
+        setRuntimeApiMessage('Nejdřív Register Routes.');
+        return;
+      }
+      const validation = services.runtimeApiGatewayApi.validateRuntimeApi(
+        runtimeApiPackage.id,
+      );
+      const previewed = services.runtimeApiGatewayApi.preview(
+        runtimeApiPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeApiPackage(previewed);
+      }
+      setRuntimeApiEvents(services.runtimeApiGateway.getEvents());
+      setRuntimeApiMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeApi(): void {
+      if (runtimeApiPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeApiGateway.dispose(runtimeApiPackage.id);
+      setRuntimeApiPackage(disposed);
+      setRuntimeApiEvents(services.runtimeApiGateway.getEvents());
+      setRuntimeApiIndexCount(services.runtimeApiGateway.getIndex().length);
+      setRuntimeApiMessage(null);
     },
     buildProject(): void {
       const projectId =

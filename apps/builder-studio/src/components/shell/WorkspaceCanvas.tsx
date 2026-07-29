@@ -74,6 +74,8 @@ import type {
   RuntimeRegistryPackage,
   RuntimeManifestEvent,
   RuntimeManifestPackage,
+  RuntimeApiEvent,
+  RuntimeApiPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -141,6 +143,7 @@ import { OperationsOverview } from './OperationsOverview';
 import { RuntimeIntegrationOverview } from './RuntimeIntegrationOverview';
 import { RuntimeRegistryOverview } from './RuntimeRegistryOverview';
 import { RuntimeManifestOverview } from './RuntimeManifestOverview';
+import { RuntimeApiOverview } from './RuntimeApiOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -315,6 +318,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeManifestEvents: readonly RuntimeManifestEvent[];
   readonly runtimeManifestIndexCount: number;
   readonly runtimeManifestMessage: string | null;
+  readonly runtimeApiPackage: RuntimeApiPackage | null;
+  readonly runtimeApiEvents: readonly RuntimeApiEvent[];
+  readonly runtimeApiIndexCount: number;
+  readonly runtimeApiMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -527,6 +534,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeManifest: () => void;
   readonly onValidateRuntimeManifest: () => void;
   readonly onDisposeRuntimeManifest: () => void;
+  readonly onRegisterRuntimeApi: () => void;
+  readonly onPublishRuntimeApi: () => void;
+  readonly onValidateRuntimeApi: () => void;
+  readonly onDisposeRuntimeApi: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -684,6 +695,10 @@ export function WorkspaceCanvas({
   runtimeManifestEvents,
   runtimeManifestIndexCount,
   runtimeManifestMessage,
+  runtimeApiPackage,
+  runtimeApiEvents,
+  runtimeApiIndexCount,
+  runtimeApiMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -886,6 +901,10 @@ export function WorkspaceCanvas({
   onPublishRuntimeManifest,
   onValidateRuntimeManifest,
   onDisposeRuntimeManifest,
+  onRegisterRuntimeApi,
+  onPublishRuntimeApi,
+  onValidateRuntimeApi,
+  onDisposeRuntimeApi,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1516,6 +1535,19 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeManifest}
             onDispose={onDisposeRuntimeManifest}
             message={runtimeManifestMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-api' ? (
+          <RuntimeApiOverview
+            apiPackage={runtimeApiPackage}
+            events={runtimeApiEvents}
+            indexCount={runtimeApiIndexCount}
+            onRegister={onRegisterRuntimeApi}
+            onPublish={onPublishRuntimeApi}
+            onValidate={onValidateRuntimeApi}
+            onDispose={onDisposeRuntimeApi}
+            message={runtimeApiMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

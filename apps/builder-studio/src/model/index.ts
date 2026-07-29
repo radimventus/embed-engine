@@ -712,3 +712,19 @@ export type {
   RuntimeManifestValidation,
   RuntimeManifestValidationIssue,
 } from './runtime-manifest-types';
+
+export type {
+  InitializeRuntimeApiInput,
+  InvokeRuntimeOperationInput,
+  RegisterRuntimeRouteInput,
+  ResolveRuntimeRouteInput,
+  RuntimeApiEvent,
+  RuntimeApiEventType,
+  RuntimeApiIndexEntry,
+  RuntimeApiInvocationResult,
+  RuntimeApiPackage,
+  RuntimeApiRegistry,
+  RuntimeApiRoute,
+  RuntimeApiValidation,
+  RuntimeApiValidationIssue,
+} from './runtime-api-types';

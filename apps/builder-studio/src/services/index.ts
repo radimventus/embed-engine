@@ -817,3 +817,23 @@ export {
   createRuntimeManifestIndex,
   type RuntimeManifestIndex,
 } from './runtime-manifest/runtime-manifest-index';
+
+export {
+  createRuntimeApiGateway,
+  type RuntimeApiGateway,
+  type RuntimeApiGatewayOptions,
+} from './runtime-api/runtime-api-gateway';
+export {
+  createRuntimeApiGatewayApi,
+  type RuntimeApiGatewayApi,
+} from './runtime-api/runtime-api-gateway-api';
+export {
+  createBasicRuntimeApiStrategy,
+  createRuntimeApiValidator,
+  type RuntimeApiStrategy,
+  type RuntimeApiValidator,
+} from './runtime-api/basic-runtime-api-strategy';
+export {
+  createRuntimeApiIndex,
+  type RuntimeApiIndex,
+} from './runtime-api/runtime-api-index';
