@@ -236,6 +236,10 @@ export function BuilderStudioApp() {
         objectPublicationEvents={session.objectPublicationEvents}
         objectPublicationIndexCount={session.objectPublicationIndexCount}
         objectPublicationMessage={session.objectPublicationMessage}
+        publishedObjectPackage={session.publishedObjectPackage}
+        publishedObjectEvents={session.publishedObjectEvents}
+        publishedObjectIndexCount={session.publishedObjectIndexCount}
+        publishedObjectMessage={session.publishedObjectMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -489,6 +493,10 @@ export function BuilderStudioApp() {
         onValidateObjectPublication={session.validateObjectPublication}
         onPublishObjectPublication={session.publishObjectPublication}
         onDisposeObjectPublication={session.disposeObjectPublication}
+        onRegisterPublishedObjects={session.registerPublishedObjects}
+        onArchivePublishedObjects={session.archivePublishedObjects}
+        onValidatePublishedObjects={session.validatePublishedObjects}
+        onDisposePublishedObjects={session.disposePublishedObjects}
       />
     </AppShell>
   );

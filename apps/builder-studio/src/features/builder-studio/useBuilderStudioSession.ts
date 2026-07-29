@@ -93,6 +93,8 @@ import type {
   RuntimeExtensionPackage,
   ObjectPublicationEvent,
   PublicationPackage,
+  PublishedObjectEvent,
+  PublishedObjectPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -225,6 +227,8 @@ import {
   createRuntimeExtensionFramework,
   createObjectPublicationApi,
   createObjectPublicationPipeline,
+  createPublishedObjectApi,
+  createPublishedObjectRegistry,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -436,6 +440,10 @@ export type BuilderStudioViewModel = {
   readonly objectPublicationEvents: readonly ObjectPublicationEvent[];
   readonly objectPublicationIndexCount: number;
   readonly objectPublicationMessage: string | null;
+  readonly publishedObjectPackage: PublishedObjectPackage | null;
+  readonly publishedObjectEvents: readonly PublishedObjectEvent[];
+  readonly publishedObjectIndexCount: number;
+  readonly publishedObjectMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -682,6 +690,10 @@ export type BuilderStudioViewModel = {
   readonly validateObjectPublication: () => void;
   readonly publishObjectPublication: () => void;
   readonly disposeObjectPublication: () => void;
+  readonly registerPublishedObjects: () => void;
+  readonly archivePublishedObjects: () => void;
+  readonly validatePublishedObjects: () => void;
+  readonly disposePublishedObjects: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1427,6 +1439,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const objectPublicationApi = createObjectPublicationApi(
       objectPublicationPipeline,
     );
+    const publishedObjectRegistry = createPublishedObjectRegistry();
+    const publishedObjectApi = createPublishedObjectApi(
+      publishedObjectRegistry,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1542,6 +1558,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeExtensionApi,
       objectPublicationPipeline,
       objectPublicationApi,
+      publishedObjectRegistry,
+      publishedObjectApi,
     };
   }, []);
 
@@ -2069,6 +2087,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [objectPublicationMessage, setObjectPublicationMessage] = useState<
     string | null
   >(null);
+  const [publishedObjectPackage, setPublishedObjectPackage] =
+    useState<PublishedObjectPackage | null>(null);
+  const [publishedObjectEvents, setPublishedObjectEvents] = useState<
+    readonly PublishedObjectEvent[]
+  >([]);
+  const [publishedObjectIndexCount, setPublishedObjectIndexCount] =
+    useState(0);
+  const [publishedObjectMessage, setPublishedObjectMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2526,6 +2554,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     objectPublicationEvents,
     objectPublicationIndexCount,
     objectPublicationMessage,
+    publishedObjectPackage,
+    publishedObjectEvents,
+    publishedObjectIndexCount,
+    publishedObjectMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -7627,6 +7659,152 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.objectPublicationPipeline.getIndex().length,
       );
       setObjectPublicationMessage(null);
+    },
+    registerPublishedObjects(): void {
+      const sessionId =
+        objectPublicationPackage?.metadata.sessionId ??
+        runtimeExtensionPackage?.metadata.sessionId ??
+        'published-object-session-demo';
+      const fromPublication =
+        objectPublicationPackage !== null &&
+        objectPublicationPackage.metadata.status === 'Published'
+          ? [
+              {
+                objectId: objectPublicationPackage.objectPackage.objectId,
+                version: objectPublicationPackage.objectPackage.version,
+                publicationVersion: objectPublicationPackage.version,
+                title: objectPublicationPackage.objectPackage.metadata.title,
+                manifest: {
+                  id: objectPublicationPackage.objectPackage.manifest.id,
+                  objectVersion:
+                    objectPublicationPackage.objectPackage.manifest
+                      .objectVersion,
+                  runtimeVersion:
+                    objectPublicationPackage.objectPackage.manifest
+                      .runtimeVersion,
+                  contractVersion:
+                    objectPublicationPackage.objectPackage.manifest
+                      .contractVersion,
+                  compatibilityVersion:
+                    objectPublicationPackage.objectPackage.manifest
+                      .compatibilityVersion,
+                  generatedAt:
+                    objectPublicationPackage.objectPackage.manifest
+                      .generatedAt,
+                },
+                sourcePublicationPackageId: objectPublicationPackage.id,
+                sourceObjectPackageId:
+                  objectPublicationPackage.objectPackage.id,
+                checksum: objectPublicationPackage.objectPackage.checksum,
+              },
+            ]
+          : [];
+      const objects =
+        fromPublication.length > 0
+          ? fromPublication
+          : [
+              {
+                objectId: 'object-demo-house',
+                version: '1.0.0',
+                publicationVersion: '1.0.0',
+                title: 'Demo House',
+                manifest: {
+                  id: 'publication-manifest-demo',
+                  objectVersion: '1.0.0',
+                  runtimeVersion: '1.0.0',
+                  contractVersion: '1.0.0',
+                  compatibilityVersion: '1.0.0',
+                  generatedAt: new Date().toISOString(),
+                },
+                sourcePublicationPackageId: 'publication-package-demo',
+                sourceObjectPackageId: 'publication-object-package-demo',
+                checksum: 'chk-demo',
+              },
+              {
+                objectId: 'object-demo-apartment',
+                version: '1.0.0',
+                publicationVersion: '1.0.0',
+                title: 'Demo Apartment',
+                manifest: {
+                  id: 'publication-manifest-demo-2',
+                  objectVersion: '1.0.0',
+                  runtimeVersion: '1.0.0',
+                  contractVersion: '1.0.0',
+                  compatibilityVersion: '1.0.0',
+                  generatedAt: new Date().toISOString(),
+                },
+                sourcePublicationPackageId: 'publication-package-demo-2',
+                sourceObjectPackageId: 'publication-object-package-demo-2',
+                checksum: 'chk-demo-2',
+              },
+            ];
+      const registered = services.publishedObjectApi.initialize({
+        sessionId,
+        title: 'Builder Published Objects',
+        objects,
+      });
+      setPublishedObjectPackage(registered);
+      setPublishedObjectEvents(services.publishedObjectRegistry.getEvents());
+      setPublishedObjectIndexCount(
+        services.publishedObjectRegistry.getIndex().length,
+      );
+      setPublishedObjectMessage(
+        `Catalog ${registered.catalog.id} · ${registered.catalog.objects.length} object(s).`,
+      );
+    },
+    archivePublishedObjects(): void {
+      if (publishedObjectPackage === null) {
+        setPublishedObjectMessage('Nejdřív Register Published Objects.');
+        return;
+      }
+      const target =
+        publishedObjectPackage.catalog.objects.find(
+          (item) => item.status !== 'Archived',
+        ) ?? publishedObjectPackage.catalog.objects[0];
+      if (target === undefined) {
+        setPublishedObjectMessage('Žádný objekt k archive.');
+        return;
+      }
+      const archived = services.publishedObjectApi.archivePublishedObject(
+        publishedObjectPackage.id,
+        target.id,
+      );
+      setPublishedObjectPackage(archived);
+      setPublishedObjectEvents(services.publishedObjectRegistry.getEvents());
+      setPublishedObjectMessage(`Archived ${target.metadata.title}.`);
+    },
+    validatePublishedObjects(): void {
+      if (publishedObjectPackage === null) {
+        setPublishedObjectMessage('Nejdřív Register Published Objects.');
+        return;
+      }
+      const validation = services.publishedObjectApi.validatePublishedObject(
+        publishedObjectPackage.id,
+      );
+      const previewed = services.publishedObjectApi.preview(
+        publishedObjectPackage.id,
+      );
+      if (previewed !== null) {
+        setPublishedObjectPackage(previewed);
+      }
+      setPublishedObjectEvents(services.publishedObjectRegistry.getEvents());
+      setPublishedObjectMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposePublishedObjects(): void {
+      if (publishedObjectPackage === null) {
+        return;
+      }
+      const disposed = services.publishedObjectRegistry.dispose(
+        publishedObjectPackage.id,
+      );
+      setPublishedObjectPackage(disposed);
+      setPublishedObjectEvents(services.publishedObjectRegistry.getEvents());
+      setPublishedObjectIndexCount(
+        services.publishedObjectRegistry.getIndex().length,
+      );
+      setPublishedObjectMessage(null);
     },
     buildProject(): void {
       const projectId =

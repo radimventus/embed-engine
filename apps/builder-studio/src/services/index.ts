@@ -917,3 +917,23 @@ export {
   createPublicationIndex,
   type PublicationIndex,
 } from './object-publication/publication-index';
+
+export {
+  createPublishedObjectRegistry,
+  type PublishedObjectRegistry,
+  type PublishedObjectRegistryOptions,
+} from './published-object/published-object-registry';
+export {
+  createPublishedObjectApi,
+  type PublishedObjectApi,
+} from './published-object/published-object-api';
+export {
+  createBasicPublishedObjectStrategy,
+  createPublishedObjectValidator,
+  type PublishedObjectStrategy,
+  type PublishedObjectValidator,
+} from './published-object/basic-published-object-strategy';
+export {
+  createPublishedObjectIndex,
+  type PublishedObjectIndex,
+} from './published-object/published-object-index';

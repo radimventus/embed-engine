@@ -787,3 +787,18 @@ export type {
   PublicationValidation,
   PublicationValidationIssue,
 } from './object-publication-types';
+
+export type {
+  InitializePublishedObjectRegistryInput,
+  PublishedObject,
+  PublishedObjectCatalog,
+  PublishedObjectEvent,
+  PublishedObjectEventType,
+  PublishedObjectIndexEntry,
+  PublishedObjectManifestRef,
+  PublishedObjectPackage,
+  PublishedObjectStatus,
+  PublishedObjectValidation,
+  PublishedObjectValidationIssue,
+  RegisterPublishedObjectInput,
+} from './published-object-types';
