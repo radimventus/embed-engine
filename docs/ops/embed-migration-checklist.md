@@ -114,4 +114,4 @@ If conis.cz is unavailable:
 
 ## Simplified snippet (future)
 
-Partners should eventually paste only a mount target + one script tag, with `assetBase` resolved inside Delivery. Proposal: [Simplified Partner Snippet Proposal](./embed-simplified-partner-snippet-proposal.md). **Not implemented in this migration.**
+Partners should eventually paste only a mount target + one script tag, with `assetBase` resolved inside Delivery. Formal CAP: [CAP-INFRA-01](./CAP-INFRA-01-centralized-embed-configuration.md) (post-pilot). Detail sketch: [Simplified Partner Snippet Proposal](./embed-simplified-partner-snippet-proposal.md). **Not implemented in this migration.**

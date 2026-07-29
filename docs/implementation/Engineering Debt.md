@@ -8,6 +8,7 @@ Items here are candidates for later milestones / ADRs.
 | ID | Item | Why deferred |
 | --- | --- | --- |
 | ED-DIST-01 | GitHub Pages hosting of `packages/embed/dist` | **Done (M3/S2)** — published under `docs/embed/` at https://conis.cz/embed/ (custom domain; PT-EMBED-MIGRATION-01) |
+| ED-INFRA-001 | GitHub Pages used as production `assetBase` (CORS on 301) | **PASS** — [ED-INFRA-001](../ops/ED-INFRA-001.md); follow-up [CAP-INFRA-01](../ops/CAP-INFRA-01-centralized-embed-configuration.md) |
 | ED-DIST-02 | GitHub Actions release workflow | Publishing automation out of scope |
 | ED-DIST-03 | CDN / npm publish of `@embed-engine/embed` | Requires auth, semver policy, changelog process |
 | ED-DIST-04 | Single bundled `embed.d.ts` (rollup-types) | Current multi-file public `.d.ts` graph is sufficient for MVP |

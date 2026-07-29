@@ -1,7 +1,8 @@
 # Simplified Partner Snippet — Proposal
 
-**Status:** Proposal only (PT-EMBED-MIGRATION-01)  
-**Do not implement in this ticket.**
+**Status:** Absorbed by **[CAP-INFRA-01](./CAP-INFRA-01-centralized-embed-configuration.md)** (Proposed)  
+**Origin:** PT-EMBED-MIGRATION-01  
+**Do not implement outside CAP-INFRA-01.**
 
 ## Goal
 

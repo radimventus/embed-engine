@@ -46,6 +46,7 @@ Reaction-driven backlog. Prefer Behavior Packs and **User Transformation** over 
 | PRI-PM-02 | Multi-user / couple Priority collaboration | ADR-007 Q2 | Husband+wife, family, advisor+customer as cognitive actors — postponed. Requires Participant / merge ADR. |
 | PRI-PM-03 | Session restore of DecisionState | ADR-007 Q3 | Optional rehydrate before `project()`. Not LocalStorage-by-default in MVP. |
 | PRI-PM-04 | Backend DecisionState persistence | ADR-007 Q3 | Durable decision process across devices / CRM. Out of Cognitive Layer. |
+| CAP-INFRA-01 | Centralized Embed Configuration — partner paste without `assetBase` / infra fields | ED-INFRA-001 | **Post-pilot.** Prevents stale CMS infra snippets. Not before pilot-critical CAPs. [CAP](../../ops/CAP-INFRA-01-centralized-embed-configuration.md) |
 
 ---
 
