@@ -117,6 +117,9 @@ import type {
   Project,
   WorkspaceEvent,
   WorkspacePackage,
+  Asset,
+  AssetManagerEvent,
+  AssetPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -205,6 +208,7 @@ import { ExportCapabilityOverview } from './ExportCapabilityOverview';
 import { ExportPoliciesOverview } from './ExportPoliciesOverview';
 import { ExportCertificationOverview } from './ExportCertificationOverview';
 import { ProjectsOverview } from './ProjectsOverview';
+import { AssetsOverview } from './AssetsOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -464,6 +468,11 @@ type WorkspaceCanvasProps = {
   readonly workspaceEvents: readonly WorkspaceEvent[];
   readonly workspaceIndexCount: number;
   readonly workspaceMessage: string | null;
+  readonly assetManagerPackage: AssetPackage | null;
+  readonly managedAssets: readonly Asset[];
+  readonly assetManagerEvents: readonly AssetManagerEvent[];
+  readonly assetManagerIndexCount: number;
+  readonly assetManagerMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -758,6 +767,10 @@ type WorkspaceCanvasProps = {
   readonly onCreateProject: () => void;
   readonly onDuplicateProject: (projectId: string) => void;
   readonly onArchiveProject: (projectId: string) => void;
+  readonly onCreateManagedAsset: () => void;
+  readonly onRenameManagedAsset: (assetId: string) => void;
+  readonly onArchiveManagedAsset: (assetId: string) => void;
+  readonly onRestoreManagedAsset: (assetId: string) => void;
   readonly onCertifyExport: () => void;
   readonly onValidateExportCertification: () => void;
   readonly onRevokeExportCertification: () => void;
@@ -1004,6 +1017,11 @@ export function WorkspaceCanvas({
   workspaceEvents,
   workspaceIndexCount,
   workspaceMessage,
+  assetManagerPackage,
+  managedAssets,
+  assetManagerEvents,
+  assetManagerIndexCount,
+  assetManagerMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1288,6 +1306,10 @@ export function WorkspaceCanvas({
   onCreateProject,
   onDuplicateProject,
   onArchiveProject,
+  onCreateManagedAsset,
+  onRenameManagedAsset,
+  onArchiveManagedAsset,
+  onRestoreManagedAsset,
   onCertifyExport,
   onValidateExportCertification,
   onRevokeExportCertification,
@@ -1321,7 +1343,7 @@ export function WorkspaceCanvas({
 
   return (
     <div>
-      {activeSection !== 'projects' ? (
+      {activeSection !== 'projects' && activeSection !== 'assets' ? (
         <ProjectDashboard
           projectName={projectModel.record.name}
           manifest={manifest}
@@ -1348,6 +1370,19 @@ export function WorkspaceCanvas({
             onOpenProject={onOpenProject}
             onDuplicateProject={onDuplicateProject}
             onArchiveProject={onArchiveProject}
+          />
+        ) : null}
+        {activeSection === 'assets' ? (
+          <AssetsOverview
+            assetPackage={assetManagerPackage}
+            assets={managedAssets}
+            events={assetManagerEvents}
+            indexCount={assetManagerIndexCount}
+            message={assetManagerMessage}
+            onCreateAsset={onCreateManagedAsset}
+            onRenameAsset={onRenameManagedAsset}
+            onArchiveAsset={onArchiveManagedAsset}
+            onRestoreAsset={onRestoreManagedAsset}
           />
         ) : null}
         {activeSection === 'overview' && objectPackage !== null ? (

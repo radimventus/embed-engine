@@ -126,6 +126,9 @@ import type {
   Project,
   WorkspaceEvent,
   WorkspacePackage,
+  Asset,
+  AssetManagerEvent,
+  AssetPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -284,6 +287,8 @@ import {
   createExportPolicyApi,
   createExportCertificationService,
   createExportCertificationApi,
+  createAssetManagerService,
+  createAssetManagerApi,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -564,6 +569,11 @@ export type BuilderStudioViewModel = {
   readonly workspaceEvents: readonly WorkspaceEvent[];
   readonly workspaceIndexCount: number;
   readonly workspaceMessage: string | null;
+  readonly assetManagerPackage: AssetPackage | null;
+  readonly managedAssets: readonly Asset[];
+  readonly assetManagerEvents: readonly AssetManagerEvent[];
+  readonly assetManagerIndexCount: number;
+  readonly assetManagerMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -586,6 +596,10 @@ export type BuilderStudioViewModel = {
   readonly createProject: () => void;
   readonly duplicateProject: (projectId: string) => void;
   readonly archiveProject: (projectId: string) => void;
+  readonly createManagedAsset: () => void;
+  readonly renameManagedAsset: (assetId: string) => void;
+  readonly archiveManagedAsset: (assetId: string) => void;
+  readonly restoreManagedAsset: (assetId: string) => void;
   readonly selectSection: (sectionId: WorkspaceSectionId) => void;
   readonly addAsset: (categoryId: AssetCategoryId) => void;
   readonly removeAsset: (
@@ -1657,6 +1671,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const exportCertificationApi = createExportCertificationApi(
       exportCertificationService,
     );
+    const assetManagerService = createAssetManagerService();
+    const assetManagerApi = createAssetManagerApi(assetManagerService);
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1804,6 +1820,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       exportPolicyApi,
       exportCertificationService,
       exportCertificationApi,
+      assetManagerService,
+      assetManagerApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -1827,6 +1845,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     () => services.workspaceService.getIndex().length,
   );
   const [workspaceMessage, setWorkspaceMessage] = useState<string | null>(null);
+  const [assetManagerPackage, setAssetManagerPackage] =
+    useState<AssetPackage | null>(null);
+  const [managedAssets, setManagedAssets] = useState<readonly Asset[]>([]);
+  const [assetManagerEvents, setAssetManagerEvents] = useState<
+    readonly AssetManagerEvent[]
+  >([]);
+  const [assetManagerIndexCount, setAssetManagerIndexCount] = useState(0);
+  const [assetManagerMessage, setAssetManagerMessage] = useState<string | null>(
+    null,
+  );
   const [activeProjectModel, setActiveProjectModel] = useState(() =>
     services.workspaceService.getActiveProjectModel(),
   );
@@ -3008,6 +3036,11 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     workspaceEvents,
     workspaceIndexCount,
     workspaceMessage,
+    assetManagerPackage,
+    managedAssets,
+    assetManagerEvents,
+    assetManagerIndexCount,
+    assetManagerMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3065,6 +3098,14 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       );
       setWorkspaceMessage('Project opened.');
       setActiveSection('overview');
+      const managed =
+        services.assetManagerApi.listPackages().find(
+          (item) => item.metadata.projectId === projectId,
+        ) ?? null;
+      setAssetManagerPackage(managed);
+      setManagedAssets(services.assetManagerApi.listProjectAssets(projectId));
+      setAssetManagerEvents(services.assetManagerApi.listEvents());
+      setAssetManagerIndexCount(services.assetManagerApi.listIndex().length);
       syncFromServices(projectId);
     },
     createProject(): void {
@@ -3130,6 +3171,182 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setWorkspaceMessage('Project archived.');
       setActiveSection('projects');
       syncFromServices();
+    },
+    createManagedAsset(): void {
+      const projectId =
+        services.workspaceService.getWorkspace().activeProjectId ??
+        'harmony-124';
+      const samples = [
+        {
+          name: 'Facade.jpg',
+          type: 'IMAGE' as const,
+          location: {
+            provider: 'LOCAL' as const,
+            uri: `file:///assets/${projectId}/facade.jpg`,
+            key: 'facade.jpg',
+          },
+          mimeType: 'image/jpeg',
+          size: 180_000,
+          previewHint: 'IMG',
+        },
+        {
+          name: 'Walkthrough.mp4',
+          type: 'VIDEO' as const,
+          location: {
+            provider: 'S3' as const,
+            uri: `s3://conis-media/${projectId}/walkthrough.mp4`,
+            bucket: 'conis-media',
+            key: `${projectId}/walkthrough.mp4`,
+            region: 'eu-central-1',
+          },
+          mimeType: 'video/mp4',
+          size: 5_200_000,
+          previewHint: 'VID',
+        },
+        {
+          name: 'Brochure.pdf',
+          type: 'DOCUMENT' as const,
+          location: {
+            provider: 'CLOUDINARY' as const,
+            uri: `cloudinary://demo/${projectId}/brochure`,
+            key: `${projectId}/brochure`,
+            publicId: `${projectId}/brochure`,
+          },
+          mimeType: 'application/pdf',
+          size: 420_000,
+          previewHint: 'PDF',
+        },
+        {
+          name: 'Floorplan.svg',
+          type: 'FLOORPLAN' as const,
+          location: {
+            provider: 'LOCAL' as const,
+            uri: `file:///assets/${projectId}/floorplan.svg`,
+            key: 'floorplan.svg',
+          },
+          mimeType: 'image/svg+xml',
+          size: 64_000,
+          previewHint: 'PLAN',
+        },
+        {
+          name: 'Exterior.glb',
+          type: 'MODEL_3D' as const,
+          location: {
+            provider: 'OTHER' as const,
+            uri: `asset://${projectId}/exterior.glb`,
+            key: 'exterior.glb',
+          },
+          mimeType: 'model/gltf-binary',
+          size: 2_400_000,
+          previewHint: '3D',
+        },
+        {
+          name: 'Tour URL',
+          type: 'URL' as const,
+          location: {
+            provider: 'URL' as const,
+            uri: `https://example.com/tours/${projectId}`,
+          },
+          mimeType: 'text/uri-list',
+          size: 0,
+          previewHint: 'URL',
+        },
+      ];
+      const sample =
+        samples[
+          services.assetManagerApi.listProjectAssets(projectId).length %
+            samples.length
+        ]!;
+      try {
+        const asset = services.assetManagerApi.createAsset(
+          assetManagerPackage?.id ?? null,
+          {
+            projectId,
+            name: sample.name,
+            type: sample.type,
+            location: sample.location,
+            mimeType: sample.mimeType,
+            size: sample.size,
+            previewHint: sample.previewHint,
+          },
+          { projectId, title: `Assets · ${projectId}` },
+        );
+        const pkg =
+          services.assetManagerApi.listPackages().find(
+            (item) => item.metadata.projectId === projectId,
+          ) ??
+          services.assetManagerApi.getPackage(assetManagerPackage?.id ?? '') ??
+          null;
+        setAssetManagerPackage(pkg);
+        setManagedAssets(
+          services.assetManagerApi.listProjectAssets(projectId),
+        );
+        setAssetManagerEvents(services.assetManagerApi.listEvents());
+        setAssetManagerIndexCount(services.assetManagerApi.listIndex().length);
+        setAssetManagerMessage(`Asset created: ${asset.name}.`);
+      } catch (err) {
+        setAssetManagerMessage(
+          `Create failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    renameManagedAsset(assetId: string): void {
+      if (assetManagerPackage === null) {
+        setAssetManagerMessage('Create an asset first.');
+        return;
+      }
+      const asset = services.assetManagerApi.findAsset(assetId);
+      if (asset === null) {
+        setAssetManagerMessage('Asset not found.');
+        return;
+      }
+      const renamed = services.assetManagerApi.updateAsset(
+        assetManagerPackage.id,
+        assetId,
+        {
+          name: `${asset.name.replace(/\s+Copy.*$/, '')} Copy`,
+          label: `${asset.metadata.label} Copy`,
+        },
+      );
+      setAssetManagerPackage(
+        services.assetManagerApi.getPackage(assetManagerPackage.id),
+      );
+      setManagedAssets(
+        services.assetManagerApi.listProjectAssets(asset.projectId),
+      );
+      setAssetManagerEvents(services.assetManagerApi.listEvents());
+      setAssetManagerIndexCount(services.assetManagerApi.listIndex().length);
+      setAssetManagerMessage(`Renamed to ${renamed.name}.`);
+    },
+    archiveManagedAsset(assetId: string): void {
+      if (assetManagerPackage === null) return;
+      const asset = services.assetManagerApi.findAsset(assetId);
+      if (asset === null) return;
+      services.assetManagerApi.archiveAsset(assetManagerPackage.id, assetId);
+      setAssetManagerPackage(
+        services.assetManagerApi.getPackage(assetManagerPackage.id),
+      );
+      setManagedAssets(
+        services.assetManagerApi.listProjectAssets(asset.projectId),
+      );
+      setAssetManagerEvents(services.assetManagerApi.listEvents());
+      setAssetManagerIndexCount(services.assetManagerApi.listIndex().length);
+      setAssetManagerMessage(`Archived ${asset.name}.`);
+    },
+    restoreManagedAsset(assetId: string): void {
+      if (assetManagerPackage === null) return;
+      const asset = services.assetManagerApi.findAsset(assetId);
+      if (asset === null) return;
+      services.assetManagerApi.restoreAsset(assetManagerPackage.id, assetId);
+      setAssetManagerPackage(
+        services.assetManagerApi.getPackage(assetManagerPackage.id),
+      );
+      setManagedAssets(
+        services.assetManagerApi.listProjectAssets(asset.projectId),
+      );
+      setAssetManagerEvents(services.assetManagerApi.listEvents());
+      setAssetManagerIndexCount(services.assetManagerApi.listIndex().length);
+      setAssetManagerMessage(`Restored ${asset.name}.`);
     },
     selectSection(sectionId: WorkspaceSectionId): void {
       setActiveSection(sectionId);

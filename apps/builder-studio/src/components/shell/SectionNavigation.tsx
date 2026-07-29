@@ -5,6 +5,7 @@ const SECTIONS: readonly {
   label: string;
 }[] = [
   { id: 'projects', label: 'Projects' },
+  { id: 'assets', label: 'Assets' },
   { id: 'overview', label: 'Overview' },
   { id: 'experience', label: 'Experience' },
   { id: 'knowledge-package', label: 'Knowledge' },

@@ -80,6 +80,27 @@ export {
 } from './workspace-validator';
 export { createWorkspaceIndex, type WorkspaceIndex } from './workspace-index';
 export {
+  createAssetManagerService,
+  type AssetManagerService,
+  type AssetManagerServiceOptions,
+} from './asset-manager/asset-manager-service';
+export {
+  createAssetManagerApi,
+  type AssetManagerApi,
+} from './asset-manager/asset-manager-api';
+export {
+  createBasicAssetStrategy,
+  type AssetStrategy,
+} from './asset-manager/basic-asset-strategy';
+export {
+  createBasicAssetValidator,
+  type AssetValidator,
+} from './asset-manager/basic-asset-validator';
+export {
+  createAssetIndex,
+  type AssetIndex,
+} from './asset-manager/asset-index';
+export {
   createObjectService,
   type ObjectService,
 } from './object/object-service';

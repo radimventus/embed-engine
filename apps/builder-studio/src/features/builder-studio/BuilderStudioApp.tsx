@@ -301,6 +301,11 @@ export function BuilderStudioApp() {
         workspaceEvents={session.workspaceEvents}
         workspaceIndexCount={session.workspaceIndexCount}
         workspaceMessage={session.workspaceMessage}
+        assetManagerPackage={session.assetManagerPackage}
+        managedAssets={session.managedAssets}
+        assetManagerEvents={session.assetManagerEvents}
+        assetManagerIndexCount={session.assetManagerIndexCount}
+        assetManagerMessage={session.assetManagerMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -613,6 +618,10 @@ export function BuilderStudioApp() {
         onCreateProject={session.createProject}
         onDuplicateProject={session.duplicateProject}
         onArchiveProject={session.archiveProject}
+        onCreateManagedAsset={session.createManagedAsset}
+        onRenameManagedAsset={session.renameManagedAsset}
+        onArchiveManagedAsset={session.archiveManagedAsset}
+        onRestoreManagedAsset={session.restoreManagedAsset}
         onCertifyExport={session.certifyExport}
         onValidateExportCertification={session.validateExportCertification}
         onRevokeExportCertification={session.revokeExportCertification}

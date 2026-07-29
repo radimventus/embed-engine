@@ -38,6 +38,23 @@ export type {
   WorkspaceValidation,
   WorkspaceValidationIssue,
 } from './project-workspace-types';
+export type {
+  Asset,
+  AssetIndexEntry,
+  AssetLocation,
+  AssetLocationProvider,
+  AssetManagerEvent,
+  AssetManagerEventType,
+  AssetPackage,
+  AssetStatus,
+  AssetType,
+  AssetValidation,
+  AssetValidationIssue,
+  CreateManagedAssetInput,
+  InitializeAssetManagerInput,
+  ListManagedAssetsInput,
+  UpdateManagedAssetInput,
+} from './asset-manager-types';
 
 export type {
   BuildIssue,
