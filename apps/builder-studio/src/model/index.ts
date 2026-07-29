@@ -933,3 +933,17 @@ export type {
   InitializeExportSchemaRegistryInput,
   RegisterExportSchemaInput,
 } from './export-schema-types';
+
+export type {
+  ExportCompatibility,
+  ExportCompatibilityEvent,
+  ExportCompatibilityEventType,
+  ExportCompatibilityIndexEntry,
+  ExportCompatibilityLevel,
+  ExportCompatibilityPackage,
+  ExportCompatibilityStatus,
+  ExportCompatibilityValidation,
+  ExportCompatibilityValidationIssue,
+  InitializeExportCompatibilityRegistryInput,
+  RegisterExportCompatibilityInput,
+} from './export-compatibility-types';

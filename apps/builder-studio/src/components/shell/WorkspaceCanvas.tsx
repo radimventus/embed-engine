@@ -106,6 +106,8 @@ import type {
   ArtifactExportPackage,
   ExportSchemaEvent,
   ExportSchemaPackage,
+  ExportCompatibilityEvent,
+  ExportCompatibilityPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -189,6 +191,7 @@ import { PublicationPlanOverview } from './PublicationPlanOverview';
 import { PublicationExecutionOverview } from './PublicationExecutionOverview';
 import { ArtifactExportOverview } from './ArtifactExportOverview';
 import { ExportSchemaOverview } from './ExportSchemaOverview';
+import { ExportCompatibilityOverview } from './ExportCompatibilityOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -427,6 +430,10 @@ type WorkspaceCanvasProps = {
   readonly exportSchemaEvents: readonly ExportSchemaEvent[];
   readonly exportSchemaIndexCount: number;
   readonly exportSchemaMessage: string | null;
+  readonly exportCompatibilityPackage: ExportCompatibilityPackage | null;
+  readonly exportCompatibilityEvents: readonly ExportCompatibilityEvent[];
+  readonly exportCompatibilityIndexCount: number;
+  readonly exportCompatibilityMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -708,6 +715,9 @@ type WorkspaceCanvasProps = {
   readonly onRegisterExportSchema: () => void;
   readonly onValidateExportSchema: () => void;
   readonly onDisposeExportSchema: () => void;
+  readonly onRegisterExportCompatibility: () => void;
+  readonly onValidateExportCompatibility: () => void;
+  readonly onDisposeExportCompatibility: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -929,6 +939,10 @@ export function WorkspaceCanvas({
   exportSchemaEvents,
   exportSchemaIndexCount,
   exportSchemaMessage,
+  exportCompatibilityPackage,
+  exportCompatibilityEvents,
+  exportCompatibilityIndexCount,
+  exportCompatibilityMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1200,6 +1214,9 @@ export function WorkspaceCanvas({
   onRegisterExportSchema,
   onValidateExportSchema,
   onDisposeExportSchema,
+  onRegisterExportCompatibility,
+  onValidateExportCompatibility,
+  onDisposeExportCompatibility,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -2034,6 +2051,17 @@ export function WorkspaceCanvas({
             onValidate={onValidateExportSchema}
             onDispose={onDisposeExportSchema}
             message={exportSchemaMessage}
+          />
+        ) : null}
+        {activeSection === 'export-compatibility' ? (
+          <ExportCompatibilityOverview
+            compatibilityPackage={exportCompatibilityPackage}
+            events={exportCompatibilityEvents}
+            indexCount={exportCompatibilityIndexCount}
+            onRegister={onRegisterExportCompatibility}
+            onValidate={onValidateExportCompatibility}
+            onDispose={onDisposeExportCompatibility}
+            message={exportCompatibilityMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

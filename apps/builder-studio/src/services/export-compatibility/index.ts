@@ -1,0 +1,10 @@
+export type { ExportCompatibilityRegistry, ExportCompatibilityRegistryOptions } from './export-compatibility-registry';
+export { createExportCompatibilityRegistry } from './export-compatibility-registry';
+export type { ExportCompatibilityApi } from './export-compatibility-api';
+export { createExportCompatibilityApi } from './export-compatibility-api';
+export type { ExportCompatibilityStrategy } from './basic-export-compatibility-strategy';
+export { createBasicExportCompatibilityStrategy } from './basic-export-compatibility-strategy';
+export type { ExportCompatibilityValidator } from './basic-export-compatibility-validator';
+export { createBasicExportCompatibilityValidator } from './basic-export-compatibility-validator';
+export type { ExportCompatibilityIndex } from './export-compatibility-index';
+export { createExportCompatibilityIndex } from './export-compatibility-index';

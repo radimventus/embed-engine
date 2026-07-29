@@ -1145,3 +1145,25 @@ export {
   createExportSchemaIndex,
   type ExportSchemaIndex,
 } from './export-schema/export-schema-index';
+
+export {
+  createExportCompatibilityRegistry,
+  type ExportCompatibilityRegistry,
+  type ExportCompatibilityRegistryOptions,
+} from './export-compatibility/export-compatibility-registry';
+export {
+  createExportCompatibilityApi,
+  type ExportCompatibilityApi,
+} from './export-compatibility/export-compatibility-api';
+export {
+  createBasicExportCompatibilityStrategy,
+  type ExportCompatibilityStrategy,
+} from './export-compatibility/basic-export-compatibility-strategy';
+export {
+  createBasicExportCompatibilityValidator,
+  type ExportCompatibilityValidator,
+} from './export-compatibility/basic-export-compatibility-validator';
+export {
+  createExportCompatibilityIndex,
+  type ExportCompatibilityIndex,
+} from './export-compatibility/export-compatibility-index';

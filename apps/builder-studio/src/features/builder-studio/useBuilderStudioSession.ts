@@ -115,6 +115,8 @@ import type {
   ArtifactExportPackage,
   ExportSchemaEvent,
   ExportSchemaPackage,
+  ExportCompatibilityEvent,
+  ExportCompatibilityPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -265,6 +267,8 @@ import {
   createArtifactExportApi,
   createExportSchemaRegistry,
   createExportSchemaApi,
+  createExportCompatibilityRegistry,
+  createExportCompatibilityApi,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -524,6 +528,10 @@ export type BuilderStudioViewModel = {
   readonly exportSchemaEvents: readonly ExportSchemaEvent[];
   readonly exportSchemaIndexCount: number;
   readonly exportSchemaMessage: string | null;
+  readonly exportCompatibilityPackage: ExportCompatibilityPackage | null;
+  readonly exportCompatibilityEvents: readonly ExportCompatibilityEvent[];
+  readonly exportCompatibilityIndexCount: number;
+  readonly exportCompatibilityMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -816,6 +824,9 @@ export type BuilderStudioViewModel = {
   readonly registerExportSchema: () => void;
   readonly validateExportSchema: () => void;
   readonly disposeExportSchema: () => void;
+  readonly registerExportCompatibility: () => void;
+  readonly validateExportCompatibility: () => void;
+  readonly disposeExportCompatibility: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1592,6 +1603,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const artifactExportApi = createArtifactExportApi(artifactExportContract);
     const exportSchemaRegistry = createExportSchemaRegistry();
     const exportSchemaApi = createExportSchemaApi(exportSchemaRegistry);
+    const exportCompatibilityRegistry = createExportCompatibilityRegistry();
+    const exportCompatibilityApi = createExportCompatibilityApi(exportCompatibilityRegistry);
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1731,6 +1744,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       artifactExportApi,
       exportSchemaRegistry,
       exportSchemaApi,
+      exportCompatibilityRegistry,
+      exportCompatibilityApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -2362,6 +2377,14 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [exportSchemaIndexCount, setExportSchemaIndexCount] = useState(0);
   const [exportSchemaMessage, setExportSchemaMessage] =
     useState<string | null>(null);
+  const [exportCompatibilityPackage, setExportCompatibilityPackage] =
+    useState<ExportCompatibilityPackage | null>(null);
+  const [exportCompatibilityEvents, setExportCompatibilityEvents] = useState<
+    readonly ExportCompatibilityEvent[]
+  >([]);
+  const [exportCompatibilityIndexCount, setExportCompatibilityIndexCount] = useState(0);
+  const [exportCompatibilityMessage, setExportCompatibilityMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2863,6 +2886,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     exportSchemaEvents,
     exportSchemaIndexCount,
     exportSchemaMessage,
+    exportCompatibilityPackage,
+    exportCompatibilityEvents,
+    exportCompatibilityIndexCount,
+    exportCompatibilityMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -9176,6 +9203,49 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setExportSchemaEvents(services.exportSchemaRegistry.getEvents());
       setExportSchemaIndexCount(services.exportSchemaRegistry.getIndex().length);
       setExportSchemaMessage(null);
+    },
+    registerExportCompatibility(): void {
+      try {
+        const input = {
+          sourceSchemaVersion: exportSchemaPackage?.schemas[0]?.schemaVersion ?? '1.0.0',
+          targetSchemaVersion: '2.0.0',
+          compatibilityLevel: 'BACKWARD' as const,
+          title: 'Schema Compatibility',
+        };
+        const pkg = services.exportCompatibilityApi.registerExportCompatibility(
+          exportCompatibilityPackage?.id ?? null,
+          input,
+        );
+        setExportCompatibilityPackage(pkg);
+        setExportCompatibilityEvents(services.exportCompatibilityRegistry.getEvents());
+        setExportCompatibilityIndexCount(services.exportCompatibilityRegistry.getIndex().length);
+        setExportCompatibilityMessage('Export compatibility registered.');
+      } catch (err) {
+        setExportCompatibilityMessage(
+          `Register failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    validateExportCompatibility(): void {
+      if (exportCompatibilityPackage === null) {
+        setExportCompatibilityMessage('Register a compatibility first.');
+        return;
+      }
+      const validation = services.exportCompatibilityApi.validateExportCompatibility(exportCompatibilityPackage.id);
+      setExportCompatibilityPackage(services.exportCompatibilityRegistry.getPackage(exportCompatibilityPackage.id));
+      setExportCompatibilityEvents(services.exportCompatibilityRegistry.getEvents());
+      setExportCompatibilityIndexCount(services.exportCompatibilityRegistry.getIndex().length);
+      setExportCompatibilityMessage(
+        validation.valid ? 'Export compatibility validation OK.' : 'Export compatibility validation failed.',
+      );
+    },
+    disposeExportCompatibility(): void {
+      if (exportCompatibilityPackage === null) return;
+      const disposed = services.exportCompatibilityApi.dispose(exportCompatibilityPackage.id);
+      setExportCompatibilityPackage(disposed);
+      setExportCompatibilityEvents(services.exportCompatibilityRegistry.getEvents());
+      setExportCompatibilityIndexCount(services.exportCompatibilityRegistry.getIndex().length);
+      setExportCompatibilityMessage(null);
     },
     buildProject(): void {
       const projectId =
