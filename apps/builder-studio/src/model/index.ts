@@ -632,3 +632,18 @@ export type {
   RuntimeRecoveryExecutionValidation,
   RuntimeRecoveryExecutionValidationIssue,
 } from './runtime-recovery-execution-types';
+
+export type {
+  RecoverySession,
+  RecoverySessionExecutionRef,
+  RecoverySessionStatus,
+  RecoverySummary,
+  RuntimeRecoveryCoordinatorEvent,
+  RuntimeRecoveryCoordinatorEventType,
+  RuntimeRecoveryCoordinatorIndexEntry,
+  RuntimeRecoveryCoordinatorValidation,
+  RuntimeRecoveryCoordinatorValidationIssue,
+  RuntimeRecoverySummaryPackage,
+  StartRecoverySessionInput,
+  TrackRecoveryProgressInput,
+} from './runtime-recovery-coordinator-types';

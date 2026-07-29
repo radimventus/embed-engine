@@ -71,6 +71,8 @@ import type {
   RuntimeRecoveryPackage,
   RuntimeRecoveryExecutionEvent,
   RuntimeRecoveryExecutionPackage,
+  RuntimeRecoveryCoordinatorEvent,
+  RuntimeRecoverySummaryPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -181,6 +183,8 @@ import {
   createRuntimeRecoveryOrchestrator,
   createRuntimeRecoveryExecutionApi,
   createRuntimeRecoveryExecutor,
+  createRuntimeRecoveryCoordinatorApi,
+  createRuntimeRecoveryCoordinator,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -348,6 +352,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeRecoveryExecutionEvents: readonly RuntimeRecoveryExecutionEvent[];
   readonly runtimeRecoveryExecutionIndexCount: number;
   readonly runtimeRecoveryExecutionMessage: string | null;
+  readonly runtimeRecoveryCoordinatorPackage: RuntimeRecoverySummaryPackage | null;
+  readonly runtimeRecoveryCoordinatorEvents: readonly RuntimeRecoveryCoordinatorEvent[];
+  readonly runtimeRecoveryCoordinatorIndexCount: number;
+  readonly runtimeRecoveryCoordinatorMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -546,6 +554,11 @@ export type BuilderStudioViewModel = {
   readonly validateRuntimeRecoveryExecution: () => void;
   readonly publishRuntimeRecoveryExecution: () => void;
   readonly disposeRuntimeRecoveryExecution: () => void;
+  readonly startRuntimeRecoveryCoordinator: () => void;
+  readonly completeRuntimeRecoveryCoordinator: () => void;
+  readonly publishRuntimeRecoveryCoordinator: () => void;
+  readonly validateRuntimeRecoveryCoordinator: () => void;
+  readonly disposeRuntimeRecoveryCoordinator: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1246,6 +1259,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeRecoveryExecutionApi = createRuntimeRecoveryExecutionApi(
       runtimeRecoveryExecutor,
     );
+    const runtimeRecoveryCoordinator = createRuntimeRecoveryCoordinator();
+    const runtimeRecoveryCoordinatorApi = createRuntimeRecoveryCoordinatorApi(
+      runtimeRecoveryCoordinator,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1339,6 +1356,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeRecoveryApi,
       runtimeRecoveryExecutor,
       runtimeRecoveryExecutionApi,
+      runtimeRecoveryCoordinator,
+      runtimeRecoveryCoordinatorApi,
     };
   }, []);
 
@@ -1743,6 +1762,22 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [
     runtimeRecoveryExecutionMessage,
     setRuntimeRecoveryExecutionMessage,
+  ] = useState<string | null>(null);
+  const [
+    runtimeRecoveryCoordinatorPackage,
+    setRuntimeRecoveryCoordinatorPackage,
+  ] = useState<RuntimeRecoverySummaryPackage | null>(null);
+  const [
+    runtimeRecoveryCoordinatorEvents,
+    setRuntimeRecoveryCoordinatorEvents,
+  ] = useState<readonly RuntimeRecoveryCoordinatorEvent[]>([]);
+  const [
+    runtimeRecoveryCoordinatorIndexCount,
+    setRuntimeRecoveryCoordinatorIndexCount,
+  ] = useState(0);
+  const [
+    runtimeRecoveryCoordinatorMessage,
+    setRuntimeRecoveryCoordinatorMessage,
   ] = useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
@@ -2157,6 +2192,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeRecoveryExecutionEvents,
     runtimeRecoveryExecutionIndexCount,
     runtimeRecoveryExecutionMessage,
+    runtimeRecoveryCoordinatorPackage,
+    runtimeRecoveryCoordinatorEvents,
+    runtimeRecoveryCoordinatorIndexCount,
+    runtimeRecoveryCoordinatorMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -5752,6 +5791,126 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeRecoveryExecutor.getIndex().length,
       );
       setRuntimeRecoveryExecutionMessage(null);
+    },
+    startRuntimeRecoveryCoordinator(): void {
+      const execution = runtimeRecoveryExecutionPackage?.execution ?? null;
+      const started =
+        services.runtimeRecoveryCoordinatorApi.startRecoverySession({
+          sessionId:
+            execution?.metadata.sessionId ??
+            runtimeRecoveryPackage?.metadata.sessionId ??
+            runtimeResiliencePackage?.recoveryPlan.sessionId ??
+            'runtime-session-demo',
+          runtimeExecutionId:
+            execution?.runtimeExecutionId ??
+            runtimeRecoveryPackage?.sequence.runtimeExecutionId ??
+            'runtime-execution-demo',
+          title: 'Builder Runtime Recovery Coordinator',
+          executions: [
+            {
+              executionId: execution?.id ?? 'recovery-execution-demo',
+              status: execution?.status ?? 'COMPLETED',
+              sequenceId:
+                execution?.sequenceId ??
+                runtimeRecoveryPackage?.sequence.id ??
+                'recovery-sequence-demo',
+            },
+          ],
+        });
+      let next = started;
+      if (started.summary === null) {
+        next =
+          services.runtimeRecoveryCoordinatorApi.completeRecoverySession(
+            started.id,
+          );
+      }
+      setRuntimeRecoveryCoordinatorPackage(next);
+      setRuntimeRecoveryCoordinatorEvents(
+        services.runtimeRecoveryCoordinator.getEvents(),
+      );
+      setRuntimeRecoveryCoordinatorIndexCount(
+        services.runtimeRecoveryCoordinator.getIndex().length,
+      );
+      setRuntimeRecoveryCoordinatorMessage(
+        `Session ${next.session.status} · ${next.session.metadata.progressPercent}% · summary ${next.summary?.id ?? 'pending'}.`,
+      );
+    },
+    completeRuntimeRecoveryCoordinator(): void {
+      if (runtimeRecoveryCoordinatorPackage === null) {
+        setRuntimeRecoveryCoordinatorMessage('Nejdřív Start Session.');
+        return;
+      }
+      const completed =
+        services.runtimeRecoveryCoordinatorApi.completeRecoverySession(
+          runtimeRecoveryCoordinatorPackage.id,
+        );
+      setRuntimeRecoveryCoordinatorPackage(completed);
+      setRuntimeRecoveryCoordinatorEvents(
+        services.runtimeRecoveryCoordinator.getEvents(),
+      );
+      setRuntimeRecoveryCoordinatorMessage(
+        `Completed → ${completed.session.status}.`,
+      );
+    },
+    publishRuntimeRecoveryCoordinator(): void {
+      if (runtimeRecoveryCoordinatorPackage === null) {
+        setRuntimeRecoveryCoordinatorMessage('Nejdřív Start Session.');
+        return;
+      }
+      try {
+        const published =
+          services.runtimeRecoveryCoordinatorApi.publishRecoverySummary(
+            runtimeRecoveryCoordinatorPackage.id,
+          );
+        setRuntimeRecoveryCoordinatorPackage(published);
+        setRuntimeRecoveryCoordinatorEvents(
+          services.runtimeRecoveryCoordinator.getEvents(),
+        );
+        setRuntimeRecoveryCoordinatorMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeRecoveryCoordinatorMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeRecoveryCoordinator(): void {
+      if (runtimeRecoveryCoordinatorPackage === null) {
+        setRuntimeRecoveryCoordinatorMessage('Nejdřív Start Session.');
+        return;
+      }
+      const validation =
+        services.runtimeRecoveryCoordinatorApi.validateRecoverySession(
+          runtimeRecoveryCoordinatorPackage.id,
+        );
+      const previewed =
+        services.runtimeRecoveryCoordinatorApi.previewRecoverySummary(
+          runtimeRecoveryCoordinatorPackage.id,
+        );
+      if (previewed !== null) {
+        setRuntimeRecoveryCoordinatorPackage(previewed);
+      }
+      setRuntimeRecoveryCoordinatorEvents(
+        services.runtimeRecoveryCoordinator.getEvents(),
+      );
+      setRuntimeRecoveryCoordinatorMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeRecoveryCoordinator(): void {
+      if (runtimeRecoveryCoordinatorPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeRecoveryCoordinator.dispose(
+        runtimeRecoveryCoordinatorPackage.id,
+      );
+      setRuntimeRecoveryCoordinatorPackage(disposed);
+      setRuntimeRecoveryCoordinatorEvents(
+        services.runtimeRecoveryCoordinator.getEvents(),
+      );
+      setRuntimeRecoveryCoordinatorIndexCount(
+        services.runtimeRecoveryCoordinator.getIndex().length,
+      );
+      setRuntimeRecoveryCoordinatorMessage(null);
     },
     buildProject(): void {
       const projectId =

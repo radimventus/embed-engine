@@ -697,3 +697,23 @@ export {
   createRuntimeRecoveryExecutionIndex,
   type RuntimeRecoveryExecutionIndex,
 } from './runtime-recovery-execution/runtime-recovery-execution-index';
+
+export {
+  createRuntimeRecoveryCoordinator,
+  type RuntimeRecoveryCoordinator,
+  type RuntimeRecoveryCoordinatorOptions,
+} from './runtime-recovery-coordinator/runtime-recovery-coordinator';
+export {
+  createRuntimeRecoveryCoordinatorApi,
+  type RuntimeRecoveryCoordinatorApi,
+} from './runtime-recovery-coordinator/runtime-recovery-coordinator-api';
+export {
+  createBasicRecoveryCoordinationStrategy,
+  createRuntimeRecoveryCoordinatorValidator,
+  type RecoveryCoordinationStrategy,
+  type RuntimeRecoveryCoordinatorValidator,
+} from './runtime-recovery-coordinator/basic-recovery-coordination-strategy';
+export {
+  createRuntimeRecoveryCoordinatorIndex,
+  type RuntimeRecoveryCoordinatorIndex,
+} from './runtime-recovery-coordinator/runtime-recovery-coordinator-index';

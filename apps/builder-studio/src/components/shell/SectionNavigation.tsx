@@ -40,6 +40,7 @@ const SECTIONS: readonly {
   { id: 'runtime-resilience', label: 'Resilience' },
   { id: 'runtime-recovery', label: 'Recovery' },
   { id: 'runtime-recovery-execution', label: 'Recovery Execution' },
+  { id: 'runtime-recovery-coordinator', label: 'Recovery Coordinator' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },
