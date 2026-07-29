@@ -998,6 +998,27 @@ export {
 } from './publication-readiness/publication-readiness-index';
 
 export {
+  createArtifactVersionManager,
+  type ArtifactVersionManager,
+  type ArtifactVersionManagerOptions,
+} from './artifact-version/artifact-version-manager';
+export {
+  createArtifactVersionApi,
+  type ArtifactVersionApi,
+} from './artifact-version/artifact-version-api';
+export {
+  buildInitialArtifactVersionPackage,
+  createArtifactVersionValidator,
+  createBasicArtifactVersionStrategy,
+  type ArtifactVersionStrategy,
+  type ArtifactVersionValidator,
+} from './artifact-version/basic-artifact-version-strategy';
+export {
+  createArtifactVersionIndex,
+  type ArtifactVersionIndex,
+} from './artifact-version/artifact-version-index';
+
+export {
   createRuntimeSessionBootstrap,
   type RuntimeSessionBootstrap,
   type RuntimeSessionBootstrapOptions,

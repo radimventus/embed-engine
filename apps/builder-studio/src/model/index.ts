@@ -845,6 +845,19 @@ export type {
 } from './publication-readiness-types';
 
 export type {
+  ArtifactVersion,
+  ArtifactVersionEvent,
+  ArtifactVersionEventType,
+  ArtifactVersionIndexEntry,
+  ArtifactVersionPackage,
+  ArtifactVersionStatus,
+  ArtifactVersionValidation,
+  ArtifactVersionValidationIssue,
+  InitializeArtifactVersionManagerInput,
+  RegisterArtifactVersionInput,
+} from './artifact-version-types';
+
+export type {
   BuildRuntimeBootstrapInput,
   InitializeRuntimeBootstrapInput,
   RuntimeBootstrapEvent,

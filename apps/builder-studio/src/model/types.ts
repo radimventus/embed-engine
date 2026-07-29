@@ -70,6 +70,7 @@ export type WorkspaceSectionId =
   | 'client-publication'
   | 'publication-readiness'
   | 'runtime-bootstrap'
+  | 'artifact-versions'
   | 'media'
   | 'layout'
   | 'knowledge';

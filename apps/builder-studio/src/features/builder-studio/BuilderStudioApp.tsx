@@ -256,6 +256,10 @@ export function BuilderStudioApp() {
         runtimeBootstrapEvents={session.runtimeBootstrapEvents}
         runtimeBootstrapIndexCount={session.runtimeBootstrapIndexCount}
         runtimeBootstrapMessage={session.runtimeBootstrapMessage}
+        artifactVersionPackage={session.artifactVersionPackage}
+        artifactVersionEvents={session.artifactVersionEvents}
+        artifactVersionIndexCount={session.artifactVersionIndexCount}
+        artifactVersionMessage={session.artifactVersionMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -530,6 +534,11 @@ export function BuilderStudioApp() {
         onValidateRuntimeBootstrap={session.validateRuntimeBootstrap}
         onPublishRuntimeBootstrap={session.publishRuntimeBootstrap}
         onDisposeRuntimeBootstrap={session.disposeRuntimeBootstrap}
+        onRegisterArtifactVersion={session.registerArtifactVersion}
+        onActivateArtifactVersion={session.activateArtifactVersion}
+        onDeprecateArtifactVersion={session.deprecateArtifactVersion}
+        onValidateArtifactVersion={session.validateArtifactVersion}
+        onDisposeArtifactVersion={session.disposeArtifactVersion}
       />
     </AppShell>
   );

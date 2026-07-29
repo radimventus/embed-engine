@@ -103,6 +103,8 @@ import type {
   PublicationReadinessPackage,
   RuntimeBootstrapEvent,
   RuntimeBootstrapPackage,
+  ArtifactVersionEvent,
+  ArtifactVersionPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -243,6 +245,8 @@ import {
   createClientPublicationAdapter,
   createPublicationReadinessApi,
   createPublicationReadinessValidator,
+  createArtifactVersionApi,
+  createArtifactVersionManager,
   createRuntimeBootstrapApi,
   createRuntimeSessionBootstrap,
   createDecisionKnowledgeService,
@@ -476,6 +480,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeBootstrapEvents: readonly RuntimeBootstrapEvent[];
   readonly runtimeBootstrapIndexCount: number;
   readonly runtimeBootstrapMessage: string | null;
+  readonly artifactVersionPackage: ArtifactVersionPackage | null;
+  readonly artifactVersionEvents: readonly ArtifactVersionEvent[];
+  readonly artifactVersionIndexCount: number;
+  readonly artifactVersionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -743,6 +751,11 @@ export type BuilderStudioViewModel = {
   readonly validateRuntimeBootstrap: () => void;
   readonly publishRuntimeBootstrap: () => void;
   readonly disposeRuntimeBootstrap: () => void;
+  readonly registerArtifactVersion: () => void;
+  readonly activateArtifactVersion: () => void;
+  readonly deprecateArtifactVersion: () => void;
+  readonly validateArtifactVersion: () => void;
+  readonly disposeArtifactVersion: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1504,6 +1517,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const publicationReadinessApi = createPublicationReadinessApi(
       publicationReadinessValidator,
     );
+    const artifactVersionManager = createArtifactVersionManager();
+    const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
     const runtimeBootstrapApi = createRuntimeBootstrapApi(
       runtimeSessionBootstrap,
@@ -1631,6 +1646,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       clientPublicationApi,
       publicationReadinessValidator,
       publicationReadinessApi,
+      artifactVersionManager,
+      artifactVersionApi,
       runtimeSessionBootstrap,
       runtimeBootstrapApi,
     };
@@ -2207,6 +2224,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     useState(0);
   const [runtimeBootstrapMessage, setRuntimeBootstrapMessage] =
     useState<string | null>(null);
+  const [artifactVersionPackage, setArtifactVersionPackage] =
+    useState<ArtifactVersionPackage | null>(null);
+  const [artifactVersionEvents, setArtifactVersionEvents] = useState<
+    readonly ArtifactVersionEvent[]
+  >([]);
+  const [artifactVersionIndexCount, setArtifactVersionIndexCount] = useState(0);
+  const [artifactVersionMessage, setArtifactVersionMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2684,6 +2710,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeBootstrapEvents,
     runtimeBootstrapIndexCount,
     runtimeBootstrapMessage,
+    artifactVersionPackage,
+    artifactVersionEvents,
+    artifactVersionIndexCount,
+    artifactVersionMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -8435,6 +8465,120 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeSessionBootstrap.getIndex().length,
       );
       setRuntimeBootstrapMessage(null);
+    },
+    registerArtifactVersion(): void {
+      const sessionId =
+        runtimeBootstrapPackage?.metadata.sessionId ??
+        publicationReadinessPackage?.metadata.sessionId ??
+        'artifact-version-session-demo';
+      const bootstrap = runtimeBootstrapPackage?.runtimeSession ?? null;
+      const input = bootstrap
+        ? {
+            artifactId: bootstrap.publicationId,
+            version: bootstrap.bootstrapVersion,
+            artifactType: 'RuntimeBootstrap' as const,
+            title: bootstrap.metadata.title,
+            notes: 'Registered Runtime bootstrap version.',
+            active: runtimeBootstrapPackage?.metadata.status === 'Published',
+          }
+        : {
+            artifactId: 'platform-publication-demo',
+            version: '1.0.0',
+            artifactType: 'RuntimeBootstrap' as const,
+            title: 'Demo Runtime Bootstrap',
+            active: true,
+          };
+      const registered = services.artifactVersionApi.registerArtifactVersion(
+        artifactVersionPackage?.id ?? null,
+        input,
+        {
+          sessionId,
+          title: 'Builder Artifact Versions',
+          version: input,
+        },
+      );
+      setArtifactVersionPackage(registered);
+      setArtifactVersionEvents(services.artifactVersionManager.getEvents());
+      setArtifactVersionIndexCount(services.artifactVersionManager.getIndex().length);
+      setArtifactVersionMessage(
+        `Registered ${input.artifactId}@${input.version}.`,
+      );
+    },
+    activateArtifactVersion(): void {
+      if (
+        artifactVersionPackage === null ||
+        artifactVersionPackage.artifactVersions.length === 0
+      ) {
+        setArtifactVersionMessage('Nejdřív Register Version.');
+        return;
+      }
+      const target =
+        artifactVersionPackage.artifactVersions.at(-1) ??
+        artifactVersionPackage.artifactVersions[0];
+      const activated = services.artifactVersionApi.activateArtifactVersion(
+        artifactVersionPackage.id,
+        target.id,
+      );
+      setArtifactVersionPackage(activated);
+      setArtifactVersionEvents(services.artifactVersionManager.getEvents());
+      setArtifactVersionIndexCount(services.artifactVersionManager.getIndex().length);
+      setArtifactVersionMessage(
+        `Activated ${target.artifactId}@${target.version}.`,
+      );
+    },
+    deprecateArtifactVersion(): void {
+      if (
+        artifactVersionPackage === null ||
+        artifactVersionPackage.artifactVersions.length === 0
+      ) {
+        setArtifactVersionMessage('Nejdřív Register Version.');
+        return;
+      }
+      const target =
+        artifactVersionPackage.artifactVersions.find((item) => item.metadata.active) ??
+        artifactVersionPackage.artifactVersions.at(-1) ??
+        artifactVersionPackage.artifactVersions[0];
+      const deprecated = services.artifactVersionApi.deprecateArtifactVersion(
+        artifactVersionPackage.id,
+        target.id,
+      );
+      setArtifactVersionPackage(deprecated);
+      setArtifactVersionEvents(services.artifactVersionManager.getEvents());
+      setArtifactVersionIndexCount(services.artifactVersionManager.getIndex().length);
+      setArtifactVersionMessage(
+        `Deprecated ${target.artifactId}@${target.version}.`,
+      );
+    },
+    validateArtifactVersion(): void {
+      if (artifactVersionPackage === null) {
+        setArtifactVersionMessage('Nejdřív Register Version.');
+        return;
+      }
+      const validation = services.artifactVersionApi.validateArtifactVersion(
+        artifactVersionPackage.id,
+      );
+      setArtifactVersionPackage(
+        services.artifactVersionApi.getPackage(artifactVersionPackage.id),
+      );
+      setArtifactVersionEvents(services.artifactVersionManager.getEvents());
+      setArtifactVersionIndexCount(services.artifactVersionManager.getIndex().length);
+      setArtifactVersionMessage(
+        validation.valid
+          ? 'Artifact version validation OK.'
+          : 'Artifact version validation failed.',
+      );
+    },
+    disposeArtifactVersion(): void {
+      if (artifactVersionPackage === null) {
+        return;
+      }
+      const disposed = services.artifactVersionManager.dispose(
+        artifactVersionPackage.id,
+      );
+      setArtifactVersionPackage(disposed);
+      setArtifactVersionEvents(services.artifactVersionManager.getEvents());
+      setArtifactVersionIndexCount(services.artifactVersionManager.getIndex().length);
+      setArtifactVersionMessage(null);
     },
     buildProject(): void {
       const projectId =

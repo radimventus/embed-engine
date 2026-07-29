@@ -56,6 +56,7 @@ const SECTIONS: readonly {
   { id: 'client-publication', label: 'Client Publication' },
   { id: 'publication-readiness', label: 'Publication Readiness' },
   { id: 'runtime-bootstrap', label: 'Runtime Bootstrap' },
+  { id: 'artifact-versions', label: 'Artifact Versions' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

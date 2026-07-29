@@ -94,6 +94,8 @@ import type {
   PublicationReadinessPackage,
   RuntimeBootstrapEvent,
   RuntimeBootstrapPackage,
+  ArtifactVersionEvent,
+  ArtifactVersionPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -171,6 +173,7 @@ import { PlatformPublicationOverview } from './PlatformPublicationOverview';
 import { ClientPublicationOverview } from './ClientPublicationOverview';
 import { PublicationReadinessOverview } from './PublicationReadinessOverview';
 import { RuntimeBootstrapOverview } from './RuntimeBootstrapOverview';
+import { ArtifactVersionsOverview } from './ArtifactVersionsOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -385,6 +388,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeBootstrapEvents: readonly RuntimeBootstrapEvent[];
   readonly runtimeBootstrapIndexCount: number;
   readonly runtimeBootstrapMessage: string | null;
+  readonly artifactVersionPackage: ArtifactVersionPackage | null;
+  readonly artifactVersionEvents: readonly ArtifactVersionEvent[];
+  readonly artifactVersionIndexCount: number;
+  readonly artifactVersionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -641,6 +648,11 @@ type WorkspaceCanvasProps = {
   readonly onValidateRuntimeBootstrap: () => void;
   readonly onPublishRuntimeBootstrap: () => void;
   readonly onDisposeRuntimeBootstrap: () => void;
+  readonly onRegisterArtifactVersion: () => void;
+  readonly onActivateArtifactVersion: () => void;
+  readonly onDeprecateArtifactVersion: () => void;
+  readonly onValidateArtifactVersion: () => void;
+  readonly onDisposeArtifactVersion: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -838,6 +850,10 @@ export function WorkspaceCanvas({
   runtimeBootstrapEvents,
   runtimeBootstrapIndexCount,
   runtimeBootstrapMessage,
+  artifactVersionPackage,
+  artifactVersionEvents,
+  artifactVersionIndexCount,
+  artifactVersionMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1084,6 +1100,11 @@ export function WorkspaceCanvas({
   onValidateRuntimeBootstrap,
   onPublishRuntimeBootstrap,
   onDisposeRuntimeBootstrap,
+  onRegisterArtifactVersion,
+  onActivateArtifactVersion,
+  onDeprecateArtifactVersion,
+  onValidateArtifactVersion,
+  onDisposeArtifactVersion,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1845,6 +1866,19 @@ export function WorkspaceCanvas({
             onPublish={onPublishRuntimeBootstrap}
             onDispose={onDisposeRuntimeBootstrap}
             message={runtimeBootstrapMessage}
+          />
+        ) : null}
+        {activeSection === 'artifact-versions' ? (
+          <ArtifactVersionsOverview
+            versionPackage={artifactVersionPackage}
+            events={artifactVersionEvents}
+            indexCount={artifactVersionIndexCount}
+            onRegister={onRegisterArtifactVersion}
+            onActivate={onActivateArtifactVersion}
+            onDeprecate={onDeprecateArtifactVersion}
+            onValidate={onValidateArtifactVersion}
+            onDispose={onDisposeArtifactVersion}
+            message={artifactVersionMessage}
           />
         ) : null}
         {activeSection === 'media' ? (
