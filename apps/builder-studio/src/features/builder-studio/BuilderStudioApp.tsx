@@ -260,6 +260,10 @@ export function BuilderStudioApp() {
         artifactVersionEvents={session.artifactVersionEvents}
         artifactVersionIndexCount={session.artifactVersionIndexCount}
         artifactVersionMessage={session.artifactVersionMessage}
+        artifactDependencyPackage={session.artifactDependencyPackage}
+        artifactDependencyEvents={session.artifactDependencyEvents}
+        artifactDependencyIndexCount={session.artifactDependencyIndexCount}
+        artifactDependencyMessage={session.artifactDependencyMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -539,6 +543,10 @@ export function BuilderStudioApp() {
         onDeprecateArtifactVersion={session.deprecateArtifactVersion}
         onValidateArtifactVersion={session.validateArtifactVersion}
         onDisposeArtifactVersion={session.disposeArtifactVersion}
+        onRegisterArtifactDependency={session.registerArtifactDependency}
+        onRemoveArtifactDependency={session.removeArtifactDependency}
+        onValidateArtifactDependencies={session.validateArtifactDependencies}
+        onDisposeArtifactDependency={session.disposeArtifactDependency}
       />
     </AppShell>
   );

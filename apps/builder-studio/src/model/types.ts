@@ -71,6 +71,7 @@ export type WorkspaceSectionId =
   | 'publication-readiness'
   | 'runtime-bootstrap'
   | 'artifact-versions'
+  | 'artifact-dependencies'
   | 'media'
   | 'layout'
   | 'knowledge';

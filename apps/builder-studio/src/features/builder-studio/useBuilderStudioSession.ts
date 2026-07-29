@@ -105,6 +105,8 @@ import type {
   RuntimeBootstrapPackage,
   ArtifactVersionEvent,
   ArtifactVersionPackage,
+  ArtifactDependencyEvent,
+  ArtifactDependencyPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -245,6 +247,8 @@ import {
   createClientPublicationAdapter,
   createPublicationReadinessApi,
   createPublicationReadinessValidator,
+  createArtifactDependencyApi,
+  createArtifactDependencyRegistry,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -484,6 +488,10 @@ export type BuilderStudioViewModel = {
   readonly artifactVersionEvents: readonly ArtifactVersionEvent[];
   readonly artifactVersionIndexCount: number;
   readonly artifactVersionMessage: string | null;
+  readonly artifactDependencyPackage: ArtifactDependencyPackage | null;
+  readonly artifactDependencyEvents: readonly ArtifactDependencyEvent[];
+  readonly artifactDependencyIndexCount: number;
+  readonly artifactDependencyMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -756,6 +764,10 @@ export type BuilderStudioViewModel = {
   readonly deprecateArtifactVersion: () => void;
   readonly validateArtifactVersion: () => void;
   readonly disposeArtifactVersion: () => void;
+  readonly registerArtifactDependency: () => void;
+  readonly removeArtifactDependency: () => void;
+  readonly validateArtifactDependencies: () => void;
+  readonly disposeArtifactDependency: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1517,6 +1529,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const publicationReadinessApi = createPublicationReadinessApi(
       publicationReadinessValidator,
     );
+    const artifactDependencyRegistry = createArtifactDependencyRegistry();
+    const artifactDependencyApi = createArtifactDependencyApi(
+      artifactDependencyRegistry,
+    );
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1646,6 +1662,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       clientPublicationApi,
       publicationReadinessValidator,
       publicationReadinessApi,
+      artifactDependencyRegistry,
+      artifactDependencyApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -2233,6 +2251,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [artifactVersionMessage, setArtifactVersionMessage] = useState<
     string | null
   >(null);
+  const [artifactDependencyPackage, setArtifactDependencyPackage] =
+    useState<ArtifactDependencyPackage | null>(null);
+  const [artifactDependencyEvents, setArtifactDependencyEvents] = useState<
+    readonly ArtifactDependencyEvent[]
+  >([]);
+  const [artifactDependencyIndexCount, setArtifactDependencyIndexCount] =
+    useState(0);
+  const [artifactDependencyMessage, setArtifactDependencyMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2714,6 +2742,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     artifactVersionEvents,
     artifactVersionIndexCount,
     artifactVersionMessage,
+    artifactDependencyPackage,
+    artifactDependencyEvents,
+    artifactDependencyIndexCount,
+    artifactDependencyMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -8579,6 +8611,100 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setArtifactVersionEvents(services.artifactVersionManager.getEvents());
       setArtifactVersionIndexCount(services.artifactVersionManager.getIndex().length);
       setArtifactVersionMessage(null);
+    },
+    registerArtifactDependency(): void {
+      const sessionId =
+        artifactDependencyPackage?.metadata.sessionId ??
+        artifactVersionPackage?.metadata.sessionId ??
+        'artifact-dependency-session-demo';
+      const source =
+        runtimeBootstrapPackage?.runtimeSession.publicationId ??
+        'runtime-bootstrap-demo';
+      const target =
+        clientPublicationPackage?.publicationModel.publicationId ??
+        'client-publication-demo';
+      const input = {
+        sourceArtifactId: source,
+        targetArtifactId: target,
+        dependencyType: 'REQUIRES' as const,
+        title: `${source} requires ${target}`,
+        notes: 'Registered runtime bootstrap dependency.',
+      };
+      const registered = services.artifactDependencyApi.registerArtifactDependency(
+        artifactDependencyPackage?.id ?? null,
+        input,
+        {
+          sessionId,
+          title: 'Builder Artifact Dependencies',
+          dependency: input,
+        },
+      );
+      setArtifactDependencyPackage(registered);
+      setArtifactDependencyEvents(services.artifactDependencyRegistry.getEvents());
+      setArtifactDependencyIndexCount(
+        services.artifactDependencyRegistry.getIndex().length,
+      );
+      setArtifactDependencyMessage(`Registered ${source} -> ${target}.`);
+    },
+    removeArtifactDependency(): void {
+      if (
+        artifactDependencyPackage === null ||
+        artifactDependencyPackage.dependencies.length === 0
+      ) {
+        setArtifactDependencyMessage('Nejdřív Register Dependency.');
+        return;
+      }
+      const target =
+        artifactDependencyPackage.dependencies.find(
+          (dependency) => dependency.status === 'Active',
+        ) ?? artifactDependencyPackage.dependencies[0];
+      const removed = services.artifactDependencyApi.removeArtifactDependency(
+        artifactDependencyPackage.id,
+        target.id,
+      );
+      setArtifactDependencyPackage(removed);
+      setArtifactDependencyEvents(services.artifactDependencyRegistry.getEvents());
+      setArtifactDependencyIndexCount(
+        services.artifactDependencyRegistry.getIndex().length,
+      );
+      setArtifactDependencyMessage(
+        `Removed ${target.sourceArtifactId} -> ${target.targetArtifactId}.`,
+      );
+    },
+    validateArtifactDependencies(): void {
+      if (artifactDependencyPackage === null) {
+        setArtifactDependencyMessage('Nejdřív Register Dependency.');
+        return;
+      }
+      const validation = services.artifactDependencyApi.validateArtifactDependencies(
+        artifactDependencyPackage.id,
+      );
+      setArtifactDependencyPackage(
+        services.artifactDependencyApi.getPackage(artifactDependencyPackage.id),
+      );
+      setArtifactDependencyEvents(services.artifactDependencyRegistry.getEvents());
+      setArtifactDependencyIndexCount(
+        services.artifactDependencyRegistry.getIndex().length,
+      );
+      setArtifactDependencyMessage(
+        validation.valid
+          ? 'Artifact dependency validation OK.'
+          : 'Artifact dependency validation failed.',
+      );
+    },
+    disposeArtifactDependency(): void {
+      if (artifactDependencyPackage === null) {
+        return;
+      }
+      const disposed = services.artifactDependencyRegistry.dispose(
+        artifactDependencyPackage.id,
+      );
+      setArtifactDependencyPackage(disposed);
+      setArtifactDependencyEvents(services.artifactDependencyRegistry.getEvents());
+      setArtifactDependencyIndexCount(
+        services.artifactDependencyRegistry.getIndex().length,
+      );
+      setArtifactDependencyMessage(null);
     },
     buildProject(): void {
       const projectId =

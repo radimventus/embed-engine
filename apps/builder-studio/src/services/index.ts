@@ -998,6 +998,27 @@ export {
 } from './publication-readiness/publication-readiness-index';
 
 export {
+  createArtifactDependencyRegistry,
+  type ArtifactDependencyRegistry,
+  type ArtifactDependencyRegistryOptions,
+} from './artifact-dependency/artifact-dependency-registry';
+export {
+  createArtifactDependencyApi,
+  type ArtifactDependencyApi,
+} from './artifact-dependency/artifact-dependency-api';
+export {
+  buildInitialArtifactDependencyPackage,
+  createArtifactDependencyValidator,
+  createBasicArtifactDependencyStrategy,
+  type ArtifactDependencyStrategy,
+  type ArtifactDependencyValidator,
+} from './artifact-dependency/basic-artifact-dependency-strategy';
+export {
+  createArtifactDependencyIndex,
+  type ArtifactDependencyIndex,
+} from './artifact-dependency/artifact-dependency-index';
+
+export {
   createArtifactVersionManager,
   type ArtifactVersionManager,
   type ArtifactVersionManagerOptions,

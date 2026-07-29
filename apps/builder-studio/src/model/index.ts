@@ -845,6 +845,19 @@ export type {
 } from './publication-readiness-types';
 
 export type {
+  ArtifactDependency,
+  ArtifactDependencyEvent,
+  ArtifactDependencyEventType,
+  ArtifactDependencyIndexEntry,
+  ArtifactDependencyPackage,
+  ArtifactDependencyType,
+  ArtifactDependencyValidation,
+  ArtifactDependencyValidationIssue,
+  InitializeArtifactDependencyRegistryInput,
+  RegisterArtifactDependencyInput,
+} from './artifact-dependency-types';
+
+export type {
   ArtifactVersion,
   ArtifactVersionEvent,
   ArtifactVersionEventType,

@@ -96,6 +96,8 @@ import type {
   RuntimeBootstrapPackage,
   ArtifactVersionEvent,
   ArtifactVersionPackage,
+  ArtifactDependencyEvent,
+  ArtifactDependencyPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -174,6 +176,7 @@ import { ClientPublicationOverview } from './ClientPublicationOverview';
 import { PublicationReadinessOverview } from './PublicationReadinessOverview';
 import { RuntimeBootstrapOverview } from './RuntimeBootstrapOverview';
 import { ArtifactVersionsOverview } from './ArtifactVersionsOverview';
+import { ArtifactDependenciesOverview } from './ArtifactDependenciesOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -392,6 +395,10 @@ type WorkspaceCanvasProps = {
   readonly artifactVersionEvents: readonly ArtifactVersionEvent[];
   readonly artifactVersionIndexCount: number;
   readonly artifactVersionMessage: string | null;
+  readonly artifactDependencyPackage: ArtifactDependencyPackage | null;
+  readonly artifactDependencyEvents: readonly ArtifactDependencyEvent[];
+  readonly artifactDependencyIndexCount: number;
+  readonly artifactDependencyMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -653,6 +660,10 @@ type WorkspaceCanvasProps = {
   readonly onDeprecateArtifactVersion: () => void;
   readonly onValidateArtifactVersion: () => void;
   readonly onDisposeArtifactVersion: () => void;
+  readonly onRegisterArtifactDependency: () => void;
+  readonly onRemoveArtifactDependency: () => void;
+  readonly onValidateArtifactDependencies: () => void;
+  readonly onDisposeArtifactDependency: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -854,6 +865,10 @@ export function WorkspaceCanvas({
   artifactVersionEvents,
   artifactVersionIndexCount,
   artifactVersionMessage,
+  artifactDependencyPackage,
+  artifactDependencyEvents,
+  artifactDependencyIndexCount,
+  artifactDependencyMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1105,6 +1120,10 @@ export function WorkspaceCanvas({
   onDeprecateArtifactVersion,
   onValidateArtifactVersion,
   onDisposeArtifactVersion,
+  onRegisterArtifactDependency,
+  onRemoveArtifactDependency,
+  onValidateArtifactDependencies,
+  onDisposeArtifactDependency,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1879,6 +1898,18 @@ export function WorkspaceCanvas({
             onValidate={onValidateArtifactVersion}
             onDispose={onDisposeArtifactVersion}
             message={artifactVersionMessage}
+          />
+        ) : null}
+        {activeSection === 'artifact-dependencies' ? (
+          <ArtifactDependenciesOverview
+            dependencyPackage={artifactDependencyPackage}
+            events={artifactDependencyEvents}
+            indexCount={artifactDependencyIndexCount}
+            onRegister={onRegisterArtifactDependency}
+            onRemove={onRemoveArtifactDependency}
+            onValidate={onValidateArtifactDependencies}
+            onDispose={onDisposeArtifactDependency}
+            message={artifactDependencyMessage}
           />
         ) : null}
         {activeSection === 'media' ? (
