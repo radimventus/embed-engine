@@ -110,6 +110,8 @@ import type {
   ExportCompatibilityPackage,
   ExportCapabilityEvent,
   ExportCapabilityPackage,
+  ExportPolicyEvent,
+  ExportPolicyPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -195,6 +197,7 @@ import { ArtifactExportOverview } from './ArtifactExportOverview';
 import { ExportSchemaOverview } from './ExportSchemaOverview';
 import { ExportCompatibilityOverview } from './ExportCompatibilityOverview';
 import { ExportCapabilityOverview } from './ExportCapabilityOverview';
+import { ExportPoliciesOverview } from './ExportPoliciesOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -441,6 +444,10 @@ type WorkspaceCanvasProps = {
   readonly exportCapabilityEvents: readonly ExportCapabilityEvent[];
   readonly exportCapabilityIndexCount: number;
   readonly exportCapabilityMessage: string | null;
+  readonly exportPolicyPackage: ExportPolicyPackage | null;
+  readonly exportPolicyEvents: readonly ExportPolicyEvent[];
+  readonly exportPolicyIndexCount: number;
+  readonly exportPolicyMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -728,6 +735,9 @@ type WorkspaceCanvasProps = {
   readonly onRegisterExportCapability: () => void;
   readonly onValidateExportCapability: () => void;
   readonly onDisposeExportCapability: () => void;
+  readonly onRegisterExportPolicy: () => void;
+  readonly onValidateExportPolicy: () => void;
+  readonly onDisposeExportPolicy: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -957,6 +967,10 @@ export function WorkspaceCanvas({
   exportCapabilityEvents,
   exportCapabilityIndexCount,
   exportCapabilityMessage,
+  exportPolicyPackage,
+  exportPolicyEvents,
+  exportPolicyIndexCount,
+  exportPolicyMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1234,6 +1248,9 @@ export function WorkspaceCanvas({
   onRegisterExportCapability,
   onValidateExportCapability,
   onDisposeExportCapability,
+  onRegisterExportPolicy,
+  onValidateExportPolicy,
+  onDisposeExportPolicy,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -2090,6 +2107,17 @@ export function WorkspaceCanvas({
             onValidate={onValidateExportCapability}
             onDispose={onDisposeExportCapability}
             message={exportCapabilityMessage}
+          />
+        ) : null}
+        {activeSection === 'export-policies' ? (
+          <ExportPoliciesOverview
+            policyPackage={exportPolicyPackage}
+            events={exportPolicyEvents}
+            indexCount={exportPolicyIndexCount}
+            onRegister={onRegisterExportPolicy}
+            onValidate={onValidateExportPolicy}
+            onDispose={onDisposeExportPolicy}
+            message={exportPolicyMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

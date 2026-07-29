@@ -288,6 +288,10 @@ export function BuilderStudioApp() {
         exportCapabilityEvents={session.exportCapabilityEvents}
         exportCapabilityIndexCount={session.exportCapabilityIndexCount}
         exportCapabilityMessage={session.exportCapabilityMessage}
+        exportPolicyPackage={session.exportPolicyPackage}
+        exportPolicyEvents={session.exportPolicyEvents}
+        exportPolicyIndexCount={session.exportPolicyIndexCount}
+        exportPolicyMessage={session.exportPolicyMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -593,6 +597,9 @@ export function BuilderStudioApp() {
         onRegisterExportCapability={session.registerExportCapability}
         onValidateExportCapability={session.validateExportCapability}
         onDisposeExportCapability={session.disposeExportCapability}
+        onRegisterExportPolicy={session.registerExportPolicy}
+        onValidateExportPolicy={session.validateExportPolicy}
+        onDisposeExportPolicy={session.disposeExportPolicy}
       />
     </AppShell>
   );

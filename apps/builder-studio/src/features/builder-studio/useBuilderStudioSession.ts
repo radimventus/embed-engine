@@ -119,6 +119,8 @@ import type {
   ExportCompatibilityPackage,
   ExportCapabilityEvent,
   ExportCapabilityPackage,
+  ExportPolicyEvent,
+  ExportPolicyPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -273,6 +275,8 @@ import {
   createExportCompatibilityApi,
   createExportCapabilityRegistry,
   createExportCapabilityApi,
+  createExportPolicyRegistry,
+  createExportPolicyApi,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -540,6 +544,10 @@ export type BuilderStudioViewModel = {
   readonly exportCapabilityEvents: readonly ExportCapabilityEvent[];
   readonly exportCapabilityIndexCount: number;
   readonly exportCapabilityMessage: string | null;
+  readonly exportPolicyPackage: ExportPolicyPackage | null;
+  readonly exportPolicyEvents: readonly ExportPolicyEvent[];
+  readonly exportPolicyIndexCount: number;
+  readonly exportPolicyMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -838,6 +846,9 @@ export type BuilderStudioViewModel = {
   readonly registerExportCapability: () => void;
   readonly validateExportCapability: () => void;
   readonly disposeExportCapability: () => void;
+  readonly registerExportPolicy: () => void;
+  readonly validateExportPolicy: () => void;
+  readonly disposeExportPolicy: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1618,6 +1629,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const exportCompatibilityApi = createExportCompatibilityApi(exportCompatibilityRegistry);
     const exportCapabilityRegistry = createExportCapabilityRegistry();
     const exportCapabilityApi = createExportCapabilityApi(exportCapabilityRegistry);
+    const exportPolicyRegistry = createExportPolicyRegistry();
+    const exportPolicyApi = createExportPolicyApi(exportPolicyRegistry);
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1761,6 +1774,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       exportCompatibilityApi,
       exportCapabilityRegistry,
       exportCapabilityApi,
+      exportPolicyRegistry,
+      exportPolicyApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -2409,6 +2424,14 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     useState(0);
   const [exportCapabilityMessage, setExportCapabilityMessage] =
     useState<string | null>(null);
+  const [exportPolicyPackage, setExportPolicyPackage] =
+    useState<ExportPolicyPackage | null>(null);
+  const [exportPolicyEvents, setExportPolicyEvents] = useState<
+    readonly ExportPolicyEvent[]
+  >([]);
+  const [exportPolicyIndexCount, setExportPolicyIndexCount] = useState(0);
+  const [exportPolicyMessage, setExportPolicyMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2918,6 +2941,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     exportCapabilityEvents,
     exportCapabilityIndexCount,
     exportCapabilityMessage,
+    exportPolicyPackage,
+    exportPolicyEvents,
+    exportPolicyIndexCount,
+    exportPolicyMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -9335,6 +9362,66 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.exportCapabilityRegistry.getIndex().length,
       );
       setExportCapabilityMessage(null);
+    },
+    registerExportPolicy(): void {
+      try {
+        const input = {
+          name: 'policy-ready-export',
+          conditions: [
+            'artifactPublished',
+            'schemaValid',
+            'capabilitySupported',
+            'notDeprecated',
+            'validationPassed',
+          ],
+          title: 'Ready export policy',
+        };
+        const pkg = services.exportPolicyApi.registerExportPolicy(
+          exportPolicyPackage?.id ?? null,
+          input,
+        );
+        setExportPolicyPackage(pkg);
+        setExportPolicyEvents(services.exportPolicyRegistry.getEvents());
+        setExportPolicyIndexCount(
+          services.exportPolicyRegistry.getIndex().length,
+        );
+        setExportPolicyMessage('Export policy registered.');
+      } catch (err) {
+        setExportPolicyMessage(
+          `Register failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    validateExportPolicy(): void {
+      if (exportPolicyPackage === null) {
+        setExportPolicyMessage('Register a policy first.');
+        return;
+      }
+      const validation = services.exportPolicyApi.validateExportPolicy(
+        exportPolicyPackage.id,
+      );
+      setExportPolicyPackage(
+        services.exportPolicyRegistry.getPackage(exportPolicyPackage.id),
+      );
+      setExportPolicyEvents(services.exportPolicyRegistry.getEvents());
+      setExportPolicyIndexCount(
+        services.exportPolicyRegistry.getIndex().length,
+      );
+      setExportPolicyMessage(
+        validation.valid ? 'Export policy validation OK.' : 'Export policy validation failed.',
+      );
+    },
+    disposeExportPolicy(): void {
+      if (exportPolicyPackage === null) return;
+      const disposed = services.exportPolicyApi.disposeExportPolicy(
+        exportPolicyPackage.id,
+      );
+      setExportPolicyPackage(disposed);
+      setExportPolicyEvents(services.exportPolicyRegistry.getEvents());
+      setExportPolicyIndexCount(
+        services.exportPolicyRegistry.getIndex().length,
+      );
+      setExportPolicyMessage(null);
     },
     buildProject(): void {
       const projectId =

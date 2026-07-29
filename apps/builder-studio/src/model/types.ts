@@ -78,6 +78,7 @@ export type WorkspaceSectionId =
   | 'export-schemas'
   | 'export-compatibility'
   | 'export-capabilities'
+  | 'export-policies'
   | 'media'
   | 'layout'
   | 'knowledge';

@@ -1189,3 +1189,25 @@ export {
   createExportCapabilityIndex,
   type ExportCapabilityIndex,
 } from './export-capability/export-capability-index';
+
+export {
+  createExportPolicyRegistry,
+  type ExportPolicyRegistry,
+  type ExportPolicyRegistryOptions,
+} from './export-policy/export-policy-registry';
+export {
+  createExportPolicyApi,
+  type ExportPolicyApi,
+} from './export-policy/export-policy-api';
+export {
+  createBasicExportPolicyStrategy,
+  type ExportPolicyStrategy,
+} from './export-policy/basic-export-policy-strategy';
+export {
+  createBasicExportPolicyValidator,
+  type ExportPolicyValidator,
+} from './export-policy/basic-export-policy-validator';
+export {
+  createExportPolicyIndex,
+  type ExportPolicyIndex,
+} from './export-policy/export-policy-index';

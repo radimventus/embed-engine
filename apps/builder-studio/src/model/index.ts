@@ -960,3 +960,16 @@ export type {
   InitializeExportCapabilityRegistryInput,
   RegisterExportCapabilityInput,
 } from './export-capability-types';
+
+export type {
+  ExportPolicy,
+  ExportPolicyEvent,
+  ExportPolicyEventType,
+  ExportPolicyIndexEntry,
+  ExportPolicyPackage,
+  ExportPolicyStatus,
+  ExportPolicyValidation,
+  ExportPolicyValidationIssue,
+  InitializeExportPolicyRegistryInput,
+  RegisterExportPolicyInput,
+} from './export-policy-types';
