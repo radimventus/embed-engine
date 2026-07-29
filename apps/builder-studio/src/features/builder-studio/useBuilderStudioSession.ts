@@ -4404,15 +4404,22 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     },
     createExperienceState(): void {
       const sessionId = runtimeSession?.id ?? 'runtime-session-demo';
+      const activeModule =
+        experienceModulePackage?.metadata.activeModuleId ?? 'hero';
+      const activeMove =
+        runtimeExecutionPackage?.execution.currentMove ??
+        decisionExecutionPackage?.execution.currentMove ??
+        'move-1';
+      const activeModuleExecution =
+        experienceModulePackage?.modules.find(
+          (item) => item.moduleId === activeModule,
+        ) ?? null;
       const created = services.experienceStateApi.createState({
         sessionId,
-        executionId: decisionExecutionPackage?.execution.id ?? null,
-        activeModule:
-          experienceModulePackage?.metadata.activeModuleId ?? 'hero',
-        activeMove:
-          runtimeExecutionPackage?.execution.currentMove ??
-          decisionExecutionPackage?.execution.currentMove ??
-          'move-1',
+        runtimeExecutionId: runtimeExecutionPackage?.execution.id ?? null,
+        moduleExecutionId: activeModuleExecution?.id ?? null,
+        activeModule,
+        activeMove,
         title: `Experience State ${sessionId}`,
       });
       setExperienceStatePackage(created);
@@ -4433,13 +4440,13 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       }
       try {
         const nextModule =
-          experienceStatePackage.state.activeModule === 'hero'
+          experienceStatePackage.state.metadata.activeModule === 'hero'
             ? 'priority'
-            : experienceStatePackage.state.activeModule === 'priority'
+            : experienceStatePackage.state.metadata.activeModule === 'priority'
               ? 'faq'
               : 'lead-capture';
         const nextMove =
-          experienceStatePackage.state.activeMove === 'move-1'
+          experienceStatePackage.state.metadata.activeMove === 'move-1'
             ? 'move-2'
             : 'move-3';
         const updated = services.experienceStateApi.updateState(
@@ -4447,9 +4454,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           {
             activeModule: nextModule,
             activeMove: nextMove,
-            executionId:
-              decisionExecutionPackage?.execution.id ??
-              experienceStatePackage.state.executionId,
+            runtimeExecutionId:
+              runtimeExecutionPackage?.execution.id ??
+              experienceStatePackage.state.runtimeExecutionId,
+            moduleExecutionId: `module-execution-${nextModule}`,
             notes: 'Updated from diagnostic Overview.',
           },
         );
@@ -4458,7 +4466,7 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           services.experienceStateManager.getHistory(updated.id),
         );
         setExperienceStateMessage(
-          `Updated → ${updated.state.activeModule} / ${updated.state.activeMove}.`,
+          `Updated → ${updated.state.currentState}.`,
         );
       } catch (error) {
         setExperienceStateMessage(
@@ -4472,7 +4480,7 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         return;
       }
       try {
-        const checked = services.experienceStateApi.checkpoint(
+        const checked = services.experienceStateApi.createCheckpoint(
           experienceStatePackage.id,
           'overview-checkpoint',
         );

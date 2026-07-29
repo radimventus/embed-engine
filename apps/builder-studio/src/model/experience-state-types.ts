@@ -1,6 +1,6 @@
 /**
- * Experience State Manager (EPIC-BLD-34).
- * SSOT for Experience runtime state — no Knowledge / Story / AI / module logic.
+ * Experience State Manager (EPIC-BLD-35).
+ * SSOT for Experience runtime state — no Knowledge / Story / AI / orchestration.
  */
 
 export type ExperienceStateStatus =
@@ -12,26 +12,30 @@ export type ExperienceStateStatus =
 
 export type ExperienceStateSnapshot = {
   readonly sessionId: string;
-  readonly executionId: string | null;
+  readonly runtimeExecutionId: string | null;
+  readonly moduleExecutionId: string | null;
+  readonly currentState: string;
+  readonly status: ExperienceStateStatus;
   readonly activeModule: string | null;
   readonly activeMove: string | null;
-  readonly status: ExperienceStateStatus;
   readonly notes: string;
 };
 
 export type ExperienceState = {
   readonly id: string;
   readonly sessionId: string;
-  readonly executionId: string | null;
-  readonly activeModule: string | null;
-  readonly activeMove: string | null;
-  readonly status: ExperienceStateStatus;
+  readonly runtimeExecutionId: string | null;
+  readonly moduleExecutionId: string | null;
+  readonly currentState: string;
   readonly checkpointId: string | null;
+  readonly status: ExperienceStateStatus;
   readonly createdAt: string;
   readonly updatedAt: string;
   readonly metadata: {
     readonly title: string;
     readonly notes: string;
+    readonly activeModule: string | null;
+    readonly activeMove: string | null;
     readonly restoreStatus: 'None' | 'Restored' | 'Failed';
     readonly lastCheckpointReason: string | null;
   };
@@ -39,10 +43,10 @@ export type ExperienceState = {
 
 export type ExperienceCheckpoint = {
   readonly id: string;
-  readonly stateId: string;
-  readonly timestamp: string;
+  readonly experienceStateId: string;
   readonly snapshot: ExperienceStateSnapshot;
   readonly reason: string;
+  readonly createdAt: string;
   readonly metadata: {
     readonly notes: string;
     readonly sequence: number;
@@ -79,14 +83,18 @@ export type ExperienceStateValidation = {
 
 export type CreateExperienceStateInput = {
   readonly sessionId: string;
-  readonly executionId?: string | null;
+  readonly runtimeExecutionId?: string | null;
+  readonly moduleExecutionId?: string | null;
+  readonly currentState?: string;
   readonly activeModule?: string | null;
   readonly activeMove?: string | null;
   readonly title?: string;
 };
 
 export type UpdateExperienceStateInput = {
-  readonly executionId?: string | null;
+  readonly runtimeExecutionId?: string | null;
+  readonly moduleExecutionId?: string | null;
+  readonly currentState?: string;
   readonly activeModule?: string | null;
   readonly activeMove?: string | null;
   readonly notes?: string;

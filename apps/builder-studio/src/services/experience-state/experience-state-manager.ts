@@ -20,6 +20,16 @@ import {
 
 const MAX_HISTORY = 40;
 
+function composeCurrentState(input: {
+  readonly activeModule: string | null;
+  readonly activeMove: string | null;
+  readonly status: string;
+}): string {
+  const modulePart = input.activeModule ?? 'none';
+  const movePart = input.activeMove ?? 'none';
+  return `${input.status}:${modulePart}@${movePart}`;
+}
+
 export type ExperienceStateManager = {
   initialize(sessionId: string): string;
   createState(input: CreateExperienceStateInput): ExperienceStatePackage;
@@ -27,7 +37,7 @@ export type ExperienceStateManager = {
     packageId: string,
     patch: UpdateExperienceStateInput,
   ): ExperienceStatePackage;
-  checkpoint(
+  createCheckpoint(
     packageId: string,
     reason?: string,
   ): ExperienceStatePackage;
@@ -46,8 +56,8 @@ export type ExperienceStateManager = {
 };
 
 /**
- * ExperienceStateManager (EPIC-BLD-34).
- * Runtime state SSOT — does not drive Experience flow or module logic.
+ * ExperienceStateManager (EPIC-BLD-35).
+ * Runtime state SSOT — does not drive Runtime, modules or orchestration.
  */
 export function createExperienceStateManager(options?: {
   readonly now?: () => Date;
@@ -116,14 +126,22 @@ export function createExperienceStateManager(options?: {
     createState(input) {
       const packageId = this.initialize(input.sessionId);
       const stamp = now().toISOString();
+      const activeModule = input.activeModule ?? null;
+      const activeMove = input.activeMove ?? null;
       const state: ExperienceState = {
         id: createId('experience-state'),
         sessionId: input.sessionId,
-        executionId: input.executionId ?? null,
-        activeModule: input.activeModule ?? null,
-        activeMove: input.activeMove ?? null,
-        status: 'Active',
+        runtimeExecutionId: input.runtimeExecutionId ?? null,
+        moduleExecutionId: input.moduleExecutionId ?? null,
+        currentState:
+          input.currentState?.trim() ||
+          composeCurrentState({
+            activeModule,
+            activeMove,
+            status: 'Active',
+          }),
         checkpointId: null,
+        status: 'Active',
         createdAt: stamp,
         updatedAt: stamp,
         metadata: {
@@ -132,6 +150,8 @@ export function createExperienceStateManager(options?: {
             `Experience State ${input.sessionId}`,
           notes:
             'Runtime state SSOT — Knowledge / Story / Personalization unchanged.',
+          activeModule,
+          activeMove,
           restoreStatus: 'None',
           lastCheckpointReason: null,
         },
@@ -182,24 +202,37 @@ export function createExperienceStateManager(options?: {
       }
 
       const stamp = now().toISOString();
+      const activeModule =
+        patch.activeModule !== undefined
+          ? patch.activeModule
+          : current.state.metadata.activeModule;
+      const activeMove =
+        patch.activeMove !== undefined
+          ? patch.activeMove
+          : current.state.metadata.activeMove;
       const state: ExperienceState = {
         ...current.state,
-        executionId:
-          patch.executionId !== undefined
-            ? patch.executionId
-            : current.state.executionId,
-        activeModule:
-          patch.activeModule !== undefined
-            ? patch.activeModule
-            : current.state.activeModule,
-        activeMove:
-          patch.activeMove !== undefined
-            ? patch.activeMove
-            : current.state.activeMove,
+        runtimeExecutionId:
+          patch.runtimeExecutionId !== undefined
+            ? patch.runtimeExecutionId
+            : current.state.runtimeExecutionId,
+        moduleExecutionId:
+          patch.moduleExecutionId !== undefined
+            ? patch.moduleExecutionId
+            : current.state.moduleExecutionId,
+        currentState:
+          patch.currentState?.trim() ||
+          composeCurrentState({
+            activeModule,
+            activeMove,
+            status: 'Active',
+          }),
         status: 'Active',
         updatedAt: stamp,
         metadata: {
           ...current.state.metadata,
+          activeModule,
+          activeMove,
           notes: patch.notes ?? current.state.metadata.notes,
         },
       };
@@ -221,7 +254,7 @@ export function createExperienceStateManager(options?: {
       return next;
     },
 
-    checkpoint(packageId, reason = 'manual-checkpoint') {
+    createCheckpoint(packageId, reason = 'manual-checkpoint') {
       const current = requirePackage(packageId);
       if (current.state.status === 'Disposed') {
         throw new Error('Cannot checkpoint disposed state');
@@ -230,10 +263,10 @@ export function createExperienceStateManager(options?: {
       const stamp = now().toISOString();
       const checkpoint: ExperienceCheckpoint = {
         id: createId('experience-checkpoint'),
-        stateId: current.state.id,
-        timestamp: stamp,
+        experienceStateId: current.state.id,
         snapshot: toStateSnapshot(current.state),
         reason,
+        createdAt: stamp,
         metadata: {
           notes: `Checkpoint for state ${current.state.id}`,
           sequence: current.checkpoints.length + 1,
@@ -300,15 +333,17 @@ export function createExperienceStateManager(options?: {
       const stamp = now().toISOString();
       const state: ExperienceState = {
         ...current.state,
-        executionId: checkpoint.snapshot.executionId,
-        activeModule: checkpoint.snapshot.activeModule,
-        activeMove: checkpoint.snapshot.activeMove,
+        runtimeExecutionId: checkpoint.snapshot.runtimeExecutionId,
+        moduleExecutionId: checkpoint.snapshot.moduleExecutionId,
+        currentState: checkpoint.snapshot.currentState,
         status: 'Restored',
         checkpointId: checkpoint.id,
         updatedAt: stamp,
         metadata: {
           ...current.state.metadata,
           notes: checkpoint.snapshot.notes,
+          activeModule: checkpoint.snapshot.activeModule,
+          activeMove: checkpoint.snapshot.activeMove,
           restoreStatus: 'Restored',
           lastCheckpointReason: checkpoint.reason,
         },
@@ -341,6 +376,11 @@ export function createExperienceStateManager(options?: {
       const state: ExperienceState = {
         ...current.state,
         status: 'Completed',
+        currentState: composeCurrentState({
+          activeModule: current.state.metadata.activeModule,
+          activeMove: current.state.metadata.activeMove,
+          status: 'Completed',
+        }),
         updatedAt: stamp,
       };
       const next: ExperienceStatePackage = {

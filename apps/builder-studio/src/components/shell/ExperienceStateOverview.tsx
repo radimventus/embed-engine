@@ -18,8 +18,8 @@ type ExperienceStateOverviewProps = {
 };
 
 /**
- * Experience State Overview (EPIC-BLD-34).
- * Diagnostic runtime state SSOT — no flow control.
+ * Experience State Overview (EPIC-BLD-35).
+ * Diagnostic runtime state SSOT — no Runtime / module control.
  */
 export function ExperienceStateOverview({
   statePackage,
@@ -39,8 +39,7 @@ export function ExperienceStateOverview({
     statePackage.metadata.status !== 'Disposed' &&
     statePackage.state.status !== 'Disposed';
   const canUpdate =
-    canMutate &&
-    statePackage.state.status !== 'Completed';
+    canMutate && statePackage.state.status !== 'Completed';
   const lastCheckpoint =
     statePackage !== null && statePackage.checkpoints.length > 0
       ? statePackage.checkpoints[statePackage.checkpoints.length - 1]
@@ -63,7 +62,7 @@ export function ExperienceStateOverview({
           </p>
           <p className="mt-2 text-[13px] text-builder-muted">
             State Manager nemění Knowledge, AI Context, Personalization ani
-            Story. Neřídí průchod Experience a neobsahuje logiku modulů.
+            Story. Neřídí Runtime ani moduly a nepoužívá AI.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -131,30 +130,42 @@ export function ExperienceStateOverview({
         </p>
       ) : null}
 
-      <section aria-labelledby="es-active-heading">
+      <section aria-labelledby="es-session-heading">
         <h3
-          id="es-active-heading"
+          id="es-session-heading"
           className="text-base font-semibold text-builder-ink"
         >
-          Active State
+          Active Session
         </h3>
         {statePackage === null ? (
           <p className="mt-3 text-sm text-builder-muted">
-            Spusťte Create State (volitelně po Session / Orchestrator /
-            Modules).
+            Spusťte Create State (volitelně po Session / Runtime / Modules).
           </p>
         ) : (
           <ul className="mt-3 grid gap-2 sm:grid-cols-2">
-            <InfoTile label="Package" value={statePackage.id} />
-            <InfoTile label="State" value={statePackage.state.id} />
             <InfoTile label="Session" value={statePackage.state.sessionId} />
-            <InfoTile
-              label="Execution"
-              value={statePackage.state.executionId ?? '—'}
-            />
-            <InfoTile label="Status" value={statePackage.state.status} />
+            <InfoTile label="State" value={statePackage.state.id} />
+            <InfoTile label="Package" value={statePackage.id} />
             <InfoTile label="Index" value={String(indexCount)} />
           </ul>
+        )}
+      </section>
+
+      <section aria-labelledby="es-runtime-heading">
+        <h3
+          id="es-runtime-heading"
+          className="text-base font-semibold text-builder-ink"
+        >
+          Active Runtime
+        </h3>
+        {statePackage === null ? (
+          <p className="mt-3 text-sm text-builder-muted">—</p>
+        ) : (
+          <div className="mt-3 rounded-[12px] border border-[#DDE5EF] px-4 py-3">
+            <p className="text-sm font-semibold text-builder-ink">
+              {statePackage.state.runtimeExecutionId ?? '—'}
+            </p>
+          </div>
         )}
       </section>
 
@@ -170,25 +181,32 @@ export function ExperienceStateOverview({
         ) : (
           <div className="mt-3 rounded-[12px] border border-[#DDE5EF] px-4 py-3">
             <p className="text-sm font-semibold text-builder-ink">
-              {statePackage.state.activeModule ?? '—'}
+              {statePackage.state.metadata.activeModule ?? '—'}
+            </p>
+            <p className="mt-1 text-[13px] text-builder-muted">
+              execution: {statePackage.state.moduleExecutionId ?? '—'}
             </p>
           </div>
         )}
       </section>
 
-      <section aria-labelledby="es-move-heading">
+      <section aria-labelledby="es-current-heading">
         <h3
-          id="es-move-heading"
+          id="es-current-heading"
           className="text-base font-semibold text-builder-ink"
         >
-          Active Move
+          Current State
         </h3>
         {statePackage === null ? (
           <p className="mt-3 text-sm text-builder-muted">—</p>
         ) : (
           <div className="mt-3 rounded-[12px] border border-[#DDE5EF] px-4 py-3">
             <p className="text-sm font-semibold text-builder-ink">
-              {statePackage.state.activeMove ?? '—'}
+              {statePackage.state.currentState}
+            </p>
+            <p className="mt-1 text-[13px] text-builder-muted">
+              status: {statePackage.state.status} · move:{' '}
+              {statePackage.state.metadata.activeMove ?? '—'}
             </p>
           </div>
         )}
@@ -210,29 +228,8 @@ export function ExperienceStateOverview({
             </p>
             <p className="mt-1 text-[13px] text-builder-muted">
               {lastCheckpoint.reason} · seq #
-              {lastCheckpoint.metadata.sequence}
-            </p>
-          </div>
-        )}
-      </section>
-
-      <section aria-labelledby="es-restore-heading">
-        <h3
-          id="es-restore-heading"
-          className="text-base font-semibold text-builder-ink"
-        >
-          Restore Status
-        </h3>
-        {statePackage === null ? (
-          <p className="mt-3 text-sm text-builder-muted">—</p>
-        ) : (
-          <div className="mt-3 rounded-[12px] border border-[#DDE5EF] px-4 py-3">
-            <p className="text-sm font-semibold text-builder-ink">
-              {statePackage.state.metadata.restoreStatus}
-            </p>
-            <p className="mt-1 text-[13px] text-builder-muted">
-              checkpoint:{' '}
-              {statePackage.state.checkpointId ?? '—'}
+              {lastCheckpoint.metadata.sequence} · restore:{' '}
+              {statePackage?.state.metadata.restoreStatus ?? 'None'}
             </p>
           </div>
         )}

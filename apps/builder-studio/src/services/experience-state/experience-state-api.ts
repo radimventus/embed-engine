@@ -6,7 +6,7 @@ import type {
 import type { ExperienceStateManager } from './experience-state-manager';
 
 /**
- * Public Experience State API (EPIC-BLD-34).
+ * Public Experience State API (EPIC-BLD-35).
  */
 export type ExperienceStateApi = {
   createState(input: CreateExperienceStateInput): ExperienceStatePackage;
@@ -14,7 +14,10 @@ export type ExperienceStateApi = {
     packageId: string,
     patch: UpdateExperienceStateInput,
   ): ExperienceStatePackage;
-  checkpoint(packageId: string, reason?: string): ExperienceStatePackage;
+  createCheckpoint(
+    packageId: string,
+    reason?: string,
+  ): ExperienceStatePackage;
   restoreState(
     packageId: string,
     checkpointId: string,
@@ -33,8 +36,8 @@ export function createExperienceStateApi(
     updateState(packageId, patch) {
       return manager.updateState(packageId, patch);
     },
-    checkpoint(packageId, reason) {
-      return manager.checkpoint(packageId, reason);
+    createCheckpoint(packageId, reason) {
+      return manager.createCheckpoint(packageId, reason);
     },
     restoreState(packageId, checkpointId) {
       return manager.restore(packageId, checkpointId);

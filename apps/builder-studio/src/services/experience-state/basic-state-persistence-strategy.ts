@@ -8,15 +8,15 @@ import type {
 } from '../../model';
 
 /**
- * StatePersistenceStrategy (EPIC-BLD-34).
- * Deterministic in-memory persistence — no database.
+ * StatePersistenceStrategy (EPIC-BLD-35).
+ * Deterministic in-memory persistence — no database / cloud / sync.
  */
 export type StatePersistenceStrategy = {
   readonly id: string;
   supports(state: ExperienceState): boolean;
   save(checkpoint: ExperienceCheckpoint): ExperienceCheckpoint;
   restore(checkpointId: string): ExperienceCheckpoint | null;
-  list(stateId?: string): readonly ExperienceCheckpoint[];
+  list(experienceStateId?: string): readonly ExperienceCheckpoint[];
 };
 
 /**
@@ -41,12 +41,12 @@ export function createBasicStatePersistenceStrategy(): StatePersistenceStrategy 
       return store.get(checkpointId) ?? null;
     },
 
-    list(stateId) {
+    list(experienceStateId) {
       const all = Array.from(store.values());
-      if (stateId === undefined) {
+      if (experienceStateId === undefined) {
         return all;
       }
-      return all.filter((item) => item.stateId === stateId);
+      return all.filter((item) => item.experienceStateId === experienceStateId);
     },
   };
 }
@@ -54,16 +54,18 @@ export function createBasicStatePersistenceStrategy(): StatePersistenceStrategy 
 export function toStateSnapshot(state: ExperienceState): ExperienceStateSnapshot {
   return {
     sessionId: state.sessionId,
-    executionId: state.executionId,
-    activeModule: state.activeModule,
-    activeMove: state.activeMove,
+    runtimeExecutionId: state.runtimeExecutionId,
+    moduleExecutionId: state.moduleExecutionId,
+    currentState: state.currentState,
     status: state.status,
+    activeModule: state.metadata.activeModule,
+    activeMove: state.metadata.activeMove,
     notes: state.metadata.notes,
   };
 }
 
 /**
- * ExperienceStateValidator (EPIC-BLD-34).
+ * ExperienceStateValidator (EPIC-BLD-35).
  */
 export type ExperienceStateValidator = {
   validate(pkg: ExperienceStatePackage): ExperienceStateValidation;
@@ -95,11 +97,11 @@ export function createExperienceStateValidator(options?: {
           message: `Checkpoint ${item.id} missing reason.`,
         });
       }
-      if (item.stateId !== pkg.state.id) {
+      if (item.experienceStateId !== pkg.state.id) {
         issues.push({
           code: 'checkpoint-state-mismatch',
           severity: 'error',
-          message: `Checkpoint ${item.id} stateId mismatch.`,
+          message: `Checkpoint ${item.id} experienceStateId mismatch.`,
         });
       }
       if (!item.snapshot.sessionId.trim()) {
@@ -129,13 +131,20 @@ export function createExperienceStateValidator(options?: {
     const issues: ExperienceStateValidationIssue[] = [];
     if (
       pkg.state.status === 'Active' &&
-      pkg.state.executionId === null &&
-      pkg.state.activeModule === null
+      pkg.state.runtimeExecutionId === null &&
+      pkg.state.moduleExecutionId === null
     ) {
       issues.push({
         code: 'active-without-progress',
         severity: 'warning',
-        message: `Active state ${pkg.state.id} has no execution or module.`,
+        message: `Active state ${pkg.state.id} has no runtime or module execution.`,
+      });
+    }
+    if (!pkg.state.currentState.trim()) {
+      issues.push({
+        code: 'empty-current-state',
+        severity: 'error',
+        message: `State ${pkg.state.id} has empty currentState.`,
       });
     }
     if (pkg.state.status === 'Completed' && pkg.state.updatedAt.trim() === '') {

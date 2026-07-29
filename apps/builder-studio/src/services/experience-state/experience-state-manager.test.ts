@@ -13,7 +13,8 @@ import { createExperienceStateIndex } from './experience-state-index';
 function sampleInput(): CreateExperienceStateInput {
   return {
     sessionId: 'runtime-session-1',
-    executionId: 'decision-execution-1',
+    runtimeExecutionId: 'runtime-execution-1',
+    moduleExecutionId: 'module-execution-1',
     activeModule: 'hero',
     activeMove: 'move-1',
     title: 'Demo Experience State',
@@ -25,14 +26,16 @@ describe('BasicStatePersistenceStrategy', () => {
     const persistence = createBasicStatePersistenceStrategy();
     const saved = persistence.save({
       id: 'cp-1',
-      stateId: 'state-1',
-      timestamp: '2026-08-19T00:00:00.000Z',
+      experienceStateId: 'state-1',
+      createdAt: '2026-08-19T00:00:00.000Z',
       snapshot: {
         sessionId: 's1',
-        executionId: 'e1',
+        runtimeExecutionId: 'r1',
+        moduleExecutionId: 'm1',
+        currentState: 'Active:hero@move-1',
+        status: 'Active',
         activeModule: 'hero',
         activeMove: 'move-1',
-        status: 'Active',
         notes: 'n',
       },
       reason: 'test',
@@ -54,9 +57,9 @@ describe('ExperienceStateValidator', () => {
       state: {
         id: 'state-1',
         sessionId: 's1',
-        executionId: null,
-        activeModule: null,
-        activeMove: null,
+        runtimeExecutionId: null,
+        moduleExecutionId: null,
+        currentState: 'Active:none@none',
         status: 'Active',
         checkpointId: 'missing-cp',
         createdAt: '2026-08-19T00:00:00.000Z',
@@ -64,6 +67,8 @@ describe('ExperienceStateValidator', () => {
         metadata: {
           title: 't',
           notes: 'n',
+          activeModule: null,
+          activeMove: null,
           restoreStatus: 'None',
           lastCheckpointReason: null,
         },
@@ -100,6 +105,7 @@ describe('createExperienceStateManager', () => {
 
     const pkg = manager.createState(sampleInput());
     assert.equal(pkg.state.status, 'Active');
+    assert.ok(pkg.state.currentState.includes('hero'));
     assert.ok(
       manager
         .getEvents(pkg.id)
@@ -109,17 +115,23 @@ describe('createExperienceStateManager', () => {
     const updated = manager.updateState(pkg.id, {
       activeModule: 'priority',
       activeMove: 'move-2',
+      moduleExecutionId: 'module-execution-2',
     });
-    assert.equal(updated.state.activeModule, 'priority');
+    assert.equal(updated.state.metadata.activeModule, 'priority');
+    assert.ok(updated.state.currentState.includes('priority'));
     assert.ok(
       manager
         .getEvents(pkg.id)
         .some((event) => event.type === 'ExperienceStateUpdated'),
     );
 
-    const checked = manager.checkpoint(updated.id, 'mid-flow');
+    const checked = manager.createCheckpoint(updated.id, 'mid-flow');
     assert.ok(checked.state.checkpointId);
     assert.equal(checked.checkpoints.length, 1);
+    assert.equal(
+      checked.checkpoints[0]?.experienceStateId,
+      checked.state.id,
+    );
     assert.ok(
       manager
         .getEvents(pkg.id)
@@ -130,11 +142,11 @@ describe('createExperienceStateManager', () => {
       activeModule: 'faq',
       activeMove: 'move-3',
     });
-    assert.equal(moved.state.activeModule, 'faq');
+    assert.equal(moved.state.metadata.activeModule, 'faq');
 
     const restored = manager.restore(moved.id, checked.state.checkpointId!);
     assert.equal(restored.state.status, 'Restored');
-    assert.equal(restored.state.activeModule, 'priority');
+    assert.equal(restored.state.metadata.activeModule, 'priority');
     assert.equal(restored.state.metadata.restoreStatus, 'Restored');
     assert.ok(
       manager
@@ -156,13 +168,13 @@ describe('createExperienceStateManager', () => {
     assert.ok(manager.getIndex().list(pkg.id).length >= 1);
   });
 
-  it('exposes API create/update/checkpoint/restore/list/validate', () => {
+  it('exposes API create/update/createCheckpoint/restore/list/validate', () => {
     const manager = createExperienceStateManager();
     const api = createExperienceStateApi(manager);
     const pkg = api.createState(sampleInput());
     const updated = api.updateState(pkg.id, { activeModule: 'faq' });
-    assert.equal(updated.state.activeModule, 'faq');
-    const checked = api.checkpoint(pkg.id, 'api-cp');
+    assert.equal(updated.state.metadata.activeModule, 'faq');
+    const checked = api.createCheckpoint(pkg.id, 'api-cp');
     assert.ok(checked.state.checkpointId);
     const restored = api.restoreState(pkg.id, checked.state.checkpointId!);
     assert.equal(restored.state.status, 'Restored');
@@ -181,9 +193,9 @@ describe('ExperienceStateIndex', () => {
         state: {
           id: 'state-1',
           sessionId: 's1',
-          executionId: null,
-          activeModule: 'hero',
-          activeMove: null,
+          runtimeExecutionId: null,
+          moduleExecutionId: null,
+          currentState: 'Active:hero@none',
           status: 'Active',
           checkpointId: null,
           createdAt: '2026-08-19T00:00:00.000Z',
@@ -191,6 +203,8 @@ describe('ExperienceStateIndex', () => {
           metadata: {
             title: 't',
             notes: 'n',
+            activeModule: 'hero',
+            activeMove: null,
             restoreStatus: 'None',
             lastCheckpointReason: null,
           },
