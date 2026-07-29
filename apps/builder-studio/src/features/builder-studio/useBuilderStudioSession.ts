@@ -111,6 +111,8 @@ import type {
   PublicationPlanPackage,
   PublicationExecutionEvent,
   PublicationExecutionPackage,
+  ArtifactExportEvent,
+  ArtifactExportPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -257,6 +259,8 @@ import {
   createPublicationPlanBuilder,
   createPublicationExecutionApi,
   createPublicationExecutionCoordinator,
+  createArtifactExportContract,
+  createArtifactExportApi,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -508,6 +512,10 @@ export type BuilderStudioViewModel = {
   readonly publicationExecutionEvents: readonly PublicationExecutionEvent[];
   readonly publicationExecutionIndexCount: number;
   readonly publicationExecutionMessage: string | null;
+  readonly artifactExportPackage: ArtifactExportPackage | null;
+  readonly artifactExportEvents: readonly ArtifactExportEvent[];
+  readonly artifactExportIndexCount: number;
+  readonly artifactExportMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -793,6 +801,10 @@ export type BuilderStudioViewModel = {
   readonly completePublicationExecution: () => void;
   readonly validatePublicationExecution: () => void;
   readonly disposePublicationExecution: () => void;
+  readonly buildArtifactExport: () => void;
+  readonly validateArtifactExport: () => void;
+  readonly exportArtifact: () => void;
+  readonly disposeArtifactExport: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1565,6 +1577,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const publicationExecutionApi = createPublicationExecutionApi(
       publicationExecutionCoordinator,
     );
+    const artifactExportContract = createArtifactExportContract();
+    const artifactExportApi = createArtifactExportApi(artifactExportContract);
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1700,6 +1714,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       publicationPlanApi,
       publicationExecutionCoordinator,
       publicationExecutionApi,
+      artifactExportContract,
+      artifactExportApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -2315,6 +2331,14 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     useState(0);
   const [publicationExecutionMessage, setPublicationExecutionMessage] =
     useState<string | null>(null);
+  const [artifactExportPackage, setArtifactExportPackage] =
+    useState<ArtifactExportPackage | null>(null);
+  const [artifactExportEvents, setArtifactExportEvents] = useState<
+    readonly ArtifactExportEvent[]
+  >([]);
+  const [artifactExportIndexCount, setArtifactExportIndexCount] = useState(0);
+  const [artifactExportMessage, setArtifactExportMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2808,6 +2832,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     publicationExecutionEvents,
     publicationExecutionIndexCount,
     publicationExecutionMessage,
+    artifactExportPackage,
+    artifactExportEvents,
+    artifactExportIndexCount,
+    artifactExportMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -8995,6 +9023,90 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.publicationExecutionCoordinator.getIndex().length,
       );
       setPublicationExecutionMessage(null);
+    },
+    buildArtifactExport(): void {
+      try {
+        const input = {
+          artifactId:
+            publicationExecutionPackage?.session.planId ??
+            runtimeBootstrapPackage?.runtimeSession?.publicationId ??
+            'artifact-demo-001',
+          artifactType: 'RuntimeBootstrap',
+          exportVersion: '1.0.0',
+          schemaVersion: '1',
+          title: 'Builder Artifact Export',
+        };
+        const pkg = services.artifactExportApi.buildArtifactExport(
+          artifactExportPackage?.id ?? null,
+          input,
+        );
+        setArtifactExportPackage(pkg);
+        setArtifactExportEvents(services.artifactExportContract.getEvents());
+        setArtifactExportIndexCount(
+          services.artifactExportContract.getIndex().length,
+        );
+        setArtifactExportMessage('Artifact export built.');
+      } catch (err) {
+        setArtifactExportMessage(
+          `Build failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    validateArtifactExport(): void {
+      if (artifactExportPackage === null) {
+        setArtifactExportMessage('Build export first.');
+        return;
+      }
+      const validation = services.artifactExportApi.validateArtifactExport(
+        artifactExportPackage.id,
+      );
+      setArtifactExportPackage(
+        services.artifactExportContract.getPackage(artifactExportPackage.id),
+      );
+      setArtifactExportEvents(services.artifactExportContract.getEvents());
+      setArtifactExportIndexCount(
+        services.artifactExportContract.getIndex().length,
+      );
+      setArtifactExportMessage(
+        validation.valid
+          ? 'Artifact export validation OK.'
+          : 'Artifact export validation failed.',
+      );
+    },
+    exportArtifact(): void {
+      if (artifactExportPackage === null) {
+        setArtifactExportMessage('Build export first.');
+        return;
+      }
+      try {
+        const exported = services.artifactExportApi.exportArtifact(
+          artifactExportPackage.id,
+        );
+        setArtifactExportPackage(exported);
+        setArtifactExportEvents(services.artifactExportContract.getEvents());
+        setArtifactExportIndexCount(
+          services.artifactExportContract.getIndex().length,
+        );
+        setArtifactExportMessage('Artifact exported.');
+      } catch (err) {
+        setArtifactExportMessage(
+          `Export failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    disposeArtifactExport(): void {
+      if (artifactExportPackage === null) {
+        return;
+      }
+      const disposed = services.artifactExportApi.disposeArtifactExport(
+        artifactExportPackage.id,
+      );
+      setArtifactExportPackage(disposed);
+      setArtifactExportEvents(services.artifactExportContract.getEvents());
+      setArtifactExportIndexCount(
+        services.artifactExportContract.getIndex().length,
+      );
+      setArtifactExportMessage(null);
     },
     buildProject(): void {
       const projectId =

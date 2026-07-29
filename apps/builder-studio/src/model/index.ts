@@ -908,3 +908,15 @@ export type {
   RuntimeBootstrapValidationIssue,
   RuntimeSessionModel,
 } from './runtime-bootstrap-types';
+
+export type {
+  ArtifactExportEvent,
+  ArtifactExportEventType,
+  ArtifactExportIndexEntry,
+  ArtifactExportModel,
+  ArtifactExportPackage,
+  ArtifactExportValidation,
+  ArtifactExportValidationIssue,
+  BuildArtifactExportInput,
+  InitializeArtifactExportInput,
+} from './artifact-export-types';

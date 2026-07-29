@@ -102,6 +102,8 @@ import type {
   PublicationPlanPackage,
   PublicationExecutionEvent,
   PublicationExecutionPackage,
+  ArtifactExportEvent,
+  ArtifactExportPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -183,6 +185,7 @@ import { ArtifactVersionsOverview } from './ArtifactVersionsOverview';
 import { ArtifactDependenciesOverview } from './ArtifactDependenciesOverview';
 import { PublicationPlanOverview } from './PublicationPlanOverview';
 import { PublicationExecutionOverview } from './PublicationExecutionOverview';
+import { ArtifactExportOverview } from './ArtifactExportOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -413,6 +416,10 @@ type WorkspaceCanvasProps = {
   readonly publicationExecutionEvents: readonly PublicationExecutionEvent[];
   readonly publicationExecutionIndexCount: number;
   readonly publicationExecutionMessage: string | null;
+  readonly artifactExportPackage: ArtifactExportPackage | null;
+  readonly artifactExportEvents: readonly ArtifactExportEvent[];
+  readonly artifactExportIndexCount: number;
+  readonly artifactExportMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -687,6 +694,10 @@ type WorkspaceCanvasProps = {
   readonly onCompletePublicationExecution: () => void;
   readonly onValidatePublicationExecution: () => void;
   readonly onDisposePublicationExecution: () => void;
+  readonly onBuildArtifactExport: () => void;
+  readonly onValidateArtifactExport: () => void;
+  readonly onExportArtifact: () => void;
+  readonly onDisposeArtifactExport: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -900,6 +911,10 @@ export function WorkspaceCanvas({
   publicationExecutionEvents,
   publicationExecutionIndexCount,
   publicationExecutionMessage,
+  artifactExportPackage,
+  artifactExportEvents,
+  artifactExportIndexCount,
+  artifactExportMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1164,6 +1179,10 @@ export function WorkspaceCanvas({
   onCompletePublicationExecution,
   onValidatePublicationExecution,
   onDisposePublicationExecution,
+  onBuildArtifactExport,
+  onValidateArtifactExport,
+  onExportArtifact,
+  onDisposeArtifactExport,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1975,6 +1994,18 @@ export function WorkspaceCanvas({
             onValidate={onValidatePublicationExecution}
             onDispose={onDisposePublicationExecution}
             message={publicationExecutionMessage}
+          />
+        ) : null}
+        {activeSection === 'artifact-export' ? (
+          <ArtifactExportOverview
+            exportPackage={artifactExportPackage}
+            events={artifactExportEvents}
+            indexCount={artifactExportIndexCount}
+            onBuild={onBuildArtifactExport}
+            onValidate={onValidateArtifactExport}
+            onExport={onExportArtifact}
+            onDispose={onDisposeArtifactExport}
+            message={artifactExportMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

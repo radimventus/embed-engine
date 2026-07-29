@@ -1101,3 +1101,25 @@ export {
   createRuntimeBootstrapIndex,
   type RuntimeBootstrapIndex,
 } from './runtime-bootstrap/runtime-bootstrap-index';
+
+export {
+  createArtifactExportContract,
+  type ArtifactExportContract,
+  type ArtifactExportContractOptions,
+} from './artifact-export/artifact-export-contract';
+export {
+  createArtifactExportApi,
+  type ArtifactExportApi,
+} from './artifact-export/artifact-export-api';
+export {
+  createBasicArtifactExportStrategy,
+  type ArtifactExportStrategy,
+} from './artifact-export/basic-artifact-export-strategy';
+export {
+  createBasicArtifactExportValidator,
+  type ArtifactExportValidator,
+} from './artifact-export/basic-artifact-export-validator';
+export {
+  createArtifactExportIndex,
+  type ArtifactExportIndex,
+} from './artifact-export/artifact-export-index';
