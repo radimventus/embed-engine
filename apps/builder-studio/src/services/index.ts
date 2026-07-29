@@ -637,3 +637,23 @@ export {
   createRuntimeEnforcementIndex,
   type RuntimeEnforcementIndex,
 } from './runtime-enforcement/runtime-enforcement-index';
+
+export {
+  createRuntimeResilienceEngine,
+  type RuntimeResilienceEngine,
+  type RuntimeResilienceEngineOptions,
+} from './runtime-resilience/runtime-resilience-engine';
+export {
+  createRuntimeResilienceApi,
+  type RuntimeResilienceApi,
+} from './runtime-resilience/runtime-resilience-api';
+export {
+  createBasicRecoveryStrategy,
+  createRuntimeResilienceValidator,
+  type RecoveryStrategy,
+  type RuntimeResilienceValidator,
+} from './runtime-resilience/basic-recovery-strategy';
+export {
+  createRuntimeResilienceIndex,
+  type RuntimeResilienceIndex,
+} from './runtime-resilience/runtime-resilience-index';

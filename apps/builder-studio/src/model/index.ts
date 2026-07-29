@@ -590,3 +590,18 @@ export type {
   RuntimeEnforcementValidation,
   RuntimeEnforcementValidationIssue,
 } from './runtime-enforcement-types';
+
+export type {
+  EstimatedRecoveryLevel,
+  EvaluateResilienceInput,
+  RecoveryAction,
+  RecoveryPlan,
+  RecoverySeverity,
+  RecoveryStrategyKind,
+  RuntimeResilienceEvent,
+  RuntimeResilienceEventType,
+  RuntimeResilienceIndexEntry,
+  RuntimeResiliencePackage,
+  RuntimeResilienceValidation,
+  RuntimeResilienceValidationIssue,
+} from './runtime-resilience-types';

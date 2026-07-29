@@ -162,6 +162,10 @@ export function BuilderStudioApp() {
         runtimeEnforcementEvents={session.runtimeEnforcementEvents}
         runtimeEnforcementIndexCount={session.runtimeEnforcementIndexCount}
         runtimeEnforcementMessage={session.runtimeEnforcementMessage}
+        runtimeResiliencePackage={session.runtimeResiliencePackage}
+        runtimeResilienceEvents={session.runtimeResilienceEvents}
+        runtimeResilienceIndexCount={session.runtimeResilienceIndexCount}
+        runtimeResilienceMessage={session.runtimeResilienceMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -325,6 +329,10 @@ export function BuilderStudioApp() {
         onPublishRuntimeEnforcement={session.publishRuntimeEnforcement}
         onValidateRuntimeEnforcement={session.validateRuntimeEnforcement}
         onDisposeRuntimeEnforcement={session.disposeRuntimeEnforcement}
+        onEvaluateRuntimeResilience={session.evaluateRuntimeResilience}
+        onPublishRuntimeResilience={session.publishRuntimeResilience}
+        onValidateRuntimeResilience={session.validateRuntimeResilience}
+        onDisposeRuntimeResilience={session.disposeRuntimeResilience}
       />
     </AppShell>
   );

@@ -65,6 +65,8 @@ import type {
   RuntimePolicyPackage,
   RuntimeEnforcementEvent,
   RuntimeEnforcementPackage,
+  RuntimeResilienceEvent,
+  RuntimeResiliencePackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -169,6 +171,8 @@ import {
   createRuntimePolicyEngine,
   createRuntimeEnforcementApi,
   createRuntimePolicyEnforcementEngine,
+  createRuntimeResilienceApi,
+  createRuntimeResilienceEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -324,6 +328,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeEnforcementEvents: readonly RuntimeEnforcementEvent[];
   readonly runtimeEnforcementIndexCount: number;
   readonly runtimeEnforcementMessage: string | null;
+  readonly runtimeResiliencePackage: RuntimeResiliencePackage | null;
+  readonly runtimeResilienceEvents: readonly RuntimeResilienceEvent[];
+  readonly runtimeResilienceIndexCount: number;
+  readonly runtimeResilienceMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -508,6 +516,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeEnforcement: () => void;
   readonly validateRuntimeEnforcement: () => void;
   readonly disposeRuntimeEnforcement: () => void;
+  readonly evaluateRuntimeResilience: () => void;
+  readonly publishRuntimeResilience: () => void;
+  readonly validateRuntimeResilience: () => void;
+  readonly disposeRuntimeResilience: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1196,6 +1208,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeEnforcementApi = createRuntimeEnforcementApi(
       runtimeEnforcementEngine,
     );
+    const runtimeResilienceEngine = createRuntimeResilienceEngine();
+    const runtimeResilienceApi = createRuntimeResilienceApi(
+      runtimeResilienceEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1283,6 +1299,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimePolicyApi,
       runtimeEnforcementEngine,
       runtimeEnforcementApi,
+      runtimeResilienceEngine,
+      runtimeResilienceApi,
     };
   }, []);
 
@@ -1652,6 +1670,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [runtimeEnforcementIndexCount, setRuntimeEnforcementIndexCount] =
     useState(0);
   const [runtimeEnforcementMessage, setRuntimeEnforcementMessage] = useState<
+    string | null
+  >(null);
+  const [runtimeResiliencePackage, setRuntimeResiliencePackage] =
+    useState<RuntimeResiliencePackage | null>(null);
+  const [runtimeResilienceEvents, setRuntimeResilienceEvents] = useState<
+    readonly RuntimeResilienceEvent[]
+  >([]);
+  const [runtimeResilienceIndexCount, setRuntimeResilienceIndexCount] =
+    useState(0);
+  const [runtimeResilienceMessage, setRuntimeResilienceMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -2055,6 +2083,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeEnforcementEvents,
     runtimeEnforcementIndexCount,
     runtimeEnforcementMessage,
+    runtimeResiliencePackage,
+    runtimeResilienceEvents,
+    runtimeResilienceIndexCount,
+    runtimeResilienceMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -5295,6 +5327,95 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeEnforcementEngine.getIndex().length,
       );
       setRuntimeEnforcementMessage(null);
+    },
+    evaluateRuntimeResilience(): void {
+      const sessionId =
+        runtimeEnforcementPackage?.decision.sessionId ??
+        runtimeHealthPackage?.report.sessionId ??
+        runtimeGovernancePackage?.evaluation.sessionId ??
+        observabilityPackage?.metadata.sessionId ??
+        experienceStatePackage?.state.sessionId ??
+        runtimeExecutionPackage?.execution.sessionId ??
+        'runtime-session-demo';
+      const health = runtimeHealthPackage?.report ?? null;
+      const enforcement = runtimeEnforcementPackage?.decision ?? null;
+      const evaluated = services.runtimeResilienceApi.evaluateRecovery({
+        sessionId,
+        runtimeExecutionId:
+          enforcement?.runtimeExecutionId ??
+          health?.runtimeExecutionId ??
+          runtimeExecutionPackage?.execution.id ??
+          experienceStatePackage?.state.runtimeExecutionId ??
+          'runtime-execution-demo',
+        title: 'Builder Runtime Resilience',
+        healthStatus: health?.overallHealth ?? 'Healthy',
+        healthScore: health?.score ?? 1,
+        enforcementStatus: enforcement?.status ?? 'ALLOW',
+        disruptionCodes: [],
+        moduleFailures: [],
+        hasCheckpoint: true,
+      });
+      setRuntimeResiliencePackage(evaluated);
+      setRuntimeResilienceEvents(services.runtimeResilienceEngine.getEvents());
+      setRuntimeResilienceIndexCount(
+        services.runtimeResilienceEngine.getIndex().length,
+      );
+      setRuntimeResilienceMessage(
+        `Plan ${evaluated.recoveryPlan.recoveryStrategy} → ${evaluated.recoveryPlan.estimatedRecoveryLevel}.`,
+      );
+    },
+    publishRuntimeResilience(): void {
+      if (runtimeResiliencePackage === null) {
+        setRuntimeResilienceMessage('Nejdřív Evaluate Recovery.');
+        return;
+      }
+      try {
+        const published = services.runtimeResilienceApi.publishRecovery(
+          runtimeResiliencePackage.id,
+        );
+        setRuntimeResiliencePackage(published);
+        setRuntimeResilienceEvents(
+          services.runtimeResilienceEngine.getEvents(),
+        );
+        setRuntimeResilienceMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeResilienceMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeResilience(): void {
+      if (runtimeResiliencePackage === null) {
+        setRuntimeResilienceMessage('Nejdřív Evaluate Recovery.');
+        return;
+      }
+      const validation = services.runtimeResilienceApi.validateRecovery(
+        runtimeResiliencePackage.id,
+      );
+      const previewed = services.runtimeResilienceApi.previewRecovery(
+        runtimeResiliencePackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeResiliencePackage(previewed);
+      }
+      setRuntimeResilienceEvents(services.runtimeResilienceEngine.getEvents());
+      setRuntimeResilienceMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeResilience(): void {
+      if (runtimeResiliencePackage === null) {
+        return;
+      }
+      const disposed = services.runtimeResilienceEngine.dispose(
+        runtimeResiliencePackage.id,
+      );
+      setRuntimeResiliencePackage(disposed);
+      setRuntimeResilienceEvents(services.runtimeResilienceEngine.getEvents());
+      setRuntimeResilienceIndexCount(
+        services.runtimeResilienceEngine.getIndex().length,
+      );
+      setRuntimeResilienceMessage(null);
     },
     buildProject(): void {
       const projectId =

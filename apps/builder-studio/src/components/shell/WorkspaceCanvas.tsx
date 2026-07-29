@@ -56,6 +56,8 @@ import type {
   RuntimePolicyPackage,
   RuntimeEnforcementEvent,
   RuntimeEnforcementPackage,
+  RuntimeResilienceEvent,
+  RuntimeResiliencePackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -114,6 +116,7 @@ import { AuditOverview } from './AuditOverview';
 import { GovernanceOverview } from './GovernanceOverview';
 import { PoliciesOverview } from './PoliciesOverview';
 import { EnforcementOverview } from './EnforcementOverview';
+import { ResilienceOverview } from './ResilienceOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -252,6 +255,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeEnforcementEvents: readonly RuntimeEnforcementEvent[];
   readonly runtimeEnforcementIndexCount: number;
   readonly runtimeEnforcementMessage: string | null;
+  readonly runtimeResiliencePackage: RuntimeResiliencePackage | null;
+  readonly runtimeResilienceEvents: readonly RuntimeResilienceEvent[];
+  readonly runtimeResilienceIndexCount: number;
+  readonly runtimeResilienceMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -425,6 +432,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeEnforcement: () => void;
   readonly onValidateRuntimeEnforcement: () => void;
   readonly onDisposeRuntimeEnforcement: () => void;
+  readonly onEvaluateRuntimeResilience: () => void;
+  readonly onPublishRuntimeResilience: () => void;
+  readonly onValidateRuntimeResilience: () => void;
+  readonly onDisposeRuntimeResilience: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -546,6 +557,10 @@ export function WorkspaceCanvas({
   runtimeEnforcementEvents,
   runtimeEnforcementIndexCount,
   runtimeEnforcementMessage,
+  runtimeResiliencePackage,
+  runtimeResilienceEvents,
+  runtimeResilienceIndexCount,
+  runtimeResilienceMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -709,6 +724,10 @@ export function WorkspaceCanvas({
   onPublishRuntimeEnforcement,
   onValidateRuntimeEnforcement,
   onDisposeRuntimeEnforcement,
+  onEvaluateRuntimeResilience,
+  onPublishRuntimeResilience,
+  onValidateRuntimeResilience,
+  onDisposeRuntimeResilience,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1219,6 +1238,19 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeEnforcement}
             onDispose={onDisposeRuntimeEnforcement}
             message={runtimeEnforcementMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-resilience' ? (
+          <ResilienceOverview
+            resiliencePackage={runtimeResiliencePackage}
+            events={runtimeResilienceEvents}
+            indexCount={runtimeResilienceIndexCount}
+            onEvaluate={onEvaluateRuntimeResilience}
+            onPublish={onPublishRuntimeResilience}
+            onValidate={onValidateRuntimeResilience}
+            onDispose={onDisposeRuntimeResilience}
+            message={runtimeResilienceMessage}
           />
         ) : null}
         {activeSection === 'media' ? (
