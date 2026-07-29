@@ -80,6 +80,8 @@ import type {
   RuntimeCompatibilityPackage,
   RuntimeContractEvent,
   RuntimeContractPackage,
+  RuntimeExtensionEvent,
+  RuntimeExtensionPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -150,6 +152,7 @@ import { RuntimeManifestOverview } from './RuntimeManifestOverview';
 import { RuntimeApiOverview } from './RuntimeApiOverview';
 import { RuntimeCompatibilityOverview } from './RuntimeCompatibilityOverview';
 import { RuntimeContractsOverview } from './RuntimeContractsOverview';
+import { RuntimeExtensionsOverview } from './RuntimeExtensionsOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -336,6 +339,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeContractEvents: readonly RuntimeContractEvent[];
   readonly runtimeContractIndexCount: number;
   readonly runtimeContractMessage: string | null;
+  readonly runtimeExtensionPackage: RuntimeExtensionPackage | null;
+  readonly runtimeExtensionEvents: readonly RuntimeExtensionEvent[];
+  readonly runtimeExtensionIndexCount: number;
+  readonly runtimeExtensionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -561,6 +568,12 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeContracts: () => void;
   readonly onValidateRuntimeContracts: () => void;
   readonly onDisposeRuntimeContracts: () => void;
+  readonly onRegisterRuntimeExtensions: () => void;
+  readonly onEnableRuntimeExtensions: () => void;
+  readonly onDisableRuntimeExtensions: () => void;
+  readonly onPublishRuntimeExtensions: () => void;
+  readonly onValidateRuntimeExtensions: () => void;
+  readonly onDisposeRuntimeExtensions: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -730,6 +743,10 @@ export function WorkspaceCanvas({
   runtimeContractEvents,
   runtimeContractIndexCount,
   runtimeContractMessage,
+  runtimeExtensionPackage,
+  runtimeExtensionEvents,
+  runtimeExtensionIndexCount,
+  runtimeExtensionMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -945,6 +962,12 @@ export function WorkspaceCanvas({
   onPublishRuntimeContracts,
   onValidateRuntimeContracts,
   onDisposeRuntimeContracts,
+  onRegisterRuntimeExtensions,
+  onEnableRuntimeExtensions,
+  onDisableRuntimeExtensions,
+  onPublishRuntimeExtensions,
+  onValidateRuntimeExtensions,
+  onDisposeRuntimeExtensions,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1615,6 +1638,21 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeContracts}
             onDispose={onDisposeRuntimeContracts}
             message={runtimeContractMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-extensions' ? (
+          <RuntimeExtensionsOverview
+            extensionPackage={runtimeExtensionPackage}
+            events={runtimeExtensionEvents}
+            indexCount={runtimeExtensionIndexCount}
+            onRegister={onRegisterRuntimeExtensions}
+            onEnable={onEnableRuntimeExtensions}
+            onDisable={onDisableRuntimeExtensions}
+            onPublish={onPublishRuntimeExtensions}
+            onValidate={onValidateRuntimeExtensions}
+            onDispose={onDisposeRuntimeExtensions}
+            message={runtimeExtensionMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

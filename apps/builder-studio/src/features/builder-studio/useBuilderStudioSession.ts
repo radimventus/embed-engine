@@ -89,6 +89,8 @@ import type {
   RuntimeCompatibilityPackage,
   RuntimeContractEvent,
   RuntimeContractPackage,
+  RuntimeExtensionEvent,
+  RuntimeExtensionPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -217,6 +219,8 @@ import {
   createRuntimeCompatibilityManager,
   createRuntimeContractApi,
   createRuntimeContractManager,
+  createRuntimeExtensionApi,
+  createRuntimeExtensionFramework,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -420,6 +424,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeContractEvents: readonly RuntimeContractEvent[];
   readonly runtimeContractIndexCount: number;
   readonly runtimeContractMessage: string | null;
+  readonly runtimeExtensionPackage: RuntimeExtensionPackage | null;
+  readonly runtimeExtensionEvents: readonly RuntimeExtensionEvent[];
+  readonly runtimeExtensionIndexCount: number;
+  readonly runtimeExtensionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -656,6 +664,12 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeContracts: () => void;
   readonly validateRuntimeContracts: () => void;
   readonly disposeRuntimeContracts: () => void;
+  readonly registerRuntimeExtensions: () => void;
+  readonly enableRuntimeExtensions: () => void;
+  readonly disableRuntimeExtensions: () => void;
+  readonly publishRuntimeExtensions: () => void;
+  readonly validateRuntimeExtensions: () => void;
+  readonly disposeRuntimeExtensions: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1393,6 +1407,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeContractApi = createRuntimeContractApi(
       runtimeContractManager,
     );
+    const runtimeExtensionFramework = createRuntimeExtensionFramework();
+    const runtimeExtensionApi = createRuntimeExtensionApi(
+      runtimeExtensionFramework,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1504,6 +1522,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeCompatibilityApi,
       runtimeContractManager,
       runtimeContractApi,
+      runtimeExtensionFramework,
+      runtimeExtensionApi,
     };
   }, []);
 
@@ -2011,6 +2031,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [runtimeContractMessage, setRuntimeContractMessage] = useState<
     string | null
   >(null);
+  const [runtimeExtensionPackage, setRuntimeExtensionPackage] =
+    useState<RuntimeExtensionPackage | null>(null);
+  const [runtimeExtensionEvents, setRuntimeExtensionEvents] = useState<
+    readonly RuntimeExtensionEvent[]
+  >([]);
+  const [runtimeExtensionIndexCount, setRuntimeExtensionIndexCount] =
+    useState(0);
+  const [runtimeExtensionMessage, setRuntimeExtensionMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2460,6 +2490,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeContractEvents,
     runtimeContractIndexCount,
     runtimeContractMessage,
+    runtimeExtensionPackage,
+    runtimeExtensionEvents,
+    runtimeExtensionIndexCount,
+    runtimeExtensionMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -7240,6 +7274,181 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeContractManager.getIndex().length,
       );
       setRuntimeContractMessage(null);
+    },
+    registerRuntimeExtensions(): void {
+      const sessionId =
+        runtimeContractPackage?.metadata.sessionId ??
+        runtimeCompatibilityPackage?.metadata.sessionId ??
+        runtimeApiPackage?.metadata.sessionId ??
+        'runtime-session-demo';
+      const fromContracts =
+        runtimeContractPackage?.contracts.map((contract) => ({
+          name: `${contract.name} Extension`,
+          version: contract.version,
+          capability: contract.capability,
+          dependencies: [...contract.dependencies],
+          title: `${contract.name} Extension`,
+          contractId: contract.id,
+          source: 'Runtime Contract Manager',
+          status: 'Registered' as const,
+        })) ?? [];
+      const extensions =
+        fromContracts.length > 0
+          ? fromContracts
+          : [
+              {
+                name: 'Policy Extension',
+                version: '1.0.0',
+                capability: 'capability-policy',
+                dependencies: [],
+                title: 'Policy Extension',
+                contractId: 'runtime-contract-policy-demo',
+                source: 'Runtime Contract Manager',
+                status: 'Registered' as const,
+              },
+              {
+                name: 'Governance Extension',
+                version: '1.0.0',
+                capability: 'capability-governance',
+                dependencies: ['capability-policy'],
+                title: 'Governance Extension',
+                contractId: 'runtime-contract-governance-demo',
+                source: 'Runtime Contract Manager',
+                status: 'Registered' as const,
+              },
+              {
+                name: 'Operations Extension',
+                version: '1.0.0',
+                capability: 'capability-operations',
+                dependencies: ['capability-policy', 'capability-governance'],
+                title: 'Operations Extension',
+                contractId: 'runtime-contract-operations-demo',
+                source: 'Runtime Contract Manager',
+                status: 'Registered' as const,
+              },
+            ];
+      const registered = services.runtimeExtensionApi.initialize({
+        sessionId,
+        title: 'Builder Runtime Extensions',
+        extensions,
+      });
+      setRuntimeExtensionPackage(registered);
+      setRuntimeExtensionEvents(
+        services.runtimeExtensionFramework.getEvents(),
+      );
+      setRuntimeExtensionIndexCount(
+        services.runtimeExtensionFramework.getIndex().length,
+      );
+      setRuntimeExtensionMessage(
+        `Registry ${registered.registry.id} · ${registered.registry.extensions.length} extension(s).`,
+      );
+    },
+    enableRuntimeExtensions(): void {
+      if (runtimeExtensionPackage === null) {
+        setRuntimeExtensionMessage('Nejdřív Register Extensions.');
+        return;
+      }
+      const target =
+        runtimeExtensionPackage.registry.extensions.find(
+          (item) =>
+            item.status === 'Registered' || item.status === 'Disabled',
+        ) ?? runtimeExtensionPackage.registry.extensions[0];
+      if (target === undefined) {
+        setRuntimeExtensionMessage('Žádné extension k enable.');
+        return;
+      }
+      const enabled = services.runtimeExtensionApi.enableRuntimeExtension(
+        runtimeExtensionPackage.id,
+        target.id,
+      );
+      setRuntimeExtensionPackage(enabled);
+      setRuntimeExtensionEvents(
+        services.runtimeExtensionFramework.getEvents(),
+      );
+      setRuntimeExtensionMessage(`Enabled ${target.name}.`);
+    },
+    disableRuntimeExtensions(): void {
+      if (runtimeExtensionPackage === null) {
+        setRuntimeExtensionMessage('Nejdřív Register Extensions.');
+        return;
+      }
+      const target =
+        runtimeExtensionPackage.registry.extensions.find(
+          (item) =>
+            item.status === 'Enabled' || item.status === 'Published',
+        ) ?? runtimeExtensionPackage.registry.extensions[0];
+      if (target === undefined) {
+        setRuntimeExtensionMessage('Žádné extension k disable.');
+        return;
+      }
+      const disabled = services.runtimeExtensionApi.disableRuntimeExtension(
+        runtimeExtensionPackage.id,
+        target.id,
+      );
+      setRuntimeExtensionPackage(disabled);
+      setRuntimeExtensionEvents(
+        services.runtimeExtensionFramework.getEvents(),
+      );
+      setRuntimeExtensionMessage(`Disabled ${target.name}.`);
+    },
+    publishRuntimeExtensions(): void {
+      if (runtimeExtensionPackage === null) {
+        setRuntimeExtensionMessage('Nejdřív Register Extensions.');
+        return;
+      }
+      try {
+        const published =
+          services.runtimeExtensionApi.publishRuntimeExtension(
+            runtimeExtensionPackage.id,
+          );
+        setRuntimeExtensionPackage(published);
+        setRuntimeExtensionEvents(
+          services.runtimeExtensionFramework.getEvents(),
+        );
+        setRuntimeExtensionMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeExtensionMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeExtensions(): void {
+      if (runtimeExtensionPackage === null) {
+        setRuntimeExtensionMessage('Nejdřív Register Extensions.');
+        return;
+      }
+      const validation =
+        services.runtimeExtensionApi.validateRuntimeExtension(
+          runtimeExtensionPackage.id,
+        );
+      const previewed = services.runtimeExtensionApi.preview(
+        runtimeExtensionPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeExtensionPackage(previewed);
+      }
+      setRuntimeExtensionEvents(
+        services.runtimeExtensionFramework.getEvents(),
+      );
+      setRuntimeExtensionMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeExtensions(): void {
+      if (runtimeExtensionPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeExtensionFramework.dispose(
+        runtimeExtensionPackage.id,
+      );
+      setRuntimeExtensionPackage(disposed);
+      setRuntimeExtensionEvents(
+        services.runtimeExtensionFramework.getEvents(),
+      );
+      setRuntimeExtensionIndexCount(
+        services.runtimeExtensionFramework.getIndex().length,
+      );
+      setRuntimeExtensionMessage(null);
     },
     buildProject(): void {
       const projectId =

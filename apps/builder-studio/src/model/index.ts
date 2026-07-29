@@ -759,3 +759,17 @@ export type {
   RuntimeContractValidationIssue,
   RuntimeOperationContract,
 } from './runtime-contract-types';
+
+export type {
+  InitializeExtensionInput,
+  RegisterRuntimeExtensionInput,
+  RuntimeExtension,
+  RuntimeExtensionEvent,
+  RuntimeExtensionEventType,
+  RuntimeExtensionIndexEntry,
+  RuntimeExtensionPackage,
+  RuntimeExtensionRegistry,
+  RuntimeExtensionStatus,
+  RuntimeExtensionValidation,
+  RuntimeExtensionValidationIssue,
+} from './runtime-extension-types';

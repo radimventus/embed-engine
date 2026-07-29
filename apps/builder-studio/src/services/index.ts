@@ -877,3 +877,23 @@ export {
   createRuntimeContractIndex,
   type RuntimeContractIndex,
 } from './runtime-contract/runtime-contract-index';
+
+export {
+  createRuntimeExtensionFramework,
+  type RuntimeExtensionFramework,
+  type RuntimeExtensionFrameworkOptions,
+} from './runtime-extension/runtime-extension-framework';
+export {
+  createRuntimeExtensionApi,
+  type RuntimeExtensionApi,
+} from './runtime-extension/runtime-extension-api';
+export {
+  createBasicRuntimeExtensionStrategy,
+  createRuntimeExtensionValidator,
+  type RuntimeExtensionStrategy,
+  type RuntimeExtensionValidator,
+} from './runtime-extension/basic-runtime-extension-strategy';
+export {
+  createRuntimeExtensionIndex,
+  type RuntimeExtensionIndex,
+} from './runtime-extension/runtime-extension-index';

@@ -228,6 +228,10 @@ export function BuilderStudioApp() {
         runtimeContractEvents={session.runtimeContractEvents}
         runtimeContractIndexCount={session.runtimeContractIndexCount}
         runtimeContractMessage={session.runtimeContractMessage}
+        runtimeExtensionPackage={session.runtimeExtensionPackage}
+        runtimeExtensionEvents={session.runtimeExtensionEvents}
+        runtimeExtensionIndexCount={session.runtimeExtensionIndexCount}
+        runtimeExtensionMessage={session.runtimeExtensionMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -471,6 +475,12 @@ export function BuilderStudioApp() {
         onPublishRuntimeContracts={session.publishRuntimeContracts}
         onValidateRuntimeContracts={session.validateRuntimeContracts}
         onDisposeRuntimeContracts={session.disposeRuntimeContracts}
+        onRegisterRuntimeExtensions={session.registerRuntimeExtensions}
+        onEnableRuntimeExtensions={session.enableRuntimeExtensions}
+        onDisableRuntimeExtensions={session.disableRuntimeExtensions}
+        onPublishRuntimeExtensions={session.publishRuntimeExtensions}
+        onValidateRuntimeExtensions={session.validateRuntimeExtensions}
+        onDisposeRuntimeExtensions={session.disposeRuntimeExtensions}
       />
     </AppShell>
   );
