@@ -85,6 +85,8 @@ import type {
   RuntimeManifestPackage,
   RuntimeApiEvent,
   RuntimeApiPackage,
+  RuntimeCompatibilityEvent,
+  RuntimeCompatibilityPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -209,6 +211,8 @@ import {
   createRuntimeManifestEngine,
   createRuntimeApiGatewayApi,
   createRuntimeApiGateway,
+  createRuntimeCompatibilityApi,
+  createRuntimeCompatibilityManager,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -404,6 +408,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeApiEvents: readonly RuntimeApiEvent[];
   readonly runtimeApiIndexCount: number;
   readonly runtimeApiMessage: string | null;
+  readonly runtimeCompatibilityPackage: RuntimeCompatibilityPackage | null;
+  readonly runtimeCompatibilityEvents: readonly RuntimeCompatibilityEvent[];
+  readonly runtimeCompatibilityIndexCount: number;
+  readonly runtimeCompatibilityMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -631,6 +639,11 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeApi: () => void;
   readonly validateRuntimeApi: () => void;
   readonly disposeRuntimeApi: () => void;
+  readonly registerRuntimeCompatibility: () => void;
+  readonly evaluateRuntimeCompatibility: () => void;
+  readonly publishRuntimeCompatibility: () => void;
+  readonly validateRuntimeCompatibility: () => void;
+  readonly disposeRuntimeCompatibility: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1360,6 +1373,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeApiGatewayApi = createRuntimeApiGatewayApi(
       runtimeApiGateway,
     );
+    const runtimeCompatibilityManager = createRuntimeCompatibilityManager();
+    const runtimeCompatibilityApi = createRuntimeCompatibilityApi(
+      runtimeCompatibilityManager,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1467,6 +1484,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeManifestApi,
       runtimeApiGateway,
       runtimeApiGatewayApi,
+      runtimeCompatibilityManager,
+      runtimeCompatibilityApi,
     };
   }, []);
 
@@ -1953,6 +1972,17 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [runtimeApiMessage, setRuntimeApiMessage] = useState<string | null>(
     null,
   );
+  const [runtimeCompatibilityPackage, setRuntimeCompatibilityPackage] =
+    useState<RuntimeCompatibilityPackage | null>(null);
+  const [runtimeCompatibilityEvents, setRuntimeCompatibilityEvents] = useState<
+    readonly RuntimeCompatibilityEvent[]
+  >([]);
+  const [
+    runtimeCompatibilityIndexCount,
+    setRuntimeCompatibilityIndexCount,
+  ] = useState(0);
+  const [runtimeCompatibilityMessage, setRuntimeCompatibilityMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2394,6 +2424,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeApiEvents,
     runtimeApiIndexCount,
     runtimeApiMessage,
+    runtimeCompatibilityPackage,
+    runtimeCompatibilityEvents,
+    runtimeCompatibilityIndexCount,
+    runtimeCompatibilityMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -6872,6 +6906,163 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setRuntimeApiEvents(services.runtimeApiGateway.getEvents());
       setRuntimeApiIndexCount(services.runtimeApiGateway.getIndex().length);
       setRuntimeApiMessage(null);
+    },
+    registerRuntimeCompatibility(): void {
+      const sessionId =
+        runtimeApiPackage?.metadata.sessionId ??
+        runtimeManifestPackage?.metadata.sessionId ??
+        runtimeRegistryPackage?.metadata.sessionId ??
+        'runtime-session-demo';
+      const runtimeVersion = runtimeManifestPackage?.version ?? '1.0.0';
+      const manifestVersion =
+        runtimeManifestPackage?.manifest.version ?? '1.0.0';
+      const apiVersion = runtimeApiPackage?.version ?? '1.0.0';
+      const registered = services.runtimeCompatibilityApi.initialize({
+        sessionId,
+        title: 'Builder Runtime Compatibility',
+        runtimeVersion,
+        manifestVersion,
+        apiVersion,
+        supportedConsumers: [
+          'Manager Studio',
+          'Sales Studio',
+          'Client Studio',
+          'API',
+        ],
+        rules: [
+          {
+            sourceVersion: runtimeVersion,
+            targetVersion: runtimeVersion,
+            status: 'Compatible',
+            reason: 'Same runtime version.',
+            dimension: 'runtime',
+            title: 'Runtime self',
+          },
+          {
+            sourceVersion: manifestVersion,
+            targetVersion: manifestVersion,
+            status: 'Compatible',
+            reason: 'Same manifest version.',
+            dimension: 'manifest',
+            title: 'Manifest self',
+          },
+          {
+            sourceVersion: apiVersion,
+            targetVersion: apiVersion,
+            status: 'Compatible',
+            reason: 'Same API version.',
+            dimension: 'api',
+            title: 'API self',
+          },
+          {
+            sourceVersion: '1.0.0',
+            targetVersion: '1.1.0',
+            status: 'Compatible',
+            reason: 'Minor bump within major 1.',
+            dimension: 'runtime',
+            title: 'Runtime minor',
+          },
+          {
+            sourceVersion: '1.0.0',
+            targetVersion: '2.0.0',
+            status: 'Incompatible',
+            reason: 'Major bump requires consumer upgrade.',
+            dimension: 'api',
+            title: 'API major',
+          },
+        ],
+      });
+      setRuntimeCompatibilityPackage(registered);
+      setRuntimeCompatibilityEvents(
+        services.runtimeCompatibilityManager.getEvents(),
+      );
+      setRuntimeCompatibilityIndexCount(
+        services.runtimeCompatibilityManager.getIndex().length,
+      );
+      setRuntimeCompatibilityMessage(
+        `Matrix ${registered.matrix.id} · ${registered.matrix.rules.length} rule(s) · ${registered.matrix.metadata.overallStatus}.`,
+      );
+    },
+    evaluateRuntimeCompatibility(): void {
+      if (runtimeCompatibilityPackage === null) {
+        setRuntimeCompatibilityMessage('Nejdřív Register Matrix.');
+        return;
+      }
+      const evaluation =
+        services.runtimeCompatibilityApi.evaluateCompatibility(
+          runtimeCompatibilityPackage.id,
+          {
+            sourceVersion:
+              runtimeCompatibilityPackage.matrix.runtimeVersion,
+            targetVersion: '1.1.0',
+            dimension: 'runtime',
+          },
+        );
+      setRuntimeCompatibilityEvents(
+        services.runtimeCompatibilityManager.getEvents(),
+      );
+      setRuntimeCompatibilityMessage(
+        `Evaluated ${evaluation.sourceVersion} → ${evaluation.targetVersion}: ${evaluation.status}.`,
+      );
+    },
+    publishRuntimeCompatibility(): void {
+      if (runtimeCompatibilityPackage === null) {
+        setRuntimeCompatibilityMessage('Nejdřív Register Matrix.');
+        return;
+      }
+      try {
+        const published =
+          services.runtimeCompatibilityApi.publishCompatibility(
+            runtimeCompatibilityPackage.id,
+          );
+        setRuntimeCompatibilityPackage(published);
+        setRuntimeCompatibilityEvents(
+          services.runtimeCompatibilityManager.getEvents(),
+        );
+        setRuntimeCompatibilityMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeCompatibilityMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeCompatibility(): void {
+      if (runtimeCompatibilityPackage === null) {
+        setRuntimeCompatibilityMessage('Nejdřív Register Matrix.');
+        return;
+      }
+      const validation =
+        services.runtimeCompatibilityApi.validateCompatibility(
+          runtimeCompatibilityPackage.id,
+        );
+      const previewed = services.runtimeCompatibilityApi.preview(
+        runtimeCompatibilityPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeCompatibilityPackage(previewed);
+      }
+      setRuntimeCompatibilityEvents(
+        services.runtimeCompatibilityManager.getEvents(),
+      );
+      setRuntimeCompatibilityMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeCompatibility(): void {
+      if (runtimeCompatibilityPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeCompatibilityManager.dispose(
+        runtimeCompatibilityPackage.id,
+      );
+      setRuntimeCompatibilityPackage(disposed);
+      setRuntimeCompatibilityEvents(
+        services.runtimeCompatibilityManager.getEvents(),
+      );
+      setRuntimeCompatibilityIndexCount(
+        services.runtimeCompatibilityManager.getIndex().length,
+      );
+      setRuntimeCompatibilityMessage(null);
     },
     buildProject(): void {
       const projectId =

@@ -218,6 +218,12 @@ export function BuilderStudioApp() {
         runtimeApiEvents={session.runtimeApiEvents}
         runtimeApiIndexCount={session.runtimeApiIndexCount}
         runtimeApiMessage={session.runtimeApiMessage}
+        runtimeCompatibilityPackage={session.runtimeCompatibilityPackage}
+        runtimeCompatibilityEvents={session.runtimeCompatibilityEvents}
+        runtimeCompatibilityIndexCount={
+          session.runtimeCompatibilityIndexCount
+        }
+        runtimeCompatibilityMessage={session.runtimeCompatibilityMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -452,6 +458,11 @@ export function BuilderStudioApp() {
         onPublishRuntimeApi={session.publishRuntimeApi}
         onValidateRuntimeApi={session.validateRuntimeApi}
         onDisposeRuntimeApi={session.disposeRuntimeApi}
+        onRegisterRuntimeCompatibility={session.registerRuntimeCompatibility}
+        onEvaluateRuntimeCompatibility={session.evaluateRuntimeCompatibility}
+        onPublishRuntimeCompatibility={session.publishRuntimeCompatibility}
+        onValidateRuntimeCompatibility={session.validateRuntimeCompatibility}
+        onDisposeRuntimeCompatibility={session.disposeRuntimeCompatibility}
       />
     </AppShell>
   );

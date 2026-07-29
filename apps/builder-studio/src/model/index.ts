@@ -728,3 +728,19 @@ export type {
   RuntimeApiValidation,
   RuntimeApiValidationIssue,
 } from './runtime-api-types';
+
+export type {
+  CompatibilityEvaluation,
+  CompatibilityRule,
+  CompatibilityStatus,
+  EvaluateCompatibilityInput,
+  InitializeCompatibilityInput,
+  RegisterCompatibilityRuleInput,
+  RuntimeCompatibilityEvent,
+  RuntimeCompatibilityEventType,
+  RuntimeCompatibilityIndexEntry,
+  RuntimeCompatibilityMatrix,
+  RuntimeCompatibilityPackage,
+  RuntimeCompatibilityValidation,
+  RuntimeCompatibilityValidationIssue,
+} from './runtime-compatibility-types';

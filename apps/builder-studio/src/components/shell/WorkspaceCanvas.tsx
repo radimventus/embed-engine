@@ -76,6 +76,8 @@ import type {
   RuntimeManifestPackage,
   RuntimeApiEvent,
   RuntimeApiPackage,
+  RuntimeCompatibilityEvent,
+  RuntimeCompatibilityPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -144,6 +146,7 @@ import { RuntimeIntegrationOverview } from './RuntimeIntegrationOverview';
 import { RuntimeRegistryOverview } from './RuntimeRegistryOverview';
 import { RuntimeManifestOverview } from './RuntimeManifestOverview';
 import { RuntimeApiOverview } from './RuntimeApiOverview';
+import { RuntimeCompatibilityOverview } from './RuntimeCompatibilityOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -322,6 +325,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeApiEvents: readonly RuntimeApiEvent[];
   readonly runtimeApiIndexCount: number;
   readonly runtimeApiMessage: string | null;
+  readonly runtimeCompatibilityPackage: RuntimeCompatibilityPackage | null;
+  readonly runtimeCompatibilityEvents: readonly RuntimeCompatibilityEvent[];
+  readonly runtimeCompatibilityIndexCount: number;
+  readonly runtimeCompatibilityMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -538,6 +545,11 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeApi: () => void;
   readonly onValidateRuntimeApi: () => void;
   readonly onDisposeRuntimeApi: () => void;
+  readonly onRegisterRuntimeCompatibility: () => void;
+  readonly onEvaluateRuntimeCompatibility: () => void;
+  readonly onPublishRuntimeCompatibility: () => void;
+  readonly onValidateRuntimeCompatibility: () => void;
+  readonly onDisposeRuntimeCompatibility: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -699,6 +711,10 @@ export function WorkspaceCanvas({
   runtimeApiEvents,
   runtimeApiIndexCount,
   runtimeApiMessage,
+  runtimeCompatibilityPackage,
+  runtimeCompatibilityEvents,
+  runtimeCompatibilityIndexCount,
+  runtimeCompatibilityMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -905,6 +921,11 @@ export function WorkspaceCanvas({
   onPublishRuntimeApi,
   onValidateRuntimeApi,
   onDisposeRuntimeApi,
+  onRegisterRuntimeCompatibility,
+  onEvaluateRuntimeCompatibility,
+  onPublishRuntimeCompatibility,
+  onValidateRuntimeCompatibility,
+  onDisposeRuntimeCompatibility,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1548,6 +1569,20 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeApi}
             onDispose={onDisposeRuntimeApi}
             message={runtimeApiMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-compatibility' ? (
+          <RuntimeCompatibilityOverview
+            compatibilityPackage={runtimeCompatibilityPackage}
+            events={runtimeCompatibilityEvents}
+            indexCount={runtimeCompatibilityIndexCount}
+            onRegister={onRegisterRuntimeCompatibility}
+            onEvaluate={onEvaluateRuntimeCompatibility}
+            onPublish={onPublishRuntimeCompatibility}
+            onValidate={onValidateRuntimeCompatibility}
+            onDispose={onDisposeRuntimeCompatibility}
+            message={runtimeCompatibilityMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

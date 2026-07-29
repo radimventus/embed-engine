@@ -837,3 +837,23 @@ export {
   createRuntimeApiIndex,
   type RuntimeApiIndex,
 } from './runtime-api/runtime-api-index';
+
+export {
+  createRuntimeCompatibilityManager,
+  type RuntimeCompatibilityManager,
+  type RuntimeCompatibilityManagerOptions,
+} from './runtime-compatibility/runtime-compatibility-manager';
+export {
+  createRuntimeCompatibilityApi,
+  type RuntimeCompatibilityApi,
+} from './runtime-compatibility/runtime-compatibility-api';
+export {
+  createBasicRuntimeCompatibilityStrategy,
+  createRuntimeCompatibilityValidator,
+  type RuntimeCompatibilityStrategy,
+  type RuntimeCompatibilityValidator,
+} from './runtime-compatibility/basic-runtime-compatibility-strategy';
+export {
+  createRuntimeCompatibilityIndex,
+  type RuntimeCompatibilityIndex,
+} from './runtime-compatibility/runtime-compatibility-index';
