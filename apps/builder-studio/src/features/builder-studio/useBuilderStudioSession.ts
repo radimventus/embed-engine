@@ -47,6 +47,8 @@ import type {
   DecisionOrchestratorEvent,
   RuntimeExecutionPackage,
   ExperienceRuntimeEvent,
+  ExperienceModulePackage,
+  ModuleCoordinatorEvent,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -134,6 +136,9 @@ import {
   createDecisionOrchestrator,
   createExperienceRuntimeApi,
   createExperienceRuntimeOrchestrator,
+  createExperienceModuleCoordinatorApi,
+  createExperienceModuleCoordinator,
+  BASIC_MODULE_SEQUENCE,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -257,6 +262,10 @@ export type BuilderStudioViewModel = {
   readonly experienceRuntimeEvents: readonly ExperienceRuntimeEvent[];
   readonly experienceRuntimeIndexCount: number;
   readonly experienceRuntimeMessage: string | null;
+  readonly experienceModulePackage: ExperienceModulePackage | null;
+  readonly moduleCoordinatorEvents: readonly ModuleCoordinatorEvent[];
+  readonly moduleCoordinatorIndexCount: number;
+  readonly moduleCoordinatorMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -403,6 +412,12 @@ export type BuilderStudioViewModel = {
   readonly completeExperienceRuntime: () => void;
   readonly validateExperienceRuntime: () => void;
   readonly disposeExperienceRuntime: () => void;
+  readonly initializeExperienceModules: () => void;
+  readonly activateExperienceModule: () => void;
+  readonly transitionExperienceModule: () => void;
+  readonly completeExperienceModules: () => void;
+  readonly validateExperienceModules: () => void;
+  readonly disposeExperienceModules: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1065,6 +1080,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const experienceRuntimeApi = createExperienceRuntimeApi(
       experienceRuntimeOrchestrator,
     );
+    const experienceModuleCoordinator = createExperienceModuleCoordinator();
+    const experienceModuleCoordinatorApi = createExperienceModuleCoordinatorApi(
+      experienceModuleCoordinator,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1136,6 +1155,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       decisionOrchestratorApi,
       experienceRuntimeOrchestrator,
       experienceRuntimeApi,
+      experienceModuleCoordinator,
+      experienceModuleCoordinatorApi,
     };
   }, []);
 
@@ -1429,6 +1450,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [experienceRuntimeIndexCount, setExperienceRuntimeIndexCount] =
     useState(0);
   const [experienceRuntimeMessage, setExperienceRuntimeMessage] = useState<
+    string | null
+  >(null);
+  const [experienceModulePackage, setExperienceModulePackage] =
+    useState<ExperienceModulePackage | null>(null);
+  const [moduleCoordinatorEvents, setModuleCoordinatorEvents] = useState<
+    readonly ModuleCoordinatorEvent[]
+  >([]);
+  const [moduleCoordinatorIndexCount, setModuleCoordinatorIndexCount] =
+    useState(0);
+  const [moduleCoordinatorMessage, setModuleCoordinatorMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -1800,6 +1831,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     experienceRuntimeEvents,
     experienceRuntimeIndexCount,
     experienceRuntimeMessage,
+    experienceModulePackage,
+    moduleCoordinatorEvents,
+    moduleCoordinatorIndexCount,
+    moduleCoordinatorMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -4182,6 +4217,155 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           .length,
       );
       setExperienceRuntimeMessage(null);
+    },
+    initializeExperienceModules(): void {
+      const sessionId = runtimeSession?.id ?? 'runtime-session-demo';
+      const moduleIds =
+        experience !== null && experience.modules.length > 0
+          ? experience.modules.map((moduleId) => moduleId)
+          : [...BASIC_MODULE_SEQUENCE];
+      const initialized = services.experienceModuleCoordinator.initialize({
+        sessionId,
+        moduleIds,
+        title: `Experience Modules ${sessionId}`,
+      });
+      setExperienceModulePackage(initialized);
+      setModuleCoordinatorEvents(
+        services.experienceModuleCoordinator.getHistory(initialized.id),
+      );
+      setModuleCoordinatorIndexCount(
+        services.experienceModuleCoordinator.getIndex().list(initialized.id)
+          .length,
+      );
+      setModuleCoordinatorMessage(
+        `Initialized ${moduleIds.length} modules. Sources unchanged.`,
+      );
+    },
+    activateExperienceModule(): void {
+      if (experienceModulePackage === null) {
+        setModuleCoordinatorMessage('Nejdřív Initialize.');
+        return;
+      }
+      const target =
+        experienceModulePackage.modules.find(
+          (item) => item.status === 'Pending',
+        )?.moduleId ??
+        experienceModulePackage.modules[0]?.moduleId ??
+        null;
+      if (target === null) {
+        setModuleCoordinatorMessage('Žádný modul k aktivaci.');
+        return;
+      }
+      try {
+        const activated =
+          services.experienceModuleCoordinatorApi.activateModule(
+            experienceModulePackage.id,
+            target,
+          );
+        setExperienceModulePackage(activated);
+        setModuleCoordinatorEvents(
+          services.experienceModuleCoordinator.getHistory(activated.id),
+        );
+        setModuleCoordinatorIndexCount(
+          services.experienceModuleCoordinator.getIndex().list(activated.id)
+            .length,
+        );
+        setModuleCoordinatorMessage(`Activated ${target}.`);
+      } catch (error) {
+        setModuleCoordinatorMessage(
+          error instanceof Error ? error.message : 'Activate failed.',
+        );
+      }
+    },
+    transitionExperienceModule(): void {
+      if (experienceModulePackage === null) {
+        setModuleCoordinatorMessage('Nejdřív Initialize.');
+        return;
+      }
+      try {
+        const transitioned =
+          services.experienceModuleCoordinatorApi.transitionModule(
+            experienceModulePackage.id,
+          );
+        setExperienceModulePackage(transitioned);
+        setModuleCoordinatorEvents(
+          services.experienceModuleCoordinator.getHistory(transitioned.id),
+        );
+        setModuleCoordinatorIndexCount(
+          services.experienceModuleCoordinator.getIndex().list(transitioned.id)
+            .length,
+        );
+        setModuleCoordinatorMessage(
+          transitioned.metadata.activeModuleId === null
+            ? 'Module sequence completed.'
+            : `Transition → ${transitioned.metadata.activeModuleId}.`,
+        );
+      } catch (error) {
+        setModuleCoordinatorMessage(
+          error instanceof Error ? error.message : 'Transition failed.',
+        );
+      }
+    },
+    completeExperienceModules(): void {
+      if (experienceModulePackage === null) {
+        setModuleCoordinatorMessage('Nejdřív Initialize.');
+        return;
+      }
+      try {
+        const completed =
+          services.experienceModuleCoordinatorApi.completeModule(
+            experienceModulePackage.id,
+          );
+        setExperienceModulePackage(completed);
+        setModuleCoordinatorEvents(
+          services.experienceModuleCoordinator.getHistory(completed.id),
+        );
+        setModuleCoordinatorIndexCount(
+          services.experienceModuleCoordinator.getIndex().list(completed.id)
+            .length,
+        );
+        setModuleCoordinatorMessage(`Completed package ${completed.id}.`);
+      } catch (error) {
+        setModuleCoordinatorMessage(
+          error instanceof Error ? error.message : 'Complete failed.',
+        );
+      }
+    },
+    validateExperienceModules(): void {
+      if (experienceModulePackage === null) {
+        setModuleCoordinatorMessage('Nejdřív Initialize.');
+        return;
+      }
+      const validated =
+        services.experienceModuleCoordinatorApi.validateModules(
+          experienceModulePackage.id,
+        );
+      setExperienceModulePackage(validated);
+      setModuleCoordinatorEvents(
+        services.experienceModuleCoordinator.getHistory(validated.id),
+      );
+      setModuleCoordinatorMessage(
+        validated.validation?.valid
+          ? 'Validation OK.'
+          : 'Validation failed.',
+      );
+    },
+    disposeExperienceModules(): void {
+      if (experienceModulePackage === null) {
+        return;
+      }
+      const disposed = services.experienceModuleCoordinator.dispose(
+        experienceModulePackage.id,
+      );
+      setExperienceModulePackage(disposed);
+      setModuleCoordinatorEvents(
+        services.experienceModuleCoordinator.getHistory(disposed.id),
+      );
+      setModuleCoordinatorIndexCount(
+        services.experienceModuleCoordinator.getIndex().list(disposed.id)
+          .length,
+      );
+      setModuleCoordinatorMessage(null);
     },
     buildProject(): void {
       const projectId =

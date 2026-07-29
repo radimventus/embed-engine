@@ -29,6 +29,7 @@ const SECTIONS: readonly {
   { id: 'personalization-runtime', label: 'Pers. Runtime' },
   { id: 'decision-orchestrator', label: 'Orchestrator' },
   { id: 'experience-runtime', label: 'Exp. Runtime' },
+  { id: 'experience-modules', label: 'Modules' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

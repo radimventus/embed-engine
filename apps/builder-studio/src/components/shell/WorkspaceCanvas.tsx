@@ -40,6 +40,8 @@ import type {
   DecisionOrchestratorEvent,
   RuntimeExecutionPackage,
   ExperienceRuntimeEvent,
+  ExperienceModulePackage,
+  ModuleCoordinatorEvent,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -90,6 +92,7 @@ import { PersonalizationEngineOverview } from './PersonalizationEngineOverview';
 import { PersonalizationRuntimeOverview } from './PersonalizationRuntimeOverview';
 import { DecisionOrchestratorOverview } from './DecisionOrchestratorOverview';
 import { ExperienceRuntimeOverview } from './ExperienceRuntimeOverview';
+import { ExperienceModulesOverview } from './ExperienceModulesOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -196,6 +199,10 @@ type WorkspaceCanvasProps = {
   readonly experienceRuntimeEvents: readonly ExperienceRuntimeEvent[];
   readonly experienceRuntimeIndexCount: number;
   readonly experienceRuntimeMessage: string | null;
+  readonly experienceModulePackage: ExperienceModulePackage | null;
+  readonly moduleCoordinatorEvents: readonly ModuleCoordinatorEvent[];
+  readonly moduleCoordinatorIndexCount: number;
+  readonly moduleCoordinatorMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -331,6 +338,12 @@ type WorkspaceCanvasProps = {
   readonly onCompleteExperienceRuntime: () => void;
   readonly onValidateExperienceRuntime: () => void;
   readonly onDisposeExperienceRuntime: () => void;
+  readonly onInitializeExperienceModules: () => void;
+  readonly onActivateExperienceModule: () => void;
+  readonly onTransitionExperienceModule: () => void;
+  readonly onCompleteExperienceModules: () => void;
+  readonly onValidateExperienceModules: () => void;
+  readonly onDisposeExperienceModules: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -420,6 +433,10 @@ export function WorkspaceCanvas({
   experienceRuntimeEvents,
   experienceRuntimeIndexCount,
   experienceRuntimeMessage,
+  experienceModulePackage,
+  moduleCoordinatorEvents,
+  moduleCoordinatorIndexCount,
+  moduleCoordinatorMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -545,6 +562,12 @@ export function WorkspaceCanvas({
   onCompleteExperienceRuntime,
   onValidateExperienceRuntime,
   onDisposeExperienceRuntime,
+  onInitializeExperienceModules,
+  onActivateExperienceModule,
+  onTransitionExperienceModule,
+  onCompleteExperienceModules,
+  onValidateExperienceModules,
+  onDisposeExperienceModules,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -939,6 +962,21 @@ export function WorkspaceCanvas({
             onValidate={onValidateExperienceRuntime}
             onDispose={onDisposeExperienceRuntime}
             message={experienceRuntimeMessage}
+          />
+        ) : null}
+
+        {activeSection === 'experience-modules' ? (
+          <ExperienceModulesOverview
+            modulePackage={experienceModulePackage}
+            events={moduleCoordinatorEvents}
+            indexCount={moduleCoordinatorIndexCount}
+            onInitialize={onInitializeExperienceModules}
+            onActivate={onActivateExperienceModule}
+            onTransition={onTransitionExperienceModule}
+            onComplete={onCompleteExperienceModules}
+            onValidate={onValidateExperienceModules}
+            onDispose={onDisposeExperienceModules}
+            message={moduleCoordinatorMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

@@ -468,3 +468,23 @@ export {
   createRuntimeIndex,
   type RuntimeIndex,
 } from './experience-runtime/runtime-index';
+
+export {
+  createExperienceModuleCoordinator,
+  type ExperienceModuleCoordinator,
+} from './experience-module-coordinator/experience-module-coordinator';
+export {
+  createExperienceModuleCoordinatorApi,
+  type ExperienceModuleCoordinatorApi,
+} from './experience-module-coordinator/experience-module-coordinator-api';
+export {
+  BASIC_MODULE_SEQUENCE,
+  createBasicModuleExecutionStrategy,
+  createModuleExecutionValidator,
+  type ModuleExecutionStrategy,
+  type ModuleExecutionValidator,
+} from './experience-module-coordinator/basic-module-execution-strategy';
+export {
+  createModuleExecutionIndex,
+  type ModuleExecutionIndex,
+} from './experience-module-coordinator/module-execution-index';

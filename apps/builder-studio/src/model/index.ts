@@ -473,3 +473,16 @@ export type {
   RuntimeTransition,
   StartRuntimeInput,
 } from './experience-runtime-types';
+
+export type {
+  ExperienceModuleExecution,
+  ExperienceModulePackage,
+  ExperienceModuleStatus,
+  InitializeModulesInput,
+  ModuleCoordinatorEvent,
+  ModuleCoordinatorEventType,
+  ModuleExecutionIndexEntry,
+  ModuleExecutionValidation,
+  ModuleExecutionValidationIssue,
+  ModuleTransition,
+} from './experience-module-coordinator-types';
