@@ -63,6 +63,8 @@ import type {
   RuntimeGovernancePackage,
   RuntimePolicyEvent,
   RuntimePolicyPackage,
+  RuntimeEnforcementEvent,
+  RuntimeEnforcementPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -165,6 +167,8 @@ import {
   createRuntimeGovernanceEngine,
   createRuntimePolicyApi,
   createRuntimePolicyEngine,
+  createRuntimeEnforcementApi,
+  createRuntimePolicyEnforcementEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -316,6 +320,10 @@ export type BuilderStudioViewModel = {
   readonly runtimePolicyEvents: readonly RuntimePolicyEvent[];
   readonly runtimePolicyIndexCount: number;
   readonly runtimePolicyMessage: string | null;
+  readonly runtimeEnforcementPackage: RuntimeEnforcementPackage | null;
+  readonly runtimeEnforcementEvents: readonly RuntimeEnforcementEvent[];
+  readonly runtimeEnforcementIndexCount: number;
+  readonly runtimeEnforcementMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -496,6 +504,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimePolicies: () => void;
   readonly validateRuntimePolicies: () => void;
   readonly disposeRuntimePolicies: () => void;
+  readonly evaluateRuntimeEnforcement: () => void;
+  readonly publishRuntimeEnforcement: () => void;
+  readonly validateRuntimeEnforcement: () => void;
+  readonly disposeRuntimeEnforcement: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1180,6 +1192,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     );
     const runtimePolicyEngine = createRuntimePolicyEngine();
     const runtimePolicyApi = createRuntimePolicyApi(runtimePolicyEngine);
+    const runtimeEnforcementEngine = createRuntimePolicyEnforcementEngine();
+    const runtimeEnforcementApi = createRuntimeEnforcementApi(
+      runtimeEnforcementEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1265,6 +1281,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeGovernanceApi,
       runtimePolicyEngine,
       runtimePolicyApi,
+      runtimeEnforcementEngine,
+      runtimeEnforcementApi,
     };
   }, []);
 
@@ -1624,6 +1642,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   >([]);
   const [runtimePolicyIndexCount, setRuntimePolicyIndexCount] = useState(0);
   const [runtimePolicyMessage, setRuntimePolicyMessage] = useState<
+    string | null
+  >(null);
+  const [runtimeEnforcementPackage, setRuntimeEnforcementPackage] =
+    useState<RuntimeEnforcementPackage | null>(null);
+  const [runtimeEnforcementEvents, setRuntimeEnforcementEvents] = useState<
+    readonly RuntimeEnforcementEvent[]
+  >([]);
+  const [runtimeEnforcementIndexCount, setRuntimeEnforcementIndexCount] =
+    useState(0);
+  const [runtimeEnforcementMessage, setRuntimeEnforcementMessage] = useState<
     string | null
   >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
@@ -2023,6 +2051,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimePolicyEvents,
     runtimePolicyIndexCount,
     runtimePolicyMessage,
+    runtimeEnforcementPackage,
+    runtimeEnforcementEvents,
+    runtimeEnforcementIndexCount,
+    runtimeEnforcementMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -5171,6 +5203,98 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimePolicyEngine.getIndex().length,
       );
       setRuntimePolicyMessage(null);
+    },
+    evaluateRuntimeEnforcement(): void {
+      const sessionId =
+        runtimeGovernancePackage?.evaluation.sessionId ??
+        runtimeHealthPackage?.report.sessionId ??
+        observabilityPackage?.metadata.sessionId ??
+        experienceStatePackage?.state.sessionId ??
+        runtimeExecutionPackage?.execution.sessionId ??
+        'runtime-session-demo';
+      const gov = runtimeGovernancePackage?.evaluation ?? null;
+      const evaluated = services.runtimeEnforcementApi.evaluateEnforcement({
+        sessionId,
+        runtimeExecutionId:
+          gov?.runtimeExecutionId ??
+          runtimeExecutionPackage?.execution.id ??
+          experienceStatePackage?.state.runtimeExecutionId ??
+          'runtime-execution-demo',
+        title: 'Builder Runtime Enforcement',
+        governanceStatus: gov?.overallStatus ?? 'Compliant',
+        governanceScore: gov?.score ?? 1,
+        failedPolicyCodes:
+          gov?.failedRules.map((rule) => rule.metadata.code) ?? [],
+        failedSeverities:
+          gov?.failedRules.map((rule) => rule.severity) ?? [],
+      });
+      setRuntimeEnforcementPackage(evaluated);
+      setRuntimeEnforcementEvents(
+        services.runtimeEnforcementEngine.getEvents(),
+      );
+      setRuntimeEnforcementIndexCount(
+        services.runtimeEnforcementEngine.getIndex().length,
+      );
+      setRuntimeEnforcementMessage(
+        `Decision ${evaluated.decision.status} → ${evaluated.decision.recommendedAction}.`,
+      );
+    },
+    publishRuntimeEnforcement(): void {
+      if (runtimeEnforcementPackage === null) {
+        setRuntimeEnforcementMessage('Nejdřív Evaluate Enforcement.');
+        return;
+      }
+      try {
+        const published = services.runtimeEnforcementApi.publishEnforcement(
+          runtimeEnforcementPackage.id,
+        );
+        setRuntimeEnforcementPackage(published);
+        setRuntimeEnforcementEvents(
+          services.runtimeEnforcementEngine.getEvents(),
+        );
+        setRuntimeEnforcementMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeEnforcementMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeEnforcement(): void {
+      if (runtimeEnforcementPackage === null) {
+        setRuntimeEnforcementMessage('Nejdřív Evaluate Enforcement.');
+        return;
+      }
+      const validation = services.runtimeEnforcementApi.validateEnforcement(
+        runtimeEnforcementPackage.id,
+      );
+      const previewed = services.runtimeEnforcementApi.previewEnforcement(
+        runtimeEnforcementPackage.id,
+      );
+      if (previewed !== null) {
+        setRuntimeEnforcementPackage(previewed);
+      }
+      setRuntimeEnforcementEvents(
+        services.runtimeEnforcementEngine.getEvents(),
+      );
+      setRuntimeEnforcementMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeEnforcement(): void {
+      if (runtimeEnforcementPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeEnforcementEngine.dispose(
+        runtimeEnforcementPackage.id,
+      );
+      setRuntimeEnforcementPackage(disposed);
+      setRuntimeEnforcementEvents(
+        services.runtimeEnforcementEngine.getEvents(),
+      );
+      setRuntimeEnforcementIndexCount(
+        services.runtimeEnforcementEngine.getIndex().length,
+      );
+      setRuntimeEnforcementMessage(null);
     },
     buildProject(): void {
       const projectId =

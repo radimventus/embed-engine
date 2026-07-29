@@ -616,3 +616,24 @@ export {
   createRuntimePolicyIndex,
   type RuntimePolicyIndex,
 } from './runtime-policy/runtime-policy-index';
+
+export {
+  createRuntimePolicyEnforcementEngine,
+  type RuntimePolicyEnforcementEngine,
+  type RuntimePolicyEnforcementEngineOptions,
+} from './runtime-enforcement/runtime-enforcement-engine';
+export {
+  createRuntimeEnforcementApi,
+  type RuntimeEnforcementApi,
+} from './runtime-enforcement/runtime-enforcement-api';
+export {
+  BASIC_ENFORCEMENT_RULES,
+  createBasicEnforcementStrategy,
+  createRuntimeEnforcementValidator,
+  type EnforcementStrategy,
+  type RuntimeEnforcementValidator,
+} from './runtime-enforcement/basic-enforcement-strategy';
+export {
+  createRuntimeEnforcementIndex,
+  type RuntimeEnforcementIndex,
+} from './runtime-enforcement/runtime-enforcement-index';

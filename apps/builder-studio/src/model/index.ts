@@ -576,3 +576,17 @@ export type {
   RuntimePolicyValidationIssue,
   UpdatePolicyInput,
 } from './runtime-policy-types';
+
+export type {
+  EnforcementDecision,
+  EnforcementRecommendedAction,
+  EnforcementRule,
+  EnforcementStatus,
+  EvaluateEnforcementInput,
+  RuntimeEnforcementEvent,
+  RuntimeEnforcementEventType,
+  RuntimeEnforcementIndexEntry,
+  RuntimeEnforcementPackage,
+  RuntimeEnforcementValidation,
+  RuntimeEnforcementValidationIssue,
+} from './runtime-enforcement-types';

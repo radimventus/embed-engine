@@ -36,6 +36,7 @@ const SECTIONS: readonly {
   { id: 'runtime-audit', label: 'Audit' },
   { id: 'runtime-governance', label: 'Governance' },
   { id: 'runtime-policies', label: 'Policies' },
+  { id: 'runtime-enforcement', label: 'Enforcement' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },
