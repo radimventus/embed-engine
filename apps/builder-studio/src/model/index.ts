@@ -802,3 +802,19 @@ export type {
   PublishedObjectValidationIssue,
   RegisterPublishedObjectInput,
 } from './published-object-types';
+
+export type {
+  InitializePlatformPublicationInput,
+  PlatformPublicationCategory,
+  PlatformPublicationEntry,
+  PlatformPublicationEvent,
+  PlatformPublicationEventType,
+  PlatformPublicationIndexEntry,
+  PlatformPublicationPackage,
+  PlatformPublicationSnapshot,
+  PlatformPublicationStatus,
+  PlatformPublicationValidation,
+  PlatformPublicationValidationIssue,
+  PlatformPublicationVisibility,
+  RegisterPlatformPublicationInput,
+} from './platform-publication-types';

@@ -52,6 +52,7 @@ const SECTIONS: readonly {
   { id: 'runtime-extensions', label: 'Runtime Extensions' },
   { id: 'object-publication', label: 'Object Publication' },
   { id: 'published-objects', label: 'Published Objects' },
+  { id: 'platform-publication', label: 'Platform Catalog' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

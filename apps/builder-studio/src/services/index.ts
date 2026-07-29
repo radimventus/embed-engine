@@ -937,3 +937,23 @@ export {
   createPublishedObjectIndex,
   type PublishedObjectIndex,
 } from './published-object/published-object-index';
+
+export {
+  createPlatformPublicationCatalog,
+  type PlatformPublicationCatalog,
+  type PlatformPublicationCatalogOptions,
+} from './platform-publication/platform-publication-catalog';
+export {
+  createPlatformPublicationApi,
+  type PlatformPublicationApi,
+} from './platform-publication/platform-publication-api';
+export {
+  createBasicPlatformPublicationStrategy,
+  createPlatformPublicationValidator,
+  type PlatformPublicationStrategy,
+  type PlatformPublicationValidator,
+} from './platform-publication/basic-platform-publication-strategy';
+export {
+  createPlatformPublicationIndex,
+  type PlatformPublicationIndex,
+} from './platform-publication/platform-publication-index';

@@ -66,6 +66,7 @@ export type WorkspaceSectionId =
   | 'runtime-extensions'
   | 'object-publication'
   | 'published-objects'
+  | 'platform-publication'
   | 'media'
   | 'layout'
   | 'knowledge';

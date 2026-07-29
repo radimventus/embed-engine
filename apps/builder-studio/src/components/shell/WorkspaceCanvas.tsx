@@ -86,6 +86,8 @@ import type {
   PublicationPackage,
   PublishedObjectEvent,
   PublishedObjectPackage,
+  PlatformPublicationEvent,
+  PlatformPublicationPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -159,6 +161,7 @@ import { RuntimeContractsOverview } from './RuntimeContractsOverview';
 import { RuntimeExtensionsOverview } from './RuntimeExtensionsOverview';
 import { ObjectPublicationOverview } from './ObjectPublicationOverview';
 import { PublishedObjectsOverview } from './PublishedObjectsOverview';
+import { PlatformPublicationOverview } from './PlatformPublicationOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -357,6 +360,10 @@ type WorkspaceCanvasProps = {
   readonly publishedObjectEvents: readonly PublishedObjectEvent[];
   readonly publishedObjectIndexCount: number;
   readonly publishedObjectMessage: string | null;
+  readonly platformPublicationPackage: PlatformPublicationPackage | null;
+  readonly platformPublicationEvents: readonly PlatformPublicationEvent[];
+  readonly platformPublicationIndexCount: number;
+  readonly platformPublicationMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -596,6 +603,10 @@ type WorkspaceCanvasProps = {
   readonly onArchivePublishedObjects: () => void;
   readonly onValidatePublishedObjects: () => void;
   readonly onDisposePublishedObjects: () => void;
+  readonly onRegisterPlatformPublications: () => void;
+  readonly onRefreshPlatformPublications: () => void;
+  readonly onValidatePlatformPublications: () => void;
+  readonly onDisposePlatformPublications: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -777,6 +788,10 @@ export function WorkspaceCanvas({
   publishedObjectEvents,
   publishedObjectIndexCount,
   publishedObjectMessage,
+  platformPublicationPackage,
+  platformPublicationEvents,
+  platformPublicationIndexCount,
+  platformPublicationMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1006,6 +1021,10 @@ export function WorkspaceCanvas({
   onArchivePublishedObjects,
   onValidatePublishedObjects,
   onDisposePublishedObjects,
+  onRegisterPlatformPublications,
+  onRefreshPlatformPublications,
+  onValidatePlatformPublications,
+  onDisposePlatformPublications,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1717,6 +1736,19 @@ export function WorkspaceCanvas({
             onValidate={onValidatePublishedObjects}
             onDispose={onDisposePublishedObjects}
             message={publishedObjectMessage}
+          />
+        ) : null}
+
+        {activeSection === 'platform-publication' ? (
+          <PlatformPublicationOverview
+            catalogPackage={platformPublicationPackage}
+            events={platformPublicationEvents}
+            indexCount={platformPublicationIndexCount}
+            onRegister={onRegisterPlatformPublications}
+            onRefresh={onRefreshPlatformPublications}
+            onValidate={onValidatePlatformPublications}
+            onDispose={onDisposePlatformPublications}
+            message={platformPublicationMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

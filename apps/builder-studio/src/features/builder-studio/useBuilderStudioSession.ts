@@ -95,6 +95,8 @@ import type {
   PublicationPackage,
   PublishedObjectEvent,
   PublishedObjectPackage,
+  PlatformPublicationEvent,
+  PlatformPublicationPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -229,6 +231,8 @@ import {
   createObjectPublicationPipeline,
   createPublishedObjectApi,
   createPublishedObjectRegistry,
+  createPlatformPublicationApi,
+  createPlatformPublicationCatalog,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -444,6 +448,10 @@ export type BuilderStudioViewModel = {
   readonly publishedObjectEvents: readonly PublishedObjectEvent[];
   readonly publishedObjectIndexCount: number;
   readonly publishedObjectMessage: string | null;
+  readonly platformPublicationPackage: PlatformPublicationPackage | null;
+  readonly platformPublicationEvents: readonly PlatformPublicationEvent[];
+  readonly platformPublicationIndexCount: number;
+  readonly platformPublicationMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -694,6 +702,10 @@ export type BuilderStudioViewModel = {
   readonly archivePublishedObjects: () => void;
   readonly validatePublishedObjects: () => void;
   readonly disposePublishedObjects: () => void;
+  readonly registerPlatformPublications: () => void;
+  readonly refreshPlatformPublications: () => void;
+  readonly validatePlatformPublications: () => void;
+  readonly disposePlatformPublications: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1443,6 +1455,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const publishedObjectApi = createPublishedObjectApi(
       publishedObjectRegistry,
     );
+    const platformPublicationCatalog = createPlatformPublicationCatalog();
+    const platformPublicationApi = createPlatformPublicationApi(
+      platformPublicationCatalog,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1560,6 +1576,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       objectPublicationApi,
       publishedObjectRegistry,
       publishedObjectApi,
+      platformPublicationCatalog,
+      platformPublicationApi,
     };
   }, []);
 
@@ -2097,6 +2115,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [publishedObjectMessage, setPublishedObjectMessage] = useState<
     string | null
   >(null);
+  const [platformPublicationPackage, setPlatformPublicationPackage] =
+    useState<PlatformPublicationPackage | null>(null);
+  const [platformPublicationEvents, setPlatformPublicationEvents] = useState<
+    readonly PlatformPublicationEvent[]
+  >([]);
+  const [platformPublicationIndexCount, setPlatformPublicationIndexCount] =
+    useState(0);
+  const [platformPublicationMessage, setPlatformPublicationMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2558,6 +2585,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     publishedObjectEvents,
     publishedObjectIndexCount,
     publishedObjectMessage,
+    platformPublicationPackage,
+    platformPublicationEvents,
+    platformPublicationIndexCount,
+    platformPublicationMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -7805,6 +7836,134 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.publishedObjectRegistry.getIndex().length,
       );
       setPublishedObjectMessage(null);
+    },
+    registerPlatformPublications(): void {
+      const sessionId =
+        publishedObjectPackage?.metadata.sessionId ??
+        objectPublicationPackage?.metadata.sessionId ??
+        'platform-publication-session-demo';
+      const fromRegistry =
+        publishedObjectPackage?.catalog.objects
+          .filter((object) => object.status !== 'Archived')
+          .map((object) => ({
+            objectId: object.objectId,
+            publicationVersion: object.publicationVersion,
+            title: object.metadata.title,
+            category:
+              object.objectId.includes('apartment') ||
+              object.objectId.includes('house')
+                ? ('residential' as const)
+                : ('general' as const),
+            visibility: 'public' as const,
+            sourcePublishedObjectId: object.id,
+            objectVersion: object.version,
+            runtimeVersion: object.manifest.runtimeVersion,
+            status: 'Registered' as const,
+          })) ?? [];
+      const entries =
+        fromRegistry.length > 0
+          ? fromRegistry
+          : [
+              {
+                objectId: 'object-demo-house',
+                publicationVersion: '1.0.0',
+                title: 'Demo House',
+                category: 'residential' as const,
+                visibility: 'public' as const,
+                sourcePublishedObjectId: 'published-object-demo-1',
+                objectVersion: '1.0.0',
+                runtimeVersion: '1.0.0',
+              },
+              {
+                objectId: 'object-demo-commercial',
+                publicationVersion: '1.0.0',
+                title: 'Demo Commercial',
+                category: 'commercial' as const,
+                visibility: 'partner' as const,
+                sourcePublishedObjectId: 'published-object-demo-2',
+                objectVersion: '1.0.0',
+                runtimeVersion: '1.0.0',
+              },
+            ];
+      const registered = services.platformPublicationApi.initialize({
+        sessionId,
+        title: 'Builder Platform Publication Catalog',
+        entries,
+      });
+      setPlatformPublicationPackage(registered);
+      setPlatformPublicationEvents(
+        services.platformPublicationCatalog.getEvents(),
+      );
+      setPlatformPublicationIndexCount(
+        services.platformPublicationCatalog.getIndex().length,
+      );
+      setPlatformPublicationMessage(
+        `Snapshot ${registered.snapshot.id} · ${registered.snapshot.entries.length} entr${registered.snapshot.entries.length === 1 ? 'y' : 'ies'}.`,
+      );
+    },
+    refreshPlatformPublications(): void {
+      if (platformPublicationPackage === null) {
+        setPlatformPublicationMessage('Nejdřív Register Catalog.');
+        return;
+      }
+      try {
+        const refreshed =
+          services.platformPublicationApi.refreshPlatformPublication(
+            platformPublicationPackage.id,
+          );
+        setPlatformPublicationPackage(refreshed);
+        setPlatformPublicationEvents(
+          services.platformPublicationCatalog.getEvents(),
+        );
+        setPlatformPublicationIndexCount(
+          services.platformPublicationCatalog.getIndex().length,
+        );
+        setPlatformPublicationMessage(
+          `Refreshed ${refreshed.snapshot.id}.`,
+        );
+      } catch (error) {
+        setPlatformPublicationMessage(
+          error instanceof Error ? error.message : 'Refresh failed.',
+        );
+      }
+    },
+    validatePlatformPublications(): void {
+      if (platformPublicationPackage === null) {
+        setPlatformPublicationMessage('Nejdřív Register Catalog.');
+        return;
+      }
+      const validation =
+        services.platformPublicationApi.validatePlatformPublication(
+          platformPublicationPackage.id,
+        );
+      const previewed = services.platformPublicationApi.preview(
+        platformPublicationPackage.id,
+      );
+      if (previewed !== null) {
+        setPlatformPublicationPackage(previewed);
+      }
+      setPlatformPublicationEvents(
+        services.platformPublicationCatalog.getEvents(),
+      );
+      setPlatformPublicationMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposePlatformPublications(): void {
+      if (platformPublicationPackage === null) {
+        return;
+      }
+      const disposed = services.platformPublicationCatalog.dispose(
+        platformPublicationPackage.id,
+      );
+      setPlatformPublicationPackage(disposed);
+      setPlatformPublicationEvents(
+        services.platformPublicationCatalog.getEvents(),
+      );
+      setPlatformPublicationIndexCount(
+        services.platformPublicationCatalog.getIndex().length,
+      );
+      setPlatformPublicationMessage(null);
     },
     buildProject(): void {
       const projectId =
