@@ -170,6 +170,12 @@ export function BuilderStudioApp() {
         runtimeRecoveryEvents={session.runtimeRecoveryEvents}
         runtimeRecoveryIndexCount={session.runtimeRecoveryIndexCount}
         runtimeRecoveryMessage={session.runtimeRecoveryMessage}
+        runtimeRecoveryExecutionPackage={session.runtimeRecoveryExecutionPackage}
+        runtimeRecoveryExecutionEvents={session.runtimeRecoveryExecutionEvents}
+        runtimeRecoveryExecutionIndexCount={
+          session.runtimeRecoveryExecutionIndexCount
+        }
+        runtimeRecoveryExecutionMessage={session.runtimeRecoveryExecutionMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -341,6 +347,22 @@ export function BuilderStudioApp() {
         onPublishRuntimeRecovery={session.publishRuntimeRecovery}
         onValidateRuntimeRecovery={session.validateRuntimeRecovery}
         onDisposeRuntimeRecovery={session.disposeRuntimeRecovery}
+        onExecuteRuntimeRecoveryExecution={
+          session.executeRuntimeRecoveryExecution
+        }
+        onPauseRuntimeRecoveryExecution={session.pauseRuntimeRecoveryExecution}
+        onResumeRuntimeRecoveryExecution={
+          session.resumeRuntimeRecoveryExecution
+        }
+        onValidateRuntimeRecoveryExecution={
+          session.validateRuntimeRecoveryExecution
+        }
+        onPublishRuntimeRecoveryExecution={
+          session.publishRuntimeRecoveryExecution
+        }
+        onDisposeRuntimeRecoveryExecution={
+          session.disposeRuntimeRecoveryExecution
+        }
       />
     </AppShell>
   );

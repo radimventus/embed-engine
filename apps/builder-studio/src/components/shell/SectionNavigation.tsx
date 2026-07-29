@@ -39,6 +39,7 @@ const SECTIONS: readonly {
   { id: 'runtime-enforcement', label: 'Enforcement' },
   { id: 'runtime-resilience', label: 'Resilience' },
   { id: 'runtime-recovery', label: 'Recovery' },
+  { id: 'runtime-recovery-execution', label: 'Recovery Execution' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

@@ -69,6 +69,8 @@ import type {
   RuntimeResiliencePackage,
   RuntimeRecoveryEvent,
   RuntimeRecoveryPackage,
+  RuntimeRecoveryExecutionEvent,
+  RuntimeRecoveryExecutionPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -177,6 +179,8 @@ import {
   createRuntimeResilienceEngine,
   createRuntimeRecoveryApi,
   createRuntimeRecoveryOrchestrator,
+  createRuntimeRecoveryExecutionApi,
+  createRuntimeRecoveryExecutor,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -340,6 +344,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeRecoveryEvents: readonly RuntimeRecoveryEvent[];
   readonly runtimeRecoveryIndexCount: number;
   readonly runtimeRecoveryMessage: string | null;
+  readonly runtimeRecoveryExecutionPackage: RuntimeRecoveryExecutionPackage | null;
+  readonly runtimeRecoveryExecutionEvents: readonly RuntimeRecoveryExecutionEvent[];
+  readonly runtimeRecoveryExecutionIndexCount: number;
+  readonly runtimeRecoveryExecutionMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -532,6 +540,12 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeRecovery: () => void;
   readonly validateRuntimeRecovery: () => void;
   readonly disposeRuntimeRecovery: () => void;
+  readonly executeRuntimeRecoveryExecution: () => void;
+  readonly pauseRuntimeRecoveryExecution: () => void;
+  readonly resumeRuntimeRecoveryExecution: () => void;
+  readonly validateRuntimeRecoveryExecution: () => void;
+  readonly publishRuntimeRecoveryExecution: () => void;
+  readonly disposeRuntimeRecoveryExecution: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1228,6 +1242,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeRecoveryApi = createRuntimeRecoveryApi(
       runtimeRecoveryOrchestrator,
     );
+    const runtimeRecoveryExecutor = createRuntimeRecoveryExecutor();
+    const runtimeRecoveryExecutionApi = createRuntimeRecoveryExecutionApi(
+      runtimeRecoveryExecutor,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1319,6 +1337,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeResilienceApi,
       runtimeRecoveryOrchestrator,
       runtimeRecoveryApi,
+      runtimeRecoveryExecutor,
+      runtimeRecoveryExecutionApi,
     };
   }, []);
 
@@ -1710,6 +1730,20 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [runtimeRecoveryMessage, setRuntimeRecoveryMessage] = useState<
     string | null
   >(null);
+  const [runtimeRecoveryExecutionPackage, setRuntimeRecoveryExecutionPackage] =
+    useState<RuntimeRecoveryExecutionPackage | null>(null);
+  const [
+    runtimeRecoveryExecutionEvents,
+    setRuntimeRecoveryExecutionEvents,
+  ] = useState<readonly RuntimeRecoveryExecutionEvent[]>([]);
+  const [
+    runtimeRecoveryExecutionIndexCount,
+    setRuntimeRecoveryExecutionIndexCount,
+  ] = useState(0);
+  const [
+    runtimeRecoveryExecutionMessage,
+    setRuntimeRecoveryExecutionMessage,
+  ] = useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2119,6 +2153,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeRecoveryEvents,
     runtimeRecoveryIndexCount,
     runtimeRecoveryMessage,
+    runtimeRecoveryExecutionPackage,
+    runtimeRecoveryExecutionEvents,
+    runtimeRecoveryExecutionIndexCount,
+    runtimeRecoveryExecutionMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -5542,6 +5580,178 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeRecoveryOrchestrator.getIndex().length,
       );
       setRuntimeRecoveryMessage(null);
+    },
+    executeRuntimeRecoveryExecution(): void {
+      const sequence =
+        runtimeRecoveryPackage?.sequence ??
+        ({
+          id: 'recovery-sequence-demo',
+          runtimeExecutionId:
+            runtimeResiliencePackage?.recoveryPlan.runtimeExecutionId ??
+            runtimeExecutionPackage?.execution.id ??
+            'runtime-execution-demo',
+          steps: [
+            {
+              id: 'recovery-step-demo-1',
+              order: 1,
+              action: 'ConfirmHealth' as const,
+              description: 'Confirm Runtime remains healthy.',
+              dependsOn: [],
+              metadata: {
+                notes: 'Demo step',
+                sourceActionId: null,
+                estimatedSeconds: 30,
+              },
+            },
+            {
+              id: 'recovery-step-demo-2',
+              order: 2,
+              action: 'ContinueSession' as const,
+              description:
+                'Continue current Decision Session without interruption.',
+              dependsOn: ['recovery-step-demo-1'],
+              metadata: {
+                notes: 'Demo step',
+                sourceActionId: null,
+                estimatedSeconds: 15,
+              },
+            },
+          ],
+          estimatedDuration: 45,
+          riskLevel: 'low' as const,
+          createdAt: new Date().toISOString(),
+          metadata: {
+            title: 'Demo Recovery Sequence',
+            notes: 'Fallback sequence for Recovery Executor demo.',
+            sessionId:
+              runtimeResiliencePackage?.recoveryPlan.sessionId ??
+              'runtime-session-demo',
+            planId:
+              runtimeResiliencePackage?.recoveryPlan.id ??
+              'recovery-plan-demo',
+            recoveryStrategy: 'CONTINUE',
+          },
+        } as const);
+      const executed = services.runtimeRecoveryExecutionApi.executeRecovery({
+        sessionId: sequence.metadata.sessionId,
+        title: 'Builder Runtime Recovery Execution',
+        sequence,
+        failOnStepId: null,
+      });
+      setRuntimeRecoveryExecutionPackage(executed);
+      setRuntimeRecoveryExecutionEvents(
+        services.runtimeRecoveryExecutor.getEvents(),
+      );
+      setRuntimeRecoveryExecutionIndexCount(
+        services.runtimeRecoveryExecutor.getIndex().length,
+      );
+      setRuntimeRecoveryExecutionMessage(
+        `Execution ${executed.execution.status} · ${executed.result?.completedSteps.length ?? 0}/${executed.execution.metadata.totalSteps} steps.`,
+      );
+    },
+    pauseRuntimeRecoveryExecution(): void {
+      if (runtimeRecoveryExecutionPackage === null) {
+        setRuntimeRecoveryExecutionMessage('Nejdřív Execute Recovery.');
+        return;
+      }
+      try {
+        const paused = services.runtimeRecoveryExecutionApi.pauseRecovery(
+          runtimeRecoveryExecutionPackage.id,
+        );
+        setRuntimeRecoveryExecutionPackage(paused);
+        setRuntimeRecoveryExecutionEvents(
+          services.runtimeRecoveryExecutor.getEvents(),
+        );
+        setRuntimeRecoveryExecutionMessage(
+          `Paused at ${paused.execution.currentStep ?? 'start'}.`,
+        );
+      } catch (error) {
+        setRuntimeRecoveryExecutionMessage(
+          error instanceof Error ? error.message : 'Pause failed.',
+        );
+      }
+    },
+    resumeRuntimeRecoveryExecution(): void {
+      if (runtimeRecoveryExecutionPackage === null) {
+        setRuntimeRecoveryExecutionMessage('Nejdřív Execute Recovery.');
+        return;
+      }
+      try {
+        const resumed = services.runtimeRecoveryExecutionApi.resumeRecovery(
+          runtimeRecoveryExecutionPackage.id,
+        );
+        setRuntimeRecoveryExecutionPackage(resumed);
+        setRuntimeRecoveryExecutionEvents(
+          services.runtimeRecoveryExecutor.getEvents(),
+        );
+        setRuntimeRecoveryExecutionMessage(
+          `Resumed → ${resumed.execution.status}.`,
+        );
+      } catch (error) {
+        setRuntimeRecoveryExecutionMessage(
+          error instanceof Error ? error.message : 'Resume failed.',
+        );
+      }
+    },
+    validateRuntimeRecoveryExecution(): void {
+      if (runtimeRecoveryExecutionPackage === null) {
+        setRuntimeRecoveryExecutionMessage('Nejdřív Execute Recovery.');
+        return;
+      }
+      const validation =
+        services.runtimeRecoveryExecutionApi.validateRecoveryExecution(
+          runtimeRecoveryExecutionPackage.id,
+        );
+      const previewed =
+        services.runtimeRecoveryExecutionApi.previewRecoveryExecution(
+          runtimeRecoveryExecutionPackage.id,
+        );
+      if (previewed !== null) {
+        setRuntimeRecoveryExecutionPackage(previewed);
+      }
+      setRuntimeRecoveryExecutionEvents(
+        services.runtimeRecoveryExecutor.getEvents(),
+      );
+      setRuntimeRecoveryExecutionMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    publishRuntimeRecoveryExecution(): void {
+      if (runtimeRecoveryExecutionPackage === null) {
+        setRuntimeRecoveryExecutionMessage('Nejdřív Execute Recovery.');
+        return;
+      }
+      try {
+        const published =
+          services.runtimeRecoveryExecutionApi.publishRecoveryExecution(
+            runtimeRecoveryExecutionPackage.id,
+          );
+        setRuntimeRecoveryExecutionPackage(published);
+        setRuntimeRecoveryExecutionEvents(
+          services.runtimeRecoveryExecutor.getEvents(),
+        );
+        setRuntimeRecoveryExecutionMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeRecoveryExecutionMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    disposeRuntimeRecoveryExecution(): void {
+      if (runtimeRecoveryExecutionPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeRecoveryExecutor.dispose(
+        runtimeRecoveryExecutionPackage.id,
+      );
+      setRuntimeRecoveryExecutionPackage(disposed);
+      setRuntimeRecoveryExecutionEvents(
+        services.runtimeRecoveryExecutor.getEvents(),
+      );
+      setRuntimeRecoveryExecutionIndexCount(
+        services.runtimeRecoveryExecutor.getIndex().length,
+      );
+      setRuntimeRecoveryExecutionMessage(null);
     },
     buildProject(): void {
       const projectId =

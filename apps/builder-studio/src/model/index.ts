@@ -619,3 +619,16 @@ export type {
   RuntimeRecoveryValidation,
   RuntimeRecoveryValidationIssue,
 } from './runtime-recovery-types';
+
+export type {
+  ExecuteRecoveryInput,
+  RecoveryExecution,
+  RecoveryExecutionStatus,
+  RecoveryResult,
+  RuntimeRecoveryExecutionEvent,
+  RuntimeRecoveryExecutionEventType,
+  RuntimeRecoveryExecutionIndexEntry,
+  RuntimeRecoveryExecutionPackage,
+  RuntimeRecoveryExecutionValidation,
+  RuntimeRecoveryExecutionValidationIssue,
+} from './runtime-recovery-execution-types';
