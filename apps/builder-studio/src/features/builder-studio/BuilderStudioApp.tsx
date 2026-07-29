@@ -276,6 +276,10 @@ export function BuilderStudioApp() {
         artifactExportEvents={session.artifactExportEvents}
         artifactExportIndexCount={session.artifactExportIndexCount}
         artifactExportMessage={session.artifactExportMessage}
+        exportSchemaPackage={session.exportSchemaPackage}
+        exportSchemaEvents={session.exportSchemaEvents}
+        exportSchemaIndexCount={session.exportSchemaIndexCount}
+        exportSchemaMessage={session.exportSchemaMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -572,6 +576,9 @@ export function BuilderStudioApp() {
         onValidateArtifactExport={session.validateArtifactExport}
         onExportArtifact={session.exportArtifact}
         onDisposeArtifactExport={session.disposeArtifactExport}
+        onRegisterExportSchema={session.registerExportSchema}
+        onValidateExportSchema={session.validateExportSchema}
+        onDisposeExportSchema={session.disposeExportSchema}
       />
     </AppShell>
   );

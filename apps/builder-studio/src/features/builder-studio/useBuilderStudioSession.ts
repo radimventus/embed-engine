@@ -113,6 +113,8 @@ import type {
   PublicationExecutionPackage,
   ArtifactExportEvent,
   ArtifactExportPackage,
+  ExportSchemaEvent,
+  ExportSchemaPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -261,6 +263,8 @@ import {
   createPublicationExecutionCoordinator,
   createArtifactExportContract,
   createArtifactExportApi,
+  createExportSchemaRegistry,
+  createExportSchemaApi,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -516,6 +520,10 @@ export type BuilderStudioViewModel = {
   readonly artifactExportEvents: readonly ArtifactExportEvent[];
   readonly artifactExportIndexCount: number;
   readonly artifactExportMessage: string | null;
+  readonly exportSchemaPackage: ExportSchemaPackage | null;
+  readonly exportSchemaEvents: readonly ExportSchemaEvent[];
+  readonly exportSchemaIndexCount: number;
+  readonly exportSchemaMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -805,6 +813,9 @@ export type BuilderStudioViewModel = {
   readonly validateArtifactExport: () => void;
   readonly exportArtifact: () => void;
   readonly disposeArtifactExport: () => void;
+  readonly registerExportSchema: () => void;
+  readonly validateExportSchema: () => void;
+  readonly disposeExportSchema: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1579,6 +1590,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     );
     const artifactExportContract = createArtifactExportContract();
     const artifactExportApi = createArtifactExportApi(artifactExportContract);
+    const exportSchemaRegistry = createExportSchemaRegistry();
+    const exportSchemaApi = createExportSchemaApi(exportSchemaRegistry);
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1716,6 +1729,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       publicationExecutionApi,
       artifactExportContract,
       artifactExportApi,
+      exportSchemaRegistry,
+      exportSchemaApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -2339,6 +2354,14 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [artifactExportIndexCount, setArtifactExportIndexCount] = useState(0);
   const [artifactExportMessage, setArtifactExportMessage] =
     useState<string | null>(null);
+  const [exportSchemaPackage, setExportSchemaPackage] =
+    useState<ExportSchemaPackage | null>(null);
+  const [exportSchemaEvents, setExportSchemaEvents] = useState<
+    readonly ExportSchemaEvent[]
+  >([]);
+  const [exportSchemaIndexCount, setExportSchemaIndexCount] = useState(0);
+  const [exportSchemaMessage, setExportSchemaMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2836,6 +2859,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     artifactExportEvents,
     artifactExportIndexCount,
     artifactExportMessage,
+    exportSchemaPackage,
+    exportSchemaEvents,
+    exportSchemaIndexCount,
+    exportSchemaMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -9107,6 +9134,48 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.artifactExportContract.getIndex().length,
       );
       setArtifactExportMessage(null);
+    },
+    registerExportSchema(): void {
+      try {
+        const input = {
+          name: 'ArtifactExport',
+          schemaVersion: artifactExportPackage?.exportModel.schemaVersion ?? '1',
+          title: 'Artifact Export Schema',
+        };
+        const pkg = services.exportSchemaApi.registerExportSchema(
+          exportSchemaPackage?.id ?? null,
+          input,
+        );
+        setExportSchemaPackage(pkg);
+        setExportSchemaEvents(services.exportSchemaRegistry.getEvents());
+        setExportSchemaIndexCount(services.exportSchemaRegistry.getIndex().length);
+        setExportSchemaMessage('Export schema registered.');
+      } catch (err) {
+        setExportSchemaMessage(
+          `Register failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    validateExportSchema(): void {
+      if (exportSchemaPackage === null) {
+        setExportSchemaMessage('Register a schema first.');
+        return;
+      }
+      const validation = services.exportSchemaApi.validateExportSchema(exportSchemaPackage.id);
+      setExportSchemaPackage(services.exportSchemaRegistry.getPackage(exportSchemaPackage.id));
+      setExportSchemaEvents(services.exportSchemaRegistry.getEvents());
+      setExportSchemaIndexCount(services.exportSchemaRegistry.getIndex().length);
+      setExportSchemaMessage(
+        validation.valid ? 'Export schema validation OK.' : 'Export schema validation failed.',
+      );
+    },
+    disposeExportSchema(): void {
+      if (exportSchemaPackage === null) return;
+      const disposed = services.exportSchemaApi.dispose(exportSchemaPackage.id);
+      setExportSchemaPackage(disposed);
+      setExportSchemaEvents(services.exportSchemaRegistry.getEvents());
+      setExportSchemaIndexCount(services.exportSchemaRegistry.getIndex().length);
+      setExportSchemaMessage(null);
     },
     buildProject(): void {
       const projectId =

@@ -1123,3 +1123,25 @@ export {
   createArtifactExportIndex,
   type ArtifactExportIndex,
 } from './artifact-export/artifact-export-index';
+
+export {
+  createExportSchemaRegistry,
+  type ExportSchemaRegistry,
+  type ExportSchemaRegistryOptions,
+} from './export-schema/export-schema-registry';
+export {
+  createExportSchemaApi,
+  type ExportSchemaApi,
+} from './export-schema/export-schema-api';
+export {
+  createBasicExportSchemaStrategy,
+  type ExportSchemaStrategy,
+} from './export-schema/basic-export-schema-strategy';
+export {
+  createBasicExportSchemaValidator,
+  type ExportSchemaValidator,
+} from './export-schema/basic-export-schema-validator';
+export {
+  createExportSchemaIndex,
+  type ExportSchemaIndex,
+} from './export-schema/export-schema-index';

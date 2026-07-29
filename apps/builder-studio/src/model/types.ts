@@ -75,6 +75,7 @@ export type WorkspaceSectionId =
   | 'publication-plan'
   | 'publication-execution'
   | 'artifact-export'
+  | 'export-schemas'
   | 'media'
   | 'layout'
   | 'knowledge';

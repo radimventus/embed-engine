@@ -104,6 +104,8 @@ import type {
   PublicationExecutionPackage,
   ArtifactExportEvent,
   ArtifactExportPackage,
+  ExportSchemaEvent,
+  ExportSchemaPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -186,6 +188,7 @@ import { ArtifactDependenciesOverview } from './ArtifactDependenciesOverview';
 import { PublicationPlanOverview } from './PublicationPlanOverview';
 import { PublicationExecutionOverview } from './PublicationExecutionOverview';
 import { ArtifactExportOverview } from './ArtifactExportOverview';
+import { ExportSchemaOverview } from './ExportSchemaOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -420,6 +423,10 @@ type WorkspaceCanvasProps = {
   readonly artifactExportEvents: readonly ArtifactExportEvent[];
   readonly artifactExportIndexCount: number;
   readonly artifactExportMessage: string | null;
+  readonly exportSchemaPackage: ExportSchemaPackage | null;
+  readonly exportSchemaEvents: readonly ExportSchemaEvent[];
+  readonly exportSchemaIndexCount: number;
+  readonly exportSchemaMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -698,6 +705,9 @@ type WorkspaceCanvasProps = {
   readonly onValidateArtifactExport: () => void;
   readonly onExportArtifact: () => void;
   readonly onDisposeArtifactExport: () => void;
+  readonly onRegisterExportSchema: () => void;
+  readonly onValidateExportSchema: () => void;
+  readonly onDisposeExportSchema: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -915,6 +925,10 @@ export function WorkspaceCanvas({
   artifactExportEvents,
   artifactExportIndexCount,
   artifactExportMessage,
+  exportSchemaPackage,
+  exportSchemaEvents,
+  exportSchemaIndexCount,
+  exportSchemaMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1183,6 +1197,9 @@ export function WorkspaceCanvas({
   onValidateArtifactExport,
   onExportArtifact,
   onDisposeArtifactExport,
+  onRegisterExportSchema,
+  onValidateExportSchema,
+  onDisposeExportSchema,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -2006,6 +2023,17 @@ export function WorkspaceCanvas({
             onExport={onExportArtifact}
             onDispose={onDisposeArtifactExport}
             message={artifactExportMessage}
+          />
+        ) : null}
+        {activeSection === 'export-schemas' ? (
+          <ExportSchemaOverview
+            schemaPackage={exportSchemaPackage}
+            events={exportSchemaEvents}
+            indexCount={exportSchemaIndexCount}
+            onRegister={onRegisterExportSchema}
+            onValidate={onValidateExportSchema}
+            onDispose={onDisposeExportSchema}
+            message={exportSchemaMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

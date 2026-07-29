@@ -920,3 +920,16 @@ export type {
   BuildArtifactExportInput,
   InitializeArtifactExportInput,
 } from './artifact-export-types';
+
+export type {
+  ExportSchema,
+  ExportSchemaEvent,
+  ExportSchemaEventType,
+  ExportSchemaIndexEntry,
+  ExportSchemaPackage,
+  ExportSchemaStatus,
+  ExportSchemaValidation,
+  ExportSchemaValidationIssue,
+  InitializeExportSchemaRegistryInput,
+  RegisterExportSchemaInput,
+} from './export-schema-types';

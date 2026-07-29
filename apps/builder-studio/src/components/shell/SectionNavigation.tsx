@@ -61,6 +61,7 @@ const SECTIONS: readonly {
   { id: 'publication-plan', label: 'Publication Plan' },
   { id: 'publication-execution', label: 'Publication Execution' },
   { id: 'artifact-export', label: 'Artifact Export' },
+  { id: 'export-schemas', label: 'Export Schemas' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },
