@@ -123,6 +123,9 @@ import type {
   ExportPolicyPackage,
   ExportCertificationEvent,
   ExportCertificationPackage,
+  Project,
+  WorkspaceEvent,
+  WorkspacePackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -556,6 +559,11 @@ export type BuilderStudioViewModel = {
   readonly exportCertificationEvents: readonly ExportCertificationEvent[];
   readonly exportCertificationIndexCount: number;
   readonly exportCertificationMessage: string | null;
+  readonly workspacePackage: WorkspacePackage | null;
+  readonly workspaceProjects: readonly Project[];
+  readonly workspaceEvents: readonly WorkspaceEvent[];
+  readonly workspaceIndexCount: number;
+  readonly workspaceMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -576,6 +584,8 @@ export type BuilderStudioViewModel = {
   readonly validationEvents: readonly ValidationEvent[];
   readonly openProject: (projectId: string) => void;
   readonly createProject: () => void;
+  readonly duplicateProject: (projectId: string) => void;
+  readonly archiveProject: (projectId: string) => void;
   readonly selectSection: (sectionId: WorkspaceSectionId) => void;
   readonly addAsset: (categoryId: AssetCategoryId) => void;
   readonly removeAsset: (
@@ -1804,6 +1814,19 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [workspace, setWorkspace] = useState(() =>
     services.workspaceService.getWorkspace(),
   );
+  const [workspacePackage, setWorkspacePackage] = useState<WorkspacePackage | null>(
+    () => services.workspaceService.initialize(),
+  );
+  const [workspaceProjects, setWorkspaceProjects] = useState<readonly Project[]>(
+    () => services.workspaceService.listProjects(),
+  );
+  const [workspaceEvents, setWorkspaceEvents] = useState<readonly WorkspaceEvent[]>(
+    () => services.workspaceService.getEvents(),
+  );
+  const [workspaceIndexCount, setWorkspaceIndexCount] = useState(
+    () => services.workspaceService.getIndex().length,
+  );
+  const [workspaceMessage, setWorkspaceMessage] = useState<string | null>(null);
   const [activeProjectModel, setActiveProjectModel] = useState(() =>
     services.workspaceService.getActiveProjectModel(),
   );
@@ -1811,7 +1834,7 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     services.workspaceService.getPipelineSnapshot(),
   );
   const [activeSection, setActiveSection] =
-    useState<WorkspaceSectionId>('overview');
+    useState<WorkspaceSectionId>('projects');
   const [objectPackage, setObjectPackage] = useState<ObjectPackage | null>(
     () => {
       const model = services.workspaceService.getActiveProjectModel();
@@ -2704,6 +2727,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
 
   const syncFromServices = (projectId?: string | null): void => {
     setWorkspace(services.workspaceService.getWorkspace());
+    setWorkspacePackage(services.workspaceService.getPackage());
+    setWorkspaceProjects(services.workspaceService.listProjects());
+    setWorkspaceEvents(services.workspaceService.getEvents());
+    setWorkspaceIndexCount(services.workspaceService.getIndex().length);
     setActiveProjectModel(services.workspaceService.getActiveProjectModel());
     const activeId =
       projectId ?? services.workspaceService.getWorkspace().activeProjectId;
@@ -2976,6 +3003,11 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     exportCertificationEvents,
     exportCertificationIndexCount,
     exportCertificationMessage,
+    workspacePackage,
+    workspaceProjects,
+    workspaceEvents,
+    workspaceIndexCount,
+    workspaceMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3016,7 +3048,7 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     validationHistory,
     validationEvents,
     openProject(projectId: string): void {
-      services.workspaceService.setActiveProject(projectId);
+      services.workspaceService.openProject(projectId);
       const base = services.workspaceService.getPipelineSnapshot();
       const latest = services.buildService.getLatestBuild(projectId);
       const packageId = latest?.package.packageId;
@@ -3031,14 +3063,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
           ? pipelineFromBuild(base, latest, publish, validation)
           : base,
       );
+      setWorkspaceMessage('Project opened.');
+      setActiveSection('overview');
       syncFromServices(projectId);
     },
     createProject(): void {
-      const count = services.registry.listProjects().length + 1;
-      const created = services.lifecycle.createProject({
-        name: `Nový projekt ${count}`,
+      const count = services.workspaceService.listProjects().length + 1;
+      const created = services.workspaceService.createProject({
+        name: `Novy projekt ${count}`,
       });
-      services.workspaceService.setActiveProject(created.projectId);
       const model = services.workspaceService.getActiveProjectModel();
       if (model !== null) {
         const pkg = ensureObjectPackage(services.objectService, model);
@@ -3060,8 +3093,43 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         );
       }
       setPipeline(services.workspaceService.getPipelineSnapshot());
+      setWorkspaceMessage('Project created.');
       setActiveSection('overview');
-      syncFromServices(created.projectId);
+      syncFromServices(created.id);
+    },
+    duplicateProject(projectId: string): void {
+      const duplicated = services.workspaceService.duplicateProject(projectId);
+      const model = services.workspaceService.getActiveProjectModel();
+      if (model !== null) {
+        const pkg = ensureObjectPackage(services.objectService, model);
+        ensureExperience(
+          services.composerService,
+          services.objectService,
+          pkg,
+        );
+        ensureKnowledge(
+          services.knowledgeService,
+          services.objectService,
+          pkg,
+          model,
+        );
+        ensureDecisionKnowledge(
+          services.decisionService,
+          services.objectService,
+          pkg,
+        );
+      }
+      setPipeline(services.workspaceService.getPipelineSnapshot());
+      setWorkspaceMessage('Project duplicated.');
+      setActiveSection('overview');
+      syncFromServices(duplicated.id);
+    },
+    archiveProject(projectId: string): void {
+      services.workspaceService.archiveProject(projectId);
+      setPipeline(services.workspaceService.getPipelineSnapshot());
+      setWorkspaceMessage('Project archived.');
+      setActiveSection('projects');
+      syncFromServices();
     },
     selectSection(sectionId: WorkspaceSectionId): void {
       setActiveSection(sectionId);

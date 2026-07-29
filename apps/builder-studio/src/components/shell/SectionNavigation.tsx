@@ -4,6 +4,7 @@ const SECTIONS: readonly {
   id: WorkspaceSectionId;
   label: string;
 }[] = [
+  { id: 'projects', label: 'Projects' },
   { id: 'overview', label: 'Overview' },
   { id: 'experience', label: 'Experience' },
   { id: 'knowledge-package', label: 'Knowledge' },

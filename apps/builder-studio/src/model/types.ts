@@ -18,6 +18,7 @@ export type BuildStatus = 'Idle' | 'Ready' | 'Failed';
 export type PublishReadyStatus = 'Ready' | 'Blocked' | 'Idle';
 
 export type WorkspaceSectionId =
+  | 'projects'
   | 'overview'
   | 'experience'
   | 'knowledge-package'

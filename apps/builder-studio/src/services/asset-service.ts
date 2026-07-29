@@ -15,6 +15,7 @@ import { createMockActiveProjects } from './mock-data';
 export type AssetService = {
   getActiveProject(projectId: string): ActiveProjectModel | null;
   ensureProject(record: ProjectRecord): ActiveProjectModel;
+  cloneProject(sourceProjectId: string, targetRecord: ProjectRecord): ActiveProjectModel;
   addAsset(
     projectId: string,
     categoryId: AssetCategoryId,
@@ -172,6 +173,23 @@ export function createAssetService(
       };
       projects.set(record.projectId, created);
       return created;
+    },
+
+    cloneProject(sourceProjectId, targetRecord) {
+      const source = requireProject(sourceProjectId);
+      const cloned: ActiveProjectModel = {
+        ...source,
+        projectId: targetRecord.projectId,
+        record: targetRecord,
+        metadata: {
+          ...source.metadata,
+          title: targetRecord.name,
+          partnerName: targetRecord.customer,
+        },
+        assets: cloneCollections(source),
+      };
+      projects.set(targetRecord.projectId, cloned);
+      return cloned;
     },
 
     addAsset(

@@ -296,6 +296,11 @@ export function BuilderStudioApp() {
         exportCertificationEvents={session.exportCertificationEvents}
         exportCertificationIndexCount={session.exportCertificationIndexCount}
         exportCertificationMessage={session.exportCertificationMessage}
+        workspacePackage={session.workspacePackage}
+        workspaceProjects={session.workspaceProjects}
+        workspaceEvents={session.workspaceEvents}
+        workspaceIndexCount={session.workspaceIndexCount}
+        workspaceMessage={session.workspaceMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -604,6 +609,10 @@ export function BuilderStudioApp() {
         onRegisterExportPolicy={session.registerExportPolicy}
         onValidateExportPolicy={session.validateExportPolicy}
         onDisposeExportPolicy={session.disposeExportPolicy}
+        onOpenProject={session.openProject}
+        onCreateProject={session.createProject}
+        onDuplicateProject={session.duplicateProject}
+        onArchiveProject={session.archiveProject}
         onCertifyExport={session.certifyExport}
         onValidateExportCertification={session.validateExportCertification}
         onRevokeExportCertification={session.revokeExportCertification}

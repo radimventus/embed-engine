@@ -24,6 +24,20 @@ export type {
   WorkspaceSectionId,
   WorkspaceStructure,
 } from './types';
+export type {
+  CreateWorkspaceProjectInput,
+  InitializeWorkspaceInput,
+  ListWorkspaceProjectsInput,
+  Project,
+  WorkspaceEvent,
+  WorkspaceEventType,
+  WorkspaceIndexEntry,
+  WorkspacePackage,
+  WorkspaceProjectSort,
+  WorkspaceProjectStatus,
+  WorkspaceValidation,
+  WorkspaceValidationIssue,
+} from './project-workspace-types';
 
 export type {
   BuildIssue,

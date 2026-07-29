@@ -69,6 +69,16 @@ export {
   createWorkspaceService,
   type WorkspaceService,
 } from './workspace-service';
+export { createWorkspaceApi, type WorkspaceApi } from './workspace-api';
+export {
+  createBasicWorkspaceStrategy,
+  type WorkspaceStrategy,
+} from './workspace-strategy';
+export {
+  createWorkspaceValidator,
+  type WorkspaceValidator,
+} from './workspace-validator';
+export { createWorkspaceIndex, type WorkspaceIndex } from './workspace-index';
 export {
   createObjectService,
   type ObjectService,

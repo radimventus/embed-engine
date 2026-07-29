@@ -114,6 +114,9 @@ import type {
   ExportPolicyPackage,
   ExportCertificationEvent,
   ExportCertificationPackage,
+  Project,
+  WorkspaceEvent,
+  WorkspacePackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -201,6 +204,7 @@ import { ExportCompatibilityOverview } from './ExportCompatibilityOverview';
 import { ExportCapabilityOverview } from './ExportCapabilityOverview';
 import { ExportPoliciesOverview } from './ExportPoliciesOverview';
 import { ExportCertificationOverview } from './ExportCertificationOverview';
+import { ProjectsOverview } from './ProjectsOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -455,6 +459,11 @@ type WorkspaceCanvasProps = {
   readonly exportCertificationEvents: readonly ExportCertificationEvent[];
   readonly exportCertificationIndexCount: number;
   readonly exportCertificationMessage: string | null;
+  readonly workspacePackage: WorkspacePackage | null;
+  readonly workspaceProjects: readonly Project[];
+  readonly workspaceEvents: readonly WorkspaceEvent[];
+  readonly workspaceIndexCount: number;
+  readonly workspaceMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -745,6 +754,10 @@ type WorkspaceCanvasProps = {
   readonly onRegisterExportPolicy: () => void;
   readonly onValidateExportPolicy: () => void;
   readonly onDisposeExportPolicy: () => void;
+  readonly onOpenProject: (projectId: string) => void;
+  readonly onCreateProject: () => void;
+  readonly onDuplicateProject: (projectId: string) => void;
+  readonly onArchiveProject: (projectId: string) => void;
   readonly onCertifyExport: () => void;
   readonly onValidateExportCertification: () => void;
   readonly onRevokeExportCertification: () => void;
@@ -986,6 +999,11 @@ export function WorkspaceCanvas({
   exportCertificationEvents,
   exportCertificationIndexCount,
   exportCertificationMessage,
+  workspacePackage,
+  workspaceProjects,
+  workspaceEvents,
+  workspaceIndexCount,
+  workspaceMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1266,6 +1284,10 @@ export function WorkspaceCanvas({
   onRegisterExportPolicy,
   onValidateExportPolicy,
   onDisposeExportPolicy,
+  onOpenProject,
+  onCreateProject,
+  onDuplicateProject,
+  onArchiveProject,
   onCertifyExport,
   onValidateExportCertification,
   onRevokeExportCertification,
@@ -1299,19 +1321,35 @@ export function WorkspaceCanvas({
 
   return (
     <div>
-      <ProjectDashboard
-        projectName={projectModel.record.name}
-        manifest={manifest}
-        versions={versions}
-        readiness={readiness}
-        timeline={timeline}
-        metadataLine={metadataLine}
-      />
+      {activeSection !== 'projects' ? (
+        <ProjectDashboard
+          projectName={projectModel.record.name}
+          manifest={manifest}
+          versions={versions}
+          readiness={readiness}
+          timeline={timeline}
+          metadataLine={metadataLine}
+        />
+      ) : null}
       <SectionNavigation
         activeSection={activeSection}
         onSelectSection={onSelectSection}
       />
       <div className="min-h-[650px] rounded-[20px] border border-builder-contentBorder bg-white p-[34px]">
+        {activeSection === 'projects' ? (
+          <ProjectsOverview
+            workspacePackage={workspacePackage}
+            projects={workspaceProjects}
+            activeProjectId={projectModel?.projectId ?? null}
+            events={workspaceEvents}
+            indexCount={workspaceIndexCount}
+            message={workspaceMessage}
+            onCreateProject={onCreateProject}
+            onOpenProject={onOpenProject}
+            onDuplicateProject={onDuplicateProject}
+            onArchiveProject={onArchiveProject}
+          />
+        ) : null}
         {activeSection === 'overview' && objectPackage !== null ? (
           <ObjectOverview
             objectPackage={objectPackage}
