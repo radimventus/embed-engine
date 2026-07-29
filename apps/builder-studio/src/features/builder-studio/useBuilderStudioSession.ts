@@ -117,6 +117,8 @@ import type {
   ExportSchemaPackage,
   ExportCompatibilityEvent,
   ExportCompatibilityPackage,
+  ExportCapabilityEvent,
+  ExportCapabilityPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -269,6 +271,8 @@ import {
   createExportSchemaApi,
   createExportCompatibilityRegistry,
   createExportCompatibilityApi,
+  createExportCapabilityRegistry,
+  createExportCapabilityApi,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -532,6 +536,10 @@ export type BuilderStudioViewModel = {
   readonly exportCompatibilityEvents: readonly ExportCompatibilityEvent[];
   readonly exportCompatibilityIndexCount: number;
   readonly exportCompatibilityMessage: string | null;
+  readonly exportCapabilityPackage: ExportCapabilityPackage | null;
+  readonly exportCapabilityEvents: readonly ExportCapabilityEvent[];
+  readonly exportCapabilityIndexCount: number;
+  readonly exportCapabilityMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -827,6 +835,9 @@ export type BuilderStudioViewModel = {
   readonly registerExportCompatibility: () => void;
   readonly validateExportCompatibility: () => void;
   readonly disposeExportCompatibility: () => void;
+  readonly registerExportCapability: () => void;
+  readonly validateExportCapability: () => void;
+  readonly disposeExportCapability: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1605,6 +1616,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const exportSchemaApi = createExportSchemaApi(exportSchemaRegistry);
     const exportCompatibilityRegistry = createExportCompatibilityRegistry();
     const exportCompatibilityApi = createExportCompatibilityApi(exportCompatibilityRegistry);
+    const exportCapabilityRegistry = createExportCapabilityRegistry();
+    const exportCapabilityApi = createExportCapabilityApi(exportCapabilityRegistry);
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1746,6 +1759,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       exportSchemaApi,
       exportCompatibilityRegistry,
       exportCompatibilityApi,
+      exportCapabilityRegistry,
+      exportCapabilityApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -2385,6 +2400,15 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   const [exportCompatibilityIndexCount, setExportCompatibilityIndexCount] = useState(0);
   const [exportCompatibilityMessage, setExportCompatibilityMessage] =
     useState<string | null>(null);
+  const [exportCapabilityPackage, setExportCapabilityPackage] =
+    useState<ExportCapabilityPackage | null>(null);
+  const [exportCapabilityEvents, setExportCapabilityEvents] = useState<
+    readonly ExportCapabilityEvent[]
+  >([]);
+  const [exportCapabilityIndexCount, setExportCapabilityIndexCount] =
+    useState(0);
+  const [exportCapabilityMessage, setExportCapabilityMessage] =
+    useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2890,6 +2914,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     exportCompatibilityEvents,
     exportCompatibilityIndexCount,
     exportCompatibilityMessage,
+    exportCapabilityPackage,
+    exportCapabilityEvents,
+    exportCapabilityIndexCount,
+    exportCapabilityMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -9246,6 +9274,67 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       setExportCompatibilityEvents(services.exportCompatibilityRegistry.getEvents());
       setExportCompatibilityIndexCount(services.exportCompatibilityRegistry.getIndex().length);
       setExportCompatibilityMessage(null);
+    },
+    registerExportCapability(): void {
+      try {
+        const fallbackSchemaVersion =
+          exportSchemaPackage?.schemas[0]?.schemaVersion ??
+          artifactExportPackage?.exportModel.schemaVersion ??
+          '1';
+        const input = {
+          name: 'supportsValidation',
+          description: 'Consumer can validate exported artifacts against the declared schema.',
+          supportedSchemaVersions: [fallbackSchemaVersion],
+          title: 'supportsValidation capability',
+        };
+        const pkg = services.exportCapabilityApi.registerExportCapability(
+          exportCapabilityPackage?.id ?? null,
+          input,
+        );
+        setExportCapabilityPackage(pkg);
+        setExportCapabilityEvents(
+          services.exportCapabilityRegistry.getEvents(),
+        );
+        setExportCapabilityIndexCount(
+          services.exportCapabilityRegistry.getIndex().length,
+        );
+        setExportCapabilityMessage('Export capability registered.');
+      } catch (err) {
+        setExportCapabilityMessage(
+          `Register failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    validateExportCapability(): void {
+      if (exportCapabilityPackage === null) {
+        setExportCapabilityMessage('Register a capability first.');
+        return;
+      }
+      const validation = services.exportCapabilityApi.validateExportCapability(
+        exportCapabilityPackage.id,
+      );
+      setExportCapabilityPackage(
+        services.exportCapabilityRegistry.getPackage(exportCapabilityPackage.id),
+      );
+      setExportCapabilityEvents(services.exportCapabilityRegistry.getEvents());
+      setExportCapabilityIndexCount(
+        services.exportCapabilityRegistry.getIndex().length,
+      );
+      setExportCapabilityMessage(
+        validation.valid ? 'Export capability validation OK.' : 'Export capability validation failed.',
+      );
+    },
+    disposeExportCapability(): void {
+      if (exportCapabilityPackage === null) return;
+      const disposed = services.exportCapabilityApi.disposeExportCapability(
+        exportCapabilityPackage.id,
+      );
+      setExportCapabilityPackage(disposed);
+      setExportCapabilityEvents(services.exportCapabilityRegistry.getEvents());
+      setExportCapabilityIndexCount(
+        services.exportCapabilityRegistry.getIndex().length,
+      );
+      setExportCapabilityMessage(null);
     },
     buildProject(): void {
       const projectId =

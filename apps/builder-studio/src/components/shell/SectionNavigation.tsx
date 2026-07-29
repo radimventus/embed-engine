@@ -63,6 +63,7 @@ const SECTIONS: readonly {
   { id: 'artifact-export', label: 'Artifact Export' },
   { id: 'export-schemas', label: 'Export Schemas' },
   { id: 'export-compatibility', label: 'Export Compatibility' },
+  { id: 'export-capabilities', label: 'Export Capabilities' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },

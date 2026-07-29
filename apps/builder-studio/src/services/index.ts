@@ -1167,3 +1167,25 @@ export {
   createExportCompatibilityIndex,
   type ExportCompatibilityIndex,
 } from './export-compatibility/export-compatibility-index';
+
+export {
+  createExportCapabilityRegistry,
+  type ExportCapabilityRegistry,
+  type ExportCapabilityRegistryOptions,
+} from './export-capability/export-capability-registry';
+export {
+  createExportCapabilityApi,
+  type ExportCapabilityApi,
+} from './export-capability/export-capability-api';
+export {
+  createBasicExportCapabilityStrategy,
+  type ExportCapabilityStrategy,
+} from './export-capability/basic-export-capability-strategy';
+export {
+  createBasicExportCapabilityValidator,
+  type ExportCapabilityValidator,
+} from './export-capability/basic-export-capability-validator';
+export {
+  createExportCapabilityIndex,
+  type ExportCapabilityIndex,
+} from './export-capability/export-capability-index';

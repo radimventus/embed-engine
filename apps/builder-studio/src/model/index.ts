@@ -947,3 +947,16 @@ export type {
   InitializeExportCompatibilityRegistryInput,
   RegisterExportCompatibilityInput,
 } from './export-compatibility-types';
+
+export type {
+  ExportCapability,
+  ExportCapabilityEvent,
+  ExportCapabilityEventType,
+  ExportCapabilityIndexEntry,
+  ExportCapabilityPackage,
+  ExportCapabilityStatus,
+  ExportCapabilityValidation,
+  ExportCapabilityValidationIssue,
+  InitializeExportCapabilityRegistryInput,
+  RegisterExportCapabilityInput,
+} from './export-capability-types';

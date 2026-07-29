@@ -284,6 +284,10 @@ export function BuilderStudioApp() {
         exportCompatibilityEvents={session.exportCompatibilityEvents}
         exportCompatibilityIndexCount={session.exportCompatibilityIndexCount}
         exportCompatibilityMessage={session.exportCompatibilityMessage}
+        exportCapabilityPackage={session.exportCapabilityPackage}
+        exportCapabilityEvents={session.exportCapabilityEvents}
+        exportCapabilityIndexCount={session.exportCapabilityIndexCount}
+        exportCapabilityMessage={session.exportCapabilityMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -586,6 +590,9 @@ export function BuilderStudioApp() {
         onRegisterExportCompatibility={session.registerExportCompatibility}
         onValidateExportCompatibility={session.validateExportCompatibility}
         onDisposeExportCompatibility={session.disposeExportCompatibility}
+        onRegisterExportCapability={session.registerExportCapability}
+        onValidateExportCapability={session.validateExportCapability}
+        onDisposeExportCapability={session.disposeExportCapability}
       />
     </AppShell>
   );
