@@ -818,3 +818,16 @@ export type {
   PlatformPublicationVisibility,
   RegisterPlatformPublicationInput,
 } from './platform-publication-types';
+
+export type {
+  ClientPublicationAsset,
+  ClientPublicationEvent,
+  ClientPublicationEventType,
+  ClientPublicationIndexEntry,
+  ClientPublicationModel,
+  ClientPublicationPackage,
+  ClientPublicationValidation,
+  ClientPublicationValidationIssue,
+  InitializeClientPublicationInput,
+  LoadClientPublicationInput,
+} from './client-publication-types';

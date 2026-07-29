@@ -957,3 +957,23 @@ export {
   createPlatformPublicationIndex,
   type PlatformPublicationIndex,
 } from './platform-publication/platform-publication-index';
+
+export {
+  createClientPublicationAdapter,
+  type ClientPublicationAdapter,
+  type ClientPublicationAdapterOptions,
+} from './client-publication/client-publication-adapter';
+export {
+  createClientPublicationApi,
+  type ClientPublicationApi,
+} from './client-publication/client-publication-api';
+export {
+  createBasicClientPublicationStrategy,
+  createClientPublicationValidator,
+  type ClientPublicationStrategy,
+  type ClientPublicationValidator,
+} from './client-publication/basic-client-publication-strategy';
+export {
+  createClientPublicationIndex,
+  type ClientPublicationIndex,
+} from './client-publication/client-publication-index';

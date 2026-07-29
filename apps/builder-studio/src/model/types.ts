@@ -67,6 +67,7 @@ export type WorkspaceSectionId =
   | 'object-publication'
   | 'published-objects'
   | 'platform-publication'
+  | 'client-publication'
   | 'media'
   | 'layout'
   | 'knowledge';

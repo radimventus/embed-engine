@@ -97,6 +97,8 @@ import type {
   PublishedObjectPackage,
   PlatformPublicationEvent,
   PlatformPublicationPackage,
+  ClientPublicationEvent,
+  ClientPublicationPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -233,6 +235,8 @@ import {
   createPublishedObjectRegistry,
   createPlatformPublicationApi,
   createPlatformPublicationCatalog,
+  createClientPublicationApi,
+  createClientPublicationAdapter,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -452,6 +456,10 @@ export type BuilderStudioViewModel = {
   readonly platformPublicationEvents: readonly PlatformPublicationEvent[];
   readonly platformPublicationIndexCount: number;
   readonly platformPublicationMessage: string | null;
+  readonly clientPublicationPackage: ClientPublicationPackage | null;
+  readonly clientPublicationEvents: readonly ClientPublicationEvent[];
+  readonly clientPublicationIndexCount: number;
+  readonly clientPublicationMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -706,6 +714,11 @@ export type BuilderStudioViewModel = {
   readonly refreshPlatformPublications: () => void;
   readonly validatePlatformPublications: () => void;
   readonly disposePlatformPublications: () => void;
+  readonly loadClientPublication: () => void;
+  readonly transformClientPublication: () => void;
+  readonly publishClientPublication: () => void;
+  readonly validateClientPublication: () => void;
+  readonly disposeClientPublication: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1459,6 +1472,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const platformPublicationApi = createPlatformPublicationApi(
       platformPublicationCatalog,
     );
+    const clientPublicationAdapter = createClientPublicationAdapter();
+    const clientPublicationApi = createClientPublicationApi(
+      clientPublicationAdapter,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1578,6 +1595,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       publishedObjectApi,
       platformPublicationCatalog,
       platformPublicationApi,
+      clientPublicationAdapter,
+      clientPublicationApi,
     };
   }, []);
 
@@ -2124,6 +2143,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     useState(0);
   const [platformPublicationMessage, setPlatformPublicationMessage] =
     useState<string | null>(null);
+  const [clientPublicationPackage, setClientPublicationPackage] =
+    useState<ClientPublicationPackage | null>(null);
+  const [clientPublicationEvents, setClientPublicationEvents] = useState<
+    readonly ClientPublicationEvent[]
+  >([]);
+  const [clientPublicationIndexCount, setClientPublicationIndexCount] =
+    useState(0);
+  const [clientPublicationMessage, setClientPublicationMessage] = useState<
+    string | null
+  >(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2589,6 +2618,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     platformPublicationEvents,
     platformPublicationIndexCount,
     platformPublicationMessage,
+    clientPublicationPackage,
+    clientPublicationEvents,
+    clientPublicationIndexCount,
+    clientPublicationMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -7964,6 +7997,147 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.platformPublicationCatalog.getIndex().length,
       );
       setPlatformPublicationMessage(null);
+    },
+    loadClientPublication(): void {
+      const sessionId =
+        platformPublicationPackage?.metadata.sessionId ??
+        publishedObjectPackage?.metadata.sessionId ??
+        'client-publication-session-demo';
+      const source = platformPublicationPackage?.snapshot.entries[0] ?? null;
+      const input =
+        source !== null
+          ? {
+              publicationId: source.id,
+              objectId: source.objectId,
+              version: source.metadata.objectVersion,
+              title: source.metadata.title,
+              sourceCatalogPackageId: platformPublicationPackage?.id ?? null,
+              sourcePlatformEntryId: source.id,
+              assets: [
+                {
+                  id: 'client-asset-hero',
+                  kind: 'hero',
+                  ref: `client://${source.objectId}/hero`,
+                  label: 'Hero asset',
+                },
+                {
+                  id: 'client-asset-gallery',
+                  kind: 'gallery',
+                  ref: `client://${source.objectId}/gallery`,
+                  label: 'Gallery asset',
+                },
+              ],
+            }
+          : {
+              publicationId: 'platform-publication-demo',
+              objectId: 'object-demo-house',
+              version: '1.0.0',
+              title: 'Demo House',
+              assets: [
+                {
+                  id: 'client-demo-asset-hero',
+                  kind: 'hero',
+                  ref: 'client://object-demo-house/hero',
+                  label: 'Hero asset',
+                },
+                {
+                  id: 'client-demo-asset-gallery',
+                  kind: 'gallery',
+                  ref: 'client://object-demo-house/gallery',
+                  label: 'Gallery asset',
+                },
+              ],
+            };
+      const loaded = services.clientPublicationApi.loadClientPublication(
+        null,
+        input,
+        {
+          sessionId,
+          title: 'Builder Client Publication',
+          publication: input,
+        },
+      );
+      setClientPublicationPackage(loaded);
+      setClientPublicationEvents(services.clientPublicationAdapter.getEvents());
+      setClientPublicationIndexCount(
+        services.clientPublicationAdapter.getIndex().length,
+      );
+      setClientPublicationMessage(
+        `Loaded ${loaded.publicationModel.publicationId} for ${loaded.publicationModel.objectId}.`,
+      );
+    },
+    transformClientPublication(): void {
+      if (clientPublicationPackage === null) {
+        setClientPublicationMessage('Nejdřív Load Publication.');
+        return;
+      }
+      const transformed = services.clientPublicationApi.transformClientPublication(
+        clientPublicationPackage.id,
+      );
+      setClientPublicationPackage(transformed);
+      setClientPublicationEvents(services.clientPublicationAdapter.getEvents());
+      setClientPublicationIndexCount(
+        services.clientPublicationAdapter.getIndex().length,
+      );
+      setClientPublicationMessage(
+        `Transformed ${transformed.publicationModel.publicationId}.`,
+      );
+    },
+    publishClientPublication(): void {
+      if (clientPublicationPackage === null) {
+        setClientPublicationMessage('Nejdřív Load Publication.');
+        return;
+      }
+      try {
+        const published = services.clientPublicationApi.publishClientPublication(
+          clientPublicationPackage.id,
+        );
+        setClientPublicationPackage(published);
+        setClientPublicationEvents(services.clientPublicationAdapter.getEvents());
+        setClientPublicationIndexCount(
+          services.clientPublicationAdapter.getIndex().length,
+        );
+        setClientPublicationMessage(
+          `Published ${published.publicationModel.publicationId}.`,
+        );
+      } catch (error) {
+        setClientPublicationMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateClientPublication(): void {
+      if (clientPublicationPackage === null) {
+        setClientPublicationMessage('Nejdřív Load Publication.');
+        return;
+      }
+      const validation = services.clientPublicationApi.validateClientPublication(
+        clientPublicationPackage.id,
+      );
+      const previewed = services.clientPublicationApi.preview(
+        clientPublicationPackage.id,
+      );
+      if (previewed !== null) {
+        setClientPublicationPackage(previewed);
+      }
+      setClientPublicationEvents(services.clientPublicationAdapter.getEvents());
+      setClientPublicationMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeClientPublication(): void {
+      if (clientPublicationPackage === null) {
+        return;
+      }
+      const disposed = services.clientPublicationAdapter.dispose(
+        clientPublicationPackage.id,
+      );
+      setClientPublicationPackage(disposed);
+      setClientPublicationEvents(services.clientPublicationAdapter.getEvents());
+      setClientPublicationIndexCount(
+        services.clientPublicationAdapter.getIndex().length,
+      );
+      setClientPublicationMessage(null);
     },
     buildProject(): void {
       const projectId =

@@ -53,6 +53,7 @@ const SECTIONS: readonly {
   { id: 'object-publication', label: 'Object Publication' },
   { id: 'published-objects', label: 'Published Objects' },
   { id: 'platform-publication', label: 'Platform Catalog' },
+  { id: 'client-publication', label: 'Client Publication' },
   { id: 'media', label: 'Média' },
   { id: 'layout', label: 'Dispozice' },
   { id: 'knowledge', label: 'Soubory' },
