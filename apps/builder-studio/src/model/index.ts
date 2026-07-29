@@ -75,6 +75,20 @@ export type {
 } from './object-metadata-types';
 
 export type {
+  DashboardValidationCheck,
+  DashboardValidationReport,
+  DashboardOverallStatus,
+  InitializeValidationDashboardInput,
+  ValidationCheck,
+  ValidationCheckSeverity,
+  ValidationCheckSource,
+  ValidationDashboardEvent,
+  ValidationDashboardEventType,
+  ValidationDashboardIndexEntry,
+  ValidationDashboardReportAlias,
+} from './validation-dashboard-types';
+
+export type {
   BuildIssue,
   BuildIssueSeverity,
   BuildResult,

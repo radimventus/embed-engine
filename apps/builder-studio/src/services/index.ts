@@ -122,6 +122,24 @@ export {
   type MetadataIndex,
 } from './object-metadata/metadata-index';
 export {
+  createValidationDashboardService,
+  type ValidationDashboardService,
+  type ValidationDashboardServiceOptions,
+} from './validation-dashboard/validation-dashboard-service';
+export {
+  createValidationDashboardApi,
+  type ValidationDashboardApi,
+} from './validation-dashboard/validation-dashboard-api';
+export {
+  createValidationAggregator,
+  type ValidationAggregator,
+  type ValidationSourceSnapshot,
+} from './validation-dashboard/validation-aggregator';
+export {
+  createValidationDashboardIndex,
+  type ValidationDashboardIndex,
+} from './validation-dashboard/validation-dashboard-index';
+export {
   createObjectService,
   type ObjectService,
 } from './object/object-service';

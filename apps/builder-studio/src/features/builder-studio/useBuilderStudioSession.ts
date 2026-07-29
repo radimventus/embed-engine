@@ -134,6 +134,8 @@ import type {
   MetadataStatus,
   ObjectAttribute,
   ObjectMetadataDocument,
+  DashboardValidationReport,
+  ValidationDashboardEvent,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -296,6 +298,12 @@ import {
   createAssetManagerApi,
   createMetadataService,
   createMetadataApi,
+  createValidationDashboardService,
+  createValidationDashboardApi,
+  createWorkspaceValidator,
+  createBasicAssetValidator,
+  createBasicMetadataValidator,
+  createBasicExportCertificationValidator,
   createArtifactVersionApi,
   createArtifactVersionManager,
   createRuntimeBootstrapApi,
@@ -586,6 +594,10 @@ export type BuilderStudioViewModel = {
   readonly objectMetadataEvents: readonly MetadataEvent[];
   readonly objectMetadataIndexCount: number;
   readonly objectMetadataMessage: string | null;
+  readonly validationDashboardReport: DashboardValidationReport | null;
+  readonly validationDashboardEvents: readonly ValidationDashboardEvent[];
+  readonly validationDashboardIndexCount: number;
+  readonly validationDashboardMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -646,6 +658,8 @@ export type BuilderStudioViewModel = {
   ) => void;
   readonly validateObjectMetadata: () => void;
   readonly publishObjectMetadataDraft: () => void;
+  readonly evaluateValidationDashboard: () => void;
+  readonly refreshValidationDashboard: () => void;
   readonly selectSection: (sectionId: WorkspaceSectionId) => void;
   readonly addAsset: (categoryId: AssetCategoryId) => void;
   readonly removeAsset: (
@@ -1724,6 +1738,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         new Set(assetManagerApi.listAssets().map((asset) => asset.id)),
     });
     const metadataApi = createMetadataApi(metadataService);
+    const validationDashboardService = createValidationDashboardService();
+    const validationDashboardApi = createValidationDashboardApi(
+      validationDashboardService,
+    );
     const artifactVersionManager = createArtifactVersionManager();
     const artifactVersionApi = createArtifactVersionApi(artifactVersionManager);
     const runtimeSessionBootstrap = createRuntimeSessionBootstrap();
@@ -1875,6 +1893,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       assetManagerApi,
       metadataService,
       metadataApi,
+      validationDashboardService,
+      validationDashboardApi,
       artifactVersionManager,
       artifactVersionApi,
       runtimeSessionBootstrap,
@@ -1917,6 +1937,16 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
   >([]);
   const [objectMetadataIndexCount, setObjectMetadataIndexCount] = useState(0);
   const [objectMetadataMessage, setObjectMetadataMessage] = useState<
+    string | null
+  >(null);
+  const [validationDashboardReport, setValidationDashboardReport] =
+    useState<DashboardValidationReport | null>(null);
+  const [validationDashboardEvents, setValidationDashboardEvents] = useState<
+    readonly ValidationDashboardEvent[]
+  >([]);
+  const [validationDashboardIndexCount, setValidationDashboardIndexCount] =
+    useState(0);
+  const [validationDashboardMessage, setValidationDashboardMessage] = useState<
     string | null
   >(null);
   const [activeProjectModel, setActiveProjectModel] = useState(() =>
@@ -3110,6 +3140,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     objectMetadataEvents,
     objectMetadataIndexCount,
     objectMetadataMessage,
+    validationDashboardReport,
+    validationDashboardEvents,
+    validationDashboardIndexCount,
+    validationDashboardMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -3728,6 +3762,127 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       } catch (err) {
         setObjectMetadataMessage(
           `Publish failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    evaluateValidationDashboard(): void {
+      const projectId =
+        services.workspaceService.getWorkspace().activeProjectId ??
+        'harmony-124';
+      try {
+        const workspacePkg = services.workspaceService.getPackage();
+        const workspace =
+          workspacePkg !== null
+            ? createWorkspaceValidator().validate(workspacePkg)
+            : null;
+
+        const assets =
+          assetManagerPackage !== null
+            ? createBasicAssetValidator().validate(assetManagerPackage)
+            : null;
+
+        const knownAssetIds = new Set(
+          services.assetManagerApi.listAssets().map((asset) => asset.id),
+        );
+        const metadata =
+          objectMetadataPackage !== null
+            ? createBasicMetadataValidator().validate(
+                objectMetadataPackage,
+                knownAssetIds,
+              )
+            : null;
+
+        const publication = publicationReadinessPackage?.report ?? null;
+
+        const exportCertification =
+          exportCertificationPackage?.certificate !== undefined
+            ? createBasicExportCertificationValidator().validate(
+                exportCertificationPackage.certificate,
+              )
+            : null;
+
+        const report = services.validationDashboardApi.evaluateProject(
+          projectId,
+          {
+            workspace,
+            assets,
+            metadata,
+            publication,
+            exportCertification,
+          },
+        );
+        setValidationDashboardReport(report);
+        setValidationDashboardEvents(
+          services.validationDashboardApi.listEvents(),
+        );
+        setValidationDashboardIndexCount(
+          services.validationDashboardApi.listIndex().length,
+        );
+        setValidationDashboardMessage(
+          `Validation ${report.overallStatus} · Ready Score ${report.readinessScore}%.`,
+        );
+      } catch (err) {
+        setValidationDashboardMessage(
+          `Validation failed: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      }
+    },
+    refreshValidationDashboard(): void {
+      if (validationDashboardReport === null) {
+        setValidationDashboardMessage('Evaluate project first.');
+        return;
+      }
+      try {
+        const workspacePkg = services.workspaceService.getPackage();
+        const workspace =
+          workspacePkg !== null
+            ? createWorkspaceValidator().validate(workspacePkg)
+            : null;
+        const assets =
+          assetManagerPackage !== null
+            ? createBasicAssetValidator().validate(assetManagerPackage)
+            : null;
+        const knownAssetIds = new Set(
+          services.assetManagerApi.listAssets().map((asset) => asset.id),
+        );
+        const metadata =
+          objectMetadataPackage !== null
+            ? createBasicMetadataValidator().validate(
+                objectMetadataPackage,
+                knownAssetIds,
+              )
+            : null;
+        const publication = publicationReadinessPackage?.report ?? null;
+        const exportCertification =
+          exportCertificationPackage?.certificate !== undefined
+            ? createBasicExportCertificationValidator().validate(
+                exportCertificationPackage.certificate,
+              )
+            : null;
+
+        const report = services.validationDashboardApi.refreshValidation(
+          validationDashboardReport.id,
+          {
+            workspace,
+            assets,
+            metadata,
+            publication,
+            exportCertification,
+          },
+        );
+        setValidationDashboardReport(report);
+        setValidationDashboardEvents(
+          services.validationDashboardApi.listEvents(),
+        );
+        setValidationDashboardIndexCount(
+          services.validationDashboardApi.listIndex().length,
+        );
+        setValidationDashboardMessage(
+          `Refreshed ${report.overallStatus} · Ready Score ${report.readinessScore}%.`,
+        );
+      } catch (err) {
+        setValidationDashboardMessage(
+          `Refresh failed: ${err instanceof Error ? err.message : String(err)}`,
         );
       }
     },

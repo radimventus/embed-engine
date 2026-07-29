@@ -125,6 +125,8 @@ import type {
   MetadataStatus,
   ObjectAttribute,
   ObjectMetadataDocument,
+  DashboardValidationReport,
+  ValidationDashboardEvent,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -215,6 +217,7 @@ import { ExportCertificationOverview } from './ExportCertificationOverview';
 import { ProjectsOverview } from './ProjectsOverview';
 import { AssetsOverview } from './AssetsOverview';
 import { MetadataOverview } from './MetadataOverview';
+import { ValidationOverview } from './ValidationOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -484,6 +487,10 @@ type WorkspaceCanvasProps = {
   readonly objectMetadataEvents: readonly MetadataEvent[];
   readonly objectMetadataIndexCount: number;
   readonly objectMetadataMessage: string | null;
+  readonly validationDashboardReport: DashboardValidationReport | null;
+  readonly validationDashboardEvents: readonly ValidationDashboardEvent[];
+  readonly validationDashboardIndexCount: number;
+  readonly validationDashboardMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -816,6 +823,8 @@ type WorkspaceCanvasProps = {
   ) => void;
   readonly onValidateObjectMetadata: () => void;
   readonly onPublishObjectMetadataDraft: () => void;
+  readonly onEvaluateValidationDashboard: () => void;
+  readonly onRefreshValidationDashboard: () => void;
   readonly onCertifyExport: () => void;
   readonly onValidateExportCertification: () => void;
   readonly onRevokeExportCertification: () => void;
@@ -1072,6 +1081,10 @@ export function WorkspaceCanvas({
   objectMetadataEvents,
   objectMetadataIndexCount,
   objectMetadataMessage,
+  validationDashboardReport,
+  validationDashboardEvents,
+  validationDashboardIndexCount,
+  validationDashboardMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -1372,6 +1385,8 @@ export function WorkspaceCanvas({
   onReorderObjectMetadataAttribute,
   onValidateObjectMetadata,
   onPublishObjectMetadataDraft,
+  onEvaluateValidationDashboard,
+  onRefreshValidationDashboard,
   onCertifyExport,
   onValidateExportCertification,
   onRevokeExportCertification,
@@ -1469,6 +1484,16 @@ export function WorkspaceCanvas({
             onReorderAttribute={onReorderObjectMetadataAttribute}
             onValidate={onValidateObjectMetadata}
             onPublishDraft={onPublishObjectMetadataDraft}
+          />
+        ) : null}
+        {activeSection === 'validation' ? (
+          <ValidationOverview
+            report={validationDashboardReport}
+            events={validationDashboardEvents}
+            indexCount={validationDashboardIndexCount}
+            message={validationDashboardMessage}
+            onEvaluate={onEvaluateValidationDashboard}
+            onRefresh={onRefreshValidationDashboard}
           />
         ) : null}
         {activeSection === 'overview' && objectPackage !== null ? (

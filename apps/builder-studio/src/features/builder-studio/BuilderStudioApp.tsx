@@ -311,6 +311,10 @@ export function BuilderStudioApp() {
         objectMetadataEvents={session.objectMetadataEvents}
         objectMetadataIndexCount={session.objectMetadataIndexCount}
         objectMetadataMessage={session.objectMetadataMessage}
+        validationDashboardReport={session.validationDashboardReport}
+        validationDashboardEvents={session.validationDashboardEvents}
+        validationDashboardIndexCount={session.validationDashboardIndexCount}
+        validationDashboardMessage={session.validationDashboardMessage}
         priorityRegistry={session.priorityRegistry}
         moduleRegistry={session.moduleRegistry}
         objectEvents={session.objectEvents}
@@ -639,6 +643,8 @@ export function BuilderStudioApp() {
         onReorderObjectMetadataAttribute={session.reorderObjectMetadataAttribute}
         onValidateObjectMetadata={session.validateObjectMetadata}
         onPublishObjectMetadataDraft={session.publishObjectMetadataDraft}
+        onEvaluateValidationDashboard={session.evaluateValidationDashboard}
+        onRefreshValidationDashboard={session.refreshValidationDashboard}
         onCertifyExport={session.certifyExport}
         onValidateExportCertification={session.validateExportCertification}
         onRevokeExportCertification={session.revokeExportCertification}

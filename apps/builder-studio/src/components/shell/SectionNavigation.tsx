@@ -7,6 +7,7 @@ const SECTIONS: readonly {
   { id: 'projects', label: 'Projects' },
   { id: 'assets', label: 'Assets' },
   { id: 'metadata', label: 'Metadata' },
+  { id: 'validation', label: 'Validation' },
   { id: 'overview', label: 'Overview' },
   { id: 'experience', label: 'Experience' },
   { id: 'knowledge-package', label: 'Knowledge' },
