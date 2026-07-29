@@ -64,6 +64,8 @@ import type {
   RuntimeRecoveryExecutionPackage,
   RuntimeRecoveryCoordinatorEvent,
   RuntimeRecoverySummaryPackage,
+  RuntimeRecoveryReportingEvent,
+  RuntimeRecoveryReportPackage,
   BehaviorEvaluation,
   BehaviorEvent,
   BehaviorSignal,
@@ -126,6 +128,7 @@ import { ResilienceOverview } from './ResilienceOverview';
 import { RecoveryOverview } from './RecoveryOverview';
 import { RecoveryExecutionOverview } from './RecoveryExecutionOverview';
 import { RecoveryCoordinatorOverview } from './RecoveryCoordinatorOverview';
+import { RecoveryReportingOverview } from './RecoveryReportingOverview';
 import { RuleEvaluationOverview } from './RuleEvaluationOverview';
 import { DecisionOverview } from './DecisionOverview';
 import { KnowledgeLayersOverview } from './KnowledgeLayersOverview';
@@ -280,6 +283,10 @@ type WorkspaceCanvasProps = {
   readonly runtimeRecoveryCoordinatorEvents: readonly RuntimeRecoveryCoordinatorEvent[];
   readonly runtimeRecoveryCoordinatorIndexCount: number;
   readonly runtimeRecoveryCoordinatorMessage: string | null;
+  readonly runtimeRecoveryReportingPackage: RuntimeRecoveryReportPackage | null;
+  readonly runtimeRecoveryReportingEvents: readonly RuntimeRecoveryReportingEvent[];
+  readonly runtimeRecoveryReportingIndexCount: number;
+  readonly runtimeRecoveryReportingMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -472,6 +479,10 @@ type WorkspaceCanvasProps = {
   readonly onPublishRuntimeRecoveryCoordinator: () => void;
   readonly onValidateRuntimeRecoveryCoordinator: () => void;
   readonly onDisposeRuntimeRecoveryCoordinator: () => void;
+  readonly onGenerateRuntimeRecoveryReporting: () => void;
+  readonly onPublishRuntimeRecoveryReporting: () => void;
+  readonly onValidateRuntimeRecoveryReporting: () => void;
+  readonly onDisposeRuntimeRecoveryReporting: () => void;
 };
 
 export function WorkspaceCanvas({
@@ -609,6 +620,10 @@ export function WorkspaceCanvas({
   runtimeRecoveryCoordinatorEvents,
   runtimeRecoveryCoordinatorIndexCount,
   runtimeRecoveryCoordinatorMessage,
+  runtimeRecoveryReportingPackage,
+  runtimeRecoveryReportingEvents,
+  runtimeRecoveryReportingIndexCount,
+  runtimeRecoveryReportingMessage,
   priorityRegistry,
   moduleRegistry,
   objectEvents,
@@ -791,6 +806,10 @@ export function WorkspaceCanvas({
   onPublishRuntimeRecoveryCoordinator,
   onValidateRuntimeRecoveryCoordinator,
   onDisposeRuntimeRecoveryCoordinator,
+  onGenerateRuntimeRecoveryReporting,
+  onPublishRuntimeRecoveryReporting,
+  onValidateRuntimeRecoveryReporting,
+  onDisposeRuntimeRecoveryReporting,
 }: WorkspaceCanvasProps) {
   if (projectModel === null || manifest === null || versions === null || readiness === null) {
     return (
@@ -1356,6 +1375,19 @@ export function WorkspaceCanvas({
             onValidate={onValidateRuntimeRecoveryCoordinator}
             onDispose={onDisposeRuntimeRecoveryCoordinator}
             message={runtimeRecoveryCoordinatorMessage}
+          />
+        ) : null}
+
+        {activeSection === 'runtime-recovery-reporting' ? (
+          <RecoveryReportingOverview
+            reportPackage={runtimeRecoveryReportingPackage}
+            events={runtimeRecoveryReportingEvents}
+            indexCount={runtimeRecoveryReportingIndexCount}
+            onGenerate={onGenerateRuntimeRecoveryReporting}
+            onPublish={onPublishRuntimeRecoveryReporting}
+            onValidate={onValidateRuntimeRecoveryReporting}
+            onDispose={onDisposeRuntimeRecoveryReporting}
+            message={runtimeRecoveryReportingMessage}
           />
         ) : null}
         {activeSection === 'media' ? (

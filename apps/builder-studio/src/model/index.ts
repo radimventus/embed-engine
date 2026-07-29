@@ -647,3 +647,16 @@ export type {
   StartRecoverySessionInput,
   TrackRecoveryProgressInput,
 } from './runtime-recovery-coordinator-types';
+
+export type {
+  CollectRecoveryReportInput,
+  RecoveryReport,
+  RecoveryReportFinalStatus,
+  RecoveryReportItem,
+  RuntimeRecoveryReportPackage,
+  RuntimeRecoveryReportingEvent,
+  RuntimeRecoveryReportingEventType,
+  RuntimeRecoveryReportingIndexEntry,
+  RuntimeRecoveryReportingValidation,
+  RuntimeRecoveryReportingValidationIssue,
+} from './runtime-recovery-reporting-types';

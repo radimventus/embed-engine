@@ -73,6 +73,8 @@ import type {
   RuntimeRecoveryExecutionPackage,
   RuntimeRecoveryCoordinatorEvent,
   RuntimeRecoverySummaryPackage,
+  RuntimeRecoveryReportingEvent,
+  RuntimeRecoveryReportPackage,
   BehaviorEvent,
   BehaviorSignal,
   CreateSessionInput,
@@ -185,6 +187,8 @@ import {
   createRuntimeRecoveryExecutor,
   createRuntimeRecoveryCoordinatorApi,
   createRuntimeRecoveryCoordinator,
+  createRuntimeRecoveryReportingApi,
+  createRuntimeRecoveryReportingEngine,
   createDecisionKnowledgeService,
   createKnowledgeApi,
   createKnowledgeContextResolver,
@@ -356,6 +360,10 @@ export type BuilderStudioViewModel = {
   readonly runtimeRecoveryCoordinatorEvents: readonly RuntimeRecoveryCoordinatorEvent[];
   readonly runtimeRecoveryCoordinatorIndexCount: number;
   readonly runtimeRecoveryCoordinatorMessage: string | null;
+  readonly runtimeRecoveryReportingPackage: RuntimeRecoveryReportPackage | null;
+  readonly runtimeRecoveryReportingEvents: readonly RuntimeRecoveryReportingEvent[];
+  readonly runtimeRecoveryReportingIndexCount: number;
+  readonly runtimeRecoveryReportingMessage: string | null;
   readonly priorityRegistry: readonly PriorityDefinition[];
   readonly moduleRegistry: readonly ObjectModuleDefinition[];
   readonly objectEvents: readonly ObjectEvent[];
@@ -559,6 +567,10 @@ export type BuilderStudioViewModel = {
   readonly publishRuntimeRecoveryCoordinator: () => void;
   readonly validateRuntimeRecoveryCoordinator: () => void;
   readonly disposeRuntimeRecoveryCoordinator: () => void;
+  readonly generateRuntimeRecoveryReporting: () => void;
+  readonly publishRuntimeRecoveryReporting: () => void;
+  readonly validateRuntimeRecoveryReporting: () => void;
+  readonly disposeRuntimeRecoveryReporting: () => void;
   readonly validateProject: () => void;
   readonly buildProject: () => void;
   readonly publishPackage: () => void;
@@ -1263,6 +1275,11 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     const runtimeRecoveryCoordinatorApi = createRuntimeRecoveryCoordinatorApi(
       runtimeRecoveryCoordinator,
     );
+    const runtimeRecoveryReportingEngine =
+      createRuntimeRecoveryReportingEngine();
+    const runtimeRecoveryReportingApi = createRuntimeRecoveryReportingApi(
+      runtimeRecoveryReportingEngine,
+    );
     for (const record of registry.listProjects()) {
       const project = assets.getActiveProject(record.projectId);
       if (project !== null) {
@@ -1358,6 +1375,8 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
       runtimeRecoveryExecutionApi,
       runtimeRecoveryCoordinator,
       runtimeRecoveryCoordinatorApi,
+      runtimeRecoveryReportingEngine,
+      runtimeRecoveryReportingApi,
     };
   }, []);
 
@@ -1779,6 +1798,22 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeRecoveryCoordinatorMessage,
     setRuntimeRecoveryCoordinatorMessage,
   ] = useState<string | null>(null);
+  const [
+    runtimeRecoveryReportingPackage,
+    setRuntimeRecoveryReportingPackage,
+  ] = useState<RuntimeRecoveryReportPackage | null>(null);
+  const [
+    runtimeRecoveryReportingEvents,
+    setRuntimeRecoveryReportingEvents,
+  ] = useState<readonly RuntimeRecoveryReportingEvent[]>([]);
+  const [
+    runtimeRecoveryReportingIndexCount,
+    setRuntimeRecoveryReportingIndexCount,
+  ] = useState(0);
+  const [
+    runtimeRecoveryReportingMessage,
+    setRuntimeRecoveryReportingMessage,
+  ] = useState<string | null>(null);
   const [latestBuild, setLatestBuild] = useState<BuildResult | null>(null);
   const [buildHistory, setBuildHistory] = useState<readonly BuildResult[]>(
     [],
@@ -2196,6 +2231,10 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
     runtimeRecoveryCoordinatorEvents,
     runtimeRecoveryCoordinatorIndexCount,
     runtimeRecoveryCoordinatorMessage,
+    runtimeRecoveryReportingPackage,
+    runtimeRecoveryReportingEvents,
+    runtimeRecoveryReportingIndexCount,
+    runtimeRecoveryReportingMessage,
     resolvedLayers:
       knowledgeLayerBundle === null
         ? null
@@ -5911,6 +5950,134 @@ export function useBuilderStudioSession(): BuilderStudioViewModel {
         services.runtimeRecoveryCoordinator.getIndex().length,
       );
       setRuntimeRecoveryCoordinatorMessage(null);
+    },
+    generateRuntimeRecoveryReporting(): void {
+      const coordinator = runtimeRecoveryCoordinatorPackage;
+      const execution = runtimeRecoveryExecutionPackage;
+      const generated =
+        services.runtimeRecoveryReportingApi.generateRecoveryReport({
+          sessionId:
+            coordinator?.session.metadata.sessionId ??
+            execution?.execution.metadata.sessionId ??
+            'runtime-session-demo',
+          runtimeExecutionId:
+            coordinator?.session.runtimeExecutionId ??
+            execution?.execution.runtimeExecutionId ??
+            'runtime-execution-demo',
+          title: 'Builder Runtime Recovery Report',
+          recoverySessionId: coordinator?.session.id ?? 'recovery-session-demo',
+          recoverySummaryId: coordinator?.summary?.id ?? null,
+          finalStatus:
+            coordinator?.summary?.finalStatus ??
+            coordinator?.session.status ??
+            execution?.execution.status ??
+            'COMPLETED',
+          duration:
+            coordinator?.summary?.duration ??
+            execution?.result?.duration ??
+            45,
+          summaryText:
+            coordinator?.summary !== null && coordinator?.summary !== undefined
+              ? `Recovery ${coordinator.summary.finalStatus} · ${coordinator.summary.completedExecutions} completed · ${coordinator.summary.failedExecutions} failed.`
+              : null,
+          executions:
+            coordinator?.session.executions.map((item) => ({
+              executionId: item.executionId,
+              status: item.status,
+              duration: execution?.result?.duration ?? 45,
+              description: `Coordinated execution ${item.executionId}`,
+              sequenceId: item.sequenceId,
+            })) ??
+            (execution !== null
+              ? [
+                  {
+                    executionId: execution.execution.id,
+                    status: execution.execution.status,
+                    duration: execution.result?.duration ?? 45,
+                    description: 'Primary recovery execution',
+                    sequenceId: execution.execution.sequenceId,
+                  },
+                ]
+              : [
+                  {
+                    executionId: 'recovery-execution-demo',
+                    status: 'COMPLETED',
+                    duration: 45,
+                    description: 'Demo recovery execution',
+                    sequenceId: 'recovery-sequence-demo',
+                  },
+                ]),
+        });
+      setRuntimeRecoveryReportingPackage(generated);
+      setRuntimeRecoveryReportingEvents(
+        services.runtimeRecoveryReportingEngine.getEvents(),
+      );
+      setRuntimeRecoveryReportingIndexCount(
+        services.runtimeRecoveryReportingEngine.getIndex().length,
+      );
+      setRuntimeRecoveryReportingMessage(
+        `Report ${generated.report.finalStatus} · ${generated.report.executions.length} item(s) · ${generated.report.duration}s.`,
+      );
+    },
+    publishRuntimeRecoveryReporting(): void {
+      if (runtimeRecoveryReportingPackage === null) {
+        setRuntimeRecoveryReportingMessage('Nejdřív Generate Report.');
+        return;
+      }
+      try {
+        const published =
+          services.runtimeRecoveryReportingApi.publishRecoveryReport(
+            runtimeRecoveryReportingPackage.id,
+          );
+        setRuntimeRecoveryReportingPackage(published);
+        setRuntimeRecoveryReportingEvents(
+          services.runtimeRecoveryReportingEngine.getEvents(),
+        );
+        setRuntimeRecoveryReportingMessage(`Published ${published.id}.`);
+      } catch (error) {
+        setRuntimeRecoveryReportingMessage(
+          error instanceof Error ? error.message : 'Publish failed.',
+        );
+      }
+    },
+    validateRuntimeRecoveryReporting(): void {
+      if (runtimeRecoveryReportingPackage === null) {
+        setRuntimeRecoveryReportingMessage('Nejdřív Generate Report.');
+        return;
+      }
+      const validation =
+        services.runtimeRecoveryReportingApi.validateRecoveryReport(
+          runtimeRecoveryReportingPackage.id,
+        );
+      const previewed =
+        services.runtimeRecoveryReportingApi.previewRecoveryReport(
+          runtimeRecoveryReportingPackage.id,
+        );
+      if (previewed !== null) {
+        setRuntimeRecoveryReportingPackage(previewed);
+      }
+      setRuntimeRecoveryReportingEvents(
+        services.runtimeRecoveryReportingEngine.getEvents(),
+      );
+      setRuntimeRecoveryReportingMessage(
+        validation.valid ? 'Validation OK.' : 'Validation failed.',
+      );
+    },
+    disposeRuntimeRecoveryReporting(): void {
+      if (runtimeRecoveryReportingPackage === null) {
+        return;
+      }
+      const disposed = services.runtimeRecoveryReportingEngine.dispose(
+        runtimeRecoveryReportingPackage.id,
+      );
+      setRuntimeRecoveryReportingPackage(disposed);
+      setRuntimeRecoveryReportingEvents(
+        services.runtimeRecoveryReportingEngine.getEvents(),
+      );
+      setRuntimeRecoveryReportingIndexCount(
+        services.runtimeRecoveryReportingEngine.getIndex().length,
+      );
+      setRuntimeRecoveryReportingMessage(null);
     },
     buildProject(): void {
       const projectId =
