@@ -1,15 +1,13 @@
-<svg xmlns="http://www.w3.org/2000/svg"
-     viewBox="0 0 2790 1938"
-     data-floor="p1"
-     data-hp003="1">
-  <!-- HP-003 authoring SSOT: room hit regions. Visual raster: p1.webp (same viewBox). -->
-  <rect id="bedroom" data-room="bedroom" x="388" y="360" width="421" height="720" fill="#f5b900" fill-opacity="0.01" />
-  <rect id="children-room" data-room="children-room" x="825" y="360" width="388" height="720" fill="#f5b900" fill-opacity="0.01" />
-  <rect id="toilet" data-room="toilet" x="1229" y="360" width="200" height="240" fill="#f5b900" fill-opacity="0.01" />
-  <rect id="bathroom" data-room="bathroom" x="1229" y="620" width="340" height="460" fill="#f5b900" fill-opacity="0.01" />
-  <rect id="living-room" data-room="living-room" x="1601" y="340" width="793" height="520" fill="#f5b900" fill-opacity="0.01" />
-  <rect id="kitchen" data-room="kitchen" x="1601" y="880" width="793" height="280" fill="#f5b900" fill-opacity="0.01" />
-  <rect id="vestibule" data-room="vestibule" x="388" y="1120" width="320" height="220" fill="#f5b900" fill-opacity="0.01" />
-  <rect id="wardrobe" data-room="wardrobe" x="720" y="1120" width="200" height="200" fill="#f5b900" fill-opacity="0.01" />
-  <rect id="office" data-room="office" x="940" y="1120" width="420" height="280" fill="#f5b900" fill-opacity="0.01" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2790 1938" data-floor="p1" data-hp003="1">
+  <!-- Generated from media/plans/p1.rooms/room-*.svg. Do not edit by hand. -->
+  <path id="bathroom" data-room="bathroom" d="M 663 945 L 981 945 L 981 1061 L 1035 1061 L 1035 1139 L 663 1139 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="bedroom" data-room="bedroom" d="M 228 543 L 600 543 L 600 930 L 498 930 L 498 1139 L 228 1139 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="children-room" data-room="children-room" d="M 618 545 L 753 545 L 753 521 L 981 521 L 981 545 L 1076 545 L 1076 678 L 1146 678 L 1146 780 L 618 780 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="kitchen" data-room="kitchen" d="M 1655 545 L 1786 545 L 1786 516 L 2013 516 L 2013 545 L 2025 545 L 2025 896 L 1916 896 L 1916 962 L 1655 962 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="living-room" data-room="living-room" d="M 1655 545 L 1786 545 L 1786 516 L 2013 516 L 2013 545 L 2025 545 L 2025 896 L 1916 896 L 1916 962 L 1655 962 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="office" data-room="office" d="M 1093 545 L 1093 654 L 1162 654 L 1162 780 L 1634 780 L 1634 545 L 1495 545 L 1495 521 L 1272 521 L 1272 545 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="technical-room" data-room="technical-room" d="M 1613 1141 L 1613 1226 L 1381 1226 L 1381 1379 L 1650 1379 L 1650 1221 L 1674 1221 L 1674 1141 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="toilet" data-room="toilet" d="M 1053 945 L 1176 945 L 1176 1139 L 1053 1139 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="vestibule" data-room="vestibule" d="M 516 804 L 1362 804 L 1362 1139 L 1162 1139 L 1162 945 L 516 945 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="wardrobe" data-room="wardrobe" d="M 430 945 L 646 945 L 646 1139 L 430 1139 Z" fill="#f5b900" fill-opacity="0.01" />
 </svg>
