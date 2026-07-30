@@ -49,7 +49,7 @@ describe("loadHousePackage", () => {
     }
 
     assert.equal(result.package.identity.id, "house-modern-01");
-    assert.equal(result.package.rooms.length, 8);
+    assert.equal(result.package.rooms.length, 9);
     assert.equal(result.package.media[0]?.id, "hero-image");
     assert.equal(result.package.documents?.[0]?.id, "technical-document");
     assert.throws(() => {
