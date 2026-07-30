@@ -26,6 +26,11 @@ import { PriorityExperienceProvider } from './sections/PriorityEngine/PriorityEx
 import { SpatialTerminal } from './sections/SpatialTerminal/SpatialTerminal';
 import { WalkthroughProvider } from '../walkthrough';
 import { PILOT_FLAGS } from './pilot/pilotVocabulary';
+import {
+  CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,
+  ClientStudioWelcomeBridge,
+  useWelcomeBridgeController,
+} from './welcome-bridge';
 
 type ClientStudioPageProps = {
   /** LEGACY only — set when CommandRuntime host is explicitly enabled. */
@@ -86,7 +91,7 @@ export function ClientStudioPage({
     };
   }, [pendingSceneId, revealedSceneCount]);
 
-  const handleSceneNavigate = (sceneId: string) => {
+  const enterPriorityScene = (sceneId: string) => {
     const nextSceneIndex = scenes.findIndex((scene) => scene.id === sceneId);
     if (nextSceneIndex === -1) {
       return;
@@ -97,6 +102,19 @@ export function ClientStudioPage({
     setIsSceneTransitioning(true);
     setRevealedSceneCount((current) => Math.max(current, nextSceneIndex + 1));
     setPendingSceneId(sceneId);
+  };
+
+  const welcomeBridge = useWelcomeBridgeController({
+    config: CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,
+    prioritySceneId: scenes[1]?.id ?? 'journey-scene-interpretation',
+    onEnterPriority: enterPriorityScene,
+  });
+
+  const handleSceneNavigate = (sceneId: string) => {
+    if (welcomeBridge.interceptSceneNavigate(sceneId)) {
+      return;
+    }
+    enterPriorityScene(sceneId);
   };
 
   return (
@@ -130,6 +148,11 @@ export function ClientStudioPage({
                   <Hero />
                   <ChapterSpacer />
                   <SpatialTerminal />
+                  <ClientStudioWelcomeBridge
+                    open={welcomeBridge.open}
+                    onContinue={welcomeBridge.continueToPriority}
+                    onDismiss={welcomeBridge.dismiss}
+                  />
                 </JourneySceneFrame>
                 {revealedSceneCount >= 2 ? (
                   <PriorityExperienceProvider>
