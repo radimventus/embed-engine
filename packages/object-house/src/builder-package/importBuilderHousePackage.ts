@@ -7,6 +7,11 @@ import {
   type BuilderPackageImportError,
   type BuilderPackageImportResult,
 } from "./errors";
+import { extractFloorPlanGeometryFromSvg } from "./extractFloorPlanGeometry";
+import { isFloorPlanGeometry } from "./floorPlanGeometry";
+import { parseCsv, parseNonNegativeNumber } from "./parse-csv";
+import { validateFloorPlanGeometryAgainstRooms } from "./validateFloorPlanGeometry";
+import type { RoomCsvRow } from "./types";
 
 async function pathExists(filePath: string): Promise<boolean> {
   try {
@@ -37,6 +42,8 @@ async function discoverPlanPairs(
     readonly floorId: string;
     readonly rasterRelativePath: string;
     readonly svgRelativePath: string;
+    readonly authorSvgRelativePath: string | null;
+    readonly geometryRelativePath: string | null;
   }[]
 > {
   const plansDir = path.join(packageRoot, "media", "plans");
@@ -49,7 +56,12 @@ async function discoverPlanPairs(
   const basenames = new Set<string>();
 
   for (const name of names) {
-    const match = /^(p\d+)\.(png|webp|svg)$/i.exec(name);
+    const authorMatch = /^(p\d+)\.author\.svg$/i.exec(name);
+    if (authorMatch) {
+      basenames.add(authorMatch[1]!.toLowerCase());
+      continue;
+    }
+    const match = /^(p\d+)\.(png|webp|svg|geometry\.json)$/i.exec(name);
     if (!match) {
       continue;
     }
@@ -60,31 +72,63 @@ async function discoverPlanPairs(
   const pairs = [];
 
   for (const floorId of floors) {
+    const authorName = `${floorId}.author.svg`;
     const svgName = `${floorId}.svg`;
+    const authorPath = path.join(plansDir, authorName);
     const svgPath = path.join(plansDir, svgName);
     const webpPath = path.join(plansDir, `${floorId}.webp`);
     const pngPath = path.join(plansDir, `${floorId}.png`);
+    const geometryPath = path.join(plansDir, `${floorId}.geometry.json`);
 
+    const hasAuthor = await pathExists(authorPath);
     const hasSvg = await pathExists(svgPath);
     const hasWebp = await pathExists(webpPath);
     const hasPng = await pathExists(pngPath);
+    const hasGeometry = await pathExists(geometryPath);
 
-    if (!hasSvg || (!hasWebp && !hasPng)) {
+    if (!hasAuthor && !hasSvg) {
       errors.push(
         bpError(
-          "BP_PLAN_INCOMPLETE",
-          `Floor ${floorId} requires ${floorId}.svg and ${floorId}.webp (or .png).`,
+          "HP003_SVG_MISSING",
+          `Floor ${floorId} requires ${floorId}.author.svg (or legacy ${floorId}.svg).`,
           `media/plans/${floorId}`,
         ),
       );
       continue;
     }
 
+    if (!hasWebp && !hasPng) {
+      errors.push(
+        bpError(
+          "BP_PLAN_INCOMPLETE",
+          `Floor ${floorId} requires ${floorId}.webp (or .png).`,
+          `media/plans/${floorId}`,
+        ),
+      );
+      continue;
+    }
+
+    if (!hasGeometry) {
+      errors.push(
+        bpError(
+          "HP003_GEOMETRY_MISSING",
+          `Floor ${floorId} requires ${floorId}.geometry.json (run publish-floorplan-geometry).`,
+          `media/plans/${floorId}.geometry.json`,
+        ),
+      );
+      continue;
+    }
+
     const rasterAbsolute = hasWebp ? webpPath : pngPath;
+    const svgAbsolute = hasAuthor ? authorPath : svgPath;
     pairs.push({
       floorId,
       rasterRelativePath: packageRelative(packageRoot, rasterAbsolute),
-      svgRelativePath: packageRelative(packageRoot, svgPath),
+      svgRelativePath: packageRelative(packageRoot, hasSvg ? svgPath : svgAbsolute),
+      authorSvgRelativePath: hasAuthor
+        ? packageRelative(packageRoot, authorPath)
+        : null,
+      geometryRelativePath: packageRelative(packageRoot, geometryPath),
     });
   }
 
@@ -187,13 +231,116 @@ export async function importBuilderHousePackage(
 
   const existingRelativePaths = await collectExistingPaths(root);
 
-  return buildBuilderPackageRegistries({
+  const registries = buildBuilderPackageRegistries({
     packageRoot: root,
     galleryCsv: galleryText,
     roomsCsv: roomsText,
     videosCsv: videosText,
     heroPath,
-    planPairs,
+    planPairs: planPairs.map((pair) => ({
+      floorId: pair.floorId,
+      rasterRelativePath: pair.rasterRelativePath,
+      svgRelativePath: pair.authorSvgRelativePath ?? pair.svgRelativePath,
+    })),
     existingRelativePaths,
   });
+
+  if (!registries.ok) {
+    return registries;
+  }
+
+  // HP-003: validate authoring SVG ↔ geometry.json ↔ rooms.csv
+  const roomRows: RoomCsvRow[] = [];
+  const roomsTable = parseCsv(roomsText);
+  for (const row of roomsTable.rows) {
+    const floor = row.floor?.trim() ?? "";
+    const room = row.room?.trim() ?? "";
+    const name = row.name?.trim() ?? "";
+    const areaParsed = parseNonNegativeNumber(row.area ?? "0", "area", "rooms.csv");
+    if (!floor || !room || typeof areaParsed === "string") {
+      continue;
+    }
+    roomRows.push({ floor, room, name, area: areaParsed });
+  }
+
+  const hp003Errors: BuilderPackageImportError[] = [];
+  for (const pair of planPairs) {
+    const authorRel = pair.authorSvgRelativePath ?? pair.svgRelativePath;
+    const authorAbs = path.join(root, authorRel);
+    const svgText = await readUtf8(authorAbs);
+    if (svgText === undefined) {
+      hp003Errors.push(
+        bpError("HP003_SVG_MISSING", `Cannot read authoring SVG for ${pair.floorId}.`, authorRel),
+      );
+      continue;
+    }
+    const extracted = extractFloorPlanGeometryFromSvg(svgText, pair.floorId);
+    if (!extracted.ok) {
+      for (const err of extracted.errors) {
+        hp003Errors.push(bpError(err.code, err.message, authorRel));
+      }
+      continue;
+    }
+    const geometryAbs = path.join(root, "media", "plans", `${pair.floorId}.geometry.json`);
+    const geometryText = await readUtf8(geometryAbs);
+    if (geometryText === undefined) {
+      hp003Errors.push(
+        bpError(
+          "HP003_GEOMETRY_MISSING",
+          `Missing ${pair.floorId}.geometry.json`,
+          `media/plans/${pair.floorId}.geometry.json`,
+        ),
+      );
+      continue;
+    }
+    let published: unknown;
+    try {
+      published = JSON.parse(geometryText);
+    } catch {
+      hp003Errors.push(
+        bpError(
+          "HP003_GEOMETRY_MISSING",
+          `Invalid JSON in ${pair.floorId}.geometry.json`,
+          `media/plans/${pair.floorId}.geometry.json`,
+        ),
+      );
+      continue;
+    }
+    if (!isFloorPlanGeometry(published)) {
+      hp003Errors.push(
+        bpError(
+          "HP003_GEOMETRY_MISSING",
+          `Invalid HP-003 schema in ${pair.floorId}.geometry.json`,
+          `media/plans/${pair.floorId}.geometry.json`,
+        ),
+      );
+      continue;
+    }
+    for (const err of validateFloorPlanGeometryAgainstRooms({
+      geometry: extracted.geometry,
+      rooms: roomRows,
+    })) {
+      hp003Errors.push(bpError(err.code, err.message, err.path));
+    }
+    // Published file must match extractor output (room set + viewBox)
+    if (
+      published.viewBox.width !== extracted.geometry.viewBox.width ||
+      published.viewBox.height !== extracted.geometry.viewBox.height ||
+      published.rooms.length !== extracted.geometry.rooms.length
+    ) {
+      hp003Errors.push(
+        bpError(
+          "HP003_VIEWBOX_MISMATCH",
+          `${pair.floorId}.geometry.json is stale — re-run publish-floorplan-geometry.`,
+          `media/plans/${pair.floorId}.geometry.json`,
+        ),
+      );
+    }
+  }
+
+  if (hp003Errors.length > 0) {
+    return { ok: false, errors: hp003Errors };
+  }
+
+  return registries;
 }

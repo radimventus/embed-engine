@@ -13,7 +13,18 @@ export type BuilderPackageErrorCode =
   | "BP_PLAN_INCOMPLETE"
   | "BP_UNKNOWN_FLOOR"
   | "BP_INVALID_HERO_COUNT"
-  | "BP_INVALID_TYPE";
+  | "BP_INVALID_TYPE"
+  | "HP003_SVG_MISSING"
+  | "HP003_SVG_EMPTY"
+  | "HP003_SVG_NO_VIEWBOX"
+  | "HP003_SVG_BAD_FLOOR"
+  | "HP003_SVG_MISSING_HP003"
+  | "HP003_SVG_BAD_SHAPE"
+  | "HP003_ROOM_UNBOUND"
+  | "HP003_CSV_NO_GEOMETRY"
+  | "HP003_ROOM_DUP"
+  | "HP003_VIEWBOX_MISMATCH"
+  | "HP003_GEOMETRY_MISSING";
 
 export type BuilderPackageImportError = {
   readonly code: BuilderPackageErrorCode;

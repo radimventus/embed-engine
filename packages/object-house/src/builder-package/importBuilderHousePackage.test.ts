@@ -93,7 +93,7 @@ describe("importBuilderHousePackage", () => {
       ["p1", "p2"],
     );
     assert.equal(floors.floors[0]?.planPng, "media/plans/p1.webp");
-    assert.equal(svg.entries[0]?.path, "media/plans/p1.svg");
+    assert.equal(svg.entries[0]?.path, "media/plans/p1.author.svg");
 
     assert.equal(videos.entries.length, 2);
     assert.equal(videos.entries[0]?.provider, "wistia");
@@ -133,9 +133,63 @@ describe("importBuilderHousePackage", () => {
       assert.fail("expected failure");
     }
     assert.equal(
-      result.errors.some((e) => e.code === "BP_PLAN_INCOMPLETE"),
+      result.errors.some(
+        (e) =>
+          e.code === "BP_PLAN_INCOMPLETE" ||
+          e.code === "HP003_SVG_MISSING" ||
+          e.code === "HP003_GEOMETRY_MISSING",
+      ),
       true,
     );
+  });
+
+  it("fails when CSV room lacks geometry (HP-003)", async () => {
+    const dir = await copyFixture();
+    await writeFile(
+      path.join(dir, "rooms.csv"),
+      "floor,room,name,area\np1,exterior,Exteriér,0\np1,living-room,Obývací pokoj,32\np1,kitchen,Kuchyně,14\np1,office,Pracovna,12\np2,bedroom,Ložnice,18.4\n",
+    );
+
+    const result = await importBuilderHousePackage(dir);
+    assert.equal(result.ok, false);
+    if (result.ok) {
+      assert.fail("expected failure");
+    }
+    assert.ok(result.errors.some((e) => e.code === "HP003_CSV_NO_GEOMETRY"));
+  });
+
+  it("fails when SVG room is unbound from CSV (HP-003)", async () => {
+    const dir = await copyFixture();
+    await writeFile(
+      path.join(dir, "media", "plans", "p1.author.svg"),
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80" data-floor="p1" data-hp003="1">
+  <rect data-room="living-room" x="10" y="10" width="40" height="30" />
+  <rect data-room="kitchen" x="55" y="10" width="35" height="30" />
+  <rect data-room="ghost-room" x="10" y="50" width="20" height="20" />
+</svg>`,
+    );
+
+    const result = await importBuilderHousePackage(dir);
+    assert.equal(result.ok, false);
+    if (result.ok) {
+      assert.fail("expected failure");
+    }
+    assert.ok(result.errors.some((e) => e.code === "HP003_ROOM_UNBOUND"));
+  });
+
+  it("fails on stub authoring SVG (HP-003)", async () => {
+    const dir = await copyFixture();
+    await writeFile(
+      path.join(dir, "media", "plans", "p1.author.svg"),
+      `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80" data-floor="p1" data-hp003="1"/>`,
+    );
+
+    const result = await importBuilderHousePackage(dir);
+    assert.equal(result.ok, false);
+    if (result.ok) {
+      assert.fail("expected failure");
+    }
+    assert.ok(result.errors.some((e) => e.code === "HP003_SVG_EMPTY"));
   });
 
   it("fails when required CSV is missing", async () => {
