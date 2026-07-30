@@ -342,5 +342,47 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
       /\/house-package\/decision-canvas\/living-room\.svg$/,
     );
     assert.ok(living?.floorPlanRegion !== null);
+    assert.ok(
+      (living?.floorPlanRegion?.polygon?.length ?? 0) >= 3,
+      'living-room must project HP-003 polygon for highlight/hit-test',
+    );
+
+    const vestibule = first.context.floorPlan.rooms.find(
+      (room) => room.id === 'vestibule',
+    );
+    const toilet = first.context.floorPlan.rooms.find(
+      (room) => room.id === 'toilet',
+    );
+    const bathroom = first.context.floorPlan.rooms.find(
+      (room) => room.id === 'bathroom',
+    );
+    const wardrobe = first.context.floorPlan.rooms.find(
+      (room) => room.id === 'wardrobe',
+    );
+    assert.ok(vestibule?.floorPlanRegion?.polygon);
+    assert.ok(toilet?.floorPlanRegion?.polygon);
+    assert.notDeepEqual(
+      vestibule?.floorPlanRegion?.polygon,
+      toilet?.floorPlanRegion?.polygon,
+    );
+    // BBoxes of the hallway cluster overlap; polygons must stay distinct so
+    // highlight does not paint toilet/bathroom/wardrobe when vestibule is active.
+    const vb = vestibule!.floorPlanRegion!;
+    const tb = toilet!.floorPlanRegion!;
+    const bb = bathroom!.floorPlanRegion!;
+    const wb = wardrobe!.floorPlanRegion!;
+    const bboxOverlap = (
+      a: { x: number; y: number; width: number; height: number },
+      b: { x: number; y: number; width: number; height: number },
+    ) =>
+      a.x < b.x + b.width &&
+      a.x + a.width > b.x &&
+      a.y < b.y + b.height &&
+      a.y + a.height > b.y;
+    assert.equal(bboxOverlap(vb, tb), true);
+    assert.equal(bboxOverlap(vb, bb), true);
+    assert.equal(bboxOverlap(vb, wb), true);
+    assert.notDeepEqual(vb.polygon, bb.polygon);
+    assert.notDeepEqual(vb.polygon, wb.polygon);
   });
 });

@@ -77,18 +77,23 @@ export type ExperienceHeroContext = {
   readonly focusRoomName: string | null;
 };
 
+/** Floor-plan hotspot — bbox for layout; polygon for highlight/hit-test when present (HP-003). */
+export type ExperienceFloorPlanRegion = {
+  readonly x: number;
+  readonly y: number;
+  readonly width: number;
+  readonly height: number;
+  /** Closed ring in viewBox space. Prefer over bbox for paint + pointer hit-test. */
+  readonly polygon?: ReadonlyArray<readonly [number, number]>;
+};
+
 /** Floor-plan projection — assets + hotspot regions (ED-DA-02). */
 export type ExperienceFloorPlanRoom = {
   readonly id: string;
   readonly title: string;
   readonly floor: string;
   readonly decisionCanvasSrc: string;
-  readonly floorPlanRegion: {
-    readonly x: number;
-    readonly y: number;
-    readonly width: number;
-    readonly height: number;
-  } | null;
+  readonly floorPlanRegion: ExperienceFloorPlanRegion | null;
 };
 
 export type ExperienceFloorPlanContext = {
@@ -359,17 +364,28 @@ function projectFloorPlan(
   const viewBoxHeight = geometry?.viewBox.height ?? 0;
 
   const regionByRoomId = new Map(
-    (geometry?.rooms ?? []).map((room) => [room.roomId, room.bbox] as const),
+    (geometry?.rooms ?? []).map((room) => {
+      const region: ExperienceFloorPlanRegion = {
+        x: room.bbox.x,
+        y: room.bbox.y,
+        width: room.bbox.width,
+        height: room.bbox.height,
+        ...(room.polygon !== undefined && room.polygon.length >= 3
+          ? { polygon: room.polygon }
+          : {}),
+      };
+      return [room.roomId, region] as const;
+    }),
   );
 
   const rooms = experience.house.rooms.map((room) => {
-    const bbox = regionByRoomId.get(room.id) ?? null;
+    const region = regionByRoomId.get(room.id) ?? null;
     return Object.freeze({
       id: room.id,
       title: room.name,
       floor: String(room.floor),
       decisionCanvasSrc: decisionCanvasUrlForRoom(room.id),
-      floorPlanRegion: bbox,
+      floorPlanRegion: region,
     });
   });
 

@@ -63,10 +63,46 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
           return null;
         }
 
-        const { x, y, width, height } = region;
         const active = activeRoomId !== null && isRoomActive(room.id);
         const hovered = interactive && hoveredRoomId === room.id;
+        const fill = active
+          ? FLOOR_ACTIVE_FILL
+          : hovered
+            ? FLOOR_HOVER_FILL
+            : 'transparent';
+        const interactionProps = interactive
+          ? {
+              className:
+                'cursor-pointer touch-manipulation transition-[fill] duration-125 ease-out',
+              onClick: () => selectRoom(room.id),
+              onPointerEnter: () => {
+                setHoveredRoomId(room.id);
+              },
+              onPointerLeave: () => {
+                setHoveredRoomId(null);
+              },
+            }
+          : {};
 
+        // HP-003: paint + hit-test the room polygon when present. BBox-only
+        // rects falsely highlight overlapping axis-aligned bounds (e.g. vestibule
+        // covering toilet / bathroom / wardrobe).
+        if (region.polygon !== undefined && region.polygon.length >= 3) {
+          const points = region.polygon.map(([x, y]) => `${x},${y}`).join(' ');
+          return (
+            <polygon
+              key={room.id}
+              points={points}
+              data-room={room.id}
+              aria-label={room.title}
+              fill={fill}
+              stroke="none"
+              {...interactionProps}
+            />
+          );
+        }
+
+        const { x, y, width, height } = region;
         return (
           <rect
             key={room.id}
@@ -74,35 +110,11 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
             y={y}
             width={width}
             height={height}
+            data-room={room.id}
             aria-label={room.title}
-            fill={
-              active
-                ? FLOOR_ACTIVE_FILL
-                : hovered
-                  ? FLOOR_HOVER_FILL
-                  : 'transparent'
-            }
+            fill={fill}
             stroke="none"
-            className={
-              interactive
-                ? 'cursor-pointer touch-manipulation transition-[fill] duration-125 ease-out'
-                : undefined
-            }
-            onClick={interactive ? () => selectRoom(room.id) : undefined}
-            onPointerEnter={
-              interactive
-                ? () => {
-                    setHoveredRoomId(room.id);
-                  }
-                : undefined
-            }
-            onPointerLeave={
-              interactive
-                ? () => {
-                    setHoveredRoomId(null);
-                  }
-                : undefined
-            }
+            {...interactionProps}
           />
         );
       })}

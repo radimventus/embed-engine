@@ -38,7 +38,9 @@ describe('House Navigator Runtime integration', () => {
     assert.equal(isNavigatorRoomActive(view, 'bedroom'), true);
     assert.equal(isNavigatorRoomActive(view, 'kitchen'), false);
     assert.equal(view.rooms.length, house.rooms.length);
-    assert.equal(view.rooms.length, 10);
+    assert.ok(view.rooms.some((room) => room.id === 'vestibule'));
+    assert.ok(view.rooms.some((room) => room.id === 'toilet'));
+    assert.ok(view.rooms.some((room) => room.id === 'technical-room'));
   });
 
   it('external Runtime changes update Navigator without local state', () => {
@@ -99,6 +101,8 @@ describe('House Navigator Runtime integration', () => {
     assert.equal(upper.length, 0);
     assert.ok(ground.some((room) => room.id === 'living-room'));
     assert.ok(ground.some((room) => room.id === 'bedroom'));
-    assert.equal(ground.length, 10);
+    assert.ok(ground.some((room) => room.id === 'vestibule'));
+    assert.ok(ground.some((room) => room.id === 'toilet'));
+    assert.equal(ground.length, view.rooms.length);
   });
 });
