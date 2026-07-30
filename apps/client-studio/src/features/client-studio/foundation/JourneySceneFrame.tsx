@@ -80,44 +80,58 @@ export function JourneySceneFrame({
       }}
     >
       {children}
-      <div
-        className={`flex items-start justify-between gap-3 px-section mobile:flex-col ${
-          pinFooterToBottom ? 'mt-auto' : ''
-        }`}
-        style={
-          pinFooterToBottom
-            ? undefined
-            : {
-                // Scene uses gap-[18px]; add 12px so Tour → footer row = 30px.
-                marginTop: 12,
-              }
-        }
-      >
-        {hasFooterLeading ? (
-          <div className="flex min-w-0 flex-1 justify-center mobile:w-full">
-            {footerLeading}
-          </div>
-        ) : previousSceneId ? (
-          <button
-            type="button"
-            onClick={() => navigate(previousSceneId)}
-            className={`${SECONDARY_NAV_BUTTON_CLASS} justify-start mobile:w-full`}
-          >
-            ← Zpět
-          </button>
-        ) : (
-          <span aria-hidden="true" className="hidden min-h-[32px] desktop:block" />
-        )}
-        {nextSceneId ? (
-          <button
-            type="button"
-            onClick={() => navigate(nextSceneId)}
-            className={`${PRIMARY_NAV_BUTTON_CLASS} ml-auto shrink-0 mobile:w-full`}
-          >
-            Pokračovat →
-          </button>
-        ) : null}
-      </div>
+      {hasFooterLeading ? (
+        <div
+          className={`relative px-section ${pinFooterToBottom ? 'mt-auto' : ''}`}
+          style={
+            pinFooterToBottom
+              ? undefined
+              : {
+                  // Scene uses gap-[18px]; add 12px so Tour → footer row = 30px.
+                  marginTop: 12,
+                }
+          }
+        >
+          {/* Full-width center: banner ignores Pokračovat button width. */}
+          <div className="flex w-full justify-center">{footerLeading}</div>
+          {nextSceneId ? (
+            <button
+              type="button"
+              onClick={() => navigate(nextSceneId)}
+              className={`${PRIMARY_NAV_BUTTON_CLASS} absolute top-0 right-0 shrink-0 mobile:static mobile:mt-3 mobile:w-full`}
+            >
+              Pokračovat →
+            </button>
+          ) : null}
+        </div>
+      ) : (
+        <div
+          className={`flex items-start justify-between gap-3 px-section mobile:flex-col ${
+            pinFooterToBottom ? 'mt-auto' : ''
+          }`}
+        >
+          {previousSceneId ? (
+            <button
+              type="button"
+              onClick={() => navigate(previousSceneId)}
+              className={`${SECONDARY_NAV_BUTTON_CLASS} justify-start mobile:w-full`}
+            >
+              ← Zpět
+            </button>
+          ) : (
+            <span aria-hidden="true" className="hidden min-h-[32px] desktop:block" />
+          )}
+          {nextSceneId ? (
+            <button
+              type="button"
+              onClick={() => navigate(nextSceneId)}
+              className={`${PRIMARY_NAV_BUTTON_CLASS} ml-auto shrink-0 mobile:w-full`}
+            >
+              Pokračovat →
+            </button>
+          ) : null}
+        </div>
+      )}
     </div>
   );
 }

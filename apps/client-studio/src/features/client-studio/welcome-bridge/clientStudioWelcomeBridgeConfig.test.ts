@@ -12,8 +12,8 @@ describe("CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG", () => {
       /nastavení priorit/i,
     );
     assert.match(
-      CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.headline,
-      /Pojďme společně objevit/,
+      CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.description,
+      /Ptejte se, na co uznáte za vhodné/,
     );
     assert.ok(
       CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.triggers.some(

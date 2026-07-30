@@ -13,7 +13,7 @@ export const CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG: WelcomeBridgeConfig =
       title: "Jmenuji se CONIS.",
       headline: "Pojďme společně objevit, co je pro vás skutečně podstatné.",
       description:
-        "Vaše odpovědi ovlivní další témata i závěrečný PDF souhrn, který pro vás připravím. Ptejte se, na co uznáte za vhodné, rád vám poradím.",
+        "Ptejte se, na co uznáte za vhodné, rád vám poradím. Vaše odpovědi ovlivní další témata i závěrečný PDF souhrn, který pro vás připravím.",
       ctaLabel: "→ Pokračovat k nastavení priorit",
       closeLabel: "Zavřít",
     }),

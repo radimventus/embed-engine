@@ -68,8 +68,8 @@ export function WelcomeBridge({
   return (
     <div
       role="region"
-      aria-labelledby="welcome-bridge-title"
-      aria-describedby="welcome-bridge-headline welcome-bridge-description"
+      aria-labelledby="welcome-bridge-headline"
+      aria-describedby="welcome-bridge-title welcome-bridge-description"
       data-testid="welcome-bridge"
       data-welcome-bridge-variant={config.variant}
       style={HOST_STYLE}
@@ -84,7 +84,8 @@ export function WelcomeBridge({
           boxShadow: theme.shadow,
           color: theme.headlineColor,
           display: "flex",
-          gap: 16,
+          flexDirection: "column",
+          gap: 12,
           padding: "18px 18px 16px",
           position: "relative",
           boxSizing: "border-box",
@@ -118,88 +119,96 @@ export function WelcomeBridge({
         </button>
 
         <div
-          style={{ flexShrink: 0, paddingTop: 2 }}
-          data-testid="welcome-bridge-avatar"
+          style={{
+            display: "flex",
+            gap: 16,
+            minWidth: 0,
+            paddingRight: 18,
+          }}
         >
-          {avatar}
+          <div
+            style={{ flexShrink: 0, paddingTop: 2 }}
+            data-testid="welcome-bridge-avatar"
+          >
+            {avatar}
+          </div>
+
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+              minWidth: 0,
+              flex: 1,
+            }}
+          >
+            <p
+              id="welcome-bridge-headline"
+              style={{
+                margin: 0,
+                fontSize: 18,
+                fontWeight: 500,
+                lineHeight: 1.45,
+                color: theme.headlineColor,
+              }}
+            >
+              {content.headline}
+            </p>
+            <p
+              id="welcome-bridge-title"
+              style={{
+                margin: 0,
+                fontSize: 13,
+                fontWeight: 600,
+                letterSpacing: "0.04em",
+                textTransform: "uppercase",
+                color: theme.titleColor,
+              }}
+            >
+              {content.title}
+            </p>
+            <p
+              id="welcome-bridge-description"
+              style={{
+                margin: 0,
+                fontSize: 15,
+                fontWeight: 500,
+                lineHeight: 1.45,
+                color: theme.descriptionColor,
+              }}
+            >
+              {content.description}
+            </p>
+          </div>
         </div>
 
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
-            gap: 8,
-            minWidth: 0,
-            paddingRight: 18,
-            flex: 1,
+            justifyContent: "center",
+            width: "100%",
           }}
         >
-          <p
-            id="welcome-bridge-title"
+          <button
+            type="button"
+            data-testid="welcome-bridge-cta"
+            onClick={onContinue}
             style={{
-              margin: 0,
+              display: "inline-flex",
+              alignItems: "center",
+              minHeight: 36,
+              border: 0,
+              borderRadius: 8,
+              padding: "0 14px",
+              backgroundColor: theme.ctaBackgroundColor,
+              color: theme.ctaTextColor,
               fontSize: 13,
               fontWeight: 600,
-              letterSpacing: "0.04em",
-              textTransform: "uppercase",
-              color: theme.titleColor,
+              cursor: "pointer",
             }}
           >
-            {content.title}
-          </p>
-          <p
-            id="welcome-bridge-headline"
-            style={{
-              margin: 0,
-              fontSize: 18,
-              fontWeight: 500,
-              lineHeight: 1.45,
-              color: theme.headlineColor,
-            }}
-          >
-            {content.headline}
-          </p>
-          <p
-            id="welcome-bridge-description"
-            style={{
-              margin: 0,
-              fontSize: 15,
-              fontWeight: 500,
-              lineHeight: 1.45,
-              color: theme.descriptionColor,
-            }}
-          >
-            {content.description}
-          </p>
-          <div
-            style={{
-              paddingTop: 4,
-              display: "flex",
-              justifyContent: "center",
-              width: "100%",
-            }}
-          >
-            <button
-              type="button"
-              data-testid="welcome-bridge-cta"
-              onClick={onContinue}
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                minHeight: 36,
-                border: 0,
-                borderRadius: 8,
-                padding: "0 14px",
-                backgroundColor: theme.ctaBackgroundColor,
-                color: theme.ctaTextColor,
-                fontSize: 13,
-                fontWeight: 600,
-                cursor: "pointer",
-              }}
-            >
-              {content.ctaLabel}
-            </button>
-          </div>
+            {content.ctaLabel}
+          </button>
         </div>
       </div>
     </div>
