@@ -56,3 +56,22 @@ export {
   BUILDER_PACKAGE_FORMAT,
   BUILDER_PACKAGE_SCHEMA_VERSION,
 } from "./types";
+export {
+  HP003_GEOMETRY_SCHEMA,
+  HP003_GEOMETRY_SCHEMA_VERSION,
+  authorSvgRelativePath,
+  geometryRelativePath,
+  isFloorPlanGeometry,
+  type FloorPlanBBox,
+  type FloorPlanGeometry,
+  type FloorPlanGeometryRoom,
+} from "./floorPlanGeometry";
+export {
+  extractFloorPlanGeometryFromSvg,
+  type GeometryExtractError,
+  type GeometryExtractResult,
+} from "./extractFloorPlanGeometry";
+export {
+  validateFloorPlanGeometryAgainstRooms,
+  type Hp003ValidationError,
+} from "./validateFloorPlanGeometry";

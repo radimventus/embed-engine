@@ -28,14 +28,18 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/behavior/composeDispositionLayout.test.ts src/behavior/spliceStairsWarn.test.ts src/behavior/decisionFactors.test.ts src/loader/loadHousePackage.test.ts src/projectHouse.test.ts src/builder-package/importBuilderHousePackage.test.ts src/builder-package/projectToHousePackage.test.ts"
+    "test": "tsx --test src/behavior/composeDispositionLayout.test.ts src/behavior/spliceStairsWarn.test.ts src/behavior/decisionFactors.test.ts src/loader/loadHousePackage.test.ts src/projectHouse.test.ts src/builder-package/importBuilderHousePackage.test.ts src/builder-package/projectToHousePackage.test.ts src/builder-package/extractFloorPlanGeometry.test.ts",
+    "publish:floorplan-geometry": "tsx ./scripts/publish-floorplan-geometry.mjs"
   },
   "dependencies": {
     "@embed-engine/core": "workspace:*",
-    "@embed-engine/model": "workspace:*"
+    "@embed-engine/model": "workspace:*",
+    "@resvg/resvg-js": "^2.6.2",
+    "sharp": "^0.35.3"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
+    "@types/sharp": "^0.32.0",
     "tsx": "^4.20.3",
     "typescript": "^5.9.2"
   }

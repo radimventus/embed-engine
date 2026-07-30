@@ -1,0 +1,40 @@
+{
+  "schema": "hp-003-floorplan-geometry",
+  "schemaVersion": "1.0",
+  "floorId": "p2",
+  "viewBox": {
+    "width": 100,
+    "height": 80
+  },
+  "units": "px",
+  "rooms": [
+    {
+      "roomId": "bedroom",
+      "interactive": true,
+      "bbox": {
+        "x": 20,
+        "y": 15,
+        "width": 50,
+        "height": 40
+      },
+      "polygon": [
+        [
+          20,
+          15
+        ],
+        [
+          70,
+          15
+        ],
+        [
+          70,
+          55
+        ],
+        [
+          20,
+          55
+        ]
+      ]
+    }
+  ]
+}
