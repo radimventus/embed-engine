@@ -11,11 +11,10 @@ export const CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG: WelcomeBridgeConfig =
     variant: "client-studio-tour-to-priority",
     content: Object.freeze({
       title: "Jmenuji se CONIS.",
-      headline:
-        "Teď, když jsme prošli váš možný nový domov, pojďme společně objevit, co je pro vás skutečně podstatné.",
+      headline: "Pojďme společně objevit, co je pro vás skutečně podstatné.",
       description:
-        "Vaše odpovědi ovlivní celý další průběh Experience i závěrečný PDF přehled, který pro vás připravím.",
-      ctaLabel: "→ Pokračovat k prioritám",
+        "Vaše odpovědi ovlivní další témata i závěrečný PDF souhrn, který pro vás připravím. Ptejte se, na co uznáte za vhodné, rád vám poradím.",
+      ctaLabel: "→ Pokračovat k nastavení priorit",
       closeLabel: "Zavřít",
     }),
     triggers: Object.freeze([

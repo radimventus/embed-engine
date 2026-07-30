@@ -7,7 +7,14 @@ describe("CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG", () => {
   it("is a config-driven Experience variant without Runtime coupling", () => {
     assert.equal(CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.variant, "client-studio-tour-to-priority");
     assert.match(CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.title, /CONIS/i);
-    assert.match(CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.ctaLabel, /priorit/i);
+    assert.match(
+      CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.ctaLabel,
+      /nastavení priorit/i,
+    );
+    assert.match(
+      CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.headline,
+      /Pojďme společně objevit/,
+    );
     assert.ok(
       CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.triggers.some(
         (trigger) => trigger.kind === "on-continue-to-priority",

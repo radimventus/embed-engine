@@ -7,6 +7,10 @@ type JourneySceneFrameProps = {
   readonly onNavigate?: (sceneId: string) => void;
   readonly animateOnMount?: boolean;
   readonly reserveScrollSpace?: boolean;
+  /** When false, footer sits 30px under content instead of viewport bottom. */
+  readonly pinFooterToBottom?: boolean;
+  /** Leading footer slot (e.g. Welcome Bridge), top-aligned with nav CTA. */
+  readonly footerLeading?: ReactNode;
   readonly children: ReactNode;
 };
 
@@ -27,6 +31,8 @@ export function JourneySceneFrame({
   onNavigate,
   animateOnMount = false,
   reserveScrollSpace = false,
+  pinFooterToBottom = true,
+  footerLeading,
   children,
 }: JourneySceneFrameProps) {
   const [isEntered, setIsEntered] = useState(!animateOnMount);
@@ -47,6 +53,8 @@ export function JourneySceneFrame({
   const navigate = (targetSceneId: string) => {
     onNavigate?.(targetSceneId);
   };
+
+  const hasFooterLeading = footerLeading !== undefined && footerLeading !== null;
 
   return (
     <div
@@ -72,8 +80,24 @@ export function JourneySceneFrame({
       }}
     >
       {children}
-      <div className="mt-auto flex items-center justify-between gap-3 px-section mobile:flex-col">
-        {previousSceneId ? (
+      <div
+        className={`flex items-start justify-between gap-3 px-section mobile:flex-col ${
+          pinFooterToBottom ? 'mt-auto' : ''
+        }`}
+        style={
+          pinFooterToBottom
+            ? undefined
+            : {
+                // Scene uses gap-[18px]; add 12px so Tour → footer row = 30px.
+                marginTop: 12,
+              }
+        }
+      >
+        {hasFooterLeading ? (
+          <div className="flex min-w-0 flex-1 justify-center mobile:w-full">
+            {footerLeading}
+          </div>
+        ) : previousSceneId ? (
           <button
             type="button"
             onClick={() => navigate(previousSceneId)}
@@ -88,7 +112,7 @@ export function JourneySceneFrame({
           <button
             type="button"
             onClick={() => navigate(nextSceneId)}
-            className={`${PRIMARY_NAV_BUTTON_CLASS} ml-auto mobile:w-full`}
+            className={`${PRIMARY_NAV_BUTTON_CLASS} ml-auto shrink-0 mobile:w-full`}
           >
             Pokračovat →
           </button>

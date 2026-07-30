@@ -4,12 +4,11 @@ import { cn } from "../lib/cn";
 import type { WelcomeBridgeProps } from "./types";
 import { resolveWelcomeBridgeTheme } from "./welcomeBridgeTheme";
 
-/** In-flow host wrapper — sits under Tour as layout continuation (not a modal). */
+/** In-flow host — parent supplies Tour→banner gap; keep host flush. */
 const HOST_STYLE: CSSProperties = {
   display: "flex",
   justifyContent: "center",
   width: "100%",
-  marginTop: 20,
   boxSizing: "border-box",
   pointerEvents: "auto",
 };
@@ -152,7 +151,7 @@ export function WelcomeBridge({
             id="welcome-bridge-headline"
             style={{
               margin: 0,
-              fontSize: 15,
+              fontSize: 18,
               fontWeight: 500,
               lineHeight: 1.45,
               color: theme.headlineColor,
@@ -164,14 +163,22 @@ export function WelcomeBridge({
             id="welcome-bridge-description"
             style={{
               margin: 0,
-              fontSize: 13,
-              lineHeight: 1.55,
+              fontSize: 15,
+              fontWeight: 500,
+              lineHeight: 1.45,
               color: theme.descriptionColor,
             }}
           >
             {content.description}
           </p>
-          <div style={{ paddingTop: 4 }}>
+          <div
+            style={{
+              paddingTop: 4,
+              display: "flex",
+              justifyContent: "center",
+              width: "100%",
+            }}
+          >
             <button
               type="button"
               data-testid="welcome-bridge-cta"

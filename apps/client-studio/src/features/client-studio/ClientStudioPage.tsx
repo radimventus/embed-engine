@@ -144,15 +144,18 @@ export function ClientStudioPage({
                   nextSceneId={scenes[1]?.id}
                   onNavigate={handleSceneNavigate}
                   reserveScrollSpace={revealedSceneCount === 1}
+                  pinFooterToBottom={false}
+                  footerLeading={
+                    <ClientStudioWelcomeBridge
+                      open={welcomeBridge.open}
+                      onContinue={welcomeBridge.continueToPriority}
+                      onDismiss={welcomeBridge.dismiss}
+                    />
+                  }
                 >
                   <Hero />
                   <ChapterSpacer />
                   <SpatialTerminal />
-                  <ClientStudioWelcomeBridge
-                    open={welcomeBridge.open}
-                    onContinue={welcomeBridge.continueToPriority}
-                    onDismiss={welcomeBridge.dismiss}
-                  />
                 </JourneySceneFrame>
                 {revealedSceneCount >= 2 ? (
                   <PriorityExperienceProvider>
