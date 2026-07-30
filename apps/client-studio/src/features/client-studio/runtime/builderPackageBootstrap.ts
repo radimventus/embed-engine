@@ -1,12 +1,18 @@
 import {
   buildBuilderPackageRegistries,
+  isFloorPlanGeometry,
   parseCsv,
   projectBuilderImportToHousePackage,
   type BuilderHousePackageImport,
+  type FloorPlanGeometry,
 } from '@embed-engine/object-house/builder-package';
 import type { HousePackage } from '@embed-engine/object-house';
 
 import { BUILDER_RUNTIME_HOUSE_DEFAULTS } from './builderRuntimeHouseDefaults';
+import {
+  clearFloorPlanGeometryCache,
+  setFloorPlanGeometryForFloor,
+} from './floorPlanGeometryStore';
 import { getPresentationAssetBase } from './presentationAssetBase';
 import {
   evidenceLog,
@@ -71,15 +77,55 @@ function resolvePackageUrl(absolutePath: string): string {
   return absolutePath;
 }
 
-async function fetchCsvText(absolutePath: string): Promise<string> {
+async function fetchText(absolutePath: string): Promise<string> {
   const url = resolvePackageUrl(absolutePath);
   const response = await fetch(url, { cache: 'no-store' });
   if (!response.ok) {
     throw new Error(
-      `Failed to load Builder Package CSV ${url}: HTTP ${response.status}`,
+      `Failed to load House Package asset ${url}: HTTP ${response.status}`,
     );
   }
   return response.text();
+}
+
+async function fetchCsvText(absolutePath: string): Promise<string> {
+  return fetchText(absolutePath);
+}
+
+async function loadFloorPlanGeometryForRooms(
+  roomsCsvText: string,
+): Promise<void> {
+  clearFloorPlanGeometryCache();
+  const table = parseCsv(roomsCsvText);
+  const floors = new Set<string>();
+  for (const row of table.rows) {
+    const floor = row.floor?.trim();
+    if (floor) {
+      floors.add(floor);
+    }
+  }
+  await Promise.all(
+    [...floors].map(async (floorId) => {
+      const path = `/house-package/media/plans/${floorId}.geometry.json`;
+      const text = await fetchText(path);
+      let parsed: unknown;
+      try {
+        parsed = JSON.parse(text);
+      } catch {
+        throw new Error(`Invalid HP-003 geometry JSON at ${path}`);
+      }
+      if (!isFloorPlanGeometry(parsed)) {
+        throw new Error(`HP-003 schema mismatch at ${path}`);
+      }
+      const geometry = parsed as FloorPlanGeometry;
+      if (geometry.floorId !== floorId) {
+        throw new Error(
+          `HP-003 floorId mismatch at ${path}: expected ${floorId}, got ${geometry.floorId}`,
+        );
+      }
+      setFloorPlanGeometryForFloor(floorId, geometry);
+    }),
+  );
 }
 
 /**
@@ -186,6 +232,7 @@ export async function ensureBuilderPackageBootstrapped(): Promise<BuilderHousePa
 
   bootstrapPromise = (async () => {
     const texts = await loadBuilderPackageCsvTexts();
+    await loadFloorPlanGeometryForRooms(texts.roomsCsv);
     const registries = buildRegistriesFromTexts(texts);
     cachedRegistries = registries;
     projectCachedHousePackage(registries);
@@ -228,7 +275,14 @@ export function getBuilderRuntimeHousePackage(): HousePackage {
  */
 export function bootstrapBuilderPackageRegistriesSyncForTests(
   texts: BuilderPackageCsvTexts,
+  geometryByFloor?: Readonly<Record<string, FloorPlanGeometry>>,
 ): BuilderHousePackageImport {
+  clearFloorPlanGeometryCache();
+  if (geometryByFloor !== undefined) {
+    for (const [floorId, geometry] of Object.entries(geometryByFloor)) {
+      setFloorPlanGeometryForFloor(floorId, geometry);
+    }
+  }
   const registries = buildRegistriesFromTexts(texts);
   cachedRegistries = registries;
   bootstrapPromise = Promise.resolve(registries);
@@ -242,4 +296,5 @@ export function resetBuilderPackageBootstrapForTests(): void {
   cachedRegistries = null;
   cachedHousePackage = null;
   bootstrapPromise = null;
+  clearFloorPlanGeometryCache();
 }

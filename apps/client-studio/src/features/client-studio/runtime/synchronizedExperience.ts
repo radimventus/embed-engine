@@ -15,12 +15,8 @@ import {
   listRoomGalleryUrls,
   listTourVideos,
 } from './experienceHouseMedia';
+import { getFloorPlanGeometryForFloor } from './floorPlanGeometryStore';
 import { resolvePublicAssetUrl } from './presentationAssetBase';
-import {
-  REFERENCE_FLOORPLAN_HEIGHT,
-  REFERENCE_FLOORPLAN_REGIONS,
-  REFERENCE_FLOORPLAN_WIDTH,
-} from './referenceFloorPlanGeometry';
 
 /**
  * First-class projected media asset (CAP-HP-003.4).
@@ -97,9 +93,9 @@ export type ExperienceFloorPlanRoom = {
 
 export type ExperienceFloorPlanContext = {
   readonly src: string;
-  /** Natural floorplan width in viewBox units (Reference House: 3450). */
+  /** Natural floorplan width in viewBox units (from HP-003 geometry.json). */
   readonly viewBoxWidth: number;
-  /** Natural floorplan height in viewBox units (Reference House: 1938). */
+  /** Natural floorplan height in viewBox units (from HP-003 geometry.json). */
   readonly viewBoxHeight: number;
   /**
    * @deprecated Prefer viewBoxWidth — retained as width for older adapters.
@@ -338,6 +334,14 @@ function projectHeroContext(
   });
 }
 
+function builderFloorIdFromNavigationFloor(floorKeyValue: string): string {
+  const floorNumber = Number.parseInt(floorKeyValue, 10);
+  if (Number.isFinite(floorNumber)) {
+    return `p${floorNumber + 1}`;
+  }
+  return floorKeyValue.startsWith('p') ? floorKeyValue : `p${floorKeyValue}`;
+}
+
 function projectFloorPlan(
   experience: SessionExperience,
 ): ExperienceFloorPlanContext {
@@ -348,22 +352,24 @@ function projectFloorPlan(
   const floorPlanSrc =
     getFloorPlanUrlForFloor(experience.house, currentFloor) ||
     getFloorPlanUrlFromHouse(experience.house);
-  const hasBuilderFloorplan = floorPlanSrc.length > 0;
-  const viewBoxWidth = hasBuilderFloorplan
-    ? REFERENCE_FLOORPLAN_WIDTH
-    : 400;
-  const viewBoxHeight = hasBuilderFloorplan
-    ? REFERENCE_FLOORPLAN_HEIGHT
-    : 400;
+  const builderFloorId = builderFloorIdFromNavigationFloor(currentFloor);
+  const geometry = getFloorPlanGeometryForFloor(builderFloorId);
+  // HP-003: viewBox + regions come only from published geometry.json (no TS fallback).
+  const viewBoxWidth = geometry?.viewBox.width ?? 0;
+  const viewBoxHeight = geometry?.viewBox.height ?? 0;
+
+  const regionByRoomId = new Map(
+    (geometry?.rooms ?? []).map((room) => [room.roomId, room.bbox] as const),
+  );
 
   const rooms = experience.house.rooms.map((room) => {
-    const referenceRegion = REFERENCE_FLOORPLAN_REGIONS[room.id] ?? null;
+    const bbox = regionByRoomId.get(room.id) ?? null;
     return Object.freeze({
       id: room.id,
       title: room.name,
       floor: String(room.floor),
       decisionCanvasSrc: decisionCanvasUrlForRoom(room.id),
-      floorPlanRegion: referenceRegion,
+      floorPlanRegion: bbox,
     });
   });
 
