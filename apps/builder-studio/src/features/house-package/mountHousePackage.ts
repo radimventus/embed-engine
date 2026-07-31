@@ -34,7 +34,8 @@ export type HousePackageMountTexts = {
  */
 export type HousePackageMount = {
   readonly packageRootLabel: typeof HOUSE_PACKAGE_URL_ROOT;
-  readonly canonicalDiskRoot: typeof HOUSE_PACKAGE_DISK_ROOT;
+  /** Repo-relative HP-002 disk root for the active workspace project. */
+  readonly canonicalDiskRoot: string;
   readonly ok: boolean;
   readonly errors: readonly BuilderPackageImportError[];
   readonly texts: HousePackageMountTexts;
@@ -50,6 +51,8 @@ export type MountHousePackageOptions = {
   readonly fetchText?: (url: string) => Promise<string>;
   readonly probeExists?: (url: string) => Promise<boolean>;
   readonly now?: () => Date;
+  /** Active workspace project disk root (repo-relative). */
+  readonly diskRoot?: string;
 };
 
 async function defaultFetchText(url: string): Promise<string> {
@@ -114,6 +117,7 @@ export async function mountHousePackage(
   const fetchText = options.fetchText ?? defaultFetchText;
   const probeExists = options.probeExists ?? defaultProbeExists;
   const now = options.now ?? (() => new Date());
+  const diskRoot = options.diskRoot ?? HOUSE_PACKAGE_DISK_ROOT;
 
   const [galleryCsv, roomsCsv, videosCsv, manifestJson] = await Promise.all([
     fetchText(HOUSE_PACKAGE_CSV.gallery),
@@ -145,7 +149,7 @@ export async function mountHousePackage(
   if (!registryResult.ok) {
     return {
       packageRootLabel: HOUSE_PACKAGE_URL_ROOT,
-      canonicalDiskRoot: HOUSE_PACKAGE_DISK_ROOT,
+      canonicalDiskRoot: diskRoot,
       ok: false,
       errors: registryResult.errors,
       texts: { galleryCsv, roomsCsv, videosCsv, manifestJson },
@@ -158,7 +162,7 @@ export async function mountHousePackage(
 
   return {
     packageRootLabel: HOUSE_PACKAGE_URL_ROOT,
-    canonicalDiskRoot: HOUSE_PACKAGE_DISK_ROOT,
+    canonicalDiskRoot: diskRoot,
     ok: true,
     errors: [],
     texts: { galleryCsv, roomsCsv, videosCsv, manifestJson },

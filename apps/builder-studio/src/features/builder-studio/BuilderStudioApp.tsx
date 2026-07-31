@@ -9,11 +9,18 @@ import {
   useHousePackageEditController,
   type HousePackageNavId,
 } from '../house-package';
+import {
+  useWorkspaceController,
+  WorkspaceSidebar,
+} from '../workspace';
 
 /**
- * CAP-BLD-07 — production Authoring Surface: HP + Shared Runtime Preview.
+ * CAP-BLD-08 — multi-project Workspace over HP-002 Authoring Surface.
  */
 export function BuilderStudioApp() {
+  const workspace = useWorkspaceController();
+  const diskRoot = workspace.activeProject?.packageRoot ?? null;
+
   const {
     mountStatus,
     snapshot,
@@ -32,11 +39,17 @@ export function BuilderStudioApp() {
     publish,
     openPreview,
     closePreview,
-  } = useHousePackageEditController();
+  } = useHousePackageEditController(diskRoot);
   const [activeNav, setActiveNav] = useState<HousePackageNavId>('overview');
 
   const loadError =
-    mountStatus.status === 'error' ? mountStatus.message : null;
+    diskRoot === null
+      ? 'Open a workspace project to mount a House Package.'
+      : mountStatus.status === 'error'
+        ? mountStatus.message
+        : null;
+
+  const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';
 
   return (
     <AppShell
@@ -47,28 +60,40 @@ export function BuilderStudioApp() {
               CONIS Builder
             </h1>
             <div className="text-sm text-builder-muted">
-              House Package · Authoring Surface
+              {workspace.activeProject !== null
+                ? `${workspace.activeProject.name} · House Package`
+                : 'Workspace · select a project'}
             </div>
           </div>
           <div className="text-sm text-builder-muted">
-            {mountStatus.status === 'loading' && 'Mounting HP-002…'}
-            {mountStatus.status === 'ready' && publishing && 'Publishing…'}
-            {mountStatus.status === 'ready' &&
+            {workspace.switching && 'Switching project…'}
+            {!workspace.switching &&
+              mountStatus.status === 'loading' &&
+              'Mounting HP-002…'}
+            {!workspace.switching &&
+              mountStatus.status === 'ready' &&
+              publishing &&
+              'Publishing…'}
+            {!workspace.switching &&
+              mountStatus.status === 'ready' &&
               !publishing &&
               previewOpen &&
               'Runtime Preview'}
-            {mountStatus.status === 'ready' &&
+            {!workspace.switching &&
+              mountStatus.status === 'ready' &&
               !publishing &&
               !previewOpen &&
               releaseSummary !== null &&
               'Publish OK · Preview ready'}
-            {mountStatus.status === 'ready' &&
+            {!workspace.switching &&
+              mountStatus.status === 'ready' &&
               !publishing &&
               !previewOpen &&
               releaseSummary === null &&
               publishError !== null &&
               'Publish failed · retry available'}
-            {mountStatus.status === 'ready' &&
+            {!workspace.switching &&
+              mountStatus.status === 'ready' &&
               !publishing &&
               !previewOpen &&
               releaseSummary === null &&
@@ -81,15 +106,49 @@ export function BuilderStudioApp() {
                   : validationReport.status === 'ERROR'
                     ? 'Geometry refresh needed · Publish ready'
                     : 'Validation PASS · Publish ready')}
-            {mountStatus.status === 'error' && 'Mount failed'}
+            {!workspace.switching &&
+              diskRoot === null &&
+              'No project open'}
+            {!workspace.switching &&
+              mountStatus.status === 'error' &&
+              diskRoot !== null &&
+              'Mount failed'}
           </div>
         </header>
+      }
+      workspacePanel={
+        <WorkspaceSidebar
+          registry={workspace.registry}
+          activeProject={workspace.activeProject}
+          switching={workspace.switching || saving}
+          switchError={workspace.switchError}
+          dirtyPrompt={workspace.dirtyPrompt}
+          onOpenProject={(projectId) => {
+            void workspace.requestOpenProject(projectId, { dirty });
+          }}
+          onCloseProject={() => {
+            workspace.requestCloseProject({ dirty });
+          }}
+          onDirtySave={() => {
+            void workspace.confirmDirtySave(async () => {
+              await save();
+            });
+          }}
+          onDirtyDiscard={() => {
+            if (session !== null) {
+              apply(session.discard());
+            }
+            void workspace.confirmDirtyDiscard();
+          }}
+          onDirtyCancel={workspace.cancelDirtySwitch}
+        />
       }
       sidebar={
         <HousePackageSidebar
           snapshot={snapshot}
           activeNav={activeNav}
           onSelectNav={setActiveNav}
+          packageRootLabel={diskRoot}
         />
       }
       publishPanel={
@@ -118,12 +177,17 @@ export function BuilderStudioApp() {
         />
       }
     >
-      {mountStatus.status === 'loading' && (
+      {diskRoot === null && (
         <p className="text-sm text-builder-muted">
-          Mounting House Package from apps/client-studio/public/house-package…
+          Open Family 98, Harmony 124, or Villa 168 from the Workspace panel.
         </p>
       )}
-      {mountStatus.status === 'error' && (
+      {diskRoot !== null && mountStatus.status === 'loading' && (
+        <p className="text-sm text-builder-muted">
+          Mounting House Package from {diskRoot}…
+        </p>
+      )}
+      {diskRoot !== null && mountStatus.status === 'error' && (
         <p className="rounded-lg bg-builder-draftBg px-4 py-3 text-sm text-builder-draft">
           {mountStatus.message}
         </p>

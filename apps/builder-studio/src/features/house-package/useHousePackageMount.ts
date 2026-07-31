@@ -4,6 +4,7 @@ import {
   mountHousePackage,
   type HousePackageMount,
 } from './mountHousePackage';
+import { HOUSE_PACKAGE_DISK_ROOT } from './housePackagePaths';
 
 export type HousePackageMountState =
   | { readonly status: 'loading' }
@@ -16,17 +17,24 @@ export type UseHousePackageMountResult = {
 };
 
 /**
- * CAP-BLD-02/04 — mount HP-002; remount after persist.
+ * CAP-BLD-02/04/08 — mount active HP-002; remount after persist / project switch.
  */
-export function useHousePackageMount(): UseHousePackageMountResult {
+export function useHousePackageMount(
+  diskRoot: string | null = HOUSE_PACKAGE_DISK_ROOT,
+): UseHousePackageMountResult {
   const [state, setState] = useState<HousePackageMountState>({
     status: 'loading',
   });
 
   const remount = useCallback(async (): Promise<HousePackageMount> => {
+    if (diskRoot === null) {
+      const message = 'No active workspace project.';
+      setState({ status: 'error', message });
+      throw new Error(message);
+    }
     setState({ status: 'loading' });
     try {
-      const mount = await mountHousePackage();
+      const mount = await mountHousePackage({ diskRoot });
       setState({ status: 'ready', mount });
       return mount;
     } catch (error: unknown) {
@@ -37,12 +45,20 @@ export function useHousePackageMount(): UseHousePackageMountResult {
       setState({ status: 'error', message });
       throw error instanceof Error ? error : new Error(message);
     }
-  }, []);
+  }, [diskRoot]);
 
   useEffect(() => {
     let cancelled = false;
+    if (diskRoot === null) {
+      setState({
+        status: 'error',
+        message: 'No active workspace project. Open a project to mount HP-002.',
+      });
+      return;
+    }
 
-    void mountHousePackage()
+    setState({ status: 'loading' });
+    void mountHousePackage({ diskRoot })
       .then((mount) => {
         if (!cancelled) {
           setState({ status: 'ready', mount });
@@ -63,7 +79,7 @@ export function useHousePackageMount(): UseHousePackageMountResult {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [diskRoot]);
 
   return { state, remount };
 }

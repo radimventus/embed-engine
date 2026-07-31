@@ -29,15 +29,17 @@ type HousePackageSidebarProps = {
   readonly snapshot: HousePackageEditSnapshot | null;
   readonly activeNav: HousePackageNavId;
   readonly onSelectNav: (id: HousePackageNavId) => void;
+  readonly packageRootLabel?: string | null;
 };
 
 /**
- * CAP-BLD-03 — sidebar over edit session (dirty badges per section).
+ * CAP-BLD-03/08 — sidebar over edit session (dirty badges per section).
  */
 export function HousePackageSidebar({
   snapshot,
   activeNav,
   onSelectNav,
+  packageRootLabel = HOUSE_PACKAGE_DISK_ROOT,
 }: HousePackageSidebarProps) {
   const pkg = snapshot?.validation.builderImport;
   const rooms = pkg?.rooms.rooms.length ?? 0;
@@ -52,7 +54,7 @@ export function HousePackageSidebar({
       </p>
       <h2 className="mt-1 text-lg font-semibold text-builder-ink">HP-002</h2>
       <p className="mt-2 break-all font-mono text-[11px] text-builder-muted">
-        {HOUSE_PACKAGE_DISK_ROOT}
+        {packageRootLabel ?? '—'}
       </p>
       <p className="mt-1 text-[12px] text-builder-muted">
         Edit in memory · ADR-023

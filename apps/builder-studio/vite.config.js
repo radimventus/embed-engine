@@ -15,10 +15,42 @@ const packageJson = JSON.parse(
   readFileSync(join(rootDir, 'package.json'), 'utf8'),
 );
 
-const housePackageDiskRoot = resolve(
+const defaultHousePackageDiskRoot = resolve(
   repoRoot,
   'apps/client-studio/public/house-package',
 );
+
+/** CAP-BLD-08 — single active HP root (no parallel mounts). */
+let activeHousePackage = {
+  projectId: 'villa-168',
+  packageRootRel: 'apps/client-studio/public/house-package',
+  diskRoot: defaultHousePackageDiskRoot,
+};
+
+function resolveAllowedPackageRoot(packageRootRel) {
+  const normalized = packageRootRel.replace(/\\/g, '/').replace(/^\.\//, '');
+  if (normalized.includes('..') || normalized.includes('\0')) {
+    return null;
+  }
+  const allowed =
+    normalized === 'apps/client-studio/public/house-package' ||
+    normalized.startsWith('apps/client-studio/public/house-packages/');
+  if (!allowed) {
+    return null;
+  }
+  const absolute = resolve(repoRoot, normalized);
+  const fromRepo = relative(repoRoot, absolute);
+  if (fromRepo.startsWith('..')) {
+    return null;
+  }
+  if (!existsSync(absolute) || !statSync(absolute).isDirectory()) {
+    return null;
+  }
+  if (!existsSync(join(absolute, 'rooms.csv'))) {
+    return null;
+  }
+  return { absolute, relative: normalized };
+}
 
 function readEmbedRuntimeBuildDefine() {
   const versionPath = join(repoRoot, 'docs/embed/version.json');
@@ -82,6 +114,73 @@ function serveHousePackagePlugin() {
       server.middlewares.use(async (req, res, next) => {
         const url = req.url ?? '';
         const pathOnly = (url.split('?')[0] ?? url);
+
+        if (pathOnly === '/api/workspace/active') {
+          if (req.method === 'GET') {
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(
+              JSON.stringify({
+                ok: true,
+                projectId: activeHousePackage.projectId,
+                packageRoot: activeHousePackage.packageRootRel,
+              }),
+            );
+            return;
+          }
+          if (req.method === 'POST') {
+            try {
+              const raw = await readRequestBody(req);
+              const body = JSON.parse(raw || '{}');
+              const packageRootRel =
+                typeof body.packageRoot === 'string' ? body.packageRoot : '';
+              const projectId =
+                typeof body.projectId === 'string' ? body.projectId : '';
+              const resolved = resolveAllowedPackageRoot(packageRootRel);
+              if (resolved === null || projectId.length === 0) {
+                res.statusCode = 400;
+                res.setHeader('Content-Type', 'application/json; charset=utf-8');
+                res.end(
+                  JSON.stringify({
+                    ok: false,
+                    error:
+                      'Invalid packageRoot or projectId. Root must be an HP-002 directory under apps/client-studio/public.',
+                  }),
+                );
+                return;
+              }
+              activeHousePackage = {
+                projectId,
+                packageRootRel: resolved.relative,
+                diskRoot: resolved.absolute,
+              };
+              res.statusCode = 200;
+              res.setHeader('Content-Type', 'application/json; charset=utf-8');
+              res.end(
+                JSON.stringify({
+                  ok: true,
+                  projectId,
+                  packageRoot: resolved.relative,
+                }),
+              );
+            } catch (error) {
+              res.statusCode = 500;
+              res.setHeader('Content-Type', 'application/json; charset=utf-8');
+              res.end(
+                JSON.stringify({
+                  ok: false,
+                  error:
+                    error instanceof Error
+                      ? error.message
+                      : 'Workspace active middleware failed.',
+                }),
+              );
+            }
+            return;
+          }
+        }
+
+        const housePackageDiskRoot = activeHousePackage.diskRoot;
 
         if (
           pathOnly === '/api/house-package/validate' &&

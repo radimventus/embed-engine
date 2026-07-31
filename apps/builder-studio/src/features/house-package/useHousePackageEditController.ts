@@ -42,10 +42,12 @@ export type HousePackageEditController = {
 };
 
 /**
- * CAP-BLD-03..07 — mount, edit, persist, validate, publish, Runtime Preview.
+ * CAP-BLD-03..08 — mount, edit, persist, validate, publish, Runtime Preview.
  */
-export function useHousePackageEditController(): HousePackageEditController {
-  const { state: mountStatus, remount } = useHousePackageMount();
+export function useHousePackageEditController(
+  diskRoot: string | null,
+): HousePackageEditController {
+  const { state: mountStatus, remount } = useHousePackageMount(diskRoot);
   const [sessionEpoch, setSessionEpoch] = useState(0);
   const [saving, setSaving] = useState(false);
   const [validating, setValidating] = useState(false);
@@ -56,6 +58,14 @@ export function useHousePackageEditController(): HousePackageEditController {
   const [releaseSummary, setReleaseSummary] =
     useState<HousePackageReleaseSummary | null>(null);
   const [publishError, setPublishError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setReleaseSummary(null);
+    setPublishError(null);
+    setPreviewOpen(false);
+    setValidationReport(null);
+    setSessionEpoch((value) => value + 1);
+  }, [diskRoot]);
 
   const session = useMemo(() => {
     if (mountStatus.status !== 'ready') {

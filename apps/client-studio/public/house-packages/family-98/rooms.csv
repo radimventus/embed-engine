@@ -1,0 +1,12 @@
+floor,room,name,area
+p1,exterior,Exteriér,0
+p1,kitchen,Kuchyně Family,14
+p1,living-room,Obývací pokoj,32
+p1,vestibule,Zádveří a chodba,10
+p1,wardrobe,Šatna,4
+p1,bedroom,Ložnice,18.4
+p1,bathroom,Koupelna,8
+p1,toilet,Toaleta,3
+p1,children-room,Dětský pokoj,16
+p1,office,Pracovna,12
+p1,technical-room,Technická místnost,5.1
