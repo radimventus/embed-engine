@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2790 1938" width="100%" height="100%">
   <defs>
     <style>
       .overlay-shape {
@@ -11,6 +10,5 @@
       }
     </style>
   </defs>
-  
-  <polygon points="185,390 278,390 278,470 185,470" class="overlay-shape" />
+  <polygon points="517,949 586,949 733,950 776,950 775,1025 775,1138 516,1138 516,1033" class="overlay-shape" />
 </svg>
