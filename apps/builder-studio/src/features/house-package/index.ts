@@ -1,6 +1,12 @@
 export { HOUSE_PACKAGE_DISK_ROOT, HOUSE_PACKAGE_URL_ROOT } from './housePackagePaths';
 export { mountHousePackage, type HousePackageMount } from './mountHousePackage';
 export { useHousePackageMount } from './useHousePackageMount';
+export { useHousePackageEditController } from './useHousePackageEditController';
+export {
+  createHousePackageEditSession,
+  type HousePackageEditSession,
+  type HousePackageEditSnapshot,
+} from './housePackageEditSession';
 export { HousePackageSidebar, type HousePackageNavId } from './HousePackageSidebar';
-export { HousePackageReadonlyView } from './HousePackageReadonlyView';
+export { HousePackageEditView } from './HousePackageEditView';
 export { HousePackageMountPanel } from './HousePackageMountPanel';

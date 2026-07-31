@@ -1,17 +1,23 @@
-import type { HousePackageMount } from './mountHousePackage';
+import type {
+  HousePackageEditSession,
+  HousePackageEditSnapshot,
+} from './housePackageEditSession';
 
 type HousePackageMountPanelProps = {
-  readonly mount: HousePackageMount | null;
+  readonly snapshot: HousePackageEditSnapshot | null;
+  readonly session: HousePackageEditSession | null;
   readonly loadError: string | null;
+  readonly onChange: (next: HousePackageEditSnapshot) => void;
 };
 
 /**
- * CAP-BLD-02 — right rail: mount / validation status (read-only).
- * Publish actions are out of scope until CAP-BLD-05.
+ * CAP-BLD-03 — validation + dirty/undo/reset controls.
  */
 export function HousePackageMountPanel({
-  mount,
+  snapshot,
+  session,
   loadError,
+  onChange,
 }: HousePackageMountPanelProps) {
   return (
     <aside className="h-full overflow-y-auto border-l border-builder-line bg-white p-6">
@@ -22,7 +28,7 @@ export function HousePackageMountPanel({
         object-house
       </h2>
       <p className="mt-2 text-[12px] text-builder-muted">
-        Read-only mount. No Publish in CAP-BLD-02.
+        In-memory edit. No disk save (CAP-BLD-04).
       </p>
 
       {loadError !== null && (
@@ -31,36 +37,66 @@ export function HousePackageMountPanel({
         </p>
       )}
 
-      {mount !== null && (
+      {snapshot !== null && session !== null && (
         <div className="mt-6 space-y-3 text-sm">
           <StatusRow
-            label="Mount"
-            value={mount.ok ? 'OK' : 'Errors'}
-            ok={mount.ok}
+            label="State"
+            value={
+              !snapshot.validation.ok
+                ? 'Invalid'
+                : snapshot.dirtyState === 'modified'
+                  ? 'Modified'
+                  : 'Clean'
+            }
+            ok={snapshot.validation.ok && snapshot.dirtyState === 'clean'}
           />
           <StatusRow
-            label="Rooms"
-            value={String(mount.builderImport?.rooms.rooms.length ?? 0)}
-            ok={mount.ok}
+            label="Rooms CSV"
+            value={snapshot.dirty.includes('rooms') ? 'dirty' : 'clean'}
+            ok={!snapshot.dirty.includes('rooms')}
           />
           <StatusRow
-            label="Gallery"
-            value={String(mount.builderImport?.gallery.entries.length ?? 0)}
-            ok={mount.ok}
+            label="Gallery CSV"
+            value={snapshot.dirty.includes('gallery') ? 'dirty' : 'clean'}
+            ok={!snapshot.dirty.includes('gallery')}
           />
           <StatusRow
-            label="Videos"
-            value={String(mount.builderImport?.videos.entries.length ?? 0)}
-            ok={mount.ok}
+            label="Videos CSV"
+            value={snapshot.dirty.includes('videos') ? 'dirty' : 'clean'}
+            ok={!snapshot.dirty.includes('videos')}
           />
           <StatusRow
-            label="Floors"
-            value={String(mount.builderImport?.floors.floors.length ?? 0)}
-            ok={mount.ok}
+            label="Registries"
+            value={
+              snapshot.validation.builderImport
+                ? String(snapshot.validation.builderImport.rooms.rooms.length)
+                : '—'
+            }
+            ok={snapshot.validation.ok}
           />
-          {mount.errors.length > 0 && (
+
+          <div className="flex flex-col gap-2 pt-2">
+            <button
+              type="button"
+              disabled={!snapshot.canUndo}
+              onClick={() => onChange(session.undo())}
+              className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
+            >
+              Undo last change
+            </button>
+            <button
+              type="button"
+              disabled={snapshot.dirtyState === 'clean'}
+              onClick={() => onChange(session.discard())}
+              className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
+            >
+              Discard / Reset to mount
+            </button>
+          </div>
+
+          {snapshot.sectionErrors.length > 0 && (
             <ul className="mt-4 space-y-2 text-[12px] text-builder-draft">
-              {mount.errors.map((error) => (
+              {snapshot.sectionErrors.map((error) => (
                 <li key={`${error.code}:${error.message}`}>
                   <span className="font-mono">{error.code}</span> —{' '}
                   {error.message}
@@ -68,6 +104,17 @@ export function HousePackageMountPanel({
               ))}
             </ul>
           )}
+          {snapshot.validation.errors.length > 0 &&
+            snapshot.sectionErrors.length === 0 && (
+              <ul className="mt-4 space-y-2 text-[12px] text-builder-draft">
+                {snapshot.validation.errors.map((error) => (
+                  <li key={`${error.code}:${error.message}`}>
+                    <span className="font-mono">{error.code}</span> —{' '}
+                    {error.message}
+                  </li>
+                ))}
+              </ul>
+            )}
         </div>
       )}
     </aside>

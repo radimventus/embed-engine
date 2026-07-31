@@ -6,7 +6,6 @@
 import {
   buildBuilderPackageRegistries,
   isFloorPlanGeometry,
-  parseCsv,
   type BuilderHousePackageImport,
   type BuilderPackageImportError,
   type FloorPlanGeometry,
@@ -19,6 +18,7 @@ import {
   HOUSE_PACKAGE_MANIFEST_URL,
   HOUSE_PACKAGE_URL_ROOT,
 } from './housePackagePaths';
+import { planPairsFromRooms } from './validateHousePackageWorking';
 
 export type HousePackageMountTexts = {
   readonly galleryCsv: string;
@@ -66,29 +66,6 @@ async function defaultProbeExists(url: string): Promise<boolean> {
   } catch {
     return false;
   }
-}
-
-function planPairsFromRooms(roomsCsvText: string): {
-  readonly floorId: string;
-  readonly rasterRelativePath: string;
-  readonly svgRelativePath: string;
-}[] {
-  const table = parseCsv(roomsCsvText);
-  const floors = new Set<string>();
-  for (const row of table.rows) {
-    const floor = row.floor?.trim();
-    if (floor) {
-      floors.add(floor);
-    }
-  }
-
-  return [...floors]
-    .sort((a, b) => a.localeCompare(b, 'en'))
-    .map((floorId) => ({
-      floorId,
-      rasterRelativePath: `media/plans/${floorId}.webp`,
-      svgRelativePath: `media/plans/${floorId}.svg`,
-    }));
 }
 
 async function resolveHeroPath(
