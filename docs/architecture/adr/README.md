@@ -24,6 +24,7 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 | [ADR-020](./ADR-020-ai-delivery-architecture.md) | AI Delivery Architecture (Contract · Adapters · optional Gateway · exclusive translation) | Accepted |
 | [ADR-021](./ADR-021-ai-semantic-model.md) | AI Semantic Model (Conversation · Turn · Message · …) | Accepted |
 | [ADR-022](./ADR-022-conversation-contract.md) | Conversation Contract Freeze (ACC-01) | Accepted |
+| [ADR-023](./ADR-023-house-package-content-ssot.md) | House Package as Content SSOT (Builder Authoring Surface · no parallel content models) | Accepted |
 
 **Platform Theory:** [../pt/README.md](../pt/README.md) (PT-001 Object · PT-002 Interpretation · PT-003 Sessions · PT-004 Decision Story · PT-005 Decision Moves · PT-006 AI Explains · PT-007 Decision Terminal · PT-008 Decision Outcome)
 
@@ -33,6 +34,7 @@ ADRs lock architectural decisions before implementation and freeze accepted boun
 **AI Delivery:** [ADR-020](./ADR-020-ai-delivery-architecture.md) · [../platform/AI-Delivery-Architecture.md](../platform/AI-Delivery-Architecture.md) (AID-01)  
 **AI Semantics:** [ADR-021](./ADR-021-ai-semantic-model.md) · [../ai/ai-semantic-model.md](../ai/ai-semantic-model.md) (AIS-01)  
 **AI Conversation Contract:** [ADR-022](./ADR-022-conversation-contract.md) · [../ai/conversation-contract.md](../ai/conversation-contract.md) (ACC-01)  
+**House Package Content SSOT:** [ADR-023](./ADR-023-house-package-content-ssot.md) · [HP-002](../../03-specification-standard/HP-002-Builder-House-Package-Input.md) · [CAP-BLD-01 migration](../builder/CAP-BLD-01-House-Package-SSOT-Migration.md)  
 **Decision Session SSOT:** [../../04-reference-implementation/RI-002-Decision-Session.md](../../04-reference-implementation/RI-002-Decision-Session.md)  
 **Governance freeze:** [../decision-layer/decision-layer-governance-v1.md](../decision-layer/decision-layer-governance-v1.md) · tag `architecture-decision-layer-v1`  
 **Implementation contract:** [../platform/Experience-Delivery-Implementation-Contract.md](../platform/Experience-Delivery-Implementation-Contract.md) (EDIC-01) · [../platform/Launcher-Runtime-Integration-Specification.md](../platform/Launcher-Runtime-Integration-Specification.md) (LRI-01) · [ADR-017](./ADR-017-experience-delivery-implementation-contract.md)  

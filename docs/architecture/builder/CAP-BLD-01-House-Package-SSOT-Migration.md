@@ -4,6 +4,7 @@
 | --- | --- |
 | **Status** | Design accepted — implementation via follow-up CAPs |
 | **Date** | 2026-07-31 |
+| **Architecture lock** | [ADR-023 — House Package as Content SSOT](../adr/ADR-023-house-package-content-ssot.md) |
 | **Normative format** | [HP-002](../../03-specification-standard/HP-002-Builder-House-Package-Input.md) (locked) |
 | **Tooling** | `@embed-engine/object-house` · `pnpm embed:publish` |
 | **Out of scope** | Company CRUD · Login · Backend · Sales Studio · new formats · Builder→HP exporter |
