@@ -58,8 +58,8 @@ Counts: errors, warnings, PASS categories.
 
 Unsaved working copy → WARNING only (disk may still be publishable).
 
-## Out of scope (CAP-BLD-06+)
+## Out of scope (CAP-BLD-07+)
 
-- `embed:publish` execution
 - Runtime Preview
-- Geometry generation / binary upload
+- Legacy mock publish retirement from pilot IA
+- Geometry generation / binary upload as authoring features (geometry runs only as publish prep)

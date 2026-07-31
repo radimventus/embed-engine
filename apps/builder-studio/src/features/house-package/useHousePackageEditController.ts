@@ -7,7 +7,10 @@ import {
   type HousePackageEditSnapshot,
 } from './housePackageEditSession';
 import type { HousePackageValidationReport } from './housePackageValidationReport';
+import type { HousePackageReleaseSummary } from './productionPublishGate';
+import { buildHousePackageValidationReport } from './housePackageValidationReport';
 import { requestHousePackagePersist } from './requestHousePackagePersist';
+import { requestHousePackagePublish } from './requestHousePackagePublish';
 import { runDiskHousePackageValidation } from './runHousePackageValidation';
 import { useHousePackageMount } from './useHousePackageMount';
 import { validateHousePackageWorking } from './validateHousePackageWorking';
@@ -18,22 +21,30 @@ export type HousePackageEditController = {
   readonly session: HousePackageEditSession | null;
   readonly saving: boolean;
   readonly validating: boolean;
+  readonly publishing: boolean;
   readonly validationReport: HousePackageValidationReport | null;
+  readonly releaseSummary: HousePackageReleaseSummary | null;
+  readonly publishError: string | null;
   readonly apply: (next: HousePackageEditSnapshot) => void;
   readonly save: () => Promise<void>;
   readonly validate: () => Promise<void>;
+  readonly publish: () => Promise<void>;
 };
 
 /**
- * CAP-BLD-03/04/05 — mount, edit, persist, disk validation (publish gate).
+ * CAP-BLD-03/04/05/06 — mount, edit, persist, validate, production publish.
  */
 export function useHousePackageEditController(): HousePackageEditController {
   const { state: mountStatus, remount } = useHousePackageMount();
   const [sessionEpoch, setSessionEpoch] = useState(0);
   const [saving, setSaving] = useState(false);
   const [validating, setValidating] = useState(false);
+  const [publishing, setPublishing] = useState(false);
   const [validationReport, setValidationReport] =
     useState<HousePackageValidationReport | null>(null);
+  const [releaseSummary, setReleaseSummary] =
+    useState<HousePackageReleaseSummary | null>(null);
+  const [publishError, setPublishError] = useState<string | null>(null);
 
   const session = useMemo(() => {
     if (mountStatus.status !== 'ready') {
@@ -91,7 +102,6 @@ export function useHousePackageEditController(): HousePackageEditController {
     return () => {
       cancelled = true;
     };
-    // Re-validate after mount/remount (sessionEpoch), not on every keystroke.
   }, [mountStatus.status, sessionEpoch]);
 
   const save = useCallback(async () => {
@@ -143,15 +153,74 @@ export function useHousePackageEditController(): HousePackageEditController {
     }
   }, [apply, remount, session, snapshot]);
 
+  const publish = useCallback(async () => {
+    const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';
+    setPublishing(true);
+    setPublishError(null);
+    setReleaseSummary(null);
+    try {
+      const gateReport = await runDiskHousePackageValidation({ dirty });
+      setValidationReport(gateReport);
+      if (!gateReport.canPublish) {
+        setPublishError(
+          'Publish blocked: object-house validation has ERROR. Fix issues and retry.',
+        );
+        return;
+      }
+
+      const result = await requestHousePackagePublish();
+      if (!result.ok) {
+        setPublishError(`[${result.stage}] ${result.error}`);
+        if (result.validationErrors !== undefined) {
+          setValidationReport(
+            buildHousePackageValidationReport({
+              errors: result.validationErrors,
+              warnings:
+                dirty === true
+                  ? [
+                      {
+                        type: 'UNSAVED_WORKING_COPY',
+                        file: '(session)',
+                        item: 'working-copy',
+                        description:
+                          'Unsaved Builder edits will not be included until Save.',
+                        category: 'mandatory',
+                        editor: 'overview',
+                      },
+                    ]
+                  : undefined,
+              source: 'disk',
+            }),
+          );
+        }
+        return;
+      }
+
+      setReleaseSummary(result.summary);
+      await remount();
+      setSessionEpoch((value) => value + 1);
+    } catch (error: unknown) {
+      setPublishError(
+        error instanceof Error ? error.message : 'Publish request failed.',
+      );
+    } finally {
+      setPublishing(false);
+    }
+  }, [remount, snapshot]);
+
   return {
     mountStatus,
     snapshot,
     session,
     saving,
     validating,
+    publishing,
     validationReport,
+    releaseSummary,
+    publishError,
     apply,
     save,
     validate,
+    publish,
   };
 }

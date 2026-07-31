@@ -6,6 +6,7 @@
 import type { BuilderPackageImportError } from '@embed-engine/object-house/builder-package';
 
 import type { HousePackageNavId } from './HousePackageSidebar';
+import { HEALABLE_GEOMETRY_CODES } from './productionPublishGate';
 
 export type ValidationSeverity = 'PASS' | 'WARNING' | 'ERROR';
 
@@ -216,6 +217,11 @@ export function buildHousePackageValidationReport(input: {
   const status: HousePackageValidationReport['status'] =
     errorCount > 0 ? 'ERROR' : warningCount > 0 ? 'WARNING' : 'PASS';
 
+  const errorIssues = issues.filter((issue) => issue.severity === 'ERROR');
+  const onlyHealableGeometry =
+    errorIssues.length > 0 &&
+    errorIssues.every((issue) => HEALABLE_GEOMETRY_CODES.has(issue.type));
+
   return {
     status,
     errorCount,
@@ -223,7 +229,8 @@ export function buildHousePackageValidationReport(input: {
     passCount: passes.length,
     issues,
     passes,
-    canPublish: errorCount === 0,
+    // Healable HP-003 geometry ERRORs still allow Publish (pipeline regenerates).
+    canPublish: errorCount === 0 || onlyHealableGeometry,
     source: input.source,
     validatedAt: now().toISOString(),
   };

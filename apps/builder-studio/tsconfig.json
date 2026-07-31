@@ -13,6 +13,9 @@
     "resolveJsonModule": true
   },
   "include": ["src"],
-  "exclude": ["src/**/*.test.ts"],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/features/house-package/server/**"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

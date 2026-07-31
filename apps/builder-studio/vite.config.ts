@@ -119,6 +119,46 @@ function serveHousePackagePlugin() {
         }
 
         if (
+          pathOnly === '/api/house-package/publish' &&
+          req.method === 'POST'
+        ) {
+          try {
+            const { importBuilderHousePackage } = await import(
+              '../../packages/object-house/src/builder-package/importBuilderHousePackage.ts'
+            );
+            const { publishAllFloorPlanGeometry } = await import(
+              '../../packages/object-house/src/builder-package/publishFloorPlanGeometry.ts'
+            );
+            const { runProductionHousePackagePublish } = await import(
+              './src/features/house-package/server/runProductionHousePackagePublish.ts'
+            );
+            const result = await runProductionHousePackagePublish({
+              packageRoot: housePackageDiskRoot,
+              repoRoot,
+              importBuilderHousePackage,
+              publishAllFloorPlanGeometry,
+            });
+            res.statusCode = result.ok ? 200 : 500;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(JSON.stringify(result));
+          } catch (error) {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(
+              JSON.stringify({
+                ok: false,
+                stage: 'embed:publish',
+                error:
+                  error instanceof Error
+                    ? error.message
+                    : 'Publish middleware failed.',
+              }),
+            );
+          }
+          return;
+        }
+
+        if (
           pathOnly === '/api/house-package/persist' &&
           req.method === 'POST'
         ) {

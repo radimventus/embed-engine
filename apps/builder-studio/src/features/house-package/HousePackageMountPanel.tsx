@@ -3,15 +3,19 @@ import type {
   HousePackageEditSnapshot,
 } from './housePackageEditSession';
 import type { HousePackageValidationReport } from './housePackageValidationReport';
+import type { HousePackageReleaseSummary } from './productionPublishGate';
 import type { HousePackageNavId } from './HousePackageSidebar';
 
 type HousePackageMountPanelProps = {
   readonly snapshot: HousePackageEditSnapshot | null;
   readonly session: HousePackageEditSession | null;
   readonly validationReport: HousePackageValidationReport | null;
+  readonly releaseSummary: HousePackageReleaseSummary | null;
+  readonly publishError: string | null;
   readonly loadError: string | null;
   readonly saving: boolean;
   readonly validating: boolean;
+  readonly publishing: boolean;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
   readonly onSave: () => void;
   readonly onValidate: () => void;
@@ -20,15 +24,18 @@ type HousePackageMountPanelProps = {
 };
 
 /**
- * CAP-BLD-05 — validation report + publish gate (ERROR blocks Publish).
+ * CAP-BLD-05/06 — validation report, publish gate, release summary.
  */
 export function HousePackageMountPanel({
   snapshot,
   session,
   validationReport,
+  releaseSummary,
+  publishError,
   loadError,
   saving,
   validating,
+  publishing,
   onChange,
   onSave,
   onValidate,
@@ -40,13 +47,13 @@ export function HousePackageMountPanel({
   return (
     <aside className="h-full overflow-y-auto border-l border-builder-line bg-white p-6">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-        Validation
+        Validation · Publish
       </p>
       <h2 className="mt-1 text-lg font-semibold text-builder-ink">
         House Package
       </h2>
       <p className="mt-2 text-[12px] text-builder-muted">
-        object-house · disk SSOT · publish gate
+        object-house · HP-002 SSOT · pnpm embed:publish
       </p>
 
       {loadError !== null && (
@@ -87,7 +94,55 @@ export function HousePackageMountPanel({
         >
           Status: {validationReport.status}
           {canPublish ? ' · Publish ready' : ' · Publish blocked'}
+          {canPublish &&
+            validationReport.status === 'ERROR' &&
+            ' (geometry will refresh)'}
         </p>
+      )}
+
+      {releaseSummary !== null && (
+        <div className="mt-4 rounded-lg border border-builder-success/30 bg-builder-successBg px-3 py-3 text-[12px] text-builder-success">
+          <p className="font-bold">{releaseSummary.status}</p>
+          <dl className="mt-2 space-y-1 font-mono text-[11px] text-builder-ink">
+            <div>
+              <dt className="inline text-builder-muted">Fingerprint · </dt>
+              <dd className="inline break-all">
+                {releaseSummary.buildFingerprint}
+              </dd>
+            </div>
+            <div>
+              <dt className="inline text-builder-muted">House Package · </dt>
+              <dd className="inline">{releaseSummary.housePackageVersion}</dd>
+            </div>
+            <div>
+              <dt className="inline text-builder-muted">Embed · </dt>
+              <dd className="inline">{releaseSummary.embedVersion}</dd>
+            </div>
+            <div>
+              <dt className="inline text-builder-muted">Released · </dt>
+              <dd className="inline">{releaseSummary.releaseTimestamp}</dd>
+            </div>
+            <div>
+              <dt className="inline text-builder-muted">Artifacts · </dt>
+              <dd className="inline">
+                {releaseSummary.artifacts.housePackage},{' '}
+                {releaseSummary.artifacts.embed}
+              </dd>
+            </div>
+            {releaseSummary.geometryRan && (
+              <div>
+                <dt className="inline text-builder-muted">Geometry · </dt>
+                <dd className="inline">refreshed via publish:floorplan-geometry</dd>
+              </div>
+            )}
+          </dl>
+        </div>
+      )}
+
+      {publishError !== null && (
+        <pre className="mt-4 max-h-48 overflow-auto whitespace-pre-wrap rounded-lg bg-builder-draftBg px-3 py-2 text-[11px] text-builder-draft">
+          {publishError}
+        </pre>
       )}
 
       {snapshot !== null && session !== null && (
@@ -115,7 +170,7 @@ export function HousePackageMountPanel({
           <div className="flex flex-col gap-2 pt-2">
             <button
               type="button"
-              disabled={validating}
+              disabled={validating || publishing}
               onClick={onValidate}
               className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
             >
@@ -123,21 +178,22 @@ export function HousePackageMountPanel({
             </button>
             <button
               type="button"
-              disabled={!canPublish || validating}
+              disabled={!canPublish || validating || publishing}
               onClick={onPublish}
               className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
               title={
                 canPublish
-                  ? 'Publish gate open (CAP-BLD-06 wires embed:publish)'
+                  ? 'Runs object-house gate → optional geometry → pnpm embed:publish'
                   : 'Publish blocked while validation has ERROR'
               }
             >
-              Publish
+              {publishing ? 'Publishing…' : 'Publish'}
             </button>
             <button
               type="button"
               disabled={
                 saving ||
+                publishing ||
                 snapshot.dirtyState === 'clean' ||
                 !snapshot.validation.ok
               }
@@ -148,7 +204,7 @@ export function HousePackageMountPanel({
             </button>
             <button
               type="button"
-              disabled={!snapshot.canUndo || saving}
+              disabled={!snapshot.canUndo || saving || publishing}
               onClick={() => onChange(session.undo())}
               className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
             >
@@ -156,7 +212,9 @@ export function HousePackageMountPanel({
             </button>
             <button
               type="button"
-              disabled={snapshot.dirtyState === 'clean' || saving}
+              disabled={
+                snapshot.dirtyState === 'clean' || saving || publishing
+              }
               onClick={() => onChange(session.discard())}
               className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
             >

@@ -12,3 +12,5 @@ export {
 export { HousePackageSidebar, type HousePackageNavId } from './HousePackageSidebar';
 export { HousePackageEditView } from './HousePackageEditView';
 export { HousePackageMountPanel } from './HousePackageMountPanel';
+export type { HousePackageReleaseSummary } from './productionPublishGate';
+export { requestHousePackagePublish } from './requestHousePackagePublish';

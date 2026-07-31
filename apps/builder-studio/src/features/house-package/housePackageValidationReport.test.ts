@@ -65,6 +65,21 @@ describe('buildHousePackageValidationReport (CAP-BLD-05)', () => {
     assert.equal(report.canPublish, true);
   });
 
+  it('healable geometry ERROR still allows publish attempt', () => {
+    const report = buildHousePackageValidationReport({
+      errors: [
+        {
+          code: 'HP003_GEOMETRY_MISSING',
+          message: 'missing',
+          path: 'media/plans/p1.geometry.json',
+        },
+      ],
+      source: 'disk',
+    });
+    assert.equal(report.status, 'ERROR');
+    assert.equal(report.canPublish, true);
+  });
+
   it('maps CSV path to rooms/gallery/videos categories', () => {
     const report = buildHousePackageValidationReport({
       errors: [
