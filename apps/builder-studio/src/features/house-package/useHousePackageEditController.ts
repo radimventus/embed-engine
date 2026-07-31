@@ -6,7 +6,9 @@ import {
   type HousePackageEditSession,
   type HousePackageEditSnapshot,
 } from './housePackageEditSession';
+import type { HousePackageValidationReport } from './housePackageValidationReport';
 import { requestHousePackagePersist } from './requestHousePackagePersist';
+import { runDiskHousePackageValidation } from './runHousePackageValidation';
 import { useHousePackageMount } from './useHousePackageMount';
 import { validateHousePackageWorking } from './validateHousePackageWorking';
 
@@ -15,17 +17,23 @@ export type HousePackageEditController = {
   readonly snapshot: HousePackageEditSnapshot | null;
   readonly session: HousePackageEditSession | null;
   readonly saving: boolean;
+  readonly validating: boolean;
+  readonly validationReport: HousePackageValidationReport | null;
   readonly apply: (next: HousePackageEditSnapshot) => void;
   readonly save: () => Promise<void>;
+  readonly validate: () => Promise<void>;
 };
 
 /**
- * CAP-BLD-03/04 — mount, edit in memory, persist via Node host, remount.
+ * CAP-BLD-03/04/05 — mount, edit, persist, disk validation (publish gate).
  */
 export function useHousePackageEditController(): HousePackageEditController {
   const { state: mountStatus, remount } = useHousePackageMount();
   const [sessionEpoch, setSessionEpoch] = useState(0);
   const [saving, setSaving] = useState(false);
+  const [validating, setValidating] = useState(false);
+  const [validationReport, setValidationReport] =
+    useState<HousePackageValidationReport | null>(null);
 
   const session = useMemo(() => {
     if (mountStatus.status !== 'ready') {
@@ -49,6 +57,42 @@ export function useHousePackageEditController(): HousePackageEditController {
   const apply = useCallback((next: HousePackageEditSnapshot) => {
     setSnapshot(next);
   }, []);
+
+  const validate = useCallback(async () => {
+    const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';
+    setValidating(true);
+    try {
+      const report = await runDiskHousePackageValidation({ dirty });
+      setValidationReport(report);
+    } finally {
+      setValidating(false);
+    }
+  }, [snapshot]);
+
+  useEffect(() => {
+    if (mountStatus.status !== 'ready') {
+      return;
+    }
+    let cancelled = false;
+    void (async () => {
+      setValidating(true);
+      try {
+        const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';
+        const report = await runDiskHousePackageValidation({ dirty });
+        if (!cancelled) {
+          setValidationReport(report);
+        }
+      } finally {
+        if (!cancelled) {
+          setValidating(false);
+        }
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // Re-validate after mount/remount (sessionEpoch), not on every keystroke.
+  }, [mountStatus.status, sessionEpoch]);
 
   const save = useCallback(async () => {
     if (session === null || snapshot === null) {
@@ -104,7 +148,10 @@ export function useHousePackageEditController(): HousePackageEditController {
     snapshot,
     session,
     saving,
+    validating,
+    validationReport,
     apply,
     save,
+    validate,
   };
 }

@@ -89,6 +89,36 @@ function serveHousePackagePlugin() {
         const pathOnly = (url.split('?')[0] ?? url);
 
         if (
+          pathOnly === '/api/house-package/validate' &&
+          req.method === 'POST'
+        ) {
+          try {
+            const { importBuilderHousePackage } = await import(
+              '../../packages/object-house/src/builder-package/importBuilderHousePackage.ts'
+            );
+            const result = await importBuilderHousePackage(housePackageDiskRoot);
+            const errors = result.ok ? [] : result.errors;
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(JSON.stringify({ ok: true, errors }));
+          } catch (error) {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(
+              JSON.stringify({
+                ok: false,
+                error:
+                  error instanceof Error
+                    ? error.message
+                    : 'Validate middleware failed.',
+                errors: [],
+              }),
+            );
+          }
+          return;
+        }
+
+        if (
           pathOnly === '/api/house-package/persist' &&
           req.method === 'POST'
         ) {

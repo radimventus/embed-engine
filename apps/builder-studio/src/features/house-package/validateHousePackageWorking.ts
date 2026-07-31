@@ -47,9 +47,13 @@ export function planPairsFromRooms(roomsCsvText: string): {
 
 /**
  * Validate in-memory HP CSV/manifest texts with object-house registries.
+ * Pass existingRelativePaths to enable missing-asset checks (CAP-BLD-05).
  */
 export function validateHousePackageWorking(
   working: HousePackageWorkingContent,
+  options?: {
+    readonly existingRelativePaths?: ReadonlySet<string>;
+  },
 ): HousePackageValidation {
   const result = buildBuilderPackageRegistries({
     packageRoot: HOUSE_PACKAGE_URL_ROOT,
@@ -58,6 +62,7 @@ export function validateHousePackageWorking(
     videosCsv: working.videosCsv,
     heroPath: working.heroRelativePath,
     planPairs: planPairsFromRooms(working.roomsCsv),
+    existingRelativePaths: options?.existingRelativePaths,
   });
 
   if (!result.ok) {

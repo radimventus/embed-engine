@@ -10,11 +10,20 @@ import {
 } from '../house-package';
 
 /**
- * CAP-BLD-04 — Builder mounts, edits, and persists HP-002 (ADR-023).
+ * CAP-BLD-05 — Builder HP authoring + validation / publish gate.
  */
 export function BuilderStudioApp() {
-  const { mountStatus, snapshot, session, saving, apply, save } =
-    useHousePackageEditController();
+  const {
+    mountStatus,
+    snapshot,
+    session,
+    saving,
+    validating,
+    validationReport,
+    apply,
+    save,
+    validate,
+  } = useHousePackageEditController();
   const [activeNav, setActiveNav] = useState<HousePackageNavId>('overview');
 
   const loadError =
@@ -35,14 +44,12 @@ export function BuilderStudioApp() {
           <div className="text-sm text-builder-muted">
             {mountStatus.status === 'loading' && 'Mounting HP-002…'}
             {mountStatus.status === 'ready' &&
-              snapshot !== null &&
-              (snapshot.dirtyState === 'save-failed'
-                ? 'Save failed'
-                : !snapshot.validation.ok
-                  ? 'HP-002 invalid'
-                  : snapshot.dirtyState === 'modified'
-                    ? 'HP-002 modified'
-                    : 'HP-002 clean')}
+              validationReport !== null &&
+              (validationReport.status === 'ERROR'
+                ? 'Validation ERROR · Publish blocked'
+                : validationReport.status === 'WARNING'
+                  ? 'Validation WARNING · Publish ready'
+                  : 'Validation PASS · Publish ready')}
             {mountStatus.status === 'error' && 'Mount failed'}
           </div>
         </header>
@@ -58,11 +65,25 @@ export function BuilderStudioApp() {
         <HousePackageMountPanel
           snapshot={snapshot}
           session={session}
+          validationReport={validationReport}
           loadError={loadError}
           saving={saving}
+          validating={validating}
           onChange={apply}
           onSave={() => {
             void save();
+          }}
+          onValidate={() => {
+            void validate();
+          }}
+          onNavigate={setActiveNav}
+          onPublish={() => {
+            // CAP-BLD-06 wires embed:publish. Gate only here.
+            window.alert(
+              validationReport?.canPublish
+                ? 'Publish gate open. CAP-BLD-06 will run embed:publish.'
+                : 'Publish blocked: fix validation ERROR first.',
+            );
           }}
         />
       }
