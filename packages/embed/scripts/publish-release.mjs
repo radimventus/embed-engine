@@ -61,6 +61,32 @@ function fail(message) {
   process.exit(1);
 }
 
+/**
+ * SPR-003 — refuse shipping HTML / Markdown / distribution docs at the IIFE path.
+ * Production partners load this URL as a script; docs belong in index.html only.
+ */
+function assertIifeIsJavascriptBundle(iifeText, label = "embed.iife.js") {
+  const head = iifeText.trimStart().slice(0, 120);
+  const looksLikeJs =
+    head.startsWith("var Embed=") ||
+    head.startsWith("(function") ||
+    head.startsWith("!function");
+  const looksLikeDoc =
+    head.startsWith("<!") ||
+    head.startsWith("<html") ||
+    head.startsWith("# ") ||
+    /Distribuce Embed Engine/i.test(head) ||
+    /Embed Engine distribution/i.test(head);
+
+  if (!looksLikeJs || looksLikeDoc) {
+    fail(
+      `${label} is not a JavaScript IIFE bundle.\n` +
+        `  head: ${JSON.stringify(head.slice(0, 80))}\n` +
+        `Expected e.g. "var Embed=" or "(function". Release index docs belong in index.html, never this path.`,
+    );
+  }
+}
+
 function run(label, command, args, cwd = packageDir) {
   console.log(`\n→ ${label}`);
   const result = spawnSync(command, args, {
@@ -143,6 +169,7 @@ function validateLocalRelease() {
   }
 
   const iifeText = readFileSync(iife, "utf8");
+  assertIifeIsJavascriptBundle(iifeText, "docs/embed/embed.iife.js");
   if (!iifeText.includes(fingerprint.marker)) {
     fail("embed.iife.js does not contain build fingerprint marker");
   }
@@ -193,6 +220,7 @@ async function validateRemotePages(fingerprint, versionJson) {
     fail(`Remote IIFE HTTP ${iifeRes.status}: ${iifeUrl}`);
   }
   const remoteIife = await iifeRes.text();
+  assertIifeIsJavascriptBundle(remoteIife, iifeUrl);
   if (!remoteIife.includes(fingerprint.marker)) {
     fail("Remote IIFE does not contain Release Snapshot fingerprint marker");
   }

@@ -151,7 +151,7 @@ function writeIndexHtml(version, cacheBust) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Embed Engine — Distribution ${version}</title>
+  <title>Embed release index ${version}</title>
   <style>
     body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; color: #1c2b22; }
     code, pre { background: #f0f4f1; padding: 0.15rem 0.35rem; border-radius: 0.25rem; }
@@ -160,7 +160,8 @@ function writeIndexHtml(version, cacheBust) {
   </style>
 </head>
 <body>
-  <h1>Embed Engine distribution</h1>
+  <h1>Embed release index</h1>
+  <p><strong>Not the IIFE.</strong> The script partners must load is <a href="./embed.iife.js"><code>embed.iife.js</code></a> (JavaScript). This page is only an artifact listing.</p>
   <p>Version <strong>${version}</strong> — build <code>${cacheBust}</code> — public artifacts for host pages.</p>
   <ul>
     <li><a href="./live.html"><strong>Live Launcher</strong></a> — Embed Hero → fullscreen Delivery Overlay</li>
