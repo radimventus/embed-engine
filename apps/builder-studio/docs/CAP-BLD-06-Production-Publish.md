@@ -66,5 +66,4 @@ From real artifacts (no mock checksum):
 ## Out of scope
 
 - Git commit / push / GitHub Pages
-- Runtime Preview (CAP-BLD-07)
 - Login / multi-project

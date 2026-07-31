@@ -15,7 +15,11 @@
   "include": ["src"],
   "exclude": [
     "src/**/*.test.ts",
-    "src/features/house-package/server/**"
+    "src/features/house-package/server/**",
+    "src/legacy/**",
+    "src/services/**",
+    "src/components/shell/**",
+    "src/model/**"
   ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

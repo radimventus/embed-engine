@@ -1,3 +1,10 @@
+/**
+ * @legacy CAP-BLD-07 quarantine — mock Partner/Project fixtures.
+ * NOT House Package SSOT. NOT used by BuilderStudioApp.
+ * Kept only for legacy service unit tests (`pnpm test:legacy`).
+ * See `src/legacy/README.md`.
+ */
+
 import type {
   ActiveProjectModel,
   AssetCategoryId,

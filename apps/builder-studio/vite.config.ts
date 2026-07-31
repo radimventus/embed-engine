@@ -6,8 +6,13 @@ import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 
+import {
+  createSsotResolveAliases,
+  repoRoot as ssotRepoRoot,
+} from '../../packages/embed/vite.ssot-aliases.js';
+
 const rootDir = dirname(fileURLToPath(import.meta.url));
-const repoRoot = resolve(rootDir, '../..');
+const repoRoot = ssotRepoRoot;
 const packageJson = JSON.parse(
   readFileSync(join(rootDir, 'package.json'), 'utf8'),
 );
@@ -16,6 +21,36 @@ const housePackageDiskRoot = resolve(
   repoRoot,
   'apps/client-studio/public/house-package',
 );
+
+function readEmbedRuntimeBuildDefine() {
+  const versionPath = join(repoRoot, 'docs/embed/version.json');
+  try {
+    const versionJson = JSON.parse(readFileSync(versionPath, 'utf8'));
+    const fp = versionJson.fingerprint;
+    if (
+      fp &&
+      typeof fp.commit === 'string' &&
+      typeof fp.builtAt === 'string' &&
+      typeof fp.marker === 'string' &&
+      typeof fp.runtimeSource === 'string'
+    ) {
+      return {
+        commit: fp.commit,
+        builtAt: fp.builtAt,
+        runtimeSource: fp.runtimeSource,
+        marker: fp.marker,
+      };
+    }
+  } catch {
+    // fall through
+  }
+  return {
+    commit: 'dev',
+    builtAt: 'dev',
+    runtimeSource: 'builder-package/projectBuilderImportToHousePackage',
+    marker: 'EMBED_RUNTIME_BUILD:dev@dev',
+  };
+}
 
 const CONTENT_TYPES = {
   '.csv': 'text/csv; charset=utf-8',
@@ -28,44 +63,6 @@ const CONTENT_TYPES = {
   '.webm': 'video/webm',
   '.mp4': 'video/mp4',
 };
-
-function pkgSrc(name, entry = 'index.ts') {
-  return resolve(repoRoot, 'packages', name, 'src', entry);
-}
-
-/** Same workspace source aliases as Embed / Client Studio hosts. */
-function createBuilderResolveAliases() {
-  return [
-    {
-      find: '@embed-engine/object-house/builder-package/node',
-      replacement: pkgSrc('object-house', 'builder-package/node.ts'),
-    },
-    {
-      find: '@embed-engine/object-house/builder-package',
-      replacement: pkgSrc('object-house', 'builder-package/index.ts'),
-    },
-    {
-      find: '@embed-engine/object-house/loader',
-      replacement: pkgSrc('object-house', 'loader/index.ts'),
-    },
-    {
-      find: '@embed-engine/object-house',
-      replacement: pkgSrc('object-house'),
-    },
-    {
-      find: '@embed-engine/design-tokens',
-      replacement: pkgSrc('design-tokens'),
-    },
-    {
-      find: '@embed-engine/model',
-      replacement: pkgSrc('model'),
-    },
-    {
-      find: '@embed-engine/core',
-      replacement: pkgSrc('core'),
-    },
-  ];
-}
 
 function readRequestBody(req) {
   return new Promise((resolveBody, rejectBody) => {
@@ -252,18 +249,26 @@ function serveHousePackagePlugin() {
 }
 
 /**
- * Builder Studio Vite config (EPIC-BLD-01 / CAP-BLD-02).
+ * Builder Studio Vite config (CAP-BLD-02..07).
  * Vite prefers vite.config.js over vite.config.ts when both exist.
  */
 export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
+  envDir: repoRoot,
   plugins: [react(), serveHousePackagePlugin()],
+  css: {
+    postcss: join(repoRoot, 'packages/embed/postcss.config.js'),
+  },
   resolve: {
-    alias: createBuilderResolveAliases(),
+    alias: createSsotResolveAliases(),
     dedupe: ['react', 'react-dom'],
   },
   define: {
     __BUILDER_STUDIO_VERSION__: JSON.stringify(packageJson.version),
+    __EMBED_RUNTIME_BUILD__: JSON.stringify(readEmbedRuntimeBuildDefine()),
+    'process.env.NODE_ENV': JSON.stringify(
+      process.env.NODE_ENV ?? 'development',
+    ),
   },
   build: {
     sourcemap: false,

@@ -20,12 +20,36 @@ importers:
 
   apps/builder-studio:
     dependencies:
+      '@embed-engine/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
+      '@embed-engine/core':
+        specifier: workspace:*
+        version: link:../../packages/core
+      '@embed-engine/decision':
+        specifier: workspace:*
+        version: link:../../packages/decision
       '@embed-engine/design-tokens':
         specifier: workspace:*
         version: link:../../packages/design-tokens
+      '@embed-engine/embed':
+        specifier: workspace:*
+        version: link:../../packages/embed
+      '@embed-engine/kernel':
+        specifier: workspace:*
+        version: link:../../packages/kernel
+      '@embed-engine/model':
+        specifier: workspace:*
+        version: link:../../packages/model
       '@embed-engine/object-house':
         specifier: workspace:*
         version: link:../../packages/object-house
+      '@embed-engine/runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
+      '@embed-engine/ui':
+        specifier: workspace:*
+        version: link:../../packages/ui
       react:
         specifier: ^19.1.0
         version: 19.2.7

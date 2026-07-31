@@ -12,5 +12,8 @@ export {
 export { HousePackageSidebar, type HousePackageNavId } from './HousePackageSidebar';
 export { HousePackageEditView } from './HousePackageEditView';
 export { HousePackageMountPanel } from './HousePackageMountPanel';
+export { HousePackageRuntimePreview } from './HousePackageRuntimePreview';
 export type { HousePackageReleaseSummary } from './productionPublishGate';
+export type { ReleaseVerification } from './releaseVerification';
 export { requestHousePackagePublish } from './requestHousePackagePublish';
+export { mountHousePackageRuntimePreview } from './mountHousePackageRuntimePreview';

@@ -1,3 +1,9 @@
+/**
+ * @legacy CAP-BLD-07 quarantine — mock Builder session (EPIC-BLD lab).
+ * NOT production Authoring Surface. BuilderStudioApp uses House Package only.
+ * Kept for archaeology / legacy tests only. See `src/legacy/README.md`.
+ */
+
 import { useMemo, useState } from 'react';
 
 import type {
@@ -182,7 +188,7 @@ import type {
   VersionInfo,
   WorkspaceSectionId,
   WorkspaceStructure,
-} from '../../model';
+} from '../model';
 import {
   createAssetService,
   createBuildService,
@@ -342,7 +348,7 @@ import {
   type ExperienceComposerService,
   type KnowledgeService,
   type ObjectService,
-} from '../../services';
+} from '../services';
 
 export type BuilderStudioViewModel = {
   readonly workspace: WorkspaceStructure;

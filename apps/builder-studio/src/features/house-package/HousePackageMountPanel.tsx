@@ -21,6 +21,7 @@ type HousePackageMountPanelProps = {
   readonly onValidate: () => void;
   readonly onNavigate: (nav: HousePackageNavId) => void;
   readonly onPublish: () => void;
+  readonly onOpenPreview: () => void;
 };
 
 /**
@@ -41,6 +42,7 @@ export function HousePackageMountPanel({
   onValidate,
   onNavigate,
   onPublish,
+  onOpenPreview,
 }: HousePackageMountPanelProps) {
   const canPublish = validationReport?.canPublish === true;
 
@@ -136,6 +138,14 @@ export function HousePackageMountPanel({
               </div>
             )}
           </dl>
+          <button
+            type="button"
+            onClick={onOpenPreview}
+            disabled={publishing}
+            className="mt-3 w-full rounded-[10px] border border-builder-navy bg-white px-3 py-2 text-sm font-medium text-builder-navy disabled:opacity-40"
+          >
+            Open Runtime Preview
+          </button>
         </div>
       )}
 

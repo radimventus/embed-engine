@@ -9,6 +9,12 @@ import {
 import type { HousePackageValidationReport } from './housePackageValidationReport';
 import type { HousePackageReleaseSummary } from './productionPublishGate';
 import { buildHousePackageValidationReport } from './housePackageValidationReport';
+import {
+  buildReleaseVerification,
+  fingerprintHousePackageContent,
+  PRODUCTION_RUNTIME_SOURCE,
+  type ReleaseVerification,
+} from './releaseVerification';
 import { requestHousePackagePersist } from './requestHousePackagePersist';
 import { requestHousePackagePublish } from './requestHousePackagePublish';
 import { runDiskHousePackageValidation } from './runHousePackageValidation';
@@ -22,17 +28,21 @@ export type HousePackageEditController = {
   readonly saving: boolean;
   readonly validating: boolean;
   readonly publishing: boolean;
+  readonly previewOpen: boolean;
   readonly validationReport: HousePackageValidationReport | null;
   readonly releaseSummary: HousePackageReleaseSummary | null;
+  readonly releaseVerification: ReleaseVerification | null;
   readonly publishError: string | null;
   readonly apply: (next: HousePackageEditSnapshot) => void;
   readonly save: () => Promise<void>;
   readonly validate: () => Promise<void>;
   readonly publish: () => Promise<void>;
+  readonly openPreview: () => void;
+  readonly closePreview: () => void;
 };
 
 /**
- * CAP-BLD-03/04/05/06 — mount, edit, persist, validate, production publish.
+ * CAP-BLD-03..07 — mount, edit, persist, validate, publish, Runtime Preview.
  */
 export function useHousePackageEditController(): HousePackageEditController {
   const { state: mountStatus, remount } = useHousePackageMount();
@@ -40,6 +50,7 @@ export function useHousePackageEditController(): HousePackageEditController {
   const [saving, setSaving] = useState(false);
   const [validating, setValidating] = useState(false);
   const [publishing, setPublishing] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
   const [validationReport, setValidationReport] =
     useState<HousePackageValidationReport | null>(null);
   const [releaseSummary, setReleaseSummary] =
@@ -68,6 +79,48 @@ export function useHousePackageEditController(): HousePackageEditController {
   const apply = useCallback((next: HousePackageEditSnapshot) => {
     setSnapshot(next);
   }, []);
+
+  const housePackageFingerprint = useMemo(() => {
+    if (snapshot === null) {
+      return null;
+    }
+    let manifestVersion = '1';
+    try {
+      const parsed = JSON.parse(snapshot.working.manifestJson ?? '{}') as {
+        version?: unknown;
+      };
+      if (
+        typeof parsed.version === 'string' ||
+        typeof parsed.version === 'number'
+      ) {
+        manifestVersion = String(parsed.version);
+      }
+    } catch {
+      // keep default
+    }
+    return fingerprintHousePackageContent({
+      roomsCsv: snapshot.working.roomsCsv,
+      galleryCsv: snapshot.working.galleryCsv,
+      videosCsv: snapshot.working.videosCsv,
+      heroRelativePath: snapshot.working.heroRelativePath,
+      manifestVersion,
+    });
+  }, [snapshot]);
+
+  const releaseVerification = useMemo((): ReleaseVerification | null => {
+    if (releaseSummary === null || housePackageFingerprint === null) {
+      return null;
+    }
+    return buildReleaseVerification({
+      publishFingerprint: releaseSummary.buildFingerprint,
+      runtimeFingerprint: PRODUCTION_RUNTIME_SOURCE,
+      housePackageFingerprint,
+      buildTimestamp: releaseSummary.releaseTimestamp,
+      housePackageVersion: releaseSummary.housePackageVersion,
+      embedVersion: releaseSummary.embedVersion,
+      previewOpen,
+    });
+  }, [housePackageFingerprint, previewOpen, releaseSummary]);
 
   const validate = useCallback(async () => {
     const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';
@@ -158,6 +211,7 @@ export function useHousePackageEditController(): HousePackageEditController {
     setPublishing(true);
     setPublishError(null);
     setReleaseSummary(null);
+    setPreviewOpen(false);
     try {
       const gateReport = await runDiskHousePackageValidation({ dirty });
       setValidationReport(gateReport);
@@ -208,6 +262,17 @@ export function useHousePackageEditController(): HousePackageEditController {
     }
   }, [remount, snapshot]);
 
+  const openPreview = useCallback(() => {
+    if (releaseSummary === null) {
+      return;
+    }
+    setPreviewOpen(true);
+  }, [releaseSummary]);
+
+  const closePreview = useCallback(() => {
+    setPreviewOpen(false);
+  }, []);
+
   return {
     mountStatus,
     snapshot,
@@ -215,12 +280,16 @@ export function useHousePackageEditController(): HousePackageEditController {
     saving,
     validating,
     publishing,
+    previewOpen,
     validationReport,
     releaseSummary,
+    releaseVerification,
     publishError,
     apply,
     save,
     validate,
     publish,
+    openPreview,
+    closePreview,
   };
 }

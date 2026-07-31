@@ -1,3 +1,10 @@
+/**
+ * @legacy CAP-BLD-07 quarantine — Stub Runtime Preview service.
+ * NOT production Preview. Production uses Embed.mount → Shared Runtime.
+ * Kept only for legacy unit tests (`pnpm test:legacy`).
+ * See `src/legacy/README.md`.
+ */
+
 import type {
   PreviewEvent,
   PreviewSnapshot,

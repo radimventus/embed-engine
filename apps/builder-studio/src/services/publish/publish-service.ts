@@ -1,3 +1,10 @@
+/**
+ * @legacy CAP-BLD-07 quarantine — mock in-memory PublishService.
+ * NOT production Publish. Production uses `pnpm embed:publish` (CAP-BLD-06).
+ * Kept only for legacy unit tests (`pnpm test:legacy`).
+ * See `src/legacy/README.md`.
+ */
+
 import type {
   DistributionModel,
   ProjectPackage,

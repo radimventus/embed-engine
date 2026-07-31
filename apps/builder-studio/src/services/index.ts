@@ -1,3 +1,10 @@
+/**
+ * @legacy CAP-BLD-07 — barrel for quarantined Builder lab services.
+ * Production Authoring Surface (`BuilderStudioApp`) must not import this module.
+ * Prefer House Package feature APIs under `src/features/house-package`.
+ * Legacy tests: `pnpm test:legacy`. See `src/legacy/README.md`.
+ */
+
 export {
   createMockActiveProjects,
   MOCK_PARTNER,

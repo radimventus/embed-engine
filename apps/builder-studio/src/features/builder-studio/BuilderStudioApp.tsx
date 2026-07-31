@@ -4,13 +4,14 @@ import { AppShell } from '../../components/layout/AppShell';
 import {
   HousePackageEditView,
   HousePackageMountPanel,
+  HousePackageRuntimePreview,
   HousePackageSidebar,
   useHousePackageEditController,
   type HousePackageNavId,
 } from '../house-package';
 
 /**
- * CAP-BLD-06 — Builder HP authoring + production publish (embed:publish).
+ * CAP-BLD-07 — production Authoring Surface: HP + Shared Runtime Preview.
  */
 export function BuilderStudioApp() {
   const {
@@ -20,13 +21,17 @@ export function BuilderStudioApp() {
     saving,
     validating,
     publishing,
+    previewOpen,
     validationReport,
     releaseSummary,
+    releaseVerification,
     publishError,
     apply,
     save,
     validate,
     publish,
+    openPreview,
+    closePreview,
   } = useHousePackageEditController();
   const [activeNav, setActiveNav] = useState<HousePackageNavId>('overview');
 
@@ -50,15 +55,22 @@ export function BuilderStudioApp() {
             {mountStatus.status === 'ready' && publishing && 'Publishing…'}
             {mountStatus.status === 'ready' &&
               !publishing &&
-              releaseSummary !== null &&
-              'Publish OK'}
+              previewOpen &&
+              'Runtime Preview'}
             {mountStatus.status === 'ready' &&
               !publishing &&
+              !previewOpen &&
+              releaseSummary !== null &&
+              'Publish OK · Preview ready'}
+            {mountStatus.status === 'ready' &&
+              !publishing &&
+              !previewOpen &&
               releaseSummary === null &&
               publishError !== null &&
               'Publish failed · retry available'}
             {mountStatus.status === 'ready' &&
               !publishing &&
+              !previewOpen &&
               releaseSummary === null &&
               publishError === null &&
               validationReport !== null &&
@@ -102,6 +114,7 @@ export function BuilderStudioApp() {
           onPublish={() => {
             void publish();
           }}
+          onOpenPreview={openPreview}
         />
       }
     >
@@ -127,6 +140,16 @@ export function BuilderStudioApp() {
             onSave={() => {
               void save();
             }}
+          />
+        )}
+      {releaseSummary !== null &&
+        releaseVerification !== null &&
+        previewOpen && (
+          <HousePackageRuntimePreview
+            open={previewOpen}
+            releaseSummary={releaseSummary}
+            verification={releaseVerification}
+            onClose={closePreview}
           />
         )}
     </AppShell>

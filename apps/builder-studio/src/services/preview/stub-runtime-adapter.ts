@@ -1,12 +1,14 @@
+/**
+ * @legacy CAP-BLD-07 quarantine — Stub Runtime Adapter.
+ * NOT Shared Runtime. NOT used by BuilderStudioApp.
+ * Kept only for legacy unit tests (`pnpm test:legacy`).
+ * See `src/legacy/README.md`.
+ */
+
 import type { RuntimeAdapter, RuntimeAdapterStatus } from '../../model';
 
 const STUB_RUNTIME_VERSION = 'adapter-stub-1.0.0';
 
-/**
- * Stub RuntimeAdapter for Builder orchestration tests.
- * Does not interpret package content and is not Embed Runtime.
- * Tracks load/unload/reload status only.
- */
 export function createStubRuntimeAdapter(options?: {
   readonly runtimeVersion?: string;
   readonly failOnLoad?: boolean;
