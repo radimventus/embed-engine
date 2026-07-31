@@ -1,0 +1,29 @@
+{
+  "name": "@embed-engine/lead",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc && node ./scripts/build-browser.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/LeadService.test.ts src/adapters/GoogleSheetsAdapter.test.ts src/adapters/EmailAdapter.test.ts"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  }
+}

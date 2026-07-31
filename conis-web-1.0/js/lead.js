@@ -1,7 +1,6 @@
 /**
- * Lead capture UI — production POST to Google Apps Script (CAP-WEB-01).
- * Flow: quiz → form → Sheets + e-mail via Apps Script → thank-you.
- * Does not talk to Google Sheets directly.
+ * Lead capture UI — builds LeadPayload and submits via @embed-engine/lead (IIFE).
+ * Source-specific quiz mapping lives here; Lead Service stays source-agnostic.
  */
 
 (function () {
@@ -15,19 +14,19 @@
 
   const SEGMENT_EVALUATION = Object.freeze({
     A: Object.freeze({
-      score: "Nízká připravenost",
+      score: 1,
       segment: "A — zatím není fit pro pilot",
       recommendation:
         "Pilot zatím nedává smysl. Zůstaňte v kontaktu a vraťte se, až budete připraveni začít.",
     }),
     B: Object.freeze({
-      score: "Střední připravenost",
+      score: 2,
       segment: "B — ke zvážení / review",
       recommendation:
         "Potenciál je, ale potřebujeme krátké review. Ozveme se s návrhem dalšího kroku.",
     }),
     C: Object.freeze({
-      score: "Vysoká připravenost",
+      score: 3,
       segment: "C — pilotní kandidát",
       recommendation:
         "Silný fit pro pilot. Domluvíme krátkou schůzku a nastavíme další postup.",
@@ -37,6 +36,7 @@
   let qualificationStatus = null;
   let qualificationAnswers = null;
   let calendlyUrl = null;
+  let leadService = null;
 
   const leadSection = document.getElementById("leadSection");
   const leadFormWrap = document.getElementById("leadFormWrap");
@@ -83,11 +83,11 @@
     leadError.textContent = message;
   }
 
-  function validate(payload) {
-    if (!payload.name) return "Vyplňte prosím jméno.";
-    if (!payload.company) return "Vyplňte prosím firmu.";
-    if (!payload.email) return "Vyplňte prosím e-mail.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email)) {
+  function validateContact(formValues) {
+    if (!formValues.name) return "Vyplňte prosím jméno.";
+    if (!formValues.company) return "Vyplňte prosím firmu.";
+    if (!formValues.email) return "Vyplňte prosím e-mail.";
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formValues.email)) {
       return "Zadejte platný e-mail.";
     }
     return null;
@@ -130,19 +130,12 @@
   function readUtmParams() {
     const params = new URLSearchParams(window.location.search);
     return {
-      utmSource: params.get("utm_source") || "",
-      utmMedium: params.get("utm_medium") || "",
-      utmCampaign: params.get("utm_campaign") || "",
+      source: params.get("utm_source") || undefined,
+      medium: params.get("utm_medium") || undefined,
+      campaign: params.get("utm_campaign") || undefined,
+      term: params.get("utm_term") || undefined,
+      content: params.get("utm_content") || undefined,
     };
-  }
-
-  function answersByQuestionTitle(answers) {
-    const mapped = {};
-    Object.keys(QUESTION_TITLES_BY_KEY).forEach((key) => {
-      const title = QUESTION_TITLES_BY_KEY[key];
-      mapped[title] = answers && answers[key] != null ? String(answers[key]) : "";
-    });
-    return mapped;
   }
 
   function evaluateStatus(status) {
@@ -161,65 +154,62 @@
     const fromMeta = meta?.getAttribute("content")?.trim() || "";
     if (fromMeta) return fromMeta;
 
-    return "/lead";
+    return "";
   }
 
-  function buildPayload(formValues) {
-    const evaluation = evaluateStatus(qualificationStatus);
+  function ensureLeadService() {
+    if (leadService) return leadService;
+    const api = window.EmbedLead;
+    if (!api || typeof api.createLeadService !== "function") {
+      throw new Error("Lead Service není načtená (chybí lead.iife.js).");
+    }
+    const endpoint = resolveLeadEndpoint();
+    if (!endpoint) {
+      throw new Error("Lead endpoint není nakonfigurován.");
+    }
+    leadService = api.createLeadService({ endpoint });
+    return leadService;
+  }
+
+  /** Source adapter: CONIS web quiz → universal LeadPayload (not inside LeadService). */
+  function buildLeadPayload(formValues) {
     const answers = qualificationAnswers || {};
+    const evaluation = evaluateStatus(qualificationStatus);
+    const source =
+      (window.EmbedLead && window.EmbedLead.LEAD_SOURCES?.CONIS_WEB) ||
+      "CONIS_WEB";
+
+    const fields = Object.keys(QUESTION_TITLES_BY_KEY).map((key) => ({
+      id: key,
+      label: QUESTION_TITLES_BY_KEY[key],
+      value: answers[key] != null ? String(answers[key]) : "",
+    }));
+
     const utm = readUtmParams();
 
     return {
+      source,
       leadId: createId(),
       timestamp: new Date().toISOString(),
-      name: formValues.name,
-      company: formValues.company,
-      email: formValues.email,
-      phone: formValues.phone,
-      status: qualificationStatus || "B",
-      score: evaluation.score,
-      segment: evaluation.segment,
-      recommendation: evaluation.recommendation,
-      answers,
-      answersByTitle: answersByQuestionTitle(answers),
-      url: window.location.href,
-      referrer: document.referrer || "",
-      utmSource: utm.utmSource,
-      utmMedium: utm.utmMedium,
-      utmCampaign: utm.utmCampaign,
-      sessionId: getOrCreateSessionId(),
-      userAgent: navigator.userAgent,
-    };
-  }
-
-  async function postLead(endpoint, payload) {
-    const isAppsScript = /script\.google\.com/i.test(endpoint);
-    const response = await fetch(endpoint, {
-      method: "POST",
-      // text/plain avoids CORS preflight against Apps Script web apps
-      headers: {
-        "Content-Type": isAppsScript
-          ? "text/plain;charset=utf-8"
-          : "application/json",
+      contact: {
+        name: formValues.name,
+        company: formValues.company,
+        email: formValues.email,
+        phone: formValues.phone || undefined,
       },
-      body: JSON.stringify(payload),
-      redirect: "follow",
-    });
-
-    let body = {};
-    try {
-      body = await response.json();
-    } catch {
-      body = {};
-    }
-
-    if (!response.ok || body.ok === false) {
-      throw new Error(
-        body.error || "Odeslání se nezdařilo. Zkuste to prosím znovu.",
-      );
-    }
-
-    return body;
+      fields,
+      summary: {
+        score: evaluation.score,
+        segment: evaluation.segment,
+        recommendation: evaluation.recommendation,
+      },
+      metadata: {
+        url: window.location.href,
+        referrer: document.referrer || undefined,
+        sessionId: getOrCreateSessionId(),
+        utm,
+      },
+    };
   }
 
   async function submitLead(event) {
@@ -236,14 +226,11 @@
       phone: String(data.get("phone") || "").trim(),
     };
 
-    const error = validate(formValues);
+    const error = validateContact(formValues);
     if (error) {
       showError(error);
       return;
     }
-
-    const payload = buildPayload(formValues);
-    const endpoint = resolveLeadEndpoint();
 
     if (leadSubmit) {
       leadSubmit.disabled = true;
@@ -251,7 +238,15 @@
     }
 
     try {
-      await postLead(endpoint, payload);
+      const service = ensureLeadService();
+      const payload = buildLeadPayload(formValues);
+      const result = await service.submitLead(payload);
+
+      if (!result.ok) {
+        throw new Error(
+          result.error || "Odeslání se nezdařilo. Zkuste to prosím znovu.",
+        );
+      }
 
       if (leadFormWrap) leadFormWrap.hidden = true;
       if (leadThanks) {
@@ -262,7 +257,6 @@
         leadThanks.scrollIntoView({ behavior: "smooth", block: "center" });
       }
     } catch (err) {
-      // Keep form values (do not reset) so the user can retry.
       showError(
         err instanceof Error
           ? err.message

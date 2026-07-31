@@ -1,50 +1,16 @@
 /**
- * CONIS Quiz Lead Capture — Google Apps Script (CAP-WEB-01)
+ * CONIS Lead Capture — Google Apps Script (CAP-WEB-01 + CAP-CORE-01)
  *
- * Deploy:
- * 1. Create a Google Sheet; copy its Spreadsheet ID.
- * 2. Extensions → Apps Script → paste this file.
- * 3. Project Settings → Script properties:
- *      SPREADSHEET_ID   = <sheet id>
- *      NOTIFICATION_EMAIL = kontakt@conis.cz
- *      SHEET_NAME       = Leads   (optional, default Leads)
- * 4. Deploy → New deployment → Web app
- *      Execute as: Me
- *      Who has access: Anyone
- * 5. Copy the Web App URL into conis-web meta `conis-lead-endpoint`
- *    (and docs/index.html for production Pages).
+ * Accepts:
+ * 1) Universal Lead Service envelope from @embed-engine/lead
+ *    { channel, sheetColumns, email, payload, source, leadId }
+ * 2) Legacy CAP-WEB-01 quiz payload (answersByTitle, contact flat fields)
  *
- * Frontend POSTs JSON as text/plain (avoids CORS preflight).
- * This script appends one sheet row and sends a notification email.
+ * Script properties:
+ *   SPREADSHEET_ID
+ *   NOTIFICATION_EMAIL  (default kontakt@conis.cz)
+ *   SHEET_NAME           (default Leads)
  */
-
-var QUESTION_TITLES = [
-  "Kolik domů ročně prodáváte?",
-  "Máte vlastní obchodní tým?",
-  "Kolik lidí měsíčně navštíví váš web?",
-  "Co je pro vás důležitější?",
-  "Jste připraveni začít pilotem?",
-];
-
-var FIXED_HEADERS = [
-  "Lead ID",
-  "Datum a čas",
-  "Jméno",
-  "Firma",
-  "E-mail",
-  "Telefon",
-].concat(QUESTION_TITLES).concat([
-  "Skóre",
-  "Segment",
-  "Doporučení",
-  "URL",
-  "Referrer",
-  "UTM Source",
-  "UTM Medium",
-  "UTM Campaign",
-  "Session ID",
-  "JSON Payload",
-]);
 
 function doGet() {
   return jsonResponse_({ ok: true, service: "conis-lead-capture" });
@@ -57,30 +23,125 @@ function doPost(e) {
         ? e.postData.contents
         : "";
     if (!raw) {
-      return jsonResponse_({ ok: false, error: "Empty body" }, 400);
+      return jsonResponse_({ ok: false, error: "Empty body" });
     }
-
     var payload = JSON.parse(raw);
-    var result = processLead_(payload);
+    var result = processIncoming_(payload);
     return jsonResponse_(result);
   } catch (err) {
-    return jsonResponse_(
-      { ok: false, error: String(err && err.message ? err.message : err) },
-      500,
-    );
+    return jsonResponse_({
+      ok: false,
+      error: String(err && err.message ? err.message : err),
+    });
   }
 }
 
-function processLead_(payload) {
-  if (!payload || typeof payload !== "object") {
+function processIncoming_(body) {
+  if (!body || typeof body !== "object") {
     throw new Error("Neplatný payload.");
   }
+
+  // CAP-CORE-01 envelope from Lead Service adapters
+  // Detect via sheetColumns / channel — not `email` (legacy uses string email).
+  if (body.sheetColumns || body.channel) {
+    return processUniversal_(body);
+  }
+
+  // Legacy CAP-WEB-01 flat quiz payload
+  return processLegacyQuiz_(body);
+}
+
+function processUniversal_(body) {
+  var props = PropertiesService.getScriptProperties();
+  var spreadsheetId = props.getProperty("SPREADSHEET_ID");
+  var notificationEmail =
+    props.getProperty("NOTIFICATION_EMAIL") || "kontakt@conis.cz";
+  var sheetName = props.getProperty("SHEET_NAME") || "Leads";
+
+  if (!spreadsheetId) {
+    throw new Error("SPREADSHEET_ID není nastaveno ve Script properties.");
+  }
+
+  var leadId =
+    String(body.leadId || "") ||
+    (body.payload && body.payload.leadId) ||
+    Utilities.getUuid();
+
+  var sheetColumns = body.sheetColumns || {};
+  if (!sheetColumns["Lead ID"]) {
+    sheetColumns["Lead ID"] = leadId;
+  }
+
+  if (Object.keys(sheetColumns).length > 0) {
+    appendDynamicRow_(spreadsheetId, sheetName, sheetColumns);
+  }
+
+  var mail = body.mail || body.emailMessage;
+  if (mail && mail.body) {
+    MailApp.sendEmail({
+      to: notificationEmail,
+      subject: String(mail.subject || "Nový lead"),
+      body: String(mail.body),
+    });
+  } else if (body.payload) {
+    MailApp.sendEmail({
+      to: notificationEmail,
+      subject: "Nový lead — " + leadId,
+      body: JSON.stringify(body.payload, null, 2),
+    });
+  }
+
+  return { ok: true, leadId: String(leadId) };
+}
+
+function appendDynamicRow_(spreadsheetId, sheetName, columns) {
+  var ss = SpreadsheetApp.openById(spreadsheetId);
+  var sheet = ss.getSheetByName(sheetName);
+  if (!sheet) {
+    sheet = ss.insertSheet(sheetName);
+  }
+
+  var headers;
+  if (sheet.getLastRow() === 0) {
+    headers = Object.keys(columns);
+    sheet.appendRow(headers);
+    sheet.setFrozenRows(1);
+  } else {
+    var width = Math.max(sheet.getLastColumn(), 1);
+    headers = sheet.getRange(1, 1, 1, width).getValues()[0].map(String);
+    // Extend header row with any new labels
+    var changed = false;
+    Object.keys(columns).forEach(function (key) {
+      if (headers.indexOf(key) === -1) {
+        headers.push(key);
+        changed = true;
+      }
+    });
+    if (changed) {
+      sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    }
+  }
+
+  var row = headers.map(function (header) {
+    return columns[header] != null ? String(columns[header]) : "";
+  });
+  sheet.appendRow(row);
+}
+
+/** Legacy CAP-WEB-01 quiz-shaped payload (kept for backward compatibility). */
+function processLegacyQuiz_(payload) {
+  var QUESTION_TITLES = [
+    "Kolik domů ročně prodáváte?",
+    "Máte vlastní obchodní tým?",
+    "Kolik lidí měsíčně navštíví váš web?",
+    "Co je pro vás důležitější?",
+    "Jste připraveni začít pilotem?",
+  ];
 
   var name = String(payload.name || "").trim();
   var company = String(payload.company || "").trim();
   var email = String(payload.email || "").trim();
   var phone = String(payload.phone || "").trim();
-
   if (!name || !company || !email) {
     throw new Error("Vyplňte jméno, firmu a e-mail.");
   }
@@ -90,7 +151,6 @@ function processLead_(payload) {
   var notificationEmail =
     props.getProperty("NOTIFICATION_EMAIL") || "kontakt@conis.cz";
   var sheetName = props.getProperty("SHEET_NAME") || "Leads";
-
   if (!spreadsheetId) {
     throw new Error("SPREADSHEET_ID není nastaveno ve Script properties.");
   }
@@ -102,128 +162,64 @@ function processLead_(payload) {
 
   var leadId = String(payload.leadId || Utilities.getUuid());
   var timestamp = String(payload.timestamp || new Date().toISOString());
-  var score = String(payload.score || "");
-  var segment = String(payload.segment || payload.status || "");
-  var recommendation = String(payload.recommendation || "");
-  var pageUrl = String(payload.url || "");
-  var referrer = String(payload.referrer || "");
-  var utmSource = String(payload.utmSource || "");
-  var utmMedium = String(payload.utmMedium || "");
-  var utmCampaign = String(payload.utmCampaign || "");
-  var sessionId = String(payload.sessionId || "");
 
-  var row = [
-    leadId,
-    timestamp,
-    name,
-    company,
-    email,
-    phone,
-  ];
+  var columns = {
+    "Lead ID": leadId,
+    "Datum a čas": timestamp,
+    Source: "CONIS_WEB",
+    Jméno: name,
+    Firma: company,
+    "E-mail": email,
+    Telefon: phone,
+  };
 
-  for (var i = 0; i < QUESTION_TITLES.length; i++) {
-    var title = QUESTION_TITLES[i];
-    row.push(String(answersByTitle[title] || ""));
-  }
+  QUESTION_TITLES.forEach(function (title) {
+    columns[title] = String(answersByTitle[title] || "");
+  });
 
-  row.push(
-    score,
-    segment,
-    recommendation,
-    pageUrl,
-    referrer,
-    utmSource,
-    utmMedium,
-    utmCampaign,
-    sessionId,
-    JSON.stringify(payload),
-  );
+  columns["Skóre"] = String(payload.score || "");
+  columns.Segment = String(payload.segment || payload.status || "");
+  columns.Doporučení = String(payload.recommendation || "");
+  columns.URL = String(payload.url || "");
+  columns.Referrer = String(payload.referrer || "");
+  columns["UTM Source"] = String(payload.utmSource || "");
+  columns["UTM Medium"] = String(payload.utmMedium || "");
+  columns["UTM Campaign"] = String(payload.utmCampaign || "");
+  columns["Session ID"] = String(payload.sessionId || "");
+  columns["JSON Payload"] = JSON.stringify(payload);
 
-  var sheet = ensureSheet_(spreadsheetId, sheetName);
-  sheet.appendRow(row);
+  appendDynamicRow_(spreadsheetId, sheetName, columns);
 
-  sendNotificationEmail_(notificationEmail, {
-    leadId: leadId,
-    timestamp: timestamp,
-    name: name,
-    company: company,
-    email: email,
-    phone: phone,
-    score: score,
-    segment: segment,
-    recommendation: recommendation,
-    answersByTitle: answersByTitle,
-    pageUrl: pageUrl,
-    sessionId: sessionId,
+  var answerLines = QUESTION_TITLES.map(function (title) {
+    return title + ": " + (answersByTitle[title] || "—");
+  });
+
+  MailApp.sendEmail({
+    to: notificationEmail,
+    subject: "Nová kvalifikace CONIS — " + company,
+    body: [
+      "Nová kvalifikace CONIS",
+      "",
+      "Lead ID: " + leadId,
+      "Datum: " + timestamp,
+      "",
+      "Kontakt",
+      "Jméno: " + name,
+      "Firma: " + company,
+      "E-mail: " + email,
+      "Telefon: " + (phone || "—"),
+      "",
+      "Vyhodnocení",
+      "Skóre: " + (payload.score || "—"),
+      "Segment: " + (payload.segment || payload.status || "—"),
+      "Doporučení: " + (payload.recommendation || "—"),
+      "",
+      "Odpovědi z kvízu",
+      answerLines.join("\n"),
+    ].join("\n"),
   });
 
   return { ok: true, leadId: leadId };
-}
-
-function ensureSheet_(spreadsheetId, sheetName) {
-  var ss = SpreadsheetApp.openById(spreadsheetId);
-  var sheet = ss.getSheetByName(sheetName);
-  if (!sheet) {
-    sheet = ss.insertSheet(sheetName);
-  }
-
-  if (sheet.getLastRow() === 0) {
-    sheet.appendRow(FIXED_HEADERS);
-    sheet.setFrozenRows(1);
-  } else {
-    var existing = sheet.getRange(1, 1, 1, FIXED_HEADERS.length).getValues()[0];
-    var mismatch = false;
-    for (var i = 0; i < FIXED_HEADERS.length; i++) {
-      if (String(existing[i] || "") !== FIXED_HEADERS[i]) {
-        mismatch = true;
-        break;
-      }
-    }
-    if (mismatch) {
-      sheet.getRange(1, 1, 1, FIXED_HEADERS.length).setValues([FIXED_HEADERS]);
-      sheet.setFrozenRows(1);
-    }
-  }
-
-  return sheet;
-}
-
-function sendNotificationEmail_(to, data) {
-  var answerLines = [];
-  for (var i = 0; i < QUESTION_TITLES.length; i++) {
-    var title = QUESTION_TITLES[i];
-    answerLines.push(title + ": " + (data.answersByTitle[title] || "—"));
-  }
-
-  var body = [
-    "Nová kvalifikace CONIS",
-    "",
-    "Lead ID: " + data.leadId,
-    "Datum: " + data.timestamp,
-    "",
-    "Kontakt",
-    "Jméno: " + data.name,
-    "Firma: " + data.company,
-    "E-mail: " + data.email,
-    "Telefon: " + (data.phone || "—"),
-    "",
-    "Vyhodnocení",
-    "Skóre: " + (data.score || "—"),
-    "Segment: " + (data.segment || "—"),
-    "Doporučení: " + (data.recommendation || "—"),
-    "",
-    "Odpovědi z kvízu",
-    answerLines.join("\n"),
-    "",
-    "URL: " + (data.pageUrl || "—"),
-    "Session ID: " + (data.sessionId || "—"),
-  ].join("\n");
-
-  MailApp.sendEmail({
-    to: to,
-    subject: "Nová kvalifikace CONIS — " + data.company,
-    body: body,
-  });
 }
 
 function jsonResponse_(obj) {
