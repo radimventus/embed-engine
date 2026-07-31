@@ -7,4 +7,10 @@ export {
 } from "./publishFloorPlanGeometry";
 export type { GenerateAuthorSvgFromRoomSvgsResult } from "./generateAuthorSvgFromRoomSvgs";
 export { generateAuthorSvgFromRoomSvgs } from "./generateAuthorSvgFromRoomSvgs";
+export {
+  persistBuilderHousePackage,
+  type PersistBuilderHousePackageFiles,
+  type PersistBuilderHousePackageInput,
+  type PersistBuilderHousePackageResult,
+} from "./persistBuilderHousePackage";
 export * from "./index";

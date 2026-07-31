@@ -17,7 +17,7 @@ import {
 
 const MAX_UNDO = 40;
 
-export type HousePackageDirtyState = 'clean' | 'modified';
+export type HousePackageDirtyState = 'clean' | 'modified' | 'save-failed';
 
 export type HousePackageEditSnapshot = {
   readonly baseline: HousePackageWorkingContent;
@@ -25,6 +25,7 @@ export type HousePackageEditSnapshot = {
   readonly dirtyState: HousePackageDirtyState;
   readonly dirty: readonly HpEditSection[];
   readonly canUndo: boolean;
+  readonly saveError: string | null;
   readonly validation: HousePackageValidation;
   readonly sectionErrors: readonly BuilderPackageImportError[];
   readonly geometryByFloor: HousePackageMount['geometryByFloor'];
@@ -44,6 +45,8 @@ export type HousePackageEditSession = {
   /** Discard all edits — reset working content to mounted baseline. */
   discard(): HousePackageEditSnapshot;
   reset(): HousePackageEditSnapshot;
+  markSaveFailed(message: string): HousePackageEditSnapshot;
+  clearSaveFailed(): HousePackageEditSnapshot;
 };
 
 function cloneWorking(
@@ -63,16 +66,24 @@ function buildSnapshot(input: {
   readonly working: HousePackageWorkingContent;
   readonly undoStack: readonly HousePackageWorkingContent[];
   readonly mount: HousePackageMount;
+  readonly saveError: string | null;
 }): HousePackageEditSnapshot {
   const dirty = dirtySections(input.baseline, input.working);
   const validation = validateHousePackageWorking(input.working);
   const sectionErrors = errorsForDirtySections(validation.errors, dirty);
+  const dirtyState: HousePackageDirtyState =
+    input.saveError !== null
+      ? 'save-failed'
+      : dirty.length === 0
+        ? 'clean'
+        : 'modified';
   return {
     baseline: input.baseline,
     working: input.working,
-    dirtyState: dirty.length === 0 ? 'clean' : 'modified',
+    dirtyState,
     dirty,
     canUndo: input.undoStack.length > 0,
+    saveError: input.saveError,
     validation,
     sectionErrors,
     geometryByFloor: input.mount.geometryByFloor,
@@ -83,7 +94,8 @@ function buildSnapshot(input: {
 }
 
 /**
- * Create an edit session bound to a mount. Mutations stay in memory only.
+ * Create an edit session bound to a mount. Mutations stay in memory only
+ * until CAP-BLD-04 persist via Node host.
  */
 export function createHousePackageEditSession(
   mount: HousePackageMount,
@@ -97,18 +109,20 @@ export function createHousePackageEditSession(
   };
   let working = cloneWorking(baseline);
   let undoStack: HousePackageWorkingContent[] = [];
+  let saveError: string | null = null;
 
   const commit = (
     next: HousePackageWorkingContent,
   ): HousePackageEditSnapshot => {
     undoStack = [cloneWorking(working), ...undoStack].slice(0, MAX_UNDO);
     working = next;
-    return buildSnapshot({ baseline, working, undoStack, mount });
+    saveError = null;
+    return buildSnapshot({ baseline, working, undoStack, mount, saveError });
   };
 
   return {
     snapshot() {
-      return buildSnapshot({ baseline, working, undoStack, mount });
+      return buildSnapshot({ baseline, working, undoStack, mount, saveError });
     },
 
     setRoomsCsv(next) {
@@ -154,17 +168,29 @@ export function createHousePackageEditSession(
       }
       undoStack = undoStack.slice(1);
       working = cloneWorking(previous);
-      return buildSnapshot({ baseline, working, undoStack, mount });
+      saveError = null;
+      return buildSnapshot({ baseline, working, undoStack, mount, saveError });
     },
 
     discard() {
       undoStack = [];
       working = cloneWorking(baseline);
-      return buildSnapshot({ baseline, working, undoStack, mount });
+      saveError = null;
+      return buildSnapshot({ baseline, working, undoStack, mount, saveError });
     },
 
     reset() {
       return this.discard();
+    },
+
+    markSaveFailed(message) {
+      saveError = message;
+      return buildSnapshot({ baseline, working, undoStack, mount, saveError });
+    },
+
+    clearSaveFailed() {
+      saveError = null;
+      return buildSnapshot({ baseline, working, undoStack, mount, saveError });
     },
   };
 }

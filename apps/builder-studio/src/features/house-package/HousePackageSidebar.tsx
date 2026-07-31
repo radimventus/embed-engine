@@ -60,17 +60,19 @@ export function HousePackageSidebar({
       {snapshot !== null && (
         <p
           className={`mt-2 text-[12px] font-semibold ${
-            snapshot.validation.ok
-              ? snapshot.dirtyState === 'modified'
+            !snapshot.validation.ok || snapshot.dirtyState === 'save-failed'
+              ? 'text-builder-draft'
+              : snapshot.dirtyState === 'modified'
                 ? 'text-builder-navy'
                 : 'text-builder-success'
-              : 'text-builder-draft'
           }`}
         >
           {snapshot.validation.ok
-            ? snapshot.dirtyState === 'modified'
-              ? 'Modified'
-              : 'Clean'
+            ? snapshot.dirtyState === 'save-failed'
+              ? 'Save failed'
+              : snapshot.dirtyState === 'modified'
+                ? 'Modified'
+                : 'Clean'
             : 'Invalid'}
         </p>
       )}

@@ -21,17 +21,21 @@ type HousePackageEditViewProps = {
   readonly snapshot: HousePackageEditSnapshot;
   readonly session: HousePackageEditSession;
   readonly activeNav: HousePackageNavId;
+  readonly saving: boolean;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
+  readonly onSave: () => void;
 };
 
 /**
- * CAP-BLD-03 — edit HP-002 texts in memory (no disk write).
+ * CAP-BLD-03/04 — edit HP-002 texts; Save persists via Node host.
  */
 export function HousePackageEditView({
   snapshot,
   session,
   activeNav,
+  saving,
   onChange,
+  onSave,
 }: HousePackageEditViewProps) {
   const pkg = snapshot.validation.builderImport;
   const status = sectionStatus(snapshot, navToSection(activeNav));
@@ -41,7 +45,7 @@ export function HousePackageEditView({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-[12px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-            Content SSOT · in-memory edit
+            Content SSOT · edit &amp; save
           </p>
           <h2 className="mt-1 text-2xl font-semibold text-builder-ink">
             House Package (HP-002)
@@ -54,7 +58,19 @@ export function HousePackageEditView({
           <StatusBadge status={overallStatus(snapshot)} />
           <button
             type="button"
-            disabled={!snapshot.canUndo}
+            disabled={
+              saving ||
+              snapshot.dirtyState === 'clean' ||
+              !snapshot.validation.ok
+            }
+            onClick={onSave}
+            className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
+          >
+            {saving ? 'Saving…' : 'Save'}
+          </button>
+          <button
+            type="button"
+            disabled={!snapshot.canUndo || saving}
             onClick={() => onChange(session.undo())}
             className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium text-builder-ink disabled:opacity-40"
           >
@@ -62,7 +78,7 @@ export function HousePackageEditView({
           </button>
           <button
             type="button"
-            disabled={snapshot.dirtyState === 'clean'}
+            disabled={snapshot.dirtyState === 'clean' || saving}
             onClick={() => onChange(session.discard())}
             className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium text-builder-ink disabled:opacity-40"
           >
@@ -70,6 +86,12 @@ export function HousePackageEditView({
           </button>
         </div>
       </div>
+
+      {snapshot.saveError !== null && (
+        <p className="rounded-lg bg-builder-draftBg px-4 py-3 text-sm text-builder-draft">
+          {snapshot.saveError}
+        </p>
+      )}
 
       {snapshot.sectionErrors.length > 0 && (
         <ErrorList
@@ -99,8 +121,8 @@ export function HousePackageEditView({
             />
           </Panel>
           <p className="text-sm text-builder-muted">
-            Edits stay in memory. Save to disk is CAP-BLD-04. Publish is
-            CAP-BLD-05.
+            Save writes changed HP-002 files atomically via Node host. Publish
+            is CAP-BLD-05.
           </p>
         </section>
       )}
@@ -248,7 +270,7 @@ export function HousePackageEditView({
   );
 }
 
-type UiStatus = 'clean' | 'modified' | 'invalid';
+type UiStatus = 'clean' | 'modified' | 'invalid' | 'save-failed';
 
 function navToSection(nav: HousePackageNavId): HpEditSection | null {
   if (nav === 'rooms') return 'rooms';
@@ -267,6 +289,7 @@ function sectionStatus(
   if (section === null) {
     return overallStatus(snapshot);
   }
+  if (snapshot.dirtyState === 'save-failed') return 'save-failed';
   const dirty = snapshot.dirty.includes(section);
   const hasSectionError = snapshot.sectionErrors.some((error) => {
     const hay = `${error.path ?? ''} ${error.message}`.toLowerCase();
@@ -279,14 +302,12 @@ function sectionStatus(
     return false;
   });
   if (dirty && hasSectionError) return 'invalid';
-  if (dirty && !snapshot.validation.ok && section !== 'manifest' && hasSectionError) {
-    return 'invalid';
-  }
   if (dirty) return 'modified';
   return 'clean';
 }
 
 function overallStatus(snapshot: HousePackageEditSnapshot): UiStatus {
+  if (snapshot.dirtyState === 'save-failed') return 'save-failed';
   if (!snapshot.validation.ok) return 'invalid';
   if (snapshot.dirtyState === 'modified') return 'modified';
   return 'clean';
@@ -294,7 +315,13 @@ function overallStatus(snapshot: HousePackageEditSnapshot): UiStatus {
 
 function StatusBadge({ status }: { readonly status: UiStatus }) {
   const label =
-    status === 'clean' ? 'Clean' : status === 'modified' ? 'Modified' : 'Invalid';
+    status === 'clean'
+      ? 'Clean'
+      : status === 'modified'
+        ? 'Modified'
+        : status === 'save-failed'
+          ? 'Save failed'
+          : 'Invalid';
   const className =
     status === 'clean'
       ? 'bg-builder-successBg text-builder-success'

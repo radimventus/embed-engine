@@ -65,18 +65,88 @@ function createBuilderResolveAliases() {
   ];
 }
 
+function readRequestBody(req) {
+  return new Promise((resolveBody, rejectBody) => {
+    const chunks = [];
+    req.on('data', (chunk) => {
+      chunks.push(chunk);
+    });
+    req.on('end', () => {
+      resolveBody(Buffer.concat(chunks).toString('utf8'));
+    });
+    req.on('error', rejectBody);
+  });
+}
+
 function serveHousePackagePlugin() {
   return {
     name: 'serve-house-package-hp002',
     configureServer(server) {
-      server.middlewares.use((req, res, next) => {
+      server.middlewares.use(async (req, res, next) => {
         const url = req.url ?? '';
+        const pathOnly = (url.split('?')[0] ?? url);
+
+        if (
+          pathOnly === '/api/house-package/persist' &&
+          req.method === 'POST'
+        ) {
+          try {
+            const raw = await readRequestBody(req);
+            const body = JSON.parse(raw || '{}');
+            const files =
+              body && typeof body === 'object' && body.files
+                ? body.files
+                : {};
+            const { persistBuilderHousePackage } = await import(
+              '../../packages/object-house/src/builder-package/persistBuilderHousePackage.ts'
+            );
+            const result = await persistBuilderHousePackage({
+              packageRoot: housePackageDiskRoot,
+              files: {
+                roomsCsv:
+                  typeof files.roomsCsv === 'string'
+                    ? files.roomsCsv
+                    : undefined,
+                galleryCsv:
+                  typeof files.galleryCsv === 'string'
+                    ? files.galleryCsv
+                    : undefined,
+                videosCsv:
+                  typeof files.videosCsv === 'string'
+                    ? files.videosCsv
+                    : undefined,
+                manifestJson:
+                  typeof files.manifestJson === 'string'
+                    ? files.manifestJson
+                    : files.manifestJson === null
+                      ? null
+                      : undefined,
+              },
+            });
+            res.statusCode = result.ok ? 200 : 500;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(JSON.stringify(result));
+          } catch (error) {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(
+              JSON.stringify({
+                ok: false,
+                error:
+                  error instanceof Error
+                    ? error.message
+                    : 'Persist middleware failed.',
+              }),
+            );
+          }
+          return;
+        }
+
         if (!url.startsWith('/house-package/')) {
           next();
           return;
         }
 
-        const pathOnly = url.split('?')[0] ?? url;
         const rel = decodeURIComponent(pathOnly.slice('/house-package/'.length));
         if (rel.length === 0 || rel.includes('\0')) {
           res.statusCode = 404;

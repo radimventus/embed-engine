@@ -2,6 +2,8 @@ export { HOUSE_PACKAGE_DISK_ROOT, HOUSE_PACKAGE_URL_ROOT } from './housePackageP
 export { mountHousePackage, type HousePackageMount } from './mountHousePackage';
 export { useHousePackageMount } from './useHousePackageMount';
 export { useHousePackageEditController } from './useHousePackageEditController';
+export { requestHousePackagePersist } from './requestHousePackagePersist';
+export { buildPersistFiles } from './buildPersistFiles';
 export {
   createHousePackageEditSession,
   type HousePackageEditSession,

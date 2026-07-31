@@ -1,29 +1,23 @@
+// Runtime config SSOT is vite.config.js (Vite prefers .js).
+// Keep this TypeScript mirror for editors; prefer editing vite.config.js.
 import { existsSync, readFileSync, statSync } from 'node:fs';
-import type { IncomingMessage, ServerResponse } from 'node:http';
 import { dirname, join, normalize, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
 import react from '@vitejs/plugin-react';
-import { defineConfig, type Plugin } from 'vite';
-
-/**
- * TypeScript mirror of vite.config.js (CAP-BLD-02).
- * Vite prefers vite.config.js when both exist — keep JS as the runtime config.
- * This file documents the same HP mount middleware for typed editing.
- */
+import { defineConfig } from 'vite';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(rootDir, '../..');
 const packageJson = JSON.parse(
   readFileSync(join(rootDir, 'package.json'), 'utf8'),
-) as { version: string };
+);
 
 const housePackageDiskRoot = resolve(
   repoRoot,
   'apps/client-studio/public/house-package',
 );
 
-const CONTENT_TYPES: Record<string, string> = {
+const CONTENT_TYPES = {
   '.csv': 'text/csv; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.svg': 'image/svg+xml',
@@ -35,10 +29,11 @@ const CONTENT_TYPES: Record<string, string> = {
   '.mp4': 'video/mp4',
 };
 
-function pkgSrc(name: string, entry = 'index.ts'): string {
+function pkgSrc(name, entry = 'index.ts') {
   return resolve(repoRoot, 'packages', name, 'src', entry);
 }
 
+/** Same workspace source aliases as Embed / Client Studio hosts. */
 function createBuilderResolveAliases() {
   return [
     {
@@ -72,58 +67,124 @@ function createBuilderResolveAliases() {
   ];
 }
 
-function serveHousePackagePlugin(): Plugin {
+function readRequestBody(req) {
+  return new Promise((resolveBody, rejectBody) => {
+    const chunks = [];
+    req.on('data', (chunk) => {
+      chunks.push(chunk);
+    });
+    req.on('end', () => {
+      resolveBody(Buffer.concat(chunks).toString('utf8'));
+    });
+    req.on('error', rejectBody);
+  });
+}
+
+function serveHousePackagePlugin() {
   return {
     name: 'serve-house-package-hp002',
     configureServer(server) {
-      server.middlewares.use(
-        (
-          req: IncomingMessage,
-          res: ServerResponse,
-          next: (error?: unknown) => void,
-        ) => {
-          const url = req.url ?? '';
-          if (!url.startsWith('/house-package/')) {
-            next();
-            return;
-          }
+      server.middlewares.use(async (req, res, next) => {
+        const url = req.url ?? '';
+        const pathOnly = (url.split('?')[0] ?? url);
 
-          const pathOnly = url.split('?')[0] ?? url;
-          const rel = decodeURIComponent(
-            pathOnly.slice('/house-package/'.length),
-          );
-          if (rel.length === 0 || rel.includes('\0')) {
-            res.statusCode = 404;
-            res.end('Not found');
-            return;
+        if (
+          pathOnly === '/api/house-package/persist' &&
+          req.method === 'POST'
+        ) {
+          try {
+            const raw = await readRequestBody(req);
+            const body = JSON.parse(raw || '{}');
+            const files =
+              body && typeof body === 'object' && body.files
+                ? body.files
+                : {};
+            const { persistBuilderHousePackage } = await import(
+              '../../packages/object-house/src/builder-package/persistBuilderHousePackage.ts'
+            );
+            const result = await persistBuilderHousePackage({
+              packageRoot: housePackageDiskRoot,
+              files: {
+                roomsCsv:
+                  typeof files.roomsCsv === 'string'
+                    ? files.roomsCsv
+                    : undefined,
+                galleryCsv:
+                  typeof files.galleryCsv === 'string'
+                    ? files.galleryCsv
+                    : undefined,
+                videosCsv:
+                  typeof files.videosCsv === 'string'
+                    ? files.videosCsv
+                    : undefined,
+                manifestJson:
+                  typeof files.manifestJson === 'string'
+                    ? files.manifestJson
+                    : files.manifestJson === null
+                      ? null
+                      : undefined,
+              },
+            });
+            res.statusCode = result.ok ? 200 : 500;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(JSON.stringify(result));
+          } catch (error) {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(
+              JSON.stringify({
+                ok: false,
+                error:
+                  error instanceof Error
+                    ? error.message
+                    : 'Persist middleware failed.',
+              }),
+            );
           }
+          return;
+        }
 
-          const absolute = normalize(resolve(housePackageDiskRoot, rel));
-          const fromRoot = relative(housePackageDiskRoot, absolute);
-          if (fromRoot.startsWith('..') || fromRoot === '') {
-            res.statusCode = 403;
-            res.end('Forbidden');
-            return;
-          }
+        if (!url.startsWith('/house-package/')) {
+          next();
+          return;
+        }
 
-          if (!existsSync(absolute) || !statSync(absolute).isFile()) {
-            res.statusCode = 404;
-            res.end('Not found');
-            return;
-          }
+        const rel = decodeURIComponent(pathOnly.slice('/house-package/'.length));
+        if (rel.length === 0 || rel.includes('\0')) {
+          res.statusCode = 404;
+          res.end('Not found');
+          return;
+        }
 
-          const ext = absolute.slice(absolute.lastIndexOf('.')).toLowerCase();
-          const type = CONTENT_TYPES[ext] ?? 'application/octet-stream';
-          res.statusCode = 200;
-          res.setHeader('Content-Type', type);
-          res.setHeader('Cache-Control', 'no-store');
-          res.end(readFileSync(absolute));
-        },
-      );
+        const absolute = normalize(resolve(housePackageDiskRoot, rel));
+        const fromRoot = relative(housePackageDiskRoot, absolute);
+        if (fromRoot.startsWith('..') || fromRoot === '') {
+          res.statusCode = 403;
+          res.end('Forbidden');
+          return;
+        }
+
+        if (!existsSync(absolute) || !statSync(absolute).isFile()) {
+          res.statusCode = 404;
+          res.end('Not found');
+          return;
+        }
+
+        const ext = absolute.slice(absolute.lastIndexOf('.')).toLowerCase();
+        const type = CONTENT_TYPES[ext] ?? 'application/octet-stream';
+        res.statusCode = 200;
+        res.setHeader('Content-Type', type);
+        res.setHeader('Cache-Control', 'no-store');
+        res.end(readFileSync(absolute));
+      });
     },
   };
 }
 
+/**
+ * Builder Studio Vite config (EPIC-BLD-01 / CAP-BLD-02).
+ * Vite prefers vite.config.js over vite.config.ts when both exist.
+ */
 export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
   plugins: [react(), serveHousePackagePlugin()],

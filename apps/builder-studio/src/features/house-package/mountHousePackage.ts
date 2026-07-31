@@ -18,6 +18,7 @@ import {
   HOUSE_PACKAGE_MANIFEST_URL,
   HOUSE_PACKAGE_URL_ROOT,
 } from './housePackagePaths';
+import { readHeroRelativePathFromManifest } from './buildPersistFiles';
 import { planPairsFromRooms } from './validateHousePackageWorking';
 
 export type HousePackageMountTexts = {
@@ -114,14 +115,19 @@ export async function mountHousePackage(
   const probeExists = options.probeExists ?? defaultProbeExists;
   const now = options.now ?? (() => new Date());
 
-  const [galleryCsv, roomsCsv, videosCsv, manifestJson, heroRelativePath] =
-    await Promise.all([
-      fetchText(HOUSE_PACKAGE_CSV.gallery),
-      fetchText(HOUSE_PACKAGE_CSV.rooms),
-      fetchText(HOUSE_PACKAGE_CSV.videos),
-      fetchText(HOUSE_PACKAGE_MANIFEST_URL).catch(() => null),
-      resolveHeroPath(probeExists),
-    ]);
+  const [galleryCsv, roomsCsv, videosCsv, manifestJson] = await Promise.all([
+    fetchText(HOUSE_PACKAGE_CSV.gallery),
+    fetchText(HOUSE_PACKAGE_CSV.rooms),
+    fetchText(HOUSE_PACKAGE_CSV.videos),
+    fetchText(HOUSE_PACKAGE_MANIFEST_URL).catch(() => null),
+  ]);
+
+  const manifestHero = readHeroRelativePathFromManifest(manifestJson);
+  const heroRelativePath =
+    manifestHero !== null &&
+    (await probeExists(`${HOUSE_PACKAGE_URL_ROOT}/${manifestHero}`))
+      ? manifestHero
+      : await resolveHeroPath(probeExists);
 
   const planPairs = planPairsFromRooms(roomsCsv);
   const registryResult = buildBuilderPackageRegistries({

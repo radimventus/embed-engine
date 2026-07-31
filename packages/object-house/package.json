@@ -28,7 +28,7 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/behavior/composeDispositionLayout.test.ts src/behavior/spliceStairsWarn.test.ts src/behavior/decisionFactors.test.ts src/loader/loadHousePackage.test.ts src/projectHouse.test.ts src/builder-package/importBuilderHousePackage.test.ts src/builder-package/projectToHousePackage.test.ts src/builder-package/extractFloorPlanGeometry.test.ts src/builder-package/generateAuthorSvgFromRoomSvgs.test.ts",
+    "test": "tsx --test src/behavior/composeDispositionLayout.test.ts src/behavior/spliceStairsWarn.test.ts src/behavior/decisionFactors.test.ts src/loader/loadHousePackage.test.ts src/projectHouse.test.ts src/builder-package/importBuilderHousePackage.test.ts src/builder-package/projectToHousePackage.test.ts src/builder-package/extractFloorPlanGeometry.test.ts src/builder-package/generateAuthorSvgFromRoomSvgs.test.ts src/builder-package/persistBuilderHousePackage.test.ts",
     "publish:floorplan-geometry": "tsx ./scripts/publish-floorplan-geometry.mjs"
   },
   "dependencies": {

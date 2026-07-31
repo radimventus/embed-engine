@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import {
   mountHousePackage,
@@ -10,13 +10,34 @@ export type HousePackageMountState =
   | { readonly status: 'ready'; readonly mount: HousePackageMount }
   | { readonly status: 'error'; readonly message: string };
 
+export type UseHousePackageMountResult = {
+  readonly state: HousePackageMountState;
+  readonly remount: () => Promise<HousePackageMount>;
+};
+
 /**
- * CAP-BLD-02 — mount HP-002 once on Builder open (read-only).
+ * CAP-BLD-02/04 — mount HP-002; remount after persist.
  */
-export function useHousePackageMount(): HousePackageMountState {
+export function useHousePackageMount(): UseHousePackageMountResult {
   const [state, setState] = useState<HousePackageMountState>({
     status: 'loading',
   });
+
+  const remount = useCallback(async (): Promise<HousePackageMount> => {
+    setState({ status: 'loading' });
+    try {
+      const mount = await mountHousePackage();
+      setState({ status: 'ready', mount });
+      return mount;
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : 'House Package mount failed.';
+      setState({ status: 'error', message });
+      throw error instanceof Error ? error : new Error(message);
+    }
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,5 +65,5 @@ export function useHousePackageMount(): HousePackageMountState {
     };
   }, []);
 
-  return state;
+  return { state, remount };
 }

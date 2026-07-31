@@ -10,10 +10,10 @@ import {
 } from '../house-package';
 
 /**
- * CAP-BLD-03 — Builder mounts HP-002 and edits it in memory (ADR-023).
+ * CAP-BLD-04 — Builder mounts, edits, and persists HP-002 (ADR-023).
  */
 export function BuilderStudioApp() {
-  const { mountStatus, snapshot, session, apply } =
+  const { mountStatus, snapshot, session, saving, apply, save } =
     useHousePackageEditController();
   const [activeNav, setActiveNav] = useState<HousePackageNavId>('overview');
 
@@ -36,11 +36,13 @@ export function BuilderStudioApp() {
             {mountStatus.status === 'loading' && 'Mounting HP-002…'}
             {mountStatus.status === 'ready' &&
               snapshot !== null &&
-              (!snapshot.validation.ok
-                ? 'HP-002 invalid'
-                : snapshot.dirtyState === 'modified'
-                  ? 'HP-002 modified'
-                  : 'HP-002 clean')}
+              (snapshot.dirtyState === 'save-failed'
+                ? 'Save failed'
+                : !snapshot.validation.ok
+                  ? 'HP-002 invalid'
+                  : snapshot.dirtyState === 'modified'
+                    ? 'HP-002 modified'
+                    : 'HP-002 clean')}
             {mountStatus.status === 'error' && 'Mount failed'}
           </div>
         </header>
@@ -57,7 +59,11 @@ export function BuilderStudioApp() {
           snapshot={snapshot}
           session={session}
           loadError={loadError}
+          saving={saving}
           onChange={apply}
+          onSave={() => {
+            void save();
+          }}
         />
       }
     >
@@ -78,7 +84,11 @@ export function BuilderStudioApp() {
             snapshot={snapshot}
             session={session}
             activeNav={activeNav}
+            saving={saving}
             onChange={apply}
+            onSave={() => {
+              void save();
+            }}
           />
         )}
     </AppShell>

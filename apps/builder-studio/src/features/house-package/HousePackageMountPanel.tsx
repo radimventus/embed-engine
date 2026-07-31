@@ -7,17 +7,21 @@ type HousePackageMountPanelProps = {
   readonly snapshot: HousePackageEditSnapshot | null;
   readonly session: HousePackageEditSession | null;
   readonly loadError: string | null;
+  readonly saving: boolean;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
+  readonly onSave: () => void;
 };
 
 /**
- * CAP-BLD-03 — validation + dirty/undo/reset controls.
+ * CAP-BLD-04 — validation + dirty/undo/reset/save controls.
  */
 export function HousePackageMountPanel({
   snapshot,
   session,
   loadError,
+  saving,
   onChange,
+  onSave,
 }: HousePackageMountPanelProps) {
   return (
     <aside className="h-full overflow-y-auto border-l border-builder-line bg-white p-6">
@@ -28,7 +32,7 @@ export function HousePackageMountPanel({
         object-house
       </h2>
       <p className="mt-2 text-[12px] text-builder-muted">
-        In-memory edit. No disk save (CAP-BLD-04).
+        Persist via Node host → HP-002 disk root.
       </p>
 
       {loadError !== null && (
@@ -42,13 +46,17 @@ export function HousePackageMountPanel({
           <StatusRow
             label="State"
             value={
-              !snapshot.validation.ok
-                ? 'Invalid'
-                : snapshot.dirtyState === 'modified'
-                  ? 'Modified'
-                  : 'Clean'
+              snapshot.dirtyState === 'save-failed'
+                ? 'Save failed'
+                : !snapshot.validation.ok
+                  ? 'Invalid'
+                  : snapshot.dirtyState === 'modified'
+                    ? 'Modified'
+                    : 'Clean'
             }
-            ok={snapshot.validation.ok && snapshot.dirtyState === 'clean'}
+            ok={
+              snapshot.validation.ok && snapshot.dirtyState === 'clean'
+            }
           />
           <StatusRow
             label="Rooms CSV"
@@ -75,10 +83,28 @@ export function HousePackageMountPanel({
             ok={snapshot.validation.ok}
           />
 
+          {snapshot.saveError !== null && (
+            <p className="rounded-lg bg-builder-draftBg px-3 py-2 text-[12px] text-builder-draft">
+              {snapshot.saveError}
+            </p>
+          )}
+
           <div className="flex flex-col gap-2 pt-2">
             <button
               type="button"
-              disabled={!snapshot.canUndo}
+              disabled={
+                saving ||
+                snapshot.dirtyState === 'clean' ||
+                !snapshot.validation.ok
+              }
+              onClick={onSave}
+              className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
+            >
+              {saving ? 'Saving…' : 'Save to House Package'}
+            </button>
+            <button
+              type="button"
+              disabled={!snapshot.canUndo || saving}
               onClick={() => onChange(session.undo())}
               className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
             >
@@ -86,7 +112,7 @@ export function HousePackageMountPanel({
             </button>
             <button
               type="button"
-              disabled={snapshot.dirtyState === 'clean'}
+              disabled={snapshot.dirtyState === 'clean' || saving}
               onClick={() => onChange(session.discard())}
               className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
             >
