@@ -66,8 +66,14 @@ describe('PT-PRIORITY-CONVERSATION-03 decision conversation', () => {
     assert.equal(PRIORITY_CONVERSATION_MINIMUM, 3);
     assert.equal(PRIORITY_DIALOG_QUESTION_COUNT, 3);
     assert.ok(CONIS_THINKING_MS >= 700 && CONIS_THINKING_MS <= 1000);
-    assert.match(PRIORITY_CONVERSATION_INTRO_LINES.join(' '), /Conis/i);
-    assert.equal(PRIORITY_CONVERSATION_INTRO_LINES[0], 'Dobrý den, jmenuji se Conis.');
+    assert.match(
+      PRIORITY_CONVERSATION_INTRO_LINES.join(' '),
+      /podstatné|rozhodujete/i,
+    );
+    assert.equal(
+      PRIORITY_CONVERSATION_INTRO_LINES[0],
+      'Teď se zaměříme na to, co je pro vás u domu podstatné.',
+    );
     assert.match(PRIORITY_CONVERSATION_START_LINES.join(' '), /označte alespoň tři/i);
     assert.match(PRIORITY_CONVERSATION_START_HEADING, /^Začněme$/);
     assert.match(PRIORITY_CONVERSATION_PREP_TITLE, /Už rozumím/);

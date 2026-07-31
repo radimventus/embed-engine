@@ -62,6 +62,7 @@ export {
   authorSvgRelativePath,
   geometryRelativePath,
   isFloorPlanGeometry,
+  roomSvgDirectoryRelativePath,
   type FloorPlanBBox,
   type FloorPlanGeometry,
   type FloorPlanGeometryRoom,

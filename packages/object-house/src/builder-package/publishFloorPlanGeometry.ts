@@ -11,6 +11,7 @@ import {
   geometryRelativePath,
   type FloorPlanGeometry,
 } from "./floorPlanGeometry";
+import { generateAuthorSvgFromRoomSvgs } from "./generateAuthorSvgFromRoomSvgs";
 import { parseCsv } from "./parse-csv";
 import {
   validateFloorPlanGeometryAgainstRooms,
@@ -139,6 +140,22 @@ export async function publishFloorPlanGeometry(
     keepExistingRaster = true,
   } = options;
   const warnings: string[] = [];
+  const generatedAuthor = await generateAuthorSvgFromRoomSvgs(packageRoot, floorId);
+  if (generatedAuthor !== null) {
+    if (!generatedAuthor.ok) {
+      return {
+        ok: false,
+        errors: generatedAuthor.errors.map((message) => ({
+          code: "HP003_SVG_MISSING",
+          message,
+          path: authorSvgRelativePath(floorId),
+        })),
+      };
+    }
+    warnings.push(
+      `Generated ${authorSvgRelativePath(floorId)} from room SVG sources.`,
+    );
+  }
   const authorPath = await resolveAuthorSvgPath(packageRoot, floorId);
   if (authorPath === null) {
     return {

@@ -12,10 +12,13 @@ export const CONIS_THINKING_MS = 850;
  */
 export const CONIS_QUIZ_ADVANCE_MS = 1500;
 
-/** Opening — who Conis is, what follows, without commands (CAP UX 56). */
+/**
+ * Opening inside Priority — Welcome Bridge already introduced Conis.
+ * Keep a short orientation into Priority work (no second self-introduction).
+ */
 export const PRIORITY_CONVERSATION_INTRO_LINES = Object.freeze([
-  'Dobrý den, jmenuji se Conis.',
-  'Pomohu vám porozumět, jak se rozhodujete o domě.',
+  'Teď se zaměříme na to, co je pro vás u domu podstatné.',
+  'Pomohu vám porozumět, jak se rozhodujete.',
 ] as const);
 
 export const PRIORITY_CONVERSATION_START_HEADING = 'Začněme';

@@ -43,3 +43,13 @@ export {
   type VisualMetrics,
   type VisualName,
 } from './visual';
+export {
+  WelcomeBridge,
+  DEFAULT_WELCOME_BRIDGE_THEME,
+  resolveWelcomeBridgeTheme,
+  type WelcomeBridgeConfig,
+  type WelcomeBridgeContent,
+  type WelcomeBridgeProps,
+  type WelcomeBridgeTheme,
+  type WelcomeBridgeTrigger,
+} from './welcome-bridge';

@@ -5,4 +5,6 @@ export {
   publishFloorPlanGeometry,
   resolveAuthorSvgPath,
 } from "./publishFloorPlanGeometry";
+export type { GenerateAuthorSvgFromRoomSvgsResult } from "./generateAuthorSvgFromRoomSvgs";
+export { generateAuthorSvgFromRoomSvgs } from "./generateAuthorSvgFromRoomSvgs";
 export * from "./index";

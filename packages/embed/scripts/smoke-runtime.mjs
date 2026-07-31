@@ -120,9 +120,25 @@ async function main() {
     packagePublicRoot: "/house-package",
   });
 
-  const roomIds = housePackage.rooms.map((room) => room.id);
-  if (roomIds.length !== 10) {
-    throw new Error(`Smoke: expected 10 rooms, got ${roomIds.length}: ${roomIds.join(",")}`);
+  const roomIds = housePackage.rooms.map((room) => room.id).sort();
+  const expectedRoomIds = [
+    "bathroom",
+    "bedroom",
+    "children-room",
+    "exterior",
+    "kitchen",
+    "living-room",
+    "office",
+    "technical-room",
+    "toilet",
+    "vestibule",
+    "wardrobe",
+  ];
+  if (JSON.stringify(roomIds) !== JSON.stringify(expectedRoomIds)) {
+    throw new Error(
+      `Smoke: expected ${expectedRoomIds.length} rooms [${expectedRoomIds.join(",")}]\n` +
+        `  got ${roomIds.length}: [${roomIds.join(",")}]`,
+    );
   }
 
   const exteriorGallery = housePackage.media

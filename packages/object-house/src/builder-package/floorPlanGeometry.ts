@@ -48,3 +48,7 @@ export function geometryRelativePath(floorId: string): string {
 export function authorSvgRelativePath(floorId: string): string {
   return `media/plans/${floorId}.author.svg`;
 }
+
+export function roomSvgDirectoryRelativePath(floorId: string): string {
+  return `media/plans/${floorId}.rooms`;
+}

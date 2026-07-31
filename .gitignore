@@ -148,3 +148,6 @@ vite.config.ts.timestamp-*
 # Turborepo
 .turbo/
 .DS_Store
+
+# Local Playwright browser cache
+.playwright-browsers/
