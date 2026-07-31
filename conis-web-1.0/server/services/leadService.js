@@ -3,19 +3,42 @@
 /**
  * Lead Service — integration layer between web UI and destinations.
  *
- * Accepts:
- * - contact details
- * - complete qualification answers
- * - resulting segment
- * - timestamp
- * - user-agent
- *
- * Destinations (email, sheets, archive, future CRM) plug in without UI changes.
+ * Production (conis.cz / GitHub Pages) posts directly to Google Apps Script.
+ * Local `npm start` still accepts POST /lead and fans out to destinations.
  */
 
 const { archiveLead } = require('../destinations/localArchive');
 const { deliverEmail } = require('../destinations/email');
 const { deliverSheet } = require('../destinations/googleSheets');
+
+const QUESTION_TITLES_BY_KEY = Object.freeze({
+  annual_sales: 'Kolik domů ročně prodáváte?',
+  sales_team: 'Máte vlastní obchodní tým?',
+  monthly_traffic: 'Kolik lidí měsíčně navštíví váš web?',
+  priority: 'Co je pro vás důležitější?',
+  ready_for_pilot: 'Jste připraveni začít pilotem?',
+});
+
+const SEGMENT_EVALUATION = Object.freeze({
+  A: Object.freeze({
+    score: 'Nízká připravenost',
+    segment: 'A — zatím není fit pro pilot',
+    recommendation:
+      'Pilot zatím nedává smysl. Zůstaňte v kontaktu a vraťte se, až budete připraveni začít.',
+  }),
+  B: Object.freeze({
+    score: 'Střední připravenost',
+    segment: 'B — ke zvážení / review',
+    recommendation:
+      'Potenciál je, ale potřebujeme krátké review. Ozveme se s návrhem dalšího kroku.',
+  }),
+  C: Object.freeze({
+    score: 'Vysoká připravenost',
+    segment: 'C — pilotní kandidát',
+    recommendation:
+      'Silný fit pro pilot. Domluvíme krátkou schůzku a nastavíme další postup.',
+  }),
+});
 
 function resolveTimestamp(value) {
   if (typeof value === 'string' && value.trim()) {
@@ -25,6 +48,15 @@ function resolveTimestamp(value) {
     }
   }
   return new Date().toISOString();
+}
+
+function answersByQuestionTitle(answers) {
+  const mapped = {};
+  for (const [key, title] of Object.entries(QUESTION_TITLES_BY_KEY)) {
+    mapped[title] =
+      answers && answers[key] != null ? String(answers[key]) : '';
+  }
+  return mapped;
 }
 
 function validateLeadInput(body) {
@@ -41,6 +73,7 @@ function validateLeadInput(body) {
     body.answers && typeof body.answers === 'object' ? body.answers : {};
   const userAgent = String(body.userAgent || '').trim();
   const timestamp = resolveTimestamp(body.timestamp);
+  const evaluation = SEGMENT_EVALUATION[status.toUpperCase()] || SEGMENT_EVALUATION.B;
 
   if (!name || !company || !email) {
     return { ok: false, error: 'Vyplňte jméno, firmu a e-mail.' };
@@ -52,10 +85,30 @@ function validateLeadInput(body) {
 
   return {
     ok: true,
-    contact: { name, company, email, phone },
-    qualification: { status, answers },
-    userAgent,
-    timestamp,
+    record: {
+      leadId: String(body.leadId || '').trim(),
+      timestamp,
+      name,
+      company,
+      email,
+      phone,
+      answers,
+      answersByTitle:
+        body.answersByTitle && typeof body.answersByTitle === 'object'
+          ? body.answersByTitle
+          : answersByQuestionTitle(answers),
+      status,
+      score: String(body.score || evaluation.score),
+      segment: String(body.segment || evaluation.segment),
+      recommendation: String(body.recommendation || evaluation.recommendation),
+      url: String(body.url || '').trim(),
+      referrer: String(body.referrer || '').trim(),
+      utmSource: String(body.utmSource || '').trim(),
+      utmMedium: String(body.utmMedium || '').trim(),
+      utmCampaign: String(body.utmCampaign || '').trim(),
+      sessionId: String(body.sessionId || '').trim(),
+      userAgent,
+    },
   };
 }
 
@@ -70,14 +123,7 @@ async function submitLead(body, meta = {}) {
   }
 
   const record = {
-    timestamp: checked.timestamp,
-    name: checked.contact.name,
-    company: checked.contact.company,
-    email: checked.contact.email,
-    phone: checked.contact.phone,
-    answers: checked.qualification.answers,
-    status: checked.qualification.status,
-    userAgent: checked.userAgent,
+    ...checked.record,
     ip: meta.ip || '',
   };
 
@@ -100,4 +146,5 @@ async function submitLead(body, meta = {}) {
 module.exports = {
   submitLead,
   validateLeadInput,
+  answersByQuestionTitle,
 };

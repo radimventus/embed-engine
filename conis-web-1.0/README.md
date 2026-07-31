@@ -1,12 +1,13 @@
 # CONIS Web 1.0
 
-Manifest site with partner qualification and optional lead capture.
+Manifest site with partner qualification and lead capture.
 
 ## Requirements
 
-- Node.js 18+
+- Node.js 18+ (local preview only)
+- Production host: GitHub Pages (`docs/` → `https://conis.cz`)
 
-## Start
+## Start (local)
 
 ```bash
 cd conis-web-1.0
@@ -15,32 +16,28 @@ npm start
 
 Open: [http://127.0.0.1:3000](http://127.0.0.1:3000)
 
-```bash
-PORT=8080 npm start
+## Production lead capture (CAP-WEB-01)
+
+On GitHub Pages there is **no Node server**. The contact form posts to a **Google Apps Script** Web App, which:
+
+1. Appends one row to Google Sheets (columns = real quiz question titles)
+2. Sends a notification e-mail (Gmail / MailApp)
+
+Setup guide: [`apps-script/README.md`](./apps-script/README.md)
+
+Required production config in `docs/index.html` (and source `index.html`):
+
+```html
+<meta name="conis-lead-endpoint" content="https://script.google.com/macros/s/AKfycbzQ2-YW9DputxDhBVLGRK8byxhLfoju1Obo5OneqAABWK6KuQubzDwM8zLz2z_yDKTj3g/exec">
 ```
-
-Stop: `Ctrl+C`
-
-## Architecture
 
 ```text
-Web UI
-  → POST /qualification   (decision A/B/C)
-  → POST /lead            (voluntary contact)
-
-HTTP (server/index.js)
-  → services/leadService  (orchestration)
-
-Destinations (pluggable)
-  → localArchive
-  → email
-  → googleSheets
-  → (future: CRM, database, …)
+Quiz → Lead Form → Apps Script → Google Sheets + Gmail
 ```
 
-UI never talks to e-mail or Sheets directly.
+Frontend never calls the Google Sheets API directly.
 
-## APIs
+## Local APIs (npm start)
 
 ### `POST /qualification`
 
@@ -49,34 +46,19 @@ Response: `{ status: "A" | "B" | "C", calendlyUrl?: string }`
 
 ### `POST /lead`
 
-Body:
+Accepts the same payload shape as Apps Script (contact + `answersByTitle` + evaluation + UTM).  
+`leadService` validates, archives locally, then fans out to e-mail / Sheets webhook when configured.
 
-```json
-{
-  "name": "",
-  "company": "",
-  "email": "",
-  "phone": "",
-  "status": "B",
-  "answers": {},
-  "userAgent": ""
-}
+See `.env.example`.
+
+## Sync to Pages
+
+After changing web assets, copy into the Pages tree:
+
+```bash
+cp conis-web-1.0/js/lead.js docs/js/lead.js
+cp conis-web-1.0/index.html docs/index.html
+# keep docs/conis-web-1.0 in sync if used as mirror
 ```
 
-`leadService` validates, archives locally, then fans out to configured destinations.
-
-Configure via `.env` (see `.env.example`).
-
-### Google Sheets webhook
-
-Apps Script web app accepting JSON POST and appending:
-
-`timestamp | name | company | email | phone | answers | status | userAgent | ip`
-
-Set `GOOGLE_SHEETS_WEBHOOK_URL`.
-
-## Production notes
-
-- Copy `.env.example` → `.env` for SMTP + Sheets.
-- Update absolute URLs in `robots.txt`, `sitemap.xml`, and Open Graph tags.
-- Serve over HTTPS.
+Then commit + push the Pages branch.
