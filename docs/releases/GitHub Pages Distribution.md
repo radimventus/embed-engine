@@ -88,7 +88,7 @@ Copy from [`docs/embed/OFFICIAL-PARTNER-SNIPPET.html`](../embed/OFFICIAL-PARTNER
 
 ```html
 <div id="embed-hero"></div>
-<script src="https://conis.cz/embed/embed.iife.js?v=embed-01"></script>
+<script src="https://conis.cz/embed/embed.iife.js?v=embed-02"></script>
 <script>
   Embed.mount({
     mode: "launcher",

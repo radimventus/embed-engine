@@ -9,6 +9,7 @@
 import { logEmbedRuntimeBuild } from "./buildFingerprint";
 import { bootstrapLegacyGardenEmbed } from "./delivery/legacyGarden";
 import { bootstrapClientStudioDelivery } from "./delivery/mountClientStudioDelivery";
+import { resolveProductionAssetBase } from "./delivery/resolveProductionAssetBase";
 import {
   isLegacyExperienceMount,
   isLegacyGardenMount,
@@ -86,6 +87,7 @@ export function mount(options: EmbedMountOptions): void {
 
   if (isProductionMount(options)) {
     const mode = resolveExperienceMode(options);
+    const assetBase = resolveProductionAssetBase(options.assetBase);
 
     if (mode === "launcher") {
       const trigger = resolveLauncherTrigger(options);
@@ -99,7 +101,7 @@ export function mount(options: EmbedMountOptions): void {
         trigger,
         heroHost,
         objectId: options.objectId,
-        assetBase: options.assetBase,
+        assetBase,
         launchContext: toLaunchContext(options),
       });
       setActiveSession(armed);
@@ -109,7 +111,7 @@ export function mount(options: EmbedMountOptions): void {
     const host = resolveInlineTarget(options);
     void bootstrapClientStudioDelivery(host, {
       objectId: options.objectId,
-      assetBase: options.assetBase,
+      assetBase,
     })
       .then((session) => {
         setActiveSession(session);

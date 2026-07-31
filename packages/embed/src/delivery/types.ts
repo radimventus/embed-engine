@@ -27,7 +27,9 @@ export type EmbedProductionMountOptions = {
   readonly launcher?: string | HTMLElement;
   readonly objectId?: string;
   /**
-   * Optional base URL for Object / house-package media (no trailing slash).
+   * Base URL for Object / house-package media (no trailing slash).
+   * On foreign partner hosts must be `https://conis.cz`.
+   * Legacy `radimventus.github.io/embed-engine` is rewritten at mount (ED-INFRA-001).
    * When omitted, media URLs resolve from the host page origin.
    */
   readonly assetBase?: string;

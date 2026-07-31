@@ -67,7 +67,7 @@ function aiDeliveryHostBootstrap() {
  */
 /**
  * Official partner CMS snippet.
- * Cache-bust defaults to embed-01 (partner migration pin).
+ * Cache-bust defaults to embed-02 (SPR-002 canonical partner snippet).
  * Override with EMBED_PARTNER_CACHE_BUST on publish when bumping partners.
  */
 function resolvePartnerCacheBust(_fingerprintCacheBust) {
@@ -75,7 +75,7 @@ function resolvePartnerCacheBust(_fingerprintCacheBust) {
   if (fromEnv && fromEnv.length > 0) {
     return fromEnv;
   }
-  return "embed-01";
+  return "embed-02";
 }
 
 function buildOfficialPartnerSnippet(cacheBust) {
