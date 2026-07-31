@@ -1,22 +1,136 @@
-import { readFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { existsSync, readFileSync, statSync } from 'node:fs';
+import type { IncomingMessage, ServerResponse } from 'node:http';
+import { dirname, join, normalize, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, type Plugin } from 'vite';
+
+/**
+ * TypeScript mirror of vite.config.js (CAP-BLD-02).
+ * Vite prefers vite.config.js when both exist — keep JS as the runtime config.
+ * This file documents the same HP mount middleware for typed editing.
+ */
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
+const repoRoot = resolve(rootDir, '../..');
 const packageJson = JSON.parse(
   readFileSync(join(rootDir, 'package.json'), 'utf8'),
 ) as { version: string };
 
-/**
- * Builder Studio Vite config (EPIC-BLD-01).
- * Ports intentionally distinct from Client Studio (4173/4174) and Manager Studio (4175/4176).
- */
+const housePackageDiskRoot = resolve(
+  repoRoot,
+  'apps/client-studio/public/house-package',
+);
+
+const CONTENT_TYPES: Record<string, string> = {
+  '.csv': 'text/csv; charset=utf-8',
+  '.json': 'application/json; charset=utf-8',
+  '.svg': 'image/svg+xml',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.webm': 'video/webm',
+  '.mp4': 'video/mp4',
+};
+
+function pkgSrc(name: string, entry = 'index.ts'): string {
+  return resolve(repoRoot, 'packages', name, 'src', entry);
+}
+
+function createBuilderResolveAliases() {
+  return [
+    {
+      find: '@embed-engine/object-house/builder-package/node',
+      replacement: pkgSrc('object-house', 'builder-package/node.ts'),
+    },
+    {
+      find: '@embed-engine/object-house/builder-package',
+      replacement: pkgSrc('object-house', 'builder-package/index.ts'),
+    },
+    {
+      find: '@embed-engine/object-house/loader',
+      replacement: pkgSrc('object-house', 'loader/index.ts'),
+    },
+    {
+      find: '@embed-engine/object-house',
+      replacement: pkgSrc('object-house'),
+    },
+    {
+      find: '@embed-engine/design-tokens',
+      replacement: pkgSrc('design-tokens'),
+    },
+    {
+      find: '@embed-engine/model',
+      replacement: pkgSrc('model'),
+    },
+    {
+      find: '@embed-engine/core',
+      replacement: pkgSrc('core'),
+    },
+  ];
+}
+
+function serveHousePackagePlugin(): Plugin {
+  return {
+    name: 'serve-house-package-hp002',
+    configureServer(server) {
+      server.middlewares.use(
+        (
+          req: IncomingMessage,
+          res: ServerResponse,
+          next: (error?: unknown) => void,
+        ) => {
+          const url = req.url ?? '';
+          if (!url.startsWith('/house-package/')) {
+            next();
+            return;
+          }
+
+          const pathOnly = url.split('?')[0] ?? url;
+          const rel = decodeURIComponent(
+            pathOnly.slice('/house-package/'.length),
+          );
+          if (rel.length === 0 || rel.includes('\0')) {
+            res.statusCode = 404;
+            res.end('Not found');
+            return;
+          }
+
+          const absolute = normalize(resolve(housePackageDiskRoot, rel));
+          const fromRoot = relative(housePackageDiskRoot, absolute);
+          if (fromRoot.startsWith('..') || fromRoot === '') {
+            res.statusCode = 403;
+            res.end('Forbidden');
+            return;
+          }
+
+          if (!existsSync(absolute) || !statSync(absolute).isFile()) {
+            res.statusCode = 404;
+            res.end('Not found');
+            return;
+          }
+
+          const ext = absolute.slice(absolute.lastIndexOf('.')).toLowerCase();
+          const type = CONTENT_TYPES[ext] ?? 'application/octet-stream';
+          res.statusCode = 200;
+          res.setHeader('Content-Type', type);
+          res.setHeader('Cache-Control', 'no-store');
+          res.end(readFileSync(absolute));
+        },
+      );
+    },
+  };
+}
+
 export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
-  plugins: [react()],
+  plugins: [react(), serveHousePackagePlugin()],
+  resolve: {
+    alias: createBuilderResolveAliases(),
+    dedupe: ['react', 'react-dom'],
+  },
   define: {
     __BUILDER_STUDIO_VERSION__: JSON.stringify(packageJson.version),
   },
@@ -28,6 +142,9 @@ export default defineConfig({
     host: '127.0.0.1',
     port: 4177,
     strictPort: true,
+    fs: {
+      allow: [repoRoot],
+    },
   },
   preview: {
     host: '127.0.0.1',

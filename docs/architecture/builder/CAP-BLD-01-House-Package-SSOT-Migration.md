@@ -189,8 +189,8 @@ Quarantine = keep tests/lab sections behind non-default nav; must not run on Pub
 
 | Phase | CAP | Outcome | Builder break risk |
 | --- | --- | --- | --- |
-| **0** | CAP-BLD-01 (this doc) | Architecture locked | None |
-| **1** | CAP-BLD-02 | Node host: read HP root + list CSV/media in Builder UI (read-only) | Low — additive |
+| **0** | CAP-BLD-01 (design) + ADR-023 | Architecture locked | None |
+| **1** | CAP-BLD-02 | Node/Vite host: read HP root + list CSV/media in Builder UI (read-only) | Low — additive; authoring surface switched |
 | **2** | CAP-BLD-03 | Editors write CSV/media via host (save to same files) | Medium — replace asset UI |
 | **3** | CAP-BLD-04 | Validation = object-house import; drop mock validation as gate | Low |
 | **4** | CAP-BLD-05 | Publish bridge → geometry? → `embed:publish`; retire in-memory publish success | Medium |

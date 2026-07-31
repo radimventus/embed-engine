@@ -23,6 +23,9 @@ importers:
       '@embed-engine/design-tokens':
         specifier: workspace:*
         version: link:../../packages/design-tokens
+      '@embed-engine/object-house':
+        specifier: workspace:*
+        version: link:../../packages/object-house
       react:
         specifier: ^19.1.0
         version: 19.2.7
