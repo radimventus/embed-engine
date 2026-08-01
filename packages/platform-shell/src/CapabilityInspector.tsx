@@ -4,6 +4,14 @@ import type {
   CapabilityInspectorModel,
 } from '@embed-engine/capabilities';
 
+import {
+  localizeCapabilityDescription,
+  localizeCapabilityName,
+  localizeDependencyIds,
+  localizeEntitlement,
+  localizeMaturity,
+  localizeOwner,
+} from './localizeCapabilityPresentation';
 import { PlatformStatusBadge } from './PlatformStatusBadge';
 
 type CapabilityInspectorProps = {
@@ -30,7 +38,7 @@ function healthLabel(status: string): string {
 }
 
 /**
- * VR-FIX-06 — Unified Inspector (production chrome, no internal IDs).
+ * VR-FIX-06 / PR-004 — Unified Inspector (české UI, Registry SSOT beze změny).
  */
 export function CapabilityInspector({
   model,
@@ -45,10 +53,10 @@ export function CapabilityInspector({
     <aside
       className="platform-capability-inspector"
       data-testid="capability-inspector"
-      aria-label="Inspector modulu"
+      aria-label="Inspektor modulu"
     >
       <p className="platform-capability-inspector__eyebrow">Modul</p>
-      <h2 className="platform-capability-inspector__title">Inspector</h2>
+      <h2 className="platform-capability-inspector__title">Inspektor</h2>
       <p className="platform-capability-inspector__studio">
         Studio ·{' '}
         {model.studioId === 'builder'
@@ -63,34 +71,39 @@ export function CapabilityInspector({
       {active !== null ? (
         <div className="platform-capability-inspector__active">
           <p className="platform-capability-inspector__name">
-            {active.metadata.name}
+            {localizeCapabilityName(active.metadata.id)}
           </p>
           <div className="platform-capability-inspector__badges">
             <PlatformStatusBadge tone={healthTone(active.health.status)}>
               {healthLabel(active.health.status)}
             </PlatformStatusBadge>
             <PlatformStatusBadge tone="info">
-              {active.metadata.maturity}
+              {localizeMaturity(active.metadata.maturity)}
             </PlatformStatusBadge>
             <PlatformStatusBadge tone="gold">
-              {active.metadata.entitlement}
+              {localizeEntitlement(active.metadata.entitlement)}
             </PlatformStatusBadge>
           </div>
           <p className="platform-capability-inspector__desc">
-            {active.metadata.description}
+            {localizeCapabilityDescription(
+              active.metadata.id,
+              active.metadata.description,
+            )}
           </p>
           <p className="platform-capability-inspector__meta">
-            v{active.metadata.version} · {active.metadata.owner}
+            v{active.metadata.version} ·{' '}
+            {localizeOwner(active.metadata.owner)}
           </p>
           {active.metadata.dependencies.length > 0 && (
             <p className="platform-capability-inspector__deps">
-              Závislosti · {active.metadata.dependencies.join(', ')}
+              Závislosti ·{' '}
+              {localizeDependencyIds(active.metadata.dependencies)}
             </p>
           )}
         </div>
       ) : (
         <p className="platform-capability-inspector__empty">
-          Vyberte produktový modul — Inspector zobrazí stav a metadata.
+          Vyberte produktový modul — Inspektor zobrazí stav a metadata.
         </p>
       )}
 
@@ -111,7 +124,7 @@ export function CapabilityInspector({
                       : 'platform-capability-inspector__item'
                   }
                 >
-                  <span>{item.metadata.name}</span>
+                  <span>{localizeCapabilityName(item.metadata.id)}</span>
                   <PlatformStatusBadge
                     tone={item.health.active ? 'ready' : 'draft'}
                   >

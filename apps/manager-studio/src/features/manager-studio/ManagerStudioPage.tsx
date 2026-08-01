@@ -9,22 +9,19 @@ import { ProductLearningCanvas } from './product-learning/ProductLearningCanvas'
 import { DecisionSessionRuntimeProvider } from './runtime/DecisionSessionRuntimeProvider';
 
 /**
- * PR-005 — Manager Studio: pracovní centrum (capability canvases remain composed, not primary UX).
+ * PR-005 — Manager: pracovní centrum + kompletní funkce (pro návrh finální IA).
  */
 export function ManagerStudioPage() {
   return (
     <DecisionSessionRuntimeProvider>
       <RuntimeBootstrapGate>
         <ManagerWorkCenterHome />
-        {/* Capability projections remain composed for host wiring; not part of work-center UX. */}
-        <div className="hidden" aria-hidden="true">
-          <LaunchCenterCanvas />
-          <OperationsCenterCanvas />
-          <CommercialPlatformCanvas />
-          <ProductLearningCanvas />
-          <CustomerSuccessCanvas />
-          <OperationsCanvas />
-        </div>
+        <LaunchCenterCanvas />
+        <OperationsCenterCanvas />
+        <CommercialPlatformCanvas />
+        <ProductLearningCanvas />
+        <CustomerSuccessCanvas />
+        <OperationsCanvas />
       </RuntimeBootstrapGate>
     </DecisionSessionRuntimeProvider>
   );

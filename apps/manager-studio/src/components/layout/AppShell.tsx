@@ -55,11 +55,24 @@ export function AppShell({ sidebar, children }: AppShellProps) {
   });
 
   const sectionLabel =
-    activeSectionId === 'mwc-factors'
-      ? 'Faktory rozhodnutí'
-      : activeSectionId === 'mwc-improvements'
-        ? 'Doporučená vylepšení'
-        : 'Konverzní přehled';
+    activeSectionId === 'manager-work-center' ||
+    activeSectionId === 'mwc-dropoff'
+      ? 'Konverzní přehled'
+      : activeSectionId === 'mwc-factors'
+        ? 'Faktory rozhodnutí'
+        : activeSectionId === 'mwc-improvements'
+          ? 'Doporučená vylepšení'
+          : activeCapabilityId === 'launch-center'
+            ? 'Spuštění'
+            : activeCapabilityId === 'operations-center'
+              ? 'Provoz platformy'
+              : activeCapabilityId === 'commercial-platform'
+                ? 'Obchod'
+                : activeCapabilityId === 'product-learning'
+                  ? 'Učení produktu'
+                  : activeCapabilityId === 'customer-success'
+                    ? 'Zákaznický úspěch'
+                    : 'Provoz';
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },

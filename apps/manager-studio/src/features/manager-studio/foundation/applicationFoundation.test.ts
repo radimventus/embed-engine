@@ -100,10 +100,11 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.match(vocabulary, /OPERATIONS_SECTION_NAV/);
     assert.match(vocabulary, /live-overview/);
     assert.match(vocabulary, /attention-queue/);
-    assert.match(sidebar, /Pracovní centrum/);
-    assert.match(sidebar, /Konverzní přehled/);
+    assert.match(sidebar, /OPERATIONS_SECTION_NAV/);
+    assert.match(sidebar, /CUSTOMER_SUCCESS_SECTION_NAV/);
     assert.match(sidebar, /useManagerNav/);
     assert.match(sidebar, /scrollToSection/);
+    assert.match(sidebar, /Konverzní přehled/);
     assert.match(canvas, /LiveOverview/);
     assert.match(canvas, /Timeline/);
     assert.match(canvas, /Actions/);
@@ -121,6 +122,7 @@ describe('Application Foundation (MSCB-01)', () => {
 
     assert.match(page, /CustomerSuccessCanvas/);
     assert.match(shell, /activeCapabilityId/);
+    assert.match(shell, /customer-success/);
     assert.match(pkg, /@embed-engine\/customer-success/);
   });
 
@@ -134,7 +136,8 @@ describe('Application Foundation (MSCB-01)', () => {
     const pkg = readSource('package.json');
 
     assert.match(page, /OperationsCenterCanvas/);
-    assert.match(sidebar, /Pracovní centrum/);
+    assert.match(sidebar, /PLATFORM_OPS_SECTION_NAV/);
+    assert.match(sidebar, /Provoz/);
     assert.match(pkg, /@embed-engine\/operations-center/);
   });
 
@@ -148,7 +151,7 @@ describe('Application Foundation (MSCB-01)', () => {
     const pkg = readSource('package.json');
 
     assert.match(page, /ProductLearningCanvas/);
-    assert.match(sidebar, /Konverzní přehled/);
+    assert.match(sidebar, /PRODUCT_LEARNING_SECTION_NAV/);
     assert.match(pkg, /@embed-engine\/product-learning/);
   });
 
@@ -162,7 +165,7 @@ describe('Application Foundation (MSCB-01)', () => {
     const pkg = readSource('package.json');
 
     assert.match(page, /CommercialPlatformCanvas/);
-    assert.match(sidebar, /mwc-improvements/);
+    assert.match(sidebar, /COMMERCIAL_SECTION_NAV/);
     assert.match(pkg, /@embed-engine\/commercial-platform/);
   });
 
@@ -176,6 +179,7 @@ describe('Application Foundation (MSCB-01)', () => {
     const pkg = readSource('package.json');
 
     assert.match(page, /LaunchCenterCanvas/);
+    assert.match(sidebar, /LAUNCH_SECTION_NAV/);
     assert.match(sidebar, /Přehled/);
     assert.match(pkg, /@embed-engine\/launch-center/);
   });

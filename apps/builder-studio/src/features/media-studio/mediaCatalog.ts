@@ -55,7 +55,7 @@ export const MEDIA_AREA_CATALOG: readonly MediaAreaDefinition[] = [
   },
   {
     id: 'floor-plans',
-    label: 'Floor Plans',
+    label: 'Půdorys',
     description: 'Podlaží a vazby na místnosti.',
     usages: ['House Navigator', 'Runtime', 'Experience'],
   },

@@ -12,10 +12,15 @@ type AnchorItem = {
 };
 
 /**
- * PR-008 — Anchor Rail = scroll na sekce (HTML click model), ne přepínače obrazovek.
+ * PR-007 / PR-008 — kompletní Anchor Rail (kotvy celé pracovní plochy).
  */
 const ANCHORS: readonly AnchorItem[] = [
-  { id: 'media-studio', label: 'Média', domId: 'b-media', section: null },
+  { id: 'media-studio', label: 'Hero', domId: 'b-hero', section: null },
+  { id: 'gallery', label: 'Galerie', domId: 'b-gallery', section: 'gallery' },
+  { id: 'videos', label: 'Videa', domId: 'b-videos', section: 'videos' },
+  { id: 'plans', label: 'Půdorys', domId: 'b-floor-plans', section: 'plans' },
+  { id: 'media', label: 'SVG', domId: 'b-svg', section: null },
+  { id: 'manifest', label: 'Dokumenty', domId: 'b-documents', section: null },
   { id: 'rooms', label: 'Dispozice', domId: 'b-layout', section: 'rooms' },
   { id: 'knowledge', label: 'Znalosti', domId: 'b-knowledge', section: null },
 ];
@@ -62,7 +67,7 @@ export function BuilderAnchorRail({
       },
       {
         root,
-        threshold: [0.15, 0.35, 0.55, 0.75],
+        threshold: [0.1, 0.25, 0.4, 0.55, 0.7],
       },
     );
 
@@ -78,16 +83,9 @@ export function BuilderAnchorRail({
 
   const resolvedActive: HousePackageNavId =
     scrollActive ??
-    (activeNav === 'media' ||
-    activeNav === 'gallery' ||
-    activeNav === 'videos' ||
-    activeNav === 'media-studio'
-      ? 'media-studio'
-      : activeNav === 'rooms'
-        ? 'rooms'
-        : activeNav === 'knowledge'
-          ? 'knowledge'
-          : 'media-studio');
+    (ANCHORS.some((item) => item.id === activeNav)
+      ? activeNav
+      : 'media-studio');
 
   return (
     <nav
@@ -102,7 +100,7 @@ export function BuilderAnchorRail({
           snapshot?.dirty.includes(item.section) === true;
         return (
           <button
-            key={item.id}
+            key={item.domId}
             type="button"
             onClick={() => {
               onSelectNav(item.id);

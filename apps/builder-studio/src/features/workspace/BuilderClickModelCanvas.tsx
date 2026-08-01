@@ -1,5 +1,6 @@
 import { KnowledgeComposerView } from '../knowledge-composer';
 import { MediaStudioView } from '../media-studio';
+import type { MediaAreaId } from '../media-studio/mediaCatalog';
 import {
   HousePackageEditView,
   type HousePackageEditSession,
@@ -27,8 +28,54 @@ type BuilderClickModelCanvasProps = {
   readonly onPublish: () => void;
 };
 
+type MediaAnchor = {
+  readonly domId: string;
+  readonly title: string;
+  readonly description: string;
+  readonly area: MediaAreaId;
+};
+
+const MEDIA_ANCHORS: readonly MediaAnchor[] = [
+  {
+    domId: 'b-hero',
+    title: 'Hero',
+    description: 'Hlavní vizuál Experience.',
+    area: 'hero',
+  },
+  {
+    domId: 'b-gallery',
+    title: 'Galerie',
+    description: 'Fotografie objektu a místností.',
+    area: 'gallery',
+  },
+  {
+    domId: 'b-videos',
+    title: 'Videa',
+    description: 'Video vrstva prohlídky.',
+    area: 'videos',
+  },
+  {
+    domId: 'b-floor-plans',
+    title: 'Půdorys',
+    description: 'Podlaží a vazby na místnosti.',
+    area: 'floor-plans',
+  },
+  {
+    domId: 'b-svg',
+    title: 'SVG',
+    description: 'SVG půdorysy a decision canvas.',
+    area: 'svg',
+  },
+  {
+    domId: 'b-documents',
+    title: 'Dokumenty',
+    description: 'PDF a technické dokumenty Runtime.',
+    area: 'documents',
+  },
+];
+
 /**
- * PR-008 — Jedna scrollovací plocha se sekcemi Média · Dispozice · Znalosti.
+ * PR-007 / PR-008 — Jedna souvislá pracovní plocha se všemi kotvami Anchor Rail.
  */
 export function BuilderClickModelCanvas({
   projectId,
@@ -51,21 +98,31 @@ export function BuilderClickModelCanvas({
       className="space-y-14"
       data-studio-shell="builder-click-model-canvas"
     >
-      <section id="b-media" className="scroll-mt-6 space-y-4">
-        <header>
-          <h3 className="text-[22px] font-bold text-builder-navy">Média</h3>
-          <p className="mt-1 text-sm text-builder-muted">
-            Fotografie a video objektu.
-          </p>
-        </header>
-        <MediaStudioView
-          projectId={projectId}
-          projectName={projectName}
-          snapshot={snapshot}
-          session={session}
-          onChange={onChange}
-        />
-      </section>
+      {MEDIA_ANCHORS.map((item) => (
+        <section
+          key={item.domId}
+          id={item.domId}
+          className="scroll-mt-6 space-y-4"
+        >
+          <header>
+            <h3 className="text-[22px] font-bold text-builder-navy">
+              {item.title}
+            </h3>
+            <p className="mt-1 text-sm text-builder-muted">
+              {item.description}
+            </p>
+          </header>
+          <MediaStudioView
+            projectId={projectId}
+            projectName={projectName}
+            snapshot={snapshot}
+            session={session}
+            onChange={onChange}
+            lockedArea={item.area}
+            embedded
+          />
+        </section>
+      ))}
 
       <section id="b-layout" className="scroll-mt-6 space-y-4">
         <header>

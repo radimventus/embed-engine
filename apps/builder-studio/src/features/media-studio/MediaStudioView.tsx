@@ -36,6 +36,9 @@ type MediaStudioViewProps = {
   readonly snapshot: HousePackageEditSnapshot | null;
   readonly session: HousePackageEditSession | null;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
+  /** PR-008 — jedna oblast jako kotva v souvislé ploše. */
+  readonly lockedArea?: MediaAreaId;
+  readonly embedded?: boolean;
 };
 
 /**
@@ -47,10 +50,13 @@ export function MediaStudioView({
   snapshot,
   session,
   onChange,
+  lockedArea,
+  embedded = false,
 }: MediaStudioViewProps) {
-  const [area, setArea] = useState<MediaAreaId>('gallery');
+  const [areaState, setArea] = useState<MediaAreaId>(lockedArea ?? 'gallery');
   const [metaTick, setMetaTick] = useState(0);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const area = lockedArea ?? areaState;
 
   const model = useMemo(
     () => buildMediaStudioModel({ projectId, snapshot }),
@@ -58,6 +64,56 @@ export function MediaStudioView({
   );
 
   const refreshMeta = () => setMetaTick((value) => value + 1);
+
+  const areaBody = (
+    <>
+      {area === 'hero' && session !== null && (
+        <HeroManager
+          model={model}
+          session={session}
+          projectId={projectId}
+          onChange={onChange}
+          onMetaSaved={refreshMeta}
+        />
+      )}
+      {area === 'gallery' && snapshot !== null && session !== null && (
+        <GalleryManager
+          model={model}
+          snapshot={snapshot}
+          session={session}
+          projectId={projectId}
+          selectedKey={selectedKey}
+          onSelect={setSelectedKey}
+          onChange={onChange}
+          onMetaSaved={refreshMeta}
+        />
+      )}
+      {area === 'videos' && snapshot !== null && session !== null && (
+        <VideoManager
+          model={model}
+          snapshot={snapshot}
+          session={session}
+          projectId={projectId}
+          selectedKey={selectedKey}
+          onSelect={setSelectedKey}
+          onChange={onChange}
+          onMetaSaved={refreshMeta}
+        />
+      )}
+      {(area === 'svg' || area === 'floor-plans') && (
+        <FloorPlanStudio model={model} />
+      )}
+      {area === 'documents' && <DocumentLibrary model={model} />}
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <div className="space-y-4" data-testid="media-studio" data-area={area}>
+        {areaBody}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -67,7 +123,7 @@ export function MediaStudioView({
       <div className="space-y-5">
         <header className="rounded-[16px] border border-[#E8EEF5] bg-white p-6 shadow-sm">
           <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-            Media
+            Média
           </p>
           <h1 className="mt-1 text-2xl font-semibold text-builder-ink">
             Media Studio
@@ -100,43 +156,7 @@ export function MediaStudioView({
           </div>
         </header>
 
-        {area === 'hero' && session !== null && (
-          <HeroManager
-            model={model}
-            session={session}
-            projectId={projectId}
-            onChange={onChange}
-            onMetaSaved={refreshMeta}
-          />
-        )}
-        {area === 'gallery' && snapshot !== null && session !== null && (
-          <GalleryManager
-            model={model}
-            snapshot={snapshot}
-            session={session}
-            projectId={projectId}
-            selectedKey={selectedKey}
-            onSelect={setSelectedKey}
-            onChange={onChange}
-            onMetaSaved={refreshMeta}
-          />
-        )}
-        {area === 'videos' && snapshot !== null && session !== null && (
-          <VideoManager
-            model={model}
-            snapshot={snapshot}
-            session={session}
-            projectId={projectId}
-            selectedKey={selectedKey}
-            onSelect={setSelectedKey}
-            onChange={onChange}
-            onMetaSaved={refreshMeta}
-          />
-        )}
-        {(area === 'svg' || area === 'floor-plans') && (
-          <FloorPlanStudio model={model} />
-        )}
-        {area === 'documents' && <DocumentLibrary model={model} />}
+        {areaBody}
       </div>
 
       <div className="space-y-4">
