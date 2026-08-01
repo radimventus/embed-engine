@@ -31,6 +31,7 @@ export {
   hasRole,
   canAccessStudio,
   studiosForRoles,
+  isPlatformAdmin,
 } from './domain/roles';
 
 export {
@@ -124,6 +125,32 @@ export {
   FEEDBACK_STORAGE_KEY,
 } from './pilot/feedbackStore';
 
+export type {
+  GmVerdict,
+  GmChecklistState,
+  GmDomainId,
+  GmDomainReport,
+  GmHealthId,
+  GmHealthItem,
+  GmOperationalHealth,
+  GmPilotLifecycle,
+  GmPilotFirmStatus,
+  GmPilotStatusSummary,
+  GmChecklistItemId,
+  GmChecklistItem,
+  GmEngineeringDebtItem,
+  GmExecutiveStage,
+  GmExecutiveSummary,
+  GmReadinessReport,
+} from './gm/gmTypes';
+
+export { GM_ENGINEERING_DEBT } from './gm/gmEngineeringDebt';
+export { buildGmOperationalHealth } from './gm/buildGmOperationalHealth';
+export { buildGmDomainReports } from './gm/buildGmDomainReports';
+export { buildGmPilotStatusSummary } from './gm/buildGmPilotStatus';
+export { buildGmChecklist } from './gm/buildGmChecklist';
+export { buildGmReadinessReport } from './gm/buildGmReadinessReport';
+
 export {
   SessionProvider,
   usePlatformSession,
@@ -136,3 +163,4 @@ export { AuthShell } from './react/AuthShell';
 export { InviteShell } from './react/InviteShell';
 export { PlatformLanding } from './react/PlatformLanding';
 export { PlatformAccessRoot } from './react/PlatformAccessRoot';
+export { GmReadinessCenter } from './react/GmReadinessCenter';

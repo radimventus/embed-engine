@@ -1,7 +1,7 @@
 import { useMemo, useState, type FormEvent } from 'react';
 
 import { bootstrapTenant } from '../bootstrap/tenantBootstrap';
-import { PLATFORM_ROLE_LABELS, primaryRole } from '../domain/roles';
+import { PLATFORM_ROLE_LABELS, isPlatformAdmin, primaryRole } from '../domain/roles';
 import type { PlatformStudioId } from '../domain/types';
 import {
   buildPilotDiagnostics,
@@ -10,6 +10,7 @@ import {
 } from '../pilot/pilotDiagnostics';
 import { createPilotInvite, listPendingInvites } from '../pilot/inviteStore';
 import { provisionPilotWorkspace } from '../pilot/provisionPilotWorkspace';
+import { GmReadinessCenter } from './GmReadinessCenter';
 import { usePlatformSession } from './SessionProvider';
 
 const STUDIO_ORDER: readonly {
@@ -22,7 +23,7 @@ const STUDIO_ORDER: readonly {
 ];
 
 /**
- * EPIC-BX-14 / BX-15 — Platform Landing: studios, recent work, diagnostics, invite.
+ * EPIC-BX-14 / BX-15 / BX-16 — Platform Landing + GM Readiness Center.
  */
 export function PlatformLanding() {
   const {
@@ -54,9 +55,7 @@ export function PlatformLanding() {
   }
 
   const role = primaryRole(session.user.roles);
-  const isAdmin =
-    session.user.roles.includes('conis-admin') ||
-    session.user.roles.includes('project-admin');
+  const isAdmin = isPlatformAdmin(session.user.roles);
   const recentProjects = registry.projects.slice(0, 5);
 
   const continueWork = () => {
@@ -162,21 +161,25 @@ export function PlatformLanding() {
           )}
         </section>
 
-        <section className="platform-access__dashboard-slot">
-          <p className="platform-access__demos-title">Pilot Diagnostics</p>
-          <ul className="platform-access__list platform-access__lead">
-            <li>Last login · {diagnostics.lastLoginAt ?? '—'}</li>
-            <li>
-              Last publish · {diagnostics.lastPublishLabel}
-              {diagnostics.lastPublishAt !== null
-                ? ` (${diagnostics.lastPublishAt})`
-                : ''}
-            </li>
-            <li>Runtime · {diagnostics.runtimeStatus}</li>
-            <li>Capability · {diagnostics.capabilityStatus}</li>
-            <li>Intelligence · {diagnostics.intelligenceStatus}</li>
-          </ul>
-        </section>
+        {!isAdmin && (
+          <section className="platform-access__dashboard-slot">
+            <p className="platform-access__demos-title">Pilot Diagnostics</p>
+            <ul className="platform-access__list platform-access__lead">
+              <li>Last login · {diagnostics.lastLoginAt ?? '—'}</li>
+              <li>
+                Last publish · {diagnostics.lastPublishLabel}
+                {diagnostics.lastPublishAt !== null
+                  ? ` (${diagnostics.lastPublishAt})`
+                  : ''}
+              </li>
+              <li>Runtime · {diagnostics.runtimeStatus}</li>
+              <li>Capability · {diagnostics.capabilityStatus}</li>
+              <li>Intelligence · {diagnostics.intelligenceStatus}</li>
+            </ul>
+          </section>
+        )}
+
+        {isAdmin && <GmReadinessCenter />}
 
         {isAdmin && (
           <section className="platform-access__dashboard-slot">

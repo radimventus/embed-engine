@@ -55,3 +55,8 @@ export function studiosForRoles(
     canAccessStudio(roles, studio),
   );
 }
+
+/** Soft admin gate for Platform Landing ops (invite, provision, GM). */
+export function isPlatformAdmin(roles: readonly PlatformRole[]): boolean {
+  return roles.includes('conis-admin') || roles.includes('project-admin');
+}

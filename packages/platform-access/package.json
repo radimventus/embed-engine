@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/platformAccess.test.ts"
+    "test": "tsx --test src/platformAccess.test.ts src/gmReadiness.test.ts"
   },
   "peerDependencies": {
     "react": "^19.0.0",

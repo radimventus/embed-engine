@@ -224,3 +224,139 @@
   cursor: pointer;
   text-decoration: underline;
 }
+
+/* EPIC-BX-16 — GM Readiness Center */
+.platform-gm {
+  margin-top: 28px;
+  border: 1px solid #dde5ef;
+  border-radius: 16px;
+  background: #fff;
+  padding: 18px;
+}
+
+.platform-gm__executive {
+  margin-top: 14px;
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(30, 77, 140, 0.1), transparent 55%),
+    #f5f7fa;
+  padding: 18px;
+}
+
+.platform-gm__executive-label {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6b7a90;
+}
+
+.platform-gm__executive-score {
+  margin: 6px 0 0;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: #1a2332;
+}
+
+.platform-gm__executive-stage {
+  margin: 4px 0 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e4d8c;
+}
+
+.platform-gm__grid {
+  display: grid;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+@media (min-width: 720px) {
+  .platform-gm__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .platform-gm__panel--wide {
+    grid-column: 1 / -1;
+  }
+}
+
+.platform-gm__panel {
+  border: 1px solid #e8eef5;
+  border-radius: 12px;
+  background: #fafbfd;
+  padding: 14px;
+}
+
+.platform-gm__list {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.platform-gm__row,
+.platform-gm__debt {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0;
+  border-top: 1px solid #e8eef5;
+}
+
+.platform-gm__row:first-of-type,
+.platform-gm__debt:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.platform-gm__row-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1a2332;
+}
+
+.platform-gm__row-detail {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #6b7a90;
+}
+
+.platform-gm__badge {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.platform-gm__badge--pass {
+  background: #e8f6ee;
+  color: #1f7a4d;
+}
+
+.platform-gm__badge--warn {
+  background: #fff6e8;
+  color: #a15c00;
+}
+
+.platform-gm__badge--fail {
+  background: #fdecec;
+  color: #b42318;
+}
+
+.platform-gm__badge--info {
+  background: #e8eef8;
+  color: #1e4d8c;
+}
+
+.platform-gm__debt-area {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #6b7a90;
+}
