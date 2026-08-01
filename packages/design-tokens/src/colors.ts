@@ -1,34 +1,33 @@
 /**
  * Platform + Embed color system.
- * Click-model SSOT (`docs/platform/click model.html`) for platform chrome.
+ * Click-model SSOT (`docs/platform/click model.html`) — no local studio variants.
  */
 export const palette = {
   navy: '#001930',
   warmWhite: '#F7F6F4',
-  /** Interactive secondary surfaces (FAQ rows, segment track, idle segments). */
   warmGray: '#E8E5E0',
   lightGray: '#E3E3E3',
   gold: '#C8A165',
-  /** Muted bronze accent — Audit / action gold (CTA, workflow, panels). */
   goldIntense: '#B8922D',
-  /** Click-model gold-light surface. */
   goldLight: '#FBF7EE',
-  /** Click-model canvas. */
   platformBg: '#F5F7FB',
-  /** Click-model muted text. */
   platformMuted: '#64748B',
-  /** Click-model hairline. */
   platformLine: '#E2E8F0',
-  /** Builder active / blue accent from click model. */
   platformBlue: '#18428F',
   platformBlueBg: '#EEF4FF',
+  platformGreen: '#138D45',
+  platformGreenBg: '#E6F7ED',
+  platformRed: '#DC2626',
+  platformRedBg: '#FEF2F2',
+  platformWarning: '#B45309',
+  platformWarningBg: '#FFF4E5',
+  platformSection: '#7D8796',
   pureWhite: '#FFFFFF',
 } as const;
 
 export const colors = {
   white: palette.warmWhite,
   black: palette.navy,
-  /** Collapsed scale — every step resolves to a palette color */
   neutral: {
     50: palette.warmWhite,
     100: palette.warmWhite,
@@ -42,11 +41,26 @@ export const colors = {
     900: palette.navy,
     950: palette.navy,
   },
+  /** Click-model status system — single visual vocabulary. */
   status: {
-    ready: palette.gold,
-    warning: palette.gold,
-    error: palette.navy,
-    info: palette.navy,
+    pass: palette.platformGreen,
+    passBg: palette.platformGreenBg,
+    ready: palette.platformGreen,
+    readyBg: palette.platformGreenBg,
+    published: palette.platformGreen,
+    publishedBg: palette.platformGreenBg,
+    warning: palette.platformWarning,
+    warningBg: palette.platformWarningBg,
+    draft: palette.platformWarning,
+    draftBg: palette.platformWarningBg,
+    fail: palette.platformRed,
+    failBg: palette.platformRedBg,
+    error: palette.platformRed,
+    errorBg: palette.platformRedBg,
+    info: palette.platformBlue,
+    infoBg: palette.platformBlueBg,
+    gold: palette.goldIntense,
+    goldBg: palette.goldLight,
   },
   background: {
     primary: palette.platformBg,
@@ -62,7 +76,6 @@ export const colors = {
   border: {
     default: palette.platformLine,
     strong: palette.platformLine,
-    /** Input / accent outlines — saturated gold */
     gold: palette.goldIntense,
   },
   brand: {
@@ -71,7 +84,6 @@ export const colors = {
     goldIntense: palette.goldIntense,
     goldLight: palette.goldLight,
   },
-  /** Interactive action surfaces — consumed by @embed-engine/ui */
   action: {
     primary: palette.navy,
     onPrimary: palette.pureWhite,
@@ -92,7 +104,6 @@ export const colors = {
     card: palette.pureWhite,
     elevated: palette.pureWhite,
     inset: palette.lightGray,
-    /** Shared interactive fill — FAQ items, SegmentedControl track/idle */
     interactive: palette.warmGray,
   },
   platform: {
@@ -104,6 +115,13 @@ export const colors = {
     line: palette.platformLine,
     blue: palette.platformBlue,
     blueBg: palette.platformBlueBg,
+    green: palette.platformGreen,
+    greenBg: palette.platformGreenBg,
+    red: palette.platformRed,
+    redBg: palette.platformRedBg,
+    warning: palette.platformWarning,
+    warningBg: palette.platformWarningBg,
+    section: palette.platformSection,
     card: palette.pureWhite,
   },
 } as const;

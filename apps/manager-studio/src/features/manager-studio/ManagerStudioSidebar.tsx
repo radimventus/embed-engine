@@ -40,7 +40,7 @@ function NavGroup({
                 scrollToSection(item.id);
               }}
               className={[
-                'rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-semibold transition-colors',
+                'rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-semibold transition-all duration-200',
                 isActive
                   ? 'border-[#18428F] bg-[#18428F] text-white'
                   : 'border-transparent text-[#001930] hover:bg-[#F7F9FC]',

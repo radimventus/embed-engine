@@ -318,29 +318,34 @@ export function BuilderStudioApp() {
           />
         )}
         {diskRoot === null && (
-          <section className="rounded-[18px] border border-[rgba(0,25,48,0.06)] bg-white p-[26px] shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-            <h2 className="text-xl font-semibold text-builder-ink">
-              Vyberte projekt
-            </h2>
-            <p className="mt-2 text-sm text-builder-muted">
+          <div className="platform-empty">
+            <div className="platform-empty__icon" aria-hidden>
+              ⊕
+            </div>
+            <h2 className="platform-empty__title">Vyberte projekt</h2>
+            <p className="platform-empty__helper">
               Otevřete projekt ve Workspace vlevo, nebo založte nový přes ⊕.
+            </p>
+          </div>
+        )}
+        {diskRoot !== null && mountStatus.status === 'loading' && (
+          <section className="platform-card">
+            <p className="platform-type-section">Workspace</p>
+            <h2 className="platform-type-h2" style={{ marginTop: 8 }}>
+              Načítám projekt…
+            </h2>
+            <p className="platform-type-helper" style={{ marginTop: 8 }}>
+              {companyName}
             </p>
           </section>
         )}
-        {diskRoot !== null && mountStatus.status === 'loading' && (
-          <section className="rounded-[18px] border border-[rgba(0,25,48,0.06)] bg-white p-[26px] shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-            <h2 className="text-xl font-semibold text-builder-ink">
-              Načítám projekt…
-            </h2>
-            <p className="mt-2 text-sm text-builder-muted">{companyName}</p>
-          </section>
-        )}
         {diskRoot !== null && mountStatus.status === 'error' && (
-          <section className="rounded-[18px] border border-builder-draft/30 bg-builder-draftBg p-[26px]">
-            <h2 className="text-xl font-semibold text-builder-draft">
+          <section className="platform-card">
+            <p className="platform-type-section">Workspace</p>
+            <h2 className="platform-type-h2" style={{ marginTop: 8 }}>
               Projekt se nepodařilo otevřít
             </h2>
-            <p className="mt-2 text-sm text-builder-draft">
+            <p className="platform-type-helper" style={{ marginTop: 8 }}>
               {mountStatus.message}
             </p>
           </section>

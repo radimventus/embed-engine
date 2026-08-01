@@ -16,10 +16,19 @@
   --platform-accent: #18428f;
   --platform-blue: #18428f;
   --platform-blue-bg: #eef4ff;
+  --platform-green: #138d45;
+  --platform-green-bg: #e6f7ed;
+  --platform-red: #dc2626;
+  --platform-red-bg: #fef2f2;
+  --platform-warning: #b45309;
+  --platform-warning-bg: #fff4e5;
+  --platform-section: #7d8796;
   --platform-radius: 10px;
   --platform-radius-card: 18px;
+  --platform-radius-panel: 14px;
   --platform-shadow-header: 0 4px 20px rgba(0, 25, 48, 0.15);
   --platform-shadow-card: 0 4px 20px rgba(0, 0, 0, 0.02);
+  --platform-transition: all 0.25s ease;
   --platform-font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   box-sizing: border-box;
   display: flex;
@@ -302,106 +311,6 @@
   overflow: hidden;
 }
 
-.platform-card {
-  border: 1px solid rgba(0, 25, 48, 0.06);
-  border-radius: var(--platform-radius-card);
-  background: var(--platform-surface);
-  padding: 26px;
-  box-shadow: var(--platform-shadow-card);
-}
-
-.platform-card__title {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--platform-ink);
-}
-
-.platform-card__desc {
-  margin: 4px 0 0;
-  font-size: 13px;
-  color: var(--platform-muted);
-}
-
-.platform-capability-inspector {
-  box-sizing: border-box;
-  height: 100%;
-  overflow-y: auto;
-  border-left: 1px solid var(--platform-line);
-  background: var(--platform-surface);
-  padding: 24px;
-  font-family: var(--platform-font);
-  color: var(--platform-ink);
-}
-
-.platform-capability-inspector__eyebrow {
-  margin: 0;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  color: #7d8796;
-}
-
-.platform-capability-inspector__title {
-  margin: 4px 0 0;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.platform-capability-inspector__studio {
-  margin: 8px 0 0;
-  font-size: 12px;
-  color: var(--platform-muted);
-}
-
-.platform-capability-inspector__active {
-  margin-top: 20px;
-  border: 1px solid var(--platform-line);
-  border-radius: 14px;
-  background: var(--platform-canvas);
-  padding: 14px;
-}
-
-.platform-capability-inspector__name {
-  margin: 0;
-  font-size: 15px;
-  font-weight: 700;
-}
-
-.platform-capability-inspector__meta,
-.platform-capability-inspector__desc,
-.platform-capability-inspector__owner,
-.platform-capability-inspector__deps,
-.platform-capability-inspector__empty {
-  margin: 8px 0 0;
-  font-size: 12px;
-  line-height: 1.45;
-  color: var(--platform-muted);
-}
-
-.platform-capability-inspector__list {
-  margin: 20px 0 0;
-  padding: 0;
-  list-style: none;
-}
-
-.platform-capability-inspector__item {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-  border: 1px solid var(--platform-line);
-  border-radius: 10px;
-  margin-top: 8px;
-  padding: 10px 12px;
-  font-size: 12px;
-}
-
-.platform-capability-inspector__item--active {
-  border-color: var(--platform-accent);
-  background: var(--platform-blue-bg);
-}
-
 .platform-feedback {
   position: relative;
 }
@@ -493,4 +402,369 @@
   margin: 10px 0 0;
   font-size: 12px;
   color: var(--platform-muted);
+}
+
+/* =======================================================
+   VR-FIX-02 — Visual system (click-model SSOT)
+   ======================================================= */
+
+.platform-type-h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  color: var(--platform-ink);
+}
+
+.platform-type-h2 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--platform-ink);
+}
+
+.platform-type-h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--platform-ink);
+}
+
+.platform-type-section {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--platform-section);
+}
+
+.platform-type-meta {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--platform-muted);
+}
+
+.platform-type-helper {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--platform-muted);
+}
+
+.platform-type-body {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--platform-ink);
+}
+
+.platform-card {
+  border: 1px solid rgba(0, 25, 48, 0.06);
+  border-radius: var(--platform-radius-card);
+  background: var(--platform-surface);
+  padding: 26px;
+  box-shadow: var(--platform-shadow-card);
+}
+
+.platform-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  min-height: 44px;
+}
+
+.platform-card__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--platform-ink);
+}
+
+.platform-card__desc {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--platform-muted);
+}
+
+.platform-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.platform-badge--pass,
+.platform-badge--ready,
+.platform-badge--published {
+  background: var(--platform-green-bg);
+  color: var(--platform-green);
+}
+
+.platform-badge--warning,
+.platform-badge--draft {
+  background: var(--platform-warning-bg);
+  color: var(--platform-warning);
+}
+
+.platform-badge--fail {
+  background: var(--platform-red-bg);
+  color: var(--platform-red);
+}
+
+.platform-badge--info {
+  background: var(--platform-blue-bg);
+  color: var(--platform-blue);
+}
+
+.platform-badge--gold {
+  background: var(--platform-gold-light);
+  color: var(--platform-gold);
+}
+
+.platform-icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.platform-icon--lg {
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+}
+
+.platform-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  border: 1px dashed var(--platform-line);
+  border-radius: var(--platform-radius-card);
+  background: var(--platform-canvas);
+  padding: 28px 26px;
+}
+
+.platform-empty__icon {
+  display: flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--platform-blue-bg);
+  color: var(--platform-blue);
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.platform-empty__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--platform-ink);
+}
+
+.platform-empty__helper {
+  margin: 0;
+  max-width: 42ch;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--platform-muted);
+}
+
+.platform-empty__action {
+  margin-top: 10px;
+}
+
+.platform-module {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--platform-line);
+  border-radius: var(--platform-radius-panel);
+  background: var(--platform-surface);
+  padding: 14px 16px;
+  transition: var(--platform-transition);
+}
+
+.platform-module:hover {
+  border-color: color-mix(in srgb, var(--platform-blue) 35%, var(--platform-line));
+  background: var(--platform-canvas);
+}
+
+.platform-module--active {
+  border-color: var(--platform-blue);
+  background: var(--platform-blue-bg);
+}
+
+.platform-module__name {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--platform-ink);
+}
+
+.platform-module__meta {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--platform-muted);
+}
+
+.platform-capability-inspector {
+  box-sizing: border-box;
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  gap: 0;
+  overflow-y: auto;
+  border-left: 1px solid var(--platform-line);
+  background: var(--platform-surface);
+  padding: 24px;
+  font-family: var(--platform-font);
+  color: var(--platform-ink);
+}
+
+.platform-capability-inspector__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--platform-section);
+}
+
+.platform-capability-inspector__title {
+  margin: 6px 0 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--platform-ink);
+}
+
+.platform-capability-inspector__studio {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: var(--platform-muted);
+}
+
+.platform-capability-inspector__active {
+  margin-top: 20px;
+  border: 1px solid var(--platform-line);
+  border-radius: var(--platform-radius-panel);
+  background: var(--platform-canvas);
+  padding: 16px;
+}
+
+.platform-capability-inspector__name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--platform-ink);
+}
+
+.platform-capability-inspector__meta,
+.platform-capability-inspector__desc,
+.platform-capability-inspector__owner,
+.platform-capability-inspector__deps,
+.platform-capability-inspector__empty {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--platform-muted);
+}
+
+.platform-capability-inspector__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.platform-capability-inspector__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.platform-capability-inspector__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid var(--platform-line);
+  border-radius: var(--platform-radius-panel);
+  padding: 12px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--platform-ink);
+  transition: var(--platform-transition);
+}
+
+.platform-capability-inspector__item:hover {
+  background: var(--platform-canvas);
+}
+
+.platform-capability-inspector__item--active {
+  border-color: var(--platform-blue);
+  background: var(--platform-blue-bg);
+}
+
+.platform-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 1px solid var(--platform-line);
+  border-radius: var(--platform-radius);
+  background: var(--platform-surface);
+  padding: 10px 16px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--platform-ink);
+  cursor: pointer;
+  transition: var(--platform-transition);
+}
+
+.platform-btn:hover {
+  background: var(--platform-canvas);
+}
+
+.platform-btn:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--platform-blue) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.platform-btn--primary {
+  border-color: var(--platform-navy);
+  background: var(--platform-navy);
+  color: #fff;
+}
+
+.platform-btn--primary:hover {
+  background: color-mix(in srgb, var(--platform-navy) 88%, #fff);
+}
+
+.platform-role-btn,
+.platform-menu-button,
+.platform-feedback__trigger,
+.platform-notify {
+  transition: var(--platform-transition);
 }

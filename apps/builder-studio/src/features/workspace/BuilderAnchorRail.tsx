@@ -1,36 +1,23 @@
 import type { HousePackageEditSnapshot } from '../house-package/housePackageEditSession';
-import type {
-  HousePackageNavId,
-} from '../house-package/HousePackageSidebar';
+import type { HousePackageNavId } from '../house-package/HousePackageSidebar';
 import type { HpEditSection } from '../house-package/validateHousePackageWorking';
 
 type AnchorItem = {
   readonly id: HousePackageNavId;
   readonly label: string;
   readonly section: HpEditSection | null;
-  readonly group: 'authoring' | 'content' | 'platform';
 };
 
 const ANCHORS: readonly AnchorItem[] = [
-  { id: 'overview', label: 'Dashboard', section: null, group: 'authoring' },
-  { id: 'media-studio', label: 'Média', section: null, group: 'authoring' },
-  { id: 'rooms', label: 'Dispozice', section: 'rooms', group: 'content' },
-  { id: 'knowledge', label: 'Znalosti', section: null, group: 'authoring' },
-  { id: 'experience', label: 'Experience', section: null, group: 'authoring' },
-  { id: 'preview-center', label: 'Preview', section: null, group: 'authoring' },
-  { id: 'release-center', label: 'Release', section: null, group: 'authoring' },
-  {
-    id: 'collaboration',
-    label: 'Collaboration',
-    section: null,
-    group: 'platform',
-  },
-  {
-    id: 'intelligence',
-    label: 'Intelligence',
-    section: null,
-    group: 'platform',
-  },
+  { id: 'overview', label: 'Dashboard', section: null },
+  { id: 'media-studio', label: 'Média', section: null },
+  { id: 'rooms', label: 'Dispozice', section: 'rooms' },
+  { id: 'knowledge', label: 'Znalosti', section: null },
+  { id: 'experience', label: 'Experience', section: null },
+  { id: 'preview-center', label: 'Preview', section: null },
+  { id: 'release-center', label: 'Release', section: null },
+  { id: 'collaboration', label: 'Collaboration', section: null },
+  { id: 'intelligence', label: 'Intelligence', section: null },
 ];
 
 type BuilderAnchorRailProps = {
@@ -40,8 +27,7 @@ type BuilderAnchorRailProps = {
 };
 
 /**
- * VR-FIX-01 — Sticky Anchor Rail (workspace navigation, not left menu).
- * Product-facing capability groups from click model (Média / Dispozice / Znalosti +).
+ * VR-FIX-02 — Sticky product modules (click-model builder-tabs grammar).
  */
 export function BuilderAnchorRail({
   snapshot,
@@ -64,10 +50,10 @@ export function BuilderAnchorRail({
             key={item.id}
             type="button"
             onClick={() => onSelectNav(item.id)}
-            className={`rounded-[10px] border px-5 py-2.5 text-[13px] font-semibold ${
+            className={`rounded-[10px] border px-5 py-2.5 text-[13px] font-semibold transition-all duration-200 ${
               active
                 ? 'border-builder-navy bg-builder-navy text-white'
-                : 'border-[#DDE5EF] bg-white text-builder-ink'
+                : 'border-[#DDE5EF] bg-white text-builder-ink hover:bg-builder-hover'
             }`}
           >
             {item.label}

@@ -1,3 +1,6 @@
+/**
+ * Click-model spacing rhythm (px-aligned for platform chrome).
+ */
 export const spacing = {
   0: '0rem',
   1: '0.25rem',
@@ -12,4 +15,13 @@ export const spacing = {
   16: '4rem',
   20: '5rem',
   24: '6rem',
+  /** Platform click-model aliases */
+  card: '26px',
+  cardGap: '24px',
+  cardHeader: '20px',
+  studioX: '32px',
+  studioY: '28px',
+  control: '10px',
+  icon: '16px',
+  iconGap: '10px',
 } as const;

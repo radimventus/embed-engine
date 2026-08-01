@@ -13,6 +13,10 @@ export {
   CapabilityHostBar,
   CapabilityInspector,
   buildInspectorModel,
+  PlatformStatusBadge,
+  statusToneFromLabel,
+  PlatformCard,
+  PlatformEmptyState,
   PLATFORM_STUDIOS,
   getPlatformStudio,
   getPlatformTheme,
@@ -23,6 +27,7 @@ export {
   type PlatformBreadcrumbItem,
   type PlatformWorkspaceOption,
   type PlatformWorkspaceState,
+  type PlatformStatusTone,
 } from '@embed-engine/platform-shell';
 
 /** Active Studio for this app (Builder). */

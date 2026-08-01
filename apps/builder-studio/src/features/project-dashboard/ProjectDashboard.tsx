@@ -1,3 +1,4 @@
+import { PlatformStatusBadge, statusToneFromLabel } from '../platform';
 import { HOUSE_PACKAGE_URL_ROOT } from '../house-package/housePackagePaths';
 import type { HousePackageNavId } from '../house-package/HousePackageSidebar';
 import {
@@ -31,7 +32,7 @@ export function ProjectDashboard({
 
   return (
     <div className="space-y-6" data-testid="project-dashboard">
-      <header className="overflow-hidden rounded-[18px] border border-[#E8EEF5] bg-white shadow-sm">
+      <header className="platform-card overflow-hidden !p-0">
         <div className="grid gap-0 desktop:grid-cols-[1.2fr_1fr]">
           <div className="relative min-h-[200px] bg-builder-soft">
             {heroUrl !== null ? (
@@ -43,24 +44,22 @@ export function ProjectDashboard({
             ) : (
               <div className="absolute inset-0 bg-gradient-to-br from-[#EEF4FF] via-[#F5F7FB] to-[#E6ECF3]" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-[#23334C]/55 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#001930]/55 to-transparent" />
             <div className="relative flex h-full min-h-[200px] flex-col justify-end p-6 text-white">
               <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-sm font-bold text-builder-navy">
                 {model.companyInitials}
               </div>
-              <h1 className="text-3xl font-semibold tracking-tight">
+              <h1 className="text-[30px] font-semibold tracking-[-0.5px]">
                 {model.projectName}
               </h1>
               <p className="mt-1 text-sm text-white/85">{model.companyName}</p>
             </div>
           </div>
 
-          <div className="flex flex-col justify-between gap-5 p-6">
+          <div className="flex flex-col justify-between gap-5 p-[26px]">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-                  Stav projektu
-                </p>
+                <p className="platform-type-section">Stav projektu</p>
                 <p className="mt-1 text-xl font-semibold text-builder-ink">
                   {model.readinessStateLabel}
                 </p>
@@ -68,7 +67,7 @@ export function ProjectDashboard({
               <button
                 type="button"
                 onClick={onEditProject}
-                className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium text-builder-ink"
+                className="platform-btn"
               >
                 Upravit projekt
               </button>
@@ -168,10 +167,8 @@ function ProjectStats({ model }: { readonly model: ProjectDashboardModel }) {
   ] as const;
 
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
-      <h2 className="text-base font-semibold text-builder-ink">
-        Statistiky projektu
-      </h2>
+    <section className="platform-card">
+      <h2 className="platform-card__title">Statistiky projektu</h2>
       <ul className="mt-4 space-y-3">
         {rows.map((row) => (
           <li
@@ -183,17 +180,13 @@ function ProjectStats({ model }: { readonly model: ProjectDashboardModel }) {
           </li>
         ))}
       </ul>
-      <p
-        className={`mt-4 rounded-[10px] px-3 py-2 text-sm font-semibold ${
-          model.stats.validationLabel.includes('PASS')
-            ? 'bg-builder-successBg text-builder-success'
-            : model.stats.validationLabel.includes('WARNING')
-              ? 'bg-builder-panel text-builder-navy'
-              : 'bg-builder-draftBg text-builder-draft'
-        }`}
-      >
-        {model.stats.validationLabel}
-      </p>
+      <div className="mt-4">
+        <PlatformStatusBadge
+          tone={statusToneFromLabel(model.stats.validationLabel)}
+        >
+          {model.stats.validationLabel}
+        </PlatformStatusBadge>
+      </div>
     </section>
   );
 }
