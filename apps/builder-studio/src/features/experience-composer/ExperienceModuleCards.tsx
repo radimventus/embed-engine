@@ -226,7 +226,7 @@ export function ExperienceModuleCards({
                         event.stopPropagation();
                         onEdit(module.id);
                       }}
-                      className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-1.5 text-sm font-medium text-white"
+                      className="rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-1.5 text-sm font-medium text-white"
                     >
                       Upravit
                     </button>

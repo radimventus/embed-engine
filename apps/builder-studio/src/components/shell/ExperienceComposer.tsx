@@ -115,7 +115,7 @@ export function ExperienceComposer({
                       aria-pressed={isOn}
                       className={`flex w-full flex-col rounded-[12px] border px-4 py-3 text-left ${
                         isOn
-                          ? 'border-builder-navy bg-builder-navy text-white'
+                          ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                           : 'border-[#DDE5EF] bg-white text-builder-ink'
                       }`}
                     >

@@ -38,9 +38,11 @@ Nikoli jako reklamní leták.
 
 ------------------------------------------------------------------------
 
-## 3. Barevná identita (PR-022B)
+## 3. Barevná identita (PR-022C)
 
 Barva není dekorace. Barva vyjadřuje význam. Jedna barva = jedna role.
+
+**Navy = identita. Blue = interakce. Green = success.** Tyto role se nikdy nesmí zaměňovat.
 
 Builder, Manager, Sales i Platform jsou jeden produkt — barvy neodlišují Studia.
 
@@ -49,6 +51,7 @@ Builder, Manager, Sales i Platform jsou jeden produkt — barvy neodlišují Stu
 | Role | HEX |
 | --- | --- |
 | Navy | `#001930` |
+| Interaction Blue | `#18428F` |
 | Gold Intense | `#B8922D` |
 | Gold | `#C8A165` |
 | White | `#FFFFFF` |
@@ -64,17 +67,29 @@ Builder, Manager, Sales i Platform jsou jeden produkt — barvy neodlišují Stu
 
 Warning: zatím ponecháno pro další iteraci.
 
-### Navy — jediná pracovní barva
+### Navy — identita (ne Primary Button)
 
-Primary button / CTA, header, aktivní položky, odkazy, Anchor Rail, hlavní ikony, hlavní text.
+Fonty, header, horní lišta, navigace, rámečky, oddělovače, základní ikony.
+
+### Interaction Blue `#18428F` — jediná aktivní pracovní barva
+
+Primary Button, CTA, hover, odkazy, focus, aktivní text/border/ikona, aktivní badge.
+
+Jedna modrá pro celou platformu. Ne Green.
+
+### Aktivní stav
+
+Podklad: **Cream Dark**. Modrá pouze zvýrazňuje (text, border, ikona) — ne modrá plocha.
 
 ### Gold — pouze Premium
 
-Logo, premium badge, certifikace, střídmé zvýraznění. Nikdy primary button, canvas, formuláře, menu, běžné karty. Gold nesmí převážit nad Navy.
+Logo, premium badge, certifikace, střídmé zvýraznění.
 
 ### Green — Success / PASS / Ready / Published
 
 Green Intense: text, ikony, badge. Green Light: notice, background, success panel.
+
+Green ≠ Navy. Green nikdy nenahrazuje interakční blue.
 
 ### Red — Error / FAIL / blokace / destructive
 
@@ -82,19 +97,19 @@ Red Intense: text, badge, destructive button. Red Light: error background / pane
 
 ### Cream — materiál (ne status)
 
-Canvas, pozadí, dialogy, formuláře, neutrální plochy, hover neutrálních prvků.
+Canvas, pozadí, dialogy, formuláře, neutrální plochy. Cream Mid = secondary hover. Cream Dark = aktivní podklad.
 
 ### Tlačítka
 
-- Primary: Navy (hover tmavší Navy)
-- Secondary: White (hover White + Navy border)
+- Primary: Interaction Blue (hover/pressed tmavší stejné modré)
+- Secondary: White + Navy text (hover Cream Mid)
 - Danger: Red
 - Success: Green
-- Nikdy Gold
+- Nikdy Gold, nikdy Navy fill
 
 ### Focus
 
-Jednotný decentní Navy/Gold focus ring. Žádný systémový světle modrý ring.
+Jednotný Interaction Blue focus ring. Žádný systémový světle modrý ring.
 
 ### Disabled
 
@@ -102,7 +117,7 @@ Cream Dark + Muted text. Bez hover.
 
 ### Zakázáno
 
-Béžové/oranžové plochy, Gold tint panely, světle modré pracovní plochy, historické Builder blues, neodsouhlasené odstíny.
+Béžové/oranžové plochy, Gold tint panely, studio-specific odstíny, Navy jako Primary Button, Green jako interakce.
 
 ------------------------------------------------------------------------
 

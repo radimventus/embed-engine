@@ -330,7 +330,7 @@ function ReleaseReadinessCard({
         type="button"
         disabled={publishing || !model.readyToRelease}
         onClick={onPublish}
-        className="mt-3 w-full rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-3 w-full rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
       >
         {publishing ? 'Publikuji…' : 'Publikovat změny'}
       </button>

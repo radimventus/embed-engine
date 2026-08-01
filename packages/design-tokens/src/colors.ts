@@ -1,7 +1,7 @@
 /**
  * Platform + Embed color system.
- * CONIS Design Manual SSOT — PR-022B.
- * Color = meaning. One color = one role. Studios share one palette.
+ * CONIS Design Manual SSOT — PR-022C.
+ * Navy = identity. Blue = interaction. Green = success only.
  */
 export const palette = {
   navy: '#001930',
@@ -20,9 +20,13 @@ export const palette = {
   platformBg: '#F7F6F4',
   platformMuted: '#64748B',
   platformLine: '#E3E3E3',
-  /** Working / informational chrome — Navy only (PR-022B). */
-  platformBlue: '#001930',
-  platformBlueBg: '#E8E5E0',
+  /**
+   * Interaction blue (click-model / Manager mid blue).
+   * Primary button, CTA, links, focus, active accents — never Green.
+   */
+  platformBlue: '#18428F',
+  /** Active / info surface — Cream Dark (not blue fill). */
+  platformBlueBg: '#D9D4CC',
   platformGreen: '#137A43',
   platformGreenBg: '#EAF5EE',
   platformRed: '#A93226',
@@ -65,8 +69,8 @@ export const colors = {
     failBg: palette.platformRedBg,
     error: palette.platformRed,
     errorBg: palette.platformRedBg,
-    info: palette.navy,
-    infoBg: palette.creamMid,
+    info: palette.platformBlue,
+    infoBg: palette.creamDark,
     gold: palette.goldIntense,
     goldBg: palette.goldSurface,
   },
@@ -91,14 +95,15 @@ export const colors = {
     gold: palette.gold,
     goldIntense: palette.goldIntense,
     goldLight: palette.goldSurface,
+    blue: palette.platformBlue,
   },
   action: {
-    primary: palette.navy,
+    primary: palette.platformBlue,
     onPrimary: palette.pureWhite,
     secondary: palette.pureWhite,
     onSecondary: palette.navy,
     secondaryAccent: palette.navy,
-    accent: palette.navy,
+    accent: palette.platformBlue,
     onAccent: palette.pureWhite,
     muted: palette.creamDark,
     onMuted: palette.platformMuted,
@@ -128,8 +133,8 @@ export const colors = {
     bg: palette.platformBg,
     muted: palette.platformMuted,
     line: palette.platformLine,
-    blue: palette.navy,
-    blueBg: palette.creamMid,
+    blue: palette.platformBlue,
+    blueBg: palette.platformBlueBg,
     green: palette.platformGreen,
     greenBg: palette.platformGreenBg,
     red: palette.platformRed,

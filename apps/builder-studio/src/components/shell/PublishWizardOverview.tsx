@@ -83,7 +83,7 @@ export function PublishWizardOverview({
         <button
           type="button"
           onClick={onStart}
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2.5 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2.5 text-sm font-medium text-white"
         >
           Start Publish
         </button>
@@ -211,7 +211,7 @@ export function PublishWizardOverview({
             type="button"
             onClick={onPublish}
             disabled={!canPublish || session.status !== 'READY'}
-            className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
+            className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
           >
             Publish
           </button>

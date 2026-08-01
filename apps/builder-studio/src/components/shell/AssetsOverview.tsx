@@ -107,7 +107,7 @@ export function AssetsOverview({
         <button
           type="button"
           onClick={onCreateAsset}
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2.5 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2.5 text-sm font-medium text-white"
         >
           Create
         </button>
@@ -127,7 +127,7 @@ export function AssetsOverview({
             onClick={() => setFilter(item.id)}
             className={`rounded-[10px] border px-3 py-2 text-sm ${
               filter === item.id
-                ? 'border-builder-navy bg-builder-navy text-white'
+                ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                 : 'border-[#DDE5EF] bg-white text-builder-ink'
             }`}
           >

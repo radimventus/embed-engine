@@ -40,7 +40,7 @@ export function ExportCompatibilityOverview({
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <button type="button" onClick={onRegister} className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2.5 text-sm font-medium text-white">
+          <button type="button" onClick={onRegister} className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2.5 text-sm font-medium text-white">
             Register Compatibility
           </button>
           <button type="button" onClick={onValidate} disabled={compatibilityPackage === null} className="rounded-[10px] border border-[#DDE5EF] px-4 py-2.5 text-sm font-medium disabled:opacity-40">

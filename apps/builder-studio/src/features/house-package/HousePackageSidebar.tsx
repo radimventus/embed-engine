@@ -111,7 +111,7 @@ export function HousePackageSidebar({
               onClick={() => onSelectNav(item.id)}
               className={`flex items-center justify-between rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-medium ${
                 active
-                  ? 'border-builder-navy bg-builder-navy text-white'
+                  ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                   : 'border-[#DDE5EF] bg-white text-builder-ink'
               }`}
             >
@@ -119,7 +119,7 @@ export function HousePackageSidebar({
               {dirty && (
                 <span
                   className={`text-[10px] uppercase tracking-wide ${
-                    active ? 'text-white/80' : 'text-builder-navy'
+                    active ? 'text-builder-blue/80' : 'text-builder-navy'
                   }`}
                 >
                   změna

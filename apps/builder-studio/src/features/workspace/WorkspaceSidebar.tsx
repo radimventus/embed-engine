@@ -140,7 +140,7 @@ export function WorkspaceSidebar({
                 onClick={() => onOpenHouse(house.id)}
                 className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-sm font-semibold transition ${
                   active
-                    ? 'bg-builder-navy text-white'
+                    ? 'bg-builder-creamDark text-builder-blue border border-builder-blue'
                     : 'text-builder-ink hover:bg-builder-hover'
                 } ${switching ? 'opacity-70' : ''}`}
               >
@@ -149,7 +149,7 @@ export function WorkspaceSidebar({
                   {house.name}
                   <small
                     className={`mt-0.5 block text-[11px] font-normal ${
-                      active ? 'text-white/75' : 'text-builder-muted'
+                      active ? 'text-builder-muted' : 'text-builder-muted'
                     }`}
                   >
                     {activeFolder?.name ?? 'Projekt'}

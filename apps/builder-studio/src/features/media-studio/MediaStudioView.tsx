@@ -139,7 +139,7 @@ export function MediaStudioView({
                 onClick={() => setArea(item.id)}
                 className={`rounded-[12px] border px-3 py-3 text-left ${
                   area === item.id
-                    ? 'border-builder-navy bg-builder-navy text-white'
+                    ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                     : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                 }`}
               >
@@ -312,7 +312,7 @@ function HeroManager({
         <div className="flex items-end">
           <button
             type="submit"
-            className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2 text-sm font-medium text-white"
+            className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2 text-sm font-medium text-white"
           >
             Uložit Hero
           </button>
@@ -379,7 +379,7 @@ function GalleryManager({
           />
           <button
             type="button"
-            className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white"
+            className="rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2 text-sm font-medium text-white"
             onClick={() =>
               onChange(
                 session.setGalleryCsv(
@@ -622,7 +622,7 @@ function SelectedGalleryEditor({
       </label>
       <button
         type="submit"
-        className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2 text-sm font-medium text-white"
+        className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2 text-sm font-medium text-white"
       >
         Uložit položku
       </button>
@@ -663,7 +663,7 @@ function VideoManager({
         </div>
         <button
           type="button"
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2 text-sm font-medium text-white"
           onClick={() =>
             onChange(
               session.setVideosCsv(
@@ -798,7 +798,7 @@ function VideoEditor({
       </label>
       <button
         type="submit"
-        className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2 text-sm font-medium text-white"
+        className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2 text-sm font-medium text-white"
       >
         Uložit video
       </button>

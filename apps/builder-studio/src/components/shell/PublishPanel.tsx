@@ -264,7 +264,7 @@ export function PublishPanel({
         <button
           type="button"
           onClick={onBuildProject}
-          className="w-full rounded-xl bg-builder-navy px-4 py-4 text-[15px] font-semibold text-white transition hover:bg-builder-navyDeep"
+          className="w-full rounded-xl bg-builder-blue px-4 py-4 text-[15px] font-semibold text-white transition hover:bg-builder-blueHover"
         >
           Spustit Build
         </button>
@@ -364,8 +364,8 @@ export function PublishPanel({
           disabled={!canPublish}
           className={`w-full rounded-xl px-4 py-4 text-[15px] font-semibold text-white transition ${
             canPublish
-              ? 'bg-builder-navy hover:bg-builder-navyDeep'
-              : 'cursor-not-allowed bg-builder-navy opacity-60'
+              ? 'bg-builder-blue hover:bg-builder-blueHover'
+              : 'cursor-not-allowed bg-builder-blue opacity-60'
           }`}
           title={
             canPublish
@@ -443,8 +443,8 @@ export function PublishPanel({
             disabled={!canOpenPreview}
             className={`w-full rounded-xl px-4 py-4 text-[15px] font-semibold text-white transition ${
               canOpenPreview
-                ? 'bg-builder-navy hover:bg-builder-navyDeep'
-                : 'cursor-not-allowed bg-builder-navy opacity-60'
+                ? 'bg-builder-blue hover:bg-builder-blueHover'
+                : 'cursor-not-allowed bg-builder-blue opacity-60'
             }`}
             title={
               canOpenPreview
@@ -460,7 +460,7 @@ export function PublishPanel({
             disabled={preview.session === null}
             className={`w-full rounded-xl px-4 py-3 text-sm font-semibold transition ${
               preview.session !== null
-                ? 'bg-builder-panel text-builder-navy hover:bg-builder-navy hover:text-white'
+                ? 'bg-builder-panel text-builder-navy hover:bg-builder-blue hover:text-white'
                 : 'cursor-not-allowed bg-builder-soft text-builder-navy opacity-60'
             }`}
           >

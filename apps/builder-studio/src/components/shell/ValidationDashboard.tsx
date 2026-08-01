@@ -120,7 +120,7 @@ export function ValidationDashboard({
       <button
         type="button"
         onClick={onValidateProject}
-        className="w-full rounded-xl bg-builder-panel px-4 py-4 text-[15px] font-semibold text-builder-navy transition hover:bg-builder-navy hover:text-white"
+        className="w-full rounded-xl bg-builder-panel px-4 py-4 text-[15px] font-semibold text-builder-navy transition hover:bg-builder-blue hover:text-white"
       >
         Spustit validaci
       </button>

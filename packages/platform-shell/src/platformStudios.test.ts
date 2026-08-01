@@ -12,15 +12,15 @@ describe('platformShell (EPIC-BX-11 / BX-15 / VR-FIX-01)', () => {
     assert.equal(getPlatformStudio('sales').href, 'http://127.0.0.1:4179/');
   });
 
-  it('uses shared Navy working accent and CONIS header height (PR-022B)', () => {
+  it('uses shared interaction blue and CONIS header height (PR-022C)', () => {
     const builder = getPlatformTheme('builder');
     const manager = getPlatformTheme('manager');
     const sales = getPlatformTheme('sales');
     assert.equal(builder.headerHeightPx, 70);
     assert.equal(builder.navy, '#001930');
     assert.equal(builder.gold, '#B8922D');
-    assert.equal(builder.accent, '#001930');
-    assert.equal(manager.accent, '#001930');
-    assert.equal(sales.accent, '#001930');
+    assert.equal(builder.accent, '#18428F');
+    assert.equal(manager.accent, '#18428F');
+    assert.equal(sales.accent, '#18428F');
   });
 });

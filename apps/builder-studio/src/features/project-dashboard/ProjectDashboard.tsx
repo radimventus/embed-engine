@@ -302,7 +302,7 @@ function QuickAction({
         onClick={onClick}
         className={`flex w-full items-center gap-2 rounded-[10px] px-3 py-2.5 text-left text-sm font-medium ${
           emphasis
-            ? 'bg-builder-navy text-white'
+            ? 'bg-builder-creamDark text-builder-blue'
             : 'text-builder-navy hover:bg-builder-panel'
         }`}
       >

@@ -46,7 +46,7 @@ export function AssetCard({
         <button
           type="button"
           onClick={onUploadPlaceholder}
-          className="inline-flex items-center gap-2 rounded-[10px] border border-builder-panelBorder bg-builder-panel px-5 py-3 text-sm font-semibold text-builder-navy transition hover:border-builder-navy hover:bg-builder-navy hover:text-white"
+          className="inline-flex items-center gap-2 rounded-[10px] border border-builder-panelBorder bg-builder-panel px-5 py-3 text-sm font-semibold text-builder-navy transition hover:border-builder-blue hover:bg-builder-creamMid"
         >
           Nahrát {collection.title}
         </button>

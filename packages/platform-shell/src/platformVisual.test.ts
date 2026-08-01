@@ -22,9 +22,9 @@ describe('platformVisual (VR-FIX-02)', () => {
     assert.equal(builder.canvas, '#F7F6F4');
   });
 
-  it('uses shared Navy working accent across studios (PR-022B)', () => {
-    assert.equal(getPlatformTheme('builder').accent, '#001930');
-    assert.equal(getPlatformTheme('manager').accent, '#001930');
-    assert.equal(getPlatformTheme('sales').accent, '#001930');
+  it('uses shared interaction blue accent across studios (PR-022C)', () => {
+    assert.equal(getPlatformTheme('builder').accent, '#18428F');
+    assert.equal(getPlatformTheme('manager').accent, '#18428F');
+    assert.equal(getPlatformTheme('sales').accent, '#18428F');
   });
 });

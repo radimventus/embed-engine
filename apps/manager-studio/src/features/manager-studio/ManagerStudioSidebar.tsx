@@ -42,7 +42,7 @@ function NavGroup({
               className={[
                 'rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-semibold platform-motion',
                 isActive
-                  ? 'border-[var(--platform-accent)] bg-[var(--platform-accent)] text-white'
+                  ? 'border-[var(--platform-blue)] bg-[var(--platform-cream-dark)] text-[var(--platform-blue)]'
                   : 'border-transparent text-[#001930] hover:bg-[var(--platform-cream-mid)]',
               ].join(' ')}
             >

@@ -73,7 +73,7 @@ export function CollaborationCenterView({
               onClick={() => setPanel(item.id)}
               className={`rounded-[12px] border px-3 py-3 text-left ${
                 panel === item.id
-                  ? 'border-builder-navy bg-builder-navy text-white'
+                  ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                   : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
               }`}
             >
@@ -245,7 +245,7 @@ function WorkflowStrip({
                       onClick={() => onChange(item.areaId, stage.id)}
                       className={`rounded-[10px] border px-2 py-2 text-center text-[12px] font-medium ${
                         active
-                          ? 'border-builder-navy bg-builder-navy text-white'
+                          ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                           : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                       }`}
                     >
@@ -323,7 +323,7 @@ function ReviewPanel({
                     onClick={() => onDecide(review.moduleId, decision, '')}
                     className={`rounded-[8px] border px-3 py-1.5 text-[12px] font-medium ${
                       review.decision === decision
-                        ? 'border-builder-navy bg-builder-navy text-white'
+                        ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                         : 'border-[#DDE5EF] bg-white text-builder-ink'
                     }`}
                   >
@@ -391,7 +391,7 @@ function CommentsPanel({
         />
         <button
           type="submit"
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2 text-sm font-medium text-white"
         >
           Přidat
         </button>
@@ -496,7 +496,7 @@ function TasksPanel({
         />
         <button
           type="submit"
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2 text-sm font-medium text-white tablet:col-span-4"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2 text-sm font-medium text-white tablet:col-span-4"
         >
           Vytvořit úkol
         </button>
@@ -562,7 +562,7 @@ function ActivityPanel({
             <ul className="mt-2 space-y-2 border-l border-[#DDE5EF] pl-4">
               {group.events.map((event) => (
                 <li key={event.id} className="relative text-sm">
-                  <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-builder-navy" />
+                  <span className="absolute -left-[21px] top-1.5 h-2.5 w-2.5 rounded-full bg-builder-blue" />
                   <p className="font-medium text-builder-ink">{event.summary}</p>
                   <p className="text-[11px] text-builder-muted">
                     {event.actor} ·{' '}

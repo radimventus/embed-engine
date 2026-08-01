@@ -56,7 +56,7 @@ export function HeuristicEngineOverview({
           <button
             type="button"
             onClick={onDerive}
-            className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2.5 text-sm font-medium text-white"
+            className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2.5 text-sm font-medium text-white"
           >
             Derive Heuristics
           </button>

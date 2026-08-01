@@ -150,7 +150,7 @@ function ActionButton({
       onClick={onClick}
       className={`w-full rounded-[10px] border px-3 py-2.5 text-sm font-medium disabled:opacity-40 ${
         primary
-          ? 'border-builder-navy bg-builder-navy text-white'
+          ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
           : 'border-[#DDE5EF] bg-white text-builder-ink'
       }`}
     >

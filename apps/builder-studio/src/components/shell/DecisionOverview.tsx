@@ -53,7 +53,7 @@ export function DecisionOverview({
         <button
           type="button"
           onClick={onSave}
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2.5 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2.5 text-sm font-medium text-white"
         >
           Uložit Decision
         </button>
@@ -170,7 +170,7 @@ export function DecisionOverview({
                   aria-pressed={isOn}
                   className={`flex w-full flex-col rounded-[12px] border px-4 py-3 text-left ${
                     isOn
-                      ? 'border-builder-navy bg-builder-navy text-white'
+                      ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                       : 'border-[#DDE5EF] bg-white text-builder-ink'
                   }`}
                 >

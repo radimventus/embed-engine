@@ -136,7 +136,7 @@ export function HousePackageMountPanel({
             type="button"
             disabled={!canPublish || validating || publishing}
             onClick={onPublish}
-            className="w-full rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
+            className="w-full rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
           >
             {publishing ? 'Publikuji…' : 'Publikovat'}
           </button>

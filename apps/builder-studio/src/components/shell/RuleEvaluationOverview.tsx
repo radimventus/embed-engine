@@ -48,7 +48,7 @@ export function RuleEvaluationOverview({
           <button
             type="button"
             onClick={onEvaluate}
-            className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2.5 text-sm font-medium text-white"
+            className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2.5 text-sm font-medium text-white"
           >
             Evaluate Rules
           </button>
@@ -127,7 +127,7 @@ export function RuleEvaluationOverview({
                   <span
                     className={`rounded-[8px] px-2.5 py-1 text-[12px] font-medium ${
                       result.status === 'Passed'
-                        ? 'bg-builder-navy text-white'
+                        ? 'bg-builder-creamDark text-builder-blue'
                         : result.status === 'Failed'
                           ? 'border border-[#DDE5EF] text-builder-ink'
                           : 'border border-dashed border-[#DDE5EF] text-builder-muted'

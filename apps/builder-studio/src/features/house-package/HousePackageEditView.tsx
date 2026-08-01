@@ -111,7 +111,7 @@ export function HousePackageEditView({
               !snapshot.validation.ok
             }
             onClick={onSave}
-            className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
+            className="rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
           >
             {saving ? 'Ukládám…' : 'Uložit'}
           </button>
@@ -446,7 +446,7 @@ function CsvEditor({
       <div className="mb-3 flex gap-2">
         <button
           type="button"
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-1.5 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-1.5 text-sm font-medium text-white"
           onClick={() => onCsvChange(addCsvRow(csv, emptyRow))}
         >
           Přidat řádek

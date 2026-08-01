@@ -184,7 +184,7 @@ function ReadonlyStructuredFields({
         <button
           type="button"
           onClick={onOpenHp}
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2 text-sm font-medium text-white"
         >
           Otevřít související obsah
         </button>
@@ -296,7 +296,7 @@ function RoomsStructuredEditor({
         </button>
         <button
           type="submit"
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2 text-sm font-medium text-white"
         >
           Uložit do projektu
         </button>
@@ -419,7 +419,7 @@ function FaqStructuredEditor({
         </button>
         <button
           type="submit"
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2 text-sm font-medium text-white"
         >
           Uložit FAQ
         </button>

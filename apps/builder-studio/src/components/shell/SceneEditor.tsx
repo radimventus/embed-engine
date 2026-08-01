@@ -42,7 +42,7 @@ export function SceneEditor({
         <button
           type="button"
           onClick={onAddScene}
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-3.5 py-2 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-3.5 py-2 text-sm font-medium text-white"
         >
           + Scéna
         </button>

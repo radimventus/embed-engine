@@ -215,10 +215,10 @@ export function SalesStudioApp() {
                       className="w-full rounded-[12px] border px-3.5 py-3 text-left platform-motion"
                       style={{
                         borderColor: active
-                          ? 'var(--platform-navy)'
+                          ? 'var(--platform-blue)'
                           : 'var(--platform-line)',
                         background: active
-                          ? 'var(--platform-cream-mid)'
+                          ? 'var(--platform-cream-dark)'
                           : 'var(--platform-surface)',
                       }}
                     >
@@ -226,7 +226,7 @@ export function SalesStudioApp() {
                         <span className="text-sm font-semibold text-[var(--platform-ink)]">
                           {client.name}
                         </span>
-                        <span className="text-[13px] font-bold text-[var(--platform-navy)]">
+                        <span className="text-[13px] font-bold text-[var(--platform-blue)]">
                           {client.score} %
                         </span>
                       </div>
@@ -281,7 +281,7 @@ export function SalesStudioApp() {
                       className="h-full rounded-full"
                       style={{
                         width: `${activeClient.score}%`,
-                        background: 'var(--platform-navy)',
+                        background: 'var(--platform-blue)',
                       }}
                     />
                   </div>
@@ -331,7 +331,7 @@ export function SalesStudioApp() {
                             step.state === 'completed'
                               ? 'var(--platform-green)'
                               : step.state === 'active'
-                                ? 'var(--platform-navy)'
+                                ? 'var(--platform-blue)'
                                 : 'var(--platform-line)',
                         }}
                         aria-hidden

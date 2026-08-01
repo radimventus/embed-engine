@@ -54,13 +54,13 @@ export function ExperienceOutline({
                 onClick={() => onSelect(module.id)}
                 className={`flex w-full items-center gap-2 rounded-[10px] px-3 py-2.5 text-left text-sm ${
                   active
-                    ? 'bg-builder-navy text-white'
+                    ? 'bg-builder-creamDark text-builder-blue'
                     : 'text-builder-ink hover:bg-builder-hover'
                 }`}
               >
                 <span
                   className={`w-4 text-[11px] ${
-                    active ? 'text-white/70' : 'text-builder-muted'
+                    active ? 'text-builder-muted' : 'text-builder-muted'
                   }`}
                 >
                   {index + 1}

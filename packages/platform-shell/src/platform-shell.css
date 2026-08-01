@@ -20,9 +20,10 @@
   --platform-cream-light: #f7f6f4;
   --platform-cream-mid: #e8e5e0;
   --platform-cream-dark: #d9d4cc;
-  --platform-accent: #001930;
-  --platform-blue: #001930;
-  --platform-blue-bg: #e8e5e0;
+  /* PR-022C — interaction blue (not Navy, not Green). */
+  --platform-accent: #18428f;
+  --platform-blue: #18428f;
+  --platform-blue-bg: #d9d4cc;
   --platform-green: #137a43;
   --platform-green-bg: #eaf5ee;
   --platform-red: #a93226;
@@ -58,13 +59,13 @@
   box-sizing: border-box;
 }
 
-/* PR-022B — studios share one working palette (Navy). No studio color identity. */
+/* PR-022C — shared interaction blue across studios. Navy = identity only. */
 [data-platform-shell][data-studio='builder'],
 [data-platform-shell][data-studio='manager'],
 [data-platform-shell][data-studio='sales'] {
-  --platform-accent: #001930;
-  --platform-blue: #001930;
-  --platform-blue-bg: #e8e5e0;
+  --platform-accent: #18428f;
+  --platform-blue: #18428f;
+  --platform-blue-bg: #d9d4cc;
 }
 
 .platform-header {
@@ -232,7 +233,7 @@
 }
 
 .platform-menu-item--active {
-  background: var(--platform-blue-bg);
+  background: var(--platform-cream-dark);
   color: var(--platform-blue);
 }
 
@@ -396,7 +397,7 @@
 
 .platform-feedback__send {
   border: 0;
-  background: var(--platform-navy);
+  background: var(--platform-blue);
   color: #fff;
 }
 
@@ -534,7 +535,7 @@
 }
 
 .platform-badge--info {
-  background: var(--platform-blue-bg);
+  background: var(--platform-cream-dark);
   color: var(--platform-blue);
 }
 
@@ -578,7 +579,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  background: var(--platform-blue-bg);
+  background: var(--platform-cream-dark);
   color: var(--platform-blue);
   font-size: 18px;
   margin-bottom: 4px;
@@ -616,13 +617,14 @@
 }
 
 .platform-module:hover {
-  border-color: color-mix(in srgb, var(--platform-navy) 35%, var(--platform-line));
+  border-color: color-mix(in srgb, var(--platform-blue) 35%, var(--platform-line));
   background: var(--platform-cream-mid);
 }
 
 .platform-module--active {
   border-color: var(--platform-blue);
-  background: var(--platform-blue-bg);
+  background: var(--platform-cream-dark);
+  color: var(--platform-blue);
 }
 
 .platform-module__name {
@@ -736,7 +738,8 @@
 
 .platform-capability-inspector__item--active {
   border-color: var(--platform-blue);
-  background: var(--platform-blue-bg);
+  background: var(--platform-cream-dark);
+  color: var(--platform-blue);
 }
 
 .platform-btn {
@@ -757,24 +760,29 @@
 }
 
 .platform-btn:hover {
-  background: #fff;
-  border-color: var(--platform-navy);
+  background: var(--platform-cream-mid);
+  border-color: var(--platform-line);
 }
 
 .platform-btn:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--platform-gold) 45%, var(--platform-navy));
+  outline: 2px solid var(--platform-blue);
   outline-offset: 2px;
 }
 
 .platform-btn--primary {
-  border-color: var(--platform-navy);
-  background: var(--platform-navy);
+  border-color: var(--platform-blue);
+  background: var(--platform-blue);
   color: #fff;
 }
 
 .platform-btn--primary:hover {
-  background: color-mix(in srgb, var(--platform-navy) 88%, #000);
-  border-color: color-mix(in srgb, var(--platform-navy) 88%, #000);
+  background: color-mix(in srgb, var(--platform-blue) 85%, #000);
+  border-color: color-mix(in srgb, var(--platform-blue) 85%, #000);
+}
+
+.platform-btn--primary:active:not(:disabled) {
+  background: color-mix(in srgb, var(--platform-blue) 72%, #000);
+  border-color: color-mix(in srgb, var(--platform-blue) 72%, #000);
 }
 
 .platform-btn--danger {
@@ -893,7 +901,7 @@
 .platform-role-btn:focus-visible,
 .platform-menu-button:focus-visible,
 .platform-field__control :focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--platform-gold) 45%, var(--platform-navy));
+  outline: 2px solid var(--platform-blue);
   outline-offset: 2px;
 }
 
@@ -1100,7 +1108,7 @@
 .platform-role-btn:focus-visible,
 .platform-menu-item:focus-visible,
 .platform-breadcrumb__item--action:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--platform-gold) 45%, var(--platform-navy));
+  outline: 2px solid var(--platform-blue);
   outline-offset: 2px;
 }
 
@@ -1184,18 +1192,20 @@
 }
 
 .platform-tab:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--platform-gold) 45%, var(--platform-navy));
+  outline: 2px solid var(--platform-blue);
   outline-offset: 2px;
 }
 
 .platform-tab--active {
-  border-color: var(--platform-accent);
-  background: var(--platform-accent);
-  color: #fff;
+  border-color: var(--platform-blue);
+  background: var(--platform-cream-dark);
+  color: var(--platform-blue);
 }
 
 .platform-tab--active:hover {
-  background: color-mix(in srgb, var(--platform-accent) 88%, #fff);
+  background: var(--platform-cream-dark);
+  border-color: var(--platform-blue);
+  color: var(--platform-blue);
 }
 
 .platform-nav-rail {

@@ -47,7 +47,7 @@ export class ErrorBoundary extends Component<
           </p>
           <button
             type="button"
-            className="rounded-xl bg-builder-navy px-4 py-2 text-sm font-semibold text-white"
+            className="rounded-xl bg-builder-blue px-4 py-2 text-sm font-semibold text-white"
             onClick={() => {
               this.setState({ error: null });
               window.location.reload();

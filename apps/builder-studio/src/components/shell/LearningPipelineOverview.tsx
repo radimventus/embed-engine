@@ -62,7 +62,7 @@ export function LearningPipelineOverview({
           <button
             type="button"
             onClick={onImport}
-            className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2.5 text-sm font-medium text-white"
+            className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2.5 text-sm font-medium text-white"
           >
             Import Analytics
           </button>
@@ -178,7 +178,7 @@ export function LearningPipelineOverview({
                   key={step}
                   className={`rounded-[12px] border px-4 py-3 ${
                     active
-                      ? 'border-builder-navy bg-builder-navy text-white'
+                      ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                       : 'border-[#DDE5EF] bg-white text-builder-ink'
                   }`}
                 >

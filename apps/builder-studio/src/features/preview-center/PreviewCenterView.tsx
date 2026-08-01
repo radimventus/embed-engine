@@ -95,7 +95,7 @@ export function PreviewCenterView({
             onClick={() => setCompareMode(false)}
             className={`rounded-[10px] border px-3 py-2 text-sm font-medium ${
               !compareMode
-                ? 'border-builder-navy bg-builder-navy text-white'
+                ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                 : 'border-[#DDE5EF] bg-white text-builder-ink'
             }`}
           >
@@ -106,7 +106,7 @@ export function PreviewCenterView({
             onClick={() => setCompareMode(true)}
             className={`rounded-[10px] border px-3 py-2 text-sm font-medium ${
               compareMode
-                ? 'border-builder-navy bg-builder-navy text-white'
+                ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                 : 'border-[#DDE5EF] bg-white text-builder-ink'
             }`}
           >
@@ -312,7 +312,7 @@ function PersonaPanel({
                 onClick={() => onSelect(persona.id)}
                 className={`w-full rounded-[10px] border px-3 py-2.5 text-left ${
                   active
-                    ? 'border-builder-navy bg-builder-navy text-white'
+                    ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                     : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                 }`}
               >
@@ -321,7 +321,7 @@ function PersonaPanel({
                 </span>
                 <span
                   className={`mt-0.5 block text-[11px] ${
-                    active ? 'text-white/80' : 'text-builder-muted'
+                    active ? 'text-builder-blue/80' : 'text-builder-muted'
                   }`}
                 >
                   {persona.description}
@@ -359,7 +359,7 @@ function DevicePanel({
               onClick={() => onSelect(device.id)}
               className={`rounded-[10px] border px-2 py-2 text-center text-sm font-medium ${
                 active
-                  ? 'border-builder-navy bg-builder-navy text-white'
+                  ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                   : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
               }`}
             >
@@ -423,7 +423,7 @@ function DecisionPathPanel({
                 <span
                   className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${
                     active
-                      ? 'bg-builder-navy text-white'
+                      ? 'bg-builder-creamDark text-builder-blue'
                       : 'bg-[#E3E3E3] text-builder-muted'
                   }`}
                 >
@@ -530,7 +530,7 @@ function ValidationSummary({
       <div className="mt-4 flex flex-wrap gap-2">
         <button
           type="button"
-          className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2 text-sm font-medium text-white"
+          className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2 text-sm font-medium text-white"
           onClick={() => onNavigate('experience')}
         >
           Otevřít Experience

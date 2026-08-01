@@ -72,14 +72,14 @@ export function BuilderIntelligenceView({
                 onClick={() => setCoachId(coach.id)}
                 className={`rounded-[12px] border px-3 py-3 text-left ${
                   active
-                    ? 'border-builder-navy bg-builder-navy text-white'
+                    ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                     : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                 }`}
               >
                 <p className="text-sm font-semibold">{coach.label}</p>
                 <p
                   className={`mt-1 text-[11px] ${
-                    active ? 'text-white/80' : 'text-builder-muted'
+                    active ? 'text-builder-blue/80' : 'text-builder-muted'
                   }`}
                 >
                   Skóre {report?.score ?? 0} · {report?.findings.length ?? 0}{' '}
@@ -131,7 +131,7 @@ function DecisionReadinessCard({
             </div>
             <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[#E3E3E3]">
               <div
-                className="h-full rounded-full bg-builder-navy"
+                className="h-full rounded-full bg-builder-blue"
                 style={{ width: `${pillar.score}%` }}
               />
             </div>

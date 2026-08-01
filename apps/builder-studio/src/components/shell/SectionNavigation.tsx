@@ -99,7 +99,7 @@ export function SectionNavigation({
             onClick={() => onSelectSection(section.id)}
             className={`rounded-[10px] border px-[22px] py-[13px] text-sm font-medium ${
               isActive
-                ? 'border-builder-navy bg-builder-navy text-white'
+                ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
                 : 'border-[#DDE5EF] bg-white text-builder-ink'
             }`}
           >

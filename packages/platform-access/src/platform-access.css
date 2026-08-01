@@ -84,7 +84,7 @@
 }
 
 .platform-access__input:focus-visible {
-  outline: 2px solid color-mix(in srgb, #b8922d 45%, #001930);
+  outline: 2px solid #18428f;
   outline-offset: 2px;
 }
 
@@ -109,7 +109,7 @@
 .platform-access__logout {
   border: 0;
   border-radius: 10px;
-  background: #001930;
+  background: #18428f;
   padding: 12px 16px;
   font: inherit;
   font-size: 14px;
@@ -119,7 +119,7 @@
 }
 
 .platform-access__submit:hover {
-  background: color-mix(in srgb, #001930 88%, #000);
+  background: color-mix(in srgb, #18428f 85%, #000);
 }
 
 .platform-access__logout {
@@ -130,8 +130,8 @@
 }
 
 .platform-access__logout:hover {
-  border-color: #001930;
-  background: #fff;
+  border-color: #e3e3e3;
+  background: #e8e5e0;
 }
 
 .platform-access__demos {
@@ -193,7 +193,7 @@
 }
 
 .platform-access__studio:hover:not(:disabled) {
-  border-color: #001930;
+  border-color: #18428f;
   background: #e8e5e0;
 }
 
@@ -240,7 +240,7 @@
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  color: #001930;
+  color: #18428f;
   cursor: pointer;
   text-decoration: underline;
 }
