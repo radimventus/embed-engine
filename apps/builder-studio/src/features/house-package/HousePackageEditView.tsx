@@ -337,6 +337,8 @@ function sectionHeadline(nav: HousePackageNavId): string {
       return 'Decision Experience Composer';
     case 'knowledge':
       return 'Knowledge Composer';
+    case 'media-studio':
+      return 'Media Studio';
     case 'rooms':
       return 'Tabulka místností';
     case 'gallery':

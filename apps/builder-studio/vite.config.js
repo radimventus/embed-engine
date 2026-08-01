@@ -354,7 +354,9 @@ export default defineConfig({
   envDir: repoRoot,
   plugins: [react(), serveHousePackagePlugin()],
   css: {
-    postcss: join(repoRoot, 'packages/embed/postcss.config.js'),
+    // Builder chrome + Embed Experience tokens live in apps/builder-studio/tailwind.config.js
+    // so Client Studio CSS (?inline Runtime Preview) resolves text-embed-* @apply.
+    postcss: join(rootDir, 'postcss.config.js'),
   },
   resolve: {
     alias: createSsotResolveAliases(),

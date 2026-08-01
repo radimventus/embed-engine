@@ -267,6 +267,10 @@ function QuickActions({
           label="Upravit Knowledge"
           onClick={() => onNavigate('knowledge')}
         />
+        <QuickAction
+          label="Upravit Media"
+          onClick={() => onNavigate('media-studio')}
+        />
         <QuickAction label="Publikovat" onClick={onPublish} emphasis />
       </ul>
     </section>

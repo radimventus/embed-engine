@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { AppShell } from '../../components/layout/AppShell';
 import { ExperienceComposerView } from '../experience-composer';
 import { KnowledgeComposerView } from '../knowledge-composer';
+import { MediaStudioView } from '../media-studio';
 import { PlatformHeader } from '../platform';
 import { ProjectActionPanel } from '../project-dashboard';
 import {
@@ -70,6 +71,7 @@ export function BuilderStudioApp() {
 
   const experienceMode = activeNav === 'experience';
   const knowledgeMode = activeNav === 'knowledge';
+  const mediaStudioMode = activeNav === 'media-studio';
 
   // Always land on Dashboard when the active project changes.
   useEffect(() => {
@@ -111,7 +113,7 @@ export function BuilderStudioApp() {
     <>
       <AppShell
         header={<PlatformHeader />}
-        denseMain={experienceMode}
+        denseMain={experienceMode || mediaStudioMode}
         workspacePanel={
           <WorkspaceSidebar
             registry={workspace.registry}
@@ -147,7 +149,7 @@ export function BuilderStudioApp() {
           />
         }
         publishPanel={
-          experienceMode ? undefined : (
+          experienceMode || mediaStudioMode ? undefined : (
             <ProjectActionPanel
               loadError={loadError}
               publishError={publishError}
@@ -227,11 +229,23 @@ export function BuilderStudioApp() {
             />
           )}
         {mountStatus.status === 'ready' &&
+          workspace.activeProject !== null &&
+          mediaStudioMode && (
+            <MediaStudioView
+              projectId={workspace.activeProject.id}
+              projectName={workspace.activeProject.name}
+              snapshot={snapshot}
+              session={session}
+              onChange={apply}
+            />
+          )}
+        {mountStatus.status === 'ready' &&
           snapshot !== null &&
           session !== null &&
           workspace.activeProject !== null &&
           !experienceMode &&
-          !knowledgeMode && (
+          !knowledgeMode &&
+          !mediaStudioMode && (
             <HousePackageEditView
               snapshot={snapshot}
               session={session}

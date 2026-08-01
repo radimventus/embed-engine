@@ -5,6 +5,7 @@ export type HousePackageNavId =
   | 'overview'
   | 'experience'
   | 'knowledge'
+  | 'media-studio'
   | 'rooms'
   | 'gallery'
   | 'videos'
@@ -20,11 +21,12 @@ const NAV: readonly {
   { id: 'overview', label: 'Dashboard', section: null },
   { id: 'experience', label: 'Experience', section: null },
   { id: 'knowledge', label: 'Knowledge', section: null },
+  { id: 'media-studio', label: 'Media', section: null },
   { id: 'rooms', label: 'Rooms', section: 'rooms' },
   { id: 'gallery', label: 'Gallery', section: 'gallery' },
   { id: 'videos', label: 'Videos', section: 'videos' },
   { id: 'plans', label: 'Plans', section: 'plans' },
-  { id: 'media', label: 'Media', section: 'hero' },
+  { id: 'media', label: 'Media (HP)', section: 'hero' },
   { id: 'manifest', label: 'Manifest', section: 'manifest' },
 ];
 
