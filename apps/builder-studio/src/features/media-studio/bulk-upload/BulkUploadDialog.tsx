@@ -1,5 +1,11 @@
 /**
- * BU-001 — Unified bulk upload dialog (same grammar as Nový projekt / Nový objekt).
+ * BU-001 / BU-001A — Unified bulk upload dialog (Nový projekt grammar).
+ *
+ * BU-002 extension points (do not redesign this dialog shell):
+ * - pick phase body → drag & drop zone + multi-select list
+ * - completed file rows → rename / preview / delete / version badges
+ * - onCompleted payload → reorder / selection state in parent staging
+ * - progress block → keep as optional long-running feedback
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -15,6 +21,9 @@ import {
   type BulkUploadKind,
 } from './bulkUploadKinds';
 import { requestBulkMediaUpload } from './requestBulkMediaUpload';
+
+/** Reveal progress only when upload is still running after this delay. */
+export const BULK_UPLOAD_PROGRESS_REVEAL_MS = 300;
 
 export type BulkUploadCompletedFile = {
   readonly fileName: string;
@@ -38,17 +47,28 @@ export function BulkUploadDialog({
 }: BulkUploadDialogProps) {
   const config = BULK_UPLOAD_KINDS[kind];
   const inputRef = useRef<HTMLInputElement>(null);
+  const progressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [files, setFiles] = useState<File[]>([]);
   const [phase, setPhase] = useState<Phase>('pick');
+  const [showProgress, setShowProgress] = useState(false);
   const [doneCount, setDoneCount] = useState(0);
   const [totalCount, setTotalCount] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [completed, setCompleted] = useState<BulkUploadCompletedFile[]>([]);
 
+  const clearProgressTimer = () => {
+    if (progressTimerRef.current !== null) {
+      clearTimeout(progressTimerRef.current);
+      progressTimerRef.current = null;
+    }
+  };
+
   useEffect(() => {
     if (!open) return;
+    clearProgressTimer();
     setFiles([]);
     setPhase('pick');
+    setShowProgress(false);
     setDoneCount(0);
     setTotalCount(0);
     setError(null);
@@ -57,6 +77,8 @@ export function BulkUploadDialog({
       inputRef.current.value = '';
     }
   }, [open, kind]);
+
+  useEffect(() => () => clearProgressTimer(), []);
 
   const remaining = Math.max(totalCount - doneCount, 0);
   const busy = phase === 'uploading';
@@ -72,8 +94,14 @@ export function BulkUploadDialog({
     }
     setError(null);
     setPhase('uploading');
+    setShowProgress(false);
     setTotalCount(accepted.length);
     setDoneCount(0);
+    clearProgressTimer();
+    progressTimerRef.current = setTimeout(() => {
+      setShowProgress(true);
+    }, BULK_UPLOAD_PROGRESS_REVEAL_MS);
+
     const uploaded: BulkUploadCompletedFile[] = [];
     for (let index = 0; index < accepted.length; index += 1) {
       const result = await requestBulkMediaUpload({
@@ -81,6 +109,8 @@ export function BulkUploadDialog({
         file: accepted[index],
       });
       if (!result.ok || result.relativePath.length === 0) {
+        clearProgressTimer();
+        setShowProgress(false);
         setError(result.error ?? `Upload selhal: ${accepted[index].name}`);
         setPhase('pick');
         return;
@@ -91,6 +121,9 @@ export function BulkUploadDialog({
       });
       setDoneCount(index + 1);
     }
+
+    clearProgressTimer();
+    setShowProgress(false);
     setCompleted(uploaded);
     setPhase('done');
     onCompleted(uploaded);
@@ -107,7 +140,7 @@ export function BulkUploadDialog({
       }
       primaryLabel={
         phase === 'done'
-          ? 'Hotovo'
+          ? 'Hotovo – Zavřít'
           : phase === 'uploading'
             ? 'Nahrávám…'
             : 'Nahrát'
@@ -161,7 +194,7 @@ export function BulkUploadDialog({
         </>
       )}
 
-      {phase === 'uploading' && (
+      {phase === 'uploading' && showProgress && (
         <div className="space-y-3">
           <p className="text-sm font-semibold text-[var(--platform-navy)]">
             Nahráno {doneCount} z {totalCount}

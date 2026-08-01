@@ -27,4 +27,12 @@ describe('BU-001 bulk upload wiring', () => {
     assert.match(vite, /media\/plans/);
     assert.match(vite, /media\/documents/);
   });
+
+  it('polishes completion and deferred progress (BU-001A)', () => {
+    const dialog = readFileSync(join(here, 'BulkUploadDialog.tsx'), 'utf8');
+    assert.match(dialog, /Hotovo – Zavřít/);
+    assert.match(dialog, /BULK_UPLOAD_PROGRESS_REVEAL_MS\s*=\s*300/);
+    assert.match(dialog, /showProgress/);
+    assert.match(dialog, /BU-002 extension points/);
+  });
 });

@@ -1,4 +1,4 @@
-export { BulkUploadDialog } from './BulkUploadDialog';
+export { BulkUploadDialog, BULK_UPLOAD_PROGRESS_REVEAL_MS } from './BulkUploadDialog';
 export type { BulkUploadCompletedFile } from './BulkUploadDialog';
 export {
   BULK_UPLOAD_KINDS,
