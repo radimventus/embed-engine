@@ -101,8 +101,8 @@ Canvas, pozadí, dialogy, formuláře, neutrální plochy. Cream Mid = secondary
 
 ### Tlačítka
 
-- Primary: Interaction Blue (hover/pressed tmavší stejné modré)
-- Secondary: White + Navy text (hover Cream Mid)
+- Primary: Interaction Blue fill (hover/pressed tmavší stejné modré)
+- Secondary: outline Interaction Blue (hover Interaction Blue fill)
 - Danger: Red
 - Success: Green
 - Nikdy Gold, nikdy Navy fill

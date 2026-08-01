@@ -498,7 +498,7 @@ function CsvEditor({
                   <td className="py-1.5">
                     <button
                       type="button"
-                      className="text-[12px] text-builder-draft"
+                      className="text-[12px] font-semibold text-builder-danger"
                       onClick={() => onCsvChange(removeCsvRow(csv, rowIndex))}
                     >
                       Odstranit

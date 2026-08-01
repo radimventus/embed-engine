@@ -747,21 +747,22 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  border: 1px solid var(--platform-line);
+  border: 1px solid var(--platform-blue);
   border-radius: var(--platform-radius);
-  background: var(--platform-surface);
+  background: #fff;
   padding: 10px 16px;
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  color: var(--platform-ink);
+  color: var(--platform-blue);
   cursor: pointer;
   transition: var(--platform-transition);
 }
 
 .platform-btn:hover {
-  background: var(--platform-cream-mid);
-  border-color: var(--platform-line);
+  background: var(--platform-blue);
+  border-color: var(--platform-blue);
+  color: #fff;
 }
 
 .platform-btn:focus-visible {
@@ -778,11 +779,25 @@
 .platform-btn--primary:hover {
   background: color-mix(in srgb, var(--platform-blue) 85%, #000);
   border-color: color-mix(in srgb, var(--platform-blue) 85%, #000);
+  color: #fff;
 }
 
 .platform-btn--primary:active:not(:disabled) {
   background: color-mix(in srgb, var(--platform-blue) 72%, #000);
   border-color: color-mix(in srgb, var(--platform-blue) 72%, #000);
+  color: #fff;
+}
+
+.platform-btn--secondary {
+  border-color: var(--platform-blue);
+  background: #fff;
+  color: var(--platform-blue);
+}
+
+.platform-btn--secondary:hover {
+  background: var(--platform-blue);
+  border-color: var(--platform-blue);
+  color: #fff;
 }
 
 .platform-btn--danger {

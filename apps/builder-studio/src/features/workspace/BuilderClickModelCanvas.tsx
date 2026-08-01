@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import { PlatformStatusBadge } from '@embed-engine/platform-shell';
 
 import { KnowledgeComposerView } from '../knowledge-composer';
@@ -79,7 +77,7 @@ const MEDIA_ANCHORS: readonly MediaAnchor[] = [
 ];
 
 /**
- * PR-007 / PR-008 / PR-012 — Souvislá plocha; mount jen aktivní media sekce (stabilita).
+ * PR-007 / PR-008 / PR-022D — Souvislá plocha; všechny media sekce rozbalené (scroll).
  */
 export function BuilderClickModelCanvas({
   projectId,
@@ -97,8 +95,6 @@ export function BuilderClickModelCanvas({
   onNavigate,
   onPublish,
 }: BuilderClickModelCanvasProps) {
-  const [mountedArea, setMountedArea] = useState<MediaAreaId>('hero');
-
   return (
     <div
       className="space-y-14"
@@ -142,25 +138,15 @@ export function BuilderClickModelCanvas({
               {item.description}
             </p>
           </header>
-          {mountedArea === item.area ? (
-            <MediaStudioView
-              projectId={projectId}
-              projectName={projectName}
-              snapshot={snapshot}
-              session={session}
-              onChange={onChange}
-              lockedArea={item.area}
-              embedded
-            />
-          ) : (
-            <button
-              type="button"
-              className="flex min-h-[120px] w-full items-center justify-center rounded-[16px] border border-dashed border-builder-panelBorder bg-white text-sm font-semibold text-builder-navy"
-              onClick={() => setMountedArea(item.area)}
-            >
-              Otevřít {item.title}
-            </button>
-          )}
+          <MediaStudioView
+            projectId={projectId}
+            projectName={projectName}
+            snapshot={snapshot}
+            session={session}
+            onChange={onChange}
+            lockedArea={item.area}
+            embedded
+          />
         </section>
       ))}
 

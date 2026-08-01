@@ -55,7 +55,7 @@ export function WorkspaceSidebar({
 
   return (
     <aside
-      className="flex h-full min-h-0 flex-col overflow-y-auto border-r border-builder-line bg-white p-6"
+      className="flex h-full min-h-0 flex-col overflow-y-auto border-r border-builder-creamDark bg-builder-canvas p-6"
       data-studio-shell="workspace-sidebar"
     >
       <label className="block">

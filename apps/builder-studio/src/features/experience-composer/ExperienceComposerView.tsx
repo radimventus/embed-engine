@@ -18,7 +18,7 @@ type ExperienceComposerViewProps = {
 };
 
 /**
- * EPIC-BX-03 — Experience Composer workspace (Outline · Canvas · Live Preview).
+ * EPIC-BX-03 / PR-022D — Experience Composer (Outline · Canvas · Náhled on demand).
  */
 export function ExperienceComposerView({
   projectId,

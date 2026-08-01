@@ -125,13 +125,14 @@
 .platform-access__logout {
   margin-top: 24px;
   background: #fff;
-  border: 1px solid #e3e3e3;
-  color: #001930;
+  border: 1px solid #18428f;
+  color: #18428f;
 }
 
 .platform-access__logout:hover {
-  border-color: #e3e3e3;
-  background: #e8e5e0;
+  border-color: #18428f;
+  background: #18428f;
+  color: #fff;
 }
 
 .platform-access__demos {

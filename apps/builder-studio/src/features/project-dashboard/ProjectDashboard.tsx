@@ -302,8 +302,8 @@ function QuickAction({
         onClick={onClick}
         className={`flex w-full items-center gap-2 rounded-[10px] px-3 py-2.5 text-left text-sm font-medium ${
           emphasis
-            ? 'bg-builder-creamDark text-builder-blue'
-            : 'text-builder-navy hover:bg-builder-panel'
+            ? 'border border-builder-blue bg-builder-blue text-white hover:bg-builder-blueHover'
+            : 'border border-builder-blue bg-white text-builder-blue hover:bg-builder-blue hover:text-white'
         }`}
       >
         <span aria-hidden>→</span>
