@@ -1,37 +1,98 @@
 /**
- * CAP-BLD-08 — Workspace / Project registry metadata only (ADR-023).
+ * CAP-BLD-08 + EPIC-BX-01 — Workspace / Project registry metadata only (ADR-023).
  * Content remains in each House Package root. No parallel content model.
  */
+
+export type WorkspaceProjectStatus = 'draft' | 'ready' | 'published';
+
+export type WorkspaceCompany = {
+  readonly id: string;
+  readonly name: string;
+};
 
 export type WorkspaceProject = {
   readonly id: string;
   readonly name: string;
-  /** Repo-relative HP-002 root. */
+  /** Repo-relative HP-002 root (internal — not product UI). */
   readonly packageRoot: string;
+  readonly companyId: string;
+  readonly description: string;
+  readonly status: WorkspaceProjectStatus;
+  readonly slug: string;
+  readonly objectType: string;
+  /** Freeform project notes / metadata (not House Package content). */
+  readonly metadata: string;
 };
 
 export type WorkspaceRegistryState = {
+  readonly companies: readonly WorkspaceCompany[];
   readonly projects: readonly WorkspaceProject[];
   readonly activeProjectId: string | null;
   readonly recentProjectIds: readonly string[];
   readonly lastOpenedProjectId: string | null;
 };
 
+export const DEFAULT_COMPANY_ID = 'ac-modular' as const;
+
+export const DEFAULT_WORKSPACE_COMPANIES: readonly WorkspaceCompany[] = [
+  { id: DEFAULT_COMPANY_ID, name: 'AC Modular' },
+] as const;
+
+export const OBJECT_TYPE_OPTIONS: readonly {
+  readonly id: string;
+  readonly label: string;
+  readonly packageRoot: string;
+}[] = [
+  {
+    id: 'family',
+    label: 'Family',
+    packageRoot: 'apps/client-studio/public/house-packages/family-98',
+  },
+  {
+    id: 'harmony',
+    label: 'Harmony',
+    packageRoot: 'apps/client-studio/public/house-packages/harmony-124',
+  },
+  {
+    id: 'villa',
+    label: 'Villa',
+    packageRoot: 'apps/client-studio/public/house-package',
+  },
+] as const;
+
 export const DEFAULT_WORKSPACE_PROJECTS: readonly WorkspaceProject[] = [
   {
     id: 'family-98',
     name: 'Family 98',
     packageRoot: 'apps/client-studio/public/house-packages/family-98',
+    companyId: DEFAULT_COMPANY_ID,
+    description: 'Modulární rodinný dům Family 98.',
+    status: 'ready',
+    slug: 'family-98',
+    objectType: 'family',
+    metadata: '',
   },
   {
     id: 'harmony-124',
     name: 'Harmony 124',
     packageRoot: 'apps/client-studio/public/house-packages/harmony-124',
+    companyId: DEFAULT_COMPANY_ID,
+    description: 'Modulární dům Harmony 124.',
+    status: 'ready',
+    slug: 'harmony-124',
+    objectType: 'harmony',
+    metadata: '',
   },
   {
     id: 'villa-168',
     name: 'Villa 168',
     packageRoot: 'apps/client-studio/public/house-package',
+    companyId: DEFAULT_COMPANY_ID,
+    description: 'Referenční projekt Villa 168.',
+    status: 'published',
+    slug: 'villa-168',
+    objectType: 'villa',
+    metadata: '',
   },
 ] as const;
 
@@ -41,18 +102,59 @@ export const WORKSPACE_STORAGE_KEY = 'conis.builder.workspace.v1';
 
 const MAX_RECENT = 8;
 
+const STATUS_VALUES = new Set<WorkspaceProjectStatus>([
+  'draft',
+  'ready',
+  'published',
+]);
+
+export function normalizeWorkspaceProject(
+  input: Partial<WorkspaceProject> &
+    Pick<WorkspaceProject, 'id' | 'name' | 'packageRoot'>,
+): WorkspaceProject {
+  const status = STATUS_VALUES.has(input.status as WorkspaceProjectStatus)
+    ? (input.status as WorkspaceProjectStatus)
+    : 'draft';
+  return {
+    id: input.id,
+    name: input.name,
+    packageRoot: input.packageRoot,
+    companyId:
+      typeof input.companyId === 'string' && input.companyId.length > 0
+        ? input.companyId
+        : DEFAULT_COMPANY_ID,
+    description:
+      typeof input.description === 'string' ? input.description : '',
+    status,
+    slug:
+      typeof input.slug === 'string' && input.slug.length > 0
+        ? input.slug
+        : input.id,
+    objectType:
+      typeof input.objectType === 'string' && input.objectType.length > 0
+        ? input.objectType
+        : 'villa',
+    metadata: typeof input.metadata === 'string' ? input.metadata : '',
+  };
+}
+
 export function createInitialWorkspaceRegistry(
   projects: readonly WorkspaceProject[] = DEFAULT_WORKSPACE_PROJECTS,
   activeProjectId: string | null = DEFAULT_ACTIVE_PROJECT_ID,
+  companies: readonly WorkspaceCompany[] = DEFAULT_WORKSPACE_COMPANIES,
 ): WorkspaceRegistryState {
+  const normalized = projects.map((project) =>
+    normalizeWorkspaceProject(project),
+  );
   const active =
     activeProjectId !== null &&
-    projects.some((project) => project.id === activeProjectId)
+    normalized.some((project) => project.id === activeProjectId)
       ? activeProjectId
-      : (projects[0]?.id ?? null);
+      : (normalized[0]?.id ?? null);
 
   return {
-    projects: [...projects],
+    companies: [...companies],
+    projects: normalized,
     activeProjectId: active,
     recentProjectIds: active !== null ? [active] : [],
     lastOpenedProjectId: active,
@@ -66,6 +168,13 @@ export function findWorkspaceProject(
   return state.projects.find((project) => project.id === projectId) ?? null;
 }
 
+export function findWorkspaceCompany(
+  state: WorkspaceRegistryState,
+  companyId: string,
+): WorkspaceCompany | null {
+  return state.companies.find((company) => company.id === companyId) ?? null;
+}
+
 export function getActiveWorkspaceProject(
   state: WorkspaceRegistryState,
 ): WorkspaceProject | null {
@@ -73,6 +182,13 @@ export function getActiveWorkspaceProject(
     return null;
   }
   return findWorkspaceProject(state, state.activeProjectId);
+}
+
+export function projectsForCompany(
+  state: WorkspaceRegistryState,
+  companyId: string,
+): readonly WorkspaceProject[] {
+  return state.projects.filter((project) => project.companyId === companyId);
 }
 
 function pushRecent(
@@ -112,14 +228,123 @@ export function closeWorkspaceProject(
   };
 }
 
+export function registerWorkspaceCompany(
+  state: WorkspaceRegistryState,
+  company: WorkspaceCompany,
+): WorkspaceRegistryState {
+  const without = state.companies.filter((item) => item.id !== company.id);
+  return {
+    ...state,
+    companies: [...without, company],
+  };
+}
+
 export function registerWorkspaceProject(
   state: WorkspaceRegistryState,
   project: WorkspaceProject,
 ): WorkspaceRegistryState {
-  const without = state.projects.filter((item) => item.id !== project.id);
+  const normalized = normalizeWorkspaceProject(project);
+  const without = state.projects.filter((item) => item.id !== normalized.id);
   return {
     ...state,
-    projects: [...without, project],
+    projects: [...without, normalized],
+  };
+}
+
+export function updateWorkspaceProject(
+  state: WorkspaceRegistryState,
+  projectId: string,
+  patch: Partial<
+    Pick<
+      WorkspaceProject,
+      | 'name'
+      | 'companyId'
+      | 'description'
+      | 'status'
+      | 'slug'
+      | 'metadata'
+      | 'objectType'
+    >
+  >,
+): WorkspaceRegistryState {
+  const current = findWorkspaceProject(state, projectId);
+  if (current === null) {
+    return state;
+  }
+  return registerWorkspaceProject(state, {
+    ...current,
+    ...patch,
+  });
+}
+
+export function slugifyProjectName(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48);
+}
+
+export function resolvePackageRootForObjectType(objectType: string): string {
+  const match = OBJECT_TYPE_OPTIONS.find((option) => option.id === objectType);
+  return match?.packageRoot ?? OBJECT_TYPE_OPTIONS[2].packageRoot;
+}
+
+export type CreateWorkspaceProjectInput = {
+  readonly name: string;
+  readonly companyId: string;
+  readonly companyName?: string;
+  readonly objectType: string;
+  readonly description: string;
+};
+
+export function createWorkspaceProjectFromInput(
+  state: WorkspaceRegistryState,
+  input: CreateWorkspaceProjectInput,
+): {
+  readonly state: WorkspaceRegistryState;
+  readonly project: WorkspaceProject;
+} {
+  let next = state;
+  let companyId = input.companyId;
+
+  if (companyId === '__new__') {
+    const companyName = (input.companyName ?? '').trim();
+    const companySlug = slugifyProjectName(companyName) || 'company';
+    companyId = `company-${companySlug}`;
+    next = registerWorkspaceCompany(next, {
+      id: companyId,
+      name: companyName.length > 0 ? companyName : 'Nová firma',
+    });
+  }
+
+  const baseSlug = slugifyProjectName(input.name) || 'project';
+  let slug = baseSlug;
+  let id = baseSlug;
+  let suffix = 2;
+  while (next.projects.some((project) => project.id === id)) {
+    slug = `${baseSlug}-${suffix}`;
+    id = slug;
+    suffix += 1;
+  }
+
+  const project = normalizeWorkspaceProject({
+    id,
+    name: input.name.trim(),
+    packageRoot: resolvePackageRootForObjectType(input.objectType),
+    companyId,
+    description: input.description.trim(),
+    status: 'draft',
+    slug,
+    objectType: input.objectType,
+    metadata: '',
+  });
+
+  return {
+    state: registerWorkspaceProject(next, project),
+    project,
   };
 }
 
@@ -129,17 +354,25 @@ export type WorkspacePersistedSlice = {
   readonly lastOpenedProjectId: string | null;
   /** Extra projects opened beyond defaults (metadata only). */
   readonly extraProjects: readonly WorkspaceProject[];
+  /** Extra companies beyond defaults. */
+  readonly extraCompanies?: readonly WorkspaceCompany[];
 };
 
 export function toPersistedWorkspaceSlice(
   state: WorkspaceRegistryState,
 ): WorkspacePersistedSlice {
   const defaultIds = new Set(DEFAULT_WORKSPACE_PROJECTS.map((p) => p.id));
+  const defaultCompanyIds = new Set(
+    DEFAULT_WORKSPACE_COMPANIES.map((company) => company.id),
+  );
   return {
     activeProjectId: state.activeProjectId,
     recentProjectIds: state.recentProjectIds,
     lastOpenedProjectId: state.lastOpenedProjectId,
     extraProjects: state.projects.filter((p) => !defaultIds.has(p.id)),
+    extraCompanies: state.companies.filter(
+      (company) => !defaultCompanyIds.has(company.id),
+    ),
   };
 }
 
@@ -152,17 +385,32 @@ export function mergePersistedWorkspaceSlice(
   }
 
   const extras = Array.isArray(persisted.extraProjects)
-    ? persisted.extraProjects.filter(
-        (project) =>
-          typeof project?.id === 'string' &&
-          typeof project?.name === 'string' &&
-          typeof project?.packageRoot === 'string',
+    ? persisted.extraProjects
+        .filter(
+          (project) =>
+            typeof project?.id === 'string' &&
+            typeof project?.name === 'string' &&
+            typeof project?.packageRoot === 'string',
+        )
+        .map((project) => normalizeWorkspaceProject(project))
+    : [];
+
+  const extraCompanies = Array.isArray(persisted.extraCompanies)
+    ? persisted.extraCompanies.filter(
+        (company) =>
+          typeof company?.id === 'string' &&
+          typeof company?.name === 'string',
       )
     : [];
 
-  const projects = [...DEFAULT_WORKSPACE_PROJECTS, ...extras];
+  const companies = [...DEFAULT_WORKSPACE_COMPANIES, ...extraCompanies];
+  const projects = [...DEFAULT_WORKSPACE_PROJECTS, ...extras].map((project) =>
+    normalizeWorkspaceProject(project),
+  );
   const activeCandidate =
-    persisted.activeProjectId ?? persisted.lastOpenedProjectId ?? base.activeProjectId;
+    persisted.activeProjectId ??
+    persisted.lastOpenedProjectId ??
+    base.activeProjectId;
   const active =
     activeCandidate !== null &&
     projects.some((project) => project.id === activeCandidate)
@@ -178,14 +426,11 @@ export function mergePersistedWorkspaceSlice(
   ).slice(0, MAX_RECENT);
 
   return {
+    companies,
     projects,
     activeProjectId: active,
     recentProjectIds:
-      recent.length > 0
-        ? recent
-        : active !== null
-          ? [active]
-          : [],
+      recent.length > 0 ? recent : active !== null ? [active] : [],
     lastOpenedProjectId:
       persisted.lastOpenedProjectId !== null &&
       projects.some((project) => project.id === persisted.lastOpenedProjectId)

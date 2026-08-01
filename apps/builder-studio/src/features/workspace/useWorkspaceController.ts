@@ -3,10 +3,14 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { requestWorkspaceActive } from './requestWorkspaceActive';
 import {
   closeWorkspaceProject,
+  createWorkspaceProjectFromInput,
   decideProjectSwitch,
   getActiveWorkspaceProject,
   openWorkspaceProject,
+  updateWorkspaceProject,
+  type CreateWorkspaceProjectInput,
   type WorkspaceProject,
+  type WorkspaceProjectStatus,
   type WorkspaceRegistryState,
 } from './workspaceRegistry';
 import {
@@ -17,6 +21,15 @@ import {
 export type DirtySwitchPrompt =
   | { readonly kind: 'switch'; readonly target: WorkspaceProject }
   | { readonly kind: 'close' };
+
+export type UpdateWorkspaceProjectInput = {
+  readonly name: string;
+  readonly companyId: string;
+  readonly description: string;
+  readonly status: WorkspaceProjectStatus;
+  readonly slug: string;
+  readonly metadata: string;
+};
 
 export type WorkspaceController = {
   readonly registry: WorkspaceRegistryState;
@@ -38,10 +51,18 @@ export type WorkspaceController = {
   readonly requestCloseProject: (options: {
     readonly dirty: boolean;
   }) => void;
+  readonly createProject: (
+    input: CreateWorkspaceProjectInput,
+    options: { readonly dirty: boolean },
+  ) => Promise<WorkspaceProject | null>;
+  readonly updateProject: (
+    projectId: string,
+    input: UpdateWorkspaceProjectInput,
+  ) => void;
 };
 
 /**
- * CAP-BLD-08 — workspace registry + single-project mount switching.
+ * CAP-BLD-08 / EPIC-BX-01 — workspace registry + single-project mount switching.
  */
 export function useWorkspaceController(): WorkspaceController {
   const [registry, setRegistry] = useState<WorkspaceRegistryState>(() =>
@@ -171,6 +192,45 @@ export function useWorkspaceController(): WorkspaceController {
     [closeActiveProject, registry.activeProjectId],
   );
 
+  const createProject = useCallback(
+    async (
+      input: CreateWorkspaceProjectInput,
+      options: { readonly dirty: boolean },
+    ) => {
+      const name = input.name.trim();
+      if (name.length === 0) {
+        setSwitchError('Zadejte název projektu.');
+        return null;
+      }
+      if (options.dirty) {
+        setSwitchError('Nejdřív uložte nebo zahoďte změny aktivního projektu.');
+        return null;
+      }
+
+      const created = createWorkspaceProjectFromInput(registry, input);
+      setRegistry(created.state);
+      const ok = await activate(created.project);
+      return ok ? created.project : null;
+    },
+    [activate, registry],
+  );
+
+  const updateProject = useCallback(
+    (projectId: string, input: UpdateWorkspaceProjectInput) => {
+      setRegistry((prev) =>
+        updateWorkspaceProject(prev, projectId, {
+          name: input.name.trim(),
+          companyId: input.companyId,
+          description: input.description.trim(),
+          status: input.status,
+          slug: input.slug.trim() || projectId,
+          metadata: input.metadata.trim(),
+        }),
+      );
+    },
+    [],
+  );
+
   // Sync host active root on first load.
   useEffect(() => {
     const project = getActiveWorkspaceProject(registry);
@@ -199,5 +259,7 @@ export function useWorkspaceController(): WorkspaceController {
     cancelDirtySwitch,
     closeActiveProject,
     requestCloseProject,
+    createProject,
+    updateProject,
   };
 }

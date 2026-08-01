@@ -9,7 +9,7 @@ type AppShellProps = {
 };
 
 /**
- * BuilderShell: Header + Workspace + HP Sidebar + Workspace canvas + Publish.
+ * BuilderShell: Platform Header + Workspace + Project nav + canvas + readiness.
  */
 export function AppShell({
   header,

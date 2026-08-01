@@ -1,5 +1,11 @@
-import type { WorkspaceProject, WorkspaceRegistryState } from './workspaceRegistry';
+import { useEffect, useMemo, useState } from 'react';
+
 import type { DirtySwitchPrompt } from './useWorkspaceController';
+import {
+  projectsForCompany,
+  type WorkspaceProject,
+  type WorkspaceRegistryState,
+} from './workspaceRegistry';
 
 type WorkspaceSidebarProps = {
   readonly registry: WorkspaceRegistryState;
@@ -8,14 +14,15 @@ type WorkspaceSidebarProps = {
   readonly switchError: string | null;
   readonly dirtyPrompt: DirtySwitchPrompt | null;
   readonly onOpenProject: (projectId: string) => void;
-  readonly onCloseProject: () => void;
+  readonly onCreateProject: () => void;
+  readonly onEditProject: () => void;
   readonly onDirtySave: () => void;
   readonly onDirtyDiscard: () => void;
   readonly onDirtyCancel: () => void;
 };
 
 /**
- * CAP-BLD-08 — workspace project list (metadata only).
+ * EPIC-BX-01 — Workspace: firma → projekty (bez technických pojmů).
  */
 export function WorkspaceSidebar({
   registry,
@@ -24,39 +31,50 @@ export function WorkspaceSidebar({
   switchError,
   dirtyPrompt,
   onOpenProject,
-  onCloseProject,
+  onCreateProject,
+  onEditProject,
   onDirtySave,
   onDirtyDiscard,
   onDirtyCancel,
 }: WorkspaceSidebarProps) {
+  const activeCompanyId = activeProject?.companyId ?? registry.companies[0]?.id;
+  const [expandedCompanyIds, setExpandedCompanyIds] = useState<
+    ReadonlySet<string>
+  >(() => new Set(activeCompanyId !== undefined ? [activeCompanyId] : []));
+
+  useEffect(() => {
+    if (activeProject === null) {
+      return;
+    }
+    setExpandedCompanyIds((prev) => {
+      if (prev.has(activeProject.companyId)) {
+        return prev;
+      }
+      const next = new Set(prev);
+      next.add(activeProject.companyId);
+      return next;
+    });
+  }, [activeProject]);
+
+  const companies = useMemo(() => registry.companies, [registry.companies]);
+
+  const toggleCompany = (companyId: string) => {
+    setExpandedCompanyIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(companyId)) {
+        next.delete(companyId);
+      } else {
+        next.add(companyId);
+      }
+      return next;
+    });
+  };
+
   return (
-    <aside className="h-full overflow-y-auto border-r border-builder-line bg-white p-6">
+    <aside className="h-full overflow-y-auto border-r border-builder-line bg-white p-5">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Workspace
       </p>
-      <h2 className="mt-1 text-lg font-semibold text-builder-ink">Projects</h2>
-      <p className="mt-2 text-[12px] text-builder-muted">
-        Each project → one HP-002 root
-      </p>
-
-      {activeProject !== null ? (
-        <div className="mt-4 rounded-lg border border-[#E8EEF5] bg-builder-canvas px-3 py-2 text-[12px]">
-          <p className="font-semibold text-builder-ink">{activeProject.name}</p>
-          <p className="mt-1 break-all font-mono text-[11px] text-builder-muted">
-            {activeProject.packageRoot}
-          </p>
-          <button
-            type="button"
-            disabled={switching}
-            onClick={onCloseProject}
-            className="mt-2 text-[12px] font-medium text-builder-navy disabled:opacity-40"
-          >
-            Close project
-          </button>
-        </div>
-      ) : (
-        <p className="mt-4 text-[12px] text-builder-draft">No project open.</p>
-      )}
 
       {switchError !== null && (
         <p className="mt-3 rounded-lg bg-builder-draftBg px-3 py-2 text-[12px] text-builder-draft">
@@ -68,8 +86,8 @@ export function WorkspaceSidebar({
         <div className="mt-4 rounded-lg border border-builder-navy/30 bg-builder-panel px-3 py-3 text-[12px]">
           <p className="font-semibold text-builder-ink">
             {dirtyPrompt.kind === 'close'
-              ? 'Unsaved changes — close project?'
-              : `Unsaved changes — switch to ${dirtyPrompt.target.name}?`}
+              ? 'Neuložené změny — zavřít projekt?'
+              : `Neuložené změny — přepnout na ${dirtyPrompt.target.name}?`}
           </p>
           <div className="mt-3 flex flex-col gap-2">
             <button
@@ -78,7 +96,7 @@ export function WorkspaceSidebar({
               onClick={onDirtySave}
               className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
             >
-              Save
+              Uložit
             </button>
             <button
               type="button"
@@ -86,7 +104,7 @@ export function WorkspaceSidebar({
               onClick={onDirtyDiscard}
               className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
             >
-              Discard
+              Zahodit
             </button>
             <button
               type="button"
@@ -94,83 +112,85 @@ export function WorkspaceSidebar({
               onClick={onDirtyCancel}
               className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
             >
-              Cancel
+              Zrušit
             </button>
           </div>
         </div>
       )}
 
-      <p className="mt-6 text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-        Open
-      </p>
-      <ul className="mt-2 space-y-1.5">
-        {registry.projects.map((project) => {
-          const active = project.id === registry.activeProjectId;
+      <ul className="mt-5 space-y-3">
+        {companies.map((company) => {
+          const expanded = expandedCompanyIds.has(company.id);
+          const projects = projectsForCompany(registry, company.id);
           return (
-            <li key={project.id}>
+            <li key={company.id}>
               <button
                 type="button"
-                disabled={switching || active}
-                onClick={() => onOpenProject(project.id)}
-                className={`w-full rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-medium disabled:opacity-60 ${
-                  active
-                    ? 'border-builder-navy bg-builder-navy text-white'
-                    : 'border-[#DDE5EF] bg-white text-builder-ink'
-                }`}
+                onClick={() => toggleCompany(company.id)}
+                className="flex w-full items-center gap-2 rounded-[10px] px-2 py-1.5 text-left text-sm font-semibold text-builder-ink hover:bg-builder-hover"
+                aria-expanded={expanded}
               >
-                <span className="block">{project.name}</span>
-                <span
-                  className={`mt-0.5 block font-mono text-[10px] ${
-                    active ? 'text-white/80' : 'text-builder-muted'
-                  }`}
-                >
-                  {project.packageRoot.replace(
-                    'apps/client-studio/public/',
-                    '',
-                  )}
+                <span className="w-3 text-builder-muted" aria-hidden>
+                  {expanded ? '▼' : '▶'}
                 </span>
+                <span>{company.name}</span>
               </button>
+
+              {expanded && (
+                <ul className="mt-1 space-y-1 border-l border-builder-lineSoft ml-3 pl-3">
+                  {projects.map((project) => {
+                    const active = project.id === registry.activeProjectId;
+                    return (
+                      <li key={project.id}>
+                        <div
+                          className={`group flex items-center gap-1 rounded-[10px] ${
+                            active ? 'bg-builder-navy text-white' : ''
+                          }`}
+                        >
+                          <button
+                            type="button"
+                            disabled={switching}
+                            onClick={() => onOpenProject(project.id)}
+                            className={`min-w-0 flex-1 truncate px-3 py-2 text-left text-sm font-medium disabled:opacity-60 ${
+                              active
+                                ? 'text-white'
+                                : 'text-builder-ink hover:bg-builder-hover rounded-[10px]'
+                            }`}
+                          >
+                            {project.name}
+                          </button>
+                          {active && (
+                            <button
+                              type="button"
+                              title="Upravit projekt"
+                              aria-label="Upravit projekt"
+                              disabled={switching}
+                              onClick={onEditProject}
+                              className="mr-1.5 rounded-md px-2 py-1 text-[13px] text-white/90 hover:bg-white/15 disabled:opacity-40"
+                            >
+                              ✎
+                            </button>
+                          )}
+                        </div>
+                      </li>
+                    );
+                  })}
+                  <li>
+                    <button
+                      type="button"
+                      disabled={switching}
+                      onClick={onCreateProject}
+                      className="w-full rounded-[10px] px-3 py-2 text-left text-sm font-medium text-builder-navy hover:bg-builder-panel disabled:opacity-40"
+                    >
+                      ＋ Nový projekt
+                    </button>
+                  </li>
+                </ul>
+              )}
             </li>
           );
         })}
       </ul>
-
-      {registry.recentProjectIds.length > 0 && (
-        <>
-          <p className="mt-6 text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-            Recent
-          </p>
-          <ul className="mt-2 space-y-1 text-[12px] text-builder-muted">
-            {registry.recentProjectIds.map((id) => {
-              const project = registry.projects.find((item) => item.id === id);
-              if (project === undefined) {
-                return null;
-              }
-              return (
-                <li key={`recent-${id}`}>
-                  <button
-                    type="button"
-                    disabled={switching}
-                    onClick={() => onOpenProject(id)}
-                    className="text-left font-medium text-builder-navy disabled:opacity-40"
-                  >
-                    {project.name}
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-        </>
-      )}
-
-      {registry.lastOpenedProjectId !== null && (
-        <p className="mt-6 text-[11px] text-builder-muted">
-          Last opened ·{' '}
-          {registry.projects.find(
-            (project) => project.id === registry.lastOpenedProjectId,
-          )?.name ?? registry.lastOpenedProjectId}
-        </p>
-      )}
     </aside>
   );
 }
