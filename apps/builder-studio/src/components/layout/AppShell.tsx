@@ -16,8 +16,9 @@ export function AppShell({
   workspacePanel,
   publishPanel,
   children,
-  denseMain = false,
+  denseMain: _denseMain = false,
 }: AppShellProps) {
+  void _denseMain;
   const hasPublish = publishPanel !== undefined && publishPanel !== null;
   const gridClass =
     workspacePanel !== undefined
@@ -34,17 +35,17 @@ export function AppShell({
       data-studio-shell="builder-layout"
     >
       {workspacePanel !== undefined ? (
-        <div className="min-h-0 overflow-hidden">{workspacePanel}</div>
+        <div className="platform-nav-rail min-h-0 overflow-hidden">
+          {workspacePanel}
+        </div>
       ) : null}
-      <main
-        className={`min-h-0 min-w-0 overflow-y-auto ${
-          denseMain ? 'px-6 py-6' : 'px-8 py-7'
-        }`}
-      >
+      <main className="platform-studio-pad min-h-0 min-w-0 overflow-y-auto">
         {children}
       </main>
       {hasPublish ? (
-        <div className="min-h-0 overflow-hidden">{publishPanel}</div>
+        <div className="platform-inspector-rail min-h-0 overflow-hidden">
+          {publishPanel}
+        </div>
       ) : null}
     </div>
   );

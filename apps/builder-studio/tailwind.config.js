@@ -20,8 +20,8 @@ export default {
       colors: {
         builder: {
           canvas: '#F5F7FB',
-          ink: '#23334C',
-          muted: '#7A879B',
+          ink: '#001930',
+          muted: '#64748B',
           line: '#E7ECF3',
           lineSoft: '#E6EBF3',
           navy: '#18428F',

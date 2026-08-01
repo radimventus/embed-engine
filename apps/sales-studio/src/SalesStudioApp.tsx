@@ -105,31 +105,26 @@ export function SalesStudioApp() {
           overflow: 'hidden',
         }}
       >
-        <main
-          style={{
-            minHeight: 0,
-            minWidth: 0,
-            flex: 1,
-            overflowY: 'auto',
-            padding: '28px 32px',
-          }}
-        >
+        <main className="platform-studio-pad" style={{ minHeight: 0, minWidth: 0, flex: 1, overflowY: 'auto' }}>
           <div style={{ maxWidth: 960, margin: '0 auto' }}>
-            <header style={{ marginBottom: 24 }}>
-              <h1 className="platform-type-h1">Sales Studio</h1>
-              <p className="platform-type-helper" style={{ marginTop: 4 }}>
-                Customer Success · stejný projekt a Workspace jako Builder /
-                Manager.
-              </p>
+            <header className="platform-title-bar" style={{ marginBottom: 24 }}>
+              <div>
+                <h1 className="platform-type-h1">Sales Studio</h1>
+                <p className="platform-type-helper" style={{ marginTop: 4 }}>
+                  {bootstrap?.company.name ?? 'Firma'} ·{' '}
+                  {bootstrap?.project?.name ?? 'Projekt'}
+                </p>
+              </div>
+              <PlatformStatusBadge tone={healthTone}>
+                {success?.health ?? '—'}
+              </PlatformStatusBadge>
             </header>
 
             <PlatformCard
               title="Customer Success"
-              description="Produktový modul — health, adoption a doporučení."
+              description="Health, adoption a doporučení pro aktivní Project."
               action={
-                <PlatformStatusBadge tone={healthTone}>
-                  {success?.health ?? '—'}
-                </PlatformStatusBadge>
+                <PlatformStatusBadge tone="info">Projekce</PlatformStatusBadge>
               }
             >
               <p className="platform-type-h2">
@@ -142,7 +137,7 @@ export function SalesStudioApp() {
               {(success?.recommendations ?? []).length === 0 ? (
                 <PlatformEmptyState
                   title="Žádná doporučení"
-                  description="Customer Success zatím nemá další kroky pro tento projekt."
+                  description="Customer Success zatím nemá další kroky pro tento Project."
                 />
               ) : (
                 <ul
@@ -159,14 +154,7 @@ export function SalesStudioApp() {
             </PlatformCard>
           </div>
         </main>
-        <div
-          style={{
-            width: 340,
-            flexShrink: 0,
-            height: '100%',
-            overflow: 'hidden',
-          }}
-        >
+        <div className="platform-inspector-rail" style={{ height: '100%', overflow: 'hidden' }}>
           <CapabilityInspector model={inspectorModel} />
         </div>
       </div>

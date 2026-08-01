@@ -81,7 +81,7 @@ export function ManagerStudioSidebar() {
           ariaLabel="Sekce Launch Center"
         />
         <NavGroup
-          title="Platform"
+          title="Platforma"
           items={[
             ...PLATFORM_OPS_SECTION_NAV,
             ...COMMERCIAL_SECTION_NAV,
@@ -91,13 +91,13 @@ export function ManagerStudioSidebar() {
           ariaLabel="Sekce Platform capabilities"
         />
         <NavGroup
-          title="Customers"
+          title="Zákazníci"
           items={CUSTOMER_SUCCESS_SECTION_NAV}
           activeSectionId={activeSectionId}
           ariaLabel="Sekce Customer Success"
         />
         <NavGroup
-          title="Operations"
+          title="Provoz"
           items={OPERATIONS_SECTION_NAV}
           activeSectionId={activeSectionId}
           ariaLabel="Sekce Operations Terminal"

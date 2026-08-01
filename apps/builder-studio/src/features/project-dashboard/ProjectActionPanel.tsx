@@ -42,11 +42,13 @@ export function ProjectActionPanel({
   return (
     <aside className="h-full overflow-y-auto border-l border-builder-line bg-white p-6">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-        Akce
+        Připravenost
       </p>
-      <h2 className="mt-1 text-lg font-semibold text-builder-ink">Projekt</h2>
+      <h2 className="mt-1 text-lg font-semibold text-builder-ink">
+        Připravenost projektu
+      </h2>
       <p className="mt-2 text-[12px] text-builder-muted">
-        Preview · Validovat · Publish — pak Manager
+        Náhled · Kontrola · Publish · Manager
       </p>
 
       {loadError !== null && (
@@ -57,19 +59,19 @@ export function ProjectActionPanel({
 
       <div className="mt-6 flex flex-col gap-2">
         <ActionButton
-          label="Preview"
+          label="Náhled"
           onClick={onPreview}
           disabled={!previewAvailable || publishing}
           primary={false}
         />
         <ActionButton
-          label={publishing ? 'Publikuji…' : 'Publish'}
+          label={publishing ? 'Publikuji…' : 'Publikovat změny'}
           onClick={onPublish}
           disabled={!canPublish || validating || publishing}
           primary
         />
         <ActionButton
-          label={validating ? 'Validuji…' : 'Validovat'}
+          label={validating ? 'Kontroluji…' : 'Zkontrolovat stav'}
           onClick={onValidate}
           disabled={validating || publishing}
           primary={false}
@@ -108,7 +110,7 @@ export function ProjectActionPanel({
 
       {releaseSummary !== null && (
         <div className="mt-5 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-3 py-3 text-[12px]">
-          <p className="font-semibold text-builder-ink">Poslední release</p>
+          <p className="font-semibold text-builder-ink">Poslední Release</p>
           <p className="mt-1 text-builder-muted">
             {formatCzechDateTime(releaseSummary.releaseTimestamp)}
           </p>

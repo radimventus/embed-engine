@@ -105,13 +105,13 @@ export function AppShell({ sidebar, children }: AppShellProps) {
       }}
     >
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        <div className="sticky top-0 h-full shrink-0 self-stretch overflow-y-auto">
+        <div className="platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto">
           {sidebar}
         </div>
         <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
           <Workspace>{children}</Workspace>
         </div>
-        <div className="sticky top-0 h-full w-[340px] shrink-0 self-stretch overflow-hidden">
+        <div className="platform-inspector-rail sticky top-0 h-full self-stretch overflow-hidden">
           <CapabilityInspector model={inspectorModel} />
         </div>
       </div>

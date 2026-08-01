@@ -1086,3 +1086,93 @@
     transform: none;
   }
 }
+
+/* =======================================================
+   VR-FIX-05 — Studio pad, title-bar, responsive collapse
+   ======================================================= */
+
+.platform-studio-pad {
+  padding: 28px 32px;
+}
+
+.platform-title-bar {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.platform-nav-rail {
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.platform-inspector-rail {
+  width: 340px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1100px) {
+  .platform-inspector-rail {
+    display: none;
+  }
+
+  .platform-role-switcher {
+    gap: 2px;
+  }
+
+  .platform-role-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .platform-header {
+    gap: 12px;
+    padding: 0 16px;
+  }
+
+  .platform-header__cluster {
+    gap: 10px;
+  }
+
+  .platform-studio-pad {
+    padding: 20px 16px;
+  }
+
+  .platform-title-bar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .platform-breadcrumb {
+    padding-left: 16px;
+    padding-right: 16px;
+    font-size: 12px;
+  }
+
+  [data-studio-shell='sidebar'] {
+    width: 220px;
+  }
+}
+
+@media (max-width: 720px) {
+  .platform-header__brand {
+    letter-spacing: 0.18em;
+    font-size: 16px;
+  }
+
+  .platform-feedback__trigger {
+    display: none;
+  }
+
+  [data-studio-shell='sidebar'] {
+    display: none;
+  }
+
+  .platform-dialog {
+    padding: 20px;
+  }
+}

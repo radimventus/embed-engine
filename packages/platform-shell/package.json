@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/platformStudios.test.ts src/capabilityHost.integration.test.ts src/platformVisual.test.ts src/platformInteraction.test.ts src/platformJourney.test.ts"
+    "test": "tsx --test src/platformStudios.test.ts src/capabilityHost.integration.test.ts src/platformVisual.test.ts src/platformInteraction.test.ts src/platformJourney.test.ts src/platformCompliance.test.ts"
   },
   "peerDependencies": {
     "react": "^19.0.0",

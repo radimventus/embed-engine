@@ -260,7 +260,7 @@ function buildReadiness(
     },
     {
       id: 'knowledge',
-      label: 'Knowledge',
+      label: 'Znalosti',
       tone: knowledgeTone,
       nav: 'videos',
     },

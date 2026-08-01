@@ -24,7 +24,7 @@ const NAV: readonly {
 }[] = [
   { id: 'overview', label: 'Dashboard', section: null },
   { id: 'experience', label: 'Experience', section: null },
-  { id: 'knowledge', label: 'Knowledge', section: null },
+  { id: 'knowledge', label: 'Znalosti', section: null },
   { id: 'media-studio', label: 'Media', section: null },
   { id: 'preview-center', label: 'Preview', section: null },
   { id: 'release-center', label: 'Release', section: null },
