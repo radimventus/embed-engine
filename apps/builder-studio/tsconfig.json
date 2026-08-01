@@ -20,6 +20,5 @@
     "src/services/**",
     "src/components/shell/**",
     "src/model/**"
-  ],
-  "references": [{ "path": "./tsconfig.node.json" }]
+  ]
 }

@@ -86,13 +86,13 @@ export function CommercialPlatformCanvas() {
               Firmy
             </dt>
             <dd className="text-lg font-semibold">
-              {report.dashboard.activeFirmy}
+              {report.dashboard.activeCompanies}
             </dd>
           </div>
           <div>
             <dt className="text-xs text-embed-foreground-primary/50">Trial</dt>
             <dd className="text-lg font-semibold">
-              {report.dashboard.trialFirmy}
+              {report.dashboard.trialCompanies}
             </dd>
           </div>
           {(['Trial', 'Starter', 'Growth', 'Scale'] as const).map((plan) => (
