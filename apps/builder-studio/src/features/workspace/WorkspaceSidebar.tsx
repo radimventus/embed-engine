@@ -143,7 +143,7 @@ export function WorkspaceSidebar({
                 onClick={() => onOpenHouse(house.id)}
                 className={`group flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left text-sm font-semibold transition ${
                   active
-                    ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
+                    ? 'border-builder-blue bg-builder-creamLight text-builder-ink'
                     : 'border-[#E3E3E3] bg-white text-builder-ink hover:border-builder-blue hover:bg-builder-blue hover:text-white'
                 } ${switching ? 'opacity-70' : ''}`}
               >
@@ -153,8 +153,8 @@ export function WorkspaceSidebar({
                   <small
                     className={`mt-0.5 block text-[11px] font-normal ${
                       active
-                        ? 'text-builder-blue/80'
-                        : 'text-builder-muted group-hover:text-white/80'
+                        ? 'text-builder-ink/80'
+                        : 'text-builder-ink/70 group-hover:text-white/80'
                     }`}
                   >
                     {activeFolder?.name ?? 'Projekt'}
@@ -165,7 +165,7 @@ export function WorkspaceSidebar({
           );
         })}
         {houses.length === 0 && (
-          <li className="px-1 text-sm text-builder-muted">
+          <li className="px-1 text-sm text-builder-ink">
             V tomto projektu zatím nejsou domy.
           </li>
         )}
