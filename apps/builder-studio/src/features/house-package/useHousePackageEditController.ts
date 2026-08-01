@@ -36,7 +36,7 @@ export type HousePackageEditController = {
   readonly apply: (next: HousePackageEditSnapshot) => void;
   readonly save: () => Promise<void>;
   readonly validate: () => Promise<void>;
-  readonly publish: () => Promise<void>;
+  readonly publish: () => Promise<HousePackageReleaseSummary | null>;
   readonly openPreview: () => void;
   readonly closePreview: () => void;
 };
@@ -216,7 +216,7 @@ export function useHousePackageEditController(
     }
   }, [apply, remount, session, snapshot]);
 
-  const publish = useCallback(async () => {
+  const publish = useCallback(async (): Promise<HousePackageReleaseSummary | null> => {
     const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';
     setPublishing(true);
     setPublishError(null);
@@ -229,7 +229,7 @@ export function useHousePackageEditController(
         setPublishError(
           'Publish blocked: object-house validation has ERROR. Fix issues and retry.',
         );
-        return;
+        return null;
       }
 
       const result = await requestHousePackagePublish();
@@ -257,16 +257,18 @@ export function useHousePackageEditController(
             }),
           );
         }
-        return;
+        return null;
       }
 
       setReleaseSummary(result.summary);
       await remount();
       setSessionEpoch((value) => value + 1);
+      return result.summary;
     } catch (error: unknown) {
       setPublishError(
         error instanceof Error ? error.message : 'Publish request failed.',
       );
+      return null;
     } finally {
       setPublishing(false);
     }

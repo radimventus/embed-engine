@@ -5,6 +5,7 @@ import { ExperienceComposerView } from '../experience-composer';
 import { KnowledgeComposerView } from '../knowledge-composer';
 import { MediaStudioView } from '../media-studio';
 import { PreviewCenterView } from '../preview-center';
+import { ReleaseCenterView } from '../release-center';
 import { PlatformHeader } from '../platform';
 import { ProjectActionPanel } from '../project-dashboard';
 import {
@@ -74,6 +75,7 @@ export function BuilderStudioApp() {
   const knowledgeMode = activeNav === 'knowledge';
   const mediaStudioMode = activeNav === 'media-studio';
   const previewCenterMode = activeNav === 'preview-center';
+  const releaseCenterMode = activeNav === 'release-center';
 
   // Always land on Dashboard when the active project changes.
   useEffect(() => {
@@ -115,7 +117,12 @@ export function BuilderStudioApp() {
     <>
       <AppShell
         header={<PlatformHeader />}
-        denseMain={experienceMode || mediaStudioMode || previewCenterMode}
+        denseMain={
+          experienceMode ||
+          mediaStudioMode ||
+          previewCenterMode ||
+          releaseCenterMode
+        }
         workspacePanel={
           <WorkspaceSidebar
             registry={workspace.registry}
@@ -151,7 +158,10 @@ export function BuilderStudioApp() {
           />
         }
         publishPanel={
-          experienceMode || mediaStudioMode || previewCenterMode ? undefined : (
+          experienceMode ||
+          mediaStudioMode ||
+          previewCenterMode ||
+          releaseCenterMode ? undefined : (
             <ProjectActionPanel
               loadError={loadError}
               publishError={publishError}
@@ -253,13 +263,29 @@ export function BuilderStudioApp() {
             />
           )}
         {mountStatus.status === 'ready' &&
+          workspace.activeProject !== null &&
+          releaseCenterMode && (
+            <ReleaseCenterView
+              projectId={workspace.activeProject.id}
+              projectName={workspace.activeProject.name}
+              snapshot={snapshot}
+              validationReport={validationReport}
+              releaseSummary={releaseSummary}
+              publishing={publishing}
+              publishError={publishError}
+              onPublish={publish}
+              onNavigate={handleNavigate}
+            />
+          )}
+        {mountStatus.status === 'ready' &&
           snapshot !== null &&
           session !== null &&
           workspace.activeProject !== null &&
           !experienceMode &&
           !knowledgeMode &&
           !mediaStudioMode &&
-          !previewCenterMode && (
+          !previewCenterMode &&
+          !releaseCenterMode && (
             <HousePackageEditView
               snapshot={snapshot}
               session={session}

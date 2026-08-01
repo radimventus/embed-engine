@@ -275,6 +275,10 @@ function QuickActions({
           label="Otevřít Preview"
           onClick={() => onNavigate('preview-center')}
         />
+        <QuickAction
+          label="Otevřít Release"
+          onClick={() => onNavigate('release-center')}
+        />
         <QuickAction label="Publikovat" onClick={onPublish} emphasis />
       </ul>
     </section>

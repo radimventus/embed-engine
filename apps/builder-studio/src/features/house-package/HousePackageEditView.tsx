@@ -341,6 +341,8 @@ function sectionHeadline(nav: HousePackageNavId): string {
       return 'Media Studio';
     case 'preview-center':
       return 'Preview Center';
+    case 'release-center':
+      return 'Release Center';
     case 'rooms':
       return 'Tabulka místností';
     case 'gallery':
