@@ -22,6 +22,13 @@ import {
 } from '../house-package/housePackageCsv';
 import type { MediaAreaId } from './mediaCatalog';
 import {
+  BulkUploadDialog,
+  appendStagedBulkAssets,
+  listStagedBulkAssets,
+  type BulkUploadCompletedFile,
+  type BulkUploadKind,
+} from './bulk-upload';
+import {
   buildMediaStudioModel,
   reorderGalleryCsv,
   reorderGalleryCsvByFiles,
@@ -29,6 +36,7 @@ import {
   type MediaStudioModel,
 } from './mediaProjection';
 import { setMediaPresentationMeta } from './mediaPresentationStorage';
+import { HOUSE_PACKAGE_URL_ROOT } from '../house-package/housePackagePaths';
 
 type MediaStudioViewProps = {
   readonly projectId: string;
@@ -55,15 +63,18 @@ export function MediaStudioView({
 }: MediaStudioViewProps) {
   const [areaState, setArea] = useState<MediaAreaId>(lockedArea ?? 'gallery');
   const [metaTick, setMetaTick] = useState(0);
+  const [stagingTick, setStagingTick] = useState(0);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [bulkKind, setBulkKind] = useState<BulkUploadKind | null>(null);
   const area = lockedArea ?? areaState;
 
   const model = useMemo(
     () => buildMediaStudioModel({ projectId, snapshot }),
-    [projectId, snapshot, metaTick],
+    [projectId, snapshot, metaTick, stagingTick],
   );
 
   const refreshMeta = () => setMetaTick((value) => value + 1);
+  const refreshStaging = () => setStagingTick((value) => value + 1);
 
   const areaBody = (
     <>
@@ -86,6 +97,7 @@ export function MediaStudioView({
           onSelect={setSelectedKey}
           onChange={onChange}
           onMetaSaved={refreshMeta}
+          onOpenBulkUpload={() => setBulkKind('images')}
         />
       )}
       {area === 'videos' && snapshot !== null && session !== null && (
@@ -101,9 +113,53 @@ export function MediaStudioView({
         />
       )}
       {(area === 'svg' || area === 'floor-plans') && (
-        <FloorPlanStudio model={model} />
+        <FloorPlanStudio
+          model={model}
+          projectId={projectId}
+          showBulkUpload={area === 'svg'}
+          stagingTick={stagingTick}
+          onOpenBulkUpload={() => setBulkKind('svg')}
+        />
       )}
-      {area === 'documents' && <DocumentLibrary model={model} />}
+      {area === 'documents' && (
+        <DocumentLibrary
+          model={model}
+          projectId={projectId}
+          stagingTick={stagingTick}
+          onOpenBulkUpload={() => setBulkKind('documents')}
+        />
+      )}
+      {bulkKind !== null && (
+        <BulkUploadDialog
+          open
+          kind={bulkKind}
+          onClose={() => setBulkKind(null)}
+          onCompleted={(files) => {
+            if (bulkKind === 'images' && snapshot !== null && session !== null) {
+              applyGalleryBulkUpload({
+                files,
+                snapshot,
+                session,
+                galleryCount: model.gallery.length,
+                onChange,
+              });
+            } else if (bulkKind === 'svg' || bulkKind === 'documents') {
+              appendStagedBulkAssets(
+                projectId,
+                bulkKind,
+                files.map((file) => ({
+                  id: `${bulkKind}:${file.relativePath}`,
+                  kind: bulkKind,
+                  fileName: file.fileName,
+                  relativePath: file.relativePath,
+                  uploadedAt: new Date().toISOString(),
+                })),
+              );
+              refreshStaging();
+            }
+          }}
+        />
+      )}
     </>
   );
 
@@ -323,6 +379,26 @@ function HeroManager({
   );
 }
 
+function applyGalleryBulkUpload(input: {
+  readonly files: readonly BulkUploadCompletedFile[];
+  readonly snapshot: HousePackageEditSnapshot;
+  readonly session: HousePackageEditSession;
+  readonly galleryCount: number;
+  readonly onChange: (next: HousePackageEditSnapshot) => void;
+}): void {
+  let csv = input.snapshot.working.galleryCsv;
+  let order = input.galleryCount;
+  for (const file of input.files) {
+    order += 1;
+    csv = addCsvRow(csv, {
+      order: String(order),
+      room: 'exterior',
+      file: file.fileName,
+    });
+  }
+  input.onChange(input.session.setGalleryCsv(csv));
+}
+
 function GalleryManager({
   model,
   snapshot,
@@ -332,6 +408,7 @@ function GalleryManager({
   onSelect,
   onChange,
   onMetaSaved,
+  onOpenBulkUpload,
 }: {
   readonly model: MediaStudioModel;
   readonly snapshot: HousePackageEditSnapshot;
@@ -341,6 +418,7 @@ function GalleryManager({
   readonly onSelect: (key: string) => void;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
   readonly onMetaSaved: () => void;
+  readonly onOpenBulkUpload: () => void;
 }) {
   const [filter, setFilter] = useState('');
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -393,6 +471,13 @@ function GalleryManager({
             }
           >
             ＋ Přidat
+          </button>
+          <button
+            type="button"
+            className="platform-btn"
+            onClick={onOpenBulkUpload}
+          >
+            Nahrát více souborů
           </button>
           <AiAuthorSuggestButton
             projectId={projectId}
@@ -810,15 +895,43 @@ function VideoEditor({
   );
 }
 
-function FloorPlanStudio({ model }: { readonly model: MediaStudioModel }) {
+function FloorPlanStudio({
+  model,
+  projectId,
+  showBulkUpload,
+  stagingTick,
+  onOpenBulkUpload,
+}: {
+  readonly model: MediaStudioModel;
+  readonly projectId: string;
+  readonly showBulkUpload: boolean;
+  readonly stagingTick: number;
+  readonly onOpenBulkUpload: () => void;
+}) {
+  void stagingTick;
+  const staged = listStagedBulkAssets(projectId, 'svg');
+
   return (
     <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-semibold text-builder-ink">
-        Půdorys
-      </h2>
-      <p className="mt-1 text-sm text-builder-muted">
-        SVG · validace · vazby na místnosti
-      </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold text-builder-ink">
+            {showBulkUpload ? 'SVG' : 'Půdorys'}
+          </h2>
+          <p className="mt-1 text-sm text-builder-muted">
+            SVG · validace · vazby na místnosti
+          </p>
+        </div>
+        {showBulkUpload && (
+          <button
+            type="button"
+            className="platform-btn"
+            onClick={onOpenBulkUpload}
+          >
+            Nahrát více souborů
+          </button>
+        )}
+      </div>
       <ul className="mt-5 space-y-4">
         {model.floors.map((floor) => (
           <li
@@ -851,25 +964,71 @@ function FloorPlanStudio({ model }: { readonly model: MediaStudioModel }) {
             </div>
           </li>
         ))}
+        {staged.map((asset) => (
+          <li
+            key={asset.id}
+            className="overflow-hidden rounded-[14px] border border-[#E3E3E3]"
+          >
+            <div className="grid gap-0 tablet:grid-cols-[240px_1fr]">
+              <div className="flex items-center justify-center bg-builder-soft p-4">
+                <img
+                  src={`${HOUSE_PACKAGE_URL_ROOT}/${asset.relativePath}`}
+                  alt={asset.fileName}
+                  className="max-h-48 w-full object-contain"
+                />
+              </div>
+              <div className="p-4">
+                <p className="font-semibold text-builder-ink">{asset.fileName}</p>
+                <p className="mt-1 text-sm text-builder-muted">
+                  Nahráno · {asset.relativePath}
+                </p>
+              </div>
+            </div>
+          </li>
+        ))}
       </ul>
-      {model.floors.length === 0 && (
+      {model.floors.length === 0 && staged.length === 0 && (
         <p className="mt-4 text-sm text-builder-muted">
-          Žádná podlaží — doplňte Dispozici (rooms.csv).
+          Žádná podlaží — doplňte Dispozici (rooms.csv) nebo nahrajte SVG.
         </p>
       )}
     </section>
   );
 }
 
-function DocumentLibrary({ model }: { readonly model: MediaStudioModel }) {
+function DocumentLibrary({
+  model,
+  projectId,
+  stagingTick,
+  onOpenBulkUpload,
+}: {
+  readonly model: MediaStudioModel;
+  readonly projectId: string;
+  readonly stagingTick: number;
+  readonly onOpenBulkUpload: () => void;
+}) {
+  void stagingTick;
+  const staged = listStagedBulkAssets(projectId, 'documents');
+
   return (
     <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-semibold text-builder-ink">
-        Dokumenty
-      </h2>
-      <p className="mt-1 text-sm text-builder-muted">
-        PDF / DOCX / XLSX — metadata a náhled (Runtime documents)
-      </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-semibold text-builder-ink">
+            Dokumenty
+          </h2>
+          <p className="mt-1 text-sm text-builder-muted">
+            PDF / DOC / DOCX — rychlý hromadný upload
+          </p>
+        </div>
+        <button
+          type="button"
+          className="platform-btn"
+          onClick={onOpenBulkUpload}
+        >
+          Nahrát více souborů
+        </button>
+      </div>
       <ul className="mt-5 space-y-2">
         {model.documents.map((doc) => (
           <li
@@ -890,10 +1049,41 @@ function DocumentLibrary({ model }: { readonly model: MediaStudioModel }) {
             </a>
           </li>
         ))}
+        {staged.map((asset) => {
+          const lower = asset.fileName.toLowerCase();
+          const kind = lower.endsWith('.pdf')
+            ? 'PDF'
+            : lower.endsWith('.docx')
+              ? 'DOCX'
+              : lower.endsWith('.doc')
+                ? 'DOC'
+                : 'Dokument';
+          return (
+            <li
+              key={asset.id}
+              className="flex items-center justify-between rounded-[12px] border border-[#E3E3E3] bg-builder-canvas px-4 py-3"
+            >
+              <div>
+                <p className="text-sm font-semibold text-builder-ink">
+                  {asset.fileName}
+                </p>
+                <p className="text-[12px] text-builder-muted">{kind}</p>
+              </div>
+              <a
+                href={`${HOUSE_PACKAGE_URL_ROOT}/${asset.relativePath}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm font-medium text-builder-navy"
+              >
+                Náhled
+              </a>
+            </li>
+          );
+        })}
       </ul>
-      {model.documents.length === 0 && (
+      {model.documents.length === 0 && staged.length === 0 && (
         <p className="mt-4 text-sm text-builder-muted">
-          Žádné dokumenty v Runtime projection.
+          Žádné dokumenty — nahrajte PDF, DOC nebo DOCX.
         </p>
       )}
       <UsageLine

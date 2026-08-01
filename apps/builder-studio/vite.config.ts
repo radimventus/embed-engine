@@ -1,6 +1,6 @@
 // Runtime config SSOT is vite.config.js (Vite prefers .js).
 // Keep this TypeScript mirror for editors; prefer editing vite.config.js.
-import { existsSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, normalize, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
@@ -54,6 +54,35 @@ function resolveAllowedPackageRoot(packageRootRel) {
   return { absolute, relative: normalized };
 }
 
+/** BU-001 — presentation bulk upload dirs (Builder host only). */
+const BULK_UPLOAD_DIRS = {
+  images: { dir: 'media/gallery', extensions: ['.jpg', '.jpeg', '.png', '.webp'] },
+  svg: { dir: 'media/plans', extensions: ['.svg'] },
+  documents: {
+    dir: 'media/documents',
+    extensions: ['.pdf', '.doc', '.docx'],
+  },
+};
+
+function sanitizeUploadFileName(fileName: string): string {
+  const base = String(fileName).split(/[/\\]/).pop() ?? 'file';
+  return base.replace(/[^\w.\-()+ ]+/g, '_').replace(/\s+/g, '-');
+}
+
+function uniqueUploadPath(dirAbsolute: string, fileName: string): string {
+  const safe = sanitizeUploadFileName(fileName);
+  const dot = safe.lastIndexOf('.');
+  const stem = dot > 0 ? safe.slice(0, dot) : safe;
+  const ext = dot > 0 ? safe.slice(dot) : '';
+  let candidate = safe;
+  let index = 1;
+  while (existsSync(join(dirAbsolute, candidate))) {
+    candidate = `${stem}-${index}${ext}`;
+    index += 1;
+  }
+  return candidate;
+}
+
 function readEmbedRuntimeBuildDefine() {
   const versionPath = join(repoRoot, 'docs/embed/version.json');
   try {
@@ -92,6 +121,10 @@ const CONTENT_TYPES = {
   '.webp': 'image/webp',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
+  '.pdf': 'application/pdf',
+  '.doc': 'application/msword',
+  '.docx':
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
   '.webm': 'video/webm',
   '.mp4': 'video/mp4',
 };
@@ -183,6 +216,89 @@ function serveHousePackagePlugin() {
         }
 
         const housePackageDiskRoot = activeHousePackage.diskRoot;
+
+        if (
+          pathOnly === '/api/house-package/upload' &&
+          req.method === 'POST'
+        ) {
+          try {
+            const raw = await readRequestBody(req);
+            const body = JSON.parse(raw || '{}') as {
+              kind?: string;
+              files?: Array<{ name?: string; contentBase64?: string }>;
+            };
+            const kind = typeof body.kind === 'string' ? body.kind : '';
+            const kindConfig =
+              BULK_UPLOAD_DIRS[kind as keyof typeof BULK_UPLOAD_DIRS];
+            const incoming = Array.isArray(body.files) ? body.files : [];
+            if (kindConfig === undefined || incoming.length === 0) {
+              res.statusCode = 400;
+              res.setHeader('Content-Type', 'application/json; charset=utf-8');
+              res.end(
+                JSON.stringify({
+                  ok: false,
+                  error: 'Invalid upload kind or empty files.',
+                  results: [],
+                }),
+              );
+              return;
+            }
+            const dirAbsolute = join(housePackageDiskRoot, kindConfig.dir);
+            mkdirSync(dirAbsolute, { recursive: true });
+            const results: Array<{
+              fileName: string;
+              relativePath: string;
+              ok: boolean;
+              error?: string;
+            }> = [];
+            for (const entry of incoming) {
+              const name = typeof entry?.name === 'string' ? entry.name : '';
+              const contentBase64 =
+                typeof entry?.contentBase64 === 'string'
+                  ? entry.contentBase64
+                  : '';
+              const lower = name.toLowerCase();
+              const allowed = kindConfig.extensions.some((ext) =>
+                lower.endsWith(ext),
+              );
+              if (!allowed || contentBase64.length === 0) {
+                results.push({
+                  fileName: name,
+                  relativePath: '',
+                  ok: false,
+                  error: 'Unsupported file or empty payload.',
+                });
+                continue;
+              }
+              const uniqueName = uniqueUploadPath(dirAbsolute, name);
+              const absolute = join(dirAbsolute, uniqueName);
+              writeFileSync(absolute, Buffer.from(contentBase64, 'base64'));
+              results.push({
+                fileName: uniqueName,
+                relativePath: `${kindConfig.dir}/${uniqueName}`,
+                ok: true,
+              });
+            }
+            const ok = results.every((item) => item.ok);
+            res.statusCode = ok ? 200 : 400;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(JSON.stringify({ ok, results }));
+          } catch (error) {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(
+              JSON.stringify({
+                ok: false,
+                error:
+                  error instanceof Error
+                    ? error.message
+                    : 'Upload middleware failed.',
+                results: [],
+              }),
+            );
+          }
+          return;
+        }
 
         if (
           pathOnly === '/api/house-package/validate' &&
