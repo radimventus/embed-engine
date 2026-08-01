@@ -202,6 +202,9 @@ importers:
       '@embed-engine/platform-shell':
         specifier: workspace:*
         version: link:../../packages/platform-shell
+      '@embed-engine/product-learning':
+        specifier: workspace:*
+        version: link:../../packages/product-learning
       '@embed-engine/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
@@ -596,6 +599,25 @@ importers:
       react-dom:
         specifier: ^19.1.0
         version: 19.2.7(react@19.2.7)
+      tsx:
+        specifier: ^4.20.3
+        version: 4.23.1
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  packages/product-learning:
+    dependencies:
+      '@embed-engine/capabilities':
+        specifier: workspace:*
+        version: link:../capabilities
+      '@embed-engine/platform-access':
+        specifier: workspace:*
+        version: link:../platform-access
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.1
+        version: 22.20.1
       tsx:
         specifier: ^4.20.3
         version: 4.23.1

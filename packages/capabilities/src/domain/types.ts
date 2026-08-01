@@ -18,7 +18,8 @@ export type CapabilityId =
   | 'operations'
   | 'pipeline'
   | 'customer-success'
-  | 'operations-center';
+  | 'operations-center'
+  | 'product-learning';
 
 export type CapabilityMaturity =
   | 'experimental'

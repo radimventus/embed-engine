@@ -136,4 +136,15 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     description:
       'Platform Operations Center — CONIS platform ops overview, timeline, alerts, metrics.',
   },
+  {
+    id: 'product-learning',
+    name: 'Product Learning',
+    version: '1.0.0',
+    owner: 'platform',
+    studioSupport: ['manager'],
+    dependencies: [],
+    maturity: 'beta',
+    description:
+      'Product Learning Center — feedback registry, insights, roadmap suggestions.',
+  },
 ] as const;

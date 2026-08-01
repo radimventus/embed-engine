@@ -19,6 +19,7 @@
     "@embed-engine/operations-center": "workspace:*",
     "@embed-engine/platform-access": "workspace:*",
     "@embed-engine/platform-shell": "workspace:*",
+    "@embed-engine/product-learning": "workspace:*",
     "@embed-engine/runtime": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

@@ -139,6 +139,21 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.match(pkg, /@embed-engine\/operations-center/);
   });
 
+  it('projects Product Learning capability (EPIC-BX-20)', () => {
+    const page = readSource(
+      'src/features/manager-studio/ManagerStudioPage.tsx',
+    );
+    const sidebar = readSource(
+      'src/features/manager-studio/ManagerStudioSidebar.tsx',
+    );
+    const pkg = readSource('package.json');
+
+    assert.match(page, /ProductLearningCanvas/);
+    assert.match(sidebar, /PRODUCT_LEARNING_SECTION_NAV/);
+    assert.match(sidebar, /Product Learning/);
+    assert.match(pkg, /@embed-engine\/product-learning/);
+  });
+
   it('does not expose Interpretation or compose semantics in the Provider', () => {
     const provider = stripComments(
       readSource(

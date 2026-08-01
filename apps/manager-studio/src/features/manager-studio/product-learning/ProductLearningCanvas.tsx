@@ -1,0 +1,247 @@
+import { useMemo, useState, type FormEvent } from 'react';
+
+import {
+  buildProductLearningReport,
+  registerLearningFeedback,
+} from '@embed-engine/product-learning';
+import { usePlatformSession } from '@embed-engine/platform-access';
+
+import { OperationsSurface } from '../operations/OperationsSurface';
+import { PRODUCT_LEARNING_SECTION_IDS } from './productLearningVocabulary';
+
+/**
+ * EPIC-BX-20 — Manager projection of Product Learning capability.
+ */
+export function ProductLearningCanvas() {
+  const { session, bootstrap } = usePlatformSession();
+  const [tick, setTick] = useState(0);
+  const [message, setMessage] = useState('');
+  const report = useMemo(() => {
+    void tick;
+    return buildProductLearningReport();
+  }, [tick, session?.companyId]);
+
+  const onSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    if (message.trim().length === 0 || bootstrap === null) return;
+    registerLearningFeedback({
+      message: message.trim(),
+      companyId: bootstrap.company.id,
+      workspaceId: bootstrap.workspace.id,
+      projectId: bootstrap.project?.id ?? null,
+      studioId: 'manager',
+      source: 'learning',
+    });
+    setMessage('');
+    setTick((value) => value + 1);
+  };
+
+  return (
+    <div
+      className="w-full max-w-5xl"
+      data-studio-shell="product-learning-canvas"
+      data-capability="product-learning"
+    >
+      <OperationsSurface
+        id={PRODUCT_LEARNING_SECTION_IDS.executive}
+        title="Executive Summary"
+        description="Pilot Learnings · Top doporučení · rizika · příležitosti."
+      >
+        <p className="text-lg font-semibold text-embed-foreground-primary">
+          {report.executive.pilotLearnings}
+        </p>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+              Top 10 doporučení
+            </p>
+            <ul className="mt-2 space-y-2">
+              {report.executive.topRecommendations.map((item) => (
+                <li
+                  key={item}
+                  className="text-sm text-embed-foreground-primary/75"
+                >
+                  {item}
+                </li>
+              ))}
+              {report.executive.topRecommendations.length === 0 && (
+                <li className="text-sm text-embed-foreground-primary/60">
+                  Zatím žádný feedback.
+                </li>
+              )}
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+              Největší rizika
+            </p>
+            <ul className="mt-2 space-y-2">
+              {report.executive.greatestRisks.map((item) => (
+                <li
+                  key={item}
+                  className="text-sm text-embed-foreground-primary/75"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+              Největší příležitosti
+            </p>
+            <ul className="mt-2 space-y-2">
+              {report.executive.greatestOpportunities.map((item) => (
+                <li
+                  key={item}
+                  className="text-sm text-embed-foreground-primary/75"
+                >
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </OperationsSurface>
+
+      <OperationsSurface
+        id={PRODUCT_LEARNING_SECTION_IDS.insights}
+        title="Product Insights"
+        description="Nejčastější podněty · capability · Studia · trendy pilotů."
+      >
+        <div className="grid gap-6 md:grid-cols-2">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+              Nejčastější podněty
+            </p>
+            <ul className="mt-2 space-y-2">
+              {report.insights.topThemes.map((theme) => (
+                <li key={theme.id} className="text-sm">
+                  <span className="font-medium">{theme.category}</span>
+                  {' · '}
+                  {theme.frequency}× · {theme.theme}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+              Capability / Studia
+            </p>
+            <ul className="mt-2 space-y-1 text-sm text-embed-foreground-primary/75">
+              {report.insights.capabilitiesAffected.slice(0, 5).map((item) => (
+                <li key={item.capabilityId}>
+                  {item.capabilityId} · {item.count}
+                </li>
+              ))}
+              {report.insights.studiosAffected.slice(0, 5).map((item) => (
+                <li key={item.studioId}>
+                  Studio {item.studioId} · {item.count}
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+              Trendy podle pilotů
+            </p>
+            <ul className="mt-2 space-y-1 text-sm text-embed-foreground-primary/75">
+              {report.insights.pilotTrends.map((trend) => (
+                <li key={trend.companyId}>
+                  {trend.companyName} · {trend.count} ·{' '}
+                  {trend.topCategory ?? '—'}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </OperationsSurface>
+
+      <OperationsSurface
+        id={PRODUCT_LEARNING_SECTION_IDS.recommendations}
+        title="Recommendation Pipeline"
+        description="Četnost · dopad · priorita — deterministická pravidla."
+      >
+        <ul className="space-y-3">
+          {report.recommendations.map((item) => (
+            <li
+              key={item.id}
+              className="border-b border-embed-border-default pb-3"
+            >
+              <p className="text-sm font-medium text-embed-foreground-primary">
+                {item.theme}
+              </p>
+              <p className="mt-1 text-xs text-embed-foreground-primary/60">
+                {item.category} · {item.frequency}× · {item.impact} ·{' '}
+                {item.priority}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </OperationsSurface>
+
+      <OperationsSurface
+        id={PRODUCT_LEARNING_SECTION_IDS.roadmap}
+        title="Roadmap Suggestions"
+        description="High / Medium / Low Impact — doporučení, ne automatická roadmapa."
+      >
+        <ul className="space-y-3">
+          {report.roadmapSuggestions.map((item) => (
+            <li
+              key={item.id}
+              className="rounded-sm border border-embed-border-default px-3 py-3"
+            >
+              <p className="text-sm font-medium">{item.title}</p>
+              <p className="mt-1 text-xs text-embed-foreground-primary/60">
+                {item.rationale}
+              </p>
+            </li>
+          ))}
+          {report.roadmapSuggestions.length === 0 && (
+            <p className="text-sm text-embed-foreground-primary/60">
+              Zatím žádná roadmap doporučení.
+            </p>
+          )}
+        </ul>
+      </OperationsSurface>
+
+      <OperationsSurface
+        id={PRODUCT_LEARNING_SECTION_IDS.registry}
+        title="Feedback Registry"
+        description="Navázáno na Company / Workspace / Project / Studio / Capability / Release."
+      >
+        <form className="mb-4 grid gap-2" onSubmit={onSubmit}>
+          <label className="text-xs font-semibold text-embed-foreground-primary/60">
+            Nový podnět (Product Owner / Admin)
+            <textarea
+              className="mt-1 w-full rounded-sm border border-embed-border-default bg-white px-3 py-2 text-sm"
+              rows={3}
+              value={message}
+              onChange={(event) => setMessage(event.target.value)}
+              placeholder="např. UX: preview navigace je matoucí"
+            />
+          </label>
+          <button
+            type="submit"
+            className="w-fit rounded-sm bg-embed-brand-navy px-3 py-2 text-sm font-medium text-white"
+          >
+            Zaznamenat feedback
+          </button>
+        </form>
+        <ul className="space-y-3">
+          {report.entries.slice(0, 20).map((entry) => (
+            <li
+              key={entry.id}
+              className="border-b border-embed-border-default pb-2 text-sm"
+            >
+              <p className="font-medium text-embed-foreground-primary">
+                {entry.category} · {entry.message}
+              </p>
+              <p className="mt-1 text-xs text-embed-foreground-primary/55">
+                {entry.companyId} / {entry.workspaceId} /{' '}
+                {entry.projectId ?? '—'} · {entry.studioId ?? '—'} ·{' '}
+                {entry.capabilityId ?? '—'} · {entry.releaseLabel ?? '—'}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </OperationsSurface>
+    </div>
+  );
+}
