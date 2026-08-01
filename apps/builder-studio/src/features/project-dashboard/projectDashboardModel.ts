@@ -53,7 +53,7 @@ export type ProjectDashboardModel = {
   } | null;
 };
 
-const EXPERIENCE_MODULE_FALLBACK = 4;
+const EXPERIENCE_FLOW_MODULES = 4;
 
 export function buildProjectDashboardModel(input: {
   readonly project: WorkspaceProject;
@@ -115,8 +115,7 @@ export function buildProjectDashboardModel(input: {
       photos,
       videos,
       svgPlans,
-      experienceModules:
-        experienceModules > 0 ? experienceModules : EXPERIENCE_MODULE_FALLBACK,
+      experienceModules: experienceModules,
       validationLabel:
         validationReport === null
           ? snapshot.validation.ok
@@ -241,19 +240,21 @@ function buildReadinessItems(input: {
     {
       id: 'knowledge',
       label: 'Knowledge',
-      tone: toneFor(
-        input.videos >= 0 && !hasIssue('videos', ['videos']),
-        hasIssue('videos', ['videos']),
-      ),
+      tone: hasIssue('videos', ['videos'])
+        ? 'warn'
+        : input.videos > 0
+          ? 'ok'
+          : 'missing',
       nav: 'videos',
     },
     {
       id: 'experience',
       label: 'Experience',
-      tone: toneFor(
-        input.experienceModules > 0 || EXPERIENCE_MODULE_FALLBACK > 0,
-        hasIssue('manifest', ['manifest', 'mandatory']),
-      ),
+      tone: hasIssue('manifest', ['manifest', 'mandatory'])
+        ? 'warn'
+        : input.experienceModules > 0
+          ? 'ok'
+          : 'missing',
       nav: 'manifest',
     },
     {
@@ -303,13 +304,14 @@ function countExperienceModules(
   } | null,
 ): number {
   if (manifest?.rooms === undefined) {
-    return 0;
+    return EXPERIENCE_FLOW_MODULES;
   }
-  return manifest.rooms.filter(
+  const canvases = manifest.rooms.filter(
     (room) =>
       typeof room.decisionCanvas === 'string' &&
       room.decisionCanvas.length > 0,
   ).length;
+  return canvases > 0 ? canvases : EXPERIENCE_FLOW_MODULES;
 }
 
 function formatPackageVersion(version: unknown): string {
