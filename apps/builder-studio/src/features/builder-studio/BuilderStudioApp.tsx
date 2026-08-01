@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 
 import { AppShell } from '../../components/layout/AppShell';
 import { ExperienceComposerView } from '../experience-composer';
+import { KnowledgeComposerView } from '../knowledge-composer';
 import { PlatformHeader } from '../platform';
 import { ProjectActionPanel } from '../project-dashboard';
 import {
@@ -68,6 +69,7 @@ export function BuilderStudioApp() {
       : 'Workspace';
 
   const experienceMode = activeNav === 'experience';
+  const knowledgeMode = activeNav === 'knowledge';
 
   // Always land on Dashboard when the active project changes.
   useEffect(() => {
@@ -213,10 +215,23 @@ export function BuilderStudioApp() {
             />
           )}
         {mountStatus.status === 'ready' &&
+          workspace.activeProject !== null &&
+          knowledgeMode && (
+            <KnowledgeComposerView
+              projectId={workspace.activeProject.id}
+              projectName={workspace.activeProject.name}
+              snapshot={snapshot}
+              session={session}
+              onSnapshotChange={apply}
+              onNavigate={handleNavigate}
+            />
+          )}
+        {mountStatus.status === 'ready' &&
           snapshot !== null &&
           session !== null &&
           workspace.activeProject !== null &&
-          !experienceMode && (
+          !experienceMode &&
+          !knowledgeMode && (
             <HousePackageEditView
               snapshot={snapshot}
               session={session}

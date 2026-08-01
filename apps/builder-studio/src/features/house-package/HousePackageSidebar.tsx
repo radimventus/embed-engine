@@ -4,6 +4,7 @@ import type { HpEditSection } from './validateHousePackageWorking';
 export type HousePackageNavId =
   | 'overview'
   | 'experience'
+  | 'knowledge'
   | 'rooms'
   | 'gallery'
   | 'videos'
@@ -18,6 +19,7 @@ const NAV: readonly {
 }[] = [
   { id: 'overview', label: 'Dashboard', section: null },
   { id: 'experience', label: 'Experience', section: null },
+  { id: 'knowledge', label: 'Knowledge', section: null },
   { id: 'rooms', label: 'Rooms', section: 'rooms' },
   { id: 'gallery', label: 'Gallery', section: 'gallery' },
   { id: 'videos', label: 'Videos', section: 'videos' },
