@@ -32,7 +32,7 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.match(app, /ManagerStudioPage/);
   });
 
-  it('uses the shared Platform Shell header (EPIC-BX-11)', () => {
+    it('uses the shared Platform Shell header (EPIC-BX-11)', () => {
     const shell = readSource('src/components/layout/AppShell.tsx');
     const pkg = readSource('package.json');
 
@@ -40,6 +40,18 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.match(shell, /PlatformShell/);
     assert.match(shell, /activeStudioId="manager"/);
     assert.match(pkg, /@embed-engine\/platform-shell/);
+  });
+
+  it('composes Manager from Capability Registry (EPIC-BX-13)', () => {
+    const shell = readSource('src/components/layout/AppShell.tsx');
+    const composition = readSource('src/studio/managerStudioComposition.ts');
+    const pkg = readSource('package.json');
+
+    assert.match(composition, /MANAGER_STUDIO_COMPOSITION/);
+    assert.match(composition, /composeStudio/);
+    assert.match(shell, /capabilityHost/);
+    assert.match(shell, /CapabilityInspector/);
+    assert.match(pkg, /@embed-engine\/capabilities/);
   });
 
   it('bootstraps Decision Session Runtime only via the Provider', () => {

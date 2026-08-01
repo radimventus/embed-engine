@@ -1,6 +1,5 @@
 /**
- * EPIC-BX-11 — thin re-exports of the shared Platform Shell.
- * Header lives only in `@embed-engine/platform-shell`.
+ * EPIC-BX-11 / BX-13 — thin re-exports of the shared Platform Shell.
  */
 
 export {
@@ -11,6 +10,9 @@ export {
   WorkspaceSwitcher,
   UserMenu,
   NotificationsBell,
+  CapabilityHostBar,
+  CapabilityInspector,
+  buildInspectorModel,
   PLATFORM_STUDIOS,
   getPlatformStudio,
   getPlatformTheme,

@@ -11,6 +11,7 @@
     "test": "tsx --test src/features/manager-studio/foundation/applicationFoundation.test.ts src/features/manager-studio/operations/projectOperationsOverview.test.ts src/features/intelligence/managerIntelligenceAdapter.test.ts"
   },
   "dependencies": {
+    "@embed-engine/capabilities": "workspace:*",
     "@embed-engine/design-tokens": "workspace:*",
     "@embed-engine/intelligence": "workspace:*",
     "@embed-engine/object-house": "workspace:*",

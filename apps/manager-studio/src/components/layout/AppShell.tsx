@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
+import { useMemo } from 'react';
 
 import {
+  CapabilityInspector,
   PlatformShell,
   type PlatformBreadcrumbItem,
   type PlatformWorkspaceState,
 } from '@embed-engine/platform-shell';
 
+import { getManagerCapabilityHost } from '../../studio/managerStudioComposition';
 import { Workspace } from './Workspace';
 
 type AppShellProps = {
@@ -39,23 +42,31 @@ const MANAGER_BREADCRUMB: readonly PlatformBreadcrumbItem[] = [
 ];
 
 /**
- * Single shell composition for Manager Studio (MSCB-01 + EPIC-BX-11).
- * Platform Header is shared via `@embed-engine/platform-shell`.
+ * Single shell composition for Manager Studio (MSCB-01 + EPIC-BX-11/13).
+ * Platform Shell loads Capability Host from Manager composition.
  */
 export function AppShell({ sidebar, children }: AppShellProps) {
+  const capabilityHost = useMemo(() => getManagerCapabilityHost(), []);
+  const inspectorModel = capabilityHost.inspectorModel('operations');
+
   return (
     <PlatformShell
       activeStudioId="manager"
       userLabel="Radim"
       workspace={MANAGER_WORKSPACE}
       breadcrumb={MANAGER_BREADCRUMB}
+      capabilityHost={capabilityHost}
+      activeCapabilityId="operations"
     >
       <div className="flex min-h-0 flex-1">
-        <div className="sticky top-0 h-[calc(100vh-var(--platform-header-height,72px)-41px)] shrink-0 self-start overflow-y-auto">
+        <div className="sticky top-0 h-[calc(100vh-var(--platform-header-height,72px)-41px-36px)] shrink-0 self-start overflow-y-auto">
           {sidebar}
         </div>
         <div className="flex min-w-0 flex-1 flex-col">
           <Workspace>{children}</Workspace>
+        </div>
+        <div className="w-[300px] shrink-0">
+          <CapabilityInspector model={inspectorModel} />
         </div>
       </div>
     </PlatformShell>

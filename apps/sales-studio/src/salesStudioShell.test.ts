@@ -19,4 +19,18 @@ describe('Sales Studio shell (EPIC-BX-11)', () => {
     assert.match(pkg, /@embed-engine\/platform-shell/);
     assert.match(vite, /port:\s*4179/);
   });
+
+  it('composes Sales from Capability Registry (EPIC-BX-13)', () => {
+    const app = readFileSync(join(salesRoot, 'src/SalesStudioApp.tsx'), 'utf8');
+    const composition = readFileSync(
+      join(salesRoot, 'src/studio/salesStudioComposition.ts'),
+      'utf8',
+    );
+    const pkg = readFileSync(join(salesRoot, 'package.json'), 'utf8');
+
+    assert.match(composition, /SALES_STUDIO_COMPOSITION/);
+    assert.match(app, /capabilityHost/);
+    assert.match(app, /CapabilityInspector/);
+    assert.match(pkg, /@embed-engine\/capabilities/);
+  });
 });

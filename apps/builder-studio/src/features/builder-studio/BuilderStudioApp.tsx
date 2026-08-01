@@ -1,6 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import { capabilityIdFromBuilderNav } from '@embed-engine/capabilities';
 
 import { AppShell } from '../../components/layout/AppShell';
+import { getBuilderCapabilityHost } from '../../studio/builderStudioComposition';
 import { ExperienceComposerView } from '../experience-composer';
 import { KnowledgeComposerView } from '../knowledge-composer';
 import { MediaStudioView } from '../media-studio';
@@ -9,6 +12,7 @@ import { CollaborationCenterView } from '../collaboration-workspace';
 import { PreviewCenterView } from '../preview-center';
 import { ReleaseCenterView } from '../release-center';
 import {
+  CapabilityInspector,
   PlatformShell,
   type PlatformBreadcrumbItem,
   type PlatformWorkspaceState,
@@ -47,10 +51,11 @@ const SECTION_LABEL: Record<HousePackageNavId, string> = {
 };
 
 /**
- * EPIC-BX-01..03 — Builder Studio: Dashboard + Experience Composer + HP authoring.
+ * EPIC-BX-01..13 — Builder Studio: capability composition over Platform Shell.
  */
 export function BuilderStudioApp() {
   const workspace = useWorkspaceController();
+  const capabilityHost = useMemo(() => getBuilderCapabilityHost(), []);
   const diskRoot = workspace.activeProject?.packageRoot ?? null;
   const [activeNav, setActiveNav] = useState<HousePackageNavId>('overview');
   const [createOpen, setCreateOpen] = useState(false);
@@ -164,6 +169,17 @@ export function BuilderStudioApp() {
     { id: 'section', label: SECTION_LABEL[activeNav] },
   ];
 
+  const activeCapabilityId = capabilityIdFromBuilderNav(activeNav);
+  const productCapabilityMode =
+    experienceMode ||
+    knowledgeMode ||
+    mediaStudioMode ||
+    previewCenterMode ||
+    releaseCenterMode ||
+    collaborationMode ||
+    intelligenceMode;
+  const inspectorModel = capabilityHost.inspectorModel(activeCapabilityId);
+
   return (
     <>
       <PlatformShell
@@ -171,16 +187,11 @@ export function BuilderStudioApp() {
         userLabel="Radim"
         workspace={platformWorkspace}
         breadcrumb={breadcrumb}
+        capabilityHost={capabilityHost}
+        activeCapabilityId={activeCapabilityId}
       >
       <AppShell
-        denseMain={
-          experienceMode ||
-          mediaStudioMode ||
-          previewCenterMode ||
-          releaseCenterMode ||
-          collaborationMode ||
-          intelligenceMode
-        }
+        denseMain={productCapabilityMode}
         workspacePanel={
           <WorkspaceSidebar
             registry={workspace.registry}
@@ -216,31 +227,35 @@ export function BuilderStudioApp() {
           />
         }
         publishPanel={
-          experienceMode ||
-          mediaStudioMode ||
-          previewCenterMode ||
-          releaseCenterMode ||
-          collaborationMode ||
-          intelligenceMode ? undefined : (
-            <ProjectActionPanel
-              loadError={loadError}
-              publishError={publishError}
-              validationReport={validationReport}
-              releaseSummary={releaseSummary}
-              validating={validating}
-              publishing={publishing}
-              previewAvailable={
-                releaseSummary !== null && releaseVerification !== null
-              }
-              onPreview={openPreview}
-              onPublish={() => {
-                void publish();
-              }}
-              onValidate={() => {
-                void validate();
-              }}
-              onHistory={handleHistory}
-            />
+          productCapabilityMode ? (
+            <CapabilityInspector model={inspectorModel} />
+          ) : (
+            <div className="flex h-full min-h-0 flex-col overflow-hidden">
+              <div className="min-h-0 flex-1 overflow-y-auto">
+                <ProjectActionPanel
+                  loadError={loadError}
+                  publishError={publishError}
+                  validationReport={validationReport}
+                  releaseSummary={releaseSummary}
+                  validating={validating}
+                  publishing={publishing}
+                  previewAvailable={
+                    releaseSummary !== null && releaseVerification !== null
+                  }
+                  onPreview={openPreview}
+                  onPublish={() => {
+                    void publish();
+                  }}
+                  onValidate={() => {
+                    void validate();
+                  }}
+                  onHistory={handleHistory}
+                />
+              </div>
+              <div className="max-h-[42%] shrink-0 overflow-y-auto border-t border-builder-line">
+                <CapabilityInspector model={inspectorModel} compact />
+              </div>
+            </div>
           )
         }
       >

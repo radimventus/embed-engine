@@ -5,6 +5,11 @@ export { StudioSwitcher } from './StudioSwitcher';
 export { WorkspaceSwitcher } from './WorkspaceSwitcher';
 export { UserMenu } from './UserMenu';
 export { NotificationsBell } from './NotificationsBell';
+export { CapabilityHostBar } from './CapabilityHostBar';
+export {
+  CapabilityInspector,
+  buildInspectorModel,
+} from './CapabilityInspector';
 export {
   PLATFORM_STUDIOS,
   getPlatformStudio,

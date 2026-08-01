@@ -237,3 +237,109 @@
 .platform-breadcrumb__sep {
   opacity: 0.6;
 }
+
+.platform-capability-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--platform-line);
+  background: color-mix(in srgb, var(--platform-accent) 6%, white);
+  padding: 8px 24px;
+  font-size: 12px;
+  color: var(--platform-muted);
+}
+
+.platform-capability-bar__label {
+  font-weight: 600;
+  color: var(--platform-ink);
+}
+
+.platform-capability-bar__ids {
+  opacity: 0.85;
+}
+
+.platform-capability-bar__active {
+  margin-left: auto;
+  font-weight: 600;
+  color: var(--platform-accent);
+}
+
+.platform-capability-inspector {
+  box-sizing: border-box;
+  height: 100%;
+  overflow-y: auto;
+  border-left: 1px solid var(--platform-line);
+  background: var(--platform-surface);
+  padding: 24px;
+  font-family: var(--platform-font);
+  color: var(--platform-ink);
+}
+
+.platform-capability-inspector__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--platform-muted);
+}
+
+.platform-capability-inspector__title {
+  margin: 4px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.platform-capability-inspector__studio {
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: var(--platform-muted);
+}
+
+.platform-capability-inspector__active {
+  margin-top: 20px;
+  border: 1px solid var(--platform-line);
+  border-radius: 12px;
+  background: var(--platform-canvas);
+  padding: 14px;
+}
+
+.platform-capability-inspector__name {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.platform-capability-inspector__meta,
+.platform-capability-inspector__desc,
+.platform-capability-inspector__owner,
+.platform-capability-inspector__deps,
+.platform-capability-inspector__empty {
+  margin: 8px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--platform-muted);
+}
+
+.platform-capability-inspector__list {
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.platform-capability-inspector__item {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  border: 1px solid var(--platform-line);
+  border-radius: 10px;
+  margin-top: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+}
+
+.platform-capability-inspector__item--active {
+  border-color: var(--platform-accent);
+  background: color-mix(in srgb, var(--platform-accent) 8%, white);
+}

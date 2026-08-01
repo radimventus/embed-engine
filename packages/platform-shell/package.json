@@ -18,11 +18,14 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/platformStudios.test.ts"
+    "test": "tsx --test src/platformStudios.test.ts src/capabilityHost.integration.test.ts"
   },
   "peerDependencies": {
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
+  },
+  "dependencies": {
+    "@embed-engine/capabilities": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
