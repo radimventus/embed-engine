@@ -1,4 +1,8 @@
 export { BuilderIntelligenceView } from './BuilderIntelligenceView';
-export { buildBuilderIntelligenceModel } from './intelligenceModel';
-export { buildDecisionReadiness } from './decisionReadiness';
-export { INTELLIGENCE_COACHES } from './intelligenceTypes';
+export {
+  buildBuilderIntelligenceModel,
+  projectBuilderIntelligenceContext,
+  getCoachLabel,
+  INTELLIGENCE_COACHES,
+} from './builderIntelligenceAdapter';
+export { buildDecisionReadiness } from './decisionReadinessBridge';

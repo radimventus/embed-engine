@@ -1,15 +1,13 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { buildBuilderIntelligenceModel } from './intelligenceModel';
-import { buildConversionCoach } from './conversionCoach';
-import { buildDecisionCoach } from './decisionCoach';
-import { buildDecisionReadiness, gradeForScore } from './decisionReadiness';
-import { buildKnowledgeCoach } from './knowledgeCoach';
-import { buildQualityCoach } from './qualityCoach';
+import { gradeForScore } from '@embed-engine/intelligence';
 
-describe('builderIntelligence (EPIC-BX-09)', () => {
-  it('builds four deterministic coaches without LLM', () => {
+import { buildBuilderIntelligenceModel } from './builderIntelligenceAdapter';
+import { buildDecisionReadiness } from './decisionReadinessBridge';
+
+describe('builderIntelligence adapter (EPIC-BX-12)', () => {
+  it('delegates to Intelligence Core via Builder Adapter', () => {
     const model = buildBuilderIntelligenceModel({
       projectId: 'intel-test',
       snapshot: null,
@@ -21,30 +19,50 @@ describe('builderIntelligence (EPIC-BX-09)', () => {
   });
 
   it('Quality Coach recommends on missing hero/gallery', () => {
-    const report = buildQualityCoach({
+    const model = buildBuilderIntelligenceModel({
       projectId: 'quality-test',
       snapshot: null,
+      validationReport: null,
     });
-    assert.ok(report.findings.some((item) => item.id.includes('hero')));
-    assert.ok(report.findings.some((item) => item.nav === 'media-studio' || item.nav === 'rooms' || item.nav === 'plans'));
+    const quality = model.coaches.find((coach) => coach.id === 'quality');
+    assert.ok(quality);
+    assert.ok(quality.findings.some((item) => item.id.includes('hero')));
+    assert.ok(
+      quality.findings.some(
+        (item) =>
+          item.nav === 'media-studio' ||
+          item.nav === 'rooms' ||
+          item.nav === 'plans',
+      ),
+    );
   });
 
   it('Conversion Coach evaluates Experience structure only', () => {
-    const report = buildConversionCoach({
+    const model = buildBuilderIntelligenceModel({
       projectId: 'conversion-test',
       snapshot: null,
+      validationReport: null,
     });
-    assert.equal(report.id, 'conversion');
-    assert.ok(report.findings.every((item) => item.nav === 'experience' || item.nav === 'knowledge'));
+    const conversion = model.coaches.find((coach) => coach.id === 'conversion');
+    assert.ok(conversion);
+    assert.equal(conversion.id, 'conversion');
+    assert.ok(
+      conversion.findings.every(
+        (item) => item.nav === 'experience' || item.nav === 'knowledge',
+      ),
+    );
   });
 
   it('Knowledge Coach uses rules for energy/heating/financing', () => {
-    const report = buildKnowledgeCoach({
+    const model = buildBuilderIntelligenceModel({
       projectId: 'knowledge-coach-test',
       snapshot: null,
+      validationReport: null,
     });
+    const knowledge = model.coaches.find((coach) => coach.id === 'knowledge');
+    assert.ok(knowledge);
     assert.ok(
-      report.findings.some(
+      knowledge.findings.some(
         (item) =>
           item.id.includes('heating') ||
           item.id.includes('financing') ||
@@ -55,12 +73,15 @@ describe('builderIntelligence (EPIC-BX-09)', () => {
   });
 
   it('Decision Coach checks path and persona coverage', () => {
-    const report = buildDecisionCoach({
+    const model = buildBuilderIntelligenceModel({
       projectId: 'decision-coach-test',
       snapshot: null,
+      validationReport: null,
     });
-    assert.equal(report.id, 'decision');
-    assert.ok(typeof report.score === 'number');
+    const decision = model.coaches.find((coach) => coach.id === 'decision');
+    assert.ok(decision);
+    assert.equal(decision.id, 'decision');
+    assert.ok(typeof decision.score === 'number');
   });
 
   it('Decision Readiness produces score and grade from pillars', () => {

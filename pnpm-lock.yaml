@@ -35,6 +35,9 @@ importers:
       '@embed-engine/embed':
         specifier: workspace:*
         version: link:../../packages/embed
+      '@embed-engine/intelligence':
+        specifier: workspace:*
+        version: link:../../packages/intelligence
       '@embed-engine/kernel':
         specifier: workspace:*
         version: link:../../packages/kernel
@@ -169,6 +172,9 @@ importers:
       '@embed-engine/design-tokens':
         specifier: workspace:*
         version: link:../../packages/design-tokens
+      '@embed-engine/intelligence':
+        specifier: workspace:*
+        version: link:../../packages/intelligence
       '@embed-engine/object-house':
         specifier: workspace:*
         version: link:../../packages/object-house
@@ -215,6 +221,9 @@ importers:
 
   apps/sales-studio:
     dependencies:
+      '@embed-engine/intelligence':
+        specifier: workspace:*
+        version: link:../../packages/intelligence
       '@embed-engine/platform-shell':
         specifier: workspace:*
         version: link:../../packages/platform-shell
@@ -386,6 +395,18 @@ importers:
       vite:
         specifier: ^6.0.0
         version: 6.4.3(@types/node@22.20.1)(jiti@1.21.7)(tsx@4.23.1)
+
+  packages/intelligence:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.1
+        version: 22.20.1
+      tsx:
+        specifier: ^4.20.3
+        version: 4.23.1
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
 
   packages/kernel:
     dependencies:

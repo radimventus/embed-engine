@@ -7,13 +7,13 @@ import {
   buildBuilderIntelligenceModel,
   getCoachLabel,
   INTELLIGENCE_COACHES,
-} from './intelligenceModel';
+  type BuilderCoachReport,
+  type BuilderIntelligenceRecommendation,
+} from './builderIntelligenceAdapter';
 import type {
-  CoachReport,
-  IntelligenceCoachId,
-  IntelligenceRecommendation,
   RecommendationSeverity,
-} from './intelligenceTypes';
+  RuleCategory,
+} from '@embed-engine/intelligence';
 
 type BuilderIntelligenceViewProps = {
   readonly projectId: string;
@@ -24,7 +24,7 @@ type BuilderIntelligenceViewProps = {
 };
 
 /**
- * EPIC-BX-09 — Builder Intelligence: deterministic product coach (no LLM chat).
+ * EPIC-BX-09 / BX-12 — Builder Intelligence UI over shared Intelligence Core.
  */
 export function BuilderIntelligenceView({
   projectId,
@@ -33,7 +33,7 @@ export function BuilderIntelligenceView({
   validationReport,
   onNavigate,
 }: BuilderIntelligenceViewProps) {
-  const [coachId, setCoachId] = useState<IntelligenceCoachId>('quality');
+  const [coachId, setCoachId] = useState<RuleCategory>('quality');
 
   const model = useMemo(
     () =>
@@ -58,8 +58,8 @@ export function BuilderIntelligenceView({
           Builder Coach
         </h1>
         <p className="mt-1 text-sm text-builder-muted">
-          {projectName} — deterministický produktový kouč (bez AI chatu, bez
-          LLM).
+          {projectName} — Decision Intelligence Core (sdílená platformní
+          vrstva).
         </p>
         <div className="mt-5 grid gap-3 tablet:grid-cols-4">
           {INTELLIGENCE_COACHES.map((coach) => {
@@ -146,7 +146,7 @@ function CoachDetail({
   coach,
   onNavigate,
 }: {
-  readonly coach: CoachReport;
+  readonly coach: BuilderCoachReport;
   readonly onNavigate: (nav: HousePackageNavId) => void;
 }) {
   return (
@@ -197,7 +197,7 @@ function RecommendationsPanel({
   recommendations,
   onNavigate,
 }: {
-  readonly recommendations: readonly IntelligenceRecommendation[];
+  readonly recommendations: readonly BuilderIntelligenceRecommendation[];
   readonly onNavigate: (nav: HousePackageNavId) => void;
 }) {
   return (
