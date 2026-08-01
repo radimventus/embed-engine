@@ -5,6 +5,7 @@ export { StudioSwitcher } from './StudioSwitcher';
 export { WorkspaceSwitcher } from './WorkspaceSwitcher';
 export { UserMenu } from './UserMenu';
 export { NotificationsBell } from './NotificationsBell';
+export { FeedbackButton } from './FeedbackButton';
 export { CapabilityHostBar } from './CapabilityHostBar';
 export {
   CapabilityInspector,
@@ -13,6 +14,7 @@ export {
 export {
   PLATFORM_STUDIOS,
   getPlatformStudio,
+  resolvePlatformStudioHref,
   type PlatformStudio,
   type PlatformStudioId,
 } from './platformStudios';

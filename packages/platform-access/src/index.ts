@@ -12,6 +12,19 @@ export type {
   ProjectBootstrap,
 } from './domain/types';
 
+export type {
+  PlatformTenant,
+  PilotInvite,
+  PilotInviteStatus,
+  TenantBootstrap,
+  PilotActivityEntry,
+  PilotDiagnostics,
+  PilotReadyCheck,
+  PilotReadyCheckId,
+  PilotReadyReport,
+  PlatformFeedbackPayload,
+} from './domain/pilotTypes';
+
 export {
   PLATFORM_ROLE_LABELS,
   primaryRole,
@@ -25,9 +38,12 @@ export {
   findCompany,
   findWorkspace,
   findProject,
+  findTenant,
   listWorkspacesForCompany,
   listProjectsForWorkspace,
   listProjectsForCompany,
+  appendPilotProvision,
+  resetCompanyRegistryExtras,
   DEFAULT_COMPANY_ID,
   DEFAULT_WORKSPACE_ID,
   DEFAULT_PROJECT_ID,
@@ -38,7 +54,10 @@ export {
   DEFAULT_COMPANIES,
   DEFAULT_WORKSPACES,
   DEFAULT_PROJECTS,
+  DEFAULT_TENANTS,
+  DEFAULT_TENANT_ID,
   DEMO_USERS,
+  PILOT_HOUSE_PACKAGE_ROOT,
 } from './registry/defaults';
 
 export {
@@ -46,6 +65,7 @@ export {
   logout,
   restoreSession,
   updateSession,
+  buildSession,
   type AuthResult,
 } from './session/authService';
 
@@ -63,6 +83,46 @@ export {
 } from './bootstrap/workspaceBootstrap';
 
 export { bootstrapProject } from './bootstrap/projectBootstrap';
+export { bootstrapTenant } from './bootstrap/tenantBootstrap';
+
+export {
+  CLOUD_PLATFORM_ORIGIN,
+  getCloudPlatformConfig,
+  resolveCloudStudioHref,
+  resolveCloudLandingHref,
+  type CloudPlatformConfig,
+  type PlatformDeployMode,
+} from './cloud/cloudConfig';
+
+export {
+  createPilotInvite,
+  findInviteByToken,
+  listPendingInvites,
+  activateInvite,
+  findActivatedInviteUser,
+  resetInviteStore,
+  INVITE_STORAGE_KEY,
+} from './pilot/inviteStore';
+
+export {
+  provisionPilotWorkspace,
+  type PilotProvisionResult,
+} from './pilot/provisionPilotWorkspace';
+
+export {
+  recordPlatformActivity,
+  listRecentActivity,
+  recordLastPublish,
+  readLastPublish,
+  buildPilotDiagnostics,
+  buildPilotReadyReport,
+} from './pilot/pilotDiagnostics';
+
+export {
+  submitPlatformFeedback,
+  listPlatformFeedback,
+  FEEDBACK_STORAGE_KEY,
+} from './pilot/feedbackStore';
 
 export {
   SessionProvider,
@@ -73,5 +133,6 @@ export {
 } from './react/SessionProvider';
 
 export { AuthShell } from './react/AuthShell';
+export { InviteShell } from './react/InviteShell';
 export { PlatformLanding } from './react/PlatformLanding';
 export { PlatformAccessRoot } from './react/PlatformAccessRoot';

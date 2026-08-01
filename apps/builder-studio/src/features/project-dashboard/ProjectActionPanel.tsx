@@ -1,6 +1,7 @@
 import type { HousePackageReleaseSummary } from '../house-package/productionPublishGate';
 import type { HousePackageValidationReport } from '../house-package/housePackageValidationReport';
 import { formatCzechDateTime } from './projectDashboardModel';
+import { PilotReadyPanel } from './PilotReadyPanel';
 
 type ProjectActionPanelProps = {
   readonly loadError: string | null;
@@ -17,7 +18,7 @@ type ProjectActionPanelProps = {
 };
 
 /**
- * EPIC-BX-02 — right rail: primary actions only (product language).
+ * EPIC-BX-02 / BX-15 — right rail: primary actions + Pilot Ready.
  */
 export function ProjectActionPanel({
   loadError,
@@ -104,6 +105,8 @@ export function ProjectActionPanel({
           </p>
         </div>
       )}
+
+      <PilotReadyPanel />
 
       {publishError !== null && (
         <pre className="mt-4 max-h-40 overflow-auto whitespace-pre-wrap rounded-lg bg-builder-draftBg px-3 py-2 text-[11px] text-builder-draft">

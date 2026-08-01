@@ -1,6 +1,6 @@
 /**
- * EPIC-BX-11 — Platform Studio registry (local Vite ports).
- * URL switch only — routing framework left for later.
+ * EPIC-BX-11 / BX-15 — Platform Studio registry.
+ * Local Vite ports for development; path-based URLs on https://app.conis.cz.
  */
 
 export type PlatformStudioId = 'builder' | 'manager' | 'sales';
@@ -9,18 +9,74 @@ export type PlatformStudio = {
   readonly id: PlatformStudioId;
   readonly label: string;
   readonly shortLabel: string;
-  /** Absolute local URL, or null when Studio is not yet available. */
+  /** Absolute studio URL, or null when Studio is not yet available. */
   readonly href: string | null;
   readonly available: boolean;
   readonly accent: string;
 };
 
-export const PLATFORM_STUDIOS: readonly PlatformStudio[] = [
+const LOCAL_PORTS: Record<PlatformStudioId, number> = {
+  builder: 4177,
+  manager: 4175,
+  sales: 4179,
+};
+
+const CLOUD_PATHS: Record<PlatformStudioId, string> = {
+  builder: '/builder/',
+  manager: '/manager/',
+  sales: '/sales/',
+};
+
+function readEnvOrigin(): string | null {
+  try {
+    const meta = import.meta as { env?: Record<string, string | undefined> };
+    const fromVite = meta.env?.VITE_PLATFORM_ORIGIN?.trim();
+    if (fromVite !== undefined && fromVite.length > 0) {
+      return fromVite.replace(/\/$/, '');
+    }
+  } catch {
+    // non-Vite host
+  }
+  return null;
+}
+
+function isLocalHost(hostname: string): boolean {
+  return hostname === '127.0.0.1' || hostname === 'localhost';
+}
+
+export function resolvePlatformStudioHref(studioId: PlatformStudioId): string {
+  const envOrigin = readEnvOrigin();
+  if (envOrigin !== null) {
+    const local =
+      envOrigin.includes('127.0.0.1') || envOrigin.includes('localhost');
+    if (local) {
+      let host = '127.0.0.1';
+      try {
+        host = new URL(envOrigin).hostname;
+      } catch {
+        // keep default
+      }
+      return `http://${host}:${LOCAL_PORTS[studioId]}/`;
+    }
+    return `${envOrigin}${CLOUD_PATHS[studioId]}`;
+  }
+
+  if (typeof window !== 'undefined') {
+    const { hostname, origin } = window.location;
+    if (isLocalHost(hostname)) {
+      return `http://${hostname}:${LOCAL_PORTS[studioId]}/`;
+    }
+    return `${origin.replace(/\/$/, '')}${CLOUD_PATHS[studioId]}`;
+  }
+
+  return `http://127.0.0.1:${LOCAL_PORTS[studioId]}/`;
+}
+
+const STUDIO_DEFS: readonly Omit<PlatformStudio, 'href'>[] = [
   {
     id: 'builder',
     label: 'Builder Studio',
     shortLabel: 'Builder',
-    href: 'http://127.0.0.1:4177/',
     available: true,
     accent: '#1E4D8C',
   },
@@ -28,7 +84,6 @@ export const PLATFORM_STUDIOS: readonly PlatformStudio[] = [
     id: 'manager',
     label: 'Manager Studio',
     shortLabel: 'Manager',
-    href: 'http://127.0.0.1:4175/',
     available: true,
     accent: '#1F7A4D',
   },
@@ -36,12 +91,22 @@ export const PLATFORM_STUDIOS: readonly PlatformStudio[] = [
     id: 'sales',
     label: 'Sales Studio',
     shortLabel: 'Sales',
-    href: 'http://127.0.0.1:4179/',
     available: true,
     accent: '#C45C26',
   },
 ] as const;
 
+function buildStudios(): readonly PlatformStudio[] {
+  return STUDIO_DEFS.map((studio) => ({
+    ...studio,
+    href: studio.available ? resolvePlatformStudioHref(studio.id) : null,
+  }));
+}
+
+/** Resolved at module load (Node tests → local ports). */
+export const PLATFORM_STUDIOS: readonly PlatformStudio[] = buildStudios();
+
 export function getPlatformStudio(id: PlatformStudioId): PlatformStudio {
-  return PLATFORM_STUDIOS.find((studio) => studio.id === id) ?? PLATFORM_STUDIOS[0];
+  const live = buildStudios().find((studio) => studio.id === id);
+  return live ?? PLATFORM_STUDIOS[0];
 }

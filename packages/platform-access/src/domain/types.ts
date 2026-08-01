@@ -26,6 +26,7 @@ export type PlatformUser = {
 export type PlatformCompany = {
   readonly id: string;
   readonly name: string;
+  readonly tenantId: string;
 };
 
 export type PlatformWorkspace = {
@@ -51,6 +52,7 @@ export type PlatformProject = {
 
 export type PlatformSession = {
   readonly user: PlatformUser;
+  readonly tenantId: string;
   readonly companyId: string;
   readonly workspaceId: string;
   readonly projectId: string | null;
@@ -59,6 +61,7 @@ export type PlatformSession = {
   readonly rememberMe: boolean;
   readonly issuedAt: string;
   readonly expiresAt: string | null;
+  readonly lastLoginAt: string;
 };
 
 export type LoginCredentials = {

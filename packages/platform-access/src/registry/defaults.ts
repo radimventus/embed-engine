@@ -4,13 +4,33 @@ import type {
   PlatformUser,
   PlatformWorkspace,
 } from '../domain/types';
+import type { PlatformTenant } from '../domain/pilotTypes';
 
+export const DEFAULT_TENANT_ID = 'tenant-ac-modular' as const;
 export const DEFAULT_COMPANY_ID = 'ac-modular' as const;
 export const DEFAULT_WORKSPACE_ID = 'ac-modular-main' as const;
 export const DEFAULT_PROJECT_ID = 'villa-168' as const;
 
+/** Canonical House Package seed for automatic pilot project provisioning. */
+export const PILOT_HOUSE_PACKAGE_ROOT =
+  'apps/client-studio/public/house-package' as const;
+
+export const DEFAULT_TENANTS: readonly PlatformTenant[] = [
+  {
+    id: DEFAULT_TENANT_ID,
+    name: 'AC Modular Pilot',
+    companyId: DEFAULT_COMPANY_ID,
+    pilot: true,
+    createdAt: '2026-01-01T00:00:00.000Z',
+  },
+] as const;
+
 export const DEFAULT_COMPANIES: readonly PlatformCompany[] = [
-  { id: DEFAULT_COMPANY_ID, name: 'AC Modular' },
+  {
+    id: DEFAULT_COMPANY_ID,
+    name: 'AC Modular',
+    tenantId: DEFAULT_TENANT_ID,
+  },
 ] as const;
 
 export const DEFAULT_WORKSPACES: readonly PlatformWorkspace[] = [
@@ -49,7 +69,7 @@ export const DEFAULT_PROJECTS: readonly PlatformProject[] = [
     workspaceId: DEFAULT_WORKSPACE_ID,
     companyId: DEFAULT_COMPANY_ID,
     name: 'Villa 168',
-    packageRoot: 'apps/client-studio/public/house-package',
+    packageRoot: PILOT_HOUSE_PACKAGE_ROOT,
     status: 'published',
     slug: 'villa-168',
     objectType: 'villa',

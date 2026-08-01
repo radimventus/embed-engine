@@ -53,6 +53,7 @@ export type PlatformSessionContextValue = {
   ) => ProjectBootstrap | null;
   readonly canOpenStudio: (studioId: PlatformStudioId) => boolean;
   readonly availableStudios: readonly PlatformStudioId[];
+  readonly refreshRegistry: () => void;
 };
 
 const PlatformSessionContext =
@@ -71,7 +72,14 @@ export function SessionProvider({
   children,
   bindStudioId,
 }: SessionProviderProps) {
-  const registry = useMemo(() => getDefaultCompanyRegistry(), []);
+  const [registryTick, setRegistryTick] = useState(0);
+  const registry = useMemo(
+    () => getDefaultCompanyRegistry(),
+    [registryTick],
+  );
+  const refreshRegistry = useCallback(() => {
+    setRegistryTick((value) => value + 1);
+  }, []);
   const [session, setSession] = useState<PlatformSession | null>(() => {
     const restored = restoreSession();
     if (restored === null) return null;
@@ -188,6 +196,7 @@ export function SessionProvider({
       bootstrapActiveProject,
       canOpenStudio,
       availableStudios,
+      refreshRegistry,
     }),
     [
       session,
@@ -202,6 +211,7 @@ export function SessionProvider({
       bootstrapActiveProject,
       canOpenStudio,
       availableStudios,
+      refreshRegistry,
     ],
   );
 

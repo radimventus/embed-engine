@@ -1,5 +1,5 @@
 /**
- * EPIC-BX-14 — Platform Company Registry (single company / workspace / project SSOT).
+ * EPIC-BX-14 / BX-15 — Platform Company + Tenant Registry.
  */
 
 import type {
@@ -7,27 +7,76 @@ import type {
   PlatformProject,
   PlatformWorkspace,
 } from '../domain/types';
+import type { PlatformTenant } from '../domain/pilotTypes';
 import {
   DEFAULT_COMPANIES,
   DEFAULT_COMPANY_ID,
   DEFAULT_PROJECT_ID,
   DEFAULT_PROJECTS,
+  DEFAULT_TENANT_ID,
+  DEFAULT_TENANTS,
   DEFAULT_WORKSPACE_ID,
   DEFAULT_WORKSPACES,
 } from './defaults';
 
 export type CompanyRegistryState = {
+  readonly tenants: readonly PlatformTenant[];
   readonly companies: readonly PlatformCompany[];
   readonly workspaces: readonly PlatformWorkspace[];
   readonly projects: readonly PlatformProject[];
 };
 
+let mutableExtras: {
+  tenants: PlatformTenant[];
+  companies: PlatformCompany[];
+  workspaces: PlatformWorkspace[];
+  projects: PlatformProject[];
+} = {
+  tenants: [],
+  companies: [],
+  workspaces: [],
+  projects: [],
+};
+
 export function getDefaultCompanyRegistry(): CompanyRegistryState {
   return {
-    companies: DEFAULT_COMPANIES,
-    workspaces: DEFAULT_WORKSPACES,
-    projects: DEFAULT_PROJECTS,
+    tenants: [...DEFAULT_TENANTS, ...mutableExtras.tenants],
+    companies: [...DEFAULT_COMPANIES, ...mutableExtras.companies],
+    workspaces: [...DEFAULT_WORKSPACES, ...mutableExtras.workspaces],
+    projects: [...DEFAULT_PROJECTS, ...mutableExtras.projects],
   };
+}
+
+/** Reset mutable pilot provisions (tests). */
+export function resetCompanyRegistryExtras(): void {
+  mutableExtras = {
+    tenants: [],
+    companies: [],
+    workspaces: [],
+    projects: [],
+  };
+}
+
+export function appendPilotProvision(input: {
+  readonly tenant: PlatformTenant;
+  readonly company: PlatformCompany;
+  readonly workspace: PlatformWorkspace;
+  readonly project: PlatformProject;
+}): CompanyRegistryState {
+  mutableExtras = {
+    tenants: [...mutableExtras.tenants, input.tenant],
+    companies: [...mutableExtras.companies, input.company],
+    workspaces: [...mutableExtras.workspaces, input.workspace],
+    projects: [...mutableExtras.projects, input.project],
+  };
+  return getDefaultCompanyRegistry();
+}
+
+export function findTenant(
+  state: CompanyRegistryState,
+  tenantId: string,
+): PlatformTenant | undefined {
+  return state.tenants.find((item) => item.id === tenantId);
 }
 
 export function findCompany(
@@ -73,6 +122,7 @@ export function listProjectsForCompany(
 }
 
 export {
+  DEFAULT_TENANT_ID,
   DEFAULT_COMPANY_ID,
   DEFAULT_WORKSPACE_ID,
   DEFAULT_PROJECT_ID,

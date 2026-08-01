@@ -1,27 +1,29 @@
 /**
- * EPIC-BX-14 / BX-15 — Workspace Bootstrap: User → Company → Workspace → Project → Studio.
+ * EPIC-BX-15 — Tenant Bootstrap: Tenant → Company → Workspace → Project → Studio.
  */
 
-import { resolveCloudStudioHref } from '../cloud/cloudConfig';
-import type {
-  PlatformSession,
-  PlatformStudioId,
-  WorkspaceBootstrap,
-} from '../domain/types';
+import type { PlatformSession } from '../domain/types';
+import type { TenantBootstrap } from '../domain/pilotTypes';
 import {
   findCompany,
   findProject,
+  findTenant,
   findWorkspace,
   getDefaultCompanyRegistry,
 } from '../registry/companyRegistry';
 
-export function bootstrapWorkspace(
+export function bootstrapTenant(
   session: PlatformSession,
-): WorkspaceBootstrap | null {
+): TenantBootstrap | null {
   const registry = getDefaultCompanyRegistry();
+  const tenant = findTenant(registry, session.tenantId);
   const company = findCompany(registry, session.companyId);
   const workspace = findWorkspace(registry, session.workspaceId);
-  if (company === undefined || workspace === undefined) {
+  if (
+    tenant === undefined ||
+    company === undefined ||
+    workspace === undefined
+  ) {
     return null;
   }
   const project =
@@ -30,14 +32,11 @@ export function bootstrapWorkspace(
       : null;
 
   return {
-    user: session.user,
+    tenant,
     company,
     workspace,
     project,
+    user: session.user,
     studioId: session.activeStudioId,
   };
-}
-
-export function resolveStudioHref(studioId: PlatformStudioId): string {
-  return resolveCloudStudioHref(studioId);
 }

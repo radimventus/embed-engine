@@ -4,6 +4,8 @@ import { useMemo } from 'react';
 import {
   PLATFORM_ROLE_LABELS,
   primaryRole,
+  recordPlatformActivity,
+  submitPlatformFeedback,
   usePlatformSession,
 } from '@embed-engine/platform-access';
 import {
@@ -72,6 +74,18 @@ export function AppShell({ sidebar, children }: AppShellProps) {
       activeCapabilityId="operations"
       onLogout={logout}
       onOpenLanding={clearStudio}
+      onSubmitFeedback={(message) => {
+        submitPlatformFeedback({
+          message,
+          email: session?.user.email ?? null,
+          studioId: 'manager',
+          companyId: session?.companyId ?? null,
+        });
+        recordPlatformActivity({
+          label: 'Feedback',
+          detail: message.slice(0, 80),
+        });
+      }}
     >
       <div className="flex min-h-0 flex-1">
         <div className="sticky top-0 h-[calc(100vh-var(--platform-header-height,72px)-41px-36px)] shrink-0 self-start overflow-y-auto">

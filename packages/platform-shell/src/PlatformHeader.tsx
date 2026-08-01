@@ -1,4 +1,5 @@
 import type { PlatformStudioId } from './platformStudios';
+import { FeedbackButton } from './FeedbackButton';
 import { NotificationsBell } from './NotificationsBell';
 import { StudioSwitcher } from './StudioSwitcher';
 import { UserMenu } from './UserMenu';
@@ -14,10 +15,11 @@ export type PlatformHeaderProps = {
   readonly searchPlaceholder?: string;
   readonly onLogout?: () => void;
   readonly onOpenLanding?: () => void;
+  readonly onSubmitFeedback?: (message: string) => void;
 };
 
 /**
- * EPIC-BX-11 / BX-14 — Shared Platform Header for Builder / Manager / Sales.
+ * EPIC-BX-11 / BX-14 / BX-15 — Shared Platform Header for Builder / Manager / Sales.
  */
 export function PlatformHeader({
   activeStudioId,
@@ -28,6 +30,7 @@ export function PlatformHeader({
   searchPlaceholder = 'Hledat v platformě…',
   onLogout,
   onOpenLanding,
+  onSubmitFeedback,
 }: PlatformHeaderProps) {
   return (
     <header className="platform-header" data-testid="platform-header">
@@ -46,6 +49,7 @@ export function PlatformHeader({
           placeholder={searchPlaceholder}
           aria-label="Global Search"
         />
+        <FeedbackButton onSubmitFeedback={onSubmitFeedback} />
         <NotificationsBell count={notificationCount} />
         <UserMenu
           userLabel={userLabel}

@@ -1,5 +1,6 @@
 import {
   PLATFORM_STUDIOS,
+  resolvePlatformStudioHref,
   type PlatformStudioId,
 } from './platformStudios';
 import { PlatformDropdown } from './PlatformDropdown';
@@ -24,11 +25,14 @@ export function StudioSwitcher({ activeStudioId }: StudioSwitcherProps) {
     >
       {PLATFORM_STUDIOS.map((studio) => {
         const isActive = studio.id === activeStudioId;
-        if (studio.available && studio.href !== null && !isActive) {
+        const href = studio.available
+          ? resolvePlatformStudioHref(studio.id)
+          : null;
+        if (href !== null && !isActive) {
           return (
             <a
               key={studio.id}
-              href={studio.href}
+              href={href}
               role="menuitem"
               className="platform-menu-item"
             >

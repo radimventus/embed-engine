@@ -200,3 +200,27 @@
   border-radius: 14px;
   padding: 16px;
 }
+
+.platform-access__list {
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.platform-access__list li + li {
+  margin-top: 6px;
+}
+
+.platform-access__link {
+  display: inline-block;
+  margin-top: 16px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e4d8c;
+  cursor: pointer;
+  text-decoration: underline;
+}

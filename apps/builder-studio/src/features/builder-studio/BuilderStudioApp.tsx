@@ -4,6 +4,9 @@ import { capabilityIdFromBuilderNav } from '@embed-engine/capabilities';
 import {
   PLATFORM_ROLE_LABELS,
   primaryRole,
+  recordLastPublish,
+  recordPlatformActivity,
+  submitPlatformFeedback,
   usePlatformSession,
 } from '@embed-engine/platform-access';
 
@@ -224,6 +227,18 @@ export function BuilderStudioApp() {
         activeCapabilityId={activeCapabilityId}
         onLogout={logout}
         onOpenLanding={clearStudio}
+        onSubmitFeedback={(message) => {
+          submitPlatformFeedback({
+            message,
+            email: accessSession?.user.email ?? null,
+            studioId: 'builder',
+            companyId: accessSession?.companyId ?? null,
+          });
+          recordPlatformActivity({
+            label: 'Feedback',
+            detail: message.slice(0, 80),
+          });
+        }}
       >
       <AppShell
         denseMain={productCapabilityMode}
@@ -280,7 +295,16 @@ export function BuilderStudioApp() {
                   }
                   onPreview={openPreview}
                   onPublish={() => {
-                    void publish();
+                    void publish().then((summary) => {
+                      if (summary === null) return;
+                      recordLastPublish(
+                        `v${summary.housePackageVersion}`,
+                      );
+                      recordPlatformActivity({
+                        label: 'Publish',
+                        detail: `v${summary.housePackageVersion}`,
+                      });
+                    });
                   }}
                   onValidate={() => {
                     void validate();
