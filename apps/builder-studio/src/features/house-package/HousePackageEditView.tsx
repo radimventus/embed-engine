@@ -11,31 +11,35 @@ import type {
   HousePackageEditSnapshot,
 } from './housePackageEditSession';
 import type { HousePackageNavId } from './HousePackageSidebar';
-import {
-  HOUSE_PACKAGE_DISK_ROOT,
-  HOUSE_PACKAGE_URL_ROOT,
-} from './housePackagePaths';
+import { HOUSE_PACKAGE_URL_ROOT } from './housePackagePaths';
 import type { HpEditSection } from './validateHousePackageWorking';
+import type { WorkspaceProject } from '../workspace/workspaceRegistry';
 
 type HousePackageEditViewProps = {
   readonly snapshot: HousePackageEditSnapshot;
   readonly session: HousePackageEditSession;
   readonly activeNav: HousePackageNavId;
   readonly saving: boolean;
+  readonly companyName: string;
+  readonly project: WorkspaceProject;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
   readonly onSave: () => void;
+  readonly onEditProject: () => void;
 };
 
 /**
- * CAP-BLD-03/04 — edit HP-002 texts; Save persists via Node host.
+ * EPIC-BX-01 — project content editors (never an empty canvas).
  */
 export function HousePackageEditView({
   snapshot,
   session,
   activeNav,
   saving,
+  companyName,
+  project,
   onChange,
   onSave,
+  onEditProject,
 }: HousePackageEditViewProps) {
   const pkg = snapshot.validation.builderImport;
   const status = sectionStatus(snapshot, navToSection(activeNav));
@@ -44,17 +48,26 @@ export function HousePackageEditView({
     <div className="space-y-6" data-testid="house-package-edit">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-[12px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-            Content SSOT · edit &amp; save
-          </p>
-          <h2 className="mt-1 text-2xl font-semibold text-builder-ink">
-            House Package (HP-002)
-          </h2>
-          <p className="mt-1 font-mono text-[12px] text-builder-muted">
-            {snapshot.packageRootLabel} → {HOUSE_PACKAGE_DISK_ROOT}
+          <nav
+            aria-label="Breadcrumb"
+            className="flex flex-wrap items-center gap-2 text-sm text-builder-muted"
+          >
+            <span className="font-medium text-builder-ink">{companyName}</span>
+            <span aria-hidden>/</span>
+            <span className="font-semibold text-builder-ink">{project.name}</span>
+          </nav>
+          <p className="mt-2 text-sm text-builder-muted">
+            {sectionHeadline(activeNav)}
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={onEditProject}
+            className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium text-builder-ink"
+          >
+            Upravit projekt
+          </button>
           <StatusBadge status={overallStatus(snapshot)} />
           <button
             type="button"
@@ -66,7 +79,7 @@ export function HousePackageEditView({
             onClick={onSave}
             className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
           >
-            {saving ? 'Saving…' : 'Save'}
+            {saving ? 'Ukládám…' : 'Uložit'}
           </button>
           <button
             type="button"
@@ -74,7 +87,7 @@ export function HousePackageEditView({
             onClick={() => onChange(session.undo())}
             className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium text-builder-ink disabled:opacity-40"
           >
-            Undo
+            Zpět
           </button>
           <button
             type="button"
@@ -82,7 +95,7 @@ export function HousePackageEditView({
             onClick={() => onChange(session.discard())}
             className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium text-builder-ink disabled:opacity-40"
           >
-            Discard / Reset
+            Zahodit
           </button>
         </div>
       </div>
@@ -103,55 +116,120 @@ export function HousePackageEditView({
 
       {activeNav === 'overview' && (
         <section className="space-y-4">
-          <Panel title="Session" status={overallStatus(snapshot)}>
-            <Row label="Dirty state" value={snapshot.dirtyState} />
+          <div className="grid gap-4 tablet:grid-cols-2 desktop:grid-cols-4">
+            <Metric
+              label="Místnosti"
+              value={String(pkg?.rooms.rooms.length ?? 0)}
+            />
+            <Metric
+              label="Galerie"
+              value={String(pkg?.gallery.entries.length ?? 0)}
+            />
+            <Metric
+              label="Videa"
+              value={String(pkg?.videos.entries.length ?? 0)}
+            />
+            <Metric
+              label="Podlaží"
+              value={String(pkg?.floors.floors.length ?? 0)}
+            />
+          </div>
+          <Panel title="Dashboard projektu" status={overallStatus(snapshot)}>
+            <Row label="Název" value={project.name} />
+            <Row label="Firma" value={companyName} />
+            <Row label="Stav projektu" value={statusLabel(project.status)} />
+            <Row label="Slug" value={project.slug} />
             <Row
-              label="Dirty sections"
+              label="Popis"
               value={
-                snapshot.dirty.length === 0
-                  ? '—'
-                  : snapshot.dirty.join(', ')
+                project.description.length > 0 ? project.description : '—'
               }
             />
-            <Row label="Mounted at" value={snapshot.mountedAt} />
-            <Row label="Hero" value={snapshot.working.heroRelativePath} />
             <Row
-              label="Validation"
-              value={snapshot.validation.ok ? 'OK' : 'Invalid'}
+              label="Obsah"
+              value={
+                snapshot.dirtyState === 'clean'
+                  ? 'Uloženo'
+                  : snapshot.dirtyState === 'modified'
+                    ? 'Neuložené změny'
+                    : 'Chyba uložení'
+              }
+            />
+            <Row
+              label="Hero"
+              value={snapshot.working.heroRelativePath || '—'}
             />
           </Panel>
-          <p className="text-sm text-builder-muted">
-            Save writes changed HP-002 files atomically via Node host. Publish
-            is CAP-BLD-05.
-          </p>
+          {pkg !== null && pkg.gallery.entries.length > 0 && (
+            <Panel title="Náhled galerie">
+              <div className="grid grid-cols-3 gap-2 tablet:grid-cols-5">
+                {pkg.gallery.entries.slice(0, 10).map((entry) => (
+                  <img
+                    key={`${entry.order}-${entry.path}`}
+                    src={`${HOUSE_PACKAGE_URL_ROOT}/${entry.path}`}
+                    alt=""
+                    className="aspect-[4/3] w-full rounded-lg object-cover bg-builder-soft"
+                  />
+                ))}
+              </div>
+            </Panel>
+          )}
         </section>
       )}
 
       {activeNav === 'rooms' && (
         <CsvEditor
-          title="rooms.csv"
+          title="Místnosti"
           status={status}
           csv={snapshot.working.roomsCsv}
           columns={['floor', 'room', 'name', 'area']}
           onCsvChange={(next) => onChange(session.setRoomsCsv(next))}
-          emptyRow={{ floor: 'p1', room: 'new-room', name: 'Nová místnost', area: '0' }}
+          emptyRow={{
+            floor: 'p1',
+            room: 'new-room',
+            name: 'Nová místnost',
+            area: '0',
+          }}
         />
       )}
 
       {activeNav === 'gallery' && (
-        <CsvEditor
-          title="gallery.csv"
-          status={status}
-          csv={snapshot.working.galleryCsv}
-          columns={['order', 'room', 'file']}
-          onCsvChange={(next) => onChange(session.setGalleryCsv(next))}
-          emptyRow={{ order: '99', room: 'exterior', file: '00.webp' }}
-        />
+        <section className="space-y-4">
+          {pkg !== null && pkg.gallery.entries.length > 0 && (
+            <Panel title="Miniatury">
+              <div className="grid grid-cols-2 gap-3 tablet:grid-cols-4">
+                {pkg.gallery.entries.map((entry) => (
+                  <figure
+                    key={`${entry.order}-${entry.path}`}
+                    className="overflow-hidden rounded-[12px] border border-[#E8EEF5] bg-white"
+                  >
+                    <img
+                      src={`${HOUSE_PACKAGE_URL_ROOT}/${entry.path}`}
+                      alt=""
+                      className="aspect-[4/3] w-full object-cover bg-builder-soft"
+                    />
+                    <figcaption className="px-2.5 py-2 text-[11px] text-builder-muted">
+                      {entry.roomId} · {entry.order}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </Panel>
+          )}
+          <CsvEditor
+            title="Galerie — tabulka"
+            status={status}
+            csv={snapshot.working.galleryCsv}
+            columns={['order', 'room', 'file']}
+            onCsvChange={(next) => onChange(session.setGalleryCsv(next))}
+            emptyRow={{ order: '99', room: 'exterior', file: '00.webp' }}
+          />
+        </section>
       )}
 
       {activeNav === 'videos' && (
         <CsvEditor
-          title="videos.csv"
+          title="Videa"
           status={status}
           csv={snapshot.working.videosCsv}
           columns={['order', 'room', 'provider', 'mediaId']}
@@ -166,53 +244,62 @@ export function HousePackageEditView({
       )}
 
       {activeNav === 'plans' && (
-        <Panel title="Floor plans / SVG" status={status}>
+        <Panel title="Půdorysy" status={status}>
           {pkg === null ? (
             <Empty />
           ) : (
-            <ul className="space-y-3 text-sm">
+            <ul className="space-y-4">
               {pkg.floors.floors.map((floor) => {
+                const svgPath =
+                  pkg.svg.entries.find((item) => item.floorId === floor.floorId)
+                    ?.path ?? floor.planSvg;
                 const geometry = snapshot.geometryByFloor[floor.floorId];
                 const geometryLabel =
                   geometry === undefined || geometry === 'missing'
-                    ? 'geometry missing'
+                    ? 'Geometrie chybí'
                     : geometry === 'invalid'
-                      ? 'geometry invalid'
-                      : `geometry ok · ${geometry.rooms.length} rooms`;
+                      ? 'Geometrie neplatná'
+                      : `Geometrie OK · ${geometry.rooms.length} místností`;
                 return (
                   <li
                     key={floor.floorId}
-                    className="rounded-lg border border-[#E8EEF5] bg-white px-4 py-3"
+                    className="overflow-hidden rounded-[14px] border border-[#E8EEF5] bg-white"
                   >
-                    <p className="font-semibold text-builder-ink">
-                      {floor.floorId}
-                    </p>
-                    <p className="mt-1 font-mono text-[11px] text-builder-muted">
-                      raster: {floor.planPng}
-                    </p>
-                    <p className="font-mono text-[11px] text-builder-muted">
-                      svg:{' '}
-                      {pkg.svg.entries.find((item) => item.floorId === floor.floorId)
-                        ?.path ?? floor.planSvg}
-                    </p>
-                    <p className="mt-1 text-[12px] text-builder-muted">
-                      {geometryLabel}
-                    </p>
+                    <div className="grid gap-0 tablet:grid-cols-[220px_1fr]">
+                      <div className="flex items-center justify-center bg-builder-soft p-4">
+                        <img
+                          src={`${HOUSE_PACKAGE_URL_ROOT}/${svgPath}`}
+                          alt={`Půdorys ${floor.floorId}`}
+                          className="max-h-48 w-full object-contain"
+                        />
+                      </div>
+                      <div className="px-4 py-3">
+                        <p className="font-semibold text-builder-ink">
+                          {floor.floorId}
+                        </p>
+                        <p className="mt-1 text-[12px] text-builder-muted">
+                          {geometryLabel}
+                        </p>
+                        <p className="mt-2 font-mono text-[11px] text-builder-muted">
+                          {svgPath}
+                        </p>
+                      </div>
+                    </div>
                   </li>
                 );
               })}
             </ul>
           )}
           <p className="mt-3 text-[12px] text-builder-muted">
-            Plan pairs derive from floors in rooms.csv (edit Rooms to change).
+            Podlaží vycházejí z tabulky místností (sekce Rooms).
           </p>
         </Panel>
       )}
 
       {activeNav === 'media' && (
-        <Panel title="Media metadata" status={sectionStatus(snapshot, 'hero')}>
+        <Panel title="Média" status={sectionStatus(snapshot, 'hero')}>
           <label className="block text-sm">
-            <span className="text-builder-muted">Hero relative path</span>
+            <span className="text-builder-muted">Hero (relativní cesta)</span>
             <input
               className="mt-1 w-full rounded-lg border border-[#DDE5EF] px-3 py-2 font-mono text-[12px]"
               value={snapshot.working.heroRelativePath}
@@ -221,29 +308,37 @@ export function HousePackageEditView({
               }
             />
           </label>
-          <Row
-            label="Hero URL"
-            value={`${HOUSE_PACKAGE_URL_ROOT}/${snapshot.working.heroRelativePath}`}
-          />
+          {snapshot.working.heroRelativePath.length > 0 && (
+            <img
+              src={`${HOUSE_PACKAGE_URL_ROOT}/${snapshot.working.heroRelativePath}`}
+              alt="Hero"
+              className="mt-4 max-h-56 w-full rounded-[12px] object-cover bg-builder-soft"
+            />
+          )}
           {pkg !== null && (
             <>
               <p className="mt-4 text-[12px] font-medium text-builder-muted">
-                Gallery paths ({pkg.gallery.entries.length}) — edit in Gallery
+                Soubory galerie ({pkg.gallery.entries.length})
               </p>
-              <ul className="mt-2 max-h-48 space-y-1 overflow-y-auto font-mono text-[11px]">
+              <div className="mt-2 grid grid-cols-3 gap-2 tablet:grid-cols-6">
                 {pkg.gallery.entries.map((entry) => (
-                  <li key={`${entry.order}-${entry.path}`}>{entry.path}</li>
+                  <img
+                    key={`${entry.order}-${entry.path}`}
+                    src={`${HOUSE_PACKAGE_URL_ROOT}/${entry.path}`}
+                    alt=""
+                    className="aspect-square w-full rounded-lg object-cover bg-builder-soft"
+                  />
                 ))}
-              </ul>
+              </div>
             </>
           )}
         </Panel>
       )}
 
       {activeNav === 'manifest' && (
-        <Panel title="manifest.json" status={sectionStatus(snapshot, 'manifest')}>
+        <Panel title="Manifest" status={sectionStatus(snapshot, 'manifest')}>
           <textarea
-            className="min-h-64 w-full rounded-lg border border-[#DDE5EF] bg-[#F8FAFC] p-3 font-mono text-[11px]"
+            className="min-h-80 w-full rounded-lg border border-[#DDE5EF] bg-[#F8FAFC] p-3 font-mono text-[11px]"
             value={snapshot.working.manifestJson ?? ''}
             onChange={(event) =>
               onChange(
@@ -254,16 +349,6 @@ export function HousePackageEditView({
             }
             spellCheck={false}
           />
-          {pkg !== null && (
-            <details className="mt-4">
-              <summary className="cursor-pointer text-[12px] font-medium text-builder-muted">
-                Runtime Manifest (object-house)
-              </summary>
-              <pre className="mt-2 max-h-64 overflow-auto rounded-lg bg-[#0F172A] p-4 text-[11px] text-[#E2E8F0]">
-                {JSON.stringify(pkg.manifest, null, 2)}
-              </pre>
-            </details>
-          )}
         </Panel>
       )}
     </div>
@@ -271,6 +356,31 @@ export function HousePackageEditView({
 }
 
 type UiStatus = 'clean' | 'modified' | 'invalid' | 'save-failed';
+
+function sectionHeadline(nav: HousePackageNavId): string {
+  switch (nav) {
+    case 'overview':
+      return 'Přehled projektu a stavu obsahu';
+    case 'rooms':
+      return 'Tabulka místností';
+    case 'gallery':
+      return 'Galerie — miniatury a tabulka';
+    case 'videos':
+      return 'Videa projektu';
+    case 'plans':
+      return 'Půdorysy a SVG';
+    case 'media':
+      return 'Hero a mediální soubory';
+    case 'manifest':
+      return 'Editor manifestu';
+  }
+}
+
+function statusLabel(status: WorkspaceProject['status']): string {
+  if (status === 'published') return 'Publikováno';
+  if (status === 'ready') return 'Připraveno';
+  return 'Koncept';
+}
 
 function navToSection(nav: HousePackageNavId): HpEditSection | null {
   if (nav === 'rooms') return 'rooms';
@@ -316,12 +426,12 @@ function overallStatus(snapshot: HousePackageEditSnapshot): UiStatus {
 function StatusBadge({ status }: { readonly status: UiStatus }) {
   const label =
     status === 'clean'
-      ? 'Clean'
+      ? 'Uloženo'
       : status === 'modified'
-        ? 'Modified'
+        ? 'Změny'
         : status === 'save-failed'
-          ? 'Save failed'
-          : 'Invalid';
+          ? 'Chyba'
+          : 'Neplatné';
   const className =
     status === 'clean'
       ? 'bg-builder-successBg text-builder-success'
@@ -359,7 +469,7 @@ function CsvEditor({
           className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-1.5 text-sm font-medium text-white"
           onClick={() => onCsvChange(addCsvRow(csv, emptyRow))}
         >
-          Add row
+          Přidat řádek
         </button>
       </div>
       <div className="overflow-x-auto">
@@ -375,48 +485,51 @@ function CsvEditor({
             </tr>
           </thead>
           <tbody>
-            {table.rows.map((row, rowIndex) => (
-              <tr key={rowIndex} className="border-b border-builder-divider/60">
-                {columns.map((column) => (
-                  <td key={column} className="py-1.5 pr-2">
-                    <input
-                      className="w-full min-w-[5rem] rounded border border-[#E8EEF5] px-2 py-1.5 font-mono text-[12px]"
-                      value={row[column] ?? ''}
-                      onChange={(event) =>
-                        onCsvChange(
-                          updateCsvCell(
-                            csv,
-                            rowIndex,
-                            column,
-                            event.target.value,
-                          ),
-                        )
-                      }
-                    />
-                  </td>
-                ))}
-                <td className="py-1.5">
-                  <button
-                    type="button"
-                    className="text-[12px] text-builder-draft"
-                    onClick={() => onCsvChange(removeCsvRow(csv, rowIndex))}
-                  >
-                    Remove
-                  </button>
+            {table.rows.length === 0 ? (
+              <tr>
+                <td
+                  colSpan={columns.length + 1}
+                  className="py-6 text-center text-builder-muted"
+                >
+                  Žádné řádky — přidejte první záznam.
                 </td>
               </tr>
-            ))}
+            ) : (
+              table.rows.map((row, rowIndex) => (
+                <tr key={rowIndex} className="border-b border-builder-divider/60">
+                  {columns.map((column) => (
+                    <td key={column} className="py-1.5 pr-2">
+                      <input
+                        className="w-full min-w-[5rem] rounded border border-[#E8EEF5] px-2 py-1.5 font-mono text-[12px]"
+                        value={row[column] ?? ''}
+                        onChange={(event) =>
+                          onCsvChange(
+                            updateCsvCell(
+                              csv,
+                              rowIndex,
+                              column,
+                              event.target.value,
+                            ),
+                          )
+                        }
+                      />
+                    </td>
+                  ))}
+                  <td className="py-1.5">
+                    <button
+                      type="button"
+                      className="text-[12px] text-builder-draft"
+                      onClick={() => onCsvChange(removeCsvRow(csv, rowIndex))}
+                    >
+                      Odstranit
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>
-      <details className="mt-4">
-        <summary className="cursor-pointer text-[12px] font-medium text-builder-muted">
-          Raw CSV
-        </summary>
-        <pre className="mt-2 max-h-40 overflow-auto rounded-lg bg-[#F8FAFC] p-3 font-mono text-[11px]">
-          {csv}
-        </pre>
-      </details>
     </Panel>
   );
 }
@@ -441,6 +554,21 @@ function Panel({
   );
 }
 
+function Metric({
+  label,
+  value,
+}: {
+  readonly label: string;
+  readonly value: string;
+}) {
+  return (
+    <div className="rounded-[14px] border border-[#E8EEF5] bg-white px-4 py-4 shadow-sm">
+      <p className="text-[12px] text-builder-muted">{label}</p>
+      <p className="mt-1 text-2xl font-semibold text-builder-ink">{value}</p>
+    </div>
+  );
+}
+
 function Row({
   label,
   value,
@@ -451,7 +579,9 @@ function Row({
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-builder-divider py-2 text-sm">
       <span className="text-builder-muted">{label}</span>
-      <span className="font-mono text-[12px] text-builder-ink">{value}</span>
+      <span className="max-w-[70%] text-right text-[13px] text-builder-ink">
+        {value}
+      </span>
     </div>
   );
 }
@@ -459,7 +589,7 @@ function Row({
 function Empty() {
   return (
     <p className="text-sm text-builder-muted">
-      Registries unavailable — fix validation errors.
+      Půdorysy nejsou dostupné — opravte chyby v místnostech.
     </p>
   );
 }

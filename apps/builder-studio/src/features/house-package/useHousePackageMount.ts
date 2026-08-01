@@ -52,7 +52,7 @@ export function useHousePackageMount(
     if (diskRoot === null) {
       setState({
         status: 'error',
-        message: 'No active workspace project. Open a project to mount HP-002.',
+        message: 'No active workspace project. Open a project in Workspace.',
       });
       return;
     }

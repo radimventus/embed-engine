@@ -1,5 +1,4 @@
 import type { HousePackageEditSnapshot } from './housePackageEditSession';
-import { HOUSE_PACKAGE_DISK_ROOT } from './housePackagePaths';
 import type { HpEditSection } from './validateHousePackageWorking';
 
 export type HousePackageNavId =
@@ -20,7 +19,7 @@ const NAV: readonly {
   { id: 'rooms', label: 'Rooms', section: 'rooms' },
   { id: 'gallery', label: 'Gallery', section: 'gallery' },
   { id: 'videos', label: 'Videos', section: 'videos' },
-  { id: 'plans', label: 'Plans / SVG', section: 'plans' },
+  { id: 'plans', label: 'Plans', section: 'plans' },
   { id: 'media', label: 'Media', section: 'hero' },
   { id: 'manifest', label: 'Manifest', section: 'manifest' },
 ];
@@ -29,17 +28,17 @@ type HousePackageSidebarProps = {
   readonly snapshot: HousePackageEditSnapshot | null;
   readonly activeNav: HousePackageNavId;
   readonly onSelectNav: (id: HousePackageNavId) => void;
-  readonly packageRootLabel?: string | null;
+  readonly projectName?: string | null;
 };
 
 /**
- * CAP-BLD-03/08 — sidebar over edit session (dirty badges per section).
+ * EPIC-BX-01 — project content navigation (House Package is internal).
  */
 export function HousePackageSidebar({
   snapshot,
   activeNav,
   onSelectNav,
-  packageRootLabel = HOUSE_PACKAGE_DISK_ROOT,
+  projectName = null,
 }: HousePackageSidebarProps) {
   const pkg = snapshot?.validation.builderImport;
   const rooms = pkg?.rooms.rooms.length ?? 0;
@@ -50,14 +49,13 @@ export function HousePackageSidebar({
   return (
     <aside className="h-full overflow-y-auto border-r border-builder-line bg-white p-6">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-        House Package
+        Projekt
       </p>
-      <h2 className="mt-1 text-lg font-semibold text-builder-ink">HP-002</h2>
-      <p className="mt-2 break-all font-mono text-[11px] text-builder-muted">
-        {packageRootLabel ?? '—'}
-      </p>
-      <p className="mt-1 text-[12px] text-builder-muted">
-        Edit in memory · ADR-023
+      <h2 className="mt-1 text-lg font-semibold text-builder-ink">
+        {projectName ?? 'Obsah'}
+      </h2>
+      <p className="mt-2 text-[12px] text-builder-muted">
+        Sekce obsahu · úpravy v paměti
       </p>
       {snapshot !== null && (
         <p
@@ -71,11 +69,11 @@ export function HousePackageSidebar({
         >
           {snapshot.validation.ok
             ? snapshot.dirtyState === 'save-failed'
-              ? 'Save failed'
+              ? 'Uložení selhalo'
               : snapshot.dirtyState === 'modified'
-                ? 'Modified'
-                : 'Clean'
-            : 'Invalid'}
+                ? 'Neuložené změny'
+                : 'Uloženo'
+            : 'Neplatný obsah'}
         </p>
       )}
 
@@ -83,10 +81,10 @@ export function HousePackageSidebar({
         <Stat label="Rooms" value={String(rooms)} />
         <Stat label="Gallery" value={String(gallery)} />
         <Stat label="Videos" value={String(videos)} />
-        <Stat label="Floors" value={String(floors)} />
+        <Stat label="Plans" value={String(floors)} />
       </dl>
 
-      <nav className="mt-8 flex flex-col gap-1.5" aria-label="House Package">
+      <nav className="mt-8 flex flex-col gap-1.5" aria-label="Sekce projektu">
         {NAV.map((item) => {
           const active = item.id === activeNav;
           const dirty =
@@ -110,7 +108,7 @@ export function HousePackageSidebar({
                     active ? 'text-white/80' : 'text-builder-navy'
                   }`}
                 >
-                  dirty
+                  změna
                 </span>
               )}
             </button>
