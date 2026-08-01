@@ -74,8 +74,9 @@
   html,
   body,
   #root {
-    @apply min-h-screen overscroll-none text-builder-ink;
+    @apply min-h-screen overscroll-none;
     background-color: #f7f6f4;
+    color: #001930;
   }
 
   body {

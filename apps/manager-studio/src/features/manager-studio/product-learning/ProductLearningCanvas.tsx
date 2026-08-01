@@ -54,52 +54,52 @@ export function ProductLearningCanvas({
         title="Manažerské shrnutí"
         description="Poznatky z pilota · top doporučení · rizika · příležitosti."
       >
-        <p className="text-lg font-semibold text-embed-foreground-primary">
+        <p className="text-lg font-semibold text-[var(--platform-navy)]">
           {report.executive.pilotLearnings}
         </p>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--platform-navy)]">
               Top 10 doporučení
             </p>
             <ul className="mt-2 space-y-2">
               {report.executive.topRecommendations.map((item) => (
                 <li
                   key={item}
-                  className="text-sm text-embed-foreground-primary/75"
+                  className="text-sm text-[var(--platform-navy)]"
                 >
                   {item}
                 </li>
               ))}
               {report.executive.topRecommendations.length === 0 && (
-                <li className="text-sm text-embed-foreground-primary/60">
+                <li className="text-sm text-[var(--platform-navy)]">
                   Zatím žádný feedback.
                 </li>
               )}
             </ul>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--platform-navy)]">
               Největší rizika
             </p>
             <ul className="mt-2 space-y-2">
               {report.executive.greatestRisks.map((item) => (
                 <li
                   key={item}
-                  className="text-sm text-embed-foreground-primary/75"
+                  className="text-sm text-[var(--platform-navy)]"
                 >
                   {item}
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-[var(--platform-navy)]">
               Největší příležitosti
             </p>
             <ul className="mt-2 space-y-2">
               {report.executive.greatestOpportunities.map((item) => (
                 <li
                   key={item}
-                  className="text-sm text-embed-foreground-primary/75"
+                  className="text-sm text-[var(--platform-navy)]"
                 >
                   {item}
                 </li>
@@ -116,7 +116,7 @@ export function ProductLearningCanvas({
       >
         <div className="grid gap-6 md:grid-cols-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--platform-navy)]">
               Nejčastější podněty
             </p>
             <ul className="mt-2 space-y-2">
@@ -130,10 +130,10 @@ export function ProductLearningCanvas({
             </ul>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--platform-navy)]">
               Schopnosti / Studia
             </p>
-            <ul className="mt-2 space-y-1 text-sm text-embed-foreground-primary/75">
+            <ul className="mt-2 space-y-1 text-sm text-[var(--platform-navy)]">
               {report.insights.capabilitiesAffected.slice(0, 5).map((item) => (
                 <li key={item.capabilityId}>
                   {item.capabilityId} · {item.count}
@@ -145,10 +145,10 @@ export function ProductLearningCanvas({
                 </li>
               ))}
             </ul>
-            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+            <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-[var(--platform-navy)]">
               Trendy podle pilotů
             </p>
-            <ul className="mt-2 space-y-1 text-sm text-embed-foreground-primary/75">
+            <ul className="mt-2 space-y-1 text-sm text-[var(--platform-navy)]">
               {report.insights.pilotTrends.map((trend) => (
                 <li key={trend.companyId}>
                   {trend.companyName} · {trend.count} ·{' '}
@@ -173,10 +173,10 @@ export function ProductLearningCanvas({
                   key={item.id}
                   className="border-b border-embed-border-default pb-3"
                 >
-                  <p className="text-sm font-medium text-embed-foreground-primary">
+                  <p className="text-sm font-medium text-[var(--platform-navy)]">
                     {item.theme}
                   </p>
-                  <p className="mt-1 text-xs text-embed-foreground-primary/60">
+                  <p className="mt-1 text-xs text-[var(--platform-navy)]">
                     {item.category} · {item.frequency}× · {item.impact} ·{' '}
                     {item.priority}
                   </p>
@@ -197,13 +197,13 @@ export function ProductLearningCanvas({
                   className="rounded-sm border border-embed-border-default px-3 py-3"
                 >
                   <p className="text-sm font-medium">{item.title}</p>
-                  <p className="mt-1 text-xs text-embed-foreground-primary/60">
+                  <p className="mt-1 text-xs text-[var(--platform-navy)]">
                     {item.rationale}
                   </p>
                 </li>
               ))}
               {report.roadmapSuggestions.length === 0 && (
-                <p className="text-sm text-embed-foreground-primary/60">
+                <p className="text-sm text-[var(--platform-navy)]">
                   Zatím žádná roadmap doporučení.
                 </p>
               )}
@@ -216,7 +216,7 @@ export function ProductLearningCanvas({
             description="Navázáno na firmu / workspace / projekt / studio / schopnost / release."
           >
             <form className="mb-4 grid gap-2" onSubmit={onSubmit}>
-              <label className="text-xs font-semibold text-embed-foreground-primary/60">
+              <label className="text-xs font-semibold text-[var(--platform-navy)]">
                 Nový podnět (Product Owner / Admin)
                 <textarea
                   className="mt-1 w-full rounded-sm border border-embed-border-default bg-white px-3 py-2 text-sm"
@@ -239,10 +239,10 @@ export function ProductLearningCanvas({
                   key={entry.id}
                   className="border-b border-embed-border-default pb-2 text-sm"
                 >
-                  <p className="font-medium text-embed-foreground-primary">
+                  <p className="font-medium text-[var(--platform-navy)]">
                     {entry.category} · {entry.message}
                   </p>
-                  <p className="mt-1 text-xs text-embed-foreground-primary/55">
+                  <p className="mt-1 text-xs text-[var(--platform-navy)]">
                     {entry.companyId} / {entry.workspaceId} /{' '}
                     {entry.projectId ?? '—'} · {entry.studioId ?? '—'} ·{' '}
                     {entry.capabilityId ?? '—'} · {entry.releaseLabel ?? '—'}

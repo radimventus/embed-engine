@@ -22,7 +22,7 @@ function NavGroup({
       <p className="px-1 text-[11px] font-bold uppercase tracking-[1px] text-[var(--platform-section)]">
         {title}
       </p>
-      <nav className="mt-2 flex flex-col gap-1" aria-label={ariaLabel}>
+      <nav className="mt-2 flex flex-col gap-1.5" aria-label={ariaLabel}>
         {items.map((item) => {
           const isActive = activeSectionId === item.id;
           return (
@@ -35,10 +35,10 @@ function NavGroup({
                 scrollToSection(item.id);
               }}
               className={[
-                'rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-semibold platform-motion',
+                'rounded-xl border px-3.5 py-3 text-left text-sm font-semibold platform-motion',
                 isActive
                   ? 'border-[var(--platform-blue)] bg-[var(--platform-cream-light)] text-[var(--platform-blue)]'
-                  : 'border-transparent text-[#001930] hover:bg-[var(--platform-blue)] hover:text-white',
+                  : 'border-[#E3E3E3] bg-white text-[var(--platform-navy)] hover:border-[var(--platform-blue)] hover:bg-[var(--platform-blue)] hover:text-white',
               ].join(' ')}
             >
               {item.label}
@@ -51,7 +51,7 @@ function NavGroup({
 }
 
 /**
- * PR-026 — Partner work center navigation (no CONIS internal admin surfaces).
+ * PR-026A — Cream Light rail · white nav cards (Builder object-list principle).
  */
 export function ManagerStudioSidebar() {
   const { activeSectionId } = useManagerNav();

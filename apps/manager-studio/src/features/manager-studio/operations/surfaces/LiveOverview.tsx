@@ -36,8 +36,8 @@ export function LiveOverview() {
 function Fact({ label, value }: { readonly label: string; readonly value: string }) {
   return (
     <div className="border border-embed-border-default bg-embed-background-secondary px-3 py-2">
-      <dt className="text-xs text-embed-foreground-primary/50">{label}</dt>
-      <dd className="mt-1 text-sm text-embed-foreground-primary">{value}</dd>
+      <dt className="text-xs text-[var(--platform-navy)]">{label}</dt>
+      <dd className="mt-1 text-sm text-[var(--platform-navy)]">{value}</dd>
     </div>
   );
 }

@@ -41,6 +41,7 @@ body {
    HEADER & ROLE SWITCHER
    ======================================================= */
 header {
+    position: relative;
     height: 70px;
     background: var(--navy);
     color: #fff;
@@ -63,12 +64,16 @@ header {
 .logo-conis span { color: var(--gold); }
 
 .role-switcher {
+    position: absolute;
+    left: 50%;
+    top: 50%;
     display: flex;
     background: var(--cream-dark, #D9D4CC);
     border: 1px solid var(--cream-dark, #D9D4CC);
     border-radius: 30px;
     padding: 4px;
     gap: 4px;
+    transform: translate(-50%, -50%);
 }
 
 .role-btn {
@@ -76,17 +81,26 @@ header {
     border-radius: 20px;
     font-size: 13px;
     font-weight: 600;
-    color: #fff;
-    background: var(--navy);
+    color: var(--navy);
+    background: var(--cream-dark, #D9D4CC);
     border: none;
     cursor: pointer;
-    transition: all 0.25s ease;
+    transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+}
+
+.role-btn:hover {
+    background: var(--cream-dark, #D9D4CC);
+    color: var(--navy);
 }
 
 .role-btn.active {
-    background: var(--cream-mid, #E8E5E0);
-    color: var(--navy);
+    background: var(--navy);
+    color: #fff;
     box-shadow: none;
+}
+
+.role-btn.active:hover {
+    opacity: 0.92;
 }
 
 .user-badge {

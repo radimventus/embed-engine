@@ -36,7 +36,7 @@ export function OperationsCenterCanvas({
     >
       <dl className="grid gap-3 sm:grid-cols-2">
         <div>
-          <dt className="text-xs text-embed-foreground-primary/50">
+          <dt className="text-xs text-[var(--platform-navy)]">
             Aktivní firmy
           </dt>
           <dd className="text-lg font-semibold">
@@ -44,7 +44,7 @@ export function OperationsCenterCanvas({
           </dd>
         </div>
         <div>
-          <dt className="text-xs text-embed-foreground-primary/50">
+          <dt className="text-xs text-[var(--platform-navy)]">
             Aktivní workspaces
           </dt>
           <dd className="text-lg font-semibold">
@@ -52,7 +52,7 @@ export function OperationsCenterCanvas({
           </dd>
         </div>
         <div>
-          <dt className="text-xs text-embed-foreground-primary/50">
+          <dt className="text-xs text-[var(--platform-navy)]">
             Aktivní projekty
           </dt>
           <dd className="text-lg font-semibold">
@@ -60,11 +60,11 @@ export function OperationsCenterCanvas({
           </dd>
         </div>
         <div>
-          <dt className="text-xs text-embed-foreground-primary/50">Releases</dt>
+          <dt className="text-xs text-[var(--platform-navy)]">Releases</dt>
           <dd className="text-lg font-semibold">{report.metrics.releases}</dd>
         </div>
         <div>
-          <dt className="text-xs text-embed-foreground-primary/50">
+          <dt className="text-xs text-[var(--platform-navy)]">
             Úspěšnost publikace
           </dt>
           <dd className="text-sm font-medium">
@@ -72,7 +72,7 @@ export function OperationsCenterCanvas({
           </dd>
         </div>
         <div>
-          <dt className="text-xs text-embed-foreground-primary/50">
+          <dt className="text-xs text-[var(--platform-navy)]">
             Zdraví Runtime
           </dt>
           <dd className="text-sm font-medium uppercase">
@@ -80,7 +80,7 @@ export function OperationsCenterCanvas({
           </dd>
         </div>
         <div>
-          <dt className="text-xs text-embed-foreground-primary/50">Adopce</dt>
+          <dt className="text-xs text-[var(--platform-navy)]">Adopce</dt>
           <dd className="text-lg font-semibold">
             {report.metrics.adoptionPercent} %
           </dd>
@@ -112,19 +112,19 @@ export function OperationsCenterCanvas({
         title="Manažerský provozní přehled"
         description="Stav platformy · rizika · doporučené akce — provoz CONIS."
       >
-        <p className="text-2xl font-semibold text-embed-foreground-primary">
+        <p className="text-2xl font-semibold text-[var(--platform-navy)]">
           {report.executive.currentPlatformStatus}
         </p>
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--platform-navy)]">
               Aktuální rizika
             </p>
             <ul className="mt-2 space-y-2">
               {report.executive.currentRisks.map((risk) => (
                 <li
                   key={risk}
-                  className="text-sm text-embed-foreground-primary/75"
+                  className="text-sm text-[var(--platform-navy)]"
                 >
                   {risk}
                 </li>
@@ -132,14 +132,14 @@ export function OperationsCenterCanvas({
             </ul>
           </div>
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--platform-navy)]">
               Doporučené akce
             </p>
             <ul className="mt-2 space-y-2">
               {report.executive.recommendedActions.map((action) => (
                 <li
                   key={action}
-                  className="text-sm text-embed-foreground-primary/75"
+                  className="text-sm text-[var(--platform-navy)]"
                 >
                   {action}
                 </li>
@@ -160,13 +160,13 @@ export function OperationsCenterCanvas({
               key={area.id}
               className="grid gap-1 border-b border-embed-border-default pb-3 md:grid-cols-[140px_100px_1fr]"
             >
-              <span className="text-sm font-medium text-embed-foreground-primary">
+              <span className="text-sm font-medium text-[var(--platform-navy)]">
                 {area.label}
               </span>
               <span className="text-xs font-semibold uppercase tracking-wide text-embed-brand-navy">
                 {healthLabel(area.health)}
               </span>
-              <span className="text-xs text-embed-foreground-primary/60">
+              <span className="text-xs text-[var(--platform-navy)]">
                 {area.status}
                 <br />
                 Poslední aktivita · {area.lastActivity}
@@ -187,19 +187,19 @@ export function OperationsCenterCanvas({
               key={event.id}
               className="flex flex-wrap items-baseline justify-between gap-2 border-b border-embed-border-default pb-2"
             >
-              <span className="text-sm font-medium text-embed-foreground-primary">
+              <span className="text-sm font-medium text-[var(--platform-navy)]">
                 {event.label}
               </span>
               <span className="text-xs uppercase tracking-wide text-embed-brand-navy">
                 {event.kind}
               </span>
-              <span className="w-full text-xs text-embed-foreground-primary/55">
+              <span className="w-full text-xs text-[var(--platform-navy)]">
                 {event.at ?? '—'} · {event.detail}
               </span>
             </li>
           ))}
           {report.timeline.length === 0 && (
-            <p className="text-sm text-embed-foreground-primary/60">
+            <p className="text-sm text-[var(--platform-navy)]">
               Zatím žádné agregované události.
             </p>
           )}
@@ -217,19 +217,19 @@ export function OperationsCenterCanvas({
               key={alert.id}
               className="rounded-sm border border-embed-border-default px-3 py-3"
             >
-              <p className="text-sm font-medium text-embed-foreground-primary">
+              <p className="text-sm font-medium text-[var(--platform-navy)]">
                 {alert.title}
               </p>
               <p className="mt-1 text-xs uppercase tracking-wide text-embed-brand-navy">
                 {alert.severity}
               </p>
-              <p className="mt-1 text-xs text-embed-foreground-primary/60">
+              <p className="mt-1 text-xs text-[var(--platform-navy)]">
                 {alert.detail}
               </p>
             </li>
           ))}
           {report.alerts.length === 0 && (
-            <p className="text-sm text-embed-foreground-primary/60">
+            <p className="text-sm text-[var(--platform-navy)]">
               Žádné aktivní alerty.
             </p>
           )}

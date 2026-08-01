@@ -70,6 +70,7 @@
 
 .platform-header {
   box-sizing: border-box;
+  position: relative;
   display: flex;
   height: var(--platform-header-height);
   flex-shrink: 0;
@@ -97,6 +98,8 @@
 }
 
 .platform-header__cluster {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -104,6 +107,8 @@
 }
 
 .platform-header__actions {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -111,44 +116,63 @@
 }
 
 .platform-role-switcher {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
   display: flex;
   gap: 4px;
   border: 1px solid var(--platform-cream-dark);
   border-radius: 30px;
   background: var(--platform-cream-dark);
   padding: 4px;
+  transform: translate(-50%, -50%);
 }
 
 .platform-role-btn {
   border: none;
   border-radius: 20px;
-  background: var(--platform-navy);
+  background: var(--platform-cream-dark);
   padding: 8px 20px;
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--platform-navy);
   text-decoration: none;
   cursor: pointer;
-  transition: all 0.25s ease;
+  transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
 
+/* PR-026A — hover only on Navy (active) button; Cream segments stay flat. */
 .platform-role-btn:hover {
-  color: #ffffff;
-  opacity: 0.92;
+  background: var(--platform-cream-dark);
+  color: var(--platform-navy);
+  opacity: 1;
 }
 
 .platform-role-btn--active {
-  background: var(--platform-cream-mid);
-  color: var(--platform-navy);
+  background: var(--platform-navy);
+  color: #ffffff;
   box-shadow: none;
   cursor: default;
   opacity: 1;
 }
 
+.platform-role-btn--active:hover {
+  background: var(--platform-navy);
+  color: #ffffff;
+  opacity: 0.92;
+}
+
 .platform-role-btn--disabled {
   opacity: 0.45;
   cursor: not-allowed;
+}
+
+.platform-role-btn--disabled:hover {
+  background: var(--platform-cream-dark);
+  color: var(--platform-navy);
+  opacity: 0.45;
 }
 
 .platform-user-badge {
@@ -325,6 +349,7 @@
   flex: 1;
   flex-direction: column;
   overflow: hidden;
+  color: var(--platform-navy);
 }
 
 .platform-feedback {
@@ -503,7 +528,7 @@
 .platform-card__desc {
   margin: 2px 0 0;
   font-size: 13px;
-  color: var(--platform-muted);
+  color: var(--platform-navy);
 }
 
 .platform-badge {
@@ -589,7 +614,7 @@
   border-radius: 999px;
   background: #ffffff;
   color: var(--platform-blue);
-  padding: 0;
+  padding: 0 0 3px;
   font: inherit;
   font-size: 28px;
   font-weight: 600;

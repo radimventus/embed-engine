@@ -58,22 +58,22 @@ export function ManagerWorkCenterHome() {
                 <FactorRow label="Design & Architektura" width={44} value="44" />
               </div>
               <div className="rounded-[14px] border border-[var(--platform-line)] bg-[var(--platform-cream-light)] p-4">
-                <div className="text-[12px] text-[var(--platform-muted)]">
+                <div className="text-[12px] text-[var(--platform-navy)]">
                   Nejsilnější faktor
                 </div>
-                <div className="mt-1 text-[28px] font-bold text-[var(--platform-ink)]">
+                <div className="mt-1 text-[28px] font-bold text-[var(--platform-navy)]">
                   Cena
                 </div>
-                <div className="mt-4 text-[12px] font-semibold text-[var(--platform-muted)]">
+                <div className="mt-4 text-[12px] font-semibold text-[var(--platform-navy)]">
                   Průměrná změna priorit
                 </div>
-                <div className="mt-1 text-[18px] font-bold text-[var(--platform-ink)]">
+                <div className="mt-1 text-[18px] font-bold text-[var(--platform-navy)]">
                   +31 %
                 </div>
-                <div className="mt-4 text-[12px] font-semibold text-[var(--platform-muted)]">
+                <div className="mt-4 text-[12px] font-semibold text-[var(--platform-navy)]">
                   Nejcitlivější okamžik
                 </div>
-                <div className="mt-1 text-sm font-bold text-[var(--platform-ink)]">
+                <div className="mt-1 text-sm font-bold text-[var(--platform-navy)]">
                   Finanční kalkulace
                 </div>
               </div>
@@ -131,7 +131,7 @@ function FunnelRow({
     >
       <span
         className="text-sm font-semibold"
-        style={{ color: critical ? 'var(--platform-red)' : 'var(--platform-ink)' }}
+        style={{ color: critical ? 'var(--platform-red)' : 'var(--platform-navy)' }}
       >
         {label}
       </span>
@@ -148,7 +148,7 @@ function FunnelRow({
       </div>
       <span
         className="text-right text-sm font-bold"
-        style={{ color: critical ? 'var(--platform-red)' : 'var(--platform-ink)' }}
+        style={{ color: critical ? 'var(--platform-red)' : 'var(--platform-navy)' }}
       >
         {value}
       </span>
@@ -170,7 +170,7 @@ function FactorRow({
       className="mb-3 grid items-center gap-3"
       style={{ gridTemplateColumns: '1fr 1fr 40px' }}
     >
-      <span className="text-sm font-semibold text-[var(--platform-ink)]">
+      <span className="text-sm font-semibold text-[var(--platform-navy)]">
         {label}
       </span>
       <div className="h-2 overflow-hidden rounded-full bg-[var(--platform-line)]">
@@ -179,7 +179,9 @@ function FactorRow({
           style={{ width: `${width}%` }}
         />
       </div>
-      <span className="text-right text-sm font-bold">{value}</span>
+      <span className="text-right text-sm font-bold text-[var(--platform-navy)]">
+        {value}
+      </span>
     </div>
   );
 }
@@ -192,9 +194,9 @@ function MetricBox({
   readonly value: string;
 }) {
   return (
-    <div className="rounded-[12px] bg-[var(--platform-cream-light)] px-3 py-3 text-[12px] text-[var(--platform-muted)]">
+    <div className="rounded-[12px] bg-[var(--platform-cream-light)] px-3 py-3 text-[12px] text-[var(--platform-navy)]">
       {label}
-      <b className="mt-1 block text-sm text-[var(--platform-ink)]">{value}</b>
+      <b className="mt-1 block text-sm text-[var(--platform-navy)]">{value}</b>
     </div>
   );
 }
@@ -213,10 +215,10 @@ function ImproveCard({
   return (
     <div className="rounded-[12px] border border-[var(--platform-line)] bg-[var(--platform-cream-light)] p-4">
       <PlatformStatusBadge tone={tone}>{impact}</PlatformStatusBadge>
-      <h4 className="mt-2 text-[15px] font-semibold text-[var(--platform-ink)]">
+      <h4 className="mt-2 text-[15px] font-semibold text-[var(--platform-navy)]">
         {title}
       </h4>
-      <p className="mt-1 text-[12px] text-[var(--platform-muted)]">{detail}</p>
+      <p className="mt-1 text-[12px] text-[var(--platform-navy)]">{detail}</p>
     </div>
   );
 }

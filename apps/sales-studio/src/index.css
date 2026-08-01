@@ -1,8 +1,10 @@
 body {
   margin: 0;
+  color: #001930;
 }
 
 #root {
   height: 100vh;
   overflow: hidden;
+  color: #001930;
 }
