@@ -48,10 +48,22 @@
   box-sizing: border-box;
 }
 
-[data-platform-shell][data-studio='builder'],
-[data-platform-shell][data-studio='manager'],
+[data-platform-shell][data-studio='builder'] {
+  --platform-accent: #18428f;
+  --platform-blue: #18428f;
+  --platform-blue-bg: #eef4ff;
+}
+
+[data-platform-shell][data-studio='manager'] {
+  --platform-accent: #138d45;
+  --platform-blue: #138d45;
+  --platform-blue-bg: #e6f7ed;
+}
+
 [data-platform-shell][data-studio='sales'] {
-  --platform-accent: var(--platform-blue);
+  --platform-accent: #ea580c;
+  --platform-blue: #ea580c;
+  --platform-blue-bg: #fff7ed;
 }
 
 .platform-header {
@@ -1132,13 +1144,13 @@
 }
 
 .platform-tab--active {
-  border-color: var(--platform-blue);
-  background: var(--platform-blue);
+  border-color: var(--platform-accent);
+  background: var(--platform-accent);
   color: #fff;
 }
 
 .platform-tab--active:hover {
-  background: color-mix(in srgb, var(--platform-blue) 88%, #fff);
+  background: color-mix(in srgb, var(--platform-accent) 88%, #fff);
 }
 
 .platform-nav-rail {

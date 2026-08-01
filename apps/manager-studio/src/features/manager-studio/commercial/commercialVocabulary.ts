@@ -14,17 +14,17 @@ export type CommercialSectionId =
   (typeof COMMERCIAL_SECTION_IDS)[keyof typeof COMMERCIAL_SECTION_IDS];
 
 export const COMMERCIAL_SECTION_NAV = [
-  { id: COMMERCIAL_SECTION_IDS.executive, label: 'Executive', short: 'E' },
-  { id: COMMERCIAL_SECTION_IDS.dashboard, label: 'Dashboard', short: 'D' },
+  { id: COMMERCIAL_SECTION_IDS.executive, label: 'Shrnutí', short: 'S' },
+  { id: COMMERCIAL_SECTION_IDS.dashboard, label: 'Přehled', short: 'P' },
   {
     id: COMMERCIAL_SECTION_IDS.licenses,
-    label: 'Subscriptions',
-    short: 'S',
+    label: 'Předplatná',
+    short: 'R',
   },
   {
     id: COMMERCIAL_SECTION_IDS.entitlements,
-    label: 'Entitlements',
-    short: 'N',
+    label: 'Oprávnění',
+    short: 'O',
   },
-  { id: COMMERCIAL_SECTION_IDS.upgrades, label: 'Upgrades', short: 'U' },
+  { id: COMMERCIAL_SECTION_IDS.upgrades, label: 'Navýšení', short: 'N' },
 ] as const;

@@ -37,7 +37,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
     selectStudio,
     selectProject,
   } = usePlatformSession();
-  const { activeCapabilityId } = useManagerNav();
+  const { activeCapabilityId, activeSectionId } = useManagerNav();
   const capabilityHost = useMemo(() => getManagerCapabilityHost(), []);
   const inspectorModel = capabilityHost.inspectorModel(activeCapabilityId);
 
@@ -55,17 +55,19 @@ export function AppShell({ sidebar, children }: AppShellProps) {
   });
 
   const sectionLabel =
-    activeCapabilityId === 'launch-center'
-      ? 'Launch'
-      : activeCapabilityId === 'operations-center'
-        ? 'Platform Ops'
-        : activeCapabilityId === 'commercial-platform'
-          ? 'Commercial'
-          : activeCapabilityId === 'product-learning'
-            ? 'Product Learning'
-            : activeCapabilityId === 'customer-success'
-              ? 'Customer Success'
-              : 'Operations';
+    activeSectionId === 'manager-work-center'
+      ? 'Konverzní přehled'
+      : activeCapabilityId === 'launch-center'
+        ? 'Spuštění'
+        : activeCapabilityId === 'operations-center'
+          ? 'Provoz platformy'
+          : activeCapabilityId === 'commercial-platform'
+            ? 'Obchod'
+            : activeCapabilityId === 'product-learning'
+              ? 'Učení produktu'
+              : activeCapabilityId === 'customer-success'
+                ? 'Zákaznický úspěch'
+                : 'Provoz';
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },

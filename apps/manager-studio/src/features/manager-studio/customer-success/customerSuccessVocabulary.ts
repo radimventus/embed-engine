@@ -16,13 +16,13 @@ export type CustomerSuccessSectionId =
 export const CUSTOMER_SUCCESS_SECTION_NAV = [
   {
     id: CUSTOMER_SUCCESS_SECTION_IDS.adoption,
-    label: 'Adoption',
+    label: 'Adopce',
     short: 'A',
   },
   {
     id: CUSTOMER_SUCCESS_SECTION_IDS.health,
-    label: 'Health',
-    short: 'H',
+    label: 'Zdraví',
+    short: 'Z',
   },
   {
     id: CUSTOMER_SUCCESS_SECTION_IDS.onboarding,
@@ -31,8 +31,8 @@ export const CUSTOMER_SUCCESS_SECTION_NAV = [
   },
   {
     id: CUSTOMER_SUCCESS_SECTION_IDS.timeline,
-    label: 'Success',
-    short: 'S',
+    label: 'Úspěch',
+    short: 'U',
   },
   {
     id: CUSTOMER_SUCCESS_SECTION_IDS.recommendations,

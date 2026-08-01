@@ -1,6 +1,5 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
-import { analyzeCustomerSuccess } from '@embed-engine/customer-success';
 import {
   PLATFORM_ROLE_LABELS,
   primaryRole,
@@ -12,7 +11,6 @@ import {
   buildPlatformWorkspaceState,
   CapabilityInspector,
   PlatformCard,
-  PlatformEmptyState,
   PlatformShell,
   PlatformStatusBadge,
   type PlatformBreadcrumbItem,
@@ -20,8 +18,126 @@ import {
 
 import { getSalesCapabilityHost } from './studio/salesStudioComposition';
 
+type SalesClient = {
+  readonly id: string;
+  readonly name: string;
+  readonly score: number;
+  readonly project: string;
+  readonly location: string;
+  readonly land: string;
+  readonly priorities: readonly string[];
+  readonly insight: string;
+  readonly journey: readonly {
+    readonly label: string;
+    readonly state: 'completed' | 'active' | 'pending';
+    readonly detail: string;
+  }[];
+};
+
+const SALES_CLIENTS: readonly SalesClient[] = [
+  {
+    id: 'novak',
+    name: 'Jan Novák',
+    score: 88,
+    project: 'RD Harmony 124',
+    location: 'Opava',
+    land: 'Mám pozemek',
+    priorities: ['Orientace ke světlu', 'Provozní náklady', 'Dispozice 4+kk'],
+    insight:
+      'Klient strávil nejvíce času sledováním vazby domu na pozemek v House Navigatoru a prosvětlení obývacího pokoje. Doporučujeme začít rozhovor potvrzením správné orientace domu.',
+    journey: [
+      {
+        label: 'Experience',
+        state: 'completed',
+        detail: 'Prohlédl Hero a galerii',
+      },
+      {
+        label: 'Priority',
+        state: 'completed',
+        detail: 'Potvrdil 3 priority',
+      },
+      {
+        label: 'Navigátor',
+        state: 'active',
+        detail: 'Opakované návraty k orientaci',
+      },
+      {
+        label: 'Finance',
+        state: 'pending',
+        detail: 'Ještě neotevřeno',
+      },
+    ],
+  },
+  {
+    id: 'dvorak',
+    name: 'Petr Dvořák',
+    score: 72,
+    project: 'Villa 168',
+    location: 'Brno',
+    land: 'Hledám pozemek',
+    priorities: ['Velikost pozemku', 'Celková cena', 'Design'],
+    insight:
+      'Klient porovnává varianty pozemku. Otevřete rozhovor nabídkou lokalit a limitem rozpočtu.',
+    journey: [
+      {
+        label: 'Experience',
+        state: 'completed',
+        detail: 'Krátká návštěva',
+      },
+      {
+        label: 'Priority',
+        state: 'active',
+        detail: 'Změnil pořadí priorit',
+      },
+      {
+        label: 'Navigátor',
+        state: 'pending',
+        detail: 'Čeká na pozemek',
+      },
+      {
+        label: 'Finance',
+        state: 'pending',
+        detail: 'Ještě neotevřeno',
+      },
+    ],
+  },
+  {
+    id: 'kucerova',
+    name: 'Marie Kučerová',
+    score: 65,
+    project: 'Family 98',
+    location: 'Olomouc',
+    land: 'Mám pozemek',
+    priorities: ['Dispozice', 'Energetická úspora', 'Měsíční splátka'],
+    insight:
+      'Klientka se vrací k FAQ o spotřebě. Připravte konkrétní čísla FVE a provozních nákladů.',
+    journey: [
+      {
+        label: 'Experience',
+        state: 'completed',
+        detail: 'Prošla galerii',
+      },
+      {
+        label: 'Priority',
+        state: 'completed',
+        detail: 'Potvrdila priority',
+      },
+      {
+        label: 'Navigátor',
+        state: 'completed',
+        detail: 'Prošla dispozici',
+      },
+      {
+        label: 'Finance',
+        state: 'active',
+        detail: 'Opakované otevření FAQ',
+      },
+    ],
+  },
+];
+
 /**
- * VR-FIX-04 — Sales Studio on the same cross-studio journey grammar.
+ * PR-006 / PR-007 — Sales Studio dle HTML click modelu (ne projekce CS).
  */
 export function SalesStudioApp() {
   const {
@@ -35,10 +151,10 @@ export function SalesStudioApp() {
   } = usePlatformSession();
   const capabilityHost = useMemo(() => getSalesCapabilityHost(), []);
   const inspectorModel = capabilityHost.inspectorModel('customer-success');
-  const success = useMemo(
-    () => analyzeCustomerSuccess({ session }),
-    [session],
-  );
+  const [activeClientId, setActiveClientId] = useState(SALES_CLIENTS[0].id);
+  const activeClient =
+    SALES_CLIENTS.find((client) => client.id === activeClientId) ??
+    SALES_CLIENTS[0];
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: bootstrap?.company.name ?? 'Firma',
@@ -58,15 +174,12 @@ export function SalesStudioApp() {
     { id: 'studio', label: 'Sales' },
     { id: 'company', label: bootstrap?.company.name ?? 'Firma' },
     { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
-    { id: 'section', label: 'Customer Success' },
+    { id: 'section', label: 'Případy k hovoru' },
   ];
 
-  const healthTone =
-    success?.health === 'Healthy'
-      ? 'pass'
-      : success?.health === 'At Risk'
-        ? 'fail'
-        : 'warning';
+  const highIntentCount = SALES_CLIENTS.filter(
+    (client) => client.score >= 70,
+  ).length;
 
   return (
     <PlatformShell
@@ -97,64 +210,155 @@ export function SalesStudioApp() {
         });
       }}
     >
-      <div
-        style={{
-          display: 'flex',
-          minHeight: 0,
-          flex: 1,
-          overflow: 'hidden',
-        }}
-      >
-        <main className="platform-studio-pad" style={{ minHeight: 0, minWidth: 0, flex: 1, overflowY: 'auto' }}>
-          <div style={{ maxWidth: 960, margin: '0 auto' }}>
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <main className="platform-studio-pad min-h-0 min-w-0 flex-1 overflow-y-auto">
+          <div className="mx-auto w-full max-w-[1520px]">
             <header className="platform-title-bar">
               <div>
                 <h1 className="platform-type-h1">Sales Studio</h1>
                 <p className="platform-type-helper" style={{ marginTop: 4 }}>
-                  {bootstrap?.company.name ?? 'Firma'} ·{' '}
-                  {bootstrap?.project?.name ?? 'Projekt'}
+                  Nákupní záměr, Decision Profile a konverzní cesta vašich
+                  klientů.
                 </p>
               </div>
-              <PlatformStatusBadge tone={healthTone}>
-                {success?.health ?? '—'}
+              <PlatformStatusBadge tone="gold">
+                {`● ${highIntentCount} klienti s vysokou rozhodovací jistotou`}
               </PlatformStatusBadge>
             </header>
 
-            <PlatformCard
-              title="Customer Success"
-              description="Health, adoption a doporučení pro aktivní Project."
-              action={
-                <PlatformStatusBadge tone="info">Projekce</PlatformStatusBadge>
-              }
+            <div
+              className="grid gap-6"
+              style={{
+                gridTemplateColumns: 'minmax(260px, 340px) minmax(0, 1.2fr) minmax(0, 1fr)',
+              }}
             >
-              <p className="platform-type-h2">
-                {success?.adoptionScore ?? 0}% adoption
-              </p>
-              <p className="platform-type-helper" style={{ marginTop: 12 }}>
-                Onboarding {success?.onboardingCompleteCount ?? 0}/
-                {success?.onboardingTotal ?? 0}.
-              </p>
-              {(success?.recommendations ?? []).length === 0 ? (
-                <PlatformEmptyState
-                  title="Žádná doporučení"
-                  description="Customer Success zatím nemá další kroky pro tento Project."
-                />
-              ) : (
-                <ul
-                  className="platform-type-body"
-                  style={{ marginTop: 20, paddingLeft: 18 }}
+              <PlatformCard title="Případy k hovoru">
+                <ul className="mt-2 space-y-2">
+                  {SALES_CLIENTS.map((client) => {
+                    const active = client.id === activeClient.id;
+                    return (
+                      <li key={client.id}>
+                        <button
+                          type="button"
+                          onClick={() => setActiveClientId(client.id)}
+                          className="w-full rounded-[12px] border px-3.5 py-3 text-left platform-motion"
+                          style={{
+                            borderColor: active
+                              ? 'var(--platform-gold)'
+                              : 'var(--platform-line)',
+                            background: active
+                              ? 'var(--platform-gold-light)'
+                              : 'var(--platform-surface)',
+                          }}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-sm font-semibold text-[var(--platform-ink)]">
+                              {client.name}
+                            </span>
+                            <span className="text-[13px] font-bold text-[var(--platform-gold)]">
+                              {client.score} % Jistota
+                            </span>
+                          </div>
+                          <p className="mt-1 text-[12px] text-[var(--platform-muted)]">
+                            {client.project} • {client.land}
+                          </p>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </PlatformCard>
+
+              <PlatformCard title="Detail nákupního záměru">
+                <h2 className="mt-2 text-[22px] font-semibold text-[var(--platform-ink)]">
+                  {activeClient.name}
+                </h2>
+                <p className="mt-1 text-[13px] text-[var(--platform-muted)]">
+                  {activeClient.project} ({activeClient.location})
+                </p>
+
+                <div className="mt-4">
+                  <div className="mb-2 flex justify-between text-[13px] font-semibold">
+                    <span>Index rozhodovací jistoty</span>
+                    <span>{activeClient.score} %</span>
+                  </div>
+                  <div className="h-2.5 overflow-hidden rounded-full bg-[#EDF2F7]">
+                    <div
+                      className="h-full rounded-full"
+                      style={{
+                        width: `${activeClient.score}%`,
+                        background:
+                          'linear-gradient(90deg, var(--platform-navy), var(--platform-gold))',
+                      }}
+                    />
+                  </div>
+                </div>
+
+                <p className="platform-type-section mt-5">
+                  Hlavní deklarované priority
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {activeClient.priorities.map((priority, index) => (
+                    <PlatformStatusBadge
+                      key={priority}
+                      tone={index === 0 ? 'gold' : 'info'}
+                    >
+                      {priority}
+                    </PlatformStatusBadge>
+                  ))}
+                </div>
+
+                <div
+                  className="mt-5 rounded-[12px] p-4"
+                  style={{
+                    borderLeft: '4px solid var(--platform-gold)',
+                    background: 'var(--platform-gold-light)',
+                  }}
                 >
-                  {(success?.recommendations ?? []).map((item) => (
-                    <li key={item.id}>
-                      <a href={item.href}>{item.title}</a>
+                  <h4 className="text-sm font-semibold text-[var(--platform-ink)]">
+                    Doporučené téma rozhovoru
+                  </h4>
+                  <p className="mt-2 text-[13px] leading-relaxed text-[var(--platform-muted)]">
+                    {activeClient.insight}
+                  </p>
+                </div>
+              </PlatformCard>
+
+              <PlatformCard
+                title="Rozhodovací cesta (Decision Journey)"
+                description="Pasivní chování vs. reálné Decision Signals"
+              >
+                <ol className="mt-3 space-y-4">
+                  {activeClient.journey.map((step) => (
+                    <li key={step.label} className="flex gap-3">
+                      <span
+                        className="mt-1 h-3 w-3 shrink-0 rounded-full"
+                        style={{
+                          background:
+                            step.state === 'completed'
+                              ? 'var(--platform-gold)'
+                              : step.state === 'active'
+                                ? 'var(--platform-green)'
+                                : 'var(--platform-line)',
+                        }}
+                        aria-hidden
+                      />
+                      <div>
+                        <p className="text-sm font-semibold text-[var(--platform-ink)]">
+                          {step.label}
+                        </p>
+                        <p className="text-[12px] text-[var(--platform-muted)]">
+                          {step.detail}
+                        </p>
+                      </div>
                     </li>
                   ))}
-                </ul>
-              )}
-            </PlatformCard>
+                </ol>
+              </PlatformCard>
+            </div>
           </div>
         </main>
-        <div className="platform-inspector-rail" style={{ height: '100%', overflow: 'hidden' }}>
+        <div className="platform-inspector-rail h-full overflow-hidden">
           <CapabilityInspector model={inspectorModel} />
         </div>
       </div>

@@ -42,7 +42,7 @@ function NavGroup({
               className={[
                 'rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-semibold platform-motion',
                 isActive
-                  ? 'border-[#18428F] bg-[#18428F] text-white'
+                  ? 'border-[var(--platform-accent)] bg-[var(--platform-accent)] text-white'
                   : 'border-transparent text-[#001930] hover:bg-[#F7F9FC]',
               ].join(' ')}
             >
@@ -56,7 +56,7 @@ function NavGroup({
 }
 
 /**
- * VR-FIX-01 — Product capability navigation (light rail, shared platform grammar).
+ * PR-001 / PR-002 / PR-012 — Pracovní centrum manažera (české labely, bez „capability“).
  */
 export function ManagerStudioSidebar() {
   const { activeSectionId } = useManagerNav();
@@ -69,38 +69,47 @@ export function ManagerStudioSidebar() {
     >
       <div className="flex h-[52px] shrink-0 items-center px-6">
         <span className="text-[11px] font-bold uppercase tracking-[1px] text-[#7D8796]">
-          Moduly
+          Pracovní centrum
         </span>
       </div>
 
       <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-6">
         <NavGroup
-          title="Launch"
-          items={LAUNCH_SECTION_NAV}
-          activeSectionId={activeSectionId}
-          ariaLabel="Sekce Launch Center"
-        />
-        <NavGroup
-          title="Platforma"
+          title="Přehled"
           items={[
-            ...PLATFORM_OPS_SECTION_NAV,
-            ...COMMERCIAL_SECTION_NAV,
-            ...PRODUCT_LEARNING_SECTION_NAV,
+            {
+              id: 'manager-work-center',
+              label: 'Konverzní přehled',
+              short: 'K',
+            },
+            ...LAUNCH_SECTION_NAV,
           ]}
           activeSectionId={activeSectionId}
-          ariaLabel="Sekce Platform capabilities"
-        />
-        <NavGroup
-          title="Zákazníci"
-          items={CUSTOMER_SUCCESS_SECTION_NAV}
-          activeSectionId={activeSectionId}
-          ariaLabel="Sekce Customer Success"
+          ariaLabel="Přehled manažera"
         />
         <NavGroup
           title="Provoz"
-          items={OPERATIONS_SECTION_NAV}
+          items={[...OPERATIONS_SECTION_NAV, ...PLATFORM_OPS_SECTION_NAV]}
           activeSectionId={activeSectionId}
-          ariaLabel="Sekce Operations Terminal"
+          ariaLabel="Provoz"
+        />
+        <NavGroup
+          title="Experience"
+          items={PRODUCT_LEARNING_SECTION_NAV}
+          activeSectionId={activeSectionId}
+          ariaLabel="Experience"
+        />
+        <NavGroup
+          title="Případy"
+          items={CUSTOMER_SUCCESS_SECTION_NAV}
+          activeSectionId={activeSectionId}
+          ariaLabel="Případy"
+        />
+        <NavGroup
+          title="Obchod"
+          items={COMMERCIAL_SECTION_NAV}
+          activeSectionId={activeSectionId}
+          ariaLabel="Obchod"
         />
       </div>
     </aside>

@@ -16,10 +16,11 @@ describe('platformShell (EPIC-BX-11 / BX-15 / VR-FIX-01)', () => {
     const builder = getPlatformTheme('builder');
     const manager = getPlatformTheme('manager');
     const sales = getPlatformTheme('sales');
-    assert.equal(builder.accent, manager.accent);
-    assert.equal(manager.accent, sales.accent);
     assert.equal(builder.headerHeightPx, 70);
     assert.equal(builder.navy, '#001930');
     assert.equal(builder.gold, '#B8922D');
+    assert.equal(builder.accent, '#18428F');
+    assert.equal(manager.accent, '#138D45');
+    assert.equal(sales.accent, '#EA580C');
   });
 });

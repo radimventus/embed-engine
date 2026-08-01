@@ -50,7 +50,14 @@ export function CapabilityInspector({
       <p className="platform-capability-inspector__eyebrow">Modul</p>
       <h2 className="platform-capability-inspector__title">Inspector</h2>
       <p className="platform-capability-inspector__studio">
-        Studio · {model.studioId}
+        Studio ·{' '}
+        {model.studioId === 'builder'
+          ? 'Builder'
+          : model.studioId === 'manager'
+            ? 'Manager'
+            : model.studioId === 'sales'
+              ? 'Sales'
+              : model.studioId}
       </p>
 
       {active !== null ? (

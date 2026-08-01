@@ -8,17 +8,14 @@ type AnchorItem = {
   readonly section: HpEditSection | null;
 };
 
-/** VR-FIX-06 — click-model Czech product labels (IDs unchanged). */
+/**
+ * PR-005 — Anchor Rail přesně podle HTML click modelu.
+ * Pouze: Média · Dispozice · Znalosti.
+ */
 const ANCHORS: readonly AnchorItem[] = [
-  { id: 'overview', label: 'Dashboard', section: null },
   { id: 'media-studio', label: 'Média', section: null },
   { id: 'rooms', label: 'Dispozice', section: 'rooms' },
   { id: 'knowledge', label: 'Znalosti', section: null },
-  { id: 'experience', label: 'Experience', section: null },
-  { id: 'preview-center', label: 'Náhled', section: null },
-  { id: 'release-center', label: 'Publikace', section: null },
-  { id: 'collaboration', label: 'Spolupráce', section: null },
-  { id: 'intelligence', label: 'Intelligence', section: null },
 ];
 
 type BuilderAnchorRailProps = {
@@ -27,22 +24,31 @@ type BuilderAnchorRailProps = {
   readonly onSelectNav: (id: HousePackageNavId) => void;
 };
 
-/**
- * VR-FIX-06 — Sticky product modules (click-model builder-tabs grammar).
- */
 export function BuilderAnchorRail({
   snapshot,
   activeNav,
   onSelectNav,
 }: BuilderAnchorRailProps) {
+  const resolvedActive: HousePackageNavId =
+    activeNav === 'media' ||
+    activeNav === 'gallery' ||
+    activeNav === 'videos' ||
+    activeNav === 'media-studio'
+      ? 'media-studio'
+      : activeNav === 'rooms'
+        ? 'rooms'
+        : activeNav === 'knowledge'
+          ? 'knowledge'
+          : activeNav;
+
   return (
     <nav
-      className="sticky top-0 z-20 mb-6 flex flex-wrap gap-2.5 bg-builder-canvas pb-4"
+      className="mb-0 flex flex-wrap gap-2.5 pb-4"
       aria-label="Anchor Rail"
       data-studio-shell="anchor-rail"
     >
       {ANCHORS.map((item) => {
-        const active = item.id === activeNav;
+        const active = item.id === resolvedActive;
         const dirty =
           item.section !== null &&
           snapshot?.dirty.includes(item.section) === true;

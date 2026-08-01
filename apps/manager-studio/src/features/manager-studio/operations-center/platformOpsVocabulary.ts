@@ -15,9 +15,9 @@ export type PlatformOpsSectionId =
   (typeof PLATFORM_OPS_SECTION_IDS)[keyof typeof PLATFORM_OPS_SECTION_IDS];
 
 export const PLATFORM_OPS_SECTION_NAV = [
-  { id: PLATFORM_OPS_SECTION_IDS.overview, label: 'Overview', short: 'P' },
-  { id: PLATFORM_OPS_SECTION_IDS.timeline, label: 'Timeline', short: 'T' },
-  { id: PLATFORM_OPS_SECTION_IDS.alerts, label: 'Alerts', short: 'A' },
-  { id: PLATFORM_OPS_SECTION_IDS.metrics, label: 'Metrics', short: 'M' },
-  { id: PLATFORM_OPS_SECTION_IDS.executive, label: 'Executive', short: 'E' },
+  { id: PLATFORM_OPS_SECTION_IDS.overview, label: 'Přehled', short: 'P' },
+  { id: PLATFORM_OPS_SECTION_IDS.timeline, label: 'Časová osa', short: 'Č' },
+  { id: PLATFORM_OPS_SECTION_IDS.alerts, label: 'Upozornění', short: 'U' },
+  { id: PLATFORM_OPS_SECTION_IDS.metrics, label: 'Metriky', short: 'M' },
+  { id: PLATFORM_OPS_SECTION_IDS.executive, label: 'Shrnutí', short: 'S' },
 ] as const;

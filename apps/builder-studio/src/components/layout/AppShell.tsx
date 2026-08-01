@@ -3,18 +3,19 @@ import type { ReactNode } from 'react';
 type AppShellProps = {
   readonly workspacePanel?: ReactNode;
   readonly publishPanel?: ReactNode;
+  /** Sticky under header — not part of the scrolling canvas (PR-004 / PR-005). */
+  readonly anchorRail?: ReactNode;
   readonly children: ReactNode;
-  /** Wider authoring surface (Experience Composer). */
   readonly denseMain?: boolean;
 };
 
 /**
- * VR-FIX-01 — Sticky Builder layout (Workspace | Canvas | Inspector).
- * Only the center workspace scrolls.
+ * PR-004 — Sticky Workspace + Anchor Rail + Inspector; only center canvas scrolls.
  */
 export function AppShell({
   workspacePanel,
   publishPanel,
+  anchorRail,
   children,
   denseMain: _denseMain = false,
 }: AppShellProps) {
@@ -35,15 +36,22 @@ export function AppShell({
       data-studio-shell="builder-layout"
     >
       {workspacePanel !== undefined ? (
-        <div className="platform-nav-rail min-h-0 overflow-hidden">
+        <div className="platform-nav-rail min-h-0 self-stretch overflow-hidden">
           {workspacePanel}
         </div>
       ) : null}
-      <main className="platform-studio-pad min-h-0 min-w-0 overflow-y-auto">
-        {children}
-      </main>
+      <div className="flex min-h-0 min-w-0 flex-col overflow-hidden">
+        {anchorRail !== undefined && anchorRail !== null ? (
+          <div className="shrink-0 border-b border-builder-line bg-builder-canvas px-8 pt-4">
+            {anchorRail}
+          </div>
+        ) : null}
+        <main className="platform-studio-pad min-h-0 flex-1 overflow-y-auto">
+          {children}
+        </main>
+      </div>
       {hasPublish ? (
-        <div className="platform-inspector-rail min-h-0 overflow-hidden">
+        <div className="platform-inspector-rail min-h-0 self-stretch overflow-hidden">
           {publishPanel}
         </div>
       ) : null}

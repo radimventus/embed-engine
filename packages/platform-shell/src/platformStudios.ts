@@ -78,14 +78,14 @@ const STUDIO_DEFS: readonly Omit<PlatformStudio, 'href'>[] = [
     label: 'Manager Studio',
     shortLabel: 'Manager',
     available: true,
-    accent: '#18428F',
+    accent: '#138D45',
   },
   {
     id: 'sales',
     label: 'Sales Studio',
     shortLabel: 'Sales',
     available: true,
-    accent: '#18428F',
+    accent: '#EA580C',
   },
   {
     id: 'builder',

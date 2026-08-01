@@ -14,9 +14,9 @@ export type LaunchSectionId =
   (typeof LAUNCH_SECTION_IDS)[keyof typeof LAUNCH_SECTION_IDS];
 
 export const LAUNCH_SECTION_NAV = [
-  { id: LAUNCH_SECTION_IDS.executive, label: 'Executive', short: 'E' },
-  { id: LAUNCH_SECTION_IDS.dashboard, label: 'Dashboard', short: 'D' },
-  { id: LAUNCH_SECTION_IDS.checklist, label: 'Checklist', short: 'C' },
-  { id: LAUNCH_SECTION_IDS.timeline, label: 'Timeline', short: 'T' },
-  { id: LAUNCH_SECTION_IDS.gates, label: 'Gates', short: 'G' },
+  { id: LAUNCH_SECTION_IDS.executive, label: 'Shrnutí', short: 'S' },
+  { id: LAUNCH_SECTION_IDS.dashboard, label: 'Přehled', short: 'P' },
+  { id: LAUNCH_SECTION_IDS.checklist, label: 'Kontrolní seznam', short: 'K' },
+  { id: LAUNCH_SECTION_IDS.timeline, label: 'Časová osa', short: 'Č' },
+  { id: LAUNCH_SECTION_IDS.gates, label: 'Brány připravenosti', short: 'B' },
 ] as const;

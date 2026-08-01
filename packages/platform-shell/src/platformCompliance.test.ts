@@ -11,6 +11,7 @@ describe('platformCompliance (VR-FIX-05)', () => {
     assert.equal(theme.gold, '#B8922D');
     assert.equal(theme.canvas, '#F5F7FB');
     assert.equal(theme.headerHeightPx, 70);
+    assert.equal(theme.accent, '#18428F');
   });
 
   it('keeps pilot studio order Manager → Sales → Builder', () => {

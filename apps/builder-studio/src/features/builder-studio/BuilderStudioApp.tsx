@@ -81,7 +81,7 @@ export function BuilderStudioApp() {
     () => bootstrapActiveProject('builder'),
     [bootstrapActiveProject, accessSession?.projectId],
   );
-  const [activeNav, setActiveNav] = useState<HousePackageNavId>('overview');
+  const [activeNav, setActiveNav] = useState<HousePackageNavId>('media-studio');
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -132,22 +132,23 @@ export function BuilderStudioApp() {
   const collaborationMode = activeNav === 'collaboration';
   const intelligenceMode = activeNav === 'intelligence';
 
-  // Always land on Dashboard when the active project changes (honor deep-link hash).
+  // Default: Média (click-model Anchor Rail); honor deep-link hash.
   useEffect(() => {
     const hash = window.location.hash.replace(/^#/, '');
     if (
       hash === 'knowledge' ||
+      hash === 'rooms' ||
+      hash === 'media-studio' ||
       hash === 'release-center' ||
       hash === 'preview-center' ||
       hash === 'experience' ||
       hash === 'collaboration' ||
       hash === 'intelligence' ||
-      hash === 'media-studio' ||
       hash === 'overview'
     ) {
-      setActiveNav(hash);
+      setActiveNav(hash as HousePackageNavId);
     } else {
-      setActiveNav('overview');
+      setActiveNav('media-studio');
     }
     setHistoryOpen(false);
     validatedRootRef.current = null;
@@ -264,6 +265,15 @@ export function BuilderStudioApp() {
       >
       <AppShell
         denseMain={productCapabilityMode}
+        anchorRail={
+          mountStatus.status === 'ready' ? (
+            <BuilderAnchorRail
+              snapshot={snapshot}
+              activeNav={activeNav}
+              onSelectNav={handleNavigate}
+            />
+          ) : null
+        }
         workspacePanel={
           <WorkspaceSidebar
             registry={workspace.registry}
@@ -335,13 +345,6 @@ export function BuilderStudioApp() {
           )
         }
       >
-        {mountStatus.status === 'ready' && (
-          <BuilderAnchorRail
-            snapshot={snapshot}
-            activeNav={activeNav}
-            onSelectNav={handleNavigate}
-          />
-        )}
         {diskRoot === null && (
           <PlatformEmptyState
             icon="⊕"

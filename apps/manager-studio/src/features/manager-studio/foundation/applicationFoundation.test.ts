@@ -135,7 +135,7 @@ describe('Application Foundation (MSCB-01)', () => {
 
     assert.match(page, /OperationsCenterCanvas/);
     assert.match(sidebar, /PLATFORM_OPS_SECTION_NAV/);
-    assert.match(sidebar, /Platform/);
+    assert.match(sidebar, /Provoz/);
     assert.match(pkg, /@embed-engine\/operations-center/);
   });
 
@@ -178,7 +178,7 @@ describe('Application Foundation (MSCB-01)', () => {
 
     assert.match(page, /LaunchCenterCanvas/);
     assert.match(sidebar, /LAUNCH_SECTION_NAV/);
-    assert.match(sidebar, /Launch/);
+    assert.match(sidebar, /Přehled/);
     assert.match(pkg, /@embed-engine\/launch-center/);
   });
 

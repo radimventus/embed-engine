@@ -39,6 +39,7 @@ function resolveCapability(sectionId: string | null): CapabilityId {
 export function ManagerNavProvider({ children }: { readonly children: ReactNode }) {
   const allSectionIds = useMemo(
     () => [
+      'manager-work-center',
       ...LAUNCH_SECTION_NAV.map((item) => item.id),
       ...PLATFORM_OPS_SECTION_NAV.map((item) => item.id),
       ...COMMERCIAL_SECTION_NAV.map((item) => item.id),

@@ -78,21 +78,20 @@ export function WorkspaceSidebar({
         </span>
       </button>
 
-      <div className="mt-3 flex items-start gap-2">
-        <div className="min-w-0 flex-1 rounded-xl border border-[#D7E4FF] bg-builder-panel px-3.5 py-3 text-sm font-semibold text-builder-ink">
-          {contextLabel}
-        </div>
-        <button
-          type="button"
-          title="Nový projekt"
-          aria-label="Nový projekt"
-          disabled={switching}
-          onClick={onCreateProject}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[#D7E4FF] bg-builder-panel text-lg font-semibold text-builder-navy hover:bg-white disabled:opacity-40"
-        >
-          ⊕
-        </button>
+      <div className="mt-3 rounded-xl border border-[#D7E4FF] bg-builder-panel px-3.5 py-3 text-sm font-semibold text-builder-ink">
+        {contextLabel}
       </div>
+
+      <button
+        type="button"
+        title="Nový projekt"
+        aria-label="Nový projekt"
+        disabled={switching}
+        onClick={onCreateProject}
+        className="mt-3 flex h-10 w-10 items-center justify-center rounded-full border border-[#D7E4FF] bg-builder-panel text-lg font-semibold text-builder-navy hover:bg-white disabled:opacity-40"
+      >
+        ⊕
+      </button>
 
       <div className="my-5 border-t border-builder-line" />
 
