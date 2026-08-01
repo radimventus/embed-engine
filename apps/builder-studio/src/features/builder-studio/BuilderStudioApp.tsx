@@ -4,6 +4,7 @@ import { AppShell } from '../../components/layout/AppShell';
 import { ExperienceComposerView } from '../experience-composer';
 import { KnowledgeComposerView } from '../knowledge-composer';
 import { MediaStudioView } from '../media-studio';
+import { BuilderIntelligenceView } from '../builder-intelligence';
 import { CollaborationCenterView } from '../collaboration-workspace';
 import { PreviewCenterView } from '../preview-center';
 import { ReleaseCenterView } from '../release-center';
@@ -78,6 +79,7 @@ export function BuilderStudioApp() {
   const previewCenterMode = activeNav === 'preview-center';
   const releaseCenterMode = activeNav === 'release-center';
   const collaborationMode = activeNav === 'collaboration';
+  const intelligenceMode = activeNav === 'intelligence';
 
   // Always land on Dashboard when the active project changes.
   useEffect(() => {
@@ -124,7 +126,8 @@ export function BuilderStudioApp() {
           mediaStudioMode ||
           previewCenterMode ||
           releaseCenterMode ||
-          collaborationMode
+          collaborationMode ||
+          intelligenceMode
         }
         workspacePanel={
           <WorkspaceSidebar
@@ -165,7 +168,8 @@ export function BuilderStudioApp() {
           mediaStudioMode ||
           previewCenterMode ||
           releaseCenterMode ||
-          collaborationMode ? undefined : (
+          collaborationMode ||
+          intelligenceMode ? undefined : (
             <ProjectActionPanel
               loadError={loadError}
               publishError={publishError}
@@ -291,6 +295,17 @@ export function BuilderStudioApp() {
             />
           )}
         {mountStatus.status === 'ready' &&
+          workspace.activeProject !== null &&
+          intelligenceMode && (
+            <BuilderIntelligenceView
+              projectId={workspace.activeProject.id}
+              projectName={workspace.activeProject.name}
+              snapshot={snapshot}
+              validationReport={validationReport}
+              onNavigate={handleNavigate}
+            />
+          )}
+        {mountStatus.status === 'ready' &&
           snapshot !== null &&
           session !== null &&
           workspace.activeProject !== null &&
@@ -299,7 +314,8 @@ export function BuilderStudioApp() {
           !mediaStudioMode &&
           !previewCenterMode &&
           !releaseCenterMode &&
-          !collaborationMode && (
+          !collaborationMode &&
+          !intelligenceMode && (
             <HousePackageEditView
               snapshot={snapshot}
               session={session}
