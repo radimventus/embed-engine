@@ -10,7 +10,7 @@ import {
 } from '../pilot/pilotDiagnostics';
 import { createPilotInvite, listPendingInvites } from '../pilot/inviteStore';
 import { provisionPilotWorkspace } from '../pilot/provisionPilotWorkspace';
-import { GmReadinessCenter } from './GmReadinessCenter';
+import { GaReadinessCenter } from './GaReadinessCenter';
 import { usePlatformSession } from './SessionProvider';
 
 const STUDIO_ORDER: readonly {
@@ -23,7 +23,7 @@ const STUDIO_ORDER: readonly {
 ];
 
 /**
- * EPIC-BX-14 / BX-15 / BX-16 — Platform Landing + GM Readiness Center.
+ * EPIC-BX-14 / BX-15 / BX-16 / BX-18 — Platform Landing + GA Readiness Center.
  */
 export function PlatformLanding() {
   const {
@@ -179,7 +179,7 @@ export function PlatformLanding() {
           </section>
         )}
 
-        {isAdmin && <GmReadinessCenter />}
+        {isAdmin && <GaReadinessCenter />}
 
         {isAdmin && (
           <section className="platform-access__dashboard-slot">

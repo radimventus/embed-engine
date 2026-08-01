@@ -151,6 +151,24 @@ export { buildGmPilotStatusSummary } from './gm/buildGmPilotStatus';
 export { buildGmChecklist } from './gm/buildGmChecklist';
 export { buildGmReadinessReport } from './gm/buildGmReadinessReport';
 
+export type {
+  GaVerdict,
+  GaChecklistState,
+  GaMatrixAreaId,
+  GaMatrixRow,
+  GaHealthId,
+  GaHealthItem,
+  GaReleaseCertification,
+  GaGoDecision,
+  GaGoNoGoBoard,
+  GaProductionChecklistItem,
+  GaDashboard,
+  GaExecutiveReport,
+  GaReadinessReport,
+} from './ga/gaTypes';
+
+export { buildGaReadinessReport } from './ga/buildGaReadinessReport';
+
 export {
   SessionProvider,
   usePlatformSession,
@@ -164,3 +182,4 @@ export { InviteShell } from './react/InviteShell';
 export { PlatformLanding } from './react/PlatformLanding';
 export { PlatformAccessRoot } from './react/PlatformAccessRoot';
 export { GmReadinessCenter } from './react/GmReadinessCenter';
+export { GaReadinessCenter } from './react/GaReadinessCenter';
