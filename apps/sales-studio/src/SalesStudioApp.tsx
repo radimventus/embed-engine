@@ -9,23 +9,30 @@ import {
   usePlatformSession,
 } from '@embed-engine/platform-access';
 import {
+  buildPlatformWorkspaceState,
   CapabilityInspector,
   PlatformCard,
   PlatformEmptyState,
   PlatformShell,
   PlatformStatusBadge,
   type PlatformBreadcrumbItem,
-  type PlatformWorkspaceState,
 } from '@embed-engine/platform-shell';
 
 import { getSalesCapabilityHost } from './studio/salesStudioComposition';
 
 /**
- * VR-FIX-02 — Sales Studio using unified Platform visual system.
+ * VR-FIX-04 — Sales Studio on the same cross-studio journey grammar.
  */
 export function SalesStudioApp() {
-  const { session, bootstrap, registry, logout, clearStudio, selectProject } =
-    usePlatformSession();
+  const {
+    session,
+    bootstrap,
+    registry,
+    logout,
+    clearStudio,
+    selectStudio,
+    selectProject,
+  } = usePlatformSession();
   const capabilityHost = useMemo(() => getSalesCapabilityHost(), []);
   const inspectorModel = capabilityHost.inspectorModel('customer-success');
   const success = useMemo(
@@ -33,8 +40,8 @@ export function SalesStudioApp() {
     [session],
   );
 
-  const workspaceState: PlatformWorkspaceState = {
-    companyLabel: bootstrap?.company.name ?? 'Company',
+  const workspaceState = buildPlatformWorkspaceState({
+    companyLabel: bootstrap?.company.name ?? 'Firma',
     projectLabel: bootstrap?.project?.name ?? '—',
     projects: registry.projects.map((project) => ({
       id: project.id,
@@ -44,12 +51,12 @@ export function SalesStudioApp() {
           ?.name ?? 'Firma',
     })),
     onSelectProject: selectProject,
-  };
+  });
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Sales' },
-    { id: 'company', label: bootstrap?.company.name ?? 'Company' },
+    { id: 'company', label: bootstrap?.company.name ?? 'Firma' },
     { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
     { id: 'section', label: 'Customer Success' },
   ];
@@ -76,6 +83,7 @@ export function SalesStudioApp() {
       activeCapabilityId="customer-success"
       onLogout={logout}
       onOpenLanding={clearStudio}
+      onSelectStudio={selectStudio}
       onSubmitFeedback={(message) => {
         submitPlatformFeedback({
           message,
@@ -110,7 +118,8 @@ export function SalesStudioApp() {
             <header style={{ marginBottom: 24 }}>
               <h1 className="platform-type-h1">Sales Studio</h1>
               <p className="platform-type-helper" style={{ marginTop: 4 }}>
-                Customer Success projection — stejná platformní capability.
+                Customer Success · stejný projekt a Workspace jako Builder /
+                Manager.
               </p>
             </header>
 

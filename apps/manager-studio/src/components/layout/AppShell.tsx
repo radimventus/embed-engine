@@ -9,10 +9,10 @@ import {
   usePlatformSession,
 } from '@embed-engine/platform-access';
 import {
+  buildPlatformWorkspaceState,
   CapabilityInspector,
   PlatformShell,
   type PlatformBreadcrumbItem,
-  type PlatformWorkspaceState,
 } from '@embed-engine/platform-shell';
 
 import { getManagerCapabilityHost } from '../../studio/managerStudioComposition';
@@ -25,7 +25,7 @@ type AppShellProps = {
 };
 
 /**
- * Manager Studio shell — Platform Access session + Capability Host (BX-11..17).
+ * Manager Studio shell — Platform Access session + Capability Host (VR-FIX-04).
  */
 export function AppShell({ sidebar, children }: AppShellProps) {
   const {
@@ -34,14 +34,15 @@ export function AppShell({ sidebar, children }: AppShellProps) {
     registry,
     logout,
     clearStudio,
+    selectStudio,
     selectProject,
   } = usePlatformSession();
   const { activeCapabilityId } = useManagerNav();
   const capabilityHost = useMemo(() => getManagerCapabilityHost(), []);
   const inspectorModel = capabilityHost.inspectorModel(activeCapabilityId);
 
-  const workspaceState: PlatformWorkspaceState = {
-    companyLabel: bootstrap?.company.name ?? 'Company',
+  const workspaceState = buildPlatformWorkspaceState({
+    companyLabel: bootstrap?.company.name ?? 'Firma',
     projectLabel: bootstrap?.project?.name ?? '—',
     projects: registry.projects.map((project) => ({
       id: project.id,
@@ -51,7 +52,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
           ?.name ?? 'Firma',
     })),
     onSelectProject: selectProject,
-  };
+  });
 
   const sectionLabel =
     activeCapabilityId === 'launch-center'
@@ -69,7 +70,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Manager' },
-    { id: 'company', label: bootstrap?.company.name ?? 'Company' },
+    { id: 'company', label: bootstrap?.company.name ?? 'Firma' },
     { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
     { id: 'section', label: sectionLabel },
   ];
@@ -89,6 +90,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
       activeCapabilityId={activeCapabilityId}
       onLogout={logout}
       onOpenLanding={clearStudio}
+      onSelectStudio={selectStudio}
       onSubmitFeedback={(message) => {
         submitPlatformFeedback({
           message,

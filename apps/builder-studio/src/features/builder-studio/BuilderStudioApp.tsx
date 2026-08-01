@@ -20,12 +20,12 @@ import { CollaborationCenterView } from '../collaboration-workspace';
 import { PreviewCenterView } from '../preview-center';
 import { ReleaseCenterView } from '../release-center';
 import {
+  buildPlatformWorkspaceState,
   CapabilityInspector,
   PlatformEmptyState,
   PlatformLoading,
   PlatformShell,
   type PlatformBreadcrumbItem,
-  type PlatformWorkspaceState,
 } from '../platform';
 import { ProjectActionPanel } from '../project-dashboard';
 import {
@@ -66,8 +66,11 @@ const SECTION_LABEL: Record<HousePackageNavId, string> = {
 export function BuilderStudioApp() {
   const {
     session: accessSession,
+    registry,
+    bootstrap,
     logout,
     clearStudio,
+    selectStudio,
     selectProject,
     bootstrapActiveProject,
   } = usePlatformSession();
@@ -113,12 +116,13 @@ export function BuilderStudioApp() {
 
   const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';
   const companyName =
-    workspace.activeProject !== null
+    bootstrap?.company.name ??
+    (workspace.activeProject !== null
       ? (findWorkspaceCompany(
           workspace.registry,
           workspace.activeProject.companyId,
         )?.name ?? 'Firma')
-      : 'Workspace';
+      : 'Firma');
 
   const experienceMode = activeNav === 'experience';
   const knowledgeMode = activeNav === 'knowledge';
@@ -128,9 +132,23 @@ export function BuilderStudioApp() {
   const collaborationMode = activeNav === 'collaboration';
   const intelligenceMode = activeNav === 'intelligence';
 
-  // Always land on Dashboard when the active project changes.
+  // Always land on Dashboard when the active project changes (honor deep-link hash).
   useEffect(() => {
-    setActiveNav('overview');
+    const hash = window.location.hash.replace(/^#/, '');
+    if (
+      hash === 'knowledge' ||
+      hash === 'release-center' ||
+      hash === 'preview-center' ||
+      hash === 'experience' ||
+      hash === 'collaboration' ||
+      hash === 'intelligence' ||
+      hash === 'media-studio' ||
+      hash === 'overview'
+    ) {
+      setActiveNav(hash);
+    } else {
+      setActiveNav('overview');
+    }
     setHistoryOpen(false);
     validatedRootRef.current = null;
   }, [diskRoot]);
@@ -173,21 +191,22 @@ export function BuilderStudioApp() {
     });
   };
 
-  const platformWorkspace: PlatformWorkspaceState = {
+  const platformWorkspace = buildPlatformWorkspaceState({
     companyLabel: companyName,
-    projectLabel: workspace.activeProject?.name ?? '—',
-    projects: workspace.registry.projects.map((project) => ({
+    projectLabel:
+      workspace.activeProject?.name ?? bootstrap?.project?.name ?? '—',
+    projects: registry.projects.map((project) => ({
       id: project.id,
       label: project.name,
       companyLabel:
-        findWorkspaceCompany(workspace.registry, project.companyId)?.name ??
-        'Firma',
+        registry.companies.find((company) => company.id === project.companyId)
+          ?.name ?? 'Firma',
     })),
     onSelectProject: (projectId) => {
       selectProject(projectId);
       void workspace.requestOpenProject(projectId, { dirty });
     },
-  };
+  });
 
   const breadcrumb: PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
@@ -195,7 +214,7 @@ export function BuilderStudioApp() {
     { id: 'company', label: companyName },
     {
       id: 'project',
-      label: workspace.activeProject?.name ?? 'Projekt',
+      label: workspace.activeProject?.name ?? bootstrap?.project?.name ?? 'Projekt',
     },
     { id: 'section', label: SECTION_LABEL[activeNav] },
   ];
@@ -229,6 +248,7 @@ export function BuilderStudioApp() {
         activeCapabilityId={activeCapabilityId}
         onLogout={logout}
         onOpenLanding={clearStudio}
+        onSelectStudio={selectStudio}
         onSubmitFeedback={(message) => {
           submitPlatformFeedback({
             message,
@@ -252,7 +272,9 @@ export function BuilderStudioApp() {
             switchError={workspace.switchError}
             dirtyPrompt={workspace.dirtyPrompt}
             onOpenProject={(projectId) => {
-              selectProject(projectId);
+              if (registry.projects.some((project) => project.id === projectId)) {
+                selectProject(projectId);
+              }
               void workspace.requestOpenProject(projectId, { dirty });
             }}
             onCreateProject={() => setCreateOpen(true)}
@@ -303,6 +325,7 @@ export function BuilderStudioApp() {
                     void validate();
                   }}
                   onHistory={handleHistory}
+                  onOpenManager={() => selectStudio('manager')}
                 />
               </div>
               <div className="max-h-[42%] shrink-0 overflow-y-auto border-t border-builder-line">
@@ -475,6 +498,11 @@ export function BuilderStudioApp() {
           void (async () => {
             const created = await workspace.createProject(input, { dirty });
             if (created !== null) {
+              if (
+                registry.projects.some((project) => project.id === created.id)
+              ) {
+                selectProject(created.id);
+              }
               setCreateOpen(false);
               setActiveNav('overview');
             }

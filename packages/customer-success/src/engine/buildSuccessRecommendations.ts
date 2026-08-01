@@ -61,7 +61,7 @@ export function buildSuccessRecommendations(input: {
       id: 'invite-user',
       title: 'Dokončete onboarding uživatele',
       detail: 'Máte otevřené pozvánky — aktivujte účet kolegy.',
-      targetLabel: 'Platform Landing',
+      targetLabel: 'Manager · Pilot',
       href: snapshot.managerHref,
     });
   }

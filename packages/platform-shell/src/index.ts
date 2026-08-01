@@ -34,6 +34,7 @@ export {
   type PlatformStudio,
   type PlatformStudioId,
 } from './platformStudios';
+export { PLATFORM_STUDIO_SWITCH_ORDER } from './StudioSwitcher';
 export {
   getPlatformTheme,
   PLATFORM_HEADER_HEIGHT_PX,
@@ -44,3 +45,4 @@ export type {
   PlatformWorkspaceOption,
   PlatformWorkspaceState,
 } from './platformTypes';
+export { buildPlatformWorkspaceState } from './buildPlatformWorkspaceState';

@@ -26,6 +26,7 @@ export function PlatformShell({
   searchPlaceholder,
   onLogout,
   onOpenLanding,
+  onSelectStudio,
   onSubmitFeedback,
   breadcrumb = [],
   capabilityHost = null,
@@ -50,6 +51,7 @@ export function PlatformShell({
         searchPlaceholder={searchPlaceholder}
         onLogout={onLogout}
         onOpenLanding={onOpenLanding}
+        onSelectStudio={onSelectStudio}
         onSubmitFeedback={onSubmitFeedback}
       />
       <PlatformBreadcrumb items={breadcrumb} />

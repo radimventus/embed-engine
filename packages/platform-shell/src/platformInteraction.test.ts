@@ -29,5 +29,9 @@ describe('platformInteraction (VR-FIX-03)', () => {
     for (const id of order) {
       assert.ok(PLATFORM_STUDIOS.some((studio) => studio.id === id));
     }
+    assert.deepEqual(
+      PLATFORM_STUDIOS.map((studio) => studio.id),
+      order,
+    );
   });
 });

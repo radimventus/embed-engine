@@ -69,7 +69,7 @@ export function ManagerStudioSidebar() {
     >
       <div className="flex h-[52px] shrink-0 items-center px-6">
         <span className="text-[11px] font-bold uppercase tracking-[1px] text-[#7D8796]">
-          Workspace
+          Moduly
         </span>
       </div>
 

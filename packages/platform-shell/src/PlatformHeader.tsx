@@ -15,11 +15,12 @@ export type PlatformHeaderProps = {
   readonly searchPlaceholder?: string;
   readonly onLogout?: () => void;
   readonly onOpenLanding?: () => void;
+  readonly onSelectStudio?: (studioId: PlatformStudioId) => void;
   readonly onSubmitFeedback?: (message: string) => void;
 };
 
 /**
- * VR-FIX-03 — Header with Studio + Project switchers (same interaction model).
+ * VR-FIX-04 — Header: brand · Project · Studio · user (one interaction model).
  */
 export function PlatformHeader({
   activeStudioId,
@@ -29,6 +30,7 @@ export function PlatformHeader({
   notificationCount = 3,
   onLogout,
   onOpenLanding,
+  onSelectStudio,
   onSubmitFeedback,
 }: PlatformHeaderProps) {
   return (
@@ -52,7 +54,10 @@ export function PlatformHeader({
         <WorkspaceSwitcher workspace={workspace} />
       </div>
 
-      <StudioSwitcher activeStudioId={activeStudioId} />
+      <StudioSwitcher
+        activeStudioId={activeStudioId}
+        onSelectStudio={onSelectStudio}
+      />
 
       <div className="platform-header__actions">
         <div className="platform-user-badge">

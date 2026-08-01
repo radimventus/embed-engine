@@ -16,6 +16,8 @@ type ProjectActionPanelProps = {
   readonly onPublish: () => void;
   readonly onValidate: () => void;
   readonly onHistory: () => void;
+  /** VR-FIX-04 — same Studio Switcher path after Publish. */
+  readonly onOpenManager?: () => void;
 };
 
 /**
@@ -33,6 +35,7 @@ export function ProjectActionPanel({
   onPublish,
   onValidate,
   onHistory,
+  onOpenManager,
 }: ProjectActionPanelProps) {
   const canPublish = validationReport?.canPublish === true;
 
@@ -43,7 +46,7 @@ export function ProjectActionPanel({
       </p>
       <h2 className="mt-1 text-lg font-semibold text-builder-ink">Projekt</h2>
       <p className="mt-2 text-[12px] text-builder-muted">
-        Náhled, kontrola a publikace
+        Preview · Validovat · Publish — pak Manager
       </p>
 
       {loadError !== null && (
@@ -60,7 +63,7 @@ export function ProjectActionPanel({
           primary={false}
         />
         <ActionButton
-          label={publishing ? 'Publikuji…' : 'Publikovat'}
+          label={publishing ? 'Publikuji…' : 'Publish'}
           onClick={onPublish}
           disabled={!canPublish || validating || publishing}
           primary
@@ -77,6 +80,14 @@ export function ProjectActionPanel({
           disabled={false}
           primary={false}
         />
+        {onOpenManager !== undefined && releaseSummary !== null && (
+          <ActionButton
+            label="Otevřít Manager"
+            onClick={onOpenManager}
+            disabled={publishing}
+            primary={false}
+          />
+        )}
       </div>
 
       {validationReport !== null && (
