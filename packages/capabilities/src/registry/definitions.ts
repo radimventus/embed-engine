@@ -174,4 +174,16 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     description:
       'Commercial Platform — editions, entitlements, subscriptions, upgrade suggestions (no billing).',
   },
+  {
+    id: 'launch-center',
+    name: 'Launch Center',
+    version: '1.0.0',
+    owner: 'platform',
+    studioSupport: ['manager'],
+    dependencies: [],
+    maturity: 'beta',
+    entitlement: 'included',
+    description:
+      'CONIS Launch Center — Pilot → GA orchestration over existing readiness projections.',
+  },
 ] as const;

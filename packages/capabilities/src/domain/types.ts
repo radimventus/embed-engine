@@ -20,7 +20,8 @@ export type CapabilityId =
   | 'customer-success'
   | 'operations-center'
   | 'product-learning'
-  | 'commercial-platform';
+  | 'commercial-platform'
+  | 'launch-center';
 
 /**
  * Commercial entitlement class — Registry remains SSOT; Commercial only projects.

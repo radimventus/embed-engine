@@ -72,6 +72,7 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
     assert.ok(manager.isDeclared('operations-center'));
     assert.ok(manager.isDeclared('product-learning'));
     assert.ok(manager.isDeclared('commercial-platform'));
+    assert.ok(manager.isDeclared('launch-center'));
     assert.ok(sales.isDeclared('pipeline'));
     assert.ok(sales.isDeclared('customer-success'));
   });
@@ -103,6 +104,11 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
         (item) => item.id === 'commercial-platform',
       ),
     );
+    assert.ok(
+      MANAGER_CAPABILITY_MANIFEST.uses.some(
+        (item) => item.id === 'launch-center',
+      ),
+    );
     assert.equal(listCapabilities().filter((c) => c.id === 'intelligence').length, 1);
     assert.equal(
       listCapabilities().filter((c) => c.id === 'customer-success').length,
@@ -118,6 +124,10 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
     );
     assert.equal(
       listCapabilities().filter((c) => c.id === 'commercial-platform').length,
+      1,
+    );
+    assert.equal(
+      listCapabilities().filter((c) => c.id === 'launch-center').length,
       1,
     );
   });

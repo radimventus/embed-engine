@@ -1,0 +1,30 @@
+{
+  "name": "@embed-engine/launch-center",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    }
+  },
+  "files": ["src"],
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/launchCenter.test.ts"
+  },
+  "dependencies": {
+    "@embed-engine/commercial-platform": "workspace:*",
+    "@embed-engine/operations-center": "workspace:*",
+    "@embed-engine/platform-access": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2"
+  }
+}

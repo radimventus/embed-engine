@@ -16,6 +16,7 @@
     "@embed-engine/customer-success": "workspace:*",
     "@embed-engine/design-tokens": "workspace:*",
     "@embed-engine/intelligence": "workspace:*",
+    "@embed-engine/launch-center": "workspace:*",
     "@embed-engine/object-house": "workspace:*",
     "@embed-engine/operations-center": "workspace:*",
     "@embed-engine/platform-access": "workspace:*",

@@ -7,6 +7,7 @@ export const MANAGER_CAPABILITY_MANIFEST: CapabilityManifest = {
   studioId: 'manager',
   version: '1.0.0',
   uses: [
+    { id: 'launch-center' },
     { id: 'operations-center' },
     { id: 'product-learning' },
     { id: 'commercial-platform' },

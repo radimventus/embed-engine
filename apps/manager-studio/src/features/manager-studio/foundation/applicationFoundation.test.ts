@@ -169,6 +169,21 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.match(pkg, /@embed-engine\/commercial-platform/);
   });
 
+  it('projects Launch Center capability (EPIC-BX-23)', () => {
+    const page = readSource(
+      'src/features/manager-studio/ManagerStudioPage.tsx',
+    );
+    const sidebar = readSource(
+      'src/features/manager-studio/ManagerStudioSidebar.tsx',
+    );
+    const pkg = readSource('package.json');
+
+    assert.match(page, /LaunchCenterCanvas/);
+    assert.match(sidebar, /LAUNCH_SECTION_NAV/);
+    assert.match(sidebar, /Launch/);
+    assert.match(pkg, /@embed-engine\/launch-center/);
+  });
+
   it('does not expose Interpretation or compose semantics in the Provider', () => {
     const provider = stripComments(
       readSource(

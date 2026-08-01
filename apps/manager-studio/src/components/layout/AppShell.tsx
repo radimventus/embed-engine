@@ -54,15 +54,17 @@ export function AppShell({ sidebar, children }: AppShellProps) {
   };
 
   const sectionLabel =
-    activeCapabilityId === 'operations-center'
-      ? 'Platform Ops'
-      : activeCapabilityId === 'commercial-platform'
-        ? 'Commercial'
-        : activeCapabilityId === 'product-learning'
-          ? 'Product Learning'
-          : activeCapabilityId === 'customer-success'
-            ? 'Customer Success'
-            : 'Operations';
+    activeCapabilityId === 'launch-center'
+      ? 'Launch'
+      : activeCapabilityId === 'operations-center'
+        ? 'Platform Ops'
+        : activeCapabilityId === 'commercial-platform'
+          ? 'Commercial'
+          : activeCapabilityId === 'product-learning'
+            ? 'Product Learning'
+            : activeCapabilityId === 'customer-success'
+              ? 'Customer Success'
+              : 'Operations';
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS' },

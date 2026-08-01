@@ -2,6 +2,7 @@ import { scrollToSection } from './foundation/scrollToSection';
 import { useManagerNav } from './foundation/ManagerNavProvider';
 import { COMMERCIAL_SECTION_NAV } from './commercial/commercialVocabulary';
 import { CUSTOMER_SUCCESS_SECTION_NAV } from './customer-success/customerSuccessVocabulary';
+import { LAUNCH_SECTION_NAV } from './launch/launchVocabulary';
 import { PLATFORM_OPS_SECTION_NAV } from './operations-center/platformOpsVocabulary';
 import { PRODUCT_LEARNING_SECTION_NAV } from './product-learning/productLearningVocabulary';
 import { OPERATIONS_SECTION_NAV } from './operations/operationsVocabulary';
@@ -78,6 +79,12 @@ export function ManagerStudioSidebar() {
       </div>
 
       <div className="flex flex-1 flex-col overflow-y-auto pb-section">
+        <NavGroup
+          title="Launch"
+          items={LAUNCH_SECTION_NAV}
+          activeSectionId={activeSectionId}
+          ariaLabel="Sekce Launch Center"
+        />
         <NavGroup
           title="Platform Ops"
           items={PLATFORM_OPS_SECTION_NAV}

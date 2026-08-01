@@ -193,6 +193,9 @@ importers:
       '@embed-engine/intelligence':
         specifier: workspace:*
         version: link:../../packages/intelligence
+      '@embed-engine/launch-center':
+        specifier: workspace:*
+        version: link:../../packages/launch-center
       '@embed-engine/object-house':
         specifier: workspace:*
         version: link:../../packages/object-house
@@ -500,6 +503,28 @@ importers:
         specifier: workspace:*
         version: link:../contracts
     devDependencies:
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  packages/launch-center:
+    dependencies:
+      '@embed-engine/commercial-platform':
+        specifier: workspace:*
+        version: link:../commercial-platform
+      '@embed-engine/operations-center':
+        specifier: workspace:*
+        version: link:../operations-center
+      '@embed-engine/platform-access':
+        specifier: workspace:*
+        version: link:../platform-access
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.1
+        version: 22.20.1
+      tsx:
+        specifier: ^4.20.3
+        version: 4.23.1
       typescript:
         specifier: ^5.9.2
         version: 5.9.3
