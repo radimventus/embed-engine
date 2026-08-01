@@ -83,6 +83,7 @@ describe('workspaceStorage migration (PR-012)', () => {
     const state = loadWorkspaceRegistryFromStorage();
     assert.equal(state.activeProjectId, 'villa-168');
     assert.equal(state.folders[0]?.name, 'AC Modular Pilot');
+    assert.ok(state.folders.length >= 3);
     saveWorkspaceRegistryToStorage(state);
     const raw = memory.get(WORKSPACE_STORAGE_KEY);
     assert.ok(raw !== undefined);

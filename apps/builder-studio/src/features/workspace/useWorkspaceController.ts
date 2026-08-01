@@ -67,7 +67,7 @@ export type WorkspaceController = {
 };
 
 /**
- * CAP-BLD-08 / PR-012 — workspace registry + latest-wins house activation.
+ * CAP-BLD-08 / PR-003A — serialized latest-wins activation (no abort timeout).
  */
 export function useWorkspaceController(): WorkspaceController {
   const [registry, setRegistry] = useState<WorkspaceRegistryState>(() =>
@@ -78,9 +78,13 @@ export function useWorkspaceController(): WorkspaceController {
   );
   const [switching, setSwitching] = useState(false);
   const [switchError, setSwitchError] = useState<string | null>(null);
-  const switchGenerationRef = useRef(0);
-  const abortRef = useRef<AbortController | null>(null);
   const registryRef = useRef(registry);
+  const pendingTargetRef = useRef<WorkspaceProject | null>(null);
+  const drainRunningRef = useRef(false);
+  const hostActiveRef = useRef<{
+    projectId: string;
+    packageRoot: string;
+  } | null>(null);
 
   useEffect(() => {
     registryRef.current = registry;
@@ -95,49 +99,70 @@ export function useWorkspaceController(): WorkspaceController {
     [registry],
   );
 
-  const activate = useCallback(async (project: WorkspaceProject) => {
-    // Latest request wins — abort in-flight activation (PR-012).
-    abortRef.current?.abort();
-    const generation = ++switchGenerationRef.current;
-    const abort = new AbortController();
-    abortRef.current = abort;
-
+  const drainActivationQueue = useCallback(async (): Promise<boolean> => {
+    if (drainRunningRef.current) {
+      return true;
+    }
+    drainRunningRef.current = true;
     setSwitching(true);
     setSwitchError(null);
+    let lastOk = true;
 
     try {
-      const result = await requestWorkspaceActive({
-        projectId: project.id,
-        packageRoot: project.packageRoot,
-        signal: abort.signal,
-      });
-      if (generation !== switchGenerationRef.current) {
-        return false;
-      }
-      if (!result.ok) {
-        if (result.aborted === true) {
-          return false;
+      while (pendingTargetRef.current !== null) {
+        const target = pendingTargetRef.current;
+        pendingTargetRef.current = null;
+
+        const alreadyHost =
+          hostActiveRef.current !== null &&
+          hostActiveRef.current.projectId === target.id &&
+          hostActiveRef.current.packageRoot === target.packageRoot;
+
+        if (!alreadyHost) {
+          const result = await requestWorkspaceActive({
+            projectId: target.id,
+            packageRoot: target.packageRoot,
+          });
+          // A newer target was queued while we awaited — discard this result.
+          if (pendingTargetRef.current !== null) {
+            continue;
+          }
+          if (!result.ok) {
+            setSwitchError(result.error);
+            lastOk = false;
+            break;
+          }
+          hostActiveRef.current = {
+            projectId: target.id,
+            packageRoot: target.packageRoot,
+          };
         }
-        setSwitchError(result.error);
-        return false;
+
+        if (pendingTargetRef.current !== null) {
+          continue;
+        }
+
+        setRegistry((prev) => openWorkspaceProject(prev, target.id));
+        setDirtyPrompt(null);
+        lastOk = true;
       }
-      setRegistry((prev) => openWorkspaceProject(prev, project.id));
-      setDirtyPrompt(null);
-      return true;
-    } catch (error: unknown) {
-      if (generation !== switchGenerationRef.current) {
-        return false;
-      }
-      setSwitchError(
-        error instanceof Error ? error.message : 'Přepnutí domu selhalo.',
-      );
-      return false;
+      return lastOk;
     } finally {
-      if (generation === switchGenerationRef.current) {
-        setSwitching(false);
+      drainRunningRef.current = false;
+      setSwitching(false);
+      if (pendingTargetRef.current !== null) {
+        void drainActivationQueue();
       }
     }
   }, []);
+
+  const activate = useCallback(
+    async (project: WorkspaceProject) => {
+      pendingTargetRef.current = project;
+      return drainActivationQueue();
+    },
+    [drainActivationQueue],
+  );
 
   const requestOpenProject = useCallback(
     async (
@@ -157,7 +182,14 @@ export function useWorkspaceController(): WorkspaceController {
       }
 
       if (target.id === current.activeProjectId && !options.dirty) {
-        // Re-assert host mount for the already-active house.
+        setRegistry((prev) => openWorkspaceProject(prev, target.id));
+        const alreadyHost =
+          hostActiveRef.current !== null &&
+          hostActiveRef.current.projectId === target.id &&
+          hostActiveRef.current.packageRoot === target.packageRoot;
+        if (alreadyHost) {
+          return true;
+        }
         return activate(target);
       }
 
@@ -192,13 +224,6 @@ export function useWorkspaceController(): WorkspaceController {
 
       if (opened.houseId === current.activeProjectId) {
         setRegistry(opened.state);
-        // Ensure host package root matches the active house.
-        const house = opened.state.projects.find(
-          (project) => project.id === opened.houseId,
-        );
-        if (house !== undefined) {
-          await activate(house);
-        }
         return opened.houseId;
       }
 
@@ -217,12 +242,10 @@ export function useWorkspaceController(): WorkspaceController {
         return null;
       }
 
-      const ok = await requestOpenProject(opened.houseId, {
-        dirty: false,
-      });
+      const ok = await requestOpenProject(opened.houseId, { dirty: false });
       return ok ? opened.houseId : null;
     },
-    [activate, requestOpenProject],
+    [requestOpenProject],
   );
 
   const confirmDirtySave = useCallback(
@@ -295,7 +318,6 @@ export function useWorkspaceController(): WorkspaceController {
         registryRef.current,
         input,
       );
-      // Immediate list update (PR-006) — before host activation.
       setRegistry(created.state);
       registryRef.current = created.state;
 
@@ -336,9 +358,18 @@ export function useWorkspaceController(): WorkspaceController {
     void requestWorkspaceActive({
       projectId: project.id,
       packageRoot: project.packageRoot,
-    }).catch(() => {
-      // Host may not be ready in unit tests.
-    });
+    })
+      .then((result) => {
+        if (result.ok) {
+          hostActiveRef.current = {
+            projectId: project.id,
+            packageRoot: project.packageRoot,
+          };
+        }
+      })
+      .catch(() => {
+        // Host may not be ready in unit tests.
+      });
     // Intentional: once on mount with initial registry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

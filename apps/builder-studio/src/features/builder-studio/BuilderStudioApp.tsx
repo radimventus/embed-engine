@@ -163,8 +163,11 @@ export function BuilderStudioApp() {
     validatedRootRef.current = null;
   }, [diskRoot]);
 
-  // Seed readiness from existing validate capability (no new CAP).
+  // Seed readiness after switch settles — avoid contending Vite with activate (PR-003A).
   useEffect(() => {
+    if (workspace.switching) {
+      return;
+    }
     if (
       diskRoot === null ||
       mountStatus.status !== 'ready' ||
@@ -173,9 +176,23 @@ export function BuilderStudioApp() {
     ) {
       return;
     }
-    validatedRootRef.current = diskRoot;
-    void validate();
-  }, [diskRoot, mountStatus.status, snapshot, validate]);
+    const timer = window.setTimeout(() => {
+      if (validatedRootRef.current === diskRoot) {
+        return;
+      }
+      validatedRootRef.current = diskRoot;
+      void validate();
+    }, 350);
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [
+    diskRoot,
+    mountStatus.status,
+    snapshot,
+    validate,
+    workspace.switching,
+  ]);
 
   // Platform Access → Builder HP mount (only when Workspace has no active project).
   useEffect(() => {

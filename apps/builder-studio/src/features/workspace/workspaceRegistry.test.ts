@@ -21,7 +21,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01)', () => {
     const state = createInitialWorkspaceRegistry();
     assert.equal(state.companies.length, 1);
     assert.equal(state.companies[0]?.name, 'AC Modular');
-    assert.equal(state.projects.length, 3);
+    assert.ok(state.projects.length >= 7);
     assert.equal(state.activeProjectId, 'villa-168');
     assert.ok(
       state.projects.every(
@@ -54,7 +54,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01)', () => {
     );
     state = closeWorkspaceProject(state);
     assert.equal(state.activeProjectId, null);
-    assert.equal(state.projects.length, 3);
+    assert.equal(state.projects.length, 7);
     assert.equal(state.lastOpenedProjectId, 'harmony-124');
   });
 
@@ -129,15 +129,21 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01)', () => {
     );
   });
 
-  it('seeds default houses under one project folder', () => {
+  it('seeds default houses under review project folders', () => {
     const state = createInitialWorkspaceRegistry();
-    assert.equal(state.folders.length, 1);
+    assert.equal(state.folders.length, 3);
     assert.equal(state.folders[0]?.name, 'AC Modular Pilot');
-    assert.ok(
-      state.projects.every(
-        (project) => project.folderId === state.folders[0]?.id,
-      ),
-    );
+    assert.equal(state.folders[1]?.name, 'Opava Pilot');
+    assert.equal(state.folders[2]?.name, 'Brno Pilot');
+    for (const folder of state.folders) {
+      const houses = state.projects.filter(
+        (project) => project.folderId === folder.id,
+      );
+      assert.ok(
+        houses.length >= 2,
+        `${folder.name} must have ≥2 houses, got ${houses.length}`,
+      );
+    }
   });
 
   it('updates project metadata without touching packageRoot', () => {

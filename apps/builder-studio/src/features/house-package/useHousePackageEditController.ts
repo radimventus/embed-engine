@@ -143,30 +143,6 @@ export function useHousePackageEditController(
     }
   }, [snapshot]);
 
-  useEffect(() => {
-    if (mountStatus.status !== 'ready') {
-      return;
-    }
-    let cancelled = false;
-    void (async () => {
-      setValidating(true);
-      try {
-        const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';
-        const report = await runDiskHousePackageValidation({ dirty });
-        if (!cancelled) {
-          setValidationReport(report);
-        }
-      } finally {
-        if (!cancelled) {
-          setValidating(false);
-        }
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [mountStatus.status, sessionEpoch]);
-
   const save = useCallback(async () => {
     if (session === null || snapshot === null) {
       return;

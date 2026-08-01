@@ -79,29 +79,94 @@ export const OBJECT_TYPE_OPTIONS: readonly {
   },
 ] as const;
 
-const DEFAULT_FOLDER_ID = 'project-ac-modular-pilot';
+const DEFAULT_FOLDER_AC = 'project-ac-modular-pilot';
+const DEFAULT_FOLDER_OPAVA = 'project-opava-pilot';
+const DEFAULT_FOLDER_BRNO = 'project-brno-pilot';
 
 export const DEFAULT_WORKSPACE_FOLDERS: readonly WorkspaceProjectFolder[] = [
   {
-    id: DEFAULT_FOLDER_ID,
+    id: DEFAULT_FOLDER_AC,
     name: 'AC Modular Pilot',
+    companyId: DEFAULT_COMPANY_ID,
+  },
+  {
+    id: DEFAULT_FOLDER_OPAVA,
+    name: 'Opava Pilot',
+    companyId: DEFAULT_COMPANY_ID,
+  },
+  {
+    id: DEFAULT_FOLDER_BRNO,
+    name: 'Brno Pilot',
     companyId: DEFAULT_COMPANY_ID,
   },
 ];
 
-export const DEFAULT_WORKSPACE_PROJECTS: readonly WorkspaceProject[] =
+const PLATFORM_HOUSES: readonly WorkspaceProject[] =
   platformRegistry.projects.map((project) => ({
     id: project.id,
     name: project.name,
     packageRoot: project.packageRoot,
     companyId: project.companyId,
-    folderId: DEFAULT_FOLDER_ID,
+    folderId: DEFAULT_FOLDER_AC,
     description: project.description,
     status: project.status,
     slug: project.slug,
     objectType: project.objectType,
     metadata: '',
   }));
+
+/** PR-003A — Product Review seed: ≥3 projekty, každý ≥2 domy. */
+export const DEFAULT_WORKSPACE_PROJECTS: readonly WorkspaceProject[] = [
+  ...PLATFORM_HOUSES,
+  {
+    id: 'opava-harmony',
+    name: 'Harmony 124',
+    packageRoot: 'apps/client-studio/public/house-packages/harmony-124',
+    companyId: DEFAULT_COMPANY_ID,
+    folderId: DEFAULT_FOLDER_OPAVA,
+    description: 'Opava — Harmony',
+    status: 'ready',
+    slug: 'opava-harmony',
+    objectType: 'harmony',
+    metadata: '',
+  },
+  {
+    id: 'opava-family',
+    name: 'Family 98',
+    packageRoot: 'apps/client-studio/public/house-packages/family-98',
+    companyId: DEFAULT_COMPANY_ID,
+    folderId: DEFAULT_FOLDER_OPAVA,
+    description: 'Opava — Family',
+    status: 'draft',
+    slug: 'opava-family',
+    objectType: 'family',
+    metadata: '',
+  },
+  {
+    id: 'brno-villa',
+    name: 'Villa 168',
+    packageRoot: 'apps/client-studio/public/house-package',
+    companyId: DEFAULT_COMPANY_ID,
+    folderId: DEFAULT_FOLDER_BRNO,
+    description: 'Brno — Villa',
+    status: 'published',
+    slug: 'brno-villa',
+    objectType: 'villa',
+    metadata: '',
+  },
+  {
+    id: 'brno-harmony',
+    name: 'Harmony 124',
+    packageRoot: 'apps/client-studio/public/house-packages/harmony-124',
+    companyId: DEFAULT_COMPANY_ID,
+    folderId: DEFAULT_FOLDER_BRNO,
+    description: 'Brno — Harmony',
+    status: 'ready',
+    slug: 'brno-harmony',
+    objectType: 'harmony',
+    metadata: '',
+  },
+];
 
 export const DEFAULT_ACTIVE_PROJECT_ID = PLATFORM_DEFAULT_PROJECT_ID;
 
@@ -135,7 +200,7 @@ export function normalizeWorkspaceProject(
     folderId:
       typeof input.folderId === 'string' && input.folderId.length > 0
         ? input.folderId
-        : DEFAULT_FOLDER_ID,
+        : DEFAULT_FOLDER_AC,
     description:
       typeof input.description === 'string' ? input.description : '',
     status,

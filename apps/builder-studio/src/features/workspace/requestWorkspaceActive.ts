@@ -1,5 +1,9 @@
 /**
  * CAP-BLD-08 — activate HP root on Builder Vite host (metadata → mount root).
+ *
+ * PR-003A / PR-012 — no client-side abort timeout. The previous 8s AbortController
+ * was the direct source of "Aktivace projektu vypršela" under normal switching
+ * when the Vite event loop was busy with HP validate/mount work.
  */
 
 export const WORKSPACE_ACTIVE_API = '/api/workspace/active';
@@ -13,7 +17,6 @@ export type WorkspaceActiveResponse =
   | {
       readonly ok: false;
       readonly error: string;
-      readonly aborted?: boolean;
     };
 
 function parseActivePayload(payload: unknown): WorkspaceActiveResponse | null {
@@ -49,34 +52,10 @@ function parseActivePayload(payload: unknown): WorkspaceActiveResponse | null {
   return null;
 }
 
-function isAbortError(error: unknown): boolean {
-  return (
-    (error instanceof DOMException && error.name === 'AbortError') ||
-    (error instanceof Error && error.name === 'AbortError')
-  );
-}
-
 export async function requestWorkspaceActive(input: {
   readonly projectId: string;
   readonly packageRoot: string;
-  readonly signal?: AbortSignal;
 }): Promise<WorkspaceActiveResponse> {
-  const timeout = new AbortController();
-  const timeoutId = setTimeout(() => {
-    timeout.abort();
-  }, 8_000);
-
-  const onOuterAbort = () => {
-    timeout.abort();
-  };
-  if (input.signal !== undefined) {
-    if (input.signal.aborted) {
-      clearTimeout(timeoutId);
-      return { ok: false, error: 'aborted', aborted: true };
-    }
-    input.signal.addEventListener('abort', onOuterAbort, { once: true });
-  }
-
   try {
     const response = await fetch(WORKSPACE_ACTIVE_API, {
       method: 'POST',
@@ -85,7 +64,6 @@ export async function requestWorkspaceActive(input: {
         projectId: input.projectId,
         packageRoot: input.packageRoot,
       }),
-      signal: timeout.signal,
     });
 
     let payload: unknown = null;
@@ -105,15 +83,6 @@ export async function requestWorkspaceActive(input: {
       error: `Aktivace projektu selhala (HTTP ${response.status})`,
     };
   } catch (error: unknown) {
-    if (isAbortError(error)) {
-      if (input.signal?.aborted) {
-        return { ok: false, error: 'aborted', aborted: true };
-      }
-      return {
-        ok: false,
-        error: 'Aktivace projektu vypršela — zkuste znovu.',
-      };
-    }
     return {
       ok: false,
       error:
@@ -121,9 +90,6 @@ export async function requestWorkspaceActive(input: {
           ? error.message
           : 'Aktivace projektu selhala.',
     };
-  } finally {
-    clearTimeout(timeoutId);
-    input.signal?.removeEventListener('abort', onOuterAbort);
   }
 }
 
