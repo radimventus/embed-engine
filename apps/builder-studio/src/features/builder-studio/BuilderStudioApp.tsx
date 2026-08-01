@@ -18,7 +18,6 @@ import { CollaborationCenterView } from '../collaboration-workspace';
 import { PreviewCenterView } from '../preview-center';
 import { ReleaseCenterView } from '../release-center';
 import {
-  buildPlatformWorkspaceState,
   CapabilityInspector,
   PlatformEmptyState,
   PlatformLoading,
@@ -78,12 +77,10 @@ function isClickModelNav(nav: HousePackageNavId): boolean {
 export function BuilderStudioApp() {
   const {
     session: accessSession,
-    registry,
     bootstrap,
     logout,
     clearStudio,
     selectStudio,
-    selectProject,
     bootstrapActiveProject,
   } = usePlatformSession();
   const workspace = useWorkspaceController();
@@ -190,14 +187,13 @@ export function BuilderStudioApp() {
     void projectBootstrap;
   }, [accessSession?.projectId, workspace.activeProject?.id, workspace.switching]);
 
-  const openProjectStable = (projectId: string) => {
-    void (async () => {
-      const ok = await workspace.requestOpenProject(projectId, { dirty });
-      if (!ok) return;
-      if (registry.projects.some((project) => project.id === projectId)) {
-        selectProject(projectId);
-      }
-    })();
+  // PR-006 / PR-012 — přepínání jen ve Workspace (ne v Platform Access / horní liště).
+  const openHouseStable = (houseId: string) => {
+    void workspace.requestOpenProject(houseId, { dirty });
+  };
+
+  const openFolderStable = (folderId: string) => {
+    void workspace.requestOpenFolder(folderId, { dirty });
   };
 
   const handleNavigate = (nav: HousePackageNavId) => {
@@ -215,27 +211,20 @@ export function BuilderStudioApp() {
     });
   };
 
-  const platformWorkspace = buildPlatformWorkspaceState({
-    companyLabel: companyName,
-    projectLabel:
-      workspace.activeProject?.name ?? bootstrap?.project?.name ?? '—',
-    projects: registry.projects.map((project) => ({
-      id: project.id,
-      label: project.name,
-      companyLabel:
-        registry.companies.find((company) => company.id === project.companyId)
-          ?.name ?? 'Firma',
-    })),
-    onSelectProject: openProjectStable,
-  });
+  const activeFolderName =
+    workspace.registry.folders.find(
+      (folder) => folder.id === workspace.registry.activeFolderId,
+    )?.name ?? 'Projekt';
 
+  const platformWorkspace = null;
   const breadcrumb: PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Builder' },
     { id: 'company', label: companyName },
+    { id: 'project', label: activeFolderName },
     {
-      id: 'project',
-      label: workspace.activeProject?.name ?? bootstrap?.project?.name ?? 'Projekt',
+      id: 'house',
+      label: workspace.activeProject?.name ?? 'Dům',
     },
     { id: 'section', label: SECTION_LABEL[activeNav] },
   ];
@@ -301,34 +290,19 @@ export function BuilderStudioApp() {
             switching={workspace.switching}
             switchError={workspace.switchError}
             dirtyPrompt={workspace.dirtyPrompt}
-            onOpenProject={openProjectStable}
+            onOpenFolder={openFolderStable}
+            onOpenHouse={openHouseStable}
             onCreateProject={() => setCreateOpen(true)}
             onDirtySave={() => {
-              const targetId =
-                workspace.dirtyPrompt?.kind === 'switch'
-                  ? workspace.dirtyPrompt.target.id
-                  : null;
               void workspace.confirmDirtySave(async () => {
                 await save();
-              }).then((ok) => {
-                if (ok && targetId !== null) {
-                  selectProject(targetId);
-                }
               });
             }}
             onDirtyDiscard={() => {
-              const targetId =
-                workspace.dirtyPrompt?.kind === 'switch'
-                  ? workspace.dirtyPrompt.target.id
-                  : null;
               if (session !== null) {
                 apply(session.discard());
               }
-              void workspace.confirmDirtyDiscard().then((ok) => {
-                if (ok && targetId !== null) {
-                  selectProject(targetId);
-                }
-              });
+              void workspace.confirmDirtyDiscard();
             }}
             onDirtyCancel={workspace.cancelDirtySwitch}
           />
@@ -544,13 +518,8 @@ export function BuilderStudioApp() {
           void (async () => {
             const created = await workspace.createProject(input, { dirty });
             if (created !== null) {
-              if (
-                registry.projects.some((project) => project.id === created.id)
-              ) {
-                selectProject(created.id);
-              }
               setCreateOpen(false);
-              setActiveNav('overview');
+              setActiveNav('media-studio');
             }
           })();
         }}

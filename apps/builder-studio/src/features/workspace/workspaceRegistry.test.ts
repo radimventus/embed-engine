@@ -88,18 +88,22 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01)', () => {
     assert.deepEqual(state.recentProjectIds, ['harmony-124', 'family-98']);
   });
 
-  it('creates a new project under a company (metadata only)', () => {
+  it('creates a new project folder with first house (metadata only)', () => {
     const base = createInitialWorkspaceRegistry();
-    const { state, project } = createWorkspaceProjectFromInput(base, {
+    const { state, project, folder } = createWorkspaceProjectFromInput(base, {
       name: 'Harmony 140',
       companyId: 'ac-modular',
       objectType: 'harmony',
       description: 'Nový typ',
     });
-    assert.equal(project.name, 'Harmony 140');
+    assert.equal(folder.name, 'Harmony 140');
+    assert.equal(project.name, 'Harmony');
+    assert.equal(project.folderId, folder.id);
     assert.equal(project.companyId, 'ac-modular');
     assert.equal(project.status, 'draft');
+    assert.ok(state.folders.some((item) => item.id === folder.id));
     assert.ok(state.projects.some((item) => item.id === project.id));
+    assert.equal(state.activeFolderId, folder.id);
     assert.equal(
       project.packageRoot,
       'apps/client-studio/public/house-packages/harmony-124',
@@ -108,18 +112,30 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01)', () => {
 
   it('creates a new company inline when creating a project', () => {
     const base = createInitialWorkspaceRegistry();
-    const { state, project } = createWorkspaceProjectFromInput(base, {
+    const { state, project, folder } = createWorkspaceProjectFromInput(base, {
       name: 'Pilot A',
       companyId: '__new__',
       companyName: 'Nova Homes',
       objectType: 'villa',
       description: '',
     });
+    assert.equal(folder.name, 'Pilot A');
     assert.equal(project.companyId, 'company-nova-homes');
     assert.ok(
       state.companies.some(
         (company) =>
           company.id === 'company-nova-homes' && company.name === 'Nova Homes',
+      ),
+    );
+  });
+
+  it('seeds default houses under one project folder', () => {
+    const state = createInitialWorkspaceRegistry();
+    assert.equal(state.folders.length, 1);
+    assert.equal(state.folders[0]?.name, 'AC Modular Pilot');
+    assert.ok(
+      state.projects.every(
+        (project) => project.folderId === state.folders[0]?.id,
       ),
     );
   });

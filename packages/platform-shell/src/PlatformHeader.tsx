@@ -3,13 +3,13 @@ import { FeedbackButton } from './FeedbackButton';
 import { NotificationsBell } from './NotificationsBell';
 import { StudioSwitcher } from './StudioSwitcher';
 import { UserMenu } from './UserMenu';
-import { WorkspaceSwitcher } from './WorkspaceSwitcher';
 import type { PlatformWorkspaceState } from './platformTypes';
 
 export type PlatformHeaderProps = {
   readonly activeStudioId: PlatformStudioId;
   readonly userLabel?: string;
   readonly roleLabel?: string;
+  /** @deprecated PR-006 — header no longer shows project/house. Kept for API compat. */
   readonly workspace?: PlatformWorkspaceState | null;
   readonly notificationCount?: number;
   readonly searchPlaceholder?: string;
@@ -20,19 +20,21 @@ export type PlatformHeaderProps = {
 };
 
 /**
- * VR-FIX-04 — Header: brand · Project · Studio · user (one interaction model).
+ * PR-006 — Header: Platform + Studio switch only (no Projekt / Dům).
  */
 export function PlatformHeader({
   activeStudioId,
   userLabel = 'Radim',
   roleLabel,
-  workspace = null,
+  workspace: _workspace = null,
   notificationCount = 3,
   onLogout,
   onOpenLanding,
   onSelectStudio,
   onSubmitFeedback,
 }: PlatformHeaderProps) {
+  void _workspace;
+
   return (
     <header className="platform-header" data-testid="platform-header">
       <div className="platform-header__cluster">
@@ -51,7 +53,6 @@ export function PlatformHeader({
         >
           CON<span className="platform-header__brand-accent">I</span>S
         </button>
-        <WorkspaceSwitcher workspace={workspace} />
       </div>
 
       <StudioSwitcher

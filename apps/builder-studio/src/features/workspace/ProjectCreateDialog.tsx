@@ -51,7 +51,7 @@ export function ProjectCreateDialog({
     <PlatformDialog
       open={open}
       title="Nový projekt"
-      description="Projekt patří firmě ve Workspace. Typ objektu určí výchozí obsah."
+      description="Založí nový projekt ve Workspace a první dům podle typu objektu."
       primaryLabel={busy ? 'Zakládám…' : 'Založit projekt'}
       secondaryLabel="Zrušit"
       busy={busy}

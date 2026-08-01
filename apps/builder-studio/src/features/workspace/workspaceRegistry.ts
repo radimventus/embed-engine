@@ -1,6 +1,5 @@
 /**
- * CAP-BLD-08 + EPIC-BX-01 / BX-14 — Workspace / Project registry metadata only (ADR-023).
- * Company identity SSOT lives in `@embed-engine/platform-access`.
+ * CAP-BLD-08 + EPIC-BX-01 / BX-14 — Workspace registry (Projekt → Domy).
  * Content remains in each House Package root. No parallel content model.
  */
 
@@ -17,23 +16,32 @@ export type WorkspaceCompany = {
   readonly name: string;
 };
 
+/** UI „Projekt“ — kontejner domů (ne HP obsah). */
+export type WorkspaceProjectFolder = {
+  readonly id: string;
+  readonly name: string;
+  readonly companyId: string;
+};
+
+/** UI „Dům“ — House Package mount. */
 export type WorkspaceProject = {
   readonly id: string;
   readonly name: string;
-  /** Repo-relative HP-002 root (internal — not product UI). */
   readonly packageRoot: string;
   readonly companyId: string;
+  readonly folderId: string;
   readonly description: string;
   readonly status: WorkspaceProjectStatus;
   readonly slug: string;
   readonly objectType: string;
-  /** Freeform project notes / metadata (not House Package content). */
   readonly metadata: string;
 };
 
 export type WorkspaceRegistryState = {
   readonly companies: readonly WorkspaceCompany[];
+  readonly folders: readonly WorkspaceProjectFolder[];
   readonly projects: readonly WorkspaceProject[];
+  readonly activeFolderId: string | null;
   readonly activeProjectId: string | null;
   readonly recentProjectIds: readonly string[];
   readonly lastOpenedProjectId: string | null;
@@ -71,12 +79,23 @@ export const OBJECT_TYPE_OPTIONS: readonly {
   },
 ] as const;
 
+const DEFAULT_FOLDER_ID = 'project-ac-modular-pilot';
+
+export const DEFAULT_WORKSPACE_FOLDERS: readonly WorkspaceProjectFolder[] = [
+  {
+    id: DEFAULT_FOLDER_ID,
+    name: 'AC Modular Pilot',
+    companyId: DEFAULT_COMPANY_ID,
+  },
+];
+
 export const DEFAULT_WORKSPACE_PROJECTS: readonly WorkspaceProject[] =
   platformRegistry.projects.map((project) => ({
     id: project.id,
     name: project.name,
     packageRoot: project.packageRoot,
     companyId: project.companyId,
+    folderId: DEFAULT_FOLDER_ID,
     description: project.description,
     status: project.status,
     slug: project.slug,
@@ -86,7 +105,9 @@ export const DEFAULT_WORKSPACE_PROJECTS: readonly WorkspaceProject[] =
 
 export const DEFAULT_ACTIVE_PROJECT_ID = PLATFORM_DEFAULT_PROJECT_ID;
 
-export const WORKSPACE_STORAGE_KEY = 'conis.builder.workspace.v1';
+export const WORKSPACE_STORAGE_KEY = 'conis.builder.workspace.v2';
+/** Legacy key — auto-migrated on load (PR-012). */
+export const WORKSPACE_STORAGE_KEY_LEGACY = 'conis.builder.workspace.v1';
 
 const MAX_RECENT = 8;
 
@@ -111,6 +132,10 @@ export function normalizeWorkspaceProject(
       typeof input.companyId === 'string' && input.companyId.length > 0
         ? input.companyId
         : DEFAULT_COMPANY_ID,
+    folderId:
+      typeof input.folderId === 'string' && input.folderId.length > 0
+        ? input.folderId
+        : DEFAULT_FOLDER_ID,
     description:
       typeof input.description === 'string' ? input.description : '',
     status,
@@ -130,6 +155,7 @@ export function createInitialWorkspaceRegistry(
   projects: readonly WorkspaceProject[] = DEFAULT_WORKSPACE_PROJECTS,
   activeProjectId: string | null = DEFAULT_ACTIVE_PROJECT_ID,
   companies: readonly WorkspaceCompany[] = DEFAULT_WORKSPACE_COMPANIES,
+  folders: readonly WorkspaceProjectFolder[] = DEFAULT_WORKSPACE_FOLDERS,
 ): WorkspaceRegistryState {
   const normalized = projects.map((project) =>
     normalizeWorkspaceProject(project),
@@ -139,10 +165,16 @@ export function createInitialWorkspaceRegistry(
     normalized.some((project) => project.id === activeProjectId)
       ? activeProjectId
       : (normalized[0]?.id ?? null);
+  const activeHouse =
+    active !== null ? normalized.find((project) => project.id === active) : null;
+  const activeFolderId =
+    activeHouse?.folderId ?? folders[0]?.id ?? null;
 
   return {
     companies: [...companies],
+    folders: [...folders],
     projects: normalized,
+    activeFolderId,
     activeProjectId: active,
     recentProjectIds: active !== null ? [active] : [],
     lastOpenedProjectId: active,
@@ -163,6 +195,13 @@ export function findWorkspaceCompany(
   return state.companies.find((company) => company.id === companyId) ?? null;
 }
 
+export function findWorkspaceFolder(
+  state: WorkspaceRegistryState,
+  folderId: string,
+): WorkspaceProjectFolder | null {
+  return state.folders.find((folder) => folder.id === folderId) ?? null;
+}
+
 export function getActiveWorkspaceProject(
   state: WorkspaceRegistryState,
 ): WorkspaceProject | null {
@@ -172,11 +211,27 @@ export function getActiveWorkspaceProject(
   return findWorkspaceProject(state, state.activeProjectId);
 }
 
+export function getActiveWorkspaceFolder(
+  state: WorkspaceRegistryState,
+): WorkspaceProjectFolder | null {
+  if (state.activeFolderId === null) {
+    return null;
+  }
+  return findWorkspaceFolder(state, state.activeFolderId);
+}
+
 export function projectsForCompany(
   state: WorkspaceRegistryState,
   companyId: string,
 ): readonly WorkspaceProject[] {
   return state.projects.filter((project) => project.companyId === companyId);
+}
+
+export function housesForFolder(
+  state: WorkspaceRegistryState,
+  folderId: string,
+): readonly WorkspaceProject[] {
+  return state.projects.filter((project) => project.folderId === folderId);
 }
 
 function pushRecent(
@@ -189,7 +244,7 @@ function pushRecent(
   ].slice(0, MAX_RECENT);
 }
 
-/** Open / switch active project (metadata only). */
+/** Open / switch active house (metadata only). */
 export function openWorkspaceProject(
   state: WorkspaceRegistryState,
   projectId: string,
@@ -201,12 +256,45 @@ export function openWorkspaceProject(
   return {
     ...state,
     activeProjectId: projectId,
+    activeFolderId: project.folderId,
     lastOpenedProjectId: projectId,
     recentProjectIds: pushRecent(state.recentProjectIds, projectId),
   };
 }
 
-/** Close active project (keeps registry; clears active). */
+/** Switch project folder and open its first house. */
+export function openWorkspaceFolder(
+  state: WorkspaceRegistryState,
+  folderId: string,
+): { readonly state: WorkspaceRegistryState; readonly houseId: string | null } {
+  const folder = findWorkspaceFolder(state, folderId);
+  if (folder === null) {
+    return { state, houseId: null };
+  }
+  const houses = housesForFolder(state, folderId);
+  const preferred =
+    houses.find((house) => house.id === state.activeProjectId) ??
+    houses[0] ??
+    null;
+  if (preferred === null) {
+    return {
+      state: {
+        ...state,
+        activeFolderId: folderId,
+        activeProjectId: null,
+      },
+      houseId: null,
+    };
+  }
+  return {
+    state: openWorkspaceProject(
+      { ...state, activeFolderId: folderId },
+      preferred.id,
+    ),
+    houseId: preferred.id,
+  };
+}
+
 export function closeWorkspaceProject(
   state: WorkspaceRegistryState,
 ): WorkspaceRegistryState {
@@ -224,6 +312,17 @@ export function registerWorkspaceCompany(
   return {
     ...state,
     companies: [...without, company],
+  };
+}
+
+export function registerWorkspaceFolder(
+  state: WorkspaceRegistryState,
+  folder: WorkspaceProjectFolder,
+): WorkspaceRegistryState {
+  const without = state.folders.filter((item) => item.id !== folder.id);
+  return {
+    ...state,
+    folders: [...without, folder],
   };
 }
 
@@ -247,6 +346,7 @@ export function updateWorkspaceProject(
       WorkspaceProject,
       | 'name'
       | 'companyId'
+      | 'folderId'
       | 'description'
       | 'status'
       | 'slug'
@@ -277,7 +377,7 @@ export function slugifyProjectName(name: string): string {
 
 export function resolvePackageRootForObjectType(objectType: string): string {
   const match = OBJECT_TYPE_OPTIONS.find((option) => option.id === objectType);
-  return match?.packageRoot ?? OBJECT_TYPE_OPTIONS[2].packageRoot;
+  return match?.packageRoot ?? OBJECT_TYPE_OPTIONS[2]!.packageRoot;
 }
 
 export type CreateWorkspaceProjectInput = {
@@ -288,12 +388,16 @@ export type CreateWorkspaceProjectInput = {
   readonly description: string;
 };
 
+/**
+ * ⊕ Nový projekt — vytvoří Projekt (folder) + první dům.
+ */
 export function createWorkspaceProjectFromInput(
   state: WorkspaceRegistryState,
   input: CreateWorkspaceProjectInput,
 ): {
   readonly state: WorkspaceRegistryState;
   readonly project: WorkspaceProject;
+  readonly folder: WorkspaceProjectFolder;
 } {
   let next = state;
   let companyId = input.companyId;
@@ -309,41 +413,68 @@ export function createWorkspaceProjectFromInput(
   }
 
   const baseSlug = slugifyProjectName(input.name) || 'project';
-  let slug = baseSlug;
-  let id = baseSlug;
+  let folderSlug = baseSlug;
+  let folderId = `project-${folderSlug}`;
   let suffix = 2;
-  while (next.projects.some((project) => project.id === id)) {
-    slug = `${baseSlug}-${suffix}`;
-    id = slug;
+  while (next.folders.some((folder) => folder.id === folderId)) {
+    folderSlug = `${baseSlug}-${suffix}`;
+    folderId = `project-${folderSlug}`;
     suffix += 1;
   }
 
-  const project = normalizeWorkspaceProject({
-    id,
+  const folder: WorkspaceProjectFolder = {
+    id: folderId,
     name: input.name.trim(),
+    companyId,
+  };
+  next = registerWorkspaceFolder(next, folder);
+
+  let houseSlug = `${folderSlug}-dum`;
+  let houseId = houseSlug;
+  suffix = 2;
+  while (next.projects.some((project) => project.id === houseId)) {
+    houseSlug = `${folderSlug}-dum-${suffix}`;
+    houseId = houseSlug;
+    suffix += 1;
+  }
+
+  const objectLabel =
+    OBJECT_TYPE_OPTIONS.find((option) => option.id === input.objectType)
+      ?.label ?? 'Dům';
+
+  const project = normalizeWorkspaceProject({
+    id: houseId,
+    name: objectLabel,
     packageRoot: resolvePackageRootForObjectType(input.objectType),
     companyId,
+    folderId: folder.id,
     description: input.description.trim(),
     status: 'draft',
-    slug,
+    slug: houseSlug,
     objectType: input.objectType,
     metadata: '',
   });
 
-  return {
-    state: registerWorkspaceProject(next, project),
-    project,
+  next = registerWorkspaceProject(next, project);
+  next = {
+    ...next,
+    activeFolderId: folder.id,
+    activeProjectId: project.id,
+    lastOpenedProjectId: project.id,
+    recentProjectIds: pushRecent(next.recentProjectIds, project.id),
   };
+
+  return { state: next, project, folder };
 }
 
 export type WorkspacePersistedSlice = {
+  readonly activeFolderId?: string | null;
   readonly activeProjectId: string | null;
   readonly recentProjectIds: readonly string[];
   readonly lastOpenedProjectId: string | null;
-  /** Extra projects opened beyond defaults (metadata only). */
   readonly extraProjects: readonly WorkspaceProject[];
-  /** Extra companies beyond defaults. */
   readonly extraCompanies?: readonly WorkspaceCompany[];
+  readonly extraFolders?: readonly WorkspaceProjectFolder[];
 };
 
 export function toPersistedWorkspaceSlice(
@@ -353,13 +484,20 @@ export function toPersistedWorkspaceSlice(
   const defaultCompanyIds = new Set(
     DEFAULT_WORKSPACE_COMPANIES.map((company) => company.id),
   );
+  const defaultFolderIds = new Set(
+    DEFAULT_WORKSPACE_FOLDERS.map((folder) => folder.id),
+  );
   return {
+    activeFolderId: state.activeFolderId,
     activeProjectId: state.activeProjectId,
     recentProjectIds: state.recentProjectIds,
     lastOpenedProjectId: state.lastOpenedProjectId,
     extraProjects: state.projects.filter((p) => !defaultIds.has(p.id)),
     extraCompanies: state.companies.filter(
       (company) => !defaultCompanyIds.has(company.id),
+    ),
+    extraFolders: state.folders.filter(
+      (folder) => !defaultFolderIds.has(folder.id),
     ),
   };
 }
@@ -391,7 +529,17 @@ export function mergePersistedWorkspaceSlice(
       )
     : [];
 
+  const extraFolders = Array.isArray(persisted.extraFolders)
+    ? persisted.extraFolders.filter(
+        (folder) =>
+          typeof folder?.id === 'string' &&
+          typeof folder?.name === 'string' &&
+          typeof folder?.companyId === 'string',
+      )
+    : [];
+
   const companies = [...DEFAULT_WORKSPACE_COMPANIES, ...extraCompanies];
+  const folders = [...DEFAULT_WORKSPACE_FOLDERS, ...extraFolders];
   const projects = [...DEFAULT_WORKSPACE_PROJECTS, ...extras].map((project) =>
     normalizeWorkspaceProject(project),
   );
@@ -404,6 +552,15 @@ export function mergePersistedWorkspaceSlice(
     projects.some((project) => project.id === activeCandidate)
       ? activeCandidate
       : base.activeProjectId;
+  const activeHouse =
+    active !== null ? projects.find((project) => project.id === active) : null;
+  const folderCandidate =
+    persisted.activeFolderId ?? activeHouse?.folderId ?? base.activeFolderId;
+  const activeFolderId =
+    folderCandidate !== null &&
+    folders.some((folder) => folder.id === folderCandidate)
+      ? folderCandidate
+      : (folders[0]?.id ?? null);
 
   const recent = (
     Array.isArray(persisted.recentProjectIds)
@@ -415,7 +572,9 @@ export function mergePersistedWorkspaceSlice(
 
   return {
     companies,
+    folders,
     projects,
+    activeFolderId,
     activeProjectId: active,
     recentProjectIds:
       recent.length > 0 ? recent : active !== null ? [active] : [],

@@ -6,7 +6,7 @@ type WorkspaceSwitcherProps = {
 };
 
 /**
- * VR-FIX-03 — Project switcher (same grammar as Studio switcher dropdown).
+ * VR-FIX-03 / PR-006 — Project context in header (no switching — sidebar owns it).
  */
 export function WorkspaceSwitcher({ workspace }: WorkspaceSwitcherProps) {
   if (workspace === null) {
@@ -16,6 +16,24 @@ export function WorkspaceSwitcher({ workspace }: WorkspaceSwitcherProps) {
         style={{ cursor: 'default', color: '#94A3B8' }}
       >
         Projekt
+      </span>
+    );
+  }
+
+  const canSwitch =
+    typeof workspace.onSelectProject === 'function' &&
+    workspace.projects.length > 0;
+
+  if (!canSwitch) {
+    return (
+      <span
+        className="platform-menu-button"
+        style={{ cursor: 'default' }}
+        aria-label="Aktivní projekt"
+      >
+        <span style={{ color: '#94A3B8', fontWeight: 500 }}>Projekt</span>
+        <span aria-hidden> · </span>
+        <span>{workspace.projectLabel}</span>
       </span>
     );
   }

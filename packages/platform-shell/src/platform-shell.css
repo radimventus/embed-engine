@@ -10,12 +10,12 @@
   --platform-gold-light: #fbf7ee;
   --platform-ink: #001930;
   --platform-muted: #64748b;
-  --platform-line: #e2e8f0;
+  --platform-line: #e3e3e3;
   --platform-surface: #ffffff;
-  --platform-canvas: #f5f7fb;
-  --platform-accent: #18428f;
-  --platform-blue: #18428f;
-  --platform-blue-bg: #eef4ff;
+  --platform-canvas: #f7f6f4;
+  --platform-accent: #b8922d;
+  --platform-blue: #b8922d;
+  --platform-blue-bg: #fbf7ee;
   --platform-green: #138d45;
   --platform-green-bg: #e6f7ed;
   --platform-red: #dc2626;
@@ -49,9 +49,9 @@
 }
 
 [data-platform-shell][data-studio='builder'] {
-  --platform-accent: #18428f;
-  --platform-blue: #18428f;
-  --platform-blue-bg: #eef4ff;
+  --platform-accent: #b8922d;
+  --platform-blue: #b8922d;
+  --platform-blue-bg: #fbf7ee;
 }
 
 [data-platform-shell][data-studio='manager'] {
@@ -788,7 +788,7 @@
 .platform-dialog-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 200;
+  z-index: 400;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -797,22 +797,32 @@
 }
 
 .platform-dialog {
+  display: flex;
+  flex-direction: column;
   width: min(520px, 100%);
   max-height: min(86vh, 720px);
-  overflow: auto;
+  overflow: hidden;
   border: 1px solid rgba(0, 25, 48, 0.06);
   border-radius: var(--platform-radius-card);
   background: var(--platform-surface);
   box-shadow: 0 20px 48px rgba(0, 25, 48, 0.18);
-  padding: 26px;
+  padding: 0;
+}
+
+.platform-dialog > form {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: min(86vh, 720px);
 }
 
 .platform-dialog__header {
   display: flex;
+  flex-shrink: 0;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
-  margin-bottom: 8px;
+  padding: 26px 26px 0;
 }
 
 .platform-dialog__title {
@@ -862,16 +872,23 @@
 
 .platform-dialog__body {
   display: flex;
+  flex: 1 1 auto;
   flex-direction: column;
   gap: 14px;
-  margin-top: 18px;
+  min-height: 0;
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 18px 26px;
 }
 
 .platform-dialog__actions {
   display: flex;
+  flex-shrink: 0;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 22px;
+  margin: 0;
+  padding: 8px 26px 26px;
 }
 
 .platform-field {

@@ -13,6 +13,7 @@ export type WorkspaceActiveResponse =
   | {
       readonly ok: false;
       readonly error: string;
+      readonly aborted?: boolean;
     };
 
 function parseActivePayload(payload: unknown): WorkspaceActiveResponse | null {
@@ -48,21 +49,43 @@ function parseActivePayload(payload: unknown): WorkspaceActiveResponse | null {
   return null;
 }
 
+function isAbortError(error: unknown): boolean {
+  return (
+    (error instanceof DOMException && error.name === 'AbortError') ||
+    (error instanceof Error && error.name === 'AbortError')
+  );
+}
+
 export async function requestWorkspaceActive(input: {
   readonly projectId: string;
   readonly packageRoot: string;
+  readonly signal?: AbortSignal;
 }): Promise<WorkspaceActiveResponse> {
-  const controller = new AbortController();
+  const timeout = new AbortController();
   const timeoutId = setTimeout(() => {
-    controller.abort();
+    timeout.abort();
   }, 8_000);
+
+  const onOuterAbort = () => {
+    timeout.abort();
+  };
+  if (input.signal !== undefined) {
+    if (input.signal.aborted) {
+      clearTimeout(timeoutId);
+      return { ok: false, error: 'aborted', aborted: true };
+    }
+    input.signal.addEventListener('abort', onOuterAbort, { once: true });
+  }
 
   try {
     const response = await fetch(WORKSPACE_ACTIVE_API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input),
-      signal: controller.signal,
+      body: JSON.stringify({
+        projectId: input.projectId,
+        packageRoot: input.packageRoot,
+      }),
+      signal: timeout.signal,
     });
 
     let payload: unknown = null;
@@ -82,7 +105,10 @@ export async function requestWorkspaceActive(input: {
       error: `Aktivace projektu selhala (HTTP ${response.status})`,
     };
   } catch (error: unknown) {
-    if (error instanceof DOMException && error.name === 'AbortError') {
+    if (isAbortError(error)) {
+      if (input.signal?.aborted) {
+        return { ok: false, error: 'aborted', aborted: true };
+      }
       return {
         ok: false,
         error: 'Aktivace projektu vypršela — zkuste znovu.',
@@ -97,6 +123,7 @@ export async function requestWorkspaceActive(input: {
     };
   } finally {
     clearTimeout(timeoutId);
+    input.signal?.removeEventListener('abort', onOuterAbort);
   }
 }
 

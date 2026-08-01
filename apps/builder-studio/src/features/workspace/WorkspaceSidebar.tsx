@@ -3,7 +3,8 @@ import { PlatformDialog } from '@embed-engine/platform-shell';
 
 import type { DirtySwitchPrompt } from './useWorkspaceController';
 import {
-  projectsForCompany,
+  getActiveWorkspaceFolder,
+  housesForFolder,
   type WorkspaceProject,
   type WorkspaceRegistryState,
 } from './workspaceRegistry';
@@ -14,7 +15,8 @@ type WorkspaceSidebarProps = {
   readonly switching: boolean;
   readonly switchError: string | null;
   readonly dirtyPrompt: DirtySwitchPrompt | null;
-  readonly onOpenProject: (projectId: string) => void;
+  readonly onOpenFolder: (folderId: string) => void;
+  readonly onOpenHouse: (houseId: string) => void;
   readonly onCreateProject: () => void;
   readonly onDirtySave: () => void;
   readonly onDirtyDiscard: () => void;
@@ -22,37 +24,32 @@ type WorkspaceSidebarProps = {
 };
 
 /**
- * PR-006 — Funkční selectbox Projekt + ⊕ pro nový projekt.
+ * PR-006 — Selectbox Projekt · ⊕ nový projekt · levý seznam pouze Domy.
  */
 export function WorkspaceSidebar({
   registry,
-  activeProject,
+  activeProject: _activeProject,
   switching,
   switchError,
   dirtyPrompt,
-  onOpenProject,
+  onOpenFolder,
+  onOpenHouse,
   onCreateProject,
   onDirtySave,
   onDirtyDiscard,
   onDirtyCancel,
 }: WorkspaceSidebarProps) {
-  const activeCompany = useMemo(() => {
-    if (activeProject === null) {
-      return registry.companies[0] ?? null;
-    }
-    return (
-      registry.companies.find(
-        (company) => company.id === activeProject.companyId,
-      ) ?? null
-    );
-  }, [activeProject, registry.companies]);
+  void _activeProject;
 
-  const projects = useMemo(() => {
-    if (activeCompany === null) {
-      return registry.projects;
-    }
-    return projectsForCompany(registry, activeCompany.id);
-  }, [activeCompany, registry]);
+  const activeFolder = useMemo(
+    () => getActiveWorkspaceFolder(registry),
+    [registry],
+  );
+
+  const houses = useMemo(() => {
+    if (activeFolder === null) return [];
+    return housesForFolder(registry, activeFolder.id);
+  }, [activeFolder, registry]);
 
   return (
     <aside
@@ -64,29 +61,24 @@ export function WorkspaceSidebar({
           Projekt
         </span>
         <select
-          className="mt-3 w-full rounded-xl border border-[#D7E4FF] bg-builder-panel px-3.5 py-3 text-sm font-semibold text-builder-ink"
+          className="mt-3 w-full rounded-xl border border-builder-panelBorder bg-builder-panel px-3.5 py-3 text-sm font-semibold text-builder-ink"
           aria-label="Vybrat projekt"
-          disabled={switching || projects.length === 0}
-          value={activeProject?.id ?? ''}
+          disabled={registry.folders.length === 0}
+          value={registry.activeFolderId ?? ''}
           onChange={(event) => {
             const nextId = event.target.value;
             if (nextId.length === 0) return;
-            onOpenProject(nextId);
+            onOpenFolder(nextId);
           }}
         >
-          {projects.length === 0 ? (
+          {registry.folders.length === 0 ? (
             <option value="">Žádné projekty</option>
           ) : (
-            projects.map((project) => {
-              const company =
-                registry.companies.find((item) => item.id === project.companyId)
-                  ?.name ?? 'Firma';
-              return (
-                <option key={project.id} value={project.id}>
-                  {company} · {project.name}
-                </option>
-              );
-            })
+            registry.folders.map((folder) => (
+              <option key={folder.id} value={folder.id}>
+                {folder.name}
+              </option>
+            ))
           )}
         </select>
       </label>
@@ -96,9 +88,12 @@ export function WorkspaceSidebar({
           type="button"
           title="Nový projekt"
           aria-label="Nový projekt"
-          disabled={switching}
-          onClick={onCreateProject}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D7E4FF] bg-builder-panel text-lg font-semibold text-builder-navy hover:bg-white disabled:opacity-40"
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onCreateProject();
+          }}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-builder-panelBorder bg-builder-panel text-lg font-semibold text-builder-navy hover:bg-white"
         >
           ⊕
         </button>
@@ -117,7 +112,7 @@ export function WorkspaceSidebar({
           open
           title={
             dirtyPrompt.kind === 'close'
-              ? 'Neuložené změny — zavřít projekt?'
+              ? 'Neuložené změny — zavřít dům?'
               : `Neuložené změny — přepnout na ${dirtyPrompt.target.name}?`
           }
           description="Uložit změny, zahodit je, nebo zrušit přepnutí."
@@ -134,41 +129,37 @@ export function WorkspaceSidebar({
         Domy
       </p>
       <ul className="space-y-2">
-        {projects.map((project) => {
-          const active = project.id === registry.activeProjectId;
+        {houses.map((house) => {
+          const active = house.id === registry.activeProjectId;
           return (
-            <li key={project.id}>
+            <li key={house.id}>
               <button
                 type="button"
-                disabled={switching}
-                onClick={() => onOpenProject(project.id)}
-                className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-sm font-semibold transition disabled:opacity-60 ${
+                onClick={() => onOpenHouse(house.id)}
+                className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-sm font-semibold transition ${
                   active
                     ? 'bg-builder-navy text-white'
                     : 'text-builder-ink hover:bg-builder-hover'
-                }`}
+                } ${switching ? 'opacity-70' : ''}`}
               >
                 <span aria-hidden>⌂</span>
                 <span className="min-w-0 truncate">
-                  {project.name}
+                  {house.name}
                   <small
                     className={`mt-0.5 block text-[11px] font-normal ${
                       active ? 'text-white/75' : 'text-builder-muted'
                     }`}
                   >
-                    {activeCompany?.name ??
-                      registry.companies.find((c) => c.id === project.companyId)
-                        ?.name ??
-                      'Firma'}
+                    {activeFolder?.name ?? 'Projekt'}
                   </small>
                 </span>
               </button>
             </li>
           );
         })}
-        {projects.length === 0 && (
+        {houses.length === 0 && (
           <li className="px-1 text-sm text-builder-muted">
-            Zatím žádné projekty.
+            V tomto projektu zatím nejsou domy.
           </li>
         )}
       </ul>

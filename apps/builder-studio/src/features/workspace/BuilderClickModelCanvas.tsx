@@ -1,4 +1,7 @@
+import { useState } from 'react';
+
 import { PlatformStatusBadge } from '@embed-engine/platform-shell';
+
 import { KnowledgeComposerView } from '../knowledge-composer';
 import { MediaStudioView } from '../media-studio';
 import type { MediaAreaId } from '../media-studio/mediaCatalog';
@@ -76,7 +79,7 @@ const MEDIA_ANCHORS: readonly MediaAnchor[] = [
 ];
 
 /**
- * PR-007 / PR-008 — Jedna souvislá pracovní plocha se všemi kotvami Anchor Rail.
+ * PR-007 / PR-008 / PR-012 — Souvislá plocha; mount jen aktivní media sekce (stabilita).
  */
 export function BuilderClickModelCanvas({
   projectId,
@@ -94,6 +97,8 @@ export function BuilderClickModelCanvas({
   onNavigate,
   onPublish,
 }: BuilderClickModelCanvasProps) {
+  const [mountedArea, setMountedArea] = useState<MediaAreaId>('hero');
+
   return (
     <div
       className="space-y-14"
@@ -103,7 +108,7 @@ export function BuilderClickModelCanvas({
         <div>
           <h1 className="platform-type-h1">{projectName}</h1>
           <p className="platform-type-helper" style={{ marginTop: 4 }}>
-            Obsah projektu · Hero · Dispozice · Znalosti
+            Obsah domu · Hero · Dispozice · Znalosti
           </p>
         </div>
         <PlatformStatusBadge
@@ -137,15 +142,25 @@ export function BuilderClickModelCanvas({
               {item.description}
             </p>
           </header>
-          <MediaStudioView
-            projectId={projectId}
-            projectName={projectName}
-            snapshot={snapshot}
-            session={session}
-            onChange={onChange}
-            lockedArea={item.area}
-            embedded
-          />
+          {mountedArea === item.area ? (
+            <MediaStudioView
+              projectId={projectId}
+              projectName={projectName}
+              snapshot={snapshot}
+              session={session}
+              onChange={onChange}
+              lockedArea={item.area}
+              embedded
+            />
+          ) : (
+            <button
+              type="button"
+              className="flex min-h-[120px] w-full items-center justify-center rounded-[16px] border border-dashed border-builder-panelBorder bg-white text-sm font-semibold text-builder-navy"
+              onClick={() => setMountedArea(item.area)}
+            >
+              Otevřít {item.title}
+            </button>
+          )}
         </section>
       ))}
 

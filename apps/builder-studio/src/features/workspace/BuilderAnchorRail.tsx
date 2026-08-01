@@ -62,7 +62,7 @@ export function BuilderAnchorRail({
           }
         }
         if (bestId !== null) {
-          setScrollActive(bestId);
+          setScrollActive((prev) => (prev === bestId ? prev : bestId));
         }
       },
       {
