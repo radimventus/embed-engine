@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { capabilityIdFromBuilderNav } from '@embed-engine/capabilities';
 import {
@@ -94,7 +94,6 @@ export function BuilderStudioApp() {
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
-  const validatedRootRef = useRef<string | null>(null);
 
   const {
     mountStatus,
@@ -160,39 +159,7 @@ export function BuilderStudioApp() {
       setActiveNav('media-studio');
     }
     setHistoryOpen(false);
-    validatedRootRef.current = null;
   }, [diskRoot]);
-
-  // Seed readiness after switch settles — avoid contending Vite with activate (PR-003A).
-  useEffect(() => {
-    if (workspace.switching) {
-      return;
-    }
-    if (
-      diskRoot === null ||
-      mountStatus.status !== 'ready' ||
-      snapshot === null ||
-      validatedRootRef.current === diskRoot
-    ) {
-      return;
-    }
-    const timer = window.setTimeout(() => {
-      if (validatedRootRef.current === diskRoot) {
-        return;
-      }
-      validatedRootRef.current = diskRoot;
-      void validate();
-    }, 350);
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [
-    diskRoot,
-    mountStatus.status,
-    snapshot,
-    validate,
-    workspace.switching,
-  ]);
 
   // Platform Access → Builder HP mount (only when Workspace has no active project).
   useEffect(() => {

@@ -53,7 +53,42 @@ export type MountHousePackageOptions = {
   readonly now?: () => Date;
   /** Active workspace project disk root (repo-relative). */
   readonly diskRoot?: string;
+  /** Abort in-flight HTTP when workspace switches (PR-003B). */
+  readonly signal?: AbortSignal;
 };
+
+function createFetchers(signal?: AbortSignal): {
+  readonly fetchText: (url: string) => Promise<string>;
+  readonly probeExists: (url: string) => Promise<boolean>;
+} {
+  return {
+    fetchText: async (url: string) => {
+      const response = await fetch(url, { cache: 'no-store', signal });
+      if (!response.ok) {
+        throw new Error(`Failed to load ${url}: HTTP ${response.status}`);
+      }
+      return response.text();
+    },
+    probeExists: async (url: string) => {
+      try {
+        const response = await fetch(url, {
+          cache: 'no-store',
+          method: 'GET',
+          signal,
+        });
+        return response.ok;
+      } catch (error: unknown) {
+        if (
+          (error instanceof DOMException && error.name === 'AbortError') ||
+          (error instanceof Error && error.name === 'AbortError')
+        ) {
+          throw error;
+        }
+        return false;
+      }
+    },
+  };
+}
 
 async function defaultFetchText(url: string): Promise<string> {
   const response = await fetch(url, { cache: 'no-store' });
@@ -114,8 +149,15 @@ async function loadGeometryByFloor(
 export async function mountHousePackage(
   options: MountHousePackageOptions = {},
 ): Promise<HousePackageMount> {
-  const fetchText = options.fetchText ?? defaultFetchText;
-  const probeExists = options.probeExists ?? defaultProbeExists;
+  const signal = options.signal;
+  if (signal?.aborted) {
+    throw new DOMException('Mount aborted', 'AbortError');
+  }
+  const defaults = signal !== undefined ? createFetchers(signal) : null;
+  const fetchText =
+    options.fetchText ?? defaults?.fetchText ?? defaultFetchText;
+  const probeExists =
+    options.probeExists ?? defaults?.probeExists ?? defaultProbeExists;
   const now = options.now ?? (() => new Date());
   const diskRoot = options.diskRoot ?? HOUSE_PACKAGE_DISK_ROOT;
 

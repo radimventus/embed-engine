@@ -16,8 +16,15 @@ export type UseHousePackageMountResult = {
   readonly remount: () => Promise<HousePackageMount>;
 };
 
+function isAbortError(error: unknown): boolean {
+  return (
+    (error instanceof DOMException && error.name === 'AbortError') ||
+    (error instanceof Error && error.name === 'AbortError')
+  );
+}
+
 /**
- * CAP-BLD-02/04/08 — mount active HP-002; remount after persist / project switch.
+ * CAP-BLD-02/04/08 — mount active HP-002; abort in-flight fetch on switch (PR-003B).
  */
 export function useHousePackageMount(
   diskRoot: string | null = HOUSE_PACKAGE_DISK_ROOT,
@@ -48,7 +55,6 @@ export function useHousePackageMount(
   }, [diskRoot]);
 
   useEffect(() => {
-    let cancelled = false;
     if (diskRoot === null) {
       setState({
         status: 'error',
@@ -57,27 +63,29 @@ export function useHousePackageMount(
       return;
     }
 
+    const abort = new AbortController();
     setState({ status: 'loading' });
-    void mountHousePackage({ diskRoot })
+    void mountHousePackage({ diskRoot, signal: abort.signal })
       .then((mount) => {
-        if (!cancelled) {
+        if (!abort.signal.aborted) {
           setState({ status: 'ready', mount });
         }
       })
       .catch((error: unknown) => {
-        if (!cancelled) {
-          setState({
-            status: 'error',
-            message:
-              error instanceof Error
-                ? error.message
-                : 'House Package mount failed.',
-          });
+        if (abort.signal.aborted || isAbortError(error)) {
+          return;
         }
+        setState({
+          status: 'error',
+          message:
+            error instanceof Error
+              ? error.message
+              : 'House Package mount failed.',
+        });
       });
 
     return () => {
-      cancelled = true;
+      abort.abort();
     };
   }, [diskRoot]);
 

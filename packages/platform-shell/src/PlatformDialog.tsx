@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import {
   useEffect,
   useId,
@@ -24,7 +25,7 @@ type PlatformDialogProps = {
 };
 
 /**
- * VR-FIX-03 — Unified dialog grammar (header · description · body · actions · close).
+ * VR-FIX-03 / PR-003B — Dialog portaled to document.body (opaque overlay).
  */
 export function PlatformDialog({
   open,
@@ -63,7 +64,7 @@ export function PlatformDialog({
     };
   }, [open, busy, onClose]);
 
-  if (!open) {
+  if (!open || typeof document === 'undefined') {
     return null;
   }
 
@@ -129,7 +130,7 @@ export function PlatformDialog({
     </div>
   );
 
-  return (
+  const node = (
     <div
       className="platform-dialog-backdrop"
       role="presentation"
@@ -171,4 +172,6 @@ export function PlatformDialog({
       </div>
     </div>
   );
+
+  return createPortal(node, document.body);
 }
