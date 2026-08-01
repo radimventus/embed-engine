@@ -1,59 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-
-import { mountHousePackageRuntimePreview } from '../house-package/mountHousePackageRuntimePreview';
+import { openHousePackageRuntimePreviewWindow } from '../house-package/mountHousePackageRuntimePreview';
 
 type ExperienceLivePreviewProps = {
-  /**
-   * Snapshot identity for the next manual Náhled mount.
-   * Does not auto-remount — only the Náhled button opens/refreshes preview.
-   */
   readonly remountKey: string;
 };
 
 /**
- * PR-022D — On-demand Náhled (no Live Preview auto-redraw).
+ * PR-024 — Náhled opens Shared Runtime in a new browser window.
  */
 export function ExperienceLivePreview({ remountKey }: ExperienceLivePreviewProps) {
-  const mountRef = useRef<HTMLDivElement | null>(null);
-  const [previewToken, setPreviewToken] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (previewToken === null) {
-      return;
-    }
-    const target = mountRef.current;
-    if (target === null) {
-      return;
-    }
-
-    let disposed = false;
-    let handle: ReturnType<typeof mountHousePackageRuntimePreview> | null =
-      null;
-    try {
-      target.replaceChildren();
-      setError(null);
-      handle = mountHousePackageRuntimePreview({ target });
-    } catch (caught: unknown) {
-      console.error('Náhled mount failed', caught);
-      const message =
-        caught instanceof Error ? caught.message : 'Náhled se nepodařilo načíst.';
-      setError(message);
-      target.textContent = message;
-    }
-
-    return () => {
-      if (disposed) {
-        return;
-      }
-      disposed = true;
-      handle?.dispose();
-    };
-  }, [previewToken]);
-
-  const openPreview = () => {
-    setPreviewToken(`${remountKey}::${Date.now()}`);
-  };
+  void remountKey;
 
   return (
     <aside className="flex h-full min-h-[70vh] flex-col overflow-hidden border-l border-builder-line bg-white">
@@ -65,33 +20,25 @@ export function ExperienceLivePreview({ remountKey }: ExperienceLivePreviewProps
           Shared Runtime
         </h2>
         <p className="mt-1 text-[11px] text-builder-muted">
-          Embed.mount · otevře se jen na požadavek
+          Otevře se v novém okně
         </p>
         <button
           type="button"
-          onClick={openPreview}
+          onClick={() => {
+            openHousePackageRuntimePreviewWindow();
+          }}
           className="mt-3 w-full rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2.5 text-sm font-semibold text-white hover:bg-builder-blueHover"
+          style={{ backgroundColor: '#18428F', borderColor: '#18428F' }}
         >
           Náhled
         </button>
-        {error !== null && (
-          <p className="mt-2 text-[11px] text-builder-danger">{error}</p>
-        )}
       </div>
-      {previewToken === null ? (
-        <div
-          className="flex min-h-0 flex-1 items-center justify-center bg-builder-canvas px-4 text-center text-sm text-builder-muted"
-          data-testid="experience-preview-idle"
-        >
-          Náhled není spuštěný. Klikněte na Náhled.
-        </div>
-      ) : (
-        <div
-          ref={mountRef}
-          className="min-h-0 flex-1 overflow-hidden bg-builder-canvas"
-          data-testid="experience-live-preview"
-        />
-      )}
+      <div
+        className="flex min-h-0 flex-1 items-center justify-center bg-builder-canvas px-4 text-center text-sm text-builder-muted"
+        data-testid="experience-preview-idle"
+      >
+        Náhled se otevírá v novém okně.
+      </div>
     </aside>
   );
 }

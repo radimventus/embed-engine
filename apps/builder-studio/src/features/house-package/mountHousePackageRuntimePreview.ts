@@ -25,6 +25,26 @@ export type MountHousePackageRuntimePreviewOptions = {
   readonly assetBase?: string;
 };
 
+export const BUILDER_NAHLED_QUERY = 'nahled';
+export const BUILDER_NAHLED_WINDOW_NAME = 'conis-builder-nahled';
+
+/** PR-024 — Náhled always opens in a dedicated browser window. */
+export function isBuilderNahledWindow(
+  search: string = typeof window !== 'undefined' ? window.location.search : '',
+): boolean {
+  return new URLSearchParams(search).get(BUILDER_NAHLED_QUERY) === '1';
+}
+
+/** PR-024 — open Shared Runtime preview in a new window (not canvas/panel). */
+export function openHousePackageRuntimePreviewWindow(): Window | null {
+  if (typeof window === 'undefined') {
+    return null;
+  }
+  const url = new URL(window.location.href);
+  url.searchParams.set(BUILDER_NAHLED_QUERY, '1');
+  return window.open(url.toString(), BUILDER_NAHLED_WINDOW_NAME);
+}
+
 /**
  * Mount the same Decision Experience as Embed / Client Studio over local HP-002.
  */

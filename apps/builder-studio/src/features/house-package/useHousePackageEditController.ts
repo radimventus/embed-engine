@@ -20,6 +20,7 @@ import { requestHousePackagePublish } from './requestHousePackagePublish';
 import { runDiskHousePackageValidation } from './runHousePackageValidation';
 import { useHousePackageMount } from './useHousePackageMount';
 import { validateHousePackageWorking } from './validateHousePackageWorking';
+import { openHousePackageRuntimePreviewWindow } from './mountHousePackageRuntimePreview';
 
 export type HousePackageEditController = {
   readonly mountStatus: ReturnType<typeof useHousePackageMount>['state'];
@@ -52,7 +53,6 @@ export function useHousePackageEditController(
   const [saving, setSaving] = useState(false);
   const [validating, setValidating] = useState(false);
   const [publishing, setPublishing] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
   const [validationReport, setValidationReport] =
     useState<HousePackageValidationReport | null>(null);
   const [releaseSummary, setReleaseSummary] =
@@ -62,7 +62,6 @@ export function useHousePackageEditController(
   useEffect(() => {
     setReleaseSummary(null);
     setPublishError(null);
-    setPreviewOpen(false);
     setValidationReport(null);
     setSessionEpoch((value) => value + 1);
   }, [diskRoot]);
@@ -128,9 +127,9 @@ export function useHousePackageEditController(
       buildTimestamp: releaseSummary.releaseTimestamp,
       housePackageVersion: releaseSummary.housePackageVersion,
       embedVersion: releaseSummary.embedVersion,
-      previewOpen,
+      previewOpen: false,
     });
-  }, [housePackageFingerprint, previewOpen, releaseSummary]);
+  }, [housePackageFingerprint, releaseSummary]);
 
   const validate = useCallback(async () => {
     const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';
@@ -197,7 +196,6 @@ export function useHousePackageEditController(
     setPublishing(true);
     setPublishError(null);
     setReleaseSummary(null);
-    setPreviewOpen(false);
     try {
       const gateReport = await runDiskHousePackageValidation({ dirty });
       setValidationReport(gateReport);
@@ -251,11 +249,7 @@ export function useHousePackageEditController(
   }, [remount, snapshot]);
 
   const openPreview = useCallback(() => {
-    setPreviewOpen(true);
-  }, []);
-
-  const closePreview = useCallback(() => {
-    setPreviewOpen(false);
+    openHousePackageRuntimePreviewWindow();
   }, []);
 
   return {
@@ -265,7 +259,7 @@ export function useHousePackageEditController(
     saving,
     validating,
     publishing,
-    previewOpen,
+    previewOpen: false,
     validationReport,
     releaseSummary,
     releaseVerification,
@@ -275,6 +269,8 @@ export function useHousePackageEditController(
     validate,
     publish,
     openPreview,
-    closePreview,
+    closePreview: () => {
+      // Preview runs in a separate window (PR-024).
+    },
   };
 }

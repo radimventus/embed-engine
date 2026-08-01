@@ -36,6 +36,19 @@ describe('BuilderStudioApp production imports (CAP-BLD-07)', () => {
       );
     }
     assert.match(source, /useHousePackageEditController/);
-    assert.match(source, /HousePackageRuntimePreview/);
+    assert.match(source, /openPreview/);
+  });
+
+  it('opens Náhled as a dedicated window entry (PR-024)', () => {
+    const mainSource = readFileSync(join(appRoot, 'main.tsx'), 'utf8');
+    assert.match(mainSource, /isBuilderNahledWindow/);
+    assert.match(mainSource, /HousePackageRuntimePreview/);
+
+    const openSource = readFileSync(
+      join(appRoot, 'features/house-package/mountHousePackageRuntimePreview.ts'),
+      'utf8',
+    );
+    assert.match(openSource, /openHousePackageRuntimePreviewWindow/);
+    assert.match(openSource, /BUILDER_NAHLED_QUERY/);
   });
 });

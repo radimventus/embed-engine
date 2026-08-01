@@ -25,6 +25,9 @@
   .hover\:text-builder-blue:hover {
     color: #18428f;
   }
+  .hover\:text-white:hover {
+    color: #ffffff;
+  }
   .border-builder-blue {
     border-color: #18428f;
   }

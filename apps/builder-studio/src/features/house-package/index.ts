@@ -17,3 +17,8 @@ export type { HousePackageReleaseSummary } from './productionPublishGate';
 export type { ReleaseVerification } from './releaseVerification';
 export { requestHousePackagePublish } from './requestHousePackagePublish';
 export { mountHousePackageRuntimePreview } from './mountHousePackageRuntimePreview';
+export {
+  openHousePackageRuntimePreviewWindow,
+  isBuilderNahledWindow,
+  BUILDER_NAHLED_QUERY,
+} from './mountHousePackageRuntimePreview';

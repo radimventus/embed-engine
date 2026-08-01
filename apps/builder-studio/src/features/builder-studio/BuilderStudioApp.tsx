@@ -27,7 +27,6 @@ import {
 import { ProjectActionPanel } from '../project-dashboard';
 import {
   HousePackageEditView,
-  HousePackageRuntimePreview,
   useHousePackageEditController,
   type HousePackageNavId,
 } from '../house-package';
@@ -105,7 +104,6 @@ export function BuilderStudioApp() {
     saving,
     validating,
     publishing,
-    previewOpen,
     validationReport,
     releaseSummary,
     releaseVerification,
@@ -115,7 +113,6 @@ export function BuilderStudioApp() {
     validate,
     publish,
     openPreview,
-    closePreview,
   } = useHousePackageEditController(diskRoot);
 
   const loadError =
@@ -483,14 +480,6 @@ export function BuilderStudioApp() {
                 void publish();
               }}
               onPreview={openPreview}
-            />
-          )}
-        {previewOpen && (
-            <HousePackageRuntimePreview
-              open={previewOpen}
-              releaseSummary={releaseSummary}
-              verification={releaseVerification}
-              onClose={closePreview}
             />
           )}
       </AppShell>

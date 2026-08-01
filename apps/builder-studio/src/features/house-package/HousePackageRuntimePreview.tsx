@@ -57,7 +57,7 @@ export function HousePackageRuntimePreview({
   }
 
   return (
-    <div className="fixed inset-0 z-[80] flex flex-col bg-builder-canvas">
+    <div className="flex min-h-screen flex-col bg-builder-canvas">
       <header className="flex shrink-0 items-start justify-between gap-4 border-b border-builder-line bg-white px-6 py-4">
         <div className="min-w-0">
           <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">

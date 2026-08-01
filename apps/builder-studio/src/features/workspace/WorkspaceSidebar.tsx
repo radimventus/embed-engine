@@ -24,8 +24,12 @@ type WorkspaceSidebarProps = {
   readonly onDirtyCancel: () => void;
 };
 
+/** PR-024 — white fill · Interaction Blue border · blue ⊕ · hover inverted. */
+const PLUS_BTN_CLASS =
+  'flex h-10 w-10 items-center justify-center rounded-full border border-builder-blue bg-white text-lg font-semibold text-builder-blue hover:bg-builder-blue hover:text-white disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-white disabled:hover:text-builder-blue';
+
 /**
- * PR-006 / PR-023 / PR-022C — Cream Light rail + Cream Dark border.
+ * PR-024 — Cream Light rail · object cards · unified ⊕.
  */
 export function WorkspaceSidebar({
   registry,
@@ -56,7 +60,6 @@ export function WorkspaceSidebar({
   return (
     <aside
       className="flex h-full min-h-0 flex-col overflow-y-auto border-r-2 border-builder-creamDark bg-builder-creamLight p-6"
-      style={{ backgroundColor: '#F7F6F4', borderRightColor: '#D9D4CC' }}
       data-studio-shell="workspace-sidebar"
     >
       <label className="block">
@@ -64,7 +67,7 @@ export function WorkspaceSidebar({
           Projekt
         </span>
         <select
-          className="mt-3 w-full rounded-xl border border-builder-creamDark bg-white px-3.5 py-3 text-sm font-semibold text-builder-ink"
+          className="mt-3 w-full rounded-xl border border-[#E3E3E3] bg-white px-3.5 py-3 text-sm font-semibold text-builder-ink"
           aria-label="Vybrat projekt"
           disabled={registry.folders.length === 0}
           value={registry.activeFolderId ?? ''}
@@ -96,7 +99,7 @@ export function WorkspaceSidebar({
             event.stopPropagation();
             onCreateProject();
           }}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-builder-blue bg-builder-blue text-lg font-semibold text-white hover:bg-builder-blueHover"
+          className={PLUS_BTN_CLASS}
         >
           ⊕
         </button>
@@ -139,27 +142,20 @@ export function WorkspaceSidebar({
               <button
                 type="button"
                 onClick={() => onOpenHouse(house.id)}
-                className={`flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left text-sm font-semibold transition ${
+                className={`group flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left text-sm font-semibold transition ${
                   active
                     ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
-                    : 'border-transparent text-builder-ink hover:bg-builder-creamMid'
+                    : 'border-[#E3E3E3] bg-white text-builder-ink hover:border-builder-blue hover:bg-builder-blue hover:text-white'
                 } ${switching ? 'opacity-70' : ''}`}
-                style={
-                  active
-                    ? {
-                        backgroundColor: '#F7F6F4',
-                        borderColor: '#18428F',
-                        color: '#18428F',
-                      }
-                    : undefined
-                }
               >
                 <span aria-hidden>⌂</span>
                 <span className="min-w-0 truncate">
                   {house.name}
                   <small
                     className={`mt-0.5 block text-[11px] font-normal ${
-                      active ? 'text-builder-blue/80' : 'text-builder-muted'
+                      active
+                        ? 'text-builder-blue/80'
+                        : 'text-builder-muted group-hover:text-white/80'
                     }`}
                   >
                     {activeFolder?.name ?? 'Projekt'}
@@ -187,7 +183,7 @@ export function WorkspaceSidebar({
             event.stopPropagation();
             onCreateObject();
           }}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-builder-blue bg-white text-lg font-semibold text-builder-blue hover:bg-builder-blue hover:text-white disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-white disabled:hover:text-builder-blue"
+          className={PLUS_BTN_CLASS}
         >
           ⊕
         </button>
