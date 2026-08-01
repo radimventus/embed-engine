@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CONIS · Partner Experience</title>
+  <meta name="robots" content="noindex" />
+  <style>
+    body { margin: 0; font-family: "SF Pro Text", "Helvetica Neue", Arial, sans-serif; background: #f7f6f4; color: #001930; }
+    main { width: min(1432px, calc(100% - 2rem)); margin: 0 auto; padding: 2rem 0 4rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <div id="embed-hero"></div>
+    <script src="https://conis.cz/embed/embed.iife.js?v=embed-02"></script>
+    <script>
+      Embed.mount({
+        mode: "launcher",
+        target: "#embed-hero",
+        objectId: "house-modern-01",
+        assetBase: "https://conis.cz",
+        entryPoint: "hero-cta",
+        launcherId: "embed-hero"
+      });
+    </script>
+  </main>
+</body>
+</html>

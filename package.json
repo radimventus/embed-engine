@@ -11,6 +11,7 @@
       "typecheck": "turbo run typecheck",
       "format": "prettier --write .",
       "embed:publish": "pnpm --filter @embed-engine/embed publish:release",
+    "studio:publish": "node ./scripts/publish-studio-platform.mjs",
       "reference": "pnpm --filter @embed-engine/client-studio reference",
       "reference:freeze": "pnpm --filter @embed-engine/client-studio reference:freeze",
       "cs:gen1": "pnpm --filter @embed-engine/client-studio gen1",

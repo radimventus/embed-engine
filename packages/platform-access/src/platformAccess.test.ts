@@ -8,6 +8,7 @@ import {
   bootstrapWorkspace,
   buildPilotReadyReport,
   canAccessStudio,
+  defaultStudioForRoles,
   createPilotInvite,
   getCloudPlatformConfig,
   getDefaultCompanyRegistry,
@@ -99,6 +100,13 @@ describe('platformAccess (EPIC-BX-14)', () => {
     assert.equal(canAccessStudio(['salesman'], 'builder'), false);
     assert.equal(canAccessStudio(['conis-admin'], 'manager'), true);
     assert.equal(canAccessStudio(['manager'], 'manager'), true);
+  });
+
+  it('RC-002 default studio follows occupational role', () => {
+    assert.equal(defaultStudioForRoles(['builder']), 'builder');
+    assert.equal(defaultStudioForRoles(['manager']), 'manager');
+    assert.equal(defaultStudioForRoles(['salesman']), 'sales');
+    assert.equal(defaultStudioForRoles(['conis-admin']), 'manager');
   });
 });
 

@@ -1,11 +1,14 @@
 /**
- * EPIC-BX-15 — Cloud Platform bootstrap for https://app.conis.cz
+ * EPIC-BX-15 / RC-002 — Cloud Platform bootstrap for https://studio.conis.cz
  * Local Vite ports remain for development; cloud uses path-based studio URLs.
  */
 
 import type { PlatformStudioId } from '../domain/types';
 
-export const CLOUD_PLATFORM_ORIGIN = 'https://app.conis.cz';
+/** Canonical working-platform origin (not the public marketing site). */
+export const CLOUD_PLATFORM_ORIGIN = 'https://studio.conis.cz';
+
+export const CLOUD_APP_HOST = 'studio.conis.cz';
 
 export type PlatformDeployMode = 'local' | 'cloud';
 
@@ -40,6 +43,10 @@ function readEnvOrigin(): string | null {
   return null;
 }
 
+function isLocalHost(hostname: string): boolean {
+  return hostname === '127.0.0.1' || hostname === 'localhost';
+}
+
 export function getCloudPlatformConfig(): CloudPlatformConfig {
   const envOrigin = readEnvOrigin();
   if (envOrigin !== null) {
@@ -47,31 +54,31 @@ export function getCloudPlatformConfig(): CloudPlatformConfig {
       envOrigin.includes('127.0.0.1') || envOrigin.includes('localhost');
     return {
       mode: isLocal ? 'local' : 'cloud',
-      origin: envOrigin,
-      appHost: 'app.conis.cz',
+      origin: isLocal ? envOrigin : CLOUD_PLATFORM_ORIGIN,
+      appHost: CLOUD_APP_HOST,
     };
   }
 
   if (typeof window !== 'undefined') {
-    const { hostname, origin } = window.location;
-    if (hostname === '127.0.0.1' || hostname === 'localhost') {
+    const { hostname } = window.location;
+    if (isLocalHost(hostname)) {
       return {
         mode: 'local',
         origin: `http://${hostname}`,
-        appHost: 'app.conis.cz',
+        appHost: CLOUD_APP_HOST,
       };
     }
     return {
       mode: 'cloud',
-      origin: origin.replace(/\/$/, ''),
-      appHost: 'app.conis.cz',
+      origin: CLOUD_PLATFORM_ORIGIN,
+      appHost: CLOUD_APP_HOST,
     };
   }
 
   return {
     mode: 'local',
     origin: 'http://127.0.0.1',
-    appHost: 'app.conis.cz',
+    appHost: CLOUD_APP_HOST,
   };
 }
 

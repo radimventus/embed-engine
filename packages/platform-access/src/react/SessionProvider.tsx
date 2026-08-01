@@ -16,6 +16,7 @@ import {
 } from '../bootstrap/workspaceBootstrap';
 import {
   canAccessStudio,
+  defaultStudioForRoles,
   primaryRole,
   studiosForRoles,
 } from '../domain/roles';
@@ -111,6 +112,16 @@ export function SessionProvider({
       return { ok: false as const, error: result.error };
     }
     setSession(result.session);
+    // RC-002 — after login, land on the studio that matches the user's role.
+    const studioId = defaultStudioForRoles(result.session.user.roles);
+    const next = updateSession({ activeStudioId: studioId });
+    if (next !== null) {
+      setSession(next);
+      const href = resolveStudioHref(studioId);
+      if (typeof window !== 'undefined' && window.location.href !== href) {
+        window.location.assign(href);
+      }
+    }
     return { ok: true as const };
   }, []);
 

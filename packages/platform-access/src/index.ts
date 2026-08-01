@@ -31,6 +31,7 @@ export {
   hasRole,
   canAccessStudio,
   studiosForRoles,
+  defaultStudioForRoles,
   isPlatformAdmin,
 } from './domain/roles';
 
@@ -88,6 +89,7 @@ export { bootstrapTenant } from './bootstrap/tenantBootstrap';
 
 export {
   CLOUD_PLATFORM_ORIGIN,
+  CLOUD_APP_HOST,
   getCloudPlatformConfig,
   resolveCloudStudioHref,
   resolveCloudLandingHref,

@@ -73,7 +73,7 @@ export function PlatformLanding() {
   return (
     <div className="platform-access" data-testid="platform-landing">
       <div className="platform-access__panel platform-access__panel--wide">
-        <p className="platform-access__eyebrow">CONIS · app.conis.cz</p>
+        <p className="platform-access__eyebrow">CONIS Studio · studio.conis.cz</p>
         <h1 className="platform-access__title">Vstupní stránka</h1>
         <p className="platform-access__lead">
           {bootstrap.user.displayName} · {PLATFORM_ROLE_LABELS[role]}

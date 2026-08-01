@@ -56,6 +56,23 @@ export function studiosForRoles(
   );
 }
 
+/**
+ * RC-002 — post-login studio: occupational role first, else Manager → Sales → Builder.
+ */
+export function defaultStudioForRoles(
+  roles: readonly PlatformRole[],
+): PlatformStudioId {
+  const available = studiosForRoles(roles);
+  if (available.length === 0) return 'builder';
+  const primary = primaryRole(roles);
+  if (primary === 'builder' && available.includes('builder')) return 'builder';
+  if (primary === 'manager' && available.includes('manager')) return 'manager';
+  if (primary === 'salesman' && available.includes('sales')) return 'sales';
+  if (available.includes('manager')) return 'manager';
+  if (available.includes('sales')) return 'sales';
+  return available[0]!;
+}
+
 /** Soft admin gate for Platform Landing ops (invite, provision, GM). */
 export function isPlatformAdmin(roles: readonly PlatformRole[]): boolean {
   return roles.includes('conis-admin') || roles.includes('project-admin');

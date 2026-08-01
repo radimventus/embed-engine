@@ -30,6 +30,14 @@
   <link rel="dns-prefetch" href="https://res.cloudinary.com">
 
   <link rel="stylesheet" href="css/style.css">
+  <script>
+    (function () {
+      var host = location.hostname;
+      if (host === 'studio.conis.cz' || host === 'www.studio.conis.cz') {
+        location.replace('/builder/');
+      }
+    })();
+  </script>
 </head>
 <body>
 
@@ -40,6 +48,7 @@
       <div class="logo" aria-label="CONIS">
         CON<span>I</span>S
       </div>
+      <a class="header-login" href="https://studio.conis.cz">Přihlásit</a>
     </div>
   </header>
 

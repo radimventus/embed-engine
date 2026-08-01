@@ -34,7 +34,7 @@ export function AuthShell({ onOpenInvite }: AuthShellProps) {
   return (
     <div className="platform-access" data-testid="auth-shell">
       <div className="platform-access__panel">
-        <p className="platform-access__eyebrow">CONIS Platform · app.conis.cz</p>
+        <p className="platform-access__eyebrow">CONIS Studio · studio.conis.cz</p>
         <h1 className="platform-access__title">Přihlášení</h1>
         <p className="platform-access__lead">
           Cloud Pilot Access — společná session pro Builder, Manager i Sales.
