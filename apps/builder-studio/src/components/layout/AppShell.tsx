@@ -20,7 +20,7 @@ export function AppShell({
 }: AppShellProps) {
   const gridClass =
     workspacePanel !== undefined
-      ? 'grid-cols-[220px_240px_1fr_360px]'
+      ? 'grid-cols-[240px_220px_1fr_320px]'
       : 'grid-cols-[260px_1fr_360px]';
 
   return (

@@ -90,7 +90,7 @@ export function ProjectCreateDialog({
           Nový projekt
         </h2>
         <p className="mt-1 text-sm text-builder-muted">
-          Projekt patří firmě ve Workspace. Obsah se napojí podle typu objektu.
+          Projekt patří firmě ve Workspace. Typ objektu určí výchozí obsah.
         </p>
 
         <div className="mt-5 space-y-4">

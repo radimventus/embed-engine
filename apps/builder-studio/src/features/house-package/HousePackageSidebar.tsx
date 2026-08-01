@@ -55,7 +55,7 @@ export function HousePackageSidebar({
         {projectName ?? 'Obsah'}
       </h2>
       <p className="mt-2 text-[12px] text-builder-muted">
-        Sekce obsahu · úpravy v paměti
+        Obsah projektu
       </p>
       {snapshot !== null && (
         <p
