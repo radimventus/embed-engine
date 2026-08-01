@@ -36,27 +36,18 @@ describe('BU-001 bulk upload wiring', () => {
     assert.match(dialog, /hideSecondary=\{phase === 'done'\}/);
   });
 
-  it('supports drag-and-drop asset manager (BU-002)', () => {
+  it('uses gallery DnD for ordering only (BU-002A)', () => {
     const view = readFileSync(join(here, '../MediaStudioView.tsx'), 'utf8');
-    const zone = readFileSync(join(here, 'AssetDropZone.tsx'), 'utf8');
-    const ghost = readFileSync(join(here, 'FileDragGhost.tsx'), 'utf8');
-    const dialog = readFileSync(join(here, 'BulkUploadDialog.tsx'), 'utf8');
-    const shell = readFileSync(
-      join(
-        here,
-        '../../../../../../packages/platform-shell/src/PlatformDialog.tsx',
-      ),
-      'utf8',
-    );
+    const ghost = readFileSync(join(here, 'createGalleryDragGhost.ts'), 'utf8');
 
-    assert.match(view, /AssetDropZone/);
-    assert.match(view, /FileDragGhost/);
-    assert.match(view, /onDropFiles/);
-    assert.match(view, /addInputRef\.current\?\.click/);
-    assert.match(zone, /Pusťte soubory pro nahrání/);
-    assert.match(ghost, /\+/);
-    assert.match(dialog, /initialFiles/);
-    assert.match(dialog, /autoStart/);
-    assert.match(shell, /hideSecondary/);
+    assert.match(view, /createGalleryDragGhost/);
+    assert.match(view, /Přetáhněte miniatury pro změnu pořadí/);
+    assert.match(view, /overIndex/);
+    assert.match(view, /title=\{area === 'svg' \? 'SVG' : 'Půdorys'\}/);
+    assert.match(view, /onPickFiles/);
+    assert.doesNotMatch(view, /AssetDropZone/);
+    assert.doesNotMatch(view, /FileDragGhost/);
+    assert.doesNotMatch(view, /Pusťte soubory pro nahrání/);
+    assert.match(ghost, /opacity: 0\.72/);
   });
 });
