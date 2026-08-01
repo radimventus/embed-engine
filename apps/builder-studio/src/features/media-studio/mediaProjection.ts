@@ -247,4 +247,35 @@ export function reorderGalleryCsv(
   return serializeCsv(headers, renumbered);
 }
 
+/** Apply gallery order by file list (AI Author assist — after user accept). */
+export function reorderGalleryCsvByFiles(
+  galleryCsv: string,
+  orderedFiles: readonly string[],
+): string {
+  const table = parseCsv(galleryCsv);
+  const byFile = new Map(table.rows.map((row) => [row.file ?? '', { ...row }]));
+  const ordered: Array<Record<string, string>> = [];
+  for (const file of orderedFiles) {
+    const row = byFile.get(file);
+    if (row !== undefined) {
+      ordered.push(row);
+      byFile.delete(file);
+    }
+  }
+  for (const row of table.rows) {
+    const file = row.file ?? '';
+    if (byFile.has(file)) {
+      ordered.push({ ...row });
+      byFile.delete(file);
+    }
+  }
+  const renumbered = ordered.map((row, index) => ({
+    ...row,
+    order: String(index + 1),
+  }));
+  const headers =
+    table.headers.length > 0 ? table.headers : ['order', 'room', 'file'];
+  return serializeCsv(headers, renumbered);
+}
+
 export { getMediaArea };

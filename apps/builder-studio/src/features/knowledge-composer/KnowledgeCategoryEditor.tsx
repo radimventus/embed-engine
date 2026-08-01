@@ -1,6 +1,14 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { parseCsv } from '@embed-engine/object-house/builder-package';
 
+import {
+  AiAuthorSuggestButton,
+  proposeFaqAnswers,
+  proposeFaqQuestions,
+  proposeKnowledgeFill,
+  type FaqProposalPayload,
+  type KnowledgeFillPayload,
+} from '../ai-author';
 import type { HousePackageEditSession } from '../house-package/housePackageEditSession';
 import type { HousePackageEditSnapshot } from '../house-package/housePackageEditSession';
 import {
@@ -98,6 +106,7 @@ export function KnowledgeCategoryEditor({
           {category.editTarget.kind === 'inline-faq' && (
             <FaqStructuredEditor
               projectId={projectId}
+              projectName={category.label}
               heroPath={snapshot?.working.heroRelativePath}
               onOpenExperience={onOpenExperience}
             />
@@ -107,6 +116,8 @@ export function KnowledgeCategoryEditor({
             category.editTarget.kind === 'hp') && (
             <ReadonlyStructuredFields
               category={category}
+              projectId={projectId}
+              heroPath={snapshot?.working.heroRelativePath}
               onOpenHp={
                 category.editTarget.kind === 'hp'
                   ? () => {
@@ -127,13 +138,31 @@ export function KnowledgeCategoryEditor({
 
 function ReadonlyStructuredFields({
   category,
+  projectId,
+  heroPath,
   onOpenHp,
 }: {
   readonly category: KnowledgeCategoryView;
+  readonly projectId: string;
+  readonly heroPath?: string;
   readonly onOpenHp?: () => void;
 }) {
   return (
     <div className="space-y-3">
+      <AiAuthorSuggestButton
+        projectId={projectId}
+        domain="knowledge"
+        label="Doplnit"
+        buildProposal={() => proposeKnowledgeFill(category)}
+        onAccept={(payload) => {
+          const data = payload as KnowledgeFillPayload;
+          const composition = loadExperienceComposition(projectId, heroPath);
+          const next = updateModuleConfig(composition, 'faq', {
+            items: [...composition.configs.faq.items, data.suggestedFaq],
+          });
+          persistExperienceComposition(next);
+        }}
+      />
       {category.fields.map((item) => (
         <label key={item.key} className="block text-sm">
           <span className="mb-1.5 block font-medium text-builder-ink">
@@ -148,7 +177,8 @@ function ReadonlyStructuredFields({
       ))}
       <p className="text-[12px] text-builder-muted">
         Tato oblast čte stejná data jako Runtime (House Package + projection
-        defaults). Nejde o samostatný Knowledge store.
+        defaults). ✨ Doplnit navrhne FAQ z existující Knowledge — bez nového
+        store.
       </p>
       {onOpenHp !== undefined && (
         <button
@@ -290,10 +320,12 @@ function RoomsStructuredEditor({
 
 function FaqStructuredEditor({
   projectId,
+  projectName,
   heroPath,
   onOpenExperience,
 }: {
   readonly projectId: string;
+  readonly projectName: string;
   readonly heroPath?: string;
   readonly onOpenExperience: () => void;
 }) {
@@ -312,6 +344,30 @@ function FaqStructuredEditor({
         FAQ je prezentace Experience Composeru — ne nový Knowledge model. Runtime
         Decision FAQ vychází z Priority / Terminal; toto je authoring vrstva.
       </p>
+      <div className="flex flex-wrap gap-2">
+        <AiAuthorSuggestButton
+          projectId={projectId}
+          domain="faq"
+          label="Navrhnout další otázky"
+          buildProposal={() =>
+            proposeFaqQuestions({ existing: items, projectName })
+          }
+          onAccept={(payload) => {
+            const data = payload as FaqProposalPayload;
+            setItems([...items, ...data.items]);
+          }}
+        />
+        <AiAuthorSuggestButton
+          projectId={projectId}
+          domain="faq"
+          label="Navrhnout odpovědi"
+          buildProposal={() => proposeFaqAnswers({ existing: items })}
+          onAccept={(payload) => {
+            const data = payload as FaqProposalPayload;
+            setItems([...data.items]);
+          }}
+        />
+      </div>
       {items.map((item, index) => (
         <div
           key={`faq-${index}`}

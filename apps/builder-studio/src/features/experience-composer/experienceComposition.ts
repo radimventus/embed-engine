@@ -213,6 +213,35 @@ export function reorderExperienceModules(
   };
 }
 
+/** Apply a full module order (AI Author / Decision Flow assist). */
+export function setExperienceModuleOrder(
+  composition: ExperienceComposition,
+  moduleIds: readonly ExperienceModuleId[],
+): ExperienceComposition {
+  const byId = new Map(
+    composition.modules.map((module) => [module.id, module] as const),
+  );
+  const ordered: ExperienceModulePlacement[] = [];
+  for (const id of moduleIds) {
+    const module = byId.get(id);
+    if (module !== undefined) {
+      ordered.push(module);
+      byId.delete(id);
+    }
+  }
+  for (const module of composition.modules) {
+    if (byId.has(module.id)) {
+      ordered.push(module);
+    }
+  }
+  return {
+    ...composition,
+    modules: ordered,
+    revision: composition.revision + 1,
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 export function toggleExperienceModule(
   composition: ExperienceComposition,
   moduleId: ExperienceModuleId,

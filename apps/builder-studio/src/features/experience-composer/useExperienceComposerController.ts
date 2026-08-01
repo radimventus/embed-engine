@@ -4,6 +4,7 @@ import {
   addExperienceModule,
   createDefaultExperienceComposition,
   reorderExperienceModules,
+  setExperienceModuleOrder,
   toggleExperienceModule,
   updateModuleConfig,
   type ExperienceComposition,
@@ -23,6 +24,7 @@ export type ExperienceComposerController = {
   readonly openEditor: (moduleId: ExperienceModuleId) => void;
   readonly closeEditor: () => void;
   readonly reorder: (fromIndex: number, toIndex: number) => void;
+  readonly applyOrder: (moduleIds: readonly ExperienceModuleId[]) => void;
   readonly toggleEnabled: (moduleId: ExperienceModuleId) => void;
   readonly addModule: (moduleId: ExperienceModuleId) => void;
   readonly saveConfig: <K extends ExperienceModuleId>(
@@ -81,6 +83,9 @@ export function useExperienceComposerController(
     closeEditor: () => setEditingModuleId(null),
     reorder: (fromIndex, toIndex) => {
       apply(reorderExperienceModules(composition, fromIndex, toIndex));
+    },
+    applyOrder: (moduleIds) => {
+      apply(setExperienceModuleOrder(composition, moduleIds));
     },
     toggleEnabled: (moduleId) => {
       apply(toggleExperienceModule(composition, moduleId));

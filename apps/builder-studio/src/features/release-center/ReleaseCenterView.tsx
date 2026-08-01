@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 
+import {
+  AiAuthorSuggestButton,
+  proposeReleaseNotes,
+  type ReleaseNotesPayload,
+} from '../ai-author';
 import type { HousePackageEditSnapshot } from '../house-package/housePackageEditSession';
 import type { HousePackageReleaseSummary } from '../house-package/productionPublishGate';
 import type { HousePackageValidationReport } from '../house-package/housePackageValidationReport';
@@ -168,6 +173,10 @@ export function ReleaseCenterView({
 
       <div className="grid gap-4 desktop:grid-cols-2">
         <ReleaseNotesEditor
+          projectId={projectId}
+          projectName={projectName}
+          preparedChanges={model.preparedChanges.map((item) => item.label)}
+          heroPath={snapshot?.working.heroRelativePath ?? ''}
           notes={notes}
           onChange={setNotes}
           onSave={handleSaveNotes}
@@ -332,10 +341,18 @@ function ReleaseReadinessCard({
 }
 
 function ReleaseNotesEditor({
+  projectId,
+  projectName,
+  preparedChanges,
+  heroPath,
   notes,
   onChange,
   onSave,
 }: {
+  readonly projectId: string;
+  readonly projectName: string;
+  readonly preparedChanges: readonly string[];
+  readonly heroPath: string;
   readonly notes: ReleaseNotesDraft;
   readonly onChange: (notes: ReleaseNotesDraft) => void;
   readonly onSave: (event: FormEvent) => void;
@@ -348,6 +365,29 @@ function ReleaseNotesEditor({
       <p className="mt-1 text-sm text-builder-muted">
         Metadata vydání — nejsou součástí HP-002.
       </p>
+      <div className="mt-3">
+        <AiAuthorSuggestButton
+          projectId={projectId}
+          domain="release"
+          label="Vytvořit Release Notes"
+          buildProposal={() =>
+            proposeReleaseNotes({
+              projectName,
+              preparedChanges,
+              heroPath,
+            })
+          }
+          onAccept={(payload) => {
+            const data = payload as ReleaseNotesPayload;
+            onChange({
+              changed: data.changed,
+              why: data.why,
+              internal: data.internal,
+              updatedAt: data.updatedAt,
+            });
+          }}
+        />
+      </div>
       <form className="mt-4 space-y-3" onSubmit={onSave}>
         <NoteField
           label="Co se změnilo"

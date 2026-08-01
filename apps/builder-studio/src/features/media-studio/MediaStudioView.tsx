@@ -1,6 +1,15 @@
 import { parseCsv } from '@embed-engine/object-house/builder-package';
 import { useMemo, useState, type DragEvent, type FormEvent } from 'react';
 
+import {
+  AiAuthorSuggestButton,
+  proposeGalleryOrder,
+  proposeMediaCaptions,
+  proposeMediaHero,
+  type MediaCaptionsPayload,
+  type MediaGalleryOrderPayload,
+  type MediaHeroPayload,
+} from '../ai-author';
 import { ExperienceLivePreview } from '../experience-composer/ExperienceLivePreview';
 import type {
   HousePackageEditSession,
@@ -15,6 +24,7 @@ import type { MediaAreaId } from './mediaCatalog';
 import {
   buildMediaStudioModel,
   reorderGalleryCsv,
+  reorderGalleryCsvByFiles,
   type GalleryMediaItem,
   type MediaStudioModel,
 } from './mediaProjection';
@@ -167,6 +177,31 @@ function HeroManager({
       <p className="mt-1 text-sm text-builder-muted">
         Pouze jeden aktivní Hero · Desktop / Mobile náhled
       </p>
+      <div className="mt-3">
+        <AiAuthorSuggestButton
+          projectId={projectId}
+          domain="media"
+          label="Doporučit Hero"
+          buildProposal={() =>
+            proposeMediaHero({
+              galleryFiles: model.gallery.map((item) => ({
+                path: item.path,
+                room: item.room,
+              })),
+              currentHero: model.heroPath,
+            })
+          }
+          onAccept={(payload) => {
+            const data = payload as MediaHeroPayload;
+            setPath(data.path);
+            setMeta({
+              ...meta,
+              title: data.title,
+              alt: data.alt,
+            });
+          }}
+        />
+      </div>
       <div className="mt-4 grid gap-4 desktop:grid-cols-2">
         <div>
           <p className="text-[11px] font-medium uppercase text-builder-muted">
@@ -339,6 +374,68 @@ function GalleryManager({
           >
             ＋ Přidat
           </button>
+          <AiAuthorSuggestButton
+            projectId={projectId}
+            domain="media"
+            label="Doporučit pořadí galerie"
+            buildProposal={() =>
+              proposeGalleryOrder({
+                files: model.gallery.map((item) => ({
+                  file: item.file,
+                  room: item.room,
+                })),
+              })
+            }
+            onAccept={(payload) => {
+              const data = payload as MediaGalleryOrderPayload;
+              onChange(
+                session.setGalleryCsv(
+                  reorderGalleryCsvByFiles(
+                    snapshot.working.galleryCsv,
+                    data.orderedFiles,
+                  ),
+                ),
+              );
+            }}
+          />
+          <AiAuthorSuggestButton
+            projectId={projectId}
+            domain="media"
+            label="Doporučit titulky"
+            buildProposal={() =>
+              proposeMediaCaptions({
+                items: model.gallery.map((item) => ({
+                  key: item.key,
+                  file: item.file,
+                  room: item.room,
+                })),
+              })
+            }
+            onAccept={(payload) => {
+              const data = payload as MediaCaptionsPayload;
+              for (const caption of data.captions) {
+                const current = model.gallery.find(
+                  (item) => item.key === caption.key,
+                );
+                setMediaPresentationMeta(projectId, caption.key, {
+                  ...(current?.meta ?? {
+                    title: '',
+                    alt: '',
+                    description: '',
+                    author: 'uživatel',
+                    focalX: 50,
+                    focalY: 50,
+                    active: true,
+                    updatedAt: new Date().toISOString(),
+                  }),
+                  title: caption.title,
+                  alt: caption.alt,
+                  updatedAt: new Date().toISOString(),
+                });
+              }
+              onMetaSaved();
+            }}
+          />
         </div>
       </div>
 

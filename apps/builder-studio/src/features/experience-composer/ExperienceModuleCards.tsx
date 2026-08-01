@@ -1,6 +1,14 @@
 import { useState, type DragEvent } from 'react';
 
 import {
+  AiAuthorSuggestButton,
+  proposeDecisionFlow,
+  proposeExperienceCta,
+  proposeExperienceModuleOrder,
+  type ExperienceCtaPayload,
+  type ExperienceOrderPayload,
+} from '../ai-author';
+import {
   getModuleDefinition,
   summarizeModuleConfig,
   type ExperienceComposition,
@@ -19,10 +27,13 @@ type ExperienceModuleCardsProps = {
   readonly selectedModuleId: ExperienceModuleId | null;
   readonly snapshot: HousePackageEditSnapshot | null;
   readonly validationReport: HousePackageValidationReport | null;
+  readonly projectId: string;
   readonly onSelect: (moduleId: ExperienceModuleId) => void;
   readonly onEdit: (moduleId: ExperienceModuleId) => void;
   readonly onToggle: (moduleId: ExperienceModuleId) => void;
   readonly onReorder: (fromIndex: number, toIndex: number) => void;
+  readonly onApplyOrder: (moduleIds: readonly ExperienceModuleId[]) => void;
+  readonly onApplyCta: (heroCta: string, leadCta: string) => void;
   readonly onReadyClick: (moduleId: ExperienceModuleId, ready: ExperienceModuleReady) => void;
   readonly onAddModule: (moduleId: ExperienceModuleId) => void;
 };
@@ -35,10 +46,13 @@ export function ExperienceModuleCards({
   selectedModuleId,
   snapshot,
   validationReport,
+  projectId,
   onSelect,
   onEdit,
   onToggle,
   onReorder,
+  onApplyOrder,
+  onApplyCta,
   onReadyClick,
   onAddModule,
 }: ExperienceModuleCardsProps) {
@@ -86,6 +100,38 @@ export function ExperienceModuleCards({
         <p className="mt-1 text-sm text-builder-muted">
           Upravujte moduly a jejich pořadí — ne interní implementaci.
         </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          <AiAuthorSuggestButton
+            projectId={projectId}
+            domain="experience"
+            label="Navrhni lepší pořadí modulů"
+            buildProposal={() => proposeExperienceModuleOrder(composition)}
+            onAccept={(payload) => {
+              const data = payload as ExperienceOrderPayload;
+              onApplyOrder(data.moduleIds as ExperienceModuleId[]);
+            }}
+          />
+          <AiAuthorSuggestButton
+            projectId={projectId}
+            domain="experience"
+            label="Navrhni CTA"
+            buildProposal={() => proposeExperienceCta(composition)}
+            onAccept={(payload) => {
+              const data = payload as ExperienceCtaPayload;
+              onApplyCta(data.heroCta, data.leadCta);
+            }}
+          />
+          <AiAuthorSuggestButton
+            projectId={projectId}
+            domain="experience"
+            label="Navrhni lepší Decision Flow"
+            buildProposal={() => proposeDecisionFlow(composition)}
+            onAccept={(payload) => {
+              const data = payload as ExperienceOrderPayload;
+              onApplyOrder(data.moduleIds as ExperienceModuleId[]);
+            }}
+          />
+        </div>
       </div>
 
       <ul className="space-y-3">

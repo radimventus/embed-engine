@@ -10,6 +10,7 @@ import { useExperienceComposerController } from './useExperienceComposerControll
 
 type ExperienceComposerViewProps = {
   readonly projectId: string;
+  readonly projectName: string;
   readonly snapshot: HousePackageEditSnapshot | null;
   readonly validationReport: HousePackageValidationReport | null;
   readonly onNavigateContent: (nav: HousePackageNavId) => void;
@@ -21,6 +22,7 @@ type ExperienceComposerViewProps = {
  */
 export function ExperienceComposerView({
   projectId,
+  projectName,
   snapshot,
   validationReport,
   onNavigateContent,
@@ -29,6 +31,7 @@ export function ExperienceComposerView({
   const heroPath = snapshot?.working.heroRelativePath;
   const composer = useExperienceComposerController(projectId, heroPath);
   const remountKey = `${projectId}:${composer.composition.revision}:${snapshot?.mountedAt ?? 'none'}:${snapshot?.working.heroRelativePath ?? ''}`;
+  const roomCount = snapshot?.validation.builderImport?.rooms.rooms.length ?? 0;
 
   const handleReadyClick = (
     _moduleId: string,
@@ -63,10 +66,24 @@ export function ExperienceComposerView({
             selectedModuleId={composer.selectedModuleId}
             snapshot={snapshot}
             validationReport={validationReport}
+            projectId={projectId}
             onSelect={composer.selectModule}
             onEdit={composer.openEditor}
             onToggle={composer.toggleEnabled}
             onReorder={composer.reorder}
+            onApplyOrder={(moduleIds) => {
+              composer.applyOrder(moduleIds);
+            }}
+            onApplyCta={(heroCta, leadCta) => {
+              composer.saveConfig('hero', {
+                ...composer.composition.configs.hero,
+                cta: heroCta,
+              });
+              composer.saveConfig('lead-capture', {
+                ...composer.composition.configs['lead-capture'],
+                cta: leadCta,
+              });
+            }}
             onReadyClick={handleReadyClick}
             onAddModule={composer.addModule}
           />
@@ -80,6 +97,9 @@ export function ExperienceComposerView({
         <ExperienceModuleEditor
           moduleId={composer.editingModuleId}
           composition={composer.composition}
+          projectId={projectId}
+          projectName={projectName}
+          roomCount={roomCount}
           onClose={composer.closeEditor}
           onSave={(moduleId, config) => {
             composer.saveConfig(moduleId, config);

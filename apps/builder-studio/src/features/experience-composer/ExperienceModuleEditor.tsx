@@ -1,6 +1,16 @@
 import { useEffect, useState, type FormEvent, type ReactNode } from 'react';
 
 import {
+  AiAuthorSuggestButton,
+  proposeFaqAnswers,
+  proposeFaqQuestions,
+  proposeHeroCta,
+  proposeHeroHeadline,
+  proposeHeroSubtitle,
+  type HeroProposalPayload,
+  type FaqProposalPayload,
+} from '../ai-author';
+import {
   getModuleDefinition,
   type ExperienceComposition,
   type ExperienceModuleConfigs,
@@ -10,6 +20,9 @@ import {
 type ExperienceModuleEditorProps = {
   readonly moduleId: ExperienceModuleId;
   readonly composition: ExperienceComposition;
+  readonly projectId: string;
+  readonly projectName: string;
+  readonly roomCount?: number;
   readonly onClose: () => void;
   readonly onSave: <K extends ExperienceModuleId>(
     moduleId: K,
@@ -23,6 +36,9 @@ type ExperienceModuleEditorProps = {
 export function ExperienceModuleEditor({
   moduleId,
   composition,
+  projectId,
+  projectName,
+  roomCount = 0,
   onClose,
   onSave,
 }: ExperienceModuleEditorProps) {
@@ -68,6 +84,9 @@ export function ExperienceModuleEditor({
         <div className="mt-5">
           {moduleId === 'hero' && (
             <HeroEditor
+              projectId={projectId}
+              projectName={projectName}
+              roomCount={roomCount}
               value={composition.configs.hero}
               onCancel={onClose}
               onSave={(config) => {
@@ -98,6 +117,8 @@ export function ExperienceModuleEditor({
           )}
           {moduleId === 'faq' && (
             <FaqEditor
+              projectId={projectId}
+              projectName={projectName}
               value={composition.configs.faq}
               onCancel={onClose}
               onSave={(config) => {
@@ -168,10 +189,16 @@ function EditorActions({ onCancel }: { readonly onCancel: () => void }) {
 }
 
 function HeroEditor({
+  projectId,
+  projectName,
+  roomCount,
   value,
   onCancel,
   onSave,
 }: {
+  readonly projectId: string;
+  readonly projectName: string;
+  readonly roomCount: number;
   readonly value: ExperienceModuleConfigs['hero'];
   readonly onCancel: () => void;
   readonly onSave: (config: ExperienceModuleConfigs['hero']) => void;
@@ -188,6 +215,13 @@ function HeroEditor({
     setImagePath(value.imagePath);
   }, [value]);
 
+  const applyHeroField = (payload: unknown) => {
+    const data = payload as HeroProposalPayload;
+    if (data.field === 'title') setTitle(data.value);
+    if (data.field === 'subtitle') setSubtitle(data.value);
+    if (data.field === 'cta') setCta(data.value);
+  };
+
   return (
     <form
       className="space-y-4"
@@ -196,6 +230,31 @@ function HeroEditor({
         onSave({ title, subtitle, cta, imagePath });
       }}
     >
+      <div className="flex flex-wrap gap-2">
+        <AiAuthorSuggestButton
+          projectId={projectId}
+          domain="hero"
+          label="Navrhnout headline"
+          buildProposal={() =>
+            proposeHeroHeadline({ projectName, currentTitle: title })
+          }
+          onAccept={applyHeroField}
+        />
+        <AiAuthorSuggestButton
+          projectId={projectId}
+          domain="hero"
+          label="Navrhnout subtitle"
+          buildProposal={() => proposeHeroSubtitle({ projectName, roomCount })}
+          onAccept={applyHeroField}
+        />
+        <AiAuthorSuggestButton
+          projectId={projectId}
+          domain="hero"
+          label="Navrhnout CTA"
+          buildProposal={() => proposeHeroCta()}
+          onAccept={applyHeroField}
+        />
+      </div>
       <Field label="Nadpis">
         <input
           className="w-full rounded-[10px] border border-[#DDE5EF] px-3 py-2"
@@ -333,19 +392,31 @@ function HouseNavigatorEditor({
 }
 
 function FaqEditor({
+  projectId,
+  projectName,
   value,
   onCancel,
   onSave,
 }: {
+  readonly projectId: string;
+  readonly projectName: string;
   readonly value: ExperienceModuleConfigs['faq'];
   readonly onCancel: () => void;
   readonly onSave: (config: ExperienceModuleConfigs['faq']) => void;
 }) {
+  const [items, setItems] = useState(value.items);
   const [text, setText] = useState(
     value.items
       .map((item) => `Q: ${item.question}\nA: ${item.answer}`)
       .join('\n\n'),
   );
+
+  const syncText = (next: typeof items) => {
+    setItems(next);
+    setText(
+      next.map((item) => `Q: ${item.question}\nA: ${item.answer}`).join('\n\n'),
+    );
+  };
 
   return (
     <form
@@ -356,7 +427,7 @@ function FaqEditor({
           .split(/\n\s*\n/)
           .map((block) => block.trim())
           .filter(Boolean);
-        const items = blocks.map((block) => {
+        const parsed = blocks.map((block) => {
           const lines = block.split('\n');
           const question = lines
             .find((line) => line.startsWith('Q:'))
@@ -366,9 +437,33 @@ function FaqEditor({
             ?.replace(/^A:\s*/, '') ?? '';
           return { question, answer };
         });
-        onSave({ items });
+        onSave({ items: parsed });
       }}
     >
+      <div className="flex flex-wrap gap-2">
+        <AiAuthorSuggestButton
+          projectId={projectId}
+          domain="faq"
+          label="Navrhnout další otázky"
+          buildProposal={() =>
+            proposeFaqQuestions({ existing: items, projectName })
+          }
+          onAccept={(payload) => {
+            const data = payload as FaqProposalPayload;
+            syncText([...items, ...data.items]);
+          }}
+        />
+        <AiAuthorSuggestButton
+          projectId={projectId}
+          domain="faq"
+          label="Navrhnout odpovědi"
+          buildProposal={() => proposeFaqAnswers({ existing: items })}
+          onAccept={(payload) => {
+            const data = payload as FaqProposalPayload;
+            syncText(data.items);
+          }}
+        />
+      </div>
       <Field label="Otázky a odpovědi (Q: / A: bloky)">
         <textarea
           className="min-h-56 w-full rounded-[10px] border border-[#DDE5EF] px-3 py-2 font-mono text-[12px]"

@@ -226,6 +226,7 @@ export function BuilderStudioApp() {
           experienceMode && (
             <ExperienceComposerView
               projectId={workspace.activeProject.id}
+              projectName={workspace.activeProject.name}
               snapshot={snapshot}
               validationReport={validationReport}
               onNavigateContent={handleNavigate}
