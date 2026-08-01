@@ -23,13 +23,11 @@ function NavGroup({
   readonly ariaLabel: string;
 }) {
   return (
-    <>
-      <div className="mt-4 flex h-8 shrink-0 items-center px-4 first:mt-0">
-        <span className="text-xs font-medium tracking-wide text-embed-brand-gold">
-          {title}
-        </span>
-      </div>
-      <nav className="mt-1 flex flex-col gap-1 px-2" aria-label={ariaLabel}>
+    <div className="mb-5">
+      <p className="px-1 text-[11px] font-bold uppercase tracking-[1px] text-[#7D8796]">
+        {title}
+      </p>
+      <nav className="mt-2 flex flex-col gap-1" aria-label={ariaLabel}>
         {items.map((item) => {
           const isActive = activeSectionId === item.id;
           return (
@@ -42,43 +40,40 @@ function NavGroup({
                 scrollToSection(item.id);
               }}
               className={[
-                'flex items-center gap-3 rounded-sm px-3 py-2 text-left text-sm transition-colors',
+                'rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-semibold transition-colors',
                 isActive
-                  ? 'bg-embed-background-primary/15 text-embed-brand-gold'
-                  : 'text-embed-background-primary/75 hover:bg-embed-background-primary/10 hover:text-embed-background-primary',
+                  ? 'border-[#18428F] bg-[#18428F] text-white'
+                  : 'border-transparent text-[#001930] hover:bg-[#F7F9FC]',
               ].join(' ')}
             >
-              <span className="w-4 text-center text-xs font-medium" aria-hidden>
-                {item.short}
-              </span>
-              <span>{item.label}</span>
+              {item.label}
             </button>
           );
         })}
       </nav>
-    </>
+    </div>
   );
 }
 
 /**
- * Left AppShell rail — Platform Ops + Customer Success + Operations (BX-17/19).
+ * VR-FIX-01 — Product capability navigation (light rail, shared platform grammar).
  */
 export function ManagerStudioSidebar() {
   const { activeSectionId } = useManagerNav();
 
   return (
     <aside
-      className="flex h-full min-h-screen w-sidebar shrink-0 flex-col bg-embed-brand-navy"
+      className="flex h-full w-[260px] shrink-0 flex-col border-r border-[#E7ECF3] bg-white"
       data-studio-shell="sidebar"
       aria-label="Navigace Manager Studia"
     >
-      <div className="flex h-header shrink-0 items-center px-4">
-        <span className="text-xs font-medium tracking-wide text-embed-brand-gold">
-          Manager
+      <div className="flex h-[52px] shrink-0 items-center px-6">
+        <span className="text-[11px] font-bold uppercase tracking-[1px] text-[#7D8796]">
+          Workspace
         </span>
       </div>
 
-      <div className="flex flex-1 flex-col overflow-y-auto pb-section">
+      <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-6">
         <NavGroup
           title="Launch"
           items={LAUNCH_SECTION_NAV}
@@ -86,25 +81,17 @@ export function ManagerStudioSidebar() {
           ariaLabel="Sekce Launch Center"
         />
         <NavGroup
-          title="Platform Ops"
-          items={PLATFORM_OPS_SECTION_NAV}
+          title="Platform"
+          items={[
+            ...PLATFORM_OPS_SECTION_NAV,
+            ...COMMERCIAL_SECTION_NAV,
+            ...PRODUCT_LEARNING_SECTION_NAV,
+          ]}
           activeSectionId={activeSectionId}
-          ariaLabel="Sekce Platform Operations Center"
+          ariaLabel="Sekce Platform capabilities"
         />
         <NavGroup
-          title="Commercial"
-          items={COMMERCIAL_SECTION_NAV}
-          activeSectionId={activeSectionId}
-          ariaLabel="Sekce Commercial Platform"
-        />
-        <NavGroup
-          title="Product Learning"
-          items={PRODUCT_LEARNING_SECTION_NAV}
-          activeSectionId={activeSectionId}
-          ariaLabel="Sekce Product Learning"
-        />
-        <NavGroup
-          title="Customer Success"
+          title="Customers"
           items={CUSTOMER_SUCCESS_SECTION_NAV}
           activeSectionId={activeSectionId}
           ariaLabel="Sekce Customer Success"

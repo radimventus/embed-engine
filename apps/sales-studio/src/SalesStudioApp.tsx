@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, type CSSProperties, type ReactNode } from 'react';
 
 import { analyzeCustomerSuccess } from '@embed-engine/customer-success';
 import {
@@ -17,8 +17,35 @@ import {
 
 import { getSalesCapabilityHost } from './studio/salesStudioComposition';
 
+const layoutRow: CSSProperties = {
+  display: 'flex',
+  minHeight: 0,
+  flex: 1,
+  overflow: 'hidden',
+};
+
+const mainStyle: CSSProperties = {
+  minHeight: 0,
+  minWidth: 0,
+  flex: 1,
+  overflowY: 'auto',
+  padding: '28px 32px',
+};
+
+const cardStyle: CSSProperties = {
+  border: '1px solid rgba(0, 25, 48, 0.06)',
+  borderRadius: 18,
+  background: 'var(--platform-surface)',
+  padding: 26,
+  boxShadow: '0 4px 20px rgba(0, 0, 0, 0.02)',
+};
+
+function Card({ children }: { readonly children: ReactNode }) {
+  return <section style={cardStyle}>{children}</section>;
+}
+
 /**
- * EPIC-BX-11..17 — Sales Studio: Pipeline + Customer Success capability.
+ * VR-FIX-01 — Sales Studio projection sharing Platform Shell grammar.
  */
 export function SalesStudioApp() {
   const { session, bootstrap, registry, logout, clearStudio, selectProject } =
@@ -79,92 +106,85 @@ export function SalesStudioApp() {
         });
       }}
     >
-      <div style={{ display: 'flex', minHeight: 0, flex: 1 }}>
-        <main
-          style={{
-            flex: 1,
-            padding: '48px 32px',
-            maxWidth: 720,
-          }}
-        >
-          <p
-            style={{
-              margin: 0,
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '0.08em',
-              textTransform: 'uppercase',
-              color: 'var(--platform-muted)',
-            }}
-          >
-            Customer Success
-          </p>
-          <h1
-            style={{
-              margin: '12px 0 0',
-              fontSize: 32,
-              fontWeight: 700,
-              letterSpacing: '-0.02em',
-              color: 'var(--platform-ink)',
-            }}
-          >
-            {success?.health ?? '—'} · {success?.adoptionScore ?? 0}%
-          </h1>
-          <p
-            style={{
-              margin: '16px 0 0',
-              fontSize: 15,
-              lineHeight: 1.55,
-              color: 'var(--platform-muted)',
-            }}
-          >
-            Stejná Customer Success capability jako Manager — žádný druhý model
-            zákazníka. Onboarding{' '}
-            {success?.onboardingCompleteCount ?? 0}/
-            {success?.onboardingTotal ?? 0}.
-          </p>
-          <ul
-            style={{
-              margin: '24px 0 0',
-              paddingLeft: 18,
-              color: 'var(--platform-ink)',
-              fontSize: 14,
-              lineHeight: 1.6,
-            }}
-          >
-            {(success?.recommendations ?? []).map((item) => (
-              <li key={item.id}>
-                <a href={item.href}>{item.title}</a>
-              </li>
-            ))}
-          </ul>
-          <p
-            style={{
-              margin: '28px 0 0',
-              fontSize: 12,
-              fontWeight: 600,
-              letterSpacing: '0.06em',
-              textTransform: 'uppercase',
-              color: 'var(--platform-muted)',
-            }}
-          >
-            Declared capabilities
-          </p>
-          <ul
-            style={{
-              margin: '8px 0 0',
-              paddingLeft: 18,
-              color: 'var(--platform-ink)',
-              fontSize: 14,
-              lineHeight: 1.6,
-            }}
-          >
-            {capabilityHost.declaredIds.map((id) => (
-              <li key={id}>{id}</li>
-            ))}
-          </ul>
+      <div style={layoutRow}>
+        <main style={mainStyle}>
+          <div style={{ maxWidth: 960, margin: '0 auto' }}>
+            <header style={{ marginBottom: 24 }}>
+              <h1
+                style={{
+                  margin: 0,
+                  fontSize: 30,
+                  fontWeight: 600,
+                  letterSpacing: '-0.5px',
+                  color: 'var(--platform-ink)',
+                }}
+              >
+                Sales Studio
+              </h1>
+              <p
+                style={{
+                  margin: '4px 0 0',
+                  fontSize: 14,
+                  color: 'var(--platform-muted)',
+                }}
+              >
+                Customer Success projection — stejná platformní capability.
+              </p>
+            </header>
+
+            <Card>
+              <p
+                style={{
+                  margin: 0,
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '1px',
+                  textTransform: 'uppercase',
+                  color: '#7D8796',
+                }}
+              >
+                Customer Success
+              </p>
+              <h2
+                style={{
+                  margin: '8px 0 0',
+                  fontSize: 22,
+                  fontWeight: 600,
+                  color: 'var(--platform-ink)',
+                }}
+              >
+                {success?.health ?? '—'} · {success?.adoptionScore ?? 0}%
+              </h2>
+              <p
+                style={{
+                  margin: '12px 0 0',
+                  fontSize: 13,
+                  lineHeight: 1.55,
+                  color: 'var(--platform-muted)',
+                }}
+              >
+                Onboarding {success?.onboardingCompleteCount ?? 0}/
+                {success?.onboardingTotal ?? 0}.
+              </p>
+              <ul
+                style={{
+                  margin: '20px 0 0',
+                  paddingLeft: 18,
+                  color: 'var(--platform-ink)',
+                  fontSize: 14,
+                  lineHeight: 1.6,
+                }}
+              >
+                {(success?.recommendations ?? []).map((item) => (
+                  <li key={item.id}>
+                    <a href={item.href}>{item.title}</a>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          </div>
         </main>
-        <div style={{ width: 300, flexShrink: 0 }}>
+        <div style={{ width: 340, flexShrink: 0, height: '100%', overflow: 'hidden' }}>
           <CapabilityInspector model={inspectorModel} />
         </div>
       </div>

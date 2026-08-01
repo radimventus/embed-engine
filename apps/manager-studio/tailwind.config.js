@@ -21,13 +21,13 @@ export default {
       },
       spacing: {
         section: '24px',
-        header: '72px',
+        header: '70px',
       },
       width: {
-        sidebar: '14rem',
+        sidebar: '260px',
       },
       height: {
-        header: '72px',
+        header: '70px',
       },
       fontFamily: {
         sans: typography.fontFamily.sans.split(',').map((font) => font.trim()),

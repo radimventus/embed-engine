@@ -43,7 +43,7 @@ export function PlatformDropdown({
   }, [open]);
 
   return (
-    <div className="relative" ref={rootRef}>
+    <div className="platform-dropdown" ref={rootRef}>
       <button
         type="button"
         className="platform-menu-button"

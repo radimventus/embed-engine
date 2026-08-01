@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 
 type AppShellProps = {
   readonly workspacePanel?: ReactNode;
-  readonly sidebar: ReactNode;
   readonly publishPanel?: ReactNode;
   readonly children: ReactNode;
   /** Wider authoring surface (Experience Composer). */
@@ -10,12 +9,11 @@ type AppShellProps = {
 };
 
 /**
- * Builder body shell under Platform Shell (EPIC-BX-11).
- * Platform Header / Breadcrumb live in `@embed-engine/platform-shell`.
+ * VR-FIX-01 — Sticky Builder layout (Workspace | Canvas | Inspector).
+ * Only the center workspace scrolls.
  */
 export function AppShell({
   workspacePanel,
-  sidebar,
   publishPanel,
   children,
   denseMain = false,
@@ -24,26 +22,30 @@ export function AppShell({
   const gridClass =
     workspacePanel !== undefined
       ? hasPublish
-        ? 'grid-cols-[240px_200px_1fr_300px]'
-        : 'grid-cols-[240px_200px_1fr]'
+        ? 'grid-cols-[260px_1fr_340px]'
+        : 'grid-cols-[260px_1fr]'
       : hasPublish
-        ? 'grid-cols-[260px_1fr_360px]'
-        : 'grid-cols-[260px_1fr]';
+        ? 'grid-cols-[1fr_340px]'
+        : 'grid-cols-1';
 
   return (
     <div
       className={`grid min-h-0 flex-1 overflow-hidden ${gridClass}`}
+      data-studio-shell="builder-layout"
     >
-      {workspacePanel}
-      {sidebar}
+      {workspacePanel !== undefined ? (
+        <div className="min-h-0 overflow-hidden">{workspacePanel}</div>
+      ) : null}
       <main
-        className={`min-w-0 overflow-y-auto ${
-          denseMain ? 'p-4' : 'px-9 py-9'
+        className={`min-h-0 min-w-0 overflow-y-auto ${
+          denseMain ? 'px-6 py-6' : 'px-8 py-7'
         }`}
       >
         {children}
       </main>
-      {hasPublish ? publishPanel : null}
+      {hasPublish ? (
+        <div className="min-h-0 overflow-hidden">{publishPanel}</div>
+      ) : null}
     </div>
   );
 }

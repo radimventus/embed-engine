@@ -29,6 +29,6 @@ export const typography = {
     tighter: '-0.02em',
     normal: '0em',
     wide: '0.05em',
-    brand: '0.24em',
+    brand: '0.3em',
   },
 } as const;

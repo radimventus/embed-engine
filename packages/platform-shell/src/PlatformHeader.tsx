@@ -3,7 +3,6 @@ import { FeedbackButton } from './FeedbackButton';
 import { NotificationsBell } from './NotificationsBell';
 import { StudioSwitcher } from './StudioSwitcher';
 import { UserMenu } from './UserMenu';
-import { WorkspaceSwitcher } from './WorkspaceSwitcher';
 import type { PlatformWorkspaceState } from './platformTypes';
 
 export type PlatformHeaderProps = {
@@ -19,15 +18,13 @@ export type PlatformHeaderProps = {
 };
 
 /**
- * EPIC-BX-11 / BX-14 / BX-15 — Shared Platform Header for Builder / Manager / Sales.
+ * VR-FIX-01 — Platform Header aligned to click-model SSOT.
  */
 export function PlatformHeader({
   activeStudioId,
   userLabel = 'Radim',
   roleLabel,
-  workspace = null,
   notificationCount = 3,
-  searchPlaceholder = 'Hledat v platformě…',
   onLogout,
   onOpenLanding,
   onSubmitFeedback,
@@ -36,27 +33,23 @@ export function PlatformHeader({
     <header className="platform-header" data-testid="platform-header">
       <div className="platform-header__cluster">
         <p className="platform-header__brand">
-          CON<span className="platform-header__brand-accent">IS</span>
+          CON<span className="platform-header__brand-accent">I</span>S
         </p>
-        <StudioSwitcher activeStudioId={activeStudioId} />
-        <WorkspaceSwitcher workspace={workspace} />
       </div>
 
+      <StudioSwitcher activeStudioId={activeStudioId} />
+
       <div className="platform-header__actions">
-        <input
-          className="platform-search"
-          type="search"
-          placeholder={searchPlaceholder}
-          aria-label="Global Search"
-        />
-        <FeedbackButton onSubmitFeedback={onSubmitFeedback} />
-        <NotificationsBell count={notificationCount} />
-        <UserMenu
-          userLabel={userLabel}
-          roleLabel={roleLabel}
-          onLogout={onLogout}
-          onOpenLanding={onOpenLanding}
-        />
+        <div className="platform-user-badge">
+          <FeedbackButton onSubmitFeedback={onSubmitFeedback} />
+          <NotificationsBell count={notificationCount} />
+          <UserMenu
+            userLabel={userLabel}
+            roleLabel={roleLabel}
+            onLogout={onLogout}
+            onOpenLanding={onOpenLanding}
+          />
+        </div>
       </div>
     </header>
   );

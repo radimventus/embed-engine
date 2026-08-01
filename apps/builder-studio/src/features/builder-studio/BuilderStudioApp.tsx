@@ -29,7 +29,6 @@ import { ProjectActionPanel } from '../project-dashboard';
 import {
   HousePackageEditView,
   HousePackageRuntimePreview,
-  HousePackageSidebar,
   useHousePackageEditController,
   type HousePackageNavId,
 } from '../house-package';
@@ -40,6 +39,7 @@ import {
   useWorkspaceController,
   WorkspaceSidebar,
 } from '../workspace';
+import { BuilderAnchorRail } from '../workspace/BuilderAnchorRail';
 
 const SECTION_LABEL: Record<HousePackageNavId, string> = {
   overview: 'Dashboard',
@@ -254,7 +254,6 @@ export function BuilderStudioApp() {
               void workspace.requestOpenProject(projectId, { dirty });
             }}
             onCreateProject={() => setCreateOpen(true)}
-            onEditProject={() => setEditOpen(true)}
             onDirtySave={() => {
               void workspace.confirmDirtySave(async () => {
                 await save();
@@ -267,14 +266,6 @@ export function BuilderStudioApp() {
               void workspace.confirmDirtyDiscard();
             }}
             onDirtyCancel={workspace.cancelDirtySwitch}
-          />
-        }
-        sidebar={
-          <HousePackageSidebar
-            snapshot={snapshot}
-            activeNav={activeNav}
-            onSelectNav={handleNavigate}
-            projectName={workspace.activeProject?.name ?? null}
           />
         }
         publishPanel={
@@ -319,19 +310,25 @@ export function BuilderStudioApp() {
           )
         }
       >
+        {mountStatus.status === 'ready' && (
+          <BuilderAnchorRail
+            snapshot={snapshot}
+            activeNav={activeNav}
+            onSelectNav={handleNavigate}
+          />
+        )}
         {diskRoot === null && (
-          <section className="rounded-[14px] border border-[#E8EEF5] bg-white p-8 shadow-sm">
+          <section className="rounded-[18px] border border-[rgba(0,25,48,0.06)] bg-white p-[26px] shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
             <h2 className="text-xl font-semibold text-builder-ink">
               Vyberte projekt
             </h2>
             <p className="mt-2 text-sm text-builder-muted">
-              Otevřete projekt ve Workspace vlevo, nebo založte nový přes ＋ Nový
-              projekt.
+              Otevřete projekt ve Workspace vlevo, nebo založte nový přes ⊕.
             </p>
           </section>
         )}
         {diskRoot !== null && mountStatus.status === 'loading' && (
-          <section className="rounded-[14px] border border-[#E8EEF5] bg-white p-8 shadow-sm">
+          <section className="rounded-[18px] border border-[rgba(0,25,48,0.06)] bg-white p-[26px] shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
             <h2 className="text-xl font-semibold text-builder-ink">
               Načítám projekt…
             </h2>
@@ -339,7 +336,7 @@ export function BuilderStudioApp() {
           </section>
         )}
         {diskRoot !== null && mountStatus.status === 'error' && (
-          <section className="rounded-[14px] border border-builder-draft/30 bg-builder-draftBg p-8">
+          <section className="rounded-[18px] border border-builder-draft/30 bg-builder-draftBg p-[26px]">
             <h2 className="text-xl font-semibold text-builder-draft">
               Projekt se nepodařilo otevřít
             </h2>

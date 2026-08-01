@@ -8,7 +8,7 @@ type UserMenuProps = {
 };
 
 /**
- * EPIC-BX-11 / BX-14 — User menu with logout + platform landing.
+ * VR-FIX-01 — User badge (gold avatar) per click model.
  */
 export function UserMenu({
   userLabel,
@@ -16,24 +16,29 @@ export function UserMenu({
   onLogout,
   onOpenLanding,
 }: UserMenuProps) {
+  const initials = userLabel
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('');
+
   return (
     <PlatformDropdown
       align="right"
       ariaLabel="User menu"
       label={
         <>
+          <span>{roleLabel ?? 'Aktivní modul'}</span>
           <span className="platform-avatar" aria-hidden>
-            {userLabel.slice(0, 1).toUpperCase()}
+            {initials || userLabel.slice(0, 1).toUpperCase()}
           </span>
-          <span>{userLabel}</span>
         </>
       }
     >
-      {roleLabel !== undefined && roleLabel.length > 0 && (
-        <span className="platform-menu-item platform-menu-item--disabled">
-          {roleLabel}
-        </span>
-      )}
+      <span className="platform-menu-item platform-menu-item--disabled">
+        {userLabel}
+      </span>
       <button type="button" role="menuitem" className="platform-menu-item">
         Profil
       </button>

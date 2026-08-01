@@ -74,25 +74,25 @@ export function resolvePlatformStudioHref(studioId: PlatformStudioId): string {
 
 const STUDIO_DEFS: readonly Omit<PlatformStudio, 'href'>[] = [
   {
-    id: 'builder',
-    label: 'Builder Studio',
-    shortLabel: 'Builder',
-    available: true,
-    accent: '#1E4D8C',
-  },
-  {
     id: 'manager',
     label: 'Manager Studio',
     shortLabel: 'Manager',
     available: true,
-    accent: '#1F7A4D',
+    accent: '#18428F',
   },
   {
     id: 'sales',
     label: 'Sales Studio',
     shortLabel: 'Sales',
     available: true,
-    accent: '#C45C26',
+    accent: '#18428F',
+  },
+  {
+    id: 'builder',
+    label: 'Builder Studio',
+    shortLabel: 'Builder',
+    available: true,
+    accent: '#18428F',
   },
 ] as const;
 

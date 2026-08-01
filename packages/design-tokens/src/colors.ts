@@ -1,6 +1,6 @@
 /**
- * Client Studio / EMBED color system.
- * Single source of truth — only these palette values exist.
+ * Platform + Embed color system.
+ * Click-model SSOT (`docs/platform/click model.html`) for platform chrome.
  */
 export const palette = {
   navy: '#001930',
@@ -9,8 +9,19 @@ export const palette = {
   warmGray: '#E8E5E0',
   lightGray: '#E3E3E3',
   gold: '#C8A165',
-  /** Muted bronze accent — single Audit / action gold (CTA, workflow, panels). */
+  /** Muted bronze accent — Audit / action gold (CTA, workflow, panels). */
   goldIntense: '#B8922D',
+  /** Click-model gold-light surface. */
+  goldLight: '#FBF7EE',
+  /** Click-model canvas. */
+  platformBg: '#F5F7FB',
+  /** Click-model muted text. */
+  platformMuted: '#64748B',
+  /** Click-model hairline. */
+  platformLine: '#E2E8F0',
+  /** Builder active / blue accent from click model. */
+  platformBlue: '#18428F',
+  platformBlueBg: '#EEF4FF',
   pureWhite: '#FFFFFF',
 } as const;
 
@@ -38,19 +49,19 @@ export const colors = {
     info: palette.navy,
   },
   background: {
-    primary: palette.warmWhite,
-    secondary: palette.warmWhite,
+    primary: palette.platformBg,
+    secondary: palette.platformBg,
     tertiary: palette.lightGray,
   },
   foreground: {
     primary: palette.navy,
     secondary: palette.navy,
-    tertiary: palette.navy,
-    muted: palette.navy,
+    tertiary: palette.platformMuted,
+    muted: palette.platformMuted,
   },
   border: {
-    default: palette.lightGray,
-    strong: palette.lightGray,
+    default: palette.platformLine,
+    strong: palette.platformLine,
     /** Input / accent outlines — saturated gold */
     gold: palette.goldIntense,
   },
@@ -58,7 +69,7 @@ export const colors = {
     navy: palette.navy,
     gold: palette.gold,
     goldIntense: palette.goldIntense,
-    goldLight: palette.lightGray,
+    goldLight: palette.goldLight,
   },
   /** Interactive action surfaces — consumed by @embed-engine/ui */
   action: {
@@ -78,10 +89,21 @@ export const colors = {
     chatIncoming: palette.warmGray,
     chatOutgoing: palette.warmWhite,
     placeholder: palette.lightGray,
-    card: palette.warmWhite,
+    card: palette.pureWhite,
     elevated: palette.pureWhite,
     inset: palette.lightGray,
     /** Shared interactive fill — FAQ items, SegmentedControl track/idle */
     interactive: palette.warmGray,
+  },
+  platform: {
+    navy: palette.navy,
+    gold: palette.goldIntense,
+    goldLight: palette.goldLight,
+    bg: palette.platformBg,
+    muted: palette.platformMuted,
+    line: palette.platformLine,
+    blue: palette.platformBlue,
+    blueBg: palette.platformBlueBg,
+    card: palette.pureWhite,
   },
 } as const;

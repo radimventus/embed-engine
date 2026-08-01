@@ -8,7 +8,7 @@ type OperationsSurfaceProps = {
 };
 
 /**
- * Shared Operations Terminal section chrome (MSCB-01).
+ * VR-FIX-01 — Shared section chrome using click-model card hierarchy.
  */
 export function OperationsSurface({
   id,
@@ -21,15 +21,11 @@ export function OperationsSurface({
       id={id}
       tabIndex={-1}
       aria-label={title}
-      className="scroll-mt-header border-b border-embed-border-default bg-embed-background-primary px-section py-section"
+      className="mb-6 scroll-mt-4 rounded-[18px] border border-[rgba(0,25,48,0.06)] bg-white p-[26px] shadow-[0_4px_20px_rgba(0,0,0,0.02)]"
     >
-      <header className="mb-4 max-w-3xl">
-        <h2 className="text-lg font-medium text-embed-foreground-primary">
-          {title}
-        </h2>
-        <p className="mt-1 text-sm text-embed-foreground-primary/60">
-          {description}
-        </p>
+      <header className="mb-5 max-w-3xl">
+        <h2 className="text-lg font-semibold text-[#001930]">{title}</h2>
+        <p className="mt-1 text-[13px] text-[#64748B]">{description}</p>
       </header>
       {children}
     </section>

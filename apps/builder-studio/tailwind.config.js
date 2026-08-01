@@ -56,7 +56,7 @@ export default {
       },
       spacing: {
         section: '24px',
-        header: '72px',
+        header: '70px',
       },
       screens: {
         mobile: { max: '767px' },
@@ -65,13 +65,13 @@ export default {
       },
       width: {
         'builder-sidebar': '260px',
-        'builder-publish': '360px',
+        'builder-publish': '340px',
         sidebar: '48px',
         canvas: '1432px',
       },
       height: {
-        'builder-header': '72px',
-        header: '72px',
+        'builder-header': '70px',
+        header: '70px',
         'chapter-title': '60px',
       },
       fontFamily: {

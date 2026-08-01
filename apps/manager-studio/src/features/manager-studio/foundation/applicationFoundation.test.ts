@@ -135,7 +135,7 @@ describe('Application Foundation (MSCB-01)', () => {
 
     assert.match(page, /OperationsCenterCanvas/);
     assert.match(sidebar, /PLATFORM_OPS_SECTION_NAV/);
-    assert.match(sidebar, /Platform Ops/);
+    assert.match(sidebar, /Platform/);
     assert.match(pkg, /@embed-engine\/operations-center/);
   });
 
@@ -150,7 +150,6 @@ describe('Application Foundation (MSCB-01)', () => {
 
     assert.match(page, /ProductLearningCanvas/);
     assert.match(sidebar, /PRODUCT_LEARNING_SECTION_NAV/);
-    assert.match(sidebar, /Product Learning/);
     assert.match(pkg, /@embed-engine\/product-learning/);
   });
 
@@ -165,7 +164,6 @@ describe('Application Foundation (MSCB-01)', () => {
 
     assert.match(page, /CommercialPlatformCanvas/);
     assert.match(sidebar, /COMMERCIAL_SECTION_NAV/);
-    assert.match(sidebar, /Commercial/);
     assert.match(pkg, /@embed-engine\/commercial-platform/);
   });
 

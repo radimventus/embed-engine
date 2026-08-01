@@ -4,12 +4,15 @@ type WorkspaceProps = {
   readonly children?: ReactNode;
 };
 
+/**
+ * VR-FIX-01 — Manager working surface (scrolls inside sticky shell).
+ */
 export function Workspace({ children }: WorkspaceProps) {
   return (
-    <main className="flex flex-1 justify-center bg-embed-background-secondary">
+    <main className="mx-auto w-full max-w-[1520px] px-8 py-7">
       {children ?? (
-        <div className="flex flex-1 items-center justify-center">
-          <p className="text-sm text-embed-foreground-primary/45">Workspace</p>
+        <div className="flex flex-1 items-center justify-center py-16">
+          <p className="text-sm text-[#64748B]">Workspace</p>
         </div>
       )}
     </main>

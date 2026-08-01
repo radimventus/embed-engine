@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 
 import type { CapabilityHost, CapabilityId } from '@embed-engine/capabilities';
 
-import { CapabilityHostBar } from './CapabilityHostBar';
 import { PlatformBreadcrumb } from './PlatformBreadcrumb';
 import { PlatformHeader, type PlatformHeaderProps } from './PlatformHeader';
 import type { PlatformBreadcrumbItem } from './platformTypes';
@@ -16,8 +15,7 @@ export type PlatformShellProps = PlatformHeaderProps & {
 };
 
 /**
- * EPIC-BX-11 / BX-13 / BX-14 — Platform Shell root.
- * Shell loads Capability Host and composes Studio chrome.
+ * EPIC-BX-11 / VR-FIX-01 — Platform Shell root (sticky chrome, scrolling body).
  */
 export function PlatformShell({
   activeStudioId,
@@ -34,6 +32,9 @@ export function PlatformShell({
   activeCapabilityId = null,
   children,
 }: PlatformShellProps) {
+  void capabilityHost;
+  void activeCapabilityId;
+
   return (
     <div
       data-platform-shell=""
@@ -52,13 +53,7 @@ export function PlatformShell({
         onSubmitFeedback={onSubmitFeedback}
       />
       <PlatformBreadcrumb items={breadcrumb} />
-      {capabilityHost !== null && (
-        <CapabilityHostBar
-          host={capabilityHost}
-          activeCapabilityId={activeCapabilityId}
-        />
-      )}
-      {children}
+      <div className="platform-body">{children}</div>
     </div>
   );
 }
