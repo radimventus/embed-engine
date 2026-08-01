@@ -23,7 +23,7 @@ type KnowledgeComposerViewProps = {
 };
 
 /**
- * EPIC-BX-04 — Knowledge Composer dashboard (facade over HP + Runtime defaults).
+ * EPIC-BX-04 — Composer znalostí dashboard (facade over HP + Runtime defaults).
  */
 export function KnowledgeComposerView({
   projectId,
@@ -56,10 +56,10 @@ export function KnowledgeComposerView({
     <div className="space-y-6" data-testid="knowledge-composer">
       <header className="rounded-[16px] border border-[#E8EEF5] bg-white p-6 shadow-sm">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-          Knowledge
+          Znalosti
         </p>
         <h1 className="mt-1 text-2xl font-semibold text-builder-ink">
-          Knowledge Composer
+          Composer znalostí
         </h1>
         <p className="mt-1 text-sm text-builder-muted">
           {projectName} — strukturovaná znalost objektu ze stejných dat jako
@@ -79,7 +79,7 @@ export function KnowledgeComposerView({
 
         <label className="mt-5 block text-sm">
           <span className="mb-1.5 block font-medium text-builder-ink">
-            Hledat v Knowledge
+            Hledat ve znalostech
           </span>
           <input
             value={query}

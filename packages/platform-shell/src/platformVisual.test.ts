@@ -22,9 +22,9 @@ describe('platformVisual (VR-FIX-02)', () => {
     assert.equal(builder.canvas, '#F5F7FB');
   });
 
-  it('uses studio accents from Product Review (PR-009)', () => {
+  it('uses studio accents from click model (PR-013)', () => {
     assert.equal(getPlatformTheme('builder').accent, '#18428F');
     assert.equal(getPlatformTheme('manager').accent, '#138D45');
-    assert.equal(getPlatformTheme('sales').accent, '#EA580C');
+    assert.equal(getPlatformTheme('sales').accent, '#B8922D');
   });
 });

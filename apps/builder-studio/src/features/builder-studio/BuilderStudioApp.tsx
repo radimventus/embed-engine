@@ -43,10 +43,10 @@ import { BuilderAnchorRail } from '../workspace/BuilderAnchorRail';
 import { BuilderClickModelCanvas } from '../workspace/BuilderClickModelCanvas';
 
 const SECTION_LABEL: Record<HousePackageNavId, string> = {
-  overview: 'Dashboard',
+  overview: 'Přehled',
   experience: 'Experience',
   knowledge: 'Znalosti',
-  'media-studio': 'Média',
+  'media-studio': 'Hero',
   'preview-center': 'Náhled',
   'release-center': 'Publikace',
   collaboration: 'Spolupráce',
@@ -54,9 +54,9 @@ const SECTION_LABEL: Record<HousePackageNavId, string> = {
   rooms: 'Dispozice',
   gallery: 'Galerie',
   videos: 'Videa',
-  plans: 'Plány',
-  media: 'Média (HP)',
-  manifest: 'Manifest',
+  plans: 'Půdorys',
+  media: 'SVG',
+  manifest: 'Dokumenty',
 };
 
 function isClickModelNav(nav: HousePackageNavId): boolean {
@@ -180,14 +180,25 @@ export function BuilderStudioApp() {
     void validate();
   }, [diskRoot, mountStatus.status, snapshot, validate]);
 
-  // Platform Access → Builder HP mount (project bootstrap).
+  // Platform Access → Builder HP mount (only when Workspace has no active project).
   useEffect(() => {
     if (accessSession?.projectId == null) return;
+    if (workspace.switching) return;
     if (workspace.activeProject?.id === accessSession.projectId) return;
+    if (workspace.activeProject !== null) return;
     void workspace.requestOpenProject(accessSession.projectId, { dirty: false });
-    // bootstrapActiveProject already invoked for Capability + Intelligence readiness
     void projectBootstrap;
-  }, [accessSession?.projectId]);
+  }, [accessSession?.projectId, workspace.activeProject?.id, workspace.switching]);
+
+  const openProjectStable = (projectId: string) => {
+    void (async () => {
+      const ok = await workspace.requestOpenProject(projectId, { dirty });
+      if (!ok) return;
+      if (registry.projects.some((project) => project.id === projectId)) {
+        selectProject(projectId);
+      }
+    })();
+  };
 
   const handleNavigate = (nav: HousePackageNavId) => {
     setHistoryOpen(false);
@@ -215,10 +226,7 @@ export function BuilderStudioApp() {
         registry.companies.find((company) => company.id === project.companyId)
           ?.name ?? 'Firma',
     })),
-    onSelectProject: (projectId) => {
-      selectProject(projectId);
-      void workspace.requestOpenProject(projectId, { dirty });
-    },
+    onSelectProject: openProjectStable,
   });
 
   const breadcrumb: PlatformBreadcrumbItem[] = [
@@ -270,11 +278,11 @@ export function BuilderStudioApp() {
             companyId: accessSession?.companyId ?? null,
           });
           recordPlatformActivity({
-            label: 'Feedback',
-            detail: message.slice(0, 80),
-          });
-        }}
-      >
+          label: 'Zpětná vazba',
+          detail: message.slice(0, 80),
+        });
+      }}
+    >
       <AppShell
         denseMain={productCapabilityMode}
         anchorRail={
@@ -290,26 +298,37 @@ export function BuilderStudioApp() {
           <WorkspaceSidebar
             registry={workspace.registry}
             activeProject={workspace.activeProject}
-            switching={workspace.switching || saving}
+            switching={workspace.switching}
             switchError={workspace.switchError}
             dirtyPrompt={workspace.dirtyPrompt}
-            onOpenProject={(projectId) => {
-              if (registry.projects.some((project) => project.id === projectId)) {
-                selectProject(projectId);
-              }
-              void workspace.requestOpenProject(projectId, { dirty });
-            }}
+            onOpenProject={openProjectStable}
             onCreateProject={() => setCreateOpen(true)}
             onDirtySave={() => {
+              const targetId =
+                workspace.dirtyPrompt?.kind === 'switch'
+                  ? workspace.dirtyPrompt.target.id
+                  : null;
               void workspace.confirmDirtySave(async () => {
                 await save();
+              }).then((ok) => {
+                if (ok && targetId !== null) {
+                  selectProject(targetId);
+                }
               });
             }}
             onDirtyDiscard={() => {
+              const targetId =
+                workspace.dirtyPrompt?.kind === 'switch'
+                  ? workspace.dirtyPrompt.target.id
+                  : null;
               if (session !== null) {
                 apply(session.discard());
               }
-              void workspace.confirmDirtyDiscard();
+              void workspace.confirmDirtyDiscard().then((ok) => {
+                if (ok && targetId !== null) {
+                  selectProject(targetId);
+                }
+              });
             }}
             onDirtyCancel={workspace.cancelDirtySwitch}
           />
@@ -338,7 +357,7 @@ export function BuilderStudioApp() {
                         `v${summary.housePackageVersion}`,
                       );
                       recordPlatformActivity({
-                        label: 'Publish',
+                        label: 'Publikace',
                         detail: `v${summary.housePackageVersion}`,
                       });
                     });
@@ -357,24 +376,32 @@ export function BuilderStudioApp() {
           )
         }
       >
-        {diskRoot === null && (
+        {workspace.switching && (
+          <PlatformLoading label="Přepínám projekt…" />
+        )}
+        {!workspace.switching && diskRoot === null && (
           <PlatformEmptyState
             icon="⊕"
             title="Vyberte projekt"
             description="Otevřete projekt ve Workspace vlevo, nebo založte nový přes ⊕."
           />
         )}
-        {diskRoot !== null && mountStatus.status === 'loading' && (
+        {!workspace.switching &&
+          diskRoot !== null &&
+          mountStatus.status === 'loading' && (
           <PlatformLoading label={`Načítám projekt… ${companyName}`} />
         )}
-        {diskRoot !== null && mountStatus.status === 'error' && (
+        {!workspace.switching &&
+          diskRoot !== null &&
+          mountStatus.status === 'error' && (
           <PlatformEmptyState
             icon="!"
             title="Projekt se nepodařilo otevřít"
             description={mountStatus.message}
           />
         )}
-        {mountStatus.status === 'ready' &&
+        {!workspace.switching &&
+          mountStatus.status === 'ready' &&
           workspace.activeProject !== null &&
           experienceMode && (
             <ExperienceComposerView
@@ -390,7 +417,8 @@ export function BuilderStudioApp() {
               }}
             />
           )}
-        {mountStatus.status === 'ready' &&
+        {!workspace.switching &&
+          mountStatus.status === 'ready' &&
           workspace.activeProject !== null &&
           previewCenterMode && (
             <PreviewCenterView
@@ -401,7 +429,8 @@ export function BuilderStudioApp() {
               onNavigate={handleNavigate}
             />
           )}
-        {mountStatus.status === 'ready' &&
+        {!workspace.switching &&
+          mountStatus.status === 'ready' &&
           workspace.activeProject !== null &&
           releaseCenterMode && (
             <ReleaseCenterView
@@ -416,7 +445,8 @@ export function BuilderStudioApp() {
               onNavigate={handleNavigate}
             />
           )}
-        {mountStatus.status === 'ready' &&
+        {!workspace.switching &&
+          mountStatus.status === 'ready' &&
           workspace.activeProject !== null &&
           collaborationMode && (
             <CollaborationCenterView
@@ -425,7 +455,8 @@ export function BuilderStudioApp() {
               onNavigate={handleNavigate}
             />
           )}
-        {mountStatus.status === 'ready' &&
+        {!workspace.switching &&
+          mountStatus.status === 'ready' &&
           workspace.activeProject !== null &&
           intelligenceMode && (
             <BuilderIntelligenceView
@@ -436,7 +467,8 @@ export function BuilderStudioApp() {
               onNavigate={handleNavigate}
             />
           )}
-        {mountStatus.status === 'ready' &&
+        {!workspace.switching &&
+          mountStatus.status === 'ready' &&
           snapshot !== null &&
           session !== null &&
           workspace.activeProject !== null &&
@@ -462,12 +494,14 @@ export function BuilderStudioApp() {
               }}
             />
           )}
-        {mountStatus.status === 'ready' &&
+        {!workspace.switching &&
+          mountStatus.status === 'ready' &&
           snapshot !== null &&
           session !== null &&
           workspace.activeProject !== null &&
           clickModelMode && (
             <BuilderClickModelCanvas
+              key={workspace.activeProject.id}
               projectId={workspace.activeProject.id}
               projectName={workspace.activeProject.name}
               companyName={companyName}

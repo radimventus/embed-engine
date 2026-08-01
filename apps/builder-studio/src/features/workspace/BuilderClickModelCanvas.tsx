@@ -1,3 +1,4 @@
+import { PlatformStatusBadge } from '@embed-engine/platform-shell';
 import { KnowledgeComposerView } from '../knowledge-composer';
 import { MediaStudioView } from '../media-studio';
 import type { MediaAreaId } from '../media-studio/mediaCatalog';
@@ -98,6 +99,30 @@ export function BuilderClickModelCanvas({
       className="space-y-14"
       data-studio-shell="builder-click-model-canvas"
     >
+      <header className="platform-title-bar">
+        <div>
+          <h1 className="platform-type-h1">{projectName}</h1>
+          <p className="platform-type-helper" style={{ marginTop: 4 }}>
+            Obsah projektu · Hero · Dispozice · Znalosti
+          </p>
+        </div>
+        <PlatformStatusBadge
+          tone={
+            project.status === 'published'
+              ? 'published'
+              : project.status === 'ready'
+                ? 'ready'
+                : 'draft'
+          }
+        >
+          {project.status === 'published'
+            ? 'Publikováno'
+            : project.status === 'ready'
+              ? 'Připraveno'
+              : 'Koncept'}
+        </PlatformStatusBadge>
+      </header>
+
       {MEDIA_ANCHORS.map((item) => (
         <section
           key={item.domId}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { PlatformDialog } from '@embed-engine/platform-shell';
 
 import type { DirtySwitchPrompt } from './useWorkspaceController';
@@ -22,8 +22,7 @@ type WorkspaceSidebarProps = {
 };
 
 /**
- * VR-FIX-01 — Project-first Workspace (click-model visual grammar).
- * Firma is context; create only via circular ⊕; edit from Dashboard.
+ * PR-006 — Funkční selectbox Projekt + ⊕ pro nový projekt.
  */
 export function WorkspaceSidebar({
   registry,
@@ -37,8 +36,6 @@ export function WorkspaceSidebar({
   onDirtyDiscard,
   onDirtyCancel,
 }: WorkspaceSidebarProps) {
-  const [pickerOpen, setPickerOpen] = useState(false);
-
   const activeCompany = useMemo(() => {
     if (activeProject === null) {
       return registry.companies[0] ?? null;
@@ -51,36 +48,48 @@ export function WorkspaceSidebar({
   }, [activeProject, registry.companies]);
 
   const projects = useMemo(() => {
-    if (activeCompany === null) return [];
+    if (activeCompany === null) {
+      return registry.projects;
+    }
     return projectsForCompany(registry, activeCompany.id);
   }, [activeCompany, registry]);
-
-  const contextLabel =
-    activeCompany === null
-      ? 'Vyberte projekt'
-      : activeProject === null
-        ? activeCompany.name
-        : `${activeCompany.name} · ${activeProject.name}`;
 
   return (
     <aside
       className="flex h-full min-h-0 flex-col overflow-y-auto border-r border-builder-line bg-white p-6"
       data-studio-shell="workspace-sidebar"
     >
-      <button
-        type="button"
-        className="flex w-full items-center justify-between text-left"
-        aria-expanded={pickerOpen}
-        onClick={() => setPickerOpen((open) => !open)}
-      >
+      <label className="block">
         <span className="text-[11px] font-bold uppercase tracking-[1px] text-[#7D8796]">
-          Projekt {pickerOpen ? '▲' : '▼'}
+          Projekt
         </span>
-      </button>
-
-      <div className="mt-3 rounded-xl border border-[#D7E4FF] bg-builder-panel px-3.5 py-3 text-sm font-semibold text-builder-ink">
-        {contextLabel}
-      </div>
+        <select
+          className="mt-3 w-full rounded-xl border border-[#D7E4FF] bg-builder-panel px-3.5 py-3 text-sm font-semibold text-builder-ink"
+          aria-label="Vybrat projekt"
+          disabled={switching || projects.length === 0}
+          value={activeProject?.id ?? ''}
+          onChange={(event) => {
+            const nextId = event.target.value;
+            if (nextId.length === 0) return;
+            onOpenProject(nextId);
+          }}
+        >
+          {projects.length === 0 ? (
+            <option value="">Žádné projekty</option>
+          ) : (
+            projects.map((project) => {
+              const company =
+                registry.companies.find((item) => item.id === project.companyId)
+                  ?.name ?? 'Firma';
+              return (
+                <option key={project.id} value={project.id}>
+                  {company} · {project.name}
+                </option>
+              );
+            })
+          )}
+        </select>
+      </label>
 
       <div className="mt-3 flex w-full justify-center">
         <button
@@ -111,7 +120,7 @@ export function WorkspaceSidebar({
               ? 'Neuložené změny — zavřít projekt?'
               : `Neuložené změny — přepnout na ${dirtyPrompt.target.name}?`
           }
-          description="Primary: uložit · Secondary: zahodit · Close: zrušit přepnutí."
+          description="Uložit změny, zahodit je, nebo zrušit přepnutí."
           primaryLabel="Uložit"
           secondaryLabel="Zahodit"
           busy={switching}
@@ -121,6 +130,9 @@ export function WorkspaceSidebar({
         />
       )}
 
+      <p className="mb-2 text-[11px] font-bold uppercase tracking-[1px] text-[#7D8796]">
+        Domy
+      </p>
       <ul className="space-y-2">
         {projects.map((project) => {
           const active = project.id === registry.activeProjectId;
@@ -144,7 +156,10 @@ export function WorkspaceSidebar({
                       active ? 'text-white/75' : 'text-builder-muted'
                     }`}
                   >
-                    {activeCompany?.name ?? 'Firma'}
+                    {activeCompany?.name ??
+                      registry.companies.find((c) => c.id === project.companyId)
+                        ?.name ??
+                      'Firma'}
                   </small>
                 </span>
               </button>

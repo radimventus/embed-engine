@@ -106,7 +106,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
           companyId: session?.companyId ?? null,
         });
         recordPlatformActivity({
-          label: 'Feedback',
+          label: 'Zpětná vazba',
           detail: message.slice(0, 80),
         });
       }}

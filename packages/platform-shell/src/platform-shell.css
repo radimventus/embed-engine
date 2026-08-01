@@ -61,9 +61,9 @@
 }
 
 [data-platform-shell][data-studio='sales'] {
-  --platform-accent: #ea580c;
-  --platform-blue: #ea580c;
-  --platform-blue-bg: #fff7ed;
+  --platform-accent: #b8922d;
+  --platform-blue: #b8922d;
+  --platform-blue-bg: #fbf7ee;
 }
 
 .platform-header {

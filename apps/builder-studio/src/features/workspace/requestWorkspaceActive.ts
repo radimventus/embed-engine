@@ -52,28 +52,52 @@ export async function requestWorkspaceActive(input: {
   readonly projectId: string;
   readonly packageRoot: string;
 }): Promise<WorkspaceActiveResponse> {
-  const response = await fetch(WORKSPACE_ACTIVE_API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(input),
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, 8_000);
 
-  let payload: unknown = null;
   try {
-    payload = await response.json();
-  } catch {
-    payload = null;
-  }
+    const response = await fetch(WORKSPACE_ACTIVE_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(input),
+      signal: controller.signal,
+    });
 
-  const parsed = parseActivePayload(payload);
-  if (parsed !== null) {
-    return parsed;
-  }
+    let payload: unknown = null;
+    try {
+      payload = await response.json();
+    } catch {
+      payload = null;
+    }
 
-  return {
-    ok: false,
-    error: `Activate workspace project failed (HTTP ${response.status})`,
-  };
+    const parsed = parseActivePayload(payload);
+    if (parsed !== null) {
+      return parsed;
+    }
+
+    return {
+      ok: false,
+      error: `Aktivace projektu selhala (HTTP ${response.status})`,
+    };
+  } catch (error: unknown) {
+    if (error instanceof DOMException && error.name === 'AbortError') {
+      return {
+        ok: false,
+        error: 'Aktivace projektu vypršela — zkuste znovu.',
+      };
+    }
+    return {
+      ok: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Aktivace projektu selhala.',
+    };
+  } finally {
+    clearTimeout(timeoutId);
+  }
 }
 
 export async function requestWorkspaceActiveStatus(): Promise<WorkspaceActiveResponse> {

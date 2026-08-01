@@ -126,7 +126,7 @@ export function MediaStudioView({
             Média
           </p>
           <h1 className="mt-1 text-2xl font-semibold text-builder-ink">
-            Media Studio
+            Studio médií
           </h1>
           <p className="mt-1 text-sm text-builder-muted">
             {projectName} — obsahové stavební prvky Experience (HP-002 SSOT).
@@ -193,7 +193,7 @@ function HeroManager({
 
   return (
     <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
-      <h2 className="text-lg font-semibold text-builder-ink">Hero Manager</h2>
+      <h2 className="text-lg font-semibold text-builder-ink">Hero</h2>
       <p className="mt-1 text-sm text-builder-muted">
         Pouze jeden aktivní Hero · Desktop / Mobile náhled
       </p>
@@ -364,7 +364,7 @@ function GalleryManager({
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-builder-ink">
-            Gallery Manager
+            Galerie
           </h2>
           <p className="mt-1 text-sm text-builder-muted">
             Miniatury · drag & drop pořadí · HP gallery.csv
@@ -656,7 +656,7 @@ function VideoManager({
     <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-lg font-semibold text-builder-ink">Video Manager</h2>
+          <h2 className="text-lg font-semibold text-builder-ink">Videa</h2>
           <p className="mt-1 text-sm text-builder-muted">
             Náhled · titul · typ · pořadí · aktivní
           </p>
@@ -810,7 +810,7 @@ function FloorPlanStudio({ model }: { readonly model: MediaStudioModel }) {
   return (
     <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
       <h2 className="text-lg font-semibold text-builder-ink">
-        Floor Plan Studio
+        Půdorys
       </h2>
       <p className="mt-1 text-sm text-builder-muted">
         SVG · validace · vazby na místnosti
@@ -861,7 +861,7 @@ function DocumentLibrary({ model }: { readonly model: MediaStudioModel }) {
   return (
     <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
       <h2 className="text-lg font-semibold text-builder-ink">
-        Document Library
+        Dokumenty
       </h2>
       <p className="mt-1 text-sm text-builder-muted">
         PDF / DOCX / XLSX — metadata a náhled (Runtime documents)
@@ -929,7 +929,7 @@ function MetadataPanel({
     return (
       <aside className="rounded-[16px] border border-[#E8EEF5] bg-white p-4 shadow-sm">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-          Metadata
+          Údaje
         </p>
         <p className="mt-2 text-sm text-builder-muted">
           Vyberte médium pro detail.
@@ -942,11 +942,11 @@ function MetadataPanel({
   return (
     <aside className="rounded-[16px] border border-[#E8EEF5] bg-white p-4 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-        Metadata
+        Údaje
       </p>
       <dl className="mt-3 space-y-2 text-sm">
         <MetaRow label="Název" value={meta.title || '—'} />
-        <MetaRow label="ALT" value={meta.alt || '—'} />
+        <MetaRow label="Alt text" value={meta.alt || '—'} />
         <MetaRow label="Popis" value={meta.description || '—'} />
         <MetaRow label="Autor" value={meta.author || '—'} />
         <MetaRow

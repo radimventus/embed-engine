@@ -100,7 +100,7 @@ export function useWorkspaceController(): WorkspaceController {
       return true;
     } catch (error: unknown) {
       setSwitchError(
-        error instanceof Error ? error.message : 'Project switch failed.',
+        error instanceof Error ? error.message : 'Přepnutí projektu selhalo.',
       );
       return false;
     } finally {
@@ -118,7 +118,7 @@ export function useWorkspaceController(): WorkspaceController {
     ) => {
       const target = registry.projects.find((project) => project.id === projectId);
       if (target === undefined) {
-        setSwitchError(`Unknown project: ${projectId}`);
+        setSwitchError(`Neznámý projekt: ${projectId}`);
         return false;
       }
 

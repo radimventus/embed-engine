@@ -163,17 +163,17 @@ export function PlatformLanding() {
 
         {!isAdmin && (
           <section className="platform-access__dashboard-slot">
-            <p className="platform-access__demos-title">Pilot Diagnostics</p>
+            <p className="platform-access__demos-title">Diagnostika pilota</p>
             <ul className="platform-access__list platform-access__lead">
-              <li>Last login · {diagnostics.lastLoginAt ?? '—'}</li>
+              <li>Poslední přihlášení · {diagnostics.lastLoginAt ?? '—'}</li>
               <li>
-                Last publish · {diagnostics.lastPublishLabel}
+                Poslední publikace · {diagnostics.lastPublishLabel}
                 {diagnostics.lastPublishAt !== null
                   ? ` (${diagnostics.lastPublishAt})`
                   : ''}
               </li>
               <li>Runtime · {diagnostics.runtimeStatus}</li>
-              <li>Capability · {diagnostics.capabilityStatus}</li>
+              <li>Schopnosti · {diagnostics.capabilityStatus}</li>
               <li>Intelligence · {diagnostics.intelligenceStatus}</li>
             </ul>
           </section>

@@ -205,7 +205,7 @@ export function SalesStudioApp() {
           companyId: session?.companyId ?? null,
         });
         recordPlatformActivity({
-          label: 'Feedback',
+          label: 'Zpětná vazba',
           detail: message.slice(0, 80),
         });
       }}
