@@ -18,13 +18,14 @@ type WorkspaceSidebarProps = {
   readonly onOpenFolder: (folderId: string) => void;
   readonly onOpenHouse: (houseId: string) => void;
   readonly onCreateProject: () => void;
+  readonly onCreateObject: () => void;
   readonly onDirtySave: () => void;
   readonly onDirtyDiscard: () => void;
   readonly onDirtyCancel: () => void;
 };
 
 /**
- * PR-006 — Selectbox Projekt · ⊕ nový projekt · levý seznam pouze Domy.
+ * PR-006 / PR-023 — Selectbox Projekt · ⊕ projekt · Domy · ⊕ objekt.
  */
 export function WorkspaceSidebar({
   registry,
@@ -35,6 +36,7 @@ export function WorkspaceSidebar({
   onOpenFolder,
   onOpenHouse,
   onCreateProject,
+  onCreateObject,
   onDirtySave,
   onDirtyDiscard,
   onDirtyCancel,
@@ -163,6 +165,23 @@ export function WorkspaceSidebar({
           </li>
         )}
       </ul>
+
+      <div className="mt-3 flex w-full justify-center">
+        <button
+          type="button"
+          title="Nový objekt"
+          aria-label="Nový objekt"
+          disabled={activeFolder === null || switching}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onCreateObject();
+          }}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-builder-panelBorder bg-builder-panel text-lg font-semibold text-builder-navy hover:bg-white disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-builder-panel"
+        >
+          ⊕
+        </button>
+      </div>
     </aside>
   );
 }

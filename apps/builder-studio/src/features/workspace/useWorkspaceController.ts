@@ -3,12 +3,14 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { requestWorkspaceActive } from './requestWorkspaceActive';
 import {
   closeWorkspaceProject,
+  createWorkspaceObjectFromInput,
   createWorkspaceProjectFromInput,
   decideProjectSwitch,
   getActiveWorkspaceProject,
   openWorkspaceFolder,
   openWorkspaceProject,
   updateWorkspaceProject,
+  type CreateWorkspaceObjectInput,
   type CreateWorkspaceProjectInput,
   type WorkspaceProject,
   type WorkspaceProjectStatus,
@@ -58,6 +60,10 @@ export type WorkspaceController = {
   }) => void;
   readonly createProject: (
     input: CreateWorkspaceProjectInput,
+    options: { readonly dirty: boolean },
+  ) => Promise<WorkspaceProject | null>;
+  readonly createObject: (
+    input: CreateWorkspaceObjectInput,
     options: { readonly dirty: boolean },
   ) => Promise<WorkspaceProject | null>;
   readonly updateProject: (
@@ -334,6 +340,50 @@ export function useWorkspaceController(): WorkspaceController {
     [activate],
   );
 
+  const createObject = useCallback(
+    async (
+      input: CreateWorkspaceObjectInput,
+      options: { readonly dirty: boolean },
+    ) => {
+      const name = input.name.trim();
+      if (name.length === 0) {
+        setSwitchError('Zadejte název objektu.');
+        return null;
+      }
+      if (registryRef.current.activeFolderId === null) {
+        setSwitchError('Nejdřív vyberte projekt.');
+        return null;
+      }
+      if (options.dirty) {
+        setSwitchError('Nejdřív uložte nebo zahoďte změny aktivního domu.');
+        return null;
+      }
+
+      const created = createWorkspaceObjectFromInput(
+        registryRef.current,
+        input,
+      );
+      if (created === null) {
+        setSwitchError('Objekt se nepodařilo založit.');
+        return null;
+      }
+
+      setRegistry(created.state);
+      registryRef.current = created.state;
+
+      const ok = await activate(created.project);
+      if (!ok) {
+        setSwitchError(
+          (prev) =>
+            prev ??
+            'Objekt je založen, ale aktivace se nepovedla — vyberte dům vlevo.',
+        );
+      }
+      return created.project;
+    },
+    [activate],
+  );
+
   const updateProject = useCallback(
     (projectId: string, input: UpdateWorkspaceProjectInput) => {
       setRegistry((prev) =>
@@ -388,6 +438,7 @@ export function useWorkspaceController(): WorkspaceController {
     closeActiveProject,
     requestCloseProject,
     createProject,
+    createObject,
     updateProject,
   };
 }

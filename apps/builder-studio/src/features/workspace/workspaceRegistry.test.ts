@@ -8,9 +8,12 @@ import { describe, it } from 'node:test';
 import {
   closeWorkspaceProject,
   createInitialWorkspaceRegistry,
+  createWorkspaceObjectFromInput,
   createWorkspaceProjectFromInput,
   decideProjectSwitch,
+  housesForFolder,
   mergePersistedWorkspaceSlice,
+  openWorkspaceFolder,
   openWorkspaceProject,
   toPersistedWorkspaceSlice,
   updateWorkspaceProject,
@@ -127,6 +130,38 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01)', () => {
           company.id === 'company-nova-homes' && company.name === 'Nova Homes',
       ),
     );
+  });
+
+  it('creates a new object (house) inside the active project folder (PR-023)', () => {
+    const base = createInitialWorkspaceRegistry();
+    const opened = openWorkspaceFolder(base, base.folders[0]!.id);
+    const beforeCount = housesForFolder(opened.state, opened.state.activeFolderId!)
+      .length;
+    const created = createWorkspaceObjectFromInput(opened.state, {
+      name: 'Objekt Alfa',
+      internalId: 'objekt-alfa',
+    });
+    assert.ok(created);
+    assert.equal(created.project.name, 'Objekt Alfa');
+    assert.equal(created.project.id, 'objekt-alfa');
+    assert.equal(created.project.folderId, opened.state.activeFolderId);
+    assert.equal(created.state.activeProjectId, 'objekt-alfa');
+    assert.equal(
+      housesForFolder(created.state, created.project.folderId).length,
+      beforeCount + 1,
+    );
+  });
+
+  it('auto-slugs object id and avoids collisions (PR-023)', () => {
+    const base = createInitialWorkspaceRegistry();
+    const opened = openWorkspaceFolder(base, base.folders[0]!.id);
+    const first = createWorkspaceObjectFromInput(opened.state, {
+      name: 'Duplikát',
+      internalId: 'family-98',
+    });
+    assert.ok(first);
+    assert.notEqual(first.project.id, 'family-98');
+    assert.match(first.project.id, /^family-98-\d+$/);
   });
 
   it('seeds default houses under review project folders', () => {

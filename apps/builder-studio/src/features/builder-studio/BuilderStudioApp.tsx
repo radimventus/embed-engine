@@ -33,6 +33,8 @@ import {
 } from '../house-package';
 import {
   findWorkspaceCompany,
+  getActiveWorkspaceFolder,
+  ObjectCreateDialog,
   ProjectCreateDialog,
   ProjectEditDialog,
   useWorkspaceController,
@@ -92,6 +94,7 @@ export function BuilderStudioApp() {
   );
   const [activeNav, setActiveNav] = useState<HousePackageNavId>('media-studio');
   const [createOpen, setCreateOpen] = useState(false);
+  const [objectCreateOpen, setObjectCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
 
@@ -277,6 +280,7 @@ export function BuilderStudioApp() {
             onOpenFolder={openFolderStable}
             onOpenHouse={openHouseStable}
             onCreateProject={() => setCreateOpen(true)}
+            onCreateObject={() => setObjectCreateOpen(true)}
             onDirtySave={() => {
               void workspace.confirmDirtySave(async () => {
                 await save();
@@ -503,6 +507,24 @@ export function BuilderStudioApp() {
             const created = await workspace.createProject(input, { dirty });
             if (created !== null) {
               setCreateOpen(false);
+              setActiveNav('media-studio');
+            }
+          })();
+        }}
+      />
+
+      <ObjectCreateDialog
+        open={objectCreateOpen}
+        busy={workspace.switching}
+        projectLabel={
+          getActiveWorkspaceFolder(workspace.registry)?.name ?? null
+        }
+        onClose={() => setObjectCreateOpen(false)}
+        onSubmit={(input) => {
+          void (async () => {
+            const created = await workspace.createObject(input, { dirty });
+            if (created !== null) {
+              setObjectCreateOpen(false);
               setActiveNav('media-studio');
             }
           })();

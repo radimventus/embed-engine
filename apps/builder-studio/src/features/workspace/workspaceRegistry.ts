@@ -532,6 +532,77 @@ export function createWorkspaceProjectFromInput(
   return { state: next, project, folder };
 }
 
+export type CreateWorkspaceObjectInput = {
+  readonly name: string;
+  /** Optional internal identifier → house id/slug. */
+  readonly internalId?: string;
+};
+
+/**
+ * ⊕ Nový objekt — přidá dům do aktivního projektu (folderu).
+ */
+export function createWorkspaceObjectFromInput(
+  state: WorkspaceRegistryState,
+  input: CreateWorkspaceObjectInput,
+): {
+  readonly state: WorkspaceRegistryState;
+  readonly project: WorkspaceProject;
+} | null {
+  const folder = getActiveWorkspaceFolder(state);
+  if (folder === null) {
+    return null;
+  }
+
+  const siblings = housesForFolder(state, folder.id);
+  const template =
+    siblings.find((house) => house.id === state.activeProjectId) ??
+    siblings[0] ??
+    null;
+
+  const name = input.name.trim();
+  if (name.length === 0) {
+    return null;
+  }
+
+  const requestedId = (input.internalId ?? '').trim();
+  const baseSlug =
+    slugifyProjectName(requestedId.length > 0 ? requestedId : name) || 'dum';
+
+  let houseSlug = baseSlug;
+  let houseId = houseSlug;
+  let suffix = 2;
+  while (state.projects.some((project) => project.id === houseId)) {
+    houseSlug = `${baseSlug}-${suffix}`;
+    houseId = houseSlug;
+    suffix += 1;
+  }
+
+  const project = normalizeWorkspaceProject({
+    id: houseId,
+    name,
+    packageRoot:
+      template?.packageRoot ?? resolvePackageRootForObjectType('villa'),
+    companyId: folder.companyId,
+    folderId: folder.id,
+    description: '',
+    status: 'draft',
+    slug: houseSlug,
+    objectType: template?.objectType ?? 'villa',
+    metadata: '',
+  });
+
+  let next = registerWorkspaceProject(state, project);
+  next = {
+    ...next,
+    activeFolderId: folder.id,
+    activeProjectId: project.id,
+    lastOpenedProjectId: project.id,
+    recentProjectIds: pushRecent(next.recentProjectIds, project.id),
+  };
+
+  return { state: next, project };
+}
+
 export type WorkspacePersistedSlice = {
   readonly activeFolderId?: string | null;
   readonly activeProjectId: string | null;
