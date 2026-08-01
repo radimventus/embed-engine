@@ -279,6 +279,10 @@ function QuickActions({
           label="Otevřít Release"
           onClick={() => onNavigate('release-center')}
         />
+        <QuickAction
+          label="Otevřít Collaboration"
+          onClick={() => onNavigate('collaboration')}
+        />
         <QuickAction label="Publikovat" onClick={onPublish} emphasis />
       </ul>
     </section>

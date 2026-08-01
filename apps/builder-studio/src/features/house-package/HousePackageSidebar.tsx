@@ -8,6 +8,7 @@ export type HousePackageNavId =
   | 'media-studio'
   | 'preview-center'
   | 'release-center'
+  | 'collaboration'
   | 'rooms'
   | 'gallery'
   | 'videos'
@@ -26,6 +27,7 @@ const NAV: readonly {
   { id: 'media-studio', label: 'Media', section: null },
   { id: 'preview-center', label: 'Preview', section: null },
   { id: 'release-center', label: 'Release', section: null },
+  { id: 'collaboration', label: 'Collaboration', section: null },
   { id: 'rooms', label: 'Rooms', section: 'rooms' },
   { id: 'gallery', label: 'Gallery', section: 'gallery' },
   { id: 'videos', label: 'Videos', section: 'videos' },

@@ -4,6 +4,7 @@ import { AppShell } from '../../components/layout/AppShell';
 import { ExperienceComposerView } from '../experience-composer';
 import { KnowledgeComposerView } from '../knowledge-composer';
 import { MediaStudioView } from '../media-studio';
+import { CollaborationCenterView } from '../collaboration-workspace';
 import { PreviewCenterView } from '../preview-center';
 import { ReleaseCenterView } from '../release-center';
 import { PlatformHeader } from '../platform';
@@ -76,6 +77,7 @@ export function BuilderStudioApp() {
   const mediaStudioMode = activeNav === 'media-studio';
   const previewCenterMode = activeNav === 'preview-center';
   const releaseCenterMode = activeNav === 'release-center';
+  const collaborationMode = activeNav === 'collaboration';
 
   // Always land on Dashboard when the active project changes.
   useEffect(() => {
@@ -121,7 +123,8 @@ export function BuilderStudioApp() {
           experienceMode ||
           mediaStudioMode ||
           previewCenterMode ||
-          releaseCenterMode
+          releaseCenterMode ||
+          collaborationMode
         }
         workspacePanel={
           <WorkspaceSidebar
@@ -161,7 +164,8 @@ export function BuilderStudioApp() {
           experienceMode ||
           mediaStudioMode ||
           previewCenterMode ||
-          releaseCenterMode ? undefined : (
+          releaseCenterMode ||
+          collaborationMode ? undefined : (
             <ProjectActionPanel
               loadError={loadError}
               publishError={publishError}
@@ -278,6 +282,15 @@ export function BuilderStudioApp() {
             />
           )}
         {mountStatus.status === 'ready' &&
+          workspace.activeProject !== null &&
+          collaborationMode && (
+            <CollaborationCenterView
+              projectId={workspace.activeProject.id}
+              projectName={workspace.activeProject.name}
+              onNavigate={handleNavigate}
+            />
+          )}
+        {mountStatus.status === 'ready' &&
           snapshot !== null &&
           session !== null &&
           workspace.activeProject !== null &&
@@ -285,7 +298,8 @@ export function BuilderStudioApp() {
           !knowledgeMode &&
           !mediaStudioMode &&
           !previewCenterMode &&
-          !releaseCenterMode && (
+          !releaseCenterMode &&
+          !collaborationMode && (
             <HousePackageEditView
               snapshot={snapshot}
               session={session}

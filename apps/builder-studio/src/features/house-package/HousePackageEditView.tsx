@@ -343,6 +343,8 @@ function sectionHeadline(nav: HousePackageNavId): string {
       return 'Preview Center';
     case 'release-center':
       return 'Release Center';
+    case 'collaboration':
+      return 'Collaboration Center';
     case 'rooms':
       return 'Tabulka místností';
     case 'gallery':
