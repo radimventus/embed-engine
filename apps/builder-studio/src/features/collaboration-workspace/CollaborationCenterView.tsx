@@ -54,7 +54,7 @@ export function CollaborationCenterView({
 
   return (
     <div className="space-y-5" data-testid="collaboration-center">
-      <header className="rounded-[16px] border border-[#E8EEF5] bg-white p-6 shadow-sm">
+      <header className="rounded-[16px] border border-[#E3E3E3] bg-white p-6 shadow-sm">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
           Collaboration
         </p>
@@ -74,7 +74,7 @@ export function CollaborationCenterView({
               className={`rounded-[12px] border px-3 py-3 text-left ${
                 panel === item.id
                   ? 'border-builder-navy bg-builder-navy text-white'
-                  : 'border-[#E8EEF5] bg-builder-canvas text-builder-ink'
+                  : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
               }`}
             >
               <p className="text-sm font-semibold">{item.label}</p>
@@ -215,7 +215,7 @@ function WorkflowStrip({
   readonly onChange: (areaId: ReviewModuleId, stage: WorkflowStage) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Workflow
       </p>
@@ -246,7 +246,7 @@ function WorkflowStrip({
                       className={`rounded-[10px] border px-2 py-2 text-center text-[12px] font-medium ${
                         active
                           ? 'border-builder-navy bg-builder-navy text-white'
-                          : 'border-[#E8EEF5] bg-builder-canvas text-builder-ink'
+                          : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                       }`}
                     >
                       {stage.label}
@@ -278,7 +278,7 @@ function ReviewPanel({
   readonly onOpenModule: (moduleId: ReviewModuleId) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Review
       </p>
@@ -290,7 +290,7 @@ function ReviewPanel({
           return (
             <li
               key={review.moduleId}
-              className="rounded-[12px] border border-[#E8EEF5] bg-builder-canvas p-4"
+              className="rounded-[12px] border border-[#E3E3E3] bg-builder-canvas p-4"
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
                 <div>
@@ -354,7 +354,7 @@ function CommentsPanel({
   const [body, setBody] = useState('');
 
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Comments
       </p>
@@ -409,8 +409,8 @@ function CommentsPanel({
               key={comment.id}
               className={`rounded-[12px] border px-4 py-3 ${
                 comment.resolved
-                  ? 'border-[#E8EEF5] bg-builder-canvas opacity-70'
-                  : 'border-[#E8EEF5] bg-white'
+                  ? 'border-[#E3E3E3] bg-builder-canvas opacity-70'
+                  : 'border-[#E3E3E3] bg-white'
               }`}
             >
               <div className="flex flex-wrap items-start justify-between gap-2">
@@ -458,7 +458,7 @@ function TasksPanel({
   const [dueDate, setDueDate] = useState('');
 
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Tasks
       </p>
@@ -505,7 +505,7 @@ function TasksPanel({
         {tasks.map((task) => (
           <li
             key={task.id}
-            className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-4 py-3"
+            className="flex flex-wrap items-center justify-between gap-3 rounded-[12px] border border-[#E3E3E3] bg-builder-canvas px-4 py-3"
           >
             <label className="flex items-start gap-3 text-sm">
               <input
@@ -549,7 +549,7 @@ function ActivityPanel({
 }) {
   const groups = groupActivityByDay(activity);
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Activity Timeline
       </p>
@@ -593,7 +593,7 @@ function TeamPanel({
   readonly onClaim: (areaId: string, label: string, editor: string) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Team
       </p>
@@ -606,7 +606,7 @@ function TeamPanel({
           return (
             <li
               key={member.id}
-              className="rounded-[12px] border border-[#E8EEF5] bg-builder-canvas p-4"
+              className="rounded-[12px] border border-[#E3E3E3] bg-builder-canvas p-4"
             >
               <p className="text-sm font-semibold text-builder-ink">
                 {member.name}

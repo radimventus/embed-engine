@@ -47,7 +47,7 @@ export function ExperienceComposerView({
       className="flex h-full min-h-[70vh] flex-col"
       data-testid="experience-composer"
     >
-      <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden rounded-[16px] border border-[#E8EEF5] bg-builder-canvas desktop:grid-cols-[200px_minmax(0,1fr)_360px]">
+      <div className="grid min-h-0 flex-1 grid-cols-1 overflow-hidden rounded-[16px] border border-[#E3E3E3] bg-builder-canvas desktop:grid-cols-[200px_minmax(0,1fr)_360px]">
         <ExperienceOutline
           composition={composer.composition}
           selectedModuleId={composer.selectedModuleId}

@@ -87,7 +87,7 @@ export function KnowledgeCategoryEditor({
           </button>
         </div>
 
-        <div className="mt-4 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-3 py-3 text-[12px] text-builder-muted">
+        <div className="mt-4 rounded-[12px] border border-[#E3E3E3] bg-builder-canvas px-3 py-3 text-[12px] text-builder-muted">
           Používá: {category.dependencies.join(' · ')}
         </div>
 
@@ -232,7 +232,7 @@ function RoomsStructuredEditor({
         {rows.map((row, index) => (
           <div
             key={`${row.room}-${index}`}
-            className="grid gap-2 rounded-[12px] border border-[#E8EEF5] p-3 tablet:grid-cols-4"
+            className="grid gap-2 rounded-[12px] border border-[#E3E3E3] p-3 tablet:grid-cols-4"
           >
             <Field
               label="Podlaží"
@@ -371,7 +371,7 @@ function FaqStructuredEditor({
       {items.map((item, index) => (
         <div
           key={`faq-${index}`}
-          className="space-y-2 rounded-[12px] border border-[#E8EEF5] p-3"
+          className="space-y-2 rounded-[12px] border border-[#E3E3E3] p-3"
         >
           <Field
             label="Otázka"

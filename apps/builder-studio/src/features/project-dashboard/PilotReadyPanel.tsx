@@ -14,7 +14,7 @@ export function PilotReadyPanel() {
 
   return (
     <section
-      className="mt-5 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-3 py-3"
+      className="mt-5 rounded-[12px] border border-[#E3E3E3] bg-builder-canvas px-3 py-3"
       data-testid="pilot-ready-panel"
     >
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
@@ -32,7 +32,7 @@ export function PilotReadyPanel() {
           ))}
         </ul>
       )}
-      <ul className="mt-3 list-none space-y-1 border-t border-[#E8EEF5] pt-3 p-0 text-[11px] text-builder-muted">
+      <ul className="mt-3 list-none space-y-1 border-t border-[#E3E3E3] pt-3 p-0 text-[11px] text-builder-muted">
         {report.checks.map((check) => (
           <li key={check.id} className="flex justify-between gap-2">
             <span>{check.label}</span>

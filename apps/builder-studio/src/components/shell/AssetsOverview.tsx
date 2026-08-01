@@ -163,7 +163,7 @@ export function AssetsOverview({
               className="flex flex-wrap items-center gap-4 rounded-[14px] border border-[#DDE5EF] bg-white p-4"
               data-testid={`asset-row-${asset.id}`}
             >
-              <div className="flex h-16 w-24 items-center justify-center overflow-hidden rounded-[10px] bg-[#EEF3FA] text-[11px] font-semibold uppercase tracking-wide text-builder-muted">
+              <div className="flex h-16 w-24 items-center justify-center overflow-hidden rounded-[10px] bg-builder-creamMid text-[11px] font-semibold uppercase tracking-wide text-builder-muted">
                 {asset.metadata.previewHint ?? asset.type}
               </div>
               <div className="min-w-[220px] flex-1">

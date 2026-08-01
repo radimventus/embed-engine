@@ -141,7 +141,7 @@ function Stat({
   readonly value: string;
 }) {
   return (
-    <div className="rounded-lg border border-[#E8EEF5] bg-builder-canvas px-2.5 py-2">
+    <div className="rounded-lg border border-[#E3E3E3] bg-builder-canvas px-2.5 py-2">
       <dt className="text-[11px] text-builder-muted">{label}</dt>
       <dd className="mt-0.5 text-base font-semibold text-builder-ink">{value}</dd>
     </div>

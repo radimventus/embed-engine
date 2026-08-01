@@ -9,19 +9,24 @@
   --platform-header-height: 70px;
   --platform-navy: #001930;
   --platform-gold: #b8922d;
-  --platform-gold-light: #fbf7ee;
+  --platform-gold-soft: #c8a165;
+  /* Alias — never gold-tint panels; cream material only. */
+  --platform-gold-light: #f7f6f4;
   --platform-ink: #001930;
   --platform-muted: #64748b;
   --platform-line: #e3e3e3;
   --platform-surface: #ffffff;
   --platform-canvas: #f7f6f4;
-  --platform-accent: #b8922d;
-  --platform-blue: #b8922d;
-  --platform-blue-bg: #fbf7ee;
-  --platform-green: #138d45;
-  --platform-green-bg: #e6f7ed;
-  --platform-red: #dc2626;
-  --platform-red-bg: #fef2f2;
+  --platform-cream-light: #f7f6f4;
+  --platform-cream-mid: #e8e5e0;
+  --platform-cream-dark: #d9d4cc;
+  --platform-accent: #001930;
+  --platform-blue: #001930;
+  --platform-blue-bg: #e8e5e0;
+  --platform-green: #137a43;
+  --platform-green-bg: #eaf5ee;
+  --platform-red: #a93226;
+  --platform-red-bg: #f8ebe9;
   --platform-warning: #b45309;
   --platform-warning-bg: #fff4e5;
   --platform-section: #7d8796;
@@ -53,22 +58,13 @@
   box-sizing: border-box;
 }
 
-[data-platform-shell][data-studio='builder'] {
-  --platform-accent: #b8922d;
-  --platform-blue: #b8922d;
-  --platform-blue-bg: #fbf7ee;
-}
-
-[data-platform-shell][data-studio='manager'] {
-  --platform-accent: #138d45;
-  --platform-blue: #138d45;
-  --platform-blue-bg: #e6f7ed;
-}
-
+/* PR-022B — studios share one working palette (Navy). No studio color identity. */
+[data-platform-shell][data-studio='builder'],
+[data-platform-shell][data-studio='manager'],
 [data-platform-shell][data-studio='sales'] {
-  --platform-accent: #b8922d;
-  --platform-blue: #b8922d;
-  --platform-blue-bg: #fbf7ee;
+  --platform-accent: #001930;
+  --platform-blue: #001930;
+  --platform-blue-bg: #e8e5e0;
 }
 
 .platform-header {
@@ -232,7 +228,7 @@
 }
 
 .platform-menu-item:hover {
-  background: var(--platform-canvas);
+  background: var(--platform-cream-mid);
 }
 
 .platform-menu-item--active {
@@ -543,7 +539,7 @@
 }
 
 .platform-badge--gold {
-  background: var(--platform-gold-light);
+  background: var(--platform-cream-light);
   color: var(--platform-gold);
 }
 
@@ -620,8 +616,8 @@
 }
 
 .platform-module:hover {
-  border-color: color-mix(in srgb, var(--platform-blue) 35%, var(--platform-line));
-  background: var(--platform-canvas);
+  border-color: color-mix(in srgb, var(--platform-navy) 35%, var(--platform-line));
+  background: var(--platform-cream-mid);
 }
 
 .platform-module--active {
@@ -735,7 +731,7 @@
 }
 
 .platform-capability-inspector__item:hover {
-  background: var(--platform-canvas);
+  background: var(--platform-cream-mid);
 }
 
 .platform-capability-inspector__item--active {
@@ -761,11 +757,12 @@
 }
 
 .platform-btn:hover {
-  background: var(--platform-canvas);
+  background: #fff;
+  border-color: var(--platform-navy);
 }
 
 .platform-btn:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--platform-blue) 45%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--platform-gold) 45%, var(--platform-navy));
   outline-offset: 2px;
 }
 
@@ -776,7 +773,28 @@
 }
 
 .platform-btn--primary:hover {
-  background: color-mix(in srgb, var(--platform-navy) 88%, #fff);
+  background: color-mix(in srgb, var(--platform-navy) 88%, #000);
+  border-color: color-mix(in srgb, var(--platform-navy) 88%, #000);
+}
+
+.platform-btn--danger {
+  border-color: var(--platform-red);
+  background: var(--platform-red);
+  color: #fff;
+}
+
+.platform-btn--danger:hover {
+  background: color-mix(in srgb, var(--platform-red) 88%, #000);
+}
+
+.platform-btn--success {
+  border-color: var(--platform-green);
+  background: var(--platform-green);
+  color: #fff;
+}
+
+.platform-btn--success:hover {
+  background: color-mix(in srgb, var(--platform-green) 88%, #000);
 }
 
 .platform-role-btn,
@@ -875,7 +893,7 @@
 .platform-role-btn:focus-visible,
 .platform-menu-button:focus-visible,
 .platform-field__control :focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--platform-blue) 45%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--platform-gold) 45%, var(--platform-navy));
   outline-offset: 2px;
 }
 
@@ -1054,12 +1072,20 @@
 
 .platform-btn:disabled,
 .platform-dialog__close:disabled {
-  opacity: 0.45;
+  border-color: var(--platform-cream-dark);
+  background: var(--platform-cream-dark);
+  color: var(--platform-muted);
+  opacity: 1;
   cursor: not-allowed;
 }
 
-.platform-btn--primary:disabled:hover {
-  background: var(--platform-navy);
+.platform-btn:disabled:hover,
+.platform-btn--primary:disabled:hover,
+.platform-btn--danger:disabled:hover,
+.platform-btn--success:disabled:hover {
+  border-color: var(--platform-cream-dark);
+  background: var(--platform-cream-dark);
+  color: var(--platform-muted);
 }
 
 /* Microinteractions — short, consistent, quiet */
@@ -1074,7 +1100,7 @@
 .platform-role-btn:focus-visible,
 .platform-menu-item:focus-visible,
 .platform-breadcrumb__item--action:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--platform-blue) 45%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--platform-gold) 45%, var(--platform-navy));
   outline-offset: 2px;
 }
 
@@ -1141,7 +1167,7 @@
 }
 
 .platform-tab {
-  border: 1px solid #dde5ef;
+  border: 1px solid var(--platform-line);
   border-radius: var(--platform-radius);
   background: var(--platform-surface);
   padding: 10px 20px;
@@ -1154,11 +1180,11 @@
 }
 
 .platform-tab:hover {
-  background: #f7f9fc;
+  background: var(--platform-cream-mid);
 }
 
 .platform-tab:focus-visible {
-  outline: 2px solid color-mix(in srgb, var(--platform-blue) 45%, transparent);
+  outline: 2px solid color-mix(in srgb, var(--platform-gold) 45%, var(--platform-navy));
   outline-offset: 2px;
 }
 

@@ -42,7 +42,7 @@ export function ProjectDashboard({
                 className="absolute inset-0 h-full w-full object-cover"
               />
             ) : (
-              <div className="absolute inset-0 bg-gradient-to-br from-[#EEF4FF] via-[#F5F7FB] to-[#E6ECF3]" />
+              <div className="absolute inset-0 bg-gradient-to-br from-[#F7F6F4] via-[#E8E5E0] to-[#E3E3E3]" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-[#001930]/55 to-transparent" />
             <div className="relative flex h-full min-h-[200px] flex-col justify-end p-6 text-white">
@@ -115,7 +115,7 @@ function StatusCell({
   readonly value: string;
 }) {
   return (
-    <div className="rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-3.5 py-3">
+    <div className="rounded-[12px] border border-builder-line bg-builder-canvas px-3.5 py-3">
       <dt className="text-[11px] font-medium uppercase tracking-[0.06em] text-builder-muted">
         {label}
       </dt>
@@ -132,7 +132,7 @@ function ReadinessCenter({
   readonly onNavigate: (nav: HousePackageNavId) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-builder-line bg-white p-5 shadow-sm">
       <h2 className="text-base font-semibold text-builder-ink">Připravenost</h2>
       <ul className="mt-4 space-y-2">
         {items.map((item) => (
@@ -140,7 +140,7 @@ function ReadinessCenter({
             <button
               type="button"
               onClick={() => onNavigate(item.nav)}
-              className="flex w-full items-center gap-3 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-3.5 py-2.5 text-left text-sm hover:border-builder-navy/25"
+              className="flex w-full items-center gap-3 rounded-[12px] border border-builder-line bg-builder-canvas px-3.5 py-2.5 text-left text-sm hover:border-builder-navy/25"
             >
               <span aria-hidden className={toneTextClass(item.tone)}>
                 {toneGlyph(item.tone)}
@@ -204,7 +204,7 @@ function LastPublicationCard({
       className={`rounded-[16px] border bg-white p-5 shadow-sm ${
         highlighted
           ? 'border-builder-navy ring-2 ring-builder-navy/15'
-          : 'border-[#E8EEF5]'
+          : 'border-builder-line'
       }`}
     >
       <h2 className="text-base font-semibold text-builder-ink">
@@ -239,7 +239,7 @@ function QuickActions({
   readonly onPublish: () => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-builder-line bg-white p-5 shadow-sm">
       <h2 className="text-base font-semibold text-builder-ink">
         Pokračovat v práci
       </h2>

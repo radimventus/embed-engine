@@ -137,18 +137,12 @@ const SALES_CLIENTS: readonly SalesClient[] = [
 ];
 
 /**
- * PR-006 / PR-007 — Sales Studio dle HTML click modelu (ne projekce CS).
+ * PR-006 / PR-015 — Sales: stejná hierarchie jako Builder/Manager
+ * (nav rail · title-bar · canvas · inspector).
  */
 export function SalesStudioApp() {
-  const {
-    session,
-    bootstrap,
-    registry,
-    logout,
-    clearStudio,
-    selectStudio,
-    selectProject,
-  } = usePlatformSession();
+  const { session, bootstrap, logout, clearStudio, selectStudio } =
+    usePlatformSession();
   const capabilityHost = useMemo(() => getSalesCapabilityHost(), []);
   const inspectorModel = capabilityHost.inspectorModel('customer-success');
   const [activeClientId, setActiveClientId] = useState(SALES_CLIENTS[0].id);
@@ -159,14 +153,8 @@ export function SalesStudioApp() {
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: bootstrap?.company.name ?? 'Firma',
     projectLabel: bootstrap?.project?.name ?? '—',
-    projects: registry.projects.map((project) => ({
-      id: project.id,
-      label: project.name,
-      companyLabel:
-        registry.companies.find((company) => company.id === project.companyId)
-          ?.name ?? 'Firma',
-    })),
-    onSelectProject: selectProject,
+    projects: [],
+    // PR-006 — horní lišta nepřepíná projekt.
   });
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
@@ -174,7 +162,7 @@ export function SalesStudioApp() {
     { id: 'studio', label: 'Sales' },
     { id: 'company', label: bootstrap?.company.name ?? 'Firma' },
     { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
-    { id: 'section', label: 'Případy k hovoru' },
+    { id: 'section', label: activeClient.name },
   ];
 
   const highIntentCount = SALES_CLIENTS.filter(
@@ -211,14 +199,56 @@ export function SalesStudioApp() {
       }}
     >
       <div className="flex min-h-0 flex-1 overflow-hidden">
+        <aside className="platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto">
+          <div className="p-6">
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-[1px] text-[var(--platform-muted)]">
+              Případy k hovoru
+            </p>
+            <ul className="space-y-2">
+              {SALES_CLIENTS.map((client) => {
+                const active = client.id === activeClient.id;
+                return (
+                  <li key={client.id}>
+                    <button
+                      type="button"
+                      onClick={() => setActiveClientId(client.id)}
+                      className="w-full rounded-[12px] border px-3.5 py-3 text-left platform-motion"
+                      style={{
+                        borderColor: active
+                          ? 'var(--platform-navy)'
+                          : 'var(--platform-line)',
+                        background: active
+                          ? 'var(--platform-cream-mid)'
+                          : 'var(--platform-surface)',
+                      }}
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-semibold text-[var(--platform-ink)]">
+                          {client.name}
+                        </span>
+                        <span className="text-[13px] font-bold text-[var(--platform-navy)]">
+                          {client.score} %
+                        </span>
+                      </div>
+                      <p className="mt-1 text-[12px] text-[var(--platform-muted)]">
+                        {client.project}
+                      </p>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        </aside>
+
         <main className="platform-studio-pad min-h-0 min-w-0 flex-1 overflow-y-auto">
           <div className="mx-auto w-full max-w-[1520px]">
             <header className="platform-title-bar">
               <div>
                 <h1 className="platform-type-h1">Sales Studio</h1>
                 <p className="platform-type-helper" style={{ marginTop: 4 }}>
-                  Nákupní záměr, Decision Profile a konverzní cesta vašich
-                  klientů.
+                  {bootstrap?.company.name ?? 'Firma'} ·{' '}
+                  {bootstrap?.project?.name ?? 'Projekt'}
                 </p>
               </div>
               <PlatformStatusBadge tone="gold">
@@ -229,52 +259,16 @@ export function SalesStudioApp() {
             <div
               className="grid gap-6"
               style={{
-                gridTemplateColumns: 'minmax(260px, 340px) minmax(0, 1.2fr) minmax(0, 1fr)',
+                gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)',
               }}
             >
-              <PlatformCard title="Případy k hovoru">
-                <ul className="mt-2 space-y-2">
-                  {SALES_CLIENTS.map((client) => {
-                    const active = client.id === activeClient.id;
-                    return (
-                      <li key={client.id}>
-                        <button
-                          type="button"
-                          onClick={() => setActiveClientId(client.id)}
-                          className="w-full rounded-[12px] border px-3.5 py-3 text-left platform-motion"
-                          style={{
-                            borderColor: active
-                              ? 'var(--platform-gold)'
-                              : 'var(--platform-line)',
-                            background: active
-                              ? 'var(--platform-gold-light)'
-                              : 'var(--platform-surface)',
-                          }}
-                        >
-                          <div className="flex items-center justify-between gap-2">
-                            <span className="text-sm font-semibold text-[var(--platform-ink)]">
-                              {client.name}
-                            </span>
-                            <span className="text-[13px] font-bold text-[var(--platform-gold)]">
-                              {client.score} % Jistota
-                            </span>
-                          </div>
-                          <p className="mt-1 text-[12px] text-[var(--platform-muted)]">
-                            {client.project} • {client.land}
-                          </p>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              </PlatformCard>
-
               <PlatformCard title="Detail nákupního záměru">
                 <h2 className="mt-2 text-[22px] font-semibold text-[var(--platform-ink)]">
                   {activeClient.name}
                 </h2>
                 <p className="mt-1 text-[13px] text-[var(--platform-muted)]">
-                  {activeClient.project} ({activeClient.location})
+                  {activeClient.project} ({activeClient.location}) ·{' '}
+                  {activeClient.land}
                 </p>
 
                 <div className="mt-4">
@@ -282,13 +276,12 @@ export function SalesStudioApp() {
                     <span>Index rozhodovací jistoty</span>
                     <span>{activeClient.score} %</span>
                   </div>
-                  <div className="h-2.5 overflow-hidden rounded-full bg-[#EDF2F7]">
+                  <div className="h-2.5 overflow-hidden rounded-full bg-[#E3E3E3]">
                     <div
                       className="h-full rounded-full"
                       style={{
                         width: `${activeClient.score}%`,
-                        background:
-                          'linear-gradient(90deg, var(--platform-navy), var(--platform-gold))',
+                        background: 'var(--platform-navy)',
                       }}
                     />
                   </div>
@@ -312,7 +305,7 @@ export function SalesStudioApp() {
                   className="mt-5 rounded-[12px] p-4"
                   style={{
                     borderLeft: '4px solid var(--platform-gold)',
-                    background: 'var(--platform-gold-light)',
+                    background: 'var(--platform-cream-light)',
                   }}
                 >
                   <h4 className="text-sm font-semibold text-[var(--platform-ink)]">
@@ -336,9 +329,9 @@ export function SalesStudioApp() {
                         style={{
                           background:
                             step.state === 'completed'
-                              ? 'var(--platform-gold)'
+                              ? 'var(--platform-green)'
                               : step.state === 'active'
-                                ? 'var(--platform-green)'
+                                ? 'var(--platform-navy)'
                                 : 'var(--platform-line)',
                         }}
                         aria-hidden
@@ -358,7 +351,8 @@ export function SalesStudioApp() {
             </div>
           </div>
         </main>
-        <div className="platform-inspector-rail h-full overflow-hidden">
+
+        <div className="platform-inspector-rail sticky top-0 h-full self-stretch overflow-hidden">
           <CapabilityInspector model={inspectorModel} />
         </div>
       </div>

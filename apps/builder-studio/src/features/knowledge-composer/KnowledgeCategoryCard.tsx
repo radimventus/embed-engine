@@ -26,7 +26,7 @@ export function KnowledgeCategoryCard({
       className={`w-full rounded-[14px] border bg-white p-4 text-left shadow-sm transition hover:border-builder-navy/30 ${
         selected
           ? 'border-builder-navy ring-2 ring-builder-navy/15'
-          : 'border-[#E8EEF5]'
+          : 'border-[#E3E3E3]'
       }`}
     >
       <div className="flex items-start justify-between gap-3">

@@ -147,7 +147,7 @@ export function ProjectsOverview({
               }`}
               data-testid={`project-card-${project.id}`}
             >
-              <div className="aspect-[16/9] w-full bg-[#EEF3FA]">
+              <div className="aspect-[16/9] w-full bg-builder-creamMid">
                 <img
                   src={project.thumbnail}
                   alt={project.name}

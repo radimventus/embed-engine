@@ -57,7 +57,7 @@ export function ManagerWorkCenterHome() {
                 <FactorRow label="Velikost pozemku" width={58} value="58" />
                 <FactorRow label="Design & Architektura" width={44} value="44" />
               </div>
-              <div className="rounded-[14px] border border-[var(--platform-line)] bg-[#FAFBFD] p-4">
+              <div className="rounded-[14px] border border-[var(--platform-line)] bg-[var(--platform-cream-light)] p-4">
                 <div className="text-[12px] text-[var(--platform-muted)]">
                   Nejsilnější faktor
                 </div>
@@ -89,13 +89,13 @@ export function ManagerWorkCenterHome() {
         >
           <div className="grid gap-4 desktop:grid-cols-3">
             <ImproveCard
-              tone="gold"
+              tone="info"
               impact="Vysoký dopad"
               title="Doplnit FAQ k financování"
               detail="AI detekuje opuštění ve fázi Finance. Zodpovězení splátek předem odstraní nejistotu."
             />
             <ImproveCard
-              tone="gold"
+              tone="info"
               impact="Vysoký dopad"
               title="Propojení House Navigatora s FVE"
               detail="Klienti řešící energetickou úsporu vyžadují pohled na střechu a orientaci ke světlu."
@@ -135,7 +135,7 @@ function FunnelRow({
       >
         {label}
       </span>
-      <div className="h-[22px] overflow-hidden rounded-full bg-[#EDF2F7]">
+      <div className="h-[22px] overflow-hidden rounded-full bg-[var(--platform-line)]">
         <div
           className="h-full rounded-full"
           style={{
@@ -173,7 +173,7 @@ function FactorRow({
       <span className="text-sm font-semibold text-[var(--platform-ink)]">
         {label}
       </span>
-      <div className="h-2 overflow-hidden rounded-full bg-[#EDF2F7]">
+      <div className="h-2 overflow-hidden rounded-full bg-[var(--platform-line)]">
         <div
           className="h-full rounded-full bg-[var(--platform-accent)]"
           style={{ width: `${width}%` }}
@@ -192,7 +192,7 @@ function MetricBox({
   readonly value: string;
 }) {
   return (
-    <div className="rounded-[12px] bg-[#FAFBFD] px-3 py-3 text-[12px] text-[var(--platform-muted)]">
+    <div className="rounded-[12px] bg-[var(--platform-cream-light)] px-3 py-3 text-[12px] text-[var(--platform-muted)]">
       {label}
       <b className="mt-1 block text-sm text-[var(--platform-ink)]">{value}</b>
     </div>
@@ -211,7 +211,7 @@ function ImproveCard({
   readonly detail: string;
 }) {
   return (
-    <div className="rounded-[12px] border border-[var(--platform-line)] bg-[#FAFBFD] p-4">
+    <div className="rounded-[12px] border border-[var(--platform-line)] bg-[var(--platform-cream-light)] p-4">
       <PlatformStatusBadge tone={tone}>{impact}</PlatformStatusBadge>
       <h4 className="mt-2 text-[15px] font-semibold text-[var(--platform-ink)]">
         {title}

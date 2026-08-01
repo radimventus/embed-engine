@@ -50,7 +50,7 @@ export function BuilderIntelligenceView({
 
   return (
     <div className="space-y-5" data-testid="builder-intelligence">
-      <header className="rounded-[16px] border border-[#E8EEF5] bg-white p-6 shadow-sm">
+      <header className="rounded-[16px] border border-[#E3E3E3] bg-white p-6 shadow-sm">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
           Builder Intelligence
         </p>
@@ -73,7 +73,7 @@ export function BuilderIntelligenceView({
                 className={`rounded-[12px] border px-3 py-3 text-left ${
                   active
                     ? 'border-builder-navy bg-builder-navy text-white'
-                    : 'border-[#E8EEF5] bg-builder-canvas text-builder-ink'
+                    : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                 }`}
               >
                 <p className="text-sm font-semibold">{coach.label}</p>
@@ -112,7 +112,7 @@ function DecisionReadinessCard({
   >['readiness'];
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Decision Readiness
       </p>
@@ -129,7 +129,7 @@ function DecisionReadinessCard({
               <span className="text-builder-muted">{pillar.label}</span>
               <span className="font-medium text-builder-ink">{pillar.score}</span>
             </div>
-            <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[#E8EEF5]">
+            <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-[#E3E3E3]">
               <div
                 className="h-full rounded-full bg-builder-navy"
                 style={{ width: `${pillar.score}%` }}
@@ -150,7 +150,7 @@ function CoachDetail({
   readonly onNavigate: (nav: HousePackageNavId) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-lg font-semibold text-builder-ink">
@@ -158,7 +158,7 @@ function CoachDetail({
           </h2>
           <p className="mt-1 text-sm text-builder-muted">{coach.description}</p>
         </div>
-        <p className="rounded-[10px] border border-[#E8EEF5] bg-builder-canvas px-3 py-1.5 text-sm font-semibold text-builder-ink">
+        <p className="rounded-[10px] border border-[#E3E3E3] bg-builder-canvas px-3 py-1.5 text-sm font-semibold text-builder-ink">
           {coach.score} / 100
         </p>
       </div>
@@ -173,7 +173,7 @@ function CoachDetail({
               <button
                 type="button"
                 onClick={() => onNavigate(finding.nav)}
-                className="flex w-full items-start gap-3 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-4 py-3 text-left hover:border-builder-navy/40"
+                className="flex w-full items-start gap-3 rounded-[12px] border border-[#E3E3E3] bg-builder-canvas px-4 py-3 text-left hover:border-builder-navy/40"
               >
                 <SeverityMark severity={finding.severity} />
                 <span>
@@ -201,7 +201,7 @@ function RecommendationsPanel({
   readonly onNavigate: (nav: HousePackageNavId) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Recommendations
       </p>
@@ -219,7 +219,7 @@ function RecommendationsPanel({
               <button
                 type="button"
                 onClick={() => onNavigate(item.nav)}
-                className="flex w-full items-start justify-between gap-3 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-4 py-3 text-left hover:border-builder-navy/40"
+                className="flex w-full items-start justify-between gap-3 rounded-[12px] border border-[#E3E3E3] bg-builder-canvas px-4 py-3 text-left hover:border-builder-navy/40"
               >
                 <span className="flex items-start gap-3">
                   <SeverityMark severity={item.severity} />
@@ -258,7 +258,7 @@ function SeverityMark({
           ? 'bg-builder-draftBg text-builder-draft'
           : severity === 'medium'
             ? 'bg-amber-50 text-amber-800'
-            : 'bg-[#E8EEF5] text-builder-muted'
+            : 'bg-[#E3E3E3] text-builder-muted'
       }`}
     >
       {label}

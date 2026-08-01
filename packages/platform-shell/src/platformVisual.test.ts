@@ -19,12 +19,12 @@ describe('platformVisual (VR-FIX-02)', () => {
     const manager = getPlatformTheme('manager');
     assert.equal(builder.navy, manager.navy);
     assert.equal(builder.gold, manager.gold);
-    assert.equal(builder.canvas, '#F5F7FB');
+    assert.equal(builder.canvas, '#F7F6F4');
   });
 
-  it('uses studio accents from click model (PR-013)', () => {
-    assert.equal(getPlatformTheme('builder').accent, '#18428F');
-    assert.equal(getPlatformTheme('manager').accent, '#138D45');
-    assert.equal(getPlatformTheme('sales').accent, '#B8922D');
+  it('uses shared Navy working accent across studios (PR-022B)', () => {
+    assert.equal(getPlatformTheme('builder').accent, '#001930');
+    assert.equal(getPlatformTheme('manager').accent, '#001930');
+    assert.equal(getPlatformTheme('sales').accent, '#001930');
   });
 });

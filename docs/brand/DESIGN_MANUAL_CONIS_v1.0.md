@@ -38,39 +38,71 @@ Nikoli jako reklamní leták.
 
 ------------------------------------------------------------------------
 
-## 3. Barevná identita
+## 3. Barevná identita (PR-022B)
 
-### Primární
+Barva není dekorace. Barva vyjadřuje význam. Jedna barva = jedna role.
 
-**Navy** --- `#001930`
+Builder, Manager, Sales i Platform jsou jeden produkt — barvy neodlišují Studia.
 
-Použití: nadpisy, hlavní text, CTA, ikony.
+### Základní paleta
 
-### Akcent
+| Role | HEX |
+| --- | --- |
+| Navy | `#001930` |
+| Gold Intense | `#B8922D` |
+| Gold | `#C8A165` |
+| White | `#FFFFFF` |
+| Light Gray | `#E3E3E3` |
+| Muted | `#64748B` |
+| Cream Light | `#F7F6F4` |
+| Cream Mid | `#E8E5E0` |
+| Cream Dark | `#D9D4CC` |
+| Green Intense | `#137A43` |
+| Green Light | `#EAF5EE` |
+| Red Intense | `#A93226` |
+| Red Light | `#F8EBE9` |
 
-**Gold Intense** --- `#B8922D`
+Warning: zatím ponecháno pro další iteraci.
 
-Použití: zvýraznění, odkazy, důležité prvky.
+### Navy — jediná pracovní barva
 
-### Sekundární akcent
+Primary button / CTA, header, aktivní položky, odkazy, Anchor Rail, hlavní ikony, hlavní text.
 
-**Gold** --- `#C8A165`
+### Gold — pouze Premium
 
-Pouze jemné zvýraznění.
+Logo, premium badge, certifikace, střídmé zvýraznění. Nikdy primary button, canvas, formuláře, menu, běžné karty. Gold nesmí převážit nad Navy.
 
-### Pozadí
+### Green — Success / PASS / Ready / Published
 
-**Warm White** --- `#F7F6F4`
+Green Intense: text, ikony, badge. Green Light: notice, background, success panel.
 
-Výchozí pozadí značky.
+### Red — Error / FAIL / blokace / destructive
 
-### Karty
+Red Intense: text, badge, destructive button. Red Light: error background / panel.
 
-**White** --- `#FFFFFF`
+### Cream — materiál (ne status)
 
-### Linky
+Canvas, pozadí, dialogy, formuláře, neutrální plochy, hover neutrálních prvků.
 
-**Light Gray** --- `#E3E3E3`
+### Tlačítka
+
+- Primary: Navy (hover tmavší Navy)
+- Secondary: White (hover White + Navy border)
+- Danger: Red
+- Success: Green
+- Nikdy Gold
+
+### Focus
+
+Jednotný decentní Navy/Gold focus ring. Žádný systémový světle modrý ring.
+
+### Disabled
+
+Cream Dark + Muted text. Bez hover.
+
+### Zakázáno
+
+Béžové/oranžové plochy, Gold tint panely, světle modré pracovní plochy, historické Builder blues, neodsouhlasené odstíny.
 
 ------------------------------------------------------------------------
 

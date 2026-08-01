@@ -54,7 +54,7 @@ export function KnowledgeComposerView({
 
   return (
     <div className="space-y-6" data-testid="knowledge-composer">
-      <header className="rounded-[16px] border border-[#E8EEF5] bg-white p-6 shadow-sm">
+      <header className="rounded-[16px] border border-[#E3E3E3] bg-white p-6 shadow-sm">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
           Znalosti
         </p>
@@ -105,13 +105,13 @@ export function KnowledgeComposerView({
       </section>
 
       {visible.length === 0 && (
-        <p className="rounded-[14px] border border-[#E8EEF5] bg-white px-4 py-6 text-sm text-builder-muted">
+        <p className="rounded-[14px] border border-[#E3E3E3] bg-white px-4 py-6 text-sm text-builder-muted">
           Žádná oblast neodpovídá hledání.
         </p>
       )}
 
       {selected !== null && (
-        <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+        <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-lg font-semibold text-builder-ink">
@@ -134,7 +134,7 @@ export function KnowledgeComposerView({
             {selected.fields.slice(0, 6).map((item) => (
               <div
                 key={item.key}
-                className="rounded-[10px] border border-[#E8EEF5] bg-builder-canvas px-3 py-2 text-sm"
+                className="rounded-[10px] border border-[#E3E3E3] bg-builder-canvas px-3 py-2 text-sm"
               >
                 <dt className="text-builder-muted">{item.label}</dt>
                 <dd className="mt-0.5 font-medium text-builder-ink">

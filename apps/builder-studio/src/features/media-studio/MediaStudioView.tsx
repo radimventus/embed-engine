@@ -121,7 +121,7 @@ export function MediaStudioView({
       data-testid="media-studio"
     >
       <div className="space-y-5">
-        <header className="rounded-[16px] border border-[#E8EEF5] bg-white p-6 shadow-sm">
+        <header className="rounded-[16px] border border-[#E3E3E3] bg-white p-6 shadow-sm">
           <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
             Média
           </p>
@@ -140,7 +140,7 @@ export function MediaStudioView({
                 className={`rounded-[12px] border px-3 py-3 text-left ${
                   area === item.id
                     ? 'border-builder-navy bg-builder-navy text-white'
-                    : 'border-[#E8EEF5] bg-builder-canvas text-builder-ink'
+                    : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                 }`}
               >
                 <p className="text-sm font-semibold">{item.label}</p>
@@ -167,7 +167,7 @@ export function MediaStudioView({
           projectId={projectId}
           onMetaSaved={refreshMeta}
         />
-        <div className="overflow-hidden rounded-[16px] border border-[#E8EEF5] bg-white shadow-sm">
+        <div className="overflow-hidden rounded-[16px] border border-[#E3E3E3] bg-white shadow-sm">
           <ExperienceLivePreview remountKey={model.remountKey} />
         </div>
       </div>
@@ -192,7 +192,7 @@ function HeroManager({
   const [meta, setMeta] = useState(model.heroMeta);
 
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <h2 className="text-lg font-semibold text-builder-ink">Hero</h2>
       <p className="mt-1 text-sm text-builder-muted">
         Pouze jeden aktivní Hero · Desktop / Mobile náhled
@@ -360,7 +360,7 @@ function GalleryManager({
   };
 
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-builder-ink">
@@ -494,7 +494,7 @@ function GalleryManager({
                 className={`overflow-hidden rounded-[12px] border bg-builder-canvas ${
                   selectedKey === item.key
                     ? 'border-builder-navy ring-2 ring-builder-navy/15'
-                    : 'border-[#E8EEF5]'
+                    : 'border-[#E3E3E3]'
                 } ${dragIndex === index ? 'opacity-60' : ''}`}
               >
                 <img
@@ -589,7 +589,7 @@ function SelectedGalleryEditor({
 
   return (
     <form
-      className="mt-5 grid gap-3 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas p-4 tablet:grid-cols-2"
+      className="mt-5 grid gap-3 rounded-[12px] border border-[#E3E3E3] bg-builder-canvas p-4 tablet:grid-cols-2"
       onSubmit={(event: FormEvent) => {
         event.preventDefault();
         if (index >= 0) {
@@ -653,7 +653,7 @@ function VideoManager({
     model.videos.find((item) => item.key === selectedKey) ?? model.videos[0] ?? null;
 
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-builder-ink">Videa</h2>
@@ -689,7 +689,7 @@ function VideoManager({
               className={`flex w-full items-center justify-between rounded-[12px] border px-4 py-3 text-left ${
                 selected?.key === item.key
                   ? 'border-builder-navy bg-builder-panel'
-                  : 'border-[#E8EEF5] bg-builder-canvas'
+                  : 'border-[#E3E3E3] bg-builder-canvas'
               }`}
             >
               <span>
@@ -766,7 +766,7 @@ function VideoEditor({
 
   return (
     <form
-      className="mt-4 grid gap-3 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas p-4 tablet:grid-cols-2"
+      className="mt-4 grid gap-3 rounded-[12px] border border-[#E3E3E3] bg-builder-canvas p-4 tablet:grid-cols-2"
       onSubmit={(event: FormEvent) => {
         event.preventDefault();
         if (index >= 0) {
@@ -808,7 +808,7 @@ function VideoEditor({
 
 function FloorPlanStudio({ model }: { readonly model: MediaStudioModel }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <h2 className="text-lg font-semibold text-builder-ink">
         Půdorys
       </h2>
@@ -819,7 +819,7 @@ function FloorPlanStudio({ model }: { readonly model: MediaStudioModel }) {
         {model.floors.map((floor) => (
           <li
             key={floor.floorId}
-            className="overflow-hidden rounded-[14px] border border-[#E8EEF5]"
+            className="overflow-hidden rounded-[14px] border border-[#E3E3E3]"
           >
             <div className="grid gap-0 tablet:grid-cols-[240px_1fr]">
               <div className="flex items-center justify-center bg-builder-soft p-4">
@@ -859,7 +859,7 @@ function FloorPlanStudio({ model }: { readonly model: MediaStudioModel }) {
 
 function DocumentLibrary({ model }: { readonly model: MediaStudioModel }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <h2 className="text-lg font-semibold text-builder-ink">
         Dokumenty
       </h2>
@@ -870,7 +870,7 @@ function DocumentLibrary({ model }: { readonly model: MediaStudioModel }) {
         {model.documents.map((doc) => (
           <li
             key={doc.id}
-            className="flex items-center justify-between rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-4 py-3"
+            className="flex items-center justify-between rounded-[12px] border border-[#E3E3E3] bg-builder-canvas px-4 py-3"
           >
             <div>
               <p className="text-sm font-semibold text-builder-ink">{doc.title}</p>
@@ -927,7 +927,7 @@ function MetadataPanel({
 
   if (meta === null) {
     return (
-      <aside className="rounded-[16px] border border-[#E8EEF5] bg-white p-4 shadow-sm">
+      <aside className="rounded-[16px] border border-[#E3E3E3] bg-white p-4 shadow-sm">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
           Údaje
         </p>
@@ -940,7 +940,7 @@ function MetadataPanel({
   }
 
   return (
-    <aside className="rounded-[16px] border border-[#E8EEF5] bg-white p-4 shadow-sm">
+    <aside className="rounded-[16px] border border-[#E3E3E3] bg-white p-4 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Údaje
       </p>

@@ -7,14 +7,14 @@
   ::before,
   ::after {
     box-sizing: border-box;
-    border-color: #e7ecf3;
+    border-color: #e3e3e3;
   }
 
   html,
   body,
   #root {
     @apply min-h-screen overscroll-none text-builder-ink;
-    background-color: #f5f7fb;
+    background-color: #f7f6f4;
   }
 
   body {

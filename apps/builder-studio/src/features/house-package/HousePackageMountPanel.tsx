@@ -68,7 +68,7 @@ export function HousePackageMountPanel({
             <button
               type="button"
               onClick={() => onNavigate(item.nav)}
-              className="flex w-full items-center gap-2.5 rounded-[10px] border border-[#E8EEF5] bg-builder-canvas px-3 py-2.5 text-left text-sm hover:border-builder-navy/30"
+              className="flex w-full items-center gap-2.5 rounded-[10px] border border-[#E3E3E3] bg-builder-canvas px-3 py-2.5 text-left text-sm hover:border-builder-navy/30"
             >
               <span aria-hidden className={toneClass(item.tone)}>
                 {item.tone === 'ok' ? '✔' : item.tone === 'warn' ? '⚠' : '○'}
@@ -79,7 +79,7 @@ export function HousePackageMountPanel({
         ))}
       </ul>
 
-      <div className="mt-6 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-3 py-3">
+      <div className="mt-6 rounded-[12px] border border-[#E3E3E3] bg-builder-canvas px-3 py-3">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
           Poslední publikace
         </p>

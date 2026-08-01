@@ -1,5 +1,6 @@
 /**
  * EPIC-BX-14 — Platform Access visual layer.
+ * PR-022B — CONIS color system (Navy / Cream / status).
  */
 
 .platform-access {
@@ -9,9 +10,7 @@
   align-items: center;
   justify-content: center;
   padding: 32px 20px;
-  background:
-    radial-gradient(circle at top left, rgba(24, 66, 143, 0.12), transparent 40%),
-    linear-gradient(180deg, #f5f7fb 0%, #eef2f7 100%);
+  background: #f7f6f4;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   color: #001930;
 }
@@ -24,11 +23,11 @@
 
 .platform-access__panel {
   width: min(440px, 100%);
-  border: 1px solid #dde5ef;
+  border: 1px solid #e3e3e3;
   border-radius: 18px;
   background: #fff;
   padding: 32px;
-  box-shadow: 0 18px 40px rgba(26, 35, 50, 0.08);
+  box-shadow: 0 18px 40px rgba(0, 25, 48, 0.08);
 }
 
 .platform-access__panel--wide {
@@ -41,7 +40,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #18428f;
+  color: #001930;
 }
 
 .platform-access__title {
@@ -72,12 +71,21 @@
 }
 
 .platform-access__input {
-  border: 1px solid #dde5ef;
+  border: 1px solid #e3e3e3;
   border-radius: 10px;
-  background: #f5f7fa;
+  background: #f7f6f4;
   padding: 10px 12px;
   font: inherit;
   font-size: 14px;
+}
+
+.platform-access__input:hover {
+  border-color: #d9d4cc;
+}
+
+.platform-access__input:focus-visible {
+  outline: 2px solid color-mix(in srgb, #b8922d 45%, #001930);
+  outline-offset: 2px;
 }
 
 .platform-access__remember {
@@ -91,17 +99,17 @@
 .platform-access__error {
   margin: 0;
   border-radius: 10px;
-  background: #fdecec;
+  background: #f8ebe9;
   padding: 10px 12px;
   font-size: 13px;
-  color: #b42318;
+  color: #a93226;
 }
 
 .platform-access__submit,
 .platform-access__logout {
   border: 0;
   border-radius: 10px;
-  background: #18428f;
+  background: #001930;
   padding: 12px 16px;
   font: inherit;
   font-size: 14px;
@@ -110,16 +118,25 @@
   cursor: pointer;
 }
 
+.platform-access__submit:hover {
+  background: color-mix(in srgb, #001930 88%, #000);
+}
+
 .platform-access__logout {
   margin-top: 24px;
-  background: transparent;
-  border: 1px solid #dde5ef;
+  background: #fff;
+  border: 1px solid #e3e3e3;
   color: #001930;
+}
+
+.platform-access__logout:hover {
+  border-color: #001930;
+  background: #fff;
 }
 
 .platform-access__demos {
   margin-top: 28px;
-  border-top: 1px solid #dde5ef;
+  border-top: 1px solid #e3e3e3;
   padding-top: 18px;
 }
 
@@ -146,7 +163,7 @@
   text-align: left;
   font: inherit;
   font-size: 13px;
-  color: #18428f;
+  color: #001930;
   cursor: pointer;
 }
 
@@ -166,9 +183,9 @@
   display: flex;
   flex-direction: column;
   gap: 8px;
-  border: 1px solid #dde5ef;
+  border: 1px solid #e3e3e3;
   border-radius: 14px;
-  background: #f5f7fa;
+  background: #f7f6f4;
   padding: 18px;
   text-align: left;
   cursor: pointer;
@@ -176,11 +193,14 @@
 }
 
 .platform-access__studio:hover:not(:disabled) {
-  border-color: #18428f;
+  border-color: #001930;
+  background: #e8e5e0;
 }
 
 .platform-access__studio--disabled {
-  opacity: 0.45;
+  background: #d9d4cc;
+  color: #64748b;
+  opacity: 1;
   cursor: not-allowed;
 }
 
@@ -196,7 +216,7 @@
 
 .platform-access__dashboard-slot {
   margin-top: 28px;
-  border: 1px dashed #dde5ef;
+  border: 1px dashed #e3e3e3;
   border-radius: 14px;
   padding: 16px;
 }
@@ -220,7 +240,7 @@
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  color: #18428f;
+  color: #001930;
   cursor: pointer;
   text-decoration: underline;
 }
@@ -228,7 +248,7 @@
 /* EPIC-BX-16 — GM Readiness Center */
 .platform-gm {
   margin-top: 28px;
-  border: 1px solid #dde5ef;
+  border: 1px solid #e3e3e3;
   border-radius: 16px;
   background: #fff;
   padding: 18px;
@@ -237,9 +257,7 @@
 .platform-gm__executive {
   margin-top: 14px;
   border-radius: 14px;
-  background:
-    linear-gradient(135deg, rgba(30, 77, 140, 0.1), transparent 55%),
-    #f5f7fa;
+  background: #e8e5e0;
   padding: 18px;
 }
 
@@ -264,7 +282,7 @@
   margin: 4px 0 0;
   font-size: 16px;
   font-weight: 700;
-  color: #18428f;
+  color: #001930;
 }
 
 .platform-gm__grid {
@@ -284,9 +302,9 @@
 }
 
 .platform-gm__panel {
-  border: 1px solid #e8eef5;
+  border: 1px solid #e3e3e3;
   border-radius: 12px;
-  background: #fafbfd;
+  background: #f7f6f4;
   padding: 14px;
 }
 
@@ -301,7 +319,7 @@
   display: grid;
   gap: 4px;
   padding: 10px 0;
-  border-top: 1px solid #e8eef5;
+  border-top: 1px solid #e3e3e3;
 }
 
 .platform-gm__row:first-of-type,
@@ -334,23 +352,23 @@
 }
 
 .platform-gm__badge--pass {
-  background: #e8f6ee;
-  color: #1f7a4d;
+  background: #eaf5ee;
+  color: #137a43;
 }
 
 .platform-gm__badge--warn {
-  background: #fff6e8;
-  color: #a15c00;
+  background: #fff4e5;
+  color: #b45309;
 }
 
 .platform-gm__badge--fail {
-  background: #fdecec;
-  color: #b42318;
+  background: #f8ebe9;
+  color: #a93226;
 }
 
 .platform-gm__badge--info {
-  background: #e8eef8;
-  color: #18428f;
+  background: #e8e5e0;
+  color: #001930;
 }
 
 .platform-gm__debt-area {

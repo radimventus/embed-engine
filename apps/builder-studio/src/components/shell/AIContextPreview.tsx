@@ -215,7 +215,7 @@ function FragmentSection({
           <p className="mt-2 text-[13px] text-builder-muted">
             {fragment.metadata.notes}
           </p>
-          <pre className="mt-3 overflow-x-auto rounded-[8px] bg-[#F7F9FC] p-3 text-[11px] text-builder-ink">
+          <pre className="mt-3 overflow-x-auto rounded-[8px] bg-builder-canvas p-3 text-[11px] text-builder-ink">
             {JSON.stringify(fragment.payload, null, 2)}
           </pre>
         </div>

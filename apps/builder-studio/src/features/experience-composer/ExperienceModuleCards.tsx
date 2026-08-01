@@ -157,7 +157,7 @@ export function ExperienceModuleCards({
                 className={`cursor-grab rounded-[14px] border bg-white p-4 shadow-sm active:cursor-grabbing ${
                   selected
                     ? 'border-builder-navy ring-2 ring-builder-navy/15'
-                    : 'border-[#E8EEF5]'
+                    : 'border-[#E3E3E3]'
                 } ${dragIndex === index ? 'opacity-60' : ''}`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">

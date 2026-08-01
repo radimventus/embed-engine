@@ -28,9 +28,9 @@ export function getPlatformTheme(studioId: PlatformStudioId): PlatformTheme {
     headerHeightPx: PLATFORM_HEADER_HEIGHT_PX,
     ink: '#001930',
     muted: '#64748B',
-    line: '#E2E8F0',
+    line: '#E3E3E3',
     surface: '#FFFFFF',
-    canvas: '#F5F7FB',
+    canvas: '#F7F6F4',
     navy: '#001930',
     gold: '#B8922D',
   };

@@ -109,7 +109,7 @@ export function ProjectActionPanel({
       )}
 
       {releaseSummary !== null && (
-        <div className="mt-5 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-3 py-3 text-[12px]">
+        <div className="mt-5 rounded-[12px] border border-[#E3E3E3] bg-builder-canvas px-3 py-3 text-[12px]">
           <p className="font-semibold text-builder-ink">Poslední publikace</p>
           <p className="mt-1 text-builder-muted">
             {formatCzechDateTime(releaseSummary.releaseTimestamp)}

@@ -173,7 +173,7 @@ export function HousePackageEditView({
                 {pkg.gallery.entries.map((entry) => (
                   <figure
                     key={`${entry.order}-${entry.path}`}
-                    className="overflow-hidden rounded-[12px] border border-[#E8EEF5] bg-white"
+                    className="overflow-hidden rounded-[12px] border border-[#E3E3E3] bg-white"
                   >
                     <img
                       src={`${HOUSE_PACKAGE_URL_ROOT}/${entry.path}`}
@@ -235,7 +235,7 @@ export function HousePackageEditView({
                 return (
                   <li
                     key={floor.floorId}
-                    className="overflow-hidden rounded-[14px] border border-[#E8EEF5] bg-white"
+                    className="overflow-hidden rounded-[14px] border border-[#E3E3E3] bg-white"
                   >
                     <div className="grid gap-0 tablet:grid-cols-[220px_1fr]">
                       <div className="flex items-center justify-center bg-builder-soft p-4">
@@ -480,7 +480,7 @@ function CsvEditor({
                   {columns.map((column) => (
                     <td key={column} className="py-1.5 pr-2">
                       <input
-                        className="w-full min-w-[5rem] rounded border border-[#E8EEF5] px-2 py-1.5 font-mono text-[12px]"
+                        className="w-full min-w-[5rem] rounded border border-[#E3E3E3] px-2 py-1.5 font-mono text-[12px]"
                         value={row[column] ?? ''}
                         onChange={(event) =>
                           onCsvChange(
@@ -524,7 +524,7 @@ function Panel({
   readonly children: ReactNode;
 }) {
   return (
-    <section className="rounded-[14px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[14px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <div className="flex items-center justify-between gap-3">
         <h3 className="text-base font-semibold text-builder-ink">{title}</h3>
         {status !== undefined && <StatusBadge status={status} />}

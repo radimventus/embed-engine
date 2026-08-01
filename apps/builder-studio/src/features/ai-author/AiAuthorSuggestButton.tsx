@@ -89,7 +89,7 @@ export function AiAuthorSuggestButton({
             <p className="platform-type-helper" style={{ marginTop: 6 }}>
               Kontext: {pending.contextSummary}
             </p>
-            <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap rounded-[12px] border border-[#E8EEF5] bg-builder-canvas p-3 text-sm text-builder-ink">
+            <pre className="mt-3 max-h-56 overflow-auto whitespace-pre-wrap rounded-[12px] border border-[#E3E3E3] bg-builder-canvas p-3 text-sm text-builder-ink">
               {pending.proposalText}
             </pre>
           </>

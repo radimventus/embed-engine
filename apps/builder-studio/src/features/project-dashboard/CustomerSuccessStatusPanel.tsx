@@ -17,7 +17,7 @@ export function CustomerSuccessStatusPanel() {
 
   return (
     <section
-      className="mt-5 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-3 py-3"
+      className="mt-5 rounded-[12px] border border-[#E3E3E3] bg-builder-canvas px-3 py-3"
       data-testid="customer-success-status"
       data-capability="customer-success"
     >

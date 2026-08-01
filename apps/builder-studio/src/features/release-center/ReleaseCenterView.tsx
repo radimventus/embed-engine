@@ -143,7 +143,7 @@ export function ReleaseCenterView({
 
   return (
     <div className="space-y-5" data-testid="release-center">
-      <header className="rounded-[16px] border border-[#E8EEF5] bg-white p-6 shadow-sm">
+      <header className="rounded-[16px] border border-[#E3E3E3] bg-white p-6 shadow-sm">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
           Release
         </p>
@@ -235,7 +235,7 @@ function CurrentReleaseCard({
     current?.releasedAt ?? sessionSummary?.releaseTimestamp ?? null;
 
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Aktuální publikace
       </p>
@@ -287,7 +287,7 @@ function ReleaseReadinessCard({
   readonly publishError: string | null;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Připravenost publikace
       </p>
@@ -297,7 +297,7 @@ function ReleaseReadinessCard({
             <button
               type="button"
               onClick={() => onNavigate(item.nav)}
-              className="flex w-full items-start gap-2 rounded-[10px] border border-[#E8EEF5] bg-builder-canvas px-3 py-2 text-left"
+              className="flex w-full items-start gap-2 rounded-[10px] border border-[#E3E3E3] bg-builder-canvas px-3 py-2 text-left"
             >
               <span className="text-sm font-semibold">{mark(item.tone)}</span>
               <span>
@@ -316,7 +316,7 @@ function ReleaseReadinessCard({
         className={`mt-4 rounded-[12px] border px-4 py-3 ${
           model.readyToRelease
             ? 'border-builder-success/30 bg-builder-success/5'
-            : 'border-[#E8EEF5] bg-builder-canvas'
+            : 'border-[#E3E3E3] bg-builder-canvas'
         }`}
       >
         <p className="text-sm font-semibold text-builder-ink">
@@ -359,7 +359,7 @@ function ReleaseNotesEditor({
   readonly onSave: (event: FormEvent) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Release Notes
       </p>
@@ -422,7 +422,7 @@ function PreparedChangesCard({
   readonly changes: ReturnType<typeof buildReleaseCenterModel>['preparedChanges'];
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Připravené změny
       </p>
@@ -430,7 +430,7 @@ function PreparedChangesCard({
         {changes.map((change) => (
           <li
             key={change.id}
-            className="rounded-[10px] border border-[#E8EEF5] bg-builder-canvas px-3 py-2 text-sm text-builder-ink"
+            className="rounded-[10px] border border-[#E3E3E3] bg-builder-canvas px-3 py-2 text-sm text-builder-ink"
           >
             {change.label}
           </li>
@@ -452,7 +452,7 @@ function ReleaseHistoryTable({
   readonly onRollback: (id: string) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Release History
       </p>
@@ -479,7 +479,7 @@ function ReleaseHistoryTable({
                 return (
                   <tr
                     key={release.id}
-                    className={`border-t border-[#E8EEF5] ${
+                    className={`border-t border-[#E3E3E3] ${
                       selected ? 'bg-builder-panel' : ''
                     }`}
                   >
@@ -524,7 +524,7 @@ function ReleaseHistoryTable({
 
 function ReleaseDetailCard({ release }: { readonly release: ReleaseRecord }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Detail vydání
       </p>
@@ -565,7 +565,7 @@ function CompareReleasesPanel({
 }) {
   if (history.length < 2) {
     return (
-      <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+      <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
           Compare Releases
         </p>
@@ -577,7 +577,7 @@ function CompareReleasesPanel({
   }
 
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Compare Releases
       </p>
@@ -624,7 +624,7 @@ function CompareReleasesPanel({
               className={`rounded-[10px] border px-3 py-2 text-sm ${
                 change.changed
                   ? 'border-builder-navy/30 bg-builder-panel'
-                  : 'border-[#E8EEF5] bg-builder-canvas'
+                  : 'border-[#E3E3E3] bg-builder-canvas'
               }`}
             >
               <span className="font-semibold text-builder-ink">

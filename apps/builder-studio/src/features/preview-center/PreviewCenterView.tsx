@@ -78,7 +78,7 @@ export function PreviewCenterView({
 
   return (
     <div className="space-y-5" data-testid="preview-center">
-      <header className="rounded-[16px] border border-[#E8EEF5] bg-white p-6 shadow-sm">
+      <header className="rounded-[16px] border border-[#E3E3E3] bg-white p-6 shadow-sm">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
           Preview
         </p>
@@ -185,7 +185,7 @@ export function PreviewCenterView({
             />
           </>
         ) : (
-          <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-4 shadow-sm">
+          <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-4 shadow-sm">
             <PreviewLiveRuntime
               remountKey={model.remountKey}
               persona={livePersona}
@@ -255,7 +255,7 @@ function CompareColumn({
       className={`space-y-3 rounded-[16px] border p-4 shadow-sm ${
         active
           ? 'border-builder-navy bg-white ring-2 ring-builder-navy/10'
-          : 'border-[#E8EEF5] bg-builder-canvas'
+          : 'border-[#E3E3E3] bg-builder-canvas'
       }`}
     >
       <button
@@ -298,7 +298,7 @@ function PersonaPanel({
   readonly onSelect: (id: PreviewPersonaId) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-4 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-4 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         {title}
       </p>
@@ -313,7 +313,7 @@ function PersonaPanel({
                 className={`w-full rounded-[10px] border px-3 py-2.5 text-left ${
                   active
                     ? 'border-builder-navy bg-builder-navy text-white'
-                    : 'border-[#E8EEF5] bg-builder-canvas text-builder-ink'
+                    : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                 }`}
               >
                 <span className="block text-sm font-semibold">
@@ -345,7 +345,7 @@ function DevicePanel({
   readonly onSelect: (id: PreviewDeviceId) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-4 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-4 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         {title}
       </p>
@@ -360,7 +360,7 @@ function DevicePanel({
               className={`rounded-[10px] border px-2 py-2 text-center text-sm font-medium ${
                 active
                   ? 'border-builder-navy bg-builder-navy text-white'
-                  : 'border-[#E8EEF5] bg-builder-canvas text-builder-ink'
+                  : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
               }`}
             >
               {device.label}
@@ -380,7 +380,7 @@ function PriorityHint({
   readonly priorities: readonly string[];
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-4 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-4 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Priority
       </p>
@@ -404,7 +404,7 @@ function DecisionPathPanel({
   readonly onSelect: (id: ExperienceModuleId) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-4 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-4 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Decision Path
       </p>
@@ -424,7 +424,7 @@ function DecisionPathPanel({
                   className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${
                     active
                       ? 'bg-builder-navy text-white'
-                      : 'bg-[#E8EEF5] text-builder-muted'
+                      : 'bg-[#E3E3E3] text-builder-muted'
                   }`}
                 >
                   {index + 1}
@@ -463,7 +463,7 @@ function DecisionQaPanel({
   readonly onNavigate: (nav: HousePackageNavId) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-4 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-4 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Decision QA
       </p>
@@ -473,7 +473,7 @@ function DecisionQaPanel({
             <button
               type="button"
               onClick={() => onNavigate(item.nav)}
-              className="flex w-full items-start gap-2 rounded-[10px] border border-[#E8EEF5] bg-builder-canvas px-3 py-2 text-left hover:border-builder-navy/40"
+              className="flex w-full items-start gap-2 rounded-[10px] border border-[#E3E3E3] bg-builder-canvas px-3 py-2 text-left hover:border-builder-navy/40"
             >
               <span className="text-sm font-semibold">{qaMark(item.tone)}</span>
               <span>
@@ -500,7 +500,7 @@ function ValidationSummary({
   readonly onNavigate: (nav: HousePackageNavId) => void;
 }) {
   return (
-    <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
+    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Souhrn validace
       </p>
