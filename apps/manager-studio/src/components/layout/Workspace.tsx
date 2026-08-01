@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { PlatformStatusBadge } from '@embed-engine/platform-shell';
+import { PlatformEmptyState, PlatformStatusBadge } from '@embed-engine/platform-shell';
 import { usePlatformSession } from '@embed-engine/platform-access';
 
 type WorkspaceProps = {
@@ -8,7 +8,7 @@ type WorkspaceProps = {
 };
 
 /**
- * VR-FIX-05 — Manager working surface + click-model title-bar.
+ * VR-FIX-06 — Manager working surface + click-model title-bar.
  */
 export function Workspace({ children }: WorkspaceProps) {
   const { bootstrap } = usePlatformSession();
@@ -27,9 +27,10 @@ export function Workspace({ children }: WorkspaceProps) {
         <PlatformStatusBadge tone="info">Živá data z Runtime</PlatformStatusBadge>
       </header>
       {children ?? (
-        <div className="flex flex-1 items-center justify-center py-16">
-          <p className="platform-type-helper">Vyberte modul vlevo.</p>
-        </div>
+        <PlatformEmptyState
+          title="Vyberte modul"
+          description="Navigace vlevo otevře Launch, Platformu, Zákazníky nebo Provoz."
+        />
       )}
     </main>
   );

@@ -237,15 +237,15 @@ function CurrentReleaseCard({
   return (
     <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-        Current Release
+        Aktuální publikace
       </p>
       {version === undefined ? (
         <p className="mt-3 text-sm text-builder-muted">
-          Zatím žádná publikace — po Publish se zde objeví aktivní verze.
+          Zatím žádná publikace — po Publikovat změny se zde objeví aktivní verze.
         </p>
       ) : (
         <dl className="mt-4 grid gap-3 tablet:grid-cols-2">
-          <Meta label="Version" value={`v${version}`} />
+          <Meta label="Verze" value={`v${version}`} />
           <Meta
             label="Datum"
             value={
@@ -289,7 +289,7 @@ function ReleaseReadinessCard({
   return (
     <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-        Release Readiness
+        Připravenost publikace
       </p>
       <ul className="mt-3 space-y-1.5">
         {model.readiness.items.map((item) => (
@@ -320,10 +320,10 @@ function ReleaseReadinessCard({
         }`}
       >
         <p className="text-sm font-semibold text-builder-ink">
-          {model.readyToRelease ? 'Ready to Release' : 'Not ready'}
+          {model.readyToRelease ? 'Připraveno k publikaci' : 'Zatím nepřipraveno'}
         </p>
         <p className="mt-1 text-[12px] text-builder-muted">
-          Publish zůstává jeden — Release Center pouze orchestrace.
+          Publikace zůstává jedna — Release Center pouze orchestrace.
         </p>
       </div>
       <button
@@ -332,7 +332,7 @@ function ReleaseReadinessCard({
         onClick={onPublish}
         className="mt-3 w-full rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-50"
       >
-        {publishing ? 'Publikuji…' : 'Publish'}
+        {publishing ? 'Publikuji…' : 'Publikovat změny'}
       </button>
       {publishError !== null && (
         <p className="mt-2 text-sm text-builder-draft">{publishError}</p>
@@ -458,7 +458,7 @@ function ReleaseHistoryTable({
       </p>
       {history.length === 0 ? (
         <p className="mt-3 text-sm text-builder-muted">
-          Historie je prázdná — po úspěšném Publish se zde objeví záznamy.
+          Historie je prázdná — po úspěšné publikaci se zde objeví záznamy.
         </p>
       ) : (
         <div className="mt-3 overflow-x-auto">
@@ -507,7 +507,7 @@ function ReleaseHistoryTable({
                           className="text-[12px] font-medium text-builder-navy"
                           onClick={() => onRollback(release.id)}
                         >
-                          Rollback
+                          Vrátit verzi
                         </button>
                       )}
                     </td>
@@ -657,13 +657,13 @@ function RollbackDialog({
   return (
     <PlatformConfirmDialog
       open={release !== null}
-      title="Rollback"
+      title="Vrátit verzi"
       description={
         release === null
           ? ''
-          : `Aktivovat existující release v${release.version}? Neproběhne nový publish — pouze přepnutí aktivního vydání v Release Center.`
+          : `Aktivovat existující release v${release.version}? Neproběhne nová publikace — pouze přepnutí aktivního vydání.`
       }
-      confirmLabel="Potvrdit Rollback"
+      confirmLabel="Potvrdit"
       cancelLabel="Zrušit"
       onCancel={onCancel}
       onConfirm={onConfirm}

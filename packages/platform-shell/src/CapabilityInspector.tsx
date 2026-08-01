@@ -21,8 +21,16 @@ function healthTone(
   return 'info';
 }
 
+function healthLabel(status: string): string {
+  if (status === 'healthy') return 'Připraveno';
+  if (status === 'degraded') return 'Omezeno';
+  if (status === 'error') return 'Chyba';
+  if (status === 'inactive') return 'Neaktivní';
+  return status;
+}
+
 /**
- * VR-FIX-02 — Unified Inspector (header · metadata · status · modules).
+ * VR-FIX-06 — Unified Inspector (production chrome, no internal IDs).
  */
 export function CapabilityInspector({
   model,
@@ -37,7 +45,7 @@ export function CapabilityInspector({
     <aside
       className="platform-capability-inspector"
       data-testid="capability-inspector"
-      aria-label="Capability Inspector"
+      aria-label="Inspector modulu"
     >
       <p className="platform-capability-inspector__eyebrow">Modul</p>
       <h2 className="platform-capability-inspector__title">Inspector</h2>
@@ -52,7 +60,7 @@ export function CapabilityInspector({
           </p>
           <div className="platform-capability-inspector__badges">
             <PlatformStatusBadge tone={healthTone(active.health.status)}>
-              {active.health.status}
+              {healthLabel(active.health.status)}
             </PlatformStatusBadge>
             <PlatformStatusBadge tone="info">
               {active.metadata.maturity}
@@ -65,11 +73,11 @@ export function CapabilityInspector({
             {active.metadata.description}
           </p>
           <p className="platform-capability-inspector__meta">
-            v{active.metadata.version} · Owner · {active.metadata.owner}
+            v{active.metadata.version} · {active.metadata.owner}
           </p>
           {active.metadata.dependencies.length > 0 && (
             <p className="platform-capability-inspector__deps">
-              Depends · {active.metadata.dependencies.join(', ')}
+              Závislosti · {active.metadata.dependencies.join(', ')}
             </p>
           )}
         </div>
@@ -81,11 +89,8 @@ export function CapabilityInspector({
 
       {!compact && (
         <>
-          <p
-            className="platform-type-section"
-            style={{ marginTop: 24 }}
-          >
-            Product modules
+          <p className="platform-type-section" style={{ marginTop: 24 }}>
+            Produktové moduly
           </p>
           <ul className="platform-capability-inspector__list">
             {model.capabilities.map((item) => {
@@ -103,7 +108,7 @@ export function CapabilityInspector({
                   <PlatformStatusBadge
                     tone={item.health.active ? 'ready' : 'draft'}
                   >
-                    {item.health.active ? 'Ready' : 'Idle'}
+                    {item.health.active ? 'Aktivní' : 'Neaktivní'}
                   </PlatformStatusBadge>
                 </li>
               );

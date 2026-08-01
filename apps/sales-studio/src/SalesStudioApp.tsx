@@ -107,7 +107,7 @@ export function SalesStudioApp() {
       >
         <main className="platform-studio-pad" style={{ minHeight: 0, minWidth: 0, flex: 1, overflowY: 'auto' }}>
           <div style={{ maxWidth: 960, margin: '0 auto' }}>
-            <header className="platform-title-bar" style={{ marginBottom: 24 }}>
+            <header className="platform-title-bar">
               <div>
                 <h1 className="platform-type-h1">Sales Studio</h1>
                 <p className="platform-type-helper" style={{ marginTop: 4 }}>

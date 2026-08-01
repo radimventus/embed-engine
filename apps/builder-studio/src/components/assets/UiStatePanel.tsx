@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { PlatformEmptyState, PlatformLoading } from '@embed-engine/platform-shell';
+
 import type { AssetUiState } from '../../model';
 
 type UiStatePanelProps = {
@@ -10,28 +12,26 @@ type UiStatePanelProps = {
 };
 
 /**
- * Presentational UI state shell for asset collections.
+ * VR-FIX-06 — Asset collection states via Platform Shell grammar.
  */
 export function UiStatePanel({
   state,
   emptyMessage = 'Zatím žádné soubory. Nahrajte první asset.',
-  errorMessage = 'Kategorie je ve stavu Error (mock).',
+  errorMessage = 'Kategorii se nepodařilo načíst. Zkuste to znovu.',
   children,
 }: UiStatePanelProps) {
   if (state === 'Loading') {
-    return (
-      <div className="rounded-[10px] border border-dashed border-builder-panelBorder bg-builder-panel/40 px-4 py-6 text-sm text-builder-navy">
-        Načítání mock dat…
-      </div>
-    );
+    return <PlatformLoading label="Načítám soubory…" />;
   }
 
   if (state === 'Error') {
     return (
       <div className="space-y-3">
-        <div className="rounded-[10px] border border-builder-draftBorder bg-builder-draftBg px-4 py-3 text-sm text-builder-draft">
-          {errorMessage}
-        </div>
+        <PlatformEmptyState
+          icon="!"
+          title="Chyba načtení"
+          description={errorMessage}
+        />
         {children}
       </div>
     );
@@ -39,9 +39,10 @@ export function UiStatePanel({
 
   if (state === 'Empty') {
     return (
-      <div className="rounded-[10px] border border-dashed border-builder-sectionBorder bg-white px-4 py-6 text-sm text-builder-muted">
-        {emptyMessage}
-      </div>
+      <PlatformEmptyState
+        title="Žádné soubory"
+        description={emptyMessage}
+      />
     );
   }
 

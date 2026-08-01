@@ -1073,7 +1073,9 @@
   .platform-menu-item,
   .platform-dialog__close,
   .platform-notice,
-  .platform-loading__spinner {
+  .platform-loading__spinner,
+  .platform-tab,
+  .platform-motion {
     transition: none !important;
     animation: none !important;
   }
@@ -1101,6 +1103,42 @@
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 24px;
+}
+
+.platform-motion {
+  transition: var(--platform-transition);
+}
+
+.platform-tab {
+  border: 1px solid #dde5ef;
+  border-radius: var(--platform-radius);
+  background: var(--platform-surface);
+  padding: 10px 20px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--platform-ink);
+  cursor: pointer;
+  transition: var(--platform-transition);
+}
+
+.platform-tab:hover {
+  background: #f7f9fc;
+}
+
+.platform-tab:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--platform-blue) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.platform-tab--active {
+  border-color: var(--platform-blue);
+  background: var(--platform-blue);
+  color: #fff;
+}
+
+.platform-tab--active:hover {
+  background: color-mix(in srgb, var(--platform-blue) 88%, #fff);
 }
 
 .platform-nav-rail {

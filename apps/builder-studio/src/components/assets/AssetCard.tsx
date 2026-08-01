@@ -60,7 +60,7 @@ export function AssetCard({
           onUploadPlaceholder();
         }}
       >
-        Drag & drop placeholder · accept `{collection.acceptHint}`
+        Drag & drop · přijímá `{collection.acceptHint}`
       </div>
 
       <UiStatePanel state={collection.state}>

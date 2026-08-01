@@ -8,15 +8,16 @@ type AnchorItem = {
   readonly section: HpEditSection | null;
 };
 
+/** VR-FIX-06 — click-model Czech product labels (IDs unchanged). */
 const ANCHORS: readonly AnchorItem[] = [
   { id: 'overview', label: 'Dashboard', section: null },
   { id: 'media-studio', label: 'Média', section: null },
   { id: 'rooms', label: 'Dispozice', section: 'rooms' },
   { id: 'knowledge', label: 'Znalosti', section: null },
   { id: 'experience', label: 'Experience', section: null },
-  { id: 'preview-center', label: 'Preview', section: null },
-  { id: 'release-center', label: 'Release', section: null },
-  { id: 'collaboration', label: 'Collaboration', section: null },
+  { id: 'preview-center', label: 'Náhled', section: null },
+  { id: 'release-center', label: 'Publikace', section: null },
+  { id: 'collaboration', label: 'Spolupráce', section: null },
   { id: 'intelligence', label: 'Intelligence', section: null },
 ];
 
@@ -27,7 +28,7 @@ type BuilderAnchorRailProps = {
 };
 
 /**
- * VR-FIX-02 — Sticky product modules (click-model builder-tabs grammar).
+ * VR-FIX-06 — Sticky product modules (click-model builder-tabs grammar).
  */
 export function BuilderAnchorRail({
   snapshot,
@@ -50,11 +51,7 @@ export function BuilderAnchorRail({
             key={item.id}
             type="button"
             onClick={() => onSelectNav(item.id)}
-            className={`rounded-[10px] border px-5 py-2.5 text-[13px] font-semibold transition-all duration-200 ${
-              active
-                ? 'border-builder-navy bg-builder-navy text-white'
-                : 'border-[#DDE5EF] bg-white text-builder-ink hover:bg-builder-hover'
-            }`}
+            className={`platform-tab ${active ? 'platform-tab--active' : ''}`}
           >
             {item.label}
             {dirty ? ' ·' : ''}

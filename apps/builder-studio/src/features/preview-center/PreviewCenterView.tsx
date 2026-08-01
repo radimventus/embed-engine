@@ -502,11 +502,11 @@ function ValidationSummary({
   return (
     <section className="rounded-[16px] border border-[#E8EEF5] bg-white p-5 shadow-sm">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-        Validation Summary
+        Souhrn validace
       </p>
       <div className="mt-4 grid gap-3 tablet:grid-cols-3">
         <SummaryCard
-          label="Validation"
+          label="Validace"
           value={qa.validationStatus}
           tone={
             qa.validationStatus === 'PASS'
@@ -522,7 +522,7 @@ function ValidationSummary({
           tone={qa.failCount > 0 ? 'fail' : qa.warnCount > 0 ? 'warn' : 'pass'}
         />
         <SummaryCard
-          label="Ready for Publish"
+          label="Připraveno k publikaci"
           value={qa.readyForPublish ? 'Ano' : qa.summaryLabel}
           tone={qa.readyForPublish ? 'pass' : 'warn'}
         />
@@ -540,7 +540,7 @@ function ValidationSummary({
           className="rounded-[10px] border border-[#DDE5EF] bg-white px-4 py-2 text-sm font-medium text-builder-ink"
           onClick={() => onNavigate('media-studio')}
         >
-          Otevřít Media
+          Otevřít Média
         </button>
         <button
           type="button"

@@ -14,18 +14,18 @@ const DEMO_NOTICES: readonly PlatformNoticeItem[] = [
     id: 'n1',
     tone: 'info',
     title: 'Platforma je připravena',
-    detail: 'Studio switcher a Project switcher používají stejný model.',
+    detail: 'Studio Switcher a Project Switcher používají stejný model.',
   },
   {
     id: 'n2',
     tone: 'success',
     title: 'Session aktivní',
-    detail: 'Můžete pokračovat v Builder → Publish → Manager.',
+    detail: 'Pokračujte Builder → Publikace → Manager → Sales.',
   },
 ];
 
 /**
- * VR-FIX-03 — Notifications use unified notice grammar.
+ * VR-FIX-06 — Notifications use unified notice grammar.
  */
 export function NotificationsBell({ count = 2 }: NotificationsProps) {
   const panelId = useId();
@@ -37,7 +37,7 @@ export function NotificationsBell({ count = 2 }: NotificationsProps) {
       <button
         type="button"
         className="platform-notify"
-        title="Notifications"
+        title="Oznámení"
         aria-label={`${count} oznámení`}
         aria-expanded={open}
         aria-controls={panelId}

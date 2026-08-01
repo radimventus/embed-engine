@@ -48,7 +48,7 @@ export function ProjectActionPanel({
         Připravenost projektu
       </h2>
       <p className="mt-2 text-[12px] text-builder-muted">
-        Náhled · Kontrola · Publish · Manager
+        Náhled · Kontrola · Publikace · Manager
       </p>
 
       {loadError !== null && (
@@ -110,7 +110,7 @@ export function ProjectActionPanel({
 
       {releaseSummary !== null && (
         <div className="mt-5 rounded-[12px] border border-[#E8EEF5] bg-builder-canvas px-3 py-3 text-[12px]">
-          <p className="font-semibold text-builder-ink">Poslední Release</p>
+          <p className="font-semibold text-builder-ink">Poslední publikace</p>
           <p className="mt-1 text-builder-muted">
             {formatCzechDateTime(releaseSummary.releaseTimestamp)}
           </p>

@@ -63,7 +63,7 @@ export function ExperienceModuleEditor({
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
-              Module Editor
+              Editor Experience
             </p>
             <h2 className="mt-1 text-xl font-semibold text-builder-ink">
               {definition.label}
