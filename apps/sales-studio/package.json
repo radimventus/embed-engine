@@ -13,6 +13,7 @@
   "dependencies": {
     "@embed-engine/capabilities": "workspace:*",
     "@embed-engine/intelligence": "workspace:*",
+    "@embed-engine/platform-access": "workspace:*",
     "@embed-engine/platform-shell": "workspace:*",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

@@ -1,6 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { PlatformAccessRoot } from '@embed-engine/platform-access';
+import '@embed-engine/platform-access/styles.css';
+
 import { SalesStudioApp } from './SalesStudioApp';
 import '@embed-engine/platform-shell/styles.css';
 import './index.css';
@@ -13,6 +16,8 @@ if (rootElement === null) {
 
 createRoot(rootElement).render(
   <StrictMode>
-    <SalesStudioApp />
+    <PlatformAccessRoot studioId="sales">
+      <SalesStudioApp />
+    </PlatformAccessRoot>
   </StrictMode>,
 );

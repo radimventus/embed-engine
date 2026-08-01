@@ -8,20 +8,26 @@ import type { PlatformWorkspaceState } from './platformTypes';
 export type PlatformHeaderProps = {
   readonly activeStudioId: PlatformStudioId;
   readonly userLabel?: string;
+  readonly roleLabel?: string;
   readonly workspace?: PlatformWorkspaceState | null;
   readonly notificationCount?: number;
   readonly searchPlaceholder?: string;
+  readonly onLogout?: () => void;
+  readonly onOpenLanding?: () => void;
 };
 
 /**
- * EPIC-BX-11 — Shared Platform Header for Builder / Manager / Sales.
+ * EPIC-BX-11 / BX-14 — Shared Platform Header for Builder / Manager / Sales.
  */
 export function PlatformHeader({
   activeStudioId,
   userLabel = 'Radim',
+  roleLabel,
   workspace = null,
   notificationCount = 3,
   searchPlaceholder = 'Hledat v platformě…',
+  onLogout,
+  onOpenLanding,
 }: PlatformHeaderProps) {
   return (
     <header className="platform-header" data-testid="platform-header">
@@ -41,7 +47,12 @@ export function PlatformHeader({
           aria-label="Global Search"
         />
         <NotificationsBell count={notificationCount} />
-        <UserMenu userLabel={userLabel} />
+        <UserMenu
+          userLabel={userLabel}
+          roleLabel={roleLabel}
+          onLogout={onLogout}
+          onOpenLanding={onOpenLanding}
+        />
       </div>
     </header>
   );

@@ -1,6 +1,11 @@
 import { useMemo } from 'react';
 
 import {
+  PLATFORM_ROLE_LABELS,
+  primaryRole,
+  usePlatformSession,
+} from '@embed-engine/platform-access';
+import {
   CapabilityInspector,
   PlatformShell,
   type PlatformBreadcrumbItem,
@@ -9,46 +14,51 @@ import {
 
 import { getSalesCapabilityHost } from './studio/salesStudioComposition';
 
-const SALES_WORKSPACE: PlatformWorkspaceState = {
-  companyLabel: 'AC Modular',
-  projectLabel: 'Harmony 124',
-  projects: [
-    {
-      id: 'harmony-124',
-      label: 'Harmony 124',
-      companyLabel: 'AC Modular',
-    },
-    {
-      id: 'family-98',
-      label: 'Family 98',
-      companyLabel: 'AC Modular',
-    },
-  ],
-};
-
-const SALES_BREADCRUMB: readonly PlatformBreadcrumbItem[] = [
-  { id: 'conis', label: 'CONIS' },
-  { id: 'studio', label: 'Sales' },
-  { id: 'company', label: 'AC Modular' },
-  { id: 'project', label: 'Harmony 124' },
-  { id: 'section', label: 'Pipeline' },
-];
-
 /**
- * EPIC-BX-11 / BX-13 — Sales Studio shell host as capability composition.
+ * EPIC-BX-11 / BX-13 / BX-14 — Sales Studio as access + capability composition.
  */
 export function SalesStudioApp() {
+  const { session, bootstrap, registry, logout, clearStudio, selectProject } =
+    usePlatformSession();
   const capabilityHost = useMemo(() => getSalesCapabilityHost(), []);
   const inspectorModel = capabilityHost.inspectorModel('pipeline');
+
+  const workspaceState: PlatformWorkspaceState = {
+    companyLabel: bootstrap?.company.name ?? 'Company',
+    projectLabel: bootstrap?.project?.name ?? '—',
+    projects: registry.projects.map((project) => ({
+      id: project.id,
+      label: project.name,
+      companyLabel:
+        registry.companies.find((company) => company.id === project.companyId)
+          ?.name ?? 'Firma',
+    })),
+    onSelectProject: selectProject,
+  };
+
+  const breadcrumb: readonly PlatformBreadcrumbItem[] = [
+    { id: 'conis', label: 'CONIS' },
+    { id: 'studio', label: 'Sales' },
+    { id: 'company', label: bootstrap?.company.name ?? 'Company' },
+    { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
+    { id: 'section', label: 'Pipeline' },
+  ];
 
   return (
     <PlatformShell
       activeStudioId="sales"
-      userLabel="Radim"
-      workspace={SALES_WORKSPACE}
-      breadcrumb={SALES_BREADCRUMB}
+      userLabel={session?.user.displayName ?? 'Host'}
+      roleLabel={
+        session !== null
+          ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
+          : undefined
+      }
+      workspace={workspaceState}
+      breadcrumb={breadcrumb}
       capabilityHost={capabilityHost}
       activeCapabilityId="pipeline"
+      onLogout={logout}
+      onOpenLanding={clearStudio}
     >
       <div style={{ display: 'flex', minHeight: 0, flex: 1 }}>
         <main
@@ -89,9 +99,8 @@ export function SalesStudioApp() {
               color: 'var(--platform-muted)',
             }}
           >
-            Sales skládá capability z registru (Pipeline, Intelligence,
-            Experience). Produktová vrstva přijde později — orchestrace už běží
-            přes Platform Shell Capability Host.
+            Stejný Session Provider jako Builder a Manager. Kontext firmy /
+            workspace / projektu se zachová při přechodu mezi Studii.
           </p>
           <ul
             style={{

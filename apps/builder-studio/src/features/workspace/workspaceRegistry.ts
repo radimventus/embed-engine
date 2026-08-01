@@ -1,7 +1,14 @@
 /**
- * CAP-BLD-08 + EPIC-BX-01 — Workspace / Project registry metadata only (ADR-023).
+ * CAP-BLD-08 + EPIC-BX-01 / BX-14 — Workspace / Project registry metadata only (ADR-023).
+ * Company identity SSOT lives in `@embed-engine/platform-access`.
  * Content remains in each House Package root. No parallel content model.
  */
+
+import {
+  DEFAULT_COMPANY_ID as PLATFORM_DEFAULT_COMPANY_ID,
+  DEFAULT_PROJECT_ID as PLATFORM_DEFAULT_PROJECT_ID,
+  getDefaultCompanyRegistry,
+} from '@embed-engine/platform-access';
 
 export type WorkspaceProjectStatus = 'draft' | 'ready' | 'published';
 
@@ -32,11 +39,15 @@ export type WorkspaceRegistryState = {
   readonly lastOpenedProjectId: string | null;
 };
 
-export const DEFAULT_COMPANY_ID = 'ac-modular' as const;
+export const DEFAULT_COMPANY_ID = PLATFORM_DEFAULT_COMPANY_ID;
 
-export const DEFAULT_WORKSPACE_COMPANIES: readonly WorkspaceCompany[] = [
-  { id: DEFAULT_COMPANY_ID, name: 'AC Modular' },
-] as const;
+const platformRegistry = getDefaultCompanyRegistry();
+
+export const DEFAULT_WORKSPACE_COMPANIES: readonly WorkspaceCompany[] =
+  platformRegistry.companies.map((company) => ({
+    id: company.id,
+    name: company.name,
+  }));
 
 export const OBJECT_TYPE_OPTIONS: readonly {
   readonly id: string;
@@ -60,43 +71,20 @@ export const OBJECT_TYPE_OPTIONS: readonly {
   },
 ] as const;
 
-export const DEFAULT_WORKSPACE_PROJECTS: readonly WorkspaceProject[] = [
-  {
-    id: 'family-98',
-    name: 'Family 98',
-    packageRoot: 'apps/client-studio/public/house-packages/family-98',
-    companyId: DEFAULT_COMPANY_ID,
-    description: 'Modulární rodinný dům Family 98.',
-    status: 'ready',
-    slug: 'family-98',
-    objectType: 'family',
+export const DEFAULT_WORKSPACE_PROJECTS: readonly WorkspaceProject[] =
+  platformRegistry.projects.map((project) => ({
+    id: project.id,
+    name: project.name,
+    packageRoot: project.packageRoot,
+    companyId: project.companyId,
+    description: project.description,
+    status: project.status,
+    slug: project.slug,
+    objectType: project.objectType,
     metadata: '',
-  },
-  {
-    id: 'harmony-124',
-    name: 'Harmony 124',
-    packageRoot: 'apps/client-studio/public/house-packages/harmony-124',
-    companyId: DEFAULT_COMPANY_ID,
-    description: 'Modulární dům Harmony 124.',
-    status: 'ready',
-    slug: 'harmony-124',
-    objectType: 'harmony',
-    metadata: '',
-  },
-  {
-    id: 'villa-168',
-    name: 'Villa 168',
-    packageRoot: 'apps/client-studio/public/house-package',
-    companyId: DEFAULT_COMPANY_ID,
-    description: 'Referenční projekt Villa 168.',
-    status: 'published',
-    slug: 'villa-168',
-    objectType: 'villa',
-    metadata: '',
-  },
-] as const;
+  }));
 
-export const DEFAULT_ACTIVE_PROJECT_ID = 'villa-168' as const;
+export const DEFAULT_ACTIVE_PROJECT_ID = PLATFORM_DEFAULT_PROJECT_ID;
 
 export const WORKSPACE_STORAGE_KEY = 'conis.builder.workspace.v1';
 

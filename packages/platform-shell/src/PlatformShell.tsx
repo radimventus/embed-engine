@@ -16,15 +16,18 @@ export type PlatformShellProps = PlatformHeaderProps & {
 };
 
 /**
- * EPIC-BX-11 / BX-13 — Platform Shell root.
+ * EPIC-BX-11 / BX-13 / BX-14 — Platform Shell root.
  * Shell loads Capability Host and composes Studio chrome.
  */
 export function PlatformShell({
   activeStudioId,
   userLabel,
+  roleLabel,
   workspace,
   notificationCount,
   searchPlaceholder,
+  onLogout,
+  onOpenLanding,
   breadcrumb = [],
   capabilityHost = null,
   activeCapabilityId = null,
@@ -39,9 +42,12 @@ export function PlatformShell({
       <PlatformHeader
         activeStudioId={activeStudioId}
         userLabel={userLabel}
+        roleLabel={roleLabel}
         workspace={workspace}
         notificationCount={notificationCount}
         searchPlaceholder={searchPlaceholder}
+        onLogout={onLogout}
+        onOpenLanding={onOpenLanding}
       />
       <PlatformBreadcrumb items={breadcrumb} />
       {capabilityHost !== null && (

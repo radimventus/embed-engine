@@ -26,13 +26,14 @@ describe('Application Foundation (MSCB-01)', () => {
 
     assert.match(main, /ErrorBoundary/);
     assert.match(main, /ManagerStudioApp/);
+    assert.match(main, /PlatformAccessRoot/);
     assert.equal(main.includes('createRoot'), true);
     assert.match(app, /AppShell/);
     assert.match(app, /ManagerStudioSidebar/);
     assert.match(app, /ManagerStudioPage/);
   });
 
-    it('uses the shared Platform Shell header (EPIC-BX-11)', () => {
+  it('uses the shared Platform Shell header (EPIC-BX-11)', () => {
     const shell = readSource('src/components/layout/AppShell.tsx');
     const pkg = readSource('package.json');
 
@@ -52,6 +53,16 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.match(shell, /capabilityHost/);
     assert.match(shell, /CapabilityInspector/);
     assert.match(pkg, /@embed-engine\/capabilities/);
+  });
+
+  it('uses shared Platform Access Session Provider (EPIC-BX-14)', () => {
+    const main = readSource('src/main.tsx');
+    const shell = readSource('src/components/layout/AppShell.tsx');
+    const pkg = readSource('package.json');
+
+    assert.match(main, /PlatformAccessRoot/);
+    assert.match(shell, /usePlatformSession/);
+    assert.match(pkg, /@embed-engine\/platform-access/);
   });
 
   it('bootstraps Decision Session Runtime only via the Provider', () => {

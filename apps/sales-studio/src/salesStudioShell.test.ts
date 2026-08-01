@@ -33,4 +33,14 @@ describe('Sales Studio shell (EPIC-BX-11)', () => {
     assert.match(app, /CapabilityInspector/);
     assert.match(pkg, /@embed-engine\/capabilities/);
   });
+
+  it('uses shared Platform Access Session Provider (EPIC-BX-14)', () => {
+    const main = readFileSync(join(salesRoot, 'src/main.tsx'), 'utf8');
+    const app = readFileSync(join(salesRoot, 'src/SalesStudioApp.tsx'), 'utf8');
+    const pkg = readFileSync(join(salesRoot, 'package.json'), 'utf8');
+
+    assert.match(main, /PlatformAccessRoot/);
+    assert.match(app, /usePlatformSession/);
+    assert.match(pkg, /@embed-engine\/platform-access/);
+  });
 });

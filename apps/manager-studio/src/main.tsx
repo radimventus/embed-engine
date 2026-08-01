@@ -1,6 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { PlatformAccessRoot } from '@embed-engine/platform-access';
+import '@embed-engine/platform-access/styles.css';
+
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ManagerStudioApp } from './features/manager-studio/ManagerStudioApp';
 import { MANAGER_STUDIO_RELEASE } from './features/manager-studio/operations/operationsVocabulary';
@@ -21,7 +24,9 @@ document.documentElement.dataset.managerStudioGeneration =
 createRoot(rootElement).render(
   <StrictMode>
     <ErrorBoundary>
-      <ManagerStudioApp />
+      <PlatformAccessRoot studioId="manager">
+        <ManagerStudioApp />
+      </PlatformAccessRoot>
     </ErrorBoundary>
   </StrictMode>,
 );

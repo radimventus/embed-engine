@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { capabilityIdFromBuilderNav } from '@embed-engine/capabilities';
+import {
+  PLATFORM_ROLE_LABELS,
+  primaryRole,
+  usePlatformSession,
+} from '@embed-engine/platform-access';
 
 import { AppShell } from '../../components/layout/AppShell';
 import { getBuilderCapabilityHost } from '../../studio/builderStudioComposition';
@@ -54,9 +59,20 @@ const SECTION_LABEL: Record<HousePackageNavId, string> = {
  * EPIC-BX-01..13 — Builder Studio: capability composition over Platform Shell.
  */
 export function BuilderStudioApp() {
+  const {
+    session: accessSession,
+    logout,
+    clearStudio,
+    selectProject,
+    bootstrapActiveProject,
+  } = usePlatformSession();
   const workspace = useWorkspaceController();
   const capabilityHost = useMemo(() => getBuilderCapabilityHost(), []);
   const diskRoot = workspace.activeProject?.packageRoot ?? null;
+  const projectBootstrap = useMemo(
+    () => bootstrapActiveProject('builder'),
+    [bootstrapActiveProject, accessSession?.projectId],
+  );
   const [activeNav, setActiveNav] = useState<HousePackageNavId>('overview');
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
@@ -128,6 +144,15 @@ export function BuilderStudioApp() {
     void validate();
   }, [diskRoot, mountStatus.status, snapshot, validate]);
 
+  // Platform Access → Builder HP mount (project bootstrap).
+  useEffect(() => {
+    if (accessSession?.projectId == null) return;
+    if (workspace.activeProject?.id === accessSession.projectId) return;
+    void workspace.requestOpenProject(accessSession.projectId, { dirty: false });
+    // bootstrapActiveProject already invoked for Capability + Intelligence readiness
+    void projectBootstrap;
+  }, [accessSession?.projectId]);
+
   const handleNavigate = (nav: HousePackageNavId) => {
     setHistoryOpen(false);
     setActiveNav(nav);
@@ -154,6 +179,7 @@ export function BuilderStudioApp() {
         'Firma',
     })),
     onSelectProject: (projectId) => {
+      selectProject(projectId);
       void workspace.requestOpenProject(projectId, { dirty });
     },
   };
@@ -180,15 +206,24 @@ export function BuilderStudioApp() {
     intelligenceMode;
   const inspectorModel = capabilityHost.inspectorModel(activeCapabilityId);
 
+  const userLabel = accessSession?.user.displayName ?? 'Host';
+  const roleLabel =
+    accessSession !== null
+      ? PLATFORM_ROLE_LABELS[primaryRole(accessSession.user.roles)]
+      : undefined;
+
   return (
     <>
       <PlatformShell
         activeStudioId="builder"
-        userLabel="Radim"
+        userLabel={userLabel}
+        roleLabel={roleLabel}
         workspace={platformWorkspace}
         breadcrumb={breadcrumb}
         capabilityHost={capabilityHost}
         activeCapabilityId={activeCapabilityId}
+        onLogout={logout}
+        onOpenLanding={clearStudio}
       >
       <AppShell
         denseMain={productCapabilityMode}
@@ -200,6 +235,7 @@ export function BuilderStudioApp() {
             switchError={workspace.switchError}
             dirtyPrompt={workspace.dirtyPrompt}
             onOpenProject={(projectId) => {
+              selectProject(projectId);
               void workspace.requestOpenProject(projectId, { dirty });
             }}
             onCreateProject={() => setCreateOpen(true)}

@@ -1,6 +1,9 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
+import { PlatformAccessRoot } from '@embed-engine/platform-access';
+import '@embed-engine/platform-access/styles.css';
+
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { BuilderStudioApp } from './features/builder-studio/BuilderStudioApp';
 import { BUILDER_STUDIO_RELEASE } from './features/builder-studio/release';
@@ -21,7 +24,9 @@ document.documentElement.dataset.builderStudioGeneration =
 createRoot(rootElement).render(
   <StrictMode>
     <ErrorBoundary>
-      <BuilderStudioApp />
+      <PlatformAccessRoot studioId="builder">
+        <BuilderStudioApp />
+      </PlatformAccessRoot>
     </ErrorBoundary>
   </StrictMode>,
 );

@@ -2,6 +2,11 @@ import type { ReactNode } from 'react';
 import { useMemo } from 'react';
 
 import {
+  PLATFORM_ROLE_LABELS,
+  primaryRole,
+  usePlatformSession,
+} from '@embed-engine/platform-access';
+import {
   CapabilityInspector,
   PlatformShell,
   type PlatformBreadcrumbItem,
@@ -16,47 +21,57 @@ type AppShellProps = {
   readonly children?: ReactNode;
 };
 
-const MANAGER_WORKSPACE: PlatformWorkspaceState = {
-  companyLabel: 'AC Modular',
-  projectLabel: 'Harmony 124',
-  projects: [
-    {
-      id: 'harmony-124',
-      label: 'Harmony 124',
-      companyLabel: 'AC Modular',
-    },
-    {
-      id: 'family-98',
-      label: 'Family 98',
-      companyLabel: 'AC Modular',
-    },
-  ],
-};
-
-const MANAGER_BREADCRUMB: readonly PlatformBreadcrumbItem[] = [
-  { id: 'conis', label: 'CONIS' },
-  { id: 'studio', label: 'Manager' },
-  { id: 'company', label: 'AC Modular' },
-  { id: 'project', label: 'Harmony 124' },
-  { id: 'section', label: 'Operations' },
-];
-
 /**
- * Single shell composition for Manager Studio (MSCB-01 + EPIC-BX-11/13).
- * Platform Shell loads Capability Host from Manager composition.
+ * Manager Studio shell — Platform Access session + Capability Host (BX-11..14).
  */
 export function AppShell({ sidebar, children }: AppShellProps) {
+  const {
+    session,
+    bootstrap,
+    registry,
+    logout,
+    clearStudio,
+    selectProject,
+  } = usePlatformSession();
   const capabilityHost = useMemo(() => getManagerCapabilityHost(), []);
   const inspectorModel = capabilityHost.inspectorModel('operations');
+
+  const workspaceState: PlatformWorkspaceState = {
+    companyLabel: bootstrap?.company.name ?? 'Company',
+    projectLabel: bootstrap?.project?.name ?? '—',
+    projects: registry.projects.map((project) => ({
+      id: project.id,
+      label: project.name,
+      companyLabel:
+        registry.companies.find((company) => company.id === project.companyId)
+          ?.name ?? 'Firma',
+    })),
+    onSelectProject: selectProject,
+  };
+
+  const breadcrumb: readonly PlatformBreadcrumbItem[] = [
+    { id: 'conis', label: 'CONIS' },
+    { id: 'studio', label: 'Manager' },
+    { id: 'company', label: bootstrap?.company.name ?? 'Company' },
+    { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
+    { id: 'section', label: 'Operations' },
+  ];
 
   return (
     <PlatformShell
       activeStudioId="manager"
-      userLabel="Radim"
-      workspace={MANAGER_WORKSPACE}
-      breadcrumb={MANAGER_BREADCRUMB}
+      userLabel={session?.user.displayName ?? 'Host'}
+      roleLabel={
+        session !== null
+          ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
+          : undefined
+      }
+      workspace={workspaceState}
+      breadcrumb={breadcrumb}
       capabilityHost={capabilityHost}
       activeCapabilityId="operations"
+      onLogout={logout}
+      onOpenLanding={clearStudio}
     >
       <div className="flex min-h-0 flex-1">
         <div className="sticky top-0 h-[calc(100vh-var(--platform-header-height,72px)-41px-36px)] shrink-0 self-start overflow-y-auto">
