@@ -340,9 +340,9 @@ export function BuilderStudioApp() {
         )}
         {!workspace.switching && diskRoot === null && (
           <PlatformEmptyState
-            icon="⊕"
+            icon="+"
             title="Vyberte projekt"
-            description="Otevřete projekt ve Workspace vlevo, nebo založte nový přes ⊕."
+            description="Otevřete projekt ve Workspace vlevo, nebo založte nový přes +."
           />
         )}
         {!workspace.switching &&

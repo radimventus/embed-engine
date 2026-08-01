@@ -522,7 +522,8 @@ function GalleryManager({
                     </button>
                     <button
                       type="button"
-                      className="rounded-md border border-builder-danger bg-white px-2 py-1 text-[11px] font-semibold text-builder-danger"
+                      className="platform-icon-btn--danger"
+                      aria-label="Odstranit"
                       onClick={(event) => {
                         event.stopPropagation();
                         if (index >= 0) {
@@ -534,7 +535,7 @@ function GalleryManager({
                         }
                       }}
                     >
-                      Odstranit
+                      ✕
                     </button>
                   </div>
                 </div>
@@ -703,7 +704,8 @@ function VideoManager({
               </span>
               <button
                 type="button"
-                className="text-[12px] font-semibold text-builder-danger"
+                className="platform-icon-btn--danger"
+                aria-label="Odstranit"
                 onClick={(event) => {
                   event.stopPropagation();
                   const index = model.videos.findIndex(
@@ -718,7 +720,7 @@ function VideoManager({
                   }
                 }}
               >
-                Odstranit
+                ✕
               </button>
             </button>
           </li>

@@ -6,7 +6,8 @@ export type PlatformStatusTone =
   | 'draft'
   | 'published'
   | 'info'
-  | 'gold';
+  | 'gold'
+  | 'fill';
 
 const TONE_CLASS: Record<PlatformStatusTone, string> = {
   pass: 'platform-badge--pass',
@@ -17,6 +18,7 @@ const TONE_CLASS: Record<PlatformStatusTone, string> = {
   published: 'platform-badge--published',
   info: 'platform-badge--info',
   gold: 'platform-badge--gold',
+  fill: 'platform-badge--fill',
 };
 
 type PlatformStatusBadgeProps = {

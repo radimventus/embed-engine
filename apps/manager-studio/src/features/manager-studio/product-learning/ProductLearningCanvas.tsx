@@ -9,10 +9,17 @@ import { usePlatformSession } from '@embed-engine/platform-access';
 import { OperationsSurface } from '../operations/OperationsSurface';
 import { PRODUCT_LEARNING_SECTION_IDS } from './productLearningVocabulary';
 
+type ProductLearningCanvasProps = {
+  /** PR-026 — partner UI shows Manažerské shrnutí + Produktové poznatky. */
+  readonly partnerOnly?: boolean;
+};
+
 /**
  * EPIC-BX-20 — Manager projection of Product Learning capability.
  */
-export function ProductLearningCanvas() {
+export function ProductLearningCanvas({
+  partnerOnly = false,
+}: ProductLearningCanvasProps) {
   const { session, bootstrap } = usePlatformSession();
   const [tick, setTick] = useState(0);
   const [message, setMessage] = useState('');
@@ -153,95 +160,99 @@ export function ProductLearningCanvas() {
         </div>
       </OperationsSurface>
 
-      <OperationsSurface
-        id={PRODUCT_LEARNING_SECTION_IDS.recommendations}
-        title="Pipeline doporučení"
-        description="Četnost · dopad · priorita — deterministická pravidla."
-      >
-        <ul className="space-y-3">
-          {report.recommendations.map((item) => (
-            <li
-              key={item.id}
-              className="border-b border-embed-border-default pb-3"
-            >
-              <p className="text-sm font-medium text-embed-foreground-primary">
-                {item.theme}
-              </p>
-              <p className="mt-1 text-xs text-embed-foreground-primary/60">
-                {item.category} · {item.frequency}× · {item.impact} ·{' '}
-                {item.priority}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </OperationsSurface>
-
-      <OperationsSurface
-        id={PRODUCT_LEARNING_SECTION_IDS.roadmap}
-        title="Návrhy roadmapy"
-        description="Vysoký / střední / nízký dopad — doporučení, ne automatická roadmapa."
-      >
-        <ul className="space-y-3">
-          {report.roadmapSuggestions.map((item) => (
-            <li
-              key={item.id}
-              className="rounded-sm border border-embed-border-default px-3 py-3"
-            >
-              <p className="text-sm font-medium">{item.title}</p>
-              <p className="mt-1 text-xs text-embed-foreground-primary/60">
-                {item.rationale}
-              </p>
-            </li>
-          ))}
-          {report.roadmapSuggestions.length === 0 && (
-            <p className="text-sm text-embed-foreground-primary/60">
-              Zatím žádná roadmap doporučení.
-            </p>
-          )}
-        </ul>
-      </OperationsSurface>
-
-      <OperationsSurface
-        id={PRODUCT_LEARNING_SECTION_IDS.registry}
-        title="Registr zpětné vazby"
-        description="Navázáno na firmu / workspace / projekt / studio / schopnost / release."
-      >
-        <form className="mb-4 grid gap-2" onSubmit={onSubmit}>
-          <label className="text-xs font-semibold text-embed-foreground-primary/60">
-            Nový podnět (Product Owner / Admin)
-            <textarea
-              className="mt-1 w-full rounded-sm border border-embed-border-default bg-white px-3 py-2 text-sm"
-              rows={3}
-              value={message}
-              onChange={(event) => setMessage(event.target.value)}
-              placeholder="např. UX: preview navigace je matoucí"
-            />
-          </label>
-          <button
-            type="submit"
-            className="w-fit rounded-sm bg-embed-brand-navy px-3 py-2 text-sm font-medium text-white"
+      {!partnerOnly && (
+        <>
+          <OperationsSurface
+            id={PRODUCT_LEARNING_SECTION_IDS.recommendations}
+            title="Pipeline doporučení"
+            description="Četnost · dopad · priorita — deterministická pravidla."
           >
-            Zaznamenat zpětnou vazbu
-          </button>
-        </form>
-        <ul className="space-y-3">
-          {report.entries.slice(0, 20).map((entry) => (
-            <li
-              key={entry.id}
-              className="border-b border-embed-border-default pb-2 text-sm"
-            >
-              <p className="font-medium text-embed-foreground-primary">
-                {entry.category} · {entry.message}
-              </p>
-              <p className="mt-1 text-xs text-embed-foreground-primary/55">
-                {entry.companyId} / {entry.workspaceId} /{' '}
-                {entry.projectId ?? '—'} · {entry.studioId ?? '—'} ·{' '}
-                {entry.capabilityId ?? '—'} · {entry.releaseLabel ?? '—'}
-              </p>
-            </li>
-          ))}
-        </ul>
-      </OperationsSurface>
+            <ul className="space-y-3">
+              {report.recommendations.map((item) => (
+                <li
+                  key={item.id}
+                  className="border-b border-embed-border-default pb-3"
+                >
+                  <p className="text-sm font-medium text-embed-foreground-primary">
+                    {item.theme}
+                  </p>
+                  <p className="mt-1 text-xs text-embed-foreground-primary/60">
+                    {item.category} · {item.frequency}× · {item.impact} ·{' '}
+                    {item.priority}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </OperationsSurface>
+
+          <OperationsSurface
+            id={PRODUCT_LEARNING_SECTION_IDS.roadmap}
+            title="Návrhy roadmapy"
+            description="Vysoký / střední / nízký dopad — doporučení, ne automatická roadmapa."
+          >
+            <ul className="space-y-3">
+              {report.roadmapSuggestions.map((item) => (
+                <li
+                  key={item.id}
+                  className="rounded-sm border border-embed-border-default px-3 py-3"
+                >
+                  <p className="text-sm font-medium">{item.title}</p>
+                  <p className="mt-1 text-xs text-embed-foreground-primary/60">
+                    {item.rationale}
+                  </p>
+                </li>
+              ))}
+              {report.roadmapSuggestions.length === 0 && (
+                <p className="text-sm text-embed-foreground-primary/60">
+                  Zatím žádná roadmap doporučení.
+                </p>
+              )}
+            </ul>
+          </OperationsSurface>
+
+          <OperationsSurface
+            id={PRODUCT_LEARNING_SECTION_IDS.registry}
+            title="Registr zpětné vazby"
+            description="Navázáno na firmu / workspace / projekt / studio / schopnost / release."
+          >
+            <form className="mb-4 grid gap-2" onSubmit={onSubmit}>
+              <label className="text-xs font-semibold text-embed-foreground-primary/60">
+                Nový podnět (Product Owner / Admin)
+                <textarea
+                  className="mt-1 w-full rounded-sm border border-embed-border-default bg-white px-3 py-2 text-sm"
+                  rows={3}
+                  value={message}
+                  onChange={(event) => setMessage(event.target.value)}
+                  placeholder="např. UX: preview navigace je matoucí"
+                />
+              </label>
+              <button
+                type="submit"
+                className="w-fit rounded-sm bg-embed-brand-navy px-3 py-2 text-sm font-medium text-white"
+              >
+                Zaznamenat zpětnou vazbu
+              </button>
+            </form>
+            <ul className="space-y-3">
+              {report.entries.slice(0, 20).map((entry) => (
+                <li
+                  key={entry.id}
+                  className="border-b border-embed-border-default pb-2 text-sm"
+                >
+                  <p className="font-medium text-embed-foreground-primary">
+                    {entry.category} · {entry.message}
+                  </p>
+                  <p className="mt-1 text-xs text-embed-foreground-primary/55">
+                    {entry.companyId} / {entry.workspaceId} /{' '}
+                    {entry.projectId ?? '—'} · {entry.studioId ?? '—'} ·{' '}
+                    {entry.capabilityId ?? '—'} · {entry.releaseLabel ?? '—'}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </OperationsSurface>
+        </>
+      )}
     </div>
   );
 }

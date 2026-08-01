@@ -68,8 +68,8 @@ export function KnowledgeComposerView({
 
         <div className="mt-5 grid gap-3 tablet:grid-cols-4">
           <Stat label="Kompletní" value={String(model.completeCount)} tone="ok" />
-          <Stat label="Doplnit" value={String(model.partialCount)} tone="warn" />
-          <Stat label="Chybí" value={String(model.missingCount)} tone="warn" />
+          <Stat label="Doplnit" value={String(model.partialCount)} tone="fill" />
+          <Stat label="Chybí" value={String(model.missingCount)} tone="fill" />
           <Stat
             label="Poslední změna"
             value={model.lastChangedLabel}
@@ -177,14 +177,16 @@ function Stat({
 }: {
   readonly label: string;
   readonly value: string;
-  readonly tone: 'ok' | 'warn' | 'neutral';
+  readonly tone: 'ok' | 'warn' | 'fill' | 'neutral';
 }) {
   const className =
     tone === 'ok'
       ? 'bg-builder-successBg text-builder-success'
-      : tone === 'warn'
-        ? 'bg-builder-draftBg text-builder-draft'
-        : 'bg-builder-canvas text-builder-ink';
+      : tone === 'fill'
+        ? 'bg-[#E4ECF7] text-builder-navy'
+        : tone === 'warn'
+          ? 'bg-builder-draftBg text-builder-draft'
+          : 'bg-builder-canvas text-builder-ink';
   return (
     <div className={`rounded-[12px] px-3.5 py-3 ${className}`}>
       <p className="text-[11px] uppercase tracking-[0.06em] opacity-80">

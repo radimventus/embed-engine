@@ -498,10 +498,11 @@ function CsvEditor({
                   <td className="py-1.5">
                     <button
                       type="button"
-                      className="text-[12px] font-semibold text-builder-danger"
+                      className="platform-icon-btn--danger"
+                      aria-label="Odstranit"
                       onClick={() => onCsvChange(removeCsvRow(csv, rowIndex))}
                     >
-                      Odstranit
+                      ✕
                     </button>
                   </td>
                 </tr>

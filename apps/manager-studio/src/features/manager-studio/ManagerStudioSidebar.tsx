@@ -1,11 +1,6 @@
 import { scrollToSection } from './foundation/scrollToSection';
 import { useManagerNav } from './foundation/ManagerNavProvider';
-import { COMMERCIAL_SECTION_NAV } from './commercial/commercialVocabulary';
-import { CUSTOMER_SUCCESS_SECTION_NAV } from './customer-success/customerSuccessVocabulary';
-import { LAUNCH_SECTION_NAV } from './launch/launchVocabulary';
-import { PLATFORM_OPS_SECTION_NAV } from './operations-center/platformOpsVocabulary';
-import { PRODUCT_LEARNING_SECTION_NAV } from './product-learning/productLearningVocabulary';
-import { OPERATIONS_SECTION_NAV } from './operations/operationsVocabulary';
+import { PARTNER_NAV_GROUPS } from './partnerNav';
 
 function NavGroup({
   title,
@@ -43,7 +38,7 @@ function NavGroup({
                 'rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-semibold platform-motion',
                 isActive
                   ? 'border-[var(--platform-blue)] bg-[var(--platform-cream-light)] text-[var(--platform-blue)]'
-                  : 'border-transparent text-[#001930] hover:bg-[var(--platform-cream-mid)]',
+                  : 'border-transparent text-[#001930] hover:bg-[var(--platform-blue)] hover:text-white',
               ].join(' ')}
             >
               {item.label}
@@ -56,8 +51,7 @@ function NavGroup({
 }
 
 /**
- * PR-005 — Kompletní levá navigace (české labely) + pracovní centrum.
- * PO: všechny funkce viditelné pro společný návrh finální IA.
+ * PR-026 — Partner work center navigation (no CONIS internal admin surfaces).
  */
 export function ManagerStudioSidebar() {
   const { activeSectionId } = useManagerNav();
@@ -75,43 +69,15 @@ export function ManagerStudioSidebar() {
       </div>
 
       <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-6">
-        <NavGroup
-          title="Přehled"
-          items={[
-            {
-              id: 'manager-work-center',
-              label: 'Konverzní přehled',
-              short: 'K',
-            },
-            ...LAUNCH_SECTION_NAV,
-          ]}
-          activeSectionId={activeSectionId}
-          ariaLabel="Přehled manažera"
-        />
-        <NavGroup
-          title="Provoz"
-          items={[...OPERATIONS_SECTION_NAV, ...PLATFORM_OPS_SECTION_NAV]}
-          activeSectionId={activeSectionId}
-          ariaLabel="Provoz"
-        />
-        <NavGroup
-          title="Experience"
-          items={PRODUCT_LEARNING_SECTION_NAV}
-          activeSectionId={activeSectionId}
-          ariaLabel="Experience"
-        />
-        <NavGroup
-          title="Případy"
-          items={CUSTOMER_SUCCESS_SECTION_NAV}
-          activeSectionId={activeSectionId}
-          ariaLabel="Případy"
-        />
-        <NavGroup
-          title="Obchod"
-          items={COMMERCIAL_SECTION_NAV}
-          activeSectionId={activeSectionId}
-          ariaLabel="Obchod"
-        />
+        {PARTNER_NAV_GROUPS.map((group) => (
+          <NavGroup
+            key={group.title}
+            title={group.title}
+            items={group.items}
+            activeSectionId={activeSectionId}
+            ariaLabel={group.ariaLabel}
+          />
+        ))}
       </div>
     </aside>
   );

@@ -51,7 +51,6 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.match(composition, /MANAGER_STUDIO_COMPOSITION/);
     assert.match(composition, /composeStudio/);
     assert.match(shell, /capabilityHost/);
-    assert.match(shell, /CapabilityInspector/);
     assert.match(pkg, /@embed-engine\/capabilities/);
   });
 
@@ -83,9 +82,9 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.equal(app.includes('createDecisionSessionRuntime'), false);
   });
 
-  it('keeps shell navigation wired to operations section ids', () => {
-    const vocabulary = readSource(
-      'src/features/manager-studio/operations/operationsVocabulary.ts',
+  it('keeps partner navigation wired to partner section ids (PR-026)', () => {
+    const partnerNav = readSource(
+      'src/features/manager-studio/partnerNav.ts',
     );
     const sidebar = readSource(
       'src/features/manager-studio/ManagerStudioSidebar.tsx',
@@ -97,90 +96,70 @@ describe('Application Foundation (MSCB-01)', () => {
       'src/features/manager-studio/ManagerStudioPage.tsx',
     );
 
-    assert.match(vocabulary, /OPERATIONS_SECTION_NAV/);
-    assert.match(vocabulary, /live-overview/);
-    assert.match(vocabulary, /attention-queue/);
-    assert.match(sidebar, /OPERATIONS_SECTION_NAV/);
-    assert.match(sidebar, /CUSTOMER_SUCCESS_SECTION_NAV/);
+    assert.match(partnerNav, /Místa ztráty zákazníků/);
+    assert.match(partnerNav, /Živý přehled/);
+    assert.match(partnerNav, /Metriky platformy/);
+    assert.match(partnerNav, /Manažerské shrnutí/);
+    assert.match(partnerNav, /Produktové poznatky/);
+    assert.match(sidebar, /PARTNER_NAV_GROUPS/);
     assert.match(sidebar, /useManagerNav/);
     assert.match(sidebar, /scrollToSection/);
-    assert.match(sidebar, /Konverzní přehled/);
+    assert.equal(sidebar.includes('LAUNCH_SECTION_NAV'), false);
+    assert.equal(sidebar.includes('CUSTOMER_SUCCESS_SECTION_NAV'), false);
+    assert.equal(sidebar.includes('COMMERCIAL_SECTION_NAV'), false);
     assert.match(canvas, /LiveOverview/);
-    assert.match(canvas, /Timeline/);
-    assert.match(canvas, /Actions/);
-    assert.match(page, /CustomerSuccessCanvas/);
+    assert.match(canvas, /partnerOnly/);
     assert.match(page, /OperationsCanvas/);
     assert.match(page, /ManagerWorkCenterHome/);
+    assert.equal(page.includes('CustomerSuccessCanvas'), false);
+    assert.equal(page.includes('LaunchCenterCanvas'), false);
+    assert.equal(page.includes('CommercialPlatformCanvas'), false);
   });
 
-  it('projects Customer Success capability (EPIC-BX-17)', () => {
-    const page = readSource(
-      'src/features/manager-studio/ManagerStudioPage.tsx',
-    );
+  it('still depends on Customer Success package for composition (EPIC-BX-17)', () => {
     const shell = readSource('src/components/layout/AppShell.tsx');
     const pkg = readSource('package.json');
 
-    assert.match(page, /CustomerSuccessCanvas/);
     assert.match(shell, /activeCapabilityId/);
-    assert.match(shell, /customer-success/);
     assert.match(pkg, /@embed-engine\/customer-success/);
   });
 
-  it('projects Platform Operations Center capability (EPIC-BX-19)', () => {
+  it('projects Platform Operations Center metrics for partners (EPIC-BX-19)', () => {
     const page = readSource(
       'src/features/manager-studio/ManagerStudioPage.tsx',
     );
-    const sidebar = readSource(
-      'src/features/manager-studio/ManagerStudioSidebar.tsx',
+    const partnerNav = readSource(
+      'src/features/manager-studio/partnerNav.ts',
     );
     const pkg = readSource('package.json');
 
     assert.match(page, /OperationsCenterCanvas/);
-    assert.match(sidebar, /PLATFORM_OPS_SECTION_NAV/);
-    assert.match(sidebar, /Provoz/);
+    assert.match(page, /partnerOnly/);
+    assert.match(partnerNav, /title: 'Provoz'/);
     assert.match(pkg, /@embed-engine\/operations-center/);
   });
 
-  it('projects Product Learning capability (EPIC-BX-20)', () => {
+  it('projects Product Learning summary for partners (EPIC-BX-20)', () => {
     const page = readSource(
       'src/features/manager-studio/ManagerStudioPage.tsx',
     );
-    const sidebar = readSource(
-      'src/features/manager-studio/ManagerStudioSidebar.tsx',
+    const partnerNav = readSource(
+      'src/features/manager-studio/partnerNav.ts',
     );
     const pkg = readSource('package.json');
 
     assert.match(page, /ProductLearningCanvas/);
-    assert.match(sidebar, /PRODUCT_LEARNING_SECTION_NAV/);
+    assert.match(partnerNav, /title: 'Shrnutí'/);
     assert.match(pkg, /@embed-engine\/product-learning/);
   });
 
-  it('projects Commercial Platform capability (EPIC-BX-21)', () => {
-    const page = readSource(
-      'src/features/manager-studio/ManagerStudioPage.tsx',
-    );
-    const sidebar = readSource(
-      'src/features/manager-studio/ManagerStudioSidebar.tsx',
-    );
+  it('keeps Commercial Platform package for composition (EPIC-BX-21)', () => {
     const pkg = readSource('package.json');
-
-    assert.match(page, /CommercialPlatformCanvas/);
-    assert.match(sidebar, /COMMERCIAL_SECTION_NAV/);
     assert.match(pkg, /@embed-engine\/commercial-platform/);
   });
 
-  it('projects Launch Center capability (EPIC-BX-23)', () => {
-    const page = readSource(
-      'src/features/manager-studio/ManagerStudioPage.tsx',
-    );
-    const sidebar = readSource(
-      'src/features/manager-studio/ManagerStudioSidebar.tsx',
-    );
+  it('keeps Launch Center package for composition (EPIC-BX-23)', () => {
     const pkg = readSource('package.json');
-
-    assert.match(page, /LaunchCenterCanvas/);
-    assert.match(sidebar, /LAUNCH_SECTION_NAV/);
-    assert.match(sidebar, /Přehled/);
     assert.match(pkg, /@embed-engine\/launch-center/);
   });
 

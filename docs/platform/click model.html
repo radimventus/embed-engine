@@ -64,8 +64,8 @@ header {
 
 .role-switcher {
     display: flex;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: var(--cream-dark, #D9D4CC);
+    border: 1px solid var(--cream-dark, #D9D4CC);
     border-radius: 30px;
     padding: 4px;
     gap: 4px;
@@ -76,17 +76,17 @@ header {
     border-radius: 20px;
     font-size: 13px;
     font-weight: 600;
-    color: #94A3B8;
-    background: transparent;
+    color: #fff;
+    background: var(--navy);
     border: none;
     cursor: pointer;
     transition: all 0.25s ease;
 }
 
 .role-btn.active {
-    background: #FFFFFF;
+    background: var(--cream-mid, #E8E5E0);
     color: var(--navy);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    box-shadow: none;
 }
 
 .user-badge {

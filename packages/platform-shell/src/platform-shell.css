@@ -113,35 +113,37 @@
 .platform-role-switcher {
   display: flex;
   gap: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--platform-cream-dark);
   border-radius: 30px;
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--platform-cream-dark);
   padding: 4px;
 }
 
 .platform-role-btn {
   border: none;
   border-radius: 20px;
-  background: transparent;
+  background: var(--platform-navy);
   padding: 8px 20px;
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  color: #94a3b8;
+  color: #ffffff;
   text-decoration: none;
   cursor: pointer;
   transition: all 0.25s ease;
 }
 
 .platform-role-btn:hover {
-  color: #fff;
+  color: #ffffff;
+  opacity: 0.92;
 }
 
 .platform-role-btn--active {
-  background: #ffffff;
+  background: var(--platform-cream-mid);
   color: var(--platform-navy);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
   cursor: default;
+  opacity: 1;
 }
 
 .platform-role-btn--disabled {
@@ -539,9 +541,76 @@
   color: var(--platform-blue);
 }
 
+.platform-badge--fill {
+  background: #e4ecf7;
+  color: var(--platform-navy);
+}
+
 .platform-badge--gold {
   background: var(--platform-cream-light);
   color: var(--platform-gold);
+}
+
+.platform-icon-btn--danger {
+  display: inline-flex;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 4px;
+  background: var(--platform-red);
+  color: #ffffff;
+  padding: 0;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.platform-icon-btn--danger:hover {
+  filter: brightness(0.95);
+}
+
+.platform-icon-btn--danger:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.platform-plus-btn {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--platform-blue);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--platform-blue);
+  padding: 0;
+  font: inherit;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.platform-plus-btn:hover {
+  background: var(--platform-blue);
+  color: #ffffff;
+}
+
+.platform-plus-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.platform-plus-btn:disabled:hover {
+  background: #ffffff;
+  color: var(--platform-blue);
 }
 
 .platform-icon {

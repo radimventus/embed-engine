@@ -10,16 +10,96 @@ function healthLabel(health: string): string {
   return health.toUpperCase();
 }
 
+type OperationsCenterCanvasProps = {
+  /** PR-026 — partner UI shows Metriky platformy only. */
+  readonly partnerOnly?: boolean;
+};
+
 /**
  * EPIC-BX-19 — Manager projection of Platform Operations Center capability.
  * Click-model grammar: Context → Narrative → Insight → Action (Projection Framework).
  */
-export function OperationsCenterCanvas() {
+export function OperationsCenterCanvas({
+  partnerOnly = false,
+}: OperationsCenterCanvasProps) {
   const { session } = usePlatformSession();
   const report = useMemo(
     () => buildOperationsCenterReport(session),
     [session],
   );
+
+  const metricsSurface = (
+    <OperationsSurface
+      id={PLATFORM_OPS_SECTION_IDS.metrics}
+      title="Metriky platformy"
+      description="Agregované metriky z registru, publikace a zákaznického úspěchu."
+    >
+      <dl className="grid gap-3 sm:grid-cols-2">
+        <div>
+          <dt className="text-xs text-embed-foreground-primary/50">
+            Aktivní firmy
+          </dt>
+          <dd className="text-lg font-semibold">
+            {report.metrics.activeCompanies}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-embed-foreground-primary/50">
+            Aktivní workspaces
+          </dt>
+          <dd className="text-lg font-semibold">
+            {report.metrics.activeWorkspaces}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-embed-foreground-primary/50">
+            Aktivní projekty
+          </dt>
+          <dd className="text-lg font-semibold">
+            {report.metrics.activeProjects}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-embed-foreground-primary/50">Releases</dt>
+          <dd className="text-lg font-semibold">{report.metrics.releases}</dd>
+        </div>
+        <div>
+          <dt className="text-xs text-embed-foreground-primary/50">
+            Úspěšnost publikace
+          </dt>
+          <dd className="text-sm font-medium">
+            {report.metrics.publishSuccess}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-embed-foreground-primary/50">
+            Zdraví Runtime
+          </dt>
+          <dd className="text-sm font-medium uppercase">
+            {report.metrics.runtimeHealth}
+          </dd>
+        </div>
+        <div>
+          <dt className="text-xs text-embed-foreground-primary/50">Adopce</dt>
+          <dd className="text-lg font-semibold">
+            {report.metrics.adoptionPercent} %
+          </dd>
+        </div>
+      </dl>
+    </OperationsSurface>
+  );
+
+  if (partnerOnly) {
+    return (
+      <div
+        className="w-full max-w-5xl"
+        data-studio-shell="operations-center-canvas"
+        data-capability="operations-center"
+      >
+        {metricsSurface}
+      </div>
+    );
+  }
 
   return (
     <div
@@ -156,64 +236,7 @@ export function OperationsCenterCanvas() {
         </ul>
       </OperationsSurface>
 
-      <OperationsSurface
-        id={PLATFORM_OPS_SECTION_IDS.metrics}
-        title="Metriky platformy"
-        description="Agregované metriky z registru, publikace a zákaznického úspěchu."
-      >
-        <dl className="grid gap-3 sm:grid-cols-2">
-          <div>
-            <dt className="text-xs text-embed-foreground-primary/50">
-              Aktivní firmy
-            </dt>
-            <dd className="text-lg font-semibold">
-              {report.metrics.activeCompanies}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs text-embed-foreground-primary/50">
-              Aktivní workspaces
-            </dt>
-            <dd className="text-lg font-semibold">
-              {report.metrics.activeWorkspaces}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs text-embed-foreground-primary/50">
-              Aktivní projekty
-            </dt>
-            <dd className="text-lg font-semibold">
-              {report.metrics.activeProjects}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs text-embed-foreground-primary/50">Releases</dt>
-            <dd className="text-lg font-semibold">{report.metrics.releases}</dd>
-          </div>
-          <div>
-            <dt className="text-xs text-embed-foreground-primary/50">
-              Úspěšnost publikace
-            </dt>
-            <dd className="text-sm font-medium">
-              {report.metrics.publishSuccess}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs text-embed-foreground-primary/50">
-              Zdraví Runtime
-            </dt>
-            <dd className="text-sm font-medium uppercase">
-              {report.metrics.runtimeHealth}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-xs text-embed-foreground-primary/50">Adopce</dt>
-            <dd className="text-lg font-semibold">
-              {report.metrics.adoptionPercent} %
-            </dd>
-          </div>
-        </dl>
-      </OperationsSurface>
+      {metricsSurface}
     </div>
   );
 }

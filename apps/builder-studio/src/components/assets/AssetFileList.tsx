@@ -73,9 +73,10 @@ export function AssetFileList({
             <button
               type="button"
               onClick={() => onRemove(file.assetId)}
-              className="shrink-0 rounded-[8px] border border-builder-line px-2.5 py-1.5 text-xs font-semibold text-builder-draft hover:bg-builder-draftBg"
+              className="platform-icon-btn--danger"
+              aria-label="Odstranit"
             >
-              Odstranit
+              ✕
             </button>
           </div>
         </li>

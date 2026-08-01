@@ -100,7 +100,7 @@ export function SceneEditor({
                     type="button"
                     disabled={ordered.length <= 1}
                     onClick={() => onRemoveScene(scene.sceneId)}
-                    className="rounded-md border border-[#DDE5EF] px-2 py-1 text-[11px] text-builder-muted disabled:opacity-40"
+                    className="platform-icon-btn--danger"
                     aria-label="Odstranit scénu"
                   >
                     ✕

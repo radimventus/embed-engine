@@ -24,9 +24,8 @@ type WorkspaceSidebarProps = {
   readonly onDirtyCancel: () => void;
 };
 
-/** PR-024 — white fill · Interaction Blue border · blue ⊕ · hover inverted. */
-const PLUS_BTN_CLASS =
-  'flex h-10 w-10 items-center justify-center rounded-full border border-builder-blue bg-white text-lg font-semibold text-builder-blue hover:bg-builder-blue hover:text-white disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-white disabled:hover:text-builder-blue';
+/** PR-024/026 — large + · white fill · Interaction Blue border · hover invert. */
+const PLUS_BTN_CLASS = 'platform-plus-btn';
 
 /**
  * PR-024 — Cream Light rail · object cards · unified ⊕.
@@ -101,7 +100,7 @@ export function WorkspaceSidebar({
           }}
           className={PLUS_BTN_CLASS}
         >
-          ⊕
+          +
         </button>
       </div>
 
@@ -185,7 +184,7 @@ export function WorkspaceSidebar({
           }}
           className={PLUS_BTN_CLASS}
         >
-          ⊕
+          +
         </button>
       </div>
     </aside>

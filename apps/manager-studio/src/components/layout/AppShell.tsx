@@ -10,13 +10,13 @@ import {
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
-  CapabilityInspector,
   PlatformShell,
   type PlatformBreadcrumbItem,
 } from '@embed-engine/platform-shell';
 
 import { getManagerCapabilityHost } from '../../studio/managerStudioComposition';
 import { useManagerNav } from '../../features/manager-studio/foundation/ManagerNavProvider';
+import { partnerSectionLabel } from '../../features/manager-studio/partnerNav';
 import { Workspace } from './Workspace';
 
 type AppShellProps = {
@@ -25,61 +25,32 @@ type AppShellProps = {
 };
 
 /**
- * Manager Studio shell — Platform Access session + Capability Host (VR-FIX-04).
+ * Manager Studio shell — partner work center (PR-026).
+ * Capability Host remains composed; Inspector is not shown in partner UI.
  */
 export function AppShell({ sidebar, children }: AppShellProps) {
   const {
     session,
     bootstrap,
-    registry,
     logout,
     clearStudio,
     selectStudio,
-    selectProject,
   } = usePlatformSession();
   const { activeCapabilityId, activeSectionId } = useManagerNav();
   const capabilityHost = useMemo(() => getManagerCapabilityHost(), []);
-  const inspectorModel = capabilityHost.inspectorModel(activeCapabilityId);
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: bootstrap?.company.name ?? 'Firma',
     projectLabel: bootstrap?.project?.name ?? '—',
-    projects: registry.projects.map((project) => ({
-      id: project.id,
-      label: project.name,
-      companyLabel:
-        registry.companies.find((company) => company.id === project.companyId)
-          ?.name ?? 'Firma',
-    })),
-    onSelectProject: selectProject,
+    projects: [],
   });
-
-  const sectionLabel =
-    activeSectionId === 'manager-work-center' ||
-    activeSectionId === 'mwc-dropoff'
-      ? 'Konverzní přehled'
-      : activeSectionId === 'mwc-factors'
-        ? 'Faktory rozhodnutí'
-        : activeSectionId === 'mwc-improvements'
-          ? 'Doporučená vylepšení'
-          : activeCapabilityId === 'launch-center'
-            ? 'Spuštění'
-            : activeCapabilityId === 'operations-center'
-              ? 'Provoz platformy'
-              : activeCapabilityId === 'commercial-platform'
-                ? 'Obchod'
-                : activeCapabilityId === 'product-learning'
-                  ? 'Učení produktu'
-                  : activeCapabilityId === 'customer-success'
-                    ? 'Zákaznický úspěch'
-                    : 'Provoz';
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Manager' },
     { id: 'company', label: bootstrap?.company.name ?? 'Firma' },
     { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
-    { id: 'section', label: sectionLabel },
+    { id: 'section', label: partnerSectionLabel(activeSectionId) },
   ];
 
   return (
@@ -117,9 +88,6 @@ export function AppShell({ sidebar, children }: AppShellProps) {
         </div>
         <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
           <Workspace>{children}</Workspace>
-        </div>
-        <div className="platform-inspector-rail sticky top-0 h-full self-stretch overflow-hidden">
-          <CapabilityInspector model={inspectorModel} />
         </div>
       </div>
     </PlatformShell>

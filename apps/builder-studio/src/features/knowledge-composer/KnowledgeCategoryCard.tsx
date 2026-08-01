@@ -61,9 +61,7 @@ function HealthBadge({ health }: { readonly health: KnowledgeHealth }) {
   const className =
     health === 'complete'
       ? 'bg-builder-successBg text-builder-success'
-      : health === 'partial'
-        ? 'bg-builder-draftBg text-builder-draft'
-        : 'bg-builder-draftBg text-builder-draft';
+      : 'bg-[#E4ECF7] text-builder-navy';
   return (
     <span
       className={`shrink-0 rounded-[10px] px-2.5 py-1 text-sm font-semibold ${className}`}
