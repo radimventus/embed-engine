@@ -5,28 +5,35 @@ type WorkspaceSwitcherProps = {
   readonly workspace: PlatformWorkspaceState | null;
 };
 
+/**
+ * VR-FIX-03 — Project switcher (same grammar as Studio switcher dropdown).
+ */
 export function WorkspaceSwitcher({ workspace }: WorkspaceSwitcherProps) {
   if (workspace === null) {
     return (
-      <span className="platform-menu-button" style={{ cursor: 'default' }}>
-        Workspace
+      <span
+        className="platform-menu-button"
+        style={{ cursor: 'default', color: '#94A3B8' }}
+      >
+        Projekt
       </span>
     );
   }
 
   return (
     <PlatformDropdown
-      ariaLabel="Workspace Switcher"
+      ariaLabel="Project Switcher"
       label={
         <span>
-          <span style={{ color: 'var(--platform-muted)', fontWeight: 500 }}>
-            {workspace.companyLabel}
-          </span>
+          <span style={{ color: '#94A3B8', fontWeight: 500 }}>Projekt</span>
           <span aria-hidden> · </span>
           <span>{workspace.projectLabel}</span>
         </span>
       }
     >
+      <span className="platform-menu-item platform-menu-item--disabled">
+        {workspace.companyLabel}
+      </span>
       {workspace.projects.map((project) => (
         <button
           key={project.id}

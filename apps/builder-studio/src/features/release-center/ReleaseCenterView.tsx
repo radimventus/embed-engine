@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { PlatformConfirmDialog } from '@embed-engine/platform-shell';
 
 import {
   AiAuthorSuggestButton,
@@ -653,36 +654,20 @@ function RollbackDialog({
   readonly onCancel: () => void;
   readonly onConfirm: () => void;
 }) {
-  if (release === null) {
-    return null;
-  }
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4">
-      <div className="w-full max-w-md rounded-[16px] border border-[#E8EEF5] bg-white p-6 shadow-lg">
-        <h2 className="text-lg font-semibold text-builder-ink">Rollback</h2>
-        <p className="mt-2 text-sm text-builder-muted">
-          Aktivovat existující release <strong>v{release.version}</strong>?
-          Neproběhne nový publish — pouze přepnutí aktivního vydání v Release
-          Center.
-        </p>
-        <div className="mt-5 flex justify-end gap-2">
-          <button
-            type="button"
-            className="rounded-[10px] border border-[#DDE5EF] px-4 py-2 text-sm"
-            onClick={onCancel}
-          >
-            Zrušit
-          </button>
-          <button
-            type="button"
-            className="rounded-[10px] border border-builder-navy bg-builder-navy px-4 py-2 text-sm font-medium text-white"
-            onClick={onConfirm}
-          >
-            Potvrdit Rollback
-          </button>
-        </div>
-      </div>
-    </div>
+    <PlatformConfirmDialog
+      open={release !== null}
+      title="Rollback"
+      description={
+        release === null
+          ? ''
+          : `Aktivovat existující release v${release.version}? Neproběhne nový publish — pouze přepnutí aktivního vydání v Release Center.`
+      }
+      confirmLabel="Potvrdit Rollback"
+      cancelLabel="Zrušit"
+      onCancel={onCancel}
+      onConfirm={onConfirm}
+    />
   );
 }
 

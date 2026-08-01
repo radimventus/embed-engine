@@ -1,18 +1,12 @@
+import { PlatformLoading } from '@embed-engine/platform-shell';
+
 /**
- * Unified Runtime bootstrap loading surface (MSCB-01).
+ * Unified Runtime bootstrap loading surface (MSCB-01 / VR-FIX-03).
  */
 export function StudioLoading({
   label = 'Načítám Manager Studio…',
 }: {
   readonly label?: string;
 }) {
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="flex min-h-[50vh] w-full items-center justify-center bg-embed-background-primary px-section"
-    >
-      <p className="text-sm text-embed-foreground-primary/60">{label}</p>
-    </div>
-  );
+  return <PlatformLoading label={label} />;
 }

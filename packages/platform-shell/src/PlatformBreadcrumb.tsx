@@ -5,7 +5,7 @@ type PlatformBreadcrumbProps = {
 };
 
 /**
- * EPIC-BX-11 — platform breadcrumb (shared chrome).
+ * VR-FIX-03 — Breadcrumb with consistent deep-nav / landing return.
  */
 export function PlatformBreadcrumb({ items }: PlatformBreadcrumbProps) {
   if (items.length === 0) {
@@ -23,13 +23,22 @@ export function PlatformBreadcrumb({ items }: PlatformBreadcrumbProps) {
                 /
               </span>
             )}
-            {item.href !== undefined && !current ? (
+            {item.onSelect !== undefined && !current ? (
+              <button
+                type="button"
+                className="platform-breadcrumb__item platform-breadcrumb__item--action"
+                onClick={item.onSelect}
+              >
+                {item.label}
+              </button>
+            ) : item.href !== undefined && !current ? (
               <a href={item.href} className="platform-breadcrumb__item">
                 {item.label}
               </a>
             ) : (
               <span
                 className={`platform-breadcrumb__item${current ? ' platform-breadcrumb__item--current' : ''}`}
+                aria-current={current ? 'page' : undefined}
               >
                 {item.label}
               </span>

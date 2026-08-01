@@ -768,3 +768,321 @@
 .platform-notify {
   transition: var(--platform-transition);
 }
+
+/* =======================================================
+   VR-FIX-03 — Interaction grammar
+   ======================================================= */
+
+.platform-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 25, 48, 0.35);
+}
+
+.platform-dialog {
+  width: min(520px, 100%);
+  max-height: min(86vh, 720px);
+  overflow: auto;
+  border: 1px solid rgba(0, 25, 48, 0.06);
+  border-radius: var(--platform-radius-card);
+  background: var(--platform-surface);
+  box-shadow: 0 20px 48px rgba(0, 25, 48, 0.18);
+  padding: 26px;
+}
+
+.platform-dialog__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.platform-dialog__title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--platform-ink);
+}
+
+.platform-dialog__desc {
+  margin: 6px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--platform-muted);
+}
+
+.platform-dialog__close {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--platform-line);
+  border-radius: 999px;
+  background: var(--platform-surface);
+  color: var(--platform-muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--platform-transition);
+}
+
+.platform-dialog__close:hover {
+  color: var(--platform-ink);
+  background: var(--platform-canvas);
+}
+
+.platform-dialog__close:focus-visible,
+.platform-btn:focus-visible,
+.platform-role-btn:focus-visible,
+.platform-menu-button:focus-visible,
+.platform-field__control :focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--platform-blue) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.platform-dialog__body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.platform-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.platform-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.platform-field__label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--platform-ink);
+}
+
+.platform-field__helper {
+  font-size: 12px;
+  color: var(--platform-muted);
+}
+
+.platform-field__control input,
+.platform-field__control select,
+.platform-field__control textarea {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--platform-line);
+  border-radius: var(--platform-radius);
+  background: var(--platform-surface);
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--platform-ink);
+  transition: var(--platform-transition);
+}
+
+.platform-field__control input:hover,
+.platform-field__control select:hover,
+.platform-field__control textarea:hover {
+  border-color: color-mix(in srgb, var(--platform-blue) 35%, var(--platform-line));
+}
+
+.platform-field__control input::placeholder,
+.platform-field__control textarea::placeholder {
+  color: var(--platform-muted);
+}
+
+.platform-field__error {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--platform-red);
+}
+
+.platform-notice-host {
+  position: fixed;
+  top: calc(var(--platform-header-height) + 12px);
+  right: 24px;
+  z-index: 220;
+  width: min(360px, calc(100vw - 32px));
+}
+
+.platform-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border: 1px solid var(--platform-line);
+  border-radius: var(--platform-radius-panel);
+  background: var(--platform-surface);
+  padding: 14px 16px;
+  box-shadow: var(--platform-shadow-card);
+}
+
+.platform-notice--success {
+  border-color: color-mix(in srgb, var(--platform-green) 35%, var(--platform-line));
+  background: var(--platform-green-bg);
+}
+
+.platform-notice--warning {
+  border-color: color-mix(in srgb, var(--platform-warning) 35%, var(--platform-line));
+  background: var(--platform-warning-bg);
+}
+
+.platform-notice--error {
+  border-color: color-mix(in srgb, var(--platform-red) 35%, var(--platform-line));
+  background: var(--platform-red-bg);
+}
+
+.platform-notice--info {
+  border-color: color-mix(in srgb, var(--platform-blue) 35%, var(--platform-line));
+  background: var(--platform-blue-bg);
+}
+
+.platform-notice__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--platform-ink);
+}
+
+.platform-notice__detail {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--platform-muted);
+}
+
+.platform-notice__dismiss {
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: var(--platform-muted);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.platform-loading {
+  display: flex;
+  min-height: 50vh;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  padding: 32px;
+}
+
+.platform-loading__spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--platform-line);
+  border-top-color: var(--platform-blue);
+  border-radius: 999px;
+  animation: platform-spin 0.7s linear infinite;
+}
+
+.platform-loading__label {
+  margin: 0;
+  font-size: 13px;
+  color: var(--platform-muted);
+}
+
+@keyframes platform-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.platform-breadcrumb__item--action {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.platform-breadcrumb__item--action:hover {
+  color: var(--platform-ink);
+  text-decoration: underline;
+}
+
+.platform-btn:disabled,
+.platform-dialog__close:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.platform-btn--primary:disabled:hover {
+  background: var(--platform-navy);
+}
+
+/* Microinteractions — short, consistent, quiet */
+.platform-btn:active:not(:disabled),
+.platform-role-btn:active,
+.platform-menu-button:active,
+.platform-dialog__close:active:not(:disabled),
+.platform-breadcrumb__item--action:active {
+  transform: translateY(1px);
+}
+
+.platform-role-btn:focus-visible,
+.platform-menu-item:focus-visible,
+.platform-breadcrumb__item--action:focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--platform-blue) 45%, transparent);
+  outline-offset: 2px;
+}
+
+.platform-menu-item {
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.platform-notice {
+  animation: platform-notice-in 0.2s ease;
+}
+
+@keyframes platform-notice-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .platform-btn,
+  .platform-role-btn,
+  .platform-menu-button,
+  .platform-menu-item,
+  .platform-dialog__close,
+  .platform-notice,
+  .platform-loading__spinner {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .platform-btn:active:not(:disabled),
+  .platform-role-btn:active,
+  .platform-menu-button:active,
+  .platform-dialog__close:active:not(:disabled),
+  .platform-breadcrumb__item--action:active {
+    transform: none;
+  }
+}

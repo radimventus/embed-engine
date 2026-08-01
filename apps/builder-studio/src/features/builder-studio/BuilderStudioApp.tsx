@@ -21,6 +21,8 @@ import { PreviewCenterView } from '../preview-center';
 import { ReleaseCenterView } from '../release-center';
 import {
   CapabilityInspector,
+  PlatformEmptyState,
+  PlatformLoading,
   PlatformShell,
   type PlatformBreadcrumbItem,
   type PlatformWorkspaceState,
@@ -188,7 +190,7 @@ export function BuilderStudioApp() {
   };
 
   const breadcrumb: PlatformBreadcrumbItem[] = [
-    { id: 'conis', label: 'CONIS' },
+    { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Builder' },
     { id: 'company', label: companyName },
     {
@@ -318,37 +320,21 @@ export function BuilderStudioApp() {
           />
         )}
         {diskRoot === null && (
-          <div className="platform-empty">
-            <div className="platform-empty__icon" aria-hidden>
-              ⊕
-            </div>
-            <h2 className="platform-empty__title">Vyberte projekt</h2>
-            <p className="platform-empty__helper">
-              Otevřete projekt ve Workspace vlevo, nebo založte nový přes ⊕.
-            </p>
-          </div>
+          <PlatformEmptyState
+            icon="⊕"
+            title="Vyberte projekt"
+            description="Otevřete projekt ve Workspace vlevo, nebo založte nový přes ⊕."
+          />
         )}
         {diskRoot !== null && mountStatus.status === 'loading' && (
-          <section className="platform-card">
-            <p className="platform-type-section">Workspace</p>
-            <h2 className="platform-type-h2" style={{ marginTop: 8 }}>
-              Načítám projekt…
-            </h2>
-            <p className="platform-type-helper" style={{ marginTop: 8 }}>
-              {companyName}
-            </p>
-          </section>
+          <PlatformLoading label={`Načítám projekt… ${companyName}`} />
         )}
         {diskRoot !== null && mountStatus.status === 'error' && (
-          <section className="platform-card">
-            <p className="platform-type-section">Workspace</p>
-            <h2 className="platform-type-h2" style={{ marginTop: 8 }}>
-              Projekt se nepodařilo otevřít
-            </h2>
-            <p className="platform-type-helper" style={{ marginTop: 8 }}>
-              {mountStatus.message}
-            </p>
-          </section>
+          <PlatformEmptyState
+            icon="!"
+            title="Projekt se nepodařilo otevřít"
+            description={mountStatus.message}
+          />
         )}
         {mountStatus.status === 'ready' &&
           workspace.activeProject !== null &&

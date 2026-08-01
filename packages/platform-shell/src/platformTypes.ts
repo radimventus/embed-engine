@@ -2,6 +2,8 @@ export type PlatformBreadcrumbItem = {
   readonly id: string;
   readonly label: string;
   readonly href?: string;
+  /** Cross-studio / landing navigation without leaving Platform Shell. */
+  readonly onSelect?: () => void;
 };
 
 export type PlatformWorkspaceOption = {

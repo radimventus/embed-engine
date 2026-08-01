@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { PlatformDialog } from '@embed-engine/platform-shell';
 
 import type { DirtySwitchPrompt } from './useWorkspaceController';
 import {
@@ -102,39 +103,21 @@ export function WorkspaceSidebar({
       )}
 
       {dirtyPrompt !== null && (
-        <div className="mb-4 rounded-[14px] border border-builder-navy/30 bg-builder-panel px-3 py-3 text-[12px]">
-          <p className="font-semibold text-builder-ink">
-            {dirtyPrompt.kind === 'close'
+        <PlatformDialog
+          open
+          title={
+            dirtyPrompt.kind === 'close'
               ? 'Neuložené změny — zavřít projekt?'
-              : `Neuložené změny — přepnout na ${dirtyPrompt.target.name}?`}
-          </p>
-          <div className="mt-3 flex flex-col gap-2">
-            <button
-              type="button"
-              disabled={switching}
-              onClick={onDirtySave}
-              className="rounded-[10px] border border-builder-navy bg-builder-navy px-3 py-2 text-sm font-medium text-white disabled:opacity-40"
-            >
-              Uložit
-            </button>
-            <button
-              type="button"
-              disabled={switching}
-              onClick={onDirtyDiscard}
-              className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
-            >
-              Zahodit
-            </button>
-            <button
-              type="button"
-              disabled={switching}
-              onClick={onDirtyCancel}
-              className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
-            >
-              Zrušit
-            </button>
-          </div>
-        </div>
+              : `Neuložené změny — přepnout na ${dirtyPrompt.target.name}?`
+          }
+          description="Primary: uložit · Secondary: zahodit · Close: zrušit přepnutí."
+          primaryLabel="Uložit"
+          secondaryLabel="Zahodit"
+          busy={switching}
+          onPrimary={onDirtySave}
+          onSecondary={onDirtyDiscard}
+          onClose={onDirtyCancel}
+        />
       )}
 
       <ul className="space-y-2">

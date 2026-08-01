@@ -11,6 +11,7 @@ import {
 import {
   CapabilityInspector,
   PlatformCard,
+  PlatformEmptyState,
   PlatformShell,
   PlatformStatusBadge,
   type PlatformBreadcrumbItem,
@@ -46,7 +47,7 @@ export function SalesStudioApp() {
   };
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
-    { id: 'conis', label: 'CONIS' },
+    { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Sales' },
     { id: 'company', label: bootstrap?.company.name ?? 'Company' },
     { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
@@ -129,16 +130,23 @@ export function SalesStudioApp() {
                 Onboarding {success?.onboardingCompleteCount ?? 0}/
                 {success?.onboardingTotal ?? 0}.
               </p>
-              <ul
-                className="platform-type-body"
-                style={{ marginTop: 20, paddingLeft: 18 }}
-              >
-                {(success?.recommendations ?? []).map((item) => (
-                  <li key={item.id}>
-                    <a href={item.href}>{item.title}</a>
-                  </li>
-                ))}
-              </ul>
+              {(success?.recommendations ?? []).length === 0 ? (
+                <PlatformEmptyState
+                  title="Žádná doporučení"
+                  description="Customer Success zatím nemá další kroky pro tento projekt."
+                />
+              ) : (
+                <ul
+                  className="platform-type-body"
+                  style={{ marginTop: 20, paddingLeft: 18 }}
+                >
+                  {(success?.recommendations ?? []).map((item) => (
+                    <li key={item.id}>
+                      <a href={item.href}>{item.title}</a>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </PlatformCard>
           </div>
         </main>

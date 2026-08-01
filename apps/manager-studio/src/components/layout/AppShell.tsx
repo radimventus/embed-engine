@@ -67,7 +67,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
               : 'Operations';
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
-    { id: 'conis', label: 'CONIS' },
+    { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Manager' },
     { id: 'company', label: bootstrap?.company.name ?? 'Company' },
     { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },

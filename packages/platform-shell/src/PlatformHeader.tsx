@@ -3,6 +3,7 @@ import { FeedbackButton } from './FeedbackButton';
 import { NotificationsBell } from './NotificationsBell';
 import { StudioSwitcher } from './StudioSwitcher';
 import { UserMenu } from './UserMenu';
+import { WorkspaceSwitcher } from './WorkspaceSwitcher';
 import type { PlatformWorkspaceState } from './platformTypes';
 
 export type PlatformHeaderProps = {
@@ -18,12 +19,13 @@ export type PlatformHeaderProps = {
 };
 
 /**
- * VR-FIX-01 — Platform Header aligned to click-model SSOT.
+ * VR-FIX-03 — Header with Studio + Project switchers (same interaction model).
  */
 export function PlatformHeader({
   activeStudioId,
   userLabel = 'Radim',
   roleLabel,
+  workspace = null,
   notificationCount = 3,
   onLogout,
   onOpenLanding,
@@ -32,9 +34,22 @@ export function PlatformHeader({
   return (
     <header className="platform-header" data-testid="platform-header">
       <div className="platform-header__cluster">
-        <p className="platform-header__brand">
+        <button
+          type="button"
+          className="platform-header__brand platform-breadcrumb__item--action"
+          aria-label="CONIS Platform Landing"
+          onClick={onOpenLanding}
+          disabled={onOpenLanding === undefined}
+          style={{
+            background: 'transparent',
+            border: 0,
+            padding: 0,
+            cursor: onOpenLanding !== undefined ? 'pointer' : 'default',
+          }}
+        >
           CON<span className="platform-header__brand-accent">I</span>S
-        </p>
+        </button>
+        <WorkspaceSwitcher workspace={workspace} />
       </div>
 
       <StudioSwitcher activeStudioId={activeStudioId} />
