@@ -43,7 +43,7 @@ export function ProjectList({
                 onClick={() => onOpenProject(project.projectId)}
                 className={`flex w-full items-center gap-3 rounded-xl px-4 py-3.5 text-left transition ${
                   isActive
-                    ? 'bg-builder-creamDark text-builder-blue'
+                    ? 'bg-builder-creamLight text-builder-blue'
                     : 'text-builder-ink hover:bg-builder-hover'
                 }`}
               >

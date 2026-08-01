@@ -42,7 +42,7 @@ function NavGroup({
               className={[
                 'rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-semibold platform-motion',
                 isActive
-                  ? 'border-[var(--platform-blue)] bg-[var(--platform-cream-dark)] text-[var(--platform-blue)]'
+                  ? 'border-[var(--platform-blue)] bg-[var(--platform-cream-light)] text-[var(--platform-blue)]'
                   : 'border-transparent text-[#001930] hover:bg-[var(--platform-cream-mid)]',
               ].join(' ')}
             >
@@ -64,7 +64,7 @@ export function ManagerStudioSidebar() {
 
   return (
     <aside
-      className="flex h-full w-[260px] shrink-0 flex-col border-r border-[var(--platform-line)] bg-white"
+      className="flex h-full w-[260px] shrink-0 flex-col border-r-2 border-[var(--platform-cream-dark)] bg-[var(--platform-cream-light)]"
       data-studio-shell="sidebar"
       aria-label="Navigace Manager Studia"
     >

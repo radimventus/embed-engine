@@ -149,7 +149,7 @@ export function RuntimeSessionOverview({
                 key={state}
                 className={`rounded-[12px] border px-4 py-3 ${
                   active
-                    ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                    ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                     : 'border-[#DDE5EF] bg-white text-builder-ink'
                 }`}
               >

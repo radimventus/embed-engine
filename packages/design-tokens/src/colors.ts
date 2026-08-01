@@ -25,8 +25,8 @@ export const palette = {
    * Primary button, CTA, links, focus, active accents — never Green.
    */
   platformBlue: '#18428F',
-  /** Active / info surface — Cream Dark (not blue fill). */
-  platformBlueBg: '#D9D4CC',
+  /** Active / info surface — Cream Light (not blue fill). */
+  platformBlueBg: '#F7F6F4',
   platformGreen: '#137A43',
   platformGreenBg: '#EAF5EE',
   platformRed: '#A93226',
@@ -70,7 +70,7 @@ export const colors = {
     error: palette.platformRed,
     errorBg: palette.platformRedBg,
     info: palette.platformBlue,
-    infoBg: palette.creamDark,
+    infoBg: palette.creamLight,
     gold: palette.goldIntense,
     goldBg: palette.goldSurface,
   },

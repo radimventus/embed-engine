@@ -127,7 +127,7 @@ export function AssetsOverview({
             onClick={() => setFilter(item.id)}
             className={`rounded-[10px] border px-3 py-2 text-sm ${
               filter === item.id
-                ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                 : 'border-[#DDE5EF] bg-white text-builder-ink'
             }`}
           >

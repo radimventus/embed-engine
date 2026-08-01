@@ -47,6 +47,7 @@ export default {
           divider: '#E3E3E3',
           creamMid: '#E8E5E0',
           creamDark: '#D9D4CC',
+          creamLight: '#F7F6F4',
         },
         embed: {
           white: colors.white,

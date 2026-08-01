@@ -482,11 +482,10 @@ export function BuilderStudioApp() {
               onPublish={() => {
                 void publish();
               }}
+              onPreview={openPreview}
             />
           )}
-        {releaseSummary !== null &&
-          releaseVerification !== null &&
-          previewOpen && (
+        {previewOpen && (
             <HousePackageRuntimePreview
               open={previewOpen}
               releaseSummary={releaseSummary}

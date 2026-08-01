@@ -127,7 +127,7 @@ export function RuleEvaluationOverview({
                   <span
                     className={`rounded-[8px] px-2.5 py-1 text-[12px] font-medium ${
                       result.status === 'Passed'
-                        ? 'bg-builder-creamDark text-builder-blue'
+                        ? 'bg-builder-creamLight text-builder-blue'
                         : result.status === 'Failed'
                           ? 'border border-[#DDE5EF] text-builder-ink'
                           : 'border border-dashed border-[#DDE5EF] text-builder-muted'

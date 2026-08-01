@@ -251,11 +251,8 @@ export function useHousePackageEditController(
   }, [remount, snapshot]);
 
   const openPreview = useCallback(() => {
-    if (releaseSummary === null) {
-      return;
-    }
     setPreviewOpen(true);
-  }, [releaseSummary]);
+  }, []);
 
   const closePreview = useCallback(() => {
     setPreviewOpen(false);

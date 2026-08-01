@@ -95,7 +95,7 @@ export function PreviewCenterView({
             onClick={() => setCompareMode(false)}
             className={`rounded-[10px] border px-3 py-2 text-sm font-medium ${
               !compareMode
-                ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                 : 'border-[#DDE5EF] bg-white text-builder-ink'
             }`}
           >
@@ -106,7 +106,7 @@ export function PreviewCenterView({
             onClick={() => setCompareMode(true)}
             className={`rounded-[10px] border px-3 py-2 text-sm font-medium ${
               compareMode
-                ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                 : 'border-[#DDE5EF] bg-white text-builder-ink'
             }`}
           >
@@ -312,7 +312,7 @@ function PersonaPanel({
                 onClick={() => onSelect(persona.id)}
                 className={`w-full rounded-[10px] border px-3 py-2.5 text-left ${
                   active
-                    ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                    ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                     : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                 }`}
               >
@@ -359,7 +359,7 @@ function DevicePanel({
               onClick={() => onSelect(device.id)}
               className={`rounded-[10px] border px-2 py-2 text-center text-sm font-medium ${
                 active
-                  ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                  ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                   : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
               }`}
             >
@@ -423,7 +423,7 @@ function DecisionPathPanel({
                 <span
                   className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ${
                     active
-                      ? 'bg-builder-creamDark text-builder-blue'
+                      ? 'bg-builder-creamLight text-builder-blue'
                       : 'bg-[#E3E3E3] text-builder-muted'
                   }`}
                 >

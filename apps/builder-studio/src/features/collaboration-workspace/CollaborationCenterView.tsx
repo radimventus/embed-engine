@@ -73,7 +73,7 @@ export function CollaborationCenterView({
               onClick={() => setPanel(item.id)}
               className={`rounded-[12px] border px-3 py-3 text-left ${
                 panel === item.id
-                  ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                  ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                   : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
               }`}
             >
@@ -245,7 +245,7 @@ function WorkflowStrip({
                       onClick={() => onChange(item.areaId, stage.id)}
                       className={`rounded-[10px] border px-2 py-2 text-center text-[12px] font-medium ${
                         active
-                          ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                          ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                           : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                       }`}
                     >
@@ -323,7 +323,7 @@ function ReviewPanel({
                     onClick={() => onDecide(review.moduleId, decision, '')}
                     className={`rounded-[8px] border px-3 py-1.5 text-[12px] font-medium ${
                       review.decision === decision
-                        ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                        ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                         : 'border-[#DDE5EF] bg-white text-builder-ink'
                     }`}
                   >

@@ -23,7 +23,7 @@
   /* PR-022C — interaction blue (not Navy, not Green). */
   --platform-accent: #18428f;
   --platform-blue: #18428f;
-  --platform-blue-bg: #d9d4cc;
+  --platform-blue-bg: #f7f6f4;
   --platform-green: #137a43;
   --platform-green-bg: #eaf5ee;
   --platform-red: #a93226;
@@ -65,7 +65,7 @@
 [data-platform-shell][data-studio='sales'] {
   --platform-accent: #18428f;
   --platform-blue: #18428f;
-  --platform-blue-bg: #d9d4cc;
+  --platform-blue-bg: #f7f6f4;
 }
 
 .platform-header {
@@ -233,7 +233,7 @@
 }
 
 .platform-menu-item--active {
-  background: var(--platform-cream-dark);
+  background: var(--platform-cream-light);
   color: var(--platform-blue);
 }
 
@@ -535,7 +535,7 @@
 }
 
 .platform-badge--info {
-  background: var(--platform-cream-dark);
+  background: var(--platform-cream-light);
   color: var(--platform-blue);
 }
 
@@ -579,7 +579,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 12px;
-  background: var(--platform-cream-dark);
+  background: var(--platform-cream-light);
   color: var(--platform-blue);
   font-size: 18px;
   margin-bottom: 4px;
@@ -623,7 +623,7 @@
 
 .platform-module--active {
   border-color: var(--platform-blue);
-  background: var(--platform-cream-dark);
+  background: var(--platform-cream-light);
   color: var(--platform-blue);
 }
 
@@ -738,7 +738,7 @@
 
 .platform-capability-inspector__item--active {
   border-color: var(--platform-blue);
-  background: var(--platform-cream-dark);
+  background: var(--platform-cream-light);
   color: var(--platform-blue);
 }
 
@@ -1019,7 +1019,7 @@
 
 .platform-notice--info {
   border-color: color-mix(in srgb, var(--platform-blue) 35%, var(--platform-line));
-  background: var(--platform-blue-bg);
+  background: var(--platform-cream-light);
 }
 
 .platform-notice__title {
@@ -1213,12 +1213,12 @@
 
 .platform-tab--active {
   border-color: var(--platform-blue);
-  background: var(--platform-cream-dark);
+  background: var(--platform-cream-light);
   color: var(--platform-blue);
 }
 
 .platform-tab--active:hover {
-  background: var(--platform-cream-dark);
+  background: var(--platform-cream-light);
   border-color: var(--platform-blue);
   color: var(--platform-blue);
 }

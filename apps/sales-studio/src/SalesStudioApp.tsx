@@ -218,7 +218,7 @@ export function SalesStudioApp() {
                           ? 'var(--platform-blue)'
                           : 'var(--platform-line)',
                         background: active
-                          ? 'var(--platform-cream-dark)'
+                          ? 'var(--platform-cream-light)'
                           : 'var(--platform-surface)',
                       }}
                     >

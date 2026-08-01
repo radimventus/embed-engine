@@ -25,7 +25,7 @@ type WorkspaceSidebarProps = {
 };
 
 /**
- * PR-006 / PR-023 — Selectbox Projekt · ⊕ projekt · Domy · ⊕ objekt.
+ * PR-006 / PR-023 / PR-022C — Cream Light rail + Cream Dark border.
  */
 export function WorkspaceSidebar({
   registry,
@@ -55,7 +55,8 @@ export function WorkspaceSidebar({
 
   return (
     <aside
-      className="flex h-full min-h-0 flex-col overflow-y-auto border-r border-builder-creamDark bg-builder-canvas p-6"
+      className="flex h-full min-h-0 flex-col overflow-y-auto border-r-2 border-builder-creamDark bg-builder-creamLight p-6"
+      style={{ backgroundColor: '#F7F6F4', borderRightColor: '#D9D4CC' }}
       data-studio-shell="workspace-sidebar"
     >
       <label className="block">
@@ -63,7 +64,7 @@ export function WorkspaceSidebar({
           Projekt
         </span>
         <select
-          className="mt-3 w-full rounded-xl border border-builder-panelBorder bg-builder-panel px-3.5 py-3 text-sm font-semibold text-builder-ink"
+          className="mt-3 w-full rounded-xl border border-builder-creamDark bg-white px-3.5 py-3 text-sm font-semibold text-builder-ink"
           aria-label="Vybrat projekt"
           disabled={registry.folders.length === 0}
           value={registry.activeFolderId ?? ''}
@@ -95,13 +96,13 @@ export function WorkspaceSidebar({
             event.stopPropagation();
             onCreateProject();
           }}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-builder-panelBorder bg-builder-panel text-lg font-semibold text-builder-navy hover:bg-white"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-builder-blue bg-builder-blue text-lg font-semibold text-white hover:bg-builder-blueHover"
         >
           ⊕
         </button>
       </div>
 
-      <div className="my-5 border-t border-builder-line" />
+      <div className="my-5 border-t border-builder-creamDark" />
 
       {switchError !== null && (
         <p className="mb-3 rounded-[10px] bg-builder-draftBg px-3 py-2 text-[12px] text-builder-draft">
@@ -138,18 +139,27 @@ export function WorkspaceSidebar({
               <button
                 type="button"
                 onClick={() => onOpenHouse(house.id)}
-                className={`flex w-full items-center gap-3 rounded-xl px-3.5 py-3 text-left text-sm font-semibold transition ${
+                className={`flex w-full items-center gap-3 rounded-xl border px-3.5 py-3 text-left text-sm font-semibold transition ${
                   active
-                    ? 'bg-builder-creamDark text-builder-blue border border-builder-blue'
-                    : 'text-builder-ink hover:bg-builder-hover'
+                    ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
+                    : 'border-transparent text-builder-ink hover:bg-builder-creamMid'
                 } ${switching ? 'opacity-70' : ''}`}
+                style={
+                  active
+                    ? {
+                        backgroundColor: '#F7F6F4',
+                        borderColor: '#18428F',
+                        color: '#18428F',
+                      }
+                    : undefined
+                }
               >
                 <span aria-hidden>⌂</span>
                 <span className="min-w-0 truncate">
                   {house.name}
                   <small
                     className={`mt-0.5 block text-[11px] font-normal ${
-                      active ? 'text-builder-muted' : 'text-builder-muted'
+                      active ? 'text-builder-blue/80' : 'text-builder-muted'
                     }`}
                   >
                     {activeFolder?.name ?? 'Projekt'}
@@ -177,7 +187,7 @@ export function WorkspaceSidebar({
             event.stopPropagation();
             onCreateObject();
           }}
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-builder-panelBorder bg-builder-panel text-lg font-semibold text-builder-navy hover:bg-white disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-builder-panel"
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-builder-blue bg-white text-lg font-semibold text-builder-blue hover:bg-builder-blue hover:text-white disabled:cursor-not-allowed disabled:opacity-45 disabled:hover:bg-white disabled:hover:text-builder-blue"
         >
           ⊕
         </button>

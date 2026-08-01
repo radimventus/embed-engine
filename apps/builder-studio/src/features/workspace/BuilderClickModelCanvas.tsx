@@ -28,6 +28,7 @@ type BuilderClickModelCanvasProps = {
   readonly onEditProject: () => void;
   readonly onNavigate: (nav: HousePackageNavId) => void;
   readonly onPublish: () => void;
+  readonly onPreview: () => void;
 };
 
 type MediaAnchor = {
@@ -94,6 +95,7 @@ export function BuilderClickModelCanvas({
   onEditProject,
   onNavigate,
   onPublish,
+  onPreview,
 }: BuilderClickModelCanvasProps) {
   return (
     <div
@@ -107,21 +109,31 @@ export function BuilderClickModelCanvas({
             Obsah domu · Hero · Dispozice · Znalosti
           </p>
         </div>
-        <PlatformStatusBadge
-          tone={
-            project.status === 'published'
-              ? 'published'
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            onClick={onPreview}
+            className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2.5 text-sm font-semibold text-white hover:bg-builder-blueHover"
+            style={{ backgroundColor: '#18428F', borderColor: '#18428F' }}
+          >
+            Náhled
+          </button>
+          <PlatformStatusBadge
+            tone={
+              project.status === 'published'
+                ? 'published'
+                : project.status === 'ready'
+                  ? 'ready'
+                  : 'draft'
+            }
+          >
+            {project.status === 'published'
+              ? 'Publikováno'
               : project.status === 'ready'
-                ? 'ready'
-                : 'draft'
-          }
-        >
-          {project.status === 'published'
-            ? 'Publikováno'
-            : project.status === 'ready'
-              ? 'Připraveno'
-              : 'Koncept'}
-        </PlatformStatusBadge>
+                ? 'Připraveno'
+                : 'Koncept'}
+          </PlatformStatusBadge>
+        </div>
       </header>
 
       {MEDIA_ANCHORS.map((item) => (

@@ -111,7 +111,7 @@ export function HousePackageSidebar({
               onClick={() => onSelectNav(item.id)}
               className={`flex items-center justify-between rounded-[10px] border px-3.5 py-2.5 text-left text-sm font-medium ${
                 active
-                  ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                  ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                   : 'border-[#DDE5EF] bg-white text-builder-ink'
               }`}
             >

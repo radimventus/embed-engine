@@ -30,17 +30,18 @@ export function ProjectActionPanel({
   releaseSummary,
   validating,
   publishing,
-  previewAvailable,
+  previewAvailable: _previewAvailable,
   onPreview,
   onPublish,
   onValidate,
   onHistory,
   onOpenManager,
 }: ProjectActionPanelProps) {
+  void _previewAvailable;
   const canPublish = validationReport?.canPublish === true;
 
   return (
-    <aside className="h-full overflow-y-auto border-l border-builder-line bg-white p-6">
+    <aside className="h-full overflow-y-auto border-l border-builder-creamDark bg-builder-creamLight p-6">
       <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
         Připravenost
       </p>
@@ -61,8 +62,8 @@ export function ProjectActionPanel({
         <ActionButton
           label="Náhled"
           onClick={onPreview}
-          disabled={!previewAvailable || publishing}
-          primary={false}
+          disabled={publishing}
+          primary
         />
         <ActionButton
           label={publishing ? 'Publikuji…' : 'Publikovat změny'}
@@ -148,11 +149,16 @@ function ActionButton({
       type="button"
       disabled={disabled}
       onClick={onClick}
-      className={`w-full rounded-[10px] border px-3 py-2.5 text-sm font-medium disabled:opacity-40 ${
+      className={`w-full rounded-[10px] border px-3 py-2.5 text-sm font-semibold disabled:opacity-40 ${
         primary
           ? 'border-builder-blue bg-builder-blue text-white hover:bg-builder-blueHover'
           : 'border-builder-blue bg-white text-builder-blue hover:bg-builder-blue hover:text-white'
       }`}
+      style={
+        primary
+          ? { backgroundColor: '#18428F', borderColor: '#18428F', color: '#FFFFFF' }
+          : { backgroundColor: '#FFFFFF', borderColor: '#18428F', color: '#18428F' }
+      }
     >
       {label}
     </button>

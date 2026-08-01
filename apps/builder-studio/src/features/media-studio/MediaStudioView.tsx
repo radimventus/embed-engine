@@ -139,7 +139,7 @@ export function MediaStudioView({
                 onClick={() => setArea(item.id)}
                 className={`rounded-[12px] border px-3 py-3 text-left ${
                   area === item.id
-                    ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                    ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                     : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                 }`}
               >

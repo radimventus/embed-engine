@@ -2,6 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * PR-022C/E — Force CONIS interaction tokens into CSS.
+ * Vite/Tailwind HMR can miss new theme keys; these utilities are SSOT for Builder chrome.
+ */
+@layer utilities {
+  .bg-builder-blue {
+    background-color: #18428f;
+  }
+  .bg-builder-blueHover {
+    background-color: #12356f;
+  }
+  .hover\:bg-builder-blue:hover {
+    background-color: #18428f;
+  }
+  .hover\:bg-builder-blueHover:hover {
+    background-color: #12356f;
+  }
+  .text-builder-blue {
+    color: #18428f;
+  }
+  .hover\:text-builder-blue:hover {
+    color: #18428f;
+  }
+  .border-builder-blue {
+    border-color: #18428f;
+  }
+  .hover\:border-builder-blue:hover {
+    border-color: #18428f;
+  }
+  .bg-builder-canvas,
+  .bg-builder-panel,
+  .bg-builder-soft,
+  .bg-builder-creamLight {
+    background-color: #f7f6f4;
+  }
+  .bg-builder-creamMid {
+    background-color: #e8e5e0;
+  }
+  .hover\:bg-builder-creamMid:hover {
+    background-color: #e8e5e0;
+  }
+  .bg-builder-creamDark {
+    background-color: #d9d4cc;
+  }
+  .border-builder-creamDark {
+    border-color: #d9d4cc;
+  }
+  .border-builder-creamMid {
+    border-color: #e8e5e0;
+  }
+  .text-builder-danger {
+    color: #a93226;
+  }
+  .border-builder-danger {
+    border-color: #a93226;
+  }
+}
+
 @layer base {
   *,
   ::before,

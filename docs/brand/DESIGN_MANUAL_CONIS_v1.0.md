@@ -79,7 +79,7 @@ Jedna modrá pro celou platformu. Ne Green.
 
 ### Aktivní stav
 
-Podklad: **Cream Dark**. Modrá pouze zvýrazňuje (text, border, ikona) — ne modrá plocha.
+Podklad: **Cream Light**. Modrá pouze zvýrazňuje (text, border, ikona) — ne modrá plocha.
 
 ### Gold — pouze Premium
 

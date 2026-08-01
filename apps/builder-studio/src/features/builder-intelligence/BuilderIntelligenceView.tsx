@@ -72,7 +72,7 @@ export function BuilderIntelligenceView({
                 onClick={() => setCoachId(coach.id)}
                 className={`rounded-[12px] border px-3 py-3 text-left ${
                   active
-                    ? 'border-builder-blue bg-builder-creamDark text-builder-blue'
+                    ? 'border-builder-blue bg-builder-creamLight text-builder-blue'
                     : 'border-[#E3E3E3] bg-builder-canvas text-builder-ink'
                 }`}
               >
