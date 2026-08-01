@@ -458,10 +458,10 @@ export function PublishPanel({
             type="button"
             onClick={onRefreshPreview}
             disabled={preview.session === null}
-            className={`w-full rounded-xl px-4 py-3 text-sm font-semibold transition ${
+            className={`w-full rounded-xl border px-4 py-3 text-sm font-semibold transition ${
               preview.session !== null
-                ? 'bg-builder-panel text-builder-navy hover:bg-builder-creamMid'
-                : 'cursor-not-allowed bg-builder-soft text-builder-navy opacity-60'
+                ? 'border-builder-blue bg-white text-builder-blue hover:bg-builder-blue hover:text-white'
+                : 'cursor-not-allowed border-builder-line bg-builder-soft text-builder-navy opacity-60'
             }`}
           >
             Refresh Preview
@@ -470,10 +470,10 @@ export function PublishPanel({
             type="button"
             onClick={onClosePreview}
             disabled={preview.session === null}
-            className={`w-full rounded-xl border border-builder-line px-4 py-3 text-sm font-semibold transition ${
+            className={`w-full rounded-xl border px-4 py-3 text-sm font-semibold transition ${
               preview.session !== null
-                ? 'bg-white text-builder-ink hover:bg-builder-hover'
-                : 'cursor-not-allowed bg-white text-builder-muted opacity-60'
+                ? 'border-builder-blue bg-white text-builder-blue hover:bg-builder-blue hover:text-white'
+                : 'cursor-not-allowed border-builder-line bg-white text-builder-muted opacity-60'
             }`}
           >
             Close Preview
