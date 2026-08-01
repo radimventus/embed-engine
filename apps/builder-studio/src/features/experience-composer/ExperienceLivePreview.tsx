@@ -43,7 +43,7 @@ export function ExperienceLivePreview({ remountKey }: ExperienceLivePreviewProps
   }, [remountKey]);
 
   return (
-    <aside className="flex h-full min-h-0 flex-col overflow-hidden border-l border-builder-line bg-white">
+    <aside className="flex h-full min-h-[70vh] flex-col overflow-hidden border-l border-builder-line bg-white">
       <div className="shrink-0 border-b border-builder-lineSoft px-4 py-3">
         <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-builder-muted">
           Live Preview

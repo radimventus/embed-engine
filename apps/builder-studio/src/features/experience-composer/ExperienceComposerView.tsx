@@ -71,7 +71,7 @@ export function ExperienceComposerView({
             onAddModule={composer.addModule}
           />
         </div>
-        <div className="hidden min-h-[640px] desktop:block">
+        <div className="hidden min-h-0 desktop:block">
           <ExperienceLivePreview remountKey={remountKey} />
         </div>
       </div>
