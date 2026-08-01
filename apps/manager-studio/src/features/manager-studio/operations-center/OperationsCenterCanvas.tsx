@@ -179,7 +179,7 @@ export function OperationsCenterCanvas({
       <OperationsSurface
         id={PLATFORM_OPS_SECTION_IDS.timeline}
         title="Provozní časová osa"
-        description="Agregace existujících událostí — publikace, přihlášení, release, Runtime, validace, zákaznický úspěch."
+        description="Agregace existujících událostí — publikace, přihlášení, vydání, provozní jádro, validace, zákaznický úspěch."
       >
         <ul className="space-y-3">
           {report.timeline.map((event) => (
