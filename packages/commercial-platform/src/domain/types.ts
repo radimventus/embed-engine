@@ -1,5 +1,5 @@
 /**
- * EPIC-BX-21 — Commercial Platform projection types (no billing domain).
+ * EPIC-BX-22 — Commercial Platform projection types (no billing domain).
  */
 
 import type {
@@ -13,6 +13,9 @@ export type CommercialPlan = 'Trial' | 'Starter' | 'Growth' | 'Scale';
 
 export type TrialStatus = 'active' | 'expired' | 'converted' | 'none';
 
+/** Deterministic renewal projection — not a billing lifecycle. */
+export type RenewalState = 'current' | 'due' | 'lapsed' | 'not-applicable';
+
 export type CompanySubscriptionProjection = {
   readonly companyId: string;
   readonly companyName: string;
@@ -22,6 +25,8 @@ export type CompanySubscriptionProjection = {
   readonly edition: CommercialEdition;
   readonly plan: CommercialPlan;
   readonly trialStatus: TrialStatus;
+  readonly renewalState: RenewalState;
+  readonly projectCount: number;
   readonly activeCapabilityIds: readonly CapabilityId[];
 };
 
@@ -39,6 +44,8 @@ export type LicenseProjection = {
   readonly workspaceName: string;
   readonly plan: CommercialPlan;
   readonly edition: CommercialEdition;
+  readonly trialStatus: TrialStatus;
+  readonly renewalState: RenewalState;
   readonly enabledCapabilities: readonly CapabilityId[];
 };
 
@@ -51,7 +58,17 @@ export type UpgradeRecommendation = {
   readonly suggestedPlan: CommercialPlan;
 };
 
+export type CommercialCompanyRow = {
+  readonly companyId: string;
+  readonly companyName: string;
+  readonly edition: CommercialEdition;
+  readonly plan: CommercialPlan;
+  readonly trialStatus: TrialStatus;
+  readonly renewalState: RenewalState;
+};
+
 export type CommercialDashboard = {
+  readonly companies: readonly CommercialCompanyRow[];
   readonly activeCompanies: number;
   readonly trialCompanies: number;
   readonly planCounts: Readonly<Record<CommercialPlan, number>>;
@@ -59,13 +76,13 @@ export type CommercialDashboard = {
     readonly capabilityId: CapabilityId;
     readonly companiesUsing: number;
   }[];
-  readonly recommendedUpgrades: readonly UpgradeRecommendation[];
+  readonly upgradeOpportunities: readonly UpgradeRecommendation[];
 };
 
 export type CommercialExecutiveView = {
-  readonly commercialReadiness: string;
+  readonly revenueReadiness: string;
   readonly adoption: string;
-  readonly capabilityUsage: string;
+  readonly commercialRisks: readonly string[];
   readonly growthOpportunities: readonly string[];
   readonly constraints: readonly string[];
 };

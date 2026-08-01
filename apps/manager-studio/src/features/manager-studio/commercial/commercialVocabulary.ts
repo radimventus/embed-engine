@@ -1,5 +1,5 @@
 /**
- * EPIC-BX-21 — Commercial Platform projection vocabulary (Manager).
+ * EPIC-BX-22 — Commercial Platform projection vocabulary (Manager).
  */
 
 export const COMMERCIAL_SECTION_IDS = {
@@ -16,7 +16,11 @@ export type CommercialSectionId =
 export const COMMERCIAL_SECTION_NAV = [
   { id: COMMERCIAL_SECTION_IDS.executive, label: 'Executive', short: 'E' },
   { id: COMMERCIAL_SECTION_IDS.dashboard, label: 'Dashboard', short: 'D' },
-  { id: COMMERCIAL_SECTION_IDS.licenses, label: 'Licenses', short: 'L' },
+  {
+    id: COMMERCIAL_SECTION_IDS.licenses,
+    label: 'Subscriptions',
+    short: 'S',
+  },
   {
     id: COMMERCIAL_SECTION_IDS.entitlements,
     label: 'Entitlements',

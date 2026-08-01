@@ -1,5 +1,5 @@
 /**
- * EPIC-BX-21 — Commercial Platform report over existing Company / Capability SSOT.
+ * EPIC-BX-22 — Commercial Platform report over existing Company / Capability SSOT.
  */
 
 import {
@@ -22,10 +22,12 @@ import type {
   CommercialPlatformReport,
   CompanySubscriptionProjection,
   LicenseProjection,
+  RenewalState,
   TrialStatus,
   UpgradeRecommendation,
 } from '../domain/types';
 import {
+  BUILDER_USAGE_CAPABILITIES,
   GROWTH_SIGNAL_CAPABILITIES,
   isCapabilityAvailableOnPlan,
 } from './planEntitlements';
@@ -60,6 +62,16 @@ function deriveTrialStatus(
   return 'none';
 }
 
+function deriveRenewalState(
+  plan: CommercialPlan,
+  trialStatus: TrialStatus,
+): RenewalState {
+  if (trialStatus === 'expired') return 'lapsed';
+  if (trialStatus === 'active' || plan === 'Trial') return 'due';
+  if (trialStatus === 'none' && plan === 'Starter') return 'not-applicable';
+  return 'current';
+}
+
 function declaredCommercialCapabilities(): readonly CapabilityId[] {
   const ids = new Set<CapabilityId>();
   for (const studioId of ['builder', 'manager', 'sales'] as const) {
@@ -85,10 +97,9 @@ function buildSubscriptions(
   );
 
   return registry.companies.map((company) => {
-    const tenant = findTenant(
-      registry,
-      company.tenantId,
-    ) ?? registry.tenants.find((item) => item.companyId === company.id);
+    const tenant =
+      findTenant(registry, company.tenantId) ??
+      registry.tenants.find((item) => item.companyId === company.id);
     const workspaces = listWorkspacesForCompany(registry, company.id);
     const workspace = workspaces[0];
     const projectCount = registry.projects.filter(
@@ -102,6 +113,7 @@ function buildSubscriptions(
     });
     const edition = deriveEdition(plan, pilot);
     const trialStatus = deriveTrialStatus(plan, pilot);
+    const renewalState = deriveRenewalState(plan, trialStatus);
     const activeCapabilityIds = declared.filter((id) => {
       const def = listCapabilities().find((item) => item.id === id);
       if (def === undefined) return false;
@@ -117,6 +129,8 @@ function buildSubscriptions(
       edition,
       plan,
       trialStatus,
+      renewalState,
+      projectCount,
       activeCapabilityIds,
     };
   });
@@ -129,7 +143,27 @@ function buildUpgrades(
   for (const sub of subscriptions) {
     const usesCs = sub.activeCapabilityIds.includes('customer-success');
     const usesOps = sub.activeCapabilityIds.includes('operations-center');
+    const highBuilderUsage =
+      sub.projectCount >= 3 &&
+      BUILDER_USAGE_CAPABILITIES.some((id) =>
+        sub.activeCapabilityIds.includes(id),
+      );
+
     if (
+      highBuilderUsage &&
+      usesCs &&
+      (sub.plan === 'Trial' || sub.plan === 'Starter')
+    ) {
+      upgrades.push({
+        id: `upgrade-${sub.companyId}-builder-growth`,
+        companyId: sub.companyId,
+        companyName: sub.companyName,
+        title: 'Doporučen vyšší plán (Growth)',
+        detail:
+          'vysoké využití Builderu, Customer Success aktivní',
+        suggestedPlan: 'Growth',
+      });
+    } else if (
       (usesCs || usesOps) &&
       (sub.plan === 'Trial' || sub.plan === 'Starter')
     ) {
@@ -139,14 +173,15 @@ function buildUpgrades(
         companyName: sub.companyName,
         title: 'Doporučen vyšší plán (Growth)',
         detail: [
-          usesCs ? 'využíváte Customer Success' : null,
-          usesOps ? 'využíváte Operations' : null,
+          usesCs ? 'Customer Success aktivní' : null,
+          usesOps ? 'Operations aktivní' : null,
         ]
           .filter((item): item is string => item !== null)
           .join(', '),
         suggestedPlan: 'Growth',
       });
     }
+
     if (
       sub.activeCapabilityIds.includes('product-learning') &&
       sub.plan === 'Growth'
@@ -184,6 +219,14 @@ function buildDashboard(
   }
 
   return {
+    companies: subscriptions.map((sub) => ({
+      companyId: sub.companyId,
+      companyName: sub.companyName,
+      edition: sub.edition,
+      plan: sub.plan,
+      trialStatus: sub.trialStatus,
+      renewalState: sub.renewalState,
+    })),
     activeCompanies: subscriptions.length,
     trialCompanies: subscriptions.filter((s) => s.trialStatus === 'active')
       .length,
@@ -194,7 +237,7 @@ function buildDashboard(
         companiesUsing,
       }))
       .sort((a, b) => b.companiesUsing - a.companiesUsing),
-    recommendedUpgrades: upgrades,
+    upgradeOpportunities: upgrades,
   };
 }
 
@@ -203,27 +246,50 @@ function buildExecutive(
   subscriptions: readonly CompanySubscriptionProjection[],
 ): CommercialExecutiveView {
   const paid = subscriptions.filter((s) => s.plan !== 'Trial').length;
+  const dueRenewals = subscriptions.filter((s) => s.renewalState === 'due')
+    .length;
+  const lapsed = subscriptions.filter((s) => s.renewalState === 'lapsed')
+    .length;
   const readiness =
     dashboard.trialCompanies === 0 && paid > 0
-      ? 'Commercial Ready'
+      ? 'Revenue Ready'
       : dashboard.trialCompanies > 0
-        ? 'Pilot / Trial in progress'
+        ? 'Pilot / Trial — revenue path forming'
         : 'Not Ready';
 
+  const commercialRisks: string[] = [];
+  if (dashboard.trialCompanies > 0) {
+    commercialRisks.push(
+      `${dashboard.trialCompanies} firma(y) v aktivním trial — konverze není jistá`,
+    );
+  }
+  if (dueRenewals > 0) {
+    commercialRisks.push(
+      `${dueRenewals} firma(y) se stavem renewal · due`,
+    );
+  }
+  if (lapsed > 0) {
+    commercialRisks.push(`${lapsed} firma(y) se stavem renewal · lapsed`);
+  }
+  if (commercialRisks.length === 0) {
+    commercialRisks.push('Žádná kritická commercial rizika');
+  }
+
   return {
-    commercialReadiness: readiness,
+    revenueReadiness: readiness,
     adoption: `${paid}/${dashboard.activeCompanies} paid-like plans · ${dashboard.trialCompanies} trial`,
-    capabilityUsage: `${dashboard.capabilityUsage.length} capabilities in use across firms`,
+    commercialRisks,
     growthOpportunities:
-      dashboard.recommendedUpgrades.length > 0
-        ? dashboard.recommendedUpgrades.map(
+      dashboard.upgradeOpportunities.length > 0
+        ? dashboard.upgradeOpportunities.map(
             (item) => `${item.companyName}: ${item.title}`,
           )
-        : ['Žádné aktivní upgrade doporučení'],
+        : ['Žádné aktivní upgrade opportunities'],
     constraints: [
       'Bez billing / payment gateway / fakturace',
       'Capability Registry zůstává jediným zdrojem pravdy',
       'Commercial pouze projektuje existující Company / Workspace data',
+      'Hidden entitlements nejsou komerčně nabízeny',
     ],
   };
 }
@@ -245,13 +311,14 @@ export function buildCommercialPlatformReport(
     workspaceName: sub.workspaceName,
     plan: sub.plan,
     edition: sub.edition,
+    trialStatus: sub.trialStatus,
+    renewalState: sub.renewalState,
     enabledCapabilities: sub.activeCapabilityIds,
   }));
   const upgrades = buildUpgrades(subscriptions);
   const dashboard = buildDashboard(subscriptions, upgrades);
   const executive = buildExecutive(dashboard, subscriptions);
 
-  // Mark entitlement availability against dominant plan (Growth as default SaaS target).
   const targetPlan: CommercialPlan = 'Growth';
   const entitlementRows = entitlements.map((row) => ({
     ...row,

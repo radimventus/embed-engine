@@ -1,5 +1,5 @@
 /**
- * EPIC-BX-21 — Plan ↔ entitlement rules (deterministic, no billing).
+ * EPIC-BX-22 — Plan ↔ entitlement rules (deterministic, no billing).
  */
 
 import type {
@@ -9,7 +9,7 @@ import type {
 
 import type { CommercialPlan } from '../domain/types';
 
-/** Which entitlement classes a plan unlocks. */
+/** Which entitlement classes a plan unlocks. `hidden` is never unlocked. */
 export function entitlementsAllowedByPlan(
   plan: CommercialPlan,
 ): readonly CapabilityEntitlement[] {
@@ -29,6 +29,7 @@ export function isCapabilityAvailableOnPlan(
   entitlement: CapabilityEntitlement,
   plan: CommercialPlan,
 ): boolean {
+  if (entitlement === 'hidden') return false;
   return entitlementsAllowedByPlan(plan).includes(entitlement);
 }
 
@@ -39,4 +40,13 @@ export const GROWTH_SIGNAL_CAPABILITIES: readonly CapabilityId[] = [
   'product-learning',
   'operations',
   'ai',
+] as const;
+
+/** Builder product capabilities — high project count = high Builder usage. */
+export const BUILDER_USAGE_CAPABILITIES: readonly CapabilityId[] = [
+  'media',
+  'knowledge',
+  'experience',
+  'preview',
+  'release',
 ] as const;

@@ -7,8 +7,8 @@ import { OperationsSurface } from '../operations/OperationsSurface';
 import { COMMERCIAL_SECTION_IDS } from './commercialVocabulary';
 
 /**
- * EPIC-BX-21 — Manager projection of Commercial Platform capability.
- * No billing — subscription / entitlement / upgrade projections only.
+ * EPIC-BX-22 — Manager projection of Commercial Platform capability.
+ * No billing — edition / entitlement / subscription / upgrade projections only.
  */
 export function CommercialPlatformCanvas() {
   const { session } = usePlatformSession();
@@ -26,18 +26,31 @@ export function CommercialPlatformCanvas() {
       <OperationsSurface
         id={COMMERCIAL_SECTION_IDS.executive}
         title="Executive Commercial View"
-        description="Commercial Readiness · Adoption · Capability Usage · Growth Opportunities."
+        description="Revenue Readiness · Adoption · Commercial Risks · Growth Opportunities · Constraints."
       >
         <p className="text-2xl font-semibold text-embed-foreground-primary">
-          {report.executive.commercialReadiness}
+          {report.executive.revenueReadiness}
         </p>
         <p className="mt-2 text-sm text-embed-foreground-primary/70">
           Adoption · {report.executive.adoption}
         </p>
-        <p className="mt-1 text-sm text-embed-foreground-primary/70">
-          Capability usage · {report.executive.capabilityUsage}
+        <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+          Commercial Risks
         </p>
-        <ul className="mt-4 space-y-2">
+        <ul className="mt-2 space-y-1">
+          {report.executive.commercialRisks.map((item) => (
+            <li
+              key={item}
+              className="text-sm text-embed-foreground-primary/75"
+            >
+              {item}
+            </li>
+          ))}
+        </ul>
+        <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+          Growth Opportunities
+        </p>
+        <ul className="mt-2 space-y-1">
           {report.executive.growthOpportunities.map((item) => (
             <li
               key={item}
@@ -65,12 +78,12 @@ export function CommercialPlatformCanvas() {
       <OperationsSurface
         id={COMMERCIAL_SECTION_IDS.dashboard}
         title="Commercial Dashboard"
-        description="Aktivní firmy · trial · plány · využití capability · doporučené upgrady."
+        description="Companies · Plans · Trial · Capability Usage · Upgrade Opportunities."
       >
         <dl className="grid gap-3 sm:grid-cols-2">
           <div>
             <dt className="text-xs text-embed-foreground-primary/50">
-              Active Companies
+              Companies
             </dt>
             <dd className="text-lg font-semibold">
               {report.dashboard.activeCompanies}
@@ -82,9 +95,7 @@ export function CommercialPlatformCanvas() {
               {report.dashboard.trialCompanies}
             </dd>
           </div>
-          {(
-            ['Trial', 'Starter', 'Growth', 'Scale'] as const
-          ).map((plan) => (
+          {(['Trial', 'Starter', 'Growth', 'Scale'] as const).map((plan) => (
             <div key={plan}>
               <dt className="text-xs text-embed-foreground-primary/50">
                 Plan · {plan}
@@ -95,6 +106,25 @@ export function CommercialPlatformCanvas() {
             </div>
           ))}
         </dl>
+
+        <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+          Companies
+        </p>
+        <ul className="mt-2 space-y-2 text-sm">
+          {report.dashboard.companies.map((company) => (
+            <li
+              key={company.companyId}
+              className="border-b border-embed-border-default pb-2"
+            >
+              <span className="font-medium">{company.companyName}</span>
+              <span className="mt-0.5 block text-xs text-embed-foreground-primary/55">
+                {company.edition} · {company.plan} · trial {company.trialStatus}{' '}
+                · renewal {company.renewalState}
+              </span>
+            </li>
+          ))}
+        </ul>
+
         <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
           Capability usage
         </p>
@@ -105,12 +135,28 @@ export function CommercialPlatformCanvas() {
             </li>
           ))}
         </ul>
+
+        <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
+          Upgrade Opportunities
+        </p>
+        <ul className="mt-2 space-y-1 text-sm">
+          {report.dashboard.upgradeOpportunities.map((item) => (
+            <li key={item.id}>
+              {item.companyName} · {item.title}
+            </li>
+          ))}
+          {report.dashboard.upgradeOpportunities.length === 0 && (
+            <li className="text-embed-foreground-primary/60">
+              Žádné upgrade opportunities.
+            </li>
+          )}
+        </ul>
       </OperationsSurface>
 
       <OperationsSurface
         id={COMMERCIAL_SECTION_IDS.licenses}
-        title="License Projection"
-        description="Company · Workspace · Plan · Enabled Capabilities — stejný Company model."
+        title="Company Subscription"
+        description="Edition · Active Capabilities · Trial · Renewal State — stejný Company model."
       >
         <ul className="space-y-3">
           {report.licenses.map((license) => (
@@ -120,6 +166,10 @@ export function CommercialPlatformCanvas() {
             >
               <p className="text-sm font-medium text-embed-foreground-primary">
                 {license.companyName} · {license.edition} · {license.plan}
+              </p>
+              <p className="mt-1 text-xs text-embed-foreground-primary/60">
+                Trial · {license.trialStatus} · Renewal ·{' '}
+                {license.renewalState}
               </p>
               <p className="mt-1 text-xs text-embed-foreground-primary/60">
                 {license.workspaceName} ·{' '}
@@ -133,7 +183,7 @@ export function CommercialPlatformCanvas() {
       <OperationsSurface
         id={COMMERCIAL_SECTION_IDS.entitlements}
         title="Capability Entitlements"
-        description="included · optional · experimental — Registry SSOT, Commercial pouze projektuje."
+        description="included · optional · experimental · hidden — Registry SSOT, Commercial pouze projektuje."
       >
         <ul className="space-y-2">
           {report.entitlements.map((row) => (
@@ -147,7 +197,11 @@ export function CommercialPlatformCanvas() {
               </span>
               <span className="w-full text-xs text-embed-foreground-primary/55">
                 Growth availability ·{' '}
-                {row.availableOnPlan ? 'yes' : 'upgrade required'}
+                {row.entitlement === 'hidden'
+                  ? 'never (hidden)'
+                  : row.availableOnPlan
+                    ? 'yes'
+                    : 'upgrade required'}
               </span>
             </li>
           ))}
@@ -156,8 +210,8 @@ export function CommercialPlatformCanvas() {
 
       <OperationsSurface
         id={COMMERCIAL_SECTION_IDS.upgrades}
-        title="Upgrade Recommendations"
-        description="Deterministická pravidla — bez obchodní AI a bez billing."
+        title="Upgrade Suggestions"
+        description="Deterministická pravidla — vysoké využití Builderu · CS aktivní · bez billing AI."
       >
         <ul className="space-y-3">
           {report.upgrades.map((item) => (

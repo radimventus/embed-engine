@@ -2,7 +2,7 @@ import type { CapabilityDefinition } from '../domain/types';
 
 /**
  * Canonical Capability Registry definitions — each capability exists once.
- * Entitlement (BX-21) is commercial classification; Registry remains SSOT.
+ * Entitlement (BX-21/22) is commercial classification; Registry remains SSOT.
  */
 export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
   {
@@ -123,8 +123,8 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['sales'],
     dependencies: ['intelligence', 'experience'],
     maturity: 'experimental',
-    entitlement: 'experimental',
-    description: 'Sales pipeline placeholder capability.',
+    entitlement: 'hidden',
+    description: 'Sales pipeline placeholder — commercially hidden until productized.',
   },
   {
     id: 'customer-success',
@@ -172,6 +172,6 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     maturity: 'beta',
     entitlement: 'included',
     description:
-      'Commercial Platform — editions, plans, entitlements, upgrade recommendations (no billing).',
+      'Commercial Platform — editions, entitlements, subscriptions, upgrade suggestions (no billing).',
   },
 ] as const;

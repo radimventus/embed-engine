@@ -122,14 +122,16 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
     );
   });
 
-  it('exposes commercial entitlements on every capability (EPIC-BX-21)', () => {
+  it('exposes commercial entitlements on every capability (EPIC-BX-22)', () => {
     for (const item of listCapabilities()) {
       assert.ok(
-        ['included', 'optional', 'experimental'].includes(item.entitlement),
+        ['included', 'optional', 'experimental', 'hidden'].includes(
+          item.entitlement,
+        ),
       );
     }
     assert.equal(requireCapability('media').entitlement, 'included');
-    assert.equal(requireCapability('pipeline').entitlement, 'experimental');
+    assert.equal(requireCapability('pipeline').entitlement, 'hidden');
   });
 
   it('inspector model exposes capability metadata and health', () => {
