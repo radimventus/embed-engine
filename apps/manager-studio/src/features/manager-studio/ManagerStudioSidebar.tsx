@@ -1,5 +1,6 @@
 import { scrollToSection } from './foundation/scrollToSection';
 import { useManagerNav } from './foundation/ManagerNavProvider';
+import { COMMERCIAL_SECTION_NAV } from './commercial/commercialVocabulary';
 import { CUSTOMER_SUCCESS_SECTION_NAV } from './customer-success/customerSuccessVocabulary';
 import { PLATFORM_OPS_SECTION_NAV } from './operations-center/platformOpsVocabulary';
 import { PRODUCT_LEARNING_SECTION_NAV } from './product-learning/productLearningVocabulary';
@@ -82,6 +83,12 @@ export function ManagerStudioSidebar() {
           items={PLATFORM_OPS_SECTION_NAV}
           activeSectionId={activeSectionId}
           ariaLabel="Sekce Platform Operations Center"
+        />
+        <NavGroup
+          title="Commercial"
+          items={COMMERCIAL_SECTION_NAV}
+          activeSectionId={activeSectionId}
+          ariaLabel="Sekce Commercial Platform"
         />
         <NavGroup
           title="Product Learning"

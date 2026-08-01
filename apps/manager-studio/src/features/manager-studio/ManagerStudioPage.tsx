@@ -1,3 +1,4 @@
+import { CommercialPlatformCanvas } from './commercial/CommercialPlatformCanvas';
 import { CustomerSuccessCanvas } from './customer-success/CustomerSuccessCanvas';
 import { RuntimeBootstrapGate } from './foundation';
 import { OperationsCenterCanvas } from './operations-center/OperationsCenterCanvas';
@@ -6,13 +7,14 @@ import { ProductLearningCanvas } from './product-learning/ProductLearningCanvas'
 import { DecisionSessionRuntimeProvider } from './runtime/DecisionSessionRuntimeProvider';
 
 /**
- * Manager Studio host — Platform Ops + Product Learning + CS + Operations.
+ * Manager Studio host — platform capability projections (BX-17..21 + MSCB).
  */
 export function ManagerStudioPage() {
   return (
     <DecisionSessionRuntimeProvider>
       <RuntimeBootstrapGate>
         <OperationsCenterCanvas />
+        <CommercialPlatformCanvas />
         <ProductLearningCanvas />
         <CustomerSuccessCanvas />
         <OperationsCanvas />

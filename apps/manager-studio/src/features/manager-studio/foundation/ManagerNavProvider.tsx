@@ -8,6 +8,7 @@ import {
 import type { CapabilityId } from '@embed-engine/capabilities';
 
 import { useActiveSection } from './useActiveSection';
+import { COMMERCIAL_SECTION_NAV } from '../commercial/commercialVocabulary';
 import { CUSTOMER_SUCCESS_SECTION_NAV } from '../customer-success/customerSuccessVocabulary';
 import { PLATFORM_OPS_SECTION_NAV } from '../operations-center/platformOpsVocabulary';
 import { PRODUCT_LEARNING_SECTION_NAV } from '../product-learning/productLearningVocabulary';
@@ -24,18 +25,20 @@ const ManagerNavContext = createContext<ManagerNavContextValue | null>(null);
 function resolveCapability(sectionId: string | null): CapabilityId {
   if (sectionId === null) return 'operations-center';
   if (sectionId.startsWith('poc-')) return 'operations-center';
+  if (sectionId.startsWith('cm-')) return 'commercial-platform';
   if (sectionId.startsWith('pl-')) return 'product-learning';
   if (sectionId.startsWith('cs-')) return 'customer-success';
   return 'operations';
 }
 
 /**
- * Shared scroll-spy for Platform Ops + Product Learning + CS + Operations.
+ * Shared scroll-spy for platform capability projections.
  */
 export function ManagerNavProvider({ children }: { readonly children: ReactNode }) {
   const allSectionIds = useMemo(
     () => [
       ...PLATFORM_OPS_SECTION_NAV.map((item) => item.id),
+      ...COMMERCIAL_SECTION_NAV.map((item) => item.id),
       ...PRODUCT_LEARNING_SECTION_NAV.map((item) => item.id),
       ...CUSTOMER_SUCCESS_SECTION_NAV.map((item) => item.id),
       ...OPERATIONS_SECTION_NAV.map((item) => item.id),

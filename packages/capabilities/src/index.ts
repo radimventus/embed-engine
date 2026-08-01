@@ -1,6 +1,7 @@
 export type {
   StudioId,
   CapabilityId,
+  CapabilityEntitlement,
   CapabilityMaturity,
   CapabilityHealthStatus,
   CapabilityDefinition,

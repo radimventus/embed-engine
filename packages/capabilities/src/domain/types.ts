@@ -1,5 +1,5 @@
 /**
- * EPIC-BX-13 — Capability Platform domain model (orchestration only).
+ * EPIC-BX-13 / BX-21 — Capability Platform domain model (orchestration only).
  * Pure TypeScript — no React, no Runtime/HP/Publish coupling.
  */
 
@@ -19,7 +19,13 @@ export type CapabilityId =
   | 'pipeline'
   | 'customer-success'
   | 'operations-center'
-  | 'product-learning';
+  | 'product-learning'
+  | 'commercial-platform';
+
+/**
+ * Commercial entitlement class — Registry remains SSOT; Commercial only projects.
+ */
+export type CapabilityEntitlement = 'included' | 'optional' | 'experimental';
 
 export type CapabilityMaturity =
   | 'experimental'
@@ -37,6 +43,7 @@ export type CapabilityDefinition = {
   readonly studioSupport: readonly StudioId[];
   readonly dependencies: readonly CapabilityId[];
   readonly maturity: CapabilityMaturity;
+  readonly entitlement: CapabilityEntitlement;
   readonly description: string;
 };
 
@@ -46,6 +53,7 @@ export type CapabilityMetadata = {
   readonly version: string;
   readonly owner: string;
   readonly maturity: CapabilityMaturity;
+  readonly entitlement: CapabilityEntitlement;
   readonly description: string;
   readonly studioSupport: readonly StudioId[];
   readonly dependencies: readonly CapabilityId[];

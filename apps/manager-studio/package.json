@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@embed-engine/capabilities": "workspace:*",
+    "@embed-engine/commercial-platform": "workspace:*",
     "@embed-engine/customer-success": "workspace:*",
     "@embed-engine/design-tokens": "workspace:*",
     "@embed-engine/intelligence": "workspace:*",

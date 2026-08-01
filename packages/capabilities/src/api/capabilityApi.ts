@@ -24,6 +24,7 @@ export function createCapabilityApi(
     version: definition.version,
     owner: definition.owner,
     maturity: definition.maturity,
+    entitlement: definition.entitlement,
     description: definition.description,
     studioSupport: definition.studioSupport,
     dependencies: definition.dependencies,

@@ -2,6 +2,7 @@ import type { CapabilityDefinition } from '../domain/types';
 
 /**
  * Canonical Capability Registry definitions — each capability exists once.
+ * Entitlement (BX-21) is commercial classification; Registry remains SSOT.
  */
 export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
   {
@@ -12,6 +13,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['builder'],
     dependencies: [],
     maturity: 'stable',
+    entitlement: 'included',
     description: 'Project overview and readiness summary.',
   },
   {
@@ -22,6 +24,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['builder'],
     dependencies: ['dashboard'],
     maturity: 'stable',
+    entitlement: 'included',
     description: 'Media Studio over House Package content areas.',
   },
   {
@@ -32,6 +35,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['builder'],
     dependencies: ['dashboard'],
     maturity: 'stable',
+    entitlement: 'included',
     description: 'Knowledge Composer projection and editing surfaces.',
   },
   {
@@ -42,6 +46,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['builder', 'sales'],
     dependencies: ['dashboard'],
     maturity: 'stable',
+    entitlement: 'included',
     description: 'Experience Composer — Decision Experience structure.',
   },
   {
@@ -52,6 +57,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['builder'],
     dependencies: ['experience', 'media'],
     maturity: 'stable',
+    entitlement: 'included',
     description: 'Preview Center — personas, devices, Decision Path.',
   },
   {
@@ -62,6 +68,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['builder'],
     dependencies: ['experience', 'media', 'knowledge'],
     maturity: 'stable',
+    entitlement: 'included',
     description: 'Release Center — publish orchestration metadata.',
   },
   {
@@ -72,6 +79,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['builder', 'manager'],
     dependencies: ['dashboard'],
     maturity: 'beta',
+    entitlement: 'optional',
     description: 'Collaboration workspace — review, tasks, activity.',
   },
   {
@@ -82,6 +90,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['builder', 'manager', 'sales'],
     dependencies: [],
     maturity: 'stable',
+    entitlement: 'included',
     description: 'Decision Intelligence Core client surface.',
   },
   {
@@ -92,6 +101,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['builder'],
     dependencies: ['experience', 'knowledge', 'media', 'release'],
     maturity: 'beta',
+    entitlement: 'optional',
     description: 'Contextual AI Author suggestions (deterministic proposals).',
   },
   {
@@ -102,6 +112,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['manager'],
     dependencies: ['intelligence'],
     maturity: 'beta',
+    entitlement: 'optional',
     description: 'Manager Operations Terminal surfaces.',
   },
   {
@@ -112,6 +123,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['sales'],
     dependencies: ['intelligence', 'experience'],
     maturity: 'experimental',
+    entitlement: 'experimental',
     description: 'Sales pipeline placeholder capability.',
   },
   {
@@ -122,6 +134,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['manager', 'sales', 'builder'],
     dependencies: [],
     maturity: 'beta',
+    entitlement: 'optional',
     description:
       'Customer Success Platform — onboarding, adoption, health, recommendations.',
   },
@@ -133,6 +146,7 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['manager'],
     dependencies: ['customer-success'],
     maturity: 'beta',
+    entitlement: 'optional',
     description:
       'Platform Operations Center — CONIS platform ops overview, timeline, alerts, metrics.',
   },
@@ -144,7 +158,20 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     studioSupport: ['manager'],
     dependencies: [],
     maturity: 'beta',
+    entitlement: 'optional',
     description:
       'Product Learning Center — feedback registry, insights, roadmap suggestions.',
+  },
+  {
+    id: 'commercial-platform',
+    name: 'Commercial Platform',
+    version: '1.0.0',
+    owner: 'platform',
+    studioSupport: ['manager'],
+    dependencies: [],
+    maturity: 'beta',
+    entitlement: 'included',
+    description:
+      'Commercial Platform — editions, plans, entitlements, upgrade recommendations (no billing).',
   },
 ] as const;

@@ -181,6 +181,9 @@ importers:
       '@embed-engine/capabilities':
         specifier: workspace:*
         version: link:../../packages/capabilities
+      '@embed-engine/commercial-platform':
+        specifier: workspace:*
+        version: link:../../packages/commercial-platform
       '@embed-engine/customer-success':
         specifier: workspace:*
         version: link:../../packages/customer-success
@@ -319,6 +322,25 @@ importers:
         version: 5.9.3
 
   packages/capabilities:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.1
+        version: 22.20.1
+      tsx:
+        specifier: ^4.20.3
+        version: 4.23.1
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+
+  packages/commercial-platform:
+    dependencies:
+      '@embed-engine/capabilities':
+        specifier: workspace:*
+        version: link:../capabilities
+      '@embed-engine/platform-access':
+        specifier: workspace:*
+        version: link:../platform-access
     devDependencies:
       '@types/node':
         specifier: ^22.20.1

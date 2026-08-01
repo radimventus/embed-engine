@@ -9,6 +9,7 @@ export const MANAGER_CAPABILITY_MANIFEST: CapabilityManifest = {
   uses: [
     { id: 'operations-center' },
     { id: 'product-learning' },
+    { id: 'commercial-platform' },
     { id: 'operations' },
     { id: 'customer-success' },
     { id: 'intelligence' },

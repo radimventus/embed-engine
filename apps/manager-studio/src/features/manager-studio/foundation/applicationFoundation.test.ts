@@ -154,6 +154,21 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.match(pkg, /@embed-engine\/product-learning/);
   });
 
+  it('projects Commercial Platform capability (EPIC-BX-21)', () => {
+    const page = readSource(
+      'src/features/manager-studio/ManagerStudioPage.tsx',
+    );
+    const sidebar = readSource(
+      'src/features/manager-studio/ManagerStudioSidebar.tsx',
+    );
+    const pkg = readSource('package.json');
+
+    assert.match(page, /CommercialPlatformCanvas/);
+    assert.match(sidebar, /COMMERCIAL_SECTION_NAV/);
+    assert.match(sidebar, /Commercial/);
+    assert.match(pkg, /@embed-engine\/commercial-platform/);
+  });
+
   it('does not expose Interpretation or compose semantics in the Provider', () => {
     const provider = stripComments(
       readSource(

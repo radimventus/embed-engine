@@ -40,7 +40,7 @@ export function CapabilityInspector({
           </p>
           <p className="platform-capability-inspector__meta">
             v{active.metadata.version} · {active.metadata.maturity} ·{' '}
-            {active.health.status}
+            {active.metadata.entitlement} · {active.health.status}
           </p>
           <p className="platform-capability-inspector__desc">
             {active.metadata.description}

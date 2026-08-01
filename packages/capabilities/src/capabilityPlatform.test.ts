@@ -71,6 +71,7 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
     assert.ok(manager.isDeclared('customer-success'));
     assert.ok(manager.isDeclared('operations-center'));
     assert.ok(manager.isDeclared('product-learning'));
+    assert.ok(manager.isDeclared('commercial-platform'));
     assert.ok(sales.isDeclared('pipeline'));
     assert.ok(sales.isDeclared('customer-success'));
   });
@@ -97,6 +98,11 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
         (item) => item.id === 'product-learning',
       ),
     );
+    assert.ok(
+      MANAGER_CAPABILITY_MANIFEST.uses.some(
+        (item) => item.id === 'commercial-platform',
+      ),
+    );
     assert.equal(listCapabilities().filter((c) => c.id === 'intelligence').length, 1);
     assert.equal(
       listCapabilities().filter((c) => c.id === 'customer-success').length,
@@ -110,6 +116,20 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
       listCapabilities().filter((c) => c.id === 'product-learning').length,
       1,
     );
+    assert.equal(
+      listCapabilities().filter((c) => c.id === 'commercial-platform').length,
+      1,
+    );
+  });
+
+  it('exposes commercial entitlements on every capability (EPIC-BX-21)', () => {
+    for (const item of listCapabilities()) {
+      assert.ok(
+        ['included', 'optional', 'experimental'].includes(item.entitlement),
+      );
+    }
+    assert.equal(requireCapability('media').entitlement, 'included');
+    assert.equal(requireCapability('pipeline').entitlement, 'experimental');
   });
 
   it('inspector model exposes capability metadata and health', () => {
