@@ -7,7 +7,7 @@ import { describe, it } from 'node:test';
 const here = dirname(fileURLToPath(import.meta.url));
 const salesRoot = join(here, '..');
 
-describe('Sales Studio shell (EPIC-BX-11)', () => {
+describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
   it('hosts the shared Platform Shell on port 4179', () => {
     const app = readFileSync(join(salesRoot, 'src/SalesStudioApp.tsx'), 'utf8');
     const pkg = readFileSync(join(salesRoot, 'package.json'), 'utf8');
@@ -30,7 +30,6 @@ describe('Sales Studio shell (EPIC-BX-11)', () => {
 
     assert.match(composition, /SALES_STUDIO_COMPOSITION/);
     assert.match(app, /capabilityHost/);
-    assert.match(app, /CapabilityInspector/);
     assert.match(pkg, /@embed-engine\/capabilities/);
   });
 
@@ -44,12 +43,25 @@ describe('Sales Studio shell (EPIC-BX-11)', () => {
     assert.match(pkg, /@embed-engine\/platform-access/);
   });
 
-  it('projects Customer Success capability (EPIC-BX-17)', () => {
+  it('implements the click-model 3-column sales desk (SR-001)', () => {
     const app = readFileSync(join(salesRoot, 'src/SalesStudioApp.tsx'), 'utf8');
-    const pkg = readFileSync(join(salesRoot, 'package.json'), 'utf8');
+    const css = readFileSync(join(salesRoot, 'src/index.css'), 'utf8');
+    const clients = readFileSync(
+      join(salesRoot, 'src/sales/salesClients.ts'),
+      'utf8',
+    );
 
-    assert.match(app, /analyzeCustomerSuccess/);
-    assert.match(app, /customer-success/);
-    assert.match(pkg, /@embed-engine\/customer-success/);
+    assert.match(app, /Případy k hovoru/);
+    assert.match(app, /Detail nákupního záměru/);
+    assert.match(app, /Rozhodovací cesta \(Decision Journey\)/);
+    assert.match(app, /Hledat zájemce/);
+    assert.match(app, /Vysoká jistota/);
+    assert.doesNotMatch(app, /CapabilityInspector/);
+    assert.doesNotMatch(app, /platform-nav-rail/);
+    assert.doesNotMatch(app, /platform-inspector-rail/);
+    assert.match(css, /sales-desk__grid/);
+    assert.match(css, /340px/);
+    assert.match(clients, /Jan Novák/);
+    assert.match(clients, /Hero Experience/);
   });
 });

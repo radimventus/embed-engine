@@ -1,3 +1,9 @@
+/**
+ * SR-001 — Sales Studio: jedna pracovní obrazovka dle click modelu.
+ * Layout SSOT: docs/platform/click model.html (#sales-studio).
+ * Význam SSOT: 06_SALES_STUDIO_SPECIFICATION_v1.0.md
+ */
+
 import { useMemo, useState } from 'react';
 
 import {
@@ -9,152 +15,54 @@ import {
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
-  CapabilityInspector,
   PlatformCard,
   PlatformShell,
   PlatformStatusBadge,
   type PlatformBreadcrumbItem,
 } from '@embed-engine/platform-shell';
 
+import {
+  HIGH_INTENT_THRESHOLD,
+  SALES_CLIENTS,
+  type SalesClient,
+} from './sales/salesClients';
 import { getSalesCapabilityHost } from './studio/salesStudioComposition';
 
-type SalesClient = {
-  readonly id: string;
-  readonly name: string;
-  readonly score: number;
-  readonly project: string;
-  readonly location: string;
-  readonly land: string;
-  readonly priorities: readonly string[];
-  readonly insight: string;
-  readonly journey: readonly {
-    readonly label: string;
-    readonly state: 'completed' | 'active' | 'pending';
-    readonly detail: string;
-  }[];
-};
+type IntentFilter = 'all' | 'high';
 
-const SALES_CLIENTS: readonly SalesClient[] = [
-  {
-    id: 'novak',
-    name: 'Jan Novák',
-    score: 88,
-    project: 'RD Harmony 124',
-    location: 'Opava',
-    land: 'Mám pozemek',
-    priorities: ['Orientace ke světlu', 'Provozní náklady', 'Dispozice 4+kk'],
-    insight:
-      'Klient strávil nejvíce času sledováním vazby domu na pozemek v House Navigatoru a prosvětlení obývacího pokoje. Doporučujeme začít rozhovor potvrzením správné orientace domu.',
-    journey: [
-      {
-        label: 'Experience',
-        state: 'completed',
-        detail: 'Prohlédl Hero a galerii',
-      },
-      {
-        label: 'Priority',
-        state: 'completed',
-        detail: 'Potvrdil 3 priority',
-      },
-      {
-        label: 'Navigátor',
-        state: 'active',
-        detail: 'Opakované návraty k orientaci',
-      },
-      {
-        label: 'Finance',
-        state: 'pending',
-        detail: 'Ještě neotevřeno',
-      },
-    ],
-  },
-  {
-    id: 'dvorak',
-    name: 'Petr Dvořák',
-    score: 72,
-    project: 'Villa 168',
-    location: 'Brno',
-    land: 'Hledám pozemek',
-    priorities: ['Velikost pozemku', 'Celková cena', 'Design'],
-    insight:
-      'Klient porovnává varianty pozemku. Otevřete rozhovor nabídkou lokalit a limitem rozpočtu.',
-    journey: [
-      {
-        label: 'Experience',
-        state: 'completed',
-        detail: 'Krátká návštěva',
-      },
-      {
-        label: 'Priority',
-        state: 'active',
-        detail: 'Změnil pořadí priorit',
-      },
-      {
-        label: 'Navigátor',
-        state: 'pending',
-        detail: 'Čeká na pozemek',
-      },
-      {
-        label: 'Finance',
-        state: 'pending',
-        detail: 'Ještě neotevřeno',
-      },
-    ],
-  },
-  {
-    id: 'kucerova',
-    name: 'Marie Kučerová',
-    score: 65,
-    project: 'Family 98',
-    location: 'Olomouc',
-    land: 'Mám pozemek',
-    priorities: ['Dispozice', 'Energetická úspora', 'Měsíční splátka'],
-    insight:
-      'Klientka se vrací k FAQ o spotřebě. Připravte konkrétní čísla FVE a provozních nákladů.',
-    journey: [
-      {
-        label: 'Experience',
-        state: 'completed',
-        detail: 'Prošla galerii',
-      },
-      {
-        label: 'Priority',
-        state: 'completed',
-        detail: 'Potvrdila priority',
-      },
-      {
-        label: 'Navigátor',
-        state: 'completed',
-        detail: 'Prošla dispozici',
-      },
-      {
-        label: 'Finance',
-        state: 'active',
-        detail: 'Opakované otevření FAQ',
-      },
-    ],
-  },
-];
+function matchesQuery(client: SalesClient, query: string): boolean {
+  if (query.length === 0) return true;
+  const haystack =
+    `${client.name} ${client.listProject} ${client.project}`.toLowerCase();
+  return haystack.includes(query);
+}
 
-/**
- * PR-006 / PR-015 — Sales: stejná hierarchie jako Builder/Manager
- * (nav rail · title-bar · canvas · inspector).
- */
 export function SalesStudioApp() {
   const { session, bootstrap, logout, clearStudio, selectStudio } =
     usePlatformSession();
   const capabilityHost = useMemo(() => getSalesCapabilityHost(), []);
-  const inspectorModel = capabilityHost.inspectorModel('customer-success');
   const [activeClientId, setActiveClientId] = useState(SALES_CLIENTS[0].id);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [intentFilter, setIntentFilter] = useState<IntentFilter>('all');
+
+  const query = searchQuery.trim().toLowerCase();
+  const visibleClients = SALES_CLIENTS.filter((client) => {
+    if (!matchesQuery(client, query)) return false;
+    if (intentFilter === 'high' && client.score < HIGH_INTENT_THRESHOLD) {
+      return false;
+    }
+    return true;
+  });
+
   const activeClient =
-    SALES_CLIENTS.find((client) => client.id === activeClientId) ??
+    visibleClients.find((client) => client.id === activeClientId) ??
+    visibleClients[0] ??
     SALES_CLIENTS[0];
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: bootstrap?.company.name ?? 'Firma',
     projectLabel: bootstrap?.project?.name ?? '—',
     projects: [],
-    // PR-006 — horní lišta nepřepíná projekt.
   });
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
@@ -166,7 +74,7 @@ export function SalesStudioApp() {
   ];
 
   const highIntentCount = SALES_CLIENTS.filter(
-    (client) => client.score >= 70,
+    (client) => client.score >= HIGH_INTENT_THRESHOLD,
   ).length;
 
   return (
@@ -181,7 +89,6 @@ export function SalesStudioApp() {
       workspace={workspaceState}
       breadcrumb={breadcrumb}
       capabilityHost={capabilityHost}
-      activeCapabilityId="customer-success"
       onLogout={logout}
       onOpenLanding={clearStudio}
       onSelectStudio={selectStudio}
@@ -198,164 +105,156 @@ export function SalesStudioApp() {
         });
       }}
     >
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        <aside className="platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto">
-          <div className="p-6">
-            <p className="mb-3 text-[11px] font-bold uppercase tracking-[1px] text-[var(--platform-section)]">
-              Případy k hovoru
-            </p>
-            <ul className="space-y-2">
-              {SALES_CLIENTS.map((client) => {
-                const active = client.id === activeClient.id;
-                return (
-                  <li key={client.id}>
-                    <button
-                      type="button"
-                      onClick={() => setActiveClientId(client.id)}
-                      className="w-full rounded-[12px] border px-3.5 py-3 text-left platform-motion"
-                      style={{
-                        borderColor: active
-                          ? 'var(--platform-blue)'
-                          : 'var(--platform-line)',
-                        background: active
-                          ? 'var(--platform-cream-light)'
-                          : 'var(--platform-surface)',
-                      }}
-                    >
-                      <div className="flex items-center justify-between gap-2">
-                        <span className="text-sm font-semibold text-[var(--platform-ink)]">
-                          {client.name}
-                        </span>
-                        <span className="text-[13px] font-bold text-[var(--platform-blue)]">
-                          {client.score} %
-                        </span>
-                      </div>
-                      <p className="mt-1 text-[12px] text-[var(--platform-navy)]">
-                        {client.project}
-                      </p>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        </aside>
-
-        <main className="platform-studio-pad min-h-0 min-w-0 flex-1 overflow-y-auto">
-          <div className="mx-auto w-full max-w-[1520px]">
-            <header className="platform-title-bar">
-              <div>
-                <h1 className="platform-type-h1">Sales Studio</h1>
-                <p className="platform-type-helper" style={{ marginTop: 4 }}>
-                  {bootstrap?.company.name ?? 'Firma'} ·{' '}
-                  {bootstrap?.project?.name ?? 'Projekt'}
-                </p>
-              </div>
-              <PlatformStatusBadge tone="gold">
-                {`● ${highIntentCount} klienti s vysokou rozhodovací jistotou`}
-              </PlatformStatusBadge>
-            </header>
-
-            <div
-              className="grid gap-6"
-              style={{
-                gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)',
-              }}
-            >
-              <PlatformCard title="Detail nákupního záměru">
-                <h2 className="mt-2 text-[22px] font-semibold text-[var(--platform-ink)]">
-                  {activeClient.name}
-                </h2>
-                <p className="mt-1 text-[13px] text-[var(--platform-navy)]">
-                  {activeClient.project} ({activeClient.location}) ·{' '}
-                  {activeClient.land}
-                </p>
-
-                <div className="mt-4">
-                  <div className="mb-2 flex justify-between text-[13px] font-semibold">
-                    <span>Index rozhodovací jistoty</span>
-                    <span>{activeClient.score} %</span>
-                  </div>
-                  <div className="h-2.5 overflow-hidden rounded-full bg-[#E3E3E3]">
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${activeClient.score}%`,
-                        background: 'var(--platform-blue)',
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <p className="platform-type-section mt-5">
-                  Hlavní deklarované priority
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {activeClient.priorities.map((priority, index) => (
-                    <PlatformStatusBadge
-                      key={priority}
-                      tone={index === 0 ? 'gold' : 'info'}
-                    >
-                      {priority}
-                    </PlatformStatusBadge>
-                  ))}
-                </div>
-
-                <div
-                  className="mt-5 rounded-[12px] p-4"
-                  style={{
-                    borderLeft: '4px solid var(--platform-gold)',
-                    background: 'var(--platform-cream-light)',
-                  }}
-                >
-                  <h4 className="text-sm font-semibold text-[var(--platform-ink)]">
-                    Doporučené téma rozhovoru
-                  </h4>
-                  <p className="mt-2 text-[13px] leading-relaxed text-[var(--platform-navy)]">
-                    {activeClient.insight}
-                  </p>
-                </div>
-              </PlatformCard>
-
-              <PlatformCard
-                title="Rozhodovací cesta (Decision Journey)"
-                description="Pasivní chování vs. reálné Decision Signals"
-              >
-                <ol className="mt-3 space-y-4">
-                  {activeClient.journey.map((step) => (
-                    <li key={step.label} className="flex gap-3">
-                      <span
-                        className="mt-1 h-3 w-3 shrink-0 rounded-full"
-                        style={{
-                          background:
-                            step.state === 'completed'
-                              ? 'var(--platform-green)'
-                              : step.state === 'active'
-                                ? 'var(--platform-blue)'
-                                : 'var(--platform-line)',
-                        }}
-                        aria-hidden
-                      />
-                      <div>
-                        <p className="text-sm font-semibold text-[var(--platform-ink)]">
-                          {step.label}
-                        </p>
-                        <p className="text-[12px] text-[var(--platform-navy)]">
-                          {step.detail}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </PlatformCard>
+      <main className="platform-studio-pad sales-desk min-h-0 min-w-0 flex-1 overflow-y-auto">
+        <div className="sales-desk__canvas">
+          <header className="platform-title-bar">
+            <div>
+              <h1 className="platform-type-h1">Sales Studio</h1>
+              <p className="platform-type-helper" style={{ marginTop: 4 }}>
+                Nákupní záměr, Decision Profile a konverzní cesta vašich
+                klientů.
+              </p>
             </div>
-          </div>
-        </main>
+            <PlatformStatusBadge tone="gold">
+              {`● ${highIntentCount} klienti s vysokou rozhodovací jistotou`}
+            </PlatformStatusBadge>
+          </header>
 
-        <div className="platform-inspector-rail sticky top-0 h-full self-stretch overflow-hidden">
-          <CapabilityInspector model={inspectorModel} />
+          <div className="sales-desk__grid">
+            <PlatformCard
+              className="sales-desk__cases"
+              title="Případy k hovoru"
+            >
+              <label className="sales-desk__search">
+                <span className="sr-only">Vyhledávání zájemců</span>
+                <input
+                  type="search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                  placeholder="Hledat zájemce…"
+                  className="sales-desk__search-input"
+                />
+              </label>
+
+              <div
+                className="sales-desk__filters"
+                role="group"
+                aria-label="Filtry případů"
+              >
+                <button
+                  type="button"
+                  className={`sales-desk__filter${intentFilter === 'all' ? ' sales-desk__filter--active' : ''}`}
+                  onClick={() => setIntentFilter('all')}
+                >
+                  Všichni
+                </button>
+                <button
+                  type="button"
+                  className={`sales-desk__filter${intentFilter === 'high' ? ' sales-desk__filter--active' : ''}`}
+                  onClick={() => setIntentFilter('high')}
+                >
+                  Vysoká jistota
+                </button>
+              </div>
+
+              <ul className="sales-desk__client-list">
+                {visibleClients.map((client) => {
+                  const active = client.id === activeClient.id;
+                  return (
+                    <li key={client.id}>
+                      <button
+                        type="button"
+                        className={`sales-desk__client${active ? ' sales-desk__client--active' : ''}`}
+                        onClick={() => setActiveClientId(client.id)}
+                        aria-current={active ? 'true' : undefined}
+                      >
+                        <div className="sales-desk__client-head">
+                          <span className="sales-desk__client-name">
+                            {client.name}
+                          </span>
+                          <span className="sales-desk__intent-score">
+                            {client.score} % Jistota
+                          </span>
+                        </div>
+                        <p className="sales-desk__client-project">
+                          {client.listProject}
+                        </p>
+                      </button>
+                    </li>
+                  );
+                })}
+              </ul>
+
+              {visibleClients.length === 0 ? (
+                <p className="sales-desk__empty">Žádný zájemce neodpovídá.</p>
+              ) : null}
+            </PlatformCard>
+
+            <PlatformCard title="Detail nákupního záměru">
+              <h2 className="sales-desk__detail-name">{activeClient.name}</h2>
+              <p className="sales-desk__detail-project">{activeClient.project}</p>
+
+              <div className="sales-desk__meter">
+                <div className="sales-desk__meter-header">
+                  <span>Index rozhodovací jistoty</span>
+                  <span>{activeClient.score} %</span>
+                </div>
+                <div className="sales-desk__meter-track">
+                  <div
+                    className="sales-desk__meter-fill"
+                    style={{ width: `${activeClient.score}%` }}
+                  />
+                </div>
+              </div>
+
+              <p className="platform-type-section sales-desk__priorities-label">
+                Hlavní deklarované priority
+              </p>
+              <div className="sales-desk__tags">
+                {activeClient.tags.map((tag, index) => (
+                  <PlatformStatusBadge
+                    key={tag}
+                    tone={index === 0 ? 'gold' : 'info'}
+                  >
+                    {tag}
+                  </PlatformStatusBadge>
+                ))}
+              </div>
+
+              <div className="sales-desk__insight">
+                <h4>Doporučené téma rozhovoru</h4>
+                <p>{activeClient.insight}</p>
+              </div>
+            </PlatformCard>
+
+            <PlatformCard
+              title="Rozhodovací cesta (Decision Journey)"
+              description="Pasivní chování vs. reálné Decision Signals"
+            >
+              <div className="sales-desk__timeline">
+                {activeClient.journey.map((step) => {
+                  const stateClass = step.active
+                    ? ' sales-desk__step--active'
+                    : step.completed
+                      ? ' sales-desk__step--completed'
+                      : '';
+                  return (
+                    <div
+                      key={`${step.module}-${step.title}`}
+                      className={`sales-desk__step${stateClass}`}
+                    >
+                      <span className="sales-desk__step-node" aria-hidden />
+                      <p className="sales-desk__step-module">{step.module}</p>
+                      <p className="sales-desk__step-title">{step.title}</p>
+                      <p className="sales-desk__step-detail">{step.detail}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </PlatformCard>
+          </div>
         </div>
-      </div>
+      </main>
     </PlatformShell>
   );
 }

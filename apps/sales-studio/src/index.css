@@ -1,10 +1,329 @@
+/**
+ * SR-001 — Sales desk styles from docs/platform/click model.html (.grid-sales-3col …).
+ * Uses Platform Design System tokens; spacing/hierarchy matches the HTML SSOT.
+ */
+
 body {
   margin: 0;
-  color: #001930;
+  color: var(--platform-navy, #001930);
 }
 
 #root {
   height: 100vh;
   overflow: hidden;
-  color: #001930;
+  color: var(--platform-navy, #001930);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.sales-desk__canvas {
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1520px;
+}
+
+/* click model: grid-sales-3col → 340px | 1.2fr | 1fr · gap 20px */
+.sales-desk__grid {
+  display: grid;
+  grid-template-columns: 340px minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.sales-desk__cases.platform-card {
+  padding: 20px;
+}
+
+.sales-desk__cases .platform-card__title {
+  font-size: 15px;
+}
+
+.sales-desk__cases .platform-card__header {
+  margin-bottom: 16px;
+  min-height: 0;
+}
+
+.sales-desk__grid > .platform-card:not(.sales-desk__cases) .platform-card__title {
+  font-size: 15px;
+}
+
+.sales-desk__search {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.sales-desk__search-input {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid var(--platform-line);
+  border-radius: 10px;
+  background: var(--platform-surface);
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--platform-navy);
+}
+
+.sales-desk__search-input::placeholder {
+  color: var(--platform-muted);
+}
+
+.sales-desk__search-input:focus {
+  outline: 2px solid var(--platform-blue);
+  outline-offset: 1px;
+}
+
+.sales-desk__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.sales-desk__filter {
+  border: 1px solid var(--platform-line);
+  border-radius: 999px;
+  background: var(--platform-surface);
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--platform-navy);
+  cursor: pointer;
+}
+
+.sales-desk__filter:hover {
+  border-color: var(--platform-gold);
+}
+
+.sales-desk__filter--active {
+  border-color: var(--platform-gold);
+  background: #fbf7ee;
+  color: var(--platform-navy);
+}
+
+.sales-desk__client-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.sales-desk__client {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin-bottom: 12px;
+  padding: 16px;
+  border: 1px solid var(--platform-line);
+  border-radius: 14px;
+  background: #fff;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.sales-desk__client:last-child {
+  margin-bottom: 0;
+}
+
+.sales-desk__client:hover,
+.sales-desk__client--active {
+  border-color: var(--platform-gold);
+  background: #fbf7ee;
+}
+
+.sales-desk__client-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.sales-desk__client-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--platform-navy);
+}
+
+.sales-desk__intent-score {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--platform-gold);
+  white-space: nowrap;
+}
+
+.sales-desk__client-project {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--platform-muted);
+}
+
+.sales-desk__empty {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: var(--platform-muted);
+}
+
+.sales-desk__detail-name {
+  margin: 8px 0 0;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--platform-navy);
+}
+
+.sales-desk__detail-project {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: var(--platform-muted);
+}
+
+.sales-desk__meter {
+  margin: 16px 0;
+}
+
+.sales-desk__meter-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--platform-navy);
+}
+
+.sales-desk__meter-track {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #e2e8f0;
+}
+
+.sales-desk__meter-fill {
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(
+    90deg,
+    var(--platform-navy),
+    var(--platform-gold)
+  );
+}
+
+.sales-desk__priorities-label {
+  margin-top: 20px;
+  margin-bottom: 8px;
+  color: var(--platform-muted);
+}
+
+.sales-desk__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sales-desk__insight {
+  margin-top: 18px;
+  padding: 16px;
+  border-left: 4px solid var(--platform-gold);
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.sales-desk__insight h4 {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--platform-navy);
+}
+
+.sales-desk__insight p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #475569;
+}
+
+.sales-desk__timeline {
+  position: relative;
+  margin-top: 16px;
+  padding-left: 20px;
+}
+
+.sales-desk__timeline::before {
+  content: '';
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: 2px;
+  background: var(--platform-line);
+}
+
+.sales-desk__step {
+  position: relative;
+  margin-bottom: 18px;
+}
+
+.sales-desk__step:last-child {
+  margin-bottom: 0;
+}
+
+.sales-desk__step-node {
+  position: absolute;
+  top: 3px;
+  left: -20px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--platform-navy);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 2px var(--platform-navy);
+}
+
+.sales-desk__step--completed .sales-desk__step-node {
+  background: var(--platform-gold);
+  box-shadow: 0 0 0 2px var(--platform-gold);
+}
+
+.sales-desk__step--active .sales-desk__step-node {
+  background: var(--platform-green);
+  box-shadow: 0 0 0 2px var(--platform-green);
+}
+
+.sales-desk__step-module {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--platform-muted);
+}
+
+.sales-desk__step-title {
+  margin: 1px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--platform-navy);
+}
+
+.sales-desk__step-detail {
+  margin: 2px 0 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #64748b;
+}
+
+@media (max-width: 1100px) {
+  .sales-desk__grid {
+    grid-template-columns: 1fr;
+  }
 }
