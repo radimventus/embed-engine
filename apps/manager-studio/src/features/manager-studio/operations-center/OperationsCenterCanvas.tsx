@@ -29,8 +29,8 @@ export function OperationsCenterCanvas() {
     >
       <OperationsSurface
         id={PLATFORM_OPS_SECTION_IDS.executive}
-        title="Executive Operations View"
-        description="Current Platform Status · Risks · Recommended Actions — provoz CONIS."
+        title="Manažerský provozní přehled"
+        description="Stav platformy · rizika · doporučené akce — provoz CONIS."
       >
         <p className="text-2xl font-semibold text-embed-foreground-primary">
           {report.executive.currentPlatformStatus}
@@ -38,7 +38,7 @@ export function OperationsCenterCanvas() {
         <div className="mt-4 grid gap-4 md:grid-cols-2">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
-              Current Risks
+              Aktuální rizika
             </p>
             <ul className="mt-2 space-y-2">
               {report.executive.currentRisks.map((risk) => (
@@ -53,7 +53,7 @@ export function OperationsCenterCanvas() {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
-              Recommended Actions
+              Doporučené akce
             </p>
             <ul className="mt-2 space-y-2">
               {report.executive.recommendedActions.map((action) => (
@@ -71,8 +71,8 @@ export function OperationsCenterCanvas() {
 
       <OperationsSurface
         id={PLATFORM_OPS_SECTION_IDS.overview}
-        title="Platform Overview"
-        description="Health · Status · Last Activity napříč platformními oblastmi."
+        title="Přehled platformy"
+        description="Zdraví · stav · poslední aktivita napříč oblastmi platformy."
       >
         <ul className="space-y-3">
           {report.overview.map((area) => (
@@ -89,7 +89,7 @@ export function OperationsCenterCanvas() {
               <span className="text-xs text-embed-foreground-primary/60">
                 {area.status}
                 <br />
-                Last activity · {area.lastActivity}
+                Poslední aktivita · {area.lastActivity}
               </span>
             </li>
           ))}
@@ -98,8 +98,8 @@ export function OperationsCenterCanvas() {
 
       <OperationsSurface
         id={PLATFORM_OPS_SECTION_IDS.timeline}
-        title="Operations Timeline"
-        description="Agregace existujících událostí — Publish, Login, Release, Runtime, Validation, Customer Success."
+        title="Provozní časová osa"
+        description="Agregace existujících událostí — publikace, přihlášení, release, Runtime, validace, zákaznický úspěch."
       >
         <ul className="space-y-3">
           {report.timeline.map((event) => (
@@ -128,7 +128,7 @@ export function OperationsCenterCanvas() {
 
       <OperationsSurface
         id={PLATFORM_OPS_SECTION_IDS.alerts}
-        title="Operational Alerts"
+        title="Provozní upozornění"
         description="Deterministická pravidla — bez AI."
       >
         <ul className="space-y-3">
@@ -158,13 +158,13 @@ export function OperationsCenterCanvas() {
 
       <OperationsSurface
         id={PLATFORM_OPS_SECTION_IDS.metrics}
-        title="Platform Metrics"
-        description="Agregované metriky z registry, publish a Customer Success."
+        title="Metriky platformy"
+        description="Agregované metriky z registru, publikace a zákaznického úspěchu."
       >
         <dl className="grid gap-3 sm:grid-cols-2">
           <div>
             <dt className="text-xs text-embed-foreground-primary/50">
-              Active Companies
+              Aktivní firmy
             </dt>
             <dd className="text-lg font-semibold">
               {report.metrics.activeCompanies}
@@ -172,7 +172,7 @@ export function OperationsCenterCanvas() {
           </div>
           <div>
             <dt className="text-xs text-embed-foreground-primary/50">
-              Active Workspaces
+              Aktivní workspaces
             </dt>
             <dd className="text-lg font-semibold">
               {report.metrics.activeWorkspaces}
@@ -180,7 +180,7 @@ export function OperationsCenterCanvas() {
           </div>
           <div>
             <dt className="text-xs text-embed-foreground-primary/50">
-              Active Projects
+              Aktivní projekty
             </dt>
             <dd className="text-lg font-semibold">
               {report.metrics.activeProjects}
@@ -192,7 +192,7 @@ export function OperationsCenterCanvas() {
           </div>
           <div>
             <dt className="text-xs text-embed-foreground-primary/50">
-              Publish Success
+              Úspěšnost publikace
             </dt>
             <dd className="text-sm font-medium">
               {report.metrics.publishSuccess}
@@ -200,14 +200,14 @@ export function OperationsCenterCanvas() {
           </div>
           <div>
             <dt className="text-xs text-embed-foreground-primary/50">
-              Runtime Health
+              Zdraví Runtime
             </dt>
             <dd className="text-sm font-medium uppercase">
               {report.metrics.runtimeHealth}
             </dd>
           </div>
           <div>
-            <dt className="text-xs text-embed-foreground-primary/50">Adoption</dt>
+            <dt className="text-xs text-embed-foreground-primary/50">Adopce</dt>
             <dd className="text-lg font-semibold">
               {report.metrics.adoptionPercent} %
             </dd>

@@ -23,12 +23,12 @@ export function FeedbackButton({ onSubmitFeedback }: FeedbackButtonProps) {
         aria-label="Poslat zpětnou vazbu"
         onClick={() => setOpen(true)}
       >
-        Feedback
+        Zpětná vazba
       </button>
       <PlatformDialog
         open={open}
         title="Poslat zpětnou vazbu"
-        description="Zpětná vazba jde do Platform Access — ne do produktové capability."
+        description="Zpětná vazba jde do Platform Access — ne do produktového rozhraní."
         primaryLabel="Odeslat"
         secondaryLabel="Zavřít"
         primaryDisabled={message.trim().length === 0}

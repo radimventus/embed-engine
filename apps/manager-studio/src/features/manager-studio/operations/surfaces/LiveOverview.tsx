@@ -14,7 +14,7 @@ export function LiveOverview() {
     >
       <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <Fact label="Objekt" value={overview.objectTitle} />
-        <Fact label="Object ID" value={overview.objectId} />
+        <Fact label="ID objektu" value={overview.objectId} />
         <Fact label="Události" value={String(overview.eventCount)} />
         <Fact
           label="Poslední událost"
@@ -25,7 +25,7 @@ export function LiveOverview() {
           value={overview.activeRoomId ?? '—'}
         />
         <Fact
-          label="Outcome"
+          label="Výsledek"
           value={overview.outcomeStatus ?? '—'}
         />
       </dl>

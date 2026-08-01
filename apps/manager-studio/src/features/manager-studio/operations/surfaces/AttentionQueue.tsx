@@ -23,7 +23,7 @@ export function AttentionQueue() {
     >
       <p className="text-sm text-embed-foreground-primary/70">{attentionLabel}</p>
       <p className="mt-2 text-xs text-embed-foreground-primary/45">
-        Outcome status: {status ?? '—'}
+        Stav výsledku: {status ?? '—'}
       </p>
     </OperationsSurface>
   );

@@ -64,7 +64,7 @@ export function WorkspaceSidebar({
 
   return (
     <aside
-      className="sticky top-0 flex h-full flex-col overflow-y-auto border-r border-builder-line bg-white p-6"
+      className="flex h-full min-h-0 flex-col overflow-y-auto border-r border-builder-line bg-white p-6"
       data-studio-shell="workspace-sidebar"
     >
       <button
@@ -82,16 +82,18 @@ export function WorkspaceSidebar({
         {contextLabel}
       </div>
 
-      <button
-        type="button"
-        title="Nový projekt"
-        aria-label="Nový projekt"
-        disabled={switching}
-        onClick={onCreateProject}
-        className="mt-3 flex h-10 w-10 items-center justify-center rounded-full border border-[#D7E4FF] bg-builder-panel text-lg font-semibold text-builder-navy hover:bg-white disabled:opacity-40"
-      >
-        ⊕
-      </button>
+      <div className="mt-3 flex w-full justify-center">
+        <button
+          type="button"
+          title="Nový projekt"
+          aria-label="Nový projekt"
+          disabled={switching}
+          onClick={onCreateProject}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-[#D7E4FF] bg-builder-panel text-lg font-semibold text-builder-navy hover:bg-white disabled:opacity-40"
+        >
+          ⊕
+        </button>
+      </div>
 
       <div className="my-5 border-t border-builder-line" />
 

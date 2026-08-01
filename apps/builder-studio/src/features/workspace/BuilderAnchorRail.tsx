@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import type { HousePackageEditSnapshot } from '../house-package/housePackageEditSession';
 import type { HousePackageNavId } from '../house-package/HousePackageSidebar';
 import type { HpEditSection } from '../house-package/validateHousePackageWorking';
@@ -5,17 +7,17 @@ import type { HpEditSection } from '../house-package/validateHousePackageWorking
 type AnchorItem = {
   readonly id: HousePackageNavId;
   readonly label: string;
+  readonly domId: string;
   readonly section: HpEditSection | null;
 };
 
 /**
- * PR-005 — Anchor Rail přesně podle HTML click modelu.
- * Pouze: Média · Dispozice · Znalosti.
+ * PR-008 — Anchor Rail = scroll na sekce (HTML click model), ne přepínače obrazovek.
  */
 const ANCHORS: readonly AnchorItem[] = [
-  { id: 'media-studio', label: 'Média', section: null },
-  { id: 'rooms', label: 'Dispozice', section: 'rooms' },
-  { id: 'knowledge', label: 'Znalosti', section: null },
+  { id: 'media-studio', label: 'Média', domId: 'b-media', section: null },
+  { id: 'rooms', label: 'Dispozice', domId: 'b-layout', section: 'rooms' },
+  { id: 'knowledge', label: 'Znalosti', domId: 'b-knowledge', section: null },
 ];
 
 type BuilderAnchorRailProps = {
@@ -29,8 +31,54 @@ export function BuilderAnchorRail({
   activeNav,
   onSelectNav,
 }: BuilderAnchorRailProps) {
+  const [scrollActive, setScrollActive] = useState<HousePackageNavId | null>(
+    null,
+  );
+
+  useEffect(() => {
+    const root = document.querySelector(
+      '[data-studio-shell="builder-layout"] main',
+    );
+    if (!(root instanceof HTMLElement)) return;
+
+    const ratios = new Map<string, number>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          ratios.set(entry.target.id, entry.intersectionRatio);
+        }
+        let bestId: HousePackageNavId | null = null;
+        let bestRatio = 0;
+        for (const item of ANCHORS) {
+          const ratio = ratios.get(item.domId) ?? 0;
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = item.id;
+          }
+        }
+        if (bestId !== null) {
+          setScrollActive(bestId);
+        }
+      },
+      {
+        root,
+        threshold: [0.15, 0.35, 0.55, 0.75],
+      },
+    );
+
+    for (const item of ANCHORS) {
+      const el = document.getElementById(item.domId);
+      if (el !== null) observer.observe(el);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [snapshot]);
+
   const resolvedActive: HousePackageNavId =
-    activeNav === 'media' ||
+    scrollActive ??
+    (activeNav === 'media' ||
     activeNav === 'gallery' ||
     activeNav === 'videos' ||
     activeNav === 'media-studio'
@@ -39,7 +87,7 @@ export function BuilderAnchorRail({
         ? 'rooms'
         : activeNav === 'knowledge'
           ? 'knowledge'
-          : activeNav;
+          : 'media-studio');
 
   return (
     <nav
@@ -56,7 +104,14 @@ export function BuilderAnchorRail({
           <button
             key={item.id}
             type="button"
-            onClick={() => onSelectNav(item.id)}
+            onClick={() => {
+              onSelectNav(item.id);
+              window.setTimeout(() => {
+                document
+                  .getElementById(item.domId)
+                  ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 40);
+            }}
             className={`platform-tab ${active ? 'platform-tab--active' : ''}`}
           >
             {item.label}

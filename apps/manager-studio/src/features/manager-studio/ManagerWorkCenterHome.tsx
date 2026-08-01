@@ -4,81 +4,111 @@ import {
 } from '@embed-engine/platform-shell';
 
 /**
- * PR-002 — Manager jako pracovní centrum (HTML click model).
+ * PR-005 — Manager jako pracovní centrum (HTML click model).
  * Prezentace — bez nové capability / workflow.
  */
 export function ManagerWorkCenterHome() {
   return (
     <section id="manager-work-center" className="mb-8 space-y-6">
       <div className="grid gap-6 desktop:grid-cols-2">
-        <PlatformCard
-          title="Místa ztráty zákazníků"
-          description="Kde zájemci opouštějí rozhodovací proces (Decision Journey)"
-          action={
-            <PlatformStatusBadge tone="warning">
-              Pokles ve kroku Finance
-            </PlatformStatusBadge>
-          }
-        >
-          <FunnelRow label="Experience" width={100} value="1000" />
-          <FunnelRow label="Priority" width={87} value="870" />
-          <FunnelRow label="Navigátor" width={69} value="690" />
-          <FunnelRow label="Finance" width={43} value="430" critical />
-          <FunnelRow label="Nabídka" width={31} value="310" />
-          <FunnelRow label="Rezervace" width={19} value="190" />
-          <div
-            className="mt-5 grid gap-3 border-t border-[var(--platform-line)] pt-4"
-            style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}
+        <div id="mwc-dropoff" className="scroll-mt-4">
+          <PlatformCard
+            title="Místa ztráty zákazníků"
+            description="Kde zájemci opouštějí rozhodovací proces (Decision Journey)"
+            action={
+              <PlatformStatusBadge tone="warning">
+                Pokles ve kroku Finance
+              </PlatformStatusBadge>
+            }
           >
-            <MetricBox label="Nejkritičtější krok" value="Finance (−38 %)" />
-            <MetricBox label="Celková konverze" value="19 %" />
-            <MetricBox label="Doporučení" value="Doplnit kalkulačku" />
-          </div>
-        </PlatformCard>
+            <FunnelRow label="Experience" width={100} value="1000" />
+            <FunnelRow label="Priority" width={87} value="870" />
+            <FunnelRow label="Navigátor" width={69} value="690" />
+            <FunnelRow label="Finance" width={43} value="430" critical />
+            <FunnelRow label="Nabídka" width={31} value="310" />
+            <FunnelRow label="Rezervace" width={19} value="190" />
+            <div
+              className="mt-5 grid gap-3 border-t border-[var(--platform-line)] pt-4"
+              style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}
+            >
+              <MetricBox label="Nejkritičtější krok" value="Finance (−38 %)" />
+              <MetricBox label="Celková konverze" value="19 %" />
+              <MetricBox label="Doporučení AI" value="Doplnit kalkulačku" />
+            </div>
+          </PlatformCard>
+        </div>
 
-        <PlatformCard
-          title="Co ovlivňuje rozhodnutí zákazníků"
-          description="Váha parametrů při vytváření osobního Decision Profile"
-          action={
-            <PlatformStatusBadge tone="gold">
-              Top: Cena & Splátka
-            </PlatformStatusBadge>
-          }
-        >
-          <FactorRow label="Celková cena" width={92} value="92" />
-          <FactorRow label="Měsíční splátka" width={87} value="87" />
-          <FactorRow label="Energetická úspora" width={76} value="76" />
-          <FactorRow label="Dispozice domu" width={69} value="69" />
-          <FactorRow label="Velikost pozemku" width={58} value="58" />
-          <FactorRow label="Design & Architektura" width={44} value="44" />
-        </PlatformCard>
+        <div id="mwc-factors" className="scroll-mt-4">
+          <PlatformCard
+            title="Co ovlivňuje rozhodnutí zákazníků"
+            description="Váha parametrů při vytváření osobního Decision Profile"
+            action={
+              <PlatformStatusBadge tone="gold">
+                Top: Cena & Splátka
+              </PlatformStatusBadge>
+            }
+          >
+            <div className="grid gap-4 desktop:grid-cols-[1fr_200px]">
+              <div>
+                <FactorRow label="Celková cena" width={92} value="92" />
+                <FactorRow label="Měsíční splátka" width={87} value="87" />
+                <FactorRow label="Energetická úspora" width={76} value="76" />
+                <FactorRow label="Dispozice domu" width={69} value="69" />
+                <FactorRow label="Velikost pozemku" width={58} value="58" />
+                <FactorRow label="Design & Architektura" width={44} value="44" />
+              </div>
+              <div className="rounded-[14px] border border-[var(--platform-line)] bg-[#FAFBFD] p-4">
+                <div className="text-[12px] text-[var(--platform-muted)]">
+                  Nejsilnější faktor
+                </div>
+                <div className="mt-1 text-[28px] font-bold text-[var(--platform-ink)]">
+                  Cena
+                </div>
+                <div className="mt-4 text-[12px] font-semibold text-[var(--platform-muted)]">
+                  Průměrná změna priorit
+                </div>
+                <div className="mt-1 text-[18px] font-bold text-[var(--platform-ink)]">
+                  +31 %
+                </div>
+                <div className="mt-4 text-[12px] font-semibold text-[var(--platform-muted)]">
+                  Nejcitlivější okamžik
+                </div>
+                <div className="mt-1 text-sm font-bold text-[var(--platform-ink)]">
+                  Finanční kalkulace
+                </div>
+              </div>
+            </div>
+          </PlatformCard>
+        </div>
       </div>
 
-      <PlatformCard
-        title="Doporučená vylepšení Experience"
-        description="Automatická diagnostika z Decision Signals pro zvýšení jistoty klientů"
-      >
-        <div className="grid gap-4 desktop:grid-cols-3">
-          <ImproveCard
-            tone="gold"
-            impact="Vysoký dopad"
-            title="Doplnit FAQ k financování"
-            detail="Detekováno opuštění ve fázi Finance. Zodpovězení splátek předem odstraní nejistotu."
-          />
-          <ImproveCard
-            tone="gold"
-            impact="Vysoký dopad"
-            title="Propojení House Navigatora s FVE"
-            detail="Klienti řešící energetickou úsporu vyžadují pohled na střechu a orientaci ke světlu."
-          />
-          <ImproveCard
-            tone="info"
-            impact="Střední dopad"
-            title="Rozšíření fotogalerie interiéru"
-            detail="Opakované návraty do sekce Hero indikují potřebu více reálných detailů."
-          />
-        </div>
-      </PlatformCard>
+      <div id="mwc-improvements" className="scroll-mt-4">
+        <PlatformCard
+          title="Doporučená vylepšení Experience Layer"
+          description="Automatická diagnostika z Decision Signals pro zvýšení jistoty klientů"
+        >
+          <div className="grid gap-4 desktop:grid-cols-3">
+            <ImproveCard
+              tone="gold"
+              impact="Vysoký dopad"
+              title="Doplnit FAQ k financování"
+              detail="AI detekuje opuštění ve fázi Finance. Zodpovězení splátek předem odstraní nejistotu."
+            />
+            <ImproveCard
+              tone="gold"
+              impact="Vysoký dopad"
+              title="Propojení House Navigatora s FVE"
+              detail="Klienti řešící energetickou úsporu vyžadují pohled na střechu a orientaci ke světlu."
+            />
+            <ImproveCard
+              tone="info"
+              impact="Střední dopad"
+              title="Rozšíření fotogalerie interiéru"
+              detail="Opakované návraty do sekce Hero indikují potřebu většího množství reálných detailů."
+            />
+          </div>
+        </PlatformCard>
+      </div>
     </section>
   );
 }

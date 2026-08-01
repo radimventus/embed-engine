@@ -20,7 +20,7 @@ export function CustomerSuccessCanvas() {
     return (
       <div className="w-full max-w-5xl px-section py-section" data-capability="customer-success">
         <p className="text-sm text-embed-foreground-primary/60">
-          Customer Success — chybí Company / Workspace kontext.
+          Zákaznický úspěch — chybí kontext firmy / workspace.
         </p>
       </div>
     );
@@ -34,8 +34,8 @@ export function CustomerSuccessCanvas() {
     >
       <OperationsSurface
         id={CUSTOMER_SUCCESS_SECTION_IDS.adoption}
-        title="Adoption Score"
-        description="Deterministická adopce z onboarding kroků, aktivity, publish a capability."
+        title="Skóre adopce"
+        description="Deterministická adopce z onboarding kroků, aktivity, publikace a oprávnění."
       >
         <p className="text-4xl font-semibold tracking-tight text-embed-foreground-primary">
           {report.adoptionScore} %
@@ -47,8 +47,8 @@ export function CustomerSuccessCanvas() {
 
       <OperationsSurface
         id={CUSTOMER_SUCCESS_SECTION_IDS.health}
-        title="Customer Health"
-        description="Healthy · Attention · At Risk — stejná capability jako Builder status."
+        title="Zdraví zákazníka"
+        description="Zdravé · Pozornost · Ohrožené — stejný stav jako v Builderu."
       >
         <p className="text-2xl font-semibold text-embed-foreground-primary">
           {report.health}
@@ -60,8 +60,8 @@ export function CustomerSuccessCanvas() {
 
       <OperationsSurface
         id={CUSTOMER_SUCCESS_SECTION_IDS.onboarding}
-        title="Onboarding Journey"
-        description={`${report.onboardingCompleteCount}/${report.onboardingTotal} kroků complete.`}
+        title="Onboardingová cesta"
+        description={`${report.onboardingCompleteCount}/${report.onboardingTotal} kroků dokončeno.`}
       >
         <ul className="space-y-3">
           {report.onboarding.map((step) => (
@@ -85,7 +85,7 @@ export function CustomerSuccessCanvas() {
 
       <OperationsSurface
         id={CUSTOMER_SUCCESS_SECTION_IDS.timeline}
-        title="Success Timeline"
+        title="Časová osa úspěchu"
         description="Chronologie důležitých událostí zákazníka."
       >
         <ul className="space-y-3">
@@ -110,7 +110,7 @@ export function CustomerSuccessCanvas() {
 
       <OperationsSurface
         id={CUSTOMER_SUCCESS_SECTION_IDS.recommendations}
-        title="Success Recommendations"
+        title="Doporučení pro úspěch"
         description="Každé doporučení vede na konkrétní místo v platformě."
       >
         <ul className="space-y-3">

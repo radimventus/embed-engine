@@ -10,7 +10,7 @@ export function Actions() {
     <OperationsSurface
       id={OPERATIONS_SECTION_IDS.actions}
       title="Akce"
-      description="Foundation surface. Assign / contact / resolve se napojí na Runtime později."
+      description="Základní plocha. Přiřazení / kontakt / vyřešení se napojí na Runtime později."
     >
       <ul className="space-y-2 text-sm text-embed-foreground-primary/55">
         <li>Přiřadit — připraveno pro další capability</li>

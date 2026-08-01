@@ -22,8 +22,8 @@ export function LaunchCenterCanvas() {
     >
       <OperationsSurface
         id={LAUNCH_SECTION_IDS.executive}
-        title="Executive Launch Report"
-        description="Current Stage · Remaining Risks · Blocking Items · Recommended Next Action."
+        title="Manažerská zpráva ke spuštění"
+        description="Aktuální fáze · zbývající rizika · blokující položky · doporučený další krok."
       >
         <p className="text-2xl font-semibold text-embed-foreground-primary">
           {report.executive.currentStage}
@@ -32,7 +32,7 @@ export function LaunchCenterCanvas() {
           Next · {report.executive.recommendedNextAction}
         </p>
         <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
-          Remaining Risks
+          Zbývající rizika
         </p>
         <ul className="mt-2 space-y-1">
           {report.executive.remainingRisks.map((item) => (
@@ -45,7 +45,7 @@ export function LaunchCenterCanvas() {
           ))}
         </ul>
         <p className="mt-4 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
-          Blocking Items
+          Blokující položky
         </p>
         <ul className="mt-2 space-y-1">
           {report.executive.blockingItems.map((item) => (
@@ -61,17 +61,17 @@ export function LaunchCenterCanvas() {
 
       <OperationsSurface
         id={LAUNCH_SECTION_IDS.dashboard}
-        title="Launch Dashboard"
-        description="Pilot Progress · GA · Commercial · Technical · Operational Readiness."
+        title="Přehled spuštění"
+        description="Pilot · GA · obchodní · technická · provozní připravenost."
       >
         <dl className="grid gap-3 sm:grid-cols-2">
           {(
             [
-              ['Pilot Progress', report.dashboard.pilotProgress],
-              ['GA Readiness', report.dashboard.gaReadiness],
-              ['Commercial Readiness', report.dashboard.commercialReadiness],
-              ['Technical Readiness', report.dashboard.technicalReadiness],
-              ['Operational Readiness', report.dashboard.operationalReadiness],
+              ['Postup pilota', report.dashboard.pilotProgress],
+              ['Připravenost GA', report.dashboard.gaReadiness],
+              ['Obchodní připravenost', report.dashboard.commercialReadiness],
+              ['Technická připravenost', report.dashboard.technicalReadiness],
+              ['Provozní připravenost', report.dashboard.operationalReadiness],
             ] as const
           ).map(([label, value]) => (
             <div key={label}>
@@ -88,8 +88,8 @@ export function LaunchCenterCanvas() {
 
       <OperationsSurface
         id={LAUNCH_SECTION_IDS.checklist}
-        title="Launch Checklist"
-        description="Platform · Studios · Runtime · Publish · Intelligence · CS · Ops · Commercial."
+        title="Kontrolní seznam spuštění"
+        description="Platforma · Studia · Runtime · Publikace · Intelligence · CS · Provoz · Obchod."
       >
         <ul className="space-y-2">
           {report.checklist.map((item) => (
@@ -111,8 +111,8 @@ export function LaunchCenterCanvas() {
 
       <OperationsSurface
         id={LAUNCH_SECTION_IDS.timeline}
-        title="Launch Timeline"
-        description="Pilot #1–#3 · VR · GA Decision · Public Launch — pouze projekce."
+        title="Časová osa spuštění"
+        description="Pilot #1–#3 · VR · rozhodnutí GA · veřejné spuštění — pouze projekce."
       >
         <ol className="space-y-3">
           {report.timeline.map((stage) => (
@@ -133,7 +133,7 @@ export function LaunchCenterCanvas() {
 
       <OperationsSurface
         id={LAUNCH_SECTION_IDS.gates}
-        title="Pilot Gate · GA Gate"
+        title="Brána pilota · Brána GA"
         description="Výhradně z existujících Pilot Ready a GA Go/No-Go modelů."
       >
         <div className="grid gap-4 sm:grid-cols-2">

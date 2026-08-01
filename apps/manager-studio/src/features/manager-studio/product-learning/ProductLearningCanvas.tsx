@@ -44,8 +44,8 @@ export function ProductLearningCanvas() {
     >
       <OperationsSurface
         id={PRODUCT_LEARNING_SECTION_IDS.executive}
-        title="Executive Summary"
-        description="Pilot Learnings · Top doporučení · rizika · příležitosti."
+        title="Manažerské shrnutí"
+        description="Poznatky z pilota · top doporučení · rizika · příležitosti."
       >
         <p className="text-lg font-semibold text-embed-foreground-primary">
           {report.executive.pilotLearnings}
@@ -104,8 +104,8 @@ export function ProductLearningCanvas() {
 
       <OperationsSurface
         id={PRODUCT_LEARNING_SECTION_IDS.insights}
-        title="Product Insights"
-        description="Nejčastější podněty · capability · Studia · trendy pilotů."
+        title="Produktové poznatky"
+        description="Nejčastější podněty · schopnosti · Studia · trendy pilotů."
       >
         <div className="grid gap-6 md:grid-cols-2">
           <div>
@@ -124,7 +124,7 @@ export function ProductLearningCanvas() {
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/50">
-              Capability / Studia
+              Schopnosti / Studia
             </p>
             <ul className="mt-2 space-y-1 text-sm text-embed-foreground-primary/75">
               {report.insights.capabilitiesAffected.slice(0, 5).map((item) => (
@@ -155,7 +155,7 @@ export function ProductLearningCanvas() {
 
       <OperationsSurface
         id={PRODUCT_LEARNING_SECTION_IDS.recommendations}
-        title="Recommendation Pipeline"
+        title="Pipeline doporučení"
         description="Četnost · dopad · priorita — deterministická pravidla."
       >
         <ul className="space-y-3">
@@ -178,8 +178,8 @@ export function ProductLearningCanvas() {
 
       <OperationsSurface
         id={PRODUCT_LEARNING_SECTION_IDS.roadmap}
-        title="Roadmap Suggestions"
-        description="High / Medium / Low Impact — doporučení, ne automatická roadmapa."
+        title="Návrhy roadmapy"
+        description="Vysoký / střední / nízký dopad — doporučení, ne automatická roadmapa."
       >
         <ul className="space-y-3">
           {report.roadmapSuggestions.map((item) => (
@@ -203,8 +203,8 @@ export function ProductLearningCanvas() {
 
       <OperationsSurface
         id={PRODUCT_LEARNING_SECTION_IDS.registry}
-        title="Feedback Registry"
-        description="Navázáno na Company / Workspace / Project / Studio / Capability / Release."
+        title="Registr zpětné vazby"
+        description="Navázáno na firmu / workspace / projekt / studio / schopnost / release."
       >
         <form className="mb-4 grid gap-2" onSubmit={onSubmit}>
           <label className="text-xs font-semibold text-embed-foreground-primary/60">
@@ -221,7 +221,7 @@ export function ProductLearningCanvas() {
             type="submit"
             className="w-fit rounded-sm bg-embed-brand-navy px-3 py-2 text-sm font-medium text-white"
           >
-            Zaznamenat feedback
+            Zaznamenat zpětnou vazbu
           </button>
         </form>
         <ul className="space-y-3">

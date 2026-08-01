@@ -1,0 +1,110 @@
+import { KnowledgeComposerView } from '../knowledge-composer';
+import { MediaStudioView } from '../media-studio';
+import {
+  HousePackageEditView,
+  type HousePackageEditSession,
+  type HousePackageEditSnapshot,
+  type HousePackageNavId,
+} from '../house-package';
+import type { HousePackageValidationReport } from '../house-package/housePackageValidationReport';
+import type { HousePackageReleaseSummary } from '../house-package/productionPublishGate';
+import type { WorkspaceProject } from '../workspace/workspaceRegistry';
+
+type BuilderClickModelCanvasProps = {
+  readonly projectId: string;
+  readonly projectName: string;
+  readonly companyName: string;
+  readonly project: WorkspaceProject;
+  readonly snapshot: HousePackageEditSnapshot;
+  readonly session: HousePackageEditSession;
+  readonly saving: boolean;
+  readonly validationReport: HousePackageValidationReport | null;
+  readonly releaseSummary: HousePackageReleaseSummary | null;
+  readonly onChange: (next: HousePackageEditSnapshot) => void;
+  readonly onSave: () => void;
+  readonly onEditProject: () => void;
+  readonly onNavigate: (nav: HousePackageNavId) => void;
+  readonly onPublish: () => void;
+};
+
+/**
+ * PR-008 — Jedna scrollovací plocha se sekcemi Média · Dispozice · Znalosti.
+ */
+export function BuilderClickModelCanvas({
+  projectId,
+  projectName,
+  companyName,
+  project,
+  snapshot,
+  session,
+  saving,
+  validationReport,
+  releaseSummary,
+  onChange,
+  onSave,
+  onEditProject,
+  onNavigate,
+  onPublish,
+}: BuilderClickModelCanvasProps) {
+  return (
+    <div
+      className="space-y-14"
+      data-studio-shell="builder-click-model-canvas"
+    >
+      <section id="b-media" className="scroll-mt-6 space-y-4">
+        <header>
+          <h3 className="text-[22px] font-bold text-builder-navy">Média</h3>
+          <p className="mt-1 text-sm text-builder-muted">
+            Fotografie a video objektu.
+          </p>
+        </header>
+        <MediaStudioView
+          projectId={projectId}
+          projectName={projectName}
+          snapshot={snapshot}
+          session={session}
+          onChange={onChange}
+        />
+      </section>
+
+      <section id="b-layout" className="scroll-mt-6 space-y-4">
+        <header>
+          <h3 className="text-[22px] font-bold text-builder-navy">Dispozice</h3>
+          <p className="mt-1 text-sm text-builder-muted">
+            Data potřebná pro House Navigator.
+          </p>
+        </header>
+        <HousePackageEditView
+          snapshot={snapshot}
+          session={session}
+          activeNav="rooms"
+          saving={saving}
+          companyName={companyName}
+          project={project}
+          validationReport={validationReport}
+          releaseSummary={releaseSummary}
+          onChange={onChange}
+          onSave={onSave}
+          onEditProject={onEditProject}
+          onNavigate={onNavigate}
+          onPublish={onPublish}
+        />
+      </section>
+
+      <section id="b-knowledge" className="scroll-mt-6 space-y-4">
+        <header>
+          <h3 className="text-[22px] font-bold text-builder-navy">Znalosti</h3>
+          <p className="mt-1 text-sm text-builder-muted">Dokumenty pro AI.</p>
+        </header>
+        <KnowledgeComposerView
+          projectId={projectId}
+          projectName={projectName}
+          snapshot={snapshot}
+          session={session}
+          onSnapshotChange={onChange}
+          onNavigate={onNavigate}
+        />
+      </section>
+    </div>
+  );
+}

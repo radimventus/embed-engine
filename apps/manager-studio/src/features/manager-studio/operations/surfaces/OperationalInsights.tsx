@@ -9,7 +9,7 @@ export function OperationalInsights() {
     <OperationsSurface
       id={OPERATIONS_SECTION_IDS.insights}
       title="Provozní poznatky"
-      description="Foundation surface. Agregované vzorce Runtime přijdou v dalších capabilities."
+      description="Základní plocha. Agregované vzorce Runtime přijdou později."
     >
       <p className="text-sm text-embed-foreground-primary/55">
         Žádné provozní poznatky v Generation 1 foundation.

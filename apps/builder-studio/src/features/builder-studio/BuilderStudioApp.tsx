@@ -13,8 +13,6 @@ import {
 import { AppShell } from '../../components/layout/AppShell';
 import { getBuilderCapabilityHost } from '../../studio/builderStudioComposition';
 import { ExperienceComposerView } from '../experience-composer';
-import { KnowledgeComposerView } from '../knowledge-composer';
-import { MediaStudioView } from '../media-studio';
 import { BuilderIntelligenceView } from '../builder-intelligence';
 import { CollaborationCenterView } from '../collaboration-workspace';
 import { PreviewCenterView } from '../preview-center';
@@ -42,6 +40,7 @@ import {
   WorkspaceSidebar,
 } from '../workspace';
 import { BuilderAnchorRail } from '../workspace/BuilderAnchorRail';
+import { BuilderClickModelCanvas } from '../workspace/BuilderClickModelCanvas';
 
 const SECTION_LABEL: Record<HousePackageNavId, string> = {
   overview: 'Dashboard',
@@ -59,6 +58,19 @@ const SECTION_LABEL: Record<HousePackageNavId, string> = {
   media: 'Média (HP)',
   manifest: 'Manifest',
 };
+
+function isClickModelNav(nav: HousePackageNavId): boolean {
+  return (
+    nav === 'media-studio' ||
+    nav === 'rooms' ||
+    nav === 'knowledge' ||
+    nav === 'gallery' ||
+    nav === 'videos' ||
+    nav === 'media' ||
+    nav === 'plans' ||
+    nav === 'manifest'
+  );
+}
 
 /**
  * EPIC-BX-01..13 — Builder Studio: capability composition over Platform Shell.
@@ -125,12 +137,12 @@ export function BuilderStudioApp() {
       : 'Firma');
 
   const experienceMode = activeNav === 'experience';
-  const knowledgeMode = activeNav === 'knowledge';
-  const mediaStudioMode = activeNav === 'media-studio';
   const previewCenterMode = activeNav === 'preview-center';
   const releaseCenterMode = activeNav === 'release-center';
   const collaborationMode = activeNav === 'collaboration';
   const intelligenceMode = activeNav === 'intelligence';
+  const overviewMode = activeNav === 'overview';
+  const clickModelMode = isClickModelNav(activeNav);
 
   // Default: Média (click-model Anchor Rail); honor deep-link hash.
   useEffect(() => {
@@ -220,11 +232,11 @@ export function BuilderStudioApp() {
     { id: 'section', label: SECTION_LABEL[activeNav] },
   ];
 
-  const activeCapabilityId = capabilityIdFromBuilderNav(activeNav);
+  const activeCapabilityId = capabilityIdFromBuilderNav(
+    clickModelMode ? 'media-studio' : activeNav,
+  );
   const productCapabilityMode =
     experienceMode ||
-    knowledgeMode ||
-    mediaStudioMode ||
     previewCenterMode ||
     releaseCenterMode ||
     collaborationMode ||
@@ -380,29 +392,6 @@ export function BuilderStudioApp() {
           )}
         {mountStatus.status === 'ready' &&
           workspace.activeProject !== null &&
-          knowledgeMode && (
-            <KnowledgeComposerView
-              projectId={workspace.activeProject.id}
-              projectName={workspace.activeProject.name}
-              snapshot={snapshot}
-              session={session}
-              onSnapshotChange={apply}
-              onNavigate={handleNavigate}
-            />
-          )}
-        {mountStatus.status === 'ready' &&
-          workspace.activeProject !== null &&
-          mediaStudioMode && (
-            <MediaStudioView
-              projectId={workspace.activeProject.id}
-              projectName={workspace.activeProject.name}
-              snapshot={snapshot}
-              session={session}
-              onChange={apply}
-            />
-          )}
-        {mountStatus.status === 'ready' &&
-          workspace.activeProject !== null &&
           previewCenterMode && (
             <PreviewCenterView
               projectId={workspace.activeProject.id}
@@ -451,23 +440,43 @@ export function BuilderStudioApp() {
           snapshot !== null &&
           session !== null &&
           workspace.activeProject !== null &&
-          !experienceMode &&
-          !knowledgeMode &&
-          !mediaStudioMode &&
-          !previewCenterMode &&
-          !releaseCenterMode &&
-          !collaborationMode &&
-          !intelligenceMode && (
+          overviewMode && (
             <HousePackageEditView
               snapshot={snapshot}
               session={session}
-              activeNav={activeNav}
+              activeNav="overview"
               saving={saving}
               companyName={companyName}
               project={workspace.activeProject}
               validationReport={validationReport}
               releaseSummary={releaseSummary}
               historyOpen={historyOpen}
+              onChange={apply}
+              onSave={() => {
+                void save();
+              }}
+              onEditProject={() => setEditOpen(true)}
+              onNavigate={handleNavigate}
+              onPublish={() => {
+                void publish();
+              }}
+            />
+          )}
+        {mountStatus.status === 'ready' &&
+          snapshot !== null &&
+          session !== null &&
+          workspace.activeProject !== null &&
+          clickModelMode && (
+            <BuilderClickModelCanvas
+              projectId={workspace.activeProject.id}
+              projectName={workspace.activeProject.name}
+              companyName={companyName}
+              project={workspace.activeProject}
+              snapshot={snapshot}
+              session={session}
+              saving={saving}
+              validationReport={validationReport}
+              releaseSummary={releaseSummary}
               onChange={apply}
               onSave={() => {
                 void save();

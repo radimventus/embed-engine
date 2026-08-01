@@ -1,11 +1,11 @@
 import type { PlatformRole, PlatformStudioId } from './types';
 
 export const PLATFORM_ROLE_LABELS: Record<PlatformRole, string> = {
-  'conis-admin': 'CONIS Admin',
-  'project-admin': 'Project Admin',
+  'conis-admin': 'Administrátor CONIS',
+  'project-admin': 'Administrátor projektu',
   builder: 'Builder',
   manager: 'Manager',
-  salesman: 'Salesman',
+  salesman: 'Obchodník',
 };
 
 const ROLE_RANK: Record<PlatformRole, number> = {
