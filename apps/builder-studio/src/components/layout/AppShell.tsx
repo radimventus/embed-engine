@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
 
 type AppShellProps = {
-  readonly header: ReactNode;
   readonly workspacePanel?: ReactNode;
   readonly sidebar: ReactNode;
   readonly publishPanel?: ReactNode;
@@ -11,10 +10,10 @@ type AppShellProps = {
 };
 
 /**
- * BuilderShell: Platform Header + Workspace + Project nav + canvas + readiness.
+ * Builder body shell under Platform Shell (EPIC-BX-11).
+ * Platform Header / Breadcrumb live in `@embed-engine/platform-shell`.
  */
 export function AppShell({
-  header,
   workspacePanel,
   sidebar,
   publishPanel,
@@ -32,20 +31,19 @@ export function AppShell({
         : 'grid-cols-[260px_1fr]';
 
   return (
-    <div className="flex min-h-screen flex-col bg-builder-canvas text-builder-ink">
-      {header}
-      <div className={`grid min-h-0 flex-1 overflow-hidden ${gridClass}`}>
-        {workspacePanel}
-        {sidebar}
-        <main
-          className={`min-w-0 overflow-y-auto ${
-            denseMain ? 'p-4' : 'px-9 py-9'
-          }`}
-        >
-          {children}
-        </main>
-        {hasPublish ? publishPanel : null}
-      </div>
+    <div
+      className={`grid min-h-0 flex-1 overflow-hidden ${gridClass}`}
+    >
+      {workspacePanel}
+      {sidebar}
+      <main
+        className={`min-w-0 overflow-y-auto ${
+          denseMain ? 'p-4' : 'px-9 py-9'
+        }`}
+      >
+        {children}
+      </main>
+      {hasPublish ? publishPanel : null}
     </div>
   );
 }

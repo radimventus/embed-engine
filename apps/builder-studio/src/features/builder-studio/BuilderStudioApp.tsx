@@ -8,7 +8,11 @@ import { BuilderIntelligenceView } from '../builder-intelligence';
 import { CollaborationCenterView } from '../collaboration-workspace';
 import { PreviewCenterView } from '../preview-center';
 import { ReleaseCenterView } from '../release-center';
-import { PlatformHeader } from '../platform';
+import {
+  PlatformShell,
+  type PlatformBreadcrumbItem,
+  type PlatformWorkspaceState,
+} from '../platform';
 import { ProjectActionPanel } from '../project-dashboard';
 import {
   HousePackageEditView,
@@ -24,6 +28,23 @@ import {
   useWorkspaceController,
   WorkspaceSidebar,
 } from '../workspace';
+
+const SECTION_LABEL: Record<HousePackageNavId, string> = {
+  overview: 'Dashboard',
+  experience: 'Experience',
+  knowledge: 'Knowledge',
+  'media-studio': 'Media',
+  'preview-center': 'Preview',
+  'release-center': 'Release',
+  collaboration: 'Collaboration',
+  intelligence: 'Intelligence',
+  rooms: 'Rooms',
+  gallery: 'Gallery',
+  videos: 'Videos',
+  plans: 'Plans',
+  media: 'Media (HP)',
+  manifest: 'Manifest',
+};
 
 /**
  * EPIC-BX-01..03 — Builder Studio: Dashboard + Experience Composer + HP authoring.
@@ -117,10 +138,41 @@ export function BuilderStudioApp() {
     });
   };
 
+  const platformWorkspace: PlatformWorkspaceState = {
+    companyLabel: companyName,
+    projectLabel: workspace.activeProject?.name ?? '—',
+    projects: workspace.registry.projects.map((project) => ({
+      id: project.id,
+      label: project.name,
+      companyLabel:
+        findWorkspaceCompany(workspace.registry, project.companyId)?.name ??
+        'Firma',
+    })),
+    onSelectProject: (projectId) => {
+      void workspace.requestOpenProject(projectId, { dirty });
+    },
+  };
+
+  const breadcrumb: PlatformBreadcrumbItem[] = [
+    { id: 'conis', label: 'CONIS' },
+    { id: 'studio', label: 'Builder' },
+    { id: 'company', label: companyName },
+    {
+      id: 'project',
+      label: workspace.activeProject?.name ?? 'Projekt',
+    },
+    { id: 'section', label: SECTION_LABEL[activeNav] },
+  ];
+
   return (
     <>
+      <PlatformShell
+        activeStudioId="builder"
+        userLabel="Radim"
+        workspace={platformWorkspace}
+        breadcrumb={breadcrumb}
+      >
       <AppShell
-        header={<PlatformHeader />}
         denseMain={
           experienceMode ||
           mediaStudioMode ||
@@ -349,6 +401,7 @@ export function BuilderStudioApp() {
             />
           )}
       </AppShell>
+      </PlatformShell>
 
       <ProjectCreateDialog
         open={createOpen}

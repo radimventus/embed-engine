@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { BuilderStudioApp } from './features/builder-studio/BuilderStudioApp';
 import { BUILDER_STUDIO_RELEASE } from './features/builder-studio/release';
+import '@embed-engine/platform-shell/styles.css';
 import './index.css';
 
 const rootElement = document.getElementById('root');

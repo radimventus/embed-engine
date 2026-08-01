@@ -1,5 +1,4 @@
 /**
- * @deprecated EPIC-BX-01 — use PlatformHeader from features/platform.
- * Kept only for legacy lab surfaces.
+ * @deprecated EPIC-BX-01 / BX-11 — use PlatformHeader from `@embed-engine/platform-shell`.
  */
-export { PlatformHeader as BuilderHeader } from '../../features/platform/PlatformHeader';
+export { PlatformHeader as BuilderHeader } from '@embed-engine/platform-shell';

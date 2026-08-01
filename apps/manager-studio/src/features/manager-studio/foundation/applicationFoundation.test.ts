@@ -28,9 +28,18 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.match(main, /ManagerStudioApp/);
     assert.equal(main.includes('createRoot'), true);
     assert.match(app, /AppShell/);
-    assert.match(app, /ManagerStudioHeader/);
     assert.match(app, /ManagerStudioSidebar/);
     assert.match(app, /ManagerStudioPage/);
+  });
+
+  it('uses the shared Platform Shell header (EPIC-BX-11)', () => {
+    const shell = readSource('src/components/layout/AppShell.tsx');
+    const pkg = readSource('package.json');
+
+    assert.match(shell, /@embed-engine\/platform-shell/);
+    assert.match(shell, /PlatformShell/);
+    assert.match(shell, /activeStudioId="manager"/);
+    assert.match(pkg, /@embed-engine\/platform-shell/);
   });
 
   it('bootstraps Decision Session Runtime only via the Provider', () => {

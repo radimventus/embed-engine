@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { ManagerStudioApp } from './features/manager-studio/ManagerStudioApp';
 import { MANAGER_STUDIO_RELEASE } from './features/manager-studio/operations/operationsVocabulary';
+import '@embed-engine/platform-shell/styles.css';
 import './index.css';
 
 const rootElement = document.getElementById('root');
