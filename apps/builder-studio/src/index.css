@@ -55,6 +55,9 @@
   .border-builder-creamMid {
     border-color: #e8e5e0;
   }
+  .text-builder-muted {
+    color: #001930;
+  }
   .text-builder-danger {
     color: #a93226;
   }

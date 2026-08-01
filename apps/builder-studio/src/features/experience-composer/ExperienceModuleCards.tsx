@@ -216,7 +216,7 @@ export function ExperienceModuleCards({
                         event.stopPropagation();
                         onToggle(module.id);
                       }}
-                      className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-1.5 text-sm font-medium"
+                      className="platform-btn platform-btn--sm"
                     >
                       {module.enabled ? 'Vypnout' : 'Zapnout'}
                     </button>

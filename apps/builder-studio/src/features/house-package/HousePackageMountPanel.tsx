@@ -128,7 +128,7 @@ export function HousePackageMountPanel({
             type="button"
             disabled={validating || publishing}
             onClick={onValidate}
-            className="w-full rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
+            className="platform-btn w-full disabled:opacity-40"
           >
             {validating ? 'Kontroluji…' : 'Zkontrolovat připravenost'}
           </button>
@@ -149,7 +149,7 @@ export function HousePackageMountPanel({
               !snapshot.validation.ok
             }
             onClick={onSave}
-            className="w-full rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
+            className="platform-btn w-full disabled:opacity-40"
           >
             {saving ? 'Ukládám…' : 'Uložit změny'}
           </button>
@@ -157,7 +157,7 @@ export function HousePackageMountPanel({
             type="button"
             disabled={!snapshot.canUndo || saving || publishing}
             onClick={() => onChange(session.undo())}
-            className="w-full rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
+            className="platform-btn w-full disabled:opacity-40"
           >
             Zpět
           </button>
@@ -167,7 +167,7 @@ export function HousePackageMountPanel({
               snapshot.dirtyState === 'clean' || saving || publishing
             }
             onClick={() => onChange(session.discard())}
-            className="w-full rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium disabled:opacity-40"
+            className="platform-btn w-full disabled:opacity-40"
           >
             Zahodit změny
           </button>

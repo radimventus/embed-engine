@@ -132,46 +132,48 @@
 .platform-role-btn {
   border: none;
   border-radius: 20px;
-  background: var(--platform-cream-dark);
+  background: var(--platform-navy);
   padding: 8px 20px;
   font: inherit;
   font-size: 13px;
   font-weight: 600;
-  color: var(--platform-navy);
+  color: #ffffff;
   text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
 }
 
-/* PR-026A — hover only on Navy (active) button; Cream segments stay flat. */
+/* PR-026B — inactive clickable = Navy · hover Gold; active = Cream Dark · no hover. */
 .platform-role-btn:hover {
-  background: var(--platform-cream-dark);
+  background: var(--platform-gold);
   color: var(--platform-navy);
   opacity: 1;
 }
 
 .platform-role-btn--active {
-  background: var(--platform-navy);
-  color: #ffffff;
+  background: var(--platform-cream-dark);
+  color: var(--platform-navy);
   box-shadow: none;
   cursor: default;
   opacity: 1;
 }
 
 .platform-role-btn--active:hover {
-  background: var(--platform-navy);
-  color: #ffffff;
-  opacity: 0.92;
+  background: var(--platform-cream-dark);
+  color: var(--platform-navy);
+  opacity: 1;
 }
 
 .platform-role-btn--disabled {
+  background: var(--platform-navy);
+  color: #ffffff;
   opacity: 0.45;
   cursor: not-allowed;
 }
 
 .platform-role-btn--disabled:hover {
-  background: var(--platform-cream-dark);
-  color: var(--platform-navy);
+  background: var(--platform-navy);
+  color: #ffffff;
   opacity: 0.45;
 }
 
@@ -614,7 +616,7 @@
   border-radius: 999px;
   background: #ffffff;
   color: var(--platform-blue);
-  padding: 0 0 3px;
+  padding: 0 0 4px;
   font: inherit;
   font-size: 28px;
   font-weight: 600;
@@ -833,7 +835,7 @@
 .platform-capability-inspector__item--active {
   border-color: var(--platform-blue);
   background: var(--platform-cream-light);
-  color: var(--platform-blue);
+  color: var(--platform-navy);
 }
 
 .platform-btn {
@@ -859,9 +861,15 @@
   color: #fff;
 }
 
-.platform-btn:focus-visible {
-  outline: 2px solid var(--platform-blue);
-  outline-offset: 2px;
+.platform-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.platform-btn:disabled:hover {
+  background: #fff;
+  border-color: var(--platform-blue);
+  color: var(--platform-blue);
 }
 
 .platform-btn--primary {
@@ -892,6 +900,13 @@
   background: var(--platform-blue);
   border-color: var(--platform-blue);
   color: #fff;
+}
+
+.platform-btn--sm {
+  gap: 4px;
+  padding: 4px 8px;
+  font-size: 11px;
+  border-radius: 6px;
 }
 
 .platform-btn--danger {
@@ -1127,7 +1142,7 @@
   margin: 4px 0 0;
   font-size: 12px;
   line-height: 1.45;
-  color: var(--platform-muted);
+  color: var(--platform-navy);
 }
 
 .platform-notice__dismiss {

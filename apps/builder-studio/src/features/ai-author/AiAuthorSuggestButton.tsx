@@ -37,10 +37,7 @@ export function AiAuthorSuggestButton({
     <>
       <button
         type="button"
-        className={
-          className ||
-          'rounded-[8px] border border-[#DDE5EF] bg-white px-2.5 py-1.5 text-[12px] font-medium text-builder-navy'
-        }
+        className={className || 'platform-btn platform-btn--sm'}
         onClick={() => {
           const proposal = buildProposal();
           const suggestion = generateSuggestion({

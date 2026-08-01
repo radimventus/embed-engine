@@ -201,7 +201,7 @@ export function SalesStudioApp() {
       <div className="flex min-h-0 flex-1 overflow-hidden">
         <aside className="platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto">
           <div className="p-6">
-            <p className="mb-3 text-[11px] font-bold uppercase tracking-[1px] text-[var(--platform-muted)]">
+            <p className="mb-3 text-[11px] font-bold uppercase tracking-[1px] text-[var(--platform-section)]">
               Případy k hovoru
             </p>
             <ul className="space-y-2">
@@ -230,7 +230,7 @@ export function SalesStudioApp() {
                           {client.score} %
                         </span>
                       </div>
-                      <p className="mt-1 text-[12px] text-[var(--platform-muted)]">
+                      <p className="mt-1 text-[12px] text-[var(--platform-navy)]">
                         {client.project}
                       </p>
                     </button>
@@ -266,7 +266,7 @@ export function SalesStudioApp() {
                 <h2 className="mt-2 text-[22px] font-semibold text-[var(--platform-ink)]">
                   {activeClient.name}
                 </h2>
-                <p className="mt-1 text-[13px] text-[var(--platform-muted)]">
+                <p className="mt-1 text-[13px] text-[var(--platform-navy)]">
                   {activeClient.project} ({activeClient.location}) ·{' '}
                   {activeClient.land}
                 </p>
@@ -311,7 +311,7 @@ export function SalesStudioApp() {
                   <h4 className="text-sm font-semibold text-[var(--platform-ink)]">
                     Doporučené téma rozhovoru
                   </h4>
-                  <p className="mt-2 text-[13px] leading-relaxed text-[var(--platform-muted)]">
+                  <p className="mt-2 text-[13px] leading-relaxed text-[var(--platform-navy)]">
                     {activeClient.insight}
                   </p>
                 </div>
@@ -340,7 +340,7 @@ export function SalesStudioApp() {
                         <p className="text-sm font-semibold text-[var(--platform-ink)]">
                           {step.label}
                         </p>
-                        <p className="text-[12px] text-[var(--platform-muted)]">
+                        <p className="text-[12px] text-[var(--platform-navy)]">
                           {step.detail}
                         </p>
                       </div>

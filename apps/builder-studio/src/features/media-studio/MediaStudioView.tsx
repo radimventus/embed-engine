@@ -512,7 +512,7 @@ function GalleryManager({
                   <div className="flex flex-wrap gap-1 pt-1">
                     <button
                       type="button"
-                      className="rounded-md border border-[#DDE5EF] bg-white px-2 py-1 text-[11px]"
+                      className="platform-btn platform-btn--sm"
                       onClick={(event) => {
                         event.stopPropagation();
                         setAsHero(item);

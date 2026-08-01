@@ -537,14 +537,14 @@ function ValidationSummary({
         </button>
         <button
           type="button"
-          className="rounded-[10px] border border-[#DDE5EF] bg-white px-4 py-2 text-sm font-medium text-builder-ink"
+          className="platform-btn"
           onClick={() => onNavigate('media-studio')}
         >
           Otevřít Média
         </button>
         <button
           type="button"
-          className="rounded-[10px] border border-[#DDE5EF] bg-white px-4 py-2 text-sm font-medium text-builder-ink"
+          className="platform-btn"
           onClick={() => onNavigate('overview')}
         >
           Dashboard

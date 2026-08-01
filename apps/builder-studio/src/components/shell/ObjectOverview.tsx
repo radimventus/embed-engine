@@ -84,7 +84,7 @@ export function ObjectOverview({
           <button
             type="button"
             onClick={onDuplicateObject}
-            className="rounded-[10px] border border-[#DDE5EF] bg-white px-4 py-2.5 text-sm font-medium text-builder-ink"
+            className="platform-btn"
           >
             Duplikovat
           </button>

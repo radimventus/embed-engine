@@ -98,7 +98,7 @@ export function HousePackageEditView({
           <button
             type="button"
             onClick={() => onNavigate('overview')}
-            className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium text-builder-ink"
+            className="platform-btn"
           >
             Dashboard
           </button>
@@ -119,7 +119,7 @@ export function HousePackageEditView({
             type="button"
             disabled={!snapshot.canUndo || saving}
             onClick={() => onChange(session.undo())}
-            className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium text-builder-ink disabled:opacity-40"
+            className="platform-btn"
           >
             Zpět
           </button>
@@ -127,7 +127,7 @@ export function HousePackageEditView({
             type="button"
             disabled={snapshot.dirtyState === 'clean' || saving}
             onClick={() => onChange(session.discard())}
-            className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium text-builder-ink disabled:opacity-40"
+            className="platform-btn"
           >
             Zahodit
           </button>
