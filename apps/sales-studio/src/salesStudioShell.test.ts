@@ -60,8 +60,32 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.doesNotMatch(app, /platform-nav-rail/);
     assert.doesNotMatch(app, /platform-inspector-rail/);
     assert.match(css, /sales-desk__grid/);
-    assert.match(css, /340px/);
     assert.match(clients, /Jan Novák/);
     assert.match(clients, /Hero Experience/);
+  });
+
+  it('applies Sales IA hierarchy (SR-002)', () => {
+    const app = readFileSync(join(salesRoot, 'src/SalesStudioApp.tsx'), 'utf8');
+    const css = readFileSync(join(salesRoot, 'src/index.css'), 'utf8');
+    const clients = readFileSync(
+      join(salesRoot, 'src/sales/salesClients.ts'),
+      'utf8',
+    );
+    const shellCss = readFileSync(
+      join(
+        salesRoot,
+        '../../packages/platform-shell/src/platform-shell.css',
+      ),
+      'utf8',
+    );
+
+    assert.match(app, /id: 'prospect'/);
+    assert.match(app, /activeHouse\.houseName/);
+    assert.match(app, /sales-desk__house-list/);
+    assert.doesNotMatch(app, /id: 'company'/);
+    assert.match(css, /25%/);
+    assert.match(css, /50%/);
+    assert.match(clients, /MODERN 01/);
+    assert.match(shellCss, /\.platform-role-btn[\s\S]*?text-transform:\s*none/);
   });
 });

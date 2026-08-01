@@ -32,12 +32,65 @@ body {
   max-width: 1520px;
 }
 
-/* click model: grid-sales-3col → 340px | 1.2fr | 1fr · gap 20px */
+/* SR-002 — columns 25 % | 50 % | 25 % */
 .sales-desk__grid {
   display: grid;
-  grid-template-columns: 340px minmax(0, 1.2fr) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 25%) minmax(0, 50%) minmax(0, 25%);
   gap: 20px;
   align-items: start;
+}
+
+.sales-desk__title-bar {
+  align-items: flex-start;
+}
+
+.sales-desk__house-title {
+  letter-spacing: -0.02em;
+}
+
+.sales-desk__prospect-name {
+  margin: 6px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--platform-navy);
+}
+
+.sales-desk__house-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+}
+
+.sales-desk__house-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--platform-line);
+  border-radius: 999px;
+  background: var(--platform-surface);
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--platform-navy);
+  cursor: pointer;
+}
+
+.sales-desk__house-chip:hover {
+  border-color: var(--platform-gold);
+}
+
+.sales-desk__house-chip--active {
+  border-color: var(--platform-gold);
+  background: #fbf7ee;
+}
+
+.sales-desk__house-chip-score {
+  font-weight: 700;
+  color: var(--platform-gold);
 }
 
 .sales-desk__cases.platform-card {
