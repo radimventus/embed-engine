@@ -28,7 +28,7 @@ export function FeedbackButton({ onSubmitFeedback }: FeedbackButtonProps) {
       <PlatformDialog
         open={open}
         title="Poslat zpětnou vazbu"
-        description="Zpětná vazba jde do Platform Access — ne do produktového rozhraní."
+        description="Zpětná vazba jde do přístupu k platformě — ne do produktového rozhraní."
         primaryLabel="Odeslat"
         secondaryLabel="Zavřít"
         primaryDisabled={message.trim().length === 0}

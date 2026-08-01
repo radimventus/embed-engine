@@ -26,7 +26,7 @@ export function UserMenu({
   return (
     <PlatformDropdown
       align="right"
-      ariaLabel="User menu"
+      ariaLabel="Uživatelské menu"
       label={
         <>
           <span>{roleLabel ?? 'Aktivní modul'}</span>
@@ -52,7 +52,7 @@ export function UserMenu({
           className="platform-menu-item"
           onClick={onOpenLanding}
         >
-          Platform Landing
+          Vstupní stránka
         </button>
       )}
       <button

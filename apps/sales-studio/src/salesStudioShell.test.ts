@@ -53,7 +53,7 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
 
     assert.match(app, /Případy k hovoru/);
     assert.match(app, /Detail nákupního záměru/);
-    assert.match(app, /Rozhodovací cesta \(Decision Journey\)/);
+    assert.match(app, /Rozhodovací cesta/);
     assert.match(app, /Hledat zájemce/);
     assert.match(app, /Vysoká jistota/);
     assert.doesNotMatch(app, /CapabilityInspector/);
@@ -61,7 +61,7 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.doesNotMatch(app, /platform-inspector-rail/);
     assert.match(css, /sales-desk__grid/);
     assert.match(clients, /Jan Novák/);
-    assert.match(clients, /Hero Experience/);
+    assert.match(clients, /Úvodní prohlídka/);
   });
 
   it('applies Sales IA hierarchy (SR-002)', () => {
@@ -78,14 +78,36 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
       ),
       'utf8',
     );
+    const userMenu = readFileSync(
+      join(salesRoot, '../../packages/platform-shell/src/UserMenu.tsx'),
+      'utf8',
+    );
+    const landing = readFileSync(
+      join(
+        salesRoot,
+        '../../packages/platform-access/src/react/PlatformLanding.tsx',
+      ),
+      'utf8',
+    );
 
     assert.match(app, /id: 'prospect'/);
+    assert.match(app, /sales-desk__center/);
+    assert.match(app, /sales-desk__context/);
     assert.match(app, /activeHouse\.houseName/);
     assert.match(app, /sales-desk__house-list/);
     assert.doesNotMatch(app, /id: 'company'/);
+    assert.doesNotMatch(app, /Decision Journey/);
+    assert.doesNotMatch(app, /Decision Signals/);
     assert.match(css, /25%/);
     assert.match(css, /50%/);
+    assert.match(css, /sales-desk__center/);
+    assert.match(css, /text-align:\s*center/);
     assert.match(clients, /MODERN 01/);
+    assert.match(clients, /Navigátor domu/);
     assert.match(shellCss, /\.platform-role-btn[\s\S]*?text-transform:\s*none/);
+    assert.match(userMenu, /Vstupní stránka/);
+    assert.doesNotMatch(userMenu, /Platform Landing/);
+    assert.match(landing, /Vstupní stránka/);
+    assert.doesNotMatch(landing, />Platform Landing</);
   });
 });

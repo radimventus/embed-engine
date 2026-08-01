@@ -42,40 +42,40 @@ export const SALES_CLIENTS: readonly SalesClient[] = [
         location: 'Opava',
         tags: ['Orientace ke světlu', 'Provozní náklady', 'Dispozice 4+kk'],
         insight:
-          'Klient strávil nejvíce času sledováním vazby domu na pozemek v House Navigatoru a prosvětlení obývacího pokoje. Doporučujeme začít rozhovor potvrzením správné orientace domu na jeho pozemku.',
+          'Klient strávil nejvíce času sledováním vazby domu na pozemek v navigátoru domu a prosvětlení obývacího pokoje. Doporučujeme začít rozhovor potvrzením správné orientace domu na jeho pozemku.',
         journey: [
           {
-            module: 'Hero Experience',
+            module: 'Úvodní prohlídka',
             title: 'Vstup na prezentaci',
             detail: 'Spuštěno video exteriéru, stráveno 45s',
             completed: true,
           },
           {
-            module: 'Social Proof',
+            module: 'Sociální důkaz',
             title: 'Sociální validace',
             detail: 'Zobrazeny dotazy ostatních na zastavěnou plochu',
             completed: true,
           },
           {
-            module: 'House Navigator',
+            module: 'Navigátor domu',
             title: 'Prostorové poznání',
             detail: '4x otevřena obývací část + terasy na JZ',
             completed: true,
           },
           {
-            module: 'Priority Experience',
+            module: 'Prioritní prohlídka',
             title: 'Nastavení priorit',
             detail: 'Zvýšena váha: Prosvětlení & FVE',
             completed: true,
           },
           {
-            module: 'AI Advisor',
+            module: 'AI poradce',
             title: 'Dotaz na vytápění',
             detail: 'Položen dotaz na roční provozní náklady TČ',
             completed: true,
           },
           {
-            module: 'Lead Capture',
+            module: 'Zachycení kontaktu',
             title: 'Kvalifikovaný požadavek',
             detail: 'Odeslána žádost o posouzení osazení na pozemek',
             active: true,
@@ -93,13 +93,13 @@ export const SALES_CLIENTS: readonly SalesClient[] = [
           'Druhý zájem — porovnává MODERN 01 s Harmony 124 podle orientace a nákladů.',
         journey: [
           {
-            module: 'Hero Experience',
+            module: 'Úvodní prohlídka',
             title: 'Vstup na prezentaci',
             detail: 'Prohlédnuta galerie',
             completed: true,
           },
           {
-            module: 'Priority Experience',
+            module: 'Prioritní prohlídka',
             title: 'Nastavení priorit',
             detail: 'Sdílené priority s Harmony 124',
             active: true,
@@ -122,25 +122,25 @@ export const SALES_CLIENTS: readonly SalesClient[] = [
           'Klient se opakovaně vrací k finanční kalkulaci a garážovému stání. V rozhovoru se zaměřte na možnosti fázování stavby a měsíční splátku.',
         journey: [
           {
-            module: 'Hero Experience',
+            module: 'Úvodní prohlídka',
             title: 'Vstup na prezentaci',
             detail: 'Prohlédnuta fotogalerie interiéru',
             completed: true,
           },
           {
-            module: 'House Navigator',
+            module: 'Navigátor domu',
             title: 'Půdorys 1.NP',
             detail: 'Detailní průchod garáží a technickou místností',
             completed: true,
           },
           {
-            module: 'Priority Experience',
+            module: 'Prioritní prohlídka',
             title: 'Nastavení priorit',
             detail: 'Dominantní priorita: Měsíční splátka',
             completed: true,
           },
           {
-            module: 'Lead Capture',
+            module: 'Zachycení kontaktu',
             title: 'Zanechán kontakt',
             detail: 'Požadavek na konzultaci pozemku',
             active: true,
@@ -156,13 +156,13 @@ export const SALES_CLIENTS: readonly SalesClient[] = [
         insight: 'Srovnává Harmony 124 jako cenově dostupnější variantu.',
         journey: [
           {
-            module: 'Hero Experience',
+            module: 'Úvodní prohlídka',
             title: 'Vstup na prezentaci',
             detail: 'Krátká návštěva',
             completed: true,
           },
           {
-            module: 'Priority Experience',
+            module: 'Prioritní prohlídka',
             title: 'Nastavení priorit',
             detail: 'Zatím bez potvrzení',
             active: true,
@@ -186,19 +186,19 @@ export const SALES_CLIENTS: readonly SalesClient[] = [
           'Klientka řeší především velikost dětských pokojů a úložné prostory. Doporučujeme ukázat úpravu dispozice u šatny.',
         journey: [
           {
-            module: 'Hero Experience',
+            module: 'Úvodní prohlídka',
             title: 'Vstup na prezentaci',
             detail: 'Příchod z mobilního zařízení',
             completed: true,
           },
           {
-            module: 'House Navigator',
+            module: 'Navigátor domu',
             title: 'Prohlídka dispozice',
             detail: 'Opakovaný návrat do dětských pokojů',
             completed: true,
           },
           {
-            module: 'Priority Experience',
+            module: 'Prioritní prohlídka',
             title: 'Nastavení priorit',
             detail: 'Označena priorita: Úložné prostory',
             active: true,
@@ -216,19 +216,19 @@ export const SALES_CLIENTS: readonly SalesClient[] = [
           'Family 98 je záložní varianta — menší stopu, stejný důraz na dětské pokoje.',
         journey: [
           {
-            module: 'Hero Experience',
+            module: 'Úvodní prohlídka',
             title: 'Vstup na prezentaci',
             detail: 'Příchod z mobilního zařízení',
             completed: true,
           },
           {
-            module: 'House Navigator',
+            module: 'Navigátor domu',
             title: 'Prohlídka 2.NP',
             detail: 'Opakovaný návrat do Dětského pokoje 1 a 2',
             completed: true,
           },
           {
-            module: 'Priority Experience',
+            module: 'Prioritní prohlídka',
             title: 'Nastavení priorit',
             detail: 'Označena priorita: Úložné prostory',
             completed: true,

@@ -17,9 +17,9 @@ const STUDIO_ORDER: readonly {
   readonly id: PlatformStudioId;
   readonly label: string;
 }[] = [
-  { id: 'manager', label: 'Manager' },
-  { id: 'sales', label: 'Sales' },
-  { id: 'builder', label: 'Builder' },
+  { id: 'manager', label: 'Manager Studio' },
+  { id: 'sales', label: 'Sales Studio' },
+  { id: 'builder', label: 'Builder Studio' },
 ];
 
 /**
@@ -74,7 +74,7 @@ export function PlatformLanding() {
     <div className="platform-access" data-testid="platform-landing">
       <div className="platform-access__panel platform-access__panel--wide">
         <p className="platform-access__eyebrow">CONIS · app.conis.cz</p>
-        <h1 className="platform-access__title">Platform Landing</h1>
+        <h1 className="platform-access__title">Vstupní stránka</h1>
         <p className="platform-access__lead">
           {bootstrap.user.displayName} · {PLATFORM_ROLE_LABELS[role]}
           <br />
@@ -172,9 +172,9 @@ export function PlatformLanding() {
                   ? ` (${diagnostics.lastPublishAt})`
                   : ''}
               </li>
-              <li>Runtime · {diagnostics.runtimeStatus}</li>
+              <li>Provozní jádro · {diagnostics.runtimeStatus}</li>
               <li>Schopnosti · {diagnostics.capabilityStatus}</li>
-              <li>Intelligence · {diagnostics.intelligenceStatus}</li>
+              <li>Inteligence · {diagnostics.intelligenceStatus}</li>
             </ul>
           </section>
         )}
@@ -240,7 +240,7 @@ export function PlatformLanding() {
             )}
 
             <p className="platform-access__demos-title" style={{ marginTop: 16 }}>
-              Provisionovat pilotní firmu
+              Zřídit pilotní firmu
             </p>
             <form
               className="platform-access__form"
@@ -266,7 +266,7 @@ export function PlatformLanding() {
                 />
               </label>
               <button className="platform-access__submit" type="submit">
-                Provisionovat
+                Zřídit
               </button>
             </form>
             {pilotMessage !== null && (

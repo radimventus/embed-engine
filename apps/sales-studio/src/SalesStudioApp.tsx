@@ -128,41 +128,6 @@ export function SalesStudioApp() {
     >
       <main className="platform-studio-pad sales-desk min-h-0 min-w-0 flex-1 overflow-y-auto">
         <div className="sales-desk__canvas">
-          <header className="platform-title-bar sales-desk__title-bar">
-            <div>
-              <h1 className="platform-type-h1 sales-desk__house-title">
-                {activeHouse.houseName}
-              </h1>
-              <p className="sales-desk__prospect-name">{activeClient.name}</p>
-              <ul
-                className="sales-desk__house-list"
-                aria-label="Domy se zájmem"
-              >
-                {activeClient.houses.map((house) => {
-                  const selected = house.id === activeHouse.id;
-                  return (
-                    <li key={house.id}>
-                      <button
-                        type="button"
-                        className={`sales-desk__house-chip${selected ? ' sales-desk__house-chip--active' : ''}`}
-                        onClick={() => setActiveHouseId(house.id)}
-                        aria-current={selected ? 'true' : undefined}
-                      >
-                        <span>{house.houseName}</span>
-                        <span className="sales-desk__house-chip-score">
-                          {house.score} %
-                        </span>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-            <PlatformStatusBadge tone="gold">
-              {`● ${highIntentCount} klienti s vysokou rozhodovací jistotou`}
-            </PlatformStatusBadge>
-          </header>
-
           <div className="sales-desk__grid">
             <PlatformCard
               className="sales-desk__cases"
@@ -237,48 +202,85 @@ export function SalesStudioApp() {
               ) : null}
             </PlatformCard>
 
-            <PlatformCard title="Detail nákupního záměru">
-              <h2 className="sales-desk__detail-name">{activeClient.name}</h2>
-              <p className="sales-desk__detail-project">
-                {houseDetailLine(activeHouse)}
-              </p>
-
-              <div className="sales-desk__meter">
-                <div className="sales-desk__meter-header">
-                  <span>Index rozhodovací jistoty</span>
-                  <span>{activeHouse.score} %</span>
-                </div>
-                <div className="sales-desk__meter-track">
-                  <div
-                    className="sales-desk__meter-fill"
-                    style={{ width: `${activeHouse.score}%` }}
-                  />
-                </div>
-              </div>
-
-              <p className="platform-type-section sales-desk__priorities-label">
-                Hlavní deklarované priority
-              </p>
-              <div className="sales-desk__tags">
-                {activeHouse.tags.map((tag, index) => (
-                  <PlatformStatusBadge
-                    key={tag}
-                    tone={index === 0 ? 'gold' : 'info'}
-                  >
-                    {tag}
+            <div className="sales-desk__center">
+              <header className="sales-desk__context">
+                <h1 className="platform-type-h1 sales-desk__house-title">
+                  {activeHouse.houseName}
+                </h1>
+                <p className="sales-desk__prospect-name">{activeClient.name}</p>
+                <ul
+                  className="sales-desk__house-list"
+                  aria-label="Domy se zájmem"
+                >
+                  {activeClient.houses.map((house) => {
+                    const selected = house.id === activeHouse.id;
+                    return (
+                      <li key={house.id}>
+                        <button
+                          type="button"
+                          className={`sales-desk__house-chip${selected ? ' sales-desk__house-chip--active' : ''}`}
+                          onClick={() => setActiveHouseId(house.id)}
+                          aria-current={selected ? 'true' : undefined}
+                        >
+                          <span>{house.houseName}</span>
+                          <span className="sales-desk__house-chip-score">
+                            {house.score} %
+                          </span>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <div className="sales-desk__context-badge">
+                  <PlatformStatusBadge tone="gold">
+                    {`● ${highIntentCount} klienti s vysokou rozhodovací jistotou`}
                   </PlatformStatusBadge>
-                ))}
-              </div>
+                </div>
+              </header>
 
-              <div className="sales-desk__insight">
-                <h4>Doporučené téma rozhovoru</h4>
-                <p>{activeHouse.insight}</p>
-              </div>
-            </PlatformCard>
+              <PlatformCard title="Detail nákupního záměru">
+                <h2 className="sales-desk__detail-name">{activeClient.name}</h2>
+                <p className="sales-desk__detail-project">
+                  {houseDetailLine(activeHouse)}
+                </p>
+
+                <div className="sales-desk__meter">
+                  <div className="sales-desk__meter-header">
+                    <span>Index rozhodovací jistoty</span>
+                    <span>{activeHouse.score} %</span>
+                  </div>
+                  <div className="sales-desk__meter-track">
+                    <div
+                      className="sales-desk__meter-fill"
+                      style={{ width: `${activeHouse.score}%` }}
+                    />
+                  </div>
+                </div>
+
+                <p className="platform-type-section sales-desk__priorities-label">
+                  Hlavní deklarované priority
+                </p>
+                <div className="sales-desk__tags">
+                  {activeHouse.tags.map((tag, index) => (
+                    <PlatformStatusBadge
+                      key={tag}
+                      tone={index === 0 ? 'gold' : 'info'}
+                    >
+                      {tag}
+                    </PlatformStatusBadge>
+                  ))}
+                </div>
+
+                <div className="sales-desk__insight">
+                  <h4>Doporučené téma rozhovoru</h4>
+                  <p>{activeHouse.insight}</p>
+                </div>
+              </PlatformCard>
+            </div>
 
             <PlatformCard
-              title="Rozhodovací cesta (Decision Journey)"
-              description="Pasivní chování vs. reálné Decision Signals"
+              title="Rozhodovací cesta"
+              description="Pasivní chování vs. reálné rozhodovací signály"
             >
               <div className="sales-desk__timeline">
                 {activeHouse.journey.map((step) => {

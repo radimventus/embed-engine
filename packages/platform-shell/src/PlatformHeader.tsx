@@ -41,7 +41,7 @@ export function PlatformHeader({
         <button
           type="button"
           className="platform-header__brand platform-breadcrumb__item--action"
-          aria-label="CONIS Platform Landing"
+          aria-label="CONIS vstupní stránka"
           onClick={onOpenLanding}
           disabled={onOpenLanding === undefined}
           style={{

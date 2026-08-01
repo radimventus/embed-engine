@@ -40,7 +40,7 @@ export function WorkspaceSwitcher({ workspace }: WorkspaceSwitcherProps) {
 
   return (
     <PlatformDropdown
-      ariaLabel="Project Switcher"
+      ariaLabel="Přepínač projektu"
       label={
         <span>
           <span style={{ color: '#94A3B8', fontWeight: 500 }}>Projekt</span>

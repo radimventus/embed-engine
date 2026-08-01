@@ -40,12 +40,24 @@ body {
   align-items: start;
 }
 
-.sales-desk__title-bar {
-  align-items: flex-start;
+/* SR-002 — house → zájemce → domy as centered main context above Detail. */
+.sales-desk__center {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: 0;
+}
+
+.sales-desk__context {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .sales-desk__house-title {
   letter-spacing: -0.02em;
+  text-align: center;
 }
 
 .sales-desk__prospect-name {
@@ -53,15 +65,21 @@ body {
   font-size: 16px;
   font-weight: 600;
   color: var(--platform-navy);
+  text-align: center;
 }
 
 .sales-desk__house-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 8px;
   list-style: none;
   margin: 12px 0 0;
   padding: 0;
+}
+
+.sales-desk__context-badge {
+  margin-top: 14px;
 }
 
 .sales-desk__house-chip {
