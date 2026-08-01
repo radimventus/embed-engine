@@ -16,6 +16,7 @@
     "@embed-engine/design-tokens": "workspace:*",
     "@embed-engine/intelligence": "workspace:*",
     "@embed-engine/object-house": "workspace:*",
+    "@embed-engine/operations-center": "workspace:*",
     "@embed-engine/platform-access": "workspace:*",
     "@embed-engine/platform-shell": "workspace:*",
     "@embed-engine/runtime": "workspace:*",

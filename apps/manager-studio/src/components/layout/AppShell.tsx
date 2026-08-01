@@ -54,9 +54,11 @@ export function AppShell({ sidebar, children }: AppShellProps) {
   };
 
   const sectionLabel =
-    activeCapabilityId === 'customer-success'
-      ? 'Customer Success'
-      : 'Operations';
+    activeCapabilityId === 'operations-center'
+      ? 'Platform Ops'
+      : activeCapabilityId === 'customer-success'
+        ? 'Customer Success'
+        : 'Operations';
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS' },

@@ -125,4 +125,15 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     description:
       'Customer Success Platform — onboarding, adoption, health, recommendations.',
   },
+  {
+    id: 'operations-center',
+    name: 'Platform Operations Center',
+    version: '1.0.0',
+    owner: 'platform',
+    studioSupport: ['manager'],
+    dependencies: ['customer-success'],
+    maturity: 'beta',
+    description:
+      'Platform Operations Center — CONIS platform ops overview, timeline, alerts, metrics.',
+  },
 ] as const;

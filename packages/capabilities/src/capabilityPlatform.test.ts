@@ -69,6 +69,7 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
     assert.ok(builder.isDeclared('media'));
     assert.ok(manager.isDeclared('operations'));
     assert.ok(manager.isDeclared('customer-success'));
+    assert.ok(manager.isDeclared('operations-center'));
     assert.ok(sales.isDeclared('pipeline'));
     assert.ok(sales.isDeclared('customer-success'));
   });
@@ -85,9 +86,18 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
         (item) => item.id === 'customer-success',
       ),
     );
+    assert.ok(
+      MANAGER_CAPABILITY_MANIFEST.uses.some(
+        (item) => item.id === 'operations-center',
+      ),
+    );
     assert.equal(listCapabilities().filter((c) => c.id === 'intelligence').length, 1);
     assert.equal(
       listCapabilities().filter((c) => c.id === 'customer-success').length,
+      1,
+    );
+    assert.equal(
+      listCapabilities().filter((c) => c.id === 'operations-center').length,
       1,
     );
   });
