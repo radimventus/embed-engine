@@ -15,7 +15,7 @@ const NAV: readonly {
   label: string;
   section: HpEditSection | null;
 }[] = [
-  { id: 'overview', label: 'Overview', section: null },
+  { id: 'overview', label: 'Dashboard', section: null },
   { id: 'rooms', label: 'Rooms', section: 'rooms' },
   { id: 'gallery', label: 'Gallery', section: 'gallery' },
   { id: 'videos', label: 'Videos', section: 'videos' },

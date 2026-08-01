@@ -13,7 +13,13 @@ import type {
 import type { HousePackageNavId } from './HousePackageSidebar';
 import { HOUSE_PACKAGE_URL_ROOT } from './housePackagePaths';
 import type { HpEditSection } from './validateHousePackageWorking';
+import type { HousePackageValidationReport } from './housePackageValidationReport';
+import type { HousePackageReleaseSummary } from './productionPublishGate';
 import type { WorkspaceProject } from '../workspace/workspaceRegistry';
+import {
+  buildProjectDashboardModel,
+  ProjectDashboard,
+} from '../project-dashboard';
 
 type HousePackageEditViewProps = {
   readonly snapshot: HousePackageEditSnapshot;
@@ -22,13 +28,18 @@ type HousePackageEditViewProps = {
   readonly saving: boolean;
   readonly companyName: string;
   readonly project: WorkspaceProject;
+  readonly validationReport: HousePackageValidationReport | null;
+  readonly releaseSummary: HousePackageReleaseSummary | null;
+  readonly historyOpen?: boolean;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
   readonly onSave: () => void;
   readonly onEditProject: () => void;
+  readonly onNavigate: (nav: HousePackageNavId) => void;
+  readonly onPublish: () => void;
 };
 
 /**
- * EPIC-BX-01 — project content editors (never an empty canvas).
+ * EPIC-BX-01/02 — Dashboard home + section editors (never an empty canvas).
  */
 export function HousePackageEditView({
   snapshot,
@@ -37,12 +48,35 @@ export function HousePackageEditView({
   saving,
   companyName,
   project,
+  validationReport,
+  releaseSummary,
+  historyOpen = false,
   onChange,
   onSave,
   onEditProject,
+  onNavigate,
+  onPublish,
 }: HousePackageEditViewProps) {
   const pkg = snapshot.validation.builderImport;
   const status = sectionStatus(snapshot, navToSection(activeNav));
+
+  if (activeNav === 'overview') {
+    return (
+      <ProjectDashboard
+        model={buildProjectDashboardModel({
+          project,
+          companyName,
+          snapshot,
+          validationReport,
+          releaseSummary,
+        })}
+        onNavigate={onNavigate}
+        onEditProject={onEditProject}
+        onPublish={onPublish}
+        historyOpen={historyOpen}
+      />
+    );
+  }
 
   return (
     <div className="space-y-6" data-testid="house-package-edit">
@@ -63,10 +97,10 @@ export function HousePackageEditView({
         <div className="flex flex-wrap items-center gap-2">
           <button
             type="button"
-            onClick={onEditProject}
+            onClick={() => onNavigate('overview')}
             className="rounded-[10px] border border-[#DDE5EF] bg-white px-3 py-2 text-sm font-medium text-builder-ink"
           >
-            Upravit projekt
+            Dashboard
           </button>
           <StatusBadge status={overallStatus(snapshot)} />
           <button
@@ -114,68 +148,6 @@ export function HousePackageEditView({
         />
       )}
 
-      {activeNav === 'overview' && (
-        <section className="space-y-4">
-          <div className="grid gap-4 tablet:grid-cols-2 desktop:grid-cols-4">
-            <Metric
-              label="Místnosti"
-              value={String(pkg?.rooms.rooms.length ?? 0)}
-            />
-            <Metric
-              label="Galerie"
-              value={String(pkg?.gallery.entries.length ?? 0)}
-            />
-            <Metric
-              label="Videa"
-              value={String(pkg?.videos.entries.length ?? 0)}
-            />
-            <Metric
-              label="Podlaží"
-              value={String(pkg?.floors.floors.length ?? 0)}
-            />
-          </div>
-          <Panel title="Dashboard projektu" status={overallStatus(snapshot)}>
-            <Row label="Název" value={project.name} />
-            <Row label="Firma" value={companyName} />
-            <Row label="Stav projektu" value={statusLabel(project.status)} />
-            <Row label="Slug" value={project.slug} />
-            <Row
-              label="Popis"
-              value={
-                project.description.length > 0 ? project.description : '—'
-              }
-            />
-            <Row
-              label="Obsah"
-              value={
-                snapshot.dirtyState === 'clean'
-                  ? 'Uloženo'
-                  : snapshot.dirtyState === 'modified'
-                    ? 'Neuložené změny'
-                    : 'Chyba uložení'
-              }
-            />
-            <Row
-              label="Hero"
-              value={snapshot.working.heroRelativePath || '—'}
-            />
-          </Panel>
-          {pkg !== null && pkg.gallery.entries.length > 0 && (
-            <Panel title="Náhled galerie">
-              <div className="grid grid-cols-3 gap-2 tablet:grid-cols-5">
-                {pkg.gallery.entries.slice(0, 10).map((entry) => (
-                  <img
-                    key={`${entry.order}-${entry.path}`}
-                    src={`${HOUSE_PACKAGE_URL_ROOT}/${entry.path}`}
-                    alt=""
-                    className="aspect-[4/3] w-full rounded-lg object-cover bg-builder-soft"
-                  />
-                ))}
-              </div>
-            </Panel>
-          )}
-        </section>
-      )}
 
       {activeNav === 'rooms' && (
         <CsvEditor
@@ -376,12 +348,6 @@ function sectionHeadline(nav: HousePackageNavId): string {
   }
 }
 
-function statusLabel(status: WorkspaceProject['status']): string {
-  if (status === 'published') return 'Publikováno';
-  if (status === 'ready') return 'Připraveno';
-  return 'Koncept';
-}
-
 function navToSection(nav: HousePackageNavId): HpEditSection | null {
   if (nav === 'rooms') return 'rooms';
   if (nav === 'gallery') return 'gallery';
@@ -551,38 +517,6 @@ function Panel({
       </div>
       <div className="mt-4">{children}</div>
     </section>
-  );
-}
-
-function Metric({
-  label,
-  value,
-}: {
-  readonly label: string;
-  readonly value: string;
-}) {
-  return (
-    <div className="rounded-[14px] border border-[#E8EEF5] bg-white px-4 py-4 shadow-sm">
-      <p className="text-[12px] text-builder-muted">{label}</p>
-      <p className="mt-1 text-2xl font-semibold text-builder-ink">{value}</p>
-    </div>
-  );
-}
-
-function Row({
-  label,
-  value,
-}: {
-  readonly label: string;
-  readonly value: string;
-}) {
-  return (
-    <div className="flex flex-wrap items-baseline justify-between gap-2 border-b border-builder-divider py-2 text-sm">
-      <span className="text-builder-muted">{label}</span>
-      <span className="max-w-[70%] text-right text-[13px] text-builder-ink">
-        {value}
-      </span>
-    </div>
   );
 }
 
