@@ -15,7 +15,7 @@ type AnchorItem = {
  * PR-007 / PR-008 — kompletní Anchor Rail (kotvy celé pracovní plochy).
  */
 const ANCHORS: readonly AnchorItem[] = [
-  { id: 'media-studio', label: 'Hero', domId: 'b-hero', section: null },
+  { id: 'media-studio', label: 'Hero', domId: 'b-hero', section: 'hero' },
   { id: 'gallery', label: 'Galerie', domId: 'b-gallery', section: 'gallery' },
   { id: 'videos', label: 'Videa', domId: 'b-videos', section: 'videos' },
   { id: 'plans', label: 'Půdorys', domId: 'b-floor-plans', section: 'plans' },
