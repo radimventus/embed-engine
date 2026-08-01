@@ -6,6 +6,7 @@ import {
   DecisionAnalyticsProvider,
   JourneySurfaceObserver,
 } from './analytics';
+import { BuilderPreviewPersonaApplicator } from './runtime/BuilderPreviewPersonaApplicator';
 import { DecisionSessionRuntimeProvider } from './runtime/DecisionSessionRuntimeProvider';
 import { DesktopCanvas } from './DesktopCanvas';
 import {
@@ -121,6 +122,7 @@ export function ClientStudioPage({
     <DecisionAnalyticsProvider>
       <DecisionSessionRuntimeProvider runtime={runtime}>
         <RuntimeBootstrapGate>
+          <BuilderPreviewPersonaApplicator />
           <WalkthroughProvider>
             <GuidedJourneyRoot snapEnabled={snapEnabled && !isSceneTransitioning} />
             <JourneySurfaceObserver />

@@ -271,6 +271,10 @@ function QuickActions({
           label="Upravit Media"
           onClick={() => onNavigate('media-studio')}
         />
+        <QuickAction
+          label="Otevřít Preview"
+          onClick={() => onNavigate('preview-center')}
+        />
         <QuickAction label="Publikovat" onClick={onPublish} emphasis />
       </ul>
     </section>
