@@ -460,7 +460,7 @@ export function PublishPanel({
             disabled={preview.session === null}
             className={`w-full rounded-xl px-4 py-3 text-sm font-semibold transition ${
               preview.session !== null
-                ? 'bg-builder-panel text-builder-navy hover:bg-builder-blue hover:text-white'
+                ? 'bg-builder-panel text-builder-navy hover:bg-builder-creamMid'
                 : 'cursor-not-allowed bg-builder-soft text-builder-navy opacity-60'
             }`}
           >
