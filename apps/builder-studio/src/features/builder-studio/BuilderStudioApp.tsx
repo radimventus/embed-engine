@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { AppShell } from '../../components/layout/AppShell';
 import { PlatformHeader } from '../platform';
 import {
+  ProjectActionPanel,
+} from '../project-dashboard';
+import {
   HousePackageEditView,
-  HousePackageMountPanel,
   HousePackageRuntimePreview,
   HousePackageSidebar,
   useHousePackageEditController,
@@ -19,7 +21,7 @@ import {
 } from '../workspace';
 
 /**
- * EPIC-BX-01 — Builder Studio product UX over HP-002 Authoring Surface.
+ * EPIC-BX-01/02 — Builder Studio: Workspace + Project Dashboard home.
  */
 export function BuilderStudioApp() {
   const workspace = useWorkspaceController();
@@ -27,6 +29,8 @@ export function BuilderStudioApp() {
   const [activeNav, setActiveNav] = useState<HousePackageNavId>('overview');
   const [createOpen, setCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const validatedRootRef = useRef<string | null>(null);
 
   const {
     mountStatus,
@@ -64,6 +68,42 @@ export function BuilderStudioApp() {
         )?.name ?? 'Firma')
       : 'Workspace';
 
+  // Always land on Dashboard when the active project changes.
+  useEffect(() => {
+    setActiveNav('overview');
+    setHistoryOpen(false);
+    validatedRootRef.current = null;
+  }, [diskRoot]);
+
+  // Seed readiness from existing validate capability (no new CAP).
+  useEffect(() => {
+    if (
+      diskRoot === null ||
+      mountStatus.status !== 'ready' ||
+      snapshot === null ||
+      validatedRootRef.current === diskRoot
+    ) {
+      return;
+    }
+    validatedRootRef.current = diskRoot;
+    void validate();
+  }, [diskRoot, mountStatus.status, snapshot, validate]);
+
+  const handleNavigate = (nav: HousePackageNavId) => {
+    setHistoryOpen(false);
+    setActiveNav(nav);
+  };
+
+  const handleHistory = () => {
+    setActiveNav('overview');
+    setHistoryOpen(true);
+    window.requestAnimationFrame(() => {
+      document
+        .getElementById('project-publication-history')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    });
+  };
+
   return (
     <>
       <AppShell
@@ -98,33 +138,29 @@ export function BuilderStudioApp() {
           <HousePackageSidebar
             snapshot={snapshot}
             activeNav={activeNav}
-            onSelectNav={setActiveNav}
+            onSelectNav={handleNavigate}
             projectName={workspace.activeProject?.name ?? null}
           />
         }
         publishPanel={
-          <HousePackageMountPanel
-            snapshot={snapshot}
-            session={session}
+          <ProjectActionPanel
+            loadError={loadError}
+            publishError={publishError}
             validationReport={validationReport}
             releaseSummary={releaseSummary}
-            publishError={publishError}
-            loadError={loadError}
-            saving={saving}
             validating={validating}
             publishing={publishing}
-            onChange={apply}
-            onSave={() => {
-              void save();
+            previewAvailable={
+              releaseSummary !== null && releaseVerification !== null
+            }
+            onPreview={openPreview}
+            onPublish={() => {
+              void publish();
             }}
             onValidate={() => {
               void validate();
             }}
-            onNavigate={setActiveNav}
-            onPublish={() => {
-              void publish();
-            }}
-            onOpenPreview={openPreview}
+            onHistory={handleHistory}
           />
         }
       >
@@ -168,11 +204,18 @@ export function BuilderStudioApp() {
               saving={saving}
               companyName={companyName}
               project={workspace.activeProject}
+              validationReport={validationReport}
+              releaseSummary={releaseSummary}
+              historyOpen={historyOpen}
               onChange={apply}
               onSave={() => {
                 void save();
               }}
               onEditProject={() => setEditOpen(true)}
+              onNavigate={handleNavigate}
+              onPublish={() => {
+                void publish();
+              }}
             />
           )}
         {releaseSummary !== null &&
