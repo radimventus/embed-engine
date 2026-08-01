@@ -17,5 +17,6 @@ export const BUILDER_CAPABILITY_MANIFEST: CapabilityManifest = {
     { id: 'preview' },
     { id: 'collaboration' },
     { id: 'intelligence' },
+    { id: 'customer-success' },
   ],
 };

@@ -8,6 +8,7 @@ export const MANAGER_CAPABILITY_MANIFEST: CapabilityManifest = {
   version: '1.0.0',
   uses: [
     { id: 'operations' },
+    { id: 'customer-success' },
     { id: 'intelligence' },
     { id: 'collaboration' },
   ],

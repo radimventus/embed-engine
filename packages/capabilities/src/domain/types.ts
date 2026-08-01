@@ -16,7 +16,8 @@ export type CapabilityId =
   | 'intelligence'
   | 'ai'
   | 'operations'
-  | 'pipeline';
+  | 'pipeline'
+  | 'customer-success';
 
 export type CapabilityMaturity =
   | 'experimental'

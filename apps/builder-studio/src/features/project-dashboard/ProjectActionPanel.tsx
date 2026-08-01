@@ -2,6 +2,7 @@ import type { HousePackageReleaseSummary } from '../house-package/productionPubl
 import type { HousePackageValidationReport } from '../house-package/housePackageValidationReport';
 import { formatCzechDateTime } from './projectDashboardModel';
 import { PilotReadyPanel } from './PilotReadyPanel';
+import { CustomerSuccessStatusPanel } from './CustomerSuccessStatusPanel';
 
 type ProjectActionPanelProps = {
   readonly loadError: string | null;
@@ -107,6 +108,7 @@ export function ProjectActionPanel({
       )}
 
       <PilotReadyPanel />
+      <CustomerSuccessStatusPanel />
 
       {publishError !== null && (
         <pre className="mt-4 max-h-40 overflow-auto whitespace-pre-wrap rounded-lg bg-builder-draftBg px-3 py-2 text-[11px] text-builder-draft">

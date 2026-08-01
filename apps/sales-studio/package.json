@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@embed-engine/capabilities": "workspace:*",
+    "@embed-engine/customer-success": "workspace:*",
     "@embed-engine/intelligence": "workspace:*",
     "@embed-engine/platform-access": "workspace:*",
     "@embed-engine/platform-shell": "workspace:*",

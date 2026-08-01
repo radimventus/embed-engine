@@ -93,16 +93,35 @@ describe('Application Foundation (MSCB-01)', () => {
     const canvas = readSource(
       'src/features/manager-studio/operations/OperationsCanvas.tsx',
     );
+    const page = readSource(
+      'src/features/manager-studio/ManagerStudioPage.tsx',
+    );
 
     assert.match(vocabulary, /OPERATIONS_SECTION_NAV/);
     assert.match(vocabulary, /live-overview/);
     assert.match(vocabulary, /attention-queue/);
     assert.match(sidebar, /OPERATIONS_SECTION_NAV/);
-    assert.match(sidebar, /useActiveSection/);
+    assert.match(sidebar, /CUSTOMER_SUCCESS_SECTION_NAV/);
+    assert.match(sidebar, /useManagerNav/);
     assert.match(sidebar, /scrollToSection/);
     assert.match(canvas, /LiveOverview/);
     assert.match(canvas, /Timeline/);
     assert.match(canvas, /Actions/);
+    assert.match(page, /CustomerSuccessCanvas/);
+    assert.match(page, /OperationsCanvas/);
+  });
+
+  it('projects Customer Success capability (EPIC-BX-17)', () => {
+    const page = readSource(
+      'src/features/manager-studio/ManagerStudioPage.tsx',
+    );
+    const shell = readSource('src/components/layout/AppShell.tsx');
+    const pkg = readSource('package.json');
+
+    assert.match(page, /CustomerSuccessCanvas/);
+    assert.match(shell, /activeCapabilityId/);
+    assert.match(shell, /customer-success/);
+    assert.match(pkg, /@embed-engine\/customer-success/);
   });
 
   it('does not expose Interpretation or compose semantics in the Provider', () => {

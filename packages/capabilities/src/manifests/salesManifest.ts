@@ -8,6 +8,7 @@ export const SALES_CAPABILITY_MANIFEST: CapabilityManifest = {
   version: '0.1.0',
   uses: [
     { id: 'pipeline' },
+    { id: 'customer-success' },
     { id: 'intelligence' },
     { id: 'experience' },
   ],

@@ -16,6 +16,7 @@ import {
 } from '@embed-engine/platform-shell';
 
 import { getManagerCapabilityHost } from '../../studio/managerStudioComposition';
+import { useManagerNav } from '../../features/manager-studio/foundation/ManagerNavProvider';
 import { Workspace } from './Workspace';
 
 type AppShellProps = {
@@ -24,7 +25,7 @@ type AppShellProps = {
 };
 
 /**
- * Manager Studio shell — Platform Access session + Capability Host (BX-11..14).
+ * Manager Studio shell — Platform Access session + Capability Host (BX-11..17).
  */
 export function AppShell({ sidebar, children }: AppShellProps) {
   const {
@@ -35,8 +36,9 @@ export function AppShell({ sidebar, children }: AppShellProps) {
     clearStudio,
     selectProject,
   } = usePlatformSession();
+  const { activeCapabilityId } = useManagerNav();
   const capabilityHost = useMemo(() => getManagerCapabilityHost(), []);
-  const inspectorModel = capabilityHost.inspectorModel('operations');
+  const inspectorModel = capabilityHost.inspectorModel(activeCapabilityId);
 
   const workspaceState: PlatformWorkspaceState = {
     companyLabel: bootstrap?.company.name ?? 'Company',
@@ -51,12 +53,17 @@ export function AppShell({ sidebar, children }: AppShellProps) {
     onSelectProject: selectProject,
   };
 
+  const sectionLabel =
+    activeCapabilityId === 'customer-success'
+      ? 'Customer Success'
+      : 'Operations';
+
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS' },
     { id: 'studio', label: 'Manager' },
     { id: 'company', label: bootstrap?.company.name ?? 'Company' },
     { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
-    { id: 'section', label: 'Operations' },
+    { id: 'section', label: sectionLabel },
   ];
 
   return (
@@ -71,7 +78,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
       workspace={workspaceState}
       breadcrumb={breadcrumb}
       capabilityHost={capabilityHost}
-      activeCapabilityId="operations"
+      activeCapabilityId={activeCapabilityId}
       onLogout={logout}
       onOpenLanding={clearStudio}
       onSubmitFeedback={(message) => {

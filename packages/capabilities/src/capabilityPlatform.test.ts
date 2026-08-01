@@ -68,7 +68,9 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
     assert.equal(sales.studioId, 'sales');
     assert.ok(builder.isDeclared('media'));
     assert.ok(manager.isDeclared('operations'));
+    assert.ok(manager.isDeclared('customer-success'));
     assert.ok(sales.isDeclared('pipeline'));
+    assert.ok(sales.isDeclared('customer-success'));
   });
 
   it('Manager and Sales manifests use shared intelligence capability once', () => {
@@ -78,7 +80,16 @@ describe('capabilityPlatform (EPIC-BX-13)', () => {
     assert.ok(
       SALES_CAPABILITY_MANIFEST.uses.some((item) => item.id === 'intelligence'),
     );
+    assert.ok(
+      MANAGER_CAPABILITY_MANIFEST.uses.some(
+        (item) => item.id === 'customer-success',
+      ),
+    );
     assert.equal(listCapabilities().filter((c) => c.id === 'intelligence').length, 1);
+    assert.equal(
+      listCapabilities().filter((c) => c.id === 'customer-success').length,
+      1,
+    );
   });
 
   it('inspector model exposes capability metadata and health', () => {

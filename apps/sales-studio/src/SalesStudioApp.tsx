@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { analyzeCustomerSuccess } from '@embed-engine/customer-success';
 import {
   PLATFORM_ROLE_LABELS,
   primaryRole,
@@ -17,13 +18,17 @@ import {
 import { getSalesCapabilityHost } from './studio/salesStudioComposition';
 
 /**
- * EPIC-BX-11 / BX-13 / BX-14 — Sales Studio as access + capability composition.
+ * EPIC-BX-11..17 — Sales Studio: Pipeline + Customer Success capability.
  */
 export function SalesStudioApp() {
   const { session, bootstrap, registry, logout, clearStudio, selectProject } =
     usePlatformSession();
   const capabilityHost = useMemo(() => getSalesCapabilityHost(), []);
-  const inspectorModel = capabilityHost.inspectorModel('pipeline');
+  const inspectorModel = capabilityHost.inspectorModel('customer-success');
+  const success = useMemo(
+    () => analyzeCustomerSuccess({ session }),
+    [session],
+  );
 
   const workspaceState: PlatformWorkspaceState = {
     companyLabel: bootstrap?.company.name ?? 'Company',
@@ -43,7 +48,7 @@ export function SalesStudioApp() {
     { id: 'studio', label: 'Sales' },
     { id: 'company', label: bootstrap?.company.name ?? 'Company' },
     { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
-    { id: 'section', label: 'Pipeline' },
+    { id: 'section', label: 'Customer Success' },
   ];
 
   return (
@@ -58,7 +63,7 @@ export function SalesStudioApp() {
       workspace={workspaceState}
       breadcrumb={breadcrumb}
       capabilityHost={capabilityHost}
-      activeCapabilityId="pipeline"
+      activeCapabilityId="customer-success"
       onLogout={logout}
       onOpenLanding={clearStudio}
       onSubmitFeedback={(message) => {
@@ -92,7 +97,7 @@ export function SalesStudioApp() {
               color: 'var(--platform-muted)',
             }}
           >
-            Sales Studio
+            Customer Success
           </p>
           <h1
             style={{
@@ -103,7 +108,7 @@ export function SalesStudioApp() {
               color: 'var(--platform-ink)',
             }}
           >
-            Capability composition
+            {success?.health ?? '—'} · {success?.adoptionScore ?? 0}%
           </h1>
           <p
             style={{
@@ -113,12 +118,41 @@ export function SalesStudioApp() {
               color: 'var(--platform-muted)',
             }}
           >
-            Stejný Session Provider jako Builder a Manager. Kontext firmy /
-            workspace / projektu se zachová při přechodu mezi Studii.
+            Stejná Customer Success capability jako Manager — žádný druhý model
+            zákazníka. Onboarding{' '}
+            {success?.onboardingCompleteCount ?? 0}/
+            {success?.onboardingTotal ?? 0}.
           </p>
           <ul
             style={{
               margin: '24px 0 0',
+              paddingLeft: 18,
+              color: 'var(--platform-ink)',
+              fontSize: 14,
+              lineHeight: 1.6,
+            }}
+          >
+            {(success?.recommendations ?? []).map((item) => (
+              <li key={item.id}>
+                <a href={item.href}>{item.title}</a>
+              </li>
+            ))}
+          </ul>
+          <p
+            style={{
+              margin: '28px 0 0',
+              fontSize: 12,
+              fontWeight: 600,
+              letterSpacing: '0.06em',
+              textTransform: 'uppercase',
+              color: 'var(--platform-muted)',
+            }}
+          >
+            Declared capabilities
+          </p>
+          <ul
+            style={{
+              margin: '8px 0 0',
               paddingLeft: 18,
               color: 'var(--platform-ink)',
               fontSize: 14,

@@ -19,6 +19,7 @@
     "@embed-engine/embed": "workspace:*",
     "@embed-engine/intelligence": "workspace:*",
     "@embed-engine/capabilities": "workspace:*",
+    "@embed-engine/customer-success": "workspace:*",
     "@embed-engine/platform-access": "workspace:*",
     "@embed-engine/kernel": "workspace:*",
     "@embed-engine/model": "workspace:*",

@@ -43,4 +43,13 @@ describe('Sales Studio shell (EPIC-BX-11)', () => {
     assert.match(app, /usePlatformSession/);
     assert.match(pkg, /@embed-engine\/platform-access/);
   });
+
+  it('projects Customer Success capability (EPIC-BX-17)', () => {
+    const app = readFileSync(join(salesRoot, 'src/SalesStudioApp.tsx'), 'utf8');
+    const pkg = readFileSync(join(salesRoot, 'package.json'), 'utf8');
+
+    assert.match(app, /analyzeCustomerSuccess/);
+    assert.match(app, /customer-success/);
+    assert.match(pkg, /@embed-engine\/customer-success/);
+  });
 });

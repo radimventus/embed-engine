@@ -114,4 +114,15 @@ export const CAPABILITY_DEFINITIONS: readonly CapabilityDefinition[] = [
     maturity: 'experimental',
     description: 'Sales pipeline placeholder capability.',
   },
+  {
+    id: 'customer-success',
+    name: 'Customer Success',
+    version: '1.0.0',
+    owner: 'platform',
+    studioSupport: ['manager', 'sales', 'builder'],
+    dependencies: [],
+    maturity: 'beta',
+    description:
+      'Customer Success Platform — onboarding, adoption, health, recommendations.',
+  },
 ] as const;
