@@ -53,7 +53,7 @@ export function StudioSwitcher({
                 aria-label={`Otevřít ${studio.label}`}
                 onClick={() => onSelectStudio(studio.id)}
               >
-                {studio.shortLabel}
+                {studio.label}
               </button>
             );
           }
@@ -65,7 +65,7 @@ export function StudioSwitcher({
               title={studio.label}
               aria-label={`Otevřít ${studio.label}`}
             >
-              {studio.shortLabel}
+              {studio.label}
             </a>
           );
         }
@@ -81,7 +81,7 @@ export function StudioSwitcher({
             aria-current={isActive ? 'page' : undefined}
             title={!studio.available ? 'Studio zatím není dostupné' : studio.label}
           >
-            {studio.shortLabel}
+            {studio.label}
           </span>
         );
       })}

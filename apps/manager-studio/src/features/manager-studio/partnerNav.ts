@@ -32,7 +32,7 @@ export const PARTNER_NAV_GROUPS: readonly PartnerNavGroup[] = [
       },
       {
         id: 'mwc-improvements',
-        label: 'Doporučená vylepšení Experience Layer',
+        label: 'Doporučená vylepšení zážitkové vrstvy',
         short: 'V',
       },
     ],

@@ -20,7 +20,7 @@ export function Workspace({ children }: WorkspaceProps) {
             zákazníků.
           </p>
         </div>
-        <PlatformStatusBadge tone="info">Živá data z Runtime</PlatformStatusBadge>
+        <PlatformStatusBadge tone="info">Živá data z provozního jádra</PlatformStatusBadge>
       </header>
       {children}
     </main>

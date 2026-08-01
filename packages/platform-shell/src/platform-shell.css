@@ -132,18 +132,21 @@
 .platform-role-btn {
   border: none;
   border-radius: 20px;
-  background: var(--platform-navy);
-  padding: 8px 20px;
+  background: var(--platform-cream-dark);
+  padding: 8px 16px;
   font: inherit;
-  font-size: 13px;
-  font-weight: 600;
-  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--platform-navy);
   text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+  white-space: nowrap;
 }
 
-/* PR-026B — inactive clickable = Navy · hover Gold; active = Cream Dark · no hover. */
+/* PR-026C — inactive clickable Cream Dark + Gold hover; active Navy · no hover. */
 .platform-role-btn:hover {
   background: var(--platform-gold);
   color: var(--platform-navy);
@@ -151,29 +154,29 @@
 }
 
 .platform-role-btn--active {
-  background: var(--platform-cream-dark);
-  color: var(--platform-navy);
+  background: var(--platform-navy);
+  color: #ffffff;
   box-shadow: none;
   cursor: default;
   opacity: 1;
 }
 
 .platform-role-btn--active:hover {
-  background: var(--platform-cream-dark);
-  color: var(--platform-navy);
+  background: var(--platform-navy);
+  color: #ffffff;
   opacity: 1;
 }
 
 .platform-role-btn--disabled {
-  background: var(--platform-navy);
-  color: #ffffff;
+  background: var(--platform-cream-dark);
+  color: var(--platform-navy);
   opacity: 0.45;
   cursor: not-allowed;
 }
 
 .platform-role-btn--disabled:hover {
-  background: var(--platform-navy);
-  color: #ffffff;
+  background: var(--platform-cream-dark);
+  color: var(--platform-navy);
   opacity: 0.45;
 }
 

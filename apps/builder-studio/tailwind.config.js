@@ -21,7 +21,7 @@ export default {
         builder: {
           canvas: '#F7F6F4',
           ink: '#001930',
-          muted: '#64748B',
+          muted: '#001930',
           line: '#E3E3E3',
           lineSoft: '#E3E3E3',
           navy: '#001930',

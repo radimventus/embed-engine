@@ -73,7 +73,7 @@ export function OperationsCenterCanvas({
         </div>
         <div>
           <dt className="text-xs text-[var(--platform-navy)]">
-            Zdraví Runtime
+            Zdraví provozního jádra
           </dt>
           <dd className="text-sm font-medium uppercase">
             {report.metrics.runtimeHealth}

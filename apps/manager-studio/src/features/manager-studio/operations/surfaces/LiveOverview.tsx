@@ -10,7 +10,7 @@ export function LiveOverview() {
     <OperationsSurface
       id={OPERATIONS_SECTION_IDS.overview}
       title="Živý přehled"
-      description="Aktuální stav Decision Session — projekce Runtime, bez lokální interpretace."
+      description="Aktuální stav rozhodovací relace — projekce provozního jádra, bez lokální interpretace."
     >
       <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <Fact label="Objekt" value={overview.objectTitle} />

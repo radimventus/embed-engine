@@ -131,7 +131,7 @@ export function ProductLearningCanvas({
           </div>
           <div>
             <p className="text-xs font-semibold uppercase tracking-wide text-[var(--platform-navy)]">
-              Schopnosti / Studia
+              Schopnosti / studia
             </p>
             <ul className="mt-2 space-y-1 text-sm text-[var(--platform-navy)]">
               {report.insights.capabilitiesAffected.slice(0, 5).map((item) => (

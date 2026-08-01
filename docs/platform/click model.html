@@ -77,15 +77,18 @@ header {
 }
 
 .role-btn {
-    padding: 8px 20px;
+    padding: 8px 16px;
     border-radius: 20px;
-    font-size: 13px;
-    font-weight: 600;
-    color: #fff;
-    background: var(--navy);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--navy);
+    background: var(--cream-dark, #D9D4CC);
     border: none;
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease, opacity 0.2s ease;
+    white-space: nowrap;
 }
 
 .role-btn:hover {
@@ -94,14 +97,14 @@ header {
 }
 
 .role-btn.active {
-    background: var(--cream-dark, #D9D4CC);
-    color: var(--navy);
+    background: var(--navy);
+    color: #fff;
     box-shadow: none;
 }
 
 .role-btn.active:hover {
-    background: var(--cream-dark, #D9D4CC);
-    color: var(--navy);
+    background: var(--navy);
+    color: #fff;
     opacity: 1;
 }
 

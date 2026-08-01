@@ -55,7 +55,13 @@
   .border-builder-creamMid {
     border-color: #e8e5e0;
   }
+  .text-builder-ink {
+    color: #001930;
+  }
   .text-builder-muted {
+    color: #001930;
+  }
+  .text-builder-navy {
     color: #001930;
   }
   .text-builder-danger {

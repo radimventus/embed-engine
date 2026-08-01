@@ -14,14 +14,14 @@ export function ManagerWorkCenterHome() {
         <div id="mwc-dropoff" className="scroll-mt-4">
           <PlatformCard
             title="Místa ztráty zákazníků"
-            description="Kde zájemci opouštějí rozhodovací proces (Decision Journey)"
+            description="Kde zájemci opouštějí rozhodovací proces (rozhodovací cesta)"
             action={
               <PlatformStatusBadge tone="warning">
                 Pokles ve kroku Finance
               </PlatformStatusBadge>
             }
           >
-            <FunnelRow label="Experience" width={100} value="1000" />
+            <FunnelRow label="Prohlídka" width={100} value="1000" />
             <FunnelRow label="Priority" width={87} value="870" />
             <FunnelRow label="Navigátor" width={69} value="690" />
             <FunnelRow label="Finance" width={43} value="430" critical />
@@ -41,7 +41,7 @@ export function ManagerWorkCenterHome() {
         <div id="mwc-factors" className="scroll-mt-4">
           <PlatformCard
             title="Co ovlivňuje rozhodnutí zákazníků"
-            description="Váha parametrů při vytváření osobního Decision Profile"
+            description="Váha parametrů při vytváření osobního rozhodovacího profilu"
             action={
               <PlatformStatusBadge tone="gold">
                 Top: Cena & Splátka
@@ -84,27 +84,27 @@ export function ManagerWorkCenterHome() {
 
       <div id="mwc-improvements" className="scroll-mt-4">
         <PlatformCard
-          title="Doporučená vylepšení Experience Layer"
-          description="Automatická diagnostika z Decision Signals pro zvýšení jistoty klientů"
+          title="Doporučená vylepšení zážitkové vrstvy"
+          description="Automatická diagnostika z rozhodovacích signálů pro zvýšení jistoty klientů"
         >
           <div className="grid gap-4 desktop:grid-cols-3">
             <ImproveCard
               tone="info"
               impact="Vysoký dopad"
-              title="Doplnit FAQ k financování"
+              title="Doplnit časté otázky k financování"
               detail="AI detekuje opuštění ve fázi Finance. Zodpovězení splátek předem odstraní nejistotu."
             />
             <ImproveCard
               tone="info"
               impact="Vysoký dopad"
-              title="Propojení House Navigatora s FVE"
+              title="Propojení navigátoru domu s FVE"
               detail="Klienti řešící energetickou úsporu vyžadují pohled na střechu a orientaci ke světlu."
             />
             <ImproveCard
               tone="info"
               impact="Střední dopad"
               title="Rozšíření fotogalerie interiéru"
-              detail="Opakované návraty do sekce Hero indikují potřebu většího množství reálných detailů."
+              detail="Opakované návraty do úvodní sekce indikují potřebu většího množství reálných detailů."
             />
           </div>
         </PlatformCard>
