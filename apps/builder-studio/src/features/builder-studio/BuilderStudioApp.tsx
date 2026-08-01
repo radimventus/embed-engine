@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { AppShell } from '../../components/layout/AppShell';
+import { ExperienceComposerView } from '../experience-composer';
 import { PlatformHeader } from '../platform';
-import {
-  ProjectActionPanel,
-} from '../project-dashboard';
+import { ProjectActionPanel } from '../project-dashboard';
 import {
   HousePackageEditView,
   HousePackageRuntimePreview,
@@ -21,7 +20,7 @@ import {
 } from '../workspace';
 
 /**
- * EPIC-BX-01/02 — Builder Studio: Workspace + Project Dashboard home.
+ * EPIC-BX-01..03 — Builder Studio: Dashboard + Experience Composer + HP authoring.
  */
 export function BuilderStudioApp() {
   const workspace = useWorkspaceController();
@@ -68,6 +67,8 @@ export function BuilderStudioApp() {
         )?.name ?? 'Firma')
       : 'Workspace';
 
+  const experienceMode = activeNav === 'experience';
+
   // Always land on Dashboard when the active project changes.
   useEffect(() => {
     setActiveNav('overview');
@@ -108,6 +109,7 @@ export function BuilderStudioApp() {
     <>
       <AppShell
         header={<PlatformHeader />}
+        denseMain={experienceMode}
         workspacePanel={
           <WorkspaceSidebar
             registry={workspace.registry}
@@ -143,25 +145,27 @@ export function BuilderStudioApp() {
           />
         }
         publishPanel={
-          <ProjectActionPanel
-            loadError={loadError}
-            publishError={publishError}
-            validationReport={validationReport}
-            releaseSummary={releaseSummary}
-            validating={validating}
-            publishing={publishing}
-            previewAvailable={
-              releaseSummary !== null && releaseVerification !== null
-            }
-            onPreview={openPreview}
-            onPublish={() => {
-              void publish();
-            }}
-            onValidate={() => {
-              void validate();
-            }}
-            onHistory={handleHistory}
-          />
+          experienceMode ? undefined : (
+            <ProjectActionPanel
+              loadError={loadError}
+              publishError={publishError}
+              validationReport={validationReport}
+              releaseSummary={releaseSummary}
+              validating={validating}
+              publishing={publishing}
+              previewAvailable={
+                releaseSummary !== null && releaseVerification !== null
+              }
+              onPreview={openPreview}
+              onPublish={() => {
+                void publish();
+              }}
+              onValidate={() => {
+                void validate();
+              }}
+              onHistory={handleHistory}
+            />
+          )
         }
       >
         {diskRoot === null && (
@@ -194,9 +198,25 @@ export function BuilderStudioApp() {
           </section>
         )}
         {mountStatus.status === 'ready' &&
+          workspace.activeProject !== null &&
+          experienceMode && (
+            <ExperienceComposerView
+              projectId={workspace.activeProject.id}
+              snapshot={snapshot}
+              validationReport={validationReport}
+              onNavigateContent={handleNavigate}
+              onHeroImagePathChange={(imagePath) => {
+                if (session !== null) {
+                  apply(session.setHeroRelativePath(imagePath));
+                }
+              }}
+            />
+          )}
+        {mountStatus.status === 'ready' &&
           snapshot !== null &&
           session !== null &&
-          workspace.activeProject !== null && (
+          workspace.activeProject !== null &&
+          !experienceMode && (
             <HousePackageEditView
               snapshot={snapshot}
               session={session}

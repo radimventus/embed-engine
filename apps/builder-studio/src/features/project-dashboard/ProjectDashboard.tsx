@@ -261,7 +261,7 @@ function QuickActions({
         />
         <QuickAction
           label="Upravit Experience"
-          onClick={() => onNavigate('manifest')}
+          onClick={() => onNavigate('experience')}
         />
         <QuickAction label="Publikovat" onClick={onPublish} emphasis />
       </ul>

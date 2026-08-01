@@ -255,7 +255,7 @@ function buildReadinessItems(input: {
         : input.experienceModules > 0
           ? 'ok'
           : 'missing',
-      nav: 'manifest',
+      nav: 'experience',
     },
     {
       id: 'runtime',
