@@ -14,6 +14,8 @@ type PlatformDialogProps = {
   readonly children?: ReactNode;
   readonly primaryLabel: string;
   readonly secondaryLabel?: string;
+  /** When true, secondary action is omitted (e.g. done-only CTA). */
+  readonly hideSecondary?: boolean;
   readonly busy?: boolean;
   readonly primaryDisabled?: boolean;
   readonly onClose: () => void;
@@ -34,6 +36,7 @@ export function PlatformDialog({
   children,
   primaryLabel,
   secondaryLabel = 'Zrušit',
+  hideSecondary = false,
   busy = false,
   primaryDisabled = false,
   onClose,
@@ -111,14 +114,16 @@ export function PlatformDialog({
 
   const actions = (
     <div className="platform-dialog__actions">
-      <button
-        type="button"
-        className="platform-btn"
-        disabled={busy}
-        onClick={runSecondary}
-      >
-        {secondaryLabel}
-      </button>
+      {!hideSecondary && (
+        <button
+          type="button"
+          className="platform-btn"
+          disabled={busy}
+          onClick={runSecondary}
+        >
+          {secondaryLabel}
+        </button>
+      )}
       <button
         type={asForm ? 'submit' : 'button'}
         className="platform-btn platform-btn--primary"

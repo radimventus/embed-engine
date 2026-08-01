@@ -1,11 +1,8 @@
 /**
- * BU-001 / BU-001A — Unified bulk upload dialog (Nový projekt grammar).
+ * BU-001 / BU-001A / BU-002 — Unified bulk upload dialog (Nový projekt grammar).
  *
- * BU-002 extension points (do not redesign this dialog shell):
- * - pick phase body → drag & drop zone + multi-select list
- * - completed file rows → rename / preview / delete / version badges
- * - onCompleted payload → reorder / selection state in parent staging
- * - progress block → keep as optional long-running feedback
+ * BU-002: drop / ＋ Přidat feed `initialFiles` into this shell — no dialog redesign.
+ * BU-003: rename / preview / delete / versioning on completed rows & staging.
  */
 
 import { useEffect, useRef, useState } from 'react';
@@ -35,6 +32,10 @@ type BulkUploadDialogProps = {
   readonly kind: BulkUploadKind;
   readonly onClose: () => void;
   readonly onCompleted: (files: readonly BulkUploadCompletedFile[]) => void;
+  /** Prefill from drop or ＋ Přidat file picker. */
+  readonly initialFiles?: readonly File[];
+  /** When true with initialFiles, start upload immediately (drop path). */
+  readonly autoStart?: boolean;
 };
 
 type Phase = 'pick' | 'uploading' | 'done';
@@ -44,10 +45,13 @@ export function BulkUploadDialog({
   kind,
   onClose,
   onCompleted,
+  initialFiles,
+  autoStart = false,
 }: BulkUploadDialogProps) {
   const config = BULK_UPLOAD_KINDS[kind];
   const inputRef = useRef<HTMLInputElement>(null);
   const progressTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const autoStartedRef = useRef(false);
   const [files, setFiles] = useState<File[]>([]);
   const [phase, setPhase] = useState<Phase>('pick');
   const [showProgress, setShowProgress] = useState(false);
@@ -64,32 +68,48 @@ export function BulkUploadDialog({
   };
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      autoStartedRef.current = false;
+      return;
+    }
     clearProgressTimer();
-    setFiles([]);
+    const seeded =
+      initialFiles !== undefined && initialFiles.length > 0
+        ? Array.from(initialFiles).filter((file) =>
+            isAllowedBulkExtension(kind, file.name),
+          )
+        : [];
+    setFiles(seeded);
     setPhase('pick');
     setShowProgress(false);
     setDoneCount(0);
     setTotalCount(0);
-    setError(null);
+    setError(
+      initialFiles !== undefined &&
+        initialFiles.length > 0 &&
+        seeded.length === 0
+        ? 'Žádný soubor nemá podporovaný formát.'
+        : null,
+    );
     setCompleted([]);
     if (inputRef.current !== null) {
       inputRef.current.value = '';
     }
-  }, [open, kind]);
+  }, [open, kind, initialFiles]);
 
   useEffect(() => () => clearProgressTimer(), []);
 
   const remaining = Math.max(totalCount - doneCount, 0);
   const busy = phase === 'uploading';
 
-  const runUpload = async () => {
-    if (files.length === 0 || busy) return;
-    const accepted = files.filter((file) =>
+  const runUpload = async (sourceFiles: readonly File[]) => {
+    if (sourceFiles.length === 0 || busy) return;
+    const accepted = sourceFiles.filter((file) =>
       isAllowedBulkExtension(kind, file.name),
     );
     if (accepted.length === 0) {
       setError('Žádný soubor nemá podporovaný formát.');
+      setPhase('pick');
       return;
     }
     setError(null);
@@ -129,6 +149,14 @@ export function BulkUploadDialog({
     onCompleted(uploaded);
   };
 
+  useEffect(() => {
+    if (!open || !autoStart || autoStartedRef.current) return;
+    if (files.length === 0) return;
+    autoStartedRef.current = true;
+    void runUpload(files);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- start once when seeded
+  }, [open, autoStart, files]);
+
   return (
     <PlatformDialog
       open={open}
@@ -145,7 +173,8 @@ export function BulkUploadDialog({
             ? 'Nahrávám…'
             : 'Nahrát'
       }
-      secondaryLabel={phase === 'done' ? 'Zavřít' : 'Zrušit'}
+      secondaryLabel="Zrušit"
+      hideSecondary={phase === 'done'}
       busy={busy}
       primaryDisabled={phase === 'pick' && files.length === 0}
       asForm={phase === 'pick'}
@@ -157,7 +186,7 @@ export function BulkUploadDialog({
           onClose();
           return;
         }
-        void runUpload();
+        void runUpload(files);
       }}
       onSecondary={() => {
         if (!busy) onClose();

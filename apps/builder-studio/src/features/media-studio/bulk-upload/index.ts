@@ -9,3 +9,5 @@ export {
   listStagedBulkAssets,
   type StagedBulkAsset,
 } from './bulkUploadStaging';
+export { AssetDropZone } from './AssetDropZone';
+export { FileDragGhost } from './FileDragGhost';

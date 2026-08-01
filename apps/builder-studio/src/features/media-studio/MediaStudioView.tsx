@@ -1,5 +1,11 @@
 import { parseCsv } from '@embed-engine/object-house/builder-package';
-import { useMemo, useState, type DragEvent, type FormEvent } from 'react';
+import {
+  useMemo,
+  useRef,
+  useState,
+  type DragEvent,
+  type FormEvent,
+} from 'react';
 
 import {
   AiAuthorSuggestButton,
@@ -22,7 +28,9 @@ import {
 } from '../house-package/housePackageCsv';
 import type { MediaAreaId } from './mediaCatalog';
 import {
+  AssetDropZone,
   BulkUploadDialog,
+  FileDragGhost,
   appendStagedBulkAssets,
   listStagedBulkAssets,
   type BulkUploadCompletedFile,
@@ -66,6 +74,8 @@ export function MediaStudioView({
   const [stagingTick, setStagingTick] = useState(0);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [bulkKind, setBulkKind] = useState<BulkUploadKind | null>(null);
+  const [bulkInitialFiles, setBulkInitialFiles] = useState<File[] | null>(null);
+  const [bulkAutoStart, setBulkAutoStart] = useState(false);
   const area = lockedArea ?? areaState;
 
   const model = useMemo(
@@ -75,6 +85,22 @@ export function MediaStudioView({
 
   const refreshMeta = () => setMetaTick((value) => value + 1);
   const refreshStaging = () => setStagingTick((value) => value + 1);
+
+  const openBulkUpload = (
+    kind: BulkUploadKind,
+    files?: readonly File[],
+    autoStart = false,
+  ) => {
+    setBulkKind(kind);
+    setBulkInitialFiles(files !== undefined ? Array.from(files) : null);
+    setBulkAutoStart(autoStart && files !== undefined && files.length > 0);
+  };
+
+  const closeBulkUpload = () => {
+    setBulkKind(null);
+    setBulkInitialFiles(null);
+    setBulkAutoStart(false);
+  };
 
   const areaBody = (
     <>
@@ -97,7 +123,8 @@ export function MediaStudioView({
           onSelect={setSelectedKey}
           onChange={onChange}
           onMetaSaved={refreshMeta}
-          onOpenBulkUpload={() => setBulkKind('images')}
+          onOpenBulkUpload={() => openBulkUpload('images')}
+          onDropFiles={(files) => openBulkUpload('images', files, true)}
         />
       )}
       {area === 'videos' && snapshot !== null && session !== null && (
@@ -118,7 +145,8 @@ export function MediaStudioView({
           projectId={projectId}
           showBulkUpload={area === 'svg'}
           stagingTick={stagingTick}
-          onOpenBulkUpload={() => setBulkKind('svg')}
+          onOpenBulkUpload={() => openBulkUpload('svg')}
+          onDropFiles={(files) => openBulkUpload('svg', files, true)}
         />
       )}
       {area === 'documents' && (
@@ -126,14 +154,17 @@ export function MediaStudioView({
           model={model}
           projectId={projectId}
           stagingTick={stagingTick}
-          onOpenBulkUpload={() => setBulkKind('documents')}
+          onOpenBulkUpload={() => openBulkUpload('documents')}
+          onDropFiles={(files) => openBulkUpload('documents', files, true)}
         />
       )}
       {bulkKind !== null && (
         <BulkUploadDialog
           open
           kind={bulkKind}
-          onClose={() => setBulkKind(null)}
+          initialFiles={bulkInitialFiles ?? undefined}
+          autoStart={bulkAutoStart}
+          onClose={closeBulkUpload}
           onCompleted={(files) => {
             if (bulkKind === 'images' && snapshot !== null && session !== null) {
               applyGalleryBulkUpload({
@@ -160,6 +191,7 @@ export function MediaStudioView({
           }}
         />
       )}
+      <FileDragGhost />
     </>
   );
 
@@ -409,6 +441,7 @@ function GalleryManager({
   onChange,
   onMetaSaved,
   onOpenBulkUpload,
+  onDropFiles,
 }: {
   readonly model: MediaStudioModel;
   readonly snapshot: HousePackageEditSnapshot;
@@ -419,9 +452,11 @@ function GalleryManager({
   readonly onChange: (next: HousePackageEditSnapshot) => void;
   readonly onMetaSaved: () => void;
   readonly onOpenBulkUpload: () => void;
+  readonly onDropFiles: (files: File[]) => void;
 }) {
   const [filter, setFilter] = useState('');
   const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const addInputRef = useRef<HTMLInputElement>(null);
 
   const filtered = model.gallery.filter((item) => {
     const q = filter.trim().toLowerCase();
@@ -438,14 +473,14 @@ function GalleryManager({
   };
 
   return (
-    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
+    <AssetDropZone kind="images" onDropFiles={onDropFiles}>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-builder-ink">
             Galerie
           </h2>
           <p className="mt-1 text-sm text-builder-muted">
-            Miniatury · drag & drop pořadí · HP gallery.csv
+            Miniatury · přetáhněte soubory sem · HP gallery.csv
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -455,20 +490,24 @@ function GalleryManager({
             placeholder="Filtrovat…"
             className="rounded-[10px] border border-[#DDE5EF] px-3 py-2 text-sm"
           />
+          <input
+            ref={addInputRef}
+            type="file"
+            multiple
+            accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={(event) => {
+              const list = event.target.files;
+              if (list !== null && list.length > 0) {
+                onDropFiles(Array.from(list));
+              }
+              event.target.value = '';
+            }}
+          />
           <button
             type="button"
             className="rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2 text-sm font-medium text-white"
-            onClick={() =>
-              onChange(
-                session.setGalleryCsv(
-                  addCsvRow(snapshot.working.galleryCsv, {
-                    order: String(model.gallery.length + 1),
-                    room: 'exterior',
-                    file: '00.webp',
-                  }),
-                ),
-              )
-            }
+            onClick={() => addInputRef.current?.click()}
           >
             ＋ Přidat
           </button>
@@ -555,8 +594,16 @@ function GalleryManager({
                   setDragIndex(index);
                   event.dataTransfer.setData('text/plain', String(index));
                 }}
-                onDragOver={(event) => event.preventDefault()}
+                onDragOver={(event) => {
+                  if (Array.from(event.dataTransfer.types).includes('Files')) {
+                    return;
+                  }
+                  event.preventDefault();
+                }}
                 onDrop={(event: DragEvent) => {
+                  if (Array.from(event.dataTransfer.types).includes('Files')) {
+                    return;
+                  }
                   event.preventDefault();
                   const from = Number.parseInt(
                     event.dataTransfer.getData('text/plain'),
@@ -642,7 +689,7 @@ function GalleryManager({
         onChange={onChange}
         onMetaSaved={onMetaSaved}
       />
-    </section>
+    </AssetDropZone>
   );
 }
 
@@ -901,18 +948,21 @@ function FloorPlanStudio({
   showBulkUpload,
   stagingTick,
   onOpenBulkUpload,
+  onDropFiles,
 }: {
   readonly model: MediaStudioModel;
   readonly projectId: string;
   readonly showBulkUpload: boolean;
   readonly stagingTick: number;
   readonly onOpenBulkUpload: () => void;
+  readonly onDropFiles: (files: File[]) => void;
 }) {
   void stagingTick;
   const staged = listStagedBulkAssets(projectId, 'svg');
+  const addInputRef = useRef<HTMLInputElement>(null);
 
-  return (
-    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
+  const body = (
+    <>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-builder-ink">
@@ -920,16 +970,40 @@ function FloorPlanStudio({
           </h2>
           <p className="mt-1 text-sm text-builder-muted">
             SVG · validace · vazby na místnosti
+            {showBulkUpload ? ' · přetáhněte soubory sem' : ''}
           </p>
         </div>
         {showBulkUpload && (
-          <button
-            type="button"
-            className="platform-btn"
-            onClick={onOpenBulkUpload}
-          >
-            Nahrát více souborů
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <input
+              ref={addInputRef}
+              type="file"
+              multiple
+              accept=".svg,image/svg+xml"
+              className="hidden"
+              onChange={(event) => {
+                const list = event.target.files;
+                if (list !== null && list.length > 0) {
+                  onDropFiles(Array.from(list));
+                }
+                event.target.value = '';
+              }}
+            />
+            <button
+              type="button"
+              className="rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2 text-sm font-medium text-white"
+              onClick={() => addInputRef.current?.click()}
+            >
+              ＋ Přidat
+            </button>
+            <button
+              type="button"
+              className="platform-btn"
+              onClick={onOpenBulkUpload}
+            >
+              Nahrát více souborů
+            </button>
+          </div>
         )}
       </div>
       <ul className="mt-5 space-y-4">
@@ -992,7 +1066,21 @@ function FloorPlanStudio({
           Žádná podlaží — doplňte Dispozici (rooms.csv) nebo nahrajte SVG.
         </p>
       )}
-    </section>
+    </>
+  );
+
+  if (!showBulkUpload) {
+    return (
+      <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
+        {body}
+      </section>
+    );
+  }
+
+  return (
+    <AssetDropZone kind="svg" onDropFiles={onDropFiles}>
+      {body}
+    </AssetDropZone>
   );
 }
 
@@ -1001,33 +1089,59 @@ function DocumentLibrary({
   projectId,
   stagingTick,
   onOpenBulkUpload,
+  onDropFiles,
 }: {
   readonly model: MediaStudioModel;
   readonly projectId: string;
   readonly stagingTick: number;
   readonly onOpenBulkUpload: () => void;
+  readonly onDropFiles: (files: File[]) => void;
 }) {
   void stagingTick;
   const staged = listStagedBulkAssets(projectId, 'documents');
+  const addInputRef = useRef<HTMLInputElement>(null);
 
   return (
-    <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
+    <AssetDropZone kind="documents" onDropFiles={onDropFiles}>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <h2 className="text-lg font-semibold text-builder-ink">
             Dokumenty
           </h2>
           <p className="mt-1 text-sm text-builder-muted">
-            PDF / DOC / DOCX — rychlý hromadný upload
+            PDF / DOC / DOCX — přetáhněte soubory sem
           </p>
         </div>
-        <button
-          type="button"
-          className="platform-btn"
-          onClick={onOpenBulkUpload}
-        >
-          Nahrát více souborů
-        </button>
+        <div className="flex flex-wrap gap-2">
+          <input
+            ref={addInputRef}
+            type="file"
+            multiple
+            accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+            className="hidden"
+            onChange={(event) => {
+              const list = event.target.files;
+              if (list !== null && list.length > 0) {
+                onDropFiles(Array.from(list));
+              }
+              event.target.value = '';
+            }}
+          />
+          <button
+            type="button"
+            className="rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2 text-sm font-medium text-white"
+            onClick={() => addInputRef.current?.click()}
+          >
+            ＋ Přidat
+          </button>
+          <button
+            type="button"
+            className="platform-btn"
+            onClick={onOpenBulkUpload}
+          >
+            Nahrát více souborů
+          </button>
+        </div>
       </div>
       <ul className="mt-5 space-y-2">
         {model.documents.map((doc) => (
@@ -1091,7 +1205,7 @@ function DocumentLibrary({
           model.areas.find((item) => item.id === 'documents')?.usages ?? []
         }
       />
-    </section>
+    </AssetDropZone>
   );
 }
 
