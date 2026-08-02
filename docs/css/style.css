@@ -219,18 +219,6 @@ CORE VALUE SLIDE (W-01B)
   background: var(--bg);
 }
 
-.core-value__watermark {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  object-position: center center;
-  pointer-events: none;
-  user-select: none;
-  z-index: 0;
-}
-
 .core-value__inner {
   position: relative;
   z-index: 1;
@@ -243,19 +231,6 @@ CORE VALUE SLIDE (W-01B)
   background: transparent;
 }
 
-.core-value__logo {
-  font-size: clamp(18px, 2vw, 24px);
-  font-weight: 700;
-  letter-spacing: 0.34em;
-  text-transform: uppercase;
-  color: var(--navy);
-  margin-bottom: clamp(48px, 8vh, 96px);
-}
-
-.core-value__logo span {
-  color: var(--gold);
-}
-
 .core-value__headline {
   margin: 0;
   font-size: clamp(32px, 5.2vw, 68px);
@@ -264,6 +239,7 @@ CORE VALUE SLIDE (W-01B)
   line-height: 1.18;
   max-width: 18.5em;
   text-align: center;
+  color: var(--navy);
 }
 
 /************************************************
