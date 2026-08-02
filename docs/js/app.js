@@ -6,6 +6,12 @@
 document.addEventListener("DOMContentLoaded", () => {
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  document.querySelector('.logo[href="#top"]')?.addEventListener("click", (event) => {
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+    history.replaceState(null, "", "#top");
+  });
+
   if (reduceMotion) {
     document.querySelectorAll(".fade").forEach((el) => {
       el.classList.add("visible");

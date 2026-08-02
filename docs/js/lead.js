@@ -1,35 +1,35 @@
 /**
- * Lead capture UI — builds LeadPayload and submits via @embed-engine/lead (IIFE).
- * Source-specific quiz mapping lives here; Lead Service stays source-agnostic.
+ * Lead capture UI — consultation request (WEB-2.0).
+ * Builds LeadPayload and submits via @embed-engine/lead (IIFE).
  */
 
 (function () {
   const QUESTION_TITLES_BY_KEY = Object.freeze({
-    annual_sales: "Kolik domů ročně prodáváte?",
-    sales_team: "Máte vlastní obchodní tým?",
-    monthly_traffic: "Kolik lidí měsíčně navštíví váš web?",
-    priority: "Co je pro vás důležitější?",
-    ready_for_pilot: "Jste připraveni začít pilotem?",
+    extra_homes:
+      "Kolik nových domů byste chtěli ročně prodat navíc (při více připravených zájemcích)?",
+    decision_pain: "Kde dnes nejčastěji ztrácíte čas v prodeji?",
+    understanding:
+      "Když zákazník poprvé zavolá, jak dobře už rozumí vašemu domu?",
+    cycle_value: "Co by pro vás znamenalo zkrácení prodejního cyklu?",
+    want_consult:
+      "Chcete ověřit, jestli to dává smysl u vás — na jednom domě?",
   });
 
   const SEGMENT_EVALUATION = Object.freeze({
     A: Object.freeze({
       score: 1,
-      segment: "A — zatím není fit pro pilot",
-      recommendation:
-        "Pilot zatím nedává smysl. Zůstaňte v kontaktu a vraťte se, až budete připraveni začít.",
+      segment: "A — zatím není fit",
+      recommendation: "Zatím jen přemýšlí — zůstat v kontaktu.",
     }),
     B: Object.freeze({
       score: 2,
-      segment: "B — ke zvážení / review",
-      recommendation:
-        "Potenciál je, ale potřebujeme krátké review. Ozveme se s návrhem dalšího kroku.",
+      segment: "B — ke konzultaci / review",
+      recommendation: "Ozveme se a domluvíme další krok.",
     }),
     C: Object.freeze({
       score: 3,
-      segment: "C — pilotní kandidát",
-      recommendation:
-        "Silný fit pro pilot. Domluvíme krátkou schůzku a nastavíme další postup.",
+      segment: "C — žádost o konzultaci",
+      recommendation: "Partner chce konzultaci — kontaktovat.",
     }),
   });
 
@@ -38,7 +38,7 @@
   let calendlyUrl = null;
   let leadService = null;
 
-  const leadSection = document.getElementById("leadSection");
+  const leadCapture = document.getElementById("registrace");
   const leadFormWrap = document.getElementById("leadFormWrap");
   const leadForm = document.getElementById("leadForm");
   const leadError = document.getElementById("leadError");
@@ -54,7 +54,7 @@
       calendlyUrl = options.calendlyUrl || null;
       showLeadSection();
     },
-    /** Nav "Registrovat" — consultation request form without changing quiz flow. */
+    /** Nav "Registrovat" — consultation request without dialog. */
     openConsultation() {
       qualificationStatus = qualificationStatus || "B";
       qualificationAnswers = qualificationAnswers || {};
@@ -64,17 +64,17 @@
   };
 
   function showLeadSection() {
-    if (!leadSection) return;
-    leadSection.hidden = false;
-    leadSection.classList.add("is-visible");
-    leadSection.style.display = "flex";
+    if (!leadCapture) return;
+    leadCapture.hidden = false;
+    leadCapture.removeAttribute("hidden");
+    leadCapture.classList.add("is-visible");
     if (leadBridge) leadBridge.hidden = false;
     if (leadFormWrap) leadFormWrap.hidden = false;
     if (leadThanks) leadThanks.hidden = true;
     if (thanksAction) thanksAction.replaceChildren();
     if (leadForm) leadForm.reset();
     hideError();
-    leadSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    leadCapture.scrollIntoView({ behavior: "smooth", block: "start" });
     leadForm?.querySelector("input")?.focus?.();
   }
 
@@ -91,8 +91,9 @@
   }
 
   function validateContact(formValues) {
-    if (!formValues.name) return "Vyplňte prosím jméno.";
     if (!formValues.company) return "Vyplňte prosím firmu.";
+    if (!formValues.name) return "Vyplňte prosím jméno.";
+    if (!formValues.phone) return "Vyplňte prosím telefon.";
     if (!formValues.email) return "Vyplňte prosím e-mail.";
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formValues.email)) {
       return "Zadejte platný e-mail.";
@@ -178,7 +179,6 @@
     return leadService;
   }
 
-  /** Source adapter: CONIS web quiz → universal LeadPayload (not inside LeadService). */
   function buildLeadPayload(formValues) {
     const answers = qualificationAnswers || {};
     const evaluation = evaluateStatus(qualificationStatus);
@@ -202,7 +202,7 @@
         name: formValues.name,
         company: formValues.company,
         email: formValues.email,
-        phone: formValues.phone || undefined,
+        phone: formValues.phone,
       },
       fields,
       summary: {
@@ -272,7 +272,7 @@
     } finally {
       if (leadSubmit) {
         leadSubmit.disabled = false;
-        leadSubmit.textContent = "Odeslat";
+        leadSubmit.textContent = "Odeslat žádost";
       }
     }
   }

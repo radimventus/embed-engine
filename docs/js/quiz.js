@@ -1,34 +1,44 @@
 /**
- * CONIS Qualification Engine
- * Sends answers to POST /qualification (server decides A/B/C).
- * After quiz → contact form (no intermediate thank-you).
+ * CONIS commercial dialog — partner-centered (Booklet WEB-2.0).
+ * Not a data-collection form for CONIS; leads into consultation request.
  */
 
 const questions = [
   {
-    key: "annual_sales",
-    title: "Kolik domů ročně prodáváte?",
-    answers: ["do 20", "20–100", "100–300", "více než 300"]
+    key: "extra_homes",
+    title:
+      "Představte si, že by váš současný web přiváděl více připravených zájemců. Kolik nových domů byste chtěli ročně prodat navíc?",
+    answers: ["do 5", "5–15", "15–40", "více než 40"]
   },
   {
-    key: "sales_team",
-    title: "Máte vlastní obchodní tým?",
-    answers: ["Ano", "Ne"]
+    key: "decision_pain",
+    title: "Kde dnes nejčastěji ztrácíte čas v prodeji?",
+    answers: [
+      "Vysvětlováním produktu",
+      "Porovnáváním s konkurencí",
+      "Čekáním na rozhodnutí",
+      "Nejistotou zákazníka"
+    ]
   },
   {
-    key: "monthly_traffic",
-    title: "Kolik lidí měsíčně navštíví váš web?",
-    answers: ["do 500", "500–2 000", "2 000–10 000", "více"]
+    key: "understanding",
+    title: "Když zákazník poprvé zavolá, jak dobře už rozumí vašemu domu?",
+    answers: ["Skoro vůbec", "Částečně", "Dobře", "Velmi dobře"]
   },
   {
-    key: "priority",
-    title: "Co je pro vás důležitější?",
-    answers: ["Více poptávek", "Lepší rozhodování zákazníků"]
+    key: "cycle_value",
+    title: "Co by pro vás znamenalo zkrácení prodejního cyklu?",
+    answers: [
+      "Více uzavřených obchodů",
+      "Méně ztracených zájemců",
+      "Klidnější obchodní tým",
+      "Všechny tři"
+    ]
   },
   {
-    key: "ready_for_pilot",
-    title: "Jste připraveni začít pilotem?",
-    answers: ["Ano", "Ne"]
+    key: "want_consult",
+    title: "Chcete ověřit, jestli to dává smysl u vás — na jednom domě?",
+    answers: ["Ano, chci konzultaci", "Zatím jen přemýšlím"]
   }
 ];
 
@@ -82,51 +92,22 @@ function selectAnswer(key, value) {
   if (current < questions.length) {
     render();
   } else {
-    submitQualification();
+    finishDialog();
   }
 }
 
-function safeUrl(url) {
-  try {
-    const parsed = new URL(url, window.location.origin);
-    if (parsed.protocol === "https:" || parsed.protocol === "http:") {
-      return parsed.href;
-    }
-  } catch {
-    /* ignore */
-  }
-  return "https://calendly.com/conis/rezervace-schuzky";
+function resolveStatus() {
+  return userAnswers.want_consult === "Ano, chci konzultaci" ? "C" : "B";
 }
 
-async function submitQualification() {
+function finishDialog() {
   if (quizContainer) quizContainer.style.display = "none";
-  document.getElementById("closing")?.classList.add("is-complete");
+  document.getElementById("zjistit-potencial")?.classList.add("is-complete");
 
-  let status = "B";
-  let calendlyUrl = null;
-
-  try {
-    const response = await fetch("/qualification", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(userAnswers)
-    });
-
-    if (response.ok) {
-      const data = await response.json();
-      status = data.status || "B";
-      calendlyUrl = data.calendlyUrl || null;
-    }
-  } catch (error) {
-    console.warn("Backend unavailable, using default review status.", error);
-  }
+  const status = resolveStatus();
 
   if (window.ConisLead && typeof window.ConisLead.prepare === "function") {
-    window.ConisLead.prepare(status, userAnswers, {
-      calendlyUrl: calendlyUrl ? safeUrl(calendlyUrl) : null
-    });
+    window.ConisLead.prepare(status, userAnswers, { calendlyUrl: null });
   }
 }
 
