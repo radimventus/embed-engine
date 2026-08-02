@@ -211,7 +211,7 @@ CORE VALUE SLIDE (W-01B)
 .core-value {
   position: relative;
   min-height: 100vh;
-  padding-top: 82px;
+  padding: 82px 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1011,6 +1011,20 @@ RESPONSIVE DESIGN
     height: auto;
     min-height: 82px;
     padding: 14px 0;
+  }
+
+  .core-value {
+    min-height: 100vh;
+    padding-top: 120px;
+  }
+
+  .core-value__inner {
+    padding: 56px 0 72px;
+  }
+
+  .core-value__headline {
+    font-size: clamp(28px, 6.5vw, 42px);
+    letter-spacing: -1px;
   }
 
   .hero {
