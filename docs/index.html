@@ -22,6 +22,8 @@
   <meta name="twitter:description" content="CONIS je platforma porozumění mezi člověkem a produktem. Rozumíme souvislostem. Rozumíme tomu, co rozhoduje.">
   <meta name="twitter:image" content="https://res.cloudinary.com/djiq5pxj1/image/upload/v1785073673/Sni%CC%81mek_obrazovky_2026-07-26_v_15.45.55_fsdfjn.png">
 
+  <link rel="icon" href="/favicon.ico" sizes="any">
+  <link rel="icon" href="public/favicon.ico" sizes="any">
   <link rel="icon" href="public/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="public/favicon.svg">
   <link rel="manifest" href="manifest.webmanifest">
@@ -48,29 +50,33 @@
       <div class="logo" aria-label="CONIS">
         CON<span>I</span>S
       </div>
-      <a class="header-login" href="https://studio.conis.cz">Přihlásit</a>
+      <div>
+        <a class="header-login" href="https://studio.conis.cz">Přihlásit</a>
+        <a class="header-login" href="#registrace" id="navRegister">Registrovat</a>
+      </div>
     </div>
   </header>
 
   <main id="main">
-    <section class="hero" aria-label="Úvod">
-      <div class="container">
+    <section class="hero" aria-label="Úvod" data-conis-hero>
+      <div class="container" data-hero-layout>
         <div class="hero-grid">
-          <div class="hero-copy fade">
-            <h1>
+          <div class="hero-copy fade" data-hero-copy>
+            <h1 data-hero-title>
               Rozumíme<br>
               souvislostem.
             </h1>
-            <p class="lead">
+            <p class="lead" data-hero-supporting>
               Platforma porozumění mezi člověkem a produktem.
             </p>
-            <p class="lead gold">
+            <p class="lead gold" data-hero-accent>
               Rozumíme tomu, co rozhoduje.
             </p>
           </div>
 
-          <div class="hero-image fade">
+          <div class="hero-image fade" data-hero-media>
             <img
+              data-hero-image
               src="https://res.cloudinary.com/djiq5pxj1/image/upload/f_auto,q_auto,w_1200/v1785073673/Sni%CC%81mek_obrazovky_2026-07-26_v_15.45.55_fsdfjn.png"
               srcset="https://res.cloudinary.com/djiq5pxj1/image/upload/f_auto,q_auto,w_800/v1785073673/Sni%CC%81mek_obrazovky_2026-07-26_v_15.45.55_fsdfjn.png 800w,
                       https://res.cloudinary.com/djiq5pxj1/image/upload/f_auto,q_auto,w_1200/v1785073673/Sni%CC%81mek_obrazovky_2026-07-26_v_15.45.55_fsdfjn.png 1200w,
@@ -266,19 +272,19 @@
     </section>
 
     <section class="closing" id="closing" aria-label="Závěr">
-      <div class="closing-stage closing-intro" aria-label="Kvalifikace úvod">
+      <div class="closing-stage closing-intro" aria-label="Zjistit potenciál — úvod">
         <div class="container narrow-center">
-          <p class="eyebrow fade">DALŠÍ KROK</p>
+          <p class="eyebrow fade">ZJISTIT POTENCIÁL</p>
           <h2 class="fade">
             CONIS není řešením pro každou firmu.
           </h2>
           <p class="lead closing-lead fade">
-            Proto jsme připravili krátkou kvalifikaci. Zabere přibližně dvě minuty.
+            Proto jsme připravili krátký průvodce. Zabere přibližně dvě minuty.
           </p>
         </div>
       </div>
 
-      <div class="closing-stage quiz-section" id="quizContainer" aria-label="Kvalifikace">
+      <div class="closing-stage quiz-section" id="quizContainer" aria-label="Zjistit potenciál">
         <div class="quiz container">
           <div
             class="progress"
@@ -299,7 +305,7 @@
         </div>
       </div>
 
-      <div class="closing-stage lead-capture" id="leadSection" aria-label="Kontakt" hidden>
+      <div class="closing-stage lead-capture" id="leadSection" aria-label="Žádost o konzultaci" hidden>
         <div class="container narrow-center">
           <div id="leadFormWrap">
             <p class="lead lead-bridge" id="leadBridge">

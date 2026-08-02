@@ -54,6 +54,13 @@
       calendlyUrl = options.calendlyUrl || null;
       showLeadSection();
     },
+    /** Nav "Registrovat" — consultation request form without changing quiz flow. */
+    openConsultation() {
+      qualificationStatus = qualificationStatus || "B";
+      qualificationAnswers = qualificationAnswers || {};
+      calendlyUrl = null;
+      showLeadSection();
+    },
   };
 
   function showLeadSection() {
@@ -272,5 +279,19 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     leadForm?.addEventListener("submit", submitLead);
+
+    const openFromHash = () => {
+      const hash = (window.location.hash || "").toLowerCase();
+      if (hash === "#registrace" || hash === "#leadsection") {
+        window.ConisLead.openConsultation();
+      }
+    };
+    document.getElementById("navRegister")?.addEventListener("click", (event) => {
+      event.preventDefault();
+      history.replaceState(null, "", "#registrace");
+      window.ConisLead.openConsultation();
+    });
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
   });
 })();
