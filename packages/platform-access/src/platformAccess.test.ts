@@ -9,6 +9,9 @@ import {
   buildPilotReadyReport,
   canAccessStudio,
   defaultStudioForRoles,
+  CLOUD_PLATFORM_ORIGIN,
+  CLOUD_APP_HOST,
+  CLOUD_STUDIO_ENTRY_PATH,
   createPilotInvite,
   getCloudPlatformConfig,
   getDefaultCompanyRegistry,
@@ -107,6 +110,12 @@ describe('platformAccess (EPIC-BX-14)', () => {
     assert.equal(defaultStudioForRoles(['manager']), 'manager');
     assert.equal(defaultStudioForRoles(['salesman']), 'sales');
     assert.equal(defaultStudioForRoles(['conis-admin']), 'manager');
+  });
+
+  it('W-01A cloud studio paths use conis.cz/studio', () => {
+    assert.equal(CLOUD_PLATFORM_ORIGIN, 'https://conis.cz');
+    assert.equal(CLOUD_APP_HOST, 'conis.cz/studio');
+    assert.equal(CLOUD_STUDIO_ENTRY_PATH, '/studio/');
   });
 });
 

@@ -1,14 +1,18 @@
 /**
- * EPIC-BX-15 / RC-002 — Cloud Platform bootstrap for https://studio.conis.cz
+ * EPIC-BX-15 / RC-002 / W-01A — Cloud Platform bootstrap for https://conis.cz/studio
  * Local Vite ports remain for development; cloud uses path-based studio URLs.
  */
 
 import type { PlatformStudioId } from '../domain/types';
 
-/** Canonical working-platform origin (not the public marketing site). */
-export const CLOUD_PLATFORM_ORIGIN = 'https://studio.conis.cz';
+/** Site origin that hosts CONIS Studio under /studio/* (GitHub Pages single custom domain). */
+export const CLOUD_PLATFORM_ORIGIN = 'https://conis.cz';
 
-export const CLOUD_APP_HOST = 'studio.conis.cz';
+/** Public display host path for CONIS Studio (not a separate subdomain). */
+export const CLOUD_APP_HOST = 'conis.cz/studio';
+
+/** Canonical Studio entry (login / role redirect landing). */
+export const CLOUD_STUDIO_ENTRY_PATH = '/studio/';
 
 export type PlatformDeployMode = 'local' | 'cloud';
 
@@ -25,9 +29,9 @@ const LOCAL_STUDIO_PORTS: Record<PlatformStudioId, number> = {
 };
 
 const CLOUD_STUDIO_PATHS: Record<PlatformStudioId, string> = {
-  builder: '/builder/',
-  manager: '/manager/',
-  sales: '/sales/',
+  builder: '/studio/builder/',
+  manager: '/studio/manager/',
+  sales: '/studio/sales/',
 };
 
 function readEnvOrigin(): string | null {
@@ -100,5 +104,5 @@ export function resolveCloudLandingHref(): string {
       typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
     return `http://${host}:4177/`;
   }
-  return `${config.origin}/`;
+  return `${config.origin}${CLOUD_STUDIO_ENTRY_PATH}`;
 }

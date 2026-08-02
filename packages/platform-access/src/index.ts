@@ -90,6 +90,7 @@ export { bootstrapTenant } from './bootstrap/tenantBootstrap';
 export {
   CLOUD_PLATFORM_ORIGIN,
   CLOUD_APP_HOST,
+  CLOUD_STUDIO_ENTRY_PATH,
   getCloudPlatformConfig,
   resolveCloudStudioHref,
   resolveCloudLandingHref,

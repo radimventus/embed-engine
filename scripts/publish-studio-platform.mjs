@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * RC-002 — Publish CONIS Studio platform to docs/{builder,manager,sales}/
- * for GitHub Pages hosting on https://studio.conis.cz (and path aliases on conis.cz).
+ * W-01A — Publish CONIS Studio platform to docs/studio/{builder,manager,sales}/
+ * Public entry: https://conis.cz/studio
  *
  * Usage:
  *   pnpm studio:publish
@@ -20,29 +20,29 @@ import { spawnSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const STUDIO_ORIGIN = "https://studio.conis.cz";
+const STUDIO_ORIGIN = "https://conis.cz";
 
 const STUDIOS = [
   {
     id: "builder",
     filter: "@embed-engine/builder-studio",
-    base: "/builder/",
+    base: "/studio/builder/",
     distRel: "apps/builder-studio/dist",
-    outRel: "docs/builder",
+    outRel: "docs/studio/builder",
   },
   {
     id: "manager",
     filter: "@embed-engine/manager-studio",
-    base: "/manager/",
+    base: "/studio/manager/",
     distRel: "apps/manager-studio/dist",
-    outRel: "docs/manager",
+    outRel: "docs/studio/manager",
   },
   {
     id: "sales",
     filter: "@embed-engine/sales-studio",
-    base: "/sales/",
+    base: "/studio/sales/",
     distRel: "apps/sales-studio/dist",
-    outRel: "docs/sales",
+    outRel: "docs/studio/sales",
   },
 ];
 
@@ -75,7 +75,6 @@ function publishStudio(studio) {
     {
       VITE_BASE: studio.base,
       VITE_PLATFORM_ORIGIN: STUDIO_ORIGIN,
-      // Never bake local AI keys into public Studio bundles.
       VITE_OPENAI_API_KEY: "",
       VITE_OPENAI_MODEL: "",
       OPENAI_API_KEY: "",
@@ -90,49 +89,68 @@ function publishStudio(studio) {
   mkdirSync(path.dirname(outDir), { recursive: true });
   cpSync(distDir, outDir, { recursive: true });
 
-  // GitHub Pages SPA deep-link / refresh fallback
   const indexHtml = readFileSync(path.join(outDir, "index.html"), "utf8");
   writeFileSync(path.join(outDir, "404.html"), indexHtml);
 
   console.log(`  published → ${studio.outRel}/`);
 }
 
-function writeStudioRootHint() {
-  const hintPath = path.join(repoRoot, "docs", "studio-host.html");
+function writeRedirect(filePath, targetPath) {
+  mkdirSync(path.dirname(filePath), { recursive: true });
   writeFileSync(
-    hintPath,
+    filePath,
     `<!DOCTYPE html>
 <html lang="cs">
 <head>
   <meta charset="UTF-8" />
-  <meta http-equiv="refresh" content="0; url=/builder/" />
+  <meta http-equiv="refresh" content="0; url=${targetPath}" />
   <title>CONIS Studio</title>
-  <script>location.replace('/builder/');</script>
+  <script>location.replace(${JSON.stringify(targetPath)});</script>
 </head>
 <body>
-  <p><a href="/builder/">Pokračovat do CONIS Studio</a></p>
+  <p><a href="${targetPath}">Pokračovat do CONIS Studio</a></p>
 </body>
 </html>
 `,
   );
 }
 
+function writeStudioSurfaces() {
+  const studioDir = path.join(repoRoot, "docs", "studio");
+  mkdirSync(studioDir, { recursive: true });
+
+  // Default entry → Builder (role redirect continues inside the app after login)
+  writeRedirect(path.join(studioDir, "index.html"), "/studio/builder/");
+
+  // Office reserved (W-01A) — not implemented yet
+  writeRedirect(path.join(studioDir, "office", "index.html"), "/studio/");
+
+  // Legacy path aliases from RC-002 (/builder → /studio/builder)
+  for (const id of ["builder", "manager", "sales"]) {
+    const legacyDir = path.join(repoRoot, "docs", id);
+    rmSync(legacyDir, { recursive: true, force: true });
+    writeRedirect(path.join(legacyDir, "index.html"), `/studio/${id}/`);
+  }
+
+  writeRedirect(path.join(repoRoot, "docs", "studio-host.html"), "/studio/");
+}
+
 console.log("════════════════════════════════════════════════════════");
-console.log("RC-002 — Publish CONIS Studio platform");
-console.log(`Origin: ${STUDIO_ORIGIN}`);
+console.log("W-01A — Publish CONIS Studio platform");
+console.log(`Origin: ${STUDIO_ORIGIN}/studio`);
 console.log("════════════════════════════════════════════════════════");
 
 for (const studio of STUDIOS) {
   publishStudio(studio);
 }
-writeStudioRootHint();
+writeStudioSurfaces();
 
 console.log("\n════════════════════════════════════════════════════════");
 console.log("Studio platform READY");
 console.log("════════════════════════════════════════════════════════");
 console.log("Paths:");
+console.log(`  ${STUDIO_ORIGIN}/studio/`);
 for (const studio of STUDIOS) {
   console.log(`  ${STUDIO_ORIGIN}${studio.base}`);
 }
-console.log("\nNext: commit docs/builder docs/manager docs/sales, push,");
-console.log("ensure DNS CNAME studio.conis.cz → GitHub Pages.");
+console.log(`  ${STUDIO_ORIGIN}/studio/office/ (reserved)`);

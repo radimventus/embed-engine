@@ -1,6 +1,6 @@
 /**
- * EPIC-BX-11 / BX-15 / RC-002 — Platform Studio registry.
- * Local Vite ports for development; path-based URLs on https://studio.conis.cz.
+ * EPIC-BX-11 / BX-15 / W-01A — Platform Studio registry.
+ * Local Vite ports for development; path-based URLs on https://conis.cz/studio.
  */
 
 export type PlatformStudioId = 'builder' | 'manager' | 'sales';
@@ -15,8 +15,8 @@ export type PlatformStudio = {
   readonly accent: string;
 };
 
-/** Canonical working-platform origin (marketing site stays on conis.cz). */
-export const CLOUD_PLATFORM_ORIGIN = 'https://studio.conis.cz';
+/** Site origin that hosts CONIS Studio under /studio/* */
+export const CLOUD_PLATFORM_ORIGIN = 'https://conis.cz';
 
 const LOCAL_PORTS: Record<PlatformStudioId, number> = {
   builder: 4177,
@@ -25,9 +25,9 @@ const LOCAL_PORTS: Record<PlatformStudioId, number> = {
 };
 
 const CLOUD_PATHS: Record<PlatformStudioId, string> = {
-  builder: '/builder/',
-  manager: '/manager/',
-  sales: '/sales/',
+  builder: '/studio/builder/',
+  manager: '/studio/manager/',
+  sales: '/studio/sales/',
 };
 
 function readEnvOrigin(): string | null {
