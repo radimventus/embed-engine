@@ -217,13 +217,35 @@ HERO SECTION
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 70px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  gap: 48px;
   align-items: center;
 }
 
 .hero-copy {
-  padding-right: 40px;
+  position: relative;
+  padding-right: 24px;
+  background: transparent;
+  isolation: isolate;
+}
+
+.hero-watermark {
+  position: absolute;
+  inset: -8% -12% -8% -20%;
+  width: auto;
+  height: auto;
+  max-width: none;
+  object-fit: contain;
+  object-position: right center;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-copy__content {
+  position: relative;
+  z-index: 1;
+  background: transparent;
 }
 
 .hero-copy h1 {
@@ -236,42 +258,21 @@ HERO SECTION
 
 .hero-image {
   position: relative;
-  height: 82vh;
-  min-height: 480px;
-  overflow: hidden;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
   border-radius: 8px;
-  background: #ffffff;
+  background: transparent;
 }
 
-.hero-image--pair {
-  display: flex;
-  align-items: stretch;
-}
-
-.hero-image__base {
-  flex: 0 0 34%;
-  width: 34%;
-  height: 100%;
-  object-fit: cover;
-  object-position: right center;
-  display: block;
-}
-
-.hero-image__subject {
-  flex: 1 1 66%;
-  width: 66%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
-  display: block;
-}
-
-.hero-image:not(.hero-image--pair) img {
+.hero-image img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center center;
+  height: auto;
+  max-width: 100%;
   display: block;
+  object-fit: contain;
+  object-position: center center;
+  border-radius: 8px;
 }
 
 .scroll {
@@ -354,7 +355,7 @@ DECISION & CHANGES SECTIONS
 }
 
 .compare-before {
-  border: 1px solid var(--rule);
+  border: 1px solid rgba(0, 25, 48, 0.28);
   border-radius: 8px;
   padding: 48px 40px;
   text-align: right;
@@ -607,8 +608,8 @@ img {
 }
 
 .hero-image img {
-  height: 100%;
-  max-width: none;
+  height: auto;
+  max-width: 100%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -879,17 +880,8 @@ RESPONSIVE DESIGN
   }
 
   .hero-image {
-    height: 480px;
-  }
-
-  .hero-image--pair .hero-image__base {
-    flex-basis: 30%;
-    width: 30%;
-  }
-
-  .hero-image--pair .hero-image__subject {
-    flex-basis: 70%;
-    width: 70%;
+    height: auto;
+    min-height: 0;
   }
 
   .decision-grid {
@@ -970,7 +962,12 @@ RESPONSIVE DESIGN
   }
 
   .hero-image {
-    height: 420px;
+    height: auto;
+  }
+
+  .hero-watermark {
+    inset: -4% -8% -4% -12%;
+    opacity: 0.9;
   }
 
   .quiz-question h3 {
