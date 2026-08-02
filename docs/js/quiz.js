@@ -1,6 +1,6 @@
 /**
  * CONIS commercial dialog — partner-centered (Booklet WEB-2.0).
- * Not a data-collection form for CONIS; leads into consultation request.
+ * Gold marks partner-value lines only.
  */
 
 const questions = [
@@ -8,7 +8,7 @@ const questions = [
     key: "extra_homes",
     title: [
       "Představte si, že by váš současný web přiváděl více připravených zájemců.",
-      "Kolik nových domů byste chtěli ročně prodat navíc?"
+      { text: "Kolik nových domů byste chtěli ročně prodat navíc?", gold: true }
     ],
     answers: ["do 5", "5–15", "15–40", "více než 40"]
   },
@@ -29,7 +29,9 @@ const questions = [
   },
   {
     key: "cycle_value",
-    title: "Co by pro vás znamenalo zkrácení prodejního cyklu?",
+    title: [
+      "Co by pro vás znamenalo zkrácení prodejního cyklu?"
+    ],
     answers: [
       "Více uzavřených obchodů",
       "Méně ztracených zájemců",
@@ -41,7 +43,7 @@ const questions = [
     key: "want_consult",
     title: [
       "Chcete ověřit, jestli to dává smysl u vás?",
-      "Na jednom domě?"
+      { text: "Na jednom domě?", gold: true }
     ],
     answers: ["Ano, chci konzultaci", "Zatím jen přemýšlím"]
   }
@@ -56,16 +58,32 @@ const progressEl = document.getElementById("progressBar");
 const progressTrack = document.getElementById("progressTrack");
 const quizContainer = document.getElementById("quizContainer");
 
+function normalizeTitleLines(title) {
+  const raw = Array.isArray(title) ? title : [title];
+  return raw.map((line) => {
+    if (typeof line === "string") {
+      return { text: line, gold: false };
+    }
+    return { text: String(line.text || ""), gold: Boolean(line.gold) };
+  });
+}
+
 function renderQuestionTitle(title) {
   if (!titleEl) return;
   titleEl.replaceChildren();
 
-  const lines = Array.isArray(title) ? title : [title];
-  lines.forEach((line, index) => {
+  normalizeTitleLines(title).forEach((line, index) => {
     if (index > 0) {
       titleEl.appendChild(document.createElement("br"));
     }
-    titleEl.appendChild(document.createTextNode(line));
+    if (line.gold) {
+      const mark = document.createElement("span");
+      mark.className = "gold";
+      mark.textContent = line.text;
+      titleEl.appendChild(mark);
+    } else {
+      titleEl.appendChild(document.createTextNode(line.text));
+    }
   });
 }
 

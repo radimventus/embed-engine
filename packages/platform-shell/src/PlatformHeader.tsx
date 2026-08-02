@@ -1,4 +1,5 @@
 import type { PlatformStudioId } from './platformStudios';
+import { CLOUD_PLATFORM_ORIGIN } from './platformStudios';
 import { FeedbackButton } from './FeedbackButton';
 import { NotificationsBell } from './NotificationsBell';
 import { StudioSwitcher } from './StudioSwitcher';
@@ -21,6 +22,7 @@ export type PlatformHeaderProps = {
 
 /**
  * PR-006 — Header: Platform + Studio switch only (no Projekt / Dům).
+ * Brand + link under logo → public site https://conis.cz
  */
 export function PlatformHeader({
   activeStudioId,
@@ -38,21 +40,21 @@ export function PlatformHeader({
   return (
     <header className="platform-header" data-testid="platform-header">
       <div className="platform-header__cluster">
-        <button
-          type="button"
-          className="platform-header__brand platform-breadcrumb__item--action"
-          aria-label="CONIS vstupní stránka"
-          onClick={onOpenLanding}
-          disabled={onOpenLanding === undefined}
-          style={{
-            background: 'transparent',
-            border: 0,
-            padding: 0,
-            cursor: onOpenLanding !== undefined ? 'pointer' : 'default',
-          }}
-        >
-          CON<span className="platform-header__brand-accent">I</span>S
-        </button>
+        <div className="platform-header__brand-block">
+          <a
+            className="platform-header__brand"
+            href={CLOUD_PLATFORM_ORIGIN}
+            aria-label="CONIS — conis.cz"
+          >
+            CON<span className="platform-header__brand-accent">I</span>S
+          </a>
+          <a
+            className="platform-header__site-link"
+            href={CLOUD_PLATFORM_ORIGIN}
+          >
+            conis.cz
+          </a>
+        </div>
       </div>
 
       <StudioSwitcher
