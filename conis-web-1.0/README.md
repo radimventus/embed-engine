@@ -9,6 +9,18 @@ Manifest site with partner qualification and lead capture.
 
 ## Start (local)
 
+### Monorepo host (DEV-014 — recommended)
+
+Serves the production Pages tree (`docs/` → same files as https://conis.cz):
+
+```bash
+pnpm web:dev
+```
+
+Open: [http://127.0.0.1:4190/](http://127.0.0.1:4190/)
+
+### Legacy Node server (qualification / lead APIs)
+
 ```bash
 cd conis-web-1.0
 npm start
