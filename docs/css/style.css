@@ -10,7 +10,8 @@ Editorial Edition v1.0
   --text: #001930;
   --line: rgba(0, 25, 48, 0.08);
   --rule: #ececec;
-  --chapter-gap: 100px;
+  --chapter-gap: 88px;
+  --section-pad: 64px;
   --max: 1520px;
 }
 
@@ -187,7 +188,7 @@ section {
   width: 100%;
   display: flex;
   justify-content: center;
-  padding: var(--chapter-gap) 0;
+  padding: var(--section-pad) 0;
   position: relative;
 }
 
@@ -202,6 +203,16 @@ section {
   border: 0;
   border-top: 1px solid var(--rule);
   height: 0;
+}
+
+/* Equal air above and below chapter dividers */
+section:has(+ .chapter-rule) {
+  padding-bottom: var(--chapter-gap);
+}
+
+.chapter-rule + section,
+.chapter-rule + .chapter {
+  padding-top: var(--chapter-gap);
 }
 
 /************************************************
@@ -227,7 +238,7 @@ CORE VALUE SLIDE (W-01B)
   align-items: center;
   text-align: center;
   max-width: 1100px;
-  padding: 80px 0;
+  padding: 40px 0;
   background: transparent;
 }
 
@@ -248,7 +259,7 @@ HERO SECTION
 
 .hero {
   min-height: 100vh;
-  padding-top: 82px;
+  padding: 82px 0 var(--section-pad);
   display: flex;
   align-items: center;
 }
@@ -320,22 +331,22 @@ MANIFEST, PHILOSOPHY & EDITORIAL SECTIONS
 ************************************************/
 
 .manifest, .philosophy {
-  padding: 180px 0;
+  padding: var(--section-pad) 0;
 }
 
 .manifest h2, .philosophy h2 {
-  margin-bottom: 40px;
+  margin-bottom: 36px;
 }
 
 .manifest .statement {
   font-size: clamp(22px, 3vw, 36px);
   line-height: 1.5;
   max-width: 960px;
-  margin-top: 60px;
+  margin-top: 48px;
 }
 
 .editorial-image {
-  padding: var(--chapter-gap) 0;
+  padding: var(--section-pad) 0;
 }
 
 .editorial-image img {
@@ -351,13 +362,13 @@ DECISION & CHANGES SECTIONS
 ************************************************/
 
 .decision, .changes {
-  padding: var(--chapter-gap) 0;
+  padding: var(--section-pad) 0;
 }
 
 .decision-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 100px;
+  gap: 72px;
   align-items: center;
 }
 
@@ -375,10 +386,10 @@ DECISION & CHANGES SECTIONS
 }
 
 .compare {
-  margin-top: 70px;
+  margin-top: 56px;
   display: grid;
   grid-template-columns: 1fr auto 1fr;
-  gap: 48px 40px;
+  gap: 40px 36px;
   align-items: center;
 }
 
@@ -512,12 +523,12 @@ MANIFEST CLARITY LAYERS
 }
 
 .changes-principle {
-  margin-top: 72px;
+  margin-top: 56px;
   max-width: 640px;
 }
 
 .desire {
-  padding: var(--chapter-gap) 0;
+  padding: var(--section-pad) 0;
   text-align: center;
 }
 
@@ -546,11 +557,11 @@ CLOSING — one continuous finale
 }
 
 .closing-intro {
-  padding: 40px 0 48px;
+  padding: 24px 0 40px;
 }
 
 .quiz-section {
-  padding: 24px 0 100px;
+  padding: 16px 0 72px;
 }
 
 .quiz {
@@ -561,7 +572,7 @@ CLOSING — one continuous finale
 .progress {
   height: 2px;
   background: var(--rule);
-  margin-bottom: 70px;
+  margin-bottom: 56px;
 }
 
 #progressBar {
@@ -574,7 +585,7 @@ CLOSING — one continuous finale
 .quiz-question h3 {
   font-size: clamp(28px, 3.5vw, 48px);
   font-weight: 500;
-  margin-bottom: 60px;
+  margin-bottom: 48px;
   text-align: center;
 }
 
@@ -669,7 +680,7 @@ img {
 }
 
 .lead-bridge {
-  margin: 0 auto 56px;
+  margin: 0 auto 44px;
   max-width: 640px;
 }
 
@@ -705,7 +716,7 @@ LEAD CAPTURE
 
 .lead-capture {
   display: none;
-  padding: 64px 0 120px;
+  padding: 48px 0 88px;
   text-align: center;
 }
 
@@ -806,7 +817,7 @@ FOOTER
 }
 
 .footer-identity {
-  margin-bottom: 88px;
+  margin-bottom: 56px;
 }
 
 .footer-brand {
@@ -814,7 +825,7 @@ FOOTER
   font-weight: 700;
   letter-spacing: 0.34em;
   text-transform: uppercase;
-  margin-bottom: 40px;
+  margin-bottom: 28px;
   color: var(--navy);
 }
 
@@ -825,7 +836,7 @@ FOOTER
 .footer-line {
   font-size: clamp(18px, 2vw, 26px);
   line-height: 1.65;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   max-width: 640px;
   font-weight: 400;
 }
@@ -837,7 +848,7 @@ FOOTER
 }
 
 .footer-contact {
-  margin: 0 0 96px;
+  margin: 0 0 56px;
   font-size: clamp(18px, 2vw, 22px);
   line-height: 1.75;
 }
@@ -946,7 +957,16 @@ RESPONSIVE DESIGN
   }
 
   section {
-    padding: var(--chapter-gap) 0;
+    padding: var(--section-pad) 0;
+  }
+
+  section:has(+ .chapter-rule) {
+    padding-bottom: var(--chapter-gap);
+  }
+
+  .chapter-rule + section,
+  .chapter-rule + .chapter {
+    padding-top: var(--chapter-gap);
   }
 
   .closing {
@@ -954,15 +974,23 @@ RESPONSIVE DESIGN
   }
 
   .closing-intro {
-    padding-top: 24px;
+    padding: 20px 0 32px;
   }
 
   .desire {
-    padding: var(--chapter-gap) 0;
+    padding: var(--section-pad) 0;
   }
 
   .site-footer {
     padding: var(--chapter-gap) 0;
+  }
+
+  .footer-identity {
+    margin-bottom: 48px;
+  }
+
+  .footer-contact {
+    margin-bottom: 48px;
   }
 }
 
@@ -991,11 +1019,11 @@ RESPONSIVE DESIGN
 
   .core-value {
     min-height: 100vh;
-    padding-top: 120px;
+    padding: 120px 0 64px;
   }
 
   .core-value__inner {
-    padding: 56px 0 72px;
+    padding: 32px 0;
   }
 
   .core-value__headline {
@@ -1004,7 +1032,7 @@ RESPONSIVE DESIGN
   }
 
   .hero {
-    padding-top: 120px;
+    padding: 120px 0 var(--section-pad);
   }
 
   .quiz-question h3 {
