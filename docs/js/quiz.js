@@ -6,8 +6,10 @@
 const questions = [
   {
     key: "extra_homes",
-    title:
-      "Představte si, že by váš současný web přiváděl více připravených zájemců. Kolik nových domů byste chtěli ročně prodat navíc?",
+    title: [
+      "Představte si, že by váš současný web přiváděl více připravených zájemců.",
+      "Kolik nových domů byste chtěli ročně prodat navíc?"
+    ],
     answers: ["do 5", "5–15", "15–40", "více než 40"]
   },
   {
@@ -37,7 +39,10 @@ const questions = [
   },
   {
     key: "want_consult",
-    title: "Chcete ověřit, jestli to dává smysl u vás — na jednom domě?",
+    title: [
+      "Chcete ověřit, jestli to dává smysl u vás?",
+      "Na jednom domě?"
+    ],
     answers: ["Ano, chci konzultaci", "Zatím jen přemýšlím"]
   }
 ];
@@ -51,11 +56,24 @@ const progressEl = document.getElementById("progressBar");
 const progressTrack = document.getElementById("progressTrack");
 const quizContainer = document.getElementById("quizContainer");
 
+function renderQuestionTitle(title) {
+  if (!titleEl) return;
+  titleEl.replaceChildren();
+
+  const lines = Array.isArray(title) ? title : [title];
+  lines.forEach((line, index) => {
+    if (index > 0) {
+      titleEl.appendChild(document.createElement("br"));
+    }
+    titleEl.appendChild(document.createTextNode(line));
+  });
+}
+
 function render() {
   if (!titleEl || !answersEl) return;
 
   const currentQ = questions[current];
-  titleEl.textContent = currentQ.title;
+  renderQuestionTitle(currentQ.title);
   answersEl.replaceChildren();
 
   currentQ.answers.forEach((answerText, index) => {
