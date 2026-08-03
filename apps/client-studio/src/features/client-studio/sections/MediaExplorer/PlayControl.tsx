@@ -7,7 +7,7 @@ export function PlayControl({ onPlay }: PlayControlProps) {
     <button
       type="button"
       aria-label="Přehrát video"
-      className="group absolute inset-0 flex cursor-pointer items-center justify-center border-0 bg-transparent p-0"
+      className="group absolute inset-0 flex min-h-11 cursor-pointer items-center justify-center border-0 bg-transparent p-0 touch-manipulation"
       onClick={onPlay}
     >
       <span className="flex h-16 w-16 items-center justify-center rounded-full bg-embed-background-primary/90 shadow-md transition-[transform,opacity] duration-150 ease-out group-hover:scale-[1.04] group-hover:opacity-95">

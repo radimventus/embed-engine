@@ -127,19 +127,20 @@ export function useActiveThumbnailScroll(
 
 /**
  * Slot-based rail navigation — one step = one thumbnail (+ gap).
- * Max offset keeps a full window of THUMBNAIL_SLOT_COUNT thumbs visible.
+ * Max offset keeps a full window of visibleSlotCount thumbs visible.
  */
 export function useThumbnailRailNavigation(
   containerRef: RefObject<HTMLElement | null>,
   itemCount: number,
   slotStepPx: number,
+  visibleSlotCount: number = THUMBNAIL_SLOT_COUNT,
 ): {
   canScrollLeft: boolean;
   canScrollRight: boolean;
   scrollGroup: (direction: -1 | 1) => void;
   scrollToSlot: (slotIndex: number, behavior?: ScrollBehavior) => void;
 } {
-  const maxSlotOffset = Math.max(0, itemCount - THUMBNAIL_SLOT_COUNT);
+  const maxSlotOffset = Math.max(0, itemCount - visibleSlotCount);
   const [slotOffset, setSlotOffset] = useState(0);
 
   useEffect(() => {
@@ -148,7 +149,7 @@ export function useThumbnailRailNavigation(
     if (container !== null) {
       container.scrollLeft = 0;
     }
-  }, [containerRef, itemCount]);
+  }, [containerRef, itemCount, visibleSlotCount]);
 
   useEffect(() => {
     const container = containerRef.current;

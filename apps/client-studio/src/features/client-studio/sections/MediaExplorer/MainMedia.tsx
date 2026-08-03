@@ -9,6 +9,7 @@ import { evidenceLog } from '../../runtime/runtimeEvidence';
 import { MediaLightbox } from './MediaLightbox';
 import { MediaZoomControl } from './MediaZoomControl';
 import { PlayControl } from './PlayControl';
+import { useMediaSwipeNavigation } from './useMediaSwipeNavigation';
 import { SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS } from '../spatial-terminal-layout';
 
 function buildMediaKey(
@@ -62,6 +63,7 @@ export function MainMedia() {
     activeMediaIndex,
     play,
     onVideoEnded,
+    selectMediaIndex,
   } = useWalkthrough();
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hasStartedPlayback, setHasStartedPlayback] = useState(false);
@@ -163,6 +165,19 @@ export function MainMedia() {
     ? (gallery.title ?? 'Fotografie místnosti')
     : 'Náhled procházky domem';
 
+  const swipeEnabled =
+    !mediaFailed &&
+    !isLightboxOpen &&
+    gallery.thumbnails.length > 1 &&
+    (showPhoto || showPlayControl || isWistiaVideo);
+
+  const swipeHandlers = useMediaSwipeNavigation({
+    enabled: swipeEnabled,
+    itemCount: gallery.thumbnails.length,
+    activeIndex: activeMediaIndex,
+    onSelectIndex: selectMediaIndex,
+  });
+
   const handlePlay = () => {
     if (mode === 'ready') {
       play();
@@ -187,7 +202,11 @@ export function MainMedia() {
   };
 
   return (
-    <div className={SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS}>
+    <div
+      className={`${SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS} touch-pan-y`}
+      data-media-swipe={swipeEnabled ? 'on' : 'off'}
+      {...swipeHandlers}
+    >
       <div
         className="absolute inset-0 transition-opacity"
         style={{
@@ -209,7 +228,8 @@ export function MainMedia() {
           <img
             src={photoSrc}
             alt={previewAlt}
-            className="h-full w-full object-cover"
+            className="h-full w-full object-cover mobile:bg-embed-brand-navy mobile:object-contain"
+            draggable={false}
             data-walkthrough-mode={mode}
             data-media-mode={mediaMode}
             onLoad={() => setMediaPending(false)}
@@ -241,7 +261,7 @@ export function MainMedia() {
               src={videoSrc}
               poster={videoPoster}
               controls={showNativeControls}
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover mobile:object-contain"
               playsInline
               preload="metadata"
               onPlay={handleVideoPlay}

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import {
   SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX,
@@ -14,10 +14,10 @@ import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeP
 import { firstPhotoTimelineIndexForRoom, roomIdForTimelineIndex } from '../../runtime/experienceHouseMedia';
 import { SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS } from '../spatial-terminal-layout';
 
-/** Gap between thumbnails inside the 4-slot viewport. */
+/** Gap between thumbnails inside the visible slot viewport. */
 const THUMB_GAP_PX = 16;
 
-/** Side control columns — keeps chevrons outside the 4 visible thumbs. */
+/** Side control columns — keeps chevrons outside the visible thumbs (≥44px RCS-04). */
 const CHEVRON_COLUMN_PX = 48;
 
 /** First photo in the global timeline (video is #1). */
@@ -41,7 +41,7 @@ const THUMB_INNER_IDLE = 'transparent';
 const MAX_VIEWPORT_WIDTH_PX =
   SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX - CHEVRON_COLUMN_PX * 2;
 
-const FITTED_THUMB_WIDTH_PX = Math.floor(
+const DESKTOP_FITTED_THUMB_WIDTH_PX = Math.floor(
   (Math.min(
     THUMBNAIL_SLOT_COUNT * SPATIAL_TERMINAL_THUMBNAIL_WIDTH_PX +
       (THUMBNAIL_SLOT_COUNT - 1) * THUMB_GAP_PX,
@@ -51,19 +51,55 @@ const FITTED_THUMB_WIDTH_PX = Math.floor(
     THUMBNAIL_SLOT_COUNT,
 );
 
-/** Viewport shows exactly four full thumbnails — no partial fifth. */
-const THUMBNAIL_VIEWPORT_WIDTH_PX =
-  THUMBNAIL_SLOT_COUNT * FITTED_THUMB_WIDTH_PX +
+/** Desktop SSOT — viewport shows exactly four full thumbnails. */
+const DESKTOP_VIEWPORT_WIDTH_PX =
+  THUMBNAIL_SLOT_COUNT * DESKTOP_FITTED_THUMB_WIDTH_PX +
   (THUMBNAIL_SLOT_COUNT - 1) * THUMB_GAP_PX;
 
-const SLOT_STEP_PX = FITTED_THUMB_WIDTH_PX + THUMB_GAP_PX;
+const DESKTOP_SLOT_STEP_PX = DESKTOP_FITTED_THUMB_WIDTH_PX + THUMB_GAP_PX;
+
+/** Below this measured viewport width, show 3 larger thumbs (RCS-04). */
+const MOBILE_SLOT_BREAKPOINT_PX = 420;
+const MOBILE_VISIBLE_SLOTS = 3;
 
 /** Same gold as SpatialZoomControl loupe (`#D4AF37`). */
 const LOUPE_GOLD = '#D4AF37';
 
 const THUMBNAIL_RAIL_ROW_CLASS = `box-border w-full min-w-0 shrink-0 ${SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS}`;
 const THUMB_BASE_CLASS =
-  'box-border h-[80px] shrink-0 overflow-hidden transition-[border-color] duration-[125ms] ease-out';
+  'box-border h-full shrink-0 overflow-hidden transition-[border-color] duration-[125ms] ease-out touch-manipulation';
+
+type RailLayout = {
+  readonly viewportWidth: number;
+  readonly thumbWidth: number;
+  readonly slotStep: number;
+  readonly visibleSlots: number;
+};
+
+function resolveRailLayout(viewportWidth: number): RailLayout {
+  const width = Math.max(0, Math.floor(viewportWidth));
+  if (width <= 0) {
+    return {
+      viewportWidth: DESKTOP_VIEWPORT_WIDTH_PX,
+      thumbWidth: DESKTOP_FITTED_THUMB_WIDTH_PX,
+      slotStep: DESKTOP_SLOT_STEP_PX,
+      visibleSlots: THUMBNAIL_SLOT_COUNT,
+    };
+  }
+
+  const visibleSlots =
+    width < MOBILE_SLOT_BREAKPOINT_PX ? MOBILE_VISIBLE_SLOTS : THUMBNAIL_SLOT_COUNT;
+  const thumbWidth = Math.max(
+    44,
+    Math.floor((width - (visibleSlots - 1) * THUMB_GAP_PX) / visibleSlots),
+  );
+  return {
+    viewportWidth: width,
+    thumbWidth,
+    slotStep: thumbWidth + THUMB_GAP_PX,
+    visibleSlots,
+  };
+}
 
 function isWistiaEmbedUrl(url: string): boolean {
   return (
@@ -103,8 +139,8 @@ function RailChevron({ direction, onClick }: RailChevronProps) {
     <button
       type="button"
       aria-label={direction === 'left' ? 'Předchozí náhledy' : 'Další náhledy'}
-      className="flex shrink-0 cursor-pointer items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2"
-      style={{ width: CHEVRON_COLUMN_PX, height: 80 }}
+      className="flex h-11 w-12 shrink-0 cursor-pointer items-center justify-center touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 desktop:h-20"
+      style={{ width: CHEVRON_COLUMN_PX }}
       onClick={onClick}
     >
       <GoldChevronIcon direction={direction} />
@@ -113,7 +149,13 @@ function RailChevron({ direction, onClick }: RailChevronProps) {
 }
 
 function ChevronSpacer() {
-  return <div aria-hidden="true" className="shrink-0" style={{ width: CHEVRON_COLUMN_PX }} />;
+  return (
+    <div
+      aria-hidden="true"
+      className="h-11 w-12 shrink-0 desktop:h-20"
+      style={{ width: CHEVRON_COLUMN_PX }}
+    />
+  );
 }
 
 /**
@@ -180,6 +222,9 @@ export function ThumbnailRail() {
   const previousRoomIdRef = useRef(activeRoomId);
   const previousActiveIndexRef = useRef(activeMediaIndex);
   const skipNextIndexScrollRef = useRef(false);
+  const [layout, setLayout] = useState<RailLayout>(() =>
+    resolveRailLayout(DESKTOP_VIEWPORT_WIDTH_PX),
+  );
 
   /** Global Media Timeline — identical for every room; only activeIndex changes. */
   const mediaTimeline = gallery.thumbnails;
@@ -187,10 +232,32 @@ export function ThumbnailRail() {
 
   useHorizontalWheelScroll(scrollRef);
   const { canScrollLeft, canScrollRight, scrollGroup, scrollToSlot } =
-    useThumbnailRailNavigation(scrollRef, itemCount, SLOT_STEP_PX);
+    useThumbnailRailNavigation(
+      scrollRef,
+      itemCount,
+      layout.slotStep,
+      layout.visibleSlots,
+    );
+
+  useEffect(() => {
+    const node = scrollRef.current;
+    if (node === null || typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    const sync = () => {
+      setLayout(resolveRailLayout(node.clientWidth));
+    };
+    sync();
+    const observer = new ResizeObserver(sync);
+    observer.observe(node);
+    return () => {
+      observer.disconnect();
+    };
+  }, [itemCount]);
 
   /**
-   * Slot-aligned rail anchors (always 4 full thumbnails — never mid-slot):
+   * Slot-aligned rail anchors (always a full visible window — never mid-slot):
    * - VIDEO / FOTKY toggles → video first / first photo first
    * - Exteriér → first photo first
    * - other rooms / floorplan → room's first photo in second slot
@@ -270,23 +337,25 @@ export function ThumbnailRail() {
     };
   }, []);
 
+  const trackWidthPx =
+    itemCount * layout.thumbWidth + Math.max(0, itemCount - 1) * THUMB_GAP_PX;
+
   if (itemCount === 0) {
     return (
       <div
         className={THUMBNAIL_RAIL_ROW_CLASS}
         style={{ maxWidth: SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX }}
       >
-        <div className="flex items-center justify-center">
+        <div className="flex w-full items-center justify-center">
           <ChevronSpacer />
           <div
-            className="flex h-[80px] items-stretch"
-            style={{ width: THUMBNAIL_VIEWPORT_WIDTH_PX, gap: THUMB_GAP_PX }}
+            className="flex h-20 min-w-0 flex-1 items-stretch mobile:h-24"
+            style={{ gap: THUMB_GAP_PX }}
           >
-            {Array.from({ length: THUMBNAIL_SLOT_COUNT }, (_, index) => (
+            {Array.from({ length: layout.visibleSlots }, (_, index) => (
               <div
                 key={index}
-                className="rounded-[8px] border border-embed-border-default bg-embed-background-tertiary/60"
-                style={{ width: FITTED_THUMB_WIDTH_PX, height: 80 }}
+                className="min-h-11 flex-1 rounded-[8px] border border-embed-border-default bg-embed-background-tertiary/60"
               />
             ))}
           </div>
@@ -296,15 +365,13 @@ export function ThumbnailRail() {
     );
   }
 
-  const trackWidthPx =
-    itemCount * FITTED_THUMB_WIDTH_PX + Math.max(0, itemCount - 1) * THUMB_GAP_PX;
-
   return (
     <div
       className={THUMBNAIL_RAIL_ROW_CLASS}
       style={{ maxWidth: SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX }}
+      data-media-rail-slots={layout.visibleSlots}
     >
-      <div className="flex items-center justify-center">
+      <div className="flex w-full items-center justify-center">
         {canScrollLeft ? (
           <RailChevron direction="left" onClick={() => scrollGroup(-1)} />
         ) : (
@@ -313,12 +380,11 @@ export function ThumbnailRail() {
         <div
           ref={scrollRef}
           aria-label="Náhledy médií"
-          className="h-[80px] overflow-x-auto overflow-y-hidden overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="h-20 min-w-0 flex-1 overflow-x-auto overflow-y-hidden overscroll-x-contain mobile:h-24 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           role="region"
-          style={{ width: THUMBNAIL_VIEWPORT_WIDTH_PX }}
         >
           <div
-            className="flex h-full"
+            className="flex h-full transition-[width] duration-150 ease-out"
             style={{
               gap: THUMB_GAP_PX,
               width: trackWidthPx,
@@ -337,8 +403,8 @@ export function ThumbnailRail() {
                   aria-pressed={active}
                   className={THUMB_BASE_CLASS}
                   style={{
-                    width: FITTED_THUMB_WIDTH_PX,
-                    minWidth: FITTED_THUMB_WIDTH_PX,
+                    width: layout.thumbWidth,
+                    minWidth: layout.thumbWidth,
                     borderWidth: THUMB_BORDER_PX,
                     borderStyle: 'solid',
                     // Inline beats Delivery `[data-embed-boundary] button { border-radius: 0 }`.

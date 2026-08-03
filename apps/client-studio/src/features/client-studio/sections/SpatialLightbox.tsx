@@ -84,7 +84,7 @@ export function SpatialLightbox({
     <div
       aria-label={label}
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-embed-brand-navy/70"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-embed-brand-navy/70 pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)]"
       role="dialog"
       onClick={onClose}
     >
