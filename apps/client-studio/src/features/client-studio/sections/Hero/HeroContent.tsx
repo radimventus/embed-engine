@@ -1,4 +1,11 @@
+import { useEffect, useState } from 'react';
+
 import { colors } from '@embed-engine/design-tokens';
+import {
+  loadPlatformSession,
+  projectPartnerBrand,
+  type StudioBrandProjection,
+} from '@embed-engine/platform-access';
 
 import { HeroCTA } from './HeroCTA';
 
@@ -15,15 +22,33 @@ const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
 
 /**
  * Reference Hero Content — Morning Baseline presentation (PT-HERO-00).
- * Static Object fact presentation matching http://127.0.0.1:5176/.
+ * PE-02 — partner Hero strip from Brand Projection (presentation only; no Runtime).
  */
 export function HeroContent() {
+  const [brand, setBrand] = useState<StudioBrandProjection | null>(null);
+
+  useEffect(() => {
+    const session = loadPlatformSession();
+    const projected = projectPartnerBrand({
+      companyId: session?.companyId ?? null,
+    });
+    setBrand(projected.personalized ? projected : null);
+  }, []);
+
   return (
     <section
       aria-label="Hero Content"
       className="relative flex h-full min-h-0 w-full flex-col justify-center bg-white px-section py-section mobile:py-8"
     >
       <div className="translate-x-[10px] mobile:translate-x-0">
+        {brand !== null ? (
+          <p
+            className="mb-2 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/55"
+            data-testid="client-partner-hero"
+          >
+            {brand.logoLabel} · {brand.companyName} · {brand.heroLabel}
+          </p>
+        ) : null}
         <p className="text-sm font-bold uppercase tracking-wide text-[#D4AF37]">
           MODERN A01 – 4+kk
         </p>

@@ -15,4 +15,11 @@ describe('formatExperienceHeaderTitle', () => {
     assert.equal(formatExperienceHeaderTitle(undefined), 'Client Studio');
     assert.equal(formatExperienceHeaderTitle(''), 'Client Studio');
   });
+
+  it('prefixes partner firm name from Brand Projection (PE-02)', () => {
+    assert.equal(
+      formatExperienceHeaderTitle('house-modern-01', 'Pilot Domů'),
+      'Pilot Domů · Client Studio / Modern 01',
+    );
+  });
 });

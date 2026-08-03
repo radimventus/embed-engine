@@ -14,6 +14,8 @@ export type PlatformHeaderProps = {
   readonly workspace?: PlatformWorkspaceState | null;
   readonly notificationCount?: number;
   readonly searchPlaceholder?: string;
+  /** PE-02 — partner company / trade mark (Manager / Sales only). */
+  readonly partnerBrandLabel?: string | null;
   readonly onLogout?: () => void;
   readonly onOpenLanding?: () => void;
   readonly onSelectStudio?: (studioId: PlatformStudioId) => void;
@@ -23,6 +25,7 @@ export type PlatformHeaderProps = {
 /**
  * PR-006 — Header: Platform + Studio switch only (no Projekt / Dům).
  * Brand + link under logo → public site https://conis.cz
+ * PE-02 — optional partner brand line under CONIS (partner studios).
  */
 export function PlatformHeader({
   activeStudioId,
@@ -30,12 +33,14 @@ export function PlatformHeader({
   roleLabel,
   workspace: _workspace = null,
   notificationCount = 3,
+  partnerBrandLabel = null,
   onLogout,
   onOpenLanding,
   onSelectStudio,
   onSubmitFeedback,
 }: PlatformHeaderProps) {
   void _workspace;
+  const partnerLabel = partnerBrandLabel?.trim() || null;
 
   return (
     <header className="platform-header" data-testid="platform-header">
@@ -54,6 +59,15 @@ export function PlatformHeader({
           >
             conis.cz
           </a>
+          {partnerLabel !== null ? (
+            <p
+              className="platform-header__partner-brand"
+              data-testid="platform-partner-brand"
+              data-studio={activeStudioId}
+            >
+              {partnerLabel}
+            </p>
+          ) : null}
         </div>
       </div>
 

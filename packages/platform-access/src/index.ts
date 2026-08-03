@@ -144,6 +144,12 @@ export {
   PARTNER_BRANDING_STORAGE_KEY,
 } from './pilot/partnerBrandingStore';
 
+export {
+  projectPartnerBrand,
+  type StudioBrandProjection,
+  type ProjectPartnerBrandInput,
+} from './pilot/projectPartnerBrand';
+
 export type { PartnerBranding } from './domain/partnerBranding';
 export {
   DEFAULT_PILOT_BRANDING_HERO,
@@ -258,3 +264,4 @@ export { PlatformAccessRoot } from './react/PlatformAccessRoot';
 export { IdentityAccessCenter } from './react/IdentityAccessCenter';
 export { GmReadinessCenter } from './react/GmReadinessCenter';
 export { GaReadinessCenter } from './react/GaReadinessCenter';
+export { useStudioBrandProjection } from './react/useStudioBrandProjection';

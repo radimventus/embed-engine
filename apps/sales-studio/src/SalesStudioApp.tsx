@@ -11,6 +11,7 @@ import {
   recordPlatformActivity,
   submitPlatformFeedback,
   usePlatformSession,
+  useStudioBrandProjection,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -46,6 +47,7 @@ export function SalesStudioApp() {
   const { session, bootstrap, logout, clearStudio, selectStudio } =
     usePlatformSession();
   const capabilityHost = useMemo(() => getSalesCapabilityHost(), []);
+  const brand = useStudioBrandProjection();
   const [activeClientId, setActiveClientId] = useState(SALES_CLIENTS[0].id);
   const [activeHouseId, setActiveHouseId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -74,14 +76,14 @@ export function SalesStudioApp() {
   );
 
   const workspaceState = buildPlatformWorkspaceState({
-    companyLabel: bootstrap?.company.name ?? 'Firma',
+    companyLabel: brand.companyName,
     projectLabel: bootstrap?.project?.name ?? '—',
     projects: [],
   });
 
   // SR-002 — CONIS / Sales / Projekt / Zájemce (bez názvu domu).
-  const projectCrumb =
-    bootstrap?.company.name ?? bootstrap?.project?.name ?? 'Projekt';
+  // PE-02 — company crumb from Brand Projection.
+  const projectCrumb = brand.tradeMark;
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Sales' },
@@ -108,6 +110,7 @@ export function SalesStudioApp() {
           : undefined
       }
       workspace={workspaceState}
+      partnerBrandLabel={brand.logoLabel}
       breadcrumb={breadcrumb}
       capabilityHost={capabilityHost}
       onLogout={logout}
@@ -127,6 +130,13 @@ export function SalesStudioApp() {
       }}
     >
       <main className="platform-studio-pad sales-desk min-h-0 min-w-0 flex-1 overflow-y-auto">
+        <p
+          className="platform-type-helper"
+          style={{ marginBottom: 12 }}
+          data-testid="sales-partner-brand"
+        >
+          {brand.companyName} · {brand.heroLabel}
+        </p>
         <div className="sales-desk__canvas">
           <div className="sales-desk__grid">
             <PlatformCard

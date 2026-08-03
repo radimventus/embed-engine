@@ -3,13 +3,24 @@ import { colors } from '@embed-engine/design-tokens';
 const LOGO_MARK_SIZE_PX = 43;
 const LOGO_GAP_PX = 14;
 
-/** Fictional ASTAV mark — geometric A + wordmark. */
-export function AstavLogo() {
+type AstavLogoProps = {
+  /** PE-02 — projected partner logo / trade mark label. */
+  readonly label?: string;
+};
+
+/**
+ * Experience header mark — geometric A + wordmark.
+ * PE-02 — wordmark comes from Brand Projection when personalized.
+ */
+export function AstavLogo({ label = 'ASTAV' }: AstavLogoProps) {
+  const mark = label.trim() || 'ASTAV';
+
   return (
     <div
       className="flex items-center"
       style={{ gap: LOGO_GAP_PX }}
-      aria-label="ASTAV"
+      aria-label={mark}
+      data-testid="client-partner-logo"
     >
       <svg
         viewBox="0 0 32 32"
@@ -32,10 +43,10 @@ export function AstavLogo() {
         />
       </svg>
       <span
-        className="text-[22px] font-bold leading-none tracking-[0.18em]"
+        className="max-w-[10rem] truncate text-[22px] font-bold leading-none tracking-[0.12em] mobile:max-w-[7rem] mobile:text-[18px]"
         style={{ color: colors.brand.navy }}
       >
-        ASTAV
+        {mark}
       </span>
     </div>
   );

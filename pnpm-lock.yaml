@@ -129,6 +129,9 @@ importers:
       '@embed-engine/object-house':
         specifier: workspace:*
         version: link:../../packages/object-house
+      '@embed-engine/platform-access':
+        specifier: workspace:*
+        version: link:../../packages/platform-access
       '@embed-engine/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime

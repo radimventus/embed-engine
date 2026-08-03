@@ -7,6 +7,7 @@ import {
   recordPlatformActivity,
   submitPlatformFeedback,
   usePlatformSession,
+  useStudioBrandProjection,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -27,6 +28,7 @@ type AppShellProps = {
 /**
  * Manager Studio shell — partner work center (PR-026).
  * Capability Host remains composed; Inspector is not shown in partner UI.
+ * PE-02 — company / logo / hero from Brand Projection.
  */
 export function AppShell({ sidebar, children }: AppShellProps) {
   const {
@@ -38,9 +40,10 @@ export function AppShell({ sidebar, children }: AppShellProps) {
   } = usePlatformSession();
   const { activeCapabilityId, activeSectionId } = useManagerNav();
   const capabilityHost = useMemo(() => getManagerCapabilityHost(), []);
+  const brand = useStudioBrandProjection();
 
   const workspaceState = buildPlatformWorkspaceState({
-    companyLabel: bootstrap?.company.name ?? 'Firma',
+    companyLabel: brand.companyName,
     projectLabel: bootstrap?.project?.name ?? '—',
     projects: [],
   });
@@ -48,7 +51,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Manager' },
-    { id: 'company', label: bootstrap?.company.name ?? 'Firma' },
+    { id: 'company', label: brand.tradeMark },
     { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
     { id: 'section', label: partnerSectionLabel(activeSectionId) },
   ];
@@ -63,6 +66,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
           : undefined
       }
       workspace={workspaceState}
+      partnerBrandLabel={brand.logoLabel}
       breadcrumb={breadcrumb}
       capabilityHost={capabilityHost}
       activeCapabilityId={activeCapabilityId}
@@ -87,7 +91,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
           {sidebar}
         </div>
         <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
-          <Workspace>{children}</Workspace>
+          <Workspace brand={brand}>{children}</Workspace>
         </div>
       </div>
     </PlatformShell>

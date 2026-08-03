@@ -24,6 +24,7 @@ export function PlatformShell({
   workspace,
   notificationCount,
   searchPlaceholder,
+  partnerBrandLabel,
   onLogout,
   onOpenLanding,
   onSelectStudio,
@@ -49,6 +50,7 @@ export function PlatformShell({
         workspace={workspace}
         notificationCount={notificationCount}
         searchPlaceholder={searchPlaceholder}
+        partnerBrandLabel={partnerBrandLabel}
         onLogout={onLogout}
         onOpenLanding={onOpenLanding}
         onSelectStudio={onSelectStudio}
