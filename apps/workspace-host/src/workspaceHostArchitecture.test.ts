@@ -15,7 +15,7 @@ function read(relative: string): string {
   return readFileSync(join(hostRoot, relative), 'utf8');
 }
 
-describe('ARCH-01 Workspace Host', () => {
+describe('ARCH-01 / OF-14A Workspace Host', () => {
   it('opens Workspace directly without Embed launcher or partner landing', () => {
     const main = read('src/main.tsx');
     const app = read('src/WorkspaceHostApp.tsx');
@@ -27,12 +27,14 @@ describe('ARCH-01 Workspace Host', () => {
     assert.doesNotMatch(app, /mode:\s*'launcher'/);
     assert.doesNotMatch(app, /Prozkoumat dům/);
     assert.doesNotMatch(html, /Prozkoumat dům/);
+    assert.doesNotMatch(html, /Reference House/);
     assert.doesNotMatch(main, /mode:\s*"launcher"/);
     assert.match(main, /getSharedWorkspaceContext/);
   });
 
-  it('keeps Client Studio as the default Workspace surface', () => {
+  it('keeps Client Studio as the default Workspace surface with canonical switcher', () => {
     const app = read('src/WorkspaceHostApp.tsx');
     assert.match(app, /activeSurface="client"/);
+    assert.match(app, /WorkspaceStudioNavigation/);
   });
 });

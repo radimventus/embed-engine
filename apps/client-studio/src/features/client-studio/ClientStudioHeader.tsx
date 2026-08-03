@@ -13,6 +13,7 @@ import actionPdfUrl from '../../assets/icons/action-pdf.png';
 
 import { AstavLogo } from './AstavLogo';
 import { formatExperienceHeaderTitle } from './foundation/formatExperienceHeaderTitle';
+import { isConisWorkspaceHost } from './foundation/conisWorkspaceHost';
 import { HeaderContactMenu } from './header/HeaderContactMenu';
 import { HeaderSaveMenu } from './header/HeaderSaveMenu';
 
@@ -34,9 +35,7 @@ function resolveClientBrand(): StudioBrandProjection {
 export function ClientStudioHeader() {
   const [title, setTitle] = useState('Client Studio');
   const [logoLabel, setLogoLabel] = useState('ASTAV');
-  const onWorkspaceHost =
-    typeof document !== 'undefined' &&
-    document.documentElement.dataset.conisWorkspaceHost === '1';
+  const onWorkspaceHost = isConisWorkspaceHost();
 
   useEffect(() => {
     const root = document.querySelector<HTMLElement>('[data-client-studio-root]');

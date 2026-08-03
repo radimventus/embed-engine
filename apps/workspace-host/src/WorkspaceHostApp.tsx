@@ -1,6 +1,7 @@
 /**
- * ARCH-01 — CONIS Workspace Host shell.
- * Direct Workspace render: Navigation + Client Studio Experience (standalone Embed).
+ * ARCH-01 / OF-14A — CONIS Workspace Host shell.
+ * Shared Workspace chrome only: studio switcher + active Client Studio surface.
+ * No partner landing, no Reference Hero entry, no Embed launcher.
  */
 
 import { useEffect, useRef } from 'react';
