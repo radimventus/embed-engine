@@ -79,6 +79,7 @@ let idSeq = 100;
 
 export type PartnerQuickActionId =
   | 'prepare-pilot'
+  | 'deliver-pilot'
   | 'send-offer'
   | 'confirm-order'
   | 'record-payment'
@@ -188,6 +189,9 @@ export function applyPartnerQuickAction(
   switch (actionId) {
     case 'prepare-pilot':
       // CS-01 — handled by preparePilotForPartner (orchestration), not status-only.
+      return partner;
+    case 'deliver-pilot':
+      // PE-06 — handled by deliverPilot (orchestration + preview), not status-only.
       return partner;
     case 'send-offer':
       status = 'offer';

@@ -19,7 +19,9 @@ export type OfficeEventKind =
   | 'builder.workspace.created'
   | 'builder.ready'
   | 'builder.opened'
-  | 'pilot.ready';
+  | 'pilot.ready'
+  | 'pilot.prepared'
+  | 'pilot.delivered';
 
 export type OfficeEvent = {
   readonly id: string;

@@ -124,3 +124,14 @@ export function resolveClientStudioHref(): string {
   }
   return `${config.origin}${CLOUD_CLIENT_STUDIO_PATH}`;
 }
+
+/**
+ * PE-07 — Partner Workspace invite deep-link (opens InviteShell via ?invite=).
+ * Uses Manager Studio host — partner surface, not Builder/Office.
+ */
+export function resolvePartnerInviteHref(inviteToken: string): string {
+  const token = inviteToken.trim();
+  const base = resolveCloudStudioHref('manager').replace(/\/?$/, '/');
+  if (token.length === 0) return base;
+  return `${base}?invite=${encodeURIComponent(token)}`;
+}

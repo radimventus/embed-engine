@@ -27,8 +27,14 @@ import {
   updatePartner,
 } from '../../office/officePartnerRegistry';
 import { preparePilotForPartner } from '../../office/preparePilotProvisioning';
+import {
+  buildPilotDeliveryPreview,
+  deliverPilot,
+} from '../../office/officePilotDeliveryRegistry';
+import type { PilotDeliveryPreview } from '../../office/officePilotDeliveryModel';
 import { PartnerDetailPanel } from './PartnerDetailPanel';
 import { PartnerFormDialog } from './PartnerFormDialog';
+import { PilotDeliveryPreviewDialog } from './PilotDeliveryPreviewDialog';
 
 type PartnersWorkspacePageProps = {
   readonly selectedPartnerId: string | null;
@@ -53,6 +59,8 @@ export function PartnersWorkspacePage({
     useState<PartnerStatusFilter>('all');
   const [dialog, setDialog] = useState<DialogState>({ mode: 'closed' });
   const [pilotNotice, setPilotNotice] = useState<string | null>(null);
+  const [deliveryPreview, setDeliveryPreview] =
+    useState<PilotDeliveryPreview | null>(null);
   const partners = useMemo(() => {
     void revision;
     return listPartners();
@@ -108,11 +116,38 @@ export function PartnersWorkspacePage({
       );
       return;
     }
+    if (actionId === 'deliver-pilot') {
+      const preview = buildPilotDeliveryPreview(activePartner.id);
+      bump();
+      if (preview === null) {
+        setPilotNotice(
+          'Pilot nelze odeslat — partner musí mít kontaktní e-mail.',
+        );
+        return;
+      }
+      setDeliveryPreview(preview);
+      return;
+    }
     const updated = applyPartnerQuickAction(activePartner.id, actionId);
     bump();
     if (updated !== null) {
       onSelectPartner(updated.id);
     }
+  }
+
+  function handleConfirmDelivery() {
+    if (activePartner === null || deliveryPreview === null) return;
+    const result = deliverPilot(activePartner.id);
+    setDeliveryPreview(null);
+    bump();
+    if (!result.ok) {
+      setPilotNotice(result.error);
+      return;
+    }
+    onSelectPartner(activePartner.id);
+    setPilotNotice(
+      `Pilot odeslán · ${result.delivery.package.pdf.name} · ${result.delivery.package.workspaceHref}`,
+    );
   }
 
   return (
@@ -268,6 +303,13 @@ export function PartnersWorkspacePage({
           )}
           onClose={() => setDialog({ mode: 'closed' })}
           onSubmit={handleEdit}
+        />
+      ) : null}
+      {deliveryPreview !== null ? (
+        <PilotDeliveryPreviewDialog
+          preview={deliveryPreview}
+          onCancel={() => setDeliveryPreview(null)}
+          onConfirm={handleConfirmDelivery}
         />
       ) : null}
     </div>
