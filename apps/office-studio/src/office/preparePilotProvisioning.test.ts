@@ -1,3 +1,7 @@
+/**
+ * PE-10 — Partner Environment Provisioning (one-click Připravit pilot).
+ */
+
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
@@ -10,6 +14,7 @@ import {
   createPilotInvite,
   dismissPartnerWelcome,
   getPartnerBranding,
+  isPartnerEnvironmentReady,
   isPilotWorkspaceReady,
   isPilotPartnerRoles,
   login,
@@ -35,9 +40,14 @@ import {
 import { resetOfficeEventCatalogForTests } from './officeEventCatalog.ts';
 import { getLicense, resetOperationsRegistryForTests } from './officeOperationsRegistry.ts';
 import { getSalesCase } from './officeSalesRegistry.ts';
+import { buildOfficePartnerEnvironment } from './officePartnerEnvironment.ts';
+import {
+  deliverPilot,
+  resetPilotDeliveryStoreForTests,
+} from './officePilotDeliveryRegistry.ts';
 
-describe('CS-01 / PE-03 Pilot Partner Provisioning', () => {
-  it('prepares pilot in one click with invite, branding, package and partner roles', () => {
+describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
+  function resetAll() {
     resetPartnerRegistryForTests();
     resetOfficeEventCatalogForTests();
     resetOperationsRegistryForTests();
@@ -46,8 +56,13 @@ describe('CS-01 / PE-03 Pilot Partner Provisioning', () => {
     resetPartnerBrandingStore();
     resetPartnerWelcomeStore();
     resetPilotWorkspaceStore();
+    resetPilotDeliveryStoreForTests();
     resetUserRegistry();
     clearPlatformSession();
+  }
+
+  it('prepares complete Partner Environment in one click', () => {
+    resetAll();
 
     const prepared = prepareNewPilotPartner({
       firmName: 'Pilot Domů',
@@ -57,7 +72,13 @@ describe('CS-01 / PE-03 Pilot Partner Provisioning', () => {
     assert.ok(prepared !== null);
     assert.equal(prepared?.packageId, 'pilot-1');
     assert.equal(prepared?.partner.status, 'active');
+    assert.equal(
+      prepared?.partner.nextStep,
+      'Pilot připraven — pozvánka k odeslání',
+    );
     assert.equal(prepared?.invite.status, 'pending');
+    assert.equal(prepared?.invite.sendCount, 0);
+    assert.equal(prepared?.invite.lastSentAt, null);
     assert.deepEqual([...prepared!.invite.roles], [...PILOT_PARTNER_ROLES]);
     assert.equal(prepared?.invite.companyId, prepared?.provision.company.id);
     assert.equal(prepared?.invite.projectId, prepared?.provision.project.id);
@@ -71,6 +92,11 @@ describe('CS-01 / PE-03 Pilot Partner Provisioning', () => {
     assert.equal(prepared!.pilotWorkspace.studios.manager.ready, true);
     assert.equal(prepared!.pilotWorkspace.studios.sales.ready, true);
     assert.equal(isPilotWorkspaceReady(prepared!.provision.company.id), true);
+    assert.equal(isPartnerEnvironmentReady(prepared!.provision.company.id), true);
+    assert.equal(prepared!.environment.ready, true);
+    assert.equal(prepared!.environment.checklist.inviteReadyToSend, true);
+    assert.equal(prepared!.environment.checklist.branding, true);
+    assert.equal(prepared!.environment.checklist.pilotProject, true);
     assert.equal(
       getPartnerBranding(prepared!.provision.company.id)?.firmName,
       'Pilot Domů',
@@ -86,19 +112,31 @@ describe('CS-01 / PE-03 Pilot Partner Provisioning', () => {
       'manager',
       'sales',
     ]);
+
+    const officeView = buildOfficePartnerEnvironment(prepared!.partner.id);
+    assert.equal(officeView.ready, true);
+    assert.equal(officeView.inviteReadyToSend, true);
+    assert.ok(officeView.items.every((item) => item.ready));
+  });
+
+  it('keeps invite ready until pilot delivery stamps send', () => {
+    resetAll();
+    const prepared = preparePilotForPartner('p-nord');
+    assert.ok(prepared !== null);
+    assert.equal(prepared?.invite.sendCount, 0);
+
+    const delivered = deliverPilot('p-nord');
+    assert.equal(delivered.ok, true);
+
+    const env = buildOfficePartnerEnvironment('p-nord');
+    assert.equal(env.inviteReadyToSend, false);
+    assert.equal(env.environment?.invite?.sendCount, 1);
+    assert.ok(env.environment?.invite?.lastSentAt !== null);
+    assert.equal(env.ready, true);
   });
 
   it('blocks activation without NDA and shows welcome after consent + password', () => {
-    resetPartnerRegistryForTests();
-    resetOfficeEventCatalogForTests();
-    resetOperationsRegistryForTests();
-    resetCompanyRegistryExtras();
-    resetInviteStore();
-    resetPartnerBrandingStore();
-    resetPartnerWelcomeStore();
-    resetPilotWorkspaceStore();
-    resetUserRegistry();
-    clearPlatformSession();
+    resetAll();
 
     const prepared = preparePilotForPartner('p-nord');
     assert.ok(prepared !== null);
@@ -149,5 +187,6 @@ describe('CS-01 / PE-03 Pilot Partner Provisioning', () => {
       invitedByUserId: 'user-radim',
     });
     assert.equal(invite.status, 'pending');
+    assert.equal(invite.sendCount, 0);
   });
 });

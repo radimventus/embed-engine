@@ -112,7 +112,7 @@ export function PartnersWorkspacePage({
       }
       onSelectPartner(prepared.partner.id);
       setPilotNotice(
-        `Pilot připraven · pozvánka ${prepared.invite.token} · ${prepared.provision.project.name} · balíček Pilot`,
+        `Partner Environment připraven · pozvánka ${prepared.invite.token} · ${prepared.provision.project.name} · k odeslání`,
       );
       return;
     }

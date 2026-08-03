@@ -1,15 +1,18 @@
 /**
- * CS-01 / PE-03 — One-click pilot partner provisioning (Office orchestration).
- * Provisions Pilot Workspace (sample project + Client/Manager/Sales init).
+ * CS-01 / PE-03 / PE-10 — One-click Partner Environment provisioning.
+ * Creates Partner Environment, branding, Pilot Project, Client/Manager/Sales,
+ * and an invitation ready to send (not delivered).
  * Builder / Office remain CONIS-only; partner invite gets Manager + Sales roles.
  */
 
 import {
   PILOT_PARTNER_ROLES,
+  buildPartnerEnvironment,
   createPilotInvite,
   getPilotWorkspace,
   provisionPilotWorkspace,
   upsertPartnerBranding,
+  type PartnerEnvironment,
   type PilotInvite,
   type PilotProvisionResult,
   type PilotWorkspace,
@@ -25,7 +28,7 @@ import {
   updatePartner,
 } from './officePartnerRegistry';
 import { activateLicense } from './officeOperationsRegistry';
-import { selectSalesPackage } from './officeSalesRegistry';
+import { getSalesCase, selectSalesPackage } from './officeSalesRegistry';
 
 export type PreparePilotResult = {
   readonly partner: OfficePartner;
@@ -33,7 +36,8 @@ export type PreparePilotResult = {
   readonly pilotWorkspace: PilotWorkspace;
   readonly invite: PilotInvite;
   readonly branding: PartnerBranding;
-  readonly packageId: 'pilot-1';
+  readonly environment: PartnerEnvironment;
+  readonly packageId: 'pilot-1' | 'starter-3' | 'studio-partner';
 };
 
 function nowIso(): string {
@@ -41,7 +45,7 @@ function nowIso(): string {
 }
 
 /**
- * Prepare pilot for an existing Office partner — workspace, invite, branding, Pilot package.
+ * Prepare pilot for an existing Office partner — complete Partner Environment.
  */
 export function preparePilotForPartner(
   partnerId: string,
@@ -58,7 +62,7 @@ export function preparePilotForPartner(
   const provision = provisionPilotWorkspace({
     companyName: partner.company.legalName || partner.name,
   });
-  // PE-03 — provision already initializes Pilot Workspace (Client/Manager/Sales + sample).
+  // PE-03 / PE-10 — provision initializes Partner Environment studios + sample.
   const pilotWorkspace = getPilotWorkspace(provision.company.id);
   if (pilotWorkspace === null) {
     return null;
@@ -80,7 +84,9 @@ export function preparePilotForPartner(
     projectId: provision.project.id,
   });
 
-  selectSalesPackage(partnerId, 'pilot-1');
+  const existingPackage =
+    getSalesCase(partnerId)?.offer.packageId ?? 'pilot-1';
+  selectSalesPackage(partnerId, existingPackage);
   activateLicense({
     partnerId,
     type: 'pilot',
@@ -92,12 +98,17 @@ export function preparePilotForPartner(
     updatePartner(partnerId, {
       ...draft,
       status: 'active',
-      nextStep: 'Pilot aktivován — pozvánka odeslána',
+      nextStep: 'Pilot připraven — pozvánka k odeslání',
     }) ?? partner;
+
+  const environment = buildPartnerEnvironment(provision.company.id);
+  if (environment === null) {
+    return null;
+  }
 
   appendOfficeEvent({
     kind: 'pilot.ready',
-    label: 'Pilot Workspace připraven',
+    label: 'Partner Environment připraven',
     detail: `${updated.name} · ${pilotWorkspace.sampleProjectLabel} · Client/Manager/Sales · invite ${invite.token}`,
     partnerId: updated.id,
   });
@@ -108,7 +119,8 @@ export function preparePilotForPartner(
     pilotWorkspace,
     invite,
     branding,
-    packageId: 'pilot-1',
+    environment,
+    packageId: existingPackage,
   };
 }
 

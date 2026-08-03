@@ -63,11 +63,12 @@ describe('identityAccess (OF-07)', () => {
       invitedByUserId: 'user-radim',
     });
     assert.equal(invite.status, 'pending');
-    assert.equal(invite.sendCount, 1);
+    assert.equal(invite.sendCount, 0);
+    assert.equal(invite.lastSentAt, null);
 
     const resent = resendPilotInvite(invite.id);
     assert.ok(resent !== null);
-    assert.equal(resent?.sendCount, 2);
+    assert.equal(resent?.sendCount, 1);
     assert.notEqual(resent?.token, invite.token);
     assert.equal(listInvites().filter((item) => item.status === 'pending').length, 1);
 

@@ -15,6 +15,7 @@ import {
 } from '../../office/officePartnerModel';
 import type { PartnerQuickActionId } from '../../office/officePartnerRegistry';
 import { syncCommercialFollowUpTimeline } from '../../office/officeCommercialFollowUpRegistry';
+import { buildOfficePartnerEnvironment } from '../../office/officePartnerEnvironment';
 
 type PartnerDetailPanelProps = {
   readonly partner: OfficePartner | null;
@@ -54,6 +55,7 @@ export function PartnerDetailPanel({
   }
 
   const followUp = syncCommercialFollowUpTimeline(partner.id);
+  const environment = buildOfficePartnerEnvironment(partner.id);
   const timeline = listPartnerTimeline(partner.id);
   const activity = followUp?.activity;
 
@@ -133,6 +135,22 @@ export function PartnerDetailPanel({
           </dl>
         </PlatformCard>
       </div>
+
+      <PlatformCard
+        title="Partner Environment"
+        description="Kompletní pilotní prostředí po akci Připravit pilot"
+      >
+        <ul className="office-list" data-testid="partner-environment-checklist">
+          {environment.items.map((item) => (
+            <li key={item.id} className="office-list__item">
+              <p className="office-list__title">{item.label}</p>
+              <PlatformStatusBadge tone={item.ready ? 'pass' : 'info'}>
+                {item.ready ? 'připraveno' : 'čeká'}
+              </PlatformStatusBadge>
+            </li>
+          ))}
+        </ul>
+      </PlatformCard>
 
       <PlatformCard
         title="Activity Tracking"

@@ -37,13 +37,24 @@ function canUseStorage(): boolean {
 
 function normalizeInvite(raw: PilotInvite): PilotInvite {
   const createdAt = raw.createdAt;
+  const sendCount =
+    typeof raw.sendCount === 'number' && Number.isFinite(raw.sendCount)
+      ? raw.sendCount
+      : raw.lastSentAt != null
+        ? 1
+        : 0;
   return {
     ...raw,
     projectId: raw.projectId ?? DEFAULT_PROJECT_ID,
     ndaAcceptedAt: raw.ndaAcceptedAt ?? null,
     openedAt: raw.openedAt ?? null,
-    lastSentAt: raw.lastSentAt ?? raw.createdAt,
-    sendCount: raw.sendCount ?? 1,
+    lastSentAt:
+      raw.lastSentAt === undefined
+        ? sendCount > 0
+          ? createdAt
+          : null
+        : raw.lastSentAt,
+    sendCount,
     expiresAt: raw.expiresAt ?? computeInviteExpiresAt(createdAt),
   };
 }
@@ -144,7 +155,7 @@ export function createPilotInvite(input: {
   readonly expiresAt?: string;
 }): PilotInvite {
   const store = loadStore();
-  const sentAt = new Date().toISOString();
+  const createdAt = new Date().toISOString();
   const invite: PilotInvite = {
     id: `invite-${Date.now()}`,
     token: createToken(),
@@ -156,20 +167,20 @@ export function createPilotInvite(input: {
     workspaceId: input.workspaceId ?? DEFAULT_WORKSPACE_ID,
     projectId: input.projectId ?? DEFAULT_PROJECT_ID,
     status: 'pending',
-    createdAt: sentAt,
+    createdAt,
     activatedAt: null,
-    expiresAt: input.expiresAt ?? computeInviteExpiresAt(sentAt),
+    expiresAt: input.expiresAt ?? computeInviteExpiresAt(createdAt),
     ndaAcceptedAt: null,
     openedAt: null,
     invitedByUserId: input.invitedByUserId,
-    lastSentAt: sentAt,
-    sendCount: 1,
+    lastSentAt: null,
+    sendCount: 0,
   };
   saveStore({
     invites: [...store.invites, invite],
   });
   recordPlatformActivity({
-    label: 'Pozvánka odeslána',
+    label: 'Pozvánka připravena',
     detail: `${invite.email} · ${invite.token}`,
   });
   return invite;
@@ -214,6 +225,35 @@ export function listPendingInvites(): readonly PilotInvite[] {
   return listInvites().filter((item) => item.status === 'pending');
 }
 
+/**
+ * PE-10 / PE-06 — stamp local invite delivery (no SMTP). Idempotent on first send.
+ */
+export function markInviteSent(inviteId: string): PilotInvite | null {
+  const store = loadStore();
+  const current = store.invites.find((item) => item.id === inviteId);
+  if (current === undefined) return null;
+  const invite = normalizeInvite(current);
+  if (invite.sendCount > 0 && invite.lastSentAt !== null) {
+    return invite;
+  }
+  const sentAt = new Date().toISOString();
+  const next: PilotInvite = {
+    ...invite,
+    lastSentAt: sentAt,
+    sendCount: Math.max(invite.sendCount, 1),
+  };
+  saveStore({
+    invites: store.invites.map((item) =>
+      item.id === inviteId ? next : item,
+    ),
+  });
+  recordPlatformActivity({
+    label: 'Pozvánka odeslána',
+    detail: `${next.email} · ${next.token}`,
+  });
+  return next;
+}
+
 /** Resend invitation — rotates token, extends validity, keeps pending. No SMTP. */
 export function resendPilotInvite(inviteId: string): PilotInvite | null {
   const store = loadStore();
@@ -222,12 +262,13 @@ export function resendPilotInvite(inviteId: string): PilotInvite | null {
   const lifecycle = resolveInviteLifecycle(current);
   if (lifecycle !== 'pending' && lifecycle !== 'expired') return null;
   const sentAt = new Date().toISOString();
+  const normalized = normalizeInvite(current);
   const next: PilotInvite = {
-    ...current,
+    ...normalized,
     token: createToken(),
     status: 'pending',
     lastSentAt: sentAt,
-    sendCount: current.sendCount + 1,
+    sendCount: normalized.sendCount + 1,
     expiresAt: computeInviteExpiresAt(sentAt),
   };
   saveStore({
@@ -236,7 +277,10 @@ export function resendPilotInvite(inviteId: string): PilotInvite | null {
     ),
   });
   recordPlatformActivity({
-    label: 'Pozvánka znovu odeslána',
+    label:
+      normalized.sendCount === 0
+        ? 'Pozvánka odeslána'
+        : 'Pozvánka znovu odeslána',
     detail: `${next.email} · ${next.token}`,
   });
   return next;

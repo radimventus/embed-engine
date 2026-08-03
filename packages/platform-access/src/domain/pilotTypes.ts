@@ -46,8 +46,11 @@ export type PilotInvite = {
   /** PE-08 — first time partner opened the invite link (InviteShell). */
   readonly openedAt: string | null;
   readonly invitedByUserId: string;
-  /** Last invitation e-mail send (MVP local delivery stamp — no SMTP). */
-  readonly lastSentAt: string;
+  /**
+   * Last invitation delivery stamp (MVP local — no SMTP).
+   * null = prepared, not yet sent (PE-10).
+   */
+  readonly lastSentAt: string | null;
   readonly sendCount: number;
 };
 

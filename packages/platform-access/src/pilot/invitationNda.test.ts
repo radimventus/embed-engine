@@ -96,7 +96,7 @@ describe('PE-04 Invitation & NDA', () => {
     const resent = resendPilotInvite(invite.id);
     assert.ok(resent !== null);
     assert.equal(resent?.status, 'pending');
-    assert.equal(resent?.sendCount, 2);
+    assert.equal(resent?.sendCount, 1);
     assert.notEqual(resent?.token, invite.token);
     assert.ok(Date.parse(resent!.expiresAt) > Date.now());
     assert.equal(isInviteActivatable(resent), true);

@@ -5,6 +5,7 @@
 import {
   CONIS_SAMPLE_PROJECT_LABEL,
   listInvites,
+  markInviteSent,
   resolveInviteLifecycle,
   resolvePartnerInviteHref,
   type PilotInvite,
@@ -238,6 +239,12 @@ export function deliverPilot(
       ...draft,
       nextStep: 'Pilot odeslán — čeká se na aktivaci',
     });
+  }
+
+  // PE-10 / PE-06 — stamp invite as sent when pilot package is delivered.
+  const inviteForSend = findInviteForEmail(preview.email);
+  if (inviteForSend !== null) {
+    markInviteSent(inviteForSend.id);
   }
 
   // PE-08 — seed commercial follow-up tracking after delivery.

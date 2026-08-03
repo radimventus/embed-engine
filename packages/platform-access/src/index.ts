@@ -134,6 +134,7 @@ export {
   revokePilotInvite,
   activateInvite,
   markInviteOpened,
+  markInviteSent,
   findActivatedInviteUser,
   findActivatedInviteBinding,
   resetInviteStore,
@@ -223,6 +224,13 @@ export {
   resetPilotWorkspaceStore,
   PILOT_WORKSPACE_STORAGE_KEY,
 } from './pilot/pilotWorkspaceStore';
+
+export {
+  buildPartnerEnvironment,
+  isPartnerEnvironmentReady,
+  type PartnerEnvironment,
+  type PartnerEnvironmentChecklist,
+} from './pilot/partnerEnvironment';
 
 export {
   recordPlatformActivity,
