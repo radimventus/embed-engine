@@ -43,6 +43,7 @@ import {
   getOperatorPartnerEnvironment,
   returnFromOperatorPartnerEnvironment,
   clearOperatorPartnerEnvironment,
+  switchOperatorPartnerStudio,
 } from '../pilot/operatorPartnerEnvironment';
 
 export type PlatformSessionContextValue = {
@@ -182,18 +183,8 @@ export function SessionProvider({
   const clearStudio = useCallback(() => {
     const operatorPe = getOperatorPartnerEnvironment();
     if (operatorPe !== null) {
-      // OF-13 — stay in Workspace (Manager), do not open Platform Landing.
-      const next = updateSession({
-        companyId: operatorPe.companyId,
-        workspaceId: operatorPe.workspaceId,
-        projectId: operatorPe.projectId,
-        activeStudioId: 'manager',
-      });
-      setSession(next);
-      const href = resolveStudioHref('manager');
-      if (typeof window !== 'undefined' && window.location.href !== href) {
-        window.location.assign(href);
-      }
+      // OF-13A — stay in Workspace; default surface is Client Studio.
+      switchOperatorPartnerStudio('client');
       return;
     }
     const next = updateSession({ activeStudioId: null });

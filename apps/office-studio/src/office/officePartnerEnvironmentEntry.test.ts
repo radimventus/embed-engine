@@ -1,5 +1,5 @@
 /**
- * OF-12 / OF-13 — CONIS Admin Partner Environment / Workspace Entry.
+ * OF-12 / OF-13 / OF-13A — CONIS Admin Partner Environment / Workspace Entry.
  */
 
 import assert from 'node:assert/strict';
@@ -18,6 +18,7 @@ import {
   resetPartnerWelcomeStore,
   resetPilotWorkspaceStore,
   resetUserRegistry,
+  resolveClientStudioHref,
   resolveCloudStudioHref,
   returnFromOperatorPartnerEnvironment,
   shouldShowPartnerWelcome,
@@ -37,7 +38,7 @@ import { preparePilotForPartner } from './preparePilotProvisioning.ts';
 import { buildOfficePartnerEnvironment } from './officePartnerEnvironment.ts';
 import { resetPilotDeliveryStoreForTests } from './officePilotDeliveryRegistry.ts';
 
-describe('OF-13 Workspace Studio Navigation', () => {
+describe('OF-13A Workspace Studio Navigation', () => {
   function resetAll(): void {
     resetPartnerRegistryForTests();
     resetOfficeEventCatalogForTests();
@@ -53,7 +54,7 @@ describe('OF-13 Workspace Studio Navigation', () => {
     clearPlatformSession();
   }
 
-  it('opens Workspace (Manager) directly without Landing / Invite / Welcome', () => {
+  it('opens Client Studio as default Workspace entry', () => {
     resetAll();
 
     assert.equal(
@@ -76,15 +77,13 @@ describe('OF-13 Workspace Studio Navigation', () => {
       projectId: env.environment!.projectId!,
       officePartnerId: OFFICE_REFERENCE_PARTNER_ID,
       officeReturnHref: `${resolveCloudStudioHref('office')}partners/${OFFICE_REFERENCE_PARTNER_ID}`,
-      initialSurface: 'manager',
       navigate: false,
     });
     assert.equal(entered.ok, true);
     if (!entered.ok) return;
 
-    assert.equal(entered.surface, 'manager');
-    assert.equal(entered.href, resolveCloudStudioHref('manager'));
-    assert.equal(loadPlatformSession()?.activeStudioId, 'manager');
+    assert.equal(entered.surface, 'client');
+    assert.equal(entered.href, resolveClientStudioHref());
     assert.equal(
       loadPlatformSession()?.companyId,
       OFFICE_REFERENCE_PLATFORM_IDS.companyId,
@@ -93,57 +92,24 @@ describe('OF-13 Workspace Studio Navigation', () => {
     assert.ok(getOperatorPartnerEnvironment() !== null);
   });
 
-  it('filters Workspace switcher by Role Engine and preserves partner context', () => {
-    resetAll();
-    assert.equal(
-      login({
-        email: 'radim@conis.local',
-        password: 'demo',
-        rememberMe: false,
-      }).ok,
-      true,
-    );
+  it('keeps SSOT studio order and Client in role-filtered switcher', () => {
+    assert.deepEqual([...WORKSPACE_STUDIO_SWITCH_ORDER], [
+      'client',
+      'manager',
+      'sales',
+      'builder',
+      'office',
+    ]);
 
     const adminStudios = workspaceStudiosForRoles(['conis-admin']);
+    assert.ok(adminStudios.includes('client'));
     assert.deepEqual([...adminStudios], [...WORKSPACE_STUDIO_SWITCH_ORDER]);
 
     const partnerStudios = workspaceStudiosForRoles(['manager', 'salesman']);
     assert.deepEqual([...partnerStudios], ['client', 'manager', 'sales']);
-
-    preparePilotForPartner(OFFICE_REFERENCE_PARTNER_ID);
-    const env = buildOfficePartnerEnvironment(OFFICE_REFERENCE_PARTNER_ID);
-    enterOperatorPartnerEnvironment({
-      companyId: env.companyId!,
-      workspaceId: env.environment!.workspaceId!,
-      projectId: env.environment!.projectId!,
-      officePartnerId: OFFICE_REFERENCE_PARTNER_ID,
-      officeReturnHref: `${resolveCloudStudioHref('office')}partners/${OFFICE_REFERENCE_PARTNER_ID}`,
-      initialSurface: 'manager',
-      navigate: false,
-    });
-
-    const toSales = switchOperatorPartnerStudio('sales', { navigate: false });
-    assert.equal(toSales.ok, true);
-    assert.equal(loadPlatformSession()?.companyId, env.companyId);
-    assert.equal(loadPlatformSession()?.workspaceId, env.environment?.workspaceId);
-    assert.equal(loadPlatformSession()?.projectId, env.environment?.projectId);
-    assert.equal(loadPlatformSession()?.activeStudioId, 'sales');
-
-    const toBuilder = switchOperatorPartnerStudio('builder', {
-      navigate: false,
-    });
-    assert.equal(toBuilder.ok, true);
-    assert.equal(loadPlatformSession()?.companyId, env.companyId);
-    assert.equal(loadPlatformSession()?.activeStudioId, 'builder');
-
-    const toOffice = switchOperatorPartnerStudio('office', { navigate: false });
-    assert.equal(toOffice.ok, true);
-    assert.equal(getOperatorPartnerEnvironment(), null);
-    assert.equal(loadPlatformSession()?.activeStudioId, 'office');
-    assert.match(toOffice.href, /partners\/p-dse/);
   });
 
-  it('Office Studio return restores admin context and partner detail href', () => {
+  it('preserves partner context across studios and returns via Office', () => {
     resetAll();
     assert.equal(
       login({
@@ -154,6 +120,7 @@ describe('OF-13 Workspace Studio Navigation', () => {
       true,
     );
     const before = loadPlatformSession();
+
     preparePilotForPartner(OFFICE_REFERENCE_PARTNER_ID);
     const env = buildOfficePartnerEnvironment(OFFICE_REFERENCE_PARTNER_ID);
     enterOperatorPartnerEnvironment({
@@ -165,10 +132,24 @@ describe('OF-13 Workspace Studio Navigation', () => {
       navigate: false,
     });
 
+    const toManager = switchOperatorPartnerStudio('manager', {
+      navigate: false,
+    });
+    assert.equal(toManager.ok, true);
+    assert.equal(loadPlatformSession()?.companyId, env.companyId);
+    assert.equal(loadPlatformSession()?.workspaceId, env.environment?.workspaceId);
+    assert.equal(loadPlatformSession()?.projectId, env.environment?.projectId);
+
+    const toClient = switchOperatorPartnerStudio('client', { navigate: false });
+    assert.equal(toClient.ok, true);
+    assert.equal(toClient.surface, 'client');
+    assert.equal(loadPlatformSession()?.companyId, env.companyId);
+
     const returned = returnFromOperatorPartnerEnvironment({ navigate: false });
     assert.equal(returned.ok, true);
     if (!returned.ok) return;
     assert.match(returned.href, /partners\/p-dse/);
+    assert.equal(getOperatorPartnerEnvironment(), null);
     assert.equal(loadPlatformSession()?.companyId, before?.companyId);
     assert.equal(loadPlatformSession()?.activeStudioId, 'office');
   });

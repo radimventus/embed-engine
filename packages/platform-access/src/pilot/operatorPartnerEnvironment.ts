@@ -116,7 +116,7 @@ export type EnterOperatorPartnerEnvironmentInput = {
   readonly projectId: string;
   readonly officePartnerId: string;
   readonly officeReturnHref: string;
-  /** OF-13 default: manager — open Workspace, not Embed host landing. */
+  /** OF-13A default: client — open Client Studio as Workspace entry. */
   readonly initialSurface?: WorkspaceStudioSurface;
   /** When false, only bind session + bookmark (tests). Default true. */
   readonly navigate?: boolean;
@@ -133,7 +133,7 @@ export type EnterOperatorPartnerEnvironmentResult =
 
 /**
  * Bind the logged-in CONIS admin session to a partner Workspace and open a studio.
- * Default entry is Manager Studio (Workspace) — not Platform Landing / Embed host.
+ * Default entry is Client Studio (OF-13A) — Workspace Navigation stays role-filtered.
  */
 export function enterOperatorPartnerEnvironment(
   input: EnterOperatorPartnerEnvironmentInput,
@@ -170,7 +170,7 @@ export function enterOperatorPartnerEnvironment(
   };
   saveOperatorPartnerEnvironment(state);
 
-  const surface = input.initialSurface ?? 'manager';
+  const surface = input.initialSurface ?? 'client';
   if (surface === 'office') {
     clearOperatorPartnerEnvironment();
     return { ok: false, error: 'Office není vstupní Workspace Studio.' };

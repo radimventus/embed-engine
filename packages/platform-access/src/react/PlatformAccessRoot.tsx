@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
-import { resolveCloudStudioHref } from '../cloud/cloudConfig';
+import { resolveClientStudioHref } from '../cloud/cloudConfig';
 import type { PlatformStudioId } from '../domain/types';
 import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation';
 import { getOperatorPartnerEnvironment } from '../pilot/operatorPartnerEnvironment';
@@ -54,7 +54,7 @@ function AccessGateInner({ children }: AccessGateProps) {
   }
 
   if (session.activeStudioId === null) {
-    // OF-13 — operator Workspace never lands on technical Platform Landing.
+    // OF-13A — operator Workspace entry recovers to Client Studio (not Platform Landing).
     if (operatorPe !== null) {
       updateSession({
         companyId: operatorPe.companyId,
@@ -63,7 +63,7 @@ function AccessGateInner({ children }: AccessGateProps) {
         activeStudioId: 'manager',
       });
       if (typeof window !== 'undefined') {
-        window.location.replace(resolveCloudStudioHref('manager'));
+        window.location.replace(resolveClientStudioHref());
       }
       return null;
     }
