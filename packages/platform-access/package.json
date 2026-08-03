@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/platformAccess.test.ts src/gmReadiness.test.ts src/gaReadiness.test.ts src/identityAccess.test.ts src/pilot/projectPartnerBrand.test.ts src/pilot/pilotWorkspace.test.ts"
+    "test": "tsx --test src/platformAccess.test.ts src/gmReadiness.test.ts src/gaReadiness.test.ts src/identityAccess.test.ts src/pilot/projectPartnerBrand.test.ts src/pilot/pilotWorkspace.test.ts src/pilot/invitationNda.test.ts"
   },
   "peerDependencies": {
     "react": "^19.0.0",

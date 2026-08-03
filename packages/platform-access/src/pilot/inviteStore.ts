@@ -1,5 +1,6 @@
 /**
- * EPIC-BX-15 / OF-07 — Invite flow store (local pilot; not production IAM).
+ * EPIC-BX-15 / OF-07 / PE-04 — Invite flow store (local pilot; not production IAM).
+ * Invitation validity, resend, NDA-gated first password activation.
  */
 
 import type { PlatformRole, PlatformUser } from '../domain/types';
@@ -14,8 +15,13 @@ import {
   upsertActivatedUser,
   verifyUserPassword,
 } from '../registry/userRegistry';
+import {
+  computeInviteExpiresAt,
+  inviteLifecycleMessage,
+  resolveInviteLifecycle,
+} from './invitationWorkflow';
 import { recordPlatformActivity } from './pilotDiagnostics';
-import { markPartnerWelcomePending } from './welcomeStore';
+import { prepareWelcomeJourney } from './welcomeStore';
 
 export const INVITE_STORAGE_KEY = 'conis.platform.invites.v1';
 
@@ -30,12 +36,14 @@ function canUseStorage(): boolean {
 }
 
 function normalizeInvite(raw: PilotInvite): PilotInvite {
+  const createdAt = raw.createdAt;
   return {
     ...raw,
     projectId: raw.projectId ?? DEFAULT_PROJECT_ID,
     ndaAcceptedAt: raw.ndaAcceptedAt ?? null,
     lastSentAt: raw.lastSentAt ?? raw.createdAt,
     sendCount: raw.sendCount ?? 1,
+    expiresAt: raw.expiresAt ?? computeInviteExpiresAt(createdAt),
   };
 }
 
@@ -98,6 +106,30 @@ function createToken(): string {
   return `inv_${Math.random().toString(36).slice(2, 10)}${Date.now().toString(36)}`;
 }
 
+/** Persist expired status when a pending invite is past expiresAt. */
+function materializeExpiry(invite: PilotInvite): PilotInvite {
+  if (invite.status !== 'pending') return invite;
+  if (resolveInviteLifecycle(invite) !== 'expired') return invite;
+  return { ...invite, status: 'expired' };
+}
+
+function refreshInviteExpiries(): InviteStore {
+  const store = loadStore();
+  let changed = false;
+  const invites = store.invites.map((raw) => {
+    const invite = normalizeInvite(raw);
+    const next = materializeExpiry(invite);
+    if (next.status !== invite.status) changed = true;
+    return next;
+  });
+  if (changed) {
+    const nextStore = { invites };
+    saveStore(nextStore);
+    return nextStore;
+  }
+  return { invites };
+}
+
 export function createPilotInvite(input: {
   readonly email: string;
   readonly displayName: string;
@@ -107,6 +139,8 @@ export function createPilotInvite(input: {
   readonly companyId?: string;
   readonly workspaceId?: string;
   readonly projectId?: string;
+  /** Optional override for tests (absolute ISO expiry). */
+  readonly expiresAt?: string;
 }): PilotInvite {
   const store = loadStore();
   const sentAt = new Date().toISOString();
@@ -123,6 +157,7 @@ export function createPilotInvite(input: {
     status: 'pending',
     createdAt: sentAt,
     activatedAt: null,
+    expiresAt: input.expiresAt ?? computeInviteExpiresAt(sentAt),
     ndaAcceptedAt: null,
     invitedByUserId: input.invitedByUserId,
     lastSentAt: sentAt,
@@ -139,12 +174,12 @@ export function createPilotInvite(input: {
 }
 
 export function findInviteByToken(token: string): PilotInvite | null {
-  const store = loadStore();
-  return store.invites.find((item) => item.token === token) ?? null;
+  return listInvites().find((item) => item.token === token) ?? null;
 }
 
 export function listInvites(): readonly PilotInvite[] {
-  return [...loadStore().invites].sort((a, b) =>
+  const store = refreshInviteExpiries();
+  return [...store.invites].sort((a, b) =>
     b.createdAt.localeCompare(a.createdAt),
   );
 }
@@ -153,17 +188,21 @@ export function listPendingInvites(): readonly PilotInvite[] {
   return listInvites().filter((item) => item.status === 'pending');
 }
 
-/** Resend invitation e-mail — rotates token, keeps pending status. */
+/** Resend invitation — rotates token, extends validity, keeps pending. No SMTP. */
 export function resendPilotInvite(inviteId: string): PilotInvite | null {
   const store = loadStore();
   const current = store.invites.find((item) => item.id === inviteId);
-  if (current === undefined || current.status !== 'pending') return null;
+  if (current === undefined) return null;
+  const lifecycle = resolveInviteLifecycle(current);
+  if (lifecycle !== 'pending' && lifecycle !== 'expired') return null;
   const sentAt = new Date().toISOString();
   const next: PilotInvite = {
     ...current,
     token: createToken(),
+    status: 'pending',
     lastSentAt: sentAt,
     sendCount: current.sendCount + 1,
+    expiresAt: computeInviteExpiresAt(sentAt),
   };
   saveStore({
     invites: store.invites.map((item) =>
@@ -180,7 +219,9 @@ export function resendPilotInvite(inviteId: string): PilotInvite | null {
 export function revokePilotInvite(inviteId: string): PilotInvite | null {
   const store = loadStore();
   const current = store.invites.find((item) => item.id === inviteId);
-  if (current === undefined || current.status !== 'pending') return null;
+  if (current === undefined) return null;
+  const lifecycle = resolveInviteLifecycle(current);
+  if (lifecycle !== 'pending' && lifecycle !== 'expired') return null;
   const next: PilotInvite = { ...current, status: 'revoked' };
   saveStore({
     invites: store.invites.map((item) =>
@@ -190,10 +231,13 @@ export function revokePilotInvite(inviteId: string): PilotInvite | null {
   return next;
 }
 
+/**
+ * PE-04 — Activate partner account: validate invite → NDA → first password → Welcome Journey.
+ */
 export function activateInvite(input: {
   readonly token: string;
   readonly password: string;
-  /** CS-01 — NDA + consent required before password activation. */
+  /** PE-04 — NDA + consent required before password activation. */
   readonly ndaAccepted: boolean;
 }):
   | { readonly ok: true; readonly invite: PilotInvite; readonly user: PlatformUser }
@@ -211,13 +255,11 @@ export function activateInvite(input: {
   const store = loadStore();
   const invite = store.invites.find((item) => item.token === input.token);
   if (invite === undefined) {
-    return { ok: false, error: 'Pozvánka neexistuje.' };
+    return { ok: false, error: inviteLifecycleMessage('missing') };
   }
-  if (invite.status === 'revoked') {
-    return { ok: false, error: 'Pozvánka byla zrušena.' };
-  }
-  if (invite.status === 'activated') {
-    return { ok: false, error: 'Pozvánka už byla aktivována.' };
+  const lifecycle = resolveInviteLifecycle(invite);
+  if (lifecycle !== 'pending') {
+    return { ok: false, error: inviteLifecycleMessage(lifecycle) };
   }
   const activatedAt = new Date().toISOString();
   const activated: PilotInvite = {
@@ -239,10 +281,10 @@ export function activateInvite(input: {
     ),
   });
   recordPlatformActivity({
-    label: 'První nastavení hesla',
+    label: 'Aktivace partnerského účtu',
     detail: user.email,
   });
-  markPartnerWelcomePending(user.email);
+  prepareWelcomeJourney(user.email);
   return { ok: true, invite: activated, user };
 }
 

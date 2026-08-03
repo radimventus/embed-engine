@@ -19,7 +19,11 @@ export type PlatformTenant = {
   readonly createdAt: string;
 };
 
-export type PilotInviteStatus = 'pending' | 'activated' | 'revoked';
+export type PilotInviteStatus =
+  | 'pending'
+  | 'activated'
+  | 'revoked'
+  | 'expired';
 
 export type PilotInvite = {
   readonly id: string;
@@ -35,10 +39,12 @@ export type PilotInvite = {
   readonly status: PilotInviteStatus;
   readonly createdAt: string;
   readonly activatedAt: string | null;
-  /** CS-01 — NDA accepted at activation (null while pending). */
+  /** PE-04 — invitation validity window. */
+  readonly expiresAt: string;
+  /** CS-01 / PE-04 — NDA accepted at activation (null while pending). */
   readonly ndaAcceptedAt: string | null;
   readonly invitedByUserId: string;
-  /** Last invitation e-mail send (MVP local delivery stamp). */
+  /** Last invitation e-mail send (MVP local delivery stamp — no SMTP). */
   readonly lastSentAt: string;
   readonly sendCount: number;
 };

@@ -1,5 +1,5 @@
 /**
- * CS-01 — Partner welcome screen gate (first entry after NDA activation).
+ * CS-01 / PE-04 — Partner welcome / onboarding gate after NDA activation.
  */
 
 export const PARTNER_WELCOME_STORAGE_KEY = 'conis.platform.partner-welcome.v1';
@@ -58,7 +58,8 @@ export function resetPartnerWelcomeStore(): void {
   }
 }
 
-export function markPartnerWelcomePending(email: string): void {
+/** PE-04 — open Welcome Journey after successful account activation. */
+export function prepareWelcomeJourney(email: string): void {
   const key = normalizeEmail(email);
   const store = loadStore();
   saveStore({
@@ -67,11 +68,20 @@ export function markPartnerWelcomePending(email: string): void {
   });
 }
 
+/** @deprecated Prefer prepareWelcomeJourney — kept for CS-01 call sites. */
+export function markPartnerWelcomePending(email: string): void {
+  prepareWelcomeJourney(email);
+}
+
 export function shouldShowPartnerWelcome(email: string): boolean {
   const key = normalizeEmail(email);
   const store = loadStore();
   if (store.seenByEmail[key] === true) return false;
   return store.pendingByEmail[key] === true;
+}
+
+export function isPartnerOnboardingOpen(email: string): boolean {
+  return shouldShowPartnerWelcome(email);
 }
 
 export function dismissPartnerWelcome(email: string): void {
@@ -83,4 +93,9 @@ export function dismissPartnerWelcome(email: string): void {
     pendingByEmail: pending,
     seenByEmail: { ...store.seenByEmail, [key]: true },
   });
+}
+
+/** PE-04 — dismiss Welcome Journey and close onboarding. */
+export function completePartnerOnboarding(email: string): void {
+  dismissPartnerWelcome(email);
 }

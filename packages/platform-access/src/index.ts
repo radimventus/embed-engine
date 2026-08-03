@@ -138,6 +138,16 @@ export {
 } from './pilot/inviteStore';
 
 export {
+  INVITE_VALIDITY_MS,
+  computeInviteExpiresAt,
+  isInvitePastExpiry,
+  resolveInviteLifecycle,
+  inviteLifecycleMessage,
+  isInviteActivatable,
+  type InviteLifecycleState,
+} from './pilot/invitationWorkflow';
+
+export {
   upsertPartnerBranding,
   getPartnerBranding,
   resetPartnerBrandingStore,
@@ -163,8 +173,11 @@ export {
 
 export {
   markPartnerWelcomePending,
+  prepareWelcomeJourney,
   shouldShowPartnerWelcome,
+  isPartnerOnboardingOpen,
   dismissPartnerWelcome,
+  completePartnerOnboarding,
   resetPartnerWelcomeStore,
   PARTNER_WELCOME_STORAGE_KEY,
 } from './pilot/welcomeStore';
