@@ -9,12 +9,15 @@ import type { OfficeRouteId } from '../office/officeRoutes';
 import { officeRouteLabel } from '../office/officeRoutes';
 
 type OfficeSectionPageProps = {
-  readonly routeId: Exclude<OfficeRouteId, 'dashboard' | 'partners' | 'sales'>;
+  readonly routeId: Exclude<
+    OfficeRouteId,
+    'dashboard' | 'partners' | 'sales' | 'documents'
+  >;
 };
 
 /**
  * OF-01 — Functional section shells for prepared routes.
- * Partner Workspace (OF-02) and Sales Workspace (OF-03) have dedicated pages.
+ * Partner / Sales / Documents workspaces have dedicated pages.
  */
 export function OfficeSectionPage({ routeId }: OfficeSectionPageProps) {
   const label = officeRouteLabel(routeId);
@@ -83,26 +86,6 @@ export function OfficeSectionPage({ routeId }: OfficeSectionPageProps) {
               ))}
             </ul>
           )}
-        </PlatformCard>
-      </div>
-    );
-  }
-
-  if (routeId === 'documents') {
-    return (
-      <div className="office-section" data-testid={`office-section-${routeId}`}>
-        <header className="office-dashboard__header">
-          <p className="office-dashboard__eyebrow">{label}</p>
-          <h1 className="office-dashboard__title">{label}</h1>
-          <p className="office-dashboard__lead">
-            Dokumenty partnerů a provozní podklady.
-          </p>
-        </header>
-        <PlatformCard title="Dokumenty">
-          <PlatformEmptyState
-            title="Zatím žádné dokumenty v provozním přehledu"
-            description="Dokumenty se zobrazí, až budou navázané na partnera v životním cyklu."
-          />
         </PlatformCard>
       </div>
     );

@@ -41,6 +41,7 @@ const ROUTE_BY_PATH = new Map(
 const PARTNER_SCOPED_ROUTES: ReadonlySet<OfficeRouteId> = new Set([
   'partners',
   'sales',
+  'documents',
 ]);
 
 export function officeRouteLabel(routeId: OfficeRouteId): string {

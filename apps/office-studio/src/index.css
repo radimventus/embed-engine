@@ -566,6 +566,32 @@ body {
   gap: 4px;
 }
 
+.office-docs {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1280px;
+}
+
+.office-docs__grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 320px) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.office-docs__main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.office-docs__split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
 
 
 
@@ -580,7 +606,9 @@ body {
   }
 
   .office-partners__grid,
-  .office-sales__grid {
+  .office-sales__grid,
+  .office-docs__grid,
+  .office-docs__split {
     grid-template-columns: 1fr;
   }
 

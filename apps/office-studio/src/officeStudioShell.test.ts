@@ -13,7 +13,7 @@ import {
 
 const root = dirname(fileURLToPath(import.meta.url));
 
-describe('officeStudioShell (OF-01 / OF-02 / OF-03)', () => {
+describe('officeStudioShell (OF-01 / OF-02 / OF-03 / OF-04)', () => {
   it('exposes IA navigation labels', () => {
     assert.deepEqual(
       OFFICE_NAV_ITEMS.map((item) => item.label),
@@ -58,8 +58,16 @@ describe('officeStudioShell (OF-01 / OF-02 / OF-03)', () => {
       parseOfficeLocation('/studio/office/sales/p-nord', '/studio/office/'),
       { routeId: 'sales', partnerId: 'p-nord' },
     );
+    assert.deepEqual(
+      parseOfficeLocation(
+        '/studio/office/documents/p-blokki',
+        '/studio/office/',
+      ),
+      { routeId: 'documents', partnerId: 'p-blokki' },
+    );
     assert.equal(officeHref('partners', 'p-blokki'), '/partners/p-blokki');
     assert.equal(officeHref('sales', 'p-nord'), '/sales/p-nord');
+    assert.equal(officeHref('documents', 'p-blokki'), '/documents/p-blokki');
   });
 
   it('builds office hrefs from route ids', () => {
@@ -80,7 +88,8 @@ describe('officeStudioShell (OF-01 / OF-02 / OF-03)', () => {
     assert.match(app, /OfficeDashboardPage/);
     assert.match(app, /PartnersWorkspacePage/);
     assert.match(app, /SalesWorkspacePage/);
-    assert.doesNotMatch(app, /DocumentsWorkspacePage/);
+    assert.match(app, /DocumentsWorkspacePage/);
+    assert.doesNotMatch(app, /ImplementationWorkspacePage/);
     assert.match(main, /studioId="office"/);
     assert.match(pkg, /@embed-engine\/platform-shell/);
     assert.match(pkg, /@embed-engine\/platform-access/);
@@ -103,9 +112,14 @@ describe('officeStudioShell (OF-01 / OF-02 / OF-03)', () => {
       join(root, 'features/sales/SalesWorkspacePage.tsx'),
       'utf8',
     );
+    const documents = readFileSync(
+      join(root, 'features/documents/DocumentsWorkspacePage.tsx'),
+      'utf8',
+    );
     assert.doesNotMatch(section, /Coming Soon/i);
     assert.doesNotMatch(dashboard, /Coming Soon/i);
     assert.doesNotMatch(partners, /Coming Soon/i);
     assert.doesNotMatch(sales, /Coming Soon/i);
+    assert.doesNotMatch(documents, /Coming Soon/i);
   });
 });

@@ -1,6 +1,6 @@
 /**
  * OF-01 — Office Studio application shell.
- * OF-02 — Partner Workspace · OF-03 — Sales Workspace.
+ * OF-02 Partner · OF-03 Sales · OF-04 Documents.
  */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -19,6 +19,7 @@ import {
 } from '@embed-engine/platform-shell';
 
 import { OfficeSidebar } from './components/OfficeSidebar';
+import { DocumentsWorkspacePage } from './features/documents/DocumentsWorkspacePage';
 import { OfficeDashboardPage } from './features/OfficeDashboardPage';
 import { OfficeSectionPage } from './features/OfficeSectionPage';
 import { PartnersWorkspacePage } from './features/partners/PartnersWorkspacePage';
@@ -35,6 +36,8 @@ import {
 function readLocation(): OfficeLocation {
   return parseOfficeLocation(window.location.pathname);
 }
+
+type PartnerScopedRoute = 'partners' | 'sales' | 'documents';
 
 export function OfficeStudioApp() {
   const { session, bootstrap, logout, clearStudio, selectStudio } =
@@ -54,7 +57,7 @@ export function OfficeStudioApp() {
   }, []);
 
   const openPartnerScoped = useCallback(
-    (routeId: 'partners' | 'sales', partnerId: string) => {
+    (routeId: PartnerScopedRoute, partnerId: string) => {
       const href = officeHref(routeId, partnerId);
       window.history.pushState(null, '', href);
       setLocation({ routeId, partnerId });
@@ -68,9 +71,13 @@ export function OfficeStudioApp() {
     projects: [],
   });
 
+  const isPartnerScoped =
+    location.routeId === 'partners' ||
+    location.routeId === 'sales' ||
+    location.routeId === 'documents';
+
   const sectionLabel =
-    (location.routeId === 'partners' || location.routeId === 'sales') &&
-    location.partnerId !== null
+    isPartnerScoped && location.partnerId !== null
       ? (getPartner(location.partnerId)?.name ??
         officeRouteLabel(location.routeId))
       : officeRouteLabel(location.routeId);
@@ -132,6 +139,13 @@ export function OfficeStudioApp() {
               selectedPartnerId={location.partnerId}
               onSelectPartner={(partnerId) =>
                 openPartnerScoped('sales', partnerId)
+              }
+            />
+          ) : location.routeId === 'documents' ? (
+            <DocumentsWorkspacePage
+              selectedPartnerId={location.partnerId}
+              onSelectPartner={(partnerId) =>
+                openPartnerScoped('documents', partnerId)
               }
             />
           ) : (

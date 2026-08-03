@@ -11,6 +11,10 @@ export type OfficeEventKind =
   | 'offer.sent'
   | 'order.confirmed'
   | 'payment.waiting'
+  | 'documents.prepared'
+  | 'documents.sent'
+  | 'clickwrap.confirmed'
+  | 'proforma.issued'
   | 'payment.received'
   | 'builder.opened';
 
