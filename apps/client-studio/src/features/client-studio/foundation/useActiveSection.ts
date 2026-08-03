@@ -6,6 +6,7 @@ const COMPACT_VIEWPORT_MAX_PX = 1279;
 /**
  * Tracks which journey section is in view for shell navigation active state.
  * RCS-05 — compact rootMargin clears sticky header + bottom-nav reading frame.
+ * RCS-06 — skip redundant activeId updates.
  */
 export function useActiveSection(
   sectionIds: readonly string[],
@@ -55,7 +56,7 @@ export function useActiveSection(
         }
       }
       if (bestId !== null) {
-        setActiveId(bestId);
+        setActiveId((previous) => (previous === bestId ? previous : bestId));
       }
     };
 

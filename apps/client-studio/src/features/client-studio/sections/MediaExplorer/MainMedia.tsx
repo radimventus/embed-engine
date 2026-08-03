@@ -228,6 +228,8 @@ export function MainMedia() {
           <img
             src={photoSrc}
             alt={previewAlt}
+            decoding="async"
+            fetchPriority="high"
             className="h-full w-full object-cover mobile:bg-embed-brand-navy mobile:object-contain"
             draggable={false}
             data-walkthrough-mode={mode}

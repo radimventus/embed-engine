@@ -36,3 +36,11 @@ export {
 export {
   useActiveSection,
 } from './useActiveSection';
+
+export {
+  createFrameScheduler,
+} from './scheduleOnAnimationFrame';
+export {
+  PRODUCTION_VALIDATION_WIDTHS_PX,
+  resolveValidationBand,
+} from './productionValidation';

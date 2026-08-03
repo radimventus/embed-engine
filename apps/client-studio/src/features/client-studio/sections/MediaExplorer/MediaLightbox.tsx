@@ -29,7 +29,12 @@ export function MediaLightbox({
       onClose={onClose}
     >
       {kind === 'photo' ? (
-        <img alt={alt} className="h-full w-full object-contain" src={src} />
+        <img
+          alt={alt}
+          className="h-full w-full object-contain"
+          decoding="async"
+          src={src}
+        />
       ) : (
         <video
           key={src}

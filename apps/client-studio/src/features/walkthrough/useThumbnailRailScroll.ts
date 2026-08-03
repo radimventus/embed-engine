@@ -158,15 +158,31 @@ export function useThumbnailRailNavigation(
       return;
     }
 
+    let frameId = 0;
     const syncFromScroll = () => {
       const next = Math.round(container.scrollLeft / slotStepPx);
-      setSlotOffset(Math.min(maxSlotOffset, Math.max(0, next)));
+      setSlotOffset((previous) => {
+        const clamped = Math.min(maxSlotOffset, Math.max(0, next));
+        return previous === clamped ? previous : clamped;
+      });
+    };
+    const onScroll = () => {
+      if (frameId !== 0) {
+        return;
+      }
+      frameId = window.requestAnimationFrame(() => {
+        frameId = 0;
+        syncFromScroll();
+      });
     };
 
-    container.addEventListener('scroll', syncFromScroll, { passive: true });
+    container.addEventListener('scroll', onScroll, { passive: true });
 
     return () => {
-      container.removeEventListener('scroll', syncFromScroll);
+      container.removeEventListener('scroll', onScroll);
+      if (frameId !== 0) {
+        window.cancelAnimationFrame(frameId);
+      }
     };
   }, [containerRef, maxSlotOffset, slotStepPx]);
 

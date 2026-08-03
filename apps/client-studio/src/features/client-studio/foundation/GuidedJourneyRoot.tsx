@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import { createFrameScheduler } from './scheduleOnAnimationFrame';
+
 type GuidedJourneyRootProps = {
   readonly snapEnabled: boolean;
 };
@@ -7,6 +9,7 @@ type GuidedJourneyRootProps = {
 /**
  * Enables gentle CSS scroll snap on the actual scroll root:
  * overlay mount in Delivery, otherwise the document root in standalone mode.
+ * RCS-06 — resize handlers coalesce on rAF.
  */
 export function GuidedJourneyRoot({ snapEnabled }: GuidedJourneyRootProps) {
   useEffect(() => {
@@ -34,10 +37,12 @@ export function GuidedJourneyRoot({ snapEnabled }: GuidedJourneyRootProps) {
       overlayMount.dataset.guidedJourneyRoot = 'true';
     }
     applyHeaderOffset();
-    window.addEventListener('resize', applyHeaderOffset);
+    const frame = createFrameScheduler(applyHeaderOffset);
+    window.addEventListener('resize', frame.schedule, { passive: true });
 
     return () => {
-      window.removeEventListener('resize', applyHeaderOffset);
+      window.removeEventListener('resize', frame.schedule);
+      frame.cancel();
       delete html.dataset.guidedJourneyRoot;
       delete body.dataset.guidedJourneyRoot;
       if (overlayMount !== null) {

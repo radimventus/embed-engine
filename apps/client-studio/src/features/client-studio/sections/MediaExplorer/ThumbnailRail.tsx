@@ -4,6 +4,7 @@ import {
   SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX,
   SPATIAL_TERMINAL_THUMBNAIL_WIDTH_PX,
 } from '../../chapter-layout';
+import { createFrameScheduler } from '../../foundation/scheduleOnAnimationFrame';
 import {
   THUMBNAIL_SLOT_COUNT,
   useHorizontalWheelScroll,
@@ -159,8 +160,8 @@ function ChevronSpacer() {
 }
 
 /**
- * Video thumbnail — real video/iframe with a blocking overlay (no controls).
- * Click is handled by the parent button → plays in the main display.
+ * Video thumbnail — poster (or light metadata) only; click plays in MainMedia.
+ * RCS-06 — avoid eager iframe/video loads across the rail on mobile.
  */
 function VideoThumbnailPreview({
   src,
@@ -169,7 +170,7 @@ function VideoThumbnailPreview({
   src: string;
   poster: string;
 }) {
-  const wistia = isWistiaEmbedUrl(src);
+  const hasPoster = poster.length > 0;
 
   return (
     <div
@@ -179,21 +180,25 @@ function VideoThumbnailPreview({
         overflow: 'hidden',
       }}
     >
-      {wistia ? (
-        <iframe
-          src={src}
-          title=""
-          tabIndex={-1}
-          className="pointer-events-none h-full w-full border-0"
-          allow="autoplay; fullscreen"
+      {hasPoster ? (
+        <img
+          src={poster}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          className="pointer-events-none h-full w-full object-cover"
+        />
+      ) : isWistiaEmbedUrl(src) ? (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none h-full w-full bg-embed-brand-navy/15"
         />
       ) : (
         <video
           src={src}
-          poster={poster}
           muted
           playsInline
-          preload="metadata"
+          preload="none"
           className="pointer-events-none h-full w-full object-cover"
         />
       )}
@@ -246,13 +251,25 @@ export function ThumbnailRail() {
     }
 
     const sync = () => {
-      setLayout(resolveRailLayout(node.clientWidth));
+      const next = resolveRailLayout(node.clientWidth);
+      setLayout((previous) =>
+        previous.viewportWidth === next.viewportWidth &&
+        previous.thumbWidth === next.thumbWidth &&
+        previous.slotStep === next.slotStep &&
+        previous.visibleSlots === next.visibleSlots
+          ? previous
+          : next,
+      );
     };
     sync();
-    const observer = new ResizeObserver(sync);
+    const frame = createFrameScheduler(sync);
+    const observer = new ResizeObserver(() => {
+      frame.schedule();
+    });
     observer.observe(node);
     return () => {
       observer.disconnect();
+      frame.cancel();
     };
   }, [itemCount]);
 
@@ -428,6 +445,8 @@ export function ThumbnailRail() {
                     <img
                       src={item.thumbnailSrc}
                       alt=""
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover"
                       style={{
                         borderRadius: THUMB_INNER_RADIUS_PX,
