@@ -4,6 +4,7 @@
  */
 
 import type { PlatformSession } from '../domain/types';
+import { isSharedWorkspaceContext } from '../domain/workspaceContext';
 
 export const PLATFORM_SESSION_COOKIE = 'conis_platform_session_v1';
 export const PLATFORM_SESSION_STORAGE_KEY = 'conis.platform.session.v1';
@@ -13,6 +14,15 @@ let memorySession: PlatformSession | null = null;
 
 function canUseDom(): boolean {
   return typeof document !== 'undefined';
+}
+
+function normalizeSession(parsed: PlatformSession): PlatformSession {
+  return {
+    ...parsed,
+    workspaceContext: isSharedWorkspaceContext(parsed.workspaceContext)
+      ? parsed.workspaceContext
+      : null,
+  };
 }
 
 export function serializeSession(session: PlatformSession): string {
@@ -33,7 +43,7 @@ export function deserializeSession(raw: string): PlatformSession | null {
     if (parsed.expiresAt !== null && Date.parse(parsed.expiresAt) < Date.now()) {
       return null;
     }
-    return parsed;
+    return normalizeSession(parsed);
   } catch {
     return null;
   }

@@ -1,7 +1,7 @@
 /**
- * OF-13 — Workspace Studio Navigation chrome.
+ * OF-13 / OF-14 — Workspace Studio Navigation chrome.
  * Role-filtered: Client | Manager | Sales | Builder | Office
- * Shown while CONIS Admin operator Workspace mode is active.
+ * Driven only by Shared Workspace Context (platform session cookie).
  */
 
 import {
@@ -9,11 +9,9 @@ import {
   workspaceStudiosForRoles,
   type WorkspaceStudioSurface,
 } from '../domain/workspaceStudioNavigation';
+import { getSharedWorkspaceContext } from '../session/authService';
 import { loadPlatformSession } from '../session/sessionStore';
-import {
-  getOperatorPartnerEnvironment,
-  switchOperatorPartnerStudio,
-} from '../pilot/operatorPartnerEnvironment';
+import { switchOperatorPartnerStudio } from '../pilot/operatorPartnerEnvironment';
 
 type WorkspaceStudioNavigationProps = {
   readonly activeSurface: WorkspaceStudioSurface;
@@ -25,8 +23,7 @@ type WorkspaceStudioNavigationProps = {
 export function WorkspaceStudioNavigation({
   activeSurface,
 }: WorkspaceStudioNavigationProps) {
-  const state = getOperatorPartnerEnvironment();
-  if (state === null) return null;
+  if (getSharedWorkspaceContext() === null) return null;
 
   const session = loadPlatformSession();
   const roles = session?.user.roles ?? [];

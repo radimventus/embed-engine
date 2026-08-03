@@ -8,6 +8,8 @@ import type {
   PlatformStudioId,
   PlatformUser,
 } from '../domain/types';
+import type { SharedWorkspaceContext } from '../domain/workspaceContext';
+import { isSharedWorkspaceContext } from '../domain/workspaceContext';
 import {
   DEFAULT_COMPANY_ID,
   DEFAULT_PROJECT_ID,
@@ -73,6 +75,7 @@ export function buildSession(input: {
     projectId:
       input.projectId !== undefined ? input.projectId : DEFAULT_PROJECT_ID,
     activeStudioId: input.activeStudioId ?? null,
+    workspaceContext: null,
     rememberMe: input.rememberMe,
     issuedAt,
     expiresAt,
@@ -132,11 +135,15 @@ export function restoreSession(): PlatformSession | null {
     return null;
   }
   const user = normalizeUser(registryUser ?? session.user);
-  // Migrate BX-14 sessions missing tenant / lastLogin / identity fields.
+  const workspaceContext = isSharedWorkspaceContext(session.workspaceContext)
+    ? session.workspaceContext
+    : null;
+  // Migrate BX-14 sessions missing tenant / lastLogin / identity / workspace fields.
   if (
     typeof (session as { tenantId?: string }).tenantId !== 'string' ||
     typeof (session as { lastLoginAt?: string }).lastLoginAt !== 'string' ||
     session.user.status === undefined ||
+    session.workspaceContext === undefined ||
     registryUser !== null
   ) {
     const migrated: PlatformSession = {
@@ -144,6 +151,7 @@ export function restoreSession(): PlatformSession | null {
       user,
       tenantId: session.tenantId ?? DEFAULT_TENANT_ID,
       lastLoginAt: session.lastLoginAt ?? session.issuedAt,
+      workspaceContext,
     };
     savePlatformSession(migrated);
     return migrated;
@@ -160,6 +168,7 @@ export function updateSession(
       | 'workspaceId'
       | 'projectId'
       | 'activeStudioId'
+      | 'workspaceContext'
     >
   >,
 ): PlatformSession | null {
@@ -171,9 +180,27 @@ export function updateSession(
   const next: PlatformSession = {
     ...current,
     ...patch,
+    workspaceContext:
+      patch.workspaceContext !== undefined
+        ? patch.workspaceContext
+        : (current.workspaceContext ?? null),
   };
   savePlatformSession(next);
   return next;
+}
+
+/** OF-14 — read Shared Workspace Context from the platform session cookie. */
+export function getSharedWorkspaceContext(): SharedWorkspaceContext | null {
+  const session = loadPlatformSession();
+  if (session === null) return null;
+  return isSharedWorkspaceContext(session.workspaceContext)
+    ? session.workspaceContext
+    : null;
+}
+
+/** OF-14 — operator Workspace mode is active when Shared Workspace Context is set. */
+export function isOperatorWorkspaceMode(): boolean {
+  return getSharedWorkspaceContext() !== null;
 }
 
 export function changePassword(input: {

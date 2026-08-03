@@ -1,23 +1,35 @@
 /**
- * OF-12 / OF-13 — CONIS Admin direct entry into Partner Environment Workspace.
+ * OF-12 / OF-13 / OF-14 — CONIS Admin direct entry into Partner Environment Workspace.
  * No invite / NDA / Welcome. Preserves partner company context across studios.
+ *
+ * OF-14 — Operator Workspace state lives on PlatformSession.workspaceContext
+ * (cookie-backed, shared across Studio hosts). No host-local localStorage.
  */
 
 import {
   resolveClientStudioHref,
   resolveCloudStudioHref,
 } from '../cloud/cloudConfig';
+import type { SharedWorkspaceContext } from '../domain/workspaceContext';
 import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation';
 import { getDefaultCompanyRegistry } from '../registry/companyRegistry';
-import { updateSession } from '../session/authService';
+import {
+  getSharedWorkspaceContext,
+  updateSession,
+} from '../session/authService';
 import { loadPlatformSession } from '../session/sessionStore';
 
+/**
+ * @deprecated OF-14 — Workspace Context is on the platform session cookie.
+ * Kept for export compatibility; never used for storage.
+ */
 export const OPERATOR_PE_STORAGE_KEY =
   'conis.platform.operator-pe.v1' as const;
 
 /** @deprecated OF-13 — use WorkspaceStudioSurface */
 export type OperatorPeStudioSurface = WorkspaceStudioSurface;
 
+/** Compatible PE bookmark shape — derived from SharedWorkspaceContext. */
 export type OperatorPartnerEnvironmentState = {
   readonly companyId: string;
   readonly workspaceId: string;
@@ -32,63 +44,30 @@ export type OperatorPartnerEnvironmentState = {
   };
 };
 
-let memoryState: OperatorPartnerEnvironmentState | null = null;
-
-function canUseStorage(): boolean {
-  if (typeof localStorage === 'undefined') return false;
-  try {
-    const probe = '__conis.operator.pe.probe__';
-    localStorage.setItem(probe, '1');
-    localStorage.removeItem(probe);
-    return true;
-  } catch {
-    return false;
-  }
+function toOperatorState(
+  ctx: SharedWorkspaceContext,
+): OperatorPartnerEnvironmentState {
+  return {
+    companyId: ctx.companyId,
+    workspaceId: ctx.workspaceId,
+    projectId: ctx.projectId,
+    officePartnerId: ctx.partnerId,
+    officeReturnHref: ctx.officeReturnHref,
+    previous: ctx.previous,
+  };
 }
 
+/** OF-14 — Shared Workspace Context from the platform session cookie. */
 export function getOperatorPartnerEnvironment(): OperatorPartnerEnvironmentState | null {
-  if (canUseStorage()) {
-    try {
-      const raw = localStorage.getItem(OPERATOR_PE_STORAGE_KEY);
-      if (raw !== null && raw.length > 0) {
-        const parsed = JSON.parse(raw) as OperatorPartnerEnvironmentState;
-        if (
-          typeof parsed.companyId === 'string' &&
-          typeof parsed.workspaceId === 'string' &&
-          typeof parsed.projectId === 'string' &&
-          typeof parsed.officeReturnHref === 'string'
-        ) {
-          memoryState = parsed;
-          return parsed;
-        }
-      }
-    } catch {
-      // fall through to memory
-    }
-  }
-  return memoryState;
+  const ctx = getSharedWorkspaceContext();
+  return ctx === null ? null : toOperatorState(ctx);
 }
 
 export function clearOperatorPartnerEnvironment(): void {
-  memoryState = null;
-  if (!canUseStorage()) return;
-  try {
-    localStorage.removeItem(OPERATOR_PE_STORAGE_KEY);
-  } catch {
-    // ignore
-  }
-}
-
-function saveOperatorPartnerEnvironment(
-  state: OperatorPartnerEnvironmentState,
-): void {
-  memoryState = state;
-  if (!canUseStorage()) return;
-  try {
-    localStorage.setItem(OPERATOR_PE_STORAGE_KEY, JSON.stringify(state));
-  } catch {
-    // keep memory only
-  }
+  const session = loadPlatformSession();
+  if (session === null) return;
+  if (session.workspaceContext === null) return;
+  updateSession({ workspaceContext: null });
 }
 
 function resolveTenantId(companyId: string, fallback: string): string {
@@ -118,7 +97,7 @@ export type EnterOperatorPartnerEnvironmentInput = {
   readonly officeReturnHref: string;
   /** OF-13A default: client — open Client Studio as Workspace entry. */
   readonly initialSurface?: WorkspaceStudioSurface;
-  /** When false, only bind session + bookmark (tests). Default true. */
+  /** When false, only bind session + context (tests). Default true. */
   readonly navigate?: boolean;
 };
 
@@ -133,7 +112,7 @@ export type EnterOperatorPartnerEnvironmentResult =
 
 /**
  * Bind the logged-in CONIS admin session to a partner Workspace and open a studio.
- * Default entry is Client Studio (OF-13A) — Workspace Navigation stays role-filtered.
+ * Default entry is Client Studio (OF-13A). Context is cookie-shared (OF-14).
  */
 export function enterOperatorPartnerEnvironment(
   input: EnterOperatorPartnerEnvironmentInput,
@@ -154,11 +133,18 @@ export function enterOperatorPartnerEnvironment(
     return { ok: false, error: 'Partner Environment není připraveno.' };
   }
 
-  const state: OperatorPartnerEnvironmentState = {
+  const surface = input.initialSurface ?? 'client';
+  if (surface === 'office') {
+    return { ok: false, error: 'Office není vstupní Workspace Studio.' };
+  }
+
+  const workspaceContext: SharedWorkspaceContext = {
+    operatorMode: true,
+    partnerId: input.officePartnerId.trim(),
     companyId,
     workspaceId,
     projectId,
-    officePartnerId: input.officePartnerId.trim(),
+    activeStudio: surface,
     officeReturnHref:
       input.officeReturnHref.trim() || resolveCloudStudioHref('office'),
     previous: {
@@ -168,13 +154,6 @@ export function enterOperatorPartnerEnvironment(
       projectId: session.projectId,
     },
   };
-  saveOperatorPartnerEnvironment(state);
-
-  const surface = input.initialSurface ?? 'client';
-  if (surface === 'office') {
-    clearOperatorPartnerEnvironment();
-    return { ok: false, error: 'Office není vstupní Workspace Studio.' };
-  }
 
   const tenantId = resolveTenantId(companyId, session.tenantId);
   const next = updateSession({
@@ -183,12 +162,13 @@ export function enterOperatorPartnerEnvironment(
     workspaceId,
     projectId,
     activeStudioId: sessionStudioIdForSurface(surface),
+    workspaceContext,
   });
   if (next === null) {
-    clearOperatorPartnerEnvironment();
     return { ok: false, error: 'Session se nepodařilo aktualizovat.' };
   }
 
+  const state = toOperatorState(workspaceContext);
   const href = hrefForSurface(surface);
   if (input.navigate !== false && typeof window !== 'undefined') {
     window.location.assign(href);
@@ -200,8 +180,8 @@ export function switchOperatorPartnerStudio(
   surface: WorkspaceStudioSurface,
   options?: { readonly navigate?: boolean },
 ): EnterOperatorPartnerEnvironmentResult {
-  const state = getOperatorPartnerEnvironment();
-  if (state === null) {
+  const ctx = getSharedWorkspaceContext();
+  if (ctx === null) {
     return { ok: false, error: 'Operator PE mode není aktivní.' };
   }
   if (surface === 'office') {
@@ -213,7 +193,7 @@ export function switchOperatorPartnerStudio(
     }
     return {
       ok: true,
-      state,
+      state: toOperatorState(ctx),
       href: returned.href,
       surface: 'office',
     };
@@ -224,11 +204,17 @@ export function switchOperatorPartnerStudio(
     return { ok: false, error: 'Nejste přihlášeni.' };
   }
 
+  const workspaceContext: SharedWorkspaceContext = {
+    ...ctx,
+    activeStudio: surface,
+  };
+
   const next = updateSession({
-    companyId: state.companyId,
-    workspaceId: state.workspaceId,
-    projectId: state.projectId,
+    companyId: ctx.companyId,
+    workspaceId: ctx.workspaceId,
+    projectId: ctx.projectId,
     activeStudioId: sessionStudioIdForSurface(surface),
+    workspaceContext,
   });
   if (next === null) {
     return { ok: false, error: 'Session se nepodařilo aktualizovat.' };
@@ -238,7 +224,7 @@ export function switchOperatorPartnerStudio(
   if (options?.navigate !== false && typeof window !== 'undefined') {
     window.location.assign(href);
   }
-  return { ok: true, state, href, surface };
+  return { ok: true, state: toOperatorState(workspaceContext), href, surface };
 }
 
 export function returnFromOperatorPartnerEnvironment(options?: {
@@ -246,20 +232,20 @@ export function returnFromOperatorPartnerEnvironment(options?: {
 }):
   | { readonly ok: true; readonly href: string }
   | { readonly ok: false; readonly error: string } {
-  const state = getOperatorPartnerEnvironment();
-  if (state === null) {
+  const ctx = getSharedWorkspaceContext();
+  if (ctx === null) {
     return { ok: false, error: 'Operator PE mode není aktivní.' };
   }
 
+  const href = ctx.officeReturnHref;
   const next = updateSession({
-    tenantId: state.previous.tenantId,
-    companyId: state.previous.companyId,
-    workspaceId: state.previous.workspaceId,
-    projectId: state.previous.projectId,
+    tenantId: ctx.previous.tenantId,
+    companyId: ctx.previous.companyId,
+    workspaceId: ctx.previous.workspaceId,
+    projectId: ctx.previous.projectId,
     activeStudioId: 'office',
+    workspaceContext: null,
   });
-  const href = state.officeReturnHref;
-  clearOperatorPartnerEnvironment();
   if (next === null) {
     return { ok: false, error: 'Session se nepodařilo obnovit.' };
   }

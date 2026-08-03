@@ -9,7 +9,7 @@ import {
   usePlatformSession,
   usePilotWorkspace,
   useStudioBrandProjection,
-  getOperatorPartnerEnvironment,
+  isOperatorWorkspaceMode,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -79,7 +79,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
       onLogout={logout}
       onOpenLanding={clearStudio}
       onSelectStudio={selectStudio}
-      hideStudioSwitcher={getOperatorPartnerEnvironment() !== null}
+      hideStudioSwitcher={isOperatorWorkspaceMode()}
       onSubmitFeedback={(message) => {
         submitPlatformFeedback({
           message,

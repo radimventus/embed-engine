@@ -27,6 +27,7 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
 
     assert.match(main, /Embed\.mount/);
     assert.match(main, /registerClientStudioCss/);
+    assert.match(main, /mountClientHostWorkspaceNavigation/);
     assert.match(mount, /ErrorBoundary/);
     assert.match(mount, /ClientStudioApp/);
     assert.match(mount, /createRoot/);

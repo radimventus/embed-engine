@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import {
   loadPlatformSession,
   projectPartnerBrand,
-  getOperatorPartnerEnvironment,
+  isOperatorWorkspaceMode,
   WorkspaceStudioNavigation,
   type StudioBrandProjection,
 } from '@embed-engine/platform-access';
@@ -45,7 +45,7 @@ export function ClientStudioHeader() {
 
   return (
     <>
-      {getOperatorPartnerEnvironment() !== null ? (
+      {isOperatorWorkspaceMode() ? (
         <WorkspaceStudioNavigation activeSurface="client" />
       ) : null}
       <header

@@ -37,10 +37,10 @@ import {
   logout as authLogout,
   restoreSession,
   updateSession,
+  getSharedWorkspaceContext,
 } from '../session/authService';
 import { touchUserLastStudio } from '../registry/userRegistry';
 import {
-  getOperatorPartnerEnvironment,
   returnFromOperatorPartnerEnvironment,
   clearOperatorPartnerEnvironment,
   switchOperatorPartnerStudio,
@@ -96,6 +96,26 @@ export function SessionProvider({
       // until user explicitly selects, unless they already picked this studio.
       return restored;
     }
+    const workspaceContext = getSharedWorkspaceContext();
+    if (
+      bindStudioId !== undefined &&
+      workspaceContext !== null &&
+      (restored.activeStudioId !== bindStudioId ||
+        workspaceContext.activeStudio !== bindStudioId)
+    ) {
+      // OF-14 — adopt this studio host; keep partner Workspace Context.
+      const next = updateSession({
+        activeStudioId: bindStudioId,
+        workspaceContext: {
+          ...workspaceContext,
+          activeStudio: bindStudioId,
+        },
+      });
+      if (next !== null) {
+        touchUserLastStudio(next.user.id, bindStudioId);
+      }
+      return next ?? restored;
+    }
     if (
       bindStudioId !== undefined &&
       restored.activeStudioId !== null &&
@@ -145,18 +165,22 @@ export function SessionProvider({
   }, []);
 
   const selectStudio = useCallback((studioId: PlatformStudioId) => {
-    const operatorPe = getOperatorPartnerEnvironment();
-    if (operatorPe !== null) {
+    const workspaceContext = getSharedWorkspaceContext();
+    if (workspaceContext !== null) {
       if (studioId === 'office') {
         returnFromOperatorPartnerEnvironment();
         return;
       }
-      // OF-13 — Builder included for CONIS Admin; context stays on partner Workspace.
+      // OF-13 / OF-14 — keep partner Workspace; only change Active Studio.
       const next = updateSession({
-        companyId: operatorPe.companyId,
-        workspaceId: operatorPe.workspaceId,
-        projectId: operatorPe.projectId,
+        companyId: workspaceContext.companyId,
+        workspaceId: workspaceContext.workspaceId,
+        projectId: workspaceContext.projectId,
         activeStudioId: studioId,
+        workspaceContext: {
+          ...workspaceContext,
+          activeStudio: studioId,
+        },
       });
       if (next !== null) {
         touchUserLastStudio(next.user.id, studioId);
@@ -181,8 +205,7 @@ export function SessionProvider({
   }, []);
 
   const clearStudio = useCallback(() => {
-    const operatorPe = getOperatorPartnerEnvironment();
-    if (operatorPe !== null) {
+    if (getSharedWorkspaceContext() !== null) {
       // OF-13A — stay in Workspace; default surface is Client Studio.
       switchOperatorPartnerStudio('client');
       return;

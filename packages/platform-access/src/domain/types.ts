@@ -3,6 +3,8 @@
  * Shared Identity & Access for all Studios (MVP pilot — not production IAM).
  */
 
+import type { SharedWorkspaceContext } from './workspaceContext';
+
 export type PlatformStudioId = 'office' | 'builder' | 'manager' | 'sales';
 
 /**
@@ -66,6 +68,11 @@ export type PlatformSession = {
   readonly projectId: string | null;
   /** null = Platform Landing (studio not chosen yet). */
   readonly activeStudioId: PlatformStudioId | null;
+  /**
+   * OF-14 — Shared Workspace Context (cookie-backed with this session).
+   * null = not in operator Workspace mode (partner journey unaffected).
+   */
+  readonly workspaceContext: SharedWorkspaceContext | null;
   readonly rememberMe: boolean;
   readonly issuedAt: string;
   readonly expiresAt: string | null;

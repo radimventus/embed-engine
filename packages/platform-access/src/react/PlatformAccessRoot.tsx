@@ -3,9 +3,7 @@ import { useState } from 'react';
 
 import { resolveClientStudioHref } from '../cloud/cloudConfig';
 import type { PlatformStudioId } from '../domain/types';
-import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation';
-import { getOperatorPartnerEnvironment } from '../pilot/operatorPartnerEnvironment';
-import { updateSession } from '../session/authService';
+import { getSharedWorkspaceContext, updateSession } from '../session/authService';
 import { AuthShell } from './AuthShell';
 import { InviteShell } from './InviteShell';
 import { WorkspaceStudioNavigation } from './OperatorPartnerEnvironmentBar';
@@ -21,25 +19,15 @@ function readInviteTokenFromUrl(): string {
   return new URLSearchParams(window.location.search).get('invite') ?? '';
 }
 
-function operatorSurfaceForStudio(
-  studioId: PlatformStudioId,
-): WorkspaceStudioSurface | null {
-  if (studioId === 'manager') return 'manager';
-  if (studioId === 'sales') return 'sales';
-  if (studioId === 'builder') return 'builder';
-  if (studioId === 'office') return 'office';
-  return null;
-}
-
 /**
  * Auth → Invite → Landing → Studio.
- * OF-13 — CONIS operator Workspace skips Platform Landing.
+ * OF-13 / OF-14 — CONIS operator Workspace skips Platform Landing.
  */
 function AccessGateInner({ children }: AccessGateProps) {
   const { session } = usePlatformSession();
   const urlToken = readInviteTokenFromUrl();
   const [inviteMode, setInviteMode] = useState(urlToken.length > 0);
-  const operatorPe = getOperatorPartnerEnvironment();
+  const workspaceContext = getSharedWorkspaceContext();
 
   if (session === null) {
     if (inviteMode) {
@@ -54,13 +42,17 @@ function AccessGateInner({ children }: AccessGateProps) {
   }
 
   if (session.activeStudioId === null) {
-    // OF-13A — operator Workspace entry recovers to Client Studio (not Platform Landing).
-    if (operatorPe !== null) {
+    // OF-13A / OF-14 — operator Workspace entry recovers to Client Studio.
+    if (workspaceContext !== null) {
       updateSession({
-        companyId: operatorPe.companyId,
-        workspaceId: operatorPe.workspaceId,
-        projectId: operatorPe.projectId,
+        companyId: workspaceContext.companyId,
+        workspaceId: workspaceContext.workspaceId,
+        projectId: workspaceContext.projectId,
         activeStudioId: 'manager',
+        workspaceContext: {
+          ...workspaceContext,
+          activeStudio: 'client',
+        },
       });
       if (typeof window !== 'undefined') {
         window.location.replace(resolveClientStudioHref());
@@ -71,9 +63,7 @@ function AccessGateInner({ children }: AccessGateProps) {
   }
 
   const peSurface =
-    operatorPe !== null
-      ? operatorSurfaceForStudio(session.activeStudioId)
-      : null;
+    workspaceContext !== null ? workspaceContext.activeStudio : null;
 
   return (
     <>
@@ -91,7 +81,7 @@ type PlatformAccessRootProps = {
 };
 
 /**
- * EPIC-BX-14 / BX-15 / OF-12 / OF-13 — Session → Auth/Invite → Landing|Workspace → Studio.
+ * EPIC-BX-14 / BX-15 / OF-12 / OF-13 / OF-14 — Session → Auth/Invite → Landing|Workspace → Studio.
  */
 export function PlatformAccessRoot({
   studioId,

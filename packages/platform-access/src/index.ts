@@ -14,6 +14,12 @@ export type {
 } from './domain/types';
 
 export type {
+  SharedWorkspaceContext,
+  WorkspaceRoleContext,
+} from './domain/workspaceContext';
+export { isSharedWorkspaceContext } from './domain/workspaceContext';
+
+export type {
   PlatformTenant,
   PilotInvite,
   PilotInviteStatus,
@@ -93,6 +99,8 @@ export {
   startPasswordReset,
   finishPasswordReset,
   peekPasswordResetToken,
+  getSharedWorkspaceContext,
+  isOperatorWorkspaceMode,
   type AuthResult,
 } from './session/authService';
 

@@ -9,6 +9,8 @@ import {
   clearPlatformSession,
   enterOperatorPartnerEnvironment,
   getOperatorPartnerEnvironment,
+  getSharedWorkspaceContext,
+  isOperatorWorkspaceMode,
   loadPlatformSession,
   login,
   resetCompanyRegistryExtras,
@@ -90,6 +92,9 @@ describe('OF-13A Workspace Studio Navigation', () => {
     );
     assert.equal(shouldShowPartnerWelcome(loadPlatformSession()!.user.email), false);
     assert.ok(getOperatorPartnerEnvironment() !== null);
+    assert.equal(isOperatorWorkspaceMode(), true);
+    assert.equal(getSharedWorkspaceContext()?.activeStudio, 'client');
+    assert.equal(getSharedWorkspaceContext()?.partnerId, OFFICE_REFERENCE_PARTNER_ID);
   });
 
   it('keeps SSOT studio order and Client in role-filtered switcher', () => {

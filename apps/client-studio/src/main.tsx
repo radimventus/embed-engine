@@ -8,7 +8,11 @@ import clientStudioCss from "./index.css?inline";
 
 import { Embed, registerClientStudioCss } from "@embed-engine/embed";
 
+import { mountClientHostWorkspaceNavigation } from "./host/mountClientHostWorkspaceNavigation";
+
 registerClientStudioCss(clientStudioCss);
+
+mountClientHostWorkspaceNavigation();
 
 Embed.mount({
   mode: "launcher",
