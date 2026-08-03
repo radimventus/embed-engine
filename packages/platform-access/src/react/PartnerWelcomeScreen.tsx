@@ -7,7 +7,8 @@ type PartnerWelcomeScreenProps = {
 };
 
 /**
- * CS-01 — first-entry welcome after NDA activation.
+ * CS-01 / PE-03 — first-entry welcome after NDA activation.
+ * Confirms Pilot Workspace + sample project + partner studios.
  */
 export function PartnerWelcomeScreen({
   displayName,
@@ -19,15 +20,20 @@ export function PartnerWelcomeScreen({
   return (
     <div className="platform-access" data-testid="partner-welcome">
       <div className="platform-access__panel">
-        <p className="platform-access__eyebrow">CONIS Pilot · Welcome</p>
+        <p className="platform-access__eyebrow">CONIS Pilot · Workspace</p>
         <h1 className="platform-access__title">Pilotní prostředí je připraveno</h1>
         <p className="platform-access__lead">
-          Vítejte, {displayName}. Účet pro {firmName} je aktivní.
+          Vítejte, {displayName}. Účet pro {firmName} je aktivní — Workspace je
+          připraven bez dalších kroků.
         </p>
         <ul className="platform-access__list platform-access__lead">
-          <li>Pilotní prostředí připraveno</li>
-          <li>Ukázkový projekt připraven · {projectName}</li>
-          <li>Přístup: Client Studio · Manager Studio · Sales Studio</li>
+          <li data-testid="welcome-workspace-ready">Pilot Workspace připraven</li>
+          <li data-testid="welcome-sample-project">
+            Ukázkový projekt CONIS · {projectName}
+          </li>
+          <li data-testid="welcome-studio-client">Client Studio připraveno</li>
+          <li data-testid="welcome-studio-manager">Manager Studio připraveno</li>
+          <li data-testid="welcome-studio-sales">Sales Studio připraveno</li>
         </ul>
         <button
           type="button"

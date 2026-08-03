@@ -1,5 +1,6 @@
 /**
- * EPIC-BX-15 — Automatic pilot workspace provisioning for a firm.
+ * EPIC-BX-15 / PE-03 — Automatic pilot workspace provisioning for a firm.
+ * Attaches CONIS sample project (Reference House) and initializes partner studios.
  */
 
 import type {
@@ -8,11 +9,13 @@ import type {
   PlatformWorkspace,
 } from '../domain/types';
 import type { PlatformTenant } from '../domain/pilotTypes';
+import { CONIS_SAMPLE_PROJECT_LABEL } from '../domain/pilotWorkspace';
 import {
   appendPilotProvision,
   getDefaultCompanyRegistry,
 } from '../registry/companyRegistry';
 import { PILOT_HOUSE_PACKAGE_ROOT } from '../registry/defaults';
+import { initializePilotWorkspace } from './pilotWorkspaceStore';
 
 export type PilotProvisionResult = {
   readonly tenant: PlatformTenant;
@@ -55,38 +58,44 @@ export function provisionPilotWorkspace(input: {
     const project = state.projects.find(
       (item) => item.companyId === companyId,
     )!;
-    return { tenant, company: existing, workspace, project };
+    const result = { tenant, company: existing, workspace, project };
+    initializePilotWorkspace(result);
+    return result;
   }
 
+  const firmName = input.companyName.trim();
   const tenant: PlatformTenant = {
     id: tenantId,
-    name: `${input.companyName.trim()} Pilot`,
+    name: `${firmName} Pilot`,
     companyId,
     pilot: true,
     createdAt,
   };
   const company: PlatformCompany = {
     id: companyId,
-    name: input.companyName.trim(),
+    name: firmName,
     tenantId,
   };
   const workspace: PlatformWorkspace = {
     id: workspaceId,
     companyId,
-    name: `${input.companyName.trim()} Main`,
+    name: `${firmName} Pilot Workspace`,
   };
   const project: PlatformProject = {
     id: projectId,
     workspaceId,
     companyId,
-    name: `${input.companyName.trim()} Pilot Project`,
+    name: CONIS_SAMPLE_PROJECT_LABEL,
     packageRoot: PILOT_HOUSE_PACKAGE_ROOT,
     status: 'ready',
-    slug: `${slug}-pilot`,
+    slug: `${slug}-reference-house`,
     objectType: 'villa',
-    description: 'Automaticky provisionovaný pilotní projekt s House Package.',
+    description:
+      'Ukázkový projekt CONIS (Reference House) — připojen automaticky při provisioning.',
   };
 
   appendPilotProvision({ tenant, company, workspace, project });
-  return { tenant, company, workspace, project };
+  const result = { tenant, company, workspace, project };
+  initializePilotWorkspace(result);
+  return result;
 }

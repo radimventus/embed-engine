@@ -190,6 +190,23 @@ export {
 } from './pilot/provisionPilotWorkspace';
 
 export {
+  CONIS_SAMPLE_PROJECT_LABEL,
+  PARTNER_PILOT_STUDIO_IDS,
+  type PartnerPilotStudioId,
+  type PilotStudioInitState,
+  type PilotWorkspace,
+} from './domain/pilotWorkspace';
+
+export {
+  initializePilotWorkspace,
+  getPilotWorkspace,
+  isPilotWorkspaceReady,
+  listPilotWorkspaces,
+  resetPilotWorkspaceStore,
+  PILOT_WORKSPACE_STORAGE_KEY,
+} from './pilot/pilotWorkspaceStore';
+
+export {
   recordPlatformActivity,
   listRecentActivity,
   recordLastPublish,
@@ -265,3 +282,4 @@ export { IdentityAccessCenter } from './react/IdentityAccessCenter';
 export { GmReadinessCenter } from './react/GmReadinessCenter';
 export { GaReadinessCenter } from './react/GaReadinessCenter';
 export { useStudioBrandProjection } from './react/useStudioBrandProjection';
+export { usePilotWorkspace } from './react/usePilotWorkspace';

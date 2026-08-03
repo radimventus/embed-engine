@@ -7,6 +7,7 @@ import {
   recordPlatformActivity,
   submitPlatformFeedback,
   usePlatformSession,
+  usePilotWorkspace,
   useStudioBrandProjection,
 } from '@embed-engine/platform-access';
 import {
@@ -28,7 +29,6 @@ type AppShellProps = {
 /**
  * Manager Studio shell — partner work center (PR-026).
  * Capability Host remains composed; Inspector is not shown in partner UI.
- * PE-02 — company / logo / hero from Brand Projection.
  */
 export function AppShell({ sidebar, children }: AppShellProps) {
   const {
@@ -41,10 +41,15 @@ export function AppShell({ sidebar, children }: AppShellProps) {
   const { activeCapabilityId, activeSectionId } = useManagerNav();
   const capabilityHost = useMemo(() => getManagerCapabilityHost(), []);
   const brand = useStudioBrandProjection();
+  const pilot = usePilotWorkspace();
+  const projectLabel =
+    pilot?.workspace.sampleProjectLabel ??
+    bootstrap?.project?.name ??
+    '—';
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: brand.companyName,
-    projectLabel: bootstrap?.project?.name ?? '—',
+    projectLabel,
     projects: [],
   });
 
@@ -52,7 +57,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Manager' },
     { id: 'company', label: brand.tradeMark },
-    { id: 'project', label: bootstrap?.project?.name ?? 'Projekt' },
+    { id: 'project', label: projectLabel },
     { id: 'section', label: partnerSectionLabel(activeSectionId) },
   ];
 
@@ -91,7 +96,12 @@ export function AppShell({ sidebar, children }: AppShellProps) {
           {sidebar}
         </div>
         <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
-          <Workspace brand={brand}>{children}</Workspace>
+          <Workspace
+            brand={brand}
+            sampleProjectLabel={pilot?.workspace.sampleProjectLabel}
+          >
+            {children}
+          </Workspace>
         </div>
       </div>
     </PlatformShell>

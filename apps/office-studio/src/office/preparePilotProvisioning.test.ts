@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
+  CONIS_SAMPLE_PROJECT_LABEL,
   PILOT_PARTNER_ROLES,
   activateInvite,
   canAccessStudio,
@@ -9,6 +10,7 @@ import {
   createPilotInvite,
   dismissPartnerWelcome,
   getPartnerBranding,
+  isPilotWorkspaceReady,
   isPilotPartnerRoles,
   login,
   logout,
@@ -16,6 +18,7 @@ import {
   resetInviteStore,
   resetPartnerBrandingStore,
   resetPartnerWelcomeStore,
+  resetPilotWorkspaceStore,
   resetUserRegistry,
   shouldShowPartnerWelcome,
   studiosForRoles,
@@ -33,7 +36,7 @@ import { resetOfficeEventCatalogForTests } from './officeEventCatalog.ts';
 import { getLicense, resetOperationsRegistryForTests } from './officeOperationsRegistry.ts';
 import { getSalesCase } from './officeSalesRegistry.ts';
 
-describe('CS-01 Pilot Partner Provisioning', () => {
+describe('CS-01 / PE-03 Pilot Partner Provisioning', () => {
   it('prepares pilot in one click with invite, branding, package and partner roles', () => {
     resetPartnerRegistryForTests();
     resetOfficeEventCatalogForTests();
@@ -42,6 +45,7 @@ describe('CS-01 Pilot Partner Provisioning', () => {
     resetInviteStore();
     resetPartnerBrandingStore();
     resetPartnerWelcomeStore();
+    resetPilotWorkspaceStore();
     resetUserRegistry();
     clearPlatformSession();
 
@@ -58,6 +62,15 @@ describe('CS-01 Pilot Partner Provisioning', () => {
     assert.equal(prepared?.invite.companyId, prepared?.provision.company.id);
     assert.equal(prepared?.invite.projectId, prepared?.provision.project.id);
     assert.match(prepared!.provision.project.packageRoot, /house-package/);
+    assert.equal(prepared!.provision.project.name, CONIS_SAMPLE_PROJECT_LABEL);
+    assert.equal(
+      prepared!.pilotWorkspace.sampleProjectLabel,
+      CONIS_SAMPLE_PROJECT_LABEL,
+    );
+    assert.equal(prepared!.pilotWorkspace.studios.client.ready, true);
+    assert.equal(prepared!.pilotWorkspace.studios.manager.ready, true);
+    assert.equal(prepared!.pilotWorkspace.studios.sales.ready, true);
+    assert.equal(isPilotWorkspaceReady(prepared!.provision.company.id), true);
     assert.equal(
       getPartnerBranding(prepared!.provision.company.id)?.firmName,
       'Pilot Domů',
@@ -83,6 +96,7 @@ describe('CS-01 Pilot Partner Provisioning', () => {
     resetInviteStore();
     resetPartnerBrandingStore();
     resetPartnerWelcomeStore();
+    resetPilotWorkspaceStore();
     resetUserRegistry();
     clearPlatformSession();
 

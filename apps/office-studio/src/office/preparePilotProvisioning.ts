@@ -1,15 +1,18 @@
 /**
- * CS-01 — One-click pilot partner provisioning (Office orchestration).
+ * CS-01 / PE-03 — One-click pilot partner provisioning (Office orchestration).
+ * Provisions Pilot Workspace (sample project + Client/Manager/Sales init).
  * Builder / Office remain CONIS-only; partner invite gets Manager + Sales roles.
  */
 
 import {
   PILOT_PARTNER_ROLES,
   createPilotInvite,
+  getPilotWorkspace,
   provisionPilotWorkspace,
   upsertPartnerBranding,
   type PilotInvite,
   type PilotProvisionResult,
+  type PilotWorkspace,
   type PartnerBranding,
 } from '@embed-engine/platform-access';
 
@@ -27,6 +30,7 @@ import { selectSalesPackage } from './officeSalesRegistry';
 export type PreparePilotResult = {
   readonly partner: OfficePartner;
   readonly provision: PilotProvisionResult;
+  readonly pilotWorkspace: PilotWorkspace;
   readonly invite: PilotInvite;
   readonly branding: PartnerBranding;
   readonly packageId: 'pilot-1';
@@ -54,6 +58,11 @@ export function preparePilotForPartner(
   const provision = provisionPilotWorkspace({
     companyName: partner.company.legalName || partner.name,
   });
+  // PE-03 — provision already initializes Pilot Workspace (Client/Manager/Sales + sample).
+  const pilotWorkspace = getPilotWorkspace(provision.company.id);
+  if (pilotWorkspace === null) {
+    return null;
+  }
 
   const branding = upsertPartnerBranding({
     companyId: provision.company.id,
@@ -88,14 +97,15 @@ export function preparePilotForPartner(
 
   appendOfficeEvent({
     kind: 'pilot.ready',
-    label: 'Pilot připraven',
-    detail: `${updated.name} · invite ${invite.token} · ${provision.project.name}`,
+    label: 'Pilot Workspace připraven',
+    detail: `${updated.name} · ${pilotWorkspace.sampleProjectLabel} · Client/Manager/Sales · invite ${invite.token}`,
     partnerId: updated.id,
   });
 
   return {
     partner: updated,
     provision,
+    pilotWorkspace,
     invite,
     branding,
     packageId: 'pilot-1',

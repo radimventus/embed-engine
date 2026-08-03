@@ -22,6 +22,8 @@ import {
   resetCompanyRegistryExtras,
   resetInviteStore,
   resetPartnerWelcomeStore,
+  resetPilotWorkspaceStore,
+  isPilotWorkspaceReady,
   resolveCloudStudioHref,
   restoreSession,
   submitPlatformFeedback,
@@ -151,15 +153,20 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
 
   it('provisions a pilot firm with Company / Workspace / Project / HP', () => {
     resetCompanyRegistryExtras();
+    resetPilotWorkspaceStore();
     const provisioned = provisionPilotWorkspace({
       companyName: 'Nordic Homes',
     });
     assert.equal(provisioned.company.name, 'Nordic Homes');
     assert.match(provisioned.tenant.id, /nordic-homes/);
     assert.match(provisioned.workspace.name, /Nordic Homes/);
+    assert.match(provisioned.workspace.name, /Pilot Workspace/);
+    assert.equal(provisioned.project.name, 'Reference House');
     assert.match(provisioned.project.packageRoot, /house-package/);
+    assert.equal(isPilotWorkspaceReady(provisioned.company.id), true);
     const registry = getDefaultCompanyRegistry();
     assert.ok(registry.companies.some((c) => c.id === provisioned.company.id));
+    resetPilotWorkspaceStore();
     resetCompanyRegistryExtras();
   });
 

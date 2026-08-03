@@ -11,6 +11,10 @@ import {
   listRecentActivity,
   recordPlatformActivity,
 } from '../pilot/pilotDiagnostics';
+import {
+  getPilotWorkspace,
+  isPilotWorkspaceReady,
+} from '../pilot/pilotWorkspaceStore';
 import { provisionPilotWorkspace } from '../pilot/provisionPilotWorkspace';
 import {
   dismissPartnerWelcome,
@@ -74,15 +78,23 @@ export function PlatformLanding() {
   const recentProjects = registry.projects.slice(0, 5);
   const studioCards = isPartner ? PARTNER_STUDIOS : ALL_STUDIOS;
   const branding = getPartnerBranding(session.companyId);
+  const pilotWorkspace = getPilotWorkspace(session.companyId);
+  const pilotReady = isPilotWorkspaceReady(session.companyId);
   const showWelcome =
     welcomeOpen &&
     isPartner &&
     shouldShowPartnerWelcome(session.user.email);
 
   const openClientStudio = () => {
+    if (pilotWorkspace !== null) {
+      selectProject(pilotWorkspace.projectId);
+    }
     recordPlatformActivity({
       label: 'Otevření Client Studia',
-      detail: bootstrap.project?.name ?? 'Pilot project',
+      detail:
+        bootstrap.project?.name ??
+        pilotWorkspace?.sampleProjectLabel ??
+        'Reference House',
     });
     if (typeof window !== 'undefined') {
       window.location.assign(resolveClientStudioHref());
@@ -111,8 +123,12 @@ export function PlatformLanding() {
   const continueWork = () => {
     const preferred: PlatformStudioId = isPartner ? 'manager' : 'builder';
     const studio = session.activeStudioId ?? preferred;
-    if (session.projectId !== null) {
-      selectProject(session.projectId);
+    const projectId =
+      session.projectId ??
+      pilotWorkspace?.projectId ??
+      null;
+    if (projectId !== null) {
+      selectProject(projectId);
     }
     recordPlatformActivity({
       label: 'Pokračovat v práci',
@@ -153,6 +169,26 @@ export function PlatformLanding() {
             Branding · {branding.firmName} · {branding.logoLabel} ·{' '}
             {branding.heroLabel}
           </p>
+        )}
+
+        {isPartner && pilotWorkspace !== null && (
+          <section
+            className="platform-access__dashboard-slot"
+            data-testid="pilot-workspace-status"
+          >
+            <p className="platform-access__demos-title">Pilot Workspace</p>
+            <ul className="platform-access__list platform-access__lead">
+              <li>
+                Stav · {pilotReady ? 'připraven' : 'neúplný'}
+              </li>
+              <li>
+                Ukázkový projekt · {pilotWorkspace.sampleProjectLabel}
+              </li>
+              <li>Client Studio · připraveno</li>
+              <li>Manager Studio · připraveno</li>
+              <li>Sales Studio · připraveno</li>
+            </ul>
+          </section>
         )}
 
         <button

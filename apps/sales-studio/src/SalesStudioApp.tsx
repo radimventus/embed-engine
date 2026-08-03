@@ -11,6 +11,7 @@ import {
   recordPlatformActivity,
   submitPlatformFeedback,
   usePlatformSession,
+  usePilotWorkspace,
   useStudioBrandProjection,
 } from '@embed-engine/platform-access';
 import {
@@ -48,6 +49,7 @@ export function SalesStudioApp() {
     usePlatformSession();
   const capabilityHost = useMemo(() => getSalesCapabilityHost(), []);
   const brand = useStudioBrandProjection();
+  const pilot = usePilotWorkspace();
   const [activeClientId, setActiveClientId] = useState(SALES_CLIENTS[0].id);
   const [activeHouseId, setActiveHouseId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -77,7 +79,10 @@ export function SalesStudioApp() {
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: brand.companyName,
-    projectLabel: bootstrap?.project?.name ?? '—',
+    projectLabel:
+      pilot?.workspace.sampleProjectLabel ??
+      bootstrap?.project?.name ??
+      '—',
     projects: [],
   });
 
