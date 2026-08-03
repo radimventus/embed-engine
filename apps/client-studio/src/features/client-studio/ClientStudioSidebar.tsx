@@ -21,7 +21,6 @@ type ClientStudioSidebarProps = {
 /**
  * Left AppShell rail (CSCB-01).
  * Fixed 48px per layout spec. Section nav + optional legacy Decision Flow overlay.
- * RCS-05 — section jumps reveal journey scenes via navigateToJourneySection.
  */
 export function ClientStudioSidebar({
   legacyExperience = null,
@@ -48,7 +47,7 @@ export function ClientStudioSidebar({
 
   return (
     <aside
-      className="flex h-full min-h-screen w-sidebar shrink-0 flex-col bg-embed-brand-navy"
+      className="hidden h-full min-h-screen w-sidebar shrink-0 flex-col bg-embed-brand-navy desktop:flex"
       style={{ width: SIDEBAR_WIDTH_PX }}
       data-studio-shell="sidebar"
       aria-label="Navigace Client Studia"

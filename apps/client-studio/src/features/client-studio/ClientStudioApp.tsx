@@ -3,6 +3,7 @@ import type { DecisionSessionRuntime } from '@embed-engine/runtime';
 
 import { AppShell } from '../../components/layout/AppShell';
 import { ClientStudioHeader } from './ClientStudioHeader';
+import { ClientStudioMobileNav } from './ClientStudioMobileNav';
 import { ClientStudioPage } from './ClientStudioPage';
 import { ClientStudioSidebar } from './ClientStudioSidebar';
 import { LegacyCommandRuntimeHost } from './legacy/LegacyCommandRuntimeHost';
@@ -30,12 +31,15 @@ export function ClientStudioApp({ runtime }: ClientStudioAppProps = {}) {
   }
 
   return (
-    <AppShell
-      sidebar={<ClientStudioSidebar />}
-      header={<ClientStudioHeader />}
-      showStatusBar={false}
-    >
-      <ClientStudioPage runtime={runtime} />
-    </AppShell>
+    <>
+      <AppShell
+        sidebar={<ClientStudioSidebar />}
+        header={<ClientStudioHeader />}
+        showStatusBar={false}
+      >
+        <ClientStudioPage runtime={runtime} />
+      </AppShell>
+      <ClientStudioMobileNav />
+    </>
   );
 }

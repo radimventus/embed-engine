@@ -1,6 +1,13 @@
 import { useEffect } from 'react';
 
 import { createFrameScheduler } from './scheduleOnAnimationFrame';
+import {
+  MOBILE_NAV_HEIGHT_PX,
+  VIEWPORT_BREAKPOINTS,
+  matchViewportBand,
+  usesGuidedScrollSnap,
+  usesMobileSectionNav,
+} from './responsiveLayout';
 
 type GuidedJourneyRootProps = {
   readonly snapEnabled: boolean;
@@ -9,7 +16,8 @@ type GuidedJourneyRootProps = {
 /**
  * Enables gentle CSS scroll snap on the actual scroll root:
  * overlay mount in Delivery, otherwise the document root in standalone mode.
- * RCS-06 — resize handlers coalesce on rAF.
+ * Mobile disables snap for freer phone scrolling (RCS-01).
+ * RCS-06 — resize handlers coalesce on rAF; snap band uses matchMedia.
  */
 export function GuidedJourneyRoot({ snapEnabled }: GuidedJourneyRootProps) {
   useEffect(() => {
@@ -22,12 +30,19 @@ export function GuidedJourneyRoot({ snapEnabled }: GuidedJourneyRootProps) {
       (root): root is HTMLElement => root !== null,
     );
 
-    const applyHeaderOffset = () => {
+    const applyShellOffsets = () => {
       const header = document.querySelector<HTMLElement>('[data-experience-header]');
       const headerHeight = header?.getBoundingClientRect().height ?? 72;
-      const offset = `${Math.ceil(headerHeight + 20)}px`;
+      const band = matchViewportBand(window.innerWidth);
+      const bottomNav = usesMobileSectionNav(band) ? MOBILE_NAV_HEIGHT_PX : 0;
+      const headerOffset = `${Math.ceil(headerHeight + 20)}px`;
       for (const root of roots) {
-        root.style.setProperty('--guided-journey-header-offset', offset);
+        root.style.setProperty('--experience-header-height', `${Math.ceil(headerHeight)}px`);
+        root.style.setProperty('--guided-journey-header-offset', headerOffset);
+        root.style.setProperty(
+          '--guided-journey-bottom-nav-offset',
+          `${bottomNav}px`,
+        );
       }
     };
 
@@ -36,8 +51,8 @@ export function GuidedJourneyRoot({ snapEnabled }: GuidedJourneyRootProps) {
     if (overlayMount !== null) {
       overlayMount.dataset.guidedJourneyRoot = 'true';
     }
-    applyHeaderOffset();
-    const frame = createFrameScheduler(applyHeaderOffset);
+    applyShellOffsets();
+    const frame = createFrameScheduler(applyShellOffsets);
     window.addEventListener('resize', frame.schedule, { passive: true });
 
     return () => {
@@ -49,7 +64,9 @@ export function GuidedJourneyRoot({ snapEnabled }: GuidedJourneyRootProps) {
         delete overlayMount.dataset.guidedJourneyRoot;
       }
       for (const root of roots) {
+        root.style.removeProperty('--experience-header-height');
         root.style.removeProperty('--guided-journey-header-offset');
+        root.style.removeProperty('--guided-journey-bottom-nav-offset');
       }
     };
   }, []);
@@ -63,10 +80,25 @@ export function GuidedJourneyRoot({ snapEnabled }: GuidedJourneyRootProps) {
     const roots = [html, body, overlayMount].filter(
       (root): root is HTMLElement => root !== null,
     );
-    for (const root of roots) {
-      root.dataset.guidedJourneySnap = snapEnabled ? 'on' : 'off';
-    }
+
+    const applySnap = () => {
+      const band = matchViewportBand(window.innerWidth);
+      const enabled =
+        snapEnabled && usesGuidedScrollSnap(band);
+      for (const root of roots) {
+        root.dataset.guidedJourneySnap = enabled ? 'on' : 'off';
+      }
+    };
+
+    applySnap();
+
+    const mobileQuery = window.matchMedia(
+      `(max-width: ${VIEWPORT_BREAKPOINTS.mobileMaxPx}px)`,
+    );
+    mobileQuery.addEventListener('change', applySnap);
+
     return () => {
+      mobileQuery.removeEventListener('change', applySnap);
       for (const root of roots) {
         delete root.dataset.guidedJourneySnap;
       }

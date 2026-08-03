@@ -33,6 +33,7 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(app, /AppShell/);
     assert.match(app, /ClientStudioHeader/);
     assert.match(app, /ClientStudioSidebar/);
+    assert.match(app, /ClientStudioMobileNav/);
     assert.match(app, /ClientStudioPage/);
   });
 
@@ -79,10 +80,11 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(sidebar, /PILOT_SECTION_NAV/);
     assert.match(sidebar, /useActiveSection/);
     assert.match(sidebar, /navigateToJourneySection/);
+    assert.match(sidebar, /desktop:flex/);
     assert.match(header, /HeaderContactMenu/);
     assert.match(header, /HeaderSaveMenu/);
     assert.match(header, /formatExperienceHeaderTitle/);
-    assert.match(header, /w-canvas/);
+    assert.match(header, /desktop:w-canvas/);
     assert.match(contactMenu, /mailto:/);
     assert.match(contactMenu, /tel:/);
     assert.match(saveMenu, /Uložit tuto stránku jako PDF/);
@@ -91,7 +93,7 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(contact, /\+420 987 654 321/);
   });
 
-  it('adds guided journey scene shells without changing onepage architecture', () => {
+  it('keeps guided journey scene shells without changing onepage architecture', () => {
     const page = readSource(
       'src/features/client-studio/ClientStudioPage.tsx',
     );

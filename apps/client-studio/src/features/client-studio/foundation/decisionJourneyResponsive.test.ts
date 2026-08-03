@@ -27,12 +27,12 @@ describe('Responsive Decision Journey (RCS-05)', () => {
     assert.equal(isDecisionSection('hero'), false);
   });
 
-  it('unifies navigation reveal, CTA chrome, and scene rhythm', () => {
+  it('unifies mobile navigation reveal, CTA chrome, and scene rhythm', () => {
     const page = readSource(
       'src/features/client-studio/ClientStudioPage.tsx',
     );
-    const sidebar = readSource(
-      'src/features/client-studio/ClientStudioSidebar.tsx',
+    const mobileNav = readSource(
+      'src/features/client-studio/ClientStudioMobileNav.tsx',
     );
     const scene = readSource(
       'src/features/client-studio/foundation/JourneySceneFrame.tsx',
@@ -53,13 +53,13 @@ describe('Responsive Decision Journey (RCS-05)', () => {
     assert.match(page, /registerJourneySectionNavigator/);
     assert.match(page, /isInterpretationSection/);
     assert.match(page, /isDecisionSection/);
-    assert.match(sidebar, /navigateToJourneySection/);
+    assert.match(mobileNav, /navigateToJourneySection/);
     assert.match(scene, /JOURNEY_CTA_PRIMARY_CLASS/);
     assert.match(scene, /guided-journey-bottom-nav-offset/);
     assert.match(cta, /min-h-11/);
     assert.match(cta, /desktop:min-h-\[38px\]/);
     assert.match(faq, /JOURNEY_CTA_PRIMARY_CLASS/);
     assert.match(canvas, /overflow-x-hidden/);
-    assert.match(active, /COMPACT_VIEWPORT_MAX_PX|-18%/);
+    assert.match(active, /desktopMinPx/);
   });
 });

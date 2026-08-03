@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { palette } from '@embed-engine/design-tokens';
 
 type HeaderHoverMenuProps = {
@@ -14,8 +14,16 @@ const PANEL_BG = `rgba(0, 25, 48, 0.7)`;
 const TRIGGER_CLASS =
   'inline-flex items-center gap-2 text-sm text-embed-foreground-primary underline decoration-embed-border-strong underline-offset-4 transition-colors hover:text-embed-brand-navy hover:decoration-embed-brand-navy';
 
+function canHover(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia('(hover: hover) and (pointer: fine)').matches
+  );
+}
+
 /**
- * Header action with hover panel. Leave the whole control to dismiss.
+ * Header action with hover panel (desktop) and tap toggle (touch).
+ * Leave the whole control to dismiss on fine pointers.
  */
 export function HeaderHoverMenu({
   label,
@@ -24,12 +32,38 @@ export function HeaderHoverMenu({
   children,
 }: HeaderHoverMenuProps) {
   const [open, setOpen] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const onPointerDown = (event: PointerEvent) => {
+      const root = rootRef.current;
+      if (root !== null && !root.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+    };
+  }, [open]);
 
   return (
     <div
+      ref={rootRef}
       className="relative"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={() => {
+        if (canHover()) {
+          setOpen(true);
+        }
+      }}
+      onMouseLeave={() => {
+        if (canHover()) {
+          setOpen(false);
+        }
+      }}
       data-header-hover-menu={label}
     >
       <button
@@ -37,9 +71,14 @@ export function HeaderHoverMenu({
         className={TRIGGER_CLASS}
         aria-expanded={open}
         aria-haspopup="true"
+        onClick={() => {
+          if (!canHover()) {
+            setOpen((current) => !current);
+          }
+        }}
       >
         {icon}
-        <span>{label}</span>
+        <span className="mobile:sr-only">{label}</span>
       </button>
 
       {open ? (

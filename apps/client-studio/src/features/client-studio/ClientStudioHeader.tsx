@@ -27,14 +27,14 @@ export function ClientStudioHeader() {
       data-experience-header=""
       className="relative sticky top-0 z-50 shrink-0 border-b border-embed-border-default bg-embed-background-primary pt-[env(safe-area-inset-top,0px)]"
     >
-      <div className="mx-auto grid h-full w-canvas min-w-0 max-w-canvas grid-cols-[1fr_auto_1fr] items-center px-section mobile:w-full mobile:max-w-none mobile:min-w-0">
+      <div className="mx-auto grid h-header w-full min-w-0 max-w-none grid-cols-[1fr_auto_1fr] items-center px-section desktop:w-canvas desktop:max-w-canvas">
         <div className="justify-self-start">
           <AstavLogo />
         </div>
-        <p className="max-w-[20rem] truncate text-center text-base text-embed-foreground-primary/70">
+        <p className="max-w-[12rem] truncate text-center text-sm text-embed-foreground-primary/70 tablet:max-w-[16rem] tablet:text-base desktop:max-w-[20rem]">
           {title}
         </p>
-        <div className="flex items-center justify-end gap-section justify-self-end">
+        <div className="flex items-center justify-end gap-3 justify-self-end desktop:gap-section">
           <HeaderContactMenu
             icon={
               <img
@@ -42,7 +42,7 @@ export function ClientStudioHeader() {
                 alt=""
                 width={48}
                 height={48}
-                className="h-12 w-12 shrink-0 object-contain"
+                className="h-10 w-10 shrink-0 object-contain desktop:h-12 desktop:w-12"
                 aria-hidden="true"
               />
             }
@@ -54,7 +54,7 @@ export function ClientStudioHeader() {
                 alt=""
                 width={32}
                 height={32}
-                className="h-8 w-8 shrink-0 object-contain"
+                className="h-7 w-7 shrink-0 object-contain desktop:h-8 desktop:w-8"
                 aria-hidden="true"
               />
             }

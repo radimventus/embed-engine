@@ -8,7 +8,7 @@ export function DesktopCanvas({ children }: DesktopCanvasProps) {
   return (
     <div
       data-desktop-canvas
-      className="box-border w-canvas min-w-canvas max-w-canvas shrink-0 grow-0 self-start overflow-x-hidden bg-embed-background-primary pt-0 mobile:max-w-none mobile:min-w-0 mobile:w-full"
+      className="box-border w-full min-w-0 max-w-none shrink-0 grow-0 self-start overflow-x-hidden bg-embed-background-primary pt-0 desktop:w-canvas desktop:min-w-canvas desktop:max-w-canvas"
     >
       {children}
     </div>

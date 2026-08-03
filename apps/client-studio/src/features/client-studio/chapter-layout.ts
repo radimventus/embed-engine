@@ -10,6 +10,11 @@ export const SECTION_PADDING_PX = 24;
 export const CHAPTER_SPACING_PX = 30;
 export const CHAPTER_TITLE_BAND_PX = 60;
 
+/** RCS-01 — mirror of Tailwind screens / responsiveLayout.ts */
+export const VIEWPORT_MOBILE_MAX_PX = 767;
+export const VIEWPORT_TABLET_MIN_PX = 768;
+export const VIEWPORT_DESKTOP_MIN_PX = 1280;
+
 export const OPENING_HEADER_PX = 72;
 export const OPENING_HERO_IMAGE_PX = 584;
 export const OPENING_HERO_OVERLAY_PX = 112;

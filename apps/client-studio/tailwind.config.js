@@ -29,6 +29,7 @@ export default {
         header: '72px',
       },
       screens: {
+        // RCS-01 breakpoint system — desktop (≥1280) is SSOT geometry.
         mobile: { max: '767px' },
         tablet: { min: '768px' },
         desktop: { min: '1280px' },
