@@ -73,6 +73,12 @@
     scroll-margin-top: var(--guided-journey-header-offset, 92px);
   }
 
+  @media (max-width: 767px) {
+    [data-chapter-spacer] {
+      height: 24px !important;
+    }
+  }
+
   .animate-hero-photo-veil {
     transform-origin: left center;
     animation: hero-photo-veil-cycle 14s linear infinite;

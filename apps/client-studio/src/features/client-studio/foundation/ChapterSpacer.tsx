@@ -1,12 +1,11 @@
-/** Target visual gap between sibling Experience sections (CAP UX3 08). */
+/** Target visual gap between sibling Experience sections (CAP UX3 08 / RCS-05). */
 const CHAPTER_SPACING_PX = 30;
-/** Cancels JourneySceneFrame `gap-[18px]` on both sides so net gap stays 30px. */
+/** Cancels JourneySceneFrame `gap-[18px]` on both sides so net gap stays intentional. */
 const SCENE_GAP_COMPENSATION_PX = 18;
 
 /**
  * Shared chapter spacer between Decision Journey sections (CSCB-01).
- * Inline height avoids Tailwind config cache drift; negative margins cancel
- * parent flex gap so Hero↔Tour / Priority↔FAQ read as exactly 30px.
+ * Mobile height override lives in index.css (`[data-chapter-spacer]`).
  */
 export function ChapterSpacer() {
   return (

@@ -8,6 +8,18 @@ export {
   JourneySceneFrame,
 } from './JourneySceneFrame';
 export {
+  JOURNEY_CTA_FOOTER_ROW_CLASS,
+  JOURNEY_CTA_PRIMARY_CLASS,
+  JOURNEY_CTA_SECONDARY_CLASS,
+} from './journeyCta';
+export {
+  isDecisionSection,
+  isInterpretationSection,
+  isOrientationSection,
+  navigateToJourneySection,
+  registerJourneySectionNavigator,
+} from './journeyNavigation';
+export {
   RuntimeBootstrapGate,
 } from './RuntimeBootstrapGate';
 export {

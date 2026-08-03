@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import type { ReactExperienceModel } from '@embed-engine/model';
 
 import { DecisionFlowNavigator } from './decision-flow/DecisionFlowNavigator';
-import { scrollToSection } from './foundation/scrollToSection';
+import { navigateToJourneySection } from './foundation/journeyNavigation';
 import { useActiveSection } from './foundation/useActiveSection';
 import {
   PILOT_FLAGS,
@@ -21,6 +21,7 @@ type ClientStudioSidebarProps = {
 /**
  * Left AppShell rail (CSCB-01).
  * Fixed 48px per layout spec. Section nav + optional legacy Decision Flow overlay.
+ * RCS-05 — section jumps reveal journey scenes via navigateToJourneySection.
  */
 export function ClientStudioSidebar({
   legacyExperience = null,
@@ -74,7 +75,7 @@ export function ClientStudioSidebar({
                 aria-label={item.label}
                 aria-current={isActive ? 'true' : undefined}
                 onClick={() => {
-                  scrollToSection(item.id);
+                  navigateToJourneySection(item.id);
                 }}
                 className={[
                   'flex h-9 w-9 items-center justify-center text-xs font-medium transition-colors',

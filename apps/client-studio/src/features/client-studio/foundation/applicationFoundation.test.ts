@@ -78,7 +78,7 @@ describe('Application Foundation (CSCB-01 / SR-001)', () => {
     assert.match(vocabulary, /aiAdvisor:/);
     assert.match(sidebar, /PILOT_SECTION_NAV/);
     assert.match(sidebar, /useActiveSection/);
-    assert.match(sidebar, /scrollToSection/);
+    assert.match(sidebar, /navigateToJourneySection/);
     assert.match(header, /HeaderContactMenu/);
     assert.match(header, /HeaderSaveMenu/);
     assert.match(header, /formatExperienceHeaderTitle/);

@@ -15,6 +15,9 @@ import {
   JourneySceneFrame,
   RuntimeBootstrapGate,
   decisionJourneyScenes,
+  isDecisionSection,
+  isInterpretationSection,
+  registerJourneySectionNavigator,
   scrollToSection,
   useActiveSection,
 } from './foundation';
@@ -104,6 +107,23 @@ export function ClientStudioPage({
     setRevealedSceneCount((current) => Math.max(current, nextSceneIndex + 1));
     setPendingSceneId(sceneId);
   };
+
+  useEffect(() => {
+    registerJourneySectionNavigator((sectionId) => {
+      if (isDecisionSection(sectionId)) {
+        setSnapEnabled(true);
+        setRevealedSceneCount((current) => Math.max(current, 3));
+        return;
+      }
+      if (isInterpretationSection(sectionId)) {
+        setSnapEnabled(true);
+        setRevealedSceneCount((current) => Math.max(current, 2));
+      }
+    });
+    return () => {
+      registerJourneySectionNavigator(null);
+    };
+  }, []);
 
   const welcomeBridge = useWelcomeBridgeController({
     config: CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,

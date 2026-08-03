@@ -1,5 +1,11 @@
 import { useEffect, useState, type ReactNode } from 'react';
 
+import {
+  JOURNEY_CTA_FOOTER_ROW_CLASS,
+  JOURNEY_CTA_PRIMARY_CLASS,
+  JOURNEY_CTA_SECONDARY_CLASS,
+} from './journeyCta';
+
 type JourneySceneFrameProps = {
   readonly sceneId: string;
   readonly previousSceneId?: string;
@@ -14,15 +20,13 @@ type JourneySceneFrameProps = {
   readonly children: ReactNode;
 };
 
-const PRIMARY_NAV_BUTTON_CLASS =
-  'inline-flex min-h-[38px] items-center justify-center rounded-[8px] bg-[#001930] px-[19px] text-[13px] font-medium text-[#FFFFFF] transition-colors duration-150 hover:bg-embed-brand-gold hover:text-[#001930] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2';
-const SECONDARY_NAV_BUTTON_CLASS = PRIMARY_NAV_BUTTON_CLASS;
-
-const SCENE_MIN_HEIGHT_PX = 'calc(100vh - 72px)';
+const SCENE_MIN_HEIGHT =
+  'calc(100dvh - var(--experience-header-height, 72px) - var(--guided-journey-bottom-nav-offset, 0px))';
 
 /**
  * Scene shell for one guided stop in the Decision Journey.
  * Keeps the page one-piece while adding snap + next/previous affordances.
+ * RCS-05 — unified CTA + mobile scene height cleared of bottom nav.
  */
 export function JourneySceneFrame({
   sceneId,
@@ -60,12 +64,12 @@ export function JourneySceneFrame({
     <div
       id={sceneId}
       data-journey-scene={sceneId}
-      className="flex w-full snap-start snap-normal flex-col gap-[18px]"
+      className="flex w-full snap-start snap-normal flex-col gap-[18px] mobile:gap-4"
       style={{
-        minHeight: SCENE_MIN_HEIGHT_PX,
+        minHeight: SCENE_MIN_HEIGHT,
         // Last scene (Audit): Zpět sits under the footer, 40px above the bottom (CAP UX3 09).
         paddingBottom: reserveScrollSpace
-          ? 'calc(100vh - 72px)'
+          ? SCENE_MIN_HEIGHT
           : nextSceneId
             ? '30px'
             : previousSceneId
@@ -98,7 +102,7 @@ export function JourneySceneFrame({
             <button
               type="button"
               onClick={() => navigate(nextSceneId)}
-              className={`${PRIMARY_NAV_BUTTON_CLASS} absolute top-0 right-0 shrink-0 mobile:static mobile:mt-3 mobile:w-full`}
+              className={`${JOURNEY_CTA_PRIMARY_CLASS} absolute top-0 right-0 shrink-0 mobile:static mobile:mt-3 mobile:w-full`}
             >
               Pokračovat →
             </button>
@@ -106,7 +110,7 @@ export function JourneySceneFrame({
         </div>
       ) : (
         <div
-          className={`flex items-start justify-between gap-3 px-section mobile:flex-col ${
+          className={`${JOURNEY_CTA_FOOTER_ROW_CLASS} ${
             pinFooterToBottom ? 'mt-auto' : ''
           }`}
         >
@@ -114,7 +118,7 @@ export function JourneySceneFrame({
             <button
               type="button"
               onClick={() => navigate(previousSceneId)}
-              className={`${SECONDARY_NAV_BUTTON_CLASS} justify-start mobile:w-full`}
+              className={`${JOURNEY_CTA_SECONDARY_CLASS} justify-start mobile:w-full`}
             >
               ← Zpět
             </button>
@@ -125,7 +129,7 @@ export function JourneySceneFrame({
             <button
               type="button"
               onClick={() => navigate(nextSceneId)}
-              className={`${PRIMARY_NAV_BUTTON_CLASS} ml-auto shrink-0 mobile:w-full`}
+              className={`${JOURNEY_CTA_PRIMARY_CLASS} ml-auto shrink-0 mobile:w-full`}
             >
               Pokračovat →
             </button>

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { colors, palette } from '@embed-engine/design-tokens';
 
+import { JOURNEY_CTA_PRIMARY_CLASS } from '../../foundation/journeyCta';
 import {
   FAQ_ACCORDION_LIST_WIDTH_CLASS,
   FAQ_COLUMN_WIDTH_CLASS,
@@ -21,9 +22,8 @@ const LOAD_MORE_LABEL = 'Zobrazit další';
 /** RAC-06 — answer body 20% larger than the prior 14px baseline. */
 const FAQ_ANSWER_FONT_SIZE_PX = 16.8;
 
-/** Match Experience scene nav buttons (Pokračovat / Zpět), centered under FAQ. */
-const FAQ_LOAD_MORE_BUTTON_CLASS =
-  'inline-flex min-h-[38px] w-auto self-center items-center justify-center rounded-[8px] bg-[#001930] px-[19px] text-[13px] font-medium text-[#FFFFFF] transition-colors duration-150 hover:bg-embed-brand-gold hover:text-[#001930] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 disabled:cursor-default disabled:opacity-45';
+/** Match Experience scene nav buttons (Pokračovat / Zpět), centered under FAQ (RCS-05). */
+const FAQ_LOAD_MORE_BUTTON_CLASS = `${JOURNEY_CTA_PRIMARY_CLASS} w-auto self-center disabled:cursor-default disabled:opacity-45`;
 
 type SuggestedQuestionsProps = {
   items: readonly ExperienceFaqItem[];
