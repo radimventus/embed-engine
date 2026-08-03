@@ -14,6 +14,7 @@ import {
   usePilotWorkspace,
   useStudioBrandProjection,
   isOperatorWorkspaceMode,
+  isWorkspaceShellEmbed,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -106,37 +107,11 @@ export function SalesStudioApp() {
     setActiveHouseId(null);
   }
 
-  return (
-    <PlatformShell
-      activeStudioId="sales"
-      userLabel={session?.user.displayName ?? 'Host'}
-      roleLabel={
-        session !== null
-          ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
-          : undefined
-      }
-      workspace={workspaceState}
-      partnerBrandLabel={brand.logoLabel}
-      breadcrumb={breadcrumb}
-      capabilityHost={capabilityHost}
-      onLogout={logout}
-      onOpenLanding={clearStudio}
-      onSelectStudio={selectStudio}
-      hideStudioSwitcher={isOperatorWorkspaceMode()}
-      onSubmitFeedback={(message) => {
-        submitPlatformFeedback({
-          message,
-          email: session?.user.email ?? null,
-          studioId: 'sales',
-          companyId: session?.companyId ?? null,
-        });
-        recordPlatformActivity({
-          label: 'Zpětná vazba',
-          detail: message.slice(0, 80),
-        });
-      }}
-    >
-      <main className="platform-studio-pad sales-desk min-h-0 min-w-0 flex-1 overflow-y-auto">
+  const desk = (
+      <main
+        className="platform-studio-pad sales-desk min-h-0 min-w-0 flex-1 overflow-y-auto"
+        data-workspace-embed-view={isWorkspaceShellEmbed() ? 'sales' : undefined}
+      >
         <p
           className="platform-type-helper"
           style={{ marginBottom: 12 }}
@@ -323,6 +298,44 @@ export function SalesStudioApp() {
           </div>
         </div>
       </main>
+  );
+
+  if (isWorkspaceShellEmbed()) {
+    return desk;
+  }
+
+  return (
+    <PlatformShell
+      activeStudioId="sales"
+      userLabel={session?.user.displayName ?? 'Host'}
+      roleLabel={
+        session !== null
+          ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
+          : undefined
+      }
+      workspace={workspaceState}
+      partnerBrandLabel={brand.logoLabel}
+      breadcrumb={breadcrumb}
+      capabilityHost={capabilityHost}
+      onLogout={logout}
+      onOpenLanding={clearStudio}
+      onSelectStudio={selectStudio}
+      hideStudioSwitcher={isOperatorWorkspaceMode()}
+      contentOnly={isWorkspaceShellEmbed()}
+      onSubmitFeedback={(message) => {
+        submitPlatformFeedback({
+          message,
+          email: session?.user.email ?? null,
+          studioId: 'sales',
+          companyId: session?.companyId ?? null,
+        });
+        recordPlatformActivity({
+          label: 'Zpětná vazba',
+          detail: message.slice(0, 80),
+        });
+      }}
+    >
+      {desk}
     </PlatformShell>
   );
 }

@@ -153,6 +153,17 @@ describe('OF-13A Workspace Studio Navigation', () => {
     assert.equal(toClient.href, resolveWorkspaceHostHref());
     assert.equal(loadPlatformSession()?.companyId, env.companyId);
 
+    const toOffice = switchOperatorPartnerStudio('office', {
+      navigate: false,
+      retainWorkspace: true,
+    });
+    assert.equal(toOffice.ok, true);
+    assert.equal(toOffice.surface, 'office');
+    assert.equal(toOffice.href, resolveWorkspaceHostHref());
+    assert.ok(getSharedWorkspaceContext() !== null);
+    assert.equal(getSharedWorkspaceContext()?.activeStudio, 'office');
+    assert.equal(loadPlatformSession()?.companyId, env.companyId);
+
     const returned = returnFromOperatorPartnerEnvironment({ navigate: false });
     assert.equal(returned.ok, true);
     if (!returned.ok) return;

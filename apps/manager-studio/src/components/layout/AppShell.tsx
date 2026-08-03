@@ -10,6 +10,7 @@ import {
   usePilotWorkspace,
   useStudioBrandProjection,
   isOperatorWorkspaceMode,
+  isWorkspaceShellEmbed,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -62,6 +63,29 @@ export function AppShell({ sidebar, children }: AppShellProps) {
     { id: 'section', label: partnerSectionLabel(activeSectionId) },
   ];
 
+  const body = (
+    <div
+      className="flex min-h-0 flex-1 overflow-hidden"
+      data-workspace-embed-view={isWorkspaceShellEmbed() ? 'manager' : undefined}
+    >
+      <div className="platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto">
+        {sidebar}
+      </div>
+      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+        <Workspace
+          brand={brand}
+          sampleProjectLabel={pilot?.workspace.sampleProjectLabel}
+        >
+          {children}
+        </Workspace>
+      </div>
+    </div>
+  );
+
+  if (isWorkspaceShellEmbed()) {
+    return body;
+  }
+
   return (
     <PlatformShell
       activeStudioId="manager"
@@ -93,19 +117,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
         });
       }}
     >
-      <div className="flex min-h-0 flex-1 overflow-hidden">
-        <div className="platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto">
-          {sidebar}
-        </div>
-        <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
-          <Workspace
-            brand={brand}
-            sampleProjectLabel={pilot?.workspace.sampleProjectLabel}
-          >
-            {children}
-          </Workspace>
-        </div>
-      </div>
+      {body}
     </PlatformShell>
   );
 }

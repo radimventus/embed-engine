@@ -67,7 +67,7 @@ describe('OF-14 Shared Workspace Context', () => {
     }
   });
 
-  it('preserves partner Workspace Context across studio switches', () => {
+  it('preserves partner Workspace Context across in-shell studio switches including Office', () => {
     reset();
     assert.equal(
       login({
@@ -87,8 +87,17 @@ describe('OF-14 Shared Workspace Context', () => {
       navigate: false,
     });
 
-    for (const surface of ['manager', 'sales', 'builder', 'client'] as const) {
-      const switched = switchOperatorPartnerStudio(surface, { navigate: false });
+    for (const surface of [
+      'manager',
+      'sales',
+      'builder',
+      'office',
+      'client',
+    ] as const) {
+      const switched = switchOperatorPartnerStudio(surface, {
+        navigate: false,
+        retainWorkspace: true,
+      });
       assert.equal(switched.ok, true);
       const ctx = getSharedWorkspaceContext();
       assert.ok(ctx !== null);
@@ -98,6 +107,7 @@ describe('OF-14 Shared Workspace Context', () => {
       assert.equal(ctx?.partnerId, 'p-dse');
       assert.equal(ctx?.activeStudio, surface);
       assert.equal(loadPlatformSession()?.companyId, 'co-dse');
+      assert.equal(switched.href.includes('4183') || switched.href.includes('/studio/workspace'), true);
     }
   });
 

@@ -1,5 +1,5 @@
 /**
- * ARCH-01 — Workspace Host architecture guards.
+ * ARCH-01 / OF-14A / VR-04 — Workspace Host architecture guards.
  */
 
 import assert from 'node:assert/strict';
@@ -15,26 +15,26 @@ function read(relative: string): string {
   return readFileSync(join(hostRoot, relative), 'utf8');
 }
 
-describe('ARCH-01 / OF-14A Workspace Host', () => {
-  it('opens Workspace directly without Embed launcher or partner landing', () => {
-    const main = read('src/main.tsx');
+describe('VR-04 Canonical Workspace Shell', () => {
+  it('keeps a single Workspace Shell with in-shell studio switching', () => {
     const app = read('src/WorkspaceHostApp.tsx');
     const html = read('index.html');
 
-    assert.match(app, /mode:\s*'standalone'/);
+    assert.match(app, /workspace-shell__header/);
     assert.match(app, /WorkspaceStudioNavigation/);
-    assert.match(app, /hostId:\s*'conis-workspace-host'/);
+    assert.match(app, /onSelectSurface=\{selectSurface\}/);
+    assert.match(app, /retainWorkspace:\s*true/);
+    assert.match(app, /navigate:\s*false/);
+    assert.match(app, /workspace-shell-frame-/);
+    assert.match(app, /withWorkspaceShellEmbed/);
     assert.doesNotMatch(app, /mode:\s*'launcher'/);
-    assert.doesNotMatch(app, /Prozkoumat dům/);
     assert.doesNotMatch(html, /Prozkoumat dům/);
     assert.doesNotMatch(html, /Reference House/);
-    assert.doesNotMatch(main, /mode:\s*"launcher"/);
-    assert.match(main, /getSharedWorkspaceContext/);
   });
 
-  it('keeps Client Studio as the default Workspace surface with canonical switcher', () => {
+  it('defaults to Client Studio and keeps Office as a switchable view', () => {
     const app = read('src/WorkspaceHostApp.tsx');
-    assert.match(app, /activeSurface="client"/);
-    assert.match(app, /WorkspaceStudioNavigation/);
+    assert.match(app, /readActiveSurface\(\)[\s\S]*'client'/);
+    assert.match(app, /studioFrameSrc\('office'\)|surface === 'office'|WORKSPACE_STUDIO_LABELS\[surface\]/);
   });
 });

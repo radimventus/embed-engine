@@ -3,10 +3,13 @@ import { useState } from 'react';
 
 import { resolveWorkspaceHostHref } from '../cloud/cloudConfig';
 import type { PlatformStudioId } from '../domain/types';
+import {
+  isOnWorkspaceHost,
+  isWorkspaceShellEmbed,
+} from '../domain/workspaceShellEmbed';
 import { getSharedWorkspaceContext, updateSession } from '../session/authService';
 import { AuthShell } from './AuthShell';
 import { InviteShell } from './InviteShell';
-import { WorkspaceStudioNavigation } from './OperatorPartnerEnvironmentBar';
 import { PlatformLanding } from './PlatformLanding';
 import { SessionProvider, usePlatformSession } from './SessionProvider';
 
@@ -21,13 +24,14 @@ function readInviteTokenFromUrl(): string {
 
 /**
  * Auth → Invite → Landing → Studio.
- * OF-13 / OF-14 — CONIS operator Workspace skips Platform Landing.
+ * VR-04 — operator Workspace is a single host; nested embeds skip outer chrome.
  */
 function AccessGateInner({ children }: AccessGateProps) {
   const { session } = usePlatformSession();
   const urlToken = readInviteTokenFromUrl();
   const [inviteMode, setInviteMode] = useState(urlToken.length > 0);
   const workspaceContext = getSharedWorkspaceContext();
+  const shellEmbed = isWorkspaceShellEmbed();
 
   if (session === null) {
     if (inviteMode) {
@@ -41,8 +45,18 @@ function AccessGateInner({ children }: AccessGateProps) {
     return <AuthShell onOpenInvite={() => setInviteMode(true)} />;
   }
 
+  // VR-04 — PE mode on a standalone studio host redirects into Workspace Host.
+  if (
+    workspaceContext !== null &&
+    !shellEmbed &&
+    !isOnWorkspaceHost() &&
+    typeof window !== 'undefined'
+  ) {
+    window.location.replace(resolveWorkspaceHostHref());
+    return null;
+  }
+
   if (session.activeStudioId === null) {
-    // OF-13A / OF-14 — operator Workspace entry recovers to Client Studio.
     if (workspaceContext !== null) {
       updateSession({
         companyId: workspaceContext.companyId,
@@ -62,17 +76,12 @@ function AccessGateInner({ children }: AccessGateProps) {
     return <PlatformLanding />;
   }
 
-  const peSurface =
-    workspaceContext !== null ? workspaceContext.activeStudio : null;
+  // Nested Workspace Shell views — content only (no second PE switcher).
+  if (shellEmbed) {
+    return <>{children}</>;
+  }
 
-  return (
-    <>
-      {peSurface !== null && peSurface !== 'office' ? (
-        <WorkspaceStudioNavigation activeSurface={peSurface} />
-      ) : null}
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
 
 type PlatformAccessRootProps = {
@@ -81,7 +90,8 @@ type PlatformAccessRootProps = {
 };
 
 /**
- * EPIC-BX-14 / BX-15 / OF-12 / OF-13 / OF-14 — Session → Auth/Invite → Landing|Workspace → Studio.
+ * EPIC-BX-14 / BX-15 / OF-12 / OF-13 / OF-14 / VR-04 —
+ * Session → Auth/Invite → Landing|Workspace Host|Studio.
  */
 export function PlatformAccessRoot({
   studioId,

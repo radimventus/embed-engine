@@ -135,6 +135,13 @@ export {
 } from './cloud/cloudConfig';
 
 export {
+  WORKSPACE_SHELL_EMBED_QUERY,
+  withWorkspaceShellEmbed,
+  isWorkspaceShellEmbed,
+  isOnWorkspaceHost,
+} from './domain/workspaceShellEmbed';
+
+export {
   createPilotInvite,
   findInviteByToken,
   listInvites,

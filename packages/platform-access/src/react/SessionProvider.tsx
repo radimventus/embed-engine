@@ -40,8 +40,8 @@ import {
   getSharedWorkspaceContext,
 } from '../session/authService';
 import { touchUserLastStudio } from '../registry/userRegistry';
+import { isWorkspaceShellEmbed } from '../domain/workspaceShellEmbed';
 import {
-  returnFromOperatorPartnerEnvironment,
   clearOperatorPartnerEnvironment,
   switchOperatorPartnerStudio,
 } from '../pilot/operatorPartnerEnvironment';
@@ -91,6 +91,10 @@ export function SessionProvider({
   const [session, setSession] = useState<PlatformSession | null>(() => {
     const restored = restoreSession();
     if (restored === null) return null;
+    // VR-04 — nested Workspace Shell views must not rewrite activeStudio.
+    if (isWorkspaceShellEmbed()) {
+      return restored;
+    }
     if (bindStudioId !== undefined && restored.activeStudioId === null) {
       // Direct deep-link into a studio after login from another tab — keep landing
       // until user explicitly selects, unless they already picked this studio.
@@ -167,29 +171,11 @@ export function SessionProvider({
   const selectStudio = useCallback((studioId: PlatformStudioId) => {
     const workspaceContext = getSharedWorkspaceContext();
     if (workspaceContext !== null) {
-      if (studioId === 'office') {
-        returnFromOperatorPartnerEnvironment();
-        return;
-      }
-      // OF-13 / OF-14 — keep partner Workspace; only change Active Studio.
-      const next = updateSession({
-        companyId: workspaceContext.companyId,
-        workspaceId: workspaceContext.workspaceId,
-        projectId: workspaceContext.projectId,
-        activeStudioId: studioId,
-        workspaceContext: {
-          ...workspaceContext,
-          activeStudio: studioId,
-        },
-      });
-      if (next !== null) {
-        touchUserLastStudio(next.user.id, studioId);
-        setSession(next);
-        const href = resolveStudioHref(studioId);
-        if (typeof window !== 'undefined' && window.location.href !== href) {
-          window.location.assign(href);
-        }
-      }
+      // VR-04 — PE mode stays on Workspace Host; Office is an in-shell view.
+      switchOperatorPartnerStudio(
+        studioId === 'office' ? 'office' : studioId,
+        { retainWorkspace: true },
+      );
       return;
     }
 
@@ -206,8 +192,11 @@ export function SessionProvider({
 
   const clearStudio = useCallback(() => {
     if (getSharedWorkspaceContext() !== null) {
-      // OF-13A — stay in Workspace; default surface is Client Studio.
-      switchOperatorPartnerStudio('client');
+      // OF-13A / VR-04 — stay in Workspace; default surface is Client Studio.
+      switchOperatorPartnerStudio('client', {
+        retainWorkspace: true,
+        navigate: false,
+      });
       return;
     }
     const next = updateSession({ activeStudioId: null });

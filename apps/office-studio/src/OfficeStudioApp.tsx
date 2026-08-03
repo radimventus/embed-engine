@@ -11,6 +11,7 @@ import {
   recordPlatformActivity,
   submitPlatformFeedback,
   usePlatformSession,
+  isWorkspaceShellEmbed,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -98,35 +99,11 @@ export function OfficeStudioApp() {
     { id: 'section', label: sectionLabel },
   ];
 
-  return (
-    <PlatformShell
-      activeStudioId="office"
-      userLabel={session?.user.displayName ?? 'Host'}
-      roleLabel={
-        session !== null
-          ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
-          : undefined
-      }
-      workspace={workspaceState}
-      breadcrumb={breadcrumb}
-      capabilityHost={null}
-      onLogout={logout}
-      onOpenLanding={clearStudio}
-      onSelectStudio={selectStudio}
-      onSubmitFeedback={(message) => {
-        submitPlatformFeedback({
-          message,
-          email: session?.user.email ?? null,
-          studioId: 'office',
-          companyId: session?.companyId ?? null,
-        });
-        recordPlatformActivity({
-          label: 'Zpětná vazba',
-          detail: message.slice(0, 80),
-        });
-      }}
-    >
-      <div className="office-workspace">
+  const workspaceBody = (
+      <div
+        className="office-workspace"
+        data-workspace-embed-view={isWorkspaceShellEmbed() ? 'office' : undefined}
+      >
         <div className="platform-nav-rail office-workspace__rail">
           <OfficeSidebar
             activeRouteId={location.routeId}
@@ -175,6 +152,41 @@ export function OfficeStudioApp() {
           )}
         </main>
       </div>
+  );
+
+  if (isWorkspaceShellEmbed()) {
+    return workspaceBody;
+  }
+
+  return (
+    <PlatformShell
+      activeStudioId="office"
+      userLabel={session?.user.displayName ?? 'Host'}
+      roleLabel={
+        session !== null
+          ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
+          : undefined
+      }
+      workspace={workspaceState}
+      breadcrumb={breadcrumb}
+      capabilityHost={null}
+      onLogout={logout}
+      onOpenLanding={clearStudio}
+      onSelectStudio={selectStudio}
+      onSubmitFeedback={(message) => {
+        submitPlatformFeedback({
+          message,
+          email: session?.user.email ?? null,
+          studioId: 'office',
+          companyId: session?.companyId ?? null,
+        });
+        recordPlatformActivity({
+          label: 'Zpětná vazba',
+          detail: message.slice(0, 80),
+        });
+      }}
+    >
+      {workspaceBody}
     </PlatformShell>
   );
 }

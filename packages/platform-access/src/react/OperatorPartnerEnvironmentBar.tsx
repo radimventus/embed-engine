@@ -1,5 +1,5 @@
 /**
- * OF-13 / OF-14 — Workspace Studio Navigation chrome.
+ * OF-13 / OF-14 / VR-04 — Workspace Studio Navigation chrome.
  * Role-filtered: Client | Manager | Sales | Builder | Office
  * Driven only by Shared Workspace Context (platform session cookie).
  */
@@ -15,13 +15,19 @@ import { switchOperatorPartnerStudio } from '../pilot/operatorPartnerEnvironment
 
 type WorkspaceStudioNavigationProps = {
   readonly activeSurface: WorkspaceStudioSurface;
+  /**
+   * VR-04 — when set, Workspace Host owns the switch (in-shell view change).
+   * Session context is still updated via switchOperatorPartnerStudio.
+   */
+  readonly onSelectSurface?: (surface: WorkspaceStudioSurface) => void;
 };
 
 /**
- * Unified Workspace switcher — preserves partner context; Office returns to partner detail.
+ * Unified Workspace switcher — preserves partner context; Office is last (in-shell).
  */
 export function WorkspaceStudioNavigation({
   activeSurface,
+  onSelectSurface,
 }: WorkspaceStudioNavigationProps) {
   if (getSharedWorkspaceContext() === null) return null;
 
@@ -66,7 +72,14 @@ export function WorkspaceStudioNavigation({
               }
               data-testid={`workspace-studio-${surface}`}
               onClick={() => {
-                switchOperatorPartnerStudio(surface);
+                if (onSelectSurface !== undefined) {
+                  onSelectSurface(surface);
+                  return;
+                }
+                switchOperatorPartnerStudio(surface, {
+                  retainWorkspace: true,
+                  navigate: false,
+                });
               }}
             >
               {label}

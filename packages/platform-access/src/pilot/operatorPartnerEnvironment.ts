@@ -12,6 +12,7 @@ import {
 } from '../cloud/cloudConfig';
 import type { SharedWorkspaceContext } from '../domain/workspaceContext';
 import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation';
+import { isOnWorkspaceHost } from '../domain/workspaceShellEmbed';
 import { getDefaultCompanyRegistry } from '../registry/companyRegistry';
 import {
   getSharedWorkspaceContext,
@@ -78,9 +79,9 @@ function resolveTenantId(companyId: string, fallback: string): string {
 }
 
 function hrefForSurface(surface: WorkspaceStudioSurface): string {
-  // ARCH-01 — operator Client surface opens Workspace Host, not partner Embed Host.
-  if (surface === 'client') return resolveWorkspaceHostHref();
-  return resolveCloudStudioHref(surface);
+  // VR-04 — all operator Workspace surfaces live on Workspace Host.
+  void surface;
+  return resolveWorkspaceHostHref();
 }
 
 function sessionStudioIdForSurface(
@@ -179,13 +180,25 @@ export function enterOperatorPartnerEnvironment(
 
 export function switchOperatorPartnerStudio(
   surface: WorkspaceStudioSurface,
-  options?: { readonly navigate?: boolean },
+  options?: {
+    readonly navigate?: boolean;
+    /**
+     * VR-04 — when true, Office stays inside Workspace (partner detail view).
+     * When false, leave Workspace and restore CONIS Office session (legacy exit).
+     * Default: true while already on Workspace Host; otherwise false.
+     */
+    readonly retainWorkspace?: boolean;
+  },
 ): EnterOperatorPartnerEnvironmentResult {
   const ctx = getSharedWorkspaceContext();
   if (ctx === null) {
     return { ok: false, error: 'Operator PE mode není aktivní.' };
   }
-  if (surface === 'office') {
+
+  const retainWorkspace =
+    options?.retainWorkspace ?? isOnWorkspaceHost();
+
+  if (surface === 'office' && !retainWorkspace) {
     const returned = returnFromOperatorPartnerEnvironment({
       navigate: options?.navigate,
     });
@@ -221,8 +234,10 @@ export function switchOperatorPartnerStudio(
     return { ok: false, error: 'Session se nepodařilo aktualizovat.' };
   }
 
-  const href = hrefForSurface(surface);
-  if (options?.navigate !== false && typeof window !== 'undefined') {
+  const href = resolveWorkspaceHostHref();
+  const shouldNavigate =
+    options?.navigate !== false && !isOnWorkspaceHost();
+  if (shouldNavigate && typeof window !== 'undefined') {
     window.location.assign(href);
   }
   return { ok: true, state: toOperatorState(workspaceContext), href, surface };
