@@ -14,6 +14,7 @@ import {
   getPartner,
   resetPartnerRegistryForTests,
 } from './officePartnerRegistry.ts';
+import { resetPartnerEnvironmentLifecycleForTests } from './officePartnerEnvironmentLifecycle.ts';
 import {
   confirmSalesOrder,
   getSalesCase,
@@ -33,6 +34,7 @@ describe('PE-09 Pilot Offer & Checkout', () => {
     resetPartnerRegistryForTests();
     resetOfficeEventCatalogForTests();
     resetSalesRegistryForTests();
+    resetPartnerEnvironmentLifecycleForTests();
   }
 
   it('exposes Pilot, Starter and Studio Partner with comparison matrix', () => {
@@ -83,17 +85,19 @@ describe('PE-09 Pilot Offer & Checkout', () => {
     assert.equal(confirmed?.order?.packageId, 'starter');
     assert.equal(confirmed?.order?.status, 'confirmed');
     assert.equal(confirmed?.stage, 'order_confirmed');
-    assert.equal(getPartner(partner.id)?.status, 'order');
+    assert.equal(getPartner(partner.id)?.status, 'active');
 
     const kinds = listPartnerTimeline(partner.id).map((event) => event.kind);
     assert.ok(kinds.includes('offer.viewed'));
     assert.ok(kinds.includes('package.selected'));
     assert.ok(kinds.includes('order.confirmed'));
+    assert.ok(kinds.includes('partner.activated'));
 
     const labels = listPartnerTimeline(partner.id).map((event) => event.label);
     assert.ok(labels.includes('OfferViewed'));
     assert.ok(labels.includes('PackageSelected'));
     assert.ok(labels.includes('OrderConfirmed'));
+    assert.ok(labels.includes('PartnerActivated'));
   });
 
   it('normalizes legacy package ids into PE-09 packages', () => {

@@ -83,7 +83,10 @@ export type PartnerQuickActionId =
   | 'send-offer'
   | 'confirm-order'
   | 'record-payment'
-  | 'open-builder';
+  | 'open-builder'
+  | 'suspend-partner'
+  | 'restore-partner'
+  | 'archive-partner';
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -217,6 +220,11 @@ export function applyPartnerQuickAction(
       label = 'Builder otevřen';
       detail = `${partner.name} · handoff do Builderu`;
       break;
+    case 'suspend-partner':
+    case 'restore-partner':
+    case 'archive-partner':
+      // PE-11 — handled by Partner Lifecycle orchestration, not status-only.
+      return partner;
   }
 
   const updated: OfficePartner = {

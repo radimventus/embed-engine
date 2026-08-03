@@ -33,6 +33,9 @@ const QUICK_ACTIONS: readonly {
   { id: 'confirm-order', label: 'Potvrdit objednávku' },
   { id: 'record-payment', label: 'Evidovat platbu' },
   { id: 'open-builder', label: 'Otevřít Builder' },
+  { id: 'suspend-partner', label: 'Pozastavit partnera' },
+  { id: 'restore-partner', label: 'Obnovit partnera' },
+  { id: 'archive-partner', label: 'Archivovat partnera' },
 ];
 
 /**
@@ -137,9 +140,123 @@ export function PartnerDetailPanel({
       </div>
 
       <PlatformCard
-        title="Partner Environment"
-        description="Kompletní pilotní prostředí po akci Připravit pilot"
+        title="Workspace Summary"
+        description="Lifecycle · Licence · balíček · administrace"
       >
+        {environment.workspaceSummary === null ? (
+          <p className="office-dashboard__hint">Workspace zatím není aktivní.</p>
+        ) : (
+          <dl
+            className="office-partner-dl"
+            data-testid="partner-workspace-summary"
+          >
+            <div>
+              <dt>Lifecycle Status</dt>
+              <dd>{environment.lifecycleStatusLabel}</dd>
+            </div>
+            <div>
+              <dt>Licence</dt>
+              <dd>{environment.workspaceSummary.licence}</dd>
+            </div>
+            <div>
+              <dt>Aktivní balíček</dt>
+              <dd>{environment.workspaceSummary.activePackage}</dd>
+            </div>
+            <div>
+              <dt>Datum změny stavu</dt>
+              <dd>
+                {environment.statusChangedAt
+                  ? formatOfficeEventTime(environment.statusChangedAt)
+                  : '—'}
+              </dd>
+            </div>
+            <div>
+              <dt>Důvod změny</dt>
+              <dd>{environment.statusChangeReason ?? '—'}</dd>
+            </div>
+            <div>
+              <dt>Poslední administrativní akce</dt>
+              <dd>{environment.lastAdminActionLabel}</dd>
+            </div>
+            <div>
+              <dt>Datum aktivace</dt>
+              <dd>
+                {environment.workspaceSummary.activatedAt
+                  ? formatOfficeEventTime(
+                      environment.workspaceSummary.activatedAt,
+                    )
+                  : '—'}
+              </dd>
+            </div>
+            <div>
+              <dt>Workspace</dt>
+              <dd>
+                {environment.permanentWorkspace
+                  ? 'Trvalý'
+                  : environment.pilotMode
+                    ? 'Pilotní režim'
+                    : '—'}
+              </dd>
+            </div>
+          </dl>
+        )}
+      </PlatformCard>
+
+      <PlatformCard
+        title="Studio Access"
+        description="Client / Manager / Sales podle Lifecycle (Office a Builder zůstávají interní)"
+      >
+        <ul className="office-list" data-testid="partner-studio-access">
+          <li className="office-list__item">
+            <p className="office-list__title">Client Studio</p>
+            <PlatformStatusBadge
+              tone={environment.studioAccess.client ? 'pass' : 'warning'}
+            >
+              {environment.studioAccess.client ? 'povoleno' : 'zakázáno'}
+            </PlatformStatusBadge>
+          </li>
+          <li className="office-list__item">
+            <p className="office-list__title">Manager Studio</p>
+            <PlatformStatusBadge
+              tone={environment.studioAccess.manager ? 'pass' : 'warning'}
+            >
+              {environment.studioAccess.manager ? 'povoleno' : 'zakázáno'}
+            </PlatformStatusBadge>
+          </li>
+          <li className="office-list__item">
+            <p className="office-list__title">Sales Studio</p>
+            <PlatformStatusBadge
+              tone={environment.studioAccess.sales ? 'pass' : 'warning'}
+            >
+              {environment.studioAccess.sales ? 'povoleno' : 'zakázáno'}
+            </PlatformStatusBadge>
+          </li>
+        </ul>
+      </PlatformCard>
+
+      <PlatformCard
+        title="Partner Environment"
+        description={
+          environment.pilotMode
+            ? 'Kompletní pilotní prostředí po akci Připravit pilot'
+            : 'Standardní Partner Environment — dlouhodobý provoz'
+        }
+      >
+        <div className="office-partner-detail__status">
+          <PlatformStatusBadge
+            tone={
+              environment.lifecycleStatus === 'active'
+                ? 'pass'
+                : environment.lifecycleStatus === 'suspended'
+                  ? 'warning'
+                  : environment.lifecycleStatus === 'archived'
+                    ? 'draft'
+                    : 'info'
+            }
+          >
+            {environment.lifecycleStatusLabel}
+          </PlatformStatusBadge>
+        </div>
         <ul className="office-list" data-testid="partner-environment-checklist">
           {environment.items.map((item) => (
             <li key={item.id} className="office-list__item">

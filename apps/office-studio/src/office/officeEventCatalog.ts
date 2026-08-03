@@ -29,7 +29,13 @@ export type OfficeEventKind =
   | 'followup.nda_accepted'
   | 'followup.account_activated'
   | 'followup.first_login'
-  | 'followup.ready_for_contact';
+  | 'followup.ready_for_contact'
+  | 'partner.activated'
+  | 'pilot.completed'
+  | 'environment.activated'
+  | 'partner.suspended'
+  | 'partner.restored'
+  | 'partner.archived';
 
 export type OfficeEvent = {
   readonly id: string;

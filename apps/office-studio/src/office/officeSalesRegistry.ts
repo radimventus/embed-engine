@@ -8,6 +8,7 @@ import {
   defaultNextStep,
   type OfficePartnerStatus,
 } from './officePartnerModel';
+import { activatePartnerEnvironment } from './officePartnerEnvironmentLifecycle';
 import {
   draftFromPartner,
   getPartner,
@@ -440,6 +441,8 @@ export function confirmSalesOrder(partnerId: string): OfficeSalesCase | null {
     detail: `${pkg.name} · ${formatCzk(pkg.priceCzk)}`,
     partnerId,
   });
+  // PE-11 — order confirmation activates long-term Partner Environment.
+  activatePartnerEnvironment(partnerId, pkg.id);
   return getSalesCase(partnerId);
 }
 

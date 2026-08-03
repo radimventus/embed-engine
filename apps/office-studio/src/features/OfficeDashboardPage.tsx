@@ -8,12 +8,18 @@ import {
   buildOfficeFollowUpDashboard,
   listOfficePartnerSummaries,
   listOfficeWaitingActions,
+  listOfficeWorkspaceSummaries,
 } from '../office/officeDashboardData';
 import {
   formatOfficeEventTime,
   listRecentOfficeEvents,
 } from '../office/officeEventCatalog';
 import type { PartnerCommercialFollowUp } from '../office/officeCommercialFollowUpModel';
+
+function formatSummaryDate(iso: string | null): string {
+  if (iso === null) return '—';
+  return formatOfficeEventTime(iso);
+}
 
 function FollowUpList({
   items,
@@ -43,13 +49,15 @@ function FollowUpList({
 /**
  * OF-01 — Office Dashboard (overview + recent activity).
  * OF-02 — Partner summaries derived from Partner Registry.
- * PE-09 — Commercial Follow-up buckets.
+ * PE-08 — Commercial Follow-up buckets.
+ * PE-10 / PE-11 — Workspace Summary for active Partner Environments.
  */
 export function OfficeDashboardPage() {
   const cards = buildOfficeDashboardCards();
   const partners = listOfficePartnerSummaries();
   const waiting = listOfficeWaitingActions();
   const followUp = buildOfficeFollowUpDashboard();
+  const workspaceSummaries = listOfficeWorkspaceSummaries();
   const recent = listRecentOfficeEvents(8);
 
   return (
@@ -58,7 +66,7 @@ export function OfficeDashboardPage() {
         <p className="office-dashboard__eyebrow">Dashboard</p>
         <h1 className="office-dashboard__title">Provozní centrum</h1>
         <p className="office-dashboard__lead">
-          Přehled partnerů, obchodního follow-up a posledních událostí.
+          Přehled partnerů, Partner Environment a posledních událostí.
         </p>
       </header>
 
@@ -70,6 +78,49 @@ export function OfficeDashboardPage() {
           </PlatformCard>
         ))}
       </div>
+
+      <PlatformCard
+        title="Workspace Summary"
+        description="Stav dlouhodobého Partner Environment"
+      >
+        {workspaceSummaries.length === 0 ? (
+          <p className="office-dashboard__hint">
+            Po potvrzení nabídky se zde zobrazí Active Partner workspace.
+          </p>
+        ) : (
+          <ul className="office-list" data-testid="workspace-summary-list">
+            {workspaceSummaries.map((summary) => (
+              <li key={summary.partnerId} className="office-list__item">
+                <div>
+                  <p className="office-list__title">{summary.partnerName}</p>
+                  <p className="office-list__meta">
+                    {summary.activePackage} · {summary.licence}
+                  </p>
+                  <p className="office-list__meta">
+                    Aktivace {formatSummaryDate(summary.activatedAt)} · Změna{' '}
+                    {formatSummaryDate(summary.statusChangedAt)}
+                  </p>
+                  <p className="office-list__meta">
+                    {summary.statusChangeReason ?? '—'} ·{' '}
+                    {summary.lastAdminActionLabel}
+                  </p>
+                </div>
+                <PlatformStatusBadge
+                  tone={
+                    summary.lifecycleStatus === 'active'
+                      ? 'pass'
+                      : summary.lifecycleStatus === 'suspended'
+                        ? 'warning'
+                        : 'info'
+                  }
+                >
+                  {summary.lifecycleStatusLabel}
+                </PlatformStatusBadge>
+              </li>
+            ))}
+          </ul>
+        )}
+      </PlatformCard>
 
       <div
         className="office-dashboard__grid"

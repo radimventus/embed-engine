@@ -28,6 +28,11 @@ import {
 } from '../../office/officePartnerRegistry';
 import { preparePilotForPartner } from '../../office/preparePilotProvisioning';
 import {
+  archivePartnerEnvironment,
+  restorePartnerEnvironment,
+  suspendPartnerEnvironment,
+} from '../../office/officePartnerEnvironmentLifecycle';
+import {
   buildPilotDeliveryPreview,
   deliverPilot,
 } from '../../office/officePilotDeliveryRegistry';
@@ -126,6 +131,45 @@ export function PartnersWorkspacePage({
         return;
       }
       setDeliveryPreview(preview);
+      return;
+    }
+    if (actionId === 'suspend-partner') {
+      const record = suspendPartnerEnvironment(activePartner.id);
+      bump();
+      if (record?.lifecycleStatus !== 'suspended') {
+        setPilotNotice(
+          'Partnera nelze pozastavit — nejdřív aktivujte Partner Environment.',
+        );
+        return;
+      }
+      onSelectPartner(activePartner.id);
+      setPilotNotice('Partner pozastaven · přístup do studií zakázán');
+      return;
+    }
+    if (actionId === 'restore-partner') {
+      const record = restorePartnerEnvironment(activePartner.id);
+      bump();
+      if (record?.lifecycleStatus !== 'active') {
+        setPilotNotice(
+          'Partnera nelze obnovit — obnovení je možné jen ze stavu Suspended.',
+        );
+        return;
+      }
+      onSelectPartner(activePartner.id);
+      setPilotNotice('Partner obnoven · přístup do studií povolen');
+      return;
+    }
+    if (actionId === 'archive-partner') {
+      const record = archivePartnerEnvironment(activePartner.id);
+      bump();
+      if (record?.lifecycleStatus !== 'archived') {
+        setPilotNotice(
+          'Partnera nelze archivovat — nejdřív aktivujte Partner Environment.',
+        );
+        return;
+      }
+      onSelectPartner(activePartner.id);
+      setPilotNotice('Partner archivován · data zachována');
       return;
     }
     const updated = applyPartnerQuickAction(activePartner.id, actionId);

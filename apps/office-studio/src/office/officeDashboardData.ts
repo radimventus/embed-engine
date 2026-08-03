@@ -1,5 +1,5 @@
 /**
- * OF-01 / OF-02 / PE-08 / PE-09 — Office dashboard (Partner Registry + Commercial Follow-up).
+ * OF-01 / OF-02 / PE-08 / PE-09 / PE-11 — Office dashboard.
  */
 
 import type { OfficePartner } from './officePartnerModel';
@@ -12,6 +12,10 @@ import {
   syncAllCommercialFollowUps,
 } from './officeCommercialFollowUpRegistry';
 import type { PartnerCommercialFollowUp } from './officeCommercialFollowUpModel';
+import {
+  listPartnerWorkspaceSummaries,
+  type PartnerWorkspaceSummary,
+} from './officePartnerEnvironmentLifecycle';
 
 export type OfficeDashboardCard = {
   readonly id: string;
@@ -57,9 +61,7 @@ export function buildOfficeDashboardCards(
     (item) => !item.activity.accountActivated,
   );
   const newlyActivated = followUps.filter((item) => item.newlyActivated);
-  const readyForFollowUp = followUps.filter(
-    (item) => item.status === 'ready_for_contact',
-  );
+  const workspaceSummaries = listPartnerWorkspaceSummaries();
   return [
     {
       id: 'new-partners',
@@ -80,10 +82,12 @@ export function buildOfficeDashboardCards(
       hint: 'Aktivace během posledních 48 hodin',
     },
     {
-      id: 'followup-ready',
-      title: 'Připraveni k follow-up',
-      value: readyForFollowUp.length,
-      hint: 'Obchodní kontakt doporučen',
+      id: 'active-partner-environments',
+      title: 'Active Partner',
+      value: workspaceSummaries.filter(
+        (item) => item.lifecycleStatus === 'active',
+      ).length,
+      hint: 'Dlouhodobé Partner Environment',
     },
   ];
 }
@@ -97,6 +101,10 @@ export function buildOfficeFollowUpDashboard(
     newlyActivated: listNewlyActivated(nowMs),
     readyForFollowUp: listReadyForFollowUp(nowMs),
   };
+}
+
+export function listOfficeWorkspaceSummaries(): readonly PartnerWorkspaceSummary[] {
+  return listPartnerWorkspaceSummaries();
 }
 
 export function listOfficePartnerSummaries(
