@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
-import { resolveClientStudioHref } from '../cloud/cloudConfig';
+import { resolveWorkspaceHostHref } from '../cloud/cloudConfig';
 import type { PlatformStudioId } from '../domain/types';
 import { getSharedWorkspaceContext, updateSession } from '../session/authService';
 import { AuthShell } from './AuthShell';
@@ -55,7 +55,7 @@ function AccessGateInner({ children }: AccessGateProps) {
         },
       });
       if (typeof window !== 'undefined') {
-        window.location.replace(resolveClientStudioHref());
+        window.location.replace(resolveWorkspaceHostHref());
       }
       return null;
     }

@@ -25,6 +25,8 @@ import {
   resetPilotWorkspaceStore,
   isPilotWorkspaceReady,
   resolveCloudStudioHref,
+  resolveClientStudioHref,
+  resolveWorkspaceHostHref,
   restoreSession,
   submitPlatformFeedback,
   listPlatformFeedback,
@@ -132,6 +134,8 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     assert.equal(resolveCloudStudioHref('manager'), 'http://127.0.0.1:4175/');
     assert.equal(resolveCloudStudioHref('sales'), 'http://127.0.0.1:4179/');
     assert.equal(resolveCloudStudioHref('office'), 'http://127.0.0.1:4181/');
+    assert.equal(resolveClientStudioHref(), 'http://127.0.0.1:4173/');
+    assert.equal(resolveWorkspaceHostHref(), 'http://127.0.0.1:4183/');
   });
 
   it('bootstraps Tenant → Company → Workspace → Project', () => {

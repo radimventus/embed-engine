@@ -2,17 +2,14 @@
  * SSOT Local host — Client Studio is not a parallel product.
  *
  * Experience mounts exclusively through Embed.mount → Delivery → mountClientStudio.
+ * ARCH-01 — Partner Embed Host only (launcher). CONIS operators use Workspace Host.
  */
 
 import clientStudioCss from "./index.css?inline";
 
 import { Embed, registerClientStudioCss } from "@embed-engine/embed";
 
-import { mountClientHostWorkspaceNavigation } from "./host/mountClientHostWorkspaceNavigation";
-
 registerClientStudioCss(clientStudioCss);
-
-mountClientHostWorkspaceNavigation();
 
 Embed.mount({
   mode: "launcher",

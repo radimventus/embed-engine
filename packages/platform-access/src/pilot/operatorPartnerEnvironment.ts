@@ -7,8 +7,8 @@
  */
 
 import {
-  resolveClientStudioHref,
   resolveCloudStudioHref,
+  resolveWorkspaceHostHref,
 } from '../cloud/cloudConfig';
 import type { SharedWorkspaceContext } from '../domain/workspaceContext';
 import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation';
@@ -78,7 +78,8 @@ function resolveTenantId(companyId: string, fallback: string): string {
 }
 
 function hrefForSurface(surface: WorkspaceStudioSurface): string {
-  if (surface === 'client') return resolveClientStudioHref();
+  // ARCH-01 — operator Client surface opens Workspace Host, not partner Embed Host.
+  if (surface === 'client') return resolveWorkspaceHostHref();
   return resolveCloudStudioHref(surface);
 }
 

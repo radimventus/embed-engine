@@ -335,6 +335,55 @@ importers:
         specifier: ^7.0.0
         version: 7.3.6(@types/node@22.20.1)(jiti@1.21.7)(tsx@4.23.1)
 
+  apps/workspace-host:
+    dependencies:
+      '@embed-engine/design-tokens':
+        specifier: workspace:*
+        version: link:../../packages/design-tokens
+      '@embed-engine/embed':
+        specifier: workspace:*
+        version: link:../../packages/embed
+      '@embed-engine/platform-access':
+        specifier: workspace:*
+        version: link:../../packages/platform-access
+      react:
+        specifier: ^19.1.0
+        version: 19.2.7
+      react-dom:
+        specifier: ^19.1.0
+        version: 19.2.7(react@19.2.7)
+    devDependencies:
+      '@types/node':
+        specifier: ^22.20.1
+        version: 22.20.1
+      '@types/react':
+        specifier: ^19.1.0
+        version: 19.2.17
+      '@types/react-dom':
+        specifier: ^19.1.0
+        version: 19.2.3(@types/react@19.2.17)
+      '@vitejs/plugin-react':
+        specifier: ^4.7.0
+        version: 4.7.0(vite@7.3.6(@types/node@22.20.1)(jiti@1.21.7)(tsx@4.23.1))
+      autoprefixer:
+        specifier: ^10.4.21
+        version: 10.5.2(postcss@8.5.18)
+      postcss:
+        specifier: ^8.5.6
+        version: 8.5.18
+      tailwindcss:
+        specifier: ^3.4.17
+        version: 3.4.19(tsx@4.23.1)
+      tsx:
+        specifier: ^4.20.3
+        version: 4.23.1
+      typescript:
+        specifier: ^5.9.2
+        version: 5.9.3
+      vite:
+        specifier: ^7.0.0
+        version: 7.3.6(@types/node@22.20.1)(jiti@1.21.7)(tsx@4.23.1)
+
   packages/ai:
     dependencies:
       '@embed-engine/runtime':

@@ -32,6 +32,9 @@ const LOCAL_STUDIO_PORTS: Record<PlatformStudioId, number> = {
 /** CS-01 — Client Studio (Experience host) local Vite port. */
 const LOCAL_CLIENT_STUDIO_PORT = 4173;
 
+/** ARCH-01 — CONIS Workspace Host (operator entry; not partner Embed Host). */
+const LOCAL_WORKSPACE_HOST_PORT = 4183;
+
 const CLOUD_STUDIO_PATHS: Record<PlatformStudioId, string> = {
   office: '/studio/office/',
   builder: '/studio/builder/',
@@ -40,6 +43,7 @@ const CLOUD_STUDIO_PATHS: Record<PlatformStudioId, string> = {
 };
 
 const CLOUD_CLIENT_STUDIO_PATH = '/embed/' as const;
+const CLOUD_WORKSPACE_HOST_PATH = '/studio/workspace/' as const;
 
 function readEnvOrigin(): string | null {
   try {
@@ -123,6 +127,20 @@ export function resolveClientStudioHref(): string {
     return `http://${host}:${LOCAL_CLIENT_STUDIO_PORT}/`;
   }
   return `${config.origin}${CLOUD_CLIENT_STUDIO_PATH}`;
+}
+
+/**
+ * ARCH-01 — CONIS operator Workspace Host.
+ * Not the partner Embed Host — opens Workspace with Client Studio as default.
+ */
+export function resolveWorkspaceHostHref(): string {
+  const config = getCloudPlatformConfig();
+  if (config.mode === 'local') {
+    const host =
+      typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
+    return `http://${host}:${LOCAL_WORKSPACE_HOST_PORT}/`;
+  }
+  return `${config.origin}${CLOUD_WORKSPACE_HOST_PATH}`;
 }
 
 /**

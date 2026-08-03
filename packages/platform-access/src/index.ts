@@ -128,6 +128,7 @@ export {
   resolveCloudStudioHref,
   resolveCloudLandingHref,
   resolveClientStudioHref,
+  resolveWorkspaceHostHref,
   resolvePartnerInviteHref,
   type CloudPlatformConfig,
   type PlatformDeployMode,

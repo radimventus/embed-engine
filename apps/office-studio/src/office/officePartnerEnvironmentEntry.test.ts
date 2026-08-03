@@ -22,6 +22,7 @@ import {
   resetUserRegistry,
   resolveClientStudioHref,
   resolveCloudStudioHref,
+  resolveWorkspaceHostHref,
   returnFromOperatorPartnerEnvironment,
   shouldShowPartnerWelcome,
   switchOperatorPartnerStudio,
@@ -56,7 +57,7 @@ describe('OF-13A Workspace Studio Navigation', () => {
     clearPlatformSession();
   }
 
-  it('opens Client Studio as default Workspace entry', () => {
+  it('opens Client Studio as default Workspace entry via Workspace Host', () => {
     resetAll();
 
     assert.equal(
@@ -85,7 +86,8 @@ describe('OF-13A Workspace Studio Navigation', () => {
     if (!entered.ok) return;
 
     assert.equal(entered.surface, 'client');
-    assert.equal(entered.href, resolveClientStudioHref());
+    assert.equal(entered.href, resolveWorkspaceHostHref());
+    assert.notEqual(entered.href, resolveClientStudioHref());
     assert.equal(
       loadPlatformSession()?.companyId,
       OFFICE_REFERENCE_PLATFORM_IDS.companyId,
@@ -148,6 +150,7 @@ describe('OF-13A Workspace Studio Navigation', () => {
     const toClient = switchOperatorPartnerStudio('client', { navigate: false });
     assert.equal(toClient.ok, true);
     assert.equal(toClient.surface, 'client');
+    assert.equal(toClient.href, resolveWorkspaceHostHref());
     assert.equal(loadPlatformSession()?.companyId, env.companyId);
 
     const returned = returnFromOperatorPartnerEnvironment({ navigate: false });

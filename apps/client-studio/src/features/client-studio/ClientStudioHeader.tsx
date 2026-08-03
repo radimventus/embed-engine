@@ -34,6 +34,9 @@ function resolveClientBrand(): StudioBrandProjection {
 export function ClientStudioHeader() {
   const [title, setTitle] = useState('Client Studio');
   const [logoLabel, setLogoLabel] = useState('ASTAV');
+  const onWorkspaceHost =
+    typeof document !== 'undefined' &&
+    document.documentElement.dataset.conisWorkspaceHost === '1';
 
   useEffect(() => {
     const root = document.querySelector<HTMLElement>('[data-client-studio-root]');
@@ -45,7 +48,7 @@ export function ClientStudioHeader() {
 
   return (
     <>
-      {isOperatorWorkspaceMode() ? (
+      {!onWorkspaceHost && isOperatorWorkspaceMode() ? (
         <WorkspaceStudioNavigation activeSurface="client" />
       ) : null}
       <header
