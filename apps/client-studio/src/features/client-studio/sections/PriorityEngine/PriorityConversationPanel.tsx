@@ -24,7 +24,10 @@ import {
 import { PRIORITY_CLARIFICATIONS } from './decision-cards.constants';
 import { ConisMessage } from './ConisMessage';
 import { ConisThinkingDots } from './ConisThinkingDots';
-import { PRIORITY_ENGINE_CONVERSATION_PANEL_CLASS } from './priority-engine-layout';
+import {
+  PRIORITY_ENGINE_CONVERSATION_PANEL_CLASS,
+  PRIORITY_ENGINE_MOBILE_STICKY_CTA_CLASS,
+} from './priority-engine-layout';
 import { usePriorityConversationContext } from './PriorityConversationProvider';
 
 const bodyTextClass =
@@ -74,7 +77,7 @@ function PriorityWhiteActionButton({
     <button
       type="button"
       data-testid={testId}
-      className="min-w-0 flex-1 touch-manipulation px-2 py-[6.4px] text-center font-medium leading-normal tracking-wide disabled:opacity-55"
+      className="min-h-11 min-w-0 flex-1 touch-manipulation px-2 py-3 text-center font-medium leading-normal tracking-wide disabled:opacity-55 desktop:min-h-0 desktop:py-[6.4px]"
       style={{
         backgroundColor: SWITCH_IDLE_BG,
         color: SWITCH_IDLE_TEXT,
@@ -119,7 +122,7 @@ function PrioritySwitchTrack({
 }) {
   return (
     <div
-      className={`${className} flex w-full justify-center`}
+      className={`${className} flex w-full justify-center mobile:!ml-0 mobile:!pt-0`}
       style={{
         ...(shift ? { marginLeft: shift.x } : {}),
         // Use paddingTop — ConisMessage space-y utilities set margin-top !important.
@@ -131,7 +134,7 @@ function PrioritySwitchTrack({
       }}
     >
       <div
-        className="flex w-1/2 min-w-0 shrink-0 items-stretch gap-[1.6px] rounded-[6.4px] border border-solid p-[1.6px]"
+        className="flex w-full min-w-0 shrink-0 items-stretch gap-[1.6px] rounded-[6.4px] border border-solid p-[1.6px] desktop:w-1/2"
         style={{
           backgroundColor: SWITCH_SHELL_BG,
           borderColor: SWITCH_SHELL_BG,
@@ -141,6 +144,18 @@ function PrioritySwitchTrack({
       >
         {children}
       </div>
+    </div>
+  );
+}
+
+/** Mobile sticky shell for primary conversation CTAs (RCS-02). Desktop: passthrough. */
+function PriorityMobileStickyCta({ children }: { children: ReactNode }) {
+  return (
+    <div
+      className={PRIORITY_ENGINE_MOBILE_STICKY_CTA_CLASS}
+      data-testid="priority-mobile-sticky-cta"
+    >
+      {children}
     </div>
   );
 }
@@ -301,34 +316,36 @@ export function PriorityConversationPanel() {
               {line}
             </p>
           ))}
-          <PrioritySwitchTrack
-            ariaLabel="Nastavení priorit"
-            className=""
-            shift={{ x: -40, y: 0 }}
-            offsetLines={3}
-          >
-            {canAddMore ? (
-              <span
-                data-testid="priority-conversation-add-more"
-                className="flex min-w-0 flex-1 items-center justify-center px-2 py-[6.4px] text-center font-medium leading-normal tracking-wide"
-                style={{
-                  backgroundColor: SWITCH_ACTIVE_BG,
-                  color: SWITCH_ACTIVE_TEXT,
-                  fontSize: SWITCH_FONT_SIZE_PX,
-                  fontWeight: SWITCH_FONT_WEIGHT,
-                  borderRadius: 0,
-                }}
-              >
-                {PRIORITY_CONVERSATION_ADD_MORE}
-              </span>
-            ) : null}
-            <PriorityWhiteActionButton
-              testId="priority-conversation-finish-selection"
-              label={PRIORITY_CONVERSATION_FINISH_SELECTION}
-              onClick={finishSelection}
-              disabled={isAdvancing}
-            />
-          </PrioritySwitchTrack>
+          <PriorityMobileStickyCta>
+            <PrioritySwitchTrack
+              ariaLabel="Nastavení priorit"
+              className=""
+              shift={{ x: -40, y: 0 }}
+              offsetLines={3}
+            >
+              {canAddMore ? (
+                <span
+                  data-testid="priority-conversation-add-more"
+                  className="flex min-h-11 min-w-0 flex-1 items-center justify-center px-2 py-3 text-center font-medium leading-normal tracking-wide desktop:min-h-0 desktop:py-[6.4px]"
+                  style={{
+                    backgroundColor: SWITCH_ACTIVE_BG,
+                    color: SWITCH_ACTIVE_TEXT,
+                    fontSize: SWITCH_FONT_SIZE_PX,
+                    fontWeight: SWITCH_FONT_WEIGHT,
+                    borderRadius: 0,
+                  }}
+                >
+                  {PRIORITY_CONVERSATION_ADD_MORE}
+                </span>
+              ) : null}
+              <PriorityWhiteActionButton
+                testId="priority-conversation-finish-selection"
+                label={PRIORITY_CONVERSATION_FINISH_SELECTION}
+                onClick={finishSelection}
+                disabled={isAdvancing}
+              />
+            </PrioritySwitchTrack>
+          </PriorityMobileStickyCta>
         </ConisMessage>
       ) : null}
 
@@ -345,18 +362,20 @@ export function PriorityConversationPanel() {
               {line}
             </p>
           ))}
-          <PrioritySwitchTrack
-            className=""
-            shift={{ x: -40, y: 0 }}
-            offsetLines={2}
-          >
-            <PriorityWhiteActionButton
-              testId="priority-conversation-prep-continue"
-              label={PRIORITY_CONVERSATION_PREP_CONTINUE}
-              onClick={acknowledgePrep}
-              disabled={isAdvancing}
-            />
-          </PrioritySwitchTrack>
+          <PriorityMobileStickyCta>
+            <PrioritySwitchTrack
+              className=""
+              shift={{ x: -40, y: 0 }}
+              offsetLines={2}
+            >
+              <PriorityWhiteActionButton
+                testId="priority-conversation-prep-continue"
+                label={PRIORITY_CONVERSATION_PREP_CONTINUE}
+                onClick={acknowledgePrep}
+                disabled={isAdvancing}
+              />
+            </PrioritySwitchTrack>
+          </PriorityMobileStickyCta>
         </ConisMessage>
       ) : null}
 
@@ -398,7 +417,7 @@ export function PriorityConversationPanel() {
                         aria-checked={isPending}
                         disabled={dialogBeat !== 'question'}
                         data-testid={`priority-dialog-option-${option.id}`}
-                        className="rounded-[10px] px-3.5 py-3 text-left text-[15px] leading-snug transition-[background-color,color] duration-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 disabled:cursor-default"
+                        className="min-h-11 touch-manipulation rounded-[10px] px-3.5 py-3 text-left text-[15px] leading-snug transition-[background-color,color] duration-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 disabled:cursor-default"
                         style={
                           isPending
                             ? {
@@ -475,7 +494,7 @@ export function PriorityConversationPanel() {
                       </p>
                     </div>
                     <div className="mt-1 flex w-full items-center justify-center">
-                      <div className="flex w-[75%] min-w-0">
+                      <div className="flex w-full min-w-0 mobile:w-full desktop:w-[75%]">
                         <PriorityWhiteActionButton
                           testId="priority-conversation-dialog-continue"
                           label={PRIORITY_CONVERSATION_PREP_CONTINUE}
@@ -508,18 +527,20 @@ export function PriorityConversationPanel() {
           >
             {PRIORITY_CONVERSATION_REVISIT_PROMPT}
           </p>
-          <PrioritySwitchTrack
-            className=""
-            offsetLines={1}
-            shift={{ x: -60, y: 0 }}
-          >
-            <PriorityWhiteActionButton
-              testId="priority-conversation-revisit-continue"
-              label={PRIORITY_CONVERSATION_REVISIT_CONTINUE}
-              onClick={continueToSummary}
-              disabled={isAdvancing}
-            />
-          </PrioritySwitchTrack>
+          <PriorityMobileStickyCta>
+            <PrioritySwitchTrack
+              className=""
+              offsetLines={1}
+              shift={{ x: -60, y: 0 }}
+            >
+              <PriorityWhiteActionButton
+                testId="priority-conversation-revisit-continue"
+                label={PRIORITY_CONVERSATION_REVISIT_CONTINUE}
+                onClick={continueToSummary}
+                disabled={isAdvancing}
+              />
+            </PrioritySwitchTrack>
+          </PriorityMobileStickyCta>
         </ConisMessage>
       ) : null}
     </aside>

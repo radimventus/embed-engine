@@ -30,7 +30,11 @@ export const DECISION_CARD_ATTENTION_CLASS =
 
 /** Open / selected card — page bg fill, 2 px gold border, rounded in both states. */
 export const DECISION_CARD_ACTIVE_CLASS =
-  'z-10 scale-[1.10] rounded-[8px] border-2 border-solid border-[#D4AF37] bg-[#F7F6F4] shadow-none';
+  'z-10 scale-[1.10] rounded-[8px] border-2 border-solid border-[#D4AF37] bg-[#F7F6F4] shadow-none mobile:scale-[1.03]';
+
+/** Fluid card shell — fixed 119px only on desktop SSOT (RCS-02). */
+export const DECISION_CARD_SHELL_CLASS =
+  'relative w-full aspect-square desktop:aspect-auto desktop:h-[119px] desktop:w-[119px] desktop:shrink-0';
 
 /** PT-002 — primary Decision Story priority (Runtime-driven highlight). */
 export const DECISION_CARD_PRIMARY_CLASS =

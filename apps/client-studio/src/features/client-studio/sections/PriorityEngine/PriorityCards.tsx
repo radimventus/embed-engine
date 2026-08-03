@@ -1,8 +1,5 @@
 import { useExperienceProjection } from '../../runtime/useExperienceProjection';
 import { DecisionCard } from './DecisionCard';
-import {
-  DECISION_GRID_GAP_PX,
-} from './decision-cards-layout';
 import type { DecisionCategory } from './decision-cards.constants';
 import type { DecisionCardState } from './useDecisionCards';
 
@@ -32,8 +29,7 @@ export function PriorityCards({
         aria-label="Katalog priorit"
         data-pt002-primary={highlight.primaryPriorityId ?? ''}
         data-pt002-related={highlight.relatedPriorityIds.join(',')}
-        className="grid w-full max-w-[685px] grid-cols-5 justify-items-center overflow-visible mobile:grid-cols-2"
-        style={{ gap: DECISION_GRID_GAP_PX }}
+        className="grid w-full max-w-[685px] grid-cols-5 justify-items-center gap-[22px] overflow-x-hidden overflow-y-visible mobile:max-w-none mobile:grid-cols-2 mobile:justify-items-stretch mobile:gap-3"
       >
         {categories.map((category) => {
           const card = cards[category.id];

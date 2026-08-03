@@ -7,7 +7,7 @@ import {
   DECISION_CARD_IDLE_CLASS,
   DECISION_CARD_PRIMARY_CLASS,
   DECISION_CARD_RELATED_CLASS,
-  DECISION_CARD_SIZE_PX,
+  DECISION_CARD_SHELL_CLASS,
   DECISION_TRANSITION_CLASS,
 } from './decision-cards-layout';
 import { DecisionCategoryIcon } from './DecisionCategoryIcon';
@@ -26,7 +26,7 @@ type DecisionCardProps = {
 };
 
 /** Counters card active scale so icon pixel size stays constant across states. */
-const ACTIVE_ICON_COUNTER_SCALE = 'scale-[0.893]';
+const ACTIVE_ICON_COUNTER_SCALE = 'scale-[0.893] mobile:scale-[0.971]';
 
 const IDLE_BORDER = '#E3E3E3';
 const HOVER_BORDER = '#D4AF37';
@@ -52,8 +52,7 @@ export function DecisionCard({
 
   return (
     <div
-      className="relative shrink-0"
-      style={{ height: DECISION_CARD_SIZE_PX, width: DECISION_CARD_SIZE_PX }}
+      className={DECISION_CARD_SHELL_CLASS}
       data-pt002-highlight={
         isPrimary ? 'primary' : isRelated ? 'related' : undefined
       }
@@ -108,10 +107,10 @@ export function DecisionCard({
             <DecisionCategoryIcon categoryId={category.id} />
           </span>
           <span
-            className={`max-w-[96px] text-center font-medium leading-snug tracking-wide ${
+            className={`max-w-full text-center font-medium leading-snug tracking-wide desktop:max-w-[96px] ${
               isActive
                 ? 'text-[10px] text-embed-foreground-primary'
-                : 'text-[13px] text-embed-foreground-primary/70'
+                : 'text-[13px] text-embed-foreground-primary/70 mobile:text-[12px]'
             }`}
           >
             {category.title}
@@ -120,7 +119,7 @@ export function DecisionCard({
         <div
           className={`w-full transition-[opacity,transform,max-height] ${DECISION_TRANSITION_CLASS} ${
             isActive
-              ? 'max-h-10 translate-y-0 pt-2 opacity-100'
+              ? 'max-h-11 translate-y-0 pt-2 opacity-100 desktop:max-h-10'
               : 'pointer-events-none max-h-0 translate-y-1 opacity-0'
           }`}
         >

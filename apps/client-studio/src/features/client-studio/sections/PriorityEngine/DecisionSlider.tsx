@@ -10,6 +10,10 @@ function clampImportance(value: number): number {
   return Math.min(1, Math.max(0, value));
 }
 
+/**
+ * Intensity control — desktop SSOT track; enlarged touch hit on mobile (RCS-02).
+ * Pointer-capture semantics unchanged; still emits importance 0–1 only.
+ */
 export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
   const trackRef = useRef<HTMLDivElement>(null);
 
@@ -32,8 +36,9 @@ export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
 
   return (
     <div
-      className="relative h-7 w-full shrink-0"
+      className="relative h-11 w-full shrink-0 desktop:h-7"
       onPointerDown={(event) => event.stopPropagation()}
+      data-testid="priority-intensity-slider"
     >
       <div
         ref={trackRef}
@@ -43,7 +48,7 @@ export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
         aria-valuenow={Math.round(value * 100)}
         aria-label="Decision importance"
         tabIndex={0}
-        className="group relative flex h-7 w-full cursor-pointer touch-none items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2"
+        className="group relative flex h-11 w-full cursor-pointer touch-none items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 desktop:h-7"
         onKeyDown={(event) => {
           if (event.key === 'ArrowLeft') {
             event.preventDefault();
@@ -76,7 +81,7 @@ export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
           className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 ${DECISION_TRANSITION_CLASS} transition-[left]`}
           style={{ left: `${value * 100}%` }}
         >
-          <div className="flex h-7 w-7 items-center justify-center">
+          <div className="flex h-11 w-11 items-center justify-center desktop:h-7 desktop:w-7">
             <div
               className="h-3.5 w-3.5 rounded-full border-2 bg-[#FFFFFF] shadow-[0_1px_4px_rgba(0,30,58,0.12)] transition-shadow group-hover:shadow-[0_2px_6px_rgba(0,30,58,0.16)]"
               style={{ borderStyle: 'solid', borderColor: '#D4AF37' }}
