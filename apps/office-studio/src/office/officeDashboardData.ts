@@ -1,10 +1,17 @@
 /**
- * OF-01 / OF-02 — Office dashboard MVP (overview derived from Partner Registry).
+ * OF-01 / OF-02 / PE-08 / PE-09 — Office dashboard (Partner Registry + Commercial Follow-up).
  */
 
 import type { OfficePartner } from './officePartnerModel';
 import { officePartnerStatusLabel } from './officePartnerModel';
 import { listPartners } from './officePartnerRegistry';
+import {
+  listNewlyActivated,
+  listReadyForFollowUp,
+  listWaitingActivation,
+  syncAllCommercialFollowUps,
+} from './officeCommercialFollowUpRegistry';
+import type { PartnerCommercialFollowUp } from './officeCommercialFollowUpModel';
 
 export type OfficeDashboardCard = {
   readonly id: string;
@@ -27,6 +34,12 @@ export type OfficeActionItem = {
   readonly dueLabel: string;
 };
 
+export type OfficeFollowUpDashboard = {
+  readonly waitingActivation: readonly PartnerCommercialFollowUp[];
+  readonly newlyActivated: readonly PartnerCommercialFollowUp[];
+  readonly readyForFollowUp: readonly PartnerCommercialFollowUp[];
+};
+
 function toSummary(partner: OfficePartner): OfficePartnerSummary {
   return {
     id: partner.id,
@@ -39,6 +52,14 @@ function toSummary(partner: OfficePartner): OfficePartnerSummary {
 export function buildOfficeDashboardCards(
   partners: readonly OfficePartner[] = listPartners(),
 ): readonly OfficeDashboardCard[] {
+  const followUps = syncAllCommercialFollowUps();
+  const waitingActivation = followUps.filter(
+    (item) => !item.activity.accountActivated,
+  );
+  const newlyActivated = followUps.filter((item) => item.newlyActivated);
+  const readyForFollowUp = followUps.filter(
+    (item) => item.status === 'ready_for_contact',
+  );
   return [
     {
       id: 'new-partners',
@@ -47,26 +68,35 @@ export function buildOfficeDashboardCards(
       hint: 'V Partner Registry',
     },
     {
-      id: 'pending-offers',
-      title: 'Čekající nabídky',
-      value: partners.filter((partner) => partner.status === 'offer').length,
-      hint: 'Čeká na odpověď partnera',
+      id: 'followup-waiting-activation',
+      title: 'Čekají na aktivaci',
+      value: waitingActivation.length,
+      hint: 'Pilot odeslán · účet ještě není aktivní',
     },
     {
-      id: 'pending-payments',
-      title: 'Čekající platby',
-      value: partners.filter((partner) => partner.status === 'payment').length,
-      hint: 'Pilotní poplatky',
+      id: 'followup-newly-activated',
+      title: 'Nově aktivovaní',
+      value: newlyActivated.length,
+      hint: 'Aktivace během posledních 48 hodin',
     },
     {
-      id: 'active-implementations',
-      title: 'Probíhající implementace',
-      value: partners.filter(
-        (partner) => partner.status === 'implementation',
-      ).length,
-      hint: 'Builder handoff v běhu',
+      id: 'followup-ready',
+      title: 'Připraveni k follow-up',
+      value: readyForFollowUp.length,
+      hint: 'Obchodní kontakt doporučen',
     },
   ];
+}
+
+export function buildOfficeFollowUpDashboard(
+  nowMs = Date.now(),
+): OfficeFollowUpDashboard {
+  syncAllCommercialFollowUps(nowMs);
+  return {
+    waitingActivation: listWaitingActivation(nowMs),
+    newlyActivated: listNewlyActivated(nowMs),
+    readyForFollowUp: listReadyForFollowUp(nowMs),
+  };
 }
 
 export function listOfficePartnerSummaries(
@@ -97,6 +127,6 @@ export const OFFICE_MY_PARTNERS: readonly OfficePartnerSummary[] =
 export const OFFICE_WAITING_ACTIONS: readonly OfficeActionItem[] =
   listOfficeWaitingActions();
 
-/** @deprecated Prefer buildOfficeDashboardCards() */
+/** @deprecated Prefer buildOfficeDashboardCards() — kept for OF-01 section pages. */
 export const OFFICE_DASHBOARD_CARDS: readonly OfficeDashboardCard[] =
   buildOfficeDashboardCards();

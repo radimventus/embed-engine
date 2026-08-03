@@ -1,8 +1,9 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 
 import {
   activateInvite,
   findInviteByToken,
+  markInviteOpened,
 } from '../pilot/inviteStore';
 import {
   inviteLifecycleMessage,
@@ -40,6 +41,13 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
     [token],
   );
   const lifecycle = resolveInviteLifecycle(preview);
+
+  useEffect(() => {
+    const trimmed = token.trim();
+    if (trimmed.length === 0) return;
+    if (findInviteByToken(trimmed) === null) return;
+    markInviteOpened(trimmed);
+  }, [token]);
 
   const continueFromToken = () => {
     setError(null);

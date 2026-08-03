@@ -2,6 +2,7 @@ import { useMemo, useState, type FormEvent } from 'react';
 
 import { bootstrapTenant } from '../bootstrap/tenantBootstrap';
 import { resolveClientStudioHref } from '../cloud/cloudConfig';
+import { touchUserLastStudio } from '../registry/userRegistry';
 import { isPilotPartnerRoles } from '../domain/pilotPartnerAccess';
 import { PLATFORM_ROLE_LABELS, isPlatformAdmin, primaryRole } from '../domain/roles';
 import type { PlatformStudioId } from '../domain/types';
@@ -100,6 +101,7 @@ export function PlatformLanding() {
 
   const openClientStudio = () => {
     bindSampleProject();
+    touchUserLastStudio(session.user.id, 'client');
     recordPlatformActivity({
       label: 'Welcome → Client Studio',
       detail:

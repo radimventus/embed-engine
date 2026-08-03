@@ -5,6 +5,7 @@ import {
 
 import {
   buildOfficeDashboardCards,
+  buildOfficeFollowUpDashboard,
   listOfficePartnerSummaries,
   listOfficeWaitingActions,
 } from '../office/officeDashboardData';
@@ -12,15 +13,43 @@ import {
   formatOfficeEventTime,
   listRecentOfficeEvents,
 } from '../office/officeEventCatalog';
+import type { PartnerCommercialFollowUp } from '../office/officeCommercialFollowUpModel';
+
+function FollowUpList({
+  items,
+  empty,
+}: {
+  readonly items: readonly PartnerCommercialFollowUp[];
+  readonly empty: string;
+}) {
+  if (items.length === 0) {
+    return <p className="office-dashboard__hint">{empty}</p>;
+  }
+  return (
+    <ul className="office-list" data-testid="followup-list">
+      {items.map((item) => (
+        <li key={item.partnerId} className="office-list__item">
+          <div>
+            <p className="office-list__title">{item.partnerName}</p>
+            <p className="office-list__meta">{item.email}</p>
+          </div>
+          <PlatformStatusBadge tone="info">{item.statusLabel}</PlatformStatusBadge>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 /**
  * OF-01 — Office Dashboard (overview + recent activity).
  * OF-02 — Partner summaries derived from Partner Registry.
+ * PE-09 — Commercial Follow-up buckets.
  */
 export function OfficeDashboardPage() {
   const cards = buildOfficeDashboardCards();
   const partners = listOfficePartnerSummaries();
   const waiting = listOfficeWaitingActions();
+  const followUp = buildOfficeFollowUpDashboard();
   const recent = listRecentOfficeEvents(8);
 
   return (
@@ -29,7 +58,7 @@ export function OfficeDashboardPage() {
         <p className="office-dashboard__eyebrow">Dashboard</p>
         <h1 className="office-dashboard__title">Provozní centrum</h1>
         <p className="office-dashboard__lead">
-          Přehled partnerů, akcí a posledních událostí životního cyklu.
+          Přehled partnerů, obchodního follow-up a posledních událostí.
         </p>
       </header>
 
@@ -40,6 +69,39 @@ export function OfficeDashboardPage() {
             <p className="office-dashboard__hint">{card.hint}</p>
           </PlatformCard>
         ))}
+      </div>
+
+      <div
+        className="office-dashboard__grid"
+        data-testid="commercial-followup-dashboard"
+      >
+        <PlatformCard
+          title="Čekají na aktivaci"
+          description="Pilot odeslán · účet ještě není aktivní"
+        >
+          <FollowUpList
+            items={followUp.waitingActivation}
+            empty="Žádný partner nečeká na aktivaci."
+          />
+        </PlatformCard>
+        <PlatformCard
+          title="Nově aktivovaní"
+          description="Aktivace během posledních 48 hodin"
+        >
+          <FollowUpList
+            items={followUp.newlyActivated}
+            empty="Žádní nově aktivovaní partneři."
+          />
+        </PlatformCard>
+        <PlatformCard
+          title="Připraveni k follow-up"
+          description="Připraveni k obchodnímu kontaktu"
+        >
+          <FollowUpList
+            items={followUp.readyForFollowUp}
+            empty="Žádný partner nečeká na obchodní kontakt."
+          />
+        </PlatformCard>
       </div>
 
       <div className="office-dashboard__grid">

@@ -38,6 +38,7 @@ import {
   restoreSession,
   updateSession,
 } from '../session/authService';
+import { touchUserLastStudio } from '../registry/userRegistry';
 
 export type PlatformSessionContextValue = {
   readonly session: PlatformSession | null;
@@ -96,7 +97,13 @@ export function SessionProvider({
     ) {
       // Arrived via Studio Switcher — adopt this studio while keeping context.
       const next = updateSession({ activeStudioId: bindStudioId });
+      if (next !== null) {
+        touchUserLastStudio(next.user.id, bindStudioId);
+      }
       return next ?? restored;
+    }
+    if (bindStudioId !== undefined && restored.activeStudioId === bindStudioId) {
+      touchUserLastStudio(restored.user.id, bindStudioId);
     }
     return restored;
   });
@@ -133,6 +140,7 @@ export function SessionProvider({
   const selectStudio = useCallback((studioId: PlatformStudioId) => {
     const next = updateSession({ activeStudioId: studioId });
     if (next !== null) {
+      touchUserLastStudio(next.user.id, studioId);
       setSession(next);
       const href = resolveStudioHref(studioId);
       if (typeof window !== 'undefined' && window.location.href !== href) {

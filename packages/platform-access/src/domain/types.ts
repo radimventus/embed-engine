@@ -27,6 +27,8 @@ export type PlatformUser = {
   readonly status: PlatformAccountStatus;
   readonly lastLoginAt: string | null;
   readonly lastActivityAt: string | null;
+  /** PE-09 — last visited partner/studio surface (includes Client). */
+  readonly lastStudioId: PlatformStudioId | 'client' | null;
 };
 
 export type PlatformCompany = {

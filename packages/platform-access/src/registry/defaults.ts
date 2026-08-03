@@ -89,6 +89,7 @@ export const DEMO_USERS: readonly (PlatformUser & {
     status: 'active',
     lastLoginAt: null,
     lastActivityAt: null,
+    lastStudioId: null,
     password: 'demo',
   },
   {
@@ -99,6 +100,7 @@ export const DEMO_USERS: readonly (PlatformUser & {
     status: 'active',
     lastLoginAt: null,
     lastActivityAt: null,
+    lastStudioId: null,
     password: 'demo',
   },
   {
@@ -109,6 +111,7 @@ export const DEMO_USERS: readonly (PlatformUser & {
     status: 'active',
     lastLoginAt: null,
     lastActivityAt: null,
+    lastStudioId: null,
     password: 'demo',
   },
   {
@@ -119,6 +122,7 @@ export const DEMO_USERS: readonly (PlatformUser & {
     status: 'active',
     lastLoginAt: null,
     lastActivityAt: null,
+    lastStudioId: null,
     password: 'demo',
   },
   {
@@ -129,6 +133,7 @@ export const DEMO_USERS: readonly (PlatformUser & {
     status: 'active',
     lastLoginAt: null,
     lastActivityAt: null,
+    lastStudioId: null,
     password: 'demo',
   },
 ] as const;

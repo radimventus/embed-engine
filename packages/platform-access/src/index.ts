@@ -78,6 +78,7 @@ export {
   verifyUserPassword,
   touchUserLogin,
   touchUserActivity,
+  touchUserLastStudio,
   resetUserRegistry,
   USER_REGISTRY_STORAGE_KEY,
 } from './registry/userRegistry';
@@ -132,6 +133,7 @@ export {
   resendPilotInvite,
   revokePilotInvite,
   activateInvite,
+  markInviteOpened,
   findActivatedInviteUser,
   findActivatedInviteBinding,
   resetInviteStore,

@@ -41,6 +41,7 @@ function normalizeInvite(raw: PilotInvite): PilotInvite {
     ...raw,
     projectId: raw.projectId ?? DEFAULT_PROJECT_ID,
     ndaAcceptedAt: raw.ndaAcceptedAt ?? null,
+    openedAt: raw.openedAt ?? null,
     lastSentAt: raw.lastSentAt ?? raw.createdAt,
     sendCount: raw.sendCount ?? 1,
     expiresAt: raw.expiresAt ?? computeInviteExpiresAt(createdAt),
@@ -159,6 +160,7 @@ export function createPilotInvite(input: {
     activatedAt: null,
     expiresAt: input.expiresAt ?? computeInviteExpiresAt(sentAt),
     ndaAcceptedAt: null,
+    openedAt: null,
     invitedByUserId: input.invitedByUserId,
     lastSentAt: sentAt,
     sendCount: 1,
@@ -175,6 +177,30 @@ export function createPilotInvite(input: {
 
 export function findInviteByToken(token: string): PilotInvite | null {
   return listInvites().find((item) => item.token === token) ?? null;
+}
+
+/**
+ * PE-08 — mark invite opened when partner lands on InviteShell (idempotent).
+ */
+export function markInviteOpened(token: string): PilotInvite | null {
+  const store = loadStore();
+  const current = store.invites.find((item) => item.token === token.trim());
+  if (current === undefined) return null;
+  if (current.openedAt !== null) return normalizeInvite(current);
+  const next: PilotInvite = {
+    ...normalizeInvite(current),
+    openedAt: new Date().toISOString(),
+  };
+  saveStore({
+    invites: store.invites.map((item) =>
+      item.id === current.id ? next : item,
+    ),
+  });
+  recordPlatformActivity({
+    label: 'Pozvánka otevřena',
+    detail: next.email,
+  });
+  return next;
 }
 
 export function listInvites(): readonly PilotInvite[] {

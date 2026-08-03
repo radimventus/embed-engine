@@ -6,6 +6,7 @@
 import type {
   PlatformAccountStatus,
   PlatformRole,
+  PlatformStudioId,
   PlatformUser,
 } from '../domain/types';
 import { recordRoleChange } from '../pilot/identityAudit';
@@ -95,6 +96,7 @@ function normalizeUser(raw: PlatformUser): PlatformUser {
     status: raw.status === 'inactive' ? 'inactive' : 'active',
     lastLoginAt: raw.lastLoginAt ?? null,
     lastActivityAt: raw.lastActivityAt ?? null,
+    lastStudioId: raw.lastStudioId ?? null,
   };
 }
 
@@ -164,6 +166,7 @@ export function createUser(input: {
     status: input.status ?? 'active',
     lastLoginAt: null,
     lastActivityAt: null,
+    lastStudioId: null,
   };
   const passwords = { ...store.passwords };
   if (input.password !== undefined && input.password.length > 0) {
@@ -203,6 +206,7 @@ export function upsertActivatedUser(input: {
     status: 'active',
     lastLoginAt: existing?.lastLoginAt ?? null,
     lastActivityAt: existing?.lastActivityAt ?? null,
+    lastStudioId: existing?.lastStudioId ?? null,
   };
   const users = existing
     ? store.users.map((entry) => (entry.email === email ? user : entry))
@@ -312,6 +316,27 @@ export function touchUserActivity(userId: string): PlatformUser | null {
   const next: PlatformUser = {
     ...current,
     lastActivityAt: nowIso(),
+  };
+  saveStore({
+    ...store,
+    users: store.users.map((user) => (user.id === userId ? next : user)),
+  });
+  return next;
+}
+
+/** PE-09 — record last visited Studio / Client surface. */
+export function touchUserLastStudio(
+  userId: string,
+  studioId: PlatformStudioId | 'client',
+): PlatformUser | null {
+  const store = loadStore();
+  const current = store.users.find((user) => user.id === userId);
+  if (current === undefined) return null;
+  const stamp = nowIso();
+  const next: PlatformUser = {
+    ...current,
+    lastActivityAt: stamp,
+    lastStudioId: studioId,
   };
   saveStore({
     ...store,

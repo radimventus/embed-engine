@@ -13,6 +13,7 @@ import {
 import { appendOfficeEvent } from './officeEventCatalog';
 import { getPartner, updatePartner, draftFromPartner } from './officePartnerRegistry';
 import { preparePilotForPartner } from './preparePilotProvisioning';
+import { syncCommercialFollowUpTimeline } from './officeCommercialFollowUpRegistry';
 import {
   PILOT_DELIVERY_STUDIOS,
   type PilotActivationStatus,
@@ -238,6 +239,9 @@ export function deliverPilot(
       nextStep: 'Pilot odeslán — čeká se na aktivaci',
     });
   }
+
+  // PE-08 — seed commercial follow-up tracking after delivery.
+  syncCommercialFollowUpTimeline(partnerId);
 
   return { ok: true, delivery };
 }

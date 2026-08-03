@@ -21,7 +21,12 @@ export type OfficeEventKind =
   | 'builder.opened'
   | 'pilot.ready'
   | 'pilot.prepared'
-  | 'pilot.delivered';
+  | 'pilot.delivered'
+  | 'followup.invite_opened'
+  | 'followup.nda_accepted'
+  | 'followup.account_activated'
+  | 'followup.first_login'
+  | 'followup.ready_for_contact';
 
 export type OfficeEvent = {
   readonly id: string;

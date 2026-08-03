@@ -43,6 +43,8 @@ export type PilotInvite = {
   readonly expiresAt: string;
   /** CS-01 / PE-04 — NDA accepted at activation (null while pending). */
   readonly ndaAcceptedAt: string | null;
+  /** PE-08 — first time partner opened the invite link (InviteShell). */
+  readonly openedAt: string | null;
   readonly invitedByUserId: string;
   /** Last invitation e-mail send (MVP local delivery stamp — no SMTP). */
   readonly lastSentAt: string;

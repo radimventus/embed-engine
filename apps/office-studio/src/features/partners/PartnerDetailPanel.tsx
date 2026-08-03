@@ -14,6 +14,7 @@ import {
   type OfficePartner,
 } from '../../office/officePartnerModel';
 import type { PartnerQuickActionId } from '../../office/officePartnerRegistry';
+import { syncCommercialFollowUpTimeline } from '../../office/officeCommercialFollowUpRegistry';
 
 type PartnerDetailPanelProps = {
   readonly partner: OfficePartner | null;
@@ -34,7 +35,7 @@ const QUICK_ACTIONS: readonly {
 ];
 
 /**
- * OF-02 — Partner Detail: Status, Company Card, Contact Card, Quick Actions, Timeline.
+ * OF-02 / PE-08 — Partner Detail: Status, Activity Tracking, Follow-up, Timeline.
  */
 export function PartnerDetailPanel({
   partner,
@@ -52,7 +53,9 @@ export function PartnerDetailPanel({
     );
   }
 
+  const followUp = syncCommercialFollowUpTimeline(partner.id);
   const timeline = listPartnerTimeline(partner.id);
+  const activity = followUp?.activity;
 
   return (
     <div className="office-partner-detail" data-testid="office-partner-detail">
@@ -66,6 +69,17 @@ export function PartnerDetailPanel({
           <PlatformStatusBadge tone={officePartnerStatusTone(partner.status)}>
             {officePartnerStatusLabel(partner.status)}
           </PlatformStatusBadge>
+          {followUp !== null ? (
+            <span data-testid="partner-followup-status">
+              <PlatformStatusBadge
+                tone={
+                  followUp.status === 'ready_for_contact' ? 'warning' : 'info'
+                }
+              >
+                {followUp.statusLabel}
+              </PlatformStatusBadge>
+            </span>
+          ) : null}
           <button
             type="button"
             className="platform-btn platform-btn--sm"
@@ -119,6 +133,62 @@ export function PartnerDetailPanel({
           </dl>
         </PlatformCard>
       </div>
+
+      <PlatformCard
+        title="Activity Tracking"
+        description="Obchodní aktivita po odeslání pilotu"
+      >
+        <ul className="office-list" data-testid="partner-activity-tracking">
+          <li className="office-list__item">
+            <p className="office-list__title">Pozvánka otevřena</p>
+            <PlatformStatusBadge tone={activity?.inviteOpened ? 'pass' : 'info'}>
+              {activity?.inviteOpened
+                ? activity.inviteOpenedAt ?? 'ano'
+                : 'ne'}
+            </PlatformStatusBadge>
+          </li>
+          <li className="office-list__item">
+            <p className="office-list__title">NDA odsouhlaseno</p>
+            <PlatformStatusBadge tone={activity?.ndaAccepted ? 'pass' : 'info'}>
+              {activity?.ndaAccepted
+                ? activity.ndaAcceptedAt ?? 'ano'
+                : 'ne'}
+            </PlatformStatusBadge>
+          </li>
+          <li className="office-list__item">
+            <p className="office-list__title">Účet aktivován</p>
+            <PlatformStatusBadge
+              tone={activity?.accountActivated ? 'pass' : 'info'}
+            >
+              {activity?.accountActivated
+                ? activity.activatedAt ?? 'ano'
+                : 'ne'}
+            </PlatformStatusBadge>
+          </li>
+          <li className="office-list__item">
+            <p className="office-list__title">První přihlášení</p>
+            <PlatformStatusBadge tone={activity?.firstLogin ? 'pass' : 'info'}>
+              {activity?.firstLogin
+                ? activity.firstLoginAt ?? 'ano'
+                : 'ne'}
+            </PlatformStatusBadge>
+          </li>
+          <li className="office-list__item">
+            <p className="office-list__title">Poslední aktivita</p>
+            <PlatformStatusBadge tone="info">
+              {activity?.lastActivityAt ?? '—'}
+            </PlatformStatusBadge>
+          </li>
+          <li className="office-list__item">
+            <p className="office-list__title">Poslední navštívené Studio</p>
+            <PlatformStatusBadge
+              tone={activity?.lastVisitedStudio ? 'pass' : 'info'}
+            >
+              {activity?.lastVisitedStudio ?? '—'}
+            </PlatformStatusBadge>
+          </li>
+        </ul>
+      </PlatformCard>
 
       <PlatformCard title="Quick Actions" description="Provozní kroky životního cyklu">
         <div className="office-partner-actions" role="group" aria-label="Quick Actions">

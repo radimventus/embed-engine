@@ -48,6 +48,7 @@ function normalizeUser(user: PlatformUser): PlatformUser {
     status: user.status === 'inactive' ? 'inactive' : 'active',
     lastLoginAt: user.lastLoginAt ?? null,
     lastActivityAt: user.lastActivityAt ?? null,
+    lastStudioId: user.lastStudioId ?? null,
   };
 }
 
