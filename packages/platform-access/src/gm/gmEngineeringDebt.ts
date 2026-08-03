@@ -51,7 +51,7 @@ export const GM_ENGINEERING_DEBT: readonly GmEngineeringDebtItem[] = [
     id: 'dual-deploy-mode',
     title: 'Local ports vs cloud path dual-mode',
     detail:
-      'Studio hrefs use conis.cz/studio/{builder|manager|sales}; publish via studio:publish.',
+      'Studio hrefs use conis.cz/studio/{office|builder|manager|sales}; publish via studio:publish.',
     area: 'Platform',
   },
 ] as const;

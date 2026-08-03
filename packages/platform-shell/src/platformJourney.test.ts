@@ -5,9 +5,10 @@ import { buildPlatformWorkspaceState } from './buildPlatformWorkspaceState';
 import { PLATFORM_STUDIOS } from './platformStudios';
 import { PLATFORM_STUDIO_SWITCH_ORDER } from './StudioSwitcher';
 
-describe('platformJourney (VR-FIX-04)', () => {
+describe('platformJourney (VR-FIX-04 / OF-01)', () => {
   it('keeps one studio switch order for header and Landing', () => {
     assert.deepEqual([...PLATFORM_STUDIO_SWITCH_ORDER], [
+      'office',
       'manager',
       'sales',
       'builder',

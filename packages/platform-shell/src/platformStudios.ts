@@ -3,7 +3,7 @@
  * Local Vite ports for development; path-based URLs on https://conis.cz/studio.
  */
 
-export type PlatformStudioId = 'builder' | 'manager' | 'sales';
+export type PlatformStudioId = 'office' | 'builder' | 'manager' | 'sales';
 
 export type PlatformStudio = {
   readonly id: PlatformStudioId;
@@ -19,12 +19,14 @@ export type PlatformStudio = {
 export const CLOUD_PLATFORM_ORIGIN = 'https://conis.cz';
 
 const LOCAL_PORTS: Record<PlatformStudioId, number> = {
+  office: 4181,
   builder: 4177,
   manager: 4175,
   sales: 4179,
 };
 
 const CLOUD_PATHS: Record<PlatformStudioId, string> = {
+  office: '/studio/office/',
   builder: '/studio/builder/',
   manager: '/studio/manager/',
   sales: '/studio/sales/',
@@ -76,6 +78,13 @@ export function resolvePlatformStudioHref(studioId: PlatformStudioId): string {
 }
 
 const STUDIO_DEFS: readonly Omit<PlatformStudio, 'href'>[] = [
+  {
+    id: 'office',
+    label: 'Office Studio',
+    shortLabel: 'Office',
+    available: true,
+    accent: '#18428F',
+  },
   {
     id: 'manager',
     label: 'Manager Studio',

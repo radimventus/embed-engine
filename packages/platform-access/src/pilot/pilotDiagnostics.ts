@@ -2,9 +2,9 @@
  * EPIC-BX-15 — Pilot diagnostics + production readiness checks.
  */
 
-import { composeStudioById } from '@embed-engine/capabilities';
+import { composeStudioById, type StudioId } from '@embed-engine/capabilities';
 
-import type { PlatformSession } from '../domain/types';
+import type { PlatformSession, PlatformStudioId } from '../domain/types';
 import type {
   PilotActivityEntry,
   PilotDiagnostics,
@@ -19,6 +19,13 @@ import { bootstrapProject } from '../bootstrap/projectBootstrap';
 
 const ACTIVITY_KEY = 'conis.platform.activity.v1';
 const PUBLISH_KEY = 'conis.platform.last-publish.v1';
+
+function toCapabilityStudioId(
+  studioId: PlatformStudioId,
+): StudioId | null {
+  if (studioId === 'office') return null;
+  return studioId;
+}
 
 type ActivityStore = {
   readonly entries: PilotActivityEntry[];
@@ -102,11 +109,17 @@ export function buildPilotDiagnostics(
 
   let capabilityStatus: PilotDiagnostics['capabilityStatus'] = 'missing';
   try {
-    const host = composeStudioById(session?.activeStudioId ?? 'builder');
-    capabilityStatus =
-      host.healthReport().filter((item) => item.active).length > 0
-        ? 'ready'
-        : 'degraded';
+    const active = session?.activeStudioId ?? 'builder';
+    const capabilityStudioId = toCapabilityStudioId(active);
+    if (capabilityStudioId === null) {
+      capabilityStatus = 'ready';
+    } else {
+      const host = composeStudioById(capabilityStudioId);
+      capabilityStatus =
+        host.healthReport().filter((item) => item.active).length > 0
+          ? 'ready'
+          : 'degraded';
+    }
   } catch {
     capabilityStatus = 'missing';
   }

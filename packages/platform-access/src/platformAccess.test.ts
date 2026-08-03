@@ -101,7 +101,9 @@ describe('platformAccess (EPIC-BX-14)', () => {
   it('role model prepares studio guards without full RBAC', () => {
     assert.equal(canAccessStudio(['salesman'], 'sales'), true);
     assert.equal(canAccessStudio(['salesman'], 'builder'), false);
+    assert.equal(canAccessStudio(['salesman'], 'office'), false);
     assert.equal(canAccessStudio(['conis-admin'], 'manager'), true);
+    assert.equal(canAccessStudio(['conis-admin'], 'office'), true);
     assert.equal(canAccessStudio(['manager'], 'manager'), true);
   });
 
@@ -126,6 +128,7 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     assert.equal(resolveCloudStudioHref('builder'), 'http://127.0.0.1:4177/');
     assert.equal(resolveCloudStudioHref('manager'), 'http://127.0.0.1:4175/');
     assert.equal(resolveCloudStudioHref('sales'), 'http://127.0.0.1:4179/');
+    assert.equal(resolveCloudStudioHref('office'), 'http://127.0.0.1:4181/');
   });
 
   it('bootstraps Tenant → Company → Workspace → Project', () => {

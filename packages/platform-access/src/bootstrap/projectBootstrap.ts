@@ -4,7 +4,7 @@
  * Does not change HP-002, Runtime, Intelligence Core, or Capability Platform.
  */
 
-import { composeStudioById } from '@embed-engine/capabilities';
+import { composeStudioById, type StudioId } from '@embed-engine/capabilities';
 
 import type {
   PlatformSession,
@@ -17,6 +17,14 @@ import {
   findWorkspace,
   getDefaultCompanyRegistry,
 } from '../registry/companyRegistry';
+
+/** OF-01 — Office has no Capability host; map only Builder / Manager / Sales. */
+function toCapabilityStudioId(
+  studioId: PlatformStudioId,
+): StudioId | null {
+  if (studioId === 'office') return null;
+  return studioId;
+}
 
 export function bootstrapProject(input: {
   readonly session: PlatformSession;
@@ -31,11 +39,16 @@ export function bootstrapProject(input: {
   if (workspace === undefined || company === undefined) return null;
 
   let capabilitiesReady = false;
-  try {
-    const host = composeStudioById(input.studioId);
-    capabilitiesReady = host.declaredIds.length > 0;
-  } catch {
-    capabilitiesReady = false;
+  const capabilityStudioId = toCapabilityStudioId(input.studioId);
+  if (capabilityStudioId === null) {
+    capabilitiesReady = true;
+  } else {
+    try {
+      const host = composeStudioById(capabilityStudioId);
+      capabilitiesReady = host.declaredIds.length > 0;
+    } catch {
+      capabilitiesReady = false;
+    }
   }
 
   return {

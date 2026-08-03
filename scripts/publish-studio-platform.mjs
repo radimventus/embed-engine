@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * W-01A — Publish CONIS Studio platform to docs/studio/{builder,manager,sales}/
+ * W-01A / OF-01 — Publish CONIS Studio platform to docs/studio/{office,builder,manager,sales}/
  * Public entry: https://conis.cz/studio
  *
  * Usage:
@@ -23,6 +23,13 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const STUDIO_ORIGIN = "https://conis.cz";
 
 const STUDIOS = [
+  {
+    id: "office",
+    filter: "@embed-engine/office-studio",
+    base: "/studio/office/",
+    distRel: "apps/office-studio/dist",
+    outRel: "docs/studio/office",
+  },
   {
     id: "builder",
     filter: "@embed-engine/builder-studio",
@@ -122,9 +129,6 @@ function writeStudioSurfaces() {
   // Default entry → Builder (role redirect continues inside the app after login)
   writeRedirect(path.join(studioDir, "index.html"), "/studio/builder/");
 
-  // Office reserved (W-01A) — not implemented yet
-  writeRedirect(path.join(studioDir, "office", "index.html"), "/studio/");
-
   // Legacy path aliases from RC-002 (/builder → /studio/builder)
   for (const id of ["builder", "manager", "sales"]) {
     const legacyDir = path.join(repoRoot, "docs", id);
@@ -153,4 +157,3 @@ console.log(`  ${STUDIO_ORIGIN}/studio/`);
 for (const studio of STUDIOS) {
   console.log(`  ${STUDIO_ORIGIN}${studio.base}`);
 }
-console.log(`  ${STUDIO_ORIGIN}/studio/office/ (reserved)`);

@@ -23,12 +23,14 @@ export type CloudPlatformConfig = {
 };
 
 const LOCAL_STUDIO_PORTS: Record<PlatformStudioId, number> = {
+  office: 4181,
   builder: 4177,
   manager: 4175,
   sales: 4179,
 };
 
 const CLOUD_STUDIO_PATHS: Record<PlatformStudioId, string> = {
+  office: '/studio/office/',
   builder: '/studio/builder/',
   manager: '/studio/manager/',
   sales: '/studio/sales/',

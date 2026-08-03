@@ -1,0 +1,169 @@
+import {
+  PlatformCard,
+  PlatformEmptyState,
+  PlatformStatusBadge,
+} from '@embed-engine/platform-shell';
+
+import {
+  formatOfficeEventTime,
+  listPartnerTimeline,
+} from '../../office/officeEventCatalog';
+import {
+  officePartnerStatusLabel,
+  officePartnerStatusTone,
+  type OfficePartner,
+} from '../../office/officePartnerModel';
+import type { PartnerQuickActionId } from '../../office/officePartnerRegistry';
+
+type PartnerDetailPanelProps = {
+  readonly partner: OfficePartner | null;
+  readonly onEdit: () => void;
+  readonly onQuickAction: (actionId: PartnerQuickActionId) => void;
+};
+
+const QUICK_ACTIONS: readonly {
+  readonly id: PartnerQuickActionId;
+  readonly label: string;
+}[] = [
+  { id: 'send-offer', label: 'Odeslat nabídku' },
+  { id: 'confirm-order', label: 'Potvrdit objednávku' },
+  { id: 'record-payment', label: 'Evidovat platbu' },
+  { id: 'open-builder', label: 'Otevřít Builder' },
+];
+
+/**
+ * OF-02 — Partner Detail: Status, Company Card, Contact Card, Quick Actions, Timeline.
+ */
+export function PartnerDetailPanel({
+  partner,
+  onEdit,
+  onQuickAction,
+}: PartnerDetailPanelProps) {
+  if (partner === null) {
+    return (
+      <div className="office-partner-detail" data-testid="office-partner-detail-empty">
+        <PlatformEmptyState
+          title="Vyberte partnera"
+          description="Otevřete partnera v registry, nebo založte nového."
+        />
+      </div>
+    );
+  }
+
+  const timeline = listPartnerTimeline(partner.id);
+
+  return (
+    <div className="office-partner-detail" data-testid="office-partner-detail">
+      <header className="office-partner-detail__header">
+        <div>
+          <p className="office-dashboard__eyebrow">Detail partnera</p>
+          <h2 className="office-partner-detail__name">{partner.name}</h2>
+          <p className="office-partner-detail__next">{partner.nextStep}</p>
+        </div>
+        <div className="office-partner-detail__status">
+          <PlatformStatusBadge tone={officePartnerStatusTone(partner.status)}>
+            {officePartnerStatusLabel(partner.status)}
+          </PlatformStatusBadge>
+          <button
+            type="button"
+            className="platform-btn platform-btn--sm"
+            onClick={onEdit}
+          >
+            Upravit
+          </button>
+        </div>
+      </header>
+
+      <div className="office-partner-detail__cards">
+        <PlatformCard title="Company Card">
+          <dl className="office-partner-dl">
+            <div>
+              <dt>Obchodní název</dt>
+              <dd>{partner.company.legalName}</dd>
+            </div>
+            <div>
+              <dt>IČO</dt>
+              <dd>{partner.company.ico || '—'}</dd>
+            </div>
+            <div>
+              <dt>Město</dt>
+              <dd>{partner.company.city || '—'}</dd>
+            </div>
+            <div>
+              <dt>Země</dt>
+              <dd>{partner.company.country}</dd>
+            </div>
+          </dl>
+        </PlatformCard>
+
+        <PlatformCard title="Contact Card">
+          <dl className="office-partner-dl">
+            <div>
+              <dt>Kontakt</dt>
+              <dd>{partner.contact.name}</dd>
+            </div>
+            <div>
+              <dt>Role</dt>
+              <dd>{partner.contact.role || '—'}</dd>
+            </div>
+            <div>
+              <dt>E-mail</dt>
+              <dd>{partner.contact.email || '—'}</dd>
+            </div>
+            <div>
+              <dt>Telefon</dt>
+              <dd>{partner.contact.phone || '—'}</dd>
+            </div>
+          </dl>
+        </PlatformCard>
+      </div>
+
+      <PlatformCard title="Quick Actions" description="Provozní kroky životního cyklu">
+        <div className="office-partner-actions" role="group" aria-label="Quick Actions">
+          {QUICK_ACTIONS.map((action) => (
+            <button
+              key={action.id}
+              type="button"
+              className="platform-btn platform-btn--sm"
+              onClick={() => onQuickAction(action.id)}
+            >
+              {action.label}
+            </button>
+          ))}
+        </div>
+      </PlatformCard>
+
+      <PlatformCard
+        title="Timeline"
+        description="Historie událostí partnera z Event Catalog"
+      >
+        {timeline.length === 0 ? (
+          <PlatformEmptyState
+            title="Zatím žádné události"
+            description="Události se objeví při založení partnera a Quick Actions."
+          />
+        ) : (
+          <ol className="office-activity" aria-label="Timeline partnera">
+            {timeline.map((event, index) => (
+              <li key={event.id} className="office-activity__item">
+                <div className="office-activity__rail" aria-hidden>
+                  <span className="office-activity__dot" />
+                  {index < timeline.length - 1 ? (
+                    <span className="office-activity__line" />
+                  ) : null}
+                </div>
+                <div className="office-activity__body">
+                  <p className="office-activity__label">{event.label}</p>
+                  <p className="office-activity__detail">{event.detail}</p>
+                  <p className="office-activity__time">
+                    {formatOfficeEventTime(event.occurredAt)}
+                  </p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </PlatformCard>
+    </div>
+  );
+}

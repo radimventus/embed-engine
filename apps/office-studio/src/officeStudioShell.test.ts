@@ -1,0 +1,99 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { describe, it } from 'node:test';
+import { fileURLToPath } from 'node:url';
+
+import {
+  OFFICE_NAV_ITEMS,
+  officeHref,
+  parseOfficeLocation,
+  parseOfficeRoute,
+} from './office/officeRoutes';
+
+const root = dirname(fileURLToPath(import.meta.url));
+
+describe('officeStudioShell (OF-01 / OF-02)', () => {
+  it('exposes IA navigation labels', () => {
+    assert.deepEqual(
+      OFFICE_NAV_ITEMS.map((item) => item.label),
+      [
+        'Dashboard',
+        'Partneři',
+        'Obchod',
+        'Dokumenty',
+        'Implementace',
+        'Aktivita',
+        'Nastavení',
+      ],
+    );
+  });
+
+  it('parses Office routes under /studio/office base', () => {
+    assert.equal(parseOfficeRoute('/studio/office/', '/studio/office/'), 'dashboard');
+    assert.equal(
+      parseOfficeRoute('/studio/office/partners', '/studio/office/'),
+      'partners',
+    );
+    assert.equal(
+      parseOfficeRoute('/studio/office/sales/', '/studio/office/'),
+      'sales',
+    );
+    assert.equal(
+      parseOfficeRoute('/studio/office/documents', '/studio/office/'),
+      'documents',
+    );
+    assert.equal(
+      parseOfficeRoute('/studio/office/implementation', '/studio/office/'),
+      'implementation',
+    );
+  });
+
+  it('parses partner detail deep-links', () => {
+    assert.deepEqual(
+      parseOfficeLocation('/studio/office/partners/p-blokki', '/studio/office/'),
+      { routeId: 'partners', partnerId: 'p-blokki' },
+    );
+    assert.equal(officeHref('partners', 'p-blokki'), '/partners/p-blokki');
+  });
+
+  it('builds office hrefs from route ids', () => {
+    assert.equal(officeHref('dashboard'), '/');
+    assert.equal(officeHref('partners'), '/partners');
+    assert.equal(officeHref('sales'), '/sales');
+    assert.equal(officeHref('documents'), '/documents');
+    assert.equal(officeHref('implementation'), '/implementation');
+  });
+
+  it('wires Platform Shell, Partner Workspace and Office app entry', () => {
+    const app = readFileSync(join(root, 'OfficeStudioApp.tsx'), 'utf8');
+    const main = readFileSync(join(root, 'main.tsx'), 'utf8');
+    const pkg = readFileSync(join(root, '../package.json'), 'utf8');
+    assert.match(app, /PlatformShell/);
+    assert.match(app, /activeStudioId="office"/);
+    assert.match(app, /OfficeSidebar/);
+    assert.match(app, /OfficeDashboardPage/);
+    assert.match(app, /PartnersWorkspacePage/);
+    assert.match(main, /studioId="office"/);
+    assert.match(pkg, /@embed-engine\/platform-shell/);
+    assert.match(pkg, /@embed-engine\/platform-access/);
+  });
+
+  it('does not ship Coming Soon placeholders', () => {
+    const section = readFileSync(
+      join(root, 'features/OfficeSectionPage.tsx'),
+      'utf8',
+    );
+    const dashboard = readFileSync(
+      join(root, 'features/OfficeDashboardPage.tsx'),
+      'utf8',
+    );
+    const partners = readFileSync(
+      join(root, 'features/partners/PartnersWorkspacePage.tsx'),
+      'utf8',
+    );
+    assert.doesNotMatch(section, /Coming Soon/i);
+    assert.doesNotMatch(dashboard, /Coming Soon/i);
+    assert.doesNotMatch(partners, /Coming Soon/i);
+  });
+});

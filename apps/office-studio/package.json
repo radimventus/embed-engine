@@ -1,0 +1,27 @@
+{
+  "name": "@embed-engine/office-studio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test src/officeStudioShell.test.ts src/office/officeEventCatalog.test.ts src/office/officePartnerRegistry.test.ts"
+  },
+  "dependencies": {
+    "@embed-engine/platform-access": "workspace:*",
+    "@embed-engine/platform-shell": "workspace:*",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.7.0",
+    "tsx": "^4.20.3",
+    "typescript": "^5.9.2",
+    "vite": "^7.0.0"
+  }
+}

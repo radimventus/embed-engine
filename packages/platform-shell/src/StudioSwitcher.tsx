@@ -15,6 +15,7 @@ type StudioSwitcherProps = {
 
 /** Canonical switcher order — SSOT for header + Landing. */
 export const PLATFORM_STUDIO_SWITCH_ORDER: readonly PlatformStudioId[] = [
+  'office',
   'manager',
   'sales',
   'builder',

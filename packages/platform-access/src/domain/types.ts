@@ -3,7 +3,7 @@
  * Pure identity / tenant / session types — no production IAM.
  */
 
-export type PlatformStudioId = 'builder' | 'manager' | 'sales';
+export type PlatformStudioId = 'office' | 'builder' | 'manager' | 'sales';
 
 /**
  * Prepared role hierarchy (RBAC soft for pilot).

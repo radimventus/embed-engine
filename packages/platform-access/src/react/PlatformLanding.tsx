@@ -17,6 +17,7 @@ const STUDIO_ORDER: readonly {
   readonly id: PlatformStudioId;
   readonly label: string;
 }[] = [
+  { id: 'office', label: 'Office Studio' },
   { id: 'manager', label: 'Manager Studio' },
   { id: 'sales', label: 'Sales Studio' },
   { id: 'builder', label: 'Builder Studio' },

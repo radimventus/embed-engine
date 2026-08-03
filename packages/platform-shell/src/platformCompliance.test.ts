@@ -4,7 +4,7 @@ import { describe, it } from 'node:test';
 import { getPlatformTheme } from './platformTheme';
 import { PLATFORM_STUDIO_SWITCH_ORDER } from './StudioSwitcher';
 
-describe('platformCompliance (VR-FIX-05)', () => {
+describe('platformCompliance (VR-FIX-05 / OF-01)', () => {
   it('keeps CONIS navy identity and interaction blue (PR-022C)', () => {
     const theme = getPlatformTheme('builder');
     assert.equal(theme.navy, '#001930');
@@ -14,8 +14,9 @@ describe('platformCompliance (VR-FIX-05)', () => {
     assert.equal(theme.accent, '#18428F');
   });
 
-  it('keeps pilot studio order Manager → Sales → Builder', () => {
+  it('keeps pilot studio order Office → Manager → Sales → Builder', () => {
     assert.deepEqual([...PLATFORM_STUDIO_SWITCH_ORDER], [
+      'office',
       'manager',
       'sales',
       'builder',
