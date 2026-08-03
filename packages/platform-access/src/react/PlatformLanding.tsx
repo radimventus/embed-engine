@@ -17,7 +17,7 @@ import {
 } from '../pilot/pilotWorkspaceStore';
 import { provisionPilotWorkspace } from '../pilot/provisionPilotWorkspace';
 import {
-  dismissPartnerWelcome,
+  finishWelcomeJourney,
   shouldShowPartnerWelcome,
 } from '../pilot/welcomeStore';
 import { GaReadinessCenter } from './GaReadinessCenter';
@@ -44,7 +44,7 @@ const PARTNER_STUDIOS: readonly {
 ];
 
 /**
- * EPIC-BX-14 / BX-15 / BX-16 / BX-18 / CS-01 — Platform Landing + partner welcome.
+ * EPIC-BX-14 / BX-15 / BX-16 / BX-18 / CS-01 / PE-05 — Platform Landing + Welcome Journey.
  */
 export function PlatformLanding() {
   const {
@@ -85,12 +85,23 @@ export function PlatformLanding() {
     isPartner &&
     shouldShowPartnerWelcome(session.user.email);
 
-  const openClientStudio = () => {
+  const bindSampleProject = () => {
     if (pilotWorkspace !== null) {
       selectProject(pilotWorkspace.projectId);
+    } else if (session.projectId !== null) {
+      selectProject(session.projectId);
     }
+  };
+
+  const finishWelcome = () => {
+    finishWelcomeJourney(session.user.email);
+    setWelcomeOpen(false);
+  };
+
+  const openClientStudio = () => {
+    bindSampleProject();
     recordPlatformActivity({
-      label: 'Otevření Client Studia',
+      label: 'Welcome → Client Studio',
       detail:
         bootstrap.project?.name ??
         pilotWorkspace?.sampleProjectLabel ??
@@ -101,20 +112,38 @@ export function PlatformLanding() {
     }
   };
 
+  const openPartnerStudio = (studioId: 'manager' | 'sales') => {
+    bindSampleProject();
+    recordPlatformActivity({
+      label: `Welcome → ${studioId === 'manager' ? 'Manager' : 'Sales'} Studio`,
+      detail: bootstrap.company.name,
+    });
+    if (canOpenStudio(studioId)) {
+      selectStudio(studioId);
+    }
+  };
+
   if (showWelcome) {
     return (
       <PartnerWelcomeScreen
         displayName={bootstrap.user.displayName}
         firmName={branding?.firmName ?? bootstrap.company.name}
-        projectName={bootstrap.project?.name ?? 'Reference House'}
+        projectName={
+          pilotWorkspace?.sampleProjectLabel ??
+          bootstrap.project?.name ??
+          'Reference House'
+        }
         onEnterClientStudio={() => {
-          dismissPartnerWelcome(session.user.email);
-          setWelcomeOpen(false);
+          finishWelcome();
           openClientStudio();
         }}
-        onContinueToStudios={() => {
-          dismissPartnerWelcome(session.user.email);
-          setWelcomeOpen(false);
+        onEnterManagerStudio={() => {
+          finishWelcome();
+          openPartnerStudio('manager');
+        }}
+        onEnterSalesStudio={() => {
+          finishWelcome();
+          openPartnerStudio('sales');
         }}
       />
     );

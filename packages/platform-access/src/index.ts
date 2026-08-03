@@ -176,8 +176,10 @@ export {
   prepareWelcomeJourney,
   shouldShowPartnerWelcome,
   isPartnerOnboardingOpen,
+  hasCompletedWelcomeJourney,
   dismissPartnerWelcome,
   completePartnerOnboarding,
+  finishWelcomeJourney,
   resetPartnerWelcomeStore,
   PARTNER_WELCOME_STORAGE_KEY,
 } from './pilot/welcomeStore';
