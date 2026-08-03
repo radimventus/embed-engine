@@ -18,7 +18,7 @@ const ACTIVE_TEXT = palette.navy;
  * Inline fills / radii / font beat Delivery button CSS reset (`font-size: inherit`).
  */
 export const TOUR_SEGMENTED_SHELL_CLASS =
-  'mx-auto flex w-[70%] min-w-0 shrink-0 gap-[1.6px] rounded-[6.4px] border border-embed-border-default p-[1.6px]';
+  'mx-auto flex w-full min-w-0 shrink-0 gap-[1.6px] rounded-[6.4px] border border-embed-border-default p-[1.6px] desktop:w-[70%]';
 
 /** Idle segment corner radius — set inline so CSS isolation cannot zero it. */
 const IDLE_SEGMENT_RADIUS_PX = 4.8;
@@ -30,7 +30,7 @@ const SEGMENT_FONT_SIZE_PX = 12.5;
 const SEGMENT_FONT_WEIGHT = 600;
 
 export function tourSegmentedButtonClass(active: boolean): string {
-  return `flex-1 py-[6.4px] font-medium leading-normal tracking-wide transition-colors duration-[125ms] ease-out touch-manipulation ${
+  return `flex min-h-11 flex-1 items-center justify-center py-3 font-medium leading-normal tracking-wide transition-colors duration-[125ms] ease-out touch-manipulation desktop:min-h-0 desktop:py-[6.4px] ${
     active ? 'font-semibold' : 'font-normal'
   }`;
 }

@@ -35,24 +35,25 @@ export const SPATIAL_TERMINAL_SECTION_CLASS =
   'grid w-full min-w-0 content-start items-start gap-0 overflow-x-hidden px-section pb-section';
 
 export const SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS =
-  'box-border flex h-full w-full min-w-0 flex-col content-start items-start gap-0 overflow-x-hidden pb-section pl-[20px] mobile:px-section';
+  'box-border flex h-full w-full min-w-0 flex-col content-start items-start gap-0 overflow-x-hidden pb-section pl-[20px] mobile:px-section mobile:pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]';
 
 export const SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS =
-  'grid w-[600px] min-w-[600px] max-w-[600px] shrink-0 content-start items-start gap-0 mobile:w-full mobile:min-w-0 mobile:max-w-none';
+  'grid w-full min-w-0 max-w-none shrink-0 content-start items-start gap-0 desktop:w-[600px] desktop:min-w-[600px] desktop:max-w-[600px]';
 
 /**
  * Floor plan column:
  * 20 px from menu, 20 px to section edge; height from plan + min 50 px to toggles.
  */
 export const SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS =
-  'relative z-0 flex h-full w-full min-w-0 flex-col items-stretch overflow-x-hidden pl-[20px] pr-[20px] pb-section';
+  'relative z-0 flex h-full w-full min-w-0 flex-col items-stretch overflow-x-hidden pl-[20px] pr-[20px] pb-section mobile:px-section mobile:pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]';
 
 export const SPATIAL_TERMINAL_MEDIA_VIEWPORT_CLASS =
-  'relative box-border aspect-video w-[600px] min-w-[600px] max-w-[600px] shrink-0 overflow-hidden rounded-[8px] bg-embed-surface-placeholder';
+  'relative box-border aspect-video w-full min-w-0 max-w-none shrink-0 overflow-hidden rounded-[8px] bg-embed-surface-placeholder desktop:w-[600px] desktop:min-w-[600px] desktop:max-w-[600px]';
 
 /** Shared bottom baseline for thumbnails + VIDEO/FOTKY + PŘÍZEMÍ/PATRO. */
 export const SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS =
   'relative flex w-full shrink-0 items-end';
 
 /** Min gap between floorplan block and toggle pair. */
-export const SPATIAL_TERMINAL_PLAN_TOGGLE_GAP_CLASS = 'min-h-[50px] flex-1';
+export const SPATIAL_TERMINAL_PLAN_TOGGLE_GAP_CLASS =
+  'min-h-[50px] flex-1 mobile:min-h-6';

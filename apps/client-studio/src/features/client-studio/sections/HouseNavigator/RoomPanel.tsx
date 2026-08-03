@@ -32,7 +32,7 @@ export function RoomPanel() {
               aria-pressed={active}
               data-room-id={room.id}
               data-active={active ? 'true' : 'false'}
-              className={`flex min-h-[36px] w-full items-baseline justify-between gap-2 rounded-[10px] border-0 py-1.5 pl-2.5 pr-2 text-left leading-snug tracking-wide shadow-none transition-colors duration-[125ms] ease-out touch-manipulation ${
+              className={`flex min-h-11 w-full items-baseline justify-between gap-2 rounded-[10px] border-0 py-3 pl-2.5 pr-2 text-left leading-snug tracking-wide shadow-none transition-colors duration-[125ms] ease-out touch-manipulation desktop:min-h-[36px] desktop:py-1.5 ${
                 active
                   ? 'font-semibold text-embed-foreground-primary'
                   : 'bg-transparent font-normal text-embed-foreground-primary hover:bg-[#001930] hover:text-[#FFFFFF]'

@@ -28,7 +28,7 @@ export function SpatialZoomControl({
     <button
       type="button"
       aria-label={label}
-      className={`flex h-[42px] w-[42px] cursor-pointer items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 ${className}`}
+      className={`flex h-11 w-11 cursor-pointer items-center justify-center touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 ${className}`}
       style={{
         backgroundColor: hovered ? LOUPE_GOLD : LOUPE_IDLE_BG,
         borderWidth: 1,

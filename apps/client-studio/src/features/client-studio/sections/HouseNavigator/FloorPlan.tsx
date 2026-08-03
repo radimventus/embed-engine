@@ -8,6 +8,7 @@ import { useHouseNavigator } from './useHouseNavigator';
 import { floorKey } from './houseNavigatorModel';
 
 import { FloorPlanLightbox } from './FloorPlanLightbox';
+import { FloorPlanViewport } from './FloorPlanViewport';
 import { FloorPlanZoomControl } from './FloorPlanZoomControl';
 
 /** Hover overlay — gold @ 25%. */
@@ -129,7 +130,11 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
 export function FloorPlan() {
   const { experience } = useDecisionSessionRuntime();
   const analytics = useOptionalDecisionAnalytics();
-  const { viewBoxWidth, viewBoxHeight } = experience.context.floorPlan;
+  const { selectedFloor } = useHouseNavigator();
+  const floorPlan = experience.context.floorPlan;
+  const { viewBoxWidth, viewBoxHeight } = floorPlan;
+  const floorPlanSrc = floorPlan.src;
+  const selectedFloorKey = selectedFloor;
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
 
@@ -187,13 +192,17 @@ export function FloorPlan() {
 
   return (
     <div ref={rootRef} className="relative flex w-full min-w-0 max-w-none shrink-0 flex-col">
-      <div
-        className="relative w-full min-w-0 max-w-none overflow-hidden rounded-[8px]"
-        style={{ aspectRatio }}
-        data-floorplan-aspect={aspectRatioNumber.toFixed(4)}
+      <FloorPlanViewport
+        aspectRatio={aspectRatio}
+        resetKey={`${floorPlanSrc}:${selectedFloorKey}`}
       >
-        <FloorPlanCanvas interactive className="block h-full w-full" />
-      </div>
+        <div
+          className="h-full w-full"
+          data-floorplan-aspect={aspectRatioNumber.toFixed(4)}
+        >
+          <FloorPlanCanvas interactive className="block h-full w-full" />
+        </div>
+      </FloorPlanViewport>
       <div
         className="flex w-full shrink-0 justify-end"
         style={{ marginTop: LOUPE_BELOW_GAP_PX }}
