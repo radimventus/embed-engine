@@ -39,6 +39,11 @@ import {
   updateSession,
 } from '../session/authService';
 import { touchUserLastStudio } from '../registry/userRegistry';
+import {
+  getOperatorPartnerEnvironment,
+  returnFromOperatorPartnerEnvironment,
+  clearOperatorPartnerEnvironment,
+} from '../pilot/operatorPartnerEnvironment';
 
 export type PlatformSessionContextValue = {
   readonly session: PlatformSession | null;
@@ -133,11 +138,39 @@ export function SessionProvider({
   }, []);
 
   const logout = useCallback(() => {
+    clearOperatorPartnerEnvironment();
     authLogout();
     setSession(null);
   }, []);
 
   const selectStudio = useCallback((studioId: PlatformStudioId) => {
+    const operatorPe = getOperatorPartnerEnvironment();
+    if (operatorPe !== null) {
+      if (studioId === 'office') {
+        returnFromOperatorPartnerEnvironment();
+        return;
+      }
+      if (studioId === 'builder') {
+        // Partner Environment does not include Builder.
+        return;
+      }
+      const next = updateSession({
+        companyId: operatorPe.companyId,
+        workspaceId: operatorPe.workspaceId,
+        projectId: operatorPe.projectId,
+        activeStudioId: studioId,
+      });
+      if (next !== null) {
+        touchUserLastStudio(next.user.id, studioId);
+        setSession(next);
+        const href = resolveStudioHref(studioId);
+        if (typeof window !== 'undefined' && window.location.href !== href) {
+          window.location.assign(href);
+        }
+      }
+      return;
+    }
+
     const next = updateSession({ activeStudioId: studioId });
     if (next !== null) {
       touchUserLastStudio(next.user.id, studioId);

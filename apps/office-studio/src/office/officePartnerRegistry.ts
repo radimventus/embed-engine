@@ -57,6 +57,7 @@ let idSeq = initial.idSeq;
 export type PartnerQuickActionId =
   | 'prepare-pilot'
   | 'deliver-pilot'
+  | 'open-partner-environment'
   | 'send-offer'
   | 'confirm-order'
   | 'record-payment'
@@ -179,6 +180,8 @@ export function applyPartnerQuickAction(
     case 'prepare-pilot':
       return partner;
     case 'deliver-pilot':
+      return partner;
+    case 'open-partner-environment':
       return partner;
     case 'send-offer':
       status = 'offer';

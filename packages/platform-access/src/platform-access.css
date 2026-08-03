@@ -174,10 +174,47 @@
   margin-top: 28px;
 }
 
+.platform-access__studios--secondary {
+  margin-top: 8px;
+  grid-template-columns: 1fr;
+}
+
 @media (min-width: 720px) {
   .platform-access__studios {
     grid-template-columns: repeat(3, 1fr);
   }
+
+  .platform-access__studios--secondary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.platform-access__welcome-studios {
+  display: grid;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+@media (min-width: 720px) {
+  .platform-access__welcome-studios {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.platform-access__welcome-studio {
+  border: 1px solid #e3e3e3;
+  border-radius: 14px;
+  background: #f7f6f4;
+  padding: 14px 16px;
+}
+
+.platform-access__welcome-studio--primary {
+  border-color: #18428f;
+  background: #eef2f8;
+}
+
+.platform-access__panel--welcome {
+  max-width: 720px;
 }
 
 .platform-access__studio {
@@ -391,4 +428,61 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #64748b;
+}
+
+/* OF-12 — CONIS Admin Partner Environment chrome */
+.platform-access__operator-pe-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #d7e0ea;
+  background: #001930;
+  color: #f7f6f4;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.platform-access__operator-pe-label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.platform-access__operator-pe-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.platform-access__operator-pe-btn {
+  appearance: none;
+  border: 1px solid rgba(247, 246, 244, 0.35);
+  border-radius: 999px;
+  background: transparent;
+  color: #f7f6f4;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.platform-access__operator-pe-btn:hover {
+  background: rgba(247, 246, 244, 0.12);
+}
+
+.platform-access__operator-pe-btn--active {
+  background: #f7f6f4;
+  color: #001930;
+  border-color: #f7f6f4;
+  cursor: default;
+}
+
+.platform-access__operator-pe-btn--return {
+  border-color: #7eb6ff;
+  color: #7eb6ff;
 }

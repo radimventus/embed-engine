@@ -1,37 +1,13 @@
 import { useMemo, useState } from 'react';
 
 import {
+  enterOperatorPartnerEnvironment,
+  resolveCloudStudioHref,
+} from '@embed-engine/platform-access';
+import {
   PlatformCard,
   PlatformStatusBadge,
 } from '@embed-engine/platform-shell';
-
-import {
-  filterPartners,
-  type PartnerStatusFilter,
-} from '../../office/officePartnerFilters';
-import {
-  OFFICE_PARTNER_STATUS_ORDER,
-  officePartnerStatusLabel,
-  officePartnerStatusTone,
-  type OfficePartner,
-  type OfficePartnerDraft,
-} from '../../office/officePartnerModel';
-import {
-  applyPartnerQuickAction,
-  createPartner,
-  draftFromPartner,
-  emptyPartnerDraft,
-  getPartner,
-  listPartners,
-  type PartnerQuickActionId,
-  updatePartner,
-} from '../../office/officePartnerRegistry';
-import { preparePilotForPartner } from '../../office/preparePilotProvisioning';
-import {
-  archivePartnerEnvironment,
-  restorePartnerEnvironment,
-  suspendPartnerEnvironment,
-} from '../../office/officePartnerEnvironmentLifecycle';
 import {
   buildPilotDeliveryPreview,
   deliverPilot,
@@ -131,6 +107,35 @@ export function PartnersWorkspacePage({
         return;
       }
       setDeliveryPreview(preview);
+      return;
+    }
+    if (actionId === 'open-partner-environment') {
+      const env = buildOfficePartnerEnvironment(activePartner.id);
+      if (
+        !env.ready ||
+        env.companyId === null ||
+        env.environment?.workspaceId == null ||
+        env.environment.projectId == null
+      ) {
+        setPilotNotice(
+          'Partner Environment ještě není připraveno — nejdřív Připravit pilot.',
+        );
+        bump();
+        return;
+      }
+      const officeBase = resolveCloudStudioHref('office').replace(/\/?$/, '/');
+      const result = enterOperatorPartnerEnvironment({
+        companyId: env.companyId,
+        workspaceId: env.environment.workspaceId,
+        projectId: env.environment.projectId,
+        officePartnerId: activePartner.id,
+        officeReturnHref: `${officeBase}partners/${encodeURIComponent(activePartner.id)}`,
+        initialSurface: 'client',
+      });
+      if (!result.ok) {
+        setPilotNotice(result.error);
+        bump();
+      }
       return;
     }
     if (actionId === 'suspend-partner') {

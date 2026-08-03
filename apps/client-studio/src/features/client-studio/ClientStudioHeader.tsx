@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import {
   loadPlatformSession,
   projectPartnerBrand,
+  getOperatorPartnerEnvironment,
+  OperatorPartnerEnvironmentBar,
   type StudioBrandProjection,
 } from '@embed-engine/platform-access';
 
@@ -42,10 +44,14 @@ export function ClientStudioHeader() {
   }, []);
 
   return (
-    <header
-      data-experience-header=""
-      className="relative sticky top-0 z-50 shrink-0 border-b border-embed-border-default bg-embed-background-primary pt-[env(safe-area-inset-top,0px)]"
-    >
+    <>
+      {getOperatorPartnerEnvironment() !== null ? (
+        <OperatorPartnerEnvironmentBar activeSurface="client" />
+      ) : null}
+      <header
+        data-experience-header=""
+        className="relative sticky top-0 z-50 shrink-0 border-b border-embed-border-default bg-embed-background-primary pt-[env(safe-area-inset-top,0px)]"
+      >
       <div className="mx-auto grid h-header w-full min-w-0 max-w-none grid-cols-[1fr_auto_1fr] items-center px-section desktop:w-canvas desktop:max-w-canvas">
         <div className="justify-self-start">
           <AstavLogo label={logoLabel} />
@@ -84,5 +90,6 @@ export function ClientStudioHeader() {
         </div>
       </div>
     </header>
+    </>
   );
 }

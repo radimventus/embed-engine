@@ -275,6 +275,27 @@ export function PartnerDetailPanel({
             </li>
           ))}
         </ul>
+        <div className="office-partner-actions" style={{ marginTop: 16 }}>
+          {environment.ready ? (
+            <button
+              type="button"
+              className="platform-btn platform-btn--sm"
+              data-testid="open-partner-environment"
+              onClick={() => onQuickAction('open-partner-environment')}
+            >
+              Otevřít Partner Environment
+            </button>
+          ) : (
+            <button
+              type="button"
+              className="platform-btn platform-btn--sm"
+              data-testid="prepare-pilot-from-environment"
+              onClick={() => onQuickAction('prepare-pilot')}
+            >
+              Připravit pilot
+            </button>
+          )}
+        </div>
       </PlatformCard>
 
       <PlatformCard

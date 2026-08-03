@@ -189,6 +189,15 @@ export {
 } from './pilot/welcomeStore';
 
 export {
+  WELCOME_STUDIO_INTROS,
+  WELCOME_PRIMARY_CTA_LABEL,
+  welcomeGreeting,
+  welcomeEnvironmentLead,
+  type WelcomeStudioIntro,
+  type WelcomeStudioIntroId,
+} from './pilot/welcomeExperience';
+
+export {
   requestPasswordReset,
   completePasswordReset,
   findPasswordResetByToken,
@@ -231,6 +240,22 @@ export {
   type PartnerEnvironment,
   type PartnerEnvironmentChecklist,
 } from './pilot/partnerEnvironment';
+
+export {
+  enterOperatorPartnerEnvironment,
+  switchOperatorPartnerStudio,
+  returnFromOperatorPartnerEnvironment,
+  getOperatorPartnerEnvironment,
+  clearOperatorPartnerEnvironment,
+  resetOperatorPartnerEnvironmentForTests,
+  OPERATOR_PE_STORAGE_KEY,
+  type OperatorPartnerEnvironmentState,
+  type OperatorPeStudioSurface,
+  type EnterOperatorPartnerEnvironmentInput,
+  type EnterOperatorPartnerEnvironmentResult,
+} from './pilot/operatorPartnerEnvironment';
+
+export { OperatorPartnerEnvironmentBar } from './react/OperatorPartnerEnvironmentBar';
 
 export {
   recordPlatformActivity,
