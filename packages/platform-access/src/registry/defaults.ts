@@ -86,6 +86,9 @@ export const DEMO_USERS: readonly (PlatformUser & {
     email: 'radim@conis.local',
     displayName: 'Radim',
     roles: ['conis-admin'],
+    status: 'active',
+    lastLoginAt: null,
+    lastActivityAt: null,
     password: 'demo',
   },
   {
@@ -93,6 +96,9 @@ export const DEMO_USERS: readonly (PlatformUser & {
     email: 'builder@ac.local',
     displayName: 'Builder',
     roles: ['builder'],
+    status: 'active',
+    lastLoginAt: null,
+    lastActivityAt: null,
     password: 'demo',
   },
   {
@@ -100,6 +106,9 @@ export const DEMO_USERS: readonly (PlatformUser & {
     email: 'manager@ac.local',
     displayName: 'Manager',
     roles: ['manager'],
+    status: 'active',
+    lastLoginAt: null,
+    lastActivityAt: null,
     password: 'demo',
   },
   {
@@ -107,6 +116,9 @@ export const DEMO_USERS: readonly (PlatformUser & {
     email: 'sales@ac.local',
     displayName: 'Salesman',
     roles: ['salesman'],
+    status: 'active',
+    lastLoginAt: null,
+    lastActivityAt: null,
     password: 'demo',
   },
   {
@@ -114,6 +126,9 @@ export const DEMO_USERS: readonly (PlatformUser & {
     email: 'admin@ac.local',
     displayName: 'Project Admin',
     roles: ['project-admin'],
+    status: 'active',
+    lastLoginAt: null,
+    lastActivityAt: null,
     password: 'demo',
   },
 ] as const;

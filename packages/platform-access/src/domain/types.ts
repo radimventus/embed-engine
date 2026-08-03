@@ -1,12 +1,12 @@
 /**
- * EPIC-BX-14 — Platform Access domain model.
- * Pure identity / tenant / session types — no production IAM.
+ * EPIC-BX-14 / OF-07 — Platform Access domain model.
+ * Shared Identity & Access for all Studios (MVP pilot — not production IAM).
  */
 
 export type PlatformStudioId = 'office' | 'builder' | 'manager' | 'sales';
 
 /**
- * Prepared role hierarchy (RBAC soft for pilot).
+ * Prepared role hierarchy (Permission Matrix).
  * CONIS Admin → Project Admin → Builder | Manager | Salesman
  */
 export type PlatformRole =
@@ -16,11 +16,17 @@ export type PlatformRole =
   | 'manager'
   | 'salesman';
 
+/** Account lifecycle — OF-07 Identity. */
+export type PlatformAccountStatus = 'active' | 'inactive';
+
 export type PlatformUser = {
   readonly id: string;
   readonly email: string;
   readonly displayName: string;
   readonly roles: readonly PlatformRole[];
+  readonly status: PlatformAccountStatus;
+  readonly lastLoginAt: string | null;
+  readonly lastActivityAt: string | null;
 };
 
 export type PlatformCompany = {

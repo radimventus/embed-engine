@@ -1,6 +1,7 @@
 export type {
   PlatformStudioId,
   PlatformRole,
+  PlatformAccountStatus,
   PlatformUser,
   PlatformCompany,
   PlatformWorkspace,
@@ -23,6 +24,9 @@ export type {
   PilotReadyCheckId,
   PilotReadyReport,
   PlatformFeedbackPayload,
+  PlatformRoleChangeEntry,
+  PlatformPasswordReset,
+  PlatformPasswordResetStatus,
 } from './domain/pilotTypes';
 
 export {
@@ -63,11 +67,31 @@ export {
 } from './registry/defaults';
 
 export {
+  listUsers,
+  getUser,
+  findUserByEmail,
+  createUser,
+  updateUserProfile,
+  setUserStatus,
+  setUserRoles,
+  setUserPassword,
+  verifyUserPassword,
+  touchUserLogin,
+  touchUserActivity,
+  resetUserRegistry,
+  USER_REGISTRY_STORAGE_KEY,
+} from './registry/userRegistry';
+
+export {
   login,
   logout,
   restoreSession,
   updateSession,
   buildSession,
+  changePassword,
+  startPasswordReset,
+  finishPasswordReset,
+  peekPasswordResetToken,
   type AuthResult,
 } from './session/authService';
 
@@ -101,12 +125,31 @@ export {
 export {
   createPilotInvite,
   findInviteByToken,
+  listInvites,
   listPendingInvites,
+  resendPilotInvite,
+  revokePilotInvite,
   activateInvite,
   findActivatedInviteUser,
+  findActivatedInviteBinding,
   resetInviteStore,
   INVITE_STORAGE_KEY,
 } from './pilot/inviteStore';
+
+export {
+  requestPasswordReset,
+  completePasswordReset,
+  findPasswordResetByToken,
+  resetPasswordResetStore,
+  PASSWORD_RESET_STORAGE_KEY,
+} from './pilot/passwordResetStore';
+
+export {
+  recordRoleChange,
+  listRoleChangeHistory,
+  resetIdentityAudit,
+  ROLE_AUDIT_STORAGE_KEY,
+} from './pilot/identityAudit';
 
 export {
   provisionPilotWorkspace,
@@ -184,5 +227,6 @@ export { AuthShell } from './react/AuthShell';
 export { InviteShell } from './react/InviteShell';
 export { PlatformLanding } from './react/PlatformLanding';
 export { PlatformAccessRoot } from './react/PlatformAccessRoot';
+export { IdentityAccessCenter } from './react/IdentityAccessCenter';
 export { GmReadinessCenter } from './react/GmReadinessCenter';
 export { GaReadinessCenter } from './react/GaReadinessCenter';

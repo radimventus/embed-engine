@@ -8,9 +8,9 @@ import {
   listRecentActivity,
   recordPlatformActivity,
 } from '../pilot/pilotDiagnostics';
-import { createPilotInvite, listPendingInvites } from '../pilot/inviteStore';
 import { provisionPilotWorkspace } from '../pilot/provisionPilotWorkspace';
 import { GaReadinessCenter } from './GaReadinessCenter';
+import { IdentityAccessCenter } from './IdentityAccessCenter';
 import { usePlatformSession } from './SessionProvider';
 
 const STUDIO_ORDER: readonly {
@@ -37,9 +37,6 @@ export function PlatformLanding() {
     logout,
     refreshRegistry,
   } = usePlatformSession();
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteName, setInviteName] = useState('');
-  const [inviteToken, setInviteToken] = useState<string | null>(null);
   const [pilotFirm, setPilotFirm] = useState('');
   const [pilotMessage, setPilotMessage] = useState<string | null>(null);
 
@@ -48,7 +45,6 @@ export function PlatformLanding() {
     [session],
   );
   const activity = useMemo(() => listRecentActivity(5), [session?.lastLoginAt]);
-  const pendingInvites = listPendingInvites();
   const tenantBoot = session !== null ? bootstrapTenant(session) : null;
 
   if (session === null || bootstrap === null) {
@@ -182,67 +178,11 @@ export function PlatformLanding() {
 
         {isAdmin && <GaReadinessCenter />}
 
+        {isAdmin && <IdentityAccessCenter />}
+
         {isAdmin && (
           <section className="platform-access__dashboard-slot">
-            <p className="platform-access__demos-title">Pozvat uživatele</p>
-            <form
-              className="platform-access__form"
-              onSubmit={(event: FormEvent) => {
-                event.preventDefault();
-                const invite = createPilotInvite({
-                  email: inviteEmail,
-                  displayName: inviteName || inviteEmail,
-                  roles: ['builder'],
-                  invitedByUserId: session.user.id,
-                  tenantId: session.tenantId,
-                  companyId: session.companyId,
-                  workspaceId: session.workspaceId,
-                });
-                setInviteToken(invite.token);
-                setInviteEmail('');
-                setInviteName('');
-                recordPlatformActivity({
-                  label: 'Pozvánka',
-                  detail: invite.email,
-                });
-              }}
-            >
-              <label className="platform-access__label">
-                Jméno
-                <input
-                  className="platform-access__input"
-                  value={inviteName}
-                  onChange={(event) => setInviteName(event.target.value)}
-                />
-              </label>
-              <label className="platform-access__label">
-                E-mail
-                <input
-                  className="platform-access__input"
-                  type="email"
-                  required
-                  value={inviteEmail}
-                  onChange={(event) => setInviteEmail(event.target.value)}
-                />
-              </label>
-              <button className="platform-access__submit" type="submit">
-                Poslat pozvánku
-              </button>
-            </form>
-            {inviteToken !== null && (
-              <p className="platform-access__lead">
-                Token pro aktivaci: <code>{inviteToken}</code>
-              </p>
-            )}
-            {pendingInvites.length > 0 && (
-              <p className="platform-access__lead">
-                Čekající pozvánky: {pendingInvites.length}
-              </p>
-            )}
-
-            <p className="platform-access__demos-title" style={{ marginTop: 16 }}>
-              Zřídit pilotní firmu
-            </p>
+            <p className="platform-access__demos-title">Zřídit pilotní firmu</p>
             <form
               className="platform-access__form"
               onSubmit={(event: FormEvent) => {

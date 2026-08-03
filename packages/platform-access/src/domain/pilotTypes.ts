@@ -34,6 +34,32 @@ export type PilotInvite = {
   readonly createdAt: string;
   readonly activatedAt: string | null;
   readonly invitedByUserId: string;
+  /** Last invitation e-mail send (MVP local delivery stamp). */
+  readonly lastSentAt: string;
+  readonly sendCount: number;
+};
+
+/** OF-07 — immutable role-change audit entry. */
+export type PlatformRoleChangeEntry = {
+  readonly id: string;
+  readonly userId: string;
+  readonly at: string;
+  readonly previousRoles: readonly PlatformRole[];
+  readonly nextRoles: readonly PlatformRole[];
+  readonly changedByUserId: string;
+  readonly detail: string;
+};
+
+export type PlatformPasswordResetStatus = 'pending' | 'used' | 'expired';
+
+/** OF-07 — password reset token (MVP local). */
+export type PlatformPasswordReset = {
+  readonly id: string;
+  readonly email: string;
+  readonly token: string;
+  readonly status: PlatformPasswordResetStatus;
+  readonly createdAt: string;
+  readonly usedAt: string | null;
 };
 
 export type TenantBootstrap = {
