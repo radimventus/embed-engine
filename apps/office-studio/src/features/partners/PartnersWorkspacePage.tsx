@@ -8,6 +8,35 @@ import {
   PlatformCard,
   PlatformStatusBadge,
 } from '@embed-engine/platform-shell';
+
+import {
+  filterPartners,
+  type PartnerStatusFilter,
+} from '../../office/officePartnerFilters';
+import {
+  OFFICE_PARTNER_STATUS_ORDER,
+  officePartnerStatusLabel,
+  officePartnerStatusTone,
+  type OfficePartner,
+  type OfficePartnerDraft,
+} from '../../office/officePartnerModel';
+import {
+  applyPartnerQuickAction,
+  createPartner,
+  draftFromPartner,
+  emptyPartnerDraft,
+  getPartner,
+  listPartners,
+  type PartnerQuickActionId,
+  updatePartner,
+} from '../../office/officePartnerRegistry';
+import { preparePilotForPartner } from '../../office/preparePilotProvisioning';
+import {
+  archivePartnerEnvironment,
+  restorePartnerEnvironment,
+  suspendPartnerEnvironment,
+} from '../../office/officePartnerEnvironmentLifecycle';
+import { buildOfficePartnerEnvironment } from '../../office/officePartnerEnvironment';
 import {
   buildPilotDeliveryPreview,
   deliverPilot,
