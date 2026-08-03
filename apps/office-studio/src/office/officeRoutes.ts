@@ -42,6 +42,7 @@ const PARTNER_SCOPED_ROUTES: ReadonlySet<OfficeRouteId> = new Set([
   'partners',
   'sales',
   'documents',
+  'implementation',
 ]);
 
 export function officeRouteLabel(routeId: OfficeRouteId): string {

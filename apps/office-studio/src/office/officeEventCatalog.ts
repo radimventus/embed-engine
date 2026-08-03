@@ -16,6 +16,8 @@ export type OfficeEventKind =
   | 'clickwrap.confirmed'
   | 'proforma.issued'
   | 'payment.received'
+  | 'builder.workspace.created'
+  | 'builder.ready'
   | 'builder.opened';
 
 export type OfficeEvent = {

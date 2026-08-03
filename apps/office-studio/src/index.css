@@ -593,8 +593,22 @@ body {
   gap: 16px;
 }
 
+.office-handoff {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1280px;
+}
 
+.office-handoff__link {
+  color: var(--platform-blue, #18428f);
+  font-weight: 600;
+  text-decoration: none;
+}
 
+.office-handoff__link:hover {
+  text-decoration: underline;
+}
 
 @media (max-width: 1100px) {
   .office-dashboard__cards {

@@ -1,6 +1,5 @@
-import { PlatformCard, PlatformEmptyState, PlatformStatusBadge } from '@embed-engine/platform-shell';
+import { PlatformCard } from '@embed-engine/platform-shell';
 
-import { listOfficePartnerSummaries } from '../office/officeDashboardData';
 import {
   formatOfficeEventTime,
   listRecentOfficeEvents,
@@ -11,13 +10,13 @@ import { officeRouteLabel } from '../office/officeRoutes';
 type OfficeSectionPageProps = {
   readonly routeId: Exclude<
     OfficeRouteId,
-    'dashboard' | 'partners' | 'sales' | 'documents'
+    'dashboard' | 'partners' | 'sales' | 'documents' | 'implementation'
   >;
 };
 
 /**
  * OF-01 — Functional section shells for prepared routes.
- * Partner / Sales / Documents workspaces have dedicated pages.
+ * Partner / Sales / Documents / Implementation workspaces have dedicated pages.
  */
 export function OfficeSectionPage({ routeId }: OfficeSectionPageProps) {
   const label = officeRouteLabel(routeId);
@@ -47,45 +46,6 @@ export function OfficeSectionPage({ routeId }: OfficeSectionPageProps) {
               </li>
             ))}
           </ul>
-        </PlatformCard>
-      </div>
-    );
-  }
-
-  if (routeId === 'implementation') {
-    const implementations = listOfficePartnerSummaries().filter(
-      (partner) => partner.status === 'Implementace',
-    );
-    return (
-      <div className="office-section" data-testid={`office-section-${routeId}`}>
-        <header className="office-dashboard__header">
-          <p className="office-dashboard__eyebrow">{label}</p>
-          <h1 className="office-dashboard__title">{label}</h1>
-          <p className="office-dashboard__lead">
-            Probíhající implementace a handoff do Builderu.
-          </p>
-        </header>
-        <PlatformCard title="Probíhající implementace">
-          {implementations.length === 0 ? (
-            <PlatformEmptyState
-              title="Žádná aktivní implementace"
-              description="Jakmile partner vstoupí do implementace, objeví se zde."
-            />
-          ) : (
-            <ul className="office-list">
-              {implementations.map((partner) => (
-                <li key={partner.id} className="office-list__item">
-                  <div>
-                    <p className="office-list__title">{partner.name}</p>
-                    <p className="office-list__meta">{partner.nextStep}</p>
-                  </div>
-                  <PlatformStatusBadge tone="gold">
-                    {partner.status}
-                  </PlatformStatusBadge>
-                </li>
-              ))}
-            </ul>
-          )}
         </PlatformCard>
       </div>
     );

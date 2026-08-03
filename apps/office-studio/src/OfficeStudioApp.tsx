@@ -1,6 +1,6 @@
 /**
  * OF-01 — Office Studio application shell.
- * OF-02 Partner · OF-03 Sales · OF-04 Documents.
+ * OF-02 Partner · OF-03 Sales · OF-04 Documents · OF-05 Builder Handoff.
  */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -20,6 +20,7 @@ import {
 
 import { OfficeSidebar } from './components/OfficeSidebar';
 import { DocumentsWorkspacePage } from './features/documents/DocumentsWorkspacePage';
+import { ImplementationWorkspacePage } from './features/implementation/ImplementationWorkspacePage';
 import { OfficeDashboardPage } from './features/OfficeDashboardPage';
 import { OfficeSectionPage } from './features/OfficeSectionPage';
 import { PartnersWorkspacePage } from './features/partners/PartnersWorkspacePage';
@@ -37,7 +38,11 @@ function readLocation(): OfficeLocation {
   return parseOfficeLocation(window.location.pathname);
 }
 
-type PartnerScopedRoute = 'partners' | 'sales' | 'documents';
+type PartnerScopedRoute =
+  | 'partners'
+  | 'sales'
+  | 'documents'
+  | 'implementation';
 
 export function OfficeStudioApp() {
   const { session, bootstrap, logout, clearStudio, selectStudio } =
@@ -74,7 +79,8 @@ export function OfficeStudioApp() {
   const isPartnerScoped =
     location.routeId === 'partners' ||
     location.routeId === 'sales' ||
-    location.routeId === 'documents';
+    location.routeId === 'documents' ||
+    location.routeId === 'implementation';
 
   const sectionLabel =
     isPartnerScoped && location.partnerId !== null
@@ -146,6 +152,13 @@ export function OfficeStudioApp() {
               selectedPartnerId={location.partnerId}
               onSelectPartner={(partnerId) =>
                 openPartnerScoped('documents', partnerId)
+              }
+            />
+          ) : location.routeId === 'implementation' ? (
+            <ImplementationWorkspacePage
+              selectedPartnerId={location.partnerId}
+              onSelectPartner={(partnerId) =>
+                openPartnerScoped('implementation', partnerId)
               }
             />
           ) : (
