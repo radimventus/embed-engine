@@ -70,7 +70,7 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
       contactEmail: 'anna@pilotdomu.cz',
     });
     assert.ok(prepared !== null);
-    assert.equal(prepared?.packageId, 'pilot-1');
+    assert.equal(prepared?.packageId, 'pilot');
     assert.equal(prepared?.partner.status, 'active');
     assert.equal(
       prepared?.partner.nextStep,
@@ -101,7 +101,7 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
       getPartnerBranding(prepared!.provision.company.id)?.firmName,
       'Pilot Domů',
     );
-    assert.equal(getSalesCase(prepared!.partner.id)?.offer.packageId, 'pilot-1');
+    assert.equal(getSalesCase(prepared!.partner.id)?.offer.packageId, 'pilot');
     assert.equal(getLicense(prepared!.partner.id)?.type, 'pilot');
     assert.equal(isPilotPartnerRoles(prepared!.invite.roles), true);
     assert.equal(canAccessStudio(prepared!.invite.roles, 'manager'), true);

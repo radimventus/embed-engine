@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   PlatformCard,
   PlatformEmptyState,
-  PlatformField,
   PlatformStatusBadge,
 } from '@embed-engine/platform-shell';
 
@@ -13,9 +12,9 @@ import {
   type SalesPipelineFilter,
 } from '../../office/officeSalesFilters';
 import {
+  buildPackageComparison,
   formatCzk,
   getSalesPackage,
-  OFFICE_ORDER_STATUS_LABELS,
   OFFICE_PIPELINE_STAGE_LABELS,
   OFFICE_PIPELINE_STAGE_ORDER,
   OFFICE_SALES_PACKAGES,
@@ -28,10 +27,8 @@ import {
   getSalesCase,
   listSalesCases,
   listWaitingPaymentCases,
-  moveToWaitingPayment,
+  markOfferViewed,
   selectSalesPackage,
-  sendPersonalizedOffer,
-  updatePersonalizedOffer,
 } from '../../office/officeSalesRegistry';
 
 type SalesWorkspacePageProps = {
@@ -40,8 +37,8 @@ type SalesWorkspacePageProps = {
 };
 
 /**
- * OF-03 — Sales Workspace (Click Model MVP).
- * Pipeline · Personalized Offer · Package Selection · Order · Waiting Payment.
+ * PE-09 — Pilot Offer & Checkout.
+ * Package comparison → select → confirm order. No payment gateway.
  */
 export function SalesWorkspacePage({
   selectedPartnerId,
@@ -50,8 +47,6 @@ export function SalesWorkspacePage({
   const [revision, setRevision] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
   const [stageFilter, setStageFilter] = useState<SalesPipelineFilter>('all');
-  const [offerTitle, setOfferTitle] = useState('');
-  const [offerNote, setOfferNote] = useState('');
 
   const cases = useMemo(() => {
     void revision;
@@ -68,6 +63,8 @@ export function SalesWorkspacePage({
     return listWaitingPaymentCases().length;
   }, [revision]);
 
+  const comparison = useMemo(() => buildPackageComparison(), []);
+
   const activeCase: OfficeSalesCase | null =
     (selectedPartnerId !== null
       ? getSalesCase(selectedPartnerId)
@@ -77,8 +74,10 @@ export function SalesWorkspacePage({
 
   useEffect(() => {
     if (activeCase === null) return;
-    setOfferTitle(activeCase.offer.title);
-    setOfferNote(activeCase.offer.personalNote);
+    const current = getSalesCase(activeCase.partnerId);
+    if (current?.offer.viewedAt != null) return;
+    markOfferViewed(activeCase.partnerId);
+    setRevision((value) => value + 1);
   }, [activeCase?.partnerId]);
 
   function bump() {
@@ -91,15 +90,19 @@ export function SalesWorkspacePage({
     activeCase?.offer.packageId != null
       ? getSalesPackage(activeCase.offer.packageId)
       : null;
+  const orderReady =
+    activeCase !== null &&
+    activeCase.offer.packageId !== null &&
+    activeCase.order === null;
 
   return (
     <div className="office-sales" data-testid="office-sales-workspace">
       <header className="office-dashboard__header">
         <p className="office-dashboard__eyebrow">Obchod</p>
-        <h1 className="office-dashboard__title">Sales Workspace</h1>
+        <h1 className="office-dashboard__title">Pilot Offer & Checkout</h1>
         <p className="office-dashboard__lead">
-          Obchodní proces od personalizované nabídky přes pipeline až po Waiting
-          Payment. Vstupní entitou je Partner.
+          Porovnejte balíčky, vyberte Pilot / Starter / Studio Partner a potvrďte
+          objednávku bez platební brány.
         </p>
       </header>
 
@@ -200,18 +203,18 @@ export function SalesWorkspacePage({
           {activeCase === null || partner === null ? (
             <PlatformEmptyState
               title="Vyberte partnera v pipeline"
-              description="Sales Workspace pracuje s Partnerem jako vstupní entitou."
+              description="Pilot Offer pracuje s Partnerem jako vstupní entitou."
             />
           ) : (
             <>
               <header className="office-partner-detail__header">
                 <div>
-                  <p className="office-dashboard__eyebrow">Offer Detail</p>
+                  <p className="office-dashboard__eyebrow">Pilot Offer</p>
                   <h2 className="office-partner-detail__name">
                     {partner.name}
                   </h2>
                   <p className="office-partner-detail__next">
-                    {OFFICE_PIPELINE_STAGE_LABELS[activeCase.stage]}
+                    {partner.nextStep}
                   </p>
                 </div>
                 <PlatformStatusBadge
@@ -222,38 +225,8 @@ export function SalesWorkspacePage({
               </header>
 
               <PlatformCard
-                title="Personalized Offer"
-                description="Personalizace nabídky pro partnera"
-              >
-                <div className="office-sales__offer-form">
-                  <PlatformField label="Titulek nabídky">
-                    <input
-                      value={offerTitle}
-                      onChange={(event) => setOfferTitle(event.target.value)}
-                      data-testid="office-offer-title"
-                    />
-                  </PlatformField>
-                  <PlatformField label="Personalizovaná zpráva">
-                    <textarea
-                      rows={3}
-                      value={offerNote}
-                      onChange={(event) => setOfferNote(event.target.value)}
-                      data-testid="office-offer-note"
-                    />
-                  </PlatformField>
-                  <p className="office-list__meta">
-                    Stav nabídky:{' '}
-                    <strong>{activeCase.offer.status}</strong>
-                    {selectedPackage !== null
-                      ? ` · ${selectedPackage.name}`
-                      : ' · bez balíčku'}
-                  </p>
-                </div>
-              </PlatformCard>
-
-              <PlatformCard
-                title="Package Selection"
-                description="Výběr obchodního balíčku"
+                title="Pilot Offer"
+                description="Balíčky Pilot · Starter · Studio Partner"
               >
                 <div className="office-sales__packages" role="list">
                   {OFFICE_SALES_PACKAGES.map((pkg) => {
@@ -279,12 +252,17 @@ export function SalesWorkspacePage({
                       >
                         <span className="office-sales__package-name">
                           {pkg.name}
+                          {pkg.recommended ? (
+                            <span className="office-sales__package-badge">
+                              doporučeno
+                            </span>
+                          ) : null}
                         </span>
                         <span className="office-sales__package-price">
                           {formatCzk(pkg.priceCzk)}
                         </span>
                         <span className="office-sales__package-meta">
-                          {pkg.housesLabel} · {pkg.summary}
+                          {pkg.housesLabel} · {pkg.trialDays} dní · {pkg.summary}
                         </span>
                       </button>
                     );
@@ -292,148 +270,111 @@ export function SalesWorkspacePage({
                 </div>
               </PlatformCard>
 
-              <div className="office-partner-detail__cards">
-                <PlatformCard title="Order Summary">
-                  {activeCase.order === null ? (
-                    <PlatformEmptyState
-                      title="Objednávka ještě není"
-                      description="Po potvrzení nabídky se zobrazí souhrn objednávky."
-                    />
-                  ) : (
+              <PlatformCard
+                title="Package Comparison"
+                description="Funkce a rozdíly mezi balíčky"
+              >
+                <div
+                  className="office-sales__comparison-wrap"
+                  data-testid="package-comparison"
+                >
+                  <table className="office-sales__comparison">
+                    <thead>
+                      <tr>
+                        <th scope="col">Funkce</th>
+                        {OFFICE_SALES_PACKAGES.map((pkg) => (
+                          <th key={pkg.id} scope="col">
+                            {pkg.name}
+                            {pkg.recommended ? ' ★' : ''}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {comparison.map((row) => (
+                        <tr key={row.featureId}>
+                          <th scope="row">{row.label}</th>
+                          <td>{row.values.pilot}</td>
+                          <td>{row.values.starter}</td>
+                          <td>{row.values['studio-partner']}</td>
+                        </tr>
+                      ))}
+                      <tr>
+                        <th scope="row">Cena</th>
+                        {OFFICE_SALES_PACKAGES.map((pkg) => (
+                          <td key={pkg.id}>{formatCzk(pkg.priceCzk)}</td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </PlatformCard>
+
+              <PlatformCard
+                title="Checkout"
+                description="MVP — výběr balíčku a potvrzení objednávky bez platební brány"
+                className="pilot-checkout"
+              >
+                {selectedPackage === null ? (
+                  <PlatformEmptyState
+                    title="Nejprve vyberte balíček"
+                    description="Po výběru potvrďte objednávku v checkoutu."
+                  />
+                ) : (
+                  <div
+                    className="office-sales__checkout"
+                    data-testid="pilot-checkout"
+                  >
                     <dl className="office-partner-dl">
-                      <div>
-                        <dt>Balíček</dt>
-                        <dd>
-                          {getSalesPackage(activeCase.order.packageId).name}
-                        </dd>
-                      </div>
-                      <div>
-                        <dt>Částka</dt>
-                        <dd>{formatCzk(activeCase.order.amountCzk)}</dd>
-                      </div>
                       <div>
                         <dt>Partner</dt>
                         <dd>{partner.name}</dd>
                       </div>
                       <div>
-                        <dt>Nabídka</dt>
-                        <dd>{activeCase.offer.title}</dd>
+                        <dt>Balíček</dt>
+                        <dd>{selectedPackage.name}</dd>
+                      </div>
+                      <div>
+                        <dt>Cena</dt>
+                        <dd>{formatCzk(selectedPackage.priceCzk)}</dd>
+                      </div>
+                      <div>
+                        <dt>Licence</dt>
+                        <dd>{selectedPackage.housesLabel}</dd>
+                      </div>
+                      <div>
+                        <dt>Objednávka</dt>
+                        <dd>
+                          {activeCase.order !== null
+                            ? `Potvrzena · ${formatCzk(activeCase.order.amountCzk)}`
+                            : 'Připravena k potvrzení'}
+                        </dd>
                       </div>
                     </dl>
-                  )}
-                </PlatformCard>
-
-                <PlatformCard title="Order Status">
-                  {activeCase.order === null ? (
-                    <p className="office-list__meta">Bez aktivní objednávky</p>
-                  ) : (
-                    <div className="office-sales__order-status">
-                      <PlatformStatusBadge
-                        tone={
-                          activeCase.order.status === 'waiting_payment'
-                            ? 'gold'
-                            : 'warning'
-                        }
+                    <div
+                      className="office-partner-actions"
+                      role="group"
+                      aria-label="Checkout actions"
+                    >
+                      <button
+                        type="button"
+                        className="platform-btn platform-btn--sm platform-btn--primary"
+                        disabled={!orderReady}
+                        onClick={() => {
+                          confirmSalesOrder(activeCase.partnerId);
+                          bump();
+                        }}
+                        data-testid="office-sales-confirm-order"
                       >
-                        {OFFICE_ORDER_STATUS_LABELS[activeCase.order.status]}
-                      </PlatformStatusBadge>
-                      <p className="office-list__meta">
-                        Potvrzeno:{' '}
-                        {new Date(
-                          activeCase.order.confirmedAt,
-                        ).toLocaleString('cs-CZ')}
-                      </p>
+                        Potvrdit objednávku
+                      </button>
                     </div>
-                  )}
-                </PlatformCard>
-              </div>
-
-              <PlatformCard
-                title="Waiting Payment"
-                description="Provozní fronta čekající na platbu (bez PaymentReceived)"
-              >
-                {activeCase.stage === 'waiting_payment' &&
-                activeCase.order !== null ? (
-                  <div className="office-sales__waiting">
-                    <p className="office-dashboard__metric">
-                      {formatCzk(activeCase.order.amountCzk)}
-                    </p>
                     <p className="office-dashboard__hint">
-                      Čeká na úhradu · {partner.name}
+                      Bez platební brány a bez fakturace — pouze obchodní stav a
+                      Timeline.
                     </p>
                   </div>
-                ) : (
-                  <PlatformEmptyState
-                    title="Není ve Waiting Payment"
-                    description="Přesuňte potvrzenou objednávku Quick Action do Waiting Payment."
-                  />
                 )}
-              </PlatformCard>
-
-              <PlatformCard
-                title="Quick Actions"
-                description="Obchodní kroky Click Model (bez PDF / e-mailu / handoff)"
-              >
-                <div
-                  className="office-partner-actions"
-                  role="group"
-                  aria-label="Sales Quick Actions"
-                >
-                  <button
-                    type="button"
-                    className="platform-btn platform-btn--sm"
-                    onClick={() => {
-                      updatePersonalizedOffer(activeCase.partnerId, {
-                        title: offerTitle,
-                        personalNote: offerNote,
-                      });
-                      bump();
-                    }}
-                    data-testid="office-sales-save-offer"
-                  >
-                    Uložit nabídku
-                  </button>
-                  <button
-                    type="button"
-                    className="platform-btn platform-btn--sm platform-btn--primary"
-                    disabled={activeCase.offer.packageId === null}
-                    onClick={() => {
-                      updatePersonalizedOffer(activeCase.partnerId, {
-                        title: offerTitle,
-                        personalNote: offerNote,
-                      });
-                      sendPersonalizedOffer(activeCase.partnerId);
-                      bump();
-                    }}
-                    data-testid="office-sales-send-offer"
-                  >
-                    Odeslat nabídku
-                  </button>
-                  <button
-                    type="button"
-                    className="platform-btn platform-btn--sm"
-                    disabled={activeCase.offer.packageId === null}
-                    onClick={() => {
-                      confirmSalesOrder(activeCase.partnerId);
-                      bump();
-                    }}
-                    data-testid="office-sales-confirm-order"
-                  >
-                    Potvrdit objednávku
-                  </button>
-                  <button
-                    type="button"
-                    className="platform-btn platform-btn--sm"
-                    disabled={activeCase.order === null}
-                    onClick={() => {
-                      moveToWaitingPayment(activeCase.partnerId);
-                      bump();
-                    }}
-                    data-testid="office-sales-waiting-payment"
-                  >
-                    Waiting Payment
-                  </button>
-                </div>
               </PlatformCard>
             </>
           )}

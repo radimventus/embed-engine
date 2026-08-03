@@ -84,9 +84,11 @@ export function validatePilotRuntime(
     ),
     step(
       'offer',
-      sales?.offer.status === 'sent' && sales.offer.packageId !== null,
-      sales?.offer.status === 'sent'
-        ? `Nabídka odeslána · ${sales.offer.packageId}`
+      (sales?.offer.status === 'sent' ||
+        sales?.offer.status === 'accepted') &&
+        sales.offer.packageId !== null,
+      sales?.offer.packageId != null
+        ? `Nabídka · ${sales.offer.status} · ${sales.offer.packageId}`
         : 'Nabídka není odeslána',
     ),
     step(
@@ -236,7 +238,7 @@ export function runPilotRuntime(input?: {
     title: `Personalizovaná nabídka · ${partner.name}`,
     personalNote: `OF-06 Pilot Runtime nabídka pro ${partner.name}.`,
   });
-  selectSalesPackage(partner.id, 'pilot-1');
+  selectSalesPackage(partner.id, 'pilot');
   sendPersonalizedOffer(partner.id);
 
   prepareDocumentPackage(partner.id);

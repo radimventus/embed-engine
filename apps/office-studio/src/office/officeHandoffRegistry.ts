@@ -55,8 +55,8 @@ function buildBuilderWorkspace(
     readonly projectId: string;
   },
 ): OfficeBuilderWorkspace {
-  const packageId = context.packageId ?? 'pilot-1';
-  const packageLabel = context.packageLabel ?? getSalesPackage('pilot-1').name;
+  const packageId = context.packageId ?? 'pilot';
+  const packageLabel = context.packageLabel ?? getSalesPackage('pilot').name;
   const objectId = `object-${partnerId}-p1`;
   return {
     id: provisioned.workspaceId,
@@ -85,9 +85,9 @@ const SEED_HANDOFFS: readonly OfficeHandoffSummary[] = Object.freeze([
       partnerName: 'Blokki',
       companyLegalName: 'Blokki s.r.o.',
       contactEmail: 'jan@blokki.cz',
-      packageId: 'pilot-1',
-      packageLabel: 'Pilot — 1 dům',
-      amountCzk: 49_000,
+      packageId: 'pilot',
+      packageLabel: 'Pilot',
+      amountCzk: 4_970,
     },
     workspace: {
       id: 'workspace-blokki',
@@ -95,9 +95,9 @@ const SEED_HANDOFFS: readonly OfficeHandoffSummary[] = Object.freeze([
       builderHref: 'http://127.0.0.1:4177/',
       project: {
         id: 'project-blokki-01',
-        name: 'Blokki · Pilot — 1 dům',
-        packageId: 'pilot-1',
-        packageLabel: 'Pilot — 1 dům',
+        name: 'Blokki · Pilot',
+        packageId: 'pilot',
+        packageLabel: 'Pilot',
         object: {
           id: 'object-p-blokki-p1',
           name: 'Blokki P1',

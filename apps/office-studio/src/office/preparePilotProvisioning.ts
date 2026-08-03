@@ -29,6 +29,7 @@ import {
 } from './officePartnerRegistry';
 import { activateLicense } from './officeOperationsRegistry';
 import { getSalesCase, selectSalesPackage } from './officeSalesRegistry';
+import type { OfficePackageId } from './officeSalesModel';
 
 export type PreparePilotResult = {
   readonly partner: OfficePartner;
@@ -37,7 +38,7 @@ export type PreparePilotResult = {
   readonly invite: PilotInvite;
   readonly branding: PartnerBranding;
   readonly environment: PartnerEnvironment;
-  readonly packageId: 'pilot-1' | 'starter-3' | 'studio-partner';
+  readonly packageId: OfficePackageId;
 };
 
 function nowIso(): string {
@@ -85,7 +86,7 @@ export function preparePilotForPartner(
   });
 
   const existingPackage =
-    getSalesCase(partnerId)?.offer.packageId ?? 'pilot-1';
+    getSalesCase(partnerId)?.offer.packageId ?? 'pilot';
   selectSalesPackage(partnerId, existingPackage);
   activateLicense({
     partnerId,

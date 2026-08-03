@@ -29,7 +29,7 @@ describe('officeHandoffRegistry (OF-05)', () => {
     resetSalesRegistryForTests();
     resetHandoffRegistryForTests();
 
-    selectSalesPackage('p-nord', 'pilot-1');
+    selectSalesPackage('p-nord', 'pilot');
     sendPersonalizedOffer('p-nord');
     confirmSalesOrder('p-nord');
     moveToWaitingPayment('p-nord');

@@ -539,6 +539,21 @@ body {
   font-size: 14px;
   font-weight: 700;
   color: var(--platform-navy, #001930);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.office-sales__package-badge {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: lowercase;
+  color: var(--platform-gold, #b8922d);
+  border: 1px solid color-mix(in srgb, var(--platform-gold, #b8922d) 45%, #fff);
+  border-radius: 4px;
+  padding: 1px 6px;
 }
 
 .office-sales__package-price {
@@ -558,6 +573,41 @@ body {
   flex-direction: column;
   gap: 10px;
   align-items: flex-start;
+}
+
+.office-sales__comparison-wrap {
+  overflow-x: auto;
+}
+
+.office-sales__comparison {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.office-sales__comparison th,
+.office-sales__comparison td {
+  border-bottom: 1px solid #e3e3e3;
+  padding: 8px 10px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.office-sales__comparison thead th {
+  font-weight: 700;
+  color: var(--platform-navy, #001930);
+}
+
+.office-sales__comparison tbody th {
+  font-weight: 600;
+  color: var(--platform-navy, #001930);
+  white-space: nowrap;
+}
+
+.office-sales__checkout {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .office-sales__waiting {

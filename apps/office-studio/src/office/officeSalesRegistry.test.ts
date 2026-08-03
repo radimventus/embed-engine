@@ -1,3 +1,7 @@
+/**
+ * PE-09 — Pilot Offer & Checkout: packages, comparison, checkout, timeline.
+ */
+
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
@@ -6,76 +10,99 @@ import {
   resetOfficeEventCatalogForTests,
 } from './officeEventCatalog.ts';
 import {
+  createPartner,
+  getPartner,
   resetPartnerRegistryForTests,
 } from './officePartnerRegistry.ts';
 import {
   confirmSalesOrder,
   getSalesCase,
-  listWaitingPaymentCases,
-  moveToWaitingPayment,
+  markOfferViewed,
   resetSalesRegistryForTests,
   selectSalesPackage,
-  sendPersonalizedOffer,
-  updatePersonalizedOffer,
 } from './officeSalesRegistry.ts';
-import { filterSalesCases } from './officeSalesFilters.ts';
-import { listSalesCases } from './officeSalesRegistry.ts';
+import {
+  buildPackageComparison,
+  formatCzk,
+  getSalesPackage,
+  OFFICE_SALES_PACKAGES,
+} from './officeSalesModel.ts';
 
-describe('officeSalesRegistry (OF-03)', () => {
-  it('personalizes offer and selects package', () => {
+describe('PE-09 Pilot Offer & Checkout', () => {
+  function resetAll() {
     resetPartnerRegistryForTests();
     resetOfficeEventCatalogForTests();
     resetSalesRegistryForTests();
+  }
 
-    const updated = updatePersonalizedOffer('p-nord', {
-      title: 'Nordhaus Pilot Offer',
-      personalNote: 'Personalizovaný pilot pro Nordhaus.',
+  it('exposes Pilot, Starter and Studio Partner with comparison matrix', () => {
+    assert.deepEqual(
+      OFFICE_SALES_PACKAGES.map((pkg) => pkg.id),
+      ['pilot', 'starter', 'studio-partner'],
+    );
+    assert.equal(getSalesPackage('starter').recommended, true);
+    assert.equal(getSalesPackage('pilot').name, 'Pilot');
+    assert.equal(getSalesPackage('studio-partner').name, 'Studio Partner');
+
+    const comparison = buildPackageComparison();
+    assert.ok(comparison.length >= 5);
+    assert.ok(comparison.every((row) => row.values.pilot.length > 0));
+    assert.ok(comparison.every((row) => row.values.starter.length > 0));
+    assert.ok(
+      comparison.every((row) => row.values['studio-partner'].length > 0),
+    );
+    assert.match(formatCzk(4_970), /4.?970/);
+  });
+
+  it('records OfferViewed, PackageSelected and OrderConfirmed on checkout', () => {
+    resetAll();
+    const partner = createPartner({
+      name: 'Offer Co',
+      status: 'lead',
+      nextStep: 'Připravit nabídku',
+      company: {
+        legalName: 'Offer Co',
+        ico: '',
+        city: '',
+        country: 'Česko',
+      },
+      contact: {
+        name: 'Offer',
+        email: 'offer@pilot.local',
+        phone: '',
+        role: 'Jednatel',
+      },
     });
-    assert.equal(updated?.offer.title, 'Nordhaus Pilot Offer');
 
-    const withPackage = selectSalesPackage('p-nord', 'starter-3');
-    assert.equal(withPackage?.offer.packageId, 'starter-3');
-    assert.equal(withPackage?.stage, 'offer_sent');
-    assert.ok(
-      listPartnerTimeline('p-nord').some(
-        (event) => event.kind === 'package.selected',
-      ),
-    );
+    markOfferViewed(partner.id);
+    selectSalesPackage(partner.id, 'starter');
+    const confirmed = confirmSalesOrder(partner.id);
+
+    assert.equal(confirmed?.offer.packageId, 'starter');
+    assert.equal(confirmed?.offer.priceCzk, 14_970);
+    assert.equal(confirmed?.order?.packageId, 'starter');
+    assert.equal(confirmed?.order?.status, 'confirmed');
+    assert.equal(confirmed?.stage, 'order_confirmed');
+    assert.equal(getPartner(partner.id)?.status, 'order');
+
+    const kinds = listPartnerTimeline(partner.id).map((event) => event.kind);
+    assert.ok(kinds.includes('offer.viewed'));
+    assert.ok(kinds.includes('package.selected'));
+    assert.ok(kinds.includes('order.confirmed'));
+
+    const labels = listPartnerTimeline(partner.id).map((event) => event.label);
+    assert.ok(labels.includes('OfferViewed'));
+    assert.ok(labels.includes('PackageSelected'));
+    assert.ok(labels.includes('OrderConfirmed'));
   });
 
-  it('sends offer, confirms order and moves to Waiting Payment', () => {
-    resetPartnerRegistryForTests();
-    resetOfficeEventCatalogForTests();
-    resetSalesRegistryForTests();
-
+  it('normalizes legacy package ids into PE-09 packages', () => {
+    resetAll();
+    selectSalesPackage('p-nord', 'starter-3');
+    assert.equal(getSalesCase('p-nord')?.offer.packageId, 'starter');
     selectSalesPackage('p-nord', 'pilot-1');
-    sendPersonalizedOffer('p-nord');
-    assert.equal(getSalesCase('p-nord')?.stage, 'offer_sent');
-    assert.equal(getSalesCase('p-nord')?.offer.status, 'sent');
-
-    confirmSalesOrder('p-nord');
-    assert.equal(getSalesCase('p-nord')?.stage, 'order_confirmed');
-    assert.ok(getSalesCase('p-nord')?.order !== null);
-
-    moveToWaitingPayment('p-nord');
-    assert.equal(getSalesCase('p-nord')?.stage, 'waiting_payment');
-    assert.equal(getSalesCase('p-nord')?.order?.status, 'waiting_payment');
-    assert.ok(
-      listWaitingPaymentCases().some(
-        (entry) => entry.partnerId === 'p-nord',
-      ),
-    );
-    assert.ok(
-      listPartnerTimeline('p-nord').some(
-        (event) => event.kind === 'payment.waiting',
-      ),
-    );
-  });
-
-  it('filters sales pipeline by stage', () => {
-    resetPartnerRegistryForTests();
-    resetSalesRegistryForTests();
-    const waiting = filterSalesCases(listSalesCases(), '', 'waiting_payment');
-    assert.ok(waiting.every((entry) => entry.stage === 'waiting_payment'));
+    assert.equal(getSalesCase('p-nord')?.offer.packageId, 'pilot');
+    selectSalesPackage('p-nord', 'pilot-max');
+    assert.equal(getSalesCase('p-nord')?.offer.packageId, 'studio-partner');
   });
 });
