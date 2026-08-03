@@ -112,6 +112,15 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
     assert.match(pkg, /@embed-engine\/platform-access/);
   });
 
+  it('VR-05 — PE mode does not render Legacy Platform Studio Switcher', () => {
+    const app = readFileSync(join(root, 'OfficeStudioApp.tsx'), 'utf8');
+    assert.match(app, /isOperatorWorkspaceMode/);
+    assert.match(
+      app,
+      /if \(isOperatorWorkspaceMode\(\)\) \{\s*return workspaceBody;/,
+    );
+  });
+
   it('does not ship Coming Soon placeholders', () => {
     const section = readFileSync(
       join(root, 'features/OfficeSectionPage.tsx'),

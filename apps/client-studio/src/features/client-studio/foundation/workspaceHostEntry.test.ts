@@ -1,5 +1,5 @@
 /**
- * OF-14A — Workspace Host must not open partner Hero / Welcome landing.
+ * PT-VR-06 — Workspace hosts Client Studio without mutating its Experience.
  */
 
 import assert from 'node:assert/strict';
@@ -10,19 +10,24 @@ import { describe, it } from 'node:test';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const page = readFileSync(join(here, '../ClientStudioPage.tsx'), 'utf8');
-const hostHelper = readFileSync(join(here, 'conisWorkspaceHost.ts'), 'utf8');
+const header = readFileSync(join(here, '../ClientStudioHeader.tsx'), 'utf8');
 
-describe('OF-14A Workspace Host Client entry', () => {
-  it('detects CONIS Workspace Host without touching partner Embed Host', () => {
-    assert.match(hostHelper, /conisWorkspaceHost/);
-    assert.match(hostHelper, /dataset\.conisWorkspaceHost/);
+describe('PT-VR-06 Client Studio boundaries', () => {
+  it('does not branch Experience on Workspace Host', () => {
+    assert.doesNotMatch(page, /isConisWorkspaceHost/);
+    assert.doesNotMatch(page, /workspaceHost/);
+    assert.doesNotMatch(page, /conisWorkspaceHost/);
+    assert.match(page, /useState\(1\)/);
+    assert.match(page, /useState\(false\)/);
+    assert.match(page, /CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG/);
+    assert.match(page, /<Hero \/>/);
+    assert.match(page, /ClientStudioWelcomeBridge/);
   });
 
-  it('skips Hero landing and Welcome Bridge on Workspace Host', () => {
-    assert.match(page, /isConisWorkspaceHost/);
-    assert.match(page, /workspaceHost \? 2 : 1/);
-    assert.match(page, /!workspaceHost \? \(/);
-    assert.match(page, /<Hero \/>/);
-    assert.match(page, /triggers:\s*Object\.freeze\(\[\]\)/);
+  it('keeps Experience header free of Workspace switcher', () => {
+    assert.doesNotMatch(header, /WorkspaceStudioNavigation/);
+    assert.doesNotMatch(header, /isOperatorWorkspaceMode/);
+    assert.doesNotMatch(header, /isConisWorkspaceHost/);
+    assert.match(header, /data-experience-header/);
   });
 });

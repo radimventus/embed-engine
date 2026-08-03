@@ -12,6 +12,7 @@ import {
   submitPlatformFeedback,
   usePlatformSession,
   isWorkspaceShellEmbed,
+  isOperatorWorkspaceMode,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -155,6 +156,13 @@ export function OfficeStudioApp() {
   );
 
   if (isWorkspaceShellEmbed()) {
+    return workspaceBody;
+  }
+
+  // VR-05 — PE mode never shows Legacy Platform Studio Switcher.
+  // Open Partner Environment must leave Office chrome for Workspace Host;
+  // if Office still paints under PE, hide the legacy switcher (Office-first, no Client).
+  if (isOperatorWorkspaceMode()) {
     return workspaceBody;
   }
 

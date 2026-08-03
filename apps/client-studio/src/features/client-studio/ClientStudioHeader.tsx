@@ -3,8 +3,6 @@ import { useEffect, useState } from 'react';
 import {
   loadPlatformSession,
   projectPartnerBrand,
-  isOperatorWorkspaceMode,
-  WorkspaceStudioNavigation,
   type StudioBrandProjection,
 } from '@embed-engine/platform-access';
 
@@ -13,7 +11,6 @@ import actionPdfUrl from '../../assets/icons/action-pdf.png';
 
 import { AstavLogo } from './AstavLogo';
 import { formatExperienceHeaderTitle } from './foundation/formatExperienceHeaderTitle';
-import { isConisWorkspaceHost } from './foundation/conisWorkspaceHost';
 import { HeaderContactMenu } from './header/HeaderContactMenu';
 import { HeaderSaveMenu } from './header/HeaderSaveMenu';
 
@@ -35,7 +32,6 @@ function resolveClientBrand(): StudioBrandProjection {
 export function ClientStudioHeader() {
   const [title, setTitle] = useState('Client Studio');
   const [logoLabel, setLogoLabel] = useState('ASTAV');
-  const onWorkspaceHost = isConisWorkspaceHost();
 
   useEffect(() => {
     const root = document.querySelector<HTMLElement>('[data-client-studio-root]');
@@ -46,14 +42,10 @@ export function ClientStudioHeader() {
   }, []);
 
   return (
-    <>
-      {!onWorkspaceHost && isOperatorWorkspaceMode() ? (
-        <WorkspaceStudioNavigation activeSurface="client" />
-      ) : null}
-      <header
-        data-experience-header=""
-        className="relative sticky top-0 z-50 shrink-0 border-b border-embed-border-default bg-embed-background-primary pt-[env(safe-area-inset-top,0px)]"
-      >
+    <header
+      data-experience-header=""
+      className="relative sticky top-0 z-50 shrink-0 border-b border-embed-border-default bg-embed-background-primary pt-[env(safe-area-inset-top,0px)]"
+    >
       <div className="mx-auto grid h-header w-full min-w-0 max-w-none grid-cols-[1fr_auto_1fr] items-center px-section desktop:w-canvas desktop:max-w-canvas">
         <div className="justify-self-start">
           <AstavLogo label={logoLabel} />
@@ -92,6 +84,5 @@ export function ClientStudioHeader() {
         </div>
       </div>
     </header>
-    </>
   );
 }

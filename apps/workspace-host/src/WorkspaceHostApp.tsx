@@ -1,6 +1,7 @@
 /**
- * VR-04 — Canonical CONIS Workspace Shell.
- * One shell · studio switch changes only the work view · no cross-app hops.
+ * VR-04 / PT-VR-06 — Canonical CONIS Workspace Shell.
+ * Workspace = context only (partner · project · switcher · user).
+ * Studios own their UI — host does not redesign them.
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -44,7 +45,7 @@ function studioFrameSrc(
 }
 
 /**
- * Shared Workspace Shell — header + switcher + active studio view.
+ * Shared Workspace Shell — hosts studios without modifying their layouts.
  */
 export function WorkspaceHostApp() {
   const [surface, setSurface] = useState<WorkspaceStudioSurface>(readActiveSurface);
@@ -67,17 +68,6 @@ export function WorkspaceHostApp() {
     });
     if (!result.ok) return;
     setSurface(next);
-  }, []);
-
-  useEffect(() => {
-    if (getSharedWorkspaceContext() === null) {
-      window.location.replace(resolveCloudStudioHref('office'));
-      return;
-    }
-    document.documentElement.dataset.conisWorkspaceHost = '1';
-    return () => {
-      delete document.documentElement.dataset.conisWorkspaceHost;
-    };
   }, []);
 
   useEffect(() => {
@@ -130,61 +120,52 @@ export function WorkspaceHostApp() {
     <div
       className="workspace-shell"
       data-testid="workspace-host"
-      data-conis-workspace-host=""
       data-workspace-surface={surface}
     >
       <header className="workspace-shell__header" data-testid="workspace-shell-header">
-        <div className="workspace-shell__context">
-          <p className="workspace-shell__partner" data-testid="workspace-shell-partner">
-            {brand.personalized ? brand.companyName : ctx.companyId}
-          </p>
-          <p className="workspace-shell__project" data-testid="workspace-shell-project">
-            Projekt · {projectLabel}
-          </p>
+        <div className="workspace-shell__top">
+          <div className="workspace-shell__context">
+            <p className="workspace-shell__partner" data-testid="workspace-shell-partner">
+              {brand.personalized ? brand.companyName : ctx.companyId}
+            </p>
+            <p className="workspace-shell__project" data-testid="workspace-shell-project">
+              Projekt · {projectLabel}
+            </p>
+          </div>
+          <div className="workspace-shell__user">
+            <span data-testid="workspace-shell-user">{session.user.displayName}</span>
+            <button
+              type="button"
+              className="workspace-shell__logout"
+              onClick={handleLogout}
+            >
+              Odhlásit
+            </button>
+          </div>
         </div>
         <WorkspaceStudioNavigation
           activeSurface={surface}
           onSelectSurface={selectSurface}
         />
-        <div className="workspace-shell__user">
-          <span data-testid="workspace-shell-user">{session.user.displayName}</span>
-          <button
-            type="button"
-            className="workspace-shell__logout"
-            onClick={handleLogout}
-          >
-            Odhlásit
-          </button>
-        </div>
       </header>
 
-      <div className="workspace-shell__body">
-        <aside className="workspace-shell__rail" aria-label="Workspace Context">
-          <p className="workspace-shell__rail-label">Workspace</p>
-          <p className="workspace-shell__rail-value">
-            {WORKSPACE_STUDIO_LABELS[surface]}
-          </p>
-          <p className="workspace-shell__rail-meta">{ctx.workspaceId}</p>
-        </aside>
-
-        <main className="workspace-shell__main" data-testid="workspace-shell-main">
-          {surface === 'client' ? (
-            <div
-              id={CLIENT_MOUNT_ID}
-              className="workspace-shell__view"
-              data-testid="workspace-host-client-root"
-            />
-          ) : (
-            <iframe
-              key={surface}
-              className="workspace-shell__view workspace-shell__frame"
-              title={WORKSPACE_STUDIO_LABELS[surface]}
-              src={studioFrameSrc(surface)}
-              data-testid={`workspace-shell-frame-${surface}`}
-            />
-          )}
-        </main>
-      </div>
+      <main className="workspace-shell__main" data-testid="workspace-shell-main">
+        {surface === 'client' ? (
+          <div
+            id={CLIENT_MOUNT_ID}
+            className="workspace-shell__view"
+            data-testid="workspace-host-client-root"
+          />
+        ) : (
+          <iframe
+            key={surface}
+            className="workspace-shell__view workspace-shell__frame"
+            title={WORKSPACE_STUDIO_LABELS[surface]}
+            src={studioFrameSrc(surface)}
+            data-testid={`workspace-shell-frame-${surface}`}
+          />
+        )}
+      </main>
     </div>
   );
 }

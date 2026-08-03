@@ -21,7 +21,6 @@ import {
   scrollToSection,
   useActiveSection,
 } from './foundation';
-import { isConisWorkspaceHost } from './foundation/conisWorkspaceHost';
 import { LegacyCommandExperience } from './legacy/LegacyCommandExperience';
 import { AIAdvisor } from './sections/AIAdvisor/AIAdvisor';
 import { Hero } from './sections/Hero/Hero';
@@ -64,18 +63,14 @@ export function ClientStudioPage({
   runtime,
 }: ClientStudioPageProps) {
   const scenes = decisionJourneyScenes();
-  /** OF-14A — Workspace Host skips partner Hero landing; Client opens at Priority. */
-  const workspaceHost = isConisWorkspaceHost();
-  const [revealedSceneCount, setRevealedSceneCount] = useState(
-    workspaceHost ? 2 : 1,
-  );
+  const [revealedSceneCount, setRevealedSceneCount] = useState(1);
   const [pendingSceneId, setPendingSceneId] = useState<string | null>(null);
   const [isSceneTransitioning, setIsSceneTransitioning] = useState(false);
   const visibleSceneIds = scenes
     .slice(0, revealedSceneCount)
     .map((scene) => scene.id);
   const activeSceneId = useActiveSection(visibleSceneIds);
-  const [snapEnabled, setSnapEnabled] = useState(workspaceHost);
+  const [snapEnabled, setSnapEnabled] = useState(false);
 
   useEffect(() => {
     if (activeSceneId !== scenes[0]?.id) {
@@ -131,12 +126,7 @@ export function ClientStudioPage({
   }, []);
 
   const welcomeBridge = useWelcomeBridgeController({
-    config: workspaceHost
-      ? {
-          ...CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,
-          triggers: Object.freeze([]),
-        }
-      : CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,
+    config: CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,
     prioritySceneId: scenes[1]?.id ?? 'journey-scene-interpretation',
     onEnterPriority: enterPriorityScene,
   });
@@ -171,26 +161,24 @@ export function ClientStudioPage({
                     onContinue={onLegacyContinue}
                   />
                 ) : null}
-                {!workspaceHost ? (
-                  <JourneySceneFrame
-                    sceneId={scenes[0]!.id}
-                    nextSceneId={scenes[1]?.id}
-                    onNavigate={handleSceneNavigate}
-                    reserveScrollSpace={revealedSceneCount === 1}
-                    pinFooterToBottom={false}
-                    footerLeading={
-                      <ClientStudioWelcomeBridge
-                        open={welcomeBridge.open}
-                        onContinue={welcomeBridge.continueToPriority}
-                        onDismiss={welcomeBridge.dismiss}
-                      />
-                    }
-                  >
-                    <Hero />
-                    <ChapterSpacer />
-                    <SpatialTerminal />
-                  </JourneySceneFrame>
-                ) : null}
+                <JourneySceneFrame
+                  sceneId={scenes[0]!.id}
+                  nextSceneId={scenes[1]?.id}
+                  onNavigate={handleSceneNavigate}
+                  reserveScrollSpace={revealedSceneCount === 1}
+                  pinFooterToBottom={false}
+                  footerLeading={
+                    <ClientStudioWelcomeBridge
+                      open={welcomeBridge.open}
+                      onContinue={welcomeBridge.continueToPriority}
+                      onDismiss={welcomeBridge.dismiss}
+                    />
+                  }
+                >
+                  <Hero />
+                  <ChapterSpacer />
+                  <SpatialTerminal />
+                </JourneySceneFrame>
                 {revealedSceneCount >= 2 ? (
                   <PriorityExperienceProvider>
                     <JourneySceneFrame
