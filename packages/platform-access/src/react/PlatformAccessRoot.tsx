@@ -1,11 +1,14 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
+import { resolveCloudStudioHref } from '../cloud/cloudConfig';
 import type { PlatformStudioId } from '../domain/types';
+import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation';
 import { getOperatorPartnerEnvironment } from '../pilot/operatorPartnerEnvironment';
+import { updateSession } from '../session/authService';
 import { AuthShell } from './AuthShell';
 import { InviteShell } from './InviteShell';
-import { OperatorPartnerEnvironmentBar } from './OperatorPartnerEnvironmentBar';
+import { WorkspaceStudioNavigation } from './OperatorPartnerEnvironmentBar';
 import { PlatformLanding } from './PlatformLanding';
 import { SessionProvider, usePlatformSession } from './SessionProvider';
 
@@ -20,14 +23,17 @@ function readInviteTokenFromUrl(): string {
 
 function operatorSurfaceForStudio(
   studioId: PlatformStudioId,
-): 'client' | 'manager' | 'sales' | null {
+): WorkspaceStudioSurface | null {
   if (studioId === 'manager') return 'manager';
   if (studioId === 'sales') return 'sales';
+  if (studioId === 'builder') return 'builder';
+  if (studioId === 'office') return 'office';
   return null;
 }
 
 /**
- * Auth → Invite → Landing → Studio. Platform Shell is the entry (BX-14/15).
+ * Auth → Invite → Landing → Studio.
+ * OF-13 — CONIS operator Workspace skips Platform Landing.
  */
 function AccessGateInner({ children }: AccessGateProps) {
   const { session } = usePlatformSession();
@@ -48,6 +54,19 @@ function AccessGateInner({ children }: AccessGateProps) {
   }
 
   if (session.activeStudioId === null) {
+    // OF-13 — operator Workspace never lands on technical Platform Landing.
+    if (operatorPe !== null) {
+      updateSession({
+        companyId: operatorPe.companyId,
+        workspaceId: operatorPe.workspaceId,
+        projectId: operatorPe.projectId,
+        activeStudioId: 'manager',
+      });
+      if (typeof window !== 'undefined') {
+        window.location.replace(resolveCloudStudioHref('manager'));
+      }
+      return null;
+    }
     return <PlatformLanding />;
   }
 
@@ -58,8 +77,8 @@ function AccessGateInner({ children }: AccessGateProps) {
 
   return (
     <>
-      {peSurface !== null ? (
-        <OperatorPartnerEnvironmentBar activeSurface={peSurface} />
+      {peSurface !== null && peSurface !== 'office' ? (
+        <WorkspaceStudioNavigation activeSurface={peSurface} />
       ) : null}
       {children}
     </>
@@ -72,7 +91,7 @@ type PlatformAccessRootProps = {
 };
 
 /**
- * EPIC-BX-14 / BX-15 / OF-12 — wrap each Studio app: Session → Auth/Invite → Landing → Studio.
+ * EPIC-BX-14 / BX-15 / OF-12 / OF-13 — Session → Auth/Invite → Landing|Workspace → Studio.
  */
 export function PlatformAccessRoot({
   studioId,

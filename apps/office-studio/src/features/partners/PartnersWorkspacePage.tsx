@@ -159,7 +159,7 @@ export function PartnersWorkspacePage({
         projectId: env.environment.projectId,
         officePartnerId: activePartner.id,
         officeReturnHref: `${officeBase}partners/${encodeURIComponent(activePartner.id)}`,
-        initialSurface: 'client',
+        initialSurface: 'manager',
       });
       if (!result.ok) {
         setPilotNotice(result.error);

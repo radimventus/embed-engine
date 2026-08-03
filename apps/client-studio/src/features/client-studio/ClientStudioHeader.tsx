@@ -4,7 +4,7 @@ import {
   loadPlatformSession,
   projectPartnerBrand,
   getOperatorPartnerEnvironment,
-  OperatorPartnerEnvironmentBar,
+  WorkspaceStudioNavigation,
   type StudioBrandProjection,
 } from '@embed-engine/platform-access';
 
@@ -46,7 +46,7 @@ export function ClientStudioHeader() {
   return (
     <>
       {getOperatorPartnerEnvironment() !== null ? (
-        <OperatorPartnerEnvironmentBar activeSurface="client" />
+        <WorkspaceStudioNavigation activeSurface="client" />
       ) : null}
       <header
         data-experience-header=""

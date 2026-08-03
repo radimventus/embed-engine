@@ -255,7 +255,18 @@ export {
   type EnterOperatorPartnerEnvironmentResult,
 } from './pilot/operatorPartnerEnvironment';
 
-export { OperatorPartnerEnvironmentBar } from './react/OperatorPartnerEnvironmentBar';
+export {
+  WORKSPACE_STUDIO_SWITCH_ORDER,
+  WORKSPACE_STUDIO_LABELS,
+  workspaceStudiosForRoles,
+  isWorkspaceStudioSurface,
+  type WorkspaceStudioSurface,
+} from './domain/workspaceStudioNavigation';
+
+export {
+  OperatorPartnerEnvironmentBar,
+  WorkspaceStudioNavigation,
+} from './react/OperatorPartnerEnvironmentBar';
 
 export {
   recordPlatformActivity,

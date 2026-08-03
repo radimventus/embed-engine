@@ -20,6 +20,8 @@ export type PlatformHeaderProps = {
   readonly onOpenLanding?: () => void;
   readonly onSelectStudio?: (studioId: PlatformStudioId) => void;
   readonly onSubmitFeedback?: (message: string) => void;
+  /** OF-13 — hide platform switcher when Workspace Studio Navigation is shown. */
+  readonly hideStudioSwitcher?: boolean;
 };
 
 /**
@@ -38,6 +40,7 @@ export function PlatformHeader({
   onOpenLanding,
   onSelectStudio,
   onSubmitFeedback,
+  hideStudioSwitcher = false,
 }: PlatformHeaderProps) {
   void _workspace;
   const partnerLabel = partnerBrandLabel?.trim() || null;
@@ -71,10 +74,12 @@ export function PlatformHeader({
         </div>
       </div>
 
-      <StudioSwitcher
-        activeStudioId={activeStudioId}
-        onSelectStudio={onSelectStudio}
-      />
+      {hideStudioSwitcher ? null : (
+        <StudioSwitcher
+          activeStudioId={activeStudioId}
+          onSelectStudio={onSelectStudio}
+        />
+      )}
 
       <div className="platform-header__actions">
         <div className="platform-user-badge">

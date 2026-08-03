@@ -29,6 +29,7 @@ export function PlatformShell({
   onOpenLanding,
   onSelectStudio,
   onSubmitFeedback,
+  hideStudioSwitcher = false,
   breadcrumb = [],
   capabilityHost = null,
   activeCapabilityId = null,
@@ -55,6 +56,7 @@ export function PlatformShell({
         onOpenLanding={onOpenLanding}
         onSelectStudio={onSelectStudio}
         onSubmitFeedback={onSubmitFeedback}
+        hideStudioSwitcher={hideStudioSwitcher}
       />
       <PlatformBreadcrumb items={breadcrumb} />
       <div className="platform-body">{children}</div>

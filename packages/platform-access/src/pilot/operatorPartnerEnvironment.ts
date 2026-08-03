@@ -1,5 +1,5 @@
 /**
- * OF-12 — CONIS Admin direct entry into Partner Environment.
+ * OF-12 / OF-13 — CONIS Admin direct entry into Partner Environment Workspace.
  * No invite / NDA / Welcome. Preserves partner company context across studios.
  */
 
@@ -7,6 +7,7 @@ import {
   resolveClientStudioHref,
   resolveCloudStudioHref,
 } from '../cloud/cloudConfig';
+import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation';
 import { getDefaultCompanyRegistry } from '../registry/companyRegistry';
 import { updateSession } from '../session/authService';
 import { loadPlatformSession } from '../session/sessionStore';
@@ -14,7 +15,8 @@ import { loadPlatformSession } from '../session/sessionStore';
 export const OPERATOR_PE_STORAGE_KEY =
   'conis.platform.operator-pe.v1' as const;
 
-export type OperatorPeStudioSurface = 'client' | 'manager' | 'sales';
+/** @deprecated OF-13 — use WorkspaceStudioSurface */
+export type OperatorPeStudioSurface = WorkspaceStudioSurface;
 
 export type OperatorPartnerEnvironmentState = {
   readonly companyId: string;
@@ -96,9 +98,16 @@ function resolveTenantId(companyId: string, fallback: string): string {
   return company?.tenantId ?? fallback;
 }
 
-function hrefForSurface(surface: OperatorPeStudioSurface): string {
+function hrefForSurface(surface: WorkspaceStudioSurface): string {
   if (surface === 'client') return resolveClientStudioHref();
   return resolveCloudStudioHref(surface);
+}
+
+function sessionStudioIdForSurface(
+  surface: WorkspaceStudioSurface,
+): 'office' | 'builder' | 'manager' | 'sales' {
+  if (surface === 'client') return 'manager';
+  return surface;
 }
 
 export type EnterOperatorPartnerEnvironmentInput = {
@@ -107,7 +116,8 @@ export type EnterOperatorPartnerEnvironmentInput = {
   readonly projectId: string;
   readonly officePartnerId: string;
   readonly officeReturnHref: string;
-  readonly initialSurface?: OperatorPeStudioSurface;
+  /** OF-13 default: manager — open Workspace, not Embed host landing. */
+  readonly initialSurface?: WorkspaceStudioSurface;
   /** When false, only bind session + bookmark (tests). Default true. */
   readonly navigate?: boolean;
 };
@@ -117,12 +127,13 @@ export type EnterOperatorPartnerEnvironmentResult =
       readonly ok: true;
       readonly state: OperatorPartnerEnvironmentState;
       readonly href: string;
-      readonly surface: OperatorPeStudioSurface;
+      readonly surface: WorkspaceStudioSurface;
     }
   | { readonly ok: false; readonly error: string };
 
 /**
- * Bind the logged-in CONIS admin session to a partner PE and open a studio.
+ * Bind the logged-in CONIS admin session to a partner Workspace and open a studio.
+ * Default entry is Manager Studio (Workspace) — not Platform Landing / Embed host.
  */
 export function enterOperatorPartnerEnvironment(
   input: EnterOperatorPartnerEnvironmentInput,
@@ -159,15 +170,19 @@ export function enterOperatorPartnerEnvironment(
   };
   saveOperatorPartnerEnvironment(state);
 
-  const surface = input.initialSurface ?? 'client';
+  const surface = input.initialSurface ?? 'manager';
+  if (surface === 'office') {
+    clearOperatorPartnerEnvironment();
+    return { ok: false, error: 'Office není vstupní Workspace Studio.' };
+  }
+
   const tenantId = resolveTenantId(companyId, session.tenantId);
-  const activeStudioId = surface === 'client' ? 'manager' : surface;
   const next = updateSession({
     tenantId,
     companyId,
     workspaceId,
     projectId,
-    activeStudioId,
+    activeStudioId: sessionStudioIdForSurface(surface),
   });
   if (next === null) {
     clearOperatorPartnerEnvironment();
@@ -182,24 +197,38 @@ export function enterOperatorPartnerEnvironment(
 }
 
 export function switchOperatorPartnerStudio(
-  surface: OperatorPeStudioSurface,
+  surface: WorkspaceStudioSurface,
   options?: { readonly navigate?: boolean },
 ): EnterOperatorPartnerEnvironmentResult {
   const state = getOperatorPartnerEnvironment();
   if (state === null) {
     return { ok: false, error: 'Operator PE mode není aktivní.' };
   }
+  if (surface === 'office') {
+    const returned = returnFromOperatorPartnerEnvironment({
+      navigate: options?.navigate,
+    });
+    if (!returned.ok) {
+      return { ok: false, error: returned.error };
+    }
+    return {
+      ok: true,
+      state,
+      href: returned.href,
+      surface: 'office',
+    };
+  }
+
   const session = loadPlatformSession();
   if (session === null) {
     return { ok: false, error: 'Nejste přihlášeni.' };
   }
 
-  const activeStudioId = surface === 'client' ? 'manager' : surface;
   const next = updateSession({
     companyId: state.companyId,
     workspaceId: state.workspaceId,
     projectId: state.projectId,
-    activeStudioId,
+    activeStudioId: sessionStudioIdForSurface(surface),
   });
   if (next === null) {
     return { ok: false, error: 'Session se nepodařilo aktualizovat.' };

@@ -8,6 +8,7 @@ import {
   recordPlatformActivity,
   submitPlatformFeedback,
   usePlatformSession,
+  getOperatorPartnerEnvironment,
 } from '@embed-engine/platform-access';
 
 import { AppShell } from '../../components/layout/AppShell';
@@ -243,6 +244,7 @@ export function BuilderStudioApp() {
         onLogout={logout}
         onOpenLanding={clearStudio}
         onSelectStudio={selectStudio}
+        hideStudioSwitcher={getOperatorPartnerEnvironment() !== null}
         onSubmitFeedback={(message) => {
           submitPlatformFeedback({
             message,

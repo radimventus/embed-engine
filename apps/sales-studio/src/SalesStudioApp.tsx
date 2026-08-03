@@ -13,6 +13,7 @@ import {
   usePlatformSession,
   usePilotWorkspace,
   useStudioBrandProjection,
+  getOperatorPartnerEnvironment,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -121,6 +122,7 @@ export function SalesStudioApp() {
       onLogout={logout}
       onOpenLanding={clearStudio}
       onSelectStudio={selectStudio}
+      hideStudioSwitcher={getOperatorPartnerEnvironment() !== null}
       onSubmitFeedback={(message) => {
         submitPlatformFeedback({
           message,

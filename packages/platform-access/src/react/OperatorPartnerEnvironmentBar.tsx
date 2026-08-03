@@ -1,87 +1,91 @@
 /**
- * OF-12 — Operator PE chrome: Client / Manager / Sales + return to Office.
- * Shown only while CONIS Admin operator PE mode is active.
+ * OF-13 — Workspace Studio Navigation chrome.
+ * Role-filtered: Client | Manager | Sales | Builder | Office
+ * Shown while CONIS Admin operator Workspace mode is active.
  */
 
 import {
+  WORKSPACE_STUDIO_LABELS,
+  workspaceStudiosForRoles,
+  type WorkspaceStudioSurface,
+} from '../domain/workspaceStudioNavigation';
+import { loadPlatformSession } from '../session/sessionStore';
+import {
   getOperatorPartnerEnvironment,
-  returnFromOperatorPartnerEnvironment,
   switchOperatorPartnerStudio,
-  type OperatorPeStudioSurface,
 } from '../pilot/operatorPartnerEnvironment';
 
-const SURFACES: readonly {
-  readonly id: OperatorPeStudioSurface;
-  readonly label: string;
-}[] = [
-  { id: 'client', label: 'Client Studio' },
-  { id: 'manager', label: 'Manager Studio' },
-  { id: 'sales', label: 'Sales Studio' },
-];
-
-type OperatorPartnerEnvironmentBarProps = {
-  readonly activeSurface: OperatorPeStudioSurface;
+type WorkspaceStudioNavigationProps = {
+  readonly activeSurface: WorkspaceStudioSurface;
 };
 
 /**
- * Compact PE studio switcher for CONIS Admin operator entry (no Invite/NDA/Welcome).
+ * Unified Workspace switcher — preserves partner context; Office returns to partner detail.
  */
-export function OperatorPartnerEnvironmentBar({
+export function WorkspaceStudioNavigation({
   activeSurface,
-}: OperatorPartnerEnvironmentBarProps) {
+}: WorkspaceStudioNavigationProps) {
   const state = getOperatorPartnerEnvironment();
   if (state === null) return null;
+
+  const session = loadPlatformSession();
+  const roles = session?.user.roles ?? [];
+  const surfaces = workspaceStudiosForRoles(roles);
 
   return (
     <div
       className="platform-access__operator-pe-bar"
-      data-testid="operator-pe-bar"
+      data-testid="workspace-studio-navigation"
       role="navigation"
-      aria-label="Partner Environment — CONIS Admin"
+      aria-label="Workspace Studio Navigation"
     >
       <p className="platform-access__operator-pe-label">
-        Partner Environment · CONIS Admin
+        Workspace · Partner Environment
       </p>
       <div className="platform-access__operator-pe-actions" role="group">
-        {SURFACES.map((surface) => {
-          const isActive = surface.id === activeSurface;
+        {surfaces.map((surface) => {
+          const label = WORKSPACE_STUDIO_LABELS[surface];
+          const isActive = surface === activeSurface;
           if (isActive) {
             return (
               <span
-                key={surface.id}
+                key={surface}
                 className="platform-access__operator-pe-btn platform-access__operator-pe-btn--active"
                 aria-current="page"
-                data-testid={`operator-pe-${surface.id}`}
+                data-testid={`workspace-studio-${surface}`}
               >
-                {surface.label}
+                {label}
               </span>
             );
           }
           return (
             <button
-              key={surface.id}
+              key={surface}
               type="button"
-              className="platform-access__operator-pe-btn"
-              data-testid={`operator-pe-${surface.id}`}
+              className={
+                surface === 'office'
+                  ? 'platform-access__operator-pe-btn platform-access__operator-pe-btn--return'
+                  : 'platform-access__operator-pe-btn'
+              }
+              data-testid={`workspace-studio-${surface}`}
               onClick={() => {
-                switchOperatorPartnerStudio(surface.id);
+                switchOperatorPartnerStudio(surface);
               }}
             >
-              {surface.label}
+              {label}
             </button>
           );
         })}
-        <button
-          type="button"
-          className="platform-access__operator-pe-btn platform-access__operator-pe-btn--return"
-          data-testid="operator-pe-return-office"
-          onClick={() => {
-            returnFromOperatorPartnerEnvironment();
-          }}
-        >
-          Zpět do Office
-        </button>
       </div>
     </div>
   );
+}
+
+/** @deprecated OF-13 — use WorkspaceStudioNavigation */
+export function OperatorPartnerEnvironmentBar({
+  activeSurface,
+}: {
+  readonly activeSurface: WorkspaceStudioSurface;
+}) {
+  return <WorkspaceStudioNavigation activeSurface={activeSurface} />;
 }
