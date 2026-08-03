@@ -1,5 +1,5 @@
 /**
- * OF-01 / OF-02 / OF-10 — Office Event Catalog (persisted timeline source).
+ * OF-01 / OF-02 / OF-10 / OF-11 — Office Event Catalog (persisted timeline source).
  * Not a platform Event Engine — local catalog for Office dashboard / Partner Timeline.
  */
 
@@ -58,57 +58,49 @@ const SEED_EVENTS: readonly OfficeEvent[] = Object.freeze([
     id: 'evt-001',
     kind: 'partner.created',
     label: 'Partner vytvořen',
-    detail: 'Blokki · zakládající partner',
-    occurredAt: '2026-08-02T09:12:00.000Z',
-    partnerId: 'p-blokki',
+    detail: 'Domy s energií · referenční partner',
+    occurredAt: '2026-08-01T08:00:00.000Z',
+    partnerId: 'p-dse',
   },
   {
     id: 'evt-002',
     kind: 'offer.sent',
     label: 'Nabídka odeslána',
-    detail: 'Pilotní nasazení · 1 dům',
-    occurredAt: '2026-08-02T11:40:00.000Z',
-    partnerId: 'p-nord',
+    detail: 'Pilotní nasazení · Reference House · 1 dům',
+    occurredAt: '2026-08-01T10:30:00.000Z',
+    partnerId: 'p-dse',
   },
   {
     id: 'evt-003',
     kind: 'order.confirmed',
     label: 'Objednávka potvrzena',
-    detail: 'Blokki · potvrzení pilotu',
-    occurredAt: '2026-08-02T14:05:00.000Z',
-    partnerId: 'p-blokki',
+    detail: 'Domy s energií · potvrzení pilotu',
+    occurredAt: '2026-08-02T09:15:00.000Z',
+    partnerId: 'p-dse',
   },
   {
     id: 'evt-004',
     kind: 'payment.received',
     label: 'Platba přijata',
     detail: 'Pilotní poplatek · uhrazeno',
-    occurredAt: '2026-08-02T16:22:00.000Z',
-    partnerId: 'p-linea',
+    occurredAt: '2026-08-02T14:00:00.000Z',
+    partnerId: 'p-dse',
   },
   {
     id: 'evt-005',
     kind: 'builder.opened',
     label: 'Builder otevřen',
-    detail: 'Projekt Blokki · dům P1',
+    detail: 'Reference House · dům P1',
     occurredAt: '2026-08-03T07:05:00.000Z',
-    partnerId: 'p-blokki',
+    partnerId: 'p-dse',
   },
   {
     id: 'evt-006',
-    kind: 'partner.created',
-    label: 'Partner vytvořen',
-    detail: 'Nordhaus · obchodní pipeline',
-    occurredAt: '2026-07-28T10:00:00.000Z',
-    partnerId: 'p-nord',
-  },
-  {
-    id: 'evt-007',
-    kind: 'partner.created',
-    label: 'Partner vytvořen',
-    detail: 'Linea Domů · pilotní partner',
-    occurredAt: '2026-07-20T08:30:00.000Z',
-    partnerId: 'p-linea',
+    kind: 'pilot.ready',
+    label: 'Partner Environment připraven',
+    detail: 'Domy s energií · Reference House · Client/Manager/Sales',
+    occurredAt: '2026-08-03T12:00:00.000Z',
+    partnerId: 'p-dse',
   },
 ]);
 

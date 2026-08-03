@@ -162,34 +162,34 @@ describe('office persistence registries (OF-10)', () => {
   it('persists lifecycle and administration state', () => {
     resetAll();
 
-    activatePartnerEnvironment('p-nord', 'pilot');
-    suspendPartnerEnvironment('p-nord', 'OF-10 persistence check');
+    activatePartnerEnvironment('p-dse', 'pilot');
+    suspendPartnerEnvironment('p-dse', 'OF-10 persistence check');
 
     const lifecycleStored = loadJson<{
       byPartnerId: Record<string, { lifecycleStatus: string | null }>;
     } | null>(OFFICE_STORAGE_KEYS.lifecycle, null);
     assert.ok(lifecycleStored !== null);
     assert.equal(
-      getPartnerEnvironmentRecord('p-nord').lifecycleStatus,
+      getPartnerEnvironmentRecord('p-dse').lifecycleStatus,
       'suspended',
     );
     assert.equal(
-      lifecycleStored!.byPartnerId['p-nord']?.lifecycleStatus,
+      lifecycleStored!.byPartnerId['p-dse']?.lifecycleStatus,
       'suspended',
     );
 
-    addPartnerInternalNote('p-nord', 'Persisted admin note');
+    addPartnerInternalNote('p-dse', 'Persisted admin note');
     const adminStored = loadJson<{
       byPartnerId: Record<string, { notes: readonly { text: string }[] }>;
     } | null>(OFFICE_STORAGE_KEYS.administration, null);
     assert.ok(adminStored !== null);
     assert.ok(
-      buildPartnerAdminProfile('p-nord')?.notes.some(
+      buildPartnerAdminProfile('p-dse')?.notes.some(
         (note) => note.text === 'Persisted admin note',
       ),
     );
     assert.ok(
-      adminStored!.byPartnerId['p-nord']?.notes.some(
+      adminStored!.byPartnerId['p-dse']?.notes.some(
         (note) => note.text === 'Persisted admin note',
       ),
     );
@@ -198,12 +198,12 @@ describe('office persistence registries (OF-10)', () => {
   it('persists handoff after payment mutation', () => {
     resetAll();
 
-    selectSalesPackage('p-nord', 'pilot');
+    selectSalesPackage('p-dse', 'pilot');
     // Payment path creates/updates handoff and writes STORAGE_KEY.
-    const summary = receivePayment('p-nord');
+    const summary = receivePayment('p-dse');
     assert.ok(summary !== null);
     assert.equal(summary?.status, 'builder_ready');
-    assert.equal(getHandoff('p-nord')?.status, 'builder_ready');
+    assert.equal(getHandoff('p-dse')?.status, 'builder_ready');
 
     const handoffsStored = loadJson<{
       handoffs: readonly { partnerId: string; status: string }[];
@@ -212,7 +212,7 @@ describe('office persistence registries (OF-10)', () => {
     assert.ok(
       handoffsStored!.handoffs.some(
         (entry) =>
-          entry.partnerId === 'p-nord' && entry.status === 'builder_ready',
+          entry.partnerId === 'p-dse' && entry.status === 'builder_ready',
       ),
     );
   });

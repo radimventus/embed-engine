@@ -29,21 +29,21 @@ describe('officeHandoffRegistry (OF-05)', () => {
     resetSalesRegistryForTests();
     resetHandoffRegistryForTests();
 
-    selectSalesPackage('p-nord', 'pilot');
-    sendPersonalizedOffer('p-nord');
-    confirmSalesOrder('p-nord');
-    moveToWaitingPayment('p-nord');
+    selectSalesPackage('p-dse', 'pilot');
+    sendPersonalizedOffer('p-dse');
+    confirmSalesOrder('p-dse');
+    moveToWaitingPayment('p-dse');
 
-    const summary = receivePayment('p-nord');
+    const summary = receivePayment('p-dse');
     assert.ok(summary !== null);
     assert.equal(summary?.status, 'builder_ready');
-    assert.equal(getPartner('p-nord')?.status, 'implementation');
+    assert.equal(getPartner('p-dse')?.status, 'implementation');
     assert.ok(summary?.workspace !== null);
     assert.ok(summary?.workspace?.project.id);
     assert.ok(summary?.workspace?.project.object.id);
-    assert.equal(getHandoff('p-nord')?.status, 'builder_ready');
+    assert.equal(getHandoff('p-dse')?.status, 'builder_ready');
 
-    const timeline = listPartnerTimeline('p-nord');
+    const timeline = listPartnerTimeline('p-dse');
     assert.ok(timeline.some((event) => event.kind === 'payment.received'));
     assert.ok(
       timeline.some((event) => event.kind === 'builder.workspace.created'),

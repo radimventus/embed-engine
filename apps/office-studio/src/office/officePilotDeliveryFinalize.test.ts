@@ -47,8 +47,8 @@ describe('PE-07 Pilot Delivery finalize', () => {
 
   it('exposes partner workspace deep-link with invite token', () => {
     resetAll();
-    preparePilotForPartner('p-nord');
-    const preview = buildPilotDeliveryPreview('p-nord');
+    preparePilotForPartner('p-dse');
+    const preview = buildPilotDeliveryPreview('p-dse');
     assert.ok(preview !== null);
     assert.ok(preview!.invite !== null);
     assert.equal(
@@ -60,8 +60,8 @@ describe('PE-07 Pilot Delivery finalize', () => {
 
   it('exposes invitation and activation state on the delivery package', () => {
     resetAll();
-    preparePilotForPartner('p-nord');
-    const result = deliverPilot('p-nord');
+    preparePilotForPartner('p-dse');
+    const result = deliverPilot('p-dse');
     assert.equal(result.ok, true);
     if (!result.ok) return;
 

@@ -55,33 +55,33 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
 
   it('parses partner detail deep-links', () => {
     assert.deepEqual(
-      parseOfficeLocation('/studio/office/partners/p-blokki', '/studio/office/'),
-      { routeId: 'partners', partnerId: 'p-blokki' },
+      parseOfficeLocation('/studio/office/partners/p-dse', '/studio/office/'),
+      { routeId: 'partners', partnerId: 'p-dse' },
     );
     assert.deepEqual(
-      parseOfficeLocation('/studio/office/sales/p-nord', '/studio/office/'),
-      { routeId: 'sales', partnerId: 'p-nord' },
-    );
-    assert.deepEqual(
-      parseOfficeLocation(
-        '/studio/office/documents/p-blokki',
-        '/studio/office/',
-      ),
-      { routeId: 'documents', partnerId: 'p-blokki' },
+      parseOfficeLocation('/studio/office/sales/p-dse', '/studio/office/'),
+      { routeId: 'sales', partnerId: 'p-dse' },
     );
     assert.deepEqual(
       parseOfficeLocation(
-        '/studio/office/implementation/p-nord',
+        '/studio/office/documents/p-dse',
         '/studio/office/',
       ),
-      { routeId: 'implementation', partnerId: 'p-nord' },
+      { routeId: 'documents', partnerId: 'p-dse' },
     );
-    assert.equal(officeHref('partners', 'p-blokki'), '/partners/p-blokki');
-    assert.equal(officeHref('sales', 'p-nord'), '/sales/p-nord');
-    assert.equal(officeHref('documents', 'p-blokki'), '/documents/p-blokki');
+    assert.deepEqual(
+      parseOfficeLocation(
+        '/studio/office/implementation/p-dse',
+        '/studio/office/',
+      ),
+      { routeId: 'implementation', partnerId: 'p-dse' },
+    );
+    assert.equal(officeHref('partners', 'p-dse'), '/partners/p-dse');
+    assert.equal(officeHref('sales', 'p-dse'), '/sales/p-dse');
+    assert.equal(officeHref('documents', 'p-dse'), '/documents/p-dse');
     assert.equal(
-      officeHref('implementation', 'p-nord'),
-      '/implementation/p-nord',
+      officeHref('implementation', 'p-dse'),
+      '/implementation/p-dse',
     );
   });
 

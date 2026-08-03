@@ -1,5 +1,5 @@
 /**
- * OF-03 / PE-09 / OF-10 — Pilot Offer & Checkout registry (persisted).
+ * OF-03 / PE-09 / OF-10 / OF-11 — Pilot Offer & Checkout registry (persisted).
  * Select package → create offer → send offer. No payment gateway / PE provisioning.
  */
 
@@ -29,6 +29,10 @@ import {
   type OfficePackageId,
   type OfficeSalesCase,
 } from './officeSalesModel';
+import {
+  OFFICE_REFERENCE_PARTNER_ID,
+  OFFICE_REFERENCE_PARTNER_NAME,
+} from './officeReferencePartner';
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -109,69 +113,29 @@ function normalizeCase(entry: OfficeSalesCase): OfficeSalesCase {
 
 const SEED_CASES: readonly OfficeSalesCase[] = Object.freeze([
   {
-    partnerId: 'p-nord',
-    stage: 'offer_sent',
-    offer: makeOffer('p-nord', {
-      packageId: 'pilot',
-      status: 'sent',
-      title: 'Pilot nabídka · Nordhaus',
-      personalNote:
-        'Pilot — 1 dům pro Nordhaus · Embed Experience na partnerském webu.',
-      updatedAt: '2026-08-02T11:40:00.000Z',
-      priceCzk: 4_970,
-      licenseHouses: 1,
-      trialDays: 90,
-      validUntil: '2026-08-16T11:40:00.000Z',
-    }),
-    order: null,
-  },
-  {
-    partnerId: 'p-linea',
-    stage: 'waiting_payment',
-    offer: makeOffer('p-linea', {
-      packageId: 'starter',
-      status: 'sent',
-      title: 'Pilot nabídka · Linea Domů',
-      personalNote: 'Starter — až 3 domy · provozní start Linea Domů.',
-      updatedAt: '2026-08-01T09:00:00.000Z',
-      priceCzk: 14_970,
-      licenseHouses: 3,
-      trialDays: 90,
-      validUntil: '2026-08-15T09:00:00.000Z',
-    }),
-    order: {
-      id: 'order-p-linea',
-      partnerId: 'p-linea',
-      offerId: 'offer-p-linea',
-      packageId: 'starter',
-      amountCzk: 14_970,
-      status: 'waiting_payment',
-      confirmedAt: '2026-08-02T10:00:00.000Z',
-    },
-  },
-  {
-    partnerId: 'p-blokki',
+    partnerId: OFFICE_REFERENCE_PARTNER_ID,
     stage: 'order_confirmed',
-    offer: makeOffer('p-blokki', {
+    offer: makeOffer(OFFICE_REFERENCE_PARTNER_ID, {
       packageId: 'pilot',
       status: 'accepted',
-      title: 'Pilot nabídka · Blokki',
-      personalNote: 'Zakládající partner — Pilot 1 dům.',
-      updatedAt: '2026-08-02T12:00:00.000Z',
+      title: `Pilot nabídka · ${OFFICE_REFERENCE_PARTNER_NAME}`,
+      personalNote:
+        'Referenční šablona — Pilot 1 dům · Embed Experience · Reference House.',
+      updatedAt: '2026-08-02T09:00:00.000Z',
       priceCzk: 4_970,
       licenseHouses: 1,
       trialDays: 90,
-      validUntil: '2026-08-16T12:00:00.000Z',
-      acceptedAt: '2026-08-02T14:05:00.000Z',
+      validUntil: '2026-08-16T09:00:00.000Z',
+      acceptedAt: '2026-08-02T09:15:00.000Z',
     }),
     order: {
-      id: 'order-p-blokki',
-      partnerId: 'p-blokki',
-      offerId: 'offer-p-blokki',
+      id: `order-${OFFICE_REFERENCE_PARTNER_ID}`,
+      partnerId: OFFICE_REFERENCE_PARTNER_ID,
+      offerId: `offer-${OFFICE_REFERENCE_PARTNER_ID}`,
       packageId: 'pilot',
       amountCzk: 4_970,
       status: 'confirmed',
-      confirmedAt: '2026-08-02T14:05:00.000Z',
+      confirmedAt: '2026-08-02T09:15:00.000Z',
     },
   },
 ]);

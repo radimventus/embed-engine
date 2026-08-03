@@ -23,7 +23,7 @@ describe('officeDocumentRegistry (OF-04)', () => {
     resetSalesRegistryForTests();
     resetDocumentRegistryForTests();
 
-    const pack = prepareDocumentPackage('p-nord');
+    const pack = prepareDocumentPackage('p-dse');
     assert.ok(pack !== null);
     assert.equal(pack?.status, 'prepared');
     assert.ok((pack?.documents.length ?? 0) >= 5);
@@ -34,7 +34,7 @@ describe('officeDocumentRegistry (OF-04)', () => {
       pack?.documents.some((doc) => doc.type === 'framework'),
     );
     assert.ok(
-      listPartnerTimeline('p-nord').some(
+      listPartnerTimeline('p-dse').some(
         (event) => event.kind === 'documents.prepared',
       ),
     );
@@ -46,29 +46,29 @@ describe('officeDocumentRegistry (OF-04)', () => {
     resetSalesRegistryForTests();
     resetDocumentRegistryForTests();
 
-    prepareDocumentPackage('p-nord');
-    sendDocumentPackage('p-nord', 'eva@nordhaus.cz');
-    assert.equal(getDocumentPackage('p-nord')?.status, 'sent');
-    assert.equal(getDocumentPackage('p-nord')?.emailTo, 'eva@nordhaus.cz');
+    prepareDocumentPackage('p-dse');
+    sendDocumentPackage('p-dse', 'partner@domysenergii.cz');
+    assert.equal(getDocumentPackage('p-dse')?.status, 'sent');
+    assert.equal(getDocumentPackage('p-dse')?.emailTo, 'partner@domysenergii.cz');
     assert.ok(
-      listPartnerTimeline('p-nord').some(
+      listPartnerTimeline('p-dse').some(
         (event) => event.kind === 'documents.sent',
       ),
     );
 
-    confirmClickWrap('p-nord');
+    confirmClickWrap('p-dse');
     assert.equal(
-      getDocumentPackage('p-nord')?.status,
+      getDocumentPackage('p-dse')?.status,
       'clickwrap_confirmed',
     );
     assert.ok(
-      listPartnerTimeline('p-nord').some(
+      listPartnerTimeline('p-dse').some(
         (event) => event.kind === 'clickwrap.confirmed',
       ),
     );
 
-    issueProforma('p-nord');
-    const pack = getDocumentPackage('p-nord');
+    issueProforma('p-dse');
+    const pack = getDocumentPackage('p-dse');
     assert.equal(pack?.status, 'proforma_issued');
     assert.ok(pack?.proforma !== null);
     assert.match(pack?.proforma?.number ?? '', /^PF-/);
@@ -78,7 +78,7 @@ describe('officeDocumentRegistry (OF-04)', () => {
       ),
     );
     assert.ok(
-      listPartnerTimeline('p-nord').some(
+      listPartnerTimeline('p-dse').some(
         (event) => event.kind === 'proforma.issued',
       ),
     );

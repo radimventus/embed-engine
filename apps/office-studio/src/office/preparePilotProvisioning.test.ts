@@ -121,14 +121,14 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
 
   it('keeps invite ready until pilot delivery stamps send', () => {
     resetAll();
-    const prepared = preparePilotForPartner('p-nord');
+    const prepared = preparePilotForPartner('p-dse');
     assert.ok(prepared !== null);
     assert.equal(prepared?.invite.sendCount, 0);
 
-    const delivered = deliverPilot('p-nord');
+    const delivered = deliverPilot('p-dse');
     assert.equal(delivered.ok, true);
 
-    const env = buildOfficePartnerEnvironment('p-nord');
+    const env = buildOfficePartnerEnvironment('p-dse');
     assert.equal(env.inviteReadyToSend, false);
     assert.equal(env.environment?.invite?.sendCount, 1);
     assert.ok(env.environment?.invite?.lastSentAt !== null);
@@ -138,9 +138,9 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
   it('blocks activation without NDA and shows welcome after consent + password', () => {
     resetAll();
 
-    const prepared = preparePilotForPartner('p-nord');
+    const prepared = preparePilotForPartner('p-dse');
     assert.ok(prepared !== null);
-    const partner = getPartner('p-nord');
+    const partner = getPartner('p-dse');
     assert.equal(partner?.status, 'active');
 
     const denied = activateInvite({

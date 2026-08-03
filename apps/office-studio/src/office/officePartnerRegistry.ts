@@ -1,6 +1,6 @@
 /**
- * OF-02 / OF-10 — Partner Registry (persisted Office domain store).
- * Create / read / update partners; seeds align with OF-01 fixtures.
+ * OF-02 / OF-10 / OF-11 — Partner Registry (persisted Office domain store).
+ * Create / read / update partners; production seed is the OF-11 reference partner.
  */
 
 import {
@@ -12,68 +12,10 @@ import {
 import { appendOfficeEvent } from './officeEventCatalog';
 import { loadJson, removeJson, saveJson } from './officeLocalStore';
 import { OFFICE_STORAGE_KEYS } from './officeStorageKeys';
+import { buildOfficeReferencePartner } from './officeReferencePartner';
 
 const SEED_PARTNERS: readonly OfficePartner[] = Object.freeze([
-  {
-    id: 'p-blokki',
-    name: 'Blokki',
-    status: 'implementation',
-    nextStep: 'Dokončit Builder handoff',
-    company: {
-      legalName: 'Blokki s.r.o.',
-      ico: '08911234',
-      city: 'Praha',
-      country: 'Česko',
-    },
-    contact: {
-      name: 'Jan Blok',
-      email: 'jan@blokki.cz',
-      phone: '+420 777 100 200',
-      role: 'Jednatel',
-    },
-    createdAt: '2026-08-02T09:12:00.000Z',
-    updatedAt: '2026-08-03T07:05:00.000Z',
-  },
-  {
-    id: 'p-nord',
-    name: 'Nordhaus',
-    status: 'offer',
-    nextStep: 'Sledovat odpověď na nabídku',
-    company: {
-      legalName: 'Nordhaus CZ a.s.',
-      ico: '04567890',
-      city: 'Brno',
-      country: 'Česko',
-    },
-    contact: {
-      name: 'Eva Nord',
-      email: 'eva@nordhaus.cz',
-      phone: '+420 602 333 444',
-      role: 'Obchodní ředitelka',
-    },
-    createdAt: '2026-07-28T10:00:00.000Z',
-    updatedAt: '2026-08-02T11:40:00.000Z',
-  },
-  {
-    id: 'p-linea',
-    name: 'Linea Domů',
-    status: 'payment',
-    nextStep: 'Potvrdit přijetí platby',
-    company: {
-      legalName: 'Linea Domů s.r.o.',
-      ico: '12345098',
-      city: 'Ostrava',
-      country: 'Česko',
-    },
-    contact: {
-      name: 'Petr Linea',
-      email: 'petr@lineadomu.cz',
-      phone: '+420 731 555 666',
-      role: 'CEO',
-    },
-    createdAt: '2026-07-20T08:30:00.000Z',
-    updatedAt: '2026-08-02T16:22:00.000Z',
-  },
+  buildOfficeReferencePartner(),
 ]);
 
 type PartnerPersistState = {

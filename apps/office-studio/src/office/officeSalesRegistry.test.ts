@@ -102,11 +102,11 @@ describe('PE-09 Pilot Offer & Checkout', () => {
 
   it('normalizes legacy package ids into PE-09 packages', () => {
     resetAll();
-    selectSalesPackage('p-nord', 'starter-3');
-    assert.equal(getSalesCase('p-nord')?.offer.packageId, 'starter');
-    selectSalesPackage('p-nord', 'pilot-1');
-    assert.equal(getSalesCase('p-nord')?.offer.packageId, 'pilot');
-    selectSalesPackage('p-nord', 'pilot-max');
-    assert.equal(getSalesCase('p-nord')?.offer.packageId, 'studio-partner');
+    selectSalesPackage('p-dse', 'starter-3');
+    assert.equal(getSalesCase('p-dse')?.offer.packageId, 'starter');
+    selectSalesPackage('p-dse', 'pilot-1');
+    assert.equal(getSalesCase('p-dse')?.offer.packageId, 'pilot');
+    selectSalesPackage('p-dse', 'pilot-max');
+    assert.equal(getSalesCase('p-dse')?.offer.packageId, 'studio-partner');
   });
 });

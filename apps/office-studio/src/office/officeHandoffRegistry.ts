@@ -1,5 +1,5 @@
 /**
- * OF-05 / OF-10 — Builder Handoff registry (persisted MVP).
+ * OF-05 / OF-10 / OF-11 — Builder Handoff registry (persisted MVP).
  * Automatic Office → Builder handoff after PaymentReceived.
  */
 
@@ -26,6 +26,13 @@ import {
   type OfficeHandoffSummary,
   type OfficePartnerContext,
 } from './officeHandoffModel';
+import {
+  OFFICE_REFERENCE_PARTNER_ID,
+  OFFICE_REFERENCE_PARTNER_NAME,
+  OFFICE_REFERENCE_PLATFORM_IDS,
+  OFFICE_REFERENCE_PROJECT_LABEL,
+  OFFICE_REFERENCE_CONTACT_EMAIL,
+} from './officeReferencePartner';
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -80,35 +87,35 @@ function buildBuilderWorkspace(
 
 const SEED_HANDOFFS: readonly OfficeHandoffSummary[] = Object.freeze([
   {
-    partnerId: 'p-blokki',
+    partnerId: OFFICE_REFERENCE_PARTNER_ID,
     status: 'builder_ready',
     partnerContext: {
-      partnerId: 'p-blokki',
-      partnerName: 'Blokki',
-      companyLegalName: 'Blokki s.r.o.',
-      contactEmail: 'jan@blokki.cz',
+      partnerId: OFFICE_REFERENCE_PARTNER_ID,
+      partnerName: OFFICE_REFERENCE_PARTNER_NAME,
+      companyLegalName: 'Domy s energií s.r.o.',
+      contactEmail: OFFICE_REFERENCE_CONTACT_EMAIL,
       packageId: 'pilot',
       packageLabel: 'Pilot',
       amountCzk: 4_970,
     },
     workspace: {
-      id: 'workspace-blokki',
-      name: 'Blokki Builder Workspace',
-      builderHref: 'http://127.0.0.1:4177/',
+      id: OFFICE_REFERENCE_PLATFORM_IDS.workspaceId,
+      name: `${OFFICE_REFERENCE_PARTNER_NAME} Builder Workspace`,
+      builderHref: resolveCloudStudioHref('builder'),
       project: {
-        id: 'project-blokki-01',
-        name: 'Blokki · Pilot',
+        id: OFFICE_REFERENCE_PLATFORM_IDS.projectId,
+        name: OFFICE_REFERENCE_PROJECT_LABEL,
         packageId: 'pilot',
         packageLabel: 'Pilot',
         object: {
-          id: 'object-p-blokki-p1',
-          name: 'Blokki P1',
+          id: OFFICE_REFERENCE_PLATFORM_IDS.objectId,
+          name: OFFICE_REFERENCE_PROJECT_LABEL,
           kind: 'house',
         },
       },
     },
-    paymentReceivedAt: '2026-08-02T16:00:00.000Z',
-    workspaceCreatedAt: '2026-08-02T16:05:00.000Z',
+    paymentReceivedAt: '2026-08-02T14:00:00.000Z',
+    workspaceCreatedAt: '2026-08-02T14:05:00.000Z',
     builderReadyAt: '2026-08-03T07:05:00.000Z',
   },
 ]);

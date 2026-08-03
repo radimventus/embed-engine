@@ -68,7 +68,7 @@ describe('officePartnerRegistry (OF-02)', () => {
     resetPartnerRegistryForTests();
     resetOfficeEventCatalogForTests();
 
-    const partner = listPartners().find((entry) => entry.id === 'p-nord');
+    const partner = listPartners().find((entry) => entry.id === 'p-dse');
     assert.ok(partner !== undefined);
     const updated = applyPartnerQuickAction(partner!.id, 'confirm-order');
     assert.equal(updated?.status, 'order');
@@ -82,11 +82,13 @@ describe('officePartnerRegistry (OF-02)', () => {
   it('filters partners by query and status', () => {
     resetPartnerRegistryForTests();
     const all = listPartners();
-    const byName = filterPartners(all, 'blokki', 'all');
+    assert.equal(all.length, 1);
+    const byName = filterPartners(all, 'energi', 'all');
     assert.equal(byName.length, 1);
-    assert.equal(byName[0]?.id, 'p-blokki');
+    assert.equal(byName[0]?.id, 'p-dse');
 
-    const byStatus = filterPartners(all, '', 'payment');
-    assert.ok(byStatus.every((partner) => partner.status === 'payment'));
+    const byStatus = filterPartners(all, '', 'active');
+    assert.equal(byStatus.length, 1);
+    assert.equal(byStatus[0]?.id, 'p-dse');
   });
 });

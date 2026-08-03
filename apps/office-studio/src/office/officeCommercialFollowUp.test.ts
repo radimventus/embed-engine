@@ -61,19 +61,19 @@ describe('PE-09 Commercial Follow-up', () => {
 
   it('tracks activity milestones including last visited studio', () => {
     resetAll();
-    preparePilotForPartner('p-nord');
-    const delivered = deliverPilot('p-nord');
+    preparePilotForPartner('p-dse');
+    const delivered = deliverPilot('p-dse');
     assert.equal(delivered.ok, true);
     if (!delivered.ok) return;
 
-    let followUp = buildPartnerCommercialFollowUp('p-nord');
+    let followUp = buildPartnerCommercialFollowUp('p-dse');
     assert.ok(followUp !== null);
     assert.equal(followUp?.status, 'not_taken');
     assert.equal(followUp?.activity.inviteOpened, false);
     assert.equal(followUp?.activity.lastVisitedStudio, null);
 
     markInviteOpened(delivered.delivery.package.invite.token);
-    followUp = buildPartnerCommercialFollowUp('p-nord');
+    followUp = buildPartnerCommercialFollowUp('p-dse');
     assert.equal(followUp?.status, 'invite_opened');
     assert.equal(followUp?.activity.inviteOpened, true);
 
@@ -95,7 +95,7 @@ describe('PE-09 Commercial Follow-up', () => {
 
     touchUserLastStudio(loggedIn.session.user.id, 'manager');
 
-    followUp = syncCommercialFollowUpTimeline('p-nord');
+    followUp = syncCommercialFollowUpTimeline('p-dse');
     assert.ok(followUp !== null);
     assert.equal(followUp?.activity.ndaAccepted, true);
     assert.equal(followUp?.activity.accountActivated, true);
@@ -104,7 +104,7 @@ describe('PE-09 Commercial Follow-up', () => {
     assert.equal(followUp?.status, 'active');
     assert.equal(followUp?.newlyActivated, true);
 
-    const kinds = listPartnerTimeline('p-nord', 50).map((event) => event.kind);
+    const kinds = listPartnerTimeline('p-dse', 50).map((event) => event.kind);
     assert.ok(kinds.includes('followup.invite_opened'));
     assert.ok(kinds.includes('followup.nda_accepted'));
     assert.ok(kinds.includes('followup.account_activated'));
@@ -137,11 +137,11 @@ describe('PE-09 Commercial Follow-up', () => {
 
   it('builds PE-09 office dashboard follow-up buckets', () => {
     resetAll();
-    preparePilotForPartner('p-nord');
-    deliverPilot('p-nord');
+    preparePilotForPartner('p-dse');
+    deliverPilot('p-dse');
     const dashboard = buildOfficeFollowUpDashboard();
     assert.ok(
-      dashboard.waitingActivation.some((item) => item.partnerId === 'p-nord'),
+      dashboard.waitingActivation.some((item) => item.partnerId === 'p-dse'),
     );
     assert.equal(dashboard.newlyActivated.length, 0);
     assert.equal(dashboard.readyForFollowUp.length, 0);
@@ -149,8 +149,8 @@ describe('PE-09 Commercial Follow-up', () => {
 
   it('records ready_for_contact timeline event', () => {
     resetAll();
-    preparePilotForPartner('p-nord');
-    const delivered = deliverPilot('p-nord');
+    preparePilotForPartner('p-dse');
+    const delivered = deliverPilot('p-dse');
     assert.equal(delivered.ok, true);
     if (!delivered.ok) return;
 
@@ -167,9 +167,9 @@ describe('PE-09 Commercial Follow-up', () => {
       FOLLOW_UP_ACTIVE_WINDOW_MS +
       60_000;
 
-    const followUp = syncCommercialFollowUpTimeline('p-nord', staleNow);
+    const followUp = syncCommercialFollowUpTimeline('p-dse', staleNow);
     assert.equal(followUp?.status, 'ready_for_contact');
-    const kinds = listPartnerTimeline('p-nord', 50).map((event) => event.kind);
+    const kinds = listPartnerTimeline('p-dse', 50).map((event) => event.kind);
     assert.ok(kinds.includes('followup.ready_for_contact'));
   });
 });

@@ -104,15 +104,15 @@ describe('PE-11 Partner Lifecycle', () => {
 
   it('suspends, restores and archives with studio access sync', () => {
     resetAll();
-    activatePartnerEnvironment('p-nord', 'pilot');
-    assert.equal(getPartnerEnvironmentRecord('p-nord').lifecycleStatus, 'active');
+    activatePartnerEnvironment('p-dse', 'pilot');
+    assert.equal(getPartnerEnvironmentRecord('p-dse').lifecycleStatus, 'active');
     assert.deepEqual(
-      getPartnerEnvironmentRecord('p-nord').studioAccess,
+      getPartnerEnvironmentRecord('p-dse').studioAccess,
       studioAccessForLifecycle('active'),
     );
 
-    suspendPartnerEnvironment('p-nord', 'Platební spor');
-    const suspended = getPartnerEnvironmentRecord('p-nord');
+    suspendPartnerEnvironment('p-dse', 'Platební spor');
+    const suspended = getPartnerEnvironmentRecord('p-dse');
     assert.equal(suspended.lifecycleStatus, 'suspended');
     assert.equal(suspended.statusChangeReason, 'Platební spor');
     assert.equal(suspended.lastAdminAction, 'suspend');
@@ -122,11 +122,11 @@ describe('PE-11 Partner Lifecycle', () => {
       sales: false,
     });
 
-    const afterSuspend = listPartnerTimeline('p-nord').map((e) => e.label);
+    const afterSuspend = listPartnerTimeline('p-dse').map((e) => e.label);
     assert.ok(afterSuspend.includes('PartnerSuspended'));
 
-    restorePartnerEnvironment('p-nord', 'Spor vyřešen');
-    const restored = getPartnerEnvironmentRecord('p-nord');
+    restorePartnerEnvironment('p-dse', 'Spor vyřešen');
+    const restored = getPartnerEnvironmentRecord('p-dse');
     assert.equal(restored.lifecycleStatus, 'active');
     assert.equal(restored.lastAdminAction, 'restore');
     assert.deepEqual(restored.studioAccess, {
@@ -135,13 +135,13 @@ describe('PE-11 Partner Lifecycle', () => {
       sales: true,
     });
     assert.ok(
-      listPartnerTimeline('p-nord')
+      listPartnerTimeline('p-dse')
         .map((e) => e.label)
         .includes('PartnerRestored'),
     );
 
-    archivePartnerEnvironment('p-nord', 'Ukončení spolupráce');
-    const archived = getPartnerEnvironmentRecord('p-nord');
+    archivePartnerEnvironment('p-dse', 'Ukončení spolupráce');
+    const archived = getPartnerEnvironmentRecord('p-dse');
     assert.equal(archived.lifecycleStatus, 'archived');
     assert.equal(archived.pilotMode, false);
     assert.equal(archived.lastAdminAction, 'archive');
@@ -154,22 +154,22 @@ describe('PE-11 Partner Lifecycle', () => {
     assert.equal(archived.packageId, 'pilot');
     assert.ok(archived.activatedAt !== null);
     assert.ok(
-      listPartnerTimeline('p-nord')
+      listPartnerTimeline('p-dse')
         .map((e) => e.label)
         .includes('PartnerArchived'),
     );
 
     // Restore is not available from archived.
-    restorePartnerEnvironment('p-nord');
+    restorePartnerEnvironment('p-dse');
     assert.equal(
-      getPartnerEnvironmentRecord('p-nord').lifecycleStatus,
+      getPartnerEnvironmentRecord('p-dse').lifecycleStatus,
       'archived',
     );
   });
 
   it('keeps Pilot outside lifecycle until activation', () => {
     resetAll();
-    const record = getPartnerEnvironmentRecord('p-blokki');
+    const record = getPartnerEnvironmentRecord('p-dse');
     assert.equal(record.lifecycleStatus, null);
     assert.equal(record.status, 'pilot');
     assert.deepEqual(record.studioAccess, {
@@ -177,6 +177,6 @@ describe('PE-11 Partner Lifecycle', () => {
       manager: false,
       sales: false,
     });
-    assert.equal(suspendPartnerEnvironment('p-blokki')?.lifecycleStatus, null);
+    assert.equal(suspendPartnerEnvironment('p-dse')?.lifecycleStatus, null);
   });
 });

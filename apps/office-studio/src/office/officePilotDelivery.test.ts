@@ -50,12 +50,12 @@ describe('PE-07 Pilot Delivery', () => {
 
   it('builds delivery preview with PDF, invite info, activation and workspace link', () => {
     resetAll();
-    const prepared = preparePilotForPartner('p-nord');
+    const prepared = preparePilotForPartner('p-dse');
     assert.ok(prepared !== null);
 
-    const preview = buildPilotDeliveryPreview('p-nord');
+    const preview = buildPilotDeliveryPreview('p-dse');
     assert.ok(preview !== null);
-    assert.equal(preview?.partnerName, getPartner('p-nord')?.name);
+    assert.equal(preview?.partnerName, getPartner('p-dse')?.name);
     assert.ok((preview?.email.length ?? 0) > 0);
     assert.equal(preview?.pdf.attached, true);
     assert.equal(preview?.pdf.ready, true);
@@ -78,9 +78,9 @@ describe('PE-07 Pilot Delivery', () => {
 
   it('delivers pilot in one action and writes PilotPrepared + PilotDelivered', () => {
     resetAll();
-    preparePilotForPartner('p-nord');
+    preparePilotForPartner('p-dse');
 
-    const result = deliverPilot('p-nord');
+    const result = deliverPilot('p-dse');
     assert.equal(result.ok, true);
     if (!result.ok) return;
 
@@ -91,16 +91,16 @@ describe('PE-07 Pilot Delivery', () => {
       'awaiting_activation',
     );
     assert.equal(result.delivery.package.invite.status, 'pending');
-    assert.equal(getPilotDelivery('p-nord')?.id, result.delivery.id);
+    assert.equal(getPilotDelivery('p-dse')?.id, result.delivery.id);
 
-    const kinds = listPartnerTimeline('p-nord', 50).map((event) => event.kind);
+    const kinds = listPartnerTimeline('p-dse', 50).map((event) => event.kind);
     assert.ok(kinds.includes('pilot.prepared'));
     assert.ok(kinds.includes('pilot.delivered'));
 
-    const labels = listPartnerTimeline('p-nord', 50).map((event) => event.label);
+    const labels = listPartnerTimeline('p-dse', 50).map((event) => event.label);
     assert.ok(labels.includes('PilotPrepared'));
     assert.ok(labels.includes('PilotDelivered'));
 
-    assert.match(getPartner('p-nord')?.nextStep ?? '', /Pilot odeslán/i);
+    assert.match(getPartner('p-dse')?.nextStep ?? '', /Pilot odeslán/i);
   });
 });

@@ -1,7 +1,7 @@
 /**
- * CS-01 / PE-03 / PE-10 — One-click Partner Environment provisioning.
- * Creates Partner Environment, branding, Pilot Project, Client/Manager/Sales,
- * and an invitation ready to send (not delivered).
+ * CS-01 / PE-03 / PE-10 / OF-11 — One-click Partner Environment provisioning.
+ * Clones the Office reference template (Reference House + Client/Manager/Sales),
+ * then applies partner-specific firm name, logo and hero branding.
  * Builder / Office remain CONIS-only; partner invite gets Manager + Sales roles.
  */
 
@@ -30,6 +30,12 @@ import {
 import { activateLicense } from './officeOperationsRegistry';
 import { getSalesCase, selectSalesPackage } from './officeSalesRegistry';
 import type { OfficePackageId } from './officeSalesModel';
+import {
+  OFFICE_REFERENCE_PARTNER_ID,
+  OFFICE_REFERENCE_PARTNER_NAME,
+  OFFICE_REFERENCE_PROJECT_LABEL,
+  brandingLabelsForPartner,
+} from './officeReferencePartner';
 
 export type PreparePilotResult = {
   readonly partner: OfficePartner;
@@ -46,7 +52,9 @@ function nowIso(): string {
 }
 
 /**
- * Prepare pilot for an existing Office partner — complete Partner Environment.
+ * Prepare pilot for an existing Office partner — copy of the reference template.
+ * Provisions shared Workspace / Project (Reference House) / Client+Manager+Sales,
+ * then customizes firm name, logo and hero only.
  */
 export function preparePilotForPartner(
   partnerId: string,
@@ -60,18 +68,27 @@ export function preparePilotForPartner(
     return null;
   }
 
+  const firmName = partner.company.legalName || partner.name;
+  // Reference partner keeps stable platform IDs (company-domy-s-energi…).
+  const provisionName =
+    partnerId === OFFICE_REFERENCE_PARTNER_ID
+      ? OFFICE_REFERENCE_PARTNER_NAME
+      : firmName;
   const provision = provisionPilotWorkspace({
-    companyName: partner.company.legalName || partner.name,
+    companyName: provisionName,
   });
-  // PE-03 / PE-10 — provision initializes Partner Environment studios + sample.
+  // Template clone — Reference House + Client / Manager / Sales studios.
   const pilotWorkspace = getPilotWorkspace(provision.company.id);
   if (pilotWorkspace === null) {
     return null;
   }
 
+  const brandLabels = brandingLabelsForPartner(firmName);
   const branding = upsertPartnerBranding({
     companyId: provision.company.id,
-    firmName: partner.company.legalName || partner.name,
+    firmName,
+    logoLabel: brandLabels.logoLabel,
+    heroLabel: brandLabels.heroLabel,
   });
 
   const invite = createPilotInvite({
@@ -110,7 +127,7 @@ export function preparePilotForPartner(
   appendOfficeEvent({
     kind: 'pilot.ready',
     label: 'Partner Environment připraven',
-    detail: `${updated.name} · ${pilotWorkspace.sampleProjectLabel} · Client/Manager/Sales · invite ${invite.token}`,
+    detail: `${updated.name} · ${OFFICE_REFERENCE_PROJECT_LABEL} · Client/Manager/Sales · invite ${invite.token}`,
     partnerId: updated.id,
   });
 
@@ -126,7 +143,7 @@ export function preparePilotForPartner(
 }
 
 /**
- * Create a new Office partner and prepare the pilot in one step.
+ * Create a new Office partner from the reference template and prepare the pilot.
  */
 export function prepareNewPilotPartner(input: {
   readonly firmName: string;

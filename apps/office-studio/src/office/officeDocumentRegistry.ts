@@ -1,5 +1,5 @@
 /**
- * OF-04 / OF-10 — Document Workspace registry (persisted MVP workflow).
+ * OF-04 / OF-10 / OF-11 — Document Workspace registry (persisted MVP workflow).
  * Prepare → Email Delivery → Click-wrap → Proforma. No DMS / PaymentReceived.
  */
 
@@ -18,6 +18,10 @@ import {
   type OfficeDocumentType,
   type OfficeProforma,
 } from './officeDocumentModel';
+import {
+  OFFICE_REFERENCE_PARTNER_ID,
+  OFFICE_REFERENCE_PARTNER_NAME,
+} from './officeReferencePartner';
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -71,35 +75,17 @@ function emptyPackage(partnerId: string): OfficeDocumentPackage {
 
 const SEED_PACKAGES: readonly OfficeDocumentPackage[] = Object.freeze([
   {
-    partnerId: 'p-blokki',
+    partnerId: OFFICE_REFERENCE_PARTNER_ID,
     status: 'prepared',
     documents: buildPreparedDocuments(
-      'p-blokki',
-      'Blokki',
+      OFFICE_REFERENCE_PARTNER_ID,
+      OFFICE_REFERENCE_PARTNER_NAME,
       '2026-08-02T15:00:00.000Z',
       false,
     ),
     clickWrapConfirmedAt: null,
     emailSentAt: null,
     emailTo: null,
-    proforma: null,
-  },
-  {
-    partnerId: 'p-linea',
-    status: 'sent',
-    documents: buildPreparedDocuments(
-      'p-linea',
-      'Linea Domů',
-      '2026-08-02T12:00:00.000Z',
-      false,
-    ).map((doc) => ({
-      ...doc,
-      status: 'sent' as const,
-      sentAt: '2026-08-02T13:30:00.000Z',
-    })),
-    clickWrapConfirmedAt: null,
-    emailSentAt: '2026-08-02T13:30:00.000Z',
-    emailTo: 'petr@lineadomu.cz',
     proforma: null,
   },
 ]);
