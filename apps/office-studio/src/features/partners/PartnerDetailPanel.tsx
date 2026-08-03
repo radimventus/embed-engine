@@ -25,6 +25,7 @@ const QUICK_ACTIONS: readonly {
   readonly id: PartnerQuickActionId;
   readonly label: string;
 }[] = [
+  { id: 'prepare-pilot', label: 'Připravit pilot' },
   { id: 'send-offer', label: 'Odeslat nabídku' },
   { id: 'confirm-order', label: 'Potvrdit objednávku' },
   { id: 'record-payment', label: 'Evidovat platbu' },

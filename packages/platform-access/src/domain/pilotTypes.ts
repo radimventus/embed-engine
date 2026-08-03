@@ -30,9 +30,13 @@ export type PilotInvite = {
   readonly tenantId: string;
   readonly companyId: string;
   readonly workspaceId: string;
+  /** Bound pilot project (Reference House) — CS-01. */
+  readonly projectId: string;
   readonly status: PilotInviteStatus;
   readonly createdAt: string;
   readonly activatedAt: string | null;
+  /** CS-01 — NDA accepted at activation (null while pending). */
+  readonly ndaAcceptedAt: string | null;
   readonly invitedByUserId: string;
   /** Last invitation e-mail send (MVP local delivery stamp). */
   readonly lastSentAt: string;

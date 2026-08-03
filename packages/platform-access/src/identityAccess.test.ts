@@ -74,6 +74,7 @@ describe('identityAccess (OF-07)', () => {
     const activated = activateInvite({
       token: resent!.token,
       password: 'first-pass',
+      ndaAccepted: true,
     });
     assert.equal(activated.ok, true);
 

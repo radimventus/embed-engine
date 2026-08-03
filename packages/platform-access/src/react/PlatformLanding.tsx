@@ -1,19 +1,27 @@
 import { useMemo, useState, type FormEvent } from 'react';
 
 import { bootstrapTenant } from '../bootstrap/tenantBootstrap';
+import { resolveClientStudioHref } from '../cloud/cloudConfig';
+import { isPilotPartnerRoles } from '../domain/pilotPartnerAccess';
 import { PLATFORM_ROLE_LABELS, isPlatformAdmin, primaryRole } from '../domain/roles';
 import type { PlatformStudioId } from '../domain/types';
+import { getPartnerBranding } from '../pilot/partnerBrandingStore';
 import {
   buildPilotDiagnostics,
   listRecentActivity,
   recordPlatformActivity,
 } from '../pilot/pilotDiagnostics';
 import { provisionPilotWorkspace } from '../pilot/provisionPilotWorkspace';
+import {
+  dismissPartnerWelcome,
+  shouldShowPartnerWelcome,
+} from '../pilot/welcomeStore';
 import { GaReadinessCenter } from './GaReadinessCenter';
 import { IdentityAccessCenter } from './IdentityAccessCenter';
+import { PartnerWelcomeScreen } from './PartnerWelcomeScreen';
 import { usePlatformSession } from './SessionProvider';
 
-const STUDIO_ORDER: readonly {
+const ALL_STUDIOS: readonly {
   readonly id: PlatformStudioId;
   readonly label: string;
 }[] = [
@@ -23,8 +31,16 @@ const STUDIO_ORDER: readonly {
   { id: 'builder', label: 'Builder Studio' },
 ];
 
+const PARTNER_STUDIOS: readonly {
+  readonly id: PlatformStudioId;
+  readonly label: string;
+}[] = [
+  { id: 'manager', label: 'Manager Studio' },
+  { id: 'sales', label: 'Sales Studio' },
+];
+
 /**
- * EPIC-BX-14 / BX-15 / BX-16 / BX-18 — Platform Landing + GA Readiness Center.
+ * EPIC-BX-14 / BX-15 / BX-16 / BX-18 / CS-01 — Platform Landing + partner welcome.
  */
 export function PlatformLanding() {
   const {
@@ -39,6 +55,7 @@ export function PlatformLanding() {
   } = usePlatformSession();
   const [pilotFirm, setPilotFirm] = useState('');
   const [pilotMessage, setPilotMessage] = useState<string | null>(null);
+  const [welcomeOpen, setWelcomeOpen] = useState(true);
 
   const diagnostics = useMemo(
     () => buildPilotDiagnostics(session),
@@ -53,10 +70,47 @@ export function PlatformLanding() {
 
   const role = primaryRole(session.user.roles);
   const isAdmin = isPlatformAdmin(session.user.roles);
+  const isPartner = isPilotPartnerRoles(session.user.roles);
   const recentProjects = registry.projects.slice(0, 5);
+  const studioCards = isPartner ? PARTNER_STUDIOS : ALL_STUDIOS;
+  const branding = getPartnerBranding(session.companyId);
+  const showWelcome =
+    welcomeOpen &&
+    isPartner &&
+    shouldShowPartnerWelcome(session.user.email);
+
+  const openClientStudio = () => {
+    recordPlatformActivity({
+      label: 'Otevření Client Studia',
+      detail: bootstrap.project?.name ?? 'Pilot project',
+    });
+    if (typeof window !== 'undefined') {
+      window.location.assign(resolveClientStudioHref());
+    }
+  };
+
+  if (showWelcome) {
+    return (
+      <PartnerWelcomeScreen
+        displayName={bootstrap.user.displayName}
+        firmName={branding?.firmName ?? bootstrap.company.name}
+        projectName={bootstrap.project?.name ?? 'Reference House'}
+        onEnterClientStudio={() => {
+          dismissPartnerWelcome(session.user.email);
+          setWelcomeOpen(false);
+          openClientStudio();
+        }}
+        onContinueToStudios={() => {
+          dismissPartnerWelcome(session.user.email);
+          setWelcomeOpen(false);
+        }}
+      />
+    );
+  }
 
   const continueWork = () => {
-    const studio = session.activeStudioId ?? 'builder';
+    const preferred: PlatformStudioId = isPartner ? 'manager' : 'builder';
+    const studio = session.activeStudioId ?? preferred;
     if (session.projectId !== null) {
       selectProject(session.projectId);
     }
@@ -64,7 +118,19 @@ export function PlatformLanding() {
       label: 'Pokračovat v práci',
       detail: `${bootstrap.project?.name ?? 'Projekt'} → ${studio}`,
     });
-    selectStudio(canOpenStudio(studio) ? studio : 'builder');
+    if (canOpenStudio(studio)) {
+      selectStudio(studio);
+      return;
+    }
+    if (isPartner && canOpenStudio('manager')) {
+      selectStudio('manager');
+      return;
+    }
+    if (isPartner && canOpenStudio('sales')) {
+      selectStudio('sales');
+      return;
+    }
+    selectStudio(canOpenStudio('builder') ? 'builder' : 'manager');
   };
 
   return (
@@ -82,6 +148,12 @@ export function PlatformLanding() {
             ? ` / ${bootstrap.project.name}`
             : ''}
         </p>
+        {branding !== null && (
+          <p className="platform-access__lead" data-testid="partner-branding">
+            Branding · {branding.firmName} · {branding.logoLabel} ·{' '}
+            {branding.heroLabel}
+          </p>
+        )}
 
         <button
           type="button"
@@ -92,8 +164,20 @@ export function PlatformLanding() {
           Pokračovat v práci
         </button>
 
+        {isPartner && (
+          <button
+            type="button"
+            className="platform-access__submit"
+            style={{ marginTop: 12, width: '100%' }}
+            onClick={openClientStudio}
+            data-testid="open-client-studio"
+          >
+            Client Studio
+          </button>
+        )}
+
         <div className="platform-access__studios">
-          {STUDIO_ORDER.map((studio) => {
+          {studioCards.map((studio) => {
             const allowed = canOpenStudio(studio.id);
             return (
               <button

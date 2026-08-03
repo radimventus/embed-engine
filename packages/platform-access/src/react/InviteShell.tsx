@@ -9,14 +9,18 @@ type InviteShellProps = {
   readonly onCancel: () => void;
 };
 
+const NDA_SUMMARY =
+  'Pilotní NDA — důvěrné informace CONIS a partnerského nasazení Embed Experience se nesmí sdílet mimo schválený tým. Souhlas je podmínkou vstupu do Studií.';
+
 /**
- * EPIC-BX-15 — Invite activation: token → set password → enter Workspace.
+ * EPIC-BX-15 / CS-01 — Invite activation: token → NDA → set password → enter Workspace.
  */
 export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
   const { login } = usePlatformSession();
   const [token, setToken] = useState(initialToken);
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
+  const [ndaAccepted, setNdaAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const preview = useMemo(
@@ -26,11 +30,19 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
 
   const onSubmit = (event: FormEvent) => {
     event.preventDefault();
+    if (!ndaAccepted) {
+      setError('Bez souhlasu s NDA není aktivace účtu možná.');
+      return;
+    }
     if (password !== password2) {
       setError('Hesla se neshodují.');
       return;
     }
-    const result = activateInvite({ token: token.trim(), password });
+    const result = activateInvite({
+      token: token.trim(),
+      password,
+      ndaAccepted: true,
+    });
     if (!result.ok) {
       setError(result.error);
       return;
@@ -52,10 +64,10 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
   return (
     <div className="platform-access" data-testid="invite-shell">
       <div className="platform-access__panel">
-        <p className="platform-access__eyebrow">CONIS Invite</p>
+        <p className="platform-access__eyebrow">CONIS Invite · CS-01</p>
         <h1 className="platform-access__title">Aktivace účtu</h1>
         <p className="platform-access__lead">
-          Zadejte token z pozvánky a nastavte heslo pro vstup do Workspace.
+          NDA, souhlas a vlastní heslo — teprve poté vstup do Studií.
         </p>
         {preview !== null && (
           <p className="platform-access__lead">
@@ -73,6 +85,27 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
               required
             />
           </label>
+
+          <fieldset
+            className="platform-access__label"
+            data-testid="nda-gateway"
+            style={{ border: '1px solid #d0d5dd', borderRadius: 8, padding: 12 }}
+          >
+            <legend style={{ padding: '0 6px' }}>NDA Gateway</legend>
+            <p className="platform-access__lead" style={{ marginTop: 0 }}>
+              {NDA_SUMMARY}
+            </p>
+            <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+              <input
+                type="checkbox"
+                checked={ndaAccepted}
+                onChange={(event) => setNdaAccepted(event.target.checked)}
+                data-testid="nda-accept"
+              />
+              <span>Souhlasím s NDA a podmínkami pilotního přístupu.</span>
+            </label>
+          </fieldset>
+
           <label className="platform-access__label">
             Nové heslo
             <input
@@ -81,6 +114,7 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
               value={password}
               onChange={(event) => setPassword(event.target.value)}
               required
+              disabled={!ndaAccepted}
             />
           </label>
           <label className="platform-access__label">
@@ -91,6 +125,7 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
               value={password2}
               onChange={(event) => setPassword2(event.target.value)}
               required
+              disabled={!ndaAccepted}
             />
           </label>
           {error !== null && (
@@ -98,7 +133,11 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
               {error}
             </p>
           )}
-          <button className="platform-access__submit" type="submit">
+          <button
+            className="platform-access__submit"
+            type="submit"
+            disabled={!ndaAccepted}
+          >
             Aktivovat a vstoupit
           </button>
         </form>

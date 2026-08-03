@@ -21,6 +21,7 @@ import {
   provisionPilotWorkspace,
   resetCompanyRegistryExtras,
   resetInviteStore,
+  resetPartnerWelcomeStore,
   resolveCloudStudioHref,
   restoreSession,
   submitPlatformFeedback,
@@ -162,9 +163,29 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     resetCompanyRegistryExtras();
   });
 
+  it('rejects invite activation without NDA consent', () => {
+    clearPlatformSession();
+    resetInviteStore();
+    resetPartnerWelcomeStore();
+    const invite = createPilotInvite({
+      email: 'nda@nordic.local',
+      displayName: 'NDA User',
+      roles: ['manager', 'salesman'],
+      invitedByUserId: 'user-radim',
+    });
+    const denied = activateInvite({
+      token: invite.token,
+      password: 'secret',
+      ndaAccepted: false,
+    });
+    assert.equal(denied.ok, false);
+    resetInviteStore();
+  });
+
   it('invite → activate → login enters workspace', () => {
     clearPlatformSession();
     resetInviteStore();
+    resetPartnerWelcomeStore();
     const invite = createPilotInvite({
       email: 'pilot@nordic.local',
       displayName: 'Pilot User',
@@ -174,6 +195,7 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     const activated = activateInvite({
       token: invite.token,
       password: 'pilot-pass',
+      ndaAccepted: true,
     });
     assert.equal(activated.ok, true);
     const result = login({

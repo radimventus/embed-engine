@@ -78,6 +78,7 @@ let partners: OfficePartner[] = SEED_PARTNERS.map((partner) => ({ ...partner }))
 let idSeq = 100;
 
 export type PartnerQuickActionId =
+  | 'prepare-pilot'
   | 'send-offer'
   | 'confirm-order'
   | 'record-payment'
@@ -185,6 +186,9 @@ export function applyPartnerQuickAction(
   let detail = '';
 
   switch (actionId) {
+    case 'prepare-pilot':
+      // CS-01 — handled by preparePilotForPartner (orchestration), not status-only.
+      return partner;
     case 'send-offer':
       status = 'offer';
       kind = 'offer.sent';

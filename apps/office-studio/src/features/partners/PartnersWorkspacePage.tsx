@@ -26,6 +26,7 @@ import {
   type PartnerQuickActionId,
   updatePartner,
 } from '../../office/officePartnerRegistry';
+import { preparePilotForPartner } from '../../office/preparePilotProvisioning';
 import { PartnerDetailPanel } from './PartnerDetailPanel';
 import { PartnerFormDialog } from './PartnerFormDialog';
 
@@ -51,7 +52,7 @@ export function PartnersWorkspacePage({
   const [statusFilter, setStatusFilter] =
     useState<PartnerStatusFilter>('all');
   const [dialog, setDialog] = useState<DialogState>({ mode: 'closed' });
-
+  const [pilotNotice, setPilotNotice] = useState<string | null>(null);
   const partners = useMemo(() => {
     void revision;
     return listPartners();
@@ -92,6 +93,21 @@ export function PartnersWorkspacePage({
 
   function handleQuickAction(actionId: PartnerQuickActionId) {
     if (activePartner === null) return;
+    if (actionId === 'prepare-pilot') {
+      const prepared = preparePilotForPartner(activePartner.id);
+      bump();
+      if (prepared === null) {
+        setPilotNotice(
+          'Pilot nelze připravit — partner musí mít kontaktní e-mail.',
+        );
+        return;
+      }
+      onSelectPartner(prepared.partner.id);
+      setPilotNotice(
+        `Pilot připraven · pozvánka ${prepared.invite.token} · ${prepared.provision.project.name} · balíček Pilot`,
+      );
+      return;
+    }
     const updated = applyPartnerQuickAction(activePartner.id, actionId);
     bump();
     if (updated !== null) {
@@ -108,6 +124,15 @@ export function PartnersWorkspacePage({
           Centrální pracovní prostor partnera — registry, detail, timeline a
           provozní akce.
         </p>
+        {pilotNotice !== null ? (
+          <p
+            className="office-dashboard__lead"
+            data-testid="prepare-pilot-notice"
+            role="status"
+          >
+            {pilotNotice}
+          </p>
+        ) : null}
       </header>
 
       <div className="office-partners__grid">

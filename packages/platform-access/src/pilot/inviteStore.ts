@@ -15,6 +15,7 @@ import {
   verifyUserPassword,
 } from '../registry/userRegistry';
 import { recordPlatformActivity } from './pilotDiagnostics';
+import { markPartnerWelcomePending } from './welcomeStore';
 
 export const INVITE_STORAGE_KEY = 'conis.platform.invites.v1';
 
@@ -31,6 +32,8 @@ function canUseStorage(): boolean {
 function normalizeInvite(raw: PilotInvite): PilotInvite {
   return {
     ...raw,
+    projectId: raw.projectId ?? DEFAULT_PROJECT_ID,
+    ndaAcceptedAt: raw.ndaAcceptedAt ?? null,
     lastSentAt: raw.lastSentAt ?? raw.createdAt,
     sendCount: raw.sendCount ?? 1,
   };
@@ -103,6 +106,7 @@ export function createPilotInvite(input: {
   readonly tenantId?: string;
   readonly companyId?: string;
   readonly workspaceId?: string;
+  readonly projectId?: string;
 }): PilotInvite {
   const store = loadStore();
   const sentAt = new Date().toISOString();
@@ -115,9 +119,11 @@ export function createPilotInvite(input: {
     tenantId: input.tenantId ?? DEFAULT_TENANT_ID,
     companyId: input.companyId ?? DEFAULT_COMPANY_ID,
     workspaceId: input.workspaceId ?? DEFAULT_WORKSPACE_ID,
+    projectId: input.projectId ?? DEFAULT_PROJECT_ID,
     status: 'pending',
     createdAt: sentAt,
     activatedAt: null,
+    ndaAcceptedAt: null,
     invitedByUserId: input.invitedByUserId,
     lastSentAt: sentAt,
     sendCount: 1,
@@ -187,12 +193,20 @@ export function revokePilotInvite(inviteId: string): PilotInvite | null {
 export function activateInvite(input: {
   readonly token: string;
   readonly password: string;
+  /** CS-01 — NDA + consent required before password activation. */
+  readonly ndaAccepted: boolean;
 }):
   | { readonly ok: true; readonly invite: PilotInvite; readonly user: PlatformUser }
   | { readonly ok: false; readonly error: string } {
   const password = input.password.trim();
   if (password.length < 4) {
     return { ok: false, error: 'Heslo musí mít alespoň 4 znaky.' };
+  }
+  if (!input.ndaAccepted) {
+    return {
+      ok: false,
+      error: 'Bez souhlasu s NDA není aktivace účtu možná.',
+    };
   }
   const store = loadStore();
   const invite = store.invites.find((item) => item.token === input.token);
@@ -205,10 +219,12 @@ export function activateInvite(input: {
   if (invite.status === 'activated') {
     return { ok: false, error: 'Pozvánka už byla aktivována.' };
   }
+  const activatedAt = new Date().toISOString();
   const activated: PilotInvite = {
     ...invite,
     status: 'activated',
-    activatedAt: new Date().toISOString(),
+    activatedAt,
+    ndaAcceptedAt: activatedAt,
   };
   const user = upsertActivatedUser({
     id: `user-invite-${invite.id}`,
@@ -226,6 +242,7 @@ export function activateInvite(input: {
     label: 'První nastavení hesla',
     detail: user.email,
   });
+  markPartnerWelcomePending(user.email);
   return { ok: true, invite: activated, user };
 }
 
@@ -249,7 +266,7 @@ export function findActivatedInviteBinding(email: string): {
     tenantId: invite.tenantId,
     companyId: invite.companyId,
     workspaceId: invite.workspaceId,
-    projectId: DEFAULT_PROJECT_ID,
+    projectId: invite.projectId ?? DEFAULT_PROJECT_ID,
   };
 }
 

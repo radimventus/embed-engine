@@ -118,6 +118,7 @@ export {
   getCloudPlatformConfig,
   resolveCloudStudioHref,
   resolveCloudLandingHref,
+  resolveClientStudioHref,
   type CloudPlatformConfig,
   type PlatformDeployMode,
 } from './cloud/cloudConfig';
@@ -135,6 +136,32 @@ export {
   resetInviteStore,
   INVITE_STORAGE_KEY,
 } from './pilot/inviteStore';
+
+export {
+  upsertPartnerBranding,
+  getPartnerBranding,
+  resetPartnerBrandingStore,
+  PARTNER_BRANDING_STORAGE_KEY,
+} from './pilot/partnerBrandingStore';
+
+export type { PartnerBranding } from './domain/partnerBranding';
+export {
+  DEFAULT_PILOT_BRANDING_HERO,
+  DEFAULT_PILOT_BRANDING_LOGO,
+} from './domain/partnerBranding';
+
+export {
+  PILOT_PARTNER_ROLES,
+  isPilotPartnerRoles,
+} from './domain/pilotPartnerAccess';
+
+export {
+  markPartnerWelcomePending,
+  shouldShowPartnerWelcome,
+  dismissPartnerWelcome,
+  resetPartnerWelcomeStore,
+  PARTNER_WELCOME_STORAGE_KEY,
+} from './pilot/welcomeStore';
 
 export {
   requestPasswordReset,
@@ -225,6 +252,7 @@ export {
 
 export { AuthShell } from './react/AuthShell';
 export { InviteShell } from './react/InviteShell';
+export { PartnerWelcomeScreen } from './react/PartnerWelcomeScreen';
 export { PlatformLanding } from './react/PlatformLanding';
 export { PlatformAccessRoot } from './react/PlatformAccessRoot';
 export { IdentityAccessCenter } from './react/IdentityAccessCenter';

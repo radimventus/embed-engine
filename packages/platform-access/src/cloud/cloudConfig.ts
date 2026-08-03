@@ -29,12 +29,17 @@ const LOCAL_STUDIO_PORTS: Record<PlatformStudioId, number> = {
   sales: 4179,
 };
 
+/** CS-01 — Client Studio (Experience host) local Vite port. */
+const LOCAL_CLIENT_STUDIO_PORT = 4173;
+
 const CLOUD_STUDIO_PATHS: Record<PlatformStudioId, string> = {
   office: '/studio/office/',
   builder: '/studio/builder/',
   manager: '/studio/manager/',
   sales: '/studio/sales/',
 };
+
+const CLOUD_CLIENT_STUDIO_PATH = '/embed/' as const;
 
 function readEnvOrigin(): string | null {
   try {
@@ -107,4 +112,15 @@ export function resolveCloudLandingHref(): string {
     return `http://${host}:4177/`;
   }
   return `${config.origin}${CLOUD_STUDIO_ENTRY_PATH}`;
+}
+
+/** CS-01 — Partner entry into Client Studio / Embed Experience (not Builder/Office). */
+export function resolveClientStudioHref(): string {
+  const config = getCloudPlatformConfig();
+  if (config.mode === 'local') {
+    const host =
+      typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
+    return `http://${host}:${LOCAL_CLIENT_STUDIO_PORT}/`;
+  }
+  return `${config.origin}${CLOUD_CLIENT_STUDIO_PATH}`;
 }
