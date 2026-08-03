@@ -35,7 +35,11 @@ export type OfficeEventKind =
   | 'environment.activated'
   | 'partner.suspended'
   | 'partner.restored'
-  | 'partner.archived';
+  | 'partner.archived'
+  | 'admin.package_changed'
+  | 'admin.licence_changed'
+  | 'admin.contact_changed'
+  | 'admin.note_added';
 
 export type OfficeEvent = {
   readonly id: string;

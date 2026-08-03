@@ -336,6 +336,34 @@ export function activatePartnerEnvironment(
   return getPartnerEnvironmentRecord(partnerId);
 }
 
+/**
+ * PE-12 — Update commercial package/licence on an activated Partner Environment.
+ * Retains lifecycle status and studio access; no data deletion.
+ */
+export function setPartnerEnvironmentCommercial(
+  partnerId: string,
+  input: {
+    readonly packageId: OfficePackageId;
+    readonly licenceLabel?: string | null;
+  },
+): PartnerEnvironmentRecord | null {
+  if (getPartner(partnerId) === null) return null;
+  const current = getPartnerEnvironmentRecord(partnerId);
+  const meta = resolvePackageMeta(input.packageId);
+  const stamp = nowIso();
+  return upsert({
+    ...current,
+    packageId: input.packageId,
+    packageName: meta.packageName,
+    licenceLabel:
+      input.licenceLabel?.trim() ||
+      meta.licenceLabel ||
+      current.licenceLabel,
+    lastActivityAt: stamp,
+    updatedAt: stamp,
+  });
+}
+
 const DEFAULT_SUSPEND_REASON = 'Pozastaveno administrátorem Office';
 const DEFAULT_RESTORE_REASON = 'Obnoveno administrátorem Office';
 const DEFAULT_ARCHIVE_REASON = 'Archivováno administrátorem Office';

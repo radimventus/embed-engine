@@ -324,6 +324,7 @@ export function PartnersWorkspacePage({
             }
           }}
           onQuickAction={handleQuickAction}
+          onAdminChanged={bump}
         />
       </div>
 

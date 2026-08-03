@@ -610,6 +610,41 @@ body {
   gap: 12px;
 }
 
+.office-admin-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.office-admin-actions__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.office-admin-actions__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--platform-navy, #001930);
+}
+
+.office-admin-actions__field input,
+.office-admin-actions__field select,
+.office-admin-actions__field textarea {
+  border: 1px solid #d7d7d7;
+  border-radius: 4px;
+  padding: 8px 10px;
+  font: inherit;
+  color: inherit;
+  background: #fff;
+}
+
+.office-admin-actions__field button {
+  align-self: flex-start;
+}
+
 .office-sales__waiting {
   display: flex;
   flex-direction: column;

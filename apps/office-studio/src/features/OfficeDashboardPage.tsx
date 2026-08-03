@@ -15,6 +15,7 @@ import {
   listRecentOfficeEvents,
 } from '../office/officeEventCatalog';
 import type { PartnerCommercialFollowUp } from '../office/officeCommercialFollowUpModel';
+import { listPartnerAdminDashboardRows } from '../office/officePartnerAdministration';
 
 function formatSummaryDate(iso: string | null): string {
   if (iso === null) return '—';
@@ -51,6 +52,7 @@ function FollowUpList({
  * OF-02 — Partner summaries derived from Partner Registry.
  * PE-08 — Commercial Follow-up buckets.
  * PE-10 / PE-11 — Workspace Summary for active Partner Environments.
+ * PE-12 — Partner Administration overview.
  */
 export function OfficeDashboardPage() {
   const cards = buildOfficeDashboardCards();
@@ -58,6 +60,7 @@ export function OfficeDashboardPage() {
   const waiting = listOfficeWaitingActions();
   const followUp = buildOfficeFollowUpDashboard();
   const workspaceSummaries = listOfficeWorkspaceSummaries();
+  const adminRows = listPartnerAdminDashboardRows();
   const recent = listRecentOfficeEvents(8);
 
   return (
@@ -116,6 +119,41 @@ export function OfficeDashboardPage() {
                 >
                   {summary.lifecycleStatusLabel}
                 </PlatformStatusBadge>
+              </li>
+            ))}
+          </ul>
+        )}
+      </PlatformCard>
+
+      <PlatformCard
+        title="Partner Administration"
+        description="Aktuální konfigurace aktivních partnerů a historie změn"
+      >
+        {adminRows.length === 0 ? (
+          <p className="office-dashboard__hint">
+            Po aktivaci Partner Environment se zde zobrazí administrativní přehled.
+          </p>
+        ) : (
+          <ul className="office-list" data-testid="partner-admin-dashboard">
+            {adminRows.map((row) => (
+              <li key={row.partnerId} className="office-list__item">
+                <div>
+                  <p className="office-list__title">{row.partnerName}</p>
+                  <p className="office-list__meta">
+                    {row.packageName} · {row.licence}
+                  </p>
+                  <p className="office-list__meta">
+                    {row.contactName} · {row.contactEmail}
+                  </p>
+                  <p className="office-list__meta">
+                    {row.lastChangeSummary}
+                    {row.lastChangeAt
+                      ? ` · ${formatSummaryDate(row.lastChangeAt)}`
+                      : ''}
+                    {row.notesCount > 0 ? ` · ${row.notesCount} poznámek` : ''}
+                  </p>
+                </div>
+                <PlatformStatusBadge tone="info">admin</PlatformStatusBadge>
               </li>
             ))}
           </ul>

@@ -16,11 +16,13 @@ import {
 import type { PartnerQuickActionId } from '../../office/officePartnerRegistry';
 import { syncCommercialFollowUpTimeline } from '../../office/officeCommercialFollowUpRegistry';
 import { buildOfficePartnerEnvironment } from '../../office/officePartnerEnvironment';
+import { PartnerAdministrationSection } from './PartnerAdministrationSection';
 
 type PartnerDetailPanelProps = {
   readonly partner: OfficePartner | null;
   readonly onEdit: () => void;
   readonly onQuickAction: (actionId: PartnerQuickActionId) => void;
+  readonly onAdminChanged?: () => void;
 };
 
 const QUICK_ACTIONS: readonly {
@@ -45,6 +47,7 @@ export function PartnerDetailPanel({
   partner,
   onEdit,
   onQuickAction,
+  onAdminChanged,
 }: PartnerDetailPanelProps) {
   if (partner === null) {
     return (
@@ -138,6 +141,11 @@ export function PartnerDetailPanel({
           </dl>
         </PlatformCard>
       </div>
+
+      <PartnerAdministrationSection
+        partnerId={partner.id}
+        onChanged={() => onAdminChanged?.()}
+      />
 
       <PlatformCard
         title="Workspace Summary"
