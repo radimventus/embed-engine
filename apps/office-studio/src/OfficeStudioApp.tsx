@@ -1,6 +1,6 @@
 /**
  * OF-01 — Office Studio application shell.
- * OF-02 Partner · OF-03 Sales · OF-04 Documents · OF-05 Builder Handoff.
+ * OF-02 Partner · OF-03 Sales · OF-04 Documents · OF-05 Handoff · OF-06 Pilot Runtime.
  */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -24,6 +24,7 @@ import { ImplementationWorkspacePage } from './features/implementation/Implement
 import { OfficeDashboardPage } from './features/OfficeDashboardPage';
 import { OfficeSectionPage } from './features/OfficeSectionPage';
 import { PartnersWorkspacePage } from './features/partners/PartnersWorkspacePage';
+import { PilotRuntimePage } from './features/pilot/PilotRuntimePage';
 import { SalesWorkspacePage } from './features/sales/SalesWorkspacePage';
 import { getPartner } from './office/officePartnerRegistry';
 import {
@@ -83,10 +84,12 @@ export function OfficeStudioApp() {
     location.routeId === 'implementation';
 
   const sectionLabel =
-    isPartnerScoped && location.partnerId !== null
-      ? (getPartner(location.partnerId)?.name ??
-        officeRouteLabel(location.routeId))
-      : officeRouteLabel(location.routeId);
+    location.routeId === 'settings'
+      ? 'Pilot Runtime'
+      : isPartnerScoped && location.partnerId !== null
+        ? (getPartner(location.partnerId)?.name ??
+          officeRouteLabel(location.routeId))
+        : officeRouteLabel(location.routeId);
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
@@ -159,6 +162,12 @@ export function OfficeStudioApp() {
               selectedPartnerId={location.partnerId}
               onSelectPartner={(partnerId) =>
                 openPartnerScoped('implementation', partnerId)
+              }
+            />
+          ) : location.routeId === 'settings' ? (
+            <PilotRuntimePage
+              onOpenPartner={(partnerId) =>
+                openPartnerScoped('partners', partnerId)
               }
             />
           ) : (

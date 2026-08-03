@@ -47,6 +47,10 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
       parseOfficeRoute('/studio/office/implementation', '/studio/office/'),
       'implementation',
     );
+    assert.equal(
+      parseOfficeRoute('/studio/office/settings', '/studio/office/'),
+      'settings',
+    );
   });
 
   it('parses partner detail deep-links', () => {
@@ -87,6 +91,7 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
     assert.equal(officeHref('sales'), '/sales');
     assert.equal(officeHref('documents'), '/documents');
     assert.equal(officeHref('implementation'), '/implementation');
+    assert.equal(officeHref('settings'), '/settings');
   });
 
   it('wires Platform Shell, Partner Workspace and Office app entry', () => {
@@ -101,6 +106,7 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
     assert.match(app, /SalesWorkspacePage/);
     assert.match(app, /DocumentsWorkspacePage/);
     assert.match(app, /ImplementationWorkspacePage/);
+    assert.match(app, /PilotRuntimePage/);
     assert.match(main, /studioId="office"/);
     assert.match(pkg, /@embed-engine\/platform-shell/);
     assert.match(pkg, /@embed-engine\/platform-access/);
@@ -131,11 +137,16 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
       join(root, 'features/implementation/ImplementationWorkspacePage.tsx'),
       'utf8',
     );
+    const pilot = readFileSync(
+      join(root, 'features/pilot/PilotRuntimePage.tsx'),
+      'utf8',
+    );
     assert.doesNotMatch(section, /Coming Soon/i);
     assert.doesNotMatch(dashboard, /Coming Soon/i);
     assert.doesNotMatch(partners, /Coming Soon/i);
     assert.doesNotMatch(sales, /Coming Soon/i);
     assert.doesNotMatch(documents, /Coming Soon/i);
     assert.doesNotMatch(implementation, /Coming Soon/i);
+    assert.doesNotMatch(pilot, /Coming Soon/i);
   });
 });

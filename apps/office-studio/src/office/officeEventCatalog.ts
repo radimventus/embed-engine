@@ -18,7 +18,8 @@ export type OfficeEventKind =
   | 'payment.received'
   | 'builder.workspace.created'
   | 'builder.ready'
-  | 'builder.opened';
+  | 'builder.opened'
+  | 'pilot.ready';
 
 export type OfficeEvent = {
   readonly id: string;

@@ -610,6 +610,19 @@ body {
   text-decoration: underline;
 }
 
+.office-pilot {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1280px;
+}
+
+.office-pilot__summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
 @media (max-width: 1100px) {
   .office-dashboard__cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
