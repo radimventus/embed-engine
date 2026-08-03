@@ -1,5 +1,6 @@
 /**
  * PE-07 — Pilot Delivery package / preview domain (Office MVP, no SMTP).
+ * Finalizes the partner delivery package: deep-link, invitation state, activation state.
  */
 
 export type PilotDeliveryStudioId = 'client' | 'manager' | 'sales';
