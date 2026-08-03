@@ -1,9 +1,6 @@
 import { PlatformCard, PlatformEmptyState, PlatformStatusBadge } from '@embed-engine/platform-shell';
 
-import {
-  listOfficePartnerSummaries,
-  listOfficeWaitingActions,
-} from '../office/officeDashboardData';
+import { listOfficePartnerSummaries } from '../office/officeDashboardData';
 import {
   formatOfficeEventTime,
   listRecentOfficeEvents,
@@ -12,12 +9,12 @@ import type { OfficeRouteId } from '../office/officeRoutes';
 import { officeRouteLabel } from '../office/officeRoutes';
 
 type OfficeSectionPageProps = {
-  readonly routeId: Exclude<OfficeRouteId, 'dashboard' | 'partners'>;
+  readonly routeId: Exclude<OfficeRouteId, 'dashboard' | 'partners' | 'sales'>;
 };
 
 /**
  * OF-01 — Functional section shells for prepared routes.
- * Partner Workspace lives in PartnersWorkspacePage (OF-02).
+ * Partner Workspace (OF-02) and Sales Workspace (OF-03) have dedicated pages.
  */
 export function OfficeSectionPage({ routeId }: OfficeSectionPageProps) {
   const label = officeRouteLabel(routeId);
@@ -44,36 +41,6 @@ export function OfficeSectionPage({ routeId }: OfficeSectionPageProps) {
                 <span className="office-list__meta">
                   {formatOfficeEventTime(event.occurredAt)}
                 </span>
-              </li>
-            ))}
-          </ul>
-        </PlatformCard>
-      </div>
-    );
-  }
-
-  if (routeId === 'sales') {
-    const waiting = listOfficeWaitingActions();
-    return (
-      <div className="office-section" data-testid={`office-section-${routeId}`}>
-        <header className="office-dashboard__header">
-          <p className="office-dashboard__eyebrow">{label}</p>
-          <h1 className="office-dashboard__title">{label}</h1>
-          <p className="office-dashboard__lead">
-            Obchodní provoz — položky čekající na akci.
-          </p>
-        </header>
-        <PlatformCard title="Čeká na akci">
-          <ul className="office-list">
-            {waiting.map((action) => (
-              <li key={action.id} className="office-list__item">
-                <div>
-                  <p className="office-list__title">{action.title}</p>
-                  <p className="office-list__meta">{action.owner}</p>
-                </div>
-                <PlatformStatusBadge tone="warning">
-                  {action.dueLabel}
-                </PlatformStatusBadge>
               </li>
             ))}
           </ul>

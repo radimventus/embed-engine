@@ -1,6 +1,6 @@
 /**
- * OF-01 / OF-02 — Office Studio routes under /studio/office/
- * Partners support detail deep-link: /partners/:partnerId
+ * OF-01 / OF-02 / OF-03 — Office Studio routes under /studio/office/
+ * Partners + Sales support detail deep-link: /:section/:partnerId
  */
 
 export type OfficeRouteId =
@@ -37,6 +37,11 @@ export const OFFICE_NAV_ITEMS: readonly OfficeNavItem[] = Object.freeze([
 const ROUTE_BY_PATH = new Map(
   OFFICE_NAV_ITEMS.map((item) => [item.path, item.id] as const),
 );
+
+const PARTNER_SCOPED_ROUTES: ReadonlySet<OfficeRouteId> = new Set([
+  'partners',
+  'sales',
+]);
 
 export function officeRouteLabel(routeId: OfficeRouteId): string {
   return (
@@ -82,7 +87,7 @@ export function parseOfficeLocation(
   const segments = rest.split('/').filter((part) => part.length > 0);
   const segment = segments[0] ?? '';
   const routeId = ROUTE_BY_PATH.get(segment) ?? 'dashboard';
-  if (routeId === 'partners' && segments.length > 1) {
+  if (PARTNER_SCOPED_ROUTES.has(routeId) && segments.length > 1) {
     return { routeId, partnerId: segments[1] ?? null };
   }
   return { routeId, partnerId: null };
@@ -97,7 +102,11 @@ export function officeHref(
   const raw = viteBaseUrl();
   const base = raw.endsWith('/') ? raw : `${raw}/`;
   if (path === 'dashboard') return base;
-  if (routeId === 'partners' && partnerId != null && partnerId.length > 0) {
+  if (
+    PARTNER_SCOPED_ROUTES.has(routeId) &&
+    partnerId != null &&
+    partnerId.length > 0
+  ) {
     return `${base}${path}/${partnerId}`;
   }
   return `${base}${path}`;

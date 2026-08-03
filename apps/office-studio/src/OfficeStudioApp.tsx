@@ -1,6 +1,6 @@
 /**
  * OF-01 — Office Studio application shell.
- * OF-02 — Partner Workspace route under Partneři.
+ * OF-02 — Partner Workspace · OF-03 — Sales Workspace.
  */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -22,6 +22,7 @@ import { OfficeSidebar } from './components/OfficeSidebar';
 import { OfficeDashboardPage } from './features/OfficeDashboardPage';
 import { OfficeSectionPage } from './features/OfficeSectionPage';
 import { PartnersWorkspacePage } from './features/partners/PartnersWorkspacePage';
+import { SalesWorkspacePage } from './features/sales/SalesWorkspacePage';
 import { getPartner } from './office/officePartnerRegistry';
 import {
   officeHref,
@@ -52,11 +53,14 @@ export function OfficeStudioApp() {
     setLocation({ routeId: next, partnerId: null });
   }, []);
 
-  const openPartner = useCallback((partnerId: string) => {
-    const href = officeHref('partners', partnerId);
-    window.history.pushState(null, '', href);
-    setLocation({ routeId: 'partners', partnerId });
-  }, []);
+  const openPartnerScoped = useCallback(
+    (routeId: 'partners' | 'sales', partnerId: string) => {
+      const href = officeHref(routeId, partnerId);
+      window.history.pushState(null, '', href);
+      setLocation({ routeId, partnerId });
+    },
+    [],
+  );
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: bootstrap?.company.name ?? 'Firma',
@@ -64,16 +68,18 @@ export function OfficeStudioApp() {
     projects: [],
   });
 
-  const partnerLabel =
-    location.routeId === 'partners' && location.partnerId !== null
-      ? (getPartner(location.partnerId)?.name ?? officeRouteLabel('partners'))
+  const sectionLabel =
+    (location.routeId === 'partners' || location.routeId === 'sales') &&
+    location.partnerId !== null
+      ? (getPartner(location.partnerId)?.name ??
+        officeRouteLabel(location.routeId))
       : officeRouteLabel(location.routeId);
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Office' },
     { id: 'company', label: bootstrap?.company.name ?? 'Firma' },
-    { id: 'section', label: partnerLabel },
+    { id: 'section', label: sectionLabel },
   ];
 
   return (
@@ -117,7 +123,16 @@ export function OfficeStudioApp() {
           ) : location.routeId === 'partners' ? (
             <PartnersWorkspacePage
               selectedPartnerId={location.partnerId}
-              onSelectPartner={openPartner}
+              onSelectPartner={(partnerId) =>
+                openPartnerScoped('partners', partnerId)
+              }
+            />
+          ) : location.routeId === 'sales' ? (
+            <SalesWorkspacePage
+              selectedPartnerId={location.partnerId}
+              onSelectPartner={(partnerId) =>
+                openPartnerScoped('sales', partnerId)
+              }
             />
           ) : (
             <OfficeSectionPage routeId={location.routeId} />

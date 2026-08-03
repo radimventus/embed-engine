@@ -6,8 +6,11 @@
 export type OfficeEventKind =
   | 'partner.created'
   | 'partner.updated'
+  | 'offer.prepared'
+  | 'package.selected'
   | 'offer.sent'
   | 'order.confirmed'
+  | 'payment.waiting'
   | 'payment.received'
   | 'builder.opened';
 

@@ -13,7 +13,7 @@ import {
 
 const root = dirname(fileURLToPath(import.meta.url));
 
-describe('officeStudioShell (OF-01 / OF-02)', () => {
+describe('officeStudioShell (OF-01 / OF-02 / OF-03)', () => {
   it('exposes IA navigation labels', () => {
     assert.deepEqual(
       OFFICE_NAV_ITEMS.map((item) => item.label),
@@ -54,7 +54,12 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
       parseOfficeLocation('/studio/office/partners/p-blokki', '/studio/office/'),
       { routeId: 'partners', partnerId: 'p-blokki' },
     );
+    assert.deepEqual(
+      parseOfficeLocation('/studio/office/sales/p-nord', '/studio/office/'),
+      { routeId: 'sales', partnerId: 'p-nord' },
+    );
     assert.equal(officeHref('partners', 'p-blokki'), '/partners/p-blokki');
+    assert.equal(officeHref('sales', 'p-nord'), '/sales/p-nord');
   });
 
   it('builds office hrefs from route ids', () => {
@@ -74,6 +79,8 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
     assert.match(app, /OfficeSidebar/);
     assert.match(app, /OfficeDashboardPage/);
     assert.match(app, /PartnersWorkspacePage/);
+    assert.match(app, /SalesWorkspacePage/);
+    assert.doesNotMatch(app, /DocumentsWorkspacePage/);
     assert.match(main, /studioId="office"/);
     assert.match(pkg, /@embed-engine\/platform-shell/);
     assert.match(pkg, /@embed-engine\/platform-access/);
@@ -92,8 +99,13 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
       join(root, 'features/partners/PartnersWorkspacePage.tsx'),
       'utf8',
     );
+    const sales = readFileSync(
+      join(root, 'features/sales/SalesWorkspacePage.tsx'),
+      'utf8',
+    );
     assert.doesNotMatch(section, /Coming Soon/i);
     assert.doesNotMatch(dashboard, /Coming Soon/i);
     assert.doesNotMatch(partners, /Coming Soon/i);
+    assert.doesNotMatch(sales, /Coming Soon/i);
   });
 });
