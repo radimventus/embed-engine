@@ -1,5 +1,5 @@
 /**
- * PE-10 / PE-11 — Partner Environment activation + Partner Lifecycle.
+ * PE-10 / PE-11 / OF-10 — Partner Environment activation + Partner Lifecycle (persisted).
  * Lifecycle (after activation): Active → Suspended → Archived.
  * Pilot is onboarding only — not a lifecycle state.
  * No Runtime / Decision Layer / capabilities / data deletion.
@@ -14,6 +14,8 @@ import {
 } from './officePartnerRegistry';
 import type { OfficePackageId } from './officeSalesModel';
 import { formatCzk, getSalesPackage } from './officeSalesModel';
+import { loadJson, removeJson, saveJson } from './officeLocalStore';
+import { OFFICE_STORAGE_KEYS } from './officeStorageKeys';
 
 /** PE-11 — long-term partner lifecycle (Pilot is excluded). */
 export type PartnerLifecycleStatus = 'active' | 'suspended' | 'archived';
@@ -110,7 +112,22 @@ type LifecycleStore = {
   byPartnerId: Record<string, PartnerEnvironmentRecord>;
 };
 
-let store: LifecycleStore = { byPartnerId: {} };
+function readLifecycleStore(): LifecycleStore {
+  const stored = loadJson<LifecycleStore | null>(
+    OFFICE_STORAGE_KEYS.lifecycle,
+    null,
+  );
+  if (stored !== null && stored.byPartnerId !== undefined) {
+    return { byPartnerId: { ...stored.byPartnerId } };
+  }
+  return { byPartnerId: {} };
+}
+
+let store: LifecycleStore = readLifecycleStore();
+
+function persistLifecycleStore(): void {
+  saveJson(OFFICE_STORAGE_KEYS.lifecycle, store);
+}
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -178,6 +195,7 @@ function upsert(record: PartnerEnvironmentRecord): PartnerEnvironmentRecord {
       [record.partnerId]: record,
     },
   };
+  persistLifecycleStore();
   return record;
 }
 
@@ -546,5 +564,6 @@ export function listPartnerWorkspaceSummaries(): readonly PartnerWorkspaceSummar
 
 /** Test helper — clears lifecycle store. */
 export function resetPartnerEnvironmentLifecycleForTests(): void {
+  removeJson(OFFICE_STORAGE_KEYS.lifecycle);
   store = { byPartnerId: {} };
 }

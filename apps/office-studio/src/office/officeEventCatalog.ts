@@ -1,7 +1,10 @@
 /**
- * OF-01 / OF-02 — Office Event Catalog (MVP fixture + live timeline source).
+ * OF-01 / OF-02 / OF-10 — Office Event Catalog (persisted timeline source).
  * Not a platform Event Engine — local catalog for Office dashboard / Partner Timeline.
  */
+
+import { loadJson, removeJson, saveJson } from './officeLocalStore';
+import { OFFICE_STORAGE_KEYS } from './officeStorageKeys';
 
 export type OfficeEventKind =
   | 'partner.created'
@@ -109,10 +112,48 @@ const SEED_EVENTS: readonly OfficeEvent[] = Object.freeze([
   },
 ]);
 
-let events: OfficeEvent[] = SEED_EVENTS.map((event) => ({ ...event }));
-let eventSeq = 700;
+type EventPersistState = {
+  readonly events: readonly OfficeEvent[];
+  readonly eventSeq: number;
+};
+
+function seedEventState(): EventPersistState {
+  return {
+    events: SEED_EVENTS.map((event) => ({ ...event })),
+    eventSeq: 700,
+  };
+}
+
+function readEventState(): EventPersistState {
+  const stored = loadJson<EventPersistState | null>(
+    OFFICE_STORAGE_KEYS.events,
+    null,
+  );
+  if (
+    stored !== null &&
+    Array.isArray(stored.events) &&
+    stored.events.length > 0
+  ) {
+    return {
+      events: stored.events.map((event) => ({ ...event })),
+      eventSeq: typeof stored.eventSeq === 'number' ? stored.eventSeq : 700,
+    };
+  }
+  return seedEventState();
+}
+
+const initialEvents = readEventState();
+let events: OfficeEvent[] = initialEvents.events.map((event) => ({ ...event }));
+let eventSeq = initialEvents.eventSeq;
 
 export const OFFICE_EVENT_CATALOG: readonly OfficeEvent[] = SEED_EVENTS;
+
+function persistEvents(): void {
+  saveJson(OFFICE_STORAGE_KEYS.events, {
+    events,
+    eventSeq,
+  } satisfies EventPersistState);
+}
 
 export function listRecentOfficeEvents(limit = 8): readonly OfficeEvent[] {
   return [...events]
@@ -152,6 +193,7 @@ export function appendOfficeEvent(input: {
     partnerId: input.partnerId,
   };
   events = [...events, event];
+  persistEvents();
   return event;
 }
 
@@ -168,6 +210,8 @@ export function formatOfficeEventTime(iso: string): string {
 
 /** Test helper — restores seed catalog. */
 export function resetOfficeEventCatalogForTests(): void {
-  events = SEED_EVENTS.map((event) => ({ ...event }));
-  eventSeq = 700;
+  removeJson(OFFICE_STORAGE_KEYS.events);
+  const seeded = seedEventState();
+  events = seeded.events.map((event) => ({ ...event }));
+  eventSeq = seeded.eventSeq;
 }

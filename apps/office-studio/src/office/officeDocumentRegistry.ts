@@ -1,5 +1,5 @@
 /**
- * OF-04 — Document Workspace registry (in-memory MVP workflow).
+ * OF-04 / OF-10 — Document Workspace registry (persisted MVP workflow).
  * Prepare → Email Delivery → Click-wrap → Proforma. No DMS / PaymentReceived.
  */
 
@@ -7,6 +7,8 @@ import { appendOfficeEvent } from './officeEventCatalog';
 import { getPartner, listPartners } from './officePartnerRegistry';
 import { getSalesCase } from './officeSalesRegistry';
 import { formatCzk, getSalesPackage } from './officeSalesModel';
+import { loadJson, removeJson, saveJson } from './officeLocalStore';
+import { OFFICE_STORAGE_KEYS } from './officeStorageKeys';
 import {
   OFFICE_DOCUMENT_TYPE_LABELS,
   type OfficeDocument,
@@ -102,11 +104,46 @@ const SEED_PACKAGES: readonly OfficeDocumentPackage[] = Object.freeze([
   },
 ]);
 
-let packages: OfficeDocumentPackage[] = SEED_PACKAGES.map((entry) => ({
-  ...entry,
-  documents: entry.documents.map((doc) => ({ ...doc })),
-  proforma: entry.proforma === null ? null : { ...entry.proforma },
-}));
+type DocumentPersistState = {
+  readonly packages: readonly OfficeDocumentPackage[];
+};
+
+function clonePackages(
+  source: readonly OfficeDocumentPackage[],
+): OfficeDocumentPackage[] {
+  return source.map((entry) => ({
+    ...entry,
+    documents: entry.documents.map((doc) => ({ ...doc })),
+    proforma: entry.proforma === null ? null : { ...entry.proforma },
+  }));
+}
+
+function seedPackages(): OfficeDocumentPackage[] {
+  return clonePackages(SEED_PACKAGES);
+}
+
+function readPackages(): OfficeDocumentPackage[] {
+  const stored = loadJson<DocumentPersistState | null>(
+    OFFICE_STORAGE_KEYS.documents,
+    null,
+  );
+  if (
+    stored !== null &&
+    Array.isArray(stored.packages) &&
+    stored.packages.length > 0
+  ) {
+    return clonePackages(stored.packages);
+  }
+  return seedPackages();
+}
+
+let packages: OfficeDocumentPackage[] = readPackages();
+
+function persistPackages(): void {
+  saveJson(OFFICE_STORAGE_KEYS.documents, {
+    packages,
+  } satisfies DocumentPersistState);
+}
 
 function upsertPackage(next: OfficeDocumentPackage): OfficeDocumentPackage {
   const index = packages.findIndex(
@@ -117,6 +154,7 @@ function upsertPackage(next: OfficeDocumentPackage): OfficeDocumentPackage {
   } else {
     packages = packages.map((entry, i) => (i === index ? next : entry));
   }
+  persistPackages();
   return next;
 }
 
@@ -328,11 +366,8 @@ export function filterDocuments(
 }
 
 export function resetDocumentRegistryForTests(): void {
-  packages = SEED_PACKAGES.map((entry) => ({
-    ...entry,
-    documents: entry.documents.map((doc) => ({ ...doc })),
-    proforma: entry.proforma === null ? null : { ...entry.proforma },
-  }));
+  removeJson(OFFICE_STORAGE_KEYS.documents);
+  packages = seedPackages();
 }
 
 // silence unused type re-exports for consumers

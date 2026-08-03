@@ -1,5 +1,5 @@
 /**
- * OF-03 / PE-09 — Pilot Offer & Checkout registry (in-memory MVP).
+ * OF-03 / PE-09 / OF-10 — Pilot Offer & Checkout registry (persisted).
  * Select package → create offer → send offer. No payment gateway / PE provisioning.
  */
 
@@ -15,6 +15,8 @@ import {
   listPartners,
   updatePartner,
 } from './officePartnerRegistry';
+import { loadJson, removeJson, saveJson } from './officeLocalStore';
+import { OFFICE_STORAGE_KEYS } from './officeStorageKeys';
 import {
   computeOfferValidUntil,
   formatCzk,
@@ -174,7 +176,32 @@ const SEED_CASES: readonly OfficeSalesCase[] = Object.freeze([
   },
 ]);
 
-let cases: OfficeSalesCase[] = SEED_CASES.map((entry) => normalizeCase(entry));
+type SalesPersistState = {
+  readonly cases: readonly OfficeSalesCase[];
+};
+
+function seedCases(): OfficeSalesCase[] {
+  return SEED_CASES.map((entry) => normalizeCase(entry));
+}
+
+function readCases(): OfficeSalesCase[] {
+  const stored = loadJson<SalesPersistState | null>(
+    OFFICE_STORAGE_KEYS.sales,
+    null,
+  );
+  if (stored !== null && Array.isArray(stored.cases) && stored.cases.length > 0) {
+    return stored.cases.map((entry) => normalizeCase(entry));
+  }
+  return seedCases();
+}
+
+let cases: OfficeSalesCase[] = readCases();
+
+function persistCases(): void {
+  saveJson(OFFICE_STORAGE_KEYS.sales, {
+    cases,
+  } satisfies SalesPersistState);
+}
 
 function syncPartnerCommercialStatus(
   partnerId: string,
@@ -209,6 +236,7 @@ function upsertCase(next: OfficeSalesCase): OfficeSalesCase {
   } else {
     cases = cases.map((entry, i) => (i === index ? normalized : entry));
   }
+  persistCases();
   return normalized;
 }
 
@@ -484,5 +512,6 @@ export function listWaitingPaymentCases(): readonly OfficeSalesCase[] {
 }
 
 export function resetSalesRegistryForTests(): void {
-  cases = SEED_CASES.map((entry) => normalizeCase(entry));
+  removeJson(OFFICE_STORAGE_KEYS.sales);
+  cases = seedCases();
 }

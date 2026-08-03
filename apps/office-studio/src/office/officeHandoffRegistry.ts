@@ -1,5 +1,5 @@
 /**
- * OF-05 — Builder Handoff registry (MVP).
+ * OF-05 / OF-10 — Builder Handoff registry (persisted MVP).
  * Automatic Office → Builder handoff after PaymentReceived.
  */
 
@@ -18,6 +18,8 @@ import {
 import { defaultNextStep } from './officePartnerModel';
 import { formatCzk, getSalesPackage } from './officeSalesModel';
 import { getSalesCase } from './officeSalesRegistry';
+import { loadJson, removeJson, saveJson } from './officeLocalStore';
+import { OFFICE_STORAGE_KEYS } from './officeStorageKeys';
 import {
   type OfficeBuilderWorkspace,
   type OfficeHandoffStatus,
@@ -111,20 +113,53 @@ const SEED_HANDOFFS: readonly OfficeHandoffSummary[] = Object.freeze([
   },
 ]);
 
-let handoffs: OfficeHandoffSummary[] = SEED_HANDOFFS.map((entry) => ({
-  ...entry,
-  partnerContext: { ...entry.partnerContext },
-  workspace:
-    entry.workspace === null
-      ? null
-      : {
-          ...entry.workspace,
-          project: {
-            ...entry.workspace.project,
-            object: { ...entry.workspace.project.object },
+function cloneHandoff(entry: OfficeHandoffSummary): OfficeHandoffSummary {
+  return {
+    ...entry,
+    partnerContext: { ...entry.partnerContext },
+    workspace:
+      entry.workspace === null
+        ? null
+        : {
+            ...entry.workspace,
+            project: {
+              ...entry.workspace.project,
+              object: { ...entry.workspace.project.object },
+            },
           },
-        },
-}));
+  };
+}
+
+type HandoffPersistState = {
+  readonly handoffs: readonly OfficeHandoffSummary[];
+};
+
+function seedHandoffs(): OfficeHandoffSummary[] {
+  return SEED_HANDOFFS.map((entry) => cloneHandoff(entry));
+}
+
+function readHandoffs(): OfficeHandoffSummary[] {
+  const stored = loadJson<HandoffPersistState | null>(
+    OFFICE_STORAGE_KEYS.handoffs,
+    null,
+  );
+  if (
+    stored !== null &&
+    Array.isArray(stored.handoffs) &&
+    stored.handoffs.length > 0
+  ) {
+    return stored.handoffs.map((entry) => cloneHandoff(entry));
+  }
+  return seedHandoffs();
+}
+
+let handoffs: OfficeHandoffSummary[] = readHandoffs();
+
+function persistHandoffs(): void {
+  saveJson(OFFICE_STORAGE_KEYS.handoffs, {
+    handoffs,
+  } satisfies HandoffPersistState);
+}
 
 function upsertHandoff(next: OfficeHandoffSummary): OfficeHandoffSummary {
   const index = handoffs.findIndex(
@@ -135,6 +170,7 @@ function upsertHandoff(next: OfficeHandoffSummary): OfficeHandoffSummary {
   } else {
     handoffs = handoffs.map((entry, i) => (i === index ? next : entry));
   }
+  persistHandoffs();
   return next;
 }
 
@@ -255,18 +291,6 @@ export function receivePayment(partnerId: string): OfficeHandoffSummary | null {
 }
 
 export function resetHandoffRegistryForTests(): void {
-  handoffs = SEED_HANDOFFS.map((entry) => ({
-    ...entry,
-    partnerContext: { ...entry.partnerContext },
-    workspace:
-      entry.workspace === null
-        ? null
-        : {
-            ...entry.workspace,
-            project: {
-              ...entry.workspace.project,
-              object: { ...entry.workspace.project.object },
-            },
-          },
-  }));
+  removeJson(OFFICE_STORAGE_KEYS.handoffs);
+  handoffs = seedHandoffs();
 }

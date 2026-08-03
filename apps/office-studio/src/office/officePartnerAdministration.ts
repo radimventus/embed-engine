@@ -1,5 +1,5 @@
 /**
- * PE-12 — Partner Administration (post-activation operational management).
+ * PE-12 / OF-10 — Partner Administration (post-activation operational management).
  * Profile · package/licence/contact/notes · audit timeline.
  * No Runtime / Decision Layer / capabilities / invoicing / data deletion.
  */
@@ -23,6 +23,8 @@ import {
   OFFICE_SALES_PACKAGES,
 } from './officeSalesModel';
 import { getSalesCase } from './officeSalesRegistry';
+import { loadJson, removeJson, saveJson } from './officeLocalStore';
+import { OFFICE_STORAGE_KEYS } from './officeStorageKeys';
 
 export type PartnerAdminChangeKind =
   | 'package'
@@ -89,9 +91,39 @@ type AdminStore = {
   byPartnerId: Record<string, AdminStoreEntry>;
 };
 
-let store: AdminStore = { byPartnerId: {} };
-let noteSeq = 0;
-let changeSeq = 0;
+type AdminPersistState = {
+  readonly byPartnerId: Record<string, AdminStoreEntry>;
+  readonly noteSeq: number;
+  readonly changeSeq: number;
+};
+
+function readAdminStore(): AdminPersistState {
+  const stored = loadJson<AdminPersistState | null>(
+    OFFICE_STORAGE_KEYS.administration,
+    null,
+  );
+  if (stored !== null && stored.byPartnerId !== undefined) {
+    return {
+      byPartnerId: { ...stored.byPartnerId },
+      noteSeq: typeof stored.noteSeq === 'number' ? stored.noteSeq : 0,
+      changeSeq: typeof stored.changeSeq === 'number' ? stored.changeSeq : 0,
+    };
+  }
+  return { byPartnerId: {}, noteSeq: 0, changeSeq: 0 };
+}
+
+const initialAdmin = readAdminStore();
+let store: AdminStore = { byPartnerId: initialAdmin.byPartnerId };
+let noteSeq = initialAdmin.noteSeq;
+let changeSeq = initialAdmin.changeSeq;
+
+function persistAdminStore(): void {
+  saveJson(OFFICE_STORAGE_KEYS.administration, {
+    byPartnerId: store.byPartnerId,
+    noteSeq,
+    changeSeq,
+  } satisfies AdminPersistState);
+}
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -119,6 +151,7 @@ function upsertEntry(entry: AdminStoreEntry): AdminStoreEntry {
       [entry.partnerId]: entry,
     },
   };
+  persistAdminStore();
   return entry;
 }
 
@@ -374,6 +407,7 @@ export function addPartnerInternalNote(
 
 /** Test helper — clears administration store. */
 export function resetPartnerAdministrationForTests(): void {
+  removeJson(OFFICE_STORAGE_KEYS.administration);
   store = { byPartnerId: {} };
   noteSeq = 0;
   changeSeq = 0;

@@ -1,5 +1,5 @@
 /**
- * OF-02 — Partner Registry (in-memory MVP store).
+ * OF-02 / OF-10 — Partner Registry (persisted Office domain store).
  * Create / read / update partners; seeds align with OF-01 fixtures.
  */
 
@@ -10,6 +10,8 @@ import {
   type OfficePartnerStatus,
 } from './officePartnerModel';
 import { appendOfficeEvent } from './officeEventCatalog';
+import { loadJson, removeJson, saveJson } from './officeLocalStore';
+import { OFFICE_STORAGE_KEYS } from './officeStorageKeys';
 
 const SEED_PARTNERS: readonly OfficePartner[] = Object.freeze([
   {
@@ -74,8 +76,41 @@ const SEED_PARTNERS: readonly OfficePartner[] = Object.freeze([
   },
 ]);
 
-let partners: OfficePartner[] = SEED_PARTNERS.map((partner) => ({ ...partner }));
-let idSeq = 100;
+type PartnerPersistState = {
+  readonly partners: readonly OfficePartner[];
+  readonly idSeq: number;
+};
+
+function seedState(): PartnerPersistState {
+  return {
+    partners: SEED_PARTNERS.map((partner) => ({ ...partner })),
+    idSeq: 100,
+  };
+}
+
+function readState(): PartnerPersistState {
+  const stored = loadJson<PartnerPersistState | null>(
+    OFFICE_STORAGE_KEYS.partners,
+    null,
+  );
+  if (
+    stored !== null &&
+    Array.isArray(stored.partners) &&
+    stored.partners.length > 0
+  ) {
+    return {
+      partners: stored.partners.map((partner) => ({ ...partner })),
+      idSeq: typeof stored.idSeq === 'number' ? stored.idSeq : 100,
+    };
+  }
+  return seedState();
+}
+
+const initial = readState();
+let partners: OfficePartner[] = initial.partners.map((partner) => ({
+  ...partner,
+}));
+let idSeq = initial.idSeq;
 
 export type PartnerQuickActionId =
   | 'prepare-pilot'
@@ -90,6 +125,13 @@ export type PartnerQuickActionId =
 
 function nowIso(): string {
   return new Date().toISOString();
+}
+
+function persist(): void {
+  saveJson(OFFICE_STORAGE_KEYS.partners, {
+    partners,
+    idSeq,
+  } satisfies PartnerPersistState);
 }
 
 function nextId(): string {
@@ -128,6 +170,7 @@ export function createPartner(draft: OfficePartnerDraft): OfficePartner {
     updatedAt: createdAt,
   };
   partners = [...partners, partner];
+  persist();
   appendOfficeEvent({
     kind: 'partner.created',
     label: 'Partner vytvořen',
@@ -164,6 +207,7 @@ export function updatePartner(
     updatedAt: nowIso(),
   };
   partners = partners.map((partner, i) => (i === index ? updated : partner));
+  persist();
   appendOfficeEvent({
     kind: 'partner.updated',
     label: 'Partner upraven',
@@ -191,10 +235,8 @@ export function applyPartnerQuickAction(
 
   switch (actionId) {
     case 'prepare-pilot':
-      // CS-01 — handled by preparePilotForPartner (orchestration), not status-only.
       return partner;
     case 'deliver-pilot':
-      // PE-06 — handled by deliverPilot (orchestration + preview), not status-only.
       return partner;
     case 'send-offer':
       status = 'offer';
@@ -223,7 +265,6 @@ export function applyPartnerQuickAction(
     case 'suspend-partner':
     case 'restore-partner':
     case 'archive-partner':
-      // PE-11 — handled by Partner Lifecycle orchestration, not status-only.
       return partner;
   }
 
@@ -233,9 +274,8 @@ export function applyPartnerQuickAction(
     nextStep: defaultNextStep(status),
     updatedAt: nowIso(),
   };
-  partners = partners.map((entry) =>
-    entry.id === id ? updated : entry,
-  );
+  partners = partners.map((entry) => (entry.id === id ? updated : entry));
+  persist();
   appendOfficeEvent({
     kind,
     label,
@@ -247,8 +287,10 @@ export function applyPartnerQuickAction(
 
 /** Test / reset helper — restores seed registry. */
 export function resetPartnerRegistryForTests(): void {
-  partners = SEED_PARTNERS.map((partner) => ({ ...partner }));
-  idSeq = 100;
+  removeJson(OFFICE_STORAGE_KEYS.partners);
+  const seeded = seedState();
+  partners = seeded.partners.map((partner) => ({ ...partner }));
+  idSeq = seeded.idSeq;
 }
 
 export function emptyPartnerDraft(): OfficePartnerDraft {
