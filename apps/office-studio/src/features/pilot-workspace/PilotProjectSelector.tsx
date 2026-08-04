@@ -1,8 +1,8 @@
 import { usePilotWorkspaceContext } from '../../office/PilotWorkspaceContext';
 
 /**
- * CAP-OP-01 — Project Context bar (Obchodní případ + Select + (+)).
- * Selecting a project switches the whole Pilot Workspace context.
+ * CAP-OP-10A — Global Project Context (left-rail PROJEKTY block).
+ * Selecting a project switches Working Terminal + Workflow + Conversation.
  */
 export function PilotProjectSelector() {
   const {
@@ -14,20 +14,19 @@ export function PilotProjectSelector() {
 
   return (
     <div
-      className="office-pilot-ws__project-bar"
+      className="office-sidebar__projects"
       data-testid="pilot-project-selector"
+      data-office-project-context="global"
     >
-      <div className="office-pilot-ws__project-copy">
-        <p className="office-dashboard__eyebrow">Obchodní případ</p>
-        <label className="office-pilot-ws__project-label" htmlFor="pilot-project-select">
-          Select Project
-        </label>
-      </div>
+      <p className="office-sidebar__projects-eyebrow">Projekty</p>
+      <label className="office-sidebar__projects-label" htmlFor="pilot-project-select">
+        Select Project
+      </label>
 
-      <div className="office-pilot-ws__project-controls">
+      <div className="office-sidebar__projects-controls">
         <select
           id="pilot-project-select"
-          className="office-pilot-ws__project-select"
+          className="office-sidebar__projects-select"
           data-testid="pilot-project-select"
           value={activeCaseId ?? ''}
           onChange={(event) => {
@@ -35,7 +34,7 @@ export function PilotProjectSelector() {
             selectCase(next.length > 0 ? next : null);
           }}
         >
-          <option value="">— vyberte obchodní případ —</option>
+          <option value="">— vyberte projekt —</option>
           {cases.map((item) => (
             <option key={item.id} value={item.id}>
               {item.label}
@@ -45,10 +44,10 @@ export function PilotProjectSelector() {
 
         <button
           type="button"
-          className="platform-btn platform-btn--secondary office-pilot-ws__project-add"
+          className="platform-btn platform-btn--secondary office-sidebar__projects-add"
           data-testid="pilot-project-add"
-          aria-label="Přidat obchodní případ"
-          title="Přidat obchodní případ"
+          aria-label="Přidat projekt"
+          title="Přidat projekt"
           onClick={createCasePlaceholder}
         >
           (+)

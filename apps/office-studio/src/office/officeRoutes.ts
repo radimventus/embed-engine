@@ -1,20 +1,20 @@
 /**
- * OF-01 / OF-02 / OF-03 / CAP-OP-01 — Office Studio routes under /studio/office/
- * Partners + Sales support detail deep-link: /:section/:partnerId
+ * OF-01 / OF-02 / OF-03 / CAP-OP-10A — Office Studio routes.
+ * Global Project Context drives work surface; Pilot Workspace is not a route.
  */
 
 export type OfficeRouteId =
+  | 'work'
   | 'dashboard'
   | 'partners'
   | 'sales'
   | 'documents'
   | 'implementation'
-  | 'pilot-workspace'
   | 'activity'
   | 'settings';
 
 export type OfficeNavItem = {
-  readonly id: OfficeRouteId;
+  readonly id: Exclude<OfficeRouteId, 'work'>;
   readonly label: string;
   readonly path: string;
 };
@@ -24,21 +24,25 @@ export type OfficeLocation = {
   readonly partnerId: string | null;
 };
 
-/** Left-rail IA (approved terminology). */
+/**
+ * Left-rail IA — Project block is separate (sidebar).
+ * Work surface (`/`) is default; not listed as a nav item.
+ */
 export const OFFICE_NAV_ITEMS: readonly OfficeNavItem[] = Object.freeze([
   { id: 'dashboard', label: 'Dashboard', path: 'dashboard' },
   { id: 'partners', label: 'Partneři', path: 'partners' },
   { id: 'sales', label: 'Obchod', path: 'sales' },
   { id: 'documents', label: 'Dokumenty', path: 'documents' },
   { id: 'implementation', label: 'Implementace', path: 'implementation' },
-  { id: 'pilot-workspace', label: 'Pilot Workspace', path: 'pilot-workspace' },
   { id: 'activity', label: 'Aktivita', path: 'activity' },
   { id: 'settings', label: 'Nastavení', path: 'settings' },
 ]);
 
-const ROUTE_BY_PATH = new Map(
-  OFFICE_NAV_ITEMS.map((item) => [item.path, item.id] as const),
-);
+const ROUTE_BY_PATH = new Map<string, OfficeRouteId>([
+  ...OFFICE_NAV_ITEMS.map((item) => [item.path, item.id] as const),
+  /** Legacy CAP-OP-01 URL — maps to global work surface. */
+  ['pilot-workspace', 'work'],
+]);
 
 const PARTNER_SCOPED_ROUTES: ReadonlySet<OfficeRouteId> = new Set([
   'partners',
@@ -48,6 +52,7 @@ const PARTNER_SCOPED_ROUTES: ReadonlySet<OfficeRouteId> = new Set([
 ]);
 
 export function officeRouteLabel(routeId: OfficeRouteId): string {
+  if (routeId === 'work') return 'Working Terminal';
   return (
     OFFICE_NAV_ITEMS.find((item) => item.id === routeId)?.label ?? 'Office'
   );
@@ -86,11 +91,11 @@ export function parseOfficeLocation(
 ): OfficeLocation {
   const rest = stripBase(pathname, baseUrl);
   if (rest.length === 0) {
-    return { routeId: 'dashboard', partnerId: null };
+    return { routeId: 'work', partnerId: null };
   }
   const segments = rest.split('/').filter((part) => part.length > 0);
   const segment = segments[0] ?? '';
-  const routeId = ROUTE_BY_PATH.get(segment) ?? 'dashboard';
+  const routeId = ROUTE_BY_PATH.get(segment) ?? 'work';
   if (PARTNER_SCOPED_ROUTES.has(routeId) && segments.length > 1) {
     return { routeId, partnerId: segments[1] ?? null };
   }
@@ -101,11 +106,11 @@ export function officeHref(
   routeId: OfficeRouteId,
   partnerId?: string | null,
 ): string {
-  const item = OFFICE_NAV_ITEMS.find((entry) => entry.id === routeId);
-  const path = item?.path ?? 'dashboard';
   const raw = viteBaseUrl();
   const base = raw.endsWith('/') ? raw : `${raw}/`;
-  if (path === 'dashboard') return base;
+  if (routeId === 'work') return base;
+  const item = OFFICE_NAV_ITEMS.find((entry) => entry.id === routeId);
+  const path = item?.path ?? 'dashboard';
   if (
     PARTNER_SCOPED_ROUTES.has(routeId) &&
     partnerId != null &&

@@ -51,12 +51,72 @@ body {
   height: 52px;
   flex-shrink: 0;
   align-items: center;
+  border: 0;
+  background: transparent;
   padding: 0 24px;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
   color: var(--platform-section, #64748b);
+  cursor: pointer;
+  text-align: left;
+}
+
+.office-sidebar__brand:hover {
+  color: var(--platform-navy, #001930);
+}
+
+.office-sidebar__projects {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0 16px 16px;
+  padding: 14px 12px;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.office-sidebar__projects-eyebrow {
+  margin: 0;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--platform-section, #64748b);
+}
+
+.office-sidebar__projects-label {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--platform-navy, #001930);
+}
+
+.office-sidebar__projects-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.office-sidebar__projects-select {
+  min-width: 0;
+  flex: 1;
+  height: 36px;
+  border: 1px solid #d6d9de;
+  border-radius: 8px;
+  background: #fff;
+  padding: 0 10px;
+  font-size: 13px;
+  color: var(--platform-navy, #001930);
+}
+
+.office-sidebar__projects-add {
+  flex-shrink: 0;
+  min-width: 40px;
+  height: 36px;
+  padding: 0 8px;
 }
 
 .office-sidebar__nav {
@@ -66,6 +126,21 @@ body {
   gap: 6px;
   overflow-y: auto;
   padding: 0 16px 24px;
+}
+
+.office-workspace__main--work {
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+}
+
+.office-work-surface {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 28%);
+  gap: 16px;
+  align-items: start;
+  min-height: 0;
+  flex: 1;
 }
 
 .office-sidebar__link {
@@ -773,7 +848,7 @@ body {
 
 .office-pilot-ws__grid {
   display: grid;
-  grid-template-columns: minmax(0, 25%) minmax(0, 50%) minmax(0, 25%);
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 28%);
   gap: 16px;
   align-items: start;
 }

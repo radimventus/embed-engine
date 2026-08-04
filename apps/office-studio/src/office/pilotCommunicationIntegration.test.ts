@@ -39,16 +39,18 @@ describe('CAP-OP-10 communication platform integration', () => {
     assert.equal(typeof session.syncMailbox, 'function');
     assert.equal(typeof session.sendSystemMail, 'function');
 
-    const page = read('features/pilot-workspace/PilotWorkspacePage.tsx');
+    const app = read('OfficeStudioApp.tsx');
+    const surface = read('features/pilot-workspace/OfficeWorkSurface.tsx');
     const context = read('office/PilotWorkspaceContext.tsx');
     const inboxUi = read(
       'features/pilot-workspace/terminal/PilotTerminalInbox.tsx',
     );
-    assert.match(page, /DEFAULT_PILOT_MAILBOX_ID|mbx-conis-contact/);
-    assert.match(page, /data-mail-session="active"/);
+    assert.match(app, /DEFAULT_PILOT_MAILBOX_ID/);
+    assert.match(app, /PilotWorkspaceProvider/);
+    assert.match(surface, /data-mail-session="active"/);
     assert.match(context, /wirePilotMailTransportSession/);
     assert.match(context, /mailSessionActive: true/);
-    assert.doesNotMatch(page, /nodemailer|imapflow|createEnvMailTransport/);
+    assert.doesNotMatch(surface, /nodemailer|imapflow|createEnvMailTransport/);
     assert.doesNotMatch(context, /nodemailer|imapflow|IMAP_HOST|SMTP_HOST/);
     assert.doesNotMatch(inboxUi, /nodemailer|imapflow/);
   });

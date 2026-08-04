@@ -1,5 +1,5 @@
 /**
- * CAP-OP-01 / CAP-OP-02 — Pilot Workspace + Working Terminal tests.
+ * CAP-OP-01 / CAP-OP-02 / CAP-OP-10A — Working Terminal + global project nav tests.
  */
 
 import assert from 'node:assert/strict';
@@ -51,40 +51,45 @@ describe('CAP-OP-01 pilot workspace model', () => {
   });
 });
 
-describe('CAP-OP-01 pilot workspace shell wiring', () => {
-  it('ships project selector, 3-column shell and shared context', () => {
-    const page = read('features/pilot-workspace/PilotWorkspacePage.tsx');
+describe('CAP-OP-10A global project navigation wiring', () => {
+  it('ships Select Project in left rail and Terminal|Workflow work surface', () => {
+    const app = read('OfficeStudioApp.tsx');
+    const sidebar = read('components/OfficeSidebar.tsx');
     const selector = read('features/pilot-workspace/PilotProjectSelector.tsx');
-    const cases = read('features/pilot-workspace/PilotCasesPanel.tsx');
+    const surface = read('features/pilot-workspace/OfficeWorkSurface.tsx');
     const terminal = read('features/pilot-workspace/PilotWorkingTerminal.tsx');
     const workflow = read('features/pilot-workspace/PilotWorkflowNavigator.tsx');
     const context = read('office/PilotWorkspaceContext.tsx');
     const css = read('index.css');
-    const app = read('OfficeStudioApp.tsx');
+    const routes = read('office/officeRoutes.ts');
 
-    assert.match(page, /PilotWorkspaceProvider/);
-    assert.match(page, /PilotProjectSelector/);
-    assert.match(page, /PilotCasesPanel/);
-    assert.match(page, /PilotWorkingTerminal/);
-    assert.match(page, /PilotWorkflowNavigator/);
-    assert.match(page, /pilot-workspace-grid/);
+    assert.match(app, /PilotWorkspaceProvider/);
+    assert.match(app, /OfficeWorkSurface/);
+    assert.match(app, /DEFAULT_PILOT_MAILBOX_ID/);
+    assert.doesNotMatch(app, /PilotCasesPanel/);
+    assert.doesNotMatch(routes, /label: 'Pilot Workspace'/);
+    assert.doesNotMatch(sidebar, /Pilot Workspace/);
 
-    assert.match(selector, /Obchodní případ/);
+    assert.match(sidebar, /PilotProjectSelector/);
+    assert.match(selector, /Projekty/);
+    assert.match(selector, /office-sidebar__projects/);
     assert.match(selector, /Select Project/);
     assert.match(selector, /pilot-project-add/);
-    assert.match(cases, /pilot-cases-list/);
+    assert.match(selector, /data-office-project-context="global"/);
+    assert.doesNotMatch(selector, /Obchodní případ/);
+
+    assert.match(surface, /PilotWorkingTerminal/);
+    assert.match(surface, /PilotWorkflowNavigator/);
+    assert.doesNotMatch(surface, /PilotCasesPanel/);
+    assert.doesNotMatch(surface, /PilotProjectSelector/);
+
     assert.match(terminal, /pilot-working-terminal/);
-    assert.match(terminal, /pilot-terminal-tab-\$\{view\.id\}/);
-    assert.match(terminal, /PILOT_TERMINAL_VIEWS/);
-    assert.match(terminal, /PilotTerminalInbox/);
     assert.match(workflow, /pilot-workflow-navigator/);
     assert.match(context, /PilotWorkspaceProvider/);
     assert.match(context, /usePilotWorkspaceContext/);
 
-    assert.match(css, /office-pilot-ws__grid/);
-    assert.match(css, /minmax\(0, 25%\) minmax\(0, 50%\) minmax\(0, 25%\)/);
-    assert.match(app, /PilotWorkspacePage/);
-    assert.match(app, /pilot-workspace/);
+    assert.match(css, /office-work-surface/);
+    assert.match(css, /minmax\(0, 1fr\) minmax\(240px, 28%\)/);
   });
 });
 

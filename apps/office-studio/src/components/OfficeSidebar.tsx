@@ -1,3 +1,4 @@
+import { PilotProjectSelector } from '../features/pilot-workspace/PilotProjectSelector';
 import { officeHref, type OfficeRouteId, OFFICE_NAV_ITEMS } from '../office/officeRoutes';
 
 type OfficeSidebarProps = {
@@ -6,7 +7,7 @@ type OfficeSidebarProps = {
 };
 
 /**
- * OF-01 — Left rail navigation (IA terminology).
+ * OF-01 / CAP-OP-10A — Left rail: global PROJEKTY block + IA navigation.
  */
 export function OfficeSidebar({
   activeRouteId,
@@ -18,7 +19,16 @@ export function OfficeSidebar({
       data-studio-shell="sidebar"
       aria-label="Navigace Office Studia"
     >
-      <div className="office-sidebar__brand">CONIS Office</div>
+      <button
+        type="button"
+        className="office-sidebar__brand"
+        data-testid="office-sidebar-brand"
+        onClick={() => onNavigate('work')}
+      >
+        CONIS Office
+      </button>
+
+      <PilotProjectSelector />
 
       <nav className="office-sidebar__nav" aria-label="Office menu">
         {OFFICE_NAV_ITEMS.map((item) => {

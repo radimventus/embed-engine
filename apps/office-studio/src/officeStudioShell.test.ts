@@ -13,8 +13,8 @@ import {
 
 const root = dirname(fileURLToPath(import.meta.url));
 
-describe('officeStudioShell (OF-01 / OF-02)', () => {
-  it('exposes IA navigation labels', () => {
+describe('officeStudioShell (OF-01 / OF-02 / CAP-OP-10A)', () => {
+  it('exposes IA navigation labels without Pilot Workspace', () => {
     assert.deepEqual(
       OFFICE_NAV_ITEMS.map((item) => item.label),
       [
@@ -23,7 +23,6 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
         'Obchod',
         'Dokumenty',
         'Implementace',
-        'Pilot Workspace',
         'Aktivita',
         'Nastavení',
       ],
@@ -31,7 +30,11 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
   });
 
   it('parses Office routes under /studio/office base', () => {
-    assert.equal(parseOfficeRoute('/studio/office/', '/studio/office/'), 'dashboard');
+    assert.equal(parseOfficeRoute('/studio/office/', '/studio/office/'), 'work');
+    assert.equal(
+      parseOfficeRoute('/studio/office/dashboard', '/studio/office/'),
+      'dashboard',
+    );
     assert.equal(
       parseOfficeRoute('/studio/office/partners', '/studio/office/'),
       'partners',
@@ -50,7 +53,7 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
     );
     assert.equal(
       parseOfficeRoute('/studio/office/pilot-workspace', '/studio/office/'),
-      'pilot-workspace',
+      'work',
     );
     assert.equal(
       parseOfficeRoute('/studio/office/settings', '/studio/office/'),
@@ -91,16 +94,16 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
   });
 
   it('builds office hrefs from route ids', () => {
-    assert.equal(officeHref('dashboard'), '/');
+    assert.equal(officeHref('work'), '/');
+    assert.equal(officeHref('dashboard'), '/dashboard');
     assert.equal(officeHref('partners'), '/partners');
     assert.equal(officeHref('sales'), '/sales');
     assert.equal(officeHref('documents'), '/documents');
     assert.equal(officeHref('implementation'), '/implementation');
-    assert.equal(officeHref('pilot-workspace'), '/pilot-workspace');
     assert.equal(officeHref('settings'), '/settings');
   });
 
-  it('wires Platform Shell, Partner Workspace and Office app entry', () => {
+  it('wires Platform Shell, global project provider and work surface', () => {
     const app = readFileSync(join(root, 'OfficeStudioApp.tsx'), 'utf8');
     const main = readFileSync(join(root, 'main.tsx'), 'utf8');
     const pkg = readFileSync(join(root, '../package.json'), 'utf8');
@@ -112,8 +115,10 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
     assert.match(app, /SalesWorkspacePage/);
     assert.match(app, /DocumentsWorkspacePage/);
     assert.match(app, /ImplementationWorkspacePage/);
-    assert.match(app, /PilotWorkspacePage/);
+    assert.match(app, /OfficeWorkSurface/);
+    assert.match(app, /PilotWorkspaceProvider/);
     assert.match(app, /PilotRuntimePage/);
+    assert.doesNotMatch(app, /PilotCasesPanel/);
     assert.match(main, /studioId="office"/);
     assert.match(pkg, /@embed-engine\/platform-shell/);
     assert.match(pkg, /@embed-engine\/platform-access/);
@@ -122,6 +127,7 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
   it('VR-05 — PE mode does not render Legacy Platform Studio Switcher', () => {
     const app = readFileSync(join(root, 'OfficeStudioApp.tsx'), 'utf8');
     assert.match(app, /isOperatorWorkspaceMode/);
+    assert.match(app, /contentOnly/);
     assert.match(
       app,
       /if \(isOperatorWorkspaceMode\(\)\) \{\s*return workspaceBody;/,
