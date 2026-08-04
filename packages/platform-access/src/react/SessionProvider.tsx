@@ -149,8 +149,11 @@ export function SessionProvider({
       return { ok: false as const, error: result.error };
     }
     setSession(result.session);
-    // RC-002 — after login, land on the studio that matches the user's role.
-    const studioId = defaultStudioForRoles(result.session.user.roles);
+    // CAP-GOV-06 / RC-002 — prefer the Studio host that mounted SessionProvider
+    // (bindStudioId). Deep-link login on Office must not teleport to Manager/Sales
+    // when that host is down (white screen / endless navigation).
+    const studioId =
+      bindStudioId ?? defaultStudioForRoles(result.session.user.roles);
     const next = updateSession({ activeStudioId: studioId });
     if (next !== null) {
       setSession(next);
@@ -160,7 +163,7 @@ export function SessionProvider({
       }
     }
     return { ok: true as const };
-  }, []);
+  }, [bindStudioId]);
 
   const logout = useCallback(() => {
     clearOperatorPartnerEnvironment();
