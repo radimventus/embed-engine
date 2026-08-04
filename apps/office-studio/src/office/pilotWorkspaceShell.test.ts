@@ -93,6 +93,29 @@ describe('CAP-OP-10A global project navigation wiring', () => {
     assert.match(css, /office-work-surface/);
     assert.match(css, /minmax\(0, 1fr\) minmax\(240px, 28%\)/);
   });
+
+  it('wires Business Automation through host bridge not Working Terminal UI', () => {
+    const app = read('OfficeStudioApp.tsx');
+    const host = read('office/officeAutomationHost.ts');
+    const terminal = read('features/pilot-workspace/PilotWorkingTerminal.tsx');
+    const listing = read(
+      'features/pilot-workspace/terminal/PilotTerminalListing.tsx',
+    );
+    const pkg = read('../package.json');
+
+    assert.match(app, /createOfficeHostWorkflowAutomation/);
+    assert.match(app, /workflowIntegrations=\{workflowAutomation\}/);
+    assert.match(host, /@embed-engine\/business-automation/);
+    assert.match(host, /createOfficeWorkflowAutomationBridge/);
+    assert.match(host, /createPilotMailSession/);
+    assert.match(host, /notifyBusinessEvent/);
+    assert.match(host, /notifyMailIntent/);
+    assert.match(host, /mailSession/);
+    assert.match(host, /conversation/);
+    assert.match(pkg, /@embed-engine\/business-automation/);
+    assert.doesNotMatch(terminal, /business-automation|createAutomationRuntime/);
+    assert.doesNotMatch(listing, /business-automation|createAutomationRuntime/);
+  });
 });
 
 describe('CAP-OP-02 working terminal', () => {

@@ -4,7 +4,7 @@
  * CAP-OP-10A — Global Project Context + Working Terminal work surface.
  */
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
   PLATFORM_ROLE_LABELS,
@@ -31,6 +31,7 @@ import { PilotRuntimePage } from './features/pilot/PilotRuntimePage';
 import { OfficeWorkSurface } from './features/pilot-workspace/OfficeWorkSurface';
 import { SalesWorkspacePage } from './features/sales/SalesWorkspacePage';
 import { DEFAULT_PILOT_MAILBOX_ID } from './mail';
+import { createOfficeHostWorkflowAutomation } from './office/officeAutomationHost';
 import {
   PilotWorkspaceProvider,
   usePilotWorkspaceContext,
@@ -55,8 +56,16 @@ type PartnerScopedRoute =
   | 'implementation';
 
 export function OfficeStudioApp() {
+  const workflowAutomation = useMemo(
+    () => createOfficeHostWorkflowAutomation(),
+    [],
+  );
+
   return (
-    <PilotWorkspaceProvider defaultMailboxId={DEFAULT_PILOT_MAILBOX_ID}>
+    <PilotWorkspaceProvider
+      defaultMailboxId={DEFAULT_PILOT_MAILBOX_ID}
+      workflowIntegrations={workflowAutomation}
+    >
       <OfficeStudioAppInner />
     </PilotWorkspaceProvider>
   );

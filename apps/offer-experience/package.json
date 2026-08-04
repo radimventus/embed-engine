@@ -12,6 +12,7 @@
     "test": "tsx --test src/offerExperienceArchitecture.test.ts src/offer/offerModel.test.ts src/checkout/checkoutRuntime.test.ts"
   },
   "dependencies": {
+    "@embed-engine/business-automation": "workspace:*",
     "qrcode": "^1.5.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

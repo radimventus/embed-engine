@@ -10,6 +10,7 @@ import { PackageSelection } from './components/PackageSelection';
 import { PaymentComplete } from './components/PaymentComplete';
 import { ProformaExperience } from './components/ProformaExperience';
 import { QrPaymentCard } from './components/QrPaymentCard';
+import { createOfferHostAutomationIntegrations } from './automation/offerAutomationHost';
 import { buildOrderDraft } from './checkout/checkoutRuntime';
 import { useOfferCheckout } from './checkout/useOfferCheckout';
 import { OFFER_PACKAGES, type PublicOffer } from './offer/offerModel';
@@ -36,7 +37,11 @@ function useOfferSlug(): string | null {
 }
 
 function OfferCheckoutExperience({ offer }: { readonly offer: PublicOffer }) {
-  const checkout = useOfferCheckout(offer);
+  const automationIntegrations = useMemo(
+    () => createOfferHostAutomationIntegrations(),
+    [],
+  );
+  const checkout = useOfferCheckout(offer, automationIntegrations);
   const { state, selectedPackage } = checkout;
   const confirmDraft =
     state.selectedPackageId !== null

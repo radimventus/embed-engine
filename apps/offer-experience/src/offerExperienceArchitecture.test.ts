@@ -139,6 +139,7 @@ describe('CAP-CE-03 Offer Payment Experience', () => {
     assert.doesNotMatch(pkg, /platform-shell/);
     assert.doesNotMatch(pkg, /office-studio/);
     assert.match(pkg, /"qrcode"/);
+    assert.match(pkg, /@embed-engine\/business-automation/);
   });
 
   it('keeps partner-facing offer copy free of implementation jargon', () => {
@@ -153,5 +154,18 @@ describe('CAP-CE-03 Offer Payment Experience', () => {
     assert.doesNotMatch(registry, /CONIS Embed/);
     assert.doesNotMatch(hero, /mock|placeholder|runtime|demo/i);
     assert.doesNotMatch(packages, /mock|placeholder|runtime|MVP/i);
+  });
+
+  it('wires Business Automation at host layer only', () => {
+    const app = read('src/OfferExperienceApp.tsx');
+    const host = read('src/automation/offerAutomationHost.ts');
+    const paymentComplete = read('src/components/PaymentComplete.tsx');
+    const qr = read('src/components/QrPaymentCard.tsx');
+
+    assert.match(app, /createOfferHostAutomationIntegrations/);
+    assert.match(host, /@embed-engine\/business-automation/);
+    assert.match(host, /createOfferAutomationIntegrations/);
+    assert.doesNotMatch(paymentComplete, /business-automation|createAutomationRuntime/);
+    assert.doesNotMatch(qr, /business-automation|createAutomationRuntime/);
   });
 });

@@ -1,6 +1,6 @@
 /**
- * CAP-OP-10 — Workflow message-event interface (no business logic).
- * Prepared for Business Automation (PT-13+).
+ * CAP-OP-10 / PT-13 — Workflow message-event interface (no business logic).
+ * Publishes into Business Automation via Office host bridge.
  */
 
 import type { PilotConversationId } from './pilotConversationModel';
