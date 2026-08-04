@@ -1129,6 +1129,47 @@ body {
   color: var(--platform-section, #64748b);
 }
 
+.office-pilot-conversation {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.office-pilot-conversation__subject {
+  margin: 0 0 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--platform-navy, #001930);
+}
+
+.office-pilot-conversation__meta {
+  margin: 0 0 10px;
+  font-size: 12px;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-conversation__messages {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.office-pilot-conversation__message {
+  display: grid;
+  gap: 2px;
+  font-size: 12px;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-conversation__message strong {
+  font-size: 13px;
+  color: var(--platform-navy, #001930);
+}
+
 .office-pilot-detail {
   margin: 0;
   display: grid;

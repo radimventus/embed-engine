@@ -1,6 +1,6 @@
 /**
- * CAP-OP-01 / CAP-OP-03 / CAP-OP-04 / CAP-OP-06 — Shared Pilot Workspace context.
- * Inbox · Timeline · Workflow Runtime · in-memory · no persistence.
+ * CAP-OP-01 / CAP-OP-03 / CAP-OP-04 / CAP-OP-06 / CAP-OP-08 — Shared Pilot Workspace context.
+ * Inbox · Timeline · Workflow · Conversation Runtime · in-memory · no persistence.
  */
 
 import {
@@ -14,6 +14,12 @@ import {
   type ReactNode,
 } from 'react';
 
+import type { PilotConversationId } from './pilotConversationModel';
+import {
+  createInitialConversationRuntimeState,
+  reducePilotConversation,
+  type PilotConversationRuntimeState,
+} from './pilotConversationRuntime';
 import type { PilotEventCatalog } from './pilotEventCatalog';
 import {
   getInboxMessage,
@@ -81,6 +87,10 @@ export type PilotWorkspaceContextValue = {
   readonly clearTimelineSelection: () => void;
   readonly workflow: PilotWorkflowRuntimeState;
   readonly navigateWorkflowStep: (stepId: PilotWorkflowStepId) => void;
+  readonly conversation: PilotConversationRuntimeState;
+  readonly selectConversation: (
+    conversationId: PilotConversationId | null,
+  ) => void;
 };
 
 const PilotWorkspaceContext = createContext<PilotWorkspaceContextValue | null>(
@@ -97,8 +107,8 @@ type PilotWorkspaceProviderProps = {
 };
 
 /**
- * Provides active obchodní případ, Inbox, Timeline and Workflow Runtime.
- * Workflow navigates Working Terminal tabs without owning commercial data.
+ * Provides active obchodní případ, Inbox, Timeline, Workflow and Conversation Runtime.
+ * Conversation is transport-agnostic (no IMAP/SMTP). Workflow navigates terminal tabs.
  */
 export function PilotWorkspaceProvider({
   children,
@@ -127,6 +137,10 @@ export function PilotWorkspaceProvider({
       initialCaseId !== null ? getPilotWorkspaceCase(initialCaseId) : null,
     ),
   );
+  const [conversation, setConversation] =
+    useState<PilotConversationRuntimeState>(() =>
+      createInitialConversationRuntimeState(initialCaseId),
+    );
   const inboxRef = useRef(inbox);
   inboxRef.current = inbox;
 
@@ -178,6 +192,15 @@ export function PilotWorkspaceProvider({
       cancelled = true;
     };
   }, [activeCaseId, cases, eventCatalog, workflowIntegrations.projector]);
+
+  useEffect(() => {
+    setConversation((current) =>
+      reducePilotConversation(current, {
+        type: 'load-for-case',
+        caseId: activeCaseId,
+      }),
+    );
+  }, [activeCaseId]);
 
   const selectCase = useCallback((caseId: PilotWorkspaceCaseId | null) => {
     setActiveCaseId(caseId);
@@ -299,6 +322,18 @@ export function PilotWorkspaceProvider({
     [activeCaseId, workflow.steps, workflowIntegrations],
   );
 
+  const selectConversation = useCallback(
+    (conversationId: PilotConversationId | null) => {
+      setConversation((current) =>
+        reducePilotConversation(current, {
+          type: 'select-conversation',
+          conversationId,
+        }),
+      );
+    },
+    [],
+  );
+
   const value = useMemo<PilotWorkspaceContextValue>(
     () => ({
       cases,
@@ -318,6 +353,8 @@ export function PilotWorkspaceProvider({
       clearTimelineSelection,
       workflow,
       navigateWorkflowStep,
+      conversation,
+      selectConversation,
     }),
     [
       activeCase,
@@ -325,10 +362,12 @@ export function PilotWorkspaceProvider({
       assignInboxCase,
       cases,
       clearTimelineSelection,
+      conversation,
       createCasePlaceholder,
       inbox,
       navigateWorkflowStep,
       selectCase,
+      selectConversation,
       selectInboxMessage,
       selectTimelineEvent,
       selectedInboxMessage,

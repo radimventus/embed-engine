@@ -1,5 +1,9 @@
 import { usePilotWorkspaceContext } from '../../../office/PilotWorkspaceContext';
 import {
+  PILOT_MESSAGE_DIRECTION_LABELS,
+  PILOT_MESSAGE_ORIGIN_LABELS,
+} from '../../../office/pilotConversationModel';
+import {
   formatInboxReceivedAt,
   messagesInCategory,
   PILOT_INBOX_CATEGORIES,
@@ -8,8 +12,8 @@ import {
 } from '../../../office/pilotInboxModel';
 
 /**
- * CAP-OP-03 — Inbox Runtime: message list + case assignment.
- * Selecting a message updates PilotWorkspaceProvider active case.
+ * CAP-OP-03 / CAP-OP-08 — Inbox Runtime + Conversation foundation surface.
+ * Office works with Conversation Runtime (not IMAP). Selecting a message updates active case.
  */
 export function PilotTerminalInbox() {
   const {
@@ -19,7 +23,10 @@ export function PilotTerminalInbox() {
     selectInboxMessage,
     assignInboxCase,
     unassignInboxCase,
+    conversation,
   } = usePilotWorkspaceContext();
+
+  const activeConversation = conversation.activeConversation;
 
   return (
     <div
@@ -27,6 +34,7 @@ export function PilotTerminalInbox() {
       data-testid="pilot-terminal-inbox"
       data-pilot-inbox-default="true"
       data-inbox-runtime="true"
+      data-conversation-runtime="true"
     >
       <header className="office-pilot-terminal__view-head">
         <h3 className="office-pilot-ws__panel-title">Inbox</h3>
@@ -35,6 +43,55 @@ export function PilotTerminalInbox() {
           případ ve Shared Context.
         </p>
       </header>
+
+      <section
+        className="office-pilot-conversation"
+        data-testid="pilot-conversation-runtime"
+        data-transport-agnostic="true"
+      >
+        <h4 className="office-pilot-inbox__title">Conversation</h4>
+        {activeConversation === null ? (
+          <p
+            className="office-pilot-inbox__empty"
+            data-testid="pilot-conversation-empty"
+          >
+            Pro aktivní případ zatím není Conversation.
+          </p>
+        ) : (
+          <>
+            <p
+              className="office-pilot-conversation__subject"
+              data-testid="pilot-conversation-subject"
+            >
+              {activeConversation.subject}
+            </p>
+            <p className="office-pilot-conversation__meta">
+              {conversation.activeMailbox?.email ?? '—'} ·{' '}
+              {conversation.messages.length} zpráv · bez IMAP
+            </p>
+            <ul
+              className="office-pilot-conversation__messages"
+              data-testid="pilot-conversation-messages"
+            >
+              {conversation.messages.map((message) => (
+                <li
+                  key={message.id}
+                  className="office-pilot-conversation__message"
+                  data-testid={`pilot-conversation-message-${message.id}`}
+                  data-direction={message.direction}
+                  data-origin={message.origin}
+                >
+                  <span>
+                    {PILOT_MESSAGE_DIRECTION_LABELS[message.direction]} ·{' '}
+                    {PILOT_MESSAGE_ORIGIN_LABELS[message.origin]}
+                  </span>
+                  <strong>{message.subject}</strong>
+                </li>
+              ))}
+            </ul>
+          </>
+        )}
+      </section>
 
       <div className="office-pilot-inbox" data-testid="pilot-inbox-sections">
         {PILOT_INBOX_CATEGORIES.map((category) => {
@@ -135,7 +192,8 @@ export function PilotTerminalInbox() {
             data-testid="pilot-inbox-timeline-slot"
             data-timeline-ready="true"
           >
-            Timeline interface připraven (`inbox.message.*`) — napojení v PT-07.
+            Conversation Runtime je zdroj pravdy pro komunikaci; Inbox zůstává
+            pracovní frontou obchodníka.
           </p>
         </div>
       ) : (
