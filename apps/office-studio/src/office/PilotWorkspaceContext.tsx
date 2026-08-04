@@ -1,6 +1,6 @@
 /**
- * CAP-OP-01 / CAP-OP-03 / CAP-OP-04 / CAP-OP-06 / CAP-OP-08 / CAP-OP-09 — Shared Pilot Workspace context.
- * Inbox · Timeline · Workflow · Conversation Runtime · Mail transport session · in-memory.
+ * CAP-OP-01 … CAP-OP-10 — Shared Pilot Workspace context.
+ * Active Case · Active Conversation · Mail Session · Conversation-only Inbox/Timeline.
  */
 
 import {
@@ -14,6 +14,14 @@ import {
   type ReactNode,
 } from 'react';
 
+import {
+  DEFAULT_PILOT_MAILBOX_ID,
+  wirePilotMailTransportSession,
+  type MailSyncReport,
+  type PilotMailTransportSession,
+  type SystemMailDraft,
+} from '../mail';
+import { getConversationMailStore } from '../mail/conversationMailStore';
 import type {
   PilotConversationId,
   PilotConversationMessage,
@@ -23,17 +31,14 @@ import {
   reducePilotConversation,
   type PilotConversationRuntimeState,
 } from './pilotConversationRuntime';
-import type {
-  MailSyncReport,
-  PilotMailTransportSession,
-  SystemMailDraft,
-} from '../mail';
+import { loadTimelineForCaseFromConversation } from './pilotConversationTimeline';
 import type { PilotEventCatalog } from './pilotEventCatalog';
 import {
   getInboxMessage,
   type PilotInboxMessage,
   type PilotInboxMessageId,
 } from './pilotInboxModel';
+import { conversationIdForInboxMessage } from './pilotInboxProjection';
 import {
   createInitialInboxRuntimeState,
   reducePilotInbox,
@@ -46,19 +51,22 @@ import {
   notifyInboxTimeline,
   type PilotInboxTimelineIntegration,
 } from './pilotInboxTimeline';
+import type { PilotTimelineEventId } from './pilotTimelineModel';
 import {
   createEmptyTimelineRuntimeState,
-  loadTimelineForCase,
   reducePilotTimeline,
   type PilotTimelineRuntimeState,
 } from './pilotTimelineRuntime';
-import type { PilotTimelineEventId } from './pilotTimelineModel';
 import { mockPilotEventCatalog } from './pilotTimelineStore';
 import {
   buildWorkflowNavigationEvent,
   type PilotWorkflowCatalogIntegration,
 } from './pilotWorkflowCatalog';
 import type { PilotWorkflowStepId } from './pilotWorkflowModel';
+import {
+  buildWorkflowMessageEvent,
+  notifyWorkflowMessageEvent,
+} from './pilotWorkflowMessageEvents';
 import {
   createInitialWorkflowRuntimeState,
   reducePilotWorkflow,
@@ -99,13 +107,13 @@ export type PilotWorkspaceContextValue = {
   readonly selectConversation: (
     conversationId: PilotConversationId | null,
   ) => void;
-  /** Transport session boundary — no IMAP/SMTP types in Office. */
-  readonly syncMailboxTransport: ((
+  readonly mailSessionActive: boolean;
+  readonly syncMailboxTransport: (
     mailboxId?: string,
-  ) => Promise<MailSyncReport>) | null;
-  readonly sendSystemMail: ((
+  ) => Promise<MailSyncReport>;
+  readonly sendSystemMail: (
     draft: SystemMailDraft,
-  ) => Promise<PilotConversationMessage>) | null;
+  ) => Promise<PilotConversationMessage>;
   readonly refreshConversationFromStore: () => void;
 };
 
@@ -118,29 +126,37 @@ type PilotWorkspaceProviderProps = {
   readonly initialCaseId?: PilotWorkspaceCaseId | null;
   readonly initialTerminalView?: PilotTerminalViewId;
   readonly timelineIntegrations?: PilotInboxTimelineIntegration;
+  /** @deprecated Timeline loads from Conversation only (CAP-OP-10). */
   readonly eventCatalog?: PilotEventCatalog;
   readonly workflowIntegrations?: PilotWorkflowCatalogIntegration;
   /**
-   * Optional mail transport session (injected). Office never constructs IMAP/SMTP.
+   * Injected mail session. Default: wirePilotMailTransportSession(mbx-conis-contact).
+   * Node may inject createEnvMailTransportSession — identical Session API.
    */
-  readonly mailTransport?: PilotMailTransportSession | null;
+  readonly mailTransport?: PilotMailTransportSession;
   readonly defaultMailboxId?: string;
 };
 
-/**
- * Provides active obchodní případ, Inbox, Timeline, Workflow and Conversation Runtime.
- * Conversation is transport-agnostic (no IMAP/SMTP). Workflow navigates terminal tabs.
- */
 export function PilotWorkspaceProvider({
   children,
   initialCaseId = PILOT_WORKSPACE_DEMO_CASES[0]?.id ?? null,
   initialTerminalView = PILOT_TERMINAL_DEFAULT_VIEW,
   timelineIntegrations = {},
-  eventCatalog = mockPilotEventCatalog,
+  eventCatalog: _eventCatalog = mockPilotEventCatalog,
   workflowIntegrations = {},
-  mailTransport = null,
-  defaultMailboxId = 'mbx-conis-contact',
+  mailTransport,
+  defaultMailboxId = DEFAULT_PILOT_MAILBOX_ID,
 }: PilotWorkspaceProviderProps) {
+  void _eventCatalog;
+
+  const sessionRef = useRef<PilotMailTransportSession>(
+    mailTransport ??
+      wirePilotMailTransportSession({ mailboxId: defaultMailboxId }),
+  );
+  if (mailTransport !== undefined) {
+    sessionRef.current = mailTransport;
+  }
+
   const [activeCaseId, setActiveCaseId] = useState<PilotWorkspaceCaseId | null>(
     initialCaseId,
   );
@@ -188,7 +204,7 @@ export function PilotWorkspaceProvider({
   useEffect(() => {
     let cancelled = false;
     void (async () => {
-      const events = await loadTimelineForCase(activeCaseId, eventCatalog);
+      const events = await loadTimelineForCaseFromConversation(activeCaseId);
       if (cancelled) return;
       const nextCase =
         activeCaseId === null
@@ -210,20 +226,20 @@ export function PilotWorkspaceProvider({
           projector: workflowIntegrations.projector,
         }),
       );
+      setInbox((current) =>
+        reducePilotInbox(current, { type: 'refresh-from-conversation' }),
+      );
+      setConversation((current) =>
+        reducePilotConversation(current, {
+          type: 'load-for-case',
+          caseId: activeCaseId,
+        }),
+      );
     })();
     return () => {
       cancelled = true;
     };
-  }, [activeCaseId, cases, eventCatalog, workflowIntegrations.projector]);
-
-  useEffect(() => {
-    setConversation((current) =>
-      reducePilotConversation(current, {
-        type: 'load-for-case',
-        caseId: activeCaseId,
-      }),
-    );
-  }, [activeCaseId]);
+  }, [activeCaseId, cases, workflowIntegrations.projector]);
 
   const selectCase = useCallback((caseId: PilotWorkspaceCaseId | null) => {
     setActiveCaseId(caseId);
@@ -243,22 +259,47 @@ export function PilotWorkspaceProvider({
       });
       setInbox(next);
       const message = getInboxMessage(next.messages, next.selectedMessageId);
-      if (message !== null) {
-        if (message.caseId !== null) {
-          setActiveCaseId(message.caseId);
-        }
-        void notifyInboxTimeline(
-          timelineIntegrations,
-          buildInboxMessageSelectedEvent({
-            messageId: message.id,
-            caseId: message.caseId,
-            category: message.category,
-            subject: message.subject,
+      if (message === null) return;
+
+      if (message.caseId !== null) {
+        setActiveCaseId(message.caseId);
+      }
+      const conversationId = conversationIdForInboxMessage(message.id);
+      if (conversationId !== null) {
+        setConversation((current) =>
+          reducePilotConversation(current, {
+            type: 'select-conversation',
+            conversationId,
           }),
         );
       }
+      const storeMessage = getConversationMailStore().messages.find(
+        (item) => item.id === message.id,
+      );
+      if (storeMessage !== undefined) {
+        void notifyWorkflowMessageEvent(
+          workflowIntegrations,
+          buildWorkflowMessageEvent({
+            direction: storeMessage.direction,
+            messageId: storeMessage.id,
+            conversationId: storeMessage.conversationId,
+            caseId: message.caseId,
+            subject: storeMessage.subject,
+            occurredAt: storeMessage.createdAt,
+          }),
+        );
+      }
+      void notifyInboxTimeline(
+        timelineIntegrations,
+        buildInboxMessageSelectedEvent({
+          messageId: message.id,
+          caseId: message.caseId,
+          category: message.category,
+          subject: message.subject,
+        }),
+      );
     },
-    [timelineIntegrations],
+    [timelineIntegrations, workflowIntegrations],
   );
 
   const assignInboxCase = useCallback(
@@ -270,6 +311,21 @@ export function PilotWorkspaceProvider({
       });
       setInbox(next);
       setActiveCaseId(caseId);
+      setConversation((current) =>
+        reducePilotConversation(current, {
+          type: 'refresh-from-store',
+          caseId,
+        }),
+      );
+      void loadTimelineForCaseFromConversation(caseId).then((events) => {
+        setTimeline((current) =>
+          reducePilotTimeline(current, {
+            type: 'load-case',
+            caseId,
+            events,
+          }),
+        );
+      });
       const message = getInboxMessage(next.messages, messageId);
       if (message !== null) {
         void notifyInboxTimeline(
@@ -293,6 +349,12 @@ export function PilotWorkspaceProvider({
         messageId,
       });
       setInbox(next);
+      setConversation((current) =>
+        reducePilotConversation(current, {
+          type: 'refresh-from-store',
+          caseId: activeCaseId,
+        }),
+      );
       const message = getInboxMessage(next.messages, messageId);
       if (message !== null) {
         void notifyInboxTimeline(
@@ -305,7 +367,7 @@ export function PilotWorkspaceProvider({
         );
       }
     },
-    [timelineIntegrations],
+    [activeCaseId, timelineIntegrations],
   );
 
   const selectTimelineEvent = useCallback(
@@ -358,41 +420,103 @@ export function PilotWorkspaceProvider({
   );
 
   const refreshConversationFromStore = useCallback(() => {
+    setInbox((current) =>
+      reducePilotInbox(current, { type: 'refresh-from-conversation' }),
+    );
     setConversation((current) =>
       reducePilotConversation(current, {
         type: 'refresh-from-store',
         caseId: activeCaseId,
       }),
     );
+    void loadTimelineForCaseFromConversation(activeCaseId).then((events) => {
+      setTimeline((current) =>
+        reducePilotTimeline(current, {
+          type: 'load-case',
+          caseId: activeCaseId,
+          events,
+        }),
+      );
+    });
   }, [activeCaseId]);
 
-  const syncMailboxTransport = useMemo(() => {
-    if (mailTransport === null) return null;
-    return async (mailboxId = defaultMailboxId) => {
-      const report = await mailTransport.syncMailbox(mailboxId);
+  const syncMailboxTransport = useCallback(
+    async (mailboxId = defaultMailboxId) => {
+      const report = await sessionRef.current.syncMailbox(mailboxId);
+      setInbox((current) =>
+        reducePilotInbox(current, { type: 'refresh-from-conversation' }),
+      );
       setConversation((current) =>
         reducePilotConversation(current, {
           type: 'refresh-from-store',
           caseId: activeCaseId,
         }),
       );
+      const events = await loadTimelineForCaseFromConversation(activeCaseId);
+      setTimeline((current) =>
+        reducePilotTimeline(current, {
+          type: 'load-case',
+          caseId: activeCaseId,
+          events,
+        }),
+      );
+      for (const message of report.messages) {
+        void notifyWorkflowMessageEvent(
+          workflowIntegrations,
+          buildWorkflowMessageEvent({
+            direction: message.direction,
+            messageId: message.id,
+            conversationId: message.conversationId,
+            caseId:
+              getConversationMailStore().conversations.find(
+                (item) => item.id === message.conversationId,
+              )?.caseId ?? null,
+            subject: message.subject,
+            occurredAt: message.createdAt,
+          }),
+        );
+      }
       return report;
-    };
-  }, [activeCaseId, defaultMailboxId, mailTransport]);
+    },
+    [activeCaseId, defaultMailboxId, workflowIntegrations],
+  );
 
-  const sendSystemMail = useMemo(() => {
-    if (mailTransport === null) return null;
-    return async (draft: SystemMailDraft) => {
-      const message = await mailTransport.sendSystemMail(draft);
+  const sendSystemMail = useCallback(
+    async (draft: SystemMailDraft) => {
+      const message = await sessionRef.current.sendSystemMail(draft);
+      const caseId = draft.caseId ?? activeCaseId;
+      setInbox((current) =>
+        reducePilotInbox(current, { type: 'refresh-from-conversation' }),
+      );
       setConversation((current) =>
         reducePilotConversation(current, {
           type: 'refresh-from-store',
-          caseId: draft.caseId ?? activeCaseId,
+          caseId,
+        }),
+      );
+      const events = await loadTimelineForCaseFromConversation(caseId);
+      setTimeline((current) =>
+        reducePilotTimeline(current, {
+          type: 'load-case',
+          caseId,
+          events,
+        }),
+      );
+      void notifyWorkflowMessageEvent(
+        workflowIntegrations,
+        buildWorkflowMessageEvent({
+          direction: 'outgoing',
+          messageId: message.id,
+          conversationId: message.conversationId,
+          caseId,
+          subject: message.subject,
+          occurredAt: message.createdAt,
         }),
       );
       return message;
-    };
-  }, [activeCaseId, mailTransport]);
+    },
+    [activeCaseId, workflowIntegrations],
+  );
 
   const value = useMemo<PilotWorkspaceContextValue>(
     () => ({
@@ -415,6 +539,7 @@ export function PilotWorkspaceProvider({
       navigateWorkflowStep,
       conversation,
       selectConversation,
+      mailSessionActive: true,
       syncMailboxTransport,
       sendSystemMail,
       refreshConversationFromStore,

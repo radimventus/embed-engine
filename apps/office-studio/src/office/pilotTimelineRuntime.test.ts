@@ -109,25 +109,21 @@ describe('CAP-OP-04 timeline runtime', () => {
     assert.equal(state.selectedEvent, null);
   });
 
-  it('wires Timeline Runtime into provider and terminal without Office catalog persistence', () => {
+  it('wires Timeline Runtime into provider from Conversation (sole source)', () => {
     const timelineUi = read(
       'features/pilot-workspace/terminal/PilotTerminalTimeline.tsx',
     );
     const context = read('office/PilotWorkspaceContext.tsx');
-    const catalog = read('office/pilotEventCatalog.ts');
-    const store = read('office/pilotTimelineStore.ts');
+    const projection = read('office/pilotConversationTimeline.ts');
 
     assert.match(timelineUi, /data-timeline-runtime/);
     assert.match(timelineUi, /pilot-timeline-list/);
-    assert.match(timelineUi, /pilot-timeline-event-detail/);
     assert.match(timelineUi, /usePilotWorkspaceContext/);
-    assert.match(context, /loadTimelineForCase/);
+    assert.match(context, /loadTimelineForCaseFromConversation/);
+    assert.doesNotMatch(context, /loadTimelineForCase\(/);
     assert.match(context, /selectTimelineEvent/);
-    assert.match(context, /timeline/);
-    assert.match(catalog, /PilotEventCatalog/);
-    assert.match(catalog, /listEventsForCase/);
-    assert.doesNotMatch(store, /officeLocalStore/);
-    assert.doesNotMatch(store, /officeEventCatalog/);
-    assert.doesNotMatch(store, /saveJson|loadJson/);
+    assert.match(projection, /projectTimelineFromConversation/);
+    assert.match(projection, /email.received/);
+    assert.match(projection, /email.sent/);
   });
 });

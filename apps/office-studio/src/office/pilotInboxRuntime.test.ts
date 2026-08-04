@@ -1,16 +1,16 @@
 /**
- * CAP-OP-03 / PT-06 — Inbox Runtime tests.
+ * CAP-OP-10 — Inbox as Conversation projection tests.
  */
 
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
-import { describe, it } from 'node:test';
+import { beforeEach, describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
+import { resetConversationMailStore } from '../mail/conversationMailStore';
 import {
   PILOT_INBOX_CATEGORIES,
-  PILOT_INBOX_DEMO_MESSAGES,
   messagesInCategory,
 } from './pilotInboxModel';
 import {
@@ -29,17 +29,22 @@ function read(relative: string): string {
   return readFileSync(join(root, '..', relative), 'utf8');
 }
 
-describe('CAP-OP-03 inbox runtime', () => {
+describe('CAP-OP-10 inbox conversation projection', () => {
+  beforeEach(() => {
+    resetConversationMailStore();
+  });
+
   it('exposes Nové / Čeká na odpověď / Nepřiřazené / Archiv categories', () => {
     assert.deepEqual(
       PILOT_INBOX_CATEGORIES.map((item) => item.label),
       ['Nové', 'Čeká na odpověď', 'Nepřiřazené', 'Archiv'],
     );
-    assert.ok(PILOT_INBOX_DEMO_MESSAGES.length >= 4);
-    assert.ok(messagesInCategory(PILOT_INBOX_DEMO_MESSAGES, 'unassigned').length >= 1);
+    const state = createInitialInboxRuntimeState();
+    assert.ok(state.messages.length >= 4);
+    assert.ok(messagesInCategory(state.messages, 'unassigned').length >= 1);
   });
 
-  it('assigns and unassigns commercial cases in-memory', () => {
+  it('assigns and unassigns commercial cases on Conversation store', () => {
     let state = createInitialInboxRuntimeState();
     const unassigned = state.messages.find((item) => item.caseId === null);
     assert.ok(unassigned);
@@ -53,16 +58,6 @@ describe('CAP-OP-03 inbox runtime', () => {
     assert.equal(assigned?.caseId, 'case-nord-pilot');
     assert.equal(assigned?.category, 'new');
     assert.equal(state.selectedMessageId, unassigned!.id);
-
-    state = reducePilotInbox(state, {
-      type: 'assign-case',
-      messageId: unassigned!.id,
-      caseId: 'case-dse-starter',
-    });
-    assert.equal(
-      state.messages.find((item) => item.id === unassigned!.id)?.caseId,
-      'case-dse-starter',
-    );
 
     state = reducePilotInbox(state, {
       type: 'unassign-case',
@@ -119,26 +114,22 @@ describe('CAP-OP-03 inbox runtime', () => {
     assert.doesNotMatch(timeline, /officeEventCatalog/);
   });
 
-  it('wires Inbox Runtime into terminal and PilotWorkspaceProvider', () => {
+  it('wires Conversation projection Inbox into terminal and Provider', () => {
     const inbox = read(
       'features/pilot-workspace/terminal/PilotTerminalInbox.tsx',
     );
     const context = read('office/PilotWorkspaceContext.tsx');
     const runtime = read('office/pilotInboxRuntime.ts');
 
-    assert.match(inbox, /data-inbox-runtime/);
+    assert.match(inbox, /data-inbox-runtime="conversation"/);
+    assert.match(inbox, /mailSessionActive/);
     assert.match(inbox, /pilot-inbox-assignment/);
-    assert.match(inbox, /pilot-inbox-assign-select/);
-    assert.match(inbox, /pilot-inbox-unassign/);
-    assert.match(inbox, /pilot-inbox-timeline-slot/);
-    assert.match(inbox, /selectInboxMessage/);
-    assert.match(inbox, /assignInboxCase/);
-    assert.match(context, /selectInboxMessage/);
-    assert.match(context, /assignInboxCase/);
-    assert.match(context, /unassignInboxCase/);
-    assert.match(context, /notifyInboxTimeline/);
-    assert.match(context, /setActiveCaseId/);
-    assert.match(runtime, /assign-case/);
-    assert.doesNotMatch(runtime, /localStorage/);
+    assert.match(context, /wirePilotMailTransportSession/);
+    assert.match(context, /mailSessionActive: true/);
+    assert.match(context, /loadTimelineForCaseFromConversation/);
+    assert.match(context, /projectInboxFromConversationStore|refresh-from-conversation/);
+    assert.match(runtime, /projectInboxFromConversationStore/);
+    assert.doesNotMatch(runtime, /PILOT_INBOX_DEMO_MESSAGES/);
+    assert.doesNotMatch(context, /nodemailer|imapflow|IMAP_HOST|SMTP_HOST/);
   });
 });

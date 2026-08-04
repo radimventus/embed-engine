@@ -33,12 +33,14 @@ export type PilotWorkflowNavigationEvent = {
   readonly terminalView: string;
 };
 
+import type { PilotWorkflowMessageIntegration } from './pilotWorkflowMessageEvents';
+
 export type PilotWorkflowCatalogIntegration = {
   readonly projector?: PilotWorkflowCatalogProjector;
   readonly emitNavigationEvent?: (
     event: PilotWorkflowNavigationEvent,
   ) => Promise<void> | void;
-};
+} & PilotWorkflowMessageIntegration;
 
 export function buildWorkflowNavigationEvent(input: {
   readonly stepId: PilotWorkflowStepId;

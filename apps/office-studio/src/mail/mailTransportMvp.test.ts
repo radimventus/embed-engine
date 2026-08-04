@@ -312,6 +312,8 @@ describe('CAP-OP-09 mail transport mvp', () => {
     assert.match(context, /mailTransport\?/);
     assert.match(context, /syncMailboxTransport/);
     assert.match(context, /sendSystemMail/);
+    assert.match(context, /mailSessionActive/);
+    assert.match(context, /wirePilotMailTransportSession/);
 
     const liveSmtp = read('mail/live/nodemailerSmtp.ts');
     const liveImap = read('mail/live/imapflowFetch.ts');

@@ -122,6 +122,8 @@ describe('CAP-OP-08 conversation runtime foundation', () => {
     assert.match(context, /reducePilotConversation/);
     assert.match(context, /selectConversation/);
     assert.match(context, /readonly conversation:/);
+    assert.match(context, /mailSessionActive/);
+    assert.match(context, /wirePilotMailTransportSession/);
 
     const inboxUi = read(
       'features/pilot-workspace/terminal/PilotTerminalInbox.tsx',

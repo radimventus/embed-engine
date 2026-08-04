@@ -1,6 +1,6 @@
 /**
- * CAP-OP-03 / PT-06 — Inbox Runtime domain (in-memory).
- * No IMAP / SMTP / persistence / AI.
+ * CAP-OP-03 / CAP-OP-10 — Inbox projection DTO (UI shape over Conversation).
+ * No IMAP / SMTP / persistence / AI. Messages originate in Conversation store.
  */
 
 import type { PilotWorkspaceCaseId } from './pilotWorkspaceModel';
@@ -53,7 +53,7 @@ export const PILOT_INBOX_MESSAGE_STATUS_LABELS: Readonly<
   archived: 'Archiv',
 });
 
-/** Seed messages for live Inbox Runtime (session-only). */
+/** @deprecated CAP-OP-10 — Inbox projects Conversation store; demo list unused. */
 export const PILOT_INBOX_DEMO_MESSAGES: readonly PilotInboxMessage[] =
   Object.freeze([
     {

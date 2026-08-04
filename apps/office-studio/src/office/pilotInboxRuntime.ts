@@ -1,20 +1,24 @@
 /**
- * CAP-OP-03 / PT-06 — Inbox Runtime reducer (in-memory session state).
+ * CAP-OP-10 — Inbox Runtime as Conversation projection (session UI state only).
+ * Message body lives in Conversation mail store — not a parallel Inbox store.
  */
 
-import type { PilotWorkspaceCaseId } from './pilotWorkspaceModel';
 import {
-  PILOT_INBOX_DEMO_MESSAGES,
-  type PilotInboxMessage,
-  type PilotInboxMessageId,
-} from './pilotInboxModel';
+  assignConversationCaseForMessage,
+  projectInboxFromConversationStore,
+  unassignConversationCaseForMessage,
+} from './pilotInboxProjection';
+import type { PilotInboxMessage, PilotInboxMessageId } from './pilotInboxModel';
+import type { PilotWorkspaceCaseId } from './pilotWorkspaceModel';
 
 export type PilotInboxRuntimeState = {
   readonly messages: readonly PilotInboxMessage[];
   readonly selectedMessageId: PilotInboxMessageId | null;
+  readonly readMessageIds: ReadonlySet<string>;
 };
 
 export type PilotInboxRuntimeAction =
+  | { readonly type: 'refresh-from-conversation' }
   | {
       readonly type: 'select-message';
       readonly messageId: PilotInboxMessageId | null;
@@ -32,30 +36,22 @@ export type PilotInboxRuntimeAction =
 
 export function createInitialInboxRuntimeState(): PilotInboxRuntimeState {
   return {
-    messages: PILOT_INBOX_DEMO_MESSAGES,
+    messages: projectInboxFromConversationStore(),
     selectedMessageId: null,
+    readMessageIds: new Set(),
   };
 }
 
-function patchMessage(
-  messages: readonly PilotInboxMessage[],
-  messageId: PilotInboxMessageId,
-  patch: Partial<PilotInboxMessage>,
-): readonly PilotInboxMessage[] {
-  return messages.map((message) =>
-    message.id === messageId ? { ...message, ...patch } : message,
-  );
-}
-
-/**
- * Assigning a case moves an unassigned message into Nové.
- * Unassigning moves a non-archive message back to Nepřiřazené.
- */
 export function reducePilotInbox(
   state: PilotInboxRuntimeState,
   action: PilotInboxRuntimeAction,
 ): PilotInboxRuntimeState {
   switch (action.type) {
+    case 'refresh-from-conversation':
+      return {
+        ...state,
+        messages: projectInboxFromConversationStore(undefined, state.readMessageIds),
+      };
     case 'select-message': {
       if (action.messageId === null) {
         return { ...state, selectedMessageId: null };
@@ -66,44 +62,33 @@ export function reducePilotInbox(
       if (current === undefined) {
         return { ...state, selectedMessageId: null };
       }
+      const readMessageIds = new Set(state.readMessageIds);
+      readMessageIds.add(action.messageId);
       return {
-        ...state,
         selectedMessageId: action.messageId,
-        messages:
-          current.status === 'unread'
-            ? patchMessage(state.messages, action.messageId, {
-                status: 'read',
-              })
-            : state.messages,
+        readMessageIds,
+        messages: projectInboxFromConversationStore(undefined, readMessageIds),
       };
     }
     case 'assign-case': {
-      const current = state.messages.find(
-        (item) => item.id === action.messageId,
-      );
-      if (current === undefined) return state;
+      assignConversationCaseForMessage(action.messageId, action.caseId);
+      const readMessageIds = new Set(state.readMessageIds);
+      readMessageIds.add(action.messageId);
       return {
-        ...state,
         selectedMessageId: action.messageId,
-        messages: patchMessage(state.messages, action.messageId, {
-          caseId: action.caseId,
-          category:
-            current.category === 'unassigned' ? 'new' : current.category,
-        }),
+        readMessageIds,
+        messages: projectInboxFromConversationStore(undefined, readMessageIds),
       };
     }
     case 'unassign-case': {
-      const current = state.messages.find(
-        (item) => item.id === action.messageId,
-      );
-      if (current === undefined) return state;
+      unassignConversationCaseForMessage(action.messageId);
       return {
         ...state,
         selectedMessageId: action.messageId,
-        messages: patchMessage(state.messages, action.messageId, {
-          caseId: null,
-          category: current.category === 'archive' ? 'archive' : 'unassigned',
-        }),
+        messages: projectInboxFromConversationStore(
+          undefined,
+          state.readMessageIds,
+        ),
       };
     }
     case 'reset-inbox':

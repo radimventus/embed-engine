@@ -12,8 +12,8 @@ import {
 } from '../../../office/pilotInboxModel';
 
 /**
- * CAP-OP-03 / CAP-OP-08 — Inbox Runtime + Conversation foundation surface.
- * Office works with Conversation Runtime (not IMAP). Selecting a message updates active case.
+ * CAP-OP-03 / CAP-OP-10 — Inbox as Conversation Runtime projection.
+ * Selecting a message updates active case + conversation. No IMAP/SMTP.
  */
 export function PilotTerminalInbox() {
   const {
@@ -24,6 +24,7 @@ export function PilotTerminalInbox() {
     assignInboxCase,
     unassignInboxCase,
     conversation,
+    mailSessionActive,
   } = usePilotWorkspaceContext();
 
   const activeConversation = conversation.activeConversation;
@@ -33,8 +34,9 @@ export function PilotTerminalInbox() {
       className="office-pilot-terminal__view"
       data-testid="pilot-terminal-inbox"
       data-pilot-inbox-default="true"
-      data-inbox-runtime="true"
+      data-inbox-runtime="conversation"
       data-conversation-runtime="true"
+      data-mail-session={mailSessionActive ? 'active' : 'inactive'}
     >
       <header className="office-pilot-terminal__view-head">
         <h3 className="office-pilot-ws__panel-title">Inbox</h3>
@@ -192,8 +194,8 @@ export function PilotTerminalInbox() {
             data-testid="pilot-inbox-timeline-slot"
             data-timeline-ready="true"
           >
-            Conversation Runtime je zdroj pravdy pro komunikaci; Inbox zůstává
-            pracovní frontou obchodníka.
+            Conversation Runtime je jediný zdroj pravdy. Inbox je projekce.
+            Mail Session aktivní — bez IMAP/SMTP v UI.
           </p>
         </div>
       ) : (

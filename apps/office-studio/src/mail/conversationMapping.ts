@@ -74,11 +74,16 @@ export function mapToConversation(
   }
 
   if (externalEmails.length > 0) {
-    const byEmail = store.conversations.find(
+    const byEmailSameMailbox = store.conversations.find(
       (item) =>
         item.mailboxId === input.mailboxId &&
         participantMatch(item, externalEmails),
     );
+    const byEmail =
+      byEmailSameMailbox ??
+      store.conversations.find((item) =>
+        participantMatch(item, externalEmails),
+      );
     if (byEmail) {
       const merged = {
         ...byEmail,
