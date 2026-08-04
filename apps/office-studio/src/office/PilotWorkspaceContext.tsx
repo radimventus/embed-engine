@@ -1,18 +1,20 @@
 /**
- * CAP-OP-01 / CAP-OP-03 — Shared Pilot Workspace + Inbox Runtime context.
- * In-memory only — no persistence.
+ * CAP-OP-01 / CAP-OP-03 / CAP-OP-04 — Shared Pilot Workspace context.
+ * Inbox Runtime + Timeline Runtime · in-memory · no persistence.
  */
 
 import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useRef,
   useState,
   type ReactNode,
 } from 'react';
 
+import type { PilotEventCatalog } from './pilotEventCatalog';
 import {
   getInboxMessage,
   type PilotInboxMessage,
@@ -30,6 +32,14 @@ import {
   notifyInboxTimeline,
   type PilotInboxTimelineIntegration,
 } from './pilotInboxTimeline';
+import {
+  createEmptyTimelineRuntimeState,
+  loadTimelineForCase,
+  reducePilotTimeline,
+  type PilotTimelineRuntimeState,
+} from './pilotTimelineRuntime';
+import type { PilotTimelineEventId } from './pilotTimelineModel';
+import { mockPilotEventCatalog } from './pilotTimelineStore';
 import {
   createPlaceholderCase,
   getPilotWorkspaceCase,
@@ -56,6 +66,9 @@ export type PilotWorkspaceContextValue = {
     caseId: PilotWorkspaceCaseId,
   ) => void;
   readonly unassignInboxCase: (messageId: PilotInboxMessageId) => void;
+  readonly timeline: PilotTimelineRuntimeState;
+  readonly selectTimelineEvent: (eventId: PilotTimelineEventId | null) => void;
+  readonly clearTimelineSelection: () => void;
 };
 
 const PilotWorkspaceContext = createContext<PilotWorkspaceContextValue | null>(
@@ -67,17 +80,19 @@ type PilotWorkspaceProviderProps = {
   readonly initialCaseId?: PilotWorkspaceCaseId | null;
   readonly initialTerminalView?: PilotTerminalViewId;
   readonly timelineIntegrations?: PilotInboxTimelineIntegration;
+  readonly eventCatalog?: PilotEventCatalog;
 };
 
 /**
- * Provides active obchodní případ, terminal view and Inbox Runtime.
- * Selecting / assigning a message updates the shared case context.
+ * Provides active obchodní případ, Inbox Runtime and Timeline Runtime.
+ * Timeline reloads when Shared Context case changes.
  */
 export function PilotWorkspaceProvider({
   children,
   initialCaseId = PILOT_WORKSPACE_DEMO_CASES[0]?.id ?? null,
   initialTerminalView = PILOT_TERMINAL_DEFAULT_VIEW,
   timelineIntegrations = {},
+  eventCatalog = mockPilotEventCatalog,
 }: PilotWorkspaceProviderProps) {
   const [activeCaseId, setActiveCaseId] = useState<PilotWorkspaceCaseId | null>(
     initialCaseId,
@@ -89,6 +104,9 @@ export function PilotWorkspaceProvider({
   );
   const [inbox, setInbox] = useState<PilotInboxRuntimeState>(
     createInitialInboxRuntimeState,
+  );
+  const [timeline, setTimeline] = useState<PilotTimelineRuntimeState>(
+    createEmptyTimelineRuntimeState,
   );
   const inboxRef = useRef(inbox);
   inboxRef.current = inbox;
@@ -110,6 +128,24 @@ export function PilotWorkspaceProvider({
     () => getInboxMessage(inbox.messages, inbox.selectedMessageId),
     [inbox.messages, inbox.selectedMessageId],
   );
+
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const events = await loadTimelineForCase(activeCaseId, eventCatalog);
+      if (cancelled) return;
+      setTimeline((current) =>
+        reducePilotTimeline(current, {
+          type: 'load-case',
+          caseId: activeCaseId,
+          events,
+        }),
+      );
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeCaseId, eventCatalog]);
 
   const selectCase = useCallback((caseId: PilotWorkspaceCaseId | null) => {
     setActiveCaseId(caseId);
@@ -194,6 +230,21 @@ export function PilotWorkspaceProvider({
     [timelineIntegrations],
   );
 
+  const selectTimelineEvent = useCallback(
+    (eventId: PilotTimelineEventId | null) => {
+      setTimeline((current) =>
+        reducePilotTimeline(current, { type: 'select-event', eventId }),
+      );
+    },
+    [],
+  );
+
+  const clearTimelineSelection = useCallback(() => {
+    setTimeline((current) =>
+      reducePilotTimeline(current, { type: 'clear-selection' }),
+    );
+  }, []);
+
   const value = useMemo<PilotWorkspaceContextValue>(
     () => ({
       cases,
@@ -208,18 +259,24 @@ export function PilotWorkspaceProvider({
       selectInboxMessage,
       assignInboxCase,
       unassignInboxCase,
+      timeline,
+      selectTimelineEvent,
+      clearTimelineSelection,
     }),
     [
       activeCase,
       activeCaseId,
       assignInboxCase,
       cases,
+      clearTimelineSelection,
       createCasePlaceholder,
       inbox,
       selectCase,
       selectInboxMessage,
+      selectTimelineEvent,
       selectedInboxMessage,
       terminalView,
+      timeline,
       unassignInboxCase,
     ],
   );

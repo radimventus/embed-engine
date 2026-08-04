@@ -156,8 +156,9 @@ describe('CAP-OP-02 working terminal', () => {
     assert.match(detail, /pilot-detail-licence/);
     assert.match(detail, /pilot-detail-stav/);
     assert.match(detail, /pilot-detail-partner-environment/);
-    assert.match(timeline, /Event Catalog/);
+    assert.match(timeline, /data-timeline-runtime/);
     assert.match(timeline, /pilot-timeline-list/);
+    assert.match(timeline, /pilot-timeline-event-detail/);
     assert.match(workflow, /pilot-workflow-board/);
     assert.match(css, /office-pilot-canvelo__step/);
     assert.doesNotMatch(css, /progress-bar/);

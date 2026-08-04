@@ -131,7 +131,7 @@ function TerminalPanel({
     case 'inbox':
       return <PilotTerminalInbox />;
     case 'timeline':
-      return <PilotTerminalTimeline activeCase={activeCase} />;
+      return <PilotTerminalTimeline />;
     case 'workflow':
       return <PilotTerminalWorkflow activeCase={activeCase} />;
     default: {
