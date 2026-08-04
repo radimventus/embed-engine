@@ -68,6 +68,20 @@ export const DEAL_TEMPLATES: Readonly<Record<CommercialDocumentType, string>> =
 <p>Splatnost: {{dueDate}}</p>
 <p>Projekt: {{projectId}}</p>
 </body></html>`,
+    pilot_offer: `<!DOCTYPE html>
+<html lang="cs"><head><meta charset="utf-8" /><title>Nabídka pilotního programu CONIS</title></head>
+<body>
+<p class="brand">CONIS</p>
+<h1>Nabídka pilotního programu</h1>
+<p>Personalizovaná nabídka pro partnera {{partnerName}}.</p>
+<p>Společnost: {{companyName}}</p>
+<p>Hero: {{heroLabel}}</p>
+<p>Web partnera: {{websiteUrl}}</p>
+<p>Projekt: {{projectId}}</p>
+<p>Balíček: {{packageName}}</p>
+<p>Datum: {{issuedAt}}</p>
+<p>Ostatní obsah nabídky zůstává společný pro všechny partnery.</p>
+</body></html>`,
   });
 
 export function fillTemplate(

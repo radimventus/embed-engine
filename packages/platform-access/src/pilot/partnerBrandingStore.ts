@@ -6,6 +6,7 @@ import type { PartnerBranding } from '../domain/partnerBranding';
 import {
   DEFAULT_PILOT_BRANDING_HERO,
   DEFAULT_PILOT_BRANDING_LOGO,
+  DEFAULT_PILOT_BRANDING_WEBSITE,
 } from '../domain/partnerBranding';
 
 export const PARTNER_BRANDING_STORAGE_KEY = 'conis.platform.partner-branding.v1';
@@ -60,13 +61,19 @@ export function upsertPartnerBranding(input: {
   readonly firmName: string;
   readonly logoLabel?: string;
   readonly heroLabel?: string;
+  readonly websiteUrl?: string;
 }): PartnerBranding {
   const store = loadStore();
+  const previous = store.byCompanyId[input.companyId];
   const branding: PartnerBranding = {
     companyId: input.companyId,
     firmName: input.firmName.trim(),
     logoLabel: input.logoLabel?.trim() || DEFAULT_PILOT_BRANDING_LOGO,
     heroLabel: input.heroLabel?.trim() || DEFAULT_PILOT_BRANDING_HERO,
+    websiteUrl:
+      input.websiteUrl?.trim() ||
+      previous?.websiteUrl ||
+      DEFAULT_PILOT_BRANDING_WEBSITE,
     updatedAt: new Date().toISOString(),
   };
   saveStore({
@@ -79,5 +86,13 @@ export function upsertPartnerBranding(input: {
 }
 
 export function getPartnerBranding(companyId: string): PartnerBranding | null {
-  return loadStore().byCompanyId[companyId] ?? null;
+  const raw = loadStore().byCompanyId[companyId];
+  if (raw === undefined) return null;
+  return {
+    ...raw,
+    websiteUrl:
+      typeof raw.websiteUrl === 'string'
+        ? raw.websiteUrl
+        : DEFAULT_PILOT_BRANDING_WEBSITE,
+  };
 }

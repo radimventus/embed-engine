@@ -13,7 +13,7 @@ import {
   resetPartnerWelcomeStore,
   resetPilotWorkspaceStore,
   resetUserRegistry,
-  resolvePartnerInviteHref,
+  resolveCloudLandingHref,
 } from '@embed-engine/platform-access';
 
 import {
@@ -32,6 +32,7 @@ import {
   getPilotDelivery,
   resetPilotDeliveryStoreForTests,
 } from './officePilotDeliveryRegistry.ts';
+import { PILOT_DELIVERY_PASSWORD } from './officeReferencePartner.ts';
 
 describe('PE-07 Pilot Delivery', () => {
   function resetAll() {
@@ -48,7 +49,7 @@ describe('PE-07 Pilot Delivery', () => {
     clearPlatformSession();
   }
 
-  it('builds delivery preview with PDF, invite info, activation and workspace link', () => {
+  it('builds delivery preview with PDF, invite info, activation and Studio login', () => {
     resetAll();
     const prepared = preparePilotForPartner('p-dse');
     assert.ok(prepared !== null);
@@ -61,14 +62,12 @@ describe('PE-07 Pilot Delivery', () => {
     assert.equal(preview?.pdf.ready, true);
     assert.match(preview!.pdf.name, /\.pdf$/i);
     assert.ok(preview!.invite !== null);
-    assert.equal(preview!.invite?.status, 'pending');
-    assert.equal(preview!.activationStatus, 'awaiting_activation');
-    assert.ok(Date.parse(preview!.invite!.expiresAt) > Date.now());
-    assert.equal(
-      preview!.workspaceHref,
-      resolvePartnerInviteHref(preview!.invite!.token),
-    );
-    assert.match(preview!.workspaceHref, /[?&]invite=/);
+    assert.equal(preview!.invite?.status, 'activated');
+    assert.equal(preview!.activationStatus, 'activated');
+    assert.equal(preview!.loginPassword, PILOT_DELIVERY_PASSWORD);
+    assert.equal(preview!.studioLoginHref, resolveCloudLandingHref());
+    assert.equal(preview!.workspaceHref, resolveCloudLandingHref());
+    assert.doesNotMatch(preview!.workspaceHref, /invite=/);
     assert.deepEqual([...preview!.accessibleStudios], [
       'client',
       'manager',
@@ -85,12 +84,12 @@ describe('PE-07 Pilot Delivery', () => {
     if (!result.ok) return;
 
     assert.equal(result.delivery.package.pdf.ready, true);
-    assert.match(result.delivery.package.workspaceHref, /invite=/);
     assert.equal(
-      result.delivery.package.activationStatus,
-      'awaiting_activation',
+      result.delivery.package.workspaceHref,
+      resolveCloudLandingHref(),
     );
-    assert.equal(result.delivery.package.invite.status, 'pending');
+    assert.equal(result.delivery.package.activationStatus, 'activated');
+    assert.equal(result.delivery.package.invite.status, 'activated');
     assert.equal(getPilotDelivery('p-dse')?.id, result.delivery.id);
 
     const kinds = listPartnerTimeline('p-dse', 50).map((event) => event.kind);

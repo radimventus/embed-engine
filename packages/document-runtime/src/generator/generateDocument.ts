@@ -27,6 +27,8 @@ export function contextToTokens(
       context.amountCzk === null ? '' : String(Math.round(context.amountCzk)),
     issuedAt: context.issuedAt.slice(0, 10),
     dueDate: context.dueDate?.slice(0, 10) ?? '',
+    heroLabel: context.heroLabel ?? '',
+    websiteUrl: context.websiteUrl ?? '',
   };
 }
 

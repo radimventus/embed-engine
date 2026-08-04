@@ -18,6 +18,7 @@ const SOURCE_FILES: Readonly<Record<CommercialDocumentType, string>> =
     dpa: 'dpa.html',
     vop: 'vop.html',
     proforma: 'proforma-invoice.html',
+    pilot_offer: 'pilot-offer.html',
   });
 
 export const COMMERCIAL_DOCUMENT_CATALOG: readonly DocumentCatalogEntry[] =
@@ -30,13 +31,17 @@ export const COMMERCIAL_DOCUMENT_CATALOG: readonly DocumentCatalogEntry[] =
         'dpa',
         'vop',
         'proforma',
+        'pilot_offer',
       ] as const
     ).map((type) => ({
       type,
       label: COMMERCIAL_DOCUMENT_LABELS[type],
       sourcePath: `${DEAL_PACKAGE_ROOT}/${SOURCE_FILES[type]}`,
-      individualized: type === 'electronic_order' || type === 'proforma',
-      linkedToElectronicOrder: type !== 'proforma',
+      individualized:
+        type === 'electronic_order' ||
+        type === 'proforma' ||
+        type === 'pilot_offer',
+      linkedToElectronicOrder: type !== 'proforma' && type !== 'pilot_offer',
     })),
   );
 

@@ -184,11 +184,7 @@ export function applyPartnerQuickAction(
     case 'open-partner-environment':
       return partner;
     case 'send-offer':
-      status = 'offer';
-      kind = 'offer.sent';
-      label = 'Nabídka odeslána';
-      detail = `${partner.name} · nabídka odeslána`;
-      break;
+      return partner;
     case 'confirm-order':
       status = 'order';
       kind = 'order.confirmed';

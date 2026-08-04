@@ -30,8 +30,8 @@ const QUICK_ACTIONS: readonly {
   readonly label: string;
 }[] = [
   { id: 'prepare-pilot', label: 'Připravit pilot' },
-  { id: 'deliver-pilot', label: 'Odeslat pilot' },
   { id: 'send-offer', label: 'Odeslat nabídku' },
+  { id: 'deliver-pilot', label: 'Odeslat pilot' },
   { id: 'confirm-order', label: 'Potvrdit objednávku' },
   { id: 'record-payment', label: 'Evidovat platbu' },
   { id: 'open-builder', label: 'Otevřít Builder' },

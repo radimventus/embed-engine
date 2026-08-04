@@ -21,7 +21,7 @@ const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '../../..');
 
 describe('PT-15 document runtime', () => {
   it('registers commercial documents against deal package sources', () => {
-    assert.equal(COMMERCIAL_DOCUMENT_CATALOG.length, 6);
+    assert.equal(COMMERCIAL_DOCUMENT_CATALOG.length, 7);
     assert.ok(existsSync(join(repoRoot, DEAL_PACKAGE_ROOT, 'README.md')));
     for (const entry of COMMERCIAL_DOCUMENT_CATALOG) {
       assert.ok(

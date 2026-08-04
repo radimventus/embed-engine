@@ -76,7 +76,7 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
       prepared?.partner.nextStep,
       'Pilot připraven — pozvánka k odeslání',
     );
-    assert.equal(prepared?.invite.status, 'pending');
+    assert.equal(prepared?.invite.status, 'activated');
     assert.equal(prepared?.invite.sendCount, 0);
     assert.equal(prepared?.invite.lastSentAt, null);
     assert.deepEqual([...prepared!.invite.roles], [...PILOT_PARTNER_ROLES]);
@@ -143,15 +143,27 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
     const partner = getPartner('p-dse');
     assert.equal(partner?.status, 'active');
 
+    // Fresh pending invite for NDA gate coverage (PT-CJ-00 activates the delivery invite).
+    const pending = createPilotInvite({
+      email: 'nda-check@example.cz',
+      displayName: 'NDA Check',
+      roles: PILOT_PARTNER_ROLES,
+      invitedByUserId: 'user-radim',
+      tenantId: prepared!.provision.tenant.id,
+      companyId: prepared!.provision.company.id,
+      workspaceId: prepared!.provision.workspace.id,
+      projectId: prepared!.provision.project.id,
+    });
+
     const denied = activateInvite({
-      token: prepared!.invite.token,
+      token: pending.token,
       password: 'pilot-secret',
       ndaAccepted: false,
     });
     assert.equal(denied.ok, false);
 
     const activated = activateInvite({
-      token: prepared!.invite.token,
+      token: pending.token,
       password: 'pilot-secret',
       ndaAccepted: true,
     });

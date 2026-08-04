@@ -45,8 +45,8 @@ function findInviteForCompany(companyId: string): PilotInvite | null {
   const invites = listInvites().filter((item) => item.companyId === companyId);
   if (invites.length === 0) return null;
   return (
-    invites.find((item) => item.status === 'pending') ??
     invites.find((item) => item.status === 'activated') ??
+    invites.find((item) => item.status === 'pending') ??
     invites[0] ??
     null
   );
@@ -54,6 +54,8 @@ function findInviteForCompany(companyId: string): PilotInvite | null {
 
 function isInviteReadyToSend(invite: PilotInvite | null): boolean {
   if (invite === null) return false;
+  // PT-CJ-00 — account may already be activated with preset password.
+  if (invite.status === 'activated') return invite.sendCount === 0;
   if (invite.status !== 'pending') return false;
   return invite.sendCount === 0 && invite.lastSentAt === null;
 }

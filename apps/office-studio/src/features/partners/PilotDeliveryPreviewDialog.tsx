@@ -12,15 +12,17 @@ type PilotDeliveryPreviewDialogProps = {
   readonly preview: PilotDeliveryPreview;
   readonly onConfirm: () => void;
   readonly onCancel: () => void;
+  readonly busy?: boolean;
 };
 
 /**
- * PE-07 — Delivery Preview before „Odeslat pilot“ (no SMTP).
+ * PT-CJ-00 — Delivery Preview before „Odeslat nabídku“.
  */
 export function PilotDeliveryPreviewDialog({
   preview,
   onConfirm,
   onCancel,
+  busy = false,
 }: PilotDeliveryPreviewDialogProps) {
   const invite = preview.invite;
 
@@ -34,13 +36,13 @@ export function PilotDeliveryPreviewDialog({
     >
       <PlatformCard
         title="Delivery Preview"
-        description="Kontrola balíčku před odesláním pilota"
+        description="Kontrola balíčku před odesláním nabídky"
       >
         <h2
           id="pilot-delivery-preview-title"
           className="office-partner-detail__name"
         >
-          Odeslat pilot
+          Odeslat nabídku
         </h2>
         <dl className="office-partner-dl" data-testid="delivery-preview-fields">
           <div>
@@ -56,31 +58,31 @@ export function PilotDeliveryPreviewDialog({
             <dd>{preview.projectName}</dd>
           </div>
           <div>
+            <dt>Hero</dt>
+            <dd data-testid="delivery-preview-hero">{preview.heroLabel || '—'}</dd>
+          </div>
+          <div>
+            <dt>Web partnera</dt>
+            <dd data-testid="delivery-preview-website">
+              {preview.websiteUrl || '—'}
+            </dd>
+          </div>
+          <div>
             <dt>Dostupná Studia</dt>
             <dd>{preview.accessibleStudios.join(' · ')}</dd>
           </div>
           <div>
-            <dt>Stav pozvánky</dt>
-            <dd>
-              {invite !== null ? (
-                <PlatformStatusBadge tone="info">
-                  {invite.status}
-                </PlatformStatusBadge>
-              ) : (
-                '—'
-              )}
+            <dt>Login</dt>
+            <dd data-testid="delivery-preview-login">{preview.loginEmail}</dd>
+          </div>
+          <div>
+            <dt>Heslo</dt>
+            <dd data-testid="delivery-preview-password">
+              {preview.loginPassword}
             </dd>
           </div>
           <div>
-            <dt>Informace o pozvánce</dt>
-            <dd data-testid="delivery-preview-invite-info">
-              {invite !== null
-                ? `token ${invite.token} · odesláno ${invite.sendCount}× · platná do ${new Date(invite.expiresAt).toLocaleString('cs-CZ')}`
-                : '—'}
-            </dd>
-          </div>
-          <div>
-            <dt>Stav aktivace</dt>
+            <dt>Stav účtu</dt>
             <dd data-testid="delivery-preview-activation">
               <PlatformStatusBadge
                 tone={
@@ -92,30 +94,39 @@ export function PilotDeliveryPreviewDialog({
             </dd>
           </div>
           <div>
-            <dt>Partner Workspace</dt>
+            <dt>CONIS Studio</dt>
             <dd>
               <a
-                href={preview.workspaceHref}
+                href={preview.studioLoginHref}
                 data-testid="delivery-preview-workspace-link"
               >
-                {preview.workspaceHref}
+                {preview.studioLoginHref}
               </a>
             </dd>
           </div>
           <div>
-            <dt>PDF prezentace</dt>
+            <dt>PDF nabídka</dt>
             <dd data-testid="delivery-preview-pdf">{preview.pdf.name}</dd>
+          </div>
+          <div>
+            <dt>Pozvánka</dt>
+            <dd data-testid="delivery-preview-invite-info">
+              {invite !== null
+                ? `${invite.status} · odesláno ${invite.sendCount}×`
+                : '—'}
+            </dd>
           </div>
         </dl>
         <p className="office-dashboard__hint">
-          MVP: odeslání je lokální (bez SMTP). Timeline zapíše PilotPrepared a
-          PilotDelivered. Odkaz otevírá InviteShell přes ?invite=.
+          Systém vytvoří personalizované PDF (Hero + web), odešle pozvánkový
+          e-mail přes SMTP a uloží komunikaci do Conversation a Timeline.
         </p>
         <div className="office-partner-actions" style={{ marginTop: 16 }}>
           <button
             type="button"
             className="platform-btn platform-btn--sm"
             onClick={onCancel}
+            disabled={busy}
             data-testid="delivery-preview-cancel"
           >
             Zrušit
@@ -124,9 +135,10 @@ export function PilotDeliveryPreviewDialog({
             type="button"
             className="platform-btn platform-btn--sm"
             onClick={onConfirm}
+            disabled={busy}
             data-testid="delivery-preview-confirm"
           >
-            Odeslat pilot
+            {busy ? 'Odesílám…' : 'Odeslat nabídku'}
           </button>
         </div>
       </PlatformCard>

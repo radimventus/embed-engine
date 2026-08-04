@@ -3,6 +3,7 @@ import { useMemo, useState } from 'react';
 import {
   enterOperatorPartnerEnvironment,
   resolveCloudStudioHref,
+  WORKSPACE_EMBED_OBJECT_ID,
 } from '@embed-engine/platform-access';
 import {
   PlatformCard,
@@ -39,9 +40,11 @@ import {
 import { buildOfficePartnerEnvironment } from '../../office/officePartnerEnvironment';
 import {
   buildPilotDeliveryPreview,
-  deliverPilot,
+  deliverPilotOffer,
 } from '../../office/officePilotDeliveryRegistry';
 import type { PilotDeliveryPreview } from '../../office/officePilotDeliveryModel';
+import { createPilotMailSession } from '../../mail';
+import { OFFICE_REFERENCE_PROJECT_LABEL } from '../../office/officeReferencePartner';
 import { PartnerDetailPanel } from './PartnerDetailPanel';
 import { PartnerFormDialog } from './PartnerFormDialog';
 import { PilotDeliveryPreviewDialog } from './PilotDeliveryPreviewDialog';
@@ -71,6 +74,7 @@ export function PartnersWorkspacePage({
   const [pilotNotice, setPilotNotice] = useState<string | null>(null);
   const [deliveryPreview, setDeliveryPreview] =
     useState<PilotDeliveryPreview | null>(null);
+  const [deliveryBusy, setDeliveryBusy] = useState(false);
   const partners = useMemo(() => {
     void revision;
     return listPartners();
@@ -126,12 +130,12 @@ export function PartnersWorkspacePage({
       );
       return;
     }
-    if (actionId === 'deliver-pilot') {
+    if (actionId === 'deliver-pilot' || actionId === 'send-offer') {
       const preview = buildPilotDeliveryPreview(activePartner.id);
       bump();
       if (preview === null) {
         setPilotNotice(
-          'Pilot nelze odeslat — partner musí mít kontaktní e-mail.',
+          'Nabídku nelze odeslat — partner musí mít kontaktní e-mail.',
         );
         return;
       }
@@ -159,6 +163,10 @@ export function PartnersWorkspacePage({
         projectId: env.environment.projectId,
         officePartnerId: activePartner.id,
         officeReturnHref: `${officeBase}partners/${encodeURIComponent(activePartner.id)}`,
+        partnerName: activePartner.name,
+        projectLabel:
+          env.environment.projectLabel ?? OFFICE_REFERENCE_PROJECT_LABEL,
+        objectId: WORKSPACE_EMBED_OBJECT_ID,
         initialSurface: 'client',
       });
       if (!result.ok) {
@@ -213,19 +221,27 @@ export function PartnersWorkspacePage({
     }
   }
 
-  function handleConfirmDelivery() {
-    if (activePartner === null || deliveryPreview === null) return;
-    const result = deliverPilot(activePartner.id);
-    setDeliveryPreview(null);
-    bump();
-    if (!result.ok) {
-      setPilotNotice(result.error);
+  async function handleConfirmDelivery() {
+    if (activePartner === null || deliveryPreview === null || deliveryBusy) {
       return;
     }
-    onSelectPartner(activePartner.id);
-    setPilotNotice(
-      `Pilot odeslán · ${result.delivery.package.pdf.name} · ${result.delivery.package.workspaceHref}`,
-    );
+    setDeliveryBusy(true);
+    try {
+      const session = createPilotMailSession();
+      const result = await deliverPilotOffer(activePartner.id, session);
+      setDeliveryPreview(null);
+      bump();
+      if (!result.ok) {
+        setPilotNotice(result.error);
+        return;
+      }
+      onSelectPartner(activePartner.id);
+      setPilotNotice(
+        `Nabídka odeslána · ${result.delivery.package.pdf.name} · ${result.delivery.package.workspaceHref}`,
+      );
+    } finally {
+      setDeliveryBusy(false);
+    }
   }
 
   return (
@@ -387,8 +403,13 @@ export function PartnersWorkspacePage({
       {deliveryPreview !== null ? (
         <PilotDeliveryPreviewDialog
           preview={deliveryPreview}
-          onCancel={() => setDeliveryPreview(null)}
-          onConfirm={handleConfirmDelivery}
+          busy={deliveryBusy}
+          onCancel={() => {
+            if (!deliveryBusy) setDeliveryPreview(null);
+          }}
+          onConfirm={() => {
+            void handleConfirmDelivery();
+          }}
         />
       ) : null}
     </div>

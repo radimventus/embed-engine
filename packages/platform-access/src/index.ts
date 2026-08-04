@@ -82,6 +82,7 @@ export {
   setUserRoles,
   setUserPassword,
   verifyUserPassword,
+  upsertActivatedUser,
   touchUserLogin,
   touchUserActivity,
   touchUserLastStudio,

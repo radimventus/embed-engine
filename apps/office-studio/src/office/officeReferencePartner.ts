@@ -24,6 +24,13 @@ export const OFFICE_REFERENCE_PLATFORM_IDS = Object.freeze({
 export const OFFICE_REFERENCE_CONTACT_EMAIL =
   'partner@domysenergii.cz' as const;
 
+/** Production website of the reference partner (PT-CJ-00 PDF personalization). */
+export const OFFICE_REFERENCE_WEBSITE_URL =
+  'https://www.domysenergii.cz' as const;
+
+/** PT-CJ-00 — preset partner Studio password after sales meeting. */
+export const PILOT_DELIVERY_PASSWORD = 'conis' as const;
+
 export function brandingLabelsForPartner(firmName: string): {
   readonly logoLabel: string;
   readonly heroLabel: string;

@@ -1,6 +1,6 @@
 /**
- * PE-07 — Pilot Delivery package / preview domain (Office MVP, no SMTP).
- * Finalizes the partner delivery package: deep-link, invitation state, activation state.
+ * PE-07 / PT-CJ-00 — Pilot Delivery package / preview domain.
+ * Finalizes the partner delivery package: Studio login, invitation, activation.
  */
 
 export type PilotDeliveryStudioId = 'client' | 'manager' | 'sales';
@@ -24,7 +24,7 @@ export type PilotDeliveryInviteSnapshot = {
 export type PilotDeliveryPdfAttachment = {
   readonly id: string;
   readonly name: string;
-  /** MVP local attachment reference — not SMTP binary transfer. */
+  /** Document Runtime or legacy local attachment reference. */
   readonly href: string;
   readonly attached: true;
   readonly ready: true;
@@ -38,8 +38,13 @@ export type PilotDeliveryPreview = {
   readonly accessibleStudios: readonly PilotDeliveryStudioId[];
   readonly invite: PilotDeliveryInviteSnapshot | null;
   readonly activationStatus: PilotActivationStatus;
-  /** Deep-link into Partner Workspace with invite token. */
+  /** CONIS Studio login entry (AuthShell). */
   readonly workspaceHref: string;
+  readonly studioLoginHref: string;
+  readonly loginEmail: string;
+  readonly loginPassword: string;
+  readonly heroLabel: string;
+  readonly websiteUrl: string;
   readonly pdf: PilotDeliveryPdfAttachment;
 };
 

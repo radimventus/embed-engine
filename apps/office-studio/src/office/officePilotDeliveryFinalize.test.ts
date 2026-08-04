@@ -1,6 +1,6 @@
 /**
  * PE-07 — Finalize Pilot Delivery package surface.
- * Deep-link, invitation state and activation state are part of the delivery package.
+ * Studio login, invitation state and activation state are part of the delivery package.
  */
 
 import assert from 'node:assert/strict';
@@ -14,7 +14,7 @@ import {
   resetPartnerWelcomeStore,
   resetPilotWorkspaceStore,
   resetUserRegistry,
-  resolvePartnerInviteHref,
+  resolveCloudLandingHref,
 } from '@embed-engine/platform-access';
 
 import { resetOfficeEventCatalogForTests } from './officeEventCatalog.ts';
@@ -45,17 +45,15 @@ describe('PE-07 Pilot Delivery finalize', () => {
     clearPlatformSession();
   }
 
-  it('exposes partner workspace deep-link with invite token', () => {
+  it('exposes CONIS Studio login entry (not invite deep-link)', () => {
     resetAll();
     preparePilotForPartner('p-dse');
     const preview = buildPilotDeliveryPreview('p-dse');
     assert.ok(preview !== null);
     assert.ok(preview!.invite !== null);
-    assert.equal(
-      preview!.workspaceHref,
-      resolvePartnerInviteHref(preview!.invite!.token),
-    );
-    assert.match(preview!.workspaceHref, /[?&]invite=/);
+    assert.equal(preview!.workspaceHref, resolveCloudLandingHref());
+    assert.equal(preview!.studioLoginHref, resolveCloudLandingHref());
+    assert.doesNotMatch(preview!.workspaceHref, /invite=/);
   });
 
   it('exposes invitation and activation state on the delivery package', () => {
@@ -65,16 +63,16 @@ describe('PE-07 Pilot Delivery finalize', () => {
     assert.equal(result.ok, true);
     if (!result.ok) return;
 
-    assert.equal(result.delivery.package.invite.status, 'pending');
-    assert.equal(
-      result.delivery.package.activationStatus,
-      'awaiting_activation',
-    );
+    assert.equal(result.delivery.package.invite.status, 'activated');
+    assert.equal(result.delivery.package.activationStatus, 'activated');
     assert.equal(
       activationStatusLabel(result.delivery.package.activationStatus),
-      'Čeká na aktivaci',
+      'Účet aktivován',
     );
     assert.equal(result.delivery.package.pdf.ready, true);
-    assert.match(result.delivery.package.workspaceHref, /invite=/);
+    assert.equal(
+      result.delivery.package.workspaceHref,
+      resolveCloudLandingHref(),
+    );
   });
 });

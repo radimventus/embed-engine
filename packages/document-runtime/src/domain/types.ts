@@ -9,7 +9,8 @@ export type CommercialDocumentType =
   | 'implementation_standard'
   | 'dpa'
   | 'vop'
-  | 'proforma';
+  | 'proforma'
+  | 'pilot_offer';
 
 export type DocumentLifecycleStatus =
   | 'draft'
@@ -29,6 +30,9 @@ export type DocumentContext = {
   readonly issuedAt: string;
   readonly dueDate: string | null;
   readonly contactEmail: string | null;
+  /** PT-CJ-00 — personalized pilot offer fields (optional for deal docs). */
+  readonly heroLabel?: string | null;
+  readonly websiteUrl?: string | null;
 };
 
 export type DocumentCatalogEntry = {
@@ -69,6 +73,7 @@ export const COMMERCIAL_DOCUMENT_LABELS: Readonly<
   dpa: 'DPA',
   vop: 'VOP',
   proforma: 'Proforma faktura',
+  pilot_offer: 'Nabídka pilotního programu CONIS',
 });
 
 export const DEAL_PACKAGE_ROOT = 'docs/platform/office/deal' as const;

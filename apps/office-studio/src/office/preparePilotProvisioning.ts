@@ -7,11 +7,15 @@
 
 import {
   PILOT_PARTNER_ROLES,
+  activateInvite,
   buildPartnerEnvironment,
   createPilotInvite,
+  listInvites,
   getPilotWorkspace,
   provisionPilotWorkspace,
+  setUserPassword,
   upsertPartnerBranding,
+  upsertActivatedUser,
   type PartnerEnvironment,
   type PilotInvite,
   type PilotProvisionResult,
@@ -34,6 +38,8 @@ import {
   OFFICE_REFERENCE_PARTNER_ID,
   OFFICE_REFERENCE_PARTNER_NAME,
   OFFICE_REFERENCE_PROJECT_LABEL,
+  OFFICE_REFERENCE_WEBSITE_URL,
+  PILOT_DELIVERY_PASSWORD,
   brandingLabelsForPartner,
 } from './officeReferencePartner';
 
@@ -49,6 +55,26 @@ export type PreparePilotResult = {
 
 function nowIso(): string {
   return new Date().toISOString();
+}
+
+function websiteFromContactEmail(email: string): string {
+  const domain = email.split('@')[1]?.trim().toLowerCase();
+  if (domain === undefined || domain.length === 0) return '';
+  return `https://www.${domain}`;
+}
+
+function ensurePilotDeliveryPassword(
+  email: string,
+  invite: PilotInvite,
+): void {
+  upsertActivatedUser({
+    id: `user-invite-${invite.id}`,
+    email,
+    displayName: invite.displayName,
+    roles: invite.roles,
+    password: PILOT_DELIVERY_PASSWORD,
+  });
+  setUserPassword(email, PILOT_DELIVERY_PASSWORD);
 }
 
 /**
@@ -84,23 +110,52 @@ export function preparePilotForPartner(
   }
 
   const brandLabels = brandingLabelsForPartner(firmName);
+  const websiteUrl =
+    partnerId === OFFICE_REFERENCE_PARTNER_ID
+      ? OFFICE_REFERENCE_WEBSITE_URL
+      : websiteFromContactEmail(email) || OFFICE_REFERENCE_WEBSITE_URL;
   const branding = upsertPartnerBranding({
     companyId: provision.company.id,
     firmName,
     logoLabel: brandLabels.logoLabel,
     heroLabel: brandLabels.heroLabel,
+    websiteUrl,
   });
 
-  const invite = createPilotInvite({
-    email,
-    displayName: partner.contact.name || partner.name,
-    roles: PILOT_PARTNER_ROLES,
-    invitedByUserId,
-    tenantId: provision.tenant.id,
-    companyId: provision.company.id,
-    workspaceId: provision.workspace.id,
-    projectId: provision.project.id,
-  });
+  const existingInvite = listInvites().find(
+    (item) => item.email === email && item.companyId === provision.company.id,
+  );
+  let invite: PilotInvite;
+  if (existingInvite !== undefined && existingInvite.status === 'activated') {
+    ensurePilotDeliveryPassword(email, existingInvite);
+    invite = existingInvite;
+  } else if (existingInvite !== undefined && existingInvite.status === 'pending') {
+    const activated = activateInvite({
+      token: existingInvite.token,
+      password: PILOT_DELIVERY_PASSWORD,
+      ndaAccepted: true,
+    });
+    if (!activated.ok) return null;
+    invite = activated.invite;
+  } else {
+    const created = createPilotInvite({
+      email,
+      displayName: partner.contact.name || partner.name,
+      roles: PILOT_PARTNER_ROLES,
+      invitedByUserId,
+      tenantId: provision.tenant.id,
+      companyId: provision.company.id,
+      workspaceId: provision.workspace.id,
+      projectId: provision.project.id,
+    });
+    const activated = activateInvite({
+      token: created.token,
+      password: PILOT_DELIVERY_PASSWORD,
+      ndaAccepted: true,
+    });
+    if (!activated.ok) return null;
+    invite = activated.invite;
+  }
 
   const existingPackage =
     getSalesCase(partnerId)?.offer.packageId ?? 'pilot';

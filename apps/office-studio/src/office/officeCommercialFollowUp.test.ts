@@ -1,12 +1,12 @@
 /**
  * PE-09 — Commercial Follow-up activity + status + dashboard + timeline.
+ * PT-CJ-00 activates the partner account at prepare (password conis).
  */
 
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
-  activateInvite,
   clearPlatformSession,
   markInviteOpened,
   resetCompanyRegistryExtras,
@@ -42,6 +42,7 @@ import {
 import {
   FOLLOW_UP_ACTIVE_WINDOW_MS,
 } from './officeCommercialFollowUpModel.ts';
+import { PILOT_DELIVERY_PASSWORD } from './officeReferencePartner.ts';
 
 describe('PE-09 Commercial Follow-up', () => {
   function resetAll() {
@@ -68,26 +69,20 @@ describe('PE-09 Commercial Follow-up', () => {
 
     let followUp = buildPartnerCommercialFollowUp('p-dse');
     assert.ok(followUp !== null);
-    assert.equal(followUp?.status, 'not_taken');
+    // PT-CJ-00 — account already activated; waiting for first Studio login.
+    assert.equal(followUp?.activity.accountActivated, true);
+    assert.equal(followUp?.activity.firstLogin, false);
+    assert.equal(followUp?.status, 'ready_for_contact');
     assert.equal(followUp?.activity.inviteOpened, false);
     assert.equal(followUp?.activity.lastVisitedStudio, null);
 
     markInviteOpened(delivered.delivery.package.invite.token);
     followUp = buildPartnerCommercialFollowUp('p-dse');
-    assert.equal(followUp?.status, 'invite_opened');
     assert.equal(followUp?.activity.inviteOpened, true);
 
-    const activated = activateInvite({
-      token: delivered.delivery.package.invite.token,
-      password: 'follow-up-secret',
-      ndaAccepted: true,
-    });
-    assert.equal(activated.ok, true);
-    if (!activated.ok) return;
-
     const loggedIn = login({
-      email: activated.user.email,
-      password: 'follow-up-secret',
+      email: delivered.delivery.preview.email,
+      password: PILOT_DELIVERY_PASSWORD,
       rememberMe: false,
     });
     assert.equal(loggedIn.ok, true);
@@ -140,11 +135,15 @@ describe('PE-09 Commercial Follow-up', () => {
     preparePilotForPartner('p-dse');
     deliverPilot('p-dse');
     const dashboard = buildOfficeFollowUpDashboard();
+    // Activated account without first login → ready for contact / follow-up.
     assert.ok(
-      dashboard.waitingActivation.some((item) => item.partnerId === 'p-dse'),
+      dashboard.readyForFollowUp.some((item) => item.partnerId === 'p-dse') ||
+        dashboard.newlyActivated.some((item) => item.partnerId === 'p-dse'),
     );
-    assert.equal(dashboard.newlyActivated.length, 0);
-    assert.equal(dashboard.readyForFollowUp.length, 0);
+    assert.equal(
+      dashboard.waitingActivation.some((item) => item.partnerId === 'p-dse'),
+      false,
+    );
   });
 
   it('records ready_for_contact timeline event', () => {
@@ -154,20 +153,7 @@ describe('PE-09 Commercial Follow-up', () => {
     assert.equal(delivered.ok, true);
     if (!delivered.ok) return;
 
-    const activated = activateInvite({
-      token: delivered.delivery.package.invite.token,
-      password: 'follow-up-secret',
-      ndaAccepted: true,
-    });
-    assert.equal(activated.ok, true);
-    if (!activated.ok) return;
-
-    const staleNow =
-      Date.parse(activated.invite.activatedAt ?? new Date().toISOString()) +
-      FOLLOW_UP_ACTIVE_WINDOW_MS +
-      60_000;
-
-    const followUp = syncCommercialFollowUpTimeline('p-dse', staleNow);
+    const followUp = syncCommercialFollowUpTimeline('p-dse');
     assert.equal(followUp?.status, 'ready_for_contact');
     const kinds = listPartnerTimeline('p-dse', 50).map((event) => event.kind);
     assert.ok(kinds.includes('followup.ready_for_contact'));
