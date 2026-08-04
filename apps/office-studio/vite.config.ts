@@ -6,17 +6,30 @@ import { defineConfig } from 'vite';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
 
+/** Node-only mail transport — never prebundle / never ship in browser. */
+const NODE_ONLY_MAIL = ['nodemailer', 'imapflow'] as const;
+
 /**
  * Office Studio Vite config (OF-01).
  * Port 4181 — distinct from Sales (4179) and Manager (4175).
+ * CAP-GOV-06: isolate Node mail deps from browser optimizeDeps / build.
  */
 export default defineConfig({
   root: rootDir,
   base: process.env.VITE_BASE ?? '/',
   plugins: [react()],
+  optimizeDeps: {
+    exclude: [...NODE_ONLY_MAIL],
+  },
   build: {
     sourcemap: false,
     target: 'es2022',
+    rollupOptions: {
+      external: [...NODE_ONLY_MAIL],
+    },
+  },
+  ssr: {
+    external: [...NODE_ONLY_MAIL],
   },
   server: {
     host: '127.0.0.1',

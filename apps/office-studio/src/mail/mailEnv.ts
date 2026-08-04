@@ -1,6 +1,6 @@
 /**
  * CAP-OP-09 — Mail transport env configuration (.env).
- * Adapters read these keys; Office UI never imports this module for rendering.
+ * Browser-safe: never touch bare `process` (Vite/browser has no Node process).
  */
 
 export type SmtpEnvConfig = {
@@ -23,6 +23,16 @@ export type MailEnvConfig = {
   readonly smtp: SmtpEnvConfig | null;
   readonly imap: ImapEnvConfig | null;
 };
+
+function readProcessEnv(): Record<string, string | undefined> {
+  try {
+    const proc = (globalThis as { process?: { env?: Record<string, string | undefined> } })
+      .process;
+    return proc?.env ?? {};
+  } catch {
+    return {};
+  }
+}
 
 function readEnv(
   source: Record<string, string | undefined>,
@@ -49,7 +59,7 @@ function parseSecure(raw: string | undefined, fallback: boolean): boolean {
 }
 
 export function readSmtpEnvConfig(
-  source: Record<string, string | undefined> = process.env,
+  source: Record<string, string | undefined> = readProcessEnv(),
 ): SmtpEnvConfig | null {
   const host = readEnv(source, 'SMTP_HOST');
   const user = readEnv(source, 'SMTP_USER');
@@ -68,7 +78,7 @@ export function readSmtpEnvConfig(
 }
 
 export function readImapEnvConfig(
-  source: Record<string, string | undefined> = process.env,
+  source: Record<string, string | undefined> = readProcessEnv(),
 ): ImapEnvConfig | null {
   const host = readEnv(source, 'IMAP_HOST');
   const user = readEnv(source, 'IMAP_USER');
@@ -86,7 +96,7 @@ export function readImapEnvConfig(
 }
 
 export function readMailEnvConfig(
-  source: Record<string, string | undefined> = process.env,
+  source: Record<string, string | undefined> = readProcessEnv(),
 ): MailEnvConfig {
   return {
     smtp: readSmtpEnvConfig(source),

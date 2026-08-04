@@ -20,7 +20,7 @@ export function createEnvMailTransportSession(options: {
   readonly store?: ConversationMailStore;
   readonly env?: Record<string, string | undefined>;
 }): PilotMailTransportSession {
-  const env = readMailEnvConfig(options.env ?? process.env);
+  const env = readMailEnvConfig(options.env);
   if (env.smtp === null) {
     throw new Error(
       'SMTP is not configured (SMTP_HOST, SMTP_USER, SMTP_PASSWORD)',

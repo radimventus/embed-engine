@@ -149,10 +149,12 @@ export function PilotWorkspaceProvider({
 }: PilotWorkspaceProviderProps) {
   void _eventCatalog;
 
-  const sessionRef = useRef<PilotMailTransportSession>(
-    mailTransport ??
-      wirePilotMailTransportSession({ mailboxId: defaultMailboxId }),
-  );
+  const sessionRef = useRef<PilotMailTransportSession | null>(null);
+  if (sessionRef.current === null) {
+    sessionRef.current =
+      mailTransport ??
+      wirePilotMailTransportSession({ mailboxId: defaultMailboxId });
+  }
   if (mailTransport !== undefined) {
     sessionRef.current = mailTransport;
   }
@@ -442,7 +444,7 @@ export function PilotWorkspaceProvider({
 
   const syncMailboxTransport = useCallback(
     async (mailboxId = defaultMailboxId) => {
-      const report = await sessionRef.current.syncMailbox(mailboxId);
+      const report = await sessionRef.current!.syncMailbox(mailboxId);
       setInbox((current) =>
         reducePilotInbox(current, { type: 'refresh-from-conversation' }),
       );
@@ -483,7 +485,7 @@ export function PilotWorkspaceProvider({
 
   const sendSystemMail = useCallback(
     async (draft: SystemMailDraft) => {
-      const message = await sessionRef.current.sendSystemMail(draft);
+      const message = await sessionRef.current!.sendSystemMail(draft);
       const caseId = draft.caseId ?? activeCaseId;
       setInbox((current) =>
         reducePilotInbox(current, { type: 'refresh-from-conversation' }),
