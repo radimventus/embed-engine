@@ -1,6 +1,7 @@
 /**
  * OF-01 — Office Studio application shell.
  * OF-02 Partner · OF-03 Sales · OF-04 Documents · OF-05 Handoff · OF-06 Pilot Runtime.
+ * CAP-OP-01 Pilot Workspace Shell.
  */
 
 import { useCallback, useEffect, useState } from 'react';
@@ -27,6 +28,7 @@ import { OfficeDashboardPage } from './features/OfficeDashboardPage';
 import { OfficeSectionPage } from './features/OfficeSectionPage';
 import { PartnersWorkspacePage } from './features/partners/PartnersWorkspacePage';
 import { PilotRuntimePage } from './features/pilot/PilotRuntimePage';
+import { PilotWorkspacePage } from './features/pilot-workspace/PilotWorkspacePage';
 import { SalesWorkspacePage } from './features/sales/SalesWorkspacePage';
 import { getPartner } from './office/officePartnerRegistry';
 import {
@@ -142,6 +144,8 @@ export function OfficeStudioApp() {
                 openPartnerScoped('implementation', partnerId)
               }
             />
+          ) : location.routeId === 'pilot-workspace' ? (
+            <PilotWorkspacePage />
           ) : location.routeId === 'settings' ? (
             <PilotRuntimePage
               onOpenPartner={(partnerId) =>

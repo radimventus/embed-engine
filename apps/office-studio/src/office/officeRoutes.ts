@@ -1,5 +1,5 @@
 /**
- * OF-01 / OF-02 / OF-03 — Office Studio routes under /studio/office/
+ * OF-01 / OF-02 / OF-03 / CAP-OP-01 — Office Studio routes under /studio/office/
  * Partners + Sales support detail deep-link: /:section/:partnerId
  */
 
@@ -9,6 +9,7 @@ export type OfficeRouteId =
   | 'sales'
   | 'documents'
   | 'implementation'
+  | 'pilot-workspace'
   | 'activity'
   | 'settings';
 
@@ -30,6 +31,7 @@ export const OFFICE_NAV_ITEMS: readonly OfficeNavItem[] = Object.freeze([
   { id: 'sales', label: 'Obchod', path: 'sales' },
   { id: 'documents', label: 'Dokumenty', path: 'documents' },
   { id: 'implementation', label: 'Implementace', path: 'implementation' },
+  { id: 'pilot-workspace', label: 'Pilot Workspace', path: 'pilot-workspace' },
   { id: 'activity', label: 'Aktivita', path: 'activity' },
   { id: 'settings', label: 'Nastavení', path: 'settings' },
 ]);

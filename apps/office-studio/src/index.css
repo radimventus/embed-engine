@@ -708,6 +708,179 @@ body {
   gap: 16px;
 }
 
+/* CAP-OP-01 — Pilot Workspace Shell */
+.office-pilot-ws {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1520px;
+}
+
+.office-pilot-ws__project-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.office-pilot-ws__project-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.office-pilot-ws__project-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--platform-navy, #001930);
+}
+
+.office-pilot-ws__project-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: min(100%, 420px);
+  flex: 1;
+  justify-content: flex-end;
+}
+
+.office-pilot-ws__project-select {
+  width: min(100%, 360px);
+  box-sizing: border-box;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--platform-navy, #001930);
+  background: #fff;
+}
+
+.office-pilot-ws__project-select:focus {
+  outline: 2px solid var(--platform-blue, #18428f);
+  outline-offset: 1px;
+}
+
+.office-pilot-ws__project-add {
+  flex-shrink: 0;
+  min-width: 44px;
+}
+
+.office-pilot-ws__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 25%) minmax(0, 50%) minmax(0, 25%);
+  gap: 16px;
+  align-items: start;
+}
+
+.office-pilot-ws__case-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.office-pilot-ws__case {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid #eef0f3;
+  background: transparent;
+  text-align: left;
+  padding: 12px 4px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--platform-navy, #001930);
+}
+
+.office-pilot-ws__case:hover,
+.office-pilot-ws__case--active {
+  background: var(--platform-cream-light, #f7f6f4);
+}
+
+.office-pilot-ws__case-label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.office-pilot-ws__case-meta {
+  font-size: 12px;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-ws__terminal-shell,
+.office-pilot-ws__workflow-shell {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.office-pilot-ws__tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.office-pilot-ws__tab {
+  border: 1px solid #e3e3e3;
+  border-radius: 999px;
+  background: #fff;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--platform-section, #64748b);
+  cursor: pointer;
+}
+
+.office-pilot-ws__tab:hover,
+.office-pilot-ws__tab--active {
+  border-color: var(--platform-blue, #18428f);
+  color: var(--platform-navy, #001930);
+  background: var(--platform-cream-light, #f7f6f4);
+}
+
+.office-pilot-ws__terminal-body {
+  min-height: 180px;
+  border: 1px solid #eef0f3;
+  border-radius: 10px;
+  padding: 16px;
+  background: var(--platform-cream-light, #f7f6f4);
+}
+
+.office-pilot-ws__panel-title {
+  margin: 0 0 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--platform-navy, #001930);
+}
+
+.office-pilot-ws__panel-body,
+.office-pilot-ws__shell-note,
+.office-pilot-ws__context-chip {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-ws__workflow-steps {
+  margin: 0;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: var(--platform-navy, #001930);
+  font-size: 13px;
+  font-weight: 600;
+}
+
 @media (max-width: 1100px) {
   .office-dashboard__cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -720,7 +893,8 @@ body {
   .office-partners__grid,
   .office-sales__grid,
   .office-docs__grid,
-  .office-docs__split {
+  .office-docs__split,
+  .office-pilot-ws__grid {
     grid-template-columns: 1fr;
   }
 

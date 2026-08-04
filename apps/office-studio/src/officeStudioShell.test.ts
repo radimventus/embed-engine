@@ -23,6 +23,7 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
         'Obchod',
         'Dokumenty',
         'Implementace',
+        'Pilot Workspace',
         'Aktivita',
         'Nastavení',
       ],
@@ -46,6 +47,10 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
     assert.equal(
       parseOfficeRoute('/studio/office/implementation', '/studio/office/'),
       'implementation',
+    );
+    assert.equal(
+      parseOfficeRoute('/studio/office/pilot-workspace', '/studio/office/'),
+      'pilot-workspace',
     );
     assert.equal(
       parseOfficeRoute('/studio/office/settings', '/studio/office/'),
@@ -91,6 +96,7 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
     assert.equal(officeHref('sales'), '/sales');
     assert.equal(officeHref('documents'), '/documents');
     assert.equal(officeHref('implementation'), '/implementation');
+    assert.equal(officeHref('pilot-workspace'), '/pilot-workspace');
     assert.equal(officeHref('settings'), '/settings');
   });
 
@@ -106,6 +112,7 @@ describe('officeStudioShell (OF-01 / OF-02)', () => {
     assert.match(app, /SalesWorkspacePage/);
     assert.match(app, /DocumentsWorkspacePage/);
     assert.match(app, /ImplementationWorkspacePage/);
+    assert.match(app, /PilotWorkspacePage/);
     assert.match(app, /PilotRuntimePage/);
     assert.match(main, /studioId="office"/);
     assert.match(pkg, /@embed-engine\/platform-shell/);
