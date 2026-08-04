@@ -44,11 +44,19 @@ export type OfficeAutomationMailIntent = {
   readonly mailboxId: typeof DEFAULT_PILOT_MAILBOX_ID;
 };
 
+export type OfficeAutomationMailFailure = {
+  readonly actionId: string;
+  readonly event: BusinessEvent;
+  readonly reason: string;
+};
+
 export type OfficeAutomationHostJournal = {
   readonly conversationEvents: BusinessEvent[];
   readonly mailIntents: OfficeAutomationMailIntent[];
+  readonly mailFailures: OfficeAutomationMailFailure[];
   readonly workflowPlans: AutomationDispatchRecord[];
   readonly documents: DocumentArtifact[];
+  readonly documentFailures: string[];
   readonly officeTasks: OfficeTask[];
 };
 
@@ -57,6 +65,11 @@ export type OfficeAutomationHost = {
   readonly mailSession: PilotMailTransportSession;
   readonly workflowBridge: OfficeWorkflowAutomationSurface;
   readonly journal: OfficeAutomationHostJournal;
+};
+
+export type OfficeAutomationHostOptions = {
+  /** Optional mail session (failure-scenario / operational injection). */
+  readonly mailSession?: PilotMailTransportSession;
 };
 
 let sharedHost: OfficeAutomationHost | null = null;
@@ -77,19 +90,26 @@ function mailSubjectForAction(actionId: string, event: BusinessEvent): string {
 
 /**
  * Builds Office Automation host with full commercial orchestration ports.
+ * Mail / document transport failures are journaled — orchestration stays consistent.
  */
-export function createOfficeAutomationHost(): OfficeAutomationHost {
+export function createOfficeAutomationHost(
+  options: OfficeAutomationHostOptions = {},
+): OfficeAutomationHost {
   const journal: OfficeAutomationHostJournal = {
     conversationEvents: [],
     mailIntents: [],
+    mailFailures: [],
     workflowPlans: [],
     documents: [],
+    documentFailures: [],
     officeTasks: [],
   };
 
-  const mailSession = createPilotMailSession({
-    mailboxId: DEFAULT_PILOT_MAILBOX_ID,
-  });
+  const mailSession =
+    options.mailSession ??
+    createPilotMailSession({
+      mailboxId: DEFAULT_PILOT_MAILBOX_ID,
+    });
   bindOfficeDocumentMailSession(mailSession);
   void getOfficeDocumentRuntime();
 
@@ -168,14 +188,23 @@ export function createOfficeAutomationHost(): OfficeAutomationHost {
               : null;
           if (toEmail === null || toEmail.length === 0) return;
 
-          await mailSession.sendSystemMail({
-            mailboxId: DEFAULT_PILOT_MAILBOX_ID,
-            toEmail,
-            subject: mailSubjectForAction(actionId, event),
-            body: `Automatická zpráva (${actionId}) pro ${event.kind}.`,
-            caseId: projectId.length > 0 ? projectId : null,
-            origin: 'SYSTEM',
-          });
+          try {
+            await mailSession.sendSystemMail({
+              mailboxId: DEFAULT_PILOT_MAILBOX_ID,
+              toEmail,
+              subject: mailSubjectForAction(actionId, event),
+              body: `Automatická zpráva (${actionId}) pro ${event.kind}.`,
+              caseId: projectId.length > 0 ? projectId : null,
+              origin: 'SYSTEM',
+            });
+          } catch (error) {
+            journal.mailFailures.push({
+              actionId,
+              event,
+              reason:
+                error instanceof Error ? error.message : 'mail-send-failed',
+            });
+          }
         },
       },
       workflow: {
@@ -201,8 +230,14 @@ export function createOfficeAutomationHost(): OfficeAutomationHost {
       },
       documentRuntime: {
         generateForEvent: async (event) => {
-          const artifacts = await generateDocumentsForBusinessEvent(event);
-          journal.documents.push(...artifacts);
+          try {
+            const artifacts = await generateDocumentsForBusinessEvent(event);
+            journal.documents.push(...artifacts);
+          } catch (error) {
+            journal.documentFailures.push(
+              error instanceof Error ? error.message : 'document-generate-failed',
+            );
+          }
         },
       },
       officeTasks: {

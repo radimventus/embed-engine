@@ -90,22 +90,26 @@ export function getOfficeDocumentRuntime(): DocumentRuntime {
       mail: {
         sendDocument: async ({ artifact, toEmail, subject, body }) => {
           if (sharedMailSession === null) return;
-          await sharedMailSession.sendSystemMail({
-            mailboxId: DEFAULT_PILOT_MAILBOX_ID,
-            toEmail,
-            subject,
-            body,
-            caseId: artifact.projectId,
-            origin: 'SYSTEM',
-            attachments: [
-              {
-                fileName: artifact.attachment.fileName,
-                mimeType: 'application/pdf',
-                bytesBase64: artifact.attachment.bytesBase64,
-                documentId: artifact.id,
-              },
-            ],
-          });
+          try {
+            await sharedMailSession.sendSystemMail({
+              mailboxId: DEFAULT_PILOT_MAILBOX_ID,
+              toEmail,
+              subject,
+              body,
+              caseId: artifact.projectId,
+              origin: 'SYSTEM',
+              attachments: [
+                {
+                  fileName: artifact.attachment.fileName,
+                  mimeType: 'application/pdf',
+                  bytesBase64: artifact.attachment.bytesBase64,
+                  documentId: artifact.id,
+                },
+              ],
+            });
+          } catch {
+            // Mail failure must not roll back document attach / Conversation.
+          }
         },
       },
       timeline: {
