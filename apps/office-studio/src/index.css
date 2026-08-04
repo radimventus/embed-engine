@@ -1256,6 +1256,82 @@ body {
   color: var(--platform-navy, #001930);
 }
 
+.office-pilot-composer {
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fff;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.office-pilot-composer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.office-pilot-composer__error {
+  margin: 0;
+  color: #a93226;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.office-pilot-composer__form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.office-pilot-composer__context {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-composer__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-composer__field input,
+.office-pilot-composer__field textarea {
+  appearance: none;
+  border: 1px solid #e3e3e3;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--platform-navy, #001930);
+  background: #f8fafc;
+}
+
+.office-pilot-composer__field textarea {
+  resize: vertical;
+  min-height: 140px;
+}
+
+.office-pilot-composer__submit-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
 .office-pilot-detail {
   margin: 0;
   display: grid;

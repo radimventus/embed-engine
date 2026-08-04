@@ -28,6 +28,10 @@ export type SystemMailDraft = {
   readonly threadId?: string;
   readonly caseId?: PilotWorkspaceCaseId | null;
   readonly origin?: 'SYSTEM' | 'OFFICE';
+  /** RFC In-Reply-To — shared SMTP session (SYSTEM + OFFICE). */
+  readonly inReplyTo?: string;
+  /** RFC References — shared SMTP session (SYSTEM + OFFICE). */
+  readonly references?: string;
 };
 
 export type MailSyncReport = MessageIngestionReport & {
@@ -114,6 +118,8 @@ export function createMailTransportSession(
         to: draft.toEmail,
         subject: draft.subject,
         text: draft.body,
+        inReplyTo: draft.inReplyTo,
+        references: draft.references,
       });
 
       const { result, message } = ingestOutboundSystemMail(

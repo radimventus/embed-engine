@@ -9,10 +9,11 @@ import {
   PILOT_INBOX_MESSAGE_STATUS_LABELS,
   type PilotInboxMessage,
 } from '../../../office/pilotInboxModel';
+import { PilotMailComposer } from './PilotMailComposer';
 
 /**
- * CAP-OP-03 / CAP-OP-10 — Inbox as Conversation Runtime projection.
- * Selecting a message updates active case + conversation. No IMAP/SMTP.
+ * CAP-OP-03 / CAP-OP-10 / PT-14 — Inbox + Mail Composer.
+ * Conversation is SSOT. Compose uses shared Mail Session (no SMTP in UI).
  */
 export function PilotTerminalInbox() {
   const {
@@ -88,6 +89,8 @@ export function PilotTerminalInbox() {
           </>
         )}
       </section>
+
+      <PilotMailComposer />
 
       <div className="office-pilot-inbox" data-testid="pilot-inbox-sections">
         {PILOT_INBOX_CATEGORIES.map((category) => {
