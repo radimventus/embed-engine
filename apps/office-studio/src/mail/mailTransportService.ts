@@ -32,6 +32,13 @@ export type SystemMailDraft = {
   readonly inReplyTo?: string;
   /** RFC References — shared SMTP session (SYSTEM + OFFICE). */
   readonly references?: string;
+  /** PT-15 — PDF attachments (Document Runtime artifacts). */
+  readonly attachments?: readonly {
+    readonly fileName: string;
+    readonly mimeType: 'application/pdf';
+    readonly bytesBase64: string;
+    readonly documentId?: string;
+  }[];
 };
 
 export type MailSyncReport = MessageIngestionReport & {
@@ -120,6 +127,11 @@ export function createMailTransportSession(
         text: draft.body,
         inReplyTo: draft.inReplyTo,
         references: draft.references,
+        attachments: draft.attachments?.map((item) => ({
+          filename: item.fileName,
+          contentBase64: item.bytesBase64,
+          contentType: item.mimeType,
+        })),
       });
 
       const { result, message } = ingestOutboundSystemMail(
@@ -133,6 +145,13 @@ export function createMailTransportSession(
           caseId: draft.caseId,
           origin: draft.origin ?? 'SYSTEM',
           sendResult,
+          attachments: draft.attachments?.map((item) => ({
+            documentId: item.documentId ?? item.fileName,
+            fileName: item.fileName,
+            mimeType: item.mimeType,
+            bytesBase64: item.bytesBase64,
+            byteLength: Math.floor((item.bytesBase64.length * 3) / 4),
+          })),
         },
         store,
       );

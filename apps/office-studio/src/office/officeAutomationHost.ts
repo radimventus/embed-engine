@@ -1,7 +1,6 @@
 /**
- * PT-13 — Office host wiring for Business Automation.
- * Connects Automation Runtime to Workflow · Conversation · Mail Session.
- * Leaf Working Terminal UI must not import this module.
+ * PT-13 / PT-15 — Office host wiring for Business Automation + Document Runtime.
+ * Connects Automation → Document Runtime → Conversation · Mail · Timeline.
  */
 
 import {
@@ -18,6 +17,12 @@ import {
   DEFAULT_PILOT_MAILBOX_ID,
   type PilotMailTransportSession,
 } from '../mail';
+import {
+  bindOfficeDocumentMailSession,
+  generateDocumentsForBusinessEvent,
+  getOfficeDocumentRuntime,
+} from './officeDocumentRuntimeHost';
+import type { DocumentArtifact } from '@embed-engine/document-runtime';
 
 export type OfficeAutomationMailIntent = {
   readonly actionId: string;
@@ -29,6 +34,7 @@ export type OfficeAutomationHostJournal = {
   readonly conversationEvents: BusinessEvent[];
   readonly mailIntents: OfficeAutomationMailIntent[];
   readonly workflowPlans: AutomationDispatchRecord[];
+  readonly documents: DocumentArtifact[];
 };
 
 export type OfficeAutomationHost = {
@@ -41,19 +47,21 @@ export type OfficeAutomationHost = {
 let sharedHost: OfficeAutomationHost | null = null;
 
 /**
- * Builds Office Automation host with Conversation + Mail Session ports.
- * Mail intents are queued only — no SMTP send (out of PT-13 scope).
+ * Builds Office Automation host with Conversation + Mail + Document ports.
  */
 export function createOfficeAutomationHost(): OfficeAutomationHost {
   const journal: OfficeAutomationHostJournal = {
     conversationEvents: [],
     mailIntents: [],
     workflowPlans: [],
+    documents: [],
   };
 
   const mailSession = createPilotMailSession({
     mailboxId: DEFAULT_PILOT_MAILBOX_ID,
   });
+  bindOfficeDocumentMailSession(mailSession);
+  void getOfficeDocumentRuntime();
 
   const runtime = createAutomationRuntime({
     ports: {
@@ -69,7 +77,6 @@ export function createOfficeAutomationHost(): OfficeAutomationHost {
             event,
             mailboxId: DEFAULT_PILOT_MAILBOX_ID,
           });
-          void mailSession;
         },
       },
       workflow: {
@@ -79,6 +86,12 @@ export function createOfficeAutomationHost(): OfficeAutomationHost {
             plan,
             dispatchedAt: new Date().toISOString(),
           });
+        },
+      },
+      documentRuntime: {
+        generateForEvent: async (event) => {
+          const artifacts = await generateDocumentsForBusinessEvent(event);
+          journal.documents.push(...artifacts);
         },
       },
     },

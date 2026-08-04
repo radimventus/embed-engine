@@ -41,6 +41,7 @@ export {
 export type {
   AutomationIntegrationPorts,
   ConversationAutomationPort,
+  DocumentAutomationPort,
   MailSessionAutomationPort,
   WorkflowAutomationPort,
 } from './ports/integrationPorts';

@@ -13,7 +13,10 @@ export type PilotTimelineEventKind =
   | 'offer.viewed'
   | 'order.confirmed'
   | 'payment.received'
-  | 'builder.ready';
+  | 'builder.ready'
+  | 'document.generated'
+  | 'document.attached'
+  | 'document.sent';
 
 export type PilotTimelineEventId = string;
 
@@ -44,6 +47,9 @@ export const PILOT_TIMELINE_EVENT_KIND_LABELS: Readonly<
   'order.confirmed': 'Order Confirmed',
   'payment.received': 'Payment Received',
   'builder.ready': 'Builder Ready',
+  'document.generated': 'Document Generated',
+  'document.attached': 'Document Attached',
+  'document.sent': 'Document Sent',
 });
 
 /** Short icon glyph per event kind (CSS-styled, not emoji). */
@@ -58,6 +64,9 @@ export const PILOT_TIMELINE_EVENT_ICONS: Readonly<
   'order.confirmed': 'ORD',
   'payment.received': 'PAY',
   'builder.ready': 'BLD',
+  'document.generated': 'DOC',
+  'document.attached': 'ATT',
+  'document.sent': 'SND',
 });
 
 export function formatTimelineDayKey(iso: string): string {

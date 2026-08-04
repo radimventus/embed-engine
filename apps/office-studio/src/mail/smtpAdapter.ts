@@ -13,6 +13,11 @@ export type SmtpSendMailInput = {
   readonly messageId?: string;
   readonly inReplyTo?: string;
   readonly references?: string;
+  readonly attachments?: readonly {
+    readonly filename: string;
+    readonly contentBase64: string;
+    readonly contentType: string;
+  }[];
 };
 
 export type SmtpSendMailResult = {

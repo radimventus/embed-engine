@@ -10,7 +10,8 @@ export type AutomationActionId =
   | 'SendProformaMail'
   | 'SendWelcomeMail'
   | 'NotifyOffice'
-  | 'CreateBuilderTask';
+  | 'CreateBuilderTask'
+  | 'GenerateDocument';
 
 export const AUTOMATION_ACTION_IDS: readonly AutomationActionId[] = Object.freeze([
   'SendOfferMail',
@@ -18,6 +19,7 @@ export const AUTOMATION_ACTION_IDS: readonly AutomationActionId[] = Object.freez
   'SendWelcomeMail',
   'NotifyOffice',
   'CreateBuilderTask',
+  'GenerateDocument',
 ]);
 
 export type AutomationActionStatus = 'queued' | 'skipped' | 'completed' | 'failed';
@@ -37,8 +39,12 @@ export const DEFAULT_EVENT_ACTION_BINDINGS: Readonly<
   Record<BusinessEventKind, readonly AutomationActionId[]>
 > = Object.freeze({
   OfferAccepted: Object.freeze(['SendOfferMail', 'NotifyOffice'] as const),
-  OrderConfirmed: Object.freeze(['NotifyOffice'] as const),
-  ProformaGenerated: Object.freeze(['SendProformaMail', 'NotifyOffice'] as const),
+  OrderConfirmed: Object.freeze(['GenerateDocument', 'NotifyOffice'] as const),
+  ProformaGenerated: Object.freeze([
+    'GenerateDocument',
+    'SendProformaMail',
+    'NotifyOffice',
+  ] as const),
   PaymentConfirmed: Object.freeze(['NotifyOffice'] as const),
   PilotReady: Object.freeze([
     'SendWelcomeMail',

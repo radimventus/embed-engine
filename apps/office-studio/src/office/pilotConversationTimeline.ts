@@ -7,6 +7,7 @@ import {
   getConversationMailStore,
   getStoreConversation,
 } from '../mail/conversationMailStore';
+import { listDocumentTimelineEventsForCase } from './officeDocumentTimelineJournal';
 import type { PilotWorkspaceCaseId } from './pilotWorkspaceModel';
 import type { PilotTimelineEvent } from './pilotTimelineModel';
 
@@ -22,17 +23,17 @@ export function projectTimelineFromConversation(
       .map((item) => item.id),
   );
 
-  return store.messages
+  const messageEvents = store.messages
     .filter((message) => conversationIds.has(message.conversationId))
     .slice()
     .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
-    .map((message) => {
+    .flatMap((message) => {
       const conversation = getStoreConversation(message.conversationId, store);
       const incoming = message.direction === 'incoming';
-      return {
+      const emailEvent: PilotTimelineEvent = {
         id: `tl-msg-${message.id}`,
         caseId,
-        kind: incoming ? ('email.received' as const) : ('email.sent' as const),
+        kind: incoming ? 'email.received' : 'email.sent',
         title: incoming ? 'Email Received' : 'Email Sent',
         summary: message.subject,
         detail: [
@@ -43,7 +44,25 @@ export function projectTimelineFromConversation(
         ].join('\n'),
         occurredAt: message.createdAt,
       };
+
+      const documentEvents =
+        message.attachments?.map((attachment) => ({
+          id: `tl-msg-doc-${message.id}-${attachment.documentId}`,
+          caseId,
+          kind: 'document.sent' as const,
+          title: attachment.fileName,
+          summary: `Příloha · ${attachment.fileName}`,
+          detail: `documentId=${attachment.documentId}\nmime=${attachment.mimeType}`,
+          occurredAt: message.createdAt,
+        })) ?? [];
+
+      return [emailEvent, ...documentEvents];
     });
+
+  const documentJournal = listDocumentTimelineEventsForCase(caseId);
+  return [...messageEvents, ...documentJournal].sort((a, b) =>
+    a.occurredAt.localeCompare(b.occurredAt),
+  );
 }
 
 export async function loadTimelineForCaseFromConversation(

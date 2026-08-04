@@ -29,8 +29,14 @@ export type WorkflowAutomationPort = {
   }) => void | Promise<void>;
 };
 
+/** Document Runtime — Automation dispatches GenerateDocument only. */
+export type DocumentAutomationPort = {
+  readonly generateForEvent?: (event: BusinessEvent) => void | Promise<void>;
+};
+
 export type AutomationIntegrationPorts = {
   readonly conversation?: ConversationAutomationPort;
   readonly mailSession?: MailSessionAutomationPort;
   readonly workflow?: WorkflowAutomationPort;
+  readonly documentRuntime?: DocumentAutomationPort;
 };

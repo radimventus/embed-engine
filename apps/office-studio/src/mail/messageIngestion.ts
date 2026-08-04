@@ -3,12 +3,8 @@
  * Deduplicates by Message-ID across Inbox/Sent.
  */
 
-import type {
-  PilotConversationMessage,
-  PilotMailboxId,
-  PilotMessageDirection,
-  PilotMessageOrigin,
-} from '../office/pilotConversationModel';
+import type { PilotConversationMessage } from '../office/pilotConversationModel';
+import type { PilotMailboxId, PilotMessageDirection, PilotMessageOrigin } from '../office/pilotConversationModel';
 import type { PilotWorkspaceCaseId } from '../office/pilotWorkspaceModel';
 import { mapToConversation } from './conversationMapping';
 import type { ConversationMailStore } from './conversationMailStore';
@@ -33,6 +29,7 @@ export type IngestableEnvelope = {
   readonly direction: PilotMessageDirection;
   readonly origin: PilotMessageOrigin;
   readonly caseId?: PilotWorkspaceCaseId | null;
+  readonly attachments?: PilotConversationMessage['attachments'];
 };
 
 export type MessageIngestionReport = {
@@ -99,6 +96,7 @@ export function ingestEnvelope(
     fromEmail: envelope.fromEmail,
     toEmail: envelope.toEmail,
     createdAt: envelope.createdAt,
+    attachments: envelope.attachments,
   };
 
   const result = ingestStoreMessage(message, store);
@@ -143,6 +141,7 @@ export type SystemMailIngestInput = {
   readonly caseId?: PilotWorkspaceCaseId | null;
   readonly origin?: 'SYSTEM' | 'OFFICE';
   readonly sendResult: SmtpSendMailResult;
+  readonly attachments?: PilotConversationMessage['attachments'];
 };
 
 export function ingestOutboundSystemMail(
@@ -169,6 +168,7 @@ export function ingestOutboundSystemMail(
       direction: 'outgoing',
       origin: input.origin ?? 'SYSTEM',
       caseId: input.caseId,
+      attachments: input.attachments,
     },
     store,
   );

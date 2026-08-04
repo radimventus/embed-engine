@@ -51,6 +51,16 @@ export type PilotConversationMessage = {
   readonly fromEmail: string;
   readonly toEmail: string;
   readonly createdAt: string;
+  /** PT-15 — commercial document attachments (PDF). */
+  readonly attachments?: readonly PilotMessageAttachment[];
+};
+
+export type PilotMessageAttachment = {
+  readonly documentId: string;
+  readonly fileName: string;
+  readonly mimeType: 'application/pdf';
+  readonly bytesBase64: string;
+  readonly byteLength: number;
 };
 
 export const PILOT_MAILBOX_STATUS_LABELS: Readonly<

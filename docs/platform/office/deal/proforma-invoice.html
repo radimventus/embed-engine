@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <title>Proforma faktura CONIS</title>
+  <link rel="stylesheet" href="./invoice-design.css" />
+</head>
+<body class="invoice">
+  <header>
+    <p class="brand">CONIS</p>
+    <h1>Proforma faktura</h1>
+  </header>
+  <section>
+    <p><strong>Číslo:</strong> {{proformaNumber}}</p>
+    <p><strong>Objednávka:</strong> {{orderId}}</p>
+    <p><strong>Odběratel:</strong> {{companyName}} ({{partnerName}})</p>
+    <p><strong>Balíček:</strong> {{packageName}}</p>
+    <p><strong>Částka k úhradě:</strong> {{amountCzk}} CZK</p>
+    <p><strong>Vystaveno:</strong> {{issuedAt}}</p>
+    <p><strong>Splatnost:</strong> {{dueDate}}</p>
+    <p><strong>Projekt:</strong> {{projectId}}</p>
+  </section>
+</body>
+</html>

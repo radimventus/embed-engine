@@ -48,13 +48,13 @@ describe('PT-13 business automation foundation', () => {
       'SendWelcomeMail',
       'NotifyOffice',
       'CreateBuilderTask',
+      'GenerateDocument',
     ]);
     const registry = createActionRegistry();
-    assert.equal(registry.list().length, 5);
-    assert.ok(registry.has('SendWelcomeMail'));
-    assert.deepEqual(DEFAULT_EVENT_ACTION_BINDINGS.PilotReady, [
-      'SendWelcomeMail',
-      'CreateBuilderTask',
+    assert.equal(registry.list().length, 6);
+    assert.ok(registry.has('GenerateDocument'));
+    assert.deepEqual(DEFAULT_EVENT_ACTION_BINDINGS.OrderConfirmed, [
+      'GenerateDocument',
       'NotifyOffice',
     ]);
     assert.equal(planActionsForEvent('PaymentConfirmed').length, 1);

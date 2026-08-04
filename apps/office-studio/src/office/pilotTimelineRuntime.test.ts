@@ -36,6 +36,9 @@ describe('CAP-OP-04 timeline runtime', () => {
   it('exposes required commercial event kinds', () => {
     assert.deepEqual(Object.keys(PILOT_TIMELINE_EVENT_KIND_LABELS).sort(), [
       'builder.ready',
+      'document.attached',
+      'document.generated',
+      'document.sent',
       'email.received',
       'email.sent',
       'note.added',

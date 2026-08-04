@@ -33,6 +33,11 @@ export function createNodemailerSmtpClient(
         messageId,
         inReplyTo: input.inReplyTo,
         references: input.references,
+        attachments: input.attachments?.map((item) => ({
+          filename: item.filename,
+          content: Buffer.from(item.contentBase64, 'base64'),
+          contentType: item.contentType,
+        })),
       });
       const resolvedId =
         typeof info.messageId === 'string' && info.messageId.length > 0

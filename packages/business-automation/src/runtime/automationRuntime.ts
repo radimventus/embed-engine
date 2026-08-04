@@ -101,6 +101,10 @@ export function createAutomationRuntime(
               event,
             });
           }
+
+          if (item.actionId === 'GenerateDocument') {
+            await ports.documentRuntime?.generateForEvent?.(event);
+          }
         } catch (error) {
           plan.push({
             ...item,

@@ -5,14 +5,14 @@ import {
   PILOT_WORKSPACE_CASE_STATUS_LABELS,
   type PilotWorkspaceCase,
 } from '../../../office/pilotWorkspaceModel';
+import { ProjectDocumentViewer } from './ProjectDocumentViewer';
 
 type PilotTerminalDetailProps = {
   readonly activeCase: PilotWorkspaceCase | null;
 };
 
 /**
- * CAP-OP-02 — Detail obchodního případu.
- * Firma · Kontakty · Balíček · Licence · Stav · Partner Environment.
+ * CAP-OP-02 / PT-15 — Detail + project document viewer.
  */
 export function PilotTerminalDetail({ activeCase }: PilotTerminalDetailProps) {
   if (activeCase === null) {
@@ -85,6 +85,11 @@ export function PilotTerminalDetail({ activeCase }: PilotTerminalDetailProps) {
           </p>
         </DetailBlock>
       </dl>
+
+      <ProjectDocumentViewer
+        projectId={activeCase.id}
+        contactEmail={activeCase.contacts[0]?.email ?? null}
+      />
     </div>
   );
 }

@@ -25,9 +25,7 @@ import {
   confirmClickWrap,
   filterDocuments,
   getDocumentPackage,
-  issueProforma,
   listDocumentPackages,
-  prepareDocumentPackage,
   sendDocumentPackage,
 } from '../../office/officeDocumentRegistry';
 import { getPartner, listPartners } from '../../office/officePartnerRegistry';
@@ -39,8 +37,8 @@ type DocumentsWorkspacePageProps = {
 };
 
 /**
- * OF-04 — Document Workspace (Click Model MVP).
- * Document Center · Detail · Click-wrap · Email Delivery · Proforma · Timeline.
+ * OF-04 / PT-15 — Document Workspace (viewer surface).
+ * Preview · Send · History · Status — documents are issued by Document Runtime.
  */
 export function DocumentsWorkspacePage({
   selectedPartnerId,
@@ -116,8 +114,8 @@ export function DocumentsWorkspacePage({
         <p className="office-dashboard__eyebrow">Dokumenty</p>
         <h1 className="office-dashboard__title">Document Workspace</h1>
         <p className="office-dashboard__lead">
-          Řízený dokumentový průchod po potvrzené nabídce — Document Center,
-          Click-wrap, Email Delivery a Proforma (bez DMS).
+          Historie a stav obchodních dokumentů — Preview, Send, Download.
+          Dokumenty vydává Document Runtime (Business Automation), ne Office.
         </p>
       </header>
 
@@ -202,25 +200,14 @@ export function DocumentsWorkspacePage({
               </header>
 
               <PlatformCard
-                title="Quick Actions"
-                description="Dokumentový workflow MVP"
+                title="Lifecycle"
+                description="Send · Click-wrap — bez vytváření dokumentů"
               >
                 <div
                   className="office-partner-actions"
                   role="group"
-                  aria-label="Document Quick Actions"
+                  aria-label="Document lifecycle actions"
                 >
-                  <button
-                    type="button"
-                    className="platform-btn platform-btn--sm platform-btn--primary"
-                    onClick={() => {
-                      prepareDocumentPackage(partner.id);
-                      bump();
-                    }}
-                    data-testid="office-docs-prepare"
-                  >
-                    Připravit dokumenty
-                  </button>
                   <button
                     type="button"
                     className="platform-btn platform-btn--sm"
@@ -231,7 +218,7 @@ export function DocumentsWorkspacePage({
                     }}
                     data-testid="office-docs-send"
                   >
-                    Email Delivery
+                    Send
                   </button>
                   <button
                     type="button"
@@ -244,17 +231,6 @@ export function DocumentsWorkspacePage({
                     data-testid="office-docs-clickwrap"
                   >
                     Click-wrap
-                  </button>
-                  <button
-                    type="button"
-                    className="platform-btn platform-btn--sm"
-                    onClick={() => {
-                      issueProforma(partner.id);
-                      bump();
-                    }}
-                    data-testid="office-docs-proforma"
-                  >
-                    Vydat Proforma
                   </button>
                 </div>
               </PlatformCard>
@@ -306,7 +282,7 @@ export function DocumentsWorkspacePage({
                   {visibleDocs.length === 0 ? (
                     <PlatformEmptyState
                       title="Žádné dokumenty"
-                      description="Nejdřív připravte dokumentový balíček Quick Action."
+                      description="Dokumenty vznikají z Business Event přes Document Runtime."
                     />
                   ) : (
                     <ul className="office-partners__list">
