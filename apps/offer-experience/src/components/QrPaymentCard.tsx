@@ -1,5 +1,9 @@
+import { useEffect, useState } from 'react';
+import QRCode from 'qrcode';
+
 import { formatOfferPriceCzk } from '../offer/offerModel';
 import {
+  OFFER_PAYMENT_ACCOUNT,
   paymentLifecycleLabel,
   type OfferPaymentLifecycle,
   type OfferQrPaymentCard,
@@ -10,7 +14,7 @@ type PaymentStatusStripProps = {
 };
 
 /**
- * CAP-CE-03 — Waiting Payment → Payment Received → Pilot Ready.
+ * CAP-CE-03 — commercial payment status (Čeká na platbu → …).
  */
 export function PaymentStatusStrip({ lifecycle }: PaymentStatusStripProps) {
   const stages: readonly OfferPaymentLifecycle[] = [
@@ -55,13 +59,39 @@ type QrPaymentCardProps = {
 };
 
 /**
- * CAP-CE-03 — QR Payment Card (static / mock QR allowed).
+ * CAP-CE-03 — partner QR payment page (SPD bank QR).
  */
 export function QrPaymentCard({
   qr,
   lifecycle,
   onConfirmPaid,
 }: QrPaymentCardProps) {
+  const [qrImageSrc, setQrImageSrc] = useState<string | null>(qr.imageDataUrl);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (qr.imageDataUrl !== null) {
+      setQrImageSrc(qr.imageDataUrl);
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    void QRCode.toDataURL(qr.qrPayload, {
+      width: 280,
+      margin: 2,
+      errorCorrectionLevel: 'M',
+      color: { dark: '#0b1f33', light: '#ffffff' },
+    }).then((dataUrl) => {
+      if (!cancelled) setQrImageSrc(dataUrl);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [qr.imageDataUrl, qr.qrPayload]);
+
   return (
     <section
       className="offer-qr"
@@ -69,13 +99,14 @@ export function QrPaymentCard({
       aria-labelledby="offer-qr-title"
     >
       <div className="offer-section-head">
-        <p className="offer-section-eyebrow">QR platba</p>
+        <p className="offer-section-eyebrow">Platba</p>
         <h2 id="offer-qr-title" className="offer-section-title">
           Úhrada proformy
         </h2>
         <p className="offer-section-lead">
-          Naskenujte QR kód v bankovní aplikaci, nebo použijte platební údaje
-          níže. Po úhradě potvrďte platbu — automatické párování přijde později.
+          Naskenujte QR kód v bankovní aplikaci, nebo zadejte platební údaje
+          níže. Po odeslání platby potvrďte úhradu — ozveme se vám po připsání
+          platby na účet.
         </p>
       </div>
 
@@ -84,31 +115,27 @@ export function QrPaymentCard({
       <div className="offer-qr__panel">
         <div className="offer-qr__layout">
           <div
-            className="offer-qr__mock"
+            className="offer-qr__code"
             data-testid="offer-qr-code"
             role="img"
-            aria-label="Mock QR kód pro platbu"
+            aria-label="QR kód pro platbu"
           >
-            {qr.imageDataUrl !== null ? (
-              <img src={qr.imageDataUrl} alt="QR platba" />
+            {qrImageSrc !== null ? (
+              <img src={qrImageSrc} alt="QR kód pro úhradu proformy" />
             ) : (
-              <div className="offer-qr__mock-grid" aria-hidden="true">
-                {Array.from({ length: 49 }, (_, index) => (
-                  <span
-                    key={index}
-                    className={
-                      index % 3 === 0 || index % 7 === 1
-                        ? 'offer-qr__cell offer-qr__cell--on'
-                        : 'offer-qr__cell'
-                    }
-                  />
-                ))}
-              </div>
+              <div
+                className="offer-qr__code-loading"
+                data-testid="offer-qr-loading"
+                aria-hidden="true"
+              />
             )}
-            <p className="offer-qr__mock-caption">QR · mock</p>
           </div>
 
           <dl className="offer-summary__rows offer-qr__details">
+            <div>
+              <dt>Banka</dt>
+              <dd>{OFFER_PAYMENT_ACCOUNT.bankName}</dd>
+            </div>
             <div>
               <dt>Číslo účtu</dt>
               <dd data-testid="offer-qr-account">{qr.accountNumber}</dd>
@@ -128,18 +155,17 @@ export function QrPaymentCard({
               </dd>
             </div>
             <div>
-              <dt>Stav platby</dt>
+              <dt>Zpráva pro příjemce</dt>
+              <dd>{qr.message}</dd>
+            </div>
+            <div>
+              <dt>Stav</dt>
               <dd data-testid="offer-qr-status">
                 {paymentLifecycleLabel(lifecycle)}
               </dd>
             </div>
           </dl>
         </div>
-
-        <details className="offer-qr__payload">
-          <summary>SPD payload (integrace)</summary>
-          <code data-testid="offer-qr-payload">{qr.qrPayload}</code>
-        </details>
 
         <div className="offer-actions">
           <button

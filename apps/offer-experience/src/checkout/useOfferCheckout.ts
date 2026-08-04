@@ -43,7 +43,6 @@ export type UseOfferCheckoutResult = {
   readonly confirmOrder: () => void;
   readonly continueToQr: () => void;
   readonly confirmPaymentReceived: () => void;
-  readonly markPilotReady: () => void;
   readonly reset: () => void;
 };
 
@@ -179,29 +178,12 @@ export function useOfferCheckout(
       type: 'payment',
       action: { type: 'mark-payment-received', paidAt },
     });
+    dispatch({ type: 'payment', action: { type: 'mark-pilot-ready' } });
     const paymentReceived = buildPaymentReceivedEvent({
       order,
       proforma,
       paidAt,
     });
-    void notifyPaymentExtensions(integrations, {
-      timeline: paymentReceived,
-      paymentReceived,
-    });
-  }, [integrations, state.order, state.payment.proforma]);
-
-  const markPilotReady = useCallback(() => {
-    if (
-      state.order === null ||
-      state.payment.proforma === null ||
-      state.payment.paidAt === null
-    ) {
-      return;
-    }
-    const order = state.order;
-    const proforma = state.payment.proforma;
-    const paidAt = state.payment.paidAt;
-    dispatch({ type: 'payment', action: { type: 'mark-pilot-ready' } });
     const occurredAt = new Date().toISOString();
     const builderReady = buildBuilderReadyEvent({ order, occurredAt });
     const officeHandoff = buildOfficeHandoffRequest({
@@ -210,16 +192,12 @@ export function useOfferCheckout(
       paidAt,
     });
     void notifyPaymentExtensions(integrations, {
-      timeline: builderReady,
+      timeline: paymentReceived,
+      paymentReceived,
       builderReady,
       officeHandoff,
     });
-  }, [
-    integrations,
-    state.order,
-    state.payment.paidAt,
-    state.payment.proforma,
-  ]);
+  }, [integrations, state.order, state.payment.proforma]);
 
   const reset = useCallback(() => {
     dispatch({ type: 'reset' });
@@ -238,7 +216,6 @@ export function useOfferCheckout(
     confirmOrder,
     continueToQr,
     confirmPaymentReceived,
-    markPilotReady,
     reset,
   };
 }

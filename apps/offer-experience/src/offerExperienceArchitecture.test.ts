@@ -83,7 +83,7 @@ describe('CAP-CE-02 Offer Checkout Runtime', () => {
 });
 
 describe('CAP-CE-03 Offer Payment Experience', () => {
-  it('wires proforma, QR, payment states, complete and handoff interfaces', () => {
+  it('wires proforma, QR, payment states and partner-facing complete', () => {
     const app = read('src/OfferExperienceApp.tsx');
     const model = read('src/payment/paymentModel.ts');
     const runtime = read('src/payment/paymentRuntime.ts');
@@ -92,19 +92,21 @@ describe('CAP-CE-03 Offer Payment Experience', () => {
     const qr = read('src/components/QrPaymentCard.tsx');
     const complete = read('src/components/PaymentComplete.tsx');
     const pkg = read('package.json');
+    const css = read('src/index.css');
 
     assert.match(app, /ProformaExperience/);
     assert.match(app, /QrPaymentCard/);
     assert.match(app, /PaymentComplete/);
     assert.match(app, /continueToQr/);
     assert.match(app, /confirmPaymentReceived/);
-    assert.match(app, /markPilotReady/);
+    assert.doesNotMatch(app, /markPilotReady/);
     assert.doesNotMatch(app, /PlatformShell/);
     assert.doesNotMatch(app, /office-studio/);
 
     assert.match(model, /waiting_payment/);
     assert.match(model, /payment_received/);
     assert.match(model, /pilot_ready/);
+    assert.match(model, /Čeká na platbu/);
     assert.match(runtime, /issue-proforma/);
     assert.match(runtime, /open-qr/);
     assert.match(runtime, /mark-payment-received/);
@@ -115,8 +117,18 @@ describe('CAP-CE-03 Offer Payment Experience', () => {
     assert.match(qr, /offer-qr-payment/);
     assert.match(qr, /offer-qr-code/);
     assert.match(qr, /offer-payment-status/);
+    assert.match(qr, /QRCode\.toDataURL/);
+    assert.doesNotMatch(qr, /mock/i);
+    assert.doesNotMatch(qr, /SPD payload/);
+    assert.doesNotMatch(qr, /párování přijde/);
     assert.match(complete, /offer-payment-complete/);
-    assert.match(complete, /offer-handoff-slots/);
+    assert.match(complete, /offer-complete-next-steps/);
+    assert.doesNotMatch(complete, /offer-handoff-slots/);
+    assert.doesNotMatch(complete, /PaymentReceived|BuilderReady|Office handoff/);
+    assert.doesNotMatch(complete, /handoff payload|runtime rozhraní|offer\.payment\.received/);
+    assert.doesNotMatch(complete, /Pilot Ready|Označit Pilot/);
+    assert.doesNotMatch(css, /offer-qr__mock/);
+    assert.doesNotMatch(css, /offer-extension-slots/);
 
     assert.match(extensions, /OfferPaymentReceivedEvent/);
     assert.match(extensions, /OfferBuilderReadyEvent/);
@@ -126,5 +138,20 @@ describe('CAP-CE-03 Offer Payment Experience', () => {
     assert.doesNotMatch(model, /@embed-engine\/platform/);
     assert.doesNotMatch(pkg, /platform-shell/);
     assert.doesNotMatch(pkg, /office-studio/);
+    assert.match(pkg, /"qrcode"/);
+  });
+
+  it('keeps partner-facing offer copy free of implementation jargon', () => {
+    const offerModel = read('src/offer/offerModel.ts');
+    const registry = read('src/offer/offerRegistry.ts');
+    const hero = read('src/components/OfferHero.tsx');
+    const packages = read('src/components/PackageSelection.tsx');
+
+    assert.doesNotMatch(offerModel, /\(MVP\)/);
+    assert.doesNotMatch(offerModel, /Embed Experience/);
+    assert.doesNotMatch(offerModel, /Client · Manager · Sales/);
+    assert.doesNotMatch(registry, /CONIS Embed/);
+    assert.doesNotMatch(hero, /mock|placeholder|runtime|demo/i);
+    assert.doesNotMatch(packages, /mock|placeholder|runtime|MVP/i);
   });
 });

@@ -92,7 +92,7 @@ export function reduceOfferPayment(
       if (state.lifecycle !== 'payment_received' || state.paidAt === null) {
         return {
           ...state,
-          error: 'Pilot Ready vyžaduje uhrazenou platbu.',
+          error: 'Spuštění vyžaduje uhrazenou platbu.',
         };
       }
       return {

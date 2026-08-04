@@ -7,7 +7,7 @@ type OfferSummaryProps = {
 };
 
 /**
- * CAP-CE-01/02 — package summary CTA enters checkout runtime.
+ * CAP-CE-01/02 — package summary CTA enters checkout.
  */
 export function OfferSummary({ selected, onContinue }: OfferSummaryProps) {
   const enabled = selected !== null;

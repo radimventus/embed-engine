@@ -12,22 +12,21 @@ type PaymentCompleteProps = {
   readonly proforma: OfferProformaDocument;
   readonly paidAt: string;
   readonly lifecycle: OfferPaymentLifecycle;
-  readonly onMarkPilotReady: () => void;
   readonly onReset: () => void;
 };
 
 /**
- * CAP-CE-03 — Payment Complete + Pilot Ready handoff cue.
+ * CAP-CE-03 — partner confirmation after payment (commercial language only).
  */
 export function PaymentComplete({
   order,
   proforma,
   paidAt,
   lifecycle,
-  onMarkPilotReady,
   onReset,
 }: PaymentCompleteProps) {
-  const pilotReady = lifecycle === 'pilot_ready';
+  const partnerReady =
+    lifecycle === 'payment_received' || lifecycle === 'pilot_ready';
 
   return (
     <section
@@ -38,15 +37,17 @@ export function PaymentComplete({
     >
       <div className="offer-section-head">
         <p className="offer-section-eyebrow">
-          {pilotReady ? 'Pilot Ready' : 'Payment Complete'}
+          {partnerReady ? 'Připraveno' : 'Potvrzení'}
         </p>
         <h2 id="offer-complete-title" className="offer-section-title">
-          {pilotReady ? 'Pilot je připraven k předání' : 'Platba je potvrzena'}
+          {partnerReady
+            ? 'Děkujeme — objednávka je přijata'
+            : 'Platba je potvrzena'}
         </h2>
         <p className="offer-section-lead">
-          {pilotReady
-            ? 'Děkujeme. Obchodní cesta je dokončena — Office handoff je připraven přes runtime rozhraní.'
-            : 'Děkujeme za úhradu. Potvrzujeme přijetí platby a připravujeme pilotní prostředí.'}
+          {partnerReady
+            ? 'Platbu jsme zaevidovali. Do dvou pracovních dnů vás kontaktujeme s dalšími kroky spuštění.'
+            : 'Děkujeme za úhradu. Potvrzujeme přijetí objednávky a připravujeme spuštění spolupráce.'}
         </p>
       </div>
 
@@ -62,7 +63,7 @@ export function PaymentComplete({
             <dd>{proforma.number}</dd>
           </div>
           <div>
-            <dt>Uhrazeno</dt>
+            <dt>Úhrada potvrzena</dt>
             <dd data-testid="offer-complete-paid-at">
               {formatOfferDateCs(paidAt)}
             </dd>
@@ -80,50 +81,15 @@ export function PaymentComplete({
             <dd>{order.partnerName}</dd>
           </div>
           <div>
-            <dt>Příprava pilotu</dt>
-            <dd data-testid="offer-complete-pilot-info">
-              {pilotReady
-                ? 'Pilot Ready — handoff payload je připraven pro Office.'
-                : 'Po potvrzení Pilot Ready připravíme předání do provozního prostředí.'}
+            <dt>Co bude následovat</dt>
+            <dd data-testid="offer-complete-next-steps">
+              Ověříme připsání platby, připravíme váš provozní přístup a ozveme
+              se na {order.contact.email} s konkrétním termínem spuštění.
             </dd>
           </div>
         </dl>
 
-        <div
-          className="offer-extension-slots"
-          data-testid="offer-handoff-slots"
-        >
-          <article data-extension="payment-received">
-            <h3>PaymentReceived</h3>
-            <p>Event `offer.payment.received` — připraveno k napojení.</p>
-          </article>
-          <article data-extension="builder-ready">
-            <h3>BuilderReady</h3>
-            <p>Event `offer.builder.ready` — připraveno k napojení.</p>
-          </article>
-          <article data-extension="timeline">
-            <h3>Timeline</h3>
-            <p>Timeline eventy commercial cesty — bez e-mailu / Office UI.</p>
-          </article>
-          <article data-extension="office-handoff">
-            <h3>Office handoff</h3>
-            <p>
-              Rozhraní `handoffToOffice` — PT-04 bez refaktoringu UI.
-            </p>
-          </article>
-        </div>
-
         <div className="offer-actions">
-          {!pilotReady ? (
-            <button
-              type="button"
-              className="offer-btn offer-btn--primary"
-              data-testid="offer-complete-pilot-ready"
-              onClick={onMarkPilotReady}
-            >
-              Označit Pilot Ready
-            </button>
-          ) : null}
           <button
             type="button"
             className="offer-btn offer-btn--ghost"

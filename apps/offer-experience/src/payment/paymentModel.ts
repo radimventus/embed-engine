@@ -1,6 +1,6 @@
 /**
- * CAP-CE-03 — Payment Experience domain types (UI runtime).
- * No backend · no Office · prepared for PT-04 integrations.
+ * CAP-CE-03 — Payment Experience domain types.
+ * No backend · no Office · prepared for integrations.
  */
 
 import type { CheckoutConfirmedOrder } from '../checkout/checkoutRuntime';
@@ -39,9 +39,9 @@ export type OfferQrPaymentCard = {
   readonly iban: string;
   readonly variableSymbol: string;
   readonly message: string;
-  /** SPD / bank QR payload string — real image wired later. */
+  /** SPD bank QR string (encoded into QR image in UI). */
   readonly qrPayload: string;
-  /** Mock static data URL or null until generator is plugged in. */
+  /** Optional pre-rendered QR image; otherwise generated from qrPayload. */
   readonly imageDataUrl: string | null;
 };
 
@@ -54,7 +54,7 @@ export type OfferPaymentRuntimeState = {
   readonly error: string | null;
 };
 
-/** Demo CONIS settlement account — replace via integrations later. */
+/** CONIS settlement account for partner payments. */
 export const OFFER_PAYMENT_ACCOUNT = Object.freeze({
   accountNumber: '2303345128/2010',
   iban: 'CZ1520100000002303345128',
@@ -175,11 +175,11 @@ export function paymentLifecycleLabel(
 ): string {
   switch (lifecycle) {
     case 'waiting_payment':
-      return 'Waiting Payment';
+      return 'Čeká na platbu';
     case 'payment_received':
-      return 'Payment Received';
+      return 'Platba zaevidována';
     case 'pilot_ready':
-      return 'Pilot Ready';
+      return 'Připraveno ke spuštění';
     default: {
       const _exhaustive: never = lifecycle;
       return _exhaustive;

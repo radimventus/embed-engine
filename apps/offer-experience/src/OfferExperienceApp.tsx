@@ -123,7 +123,6 @@ function OfferCheckoutExperience({ offer }: { readonly offer: PublicOffer }) {
           proforma={state.payment.proforma}
           paidAt={state.payment.paidAt}
           lifecycle={state.payment.lifecycle}
-          onMarkPilotReady={checkout.markPilotReady}
           onReset={checkout.reset}
         />
       ) : null}

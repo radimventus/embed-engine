@@ -612,103 +612,41 @@ body {
   align-items: start;
 }
 
-.offer-qr__mock {
+.offer-qr__code {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   padding: 12px;
   border: 1px solid var(--offer-line);
   border-radius: var(--offer-radius);
   background: var(--offer-white);
+  min-height: 164px;
 }
 
-.offer-qr__mock img {
+.offer-qr__code img {
   width: 140px;
   height: 140px;
   object-fit: contain;
 }
 
-.offer-qr__mock-grid {
+.offer-qr__code-loading {
   width: 140px;
   height: 140px;
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 3px;
-  padding: 6px;
-  background: var(--offer-cream);
-}
-
-.offer-qr__cell {
-  background: transparent;
-}
-
-.offer-qr__cell--on {
-  background: var(--offer-navy);
-}
-
-.offer-qr__mock-caption {
-  margin: 0;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--offer-gold-intense);
-}
-
-.offer-qr__payload {
-  border-top: 1px solid var(--offer-line);
-  padding-top: 12px;
-  font-size: 13px;
-}
-
-.offer-qr__payload summary {
-  cursor: pointer;
-  font-weight: 700;
-}
-
-.offer-qr__payload code {
-  display: block;
-  margin-top: 8px;
-  padding: 10px;
-  background: var(--offer-white);
-  border: 1px solid var(--offer-line);
-  border-radius: var(--offer-radius);
-  font-size: 11px;
-  word-break: break-all;
-  white-space: pre-wrap;
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--offer-cream) 0%,
+    var(--offer-white) 50%,
+    var(--offer-cream) 100%
+  );
+  background-size: 200% 100%;
 }
 
 .offer-btn:disabled {
   opacity: 0.45;
   cursor: not-allowed;
-}
-
-.offer-extension-slots {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.offer-extension-slots article {
-  border: 1px dashed var(--offer-line);
-  border-radius: var(--offer-radius);
-  background: var(--offer-white);
-  padding: 14px;
-}
-
-.offer-extension-slots h3 {
-  margin: 0 0 6px;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--offer-gold-intense);
-}
-
-.offer-extension-slots p {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.45;
-  opacity: 0.8;
 }
 
 .offer-footer {
@@ -770,10 +708,6 @@ body {
   }
 
   .offer-qr__layout {
-    grid-template-columns: 1fr;
-  }
-
-  .offer-extension-slots {
     grid-template-columns: 1fr;
   }
 }

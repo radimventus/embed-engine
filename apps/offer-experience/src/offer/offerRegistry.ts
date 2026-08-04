@@ -14,7 +14,7 @@ const OFFER_BY_SLUG: Readonly<Record<string, PublicOffer>> = Object.freeze({
     contactName: 'Jana Energetická',
     greeting: 'Dobrý den, Jano,',
     intro:
-      'děkujeme za schůzku. Níže najdete nabídku CONIS Embed — výběrem balíčku dokončíte obchodní krok, který jsme společně připravili.',
+      'děkujeme za schůzku. Níže najdete nabídku CONIS — výběrem balíčku dokončíte obchodní krok, který jsme společně připravili.',
     heroImageUrl: OFFER_HERO_IMAGE_URL,
   },
   blokki: {
@@ -23,7 +23,7 @@ const OFFER_BY_SLUG: Readonly<Record<string, PublicOffer>> = Object.freeze({
     contactName: 'Jan Blok',
     greeting: 'Dobrý den, Jane,',
     intro:
-      'děkujeme za schůzku. Níže najdete nabídku CONIS Embed — výběrem balíčku dokončíte obchodní krok, který jsme společně připravili.',
+      'děkujeme za schůzku. Níže najdete nabídku CONIS — výběrem balíčku dokončíte obchodní krok, který jsme společně připravili.',
     heroImageUrl: OFFER_HERO_IMAGE_URL,
   },
 });
