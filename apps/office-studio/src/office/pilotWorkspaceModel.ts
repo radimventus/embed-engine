@@ -133,6 +133,27 @@ export function buildCanveloIndicators(
   }));
 }
 
+/** Active Workflow phase for a commercial case (Výpis filter key). */
+export function workflowPhaseForCaseStatus(
+  status: PilotWorkspaceCaseStatus,
+): PilotCanveloStepId {
+  return PILOT_CANVELO_STEPS[STATUS_TO_CANVELO_INDEX[status]]!.id;
+}
+
+/**
+ * CAP-OP-10B — filter the working map by Workflow phase.
+ * `null` = show all projects.
+ */
+export function filterCasesByWorkflowPhase(
+  cases: readonly PilotWorkspaceCase[],
+  phaseId: PilotCanveloStepId | null,
+): readonly PilotWorkspaceCase[] {
+  if (phaseId === null) return cases;
+  return cases.filter(
+    (item) => workflowPhaseForCaseStatus(item.status) === phaseId,
+  );
+}
+
 export type PilotInboxSectionId =
   | 'new'
   | 'waiting_reply'

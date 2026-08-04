@@ -1,6 +1,9 @@
 /**
- * CAP-OP-06 / PT-09 — Workflow Runtime domain.
+ * CAP-OP-06 / PT-09 / CAP-OP-10B — Workflow Runtime domain.
  * Projection of commercial-case state — no owned data · no persistence.
+ *
+ * Workshop catalog: edit `PILOT_WORKFLOW_STEP_DEFS` to redefine steps.
+ * UI must render from this catalog only (data-driven).
  */
 
 import type {
@@ -26,66 +29,50 @@ export type PilotWorkflowStep = {
   readonly label: string;
   readonly state: PilotWorkflowStepState;
   readonly terminalView: PilotTerminalViewId;
-  readonly contextHint: string;
 };
 
+/** Workshop catalog — redefine steps here; UI renders from this list only. */
 export const PILOT_WORKFLOW_STEP_DEFS: readonly {
   readonly id: PilotWorkflowStepId;
   readonly label: string;
   readonly terminalView: PilotTerminalViewId;
-  readonly contextHint: string;
 }[] = Object.freeze([
   {
     id: 'offer',
     label: 'Nabídka',
     terminalView: 'detail',
-    contextHint: 'Detail nabídky a balíčku',
   },
   {
     id: 'order',
     label: 'Objednávka',
     terminalView: 'detail',
-    contextHint: 'Detail objednávky a kontaktů',
   },
   {
     id: 'proforma',
     label: 'Proforma',
     terminalView: 'timeline',
-    contextHint: 'Timeline · obchodní události proformy',
   },
   {
     id: 'qr_payment',
     label: 'QR Platba',
     terminalView: 'timeline',
-    contextHint: 'Timeline · platba a QR',
   },
   {
     id: 'pilot_ready',
     label: 'Pilot Ready',
     terminalView: 'timeline',
-    contextHint: 'Timeline · Pilot Ready',
   },
   {
     id: 'builder',
     label: 'Builder',
     terminalView: 'workflow',
-    contextHint: 'Workflow plocha · Builder handoff',
   },
   {
     id: 'active_partner',
     label: 'Active Partner',
     terminalView: 'detail',
-    contextHint: 'Detail · Partner Environment',
   },
 ]);
-
-export const PILOT_WORKFLOW_STEP_STATE_LABELS: Readonly<
-  Record<PilotWorkflowStepState, string>
-> = Object.freeze({
-  done: 'dokončeno',
-  active: 'aktivní',
-  waiting: 'čekající',
-});
 
 /**
  * Commercial status → active step index among the first five commercial steps.

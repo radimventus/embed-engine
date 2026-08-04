@@ -1,14 +1,10 @@
 import { usePilotWorkspaceContext } from '../../../office/PilotWorkspaceContext';
-import {
-  PILOT_WORKFLOW_STEP_STATE_LABELS,
-} from '../../../office/pilotWorkflowModel';
 
 /**
- * CAP-OP-06 — Workflow terminal view mirrors navigator projection.
+ * CAP-OP-06 / CAP-OP-10B — Workflow terminal view (data-driven steps).
  */
 export function PilotTerminalWorkflow() {
-  const { activeCase, workflow, navigateWorkflowStep } =
-    usePilotWorkspaceContext();
+  const { workflow, navigateWorkflowStep } = usePilotWorkspaceContext();
 
   return (
     <div
@@ -18,11 +14,6 @@ export function PilotTerminalWorkflow() {
     >
       <header className="office-pilot-terminal__view-head">
         <h3 className="office-pilot-ws__panel-title">Workflow</h3>
-        <p className="office-pilot-ws__panel-body">
-          {activeCase === null
-            ? 'Pracovní plocha kroků — vyberte obchodní případ.'
-            : `Stav obchodního případu · ${activeCase.label}. Kliknutím navigujete terminál.`}
-        </p>
       </header>
 
       <div
@@ -42,12 +33,10 @@ export function PilotTerminalWorkflow() {
               }
               data-testid={`pilot-workflow-step-${step.id}`}
               data-step-state={step.state}
+              title={step.label}
               onClick={() => navigateWorkflowStep(step.id)}
             >
               <h4>{step.label}</h4>
-              <p>
-                {PILOT_WORKFLOW_STEP_STATE_LABELS[step.state]} · {step.contextHint}
-              </p>
             </button>
           );
         })}

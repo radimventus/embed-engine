@@ -28,20 +28,15 @@ export function PilotTerminalTimeline() {
     >
       <header className="office-pilot-terminal__view-head">
         <h3 className="office-pilot-ws__panel-title">Timeline</h3>
-        <p className="office-pilot-ws__panel-body">
-          {activeCase === null
-            ? 'Vyberte obchodní případ — Timeline je projekcí Event Catalog.'
-            : `Události · ${activeCase.label}`}
-        </p>
       </header>
 
       {activeCase === null ? (
         <p className="office-pilot-ws__panel-body" data-testid="pilot-timeline-empty-case">
-          Žádný aktivní obchodní případ ve Shared Context.
+          Vyberte projekt.
         </p>
       ) : timeline.groups.length === 0 ? (
         <p className="office-pilot-ws__panel-body" data-testid="pilot-timeline-empty">
-          Pro tento obchodní případ zatím nejsou žádné události.
+          Žádné události.
         </p>
       ) : (
         <div className="office-pilot-timeline" data-testid="pilot-timeline-list">
@@ -73,15 +68,6 @@ export function PilotTerminalTimeline() {
           onClose={clearTimelineSelection}
         />
       ) : null}
-
-      <p
-        className="office-pilot-inbox__timeline-slot"
-        data-testid="pilot-timeline-catalog-slot"
-        data-event-catalog="ready"
-      >
-        Event Catalog interface připraven (`PilotEventCatalog`) — napojení v
-        PT-08.
-      </p>
     </div>
   );
 }

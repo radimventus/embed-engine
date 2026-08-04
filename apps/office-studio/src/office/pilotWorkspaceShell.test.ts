@@ -15,8 +15,10 @@ import {
   PILOT_TERMINAL_VIEWS,
   PILOT_WORKSPACE_DEMO_CASES,
   buildCanveloIndicators,
+  filterCasesByWorkflowPhase,
   getPilotWorkspaceCase,
   isPilotTerminalViewId,
+  workflowPhaseForCaseStatus,
 } from './pilotWorkspaceModel';
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -112,6 +114,22 @@ describe('CAP-OP-02 working terminal', () => {
     ));
   });
 
+  it('filters working map by Workflow phase', () => {
+    const atProforma = filterCasesByWorkflowPhase(
+      PILOT_WORKSPACE_DEMO_CASES,
+      'proforma',
+    );
+    assert.equal(atProforma.length, 1);
+    assert.equal(atProforma[0]?.id, 'case-dse-starter');
+    assert.equal(workflowPhaseForCaseStatus('checkout'), 'order');
+    assert.deepEqual(
+      filterCasesByWorkflowPhase(PILOT_WORKSPACE_DEMO_CASES, null).map(
+        (item) => item.id,
+      ),
+      PILOT_WORKSPACE_DEMO_CASES.map((item) => item.id),
+    );
+  });
+
   it('exposes Inbox sections Nové / Čeká na odpověď / Nepřiřazené / Archiv', () => {
     assert.deepEqual(
       PILOT_INBOX_SECTIONS.map((section) => section.label),
@@ -119,54 +137,51 @@ describe('CAP-OP-02 working terminal', () => {
     );
   });
 
-  it('wires five terminal views including Canvelo Výpis', () => {
+  it('wires five terminal views including working-map Výpis', () => {
     const terminal = read('features/pilot-workspace/PilotWorkingTerminal.tsx');
     const listing = read(
       'features/pilot-workspace/terminal/PilotTerminalListing.tsx',
     );
-    const inbox = read(
-      'features/pilot-workspace/terminal/PilotTerminalInbox.tsx',
-    );
-    const detail = read(
-      'features/pilot-workspace/terminal/PilotTerminalDetail.tsx',
-    );
-    const timeline = read(
-      'features/pilot-workspace/terminal/PilotTerminalTimeline.tsx',
-    );
-    const workflow = read(
-      'features/pilot-workspace/terminal/PilotTerminalWorkflow.tsx',
-    );
-    const css = read('index.css');
+    const listingCss = read('index.css');
 
     assert.match(terminal, /PilotTerminalListing/);
     assert.match(terminal, /PilotTerminalDetail/);
     assert.match(terminal, /PilotTerminalInbox/);
     assert.match(terminal, /PilotTerminalTimeline/);
     assert.match(terminal, /PilotTerminalWorkflow/);
+    assert.doesNotMatch(terminal, /pilot-active-case/);
+    assert.doesNotMatch(terminal, /PlatformCard/);
+    assert.doesNotMatch(terminal, /Cases panel/);
 
     assert.match(listing, /data-canvelo/);
+    assert.match(listing, /data-working-map/);
+    assert.match(listing, /filterCasesByWorkflowPhase/);
+    assert.match(listing, /pilot-working-map-filter/);
     assert.match(listing, /buildCanveloIndicators/);
     assert.match(listing, /office-pilot-canvelo/);
+    assert.match(listing, /title=\{step\.label\}/);
     assert.doesNotMatch(listing, /progress-bar/i);
     assert.doesNotMatch(listing, /metric-card/i);
     assert.doesNotMatch(listing, /PlatformCard/);
+    assert.doesNotMatch(listing, /PILOT_WORKSPACE_CASE_STATUS_LABELS/);
+    assert.doesNotMatch(listing, /office-pilot-canvelo__step-label/);
+    assert.doesNotMatch(listing, /setTerminalView/);
 
-    assert.match(inbox, /data-inbox-runtime/);
-    assert.match(inbox, /PILOT_INBOX_CATEGORIES/);
-    assert.match(inbox, /data-pilot-inbox-default/);
-    assert.match(inbox, /pilot-inbox-assignment/);
-    assert.match(detail, /pilot-detail-firma/);
-    assert.match(detail, /pilot-detail-kontakty/);
-    assert.match(detail, /pilot-detail-balicek/);
-    assert.match(detail, /pilot-detail-licence/);
-    assert.match(detail, /pilot-detail-stav/);
-    assert.match(detail, /pilot-detail-partner-environment/);
-    assert.match(timeline, /data-timeline-runtime/);
-    assert.match(timeline, /pilot-timeline-list/);
-    assert.match(timeline, /pilot-timeline-event-detail/);
-    assert.match(workflow, /data-workflow-runtime/);
-    assert.match(workflow, /pilot-workflow-board/);
-    assert.match(css, /office-pilot-canvelo__step/);
-    assert.doesNotMatch(css, /progress-bar/);
+    assert.match(listingCss, /office-pilot-canvelo__step/);
+    assert.match(listingCss, /office-pilot-canvelo__phase-filter/);
+    assert.doesNotMatch(listingCss, /progress-bar/);
+
+    const inbox = read('features/pilot-workspace/terminal/PilotTerminalInbox.tsx');
+    const timeline = read(
+      'features/pilot-workspace/terminal/PilotTerminalTimeline.tsx',
+    );
+    const workflowNav = read(
+      'features/pilot-workspace/PilotWorkflowNavigator.tsx',
+    );
+    assert.doesNotMatch(inbox, /timeline-slot/);
+    assert.doesNotMatch(inbox, /bez IMAP/);
+    assert.doesNotMatch(timeline, /Event Catalog/);
+    assert.doesNotMatch(timeline, /catalog-slot/);
+    assert.doesNotMatch(workflowNav, /contextHint|PlatformCard|shell-note/);
   });
 });

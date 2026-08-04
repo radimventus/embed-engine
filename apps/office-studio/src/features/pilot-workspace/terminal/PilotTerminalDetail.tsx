@@ -22,7 +22,7 @@ export function PilotTerminalDetail({ activeCase }: PilotTerminalDetailProps) {
         data-testid="pilot-terminal-detail"
       >
         <p className="office-pilot-ws__panel-body">
-          Vyberte obchodní případ pro zobrazení detailu.
+          Vyberte projekt.
         </p>
       </div>
     );

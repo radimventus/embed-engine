@@ -890,6 +890,17 @@ body {
   color: var(--platform-section, #64748b);
 }
 
+.office-pilot-ws__terminal {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  border: 1px solid #e3e3e3;
+  border-radius: 12px;
+  background: #fff;
+  padding: 16px;
+}
+
 .office-pilot-ws__terminal-shell,
 .office-pilot-ws__workflow-shell {
   display: flex;
@@ -1500,6 +1511,30 @@ body {
   gap: 10px;
 }
 
+.office-pilot-canvelo__phase-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.office-pilot-canvelo__phase {
+  border: 1px solid #e3e3e3;
+  border-radius: 999px;
+  background: #fff;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--platform-navy, #001930);
+  cursor: pointer;
+}
+
+.office-pilot-canvelo__phase:hover,
+.office-pilot-canvelo__phase--active {
+  border-color: var(--platform-blue, #18428f);
+  background: var(--platform-cream-light, #f7f6f4);
+}
+
 .office-pilot-canvelo__row {
   width: 100%;
   border: 1px solid #e3e3e3;
@@ -1520,45 +1555,31 @@ body {
   background: #fff;
 }
 
-.office-pilot-canvelo__identity {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: baseline;
-}
-
 .office-pilot-canvelo__label {
   font-size: 14px;
   font-weight: 700;
-}
-
-.office-pilot-canvelo__status {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--platform-section, #64748b);
 }
 
 .office-pilot-canvelo__steps {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .office-pilot-canvelo__step {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 4px;
-  min-width: 0;
+  justify-content: center;
 }
 
 .office-pilot-canvelo__marker {
-  width: 100%;
-  height: 8px;
-  border-radius: 999px;
+  display: block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
   background: #dbe1ea;
 }
 
@@ -1568,18 +1589,6 @@ body {
 
 .office-pilot-canvelo__step--current .office-pilot-canvelo__marker {
   background: var(--platform-blue, #18428f);
-}
-
-.office-pilot-canvelo__step-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: var(--platform-section, #64748b);
-  text-align: center;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 100%;
 }
 
 @media (max-width: 1100px) {
@@ -1604,8 +1613,7 @@ body {
   }
 
   .office-pilot-detail,
-  .office-pilot-workflow-board,
-  .office-pilot-canvelo__steps {
+  .office-pilot-workflow-board {
     grid-template-columns: 1fr;
   }
 }

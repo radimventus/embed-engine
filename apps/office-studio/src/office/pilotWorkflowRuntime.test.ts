@@ -96,10 +96,17 @@ describe('CAP-OP-06 workflow runtime', () => {
     const css = read('index.css');
 
     assert.match(navigator, /data-workflow-runtime/);
+    assert.match(navigator, /data-workflow-catalog/);
     assert.match(navigator, /navigateWorkflowStep/);
     assert.match(navigator, /pilot-workflow-nav-/);
+    assert.match(navigator, /title=\{step\.label\}/);
+    assert.doesNotMatch(navigator, /contextHint/);
+    assert.doesNotMatch(navigator, /PlatformCard/);
+    assert.doesNotMatch(navigator, /shell-note/);
     assert.match(terminal, /data-workflow-runtime/);
     assert.match(terminal, /pilot-workflow-board/);
+    assert.doesNotMatch(terminal, /contextHint/);
+    assert.doesNotMatch(terminal, /PlatformCard/);
     assert.match(context, /navigateWorkflowStep/);
     assert.match(context, /workflow/);
     assert.match(catalog, /PilotWorkflowCatalogProjector/);
@@ -107,5 +114,9 @@ describe('CAP-OP-06 workflow runtime', () => {
     assert.match(css, /office-pilot-workflow-nav/);
     assert.doesNotMatch(navigator, /progress-bar/);
     assert.doesNotMatch(css, /progress-bar/);
+
+    const model = read('office/pilotWorkflowModel.ts');
+    assert.match(model, /PILOT_WORKFLOW_STEP_DEFS/);
+    assert.doesNotMatch(model, /contextHint/);
   });
 });

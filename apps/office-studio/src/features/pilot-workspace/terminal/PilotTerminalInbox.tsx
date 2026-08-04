@@ -1,7 +1,6 @@
 import { usePilotWorkspaceContext } from '../../../office/PilotWorkspaceContext';
 import {
   PILOT_MESSAGE_DIRECTION_LABELS,
-  PILOT_MESSAGE_ORIGIN_LABELS,
 } from '../../../office/pilotConversationModel';
 import {
   formatInboxReceivedAt,
@@ -40,10 +39,6 @@ export function PilotTerminalInbox() {
     >
       <header className="office-pilot-terminal__view-head">
         <h3 className="office-pilot-ws__panel-title">Inbox</h3>
-        <p className="office-pilot-ws__panel-body">
-          Pracovní schránka obchodníka. Přiřazení aktualizuje aktivní obchodní
-          případ ve Shared Context.
-        </p>
       </header>
 
       <section
@@ -57,7 +52,7 @@ export function PilotTerminalInbox() {
             className="office-pilot-inbox__empty"
             data-testid="pilot-conversation-empty"
           >
-            Pro aktivní případ zatím není Conversation.
+            Žádná konverzace.
           </p>
         ) : (
           <>
@@ -69,7 +64,7 @@ export function PilotTerminalInbox() {
             </p>
             <p className="office-pilot-conversation__meta">
               {conversation.activeMailbox?.email ?? '—'} ·{' '}
-              {conversation.messages.length} zpráv · bez IMAP
+              {conversation.messages.length} zpráv
             </p>
             <ul
               className="office-pilot-conversation__messages"
@@ -84,8 +79,7 @@ export function PilotTerminalInbox() {
                   data-origin={message.origin}
                 >
                   <span>
-                    {PILOT_MESSAGE_DIRECTION_LABELS[message.direction]} ·{' '}
-                    {PILOT_MESSAGE_ORIGIN_LABELS[message.origin]}
+                    {PILOT_MESSAGE_DIRECTION_LABELS[message.direction]}
                   </span>
                   <strong>{message.subject}</strong>
                 </li>
@@ -144,7 +138,7 @@ export function PilotTerminalInbox() {
           className="office-pilot-inbox__assignment"
           data-testid="pilot-inbox-assignment"
         >
-          <h4 className="office-pilot-inbox__title">Přiřazení obchodního případu</h4>
+          <h4 className="office-pilot-inbox__title">Přiřazení</h4>
           <p className="office-pilot-inbox__assignment-subject">
             {selectedInboxMessage.subject}
           </p>
@@ -188,19 +182,10 @@ export function PilotTerminalInbox() {
               Odebrat
             </button>
           </div>
-
-          <p
-            className="office-pilot-inbox__timeline-slot"
-            data-testid="pilot-inbox-timeline-slot"
-            data-timeline-ready="true"
-          >
-            Conversation Runtime je jediný zdroj pravdy. Inbox je projekce.
-            Mail Session aktivní — bez IMAP/SMTP v UI.
-          </p>
         </div>
       ) : (
         <p className="office-pilot-ws__panel-body" data-testid="pilot-inbox-pick-hint">
-          Vyberte zprávu ze seznamu pro přiřazení obchodního případu.
+          Vyberte zprávu.
         </p>
       )}
     </div>
