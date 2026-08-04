@@ -1,5 +1,5 @@
 /**
- * CAP-CE-01 — Public Offer Experience architecture guards.
+ * CAP-CE-01 / CAP-CE-02 — Public Offer Experience architecture guards.
  */
 
 import assert from 'node:assert/strict';
@@ -43,12 +43,38 @@ describe('CAP-CE-01 Public Offer Experience', () => {
     const css = read('src/index.css');
 
     assert.match(selection, /offer-package-selection/);
-    assert.match(summary, /Potvrdit objednávku/);
-    assert.match(summary, /offer-confirm-cta/);
+    assert.match(summary, /offer-continue-checkout/);
     assert.match(hero, /offer-logo/);
     assert.match(hero, /offer-hero-image/);
     assert.match(css, /--offer-gold-intense/);
     assert.match(css, /offer-shell__watermark/);
     assert.doesNotMatch(css, /platform-header/);
+  });
+});
+
+describe('CAP-CE-02 Offer Checkout Runtime', () => {
+  it('wires checkout form, confirmation, success and extension slots', () => {
+    const app = read('src/OfferExperienceApp.tsx');
+    const runtime = read('src/checkout/checkoutRuntime.ts');
+    const extensions = read('src/checkout/checkoutExtensions.ts');
+    const form = read('src/components/CheckoutForm.tsx');
+    const confirm = read('src/components/CheckoutConfirm.tsx');
+    const success = read('src/components/CheckoutSuccess.tsx');
+
+    assert.match(app, /useOfferCheckout/);
+    assert.match(app, /CheckoutForm/);
+    assert.match(app, /CheckoutConfirm/);
+    assert.match(app, /CheckoutSuccess/);
+    assert.match(runtime, /CheckoutStep/);
+    assert.match(runtime, /'select' \| 'checkout' \| 'confirm' \| 'success'/);
+    assert.match(form, /offer-terms-checkbox/);
+    assert.match(confirm, /offer-confirm-submit/);
+    assert.match(success, /offer-extension-slots/);
+    assert.match(extensions, /OfferProformaRequest/);
+    assert.match(extensions, /OfferQrPaymentPayload/);
+    assert.match(extensions, /OfferPaymentSessionRequest/);
+    assert.match(extensions, /OfferTimelineEvent/);
+    assert.doesNotMatch(runtime, /office-studio/);
+    assert.doesNotMatch(extensions, /PlatformShell/);
   });
 });

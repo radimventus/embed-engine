@@ -3,18 +3,13 @@ import { formatOfferPriceCzk } from '../offer/offerModel';
 
 type OfferSummaryProps = {
   readonly selected: OfferPackage | null;
-  readonly confirmed: boolean;
-  readonly onConfirm: () => void;
+  readonly onContinue: () => void;
 };
 
 /**
- * CAP-CE-01 — summary + confirm CTA (UI only).
+ * CAP-CE-01/02 — package summary CTA enters checkout runtime.
  */
-export function OfferSummary({
-  selected,
-  confirmed,
-  onConfirm,
-}: OfferSummaryProps) {
+export function OfferSummary({ selected, onContinue }: OfferSummaryProps) {
   const enabled = selected !== null;
 
   return (
@@ -26,7 +21,7 @@ export function OfferSummary({
       <div className="offer-section-head">
         <p className="offer-section-eyebrow">Shrnutí</p>
         <h2 id="offer-summary-title" className="offer-section-title">
-          Potvrzení objednávky
+          Pokračovat k objednávce
         </h2>
       </div>
 
@@ -59,18 +54,12 @@ export function OfferSummary({
         <button
           type="button"
           className="offer-summary__cta"
-          data-testid="offer-confirm-cta"
+          data-testid="offer-continue-checkout"
           disabled={!enabled}
-          onClick={onConfirm}
+          onClick={onContinue}
         >
-          Potvrdit objednávku
+          Pokračovat k objednávce
         </button>
-
-        {confirmed ? (
-          <p className="offer-summary__ack" data-testid="offer-confirm-ack">
-            Objednávka je připravena k dalšímu kroku. (Bez platby — UI foundation.)
-          </p>
-        ) : null}
       </div>
     </section>
   );

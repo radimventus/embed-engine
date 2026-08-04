@@ -9,7 +9,7 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/offerExperienceArchitecture.test.ts src/offer/offerModel.test.ts"
+    "test": "tsx --test src/offerExperienceArchitecture.test.ts src/offer/offerModel.test.ts src/checkout/checkoutRuntime.test.ts"
   },
   "dependencies": {
     "react": "^19.1.0",
