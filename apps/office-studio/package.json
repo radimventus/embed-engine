@@ -8,15 +8,18 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/officeStudioShell.test.ts src/office/pilotWorkspaceShell.test.ts src/office/pilotInboxRuntime.test.ts src/office/pilotTimelineRuntime.test.ts src/office/pilotWorkflowRuntime.test.ts src/office/pilotConversationRuntime.test.ts src/office/officeEventCatalog.test.ts src/office/officePartnerRegistry.test.ts src/office/officeSalesRegistry.test.ts src/office/officeDocumentRegistry.test.ts src/office/officeHandoffRegistry.test.ts src/office/officePilotRuntime.test.ts src/office/preparePilotProvisioning.test.ts src/office/officePilotDelivery.test.ts src/office/officePilotDeliveryFinalize.test.ts src/office/officeCommercialFollowUp.test.ts src/office/officePartnerEnvironmentLifecycle.test.ts src/office/officePartnerAdministration.test.ts src/office/officePersistenceLayer.test.ts src/office/officeReferencePartner.test.ts src/office/officePartnerEnvironmentEntry.test.ts"
+    "test": "tsx --test src/officeStudioShell.test.ts src/office/pilotWorkspaceShell.test.ts src/office/pilotInboxRuntime.test.ts src/office/pilotTimelineRuntime.test.ts src/office/pilotWorkflowRuntime.test.ts src/office/pilotConversationRuntime.test.ts src/mail/mailTransportMvp.test.ts src/office/officeEventCatalog.test.ts src/office/officePartnerRegistry.test.ts src/office/officeSalesRegistry.test.ts src/office/officeDocumentRegistry.test.ts src/office/officeHandoffRegistry.test.ts src/office/officePilotRuntime.test.ts src/office/preparePilotProvisioning.test.ts src/office/officePilotDelivery.test.ts src/office/officePilotDeliveryFinalize.test.ts src/office/officeCommercialFollowUp.test.ts src/office/officePartnerEnvironmentLifecycle.test.ts src/office/officePartnerAdministration.test.ts src/office/officePersistenceLayer.test.ts src/office/officeReferencePartner.test.ts src/office/officePartnerEnvironmentEntry.test.ts"
   },
   "dependencies": {
     "@embed-engine/platform-access": "workspace:*",
     "@embed-engine/platform-shell": "workspace:*",
+    "imapflow": "^1.6.5",
+    "nodemailer": "^9.0.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@types/nodemailer": "^8.0.1",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.7.0",

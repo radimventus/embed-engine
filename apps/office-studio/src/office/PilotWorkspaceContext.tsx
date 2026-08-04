@@ -1,6 +1,6 @@
 /**
- * CAP-OP-01 / CAP-OP-03 / CAP-OP-04 / CAP-OP-06 / CAP-OP-08 — Shared Pilot Workspace context.
- * Inbox · Timeline · Workflow · Conversation Runtime · in-memory · no persistence.
+ * CAP-OP-01 / CAP-OP-03 / CAP-OP-04 / CAP-OP-06 / CAP-OP-08 / CAP-OP-09 — Shared Pilot Workspace context.
+ * Inbox · Timeline · Workflow · Conversation Runtime · Mail transport session · in-memory.
  */
 
 import {
@@ -14,12 +14,20 @@ import {
   type ReactNode,
 } from 'react';
 
-import type { PilotConversationId } from './pilotConversationModel';
+import type {
+  PilotConversationId,
+  PilotConversationMessage,
+} from './pilotConversationModel';
 import {
   createInitialConversationRuntimeState,
   reducePilotConversation,
   type PilotConversationRuntimeState,
 } from './pilotConversationRuntime';
+import type {
+  MailSyncReport,
+  PilotMailTransportSession,
+  SystemMailDraft,
+} from '../mail';
 import type { PilotEventCatalog } from './pilotEventCatalog';
 import {
   getInboxMessage,
@@ -91,6 +99,14 @@ export type PilotWorkspaceContextValue = {
   readonly selectConversation: (
     conversationId: PilotConversationId | null,
   ) => void;
+  /** Transport session boundary — no IMAP/SMTP types in Office. */
+  readonly syncMailboxTransport: ((
+    mailboxId?: string,
+  ) => Promise<MailSyncReport>) | null;
+  readonly sendSystemMail: ((
+    draft: SystemMailDraft,
+  ) => Promise<PilotConversationMessage>) | null;
+  readonly refreshConversationFromStore: () => void;
 };
 
 const PilotWorkspaceContext = createContext<PilotWorkspaceContextValue | null>(
@@ -104,6 +120,11 @@ type PilotWorkspaceProviderProps = {
   readonly timelineIntegrations?: PilotInboxTimelineIntegration;
   readonly eventCatalog?: PilotEventCatalog;
   readonly workflowIntegrations?: PilotWorkflowCatalogIntegration;
+  /**
+   * Optional mail transport session (injected). Office never constructs IMAP/SMTP.
+   */
+  readonly mailTransport?: PilotMailTransportSession | null;
+  readonly defaultMailboxId?: string;
 };
 
 /**
@@ -117,6 +138,8 @@ export function PilotWorkspaceProvider({
   timelineIntegrations = {},
   eventCatalog = mockPilotEventCatalog,
   workflowIntegrations = {},
+  mailTransport = null,
+  defaultMailboxId = 'mbx-conis-contact',
 }: PilotWorkspaceProviderProps) {
   const [activeCaseId, setActiveCaseId] = useState<PilotWorkspaceCaseId | null>(
     initialCaseId,
@@ -334,6 +357,43 @@ export function PilotWorkspaceProvider({
     [],
   );
 
+  const refreshConversationFromStore = useCallback(() => {
+    setConversation((current) =>
+      reducePilotConversation(current, {
+        type: 'refresh-from-store',
+        caseId: activeCaseId,
+      }),
+    );
+  }, [activeCaseId]);
+
+  const syncMailboxTransport = useMemo(() => {
+    if (mailTransport === null) return null;
+    return async (mailboxId = defaultMailboxId) => {
+      const report = await mailTransport.syncMailbox(mailboxId);
+      setConversation((current) =>
+        reducePilotConversation(current, {
+          type: 'refresh-from-store',
+          caseId: activeCaseId,
+        }),
+      );
+      return report;
+    };
+  }, [activeCaseId, defaultMailboxId, mailTransport]);
+
+  const sendSystemMail = useMemo(() => {
+    if (mailTransport === null) return null;
+    return async (draft: SystemMailDraft) => {
+      const message = await mailTransport.sendSystemMail(draft);
+      setConversation((current) =>
+        reducePilotConversation(current, {
+          type: 'refresh-from-store',
+          caseId: draft.caseId ?? activeCaseId,
+        }),
+      );
+      return message;
+    };
+  }, [activeCaseId, mailTransport]);
+
   const value = useMemo<PilotWorkspaceContextValue>(
     () => ({
       cases,
@@ -355,6 +415,9 @@ export function PilotWorkspaceProvider({
       navigateWorkflowStep,
       conversation,
       selectConversation,
+      syncMailboxTransport,
+      sendSystemMail,
+      refreshConversationFromStore,
     }),
     [
       activeCase,
@@ -366,11 +429,14 @@ export function PilotWorkspaceProvider({
       createCasePlaceholder,
       inbox,
       navigateWorkflowStep,
+      refreshConversationFromStore,
       selectCase,
       selectConversation,
       selectInboxMessage,
       selectTimelineEvent,
       selectedInboxMessage,
+      sendSystemMail,
+      syncMailboxTransport,
       terminalView,
       timeline,
       unassignInboxCase,

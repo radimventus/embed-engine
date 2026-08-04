@@ -1,6 +1,6 @@
 /**
- * CAP-OP-08 / PT-11 — Transport adapter interfaces (no IMAP/SMTP implementation).
- * Conversation Runtime stays independent of transport.
+ * CAP-OP-09 — Transport adapter contracts for Conversation Runtime.
+ * Live IMAP/SMTP live under src/mail/ — Office UI never imports them.
  */
 
 import type {
@@ -30,10 +30,6 @@ export type PilotInboundMailEnvelope = {
   readonly createdAt: string;
 };
 
-/**
- * Outbound transport — SYSTEM (Offer/Proforma/Welcome) or OFFICE compose.
- * Implementations land in PT-12+; foundation only declares the contract.
- */
 export type PilotOutboundMailTransport = {
   readonly kind: Extract<PilotMailTransportKind, 'system' | 'office' | 'smtp'>;
   readonly send?: (
@@ -41,9 +37,6 @@ export type PilotOutboundMailTransport = {
   ) => Promise<PilotConversationMessage> | PilotConversationMessage;
 };
 
-/**
- * Inbound transport — future IMAP / Apple Mail / Outlook sync.
- */
 export type PilotInboundMailTransport = {
   readonly kind: Extract<PilotMailTransportKind, 'imap'>;
   readonly fetchSince?: (
@@ -57,7 +50,7 @@ export type PilotMailTransportRegistry = {
   readonly inbound?: readonly PilotInboundMailTransport[];
 };
 
-/** No-op registry — proves Office does not depend on IMAP/SMTP. */
+/** No-op registry — Office default has no direct transport coupling. */
 export const emptyPilotMailTransportRegistry: PilotMailTransportRegistry =
   Object.freeze({
     outbound: Object.freeze([]),

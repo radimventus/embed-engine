@@ -1,23 +1,24 @@
 /**
- * CAP-OP-08 / PT-11 — Conversation Runtime (in-memory session).
- * Loads Conversation + Message list; tracks active Conversation.
+ * CAP-OP-08 / CAP-OP-09 — Conversation Runtime (in-memory session).
+ * Reads from Conversation mail store so transport can ingest Messages.
  */
 
-import type { PilotWorkspaceCaseId } from './pilotWorkspaceModel';
 import {
-  conversationsForCase,
-  getPilotConversation,
-  getPilotMailbox,
-  messagesForConversation,
-  PILOT_DEMO_CONVERSATIONS,
-  PILOT_DEMO_MAILBOXES,
-  type PilotConversation,
-  type PilotConversationId,
-  type PilotConversationMessage,
-  type PilotMailbox,
+  getStoreConversation,
+  getStoreMailbox,
+  listStoreMailboxes,
+  storeConversationsForCase,
+  storeMessagesForConversation,
+} from '../mail/conversationMailStore';
+import type {
+  PilotConversation,
+  PilotConversationId,
+  PilotConversationMessage,
+  PilotMailbox,
 } from './pilotConversationModel';
 import type { PilotMailTransportRegistry } from './pilotMailTransport';
 import { emptyPilotMailTransportRegistry } from './pilotMailTransport';
+import type { PilotWorkspaceCaseId } from './pilotWorkspaceModel';
 
 export type PilotConversationRuntimeState = {
   readonly mailboxes: readonly PilotMailbox[];
@@ -37,6 +38,10 @@ export type PilotConversationRuntimeAction =
       readonly type: 'select-conversation';
       readonly conversationId: PilotConversationId | null;
     }
+  | {
+      readonly type: 'refresh-from-store';
+      readonly caseId?: PilotWorkspaceCaseId | null;
+    }
   | { readonly type: 'reset-conversation-runtime' };
 
 function resolveActive(
@@ -52,15 +57,15 @@ function resolveActive(
     activeConversationId === null
       ? null
       : (conversations.find((item) => item.id === activeConversationId) ??
-        getPilotConversation(activeConversationId));
+        getStoreConversation(activeConversationId));
 
   const resolvedId = activeConversation?.id ?? null;
   const messages =
-    resolvedId === null ? [] : messagesForConversation(resolvedId);
+    resolvedId === null ? [] : storeMessagesForConversation(resolvedId);
   const activeMailbox =
     activeConversation === null
       ? null
-      : getPilotMailbox(activeConversation.mailboxId);
+      : getStoreMailbox(activeConversation.mailboxId);
 
   return {
     activeConversationId: resolvedId,
@@ -70,17 +75,25 @@ function resolveActive(
   };
 }
 
+function conversationsForRuntimeCase(
+  caseId: PilotWorkspaceCaseId | null,
+): readonly PilotConversation[] {
+  return storeConversationsForCase(caseId);
+}
+
 export function createInitialConversationRuntimeState(
   caseId: PilotWorkspaceCaseId | null = null,
 ): PilotConversationRuntimeState {
-  const conversations =
+  const conversations = conversationsForRuntimeCase(caseId);
+  const preferred =
     caseId === null
-      ? PILOT_DEMO_CONVERSATIONS
-      : conversationsForCase(caseId);
-  const preferred = conversations[0] ?? null;
+      ? (conversations[0] ?? null)
+      : (conversations.find((item) => item.caseId === caseId) ??
+        conversations[0] ??
+        null);
   const active = resolveActive(conversations, preferred?.id ?? null);
   return {
-    mailboxes: PILOT_DEMO_MAILBOXES,
+    mailboxes: listStoreMailboxes(),
     conversations,
     ...active,
   };
@@ -92,13 +105,15 @@ export function reducePilotConversation(
 ): PilotConversationRuntimeState {
   switch (action.type) {
     case 'load-for-case': {
-      const conversations = conversationsForCase(action.caseId);
+      const conversations = conversationsForRuntimeCase(action.caseId);
       const preferred =
-        conversations.find((item) => item.caseId === action.caseId) ??
-        conversations[0] ??
-        null;
+        action.caseId === null
+          ? (conversations[0] ?? null)
+          : (conversations.find((item) => item.caseId === action.caseId) ??
+            conversations[0] ??
+            null);
       return {
-        mailboxes: PILOT_DEMO_MAILBOXES,
+        mailboxes: listStoreMailboxes(),
         conversations,
         ...resolveActive(conversations, preferred?.id ?? null),
       };
@@ -106,8 +121,28 @@ export function reducePilotConversation(
     case 'select-conversation':
       return {
         ...state,
+        mailboxes: listStoreMailboxes(),
         ...resolveActive(state.conversations, action.conversationId),
       };
+    case 'refresh-from-store': {
+      const caseId =
+        action.caseId !== undefined
+          ? action.caseId
+          : (state.activeConversation?.caseId ??
+            state.conversations.find((item) => item.caseId !== null)?.caseId ??
+            null);
+      const conversations = conversationsForRuntimeCase(caseId);
+      const activeId =
+        state.activeConversationId !== null &&
+        conversations.some((item) => item.id === state.activeConversationId)
+          ? state.activeConversationId
+          : (conversations[0]?.id ?? null);
+      return {
+        mailboxes: listStoreMailboxes(),
+        conversations,
+        ...resolveActive(conversations, activeId),
+      };
+    }
     case 'reset-conversation-runtime':
       return createInitialConversationRuntimeState(null);
     default: {
@@ -118,7 +153,7 @@ export function reducePilotConversation(
 }
 
 /**
- * Optional hook point for transport registry (unused until PT-12).
+ * Optional hook point for transport registry.
  * Keeps adapters injectable without coupling Runtime to IMAP/SMTP.
  */
 export function withMailTransportRegistry(

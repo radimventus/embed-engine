@@ -8,6 +8,7 @@ import { dirname, join } from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
+import { resetConversationMailStore } from '../mail/conversationMailStore';
 import {
   conversationsForCase,
   messagesForConversation,
@@ -31,6 +32,7 @@ function read(relative: string): string {
 
 describe('CAP-OP-08 conversation runtime foundation', () => {
   it('defines Mailbox, Conversation and Message models', () => {
+    resetConversationMailStore();
     assert.ok(PILOT_DEMO_MAILBOXES.length >= 1);
     const mailbox = PILOT_DEMO_MAILBOXES[0];
     assert.ok(mailbox.id);
@@ -55,6 +57,7 @@ describe('CAP-OP-08 conversation runtime foundation', () => {
   });
 
   it('loads Conversation and Message list for a commercial case', () => {
+    resetConversationMailStore();
     const forCase = conversationsForCase('case-dse-starter');
     assert.equal(forCase.length, 1);
     assert.equal(forCase[0].id, 'conv-dse-starter');
@@ -69,6 +72,7 @@ describe('CAP-OP-08 conversation runtime foundation', () => {
   });
 
   it('tracks active Conversation in runtime without persistence', () => {
+    resetConversationMailStore();
     let state = createInitialConversationRuntimeState('case-dse-starter');
     assert.equal(state.activeConversationId, 'conv-dse-starter');
     assert.equal(state.activeConversation?.caseId, 'case-dse-starter');

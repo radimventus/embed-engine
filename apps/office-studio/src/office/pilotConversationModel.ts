@@ -1,6 +1,7 @@
 /**
- * CAP-OP-08 / PT-11 — Conversation Runtime foundation (canonical communication model).
+ * CAP-OP-08 — Conversation Runtime foundation (canonical communication model).
  * Transport-agnostic: no IMAP / SMTP / persistence.
+ * Seed data only — live Messages live in the Conversation mail store (CAP-OP-09).
  */
 
 import type { PilotWorkspaceCaseId } from './pilotWorkspaceModel';
@@ -76,6 +77,13 @@ export const PILOT_MESSAGE_ORIGIN_LABELS: Readonly<
 });
 
 export const PILOT_DEMO_MAILBOXES: readonly PilotMailbox[] = Object.freeze([
+  {
+    id: 'mbx-conis-contact',
+    name: 'CONIS Kontakt',
+    email: 'kontakt@conis.cz',
+    owner: 'office-ops',
+    status: 'active',
+  },
   {
     id: 'mbx-conis-sales',
     name: 'CONIS Sales',
