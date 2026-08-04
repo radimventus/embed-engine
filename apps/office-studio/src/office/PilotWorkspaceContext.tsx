@@ -81,6 +81,7 @@ import {
   type PilotWorkspaceCase,
   type PilotWorkspaceCaseId,
 } from './pilotWorkspaceModel';
+import { resolveCaseWithWorkflowSync } from './commercialWorkflowSync';
 
 export type PilotWorkspaceContextValue = {
   readonly cases: readonly PilotWorkspaceCase[];
@@ -192,10 +193,10 @@ export function PilotWorkspaceProvider({
 
   const activeCase = useMemo(() => {
     if (activeCaseId === null) return null;
-    return (
+    const found =
       cases.find((item) => item.id === activeCaseId) ??
-      getPilotWorkspaceCase(activeCaseId)
-    );
+      getPilotWorkspaceCase(activeCaseId);
+    return found === null ? null : resolveCaseWithWorkflowSync(found);
   }, [activeCaseId, cases]);
 
   const selectedInboxMessage = useMemo(

@@ -42,6 +42,10 @@ describe('PT-13 Office Automation host wiring', () => {
       'mbx-conis-contact',
     );
     assert.equal(host.journal.workflowPlans.length, 1);
+    assert.ok(host.journal.officeTasks.length >= 1);
+    assert.ok(
+      host.journal.officeTasks.some((task) => task.kind === 'waiting_builder'),
+    );
 
     await host.workflowBridge.emitMessageEvent?.({
       type: 'workflow.message.received',

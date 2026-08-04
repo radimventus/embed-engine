@@ -6,13 +6,15 @@ import {
   type PilotWorkspaceCase,
 } from '../../../office/pilotWorkspaceModel';
 import { ProjectDocumentViewer } from './ProjectDocumentViewer';
+import { ProjectOfficeTasks } from './ProjectOfficeTasks';
+import { resolveCaseWithWorkflowSync } from '../../../office/commercialWorkflowSync';
 
 type PilotTerminalDetailProps = {
   readonly activeCase: PilotWorkspaceCase | null;
 };
 
 /**
- * CAP-OP-02 / PT-15 — Detail + project document viewer.
+ * CAP-OP-02 / PT-15 / PT-16 — Detail + documents + Office Tasks.
  */
 export function PilotTerminalDetail({ activeCase }: PilotTerminalDetailProps) {
   if (activeCase === null) {
@@ -28,6 +30,8 @@ export function PilotTerminalDetail({ activeCase }: PilotTerminalDetailProps) {
     );
   }
 
+  const projected = resolveCaseWithWorkflowSync(activeCase);
+
   return (
     <div
       className="office-pilot-terminal__view"
@@ -35,7 +39,7 @@ export function PilotTerminalDetail({ activeCase }: PilotTerminalDetailProps) {
     >
       <header className="office-pilot-terminal__view-head">
         <h3 className="office-pilot-ws__panel-title">Detail</h3>
-        <p className="office-pilot-ws__panel-body">{activeCase.label}</p>
+        <p className="office-pilot-ws__panel-body">{projected.label}</p>
       </header>
 
       <dl
@@ -43,16 +47,16 @@ export function PilotTerminalDetail({ activeCase }: PilotTerminalDetailProps) {
         data-testid="pilot-detail-sections"
       >
         <DetailBlock title="Firma" testId="pilot-detail-firma">
-          <p>{activeCase.companyName}</p>
-          <p className="office-pilot-detail__meta">{activeCase.partnerName}</p>
+          <p>{projected.companyName}</p>
+          <p className="office-pilot-detail__meta">{projected.partnerName}</p>
         </DetailBlock>
 
         <DetailBlock title="Kontakty" testId="pilot-detail-kontakty">
-          {activeCase.contacts.length === 0 ? (
+          {projected.contacts.length === 0 ? (
             <p className="office-pilot-detail__meta">Bez kontaktů</p>
           ) : (
             <ul className="office-pilot-detail__contacts">
-              {activeCase.contacts.map((contact) => (
+              {projected.contacts.map((contact) => (
                 <li key={contact.email}>
                   <strong>{contact.name}</strong>
                   <span>{contact.role}</span>
@@ -64,31 +68,33 @@ export function PilotTerminalDetail({ activeCase }: PilotTerminalDetailProps) {
         </DetailBlock>
 
         <DetailBlock title="Balíček" testId="pilot-detail-balicek">
-          <p>{activeCase.packageName}</p>
+          <p>{projected.packageName}</p>
         </DetailBlock>
 
         <DetailBlock title="Licence" testId="pilot-detail-licence">
-          <p>{activeCase.licenseLabel}</p>
+          <p>{projected.licenseLabel}</p>
         </DetailBlock>
 
         <DetailBlock title="Stav" testId="pilot-detail-stav">
-          <p>{PILOT_WORKSPACE_CASE_STATUS_LABELS[activeCase.status]}</p>
+          <p>{PILOT_WORKSPACE_CASE_STATUS_LABELS[projected.status]}</p>
         </DetailBlock>
 
         <DetailBlock
           title="Partner Environment"
           testId="pilot-detail-partner-environment"
         >
-          <p>{activeCase.partnerEnvironment.label}</p>
+          <p>{projected.partnerEnvironment.label}</p>
           <p className="office-pilot-detail__meta">
-            {PILOT_PARTNER_ENVIRONMENT_LABELS[activeCase.partnerEnvironment.state]}
+            {PILOT_PARTNER_ENVIRONMENT_LABELS[projected.partnerEnvironment.state]}
           </p>
         </DetailBlock>
       </dl>
 
+      <ProjectOfficeTasks projectId={projected.id} />
+
       <ProjectDocumentViewer
-        projectId={activeCase.id}
-        contactEmail={activeCase.contacts[0]?.email ?? null}
+        projectId={projected.id}
+        contactEmail={projected.contacts[0]?.email ?? null}
       />
     </div>
   );

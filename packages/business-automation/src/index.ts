@@ -43,6 +43,7 @@ export type {
   ConversationAutomationPort,
   DocumentAutomationPort,
   MailSessionAutomationPort,
+  OfficeTaskAutomationPort,
   WorkflowAutomationPort,
 } from './ports/integrationPorts';
 

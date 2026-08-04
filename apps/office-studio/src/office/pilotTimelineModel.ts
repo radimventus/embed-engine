@@ -16,7 +16,9 @@ export type PilotTimelineEventKind =
   | 'builder.ready'
   | 'document.generated'
   | 'document.attached'
-  | 'document.sent';
+  | 'document.sent'
+  | 'workflow.synced'
+  | 'office.task';
 
 export type PilotTimelineEventId = string;
 
@@ -50,6 +52,8 @@ export const PILOT_TIMELINE_EVENT_KIND_LABELS: Readonly<
   'document.generated': 'Document Generated',
   'document.attached': 'Document Attached',
   'document.sent': 'Document Sent',
+  'workflow.synced': 'Workflow Synced',
+  'office.task': 'Office Task',
 });
 
 /** Short icon glyph per event kind (CSS-styled, not emoji). */
@@ -67,6 +71,8 @@ export const PILOT_TIMELINE_EVENT_ICONS: Readonly<
   'document.generated': 'DOC',
   'document.attached': 'ATT',
   'document.sent': 'SND',
+  'workflow.synced': 'WF',
+  'office.task': 'TASK',
 });
 
 export function formatTimelineDayKey(iso: string): string {

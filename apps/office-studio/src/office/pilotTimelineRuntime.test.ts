@@ -44,8 +44,10 @@ describe('CAP-OP-04 timeline runtime', () => {
       'note.added',
       'offer.sent',
       'offer.viewed',
+      'office.task',
       'order.confirmed',
       'payment.received',
+      'workflow.synced',
     ]);
   });
 

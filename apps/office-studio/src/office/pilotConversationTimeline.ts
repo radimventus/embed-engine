@@ -8,6 +8,7 @@ import {
   getStoreConversation,
 } from '../mail/conversationMailStore';
 import { listDocumentTimelineEventsForCase } from './officeDocumentTimelineJournal';
+import { listAutomationTimelineEventsForCase } from './officeAutomationTimelineJournal';
 import type { PilotWorkspaceCaseId } from './pilotWorkspaceModel';
 import type { PilotTimelineEvent } from './pilotTimelineModel';
 
@@ -60,8 +61,9 @@ export function projectTimelineFromConversation(
     });
 
   const documentJournal = listDocumentTimelineEventsForCase(caseId);
-  return [...messageEvents, ...documentJournal].sort((a, b) =>
-    a.occurredAt.localeCompare(b.occurredAt),
+  const automationJournal = listAutomationTimelineEventsForCase(caseId);
+  return [...messageEvents, ...documentJournal, ...automationJournal].sort(
+    (a, b) => a.occurredAt.localeCompare(b.occurredAt),
   );
 }
 

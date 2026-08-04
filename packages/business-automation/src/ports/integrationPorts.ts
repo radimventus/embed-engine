@@ -34,9 +34,18 @@ export type DocumentAutomationPort = {
   readonly generateForEvent?: (event: BusinessEvent) => void | Promise<void>;
 };
 
+/** Office Tasks — Automation creates waiting work items for the active project. */
+export type OfficeTaskAutomationPort = {
+  readonly createForEvent?: (input: {
+    readonly event: BusinessEvent;
+    readonly actionId: string;
+  }) => void | Promise<void>;
+};
+
 export type AutomationIntegrationPorts = {
   readonly conversation?: ConversationAutomationPort;
   readonly mailSession?: MailSessionAutomationPort;
   readonly workflow?: WorkflowAutomationPort;
   readonly documentRuntime?: DocumentAutomationPort;
+  readonly officeTasks?: OfficeTaskAutomationPort;
 };

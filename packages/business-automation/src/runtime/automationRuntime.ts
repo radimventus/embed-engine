@@ -1,6 +1,6 @@
 /**
- * PT-13 — Automation Runtime orchestration.
- * Workflow publishes events → Runtime plans actions → Registry stubs execute.
+ * PT-13 / PT-16 — Automation Runtime orchestration.
+ * Workflow publishes events → Runtime plans actions → ports execute adapters.
  * No UI coupling · no SMTP · no bank · no scheduler.
  */
 
@@ -104,6 +104,16 @@ export function createAutomationRuntime(
 
           if (item.actionId === 'GenerateDocument') {
             await ports.documentRuntime?.generateForEvent?.(event);
+          }
+
+          if (
+            item.actionId === 'NotifyOffice' ||
+            item.actionId === 'CreateBuilderTask'
+          ) {
+            await ports.officeTasks?.createForEvent?.({
+              event,
+              actionId: item.actionId,
+            });
           }
         } catch (error) {
           plan.push({

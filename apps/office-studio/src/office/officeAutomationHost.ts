@@ -1,6 +1,6 @@
 /**
- * PT-13 / PT-15 — Office host wiring for Business Automation + Document Runtime.
- * Connects Automation → Document Runtime → Conversation · Mail · Timeline.
+ * PT-13 / PT-15 / PT-16 — Office host for Business Automation orchestration.
+ * Event → Document · Mail · Conversation · Timeline · Office Task · Workflow sync.
  */
 
 import {
@@ -11,18 +11,32 @@ import {
   type BusinessEvent,
   type OfficeWorkflowAutomationSurface,
 } from '@embed-engine/business-automation';
+import type { DocumentArtifact } from '@embed-engine/document-runtime';
 
 import {
   createPilotMailSession,
   DEFAULT_PILOT_MAILBOX_ID,
   type PilotMailTransportSession,
 } from '../mail';
+import { mapToConversation } from '../mail/conversationMapping';
+import {
+  getConversationMailStore,
+  ingestStoreMessage,
+} from '../mail/conversationMailStore';
+import {
+  applyBusinessEventToWorkflow,
+} from './commercialWorkflowSync';
+import { appendAutomationTimelineEvent } from './officeAutomationTimelineJournal';
 import {
   bindOfficeDocumentMailSession,
   generateDocumentsForBusinessEvent,
   getOfficeDocumentRuntime,
 } from './officeDocumentRuntimeHost';
-import type { DocumentArtifact } from '@embed-engine/document-runtime';
+import type { OfficeTask } from './officeTaskModel';
+import {
+  createOfficeTasksForEvent,
+  resolveProjectIdFromEvent,
+} from './officeTaskRegistry';
 
 export type OfficeAutomationMailIntent = {
   readonly actionId: string;
@@ -35,6 +49,7 @@ export type OfficeAutomationHostJournal = {
   readonly mailIntents: OfficeAutomationMailIntent[];
   readonly workflowPlans: AutomationDispatchRecord[];
   readonly documents: DocumentArtifact[];
+  readonly officeTasks: OfficeTask[];
 };
 
 export type OfficeAutomationHost = {
@@ -46,8 +61,22 @@ export type OfficeAutomationHost = {
 
 let sharedHost: OfficeAutomationHost | null = null;
 
+function mailSubjectForAction(actionId: string, event: BusinessEvent): string {
+  const partner = String(event.payload.partnerName ?? 'partner');
+  switch (actionId) {
+    case 'SendOfferMail':
+      return `Nabídka · ${partner}`;
+    case 'SendProformaMail':
+      return `Proforma · ${partner}`;
+    case 'SendWelcomeMail':
+      return `Vítejte · ${partner}`;
+    default:
+      return `CONIS · ${event.kind}`;
+  }
+}
+
 /**
- * Builds Office Automation host with Conversation + Mail + Document ports.
+ * Builds Office Automation host with full commercial orchestration ports.
  */
 export function createOfficeAutomationHost(): OfficeAutomationHost {
   const journal: OfficeAutomationHostJournal = {
@@ -55,6 +84,7 @@ export function createOfficeAutomationHost(): OfficeAutomationHost {
     mailIntents: [],
     workflowPlans: [],
     documents: [],
+    officeTasks: [],
   };
 
   const mailSession = createPilotMailSession({
@@ -68,14 +98,83 @@ export function createOfficeAutomationHost(): OfficeAutomationHost {
       conversation: {
         notifyBusinessEvent: (event) => {
           journal.conversationEvents.push(event);
+          const projectId = resolveProjectIdFromEvent(event);
+          if (projectId.length === 0) return;
+
+          const store = getConversationMailStore();
+          const toEmail =
+            typeof event.payload.contactEmail === 'string'
+              ? event.payload.contactEmail
+              : 'partner@example.com';
+          const conversation = mapToConversation(
+            {
+              mailboxId: DEFAULT_PILOT_MAILBOX_ID,
+              fromEmail: 'kontakt@conis.cz',
+              toEmail,
+              subject: `Business Event · ${event.kind}`,
+              threadId: `<ba-${event.id}@conis.cz>`,
+              createdAt: event.occurredAt,
+              caseId: projectId,
+            },
+            store,
+          );
+          ingestStoreMessage(
+            {
+              id: `ba-msg-${event.id}`,
+              direction: 'outgoing',
+              subject: `Business Event · ${event.kind}`,
+              body: `Automation zpracovala událost ${event.kind} pro projekt ${projectId}.`,
+              messageId: `<ba-${event.id}@conis.cz>`,
+              threadId: `<ba-thread-${projectId}@conis.cz>`,
+              mailboxId: conversation.mailboxId,
+              conversationId: conversation.id,
+              origin: 'SYSTEM',
+              fromEmail: 'kontakt@conis.cz',
+              toEmail,
+              createdAt: event.occurredAt,
+            },
+            store,
+          );
+
+          appendAutomationTimelineEvent({
+            id: `tl-ba-${event.id}`,
+            caseId: projectId,
+            kind:
+              event.kind === 'OrderConfirmed'
+                ? 'order.confirmed'
+                : event.kind === 'PaymentConfirmed'
+                  ? 'payment.received'
+                  : event.kind === 'PilotReady'
+                    ? 'builder.ready'
+                    : 'note.added',
+            title: event.kind,
+            summary: `Automation · ${event.kind}`,
+            detail: `eventId=${event.id}\nsource=${event.source}`,
+            occurredAt: event.occurredAt,
+          });
         },
       },
       mailSession: {
-        notifyMailIntent: ({ actionId, event }) => {
+        notifyMailIntent: async ({ actionId, event }) => {
           journal.mailIntents.push({
             actionId,
             event,
             mailboxId: DEFAULT_PILOT_MAILBOX_ID,
+          });
+          const projectId = resolveProjectIdFromEvent(event);
+          const toEmail =
+            typeof event.payload.contactEmail === 'string'
+              ? event.payload.contactEmail
+              : null;
+          if (toEmail === null || toEmail.length === 0) return;
+
+          await mailSession.sendSystemMail({
+            mailboxId: DEFAULT_PILOT_MAILBOX_ID,
+            toEmail,
+            subject: mailSubjectForAction(actionId, event),
+            body: `Automatická zpráva (${actionId}) pro ${event.kind}.`,
+            caseId: projectId.length > 0 ? projectId : null,
+            origin: 'SYSTEM',
           });
         },
       },
@@ -86,12 +185,41 @@ export function createOfficeAutomationHost(): OfficeAutomationHost {
             plan,
             dispatchedAt: new Date().toISOString(),
           });
+          const sync = applyBusinessEventToWorkflow(event);
+          if (sync.projectId.length > 0 && sync.status !== null) {
+            appendAutomationTimelineEvent({
+              id: `tl-wf-${event.id}`,
+              caseId: sync.projectId,
+              kind: 'workflow.synced',
+              title: 'Workflow Synced',
+              summary: `Stav → ${sync.status}`,
+              detail: `event=${event.kind}\nstatus=${sync.status}`,
+              occurredAt: event.occurredAt,
+            });
+          }
         },
       },
       documentRuntime: {
         generateForEvent: async (event) => {
           const artifacts = await generateDocumentsForBusinessEvent(event);
           journal.documents.push(...artifacts);
+        },
+      },
+      officeTasks: {
+        createForEvent: ({ event, actionId }) => {
+          const created = createOfficeTasksForEvent({ event, actionId });
+          journal.officeTasks.push(...created);
+          for (const task of created) {
+            appendAutomationTimelineEvent({
+              id: `tl-task-${task.id}`,
+              caseId: task.projectId,
+              kind: 'office.task',
+              title: task.label,
+              summary: `${task.kind} · ${task.status}`,
+              detail: `taskId=${task.id}\nsource=${task.sourceEventKind}`,
+              occurredAt: task.createdAt,
+            });
+          }
         },
       },
     },
