@@ -213,8 +213,46 @@
   background: #eef2f8;
 }
 
+.platform-access__hint {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+.platform-access__welcome-secondary {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  border: 0;
+  background: transparent;
+  padding: 8px 4px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #64748b;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.platform-access__welcome-secondary:hover {
+  color: #18428f;
+}
+
 .platform-access__panel--welcome {
-  max-width: 720px;
+  max-width: 440px;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.platform-access__panel--welcome .platform-access__title {
+  margin-bottom: 12px;
+}
+
+.platform-access__panel--welcome .platform-access__lead {
+  margin-bottom: 0;
 }
 
 .platform-access__studio {

@@ -1,96 +1,81 @@
+import {
+  WELCOME_LEAD,
+  WELCOME_PASSWORD_NOTE,
+  WELCOME_PRIMARY_CTA_LABEL,
+  WELCOME_SECONDARY_CTA_LABEL,
+  WELCOME_TITLE,
+} from '../pilot/welcomeExperience';
+
 type PartnerWelcomeScreenProps = {
   readonly displayName: string;
   readonly firmName: string;
   readonly projectName: string;
-  readonly onEnterClientStudio: () => void;
-  readonly onEnterManagerStudio: () => void;
-  readonly onEnterSalesStudio: () => void;
+  /** Primary — enter Pilot Offer / Commercial Journey. */
+  readonly onSelectPilotProgram: () => void;
+  /** Secondary — continue into CONIS Studio without purchase. */
+  readonly onContinueToStudio: () => void;
 };
 
 /**
- * PE-05 — Welcome Journey: first-session orientation into Partner Workspace.
- * Client Studio is the recommended primary entry; Manager / Sales are secondary.
- * Builder / Office are never offered to partners.
+ * PT-CJ-01 — Welcome & Pilot Entry (Apple Easy).
+ * One screen · one primary CTA · optional quiet Studio path.
  */
 export function PartnerWelcomeScreen({
   displayName,
   firmName,
   projectName,
-  onEnterClientStudio,
-  onEnterManagerStudio,
-  onEnterSalesStudio,
+  onSelectPilotProgram,
+  onContinueToStudio,
 }: PartnerWelcomeScreenProps) {
+  void displayName;
+  void firmName;
+  void projectName;
+
   return (
     <div className="platform-access" data-testid="partner-welcome">
-      <div className="platform-access__panel">
-        <p className="platform-access__eyebrow">CONIS Pilot · Welcome Journey</p>
-        <h1 className="platform-access__title">Vítejte v CONIS</h1>
-        <p className="platform-access__lead" data-testid="welcome-greeting">
-          {displayName}, účet pro {firmName} je aktivní. Pilotní prostředí je
-          připravené — můžete rovnou pracovat.
+      <div
+        className="platform-access__panel platform-access__panel--welcome"
+        data-testid="welcome-experience"
+      >
+        <h1
+          className="platform-access__title"
+          data-testid="welcome-title"
+        >
+          {WELCOME_TITLE}
+        </h1>
+
+        <p
+          className="platform-access__lead"
+          data-testid="welcome-lead"
+        >
+          {WELCOME_LEAD}
         </p>
 
-        <section data-testid="welcome-what-you-got">
-          <p className="platform-access__demos-title">Co jste získali</p>
-          <ul className="platform-access__list platform-access__lead">
-            <li data-testid="welcome-workspace-ready">
-              Připravené Pilot Workspace bez dalších kroků
-            </li>
-            <li data-testid="welcome-sample-project">
-              Ukázkový projekt CONIS · {projectName}
-            </li>
-            <li data-testid="welcome-experience">
-              Embed Experience v Client Studiu (priorita → FAQ → chat → audit)
-            </li>
-            <li data-testid="welcome-partner-studios">
-              Manager Studio a Sales Studio pro partnerský provoz
-            </li>
-          </ul>
-        </section>
-
-        <p className="platform-access__lead" data-testid="welcome-sample-note">
-          Pracujete s ukázkovým projektem CONIS ({projectName}). Vlastní projekty
-          přijdou později — teď si vyzkoušejte Experience end-to-end.
+        <p
+          className="platform-access__hint"
+          data-testid="welcome-password-note"
+        >
+          {WELCOME_PASSWORD_NOTE}
         </p>
 
         <button
           type="button"
           className="platform-access__submit"
-          style={{ width: '100%', marginTop: 16 }}
-          onClick={onEnterClientStudio}
-          data-testid="welcome-enter-client-studio"
+          style={{ width: '100%', marginTop: 24 }}
+          onClick={onSelectPilotProgram}
+          data-testid="welcome-select-pilot-program"
         >
-          Otevřít Client Studio
+          {WELCOME_PRIMARY_CTA_LABEL}
         </button>
-        <p
-          className="platform-access__lead"
-          style={{ marginTop: 12, marginBottom: 4 }}
+
+        <button
+          type="button"
+          className="platform-access__welcome-secondary"
+          onClick={onContinueToStudio}
+          data-testid="welcome-continue-studio"
         >
-          Nebo pokračujte do partnerských studií
-        </p>
-        <div
-          className="platform-access__studios"
-          data-testid="welcome-secondary-nav"
-        >
-          <button
-            type="button"
-            className="platform-access__studio"
-            onClick={onEnterManagerStudio}
-            data-testid="welcome-enter-manager-studio"
-          >
-            <span className="platform-access__studio-name">Manager Studio</span>
-            <span className="platform-access__studio-meta">Otevřít</span>
-          </button>
-          <button
-            type="button"
-            className="platform-access__studio"
-            onClick={onEnterSalesStudio}
-            data-testid="welcome-enter-sales-studio"
-          >
-            <span className="platform-access__studio-name">Sales Studio</span>
-            <span className="platform-access__studio-meta">Otevřít</span>
-          </button>
-        </div>
+          {WELCOME_SECONDARY_CTA_LABEL}
+        </button>
       </div>
     </div>
   );

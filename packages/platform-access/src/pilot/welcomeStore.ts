@@ -1,5 +1,5 @@
 /**
- * CS-01 / PE-04 / PE-05 — Partner welcome / first-session onboarding gate.
+ * CS-01 / PE-04 / PE-05 / PE-11 — Partner welcome / first-session onboarding gate.
  */
 
 export const PARTNER_WELCOME_STORAGE_KEY = 'conis.platform.partner-welcome.v1';

@@ -1,5 +1,5 @@
 /**
- * PE-05 — Welcome Journey: first session, Client Studio CTA, once-only gate.
+ * PT-CJ-01 — Welcome & Pilot Entry (Apple Easy).
  */
 
 import assert from 'node:assert/strict';
@@ -18,12 +18,18 @@ import {
   resetPartnerWelcomeStore,
   resetUserRegistry,
   shouldShowPartnerWelcome,
+  WELCOME_LEAD,
+  WELCOME_PASSWORD_NOTE,
+  WELCOME_PRIMARY_CTA_LABEL,
+  WELCOME_SECONDARY_CTA_LABEL,
+  WELCOME_TITLE,
+  resolvePilotOfferHref,
 } from '../index.ts';
 import { clearPlatformSession } from '../session/sessionStore.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
-describe('PE-05 Welcome Journey', () => {
+describe('PT-CJ-01 Welcome & Pilot Entry', () => {
   it('opens welcome after activation and completes only once', () => {
     resetInviteStore();
     resetUserRegistry();
@@ -31,8 +37,8 @@ describe('PE-05 Welcome Journey', () => {
     clearPlatformSession();
 
     const invite = createPilotInvite({
-      email: 'welcome-pe05@pilot.local',
-      displayName: 'Welcome PE05',
+      email: 'welcome-cj01@pilot.local',
+      displayName: 'Welcome CJ01',
       roles: ['manager', 'salesman'],
       invitedByUserId: 'user-radim',
     });
@@ -51,7 +57,6 @@ describe('PE-05 Welcome Journey', () => {
     assert.equal(shouldShowPartnerWelcome(activated.user.email), false);
     assert.equal(hasCompletedWelcomeJourney(activated.user.email), true);
 
-    // Later "prepare" must not reopen Welcome after first session.
     prepareWelcomeJourney(activated.user.email);
     assert.equal(shouldShowPartnerWelcome(activated.user.email), false);
 
@@ -60,17 +65,54 @@ describe('PE-05 Welcome Journey', () => {
     resetPartnerWelcomeStore();
   });
 
-  it('welcome screen prioritizes Client Studio and secondary partner studios', () => {
+  it('exposes Apple Easy copy and single primary CTA', () => {
+    assert.equal(WELCOME_TITLE, 'Vítejte ve svém CONIS Studio');
+    assert.equal(
+      WELCOME_LEAD,
+      'Vše je připravené. Zbývá už jen vybrat pilotní program.',
+    );
+    assert.equal(
+      WELCOME_PASSWORD_NOTE,
+      'Heslo můžete kdykoliv změnit v Nastavení.',
+    );
+    assert.equal(WELCOME_PRIMARY_CTA_LABEL, 'Vybrat pilotní program');
+    assert.equal(
+      WELCOME_SECONDARY_CTA_LABEL,
+      'Pokračovat do CONIS Studio',
+    );
+    assert.match(resolvePilotOfferHref(), /4192|\/offer\//);
+  });
+
+  it('welcome screen is one goal with quiet secondary Studio path', () => {
     const source = readFileSync(
       join(here, '../react/PartnerWelcomeScreen.tsx'),
       'utf8',
     );
-    assert.match(source, /welcome-enter-client-studio/);
-    assert.match(source, /Otevřít Client Studio/);
-    assert.match(source, /welcome-enter-manager-studio/);
-    assert.match(source, /welcome-enter-sales-studio/);
-    assert.match(source, /Ukázkový projekt CONIS/);
+    const landing = readFileSync(
+      join(here, '../react/PlatformLanding.tsx'),
+      'utf8',
+    );
+
+    assert.match(source, /welcome-experience/);
+    assert.match(source, /WELCOME_TITLE/);
+    assert.match(source, /WELCOME_LEAD/);
+    assert.match(source, /welcome-select-pilot-program/);
+    assert.match(source, /welcome-continue-studio/);
+    assert.match(source, /welcome-password-note/);
+    assert.match(source, /WELCOME_PRIMARY_CTA_LABEL/);
+    assert.match(source, /WELCOME_SECONDARY_CTA_LABEL/);
+
+    assert.doesNotMatch(source, /marketing/i);
+    assert.doesNotMatch(source, /schůzk/i);
     assert.doesNotMatch(source, /Builder Studio/);
     assert.doesNotMatch(source, /Office Studio/);
+    assert.doesNotMatch(source, /welcome-studios-intro/);
+    assert.doesNotMatch(source, /welcome-enter-manager-studio/);
+    assert.doesNotMatch(source, /type="password"/);
+    assert.doesNotMatch(source, /<form/);
+
+    assert.match(landing, /resolvePilotOfferHref/);
+    assert.match(landing, /onSelectPilotProgram/);
+    assert.match(landing, /onContinueToStudio/);
   });
 });

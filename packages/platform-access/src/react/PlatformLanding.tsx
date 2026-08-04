@@ -1,7 +1,10 @@
 import { useMemo, useState, type FormEvent } from 'react';
 
 import { bootstrapTenant } from '../bootstrap/tenantBootstrap';
-import { resolveClientStudioHref } from '../cloud/cloudConfig';
+import {
+  resolveClientStudioHref,
+  resolvePilotOfferHref,
+} from '../cloud/cloudConfig';
 import { touchUserLastStudio } from '../registry/userRegistry';
 import { isPilotPartnerRoles } from '../domain/pilotPartnerAccess';
 import { PLATFORM_ROLE_LABELS, isPlatformAdmin, primaryRole } from '../domain/roles';
@@ -103,7 +106,7 @@ export function PlatformLanding() {
     bindSampleProject();
     touchUserLastStudio(session.user.id, 'client');
     recordPlatformActivity({
-      label: 'Welcome → Client Studio',
+      label: 'Welcome → CONIS Studio',
       detail:
         bootstrap.project?.name ??
         pilotWorkspace?.sampleProjectLabel ??
@@ -114,14 +117,14 @@ export function PlatformLanding() {
     }
   };
 
-  const openPartnerStudio = (studioId: 'manager' | 'sales') => {
+  const openPilotOffer = () => {
     bindSampleProject();
     recordPlatformActivity({
-      label: `Welcome → ${studioId === 'manager' ? 'Manager' : 'Sales'} Studio`,
+      label: 'Welcome → Vybrat pilotní program',
       detail: bootstrap.company.name,
     });
-    if (canOpenStudio(studioId)) {
-      selectStudio(studioId);
+    if (typeof window !== 'undefined') {
+      window.location.assign(resolvePilotOfferHref());
     }
   };
 
@@ -135,17 +138,13 @@ export function PlatformLanding() {
           bootstrap.project?.name ??
           'Reference House'
         }
-        onEnterClientStudio={() => {
+        onSelectPilotProgram={() => {
+          finishWelcome();
+          openPilotOffer();
+        }}
+        onContinueToStudio={() => {
           finishWelcome();
           openClientStudio();
-        }}
-        onEnterManagerStudio={() => {
-          finishWelcome();
-          openPartnerStudio('manager');
-        }}
-        onEnterSalesStudio={() => {
-          finishWelcome();
-          openPartnerStudio('sales');
         }}
       />
     );

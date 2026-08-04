@@ -129,6 +129,7 @@ export {
   resolveCloudStudioHref,
   resolveCloudLandingHref,
   resolveClientStudioHref,
+  resolvePilotOfferHref,
   resolveWorkspaceHostHref,
   resolvePartnerInviteHref,
   type CloudPlatformConfig,
@@ -206,8 +207,12 @@ export {
 } from './pilot/welcomeStore';
 
 export {
+  WELCOME_TITLE,
+  WELCOME_LEAD,
+  WELCOME_PASSWORD_NOTE,
   WELCOME_STUDIO_INTROS,
   WELCOME_PRIMARY_CTA_LABEL,
+  WELCOME_SECONDARY_CTA_LABEL,
   welcomeGreeting,
   welcomeEnvironmentLead,
   type WelcomeStudioIntro,
