@@ -1,0 +1,69 @@
+{
+  "schemaVersion": "pt18-1",
+  "partner": {
+    "partnerId": "p-dse",
+    "partnerName": "Domy s energií",
+    "legalName": "Domy s energií s.r.o.",
+    "ico": "06123456",
+    "city": "Praha",
+    "country": "Česko",
+    "contactName": "Jana Energetická",
+    "contactEmail": "partner@domysenergii.cz",
+    "contactPhone": "+420 777 200 300",
+    "contactRole": "Jednatelka"
+  },
+  "platform": {
+    "companyId": "company-domy-s-energi",
+    "tenantId": "tenant-domy-s-energi",
+    "workspaceId": "workspace-domy-s-energi",
+    "projectId": "project-domy-s-energi-01",
+    "projectLabel": "Reference House",
+    "objectId": "house-modern-01"
+  },
+  "mailbox": {
+    "mailboxId": "mbx-conis-contact",
+    "mailboxEmail": "kontakt@conis.cz",
+    "smtpEnvKeys": ["SMTP_HOST", "SMTP_PORT", "SMTP_SECURE", "SMTP_USER", "SMTP_PASSWORD"],
+    "imapEnvKeys": ["IMAP_HOST", "IMAP_PORT", "IMAP_SECURE", "IMAP_USER", "IMAP_PASSWORD"]
+  },
+  "branding": {
+    "logoLabel": "Domy s energií Logo",
+    "heroLabel": "Domy s energií · Reference House Hero",
+    "locale": "cs-CZ"
+  },
+  "workflow": {
+    "initialStatus": "offer",
+    "statusPath": [
+      "offer",
+      "checkout",
+      "waiting_payment",
+      "paid",
+      "pilot_ready"
+    ],
+    "documentTriggerEvents": ["OrderConfirmed", "ProformaGenerated"],
+    "taskKinds": [
+      "waiting_review",
+      "waiting_send",
+      "waiting_payment",
+      "waiting_builder"
+    ]
+  },
+  "documents": {
+    "dealPackageRoot": "docs/platform/office/deal",
+    "types": [
+      "electronic_order",
+      "framework",
+      "implementation_standard",
+      "dpa",
+      "vop",
+      "proforma"
+    ]
+  },
+  "packages": {
+    "defaultPackageId": "starter",
+    "defaultPackageName": "Starter",
+    "defaultAmountCzk": 14970,
+    "licenseLabel": "až 3 domy · 90 dní",
+    "availablePackages": ["Starter", "Pilot", "Studio Partner"]
+  }
+}
