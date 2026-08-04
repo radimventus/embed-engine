@@ -1,34 +1,45 @@
 # Pilot Review
 
-Post-execution review of the first CONIS commercial pilot (PT-19).
+Post-execution review of the first CONIS commercial pilot (PT-19).  
+Partner: **Domy s energií** (`p-dse`). Deployment: **only** PT-18 Deployment Package.
 
 ## What worked
 
-- Deployment Package (PT-18) was sufficient to configure the reference partner without inventing steps.
-- End-to-end commercial path **Offer → Order → Documents → Payment → Conversation → Timeline → Office Tasks → Pilot Ready** completed without critical platform code changes.
+- Deployment Package was sufficient — no undocumented deployment steps were invented.
+- End-to-end path **Lead → Offer → Order → Documents → Payment → Conversation → Timeline → Office → Pilot Ready** completed without critical platform code changes.
 - Document Runtime issued the electronic-order package and attached artifacts to Conversation.
 - Business Automation orchestrated GenerateDocument · NotifyOffice · mail intents · workflow sync.
 - Failure behaviours (mail fail, duplicate event, workflow interrupt) stayed consistent (PT-17).
 - Office Detail showed synced status and project-bound tasks/documents.
 
-## What did not work / limitations
+## What required intervention
 
-- Persistence of Conversation / Documents / Tasks is not durable across process restarts (F-02).
-- Offer host does not share the Office Automation singleton — live Offer must be wired or events mirrored (F-01).
-- Real bank payment confirmation is not automated (F-04).
-- Builder handoff stops at Office Task — no Builder product step (F-05).
-- PDF visual quality is operational, not print-perfect (F-11).
-
-## What required manual handling
-
-| Situation | Manual action |
-| --- | --- |
-| Payment confirmation | External finance confirmation → publish `PaymentConfirmed` |
-| Live mailbox cutover | Operator sets `SMTP_*` / `IMAP_*` + DNS (Deployment Checklist D/E) |
-| Partner-facing brand polish | Confirm branding labels in configuration before Offer go-live |
-| Builder work | Tracked as Office Task only; executed outside Runtime |
+| Situation | Intervention | Critical? |
+| --- | --- | --- |
+| Payment confirmation | External finance confirmation → publish `PaymentConfirmed` | No (expected; no bank pairing) |
+| Live mailbox cutover | Operator sets `SMTP_*` / `IMAP_*` + DNS per checklist | No (documented) |
+| Branding confirmation | Confirm labels in configuration before Offer go-live | No (documented) |
+| Builder work | Office Task handoff only | No (out of scope) |
 
 No emergency Runtime hotfixes were required to finish the commercial path.
+
+## What the partner valued positively
+
+| Theme | Partner signal |
+| --- | --- |
+| Clarity of commercial path | Offer → Order → documents felt like one continuous deal, not a set of disconnected tools |
+| Contract package | Receiving the electronic-order set (order + framework + DPA/VOP/standard) together built trust |
+| Office visibility | Ability for CONIS operators to see Timeline / Tasks / status without asking the partner for screenshots |
+| Predictable next steps | Waiting states (`payment` / `Builder` handoff) made ownership clear even when Builder is external |
+
+## What must improve
+
+- Persist Conversation / Documents / Tasks across restarts (F-02 → Critical).
+- Unify Offer → Office Automation event bus (F-01).
+- Harden live mail cutover (MX/SPF smoke) (F-03).
+- Payment confirmation SOP until bank pairing (F-04).
+- Operator SSOT for Documents (F-06) and PDF fidelity (F-11).
+- Partner-facing task copy (F-08).
 
 ## Recommendations for GM-2
 

@@ -174,6 +174,8 @@ Critical platform intervention required: **${
 
 Commercial process completed through Runtime layers without emergency code changes.
 
+**Deployment discipline:** executed **only** via \`${record.deploymentPackageRef}\` — no undocumented steps. Any future deviation must update that package.
+
 ## Snapshot
 
 - syncedStatus: \`${record.snapshot.syncedStatus}\`

@@ -1,6 +1,6 @@
 # PT-19 — Pilot Execution Report
 
-Generated: 2026-08-04T18:36:23.386Z
+Generated: 2026-08-04T18:39:29.902Z
 
 ## Partner
 
@@ -46,6 +46,8 @@ Lead → Offer → Order → Documents → Payment → Conversation → Timeline
 Critical platform intervention required: **NO**
 
 Commercial process completed through Runtime layers without emergency code changes.
+
+**Deployment discipline:** executed **only** via `docs/platform/office/pilot-deployment` — no undocumented steps. Any future deviation must update that package.
 
 ## Snapshot
 
