@@ -1,6 +1,6 @@
 /**
- * CAP-OP-01 / CAP-OP-03 / CAP-OP-04 — Shared Pilot Workspace context.
- * Inbox Runtime + Timeline Runtime · in-memory · no persistence.
+ * CAP-OP-01 / CAP-OP-03 / CAP-OP-04 / CAP-OP-06 — Shared Pilot Workspace context.
+ * Inbox · Timeline · Workflow Runtime · in-memory · no persistence.
  */
 
 import {
@@ -41,6 +41,16 @@ import {
 import type { PilotTimelineEventId } from './pilotTimelineModel';
 import { mockPilotEventCatalog } from './pilotTimelineStore';
 import {
+  buildWorkflowNavigationEvent,
+  type PilotWorkflowCatalogIntegration,
+} from './pilotWorkflowCatalog';
+import type { PilotWorkflowStepId } from './pilotWorkflowModel';
+import {
+  createInitialWorkflowRuntimeState,
+  reducePilotWorkflow,
+  type PilotWorkflowRuntimeState,
+} from './pilotWorkflowRuntime';
+import {
   createPlaceholderCase,
   getPilotWorkspaceCase,
   PILOT_TERMINAL_DEFAULT_VIEW,
@@ -69,6 +79,8 @@ export type PilotWorkspaceContextValue = {
   readonly timeline: PilotTimelineRuntimeState;
   readonly selectTimelineEvent: (eventId: PilotTimelineEventId | null) => void;
   readonly clearTimelineSelection: () => void;
+  readonly workflow: PilotWorkflowRuntimeState;
+  readonly navigateWorkflowStep: (stepId: PilotWorkflowStepId) => void;
 };
 
 const PilotWorkspaceContext = createContext<PilotWorkspaceContextValue | null>(
@@ -81,11 +93,12 @@ type PilotWorkspaceProviderProps = {
   readonly initialTerminalView?: PilotTerminalViewId;
   readonly timelineIntegrations?: PilotInboxTimelineIntegration;
   readonly eventCatalog?: PilotEventCatalog;
+  readonly workflowIntegrations?: PilotWorkflowCatalogIntegration;
 };
 
 /**
- * Provides active obchodní případ, Inbox Runtime and Timeline Runtime.
- * Timeline reloads when Shared Context case changes.
+ * Provides active obchodní případ, Inbox, Timeline and Workflow Runtime.
+ * Workflow navigates Working Terminal tabs without owning commercial data.
  */
 export function PilotWorkspaceProvider({
   children,
@@ -93,6 +106,7 @@ export function PilotWorkspaceProvider({
   initialTerminalView = PILOT_TERMINAL_DEFAULT_VIEW,
   timelineIntegrations = {},
   eventCatalog = mockPilotEventCatalog,
+  workflowIntegrations = {},
 }: PilotWorkspaceProviderProps) {
   const [activeCaseId, setActiveCaseId] = useState<PilotWorkspaceCaseId | null>(
     initialCaseId,
@@ -107,6 +121,11 @@ export function PilotWorkspaceProvider({
   );
   const [timeline, setTimeline] = useState<PilotTimelineRuntimeState>(
     createEmptyTimelineRuntimeState,
+  );
+  const [workflow, setWorkflow] = useState<PilotWorkflowRuntimeState>(() =>
+    createInitialWorkflowRuntimeState(
+      initialCaseId !== null ? getPilotWorkspaceCase(initialCaseId) : null,
+    ),
   );
   const inboxRef = useRef(inbox);
   inboxRef.current = inbox;
@@ -134,6 +153,11 @@ export function PilotWorkspaceProvider({
     void (async () => {
       const events = await loadTimelineForCase(activeCaseId, eventCatalog);
       if (cancelled) return;
+      const nextCase =
+        activeCaseId === null
+          ? null
+          : (cases.find((item) => item.id === activeCaseId) ??
+            getPilotWorkspaceCase(activeCaseId));
       setTimeline((current) =>
         reducePilotTimeline(current, {
           type: 'load-case',
@@ -141,11 +165,19 @@ export function PilotWorkspaceProvider({
           events,
         }),
       );
+      setWorkflow((current) =>
+        reducePilotWorkflow(current, {
+          type: 'project-case',
+          activeCase: nextCase,
+          events,
+          projector: workflowIntegrations.projector,
+        }),
+      );
     })();
     return () => {
       cancelled = true;
     };
-  }, [activeCaseId, eventCatalog]);
+  }, [activeCaseId, cases, eventCatalog, workflowIntegrations.projector]);
 
   const selectCase = useCallback((caseId: PilotWorkspaceCaseId | null) => {
     setActiveCaseId(caseId);
@@ -245,6 +277,28 @@ export function PilotWorkspaceProvider({
     );
   }, []);
 
+  const navigateWorkflowStep = useCallback(
+    (stepId: PilotWorkflowStepId) => {
+      const step = workflow.steps.find((item) => item.id === stepId);
+      if (step === undefined) return;
+      setWorkflow((current) =>
+        reducePilotWorkflow(current, {
+          type: 'highlight-step',
+          stepId,
+        }),
+      );
+      setTerminalView(step.terminalView);
+      void workflowIntegrations.emitNavigationEvent?.(
+        buildWorkflowNavigationEvent({
+          stepId,
+          caseId: activeCaseId,
+          terminalView: step.terminalView,
+        }),
+      );
+    },
+    [activeCaseId, workflow.steps, workflowIntegrations],
+  );
+
   const value = useMemo<PilotWorkspaceContextValue>(
     () => ({
       cases,
@@ -262,6 +316,8 @@ export function PilotWorkspaceProvider({
       timeline,
       selectTimelineEvent,
       clearTimelineSelection,
+      workflow,
+      navigateWorkflowStep,
     }),
     [
       activeCase,
@@ -271,6 +327,7 @@ export function PilotWorkspaceProvider({
       clearTimelineSelection,
       createCasePlaceholder,
       inbox,
+      navigateWorkflowStep,
       selectCase,
       selectInboxMessage,
       selectTimelineEvent,
@@ -278,6 +335,7 @@ export function PilotWorkspaceProvider({
       terminalView,
       timeline,
       unassignInboxCase,
+      workflow,
     ],
   );
 

@@ -1,32 +1,27 @@
+import { usePilotWorkspaceContext } from '../../../office/PilotWorkspaceContext';
 import {
-  buildCanveloIndicators,
-  PILOT_CANVELO_STEPS,
-  type PilotWorkspaceCase,
-} from '../../../office/pilotWorkspaceModel';
-
-type PilotTerminalWorkflowProps = {
-  readonly activeCase: PilotWorkspaceCase | null;
-};
+  PILOT_WORKFLOW_STEP_STATE_LABELS,
+} from '../../../office/pilotWorkflowModel';
 
 /**
- * CAP-OP-02 — Workflow workspace for commercial steps (no runtime).
+ * CAP-OP-06 — Workflow terminal view mirrors navigator projection.
  */
-export function PilotTerminalWorkflow({
-  activeCase,
-}: PilotTerminalWorkflowProps) {
-  const indicators =
-    activeCase !== null ? buildCanveloIndicators(activeCase.status) : null;
+export function PilotTerminalWorkflow() {
+  const { activeCase, workflow, navigateWorkflowStep } =
+    usePilotWorkspaceContext();
 
   return (
     <div
       className="office-pilot-terminal__view"
       data-testid="pilot-terminal-workflow"
+      data-workflow-runtime="true"
     >
       <header className="office-pilot-terminal__view-head">
         <h3 className="office-pilot-ws__panel-title">Workflow</h3>
         <p className="office-pilot-ws__panel-body">
-          Pracovní plocha kroků obchodního případu. Workflow Runtime přijde
-          později — PT-05 připravuje strukturu.
+          {activeCase === null
+            ? 'Pracovní plocha kroků — vyberte obchodní případ.'
+            : `Stav obchodního případu · ${activeCase.label}. Kliknutím navigujete terminál.`}
         </p>
       </header>
 
@@ -34,25 +29,26 @@ export function PilotTerminalWorkflow({
         className="office-pilot-workflow-board"
         data-testid="pilot-workflow-board"
       >
-        {PILOT_CANVELO_STEPS.map((step) => {
-          const state =
-            indicators?.find((item) => item.id === step.id)?.state ?? 'todo';
+        {workflow.steps.map((step) => {
+          const highlighted = step.id === workflow.highlightedStepId;
           return (
-            <article
+            <button
               key={step.id}
-              className={`office-pilot-workflow-board__step office-pilot-workflow-board__step--${state}`}
+              type="button"
+              className={
+                highlighted
+                  ? `office-pilot-workflow-board__step office-pilot-workflow-board__step--${step.state} office-pilot-workflow-board__step--highlighted`
+                  : `office-pilot-workflow-board__step office-pilot-workflow-board__step--${step.state}`
+              }
               data-testid={`pilot-workflow-step-${step.id}`}
-              data-step-state={state}
+              data-step-state={step.state}
+              onClick={() => navigateWorkflowStep(step.id)}
             >
               <h4>{step.label}</h4>
               <p>
-                {state === 'current'
-                  ? 'Aktivní krok — připraveno pro runtime akci.'
-                  : state === 'done'
-                    ? 'Dokončeno (UI indikace).'
-                    : 'Čeká — bez runtime logiky.'}
+                {PILOT_WORKFLOW_STEP_STATE_LABELS[step.state]} · {step.contextHint}
               </p>
-            </article>
+            </button>
           );
         })}
       </div>

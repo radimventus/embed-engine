@@ -133,7 +133,7 @@ function TerminalPanel({
     case 'timeline':
       return <PilotTerminalTimeline />;
     case 'workflow':
-      return <PilotTerminalWorkflow activeCase={activeCase} />;
+      return <PilotTerminalWorkflow />;
     default: {
       const _exhaustive: never = view;
       return _exhaustive;
