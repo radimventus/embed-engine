@@ -1,12 +1,27 @@
 /**
- * CAP-CE-02 — Offer Checkout Runtime (in-memory UI state).
- * No backend · no Office · prepared for PT-03 payment integrations.
+ * CAP-CE-02 / CAP-CE-03 — Offer Checkout + Payment Runtime (in-memory UI state).
+ * No backend · no Office · prepared for payment / handoff integrations.
  */
 
 import type { OfferPackage, OfferPackageId, PublicOffer } from '../offer/offerModel';
 import { getOfferPackage } from '../offer/offerModel';
+import {
+  createEmptyPaymentState,
+  type OfferPaymentRuntimeState,
+  type OfferProformaDocument,
+} from '../payment/paymentModel';
+import {
+  reduceOfferPayment,
+  type OfferPaymentAction,
+} from '../payment/paymentRuntime';
 
-export type CheckoutStep = 'select' | 'checkout' | 'confirm' | 'success';
+export type CheckoutStep =
+  | 'select'
+  | 'checkout'
+  | 'confirm'
+  | 'proforma'
+  | 'qr'
+  | 'complete';
 
 export type CheckoutContactForm = {
   readonly companyName: string;
@@ -40,6 +55,7 @@ export type OfferCheckoutState = {
   readonly contact: CheckoutContactForm;
   readonly termsAccepted: boolean;
   readonly order: CheckoutConfirmedOrder | null;
+  readonly payment: OfferPaymentRuntimeState;
   readonly formError: string | null;
 };
 
@@ -54,7 +70,13 @@ export type OfferCheckoutAction =
   | { readonly type: 'submit-checkout' }
   | { readonly type: 'back-to-select' }
   | { readonly type: 'back-to-checkout' }
-  | { readonly type: 'confirm-order'; readonly orderId: string; readonly confirmedAt: string }
+  | {
+      readonly type: 'confirm-order';
+      readonly orderId: string;
+      readonly confirmedAt: string;
+      readonly proforma?: OfferProformaDocument;
+    }
+  | { readonly type: 'payment'; readonly action: OfferPaymentAction }
   | { readonly type: 'reset' };
 
 export function emptyCheckoutContact(
@@ -79,6 +101,7 @@ export function createInitialCheckoutState(
     contact: emptyCheckoutContact(offer),
     termsAccepted: false,
     order: null,
+    payment: createEmptyPaymentState(),
     formError: null,
   };
 }
@@ -139,6 +162,23 @@ export function selectedPackageFromState(
   return getOfferPackage(state.selectedPackageId);
 }
 
+function syncStepFromPayment(
+  payment: OfferPaymentRuntimeState,
+): CheckoutStep {
+  switch (payment.step) {
+    case 'proforma':
+      return 'proforma';
+    case 'qr':
+      return 'qr';
+    case 'complete':
+      return 'complete';
+    default: {
+      const _exhaustive: never = payment.step;
+      return _exhaustive;
+    }
+  }
+}
+
 export function reduceOfferCheckout(
   state: OfferCheckoutState,
   action: OfferCheckoutAction,
@@ -151,7 +191,13 @@ export function reduceOfferCheckout(
         selectedPackageId: action.packageId,
         formError: null,
         order: null,
-        step: state.step === 'success' ? 'select' : state.step,
+        payment: createEmptyPaymentState(),
+        step:
+          state.step === 'proforma' ||
+          state.step === 'qr' ||
+          state.step === 'complete'
+            ? 'select'
+            : state.step,
       };
     case 'begin-checkout':
       if (state.selectedPackageId === null) {
@@ -165,6 +211,7 @@ export function reduceOfferCheckout(
         step: 'checkout',
         formError: null,
         order: null,
+        payment: createEmptyPaymentState(),
       };
     case 'patch-contact':
       return {
@@ -201,6 +248,7 @@ export function reduceOfferCheckout(
         step: 'select',
         formError: null,
         order: null,
+        payment: createEmptyPaymentState(),
       };
     case 'back-to-checkout':
       return {
@@ -218,15 +266,38 @@ export function reduceOfferCheckout(
         state.contact,
         state.termsAccepted,
       );
+      const order: CheckoutConfirmedOrder = {
+        ...draft,
+        orderId: action.orderId,
+        confirmedAt: action.confirmedAt,
+      };
+      const payment = reduceOfferPayment(createEmptyPaymentState(), {
+        type: 'issue-proforma',
+        order,
+        issuedAt: action.confirmedAt,
+        proforma: action.proforma,
+      });
       return {
         ...state,
-        step: 'success',
+        step: 'proforma',
         formError: null,
-        order: {
-          ...draft,
-          orderId: action.orderId,
-          confirmedAt: action.confirmedAt,
-        },
+        order,
+        payment,
+      };
+    }
+    case 'payment': {
+      if (state.order === null) {
+        return {
+          ...state,
+          formError: 'Platba vyžaduje potvrzenou objednávku.',
+        };
+      }
+      const payment = reduceOfferPayment(state.payment, action.action);
+      return {
+        ...state,
+        payment,
+        step: syncStepFromPayment(payment),
+        formError: payment.error,
       };
     }
     case 'reset':

@@ -2,6 +2,17 @@ import { useCallback, useMemo, useReducer } from 'react';
 
 import type { OfferPackageId, PublicOffer } from '../offer/offerModel';
 import {
+  buildBuilderReadyEvent,
+  buildOfficeHandoffRequest,
+  buildPaymentReceivedEvent,
+  notifyPaymentExtensions,
+  type OfferPaymentIntegrations,
+} from '../payment/paymentExtensions';
+import {
+  buildLocalQrPaymentCard,
+  issueLocalProforma,
+} from '../payment/paymentModel';
+import {
   notifyCheckoutExtensions,
   type OfferCheckoutIntegrations,
 } from './checkoutExtensions';
@@ -17,6 +28,7 @@ import {
 } from './checkoutRuntime';
 
 export type { OfferCheckoutIntegrations } from './checkoutExtensions';
+export type { OfferPaymentIntegrations } from '../payment/paymentExtensions';
 
 export type UseOfferCheckoutResult = {
   readonly state: OfferCheckoutState;
@@ -29,15 +41,18 @@ export type UseOfferCheckoutResult = {
   readonly backToSelect: () => void;
   readonly backToCheckout: () => void;
   readonly confirmOrder: () => void;
+  readonly continueToQr: () => void;
+  readonly confirmPaymentReceived: () => void;
+  readonly markPilotReady: () => void;
   readonly reset: () => void;
 };
 
 /**
- * CAP-CE-02 — React binding for Offer Checkout Runtime.
+ * CAP-CE-02 / CAP-CE-03 — React binding for Checkout + Payment Runtime.
  */
 export function useOfferCheckout(
   offer: PublicOffer,
-  integrations: OfferCheckoutIntegrations = {},
+  integrations: OfferCheckoutIntegrations & OfferPaymentIntegrations = {},
 ): UseOfferCheckoutResult {
   const [state, dispatch] = useReducer(
     (current: OfferCheckoutState, action: OfferCheckoutAction) =>
@@ -89,17 +104,121 @@ export function useOfferCheckout(
       state.contact,
       state.termsAccepted,
     );
-    dispatch({ type: 'confirm-order', orderId, confirmedAt });
-    void notifyCheckoutExtensions(
-      { ...draft, orderId, confirmedAt },
-      integrations,
-    );
+    const order = { ...draft, orderId, confirmedAt };
+
+    void (async () => {
+      const customProforma = integrations.issueProforma
+        ? await integrations.issueProforma(order)
+        : undefined;
+      const proforma =
+        customProforma ?? issueLocalProforma(order, confirmedAt);
+
+      dispatch({
+        type: 'confirm-order',
+        orderId,
+        confirmedAt,
+        proforma,
+      });
+
+      await notifyCheckoutExtensions(order, integrations);
+      await notifyPaymentExtensions(integrations, {
+        timeline: {
+          type: 'offer.proforma.issued',
+          occurredAt: confirmedAt,
+          orderId,
+          proformaId: proforma.proformaId,
+          amountCzk: order.priceCzk,
+        },
+      });
+    })();
   }, [
     integrations,
     offer,
     state.contact,
     state.selectedPackageId,
     state.termsAccepted,
+  ]);
+
+  const continueToQr = useCallback(() => {
+    if (state.order === null || state.payment.proforma === null) return;
+    const order = state.order;
+    const proforma = state.payment.proforma;
+
+    void (async () => {
+      const customQr = integrations.createQrPayment
+        ? await integrations.createQrPayment(order, proforma)
+        : undefined;
+      const qr = customQr ?? buildLocalQrPaymentCard(order);
+
+      dispatch({
+        type: 'payment',
+        action: {
+          type: 'open-qr',
+          order,
+          qr,
+        },
+      });
+
+      await notifyPaymentExtensions(integrations, {
+        timeline: {
+          type: 'offer.payment.waiting',
+          occurredAt: new Date().toISOString(),
+          orderId: order.orderId,
+          variableSymbol: qr.variableSymbol,
+        },
+      });
+    })();
+  }, [integrations, state.order, state.payment.proforma]);
+
+  const confirmPaymentReceived = useCallback(() => {
+    if (state.order === null || state.payment.proforma === null) return;
+    const paidAt = new Date().toISOString();
+    const order = state.order;
+    const proforma = state.payment.proforma;
+    dispatch({
+      type: 'payment',
+      action: { type: 'mark-payment-received', paidAt },
+    });
+    const paymentReceived = buildPaymentReceivedEvent({
+      order,
+      proforma,
+      paidAt,
+    });
+    void notifyPaymentExtensions(integrations, {
+      timeline: paymentReceived,
+      paymentReceived,
+    });
+  }, [integrations, state.order, state.payment.proforma]);
+
+  const markPilotReady = useCallback(() => {
+    if (
+      state.order === null ||
+      state.payment.proforma === null ||
+      state.payment.paidAt === null
+    ) {
+      return;
+    }
+    const order = state.order;
+    const proforma = state.payment.proforma;
+    const paidAt = state.payment.paidAt;
+    dispatch({ type: 'payment', action: { type: 'mark-pilot-ready' } });
+    const occurredAt = new Date().toISOString();
+    const builderReady = buildBuilderReadyEvent({ order, occurredAt });
+    const officeHandoff = buildOfficeHandoffRequest({
+      order,
+      proforma,
+      paidAt,
+    });
+    void notifyPaymentExtensions(integrations, {
+      timeline: builderReady,
+      builderReady,
+      officeHandoff,
+    });
+  }, [
+    integrations,
+    state.order,
+    state.payment.paidAt,
+    state.payment.proforma,
   ]);
 
   const reset = useCallback(() => {
@@ -117,6 +236,9 @@ export function useOfferCheckout(
     backToSelect,
     backToCheckout,
     confirmOrder,
+    continueToQr,
+    confirmPaymentReceived,
+    markPilotReady,
     reset,
   };
 }

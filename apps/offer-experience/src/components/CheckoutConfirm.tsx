@@ -27,8 +27,7 @@ export function CheckoutConfirm({
           Zkontrolujte objednávku
         </h2>
         <p className="offer-section-lead">
-          Po potvrzení připravíme další krok obchodní cesty. Platba zatím není
-          součástí tohoto kroku.
+          Po potvrzení vystavíme proformu a pokračujeme k QR platbě.
         </p>
       </div>
 

@@ -1,5 +1,5 @@
 /**
- * CAP-CE-01 / CAP-CE-02 — Public Offer Experience architecture guards.
+ * CAP-CE-01 / CAP-CE-02 / CAP-CE-03 — Public Offer Experience architecture guards.
  */
 
 import assert from 'node:assert/strict';
@@ -53,28 +53,78 @@ describe('CAP-CE-01 Public Offer Experience', () => {
 });
 
 describe('CAP-CE-02 Offer Checkout Runtime', () => {
-  it('wires checkout form, confirmation, success and extension slots', () => {
+  it('wires checkout form, confirmation and payment entry', () => {
     const app = read('src/OfferExperienceApp.tsx');
     const runtime = read('src/checkout/checkoutRuntime.ts');
     const extensions = read('src/checkout/checkoutExtensions.ts');
     const form = read('src/components/CheckoutForm.tsx');
     const confirm = read('src/components/CheckoutConfirm.tsx');
-    const success = read('src/components/CheckoutSuccess.tsx');
 
     assert.match(app, /useOfferCheckout/);
     assert.match(app, /CheckoutForm/);
     assert.match(app, /CheckoutConfirm/);
-    assert.match(app, /CheckoutSuccess/);
+    assert.match(app, /ProformaExperience/);
     assert.match(runtime, /CheckoutStep/);
-    assert.match(runtime, /'select' \| 'checkout' \| 'confirm' \| 'success'/);
+    assert.match(runtime, /'select'/);
+    assert.match(runtime, /'checkout'/);
+    assert.match(runtime, /'confirm'/);
+    assert.match(runtime, /'proforma'/);
+    assert.match(runtime, /'qr'/);
+    assert.match(runtime, /'complete'/);
     assert.match(form, /offer-terms-checkbox/);
     assert.match(confirm, /offer-confirm-submit/);
-    assert.match(success, /offer-extension-slots/);
     assert.match(extensions, /OfferProformaRequest/);
     assert.match(extensions, /OfferQrPaymentPayload/);
     assert.match(extensions, /OfferPaymentSessionRequest/);
     assert.match(extensions, /OfferTimelineEvent/);
     assert.doesNotMatch(runtime, /office-studio/);
     assert.doesNotMatch(extensions, /PlatformShell/);
+  });
+});
+
+describe('CAP-CE-03 Offer Payment Experience', () => {
+  it('wires proforma, QR, payment states, complete and handoff interfaces', () => {
+    const app = read('src/OfferExperienceApp.tsx');
+    const model = read('src/payment/paymentModel.ts');
+    const runtime = read('src/payment/paymentRuntime.ts');
+    const extensions = read('src/payment/paymentExtensions.ts');
+    const proforma = read('src/components/ProformaExperience.tsx');
+    const qr = read('src/components/QrPaymentCard.tsx');
+    const complete = read('src/components/PaymentComplete.tsx');
+    const pkg = read('package.json');
+
+    assert.match(app, /ProformaExperience/);
+    assert.match(app, /QrPaymentCard/);
+    assert.match(app, /PaymentComplete/);
+    assert.match(app, /continueToQr/);
+    assert.match(app, /confirmPaymentReceived/);
+    assert.match(app, /markPilotReady/);
+    assert.doesNotMatch(app, /PlatformShell/);
+    assert.doesNotMatch(app, /office-studio/);
+
+    assert.match(model, /waiting_payment/);
+    assert.match(model, /payment_received/);
+    assert.match(model, /pilot_ready/);
+    assert.match(runtime, /issue-proforma/);
+    assert.match(runtime, /open-qr/);
+    assert.match(runtime, /mark-payment-received/);
+    assert.match(runtime, /mark-pilot-ready/);
+
+    assert.match(proforma, /offer-proforma/);
+    assert.match(proforma, /offer-proforma-number/);
+    assert.match(qr, /offer-qr-payment/);
+    assert.match(qr, /offer-qr-code/);
+    assert.match(qr, /offer-payment-status/);
+    assert.match(complete, /offer-payment-complete/);
+    assert.match(complete, /offer-handoff-slots/);
+
+    assert.match(extensions, /OfferPaymentReceivedEvent/);
+    assert.match(extensions, /OfferBuilderReadyEvent/);
+    assert.match(extensions, /OfferOfficeHandoffRequest/);
+    assert.match(extensions, /handoffToOffice/);
+    assert.doesNotMatch(extensions, /PlatformShell/);
+    assert.doesNotMatch(model, /@embed-engine\/platform/);
+    assert.doesNotMatch(pkg, /platform-shell/);
+    assert.doesNotMatch(pkg, /office-studio/);
   });
 });

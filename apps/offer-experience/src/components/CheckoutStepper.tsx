@@ -5,7 +5,9 @@ const STEPS: readonly { readonly id: CheckoutStep; readonly label: string }[] =
     { id: 'select', label: 'Balíček' },
     { id: 'checkout', label: 'Objednávka' },
     { id: 'confirm', label: 'Potvrzení' },
-    { id: 'success', label: 'Hotovo' },
+    { id: 'proforma', label: 'Proforma' },
+    { id: 'qr', label: 'QR platba' },
+    { id: 'complete', label: 'Hotovo' },
   ]);
 
 type CheckoutStepperProps = {

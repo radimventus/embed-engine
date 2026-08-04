@@ -3,11 +3,13 @@ import { useMemo } from 'react';
 import { CheckoutConfirm } from './components/CheckoutConfirm';
 import { CheckoutForm } from './components/CheckoutForm';
 import { CheckoutStepper } from './components/CheckoutStepper';
-import { CheckoutSuccess } from './components/CheckoutSuccess';
 import { OfferHero } from './components/OfferHero';
 import { OfferLayout } from './components/OfferLayout';
 import { OfferSummary } from './components/OfferSummary';
 import { PackageSelection } from './components/PackageSelection';
+import { PaymentComplete } from './components/PaymentComplete';
+import { ProformaExperience } from './components/ProformaExperience';
+import { QrPaymentCard } from './components/QrPaymentCard';
 import { buildOrderDraft } from './checkout/checkoutRuntime';
 import { useOfferCheckout } from './checkout/useOfferCheckout';
 import { OFFER_PACKAGES, type PublicOffer } from './offer/offerModel';
@@ -52,6 +54,7 @@ function OfferCheckoutExperience({ offer }: { readonly offer: PublicOffer }) {
       data-testid="offer-page"
       data-offer-slug={offer.slug}
       data-checkout-step={state.step}
+      data-payment-lifecycle={state.payment.lifecycle}
     >
       <CheckoutStepper step={state.step} />
 
@@ -96,8 +99,33 @@ function OfferCheckoutExperience({ offer }: { readonly offer: PublicOffer }) {
         />
       ) : null}
 
-      {state.step === 'success' && state.order !== null ? (
-        <CheckoutSuccess order={state.order} onReset={checkout.reset} />
+      {state.step === 'proforma' && state.payment.proforma !== null ? (
+        <ProformaExperience
+          proforma={state.payment.proforma}
+          onContinue={checkout.continueToQr}
+        />
+      ) : null}
+
+      {state.step === 'qr' && state.payment.qr !== null ? (
+        <QrPaymentCard
+          qr={state.payment.qr}
+          lifecycle={state.payment.lifecycle}
+          onConfirmPaid={checkout.confirmPaymentReceived}
+        />
+      ) : null}
+
+      {state.step === 'complete' &&
+      state.order !== null &&
+      state.payment.proforma !== null &&
+      state.payment.paidAt !== null ? (
+        <PaymentComplete
+          order={state.order}
+          proforma={state.payment.proforma}
+          paidAt={state.payment.paidAt}
+          lifecycle={state.payment.lifecycle}
+          onMarkPilotReady={checkout.markPilotReady}
+          onReset={checkout.reset}
+        />
       ) : null}
 
       <footer className="offer-footer">
@@ -109,7 +137,7 @@ function OfferCheckoutExperience({ offer }: { readonly offer: PublicOffer }) {
 }
 
 /**
- * CAP-CE-01 / CAP-CE-02 — Public Offer Experience + Checkout Runtime.
+ * CAP-CE-01 / CAP-CE-02 / CAP-CE-03 — Public Offer · Checkout · Payment.
  */
 export function OfferExperienceApp() {
   const slug = useOfferSlug();
