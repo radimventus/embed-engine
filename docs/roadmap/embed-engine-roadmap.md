@@ -358,3 +358,20 @@ The long-term objective is to build a reusable platform for guided interactive p
 We are not building individual applications.
 
 We are building one reusable system from which applications emerge.
+
+---
+
+# Commercial Generations (CONIS)
+
+Official commercial generation status for the partner-facing Experience and Office Runtime.
+
+| Generation | Status | Meaning |
+| --- | --- | --- |
+| **GM-1** | **COMPLETE** | Commercial Runtime · Readiness 100/100 · Deployment Package · First pilot executed |
+| **GM-2** | **ACTIVE** | Pilot-finding-driven reliability · automation continuity · ops · document clarity · handoff polish |
+
+**GM-2 SSOT package:** [docs/platform/office/gm2-roadmap/](../platform/office/gm2-roadmap/README.md)
+
+**Implementation order:** CAP-GM2-01 → CAP-GM2-02 → CAP-GM2-03 → CAP-GM2-04 → CAP-GM2-05
+
+GM-2 scope is defined exclusively by first-pilot findings. CRM, AI advisor, and experimental UI redesign remain deferred.

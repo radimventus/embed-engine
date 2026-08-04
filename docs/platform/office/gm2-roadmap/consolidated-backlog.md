@@ -29,19 +29,19 @@ Duplicates removed — one row per outcome.
 
 ## Active backlog
 
-| ID | Title | Origin buckets | Pilot finding |
-| --- | --- | --- | --- |
-| GM2-C01 | Persist Conversation · Document · Task · Workflow sync | Ops · GM-1 debt | F-02 |
-| GM2-H01 | Single commercial Automation bus (Offer ↔ Office) | Ops · GM-1 debt | F-01 |
-| GM2-H02 | Production mail cutover kit (DNS/SPF/DKIM + MX smoke) | Ops | F-03 |
-| GM2-H03 | Payment confirmation SOP (+ optional bank pairing spike) | Business · Ops | F-04 |
-| GM2-M01 | Builder handoff contract from `waiting_builder` | Missing · Business | F-05 |
-| GM2-M02 | Demote/retire legacy OF-04 document create path | UX · GM-1 debt | F-06 |
-| GM2-M03 | Timeline clarity for mail fail vs document journal | UX · Unexpected | F-07 |
-| GM2-M04 | Proforma / order PDF visual fidelity | Business · Commercial | F-11 |
-| GM2-N01 | Partner-facing Office Task Czech labels | UX | F-08 |
-| GM2-N02 | Supervised resend document from Office Task | Ops · UX | Review |
-| GM2-N03 | Export pilot case audit pack | Ops | Review |
+| ID | Title | Origin buckets | Workflow | Product Area | Pilot finding |
+| --- | --- | --- | --- | --- | --- |
+| GM2-C01 | Persist Conversation · Document · Task · Workflow sync | Ops · GM-1 debt | Conversation · Office · Timeline · Documents | Shared Runtime / Persistence | F-02 |
+| GM2-H01 | Single commercial Automation bus (Offer ↔ Office) | Ops · GM-1 debt | Offer → Order | Business Automation | F-01 |
+| GM2-H02 | Production mail cutover kit (DNS/SPF/DKIM + MX smoke) | Ops | Mail · Deployment | Mail Session / Ops | F-03 |
+| GM2-H03 | Payment confirmation SOP (+ optional bank pairing spike) | Business · Ops | Payment | Commercial Ops | F-04 |
+| GM2-M01 | Builder handoff contract from `waiting_builder` | Missing · Business | Pilot Ready | Builder Handoff | F-05 |
+| GM2-M02 | Demote/retire legacy OF-04 document create path | UX · GM-1 debt | Documents · Office | Office Experience | F-06 |
+| GM2-M03 | Timeline clarity for mail fail vs document journal | UX · Unexpected | Timeline · Mail | Timeline / Conversation | F-07 |
+| GM2-M04 | Proforma / order PDF visual fidelity | Business · Commercial | Documents | Document Runtime | F-11 |
+| GM2-N01 | Partner-facing Office Task Czech labels | UX | Office Tasks | Office Experience | F-08 |
+| GM2-N02 | Supervised resend document from Office Task | Ops · UX | Office Tasks · Documents | Office Experience | Review |
+| GM2-N03 | Export pilot case audit pack | Ops | Timeline · Office | Ops / Reporting | Review |
 
 ## Explicitly deferred (not in GM-2 active backlog)
 
