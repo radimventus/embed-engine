@@ -912,6 +912,23 @@ body {
   font-size: 13px;
   font-weight: 700;
   color: var(--platform-navy, #001930);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.office-pilot-inbox__count {
+  display: inline-flex;
+  min-width: 20px;
+  height: 20px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--platform-cream-light, #f7f6f4);
+  color: var(--platform-section, #64748b);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 0 6px;
 }
 
 .office-pilot-inbox__list {
@@ -923,13 +940,104 @@ body {
   gap: 6px;
 }
 
-.office-pilot-inbox__item {
+.office-pilot-inbox__empty {
+  margin: 0;
   font-size: 13px;
-  line-height: 1.4;
   color: var(--platform-section, #64748b);
-  padding: 8px 10px;
+}
+
+.office-pilot-inbox__item {
+  width: 100%;
+  border: 1px solid transparent;
   border-radius: 8px;
   background: var(--platform-cream-light, #f7f6f4);
+  text-align: left;
+  padding: 10px 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--platform-navy, #001930);
+  font: inherit;
+}
+
+.office-pilot-inbox__item:hover,
+.office-pilot-inbox__item--active {
+  border-color: var(--platform-blue, #18428f);
+  background: #fff;
+}
+
+.office-pilot-inbox__item-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-inbox__sender {
+  color: var(--platform-navy, #001930);
+  font-size: 13px;
+}
+
+.office-pilot-inbox__subject {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.office-pilot-inbox__item-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 11px;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-inbox__assignment {
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fff;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.office-pilot-inbox__assignment-subject {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--platform-navy, #001930);
+}
+
+.office-pilot-inbox__assign-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-inbox__assign-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.office-pilot-inbox__assign-select {
+  flex: 1;
+  min-width: 0;
+  box-sizing: border-box;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--platform-navy, #001930);
+  background: #fff;
+}
+
+.office-pilot-inbox__timeline-slot {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--platform-section, #64748b);
 }
 
 .office-pilot-detail {

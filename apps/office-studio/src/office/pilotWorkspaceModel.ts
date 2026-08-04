@@ -133,37 +133,26 @@ export function buildCanveloIndicators(
   }));
 }
 
-export type PilotInboxSectionId = 'new' | 'waiting_reply' | 'unassigned';
+export type PilotInboxSectionId =
+  | 'new'
+  | 'waiting_reply'
+  | 'unassigned'
+  | 'archive';
 
 export type PilotInboxSection = {
   readonly id: PilotInboxSectionId;
   readonly label: string;
-  readonly placeholders: readonly string[];
 };
 
-/** Inbox UI sections only — no assignment / mail runtime. */
+/**
+ * @deprecated CAP-OP-03 — use PILOT_INBOX_CATEGORIES from pilotInboxModel.
+ * Kept as label map for shell tests / PT-05 compatibility.
+ */
 export const PILOT_INBOX_SECTIONS: readonly PilotInboxSection[] = Object.freeze([
-  {
-    id: 'new',
-    label: 'Nové',
-    placeholders: [
-      'Nová zpráva od partnera (UI placeholder)',
-      'Potvrzení zájmu o balíček (UI placeholder)',
-    ],
-  },
-  {
-    id: 'waiting_reply',
-    label: 'Čeká na odpověď',
-    placeholders: [
-      'Čekáme na schválení podmínek (UI placeholder)',
-      'Doplnění kontaktních údajů (UI placeholder)',
-    ],
-  },
-  {
-    id: 'unassigned',
-    label: 'Nepřiřazené',
-    placeholders: ['Nepřiřazený podnět z Commercial Experience (UI placeholder)'],
-  },
+  { id: 'new', label: 'Nové' },
+  { id: 'waiting_reply', label: 'Čeká na odpověď' },
+  { id: 'unassigned', label: 'Nepřiřazené' },
+  { id: 'archive', label: 'Archiv' },
 ]);
 
 export type PilotTimelinePlaceholder = {

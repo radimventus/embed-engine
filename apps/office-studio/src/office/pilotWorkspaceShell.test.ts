@@ -107,10 +107,10 @@ describe('CAP-OP-02 working terminal', () => {
     ));
   });
 
-  it('exposes Inbox sections Nové / Čeká na odpověď / Nepřiřazené', () => {
+  it('exposes Inbox sections Nové / Čeká na odpověď / Nepřiřazené / Archiv', () => {
     assert.deepEqual(
       PILOT_INBOX_SECTIONS.map((section) => section.label),
-      ['Nové', 'Čeká na odpověď', 'Nepřiřazené'],
+      ['Nové', 'Čeká na odpověď', 'Nepřiřazené', 'Archiv'],
     );
   });
 
@@ -146,9 +146,10 @@ describe('CAP-OP-02 working terminal', () => {
     assert.doesNotMatch(listing, /metric-card/i);
     assert.doesNotMatch(listing, /PlatformCard/);
 
-    assert.match(inbox, /pilot-inbox-section-\$\{section\.id\}/);
-    assert.match(inbox, /PILOT_INBOX_SECTIONS/);
+    assert.match(inbox, /data-inbox-runtime/);
+    assert.match(inbox, /PILOT_INBOX_CATEGORIES/);
     assert.match(inbox, /data-pilot-inbox-default/);
+    assert.match(inbox, /pilot-inbox-assignment/);
     assert.match(detail, /pilot-detail-firma/);
     assert.match(detail, /pilot-detail-kontakty/);
     assert.match(detail, /pilot-detail-balicek/);

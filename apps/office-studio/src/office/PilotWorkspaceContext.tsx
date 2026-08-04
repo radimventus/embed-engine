@@ -1,6 +1,6 @@
 /**
- * CAP-OP-01 / PT-04 — Shared active commercial-case context (in-memory).
- * No persistence — PT-05 can consume without refactoring the Provider API.
+ * CAP-OP-01 / CAP-OP-03 — Shared Pilot Workspace + Inbox Runtime context.
+ * In-memory only — no persistence.
  */
 
 import {
@@ -8,10 +8,28 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
 
+import {
+  getInboxMessage,
+  type PilotInboxMessage,
+  type PilotInboxMessageId,
+} from './pilotInboxModel';
+import {
+  createInitialInboxRuntimeState,
+  reducePilotInbox,
+  type PilotInboxRuntimeState,
+} from './pilotInboxRuntime';
+import {
+  buildInboxMessageAssignedEvent,
+  buildInboxMessageSelectedEvent,
+  buildInboxMessageUnassignedEvent,
+  notifyInboxTimeline,
+  type PilotInboxTimelineIntegration,
+} from './pilotInboxTimeline';
 import {
   createPlaceholderCase,
   getPilotWorkspaceCase,
@@ -30,6 +48,14 @@ export type PilotWorkspaceContextValue = {
   readonly selectCase: (caseId: PilotWorkspaceCaseId | null) => void;
   readonly setTerminalView: (view: PilotTerminalViewId) => void;
   readonly createCasePlaceholder: () => void;
+  readonly inbox: PilotInboxRuntimeState;
+  readonly selectedInboxMessage: PilotInboxMessage | null;
+  readonly selectInboxMessage: (messageId: PilotInboxMessageId | null) => void;
+  readonly assignInboxCase: (
+    messageId: PilotInboxMessageId,
+    caseId: PilotWorkspaceCaseId,
+  ) => void;
+  readonly unassignInboxCase: (messageId: PilotInboxMessageId) => void;
 };
 
 const PilotWorkspaceContext = createContext<PilotWorkspaceContextValue | null>(
@@ -40,15 +66,18 @@ type PilotWorkspaceProviderProps = {
   readonly children: ReactNode;
   readonly initialCaseId?: PilotWorkspaceCaseId | null;
   readonly initialTerminalView?: PilotTerminalViewId;
+  readonly timelineIntegrations?: PilotInboxTimelineIntegration;
 };
 
 /**
- * Provides active obchodní případ + terminal view for Pilot Workspace shell.
+ * Provides active obchodní případ, terminal view and Inbox Runtime.
+ * Selecting / assigning a message updates the shared case context.
  */
 export function PilotWorkspaceProvider({
   children,
   initialCaseId = PILOT_WORKSPACE_DEMO_CASES[0]?.id ?? null,
   initialTerminalView = PILOT_TERMINAL_DEFAULT_VIEW,
+  timelineIntegrations = {},
 }: PilotWorkspaceProviderProps) {
   const [activeCaseId, setActiveCaseId] = useState<PilotWorkspaceCaseId | null>(
     initialCaseId,
@@ -58,6 +87,11 @@ export function PilotWorkspaceProvider({
   const [extraCases, setExtraCases] = useState<readonly PilotWorkspaceCase[]>(
     [],
   );
+  const [inbox, setInbox] = useState<PilotInboxRuntimeState>(
+    createInitialInboxRuntimeState,
+  );
+  const inboxRef = useRef(inbox);
+  inboxRef.current = inbox;
 
   const cases = useMemo(
     () => [...PILOT_WORKSPACE_DEMO_CASES, ...extraCases],
@@ -72,6 +106,11 @@ export function PilotWorkspaceProvider({
     );
   }, [activeCaseId, cases]);
 
+  const selectedInboxMessage = useMemo(
+    () => getInboxMessage(inbox.messages, inbox.selectedMessageId),
+    [inbox.messages, inbox.selectedMessageId],
+  );
+
   const selectCase = useCallback((caseId: PilotWorkspaceCaseId | null) => {
     setActiveCaseId(caseId);
   }, []);
@@ -82,6 +121,79 @@ export function PilotWorkspaceProvider({
     setActiveCaseId(next.id);
   }, []);
 
+  const selectInboxMessage = useCallback(
+    (messageId: PilotInboxMessageId | null) => {
+      const next = reducePilotInbox(inboxRef.current, {
+        type: 'select-message',
+        messageId,
+      });
+      setInbox(next);
+      const message = getInboxMessage(next.messages, next.selectedMessageId);
+      if (message !== null) {
+        if (message.caseId !== null) {
+          setActiveCaseId(message.caseId);
+        }
+        void notifyInboxTimeline(
+          timelineIntegrations,
+          buildInboxMessageSelectedEvent({
+            messageId: message.id,
+            caseId: message.caseId,
+            category: message.category,
+            subject: message.subject,
+          }),
+        );
+      }
+    },
+    [timelineIntegrations],
+  );
+
+  const assignInboxCase = useCallback(
+    (messageId: PilotInboxMessageId, caseId: PilotWorkspaceCaseId) => {
+      const next = reducePilotInbox(inboxRef.current, {
+        type: 'assign-case',
+        messageId,
+        caseId,
+      });
+      setInbox(next);
+      setActiveCaseId(caseId);
+      const message = getInboxMessage(next.messages, messageId);
+      if (message !== null) {
+        void notifyInboxTimeline(
+          timelineIntegrations,
+          buildInboxMessageAssignedEvent({
+            messageId,
+            caseId,
+            category: message.category,
+            subject: message.subject,
+          }),
+        );
+      }
+    },
+    [timelineIntegrations],
+  );
+
+  const unassignInboxCase = useCallback(
+    (messageId: PilotInboxMessageId) => {
+      const next = reducePilotInbox(inboxRef.current, {
+        type: 'unassign-case',
+        messageId,
+      });
+      setInbox(next);
+      const message = getInboxMessage(next.messages, messageId);
+      if (message !== null) {
+        void notifyInboxTimeline(
+          timelineIntegrations,
+          buildInboxMessageUnassignedEvent({
+            messageId,
+            category: message.category,
+            subject: message.subject,
+          }),
+        );
+      }
+    },
+    [timelineIntegrations],
+  );
+
   const value = useMemo<PilotWorkspaceContextValue>(
     () => ({
       cases,
@@ -91,14 +203,24 @@ export function PilotWorkspaceProvider({
       selectCase,
       setTerminalView,
       createCasePlaceholder,
+      inbox,
+      selectedInboxMessage,
+      selectInboxMessage,
+      assignInboxCase,
+      unassignInboxCase,
     }),
     [
       activeCase,
       activeCaseId,
+      assignInboxCase,
       cases,
       createCasePlaceholder,
+      inbox,
       selectCase,
+      selectInboxMessage,
+      selectedInboxMessage,
       terminalView,
+      unassignInboxCase,
     ],
   );
 
