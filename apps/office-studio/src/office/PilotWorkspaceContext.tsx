@@ -13,6 +13,7 @@ import {
 } from 'react';
 
 import {
+  createPlaceholderCase,
   getPilotWorkspaceCase,
   PILOT_TERMINAL_DEFAULT_VIEW,
   PILOT_WORKSPACE_DEMO_CASES,
@@ -76,15 +77,7 @@ export function PilotWorkspaceProvider({
   }, []);
 
   const createCasePlaceholder = useCallback(() => {
-    const stamp = Date.now().toString(36);
-    const next: PilotWorkspaceCase = {
-      id: `case-new-${stamp}`,
-      label: `Nový obchodní případ · ${stamp.toUpperCase()}`,
-      partnerName: 'Nový partner',
-      packageName: '—',
-      status: 'offer',
-      updatedAt: new Date().toISOString(),
-    };
+    const next = createPlaceholderCase();
     setExtraCases((current) => [...current, next]);
     setActiveCaseId(next.id);
   }, []);

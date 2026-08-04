@@ -881,6 +881,278 @@ body {
   font-weight: 600;
 }
 
+/* CAP-OP-02 — Working Terminal views */
+.office-pilot-terminal__view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.office-pilot-terminal__view-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.office-pilot-inbox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.office-pilot-inbox__section {
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fff;
+  padding: 12px 14px;
+}
+
+.office-pilot-inbox__title {
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--platform-navy, #001930);
+}
+
+.office-pilot-inbox__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.office-pilot-inbox__item {
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--platform-section, #64748b);
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--platform-cream-light, #f7f6f4);
+}
+
+.office-pilot-detail {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.office-pilot-detail__block {
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fff;
+  padding: 12px 14px;
+}
+
+.office-pilot-detail__block dt {
+  margin: 0 0 6px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-detail__block dd {
+  margin: 0;
+  font-size: 14px;
+  color: var(--platform-navy, #001930);
+}
+
+.office-pilot-detail__block p {
+  margin: 0;
+}
+
+.office-pilot-detail__meta {
+  margin-top: 4px !important;
+  font-size: 12px !important;
+  color: var(--platform-section, #64748b) !important;
+}
+
+.office-pilot-detail__contacts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.office-pilot-detail__contacts li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+}
+
+.office-pilot-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.office-pilot-timeline__item {
+  display: grid;
+  grid-template-columns: 12px minmax(0, 1fr);
+  gap: 10px;
+  align-items: start;
+}
+
+.office-pilot-timeline__dot {
+  width: 10px;
+  height: 10px;
+  margin-top: 4px;
+  border-radius: 999px;
+  background: var(--platform-blue, #18428f);
+}
+
+.office-pilot-timeline__label {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--platform-navy, #001930);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.office-pilot-timeline__detail,
+.office-pilot-timeline__time {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-workflow-board {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.office-pilot-workflow-board__step {
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fff;
+  padding: 12px 14px;
+}
+
+.office-pilot-workflow-board__step h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--platform-navy, #001930);
+}
+
+.office-pilot-workflow-board__step p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-workflow-board__step--current {
+  border-color: var(--platform-blue, #18428f);
+  box-shadow: inset 0 0 0 1px rgba(24, 66, 143, 0.15);
+}
+
+.office-pilot-workflow-board__step--done {
+  border-color: #9db5a5;
+  background: #f5faf6;
+}
+
+.office-pilot-canvelo {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.office-pilot-canvelo__row {
+  width: 100%;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
+  background: #fff;
+  text-align: left;
+  padding: 12px 14px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: var(--platform-navy, #001930);
+}
+
+.office-pilot-canvelo__row:hover,
+.office-pilot-canvelo__row--active {
+  border-color: var(--platform-blue, #18428f);
+  background: #fff;
+}
+
+.office-pilot-canvelo__identity {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+}
+
+.office-pilot-canvelo__label {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.office-pilot-canvelo__status {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--platform-section, #64748b);
+}
+
+.office-pilot-canvelo__steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.office-pilot-canvelo__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.office-pilot-canvelo__marker {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #dbe1ea;
+}
+
+.office-pilot-canvelo__step--done .office-pilot-canvelo__marker {
+  background: #2f6b4f;
+}
+
+.office-pilot-canvelo__step--current .office-pilot-canvelo__marker {
+  background: var(--platform-blue, #18428f);
+}
+
+.office-pilot-canvelo__step-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--platform-section, #64748b);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
 @media (max-width: 1100px) {
   .office-dashboard__cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -899,6 +1171,12 @@ body {
   }
 
   .office-partner-detail__cards {
+    grid-template-columns: 1fr;
+  }
+
+  .office-pilot-detail,
+  .office-pilot-workflow-board,
+  .office-pilot-canvelo__steps {
     grid-template-columns: 1fr;
   }
 }

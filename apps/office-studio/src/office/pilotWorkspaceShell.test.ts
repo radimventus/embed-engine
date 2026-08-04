@@ -1,5 +1,5 @@
 /**
- * CAP-OP-01 / PT-04 — Pilot Workspace shell tests.
+ * CAP-OP-01 / CAP-OP-02 — Pilot Workspace + Working Terminal tests.
  */
 
 import assert from 'node:assert/strict';
@@ -9,9 +9,12 @@ import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import {
+  PILOT_CANVELO_STEPS,
+  PILOT_INBOX_SECTIONS,
   PILOT_TERMINAL_DEFAULT_VIEW,
   PILOT_TERMINAL_VIEWS,
   PILOT_WORKSPACE_DEMO_CASES,
+  buildCanveloIndicators,
   getPilotWorkspaceCase,
   isPilotTerminalViewId,
 } from './pilotWorkspaceModel';
@@ -73,7 +76,7 @@ describe('CAP-OP-01 pilot workspace shell wiring', () => {
     assert.match(terminal, /pilot-working-terminal/);
     assert.match(terminal, /pilot-terminal-tab-\$\{view\.id\}/);
     assert.match(terminal, /PILOT_TERMINAL_VIEWS/);
-    assert.match(terminal, /pilot-inbox-default/);
+    assert.match(terminal, /PilotTerminalInbox/);
     assert.match(workflow, /pilot-workflow-navigator/);
     assert.match(context, /PilotWorkspaceProvider/);
     assert.match(context, /usePilotWorkspaceContext/);
@@ -82,5 +85,80 @@ describe('CAP-OP-01 pilot workspace shell wiring', () => {
     assert.match(css, /minmax\(0, 25%\) minmax\(0, 50%\) minmax\(0, 25%\)/);
     assert.match(app, /PilotWorkspacePage/);
     assert.match(app, /pilot-workspace/);
+  });
+});
+
+describe('CAP-OP-02 working terminal', () => {
+  it('builds Canvelo indicators without progress-bar semantics', () => {
+    assert.deepEqual(
+      PILOT_CANVELO_STEPS.map((step) => step.id),
+      ['offer', 'order', 'proforma', 'payment', 'pilot_ready'],
+    );
+    const waiting = buildCanveloIndicators('waiting_payment');
+    assert.equal(waiting[0]?.state, 'done');
+    assert.equal(waiting[1]?.state, 'done');
+    assert.equal(waiting[2]?.state, 'current');
+    assert.equal(waiting[3]?.state, 'todo');
+    assert.equal(waiting[4]?.state, 'todo');
+
+    const ready = buildCanveloIndicators('pilot_ready');
+    assert.ok(ready.every((step, index) =>
+      index < 4 ? step.state === 'done' : step.state === 'current',
+    ));
+  });
+
+  it('exposes Inbox sections Nové / Čeká na odpověď / Nepřiřazené', () => {
+    assert.deepEqual(
+      PILOT_INBOX_SECTIONS.map((section) => section.label),
+      ['Nové', 'Čeká na odpověď', 'Nepřiřazené'],
+    );
+  });
+
+  it('wires five terminal views including Canvelo Výpis', () => {
+    const terminal = read('features/pilot-workspace/PilotWorkingTerminal.tsx');
+    const listing = read(
+      'features/pilot-workspace/terminal/PilotTerminalListing.tsx',
+    );
+    const inbox = read(
+      'features/pilot-workspace/terminal/PilotTerminalInbox.tsx',
+    );
+    const detail = read(
+      'features/pilot-workspace/terminal/PilotTerminalDetail.tsx',
+    );
+    const timeline = read(
+      'features/pilot-workspace/terminal/PilotTerminalTimeline.tsx',
+    );
+    const workflow = read(
+      'features/pilot-workspace/terminal/PilotTerminalWorkflow.tsx',
+    );
+    const css = read('index.css');
+
+    assert.match(terminal, /PilotTerminalListing/);
+    assert.match(terminal, /PilotTerminalDetail/);
+    assert.match(terminal, /PilotTerminalInbox/);
+    assert.match(terminal, /PilotTerminalTimeline/);
+    assert.match(terminal, /PilotTerminalWorkflow/);
+
+    assert.match(listing, /data-canvelo/);
+    assert.match(listing, /buildCanveloIndicators/);
+    assert.match(listing, /office-pilot-canvelo/);
+    assert.doesNotMatch(listing, /progress-bar/i);
+    assert.doesNotMatch(listing, /metric-card/i);
+    assert.doesNotMatch(listing, /PlatformCard/);
+
+    assert.match(inbox, /pilot-inbox-section-\$\{section\.id\}/);
+    assert.match(inbox, /PILOT_INBOX_SECTIONS/);
+    assert.match(inbox, /data-pilot-inbox-default/);
+    assert.match(detail, /pilot-detail-firma/);
+    assert.match(detail, /pilot-detail-kontakty/);
+    assert.match(detail, /pilot-detail-balicek/);
+    assert.match(detail, /pilot-detail-licence/);
+    assert.match(detail, /pilot-detail-stav/);
+    assert.match(detail, /pilot-detail-partner-environment/);
+    assert.match(timeline, /Event Catalog/);
+    assert.match(timeline, /pilot-timeline-list/);
+    assert.match(workflow, /pilot-workflow-board/);
+    assert.match(css, /office-pilot-canvelo__step/);
+    assert.doesNotMatch(css, /progress-bar/);
   });
 });

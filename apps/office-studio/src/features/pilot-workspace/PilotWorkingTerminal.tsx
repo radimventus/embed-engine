@@ -6,14 +6,25 @@ import {
   PILOT_WORKSPACE_CASE_STATUS_LABELS,
   type PilotTerminalViewId,
 } from '../../office/pilotWorkspaceModel';
+import { PilotTerminalDetail } from './terminal/PilotTerminalDetail';
+import { PilotTerminalInbox } from './terminal/PilotTerminalInbox';
+import { PilotTerminalListing } from './terminal/PilotTerminalListing';
+import { PilotTerminalTimeline } from './terminal/PilotTerminalTimeline';
+import { PilotTerminalWorkflow } from './terminal/PilotTerminalWorkflow';
 
 /**
- * CAP-OP-01 — Working Terminal with canonical views.
- * Default open view: Inbox. Tab order stays Výpis → Detail → Inbox → Timeline → Workflow.
+ * CAP-OP-02 — Working Terminal navigation + five working views.
+ * Default open view: Inbox. Canonical tab order unchanged.
  */
 export function PilotWorkingTerminal() {
-  const { activeCase, terminalView, setTerminalView } =
-    usePilotWorkspaceContext();
+  const {
+    cases,
+    activeCase,
+    activeCaseId,
+    terminalView,
+    setTerminalView,
+    selectCase,
+  } = usePilotWorkspaceContext();
 
   return (
     <PlatformCard title="Working Terminal" className="office-pilot-ws__terminal">
@@ -57,11 +68,20 @@ export function PilotWorkingTerminal() {
           aria-labelledby={`pilot-tab-${terminalView}`}
           data-testid={`pilot-terminal-panel-${terminalView}`}
         >
-          <TerminalPanel view={terminalView} />
+          <TerminalPanel
+            view={terminalView}
+            cases={cases}
+            activeCase={activeCase}
+            activeCaseId={activeCaseId}
+            onSelectCase={selectCase}
+          />
         </div>
 
         {activeCase !== null ? (
-          <p className="office-pilot-ws__context-chip" data-testid="pilot-active-case">
+          <p
+            className="office-pilot-ws__context-chip"
+            data-testid="pilot-active-case"
+          >
             Kontext · {activeCase.label} ·{' '}
             {PILOT_WORKSPACE_CASE_STATUS_LABELS[activeCase.status]}
           </p>
@@ -76,64 +96,47 @@ export function PilotWorkingTerminal() {
   );
 }
 
-function TerminalPanel({ view }: { readonly view: PilotTerminalViewId }) {
+function TerminalPanel({
+  view,
+  cases,
+  activeCase,
+  activeCaseId,
+  onSelectCase,
+}: {
+  readonly view: PilotTerminalViewId;
+  readonly cases: ReturnType<
+    typeof usePilotWorkspaceContext
+  >['cases'];
+  readonly activeCase: ReturnType<
+    typeof usePilotWorkspaceContext
+  >['activeCase'];
+  readonly activeCaseId: ReturnType<
+    typeof usePilotWorkspaceContext
+  >['activeCaseId'];
+  readonly onSelectCase: ReturnType<
+    typeof usePilotWorkspaceContext
+  >['selectCase'];
+}) {
   switch (view) {
     case 'listing':
       return (
-        <ShellPanel
-          title="Výpis"
-          body="Kanonický výpis obchodního případu. Runtime přijde v PT-05."
+        <PilotTerminalListing
+          cases={cases}
+          activeCaseId={activeCaseId}
+          onSelectCase={(caseId) => onSelectCase(caseId)}
         />
       );
     case 'detail':
-      return (
-        <ShellPanel
-          title="Detail"
-          body="Detail obchodního případu. Shell bez business logiky."
-        />
-      );
+      return <PilotTerminalDetail activeCase={activeCase} />;
     case 'inbox':
-      return (
-        <ShellPanel
-          title="Inbox"
-          body="Výchozí pohled Working Terminalu. Inbox Runtime je mimo scope PT-04."
-          testId="pilot-inbox-default"
-        />
-      );
+      return <PilotTerminalInbox />;
     case 'timeline':
-      return (
-        <ShellPanel
-          title="Timeline"
-          body="Timeline shell — bez Timeline Runtime."
-        />
-      );
+      return <PilotTerminalTimeline activeCase={activeCase} />;
     case 'workflow':
-      return (
-        <ShellPanel
-          title="Workflow"
-          body="Workflow pohled v terminálu — pravý panel zůstává samostatný navigator."
-        />
-      );
+      return <PilotTerminalWorkflow activeCase={activeCase} />;
     default: {
       const _exhaustive: never = view;
       return _exhaustive;
     }
   }
-}
-
-function ShellPanel({
-  title,
-  body,
-  testId,
-}: {
-  readonly title: string;
-  readonly body: string;
-  readonly testId?: string;
-}) {
-  return (
-    <div className="office-pilot-ws__panel" data-testid={testId}>
-      <h3 className="office-pilot-ws__panel-title">{title}</h3>
-      <p className="office-pilot-ws__panel-body">{body}</p>
-    </div>
-  );
 }
