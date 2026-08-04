@@ -1,10 +1,17 @@
 import { usePilotWorkspaceContext } from '../../office/PilotWorkspaceContext';
 
+type PilotProjectSelectorProps = {
+  /** R-001 — Enter Working Terminal when a project is activated. */
+  readonly onEnterWorkSurface?: () => void;
+};
+
 /**
- * CAP-OP-10A — Global Project Context (left-rail PROJEKTY block).
- * Selecting a project switches Working Terminal + Workflow + Conversation.
+ * CAP-OP-10A / R-001 — Global Project Context (left-rail PROJEKTY block).
+ * Selecting a project switches the full Office working environment.
  */
-export function PilotProjectSelector() {
+export function PilotProjectSelector({
+  onEnterWorkSurface,
+}: PilotProjectSelectorProps) {
   const {
     cases,
     activeCaseId,
@@ -32,6 +39,9 @@ export function PilotProjectSelector() {
           onChange={(event) => {
             const next = event.target.value;
             selectCase(next.length > 0 ? next : null);
+            if (next.length > 0) {
+              onEnterWorkSurface?.();
+            }
           }}
         >
           <option value="">— vyberte projekt —</option>
@@ -48,7 +58,10 @@ export function PilotProjectSelector() {
           data-testid="pilot-project-add"
           aria-label="Přidat projekt"
           title="Přidat projekt"
-          onClick={createCasePlaceholder}
+          onClick={() => {
+            createCasePlaceholder();
+            onEnterWorkSurface?.();
+          }}
         >
           (+)
         </button>

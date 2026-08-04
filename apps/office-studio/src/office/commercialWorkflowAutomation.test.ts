@@ -50,7 +50,7 @@ describe('PT-16 commercial workflow automation', () => {
       result.timelineKinds.includes('email.sent') ||
         result.timelineKinds.includes('document.sent'),
     );
-    assert.equal(result.workflowActiveStepId, 'qr_payment');
+    assert.equal(result.workflowActiveStepId, 'payment');
     assert.ok(result.host.journal.officeTasks.length >= 2);
     assert.ok(result.host.journal.documents.length >= 5);
     assert.ok(result.host.journal.mailIntents.length >= 1);
@@ -103,7 +103,10 @@ describe('PT-16 commercial workflow automation', () => {
       },
     };
     const steps = buildWorkflowSteps(resolveCaseWithWorkflowSync(base));
-    assert.equal(steps.find((step) => step.state === 'active')?.id, 'builder');
+    assert.equal(
+      steps.find((step) => step.state === 'active')?.id,
+      'office_handoff',
+    );
 
     const timeline = projectTimelineFromConversation(projectId);
     assert.ok(timeline.some((event) => event.kind === 'workflow.synced'));

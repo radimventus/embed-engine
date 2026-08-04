@@ -82,6 +82,7 @@ import {
   type PilotWorkspaceCaseId,
 } from './pilotWorkspaceModel';
 import { resolveCaseWithWorkflowSync } from './commercialWorkflowSync';
+import { planPilotProjectActivation } from './pilotProjectActivation';
 
 export type PilotWorkspaceContextValue = {
   readonly cases: readonly PilotWorkspaceCase[];
@@ -214,6 +215,8 @@ export function PilotWorkspaceProvider({
           ? null
           : (cases.find((item) => item.id === activeCaseId) ??
             getPilotWorkspaceCase(activeCaseId));
+      const projected =
+        nextCase === null ? null : resolveCaseWithWorkflowSync(nextCase);
       setTimeline((current) =>
         reducePilotTimeline(current, {
           type: 'load-case',
@@ -224,14 +227,29 @@ export function PilotWorkspaceProvider({
       setWorkflow((current) =>
         reducePilotWorkflow(current, {
           type: 'project-case',
-          activeCase: nextCase,
+          activeCase: projected,
           events,
           projector: workflowIntegrations.projector,
         }),
       );
-      setInbox((current) =>
-        reducePilotInbox(current, { type: 'refresh-from-conversation' }),
-      );
+      setInbox((current) => {
+        const refreshed = reducePilotInbox(current, {
+          type: 'refresh-from-conversation',
+        });
+        const selectedStillVisible =
+          refreshed.selectedMessageId !== null &&
+          refreshed.messages.some(
+            (message) =>
+              message.id === refreshed.selectedMessageId &&
+              (activeCaseId === null || message.caseId === activeCaseId),
+          );
+        return {
+          ...refreshed,
+          selectedMessageId: selectedStillVisible
+            ? refreshed.selectedMessageId
+            : null,
+        };
+      });
       setConversation((current) =>
         reducePilotConversation(current, {
           type: 'load-for-case',
@@ -244,15 +262,51 @@ export function PilotWorkspaceProvider({
     };
   }, [activeCaseId, cases, workflowIntegrations.projector]);
 
-  const selectCase = useCallback((caseId: PilotWorkspaceCaseId | null) => {
-    setActiveCaseId(caseId);
-  }, []);
+  /**
+   * R-001 — Select Project activates the full working environment synchronously.
+   * Working Terminal · Workflow · Conversation · Inbox · Timeline · Detail.
+   */
+  const selectCase = useCallback(
+    (caseId: PilotWorkspaceCaseId | null) => {
+      const plan = planPilotProjectActivation({
+        caseId,
+        cases,
+        lookup: getPilotWorkspaceCase,
+        inbox: inboxRef.current,
+      });
+      setActiveCaseId(plan.activeCaseId);
+      setTerminalView(plan.terminalView);
+      setWorkflow(plan.workflow);
+      setConversation(plan.conversation);
+      setTimeline(plan.timeline);
+      setInbox((current) => ({
+        ...reducePilotInbox(current, { type: 'refresh-from-conversation' }),
+        selectedMessageId: plan.inboxSelectedMessageId,
+      }));
+    },
+    [cases],
+  );
 
   const createCasePlaceholder = useCallback(() => {
     const next = createPlaceholderCase();
     setExtraCases((current) => [...current, next]);
-    setActiveCaseId(next.id);
-  }, []);
+    const plan = planPilotProjectActivation({
+      caseId: next.id,
+      cases: [...PILOT_WORKSPACE_DEMO_CASES, ...extraCases, next],
+      lookup: (id) =>
+        id === next.id ? next : getPilotWorkspaceCase(id),
+      inbox: inboxRef.current,
+    });
+    setActiveCaseId(plan.activeCaseId);
+    setTerminalView(plan.terminalView);
+    setWorkflow(plan.workflow);
+    setConversation(plan.conversation);
+    setTimeline(plan.timeline);
+    setInbox((current) => ({
+      ...reducePilotInbox(current, { type: 'refresh-from-conversation' }),
+      selectedMessageId: plan.inboxSelectedMessageId,
+    }));
+  }, [extraCases]);
 
   const selectInboxMessage = useCallback(
     (messageId: PilotInboxMessageId | null) => {

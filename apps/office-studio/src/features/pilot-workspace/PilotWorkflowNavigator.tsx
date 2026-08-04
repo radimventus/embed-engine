@@ -2,20 +2,22 @@ import { usePilotWorkspaceContext } from '../../office/PilotWorkspaceContext';
 import type { PilotWorkflowStep } from '../../office/pilotWorkflowModel';
 
 /**
- * CAP-OP-06 / CAP-OP-10B — Workflow navigator (right panel).
- * Steps come from data catalog (`PILOT_WORKFLOW_STEP_DEFS`) — workshop-editable.
+ * PT-CJ-OS-01 — Commercial Journey navigator (right panel).
+ * Steps = partner-facing production path. Click → Working Terminal screen.
  */
 export function PilotWorkflowNavigator() {
-  const { workflow, navigateWorkflowStep } = usePilotWorkspaceContext();
+  const { workflow, navigateWorkflowStep, activeCaseId } =
+    usePilotWorkspaceContext();
 
   return (
     <div
       className="office-pilot-ws__workflow"
       data-testid="pilot-workflow-navigator"
       data-workflow-runtime="true"
-      data-workflow-catalog="defs"
+      data-workflow-catalog="commercial-journey"
+      data-active-project={activeCaseId ?? ''}
     >
-      <h3 className="office-pilot-ws__panel-title">Workflow</h3>
+      <h3 className="office-pilot-ws__panel-title">Commercial Journey</h3>
       <ol
         className="office-pilot-workflow-nav"
         data-testid="pilot-workflow-steps"

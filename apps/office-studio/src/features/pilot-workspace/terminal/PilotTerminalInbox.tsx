@@ -6,18 +6,20 @@ import {
   formatInboxReceivedAt,
   messagesInCategory,
   PILOT_INBOX_CATEGORIES,
-  PILOT_INBOX_MESSAGE_STATUS_LABELS,
   type PilotInboxMessage,
+  PILOT_INBOX_MESSAGE_STATUS_LABELS,
 } from '../../../office/pilotInboxModel';
+import { inboxMessagesForActiveProject } from '../../../office/pilotProjectActivation';
 import { PilotMailComposer } from './PilotMailComposer';
 
 /**
- * CAP-OP-03 / CAP-OP-10 / PT-14 — Inbox + Mail Composer.
- * Conversation is SSOT. Compose uses shared Mail Session (no SMTP in UI).
+ * CAP-OP-03 / CAP-OP-10 / PT-14 / R-001 — Inbox + Mail Composer.
+ * Conversation is SSOT. Active project scopes Inbox to that case.
  */
 export function PilotTerminalInbox() {
   const {
     cases,
+    activeCaseId,
     inbox,
     selectedInboxMessage,
     selectInboxMessage,
@@ -28,6 +30,10 @@ export function PilotTerminalInbox() {
   } = usePilotWorkspaceContext();
 
   const activeConversation = conversation.activeConversation;
+  const scopedMessages = inboxMessagesForActiveProject(
+    inbox.messages,
+    activeCaseId,
+  );
 
   return (
     <div
@@ -36,10 +42,21 @@ export function PilotTerminalInbox() {
       data-pilot-inbox-default="true"
       data-inbox-runtime="conversation"
       data-conversation-runtime="true"
+      data-inbox-project-scope={activeCaseId ?? 'mailbox'}
       data-mail-session={mailSessionActive ? 'active' : 'inactive'}
     >
       <header className="office-pilot-terminal__view-head">
         <h3 className="office-pilot-ws__panel-title">Inbox</h3>
+        {activeCaseId !== null ? (
+          <p
+            className="office-pilot-ws__panel-body"
+            data-testid="pilot-inbox-project-scope"
+          >
+            Projekt ·{' '}
+            {cases.find((item) => item.id === activeCaseId)?.label ??
+              activeCaseId}
+          </p>
+        ) : null}
       </header>
 
       <section
@@ -94,7 +111,7 @@ export function PilotTerminalInbox() {
 
       <div className="office-pilot-inbox" data-testid="pilot-inbox-sections">
         {PILOT_INBOX_CATEGORIES.map((category) => {
-          const messages = messagesInCategory(inbox.messages, category.id);
+          const messages = messagesInCategory(scopedMessages, category.id);
           return (
             <section
               key={category.id}

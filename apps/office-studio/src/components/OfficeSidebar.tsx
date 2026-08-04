@@ -7,7 +7,7 @@ type OfficeSidebarProps = {
 };
 
 /**
- * OF-01 / CAP-OP-10A — Left rail: global PROJEKTY block + IA navigation.
+ * OF-01 / CAP-OP-10A / R-001 — Left rail: global PROJEKTY block + IA navigation.
  */
 export function OfficeSidebar({
   activeRouteId,
@@ -28,7 +28,7 @@ export function OfficeSidebar({
         CONIS Office
       </button>
 
-      <PilotProjectSelector />
+      <PilotProjectSelector onEnterWorkSurface={() => onNavigate('work')} />
 
       <nav className="office-sidebar__nav" aria-label="Office menu">
         {OFFICE_NAV_ITEMS.map((item) => {

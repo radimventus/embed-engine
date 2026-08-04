@@ -40,8 +40,9 @@ export type PilotWorkspaceCase = {
   };
 };
 
-/** Canonical Working Terminal views — order is fixed; Inbox is default. */
+/** Working Terminal — Commercial Journey production preview (PT-CJ-OS-01). */
 export type PilotTerminalViewId =
+  | 'journey'
   | 'listing'
   | 'detail'
   | 'inbox'
@@ -53,7 +54,9 @@ export type PilotTerminalView = {
   readonly label: string;
 };
 
+/** Legacy ops tabs kept for tooling; journey mode is the production default. */
 export const PILOT_TERMINAL_VIEWS: readonly PilotTerminalView[] = Object.freeze([
+  { id: 'journey', label: 'Commercial Journey' },
   { id: 'listing', label: 'Výpis' },
   { id: 'detail', label: 'Detail' },
   { id: 'inbox', label: 'Inbox' },
@@ -61,7 +64,7 @@ export const PILOT_TERMINAL_VIEWS: readonly PilotTerminalView[] = Object.freeze(
   { id: 'workflow', label: 'Workflow' },
 ]);
 
-export const PILOT_TERMINAL_DEFAULT_VIEW: PilotTerminalViewId = 'inbox';
+export const PILOT_TERMINAL_DEFAULT_VIEW: PilotTerminalViewId = 'journey';
 
 export const PILOT_WORKSPACE_CASE_STATUS_LABELS: Readonly<
   Record<PilotWorkspaceCaseStatus, string>

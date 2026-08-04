@@ -28,16 +28,14 @@ function read(relative: string): string {
 }
 
 describe('CAP-OP-01 pilot workspace model', () => {
-  it('keeps canonical terminal order with Inbox as default', () => {
+  it('keeps Commercial Journey as default Working Terminal mode', () => {
     assert.deepEqual(
       PILOT_TERMINAL_VIEWS.map((view) => view.id),
-      ['listing', 'detail', 'inbox', 'timeline', 'workflow'],
+      ['journey', 'listing', 'detail', 'inbox', 'timeline', 'workflow'],
     );
-    assert.deepEqual(
-      PILOT_TERMINAL_VIEWS.map((view) => view.label),
-      ['Výpis', 'Detail', 'Inbox', 'Timeline', 'Workflow'],
-    );
-    assert.equal(PILOT_TERMINAL_DEFAULT_VIEW, 'inbox');
+    assert.equal(PILOT_TERMINAL_VIEWS[0]?.label, 'Commercial Journey');
+    assert.equal(PILOT_TERMINAL_DEFAULT_VIEW, 'journey');
+    assert.equal(isPilotTerminalViewId('journey'), true);
     assert.equal(isPilotTerminalViewId('inbox'), true);
     assert.equal(isPilotTerminalViewId('canvelo'), false);
   });
@@ -73,11 +71,14 @@ describe('CAP-OP-10A global project navigation wiring', () => {
     assert.doesNotMatch(sidebar, /Pilot Workspace/);
 
     assert.match(sidebar, /PilotProjectSelector/);
+    assert.match(sidebar, /onEnterWorkSurface/);
+    assert.match(sidebar, /onNavigate\('work'\)/);
     assert.match(selector, /Projekty/);
     assert.match(selector, /office-sidebar__projects/);
     assert.match(selector, /Select Project/);
     assert.match(selector, /pilot-project-add/);
     assert.match(selector, /data-office-project-context="global"/);
+    assert.match(selector, /onEnterWorkSurface/);
     assert.doesNotMatch(selector, /Obchodní případ/);
 
     assert.match(surface, /PilotWorkingTerminal/);
@@ -89,6 +90,7 @@ describe('CAP-OP-10A global project navigation wiring', () => {
     assert.match(workflow, /pilot-workflow-navigator/);
     assert.match(context, /PilotWorkspaceProvider/);
     assert.match(context, /usePilotWorkspaceContext/);
+    assert.match(context, /planPilotProjectActivation/);
 
     assert.match(css, /office-work-surface/);
     assert.match(css, /minmax\(0, 1fr\) minmax\(240px, 28%\)/);
@@ -160,18 +162,18 @@ describe('CAP-OP-02 working terminal', () => {
     );
   });
 
-  it('wires five terminal views including working-map Výpis', () => {
+  it('wires Working Terminal as Commercial Journey production preview', () => {
     const terminal = read('features/pilot-workspace/PilotWorkingTerminal.tsx');
     const listing = read(
       'features/pilot-workspace/terminal/PilotTerminalListing.tsx',
     );
     const listingCss = read('index.css');
 
-    assert.match(terminal, /PilotTerminalListing/);
-    assert.match(terminal, /PilotTerminalDetail/);
-    assert.match(terminal, /PilotTerminalInbox/);
-    assert.match(terminal, /PilotTerminalTimeline/);
-    assert.match(terminal, /PilotTerminalWorkflow/);
+    assert.match(terminal, /CommercialJourneyScreen/);
+    assert.match(terminal, /data-terminal-view="journey"/);
+    assert.match(terminal, /data-office-mode="commercial-journey"/);
+    assert.doesNotMatch(terminal, /PilotTerminalListing/);
+    assert.doesNotMatch(terminal, /PilotTerminalDetail/);
     assert.doesNotMatch(terminal, /pilot-active-case/);
     assert.doesNotMatch(terminal, /PlatformCard/);
     assert.doesNotMatch(terminal, /Cases panel/);
@@ -192,6 +194,7 @@ describe('CAP-OP-02 working terminal', () => {
 
     assert.match(listingCss, /office-pilot-canvelo__step/);
     assert.match(listingCss, /office-pilot-canvelo__phase-filter/);
+    assert.match(listingCss, /office-cj-screen/);
     assert.doesNotMatch(listingCss, /progress-bar/);
 
     const inbox = read('features/pilot-workspace/terminal/PilotTerminalInbox.tsx');
@@ -205,6 +208,7 @@ describe('CAP-OP-02 working terminal', () => {
     assert.doesNotMatch(inbox, /bez IMAP/);
     assert.doesNotMatch(timeline, /Event Catalog/);
     assert.doesNotMatch(timeline, /catalog-slot/);
+    assert.match(workflowNav, /Commercial Journey/);
     assert.doesNotMatch(workflowNav, /contextHint|PlatformCard|shell-note/);
   });
 });

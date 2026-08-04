@@ -1032,6 +1032,324 @@ body {
   color: var(--platform-section, #64748b);
 }
 
+/* PT-CJ-OS-01 — Commercial Journey production preview in Working Terminal */
+.office-pilot-ws__panel--journey {
+  background: #f7f8fa;
+}
+
+.office-cj-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 8px 4px 24px;
+}
+
+.office-cj-screen--welcome {
+  align-items: stretch;
+  max-width: 560px;
+  padding-top: 48px;
+  text-align: center;
+}
+
+.office-cj-screen__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--platform-section, #64748b);
+}
+
+.office-cj-screen__title {
+  margin: 0;
+  font-size: clamp(1.6rem, 2.4vw, 2rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--platform-ink, #0f172a);
+}
+
+.office-cj-screen__lead {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.55;
+  color: #334155;
+}
+
+.office-cj-screen__note {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--platform-section, #64748b);
+}
+
+.office-cj-screen__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.office-cj-screen__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 28px;
+  border: none;
+  border-radius: 10px;
+  background: var(--platform-blue, #18428f);
+  color: #fff;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: default;
+}
+
+.office-cj-screen__cta:disabled {
+  opacity: 1;
+}
+
+.office-cj-screen__secondary {
+  margin: 0;
+  border: none;
+  background: transparent;
+  color: var(--platform-section, #64748b);
+  font: inherit;
+  font-size: 0.9rem;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: default;
+}
+
+.office-cj-screen__packages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+}
+
+.office-cj-packages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.office-cj-package {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+}
+
+.office-cj-package--recommended {
+  border-color: var(--platform-blue, #18428f);
+  box-shadow: inset 0 0 0 1px var(--platform-blue, #18428f);
+}
+
+.office-cj-package strong {
+  font-size: 1.05rem;
+  color: var(--platform-ink, #0f172a);
+}
+
+.office-cj-package span:nth-of-type(1) {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--platform-blue, #18428f);
+}
+
+.office-cj-package span:nth-of-type(2) {
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.office-cj-screen__meta {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--platform-section, #64748b);
+}
+
+.office-cj-summary {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 16px 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+}
+
+.office-cj-summary > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.office-cj-summary dt {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--platform-section, #64748b);
+}
+
+.office-cj-summary dd {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--platform-ink, #0f172a);
+  text-align: right;
+}
+
+.office-cj-payment-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+}
+
+.office-cj-payment-card > p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.office-cj-package__name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--platform-ink, #0f172a);
+}
+
+.office-cj-package__price {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--platform-blue, #18428f);
+}
+
+.office-cj-package__period {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--platform-section, #64748b);
+}
+
+.office-cj-package__blurb {
+  margin: 0;
+  flex: 1;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: #475569;
+}
+
+.office-cj-package__pick {
+  margin-top: 4px;
+  min-height: 40px;
+  padding: 0 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  color: var(--platform-ink, #0f172a);
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: default;
+}
+
+.office-cj-order,
+.office-cj-payment,
+.office-cj-confirmed,
+.office-cj-handoff {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+  text-align: left;
+}
+
+.office-cj-order__row,
+.office-cj-payment__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.office-cj-order__row span:last-child,
+.office-cj-payment__row span:last-child {
+  font-weight: 600;
+  color: var(--platform-ink, #0f172a);
+  text-align: right;
+}
+
+.office-cj-order__total {
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid #e2e8f0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.office-cj-payment__hint,
+.office-cj-confirmed__note,
+.office-cj-handoff__note {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--platform-section, #64748b);
+}
+
+.office-cj-confirmed__check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #e8f5ee;
+  color: #2f6b4f;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.office-pilot-ws__terminal--journey {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.office-pilot-ws__journey-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.office-pilot-ws__terminal-body--journey {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
 .office-pilot-workflow-board__step {
   border: 1px solid #e3e3e3;
   border-radius: 10px;

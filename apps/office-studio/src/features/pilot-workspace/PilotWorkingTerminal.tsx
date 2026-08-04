@@ -1,120 +1,70 @@
 import { usePilotWorkspaceContext } from '../../office/PilotWorkspaceContext';
 import {
-  PILOT_TERMINAL_VIEWS,
-  type PilotTerminalViewId,
-} from '../../office/pilotWorkspaceModel';
-import { PilotTerminalDetail } from './terminal/PilotTerminalDetail';
-import { PilotTerminalInbox } from './terminal/PilotTerminalInbox';
-import { PilotTerminalListing } from './terminal/PilotTerminalListing';
-import { PilotTerminalTimeline } from './terminal/PilotTerminalTimeline';
-import { PilotTerminalWorkflow } from './terminal/PilotTerminalWorkflow';
+  COMMERCIAL_JOURNEY_DEFAULT_STEP,
+  isCommercialJourneyStepId,
+} from '../../office/commercialJourneyModel';
+import { CommercialJourneyScreen } from './terminal/CommercialJourneyScreen';
 
 /**
- * CAP-OP-02 / CAP-OP-10B — Working Terminal over one active commercial case.
- * Default open view: Inbox. Canonical tab order unchanged.
+ * PT-CJ-OS-01 — Working Terminal = production Commercial Journey preview.
+ * Synced to Workflow step + active project. Not administration.
  */
 export function PilotWorkingTerminal() {
-  const {
-    cases,
-    activeCase,
-    activeCaseId,
-    terminalView,
-    setTerminalView,
-    selectCase,
-  } = usePilotWorkspaceContext();
+  const { activeCase, activeCaseId, workflow } = usePilotWorkspaceContext();
+
+  const stepId =
+    workflow.highlightedStepId !== null &&
+    isCommercialJourneyStepId(workflow.highlightedStepId)
+      ? workflow.highlightedStepId
+      : (workflow.projectedActiveStepId ?? COMMERCIAL_JOURNEY_DEFAULT_STEP);
 
   return (
     <div
-      className="office-pilot-ws__terminal"
+      className="office-pilot-ws__terminal office-pilot-ws__terminal--journey"
       data-testid="pilot-working-terminal"
-      data-terminal-view={terminalView}
+      data-terminal-view="journey"
+      data-cj-step={stepId}
+      data-active-project={activeCaseId ?? ''}
+      data-project-activated={activeCaseId !== null ? 'true' : 'false'}
+      data-office-mode="commercial-journey"
     >
-      <div
-        className="office-pilot-ws__tabs"
-        role="tablist"
-        aria-label="Working Terminal"
-        data-testid="pilot-terminal-tabs"
-      >
-        {PILOT_TERMINAL_VIEWS.map((view) => {
-          const selected = view.id === terminalView;
-          return (
-            <button
-              key={view.id}
-              type="button"
-              role="tab"
-              id={`pilot-tab-${view.id}`}
-              aria-selected={selected}
-              data-testid={`pilot-terminal-tab-${view.id}`}
-              className={
-                selected
-                  ? 'office-pilot-ws__tab office-pilot-ws__tab--active'
-                  : 'office-pilot-ws__tab'
-              }
-              onClick={() => setTerminalView(view.id)}
-            >
-              {view.label}
-            </button>
-          );
-        })}
-      </div>
+      <header className="office-pilot-ws__journey-head">
+        <h3 className="office-pilot-ws__panel-title">Working Terminal</h3>
+        <p
+          className="office-pilot-ws__panel-body"
+          data-testid="cj-terminal-context"
+        >
+          {activeCase === null
+            ? 'Vyberte projekt — zobrazí se Commercial Journey partnera.'
+            : `${activeCase.label} · ${stepLabel(stepId)}`}
+        </p>
+      </header>
 
       <div
-        className="office-pilot-ws__terminal-body"
-        role="tabpanel"
-        aria-labelledby={`pilot-tab-${terminalView}`}
-        data-testid={`pilot-terminal-panel-${terminalView}`}
+        className="office-pilot-ws__terminal-body office-pilot-ws__terminal-body--journey"
+        data-testid="pilot-terminal-panel-journey"
       >
-        <TerminalPanel
-          view={terminalView}
-          cases={cases}
-          activeCase={activeCase}
-          activeCaseId={activeCaseId}
-          onSelectCase={selectCase}
-        />
+        <CommercialJourneyScreen stepId={stepId} activeCase={activeCase} />
       </div>
     </div>
   );
 }
 
-function TerminalPanel({
-  view,
-  cases,
-  activeCase,
-  activeCaseId,
-  onSelectCase,
-}: {
-  readonly view: PilotTerminalViewId;
-  readonly cases: ReturnType<typeof usePilotWorkspaceContext>['cases'];
-  readonly activeCase: ReturnType<
-    typeof usePilotWorkspaceContext
-  >['activeCase'];
-  readonly activeCaseId: ReturnType<
-    typeof usePilotWorkspaceContext
-  >['activeCaseId'];
-  readonly onSelectCase: ReturnType<
-    typeof usePilotWorkspaceContext
-  >['selectCase'];
-}) {
-  switch (view) {
-    case 'listing':
-      return (
-        <PilotTerminalListing
-          cases={cases}
-          activeCaseId={activeCaseId}
-          onSelectCase={(caseId) => onSelectCase(caseId)}
-        />
-      );
-    case 'detail':
-      return <PilotTerminalDetail activeCase={activeCase} />;
-    case 'inbox':
-      return <PilotTerminalInbox />;
-    case 'timeline':
-      return <PilotTerminalTimeline />;
-    case 'workflow':
-      return <PilotTerminalWorkflow />;
-    default: {
-      const _exhaustive: never = view;
-      return _exhaustive;
-    }
+function stepLabel(stepId: string): string {
+  switch (stepId) {
+    case 'welcome':
+      return 'Welcome';
+    case 'pilot_program':
+      return 'Pilot Program';
+    case 'order_confirmation':
+      return 'Order Confirmation';
+    case 'payment':
+      return 'Payment';
+    case 'pilot_confirmed':
+      return 'Pilot Confirmed';
+    case 'office_handoff':
+      return 'Office Handoff';
+    default:
+      return stepId;
   }
 }
