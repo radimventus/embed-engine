@@ -1,7 +1,7 @@
 # PT-CJ-05 — Commercial Journey Finalization (validation)
 
-**Status:** Build PASS · Visual/UX self-check PASS · Ready for Product Review · **Commit:** hold until PASS  
-**Depends on:** PT-CJ-04 Payment (`7c26352`) + completion polish (working tree)
+**Status:** Closed · Commit `7b00d9c`  
+**Depends on:** PT-CJ-04 Payment (`7c26352`) + completion polish
 
 ## Path verified
 

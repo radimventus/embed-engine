@@ -47,7 +47,7 @@ describe('PT-CJ-05 Commercial Journey Finalization', () => {
     assert.match(inventory, /No Office Handoff/);
     assert.match(roadmap, /Commercial Journey Roadmap v1\.0/);
     assert.match(officeRoadmap, /8\.1 Commercial Journey v1\.0/);
-    assert.match(validation, /Ready for Product Review/);
+    assert.match(validation, /Closed · Commit `7b00d9c`/);
     assert.equal(
       existsSync(join(repoRoot, 'docs/ssot/PLATFORM ROADMAP.docx')),
       true,

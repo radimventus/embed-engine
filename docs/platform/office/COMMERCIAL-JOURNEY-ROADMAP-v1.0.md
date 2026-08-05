@@ -21,7 +21,12 @@ Vítejte → Pilotní program → Dokončit objednávku → Platba → CONIS Stu
 | PT-CJ-02 Lean Journey + Pilot Program | `f39b242` | 5 steps + PDF catalog |
 | PT-CJ-03 Complete Order | `6b576a2` | Electronic order |
 | PT-CJ-04 Payment Experience | `7c26352` | Proforma + QR |
-| PT-CJ-05 Finalization | Hold | Visual/UX + docs freeze |
+| PT-CJ-05 Finalization | `7b00d9c` | Visual/UX + docs freeze |
+| PT-COM-01 Pilot Sales Readiness | Hold | First-sale barriers · SOP |
+
+## Next (sales)
+
+See [PT-COM-01-pilot-sales-readiness.md](./PT-COM-01-pilot-sales-readiness.md) — P0 barriers before external first deal.
 
 ## Naming
 
