@@ -10,6 +10,8 @@ export const OFFICE_STORAGE_KEYS = Object.freeze({
   handoffs: 'conis.office.handoffs.v1',
   lifecycle: 'conis.office.lifecycle.v1',
   administration: 'conis.office.administration.v1',
+  /** PT-VR-01A — last active Working Terminal case. */
+  workspaceRecovery: 'conis.office.workspaceRecovery.v1',
 } as const);
 
 export type OfficeStorageKey =

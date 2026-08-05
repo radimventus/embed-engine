@@ -28,18 +28,15 @@ describe('R-001 project activation', () => {
 
     assert.equal(plan.activeCaseId, target.id);
     assert.equal(plan.activeCase?.label, target.label);
-    assert.equal(plan.terminalView, 'journey');
+    assert.equal(plan.terminalView, 'detail');
     assert.ok(plan.workflow.steps.length > 0);
-    assert.ok(
-      plan.workflow.steps.every((step) => step.terminalView === 'journey'),
-    );
     assert.equal(plan.timeline.caseId, target.id);
     assert.equal(plan.conversation.conversations.every(
       (item) => item.caseId === null || item.caseId === target.id,
     ), true);
   });
 
-  it('clears project context back to default Commercial Journey view', () => {
+  it('clears project context back to default Inbox view', () => {
     const plan = planPilotProjectActivation({
       caseId: null,
       cases: PILOT_WORKSPACE_DEMO_CASES,

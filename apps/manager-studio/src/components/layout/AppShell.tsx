@@ -9,7 +9,6 @@ import {
   usePlatformSession,
   usePilotWorkspace,
   useStudioBrandProjection,
-  isOperatorWorkspaceMode,
   isWorkspaceShellEmbed,
 } from '@embed-engine/platform-access';
 import {
@@ -103,7 +102,6 @@ export function AppShell({ sidebar, children }: AppShellProps) {
       onLogout={logout}
       onOpenLanding={clearStudio}
       onSelectStudio={selectStudio}
-      hideStudioSwitcher={isOperatorWorkspaceMode()}
       onSubmitFeedback={(message) => {
         submitPlatformFeedback({
           message,

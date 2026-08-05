@@ -20,7 +20,7 @@ export type PlatformHeaderProps = {
   readonly onOpenLanding?: () => void;
   readonly onSelectStudio?: (studioId: PlatformStudioId) => void;
   readonly onSubmitFeedback?: (message: string) => void;
-  /** OF-13 — hide platform switcher when Workspace Studio Navigation is shown. */
+  /** OF-13 / VR-005 — hide when a host already owns chrome (rare); default shows PlatformShell switcher. */
   readonly hideStudioSwitcher?: boolean;
 };
 

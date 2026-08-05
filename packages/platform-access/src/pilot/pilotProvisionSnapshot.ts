@@ -89,17 +89,11 @@ export function encodePilotProvisionSnapshot(
   snapshot: PilotProvisionSnapshot,
 ): string {
   const json = JSON.stringify(snapshot);
-  if (typeof btoa === 'function') {
-    return btoa(unescape(encodeURIComponent(json)))
-      .replace(/\+/g, '-')
-      .replace(/\//g, '_')
-      .replace(/=+$/g, '');
-  }
-  return Buffer.from(json, 'utf8')
-    .toString('base64')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/g, '');
+  const base64 =
+    typeof btoa === 'function'
+      ? btoa(unescape(encodeURIComponent(json)))
+      : encodeBase64Node(json);
+  return base64.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
 }
 
 export function decodePilotProvisionSnapshot(
@@ -112,7 +106,7 @@ export function decodePilotProvisionSnapshot(
     const json =
       typeof atob === 'function'
         ? decodeURIComponent(escape(atob(b64)))
-        : Buffer.from(b64, 'base64').toString('utf8');
+        : decodeBase64Node(b64);
     const parsed = JSON.parse(json) as PilotProvisionSnapshot;
     if (parsed.v !== 1 || typeof parsed.email !== 'string') return null;
     if (parsed.email.trim().length === 0) return null;
@@ -120,6 +114,34 @@ export function decodePilotProvisionSnapshot(
   } catch {
     return null;
   }
+}
+
+function encodeBase64Node(json: string): string {
+  const nodeBuffer = (
+    globalThis as {
+      Buffer?: {
+        from: (value: string, encoding: string) => { toString: (enc: string) => string };
+      };
+    }
+  ).Buffer;
+  if (nodeBuffer === undefined) {
+    throw new Error('Base64 encode is unavailable in this environment.');
+  }
+  return nodeBuffer.from(json, 'utf8').toString('base64');
+}
+
+function decodeBase64Node(b64: string): string {
+  const nodeBuffer = (
+    globalThis as {
+      Buffer?: {
+        from: (value: string, encoding: string) => { toString: (enc: string) => string };
+      };
+    }
+  ).Buffer;
+  if (nodeBuffer === undefined) {
+    throw new Error('Base64 decode is unavailable in this environment.');
+  }
+  return nodeBuffer.from(b64, 'base64').toString('utf8');
 }
 
 /**

@@ -92,7 +92,7 @@ export function planPilotProjectActivation(input: {
     activeCaseId,
     activeCase,
     terminalView:
-      activeCaseId === null ? PILOT_TERMINAL_DEFAULT_VIEW : 'journey',
+      activeCaseId === null ? PILOT_TERMINAL_DEFAULT_VIEW : 'detail',
     workflow: createInitialWorkflowRuntimeState(activeCase),
     conversation: createInitialConversationRuntimeState(activeCaseId),
     timeline,

@@ -11,7 +11,8 @@ export type OfficeRouteId =
   | 'documents'
   | 'implementation'
   | 'activity'
-  | 'settings';
+  | 'settings'
+  | 'commercial-journey';
 
 export type OfficeNavItem = {
   readonly id: Exclude<OfficeRouteId, 'work'>;
@@ -27,6 +28,7 @@ export type OfficeLocation = {
 /**
  * Left-rail IA — Project block is separate (sidebar).
  * Work surface (`/`) is default; not listed as a nav item.
+ * Partner Commercial Journey is last (PT-VR-01).
  */
 export const OFFICE_NAV_ITEMS: readonly OfficeNavItem[] = Object.freeze([
   { id: 'dashboard', label: 'Dashboard', path: 'dashboard' },
@@ -36,6 +38,11 @@ export const OFFICE_NAV_ITEMS: readonly OfficeNavItem[] = Object.freeze([
   { id: 'implementation', label: 'Implementace', path: 'implementation' },
   { id: 'activity', label: 'Aktivita', path: 'activity' },
   { id: 'settings', label: 'Nastavení', path: 'settings' },
+  {
+    id: 'commercial-journey',
+    label: 'Partner Commercial Journey',
+    path: 'commercial-journey',
+  },
 ]);
 
 const ROUTE_BY_PATH = new Map<string, OfficeRouteId>([
@@ -53,6 +60,7 @@ const PARTNER_SCOPED_ROUTES: ReadonlySet<OfficeRouteId> = new Set([
 
 export function officeRouteLabel(routeId: OfficeRouteId): string {
   if (routeId === 'work') return 'Working Terminal';
+  if (routeId === 'commercial-journey') return 'Partner Commercial Journey';
   return (
     OFFICE_NAV_ITEMS.find((item) => item.id === routeId)?.label ?? 'Office'
   );

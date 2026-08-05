@@ -83,6 +83,17 @@ import {
 } from './pilotWorkspaceModel';
 import { resolveCaseWithWorkflowSync } from './commercialWorkflowSync';
 import { planPilotProjectActivation } from './pilotProjectActivation';
+import {
+  activeCommercialJourneyStepId,
+  buildCommercialJourneySteps,
+  COMMERCIAL_JOURNEY_DEFAULT_STEP,
+  type CommercialJourneyStep,
+  type CommercialJourneyStepId,
+} from './commercialJourneyModel';
+import {
+  resolveOfficeBootCaseId,
+  writeStoredActiveCaseId,
+} from './officeWorkspaceRecovery';
 
 export type PilotWorkspaceContextValue = {
   readonly cases: readonly PilotWorkspaceCase[];
@@ -105,6 +116,12 @@ export type PilotWorkspaceContextValue = {
   readonly clearTimelineSelection: () => void;
   readonly workflow: PilotWorkflowRuntimeState;
   readonly navigateWorkflowStep: (stepId: PilotWorkflowStepId) => void;
+  /** PT-VR-01 — Partner Commercial Journey preview (separate from Office Workflow). */
+  readonly commercialJourneySteps: readonly CommercialJourneyStep[];
+  readonly commercialJourneyStepId: CommercialJourneyStepId;
+  readonly navigateCommercialJourneyStep: (
+    stepId: CommercialJourneyStepId,
+  ) => void;
   readonly conversation: PilotConversationRuntimeState;
   readonly selectConversation: (
     conversationId: PilotConversationId | null,
@@ -141,7 +158,7 @@ type PilotWorkspaceProviderProps = {
 
 export function PilotWorkspaceProvider({
   children,
-  initialCaseId = PILOT_WORKSPACE_DEMO_CASES[0]?.id ?? null,
+  initialCaseId,
   initialTerminalView = PILOT_TERMINAL_DEFAULT_VIEW,
   timelineIntegrations = {},
   eventCatalog: _eventCatalog = mockPilotEventCatalog,
@@ -161,8 +178,13 @@ export function PilotWorkspaceProvider({
     sessionRef.current = mailTransport;
   }
 
+  const bootCaseId =
+    initialCaseId !== undefined
+      ? initialCaseId
+      : resolveOfficeBootCaseId(PILOT_WORKSPACE_DEMO_CASES);
+
   const [activeCaseId, setActiveCaseId] = useState<PilotWorkspaceCaseId | null>(
-    initialCaseId,
+    bootCaseId,
   );
   const [terminalView, setTerminalView] =
     useState<PilotTerminalViewId>(initialTerminalView);
@@ -177,12 +199,21 @@ export function PilotWorkspaceProvider({
   );
   const [workflow, setWorkflow] = useState<PilotWorkflowRuntimeState>(() =>
     createInitialWorkflowRuntimeState(
-      initialCaseId !== null ? getPilotWorkspaceCase(initialCaseId) : null,
+      bootCaseId !== null ? getPilotWorkspaceCase(bootCaseId) : null,
     ),
   );
+  const [commercialJourneyStepId, setCommercialJourneyStepId] =
+    useState<CommercialJourneyStepId>(() => {
+      const initial =
+        bootCaseId !== null ? getPilotWorkspaceCase(bootCaseId) : null;
+      return (
+        activeCommercialJourneyStepId(buildCommercialJourneySteps(initial)) ??
+        COMMERCIAL_JOURNEY_DEFAULT_STEP
+      );
+    });
   const [conversation, setConversation] =
     useState<PilotConversationRuntimeState>(() =>
-      createInitialConversationRuntimeState(initialCaseId),
+      createInitialConversationRuntimeState(bootCaseId),
     );
   const inboxRef = useRef(inbox);
   inboxRef.current = inbox;
@@ -199,6 +230,11 @@ export function PilotWorkspaceProvider({
       getPilotWorkspaceCase(activeCaseId);
     return found === null ? null : resolveCaseWithWorkflowSync(found);
   }, [activeCaseId, cases]);
+
+  const commercialJourneySteps = useMemo(
+    () => buildCommercialJourneySteps(activeCase),
+    [activeCase],
+  );
 
   const selectedInboxMessage = useMemo(
     () => getInboxMessage(inbox.messages, inbox.selectedMessageId),
@@ -262,27 +298,44 @@ export function PilotWorkspaceProvider({
     };
   }, [activeCaseId, cases, workflowIntegrations.projector]);
 
+  /** PT-VR-01A — remember boot context for next open. */
+  useEffect(() => {
+    writeStoredActiveCaseId(activeCaseId);
+  }, [activeCaseId]);
+
   /**
-   * R-001 — Select Project activates the full working environment synchronously.
-   * Working Terminal · Workflow · Conversation · Inbox · Timeline · Detail.
+   * R-001 / PT-VR-01A — Select Project activates the full working environment.
+   * Never leaves an empty surface when cases exist (fallback → first case + Inbox).
+   * Explicit project switch still opens Detail (R-001).
    */
   const selectCase = useCallback(
     (caseId: PilotWorkspaceCaseId | null) => {
+      const requestedEmpty = caseId === null;
+      const resolvedCaseId =
+        caseId === null && cases.length > 0 ? cases[0]!.id : caseId;
       const plan = planPilotProjectActivation({
-        caseId,
+        caseId: resolvedCaseId,
         cases,
         lookup: getPilotWorkspaceCase,
         inbox: inboxRef.current,
       });
       setActiveCaseId(plan.activeCaseId);
-      setTerminalView(plan.terminalView);
+      setTerminalView(
+        requestedEmpty ? PILOT_TERMINAL_DEFAULT_VIEW : plan.terminalView,
+      );
       setWorkflow(plan.workflow);
+      setCommercialJourneyStepId(
+        activeCommercialJourneyStepId(
+          buildCommercialJourneySteps(plan.activeCase),
+        ) ?? COMMERCIAL_JOURNEY_DEFAULT_STEP,
+      );
       setConversation(plan.conversation);
       setTimeline(plan.timeline);
       setInbox((current) => ({
         ...reducePilotInbox(current, { type: 'refresh-from-conversation' }),
         selectedMessageId: plan.inboxSelectedMessageId,
       }));
+      writeStoredActiveCaseId(plan.activeCaseId);
     },
     [cases],
   );
@@ -300,12 +353,18 @@ export function PilotWorkspaceProvider({
     setActiveCaseId(plan.activeCaseId);
     setTerminalView(plan.terminalView);
     setWorkflow(plan.workflow);
+    setCommercialJourneyStepId(
+      activeCommercialJourneyStepId(
+        buildCommercialJourneySteps(plan.activeCase),
+      ) ?? COMMERCIAL_JOURNEY_DEFAULT_STEP,
+    );
     setConversation(plan.conversation);
     setTimeline(plan.timeline);
     setInbox((current) => ({
       ...reducePilotInbox(current, { type: 'refresh-from-conversation' }),
       selectedMessageId: plan.inboxSelectedMessageId,
     }));
+    writeStoredActiveCaseId(plan.activeCaseId);
   }, [extraCases]);
 
   const selectInboxMessage = useCallback(
@@ -464,6 +523,13 @@ export function PilotWorkspaceProvider({
     [activeCaseId, workflow.steps, workflowIntegrations],
   );
 
+  const navigateCommercialJourneyStep = useCallback(
+    (stepId: CommercialJourneyStepId) => {
+      setCommercialJourneyStepId(stepId);
+    },
+    [],
+  );
+
   const selectConversation = useCallback(
     (conversationId: PilotConversationId | null) => {
       setConversation((current) =>
@@ -594,6 +660,9 @@ export function PilotWorkspaceProvider({
       clearTimelineSelection,
       workflow,
       navigateWorkflowStep,
+      commercialJourneySteps,
+      commercialJourneyStepId,
+      navigateCommercialJourneyStep,
       conversation,
       selectConversation,
       mailSessionActive: true,
@@ -607,9 +676,12 @@ export function PilotWorkspaceProvider({
       assignInboxCase,
       cases,
       clearTimelineSelection,
+      commercialJourneyStepId,
+      commercialJourneySteps,
       conversation,
       createCasePlaceholder,
       inbox,
+      navigateCommercialJourneyStep,
       navigateWorkflowStep,
       refreshConversationFromStore,
       selectCase,

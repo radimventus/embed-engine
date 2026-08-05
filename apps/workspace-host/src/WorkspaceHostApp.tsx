@@ -1,6 +1,6 @@
 /**
- * VR-04 / PT-VR-06 — Canonical CONIS Workspace Shell.
- * Workspace = context only (partner · project · switcher · user).
+ * VR-04 / VR-005 / PT-VR-06 — Canonical CONIS Workspace Shell.
+ * Chrome = PlatformShell only (no duplicated WorkspaceHeader).
  * Studios own their UI — host does not redesign them.
  */
 
@@ -12,15 +12,22 @@ import {
   getSharedWorkspaceContext,
   loadPlatformSession,
   logout as platformLogout,
+  PLATFORM_ROLE_LABELS,
+  primaryRole,
   projectPartnerBrand,
   resolveCloudStudioHref,
   resolveWorkspaceHostHref,
   switchOperatorPartnerStudio,
   withWorkspaceShellEmbed,
-  WorkspaceStudioNavigation,
   WORKSPACE_STUDIO_LABELS,
   type WorkspaceStudioSurface,
 } from '@embed-engine/platform-access';
+import {
+  buildPlatformWorkspaceState,
+  PlatformShell,
+  type PlatformBreadcrumbItem,
+  type PlatformStudioId,
+} from '@embed-engine/platform-shell';
 
 import clientStudioCss from '../../client-studio/src/index.css?inline';
 
@@ -44,8 +51,17 @@ function studioFrameSrc(
   return withWorkspaceShellEmbed(resolveCloudStudioHref(surface));
 }
 
+/** PlatformShell studio id — Client Experience has no PlatformStudioId. */
+function platformStudioIdForSurface(
+  surface: WorkspaceStudioSurface,
+): PlatformStudioId {
+  if (surface === 'client') return 'office';
+  return surface;
+}
+
 /**
  * Shared Workspace Shell — hosts studios without modifying their layouts.
+ * Top chrome is PlatformShell only (VR-005).
  */
 export function WorkspaceHostApp() {
   const [surface, setSurface] = useState<WorkspaceStudioSurface>(readActiveSurface);
@@ -114,7 +130,35 @@ export function WorkspaceHostApp() {
     );
   }
 
-  const projectLabel = ctx.projectId;
+  const projectLabel =
+    brand.personalized && brand.companyName.trim().length > 0
+      ? (ctx.projectId || 'Projekt')
+      : ctx.projectId;
+
+  const workspaceState = buildPlatformWorkspaceState({
+    companyLabel: brand.personalized ? brand.companyName : ctx.companyId,
+    projectLabel,
+    projects: [],
+  });
+
+  const sectionLabel =
+    surface === 'client'
+      ? 'Client Studio'
+      : WORKSPACE_STUDIO_LABELS[surface];
+
+  const breadcrumb: readonly PlatformBreadcrumbItem[] = [
+    {
+      id: 'conis',
+      label: 'CONIS',
+      onSelect: () => selectSurface('client'),
+    },
+    { id: 'workspace', label: 'Workspace' },
+    {
+      id: 'company',
+      label: brand.personalized ? brand.companyName : ctx.companyId,
+    },
+    { id: 'section', label: sectionLabel },
+  ];
 
   return (
     <div
@@ -122,50 +166,39 @@ export function WorkspaceHostApp() {
       data-testid="workspace-host"
       data-workspace-surface={surface}
     >
-      <header className="workspace-shell__header" data-testid="workspace-shell-header">
-        <div className="workspace-shell__top">
-          <div className="workspace-shell__context">
-            <p className="workspace-shell__partner" data-testid="workspace-shell-partner">
-              {brand.personalized ? brand.companyName : ctx.companyId}
-            </p>
-            <p className="workspace-shell__project" data-testid="workspace-shell-project">
-              Projekt · {projectLabel}
-            </p>
-          </div>
-          <div className="workspace-shell__user">
-            <span data-testid="workspace-shell-user">{session.user.displayName}</span>
-            <button
-              type="button"
-              className="workspace-shell__logout"
-              onClick={handleLogout}
-            >
-              Odhlásit
-            </button>
-          </div>
-        </div>
-        <WorkspaceStudioNavigation
-          activeSurface={surface}
-          onSelectSurface={selectSurface}
-        />
-      </header>
-
-      <main className="workspace-shell__main" data-testid="workspace-shell-main">
-        {surface === 'client' ? (
-          <div
-            id={CLIENT_MOUNT_ID}
-            className="workspace-shell__view"
-            data-testid="workspace-host-client-root"
-          />
-        ) : (
-          <iframe
-            key={surface}
-            className="workspace-shell__view workspace-shell__frame"
-            title={WORKSPACE_STUDIO_LABELS[surface]}
-            src={studioFrameSrc(surface)}
-            data-testid={`workspace-shell-frame-${surface}`}
-          />
-        )}
-      </main>
+      <PlatformShell
+        activeStudioId={platformStudioIdForSurface(surface)}
+        userLabel={session.user.displayName}
+        roleLabel={PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]}
+        workspace={workspaceState}
+        partnerBrandLabel={brand.personalized ? brand.logoLabel : null}
+        breadcrumb={breadcrumb}
+        capabilityHost={null}
+        onLogout={handleLogout}
+        onOpenLanding={() => selectSurface('client')}
+        onSelectStudio={(studioId) => selectSurface(studioId)}
+        onSubmitFeedback={() => {
+          // Feedback stays available; Workspace Host has no separate store.
+        }}
+      >
+        <main className="workspace-shell__main" data-testid="workspace-shell-main">
+          {surface === 'client' ? (
+            <div
+              id={CLIENT_MOUNT_ID}
+              className="workspace-shell__view"
+              data-testid="workspace-host-client-root"
+            />
+          ) : (
+            <iframe
+              key={surface}
+              className="workspace-shell__view workspace-shell__frame"
+              title={WORKSPACE_STUDIO_LABELS[surface]}
+              src={studioFrameSrc(surface)}
+              data-testid={`workspace-shell-frame-${surface}`}
+            />
+          )}
+        </main>
+      </PlatformShell>
     </div>
   );
 }

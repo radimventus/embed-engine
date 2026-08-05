@@ -1,7 +1,7 @@
 /**
- * OF-13 / OF-14 / VR-04 — Workspace Studio Navigation chrome.
- * Role-filtered: Client | Manager | Sales | Builder | Office
- * Driven only by Shared Workspace Context (platform session cookie).
+ * OF-13 / OF-14 / VR-004 / VR-005 — Workspace Studio Navigation (legacy).
+ * VR-005 — Workspace Host uses PlatformShell Studio Switcher only.
+ * Kept for PE unit tests / deprecated OperatorPartnerEnvironmentBar.
  */
 
 import {
@@ -23,7 +23,7 @@ type WorkspaceStudioNavigationProps = {
 };
 
 /**
- * Unified Workspace switcher — preserves partner context; Office is last (in-shell).
+ * @deprecated VR-005 — do not mount in Workspace Host; use PlatformShell StudioSwitcher.
  */
 export function WorkspaceStudioNavigation({
   activeSurface,
@@ -42,9 +42,6 @@ export function WorkspaceStudioNavigation({
       role="navigation"
       aria-label="Workspace Studio Navigation"
     >
-      <p className="platform-access__operator-pe-label">
-        Workspace · Partner Environment
-      </p>
       <div className="platform-access__operator-pe-actions" role="group">
         {surfaces.map((surface) => {
           const label = WORKSPACE_STUDIO_LABELS[surface];

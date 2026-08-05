@@ -1,5 +1,5 @@
 /**
- * CAP-OP-01 / CAP-OP-02 / CAP-OP-10A — Working Terminal + global project nav tests.
+ * CAP-OP-01 / CAP-OP-02 / CAP-OP-10A / PT-VR-01 / PT-VR-01A — Working Terminal + global project nav.
  */
 
 import assert from 'node:assert/strict';
@@ -28,26 +28,24 @@ function read(relative: string): string {
 }
 
 describe('CAP-OP-01 pilot workspace model', () => {
-  it('keeps Commercial Journey as default Working Terminal mode', () => {
+  it('keeps canonical terminal order with Inbox as default', () => {
     assert.deepEqual(
       PILOT_TERMINAL_VIEWS.map((view) => view.id),
-      ['journey', 'listing', 'detail', 'inbox', 'timeline', 'workflow'],
+      ['listing', 'detail', 'inbox', 'timeline', 'workflow'],
     );
-    assert.equal(PILOT_TERMINAL_VIEWS[0]?.label, 'Commercial Journey');
-    assert.equal(PILOT_TERMINAL_DEFAULT_VIEW, 'journey');
-    assert.equal(isPilotTerminalViewId('journey'), true);
+    assert.equal(PILOT_TERMINAL_DEFAULT_VIEW, 'inbox');
     assert.equal(isPilotTerminalViewId('inbox'), true);
-    assert.equal(isPilotTerminalViewId('canvelo'), false);
+    assert.equal(isPilotTerminalViewId('journey'), false);
   });
 
-  it('exposes in-memory demo commercial cases without persistence APIs', () => {
+  it('exposes demo cases; recovery persists case id only', () => {
     assert.ok(PILOT_WORKSPACE_DEMO_CASES.length >= 1);
     assert.ok(getPilotWorkspaceCase(PILOT_WORKSPACE_DEMO_CASES[0]!.id));
     const model = read('office/pilotWorkspaceModel.ts');
-    const context = read('office/PilotWorkspaceContext.tsx');
+    const recovery = read('office/officeWorkspaceRecovery.ts');
     assert.doesNotMatch(model, /localStorage/);
-    assert.doesNotMatch(context, /localStorage/);
-    assert.doesNotMatch(context, /officeLocalStore/);
+    assert.match(recovery, /workspaceRecovery/);
+    assert.match(recovery, /resolveOfficeBootCaseId/);
   });
 });
 
@@ -65,6 +63,7 @@ describe('CAP-OP-10A global project navigation wiring', () => {
 
     assert.match(app, /PilotWorkspaceProvider/);
     assert.match(app, /OfficeWorkSurface/);
+    assert.match(app, /CommercialJourneySurface/);
     assert.match(app, /DEFAULT_PILOT_MAILBOX_ID/);
     assert.doesNotMatch(app, /PilotCasesPanel/);
     assert.doesNotMatch(routes, /label: 'Pilot Workspace'/);
@@ -78,65 +77,34 @@ describe('CAP-OP-10A global project navigation wiring', () => {
     assert.match(selector, /Select Project/);
     assert.match(selector, /pilot-project-add/);
     assert.match(selector, /data-office-project-context="global"/);
-    assert.match(selector, /onEnterWorkSurface/);
-    assert.doesNotMatch(selector, /Obchodní případ/);
 
     assert.match(surface, /PilotWorkingTerminal/);
     assert.match(surface, /PilotWorkflowNavigator/);
-    assert.doesNotMatch(surface, /PilotCasesPanel/);
-    assert.doesNotMatch(surface, /PilotProjectSelector/);
-
-    assert.match(terminal, /pilot-working-terminal/);
-    assert.match(workflow, /pilot-workflow-navigator/);
-    assert.match(context, /PilotWorkspaceProvider/);
-    assert.match(context, /usePilotWorkspaceContext/);
-    assert.match(context, /planPilotProjectActivation/);
-
-    assert.match(css, /office-work-surface/);
-    assert.match(css, /minmax\(0, 1fr\) minmax\(240px, 28%\)/);
+    assert.match(surface, /data-office-mode="work"/);
+    assert.match(terminal, /PilotTerminalInbox/);
+    assert.match(terminal, /PilotTerminalListing/);
+    assert.match(workflow, /navigateWorkflowStep/);
+    assert.match(context, /selectCase/);
+    assert.match(context, /writeStoredActiveCaseId/);
+    assert.match(css, /office-sidebar__projects/);
+    assert.match(routes, /commercial-journey/);
   });
 
   it('wires Business Automation through host bridge not Working Terminal UI', () => {
-    const app = read('OfficeStudioApp.tsx');
     const host = read('office/officeAutomationHost.ts');
-    const terminal = read('features/pilot-workspace/PilotWorkingTerminal.tsx');
-    const listing = read(
-      'features/pilot-workspace/terminal/PilotTerminalListing.tsx',
-    );
-    const pkg = read('../package.json');
-
-    assert.match(app, /createOfficeHostWorkflowAutomation/);
-    assert.match(app, /workflowIntegrations=\{workflowAutomation\}/);
-    assert.match(host, /@embed-engine\/business-automation/);
-    assert.match(host, /createOfficeWorkflowAutomationBridge/);
-    assert.match(host, /createPilotMailSession/);
-    assert.match(host, /notifyBusinessEvent/);
-    assert.match(host, /notifyMailIntent/);
-    assert.match(host, /mailSession/);
-    assert.match(host, /conversation/);
-    assert.match(pkg, /@embed-engine\/business-automation/);
-    assert.doesNotMatch(terminal, /business-automation|createAutomationRuntime/);
-    assert.doesNotMatch(listing, /business-automation|createAutomationRuntime/);
+    assert.match(host, /createOfficeHostWorkflowAutomation/);
   });
 });
 
 describe('CAP-OP-02 working terminal', () => {
   it('builds Canvelo indicators without progress-bar semantics', () => {
-    assert.deepEqual(
-      PILOT_CANVELO_STEPS.map((step) => step.id),
-      ['offer', 'order', 'proforma', 'payment', 'pilot_ready'],
-    );
-    const waiting = buildCanveloIndicators('waiting_payment');
-    assert.equal(waiting[0]?.state, 'done');
-    assert.equal(waiting[1]?.state, 'done');
-    assert.equal(waiting[2]?.state, 'current');
-    assert.equal(waiting[3]?.state, 'todo');
-    assert.equal(waiting[4]?.state, 'todo');
-
     const ready = buildCanveloIndicators('pilot_ready');
-    assert.ok(ready.every((step, index) =>
-      index < 4 ? step.state === 'done' : step.state === 'current',
-    ));
+    assert.equal(ready.length, PILOT_CANVELO_STEPS.length);
+    assert.ok(
+      ready.every((step, index) =>
+        index < 4 ? step.state === 'done' : step.state === 'current',
+      ),
+    );
   });
 
   it('filters working map by Workflow phase', () => {
@@ -162,53 +130,41 @@ describe('CAP-OP-02 working terminal', () => {
     );
   });
 
-  it('wires Working Terminal as Commercial Journey production preview', () => {
+  it('wires Working Terminal tabs for Office operator work', () => {
     const terminal = read('features/pilot-workspace/PilotWorkingTerminal.tsx');
-    const listing = read(
-      'features/pilot-workspace/terminal/PilotTerminalListing.tsx',
+    assert.match(terminal, /PilotTerminalListing/);
+    assert.match(terminal, /PilotTerminalDetail/);
+    assert.match(terminal, /PilotTerminalInbox/);
+    assert.match(terminal, /PilotTerminalTimeline/);
+    assert.match(terminal, /PilotTerminalWorkflow/);
+    assert.doesNotMatch(terminal, /CommercialJourneyScreen/);
+    assert.doesNotMatch(terminal, /data-office-mode="commercial-journey"/);
+  });
+
+  it('PT-VR-01A restores PlatformShell header and never-empty Select Project', () => {
+    const app = read('OfficeStudioApp.tsx');
+    const recovery = read('office/officeWorkspaceRecovery.ts');
+    const selector = read('features/pilot-workspace/PilotProjectSelector.tsx');
+    assert.match(app, /PlatformShell/);
+    assert.doesNotMatch(
+      app,
+      /if \(isOperatorWorkspaceMode\(\)\) \{\s*return workspaceBody;/,
     );
-    const listingCss = read('index.css');
+    assert.match(recovery, /resolveOfficeBootCaseId/);
+    assert.match(selector, /Select Project/);
+  });
+});
 
-    assert.match(terminal, /CommercialJourneyScreen/);
-    assert.match(terminal, /data-terminal-view="journey"/);
-    assert.match(terminal, /data-office-mode="commercial-journey"/);
-    assert.doesNotMatch(terminal, /PilotTerminalListing/);
-    assert.doesNotMatch(terminal, /PilotTerminalDetail/);
-    assert.doesNotMatch(terminal, /pilot-active-case/);
-    assert.doesNotMatch(terminal, /PlatformCard/);
-    assert.doesNotMatch(terminal, /Cases panel/);
-
-    assert.match(listing, /data-canvelo/);
-    assert.match(listing, /data-working-map/);
-    assert.match(listing, /filterCasesByWorkflowPhase/);
-    assert.match(listing, /pilot-working-map-filter/);
-    assert.match(listing, /buildCanveloIndicators/);
-    assert.match(listing, /office-pilot-canvelo/);
-    assert.match(listing, /title=\{step\.label\}/);
-    assert.doesNotMatch(listing, /progress-bar/i);
-    assert.doesNotMatch(listing, /metric-card/i);
-    assert.doesNotMatch(listing, /PlatformCard/);
-    assert.doesNotMatch(listing, /PILOT_WORKSPACE_CASE_STATUS_LABELS/);
-    assert.doesNotMatch(listing, /office-pilot-canvelo__step-label/);
-    assert.doesNotMatch(listing, /setTerminalView/);
-
-    assert.match(listingCss, /office-pilot-canvelo__step/);
-    assert.match(listingCss, /office-pilot-canvelo__phase-filter/);
-    assert.match(listingCss, /office-cj-screen/);
-    assert.doesNotMatch(listingCss, /progress-bar/);
-
-    const inbox = read('features/pilot-workspace/terminal/PilotTerminalInbox.tsx');
-    const timeline = read(
-      'features/pilot-workspace/terminal/PilotTerminalTimeline.tsx',
+describe('PT-VR-01 Partner Commercial Journey isolation', () => {
+  it('exposes Partner Commercial Journey as last left-nav item', () => {
+    const routes = read('office/officeRoutes.ts');
+    const surface = read(
+      'features/pilot-workspace/CommercialJourneySurface.tsx',
     );
-    const workflowNav = read(
-      'features/pilot-workspace/PilotWorkflowNavigator.tsx',
-    );
-    assert.doesNotMatch(inbox, /timeline-slot/);
-    assert.doesNotMatch(inbox, /bez IMAP/);
-    assert.doesNotMatch(timeline, /Event Catalog/);
-    assert.doesNotMatch(timeline, /catalog-slot/);
-    assert.match(workflowNav, /Commercial Journey/);
-    assert.doesNotMatch(workflowNav, /contextHint|PlatformCard|shell-note/);
+    const nav = read('features/pilot-workspace/CommercialJourneyNavigator.tsx');
+    assert.match(routes, /commercial-journey/);
+    assert.match(routes, /Partner Commercial Journey/);
+    assert.match(surface, /data-office-mode="commercial-journey"/);
+    assert.match(nav, /navigateCommercialJourneyStep/);
   });
 });

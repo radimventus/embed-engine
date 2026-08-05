@@ -21,7 +21,7 @@ type PaymentScreenProps = {
  * Proforma preview + SPD QR from proforma · confirm → CONIS Studio.
  */
 export function PaymentScreen({ activeCase }: PaymentScreenProps) {
-  const { navigateWorkflowStep } = usePilotWorkspaceContext();
+  const { navigateCommercialJourneyStep } = usePilotWorkspaceContext();
   const proforma = useMemo(
     () => buildCommercialProformaForCase(activeCase),
     [activeCase],
@@ -101,7 +101,7 @@ export function PaymentScreen({ activeCase }: PaymentScreenProps) {
         type="button"
         className="office-cj-pilot__continue"
         data-testid="cj-payment-confirm-qr"
-        onClick={() => navigateWorkflowStep('conis_studio')}
+        onClick={() => navigateCommercialJourneyStep('conis_studio')}
       >
         Potvrdit provedení QR platby
       </button>

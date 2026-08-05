@@ -20,7 +20,7 @@ type PilotProgramScreenProps = {
  * Selection is visual only — no order / payment / automation.
  */
 export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
-  const { navigateWorkflowStep } = usePilotWorkspaceContext();
+  const { navigateCommercialJourneyStep } = usePilotWorkspaceContext();
   const suggested = resolveCommercialPilotProgramId(activeCase.packageName);
   const [selectedId, setSelectedId] = useState<CommercialPilotProgramId | null>(
     suggested,
@@ -85,7 +85,7 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
               data-testid="cj-pilot-continue"
               onClick={() => {
                 setCommercialJourneySelectedProgramId(selected.id);
-                navigateWorkflowStep('complete_order');
+                navigateCommercialJourneyStep('complete_order');
               }}
             >
               Pokračovat

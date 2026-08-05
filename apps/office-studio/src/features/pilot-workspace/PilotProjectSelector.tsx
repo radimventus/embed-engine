@@ -6,8 +6,8 @@ type PilotProjectSelectorProps = {
 };
 
 /**
- * CAP-OP-10A / R-001 — Global Project Context (left-rail PROJEKTY block).
- * Selecting a project switches the full Office working environment.
+ * CAP-OP-10A / R-001 / PT-VR-01A — Global Project Context (left-rail PROJEKTY).
+ * Always keeps an active project — never an empty work surface.
  */
 export function PilotProjectSelector({
   onEnterWorkSurface,
@@ -18,6 +18,9 @@ export function PilotProjectSelector({
     selectCase,
     createCasePlaceholder,
   } = usePilotWorkspaceContext();
+
+  const selectedId =
+    activeCaseId ?? (cases.length > 0 ? cases[0]!.id : '');
 
   return (
     <div
@@ -35,16 +38,14 @@ export function PilotProjectSelector({
           id="pilot-project-select"
           className="office-sidebar__projects-select"
           data-testid="pilot-project-select"
-          value={activeCaseId ?? ''}
+          value={selectedId}
           onChange={(event) => {
             const next = event.target.value;
-            selectCase(next.length > 0 ? next : null);
-            if (next.length > 0) {
-              onEnterWorkSurface?.();
-            }
+            if (next.length === 0) return;
+            selectCase(next);
+            onEnterWorkSurface?.();
           }}
         >
-          <option value="">— vyberte projekt —</option>
           {cases.map((item) => (
             <option key={item.id} value={item.id}>
               {item.label}

@@ -15,6 +15,7 @@ import {
   restoreSession,
 } from '@embed-engine/platform-access';
 import '@embed-engine/platform-access/styles.css';
+import '@embed-engine/platform-shell/styles.css';
 
 import { WorkspaceHostApp } from './WorkspaceHostApp';
 import './workspace-host.css';

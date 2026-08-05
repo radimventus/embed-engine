@@ -1,5 +1,5 @@
 /**
- * ARCH-01 / VR-04 / VR-05 / PT-VR-06 — Workspace Host architecture guards.
+ * ARCH-01 / VR-04 / VR-05 / VR-005 / PT-VR-06 — Workspace Host architecture guards.
  */
 
 import assert from 'node:assert/strict';
@@ -16,18 +16,19 @@ function read(relative: string): string {
 }
 
 describe('VR-04 Canonical Workspace Shell', () => {
-  it('keeps a single Workspace Shell with in-shell studio switching', () => {
+  it('keeps a single Workspace Shell with PlatformShell chrome only', () => {
     const app = read('src/WorkspaceHostApp.tsx');
     const html = read('index.html');
 
-    assert.match(app, /workspace-shell__header/);
-    assert.match(app, /workspace-shell__top/);
-    assert.match(app, /WorkspaceStudioNavigation/);
-    assert.match(app, /onSelectSurface=\{selectSurface\}/);
+    assert.match(app, /PlatformShell/);
+    assert.match(app, /onSelectStudio/);
     assert.match(app, /retainWorkspace:\s*true/);
     assert.match(app, /navigate:\s*false/);
     assert.match(app, /workspace-shell-frame-/);
     assert.match(app, /withWorkspaceShellEmbed/);
+    assert.doesNotMatch(app, /WorkspaceStudioNavigation/);
+    assert.doesNotMatch(app, /workspace-shell__header/);
+    assert.doesNotMatch(app, /Workspace · Partner Environment/);
     assert.doesNotMatch(app, /mode:\s*'launcher'/);
     assert.doesNotMatch(html, /Prozkoumat dům/);
     assert.doesNotMatch(html, /Reference House/);
@@ -59,6 +60,7 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.doesNotMatch(app, /workspace-shell__body/);
     assert.doesNotMatch(app, /conisWorkspaceHost/);
     assert.doesNotMatch(css, /workspace-shell__rail/);
+    assert.doesNotMatch(css, /workspace-shell__header/);
     assert.match(app, /workspace-shell__main/);
     assert.match(app, /Embed\.mount/);
     assert.match(app, /mode:\s*'standalone'/);

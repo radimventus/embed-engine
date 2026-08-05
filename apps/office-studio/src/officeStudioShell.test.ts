@@ -25,6 +25,7 @@ describe('officeStudioShell (OF-01 / OF-02 / CAP-OP-10A)', () => {
         'Implementace',
         'Aktivita',
         'Nastavení',
+        'Partner Commercial Journey',
       ],
     );
   });
@@ -58,6 +59,13 @@ describe('officeStudioShell (OF-01 / OF-02 / CAP-OP-10A)', () => {
     assert.equal(
       parseOfficeRoute('/studio/office/settings', '/studio/office/'),
       'settings',
+    );
+    assert.equal(
+      parseOfficeRoute(
+        '/studio/office/commercial-journey',
+        '/studio/office/',
+      ),
+      'commercial-journey',
     );
   });
 
@@ -124,11 +132,12 @@ describe('officeStudioShell (OF-01 / OF-02 / CAP-OP-10A)', () => {
     assert.match(pkg, /@embed-engine\/platform-access/);
   });
 
-  it('VR-05 — PE mode does not render Legacy Platform Studio Switcher', () => {
+  it('VR-05 — PE / embed keeps PlatformShell; host owns chrome in Workspace', () => {
     const app = readFileSync(join(root, 'OfficeStudioApp.tsx'), 'utf8');
-    assert.match(app, /isOperatorWorkspaceMode/);
     assert.match(app, /contentOnly/);
-    assert.match(
+    assert.match(app, /isWorkspaceShellEmbed/);
+    assert.doesNotMatch(app, /hideStudioSwitcher=\{isOperatorWorkspaceMode/);
+    assert.doesNotMatch(
       app,
       /if \(isOperatorWorkspaceMode\(\)\) \{\s*return workspaceBody;/,
     );

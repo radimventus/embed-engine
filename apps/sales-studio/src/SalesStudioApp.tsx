@@ -13,7 +13,6 @@ import {
   usePlatformSession,
   usePilotWorkspace,
   useStudioBrandProjection,
-  isOperatorWorkspaceMode,
   isWorkspaceShellEmbed,
 } from '@embed-engine/platform-access';
 import {
@@ -320,7 +319,6 @@ export function SalesStudioApp() {
       onLogout={logout}
       onOpenLanding={clearStudio}
       onSelectStudio={selectStudio}
-      hideStudioSwitcher={isOperatorWorkspaceMode()}
       contentOnly={isWorkspaceShellEmbed()}
       onSubmitFeedback={(message) => {
         submitPlatformFeedback({

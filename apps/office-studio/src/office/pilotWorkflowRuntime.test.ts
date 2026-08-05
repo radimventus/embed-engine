@@ -1,5 +1,5 @@
 /**
- * CAP-OP-06 / PT-CJ-02 — Lean Commercial Journey Workflow Runtime tests.
+ * CAP-OP-06 — Office ops Workflow Runtime tests (PT-VR-01 restored catalog).
  */
 
 import assert from 'node:assert/strict';
@@ -26,91 +26,80 @@ function read(relative: string): string {
   return readFileSync(join(root, '..', relative), 'utf8');
 }
 
-describe('PT-CJ-02 lean commercial journey workflow runtime', () => {
-  it('exposes five partner-facing Commercial Journey steps', () => {
+describe('CAP-OP-06 workflow runtime', () => {
+  it('exposes Nabídka → Active Partner steps without progress bars', () => {
     assert.deepEqual(
       PILOT_WORKFLOW_STEP_DEFS.map((step) => step.label),
       [
-        'Vítejte',
-        'Pilotní program',
-        'Dokončit objednávku',
-        'Platba',
-        'CONIS Studio',
+        'Nabídka',
+        'Objednávka',
+        'Proforma',
+        'QR Platba',
+        'Pilot Ready',
+        'Builder',
+        'Active Partner',
       ],
     );
+    assert.equal(PILOT_WORKFLOW_STEP_DEFS.length, 7);
     assert.ok(
-      PILOT_WORKFLOW_STEP_DEFS.every((step) => step.terminalView === 'journey'),
+      PILOT_WORKFLOW_STEP_DEFS.every((step) => step.terminalView !== undefined),
     );
-    assert.equal(PILOT_WORKFLOW_STEP_DEFS.length, 5);
   });
 
-  it('projects case status into lean journey steps', () => {
+  it('projects case status into done / active / waiting', () => {
     const waiting = buildWorkflowSteps(getPilotWorkspaceCase('case-dse-starter'));
-    assert.equal(activeWorkflowStepId(waiting), 'payment');
-    assert.equal(waiting.find((s) => s.id === 'welcome')?.state, 'done');
-    assert.equal(waiting.find((s) => s.id === 'pilot_program')?.state, 'done');
-    assert.equal(waiting.find((s) => s.id === 'complete_order')?.state, 'done');
-    assert.equal(waiting.find((s) => s.id === 'payment')?.state, 'active');
-    assert.equal(waiting.find((s) => s.id === 'conis_studio')?.state, 'waiting');
+    assert.equal(activeWorkflowStepId(waiting), 'qr_payment');
+    assert.equal(waiting.find((s) => s.id === 'offer')?.state, 'done');
+    assert.equal(waiting.find((s) => s.id === 'order')?.state, 'done');
+    assert.equal(waiting.find((s) => s.id === 'proforma')?.state, 'done');
+    assert.equal(waiting.find((s) => s.id === 'qr_payment')?.state, 'active');
 
     const checkout = buildWorkflowSteps(
       getPilotWorkspaceCase('case-nord-pilot'),
     );
-    assert.equal(activeWorkflowStepId(checkout), 'complete_order');
+    assert.equal(activeWorkflowStepId(checkout), 'order');
 
     const offer = buildWorkflowSteps(
       getPilotWorkspaceCase('case-atelier-studio'),
     );
-    assert.equal(activeWorkflowStepId(offer), 'pilot_program');
-
-    const ready = buildWorkflowSteps({
-      ...getPilotWorkspaceCase('case-dse-starter')!,
-      status: 'pilot_ready',
-    });
-    assert.equal(activeWorkflowStepId(ready), 'conis_studio');
+    assert.equal(activeWorkflowStepId(offer), 'offer');
   });
 
-  it('highlights navigated step and keeps journey terminal view', () => {
+  it('highlights navigated step and maps terminal views', () => {
     const activeCase = getPilotWorkspaceCase('case-dse-starter');
     let state = createInitialWorkflowRuntimeState(activeCase);
-    assert.equal(state.projectedActiveStepId, 'payment');
+    assert.equal(state.projectedActiveStepId, 'qr_payment');
 
     state = reducePilotWorkflow(state, {
       type: 'highlight-step',
-      stepId: 'welcome',
+      stepId: 'offer',
     });
-    assert.equal(state.highlightedStepId, 'welcome');
+    assert.equal(state.highlightedStepId, 'offer');
     assert.equal(
-      state.steps.find((step) => step.id === 'welcome')?.terminalView,
-      'journey',
+      state.steps.find((step) => step.id === 'offer')?.terminalView,
+      'detail',
     );
 
     const nav = buildWorkflowNavigationEvent({
-      stepId: 'welcome',
+      stepId: 'offer',
       caseId: 'case-dse-starter',
-      terminalView: 'journey',
+      terminalView: 'detail',
     });
     assert.equal(nav.type, 'workflow.step.navigated');
   });
 
-  it('wires lean journey screens without Office Handoff', () => {
+  it('wires Workflow Runtime into navigator, terminal and provider', () => {
     const navigator = read(
       'features/pilot-workspace/PilotWorkflowNavigator.tsx',
     );
     const terminal = read('features/pilot-workspace/PilotWorkingTerminal.tsx');
-    const screen = read(
-      'features/pilot-workspace/terminal/CommercialJourneyScreen.tsx',
-    );
-    const css = read('index.css');
+    const context = read('office/PilotWorkspaceContext.tsx');
 
-    assert.match(navigator, /data-workflow-catalog="commercial-journey"/);
-    assert.match(navigator, /Commercial Journey/);
-    assert.match(terminal, /CommercialJourneyScreen/);
-    assert.match(screen, /CompleteOrderScreen/);
-    assert.match(screen, /PaymentScreen/);
-    assert.match(screen, /ConisStudioScreen/);
-    assert.doesNotMatch(screen, /OfficeHandoff|PilotConfirmed|office_handoff/);
-    assert.doesNotMatch(navigator, /Office Handoff|Pilot Confirmed/);
-    assert.match(css, /office-cj-screen/);
+    assert.match(navigator, /data-workflow-catalog="defs"/);
+    assert.match(navigator, /Workflow/);
+    assert.match(terminal, /PilotTerminalWorkflow/);
+    assert.doesNotMatch(terminal, /CommercialJourneyScreen/);
+    assert.match(context, /navigateWorkflowStep/);
+    assert.match(context, /navigateCommercialJourneyStep/);
   });
 });

@@ -50,7 +50,7 @@ export function CommercialJourneyScreen({
 }
 
 function WelcomeScreen({ partnerName }: { readonly partnerName: string }) {
-  const { navigateWorkflowStep } = usePilotWorkspaceContext();
+  const { navigateCommercialJourneyStep } = usePilotWorkspaceContext();
 
   return (
     <div
@@ -71,7 +71,7 @@ function WelcomeScreen({ partnerName }: { readonly partnerName: string }) {
         type="button"
         className="office-cj-pilot__continue"
         data-testid="cj-welcome-cta"
-        onClick={() => navigateWorkflowStep('pilot_program')}
+        onClick={() => navigateCommercialJourneyStep('pilot_program')}
       >
         Vybrat pilotní program
       </button>

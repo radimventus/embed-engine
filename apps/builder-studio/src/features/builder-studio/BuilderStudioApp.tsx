@@ -8,7 +8,6 @@ import {
   recordPlatformActivity,
   submitPlatformFeedback,
   usePlatformSession,
-  isOperatorWorkspaceMode,
   isWorkspaceShellEmbed,
 } from '@embed-engine/platform-access';
 
@@ -245,7 +244,6 @@ export function BuilderStudioApp() {
         onLogout={logout}
         onOpenLanding={clearStudio}
         onSelectStudio={selectStudio}
-        hideStudioSwitcher={isOperatorWorkspaceMode()}
         contentOnly={isWorkspaceShellEmbed()}
         onSubmitFeedback={(message) => {
           submitPlatformFeedback({

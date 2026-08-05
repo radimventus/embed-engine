@@ -13,7 +13,6 @@ import {
   submitPlatformFeedback,
   usePlatformSession,
   isWorkspaceShellEmbed,
-  isOperatorWorkspaceMode,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -29,6 +28,7 @@ import { OfficeSectionPage } from './features/OfficeSectionPage';
 import { PartnersWorkspacePage } from './features/partners/PartnersWorkspacePage';
 import { PilotRuntimePage } from './features/pilot/PilotRuntimePage';
 import { OfficeWorkSurface } from './features/pilot-workspace/OfficeWorkSurface';
+import { CommercialJourneySurface } from './features/pilot-workspace/CommercialJourneySurface';
 import { SalesWorkspacePage } from './features/sales/SalesWorkspacePage';
 import { DEFAULT_PILOT_MAILBOX_ID } from './mail';
 import { createOfficeHostWorkflowAutomation } from './office/officeAutomationHost';
@@ -122,6 +122,8 @@ function OfficeStudioAppInner() {
   const sectionLabel =
     location.routeId === 'work'
       ? (activeCase?.label ?? 'Working Terminal')
+      : location.routeId === 'commercial-journey'
+        ? (activeCase?.label ?? 'Partner Commercial Journey')
       : location.routeId === 'settings'
         ? 'Pilot Runtime'
         : isPartnerScoped && location.partnerId !== null
@@ -139,6 +141,8 @@ function OfficeStudioAppInner() {
   const mainContent =
     location.routeId === 'work' ? (
       <OfficeWorkSurface />
+    ) : location.routeId === 'commercial-journey' ? (
+      <CommercialJourneySurface />
     ) : location.routeId === 'dashboard' ? (
       <OfficeDashboardPage />
     ) : location.routeId === 'partners' ? (
@@ -191,7 +195,8 @@ function OfficeStudioAppInner() {
       </div>
       <main
         className={
-          location.routeId === 'work'
+          location.routeId === 'work' ||
+          location.routeId === 'commercial-journey'
             ? 'platform-studio-pad office-workspace__main office-workspace__main--work'
             : 'platform-studio-pad office-workspace__main'
         }
@@ -236,11 +241,7 @@ function OfficeStudioAppInner() {
     );
   }
 
-  // VR-05 — PE mode never shows Legacy Platform Studio Switcher.
-  if (isOperatorWorkspaceMode()) {
-    return workspaceBody;
-  }
-
+  // VR-05 / PT-VR-01A — PE mode keeps PlatformShell header; hide Legacy Studio Switcher.
   return (
     <PlatformShell
       activeStudioId="office"

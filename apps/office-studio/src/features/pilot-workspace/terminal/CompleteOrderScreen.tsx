@@ -47,7 +47,7 @@ type CompleteOrderScreenProps = {
  * One screen · one checkbox · one CTA. Visual order confirmation only.
  */
 export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
-  const { navigateWorkflowStep } = usePilotWorkspaceContext();
+  const { navigateCommercialJourneyStep } = usePilotWorkspaceContext();
   const selectedId = useSyncExternalStore(
     subscribeCommercialJourneySelection,
     getCommercialJourneySelectedProgramId,
@@ -250,7 +250,7 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
         className="office-cj-pilot__continue"
         data-testid="cj-order-confirm"
         disabled={!canConfirm}
-        onClick={() => navigateWorkflowStep('payment')}
+        onClick={() => navigateCommercialJourneyStep('payment')}
       >
         Potvrdit objednávku
       </button>
