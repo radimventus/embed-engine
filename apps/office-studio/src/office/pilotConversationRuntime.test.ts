@@ -58,7 +58,7 @@ describe('CAP-OP-08 conversation runtime foundation', () => {
 
   it('loads Conversation and Message list for a commercial case', () => {
     resetConversationMailStore();
-    const forCase = conversationsForCase('case-dse-starter');
+    const forCase = conversationsForCase('villa-168');
     assert.equal(forCase.length, 1);
     assert.equal(forCase[0].id, 'conv-dse-starter');
 
@@ -73,15 +73,15 @@ describe('CAP-OP-08 conversation runtime foundation', () => {
 
   it('tracks active Conversation in runtime without persistence', () => {
     resetConversationMailStore();
-    let state = createInitialConversationRuntimeState('case-dse-starter');
+    let state = createInitialConversationRuntimeState('villa-168');
     assert.equal(state.activeConversationId, 'conv-dse-starter');
-    assert.equal(state.activeConversation?.caseId, 'case-dse-starter');
+    assert.equal(state.activeConversation?.caseId, 'villa-168');
     assert.ok(state.messages.length >= 1);
     assert.equal(state.activeMailbox?.email, 'sales@conis.cz');
 
     state = reducePilotConversation(state, {
       type: 'load-for-case',
-      caseId: 'case-nord-pilot',
+      caseId: 'harmony-124',
     });
     assert.equal(state.activeConversationId, 'conv-nord-pilot');
     assert.equal(state.messages[0]?.conversationId, 'conv-nord-pilot');

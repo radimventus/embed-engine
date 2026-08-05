@@ -9,6 +9,10 @@ import {
 } from 'react';
 import { REFERENCE_HOUSE_PACKAGE } from '@embed-engine/object-house';
 import {
+  resolveActiveProjectView,
+  usePlatformSession,
+} from '@embed-engine/platform-access';
+import {
   createDecisionSessionRuntime,
   createSystemClock,
   type DecisionSessionRuntime,
@@ -31,6 +35,8 @@ export type ManagerStudioRuntimeContextValue = {
   readonly operations: OperationsProjection;
   readonly ready: boolean;
   readonly dispatch: (command: RuntimeCommand, now?: number) => DispatchResult;
+  /** PT-PDM-02 — Shared Project id bound for this Runtime session. */
+  readonly projectId: string | null;
 };
 
 const ManagerStudioRuntimeContext =
@@ -43,10 +49,17 @@ type DecisionSessionRuntimeProviderProps = {
 /**
  * Bootstraps certified Decision Session Runtime once for Manager Studio.
  * Injects `createSystemClock()` at the adapter boundary (ED-DA-06).
+ * PT-PDM-02 — project identity from Shared Project Runtime; HP Runtime unchanged.
  */
 export function DecisionSessionRuntimeProvider({
   children,
 }: DecisionSessionRuntimeProviderProps) {
+  const { session } = usePlatformSession();
+  const projectView = useMemo(
+    () => resolveActiveProjectView(session?.projectId ?? null),
+    [session?.projectId],
+  );
+
   const runtimeRef = useRef<DecisionSessionRuntime | null>(null);
   if (runtimeRef.current === null) {
     runtimeRef.current = createDecisionSessionRuntime({
@@ -83,8 +96,9 @@ export function DecisionSessionRuntimeProvider({
       }),
       ready: true,
       dispatch,
+      projectId: projectView?.project.id ?? null,
     };
-  }, [dispatch, revision, runtime]);
+  }, [dispatch, projectView, revision, runtime]);
 
   return (
     <ManagerStudioRuntimeContext.Provider value={value}>

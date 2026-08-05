@@ -48,7 +48,7 @@ const mailbox: PilotMailbox = {
 const conversation: PilotConversation = {
   id: 'conv-test',
   mailboxId: mailbox.id,
-  caseId: 'case-dse-starter',
+  caseId: 'villa-168',
   subject: 'Starter pilot',
   participantEmails: ['jana@domysenergii.cz', 'kontakt@conis.cz', 'ops@partner.cz'],
   status: 'open',
@@ -72,14 +72,14 @@ const source: PilotConversationMessage = {
 
 describe('PT-14 mail composer', () => {
   it('builds compose drafts bound to active project contacts', () => {
-    const activeCase = getPilotWorkspaceCase('case-dse-starter')!;
+    const activeCase = getPilotWorkspaceCase('villa-168')!;
     const draft = buildNewComposeDraft({
       activeCase,
       mailbox,
       conversation,
     });
     assert.equal(draft.mode, 'compose');
-    assert.equal(draft.caseId, 'case-dse-starter');
+    assert.equal(draft.caseId, 'villa-168');
     assert.equal(draft.origin, 'OFFICE');
     assert.equal(draft.toEmail, activeCase.contacts[0]?.email);
     assert.equal(draft.partnerName, activeCase.partnerName);
@@ -87,7 +87,7 @@ describe('PT-14 mail composer', () => {
   });
 
   it('builds reply / reply-all / forward with Message-ID threading', () => {
-    const activeCase = getPilotWorkspaceCase('case-dse-starter')!;
+    const activeCase = getPilotWorkspaceCase('villa-168')!;
     const reply = buildReplyDraft({
       activeCase,
       mailbox,
@@ -165,7 +165,7 @@ describe('PT-14 mail composer', () => {
       ),
     });
 
-    const activeCase = getPilotWorkspaceCase('case-dse-starter')!;
+    const activeCase = getPilotWorkspaceCase('villa-168')!;
     const draft = buildReplyDraft({
       activeCase,
       mailbox,
@@ -188,7 +188,7 @@ describe('PT-14 mail composer', () => {
     const stored = storeMessagesForConversation(conversation.id, store);
     assert.ok(stored.some((item) => item.id === message.id));
 
-    const timeline = projectTimelineFromConversation('case-dse-starter', store);
+    const timeline = projectTimelineFromConversation('villa-168', store);
     assert.ok(
       timeline.some(
         (event) =>

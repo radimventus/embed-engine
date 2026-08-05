@@ -29,6 +29,21 @@ export const ROOMS_CSV_PATH = '/house-package/rooms.csv';
 export const VIDEOS_CSV_PATH = '/house-package/videos.csv';
 const HERO_PUBLIC_PATH = '/house-package/media/hero/hero.png';
 
+function csvPathsForPackageRoot(packagePublicRoot: string): {
+  readonly gallery: string;
+  readonly rooms: string;
+  readonly videos: string;
+  readonly packageRootLabel: string;
+} {
+  const root = packagePublicRoot.replace(/\/+$/, '') || '/house-package';
+  return {
+    gallery: `${root}/gallery.csv`,
+    rooms: `${root}/rooms.csv`,
+    videos: `${root}/videos.csv`,
+    packageRootLabel: root,
+  };
+}
+
 export type BuilderPackageCsvTexts = {
   readonly galleryCsv: string;
   readonly roomsCsv: string;
@@ -94,6 +109,7 @@ async function fetchCsvText(absolutePath: string): Promise<string> {
 
 async function loadFloorPlanGeometryForRooms(
   roomsCsvText: string,
+  packagePublicRoot: string,
 ): Promise<void> {
   clearFloorPlanGeometryCache();
   const table = parseCsv(roomsCsvText);
@@ -104,9 +120,10 @@ async function loadFloorPlanGeometryForRooms(
       floors.add(floor);
     }
   }
+  const root = packagePublicRoot.replace(/\/+$/, '') || '/house-package';
   await Promise.all(
     [...floors].map(async (floorId) => {
-      const path = `/house-package/media/plans/${floorId}.geometry.json`;
+      const path = `${root}/media/plans/${floorId}.geometry.json`;
       const text = await fetchText(path);
       let parsed: unknown;
       try {
@@ -130,21 +147,27 @@ async function loadFloorPlanGeometryForRooms(
 
 /**
  * Vite 7–compatible loader: HTTP fetch of public HP-002 CSVs (no public/?raw imports).
+ * PT-PDM-02 — paths follow Shared Project `packagePublicRoot`.
  */
-export async function loadBuilderPackageCsvTexts(): Promise<BuilderPackageCsvTexts> {
+export async function loadBuilderPackageCsvTexts(
+  packagePublicRoot: string = PACKAGE_ROOT_LABEL,
+): Promise<BuilderPackageCsvTexts> {
+  const paths = csvPathsForPackageRoot(packagePublicRoot);
   const [galleryCsv, roomsCsv, videosCsv] = await Promise.all([
-    fetchCsvText(GALLERY_CSV_PATH),
-    fetchCsvText(ROOMS_CSV_PATH),
-    fetchCsvText(VIDEOS_CSV_PATH),
+    fetchCsvText(paths.gallery),
+    fetchCsvText(paths.rooms),
+    fetchCsvText(paths.videos),
   ]);
   return { galleryCsv, roomsCsv, videosCsv };
 }
 
 function buildRegistriesFromTexts(
   texts: BuilderPackageCsvTexts,
+  packagePublicRoot: string = PACKAGE_ROOT_LABEL,
 ): BuilderHousePackageImport {
+  const paths = csvPathsForPackageRoot(packagePublicRoot);
   const result = buildBuilderPackageRegistries({
-    packageRoot: PACKAGE_ROOT_LABEL,
+    packageRoot: paths.packageRootLabel,
     galleryCsv: texts.galleryCsv,
     roomsCsv: texts.roomsCsv,
     videosCsv: texts.videosCsv,
@@ -205,14 +228,16 @@ function logBuilderPackageEvidence(
 
 let cachedRegistries: BuilderHousePackageImport | null = null;
 let cachedHousePackage: HousePackage | null = null;
+let cachedPackagePublicRoot: string | null = null;
 let bootstrapPromise: Promise<BuilderHousePackageImport> | null = null;
 
 function projectCachedHousePackage(
   registries: BuilderHousePackageImport,
+  packagePublicRoot: string,
 ): HousePackage {
   const housePackage = projectBuilderImportToHousePackage(registries, {
     ...BUILDER_RUNTIME_HOUSE_DEFAULTS,
-    packagePublicRoot: '/house-package',
+    packagePublicRoot,
   });
   cachedHousePackage = housePackage;
   return housePackage;
@@ -220,22 +245,30 @@ function projectCachedHousePackage(
 
 /**
  * Ensure Builder registries + Runtime HousePackage exist (async).
+ * PT-PDM-02 — `packagePublicRoot` comes from Shared Project Runtime (`openProject`).
  * Browser: fetches HP-002 CSVs over HTTP. Tests: use bootstrapBuilderPackageRegistriesSyncForTests.
  */
-export async function ensureBuilderPackageBootstrapped(): Promise<BuilderHousePackageImport> {
-  if (cachedRegistries !== null) {
+export async function ensureBuilderPackageBootstrapped(
+  packagePublicRoot: string = PACKAGE_ROOT_LABEL,
+): Promise<BuilderHousePackageImport> {
+  const root = packagePublicRoot.replace(/\/+$/, '') || PACKAGE_ROOT_LABEL;
+  if (cachedRegistries !== null && cachedPackagePublicRoot === root) {
     return cachedRegistries;
   }
-  if (bootstrapPromise !== null) {
+  if (bootstrapPromise !== null && cachedPackagePublicRoot === root) {
     return bootstrapPromise;
   }
 
+  cachedRegistries = null;
+  cachedHousePackage = null;
+  cachedPackagePublicRoot = root;
+
   bootstrapPromise = (async () => {
-    const texts = await loadBuilderPackageCsvTexts();
-    await loadFloorPlanGeometryForRooms(texts.roomsCsv);
-    const registries = buildRegistriesFromTexts(texts);
+    const texts = await loadBuilderPackageCsvTexts(root);
+    await loadFloorPlanGeometryForRooms(texts.roomsCsv, root);
+    const registries = buildRegistriesFromTexts(texts, root);
     cachedRegistries = registries;
-    projectCachedHousePackage(registries);
+    projectCachedHousePackage(registries, root);
     logBuilderPackageEvidence(registries, texts);
     return registries;
   })();
@@ -244,6 +277,7 @@ export async function ensureBuilderPackageBootstrapped(): Promise<BuilderHousePa
     return await bootstrapPromise;
   } catch (error) {
     bootstrapPromise = null;
+    cachedPackagePublicRoot = null;
     throw error;
   }
 }
@@ -267,7 +301,10 @@ export function getBuilderRuntimeHousePackage(): HousePackage {
   if (cachedHousePackage !== null) {
     return cachedHousePackage;
   }
-  return projectCachedHousePackage(getBuilderPackageRegistries());
+  return projectCachedHousePackage(
+    getBuilderPackageRegistries(),
+    cachedPackagePublicRoot ?? PACKAGE_ROOT_LABEL,
+  );
 }
 
 /**
@@ -276,6 +313,7 @@ export function getBuilderRuntimeHousePackage(): HousePackage {
 export function bootstrapBuilderPackageRegistriesSyncForTests(
   texts: BuilderPackageCsvTexts,
   geometryByFloor?: Readonly<Record<string, FloorPlanGeometry>>,
+  packagePublicRoot: string = PACKAGE_ROOT_LABEL,
 ): BuilderHousePackageImport {
   clearFloorPlanGeometryCache();
   if (geometryByFloor !== undefined) {
@@ -283,10 +321,12 @@ export function bootstrapBuilderPackageRegistriesSyncForTests(
       setFloorPlanGeometryForFloor(floorId, geometry);
     }
   }
-  const registries = buildRegistriesFromTexts(texts);
+  const root = packagePublicRoot.replace(/\/+$/, '') || PACKAGE_ROOT_LABEL;
+  cachedPackagePublicRoot = root;
+  const registries = buildRegistriesFromTexts(texts, root);
   cachedRegistries = registries;
   bootstrapPromise = Promise.resolve(registries);
-  projectCachedHousePackage(registries);
+  projectCachedHousePackage(registries, root);
   logBuilderPackageEvidence(registries, texts);
   return registries;
 }
@@ -295,6 +335,7 @@ export function bootstrapBuilderPackageRegistriesSyncForTests(
 export function resetBuilderPackageBootstrapForTests(): void {
   cachedRegistries = null;
   cachedHousePackage = null;
+  cachedPackagePublicRoot = null;
   bootstrapPromise = null;
   clearFloorPlanGeometryCache();
 }

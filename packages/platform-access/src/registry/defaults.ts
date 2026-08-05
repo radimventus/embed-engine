@@ -41,6 +41,10 @@ export const DEFAULT_WORKSPACES: readonly PlatformWorkspace[] = [
   },
 ] as const;
 
+/**
+ * PT-PDM-02 — Seed Projekty (Builder-authored). Published = visible to Office/Client/Manager/Sales.
+ * packageRoot points at the same House Package trees Client Studio serves.
+ */
 export const DEFAULT_PROJECTS: readonly PlatformProject[] = [
   {
     id: 'family-98',
@@ -48,7 +52,7 @@ export const DEFAULT_PROJECTS: readonly PlatformProject[] = [
     companyId: DEFAULT_COMPANY_ID,
     name: 'Family 98',
     packageRoot: 'apps/client-studio/public/house-packages/family-98',
-    status: 'ready',
+    status: 'published',
     slug: 'family-98',
     objectType: 'family',
     description: 'Modulární rodinný dům Family 98.',
@@ -59,7 +63,7 @@ export const DEFAULT_PROJECTS: readonly PlatformProject[] = [
     companyId: DEFAULT_COMPANY_ID,
     name: 'Harmony 124',
     packageRoot: 'apps/client-studio/public/house-packages/harmony-124',
-    status: 'ready',
+    status: 'published',
     slug: 'harmony-124',
     objectType: 'harmony',
     description: 'Modulární dům Harmony 124.',

@@ -51,9 +51,9 @@ describe('PT-15 Office Document Runtime wiring', () => {
       buildBusinessEvent({
         kind: 'OrderConfirmed',
         source: 'offer-experience',
-        correlationId: 'case-dse-starter',
+        correlationId: 'villa-168',
         payload: {
-          caseId: 'case-dse-starter',
+          caseId: 'villa-168',
           orderId: 'ORD-1',
           partnerName: 'Domy s energií',
           companyName: 'DSE s.r.o.',
@@ -64,7 +64,7 @@ describe('PT-15 Office Document Runtime wiring', () => {
       }),
     );
 
-    const docs = listProjectDocuments('case-dse-starter');
+    const docs = listProjectDocuments('villa-168');
     assert.equal(docs.length, 5);
     assert.ok(docs.some((item) => item.type === 'electronic_order'));
     assert.ok(host.journal.documents.length >= 5);
@@ -76,7 +76,7 @@ describe('PT-15 Office Document Runtime wiring', () => {
     );
     assert.ok(attached.length >= 5);
 
-    const timeline = projectTimelineFromConversation('case-dse-starter');
+    const timeline = projectTimelineFromConversation('villa-168');
     assert.ok(timeline.some((event) => event.kind === 'document.generated'));
     assert.ok(timeline.some((event) => event.kind === 'document.attached'));
     assert.ok(timeline.some((event) => event.kind === 'document.sent'));

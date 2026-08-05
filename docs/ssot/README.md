@@ -9,6 +9,8 @@ Autorativní projektové dokumenty (PT-SSOT-01).
 | PRODUCT BIBLE | [PRODUCT BIBLE.docx](./PRODUCT%20BIBLE.docx) | Produktový SSOT |
 | PLATFORM DATA CONSTITUTION | [PLATFORM-DATA-CONSTITUTION-v1.0.md](../platform/PLATFORM-DATA-CONSTITUTION-v1.0.md) | Data ownership · Studio matrix · Object map (**PDM-01 Completed**) |
 | PLATFORM DATA AUDIT | [PLATFORM-DATA-AUDIT-v1.0.md](../platform/PLATFORM-DATA-AUDIT-v1.0.md) | Forenzní stav datové vrstvy (AUDIT-01) |
+| PDM-02 Shared Project Runtime | [PDM-02-shared-project-runtime.md](../platform/PDM-02-shared-project-runtime.md) | Shared Project Runtime (**PDM-02 Completed**) |
+| PDM-03 Studio Integration | [PDM-03-studio-integration.md](../platform/PDM-03-studio-integration.md) | Finish Studio binds · retire reference HP (**In progress**) |
 | PDM-02 baseline | [PDM-02-implementation-baseline.md](../platform/PDM-02-implementation-baseline.md) | Implementační podklad Shared Project Runtime |
 
 Generátor: `_generate_conis_ssot_docx.py` (python-docx).

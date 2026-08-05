@@ -11,10 +11,10 @@ import type {
 } from './pilotTimelineModel';
 
 const MOCK_EVENTS: PilotTimelineEvent[] = [
-  // case-dse-starter
+  // villa-168
   {
     id: 'tl-dse-offer-sent',
-    caseId: 'case-dse-starter',
+    caseId: 'villa-168',
     kind: 'offer.sent',
     title: 'Offer Sent',
     summary: 'Odeslána nabídka Starter · Domy s energií',
@@ -24,7 +24,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-dse-offer-viewed',
-    caseId: 'case-dse-starter',
+    caseId: 'villa-168',
     kind: 'offer.viewed',
     title: 'Offer Viewed',
     summary: 'Partner otevřel veřejnou Offer Experience',
@@ -34,7 +34,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-dse-email-in',
-    caseId: 'case-dse-starter',
+    caseId: 'villa-168',
     kind: 'email.received',
     title: 'Email Received',
     summary: 'Jana Energetická · Dotaz k dokumentům',
@@ -44,7 +44,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-dse-email-out',
-    caseId: 'case-dse-starter',
+    caseId: 'villa-168',
     kind: 'email.sent',
     title: 'Email Sent',
     summary: 'Odeslána odpověď s termínem dokumentů',
@@ -54,7 +54,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-dse-order',
-    caseId: 'case-dse-starter',
+    caseId: 'villa-168',
     kind: 'order.confirmed',
     title: 'Order Confirmed',
     summary: 'Objednávka Starter potvrzena',
@@ -64,7 +64,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-dse-note',
-    caseId: 'case-dse-starter',
+    caseId: 'villa-168',
     kind: 'note.added',
     title: 'Note Added',
     summary: 'Interní poznámka: čeká se na úhradu',
@@ -74,7 +74,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-dse-pay',
-    caseId: 'case-dse-starter',
+    caseId: 'villa-168',
     kind: 'payment.received',
     title: 'Payment Received',
     summary: 'Úhrada Starter zaznamenána',
@@ -84,7 +84,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-dse-builder',
-    caseId: 'case-dse-starter',
+    caseId: 'villa-168',
     kind: 'builder.ready',
     title: 'Builder Ready',
     summary: 'Builder Ready signal připraven',
@@ -93,10 +93,10 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
     occurredAt: '2026-08-04T10:20:00.000Z',
   },
 
-  // case-nord-pilot
+  // harmony-124
   {
     id: 'tl-nord-offer-sent',
-    caseId: 'case-nord-pilot',
+    caseId: 'harmony-124',
     kind: 'offer.sent',
     title: 'Offer Sent',
     summary: 'Odeslána nabídka Pilot · Nord Living',
@@ -105,7 +105,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-nord-viewed',
-    caseId: 'case-nord-pilot',
+    caseId: 'harmony-124',
     kind: 'offer.viewed',
     title: 'Offer Viewed',
     summary: 'Offer Experience zobrazena partnerem',
@@ -114,7 +114,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-nord-email',
-    caseId: 'case-nord-pilot',
+    caseId: 'harmony-124',
     kind: 'email.received',
     title: 'Email Received',
     summary: 'Erik Nord · Dokončení objednávky Pilot',
@@ -123,7 +123,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-nord-note',
-    caseId: 'case-nord-pilot',
+    caseId: 'harmony-124',
     kind: 'note.added',
     title: 'Note Added',
     summary: 'Poznámka: checkout rozpracován',
@@ -131,10 +131,10 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
     occurredAt: '2026-08-03T17:10:00.000Z',
   },
 
-  // case-atelier-studio
+  // family-98
   {
     id: 'tl-atelier-offer',
-    caseId: 'case-atelier-studio',
+    caseId: 'family-98',
     kind: 'offer.sent',
     title: 'Offer Sent',
     summary: 'Odeslána nabídka Studio Partner',
@@ -143,7 +143,7 @@ const MOCK_EVENTS: PilotTimelineEvent[] = [
   },
   {
     id: 'tl-atelier-email',
-    caseId: 'case-atelier-studio',
+    caseId: 'family-98',
     kind: 'email.received',
     title: 'Email Received',
     summary: 'Marie Ateliér · Úvodní představení',

@@ -112,7 +112,7 @@ describe('CAP-OP-09 mail transport mvp', () => {
       toEmail: 'jana@domysenergii.cz',
       subject: 'Welcome',
       body: 'Vítejte v CONIS.',
-      caseId: 'case-dse-starter',
+      caseId: 'villa-168',
       origin: 'SYSTEM',
     });
 
@@ -129,7 +129,7 @@ describe('CAP-OP-09 mail transport mvp', () => {
         {
           id: 'conv-dse-starter',
           mailboxId: 'mbx-conis-contact',
-          caseId: 'case-dse-starter',
+          caseId: 'villa-168',
           subject: 'Domy s energií · Starter',
           participantEmails: ['jana@domysenergii.cz', 'kontakt@conis.cz'],
           status: 'open',
@@ -202,7 +202,7 @@ describe('CAP-OP-09 mail transport mvp', () => {
     const mapped = store.conversations.find((item) =>
       item.participantEmails.includes('jana@domysenergii.cz'),
     );
-    assert.equal(mapped?.caseId, 'case-dse-starter');
+    assert.equal(mapped?.caseId, 'villa-168');
 
     const unassigned = store.conversations.find((item) =>
       item.participantEmails.includes('lead@example.cz'),

@@ -26,7 +26,7 @@ function read(relative: string): string {
 describe('PT-CJ-04 Payment Experience', () => {
   it('builds proforma and SPD QR from selected program', () => {
     setCommercialJourneySelectedProgramId('pilot-plus');
-    const activeCase = getPilotWorkspaceCase('case-dse-starter');
+    const activeCase = getPilotWorkspaceCase('villa-168');
     assert.ok(activeCase);
     const proforma = buildCommercialProformaForCase(activeCase);
     assert.ok(proforma);

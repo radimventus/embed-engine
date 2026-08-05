@@ -17,6 +17,12 @@ export type SharedWorkspaceContext = {
   readonly companyId: string;
   readonly workspaceId: string;
   readonly projectId: string;
+  /** Display name when Office Open PE binds branding (optional). */
+  readonly partnerName?: string;
+  /** Project label for Workspace chrome (optional). */
+  readonly projectLabel?: string;
+  /** Default Embed object package id (optional). */
+  readonly objectId?: string;
   /** Workspace Navigation active surface (includes Client). */
   readonly activeStudio: WorkspaceStudioSurface;
   readonly officeReturnHref: string;

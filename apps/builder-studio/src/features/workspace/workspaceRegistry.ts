@@ -1,12 +1,14 @@
 /**
- * CAP-BLD-08 + EPIC-BX-01 / BX-14 — Workspace registry (Projekt → Domy).
- * Content remains in each House Package root. No parallel content model.
+ * CAP-BLD-08 + EPIC-BX-01 / BX-14 / PT-PDM-02 — Workspace registry (Projekt → Domy).
+ * Content remains in each House Package root. Identity syncs to Shared Project Runtime.
  */
 
 import {
   DEFAULT_COMPANY_ID as PLATFORM_DEFAULT_COMPANY_ID,
   DEFAULT_PROJECT_ID as PLATFORM_DEFAULT_PROJECT_ID,
+  DEFAULT_WORKSPACE_ID,
   getDefaultCompanyRegistry,
+  syncBuilderWorkspaceHouse,
 } from '@embed-engine/platform-access';
 
 export type WorkspaceProjectStatus = 'draft' | 'ready' | 'published';
@@ -397,6 +399,18 @@ export function registerWorkspaceProject(
 ): WorkspaceRegistryState {
   const normalized = normalizeWorkspaceProject(project);
   const without = state.projects.filter((item) => item.id !== normalized.id);
+  /** PDM-02 — Builder is the sole author of Shared Project identity. */
+  syncBuilderWorkspaceHouse({
+    id: normalized.id,
+    name: normalized.name,
+    packageRoot: normalized.packageRoot,
+    companyId: normalized.companyId,
+    status: normalized.status,
+    slug: normalized.slug,
+    objectType: normalized.objectType,
+    description: normalized.description,
+    workspaceId: DEFAULT_WORKSPACE_ID,
+  });
   return {
     ...state,
     projects: [...without, normalized],

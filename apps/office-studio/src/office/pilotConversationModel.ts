@@ -115,7 +115,7 @@ export const PILOT_DEMO_CONVERSATIONS: readonly PilotConversation[] =
     {
       id: 'conv-dse-starter',
       mailboxId: 'mbx-conis-sales',
-      caseId: 'case-dse-starter',
+      caseId: 'villa-168',
       subject: 'Domy s energií · Starter',
       participantEmails: ['jana@domysenergii.cz', 'sales@conis.cz'],
       status: 'waiting',
@@ -124,7 +124,7 @@ export const PILOT_DEMO_CONVERSATIONS: readonly PilotConversation[] =
     {
       id: 'conv-nord-pilot',
       mailboxId: 'mbx-conis-sales',
-      caseId: 'case-nord-pilot',
+      caseId: 'harmony-124',
       subject: 'Nord Living · Pilot',
       participantEmails: ['erik@nordliving.cz', 'sales@conis.cz'],
       status: 'open',
@@ -133,7 +133,7 @@ export const PILOT_DEMO_CONVERSATIONS: readonly PilotConversation[] =
     {
       id: 'conv-atelier-studio',
       mailboxId: 'mbx-conis-sales',
-      caseId: 'case-atelier-studio',
+      caseId: 'family-98',
       subject: 'Ateliér Domů · Studio Partner',
       participantEmails: ['marie@atelierdomu.cz', 'sales@conis.cz'],
       status: 'closed',

@@ -61,7 +61,7 @@ describe('R-001 project activation', () => {
         receivedAt: '2026-08-04T10:00:00.000Z',
         status: 'unread' as const,
         category: 'new' as const,
-        caseId: 'case-dse-starter',
+        caseId: 'villa-168',
       },
       {
         id: 'm2',
@@ -72,7 +72,7 @@ describe('R-001 project activation', () => {
         receivedAt: '2026-08-04T11:00:00.000Z',
         status: 'unread' as const,
         category: 'new' as const,
-        caseId: 'case-nord-pilot',
+        caseId: 'harmony-124',
       },
       {
         id: 'm3',
@@ -88,7 +88,7 @@ describe('R-001 project activation', () => {
     ];
 
     assert.deepEqual(
-      inboxMessagesForActiveProject(messages, 'case-nord-pilot').map(
+      inboxMessagesForActiveProject(messages, 'harmony-124').map(
         (item) => item.id,
       ),
       ['m2'],
@@ -110,13 +110,13 @@ describe('R-001 project activation', () => {
           receivedAt: '2026-08-04T10:00:00.000Z',
           status: 'read' as const,
           category: 'new' as const,
-          caseId: 'case-dse-starter',
+          caseId: 'villa-168',
         },
       ],
     };
 
     const plan = planPilotProjectActivation({
-      caseId: 'case-nord-pilot',
+      caseId: 'harmony-124',
       cases: PILOT_WORKSPACE_DEMO_CASES,
       lookup: getPilotWorkspaceCase,
       inbox,

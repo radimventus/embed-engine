@@ -89,6 +89,7 @@ describe('PT-16 commercial workflow automation', () => {
 
     const base: PilotWorkspaceCase = {
       id: projectId,
+      projectId,
       label: 'Pay smoke',
       partnerName: 'Nord',
       companyName: 'Nord',
@@ -105,7 +106,7 @@ describe('PT-16 commercial workflow automation', () => {
     const steps = buildWorkflowSteps(resolveCaseWithWorkflowSync(base));
     assert.equal(
       steps.find((step) => step.state === 'active')?.id,
-      'conis_studio',
+      'builder',
     );
 
     const timeline = projectTimelineFromConversation(projectId);

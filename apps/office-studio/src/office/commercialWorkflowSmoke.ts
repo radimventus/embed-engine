@@ -51,6 +51,7 @@ export type CommercialWorkflowSmokeResult = {
 function smokeCase(status: PilotWorkspaceCase['status']): PilotWorkspaceCase {
   return {
     id: COMMERCIAL_SMOKE_PROJECT_ID,
+    projectId: COMMERCIAL_SMOKE_PROJECT_ID,
     label: 'PT-16 Smoke · Starter',
     partnerName: 'Domy s energií',
     companyName: 'DSE s.r.o.',

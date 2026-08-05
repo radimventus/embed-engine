@@ -65,7 +65,7 @@ export const PILOT_INBOX_DEMO_MESSAGES: readonly PilotInboxMessage[] =
       receivedAt: '2026-08-04T10:15:00.000Z',
       status: 'unread',
       category: 'new',
-      caseId: 'case-dse-starter',
+      caseId: 'villa-168',
     },
     {
       id: 'msg-dse-docs',
@@ -76,7 +76,7 @@ export const PILOT_INBOX_DEMO_MESSAGES: readonly PilotInboxMessage[] =
       receivedAt: '2026-08-04T08:40:00.000Z',
       status: 'waiting',
       category: 'waiting_reply',
-      caseId: 'case-dse-starter',
+      caseId: 'villa-168',
     },
     {
       id: 'msg-nord-checkout',
@@ -87,7 +87,7 @@ export const PILOT_INBOX_DEMO_MESSAGES: readonly PilotInboxMessage[] =
       receivedAt: '2026-08-03T16:05:00.000Z',
       status: 'unread',
       category: 'new',
-      caseId: 'case-nord-pilot',
+      caseId: 'harmony-124',
     },
     {
       id: 'msg-unknown-lead',
@@ -109,7 +109,7 @@ export const PILOT_INBOX_DEMO_MESSAGES: readonly PilotInboxMessage[] =
       receivedAt: '2026-08-01T09:00:00.000Z',
       status: 'archived',
       category: 'archive',
-      caseId: 'case-atelier-studio',
+      caseId: 'family-98',
     },
   ]);
 

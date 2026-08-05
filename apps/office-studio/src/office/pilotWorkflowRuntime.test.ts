@@ -47,7 +47,7 @@ describe('CAP-OP-06 workflow runtime', () => {
   });
 
   it('projects case status into done / active / waiting', () => {
-    const waiting = buildWorkflowSteps(getPilotWorkspaceCase('case-dse-starter'));
+    const waiting = buildWorkflowSteps(getPilotWorkspaceCase('villa-168'));
     assert.equal(activeWorkflowStepId(waiting), 'qr_payment');
     assert.equal(waiting.find((s) => s.id === 'offer')?.state, 'done');
     assert.equal(waiting.find((s) => s.id === 'order')?.state, 'done');
@@ -55,18 +55,18 @@ describe('CAP-OP-06 workflow runtime', () => {
     assert.equal(waiting.find((s) => s.id === 'qr_payment')?.state, 'active');
 
     const checkout = buildWorkflowSteps(
-      getPilotWorkspaceCase('case-nord-pilot'),
+      getPilotWorkspaceCase('harmony-124'),
     );
     assert.equal(activeWorkflowStepId(checkout), 'order');
 
     const offer = buildWorkflowSteps(
-      getPilotWorkspaceCase('case-atelier-studio'),
+      getPilotWorkspaceCase('family-98'),
     );
     assert.equal(activeWorkflowStepId(offer), 'offer');
   });
 
   it('highlights navigated step and maps terminal views', () => {
-    const activeCase = getPilotWorkspaceCase('case-dse-starter');
+    const activeCase = getPilotWorkspaceCase('villa-168');
     let state = createInitialWorkflowRuntimeState(activeCase);
     assert.equal(state.projectedActiveStepId, 'qr_payment');
 
@@ -82,7 +82,7 @@ describe('CAP-OP-06 workflow runtime', () => {
 
     const nav = buildWorkflowNavigationEvent({
       stepId: 'offer',
-      caseId: 'case-dse-starter',
+      caseId: 'villa-168',
       terminalView: 'detail',
     });
     assert.equal(nav.type, 'workflow.step.navigated');

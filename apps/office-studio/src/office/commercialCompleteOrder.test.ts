@@ -19,7 +19,7 @@ function read(relative: string): string {
 
 describe('PT-CJ-03 Dokončit objednávku', () => {
   it('seeds partner billing details for review and edit', () => {
-    const activeCase = getPilotWorkspaceCase('case-dse-starter');
+    const activeCase = getPilotWorkspaceCase('villa-168');
     assert.ok(activeCase);
     const details = buildCommercialOrderPartnerDetails(activeCase);
     assert.equal(details.companyName, activeCase.companyName);

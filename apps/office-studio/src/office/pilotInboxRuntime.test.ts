@@ -52,10 +52,10 @@ describe('CAP-OP-10 inbox conversation projection', () => {
     state = reducePilotInbox(state, {
       type: 'assign-case',
       messageId: unassigned!.id,
-      caseId: 'case-nord-pilot',
+      caseId: 'harmony-124',
     });
     const assigned = state.messages.find((item) => item.id === unassigned!.id);
-    assert.equal(assigned?.caseId, 'case-nord-pilot');
+    assert.equal(assigned?.caseId, 'harmony-124');
     assert.equal(assigned?.category, 'new');
     assert.equal(state.selectedMessageId, unassigned!.id);
 
@@ -85,7 +85,7 @@ describe('CAP-OP-10 inbox conversation projection', () => {
   it('builds Timeline integration payloads without Event Catalog coupling', () => {
     const selected = buildInboxMessageSelectedEvent({
       messageId: 'msg-1',
-      caseId: 'case-dse-starter',
+      caseId: 'villa-168',
       category: 'new',
       subject: 'Test',
       occurredAt: '2026-08-04T12:00:00.000Z',
@@ -94,7 +94,7 @@ describe('CAP-OP-10 inbox conversation projection', () => {
     assert.equal(
       buildInboxMessageAssignedEvent({
         messageId: 'msg-1',
-        caseId: 'case-dse-starter',
+        caseId: 'villa-168',
         category: 'new',
         subject: 'Test',
       }).type,

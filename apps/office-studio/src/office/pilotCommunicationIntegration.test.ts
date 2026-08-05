@@ -81,7 +81,7 @@ describe('CAP-OP-10 communication platform integration', () => {
     const inbox = projectInboxFromConversationStore();
     assert.ok(inbox.some((item) => item.subject === 'Operational IMAP'));
 
-    const timeline = projectTimelineFromConversation('case-dse-starter');
+    const timeline = projectTimelineFromConversation('villa-168');
     assert.ok(
       timeline.some(
         (event) =>
@@ -100,7 +100,7 @@ describe('CAP-OP-10 communication platform integration', () => {
       toEmail: 'jana@domysenergii.cz',
       subject: 'Operational SMTP',
       body: 'System mail body',
-      caseId: 'case-dse-starter',
+      caseId: 'villa-168',
       origin: 'SYSTEM',
     });
     assert.equal(message.direction, 'outgoing');
@@ -111,7 +111,7 @@ describe('CAP-OP-10 communication platform integration', () => {
     });
     assert.ok(inbox.messages.some((item) => item.subject === 'Operational SMTP'));
 
-    const timeline = projectTimelineFromConversation('case-dse-starter');
+    const timeline = projectTimelineFromConversation('villa-168');
     assert.ok(
       timeline.some(
         (event) =>
@@ -125,7 +125,7 @@ describe('CAP-OP-10 communication platform integration', () => {
       direction: 'incoming',
       messageId: 'm1',
       conversationId: 'c1',
-      caseId: 'case-dse-starter',
+      caseId: 'villa-168',
       subject: 'Hi',
       occurredAt: '2026-08-04T12:00:00.000Z',
     });

@@ -38,7 +38,7 @@ describe('PT-CJ-02 lean commercial journey workflow runtime', () => {
 
   it('projects case status into lean journey steps', () => {
     const waiting = buildCommercialJourneySteps(
-      getPilotWorkspaceCase('case-dse-starter'),
+      getPilotWorkspaceCase('villa-168'),
     );
     assert.equal(activeCommercialJourneyStepId(waiting), 'payment');
     assert.equal(waiting.find((s) => s.id === 'welcome')?.state, 'done');
@@ -48,17 +48,17 @@ describe('PT-CJ-02 lean commercial journey workflow runtime', () => {
     assert.equal(waiting.find((s) => s.id === 'conis_studio')?.state, 'waiting');
 
     const checkout = buildCommercialJourneySteps(
-      getPilotWorkspaceCase('case-nord-pilot'),
+      getPilotWorkspaceCase('harmony-124'),
     );
     assert.equal(activeCommercialJourneyStepId(checkout), 'complete_order');
 
     const offer = buildCommercialJourneySteps(
-      getPilotWorkspaceCase('case-atelier-studio'),
+      getPilotWorkspaceCase('family-98'),
     );
     assert.equal(activeCommercialJourneyStepId(offer), 'pilot_program');
 
     const ready = buildCommercialJourneySteps({
-      ...getPilotWorkspaceCase('case-dse-starter')!,
+      ...getPilotWorkspaceCase('villa-168')!,
       status: 'pilot_ready',
     });
     assert.equal(activeCommercialJourneyStepId(ready), 'conis_studio');

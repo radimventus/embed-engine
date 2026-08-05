@@ -38,12 +38,16 @@ describe('CAP-OP-01 pilot workspace model', () => {
     assert.equal(isPilotTerminalViewId('journey'), false);
   });
 
-  it('exposes demo cases; recovery persists case id only', () => {
+  it('exposes Shared Project Select list; recovery persists project id only', () => {
     assert.ok(PILOT_WORKSPACE_DEMO_CASES.length >= 1);
     assert.ok(getPilotWorkspaceCase(PILOT_WORKSPACE_DEMO_CASES[0]!.id));
+    assert.equal(
+      PILOT_WORKSPACE_DEMO_CASES[0]!.id,
+      PILOT_WORKSPACE_DEMO_CASES[0]!.projectId,
+    );
     const model = read('office/pilotWorkspaceModel.ts');
     const recovery = read('office/officeWorkspaceRecovery.ts');
-    assert.doesNotMatch(model, /localStorage/);
+    assert.match(model, /listOfficeSelectProjects|listPublishedProjects/);
     assert.match(recovery, /workspaceRecovery/);
     assert.match(recovery, /resolveOfficeBootCaseId/);
   });
@@ -113,7 +117,7 @@ describe('CAP-OP-02 working terminal', () => {
       'proforma',
     );
     assert.equal(atProforma.length, 1);
-    assert.equal(atProforma[0]?.id, 'case-dse-starter');
+    assert.equal(atProforma[0]?.id, 'villa-168');
     assert.equal(workflowPhaseForCaseStatus('checkout'), 'order');
     assert.deepEqual(
       filterCasesByWorkflowPhase(PILOT_WORKSPACE_DEMO_CASES, null).map(

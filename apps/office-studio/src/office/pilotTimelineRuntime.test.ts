@@ -52,10 +52,10 @@ describe('CAP-OP-04 timeline runtime', () => {
   });
 
   it('projects mock events for a case chronologically by day', async () => {
-    const events = await loadTimelineForCase('case-dse-starter');
+    const events = await loadTimelineForCase('villa-168');
     assert.ok(events.length >= 6);
     assert.ok(
-      events.every((event) => event.caseId === 'case-dse-starter'),
+      events.every((event) => event.caseId === 'villa-168'),
     );
     for (let index = 1; index < events.length; index += 1) {
       assert.ok(
@@ -70,10 +70,10 @@ describe('CAP-OP-04 timeline runtime', () => {
 
   it('switches timeline projection when case changes', async () => {
     let state = createEmptyTimelineRuntimeState();
-    const dse = await loadTimelineForCase('case-dse-starter');
+    const dse = await loadTimelineForCase('villa-168');
     state = reducePilotTimeline(state, {
       type: 'load-case',
-      caseId: 'case-dse-starter',
+      caseId: 'villa-168',
       events: dse,
     });
     state = reducePilotTimeline(state, {
@@ -82,27 +82,27 @@ describe('CAP-OP-04 timeline runtime', () => {
     });
     assert.equal(state.selectedEventId, dse[0]!.id);
 
-    const nord = await loadTimelineForCase('case-nord-pilot');
+    const nord = await loadTimelineForCase('harmony-124');
     state = reducePilotTimeline(state, {
       type: 'load-case',
-      caseId: 'case-nord-pilot',
+      caseId: 'harmony-124',
       events: nord,
     });
-    assert.equal(state.caseId, 'case-nord-pilot');
+    assert.equal(state.caseId, 'harmony-124');
     assert.equal(state.selectedEventId, null);
-    assert.ok(state.events.every((event) => event.caseId === 'case-nord-pilot'));
+    assert.ok(state.events.every((event) => event.caseId === 'harmony-124'));
     assert.notEqual(
-      listMockTimelineEventsForCase('case-nord-pilot').length,
-      listMockTimelineEventsForCase('case-dse-starter').length,
+      listMockTimelineEventsForCase('harmony-124').length,
+      listMockTimelineEventsForCase('villa-168').length,
     );
   });
 
   it('selects event detail without mutation APIs', () => {
     let state = createEmptyTimelineRuntimeState();
-    const events = listMockTimelineEventsForCase('case-atelier-studio');
+    const events = listMockTimelineEventsForCase('family-98');
     state = reducePilotTimeline(state, {
       type: 'load-case',
-      caseId: 'case-atelier-studio',
+      caseId: 'family-98',
       events,
     });
     state = reducePilotTimeline(state, {

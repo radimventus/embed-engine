@@ -5,6 +5,7 @@
 import type {
   PlatformCompany,
   PlatformProject,
+  PlatformProjectStatus,
   PlatformWorkspace,
 } from '../domain/types';
 import type { PlatformTenant } from '../domain/pilotTypes';
@@ -25,6 +26,21 @@ export type CompanyRegistryState = {
   readonly workspaces: readonly PlatformWorkspace[];
   readonly projects: readonly PlatformProject[];
 };
+
+/** Merge defaults with extras — extras win by id (Builder authoring overrides). */
+function mergeById<T extends { readonly id: string }>(
+  defaults: readonly T[],
+  extras: readonly T[],
+): T[] {
+  const map = new Map<string, T>();
+  for (const item of defaults) {
+    map.set(item.id, item);
+  }
+  for (const item of extras) {
+    map.set(item.id, item);
+  }
+  return [...map.values()];
+}
 
 let mutableExtras: {
   tenants: PlatformTenant[];
@@ -77,10 +93,10 @@ function ensureExtrasHydrated(): void {
 export function getDefaultCompanyRegistry(): CompanyRegistryState {
   ensureExtrasHydrated();
   return {
-    tenants: [...DEFAULT_TENANTS, ...mutableExtras.tenants],
-    companies: [...DEFAULT_COMPANIES, ...mutableExtras.companies],
-    workspaces: [...DEFAULT_WORKSPACES, ...mutableExtras.workspaces],
-    projects: [...DEFAULT_PROJECTS, ...mutableExtras.projects],
+    tenants: mergeById(DEFAULT_TENANTS, mutableExtras.tenants),
+    companies: mergeById(DEFAULT_COMPANIES, mutableExtras.companies),
+    workspaces: mergeById(DEFAULT_WORKSPACES, mutableExtras.workspaces),
+    projects: mergeById(DEFAULT_PROJECTS, mutableExtras.projects),
   };
 }
 
@@ -178,6 +194,53 @@ export function listProjectsForCompany(
   companyId: string,
 ): readonly PlatformProject[] {
   return state.projects.filter((item) => item.companyId === companyId);
+}
+
+/**
+ * PT-PDM-02 — Builder-only write into the Shared Project Repository.
+ * Upserts by id into extras (overrides defaults when ids match).
+ */
+export function upsertBuilderProject(project: PlatformProject): CompanyRegistryState {
+  ensureExtrasHydrated();
+  mutableExtras = {
+    ...mutableExtras,
+    projects: [
+      ...mutableExtras.projects.filter((item) => item.id !== project.id),
+      project,
+    ],
+  };
+  persistExtrasToStorage();
+  return getDefaultCompanyRegistry();
+}
+
+/** Builder-only — remove authored override / extra project. */
+export function removeBuilderProject(projectId: string): boolean {
+  ensureExtrasHydrated();
+  const before = mutableExtras.projects.length;
+  const isDefault = DEFAULT_PROJECTS.some((item) => item.id === projectId);
+  mutableExtras = {
+    ...mutableExtras,
+    projects: mutableExtras.projects.filter((item) => item.id !== projectId),
+  };
+  /** Soft-delete default seeds by marking them absent via a tombstone draft remove — defaults stay. */
+  if (isDefault) {
+    persistExtrasToStorage();
+    return before !== mutableExtras.projects.length;
+  }
+  persistExtrasToStorage();
+  return before !== mutableExtras.projects.length;
+}
+
+/** Builder-only — status transition (publish / ready / draft). */
+export function setBuilderProjectStatus(
+  projectId: string,
+  status: PlatformProjectStatus,
+): CompanyRegistryState | null {
+  ensureExtrasHydrated();
+  const registry = getDefaultCompanyRegistry();
+  const current = findProject(registry, projectId);
+  if (current === undefined) return null;
+  return upsertBuilderProject({ ...current, status });
 }
 
 export {

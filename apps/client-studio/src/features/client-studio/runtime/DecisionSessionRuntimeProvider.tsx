@@ -16,6 +16,11 @@ import {
   type DispatchResult,
 } from '@embed-engine/runtime';
 import { RUNTIME_HOUSE_PACKAGE_SOURCE } from '@embed-engine/object-house/builder-package';
+import {
+  getSharedWorkspaceContext,
+  resolveActiveProjectView,
+  restoreSession,
+} from '@embed-engine/platform-access';
 
 import { useOptionalDecisionAnalytics } from '../analytics/DecisionAnalyticsProvider';
 import { StudioLoading } from '../foundation/StudioLoading';
@@ -97,6 +102,17 @@ export function DecisionSessionRuntimeProvider({
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const analytics = useOptionalDecisionAnalytics();
 
+  /** PDM-02 — resolve Shared Project without requiring SessionProvider (Embed mount). */
+  const packagePublicRoot = useMemo(() => {
+    const session = restoreSession();
+    const workspaceProjectId =
+      getSharedWorkspaceContext()?.projectId ?? session?.projectId ?? null;
+    return (
+      resolveActiveProjectView(workspaceProjectId)?.packagePublicRoot ??
+      '/house-package'
+    );
+  }, []);
+
   useEffect(() => {
     if (injectedRuntime !== undefined) {
       runtimeRef.current = injectedRuntime;
@@ -109,7 +125,7 @@ export function DecisionSessionRuntimeProvider({
     bootstrapEvents.emit('BOOTSTRAP_LOADING');
 
     let cancelled = false;
-    void ensureBuilderPackageBootstrapped()
+    void ensureBuilderPackageBootstrapped(packagePublicRoot)
       .then(() => {
         if (cancelled) {
           return;
@@ -133,7 +149,7 @@ export function DecisionSessionRuntimeProvider({
     return () => {
       cancelled = true;
     };
-  }, [injectedRuntime]);
+  }, [injectedRuntime, packagePublicRoot]);
 
   const dispatch = useCallback(
     (command: RuntimeCommand, now?: number): DispatchResult => {

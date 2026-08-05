@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 
 import {
   PLATFORM_ROLE_LABELS,
+  listPublishedProjects,
   primaryRole,
   recordPlatformActivity,
   submitPlatformFeedback,
@@ -84,7 +85,11 @@ export function SalesStudioApp() {
       pilot?.workspace.sampleProjectLabel ??
       bootstrap?.project?.name ??
       '—',
-    projects: [],
+    projects: listPublishedProjects().map((project) => ({
+      id: project.id,
+      label: project.name,
+      companyLabel: project.companyName,
+    })),
   });
 
   // SR-002 — CONIS / Sales / Projekt / Zájemce (bez názvu domu).

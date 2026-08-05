@@ -56,6 +56,9 @@ export {
   listProjectsForCompany,
   appendPilotProvision,
   resetCompanyRegistryExtras,
+  upsertBuilderProject,
+  removeBuilderProject,
+  setBuilderProjectStatus,
   DEFAULT_COMPANY_ID,
   DEFAULT_WORKSPACE_ID,
   DEFAULT_PROJECT_ID,
@@ -120,6 +123,31 @@ export {
 
 export { bootstrapProject } from './bootstrap/projectBootstrap';
 export { bootstrapTenant } from './bootstrap/tenantBootstrap';
+
+export type {
+  SharedProject,
+  SharedProjectDocumentRef,
+  SharedProjectRuntimeView,
+  SharedProjectManifest,
+  BuilderProjectWriteInput,
+} from './project';
+export {
+  packageRootToPublicUrl,
+  listSharedProjects,
+  listPublishedProjects,
+  getSharedProject,
+  upsertBuilderSharedProject,
+  publishSharedProject,
+  deleteSharedProject,
+  setSharedProjectStatus,
+  updateSharedProjectManifest,
+  syncBuilderWorkspaceHouse,
+  resetSharedProjectManifestsForTests,
+  openProject,
+  resolveActiveProjectView,
+  listOpenablePublishedProjects,
+  MANIFEST_STORAGE_KEY,
+} from './project';
 
 export {
   CLOUD_PLATFORM_ORIGIN,

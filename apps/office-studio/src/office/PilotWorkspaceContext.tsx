@@ -75,8 +75,8 @@ import {
 import {
   createPlaceholderCase,
   getPilotWorkspaceCase,
+  listOfficeSelectProjects,
   PILOT_TERMINAL_DEFAULT_VIEW,
-  PILOT_WORKSPACE_DEMO_CASES,
   type PilotTerminalViewId,
   type PilotWorkspaceCase,
   type PilotWorkspaceCaseId,
@@ -181,16 +181,14 @@ export function PilotWorkspaceProvider({
   const bootCaseId =
     initialCaseId !== undefined
       ? initialCaseId
-      : resolveOfficeBootCaseId(PILOT_WORKSPACE_DEMO_CASES);
+      : resolveOfficeBootCaseId(listOfficeSelectProjects());
 
   const [activeCaseId, setActiveCaseId] = useState<PilotWorkspaceCaseId | null>(
     bootCaseId,
   );
   const [terminalView, setTerminalView] =
     useState<PilotTerminalViewId>(initialTerminalView);
-  const [extraCases, setExtraCases] = useState<readonly PilotWorkspaceCase[]>(
-    [],
-  );
+  const [caseRevision, setCaseRevision] = useState(0);
   const [inbox, setInbox] = useState<PilotInboxRuntimeState>(
     createInitialInboxRuntimeState,
   );
@@ -218,10 +216,10 @@ export function PilotWorkspaceProvider({
   const inboxRef = useRef(inbox);
   inboxRef.current = inbox;
 
-  const cases = useMemo(
-    () => [...PILOT_WORKSPACE_DEMO_CASES, ...extraCases],
-    [extraCases],
-  );
+  const cases = useMemo(() => {
+    void caseRevision;
+    return listOfficeSelectProjects();
+  }, [caseRevision]);
 
   const activeCase = useMemo(() => {
     if (activeCaseId === null) return null;
@@ -341,13 +339,16 @@ export function PilotWorkspaceProvider({
   );
 
   const createCasePlaceholder = useCallback(() => {
-    const next = createPlaceholderCase();
-    setExtraCases((current) => [...current, next]);
+    /** PDM-02 — do not invent Projekt; refresh Shared Project list and keep selection. */
+    setCaseRevision((value) => value + 1);
+    const published = listOfficeSelectProjects();
+    const next =
+      published.find((item) => item.id === activeCaseId) ??
+      createPlaceholderCase();
     const plan = planPilotProjectActivation({
       caseId: next.id,
-      cases: [...PILOT_WORKSPACE_DEMO_CASES, ...extraCases, next],
-      lookup: (id) =>
-        id === next.id ? next : getPilotWorkspaceCase(id),
+      cases: published,
+      lookup: getPilotWorkspaceCase,
       inbox: inboxRef.current,
     });
     setActiveCaseId(plan.activeCaseId);
@@ -365,7 +366,7 @@ export function PilotWorkspaceProvider({
       selectedMessageId: plan.inboxSelectedMessageId,
     }));
     writeStoredActiveCaseId(plan.activeCaseId);
-  }, [extraCases]);
+  }, [activeCaseId]);
 
   const selectInboxMessage = useCallback(
     (messageId: PilotInboxMessageId | null) => {

@@ -78,6 +78,7 @@ function baseCase(
 ): PilotWorkspaceCase {
   return {
     id: projectId,
+    projectId,
     label: 'PT-17 Readiness · Starter',
     partnerName: 'Domy s energií',
     companyName: 'DSE s.r.o.',
