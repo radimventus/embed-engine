@@ -65,8 +65,8 @@ describe('PE-07 Pilot Delivery', () => {
     assert.equal(preview!.invite?.status, 'activated');
     assert.equal(preview!.activationStatus, 'activated');
     assert.equal(preview!.loginPassword, PILOT_DELIVERY_PASSWORD);
-    assert.equal(preview!.studioLoginHref, resolveCloudLandingHref());
-    assert.equal(preview!.workspaceHref, resolveCloudLandingHref());
+    assert.ok(preview!.studioLoginHref.startsWith(`${resolveCloudLandingHref()}?pilot=`));
+    assert.ok(preview!.workspaceHref.startsWith(`${resolveCloudLandingHref()}?pilot=`));
     assert.doesNotMatch(preview!.workspaceHref, /invite=/);
     assert.deepEqual([...preview!.accessibleStudios], [
       'client',
@@ -84,9 +84,10 @@ describe('PE-07 Pilot Delivery', () => {
     if (!result.ok) return;
 
     assert.equal(result.delivery.package.pdf.ready, true);
-    assert.equal(
-      result.delivery.package.workspaceHref,
-      resolveCloudLandingHref(),
+    assert.ok(
+      result.delivery.package.workspaceHref.startsWith(
+        `${resolveCloudLandingHref()}?pilot=`,
+      ),
     );
     assert.equal(result.delivery.package.activationStatus, 'activated');
     assert.equal(result.delivery.package.invite.status, 'activated');

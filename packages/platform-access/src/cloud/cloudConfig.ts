@@ -134,16 +134,33 @@ export function resolveClientStudioHref(): string {
 }
 
 /**
- * PT-CJ-01 — Pilot program selection (Offer Experience / Commercial Journey entry).
+ * PT-CJ-01 / PT-COM-02 — Pilot program selection (Offer Experience).
+ * Pass partner offerSlug so Welcome opens that firm's offer — never a seed default.
  */
-export function resolvePilotOfferHref(): string {
+export function resolvePilotOfferHref(offerSlug?: string): string {
+  const slug = offerSlug?.trim().toLowerCase() ?? '';
   const config = getCloudPlatformConfig();
   if (config.mode === 'local') {
     const host =
       typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
-    return `http://${host}:${LOCAL_OFFER_EXPERIENCE_PORT}/`;
+    const base = `http://${host}:${LOCAL_OFFER_EXPERIENCE_PORT}`;
+    if (slug.length === 0) return `${base}/`;
+    return `${base}/${encodeURIComponent(slug)}`;
   }
-  return `${config.origin}${CLOUD_OFFER_EXPERIENCE_PATH}`;
+  if (slug.length === 0) {
+    return `${config.origin}${CLOUD_OFFER_EXPERIENCE_PATH}`;
+  }
+  return `${config.origin}${CLOUD_OFFER_EXPERIENCE_PATH}${encodeURIComponent(slug)}/`;
+}
+
+/**
+ * PT-COM-02 — Partner Studio landing with portable provision hydrate (?pilot=).
+ */
+export function resolvePilotEntryHref(pilotPayloadEncoded: string): string {
+  const payload = pilotPayloadEncoded.trim();
+  const base = resolveCloudLandingHref().replace(/\/?$/, '/');
+  if (payload.length === 0) return base;
+  return `${base}?pilot=${encodeURIComponent(payload)}`;
 }
 
 /**

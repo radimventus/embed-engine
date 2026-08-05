@@ -34,7 +34,10 @@ describe('CAP-CE-01 offer model', () => {
     const offer = resolvePublicOffer(DEFAULT_OFFER_SLUG);
     assert.ok(offer !== null);
     assert.equal(offer?.partnerName, 'Domy s energií');
-    assert.equal(resolvePublicOffer('missing-partner'), null);
+    const synthesized = resolvePublicOffer('nova-firma');
+    assert.ok(synthesized !== null);
+    assert.equal(synthesized?.slug, 'nova-firma');
+    assert.equal(synthesized?.partnerName, 'Nova Firma');
   });
 
   it('parses /offer/{slug} paths', () => {

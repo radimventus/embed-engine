@@ -38,7 +38,44 @@ let mutableExtras: {
   projects: [],
 };
 
+const COMPANY_EXTRAS_STORAGE_KEY = 'conis.platform.companyExtras.v1';
+
+function loadExtrasFromStorage(): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    const raw = localStorage.getItem(COMPANY_EXTRAS_STORAGE_KEY);
+    if (raw === null || raw.length === 0) return;
+    const parsed = JSON.parse(raw) as Partial<typeof mutableExtras>;
+    mutableExtras = {
+      tenants: Array.isArray(parsed.tenants) ? parsed.tenants : [],
+      companies: Array.isArray(parsed.companies) ? parsed.companies : [],
+      workspaces: Array.isArray(parsed.workspaces) ? parsed.workspaces : [],
+      projects: Array.isArray(parsed.projects) ? parsed.projects : [],
+    };
+  } catch {
+    // ignore corrupt storage
+  }
+}
+
+function persistExtrasToStorage(): void {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(COMPANY_EXTRAS_STORAGE_KEY, JSON.stringify(mutableExtras));
+  } catch {
+    // quota / private mode
+  }
+}
+
+let extrasHydrated = false;
+
+function ensureExtrasHydrated(): void {
+  if (extrasHydrated) return;
+  extrasHydrated = true;
+  loadExtrasFromStorage();
+}
+
 export function getDefaultCompanyRegistry(): CompanyRegistryState {
+  ensureExtrasHydrated();
   return {
     tenants: [...DEFAULT_TENANTS, ...mutableExtras.tenants],
     companies: [...DEFAULT_COMPANIES, ...mutableExtras.companies],
@@ -55,6 +92,14 @@ export function resetCompanyRegistryExtras(): void {
     workspaces: [],
     projects: [],
   };
+  extrasHydrated = true;
+  if (typeof localStorage !== 'undefined') {
+    try {
+      localStorage.removeItem(COMPANY_EXTRAS_STORAGE_KEY);
+    } catch {
+      // ignore
+    }
+  }
 }
 
 export function appendPilotProvision(input: {
@@ -63,12 +108,26 @@ export function appendPilotProvision(input: {
   readonly workspace: PlatformWorkspace;
   readonly project: PlatformProject;
 }): CompanyRegistryState {
-  mutableExtras = {
-    tenants: [...mutableExtras.tenants, input.tenant],
-    companies: [...mutableExtras.companies, input.company],
-    workspaces: [...mutableExtras.workspaces, input.workspace],
-    projects: [...mutableExtras.projects, input.project],
+  ensureExtrasHydrated();
+  const withoutDup = {
+    tenants: mutableExtras.tenants.filter((item) => item.id !== input.tenant.id),
+    companies: mutableExtras.companies.filter(
+      (item) => item.id !== input.company.id,
+    ),
+    workspaces: mutableExtras.workspaces.filter(
+      (item) => item.id !== input.workspace.id,
+    ),
+    projects: mutableExtras.projects.filter(
+      (item) => item.id !== input.project.id,
+    ),
   };
+  mutableExtras = {
+    tenants: [...withoutDup.tenants, input.tenant],
+    companies: [...withoutDup.companies, input.company],
+    workspaces: [...withoutDup.workspaces, input.workspace],
+    projects: [...withoutDup.projects, input.project],
+  };
+  persistExtrasToStorage();
   return getDefaultCompanyRegistry();
 }
 

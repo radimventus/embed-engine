@@ -50,6 +50,6 @@ describe('PT-COM-01 Pilot Sales Readiness', () => {
       join(root, '../features/partners/PartnersWorkspacePage.tsx'),
       'utf8',
     );
-    assert.match(partners, /createPilotMailSession\(\)/);
+    assert.match(partners, /createOfferDeliveryMailSession|deliverPilotOffer/);
   });
 });

@@ -130,6 +130,7 @@ export {
   resolveCloudLandingHref,
   resolveClientStudioHref,
   resolvePilotOfferHref,
+  resolvePilotEntryHref,
   resolveWorkspaceHostHref,
   resolvePartnerInviteHref,
   type CloudPlatformConfig,
@@ -158,6 +159,17 @@ export {
   resetInviteStore,
   INVITE_STORAGE_KEY,
 } from './pilot/inviteStore';
+
+export {
+  PILOT_PROVISION_QUERY,
+  buildPilotProvisionSnapshot,
+  encodePilotProvisionSnapshot,
+  decodePilotProvisionSnapshot,
+  hydratePilotProvisionSnapshot,
+  readPilotProvisionFromUrl,
+  offerSlugFromCompanyId,
+  type PilotProvisionSnapshot,
+} from './pilot/pilotProvisionSnapshot';
 
 export {
   INVITE_VALIDITY_MS,

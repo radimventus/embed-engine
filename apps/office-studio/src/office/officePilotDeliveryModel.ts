@@ -45,6 +45,8 @@ export type PilotDeliveryPreview = {
   readonly loginPassword: string;
   readonly heroLabel: string;
   readonly websiteUrl: string;
+  /** Partner-specific Offer Experience entry. */
+  readonly offerHref: string;
   readonly pdf: PilotDeliveryPdfAttachment;
 };
 

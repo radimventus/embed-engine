@@ -157,8 +157,9 @@ describe('PT-CJ-00 Pilot Delivery', () => {
     assert.ok(preview !== null);
     assert.equal(preview!.loginPassword, PILOT_DELIVERY_PASSWORD);
     assert.equal(preview!.activationStatus, 'activated');
-    assert.equal(preview!.studioLoginHref, resolveCloudLandingHref());
+    assert.ok(preview!.studioLoginHref.startsWith(`${resolveCloudLandingHref()}?pilot=`));
     assert.doesNotMatch(preview!.studioLoginHref, /invite=/);
+    assert.ok(preview!.offerHref.includes('/offer/') || preview!.offerHref.includes('4192'));
 
     const auth = login({
       email: preview!.loginEmail,

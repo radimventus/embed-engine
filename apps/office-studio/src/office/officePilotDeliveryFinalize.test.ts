@@ -51,8 +51,8 @@ describe('PE-07 Pilot Delivery finalize', () => {
     const preview = buildPilotDeliveryPreview('p-dse');
     assert.ok(preview !== null);
     assert.ok(preview!.invite !== null);
-    assert.equal(preview!.workspaceHref, resolveCloudLandingHref());
-    assert.equal(preview!.studioLoginHref, resolveCloudLandingHref());
+    assert.ok(preview!.workspaceHref.startsWith(`${resolveCloudLandingHref()}?pilot=`));
+    assert.ok(preview!.studioLoginHref.startsWith(`${resolveCloudLandingHref()}?pilot=`));
     assert.doesNotMatch(preview!.workspaceHref, /invite=/);
   });
 
@@ -70,9 +70,10 @@ describe('PE-07 Pilot Delivery finalize', () => {
       'Účet aktivován',
     );
     assert.equal(result.delivery.package.pdf.ready, true);
-    assert.equal(
-      result.delivery.package.workspaceHref,
-      resolveCloudLandingHref(),
+    assert.ok(
+      result.delivery.package.workspaceHref.startsWith(
+        `${resolveCloudLandingHref()}?pilot=`,
+      ),
     );
   });
 });

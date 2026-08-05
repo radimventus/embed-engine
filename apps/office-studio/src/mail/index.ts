@@ -15,6 +15,10 @@ export {
   DEFAULT_PILOT_MAILBOX_ID,
 } from './createPilotMailSession';
 export {
+  createOfferDeliveryMailSession,
+  PILOT_MAIL_RELAY_PATH,
+} from './createOfferDeliveryMailSession';
+export {
   getConversationMailStore,
   resetConversationMailStore,
   storeConversationsForCase,

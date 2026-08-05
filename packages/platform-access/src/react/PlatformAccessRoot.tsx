@@ -7,6 +7,10 @@ import {
   isOnWorkspaceHost,
   isWorkspaceShellEmbed,
 } from '../domain/workspaceShellEmbed';
+import {
+  hydratePilotProvisionSnapshot,
+  readPilotProvisionFromUrl,
+} from '../pilot/pilotProvisionSnapshot';
 import { getSharedWorkspaceContext, updateSession } from '../session/authService';
 import { AuthShell } from './AuthShell';
 import { InviteShell } from './InviteShell';
@@ -22,12 +26,31 @@ function readInviteTokenFromUrl(): string {
   return new URLSearchParams(window.location.search).get('invite') ?? '';
 }
 
+function hydratePilotFromUrlOnce(): void {
+  if (typeof window === 'undefined') return;
+  const flag = 'conis.pilot.hydrate.done';
+  try {
+    if (sessionStorage.getItem(flag) === window.location.search) return;
+  } catch {
+    // ignore
+  }
+  const snapshot = readPilotProvisionFromUrl();
+  if (snapshot === null) return;
+  hydratePilotProvisionSnapshot(snapshot);
+  try {
+    sessionStorage.setItem(flag, window.location.search);
+  } catch {
+    // ignore
+  }
+}
+
 /**
  * Auth → Invite → Landing → Studio.
  * VR-04 — operator Workspace is a single host; nested embeds skip outer chrome.
  */
 function AccessGateInner({ children }: AccessGateProps) {
   const { session } = usePlatformSession();
+  hydratePilotFromUrlOnce();
   const urlToken = readInviteTokenFromUrl();
   const [inviteMode, setInviteMode] = useState(urlToken.length > 0);
   const workspaceContext = getSharedWorkspaceContext();

@@ -5,6 +5,7 @@ import {
   resolveClientStudioHref,
   resolvePilotOfferHref,
 } from '../cloud/cloudConfig';
+import { offerSlugFromCompanyId } from '../pilot/pilotProvisionSnapshot';
 import { touchUserLastStudio } from '../registry/userRegistry';
 import { isPilotPartnerRoles } from '../domain/pilotPartnerAccess';
 import { PLATFORM_ROLE_LABELS, isPlatformAdmin, primaryRole } from '../domain/roles';
@@ -119,12 +120,13 @@ export function PlatformLanding() {
 
   const openPilotOffer = () => {
     bindSampleProject();
+    const offerSlug = offerSlugFromCompanyId(session.companyId);
     recordPlatformActivity({
       label: 'Welcome → Vybrat pilotní program',
-      detail: bootstrap.company.name,
+      detail: `${bootstrap.company.name} · ${offerSlug}`,
     });
     if (typeof window !== 'undefined') {
-      window.location.assign(resolvePilotOfferHref());
+      window.location.assign(resolvePilotOfferHref(offerSlug));
     }
   };
 

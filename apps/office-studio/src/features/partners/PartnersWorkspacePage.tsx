@@ -42,7 +42,7 @@ import {
   deliverPilotOffer,
 } from '../../office/officePilotDeliveryRegistry';
 import type { PilotDeliveryPreview } from '../../office/officePilotDeliveryModel';
-import { createPilotMailSession } from '../../mail';
+import { createOfferDeliveryMailSession } from '../../mail';
 import { PartnerDetailPanel } from './PartnerDetailPanel';
 import { PartnerFormDialog } from './PartnerFormDialog';
 import { PilotDeliveryPreviewDialog } from './PilotDeliveryPreviewDialog';
@@ -221,7 +221,7 @@ export function PartnersWorkspacePage({
     }
     setDeliveryBusy(true);
     try {
-      const session = createPilotMailSession();
+      const session = createOfferDeliveryMailSession();
       const result = await deliverPilotOffer(activePartner.id, session);
       setDeliveryPreview(null);
       bump();

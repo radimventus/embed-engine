@@ -9,11 +9,15 @@ import {
 } from '@embed-engine/document-runtime';
 import {
   CONIS_SAMPLE_PROJECT_LABEL,
+  buildPilotProvisionSnapshot,
+  encodePilotProvisionSnapshot,
   getPartnerBranding,
   listInvites,
   login,
   markInviteSent,
-  resolveCloudLandingHref,
+  offerSlugFromCompanyId,
+  resolvePilotEntryHref,
+  resolvePilotOfferHref,
   resolveInviteLifecycle,
   verifyUserPassword,
   type PilotInvite,
@@ -119,8 +123,9 @@ export function buildPilotInvitationEmailBody(input: {
   readonly loginEmail: string;
   readonly password: string;
   readonly studioLoginHref: string;
+  readonly offerHref?: string;
 }): string {
-  return [
+  const lines = [
     'Dobrý den,',
     '',
     'děkuji za dnešní schůzku.',
@@ -135,11 +140,17 @@ export function buildPilotInvitationEmailBody(input: {
     `Heslo: ${input.password}`,
     '',
     `Přihlásit se do CONIS Studio: ${input.studioLoginHref}`,
+  ];
+  if (input.offerHref !== undefined && input.offerHref.length > 0) {
+    lines.push('', `Vybrat pilotní program: ${input.offerHref}`);
+  }
+  lines.push(
     '',
     'Po přihlášení si můžete celé prostředí projít.',
     '',
     'Vše je připravené. Zbývá už jen vybrat pilotní program.',
-  ].join('\n');
+  );
+  return lines.join('\n');
 }
 
 export function verifyPilotDeliveryReadiness(
@@ -214,27 +225,43 @@ export function buildPilotDeliveryPreview(
   const email = partner.contact.email.trim();
   if (email.length === 0) return null;
 
-  let invite = findInviteForEmail(email);
-  if (invite === null || toActivationStatus(invite) === 'missing') {
-    const prepared = preparePilotForPartner(partnerId);
-    if (prepared === null) return null;
-    invite = prepared.invite;
-  }
+  const prepared = preparePilotForPartner(partnerId);
+  if (prepared === null) return null;
+  const invite = prepared.invite;
 
-  const env = buildOfficePartnerEnvironment(partnerId);
-  const branding =
-    env.companyId !== null ? getPartnerBranding(env.companyId) : null;
-  const inviteSnapshot =
-    invite !== null ? toInviteSnapshot(invite) : null;
+  const branding = prepared.branding;
+  const inviteSnapshot = toInviteSnapshot(invite);
   const activationStatus = toActivationStatus(invite);
-  const studioLoginHref = resolveCloudLandingHref();
+  const offerSlug = offerSlugFromCompanyId(prepared.provision.company.id);
+  const offerHref = resolvePilotOfferHref(offerSlug);
+
+  const snapshot = buildPilotProvisionSnapshot({
+    email: email.toLowerCase(),
+    password: PILOT_DELIVERY_PASSWORD,
+    displayName: invite.displayName,
+    userId: `user-invite-${invite.id}`,
+    roles: invite.roles,
+    tenant: prepared.provision.tenant,
+    company: prepared.provision.company,
+    workspace: prepared.provision.workspace,
+    project: prepared.provision.project,
+    branding: {
+      firmName: branding.firmName,
+      logoLabel: branding.logoLabel,
+      heroLabel: branding.heroLabel,
+      websiteUrl: branding.websiteUrl,
+    },
+  });
+  const studioLoginHref = resolvePilotEntryHref(
+    encodePilotProvisionSnapshot(snapshot),
+  );
 
   return {
     partnerId: partner.id,
     partnerName: partner.name,
     email,
     projectName:
-      env.environment?.projectLabel ??
+      prepared.pilotWorkspace.sampleProjectLabel ??
       CONIS_SAMPLE_PROJECT_LABEL ??
       OFFICE_REFERENCE_PROJECT_LABEL,
     accessibleStudios: PILOT_DELIVERY_STUDIOS,
@@ -244,8 +271,9 @@ export function buildPilotDeliveryPreview(
     studioLoginHref,
     loginEmail: email,
     loginPassword: PILOT_DELIVERY_PASSWORD,
-    heroLabel: branding?.heroLabel ?? '',
-    websiteUrl: branding?.websiteUrl ?? '',
+    heroLabel: branding.heroLabel ?? '',
+    websiteUrl: branding.websiteUrl ?? '',
+    offerHref,
     pdf: {
       id: `pdf-${partnerId}-pilot-offer`,
       name: `Nabídka pilotního programu · ${partner.name}.pdf`,
@@ -342,6 +370,7 @@ export async function deliverPilotOffer(
     loginEmail: preview.loginEmail,
     password: preview.loginPassword,
     studioLoginHref: preview.studioLoginHref,
+    offerHref: preview.offerHref,
   });
 
   let message;
