@@ -91,7 +91,10 @@ describe('PT-CJ-02 Pilot Program + lean journey', () => {
     assert.match(pilot, /navigateWorkflowStep\('complete_order'\)/);
     assert.match(order, /Potvrdit objednávku/);
     assert.match(order, /Smluvní dokumenty/);
-    assert.match(order, /cj-order-check-vop/);
+    assert.match(order, /cj-order-docs-accepted/);
+    assert.match(order, /Upravit údaje/);
+    assert.match(order, /Navazující tarif/);
+    assert.doesNotMatch(order, /cj-order-check-vop/);
     assert.match(payment, /Potvrdit provedení QR platby/);
     assert.match(payment, /cj-qr-code/);
     assert.match(payment, /cj-proforma/);

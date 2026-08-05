@@ -1592,6 +1592,57 @@ body {
   background: #fff;
 }
 
+.office-cj-order__panel-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.office-cj-order__edit {
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--platform-blue, #18428f);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.office-cj-order__form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.office-cj-order__form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.office-cj-order__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: var(--platform-section, #64748b);
+}
+
+.office-cj-order__field input {
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 0.95rem;
+  color: var(--platform-ink, #0f172a);
+  background: #fff;
+}
+
 .office-cj-order__section-title {
   margin: 0;
   font-size: 0.95rem;
@@ -1607,6 +1658,23 @@ body {
   gap: 6px;
   font-size: 0.92rem;
   color: #334155;
+}
+
+.office-cj-order__doc-links {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.office-cj-order__doc-links a {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--platform-blue, #18428f);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .office-cj-order__check {

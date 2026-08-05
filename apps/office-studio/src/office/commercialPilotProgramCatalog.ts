@@ -13,6 +13,8 @@ export type CommercialPilotProgramPackage = {
   readonly priceCzk: number;
   readonly trialDays: number;
   readonly summary: string;
+  /** Follow-on tariff after the pilot period (PDF commercial fact). */
+  readonly followOnTariff: string;
   readonly recommended: boolean;
   /** Price-anchor tier (Pilot Max) — visual hierarchy only. */
   readonly priceAnchor: boolean;
@@ -33,6 +35,7 @@ export const COMMERCIAL_PILOT_PROGRAM_PACKAGES: readonly CommercialPilotProgramP
       priceCzk: 4_970,
       trialDays: COMMERCIAL_PILOT_TRIAL_DAYS,
       summary: 'Vstupní spolupráce — 1 dům a plná CONIS nabídka pro váš web.',
+      followOnTariff: 'Navazující tarif · Pilot',
       recommended: false,
       priceAnchor: false,
       highlights: [
@@ -48,6 +51,7 @@ export const COMMERCIAL_PILOT_PROGRAM_PACKAGES: readonly CommercialPilotProgramP
       priceCzk: 14_970,
       trialDays: COMMERCIAL_PILOT_TRIAL_DAYS,
       summary: 'Doporučený start — až 3 domy a rozšířený provoz.',
+      followOnTariff: 'Navazující tarif · Pilot Plus',
       recommended: true,
       priceAnchor: false,
       highlights: ['Až 3 domy', 'Pro zákazníky, správu i obchod', 'Plný brand'],
@@ -59,6 +63,7 @@ export const COMMERCIAL_PILOT_PROGRAM_PACKAGES: readonly CommercialPilotProgramP
       priceCzk: 29_970,
       trialDays: COMMERCIAL_PILOT_TRIAL_DAYS,
       summary: 'Partnerský provoz — více objektů a dlouhodobá spolupráce.',
+      followOnTariff: 'Navazující tarif · Pilot Max',
       recommended: false,
       priceAnchor: true,
       highlights: [
