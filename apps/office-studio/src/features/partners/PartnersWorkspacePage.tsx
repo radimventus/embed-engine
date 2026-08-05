@@ -3,7 +3,6 @@ import { useMemo, useState } from 'react';
 import {
   enterOperatorPartnerEnvironment,
   resolveCloudStudioHref,
-  WORKSPACE_EMBED_OBJECT_ID,
 } from '@embed-engine/platform-access';
 import {
   PlatformCard,
@@ -44,7 +43,6 @@ import {
 } from '../../office/officePilotDeliveryRegistry';
 import type { PilotDeliveryPreview } from '../../office/officePilotDeliveryModel';
 import { createPilotMailSession } from '../../mail';
-import { OFFICE_REFERENCE_PROJECT_LABEL } from '../../office/officeReferencePartner';
 import { PartnerDetailPanel } from './PartnerDetailPanel';
 import { PartnerFormDialog } from './PartnerFormDialog';
 import { PilotDeliveryPreviewDialog } from './PilotDeliveryPreviewDialog';
@@ -163,10 +161,6 @@ export function PartnersWorkspacePage({
         projectId: env.environment.projectId,
         officePartnerId: activePartner.id,
         officeReturnHref: `${officeBase}partners/${encodeURIComponent(activePartner.id)}`,
-        partnerName: activePartner.name,
-        projectLabel:
-          env.environment.projectLabel ?? OFFICE_REFERENCE_PROJECT_LABEL,
-        objectId: WORKSPACE_EMBED_OBJECT_ID,
         initialSurface: 'client',
       });
       if (!result.ok) {

@@ -1701,11 +1701,38 @@ body {
   background: #fff;
 }
 
+.office-cj-payment__proforma-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .office-cj-payment__qr-panel {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 18px;
   align-items: center;
+  text-align: center;
+}
+
+.office-cj-payment__qr-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.office-cj-payment__qr-image {
+  display: block;
+  width: 220px;
+  height: 220px;
+}
+
+.office-cj-payment__qr-note {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #001930;
 }
 
 .office-cj-payment__qr {

@@ -1,133 +1,100 @@
-import { useMemo } from 'react';
-import { useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import QRCode from 'qrcode';
 
 import { usePilotWorkspaceContext } from '../../../office/PilotWorkspaceContext';
+import { formatCommercialPilotPriceCzk } from '../../../office/commercialPilotProgramCatalog';
 import {
-  COMMERCIAL_PILOT_PROGRAM_PACKAGES,
-  formatCommercialPilotPriceCzk,
-  resolveCommercialPilotProgramId,
-} from '../../../office/commercialPilotProgramCatalog';
-import {
-  getCommercialJourneySelectedProgramId,
-  subscribeCommercialJourneySelection,
-} from '../../../office/commercialJourneySelection';
+  buildCommercialProformaForCase,
+  downloadCommercialProformaPdf,
+  formatCommercialDateCs,
+  openCommercialProformaPdf,
+  type CommercialProforma,
+} from '../../../office/commercialPaymentExperience';
 import type { PilotWorkspaceCase } from '../../../office/pilotWorkspaceModel';
-
-/** Preview settlement account — same commercial account as Offer Experience. */
-const PAYMENT_ACCOUNT = Object.freeze({
-  accountNumber: '2303345128/2010',
-  iban: 'CZ1520100000002303345128',
-  bankName: 'Fio banka',
-});
 
 type PaymentScreenProps = {
   readonly activeCase: PilotWorkspaceCase;
 };
 
 /**
- * PT-CJ-02 — Platba (proforma + QR preview).
- * Visual only — no payment gateway · no SMTP · no BA.
+ * PT-CJ-04 — Payment Experience.
+ * Proforma preview + SPD QR from proforma · confirm → CONIS Studio.
  */
 export function PaymentScreen({ activeCase }: PaymentScreenProps) {
   const { navigateWorkflowStep } = usePilotWorkspaceContext();
-  const selectedId = useSyncExternalStore(
-    subscribeCommercialJourneySelection,
-    getCommercialJourneySelectedProgramId,
-    getCommercialJourneySelectedProgramId,
+  const proforma = useMemo(
+    () => buildCommercialProformaForCase(activeCase),
+    [activeCase],
   );
+  const [qrImageSrc, setQrImageSrc] = useState<string | null>(null);
 
-  const program = useMemo(() => {
-    const id =
-      selectedId ?? resolveCommercialPilotProgramId(activeCase.packageName);
-    if (id === null) return null;
-    return COMMERCIAL_PILOT_PROGRAM_PACKAGES.find((pkg) => pkg.id === id) ?? null;
-  }, [activeCase.packageName, selectedId]);
+  useEffect(() => {
+    if (proforma === null) {
+      setQrImageSrc(null);
+      return;
+    }
+    let cancelled = false;
+    void QRCode.toDataURL(proforma.qrPayload, {
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      width: 220,
+      color: { dark: '#001930', light: '#ffffff' },
+    }).then((url) => {
+      if (!cancelled) setQrImageSrc(url);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [proforma]);
 
-  const amountCzk = program?.priceCzk ?? 14_970;
-  const variableSymbol = variableSymbolFromCaseId(activeCase.id);
-  const proformaNumber = `PF-2026-${variableSymbol.slice(-8).padStart(8, '0')}`;
-  const qrCells = useMemo(
-    () => buildPreviewQrCells(`${PAYMENT_ACCOUNT.iban}:${variableSymbol}:${amountCzk}`),
-    [amountCzk, variableSymbol],
-  );
+  if (proforma === null) {
+    return (
+      <div
+        className="office-cj-screen office-cj-screen--payment"
+        data-testid="commercial-journey-screen"
+        data-cj-step="payment"
+      >
+        <p className="office-cj-pilot__hint">Vyberte pilotní program.</p>
+      </div>
+    );
+  }
 
   return (
     <div
       className="office-cj-screen office-cj-screen--payment"
       data-testid="commercial-journey-screen"
       data-cj-step="payment"
+      data-cj-payment="true"
     >
       <header className="office-cj-order__head">
-        <p className="office-cj-pilot__eyebrow">Platba</p>
-        <h2 className="office-cj-pilot__title">Proforma a QR platba</h2>
-        <p className="office-cj-pilot__lead">
-          Úhrada {program?.name ?? 'pilotního programu'} pro{' '}
-          {activeCase.companyName}.
-        </p>
+        <h2 className="office-cj-pilot__title" data-testid="cj-payment-title">
+          Platba
+        </h2>
       </header>
 
-      <section className="office-cj-payment__proforma" data-testid="cj-proforma">
-        <h3 className="office-cj-order__section-title">Proforma faktura</h3>
-        <dl className="office-cj-summary">
-          <div>
-            <dt>Číslo</dt>
-            <dd data-testid="cj-proforma-number">{proformaNumber}</dd>
-          </div>
-          <div>
-            <dt>Partner</dt>
-            <dd>{activeCase.partnerName}</dd>
-          </div>
-          <div>
-            <dt>Program</dt>
-            <dd>{program?.name ?? activeCase.packageName}</dd>
-          </div>
-          <div>
-            <dt>Částka</dt>
-            <dd>{formatCommercialPilotPriceCzk(amountCzk)}</dd>
-          </div>
-          <div>
-            <dt>Splatnost</dt>
-            <dd>14 dní</dd>
-          </div>
-        </dl>
-      </section>
+      <ProformaPreview
+        proforma={proforma}
+        onOpen={() => openCommercialProformaPdf(proforma)}
+        onDownload={() => downloadCommercialProformaPdf(proforma)}
+      />
 
       <section className="office-cj-payment__qr-panel" data-testid="cj-qr-panel">
-        <div
-          className="office-cj-payment__qr"
-          data-testid="cj-qr-code"
-          role="img"
-          aria-label="QR kód pro platbu"
-        >
-          {qrCells.map((filled, index) => (
-            <span
-              key={index}
-              className={
-                filled
-                  ? 'office-cj-payment__qr-cell office-cj-payment__qr-cell--on'
-                  : 'office-cj-payment__qr-cell'
-              }
+        <div className="office-cj-payment__qr-frame" data-testid="cj-qr-code">
+          {qrImageSrc === null ? (
+            <p className="office-cj-pilot__hint">Připravuji QR…</p>
+          ) : (
+            <img
+              className="office-cj-payment__qr-image"
+              src={qrImageSrc}
+              alt="QR platba"
+              width={220}
+              height={220}
             />
-          ))}
+          )}
         </div>
-        <dl className="office-cj-summary office-cj-summary--compact">
-          <div>
-            <dt>Účet</dt>
-            <dd>{PAYMENT_ACCOUNT.accountNumber}</dd>
-          </div>
-          <div>
-            <dt>Banka</dt>
-            <dd>{PAYMENT_ACCOUNT.bankName}</dd>
-          </div>
-          <div>
-            <dt>VS</dt>
-            <dd>{variableSymbol}</dd>
-          </div>
-          <div>
-            <dt>Částka</dt>
-            <dd>{formatCommercialPilotPriceCzk(amountCzk)}</dd>
-          </div>
-        </dl>
+        <p className="office-cj-payment__qr-note" data-testid="cj-qr-amount">
+          {formatCommercialPilotPriceCzk(proforma.amountCzk)}
+        </p>
       </section>
 
       <button
@@ -142,41 +109,60 @@ export function PaymentScreen({ activeCase }: PaymentScreenProps) {
   );
 }
 
-function variableSymbolFromCaseId(caseId: string): string {
-  const digits = caseId.replace(/\D/g, '');
-  if (digits.length >= 6) return digits.slice(-10);
-  return caseId.replace(/[^0-9A-Z]/gi, '').slice(-10).padStart(6, '0');
-}
-
-/** Deterministic visual QR grid for product preview (not a bank SPD encoder). */
-function buildPreviewQrCells(seed: string): readonly boolean[] {
-  const size = 21;
-  const cells: boolean[] = [];
-  let hash = 2166136261;
-  for (let i = 0; i < seed.length; i += 1) {
-    hash ^= seed.charCodeAt(i);
-    hash = Math.imul(hash, 16777619);
-  }
-  for (let y = 0; y < size; y += 1) {
-    for (let x = 0; x < size; x += 1) {
-      const finder =
-        (x < 7 && y < 7) ||
-        (x >= size - 7 && y < 7) ||
-        (x < 7 && y >= size - 7);
-      if (finder) {
-        const ring = x === 0 || y === 0 || x === 6 || y === 6 ||
-          (x >= size - 7 && (x === size - 1 || y === 0 || x === size - 7 || y === 6)) ||
-          (y >= size - 7 && (y === size - 1 || x === 0 || y === size - 7 || x === 6));
-        const core =
-          (x >= 2 && x <= 4 && y >= 2 && y <= 4) ||
-          (x >= size - 5 && x <= size - 3 && y >= 2 && y <= 4) ||
-          (x >= 2 && x <= 4 && y >= size - 5 && y <= size - 3);
-        cells.push(ring || core);
-        continue;
-      }
-      hash = Math.imul(hash ^ (x * 31 + y), 16777619);
-      cells.push((hash & 1) === 1);
-    }
-  }
-  return cells;
+function ProformaPreview({
+  proforma,
+  onOpen,
+  onDownload,
+}: {
+  readonly proforma: CommercialProforma;
+  readonly onOpen: () => void;
+  readonly onDownload: () => void;
+}) {
+  return (
+    <section className="office-cj-payment__proforma" data-testid="cj-proforma">
+      <div className="office-cj-order__panel-bar">
+        <h3 className="office-cj-order__section-title">Proforma faktura</h3>
+        <div className="office-cj-payment__proforma-actions">
+          <button
+            type="button"
+            className="office-cj-order__edit"
+            data-testid="cj-proforma-open"
+            onClick={onOpen}
+          >
+            Otevřít PDF
+          </button>
+          <button
+            type="button"
+            className="office-cj-order__edit"
+            data-testid="cj-proforma-download"
+            onClick={onDownload}
+          >
+            Stáhnout PDF
+          </button>
+        </div>
+      </div>
+      <dl className="office-cj-summary" data-testid="cj-proforma-preview">
+        <div>
+          <dt>Číslo</dt>
+          <dd data-testid="cj-proforma-number">{proforma.number}</dd>
+        </div>
+        <div>
+          <dt>Společnost</dt>
+          <dd>{proforma.companyName}</dd>
+        </div>
+        <div>
+          <dt>Program</dt>
+          <dd>{proforma.packageName}</dd>
+        </div>
+        <div>
+          <dt>Částka</dt>
+          <dd>{formatCommercialPilotPriceCzk(proforma.amountCzk)}</dd>
+        </div>
+        <div>
+          <dt>Splatnost</dt>
+          <dd>{formatCommercialDateCs(proforma.dueDate)}</dd>
+        </div>
+      </dl>
+    </section>
+  );
 }

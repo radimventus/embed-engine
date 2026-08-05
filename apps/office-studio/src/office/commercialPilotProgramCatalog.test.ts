@@ -98,6 +98,7 @@ describe('PT-CJ-02 Pilot Program + lean journey', () => {
     assert.match(payment, /Potvrdit provedení QR platby/);
     assert.match(payment, /cj-qr-code/);
     assert.match(payment, /cj-proforma/);
+    assert.match(payment, /QRCode\.toDataURL|openCommercialProformaPdf/);
     assert.match(studio, /Děkujeme\. Platba byla oznámena/);
     assert.match(studio, /Nyní můžete začít pracovat v CONIS Studio/);
     assert.match(studio, /Podklady můžete nahrát/);

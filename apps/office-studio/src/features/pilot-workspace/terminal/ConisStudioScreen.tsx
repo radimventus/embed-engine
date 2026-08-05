@@ -7,17 +7,17 @@ type ConisStudioScreenProps = {
 };
 
 /**
- * PT-CJ-02 — CONIS Studio entry after QR payment confirmation.
- * Partner-facing thank-you · no Office handoff UI.
+ * PT-CJ-04 — CONIS Studio after QR payment confirmation.
  */
 export function ConisStudioScreen({ activeCase }: ConisStudioScreenProps) {
+  void activeCase;
+
   return (
     <div
       className="office-cj-screen office-cj-screen--conis-studio"
       data-testid="commercial-journey-screen"
       data-cj-step="conis_studio"
     >
-      <p className="office-cj-pilot__eyebrow">CONIS Studio</p>
       <h2 className="office-cj-screen__title" data-testid="cj-studio-title">
         Děkujeme. Platba byla oznámena.
       </h2>
@@ -26,10 +26,6 @@ export function ConisStudioScreen({ activeCase }: ConisStudioScreenProps) {
       </p>
       <p className="office-cj-screen__note">
         Podklady můžete nahrát nyní nebo kdykoliv později.
-      </p>
-      <p className="office-cj-screen__meta">
-        Office mezitím automaticky přebírá implementaci na pozadí ·{' '}
-        {activeCase.partnerName}.
       </p>
       <a
         className="office-cj-pilot__continue office-cj-pilot__continue--link"
