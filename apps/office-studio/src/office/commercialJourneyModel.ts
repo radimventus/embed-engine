@@ -1,6 +1,6 @@
 /**
- * PT-CJ-OS-01 — Commercial Journey catalog (Office production preview).
- * Navigation + display only — no business logic · no state mutations.
+ * PT-CJ-02 — Lean Commercial Journey catalog (partner purchase path).
+ * Navigation + display only — no Business Automation · no Office handoff UI.
  */
 
 import type { PilotWorkspaceCase } from './pilotWorkspaceModel';
@@ -8,10 +8,9 @@ import type { PilotWorkspaceCase } from './pilotWorkspaceModel';
 export type CommercialJourneyStepId =
   | 'welcome'
   | 'pilot_program'
-  | 'order_confirmation'
+  | 'complete_order'
   | 'payment'
-  | 'pilot_confirmed'
-  | 'office_handoff';
+  | 'conis_studio';
 
 export type CommercialJourneyStepState = 'done' | 'active' | 'waiting';
 
@@ -21,22 +20,20 @@ export type CommercialJourneyStep = {
   readonly state: CommercialJourneyStepState;
 };
 
-/** Commercial Journey — partner-facing production path. */
+/** Partner-facing Commercial Journey — five steps only. */
 export const COMMERCIAL_JOURNEY_STEP_DEFS: readonly {
   readonly id: CommercialJourneyStepId;
   readonly label: string;
 }[] = Object.freeze([
-  { id: 'welcome', label: 'Welcome' },
-  { id: 'pilot_program', label: 'Pilot Program' },
-  { id: 'order_confirmation', label: 'Order Confirmation' },
-  { id: 'payment', label: 'Payment' },
-  { id: 'pilot_confirmed', label: 'Pilot Confirmed' },
-  { id: 'office_handoff', label: 'Office Handoff' },
+  { id: 'welcome', label: 'Vítejte' },
+  { id: 'pilot_program', label: 'Pilotní program' },
+  { id: 'complete_order', label: 'Dokončit objednávku' },
+  { id: 'payment', label: 'Platba' },
+  { id: 'conis_studio', label: 'CONIS Studio' },
 ]);
 
 /**
  * Soft projection of case status → active journey index (preview hint only).
- * Does not mutate commercial state.
  */
 const STATUS_TO_JOURNEY_INDEX: Readonly<
   Record<PilotWorkspaceCase['status'], number>
@@ -45,7 +42,7 @@ const STATUS_TO_JOURNEY_INDEX: Readonly<
   checkout: 2,
   waiting_payment: 3,
   paid: 4,
-  pilot_ready: 5,
+  pilot_ready: 4,
 });
 
 function stateForIndex(

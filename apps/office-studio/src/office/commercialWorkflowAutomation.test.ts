@@ -105,7 +105,7 @@ describe('PT-16 commercial workflow automation', () => {
     const steps = buildWorkflowSteps(resolveCaseWithWorkflowSync(base));
     assert.equal(
       steps.find((step) => step.state === 'active')?.id,
-      'office_handoff',
+      'conis_studio',
     );
 
     const timeline = projectTimelineFromConversation(projectId);

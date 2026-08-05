@@ -1331,6 +1331,356 @@ body {
   font-weight: 700;
 }
 
+/* PT-CJ-02 — Pilot Program (PDF nabídka visual language) */
+.office-cj-screen--pilot-program {
+  max-width: 960px;
+  gap: 28px;
+  padding-top: 12px;
+  --cj-pilot-navy: #001930;
+  --cj-pilot-gold: #b8922d;
+  --cj-pilot-cream: #f7f6f4;
+  --cj-pilot-line: #e3e3e3;
+}
+
+.office-cj-pilot__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  text-align: left;
+}
+
+.office-cj-pilot__eyebrow {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--cj-pilot-navy);
+  opacity: 0.7;
+}
+
+.office-cj-pilot__partner {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--cj-pilot-gold);
+}
+
+.office-cj-pilot__title {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.2vw, 1.85rem);
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  line-height: 1.2;
+  color: var(--cj-pilot-navy);
+}
+
+.office-cj-pilot__lead {
+  margin: 0;
+  max-width: 36rem;
+  font-size: 0.98rem;
+  line-height: 1.5;
+  color: var(--cj-pilot-navy);
+  opacity: 0.88;
+}
+
+.office-cj-pilot__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.office-cj-pilot-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  min-height: 280px;
+  padding: 22px 20px 18px;
+  border: 1px solid var(--cj-pilot-line);
+  border-radius: 4px;
+  background: var(--cj-pilot-cream);
+  color: var(--cj-pilot-navy);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.office-cj-pilot-card:hover {
+  border-color: #c8a165;
+  box-shadow: 0 10px 28px rgba(0, 25, 48, 0.06);
+}
+
+.office-cj-pilot-card--recommended {
+  background: #fff;
+}
+
+.office-cj-pilot-card--anchor {
+  opacity: 0.92;
+}
+
+.office-cj-pilot-card--anchor .office-cj-pilot-card__price {
+  font-size: 1.55rem;
+}
+
+.office-cj-pilot-card--selected {
+  border-color: var(--cj-pilot-gold);
+  box-shadow: 0 0 0 1px var(--cj-pilot-gold);
+  background: #fff;
+  opacity: 1;
+}
+
+.office-cj-pilot-card__badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: rgba(184, 146, 45, 0.12);
+  color: var(--cj-pilot-gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.office-cj-pilot-card__name {
+  margin: 0;
+  padding-right: 72px;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.office-cj-pilot-card__price {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  color: var(--cj-pilot-navy);
+}
+
+.office-cj-pilot-card__license {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cj-pilot-gold);
+}
+
+.office-cj-pilot-card__summary {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.45;
+  opacity: 0.9;
+}
+
+.office-cj-pilot-card__highlights {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.office-cj-pilot-card__highlights li::before {
+  content: '·';
+  margin-right: 8px;
+  color: var(--cj-pilot-gold);
+  font-weight: 700;
+}
+
+.office-cj-pilot-card__select {
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cj-pilot-navy);
+}
+
+.office-cj-pilot__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 4px;
+}
+
+.office-cj-pilot__hint {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--platform-section, #64748b);
+}
+
+.office-cj-pilot__choice {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  color: var(--cj-pilot-navy);
+}
+
+.office-cj-pilot__choice strong {
+  font-size: 1.05rem;
+}
+
+.office-cj-pilot__choice span {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+.office-cj-pilot__continue {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 4px;
+  background: var(--cj-pilot-navy);
+  color: #fff;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.office-cj-pilot__continue:hover {
+  background: #0a2a4a;
+}
+
+.office-cj-pilot__continue:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.office-cj-pilot__continue--link {
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.office-cj-screen--complete-order,
+.office-cj-screen--payment,
+.office-cj-screen--conis-studio {
+  max-width: 640px;
+  text-align: left;
+}
+
+.office-cj-order__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.office-cj-order__panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.office-cj-order__section-title {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--platform-ink, #0f172a);
+}
+
+.office-cj-order__docs {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.92rem;
+  color: #334155;
+}
+
+.office-cj-order__check {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  color: #334155;
+}
+
+.office-cj-order__check input {
+  margin-top: 3px;
+}
+
+.office-cj-payment__proforma,
+.office-cj-payment__qr-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.office-cj-payment__qr-panel {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: center;
+}
+
+.office-cj-payment__qr {
+  display: grid;
+  grid-template-columns: repeat(21, 6px);
+  grid-template-rows: repeat(21, 6px);
+  gap: 1px;
+  padding: 8px;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  width: fit-content;
+}
+
+.office-cj-payment__qr-cell {
+  background: #fff;
+}
+
+.office-cj-payment__qr-cell--on {
+  background: #001930;
+}
+
+.office-cj-summary--compact {
+  padding: 0;
+  border: none;
+  background: transparent;
+}
+
+.office-cj-screen__cta {
+  cursor: pointer;
+}
+
+@media (max-width: 640px) {
+  .office-cj-payment__qr-panel {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 840px) {
+  .office-cj-pilot__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .office-pilot-ws__terminal--journey {
   display: flex;
   flex-direction: column;

@@ -53,17 +53,15 @@ export function PilotWorkingTerminal() {
 function stepLabel(stepId: string): string {
   switch (stepId) {
     case 'welcome':
-      return 'Welcome';
+      return 'Vítejte';
     case 'pilot_program':
-      return 'Pilot Program';
-    case 'order_confirmation':
-      return 'Order Confirmation';
+      return 'Pilotní program';
+    case 'complete_order':
+      return 'Dokončit objednávku';
     case 'payment':
-      return 'Payment';
-    case 'pilot_confirmed':
-      return 'Pilot Confirmed';
-    case 'office_handoff':
-      return 'Office Handoff';
+      return 'Platba';
+    case 'conis_studio':
+      return 'CONIS Studio';
     default:
       return stepId;
   }

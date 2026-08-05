@@ -218,7 +218,7 @@ export function evaluateLifecycleConsistency(
     label: 'Workflow Synchronization',
     verdict:
       snapshot.syncedStatus === 'pilot_ready' &&
-      snapshot.workflowActiveStepId === 'office_handoff'
+      snapshot.workflowActiveStepId === 'conis_studio'
         ? 'PASS'
         : 'FAIL',
     detail: `status=${snapshot.syncedStatus} active=${snapshot.workflowActiveStepId}`,
