@@ -68,6 +68,7 @@ describe('PT-CJ-04 Payment Experience', () => {
     assert.match(payment, /cj-proforma-download/);
     assert.doesNotMatch(payment, /SMTP|IMAP|Business Automation|ověření.*bank/i);
     assert.match(studio, /Děkujeme\. Platba byla oznámena/);
+    assert.match(studio, /Vítejte v CONIS Studio/);
     assert.match(studio, /Otevřít CONIS Studio/);
     assert.doesNotMatch(studio, /Office mezitím|handoff/i);
     assert.match(pkg, /"qrcode"/);

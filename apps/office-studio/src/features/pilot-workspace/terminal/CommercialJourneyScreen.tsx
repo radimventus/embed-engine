@@ -12,7 +12,7 @@ type CommercialJourneyScreenProps = {
 };
 
 /**
- * PT-CJ-02 — Lean Commercial Journey production screens (partner preview).
+ * PT-CJ-04 — Complete partner Commercial Journey (production preview).
  * Vítejte → Pilotní program → Dokončit objednávku → Platba → CONIS Studio.
  */
 export function CommercialJourneyScreen({
@@ -58,18 +58,18 @@ function WelcomeScreen({ partnerName }: { readonly partnerName: string }) {
       data-testid="commercial-journey-screen"
       data-cj-step="welcome"
     >
-      <p className="office-cj-screen__eyebrow">CONIS Studio · {partnerName}</p>
-      <h2 className="office-cj-screen__title" data-testid="cj-welcome-title">
+      <p className="office-cj-pilot__partner">{partnerName}</p>
+      <h2 className="office-cj-pilot__title" data-testid="cj-welcome-title">
         Vítejte ve svém CONIS Studio
       </h2>
-      <p className="office-cj-screen__lead" data-testid="cj-welcome-lead">
+      <p className="office-cj-pilot__lead" data-testid="cj-welcome-lead">
         Vše je připravené.
         <br />
         Zbývá už jen vybrat pilotní program.
       </p>
       <button
         type="button"
-        className="office-cj-screen__cta"
+        className="office-cj-pilot__continue"
         data-testid="cj-welcome-cta"
         onClick={() => navigateWorkflowStep('pilot_program')}
       >

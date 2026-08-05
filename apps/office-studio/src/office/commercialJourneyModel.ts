@@ -1,5 +1,5 @@
 /**
- * PT-CJ-02 — Lean Commercial Journey catalog (partner purchase path).
+ * PT-CJ-05 — Commercial Journey v1.0 catalog (partner purchase path).
  * Navigation + display only — no Business Automation · no Office handoff UI.
  */
 

@@ -80,6 +80,7 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
       data-cj-complete-order="true"
     >
       <header className="office-cj-order__head">
+        <p className="office-cj-pilot__eyebrow">Objednávka</p>
         <h2 className="office-cj-pilot__title" data-testid="cj-order-title">
           Dokončit objednávku
         </h2>

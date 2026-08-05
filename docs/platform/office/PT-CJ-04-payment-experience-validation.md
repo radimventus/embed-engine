@@ -1,6 +1,6 @@
 # PT-CJ-04 — Payment Experience (validation)
 
-**Status:** Build PASS · Ready for Product Review · **Commit:** hold until PASS  
+**Status:** Closed · Commit `7c26352`  
 **Depends on:** PT-CJ-03 complete order (`6b576a2`)
 
 ## Delivered

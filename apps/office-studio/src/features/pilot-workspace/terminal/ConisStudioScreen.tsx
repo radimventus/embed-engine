@@ -7,7 +7,7 @@ type ConisStudioScreenProps = {
 };
 
 /**
- * PT-CJ-04 — CONIS Studio after QR payment confirmation.
+ * PT-CJ-04 — Commercial Journey completion · CONIS Studio entry.
  */
 export function ConisStudioScreen({ activeCase }: ConisStudioScreenProps) {
   void activeCase;
@@ -18,11 +18,11 @@ export function ConisStudioScreen({ activeCase }: ConisStudioScreenProps) {
       data-testid="commercial-journey-screen"
       data-cj-step="conis_studio"
     >
-      <h2 className="office-cj-screen__title" data-testid="cj-studio-title">
+      <h2 className="office-cj-pilot__title" data-testid="cj-studio-title">
         Děkujeme. Platba byla oznámena.
       </h2>
-      <p className="office-cj-screen__lead" data-testid="cj-studio-lead">
-        Nyní můžete začít pracovat v CONIS Studio.
+      <p className="office-cj-pilot__lead" data-testid="cj-studio-lead">
+        Vítejte v CONIS Studio.
       </p>
       <p className="office-cj-screen__note">
         Podklady můžete nahrát nyní nebo kdykoliv později.
