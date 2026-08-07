@@ -6,7 +6,7 @@ import type { CommandHandler } from "./CommandHandler";
 import type { ExecutionContext } from "./ExecutionContext";
 import type { Interpreter } from "./Interpreter";
 import { MapCommandResolver } from "./MapCommandResolver";
-import { Runtime } from "./Runtime";
+import { CommandRuntime } from "./CommandRuntime";
 import type { SceneGraph } from "./SceneGraph";
 
 const SCENE_GRAPH: SceneGraph = {
@@ -49,11 +49,16 @@ const testInterpreter: Interpreter = {
       history: [],
       currentDecision: null,
       decisionFlow: [],
+      house: null,
+      decisionFilter: null,
+      highlights: [],
+      recommendedRooms: [],
+      summaryReady: false,
     };
   },
 };
 
-function createTestRuntime(): Runtime {
+function createTestRuntime(): CommandRuntime {
   const executionContext: ExecutionContext = {
     currentSceneId: SCENE_GRAPH.start,
     state: {
@@ -64,20 +69,20 @@ function createTestRuntime(): Runtime {
   const resolver = new MapCommandResolver();
   resolver.register("set-value", setValueHandler);
 
-  return new Runtime(SCENE_GRAPH, {
+  return new CommandRuntime(SCENE_GRAPH, {
     executionContext,
     resolver,
     interpreter: testInterpreter,
   });
 }
 
-function answersOf(runtime: Runtime): [string, unknown][] {
+function answersOf(runtime: CommandRuntime): [string, unknown][] {
   const state = runtime.context.state as TestState;
   return [...state.answers.entries()];
 }
 
-describe("Runtime determinism (core)", () => {
-  it("same command on two fresh Runtimes yields equal ExperienceModel", () => {
+describe("CommandRuntime determinism (core)", () => {
+  it("same command on two fresh Runtimes yields equal ReactExperienceModel", () => {
     const runtimeA = createTestRuntime();
     const runtimeB = createTestRuntime();
     const command = setValue("a", 1);

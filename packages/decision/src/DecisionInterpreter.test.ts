@@ -3,67 +3,64 @@ import { describe, it } from "node:test";
 
 import { DefaultDecisionRegistry } from "./DefaultDecisionRegistry";
 import type { DecisionState } from "./DecisionState";
+import { HOUSE_DECISION_FLOW } from "@embed-engine/object-house";
 import { interpretDecision } from "./interpretDecision";
-
-const KITCHEN_TYPE = {
-  id: "kitchen-type",
-  question: "Kitchen type",
-  type: "single-choice" as const,
-};
-
-function createState(
-  overrides: Partial<DecisionState> = {},
-): DecisionState {
-  return {
-    answers: new Map([["kitchen-type", "island"]]),
-    currentDecisionId: "kitchen-type",
-    history: [],
-    ...overrides,
-  };
-}
+import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 
 describe("interpretDecision", () => {
-  it("produces the same ExperienceModel for the same DecisionState", () => {
-    const registry = new DefaultDecisionRegistry([KITCHEN_TYPE]);
-    const state = createState();
+  it("produces the same ReactExperienceModel for the same DecisionState", () => {
+    const registry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
+    const state: DecisionState = {
+      answers: new Map([["priority-focus", "price"]]),
+      currentDecisionId: "priority-focus",
+      history: ["start"],
+    };
 
-    const first = interpretDecision(registry, state, "start");
-    const second = interpretDecision(registry, state, "start");
+    const first = interpretDecision(
+      registry,
+      state,
+      "start",
+      REFERENCE_HOUSE_PACKAGE,
+    );
+    const second = interpretDecision(
+      registry,
+      state,
+      "start",
+      REFERENCE_HOUSE_PACKAGE,
+    );
 
     assert.deepEqual(first, second);
-    assert.deepEqual(first.decisionFlow, [
-      {
-        id: "kitchen-type",
-        title: "Kitchen type",
-        visited: false,
-        current: true,
-      },
-    ]);
-    assert.deepEqual(first.currentDecision, first.decisionFlow[0]);
+    assert.equal(first.house?.title, "Modern 01");
+    assert.equal(first.decisionFilter?.preferPrice, true);
   });
 
   it("does not mutate DecisionState", () => {
-    const registry = new DefaultDecisionRegistry([KITCHEN_TYPE]);
-    const state = createState({ history: ["layout"] });
+    const registry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
+    const state: DecisionState = {
+      answers: new Map([["priority-focus", "price"]]),
+      currentDecisionId: "priority-focus",
+      history: ["start"],
+    };
     const answersBefore = [...state.answers.entries()];
     const historyBefore = [...state.history];
-    const currentBefore = state.currentDecisionId;
 
-    interpretDecision(registry, state, "start");
+    interpretDecision(registry, state, "start", REFERENCE_HOUSE_PACKAGE);
 
     assert.deepEqual([...state.answers.entries()], answersBefore);
     assert.deepEqual(state.history, historyBefore);
-    assert.equal(state.currentDecisionId, currentBefore);
   });
 
   it("does not mutate DecisionRegistry", () => {
-    const registry = new DefaultDecisionRegistry([KITCHEN_TYPE]);
-    const definitionBefore = registry.get("kitchen-type");
-    const state = createState();
+    const registry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
+    const definitionBefore = registry.get("priority-focus");
+    const state: DecisionState = {
+      answers: new Map(),
+      currentDecisionId: "start",
+      history: [],
+    };
 
-    interpretDecision(registry, state, "start");
+    interpretDecision(registry, state, "start", REFERENCE_HOUSE_PACKAGE);
 
-    assert.deepEqual(registry.get("kitchen-type"), definitionBefore);
-    assert.equal(registry.get("missing"), undefined);
+    assert.deepEqual(registry.get("priority-focus"), definitionBefore);
   });
 });

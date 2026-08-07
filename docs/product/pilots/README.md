@@ -19,8 +19,7 @@
 
 This document defines why pilots exist in Embed Engine and what they produce as **knowledge**.
 
-A pilot is not a software test suite.  
-A pilot is a **process of acquiring and validating Product Knowledge** with a real commercial context.
+**First concrete pilot knowledge model:** [`../../pilot/README.md`](../../pilot/README.md) (CAP-P01 — house-modern-01 + disposition-layout-v1).
 
 ---
 

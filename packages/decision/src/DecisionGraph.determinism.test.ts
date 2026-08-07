@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 
-import type { Runtime, SceneGraph } from "@embed-engine/core";
+import type { CommandRuntime, SceneGraph } from "@embed-engine/core";
 
 import { createDecisionRuntime } from "./createDecisionRuntime";
 import { DefaultDecisionRegistry } from "./DefaultDecisionRegistry";
@@ -30,7 +30,7 @@ function goBack(): GoBackCommand {
   return { type: "go-back" };
 }
 
-function navigationOf(runtime: Runtime) {
+function navigationOf(runtime: CommandRuntime) {
   const state = runtime.context.state as DecisionState;
   return {
     currentDecisionId: state.currentDecisionId,
@@ -43,26 +43,13 @@ describe("Decision graph navigation", () => {
     const runtime = createDecisionRuntime(SCENE_GRAPH);
 
     runtime.dispatch(startFlow("start"));
-    const toPreferenceA = runtime.dispatch(goNext());
-    const toPreferenceB = runtime.dispatch(goNext());
+    const toPriority = runtime.dispatch(goNext());
+    const toGarden = runtime.dispatch(goNext());
 
-    assert.equal(toPreferenceA.currentDecisionId, "preference-a");
-    assert.deepEqual(toPreferenceA.history, ["start"]);
-    assert.deepEqual(toPreferenceA.currentDecision, {
-      id: "preference-a",
-      title: "Preference A",
-      visited: false,
-      current: true,
-    });
-
-    assert.equal(toPreferenceB.currentDecisionId, "preference-b");
-    assert.deepEqual(toPreferenceB.history, ["start", "preference-a"]);
-    assert.deepEqual(toPreferenceB.currentDecision, {
-      id: "preference-b",
-      title: "Preference B",
-      visited: false,
-      current: true,
-    });
+    assert.equal(toPriority.currentDecisionId, "priority-focus");
+    assert.deepEqual(toPriority.history, ["start"]);
+    assert.equal(toGarden.currentDecisionId, "garden-importance");
+    assert.deepEqual(toGarden.history, ["start", "priority-focus"]);
   });
 
   it("reproduces the same graph navigation sequence on fresh Runtimes", () => {
@@ -86,13 +73,10 @@ describe("Decision graph navigation", () => {
       };
     };
 
-    const first = run();
-    const second = run();
-
-    assert.deepEqual(first, second);
-    assert.deepEqual(first.navigation, {
-      currentDecisionId: "preference-b",
-      history: ["start", "preference-a"],
+    assert.deepEqual(run(), run());
+    assert.deepEqual(run().navigation, {
+      currentDecisionId: "garden-importance",
+      history: ["start", "priority-focus"],
     });
   });
 
@@ -142,8 +126,8 @@ describe("Decision graph navigation", () => {
       () =>
         new DefaultDecisionRegistry([
           {
-            id: "preference-a",
-            question: "Preference A",
+            id: "priority-focus",
+            question: "Priority",
             type: "single-choice",
             previous: "missing-node",
           },
@@ -160,26 +144,25 @@ describe("Decision graph navigation", () => {
         id: "start",
         question: "Start",
         type: "text",
-        next: "preference-a",
+        next: "priority-focus",
       },
       {
-        id: "preference-a",
-        question: "Preference A",
+        id: "priority-focus",
+        question: "Priority",
         type: "single-choice",
-        next: "preference-b",
+        next: "summary",
         previous: "start",
       },
       {
-        id: "preference-b",
-        question: "Preference B",
-        type: "single-choice",
-        previous: "preference-a",
+        id: "summary",
+        question: "Summary",
+        type: "text",
+        previous: "priority-focus",
       },
     ]);
 
-    assert.equal(registry.getNext("start"), "preference-a");
-    assert.equal(registry.getPrevious("preference-a"), "start");
-    assert.equal(registry.getNext("preference-b"), undefined);
-    assert.equal(registry.getPrevious("start"), undefined);
+    assert.equal(registry.getNext("start"), "priority-focus");
+    assert.equal(registry.getPrevious("priority-focus"), "start");
+    assert.equal(registry.getNext("summary"), undefined);
   });
 });

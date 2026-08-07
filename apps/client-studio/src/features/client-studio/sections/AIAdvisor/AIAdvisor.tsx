@@ -1,5 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
+import {
+  applyQuestionOpened,
+  useApplyCognitiveSignal,
+} from '../../cognitive/CognitiveRuntimeContext';
+import { useInterpretation } from '../../cognitive/InterpretationProvider';
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import {
   AI_ADVISOR_CONVERSATION_CELL_CLASS,
@@ -16,19 +21,62 @@ import { InputBar } from './InputBar';
 import { SectionHeader } from './SectionHeader';
 import { FaqList, FaqTitle } from './SuggestedQuestions';
 import {
-  AI_PLACEHOLDER_RESPONSE,
-  INITIAL_MESSAGES,
   createMessageId,
   formatMessageTime,
+  type Message,
 } from './types';
-import type { Message } from './types';
 
+/**
+ * AI renderer — conversation framing comes from Interpretation.
+ * Local messages are only the chat transcript, not decision reasoning.
+ */
 export function AIAdvisor() {
-  const [inputValue, setInputValue] = useState('');
-  const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
+  const interpretation = useInterpretation();
+  const applySignal = useApplyCognitiveSignal();
+  const [inputValue, setInputValue] = useState(interpretation.nextAction);
+  const [messages, setMessages] = useState<Message[]>(() => [
+    {
+      id: 'context-1',
+      role: 'assistant',
+      text: interpretation.conversationContext,
+      time: formatMessageTime(new Date()),
+    },
+  ]);
+  const [lastTopic, setLastTopic] = useState(interpretation.activeTopic);
 
-  const handleQuestionSelect = (question: string) => {
+  useEffect(() => {
+    setInputValue(interpretation.nextAction);
+  }, [interpretation.nextAction]);
+
+  useEffect(() => {
+    if (interpretation.activeTopic === lastTopic) {
+      return;
+    }
+
+    setLastTopic(interpretation.activeTopic);
+    setMessages((current) => [
+      ...current,
+      {
+        id: createMessageId(),
+        role: 'assistant',
+        text: `${interpretation.conversationContext} ${interpretation.recommendations[0] ?? ''}`.trim(),
+        time: formatMessageTime(new Date()),
+      },
+    ]);
+  }, [
+    interpretation.activeTopic,
+    interpretation.conversationContext,
+    interpretation.recommendations,
+    lastTopic,
+  ]);
+
+  const handleQuestionSelect = (question: string, topicId: string) => {
     setInputValue(question);
+    applyQuestionOpened(
+      applySignal,
+      topicId,
+      `Question opened: ${question.slice(0, 48)}`,
+    );
   };
 
   const handleSend = () => {
@@ -37,9 +85,14 @@ export function AIAdvisor() {
       return;
     }
 
-    const now = new Date();
-    const time = formatMessageTime(now);
+    const topicId =
+      interpretation.priorities.find((priority) => priority.weight === 1)?.id ??
+      interpretation.recommendedQuestions[0]?.topicId ??
+      'investment';
 
+    applyQuestionOpened(applySignal, topicId, `Question asked: ${text.slice(0, 48)}`);
+
+    const time = formatMessageTime(new Date());
     setMessages((current) => [
       ...current,
       {
@@ -51,7 +104,7 @@ export function AIAdvisor() {
       {
         id: createMessageId(),
         role: 'assistant',
-        text: AI_PLACEHOLDER_RESPONSE,
+        text: `Understood — staying with ${interpretation.activeTopic}. ${interpretation.nextAction}`,
         time,
       },
     ]);
@@ -68,6 +121,18 @@ export function AIAdvisor() {
 
         <div className={AI_ADVISOR_HEADER_CELL_CLASS}>
           <SectionHeader />
+          <p
+            className="mt-2 text-[11px] leading-snug text-embed-foreground-primary/55"
+            data-testid="ai-active-topic"
+          >
+            Active topic: {interpretation.activeTopic}
+          </p>
+          <p
+            className="mt-1 text-xs leading-relaxed text-embed-foreground-primary/70 transition-opacity duration-300"
+            data-testid="ai-conversation-context"
+          >
+            {interpretation.conversationContext}
+          </p>
         </div>
 
         <div className={AI_ADVISOR_CONVERSATION_CELL_CLASS}>
@@ -77,6 +142,12 @@ export function AIAdvisor() {
         </div>
 
         <div className={AI_ADVISOR_INPUT_CELL_CLASS}>
+          <p
+            className="mb-2 text-[11px] text-embed-brand-gold"
+            data-testid="ai-next-action"
+          >
+            Suggested: {interpretation.nextAction}
+          </p>
           <InputBar value={inputValue} onChange={setInputValue} onSend={handleSend} />
         </div>
 

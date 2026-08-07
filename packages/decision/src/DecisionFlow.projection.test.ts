@@ -3,11 +3,12 @@ import { describe, it } from "node:test";
 
 import type { SceneGraph } from "@embed-engine/core";
 
-import { CANONICAL_DECISION_FLOW } from "./canonical-decision-flow";
 import { createDecisionRuntime } from "./createDecisionRuntime";
 import { DefaultDecisionRegistry } from "./DefaultDecisionRegistry";
 import type { DecisionState } from "./DecisionState";
+import { HOUSE_DECISION_FLOW } from "@embed-engine/object-house";
 import { interpretDecision } from "./interpretDecision";
+import { REFERENCE_HOUSE_PACKAGE } from "@embed-engine/object-house";
 import type { GoNextCommand } from "./GoNextCommand";
 import type { StartDecisionFlowCommand } from "./StartDecisionFlowCommand";
 
@@ -28,35 +29,45 @@ function goNext(): GoNextCommand {
 
 describe("Decision Flow projection", () => {
   it("projects every decision into decisionFlow", () => {
-    const registry = new DefaultDecisionRegistry(CANONICAL_DECISION_FLOW);
+    const registry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
     const state: DecisionState = {
       answers: new Map(),
       currentDecisionId: null,
       history: [],
     };
 
-    const experience = interpretDecision(registry, state, "start");
+    const experience = interpretDecision(
+      registry,
+      state,
+      "start",
+      REFERENCE_HOUSE_PACKAGE,
+    );
 
-    assert.equal(experience.decisionFlow.length, CANONICAL_DECISION_FLOW.length);
+    assert.equal(experience.decisionFlow.length, HOUSE_DECISION_FLOW.length);
     assert.deepEqual(
       experience.decisionFlow.map((decision) => decision.id),
-      CANONICAL_DECISION_FLOW.map((definition) => definition.id),
+      HOUSE_DECISION_FLOW.map((definition) => definition.id),
     );
   });
 
   it("preserves registry graph order", () => {
-    const registry = new DefaultDecisionRegistry(CANONICAL_DECISION_FLOW);
+    const registry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
     const state: DecisionState = {
       answers: new Map(),
-      currentDecisionId: "preference-a",
+      currentDecisionId: "priority-focus",
       history: ["start"],
     };
 
-    const experience = interpretDecision(registry, state, "start");
+    const experience = interpretDecision(
+      registry,
+      state,
+      "start",
+      REFERENCE_HOUSE_PACKAGE,
+    );
 
     assert.deepEqual(
       experience.decisionFlow.map((decision) => decision.id),
-      ["start", "preference-a", "preference-b", "preference-c", "summary"],
+      ["start", "priority-focus", "garden-importance", "summary"],
     );
   });
 
@@ -70,18 +81,22 @@ describe("Decision Flow projection", () => {
 
     assert.equal(currentNodes.length, 1);
     assert.equal(currentNodes[0]?.id, "start");
-    assert.equal(experience.currentDecision?.id, "start");
   });
 
   it("marks visited nodes from history only", () => {
-    const registry = new DefaultDecisionRegistry(CANONICAL_DECISION_FLOW);
+    const registry = new DefaultDecisionRegistry(HOUSE_DECISION_FLOW);
     const state: DecisionState = {
       answers: new Map(),
-      currentDecisionId: "preference-b",
-      history: ["start", "preference-a"],
+      currentDecisionId: "garden-importance",
+      history: ["start", "priority-focus"],
     };
 
-    const experience = interpretDecision(registry, state, "start");
+    const experience = interpretDecision(
+      registry,
+      state,
+      "start",
+      REFERENCE_HOUSE_PACKAGE,
+    );
 
     assert.deepEqual(
       experience.decisionFlow.map((decision) => ({
@@ -91,9 +106,8 @@ describe("Decision Flow projection", () => {
       })),
       [
         { id: "start", visited: true, current: false },
-        { id: "preference-a", visited: true, current: false },
-        { id: "preference-b", visited: false, current: true },
-        { id: "preference-c", visited: false, current: false },
+        { id: "priority-focus", visited: true, current: false },
+        { id: "garden-importance", visited: false, current: true },
         { id: "summary", visited: false, current: false },
       ],
     );

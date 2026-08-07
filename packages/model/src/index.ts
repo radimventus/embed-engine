@@ -11,9 +11,16 @@ export { Theme } from './entities/Theme';
 
 export type {
   DecisionId,
+  ExperienceChoice,
   ExperienceDecision,
-  ExperienceModel,
-} from './experience/ExperienceModel';
+  ExperienceDecisionFilter,
+  ExperienceHighlight,
+  ExperienceHighlightTarget,
+  ExperienceHouse,
+  ExperienceHouseMedia,
+  ExperienceHouseRoom,
+  ReactExperienceModel,
+} from './experience/ReactExperienceModel';
 
 export { Area, type AreaUnit } from './value-objects/Area';
 export { Coordinates } from './value-objects/Coordinates';

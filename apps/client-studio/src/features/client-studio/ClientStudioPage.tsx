@@ -1,7 +1,12 @@
 import type { Runtime } from '@embed-engine/core';
+import type { ReactExperienceModel } from '@embed-engine/model';
 
+import { CognitiveRuntimeProvider } from './cognitive/CognitiveRuntimeContext';
+import { DecisionStoryProvider } from './cognitive/DecisionStoryProvider';
+import { InterpretationProvider } from './cognitive/InterpretationProvider';
 import { ClientStudioHeader } from './ClientStudioHeader';
 import { DesktopCanvas } from './DesktopCanvas';
+import { HouseDecisionExperience } from './house-decision/HouseDecisionExperience';
 import { AIAdvisor } from './sections/AIAdvisor/AIAdvisor';
 import { Hero } from './sections/Hero/Hero';
 import { AuditLeadCapture } from './sections/AuditLeadCapture/AuditLeadCapture';
@@ -10,24 +15,51 @@ import { PropertyExplorer } from './sections/PropertyExplorer/PropertyExplorer';
 import { WalkthroughProvider } from '../walkthrough';
 
 type ClientStudioPageProps = {
-  runtime: Runtime;
+  cognitiveRuntime: Runtime | null;
+  experience: ReactExperienceModel | null;
+  onSelectChoice: (decisionId: string, choiceId: string) => void;
+  onContinue: () => void;
 };
 
-export function ClientStudioPage({ runtime }: ClientStudioPageProps) {
+export function ClientStudioPage({
+  cognitiveRuntime,
+  experience,
+  onSelectChoice,
+  onContinue,
+}: ClientStudioPageProps) {
   return (
-    <WalkthroughProvider>
-      <DesktopCanvas>
-        <ClientStudioHeader />
-        <Hero />
-        <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
-        <PropertyExplorer />
-        <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
-        <PriorityEngine runtime={runtime} />
-        <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
-        <AIAdvisor />
-        <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
-        <AuditLeadCapture />
-      </DesktopCanvas>
-    </WalkthroughProvider>
+    <CognitiveRuntimeProvider runtime={cognitiveRuntime}>
+      <InterpretationProvider>
+        <DecisionStoryProvider>
+        <WalkthroughProvider>
+          <DesktopCanvas>
+            <ClientStudioHeader />
+            {experience ? (
+              <>
+                <HouseDecisionExperience
+                  experience={experience}
+                  onSelectChoice={onSelectChoice}
+                  onContinue={onContinue}
+                />
+                <div
+                  aria-hidden="true"
+                  className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]"
+                />
+              </>
+            ) : null}
+            <Hero />
+            <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
+            <PropertyExplorer />
+            <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
+            {cognitiveRuntime ? <PriorityEngine runtime={cognitiveRuntime} /> : null}
+            <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
+            <AIAdvisor />
+            <div aria-hidden="true" className="h-chapter-spacing w-full shrink-0 bg-[#F7F6F4]" />
+            <AuditLeadCapture />
+          </DesktopCanvas>
+        </WalkthroughProvider>
+        </DecisionStoryProvider>
+      </InterpretationProvider>
+    </CognitiveRuntimeProvider>
   );
 }

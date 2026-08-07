@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { ExperienceModel } from '@embed-engine/model';
+import type { ReactExperienceModel } from '@embed-engine/model';
 
 import { DecisionFlowNavigator } from './decision-flow/DecisionFlowNavigator';
 
@@ -7,13 +7,13 @@ const SIDEBAR_COLLAPSED_WIDTH_PX = 48;
 const SIDEBAR_EXPANDED_WIDTH_PX = 220;
 
 type ClientStudioSidebarProps = {
-  experience: ExperienceModel | null;
+  experience: ReactExperienceModel | null;
   onSelectDecision: (decisionId: string) => void;
 };
 
 /**
  * Left shell: presentation expand/collapse only.
- * Decision Flow navigation state comes exclusively from ExperienceModel.
+ * Decision Flow navigation state comes exclusively from ReactExperienceModel.
  */
 export function ClientStudioSidebar({
   experience,

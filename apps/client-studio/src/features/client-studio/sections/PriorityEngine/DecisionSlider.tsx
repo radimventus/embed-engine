@@ -69,11 +69,11 @@ export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
       >
         <div className="absolute inset-x-0 top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-embed-border-default" />
         <div
-          className={`absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-embed-brand-gold ${DECISION_TRANSITION_CLASS} transition-[width]`}
+          className={`absolute top-1/2 h-[3px] -translate-y-1/2 rounded-full bg-embed-brand-gold transition-[width] duration-300 ease-out ${DECISION_TRANSITION_CLASS}`}
           style={{ width: `${value * 100}%` }}
         />
         <div
-          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 ${DECISION_TRANSITION_CLASS} transition-[left]`}
+          className={`absolute top-1/2 -translate-x-1/2 -translate-y-1/2 transition-[left] duration-300 ease-out ${DECISION_TRANSITION_CLASS}`}
           style={{ left: `${value * 100}%` }}
         >
           <div className="flex h-7 w-7 items-center justify-center">

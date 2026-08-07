@@ -1,5 +1,3 @@
-import type { Runtime } from '@embed-engine/core';
-
 import { DecisionActionArea } from './DecisionActionArea';
 import { DecisionCard } from './DecisionCard';
 import {
@@ -8,22 +6,22 @@ import {
   DECISION_SURFACE_HEIGHT_PX,
   DECISION_SURFACE_WIDTH_PX,
 } from './decision-cards-layout';
+import { EventTimeline } from './EventTimeline';
+import { PriorityReasons } from './PriorityReasons';
 import { useDecisionCards } from './useDecisionCards';
 
-type PriorityCardsProps = {
-  runtime: Runtime;
-};
-
-export function PriorityCards({ runtime }: PriorityCardsProps) {
+export function PriorityCards() {
   const {
-    cards,
     categories,
+    elevatedPriorities,
+    events,
     minimumMet,
     minimumSelection,
+    priorityById,
+    questionId,
     selectedCount,
-    setImportance,
     toggleCard,
-  } = useDecisionCards(runtime);
+  } = useDecisionCards();
 
   return (
     <div className="flex min-w-0 flex-col self-start">
@@ -38,15 +36,18 @@ export function PriorityCards({ runtime }: PriorityCardsProps) {
         }}
       >
         {categories.map((category) => {
-          const card = cards[category.id];
+          const priority = priorityById[category.id];
+          const importance = priority?.weight ?? 0.35;
 
           return (
             <DecisionCard
               key={category.id}
               category={category}
-              importance={card.importance}
-              isActive={card.selected}
-              onImportanceChange={(value) => setImportance(category.id, value)}
+              importance={importance}
+              isActive={questionId === category.id}
+              isHighlighted={priority?.highlighted === true}
+              rank={priority?.rank}
+              reason={priority?.reason}
               onToggle={() => toggleCard(category.id)}
             />
           );
@@ -57,6 +58,10 @@ export function PriorityCards({ runtime }: PriorityCardsProps) {
         minimumSelection={minimumSelection}
         selectedCount={selectedCount}
       />
+      <div className="mt-5 grid w-[680px] grid-cols-2 gap-4">
+        <EventTimeline events={events} />
+        <PriorityReasons priorities={elevatedPriorities} />
+      </div>
     </div>
   );
 }

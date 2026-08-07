@@ -1,4 +1,4 @@
-import type { ExperienceModel } from "@embed-engine/model";
+import type { ReactExperienceModel } from "@embed-engine/model";
 
 import type { Command } from "./Command";
 import type { CommandResolver } from "./CommandResolver";
@@ -30,7 +30,7 @@ export class Workflow {
     this.resolver = dependencies.resolver;
   }
 
-  run(command: Command): ExperienceModel {
+  run(command: Command): ReactExperienceModel {
     validate(command);
 
     const handler = this.resolver.resolve(command);

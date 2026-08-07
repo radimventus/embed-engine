@@ -1,64 +1,63 @@
-import type { ExperienceModel } from "@embed-engine/model";
+import type { Signal } from "../cognitive/signals/Signal";
+import type { DecisionStoryComposer } from "../decision-layer/composeDecisionStory";
+import { Kernel } from "./Kernel";
+import type {
+  RuntimeEvent,
+  RuntimeListener,
+  RuntimeObjectPackage,
+  RuntimeState,
+  Unsubscribe,
+} from "./RuntimeState";
 
-import type { Command } from "./Command";
-import type { CommandResolver } from "./CommandResolver";
-import { ExecutionContext } from "./ExecutionContext";
-import type { Interpreter } from "./Interpreter";
-import type { SceneGraph } from "./SceneGraph";
-import { Workflow } from "./Workflow";
+export type RuntimeOptions = {
+  readonly storyComposer?: DecisionStoryComposer;
+};
 
-export interface RuntimeOptions {
-  readonly executionContext: ExecutionContext;
-  readonly resolver: CommandResolver;
-  readonly interpreter: Interpreter;
-}
-
+/**
+ * Public Runtime façade.
+ * Owns Kernel. Exposes lifecycle, signal application, and state access.
+ */
 export class Runtime {
-  private readonly sceneGraph: SceneGraph;
-  private readonly executionContext: ExecutionContext;
-  private readonly workflow: Workflow;
+  private readonly kernel: Kernel;
 
-  constructor(sceneGraph: SceneGraph, options: RuntimeOptions) {
-    this.sceneGraph = sceneGraph;
-    this.executionContext = options.executionContext;
-
-    this.workflow = new Workflow(this.executionContext, {
-      resolver: options.resolver,
-      interpreter: options.interpreter,
-    });
+  constructor(options: RuntimeOptions = {}) {
+    this.kernel = new Kernel(options);
   }
 
-  get context(): ExecutionContext {
-    return this.executionContext;
+  async load(objectPackage: RuntimeObjectPackage): Promise<void> {
+    this.assertNotDestroyed();
+    await this.kernel.load(objectPackage);
+  }
+
+  async dispatch(event: RuntimeEvent): Promise<void> {
+    this.assertNotDestroyed();
+    await this.kernel.dispatch(event);
   }
 
   /**
-   * Sole future public entry API for the Runtime Kernel.
+   * Apply a Cognitive Signal through reduce → project → (optional) Strategy.
    */
-  dispatch(command: Command): ExperienceModel {
-    return this.workflow.run(command);
+  applySignal(signal: Signal): void {
+    this.assertNotDestroyed();
+    this.kernel.applySignal(signal);
   }
 
-  /** @deprecated Legacy scene API — retained until Workflow replaces it. */
-  start(): void {
-    this.executionContext.currentSceneId = this.sceneGraph.start;
+  getState(): RuntimeState {
+    return this.kernel.getState();
   }
 
-  /** @deprecated Legacy scene API — retained until Workflow replaces it. */
-  next(): void {
-    const current =
-      this.sceneGraph.scenes[this.executionContext.currentSceneId];
+  subscribe(listener: RuntimeListener): Unsubscribe {
+    this.assertNotDestroyed();
+    return this.kernel.subscribe(listener);
+  }
 
-    if (!current?.next) {
-      return;
+  destroy(): void {
+    this.kernel.destroy();
+  }
+
+  private assertNotDestroyed(): void {
+    if (this.kernel.getState().status === "destroyed") {
+      throw new Error("Runtime has been destroyed");
     }
-
-    this.executionContext.currentSceneId = current.next;
   }
-
-  /**
-   * @deprecated Legacy scene API — use dispatch with a domain command instead.
-   * Domain answers are owned by DecisionState outside Core.
-   */
-  answer(_key: string, _value: unknown): void {}
 }
