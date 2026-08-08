@@ -3,6 +3,8 @@
  * Create / read / update partners; production seed is the OF-11 reference partner.
  */
 
+import { createCanonicalPartner } from '@embed-engine/platform-access';
+
 import {
   defaultNextStep,
   type OfficePartner,
@@ -77,11 +79,6 @@ function persist(): void {
   } satisfies PartnerPersistState);
 }
 
-function nextId(): string {
-  idSeq += 1;
-  return `p-${idSeq}`;
-}
-
 export function listPartners(): readonly OfficePartner[] {
   return [...partners].sort((a, b) => a.name.localeCompare(b.name, 'cs'));
 }
@@ -92,8 +89,11 @@ export function getPartner(id: string): OfficePartner | null {
 
 export function createPartner(draft: OfficePartnerDraft): OfficePartner {
   const createdAt = nowIso();
+  const canonicalPartner = createCanonicalPartner({ name: draft.name });
   const partner: OfficePartner = {
-    id: nextId(),
+    // New Office projections are keyed by shared canonical Company identity.
+    // Existing p-* records remain readable as legacy Office-only projections.
+    id: canonicalPartner.companyId,
     name: draft.name.trim(),
     status: draft.status,
     nextStep: draft.nextStep.trim() || defaultNextStep(draft.status),

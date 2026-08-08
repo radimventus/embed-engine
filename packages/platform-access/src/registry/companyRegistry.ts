@@ -47,6 +47,18 @@ export type CompanyRegistryState = {
   readonly canonicalProjects: readonly PlatformCanonicalProject[];
 };
 
+export type CreateCanonicalPartnerInput = {
+  readonly name: string;
+  readonly tenantId?: string;
+};
+
+export type CanonicalPartnerIdentity = {
+  readonly companyId: string;
+  readonly workspaceId: string;
+  readonly company: PlatformCompany;
+  readonly workspace: PlatformWorkspace;
+};
+
 const SEED_PROJECT_BY_ID = new Map(
   DEFAULT_PROJECTS.map((project) => [project.id, project] as const),
 );
@@ -291,6 +303,19 @@ export function findWorkspace(
   return state.workspaces.find((item) => item.id === workspaceId);
 }
 
+/** Canonical Workspace ownership reader for Company-rooted writes. */
+export function getCanonicalWorkspaceForCompany(
+  companyId: string,
+): PlatformWorkspace | null {
+  const normalizedCompanyId = companyId.trim();
+  if (normalizedCompanyId.length === 0) return null;
+  return (
+    getDefaultCompanyRegistry().workspaces.find(
+      (workspace) => workspace.companyId === normalizedCompanyId,
+    ) ?? null
+  );
+}
+
 export function findProject(
   state: CompanyRegistryState,
   projectId: string,
@@ -317,6 +342,121 @@ export function listProjectsForCompany(
   companyId: string,
 ): readonly PlatformProject[] {
   return state.projects.filter((item) => item.companyId === companyId);
+}
+
+function canonicalPartnerSlug(name: string): string {
+  return name
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 48);
+}
+
+function nextCanonicalPartnerId(
+  prefix: 'company' | 'workspace',
+  slug: string,
+  knownIds: ReadonlySet<string>,
+): string {
+  const base = `${prefix}-${slug}`;
+  let candidate = base;
+  let suffix = 2;
+  while (knownIds.has(candidate)) {
+    candidate = `${base}-${suffix}`;
+    suffix += 1;
+  }
+  return candidate;
+}
+
+/**
+ * Creates or resolves the shared Partner identity used by every Studio.
+ * Commercial/contact lifecycle data deliberately remains outside this boundary.
+ */
+export function createCanonicalPartner(
+  input: CreateCanonicalPartnerInput,
+): CanonicalPartnerIdentity {
+  const name = input.name.trim();
+  if (name.length === 0) {
+    throw new Error('createCanonicalPartner: partner name is required');
+  }
+
+  const registry = getDefaultCompanyRegistry();
+  const existingCompany = registry.companies.find(
+    (company) =>
+      company.name.trim().localeCompare(name, undefined, {
+        sensitivity: 'accent',
+      }) === 0,
+  );
+  if (existingCompany !== undefined) {
+    const existingWorkspace = registry.workspaces.find(
+      (workspace) => workspace.companyId === existingCompany.id,
+    );
+    if (existingWorkspace !== undefined) {
+      return {
+        companyId: existingCompany.id,
+        workspaceId: existingWorkspace.id,
+        company: existingCompany,
+        workspace: existingWorkspace,
+      };
+    }
+
+    const workspace = {
+      id: nextCanonicalPartnerId(
+        'workspace',
+        canonicalPartnerSlug(existingCompany.name) || 'partner',
+        new Set(registry.workspaces.map((item) => item.id)),
+      ),
+      companyId: existingCompany.id,
+      name: `${existingCompany.name} Workspace`,
+    };
+    mutableExtras = {
+      ...mutableExtras,
+      workspaces: [
+        ...mutableExtras.workspaces.filter((item) => item.id !== workspace.id),
+        workspace,
+      ],
+    };
+    persistExtrasToStorage();
+    return {
+      companyId: existingCompany.id,
+      workspaceId: workspace.id,
+      company: existingCompany,
+      workspace,
+    };
+  }
+
+  const slug = canonicalPartnerSlug(name) || 'partner';
+  const company: PlatformCompany = {
+    id: nextCanonicalPartnerId(
+      'company',
+      slug,
+      new Set(registry.companies.map((item) => item.id)),
+    ),
+    name,
+    tenantId: input.tenantId?.trim() || DEFAULT_TENANT_ID,
+  };
+  const workspace: PlatformWorkspace = {
+    id: nextCanonicalPartnerId(
+      'workspace',
+      slug,
+      new Set(registry.workspaces.map((item) => item.id)),
+    ),
+    companyId: company.id,
+    name: `${name} Workspace`,
+  };
+  mutableExtras = {
+    ...mutableExtras,
+    companies: [...mutableExtras.companies, company],
+    workspaces: [...mutableExtras.workspaces, workspace],
+  };
+  persistExtrasToStorage();
+  return {
+    companyId: company.id,
+    workspaceId: workspace.id,
+    company,
+    workspace,
+  };
 }
 
 /**
@@ -359,10 +499,13 @@ export function upsertBuilderCanonicalProject(
   project: PlatformCanonicalProject,
 ): CompanyRegistryState {
   ensureExtrasHydrated();
+  const canonicalWorkspace = getCanonicalWorkspaceForCompany(project.companyId);
   const normalized: PlatformCanonicalProject = {
     id: project.id.trim(),
     companyId: project.companyId.trim(),
-    workspaceId: project.workspaceId.trim(),
+    // Compatibility writers may predate a Workspace. When one exists, it is
+    // authoritative and prevents callers from deriving a mismatched id.
+    workspaceId: canonicalWorkspace?.id ?? project.workspaceId.trim(),
     name: project.name.trim(),
     slug: project.slug.trim(),
     description: project.description.trim(),

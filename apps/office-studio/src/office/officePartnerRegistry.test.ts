@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
+import {
+  findCompany,
+  findWorkspace,
+  getDefaultCompanyRegistry,
+  resetCompanyRegistryExtras,
+} from '@embed-engine/platform-access';
+
 import { filterPartners } from './officePartnerFilters.ts';
 import { emptyPartnerDraft } from './officePartnerRegistry.ts';
 import {
@@ -19,6 +26,7 @@ describe('officePartnerRegistry (OF-02)', () => {
   it('seeds Partner Registry and supports create / update', () => {
     resetPartnerRegistryForTests();
     resetOfficeEventCatalogForTests();
+    resetCompanyRegistryExtras();
 
     const before = listPartners().length;
     const created = createPartner({
@@ -40,6 +48,13 @@ describe('officePartnerRegistry (OF-02)', () => {
 
     assert.equal(listPartners().length, before + 1);
     assert.equal(created.name, 'Acme Domů');
+    const canonical = getDefaultCompanyRegistry();
+    assert.equal(created.id, 'company-acme-domu');
+    assert.equal(findCompany(canonical, created.id)?.name, 'Acme Domů');
+    assert.equal(
+      findWorkspace(canonical, 'workspace-acme-domu')?.companyId,
+      created.id,
+    );
     assert.ok(
       listPartnerTimeline(created.id).some(
         (event) => event.kind === 'partner.created',

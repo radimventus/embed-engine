@@ -6,13 +6,23 @@ import assert from 'node:assert/strict';
 import { beforeEach, describe, it } from 'node:test';
 
 import { listPublishedProjects } from '../project/projectRepository';
+import {
+  clearCrossPortJson,
+  readCrossPortJson,
+  writeCrossPortJson,
+} from './crossPortJsonStore';
 import { DEFAULT_PROJECTS } from './defaults';
 import {
+  createCanonicalPartner,
+  findCompany,
+  findWorkspace,
+  getCanonicalWorkspaceForCompany,
   getDefaultCompanyRegistry,
   isSeedProjectId,
   mergeProjects,
   resetCompanyRegistryExtras,
   setBuilderProjectStatus,
+  upsertBuilderCanonicalProject,
   upsertBuilderProject,
 } from './companyRegistry';
 
@@ -27,6 +37,106 @@ describe('PT-PLAT-01 Canonical Registry', () => {
     const published = listPublishedProjects();
     assert.ok(published.length >= DEFAULT_PROJECTS.length);
     assert.ok(published.every((project) => project.status === 'published'));
+  });
+
+  it('creates one canonical Partner Company and resolves its Workspace', () => {
+    const created = createCanonicalPartner({ name: 'Nový Partner' });
+    const registry = getDefaultCompanyRegistry();
+
+    assert.equal(created.companyId, 'company-novy-partner');
+    assert.equal(created.workspaceId, 'workspace-novy-partner');
+    assert.equal(findCompany(registry, created.companyId)?.name, 'Nový Partner');
+    assert.equal(
+      findWorkspace(registry, created.workspaceId)?.companyId,
+      created.companyId,
+    );
+    assert.deepEqual(
+      createCanonicalPartner({ name: 'Nový Partner' }),
+      created,
+    );
+  });
+
+  it('CAP-VR44R1 — immediately re-reads Partner Workspace and normalizes Project ownership', () => {
+    const partner = createCanonicalPartner({ name: 'test3' });
+    assert.equal(partner.companyId, 'company-test3');
+    assert.equal(partner.workspaceId, 'workspace-test3');
+    assert.equal(
+      getCanonicalWorkspaceForCompany(partner.companyId)?.id,
+      partner.workspaceId,
+    );
+
+    upsertBuilderCanonicalProject({
+      id: 'project-test3',
+      companyId: partner.companyId,
+      workspaceId: `${partner.companyId}-main`,
+      name: 'Test Project',
+      slug: 'test-project',
+      description: '',
+    });
+    assert.equal(
+      getDefaultCompanyRegistry().canonicalProjects.find(
+        (project) => project.id === 'project-test3',
+      )?.workspaceId,
+      partner.workspaceId,
+    );
+  });
+
+  it('preserves a multi-cookie registry payload across a fresh cross-port read', () => {
+    const cookies = new Map<string, string>();
+    const originalDocument = Object.getOwnPropertyDescriptor(
+      globalThis,
+      'document',
+    );
+    Object.defineProperty(globalThis, 'document', {
+      configurable: true,
+      value: {
+        get cookie() {
+          return [...cookies.entries()]
+            .map(([name, value]) => `${name}=${value}`)
+            .join('; ');
+        },
+        set cookie(value: string) {
+          const [pair, ...attributes] = value.split(';');
+          const separator = pair.indexOf('=');
+          const name = pair.slice(0, separator);
+          const payload = pair.slice(separator + 1);
+          const expires = attributes.some(
+            (attribute) => attribute.trim().toLowerCase() === 'max-age=0',
+          );
+          if (expires) {
+            cookies.delete(name);
+          } else {
+            cookies.set(name, payload);
+          }
+        },
+      },
+    });
+
+    try {
+      const json = JSON.stringify({ payload: 'ž'.repeat(5_000) });
+      writeCrossPortJson({
+        cookieName: 'registry',
+        storageKey: 'registry',
+        json,
+      });
+      assert.equal(
+        readCrossPortJson({
+          cookieName: 'registry',
+          storageKey: 'registry',
+        }),
+        json,
+      );
+      assert.ok(cookies.has('registry__chunks'));
+      assert.ok(cookies.has('registry__0'));
+      clearCrossPortJson({ cookieName: 'registry', storageKey: 'registry' });
+      assert.equal(cookies.size, 0);
+    } finally {
+      if (originalDocument === undefined) {
+        Reflect.deleteProperty(globalThis, 'document');
+      } else {
+        Object.defineProperty(globalThis, 'document', originalDocument);
+      }
+    }
   });
 
   it('extras may patch seed metadata but never seed status', () => {

@@ -69,6 +69,7 @@ export {
   getDefaultCompanyRegistry,
   findCompany,
   findWorkspace,
+  getCanonicalWorkspaceForCompany,
   findProject,
   findTenant,
   listWorkspacesForCompany,
@@ -79,10 +80,13 @@ export {
   upsertBuilderProject,
   removeBuilderProject,
   setBuilderProjectStatus,
+  createCanonicalPartner,
   DEFAULT_COMPANY_ID,
   DEFAULT_WORKSPACE_ID,
   DEFAULT_PROJECT_ID,
   type CompanyRegistryState,
+  type CreateCanonicalPartnerInput,
+  type CanonicalPartnerIdentity,
 } from './registry/companyRegistry';
 
 export {
