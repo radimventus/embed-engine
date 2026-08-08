@@ -19,7 +19,12 @@ import {
   syncBuilderWorkspaceHouse,
   upsertBuilderSharedProject,
 } from './projectRepository';
-import { openProject, resolveActiveProjectView } from './projectRuntime';
+import {
+  openProject,
+  resolveActiveProjectView,
+  resolveBindHouseId,
+  resolveMountProjectView,
+} from './projectRuntime';
 
 describe('PT-PDM-02 Shared Project Runtime', () => {
   beforeEach(() => {
@@ -102,9 +107,47 @@ describe('PT-PDM-02 Shared Project Runtime', () => {
     assert.equal(getSharedProject('synced-house')?.name, 'Synced');
   });
 
-  it('resolveActiveProjectView falls back to published default', () => {
+  it('resolveActiveProjectView falls back to published default when id empty', () => {
     const view = resolveActiveProjectView(null);
     assert.ok(view);
     assert.equal(view.isPublished, true);
+  });
+
+  it('resolveActiveProjectView does not swap package for unknown projectId', () => {
+    assert.equal(resolveActiveProjectView('not-a-shared-project'), null);
+  });
+
+  it('resolveMountProjectView maps legacy Gen1 objectId to default Projekt', () => {
+    const view = resolveMountProjectView('house-modern-01');
+    assert.ok(view);
+    assert.equal(view.project.id, DEFAULT_PROJECT_ID);
+  });
+
+  it('resolveMountProjectView opens Shared Project ids', () => {
+    const view = resolveMountProjectView('harmony-124');
+    assert.ok(view);
+    assert.equal(view.project.id, 'harmony-124');
+    assert.equal(view.packagePublicRoot, '/house-packages/harmony-124');
+  });
+
+  it('CAP-PLAT-04e dual-read: Canonical Project id resolves to a published House', () => {
+    assert.equal(resolveBindHouseId('villa-168'), 'villa-168');
+    assert.equal(resolveBindHouseId('house-modern-01'), DEFAULT_PROJECT_ID);
+
+    const fromProject = resolveBindHouseId('project-ac-modular');
+    assert.ok(fromProject);
+    assert.notEqual(fromProject, 'project-ac-modular');
+
+    const active = resolveActiveProjectView('project-ac-modular');
+    assert.ok(active);
+    assert.equal(active.project.id, fromProject);
+    assert.equal(active.isPublished, true);
+
+    const mount = resolveMountProjectView('project-ac-modular');
+    assert.ok(mount);
+    assert.equal(mount.project.id, fromProject);
+
+    assert.equal(resolveBindHouseId('not-a-shared-project'), null);
+    assert.equal(resolveActiveProjectView('not-a-shared-project'), null);
   });
 });

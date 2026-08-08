@@ -15,9 +15,19 @@ export type {
 
 export type {
   SharedWorkspaceContext,
+  WorkspaceAuthoredHouseIdentity,
   WorkspaceRoleContext,
 } from './domain/workspaceContext';
 export { isSharedWorkspaceContext } from './domain/workspaceContext';
+export type {
+  WorkspaceHouseIdentity,
+  WorkspaceHouseRuntimeBinding,
+} from './domain/workspaceHouseProjection';
+export {
+  listWorkspaceHouses,
+  resolveWorkspaceHouseBinding,
+  upsertWorkspaceAuthoredHouse,
+} from './domain/workspaceHouseProjection';
 
 export type {
   PlatformTenant,
@@ -145,9 +155,42 @@ export {
   resetSharedProjectManifestsForTests,
   openProject,
   resolveActiveProjectView,
+  resolveMountProjectView,
+  normalizeProjectIdCandidate,
+  LEGACY_OBJECT_ID_TO_PROJECT_ID,
   listOpenablePublishedProjects,
   MANIFEST_STORAGE_KEY,
 } from './project';
+
+export type {
+  CanonicalBindSource,
+  CanonicalPartnerProjection,
+  CanonicalProjectIdentity,
+  CanonicalHouseProjection,
+  CanonicalBrandingProjection,
+  CanonicalPublicationProjection,
+  CanonicalExperienceRefs,
+  CanonicalRuntimeBinding,
+  CanonicalProjectProjection,
+  CanonicalEntityHierarchy,
+  CanonicalCompanyProjection,
+  ResolveCanonicalRuntimeBindingInput,
+} from './projection/canonicalProjectTypes';
+export {
+  projectCanonicalFromShared,
+  listCanonicalProjects,
+  listCanonicalCompanies,
+  getCanonicalCompany,
+  listCanonicalHouses,
+  listCanonicalHouseEntities,
+  getCanonicalProject,
+  getCanonicalHouse,
+  getCanonicalHouseEntity,
+  toCanonicalEntityHierarchy,
+  isCanonicalProjectId,
+  isCanonicalSeedProject,
+  resolveCanonicalRuntimeBinding,
+} from './projection/canonicalProjectProjection';
 
 export {
   CLOUD_PLATFORM_ORIGIN,
@@ -171,6 +214,7 @@ export {
   isWorkspaceShellEmbed,
   isOnWorkspaceHost,
 } from './domain/workspaceShellEmbed';
+
 
 export {
   createPilotInvite,

@@ -6,6 +6,15 @@
 import type { PlatformRole } from './types';
 import type { WorkspaceStudioSurface } from './workspaceStudioNavigation';
 
+/** CAP-VR39a — cross-origin identity projection for a Builder-authored draft. */
+export type WorkspaceAuthoredHouseIdentity = {
+  readonly houseId: string;
+  readonly name: string;
+  readonly canonicalProjectId: string;
+  readonly dataMode: 'REFERENCE_DEMO' | 'LIVE_EMPTY' | 'LIVE';
+  readonly status: 'draft';
+};
+
 /**
  * Operator Workspace bookmark — set only after CONIS Admin Open PE
  * (or equivalent Workspace entry). Partner Invite→NDA→Welcome path
@@ -17,6 +26,8 @@ export type SharedWorkspaceContext = {
   readonly companyId: string;
   readonly workspaceId: string;
   readonly projectId: string;
+  /** CAP-VR39a — identity-only draft projection for authenticated Workspace Studios. */
+  readonly authoredHouseIdentities?: readonly WorkspaceAuthoredHouseIdentity[];
   /** Display name when Office Open PE binds branding (optional). */
   readonly partnerName?: string;
   /** Project label for Workspace chrome (optional). */

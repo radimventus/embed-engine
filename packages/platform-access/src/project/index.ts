@@ -31,4 +31,8 @@ export {
   openProject,
   resolveActiveProjectView,
   listOpenablePublishedProjects,
+  resolveMountProjectView,
+  normalizeProjectIdCandidate,
+  resolveBindHouseId,
+  LEGACY_OBJECT_ID_TO_PROJECT_ID,
 } from './projectRuntime';
