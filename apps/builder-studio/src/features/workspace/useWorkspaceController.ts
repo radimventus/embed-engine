@@ -1,5 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { getCanonicalHouseRuntimeContext } from '@embed-engine/object-house';
+import {
+  createWorkspaceProjectChangeMessage,
+  createWorkspaceHouseChangeMessage,
+  isHouseInProject,
+  isCanonicalProjectId,
+  resolveWorkspaceHostHref,
+  updateSession,
+} from '@embed-engine/platform-access';
+
 import { requestWorkspaceActive } from './requestWorkspaceActive';
 import {
   closeWorkspaceProject,
@@ -13,6 +23,7 @@ import {
   type CreateWorkspaceObjectInput,
   type CreateWorkspaceProjectInput,
   type WorkspaceProject,
+  type WorkspaceProjectFolder,
   type WorkspaceProjectStatus,
   type WorkspaceRegistryState,
 } from './workspaceRegistry';
@@ -33,6 +44,10 @@ export type UpdateWorkspaceProjectInput = {
   readonly slug: string;
   readonly metadata: string;
 };
+
+export type CreateWorkspaceProjectResult =
+  | { readonly folder: WorkspaceProjectFolder; readonly error: null }
+  | { readonly folder: null; readonly error: string };
 
 export type WorkspaceController = {
   readonly registry: WorkspaceRegistryState;
@@ -61,7 +76,7 @@ export type WorkspaceController = {
   readonly createProject: (
     input: CreateWorkspaceProjectInput,
     options: { readonly dirty: boolean },
-  ) => Promise<WorkspaceProject | null>;
+  ) => Promise<CreateWorkspaceProjectResult>;
   readonly createObject: (
     input: CreateWorkspaceObjectInput,
     options: { readonly dirty: boolean },
@@ -72,8 +87,76 @@ export type WorkspaceController = {
   ) => void;
 };
 
+/** Canonical Reference content is activated without the Builder HP-002 host. */
+export function requiresLegacyWorkspaceActivation(
+  houseId: string,
+  packageRoot?: string,
+): boolean {
+  return (
+    (packageRoot === undefined || packageRoot.trim().length > 0) &&
+    getCanonicalHouseRuntimeContext(houseId) === null
+  );
+}
+
+function publishWorkspaceProjectChange(projectId: string): void {
+  if (
+    typeof window === 'undefined' ||
+    window.parent === window ||
+    !isCanonicalProjectId(projectId)
+  ) {
+    return;
+  }
+  const targetOrigin = new URL(resolveWorkspaceHostHref()).origin;
+  window.parent.postMessage(
+    createWorkspaceProjectChangeMessage(projectId),
+    targetOrigin,
+  );
+}
+
+function publishWorkspaceHouseChange(houseId: string | null): void {
+  if (typeof window === 'undefined' || window.parent === window) {
+    return;
+  }
+  const targetOrigin = new URL(resolveWorkspaceHostHref()).origin;
+  window.parent.postMessage(
+    createWorkspaceHouseChangeMessage(houseId),
+    targetOrigin,
+  );
+}
+
 /**
- * CAP-BLD-08 / PR-003A — serialized latest-wins activation (no abort timeout).
+ * Builder-authored drafts restore from the Builder registry before their
+ * transient CPL projection is available, so their scoped folder is the local
+ * ownership proof; canonical Houses use the shared CPL validator.
+ */
+export function resolveBuilderActiveHouseId(
+  projectId: string,
+  house: WorkspaceProject | null,
+): string | null {
+  if (
+    house === null ||
+    house.folderId !== projectId ||
+    !isCanonicalProjectId(projectId)
+  ) {
+    return null;
+  }
+  return isHouseInProject(house.id, projectId) || house.status === 'draft'
+    ? house.id
+    : null;
+}
+
+function publishBuilderHouseScope(
+  projectId: string,
+  house: WorkspaceProject | null,
+): void {
+  const activeHouseId = resolveBuilderActiveHouseId(projectId, house);
+  updateSession({ projectId, activeHouseId });
+  publishWorkspaceHouseChange(activeHouseId);
+}
+
+/**
+ * CAP-BLD-08 / CAP-PLAT-02a — workspace controller.
+ * Domain lists from CPL via workspaceRegistry compose; local state = selection + UI.
  */
 export function useWorkspaceController(): WorkspaceController {
   const [registry, setRegistry] = useState<WorkspaceRegistryState>(() =>
@@ -124,7 +207,10 @@ export function useWorkspaceController(): WorkspaceController {
           hostActiveRef.current.projectId === target.id &&
           hostActiveRef.current.packageRoot === target.packageRoot;
 
-        if (!alreadyHost) {
+        if (
+          !alreadyHost &&
+          requiresLegacyWorkspaceActivation(target.id, target.packageRoot)
+        ) {
           const result = await requestWorkspaceActive({
             projectId: target.id,
             packageRoot: target.packageRoot,
@@ -150,6 +236,7 @@ export function useWorkspaceController(): WorkspaceController {
 
         setRegistry((prev) => openWorkspaceProject(prev, target.id));
         setDirtyPrompt(null);
+        publishBuilderHouseScope(target.folderId, target);
         lastOk = true;
       }
       return lastOk;
@@ -224,12 +311,21 @@ export function useWorkspaceController(): WorkspaceController {
       const opened = openWorkspaceFolder(current, folderId);
       if (opened.houseId === null) {
         setRegistry(opened.state);
-        setSwitchError('Vybraný projekt nemá žádný dům.');
+        registryRef.current = opened.state;
+        publishBuilderHouseScope(folderId, null);
+        publishWorkspaceProjectChange(folderId);
+        setSwitchError(null);
         return null;
       }
 
       if (opened.houseId === current.activeProjectId) {
         setRegistry(opened.state);
+        publishBuilderHouseScope(
+          folderId,
+          current.projects.find((project) => project.id === opened.houseId) ??
+            null,
+        );
+        publishWorkspaceProjectChange(folderId);
         return opened.houseId;
       }
 
@@ -248,6 +344,8 @@ export function useWorkspaceController(): WorkspaceController {
         return null;
       }
 
+      publishBuilderHouseScope(folderId, null);
+      publishWorkspaceProjectChange(folderId);
       const ok = await requestOpenProject(opened.houseId, { dirty: false });
       return ok ? opened.houseId : null;
     },
@@ -312,32 +410,40 @@ export function useWorkspaceController(): WorkspaceController {
     ) => {
       const name = input.name.trim();
       if (name.length === 0) {
-        setSwitchError('Zadejte název projektu.');
-        return null;
+        const error = 'Zadejte název projektu.';
+        setSwitchError(error);
+        return { folder: null, error };
       }
       if (options.dirty) {
-        setSwitchError('Nejdřív uložte nebo zahoďte změny aktivního domu.');
-        return null;
+        const error = 'Nejdřív uložte nebo zahoďte změny aktivního domu.';
+        setSwitchError(error);
+        return { folder: null, error };
       }
 
-      const created = createWorkspaceProjectFromInput(
-        registryRef.current,
-        input,
-      );
-      setRegistry(created.state);
-      registryRef.current = created.state;
-
-      const ok = await activate(created.project);
-      if (!ok) {
-        setSwitchError(
-          (prev) =>
-            prev ??
-            'Projekt je založen, ale aktivace domu se nepovedla — vyberte dům vlevo.',
+      let created: ReturnType<typeof createWorkspaceProjectFromInput>;
+      try {
+        created = createWorkspaceProjectFromInput(
+          registryRef.current,
+          input,
         );
+      } catch (error) {
+        const message =
+          error instanceof Error
+            ? error.message
+            : 'Nepodařilo se založit projekt.';
+        setSwitchError(message);
+        return { folder: null, error: message };
       }
-      return created.project;
+      const opened = openWorkspaceFolder(created.state, created.folder.id);
+      setRegistry(opened.state);
+      registryRef.current = opened.state;
+      saveWorkspaceRegistryToStorage(opened.state);
+      publishBuilderHouseScope(created.folder.id, null);
+      publishWorkspaceProjectChange(created.folder.id);
+      setSwitchError(null);
+      return { folder: created.folder, error: null };
     },
-    [activate],
+    [],
   );
 
   const createObject = useCallback(
@@ -359,10 +465,17 @@ export function useWorkspaceController(): WorkspaceController {
         return null;
       }
 
-      const created = createWorkspaceObjectFromInput(
-        registryRef.current,
-        input,
-      );
+      let created: ReturnType<typeof createWorkspaceObjectFromInput>;
+      try {
+        created = createWorkspaceObjectFromInput(registryRef.current, input);
+      } catch (error) {
+        setSwitchError(
+          error instanceof Error
+            ? error.message
+            : 'Objekt se nepodařilo založit.',
+        );
+        return null;
+      }
       if (created === null) {
         setSwitchError('Objekt se nepodařilo založit.');
         return null;
@@ -370,6 +483,7 @@ export function useWorkspaceController(): WorkspaceController {
 
       setRegistry(created.state);
       registryRef.current = created.state;
+      saveWorkspaceRegistryToStorage(created.state);
 
       const ok = await activate(created.project);
       if (!ok) {
@@ -405,21 +519,23 @@ export function useWorkspaceController(): WorkspaceController {
     if (project === null) {
       return;
     }
-    void requestWorkspaceActive({
-      projectId: project.id,
-      packageRoot: project.packageRoot,
-    })
-      .then((result) => {
-        if (result.ok) {
-          hostActiveRef.current = {
-            projectId: project.id,
-            packageRoot: project.packageRoot,
-          };
-        }
+    if (requiresLegacyWorkspaceActivation(project.id, project.packageRoot)) {
+      void requestWorkspaceActive({
+        projectId: project.id,
+        packageRoot: project.packageRoot,
       })
-      .catch(() => {
-        // Host may not be ready in unit tests.
-      });
+        .then((result) => {
+          if (result.ok) {
+            hostActiveRef.current = {
+              projectId: project.id,
+              packageRoot: project.packageRoot,
+            };
+          }
+        })
+        .catch(() => {
+          // Host may not be ready in unit tests.
+        });
+    }
     // Intentional: once on mount with initial registry.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

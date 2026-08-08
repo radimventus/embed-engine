@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { capabilityIdFromBuilderNav } from '@embed-engine/capabilities';
+import { getCanonicalHouseRuntimeContext } from '@embed-engine/object-house';
 import {
   PLATFORM_ROLE_LABELS,
   primaryRole,
@@ -87,7 +88,25 @@ export function BuilderStudioApp() {
   } = usePlatformSession();
   const workspace = useWorkspaceController();
   const capabilityHost = useMemo(() => getBuilderCapabilityHost(), []);
-  const diskRoot = workspace.activeProject?.packageRoot ?? null;
+  const activeFolder = getActiveWorkspaceFolder(workspace.registry);
+  const activeHouseId = workspace.activeProject?.id ?? null;
+  const activeProjectHasNoHouses =
+    activeFolder !== null && workspace.activeProject === null;
+  const canonicalHouseContext = useMemo(
+    () =>
+      activeHouseId === null
+        ? null
+        : getCanonicalHouseRuntimeContext(activeHouseId),
+    [activeHouseId],
+  );
+  const diskRoot =
+    canonicalHouseContext === null
+      ? (workspace.activeProject?.packageRoot.trim() || null)
+      : null;
+  const activeHouseHasNoPackage =
+    canonicalHouseContext === null &&
+    workspace.activeProject !== null &&
+    diskRoot === null;
   const projectBootstrap = useMemo(
     () => bootstrapActiveProject('builder'),
     [bootstrapActiveProject, accessSession?.projectId],
@@ -97,6 +116,8 @@ export function BuilderStudioApp() {
   const [objectCreateOpen, setObjectCreateOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
+  /** PT-BS-01 — external ?projectId= / session bind runs once; never fights DOMY switches. */
+  const externalHouseBindDoneRef = useRef(false);
 
   const {
     mountStatus,
@@ -114,11 +135,15 @@ export function BuilderStudioApp() {
     validate,
     publish,
     openPreview,
-  } = useHousePackageEditController(diskRoot);
+  } = useHousePackageEditController(diskRoot, activeHouseId);
 
   const loadError =
     diskRoot === null
-      ? 'Vyberte projekt ve Workspace.'
+      ? activeProjectHasNoHouses
+        ? null
+        : activeHouseHasNoPackage
+        ? 'Aktivní dům zatím nemá House Package.'
+        : 'Vyberte projekt ve Workspace.'
       : mountStatus.status === 'error'
         ? mountStatus.message
         : null;
@@ -130,8 +155,8 @@ export function BuilderStudioApp() {
       ? (findWorkspaceCompany(
           workspace.registry,
           workspace.activeProject.companyId,
-        )?.name ?? 'Firma')
-      : 'Firma');
+        )?.name ?? 'Partner')
+      : 'Partner');
 
   const experienceMode = activeNav === 'experience';
   const previewCenterMode = activeNav === 'preview-center';
@@ -162,22 +187,53 @@ export function BuilderStudioApp() {
     setHistoryOpen(false);
   }, [diskRoot]);
 
-  // Platform Access → Builder HP mount (only when Workspace has no active project).
+  // Platform Access / Workspace Host (?projectId) → open Shared Project once (PT-BS-01).
   useEffect(() => {
-    if (accessSession?.projectId == null) return;
+    if (externalHouseBindDoneRef.current) return;
     if (workspace.switching) return;
-    if (workspace.activeProject?.id === accessSession.projectId) return;
-    if (workspace.activeProject !== null) return;
-    void workspace.requestOpenProject(accessSession.projectId, { dirty: false });
-    void projectBootstrap;
-  }, [accessSession?.projectId, workspace.activeProject?.id, workspace.switching]);
 
-  // PR-006 / PR-012 — přepínání jen ve Workspace (ne v Platform Access / horní liště).
+    const urlProjectId =
+      typeof window !== 'undefined'
+        ? new URLSearchParams(window.location.search).get('projectId')?.trim() ||
+          null
+        : null;
+    const targetId = accessSession?.projectId ?? urlProjectId ?? null;
+
+    if (targetId == null) {
+      externalHouseBindDoneRef.current = true;
+      return;
+    }
+
+    if (workspace.activeProject?.id === targetId) {
+      externalHouseBindDoneRef.current = true;
+      return;
+    }
+
+    const open = workspace.registry.folders.some(
+      (folder) => folder.id === targetId,
+    )
+      ? workspace.requestOpenFolder(targetId, { dirty: false })
+      : workspace.requestOpenProject(targetId, { dirty: false });
+    void open.finally(() => {
+      externalHouseBindDoneRef.current = true;
+    });
+    void projectBootstrap;
+  }, [
+    accessSession?.projectId,
+    workspace.activeProject?.id,
+    workspace.switching,
+    workspace.requestOpenProject,
+    projectBootstrap,
+  ]);
+
+  // PR-006 / PR-012 / PT-BS-01 — přepínání domů jen ve Workspace (House Navigator).
   const openHouseStable = (houseId: string) => {
+    externalHouseBindDoneRef.current = true;
     void workspace.requestOpenProject(houseId, { dirty });
   };
 
   const openFolderStable = (folderId: string) => {
+    externalHouseBindDoneRef.current = true;
     void workspace.requestOpenFolder(folderId, { dirty });
   };
 
@@ -340,7 +396,32 @@ export function BuilderStudioApp() {
         {workspace.switching && (
           <PlatformLoading label="Přepínám projekt…" />
         )}
-        {!workspace.switching && diskRoot === null && (
+        {!workspace.switching && canonicalHouseContext !== null && (
+          <PlatformEmptyState
+            icon="⌂"
+            title={`${canonicalHouseContext.specification.identity.name} je aktivní`}
+            description="Kanonický referenční dům je dostupný bez HP-002 balíčku. HP-002 authoring, média, náhled a publikace pro tento dům zatím nejsou k dispozici."
+          />
+        )}
+        {!workspace.switching &&
+          activeHouseHasNoPackage && (
+          <PlatformEmptyState
+            icon="⌂"
+            title={`${workspace.activeProject?.name ?? 'Dům'} je aktivní`}
+            description="Dům je založený v aktivním projektu, ale zatím nemá House Package ani provozní obsah."
+          />
+        )}
+        {!workspace.switching && activeProjectHasNoHouses && (
+          <PlatformEmptyState
+            icon="+"
+            title={`${activeFolder?.name ?? 'Projekt'} je aktivní`}
+            description="Projekt zatím nemá žádný dům. Přidejte první dům přes + v sekci DOMY."
+          />
+        )}
+        {!workspace.switching &&
+          canonicalHouseContext === null &&
+          workspace.activeProject === null &&
+          !activeProjectHasNoHouses && (
           <PlatformEmptyState
             icon="+"
             title="Vyberte projekt"
@@ -492,14 +573,14 @@ export function BuilderStudioApp() {
         companies={workspace.registry.companies}
         busy={workspace.switching}
         onClose={() => setCreateOpen(false)}
-        onSubmit={(input) => {
-          void (async () => {
-            const created = await workspace.createProject(input, { dirty });
-            if (created !== null) {
-              setCreateOpen(false);
-              setActiveNav('media-studio');
-            }
-          })();
+        onSubmit={async (input) => {
+          const result = await workspace.createProject(input, { dirty });
+          if (result.folder === null) {
+            return result.error;
+          }
+          setCreateOpen(false);
+          setActiveNav('media-studio');
+          return null;
         }}
       />
 

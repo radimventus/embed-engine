@@ -1,16 +1,32 @@
 /**
- * CAP-BLD-08 + EPIC-BX-01 / BX-14 / PT-PDM-02 — Workspace registry (Projekt → Domy).
- * Content remains in each House Package root. Identity syncs to Shared Project Runtime.
+ * CAP-BLD-08 / CAP-PLAT-02a / CAP-PLAT-04f — Builder workspace over CPL.
+ *
+ * Domain SSOT: Canonical Registry + CPL (Company / Project / House).
+ * CAP-PLAT-04f — Projekt folder ↔ Project; DOMY ↔ House via CPL lists.
+ * This module holds presentation types + UI selection/folder grouping only.
+ *
+ * @deprecated Domain registry behaviour — removed in CAP-PLAT-02a.
+ * `DEFAULT_WORKSPACE_PROJECTS` and import-time snapshots are Legacy aliases.
  */
 
 import {
   DEFAULT_COMPANY_ID as PLATFORM_DEFAULT_COMPANY_ID,
   DEFAULT_PROJECT_ID as PLATFORM_DEFAULT_PROJECT_ID,
+  DEFAULT_TENANT_ID,
   DEFAULT_WORKSPACE_ID,
-  getDefaultCompanyRegistry,
+  getCanonicalWorkspaceForCompany,
+  getCanonicalHouse,
+  isCanonicalSeedProject,
+  listCanonicalCompanies,
+  listCanonicalHouses,
+  listCanonicalProjects,
+  upsertWorkspaceAuthoredHouse,
   syncBuilderWorkspaceHouse,
+  upsertBuilderCanonicalProject,
+  upsertBuilderCompany,
+  upsertBuilderProject,
+  type CanonicalProjectProjection,
 } from '@embed-engine/platform-access';
-
 export type WorkspaceProjectStatus = 'draft' | 'ready' | 'published';
 
 export type WorkspaceCompany = {
@@ -18,14 +34,14 @@ export type WorkspaceCompany = {
   readonly name: string;
 };
 
-/** UI „Projekt“ — kontejner domů (ne HP obsah). */
+/** UI „Projekt“ — presentation folder (not Shared Project identity). */
 export type WorkspaceProjectFolder = {
   readonly id: string;
   readonly name: string;
   readonly companyId: string;
 };
 
-/** UI „Dům“ — House Package mount. */
+/** UI „Dům“ — presentation of CPL House (DOMY). */
 export type WorkspaceProject = {
   readonly id: string;
   readonly name: string;
@@ -47,17 +63,18 @@ export type WorkspaceRegistryState = {
   readonly activeProjectId: string | null;
   readonly recentProjectIds: readonly string[];
   readonly lastOpenedProjectId: string | null;
+  /** UI grouping: CPL house id → presentation folder id. */
+  readonly houseFolderIds: Readonly<Record<string, string>>;
+  /**
+   * Presentation-only Builder DOMY labels (may differ from Shared Project name
+   * used by Office/Client). Not a domain registry.
+   */
+  readonly houseLabels: Readonly<Record<string, string>>;
+  /** Presentation-only freeform metadata tags (Builder UI). */
+  readonly houseMetadata: Readonly<Record<string, string>>;
 };
 
 export const DEFAULT_COMPANY_ID = PLATFORM_DEFAULT_COMPANY_ID;
-
-const platformRegistry = getDefaultCompanyRegistry();
-
-export const DEFAULT_WORKSPACE_COMPANIES: readonly WorkspaceCompany[] =
-  platformRegistry.companies.map((company) => ({
-    id: company.id,
-    name: company.name,
-  }));
 
 export const OBJECT_TYPE_OPTIONS: readonly {
   readonly id: string;
@@ -81,94 +98,29 @@ export const OBJECT_TYPE_OPTIONS: readonly {
   },
 ] as const;
 
-const DEFAULT_FOLDER_AC = 'project-ac-modular-pilot';
-const DEFAULT_FOLDER_OPAVA = 'project-opava-pilot';
-const DEFAULT_FOLDER_BRNO = 'project-brno-pilot';
+/** CAP-PLAT-04f — seed Projekt folder id = Canonical Project id. */
+const DEFAULT_FOLDER_AC = 'project-ac-modular';
+const REFERENCE_PROJECT_DSE = 'project-domy-s-energii';
+const CANONICAL_REFERENCE_PROJECT_IDS = new Set([
+  DEFAULT_FOLDER_AC,
+  REFERENCE_PROJECT_DSE,
+]);
+const BUILDER_AUTHORED_HOUSE_MARKER = '__builder-authored-house__';
+const LEGACY_BUILDER_AUTHORED_HOUSE_MARKER = 'builder-authored-house';
+/** Pre-04f presentation folder id — dual-read alias into DEFAULT_FOLDER_AC. */
+const LEGACY_FOLDER_AC = 'project-ac-modular-pilot';
 
 export const DEFAULT_WORKSPACE_FOLDERS: readonly WorkspaceProjectFolder[] = [
   {
     id: DEFAULT_FOLDER_AC,
-    name: 'AC Modular Pilot',
-    companyId: DEFAULT_COMPANY_ID,
-  },
-  {
-    id: DEFAULT_FOLDER_OPAVA,
-    name: 'Opava Pilot',
-    companyId: DEFAULT_COMPANY_ID,
-  },
-  {
-    id: DEFAULT_FOLDER_BRNO,
-    name: 'Brno Pilot',
+    name: 'AC Modular',
     companyId: DEFAULT_COMPANY_ID,
   },
 ];
 
-const PLATFORM_HOUSES: readonly WorkspaceProject[] =
-  platformRegistry.projects.map((project) => ({
-    id: project.id,
-    name: project.name,
-    packageRoot: project.packageRoot,
-    companyId: project.companyId,
-    folderId: DEFAULT_FOLDER_AC,
-    description: project.description,
-    status: project.status,
-    slug: project.slug,
-    objectType: project.objectType,
-    metadata: '',
-  }));
-
-/** PR-003A — Product Review seed: ≥3 projekty, každý ≥2 domy. */
-export const DEFAULT_WORKSPACE_PROJECTS: readonly WorkspaceProject[] = [
-  ...PLATFORM_HOUSES,
-  {
-    id: 'opava-harmony',
-    name: 'Harmony 124',
-    packageRoot: 'apps/client-studio/public/house-packages/harmony-124',
-    companyId: DEFAULT_COMPANY_ID,
-    folderId: DEFAULT_FOLDER_OPAVA,
-    description: 'Opava — Harmony',
-    status: 'ready',
-    slug: 'opava-harmony',
-    objectType: 'harmony',
-    metadata: '',
-  },
-  {
-    id: 'opava-family',
-    name: 'Family 98',
-    packageRoot: 'apps/client-studio/public/house-packages/family-98',
-    companyId: DEFAULT_COMPANY_ID,
-    folderId: DEFAULT_FOLDER_OPAVA,
-    description: 'Opava — Family',
-    status: 'draft',
-    slug: 'opava-family',
-    objectType: 'family',
-    metadata: '',
-  },
-  {
-    id: 'brno-villa',
-    name: 'Villa 168',
-    packageRoot: 'apps/client-studio/public/house-package',
-    companyId: DEFAULT_COMPANY_ID,
-    folderId: DEFAULT_FOLDER_BRNO,
-    description: 'Brno — Villa',
-    status: 'published',
-    slug: 'brno-villa',
-    objectType: 'villa',
-    metadata: '',
-  },
-  {
-    id: 'brno-harmony',
-    name: 'Harmony 124',
-    packageRoot: 'apps/client-studio/public/house-packages/harmony-124',
-    companyId: DEFAULT_COMPANY_ID,
-    folderId: DEFAULT_FOLDER_BRNO,
-    description: 'Brno — Harmony',
-    status: 'ready',
-    slug: 'brno-harmony',
-    objectType: 'harmony',
-    metadata: '',
-  },
-];
+function canonicalizeFolderId(folderId: string): string {
+  return folderId === LEGACY_FOLDER_AC ? DEFAULT_FOLDER_AC : folderId;
+}
 
 export const DEFAULT_ACTIVE_PROJECT_ID = PLATFORM_DEFAULT_PROJECT_ID;
 
@@ -183,6 +135,393 @@ const STATUS_VALUES = new Set<WorkspaceProjectStatus>([
   'ready',
   'published',
 ]);
+
+function houseFromCanonical(
+  projection: CanonicalProjectProjection,
+  folderId: string,
+): WorkspaceProject {
+  const house = projection.house;
+  if (house === null) {
+    throw new Error('houseFromCanonical: House slice required');
+  }
+  return {
+    id: house.houseId,
+    name: house.name,
+    packageRoot: house.packageRoot,
+    companyId: projection.partner.companyId,
+    folderId,
+    description: '',
+    status: projection.publication.status,
+    slug: house.slug,
+    objectType: house.objectType,
+    metadata: '',
+  };
+}
+
+function resolveFolderId(
+  houseId: string,
+  houseFolderIds: Readonly<Record<string, string>>,
+  folders: readonly WorkspaceProjectFolder[],
+  parentProjectId: string,
+): string {
+  const mapped = houseFolderIds[houseId];
+  if (mapped !== undefined) {
+    const folderId = canonicalizeFolderId(mapped);
+    if (folders.some((folder) => folder.id === folderId)) {
+      return folderId;
+    }
+  }
+  if (folders.some((folder) => folder.id === parentProjectId)) {
+    return parentProjectId;
+  }
+  if (isCanonicalSeedProject(houseId)) {
+    return DEFAULT_FOLDER_AC;
+  }
+  return folders[0]?.id ?? DEFAULT_FOLDER_AC;
+}
+
+/** CAP-PLAT-04f — Projekt folders from true CPL Projects. */
+function foldersFromCanonicalProjects(): WorkspaceProjectFolder[] {
+  return listCanonicalProjects().map((projection) => ({
+    id: projection.project.projectId,
+    name: projection.project.name,
+    companyId: projection.partner.companyId,
+  }));
+}
+
+/**
+ * CAP-PLAT-04f — DOMY from CPL Houses, plus Builder-authored drafts resolved by id.
+ * `listCanonicalHouses` is published-scoped; authoring ids stay addressable via getCanonicalHouse.
+ */
+function isVisibleCanonicalHouse(
+  projection: CanonicalProjectProjection,
+): boolean {
+  return (
+    projection.house !== null &&
+    (!CANONICAL_REFERENCE_PROJECT_IDS.has(projection.project.projectId) ||
+      isCanonicalSeedProject(projection.house.houseId))
+  );
+}
+
+function resolveAuthoringHouses(input: {
+  readonly houseFolderIds: Readonly<Record<string, string>>;
+  readonly houseLabels: Readonly<Record<string, string>>;
+  readonly houseMetadata: Readonly<Record<string, string>>;
+}): CanonicalProjectProjection[] {
+  const byId = new Map<string, CanonicalProjectProjection>();
+  for (const projection of listCanonicalHouses()) {
+    if (projection.house === null) continue;
+    if (!isVisibleCanonicalHouse(projection)) continue;
+    byId.set(projection.house.houseId, projection);
+  }
+  const authoredIds = new Set([
+    ...Object.keys(input.houseFolderIds),
+    ...Object.keys(input.houseLabels),
+    ...Object.keys(input.houseMetadata),
+  ]);
+  for (const houseId of authoredIds) {
+    if (byId.has(houseId)) continue;
+    const hit = getCanonicalHouse(houseId);
+    const isExplicitlyAuthored = isBuilderAuthoredHouse(
+      input.houseMetadata[houseId],
+    );
+    if (
+      hit !== null &&
+      (isVisibleCanonicalHouse(hit) || isExplicitlyAuthored)
+    ) {
+      byId.set(houseId, hit);
+    }
+  }
+  return [...byId.values()];
+}
+
+function isBuilderAuthoredHouse(metadata: string | undefined): boolean {
+  return (
+    metadata === BUILDER_AUTHORED_HOUSE_MARKER ||
+    metadata === LEGACY_BUILDER_AUTHORED_HOUSE_MARKER
+  );
+}
+
+/** CAP-PLAT-02a.1 — workspace id for a company from CPL partner slice only. */
+function workspaceIdFromCanonical(companyId: string): string {
+  const workspace = getCanonicalWorkspaceForCompany(companyId);
+  if (workspace !== null) return workspace.id;
+  const hit = listCanonicalProjects().find(
+    (projection) => projection.partner.companyId === companyId,
+  );
+  if (hit !== undefined) return hit.partner.workspaceId;
+  // CAP-PLAT-04R2b — Company may exist with zero Projects; match upsertBuilderWorkspace id.
+  return `${companyId}-main`;
+}
+
+/** CAP-PLAT-04R2a/R2b — Company known via CPL Company reads (independent of Projects/Houses). */
+function companyKnownInCanonical(companyId: string): boolean {
+  return listCanonicalCompanies().some(
+    (company) => company.companyId === companyId,
+  );
+}
+
+/**
+ * CAP-PLAT-02a / CAP-PLAT-04f — compose Builder sidebar from CPL + UI pointers.
+ * Projekt folders ← `listCanonicalProjects`; DOMY ← `listCanonicalHouses`.
+ */
+export function composeWorkspaceRegistry(input: {
+  readonly folders?: readonly WorkspaceProjectFolder[];
+  readonly houseFolderIds?: Readonly<Record<string, string>>;
+  readonly houseLabels?: Readonly<Record<string, string>>;
+  readonly houseMetadata?: Readonly<Record<string, string>>;
+  readonly activeFolderId?: string | null;
+  readonly activeProjectId?: string | null;
+  readonly recentProjectIds?: readonly string[];
+  readonly lastOpenedProjectId?: string | null;
+}): WorkspaceRegistryState {
+  const deliveryProjects = listCanonicalProjects();
+  const houseFolderIds: Record<string, string> = {};
+  for (const [houseId, folderId] of Object.entries(input.houseFolderIds ?? {})) {
+    houseFolderIds[houseId] = canonicalizeFolderId(folderId);
+  }
+  const houseLabels = { ...(input.houseLabels ?? {}) };
+  const houseMetadata = { ...(input.houseMetadata ?? {}) };
+  const canonicalHouses = resolveAuthoringHouses({
+    houseFolderIds,
+    houseLabels,
+    houseMetadata,
+  });
+
+  const folders: WorkspaceProjectFolder[] = [];
+  const pushFolder = (folder: WorkspaceProjectFolder): void => {
+    const id = canonicalizeFolderId(folder.id);
+    if (folders.some((item) => item.id === id)) return;
+    folders.push({
+      id,
+      name: folder.name,
+      companyId: folder.companyId,
+    });
+  };
+
+  if (input.folders !== undefined && input.folders.length > 0) {
+    for (const folder of input.folders) {
+      pushFolder(folder);
+    }
+  } else {
+    const fromCpl = foldersFromCanonicalProjects();
+    if (fromCpl.length > 0) {
+      for (const folder of fromCpl) {
+        pushFolder(folder);
+      }
+    } else {
+      for (const folder of DEFAULT_WORKSPACE_FOLDERS) {
+        pushFolder(folder);
+      }
+    }
+  }
+
+  for (const projection of deliveryProjects) {
+    pushFolder({
+      id: projection.project.projectId,
+      name: projection.project.name,
+      companyId: projection.partner.companyId,
+    });
+  }
+
+  // Prefer CPL Project.name for the seed Projekt folder when present.
+  for (const projection of deliveryProjects) {
+    const index = folders.findIndex(
+      (folder) => folder.id === projection.project.projectId,
+    );
+    if (index >= 0) {
+      folders[index] = {
+        id: projection.project.projectId,
+        name: projection.project.name,
+        companyId: projection.partner.companyId,
+      };
+    }
+  }
+
+  for (const projection of canonicalHouses) {
+    if (projection.house === null) continue;
+    const id = projection.house.houseId;
+    const canonicalFolderId = projection.project.projectId;
+    houseFolderIds[id] = folders.some(
+      (folder) => folder.id === canonicalFolderId,
+    )
+      ? canonicalFolderId
+      : resolveFolderId(id, houseFolderIds, folders, canonicalFolderId);
+  }
+
+  const folderIds = new Set(folders.map((folder) => folder.id));
+  for (const folderId of Object.values(houseFolderIds)) {
+    const id = canonicalizeFolderId(folderId);
+    if (!folderIds.has(id)) {
+      folders.push({
+        id,
+        name: id,
+        companyId: DEFAULT_COMPANY_ID,
+      });
+      folderIds.add(id);
+    }
+  }
+
+  const companiesMap = new Map<string, WorkspaceCompany>();
+  for (const company of listCanonicalCompanies()) {
+    companiesMap.set(company.companyId, {
+      id: company.companyId,
+      name: company.name,
+    });
+  }
+  for (const projection of deliveryProjects) {
+    companiesMap.set(projection.partner.companyId, {
+      id: projection.partner.companyId,
+      name: projection.partner.companyName,
+    });
+  }
+  for (const projection of canonicalHouses) {
+    companiesMap.set(projection.partner.companyId, {
+      id: projection.partner.companyId,
+      name: projection.partner.companyName,
+    });
+  }
+
+  const projects = canonicalHouses.flatMap((projection) => {
+    if (projection.house === null) return [];
+    const id = projection.house.houseId;
+    const base = houseFromCanonical(
+      projection,
+      resolveFolderId(
+        id,
+        houseFolderIds,
+        folders,
+        projection.project.projectId,
+      ),
+    );
+    const label = houseLabels[id];
+    const metadata = houseMetadata[id];
+    return [
+      {
+        ...base,
+        name:
+          label !== undefined && label.length > 0 ? label : base.name,
+        metadata:
+          metadata !== undefined ? metadata : base.metadata,
+      },
+    ];
+  });
+  const canonicalProjectIds = new Set(
+    deliveryProjects.map((projection) => projection.project.projectId),
+  );
+  const projectedHouseIds = new Set(projects.map((project) => project.id));
+  for (const houseId of Object.keys(houseMetadata)) {
+    if (
+      projectedHouseIds.has(houseId) ||
+      !isBuilderAuthoredHouse(houseMetadata[houseId])
+    ) {
+      continue;
+    }
+    const folderId = canonicalizeFolderId(houseFolderIds[houseId] ?? '');
+    const folder = folders.find((item) => item.id === folderId);
+    if (folder === undefined || !canonicalProjectIds.has(folderId)) {
+      continue;
+    }
+    projects.push({
+      id: houseId,
+      name: houseLabels[houseId] ?? houseId,
+      packageRoot: '',
+      companyId: folder.companyId,
+      folderId,
+      description: '',
+      status: 'draft',
+      slug: houseId,
+      objectType: 'house',
+      metadata: houseMetadata[houseId],
+    });
+  }
+
+  const activeFolderCandidate =
+    input.activeFolderId !== undefined && input.activeFolderId !== null
+      ? canonicalizeFolderId(input.activeFolderId)
+      : null;
+
+  const activeCandidate =
+    input.activeProjectId !== undefined
+      ? input.activeProjectId
+      : (input.lastOpenedProjectId ?? DEFAULT_ACTIVE_PROJECT_ID);
+  const active =
+    activeCandidate !== null &&
+    projects.some((project) => project.id === activeCandidate)
+      ? activeCandidate
+      : input.activeProjectId === null
+        ? null
+        : (projects[0]?.id ?? null);
+
+  const activeHouse =
+    active !== null ? projects.find((project) => project.id === active) : null;
+  const folderCandidate =
+    activeFolderCandidate ??
+    activeHouse?.folderId ??
+    folders[0]?.id ??
+    null;
+  const activeFolderId =
+    folderCandidate !== null &&
+    folders.some((folder) => folder.id === folderCandidate)
+      ? folderCandidate
+      : (folders[0]?.id ?? null);
+
+  const recent = (
+    Array.isArray(input.recentProjectIds)
+      ? input.recentProjectIds.filter((id) =>
+          projects.some((project) => project.id === id),
+        )
+      : []
+  ).slice(0, MAX_RECENT);
+
+  const activeProjectId =
+    active === null
+      ? null
+      : activeHouse !== null &&
+          activeHouse !== undefined &&
+          activeHouse.folderId === activeFolderId
+        ? activeHouse.id
+        : (projects.find((project) => project.folderId === activeFolderId)?.id ??
+          null);
+
+  return {
+    companies: [...companiesMap.values()],
+    folders,
+    projects,
+    activeFolderId,
+    activeProjectId,
+    recentProjectIds:
+      recent.length > 0
+        ? recent
+        : activeProjectId !== null
+          ? [activeProjectId]
+          : [],
+    lastOpenedProjectId:
+      input.lastOpenedProjectId !== null &&
+      input.lastOpenedProjectId !== undefined &&
+      projects.some((project) => project.id === input.lastOpenedProjectId)
+        ? input.lastOpenedProjectId
+        : activeProjectId,
+    houseFolderIds,
+    houseLabels,
+    houseMetadata,
+  };
+}
+
+/**
+ * @deprecated CAP-PLAT-02a Legacy — was import-time Registry snapshot.
+ * Resolves seed houses from CPL for compatibility.
+ */
+export const DEFAULT_WORKSPACE_PROJECTS: readonly WorkspaceProject[] =
+  composeWorkspaceRegistry({}).projects.filter((project) =>
+    isCanonicalSeedProject(project.id),
+  );
+
+/**
+ * @deprecated CAP-PLAT-02a Legacy — was import-time company snapshot.
+ */
+export const DEFAULT_WORKSPACE_COMPANIES: readonly WorkspaceCompany[] =
+  composeWorkspaceRegistry({}).companies;
 
 export function normalizeWorkspaceProject(
   input: Partial<WorkspaceProject> &
@@ -218,34 +557,11 @@ export function normalizeWorkspaceProject(
   };
 }
 
-export function createInitialWorkspaceRegistry(
-  projects: readonly WorkspaceProject[] = DEFAULT_WORKSPACE_PROJECTS,
-  activeProjectId: string | null = DEFAULT_ACTIVE_PROJECT_ID,
-  companies: readonly WorkspaceCompany[] = DEFAULT_WORKSPACE_COMPANIES,
-  folders: readonly WorkspaceProjectFolder[] = DEFAULT_WORKSPACE_FOLDERS,
-): WorkspaceRegistryState {
-  const normalized = projects.map((project) =>
-    normalizeWorkspaceProject(project),
-  );
-  const active =
-    activeProjectId !== null &&
-    normalized.some((project) => project.id === activeProjectId)
-      ? activeProjectId
-      : (normalized[0]?.id ?? null);
-  const activeHouse =
-    active !== null ? normalized.find((project) => project.id === active) : null;
-  const activeFolderId =
-    activeHouse?.folderId ?? folders[0]?.id ?? null;
-
-  return {
-    companies: [...companies],
-    folders: [...folders],
-    projects: normalized,
-    activeFolderId,
-    activeProjectId: active,
-    recentProjectIds: active !== null ? [active] : [],
-    lastOpenedProjectId: active,
-  };
+export function createInitialWorkspaceRegistry(): WorkspaceRegistryState {
+  return composeWorkspaceRegistry({
+    folders: DEFAULT_WORKSPACE_FOLDERS,
+    activeProjectId: DEFAULT_ACTIVE_PROJECT_ID,
+  });
 }
 
 export function findWorkspaceProject(
@@ -311,7 +627,41 @@ function pushRecent(
   ].slice(0, MAX_RECENT);
 }
 
-/** Open / switch active house (metadata only). */
+function recompose(
+  state: WorkspaceRegistryState,
+  patch: Partial<{
+    folders: readonly WorkspaceProjectFolder[];
+    houseFolderIds: Readonly<Record<string, string>>;
+    houseLabels: Readonly<Record<string, string>>;
+    houseMetadata: Readonly<Record<string, string>>;
+    activeFolderId: string | null;
+    activeProjectId: string | null;
+    recentProjectIds: readonly string[];
+    lastOpenedProjectId: string | null;
+  }>,
+): WorkspaceRegistryState {
+  return composeWorkspaceRegistry({
+    folders: patch.folders ?? state.folders,
+    houseFolderIds: patch.houseFolderIds ?? state.houseFolderIds,
+    houseLabels: patch.houseLabels ?? state.houseLabels,
+    houseMetadata: patch.houseMetadata ?? state.houseMetadata,
+    activeFolderId:
+      patch.activeFolderId !== undefined
+        ? patch.activeFolderId
+        : state.activeFolderId,
+    activeProjectId:
+      patch.activeProjectId !== undefined
+        ? patch.activeProjectId
+        : state.activeProjectId,
+    recentProjectIds: patch.recentProjectIds ?? state.recentProjectIds,
+    lastOpenedProjectId:
+      patch.lastOpenedProjectId !== undefined
+        ? patch.lastOpenedProjectId
+        : state.lastOpenedProjectId,
+  });
+}
+
+/** Open / switch active house (UI selection only). */
 export function openWorkspaceProject(
   state: WorkspaceRegistryState,
   projectId: string,
@@ -320,13 +670,12 @@ export function openWorkspaceProject(
   if (project === null) {
     return state;
   }
-  return {
-    ...state,
+  return recompose(state, {
     activeProjectId: projectId,
     activeFolderId: project.folderId,
     lastOpenedProjectId: projectId,
     recentProjectIds: pushRecent(state.recentProjectIds, projectId),
-  };
+  });
 }
 
 /** Switch project folder and open its first house. */
@@ -345,17 +694,16 @@ export function openWorkspaceFolder(
     null;
   if (preferred === null) {
     return {
-      state: {
-        ...state,
+      state: recompose(state, {
         activeFolderId: folderId,
         activeProjectId: null,
-      },
+      }),
       houseId: null,
     };
   }
   return {
     state: openWorkspaceProject(
-      { ...state, activeFolderId: folderId },
+      recompose(state, { activeFolderId: folderId }),
       preferred.id,
     ),
     houseId: preferred.id,
@@ -365,21 +713,19 @@ export function openWorkspaceFolder(
 export function closeWorkspaceProject(
   state: WorkspaceRegistryState,
 ): WorkspaceRegistryState {
-  return {
-    ...state,
-    activeProjectId: null,
-  };
+  return recompose(state, { activeProjectId: null });
 }
 
 export function registerWorkspaceCompany(
   state: WorkspaceRegistryState,
   company: WorkspaceCompany,
 ): WorkspaceRegistryState {
-  const without = state.companies.filter((item) => item.id !== company.id);
-  return {
-    ...state,
-    companies: [...without, company],
-  };
+  upsertBuilderCompany({
+    id: company.id,
+    name: company.name,
+    tenantId: DEFAULT_TENANT_ID,
+  });
+  return recompose(state, {});
 }
 
 export function registerWorkspaceFolder(
@@ -387,34 +733,51 @@ export function registerWorkspaceFolder(
   folder: WorkspaceProjectFolder,
 ): WorkspaceRegistryState {
   const without = state.folders.filter((item) => item.id !== folder.id);
-  return {
-    ...state,
+  return recompose(state, {
     folders: [...without, folder],
-  };
+  });
 }
 
+/**
+ * Author House into Canonical Registry, then re-read via CPL.
+ * CAP-PLAT-04R2c — persist parent Project via canonicalProjectId = Projekt folder id.
+ */
 export function registerWorkspaceProject(
   state: WorkspaceRegistryState,
   project: WorkspaceProject,
 ): WorkspaceRegistryState {
   const normalized = normalizeWorkspaceProject(project);
-  const without = state.projects.filter((item) => item.id !== normalized.id);
-  /** PDM-02 — Builder is the sole author of Shared Project identity. */
-  syncBuilderWorkspaceHouse({
+  const workspaceId = workspaceIdFromCanonical(normalized.companyId);
+  const canonicalProjectId = canonicalizeFolderId(normalized.folderId);
+
+  // CAP-PLAT-04R2c — write the House with its parent Project in one canonical step.
+  upsertBuilderProject({
     id: normalized.id,
+    companyId: normalized.companyId,
+    workspaceId,
     name: normalized.name,
     packageRoot: normalized.packageRoot,
-    companyId: normalized.companyId,
     status: normalized.status,
     slug: normalized.slug,
     objectType: normalized.objectType,
     description: normalized.description,
-    workspaceId: DEFAULT_WORKSPACE_ID,
+    canonicalProjectId,
   });
-  return {
-    ...state,
-    projects: [...without, normalized],
-  };
+
+  return recompose(state, {
+    houseFolderIds: {
+      ...state.houseFolderIds,
+      [normalized.id]: canonicalProjectId,
+    },
+    houseLabels: {
+      ...state.houseLabels,
+      [normalized.id]: normalized.name,
+    },
+    houseMetadata: {
+      ...state.houseMetadata,
+      [normalized.id]: normalized.metadata,
+    },
+  });
 }
 
 export function updateWorkspaceProject(
@@ -462,98 +825,79 @@ export function resolvePackageRootForObjectType(objectType: string): string {
 export type CreateWorkspaceProjectInput = {
   readonly name: string;
   readonly companyId: string;
-  readonly companyName?: string;
-  readonly objectType: string;
   readonly description: string;
 };
 
 /**
- * ⊕ Nový projekt — vytvoří Projekt (folder) + první dům.
+ * CAP-PLAT-04R1 / CAP-PLAT-04R2b — ⊕ Nový projekt persists PlatformCanonicalProject.
+ * Builder Projekt folder id === canonical projectId. Does not author a House.
  */
 export function createWorkspaceProjectFromInput(
   state: WorkspaceRegistryState,
   input: CreateWorkspaceProjectInput,
 ): {
   readonly state: WorkspaceRegistryState;
-  readonly project: WorkspaceProject;
   readonly folder: WorkspaceProjectFolder;
 } {
   let next = state;
-  let companyId = input.companyId;
+  const companyId = input.companyId.trim();
 
-  if (companyId === '__new__') {
-    const companyName = (input.companyName ?? '').trim();
-    const companySlug = slugifyProjectName(companyName) || 'company';
-    companyId = `company-${companySlug}`;
-    next = registerWorkspaceCompany(next, {
-      id: companyId,
-      name: companyName.length > 0 ? companyName : 'Nová firma',
-    });
+  if (companyId.length === 0) {
+    throw new Error('Vyberte partnera pro nový projekt.');
+  }
+
+  if (!companyKnownInCanonical(companyId)) {
+    throw new Error('Vybraný partner neexistuje v kanonickém registru.');
   }
 
   const baseSlug = slugifyProjectName(input.name) || 'project';
   let folderSlug = baseSlug;
   let folderId = `project-${folderSlug}`;
   let suffix = 2;
-  while (next.folders.some((folder) => folder.id === folderId)) {
+  const knownProjectIds = () =>
+    new Set([
+      ...state.folders.map((folder) => folder.id),
+      ...listCanonicalProjects().map((item) => item.project.projectId),
+    ]);
+  while (knownProjectIds().has(folderId)) {
     folderSlug = `${baseSlug}-${suffix}`;
     folderId = `project-${folderSlug}`;
     suffix += 1;
   }
 
+  const projectName = input.name.trim();
+  upsertBuilderCanonicalProject({
+    id: folderId,
+    companyId,
+    workspaceId: workspaceIdFromCanonical(companyId),
+    name: projectName,
+    slug: folderSlug,
+    description: input.description.trim(),
+  });
+
   const folder: WorkspaceProjectFolder = {
     id: folderId,
-    name: input.name.trim(),
+    name: projectName,
     companyId,
   };
   next = registerWorkspaceFolder(next, folder);
 
-  let houseSlug = `${folderSlug}-dum`;
-  let houseId = houseSlug;
-  suffix = 2;
-  while (next.projects.some((project) => project.id === houseId)) {
-    houseSlug = `${folderSlug}-dum-${suffix}`;
-    houseId = houseSlug;
-    suffix += 1;
-  }
-
-  const objectLabel =
-    OBJECT_TYPE_OPTIONS.find((option) => option.id === input.objectType)
-      ?.label ?? 'Dům';
-
-  const project = normalizeWorkspaceProject({
-    id: houseId,
-    name: objectLabel,
-    packageRoot: resolvePackageRootForObjectType(input.objectType),
-    companyId,
-    folderId: folder.id,
-    description: input.description.trim(),
-    status: 'draft',
-    slug: houseSlug,
-    objectType: input.objectType,
-    metadata: '',
+  next = recompose(next, {
+    folders: next.folders,
+    activeFolderId: folder.id,
+    activeProjectId: null,
   });
 
-  next = registerWorkspaceProject(next, project);
-  next = {
-    ...next,
-    activeFolderId: folder.id,
-    activeProjectId: project.id,
-    lastOpenedProjectId: project.id,
-    recentProjectIds: pushRecent(next.recentProjectIds, project.id),
-  };
-
-  return { state: next, project, folder };
+  return { state: next, folder };
 }
 
 export type CreateWorkspaceObjectInput = {
   readonly name: string;
-  /** Optional internal identifier → house id/slug. */
   readonly internalId?: string;
 };
 
 /**
- * ⊕ Nový objekt — přidá dům do aktivního projektu (folderu).
+ * ⊕ Nový objekt — House into Canonical Registry under active UI folder.
  */
 export function createWorkspaceObjectFromInput(
   state: WorkspaceRegistryState,
@@ -566,12 +910,6 @@ export function createWorkspaceObjectFromInput(
   if (folder === null) {
     return null;
   }
-
-  const siblings = housesForFolder(state, folder.id);
-  const template =
-    siblings.find((house) => house.id === state.activeProjectId) ??
-    siblings[0] ??
-    null;
 
   const name = input.name.trim();
   if (name.length === 0) {
@@ -594,146 +932,252 @@ export function createWorkspaceObjectFromInput(
   const project = normalizeWorkspaceProject({
     id: houseId,
     name,
-    packageRoot:
-      template?.packageRoot ?? resolvePackageRootForObjectType('villa'),
+    // A newly authored House has no package/content until it is configured.
+    packageRoot: '',
     companyId: folder.companyId,
     folderId: folder.id,
     description: '',
     status: 'draft',
     slug: houseSlug,
-    objectType: template?.objectType ?? 'villa',
-    metadata: '',
+    objectType: 'house',
+    metadata: BUILDER_AUTHORED_HOUSE_MARKER,
   });
 
   let next = registerWorkspaceProject(state, project);
-  next = {
-    ...next,
+  upsertWorkspaceAuthoredHouse({
+    houseId: project.id,
+    name: project.name,
+    canonicalProjectId: folder.id,
+    dataMode: 'LIVE_EMPTY',
+    status: 'draft',
+  });
+  next = recompose(next, {
+    houseLabels: {
+      ...next.houseLabels,
+      [project.id]: name,
+    },
     activeFolderId: folder.id,
     activeProjectId: project.id,
     lastOpenedProjectId: project.id,
     recentProjectIds: pushRecent(next.recentProjectIds, project.id),
-  };
+  });
 
-  return { state: next, project };
+  return { state: next, project: findWorkspaceProject(next, project.id) ?? project };
 }
 
+/** CAP-PLAT-02a — UI state only (no Company / Project / House documents). */
 export type WorkspacePersistedSlice = {
+  readonly version?: number;
   readonly activeFolderId?: string | null;
   readonly activeProjectId: string | null;
   readonly recentProjectIds: readonly string[];
   readonly lastOpenedProjectId: string | null;
-  readonly extraProjects: readonly WorkspaceProject[];
+  readonly folders?: readonly WorkspaceProjectFolder[];
+  readonly houseFolderIds?: Readonly<Record<string, string>>;
+  readonly houseLabels?: Readonly<Record<string, string>>;
+  readonly houseMetadata?: Readonly<Record<string, string>>;
+  /** @deprecated CAP-PLAT-02a — migrated into Canonical Registry on load. */
+  readonly extraProjects?: readonly WorkspaceProject[];
+  /** @deprecated CAP-PLAT-02a */
   readonly extraCompanies?: readonly WorkspaceCompany[];
+  /** @deprecated CAP-PLAT-02a — folded into `folders`. */
   readonly extraFolders?: readonly WorkspaceProjectFolder[];
 };
 
 export function toPersistedWorkspaceSlice(
   state: WorkspaceRegistryState,
 ): WorkspacePersistedSlice {
-  const defaultIds = new Set(DEFAULT_WORKSPACE_PROJECTS.map((p) => p.id));
-  const defaultCompanyIds = new Set(
-    DEFAULT_WORKSPACE_COMPANIES.map((company) => company.id),
-  );
-  const defaultFolderIds = new Set(
-    DEFAULT_WORKSPACE_FOLDERS.map((folder) => folder.id),
-  );
   return {
+    version: 3,
     activeFolderId: state.activeFolderId,
     activeProjectId: state.activeProjectId,
     recentProjectIds: state.recentProjectIds,
     lastOpenedProjectId: state.lastOpenedProjectId,
-    extraProjects: state.projects.filter((p) => !defaultIds.has(p.id)),
-    extraCompanies: state.companies.filter(
-      (company) => !defaultCompanyIds.has(company.id),
-    ),
-    extraFolders: state.folders.filter(
-      (folder) => !defaultFolderIds.has(folder.id),
-    ),
+    folders: state.folders,
+    houseFolderIds: state.houseFolderIds,
+    houseLabels: state.houseLabels,
+    houseMetadata: state.houseMetadata,
   };
+}
+
+function migrateLegacyDomainExtras(
+  persisted: WorkspacePersistedSlice,
+): {
+  folders: WorkspaceProjectFolder[];
+  houseFolderIds: Record<string, string>;
+  houseLabels: Record<string, string>;
+  houseMetadata: Record<string, string>;
+} {
+  const RETIRED_REGIONAL_SEED_IDS = new Set([
+    'opava-harmony',
+    'opava-family',
+    'brno-villa',
+    'brno-harmony',
+  ]);
+  const RETIRED_REGIONAL_FOLDER_IDS = new Set([
+    'project-opava-pilot',
+    'project-brno-pilot',
+  ]);
+
+  const folders: WorkspaceProjectFolder[] = [...DEFAULT_WORKSPACE_FOLDERS];
+  const houseFolderIds: Record<string, string> = {};
+  for (const [houseId, folderId] of Object.entries(
+    persisted.houseFolderIds ?? {},
+  )) {
+    houseFolderIds[houseId] = canonicalizeFolderId(folderId);
+  }
+  const houseLabels: Record<string, string> = {
+    ...(persisted.houseLabels ?? {}),
+  };
+  const houseMetadata: Record<string, string> = {
+    ...(persisted.houseMetadata ?? {}),
+  };
+
+  for (const folder of persisted.folders ?? []) {
+    if (
+      typeof folder?.id === 'string' &&
+      typeof folder?.name === 'string' &&
+      typeof folder?.companyId === 'string' &&
+      !RETIRED_REGIONAL_FOLDER_IDS.has(folder.id) &&
+      !RETIRED_REGIONAL_FOLDER_IDS.has(canonicalizeFolderId(folder.id))
+    ) {
+      const id = canonicalizeFolderId(folder.id);
+      if (!folders.some((item) => item.id === id)) {
+        folders.push({
+          id,
+          name: folder.name,
+          companyId: folder.companyId,
+        });
+      }
+    }
+  }
+
+  const legacyFolderRefs = new Set<string>();
+
+  for (const company of persisted.extraCompanies ?? []) {
+    if (typeof company?.id === 'string' && typeof company?.name === 'string') {
+      upsertBuilderCompany({
+        id: company.id,
+        name: company.name,
+        tenantId: DEFAULT_TENANT_ID,
+      });
+    }
+  }
+
+  for (const project of persisted.extraProjects ?? []) {
+    if (
+      typeof project?.id !== 'string' ||
+      typeof project?.name !== 'string' ||
+      typeof project?.packageRoot !== 'string' ||
+      RETIRED_REGIONAL_SEED_IDS.has(project.id)
+    ) {
+      continue;
+    }
+    const normalized = normalizeWorkspaceProject(project);
+    if (
+      typeof normalized.companyId === 'string' &&
+      !companyKnownInCanonical(normalized.companyId)
+    ) {
+      upsertBuilderCompany({
+        id: normalized.companyId,
+        name: normalized.companyId,
+        tenantId: DEFAULT_TENANT_ID,
+      });
+    }
+    syncBuilderWorkspaceHouse({
+      id: normalized.id,
+      name: normalized.name,
+      packageRoot: normalized.packageRoot,
+      companyId: normalized.companyId,
+      status: normalized.status,
+      slug: normalized.slug,
+      objectType: normalized.objectType,
+      description: normalized.description,
+      workspaceId: DEFAULT_WORKSPACE_ID,
+    });
+    const folderId = canonicalizeFolderId(normalized.folderId);
+    upsertBuilderProject({
+      id: normalized.id,
+      companyId: normalized.companyId,
+      workspaceId: DEFAULT_WORKSPACE_ID,
+      name: normalized.name,
+      packageRoot: normalized.packageRoot,
+      status: normalized.status,
+      slug: normalized.slug,
+      objectType: normalized.objectType,
+      description: normalized.description,
+      canonicalProjectId: folderId,
+    });
+    houseFolderIds[normalized.id] = folderId;
+    legacyFolderRefs.add(folderId);
+    if (
+      typeof normalized.name === 'string' &&
+      normalized.name.length > 0 &&
+      houseLabels[normalized.id] === undefined
+    ) {
+      houseLabels[normalized.id] = normalized.name;
+    }
+    if (
+      typeof normalized.metadata === 'string' &&
+      normalized.metadata.length > 0
+    ) {
+      houseMetadata[normalized.id] = normalized.metadata;
+    }
+    if (!folders.some((folder) => folder.id === folderId)) {
+      folders.push({
+        id: folderId,
+        name: folderId,
+        companyId: normalized.companyId,
+      });
+    }
+  }
+
+  for (const folder of persisted.extraFolders ?? []) {
+    if (
+      typeof folder?.id === 'string' &&
+      typeof folder?.name === 'string' &&
+      typeof folder?.companyId === 'string' &&
+      !RETIRED_REGIONAL_FOLDER_IDS.has(folder.id) &&
+      legacyFolderRefs.has(canonicalizeFolderId(folder.id))
+    ) {
+      const id = canonicalizeFolderId(folder.id);
+      if (!folders.some((item) => item.id === id)) {
+        folders.push({
+          id,
+          name: folder.name,
+          companyId: folder.companyId,
+        });
+      }
+    }
+  }
+
+  for (const seedId of ['family-98', 'harmony-124', 'villa-168']) {
+    if (houseFolderIds[seedId] === undefined) {
+      houseFolderIds[seedId] = DEFAULT_FOLDER_AC;
+    }
+  }
+
+  return { folders, houseFolderIds, houseLabels, houseMetadata };
 }
 
 export function mergePersistedWorkspaceSlice(
   persisted: WorkspacePersistedSlice | null,
 ): WorkspaceRegistryState {
-  const base = createInitialWorkspaceRegistry();
   if (persisted === null) {
-    return base;
+    return createInitialWorkspaceRegistry();
   }
 
-  const extras = Array.isArray(persisted.extraProjects)
-    ? persisted.extraProjects
-        .filter(
-          (project) =>
-            typeof project?.id === 'string' &&
-            typeof project?.name === 'string' &&
-            typeof project?.packageRoot === 'string',
-        )
-        .map((project) => normalizeWorkspaceProject(project))
-    : [];
-
-  const extraCompanies = Array.isArray(persisted.extraCompanies)
-    ? persisted.extraCompanies.filter(
-        (company) =>
-          typeof company?.id === 'string' &&
-          typeof company?.name === 'string',
-      )
-    : [];
-
-  const extraFolders = Array.isArray(persisted.extraFolders)
-    ? persisted.extraFolders.filter(
-        (folder) =>
-          typeof folder?.id === 'string' &&
-          typeof folder?.name === 'string' &&
-          typeof folder?.companyId === 'string',
-      )
-    : [];
-
-  const companies = [...DEFAULT_WORKSPACE_COMPANIES, ...extraCompanies];
-  const folders = [...DEFAULT_WORKSPACE_FOLDERS, ...extraFolders];
-  const projects = [...DEFAULT_WORKSPACE_PROJECTS, ...extras].map((project) =>
-    normalizeWorkspaceProject(project),
-  );
-  const activeCandidate =
-    persisted.activeProjectId ??
-    persisted.lastOpenedProjectId ??
-    base.activeProjectId;
-  const active =
-    activeCandidate !== null &&
-    projects.some((project) => project.id === activeCandidate)
-      ? activeCandidate
-      : base.activeProjectId;
-  const activeHouse =
-    active !== null ? projects.find((project) => project.id === active) : null;
-  const folderCandidate =
-    persisted.activeFolderId ?? activeHouse?.folderId ?? base.activeFolderId;
-  const activeFolderId =
-    folderCandidate !== null &&
-    folders.some((folder) => folder.id === folderCandidate)
-      ? folderCandidate
-      : (folders[0]?.id ?? null);
-
-  const recent = (
-    Array.isArray(persisted.recentProjectIds)
-      ? persisted.recentProjectIds.filter((id) =>
-          projects.some((project) => project.id === id),
-        )
-      : []
-  ).slice(0, MAX_RECENT);
-
-  return {
-    companies,
-    folders,
-    projects,
-    activeFolderId,
-    activeProjectId: active,
-    recentProjectIds:
-      recent.length > 0 ? recent : active !== null ? [active] : [],
-    lastOpenedProjectId:
-      persisted.lastOpenedProjectId !== null &&
-      projects.some((project) => project.id === persisted.lastOpenedProjectId)
-        ? persisted.lastOpenedProjectId
-        : active,
-  };
+  const migrated = migrateLegacyDomainExtras(persisted);
+  return composeWorkspaceRegistry({
+    folders: migrated.folders,
+    houseFolderIds: migrated.houseFolderIds,
+    houseLabels: migrated.houseLabels,
+    houseMetadata: migrated.houseMetadata,
+    activeFolderId: persisted.activeFolderId,
+    activeProjectId: persisted.activeProjectId,
+    recentProjectIds: persisted.recentProjectIds,
+    lastOpenedProjectId: persisted.lastOpenedProjectId,
+  });
 }
 
 export type ProjectSwitchDecision =

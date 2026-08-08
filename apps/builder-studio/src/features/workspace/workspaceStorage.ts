@@ -1,6 +1,6 @@
 /**
- * CAP-BLD-08 — persist workspace metadata in localStorage (not HP content).
- * PR-012 — auto-migrate legacy v1 keys; never require manual localStorage wipe.
+ * CAP-BLD-08 / CAP-PLAT-02a — persist Builder UI state only (not domain entities).
+ * PR-012 — auto-migrate legacy v1 keys; CAP-PLAT-02a migrates domain extras → Registry.
  */
 
 import {

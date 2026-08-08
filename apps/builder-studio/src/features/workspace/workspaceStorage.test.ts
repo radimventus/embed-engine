@@ -13,12 +13,18 @@ import {
   loadWorkspaceRegistryFromStorage,
   saveWorkspaceRegistryToStorage,
 } from './workspaceStorage';
+import {
+  resetCompanyRegistryExtras,
+  resetSharedProjectManifestsForTests,
+} from '@embed-engine/platform-access';
 
 const memory = new Map<string, string>();
 
-describe('workspaceStorage migration (PR-012)', () => {
+describe('workspaceStorage migration (PR-012 / CAP-PLAT-02a)', () => {
   beforeEach(() => {
     memory.clear();
+    resetCompanyRegistryExtras();
+    resetSharedProjectManifestsForTests();
     (globalThis as { localStorage?: Storage }).localStorage = {
       getItem: (key: string) => memory.get(key) ?? null,
       setItem: (key: string, value: string) => {
@@ -59,7 +65,9 @@ describe('workspaceStorage migration (PR-012)', () => {
     const state = loadWorkspaceRegistryFromStorage();
     assert.equal(state.activeProjectId, 'harmony-124');
     assert.ok(state.folders.length >= 1);
+    // PT-PLATFORM-01 — Builder-persisted houses are re-authored into Shared Runtime.
     assert.ok(state.projects.some((project) => project.id === 'custom-house'));
+    assert.ok(state.projects.some((project) => project.id === 'harmony-124'));
     assert.ok(
       state.projects.every(
         (project) =>
@@ -82,12 +90,18 @@ describe('workspaceStorage migration (PR-012)', () => {
 
     const state = loadWorkspaceRegistryFromStorage();
     assert.equal(state.activeProjectId, 'villa-168');
-    assert.equal(state.folders[0]?.name, 'AC Modular Pilot');
-    assert.ok(state.folders.length >= 3);
+    assert.equal(state.folders[0]?.name, 'AC Modular');
+    assert.ok(state.folders.length >= 1);
     saveWorkspaceRegistryToStorage(state);
     const raw = memory.get(WORKSPACE_STORAGE_KEY);
     assert.ok(raw !== undefined);
-    const parsed = JSON.parse(raw) as { activeFolderId?: string | null };
+    const parsed = JSON.parse(raw) as {
+      activeFolderId?: string | null;
+      version?: number;
+      extraProjects?: unknown;
+    };
     assert.equal(typeof parsed.activeFolderId, 'string');
+    assert.equal(parsed.version, 3);
+    assert.equal(parsed.extraProjects, undefined);
   });
 });
