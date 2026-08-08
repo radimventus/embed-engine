@@ -47,8 +47,12 @@ export type HousePackageEditController = {
  */
 export function useHousePackageEditController(
   diskRoot: string | null,
+  houseId: string | null = null,
 ): HousePackageEditController {
-  const { state: mountStatus, remount } = useHousePackageMount(diskRoot);
+  const { state: mountStatus, remount } = useHousePackageMount(
+    diskRoot,
+    houseId,
+  );
   const [sessionEpoch, setSessionEpoch] = useState(0);
   const [saving, setSaving] = useState(false);
   const [validating, setValidating] = useState(false);
@@ -64,7 +68,7 @@ export function useHousePackageEditController(
     setPublishError(null);
     setValidationReport(null);
     setSessionEpoch((value) => value + 1);
-  }, [diskRoot]);
+  }, [diskRoot, houseId]);
 
   const session = useMemo(() => {
     if (mountStatus.status !== 'ready') {

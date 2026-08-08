@@ -28,6 +28,8 @@ function isAbortError(error: unknown): boolean {
  */
 export function useHousePackageMount(
   diskRoot: string | null = HOUSE_PACKAGE_DISK_ROOT,
+  /** PT-BS-01 — remount when house id changes even if packageRoot collides. */
+  houseId: string | null = null,
 ): UseHousePackageMountResult {
   const [state, setState] = useState<HousePackageMountState>({
     status: 'loading',
@@ -87,7 +89,7 @@ export function useHousePackageMount(
     return () => {
       abort.abort();
     };
-  }, [diskRoot]);
+  }, [diskRoot, houseId]);
 
   return { state, remount };
 }
