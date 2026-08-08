@@ -65,4 +65,53 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.match(app, /Embed\.mount/);
     assert.match(app, /mode:\s*'standalone'/);
   });
+
+  it('CAP-VR33E — accepts canonical Builder Project changes in Workspace Host', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    assert.match(app, /function boundSharedProjectId\(\)/);
+    assert.match(app, /candidates = \[session\?\.projectId, ctx\?\.projectId\]/);
+    assert.match(app, /isCanonicalProjectId\(id\)/);
+    assert.doesNotMatch(app, /getSharedProject\(id\)/);
+    assert.match(app, /addEventListener\('message', onWorkspaceChange\)/);
+    assert.match(app, /isWorkspaceProjectChangeMessage\(event\.data\)/);
+    assert.match(app, /isCanonicalProjectId\(event\.data\.projectId\)/);
+    assert.match(
+      app,
+      /workspaceContext:\s*\{[\s\S]*projectId:\s*event\.data\.projectId/,
+    );
+    assert.match(app, /setSharedProjectId\(next\.projectId\)/);
+    assert.match(app, /studioFrameSrc\([\s\S]*sharedProjectId,[\s\S]*sharedActiveHouseId/);
+  });
+
+  it('CAP-VR38c — scopes Builder House changes under the active Project', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    assert.match(app, /isWorkspaceHouseChangeMessage\(event\.data\)/);
+    assert.match(
+      app,
+      /houseId !== null[\s\S]*!isHouseInProject\(houseId, projectId\)/,
+    );
+    assert.match(app, /updateSession\(\{[\s\S]*activeHouseId: houseId/);
+    assert.match(app, /setSharedActiveHouseId\(next\.activeHouseId\)/);
+    assert.match(app, /url\.searchParams\.set\('houseId', activeHouseId\)/);
+    assert.match(app, /sharedActiveHouseId \?\? sharedProjectId/);
+  });
+
+  it('CAP-VR38e — accepts scope changes from trusted embedded Studios', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    assert.match(app, /WORKSPACE_SCOPE_WRITER_SURFACES/);
+    assert.match(app, /'builder',[\s\S]*'manager',[\s\S]*'sales',[\s\S]*'client'/);
+    assert.match(app, /scopeWriterOrigins\.has\(event\.origin\)/);
+  });
+
+  it('CAP-VR38d4 — accepts direct-mounted Client House changes', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    assert.match(app, /onDirectClientHouseChange/);
+    assert.match(app, /isWorkspaceHouseChangeMessage\(detail\)/);
+    assert.match(app, /applyHouseChange\(detail\.houseId\)/);
+    assert.match(app, /WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE/);
+  });
 });

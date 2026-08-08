@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 
 import {
@@ -6,12 +7,15 @@ import {
   bootstrapProject,
   bootstrapTenant,
   bootstrapWorkspace,
+  buildSession,
   buildPilotReadyReport,
   canAccessStudio,
   defaultStudioForRoles,
+  enterOperatorPartnerEnvironment,
   CLOUD_PLATFORM_ORIGIN,
   CLOUD_APP_HOST,
   CLOUD_STUDIO_ENTRY_PATH,
+  createWorkspaceHouseChangeMessage,
   createPilotInvite,
   getCloudPlatformConfig,
   getDefaultCompanyRegistry,
@@ -24,21 +28,32 @@ import {
   resetPartnerWelcomeStore,
   resetPilotWorkspaceStore,
   isPilotWorkspaceReady,
+  isHouseInProject,
+  isWorkspaceHouseChangeMessage,
   resolveCloudStudioHref,
   resolveClientStudioHref,
+  resolveBuilderStudioHref,
   resolveWorkspaceHostHref,
+  resolveWorkspaceHouseBinding,
   restoreSession,
   submitPlatformFeedback,
   listPlatformFeedback,
+  listCanonicalHouses,
+  listWorkspaceHouses,
   updateSession,
+  upsertBuilderProject,
+  upsertWorkspaceAuthoredHouse,
 } from './index';
 import { clearPlatformSession } from './session/sessionStore';
 
 describe('platformAccess (EPIC-BX-14)', () => {
-  it('owns a single Company / Workspace / Project registry', () => {
+  it('owns the canonical Company / Workspace / Project registry', () => {
     const registry = getDefaultCompanyRegistry();
-    assert.equal(registry.companies.length, 1);
-    assert.equal(registry.companies[0]?.id, 'ac-modular');
+    assert.equal(registry.companies.length, 2);
+    assert.deepEqual(
+      registry.companies.map((company) => company.id).sort(),
+      ['ac-modular', 'company-domy-s-energii'],
+    );
     assert.ok(registry.workspaces.length >= 1);
     assert.ok(registry.projects.length >= 3);
   });
@@ -64,7 +79,7 @@ describe('platformAccess (EPIC-BX-14)', () => {
     assert.equal(restoreSession(), null);
   });
 
-  it('bootstraps User → Company → Workspace → Project → Studio', () => {
+  it('keeps canonical Project scope separate from the legacy bootstrap Project', () => {
     clearPlatformSession();
     const result = login({
       email: 'radim@conis.local',
@@ -79,8 +94,201 @@ describe('platformAccess (EPIC-BX-14)', () => {
     assert.ok(boot !== null);
     assert.equal(boot?.company.name, 'AC Modular');
     assert.equal(boot?.workspace.name, 'AC Modular Main');
-    assert.equal(boot?.project?.name, 'Villa 168');
+    assert.equal(withStudio?.projectId, 'project-ac-modular');
+    assert.equal(boot?.project, null);
     assert.equal(boot?.studioId, 'builder');
+  });
+
+  it('CAP-VR38a — keeps shared House scope subordinate to Project scope', () => {
+    clearPlatformSession();
+    const result = login({
+      email: 'radim@conis.local',
+      password: 'demo',
+      rememberMe: false,
+    });
+    assert.equal(result.ok, true);
+    if (!result.ok) return;
+
+    assert.equal(isHouseInProject('modern-4kk', 'project-domy-s-energii'), true);
+    upsertBuilderProject({
+      id: 'patrovy-5kk',
+      workspaceId: 'dse-main',
+      companyId: 'dse',
+      name: 'PATROVÝ 5KK',
+      packageRoot: '',
+      status: 'draft',
+      slug: 'patrovy-5kk',
+      objectType: 'house',
+      description: '',
+      canonicalProjectId: 'project-domy-s-energii',
+    });
+    assert.equal(
+      isHouseInProject('patrovy-5kk', 'project-domy-s-energii'),
+      true,
+    );
+    assert.equal(isHouseInProject('family-98', 'project-domy-s-energii'), false);
+    assert.equal(isWorkspaceHouseChangeMessage(createWorkspaceHouseChangeMessage(null)), true);
+    assert.equal(
+      isWorkspaceHouseChangeMessage(
+        createWorkspaceHouseChangeMessage('modern-4kk'),
+      ),
+      true,
+    );
+
+    const dse = updateSession({
+      projectId: 'project-domy-s-energii',
+      activeHouseId: 'modern-4kk',
+    });
+    assert.equal(dse?.projectId, 'project-domy-s-energii');
+    assert.equal(dse?.activeHouseId, 'modern-4kk');
+
+    const ac = updateSession({ projectId: 'project-ac-modular' });
+    assert.equal(ac?.projectId, 'project-ac-modular');
+    assert.equal(ac?.activeHouseId, null);
+
+    const rejectedHouseProject = updateSession({ projectId: 'modern-4kk' });
+    assert.equal(rejectedHouseProject?.projectId, 'project-ac-modular');
+    assert.equal(rejectedHouseProject?.activeHouseId, null);
+    resetCompanyRegistryExtras();
+  });
+
+  it('CAP-VR38e — exposes an immediate shared Workspace scope mutation', () => {
+    const provider = readFileSync(
+      new URL('./react/SessionProvider.tsx', import.meta.url),
+      'utf8',
+    );
+
+    assert.match(provider, /updateWorkspaceScope/);
+    assert.match(
+      provider,
+      /updateSession\(\{[\s\S]*projectId,[\s\S]*activeHouseId,[\s\S]*workspaceContext,[\s\S]*\}\)[\s\S]*setSession\(next\)/,
+    );
+  });
+
+  it('CAP-VR39a — projects authored House identities without publishing them', () => {
+    clearPlatformSession();
+    const result = login({
+      email: 'radim@conis.local',
+      password: 'demo',
+      rememberMe: false,
+    });
+    assert.equal(result.ok, true);
+    if (!result.ok) return;
+    assert.equal(
+      enterOperatorPartnerEnvironment({
+        companyId: 'dse',
+        workspaceId: 'dse-main',
+        projectId: 'project-domy-s-energii',
+        officePartnerId: 'dse',
+        officeReturnHref: 'http://127.0.0.1:4181/',
+        navigate: false,
+      }).ok,
+      true,
+    );
+
+    upsertWorkspaceAuthoredHouse({
+      houseId: 'patrovy-5kk',
+      name: 'PATROVÝ 5KK',
+      canonicalProjectId: 'project-domy-s-energii',
+      dataMode: 'LIVE_EMPTY',
+      status: 'draft',
+    });
+    const dseHouses = listWorkspaceHouses('project-domy-s-energii');
+
+    assert.deepEqual(
+      dseHouses.map((house) => house.houseId),
+      ['modern-4kk', 'patrovy-5kk'],
+    );
+    assert.deepEqual(
+      listCanonicalHouses('project-domy-s-energii').map(
+        (projection) => projection.house?.houseId,
+      ),
+      ['modern-4kk'],
+    );
+    assert.deepEqual(dseHouses[1], {
+      houseId: 'patrovy-5kk',
+      name: 'PATROVÝ 5KK',
+      canonicalProjectId: 'project-domy-s-energii',
+      dataMode: 'LIVE_EMPTY',
+      status: 'draft',
+    });
+    assert.equal(
+      isHouseInProject('patrovy-5kk', 'project-domy-s-energii'),
+      true,
+    );
+    assert.equal(
+      isHouseInProject('patrovy-5kk', 'project-ac-modular'),
+      false,
+    );
+    assert.equal(
+      isHouseInProject('unknown-house', 'project-domy-s-energii'),
+      false,
+    );
+    const modernBinding = resolveWorkspaceHouseBinding({
+      projectId: 'project-domy-s-energii',
+      houseId: 'modern-4kk',
+    });
+    assert.equal(modernBinding?.dataMode, 'REFERENCE_DEMO');
+    assert.equal(modernBinding?.runtimeContentAvailable, true);
+    assert.equal(modernBinding?.canonicalBinding?.runtimeHouseId, 'modern-4kk');
+    assert.deepEqual(
+      resolveWorkspaceHouseBinding({
+        projectId: 'project-domy-s-energii',
+        houseId: 'patrovy-5kk',
+      }),
+      {
+        houseId: 'patrovy-5kk',
+        projectId: 'project-domy-s-energii',
+        dataMode: 'LIVE_EMPTY',
+        status: 'draft',
+        runtimeContentAvailable: false,
+        canonicalBinding: null,
+      },
+    );
+    assert.equal(
+      resolveWorkspaceHouseBinding({
+        projectId: 'project-domy-s-energii',
+        houseId: 'family-98',
+      }),
+      null,
+    );
+
+    const draftScope = updateSession({ activeHouseId: 'patrovy-5kk' });
+    assert.equal(draftScope?.projectId, 'project-domy-s-energii');
+    assert.equal(draftScope?.activeHouseId, 'patrovy-5kk');
+
+    for (const invalidProjectId of [
+      'modern-4kk',
+      'patrovy-5kk',
+      'some-random-id',
+    ]) {
+      const rejected = updateSession({ projectId: invalidProjectId });
+      assert.equal(rejected?.projectId, 'project-domy-s-energii');
+      assert.equal(rejected?.activeHouseId, 'patrovy-5kk');
+    }
+
+    const movedProject = updateSession({ projectId: 'project-ac-modular' });
+    assert.equal(movedProject?.projectId, 'project-ac-modular');
+    assert.equal(movedProject?.activeHouseId, null);
+    const projectScope = updateSession({ activeHouseId: null });
+    assert.equal(projectScope?.projectId, 'project-ac-modular');
+    assert.equal(projectScope?.activeHouseId, null);
+
+    for (const invalidProjectId of [
+      'modern-4kk',
+      'patrovy-5kk',
+      'some-random-id',
+    ]) {
+      assert.equal(
+        buildSession({
+          user: result.session.user,
+          rememberMe: false,
+          projectId: invalidProjectId,
+        }).projectId,
+        'project-ac-modular',
+      );
+    }
+    logout();
   });
 
   it('project bootstrap marks capability and intelligence readiness', () => {
@@ -135,10 +343,19 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     assert.equal(resolveCloudStudioHref('sales'), 'http://127.0.0.1:4179/');
     assert.equal(resolveCloudStudioHref('office'), 'http://127.0.0.1:4181/');
     assert.equal(resolveClientStudioHref(), 'http://127.0.0.1:4173/');
+    assert.equal(
+      resolveClientStudioHref('villa-168'),
+      'http://127.0.0.1:4173/?projectId=villa-168',
+    );
+    assert.equal(resolveCloudStudioHref('builder'), 'http://127.0.0.1:4177/');
+    assert.equal(
+      resolveBuilderStudioHref('villa-168'),
+      'http://127.0.0.1:4177/?projectId=villa-168',
+    );
     assert.equal(resolveWorkspaceHostHref(), 'http://127.0.0.1:4183/');
   });
 
-  it('bootstraps Tenant → Company → Workspace → Project', () => {
+  it('keeps canonical Project scope separate from legacy Tenant bootstrap Project', () => {
     clearPlatformSession();
     const result = login({
       email: 'radim@conis.local',
@@ -152,7 +369,8 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     assert.equal(tenantBoot?.tenant.id, 'tenant-ac-modular');
     assert.equal(tenantBoot?.company.id, 'ac-modular');
     assert.equal(tenantBoot?.workspace.id, 'ac-modular-main');
-    assert.equal(tenantBoot?.project?.id, 'villa-168');
+    assert.equal(result.session.projectId, 'project-ac-modular');
+    assert.equal(tenantBoot?.project, null);
   });
 
   it('provisions a pilot firm with Company / Workspace / Project / HP', () => {
@@ -222,7 +440,7 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     logout();
   });
 
-  it('reports Pilot Ready YES for logged-in default session', () => {
+  it('reports missing legacy package readiness for a canonical-only session', () => {
     clearPlatformSession();
     const result = login({
       email: 'radim@conis.local',
@@ -232,8 +450,9 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     assert.equal(result.ok, true);
     if (!result.ok) return;
     const report = buildPilotReadyReport(result.session);
-    assert.equal(report.ready, true);
-    assert.equal(report.missingLabels.length, 0);
+    assert.equal(report.ready, false);
+    assert.ok(report.missingLabels.includes('Missing Project'));
+    assert.ok(report.missingLabels.includes('Missing House Package'));
     const loggedOut = buildPilotReadyReport(null);
     assert.equal(loggedOut.ready, false);
     assert.ok(loggedOut.missingLabels.includes('Missing Login'));

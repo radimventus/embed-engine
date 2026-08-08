@@ -56,6 +56,10 @@ export type PlatformSessionContextValue = {
   readonly clearStudio: () => void;
   readonly selectProject: (projectId: string) => void;
   readonly selectWorkspace: (workspaceId: string) => void;
+  readonly updateWorkspaceScope: (input: {
+    readonly projectId?: string | null;
+    readonly activeHouseId?: string | null;
+  }) => PlatformSession | null;
   readonly bootstrapActiveProject: (
     studioId: PlatformStudioId,
   ) => ProjectBootstrap | null;
@@ -229,6 +233,41 @@ export function SessionProvider({
     setSession(next);
   }, [registry]);
 
+  /** CAP-VR38e — shared Project/House mutation with immediate React update. */
+  const updateWorkspaceScope = useCallback(
+    (input: {
+      readonly projectId?: string | null;
+      readonly activeHouseId?: string | null;
+    }): PlatformSession | null => {
+      if (session === null) return null;
+      const projectId =
+        input.projectId !== undefined ? input.projectId : session.projectId;
+      const activeHouseId =
+        input.activeHouseId !== undefined
+          ? input.activeHouseId
+          : session.activeHouseId;
+      const workspaceContext =
+        session.workspaceContext === null
+          ? null
+          : {
+              ...session.workspaceContext,
+              projectId:
+                projectId === null
+                  ? session.workspaceContext.projectId
+                  : projectId,
+              activeHouseId,
+            };
+      const next = updateSession({
+        projectId,
+        activeHouseId,
+        workspaceContext,
+      });
+      setSession(next);
+      return next;
+    },
+    [session],
+  );
+
   const bootstrapActiveProject = useCallback(
     (studioId: PlatformStudioId) => {
       if (session === null || session.projectId === null) return null;
@@ -264,6 +303,7 @@ export function SessionProvider({
       clearStudio,
       selectProject,
       selectWorkspace,
+      updateWorkspaceScope,
       bootstrapActiveProject,
       canOpenStudio,
       availableStudios,
@@ -279,6 +319,7 @@ export function SessionProvider({
       clearStudio,
       selectProject,
       selectWorkspace,
+      updateWorkspaceScope,
       bootstrapActiveProject,
       canOpenStudio,
       availableStudios,

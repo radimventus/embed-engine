@@ -5,7 +5,12 @@
 
 import type { SharedWorkspaceContext } from './workspaceContext';
 
-export type PlatformStudioId = 'office' | 'builder' | 'manager' | 'sales';
+export type PlatformStudioId =
+  | 'client'
+  | 'office'
+  | 'builder'
+  | 'manager'
+  | 'sales';
 
 /**
  * Prepared role hierarchy (Permission Matrix).
@@ -73,10 +78,11 @@ export type PlatformProject = {
   readonly workspaceId: string;
   readonly companyId: string;
   readonly name: string;
-  /** Repo-relative HP-002 root — bootstrap only; HP schema unchanged. */
+  /** @deprecated CAP-PLAT-04 — moves to PlatformHouse; retained for Registry compat. */
   readonly packageRoot: string;
   readonly status: PlatformProjectStatus;
   readonly slug: string;
+  /** @deprecated CAP-PLAT-04 — moves to PlatformHouse; retained for Registry compat. */
   readonly objectType: string;
   readonly description: string;
   /**
@@ -111,6 +117,8 @@ export type PlatformSession = {
   readonly tenantId: string;
   readonly companyId: string;
   readonly workspaceId: string;
+  /** CAP-VR38a — null means Project scope; otherwise a House under projectId. */
+  readonly activeHouseId: string | null;
   readonly projectId: string | null;
   /** null = Platform Landing (studio not chosen yet). */
   readonly activeStudioId: PlatformStudioId | null;

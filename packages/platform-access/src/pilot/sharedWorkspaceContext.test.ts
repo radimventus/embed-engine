@@ -18,6 +18,7 @@ import {
   resetUserRegistry,
   returnFromOperatorPartnerEnvironment,
   switchOperatorPartnerStudio,
+  updateSession,
 } from '../index';
 
 describe('OF-14 Shared Workspace Context', () => {
@@ -41,7 +42,7 @@ describe('OF-14 Shared Workspace Context', () => {
     const entered = enterOperatorPartnerEnvironment({
       companyId: 'co-dse',
       workspaceId: 'ws-dse',
-      projectId: 'proj-dse',
+      projectId: 'project-domy-s-energii',
       officePartnerId: 'p-dse',
       officeReturnHref: 'http://127.0.0.1:4181/partners/p-dse',
       navigate: false,
@@ -54,7 +55,7 @@ describe('OF-14 Shared Workspace Context', () => {
     assert.equal(ctx?.partnerId, 'p-dse');
     assert.equal(ctx?.companyId, 'co-dse');
     assert.equal(ctx?.workspaceId, 'ws-dse');
-    assert.equal(ctx?.projectId, 'proj-dse');
+    assert.equal(ctx?.projectId, 'project-domy-s-energii');
     assert.equal(ctx?.activeStudio, 'client');
     assert.equal(isOperatorWorkspaceMode(), true);
     assert.ok(getOperatorPartnerEnvironment() !== null);
@@ -81,7 +82,7 @@ describe('OF-14 Shared Workspace Context', () => {
     enterOperatorPartnerEnvironment({
       companyId: 'co-dse',
       workspaceId: 'ws-dse',
-      projectId: 'proj-dse',
+      projectId: 'project-domy-s-energii',
       officePartnerId: 'p-dse',
       officeReturnHref: 'http://127.0.0.1:4181/partners/p-dse',
       navigate: false,
@@ -103,12 +104,53 @@ describe('OF-14 Shared Workspace Context', () => {
       assert.ok(ctx !== null);
       assert.equal(ctx?.companyId, 'co-dse');
       assert.equal(ctx?.workspaceId, 'ws-dse');
-      assert.equal(ctx?.projectId, 'proj-dse');
+      assert.equal(ctx?.projectId, 'project-domy-s-energii');
       assert.equal(ctx?.partnerId, 'p-dse');
       assert.equal(ctx?.activeStudio, surface);
       assert.equal(loadPlatformSession()?.companyId, 'co-dse');
       assert.equal(switched.href.includes('4183') || switched.href.includes('/studio/workspace'), true);
     }
+  });
+
+  it('preserves Shared Project session bind across studio switches (PT-OS-02 / B-03)', () => {
+    reset();
+    assert.equal(
+      login({
+        email: 'radim@conis.local',
+        password: 'demo',
+        rememberMe: false,
+      }).ok,
+      true,
+    );
+
+    enterOperatorPartnerEnvironment({
+      companyId: 'co-dse',
+      workspaceId: 'ws-dse',
+      projectId: 'project-domy-s-energii',
+      officePartnerId: 'p-dse',
+      officeReturnHref: 'http://127.0.0.1:4181/partners/p-dse',
+      navigate: false,
+    });
+
+    updateSession({
+      projectId: 'project-ac-modular',
+      workspaceContext: {
+        ...getSharedWorkspaceContext()!,
+        projectId: 'project-ac-modular',
+      },
+    });
+
+    const switched = switchOperatorPartnerStudio('client', {
+      navigate: false,
+      retainWorkspace: true,
+    });
+    assert.equal(switched.ok, true);
+    assert.equal(loadPlatformSession()?.projectId, 'project-ac-modular');
+    assert.equal(
+      getSharedWorkspaceContext()?.projectId,
+      'project-ac-modular',
+    );
+    assert.equal(getSharedWorkspaceContext()?.activeStudio, 'client');
   });
 
   it('clears Shared Workspace Context when returning to Office', () => {
@@ -126,7 +168,7 @@ describe('OF-14 Shared Workspace Context', () => {
     enterOperatorPartnerEnvironment({
       companyId: 'co-dse',
       workspaceId: 'ws-dse',
-      projectId: 'proj-dse',
+      projectId: 'project-domy-s-energii',
       officePartnerId: 'p-dse',
       officeReturnHref: 'http://127.0.0.1:4181/partners/p-dse',
       navigate: false,

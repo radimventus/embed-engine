@@ -9,16 +9,23 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Embed, registerClientStudioCss } from '@embed-engine/embed';
 import {
   clearOperatorPartnerEnvironment,
+  isHouseInProject,
+  isWorkspaceHouseChangeMessage,
+  isWorkspaceProjectChangeMessage,
   getSharedWorkspaceContext,
+  isCanonicalProjectId,
   loadPlatformSession,
   logout as platformLogout,
   PLATFORM_ROLE_LABELS,
   primaryRole,
   projectPartnerBrand,
   resolveCloudStudioHref,
+  resolveMountProjectView,
   resolveWorkspaceHostHref,
   switchOperatorPartnerStudio,
+  updateSession,
   withWorkspaceShellEmbed,
+  WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE,
   WORKSPACE_STUDIO_LABELS,
   type WorkspaceStudioSurface,
 } from '@embed-engine/platform-access';
@@ -34,28 +41,81 @@ import clientStudioCss from '../../client-studio/src/index.css?inline';
 registerClientStudioCss(clientStudioCss);
 
 const CLIENT_MOUNT_ID = 'workspace-host-client-root';
+const WORKSPACE_SCOPE_WRITER_SURFACES = [
+  'builder',
+  'manager',
+  'sales',
+  'client',
+] as const;
 
 function readActiveSurface(): WorkspaceStudioSurface {
   return getSharedWorkspaceContext()?.activeStudio ?? 'client';
 }
 
+/** PT-OS-02 / B-02 / B-03 — bind iframe studios to Shared Project from session. */
+function boundSharedProjectId(): string | null {
+  const session = loadPlatformSession();
+  const ctx = getSharedWorkspaceContext();
+  const candidates = [session?.projectId, ctx?.projectId];
+  for (const candidate of candidates) {
+    const id = candidate?.trim() ?? '';
+    if (id.length > 0 && isCanonicalProjectId(id)) {
+      return id;
+    }
+  }
+  return null;
+}
+
+function withProjectIdQuery(
+  href: string,
+  projectId: string | null,
+  activeHouseId: string | null,
+): string {
+  if (projectId === null) return href;
+  try {
+    const url = new URL(href);
+    url.searchParams.set('projectId', projectId);
+    if (activeHouseId !== null) {
+      url.searchParams.set('houseId', activeHouseId);
+    }
+    return url.toString();
+  } catch {
+    const join = href.includes('?') ? '&' : '?';
+    const projectQuery = `projectId=${encodeURIComponent(projectId)}`;
+    const houseQuery =
+      activeHouseId === null
+        ? ''
+        : `&houseId=${encodeURIComponent(activeHouseId)}`;
+    return `${href}${join}${projectQuery}${houseQuery}`;
+  }
+}
+
 function studioFrameSrc(
   surface: Exclude<WorkspaceStudioSurface, 'client'>,
+  projectId: string | null,
+  activeHouseId: string | null,
 ): string {
   const ctx = getSharedWorkspaceContext();
   if (surface === 'office') {
     const href =
       ctx?.officeReturnHref?.trim() || resolveCloudStudioHref('office');
-    return withWorkspaceShellEmbed(href);
+    return withWorkspaceShellEmbed(
+      withProjectIdQuery(href, projectId, null),
+    );
   }
-  return withWorkspaceShellEmbed(resolveCloudStudioHref(surface));
+  return withWorkspaceShellEmbed(
+    withProjectIdQuery(
+      resolveCloudStudioHref(surface),
+      projectId,
+      activeHouseId,
+    ),
+  );
 }
 
-/** PlatformShell studio id — Client Experience has no PlatformStudioId. */
+/** PlatformShell studio id — Client is a first-class switcher surface (PT-OS-02). */
 function platformStudioIdForSurface(
   surface: WorkspaceStudioSurface,
 ): PlatformStudioId {
-  if (surface === 'client') return 'office';
   return surface;
 }
 
@@ -65,7 +125,26 @@ function platformStudioIdForSurface(
  */
 export function WorkspaceHostApp() {
   const [surface, setSurface] = useState<WorkspaceStudioSurface>(readActiveSurface);
+  const [sharedProjectId, setSharedProjectId] = useState<string | null>(
+    boundSharedProjectId,
+  );
+  const [sharedActiveHouseId, setSharedActiveHouseId] = useState<string | null>(
+    () => {
+      const projectId = boundSharedProjectId();
+      const session = loadPlatformSession();
+      const houseId =
+        session?.activeHouseId ??
+        getSharedWorkspaceContext()?.activeHouseId ??
+        null;
+      return projectId !== null &&
+        houseId !== null &&
+        isHouseInProject(houseId, projectId)
+        ? houseId
+        : null;
+    },
+  );
   const clientMountedRef = useRef(false);
+  const clientObjectIdRef = useRef<string | null>(null);
   const ctx = getSharedWorkspaceContext();
   const session = loadPlatformSession();
 
@@ -73,8 +152,9 @@ export function WorkspaceHostApp() {
     () =>
       projectPartnerBrand({
         companyId: ctx?.companyId ?? null,
+        projectId: sharedProjectId,
       }),
-    [ctx?.companyId],
+    [ctx?.companyId, sharedProjectId],
   );
 
   const selectSurface = useCallback((next: WorkspaceStudioSurface) => {
@@ -87,34 +167,134 @@ export function WorkspaceHostApp() {
   }, []);
 
   useEffect(() => {
+    const scopeWriterOrigins = new Set(
+      WORKSPACE_SCOPE_WRITER_SURFACES.map(
+        (studio) => new URL(resolveCloudStudioHref(studio)).origin,
+      ),
+    );
+    const applyHouseChange = (houseId: string | null): void => {
+      const currentContext = getSharedWorkspaceContext();
+      if (currentContext === null) return;
+      const projectId = loadPlatformSession()?.projectId ?? currentContext.projectId;
+      if (
+        projectId === null ||
+        (houseId !== null && !isHouseInProject(houseId, projectId))
+      ) {
+        return;
+      }
+      const next = updateSession({
+        activeHouseId: houseId,
+        workspaceContext: {
+          ...currentContext,
+          activeHouseId: houseId,
+        },
+      });
+      if (next !== null) {
+        setSharedProjectId(next.projectId);
+        setSharedActiveHouseId(next.activeHouseId);
+      }
+    };
+    const onWorkspaceChange = (event: MessageEvent<unknown>) => {
+      if (!scopeWriterOrigins.has(event.origin)) return;
+      const currentContext = getSharedWorkspaceContext();
+      if (currentContext === null) return;
+
+      if (
+        isWorkspaceProjectChangeMessage(event.data) &&
+        isCanonicalProjectId(event.data.projectId)
+      ) {
+        const next = updateSession({
+          projectId: event.data.projectId,
+          workspaceContext: {
+            ...currentContext,
+            projectId: event.data.projectId,
+          },
+        });
+        if (next !== null) {
+          setSharedProjectId(next.projectId);
+          setSharedActiveHouseId(next.activeHouseId);
+        }
+        return;
+      }
+
+      if (!isWorkspaceHouseChangeMessage(event.data)) {
+        return;
+      }
+      applyHouseChange(event.data.houseId);
+    };
+    const onDirectClientHouseChange = (event: Event) => {
+      const detail = (event as CustomEvent<unknown>).detail;
+      if (!isWorkspaceHouseChangeMessage(detail)) return;
+      applyHouseChange(detail.houseId);
+    };
+
+    window.addEventListener('message', onWorkspaceChange);
+    window.addEventListener(
+      WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE,
+      onDirectClientHouseChange,
+    );
+    return () => {
+      window.removeEventListener('message', onWorkspaceChange);
+      window.removeEventListener(
+        WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE,
+        onDirectClientHouseChange,
+      );
+    };
+  }, []);
+
+  useEffect(() => {
     if (surface !== 'client') {
       if (clientMountedRef.current) {
         Embed.unmount(`#${CLIENT_MOUNT_ID}`);
         clientMountedRef.current = false;
+        clientObjectIdRef.current = null;
       }
       return;
     }
 
     const target = document.getElementById(CLIENT_MOUNT_ID);
     if (target === null) return;
-    if (clientMountedRef.current) return;
+
+    const view = resolveMountProjectView(
+      sharedActiveHouseId ?? sharedProjectId,
+    );
+    if (view === null) {
+      return;
+    }
+
+    const objectId = sharedActiveHouseId ?? view.project.id;
+
+    if (
+      clientMountedRef.current &&
+      clientObjectIdRef.current === objectId
+    ) {
+      return;
+    }
+
+    if (clientMountedRef.current) {
+      Embed.unmount(`#${CLIENT_MOUNT_ID}`);
+      clientMountedRef.current = false;
+      clientObjectIdRef.current = null;
+    }
 
     Embed.mount({
       mode: 'standalone',
       target: `#${CLIENT_MOUNT_ID}`,
-      objectId: 'house-modern-01',
+      objectId,
       hostId: 'conis-workspace-host',
       entryPoint: 'workspace-host',
     });
     clientMountedRef.current = true;
+    clientObjectIdRef.current = objectId;
 
     return () => {
       if (clientMountedRef.current) {
         Embed.unmount(`#${CLIENT_MOUNT_ID}`);
         clientMountedRef.current = false;
+        clientObjectIdRef.current = null;
       }
     };
-  }, [surface]);
+  }, [surface, sharedActiveHouseId, sharedProjectId]);
 
   const handleLogout = () => {
     clearOperatorPartnerEnvironment();
@@ -132,8 +312,8 @@ export function WorkspaceHostApp() {
 
   const projectLabel =
     brand.personalized && brand.companyName.trim().length > 0
-      ? (ctx.projectId || 'Projekt')
-      : ctx.projectId;
+      ? (sharedProjectId || ctx.projectId || 'Projekt')
+      : (sharedProjectId || ctx.projectId);
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: brand.personalized ? brand.companyName : ctx.companyId,
@@ -193,7 +373,11 @@ export function WorkspaceHostApp() {
               key={surface}
               className="workspace-shell__view workspace-shell__frame"
               title={WORKSPACE_STUDIO_LABELS[surface]}
-              src={studioFrameSrc(surface)}
+              src={studioFrameSrc(
+                surface,
+                sharedProjectId,
+                sharedActiveHouseId,
+              )}
               data-testid={`workspace-shell-frame-${surface}`}
             />
           )}

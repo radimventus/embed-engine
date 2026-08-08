@@ -11,6 +11,11 @@ import type {
 import type { SharedWorkspaceContext } from '../domain/workspaceContext';
 import { isSharedWorkspaceContext } from '../domain/workspaceContext';
 import {
+  getCanonicalHouse,
+  isCanonicalProjectId,
+} from '../projection/canonicalProjectProjection';
+import {
+  DEFAULT_CANONICAL_PROJECT_ID,
   DEFAULT_COMPANY_ID,
   DEFAULT_PROJECT_ID,
   DEFAULT_TENANT_ID,
@@ -41,6 +46,34 @@ export type AuthResult =
   | { readonly ok: true; readonly session: PlatformSession }
   | { readonly ok: false; readonly error: string };
 
+/** CAP-VR38a — strict House ownership check for the shared Project/House scope. */
+export function isHouseInProject(houseId: string, projectId: string): boolean {
+  const normalizedHouseId = houseId.trim();
+  const normalizedProjectId = projectId.trim();
+  const house = getCanonicalHouse(normalizedHouseId);
+  return (
+    (house !== null &&
+      normalizedProjectId.length > 0 &&
+      house.project.projectId === normalizedProjectId) ||
+    getSharedWorkspaceContext()?.authoredHouseIdentities?.some(
+      (draft) =>
+        draft.houseId === normalizedHouseId &&
+        draft.canonicalProjectId === normalizedProjectId,
+    ) === true
+  );
+}
+
+function resolveScopedActiveHouseId(
+  projectId: string | null,
+  activeHouseId: string | null | undefined,
+): string | null {
+  if (activeHouseId === null || activeHouseId === undefined) return null;
+  const houseId = activeHouseId.trim();
+  return projectId !== null && isHouseInProject(houseId, projectId)
+    ? houseId
+    : null;
+}
+
 function normalizeUser(user: PlatformUser): PlatformUser {
   return {
     id: user.id,
@@ -62,18 +95,30 @@ export function buildSession(input: {
   readonly companyId?: string;
   readonly workspaceId?: string;
   readonly projectId?: string | null;
+  readonly activeHouseId?: string | null;
 }): PlatformSession {
   const issuedAt = new Date().toISOString();
   const expiresAt = input.rememberMe
     ? new Date(Date.now() + 1000 * 60 * 60 * 24 * 30).toISOString()
     : new Date(Date.now() + 1000 * 60 * 60 * 12).toISOString();
+  const requestedProjectId =
+    input.projectId !== undefined ? input.projectId : DEFAULT_PROJECT_ID;
+  const projectId =
+    requestedProjectId === null
+      ? null
+      : isCanonicalProjectId(requestedProjectId)
+        ? requestedProjectId
+        : DEFAULT_CANONICAL_PROJECT_ID;
   return {
     user: normalizeUser(input.user),
     tenantId: input.tenantId ?? DEFAULT_TENANT_ID,
     companyId: input.companyId ?? DEFAULT_COMPANY_ID,
     workspaceId: input.workspaceId ?? DEFAULT_WORKSPACE_ID,
-    projectId:
-      input.projectId !== undefined ? input.projectId : DEFAULT_PROJECT_ID,
+    projectId,
+    activeHouseId: resolveScopedActiveHouseId(
+      projectId,
+      input.activeHouseId,
+    ),
     activeStudioId: input.activeStudioId ?? null,
     workspaceContext: null,
     rememberMe: input.rememberMe,
@@ -136,14 +181,25 @@ export function restoreSession(): PlatformSession | null {
   }
   const user = normalizeUser(registryUser ?? session.user);
   const workspaceContext = isSharedWorkspaceContext(session.workspaceContext)
-    ? session.workspaceContext
+    ? {
+        ...session.workspaceContext,
+        activeHouseId: resolveScopedActiveHouseId(
+          session.workspaceContext.projectId,
+          session.workspaceContext.activeHouseId,
+        ),
+      }
     : null;
+  const activeHouseId = resolveScopedActiveHouseId(
+    session.projectId,
+    session.activeHouseId ?? workspaceContext?.activeHouseId,
+  );
   // Migrate BX-14 sessions missing tenant / lastLogin / identity / workspace fields.
   if (
     typeof (session as { tenantId?: string }).tenantId !== 'string' ||
     typeof (session as { lastLoginAt?: string }).lastLoginAt !== 'string' ||
     session.user.status === undefined ||
     session.workspaceContext === undefined ||
+    session.activeHouseId === undefined ||
     registryUser !== null
   ) {
     const migrated: PlatformSession = {
@@ -152,6 +208,7 @@ export function restoreSession(): PlatformSession | null {
       tenantId: session.tenantId ?? DEFAULT_TENANT_ID,
       lastLoginAt: session.lastLoginAt ?? session.issuedAt,
       workspaceContext,
+      activeHouseId,
     };
     savePlatformSession(migrated);
     return migrated;
@@ -167,6 +224,7 @@ export function updateSession(
       | 'companyId'
       | 'workspaceId'
       | 'projectId'
+      | 'activeHouseId'
       | 'activeStudioId'
       | 'workspaceContext'
     >
@@ -177,13 +235,57 @@ export function updateSession(
   if (current.user.id) {
     touchUserActivity(current.user.id);
   }
+  const requestedProjectId =
+    patch.projectId !== undefined ? patch.projectId : current.projectId;
+  const currentProjectId =
+    current.projectId !== null && isCanonicalProjectId(current.projectId)
+      ? current.projectId
+      : null;
+  const projectId =
+    requestedProjectId === null
+      ? null
+      : isCanonicalProjectId(requestedProjectId)
+        ? requestedProjectId
+        : currentProjectId;
+  const requestedHouseId =
+    patch.activeHouseId !== undefined
+      ? patch.activeHouseId
+      : patch.workspaceContext?.activeHouseId !== undefined
+        ? patch.workspaceContext.activeHouseId
+        : current.activeHouseId;
+  const activeHouseId = resolveScopedActiveHouseId(
+    projectId,
+    requestedHouseId,
+  );
+  const requestedWorkspaceContext =
+    patch.workspaceContext !== undefined
+      ? patch.workspaceContext
+      : (current.workspaceContext ?? null);
+  const workspaceProjectId =
+    requestedWorkspaceContext === null
+      ? null
+      : patch.projectId !== undefined
+        ? projectId
+        : isCanonicalProjectId(requestedWorkspaceContext.projectId)
+          ? requestedWorkspaceContext.projectId
+          : projectId;
+  const workspaceContext =
+    requestedWorkspaceContext === null || workspaceProjectId === null
+      ? null
+      : {
+          ...requestedWorkspaceContext,
+          projectId: workspaceProjectId,
+          activeHouseId: resolveScopedActiveHouseId(
+            workspaceProjectId,
+            activeHouseId,
+          ),
+        };
   const next: PlatformSession = {
     ...current,
     ...patch,
-    workspaceContext:
-      patch.workspaceContext !== undefined
-        ? patch.workspaceContext
-        : (current.workspaceContext ?? null),
+    projectId,
+    activeHouseId,
+    workspaceContext,
   };
   savePlatformSession(next);
   return next;

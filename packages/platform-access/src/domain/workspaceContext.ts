@@ -26,6 +26,8 @@ export type SharedWorkspaceContext = {
   readonly companyId: string;
   readonly workspaceId: string;
   readonly projectId: string;
+  /** CAP-VR38a — null means Project scope; absent values are migrated to null. */
+  readonly activeHouseId?: string | null;
   /** CAP-VR39a — identity-only draft projection for authenticated Workspace Studios. */
   readonly authoredHouseIdentities?: readonly WorkspaceAuthoredHouseIdentity[];
   /** Display name when Office Open PE binds branding (optional). */

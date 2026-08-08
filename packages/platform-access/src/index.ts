@@ -28,6 +28,16 @@ export {
   resolveWorkspaceHouseBinding,
   upsertWorkspaceAuthoredHouse,
 } from './domain/workspaceHouseProjection';
+export {
+  WORKSPACE_PROJECT_CHANGE_MESSAGE_TYPE,
+  WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE,
+  createWorkspaceProjectChangeMessage,
+  createWorkspaceHouseChangeMessage,
+  isWorkspaceProjectChangeMessage,
+  isWorkspaceHouseChangeMessage,
+  type WorkspaceProjectChangeMessage,
+  type WorkspaceHouseChangeMessage,
+} from './domain/workspaceProjectSync';
 
 export type {
   PlatformTenant,
@@ -115,6 +125,7 @@ export {
   peekPasswordResetToken,
   getSharedWorkspaceContext,
   isOperatorWorkspaceMode,
+  isHouseInProject,
   type AuthResult,
 } from './session/authService';
 
