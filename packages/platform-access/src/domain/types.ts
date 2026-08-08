@@ -47,6 +47,27 @@ export type PlatformWorkspace = {
 
 export type PlatformProjectStatus = 'draft' | 'ready' | 'published';
 
+/** CAP-VR35a — operational/customer-data state belongs to the House. */
+export type HouseDataMode = 'REFERENCE_DEMO' | 'LIVE_EMPTY' | 'LIVE';
+
+/**
+ * CAP-PLAT-04c — true commercial / delivery Project (Registry entity).
+ * No House Package fields — Houses reference this via {@link PlatformProject.canonicalProjectId}.
+ */
+export type PlatformCanonicalProject = {
+  readonly id: string;
+  readonly companyId: string;
+  readonly workspaceId: string;
+  readonly name: string;
+  readonly slug: string;
+  readonly description: string;
+};
+
+/**
+ * Legacy Registry row that still carries House Package pointer (compat).
+ * CAP-PLAT-04 — House Package belongs on {@link PlatformHouse}; this row remains
+ * until CAP-PLAT-04d stores Houses separately. Links to Project via canonicalProjectId.
+ */
 export type PlatformProject = {
   readonly id: string;
   readonly workspaceId: string;
@@ -58,6 +79,31 @@ export type PlatformProject = {
   readonly slug: string;
   readonly objectType: string;
   readonly description: string;
+  /**
+   * CAP-VR35a — explicit House operational data state.
+   * Missing legacy rows project as LIVE_EMPTY.
+   */
+  readonly dataMode?: HouseDataMode;
+  /**
+   * CAP-PLAT-04c — parent Canonical Project id.
+   * Required for seeds; extras may omit (compat adapter assigns default).
+   */
+  readonly canonicalProjectId?: string;
+};
+
+/**
+ * CAP-PLAT-04a — House identity (product object under a Project).
+ * Registry persistence of Houses is CAP-PLAT-04d; this is the canonical shape.
+ *
+ * Hierarchy: Company 1 ─── * Project 1 ─── * House
+ */
+export type PlatformHouse = {
+  readonly id: string;
+  readonly projectId: string;
+  readonly name: string;
+  readonly slug: string;
+  readonly packageRoot: string;
+  readonly objectType: string;
 };
 
 export type PlatformSession = {
