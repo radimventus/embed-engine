@@ -201,7 +201,10 @@ describe('CAP-REF-07a DSE Canonical Reference binding', () => {
     assert.equal(house?.project.projectId, 'project-domy-s-energii');
     assert.equal(byHouse.runtimeHouseId, 'modern-4kk');
     assert.equal(byHouse.runtimeProjectId, 'project-domy-s-energii');
-    assert.equal(byProject.runtimeHouseId, 'modern-4kk');
+    assert.equal(
+      byProject.runtimeHouseId,
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+    );
     assert.equal(byProject.runtimeProjectId, 'project-domy-s-energii');
   });
 });

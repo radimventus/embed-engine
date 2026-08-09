@@ -6,6 +6,10 @@ import type {
   PlatformWorkspace,
 } from '../domain/types';
 import type { PlatformTenant } from '../domain/pilotTypes';
+import {
+  BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+  deriveReferenceInstanceHouseId,
+} from '../reference/referenceSourceRegistry';
 
 export const DEFAULT_TENANT_ID = 'tenant-ac-modular' as const;
 export const DEFAULT_COMPANY_ID = 'ac-modular' as const;
@@ -19,6 +23,13 @@ export const DSE_COMPANY_ID = 'company-domy-s-energii' as const;
 export const DSE_WORKSPACE_ID = 'domy-s-energii-main' as const;
 export const DSE_CANONICAL_PROJECT_ID = 'project-domy-s-energii' as const;
 export const DSE_REFERENCE_HOUSE_ID = 'modern-4kk' as const;
+export const DSE_BUNGALOV_4KK_HOUSE_ID = deriveReferenceInstanceHouseId({
+  sourceId: BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+  companyId: DSE_COMPANY_ID,
+  projectId: DSE_CANONICAL_PROJECT_ID,
+});
+export const DSE_BUNGALOV_4KK_PACKAGE_ROOT =
+  'apps/client-studio/public/house-packages/bungalov-4kk' as const;
 
 /** Canonical House Package seed for automatic pilot project provisioning. */
 export const PILOT_HOUSE_PACKAGE_ROOT =
@@ -94,6 +105,20 @@ export const DEFAULT_CANONICAL_PROJECTS: readonly PlatformCanonicalProject[] = [
  * CAP-PLAT-04c — each seed links to {@link DEFAULT_CANONICAL_PROJECT_ID}.
  */
 export const DEFAULT_PROJECTS: readonly PlatformProject[] = [
+  {
+    id: DSE_BUNGALOV_4KK_HOUSE_ID,
+    workspaceId: DSE_WORKSPACE_ID,
+    companyId: DSE_COMPANY_ID,
+    name: 'BUNGALOV 4KK',
+    packageRoot: DSE_BUNGALOV_4KK_PACKAGE_ROOT,
+    status: 'published',
+    slug: 'bungalov-4kk',
+    objectType: 'reference-house',
+    description:
+      'DSE materialization of reference source bungalov-4kk-reference-v1.',
+    dataMode: 'REFERENCE_DEMO',
+    canonicalProjectId: DSE_CANONICAL_PROJECT_ID,
+  },
   {
     id: DSE_REFERENCE_HOUSE_ID,
     workspaceId: DSE_WORKSPACE_ID,

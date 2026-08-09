@@ -135,7 +135,10 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
       dseHouses.flatMap((projection) =>
         projection.house === null ? [] : [projection.house.houseId],
       ),
-      ['modern-4kk'],
+      [
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+        'modern-4kk',
+      ],
     );
     assert.deepEqual(
       acModularHouses.map((projection) => projection.house?.houseId),
@@ -150,6 +153,31 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
       resolveCanonicalRuntimeBindingFromSession('modern-4kk').runtimeHouseId,
       null,
     );
+  });
+
+  it('binds the DSE BUNGALOV materialization to its own published package', () => {
+    const binding = resolveClientRuntimeBindingFromCandidates({
+      urlProjectId: null,
+      urlHouseId: null,
+      workspaceContextProjectId: null,
+      workspaceContextHouseId: null,
+      sessionProjectId: 'project-domy-s-energii',
+      sessionHouseId:
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      embedObjectId: null,
+    });
+
+    assert.equal(
+      binding.runtimeHouseId,
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+    );
+    assert.equal(binding.runtimeProjectId, 'project-domy-s-energii');
+    assert.equal(binding.project?.house?.name, 'BUNGALOV 4KK');
+    assert.equal(
+      binding.packagePublicRoot,
+      '/house-packages/bungalov-4kk',
+    );
+    assert.notEqual(binding.runtimeHouseId, 'villa-168');
   });
 
   it('CAP-VR33c — shared Project rejects a cross-Project House URL', () => {
@@ -205,7 +233,11 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
     );
 
     assert.equal(binding.runtimeHouseId, 'patrovy-5kk');
-    assert.deepEqual(dseHouseIds, ['modern-4kk', 'patrovy-5kk']);
+    assert.deepEqual(dseHouseIds, [
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      'modern-4kk',
+      'patrovy-5kk',
+    ]);
     assert.match(sidebar, /updateWorkspaceScope\(\{ activeHouseId: houseId \}\)/);
     assert.match(sidebar, /createWorkspaceHouseChangeMessage\(houseId\)/);
     assert.match(sidebar, /window\.dispatchEvent/);

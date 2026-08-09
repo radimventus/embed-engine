@@ -11,10 +11,10 @@ export type ReferenceHouseSource = {
   readonly version: string;
   readonly lifecycle: ReferenceSourceLifecycle;
   /**
-   * Content bindings are intentionally absent until VR46B/VR46C materialize
-   * a truthful package and runtime context.
+   * Immutable reference content. Partner House instances receive their own
+   * identity while materializing this package under their package root.
    */
-  readonly packageRoot: null;
+  readonly packageRoot: string | null;
   readonly runtimeContextBinding: null;
 };
 
@@ -22,8 +22,8 @@ export const BUNGALOV_4KK_REFERENCE_SOURCE: ReferenceHouseSource = {
   sourceId: BUNGALOV_4KK_REFERENCE_SOURCE_ID,
   displayName: 'BUNGALOV 4KK',
   version: 'v1',
-  lifecycle: 'CONTENT_PENDING',
-  packageRoot: null,
+  lifecycle: 'READY',
+  packageRoot: 'apps/client-studio/public/house-packages/bungalov-4kk',
   runtimeContextBinding: null,
 };
 
