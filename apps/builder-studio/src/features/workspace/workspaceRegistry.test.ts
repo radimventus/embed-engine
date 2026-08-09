@@ -414,16 +414,23 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     const created = createWorkspaceObjectFromInput(dse.state, {
       name: 'Dům pro klienta',
       internalId: 'dse-client-house',
-    });
+    }, 'apps/client-studio/public/house-packages/dse-client-house');
 
     assert.ok(created);
     assert.equal(created.project.id, 'dse-client-house');
     assert.equal(created.project.folderId, 'project-domy-s-energii');
-    assert.equal(created.project.packageRoot, '');
+    assert.equal(
+      created.project.packageRoot,
+      'apps/client-studio/public/house-packages/dse-client-house',
+    );
     assert.equal(created.project.objectType, 'house');
 
     const canonical = getCanonicalHouse(created.project.id);
     assert.equal(canonical?.project.projectId, 'project-domy-s-energii');
+    assert.equal(
+      canonical?.house?.packageRoot,
+      'apps/client-studio/public/house-packages/dse-client-house',
+    );
     assert.equal(canonical?.house?.dataMode, 'LIVE_EMPTY');
     assert.deepEqual(
       housesForFolder(created.state, 'project-domy-s-energii').map(
@@ -499,7 +506,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     assert.match(registration, /canonicalProjectId,/);
     assert.match(
       controllerSource,
-      /createWorkspaceObjectFromInput\(registryRef\.current, input\)[\s\S]*catch \(error\)/,
+      /initializeHousePackageForBuilder\([\s\S]*createWorkspaceObjectFromInput\([\s\S]*packageRoot[\s\S]*catch \(error\)/,
     );
   });
 

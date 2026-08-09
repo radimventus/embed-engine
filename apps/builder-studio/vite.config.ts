@@ -215,6 +215,43 @@ function serveHousePackagePlugin() {
           }
         }
 
+        if (
+          pathOnly === '/__builder/house-package/initialize' &&
+          req.method === 'POST'
+        ) {
+          try {
+            const raw = await readRequestBody(req);
+            const body = JSON.parse(raw || '{}');
+            const houseId =
+              body && typeof body.houseId === 'string'
+                ? body.houseId.trim()
+                : '';
+            const { initializeBuilderHousePackage } = await import(
+              '../../packages/object-house/src/builder-package/initializeBuilderHousePackage.ts'
+            );
+            const result = await initializeBuilderHousePackage({
+              repoRoot,
+              houseId,
+            });
+            res.statusCode = result.ok ? 200 : 400;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(JSON.stringify(result));
+          } catch (error) {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(
+              JSON.stringify({
+                ok: false,
+                error:
+                  error instanceof Error
+                    ? error.message
+                    : 'House Package initialization failed.',
+              }),
+            );
+          }
+          return;
+        }
+
         const housePackageDiskRoot = activeHousePackage.diskRoot;
 
         if (

@@ -896,21 +896,15 @@ export type CreateWorkspaceObjectInput = {
   readonly internalId?: string;
 };
 
-/**
- * ⊕ Nový objekt — House into Canonical Registry under active UI folder.
- */
-export function createWorkspaceObjectFromInput(
+export type WorkspaceObjectIdentity = {
+  readonly houseId: string;
+  readonly houseSlug: string;
+};
+
+export function resolveWorkspaceObjectIdentity(
   state: WorkspaceRegistryState,
   input: CreateWorkspaceObjectInput,
-): {
-  readonly state: WorkspaceRegistryState;
-  readonly project: WorkspaceProject;
-} | null {
-  const folder = getActiveWorkspaceFolder(state);
-  if (folder === null) {
-    return null;
-  }
-
+): WorkspaceObjectIdentity | null {
   const name = input.name.trim();
   if (name.length === 0) {
     return null;
@@ -929,16 +923,40 @@ export function createWorkspaceObjectFromInput(
     suffix += 1;
   }
 
+  return { houseId, houseSlug };
+}
+
+/**
+ * ⊕ Nový objekt — House into Canonical Registry under active UI folder.
+ */
+export function createWorkspaceObjectFromInput(
+  state: WorkspaceRegistryState,
+  input: CreateWorkspaceObjectInput,
+  packageRoot = '',
+): {
+  readonly state: WorkspaceRegistryState;
+  readonly project: WorkspaceProject;
+} | null {
+  const folder = getActiveWorkspaceFolder(state);
+  if (folder === null) {
+    return null;
+  }
+
+  const identity = resolveWorkspaceObjectIdentity(state, input);
+  if (identity === null) {
+    return null;
+  }
+  const name = input.name.trim();
+
   const project = normalizeWorkspaceProject({
-    id: houseId,
+    id: identity.houseId,
     name,
-    // A newly authored House has no package/content until it is configured.
-    packageRoot: '',
+    packageRoot,
     companyId: folder.companyId,
     folderId: folder.id,
     description: '',
     status: 'draft',
-    slug: houseSlug,
+    slug: identity.houseSlug,
     objectType: 'house',
     metadata: BUILDER_AUTHORED_HOUSE_MARKER,
   });

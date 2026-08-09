@@ -8,6 +8,7 @@ import {
   createSsotResolveAliases,
   repoRoot as ssotRepoRoot,
 } from '../../packages/embed/vite.ssot-aliases.js';
+import { conisViteDevLogging } from '../../packages/embed/vite.dev-logging.js';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = ssotRepoRoot;
@@ -211,6 +212,43 @@ function serveHousePackagePlugin() {
             }
             return;
           }
+        }
+
+        if (
+          pathOnly === '/__builder/house-package/initialize' &&
+          req.method === 'POST'
+        ) {
+          try {
+            const raw = await readRequestBody(req);
+            const body = JSON.parse(raw || '{}');
+            const houseId =
+              body && typeof body.houseId === 'string'
+                ? body.houseId.trim()
+                : '';
+            const { initializeBuilderHousePackage } = await import(
+              '../../packages/object-house/src/builder-package/initializeBuilderHousePackage.ts'
+            );
+            const result = await initializeBuilderHousePackage({
+              repoRoot,
+              houseId,
+            });
+            res.statusCode = result.ok ? 200 : 400;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(JSON.stringify(result));
+          } catch (error) {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json; charset=utf-8');
+            res.end(
+              JSON.stringify({
+                ok: false,
+                error:
+                  error instanceof Error
+                    ? error.message
+                    : 'House Package initialization failed.',
+              }),
+            );
+          }
+          return;
         }
 
         const housePackageDiskRoot = activeHousePackage.diskRoot;
@@ -459,6 +497,7 @@ function serveHousePackagePlugin() {
  * Vite prefers vite.config.js over vite.config.ts when both exist.
  */
 export default defineConfig({
+  ...conisViteDevLogging(),
   base: process.env.VITE_BASE ?? '/',
   envDir: repoRoot,
   plugins: [react(), serveHousePackagePlugin()],

@@ -19,6 +19,7 @@ import {
   getActiveWorkspaceProject,
   openWorkspaceFolder,
   openWorkspaceProject,
+  resolveWorkspaceObjectIdentity,
   updateWorkspaceProject,
   type CreateWorkspaceObjectInput,
   type CreateWorkspaceProjectInput,
@@ -31,6 +32,36 @@ import {
   loadWorkspaceRegistryFromStorage,
   saveWorkspaceRegistryToStorage,
 } from './workspaceStorage';
+
+const HOUSE_PACKAGE_INITIALIZE_API = '/__builder/house-package/initialize';
+
+async function initializeHousePackageForBuilder(
+  houseId: string,
+): Promise<string> {
+  const response = await fetch(HOUSE_PACKAGE_INITIALIZE_API, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ houseId }),
+  });
+  const payload: unknown = await response.json().catch(() => null);
+  if (
+    payload !== null &&
+    typeof payload === 'object' &&
+    (payload as { ok?: unknown }).ok === true &&
+    (payload as { houseId?: unknown }).houseId === houseId &&
+    typeof (payload as { packageRoot?: unknown }).packageRoot === 'string' &&
+    (payload as { packageRoot: string }).packageRoot.trim().length > 0
+  ) {
+    return (payload as { packageRoot: string }).packageRoot;
+  }
+  const error =
+    payload !== null &&
+    typeof payload === 'object' &&
+    typeof (payload as { error?: unknown }).error === 'string'
+      ? (payload as { error: string }).error
+      : `House Package initialization failed (HTTP ${response.status}).`;
+  throw new Error(error);
+}
 
 export type DirtySwitchPrompt =
   | { readonly kind: 'switch'; readonly target: WorkspaceProject }
@@ -465,9 +496,25 @@ export function useWorkspaceController(): WorkspaceController {
         return null;
       }
 
+      const identity = resolveWorkspaceObjectIdentity(
+        registryRef.current,
+        input,
+      );
+      if (identity === null) {
+        setSwitchError('Objekt se nepodařilo založit.');
+        return null;
+      }
+
       let created: ReturnType<typeof createWorkspaceObjectFromInput>;
       try {
-        created = createWorkspaceObjectFromInput(registryRef.current, input);
+        const packageRoot = await initializeHousePackageForBuilder(
+          identity.houseId,
+        );
+        created = createWorkspaceObjectFromInput(
+          registryRef.current,
+          input,
+          packageRoot,
+        );
       } catch (error) {
         setSwitchError(
           error instanceof Error
