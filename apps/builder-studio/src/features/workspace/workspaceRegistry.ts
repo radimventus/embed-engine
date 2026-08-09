@@ -72,6 +72,8 @@ export type WorkspaceRegistryState = {
   readonly houseLabels: Readonly<Record<string, string>>;
   /** Presentation-only freeform metadata tags (Builder UI). */
   readonly houseMetadata: Readonly<Record<string, string>>;
+  /** House-owned HP-002 roots; persisted so authored Houses survive re-entry. */
+  readonly housePackageRoots: Readonly<Record<string, string>>;
 };
 
 export const DEFAULT_COMPANY_ID = PLATFORM_DEFAULT_COMPANY_ID;
@@ -207,6 +209,7 @@ function resolveAuthoringHouses(input: {
   readonly houseFolderIds: Readonly<Record<string, string>>;
   readonly houseLabels: Readonly<Record<string, string>>;
   readonly houseMetadata: Readonly<Record<string, string>>;
+  readonly housePackageRoots: Readonly<Record<string, string>>;
 }): CanonicalProjectProjection[] {
   const byId = new Map<string, CanonicalProjectProjection>();
   for (const projection of listCanonicalHouses()) {
@@ -218,6 +221,7 @@ function resolveAuthoringHouses(input: {
     ...Object.keys(input.houseFolderIds),
     ...Object.keys(input.houseLabels),
     ...Object.keys(input.houseMetadata),
+    ...Object.keys(input.housePackageRoots),
   ]);
   for (const houseId of authoredIds) {
     if (byId.has(houseId)) continue;
@@ -270,6 +274,7 @@ export function composeWorkspaceRegistry(input: {
   readonly houseFolderIds?: Readonly<Record<string, string>>;
   readonly houseLabels?: Readonly<Record<string, string>>;
   readonly houseMetadata?: Readonly<Record<string, string>>;
+  readonly housePackageRoots?: Readonly<Record<string, string>>;
   readonly activeFolderId?: string | null;
   readonly activeProjectId?: string | null;
   readonly recentProjectIds?: readonly string[];
@@ -282,10 +287,12 @@ export function composeWorkspaceRegistry(input: {
   }
   const houseLabels = { ...(input.houseLabels ?? {}) };
   const houseMetadata = { ...(input.houseMetadata ?? {}) };
+  const housePackageRoots = { ...(input.housePackageRoots ?? {}) };
   const canonicalHouses = resolveAuthoringHouses({
     houseFolderIds,
     houseLabels,
     houseMetadata,
+    housePackageRoots,
   });
 
   const folders: WorkspaceProjectFolder[] = [];
@@ -399,6 +406,10 @@ export function composeWorkspaceRegistry(input: {
     return [
       {
         ...base,
+        packageRoot:
+          housePackageRoots[id]?.trim().length > 0
+            ? housePackageRoots[id]
+            : base.packageRoot,
         name:
           label !== undefined && label.length > 0 ? label : base.name,
         metadata:
@@ -425,7 +436,7 @@ export function composeWorkspaceRegistry(input: {
     projects.push({
       id: houseId,
       name: houseLabels[houseId] ?? houseId,
-      packageRoot: '',
+      packageRoot: housePackageRoots[houseId] ?? '',
       companyId: folder.companyId,
       folderId,
       description: '',
@@ -505,6 +516,7 @@ export function composeWorkspaceRegistry(input: {
     houseFolderIds,
     houseLabels,
     houseMetadata,
+    housePackageRoots,
   };
 }
 
@@ -634,6 +646,7 @@ function recompose(
     houseFolderIds: Readonly<Record<string, string>>;
     houseLabels: Readonly<Record<string, string>>;
     houseMetadata: Readonly<Record<string, string>>;
+    housePackageRoots: Readonly<Record<string, string>>;
     activeFolderId: string | null;
     activeProjectId: string | null;
     recentProjectIds: readonly string[];
@@ -645,6 +658,7 @@ function recompose(
     houseFolderIds: patch.houseFolderIds ?? state.houseFolderIds,
     houseLabels: patch.houseLabels ?? state.houseLabels,
     houseMetadata: patch.houseMetadata ?? state.houseMetadata,
+    housePackageRoots: patch.housePackageRoots ?? state.housePackageRoots,
     activeFolderId:
       patch.activeFolderId !== undefined
         ? patch.activeFolderId
@@ -776,6 +790,10 @@ export function registerWorkspaceProject(
     houseMetadata: {
       ...state.houseMetadata,
       [normalized.id]: normalized.metadata,
+    },
+    housePackageRoots: {
+      ...state.housePackageRoots,
+      [normalized.id]: normalized.packageRoot,
     },
   });
 }
@@ -966,6 +984,7 @@ export function createWorkspaceObjectFromInput(
     houseId: project.id,
     name: project.name,
     canonicalProjectId: folder.id,
+    packageRoot: project.packageRoot,
     dataMode: 'LIVE_EMPTY',
     status: 'draft',
   });
@@ -994,6 +1013,7 @@ export type WorkspacePersistedSlice = {
   readonly houseFolderIds?: Readonly<Record<string, string>>;
   readonly houseLabels?: Readonly<Record<string, string>>;
   readonly houseMetadata?: Readonly<Record<string, string>>;
+  readonly housePackageRoots?: Readonly<Record<string, string>>;
   /** @deprecated CAP-PLAT-02a — migrated into Canonical Registry on load. */
   readonly extraProjects?: readonly WorkspaceProject[];
   /** @deprecated CAP-PLAT-02a */
@@ -1015,6 +1035,7 @@ export function toPersistedWorkspaceSlice(
     houseFolderIds: state.houseFolderIds,
     houseLabels: state.houseLabels,
     houseMetadata: state.houseMetadata,
+    housePackageRoots: state.housePackageRoots,
   };
 }
 
@@ -1025,6 +1046,7 @@ function migrateLegacyDomainExtras(
   houseFolderIds: Record<string, string>;
   houseLabels: Record<string, string>;
   houseMetadata: Record<string, string>;
+  housePackageRoots: Record<string, string>;
 } {
   const RETIRED_REGIONAL_SEED_IDS = new Set([
     'opava-harmony',
@@ -1049,6 +1071,9 @@ function migrateLegacyDomainExtras(
   };
   const houseMetadata: Record<string, string> = {
     ...(persisted.houseMetadata ?? {}),
+  };
+  const housePackageRoots: Record<string, string> = {
+    ...(persisted.housePackageRoots ?? {}),
   };
 
   for (const folder of persisted.folders ?? []) {
@@ -1175,7 +1200,13 @@ function migrateLegacyDomainExtras(
     }
   }
 
-  return { folders, houseFolderIds, houseLabels, houseMetadata };
+  return {
+    folders,
+    houseFolderIds,
+    houseLabels,
+    houseMetadata,
+    housePackageRoots,
+  };
 }
 
 export function mergePersistedWorkspaceSlice(
@@ -1186,11 +1217,48 @@ export function mergePersistedWorkspaceSlice(
   }
 
   const migrated = migrateLegacyDomainExtras(persisted);
+  for (const [houseId, packageRoot] of Object.entries(
+    migrated.housePackageRoots,
+  )) {
+    const canonicalProjectId = migrated.houseFolderIds[houseId];
+    const folder = migrated.folders.find(
+      (item) => item.id === canonicalProjectId,
+    );
+    if (
+      packageRoot.trim().length === 0 ||
+      folder === undefined ||
+      !isBuilderAuthoredHouse(migrated.houseMetadata[houseId])
+    ) {
+      continue;
+    }
+    const name = migrated.houseLabels[houseId] ?? houseId;
+    upsertBuilderProject({
+      id: houseId,
+      companyId: folder.companyId,
+      workspaceId: workspaceIdFromCanonical(folder.companyId),
+      name,
+      packageRoot,
+      status: 'draft',
+      slug: houseId,
+      objectType: 'house',
+      description: '',
+      canonicalProjectId,
+    });
+    upsertWorkspaceAuthoredHouse({
+      houseId,
+      name,
+      canonicalProjectId,
+      packageRoot,
+      dataMode: 'LIVE_EMPTY',
+      status: 'draft',
+    });
+  }
   return composeWorkspaceRegistry({
     folders: migrated.folders,
     houseFolderIds: migrated.houseFolderIds,
     houseLabels: migrated.houseLabels,
     houseMetadata: migrated.houseMetadata,
+    housePackageRoots: migrated.housePackageRoots,
     activeFolderId: persisted.activeFolderId,
     activeProjectId: persisted.activeProjectId,
     recentProjectIds: persisted.recentProjectIds,

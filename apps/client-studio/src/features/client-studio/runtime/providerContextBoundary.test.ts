@@ -4,6 +4,11 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 
+import {
+  isRuntimeReadyForBinding,
+  runtimeBindingKey,
+} from './DecisionSessionRuntimeProvider';
+
 const here = dirname(fileURLToPath(import.meta.url));
 const clientStudioRoot = join(here, '../../../..');
 
@@ -18,6 +23,20 @@ function stripComments(source: string): string {
 }
 
 describe('Context-only Provider boundary (ED-DA-04)', () => {
+  it('does not expose a previous House runtime during a new package bootstrap', () => {
+    const previous = runtimeBindingKey(
+      'bungalov-4kk',
+      '/house-packages/bungalov-4kk',
+    );
+    const requested = runtimeBindingKey(
+      'draft-house',
+      '/house-packages/draft-house',
+    );
+
+    assert.equal(isRuntimeReadyForBinding(previous, requested), false);
+    assert.equal(isRuntimeReadyForBinding(requested, requested), true);
+  });
+
   it('DecisionSessionRuntimeProvider does not expose runtime or interpretation', () => {
     const source = stripComments(
       readSource(
@@ -33,6 +52,12 @@ describe('Context-only Provider boundary (ED-DA-04)', () => {
     assert.match(source, /experience:/);
     assert.match(source, /dispatch:/);
     assert.match(source, /ready:/);
+    assert.match(source, /clientContentUnavailable/);
+    assert.match(source, /client-runtime-unavailable/);
+    assert.doesNotMatch(
+      source,
+      /Builder House Package bootstrap failed: \{bootstrapError\}/,
+    );
   });
 
   it('ClientStudioPage does not mount cognitive Providers', () => {

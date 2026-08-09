@@ -7,6 +7,7 @@ import {
   isHouseInProject,
   isCanonicalProjectId,
   resolveWorkspaceHostHref,
+  upsertWorkspaceAuthoredHouse,
   updateSession,
 } from '@embed-engine/platform-access';
 
@@ -19,6 +20,7 @@ import {
   getActiveWorkspaceProject,
   openWorkspaceFolder,
   openWorkspaceProject,
+  registerWorkspaceProject,
   resolveWorkspaceObjectIdentity,
   updateWorkspaceProject,
   type CreateWorkspaceObjectInput,
@@ -176,12 +178,49 @@ export function resolveBuilderActiveHouseId(
     : null;
 }
 
+export function isBuilderAuthoredHouseForScope(
+  projectId: string,
+  house: WorkspaceProject | null,
+): house is WorkspaceProject {
+  return (
+    house !== null &&
+    house.status === 'draft' &&
+    house.folderId === projectId &&
+    isCanonicalProjectId(projectId)
+  );
+}
+
+export function shouldRecoverLegacyLiveEmptyHouse(
+  projectId: string,
+  house: WorkspaceProject,
+): boolean {
+  return (
+    isBuilderAuthoredHouseForScope(projectId, house) &&
+    house.packageRoot.trim().length === 0
+  );
+}
+
 function publishBuilderHouseScope(
   projectId: string,
   house: WorkspaceProject | null,
 ): void {
   const activeHouseId = resolveBuilderActiveHouseId(projectId, house);
-  updateSession({ projectId, activeHouseId });
+  const isAuthoredHouse = isBuilderAuthoredHouseForScope(projectId, house);
+  updateSession({
+    projectId,
+    activeHouseId: isAuthoredHouse ? null : activeHouseId,
+  });
+  if (isAuthoredHouse) {
+    upsertWorkspaceAuthoredHouse({
+      houseId: house.id,
+      name: house.name,
+      canonicalProjectId: projectId,
+      packageRoot: house.packageRoot,
+      dataMode: 'LIVE_EMPTY',
+      status: 'draft',
+    });
+    updateSession({ projectId, activeHouseId });
+  }
   publishWorkspaceHouseChange(activeHouseId);
 }
 
@@ -230,8 +269,41 @@ export function useWorkspaceController(): WorkspaceController {
 
     try {
       while (pendingTargetRef.current !== null) {
-        const target = pendingTargetRef.current;
+        let target = pendingTargetRef.current;
         pendingTargetRef.current = null;
+
+        if (shouldRecoverLegacyLiveEmptyHouse(target.folderId, target)) {
+          try {
+            const packageRoot = await initializeHousePackageForBuilder(target.id);
+            if (pendingTargetRef.current !== null) {
+              continue;
+            }
+            const recoveredState = registerWorkspaceProject(
+              registryRef.current,
+              { ...target, packageRoot },
+            );
+            const recoveredTarget = recoveredState.projects.find(
+              (project) => project.id === target.id,
+            );
+            if (recoveredTarget === undefined) {
+              setSwitchError('Dům se po obnově House Package nepodařilo načíst.');
+              lastOk = false;
+              break;
+            }
+            registryRef.current = recoveredState;
+            setRegistry(recoveredState);
+            saveWorkspaceRegistryToStorage(recoveredState);
+            target = recoveredTarget;
+          } catch (error) {
+            setSwitchError(
+              error instanceof Error
+                ? error.message
+                : 'Obnovu House Package se nepodařilo dokončit.',
+            );
+            lastOk = false;
+            break;
+          }
+        }
 
         const alreadyHost =
           hostActiveRef.current !== null &&

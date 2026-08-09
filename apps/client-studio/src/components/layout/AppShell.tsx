@@ -26,7 +26,7 @@ export function AppShell({
 }: AppShellProps) {
   return (
     <div className="flex min-h-screen min-w-0" data-studio-shell="app">
-      <div className="sticky top-0 hidden h-screen shrink-0 self-start overflow-y-auto desktop:block">
+      <div className="sticky top-0 z-[60] h-screen shrink-0 self-start overflow-visible">
         {sidebar ?? <Sidebar items={sidebarItems} />}
       </div>
       <div className="flex min-w-0 flex-1 flex-col">

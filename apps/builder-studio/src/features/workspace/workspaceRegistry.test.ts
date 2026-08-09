@@ -6,11 +6,15 @@ import assert from 'node:assert/strict';
 import { beforeEach, describe, it } from 'node:test';
 
 import {
+  clearPlatformSession,
   getCanonicalProject,
   getCanonicalHouse,
   isCanonicalProjectId,
+  login,
   resetCompanyRegistryExtras,
   resetSharedProjectManifestsForTests,
+  resolveWorkspaceHouseBinding,
+  updateSession,
 } from '@embed-engine/platform-access';
 
 import {
@@ -444,6 +448,53 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
       ),
       false,
     );
+  });
+
+  it('persists an authored House package root through Builder re-entry', () => {
+    clearPlatformSession();
+    const authenticated = login({
+      email: 'radim@conis.local',
+      password: 'demo',
+      rememberMe: false,
+    });
+    assert.equal(authenticated.ok, true);
+    if (!authenticated.ok) return;
+    updateSession({ projectId: 'project-domy-s-energii' });
+
+    const base = createInitialWorkspaceRegistry();
+    const dse = openWorkspaceFolder(base, 'project-domy-s-energii');
+    const created = createWorkspaceObjectFromInput(
+      dse.state,
+      { name: 'Draft house', internalId: 'draft-house' },
+      'apps/client-studio/public/house-packages/draft-house',
+    );
+    assert.ok(created);
+    const persisted = toPersistedWorkspaceSlice(created.state);
+
+    resetCompanyRegistryExtras();
+    const restored = mergePersistedWorkspaceSlice(persisted);
+    const restoredHouse = restored.projects.find(
+      (project) => project.id === 'draft-house',
+    );
+    const canonical = getCanonicalHouse('draft-house');
+    const clientBinding = resolveWorkspaceHouseBinding({
+      projectId: 'project-domy-s-energii',
+      houseId: 'draft-house',
+    });
+
+    assert.equal(
+      restoredHouse?.packageRoot,
+      'apps/client-studio/public/house-packages/draft-house',
+    );
+    assert.equal(
+      canonical?.house?.packageRoot,
+      'apps/client-studio/public/house-packages/draft-house',
+    );
+    assert.equal(
+      clientBinding?.authoringDraftPackage?.packagePublicRoot,
+      '/house-packages/draft-house',
+    );
+    clearPlatformSession();
   });
 
   it('CAP-VR36b — cold selection preserves parent Project through create and restore', () => {

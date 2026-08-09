@@ -7,6 +7,7 @@
 
 import {
   getCanonicalHouse,
+  getCanonicalProject,
   getDefaultCompanyRegistry,
   getSharedWorkspaceContext,
   isHouseInProject,
@@ -14,6 +15,7 @@ import {
   listCanonicalProjects,
   loadPlatformSession,
   resolveCanonicalRuntimeBinding,
+  resolveWorkspaceHouseBinding,
   type CanonicalProjectProjection,
   type CanonicalRuntimeBinding,
 } from '@embed-engine/platform-access';
@@ -114,10 +116,25 @@ export function resolveClientRuntimeBindingFromCandidates(
     sharedHouseId !== null &&
     isHouseInProject(sharedHouseId, activeProjectId)
   ) {
-    return resolveCanonicalRuntimeBinding({
+    const canonicalBinding = resolveCanonicalRuntimeBinding({
       explicitProjectId: sharedHouseId,
       fallbackToFirstPublished: false,
     });
+    if (canonicalBinding.runtimeHouseId !== null) {
+      return canonicalBinding;
+    }
+  }
+  if (activeProjectId !== null && sharedHouseId !== null) {
+    const workspaceBinding = resolveWorkspaceHouseBinding({
+      projectId: activeProjectId,
+      houseId: sharedHouseId,
+    });
+    if (
+      workspaceBinding !== null &&
+      workspaceBinding.authoringDraftPackage !== null
+    ) {
+      return resolveAuthoringDraftRuntimeBinding(workspaceBinding);
+    }
   }
   if (activeProjectId !== null) {
     return resolveCanonicalRuntimeBinding({
@@ -135,6 +152,47 @@ export function resolveClientRuntimeBindingFromCandidates(
     explicitProjectId: explicitHouseId ?? null,
     fallbackToFirstPublished: false,
   });
+}
+
+function resolveAuthoringDraftRuntimeBinding(
+  workspaceBinding: NonNullable<
+    ReturnType<typeof resolveWorkspaceHouseBinding>
+  >,
+): CanonicalRuntimeBinding {
+  const draft = workspaceBinding.authoringDraftPackage;
+  if (draft === null) {
+    throw new Error('AUTHORING_DRAFT package is required for draft runtime binding.');
+  }
+  const parentProject = getCanonicalProject(workspaceBinding.projectId);
+  if (parentProject === null) {
+    return {
+      runtimeHouseId: null,
+      runtimeProjectId: null,
+      packagePublicRoot: null,
+      isPublished: false,
+      bindSource: 'none',
+      project: null,
+    };
+  }
+  return {
+    runtimeHouseId: workspaceBinding.houseId,
+    runtimeProjectId: workspaceBinding.projectId,
+    packagePublicRoot: draft.packagePublicRoot,
+    isPublished: false,
+    bindSource: 'workspace-context',
+    project: {
+      ...parentProject,
+      house: {
+        houseId: workspaceBinding.houseId,
+        name: draft.name,
+        slug: workspaceBinding.houseId,
+        objectType: 'house',
+        packageRoot: draft.packageRoot,
+        packagePublicRoot: draft.packagePublicRoot,
+        dataMode: workspaceBinding.dataMode,
+      },
+    },
+  };
 }
 
 /**

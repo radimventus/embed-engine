@@ -17,9 +17,7 @@ import {
 } from '@embed-engine/runtime';
 import { RUNTIME_HOUSE_PACKAGE_SOURCE } from '@embed-engine/object-house/builder-package';
 import {
-  getSharedWorkspaceContext,
-  resolveActiveProjectView,
-  restoreSession,
+  resolveWorkspaceHouseBinding,
 } from '@embed-engine/platform-access';
 
 import { useOptionalDecisionAnalytics } from '../analytics/DecisionAnalyticsProvider';
@@ -30,9 +28,35 @@ import {
   getBuilderRuntimeHousePackage,
 } from './builderPackageBootstrap';
 import {
+  readClientBindCandidates,
+  resolveClientActiveProjectId,
+  resolveClientRuntimeBindingFromCandidates,
+} from './clientCanonicalBind';
+import {
   projectSynchronizedExperience,
   type SynchronizedExperience,
 } from './synchronizedExperience';
+
+/** CAP-PLAT-02c.1a/1b — Runtime Binding: Session/URL IDs → CPL. */
+function resolveRuntimeBinding() {
+  const candidates = readClientBindCandidates();
+  const projectId = resolveClientActiveProjectId(candidates.sessionProjectId);
+  const houseId =
+    candidates.sessionHouseId ??
+    candidates.workspaceContextHouseId ??
+    candidates.urlHouseId;
+  const workspaceBinding =
+    projectId !== null && houseId !== null
+      ? resolveWorkspaceHouseBinding({ projectId, houseId })
+      : null;
+  return {
+    workspaceBinding,
+    canonicalBinding:
+      workspaceBinding?.runtimeContentAvailable === false
+        ? null
+        : resolveClientRuntimeBindingFromCandidates(candidates),
+  };
+}
 
 /**
  * Context-only transport for Decision Session Experience (ED-DA-04).
@@ -54,6 +78,26 @@ export type DecisionSessionRuntimeContextValue = {
 
 const DecisionSessionRuntimeContext =
   createContext<DecisionSessionRuntimeContextValue | null>(null);
+
+export function runtimeBindingKey(
+  houseId: string | null,
+  packagePublicRoot: string | null,
+): string | null {
+  if (houseId === null || packagePublicRoot === null) {
+    return null;
+  }
+  return `${houseId}::${packagePublicRoot}`;
+}
+
+export function isRuntimeReadyForBinding(
+  loadedBindingKey: string | null,
+  requestedBindingKey: string | null,
+): boolean {
+  return (
+    requestedBindingKey !== null &&
+    loadedBindingKey === requestedBindingKey
+  );
+}
 
 type DecisionSessionRuntimeProviderProps = {
   readonly children: ReactNode;
@@ -99,33 +143,95 @@ export function DecisionSessionRuntimeProvider({
   const runtimeRef = useRef<DecisionSessionRuntime | null>(injectedRuntime ?? null);
   const [revision, setRevision] = useState(0);
   const [packageReady, setPackageReady] = useState(injectedRuntime !== undefined);
+  const [loadedRuntimeBindingKey, setLoadedRuntimeBindingKey] = useState<
+    string | null
+  >(null);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const analytics = useOptionalDecisionAnalytics();
 
-  /** PDM-02 — resolve Shared Project without requiring SessionProvider (Embed mount). */
-  const packagePublicRoot = useMemo(() => {
-    const session = restoreSession();
-    const workspaceProjectId =
-      getSharedWorkspaceContext()?.projectId ?? session?.projectId ?? null;
-    return (
-      resolveActiveProjectView(workspaceProjectId)?.packagePublicRoot ??
-      '/house-package'
-    );
-  }, []);
+  /** CAP-PLAT-04h — Runtime bind House; package from House slice. */
+  const runtimeBinding = resolveRuntimeBinding();
+  const workspaceDraftBinding =
+    runtimeBinding.workspaceBinding?.runtimeContentAvailable === false
+      ? runtimeBinding.workspaceBinding
+      : null;
+  const authoringDraftPackage =
+    runtimeBinding.workspaceBinding?.authoringDraftPackage ?? null;
+  const projectBind = runtimeBinding.canonicalBinding;
+  const runtimeHouseId =
+    runtimeBinding.workspaceBinding?.houseId ?? projectBind?.runtimeHouseId ?? null;
+  const packagePublicRoot =
+    authoringDraftPackage?.packagePublicRoot ?? projectBind?.packagePublicRoot ?? null;
+  const clientContentUnavailable =
+    injectedRuntime === undefined &&
+    authoringDraftPackage === null &&
+    projectBind?.project?.house?.dataMode === 'LIVE_EMPTY' &&
+    runtimeHouseId !== 'villa-168';
+  const unavailableHouseId =
+    workspaceDraftBinding?.houseId ?? runtimeHouseId;
+  const requestedRuntimeBindingKey = runtimeBindingKey(
+    runtimeHouseId,
+    packagePublicRoot,
+  );
 
   useEffect(() => {
     if (injectedRuntime !== undefined) {
       runtimeRef.current = injectedRuntime;
       setPackageReady(true);
+      setLoadedRuntimeBindingKey(requestedRuntimeBindingKey);
       setBootstrapError(null);
       bootstrapEvents.emit('RUNTIME_READY');
       return;
     }
 
+    const binding = resolveRuntimeBinding();
+    if (
+      binding.workspaceBinding?.runtimeContentAvailable === false ||
+      clientContentUnavailable
+    ) {
+      runtimeRef.current = null;
+      setPackageReady(false);
+      setLoadedRuntimeBindingKey(null);
+      setBootstrapError(null);
+      return;
+    }
+    const draftPackage = binding.workspaceBinding?.authoringDraftPackage ?? null;
+    const projection = binding.canonicalBinding?.project ?? null;
+    const root = draftPackage?.packagePublicRoot ??
+      binding.canonicalBinding?.packagePublicRoot ??
+      null;
+    const canonicalHouseId =
+      binding.workspaceBinding?.houseId ??
+      binding.canonicalBinding?.runtimeHouseId ??
+      null;
+
+    if (
+      root === null ||
+      (draftPackage === null && (projection === null || projection.house === null))
+    ) {
+      setPackageReady(false);
+      setLoadedRuntimeBindingKey(null);
+      setBootstrapError(
+        canonicalHouseId !== null
+          ? `Shared Project Runtime: unknown houseId "${canonicalHouseId}".`
+          : 'Shared Project Runtime: no published House available for Client.',
+      );
+      return;
+    }
+
     bootstrapEvents.emit('BOOTSTRAP_LOADING');
+    runtimeRef.current = null;
+    setPackageReady(false);
+    setLoadedRuntimeBindingKey(null);
 
     let cancelled = false;
-    void ensureBuilderPackageBootstrapped(packagePublicRoot)
+    void ensureBuilderPackageBootstrapped(root, {
+      identity: {
+        id: canonicalHouseId ?? '',
+        title: draftPackage?.name ?? projection?.house?.name ?? '',
+        reference: projection?.house?.slug ?? canonicalHouseId ?? '',
+      },
+    })
       .then(() => {
         if (cancelled) {
           return;
@@ -136,20 +242,36 @@ export function DecisionSessionRuntimeProvider({
           now: 1,
         });
         setPackageReady(true);
+        setLoadedRuntimeBindingKey(
+          runtimeBindingKey(canonicalHouseId, root),
+        );
         setBootstrapError(null);
         setRevision((value) => value + 1);
         bootstrapEvents.emit('RUNTIME_READY');
       })
       .catch((error: unknown) => {
         if (!cancelled) {
+          console.error('[ClientStudio] House package bootstrap failed', {
+            houseId: canonicalHouseId,
+            packagePublicRoot: root,
+            error,
+          });
           setBootstrapError(error instanceof Error ? error.message : String(error));
           setPackageReady(false);
+          setLoadedRuntimeBindingKey(null);
         }
       });
     return () => {
       cancelled = true;
     };
-  }, [injectedRuntime, packagePublicRoot]);
+  }, [
+    injectedRuntime,
+    packagePublicRoot,
+    runtimeHouseId,
+    workspaceDraftBinding?.houseId,
+    clientContentUnavailable,
+    requestedRuntimeBindingKey,
+  ]);
 
   const dispatch = useCallback(
     (command: RuntimeCommand, now?: number): DispatchResult => {
@@ -168,7 +290,15 @@ export function DecisionSessionRuntimeProvider({
   );
 
   const value = useMemo((): DecisionSessionRuntimeContextValue | null => {
-    if (!packageReady || runtimeRef.current === null) {
+    if (
+      !packageReady ||
+      runtimeRef.current === null ||
+      (injectedRuntime === undefined &&
+        !isRuntimeReadyForBinding(
+          loadedRuntimeBindingKey,
+          requestedRuntimeBindingKey,
+        ))
+    ) {
       return null;
     }
     void revision;
@@ -181,7 +311,14 @@ export function DecisionSessionRuntimeProvider({
       ready: true,
       dispatch,
     };
-  }, [dispatch, packageReady, revision]);
+  }, [
+    dispatch,
+    injectedRuntime,
+    loadedRuntimeBindingKey,
+    packageReady,
+    requestedRuntimeBindingKey,
+    revision,
+  ]);
 
   // PT-RUNTIME-TRACE-01 / PT-EMBED-RUNTIME-INTEGRATION-01 — live Runtime proof.
   useEffect(() => {
@@ -253,11 +390,26 @@ export function DecisionSessionRuntimeProvider({
     }
   }, [value]);
 
-  if (bootstrapError !== null) {
+  if (
+    bootstrapError !== null ||
+    workspaceDraftBinding !== null ||
+    clientContentUnavailable
+  ) {
     return (
-      <div role="alert" data-builder-package-bootstrap-error="">
-        Builder House Package bootstrap failed: {bootstrapError}
-      </div>
+      <section
+        className="grid min-h-screen place-items-center bg-embed-background-primary p-6 text-center"
+        data-testid="client-workspace-draft-empty"
+        data-client-runtime-unavailable=""
+      >
+        <div>
+          <h1 className="text-xl font-semibold text-embed-brand-navy">
+            {unavailableHouseId ?? 'Dům'}
+          </h1>
+          <p className="mt-2 text-embed-brand-navy/70">
+            Experience zatím není připravená.
+          </p>
+        </div>
+      </section>
     );
   }
 

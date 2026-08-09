@@ -1,4 +1,5 @@
 import {
+  isCanonicalProjectId,
   listCanonicalHouses,
   resolveCanonicalRuntimeBinding,
 } from '../projection/canonicalProjectProjection';
@@ -8,14 +9,18 @@ import type {
 } from '../projection/canonicalProjectTypes';
 import {
   getSharedWorkspaceContext,
+  isHouseInProject,
   updateSession,
 } from '../session/authService';
+import { loadPlatformSession } from '../session/sessionStore';
+import { packageRootToPublicUrl } from '../project/packagePublicUrl';
 import type { WorkspaceAuthoredHouseIdentity } from './workspaceContext';
 
 export type WorkspaceHouseIdentity = {
   readonly houseId: string;
   readonly name: string;
   readonly canonicalProjectId: string;
+  readonly packageRoot?: string;
   readonly dataMode: 'REFERENCE_DEMO' | 'LIVE_EMPTY' | 'LIVE';
   readonly status: 'draft' | 'published';
 };
@@ -26,6 +31,12 @@ export type WorkspaceHouseRuntimeBinding = {
   readonly dataMode: WorkspaceHouseIdentity['dataMode'];
   readonly status: WorkspaceHouseIdentity['status'];
   readonly runtimeContentAvailable: boolean;
+  /** Present only for a House-owned AUTHORING_DRAFT package. */
+  readonly authoringDraftPackage: {
+    readonly packageRoot: string;
+    readonly packagePublicRoot: string;
+    readonly name: string;
+  } | null;
   /** Available only for a published/canonical House. */
   readonly canonicalBinding: CanonicalRuntimeBinding | null;
 };
@@ -34,17 +45,51 @@ export type WorkspaceHouseRuntimeBinding = {
 export function upsertWorkspaceAuthoredHouse(
   house: WorkspaceAuthoredHouseIdentity,
 ): void {
+  const session = loadPlatformSession();
+  const projectId = house.canonicalProjectId.trim();
+  if (
+    session === null ||
+    session.projectId !== projectId ||
+    !isCanonicalProjectId(projectId)
+  ) {
+    return;
+  }
+
   const context = getSharedWorkspaceContext();
-  if (context === null) return;
+  if (context !== null && context.projectId !== projectId) {
+    return;
+  }
+  const activeHouseId =
+    session.activeHouseId !== null &&
+    isHouseInProject(session.activeHouseId, projectId)
+      ? session.activeHouseId
+      : null;
+  const workspaceContext = context ?? {
+    operatorMode: true as const,
+    partnerId: session.companyId,
+    companyId: session.companyId,
+    workspaceId: session.workspaceId,
+    projectId,
+    activeHouseId,
+    authoredHouseIdentities: [],
+    activeStudio: 'builder' as const,
+    officeReturnHref: '',
+    previous: {
+      tenantId: session.tenantId,
+      companyId: session.companyId,
+      workspaceId: session.workspaceId,
+      projectId: session.projectId,
+    },
+  };
   const identities = [
-    ...(context.authoredHouseIdentities ?? []).filter(
+    ...(workspaceContext.authoredHouseIdentities ?? []).filter(
       (item) => item.houseId !== house.houseId,
     ),
     house,
   ];
   updateSession({
     workspaceContext: {
-      ...context,
+      ...workspaceContext,
       authoredHouseIdentities: identities,
     },
   });
@@ -80,12 +125,21 @@ export function resolveWorkspaceHouseBinding(input: {
   if (house === undefined) return null;
 
   if (house.status === 'draft') {
+    const packageRoot = house.packageRoot?.trim() ?? '';
     return {
       houseId: house.houseId,
       projectId: house.canonicalProjectId,
       dataMode: house.dataMode,
       status: 'draft',
-      runtimeContentAvailable: false,
+      runtimeContentAvailable: packageRoot.length > 0,
+      authoringDraftPackage:
+        packageRoot.length > 0
+          ? {
+              packageRoot,
+              packagePublicRoot: packageRootToPublicUrl(packageRoot),
+              name: house.name,
+            }
+          : null,
       canonicalBinding: null,
     };
   }
@@ -101,6 +155,7 @@ export function resolveWorkspaceHouseBinding(input: {
     dataMode: house.dataMode,
     status: 'published',
     runtimeContentAvailable: true,
+    authoringDraftPackage: null,
     canonicalBinding,
   };
 }

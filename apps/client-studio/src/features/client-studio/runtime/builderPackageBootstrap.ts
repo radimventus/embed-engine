@@ -4,11 +4,15 @@ import {
   parseCsv,
   projectBuilderImportToHousePackage,
   type BuilderHousePackageImport,
+  type BuilderHousePackageProjectionOptions,
   type FloorPlanGeometry,
 } from '@embed-engine/object-house/builder-package';
 import type { HousePackage } from '@embed-engine/object-house';
 
-import { BUILDER_RUNTIME_HOUSE_DEFAULTS } from './builderRuntimeHouseDefaults';
+import {
+  AUTHORING_DRAFT_RUNTIME_HOUSE_DEFAULTS,
+  BUILDER_RUNTIME_HOUSE_DEFAULTS,
+} from './builderRuntimeHouseDefaults';
 import {
   clearFloorPlanGeometryCache,
   setFloorPlanGeometryForFloor,
@@ -28,6 +32,17 @@ export const GALLERY_CSV_PATH = '/house-package/gallery.csv';
 export const ROOMS_CSV_PATH = '/house-package/rooms.csv';
 export const VIDEOS_CSV_PATH = '/house-package/videos.csv';
 const HERO_PUBLIC_PATH = '/house-package/media/hero/hero.png';
+
+type AuthoringDraftManifest = {
+  readonly validationMode: 'AUTHORING_DRAFT';
+  readonly heroPath: string;
+  readonly floorPlans: 'not-authored' | 'placeholder';
+};
+
+/** PT-PDM-03 — optional Shared Project identity overlay on Builder Package projection. */
+export type BuilderPackageBootstrapProjection = {
+  readonly identity?: BuilderHousePackageProjectionOptions['identity'];
+};
 
 function csvPathsForPackageRoot(packagePublicRoot: string): {
   readonly gallery: string;
@@ -50,7 +65,10 @@ export type BuilderPackageCsvTexts = {
   readonly videosCsv: string;
 };
 
-function planPairsFromRooms(roomsCsvText: string): {
+function planPairsFromRooms(
+  roomsCsvText: string,
+  rasterExtension: 'png' | 'webp' = 'webp',
+): {
   readonly floorId: string;
   readonly rasterRelativePath: string;
   readonly svgRelativePath: string;
@@ -68,7 +86,7 @@ function planPairsFromRooms(roomsCsvText: string): {
     .sort((a, b) => a.localeCompare(b, 'en'))
     .map((floorId) => ({
       floorId,
-      rasterRelativePath: `media/plans/${floorId}.webp`,
+      rasterRelativePath: `media/plans/${floorId}.${rasterExtension}`,
       svgRelativePath: `media/plans/${floorId}.svg`,
     }));
 }
@@ -107,11 +125,43 @@ async function fetchCsvText(absolutePath: string): Promise<string> {
   return fetchText(absolutePath);
 }
 
+function isAuthoringDraftManifest(value: unknown): value is AuthoringDraftManifest {
+  if (value === null || typeof value !== 'object') {
+    return false;
+  }
+  const manifest = value as Partial<AuthoringDraftManifest>;
+  return (
+    manifest.validationMode === 'AUTHORING_DRAFT' &&
+    typeof manifest.heroPath === 'string' &&
+    manifest.heroPath.length > 0 &&
+    (manifest.floorPlans === 'not-authored' ||
+      manifest.floorPlans === 'placeholder')
+  );
+}
+
+async function loadAuthoringDraftManifest(
+  packagePublicRoot: string,
+): Promise<AuthoringDraftManifest | null> {
+  try {
+    const text = await fetchText(
+      `${packagePublicRoot.replace(/\/+$/, '')}/manifest.json`,
+    );
+    const parsed: unknown = JSON.parse(text);
+    return isAuthoringDraftManifest(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 async function loadFloorPlanGeometryForRooms(
   roomsCsvText: string,
   packagePublicRoot: string,
+  hasFloorPlans: boolean,
 ): Promise<void> {
   clearFloorPlanGeometryCache();
+  if (!hasFloorPlans) {
+    return;
+  }
   const table = parseCsv(roomsCsvText);
   const floors = new Set<string>();
   for (const row of table.rows) {
@@ -164,6 +214,7 @@ export async function loadBuilderPackageCsvTexts(
 function buildRegistriesFromTexts(
   texts: BuilderPackageCsvTexts,
   packagePublicRoot: string = PACKAGE_ROOT_LABEL,
+  manifest: AuthoringDraftManifest | null = null,
 ): BuilderHousePackageImport {
   const paths = csvPathsForPackageRoot(packagePublicRoot);
   const result = buildBuilderPackageRegistries({
@@ -171,8 +222,15 @@ function buildRegistriesFromTexts(
     galleryCsv: texts.galleryCsv,
     roomsCsv: texts.roomsCsv,
     videosCsv: texts.videosCsv,
-    heroPath: HERO_PATH,
-    planPairs: planPairsFromRooms(texts.roomsCsv),
+    validationMode: manifest?.validationMode ?? 'PUBLISH_READY',
+    heroPath: manifest?.heroPath ?? HERO_PATH,
+    planPairs:
+      manifest?.floorPlans === 'not-authored'
+        ? []
+        : planPairsFromRooms(
+            texts.roomsCsv,
+            manifest?.floorPlans === 'placeholder' ? 'png' : 'webp',
+          ),
   });
 
   if (!result.ok) {
@@ -229,14 +287,30 @@ function logBuilderPackageEvidence(
 let cachedRegistries: BuilderHousePackageImport | null = null;
 let cachedHousePackage: HousePackage | null = null;
 let cachedPackagePublicRoot: string | null = null;
+let cachedProjectionKey: string | null = null;
 let bootstrapPromise: Promise<BuilderHousePackageImport> | null = null;
+
+function projectionCacheKey(
+  packagePublicRoot: string,
+  projection?: BuilderPackageBootstrapProjection,
+): string {
+  const identityId = projection?.identity?.id ?? '';
+  return `${packagePublicRoot}::${identityId}`;
+}
 
 function projectCachedHousePackage(
   registries: BuilderHousePackageImport,
   packagePublicRoot: string,
+  projection?: BuilderPackageBootstrapProjection,
+  isAuthoringDraft = false,
 ): HousePackage {
   const housePackage = projectBuilderImportToHousePackage(registries, {
-    ...BUILDER_RUNTIME_HOUSE_DEFAULTS,
+    ...(isAuthoringDraft
+      ? AUTHORING_DRAFT_RUNTIME_HOUSE_DEFAULTS
+      : BUILDER_RUNTIME_HOUSE_DEFAULTS),
+    ...(projection?.identity !== undefined
+      ? { identity: projection.identity }
+      : {}),
     packagePublicRoot,
   });
   cachedHousePackage = housePackage;
@@ -245,30 +319,53 @@ function projectCachedHousePackage(
 
 /**
  * Ensure Builder registries + Runtime HousePackage exist (async).
- * PT-PDM-02 — `packagePublicRoot` comes from Shared Project Runtime (`openProject`).
+ * PT-PDM-02/03 — `packagePublicRoot` + identity from Shared Project Runtime (`openProject`).
  * Browser: fetches HP-002 CSVs over HTTP. Tests: use bootstrapBuilderPackageRegistriesSyncForTests.
  */
 export async function ensureBuilderPackageBootstrapped(
   packagePublicRoot: string = PACKAGE_ROOT_LABEL,
+  projection?: BuilderPackageBootstrapProjection,
 ): Promise<BuilderHousePackageImport> {
   const root = packagePublicRoot.replace(/\/+$/, '') || PACKAGE_ROOT_LABEL;
-  if (cachedRegistries !== null && cachedPackagePublicRoot === root) {
+  const cacheKey = projectionCacheKey(root, projection);
+  if (
+    cachedRegistries !== null &&
+    cachedPackagePublicRoot === root &&
+    cachedProjectionKey === cacheKey
+  ) {
     return cachedRegistries;
   }
-  if (bootstrapPromise !== null && cachedPackagePublicRoot === root) {
+  if (
+    bootstrapPromise !== null &&
+    cachedPackagePublicRoot === root &&
+    cachedProjectionKey === cacheKey
+  ) {
     return bootstrapPromise;
   }
 
   cachedRegistries = null;
   cachedHousePackage = null;
   cachedPackagePublicRoot = root;
+  cachedProjectionKey = cacheKey;
 
   bootstrapPromise = (async () => {
-    const texts = await loadBuilderPackageCsvTexts(root);
-    await loadFloorPlanGeometryForRooms(texts.roomsCsv, root);
-    const registries = buildRegistriesFromTexts(texts, root);
+    const [texts, manifest] = await Promise.all([
+      loadBuilderPackageCsvTexts(root),
+      loadAuthoringDraftManifest(root),
+    ]);
+    await loadFloorPlanGeometryForRooms(
+      texts.roomsCsv,
+      root,
+      manifest?.floorPlans !== 'not-authored',
+    );
+    const registries = buildRegistriesFromTexts(texts, root, manifest);
     cachedRegistries = registries;
-    projectCachedHousePackage(registries, root);
+    projectCachedHousePackage(
+      registries,
+      root,
+      projection,
+      manifest?.validationMode === 'AUTHORING_DRAFT',
+    );
     logBuilderPackageEvidence(registries, texts);
     return registries;
   })();
@@ -278,6 +375,7 @@ export async function ensureBuilderPackageBootstrapped(
   } catch (error) {
     bootstrapPromise = null;
     cachedPackagePublicRoot = null;
+    cachedProjectionKey = null;
     throw error;
   }
 }
@@ -292,6 +390,11 @@ export function getBuilderPackageRegistries(): BuilderHousePackageImport {
     );
   }
   return cachedRegistries;
+}
+
+/** Active package public root after bootstrap (for presentation asset URLs). */
+export function getBuilderPackagePublicRoot(): string {
+  return cachedPackagePublicRoot ?? PACKAGE_ROOT_LABEL;
 }
 
 /**
@@ -314,6 +417,7 @@ export function bootstrapBuilderPackageRegistriesSyncForTests(
   texts: BuilderPackageCsvTexts,
   geometryByFloor?: Readonly<Record<string, FloorPlanGeometry>>,
   packagePublicRoot: string = PACKAGE_ROOT_LABEL,
+  projection?: BuilderPackageBootstrapProjection,
 ): BuilderHousePackageImport {
   clearFloorPlanGeometryCache();
   if (geometryByFloor !== undefined) {
@@ -323,11 +427,11 @@ export function bootstrapBuilderPackageRegistriesSyncForTests(
   }
   const root = packagePublicRoot.replace(/\/+$/, '') || PACKAGE_ROOT_LABEL;
   cachedPackagePublicRoot = root;
+  cachedProjectionKey = projectionCacheKey(root, projection);
   const registries = buildRegistriesFromTexts(texts, root);
   cachedRegistries = registries;
   bootstrapPromise = Promise.resolve(registries);
-  projectCachedHousePackage(registries, root);
-  logBuilderPackageEvidence(registries, texts);
+  projectCachedHousePackage(registries, root, projection);
   return registries;
 }
 
@@ -336,6 +440,7 @@ export function resetBuilderPackageBootstrapForTests(): void {
   cachedRegistries = null;
   cachedHousePackage = null;
   cachedPackagePublicRoot = null;
+  cachedProjectionKey = null;
   bootstrapPromise = null;
   clearFloorPlanGeometryCache();
 }

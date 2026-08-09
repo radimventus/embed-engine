@@ -5,10 +5,14 @@
  */
 
 import { mountClientStudio } from "@client-studio/embed-mount";
+import {
+  getSharedWorkspaceContext,
+  resolveMountProjectView,
+  resolveWorkspaceHouseBinding,
+} from "@embed-engine/platform-access";
 
 import type { EmbedSession } from "../bootstrap";
 import { ensureClientStudioStyles } from "./ensureStyles";
-import { DEFAULT_OBJECT_ID } from "./resolveObjectPackage";
 import type { EmbedProductionMountOptions } from "./types";
 
 export type ClientStudioDeliverySession = EmbedSession & {
@@ -16,17 +20,31 @@ export type ClientStudioDeliverySession = EmbedSession & {
   readonly objectId: string;
 };
 
-function resolvePilotObjectId(objectId: string | undefined): string {
-  const resolved =
-    objectId === undefined || objectId.trim().length === 0
-      ? DEFAULT_OBJECT_ID
-      : objectId.trim();
-  if (resolved !== DEFAULT_OBJECT_ID) {
-    throw new Error(
-      `Embed.mount: unknown objectId "${resolved}". Known: ${DEFAULT_OBJECT_ID}`,
-    );
+/** PT-PDM-03 — Shared Project Runtime validates mount id before Client Studio. */
+function resolvePilotProjectId(objectId: string | undefined): string {
+  const view = resolveMountProjectView(objectId ?? null);
+  if (view !== null) {
+    return view.project.id;
   }
-  return resolved;
+  const draftHouseId = objectId?.trim() ?? "";
+  const workspace = getSharedWorkspaceContext();
+  const draftBinding =
+    workspace !== null && draftHouseId.length > 0
+      ? resolveWorkspaceHouseBinding({
+          projectId: workspace.projectId,
+          houseId: draftHouseId,
+        })
+      : null;
+  if (
+    draftBinding !== null &&
+    draftBinding.authoringDraftPackage !== null
+  ) {
+    return draftBinding.houseId;
+  }
+  const label = draftHouseId.length > 0 ? draftHouseId : "(default)";
+  throw new Error(
+    `Embed.mount: unknown projectId "${label}". Use a Shared Project id from Shared Project Runtime.`,
+  );
 }
 
 /**
@@ -40,7 +58,7 @@ export async function bootstrapClientStudioDelivery(
 ): Promise<ClientStudioDeliverySession> {
   ensureClientStudioStyles();
 
-  const objectId = resolvePilotObjectId(options.objectId);
+  const objectId = resolvePilotProjectId(options.objectId);
   const handle = mountClientStudio({
     target: host,
     objectId,

@@ -21,6 +21,7 @@ import {
   projectPartnerBrand,
   resolveCloudStudioHref,
   resolveMountProjectView,
+  resolveWorkspaceHouseBinding,
   resolveWorkspaceHostHref,
   switchOperatorPartnerStudio,
   updateSession,
@@ -258,11 +259,21 @@ export function WorkspaceHostApp() {
     const view = resolveMountProjectView(
       sharedActiveHouseId ?? sharedProjectId,
     );
-    if (view === null) {
+    const draftBinding =
+      sharedActiveHouseId !== null && sharedProjectId !== null
+        ? resolveWorkspaceHouseBinding({
+            projectId: sharedProjectId,
+            houseId: sharedActiveHouseId,
+          })
+        : null;
+    if (view === null && draftBinding?.authoringDraftPackage === null) {
       return;
     }
 
-    const objectId = sharedActiveHouseId ?? view.project.id;
+    const objectId = sharedActiveHouseId ?? view?.project.id;
+    if (objectId === undefined) {
+      return;
+    }
 
     if (
       clientMountedRef.current &&

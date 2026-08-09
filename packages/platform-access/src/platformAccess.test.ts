@@ -19,6 +19,7 @@ import {
   createPilotInvite,
   getCloudPlatformConfig,
   getDefaultCompanyRegistry,
+  getSharedWorkspaceContext,
   login,
   logout,
   primaryRole,
@@ -48,7 +49,10 @@ import {
   getReferenceHouseSource,
   referenceInstanceProvenance,
 } from './index';
-import { clearPlatformSession } from './session/sessionStore';
+import {
+  clearPlatformSession,
+  loadPlatformSession,
+} from './session/sessionStore';
 
 describe('platformAccess (EPIC-BX-14)', () => {
   it('defines BUNGALOV as a versioned source, not a Partner House', () => {
@@ -205,6 +209,77 @@ describe('platformAccess (EPIC-BX-14)', () => {
     );
   });
 
+  it('CAP-RG1R4 — bootstraps valid Builder-authored House context cross-port', () => {
+    clearPlatformSession();
+    const result = login({
+      email: 'radim@conis.local',
+      password: 'demo',
+      rememberMe: false,
+    });
+    assert.equal(result.ok, true);
+    if (!result.ok) return;
+
+    updateSession({
+      projectId: 'project-domy-s-energii',
+      activeHouseId: 'modern-4kk',
+      workspaceContext: null,
+    });
+    upsertWorkspaceAuthoredHouse({
+      houseId: 'patrovy-5kk',
+      name: 'PATROVÝ 5KK',
+      canonicalProjectId: 'project-domy-s-energii',
+      packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
+      dataMode: 'LIVE_EMPTY',
+      status: 'draft',
+    });
+
+    assert.deepEqual(
+      getSharedWorkspaceContext()?.authoredHouseIdentities,
+      [
+        {
+          houseId: 'patrovy-5kk',
+          name: 'PATROVÝ 5KK',
+          canonicalProjectId: 'project-domy-s-energii',
+          packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
+          dataMode: 'LIVE_EMPTY',
+          status: 'draft',
+        },
+      ],
+    );
+    assert.equal(
+      loadPlatformSession()?.workspaceContext?.activeHouseId,
+      'modern-4kk',
+    );
+    assert.deepEqual(
+      listWorkspaceHouses('project-domy-s-energii').map(
+        (house) => house.houseId,
+      ),
+      [
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+        'modern-4kk',
+        'patrovy-5kk',
+      ],
+    );
+    assert.deepEqual(
+      listWorkspaceHouses('project-ac-modular').map((house) => house.houseId),
+      ['family-98', 'harmony-124', 'villa-168'],
+    );
+
+    updateSession({ projectId: 'project-ac-modular' });
+    upsertWorkspaceAuthoredHouse({
+      houseId: 'invalid-cross-project-house',
+      name: 'Invalid cross-project house',
+      canonicalProjectId: 'project-domy-s-energii',
+      packageRoot: 'apps/client-studio/public/house-packages/invalid-cross-project-house',
+      dataMode: 'LIVE_EMPTY',
+      status: 'draft',
+    });
+    assert.equal(
+      getSharedWorkspaceContext()?.authoredHouseIdentities?.length,
+      1,
+    );
+  });
+
   it('CAP-VR39a — projects authored House identities without publishing them', () => {
     clearPlatformSession();
     const result = login({
@@ -230,6 +305,7 @@ describe('platformAccess (EPIC-BX-14)', () => {
       houseId: 'patrovy-5kk',
       name: 'PATROVÝ 5KK',
       canonicalProjectId: 'project-domy-s-energii',
+      packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
       dataMode: 'LIVE_EMPTY',
       status: 'draft',
     });
@@ -237,18 +313,26 @@ describe('platformAccess (EPIC-BX-14)', () => {
 
     assert.deepEqual(
       dseHouses.map((house) => house.houseId),
-      ['modern-4kk', 'patrovy-5kk'],
+      [
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+        'modern-4kk',
+        'patrovy-5kk',
+      ],
     );
     assert.deepEqual(
       listCanonicalHouses('project-domy-s-energii').map(
         (projection) => projection.house?.houseId,
       ),
-      ['modern-4kk'],
+      [
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+        'modern-4kk',
+      ],
     );
-    assert.deepEqual(dseHouses[1], {
+    assert.deepEqual(dseHouses[2], {
       houseId: 'patrovy-5kk',
       name: 'PATROVÝ 5KK',
       canonicalProjectId: 'project-domy-s-energii',
+      packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
       dataMode: 'LIVE_EMPTY',
       status: 'draft',
     });
@@ -281,7 +365,12 @@ describe('platformAccess (EPIC-BX-14)', () => {
         projectId: 'project-domy-s-energii',
         dataMode: 'LIVE_EMPTY',
         status: 'draft',
-        runtimeContentAvailable: false,
+      runtimeContentAvailable: true,
+      authoringDraftPackage: {
+        packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
+        packagePublicRoot: '/house-packages/patrovy-5kk',
+        name: 'PATROVÝ 5KK',
+      },
         canonicalBinding: null,
       },
     );
@@ -296,6 +385,19 @@ describe('platformAccess (EPIC-BX-14)', () => {
     const draftScope = updateSession({ activeHouseId: 'patrovy-5kk' });
     assert.equal(draftScope?.projectId, 'project-domy-s-energii');
     assert.equal(draftScope?.activeHouseId, 'patrovy-5kk');
+
+    const bungalovId =
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk';
+    const bungalovScope = updateSession({ activeHouseId: bungalovId });
+    assert.equal(bungalovScope?.activeHouseId, bungalovId);
+    assert.deepEqual(
+      listWorkspaceHouses('project-domy-s-energii').map(
+        (house) => house.houseId,
+      ),
+      [bungalovId, 'modern-4kk', 'patrovy-5kk'],
+    );
+    const restoredDraftScope = updateSession({ activeHouseId: 'patrovy-5kk' });
+    assert.equal(restoredDraftScope?.activeHouseId, 'patrovy-5kk');
 
     for (const invalidProjectId of [
       'modern-4kk',

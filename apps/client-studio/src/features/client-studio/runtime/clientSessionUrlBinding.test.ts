@@ -8,9 +8,13 @@ import { dirname, join } from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import {
+  clearPlatformSession,
+  login,
   resetCompanyRegistryExtras,
   resolveCanonicalRuntimeBinding,
+  updateSession,
   upsertBuilderProject,
+  upsertWorkspaceAuthoredHouse,
 } from '@embed-engine/platform-access';
 
 import {
@@ -178,6 +182,80 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
       '/house-packages/bungalov-4kk',
     );
     assert.notEqual(binding.runtimeHouseId, 'villa-168');
+  });
+
+  it('binds an in-scope authored draft only when it owns a package', () => {
+    clearPlatformSession();
+    const authenticated = login({
+      email: 'radim@conis.local',
+      password: 'demo',
+      rememberMe: false,
+    });
+    assert.equal(authenticated.ok, true);
+    if (!authenticated.ok) return;
+
+    updateSession({
+      projectId: 'project-domy-s-energii',
+      workspaceContext: null,
+    });
+    upsertWorkspaceAuthoredHouse({
+      houseId: 'patrovy-5kk',
+      name: 'PATROVÝ 5KK',
+      canonicalProjectId: 'project-domy-s-energii',
+      packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
+      dataMode: 'LIVE_EMPTY',
+      status: 'draft',
+    });
+
+    const draft = resolveClientRuntimeBindingFromCandidates({
+      urlProjectId: null,
+      urlHouseId: null,
+      workspaceContextProjectId: 'project-domy-s-energii',
+      workspaceContextHouseId: 'patrovy-5kk',
+      sessionProjectId: 'project-domy-s-energii',
+      sessionHouseId: 'patrovy-5kk',
+      embedObjectId: null,
+    });
+    assert.equal(draft.runtimeHouseId, 'patrovy-5kk');
+    assert.equal(draft.runtimeProjectId, 'project-domy-s-energii');
+    assert.equal(
+      draft.packagePublicRoot,
+      '/house-packages/patrovy-5kk',
+    );
+    assert.equal(draft.project?.house?.name, 'PATROVÝ 5KK');
+
+    const crossProject = resolveClientRuntimeBindingFromCandidates({
+      urlProjectId: null,
+      urlHouseId: null,
+      workspaceContextProjectId: 'project-domy-s-energii',
+      workspaceContextHouseId: 'patrovy-5kk',
+      sessionProjectId: 'project-ac-modular',
+      sessionHouseId: 'patrovy-5kk',
+      embedObjectId: null,
+    });
+    assert.equal(crossProject.runtimeHouseId, null);
+
+    upsertWorkspaceAuthoredHouse({
+      houseId: 'empty-draft',
+      name: 'Empty draft',
+      canonicalProjectId: 'project-domy-s-energii',
+      packageRoot: '',
+      dataMode: 'LIVE_EMPTY',
+      status: 'draft',
+    });
+    const missingPackage = resolveClientRuntimeBindingFromCandidates({
+      urlProjectId: null,
+      urlHouseId: null,
+      workspaceContextProjectId: 'project-domy-s-energii',
+      workspaceContextHouseId: 'empty-draft',
+      sessionProjectId: 'project-domy-s-energii',
+      sessionHouseId: 'empty-draft',
+      embedObjectId: null,
+    });
+    assert.equal(missingPackage.runtimeHouseId, null);
+    assert.equal(missingPackage.packagePublicRoot, null);
+
+    clearPlatformSession();
   });
 
   it('CAP-VR33c — shared Project rejects a cross-Project House URL', () => {

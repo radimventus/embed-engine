@@ -200,7 +200,7 @@ export function BuilderStudioApp() {
     setHistoryOpen(false);
   }, [diskRoot]);
 
-  // Platform Access / Workspace Host (?projectId) → open Shared Project once (PT-BS-01).
+  // Partner Environment context → open its active House before a Project fallback.
   useEffect(() => {
     if (externalHouseBindDoneRef.current) return;
     if (workspace.switching) return;
@@ -210,7 +210,11 @@ export function BuilderStudioApp() {
         ? new URLSearchParams(window.location.search).get('projectId')?.trim() ||
           null
         : null;
-    const targetId = accessSession?.projectId ?? urlProjectId ?? null;
+    const targetHouseId =
+      accessSession?.workspaceContext?.activeHouseId ??
+      accessSession?.activeHouseId ??
+      null;
+    const targetId = targetHouseId ?? accessSession?.projectId ?? urlProjectId ?? null;
 
     if (targetId == null) {
       externalHouseBindDoneRef.current = true;
@@ -222,17 +226,21 @@ export function BuilderStudioApp() {
       return;
     }
 
-    const open = workspace.registry.folders.some(
-      (folder) => folder.id === targetId,
+    const open = workspace.registry.projects.some(
+      (project) => project.id === targetId,
     )
-      ? workspace.requestOpenFolder(targetId, { dirty: false })
-      : workspace.requestOpenProject(targetId, { dirty: false });
+      ? workspace.requestOpenProject(targetId, { dirty: false })
+      : workspace.registry.folders.some((folder) => folder.id === targetId)
+        ? workspace.requestOpenFolder(targetId, { dirty: false })
+        : workspace.requestOpenProject(targetId, { dirty: false });
     void open.finally(() => {
       externalHouseBindDoneRef.current = true;
     });
     void projectBootstrap;
   }, [
     accessSession?.projectId,
+    accessSession?.activeHouseId,
+    accessSession?.workspaceContext?.activeHouseId,
     workspace.activeProject?.id,
     workspace.switching,
     workspace.requestOpenProject,

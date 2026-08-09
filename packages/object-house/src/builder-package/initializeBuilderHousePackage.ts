@@ -1,17 +1,12 @@
-import { mkdir, rm } from "node:fs/promises";
+import { cp, mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 
 import { importBuilderHousePackage } from "./importBuilderHousePackage";
-import { persistBuilderHousePackage } from "./persistBuilderHousePackage";
 
 export const BUILDER_HOUSE_PACKAGE_ROOT =
   "apps/client-studio/public/house-packages" as const;
-
-const EMPTY_DRAFT_FILES = {
-  roomsCsv: "floor,room,name,area\n",
-  galleryCsv: "order,room,file\n",
-  videosCsv: "order,room,provider,mediaId\n",
-} as const;
+export const AUTHORING_DRAFT_TEMPLATE_ROOT =
+  "apps/client-studio/public/house-package-templates/authoring-draft-v1" as const;
 
 export type InitializeBuilderHousePackageInput = {
   readonly repoRoot: string;
@@ -44,8 +39,8 @@ export function resolveBuilderHousePackageRoot(houseId: string): string {
 }
 
 /**
- * Allocates a House-owned, schema-only HP-002 AUTHORING_DRAFT package.
- * Existing packages are validated and never overwritten.
+ * Materializes the immutable authoring-draft-v1 template into a House-owned
+ * HP-002 AUTHORING_DRAFT package. Existing packages are never overwritten.
  */
 export async function initializeBuilderHousePackage(
   input: InitializeBuilderHousePackageInput,
@@ -65,6 +60,10 @@ export async function initializeBuilderHousePackage(
   }
 
   const diskRoot = path.resolve(input.repoRoot, packageRoot);
+  const templateRoot = path.resolve(
+    input.repoRoot,
+    AUTHORING_DRAFT_TEMPLATE_ROOT,
+  );
   try {
     await mkdir(path.dirname(diskRoot), { recursive: true });
     await mkdir(diskRoot);
@@ -92,13 +91,17 @@ export async function initializeBuilderHousePackage(
         };
   }
 
-  const persisted = await persistBuilderHousePackage({
-    packageRoot: diskRoot,
-    files: EMPTY_DRAFT_FILES,
-  });
-  if (!persisted.ok) {
+  try {
+    await cp(templateRoot, diskRoot, { recursive: true, errorOnExist: true });
+  } catch (error) {
     await rm(diskRoot, { recursive: true, force: true });
-    return { ok: false, error: persisted.error };
+    return {
+      ok: false,
+      error:
+        error instanceof Error
+          ? `AUTHORING_DRAFT template materialization failed: ${error.message}`
+          : "AUTHORING_DRAFT template materialization failed.",
+    };
   }
 
   const initialized = await importBuilderHousePackage(diskRoot, {
