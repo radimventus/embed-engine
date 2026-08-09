@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8" />
+  <title>Elektronická objednávka CONIS</title>
+  <link rel="stylesheet" href="./invoice-design.css" />
+</head>
+<body>
+  <header>
+    <p class="brand">CONIS</p>
+    <h1>Elektronická objednávka</h1>
+    <p>Individualizovaný obchodní dokument · SSOT</p>
+  </header>
+  <section>
+    <p><strong>Číslo objednávky:</strong> {{orderId}}</p>
+    <p><strong>Partner:</strong> {{partnerName}}</p>
+    <p><strong>Společnost:</strong> {{companyName}}</p>
+    <p><strong>Balíček:</strong> {{packageName}}</p>
+    <p><strong>Částka:</strong> {{amountCzk}} CZK</p>
+    <p><strong>Datum:</strong> {{issuedAt}}</p>
+    <p><strong>Projekt:</strong> {{projectId}}</p>
+  </section>
+  <section>
+    <p>
+      Tato elektronická objednávka je navázána na Rámcovou smlouvu, Implementační
+      standard, DPA a VOP uložené v obchodním balíčku CONIS.
+    </p>
+  </section>
+</body>
+</html>
