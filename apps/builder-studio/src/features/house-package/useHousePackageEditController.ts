@@ -21,6 +21,7 @@ import { runDiskHousePackageValidation } from './runHousePackageValidation';
 import { useHousePackageMount } from './useHousePackageMount';
 import { validateHousePackageWorking } from './validateHousePackageWorking';
 import { openHousePackageRuntimePreviewWindow } from './mountHousePackageRuntimePreview';
+import type { HousePackageMountValidationMode } from './mountHousePackage';
 
 export type HousePackageEditController = {
   readonly mountStatus: ReturnType<typeof useHousePackageMount>['state'];
@@ -48,10 +49,12 @@ export type HousePackageEditController = {
 export function useHousePackageEditController(
   diskRoot: string | null,
   houseId: string | null = null,
+  validationMode: HousePackageMountValidationMode = 'PUBLISH_READY',
 ): HousePackageEditController {
   const { state: mountStatus, remount } = useHousePackageMount(
     diskRoot,
     houseId,
+    validationMode,
   );
   const [sessionEpoch, setSessionEpoch] = useState(0);
   const [saving, setSaving] = useState(false);
@@ -68,7 +71,7 @@ export function useHousePackageEditController(
     setPublishError(null);
     setValidationReport(null);
     setSessionEpoch((value) => value + 1);
-  }, [diskRoot, houseId]);
+  }, [diskRoot, houseId, validationMode]);
 
   const session = useMemo(() => {
     if (mountStatus.status !== 'ready') {

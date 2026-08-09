@@ -53,9 +53,15 @@ export type MountHousePackageOptions = {
   readonly now?: () => Date;
   /** Active workspace project disk root (repo-relative). */
   readonly diskRoot?: string;
+  /** Draft packages may omit hero and floor-plan content until authored. */
+  readonly validationMode?: HousePackageMountValidationMode;
   /** Abort in-flight HTTP when workspace switches (PR-003B). */
   readonly signal?: AbortSignal;
 };
+
+export type HousePackageMountValidationMode =
+  | 'AUTHORING_DRAFT'
+  | 'PUBLISH_READY';
 
 function createFetchers(signal?: AbortSignal): {
   readonly fetchText: (url: string) => Promise<string>;
@@ -109,14 +115,14 @@ async function defaultProbeExists(url: string): Promise<boolean> {
 
 async function resolveHeroPath(
   probeExists: (url: string) => Promise<boolean>,
-): Promise<string> {
+): Promise<string | null> {
   for (const relative of HOUSE_PACKAGE_HERO_CANDIDATES) {
     const exists = await probeExists(`${HOUSE_PACKAGE_URL_ROOT}/${relative}`);
     if (exists) {
       return relative;
     }
   }
-  return HOUSE_PACKAGE_HERO_CANDIDATES[0];
+  return null;
 }
 
 async function loadGeometryByFloor(
@@ -160,6 +166,7 @@ export async function mountHousePackage(
     options.probeExists ?? defaults?.probeExists ?? defaultProbeExists;
   const now = options.now ?? (() => new Date());
   const diskRoot = options.diskRoot ?? HOUSE_PACKAGE_DISK_ROOT;
+  const validationMode = options.validationMode ?? 'PUBLISH_READY';
 
   const [galleryCsv, roomsCsv, videosCsv, manifestJson] = await Promise.all([
     fetchText(HOUSE_PACKAGE_CSV.gallery),
@@ -181,7 +188,8 @@ export async function mountHousePackage(
     galleryCsv,
     roomsCsv,
     videosCsv,
-    heroPath: heroRelativePath,
+    validationMode,
+    heroPath: heroRelativePath ?? undefined,
     planPairs,
   });
 
@@ -195,7 +203,7 @@ export async function mountHousePackage(
       ok: false,
       errors: registryResult.errors,
       texts: { galleryCsv, roomsCsv, videosCsv, manifestJson },
-      heroRelativePath,
+      heroRelativePath: heroRelativePath ?? '',
       builderImport: null,
       geometryByFloor,
       mountedAt: now().toISOString(),
@@ -208,7 +216,7 @@ export async function mountHousePackage(
     ok: true,
     errors: [],
     texts: { galleryCsv, roomsCsv, videosCsv, manifestJson },
-    heroRelativePath,
+    heroRelativePath: heroRelativePath ?? '',
     builderImport: registryResult.result,
     geometryByFloor,
     mountedAt: now().toISOString(),

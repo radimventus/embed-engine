@@ -17,6 +17,50 @@ function readFixture(relativePath: string): string {
 }
 
 describe('mountHousePackage (CAP-BLD-02)', () => {
+  it('mounts a schema-only LIVE_EMPTY package in AUTHORING_DRAFT mode', async () => {
+    const files = new Map<string, string>([
+      ['/house-package/gallery.csv', 'order,room,file\n'],
+      ['/house-package/rooms.csv', 'floor,room,name,area\n'],
+      ['/house-package/videos.csv', 'order,room,provider,mediaId\n'],
+    ]);
+
+    const mount = await mountHousePackage({
+      validationMode: 'AUTHORING_DRAFT',
+      fetchText: async (url) => {
+        const text = files.get(url);
+        if (text === undefined) {
+          throw new Error(`Missing draft file for ${url}`);
+        }
+        return text;
+      },
+      probeExists: async (url) => files.has(url),
+    });
+
+    assert.equal(mount.ok, true);
+    assert.ok(mount.builderImport !== null);
+    assert.deepEqual(mount.builderImport.rooms.rooms, []);
+    assert.deepEqual(mount.builderImport.gallery.entries, []);
+    assert.deepEqual(mount.builderImport.videos.entries, []);
+    assert.deepEqual(mount.builderImport.floors.floors, []);
+    assert.deepEqual(mount.builderImport.hero.entries, []);
+  });
+
+  it('keeps the default mount mode publish-strict', async () => {
+    const files = new Map<string, string>([
+      ['/house-package/gallery.csv', 'order,room,file\n'],
+      ['/house-package/rooms.csv', 'floor,room,name,area\n'],
+      ['/house-package/videos.csv', 'order,room,provider,mediaId\n'],
+    ]);
+
+    const mount = await mountHousePackage({
+      fetchText: async (url) => files.get(url) ?? '',
+      probeExists: async (url) => files.has(url),
+    });
+
+    assert.equal(mount.ok, false);
+    assert.ok(mount.errors.some((error) => error.code === 'BP_MISSING_FILE'));
+  });
+
   it('loads HP-002 via object-house registries (no mock project)', async () => {
     const files = new Map<string, string>([
       ['/house-package/gallery.csv', readFixture('gallery.csv')],

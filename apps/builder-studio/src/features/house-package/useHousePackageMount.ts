@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import {
   mountHousePackage,
+  type HousePackageMountValidationMode,
   type HousePackageMount,
 } from './mountHousePackage';
 import { HOUSE_PACKAGE_DISK_ROOT } from './housePackagePaths';
@@ -30,6 +31,7 @@ export function useHousePackageMount(
   diskRoot: string | null = HOUSE_PACKAGE_DISK_ROOT,
   /** PT-BS-01 — remount when house id changes even if packageRoot collides. */
   houseId: string | null = null,
+  validationMode: HousePackageMountValidationMode = 'PUBLISH_READY',
 ): UseHousePackageMountResult {
   const [state, setState] = useState<HousePackageMountState>({
     status: 'loading',
@@ -43,7 +45,7 @@ export function useHousePackageMount(
     }
     setState({ status: 'loading' });
     try {
-      const mount = await mountHousePackage({ diskRoot });
+      const mount = await mountHousePackage({ diskRoot, validationMode });
       setState({ status: 'ready', mount });
       return mount;
     } catch (error: unknown) {
@@ -54,7 +56,7 @@ export function useHousePackageMount(
       setState({ status: 'error', message });
       throw error instanceof Error ? error : new Error(message);
     }
-  }, [diskRoot]);
+  }, [diskRoot, validationMode]);
 
   useEffect(() => {
     if (diskRoot === null) {
@@ -67,7 +69,7 @@ export function useHousePackageMount(
 
     const abort = new AbortController();
     setState({ status: 'loading' });
-    void mountHousePackage({ diskRoot, signal: abort.signal })
+    void mountHousePackage({ diskRoot, validationMode, signal: abort.signal })
       .then((mount) => {
         if (!abort.signal.aborted) {
           setState({ status: 'ready', mount });
@@ -89,7 +91,7 @@ export function useHousePackageMount(
     return () => {
       abort.abort();
     };
-  }, [diskRoot, houseId]);
+  }, [diskRoot, houseId, validationMode]);
 
   return { state, remount };
 }

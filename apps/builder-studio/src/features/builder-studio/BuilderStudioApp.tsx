@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { capabilityIdFromBuilderNav } from '@embed-engine/capabilities';
 import { getCanonicalHouseRuntimeContext } from '@embed-engine/object-house';
 import {
+  getCanonicalHouse,
   PLATFORM_ROLE_LABELS,
   primaryRole,
   recordLastPublish,
@@ -103,6 +104,14 @@ export function BuilderStudioApp() {
     canonicalHouseContext === null
       ? (workspace.activeProject?.packageRoot.trim() || null)
       : null;
+  const activeHouseDataMode =
+    activeHouseId === null
+      ? null
+      : (getCanonicalHouse(activeHouseId)?.house?.dataMode ?? null);
+  const mountValidationMode =
+    diskRoot !== null && activeHouseDataMode === 'LIVE_EMPTY'
+      ? 'AUTHORING_DRAFT'
+      : 'PUBLISH_READY';
   const activeHouseHasNoPackage =
     canonicalHouseContext === null &&
     workspace.activeProject !== null &&
@@ -135,7 +144,11 @@ export function BuilderStudioApp() {
     validate,
     publish,
     openPreview,
-  } = useHousePackageEditController(diskRoot, activeHouseId);
+  } = useHousePackageEditController(
+    diskRoot,
+    activeHouseId,
+    mountValidationMode,
+  );
 
   const loadError =
     diskRoot === null
