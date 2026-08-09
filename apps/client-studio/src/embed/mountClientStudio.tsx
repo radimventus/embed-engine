@@ -1,6 +1,10 @@
 import { StrictMode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import type { DecisionSessionRuntime } from '@embed-engine/runtime';
+import {
+  getCanonicalHouse,
+  resolveCanonicalRuntimeBinding,
+} from '@embed-engine/platform-access';
 
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ClientStudioApp } from '../features/client-studio/ClientStudioApp';
@@ -16,8 +20,7 @@ export type MountClientStudioOptions = {
    */
   readonly runtime?: DecisionSessionRuntime;
   /**
-   * Object id stamped on the mount root when Runtime is not injected yet.
-   * Defaults to the pilot Builder identity.
+   * Explicit Client House id. A Project-only id intentionally does not select a House.
    */
   readonly objectId?: string;
   /**
@@ -42,6 +45,21 @@ function assertMountTarget(target: HTMLElement | null | undefined): HTMLElement 
   return target;
 }
 
+function resolveMountHouseId(objectId: string | undefined): string | null {
+  const candidate = objectId?.trim() ?? '';
+  if (candidate.length === 0 || getCanonicalHouse(candidate) === null) {
+    return null;
+  }
+  const binding = resolveCanonicalRuntimeBinding({
+    explicitProjectId: candidate,
+    fallbackToFirstPublished: false,
+  });
+  if (binding.runtimeHouseId === null) {
+    return null;
+  }
+  return binding.runtimeHouseId;
+}
+
 /**
  * Mount Client Studio into a host element (Embed Delivery Layer).
  *
@@ -54,6 +72,7 @@ export function mountClientStudio(
 ): ClientStudioMountHandle {
   const { runtime, assetBase, objectId } = options;
   const target = assertMountTarget(options.target);
+  const houseId = resolveMountHouseId(objectId);
 
   setPresentationAssetBase(assetBase);
 
@@ -63,8 +82,8 @@ export function mountClientStudio(
   target.setAttribute('data-embed-boundary', '');
   target.dataset.clientStudioVersion = CLIENT_STUDIO_RELEASE.version;
   target.dataset.clientStudioGeneration = CLIENT_STUDIO_RELEASE.generation;
-  if (objectId != null && objectId.trim().length > 0) {
-    target.dataset.objectId = objectId.trim();
+  if (houseId !== null) {
+    target.dataset.objectId = houseId;
   }
   document.documentElement.dataset.clientStudioVersion =
     CLIENT_STUDIO_RELEASE.version;

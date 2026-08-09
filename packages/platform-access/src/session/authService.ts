@@ -109,6 +109,11 @@ export function buildSession(input: {
       : isCanonicalProjectId(requestedProjectId)
         ? requestedProjectId
         : DEFAULT_CANONICAL_PROJECT_ID;
+  const requestedActiveHouseId =
+    input.activeHouseId === undefined &&
+    projectId === DEFAULT_CANONICAL_PROJECT_ID
+      ? DEFAULT_PROJECT_ID
+      : input.activeHouseId;
   return {
     user: normalizeUser(input.user),
     tenantId: input.tenantId ?? DEFAULT_TENANT_ID,
@@ -117,7 +122,7 @@ export function buildSession(input: {
     projectId,
     activeHouseId: resolveScopedActiveHouseId(
       projectId,
-      input.activeHouseId,
+      requestedActiveHouseId,
     ),
     activeStudioId: input.activeStudioId ?? null,
     workspaceContext: null,
