@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp, mkdir, writeFile, cp } from "node:fs/promises";
+import { mkdtemp, mkdir, readFile, writeFile, cp } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,7 +9,9 @@ import {
   BUILDER_PACKAGE_FORMAT,
   buildBuilderPackageRegistries,
   importBuilderHousePackage,
+  initializeBuilderHousePackage,
   parseCsv,
+  resolveBuilderHousePackageRoot,
 } from "./node";
 
 const fixtureRoot = path.resolve(
@@ -76,6 +78,75 @@ describe("buildBuilderPackageRegistries", () => {
 });
 
 describe("importBuilderHousePackage", () => {
+  it("initializes isolated, idempotent AUTHORING_DRAFT roots", async () => {
+    const repoRoot = await mkdtemp(path.join(tmpdir(), "bp-repo-"));
+    const first = await initializeBuilderHousePackage({
+      repoRoot,
+      houseId: "test-5kk",
+    });
+
+    assert.deepEqual(first, {
+      ok: true,
+      created: true,
+      houseId: "test-5kk",
+      packageRoot: resolveBuilderHousePackageRoot("test-5kk"),
+    });
+    if (!first.ok) {
+      assert.fail(first.error);
+    }
+
+    const firstRoot = path.join(repoRoot, first.packageRoot);
+    assert.equal(
+      await readFile(path.join(firstRoot, "rooms.csv"), "utf8"),
+      "floor,room,name,area\n",
+    );
+    assert.equal(
+      await readFile(path.join(firstRoot, "gallery.csv"), "utf8"),
+      "order,room,file\n",
+    );
+    assert.equal(
+      await readFile(path.join(firstRoot, "videos.csv"), "utf8"),
+      "order,room,provider,mediaId\n",
+    );
+    const publishReady = await importBuilderHousePackage(firstRoot);
+    assert.equal(publishReady.ok, false);
+
+    const repeated = await initializeBuilderHousePackage({
+      repoRoot,
+      houseId: "test-5kk",
+    });
+    assert.deepEqual(repeated, {
+      ok: true,
+      created: false,
+      houseId: "test-5kk",
+      packageRoot: first.packageRoot,
+    });
+    await writeFile(path.join(firstRoot, "rooms.csv"), "floor,room,name,area\n\n");
+    const preserved = await initializeBuilderHousePackage({
+      repoRoot,
+      houseId: "test-5kk",
+    });
+    assert.equal(preserved.ok, true);
+    assert.equal(
+      await readFile(path.join(firstRoot, "rooms.csv"), "utf8"),
+      "floor,room,name,area\n\n",
+    );
+
+    const second = await initializeBuilderHousePackage({
+      repoRoot,
+      houseId: "test-6kk",
+    });
+    assert.equal(second.ok, true);
+    if (!second.ok) {
+      assert.fail(second.error);
+    }
+    assert.notEqual(first.packageRoot, second.packageRoot);
+    assert.equal(
+      await readFile(path.join(repoRoot, second.packageRoot, "rooms.csv"), "utf8"),
+      "floor,room,name,area\n",
+    );
+  });
+
   it("imports a schema-only AUTHORING_DRAFT with empty registries", async () => {
     const root = await createEmptyAuthoringDraft();
 
