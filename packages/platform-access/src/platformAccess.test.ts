@@ -43,10 +43,50 @@ import {
   updateSession,
   upsertBuilderProject,
   upsertWorkspaceAuthoredHouse,
+  BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+  deriveReferenceInstanceHouseId,
+  getReferenceHouseSource,
+  referenceInstanceProvenance,
 } from './index';
 import { clearPlatformSession } from './session/sessionStore';
 
 describe('platformAccess (EPIC-BX-14)', () => {
+  it('defines BUNGALOV as a versioned source, not a Partner House', () => {
+    const source = getReferenceHouseSource(
+      BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+    );
+
+    assert.deepEqual(source, {
+      sourceId: 'bungalov-4kk-reference-v1',
+      displayName: 'BUNGALOV 4KK',
+      version: 'v1',
+      lifecycle: 'CONTENT_PENDING',
+      packageRoot: null,
+      runtimeContextBinding: null,
+    });
+    const partnerA = deriveReferenceInstanceHouseId({
+      sourceId: BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+      companyId: 'company-alpha',
+      projectId: 'project-alpha',
+    });
+    const partnerB = deriveReferenceInstanceHouseId({
+      sourceId: BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+      companyId: 'company-beta',
+      projectId: 'project-beta',
+    });
+
+    assert.notEqual(partnerA, partnerB);
+    assert.notEqual(partnerA, BUNGALOV_4KK_REFERENCE_SOURCE_ID);
+    assert.notEqual(partnerA, 'modern-4kk');
+    assert.deepEqual(
+      referenceInstanceProvenance(BUNGALOV_4KK_REFERENCE_SOURCE_ID),
+      {
+        sourceId: BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+        sourceVersion: 'v1',
+      },
+    );
+  });
+
   it('owns the canonical Company / Workspace / Project registry', () => {
     const registry = getDefaultCompanyRegistry();
     assert.equal(registry.companies.length, 2);

@@ -1,0 +1,84 @@
+import type { ReferenceHouseProvenance } from '../domain/types';
+
+export const BUNGALOV_4KK_REFERENCE_SOURCE_ID =
+  'bungalov-4kk-reference-v1' as const;
+
+export type ReferenceSourceLifecycle = 'CONTENT_PENDING' | 'READY' | 'RETIRED';
+
+export type ReferenceHouseSource = {
+  readonly sourceId: string;
+  readonly displayName: string;
+  readonly version: string;
+  readonly lifecycle: ReferenceSourceLifecycle;
+  /**
+   * Content bindings are intentionally absent until VR46B/VR46C materialize
+   * a truthful package and runtime context.
+   */
+  readonly packageRoot: null;
+  readonly runtimeContextBinding: null;
+};
+
+export const BUNGALOV_4KK_REFERENCE_SOURCE: ReferenceHouseSource = {
+  sourceId: BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+  displayName: 'BUNGALOV 4KK',
+  version: 'v1',
+  lifecycle: 'CONTENT_PENDING',
+  packageRoot: null,
+  runtimeContextBinding: null,
+};
+
+const REFERENCE_HOUSE_SOURCES: readonly ReferenceHouseSource[] = [
+  BUNGALOV_4KK_REFERENCE_SOURCE,
+];
+
+function isSafeCanonicalIdPart(value: string): boolean {
+  return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value);
+}
+
+export function listReferenceHouseSources(): readonly ReferenceHouseSource[] {
+  return REFERENCE_HOUSE_SOURCES;
+}
+
+export function getReferenceHouseSource(
+  sourceId: string,
+): ReferenceHouseSource | null {
+  return (
+    REFERENCE_HOUSE_SOURCES.find((source) => source.sourceId === sourceId) ??
+    null
+  );
+}
+
+/**
+ * Produces a deterministic Partner/Project-scoped House identity without
+ * reading display names or conflating the materialization with its source.
+ */
+export function deriveReferenceInstanceHouseId(input: {
+  readonly sourceId: string;
+  readonly companyId: string;
+  readonly projectId: string;
+}): string {
+  const source = getReferenceHouseSource(input.sourceId);
+  if (source === null) {
+    throw new Error(`Unknown reference source "${input.sourceId}".`);
+  }
+  const companyId = input.companyId.trim();
+  const projectId = input.projectId.trim();
+  if (!isSafeCanonicalIdPart(companyId) || !isSafeCanonicalIdPart(projectId)) {
+    throw new Error('Reference instance requires canonical Company and Project ids.');
+  }
+
+  return `reference-${source.version}-${companyId}-${projectId}-bungalov-4kk`;
+}
+
+export function referenceInstanceProvenance(
+  sourceId: string,
+): ReferenceHouseProvenance {
+  const source = getReferenceHouseSource(sourceId);
+  if (source === null) {
+    throw new Error(`Unknown reference source "${sourceId}".`);
+  }
+  return {
+    sourceId: source.sourceId,
+    sourceVersion: source.version,
+  };
+}

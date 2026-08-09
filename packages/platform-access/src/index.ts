@@ -7,11 +7,24 @@ export type {
   PlatformWorkspace,
   PlatformProjectStatus,
   PlatformProject,
+  PlatformHouse,
+  ReferenceHouseProvenance,
   PlatformSession,
   LoginCredentials,
   WorkspaceBootstrap,
   ProjectBootstrap,
 } from './domain/types';
+
+export {
+  BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+  BUNGALOV_4KK_REFERENCE_SOURCE,
+  deriveReferenceInstanceHouseId,
+  getReferenceHouseSource,
+  listReferenceHouseSources,
+  referenceInstanceProvenance,
+  type ReferenceHouseSource,
+  type ReferenceSourceLifecycle,
+} from './reference/referenceSourceRegistry';
 
 export type {
   SharedWorkspaceContext,
@@ -81,6 +94,11 @@ export {
   removeBuilderProject,
   setBuilderProjectStatus,
   createCanonicalPartner,
+  mergeProjects,
+  isSeedProjectId,
+  upsertBuilderCompany,
+  upsertBuilderCanonicalProject,
+  upsertBuilderWorkspace,
   DEFAULT_COMPANY_ID,
   DEFAULT_WORKSPACE_ID,
   DEFAULT_PROJECT_ID,
@@ -215,6 +233,7 @@ export {
   resolveCloudStudioHref,
   resolveCloudLandingHref,
   resolveClientStudioHref,
+  resolveBuilderStudioHref,
   resolvePilotOfferHref,
   resolvePilotEntryHref,
   resolveWorkspaceHostHref,
@@ -228,6 +247,7 @@ export {
   withWorkspaceShellEmbed,
   isWorkspaceShellEmbed,
   isOnWorkspaceHost,
+  withCurrentSearchParams,
 } from './domain/workspaceShellEmbed';
 
 
@@ -459,6 +479,7 @@ export {
 export { AuthShell } from './react/AuthShell';
 export { InviteShell } from './react/InviteShell';
 export { PartnerWelcomeScreen } from './react/PartnerWelcomeScreen';
+export { SelectPilotProgramCta } from './react/SelectPilotProgramCta';
 export { PlatformLanding } from './react/PlatformLanding';
 export { PlatformAccessRoot } from './react/PlatformAccessRoot';
 export { IdentityAccessCenter } from './react/IdentityAccessCenter';

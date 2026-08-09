@@ -5,7 +5,11 @@
  * Hierarchy slices: partner → project → house (Project has no House fields).
  */
 
-import type { HouseDataMode, PlatformProjectStatus } from '../domain/types';
+import type {
+  HouseDataMode,
+  PlatformProjectStatus,
+  ReferenceHouseProvenance,
+} from '../domain/types';
 import type { SharedProjectDocumentRef } from '../project/sharedProjectTypes';
 
 /** How the active house / project id was chosen for runtime hosts. */
@@ -45,6 +49,11 @@ export type CanonicalHouseProjection = {
   readonly packagePublicRoot: string;
   /** CAP-VR35a — explicit reference/demo vs real operational-data state. */
   readonly dataMode: HouseDataMode;
+  /**
+   * Present when a Partner-owned House was materialized from a versioned
+   * reference source. Current legacy rows do not yet persist this field.
+   */
+  readonly referenceProvenance?: ReferenceHouseProvenance;
 };
 
 /**

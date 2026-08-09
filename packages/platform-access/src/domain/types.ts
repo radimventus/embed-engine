@@ -56,6 +56,15 @@ export type PlatformProjectStatus = 'draft' | 'ready' | 'published';
 export type HouseDataMode = 'REFERENCE_DEMO' | 'LIVE_EMPTY' | 'LIVE';
 
 /**
+ * Explicit origin of a Partner-owned House materialized from a versioned
+ * immutable reference source. This is provenance, not operational data mode.
+ */
+export type ReferenceHouseProvenance = {
+  readonly sourceId: string;
+  readonly sourceVersion: string;
+};
+
+/**
  * CAP-PLAT-04c — true commercial / delivery Project (Registry entity).
  * No House Package fields — Houses reference this via {@link PlatformProject.canonicalProjectId}.
  */
@@ -110,6 +119,8 @@ export type PlatformHouse = {
   readonly slug: string;
   readonly packageRoot: string;
   readonly objectType: string;
+  /** Present only for a Partner-owned materialization of a reference source. */
+  readonly referenceProvenance?: ReferenceHouseProvenance;
 };
 
 export type PlatformSession = {
