@@ -4,7 +4,11 @@
  */
 
 import { getDefaultCompanyRegistry } from '../registry/companyRegistry';
-import { DEFAULT_PROJECT_ID } from '../registry/defaults';
+import {
+  DEFAULT_PROJECT_ID,
+  DSE_CANONICAL_PROJECT_ID,
+  DSE_CANONICAL_REFERENCE_HOUSE_ID,
+} from '../registry/defaults';
 import { packageRootToPublicUrl } from './packagePublicUrl';
 import {
   getSharedProject,
@@ -61,6 +65,12 @@ export function resolveBindHouseId(
   }
 
   const published = listPublishedProjects();
+  if (delivery.id === DSE_CANONICAL_PROJECT_ID) {
+    const canonicalReference = published.find(
+      (shared) => shared.id === DSE_CANONICAL_REFERENCE_HOUSE_ID,
+    );
+    return canonicalReference?.id ?? null;
+  }
   const linked = published.find((shared) => {
     const row = registry.projects.find((item) => item.id === shared.id);
     return row?.canonicalProjectId === delivery.id;

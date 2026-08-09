@@ -22,12 +22,15 @@ export const DSE_TENANT_ID = 'tenant-domy-s-energii' as const;
 export const DSE_COMPANY_ID = 'company-domy-s-energii' as const;
 export const DSE_WORKSPACE_ID = 'domy-s-energii-main' as const;
 export const DSE_CANONICAL_PROJECT_ID = 'project-domy-s-energii' as const;
-export const DSE_REFERENCE_HOUSE_ID = 'modern-4kk' as const;
 export const DSE_BUNGALOV_4KK_HOUSE_ID = deriveReferenceInstanceHouseId({
   sourceId: BUNGALOV_4KK_REFERENCE_SOURCE_ID,
   companyId: DSE_COMPANY_ID,
   projectId: DSE_CANONICAL_PROJECT_ID,
 });
+/** Canonical/default DSE reference House. */
+export const DSE_CANONICAL_REFERENCE_HOUSE_ID = DSE_BUNGALOV_4KK_HOUSE_ID;
+/** Historical DSE reference House retained as demo data. */
+export const DSE_HISTORICAL_MODERN_4KK_HOUSE_ID = 'modern-4kk' as const;
 export const DSE_BUNGALOV_4KK_PACKAGE_ROOT =
   'apps/client-studio/public/house-packages/bungalov-4kk' as const;
 
@@ -120,7 +123,7 @@ export const DEFAULT_PROJECTS: readonly PlatformProject[] = [
     canonicalProjectId: DSE_CANONICAL_PROJECT_ID,
   },
   {
-    id: DSE_REFERENCE_HOUSE_ID,
+    id: DSE_HISTORICAL_MODERN_4KK_HOUSE_ID,
     workspaceId: DSE_WORKSPACE_ID,
     companyId: DSE_COMPANY_ID,
     name: 'MODERN 4KK',
@@ -128,7 +131,7 @@ export const DEFAULT_PROJECTS: readonly PlatformProject[] = [
     status: 'published',
     slug: 'modern-4kk',
     objectType: 'reference-house',
-    description: 'Canonical Reference House binding.',
+    description: 'Historical DSE reference House demo.',
     dataMode: 'REFERENCE_DEMO',
     canonicalProjectId: DSE_CANONICAL_PROJECT_ID,
   },

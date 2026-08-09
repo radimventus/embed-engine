@@ -184,9 +184,12 @@ describe('CAP-REF-07a DSE Canonical Reference binding', () => {
   it('resolves the seeded Company → Project → House hierarchy after a clean reset', () => {
     const company = getCanonicalCompany('company-domy-s-energii');
     const project = getCanonicalProject('project-domy-s-energii');
-    const house = getCanonicalHouse('modern-4kk');
+    const house = getCanonicalHouse(
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+    );
     const byHouse = resolveCanonicalRuntimeBinding({
-      sessionProjectId: 'modern-4kk',
+      sessionProjectId:
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
     });
     const byProject = resolveCanonicalRuntimeBinding({
       sessionProjectId: 'project-domy-s-energii',
@@ -195,17 +198,24 @@ describe('CAP-REF-07a DSE Canonical Reference binding', () => {
     assert.equal(company?.name, 'Domy s energií');
     assert.equal(project?.project.name, 'Domy s energií');
     assert.equal(project?.partner.companyId, 'company-domy-s-energii');
-    assert.equal(house?.house.name, 'MODERN 4KK');
-    assert.equal(house?.house.houseId, 'modern-4kk');
+    assert.equal(house?.house.name, 'BUNGALOV 4KK');
+    assert.equal(
+      house?.house.houseId,
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+    );
     assert.equal(house?.house.dataMode, 'REFERENCE_DEMO');
     assert.equal(house?.project.projectId, 'project-domy-s-energii');
-    assert.equal(byHouse.runtimeHouseId, 'modern-4kk');
+    assert.equal(
+      byHouse.runtimeHouseId,
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+    );
     assert.equal(byHouse.runtimeProjectId, 'project-domy-s-energii');
     assert.equal(
       byProject.runtimeHouseId,
       'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
     );
     assert.equal(byProject.runtimeProjectId, 'project-domy-s-energii');
+    assert.notEqual(byProject.runtimeHouseId, 'modern-4kk');
   });
 });
 
@@ -216,7 +226,9 @@ describe('CAP-VR35a House Runtime Data Mode', () => {
   });
 
   it('keeps the reference House demo-mode explicit and normal Houses live-empty', () => {
-    const reference = getCanonicalHouse('modern-4kk');
+    const reference = getCanonicalHouse(
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+    );
     const liveEmpty = getCanonicalHouse('family-98');
 
     assert.equal(reference?.house?.dataMode, 'REFERENCE_DEMO');
