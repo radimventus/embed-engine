@@ -30,13 +30,19 @@ import {
  * Paths are package-relative using forward slashes.
  */
 export type BuilderPackageSources = {
+  /**
+   * AUTHORING_DRAFT permits a structurally valid package before its optional
+   * hero and floor-plan content has been authored. PUBLISH_READY preserves
+   * the strict runtime-ready requirements.
+   */
+  readonly validationMode?: BuilderPackageValidationMode;
   /** Label stored on Runtime Manifest (absolute path or public URL root). */
   readonly packageRoot: string;
   readonly galleryCsv: string;
   readonly roomsCsv: string;
   readonly videosCsv: string;
   /** Package-relative hero asset, e.g. `media/hero/hero.webp`. */
-  readonly heroPath: string;
+  readonly heroPath?: string;
   readonly heroTitle?: string;
   /**
    * Floor plan pairs under `media/plans/`.
@@ -53,6 +59,10 @@ export type BuilderPackageSources = {
    */
   readonly existingRelativePaths?: ReadonlySet<string>;
 };
+
+export type BuilderPackageValidationMode =
+  | "AUTHORING_DRAFT"
+  | "PUBLISH_READY";
 
 function parseGalleryRows(
   text: string,
@@ -233,17 +243,21 @@ export function buildBuilderPackageRegistries(
   sources: BuilderPackageSources,
 ): BuilderPackageImportResult {
   const errors: BuilderPackageImportError[] = [];
+  const validationMode =
+    sources.validationMode ?? "PUBLISH_READY";
+  const isPublishReady = validationMode === "PUBLISH_READY";
 
   const roomRows = parseRoomRows(sources.roomsCsv, "rooms.csv", errors);
   const galleryRows = parseGalleryRows(sources.galleryCsv, "gallery.csv", errors);
   const videoRows = parseVideoRows(sources.videosCsv, "videos.csv", errors);
 
-  if (!sources.heroPath.trim()) {
+  const heroPath = sources.heroPath?.trim() ?? "";
+  if (heroPath.length === 0 && isPublishReady) {
     errors.push(
       bpError("BP_MISSING_FILE", "Hero asset path is required (media/hero/…).", "media/hero/"),
     );
-  } else {
-    assertExisting(sources.heroPath, sources.existingRelativePaths, errors);
+  } else if (heroPath.length > 0) {
+    assertExisting(heroPath, sources.existingRelativePaths, errors);
   }
 
   const floors: FloorRegistry = {
@@ -303,7 +317,7 @@ export function buildBuilderPackageRegistries(
     }
   }
 
-  if (floors.floors.length === 0) {
+  if (isPublishReady && floors.floors.length === 0) {
     errors.push(
       bpError("BP_PLAN_INCOMPLETE", "No floor plan pairs provided under media/plans/.", "media/plans/"),
     );
@@ -314,14 +328,19 @@ export function buildBuilderPackageRegistries(
   }
 
   const hero: HeroRegistry = {
-    entries: [
-      {
-        id: "hero-1",
-        file: sources.heroPath.split("/").pop() ?? sources.heroPath,
-        path: sources.heroPath,
-        ...(sources.heroTitle !== undefined ? { title: sources.heroTitle } : {}),
-      },
-    ],
+    entries:
+      heroPath.length === 0
+        ? []
+        : [
+            {
+              id: "hero-1",
+              file: heroPath.split("/").pop() ?? heroPath,
+              path: heroPath,
+              ...(sources.heroTitle !== undefined
+                ? { title: sources.heroTitle }
+                : {}),
+            },
+          ],
   };
 
   const gallery: GalleryRegistry = {

@@ -23,6 +23,17 @@ async function copyFixture(): Promise<string> {
   return dir;
 }
 
+async function createEmptyAuthoringDraft(): Promise<string> {
+  const dir = await mkdtemp(path.join(tmpdir(), "bp-draft-"));
+  await writeFile(path.join(dir, "rooms.csv"), "floor,room,name,area\n");
+  await writeFile(path.join(dir, "gallery.csv"), "order,room,file\n");
+  await writeFile(
+    path.join(dir, "videos.csv"),
+    "order,room,provider,mediaId\n",
+  );
+  return dir;
+}
+
 describe("parseCsv", () => {
   it("parses headers and rows without using filename order", () => {
     const table = parseCsv("order,room,file\n2,kitchen,02.webp\n1,exterior,01.webp\n");
@@ -65,6 +76,55 @@ describe("buildBuilderPackageRegistries", () => {
 });
 
 describe("importBuilderHousePackage", () => {
+  it("imports a schema-only AUTHORING_DRAFT with empty registries", async () => {
+    const root = await createEmptyAuthoringDraft();
+
+    const result = await importBuilderHousePackage(root, {
+      validationMode: "AUTHORING_DRAFT",
+    });
+
+    assert.equal(result.ok, true);
+    if (!result.ok) {
+      assert.fail(JSON.stringify(result.errors));
+    }
+    assert.deepEqual(result.result.rooms.rooms, []);
+    assert.deepEqual(result.result.gallery.entries, []);
+    assert.deepEqual(result.result.videos.entries, []);
+    assert.deepEqual(result.result.floors.floors, []);
+    assert.deepEqual(result.result.hero.entries, []);
+  });
+
+  it("keeps PUBLISH_READY strict for the same empty draft", async () => {
+    const root = await createEmptyAuthoringDraft();
+
+    const result = await importBuilderHousePackage(root);
+
+    assert.equal(result.ok, false);
+    if (result.ok) {
+      assert.fail("Expected PUBLISH_READY validation failure.");
+    }
+    assert.ok(result.errors.some((error) => error.code === "BP_MISSING_FILE"));
+  });
+
+  it("rejects malformed content supplied to an AUTHORING_DRAFT", async () => {
+    const root = await createEmptyAuthoringDraft();
+    await writeFile(
+      path.join(root, "gallery.csv"),
+      "order,room,file\n1,unknown,missing.webp\n",
+    );
+
+    const result = await importBuilderHousePackage(root, {
+      validationMode: "AUTHORING_DRAFT",
+    });
+
+    assert.equal(result.ok, false);
+    if (result.ok) {
+      assert.fail("Expected malformed draft validation failure.");
+    }
+    assert.ok(result.errors.some((error) => error.code === "BP_UNKNOWN_ROOM"));
+    assert.ok(result.errors.some((error) => error.code === "BP_ASSET_MISSING"));
+  });
+
   it("imports fixture and generates all Runtime registries", async () => {
     const result = await importBuilderHousePackage(fixtureRoot);
     assert.equal(result.ok, true);

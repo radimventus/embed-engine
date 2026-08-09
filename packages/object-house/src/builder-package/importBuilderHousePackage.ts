@@ -1,7 +1,10 @@
 import { access, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { buildBuilderPackageRegistries } from "./buildRegistries";
+import {
+  buildBuilderPackageRegistries,
+  type BuilderPackageValidationMode,
+} from "./buildRegistries";
 import {
   bpError,
   type BuilderPackageImportError,
@@ -37,6 +40,7 @@ function packageRelative(packageRoot: string, absolutePath: string): string {
 async function discoverPlanPairs(
   packageRoot: string,
   errors: BuilderPackageImportError[],
+  validationMode: BuilderPackageValidationMode,
 ): Promise<
   readonly {
     readonly floorId: string;
@@ -48,7 +52,15 @@ async function discoverPlanPairs(
 > {
   const plansDir = path.join(packageRoot, "media", "plans");
   if (!(await pathExists(plansDir))) {
-    errors.push(bpError("BP_MISSING_FILE", "Missing media/plans/ directory.", "media/plans/"));
+    if (validationMode === "PUBLISH_READY") {
+      errors.push(
+        bpError(
+          "BP_MISSING_FILE",
+          "Missing media/plans/ directory.",
+          "media/plans/",
+        ),
+      );
+    }
     return [];
   }
 
@@ -163,6 +175,7 @@ async function collectExistingPaths(packageRoot: string): Promise<Set<string>> {
 async function resolveHeroPath(
   packageRoot: string,
   errors: BuilderPackageImportError[],
+  validationMode: BuilderPackageValidationMode,
 ): Promise<string | undefined> {
   const heroDir = path.join(packageRoot, "media", "hero");
   const preferredPng = path.join(heroDir, "hero.png");
@@ -176,16 +189,30 @@ async function resolveHeroPath(
   }
 
   if (!(await pathExists(heroDir))) {
-    errors.push(bpError("BP_MISSING_FILE", "Missing media/hero/ directory.", "media/hero/"));
+    if (validationMode === "PUBLISH_READY") {
+      errors.push(
+        bpError(
+          "BP_MISSING_FILE",
+          "Missing media/hero/ directory.",
+          "media/hero/",
+        ),
+      );
+    }
     return undefined;
   }
 
   const names = await readdir(heroDir);
   const media = names.find((name) => /\.(webp|jpg|jpeg|png|mp4|webm)$/i.test(name));
   if (media === undefined) {
-    errors.push(
-      bpError("BP_ASSET_MISSING", "No Hero media file under media/hero/.", "media/hero/"),
-    );
+    if (validationMode === "PUBLISH_READY") {
+      errors.push(
+        bpError(
+          "BP_ASSET_MISSING",
+          "No Hero media file under media/hero/.",
+          "media/hero/",
+        ),
+      );
+    }
     return undefined;
   }
 
@@ -198,9 +225,13 @@ async function resolveHeroPath(
  */
 export async function importBuilderHousePackage(
   packageRoot: string,
+  options: {
+    readonly validationMode?: BuilderPackageValidationMode;
+  } = {},
 ): Promise<BuilderPackageImportResult> {
   const root = path.resolve(packageRoot);
   const errors: BuilderPackageImportError[] = [];
+  const validationMode = options.validationMode ?? "PUBLISH_READY";
 
   const roomsCsvPath = path.join(root, "rooms.csv");
   const galleryCsvPath = path.join(root, "gallery.csv");
@@ -219,10 +250,16 @@ export async function importBuilderHousePackage(
   const roomsText = await readUtf8(roomsCsvPath);
   const galleryText = await readUtf8(galleryCsvPath);
   const videosText = await readUtf8(videosCsvPath);
-  const heroPath = await resolveHeroPath(root, errors);
-  const planPairs = await discoverPlanPairs(root, errors);
+  const heroPath = await resolveHeroPath(root, errors, validationMode);
+  const planPairs = await discoverPlanPairs(root, errors, validationMode);
 
-  if (errors.length > 0 || !roomsText || !galleryText || !videosText || heroPath === undefined) {
+  if (
+    errors.length > 0 ||
+    !roomsText ||
+    !galleryText ||
+    !videosText ||
+    (validationMode === "PUBLISH_READY" && heroPath === undefined)
+  ) {
     if (!roomsText || !galleryText || !videosText) {
       errors.push(bpError("BP_MISSING_FILE", "Failed to read one or more required CSV files."));
     }
@@ -233,6 +270,7 @@ export async function importBuilderHousePackage(
 
   const registries = buildBuilderPackageRegistries({
     packageRoot: root,
+    validationMode,
     galleryCsv: galleryText,
     roomsCsv: roomsText,
     videosCsv: videosText,
