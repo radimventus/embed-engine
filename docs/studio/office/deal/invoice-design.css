@@ -1,0 +1,32 @@
+/* CONIS invoice / commercial document visual frame (deal package). */
+:root {
+  --conis-navy: #001930;
+  --conis-gold: #b8922d;
+  --conis-cream: #f7f6f4;
+}
+
+body {
+  font-family: Georgia, 'Times New Roman', serif;
+  color: var(--conis-navy);
+  background: var(--conis-cream);
+  margin: 0;
+  padding: 48px;
+}
+
+.brand {
+  letter-spacing: 0.28em;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--conis-navy);
+}
+
+h1 {
+  color: var(--conis-gold);
+  font-weight: 600;
+}
+
+.invoice header {
+  border-bottom: 2px solid var(--conis-gold);
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+}

@@ -1,0 +1,13 @@
+{
+  "sourceGitSha": "bba3d51a4df86ee2ab7f91bfd2ca44529a2b580d",
+  "builtAt": "2026-08-10T06:55:44.758Z",
+  "topologyVersion": "partner-environment-v1",
+  "surfaces": [
+    "office",
+    "builder",
+    "manager",
+    "sales",
+    "workspace"
+  ],
+  "sharedHousePackageRoot": "/house-packages/"
+}
