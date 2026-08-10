@@ -102,6 +102,10 @@ export function getCloudPlatformConfig(): CloudPlatformConfig {
 }
 
 export function resolveCloudStudioHref(studioId: PlatformStudioId): string {
+  if (studioId === 'client') {
+    return resolveWorkspaceHostHref();
+  }
+
   const config = getCloudPlatformConfig();
   if (config.mode === 'local') {
     const port = LOCAL_STUDIO_PORTS[studioId];

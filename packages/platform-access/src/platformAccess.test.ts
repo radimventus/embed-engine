@@ -484,6 +484,7 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     assert.equal(resolveCloudStudioHref('manager'), 'http://127.0.0.1:4175/');
     assert.equal(resolveCloudStudioHref('sales'), 'http://127.0.0.1:4179/');
     assert.equal(resolveCloudStudioHref('office'), 'http://127.0.0.1:4181/');
+    assert.equal(resolveCloudStudioHref('client'), 'http://127.0.0.1:4183/');
     assert.equal(resolveClientStudioHref(), 'http://127.0.0.1:4173/');
     assert.equal(
       resolveClientStudioHref('villa-168'),
@@ -495,6 +496,30 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
       'http://127.0.0.1:4177/?projectId=villa-168',
     );
     assert.equal(resolveWorkspaceHostHref(), 'http://127.0.0.1:4183/');
+  });
+
+  it('routes operator Client selection through Workspace, separate from public Embed', () => {
+    const originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+    Object.defineProperty(globalThis, 'window', {
+      configurable: true,
+      value: { location: { hostname: 'conis.cz' } },
+    });
+
+    try {
+      assert.equal(
+        resolveCloudStudioHref('client'),
+        'https://conis.cz/studio/workspace/',
+      );
+      assert.equal(resolveClientStudioHref(), 'https://conis.cz/embed/');
+      assert.notEqual(resolveCloudStudioHref('client'), resolveClientStudioHref());
+      assert.doesNotMatch(resolveCloudStudioHref('client'), /\/studio\/client\//);
+    } finally {
+      if (originalWindow === undefined) {
+        delete (globalThis as { window?: unknown }).window;
+      } else {
+        Object.defineProperty(globalThis, 'window', originalWindow);
+      }
+    }
   });
 
   it('keeps canonical Project scope separate from legacy Tenant bootstrap Project', () => {
