@@ -22,6 +22,9 @@ type JourneySceneFrameProps = {
 
 const SCENE_MIN_HEIGHT =
   'calc(100dvh - var(--experience-header-height, 72px) - var(--guided-journey-bottom-nav-offset, 0px))';
+const SCENE_CTA_GAP = '20px';
+const UNREVEALED_SCENE_SPACE =
+  'calc(20px + var(--guided-journey-bottom-nav-offset, 0px))';
 
 /**
  * Scene shell for one guided stop in the Decision Journey.
@@ -64,14 +67,15 @@ export function JourneySceneFrame({
     <div
       id={sceneId}
       data-journey-scene={sceneId}
-      className="flex w-full snap-start snap-normal flex-col gap-[18px] mobile:gap-4"
+      className="flex w-full snap-start snap-normal flex-col gap-5"
       style={{
         minHeight: SCENE_MIN_HEIGHT,
-        // Last scene (Audit): Zpět sits under the footer, 40px above the bottom (CAP UX3 09).
+        // Before the next scene is revealed, retain only the space needed to
+        // expose the CTA above mobile navigation.
         paddingBottom: reserveScrollSpace
-          ? SCENE_MIN_HEIGHT
+          ? UNREVEALED_SCENE_SPACE
           : nextSceneId
-            ? '30px'
+            ? SCENE_CTA_GAP
             : previousSceneId
               ? '40px'
               : '0px',
@@ -86,23 +90,16 @@ export function JourneySceneFrame({
       {children}
       {hasFooterLeading ? (
         <div
-          className={`relative px-section ${pinFooterToBottom ? 'mt-auto' : ''}`}
-          style={
-            pinFooterToBottom
-              ? undefined
-              : {
-                  // Scene uses gap-[18px]; add 12px so Tour → footer row = 30px.
-                  marginTop: 12,
-                }
-          }
+          className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 px-section ${
+            pinFooterToBottom ? 'mt-auto' : ''
+          }`}
         >
-          {/* Full-width center: banner ignores Pokračovat button width. */}
-          <div className="flex w-full justify-center">{footerLeading}</div>
+          <div className="min-w-0">{footerLeading}</div>
           {nextSceneId ? (
             <button
               type="button"
               onClick={() => navigate(nextSceneId)}
-              className={`${JOURNEY_CTA_PRIMARY_CLASS} absolute top-0 right-0 shrink-0 mobile:static mobile:mt-3 mobile:w-full`}
+              className={`${JOURNEY_CTA_PRIMARY_CLASS} shrink-0 justify-self-end`}
             >
               Pokračovat →
             </button>

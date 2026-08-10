@@ -62,4 +62,15 @@ describe('Responsive Decision Journey (RCS-05)', () => {
     assert.match(canvas, /overflow-x-hidden/);
     assert.match(active, /desktopMinPx/);
   });
+
+  it('keeps scene CTA space in flow while the next scene is unrevealed', () => {
+    const scene = readSource(
+      'src/features/client-studio/foundation/JourneySceneFrame.tsx',
+    );
+
+    assert.match(scene, /const SCENE_CTA_GAP = '20px'/);
+    assert.match(scene, /const UNREVEALED_SCENE_SPACE/);
+    assert.match(scene, /gap-5 px-section/);
+    assert.equal(scene.includes('absolute top-0 right-0'), false);
+  });
 });
