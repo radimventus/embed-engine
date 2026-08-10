@@ -18,7 +18,6 @@ export const CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG: WelcomeBridgeConfig =
       closeLabel: "Zavřít",
     }),
     triggers: Object.freeze([
-      Object.freeze({ kind: "on-continue-to-priority" as const }),
       Object.freeze({ kind: "delay-after-mount" as const, delayMs: 20_000 }),
     ]),
   });

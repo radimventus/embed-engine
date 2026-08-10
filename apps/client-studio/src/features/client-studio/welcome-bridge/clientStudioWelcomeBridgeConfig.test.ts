@@ -15,10 +15,11 @@ describe("CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG", () => {
       CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.description,
       /Ptejte se, na co uznáte za vhodné/,
     );
-    assert.ok(
+    assert.equal(
       CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.triggers.some(
         (trigger) => trigger.kind === "on-continue-to-priority",
       ),
+      false,
     );
     const delay = CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.triggers.find(
       (trigger) => trigger.kind === "delay-after-mount",

@@ -8,8 +8,8 @@ export const DEFAULT_WELCOME_BRIDGE_THEME: WelcomeBridgeTheme = Object.freeze({
   titleColor: palette.pureWhite,
   headlineColor: palette.warmWhite,
   descriptionColor: "rgba(247, 246, 244, 0.78)",
-  ctaBackgroundColor: colors.action.accent,
-  ctaTextColor: colors.action.onAccent,
+  ctaBackgroundColor: colors.brand.gold,
+  ctaTextColor: colors.brand.navy,
   closeColor: "rgba(247, 246, 244, 0.72)",
   /** ~30% wider than the prior 546px CTA panel. */
   widthPx: 710,

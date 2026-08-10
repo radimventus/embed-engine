@@ -143,14 +143,12 @@ export function ClientStudioPage({
 
   const welcomeBridge = useWelcomeBridgeController({
     config: CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,
+    isTourActive: revealedSceneCount === 1,
     prioritySceneId: scenes[1]?.id ?? 'journey-scene-interpretation',
     onEnterPriority: enterPriorityScene,
   });
 
   const handleSceneNavigate = (sceneId: string) => {
-    if (welcomeBridge.interceptSceneNavigate(sceneId)) {
-      return;
-    }
     enterPriorityScene(sceneId);
   };
 

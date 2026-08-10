@@ -3,6 +3,8 @@ import type { WelcomeBridgeConfig, WelcomeBridgeTrigger } from "@embed-engine/ui
 
 type UseWelcomeBridgeControllerOptions = {
   readonly config: WelcomeBridgeConfig;
+  /** The timer exists only while the Tour is the active Experience state. */
+  readonly isTourActive: boolean;
   /** Scene id that represents Priority / interpretation entry. */
   readonly prioritySceneId: string;
   readonly onEnterPriority: (sceneId: string) => void;
@@ -22,12 +24,12 @@ function hasTrigger(
  */
 export function useWelcomeBridgeController({
   config,
+  isTourActive,
   prioritySceneId,
   onEnterPriority,
 }: UseWelcomeBridgeControllerOptions) {
   const [open, setOpen] = useState(false);
   const seenRef = useRef(false);
-  const pendingPriorityRef = useRef(false);
 
   const markSeenAndClose = useCallback(() => {
     seenRef.current = true;
@@ -47,7 +49,7 @@ export function useWelcomeBridgeController({
     if (delayTrigger === undefined || delayTrigger.kind !== "delay-after-mount") {
       return;
     }
-    if (seenRef.current) {
+    if (!isTourActive || seenRef.current) {
       return;
     }
     const timer = window.setTimeout(() => {
@@ -56,48 +58,19 @@ export function useWelcomeBridgeController({
     return () => {
       window.clearTimeout(timer);
     };
-  }, [delayTrigger, tryOpen]);
-
-  const interceptSceneNavigate = useCallback(
-    (sceneId: string): boolean => {
-      const continueTrigger = hasTrigger(
-        config.triggers,
-        "on-continue-to-priority",
-      );
-      if (continueTrigger === undefined) {
-        return false;
-      }
-      if (sceneId !== prioritySceneId) {
-        return false;
-      }
-      if (seenRef.current) {
-        return false;
-      }
-      pendingPriorityRef.current = true;
-      tryOpen();
-      return true;
-    },
-    [config.triggers, prioritySceneId, tryOpen],
-  );
+  }, [delayTrigger, isTourActive, tryOpen]);
 
   const continueToPriority = useCallback(() => {
     markSeenAndClose();
-    pendingPriorityRef.current = false;
     onEnterPriority(prioritySceneId);
   }, [markSeenAndClose, onEnterPriority, prioritySceneId]);
 
   const dismiss = useCallback(() => {
-    const shouldEnterPriority = pendingPriorityRef.current;
     markSeenAndClose();
-    pendingPriorityRef.current = false;
-    if (shouldEnterPriority) {
-      onEnterPriority(prioritySceneId);
-    }
-  }, [markSeenAndClose, onEnterPriority, prioritySceneId]);
+  }, [markSeenAndClose]);
 
   return {
     open,
-    interceptSceneNavigate,
     continueToPriority,
     dismiss,
   };
