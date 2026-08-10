@@ -1,45 +1,56 @@
 import { useEffect, useState } from 'react';
-
 import {
-  loadPlatformSession,
-  projectPartnerBrand,
-  type StudioBrandProjection,
+  listWorkspaceHouses,
+  usePlatformSession,
 } from '@embed-engine/platform-access';
 
 import actionCallUrl from '../../assets/icons/action-call.png';
 import actionPdfUrl from '../../assets/icons/action-pdf.png';
 
 import { AstavLogo } from './AstavLogo';
-import { formatExperienceHeaderTitle } from './foundation/formatExperienceHeaderTitle';
 import { HeaderContactMenu } from './header/HeaderContactMenu';
 import { HeaderSaveMenu } from './header/HeaderSaveMenu';
-
-function resolveClientBrand(): StudioBrandProjection {
-  const session = loadPlatformSession();
-  return projectPartnerBrand({
-    companyId: session?.companyId ?? null,
-    fallbackCompanyName: null,
-  });
-}
+import {
+  formatClientPartnerHouseTitle,
+  resolveClientRuntimeBinding,
+} from './runtime/clientCanonicalBind';
 
 /**
- * AppShell top navigation (CSCB-01) — single sticky Experience header.
- * Close is owned by the Delivery overlay ([data-embed-close] in overlaySurface),
- * not by this header — no close button rendered here.
- * Kontakt / Uložit — hover panels (CAP UX 57).
- * PE-02 — logo + title from Brand Projection when a partner session exists.
+ * AppShell top navigation (CSCB-01 / CAP-PLAT-02c) — Partner · House from CPL.
+ * Close is owned by the Delivery overlay ([data-embed-close] in overlaySurface).
  */
 export function ClientStudioHeader() {
-  const [title, setTitle] = useState('Client Studio');
-  const [logoLabel, setLogoLabel] = useState('ASTAV');
+  const { session } = usePlatformSession();
+  const [title, setTitle] = useState('');
+  const [logoLabel, setLogoLabel] = useState('');
 
   useEffect(() => {
-    const root = document.querySelector<HTMLElement>('[data-client-studio-root]');
-    const brand = resolveClientBrand();
-    const firm = brand.personalized ? brand.companyName : null;
-    setLogoLabel(brand.personalized ? brand.tradeMark : 'ASTAV');
-    setTitle(formatExperienceHeaderTitle(root?.dataset.objectId, firm));
-  }, []);
+    const workspaceDraft =
+      session?.projectId !== null && session?.projectId !== undefined
+        ? listWorkspaceHouses(session.projectId).find(
+            (house) =>
+              house.houseId === session.activeHouseId &&
+              house.status === 'draft',
+          )
+        : undefined;
+    if (workspaceDraft !== undefined) {
+      setLogoLabel('');
+      setTitle(workspaceDraft.name);
+      return;
+    }
+    const binding = resolveClientRuntimeBinding();
+    const projection = binding.project;
+    if (projection === null) {
+      setTitle('');
+      setLogoLabel('');
+      return;
+    }
+    const logo =
+      projection.branding.logoLabel.trim() ||
+      projection.partner.companyName.trim();
+    setLogoLabel(logo.length > 0 ? logo : projection.partner.companyName);
+    setTitle(formatClientPartnerHouseTitle(projection));
+  }, [session?.activeHouseId, session?.projectId]);
 
   return (
     <header

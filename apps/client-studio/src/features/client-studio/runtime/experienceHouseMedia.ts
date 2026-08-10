@@ -163,7 +163,11 @@ export function roomIdForTimelineIndex(
   return photo?.roomId ?? null;
 }
 
-export function decisionCanvasUrlForRoom(roomId: string): string {
+export function decisionCanvasUrlForRoom(
+  roomId: string,
+  packagePublicRoot = '/house-package',
+): string {
   const fileId = DECISION_CANVAS_ALIAS[roomId] ?? roomId;
-  return resolvePublicAssetUrl(`/house-package/decision-canvas/${fileId}.svg`);
+  const root = packagePublicRoot.replace(/\/+$/, '') || '/house-package';
+  return resolvePublicAssetUrl(`${root}/decision-canvas/${fileId}.svg`);
 }

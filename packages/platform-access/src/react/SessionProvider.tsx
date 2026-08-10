@@ -178,15 +178,22 @@ export function SessionProvider({
   const selectStudio = useCallback((studioId: PlatformStudioId) => {
     const workspaceContext = getSharedWorkspaceContext();
     if (workspaceContext !== null) {
-      // VR-04 — PE mode stays on Workspace Host; Office is an in-shell view.
-      switchOperatorPartnerStudio(
-        studioId === 'office' ? 'office' : studioId,
-        { retainWorkspace: true },
-      );
+      // VR-04 / PT-OS-02 — PE mode stays on Workspace Host; switch in-shell surface.
+      const surface =
+        studioId === 'client' ||
+        studioId === 'office' ||
+        studioId === 'manager' ||
+        studioId === 'sales' ||
+        studioId === 'builder'
+          ? studioId
+          : 'client';
+      switchOperatorPartnerStudio(surface, { retainWorkspace: true });
       return;
     }
 
-    const next = updateSession({ activeStudioId: studioId });
+    const next = updateSession({
+      activeStudioId: studioId === 'client' ? null : studioId,
+    });
     if (next !== null) {
       touchUserLastStudio(next.user.id, studioId);
       setSession(next);

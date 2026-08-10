@@ -10,6 +10,7 @@ import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ClientStudioApp } from '../features/client-studio/ClientStudioApp';
 import { CLIENT_STUDIO_RELEASE } from '../features/client-studio/pilot/productionConfig';
 import { setPresentationAssetBase } from '../features/client-studio/runtime/presentationAssetBase';
+import { ClientStudioSessionBoundary } from './ClientStudioSessionBoundary';
 
 export type MountClientStudioOptions = {
   readonly target: HTMLElement;
@@ -94,7 +95,9 @@ export function mountClientStudio(
   reactRoot.render(
     <StrictMode>
       <ErrorBoundary>
-        <ClientStudioApp runtime={runtime} />
+        <ClientStudioSessionBoundary>
+          <ClientStudioApp runtime={runtime} />
+        </ClientStudioSessionBoundary>
       </ErrorBoundary>
     </StrictMode>,
   );

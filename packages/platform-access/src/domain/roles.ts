@@ -39,6 +39,12 @@ export function canAccessStudio(
     return true;
   }
   switch (studioId) {
+    case 'client':
+      return (
+        roles.includes('manager') ||
+        roles.includes('salesman') ||
+        roles.includes('builder')
+      );
     case 'office':
       // OF-01 — Office is operational CONIS center (admins only until RBAC expands).
       return false;
@@ -54,9 +60,9 @@ export function canAccessStudio(
 export function studiosForRoles(
   roles: readonly PlatformRole[],
 ): readonly PlatformStudioId[] {
-  return (['office', 'builder', 'manager', 'sales'] as const).filter((studio) =>
-    canAccessStudio(roles, studio),
-  );
+  return (
+    ['client', 'manager', 'sales', 'builder', 'office'] as const
+  ).filter((studio) => canAccessStudio(roles, studio));
 }
 
 /**

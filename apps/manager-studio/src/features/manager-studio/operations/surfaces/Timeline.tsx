@@ -3,8 +3,9 @@ import { OPERATIONS_SECTION_IDS } from '../operationsVocabulary';
 import { OperationsSurface } from '../OperationsSurface';
 
 export function Timeline() {
-  const { operations } = useManagerStudioRuntime();
-  const { timeline } = operations;
+  const runtime = useManagerStudioRuntime();
+  if (!runtime.ready) return null;
+  const { timeline } = runtime.operations;
 
   return (
     <OperationsSurface

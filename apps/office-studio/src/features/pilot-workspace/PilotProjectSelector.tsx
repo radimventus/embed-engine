@@ -1,4 +1,5 @@
 import { usePilotWorkspaceContext } from '../../office/PilotWorkspaceContext';
+import { PlatformScopeSelect } from '@embed-engine/platform-shell';
 
 type PilotProjectSelectorProps = {
   /** R-001 — Enter Working Terminal when a project is activated. */
@@ -29,29 +30,29 @@ export function PilotProjectSelector({
       data-office-project-context="global"
     >
       <p className="office-sidebar__projects-eyebrow">Projekty</p>
-      <label className="office-sidebar__projects-label" htmlFor="pilot-project-select">
-        Select Project
-      </label>
+      <span className="office-sidebar__projects-label">
+        Vybrat projekt
+      </span>
 
       <div className="office-sidebar__projects-controls">
-        <select
-          id="pilot-project-select"
-          className="office-sidebar__projects-select"
+        <div
+          style={{ flex: 1, minWidth: 0 }}
           data-testid="pilot-project-select"
-          value={selectedId}
-          onChange={(event) => {
-            const next = event.target.value;
-            if (next.length === 0) return;
-            selectCase(next);
-            onEnterWorkSurface?.();
-          }}
         >
-          {cases.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.label}
-            </option>
-          ))}
-        </select>
+          <PlatformScopeSelect
+            ariaLabel="Vybrat projekt"
+            value={selectedId}
+            options={cases.map((item) => ({
+              value: item.id,
+              label: item.label,
+            }))}
+            onChange={(next) => {
+              if (next.length === 0) return;
+              selectCase(next);
+              onEnterWorkSurface?.();
+            }}
+          />
+        </div>
 
         <button
           type="button"

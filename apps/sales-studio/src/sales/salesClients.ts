@@ -1,7 +1,14 @@
 /**
- * SR-001 / SR-002 — Presentation fixtures for Sales desk.
+ * SR-001 / SR-002 / CAP-PLAT-04j — Presentation fixtures for Sales desk.
+ * DUP-08 / PT-PDM-03 — labeled mock leads only; not SSOT.
+ * CAP-PLAT-04j — interest `id` = Canonical House id (never Project id).
  * Zájemce → houses of interest; active house = highest interest (or selected).
  */
+
+import {
+  listCanonicalHouses,
+  listCanonicalProjects,
+} from '@embed-engine/platform-access';
 
 export type SalesJourneyStep = {
   readonly module: string;
@@ -11,7 +18,7 @@ export type SalesJourneyStep = {
   readonly active?: boolean;
 };
 
-/** One house the zájemce is considering. */
+/** One house the zájemce is considering — `id` = Canonical House id. */
 export type SalesHouseInterest = {
   readonly id: string;
   readonly houseName: string;
@@ -29,6 +36,60 @@ export type SalesClient = {
   readonly houses: readonly SalesHouseInterest[];
 };
 
+/** CAP-PLAT-04j — shell Project list from true CPL Projects (never House rows). */
+export type SalesCanonicalProjectOption = {
+  readonly id: string;
+  readonly label: string;
+  readonly companyLabel: string;
+};
+
+/** CAP-PLAT-04j — House options from CPL (concrete product / model). */
+export type SalesCanonicalHouseOption = {
+  readonly id: string;
+  readonly label: string;
+  readonly projectId: string;
+};
+
+export function listSalesCanonicalProjects(): readonly SalesCanonicalProjectOption[] {
+  return listCanonicalProjects().map((projection) => ({
+    id: projection.project.projectId,
+    label: projection.project.name,
+    companyLabel: projection.partner.companyName,
+  }));
+}
+
+/**
+ * CAP-VR33b — Session `projectId` is a Project identity only. Do not resolve
+ * House ids here: Sales fixture interests remain presentation-only until VR30.
+ */
+export function resolveSalesActiveProjectId(
+  sharedProjectId: string | null | undefined,
+  projects: readonly SalesCanonicalProjectOption[] = listSalesCanonicalProjects(),
+): string | null {
+  const candidate = sharedProjectId?.trim() ?? '';
+  if (projects.some((project) => project.id === candidate)) {
+    return candidate;
+  }
+  return projects[0]?.id ?? null;
+}
+
+export function listSalesCanonicalHouses(
+  projectId?: string | null,
+): readonly SalesCanonicalHouseOption[] {
+  return listCanonicalHouses(projectId).flatMap((projection) => {
+    if (projection.house === null) return [];
+    return [{
+      id: projection.house.houseId,
+      label: projection.house.name,
+      projectId: projection.project.projectId,
+    }];
+  });
+}
+
+/**
+ * Presentation-only Sales desk fixtures (not production CRM / Partner Repository).
+ * Interest house ids must match Canonical House ids from CPL.
+ */
 export const SALES_CLIENTS: readonly SalesClient[] = [
   {
     id: 'novak',
@@ -83,14 +144,14 @@ export const SALES_CLIENTS: readonly SalesClient[] = [
         ],
       },
       {
-        id: 'modern-01',
-        houseName: 'MODERN 01',
+        id: 'family-98',
+        houseName: 'Family 98',
         score: 71,
         land: 'Mám pozemek',
         location: 'Opava',
         tags: ['Orientace ke světlu', 'Dispozice'],
         insight:
-          'Druhý zájem — porovnává MODERN 01 s Harmony 124 podle orientace a nákladů.',
+          'Druhý zájem — porovnává Family 98 s Harmony 124 podle orientace a nákladů.',
         journey: [
           {
             module: 'Úvodní prohlídka',
@@ -176,8 +237,8 @@ export const SALES_CLIENTS: readonly SalesClient[] = [
     name: 'Marie Kučerová',
     houses: [
       {
-        id: 'modern-01',
-        houseName: 'MODERN 01',
+        id: 'family-98',
+        houseName: 'Family 98',
         score: 78,
         land: 'Mám pozemek',
         location: 'Olomouc',
@@ -206,14 +267,14 @@ export const SALES_CLIENTS: readonly SalesClient[] = [
         ],
       },
       {
-        id: 'family-98',
-        houseName: 'Family 98',
+        id: 'harmony-124',
+        houseName: 'Harmony 124',
         score: 65,
         land: 'Mám pozemek',
         location: 'Olomouc',
         tags: ['Kompaktní rozměr', 'Dětské pokoje'],
         insight:
-          'Family 98 je záložní varianta — menší stopu, stejný důraz na dětské pokoje.',
+          'Harmony 124 je záložní varianta — větší stopa, stejný důraz na dětské pokoje.',
         journey: [
           {
             module: 'Úvodní prohlídka',
@@ -274,4 +335,27 @@ export function houseDetailLine(house: SalesHouseInterest): string {
 
 export function clientPrimaryScore(client: SalesClient): number {
   return highestInterestHouse(client).score;
+}
+
+/** CAP-PLAT-04j — fixture House ids must resolve as independent CPL Houses. */
+export function assertSalesFixtureHousesAreCanonical(): void {
+  const houses = listSalesCanonicalHouses();
+  const houseIds = new Set(houses.map((house) => house.id));
+  const projectIds = new Set(
+    listSalesCanonicalProjects().map((project) => project.id),
+  );
+  for (const client of SALES_CLIENTS) {
+    for (const interest of client.houses) {
+      if (!houseIds.has(interest.id)) {
+        throw new Error(
+          `Sales fixture house "${interest.id}" is not a Canonical House id`,
+        );
+      }
+      if (projectIds.has(interest.id)) {
+        throw new Error(
+          `Sales fixture "${interest.id}" collides with a Canonical Project id`,
+        );
+      }
+    }
+  }
 }

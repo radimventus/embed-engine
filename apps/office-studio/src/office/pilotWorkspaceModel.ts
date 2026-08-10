@@ -1,13 +1,24 @@
 /**
- * CAP-OP-01 / CAP-OP-02 / PT-PDM-02 — Pilot Workspace domain.
- * Select Project lists published Shared Projects (Builder-authored).
- * Commercial fields are Office ops overlays keyed by projectId — not a second project registry.
+ * CAP-OP-01 / CAP-OP-02 / CAP-PLAT-02b / CAP-PLAT-04g — Pilot Workspace commercial presentation.
+ *
+ * Domain identity (Company / Project / House) — Canonical Projection Layer only.
+ * CAP-PLAT-04g — Case = Canonical Project; Houses nested inside the case.
+ * Commercial ops overlays — workflow only (status / PE / contacts).
+ * Office identity is Firma · Projekt — never Builder dům chrome.
  */
 
 import {
-  listPublishedProjects,
-  type SharedProject,
+  getCanonicalProject,
+  listCanonicalHouses,
+  listCanonicalProjects,
+  type CanonicalProjectProjection,
+  type SharedProjectDocumentRef,
 } from '@embed-engine/platform-access';
+
+import {
+  licenseLabelFromOfferTemplate,
+  packageNameFromOfferTemplate,
+} from './commercialPilotProgramCatalog';
 
 export type PilotWorkspaceCaseId = string;
 
@@ -30,16 +41,38 @@ export type PilotPartnerEnvironmentState =
   | 'ready'
   | 'delivered';
 
+/** CAP-PLAT-04g — House nested under an Office case (Project). */
+export type PilotWorkspaceHouse = {
+  readonly houseId: string;
+  readonly name: string;
+  readonly objectType: string;
+  readonly packagePublicRoot: string;
+};
+
 export type PilotWorkspaceCase = {
-  /** Equals Shared Project id (Platform Projekt). */
+  /** CAP-PLAT-04g — Canonical Project id (case identity). */
   readonly id: PilotWorkspaceCaseId;
-  /** Explicit ProjectId bind — always equals `id` after PDM-02. */
+  /** Explicit ProjectId bind — equals `id` (Canonical Project). */
   readonly projectId: string;
+  readonly companyId: string;
+  /**
+   * PT-PLATFORM-01 — Select / chrome: `Firma · Projekt`.
+   * Never Builder dům identity.
+   */
   readonly label: string;
+  /** CAP-PLAT-04g — Office case title = `{project.name}`. */
+  readonly projectTitle: string;
   readonly partnerName: string;
   readonly companyName: string;
   readonly packageName: string;
   readonly licenseLabel: string;
+  readonly logoLabel: string;
+  readonly heroLabel: string;
+  readonly websiteUrl: string;
+  readonly documents: readonly SharedProjectDocumentRef[];
+  readonly offerTemplateId: string | null;
+  /** CAP-PLAT-04g — Houses listed inside the case. */
+  readonly houses: readonly PilotWorkspaceHouse[];
   readonly status: PilotWorkspaceCaseStatus;
   readonly updatedAt: string;
   readonly contacts: readonly PilotCaseContact[];
@@ -50,8 +83,8 @@ export type PilotWorkspaceCase = {
 };
 
 /**
- * Legacy Office demo case ids → Shared Project ids (recovery / older tests).
- * DUP-05 — demo case identity retired; aliases resolve to Projekt.
+ * Legacy Office demo case ids → Shared Project / House ids (recovery / older tests).
+ * DUP-05 — demo case identity retired; dual-read resolves to parent Project via CPL.
  */
 export const LEGACY_CASE_TO_PROJECT_ID: Readonly<Record<string, string>> =
   Object.freeze({
@@ -67,145 +100,179 @@ export function resolvePilotProjectId(
   return LEGACY_CASE_TO_PROJECT_ID[caseOrProjectId] ?? caseOrProjectId;
 }
 
-type CommercialOverlay = {
-  readonly label: string;
-  readonly partnerName: string;
-  readonly companyName: string;
-  readonly packageName: string;
-  readonly licenseLabel: string;
+/**
+ * Office ops overlay — status / PE / contacts only.
+ * Never invents partner, company, logo, Hero, package, or documents.
+ */
+type CommercialOpsOverlay = {
   readonly status: PilotWorkspaceCaseStatus;
   readonly updatedAt: string;
   readonly contacts: readonly PilotCaseContact[];
   readonly partnerEnvironment: PilotWorkspaceCase['partnerEnvironment'];
 };
 
-/** Office ops overlays — not project authoring. */
-const COMMERCIAL_OVERLAYS: Readonly<Record<string, CommercialOverlay>> =
-  Object.freeze({
-    'villa-168': {
-      label: 'Domy s energií · Starter',
-      partnerName: 'Domy s energií',
-      companyName: 'Domy s energií s.r.o.',
-      packageName: 'Starter',
-      licenseLabel: 'až 3 domy · 90 dní',
-      status: 'waiting_payment',
-      updatedAt: '2026-08-04T09:00:00.000Z',
-      contacts: [
-        {
-          name: 'Jana Energetická',
-          email: 'jana@domysenergii.cz',
-          role: 'Obchodní kontakt',
-        },
-      ],
-      partnerEnvironment: {
-        state: 'preparing',
-        label: 'Partner Environment se připravuje',
-      },
-    },
-    'harmony-124': {
-      label: 'Nord Living · Pilot',
-      partnerName: 'Nord Living',
-      companyName: 'Nord Living a.s.',
-      packageName: 'Pilot',
-      licenseLabel: '1 dům · 90 dní',
-      status: 'checkout',
-      updatedAt: '2026-08-03T14:30:00.000Z',
-      contacts: [
-        {
-          name: 'Erik Nord',
-          email: 'erik@nordliving.cz',
-          role: 'Jednatel',
-        },
-      ],
-      partnerEnvironment: {
-        state: 'not_prepared',
-        label: 'Partner Environment zatím nepřipraveno',
-      },
-    },
-    'family-98': {
-      label: 'Ateliér Domů · Studio Partner',
-      partnerName: 'Ateliér Domů',
-      companyName: 'Ateliér Domů s.r.o.',
-      packageName: 'Studio Partner',
-      licenseLabel: 'Neomezeně (MVP) · 90 dní',
-      status: 'offer',
-      updatedAt: '2026-08-02T11:15:00.000Z',
-      contacts: [
-        {
-          name: 'Marie Ateliér',
-          email: 'marie@atelierdomu.cz',
-          role: 'Partner lead',
-        },
-      ],
-      partnerEnvironment: {
-        state: 'not_prepared',
-        label: 'Partner Environment zatím nepřipraveno',
-      },
-    },
-  });
+const SEED_PROJECT_OPS: CommercialOpsOverlay = {
+  status: 'waiting_payment',
+  updatedAt: '2026-08-04T09:00:00.000Z',
+  contacts: [],
+  partnerEnvironment: {
+    state: 'preparing',
+    label: 'Partner Environment se připravuje',
+  },
+};
 
-function projectToCase(project: SharedProject): PilotWorkspaceCase {
-  const overlay = COMMERCIAL_OVERLAYS[project.id];
-  if (overlay !== undefined) {
-    return {
-      id: project.id,
-      projectId: project.id,
-      label: overlay.label,
-      partnerName: overlay.partnerName,
-      companyName: overlay.companyName,
-      packageName: overlay.packageName,
-      licenseLabel: overlay.licenseLabel,
-      status: overlay.status,
-      updatedAt: overlay.updatedAt,
-      contacts: overlay.contacts,
-      partnerEnvironment: overlay.partnerEnvironment,
-    };
-  }
-  return {
-    id: project.id,
-    projectId: project.id,
-    label: `${project.companyName} · ${project.name}`,
-    partnerName: project.companyName,
-    companyName: project.companyName,
-    packageName: project.name,
-    licenseLabel: '—',
-    status: 'offer',
-    updatedAt: project.publishedAt ?? new Date().toISOString(),
+/**
+ * Ops keyed by Canonical Project id.
+ * House ids remain dual-read aliases onto the seed Project overlay.
+ */
+const COMMERCIAL_OPS_OVERLAYS: Readonly<
+  Record<string, CommercialOpsOverlay>
+> = Object.freeze({
+  'project-ac-modular': SEED_PROJECT_OPS,
+  'villa-168': SEED_PROJECT_OPS,
+  'harmony-124': {
+    status: 'checkout',
+    updatedAt: '2026-08-03T14:30:00.000Z',
     contacts: [],
     partnerEnvironment: {
       state: 'not_prepared',
       label: 'Partner Environment zatím nepřipraveno',
     },
+  },
+  'family-98': {
+    status: 'offer',
+    updatedAt: '2026-08-02T11:15:00.000Z',
+    contacts: [],
+    partnerEnvironment: {
+      state: 'not_prepared',
+      label: 'Partner Environment zatím nepřipraveno',
+    },
+  },
+});
+
+const DEFAULT_OPS: CommercialOpsOverlay = {
+  status: 'offer',
+  updatedAt: new Date(0).toISOString(),
+  contacts: [],
+  partnerEnvironment: {
+    state: 'not_prepared',
+    label: 'Partner Environment zatím nepřipraveno',
+  },
+};
+
+/** CAP-PLAT-04g — Office case title is Project.name (not Workspace / House). */
+function officeProjectTitle(projection: CanonicalProjectProjection): string {
+  const titled = projection.project.name.trim();
+  return titled.length > 0 ? titled : projection.project.projectId;
+}
+
+/**
+ * CAP-PLAT-04g / CAP-PLAT-04R4a — nested Houses from CPL House list only.
+ * Project may have zero Houses; never requires projection.house.
+ */
+function housesForProject(
+  projectId: string,
+): readonly PilotWorkspaceHouse[] {
+  return listCanonicalHouses(projectId).flatMap((projection) => {
+    const house = projection.house;
+    if (house === null) return [];
+    return [
+      {
+        houseId: house.houseId,
+        name: house.name,
+        objectType: house.objectType,
+        packagePublicRoot: house.packagePublicRoot,
+      },
+    ];
+  });
+}
+
+/**
+ * CAP-PLAT-04R4a — null-safe ops: Project-keyed overlay, else House-keyed when present.
+ * Zero Houses → Project/default ops only (never invent a House).
+ */
+function opsForProjection(
+  projection: CanonicalProjectProjection,
+): CommercialOpsOverlay {
+  const houseId = projection.house?.houseId;
+  const houseOps =
+    houseId !== undefined ? COMMERCIAL_OPS_OVERLAYS[houseId] : undefined;
+  return (
+    COMMERCIAL_OPS_OVERLAYS[projection.project.projectId] ??
+    houseOps ?? {
+      ...DEFAULT_OPS,
+      updatedAt:
+        projection.publication.publishedAt ?? new Date().toISOString(),
+    }
+  );
+}
+
+/**
+ * CAP-PLAT-02b / CAP-PLAT-04g — Commercial Case adapter above CPL (workflow only).
+ * Case identity = Canonical Project; Houses nested.
+ */
+export function toOfficeCommercialCase(
+  projection: CanonicalProjectProjection,
+): PilotWorkspaceCase {
+  const projectId = projection.project.projectId;
+  const ops = opsForProjection(projection);
+  const packageName = packageNameFromOfferTemplate(
+    projection.experience.offerTemplateId,
+  );
+  const licenseLabel = licenseLabelFromOfferTemplate(
+    projection.experience.offerTemplateId,
+  );
+  const projectTitle = officeProjectTitle(projection);
+  return {
+    id: projectId,
+    projectId,
+    companyId: projection.partner.companyId,
+    label: `${projection.partner.companyName} · ${projectTitle}`,
+    projectTitle,
+    partnerName: projection.partner.companyName,
+    companyName: projection.partner.companyName,
+    packageName,
+    licenseLabel,
+    logoLabel: projection.branding.logoLabel,
+    heroLabel: projection.branding.heroLabel,
+    websiteUrl: projection.branding.websiteUrl,
+    documents: projection.branding.documents,
+    offerTemplateId: projection.experience.offerTemplateId,
+    houses: housesForProject(projectId),
+    status: ops.status,
+    updatedAt: ops.updatedAt,
+    contacts: ops.contacts,
+    partnerEnvironment: ops.partnerEnvironment,
   };
 }
 
-/** Prefer stable pilot order: villa → harmony → family, then others. */
-const SELECT_ORDER = ['villa-168', 'harmony-124', 'family-98'] as const;
-
 /**
- * Office Select Project — published Shared Projects only (PDM-02).
- * Replaces the former standalone PILOT_WORKSPACE_DEMO_CASES registry.
+ * Office Select Project — commercial cases from true CPL Projects.
+ * CAP-PLAT-04g — one case per Project; Houses nested on the case.
  */
 export function listOfficeSelectProjects(): readonly PilotWorkspaceCase[] {
-  const published = listPublishedProjects();
-  const byId = new Map(published.map((project) => [project.id, project]));
-  const ordered: SharedProject[] = [];
-  for (const id of SELECT_ORDER) {
-    const hit = byId.get(id);
-    if (hit !== undefined) {
-      ordered.push(hit);
-      byId.delete(id);
-    }
-  }
-  for (const project of byId.values()) {
-    ordered.push(project);
-  }
-  return ordered.map(projectToCase);
+  return listCanonicalProjects().map(toOfficeCommercialCase);
 }
 
-/** @deprecated Use listOfficeSelectProjects — kept as alias for existing imports. */
+/**
+ * @deprecated CAP-PLAT-02b — use listOfficeSelectProjects() (live CPL).
+ * Proxy avoids import-time freeze of domain rows.
+ */
 export const PILOT_WORKSPACE_DEMO_CASES: readonly PilotWorkspaceCase[] =
-  listOfficeSelectProjects();
+  new Proxy([] as PilotWorkspaceCase[], {
+    get(_target, prop, receiver) {
+      const live = listOfficeSelectProjects();
+      if (prop === 'length') return live.length;
+      if (prop === Symbol.iterator) {
+        return live[Symbol.iterator].bind(live);
+      }
+      if (typeof prop === 'string' && /^\d+$/.test(prop)) {
+        return live[Number(prop)];
+      }
+      const value = Reflect.get(live, prop, receiver);
+      return typeof value === 'function' ? value.bind(live) : value;
+    },
+  });
 
 /** Canonical Working Terminal views — order is fixed; Inbox is default. */
 export type PilotTerminalViewId =
@@ -382,9 +449,11 @@ export function getPilotWorkspaceCase(
 ): PilotWorkspaceCase | null {
   const projectId = resolvePilotProjectId(caseId);
   if (projectId === null) return null;
-  return (
-    listOfficeSelectProjects().find((item) => item.id === projectId) ?? null
-  );
+  const projection = getCanonicalProject(projectId);
+  if (projection === null || !projection.publication.isPublished) {
+    return null;
+  }
+  return toOfficeCommercialCase(projection);
 }
 
 export function isPilotTerminalViewId(
@@ -410,4 +479,3 @@ export function createPlaceholderCase(): PilotWorkspaceCase {
     updatedAt: new Date().toISOString(),
   };
 }
-

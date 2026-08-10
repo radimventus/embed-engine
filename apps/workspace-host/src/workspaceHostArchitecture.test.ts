@@ -66,6 +66,18 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.match(app, /mode:\s*'standalone'/);
   });
 
+  it('PT-BS-01 — Client surface unlocks document scrollport', () => {
+    const css = read('src/workspace-host.css');
+    assert.match(
+      css,
+      /data-workspace-surface='client'[\s\S]*overflow:\s*visible/,
+    );
+    assert.match(
+      css,
+      /\[data-workspace-surface='client'\][\s\S]*\.workspace-shell__view[\s\S]*position:\s*static/,
+    );
+  });
+
   it('CAP-VR33E — accepts canonical Builder Project changes in Workspace Host', () => {
     const app = read('src/WorkspaceHostApp.tsx');
 

@@ -18,11 +18,11 @@ import {
   getDefaultCompanyRegistry,
 } from '../registry/companyRegistry';
 
-/** OF-01 — Office has no Capability host; map only Builder / Manager / Sales. */
+/** OF-01 — Office / Client have no Capability host; map only Builder / Manager / Sales. */
 function toCapabilityStudioId(
   studioId: PlatformStudioId,
 ): StudioId | null {
-  if (studioId === 'office') return null;
+  if (studioId === 'office' || studioId === 'client') return null;
   return studioId;
 }
 

@@ -13,12 +13,13 @@ type StudioSwitcherProps = {
   readonly onSelectStudio?: (studioId: PlatformStudioId) => void;
 };
 
-/** Canonical switcher order — SSOT for header + Landing. */
+/** Canonical switcher order — SSOT for header + Landing (PT-OS-02 / B-01). */
 export const PLATFORM_STUDIO_SWITCH_ORDER: readonly PlatformStudioId[] = [
-  'office',
+  'client',
   'manager',
   'sales',
   'builder',
+  'office',
 ];
 
 /**

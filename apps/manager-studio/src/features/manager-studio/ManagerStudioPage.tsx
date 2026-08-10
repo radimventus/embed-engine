@@ -11,8 +11,8 @@ import { DecisionSessionRuntimeProvider } from './runtime/DecisionSessionRuntime
 export function ManagerStudioPage() {
   return (
     <DecisionSessionRuntimeProvider>
+      <ManagerWorkCenterHome />
       <RuntimeBootstrapGate>
-        <ManagerWorkCenterHome />
         <OperationsCanvas partnerOnly />
         <OperationsCenterCanvas partnerOnly />
         <ProductLearningCanvas partnerOnly />

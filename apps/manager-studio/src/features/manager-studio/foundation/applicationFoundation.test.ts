@@ -68,6 +68,9 @@ describe('Application Foundation (MSCB-01)', () => {
     const provider = readSource(
       'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
     );
+    const bind = readSource(
+      'src/features/manager-studio/runtime/managerCanonicalBind.ts',
+    );
     const page = readSource(
       'src/features/manager-studio/ManagerStudioPage.tsx',
     );
@@ -77,6 +80,12 @@ describe('Application Foundation (MSCB-01)', () => {
 
     assert.match(provider, /createDecisionSessionRuntime/);
     assert.match(provider, /createSystemClock/);
+    assert.match(provider, /loadPublicBuilderHousePackage/);
+    assert.match(provider, /resolveCanonicalRuntimeBindingFromSession/);
+    assert.match(bind, /resolveCanonicalRuntimeBinding/);
+    assert.doesNotMatch(provider, /\bopenProject\b/);
+    assert.doesNotMatch(bind, /\bopenProject\b/);
+    assert.equal(provider.includes('REFERENCE_HOUSE_PACKAGE'), false);
     assert.match(page, /DecisionSessionRuntimeProvider/);
     assert.match(page, /RuntimeBootstrapGate/);
     assert.equal(app.includes('createDecisionSessionRuntime'), false);
@@ -174,6 +183,211 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.equal(provider.includes('getInterpretation'), false);
     assert.equal(provider.includes('interpretDecisionSession'), false);
     assert.equal(provider.includes('composeDecision'), false);
+  });
+
+  it('PT-PLATFORM-01 / PT-CS-07 — incomplete Experience fails soft (no render throw)', () => {
+    const provider = readSource(
+      'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+    );
+    assert.doesNotMatch(
+      provider,
+      /throw new Error\('DecisionSessionRuntime produced no Experience projection\.'\)/,
+    );
+    assert.match(provider, /House Package je neúplný|Canonical Projection Layer/);
+    assert.match(provider, /resolveCanonicalRuntimeBindingFromSession/);
+    assert.doesNotMatch(provider, /\bopenProject\b/);
+    assert.doesNotMatch(provider, /resolveActiveProjectView/);
+  });
+
+  it('CAP-PLAT-02d.1 / CAP-PLAT-04i — shared Project and House resolve via CPL', async () => {
+    const { resolveCanonicalRuntimeBindingFromSession } = await import(
+      '../runtime/managerCanonicalBind.ts'
+    );
+    const binding = resolveCanonicalRuntimeBindingFromSession(
+      'project-ac-modular',
+      'villa-168',
+    );
+    assert.equal(binding.bindSource, 'explicit');
+    assert.equal(binding.runtimeHouseId, 'villa-168');
+    assert.equal(binding.runtimeProjectId, 'project-ac-modular');
+    assert.ok(binding.project);
+    assert.equal(binding.project.project.projectId, 'project-ac-modular');
+    assert.equal(binding.project.house.houseId, 'villa-168');
+    assert.equal(binding.project.house.name, 'Villa 168');
+    assert.notEqual(
+      binding.project.project.name,
+      binding.project.house.name,
+    );
+    assert.ok(binding.project.partner.companyId.length > 0);
+    assert.ok(
+      (binding.packagePublicRoot?.length ?? 0) > 0 ||
+        binding.project.house.packagePublicRoot.length > 0,
+    );
+
+    const unbound = resolveCanonicalRuntimeBindingFromSession(null);
+    assert.equal(unbound.bindSource, 'none');
+    assert.equal(unbound.project, null);
+  });
+
+  it('CAP-REF-07c — MODERN 4KK consumes canonical House Runtime Context without CSV', async () => {
+    const provider = readSource(
+      'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+    );
+    const { resolveCanonicalRuntimeBindingFromSession } = await import(
+      '../runtime/managerCanonicalBind.ts'
+    );
+    const { getCanonicalHouseRuntimeContext } = await import(
+      '@embed-engine/object-house'
+    );
+    const binding = resolveCanonicalRuntimeBindingFromSession(
+      'project-domy-s-energii',
+      'modern-4kk',
+    );
+    const context = getCanonicalHouseRuntimeContext(
+      binding.runtimeHouseId ?? '',
+    );
+
+    assert.match(provider, /getCanonicalHouseRuntimeContext/);
+    assert.match(provider, /if \(canonicalHouseContext !== null\)/);
+    assert.match(provider, /const projectId = runtimeProjectId/);
+    assert.equal(binding.runtimeHouseId, 'modern-4kk');
+    assert.equal(binding.runtimeProjectId, 'project-domy-s-energii');
+    assert.ok(context);
+    assert.equal(context.specification.identity.houseId, 'modern-4kk');
+    assert.equal(context.knowledge.length, 20);
+    assert.equal(context.priorityFaq.length, 100);
+  });
+
+  it('CAP-VR38d1 — Manager keeps Project scope distinct from shared House scope', async () => {
+    const sidebar = readSource(
+      'src/features/manager-studio/ManagerStudioSidebar.tsx',
+    );
+    const scopeControls = readSource(
+      'src/features/manager-studio/ManagerWorkspaceScopeControls.tsx',
+    );
+    const provider = readSource(
+      'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+    );
+    const { resolveCanonicalRuntimeBindingFromSession } = await import(
+      '../runtime/managerCanonicalBind.ts'
+    );
+    const projectScope = resolveCanonicalRuntimeBindingFromSession(
+      'project-domy-s-energii',
+      null,
+    );
+    const houseScope = resolveCanonicalRuntimeBindingFromSession(
+      'project-domy-s-energii',
+      'modern-4kk',
+    );
+
+    assert.equal(projectScope.runtimeProjectId, 'project-domy-s-energii');
+    assert.equal(projectScope.runtimeHouseId, null);
+    assert.equal(houseScope.runtimeHouseId, 'modern-4kk');
+    assert.match(scopeControls, /Celý projekt/);
+    assert.match(scopeControls, />\s*Projekt\s*</);
+    assert.match(scopeControls, />\s*Objekt\s*</);
+    assert.doesNotMatch(scopeControls, /Dům \/ objekt/);
+    assert.match(scopeControls, /updateWorkspaceScope\(\{ projectId: nextProjectId \}\)/);
+    assert.match(
+      scopeControls,
+      /activeHouseId: nextHouseId\.length > 0 \? nextHouseId : null/,
+    );
+    assert.match(scopeControls, /createWorkspaceHouseChangeMessage/);
+    assert.match(scopeControls, /listWorkspaceHouses\(projectId\)/);
+    assert.doesNotMatch(scopeControls, /registry\.projects\.filter/);
+    assert.match(provider, /resolveWorkspaceHouseBinding/);
+    assert.match(provider, /runtimeContentAvailable === false/);
+  });
+
+  it('CAP-VR39R1 — Project scope renders controls before any House runtime gate', () => {
+    const page = readSource('src/features/manager-studio/ManagerStudioPage.tsx');
+    const sidebar = readSource(
+      'src/features/manager-studio/ManagerStudioSidebar.tsx',
+    );
+    const scopeControls = readSource(
+      'src/features/manager-studio/ManagerWorkspaceScopeControls.tsx',
+    );
+    const provider = readSource(
+      'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+    );
+    const gate = readSource(
+      'src/features/manager-studio/foundation/RuntimeBootstrapGate.tsx',
+    );
+
+    assert.match(scopeControls, /data-testid="manager-workspace-scope"/);
+    assert.match(scopeControls, /Celý projekt/);
+    assert.match(scopeControls, /listWorkspaceHouses\(projectId\)/);
+    assert.ok(
+      sidebar.indexOf('<ManagerWorkspaceScopeControls />') <
+        sidebar.indexOf('PARTNER_NAV_GROUPS.map'),
+    );
+    assert.match(scopeControls, /PlatformScopeSelect/);
+    assert.doesNotMatch(scopeControls, /<select\b/);
+    assert.match(
+      scopeControls,
+      /bg-\[var\(--platform-cream-light\)\]/,
+    );
+    assert.doesNotMatch(page, /ManagerWorkspaceScopeControls/);
+    assert.doesNotMatch(provider, /manager-runtime-bootstrap-error/);
+    assert.match(provider, /<ManagerStudioRuntimeContext\.Provider value=\{value\}>/);
+    assert.match(provider, /\{children\}/);
+    assert.match(provider, /if \(sessionActiveHouseId === null\)/);
+    assert.match(provider, /Vyberte dům \/ objekt pro provozní projekci/);
+    assert.match(gate, /runtime\.bootstrapStatus !== null/);
+  });
+
+  it('CAP-VR35b — demo operational fixtures require REFERENCE_DEMO House mode', () => {
+    const provider = readSource(
+      'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+    );
+    const workCenter = readSource(
+      'src/features/manager-studio/ManagerWorkCenterHome.tsx',
+    );
+
+    assert.match(provider, /const houseDataMode = workspaceHouseBinding\?\.dataMode/);
+    assert.match(workCenter, /houseDataMode !== 'REFERENCE_DEMO'/);
+    assert.match(workCenter, /manager-operational-empty/);
+    assert.match(
+      workCenter,
+      /zatím nejsou žádná provozní ani zákaznická data/,
+    );
+  });
+
+  it('CAP-PLAT-02d.2 / CAP-PLAT-04i — shell Company / Project / House presentation from CPL only', async () => {
+    const shell = readSource('src/components/layout/AppShell.tsx');
+    const workspace = readSource('src/components/layout/Workspace.tsx');
+    const presentation = readSource(
+      'src/features/manager-studio/runtime/managerCanonicalPresentation.ts',
+    );
+
+    assert.match(shell, /resolveManagerCanonicalIdentity/);
+    assert.match(presentation, /resolveCanonicalRuntimeBindingFromSession/);
+    assert.doesNotMatch(shell, /useStudioBrandProjection/);
+    assert.doesNotMatch(shell, /usePilotWorkspace/);
+    assert.doesNotMatch(shell, /bootstrap\?\.project/);
+    assert.doesNotMatch(workspace, /StudioBrandProjection/);
+    assert.match(workspace, /data-canonical-company/);
+    assert.match(workspace, /data-canonical-project/);
+    assert.match(workspace, /data-canonical-house/);
+
+    const { resolveManagerCanonicalIdentity } = await import(
+      '../runtime/managerCanonicalPresentation.ts'
+    );
+    const identity = resolveManagerCanonicalIdentity('villa-168');
+    assert.ok(identity.projection);
+    assert.equal(identity.projection.project.projectId, 'project-ac-modular');
+    assert.equal(identity.projection.house.houseId, 'villa-168');
+    assert.equal(identity.houseLabel, 'Villa 168');
+    assert.equal(identity.projectLabel, 'AC Modular');
+    assert.equal(identity.companyLabel, 'AC Modular');
+    assert.notEqual(identity.houseLabel, identity.projectLabel);
+    assert.match(identity.helperLine, /AC Modular/);
+    assert.match(identity.helperLine, /Villa 168 Hero|Villa 168/);
+    assert.match(identity.helperLine, /AC Modular/);
+    assert.equal(
+      identity.helperLine,
+      'AC Modular · Villa 168 Hero · AC Modular',
+    );
   });
 
   it('does not depend on Client Studio application modules', () => {

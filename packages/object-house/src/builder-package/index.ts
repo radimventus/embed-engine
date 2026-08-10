@@ -14,6 +14,7 @@ export { bpError } from "./errors";
 export {
   buildBuilderPackageRegistries,
   type BuilderPackageSources,
+  type BuilderPackageValidationMode,
 } from "./buildRegistries";
 export { parseCsv } from "./parse-csv";
 export { resolveBuilderVideoUrl } from "./resolveVideoUrl";
@@ -73,6 +74,7 @@ export {
   type GeometryExtractResult,
 } from "./extractFloorPlanGeometry";
 export {
-  validateFloorPlanGeometryAgainstRooms,
-  type Hp003ValidationError,
-} from "./validateFloorPlanGeometry";
+  loadPublicBuilderHousePackage,
+  projectPublicBuilderHousePackageFromCsvTexts,
+  type LoadPublicBuilderHousePackageInput,
+} from "./loadPublicBuilderHousePackage";

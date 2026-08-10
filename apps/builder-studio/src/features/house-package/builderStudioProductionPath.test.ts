@@ -39,6 +39,16 @@ describe('BuilderStudioApp production imports (CAP-BLD-07)', () => {
     assert.match(source, /openPreview/);
   });
 
+  it('PT-BS-01 — external projectId bind is one-shot so House Navigator can switch', () => {
+    const source = readFileSync(
+      join(appRoot, 'features/builder-studio/BuilderStudioApp.tsx'),
+      'utf8',
+    );
+    assert.match(source, /externalHouseBindDoneRef/);
+    assert.match(source, /openHouseStable/);
+    assert.match(source, /requestOpenProject\(houseId/);
+  });
+
   it('opens Náhled as a dedicated window entry (PR-024)', () => {
     const mainSource = readFileSync(join(appRoot, 'main.tsx'), 'utf8');
     assert.match(mainSource, /isBuilderNahledWindow/);

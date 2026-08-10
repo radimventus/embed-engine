@@ -55,6 +55,52 @@ body {
   display: none !important;
 }
 
+/**
+ * PT-BS-01 — Client Studio needs document scrollport (same contract as Embed standalone).
+ * PlatformShell locks the viewport for iframe studios; unlock only the client surface.
+ */
+html:has(.workspace-shell[data-workspace-surface='client']),
+body:has(.workspace-shell[data-workspace-surface='client']),
+#root:has(.workspace-shell[data-workspace-surface='client']) {
+  height: auto;
+  min-height: 100%;
+}
+
+.workspace-shell[data-workspace-surface='client'] {
+  min-height: 100vh;
+  min-height: 100dvh;
+  height: auto;
+}
+
+.workspace-shell[data-workspace-surface='client'] [data-platform-shell] {
+  height: auto;
+  max-height: none;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow: visible;
+}
+
+.workspace-shell[data-workspace-surface='client'] .platform-body {
+  overflow: visible;
+  min-height: 0;
+}
+
+.workspace-shell[data-workspace-surface='client'] .workspace-shell__main {
+  position: relative;
+  min-height: 0;
+  height: auto;
+  overflow: visible;
+}
+
+.workspace-shell[data-workspace-surface='client'] .workspace-shell__view {
+  position: static;
+  inset: auto;
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  overflow: visible;
+}
+
 .workspace-host__redirect {
   margin: 0;
   padding: 24px;

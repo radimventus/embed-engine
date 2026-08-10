@@ -5,8 +5,9 @@ import { getPlatformStudio, PLATFORM_STUDIOS } from './platformStudios';
 import { getPlatformTheme } from './platformTheme';
 
 describe('platformShell (EPIC-BX-11 / BX-15 / VR-FIX-01 / OF-01)', () => {
-  it('exposes Office, Builder, Manager and Sales with local Vite ports', () => {
-    assert.equal(PLATFORM_STUDIOS.length, 4);
+  it('routes operator Client selection through the local Workspace Host', () => {
+    assert.equal(PLATFORM_STUDIOS.length, 5);
+    assert.equal(getPlatformStudio('client').href, 'http://127.0.0.1:4183/');
     assert.equal(getPlatformStudio('office').href, 'http://127.0.0.1:4181/');
     assert.equal(getPlatformStudio('builder').href, 'http://127.0.0.1:4177/');
     assert.equal(getPlatformStudio('manager').href, 'http://127.0.0.1:4175/');

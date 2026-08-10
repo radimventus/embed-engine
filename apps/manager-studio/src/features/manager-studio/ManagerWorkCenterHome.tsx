@@ -2,14 +2,42 @@ import {
   PlatformCard,
   PlatformStatusBadge,
 } from '@embed-engine/platform-shell';
+import { useManagerStudioRuntime } from './runtime/DecisionSessionRuntimeProvider';
 
 /**
  * PR-005 — Manager jako pracovní centrum (HTML click model).
- * Prezentace — bez nové capability / workflow.
+ * DUP-09 / PT-PDM-03 — prezentace (ukázkové metriky); ne live analytics SSOT.
  */
 export function ManagerWorkCenterHome() {
+  const { houseDataMode } = useManagerStudioRuntime();
+
+  if (houseDataMode !== 'REFERENCE_DEMO') {
+    return (
+      <section
+        id="manager-work-center"
+        className="mb-8"
+        data-testid="manager-operational-empty"
+      >
+        <PlatformCard
+          title="Provozní přehled"
+          description="Pro tento dům zatím nejsou žádná provozní ani zákaznická data."
+        >
+          <p className="text-sm text-[var(--platform-navy)] opacity-70">
+            Data se zobrazí po přijetí skutečné provozní aktivity.
+          </p>
+        </PlatformCard>
+      </section>
+    );
+  }
+
   return (
     <section id="manager-work-center" className="mb-8 space-y-6">
+      <p
+        className="text-xs text-[var(--platform-navy)] opacity-70"
+        data-testid="manager-work-center-fixtures-label"
+      >
+        Ukázkové metriky (prezentace) — ne live analytics
+      </p>
       <div className="grid gap-6 desktop:grid-cols-2">
         <div id="mwc-dropoff" className="scroll-mt-4">
           <PlatformCard

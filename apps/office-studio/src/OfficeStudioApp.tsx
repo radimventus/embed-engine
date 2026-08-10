@@ -13,6 +13,7 @@ import {
   submitPlatformFeedback,
   usePlatformSession,
   isWorkspaceShellEmbed,
+  withCurrentSearchParams,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -86,21 +87,21 @@ function OfficeStudioAppInner() {
   useEffect(() => {
     /** Legacy Pilot Workspace URL → global work surface. */
     if (window.location.pathname.includes('pilot-workspace')) {
-      const href = officeHref('work');
+      const href = withCurrentSearchParams(officeHref('work'));
       window.history.replaceState(null, '', href);
       setLocation({ routeId: 'work', partnerId: null });
     }
   }, []);
 
   const navigate = useCallback((next: OfficeRouteId) => {
-    const href = officeHref(next);
+    const href = withCurrentSearchParams(officeHref(next));
     window.history.pushState(null, '', href);
     setLocation({ routeId: next, partnerId: null });
   }, []);
 
   const openPartnerScoped = useCallback(
     (routeId: PartnerScopedRoute, partnerId: string) => {
-      const href = officeHref(routeId, partnerId);
+      const href = withCurrentSearchParams(officeHref(routeId, partnerId));
       window.history.pushState(null, '', href);
       setLocation({ routeId, partnerId });
     },
@@ -206,42 +207,12 @@ function OfficeStudioAppInner() {
     </div>
   );
 
+  // PT-OS-02 / VR01 — nested in Workspace Host: never render a second PlatformShell.
   if (isWorkspaceShellEmbed()) {
-    return (
-      <PlatformShell
-        activeStudioId="office"
-        userLabel={session?.user.displayName ?? 'Host'}
-        roleLabel={
-          session !== null
-            ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
-            : undefined
-        }
-        workspace={workspaceState}
-        breadcrumb={breadcrumb}
-        capabilityHost={null}
-        onLogout={logout}
-        onOpenLanding={clearStudio}
-        onSelectStudio={selectStudio}
-        contentOnly
-        onSubmitFeedback={(message) => {
-          submitPlatformFeedback({
-            message,
-            email: session?.user.email ?? null,
-            studioId: 'office',
-            companyId: session?.companyId ?? null,
-          });
-          recordPlatformActivity({
-            label: 'Zpětná vazba',
-            detail: message.slice(0, 80),
-          });
-        }}
-      >
-        {workspaceBody}
-      </PlatformShell>
-    );
+    return workspaceBody;
   }
 
-  // VR-05 / PT-VR-01A — PE mode keeps PlatformShell header; hide Legacy Studio Switcher.
+  // Standalone Office — single PlatformShell with Studio Switcher SSOT.
   return (
     <PlatformShell
       activeStudioId="office"

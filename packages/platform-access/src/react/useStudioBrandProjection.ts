@@ -14,10 +14,13 @@ export function useStudioBrandProjection(): StudioBrandProjection {
   return useMemo(
     () =>
       projectPartnerBrand({
+        projectId: session?.projectId ?? bootstrap?.project?.id ?? null,
         companyId: session?.companyId ?? bootstrap?.company.id ?? null,
         fallbackCompanyName: bootstrap?.company.name ?? null,
       }),
     [
+      session?.projectId,
+      bootstrap?.project?.id,
       session?.companyId,
       bootstrap?.company.id,
       bootstrap?.company.name,

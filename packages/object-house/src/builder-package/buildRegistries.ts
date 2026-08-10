@@ -277,7 +277,7 @@ export function buildBuilderPackageRegistries(
   const roomIds = new Set(roomRows.map((r) => r.room));
 
   for (const row of roomRows) {
-    if (!floorIds.has(row.floor)) {
+    if (floorIds.size > 0 && !floorIds.has(row.floor)) {
       errors.push(
         bpError(
           "BP_UNKNOWN_FLOOR",

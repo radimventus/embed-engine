@@ -27,6 +27,14 @@ type WorkspaceSidebarProps = {
 /** PR-024/026 — large + · white fill · Interaction Blue border · hover invert. */
 const PLUS_BTN_CLASS = 'platform-plus-btn';
 
+/** The exact DOMY collection rendered by the workspace sidebar. */
+export function getWorkspaceSidebarHouses(
+  registry: WorkspaceRegistryState,
+): readonly WorkspaceProject[] {
+  const activeFolder = getActiveWorkspaceFolder(registry);
+  return activeFolder === null ? [] : housesForFolder(registry, activeFolder.id);
+}
+
 /**
  * PR-024 — Cream Light rail · object cards · unified ⊕.
  */
@@ -51,10 +59,7 @@ export function WorkspaceSidebar({
     [registry],
   );
 
-  const houses = useMemo(() => {
-    if (activeFolder === null) return [];
-    return housesForFolder(registry, activeFolder.id);
-  }, [activeFolder, registry]);
+  const houses = useMemo(() => getWorkspaceSidebarHouses(registry), [registry]);
 
   return (
     <aside

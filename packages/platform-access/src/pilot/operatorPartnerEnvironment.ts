@@ -10,9 +10,11 @@ import {
   resolveCloudStudioHref,
   resolveWorkspaceHostHref,
 } from '../cloud/cloudConfig';
+import type { PlatformStudioId } from '../domain/types';
 import type { SharedWorkspaceContext } from '../domain/workspaceContext';
 import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation';
 import { isOnWorkspaceHost } from '../domain/workspaceShellEmbed';
+import { getSharedProject } from '../project/projectRepository';
 import { getDefaultCompanyRegistry } from '../registry/companyRegistry';
 import {
   getSharedWorkspaceContext,
@@ -86,8 +88,7 @@ function hrefForSurface(surface: WorkspaceStudioSurface): string {
 
 function sessionStudioIdForSurface(
   surface: WorkspaceStudioSurface,
-): 'office' | 'builder' | 'manager' | 'sales' {
-  if (surface === 'client') return 'manager';
+): PlatformStudioId {
   return surface;
 }
 
@@ -218,15 +219,27 @@ export function switchOperatorPartnerStudio(
     return { ok: false, error: 'Nejste přihlášeni.' };
   }
 
+  /**
+   * PT-OS-02 / B-02 / B-03 — never clobber Office-selected Shared Project id
+   * with the PE provision template id (e.g. project-domy-s-energi-01).
+   */
+  const boundProjectId =
+    session.projectId !== null &&
+    session.projectId.length > 0 &&
+    getSharedProject(session.projectId) !== null
+      ? session.projectId
+      : ctx.projectId;
+
   const workspaceContext: SharedWorkspaceContext = {
     ...ctx,
     activeStudio: surface,
+    projectId: boundProjectId,
   };
 
   const next = updateSession({
     companyId: ctx.companyId,
     workspaceId: ctx.workspaceId,
-    projectId: ctx.projectId,
+    projectId: boundProjectId,
     activeStudioId: sessionStudioIdForSurface(surface),
     workspaceContext,
   });

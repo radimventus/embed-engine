@@ -3,7 +3,13 @@
  * Local Vite ports for development; path-based URLs on https://conis.cz/studio.
  */
 
-export type PlatformStudioId = 'office' | 'builder' | 'manager' | 'sales';
+export type PlatformStudioId =
+  | 'client'
+  | 'office'
+  | 'builder'
+  | 'manager'
+  | 'sales';
+
 
 export type PlatformStudio = {
   readonly id: PlatformStudioId;
@@ -18,19 +24,26 @@ export type PlatformStudio = {
 /** Site origin that hosts CONIS Studio under /studio/* */
 export const CLOUD_PLATFORM_ORIGIN = 'https://conis.cz';
 
-const LOCAL_PORTS: Record<PlatformStudioId, number> = {
+const LOCAL_PORTS: Record<Exclude<PlatformStudioId, 'client'>, number> = {
   office: 4181,
   builder: 4177,
   manager: 4175,
   sales: 4179,
 };
 
-const CLOUD_PATHS: Record<PlatformStudioId, string> = {
+// Client is an Experience mounted by the Workspace Host, not a standalone
+// operator Studio route.
+const LOCAL_CLIENT_PORT = 4183;
+
+const CLOUD_PATHS: Record<Exclude<PlatformStudioId, 'client'>, string> = {
   office: '/studio/office/',
   builder: '/studio/builder/',
   manager: '/studio/manager/',
   sales: '/studio/sales/',
 };
+
+const CLOUD_CLIENT_PATH = '/studio/workspace/';
+
 
 function readEnvOrigin(): string | null {
   try {
@@ -50,6 +63,32 @@ function isLocalHost(hostname: string): boolean {
 }
 
 export function resolvePlatformStudioHref(studioId: PlatformStudioId): string {
+  if (studioId === 'client') {
+    const envOrigin = readEnvOrigin();
+    if (envOrigin !== null) {
+      const local =
+        envOrigin.includes('127.0.0.1') || envOrigin.includes('localhost');
+      if (local) {
+        let host = '127.0.0.1';
+        try {
+          host = new URL(envOrigin).hostname;
+        } catch {
+          // keep default
+        }
+        return `http://${host}:${LOCAL_CLIENT_PORT}/`;
+      }
+      return `${CLOUD_PLATFORM_ORIGIN}${CLOUD_CLIENT_PATH}`;
+    }
+    if (typeof window !== 'undefined') {
+      const { hostname } = window.location;
+      if (isLocalHost(hostname)) {
+        return `http://${hostname}:${LOCAL_CLIENT_PORT}/`;
+      }
+      return `${CLOUD_PLATFORM_ORIGIN}${CLOUD_CLIENT_PATH}`;
+    }
+    return `http://127.0.0.1:${LOCAL_CLIENT_PORT}/`;
+  }
+
   const envOrigin = readEnvOrigin();
   if (envOrigin !== null) {
     const local =
@@ -79,9 +118,9 @@ export function resolvePlatformStudioHref(studioId: PlatformStudioId): string {
 
 const STUDIO_DEFS: readonly Omit<PlatformStudio, 'href'>[] = [
   {
-    id: 'office',
-    label: 'Office Studio',
-    shortLabel: 'Office',
+    id: 'client',
+    label: 'Client Studio',
+    shortLabel: 'Client',
     available: true,
     accent: '#18428F',
   },
@@ -103,6 +142,13 @@ const STUDIO_DEFS: readonly Omit<PlatformStudio, 'href'>[] = [
     id: 'builder',
     label: 'Builder Studio',
     shortLabel: 'Builder',
+    available: true,
+    accent: '#18428F',
+  },
+  {
+    id: 'office',
+    label: 'Office Studio',
+    shortLabel: 'Office',
     available: true,
     accent: '#18428F',
   },

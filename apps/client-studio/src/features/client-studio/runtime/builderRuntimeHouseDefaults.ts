@@ -35,3 +35,30 @@ export const BUILDER_RUNTIME_HOUSE_DEFAULTS: Omit<
     }),
   ]),
 });
+
+/** Truthful non-commercial projection fields until a House is authored. */
+export const AUTHORING_DRAFT_RUNTIME_HOUSE_DEFAULTS: Omit<
+  BuilderHousePackageProjectionOptions,
+  'packagePublicRoot'
+> = Object.freeze({
+  identity: Object.freeze({
+    id: 'authoring-draft',
+    title: 'Váš první dům',
+    reference: 'AUTHORING_DRAFT',
+  }),
+  overview: Object.freeze({
+    price: 0,
+    usableArea: 0,
+    landArea: 0,
+    hasGarden: false,
+  }),
+  location: Object.freeze({
+    city: '',
+    district: '',
+  }),
+  metadata: Object.freeze({
+    energyClass: '—',
+    construction: 'Připravuje se',
+  }),
+  documents: Object.freeze([]),
+});

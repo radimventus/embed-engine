@@ -11,6 +11,8 @@ export type WorkspaceAuthoredHouseIdentity = {
   readonly houseId: string;
   readonly name: string;
   readonly canonicalProjectId: string;
+  /** House-owned HP-002 root; never borrowed from a reference House. */
+  readonly packageRoot: string;
   readonly dataMode: 'REFERENCE_DEMO' | 'LIVE_EMPTY' | 'LIVE';
   readonly status: 'draft';
 };

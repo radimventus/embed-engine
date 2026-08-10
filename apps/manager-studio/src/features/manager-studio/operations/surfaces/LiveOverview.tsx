@@ -3,8 +3,9 @@ import { OPERATIONS_SECTION_IDS } from '../operationsVocabulary';
 import { OperationsSurface } from '../OperationsSurface';
 
 export function LiveOverview() {
-  const { operations } = useManagerStudioRuntime();
-  const { overview } = operations;
+  const runtime = useManagerStudioRuntime();
+  if (!runtime.ready) return null;
+  const { overview } = runtime.operations;
 
   return (
     <OperationsSurface

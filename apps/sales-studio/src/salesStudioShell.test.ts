@@ -102,12 +102,115 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(css, /50%/);
     assert.match(css, /sales-desk__center/);
     assert.match(css, /text-align:\s*center/);
-    assert.match(clients, /MODERN 01/);
+    assert.match(clients, /Family 98/);
     assert.match(clients, /Navigátor domu/);
     assert.match(shellCss, /\.platform-role-btn[\s\S]*?text-transform:\s*none/);
     assert.match(userMenu, /Vstupní stránka/);
     assert.doesNotMatch(userMenu, /Platform Landing/);
     assert.match(landing, /Vstupní stránka/);
     assert.doesNotMatch(landing, />Platform Landing</);
+  });
+
+  it('CAP-PLAT-04j — shell Project list from CPL Projects; fixtures are Houses', async () => {
+    const app = readFileSync(join(salesRoot, 'src/SalesStudioApp.tsx'), 'utf8');
+    const clients = readFileSync(
+      join(salesRoot, 'src/sales/salesClients.ts'),
+      'utf8',
+    );
+
+    assert.match(app, /listSalesCanonicalProjects/);
+    assert.doesNotMatch(app, /listPublishedProjects/);
+    assert.doesNotMatch(app, /usePilotWorkspace/);
+    assert.match(clients, /listCanonicalProjects/);
+    assert.match(clients, /listCanonicalHouses/);
+
+    const {
+      assertSalesFixtureHousesAreCanonical,
+      listSalesCanonicalHouses,
+      listSalesCanonicalProjects,
+      resolveSalesActiveProjectId,
+    } = await import('./sales/salesClients.ts');
+
+    const projects = listSalesCanonicalProjects();
+    assert.ok(projects.length >= 1);
+    assert.equal(projects[0]?.id, 'project-ac-modular');
+    assert.equal(projects[0]?.label, 'AC Modular');
+    assert.ok(
+      projects.every(
+        (project) =>
+          project.id !== 'villa-168' &&
+          project.id !== 'harmony-124' &&
+          project.id !== 'family-98' &&
+          project.label !== 'Villa 168' &&
+          project.label !== 'Harmony 124' &&
+          project.label !== 'Family 98',
+      ),
+    );
+
+    const houses = listSalesCanonicalHouses('project-ac-modular');
+    assert.ok(houses.length >= 3);
+    assert.ok(
+      houses.every(
+        (house) =>
+          house.id !== house.projectId &&
+          house.projectId === 'project-ac-modular',
+      ),
+    );
+    assert.ok(houses.some((house) => house.id === 'villa-168'));
+    assertSalesFixtureHousesAreCanonical();
+
+    assert.equal(
+      resolveSalesActiveProjectId('project-domy-s-energii', projects),
+      'project-domy-s-energii',
+    );
+    assert.equal(
+      resolveSalesActiveProjectId('project-ac-modular', projects),
+      'project-ac-modular',
+    );
+    assert.equal(
+      resolveSalesActiveProjectId('modern-4kk', projects),
+      'project-ac-modular',
+    );
+    assert.match(app, /session\?\.projectId/);
+    assert.match(app, /activeProject\?\.label/);
+  });
+
+  it('CAP-VR38d2 — uses shared Project and House scope separately from fixture detail', () => {
+    const app = readFileSync(join(salesRoot, 'src/SalesStudioApp.tsx'), 'utf8');
+    const scopeControls = readFileSync(
+      join(salesRoot, 'src/SalesWorkspaceScope.tsx'),
+      'utf8',
+    );
+
+    assert.match(app, /session\?\.activeHouseId/);
+    assert.match(scopeControls, /Celý projekt/);
+    assert.match(scopeControls, />\s*Projekt\s*</);
+    assert.match(scopeControls, />\s*Objekt\s*</);
+    assert.doesNotMatch(scopeControls, /Dům \/ objekt/);
+    assert.match(
+      scopeControls,
+      /updateWorkspaceScope\(\{ projectId: nextProjectId \}\)/,
+    );
+    assert.match(
+      scopeControls,
+      /activeHouseId:\s*nextHouseId\.length > 0 \? nextHouseId : null/,
+    );
+    assert.match(scopeControls, /createWorkspaceProjectChangeMessage/);
+    assert.match(scopeControls, /createWorkspaceHouseChangeMessage/);
+    assert.match(app, /activeInterestHouseId/);
+    assert.doesNotMatch(app, /setActiveHouseId/);
+    assert.match(scopeControls, /listWorkspaceHouses\(activeProjectId\)/);
+    assert.doesNotMatch(scopeControls, /registry\.projects\.filter/);
+    assert.ok(
+      app.indexOf('<SalesWorkspaceScope') <
+        app.indexOf('title="Případy k hovoru"'),
+    );
+    assert.ok(
+      app.indexOf('<SalesWorkspaceScope') <
+        app.indexOf('<div className="sales-desk__canvas">'),
+    );
+    assert.match(scopeControls, /PlatformScopeSelect/);
+    assert.doesNotMatch(scopeControls, /<select\b/);
+    assert.match(scopeControls, /text-\[var\(--platform-navy\)\]/);
   });
 });

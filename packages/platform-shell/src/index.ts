@@ -28,6 +28,10 @@ export {
 } from './PlatformNotice';
 export { PlatformLoading } from './PlatformLoading';
 export {
+  PlatformScopeSelect,
+  type PlatformScopeSelectOption,
+} from './PlatformScopeSelect';
+export {
   PLATFORM_STUDIOS,
   getPlatformStudio,
   resolvePlatformStudioHref,

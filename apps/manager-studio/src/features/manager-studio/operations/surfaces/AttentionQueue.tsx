@@ -7,8 +7,9 @@ import { OperationsSurface } from '../OperationsSurface';
  * Does not invent alert rules or scoring.
  */
 export function AttentionQueue() {
-  const { operations } = useManagerStudioRuntime();
-  const status = operations.overview.outcomeStatus;
+  const runtime = useManagerStudioRuntime();
+  if (!runtime.ready) return null;
+  const status = runtime.operations.overview.outcomeStatus;
   const needsAttention = status === null || status === 'in-progress';
 
   const attentionLabel = needsAttention

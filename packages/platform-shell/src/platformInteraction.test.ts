@@ -5,10 +5,10 @@ import { PLATFORM_STUDIOS } from './platformStudios';
 import type { PlatformNoticeTone } from './PlatformNotice';
 
 describe('platformInteraction (VR-FIX-03 / OF-01)', () => {
-  it('exposes the same four studios for cross-studio navigation', () => {
+  it('exposes the same five studios for cross-studio navigation', () => {
     assert.deepEqual(
       PLATFORM_STUDIOS.map((studio) => studio.id).sort(),
-      ['builder', 'manager', 'office', 'sales'],
+      ['builder', 'client', 'manager', 'office', 'sales'],
     );
   });
 
@@ -24,12 +24,13 @@ describe('platformInteraction (VR-FIX-03 / OF-01)', () => {
     assert.ok(tones.includes('error'));
   });
 
-  it('keeps studio switcher order Office → Manager → Sales → Builder', () => {
+  it('keeps studio switcher order Client → Manager → Sales → Builder → Office', () => {
     const order: readonly string[] = [
-      'office',
+      'client',
       'manager',
       'sales',
       'builder',
+      'office',
     ];
     for (const id of order) {
       assert.ok(PLATFORM_STUDIOS.some((studio) => studio.id === id));

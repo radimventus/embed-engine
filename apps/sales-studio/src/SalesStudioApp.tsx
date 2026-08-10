@@ -1,18 +1,17 @@
 /**
  * SR-001 / SR-002 — Sales Studio: jedna pracovní obrazovka.
  * IA: Sales = zájemce · titulek = aktivní dům · breadcrumb bez názvu domu.
+ * CAP-PLAT-04j — shell Project list from CPL Projects; desk houses = House ids.
  */
 
 import { useMemo, useState } from 'react';
 
 import {
   PLATFORM_ROLE_LABELS,
-  listPublishedProjects,
   primaryRole,
   recordPlatformActivity,
   submitPlatformFeedback,
   usePlatformSession,
-  usePilotWorkspace,
   useStudioBrandProjection,
   isWorkspaceShellEmbed,
 } from '@embed-engine/platform-access';
@@ -30,9 +29,12 @@ import {
   clientPrimaryScore,
   houseDetailLine,
   houseListLine,
+  listSalesCanonicalProjects,
+  resolveSalesActiveProjectId,
   resolveActiveHouse,
   type SalesClient,
 } from './sales/salesClients';
+import { SalesWorkspaceScope } from './SalesWorkspaceScope';
 import { getSalesCapabilityHost } from './studio/salesStudioComposition';
 
 type IntentFilter = 'all' | 'high';
@@ -47,15 +49,27 @@ function matchesQuery(client: SalesClient, query: string): boolean {
 }
 
 export function SalesStudioApp() {
-  const { session, bootstrap, logout, clearStudio, selectStudio } =
+  const {
+    session,
+    logout,
+    clearStudio,
+    selectStudio,
+  } =
     usePlatformSession();
   const capabilityHost = useMemo(() => getSalesCapabilityHost(), []);
   const brand = useStudioBrandProjection();
-  const pilot = usePilotWorkspace();
+  const salesProjects = useMemo(() => listSalesCanonicalProjects(), []);
+  const activeProjectId = resolveSalesActiveProjectId(
+    session?.projectId,
+    salesProjects,
+  );
+  const activeProject =
+    salesProjects.find((project) => project.id === activeProjectId) ?? null;
   const [activeClientId, setActiveClientId] = useState(SALES_CLIENTS[0].id);
-  const [activeHouseId, setActiveHouseId] = useState<string | null>(null);
+  const [activeInterestHouseId, setActiveInterestHouseId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [intentFilter, setIntentFilter] = useState<IntentFilter>('all');
+  const scopeHouseId = session?.activeHouseId ?? null;
 
   const query = searchQuery.trim().toLowerCase();
   const visibleClients = SALES_CLIENTS.filter((client) => {
@@ -76,25 +90,18 @@ export function SalesStudioApp() {
 
   const activeHouse = resolveActiveHouse(
     activeClient,
-    activeClient.id === activeClientId ? activeHouseId : null,
+    activeClient.id === activeClientId ? activeInterestHouseId : null,
   );
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: brand.companyName,
-    projectLabel:
-      pilot?.workspace.sampleProjectLabel ??
-      bootstrap?.project?.name ??
-      '—',
-    projects: listPublishedProjects().map((project) => ({
-      id: project.id,
-      label: project.name,
-      companyLabel: project.companyName,
-    })),
+    projectLabel: activeProject?.label ?? '—',
+    projects: salesProjects,
   });
 
   // SR-002 — CONIS / Sales / Projekt / Zájemce (bez názvu domu).
   // PE-02 — company crumb from Brand Projection.
-  const projectCrumb = brand.tradeMark;
+  const projectCrumb = activeProject?.label ?? brand.tradeMark;
   const breadcrumb: readonly PlatformBreadcrumbItem[] = [
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Sales' },
@@ -108,7 +115,7 @@ export function SalesStudioApp() {
 
   function selectClient(clientId: string) {
     setActiveClientId(clientId);
-    setActiveHouseId(null);
+    setActiveInterestHouseId(null);
   }
 
   const desk = (
@@ -123,6 +130,10 @@ export function SalesStudioApp() {
         >
           {brand.companyName} · {brand.heroLabel}
         </p>
+        <SalesWorkspaceScope
+          activeProjectId={activeProjectId}
+          activeHouseId={scopeHouseId}
+        />
         <div className="sales-desk__canvas">
           <div className="sales-desk__grid">
             <PlatformCard
@@ -166,7 +177,9 @@ export function SalesStudioApp() {
                   const active = client.id === activeClient.id;
                   const primary = resolveActiveHouse(
                     client,
-                    active && activeHouseId !== null ? activeHouseId : null,
+                    active && activeInterestHouseId !== null
+                      ? activeInterestHouseId
+                      : null,
                   );
                   return (
                     <li key={client.id}>
@@ -215,7 +228,7 @@ export function SalesStudioApp() {
                         <button
                           type="button"
                           className={`sales-desk__house-chip${selected ? ' sales-desk__house-chip--active' : ''}`}
-                          onClick={() => setActiveHouseId(house.id)}
+                          onClick={() => setActiveInterestHouseId(house.id)}
                           aria-current={selected ? 'true' : undefined}
                         >
                           <span>{house.houseName}</span>

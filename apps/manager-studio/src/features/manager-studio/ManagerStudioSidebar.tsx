@@ -1,4 +1,5 @@
 import { scrollToSection } from './foundation/scrollToSection';
+import { ManagerWorkspaceScopeControls } from './ManagerWorkspaceScopeControls';
 import { useManagerNav } from './foundation/ManagerNavProvider';
 import { PARTNER_NAV_GROUPS } from './partnerNav';
 
@@ -67,7 +68,7 @@ export function ManagerStudioSidebar() {
           Pracovní centrum
         </span>
       </div>
-
+      <ManagerWorkspaceScopeControls />
       <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-6">
         {PARTNER_NAV_GROUPS.map((group) => (
           <NavGroup

@@ -6,6 +6,7 @@ import { ClientStudioHeader } from './ClientStudioHeader';
 import { ClientStudioMobileNav } from './ClientStudioMobileNav';
 import { ClientStudioPage } from './ClientStudioPage';
 import { ClientStudioSidebar } from './ClientStudioSidebar';
+import { decisionJourneyScenes } from './foundation/decisionJourney';
 import { LegacyCommandRuntimeHost } from './legacy/LegacyCommandRuntimeHost';
 import { isLegacyCommandRuntimeEnabled } from './legacy/isLegacyCommandRuntimeEnabled';
 
@@ -25,6 +26,12 @@ type ClientStudioAppProps = {
  */
 export function ClientStudioApp({ runtime }: ClientStudioAppProps = {}) {
   const [legacyEnabled] = useState(() => isLegacyCommandRuntimeEnabled());
+  const [activeSceneId, setActiveSceneId] = useState<string | null>(
+    () => decisionJourneyScenes()[0]?.id ?? null,
+  );
+  const [visibleSceneIds, setVisibleSceneIds] = useState<readonly string[]>(
+    () => decisionJourneyScenes().slice(0, 1).map((scene) => scene.id),
+  );
 
   if (legacyEnabled) {
     return <LegacyCommandRuntimeHost />;
@@ -33,11 +40,20 @@ export function ClientStudioApp({ runtime }: ClientStudioAppProps = {}) {
   return (
     <>
       <AppShell
-        sidebar={<ClientStudioSidebar />}
+        sidebar={
+          <ClientStudioSidebar
+            activeSceneId={activeSceneId}
+            visibleSceneIds={visibleSceneIds}
+          />
+        }
         header={<ClientStudioHeader />}
         showStatusBar={false}
       >
-        <ClientStudioPage runtime={runtime} />
+        <ClientStudioPage
+          runtime={runtime}
+          onActiveSceneChange={setActiveSceneId}
+          onVisibleSceneIdsChange={setVisibleSceneIds}
+        />
       </AppShell>
       <ClientStudioMobileNav />
     </>

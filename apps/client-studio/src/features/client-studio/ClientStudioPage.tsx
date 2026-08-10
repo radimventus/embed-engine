@@ -43,6 +43,10 @@ type ClientStudioPageProps = {
   onLegacyContinue?: () => void;
   /** Shared Runtime from Embed Delivery Layer (optional for standalone SPA). */
   runtime?: DecisionSessionRuntime;
+  /** Publishes the canonical visible scene to shell navigation. */
+  onActiveSceneChange?: (sceneId: string | null) => void;
+  /** Publishes the scene anchors that are currently rendered and navigable. */
+  onVisibleSceneIdsChange?: (sceneIds: readonly string[]) => void;
 };
 
 /**
@@ -61,6 +65,8 @@ export function ClientStudioPage({
   onLegacySelectChoice,
   onLegacyContinue,
   runtime,
+  onActiveSceneChange,
+  onVisibleSceneIdsChange,
 }: ClientStudioPageProps) {
   const scenes = decisionJourneyScenes();
   const [revealedSceneCount, setRevealedSceneCount] = useState(1);
@@ -71,6 +77,16 @@ export function ClientStudioPage({
     .map((scene) => scene.id);
   const activeSceneId = useActiveSection(visibleSceneIds);
   const [snapEnabled, setSnapEnabled] = useState(false);
+
+  useEffect(() => {
+    onActiveSceneChange?.(activeSceneId);
+  }, [activeSceneId, onActiveSceneChange]);
+
+  useEffect(() => {
+    onVisibleSceneIdsChange?.(
+      scenes.slice(0, revealedSceneCount).map((scene) => scene.id),
+    );
+  }, [onVisibleSceneIdsChange, revealedSceneCount, scenes]);
 
   useEffect(() => {
     if (activeSceneId !== scenes[0]?.id) {

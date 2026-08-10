@@ -22,6 +22,11 @@ import {
   type SystemMailDraft,
 } from '../mail';
 import { getConversationMailStore } from '../mail/conversationMailStore';
+import {
+  getSharedWorkspaceContext,
+  loadPlatformSession,
+  updateSession,
+} from '@embed-engine/platform-access';
 import type {
   PilotConversationId,
   PilotConversationMessage,
@@ -94,6 +99,17 @@ import {
   resolveOfficeBootCaseId,
   writeStoredActiveCaseId,
 } from './officeWorkspaceRecovery';
+
+/** PT-OS-02 — bind session + PE workspaceContext to Office Select Shared Project. */
+function syncSessionSharedProject(projectId: string): void {
+  const ctx = getSharedWorkspaceContext();
+  updateSession({
+    projectId,
+    ...(ctx !== null
+      ? { workspaceContext: { ...ctx, projectId } }
+      : {}),
+  });
+}
 
 export type PilotWorkspaceContextValue = {
   readonly cases: readonly PilotWorkspaceCase[];
@@ -181,7 +197,11 @@ export function PilotWorkspaceProvider({
   const bootCaseId =
     initialCaseId !== undefined
       ? initialCaseId
-      : resolveOfficeBootCaseId(listOfficeSelectProjects());
+      : resolveOfficeBootCaseId(
+          listOfficeSelectProjects(),
+          undefined,
+          loadPlatformSession()?.projectId ?? null,
+        );
 
   const [activeCaseId, setActiveCaseId] = useState<PilotWorkspaceCaseId | null>(
     bootCaseId,
@@ -301,6 +321,13 @@ export function PilotWorkspaceProvider({
     writeStoredActiveCaseId(activeCaseId);
   }, [activeCaseId]);
 
+  /** PT-OS-02 / VR03 — keep Platform session projectId aligned with Office Select. */
+  useEffect(() => {
+    if (activeCaseId !== null) {
+      syncSessionSharedProject(activeCaseId);
+    }
+  }, [activeCaseId]);
+
   /**
    * R-001 / PT-VR-01A — Select Project activates the full working environment.
    * Never leaves an empty surface when cases exist (fallback → first case + Inbox).
@@ -334,6 +361,9 @@ export function PilotWorkspaceProvider({
         selectedMessageId: plan.inboxSelectedMessageId,
       }));
       writeStoredActiveCaseId(plan.activeCaseId);
+      if (plan.activeCaseId !== null) {
+        syncSessionSharedProject(plan.activeCaseId);
+      }
     },
     [cases],
   );
@@ -366,6 +396,9 @@ export function PilotWorkspaceProvider({
       selectedMessageId: plan.inboxSelectedMessageId,
     }));
     writeStoredActiveCaseId(plan.activeCaseId);
+    if (plan.activeCaseId !== null) {
+      syncSessionSharedProject(plan.activeCaseId);
+    }
   }, [activeCaseId]);
 
   const selectInboxMessage = useCallback(

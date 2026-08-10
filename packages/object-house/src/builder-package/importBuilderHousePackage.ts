@@ -202,7 +202,7 @@ async function resolveHeroPath(
   }
 
   const names = await readdir(heroDir);
-  const media = names.find((name) => /\.(webp|jpg|jpeg|png|mp4|webm)$/i.test(name));
+  const media = names.find((name) => /\.(webp|jpg|jpeg|png|svg|mp4|webm)$/i.test(name));
   if (media === undefined) {
     if (validationMode === "PUBLISH_READY") {
       errors.push(

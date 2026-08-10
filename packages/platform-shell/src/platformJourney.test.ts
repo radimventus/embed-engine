@@ -8,10 +8,11 @@ import { PLATFORM_STUDIO_SWITCH_ORDER } from './StudioSwitcher';
 describe('platformJourney (VR-FIX-04 / OF-01)', () => {
   it('keeps one studio switch order for header and Landing', () => {
     assert.deepEqual([...PLATFORM_STUDIO_SWITCH_ORDER], [
-      'office',
+      'client',
       'manager',
       'sales',
       'builder',
+      'office',
     ]);
     assert.deepEqual(
       PLATFORM_STUDIOS.map((studio) => studio.id),

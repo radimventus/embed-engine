@@ -36,6 +36,38 @@ async function createEmptyAuthoringDraft(): Promise<string> {
   return dir;
 }
 
+async function createAuthoringDraftTemplate(repoRoot: string): Promise<void> {
+  const templateRoot = path.join(
+    repoRoot,
+    "apps/client-studio/public/house-package-templates/authoring-draft-v1",
+  );
+  await mkdir(path.join(templateRoot, "media/hero"), { recursive: true });
+  await mkdir(path.join(templateRoot, "media/gallery"), { recursive: true });
+  await writeFile(
+    path.join(templateRoot, "rooms.csv"),
+    "floor,room,name,area\np1,exterior,Exteriér,0\n",
+  );
+  await writeFile(
+    path.join(templateRoot, "gallery.csv"),
+    "order,room,file\n1,exterior,01.png\n",
+  );
+  await writeFile(
+    path.join(templateRoot, "videos.csv"),
+    "order,room,provider,mediaId\n",
+  );
+  await writeFile(
+    path.join(templateRoot, "manifest.json"),
+    JSON.stringify({
+      format: "HP-002",
+      validationMode: "AUTHORING_DRAFT",
+      heroPath: "media/hero/hero.png",
+      floorPlans: "not-authored",
+    }),
+  );
+  await writeFile(path.join(templateRoot, "media/hero/hero.png"), "hero");
+  await writeFile(path.join(templateRoot, "media/gallery/01.png"), "exterior");
+}
+
 describe("parseCsv", () => {
   it("parses headers and rows without using filename order", () => {
     const table = parseCsv("order,room,file\n2,kitchen,02.webp\n1,exterior,01.webp\n");
@@ -80,6 +112,7 @@ describe("buildBuilderPackageRegistries", () => {
 describe("importBuilderHousePackage", () => {
   it("initializes isolated, idempotent AUTHORING_DRAFT roots", async () => {
     const repoRoot = await mkdtemp(path.join(tmpdir(), "bp-repo-"));
+    await createAuthoringDraftTemplate(repoRoot);
     const first = await initializeBuilderHousePackage({
       repoRoot,
       houseId: "test-5kk",
@@ -98,16 +131,36 @@ describe("importBuilderHousePackage", () => {
     const firstRoot = path.join(repoRoot, first.packageRoot);
     assert.equal(
       await readFile(path.join(firstRoot, "rooms.csv"), "utf8"),
-      "floor,room,name,area\n",
+      [
+        "floor,room,name,area",
+        "p1,exterior,Exteriér,0",
+        "",
+      ].join("\n"),
     );
     assert.equal(
       await readFile(path.join(firstRoot, "gallery.csv"), "utf8"),
-      "order,room,file\n",
+      [
+        "order,room,file",
+        "1,exterior,01.png",
+        "",
+      ].join("\n"),
     );
     assert.equal(
       await readFile(path.join(firstRoot, "videos.csv"), "utf8"),
       "order,room,provider,mediaId\n",
     );
+    assert.match(
+      await readFile(path.join(firstRoot, "media/hero/hero.png"), "utf8"),
+      /hero/,
+    );
+    assert.equal(
+      await readFile(path.join(firstRoot, "media/gallery/01.png"), "utf8"),
+      "exterior",
+    );
+    const initializedDraft = await importBuilderHousePackage(firstRoot, {
+      validationMode: "AUTHORING_DRAFT",
+    });
+    assert.equal(initializedDraft.ok, true);
     const publishReady = await importBuilderHousePackage(firstRoot);
     assert.equal(publishReady.ok, false);
 
@@ -121,7 +174,14 @@ describe("importBuilderHousePackage", () => {
       houseId: "test-5kk",
       packageRoot: first.packageRoot,
     });
-    await writeFile(path.join(firstRoot, "rooms.csv"), "floor,room,name,area\n\n");
+    await writeFile(
+      path.join(firstRoot, "rooms.csv"),
+      [
+        "floor,room,name,area",
+        "p1,exterior,Upravený exteriér,0",
+        "",
+      ].join("\n"),
+    );
     const preserved = await initializeBuilderHousePackage({
       repoRoot,
       houseId: "test-5kk",
@@ -129,7 +189,11 @@ describe("importBuilderHousePackage", () => {
     assert.equal(preserved.ok, true);
     assert.equal(
       await readFile(path.join(firstRoot, "rooms.csv"), "utf8"),
-      "floor,room,name,area\n\n",
+      [
+        "floor,room,name,area",
+        "p1,exterior,Upravený exteriér,0",
+        "",
+      ].join("\n"),
     );
 
     const second = await initializeBuilderHousePackage({
@@ -143,7 +207,11 @@ describe("importBuilderHousePackage", () => {
     assert.notEqual(first.packageRoot, second.packageRoot);
     assert.equal(
       await readFile(path.join(repoRoot, second.packageRoot, "rooms.csv"), "utf8"),
-      "floor,room,name,area\n",
+      [
+        "floor,room,name,area",
+        "p1,exterior,Exteriér,0",
+        "",
+      ].join("\n"),
     );
   });
 

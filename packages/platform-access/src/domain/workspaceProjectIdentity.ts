@@ -1,12 +1,13 @@
 /**
- * PT-VR-08 — Shared Workspace project identity across Studios.
+ * PT-VR-08 / PT-DATA-02 — Shared Workspace project identity across Studios.
  * Office Open PE binds partner/project; Client/Manager/Sales read the same context.
  */
 
+import { DEFAULT_PROJECT_ID } from '../registry/defaults';
 import type { SharedWorkspaceContext } from './workspaceContext';
 
-/** Embed Experience package bound to the Office reference pilot. */
-export const WORKSPACE_EMBED_OBJECT_ID = 'house-modern-01' as const;
+/** Default Embed object bind = Shared Project id (legacy Gen1 aliases resolve in Runtime). */
+export const WORKSPACE_EMBED_OBJECT_ID = DEFAULT_PROJECT_ID;
 
 export type WorkspaceProjectIdentity = {
   readonly partnerId: string;

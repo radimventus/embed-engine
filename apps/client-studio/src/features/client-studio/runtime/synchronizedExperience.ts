@@ -15,6 +15,7 @@ import {
   listRoomGalleryUrls,
   listTourVideos,
 } from './experienceHouseMedia';
+import { getBuilderPackagePublicRoot } from './builderPackageBootstrap';
 import { getFloorPlanGeometryForFloor } from './floorPlanGeometryStore';
 import { resolvePublicAssetUrl } from './presentationAssetBase';
 
@@ -384,7 +385,10 @@ function projectFloorPlan(
       id: room.id,
       title: room.name,
       floor: String(room.floor),
-      decisionCanvasSrc: decisionCanvasUrlForRoom(room.id),
+      decisionCanvasSrc: decisionCanvasUrlForRoom(
+        room.id,
+        getBuilderPackagePublicRoot(),
+      ),
       floorPlanRegion: region,
     });
   });

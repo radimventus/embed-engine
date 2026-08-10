@@ -14,12 +14,13 @@ describe('platformCompliance (VR-FIX-05 / OF-01)', () => {
     assert.equal(theme.accent, '#18428F');
   });
 
-  it('keeps pilot studio order Office → Manager → Sales → Builder', () => {
+  it('keeps pilot studio order Client → Manager → Sales → Builder → Office', () => {
     assert.deepEqual([...PLATFORM_STUDIO_SWITCH_ORDER], [
-      'office',
+      'client',
       'manager',
       'sales',
       'builder',
+      'office',
     ]);
   });
 });

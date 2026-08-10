@@ -1,6 +1,6 @@
 /**
- * OF-13 — Workspace Studio Navigation (role-filtered).
- * Order: Client · Manager · Sales · Builder · Office
+ * OF-13 / PT-OS-02 — Workspace Studio Navigation (role-filtered).
+ * Order aligned with PlatformShell SSOT: Client · Manager · Sales · Office · Builder
  */
 
 import { isPilotPartnerRoles } from './pilotPartnerAccess';
@@ -14,7 +14,7 @@ export type WorkspaceStudioSurface =
   | 'builder'
   | 'office';
 
-/** Canonical Workspace switcher order (OF-13). */
+/** Canonical Workspace switcher order — aligned with PlatformShell SSOT (PT-OS-02 / B-01). */
 export const WORKSPACE_STUDIO_SWITCH_ORDER: readonly WorkspaceStudioSurface[] =
   Object.freeze([
     'client',
@@ -46,6 +46,18 @@ export function workspaceStudiosForRoles(
       return (
         isPlatformAdmin(roles) ||
         isPilotPartnerRoles(roles) ||
+        roles.includes('manager') ||
+        roles.includes('salesman') ||
+        roles.includes('builder')
+      );
+    }
+    if (surface === 'manager') {
+      return isPlatformAdmin(roles) || roles.includes('manager');
+    }
+    if (surface === 'sales') {
+      // Managers need Sales surface in Workspace (partner ops), not only salesmen.
+      return (
+        isPlatformAdmin(roles) ||
         roles.includes('manager') ||
         roles.includes('salesman')
       );
