@@ -130,16 +130,16 @@ export function SalesStudioApp() {
         >
           {brand.companyName} · {brand.heroLabel}
         </p>
-        <SalesWorkspaceScope
-          activeProjectId={activeProjectId}
-          activeHouseId={scopeHouseId}
-        />
         <div className="sales-desk__canvas">
           <div className="sales-desk__grid">
             <PlatformCard
               className="sales-desk__cases"
               title="Případy k hovoru"
             >
+              <SalesWorkspaceScope
+                activeProjectId={activeProjectId}
+                activeHouseId={scopeHouseId}
+              />
               <label className="sales-desk__search">
                 <span className="sr-only">Vyhledávání zájemců</span>
                 <input

@@ -182,6 +182,7 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
       'utf8',
     );
     const css = readFileSync(join(salesRoot, 'src/index.css'), 'utf8');
+    const html = readFileSync(join(salesRoot, 'index.html'), 'utf8');
 
     assert.match(app, /session\?\.activeHouseId/);
     assert.match(scopeControls, /Celý projekt/);
@@ -202,25 +203,28 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.doesNotMatch(app, /setActiveHouseId/);
     assert.match(scopeControls, /listWorkspaceHouses\(activeProjectId\)/);
     assert.doesNotMatch(scopeControls, /registry\.projects\.filter/);
-    assert.ok(
-      app.indexOf('<SalesWorkspaceScope') <
-        app.indexOf('title="Případy k hovoru"'),
-    );
-    assert.ok(
-      app.indexOf('<SalesWorkspaceScope') <
-        app.indexOf('<div className="sales-desk__canvas">'),
-    );
     assert.match(scopeControls, /PlatformScopeSelect/);
     assert.doesNotMatch(scopeControls, /<select\b/);
     assert.match(scopeControls, /sales-workspace-scope/);
     assert.match(scopeControls, /sales-workspace-scope__label/);
+    assert.ok(
+      app.indexOf('<SalesWorkspaceScope') >
+        app.indexOf('title="Případy k hovoru"'),
+    );
+    assert.ok(
+      app.indexOf('<SalesWorkspaceScope') <
+        app.indexOf('className="sales-desk__search"'),
+    );
     assert.match(
       css,
-      /\.sales-workspace-scope\s*\{[\s\S]*?padding:\s*20px 16px 16px/,
+      /\.sales-workspace-scope\s*\{[\s\S]*?margin-bottom:\s*16px/,
     );
     assert.match(
       css,
       /\.sales-workspace-scope__field\s*\{[\s\S]*?display:\s*grid/,
     );
+    assert.match(css, /font-family:\s*'Inter'/);
+    assert.match(html, /family=Inter/);
+    assert.doesNotMatch(html, /IBM\+Plex\+Sans/);
   });
 });

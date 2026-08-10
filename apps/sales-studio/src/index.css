@@ -6,21 +6,20 @@
 body {
   margin: 0;
   color: var(--platform-navy, #001930);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 #root {
   height: 100vh;
   overflow: hidden;
   color: var(--platform-navy, #001930);
+  font-family: inherit;
 }
 
 .sales-workspace-scope {
   display: grid;
-  flex-shrink: 0;
   gap: 20px;
-  border-bottom: 1px solid var(--platform-cream-dark);
-  background: #fff;
-  padding: 20px 16px 16px;
+  margin-bottom: 16px;
 }
 
 .sales-workspace-scope__field {
