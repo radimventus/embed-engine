@@ -7,12 +7,12 @@ import {
   AUDIT_ACCENT,
   AUDIT_CONTROL_RADIUS_PX,
   AUDIT_FORM_MAX_WIDTH_CLASS,
-  AUDIT_GDPR_HREF,
   AUDIT_INPUT_CLASS,
   AUDIT_INPUT_HEIGHT_PX,
   AUDIT_INPUT_STYLE,
   AUDIT_MUTED,
   AUDIT_ON_ACCENT,
+  AUDIT_PRIVACY_HREF,
   AUDIT_WHITE,
 } from './audit-panel';
 import { LockIcon, UserIcon } from './AuditIcons';
@@ -202,14 +202,14 @@ export function AuditContact() {
             <span className="text-sm leading-snug" style={{ color: AUDIT_MUTED }}>
               Vaše data jsou u nás v bezpečí. Odesláním souhlasíte se{' '}
               <a
-                href={AUDIT_GDPR_HREF}
+                href={AUDIT_PRIVACY_HREF}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline underline-offset-2"
                 style={{ color: AUDIT_ACCENT }}
                 onClick={(event) => event.stopPropagation()}
               >
-                zpracováním údajů
+                zpracováním osobních údajů
               </a>{' '}
               v souladu s pravidly GDPR.
             </span>

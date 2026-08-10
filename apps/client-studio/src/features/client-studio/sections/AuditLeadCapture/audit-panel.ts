@@ -10,9 +10,9 @@ export const AUDIT_SECTION_STYLE = {
   backgroundColor: colors.brand.navy,
 } as const;
 
-/** Single gold — muted bronze. */
-export const AUDIT_ACCENT = colors.action.accent;
-export const AUDIT_ON_ACCENT = colors.action.onAccent;
+/** Audit actions sit on navy, so they use the CONIS gold brand accent. */
+export const AUDIT_ACCENT = colors.brand.gold;
+export const AUDIT_ON_ACCENT = colors.brand.navy;
 export const AUDIT_WHITE = colors.action.onPrimary;
 export const AUDIT_MUTED = colors.border.default;
 
@@ -102,5 +102,6 @@ export const AUDIT_INPUT_STYLE = {
   borderRadius: AUDIT_CONTROL_RADIUS_PX,
 } as const;
 
-/** Partner GDPR page — Builder will replace; placeholder for CAP UX 52. */
-export const AUDIT_GDPR_HREF = 'https://www.webpartnera.cz/gdpr';
+/** Public legal-information page shipped with the Embed release snapshot. */
+export const AUDIT_PRIVACY_HREF =
+  'https://conis.cz/embed/zpracovani-osobnich-udaju.html';

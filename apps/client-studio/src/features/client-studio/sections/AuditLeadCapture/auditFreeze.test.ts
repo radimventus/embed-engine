@@ -42,10 +42,14 @@ describe('Audit Freeze shell (CAP UX 42)', () => {
     assert.match(panel, /HLEDÁM POZEMEK/);
     assert.match(panel, /LAND_OPTIONS/);
     assert.match(panel, /WORKFLOW_BY_LAND/);
+    assert.match(panel, /AUDIT_ACCENT = colors\.brand\.gold/);
+    assert.match(panel, /AUDIT_PRIVACY_HREF/);
+    assert.equal(panel.includes('webpartnera.cz'), false);
 
     const form = stripComments(read('AuditContact.tsx'));
     assert.match(form, /ODESLAT POPTÁVKU/);
     assert.match(form, /mailto:/);
+    assert.match(form, /AUDIT_PRIVACY_HREF/);
     assert.equal(form.includes('COMMERCIAL_CONSENT'), false);
   });
 
