@@ -38,6 +38,7 @@ export function DecisionSlider({ value, onChange }: DecisionSliderProps) {
     <div
       className="relative h-11 w-full shrink-0 desktop:h-7"
       onPointerDown={(event) => event.stopPropagation()}
+      onClick={(event) => event.stopPropagation()}
       data-testid="priority-intensity-slider"
     >
       <div

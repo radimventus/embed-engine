@@ -26,7 +26,7 @@ describe('Responsive Priority Experience (RCS-02)', () => {
     assert.match(cards, /grid-cols-5/);
     assert.match(cards, /mobile:grid-cols-2/);
     assert.match(cards, /mobile:max-w-none/);
-    assert.match(cards, /overflow-x-hidden/);
+    assert.match(cards, /overflow-visible/);
     assert.equal(cards.includes('tablet:grid-cols-3'), false);
 
     assert.match(layout, /DECISION_CARD_SHELL_CLASS/);
@@ -46,6 +46,7 @@ describe('Responsive Priority Experience (RCS-02)', () => {
     assert.match(slider, /desktop:h-7/);
     assert.match(slider, /touch-none/);
     assert.match(slider, /priority-intensity-slider/);
+    assert.match(slider, /onClick=\{\(event\) => event\.stopPropagation\(\)\}/);
     assert.match(panel, /min-h-11/);
     assert.match(panel, /PRIORITY_ENGINE_MOBILE_STICKY_CTA_CLASS/);
     assert.match(panel, /priority-mobile-sticky-cta/);
