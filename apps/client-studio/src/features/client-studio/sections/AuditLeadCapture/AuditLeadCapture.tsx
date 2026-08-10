@@ -1,7 +1,11 @@
 import { useState } from 'react';
 
+import { scrollToSection } from '../../foundation/scrollToSection';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
-import { AssessmentWorkflow } from './AssessmentWorkflow';
+import {
+  AssessmentWorkflow,
+  AUDIT_ASSESSMENT_WORKFLOW_ID,
+} from './AssessmentWorkflow';
 import { AuditContact } from './AuditContact';
 import { AuditTransition } from './AuditTransition';
 import { AUDIT_SECTION_STYLE, type LandOption } from './audit-panel';
@@ -15,6 +19,10 @@ import { SituationSelect } from './SituationSelect';
  */
 export function AuditLeadCapture() {
   const [landOption, setLandOption] = useState<LandOption>('owned');
+  const handleLandOptionChange = (value: LandOption) => {
+    setLandOption(value);
+    scrollToSection(AUDIT_ASSESSMENT_WORKFLOW_ID);
+  };
 
   return (
     <section
@@ -30,7 +38,7 @@ export function AuditLeadCapture() {
         <AuditTransition />
 
         <div className="flex flex-col gap-14 mobile:gap-11">
-          <SituationSelect value={landOption} onChange={setLandOption} />
+          <SituationSelect value={landOption} onChange={handleLandOptionChange} />
           <AssessmentWorkflow landOption={landOption} />
           <AuditContact />
         </div>

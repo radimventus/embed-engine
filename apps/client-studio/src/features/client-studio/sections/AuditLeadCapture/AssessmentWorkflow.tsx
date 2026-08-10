@@ -8,6 +8,8 @@ import {
 } from './audit-panel';
 import { HouseIcon, SearchIcon, StationMotifIcon } from './AuditIcons';
 
+export const AUDIT_ASSESSMENT_WORKFLOW_ID = 'audit-assessment-workflow';
+
 type AssessmentWorkflowProps = {
   landOption: LandOption;
 };
@@ -27,7 +29,10 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
   const ModeIcon = mode.Icon;
 
   return (
-    <div className={`${AUDIT_PANEL_MAX_WIDTH_CLASS} px-section`}>
+    <div
+      id={AUDIT_ASSESSMENT_WORKFLOW_ID}
+      className={`${AUDIT_PANEL_MAX_WIDTH_CLASS} px-section`}
+    >
       <h2 className="text-center text-base font-semibold tracking-wide">
         <span style={{ color: AUDIT_ACCENT }}>2. </span>
         <span style={{ color: AUDIT_WHITE }}>Jak probíhá posouzení</span>

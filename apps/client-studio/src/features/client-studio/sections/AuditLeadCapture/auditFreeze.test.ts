@@ -53,6 +53,18 @@ describe('Audit Freeze shell (CAP UX 42)', () => {
     assert.equal(form.includes('COMMERCIAL_CONSENT'), false);
   });
 
+  it('keeps land selection state and scrolls to the assessment workflow', () => {
+    const shell = stripComments(read('AuditLeadCapture.tsx'));
+    const select = stripComments(read('SituationSelect.tsx'));
+    const workflow = stripComments(read('AssessmentWorkflow.tsx'));
+
+    assert.match(shell, /setLandOption\(value\)/);
+    assert.match(shell, /scrollToSection\(AUDIT_ASSESSMENT_WORKFLOW_ID\)/);
+    assert.match(select, /onClick=\{\(\) => onChange\(option\.value\)\}/);
+    assert.match(workflow, /AUDIT_ASSESSMENT_WORKFLOW_ID = 'audit-assessment-workflow'/);
+    assert.match(workflow, /id=\{AUDIT_ASSESSMENT_WORKFLOW_ID\}/);
+  });
+
   it('limits intelligence to the three hero lines', () => {
     const transition = stripComments(read('AuditTransition.tsx'));
     assert.match(transition, /resolveAuditHero/);
