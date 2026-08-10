@@ -20,6 +20,10 @@ body {
   overflow: hidden;
 }
 
+.office-workspace[data-workspace-embed-view='office'] {
+  height: 100%;
+}
+
 .office-workspace__rail {
   position: sticky;
   top: 0;
@@ -348,6 +352,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  height: 100%;
+  min-height: 0;
   max-width: 1280px;
 }
 
@@ -355,7 +361,8 @@ body {
   display: grid;
   grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
   gap: 16px;
-  align-items: start;
+  min-height: 0;
+  flex: 1;
 }
 
 .office-partners__toolbar {
@@ -468,7 +475,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-height: 0;
   min-width: 0;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .office-partner-detail__header {
@@ -2556,6 +2566,10 @@ body {
 }
 
 @media (max-width: 1100px) {
+  .office-partners {
+    height: auto;
+  }
+
   .office-dashboard__cards {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }

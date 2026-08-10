@@ -132,6 +132,22 @@ describe('officeStudioShell (OF-01 / OF-02 / CAP-OP-10A)', () => {
     assert.match(pkg, /@embed-engine\/platform-access/);
   });
 
+  it('keeps the desktop Partner detail inside the bounded workspace scroll area', () => {
+    const css = readFileSync(join(root, 'index.css'), 'utf8');
+    assert.match(
+      css,
+      /\.office-workspace\[data-workspace-embed-view='office'\] \{[\s\S]*?height: 100%;/,
+    );
+    assert.match(
+      css,
+      /\.office-partners \{[\s\S]*?height: 100%;[\s\S]*?min-height: 0;/,
+    );
+    assert.match(
+      css,
+      /\.office-partner-detail \{[\s\S]*?min-height: 0;[\s\S]*?overflow-y: auto;/,
+    );
+  });
+
   it('VR-05 — PE / embed keeps PlatformShell; host owns chrome in Workspace', () => {
     const app = readFileSync(join(root, 'OfficeStudioApp.tsx'), 'utf8');
     assert.match(app, /contentOnly/);
