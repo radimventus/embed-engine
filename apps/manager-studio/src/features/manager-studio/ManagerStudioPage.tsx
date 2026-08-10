@@ -14,9 +14,9 @@ export function ManagerStudioPage() {
       <ManagerWorkCenterHome />
       <RuntimeBootstrapGate>
         <OperationsCanvas partnerOnly />
-        <OperationsCenterCanvas partnerOnly />
-        <ProductLearningCanvas partnerOnly />
       </RuntimeBootstrapGate>
+      <OperationsCenterCanvas partnerOnly />
+      <ProductLearningCanvas partnerOnly />
     </DecisionSessionRuntimeProvider>
   );
 }

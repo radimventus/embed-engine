@@ -125,6 +125,90 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.equal(page.includes('CommercialPlatformCanvas'), false);
   });
 
+  it('keeps all partner views navigable after the runtime gate resolves', () => {
+    const partnerNav = readSource(
+      'src/features/manager-studio/partnerNav.ts',
+    );
+    const activeSection = readSource(
+      'src/features/manager-studio/foundation/useActiveSection.ts',
+    );
+    const operations = readSource(
+      'src/features/manager-studio/operations/OperationsCanvas.tsx',
+    );
+    const operationsCenter = readSource(
+      'src/features/manager-studio/operations-center/OperationsCenterCanvas.tsx',
+    );
+    const productLearning = readSource(
+      'src/features/manager-studio/product-learning/ProductLearningCanvas.tsx',
+    );
+
+    for (const sectionId of [
+      'live-overview',
+      'poc-metrics',
+      'pl-executive',
+      'pl-insights',
+    ]) {
+      assert.match(partnerNav, new RegExp(`id: '${sectionId}'`));
+    }
+    assert.match(operations, /<LiveOverview/);
+    assert.match(operationsCenter, /PLATFORM_OPS_SECTION_IDS\.metrics/);
+    assert.match(productLearning, /PRODUCT_LEARNING_SECTION_IDS\.executive/);
+    assert.match(productLearning, /PRODUCT_LEARNING_SECTION_IDS\.insights/);
+    assert.match(activeSection, /MutationObserver/);
+    assert.match(activeSection, /observeSections/);
+  });
+
+  it('keeps platform and product views navigable without a House runtime', () => {
+    const page = readSource('src/features/manager-studio/ManagerStudioPage.tsx');
+
+    const gateStart = page.indexOf('<RuntimeBootstrapGate>');
+    const gateEnd = page.indexOf('</RuntimeBootstrapGate>');
+    const operationsCenter = page.indexOf('<OperationsCenterCanvas partnerOnly />');
+    const productLearning = page.indexOf('<ProductLearningCanvas partnerOnly />');
+
+    assert.ok(gateStart >= 0);
+    assert.ok(gateEnd > gateStart);
+    assert.ok(operationsCenter > gateEnd);
+    assert.ok(productLearning > gateEnd);
+  });
+
+  it('keeps the Manager navigation rail outside the content scrollport', () => {
+    const shell = readSource('src/components/layout/AppShell.tsx');
+    const styles = readSource('src/index.css');
+
+    assert.match(shell, /flex h-full min-h-0 flex-1 overflow-hidden/);
+    assert.match(
+      shell,
+      /platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto/,
+    );
+    assert.match(shell, /min-h-0 min-w-0 flex-1 overflow-y-auto/);
+    assert.match(
+      styles,
+      /@apply h-full min-h-screen overflow-hidden overscroll-none/,
+    );
+  });
+
+  it('uses the active House session binding in every partner view', () => {
+    const liveOverview = readSource(
+      'src/features/manager-studio/operations/surfaces/LiveOverview.tsx',
+    );
+    const operationsCenter = readSource(
+      'src/features/manager-studio/operations-center/OperationsCenterCanvas.tsx',
+    );
+    const productLearning = readSource(
+      'src/features/manager-studio/product-learning/ProductLearningCanvas.tsx',
+    );
+    const provider = readSource(
+      'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+    );
+
+    assert.match(liveOverview, /useManagerStudioRuntime/);
+    assert.match(operationsCenter, /usePlatformSession/);
+    assert.match(productLearning, /session\?\.activeHouseId/);
+    assert.match(provider, /session\?\.activeHouseId/);
+    assert.match(provider, /resolveWorkspaceHouseBinding/);
+  });
+
   it('still depends on Customer Success package for composition (EPIC-BX-17)', () => {
     const shell = readSource('src/components/layout/AppShell.tsx');
     const pkg = readSource('package.json');

@@ -64,7 +64,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
 
   const body = (
     <div
-      className="flex min-h-0 flex-1 overflow-hidden"
+      className="flex h-full min-h-0 flex-1 overflow-hidden"
       data-workspace-embed-view={isWorkspaceShellEmbed() ? 'manager' : undefined}
     >
       <div className="platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto">
