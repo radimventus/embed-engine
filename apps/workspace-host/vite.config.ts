@@ -11,6 +11,7 @@ import {
 } from '../../packages/embed/vite.ssot-aliases';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
+const clientPublicDir = join(repoRoot, 'apps/client-studio/public');
 const packageJson = JSON.parse(
   readFileSync(join(rootDir, 'package.json'), 'utf8'),
 ) as { version: string };
@@ -22,7 +23,11 @@ const packageJson = JSON.parse(
 export default defineConfig({
   base: process.env.VITE_BASE ?? '/',
   envDir: repoRoot,
-  publicDir: join(repoRoot, 'apps/client-studio/public'),
+  // Development serves canonical Client assets locally. Production publishing
+  // copies the declared package contract to the Pages root once, rather than
+  // duplicating it below every Studio route.
+  publicDir:
+    process.env.VITE_SHARED_PUBLIC_ROOT === '1' ? false : clientPublicDir,
   plugins: [react()],
   css: {
     postcss: join(rootDir, 'postcss.config.js'),
