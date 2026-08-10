@@ -18,11 +18,12 @@ export type HousePackagePersistResponse =
 
 export async function requestHousePackagePersist(
   files: HousePackagePersistFiles,
+  packageRoot: string,
 ): Promise<HousePackagePersistResponse> {
   const response = await fetch(HOUSE_PACKAGE_PERSIST_API, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ files }),
+    body: JSON.stringify({ files, packageRoot }),
   });
 
   let payload: unknown = null;

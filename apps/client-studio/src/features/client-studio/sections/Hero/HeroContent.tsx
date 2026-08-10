@@ -8,12 +8,17 @@ import {
 } from '@embed-engine/platform-access';
 
 import { HeroCTA } from './HeroCTA';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 
-const HERO_FEATURES = [
-  { value: '124 m2', label: 'Užitná plocha' },
-  { value: 'A ++', label: 'Energetická třída' },
-  { value: 'Dřevostavba', label: 'Difuzně otevřená' },
-] as const;
+const DEFAULT_HERO_COPY = {
+  eyebrow: 'MODERN A01 – 4+kk',
+  headline: 'Rodinný dům, kde to dýchá štěstím',
+  metrics: [
+    { value: '124 m2', label: 'Užitná plocha' },
+    { value: 'A ++', label: 'Energetická třída' },
+    { value: 'Dřevostavba', label: 'Difuzně otevřená' },
+  ],
+} as const;
 
 /** Same veil as former Social Proof divider — anchored to gold line, fading upward. */
 const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
@@ -26,6 +31,8 @@ const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
  */
 export function HeroContent() {
   const [brand, setBrand] = useState<StudioBrandProjection | null>(null);
+  const { experience } = useDecisionSessionRuntime();
+  const heroCopy = experience.context.hero.copy ?? DEFAULT_HERO_COPY;
 
   useEffect(() => {
     const session = loadPlatformSession();
@@ -50,17 +57,17 @@ export function HeroContent() {
           </p>
         ) : null}
         <p className="text-sm font-bold uppercase tracking-wide text-[#D4AF37]">
-          MODERN A01 – 4+kk
+          {heroCopy.eyebrow}
         </p>
 
         <h1 className="mt-3 font-sans text-[2.52rem] font-black leading-[1.15] tracking-tight text-embed-foreground-primary mobile:text-[2rem]">
-          Rodinný dům, kde to dýchá štěstím
+          {heroCopy.headline}
         </h1>
 
         <dl className="mt-8 grid grid-cols-3 divide-x divide-embed-border-default mobile:grid-cols-1 mobile:gap-3 mobile:divide-x-0">
-          {HERO_FEATURES.map((feature) => (
+          {heroCopy.metrics.map((feature, index) => (
             <div
-              key={feature.label}
+              key={`${feature.label}-${index}`}
               className="flex flex-col px-3 first:pl-0 last:pr-0 mobile:px-0"
             >
               <dd className="order-1 text-base font-bold leading-tight text-[#D4AF37]">

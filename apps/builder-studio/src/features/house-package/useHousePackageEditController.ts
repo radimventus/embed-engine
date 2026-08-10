@@ -36,7 +36,7 @@ export type HousePackageEditController = {
   readonly releaseVerification: ReleaseVerification | null;
   readonly publishError: string | null;
   readonly apply: (next: HousePackageEditSnapshot) => void;
-  readonly save: () => Promise<void>;
+  readonly save: (snapshot?: HousePackageEditSnapshot) => Promise<void>;
   readonly validate: () => Promise<void>;
   readonly publish: () => Promise<HousePackageReleaseSummary | null>;
   readonly openPreview: () => void;
@@ -149,15 +149,15 @@ export function useHousePackageEditController(
     }
   }, [snapshot]);
 
-  const save = useCallback(async () => {
-    if (session === null || snapshot === null) {
+  const save = useCallback(async (sourceSnapshot = snapshot) => {
+    if (session === null || sourceSnapshot === null) {
       return;
     }
-    if (snapshot.dirtyState === 'clean') {
+    if (sourceSnapshot.dirtyState === 'clean') {
       return;
     }
 
-    const validation = validateHousePackageWorking(snapshot.working);
+    const validation = validateHousePackageWorking(sourceSnapshot.working);
     if (!validation.ok) {
       apply(
         session.markSaveFailed(
@@ -167,7 +167,10 @@ export function useHousePackageEditController(
       return;
     }
 
-    const { files } = buildPersistFiles(snapshot.baseline, snapshot.working);
+    const { files } = buildPersistFiles(
+      sourceSnapshot.baseline,
+      sourceSnapshot.working,
+    );
     if (
       files.roomsCsv === undefined &&
       files.galleryCsv === undefined &&
@@ -180,7 +183,15 @@ export function useHousePackageEditController(
 
     setSaving(true);
     try {
-      const result = await requestHousePackagePersist(files);
+      if (diskRoot === null) {
+        apply(
+          session.markSaveFailed(
+            'Cannot save: active House Package root is unavailable.',
+          ),
+        );
+        return;
+      }
+      const result = await requestHousePackagePersist(files, diskRoot);
       if (!result.ok) {
         apply(session.markSaveFailed(result.error));
         return;
@@ -196,7 +207,7 @@ export function useHousePackageEditController(
     } finally {
       setSaving(false);
     }
-  }, [apply, remount, session, snapshot]);
+  }, [apply, diskRoot, remount, session, snapshot]);
 
   const publish = useCallback(async (): Promise<HousePackageReleaseSummary | null> => {
     const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';

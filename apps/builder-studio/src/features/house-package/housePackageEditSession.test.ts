@@ -29,6 +29,7 @@ p1,kitchen,Kuchyně,14
       manifestJson: '{"version":"1"}',
     },
     heroRelativePath: 'media/hero/hero.png',
+    heroCopy: null,
     builderImport: null,
     geometryByFloor: {},
     mountedAt: '2026-07-31T12:00:00.000Z',
@@ -74,5 +75,21 @@ describe('housePackageEditSession (CAP-BLD-03)', () => {
     assert.equal(snap.dirtyState, 'modified');
     assert.equal(snap.validation.ok, false);
     assert.ok(snap.sectionErrors.length > 0);
+  });
+
+  it('tracks House-level Hero copy independently of other package content', () => {
+    const session = createHousePackageEditSession(mountFixture());
+    const snap = session.setHeroCopy({
+      eyebrow: 'NOVÝ DŮM',
+      headline: 'Rozpoznatelný headline',
+      metrics: [
+        { value: '100 m²', label: 'Plocha' },
+        { value: 'A', label: 'Energie' },
+        { value: 'Zděná', label: 'Konstrukce' },
+      ],
+    });
+
+    assert.ok(snap.dirty.includes('hero'));
+    assert.equal(snap.working.heroCopy?.headline, 'Rozpoznatelný headline');
   });
 });

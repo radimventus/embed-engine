@@ -45,5 +45,6 @@ export function projectHouse(house: HousePackage | null): ExperienceHouse | null
           })),
         }
       : {}),
+    ...(house.heroCopy !== undefined ? { heroCopy: house.heroCopy } : {}),
   };
 }

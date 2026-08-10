@@ -8,12 +8,14 @@ import {
   type BuilderHousePackageImport,
   type BuilderPackageImportError,
 } from '@embed-engine/object-house/builder-package';
+import type { ExperienceHeroCopy } from '@embed-engine/model';
 
 import type { HousePackageMountTexts } from './mountHousePackage';
 import { HOUSE_PACKAGE_URL_ROOT } from './housePackagePaths';
 
 export type HousePackageWorkingContent = HousePackageMountTexts & {
   readonly heroRelativePath: string;
+  readonly heroCopy: ExperienceHeroCopy | null;
 };
 
 export type HousePackageValidation = {
@@ -100,7 +102,12 @@ export function dirtySections(
   if ((baseline.manifestJson ?? '') !== (working.manifestJson ?? '')) {
     dirty.push('manifest');
   }
-  if (baseline.heroRelativePath !== working.heroRelativePath) dirty.push('hero');
+  if (
+    baseline.heroRelativePath !== working.heroRelativePath ||
+    baseline.heroCopy !== working.heroCopy
+  ) {
+    dirty.push('hero');
+  }
   if (baseline.roomsCsv !== working.roomsCsv) {
     // Floor/plan pairs derive from rooms.csv
     if (!dirty.includes('plans')) dirty.push('plans');

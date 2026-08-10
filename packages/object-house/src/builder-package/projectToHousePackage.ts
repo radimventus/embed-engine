@@ -15,6 +15,7 @@ import type {
   HouseOverview,
   HousePackage,
 } from "../HousePackage";
+import type { ExperienceHeroCopy } from "@embed-engine/model";
 import type { MediaAsset } from "../MediaAsset";
 import type { BuilderHousePackageImport } from "./types";
 import { resolveBuilderVideoUrl } from "./resolveVideoUrl";
@@ -33,6 +34,8 @@ export type BuilderHousePackageProjectionOptions = {
   readonly location: HouseLocation;
   readonly metadata: HouseMetadata;
   readonly documents?: readonly HouseDocument[];
+  /** Optional House-authored Hero copy from the package manifest. */
+  readonly heroCopy?: ExperienceHeroCopy;
   /** Public URL root for package assets (default `/house-package`). */
   readonly packagePublicRoot?: string;
 };
@@ -187,5 +190,6 @@ export function projectBuilderImportToHousePackage(
     ...(options.documents !== undefined
       ? { documents: Object.freeze([...options.documents]) }
       : {}),
+    ...(options.heroCopy !== undefined ? { heroCopy: options.heroCopy } : {}),
   });
 }

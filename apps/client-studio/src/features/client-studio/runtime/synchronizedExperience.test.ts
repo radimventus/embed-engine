@@ -78,6 +78,30 @@ describe('Experience Context (CAP-HP-003.5)', () => {
     );
   });
 
+  it('passes House-level Hero copy through to the Hero context', () => {
+    const base = createTestBuilderRuntime().getExperience()!;
+    const withHeroCopy: SessionExperience = {
+      ...base,
+      house: {
+        ...base.house,
+        heroCopy: {
+          eyebrow: 'NOVÝ DŮM',
+          headline: 'Rozpoznatelný headline',
+          metrics: [
+            { value: '100 m²', label: 'Plocha' },
+            { value: 'A', label: 'Energie' },
+            { value: 'Zděná', label: 'Konstrukce' },
+          ],
+        },
+      },
+    };
+
+    assert.equal(
+      projectSynchronizedExperience(withHeroCopy).context.hero.copy?.headline,
+      'Rozpoznatelný headline',
+    );
+  });
+
   it('fallback hero context remains deterministic without catalog media', () => {
     const runtime = createTestBuilderRuntime();
     runtime.dispatch({ type: 'SelectRoom', roomId: 'living-room' }, 2);

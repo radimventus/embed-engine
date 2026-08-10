@@ -68,6 +68,8 @@ export type ExperienceHeroContext = {
   readonly title: string;
   readonly description: string;
   readonly metrics: readonly { readonly label: string; readonly value: string }[];
+  /** Optional House-authored copy, passed through from the House Package. */
+  readonly copy?: ExperienceHouse['heroCopy'];
   readonly heroMedia: ProjectedMediaAsset | null;
   readonly primaryMediaUrl: string | null;
   /** Decision Focus metadata retained for adapters — Hero UI does not interpret it. */
@@ -330,6 +332,7 @@ function projectHeroContext(
       { label: 'Pozemek', value: formatArea(house.landArea) },
       { label: 'Cena', value: formatPriceCzk(house.price) },
     ]),
+    ...(house.heroCopy !== undefined ? { copy: house.heroCopy } : {}),
     heroMedia,
     primaryMediaUrl: heroMedia?.url ?? null,
     primaryReason: decisionFocus.focusReason,

@@ -19,6 +19,12 @@ export {
 export { parseCsv } from "./parse-csv";
 export { resolveBuilderVideoUrl } from "./resolveVideoUrl";
 export {
+  DEFAULT_HERO_COPY,
+  isHeroCopy,
+  readHeroCopyFromManifest,
+  readHeroRelativePathFromManifest,
+} from "./heroCopy";
+export {
   BUILDER_MEDIA_FLOORPLAN_PREFIX,
   BUILDER_MEDIA_GALLERY_PREFIX,
   BUILDER_MEDIA_HERO_ID,

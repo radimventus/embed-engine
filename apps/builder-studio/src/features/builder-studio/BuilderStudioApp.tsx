@@ -575,8 +575,8 @@ export function BuilderStudioApp() {
               validationReport={validationReport}
               releaseSummary={releaseSummary}
               onChange={apply}
-              onSave={() => {
-                void save();
+              onSave={(sourceSnapshot) => {
+                void save(sourceSnapshot);
               }}
               onEditProject={() => setEditOpen(true)}
               onNavigate={handleNavigate}

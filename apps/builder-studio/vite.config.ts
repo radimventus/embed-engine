@@ -418,11 +418,26 @@ function serveHousePackagePlugin() {
               body && typeof body === 'object' && body.files
                 ? body.files
                 : {};
+            const packageRoot =
+              body && typeof body === 'object' && typeof body.packageRoot === 'string'
+                ? resolveAllowedPackageRoot(body.packageRoot)
+                : null;
+            if (packageRoot === null) {
+              res.statusCode = 400;
+              res.setHeader('Content-Type', 'application/json; charset=utf-8');
+              res.end(
+                JSON.stringify({
+                  ok: false,
+                  error: 'Invalid active House Package root.',
+                }),
+              );
+              return;
+            }
             const { persistBuilderHousePackage } = await import(
               '../../packages/object-house/src/builder-package/persistBuilderHousePackage.ts'
             );
             const result = await persistBuilderHousePackage({
-              packageRoot: housePackageDiskRoot,
+              packageRoot: packageRoot.absolute,
               files: {
                 roomsCsv:
                   typeof files.roomsCsv === 'string'

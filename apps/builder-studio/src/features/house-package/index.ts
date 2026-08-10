@@ -10,7 +10,10 @@ export {
   type HousePackageEditSnapshot,
 } from './housePackageEditSession';
 export { HousePackageSidebar, type HousePackageNavId } from './HousePackageSidebar';
-export { HousePackageEditView } from './HousePackageEditView';
+export {
+  HouseHeroCopyEditor,
+  HousePackageEditView,
+} from './HousePackageEditView';
 export { HousePackageMountPanel } from './HousePackageMountPanel';
 export { HousePackageRuntimePreview } from './HousePackageRuntimePreview';
 export type { HousePackageReleaseSummary } from './productionPublishGate';

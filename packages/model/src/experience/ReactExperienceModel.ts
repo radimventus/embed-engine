@@ -43,6 +43,16 @@ export interface ExperienceHouseDocument {
   readonly url: string;
 }
 
+/** Optional House-authored copy for the opening Hero. */
+export interface ExperienceHeroCopy {
+  readonly eyebrow: string;
+  readonly headline: string;
+  readonly metrics: readonly {
+    readonly label: string;
+    readonly value: string;
+  }[];
+}
+
 /**
  * Projected house for Experience rendering.
  * Derived from Object Package — never the Object Package itself.
@@ -64,6 +74,8 @@ export interface ExperienceHouse {
   readonly rooms: readonly ExperienceHouseRoom[];
   /** Optional documents projected from Object Package (HP-001). */
   readonly documents?: readonly ExperienceHouseDocument[];
+  /** Optional House Package Hero copy. */
+  readonly heroCopy?: ExperienceHeroCopy;
 }
 
 /** Projected visitor filter for rendering. */

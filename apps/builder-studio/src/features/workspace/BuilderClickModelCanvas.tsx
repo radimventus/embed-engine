@@ -4,6 +4,7 @@ import { KnowledgeComposerView } from '../knowledge-composer';
 import { MediaStudioView } from '../media-studio';
 import type { MediaAreaId } from '../media-studio/mediaCatalog';
 import {
+  HouseHeroCopyEditor,
   HousePackageEditView,
   type HousePackageEditSession,
   type HousePackageEditSnapshot,
@@ -24,7 +25,7 @@ type BuilderClickModelCanvasProps = {
   readonly validationReport: HousePackageValidationReport | null;
   readonly releaseSummary: HousePackageReleaseSummary | null;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
-  readonly onSave: () => void;
+  readonly onSave: (snapshot?: HousePackageEditSnapshot) => void;
   readonly onEditProject: () => void;
   readonly onNavigate: (nav: HousePackageNavId) => void;
   readonly onPublish: () => void;
@@ -156,9 +157,28 @@ export function BuilderClickModelCanvas({
             snapshot={snapshot}
             session={session}
             onChange={onChange}
+            onPersist={onSave}
             lockedArea={item.area}
             embedded
           />
+          {item.area === 'hero' && (
+            <div className="rounded-[14px] border border-[#E3E3E3] bg-white p-5 shadow-sm">
+              <HouseHeroCopyEditor
+                value={snapshot.working.heroCopy}
+                onChange={(next) => onChange(session.setHeroCopy(next))}
+              />
+              <div className="mt-5 flex justify-end">
+                <button
+                  type="button"
+                  disabled={saving || snapshot.dirtyState === 'clean'}
+                  onClick={() => onSave()}
+                  className="rounded-[10px] border border-builder-blue bg-builder-blue px-4 py-2 text-sm font-medium text-white disabled:opacity-40"
+                >
+                  {saving ? 'Ukládám…' : 'Uložit Hero text'}
+                </button>
+              </div>
+            </div>
+          )}
         </section>
       ))}
 

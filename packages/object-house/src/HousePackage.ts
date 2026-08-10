@@ -1,4 +1,5 @@
 import type { MediaAsset } from "./MediaAsset";
+import type { ExperienceHeroCopy } from "@embed-engine/model";
 import type { Room } from "./Room";
 
 export interface HouseIdentity {
@@ -47,4 +48,6 @@ export interface HousePackage {
   readonly metadata: HouseMetadata;
   /** Optional documents extension — package-relative or absolute references. */
   readonly documents?: readonly HouseDocument[];
+  /** Optional House-authored copy for the opening Hero. */
+  readonly heroCopy?: ExperienceHeroCopy;
 }

@@ -5,6 +5,7 @@
 
 import type { HousePackageWorkingContent } from './validateHousePackageWorking';
 import { dirtySections, type HpEditSection } from './validateHousePackageWorking';
+import type { ExperienceHeroCopy } from '@embed-engine/model';
 
 const HERO_MANIFEST_KEY = 'heroRelativePath';
 
@@ -23,6 +24,7 @@ export type HousePackagePersistFiles = {
 export function mergeHeroIntoManifestJson(
   manifestJson: string | null,
   heroRelativePath: string,
+  heroCopy: ExperienceHeroCopy | null,
 ): string {
   let parsed: Record<string, unknown> = {};
   if (manifestJson !== null && manifestJson.trim().length > 0) {
@@ -36,6 +38,9 @@ export function mergeHeroIntoManifestJson(
     }
   }
   parsed[HERO_MANIFEST_KEY] = heroRelativePath;
+  if (heroCopy !== null) {
+    parsed.heroCopy = heroCopy;
+  }
   return `${JSON.stringify(parsed, null, 2)}\n`;
 }
 
@@ -99,6 +104,7 @@ export function buildPersistFiles(
       ? mergeHeroIntoManifestJson(
           working.manifestJson,
           working.heroRelativePath,
+          working.heroCopy,
         )
       : working.manifestJson;
   }

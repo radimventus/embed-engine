@@ -55,13 +55,14 @@ describe('Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)', (
     }
   });
 
-  it('binds Morning Baseline reference copy and CTA', () => {
+  it('prefers House Hero copy while retaining the reference fallback and CTA', () => {
     const content = read('HeroContent.tsx');
     const cta = read('HeroCTA.tsx');
     const image = read('HeroImage.tsx');
 
     assert.match(content, /MODERN A01/);
     assert.match(content, /Rodinný dům, kde to dýchá štěstím/);
+    assert.match(content, /context\.hero\.copy/);
     assert.match(content, /HeroCTA/);
     assert.match(cta, /Podívat se dovnitř/);
     assert.match(cta, /PILOT_SECTION_IDS\.socialProof/);

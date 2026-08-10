@@ -3,7 +3,11 @@
  * Working content is the HP texts themselves (no Builder Package).
  */
 
-import type { BuilderPackageImportError } from '@embed-engine/object-house/builder-package';
+import type { ExperienceHeroCopy } from '@embed-engine/model';
+import {
+  readHeroCopyFromManifest,
+  type BuilderPackageImportError,
+} from '@embed-engine/object-house/builder-package';
 
 import type { HousePackageMount } from './mountHousePackage';
 import {
@@ -41,6 +45,7 @@ export type HousePackageEditSession = {
   setVideosCsv(next: string): HousePackageEditSnapshot;
   setManifestJson(next: string | null): HousePackageEditSnapshot;
   setHeroRelativePath(next: string): HousePackageEditSnapshot;
+  setHeroCopy(next: ExperienceHeroCopy): HousePackageEditSnapshot;
   undo(): HousePackageEditSnapshot;
   /** Discard all edits — reset working content to mounted baseline. */
   discard(): HousePackageEditSnapshot;
@@ -58,6 +63,7 @@ function cloneWorking(
     videosCsv: content.videosCsv,
     manifestJson: content.manifestJson,
     heroRelativePath: content.heroRelativePath,
+    heroCopy: content.heroCopy,
   };
 }
 
@@ -106,6 +112,7 @@ export function createHousePackageEditSession(
     videosCsv: mount.texts.videosCsv,
     manifestJson: mount.texts.manifestJson,
     heroRelativePath: mount.heroRelativePath,
+    heroCopy: readHeroCopyFromManifest(mount.texts.manifestJson),
   };
   let working = cloneWorking(baseline);
   let undoStack: HousePackageWorkingContent[] = [];
@@ -159,6 +166,10 @@ export function createHousePackageEditSession(
         return this.snapshot();
       }
       return commit({ ...working, heroRelativePath: trimmed });
+    },
+
+    setHeroCopy(next) {
+      return commit({ ...working, heroCopy: next });
     },
 
     undo() {

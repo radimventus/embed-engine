@@ -14,6 +14,7 @@ export type {
   ExperienceChoice,
   ExperienceDecision,
   ExperienceDecisionFilter,
+  ExperienceHeroCopy,
   ExperienceHighlight,
   ExperienceHighlightTarget,
   ExperienceHouse,

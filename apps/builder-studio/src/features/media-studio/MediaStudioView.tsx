@@ -51,6 +51,8 @@ type MediaStudioViewProps = {
   readonly snapshot: HousePackageEditSnapshot | null;
   readonly session: HousePackageEditSession | null;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
+  /** Persist a completed House Package edit through its active House root. */
+  readonly onPersist?: (next: HousePackageEditSnapshot) => void;
   /** PR-008 — jedna oblast jako kotva v souvislé ploše. */
   readonly lockedArea?: MediaAreaId;
   readonly embedded?: boolean;
@@ -65,6 +67,7 @@ export function MediaStudioView({
   snapshot,
   session,
   onChange,
+  onPersist,
   lockedArea,
   embedded = false,
 }: MediaStudioViewProps) {
@@ -109,6 +112,7 @@ export function MediaStudioView({
           session={session}
           projectId={projectId}
           onChange={onChange}
+          onPersist={onPersist}
           onMetaSaved={refreshMeta}
         />
       )}
@@ -266,12 +270,14 @@ function HeroManager({
   session,
   projectId,
   onChange,
+  onPersist,
   onMetaSaved,
 }: {
   readonly model: MediaStudioModel;
   readonly session: HousePackageEditSession;
   readonly projectId: string;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
+  readonly onPersist?: (next: HousePackageEditSnapshot) => void;
   readonly onMetaSaved: () => void;
 }) {
   const [path, setPath] = useState(model.heroPath);
@@ -352,7 +358,9 @@ function HeroManager({
         className="mt-5 grid gap-3 tablet:grid-cols-2"
         onSubmit={(event: FormEvent) => {
           event.preventDefault();
-          onChange(session.setHeroRelativePath(path.trim()));
+          const next = session.setHeroRelativePath(path.trim());
+          onChange(next);
+          onPersist?.(next);
           setMediaPresentationMeta(projectId, 'hero', {
             ...meta,
             updatedAt: new Date().toISOString(),

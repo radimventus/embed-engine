@@ -3,6 +3,8 @@ import {
   isFloorPlanGeometry,
   parseCsv,
   projectBuilderImportToHousePackage,
+  readHeroCopyFromManifest,
+  readHeroRelativePathFromManifest,
   type BuilderHousePackageImport,
   type BuilderHousePackageProjectionOptions,
   type FloorPlanGeometry,
@@ -141,15 +143,27 @@ function isAuthoringDraftManifest(value: unknown): value is AuthoringDraftManife
 
 async function loadAuthoringDraftManifest(
   packagePublicRoot: string,
-): Promise<AuthoringDraftManifest | null> {
+): Promise<{
+  readonly authoringDraft: AuthoringDraftManifest | null;
+  readonly heroCopy: ReturnType<typeof readHeroCopyFromManifest>;
+  readonly heroRelativePath: ReturnType<typeof readHeroRelativePathFromManifest>;
+}> {
   try {
     const text = await fetchText(
       `${packagePublicRoot.replace(/\/+$/, '')}/manifest.json`,
     );
     const parsed: unknown = JSON.parse(text);
-    return isAuthoringDraftManifest(parsed) ? parsed : null;
+    return {
+      authoringDraft: isAuthoringDraftManifest(parsed) ? parsed : null,
+      heroCopy: readHeroCopyFromManifest(text),
+      heroRelativePath: readHeroRelativePathFromManifest(text),
+    };
   } catch {
-    return null;
+    return {
+      authoringDraft: null,
+      heroCopy: null,
+      heroRelativePath: null,
+    };
   }
 }
 
@@ -215,6 +229,7 @@ function buildRegistriesFromTexts(
   texts: BuilderPackageCsvTexts,
   packagePublicRoot: string = PACKAGE_ROOT_LABEL,
   manifest: AuthoringDraftManifest | null = null,
+  heroRelativePath: ReturnType<typeof readHeroRelativePathFromManifest> = null,
 ): BuilderHousePackageImport {
   const paths = csvPathsForPackageRoot(packagePublicRoot);
   const result = buildBuilderPackageRegistries({
@@ -223,7 +238,7 @@ function buildRegistriesFromTexts(
     roomsCsv: texts.roomsCsv,
     videosCsv: texts.videosCsv,
     validationMode: manifest?.validationMode ?? 'PUBLISH_READY',
-    heroPath: manifest?.heroPath ?? HERO_PATH,
+    heroPath: heroRelativePath ?? manifest?.heroPath ?? HERO_PATH,
     planPairs:
       manifest?.floorPlans === 'not-authored'
         ? []
@@ -303,6 +318,7 @@ function projectCachedHousePackage(
   packagePublicRoot: string,
   projection?: BuilderPackageBootstrapProjection,
   isAuthoringDraft = false,
+  heroCopy: ReturnType<typeof readHeroCopyFromManifest> = null,
 ): HousePackage {
   const housePackage = projectBuilderImportToHousePackage(registries, {
     ...(isAuthoringDraft
@@ -312,6 +328,7 @@ function projectCachedHousePackage(
       ? { identity: projection.identity }
       : {}),
     packagePublicRoot,
+    ...(heroCopy !== null ? { heroCopy } : {}),
   });
   cachedHousePackage = housePackage;
   return housePackage;
@@ -356,15 +373,21 @@ export async function ensureBuilderPackageBootstrapped(
     await loadFloorPlanGeometryForRooms(
       texts.roomsCsv,
       root,
-      manifest?.floorPlans !== 'not-authored',
+      manifest.authoringDraft?.floorPlans !== 'not-authored',
     );
-    const registries = buildRegistriesFromTexts(texts, root, manifest);
+    const registries = buildRegistriesFromTexts(
+      texts,
+      root,
+      manifest.authoringDraft,
+      manifest.heroRelativePath,
+    );
     cachedRegistries = registries;
     projectCachedHousePackage(
       registries,
       root,
       projection,
-      manifest?.validationMode === 'AUTHORING_DRAFT',
+      manifest.authoringDraft?.validationMode === 'AUTHORING_DRAFT',
+      manifest.heroCopy,
     );
     logBuilderPackageEvidence(registries, texts);
     return registries;

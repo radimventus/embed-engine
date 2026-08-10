@@ -34,6 +34,22 @@ describe('AUTHORING_DRAFT package bootstrap', () => {
         return new Response(null, { status: 404 });
       }
       try {
+        if (relativePath === 'manifest.json') {
+          const manifest = JSON.parse(
+            await readFile(path.join(packageDiskRoot, relativePath), 'utf8'),
+          ) as Record<string, unknown>;
+          manifest.heroCopy = {
+            eyebrow: 'NOVÝ DŮM',
+            headline: 'Rozpoznatelný headline',
+            metrics: [
+              { value: '100 m²', label: 'Plocha' },
+              { value: 'A', label: 'Energie' },
+              { value: 'Zděná', label: 'Konstrukce' },
+            ],
+          };
+          manifest.heroRelativePath = 'media/gallery/interior.svg';
+          return new Response(JSON.stringify(manifest), { status: 200 });
+        }
         return new Response(
           await readFile(path.join(packageDiskRoot, relativePath)),
           { status: 200 },
@@ -55,8 +71,9 @@ describe('AUTHORING_DRAFT package bootstrap', () => {
 
       assert.equal(house.identity.id, 'patrovy-5kk');
       assert.equal(house.identity.title, 'PATROVÝ 5KK');
+      assert.equal(house.heroCopy?.headline, 'Rozpoznatelný headline');
       assert.equal(house.media.find((asset) => asset.id === 'hero')?.url,
-        `${packagePublicRoot}/media/hero/hero.png`);
+        `${packagePublicRoot}/media/gallery/interior.svg`);
       assert.equal(
         house.media.find((asset) => asset.type === 'floorplan')?.url,
         `${packagePublicRoot}/media/plans/p1.png`,
@@ -74,7 +91,11 @@ describe('AUTHORING_DRAFT package bootstrap', () => {
       const experience = projectSynchronizedExperience(runtime.getExperience()!);
       assert.equal(
         experience.context.hero.primaryMediaUrl,
-        `${packagePublicRoot}/media/hero/hero.png`,
+        `${packagePublicRoot}/media/gallery/interior.svg`,
+      );
+      assert.equal(
+        experience.context.hero.copy?.headline,
+        'Rozpoznatelný headline',
       );
       assert.equal(
         experience.context.floorPlan.src,

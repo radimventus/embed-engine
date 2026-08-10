@@ -14,6 +14,7 @@ const baseline: HousePackageWorkingContent = {
   videosCsv: 'order,room,provider,mediaId\n',
   manifestJson: '{\n  "version": "1"\n}\n',
   heroRelativePath: 'media/hero/hero.png',
+  heroCopy: null,
 };
 
 describe('buildPersistFiles (CAP-BLD-04)', () => {
@@ -43,8 +44,31 @@ describe('buildPersistFiles (CAP-BLD-04)', () => {
       'media/hero/hero.webp',
     );
     assert.match(
-      mergeHeroIntoManifestJson(baseline.manifestJson, 'media/hero/hero.webp'),
+      mergeHeroIntoManifestJson(
+        baseline.manifestJson,
+        'media/hero/hero.webp',
+        null,
+      ),
       /heroRelativePath/,
     );
+  });
+
+  it('persists House-level Hero copy in the existing manifest', () => {
+    const working = {
+      ...baseline,
+      heroCopy: {
+        eyebrow: 'NOVÝ DŮM',
+        headline: 'Rozpoznatelný headline',
+        metrics: [
+          { value: '100 m²', label: 'Plocha' },
+          { value: 'A', label: 'Energie' },
+          { value: 'Zděná', label: 'Konstrukce' },
+        ],
+      },
+    };
+    const { files, dirty } = buildPersistFiles(baseline, working);
+
+    assert.ok(dirty.includes('hero'));
+    assert.match(files.manifestJson ?? '', /Rozpoznatelný headline/);
   });
 });

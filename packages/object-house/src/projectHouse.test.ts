@@ -17,4 +17,21 @@ describe("projectHouse", () => {
   it("returns null for null input", () => {
     assert.equal(projectHouse(null), null);
   });
+
+  it("preserves optional House-level Hero copy", () => {
+    const experience = projectHouse({
+      ...REFERENCE_HOUSE_PACKAGE,
+      heroCopy: {
+        eyebrow: "NOVÝ DŮM",
+        headline: "Rozpoznatelný headline",
+        metrics: [
+          { value: "100 m²", label: "Plocha" },
+          { value: "A", label: "Energie" },
+          { value: "Zděná", label: "Konstrukce" },
+        ],
+      },
+    });
+
+    assert.equal(experience?.heroCopy?.headline, "Rozpoznatelný headline");
+  });
 });

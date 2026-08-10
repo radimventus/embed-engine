@@ -1,4 +1,5 @@
-import { parseCsv } from '@embed-engine/object-house/builder-package';
+import { DEFAULT_HERO_COPY, parseCsv } from '@embed-engine/object-house/builder-package';
+import type { ExperienceHeroCopy } from '@embed-engine/model';
 import type { ReactNode } from 'react';
 
 import {
@@ -304,6 +305,10 @@ export function HousePackageEditView({
               </div>
             </>
           )}
+          <HouseHeroCopyEditor
+            value={snapshot.working.heroCopy ?? DEFAULT_HERO_COPY}
+            onChange={(next) => onChange(session.setHeroCopy(next))}
+          />
         </Panel>
       )}
 
@@ -532,6 +537,86 @@ function Panel({
       </div>
       <div className="mt-4">{children}</div>
     </section>
+  );
+}
+
+export function HouseHeroCopyEditor({
+  value,
+  onChange,
+}: {
+  readonly value: ExperienceHeroCopy | null;
+  readonly onChange: (next: ExperienceHeroCopy) => void;
+}) {
+  const heroCopy = value ?? DEFAULT_HERO_COPY;
+
+  return (
+    <section className="mt-6 border-t border-builder-divider pt-5">
+      <h4 className="text-sm font-semibold text-builder-ink">Text Hero</h4>
+      <p className="mt-1 text-[12px] text-builder-muted">
+        Obsah pro aktuálně otevřený House Package.
+      </p>
+      <div className="mt-4 grid gap-3">
+        <HeroTextField
+          label="Eyebrow"
+          value={heroCopy.eyebrow}
+          onChange={(eyebrow) => onChange({ ...heroCopy, eyebrow })}
+        />
+        <HeroTextField
+          label="Headline"
+          value={heroCopy.headline}
+          onChange={(headline) => onChange({ ...heroCopy, headline })}
+        />
+        {heroCopy.metrics.map((metric, index) => (
+          <div key={index} className="grid gap-2 tablet:grid-cols-2">
+            <HeroTextField
+              label={`Metrika ${index + 1} — hodnota`}
+              value={metric.value}
+              onChange={(metricValue) =>
+                onChange({
+                  ...heroCopy,
+                  metrics: heroCopy.metrics.map((item, itemIndex) =>
+                    itemIndex === index ? { ...item, value: metricValue } : item,
+                  ),
+                })
+              }
+            />
+            <HeroTextField
+              label={`Metrika ${index + 1} — popisek`}
+              value={metric.label}
+              onChange={(metricLabel) =>
+                onChange({
+                  ...heroCopy,
+                  metrics: heroCopy.metrics.map((item, itemIndex) =>
+                    itemIndex === index ? { ...item, label: metricLabel } : item,
+                  ),
+                })
+              }
+            />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function HeroTextField({
+  label,
+  value,
+  onChange,
+}: {
+  readonly label: string;
+  readonly value: string;
+  readonly onChange: (value: string) => void;
+}) {
+  return (
+    <label className="block text-sm">
+      <span className="text-builder-muted">{label}</span>
+      <input
+        className="mt-1 w-full rounded-lg border border-[#DDE5EF] px-3 py-2"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </label>
   );
 }
 
