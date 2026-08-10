@@ -37,6 +37,7 @@
     "@embed-engine/kernel": "workspace:*",
     "@embed-engine/model": "workspace:*",
     "@embed-engine/object-house": "workspace:*",
+    "@embed-engine/platform-access": "workspace:*",
     "@embed-engine/runtime": "workspace:*",
     "@embed-engine/ui": "workspace:*",
     "react": "^19.1.0",

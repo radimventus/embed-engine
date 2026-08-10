@@ -23,7 +23,7 @@ const PUBLISH_KEY = 'conis.platform.last-publish.v1';
 function toCapabilityStudioId(
   studioId: PlatformStudioId,
 ): StudioId | null {
-  if (studioId === 'office') return null;
+  if (studioId === 'office' || studioId === 'client') return null;
   return studioId;
 }
 

@@ -621,6 +621,9 @@ importers:
       '@embed-engine/object-house':
         specifier: workspace:*
         version: link:../object-house
+      '@embed-engine/platform-access':
+        specifier: workspace:*
+        version: link:../platform-access
       '@embed-engine/runtime':
         specifier: workspace:*
         version: link:../runtime

@@ -23,6 +23,7 @@ export type CloudPlatformConfig = {
 };
 
 const LOCAL_STUDIO_PORTS: Record<PlatformStudioId, number> = {
+  client: 4173,
   office: 4181,
   builder: 4177,
   manager: 4175,
@@ -30,7 +31,7 @@ const LOCAL_STUDIO_PORTS: Record<PlatformStudioId, number> = {
 };
 
 /** CS-01 — Client Studio (Experience host) local Vite port. */
-const LOCAL_CLIENT_STUDIO_PORT = 4173;
+const LOCAL_CLIENT_STUDIO_PORT = LOCAL_STUDIO_PORTS.client;
 
 /** PT-CJ-01 — Offer Experience (pilot program selection) local Vite port. */
 const LOCAL_OFFER_EXPERIENCE_PORT = 4192;
@@ -39,13 +40,12 @@ const LOCAL_OFFER_EXPERIENCE_PORT = 4192;
 const LOCAL_WORKSPACE_HOST_PORT = 4183;
 
 const CLOUD_STUDIO_PATHS: Record<PlatformStudioId, string> = {
+  client: '/embed/',
   office: '/studio/office/',
   builder: '/studio/builder/',
   manager: '/studio/manager/',
   sales: '/studio/sales/',
 };
-
-const CLOUD_CLIENT_STUDIO_PATH = '/embed/' as const;
 const CLOUD_WORKSPACE_HOST_PATH = '/studio/workspace/' as const;
 const CLOUD_OFFER_EXPERIENCE_PATH = '/offer/' as const;
 
@@ -122,15 +122,36 @@ export function resolveCloudLandingHref(): string {
   return `${config.origin}${CLOUD_STUDIO_ENTRY_PATH}`;
 }
 
-/** CS-01 — Partner entry into Client Studio / Embed Experience (not Builder/Office). */
-export function resolveClientStudioHref(): string {
+/**
+ * CS-01 / PT-DATA-02 — Partner entry into Client Studio / Embed Experience.
+ * Pass Shared Project `projectId` so Client binds the same Projekt as Office / CJ.
+ */
+export function resolveClientStudioHref(projectId?: string | null): string {
   const config = getCloudPlatformConfig();
+  let base: string;
   if (config.mode === 'local') {
     const host =
       typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
-    return `http://${host}:${LOCAL_CLIENT_STUDIO_PORT}/`;
+    base = `http://${host}:${LOCAL_CLIENT_STUDIO_PORT}/`;
+  } else {
+    base = `${config.origin}${CLOUD_STUDIO_PATHS.client}`;
   }
-  return `${config.origin}${CLOUD_CLIENT_STUDIO_PATH}`;
+  return withOptionalProjectId(base, projectId);
+}
+
+/**
+ * PT-OS-01 / VR10 — Builder Studio entry for the Shared Project open in Office.
+ * Opens editor terminal; Office remains the salesperson home surface.
+ */
+export function resolveBuilderStudioHref(projectId?: string | null): string {
+  return withOptionalProjectId(resolveCloudStudioHref('builder'), projectId);
+}
+
+function withOptionalProjectId(baseHref: string, projectId?: string | null): string {
+  const id = projectId?.trim() ?? '';
+  if (id.length === 0) return baseHref;
+  const normalized = baseHref.endsWith('/') ? baseHref : `${baseHref}/`;
+  return `${normalized}?projectId=${encodeURIComponent(id)}`;
 }
 
 /**

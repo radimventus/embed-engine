@@ -89,7 +89,26 @@ export function isCommercialPilotProgramId(
 }
 
 /**
- * Soft map from workspace packageName → PDF program id (preview highlight only).
+ * Shared Project `offerTemplateId` → commercial package display name.
+ * Builder authors the template bind; Office does not invent package identity.
+ */
+export function packageNameFromOfferTemplate(
+  offerTemplateId: string | null | undefined,
+): string {
+  switch (offerTemplateId) {
+    case 'template-starter':
+      return 'Starter';
+    case 'template-pilot':
+      return 'Pilot';
+    case 'template-studio':
+      return 'Studio Partner';
+    default:
+      return '—';
+  }
+}
+
+/**
+ * Soft map from workspace packageName / offerTemplateId → PDF program id.
  */
 export function resolveCommercialPilotProgramId(
   packageName: string | null | undefined,
@@ -101,19 +120,35 @@ export function resolveCommercialPilotProgramId(
   if (
     normalized === 'pilot plus' ||
     normalized === 'pilot-plus' ||
-    normalized === 'starter'
+    normalized === 'starter' ||
+    normalized === 'template-starter'
   ) {
     return 'pilot-plus';
   }
   if (
     normalized === 'pilot max' ||
     normalized === 'pilot-max' ||
-    normalized === 'studio partner'
+    normalized === 'studio partner' ||
+    normalized === 'template-studio'
   ) {
     return 'pilot-max';
   }
-  if (normalized === 'pilot') {
+  if (normalized === 'pilot' || normalized === 'template-pilot') {
     return 'pilot';
   }
   return null;
+}
+
+/** Licence line from Shared Project offer template → catalog houses · trial. */
+export function licenseLabelFromOfferTemplate(
+  offerTemplateId: string | null | undefined,
+): string {
+  const packageName = packageNameFromOfferTemplate(offerTemplateId);
+  const programId = resolveCommercialPilotProgramId(packageName);
+  if (programId === null) return '—';
+  const program = COMMERCIAL_PILOT_PROGRAM_PACKAGES.find(
+    (item) => item.id === programId,
+  );
+  if (program === undefined) return '—';
+  return `${program.housesLabel} · ${program.trialDays} dní`;
 }
