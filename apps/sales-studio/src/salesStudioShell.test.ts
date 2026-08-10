@@ -181,6 +181,7 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
       join(salesRoot, 'src/SalesWorkspaceScope.tsx'),
       'utf8',
     );
+    const css = readFileSync(join(salesRoot, 'src/index.css'), 'utf8');
 
     assert.match(app, /session\?\.activeHouseId/);
     assert.match(scopeControls, /Celý projekt/);
@@ -211,6 +212,15 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     );
     assert.match(scopeControls, /PlatformScopeSelect/);
     assert.doesNotMatch(scopeControls, /<select\b/);
-    assert.match(scopeControls, /text-\[var\(--platform-navy\)\]/);
+    assert.match(scopeControls, /sales-workspace-scope/);
+    assert.match(scopeControls, /sales-workspace-scope__label/);
+    assert.match(
+      css,
+      /\.sales-workspace-scope\s*\{[\s\S]*?padding:\s*20px 16px 16px/,
+    );
+    assert.match(
+      css,
+      /\.sales-workspace-scope__field\s*\{[\s\S]*?display:\s*grid/,
+    );
   });
 });

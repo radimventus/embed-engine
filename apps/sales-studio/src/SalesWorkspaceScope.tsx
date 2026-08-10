@@ -41,12 +41,12 @@ export function SalesWorkspaceScope({
 
   return (
     <section
-      className="grid shrink-0 gap-5 border-b border-[var(--platform-cream-dark)] bg-white px-4 pb-4 pt-5"
+      className="sales-workspace-scope"
       data-testid="sales-workspace-scope"
     >
-      <div className="grid gap-2">
+      <div className="sales-workspace-scope__field">
         <span
-          className="text-[11px] font-bold uppercase tracking-[1px] text-[var(--platform-navy)]"
+          className="sales-workspace-scope__label"
           style={{ paddingLeft: SCOPE_TEXT_INSET_PX }}
         >
           Projekt
@@ -66,9 +66,9 @@ export function SalesWorkspaceScope({
           }}
         />
       </div>
-      <div className="grid gap-2" style={{ marginTop: 10 }}>
+      <div className="sales-workspace-scope__field sales-workspace-scope__field--house">
         <span
-          className="text-[11px] font-bold uppercase tracking-[1px] text-[var(--platform-navy)]"
+          className="sales-workspace-scope__label"
           style={{ paddingLeft: SCOPE_TEXT_INSET_PX }}
         >
           Objekt

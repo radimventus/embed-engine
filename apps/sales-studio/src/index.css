@@ -14,6 +14,32 @@ body {
   color: var(--platform-navy, #001930);
 }
 
+.sales-workspace-scope {
+  display: grid;
+  flex-shrink: 0;
+  gap: 20px;
+  border-bottom: 1px solid var(--platform-cream-dark);
+  background: #fff;
+  padding: 20px 16px 16px;
+}
+
+.sales-workspace-scope__field {
+  display: grid;
+  gap: 8px;
+}
+
+.sales-workspace-scope__field--house {
+  margin-top: 10px;
+}
+
+.sales-workspace-scope__label {
+  color: var(--platform-navy);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
