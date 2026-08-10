@@ -3,9 +3,13 @@
  * Single production seed. Legacy demo partners live only as test fixtures.
  */
 
+import { DSE_COMPANY_ID } from '@embed-engine/platform-access';
+
 import type { OfficePartner } from './officePartnerModel';
 
 export const OFFICE_REFERENCE_PARTNER_ID = 'p-dse' as const;
+/** Legacy Office identifier; DSE runtime scope is always this canonical Partner. */
+export const OFFICE_REFERENCE_CANONICAL_PARTNER_ID = DSE_COMPANY_ID;
 
 export const OFFICE_REFERENCE_PARTNER_NAME = 'Domy s energií' as const;
 
@@ -14,11 +18,12 @@ export const OFFICE_REFERENCE_PROJECT_LABEL = 'Reference House' as const;
 
 /** Platform IDs from provisionPilotWorkspace("Domy s energií"). */
 export const OFFICE_REFERENCE_PLATFORM_IDS = Object.freeze({
-  companyId: 'company-domy-s-energi',
-  tenantId: 'tenant-domy-s-energi',
-  workspaceId: 'workspace-domy-s-energi',
-  projectId: 'project-domy-s-energi-01',
-  objectId: 'object-p-dse-p1',
+  companyId: 'company-domy-s-energii',
+  tenantId: 'tenant-domy-s-energii',
+  workspaceId: 'domy-s-energii-main',
+  projectId: 'project-domy-s-energii',
+  objectId:
+    'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
 });
 
 export const OFFICE_REFERENCE_CONTACT_EMAIL =
@@ -30,6 +35,13 @@ export const OFFICE_REFERENCE_WEBSITE_URL =
 
 /** PT-CJ-00 — preset partner Studio password after sales meeting. */
 export const PILOT_DELIVERY_PASSWORD = 'conis' as const;
+
+/** Compatibility mapping only — never creates a second runtime Partner. */
+export function canonicalPartnerIdForOfficePartner(partnerId: string): string {
+  return partnerId === OFFICE_REFERENCE_PARTNER_ID
+    ? OFFICE_REFERENCE_CANONICAL_PARTNER_ID
+    : partnerId;
+}
 
 export function brandingLabelsForPartner(firmName: string): {
   readonly logoLabel: string;

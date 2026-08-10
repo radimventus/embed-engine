@@ -6,6 +6,7 @@
 import type { PlatformRole } from '../domain/types';
 import type {
   PlatformCompany,
+  PlatformCanonicalProject,
   PlatformProject,
   PlatformWorkspace,
 } from '../domain/types';
@@ -34,7 +35,9 @@ export type PilotProvisionSnapshot = {
   readonly tenant: PlatformTenant;
   readonly company: PlatformCompany;
   readonly workspace: PlatformWorkspace;
-  readonly project: PlatformProject;
+  readonly project: PlatformCanonicalProject;
+  /** Optional for v1 links issued before canonical House scope was added. */
+  readonly houses?: readonly PlatformProject[];
   readonly branding: {
     readonly firmName: string;
     readonly logoLabel: string;
@@ -61,7 +64,8 @@ export function buildPilotProvisionSnapshot(input: {
   readonly tenant: PlatformTenant;
   readonly company: PlatformCompany;
   readonly workspace: PlatformWorkspace;
-  readonly project: PlatformProject;
+  readonly project: PlatformCanonicalProject;
+  readonly houses: readonly PlatformProject[];
   readonly branding: {
     readonly firmName: string;
     readonly logoLabel: string;
@@ -80,6 +84,7 @@ export function buildPilotProvisionSnapshot(input: {
     company: input.company,
     workspace: input.workspace,
     project: input.project,
+    houses: input.houses,
     branding: input.branding,
     offerSlug: offerSlugFromCompanyId(input.company.id),
   };
@@ -156,12 +161,14 @@ export function hydratePilotProvisionSnapshot(
   }
 
   const registry = getDefaultCompanyRegistry();
+  const houses = Array.isArray(snapshot.houses) ? snapshot.houses : [];
   if (findCompany(registry, snapshot.company.id) === undefined) {
     appendPilotProvision({
       tenant: snapshot.tenant,
       company: snapshot.company,
       workspace: snapshot.workspace,
-      project: snapshot.project,
+      project: houses[0],
+      canonicalProject: snapshot.project,
     });
   }
 
@@ -187,6 +194,7 @@ export function hydratePilotProvisionSnapshot(
     company: snapshot.company,
     workspace: snapshot.workspace,
     project: snapshot.project,
+    houses,
   });
 
   return { ok: true, offerSlug: snapshot.offerSlug };

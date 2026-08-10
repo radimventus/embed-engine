@@ -6,7 +6,6 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
-  CONIS_SAMPLE_PROJECT_LABEL,
   PILOT_PARTNER_ROLES,
   activateInvite,
   canAccessStudio,
@@ -61,14 +60,10 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
     clearPlatformSession();
   }
 
-  it('prepares complete Partner Environment in one click', () => {
+  it('prepares access for an existing canonical Partner Environment', () => {
     resetAll();
 
-    const prepared = prepareNewPilotPartner({
-      firmName: 'Pilot Domů',
-      contactName: 'Anna Pilot',
-      contactEmail: 'anna@pilotdomu.cz',
-    });
+    const prepared = preparePilotForPartner('p-dse');
     assert.ok(prepared !== null);
     assert.equal(prepared?.packageId, 'pilot');
     assert.equal(prepared?.partner.status, 'active');
@@ -82,11 +77,14 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
     assert.deepEqual([...prepared!.invite.roles], [...PILOT_PARTNER_ROLES]);
     assert.equal(prepared?.invite.companyId, prepared?.provision.company.id);
     assert.equal(prepared?.invite.projectId, prepared?.provision.project.id);
-    assert.match(prepared!.provision.project.packageRoot, /house-package/);
-    assert.equal(prepared!.provision.project.name, CONIS_SAMPLE_PROJECT_LABEL);
+    assert.match(
+      prepared!.provision.houses[0]?.packageRoot ?? '',
+      /bungalov-4kk/,
+    );
+    assert.equal(prepared!.provision.project.name, 'Domy s energií');
     assert.equal(
       prepared!.pilotWorkspace.sampleProjectLabel,
-      CONIS_SAMPLE_PROJECT_LABEL,
+      'Reference House',
     );
     assert.equal(prepared!.pilotWorkspace.studios.client.ready, true);
     assert.equal(prepared!.pilotWorkspace.studios.manager.ready, true);
@@ -99,7 +97,7 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
     assert.equal(prepared!.environment.checklist.pilotProject, true);
     assert.equal(
       getPartnerBranding(prepared!.provision.company.id)?.firmName,
-      'Pilot Domů',
+      'Domy s energií s.r.o.',
     );
     assert.equal(getSalesCase(prepared!.partner.id)?.offer.packageId, 'pilot');
     assert.equal(getLicense(prepared!.partner.id)?.type, 'pilot');
@@ -109,6 +107,7 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
     assert.equal(canAccessStudio(prepared!.invite.roles, 'builder'), false);
     assert.equal(canAccessStudio(prepared!.invite.roles, 'office'), false);
     assert.deepEqual([...studiosForRoles(prepared!.invite.roles)].sort(), [
+      'client',
       'manager',
       'sales',
     ]);
@@ -133,6 +132,57 @@ describe('CS-01 / PE-03 / PE-10 Partner Environment Provisioning', () => {
     assert.equal(env.environment?.invite?.sendCount, 1);
     assert.ok(env.environment?.invite?.lastSentAt !== null);
     assert.equal(env.ready, true);
+  });
+
+  it('fails when Builder has not prepared a Partner Project and House set', () => {
+    resetAll();
+
+    const prepared = prepareNewPilotPartner({
+      firmName: 'Builder Prerequisite',
+      contactName: 'Anna Pilot',
+      contactEmail: 'anna@pilotdomu.cz',
+    });
+
+    assert.equal(prepared, null);
+  });
+
+  it('maps the Office DSE alias onto its canonical Partner and Project scope', () => {
+    resetAll();
+
+    const prepared = preparePilotForPartner('p-dse');
+
+    assert.ok(prepared !== null);
+    assert.equal(prepared?.canonicalPartnerId, 'company-domy-s-energii');
+    assert.equal(prepared?.provision.company.id, 'company-domy-s-energii');
+    assert.equal(prepared?.provision.project.id, 'project-domy-s-energii');
+    assert.ok(
+      prepared?.provision.houses.some(
+        (house) => house.name === 'BUNGALOV 4KK',
+      ),
+    );
+    assert.ok(
+      prepared?.provision.houses.some(
+        (house) => house.name === 'VÁŠ PRVNÍ DŮM 5KK',
+      ),
+    );
+  });
+
+  it('preserves DSE canonical Project scope after partner login', () => {
+    resetAll();
+
+    const prepared = preparePilotForPartner('p-dse');
+    assert.ok(prepared !== null);
+    const loggedIn = login({
+      email: 'partner@domysenergii.cz',
+      password: 'conis',
+      rememberMe: false,
+    });
+
+    assert.equal(loggedIn.ok, true);
+    if (!loggedIn.ok) return;
+    assert.equal(loggedIn.session.companyId, 'company-domy-s-energii');
+    assert.equal(loggedIn.session.projectId, 'project-domy-s-energii');
+    assert.notEqual(loggedIn.session.projectId, 'project-ac-modular');
   });
 
   it('blocks activation without NDA and shows welcome after consent + password', () => {

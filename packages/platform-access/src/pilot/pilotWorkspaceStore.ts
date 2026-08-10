@@ -87,13 +87,16 @@ export function initializePilotWorkspace(
   }
 
   const createdAt = new Date().toISOString();
+  const referenceHouse = provision.houses.find(
+    (house) => house.status !== 'draft' && house.packageRoot.length > 0,
+  );
   const workspace: PilotWorkspace = {
     id: `pilot-ws-${provision.company.id}`,
     companyId: provision.company.id,
     workspaceId: provision.workspace.id,
     projectId: provision.project.id,
     sampleProjectLabel: CONIS_SAMPLE_PROJECT_LABEL,
-    packageRoot: provision.project.packageRoot || PILOT_HOUSE_PACKAGE_ROOT,
+    packageRoot: referenceHouse?.packageRoot || PILOT_HOUSE_PACKAGE_ROOT,
     studios: buildStudioInit(createdAt),
     createdAt,
   };

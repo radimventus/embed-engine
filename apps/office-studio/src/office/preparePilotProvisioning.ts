@@ -12,7 +12,8 @@ import {
   createPilotInvite,
   listInvites,
   getPilotWorkspace,
-  provisionPilotWorkspace,
+  initializePilotWorkspace,
+  resolvePilotWorkspace,
   setUserPassword,
   upsertPartnerBranding,
   upsertActivatedUser,
@@ -36,15 +37,17 @@ import { getSalesCase, selectSalesPackage } from './officeSalesRegistry';
 import type { OfficePackageId } from './officeSalesModel';
 import {
   OFFICE_REFERENCE_PARTNER_ID,
-  OFFICE_REFERENCE_PARTNER_NAME,
   OFFICE_REFERENCE_PROJECT_LABEL,
   OFFICE_REFERENCE_WEBSITE_URL,
   PILOT_DELIVERY_PASSWORD,
   brandingLabelsForPartner,
+  canonicalPartnerIdForOfficePartner,
 } from './officeReferencePartner';
 
 export type PreparePilotResult = {
   readonly partner: OfficePartner;
+  /** Runtime Partner identity; Office `p-dse` remains a compatibility alias only. */
+  readonly canonicalPartnerId: string;
   readonly provision: PilotProvisionResult;
   readonly pilotWorkspace: PilotWorkspace;
   readonly invite: PilotInvite;
@@ -78,9 +81,9 @@ function ensurePilotDeliveryPassword(
 }
 
 /**
- * Prepare pilot for an existing Office partner — copy of the reference template.
- * Provisions shared Workspace / Project (Reference House) / Client+Manager+Sales,
- * then customizes firm name, logo and hero only.
+ * Prepare access for an existing Office Partner.
+ * Builder owns Partner / Project / House creation; Office only resolves that
+ * canonical scope before preparing access, branding, and pilot context.
  */
 export function preparePilotForPartner(
   partnerId: string,
@@ -94,16 +97,12 @@ export function preparePilotForPartner(
     return null;
   }
 
+  const canonicalPartnerId = canonicalPartnerIdForOfficePartner(partnerId);
+  const provision = resolvePilotWorkspace(canonicalPartnerId);
+  if (provision === null) return null;
   const firmName = partner.company.legalName || partner.name;
-  // Reference partner keeps stable platform IDs (company-domy-s-energi…).
-  const provisionName =
-    partnerId === OFFICE_REFERENCE_PARTNER_ID
-      ? OFFICE_REFERENCE_PARTNER_NAME
-      : firmName;
-  const provision = provisionPilotWorkspace({
-    companyName: provisionName,
-  });
-  // Template clone — Reference House + Client / Manager / Sales studios.
+  // Initialize only the access workspace; canonical Project/Houses already exist.
+  initializePilotWorkspace(provision);
   const pilotWorkspace = getPilotWorkspace(provision.company.id);
   if (pilotWorkspace === null) {
     return null;
@@ -188,6 +187,7 @@ export function preparePilotForPartner(
 
   return {
     partner: updated,
+    canonicalPartnerId,
     provision,
     pilotWorkspace,
     invite,

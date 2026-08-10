@@ -6,9 +6,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import {
-  CONIS_SAMPLE_PROJECT_LABEL,
   clearPlatformSession,
-  getPartnerBranding,
   resetCompanyRegistryExtras,
   resetInviteStore,
   resetPartnerBrandingStore,
@@ -31,7 +29,6 @@ import {
   OFFICE_REFERENCE_PARTNER_NAME,
   OFFICE_REFERENCE_PLATFORM_IDS,
   OFFICE_REFERENCE_PROJECT_LABEL,
-  brandingLabelsForPartner,
 } from './officeReferencePartner.ts';
 import { getHandoff, resetHandoffRegistryForTests } from './officeHandoffRegistry.ts';
 import { getSalesCase, resetSalesRegistryForTests } from './officeSalesRegistry.ts';
@@ -84,7 +81,7 @@ describe('OF-11 Reference Partner Consolidation', () => {
     assert.equal(getSalesCase(OFFICE_REFERENCE_PARTNER_ID)?.offer.packageId, 'pilot');
   });
 
-  it('Připravit pilot clones Reference House template and customizes branding', () => {
+  it('does not create a Project or House when preparing a new Office partner', () => {
     resetAll();
 
     const prepared = prepareNewPilotPartner({
@@ -92,25 +89,7 @@ describe('OF-11 Reference Partner Consolidation', () => {
       contactName: 'Eva Nová',
       contactEmail: 'eva@novypartner.cz',
     });
-    assert.ok(prepared !== null);
-    assert.equal(prepared!.provision.project.name, CONIS_SAMPLE_PROJECT_LABEL);
-    assert.equal(prepared!.provision.project.name, OFFICE_REFERENCE_PROJECT_LABEL);
-    assert.equal(prepared!.pilotWorkspace.studios.client.ready, true);
-    assert.equal(prepared!.pilotWorkspace.studios.manager.ready, true);
-    assert.equal(prepared!.pilotWorkspace.studios.sales.ready, true);
-
-    assert.equal(prepared!.invite.companyId, prepared!.provision.company.id);
-    assert.equal(prepared!.invite.workspaceId, prepared!.provision.workspace.id);
-    assert.equal(prepared!.invite.projectId, prepared!.provision.project.id);
-
-    const expected = brandingLabelsForPartner('Nový Partner Domů');
-    assert.equal(prepared!.branding.firmName, 'Nový Partner Domů');
-    assert.equal(prepared!.branding.logoLabel, expected.logoLabel);
-    assert.equal(prepared!.branding.heroLabel, expected.heroLabel);
-    assert.equal(
-      getPartnerBranding(prepared!.provision.company.id)?.heroLabel,
-      expected.heroLabel,
-    );
+    assert.equal(prepared, null);
   });
 
   it('reference partner prepares onto aligned platform IDs', () => {
@@ -129,6 +108,6 @@ describe('OF-11 Reference Partner Consolidation', () => {
       prepared!.provision.project.id,
       OFFICE_REFERENCE_PLATFORM_IDS.projectId,
     );
-    assert.equal(prepared!.provision.project.name, OFFICE_REFERENCE_PROJECT_LABEL);
+    assert.equal(prepared!.provision.project.name, OFFICE_REFERENCE_PARTNER_NAME);
   });
 });

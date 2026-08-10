@@ -256,9 +256,12 @@ export function appendPilotProvision(input: {
   readonly tenant: PlatformTenant;
   readonly company: PlatformCompany;
   readonly workspace: PlatformWorkspace;
-  readonly project: PlatformProject;
+  readonly project?: PlatformProject;
+  readonly canonicalProject?: PlatformCanonicalProject;
 }): CompanyRegistryState {
   ensureExtrasHydrated();
+  const project = input.project;
+  const canonicalProject = input.canonicalProject;
   const withoutDup = {
     tenants: mutableExtras.tenants.filter((item) => item.id !== input.tenant.id),
     companies: mutableExtras.companies.filter(
@@ -267,16 +270,26 @@ export function appendPilotProvision(input: {
     workspaces: mutableExtras.workspaces.filter(
       (item) => item.id !== input.workspace.id,
     ),
-    projects: mutableExtras.projects.filter(
-      (item) => item.id !== input.project.id,
+    projects:
+      project === undefined
+        ? mutableExtras.projects
+        : mutableExtras.projects.filter((item) => item.id !== project.id),
+    canonicalProjects: mutableExtras.canonicalProjects.filter(
+      (item) => item.id !== canonicalProject?.id,
     ),
   };
   mutableExtras = {
     tenants: [...withoutDup.tenants, input.tenant],
     companies: [...withoutDup.companies, input.company],
     workspaces: [...withoutDup.workspaces, input.workspace],
-    projects: [...withoutDup.projects, input.project],
-    canonicalProjects: mutableExtras.canonicalProjects,
+    projects:
+      project === undefined
+        ? withoutDup.projects
+        : [...withoutDup.projects, project],
+    canonicalProjects:
+      canonicalProject === undefined
+        ? mutableExtras.canonicalProjects
+        : [...withoutDup.canonicalProjects, canonicalProject],
   };
   persistExtrasToStorage();
   return getDefaultCompanyRegistry();

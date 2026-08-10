@@ -8,6 +8,7 @@ import type {
 import type { PlatformTenant } from '../domain/pilotTypes';
 import {
   BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+  derivePartnerDraftHouseId,
   deriveReferenceInstanceHouseId,
 } from '../reference/referenceSourceRegistry';
 
@@ -31,6 +32,11 @@ export const DSE_BUNGALOV_4KK_HOUSE_ID = deriveReferenceInstanceHouseId({
 export const DSE_CANONICAL_REFERENCE_HOUSE_ID = DSE_BUNGALOV_4KK_HOUSE_ID;
 /** Historical DSE reference House retained as demo data. */
 export const DSE_HISTORICAL_MODERN_4KK_HOUSE_ID = 'modern-4kk' as const;
+export const DSE_FIRST_DRAFT_HOUSE_ID = derivePartnerDraftHouseId({
+  companyId: DSE_COMPANY_ID,
+  projectId: DSE_CANONICAL_PROJECT_ID,
+  houseSlug: 'vas-prvni-dum-5kk',
+});
 export const DSE_BUNGALOV_4KK_PACKAGE_ROOT =
   'apps/client-studio/public/house-packages/bungalov-4kk' as const;
 
@@ -133,6 +139,19 @@ export const DEFAULT_PROJECTS: readonly PlatformProject[] = [
     objectType: 'reference-house',
     description: 'Historical DSE reference House demo.',
     dataMode: 'REFERENCE_DEMO',
+    canonicalProjectId: DSE_CANONICAL_PROJECT_ID,
+  },
+  {
+    id: DSE_FIRST_DRAFT_HOUSE_ID,
+    workspaceId: DSE_WORKSPACE_ID,
+    companyId: DSE_COMPANY_ID,
+    name: 'VÁŠ PRVNÍ DŮM 5KK',
+    packageRoot: '',
+    status: 'draft',
+    slug: 'vas-prvni-dum-5kk',
+    objectType: 'partner-house',
+    description: 'Partner-owned AUTHORING_DRAFT House for Domy s energií.',
+    dataMode: 'LIVE_EMPTY',
     canonicalProjectId: DSE_CANONICAL_PROJECT_ID,
   },
   {

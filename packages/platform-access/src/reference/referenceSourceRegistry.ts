@@ -70,6 +70,28 @@ export function deriveReferenceInstanceHouseId(input: {
   return `reference-${source.version}-${companyId}-${projectId}-bungalov-4kk`;
 }
 
+/**
+ * Deterministic identity for a Partner-owned draft House under a canonical
+ * Partner/Project scope. Drafts never reuse a reference-source identity.
+ */
+export function derivePartnerDraftHouseId(input: {
+  readonly companyId: string;
+  readonly projectId: string;
+  readonly houseSlug: string;
+}): string {
+  const companyId = input.companyId.trim();
+  const projectId = input.projectId.trim();
+  const houseSlug = input.houseSlug.trim();
+  if (
+    !isSafeCanonicalIdPart(companyId) ||
+    !isSafeCanonicalIdPart(projectId) ||
+    !isSafeCanonicalIdPart(houseSlug)
+  ) {
+    throw new Error('Draft House requires canonical Company, Project, and House ids.');
+  }
+  return `draft-${companyId}-${projectId}-${houseSlug}`;
+}
+
 export function referenceInstanceProvenance(
   sourceId: string,
 ): ReferenceHouseProvenance {

@@ -18,6 +18,7 @@ export type {
 export {
   BUNGALOV_4KK_REFERENCE_SOURCE_ID,
   BUNGALOV_4KK_REFERENCE_SOURCE,
+  derivePartnerDraftHouseId,
   deriveReferenceInstanceHouseId,
   getReferenceHouseSource,
   listReferenceHouseSources,
@@ -114,6 +115,12 @@ export {
   DEFAULT_TENANTS,
   DEFAULT_TENANT_ID,
   DEMO_USERS,
+  DSE_BUNGALOV_4KK_HOUSE_ID,
+  DSE_CANONICAL_PROJECT_ID,
+  DSE_COMPANY_ID,
+  DSE_FIRST_DRAFT_HOUSE_ID,
+  DSE_TENANT_ID,
+  DSE_WORKSPACE_ID,
   PILOT_HOUSE_PACKAGE_ROOT,
 } from './registry/defaults';
 
@@ -355,6 +362,7 @@ export {
 
 export {
   provisionPilotWorkspace,
+  resolvePilotWorkspace,
   type PilotProvisionResult,
 } from './pilot/provisionPilotWorkspace';
 

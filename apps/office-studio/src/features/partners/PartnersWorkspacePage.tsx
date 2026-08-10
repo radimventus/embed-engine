@@ -118,7 +118,7 @@ export function PartnersWorkspacePage({
       bump();
       if (prepared === null) {
         setPilotNotice(
-          'Pilot nelze připravit — partner musí mít kontaktní e-mail.',
+          'Partner environment is not prepared in Builder Studio.',
         );
         return;
       }

@@ -245,6 +245,7 @@ export function buildPilotDeliveryPreview(
     company: prepared.provision.company,
     workspace: prepared.provision.workspace,
     project: prepared.provision.project,
+    houses: prepared.provision.houses,
     branding: {
       firmName: branding.firmName,
       logoLabel: branding.logoLabel,
