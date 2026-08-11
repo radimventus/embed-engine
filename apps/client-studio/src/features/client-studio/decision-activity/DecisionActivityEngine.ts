@@ -55,14 +55,10 @@ export function projectDecisionActivity(
   const popularity = projectPopularityLayer(events);
   const behavior = projectBehaviorLayer(events);
   const preference = projectPreferenceLayer(events);
-  let live = projectLiveLayer(events);
+  const live = projectLiveLayer(events);
 
   const bootstrapMode =
     popularity.length === 0 && behavior.length === 0 && preference.length === 0;
-
-  if (bootstrapMode) {
-    live = mergeBootstrapLiveItems(live);
-  }
 
   const layers: readonly DecisionActivityLayer[] = [
     createLayer('popularity', 'Popularita', popularity),
@@ -93,11 +89,18 @@ function createLayer(
 function projectPopularityLayer(
   events: readonly AnalyticsEvent[],
 ): readonly DecisionActivityItem[] {
-  const savedCount = countExperienceEvents(events, 'house.saved');
-  const heroVideoOpenedCount = countExperienceEvents(events, 'hero.video.opened');
-  const tourCompletedCount =
-    countExperienceEvents(events, 'tour.completed') +
-    countSurfaceCompletions(events, 'walkthrough');
+  const savedCount = countSessionsWithExperienceEvent(events, 'house.saved');
+  const heroVideoOpenedCount = countSessionsWithExperienceEvent(events, 'hero.video.opened');
+  const tourCompletedCount = new Set(
+    events
+      .filter(
+        (event) =>
+          (event.type === 'experience.event' &&
+            event.experienceEventType === 'tour.completed') ||
+          (event.type === 'surface.exited' && event.surfaceId === 'walkthrough'),
+      )
+      .map((event) => event.sessionId),
+  ).size;
 
   const items: DecisionActivityItem[] = [];
   if (savedCount >= MIN_POPULARITY_EVENTS) {
@@ -213,39 +216,6 @@ function projectLiveLayer(
     .slice(0, 4);
 }
 
-function mergeBootstrapLiveItems(
-  live: readonly DecisionActivityItem[],
-): readonly DecisionActivityItem[] {
-  const seen = new Set(live.map((item) => item.message));
-  const merged = [...live];
-  for (const item of projectBootstrapLiveItems()) {
-    if (seen.has(item.message)) {
-      continue;
-    }
-    seen.add(item.message);
-    merged.push(item);
-  }
-  return merged;
-}
-
-/** First-visitor pool — keeps the ticker diverse before real analytics accumulate. */
-function projectBootstrapLiveItems(): readonly DecisionActivityItem[] {
-  return [
-    liveItem('bootstrap-journey', '1 zájemce právě prochází Decision Journey.'),
-    liveItem('bootstrap-tour', '1 zájemce právě zahájil prohlídku Client Studia.'),
-    liveItem('bootstrap-floorplan', '1 zájemce právě otevřel půdorys.'),
-    liveItem('bootstrap-priority', '1 zájemce právě vybírá své priority.'),
-    liveItem('bootstrap-ai', '1 zájemce právě konzultuje dům s AI poradcem.'),
-    liveItem('bootstrap-video', '1 zájemce právě přehrává úvodní video.'),
-    liveItem('bootstrap-spec', '1 zájemce právě otevřel technické parametry domu.'),
-    liveItem('bootstrap-energy', '1 zájemce právě porovnává energetické parametry domu.'),
-    liveItem('bootstrap-saved', '1 zájemce si právě ukládá tento dům.'),
-    liveItem('bootstrap-contact', '1 zájemce právě požádal o konzultaci.'),
-    liveItem('bootstrap-room', '1 zájemce právě prohlíží obývací pokoj.'),
-    liveItem('bootstrap-completed', '1 zájemce právě dokončil nastavení priorit.'),
-  ];
-}
-
 function projectLiveItem(event: AnalyticsEvent): DecisionActivityItem | null {
   if (event.type === 'experience.event') {
     switch (event.experienceEventType) {
@@ -329,29 +299,26 @@ function liveItem(id: string, message: string): DecisionActivityItem {
   return Object.freeze({
     id: `live:${id}`,
     layerId: 'live',
-    message,
+    message: message
+      .replace(/^1 zájemce právě /, 'V této relaci: ')
+      .replace(/^1 zájemce si právě /, 'V této relaci: '),
     sourceEventTypes: [],
   });
 }
 
-function countExperienceEvents(
+function countSessionsWithExperienceEvent(
   events: readonly AnalyticsEvent[],
   experienceEventType: string,
 ): number {
-  return events.filter(
-    (event) =>
-      event.type === 'experience.event' &&
-      event.experienceEventType === experienceEventType,
-  ).length;
-}
-
-function countSurfaceCompletions(
-  events: readonly AnalyticsEvent[],
-  surfaceId: string,
-): number {
-  return events.filter(
-    (event) => event.type === 'surface.exited' && event.surfaceId === surfaceId,
-  ).length;
+  return new Set(
+    events
+      .filter(
+        (event) =>
+          event.type === 'experience.event' &&
+          event.experienceEventType === experienceEventType,
+      )
+      .map((event) => event.sessionId),
+  ).size;
 }
 
 function countFirstAction(

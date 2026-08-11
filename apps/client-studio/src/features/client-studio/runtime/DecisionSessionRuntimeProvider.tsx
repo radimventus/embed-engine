@@ -9,6 +9,11 @@ import {
   type ReactNode,
 } from 'react';
 import {
+  getCanonicalHouseRuntimeContext,
+  selectCanonicalHouseKnowledge,
+  type CanonicalHouseKnowledgeSelection,
+} from '@embed-engine/object-house';
+import {
   createDecisionSessionRuntime,
   createSystemClock,
   type DecisionSessionRuntime,
@@ -18,6 +23,7 @@ import {
 import { RUNTIME_HOUSE_PACKAGE_SOURCE } from '@embed-engine/object-house/builder-package';
 import {
   resolveWorkspaceHouseBinding,
+  resolveCanonicalKnowledgeHouseId,
 } from '@embed-engine/platform-access';
 
 import { useOptionalDecisionAnalytics } from '../analytics/DecisionAnalyticsProvider';
@@ -72,6 +78,16 @@ export type DecisionSessionRuntimeContextValue = {
   readonly experience: SynchronizedExperience;
   /** Availability — true once Builder Package → Runtime HousePackage is ready. */
   readonly ready: boolean;
+  /**
+   * Canonical, priority-bounded House knowledge for FAQ, Chat, payoff and
+   * personalization. Null means this Runtime House has no canonical mapping.
+   */
+  readonly houseKnowledge: CanonicalHouseKnowledgeSelection | null;
+  readonly analyticsScope: {
+    readonly companyId: string;
+    readonly projectId: string;
+    readonly houseId: string;
+  } | null;
   /** Dispatch Runtime commands (SelectRoom, ChangePriority, …). */
   readonly dispatch: (command: RuntimeCommand, now?: number) => DispatchResult;
 };
@@ -172,6 +188,23 @@ export function DecisionSessionRuntimeProvider({
   const requestedRuntimeBindingKey = runtimeBindingKey(
     runtimeHouseId,
     packagePublicRoot,
+  );
+  const canonicalKnowledgeHouseId = useMemo(
+    () =>
+      runtimeHouseId === null
+        ? null
+        : resolveCanonicalKnowledgeHouseId({
+            runtimeHouseId,
+            referenceProvenance: projectBind?.project?.house?.referenceProvenance,
+          }),
+    [projectBind?.project?.house?.referenceProvenance, runtimeHouseId],
+  );
+  const canonicalHouseContext = useMemo(
+    () =>
+      canonicalKnowledgeHouseId === null
+        ? null
+        : getCanonicalHouseRuntimeContext(canonicalKnowledgeHouseId),
+    [canonicalKnowledgeHouseId],
   );
 
   useEffect(() => {
@@ -309,10 +342,29 @@ export function DecisionSessionRuntimeProvider({
     return {
       experience: projectSynchronizedExperience(base),
       ready: true,
+      houseKnowledge:
+        canonicalHouseContext === null
+          ? null
+          : selectCanonicalHouseKnowledge(
+              canonicalHouseContext,
+              base.context.decision.priorityIds,
+            ),
+      analyticsScope:
+        projectBind === null ||
+        projectBind.project === null ||
+        projectBind.project.house === null
+          ? null
+          : {
+              companyId: projectBind.project.partner.companyId,
+              projectId: projectBind.project.project.projectId,
+              houseId: projectBind.project.house.houseId,
+            },
       dispatch,
     };
   }, [
     dispatch,
+    canonicalHouseContext,
+    projectBind,
     injectedRuntime,
     loadedRuntimeBindingKey,
     packageReady,

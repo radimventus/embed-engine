@@ -4,6 +4,19 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 
+import {
+  FileSocialProofAnalyticsRepository,
+  type SocialProofAnalyticsRepository,
+} from './socialProofAnalytics';
+
+export {
+  FileSocialProofAnalyticsRepository,
+  type RecentHouseActivity,
+  type SocialProofAggregate,
+  type SocialProofAnalyticsEventInput,
+  type SocialProofAnalyticsRepository,
+} from './socialProofAnalytics';
+
 export type PlatformInviteStatus =
   | 'pending'
   | 'activated'
@@ -261,12 +274,14 @@ function respond(
 
 export function createPlatformApiServer(
   repository: PlatformInviteRepository = new FilePlatformInviteRepository(),
+  socialProofRepository: SocialProofAnalyticsRepository = new FileSocialProofAnalyticsRepository(),
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
     const allowedOrigins = new Set([
       'http://127.0.0.1:4175',
       'http://127.0.0.1:4181',
+      'http://127.0.0.1:4173',
     ]);
     if (origin !== undefined && allowedOrigins.has(origin)) {
       response.setHeader('access-control-allow-origin', origin);
@@ -291,6 +306,46 @@ export function createPlatformApiServer(
         return respond(response, result.ok ? 200 : 409, result);
       }
       if (!isLoopback(request)) return respond(response, 403, { error: 'Local-pilot access requires loopback.' });
+      if (request.method === 'POST' && path === '/local-pilot/social-proof/events') {
+        await socialProofRepository.record(
+          await requestBody(request) as import('./socialProofAnalytics').SocialProofAnalyticsEventInput,
+        );
+        return respond(response, 202, { accepted: true });
+      }
+      if (request.method === 'GET' && path === '/local-pilot/social-proof/aggregate') {
+        const url = new URL(request.url ?? '/', 'http://localhost');
+        const companyId = url.searchParams.get('companyId');
+        const projectId = url.searchParams.get('projectId');
+        const houseId = url.searchParams.get('houseId');
+        const from = url.searchParams.get('from');
+        const to = url.searchParams.get('to');
+        if (companyId === null || projectId === null || houseId === null || from === null || to === null) {
+          return respond(response, 400, { error: 'companyId, projectId, houseId, from a to jsou povinné.' });
+        }
+        return respond(response, 200, await socialProofRepository.aggregateHouse({ companyId, projectId, houseId, from, to }));
+      }
+      if (request.method === 'GET' && path === '/local-pilot/social-proof/recent') {
+        const url = new URL(request.url ?? '/', 'http://localhost');
+        const companyId = url.searchParams.get('companyId');
+        const projectId = url.searchParams.get('projectId');
+        const from = url.searchParams.get('from');
+        const to = url.searchParams.get('to');
+        if (companyId === null || projectId === null || from === null || to === null) {
+          return respond(response, 400, { error: 'companyId, projectId, from a to jsou povinné.' });
+        }
+        const minimumVisitors = Number.parseInt(url.searchParams.get('minimumVisitors') ?? '2', 10);
+        return respond(
+          response,
+          200,
+          await socialProofRepository.recentActivity({
+            companyId,
+            projectId,
+            from,
+            to,
+            minimumVisitors: Number.isFinite(minimumVisitors) ? Math.max(2, minimumVisitors) : 2,
+          }),
+        );
+      }
       if (request.method === 'POST' && path === '/local-pilot/invites') {
         return respond(response, 201, await repository.create(await requestBody(request) as PlatformInviteScope));
       }

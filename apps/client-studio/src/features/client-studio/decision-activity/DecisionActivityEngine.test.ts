@@ -15,7 +15,7 @@ function createBase(sessionId: string, at: number) {
 }
 
 describe('Decision Activity Engine', () => {
-  it('boots with live activity only on first visitor', () => {
+  it('does not fabricate bootstrap activity for the first visitor', () => {
     const events: AnalyticsEvent[] = [
       {
         ...createBase('s1', 1),
@@ -28,8 +28,8 @@ describe('Decision Activity Engine', () => {
     const snapshot = projectDecisionActivity(events);
     assert.equal(snapshot.bootstrapMode, true);
     const liveItems = snapshot.layers.find((layer) => layer.id === 'live')!.items;
-    assert.ok(liveItems.length >= 6);
-    assert.equal(liveItems[0]!.message, '1 zájemce právě otevřel půdorys.');
+    assert.equal(liveItems.length, 1);
+    assert.equal(liveItems[0]!.message, 'V této relaci: otevřel půdorys.');
     assert.equal(
       snapshot.layers.find((layer) => layer.id === 'popularity')!.items.length,
       0,

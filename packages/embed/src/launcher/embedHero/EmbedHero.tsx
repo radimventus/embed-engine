@@ -23,6 +23,40 @@ const REFERENCE_HERO_SRC = "/media/house-modern-01/exterior.webp";
 
 /** Compact layout threshold — matches reference mobile breakpoint. */
 const COMPACT_MAX_WIDTH_PX = 767;
+const SOCIAL_PROOF_REVEAL_MS = 8000;
+
+const LAUNCHER_SOCIAL_PROOF_ENTRIES = [
+  {
+    icon: "viewing",
+    value: "Tour",
+    label: "je připravená z ověřeného House package",
+  },
+  {
+    icon: "saved",
+    value: "Půdorys",
+    label: "je součástí prohlídky domu",
+  },
+  {
+    icon: "inquiry",
+    value: "BUNGALOV 4KK",
+    label: "je referenční House pro tuto Experience",
+  },
+  {
+    icon: "viewing",
+    value: "Prostor",
+    label: "si můžete projít vlastním tempem",
+  },
+  {
+    icon: "saved",
+    value: "Detaily",
+    label: "zůstávají dostupné i během prohlídky",
+  },
+  {
+    icon: "inquiry",
+    value: "Otázky",
+    label: "můžete otevřít až podle vlastního pohledu",
+  },
+] as const;
 
 export type EmbedHeroProps = {
   readonly assetBase?: string;
@@ -222,6 +256,27 @@ function EmbedHeroImage({
 }
 
 function EmbedSocialProof({ compact }: { readonly compact: boolean }) {
+  const [startIndex, setStartIndex] = useState(0);
+  const visibleEntries = Array.from(
+    { length: compact ? 1 : 3 },
+    (_, offset) =>
+      LAUNCHER_SOCIAL_PROOF_ENTRIES[
+        (startIndex + offset) % LAUNCHER_SOCIAL_PROOF_ENTRIES.length
+      ]!,
+  );
+
+  useEffect(() => {
+    const timer = window.setInterval(
+      () =>
+        setStartIndex(
+          (current) =>
+            (current + 1) % LAUNCHER_SOCIAL_PROOF_ENTRIES.length,
+        ),
+      SOCIAL_PROOF_REVEAL_MS,
+    );
+    return () => window.clearInterval(timer);
+  }, []);
+
   return (
     <section
       aria-label="Social Proof"
@@ -253,21 +308,9 @@ function EmbedSocialProof({ compact }: { readonly compact: boolean }) {
           />
         </>
       ) : null}
-      <SocialProofItem
-        icon="viewing"
-        value="1"
-        label="rodina si právě prohlíží tento dům"
-      />
-      <SocialProofItem
-        icon="saved"
-        value="18"
-        label="zájemců si uložilo tento dům v minulém měsíci"
-      />
-      <SocialProofItem
-        icon="inquiry"
-        value="21 %"
-        label="zájemců se dotazuje na velikost pozemku"
-      />
+      {visibleEntries.map((entry) => (
+        <SocialProofItem key={entry.value} {...entry} />
+      ))}
     </section>
   );
 }
