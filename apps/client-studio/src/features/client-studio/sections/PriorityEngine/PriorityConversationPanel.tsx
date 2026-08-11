@@ -7,7 +7,7 @@ import {
   PRIORITY_CONVERSATION_ANSWER_ACK,
   PRIORITY_CONVERSATION_COLLECT_HINT,
   PRIORITY_CONVERSATION_COLLECT_LINES,
-  PRIORITY_CONVERSATION_COMPLETE_PANEL_LINE,
+  PRIORITY_CONVERSATION_COMPLETE_PANEL_LINES,
   PRIORITY_CONVERSATION_COMPLETE_PANEL_TITLE,
   PRIORITY_CONVERSATION_FINISH_SELECTION,
   PRIORITY_CONVERSATION_GATE_LINES,
@@ -17,7 +17,6 @@ import {
   PRIORITY_CONVERSATION_PREP_LINES,
   PRIORITY_CONVERSATION_PREP_TITLE,
   PRIORITY_CONVERSATION_REVISIT_CONTINUE,
-  PRIORITY_CONVERSATION_REVISIT_PROMPT,
   PRIORITY_CONVERSATION_START_HEADING,
   PRIORITY_CONVERSATION_START_LINES,
 } from './priorityConversation.constants';
@@ -517,15 +516,11 @@ export function PriorityConversationPanel() {
           >
             {PRIORITY_CONVERSATION_COMPLETE_PANEL_TITLE}
           </h3>
-          <p className={bodyTextClass}>
-            {PRIORITY_CONVERSATION_COMPLETE_PANEL_LINE}
-          </p>
-          <p
-            className={bodyTextClass}
-            data-testid="priority-conversation-revisit-prompt"
-          >
-            {PRIORITY_CONVERSATION_REVISIT_PROMPT}
-          </p>
+          {PRIORITY_CONVERSATION_COMPLETE_PANEL_LINES.map((line) => (
+            <p key={line} className={bodyTextClass}>
+              {line}
+            </p>
+          ))}
           <PriorityMobileStickyCta>
             <PrioritySwitchTrack
               className=""

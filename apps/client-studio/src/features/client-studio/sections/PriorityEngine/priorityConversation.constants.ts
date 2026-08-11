@@ -71,10 +71,10 @@ export const PRIORITY_CONVERSATION_PREP_TITLE =
   'Už rozumím tomu, co je pro vás důležité.';
 
 export const PRIORITY_CONVERSATION_PREP_LINES = Object.freeze([
-  'Pomozte mi lépe porozumět tomu, jak přemýšlíte — ověřím ještě několik souvislostí.',
+  'Pomozte mi ještě lépe porozumět tomu, jak přemýšlíte — ověřím několik souvislostí.',
 ] as const);
 
-export const PRIORITY_CONVERSATION_PREP_CONTINUE = 'Pojďme dál';
+export const PRIORITY_CONVERSATION_PREP_CONTINUE = 'Pokračovat';
 
 export const PRIORITY_CONVERSATION_ANSWER_ACK = 'Rozumím.';
 
@@ -83,11 +83,10 @@ export const PRIORITY_CONVERSATION_DIALOG_CONTINUE = 'Pokračovat';
 export const PRIORITY_CONVERSATION_COMPLETE_PANEL_TITLE =
   'První kapitola je hotová.';
 
-export const PRIORITY_CONVERSATION_COMPLETE_PANEL_LINE =
-  'Níže shrnuji, co už o vás vím — a co můžete získat dál.';
-
-export const PRIORITY_CONVERSATION_REVISIT_PROMPT =
-  'Je to v pořádku, nebo chcete ještě něco upravit?';
+export const PRIORITY_CONVERSATION_COMPLETE_PANEL_LINES = Object.freeze([
+  'Teď už vím, na co se u tohoto domu společně podívat.',
+  'Teď vám ukážu, co pro vás může znamenat.',
+] as const);
 
 /** Continues to chapter summary — scroll only on this click (CAP UX3 08). */
 export const PRIORITY_CONVERSATION_REVISIT_CONTINUE = 'Pokračovat';
@@ -101,7 +100,7 @@ export const PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL = 'Pokračovat v rozhov
 
 /** Full-width chapter bridge — value language, never internal „Audit“. */
 export const PRIORITY_BRIDGE_TITLE =
-  'Už rozumím tomu, co je pro vás důležité.';
+  'Co pro vás může tento dům znamenat';
 
 export const PRIORITY_BRIDGE_SUMMARY =
   'Díky našemu rozhovoru už vidím první obraz toho, jak se rozhodujete. To je základ, na kterém můžeme stavět dál.';

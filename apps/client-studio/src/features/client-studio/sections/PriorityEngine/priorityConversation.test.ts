@@ -17,8 +17,12 @@ import {
   dialogQuestionFor,
   pickDialogPriorityIds,
   PRIORITY_BRIDGE_TITLE,
+  PRIORITY_CONVERSATION_COMPLETE_PANEL_LINES,
+  PRIORITY_CONVERSATION_COMPLETE_PANEL_TITLE,
   PRIORITY_CONVERSATION_INTRO_LINES,
   PRIORITY_CONVERSATION_MINIMUM,
+  PRIORITY_CONVERSATION_PREP_CONTINUE,
+  PRIORITY_CONVERSATION_PREP_LINES,
   PRIORITY_CONVERSATION_PREP_TITLE,
   PRIORITY_CONVERSATION_START_HEADING,
   PRIORITY_CONVERSATION_START_LINES,
@@ -74,8 +78,14 @@ describe('PT-PRIORITY-CONVERSATION-03 decision conversation', () => {
       'Ukážu vám, co stojí za pozornost právě z jejich pohledu.',
     ]);
     assert.match(PRIORITY_CONVERSATION_START_HEADING, /^Začněme$/);
-    assert.match(PRIORITY_CONVERSATION_PREP_TITLE, /Už rozumím/);
-    assert.match(PRIORITY_BRIDGE_TITLE, /Už rozumím/);
+    assert.equal(
+      PRIORITY_CONVERSATION_PREP_TITLE,
+      'Už rozumím tomu, co je pro vás důležité.',
+    );
+    assert.deepEqual(PRIORITY_CONVERSATION_PREP_LINES, [
+      'Pomozte mi ještě lépe porozumět tomu, jak přemýšlíte — ověřím několik souvislostí.',
+    ]);
+    assert.equal(PRIORITY_CONVERSATION_PREP_CONTINUE, 'Pokračovat');
     assert.ok(dialogQuestionFor('privacy')?.options.length === 3);
 
     const picked = pickDialogPriorityIds(
@@ -110,6 +120,18 @@ describe('PT-PRIORITY-CONVERSATION-03 decision conversation', () => {
     });
     assert.match(summary.title, /Už rozumím/);
     assert.match(summary.lead, /Děkuji/);
+    assert.equal(
+      PRIORITY_CONVERSATION_COMPLETE_PANEL_TITLE,
+      'První kapitola je hotová.',
+    );
+    assert.deepEqual(PRIORITY_CONVERSATION_COMPLETE_PANEL_LINES, [
+      'Teď už vím, na co se u tohoto domu společně podívat.',
+      'Teď vám ukážu, co pro vás může znamenat.',
+    ]);
+    assert.equal(
+      PRIORITY_BRIDGE_TITLE,
+      'Co pro vás může tento dům znamenat',
+    );
   });
 
   it('builds FAQ and chat opening without Audit terminology', () => {
@@ -163,6 +185,8 @@ describe('PT-PRIORITY-CONVERSATION-03 decision conversation', () => {
     assert.match(panel, /priority-conversation-interpretation/);
     assert.match(panel, /priority-conversation-dialog-continue/);
     assert.match(panel, /continueToSummary|priority-conversation-revisit-continue/);
+    assert.match(panel, /PRIORITY_CONVERSATION_COMPLETE_PANEL_LINES\.map/);
+    assert.equal(panel.includes('priority-conversation-revisit-prompt'), false);
     assert.match(panel, /x:\s*-60/);
     assert.match(panel, /PRIORITY_ENGINE_CONVERSATION_PANEL_CLASS/);
     assert.equal(panel.includes('maxHeight'), false);
@@ -183,6 +207,8 @@ describe('PT-PRIORITY-CONVERSATION-03 decision conversation', () => {
 
     const hook = stripComments(read('usePriorityConversation.ts'));
     assert.match(hook, /continueToSummary/);
+    assert.match(hook, /isFinalQuestion/);
+    assert.match(hook, /if \(isFinalQuestion\)/);
     assert.match(hook, /PRIORITY_BRIDGE_ANCHOR_ID/);
     assert.equal(hook.includes('pendingBridgeScrollRef'), false);
     assert.equal(hook.includes('staticHoldMs'), false);

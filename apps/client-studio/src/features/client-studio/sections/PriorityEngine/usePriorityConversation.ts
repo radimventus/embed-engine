@@ -379,16 +379,28 @@ export function usePriorityConversation(): PriorityConversationView {
       return;
     }
 
+    const isFinalQuestion =
+      dialogQueue.filter((id) => answers[id] === undefined).length === 1;
+
     setPendingOptionId(optionId);
     setActivePriorityId(priorityId);
     setInterpretation(null);
-    setDialogBeat('thinking');
     progress.record({
       type: 'dialog-answer',
       priorityId,
       optionId,
       at: Date.now(),
     });
+
+    if (isFinalQuestion) {
+      setAnswers((current) => ({ ...current, [priorityId]: optionId }));
+      setDialogBeat('question');
+      setActivePriorityId(null);
+      setPendingOptionId(null);
+      return;
+    }
+
+    setDialogBeat('thinking');
     progress.record({
       type: 'dialog-thinking',
       priorityId,
