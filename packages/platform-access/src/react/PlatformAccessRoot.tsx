@@ -16,6 +16,7 @@ import { AuthShell } from './AuthShell';
 import { InviteShell } from './InviteShell';
 import { PlatformLanding } from './PlatformLanding';
 import { SessionProvider, usePlatformSession } from './SessionProvider';
+import { shouldPrioritizeInviteRoute } from './inviteRouting';
 
 type AccessGateProps = {
   readonly children: ReactNode;
@@ -55,13 +56,37 @@ function AccessGateInner({ children }: AccessGateProps) {
   const [inviteMode, setInviteMode] = useState(urlToken.length > 0);
   const workspaceContext = getSharedWorkspaceContext();
   const shellEmbed = isWorkspaceShellEmbed();
+  const dismissInviteRoute = () => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.delete('invite');
+      window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+    }
+    setInviteMode(false);
+  };
+
+  // A bearer invite URL is an explicit activation route. It must take
+  // precedence over any restored Studio session until InviteShell validates it.
+  if (
+    shouldPrioritizeInviteRoute({
+      inviteToken: urlToken,
+      hasRestoredSession: session !== null,
+    })
+  ) {
+    return (
+      <InviteShell
+        initialToken={urlToken}
+        onCancel={dismissInviteRoute}
+      />
+    );
+  }
 
   if (session === null) {
     if (inviteMode) {
       return (
         <InviteShell
           initialToken={urlToken}
-          onCancel={() => setInviteMode(false)}
+          onCancel={dismissInviteRoute}
         />
       );
     }

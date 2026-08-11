@@ -9,6 +9,7 @@ import {
   WORKSPACE_STUDIO_SWITCH_ORDER,
   workspaceStudiosForRoles,
 } from './workspaceStudioNavigation';
+import { canAccessStudio } from './roles';
 
 describe('PT-VR-07 workspaceStudiosForRoles', () => {
   it('keeps canonical five-studio order', () => {
@@ -41,6 +42,11 @@ describe('PT-VR-07 workspaceStudiosForRoles', () => {
       'builder',
       'office',
     ]);
+    assert.equal(canAccessStudio(['manager'], 'client'), true);
+    assert.equal(canAccessStudio(['manager'], 'manager'), true);
+    assert.equal(canAccessStudio(['manager'], 'sales'), true);
+    assert.equal(canAccessStudio(['manager'], 'office'), false);
+    assert.equal(canAccessStudio(['manager'], 'builder'), false);
   });
 
   it('salesman sees Client · Sales only', () => {

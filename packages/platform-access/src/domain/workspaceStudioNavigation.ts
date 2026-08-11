@@ -3,8 +3,7 @@
  * Order aligned with PlatformShell SSOT: Client · Manager · Sales · Office · Builder
  */
 
-import { isPilotPartnerRoles } from './pilotPartnerAccess';
-import { canAccessStudio, isPlatformAdmin } from './roles';
+import { canAccessStudio } from './roles';
 import type { PlatformRole, PlatformStudioId } from './types';
 
 export type WorkspaceStudioSurface =
@@ -41,29 +40,9 @@ export const WORKSPACE_STUDIO_LABELS: Readonly<
 export function workspaceStudiosForRoles(
   roles: readonly PlatformRole[],
 ): readonly WorkspaceStudioSurface[] {
-  return WORKSPACE_STUDIO_SWITCH_ORDER.filter((surface) => {
-    if (surface === 'client') {
-      return (
-        isPlatformAdmin(roles) ||
-        isPilotPartnerRoles(roles) ||
-        roles.includes('manager') ||
-        roles.includes('salesman') ||
-        roles.includes('builder')
-      );
-    }
-    if (surface === 'manager') {
-      return isPlatformAdmin(roles) || roles.includes('manager');
-    }
-    if (surface === 'sales') {
-      // Managers need Sales surface in Workspace (partner ops), not only salesmen.
-      return (
-        isPlatformAdmin(roles) ||
-        roles.includes('manager') ||
-        roles.includes('salesman')
-      );
-    }
-    return canAccessStudio(roles, surface as PlatformStudioId);
-  });
+  return WORKSPACE_STUDIO_SWITCH_ORDER.filter((surface) =>
+    canAccessStudio(roles, surface as PlatformStudioId),
+  );
 }
 
 export function isWorkspaceStudioSurface(

@@ -275,6 +275,15 @@ export {
 } from './pilot/inviteStore';
 
 export {
+  createPlatformAccessInviteClient,
+  type PlatformAccessInvite,
+  type PlatformAccessInviteActivation,
+  type PlatformAccessInviteClient,
+  type PlatformAccessInviteCreateInput,
+  type PlatformAccessInviteIssue,
+} from './api/platformAccessClient';
+
+export {
   PILOT_PROVISION_QUERY,
   buildPilotProvisionSnapshot,
   encodePilotProvisionSnapshot,
@@ -395,6 +404,7 @@ export {
   switchOperatorPartnerStudio,
   returnFromOperatorPartnerEnvironment,
   getOperatorPartnerEnvironment,
+  restoreAuthenticatedPartnerEnvironment,
   clearOperatorPartnerEnvironment,
   resetOperatorPartnerEnvironmentForTests,
   OPERATOR_PE_STORAGE_KEY,

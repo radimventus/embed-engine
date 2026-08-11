@@ -12,6 +12,7 @@ import {
   loadPlatformSession,
   resolveCloudStudioHref,
   resolveWorkspaceHostHref,
+  restoreAuthenticatedPartnerEnvironment,
   restoreSession,
 } from '@embed-engine/platform-access';
 import '@embed-engine/platform-access/styles.css';
@@ -26,7 +27,8 @@ if (rootElement === null) {
 }
 
 const session = restoreSession() ?? loadPlatformSession();
-const workspaceContext = getSharedWorkspaceContext();
+const workspaceContext =
+  getSharedWorkspaceContext() ?? restoreAuthenticatedPartnerEnvironment();
 
 if (session !== null && workspaceContext !== null) {
   createRoot(rootElement).render(

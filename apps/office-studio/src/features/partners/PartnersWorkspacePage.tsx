@@ -124,7 +124,7 @@ export function PartnersWorkspacePage({
       }
       onSelectPartner(prepared.partner.id);
       setPilotNotice(
-        `Partner Environment připraven · pozvánka ${prepared.invite.token} · ${prepared.provision.project.name} · k odeslání`,
+        `Partner Environment připraven · pozvánka připravena · ${prepared.provision.project.name} · k odeslání`,
       );
       return;
     }

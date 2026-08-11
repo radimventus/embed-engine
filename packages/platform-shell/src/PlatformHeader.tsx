@@ -8,6 +8,7 @@ import type { PlatformWorkspaceState } from './platformTypes';
 
 export type PlatformHeaderProps = {
   readonly activeStudioId: PlatformStudioId;
+  readonly availableStudioIds?: readonly PlatformStudioId[];
   readonly userLabel?: string;
   readonly roleLabel?: string;
   /** @deprecated PR-006 — header no longer shows project/house. Kept for API compat. */
@@ -31,6 +32,7 @@ export type PlatformHeaderProps = {
  */
 export function PlatformHeader({
   activeStudioId,
+  availableStudioIds,
   userLabel = 'Radim',
   roleLabel,
   workspace: _workspace = null,
@@ -77,6 +79,7 @@ export function PlatformHeader({
       {hideStudioSwitcher ? null : (
         <StudioSwitcher
           activeStudioId={activeStudioId}
+          availableStudioIds={availableStudioIds}
           onSelectStudio={onSelectStudio}
         />
       )}

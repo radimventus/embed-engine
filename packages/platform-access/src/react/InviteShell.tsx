@@ -1,15 +1,12 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 
 import {
-  activateInvite,
-  findInviteByToken,
-  markInviteOpened,
-} from '../pilot/inviteStore';
-import {
-  inviteLifecycleMessage,
-  resolveInviteLifecycle,
-} from '../pilot/invitationWorkflow';
-import { recordPlatformActivity } from '../pilot/pilotDiagnostics';
+  createPlatformAccessInviteClient,
+  type PlatformAccessInvite,
+} from '../api/platformAccessClient';
+import { inviteLifecycleMessage } from '../pilot/invitationWorkflow';
+import { prepareWelcomeJourney } from '../pilot/welcomeStore';
+import { upsertActivatedUser } from '../registry/userRegistry';
 import { usePlatformSession } from './SessionProvider';
 
 type InviteShellProps = {
@@ -35,29 +32,50 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
   const [password2, setPassword2] = useState('');
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [preview, setPreview] = useState<PlatformAccessInvite | null>(null);
+  const [isResolving, setIsResolving] = useState(initialToken.trim().length > 0);
 
-  const preview = useMemo(
-    () => (token.trim().length > 0 ? findInviteByToken(token.trim()) : null),
-    [token],
-  );
-  const lifecycle = resolveInviteLifecycle(preview);
+  const inviteClient = useMemo(() => createPlatformAccessInviteClient(), []);
+  const lifecycle = preview?.status ?? 'missing';
 
   useEffect(() => {
     const trimmed = token.trim();
-    if (trimmed.length === 0) return;
-    if (findInviteByToken(trimmed) === null) return;
-    markInviteOpened(trimmed);
-  }, [token]);
-
-  const continueFromToken = () => {
-    setError(null);
-    const invite = findInviteByToken(token.trim());
-    const state = resolveInviteLifecycle(invite);
-    if (state !== 'pending') {
-      setError(inviteLifecycleMessage(state));
+    if (trimmed.length === 0) {
+      setPreview(null);
+      setIsResolving(false);
       return;
     }
-    setStep('nda');
+    let active = true;
+    setIsResolving(true);
+    void inviteClient
+      .resolveInvite(trimmed)
+      .then((invite) => {
+        if (active) setPreview(invite);
+      })
+      .catch(() => {
+        if (active) setPreview(null);
+      })
+      .finally(() => {
+        if (active) setIsResolving(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [inviteClient, token]);
+
+  const continueFromToken = async () => {
+    setError(null);
+    try {
+      const invite = await inviteClient.resolveInvite(token.trim());
+      if (invite?.status !== 'pending') {
+        setError(inviteLifecycleMessage(invite?.status ?? 'missing'));
+        return;
+      }
+      setPreview(invite);
+      setStep('nda');
+    } catch {
+      setError('Pozvánku se nepodařilo ověřit. Zkontrolujte Platform API.');
+    }
   };
 
   const continueFromNda = () => {
@@ -69,10 +87,10 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
     setStep('password');
   };
 
-  const onSubmit = (event: FormEvent) => {
+  const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (step === 'token') {
-      continueFromToken();
+      await continueFromToken();
       return;
     }
     if (step === 'nda') {
@@ -87,21 +105,27 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
       setError('Hesla se neshodují.');
       return;
     }
-    const result = activateInvite({
-      token: token.trim(),
-      password,
-      ndaAccepted: true,
-    });
+    let result;
+    try {
+      result = await inviteClient.activateInvite(token.trim(), true);
+    } catch {
+      setError('Aktivaci se nepodařilo dokončit. Zkontrolujte Platform API.');
+      return;
+    }
     if (!result.ok) {
       setError(result.error);
       return;
     }
-    recordPlatformActivity({
-      label: 'Aktivace pozvánky',
-      detail: result.user.email,
+    const user = upsertActivatedUser({
+      id: `user-invite-${result.invite.id}`,
+      email: result.invite.email,
+      displayName: result.invite.displayName,
+      roles: result.invite.roles,
+      password,
     });
+    prepareWelcomeJourney(user.email);
     const loggedIn = login({
-      email: result.user.email,
+      email: user.email,
       password,
       rememberMe: true,
     });
@@ -134,7 +158,12 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
               : ''}
           </p>
         )}
-        <form className="platform-access__form" onSubmit={onSubmit}>
+        <form
+          className="platform-access__form"
+          onSubmit={(event) => {
+            void onSubmit(event);
+          }}
+        >
           {(step === 'token' || token.length > 0) && (
             <label className="platform-access__label">
               Invite token
@@ -215,7 +244,7 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
           <button
             className="platform-access__submit"
             type="submit"
-            disabled={step === 'nda' && !ndaAccepted}
+            disabled={isResolving || (step === 'nda' && !ndaAccepted)}
             data-testid="invite-continue"
           >
             {step === 'token'

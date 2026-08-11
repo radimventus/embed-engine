@@ -89,23 +89,9 @@ export function loadPlatformSession(): PlatformSession | null {
     memorySession = fromCookie;
     return fromCookie;
   }
-  if (typeof localStorage !== 'undefined') {
-    try {
-      const raw = localStorage.getItem(PLATFORM_SESSION_STORAGE_KEY);
-      if (raw !== null && raw.length > 0) {
-        const parsed = JSON.parse(raw) as PlatformSession;
-        const session = deserializeSession(
-          encodeURIComponent(JSON.stringify(parsed)),
-        );
-        if (session !== null) {
-          memorySession = session;
-          return session;
-        }
-      }
-    } catch {
-      // fall through
-    }
-  }
+  // Browser auth is cookie-authoritative across Studio ports. A port-local
+  // localStorage copy must not revive a session after logout clears the cookie.
+  if (canUseDom()) return null;
   return memorySession;
 }
 

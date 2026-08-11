@@ -16,9 +16,11 @@ import {
   OPERATOR_PE_STORAGE_KEY,
   resetOperatorPartnerEnvironmentForTests,
   resetUserRegistry,
+  restoreAuthenticatedPartnerEnvironment,
   returnFromOperatorPartnerEnvironment,
   switchOperatorPartnerStudio,
   updateSession,
+  workspaceStudiosForRoles,
 } from '../index';
 
 describe('OF-14 Shared Workspace Context', () => {
@@ -66,6 +68,99 @@ describe('OF-14 Shared Workspace Context', () => {
     if (typeof localStorage !== 'undefined') {
       assert.equal(localStorage.getItem(OPERATOR_PE_STORAGE_KEY), null);
     }
+  });
+
+  it('keeps a Manager in DSE context while denying Office and Builder', () => {
+    reset();
+    assert.equal(
+      login({
+        email: 'manager@ac.local',
+        password: 'demo',
+        rememberMe: false,
+      }).ok,
+      true,
+    );
+    assert.equal(
+      enterOperatorPartnerEnvironment({
+        companyId: 'company-domy-s-energii',
+        workspaceId: 'domy-s-energii-main',
+        projectId: 'project-domy-s-energii',
+        officePartnerId: 'p-dse',
+        officeReturnHref: 'http://127.0.0.1:4181/partners/p-dse',
+        navigate: false,
+      }).ok,
+      true,
+    );
+
+    assert.equal(
+      switchOperatorPartnerStudio('sales', {
+        navigate: false,
+        retainWorkspace: true,
+      }).ok,
+      true,
+    );
+    assert.equal(
+      switchOperatorPartnerStudio('office', {
+        navigate: false,
+        retainWorkspace: true,
+      }).ok,
+      false,
+    );
+    assert.equal(
+      switchOperatorPartnerStudio('builder', {
+        navigate: false,
+        retainWorkspace: true,
+      }).ok,
+      false,
+    );
+    assert.deepEqual(getSharedWorkspaceContext(), {
+      operatorMode: true,
+      partnerId: 'p-dse',
+      companyId: 'company-domy-s-energii',
+      workspaceId: 'domy-s-energii-main',
+      projectId: 'project-domy-s-energii',
+      activeStudio: 'sales',
+      activeHouseId: null,
+      officeReturnHref: 'http://127.0.0.1:4181/partners/p-dse',
+      previous: {
+        tenantId: 'tenant-ac-modular',
+        companyId: 'ac-modular',
+        workspaceId: 'ac-modular-main',
+        projectId: 'project-ac-modular',
+      },
+    });
+    assert.deepEqual(loadPlatformSession()?.user.roles, ['manager']);
+  });
+
+  it('restores the prepared DSE Partner Environment for a Manager session', () => {
+    reset();
+    assert.equal(
+      login({
+        email: 'manager@ac.local',
+        password: 'demo',
+        rememberMe: false,
+      }).ok,
+      true,
+    );
+    updateSession({
+      tenantId: 'tenant-domy-s-energii',
+      companyId: 'company-domy-s-energii',
+      workspaceId: 'domy-s-energii-main',
+      projectId: 'project-domy-s-energii',
+      workspaceContext: null,
+    });
+
+    const restored = restoreAuthenticatedPartnerEnvironment();
+
+    assert.ok(restored !== null);
+    assert.equal(restored?.companyId, 'company-domy-s-energii');
+    assert.equal(restored?.projectId, 'project-domy-s-energii');
+    assert.equal(restored?.activeStudio, 'client');
+    assert.deepEqual(loadPlatformSession()?.user.roles, ['manager']);
+    assert.deepEqual(
+      workspaceStudiosForRoles(loadPlatformSession()?.user.roles ?? []),
+      ['client', 'manager', 'sales'],
+    );
   });
 
   it('preserves partner Workspace Context across in-shell studio switches including Office', () => {

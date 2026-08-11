@@ -1,65 +1,106 @@
-import { useMemo, useState, type FormEvent } from 'react';
+import { useState, type FormEvent } from "react";
 
-import { PlatformCard, PlatformStatusBadge } from '@embed-engine/platform-shell';
-import { PLATFORM_ROLE_LABELS } from '@embed-engine/platform-access';
+import {
+  PlatformCard,
+  PlatformStatusBadge,
+} from "@embed-engine/platform-shell";
+import {
+  PLATFORM_ROLE_LABELS,
+  type PlatformAccessInvite,
+  type PlatformAccessInviteClient,
+} from "@embed-engine/platform-access";
 
 import {
   invitePartnerUser,
-  listPartnerUserInvites,
+  reissuePartnerUserInvite,
   type PartnerInviteRole,
-} from '../../office/invitePartnerUser';
+} from "../../office/invitePartnerUser";
+import { copyActivationLink } from "../../office/copyActivationLink";
 
-const INVITABLE_ROLES: readonly PartnerInviteRole[] = ['manager', 'salesman'];
+const INVITABLE_ROLES: readonly PartnerInviteRole[] = ["manager", "salesman"];
+
+export function shouldShowActivationLinkAction(
+  invite: PlatformAccessInvite,
+): boolean {
+  return invite.status === "pending";
+}
 
 export function PartnerUserInvitationSection({
   partnerId,
-  invitedByUserId = 'user-radim',
+  invitedByUserId = "user-radim",
+  inviteClient,
 }: {
   readonly partnerId: string;
   readonly invitedByUserId?: string;
+  readonly inviteClient?: PlatformAccessInviteClient;
 }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [role, setRole] = useState<PartnerInviteRole>('manager');
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState<PartnerInviteRole>("manager");
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
-  const [revision, setRevision] = useState(0);
-
-  const invites = useMemo(() => {
-    void revision;
-    return listPartnerUserInvites(partnerId);
-  }, [partnerId, revision]);
-
-  function onSubmit(event: FormEvent<HTMLFormElement>) {
+  const [invites, setInvites] = useState<readonly PlatformAccessInvite[]>([]);
+  const [reissuingInviteId, setReissuingInviteId] = useState<string | null>(
+    null,
+  );
+  async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitting) return;
     setSubmitting(true);
     setMessage(null);
 
-    window.setTimeout(() => {
-      const result = invitePartnerUser({
+    const result = await invitePartnerUser(
+      {
         partnerId,
         name,
         email,
         role,
         invitedByUserId,
-      });
-      if (!result.ok) {
-        setMessage(result.error);
-        setSubmitting(false);
-        return;
-      }
-
-      setName('');
-      setEmail('');
-      setRevision((value) => value + 1);
-      setMessage(
-        `Pozvánka připravena · ${result.invite.displayName} · ${
-          PLATFORM_ROLE_LABELS[result.invite.roles[0] ?? 'manager']
-        }`,
-      );
+      },
+      inviteClient,
+    );
+    if (!result.ok) {
+      setMessage(result.error);
       setSubmitting(false);
-    }, 0);
+      return;
+    }
+
+    setName("");
+    setEmail("");
+    setInvites((current) => [result.invite, ...current]);
+    setMessage(
+      `Pozvánka připravena · ${result.invite.displayName} · ${
+        PLATFORM_ROLE_LABELS[result.invite.roles[0] ?? "manager"]
+      }`,
+    );
+    setSubmitting(false);
+  }
+
+  async function copyInviteActivationLink(inviteId: string) {
+    if (reissuingInviteId !== null) return;
+    setReissuingInviteId(inviteId);
+    setMessage(null);
+
+    const result = await reissuePartnerUserInvite(inviteId, inviteClient);
+    if (!result.ok) {
+      setMessage(result.error);
+      setReissuingInviteId(null);
+      return;
+    }
+
+    try {
+      await copyActivationLink(result.activationHref);
+      setInvites((current) =>
+        current.map((invite) =>
+          invite.id === result.invite.id ? result.invite : invite,
+        ),
+      );
+      setMessage("Aktivační odkaz zkopírován.");
+    } catch {
+      setMessage("Aktivační odkaz se nepodařilo zkopírovat.");
+    } finally {
+      setReissuingInviteId(null);
+    }
   }
 
   return (
@@ -108,7 +149,7 @@ export function PartnerUserInvitationSection({
           type="submit"
           disabled={submitting}
         >
-          {submitting ? 'Připravuji…' : 'Pozvat uživatele'}
+          {submitting ? "Připravuji…" : "Pozvat uživatele"}
         </button>
       </form>
       {message !== null ? (
@@ -123,11 +164,23 @@ export function PartnerUserInvitationSection({
               {invite.displayName} · {invite.email}
             </p>
             <span>
-              {PLATFORM_ROLE_LABELS[invite.roles[0] ?? 'manager']} ·{' '}
+              {PLATFORM_ROLE_LABELS[invite.roles[0] ?? "manager"]} ·{" "}
               <PlatformStatusBadge tone="info">
-                {invite.status === 'pending' ? 'pozván' : invite.status}
+                {invite.status === "pending" ? "pozván" : invite.status}
               </PlatformStatusBadge>
             </span>
+            {shouldShowActivationLinkAction(invite) ? (
+              <button
+                className="platform-btn platform-btn--sm"
+                type="button"
+                disabled={reissuingInviteId !== null}
+                onClick={() => void copyInviteActivationLink(invite.id)}
+              >
+                {reissuingInviteId === invite.id
+                  ? "Obnovuji…"
+                  : "Zkopírovat aktivační odkaz"}
+              </button>
+            ) : null}
           </li>
         ))}
       </ul>

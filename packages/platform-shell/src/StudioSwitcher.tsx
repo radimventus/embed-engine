@@ -6,6 +6,7 @@ import {
 
 type StudioSwitcherProps = {
   readonly activeStudioId: PlatformStudioId;
+  readonly availableStudioIds?: readonly PlatformStudioId[];
   /**
    * Persist session + navigate (same path as Platform Landing).
    * When omitted, falls back to plain href navigation.
@@ -27,6 +28,7 @@ export const PLATFORM_STUDIO_SWITCH_ORDER: readonly PlatformStudioId[] = [
  */
 export function StudioSwitcher({
   activeStudioId,
+  availableStudioIds = PLATFORM_STUDIO_SWITCH_ORDER,
   onSelectStudio,
 }: StudioSwitcherProps) {
   return (
@@ -35,7 +37,7 @@ export function StudioSwitcher({
       aria-label="Studio Switcher"
       data-testid="studio-switcher"
     >
-      {PLATFORM_STUDIO_SWITCH_ORDER.map((studioId) => {
+      {availableStudioIds.map((studioId) => {
         const studio =
           PLATFORM_STUDIOS.find((item) => item.id === studioId) ??
           PLATFORM_STUDIOS[0];

@@ -53,7 +53,7 @@ export function canAccessStudio(
     case 'manager':
       return roles.includes('manager');
     case 'sales':
-      return roles.includes('salesman');
+      return roles.includes('manager') || roles.includes('salesman');
   }
 }
 

@@ -24,6 +24,7 @@ export type PlatformShellProps = PlatformHeaderProps & {
  */
 export function PlatformShell({
   activeStudioId,
+  availableStudioIds,
   userLabel,
   roleLabel,
   workspace,
@@ -65,6 +66,7 @@ export function PlatformShell({
     >
       <PlatformHeader
         activeStudioId={activeStudioId}
+        availableStudioIds={availableStudioIds}
         userLabel={userLabel}
         roleLabel={roleLabel}
         workspace={workspace}

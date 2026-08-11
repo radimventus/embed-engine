@@ -43,7 +43,7 @@ export function IdentityAccessCenter() {
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteName, setInviteName] = useState('');
   const [inviteRole, setInviteRole] = useState<PlatformRole>('builder');
-  const [inviteToken, setInviteToken] = useState<string | null>(null);
+  const [invitePrepared, setInvitePrepared] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [currentPassword, setCurrentPassword] = useState('');
   const [nextPassword, setNextPassword] = useState('');
@@ -107,7 +107,7 @@ export function IdentityAccessCenter() {
       companyId: session.companyId,
       workspaceId: session.workspaceId,
     });
-    setInviteToken(invite.token);
+    setInvitePrepared(true);
     setInviteEmail('');
     setInviteName('');
     refresh(`Pozvánka odeslána · ${invite.email}`);
@@ -283,9 +283,9 @@ export function IdentityAccessCenter() {
           Poslat pozvánku
         </button>
       </form>
-      {inviteToken !== null ? (
+      {invitePrepared ? (
         <p className="platform-access__lead">
-          Token pro aktivaci: <code>{inviteToken}</code>
+          Pozvánka je připravena pro bezpečné předání.
         </p>
       ) : null}
 
@@ -306,7 +306,7 @@ export function IdentityAccessCenter() {
                     onClick={() => {
                       const resent = resendPilotInvite(invite.id);
                       if (resent !== null) {
-                        setInviteToken(resent.token);
+                        setInvitePrepared(true);
                         refresh(`Pozvánka znovu odeslána · ${resent.email}`);
                       }
                     }}

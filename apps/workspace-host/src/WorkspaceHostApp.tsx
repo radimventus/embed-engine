@@ -28,6 +28,7 @@ import {
   withWorkspaceShellEmbed,
   WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE,
   WORKSPACE_STUDIO_LABELS,
+  workspaceStudiosForRoles,
   type WorkspaceStudioSurface,
 } from '@embed-engine/platform-access';
 import {
@@ -359,6 +360,7 @@ export function WorkspaceHostApp() {
     >
       <PlatformShell
         activeStudioId={platformStudioIdForSurface(surface)}
+        availableStudioIds={workspaceStudiosForRoles(session.user.roles)}
         userLabel={session.user.displayName}
         roleLabel={PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]}
         workspace={workspaceState}

@@ -181,7 +181,7 @@ export function preparePilotForPartner(
   appendOfficeEvent({
     kind: 'pilot.ready',
     label: 'Partner Environment připraven',
-    detail: `${updated.name} · ${OFFICE_REFERENCE_PROJECT_LABEL} · Client/Manager/Sales · invite ${invite.token}`,
+    detail: `${updated.name} · ${OFFICE_REFERENCE_PROJECT_LABEL} · Client/Manager/Sales · pozvánka připravena`,
     partnerId: updated.id,
   });
 

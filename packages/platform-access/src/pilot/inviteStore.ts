@@ -181,7 +181,7 @@ export function createPilotInvite(input: {
   });
   recordPlatformActivity({
     label: 'Pozvánka připravena',
-    detail: `${invite.email} · ${invite.token}`,
+    detail: invite.email,
   });
   return invite;
 }
@@ -249,7 +249,7 @@ export function markInviteSent(inviteId: string): PilotInvite | null {
   });
   recordPlatformActivity({
     label: 'Pozvánka odeslána',
-    detail: `${next.email} · ${next.token}`,
+    detail: next.email,
   });
   return next;
 }
@@ -281,7 +281,7 @@ export function resendPilotInvite(inviteId: string): PilotInvite | null {
       normalized.sendCount === 0
         ? 'Pozvánka odeslána'
         : 'Pozvánka znovu odeslána',
-    detail: `${next.email} · ${next.token}`,
+    detail: next.email,
   });
   return next;
 }

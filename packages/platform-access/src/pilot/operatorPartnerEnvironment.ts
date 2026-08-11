@@ -13,8 +13,10 @@ import {
 import type { PlatformStudioId } from '../domain/types';
 import type { SharedWorkspaceContext } from '../domain/workspaceContext';
 import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation';
+import { canAccessStudio } from '../domain/roles';
 import { isOnWorkspaceHost } from '../domain/workspaceShellEmbed';
 import { getSharedProject } from '../project/projectRepository';
+import { resolvePilotWorkspace } from './provisionPilotWorkspace';
 import { getDefaultCompanyRegistry } from '../registry/companyRegistry';
 import {
   getSharedWorkspaceContext,
@@ -64,6 +66,52 @@ function toOperatorState(
 export function getOperatorPartnerEnvironment(): OperatorPartnerEnvironmentState | null {
   const ctx = getSharedWorkspaceContext();
   return ctx === null ? null : toOperatorState(ctx);
+}
+
+/**
+ * Restores the existing Builder-owned Partner Environment for an authenticated
+ * partner user whose session is already bound to its canonical scope.
+ */
+export function restoreAuthenticatedPartnerEnvironment(): SharedWorkspaceContext | null {
+  const session = loadPlatformSession();
+  if (
+    session === null ||
+    session.workspaceContext !== null ||
+    (!session.user.roles.includes('manager') &&
+      !session.user.roles.includes('salesman'))
+  ) {
+    return null;
+  }
+  const provision = resolvePilotWorkspace(session.companyId);
+  if (
+    provision === null ||
+    provision.tenant.id !== session.tenantId ||
+    provision.workspace.id !== session.workspaceId ||
+    provision.project.id !== session.projectId
+  ) {
+    return null;
+  }
+
+  const workspaceContext: SharedWorkspaceContext = {
+    operatorMode: true,
+    partnerId: provision.company.id,
+    companyId: provision.company.id,
+    workspaceId: provision.workspace.id,
+    projectId: provision.project.id,
+    activeHouseId: session.activeHouseId,
+    activeStudio: 'client',
+    officeReturnHref: resolveCloudStudioHref('office'),
+    previous: {
+      tenantId: session.tenantId,
+      companyId: session.companyId,
+      workspaceId: session.workspaceId,
+      projectId: session.projectId,
+    },
+  };
+  return updateSession({
+    activeStudioId: 'client',
+    workspaceContext,
+  })?.workspaceContext ?? null;
 }
 
 export function clearOperatorPartnerEnvironment(): void {
@@ -195,6 +243,13 @@ export function switchOperatorPartnerStudio(
   if (ctx === null) {
     return { ok: false, error: 'Operator PE mode není aktivní.' };
   }
+  const session = loadPlatformSession();
+  if (session === null) {
+    return { ok: false, error: 'Nejste přihlášeni.' };
+  }
+  if (!canAccessStudio(session.user.roles, surface)) {
+    return { ok: false, error: 'Pro tento účet nemáte přístup do Studia.' };
+  }
 
   const retainWorkspace =
     options?.retainWorkspace ?? isOnWorkspaceHost();
@@ -212,11 +267,6 @@ export function switchOperatorPartnerStudio(
       href: returned.href,
       surface: 'office',
     };
-  }
-
-  const session = loadPlatformSession();
-  if (session === null) {
-    return { ok: false, error: 'Nejste přihlášeni.' };
   }
 
   /**
