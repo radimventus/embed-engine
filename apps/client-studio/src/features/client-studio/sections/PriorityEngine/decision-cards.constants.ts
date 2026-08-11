@@ -20,6 +20,30 @@ export const DECISION_CATEGORIES: DecisionCategory[] = [
   { id: 'flexibility', title: 'Flexibilita' },
 ];
 
+/**
+ * Priority card projection — intentionally independent from catalogue order.
+ * Investment and flexibility remain available to non-card catalogue consumers.
+ */
+export const SELECTABLE_DECISION_CATEGORY_IDS = [
+  'plot',
+  'layout',
+  'privacy',
+  'design',
+  'energy',
+  'operating-costs',
+  'quality',
+  'maintenance',
+] as const;
+
+export const SELECTABLE_DECISION_CATEGORIES: readonly DecisionCategory[] =
+  SELECTABLE_DECISION_CATEGORY_IDS.map((id) => {
+    const category = DECISION_CATEGORIES.find((candidate) => candidate.id === id);
+    if (category === undefined) {
+      throw new Error(`Unknown selectable decision category: ${id}`);
+    }
+    return category;
+  });
+
 /** Soft clarifications shown only in the right panel — not on cards. */
 export const PRIORITY_CLARIFICATIONS: Readonly<Record<string, string>> =
   Object.freeze({

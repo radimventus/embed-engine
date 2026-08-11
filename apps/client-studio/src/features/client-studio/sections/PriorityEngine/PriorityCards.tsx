@@ -22,6 +22,7 @@ export function PriorityCards({
 }: PriorityCardsProps) {
   const { highlight } = useExperienceProjection();
   const relatedSet = new Set(highlight.relatedPriorityIds);
+  const hasSelectedCard = Object.values(cards).some((card) => card.selected);
 
   return (
     <div className="flex min-w-0 flex-col self-start">
@@ -29,7 +30,7 @@ export function PriorityCards({
         aria-label="Katalog priorit"
         data-pt002-primary={highlight.primaryPriorityId ?? ''}
         data-pt002-related={highlight.relatedPriorityIds.join(',')}
-        className="grid w-full max-w-[685px] grid-cols-5 justify-items-center gap-[22px] overflow-visible mobile:max-w-none mobile:grid-cols-2 mobile:justify-items-stretch mobile:gap-3"
+        className="grid w-full max-w-[685px] grid-cols-4 justify-items-center gap-[22px] overflow-visible mobile:max-w-none mobile:grid-cols-2 mobile:justify-items-stretch mobile:gap-3"
       >
         {categories.map((category) => {
           const card = cards[category.id];
@@ -46,6 +47,7 @@ export function PriorityCards({
               category={category}
               importance={card.importance}
               isActive={card.selected}
+              hasSelectedCard={hasSelectedCard}
               isPrimary={isPrimary}
               isRelated={isRelated}
               onImportanceChange={(value) => setImportance(category.id, value)}

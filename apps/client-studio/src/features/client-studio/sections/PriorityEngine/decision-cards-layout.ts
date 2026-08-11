@@ -1,9 +1,9 @@
 import { MOTION_DURATION_CLASS } from '../../chapter-layout';
 import { primaryButtonClass } from '@embed-engine/ui';
 
-export const DECISION_GRID_COLUMN_SIZE_PX = 121;
+export const DECISION_GRID_COLUMN_SIZE_PX = 155;
 export const DECISION_SURFACE_WIDTH_PX = 685;
-export const DECISION_CARD_SIZE_PX = 119;
+export const DECISION_CARD_SIZE_PX = 155;
 /** Gap between priority cards (~22 px optical). */
 export const DECISION_GRID_GAP_PX = 22;
 /** Two card rows + one gap — Decision Terminal matches this height. */
@@ -32,9 +32,9 @@ export const DECISION_CARD_ATTENTION_CLASS =
 export const DECISION_CARD_ACTIVE_CLASS =
   'z-10 scale-[1.10] rounded-[8px] border-2 border-solid border-[#D4AF37] bg-[#F7F6F4] shadow-none mobile:scale-[1.03]';
 
-/** Fluid card shell — fixed 119px only on desktop SSOT (RCS-02). */
+/** Fluid, square card shell — fixed 155px on desktop SSOT (Task 02). */
 export const DECISION_CARD_SHELL_CLASS =
-  'relative w-full aspect-square desktop:aspect-auto desktop:h-[119px] desktop:w-[119px] desktop:shrink-0';
+  'relative w-full aspect-square desktop:h-[155px] desktop:w-[155px] desktop:shrink-0';
 
 /** PT-002 — primary Decision Story priority (Runtime-driven highlight). */
 export const DECISION_CARD_PRIMARY_CLASS =

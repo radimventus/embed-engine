@@ -3,8 +3,8 @@ import { useCallback, useMemo, useState } from 'react';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import {
   DECISION_CARD_IMPORTANCE_DEFAULT,
-  DECISION_CATEGORIES,
   DECISION_MINIMUM_SELECTION,
+  SELECTABLE_DECISION_CATEGORIES,
 } from './decision-cards.constants';
 
 export type DecisionCardState = {
@@ -21,7 +21,7 @@ export function createCardsFromPriorityIds(
   priorityIds: readonly string[],
 ): Record<string, DecisionCardState> {
   const cards = Object.fromEntries(
-    DECISION_CATEGORIES.map((category) => [
+    SELECTABLE_DECISION_CATEGORIES.map((category) => [
       category.id,
       { selected: false, importance: DECISION_CARD_IMPORTANCE_DEFAULT },
     ]),
@@ -95,7 +95,7 @@ export function useDecisionCards() {
 
   return {
     cards,
-    categories: DECISION_CATEGORIES,
+    categories: SELECTABLE_DECISION_CATEGORIES,
     minimumMet,
     minimumSelection: DECISION_MINIMUM_SELECTION,
     selectedCount,

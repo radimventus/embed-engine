@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
-import { DECISION_CATEGORIES } from './decision-cards.constants';
+import { SELECTABLE_DECISION_CATEGORIES } from './decision-cards.constants';
 import type { DecisionCardState } from './useDecisionCards';
 
 /**
@@ -19,7 +19,7 @@ export function usePrioritySignalBridge(
   const lastDispatchedKey = useRef<string>('');
 
   const profileIds = useMemo(() => {
-    return DECISION_CATEGORIES.map((category) => category.id)
+    return SELECTABLE_DECISION_CATEGORIES.map((category) => category.id)
       .filter((id) => cards[id]?.selected === true)
       .sort((left, right) => {
         const importanceDelta =

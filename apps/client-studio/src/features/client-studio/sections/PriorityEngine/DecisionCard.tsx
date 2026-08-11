@@ -17,6 +17,7 @@ type DecisionCardProps = {
   category: DecisionCategory;
   importance: number;
   isActive: boolean;
+  hasSelectedCard: boolean;
   /** PT-002 — Runtime Decision Story primary. */
   isPrimary?: boolean;
   /** PT-002 — content related to primary priority. */
@@ -25,8 +26,8 @@ type DecisionCardProps = {
   onToggle: () => void;
 };
 
-/** Counters card active scale so icon pixel size stays constant across states. */
-const ACTIVE_ICON_COUNTER_SCALE = 'scale-[0.893] mobile:scale-[0.971]';
+/** Counters card active scale so content pixel size stays constant across states. */
+const ACTIVE_CONTENT_COUNTER_SCALE = 'scale-[0.909] mobile:scale-[0.971]';
 
 const IDLE_BORDER = '#E3E3E3';
 const HOVER_BORDER = '#D4AF37';
@@ -37,6 +38,7 @@ export function DecisionCard({
   category,
   importance,
   isActive,
+  hasSelectedCard,
   isPrimary = false,
   isRelated = false,
   onImportanceChange,
@@ -44,9 +46,9 @@ export function DecisionCard({
 }: DecisionCardProps) {
   const highlightClass = isActive
     ? ''
-    : isPrimary
+    : hasSelectedCard && isPrimary
       ? DECISION_CARD_PRIMARY_CLASS
-      : isRelated
+      : hasSelectedCard && isRelated
         ? DECISION_CARD_RELATED_CLASS
         : '';
 
@@ -97,20 +99,24 @@ export function DecisionCard({
           event.currentTarget.style.zIndex = '0';
         }}
       >
-        <div className="flex flex-col items-center gap-2.5">
+        <div
+          className={`flex flex-col items-center gap-2.5 ${
+            isActive ? 'translate-y-5' : ''
+          }`}
+        >
           <span
             className={`-mt-0.5 flex items-center justify-center leading-none ${
-              isActive ? ACTIVE_ICON_COUNTER_SCALE : ''
+              isActive ? ACTIVE_CONTENT_COUNTER_SCALE : ''
             }`}
             aria-hidden="true"
           >
             <DecisionCategoryIcon categoryId={category.id} />
           </span>
           <span
-            className={`max-w-full text-center font-medium leading-snug tracking-wide desktop:max-w-[96px] ${
+            className={`max-w-full text-center font-medium leading-snug tracking-wide desktop:max-w-[96px] text-[16px] ${
               isActive
-                ? 'text-[10px] text-embed-foreground-primary'
-                : 'text-[13px] text-embed-foreground-primary/70 mobile:text-[12px]'
+                ? `${ACTIVE_CONTENT_COUNTER_SCALE} text-embed-foreground-primary`
+                : 'text-embed-foreground-primary/70'
             }`}
           >
             {category.title}

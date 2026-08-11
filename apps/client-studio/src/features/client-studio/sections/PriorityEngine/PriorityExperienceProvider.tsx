@@ -9,7 +9,10 @@ import type {
   PrioritySelection,
 } from '@embed-engine/core/experience';
 
-import { DECISION_CATEGORIES } from './decision-cards.constants';
+import {
+  SELECTABLE_DECISION_CATEGORIES,
+  type DecisionCategory,
+} from './decision-cards.constants';
 import { PrioritySelectionProvider } from './PrioritySelectionContext';
 import {
   useDecisionCards,
@@ -19,7 +22,7 @@ import { usePrioritySignalBridge } from './usePrioritySignalBridge';
 
 export type PriorityExperienceValue = {
   readonly cards: Record<string, DecisionCardState>;
-  readonly categories: typeof DECISION_CATEGORIES;
+  readonly categories: readonly DecisionCategory[];
   readonly setImportance: (id: string, importance: number) => void;
   readonly toggleCard: (id: string) => void;
   readonly priorities: PrioritySelection;
@@ -57,7 +60,7 @@ export function PriorityExperienceProvider({
   usePrioritySignalBridge(cards);
 
   const priorities = useMemo((): PrioritySelection => {
-    const selected = DECISION_CATEGORIES.map((category) => category.id)
+    const selected = SELECTABLE_DECISION_CATEGORIES.map((category) => category.id)
       .filter((id) => cards[id]?.selected)
       .map((id) => id as PriorityId);
 

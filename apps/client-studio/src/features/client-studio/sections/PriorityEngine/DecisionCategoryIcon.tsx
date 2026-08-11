@@ -1,6 +1,6 @@
 const ICON_STROKE = '#D4AF37';
-/** ~20% smaller than h-10 (40px) → 32px; same size in both card states */
-const ICON_SIZE_CLASS = 'h-8 w-8';
+/** ~20% larger than the former 32px card icon. */
+const ICON_SIZE_CLASS = 'h-[38px] w-[38px]';
 
 type DecisionCategoryIconProps = {
   categoryId: string;
