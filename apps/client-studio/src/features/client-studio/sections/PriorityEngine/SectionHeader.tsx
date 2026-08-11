@@ -11,7 +11,7 @@ export function SectionHeader() {
   return (
     <div className={PRIORITY_ENGINE_TITLE_BAND_CLASS}>
       <h2 className={`${PRIORITY_ENGINE_TITLE_CLASS} uppercase`}>
-        Nastavte své priority při výběru bydlení
+        Co vás na tomto domě zajímá nejvíce?
       </h2>
     </div>
   );

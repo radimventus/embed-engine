@@ -16,16 +16,15 @@ export const CONIS_QUIZ_ADVANCE_MS = 1500;
  * Opening inside Priority — Welcome Bridge already introduced Conis.
  * Keep a short orientation into Priority work (no second self-introduction).
  */
-export const PRIORITY_CONVERSATION_INTRO_LINES = Object.freeze([
-  'Teď se zaměříme na to, co je pro vás u domu podstatné.',
-  'Pomohu vám porozumět, jak se rozhodujete.',
+export const PRIORITY_CONVERSATION_INTRO_LINES: readonly string[] = Object.freeze([
+  'Teď se zaměříme na to, co je pro vás podstatné.',
 ] as const);
 
 export const PRIORITY_CONVERSATION_START_HEADING = 'Začněme';
 
 export const PRIORITY_CONVERSATION_START_LINES = Object.freeze([
-  'Zjistíme spolu, co je pro vás u domu důležité.',
-  'Vlevo označte alespoň tři témata, která k vám patří.',
+  'Označte alespoň tři témata a nastavte jejich intenzitu.',
+  'Ukážu vám, co stojí za pozornost právě z jejich pohledu.',
 ] as const);
 
 /** @deprecated Prefer PRIORITY_CONVERSATION_START_LINES */

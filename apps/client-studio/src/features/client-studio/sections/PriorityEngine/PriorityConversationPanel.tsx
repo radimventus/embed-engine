@@ -237,13 +237,12 @@ export function PriorityConversationPanel() {
               {PRIORITY_CONVERSATION_START_HEADING}
             </p>
             {PRIORITY_CONVERSATION_START_LINES.map((line, index) => {
-              const isCardInstruction =
-                index === PRIORITY_CONVERSATION_START_LINES.length - 1;
+              const isCardInstruction = index === 0;
               return (
                 <p
                   key={line}
                   className={`${bodyTextClass} text-embed-foreground-primary/90 ${
-                    isCardInstruction ? 'font-bold' : ''
+                    isCardInstruction ? '!font-bold' : ''
                   }`}
                 >
                   {line}
