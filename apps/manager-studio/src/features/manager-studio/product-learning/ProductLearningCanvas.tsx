@@ -26,7 +26,12 @@ export function ProductLearningCanvas({
   const report = useMemo(() => {
     void tick;
     return buildProductLearningReport();
-  }, [tick, session?.companyId]);
+  }, [
+    session?.activeHouseId,
+    session?.companyId,
+    session?.projectId,
+    tick,
+  ]);
 
   const onSubmit = (event: FormEvent) => {
     event.preventDefault();

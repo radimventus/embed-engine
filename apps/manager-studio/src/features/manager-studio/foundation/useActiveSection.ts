@@ -15,16 +15,7 @@ export function useActiveSection(
       return;
     }
 
-    const elements = sectionIds
-      .map((id) => document.getElementById(id))
-      .filter((el): el is HTMLElement => el !== null);
-
-    if (elements.length === 0) {
-      return;
-    }
-
     const visibility = new Map<string, number>();
-
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -50,11 +41,23 @@ export function useActiveSection(
       },
     );
 
-    for (const element of elements) {
-      observer.observe(element);
-    }
+    const observedIds = new Set<string>();
+    const observeSections = () => {
+      for (const id of sectionIds) {
+        if (observedIds.has(id)) continue;
+        const element = document.getElementById(id);
+        if (element === null) continue;
+        observer.observe(element);
+        observedIds.add(id);
+      }
+    };
+
+    observeSections();
+    const mutationObserver = new MutationObserver(observeSections);
+    mutationObserver.observe(document.body, { childList: true, subtree: true });
 
     return () => {
+      mutationObserver.disconnect();
       observer.disconnect();
     };
   }, [sectionIds]);
