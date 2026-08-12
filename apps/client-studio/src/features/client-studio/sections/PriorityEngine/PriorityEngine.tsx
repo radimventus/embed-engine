@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { PILOT_SECTION_IDS, PILOT_TERMS } from "../../pilot/pilotVocabulary";
 import {
   JOURNEY_CTA_PRIMARY_CLASS,
@@ -20,6 +22,8 @@ import { PriorityRacioBridge } from "./PriorityRacioBridge";
 import { SectionHeader } from "./SectionHeader";
 import { SECTION_SURFACE_CLASS } from "../../section-surface";
 import { useDecisionSessionRuntime } from "../../runtime/DecisionSessionRuntimeProvider";
+
+const RACIO_BRIDGE_DELAY_MS = 10_000;
 
 type PriorityEngineProps = {
   readonly onBack: () => void;
@@ -51,6 +55,25 @@ function PriorityEngineContent({
   const context = useDecisionContext();
   const { phase } = usePriorityConversationContext();
   const terminalId = experience.context.decision.terminal.id;
+  const [isRacioBridgeDelayElapsed, setIsRacioBridgeDelayElapsed] =
+    useState(false);
+  const shouldShowDelayedRacioBridge =
+    showRacioBridge && isRacioBridgeDelayElapsed;
+
+  useEffect(() => {
+    if (phase !== "complete" || !showRacioBridge) {
+      setIsRacioBridgeDelayElapsed(false);
+      return;
+    }
+
+    const timerId = window.setTimeout(() => {
+      setIsRacioBridgeDelayElapsed(true);
+    }, RACIO_BRIDGE_DELAY_MS);
+
+    return () => {
+      window.clearTimeout(timerId);
+    };
+  }, [phase, showRacioBridge]);
 
   return (
     <>
@@ -82,7 +105,9 @@ function PriorityEngineContent({
         <div
           className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-5 px-section mobile:grid-cols-1 mobile:gap-3"
           data-testid="priority-racio-controls"
-          data-racio-bridge-visible={showRacioBridge ? "true" : "false"}
+          data-racio-bridge-visible={
+            shouldShowDelayedRacioBridge ? "true" : "false"
+          }
         >
           <button
             type="button"
@@ -91,7 +116,7 @@ function PriorityEngineContent({
           >
             ← Zpět
           </button>
-          {showRacioBridge ? (
+          {shouldShowDelayedRacioBridge ? (
             <div className="min-w-0 justify-self-center mobile:w-full">
               <PriorityRacioBridge onContinue={onContinueToRacio} />
             </div>

@@ -63,7 +63,9 @@ describe("Responsive Decision Journey (RCS-05)", () => {
     assert.match(engine, /phase === "complete"/);
     assert.match(engine, /priority-racio-controls/);
     assert.match(page, /showRacioBridge=\{revealedSceneCount < 3\}/);
-    assert.match(engine, /showRacioBridge \?/);
+    assert.match(engine, /RACIO_BRIDGE_DELAY_MS = 10_000/);
+    assert.match(engine, /showRacioBridge && isRacioBridgeDelayElapsed/);
+    assert.match(engine, /window\.clearTimeout\(timerId\)/);
     assert.match(interSceneBridge, /priority-racio-bridge-continue/);
     assert.match(interSceneBridge, /onClick=\{onContinue\}/);
   });
