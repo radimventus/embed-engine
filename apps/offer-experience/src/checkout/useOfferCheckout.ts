@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useReducer } from 'react';
+import { useCallback, useMemo, useReducer, useRef, useState } from 'react';
 
 import type { OfferPackageId, PublicOffer } from '../offer/offerModel';
 import {
@@ -26,6 +26,10 @@ import {
   type OfferCheckoutAction,
   type OfferCheckoutState,
 } from './checkoutRuntime';
+import {
+  buildDurableOrderPayload,
+  persistDurableOrder,
+} from './durableOrderClient';
 
 export type { OfferCheckoutIntegrations } from './checkoutExtensions';
 export type { OfferPaymentIntegrations } from '../payment/paymentExtensions';
@@ -41,6 +45,7 @@ export type UseOfferCheckoutResult = {
   readonly backToSelect: () => void;
   readonly backToCheckout: () => void;
   readonly confirmOrder: () => void;
+  readonly isConfirmingOrder: boolean;
   readonly continueToQr: () => void;
   readonly confirmPaymentReceived: () => void;
   readonly reset: () => void;
@@ -59,6 +64,12 @@ export function useOfferCheckout(
     offer,
     createInitialCheckoutState,
   );
+  const [isConfirmingOrder, setIsConfirmingOrder] = useState(false);
+  const confirmingOrder = useRef(false);
+  const pendingConfirmation = useRef<{
+    readonly orderId: string;
+    readonly createdAt: string;
+  } | null>(null);
 
   const selectedPackage = useMemo(
     () => selectedPackageFromState(state),
@@ -78,7 +89,11 @@ export function useOfferCheckout(
   }, []);
 
   const setTermsAccepted = useCallback((accepted: boolean) => {
-    dispatch({ type: 'set-terms', accepted });
+    dispatch({
+      type: 'set-terms',
+      accepted,
+      acceptedAt: accepted ? new Date().toISOString() : null,
+    });
   }, []);
 
   const submitCheckout = useCallback(() => {
@@ -90,45 +105,91 @@ export function useOfferCheckout(
   }, []);
 
   const backToCheckout = useCallback(() => {
+    pendingConfirmation.current = null;
     dispatch({ type: 'back-to-checkout' });
   }, []);
 
   const confirmOrder = useCallback(() => {
-    if (state.selectedPackageId === null) return;
-    const orderId = createClientOrderId();
-    const confirmedAt = new Date().toISOString();
+    if (
+      confirmingOrder.current ||
+      state.selectedPackageId === null ||
+      state.termsAcceptedAt === null
+    ) {
+      return;
+    }
+    const confirmation =
+      pendingConfirmation.current ?? {
+        orderId: createClientOrderId(),
+        createdAt: new Date().toISOString(),
+      };
+    pendingConfirmation.current = confirmation;
+    confirmingOrder.current = true;
+    setIsConfirmingOrder(true);
+    dispatch({ type: 'set-confirmation-error', error: null });
     const draft = buildOrderDraft(
       offer,
       state.selectedPackageId,
       state.contact,
       state.termsAccepted,
     );
-    const order = { ...draft, orderId, confirmedAt };
 
     void (async () => {
-      const customProforma = integrations.issueProforma
-        ? await integrations.issueProforma(order)
-        : undefined;
-      const proforma =
-        customProforma ?? issueLocalProforma(order, confirmedAt);
+      try {
+        await persistDurableOrder(
+          buildDurableOrderPayload(draft, {
+            orderId: confirmation.orderId,
+            createdAt: confirmation.createdAt,
+            termsAcceptedAt: state.termsAcceptedAt!,
+          }),
+        );
+      } catch {
+        dispatch({
+          type: 'set-confirmation-error',
+          error: 'Objednávku se nepodařilo uložit. Zkuste potvrzení opakovat.',
+        });
+        confirmingOrder.current = false;
+        setIsConfirmingOrder(false);
+        return;
+      }
 
-      dispatch({
-        type: 'confirm-order',
-        orderId,
-        confirmedAt,
-        proforma,
-      });
+      const order = {
+        ...draft,
+        orderId: confirmation.orderId,
+        confirmedAt: confirmation.createdAt,
+      };
+      try {
+        const customProforma = integrations.issueProforma
+          ? await integrations.issueProforma(order)
+          : undefined;
+        const proforma =
+          customProforma ?? issueLocalProforma(order, confirmation.createdAt);
 
-      await notifyCheckoutExtensions(order, integrations);
-      await notifyPaymentExtensions(integrations, {
-        timeline: {
-          type: 'offer.proforma.issued',
-          occurredAt: confirmedAt,
-          orderId,
-          proformaId: proforma.proformaId,
-          amountCzk: order.priceCzk,
-        },
-      });
+        dispatch({
+          type: 'confirm-order',
+          orderId: confirmation.orderId,
+          confirmedAt: confirmation.createdAt,
+          proforma,
+        });
+
+        await notifyCheckoutExtensions(order, integrations);
+        await notifyPaymentExtensions(integrations, {
+          timeline: {
+            type: 'offer.proforma.issued',
+            occurredAt: confirmation.createdAt,
+            orderId: confirmation.orderId,
+            proformaId: proforma.proformaId,
+            amountCzk: order.priceCzk,
+          },
+        });
+      } catch {
+        dispatch({
+          type: 'set-confirmation-error',
+          error: 'Objednávka je uložená, ale nepodařilo se připravit další krok.',
+        });
+      } finally {
+        confirmingOrder.current = false;
+        setIsConfirmingOrder(false);
+      }
     })();
   }, [
     integrations,
@@ -136,6 +197,7 @@ export function useOfferCheckout(
     state.contact,
     state.selectedPackageId,
     state.termsAccepted,
+    state.termsAcceptedAt,
   ]);
 
   const continueToQr = useCallback(() => {
@@ -214,6 +276,7 @@ export function useOfferCheckout(
     backToSelect,
     backToCheckout,
     confirmOrder,
+    isConfirmingOrder,
     continueToQr,
     confirmPaymentReceived,
     reset,

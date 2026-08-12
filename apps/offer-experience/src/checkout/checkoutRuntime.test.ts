@@ -80,12 +80,17 @@ describe('CAP-CE-02 checkout runtime', () => {
     );
     state = reduceOfferCheckout(
       state,
-      { type: 'set-terms', accepted: true },
+      {
+        type: 'set-terms',
+        accepted: true,
+        acceptedAt: '2026-08-04T09:59:00.000Z',
+      },
       offer,
     );
     state = reduceOfferCheckout(state, { type: 'submit-checkout' }, offer);
     assert.equal(state.step, 'confirm');
     assert.equal(state.formError, null);
+    assert.equal(state.termsAcceptedAt, '2026-08-04T09:59:00.000Z');
 
     state = reduceOfferCheckout(
       state,
@@ -168,7 +173,11 @@ describe('CAP-CE-03 payment runtime', () => {
     );
     state = reduceOfferCheckout(
       state,
-      { type: 'set-terms', accepted: true },
+      {
+        type: 'set-terms',
+        accepted: true,
+        acceptedAt: '2026-08-04T09:59:00.000Z',
+      },
       offer,
     );
     state = reduceOfferCheckout(

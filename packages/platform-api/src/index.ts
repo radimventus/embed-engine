@@ -10,6 +10,7 @@ import {
 } from './socialProofAnalytics';
 import {
   FileOrderRepository,
+  OrderAlreadyExistsError,
   type OrderRepository,
 } from './orderRepository';
 
@@ -25,6 +26,7 @@ export {
   type DurableOrder,
   type DurableOrderInput,
   type OrderRepository,
+  OrderAlreadyExistsError,
 } from './orderRepository';
 
 export type PlatformInviteStatus =
@@ -385,7 +387,10 @@ export function createPlatformApiServer(
         return respond(response, result === null ? 404 : 200, result ?? { error: 'Pozvánka není dostupná.' });
       }
       return respond(response, 404, { error: 'Nenalezeno.' });
-    } catch {
+    } catch (error) {
+      if (error instanceof OrderAlreadyExistsError) {
+        return respond(response, 409, { error: 'Objednávka již existuje.' });
+      }
       return respond(response, 400, { error: 'Neplatný požadavek.' });
     }
   });

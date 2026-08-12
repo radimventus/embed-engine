@@ -54,6 +54,7 @@ export type OfferCheckoutState = {
   readonly selectedPackageId: OfferPackageId | null;
   readonly contact: CheckoutContactForm;
   readonly termsAccepted: boolean;
+  readonly termsAcceptedAt: string | null;
   readonly order: CheckoutConfirmedOrder | null;
   readonly payment: OfferPaymentRuntimeState;
   readonly formError: string | null;
@@ -66,8 +67,13 @@ export type OfferCheckoutAction =
       readonly type: 'patch-contact';
       readonly patch: Partial<CheckoutContactForm>;
     }
-  | { readonly type: 'set-terms'; readonly accepted: boolean }
+  | {
+      readonly type: 'set-terms';
+      readonly accepted: boolean;
+      readonly acceptedAt: string | null;
+    }
   | { readonly type: 'submit-checkout' }
+  | { readonly type: 'set-confirmation-error'; readonly error: string | null }
   | { readonly type: 'back-to-select' }
   | { readonly type: 'back-to-checkout' }
   | {
@@ -100,6 +106,7 @@ export function createInitialCheckoutState(
     selectedPackageId: null,
     contact: emptyCheckoutContact(offer),
     termsAccepted: false,
+    termsAcceptedAt: null,
     order: null,
     payment: createEmptyPaymentState(),
     formError: null,
@@ -223,6 +230,7 @@ export function reduceOfferCheckout(
       return {
         ...state,
         termsAccepted: action.accepted,
+        termsAcceptedAt: action.accepted ? action.acceptedAt : null,
         formError: null,
       };
     case 'submit-checkout': {
@@ -242,6 +250,8 @@ export function reduceOfferCheckout(
         formError: null,
       };
     }
+    case 'set-confirmation-error':
+      return { ...state, formError: action.error };
     case 'back-to-select':
       return {
         ...state,

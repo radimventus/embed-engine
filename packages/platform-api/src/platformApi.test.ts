@@ -175,6 +175,13 @@ describe('Durable order repository', () => {
       });
       assert.equal(created.status, 201);
 
+      const duplicate = await fetch(baseUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(durableOrderInput),
+      });
+      assert.equal(duplicate.status, 409);
+
       const read = await fetch(`${baseUrl}/${durableOrderInput.orderId}`);
       assert.equal(read.status, 200);
       const order = await read.json() as { termsVersion: string; priceCzk: number };

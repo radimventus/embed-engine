@@ -3,6 +3,8 @@ import type { CheckoutOrderDraft } from '../checkout/checkoutRuntime';
 
 type CheckoutConfirmProps = {
   readonly draft: CheckoutOrderDraft;
+  readonly formError: string | null;
+  readonly isConfirming: boolean;
   readonly onBack: () => void;
   readonly onConfirm: () => void;
 };
@@ -12,6 +14,8 @@ type CheckoutConfirmProps = {
  */
 export function CheckoutConfirm({
   draft,
+  formError,
+  isConfirming,
   onBack,
   onConfirm,
 }: CheckoutConfirmProps) {
@@ -71,12 +75,19 @@ export function CheckoutConfirm({
           ) : null}
         </dl>
 
+        {formError !== null ? (
+          <p className="offer-form-error" data-testid="offer-confirm-error" role="alert">
+            {formError}
+          </p>
+        ) : null}
+
         <div className="offer-actions">
           <button
             type="button"
             className="offer-btn offer-btn--ghost"
             data-testid="offer-confirm-back"
             onClick={onBack}
+            disabled={isConfirming}
           >
             Upravit údaje
           </button>
@@ -85,8 +96,9 @@ export function CheckoutConfirm({
             className="offer-btn offer-btn--primary"
             data-testid="offer-confirm-submit"
             onClick={onConfirm}
+            disabled={isConfirming}
           >
-            Potvrdit objednávku
+            {isConfirming ? 'Ukládáme objednávku…' : 'Potvrdit objednávku'}
           </button>
         </div>
       </div>

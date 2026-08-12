@@ -31,6 +31,12 @@ export interface OrderRepository {
   getByOrderId(orderId: string): Promise<DurableOrder | null>;
 }
 
+export class OrderAlreadyExistsError extends Error {
+  constructor() {
+    super('Order already exists.');
+  }
+}
+
 type OrderState = {
   readonly orders: readonly DurableOrder[];
 };
@@ -101,7 +107,7 @@ export class FileOrderRepository implements OrderRepository {
     return this.exclusively(async () => {
       const state = await this.read();
       if (state.orders.some((item) => item.orderId === order.orderId)) {
-        throw new Error('Order already exists.');
+        throw new OrderAlreadyExistsError();
       }
       await this.write({ orders: [...state.orders, order] });
       return order;

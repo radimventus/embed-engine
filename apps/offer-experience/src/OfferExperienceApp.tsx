@@ -99,6 +99,8 @@ function OfferCheckoutExperience({ offer }: { readonly offer: PublicOffer }) {
       {state.step === 'confirm' && confirmDraft !== null ? (
         <CheckoutConfirm
           draft={confirmDraft}
+          formError={state.formError}
+          isConfirming={checkout.isConfirmingOrder}
           onBack={checkout.backToCheckout}
           onConfirm={checkout.confirmOrder}
         />
