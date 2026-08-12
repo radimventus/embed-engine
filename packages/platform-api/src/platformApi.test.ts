@@ -8,6 +8,7 @@ import {
   createPlatformApiServer,
   FileOrderRepository,
   FilePlatformInviteRepository,
+  FileProformaRepository,
   FileSocialProofAnalyticsRepository,
 } from './index.ts';
 
@@ -187,6 +188,88 @@ describe('Durable order repository', () => {
       const order = await read.json() as { termsVersion: string; priceCzk: number };
       assert.equal(order.termsVersion, '1.0');
       assert.equal(order.priceCzk, 14_970);
+    } finally {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => (error === undefined ? resolve() : reject(error)));
+      });
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('Durable proforma repository', () => {
+  it('persists a stable proforma for an order across repository restart', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-proforma-test-'));
+    try {
+      const order = await new FileOrderRepository(join(directory, 'orders.json')).create(
+        durableOrderInput,
+      );
+      const statePath = join(directory, 'proformas.json');
+      const repository = new FileProformaRepository(
+        statePath,
+        () => new Date('2026-08-12T12:00:00.000Z'),
+      );
+      const first = await repository.issue(order);
+      const retried = await repository.issue(order);
+      const reloaded = await new FileProformaRepository(statePath).getByOrderId(
+        order.orderId,
+      );
+
+      assert.equal(first.created, true);
+      assert.equal(retried.created, false);
+      assert.deepEqual(retried.proforma, first.proforma);
+      assert.deepEqual(reloaded, first.proforma);
+      assert.equal(first.proforma.amountCzk, 14_970);
+      assert.equal(first.proforma.variableSymbol, 'OFFTEST001');
+      assert.equal(first.proforma.dueDate, '2026-08-26T12:00:00.000Z');
+      assert.match(first.proforma.spdPayload, /AM:14970\.00/);
+      assert.match(first.proforma.spdPayload, /X-VS:OFFTEST001/);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('issues and reads a proforma through the local API', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-proforma-api-test-'));
+    const orders = new FileOrderRepository(join(directory, 'orders.json'));
+    const proformas = new FileProformaRepository(
+      join(directory, 'proformas.json'),
+      () => new Date('2026-08-12T12:00:00.000Z'),
+    );
+    const server = createPlatformApiServer(undefined, undefined, orders, proformas);
+    await new Promise<void>((resolve) => {
+      server.listen(0, '127.0.0.1', resolve);
+    });
+    try {
+      const address = server.address();
+      assert.ok(address !== null && typeof address !== 'string');
+      const baseUrl = `http://127.0.0.1:${address.port}/local-pilot/orders`;
+      await fetch(baseUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(durableOrderInput),
+      });
+
+      const issue = await fetch(`${baseUrl}/${durableOrderInput.orderId}/proforma`, {
+        method: 'POST',
+      });
+      assert.equal(issue.status, 201);
+      const created = await issue.json() as { proformaId: string; amountCzk: number };
+      assert.equal(created.amountCzk, 14_970);
+
+      const retried = await fetch(`${baseUrl}/${durableOrderInput.orderId}/proforma`, {
+        method: 'POST',
+      });
+      assert.equal(retried.status, 200);
+
+      const read = await fetch(`${baseUrl}/${durableOrderInput.orderId}/proforma`);
+      assert.equal(read.status, 200);
+      assert.deepEqual(await read.json(), await retried.json());
+
+      const byId = await fetch(
+        `http://127.0.0.1:${address.port}/local-pilot/proformas/${created.proformaId}`,
+      );
+      assert.equal(byId.status, 200);
     } finally {
       await new Promise<void>((resolve, reject) => {
         server.close((error) => (error === undefined ? resolve() : reject(error)));

@@ -13,6 +13,10 @@ import {
   OrderAlreadyExistsError,
   type OrderRepository,
 } from './orderRepository';
+import {
+  FileProformaRepository,
+  type ProformaRepository,
+} from './proformaRepository';
 
 export {
   FileSocialProofAnalyticsRepository,
@@ -28,6 +32,16 @@ export {
   type OrderRepository,
   OrderAlreadyExistsError,
 } from './orderRepository';
+export {
+  buildSpdQrPayload,
+  COMMERCIAL_PAYMENT_ACCOUNT,
+  dueDateFromIssuedAt,
+  FileProformaRepository,
+  type DurableProforma,
+  type ProformaIssuance,
+  type ProformaRepository,
+  variableSymbolFromOrderId,
+} from './proformaRepository';
 
 export type PlatformInviteStatus =
   | 'pending'
@@ -288,6 +302,7 @@ export function createPlatformApiServer(
   repository: PlatformInviteRepository = new FilePlatformInviteRepository(),
   socialProofRepository: SocialProofAnalyticsRepository = new FileSocialProofAnalyticsRepository(),
   orderRepository: OrderRepository = new FileOrderRepository(),
+  proformaRepository: ProformaRepository = new FileProformaRepository(),
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
@@ -368,6 +383,27 @@ export function createPlatformApiServer(
             await requestBody(request) as import('./orderRepository').DurableOrderInput,
           ),
         );
+      }
+      const orderProformaMatch = path.match(/^\/local-pilot\/orders\/([^/]+)\/proforma$/);
+      if (orderProformaMatch !== null) {
+        const orderId = decodeURIComponent(orderProformaMatch[1]!);
+        if (request.method === 'POST') {
+          const order = await orderRepository.getByOrderId(orderId);
+          if (order === null) {
+            return respond(response, 404, { error: 'Objednávka neexistuje.' });
+          }
+          const result = await proformaRepository.issue(order);
+          return respond(response, result.created ? 201 : 200, result.proforma);
+        }
+        if (request.method === 'GET') {
+          const proforma = await proformaRepository.getByOrderId(orderId);
+          return respond(response, proforma === null ? 404 : 200, proforma ?? { error: 'Proforma neexistuje.' });
+        }
+      }
+      if (request.method === 'GET' && path.startsWith('/local-pilot/proformas/')) {
+        const proformaId = decodeURIComponent(path.slice('/local-pilot/proformas/'.length));
+        const proforma = await proformaRepository.getByProformaId(proformaId);
+        return respond(response, proforma === null ? 404 : 200, proforma ?? { error: 'Proforma neexistuje.' });
       }
       if (request.method === 'GET' && path.startsWith('/local-pilot/orders/')) {
         const orderId = decodeURIComponent(path.slice('/local-pilot/orders/'.length));
