@@ -270,6 +270,25 @@ describe('Durable proforma repository', () => {
         `http://127.0.0.1:${address.port}/local-pilot/proformas/${created.proformaId}`,
       );
       assert.equal(byId.status, 200);
+
+      const pdf = await fetch(`${baseUrl}/${durableOrderInput.orderId}/proforma/pdf`);
+      assert.equal(pdf.status, 200);
+      const artifact = await pdf.json() as {
+        context: {
+          amountCzk: number;
+          variableSymbol: string;
+          dueDate: string;
+          spdPayload: string;
+        };
+        attachment: { bytesBase64: string };
+      };
+      const pdfContents = Buffer.from(artifact.attachment.bytesBase64, 'base64').toString('latin1');
+      assert.equal(artifact.context.amountCzk, 14_970);
+      assert.equal(artifact.context.variableSymbol, 'OFFTEST001');
+      assert.equal(artifact.context.spdPayload.includes('X-VS:OFFTEST001'), true);
+      assert.match(pdfContents, /PF-2026-/);
+      assert.match(pdfContents, /2303345128\/2010/);
+      assert.match(pdfContents, / re f/);
     } finally {
       await new Promise<void>((resolve, reject) => {
         server.close((error) => (error === undefined ? resolve() : reject(error)));

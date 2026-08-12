@@ -160,5 +160,21 @@ export function buildDocumentContextFromPayload(input: {
       input.payload.contactEmail === undefined
         ? null
         : String(input.payload.contactEmail),
+    variableSymbol:
+      input.payload.variableSymbol === null || input.payload.variableSymbol === undefined
+        ? null
+        : String(input.payload.variableSymbol),
+    bankAccountNumber:
+      input.payload.bankAccountNumber === null || input.payload.bankAccountNumber === undefined
+        ? null
+        : String(input.payload.bankAccountNumber),
+    bankIban:
+      input.payload.bankIban === null || input.payload.bankIban === undefined
+        ? null
+        : String(input.payload.bankIban),
+    spdPayload:
+      input.payload.spdPayload === null || input.payload.spdPayload === undefined
+        ? null
+        : String(input.payload.spdPayload),
   };
 }

@@ -1,3 +1,5 @@
+import QRCode from 'qrcode';
+
 /**
  * PT-15 — Minimal PDF pipeline (text pages).
  * Document Runtime owns PDF generation — Automation must not.
@@ -11,12 +13,21 @@ function utf8Length(value: string): number {
   return new TextEncoder().encode(value).byteLength;
 }
 
+export function createQrModules(payload: string): {
+  readonly size: number;
+  readonly data: ArrayLike<number | boolean>;
+} {
+  const qr = QRCode.create(payload, { errorCorrectionLevel: 'M' });
+  return { size: qr.modules.size, data: qr.modules.data };
+}
+
 /**
  * Builds a simple single-page PDF from title + body lines.
  */
 export function renderPlainTextPdf(input: {
   readonly title: string;
   readonly lines: readonly string[];
+  readonly qrPayload?: string | null;
 }): Uint8Array {
   const contentLines = [
     'BT',
@@ -32,6 +43,23 @@ export function renderPlainTextPdf(input: {
     contentLines.push('0 -16 Td');
   }
   contentLines.push('ET');
+  if (input.qrPayload !== null && input.qrPayload !== undefined) {
+    const qr = createQrModules(input.qrPayload);
+    const moduleSize = 3;
+    const x = 430;
+    const y = 500;
+    contentLines.push('q', '0 g');
+    for (let row = 0; row < qr.size; row += 1) {
+      for (let column = 0; column < qr.size; column += 1) {
+        if (qr.data[row * qr.size + column]) {
+          contentLines.push(
+            `${x + column * moduleSize} ${y + (qr.size - row - 1) * moduleSize} ${moduleSize} ${moduleSize} re f`,
+          );
+        }
+      }
+    }
+    contentLines.push('Q');
+  }
 
   const stream = contentLines.join('\n');
   const objects: string[] = [

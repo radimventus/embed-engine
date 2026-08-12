@@ -3,6 +3,10 @@ import { createServer, type IncomingMessage, type Server } from 'node:http';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
+import {
+  buildDocumentContextFromPayload,
+  createDocumentRuntime,
+} from '@embed-engine/document-runtime';
 
 import {
   FileSocialProofAnalyticsRepository,
@@ -383,6 +387,40 @@ export function createPlatformApiServer(
             await requestBody(request) as import('./orderRepository').DurableOrderInput,
           ),
         );
+      }
+      const proformaPdfMatch = path.match(/^\/local-pilot\/orders\/([^/]+)\/proforma\/pdf$/);
+      if (request.method === 'GET' && proformaPdfMatch !== null) {
+        const orderId = decodeURIComponent(proformaPdfMatch[1]!);
+        const [order, proforma] = await Promise.all([
+          orderRepository.getByOrderId(orderId),
+          proformaRepository.getByOrderId(orderId),
+        ]);
+        if (order === null || proforma === null) {
+          return respond(response, 404, { error: 'Objednávka nebo proforma neexistuje.' });
+        }
+        const artifact = await createDocumentRuntime().generate({
+          type: 'proforma',
+          businessEventKind: 'ProformaGenerated',
+          context: buildDocumentContextFromPayload({
+            projectId: order.orderId,
+            issuedAt: proforma.issuedAt,
+            payload: {
+              partnerName: order.partner.partnerName,
+              companyName: order.partner.companyName,
+              packageName: order.package.name,
+              orderId: order.orderId,
+              proformaNumber: proforma.number,
+              amountCzk: proforma.amountCzk,
+              dueDate: proforma.dueDate,
+              contactEmail: order.partner.email,
+              variableSymbol: proforma.variableSymbol,
+              bankAccountNumber: proforma.bankAccount.accountNumber,
+              bankIban: proforma.bankAccount.iban,
+              spdPayload: proforma.spdPayload,
+            },
+          }),
+        });
+        return respond(response, 200, artifact);
       }
       const orderProformaMatch = path.match(/^\/local-pilot\/orders\/([^/]+)\/proforma$/);
       if (orderProformaMatch !== null) {

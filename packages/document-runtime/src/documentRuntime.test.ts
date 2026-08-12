@@ -7,10 +7,17 @@ import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
+import {
+  BinaryBitmap,
+  HybridBinarizer,
+  QRCodeReader,
+  RGBLuminanceSource,
+} from '@zxing/library';
 
 import {
   buildDocumentContextFromPayload,
   COMMERCIAL_DOCUMENT_CATALOG,
+  createQrModules,
   createDocumentRuntime,
   DEAL_TEMPLATES,
   DEAL_PACKAGE_ROOT,
@@ -149,12 +156,46 @@ describe('PT-15 document runtime', () => {
         amountCzk: 14_970,
         proformaNumber: 'PF-1',
         dueDate: '2026-08-18T00:00:00.000Z',
+        variableSymbol: '123456',
+        bankAccountNumber: '2303345128/2010',
+        bankIban: 'CZ1520100000002303345128',
+        spdPayload: 'SPD*1.0*ACC:CZ1520100000002303345128*AM:14970.00*X-VS:123456',
       },
     });
     for (const type of ['pilot_offer', 'electronic_order', 'proforma'] as const) {
       const artifact = await runtime.generate({ type, context });
       assert.equal(artifact.type, type);
       assert.ok(artifact.attachment.byteLength > 100);
+      if (type === 'proforma') {
+        const pdf = Buffer.from(artifact.attachment.bytesBase64, 'base64').toString('latin1');
+        assert.match(pdf, / re f/);
+      }
     }
+  });
+
+  it('encodes a decodable QR from the persisted SPD payload', () => {
+    const spdPayload = 'SPD*1.0*ACC:CZ1520100000002303345128*AM:14970.00*X-VS:123456';
+    const qr = createQrModules(spdPayload);
+    const scale = 4;
+    const margin = 4;
+    const size = (qr.size + margin * 2) * scale;
+    const pixels = new Uint8ClampedArray(size * size).fill(255);
+    for (let row = 0; row < qr.size; row += 1) {
+      for (let column = 0; column < qr.size; column += 1) {
+        if (!qr.data[row * qr.size + column]) continue;
+        for (let y = 0; y < scale; y += 1) {
+          for (let x = 0; x < scale; x += 1) {
+            const index =
+              ((row + margin) * scale + y) * size +
+              ((column + margin) * scale + x);
+            pixels[index] = 0;
+          }
+        }
+      }
+    }
+    const bitmap = new BinaryBitmap(
+      new HybridBinarizer(new RGBLuminanceSource(pixels, size, size)),
+    );
+    assert.equal(new QRCodeReader().decode(bitmap).getText(), spdPayload);
   });
 });

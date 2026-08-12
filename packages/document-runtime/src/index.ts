@@ -21,7 +21,7 @@ export {
   getCatalogEntry,
 } from './domain/registry';
 export { DEAL_TEMPLATES, fillTemplate, htmlToPlainLines } from './domain/templates';
-export { renderPlainTextPdf, bytesToBase64 } from './generator/pdfPipeline';
+export { createQrModules, renderPlainTextPdf, bytesToBase64 } from './generator/pdfPipeline';
 export { generateDocumentArtifact, contextToTokens } from './generator/generateDocument';
 export {
   createDocumentVersionStore,

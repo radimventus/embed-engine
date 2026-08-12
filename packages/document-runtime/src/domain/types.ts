@@ -30,6 +30,10 @@ export type DocumentContext = {
   readonly issuedAt: string;
   readonly dueDate: string | null;
   readonly contactEmail: string | null;
+  readonly variableSymbol?: string | null;
+  readonly bankAccountNumber?: string | null;
+  readonly bankIban?: string | null;
+  readonly spdPayload?: string | null;
   /** PT-CJ-00 — personalized pilot offer fields (optional for deal docs). */
   readonly heroLabel?: string | null;
   readonly websiteUrl?: string | null;

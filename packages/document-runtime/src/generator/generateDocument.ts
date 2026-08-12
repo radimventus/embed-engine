@@ -27,6 +27,9 @@ export function contextToTokens(
       context.amountCzk === null ? '' : String(Math.round(context.amountCzk)),
     issuedAt: context.issuedAt.slice(0, 10),
     dueDate: context.dueDate?.slice(0, 10) ?? '',
+    variableSymbol: context.variableSymbol ?? '',
+    bankAccountNumber: context.bankAccountNumber ?? '',
+    bankIban: context.bankIban ?? '',
     heroLabel: context.heroLabel ?? '',
     websiteUrl: context.websiteUrl ?? '',
   };
@@ -44,7 +47,11 @@ export function generateDocumentArtifact(input: {
   const filled = fillTemplate(template, contextToTokens(input.context));
   const lines = htmlToPlainLines(filled);
   const label = COMMERCIAL_DOCUMENT_LABELS[input.type];
-  const pdf = renderPlainTextPdf({ title: label, lines });
+  const pdf = renderPlainTextPdf({
+    title: label,
+    lines,
+    qrPayload: input.type === 'proforma' ? input.context.spdPayload ?? null : null,
+  });
   const version = input.store.nextVersion(input.context.projectId, input.type);
   const createdAt = input.createdAt ?? new Date().toISOString();
   const id = `doc-${input.type}-v${version}-${Date.now().toString(36)}`;

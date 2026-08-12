@@ -22,6 +22,27 @@ export type DurableOrderPayload = {
   readonly termsAcceptedAt: string;
 };
 
+export type DurableProforma = {
+  readonly proformaId: string;
+  readonly number: string;
+  readonly orderId: string;
+  readonly issuedAt: string;
+  readonly dueDate: string;
+  readonly amountCzk: number;
+  readonly variableSymbol: string;
+  readonly bankAccount: {
+    readonly accountNumber: string;
+    readonly iban: string;
+    readonly bankName: string;
+  };
+  readonly spdPayload: string;
+};
+
+export type DurableProformaPdf = {
+  readonly attachment: {
+    readonly bytesBase64: string;
+  };
+};
 type FetchLike = (
   input: RequestInfo | URL,
   init?: RequestInit,
@@ -110,4 +131,31 @@ export async function persistDurableOrder(
     }
   }
   throw new Error('Objednávku se nepodařilo uložit. Zkuste potvrzení opakovat.');
+}
+
+export async function issueDurableProforma(
+  orderId: string,
+  request: FetchLike = fetch,
+  apiOrigin = orderApiOrigin(),
+): Promise<DurableProforma> {
+  const response = await request(
+    orderApiUrl(`/local-pilot/orders/${encodeURIComponent(orderId)}/proforma`, apiOrigin),
+    { method: 'POST' },
+  );
+  if (response.status === 201 || response.status === 200) {
+    return await response.json() as DurableProforma;
+  }
+  throw new Error('Proformu se nepodařilo vystavit.');
+}
+
+export async function fetchDurableProformaPdf(
+  orderId: string,
+  request: FetchLike = fetch,
+  apiOrigin = orderApiOrigin(),
+): Promise<DurableProformaPdf> {
+  const response = await request(
+    orderApiUrl(`/local-pilot/orders/${encodeURIComponent(orderId)}/proforma/pdf`, apiOrigin),
+  );
+  if (response.ok) return await response.json() as DurableProformaPdf;
+  throw new Error('Proforma PDF se nepodařilo vytvořit.');
 }

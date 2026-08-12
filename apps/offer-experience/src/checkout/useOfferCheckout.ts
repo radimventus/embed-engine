@@ -9,8 +9,7 @@ import {
   type OfferPaymentIntegrations,
 } from '../payment/paymentExtensions';
 import {
-  buildLocalQrPaymentCard,
-  issueLocalProforma,
+  buildDurableQrPaymentCard,
 } from '../payment/paymentModel';
 import {
   notifyCheckoutExtensions,
@@ -28,6 +27,8 @@ import {
 } from './checkoutRuntime';
 import {
   buildDurableOrderPayload,
+  fetchDurableProformaPdf,
+  issueDurableProforma,
   persistDurableOrder,
 } from './durableOrderClient';
 
@@ -158,11 +159,28 @@ export function useOfferCheckout(
         confirmedAt: confirmation.createdAt,
       };
       try {
-        const customProforma = integrations.issueProforma
-          ? await integrations.issueProforma(order)
-          : undefined;
-        const proforma =
-          customProforma ?? issueLocalProforma(order, confirmation.createdAt);
+        const durableProforma = await issueDurableProforma(order.orderId);
+        const pdf = await fetchDurableProformaPdf(order.orderId);
+        const proforma = {
+          proformaId: durableProforma.proformaId,
+          number: durableProforma.number,
+          partnerName: order.partnerName,
+          companyName: order.contact.companyName,
+          packageId: order.packageId,
+          packageName: order.packageName,
+          amountCzk: durableProforma.amountCzk,
+          currency: 'CZK' as const,
+          issuedAt: durableProforma.issuedAt,
+          dueDate: durableProforma.dueDate,
+          status: 'issued' as const,
+          orderId: durableProforma.orderId,
+          ico: order.contact.ico.length > 0 ? order.contact.ico : null,
+          variableSymbol: durableProforma.variableSymbol,
+          accountNumber: durableProforma.bankAccount.accountNumber,
+          iban: durableProforma.bankAccount.iban,
+          spdPayload: durableProforma.spdPayload,
+          pdfDataUrl: `data:application/pdf;base64,${pdf.attachment.bytesBase64}`,
+        };
 
         dispatch({
           type: 'confirm-order',
@@ -206,10 +224,7 @@ export function useOfferCheckout(
     const proforma = state.payment.proforma;
 
     void (async () => {
-      const customQr = integrations.createQrPayment
-        ? await integrations.createQrPayment(order, proforma)
-        : undefined;
-      const qr = customQr ?? buildLocalQrPaymentCard(order);
+      const qr = buildDurableQrPaymentCard(proforma);
 
       dispatch({
         type: 'payment',

@@ -81,6 +81,14 @@ export function ProformaExperience({
         </dl>
 
         <div className="offer-actions">
+          <a
+            className="offer-btn offer-btn--ghost"
+            data-testid="offer-proforma-pdf"
+            href={proforma.pdfDataUrl}
+            download={`${proforma.number}.pdf`}
+          >
+            Stáhnout proformu PDF
+          </a>
           <button
             type="button"
             className="offer-btn offer-btn--primary"

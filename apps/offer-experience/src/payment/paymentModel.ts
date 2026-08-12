@@ -29,6 +29,11 @@ export type OfferProformaDocument = {
   readonly status: OfferProformaStatus;
   readonly orderId: string;
   readonly ico: string | null;
+  readonly variableSymbol: string;
+  readonly accountNumber: string;
+  readonly iban: string;
+  readonly spdPayload: string;
+  readonly pdfDataUrl: string;
 };
 
 export type OfferQrPaymentCard = {
@@ -135,6 +140,16 @@ export function issueLocalProforma(
     status: 'issued',
     orderId: order.orderId,
     ico: order.contact.ico.length > 0 ? order.contact.ico : null,
+    variableSymbol: variableSymbolFromOrderId(order.orderId),
+    accountNumber: OFFER_PAYMENT_ACCOUNT.accountNumber,
+    iban: OFFER_PAYMENT_ACCOUNT.iban,
+    spdPayload: buildSpdQrPayload({
+      iban: OFFER_PAYMENT_ACCOUNT.iban,
+      amountCzk: order.priceCzk,
+      variableSymbol: variableSymbolFromOrderId(order.orderId),
+      message: `CONIS ${order.packageName} · ${order.partnerName}`,
+    }),
+    pdfDataUrl: '',
   };
 }
 
@@ -158,6 +173,20 @@ export function buildLocalQrPaymentCard(
     variableSymbol,
     message,
     qrPayload,
+    imageDataUrl: null,
+  };
+}
+
+export function buildDurableQrPaymentCard(proforma: OfferProformaDocument): OfferQrPaymentCard {
+  return {
+    orderId: proforma.orderId,
+    amountCzk: proforma.amountCzk,
+    currency: 'CZK',
+    accountNumber: proforma.accountNumber,
+    iban: proforma.iban,
+    variableSymbol: proforma.variableSymbol,
+    message: `CONIS ${proforma.packageName} · ${proforma.partnerName}`,
+    qrPayload: proforma.spdPayload,
     imageDataUrl: null,
   };
 }

@@ -3,6 +3,8 @@ import { describe, it } from 'node:test';
 
 import {
   buildDurableOrderPayload,
+  fetchDurableProformaPdf,
+  issueDurableProforma,
   persistDurableOrder,
 } from './durableOrderClient';
 import { buildOrderDraft } from './checkoutRuntime';
@@ -70,6 +72,45 @@ describe('durable Offer order client', () => {
         'http://127.0.0.1:4310',
       ),
       /nepodařilo uložit/i,
+    );
+  });
+
+  it('uses the issued proforma and PDF endpoints without local payment calculations', async () => {
+    const proforma = {
+      proformaId: 'proforma-OFF-TEST-001',
+      number: 'PF-2026-TEST001',
+      orderId: payload.orderId,
+      issuedAt: '2026-08-12T12:00:00.000Z',
+      dueDate: '2026-08-26T12:00:00.000Z',
+      amountCzk: 14_970,
+      variableSymbol: 'OFFTEST001',
+      bankAccount: {
+        accountNumber: '2303345128/2010',
+        iban: 'CZ1520100000002303345128',
+        bankName: 'Fio banka',
+      },
+      spdPayload: 'SPD*1.0*AM:14970.00*X-VS:OFFTEST001',
+    };
+    const request = async (input: RequestInfo | URL): Promise<Response> => {
+      const url = String(input);
+      return new Response(
+        JSON.stringify(
+          url.endsWith('/pdf')
+            ? { attachment: { bytesBase64: 'JVBERi0=' } }
+            : proforma,
+        ),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    };
+
+    assert.deepEqual(
+      await issueDurableProforma(payload.orderId, request, 'http://127.0.0.1:4310'),
+      proforma,
+    );
+    assert.equal(
+      (await fetchDurableProformaPdf(payload.orderId, request, 'http://127.0.0.1:4310'))
+        .attachment.bytesBase64,
+      'JVBERi0=',
     );
   });
 });
