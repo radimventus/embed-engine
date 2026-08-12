@@ -8,6 +8,10 @@ import {
   FileSocialProofAnalyticsRepository,
   type SocialProofAnalyticsRepository,
 } from './socialProofAnalytics';
+import {
+  FileOrderRepository,
+  type OrderRepository,
+} from './orderRepository';
 
 export {
   FileSocialProofAnalyticsRepository,
@@ -16,6 +20,12 @@ export {
   type SocialProofAnalyticsEventInput,
   type SocialProofAnalyticsRepository,
 } from './socialProofAnalytics';
+export {
+  FileOrderRepository,
+  type DurableOrder,
+  type DurableOrderInput,
+  type OrderRepository,
+} from './orderRepository';
 
 export type PlatformInviteStatus =
   | 'pending'
@@ -275,6 +285,7 @@ function respond(
 export function createPlatformApiServer(
   repository: PlatformInviteRepository = new FilePlatformInviteRepository(),
   socialProofRepository: SocialProofAnalyticsRepository = new FileSocialProofAnalyticsRepository(),
+  orderRepository: OrderRepository = new FileOrderRepository(),
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
@@ -282,6 +293,7 @@ export function createPlatformApiServer(
       'http://127.0.0.1:4175',
       'http://127.0.0.1:4181',
       'http://127.0.0.1:4173',
+      'http://127.0.0.1:4192',
     ]);
     if (origin !== undefined && allowedOrigins.has(origin)) {
       response.setHeader('access-control-allow-origin', origin);
@@ -345,6 +357,20 @@ export function createPlatformApiServer(
             minimumVisitors: Number.isFinite(minimumVisitors) ? Math.max(2, minimumVisitors) : 2,
           }),
         );
+      }
+      if (request.method === 'POST' && path === '/local-pilot/orders') {
+        return respond(
+          response,
+          201,
+          await orderRepository.create(
+            await requestBody(request) as import('./orderRepository').DurableOrderInput,
+          ),
+        );
+      }
+      if (request.method === 'GET' && path.startsWith('/local-pilot/orders/')) {
+        const orderId = decodeURIComponent(path.slice('/local-pilot/orders/'.length));
+        const order = await orderRepository.getByOrderId(orderId);
+        return respond(response, order === null ? 404 : 200, order ?? { error: 'Objednávka neexistuje.' });
       }
       if (request.method === 'POST' && path === '/local-pilot/invites') {
         return respond(response, 201, await repository.create(await requestBody(request) as PlatformInviteScope));

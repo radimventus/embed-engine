@@ -5,6 +5,8 @@ import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import {
+  createPlatformApiServer,
+  FileOrderRepository,
   FilePlatformInviteRepository,
   FileSocialProofAnalyticsRepository,
 } from './index.ts';
@@ -36,6 +38,28 @@ const inviteInput = {
 const socialProofScope = {
   companyId: 'company-1',
   projectId: 'project-1',
+} as const;
+
+const durableOrderInput = {
+  orderId: 'OFF-TEST-001',
+  createdAt: '2026-08-12T12:00:00.000Z',
+  partner: {
+    partnerName: 'Domy s energií',
+    companyName: 'Domy s energií s.r.o.',
+    contactName: 'Jana Energetická',
+    email: 'jana@domysenergii.cz',
+    phone: '+420777200300',
+    ico: '06123456',
+  },
+  package: {
+    id: 'starter',
+    name: 'Starter',
+    licenseLabel: '1 dům',
+    trialDays: 90,
+  },
+  priceCzk: 14_970,
+  termsVersion: '1.0',
+  termsAcceptedAt: '2026-08-12T12:00:00.000Z',
 } as const;
 
 describe('Platform API invitation repository', () => {
@@ -103,6 +127,64 @@ describe('Platform API invitation repository', () => {
       assert.match(stored, /"verifier":"[A-Za-z0-9_-]{43}"/);
     } finally {
       await fixture.cleanup();
+    }
+  });
+});
+
+describe('Durable order repository', () => {
+  it('persists an accepted order across repository restart', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-order-test-'));
+    const statePath = join(directory, 'orders.json');
+    try {
+      const created = await new FileOrderRepository(statePath).create(
+        durableOrderInput,
+      );
+      const reloaded = await new FileOrderRepository(statePath).getByOrderId(
+        durableOrderInput.orderId,
+      );
+
+      assert.deepEqual(reloaded, created);
+      assert.equal(reloaded?.termsVersion, '1.0');
+      assert.equal(
+        reloaded?.termsAcceptedAt,
+        '2026-08-12T12:00:00.000Z',
+      );
+      assert.equal(reloaded?.partner.companyName, 'Domy s energií s.r.o.');
+      assert.equal(reloaded?.package.id, 'starter');
+      assert.equal(reloaded?.priceCzk, 14_970);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('creates and reads an order through the local API', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-order-api-test-'));
+    const repository = new FileOrderRepository(join(directory, 'orders.json'));
+    const server = createPlatformApiServer(undefined, undefined, repository);
+    await new Promise<void>((resolve) => {
+      server.listen(0, '127.0.0.1', resolve);
+    });
+    try {
+      const address = server.address();
+      assert.ok(address !== null && typeof address !== 'string');
+      const baseUrl = `http://127.0.0.1:${address.port}/local-pilot/orders`;
+      const created = await fetch(baseUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(durableOrderInput),
+      });
+      assert.equal(created.status, 201);
+
+      const read = await fetch(`${baseUrl}/${durableOrderInput.orderId}`);
+      assert.equal(read.status, 200);
+      const order = await read.json() as { termsVersion: string; priceCzk: number };
+      assert.equal(order.termsVersion, '1.0');
+      assert.equal(order.priceCzk, 14_970);
+    } finally {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => (error === undefined ? resolve() : reject(error)));
+      });
+      await rm(directory, { recursive: true, force: true });
     }
   });
 });
