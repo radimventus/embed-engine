@@ -1,14 +1,14 @@
-import { colors } from '@embed-engine/design-tokens';
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Panel } from '@embed-engine/ui';
+import { colors } from "@embed-engine/design-tokens";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Panel } from "@embed-engine/ui";
 
-import { SocialProofIcon } from './SocialProofIcon';
+import { SocialProofIcon } from "./SocialProofIcon";
 import {
   nextSocialProofIndex,
   SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT,
   type SocialProofEntry,
   useSocialProofFeed,
-} from './useSocialProofFeed';
+} from "./useSocialProofFeed";
 
 const FEED_TICKER_PAUSE_MS = 12000;
 const FEED_TICKER_SLIDE_MS = 400;
@@ -20,7 +20,9 @@ function SocialProofItem({ icon, value, message }: SocialProofEntry) {
       <SocialProofIcon name={icon} />
       <div className="min-w-0">
         <p className="text-sm leading-snug text-[#001930]">
-          <span className="mr-2 text-2xl font-bold tracking-tight">{value}</span>
+          <span className="mr-2 text-2xl font-bold tracking-tight">
+            {value}
+          </span>
           {message}
         </p>
       </div>
@@ -52,16 +54,18 @@ export function SocialProof() {
   }, [entries.length]);
 
   useEffect(() => {
-    if (entries.length <= SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT || isAnimating) {
+    if (
+      entries.length <= SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT ||
+      isAnimating
+    ) {
       return;
     }
-    const timer = window.setTimeout(() => setIsAnimating(true), FEED_TICKER_PAUSE_MS);
+    const timer = window.setTimeout(
+      () => setIsAnimating(true),
+      FEED_TICKER_PAUSE_MS,
+    );
     return () => window.clearTimeout(timer);
   }, [entries.length, isAnimating, startIndex]);
-
-  if (entries.length === 0) {
-    return null;
-  }
 
   return (
     <Panel
@@ -73,38 +77,66 @@ export function SocialProof() {
       variant="elevated"
       className="relative scroll-mt-header !bg-[#FFFFFF] text-[#001930]"
     >
-      <div className="pointer-events-none absolute inset-x-0 top-[2px] z-10 h-px" style={{ backgroundColor: colors.action.accent }} />
+      <div
+        className="pointer-events-none absolute inset-x-0 top-[2px] z-10 h-px"
+        style={{ backgroundColor: colors.action.accent }}
+      />
       <div className="hidden h-social-proof items-center overflow-hidden px-section desktop:flex">
-        <ul
-          className="m-0 flex list-none p-0"
-          onTransitionEnd={() => {
-            if (!isAnimating || entries.length <= SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT) return;
-            setStartIndex((current) => {
-              const next = nextSocialProofIndex(current, entries, recentMessagesRef.current);
-              recentMessagesRef.current = [...recentMessagesRef.current, entries[next]!.message].slice(-12);
-              return next;
-            });
-            setIsAnimating(false);
-          }}
-          style={{
-            transform: isAnimating ? `translateX(-${100 / FEED_VISIBLE_ITEM_COUNT}%)` : 'translateX(0)',
-            transition: isAnimating ? `transform ${FEED_TICKER_SLIDE_MS}ms linear` : 'none',
-          }}
-        >
-          {visibleEntries.map((entry) => (
-            <li key={entry.id} className="min-w-0 shrink-0 border-r border-[#D4AF37]/50 px-4 last:border-r-0" style={{ flexBasis: `${100 / FEED_VISIBLE_ITEM_COUNT}%` }}>
-              <SocialProofItem {...entry} />
-            </li>
-          ))}
-        </ul>
+        {entries.length > 0 ? (
+          <ul
+            className="m-0 flex list-none p-0"
+            onTransitionEnd={() => {
+              if (
+                !isAnimating ||
+                entries.length <= SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT
+              )
+                return;
+              setStartIndex((current) => {
+                const next = nextSocialProofIndex(
+                  current,
+                  entries,
+                  recentMessagesRef.current,
+                );
+                recentMessagesRef.current = [
+                  ...recentMessagesRef.current,
+                  entries[next]!.message,
+                ].slice(-12);
+                return next;
+              });
+              setIsAnimating(false);
+            }}
+            style={{
+              transform: isAnimating
+                ? `translateX(-${100 / FEED_VISIBLE_ITEM_COUNT}%)`
+                : "translateX(0)",
+              transition: isAnimating
+                ? `transform ${FEED_TICKER_SLIDE_MS}ms linear`
+                : "none",
+            }}
+          >
+            {visibleEntries.map((entry) => (
+              <li
+                key={entry.id}
+                className="min-w-0 shrink-0 border-r border-[#D4AF37]/50 px-4 last:border-r-0"
+                style={{ flexBasis: `${100 / FEED_VISIBLE_ITEM_COUNT}%` }}
+              >
+                <SocialProofItem {...entry} />
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
-      <div className="desktop:hidden px-section py-3">
-        <ul className="m-0 flex list-none flex-col gap-3 p-0">
-          {entries.slice(0, FEED_VISIBLE_ITEM_COUNT).map((entry) => (
-            <li key={entry.id}><SocialProofItem {...entry} /></li>
-          ))}
-        </ul>
-      </div>
+      {entries.length > 0 ? (
+        <div className="desktop:hidden px-section py-3">
+          <ul className="m-0 flex list-none flex-col gap-3 p-0">
+            {entries.slice(0, FEED_VISIBLE_ITEM_COUNT).map((entry) => (
+              <li key={entry.id}>
+                <SocialProofItem {...entry} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </Panel>
   );
 }

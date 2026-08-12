@@ -75,11 +75,37 @@ describe("Responsive Decision Journey (RCS-05)", () => {
     );
 
     assert.match(page, /PILOT_SECTION_IDS\.socialProof/);
+    assert.match(page, /PILOT_SECTION_IDS\.socialProof,\s*20,\s*\)/);
     assert.match(page, /pinFooterToBottom=\{false\}/);
     assert.match(page, /previousSceneId=\{scenes\[1\]\?\.id\}/);
     assert.match(page, /<AuditLeadCapture[\s\S]*onBack/);
     assert.match(audit, /data-testid="audit-back"/);
     assert.match(audit, /pt-5/);
+  });
+
+  it("settles a fresh Journey on the mounted Social Proof anchor", () => {
+    const page = readSource("src/features/client-studio/ClientStudioPage.tsx");
+
+    assert.match(
+      page,
+      /useState<string \| null>\(\s*PILOT_SECTION_IDS\.socialProof,\s*\)/,
+    );
+    assert.match(page, /isSectionScrollReady\(sceneId\)/);
+    assert.match(page, /scrollToSection\(sceneId, "smooth"\)/);
+  });
+
+  it("cancels a superseded deferred scroll before consuming its replacement", () => {
+    const page = readSource("src/features/client-studio/ClientStudioPage.tsx");
+
+    assert.match(page, /const sceneId = pendingSceneId;/);
+    assert.match(page, /let cancelled = false;/);
+    assert.match(page, /window\.cancelAnimationFrame\(frameId\)/);
+    assert.match(
+      page,
+      /setPendingSceneId\(\(current\) => \(current === sceneId \? null : current\)\)/,
+    );
+    assert.doesNotMatch(page, /scrollDelayTimerRef/);
+    assert.doesNotMatch(page, /pendingSceneIdRef/);
   });
 
   it("unifies mobile navigation reveal, CTA chrome, and scene rhythm", () => {
@@ -126,8 +152,8 @@ describe("Responsive Decision Journey (RCS-05)", () => {
 
     assert.match(page, /const \[requestedSceneId, setRequestedSceneId\]/);
     assert.match(page, /document\.getElementById\(sceneId\) === null/);
-    assert.match(page, /isSectionScrollReady\(currentSceneId\)/);
-    assert.match(page, /current === currentSceneId \? null : current/);
+    assert.match(page, /isSectionScrollReady\(sceneId\)/);
+    assert.match(page, /current === sceneId \? null : current/);
     assert.match(page, /transitionTimerRef\.current = window\.setTimeout/);
     assert.match(
       navigation,

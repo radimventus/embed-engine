@@ -1,8 +1,8 @@
-import { PrimaryLink } from '@embed-engine/ui';
-import type { MouseEvent } from 'react';
+import { PrimaryLink } from "@embed-engine/ui";
+import type { MouseEvent } from "react";
 
-import { useOptionalDecisionAnalytics } from '../../analytics';
-import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
+import { useOptionalDecisionAnalytics } from "../../analytics";
+import { PILOT_SECTION_IDS } from "../../pilot/pilotVocabulary";
 
 const CTA_SCROLL_DURATION_MS = 520;
 
@@ -26,16 +26,16 @@ export function HeroCTA() {
     }
 
     const reducedMotion = window.matchMedia(
-      '(prefers-reduced-motion: reduce)',
+      "(prefers-reduced-motion: reduce)",
     ).matches;
     const header = document.querySelector<HTMLElement>(
-      '[data-experience-header]',
+      "[data-experience-header]",
     );
     const headerOffset = Math.ceil(
       header?.getBoundingClientRect().height ?? 72,
     );
     const overlayMount = document.querySelector<HTMLElement>(
-      '[data-embed-overlay-mount]',
+      "[data-embed-overlay-mount]",
     );
     const scroller: HTMLElement | Window = overlayMount ?? window;
 
@@ -44,7 +44,7 @@ export function HeroCTA() {
 
     const writeScrollTop = (top: number): void => {
       if (scroller instanceof Window) {
-        scroller.scrollTo({ top, left: 0, behavior: 'auto' });
+        scroller.scrollTo({ top, left: 0, behavior: "auto" });
         return;
       }
       scroller.scrollTop = top;
@@ -58,7 +58,9 @@ export function HeroCTA() {
       const containerRect = scroller.getBoundingClientRect();
       return Math.max(
         0,
-        scroller.scrollTop + (elementRect.top - containerRect.top) - headerOffset,
+        scroller.scrollTop +
+          (elementRect.top - containerRect.top) -
+          headerOffset,
       );
     };
 
@@ -68,14 +70,18 @@ export function HeroCTA() {
       document.body,
       overlayMount,
     ].filter((node): node is HTMLElement => node !== null);
-    const previousSnap = snapRoots.map((root) => root.dataset.guidedJourneySnap);
-    const previousPadding = snapRoots.map((root) => root.style.scrollPaddingTop);
+    const previousSnap = snapRoots.map(
+      (root) => root.dataset.guidedJourneySnap,
+    );
+    const previousPadding = snapRoots.map(
+      (root) => root.style.scrollPaddingTop,
+    );
     const previousBehavior = snapRoots.map((root) => root.style.scrollBehavior);
 
     for (const root of snapRoots) {
-      root.dataset.guidedJourneySnap = 'off';
-      root.style.scrollPaddingTop = '0px';
-      root.style.scrollBehavior = 'auto';
+      root.dataset.guidedJourneySnap = "off";
+      root.style.scrollPaddingTop = "0px";
+      root.style.scrollBehavior = "auto";
     }
 
     const from = readScrollTop();
@@ -93,8 +99,8 @@ export function HeroCTA() {
         } else {
           root.dataset.guidedJourneySnap = value;
         }
-        root.style.scrollPaddingTop = previousPadding[index] ?? '';
-        root.style.scrollBehavior = previousBehavior[index] ?? '';
+        root.style.scrollPaddingTop = previousPadding[index] ?? "";
+        root.style.scrollBehavior = previousBehavior[index] ?? "";
       });
     };
 
@@ -129,11 +135,11 @@ export function HeroCTA() {
     }
 
     analytics?.experienceEvent({
-      experienceEventType: 'hero.video.opened',
-      surfaceId: 'hero',
+      experienceEventType: "hero.video.opened",
+      surfaceId: "hero",
     });
     target.focus({ preventScroll: true });
-    window.history.pushState(null, '', `#${PILOT_SECTION_IDS.socialProof}`);
+    window.history.pushState(null, "", `#${PILOT_SECTION_IDS.socialProof}`);
   };
 
   return (

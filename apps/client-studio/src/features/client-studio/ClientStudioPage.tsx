@@ -72,7 +72,11 @@ export function ClientStudioPage({
 }: ClientStudioPageProps) {
   const scenes = decisionJourneyScenes();
   const [revealedSceneCount, setRevealedSceneCount] = useState(1);
-  const [pendingSceneId, setPendingSceneId] = useState<string | null>(null);
+  const [pendingSceneId, setPendingSceneId] = useState<string | null>(
+    PILOT_SECTION_IDS.socialProof,
+  );
+  const [pendingSceneScrollOffsetPx, setPendingSceneScrollOffsetPx] =
+    useState(0);
   const [isSceneTransitioning, setIsSceneTransitioning] = useState(false);
   const visibleSceneIds = scenes
     .slice(0, revealedSceneCount)
@@ -83,49 +87,11 @@ export function ClientStudioPage({
   );
   const [requestedSceneId, setRequestedSceneId] = useState<string | null>(null);
   const [snapEnabled, setSnapEnabled] = useState(false);
-  const pendingSceneIdRef = useRef<string | null>(null);
-  const scrollFrameRef = useRef<number | null>(null);
-  const scrollDelayTimerRef = useRef<number | null>(null);
   const transitionTimerRef = useRef<number | null>(null);
   const transitionEndCleanupRef = useRef<(() => void) | null>(null);
-  const initialScrollAppliedRef = useRef(false);
-
-  useEffect(() => {
-    pendingSceneIdRef.current = pendingSceneId;
-  }, [pendingSceneId]);
-
-  useEffect(() => {
-    if (initialScrollAppliedRef.current) return;
-    const socialProof = document.getElementById(PILOT_SECTION_IDS.socialProof);
-    const overlayMount = document.querySelector<HTMLElement>(
-      "[data-embed-overlay-mount]",
-    );
-    if (socialProof === null || overlayMount === null) return;
-    const frameId = window.requestAnimationFrame(() => {
-      const headerHeight =
-        document
-          .querySelector<HTMLElement>("[data-experience-header]")
-          ?.getBoundingClientRect().height ?? 72;
-      overlayMount.scrollTop = Math.max(
-        0,
-        overlayMount.scrollTop +
-          socialProof.getBoundingClientRect().top -
-          overlayMount.getBoundingClientRect().top -
-          Math.ceil(headerHeight),
-      );
-      initialScrollAppliedRef.current = true;
-    });
-    return () => window.cancelAnimationFrame(frameId);
-  }, []);
 
   useEffect(() => {
     return () => {
-      if (scrollFrameRef.current !== null) {
-        window.cancelAnimationFrame(scrollFrameRef.current);
-      }
-      if (scrollDelayTimerRef.current !== null) {
-        window.clearTimeout(scrollDelayTimerRef.current);
-      }
       if (transitionTimerRef.current !== null) {
         window.clearTimeout(transitionTimerRef.current);
       }
@@ -166,67 +132,59 @@ export function ClientStudioPage({
     if (pendingSceneId === null) {
       return;
     }
-    if (scrollFrameRef.current !== null) {
-      return;
-    }
-    if (scrollDelayTimerRef.current !== null) {
-      return;
-    }
-    const scrollWhenMounted = () => {
-      const sceneId = pendingSceneIdRef.current;
-      if (sceneId === null) {
-        scrollFrameRef.current = null;
+    const sceneId = pendingSceneId;
+    const scrollOffsetPx = pendingSceneScrollOffsetPx;
+    let frameId: number | null = null;
+    let cancelled = false;
+
+    const scrollWhenReady = () => {
+      if (cancelled) {
         return;
       }
       if (
         document.getElementById(sceneId) === null ||
         !isSectionScrollReady(sceneId)
       ) {
-        scrollFrameRef.current =
-          window.requestAnimationFrame(scrollWhenMounted);
+        frameId = window.requestAnimationFrame(scrollWhenReady);
         return;
       }
-      scrollFrameRef.current = window.requestAnimationFrame(() => {
-        const currentSceneId = pendingSceneIdRef.current;
-        if (currentSceneId === null) {
-          scrollFrameRef.current = null;
-          return;
-        }
-        if (
-          document.getElementById(currentSceneId) !== null &&
-          isSectionScrollReady(currentSceneId)
-        ) {
-          const finishTransition = () => {
-            if (transitionTimerRef.current !== null) {
-              window.clearTimeout(transitionTimerRef.current);
-              transitionTimerRef.current = null;
-            }
-            setIsSceneTransitioning(false);
-          };
-          transitionEndCleanupRef.current?.();
-          transitionEndCleanupRef.current = null;
-          transitionTimerRef.current = window.setTimeout(
-            finishTransition,
-            2000,
-          );
-          scrollToSection(currentSceneId, "smooth");
-          setPendingSceneId((current) =>
-            current === currentSceneId ? null : current,
-          );
-          scrollFrameRef.current = null;
-          return;
-        }
-        scrollFrameRef.current =
-          window.requestAnimationFrame(scrollWhenMounted);
-      });
-    };
-    scrollDelayTimerRef.current = window.setTimeout(() => {
-      scrollDelayTimerRef.current = null;
-      scrollFrameRef.current = window.requestAnimationFrame(scrollWhenMounted);
-    }, 1000);
-  }, [pendingSceneId, revealedSceneCount]);
 
-  const enterScene = (sceneId: string, scrollTargetId = sceneId) => {
+      const finishTransition = () => {
+        if (transitionTimerRef.current !== null) {
+          window.clearTimeout(transitionTimerRef.current);
+          transitionTimerRef.current = null;
+        }
+        setIsSceneTransitioning(false);
+      };
+      transitionEndCleanupRef.current?.();
+      transitionEndCleanupRef.current = null;
+      transitionTimerRef.current = window.setTimeout(finishTransition, 2000);
+      const target = document.getElementById(sceneId);
+      const previousTransform = target?.style.transform;
+      if (target !== null && scrollOffsetPx !== 0) {
+        target.style.transform = `translateY(${scrollOffsetPx}px)`;
+      }
+      scrollToSection(sceneId, "smooth");
+      if (target !== null && scrollOffsetPx !== 0) {
+        target.style.transform = previousTransform ?? "";
+      }
+      setPendingSceneId((current) => (current === sceneId ? null : current));
+    };
+
+    frameId = window.requestAnimationFrame(scrollWhenReady);
+    return () => {
+      cancelled = true;
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [pendingSceneId, pendingSceneScrollOffsetPx, revealedSceneCount]);
+
+  const enterScene = (
+    sceneId: string,
+    scrollTargetId = sceneId,
+    scrollOffsetPx = 0,
+  ) => {
     const nextSceneIndex = scenes.findIndex((scene) => scene.id === sceneId);
     if (nextSceneIndex === -1) {
       return;
@@ -238,6 +196,7 @@ export function ClientStudioPage({
     setActiveSceneId(sceneId);
     setRequestedSceneId(sceneId);
     setRevealedSceneCount((current) => Math.max(current, nextSceneIndex + 1));
+    setPendingSceneScrollOffsetPx(scrollOffsetPx);
     setPendingSceneId(scrollTargetId);
     transitionEndCleanupRef.current?.();
     transitionEndCleanupRef.current = null;
@@ -337,6 +296,7 @@ export function ClientStudioPage({
                             enterScene(
                               scenes[0]!.id,
                               PILOT_SECTION_IDS.socialProof,
+                              20,
                             )
                           }
                           onContinueToRacio={() => {
