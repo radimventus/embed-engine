@@ -141,6 +141,8 @@ export function useOfferCheckout(
             orderId: confirmation.orderId,
             createdAt: confirmation.createdAt,
             termsAcceptedAt: state.termsAcceptedAt!,
+            companyId: offer.companyId,
+            partnerId: offer.partnerId,
           }),
         );
       } catch {

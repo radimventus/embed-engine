@@ -11,6 +11,8 @@ import {
 const OFFER_BY_SLUG: Readonly<Record<string, PublicOffer>> = Object.freeze({
   'domy-s-energi': {
     slug: 'domy-s-energi',
+    companyId: 'company-domy-s-energi',
+    partnerId: 'p-dse',
     partnerName: 'Domy s energií',
     contactName: 'Jana Energetická',
     greeting: 'Dobrý den, Jano,',
@@ -20,6 +22,8 @@ const OFFER_BY_SLUG: Readonly<Record<string, PublicOffer>> = Object.freeze({
   },
   blokki: {
     slug: 'blokki',
+    companyId: 'company-blokki',
+    partnerId: 'p-blokki',
     partnerName: 'Blokki',
     contactName: 'Jan Blok',
     greeting: 'Dobrý den, Jane,',
@@ -66,6 +70,8 @@ function synthesizePublicOffer(slug: string): PublicOffer {
   const first = contactName.split(/\s+/)[0] ?? contactName;
   return {
     slug,
+    companyId: `company-${slug}`,
+    partnerId: `partner-${slug}`,
     partnerName,
     contactName,
     greeting: `Dobrý den, ${first},`,

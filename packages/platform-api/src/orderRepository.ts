@@ -4,6 +4,9 @@ import { dirname, join } from 'node:path';
 
 export type DurableOrderInput = {
   readonly orderId: string;
+  readonly offerSlug: string;
+  readonly companyId: string;
+  readonly partnerId: string;
   readonly createdAt: string;
   readonly partner: {
     readonly partnerName: string;
@@ -52,6 +55,9 @@ function isIsoTimestamp(value: string): boolean {
 function validateOrder(input: DurableOrderInput): DurableOrder {
   const required = [
     input.orderId,
+    input.offerSlug,
+    input.companyId,
+    input.partnerId,
     input.partner.partnerName,
     input.partner.companyName,
     input.partner.contactName,
@@ -76,6 +82,9 @@ function validateOrder(input: DurableOrderInput): DurableOrder {
   return {
     ...input,
     orderId: input.orderId.trim(),
+    offerSlug: input.offerSlug.trim().toLowerCase(),
+    companyId: input.companyId.trim(),
+    partnerId: input.partnerId.trim(),
     createdAt: new Date(input.createdAt).toISOString(),
     partner: {
       ...input.partner,

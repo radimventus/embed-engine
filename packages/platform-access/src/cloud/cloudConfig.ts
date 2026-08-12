@@ -165,20 +165,22 @@ function withOptionalProjectId(baseHref: string, projectId?: string | null): str
  * PT-CJ-01 / PT-COM-02 — Pilot program selection (Offer Experience).
  * Pass partner offerSlug so Welcome opens that firm's offer — never a seed default.
  */
-export function resolvePilotOfferHref(offerSlug?: string): string {
+export function resolvePilotOfferHref(offerSlug?: string, writeToken?: string): string {
   const slug = offerSlug?.trim().toLowerCase() ?? '';
   const config = getCloudPlatformConfig();
   if (config.mode === 'local') {
     const host =
       typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
     const base = `http://${host}:${LOCAL_OFFER_EXPERIENCE_PORT}`;
-    if (slug.length === 0) return `${base}/`;
-    return `${base}/${encodeURIComponent(slug)}`;
+    const href = slug.length === 0 ? `${base}/` : `${base}/${encodeURIComponent(slug)}`;
+    return writeToken === undefined ? href : `${href}?write=${encodeURIComponent(writeToken)}`;
   }
   if (slug.length === 0) {
-    return `${config.origin}${CLOUD_OFFER_EXPERIENCE_PATH}`;
+    const href = `${config.origin}${CLOUD_OFFER_EXPERIENCE_PATH}`;
+    return writeToken === undefined ? href : `${href}?write=${encodeURIComponent(writeToken)}`;
   }
-  return `${config.origin}${CLOUD_OFFER_EXPERIENCE_PATH}${encodeURIComponent(slug)}/`;
+  const href = `${config.origin}${CLOUD_OFFER_EXPERIENCE_PATH}${encodeURIComponent(slug)}/`;
+  return writeToken === undefined ? href : `${href}?write=${encodeURIComponent(writeToken)}`;
 }
 
 /** Canonical public legal document URL, resolved against the public web host. */

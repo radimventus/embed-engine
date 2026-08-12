@@ -29,6 +29,8 @@ const payload = buildDurableOrderPayload(
     orderId: 'OFF-TEST-001',
     createdAt: '2026-08-12T12:00:00.000Z',
     termsAcceptedAt: '2026-08-12T11:59:00.000Z',
+    companyId: offer.companyId,
+    partnerId: offer.partnerId,
   },
 );
 

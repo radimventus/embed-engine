@@ -2,6 +2,9 @@ import type { CheckoutOrderDraft } from './checkoutRuntime';
 
 export type DurableOrderPayload = {
   readonly orderId: string;
+  readonly offerSlug: string;
+  readonly companyId: string;
+  readonly partnerId: string;
   readonly createdAt: string;
   readonly partner: {
     readonly partnerName: string;
@@ -56,10 +59,15 @@ export function buildDurableOrderPayload(
     readonly orderId: string;
     readonly createdAt: string;
     readonly termsAcceptedAt: string;
+    readonly companyId: string;
+    readonly partnerId: string;
   },
 ): DurableOrderPayload {
   return {
     orderId: input.orderId,
+    offerSlug: draft.offerSlug,
+    companyId: input.companyId,
+    partnerId: input.partnerId,
     createdAt: input.createdAt,
     partner: {
       partnerName: draft.partnerName,
@@ -90,6 +98,14 @@ function orderApiUrl(path: string, origin: string): string {
   return `${origin.replace(/\/$/, '')}${path}`;
 }
 
+function writeAuthorization(): HeadersInit {
+  if (typeof window === 'undefined') return {};
+  const token = new URLSearchParams(window.location.search).get('write')?.trim();
+  return token === undefined || token.length === 0
+    ? {}
+    : { authorization: `Bearer ${token}` };
+}
+
 function matchesPersistedOrder(
   persisted: DurableOrderPayload,
   expected: DurableOrderPayload,
@@ -112,7 +128,7 @@ export async function persistDurableOrder(
 ): Promise<DurableOrderPayload> {
   const create = await request(orderApiUrl('/local-pilot/orders', apiOrigin), {
     method: 'POST',
-    headers: { 'content-type': 'application/json' },
+    headers: { 'content-type': 'application/json', ...writeAuthorization() },
     body: JSON.stringify(payload),
   });
   if (create.status === 201) {
@@ -140,7 +156,7 @@ export async function issueDurableProforma(
 ): Promise<DurableProforma> {
   const response = await request(
     orderApiUrl(`/local-pilot/orders/${encodeURIComponent(orderId)}/proforma`, apiOrigin),
-    { method: 'POST' },
+    { method: 'POST', headers: writeAuthorization() },
   );
   if (response.status === 201 || response.status === 200) {
     return await response.json() as DurableProforma;

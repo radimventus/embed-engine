@@ -7,6 +7,7 @@ import { describe, it } from 'node:test';
 import {
   createPlatformApiServer,
   FileOrderRepository,
+  FileOfferWriteTokenRepository,
   FilePlatformInviteRepository,
   FileProformaRepository,
   FileSocialProofAnalyticsRepository,
@@ -43,6 +44,9 @@ const socialProofScope = {
 
 const durableOrderInput = {
   orderId: 'OFF-TEST-001',
+  offerSlug: 'domy-s-energi',
+  companyId: 'company-domy-s-energi',
+  partnerId: 'p-dse',
   createdAt: '2026-08-12T12:00:00.000Z',
   partner: {
     partnerName: 'Domy s energií',
@@ -161,7 +165,13 @@ describe('Durable order repository', () => {
   it('creates and reads an order through the local API', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-order-api-test-'));
     const repository = new FileOrderRepository(join(directory, 'orders.json'));
-    const server = createPlatformApiServer(undefined, undefined, repository);
+    const tokens = new FileOfferWriteTokenRepository(join(directory, 'tokens.json'));
+    const capability = await tokens.issue({
+      offerSlug: durableOrderInput.offerSlug,
+      companyId: durableOrderInput.companyId,
+      partnerId: durableOrderInput.partnerId,
+    });
+    const server = createPlatformApiServer(undefined, undefined, repository, undefined, tokens);
     await new Promise<void>((resolve) => {
       server.listen(0, '127.0.0.1', resolve);
     });
@@ -169,16 +179,28 @@ describe('Durable order repository', () => {
       const address = server.address();
       assert.ok(address !== null && typeof address !== 'string');
       const baseUrl = `http://127.0.0.1:${address.port}/local-pilot/orders`;
-      const created = await fetch(baseUrl, {
+      const missing = await fetch(baseUrl, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(durableOrderInput),
+      });
+      assert.equal(missing.status, 401);
+      const invalid = await fetch(baseUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: 'Bearer invalid-token-1234567890' },
+        body: JSON.stringify(durableOrderInput),
+      });
+      assert.equal(invalid.status, 403);
+      const created = await fetch(baseUrl, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${capability.token}` },
         body: JSON.stringify(durableOrderInput),
       });
       assert.equal(created.status, 201);
 
       const duplicate = await fetch(baseUrl, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${capability.token}` },
         body: JSON.stringify(durableOrderInput),
       });
       assert.equal(duplicate.status, 409);
@@ -192,6 +214,53 @@ describe('Durable order repository', () => {
       await new Promise<void>((resolve, reject) => {
         server.close((error) => (error === undefined ? resolve() : reject(error)));
       });
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+});
+
+describe('Offer write capability repository', () => {
+  it('binds one matching order and rejects another scope or order', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-offer-write-test-'));
+    try {
+      const repository = new FileOfferWriteTokenRepository(join(directory, 'tokens.json'));
+      const issued = await repository.issue({
+        offerSlug: 'domy-s-energi',
+        companyId: 'company-domy-s-energi',
+        partnerId: 'p-dse',
+      });
+      assert.equal(await repository.bindOrder(issued.token, {
+        offerSlug: 'domy-s-energi',
+        companyId: 'company-domy-s-energi',
+        partnerId: 'p-dse',
+        orderId: 'OFF-1',
+      }), true);
+      assert.equal(await repository.verifyOrder(issued.token, 'OFF-1'), true);
+      assert.equal(await repository.bindOrder(issued.token, {
+        offerSlug: 'other',
+        companyId: 'company-domy-s-energi',
+        partnerId: 'p-dse',
+        orderId: 'OFF-2',
+      }), false);
+      const expired = await repository.issue({
+        offerSlug: 'domy-s-energi',
+        companyId: 'company-domy-s-energi',
+        partnerId: 'p-dse',
+        expiresAt: '2020-01-01T00:00:00.000Z',
+      });
+      assert.equal(await repository.bindOrder(expired.token, {
+        offerSlug: 'domy-s-energi',
+        companyId: 'company-domy-s-energi',
+        partnerId: 'p-dse',
+        orderId: 'OFF-3',
+      }), false);
+      assert.equal(await repository.bindOrder(issued.token, {
+        offerSlug: 'domy-s-energi',
+        companyId: 'company-domy-s-energi',
+        partnerId: 'p-dse',
+        orderId: 'OFF-2',
+      }), false);
+    } finally {
       await rm(directory, { recursive: true, force: true });
     }
   });
@@ -236,7 +305,13 @@ describe('Durable proforma repository', () => {
       join(directory, 'proformas.json'),
       () => new Date('2026-08-12T12:00:00.000Z'),
     );
-    const server = createPlatformApiServer(undefined, undefined, orders, proformas);
+    const tokens = new FileOfferWriteTokenRepository(join(directory, 'tokens.json'));
+    const capability = await tokens.issue({
+      offerSlug: durableOrderInput.offerSlug,
+      companyId: durableOrderInput.companyId,
+      partnerId: durableOrderInput.partnerId,
+    });
+    const server = createPlatformApiServer(undefined, undefined, orders, proformas, tokens);
     await new Promise<void>((resolve) => {
       server.listen(0, '127.0.0.1', resolve);
     });
@@ -246,12 +321,13 @@ describe('Durable proforma repository', () => {
       const baseUrl = `http://127.0.0.1:${address.port}/local-pilot/orders`;
       await fetch(baseUrl, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', authorization: `Bearer ${capability.token}` },
         body: JSON.stringify(durableOrderInput),
       });
 
       const issue = await fetch(`${baseUrl}/${durableOrderInput.orderId}/proforma`, {
         method: 'POST',
+        headers: { authorization: `Bearer ${capability.token}` },
       });
       assert.equal(issue.status, 201);
       const created = await issue.json() as { proformaId: string; amountCzk: number };
@@ -259,6 +335,7 @@ describe('Durable proforma repository', () => {
 
       const retried = await fetch(`${baseUrl}/${durableOrderInput.orderId}/proforma`, {
         method: 'POST',
+        headers: { authorization: `Bearer ${capability.token}` },
       });
       assert.equal(retried.status, 200);
 

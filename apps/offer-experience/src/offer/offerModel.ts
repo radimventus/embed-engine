@@ -19,6 +19,8 @@ export type OfferPackage = {
 
 export type PublicOffer = {
   readonly slug: string;
+  readonly companyId: string;
+  readonly partnerId: string;
   readonly partnerName: string;
   readonly greeting: string;
   readonly intro: string;

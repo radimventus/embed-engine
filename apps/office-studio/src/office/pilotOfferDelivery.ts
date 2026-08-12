@@ -79,6 +79,29 @@ export type PilotOfferDeliveryResult =
     }
   | { readonly ok: false; readonly error: string };
 
+export type OfferWriteCapabilityIssuer = (scope: {
+  readonly offerSlug: string;
+  readonly companyId: string;
+  readonly partnerId: string;
+}) => Promise<{ readonly token: string }>;
+
+async function issueOfferWriteCapability(scope: {
+  readonly offerSlug: string;
+  readonly companyId: string;
+  readonly partnerId: string;
+}): Promise<{ readonly token: string }> {
+  const origin =
+    (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
+      ?.VITE_PLATFORM_API_ORIGIN ?? 'http://127.0.0.1:4310';
+  const response = await fetch(`${origin.replace(/\/$/, '')}/local-pilot/offer-write-capabilities`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(scope),
+  });
+  if (!response.ok) throw new Error('Offer write capability se nepodařilo vystavit.');
+  return response.json() as Promise<{ readonly token: string }>;
+}
+
 function nowIso(): string {
   return new Date().toISOString();
 }
@@ -324,6 +347,7 @@ export async function generatePersonalizedPilotOfferPdf(
 export async function deliverPilotOffer(
   partnerId: string,
   mailSession: PilotMailTransportSession,
+  capabilityIssuer: OfferWriteCapabilityIssuer = issueOfferWriteCapability,
 ): Promise<PilotOfferDeliveryResult> {
   const readiness = verifyPilotDeliveryReadiness(partnerId);
   if (!readiness.ready) {
@@ -367,11 +391,28 @@ export async function deliverPilotOffer(
 
   const env = buildOfficePartnerEnvironment(partnerId);
   const caseId = env.environment?.projectId ?? partnerId;
+  let offerHref: string;
+  try {
+    const capability = await capabilityIssuer({
+      offerSlug: offerSlugFromCompanyId(env.companyId ?? `company-${partnerId}`),
+      companyId: env.companyId ?? `company-${partnerId}`,
+      partnerId,
+    });
+    offerHref = resolvePilotOfferHref(
+      offerSlugFromCompanyId(env.companyId ?? `company-${partnerId}`),
+      capability.token,
+    );
+  } catch (error) {
+    return {
+      ok: false,
+      error: error instanceof Error ? error.message : 'Offer write capability se nepodařilo vystavit.',
+    };
+  }
   const body = buildPilotInvitationEmailBody({
     loginEmail: preview.loginEmail,
     password: preview.loginPassword,
     studioLoginHref: preview.studioLoginHref,
-    offerHref: preview.offerHref,
+    offerHref,
   });
 
   let message;

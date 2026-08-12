@@ -21,6 +21,10 @@ import {
   FileProformaRepository,
   type ProformaRepository,
 } from './proformaRepository';
+import {
+  FileOfferWriteTokenRepository,
+  type OfferWriteTokenRepository,
+} from './offerWriteTokenRepository';
 
 export {
   FileSocialProofAnalyticsRepository,
@@ -46,6 +50,12 @@ export {
   type ProformaRepository,
   variableSymbolFromOrderId,
 } from './proformaRepository';
+export {
+  FileOfferWriteTokenRepository,
+  type OfferWriteCapability,
+  type OfferWriteCapabilityScope,
+  type OfferWriteTokenRepository,
+} from './offerWriteTokenRepository';
 
 export type PlatformInviteStatus =
   | 'pending'
@@ -302,11 +312,18 @@ function respond(
   response.end(JSON.stringify(body));
 }
 
+function bearerToken(request: IncomingMessage): string | null {
+  const value = request.headers.authorization;
+  const match = value?.match(/^Bearer ([A-Za-z0-9_-]{20,})$/);
+  return match?.[1] ?? null;
+}
+
 export function createPlatformApiServer(
   repository: PlatformInviteRepository = new FilePlatformInviteRepository(),
   socialProofRepository: SocialProofAnalyticsRepository = new FileSocialProofAnalyticsRepository(),
   orderRepository: OrderRepository = new FileOrderRepository(),
   proformaRepository: ProformaRepository = new FileProformaRepository(),
+  offerWriteTokens: OfferWriteTokenRepository = new FileOfferWriteTokenRepository(),
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
@@ -380,11 +397,28 @@ export function createPlatformApiServer(
         );
       }
       if (request.method === 'POST' && path === '/local-pilot/orders') {
+        const token = bearerToken(request);
+        if (token === null) return respond(response, 401, { error: 'Offer write capability is required.' });
+        const orderInput = await requestBody(request) as import('./orderRepository').DurableOrderInput;
+        const authorized = await offerWriteTokens.bindOrder(token, {
+          offerSlug: orderInput.offerSlug,
+          companyId: orderInput.companyId,
+          partnerId: orderInput.partnerId,
+          orderId: orderInput.orderId,
+        });
+        if (!authorized) return respond(response, 403, { error: 'Offer write capability is not valid for this order.' });
         return respond(
           response,
           201,
-          await orderRepository.create(
-            await requestBody(request) as import('./orderRepository').DurableOrderInput,
+          await orderRepository.create(orderInput),
+        );
+      }
+      if (request.method === 'POST' && path === '/local-pilot/offer-write-capabilities') {
+        return respond(
+          response,
+          201,
+          await offerWriteTokens.issue(
+            await requestBody(request) as import('./offerWriteTokenRepository').OfferWriteCapabilityScope,
           ),
         );
       }
@@ -426,6 +460,10 @@ export function createPlatformApiServer(
       if (orderProformaMatch !== null) {
         const orderId = decodeURIComponent(orderProformaMatch[1]!);
         if (request.method === 'POST') {
+          const token = bearerToken(request);
+          if (token === null || !await offerWriteTokens.verifyOrder(token, orderId)) {
+            return respond(response, 401, { error: 'Offer write capability is required.' });
+          }
           const order = await orderRepository.getByOrderId(orderId);
           if (order === null) {
             return respond(response, 404, { error: 'Objednávka neexistuje.' });

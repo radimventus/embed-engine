@@ -111,7 +111,9 @@ describe('PT-CJ-00 Pilot Delivery', () => {
     resetAll();
     preparePilotForPartner('p-dse');
     const session = createPilotMailSession();
-    const result = await deliverPilotOffer('p-dse', session);
+    const result = await deliverPilotOffer('p-dse', session, async () => ({
+      token: 'offer-write-test-token-1234567890',
+    }));
     assert.equal(result.ok, true);
     if (!result.ok) return;
 
