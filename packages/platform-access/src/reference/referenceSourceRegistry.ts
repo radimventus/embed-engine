@@ -15,7 +15,13 @@ export type ReferenceHouseSource = {
    * identity while materializing this package under their package root.
    */
   readonly packageRoot: string | null;
-  readonly runtimeContextBinding: null;
+  /**
+   * Canonical, source-owned knowledge identity. Materialized partner Houses keep
+   * their own identity and resolve this only through explicit provenance.
+   */
+  readonly runtimeContextBinding: {
+    readonly canonicalHouseId: string;
+  } | null;
 };
 
 export const BUNGALOV_4KK_REFERENCE_SOURCE: ReferenceHouseSource = {
@@ -24,7 +30,9 @@ export const BUNGALOV_4KK_REFERENCE_SOURCE: ReferenceHouseSource = {
   version: 'v1',
   lifecycle: 'READY',
   packageRoot: 'apps/client-studio/public/house-packages/bungalov-4kk',
-  runtimeContextBinding: null,
+  runtimeContextBinding: {
+    canonicalHouseId: 'modern-4kk',
+  },
 };
 
 const REFERENCE_HOUSE_SOURCES: readonly ReferenceHouseSource[] = [
@@ -46,6 +54,31 @@ export function getReferenceHouseSource(
     REFERENCE_HOUSE_SOURCES.find((source) => source.sourceId === sourceId) ??
     null
   );
+}
+
+/**
+ * Maps a Runtime House identity to canonical knowledge only when the House has
+ * explicit source provenance. Never guesses from display name, slug, or media.
+ */
+export function resolveCanonicalKnowledgeHouseId(input: {
+  readonly runtimeHouseId: string;
+  readonly referenceProvenance?: ReferenceHouseProvenance;
+}): string | null {
+  const runtimeHouseId = input.runtimeHouseId.trim();
+  if (runtimeHouseId.length === 0) return null;
+
+  const sourceId = input.referenceProvenance?.sourceId;
+  if (sourceId === undefined) {
+    return runtimeHouseId;
+  }
+  const source = getReferenceHouseSource(sourceId);
+  if (
+    source === null ||
+    source.version !== input.referenceProvenance?.sourceVersion
+  ) {
+    return null;
+  }
+  return source.runtimeContextBinding?.canonicalHouseId ?? null;
 }
 
 /**

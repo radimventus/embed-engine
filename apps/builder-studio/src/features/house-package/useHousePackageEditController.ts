@@ -267,8 +267,11 @@ export function useHousePackageEditController(
   }, [remount, snapshot]);
 
   const openPreview = useCallback(() => {
-    openHousePackageRuntimePreviewWindow();
-  }, []);
+    if (houseId === null) {
+      throw new Error('Preview requires an active House identity.');
+    }
+    openHousePackageRuntimePreviewWindow(houseId);
+  }, [houseId]);
 
   return {
     mountStatus,

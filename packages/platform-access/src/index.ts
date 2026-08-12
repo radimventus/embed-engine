@@ -23,6 +23,7 @@ export {
   getReferenceHouseSource,
   listReferenceHouseSources,
   referenceInstanceProvenance,
+  resolveCanonicalKnowledgeHouseId,
   type ReferenceHouseSource,
   type ReferenceSourceLifecycle,
 } from './reference/referenceSourceRegistry';

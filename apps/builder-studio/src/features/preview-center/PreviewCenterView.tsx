@@ -145,6 +145,7 @@ export function PreviewCenterView({
           <>
             <CompareColumn
               title="A"
+              objectId={projectId}
               active={activeCompareSide === 'primary'}
               onActivate={() => setActiveCompareSide('primary')}
               personaId={personaId}
@@ -165,6 +166,7 @@ export function PreviewCenterView({
             />
             <CompareColumn
               title="B"
+              objectId={projectId}
               active={activeCompareSide === 'compare'}
               onActivate={() => setActiveCompareSide('compare')}
               personaId={comparePersonaId}
@@ -187,6 +189,7 @@ export function PreviewCenterView({
         ) : (
           <section className="rounded-[16px] border border-[#E3E3E3] bg-white p-4 shadow-sm">
             <PreviewLiveRuntime
+              objectId={projectId}
               remountKey={model.remountKey}
               persona={livePersona}
               device={liveDevice}
@@ -227,6 +230,7 @@ export function PreviewCenterView({
 
 function CompareColumn({
   title,
+  objectId,
   active,
   onActivate,
   personaId,
@@ -239,6 +243,7 @@ function CompareColumn({
   remountKey,
 }: {
   readonly title: string;
+  readonly objectId: string;
   readonly active: boolean;
   readonly onActivate: () => void;
   readonly personaId: PreviewPersonaId;
@@ -274,6 +279,7 @@ function CompareColumn({
       <DevicePanel title="Device" selected={deviceId} onSelect={onDevice} />
       {showRuntime ? (
         <PreviewLiveRuntime
+          objectId={objectId}
           remountKey={remountKey}
           persona={persona}
           device={device}

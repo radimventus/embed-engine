@@ -48,6 +48,7 @@ import {
   deriveReferenceInstanceHouseId,
   getReferenceHouseSource,
   referenceInstanceProvenance,
+  resolveCanonicalKnowledgeHouseId,
 } from './index';
 import {
   clearPlatformSession,
@@ -64,9 +65,11 @@ describe('platformAccess (EPIC-BX-14)', () => {
       sourceId: 'bungalov-4kk-reference-v1',
       displayName: 'BUNGALOV 4KK',
       version: 'v1',
-      lifecycle: 'CONTENT_PENDING',
-      packageRoot: null,
-      runtimeContextBinding: null,
+      lifecycle: 'READY',
+      packageRoot: 'apps/client-studio/public/house-packages/bungalov-4kk',
+      runtimeContextBinding: {
+        canonicalHouseId: 'modern-4kk',
+      },
     });
     const partnerA = deriveReferenceInstanceHouseId({
       sourceId: BUNGALOV_4KK_REFERENCE_SOURCE_ID,
@@ -88,6 +91,21 @@ describe('platformAccess (EPIC-BX-14)', () => {
         sourceId: BUNGALOV_4KK_REFERENCE_SOURCE_ID,
         sourceVersion: 'v1',
       },
+    );
+    assert.equal(
+      resolveCanonicalKnowledgeHouseId({
+        runtimeHouseId: partnerA,
+        referenceProvenance: referenceInstanceProvenance(
+          BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+        ),
+      }),
+      'modern-4kk',
+    );
+    assert.equal(
+      resolveCanonicalKnowledgeHouseId({
+        runtimeHouseId: 'villa-168',
+      }),
+      'villa-168',
     );
   });
 
@@ -327,6 +345,14 @@ describe('platformAccess (EPIC-BX-14)', () => {
         'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
         'modern-4kk',
       ],
+    );
+    const bungalov = listCanonicalHouses('project-domy-s-energii')[0]?.house;
+    assert.equal(
+      resolveCanonicalKnowledgeHouseId({
+        runtimeHouseId: bungalov?.houseId ?? '',
+        referenceProvenance: bungalov?.referenceProvenance,
+      }),
+      'modern-4kk',
     );
     assert.deepEqual(dseHouses[2], {
       houseId: 'patrovy-5kk',

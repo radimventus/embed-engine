@@ -1,13 +1,17 @@
 import { openHousePackageRuntimePreviewWindow } from '../house-package/mountHousePackageRuntimePreview';
 
 type ExperienceLivePreviewProps = {
+  readonly objectId: string;
   readonly remountKey: string;
 };
 
 /**
  * PR-024 — Náhled opens Shared Runtime in a new browser window.
  */
-export function ExperienceLivePreview({ remountKey }: ExperienceLivePreviewProps) {
+export function ExperienceLivePreview({
+  objectId,
+  remountKey,
+}: ExperienceLivePreviewProps) {
   void remountKey;
 
   return (
@@ -25,7 +29,7 @@ export function ExperienceLivePreview({ remountKey }: ExperienceLivePreviewProps
         <button
           type="button"
           onClick={() => {
-            openHousePackageRuntimePreviewWindow();
+            openHousePackageRuntimePreviewWindow(objectId);
           }}
           className="mt-3 w-full rounded-[10px] border border-builder-blue bg-builder-blue px-3 py-2.5 text-sm font-semibold text-white hover:bg-builder-blueHover"
           style={{ backgroundColor: '#18428F', borderColor: '#18428F' }}

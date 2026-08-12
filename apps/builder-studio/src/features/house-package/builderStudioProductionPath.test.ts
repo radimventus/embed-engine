@@ -52,6 +52,7 @@ describe('BuilderStudioApp production imports (CAP-BLD-07)', () => {
   it('opens Náhled as a dedicated window entry (PR-024)', () => {
     const mainSource = readFileSync(join(appRoot, 'main.tsx'), 'utf8');
     assert.match(mainSource, /isBuilderNahledWindow/);
+    assert.match(mainSource, /getBuilderPreviewObjectId/);
     assert.match(mainSource, /HousePackageRuntimePreview/);
 
     const openSource = readFileSync(
@@ -60,5 +61,31 @@ describe('BuilderStudioApp production imports (CAP-BLD-07)', () => {
     );
     assert.match(openSource, /openHousePackageRuntimePreviewWindow/);
     assert.match(openSource, /BUILDER_NAHLED_QUERY/);
+  });
+
+  it('binds each active Builder House to its own preview object identity', () => {
+    const mountSource = readFileSync(
+      join(appRoot, 'features/house-package/mountHousePackageRuntimePreview.ts'),
+      'utf8',
+    );
+    const controllerSource = readFileSync(
+      join(appRoot, 'features/house-package/useHousePackageEditController.ts'),
+      'utf8',
+    );
+
+    for (const objectId of ['house-a', 'house-b']) {
+      assert.equal(
+        new URLSearchParams(
+          `?nahled=1&objectId=${encodeURIComponent(objectId)}`,
+        ).get('objectId'),
+        objectId,
+      );
+    }
+    assert.match(
+      controllerSource,
+      /openHousePackageRuntimePreviewWindow\(houseId\)/,
+    );
+    assert.match(mountSource, /const objectId = options\.objectId\.trim\(\)/);
+    assert.doesNotMatch(mountSource, /house-modern-01/);
   });
 });

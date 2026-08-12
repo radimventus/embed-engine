@@ -258,7 +258,10 @@ export function MediaStudioView({
           onMetaSaved={refreshMeta}
         />
         <div className="overflow-hidden rounded-[16px] border border-[#E3E3E3] bg-white shadow-sm">
-          <ExperienceLivePreview remountKey={model.remountKey} />
+          <ExperienceLivePreview
+            objectId={projectId}
+            remountKey={model.remountKey}
+          />
         </div>
       </div>
     </div>

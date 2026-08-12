@@ -20,12 +20,13 @@ export type HousePackageRuntimePreviewHandle = {
 
 export type MountHousePackageRuntimePreviewOptions = {
   readonly target: HTMLElement;
-  readonly objectId?: string;
+  readonly objectId: string;
   /** Omit to use Builder host origin (serves /house-package). */
   readonly assetBase?: string;
 };
 
 export const BUILDER_NAHLED_QUERY = 'nahled';
+export const BUILDER_PREVIEW_OBJECT_ID_QUERY = 'objectId';
 export const BUILDER_NAHLED_WINDOW_NAME = 'conis-builder-nahled';
 
 /** PR-024 — Náhled always opens in a dedicated browser window. */
@@ -35,13 +36,27 @@ export function isBuilderNahledWindow(
   return new URLSearchParams(search).get(BUILDER_NAHLED_QUERY) === '1';
 }
 
+export function getBuilderPreviewObjectId(search: string): string | null {
+  const objectId = new URLSearchParams(search)
+    .get(BUILDER_PREVIEW_OBJECT_ID_QUERY)
+    ?.trim();
+  return objectId || null;
+}
+
 /** PR-024 — open Shared Runtime preview in a new window (not canvas/panel). */
-export function openHousePackageRuntimePreviewWindow(): Window | null {
+export function openHousePackageRuntimePreviewWindow(
+  objectId: string,
+): Window | null {
   if (typeof window === 'undefined') {
     return null;
   }
+  const normalizedObjectId = objectId.trim();
+  if (normalizedObjectId.length === 0) {
+    throw new Error('Preview requires an active House identity.');
+  }
   const url = new URL(window.location.href);
   url.searchParams.set(BUILDER_NAHLED_QUERY, '1');
+  url.searchParams.set(BUILDER_PREVIEW_OBJECT_ID_QUERY, normalizedObjectId);
   return window.open(url.toString(), BUILDER_NAHLED_WINDOW_NAME);
 }
 
@@ -56,7 +71,10 @@ export function mountHousePackageRuntimePreview(
     cssRegistered = true;
   }
 
-  const objectId = options.objectId?.trim() || 'house-modern-01';
+  const objectId = options.objectId.trim();
+  if (objectId.length === 0) {
+    throw new Error('Preview requires an active House identity.');
+  }
 
   Embed.mount({
     target: options.target,

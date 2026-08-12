@@ -126,6 +126,10 @@ export const DEFAULT_PROJECTS: readonly PlatformProject[] = [
     description:
       'DSE materialization of reference source bungalov-4kk-reference-v1.',
     dataMode: 'REFERENCE_DEMO',
+    referenceProvenance: {
+      sourceId: BUNGALOV_4KK_REFERENCE_SOURCE_ID,
+      sourceVersion: 'v1',
+    },
     canonicalProjectId: DSE_CANONICAL_PROJECT_ID,
   },
   {

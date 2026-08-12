@@ -6,6 +6,7 @@ import type { PreviewPersona } from './previewPersonas';
 import { writePreviewPersonaScenario } from './previewScenario';
 
 type PreviewLiveRuntimeProps = {
+  readonly objectId: string;
   readonly remountKey: string;
   readonly persona: PreviewPersona;
   readonly device: PreviewDevice;
@@ -16,6 +17,7 @@ type PreviewLiveRuntimeProps = {
  * EPIC-BX-06 — Live Shared Runtime (Embed.mount) inside a device viewport frame.
  */
 export function PreviewLiveRuntime({
+  objectId,
   remountKey,
   persona,
   device,
@@ -36,7 +38,7 @@ export function PreviewLiveRuntime({
       null;
     try {
       target.replaceChildren();
-      handle = mountHousePackageRuntimePreview({ target });
+      handle = mountHousePackageRuntimePreview({ target, objectId });
     } catch (error: unknown) {
       console.error('Preview Center Runtime mount failed', error);
       target.textContent =
@@ -52,7 +54,7 @@ export function PreviewLiveRuntime({
       disposed = true;
       handle?.dispose();
     };
-  }, [remountKey, persona.id]);
+  }, [objectId, remountKey, persona.id]);
 
   const frameHeight = compact ? Math.min(device.height, 640) : device.height;
 

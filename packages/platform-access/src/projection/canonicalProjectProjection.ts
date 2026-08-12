@@ -43,9 +43,10 @@ function houseFromSharedLegacy(
   shared: SharedProject,
   packagePublicRoot: string,
 ): CanonicalHouseProjection {
-  const dataMode =
-    getDefaultCompanyRegistry().projects.find((row) => row.id === shared.id)
-      ?.dataMode ?? DEFAULT_HOUSE_DATA_MODE;
+  const registryHouse = getDefaultCompanyRegistry().projects.find(
+    (row) => row.id === shared.id,
+  );
+  const dataMode = registryHouse?.dataMode ?? DEFAULT_HOUSE_DATA_MODE;
   return {
     houseId: shared.id,
     name: shared.name,
@@ -54,6 +55,7 @@ function houseFromSharedLegacy(
     packageRoot: shared.packageRoot,
     packagePublicRoot,
     dataMode,
+    referenceProvenance: registryHouse?.referenceProvenance,
   };
 }
 

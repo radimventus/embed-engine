@@ -6,6 +6,7 @@ import { mountHousePackageRuntimePreview } from './mountHousePackageRuntimePrevi
 
 type HousePackageRuntimePreviewProps = {
   readonly open: boolean;
+  readonly objectId: string;
   readonly releaseSummary: HousePackageReleaseSummary | null;
   readonly verification: ReleaseVerification | null;
   readonly onClose: () => void;
@@ -16,6 +17,7 @@ type HousePackageRuntimePreviewProps = {
  */
 export function HousePackageRuntimePreview({
   open,
+  objectId,
   releaseSummary,
   verification,
   onClose,
@@ -36,7 +38,7 @@ export function HousePackageRuntimePreview({
       null;
     try {
       target.replaceChildren();
-      handle = mountHousePackageRuntimePreview({ target });
+      handle = mountHousePackageRuntimePreview({ target, objectId });
     } catch (error: unknown) {
       console.error('Náhled mount failed', error);
       target.textContent =
@@ -50,7 +52,7 @@ export function HousePackageRuntimePreview({
       disposed = true;
       handle?.dispose();
     };
-  }, [open]);
+  }, [objectId, open]);
 
   if (!open) {
     return null;

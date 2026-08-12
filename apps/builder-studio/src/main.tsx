@@ -9,6 +9,7 @@ import { BuilderStudioApp } from './features/builder-studio/BuilderStudioApp';
 import { BUILDER_STUDIO_RELEASE } from './features/builder-studio/release';
 import { HousePackageRuntimePreview } from './features/house-package/HousePackageRuntimePreview';
 import {
+  getBuilderPreviewObjectId,
   isBuilderNahledWindow,
 } from './features/house-package/mountHousePackageRuntimePreview';
 import '@embed-engine/platform-shell/styles.css';
@@ -26,6 +27,11 @@ document.documentElement.dataset.builderStudioGeneration =
   BUILDER_STUDIO_RELEASE.generation;
 
 const nahledWindow = isBuilderNahledWindow();
+const previewObjectId = getBuilderPreviewObjectId(window.location.search);
+
+if (nahledWindow && previewObjectId === null) {
+  throw new Error('Preview requires an active House identity.');
+}
 
 createRoot(rootElement).render(
   <StrictMode>
@@ -33,6 +39,7 @@ createRoot(rootElement).render(
       {nahledWindow ? (
         <HousePackageRuntimePreview
           open
+          objectId={previewObjectId!}
           releaseSummary={null}
           verification={null}
           onClose={() => {

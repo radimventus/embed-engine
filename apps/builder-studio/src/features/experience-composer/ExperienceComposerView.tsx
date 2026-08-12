@@ -89,7 +89,7 @@ export function ExperienceComposerView({
           />
         </div>
         <div className="hidden min-h-0 desktop:block">
-          <ExperienceLivePreview remountKey={remountKey} />
+          <ExperienceLivePreview objectId={projectId} remountKey={remountKey} />
         </div>
       </div>
 

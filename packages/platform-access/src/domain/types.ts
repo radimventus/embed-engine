@@ -99,6 +99,8 @@ export type PlatformProject = {
    * Missing legacy rows project as LIVE_EMPTY.
    */
   readonly dataMode?: HouseDataMode;
+  /** Source provenance for a materialized reference House (legacy registry row). */
+  readonly referenceProvenance?: ReferenceHouseProvenance;
   /**
    * CAP-PLAT-04c — parent Canonical Project id.
    * Required for seeds; extras may omit (compat adapter assigns default).
