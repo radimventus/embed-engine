@@ -41,11 +41,13 @@ describe('PT-CJ-03 Dokončit objednávku', () => {
     assert.match(screen, /Upravit údaje/);
     assert.match(screen, /Navazující tarif/);
     assert.match(screen, /Potvrzuji, že jsem se seznámil se smluvními dokumenty/);
-    assert.match(screen, /Elektronická objednávka/);
+    assert.match(screen, /Všeobecné obchodní podmínky/);
     assert.match(screen, /Rámcová smlouva/);
     assert.match(screen, /Implementační standard/);
-    assert.match(screen, /\bDPA\b/);
-    assert.match(screen, /\bVOP\b/);
+    assert.match(screen, /\bGDPR\b/);
+    assert.match(screen, /resolvePublicLegalHref/);
+    assert.match(screen, /01–obchodni-podminky\.pdf/);
+    assert.doesNotMatch(screen, /\/deal\//);
     assert.match(screen, /Potvrdit objednávku/);
     assert.match(screen, /navigateWorkflowStep\('payment'\)/);
     assert.match(screen, /cj-order-docs-accepted/);

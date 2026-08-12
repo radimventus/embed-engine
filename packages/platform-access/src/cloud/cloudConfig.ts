@@ -36,6 +36,9 @@ const LOCAL_CLIENT_STUDIO_PORT = LOCAL_STUDIO_PORTS.client;
 /** PT-CJ-01 — Offer Experience (pilot program selection) local Vite port. */
 const LOCAL_OFFER_EXPERIENCE_PORT = 4192;
 
+/** TASK-44C1 — Public CONIS website development host. */
+const LOCAL_PUBLIC_WEB_PORT = 4190;
+
 /** ARCH-01 — CONIS Workspace Host (operator entry; not partner Embed Host). */
 const LOCAL_WORKSPACE_HOST_PORT = 4183;
 
@@ -176,6 +179,18 @@ export function resolvePilotOfferHref(offerSlug?: string): string {
     return `${config.origin}${CLOUD_OFFER_EXPERIENCE_PATH}`;
   }
   return `${config.origin}${CLOUD_OFFER_EXPERIENCE_PATH}${encodeURIComponent(slug)}/`;
+}
+
+/** Canonical public legal document URL, resolved against the public web host. */
+export function resolvePublicLegalHref(fileName: string): string {
+  const file = fileName.replace(/^\/+/, '');
+  const config = getCloudPlatformConfig();
+  if (config.mode === 'local') {
+    const host =
+      typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
+    return `http://${host}:${LOCAL_PUBLIC_WEB_PORT}/legal/${file}`;
+  }
+  return `${config.origin}/legal/${file}`;
 }
 
 /**

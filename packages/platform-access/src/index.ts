@@ -243,6 +243,7 @@ export {
   resolveClientStudioHref,
   resolveBuilderStudioHref,
   resolvePilotOfferHref,
+  resolvePublicLegalHref,
   resolvePilotEntryHref,
   resolveWorkspaceHostHref,
   resolvePartnerInviteHref,

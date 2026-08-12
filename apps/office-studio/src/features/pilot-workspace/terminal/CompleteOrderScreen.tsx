@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 
+import { resolvePublicLegalHref } from '@embed-engine/platform-access';
+
 import { usePilotWorkspaceContext } from '../../../office/PilotWorkspaceContext';
 import {
   COMMERCIAL_PILOT_PROGRAM_PACKAGES,
@@ -17,25 +19,24 @@ import {
 } from '../../../office/commercialOrderPartnerDetails';
 import type { PilotWorkspaceCase } from '../../../office/pilotWorkspaceModel';
 
-/** Official deal pack — order matches commercial PDF / deal SSOT. */
+/** Canonical public contract documents; transactional documents stay individual. */
 const CONTRACT_DOCS = Object.freeze([
   {
-    id: 'electronic-order',
-    label: 'Elektronická objednávka',
-    href: '/deal/electronic-order.html',
+    id: 'terms',
+    label: 'Všeobecné obchodní podmínky',
+    fileName: '01–obchodni-podminky.pdf',
   },
   {
     id: 'framework',
     label: 'Rámcová smlouva',
-    href: '/deal/framework-agreement.html',
+    fileName: '02_ramcova-smlouva.pdf',
   },
   {
     id: 'implementation',
     label: 'Implementační standard',
-    href: '/deal/implementation-standard.html',
+    fileName: '03_implementacni-standard.pdf',
   },
-  { id: 'dpa', label: 'DPA', href: '/deal/dpa.html' },
-  { id: 'vop', label: 'VOP', href: '/deal/vop.html' },
+  { id: 'dpa', label: 'GDPR', fileName: '04_dpa.pdf' },
 ] as const);
 
 type CompleteOrderScreenProps = {
@@ -233,7 +234,7 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
           {CONTRACT_DOCS.map((doc) => (
             <li key={doc.id}>
               <a
-                href={doc.href}
+                href={resolvePublicLegalHref(doc.fileName)}
                 target="_blank"
                 rel="noreferrer"
                 data-testid={`cj-order-doc-${doc.id}`}

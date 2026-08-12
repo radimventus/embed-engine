@@ -122,8 +122,15 @@ export function CheckoutForm({
             data-testid="offer-terms-checkbox"
           />
           <span>
-            Potvrzuji obchodní podmínky CONIS a souhlasím s vystavením
-            objednávky vybraného balíčku.
+            Potvrzuji{' '}
+            <a
+              href="/legal/01_obchodni-podminky.html"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              obchodní podmínky CONIS
+            </a>{' '}
+            a souhlasím s vystavením objednávky vybraného balíčku.
           </span>
         </label>
 

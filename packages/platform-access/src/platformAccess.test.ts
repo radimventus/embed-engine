@@ -34,6 +34,7 @@ import {
   resolveCloudStudioHref,
   resolveClientStudioHref,
   resolveBuilderStudioHref,
+  resolvePublicLegalHref,
   resolveWorkspaceHostHref,
   resolveWorkspaceHouseBinding,
   restoreSession,
@@ -522,6 +523,10 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
       'http://127.0.0.1:4177/?projectId=villa-168',
     );
     assert.equal(resolveWorkspaceHostHref(), 'http://127.0.0.1:4183/');
+    assert.equal(
+      resolvePublicLegalHref('04_dpa.pdf'),
+      'http://127.0.0.1:4190/legal/04_dpa.pdf',
+    );
   });
 
   it('routes operator Client selection through Workspace, separate from public Embed', () => {
@@ -537,6 +542,10 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
         'https://conis.cz/studio/workspace/',
       );
       assert.equal(resolveClientStudioHref(), 'https://conis.cz/embed/');
+      assert.equal(
+        resolvePublicLegalHref('04_dpa.pdf'),
+        'https://conis.cz/legal/04_dpa.pdf',
+      );
       assert.notEqual(resolveCloudStudioHref('client'), resolveClientStudioHref());
       assert.doesNotMatch(resolveCloudStudioHref('client'), /\/studio\/client\//);
     } finally {

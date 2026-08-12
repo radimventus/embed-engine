@@ -1,10 +1,11 @@
 {
   "documents": {
     "terms": {
-      "version": null,
-      "effectiveDate": null,
-      "html": "obchodni-podminky.html",
-      "pdf": "obchodni-podminky.pdf"
+      "version": "1.0",
+      "effectiveDate": "2026-08-12",
+      "docx": "01_obchodni-podminky.docx",
+      "html": "01_obchodni-podminky.html",
+      "pdf": "01–obchodni-podminky.pdf"
     }
   }
 }
