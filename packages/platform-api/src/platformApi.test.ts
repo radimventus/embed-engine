@@ -11,6 +11,8 @@ import {
   FilePlatformInviteRepository,
   FileProformaRepository,
   FileSocialProofAnalyticsRepository,
+  platformApiAllowedOrigins,
+  platformApiStatePath,
 } from './index.ts';
 
 async function repositoryForTest(): Promise<{
@@ -132,6 +134,23 @@ describe('Platform API invitation repository', () => {
       assert.match(stored, /"verifier":"[A-Za-z0-9_-]{43}"/);
     } finally {
       await fixture.cleanup();
+    }
+  });
+});
+
+describe('Platform API production configuration', () => {
+  it('uses the configured persistent state directory and allows conis.cz', () => {
+    const previous = process.env.PLATFORM_API_STATE_DIR;
+    process.env.PLATFORM_API_STATE_DIR = '/var/lib/conis/platform-api';
+    try {
+      assert.equal(
+        platformApiStatePath('orders.json'),
+        '/var/lib/conis/platform-api/orders.json',
+      );
+      assert.equal(platformApiAllowedOrigins().has('https://conis.cz'), true);
+    } finally {
+      if (previous === undefined) delete process.env.PLATFORM_API_STATE_DIR;
+      else process.env.PLATFORM_API_STATE_DIR = previous;
     }
   });
 });

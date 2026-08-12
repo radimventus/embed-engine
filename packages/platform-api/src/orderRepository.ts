@@ -1,6 +1,7 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname } from 'node:path';
+
+import { platformApiStatePath } from './platformApiConfig';
 
 export type DurableOrderInput = {
   readonly orderId: string;
@@ -45,7 +46,7 @@ type OrderState = {
 };
 
 function defaultStatePath(): string {
-  return join(tmpdir(), 'embed-engine-platform-api', 'orders.json');
+  return platformApiStatePath('orders.json');
 }
 
 function isIsoTimestamp(value: string): boolean {

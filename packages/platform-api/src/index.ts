@@ -1,8 +1,7 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { createServer, type IncomingMessage, type Server } from 'node:http';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname } from 'node:path';
 import {
   buildDocumentContextFromPayload,
   createDocumentRuntime,
@@ -25,6 +24,7 @@ import {
   FileOfferWriteTokenRepository,
   type OfferWriteTokenRepository,
 } from './offerWriteTokenRepository';
+import { platformApiAllowedOrigins, platformApiStatePath } from './platformApiConfig';
 
 export {
   FileSocialProofAnalyticsRepository,
@@ -56,6 +56,12 @@ export {
   type OfferWriteCapabilityScope,
   type OfferWriteTokenRepository,
 } from './offerWriteTokenRepository';
+export {
+  platformApiAllowedOrigins,
+  platformApiHost,
+  platformApiPort,
+  platformApiStatePath,
+} from './platformApiConfig';
 
 export type PlatformInviteStatus =
   | 'pending'
@@ -139,7 +145,7 @@ function issueToken(): string {
 }
 
 function defaultStatePath(): string {
-  return join(tmpdir(), 'embed-engine-platform-api', 'invites.json');
+  return platformApiStatePath('invites.json');
 }
 
 export class FilePlatformInviteRepository implements PlatformInviteRepository {
@@ -327,12 +333,7 @@ export function createPlatformApiServer(
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
-    const allowedOrigins = new Set([
-      'http://127.0.0.1:4175',
-      'http://127.0.0.1:4181',
-      'http://127.0.0.1:4173',
-      'http://127.0.0.1:4192',
-    ]);
+    const allowedOrigins = platformApiAllowedOrigins();
     if (origin !== undefined && allowedOrigins.has(origin)) {
       response.setHeader('access-control-allow-origin', origin);
       response.setHeader('vary', 'origin');

@@ -1,7 +1,8 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname } from 'node:path';
+
+import { platformApiStatePath } from './platformApiConfig';
 
 export type SocialProofEventKind =
   | 'experience.opened'
@@ -87,7 +88,7 @@ type AnalyticsState = {
 const MAX_EVENTS = 100_000;
 
 function defaultStatePath(): string {
-  return join(tmpdir(), 'embed-engine-platform-api', 'social-proof-events.json');
+  return platformApiStatePath('social-proof-events.json');
 }
 
 function isOpaqueId(value: string): boolean {

@@ -1,8 +1,8 @@
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname } from 'node:path';
 
 import type { DurableOrder } from './orderRepository';
+import { platformApiStatePath } from './platformApiConfig';
 
 export const COMMERCIAL_PAYMENT_ACCOUNT = Object.freeze({
   accountNumber: '2303345128/2010',
@@ -38,7 +38,7 @@ type ProformaState = {
 };
 
 function defaultStatePath(): string {
-  return join(tmpdir(), 'embed-engine-platform-api', 'proformas.json');
+  return platformApiStatePath('proformas.json');
 }
 
 export function variableSymbolFromOrderId(orderId: string): string {

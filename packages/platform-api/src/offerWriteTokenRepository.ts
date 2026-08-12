@@ -1,7 +1,8 @@
 import { createHash, randomBytes } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { tmpdir } from 'node:os';
-import { dirname, join } from 'node:path';
+import { dirname } from 'node:path';
+
+import { platformApiStatePath } from './platformApiConfig';
 
 export type OfferWriteCapabilityScope = {
   readonly offerSlug: string;
@@ -36,7 +37,7 @@ type CapabilityState = { readonly capabilities: readonly StoredCapability[] };
 const CAPABILITY_VALIDITY_MS = 7 * 24 * 60 * 60 * 1000;
 
 function defaultStatePath(): string {
-  return join(tmpdir(), 'embed-engine-platform-api', 'offer-write-capabilities.json');
+  return platformApiStatePath('offer-write-capabilities.json');
 }
 
 function verifier(token: string): string {
