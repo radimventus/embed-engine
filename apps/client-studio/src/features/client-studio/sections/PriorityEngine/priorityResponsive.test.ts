@@ -66,6 +66,6 @@ describe('Responsive Priority Experience (RCS-02)', () => {
     assert.match(layout, /mobile:ml-0/);
     assert.match(layout, /PRIORITY_ENGINE_MOBILE_STICKY_CTA_CLASS/);
     assert.match(chapter, /mobile:mt-8/);
-    assert.match(chapter, /mobile:p-5/);
+    assert.match(chapter, /mobile:py-5/);
   });
 });

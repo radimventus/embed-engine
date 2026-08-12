@@ -77,13 +77,15 @@ describe('Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)', (
   it('keeps Social Proof inside the Hero card (reference parity)', () => {
     const hero = read('Hero.tsx');
     const socialProof = read('SocialProof.tsx');
+    const feed = read('useSocialProofFeed.tsx');
     assert.match(hero, /SocialProof/);
     assert.match(hero, /grid-cols-\[minmax\(0,1fr\)_minmax\(0,2fr\)\]/);
     assert.equal(hero.includes('tablet:grid-cols'), false);
-    assert.match(socialProof, /useSocialProofReadModel/);
+    assert.match(socialProof, /useSocialProofFeed/);
+    assert.match(feed, /useSocialProofReadModel/);
     assert.match(socialProof, /FEED_TICKER_PAUSE_MS = 12000/);
     assert.match(socialProof, /if \(entries\.length === 0\) \{\s*return null;/);
-    assert.match(socialProof, /if \(model === null\) return \[\];/);
+    assert.match(feed, /if \(model === null\) return \[\];/);
     assert.doesNotMatch(socialProof, /label:\s*layer/);
     assert.equal(socialProof.includes('zájemce'), false);
     assert.match(socialProof, /setTimeout/);

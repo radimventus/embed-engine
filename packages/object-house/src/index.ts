@@ -112,3 +112,11 @@ export { bootstrapModern4kkReferenceContent } from "./reference/modern4kkContent
 /** CAP-REF-07b — House-keyed canonical runtime read projection. */
 export type { CanonicalHouseRuntimeContext } from "./runtime-context/canonicalHouseRuntimeContext";
 export { getCanonicalHouseRuntimeContext } from "./runtime-context/canonicalHouseRuntimeContext";
+export type {
+  CanonicalHouseKnowledgeEntry,
+  CanonicalHouseKnowledgeSelection,
+} from "./runtime-context/selectCanonicalHouseKnowledge";
+export {
+  canonicalHouseKnowledgeEntries,
+  selectCanonicalHouseKnowledge,
+} from "./runtime-context/selectCanonicalHouseKnowledge";

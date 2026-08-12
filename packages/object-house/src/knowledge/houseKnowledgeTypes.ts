@@ -66,5 +66,12 @@ export type HouseKnowledgeAtom = {
   readonly validFrom?: string;
   readonly temporalStatus: HouseKnowledgeTemporalStatus;
   readonly constraints: readonly string[];
+  /** Source-backed practical significance; never a conclusion about visitor intent. */
+  readonly safeInterpretation?: string;
+  /** Short source-backed payoff scan points; omitted when no safe compression exists. */
+  readonly factPoint?: string;
+  readonly interpretationPoint?: string;
+  /** Conclusions that must not be inferred from this fact or Priority selection. */
+  readonly unsupportedConclusions?: readonly string[];
   readonly relatedTopics: readonly string[];
 };

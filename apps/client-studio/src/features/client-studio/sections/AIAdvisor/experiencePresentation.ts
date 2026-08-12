@@ -1,4 +1,5 @@
 import type { AIContextContract } from '@embed-engine/runtime';
+import type { CanonicalHouseKnowledgeSelection } from '@embed-engine/object-house';
 
 import { formatDecisionKeyCs } from '../../pilot/decisionTerminalLabels';
 import { formatOutcomeStatusCs } from '../../pilot/pilotVocabulary';
@@ -27,6 +28,32 @@ export function faqItemsFromAiContext(
       answer: formatOutcomeStatusCs(item.answer),
     }),
   );
+}
+
+/**
+ * Canonical House FAQ keeps its source constraints visible with the answer.
+ * It is supplied already filtered by actual Runtime priorities.
+ */
+export function faqItemsFromCanonicalHouseKnowledge(
+  knowledge: CanonicalHouseKnowledgeSelection,
+): readonly ExperienceFaqItem[] {
+  const factById = new Map(knowledge.facts.map((fact) => [fact.id, fact]));
+
+  return knowledge.priorityFaq.map((item) => {
+    const linkedGuardrails = item.knowledgeAtomIds.flatMap((factId) => {
+      const fact = factById.get(factId);
+      return fact === undefined
+        ? []
+        : [...fact.constraints, ...(fact.unsupportedConclusions ?? [])];
+    });
+
+    return Object.freeze({
+      id: item.id,
+      question: item.question,
+      answer: [...new Set([item.answer, ...item.constraints, ...linkedGuardrails])]
+        .join(' '),
+    });
+  });
 }
 
 /**

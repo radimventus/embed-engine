@@ -1,24 +1,25 @@
-import { useState } from 'react';
+import { useState } from "react";
 
-import { scrollToSection } from '../../foundation/scrollToSection';
-import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
+import { JOURNEY_CTA_SECONDARY_CLASS } from "../../foundation/journeyCta";
+import { scrollToSection } from "../../foundation/scrollToSection";
+import { PILOT_SECTION_IDS } from "../../pilot/pilotVocabulary";
 import {
   AssessmentWorkflow,
   AUDIT_ASSESSMENT_WORKFLOW_ID,
-} from './AssessmentWorkflow';
-import { AuditContact } from './AuditContact';
-import { AuditTransition } from './AuditTransition';
-import { AUDIT_SECTION_STYLE, type LandOption } from './audit-panel';
-import { ContactCard } from './ContactCard';
-import { SituationSelect } from './SituationSelect';
+} from "./AssessmentWorkflow";
+import { AuditContact } from "./AuditContact";
+import { AuditTransition } from "./AuditTransition";
+import { AUDIT_SECTION_STYLE, type LandOption } from "./audit-panel";
+import { ContactCard } from "./ContactCard";
+import { SituationSelect } from "./SituationSelect";
 
 /**
  * Audit — Experience closer (CAP UX 42).
  * Freeze shell: land panels + workflow + simple form.
  * Not a second Priority. Not a second AI.
  */
-export function AuditLeadCapture() {
-  const [landOption, setLandOption] = useState<LandOption>('owned');
+export function AuditLeadCapture({ onBack }: { readonly onBack: () => void }) {
+  const [landOption, setLandOption] = useState<LandOption>("owned");
   const handleLandOptionChange = (value: LandOption) => {
     setLandOption(value);
     scrollToSection(AUDIT_ASSESSMENT_WORKFLOW_ID);
@@ -38,7 +39,10 @@ export function AuditLeadCapture() {
         <AuditTransition />
 
         <div className="flex flex-col gap-14 mobile:gap-11">
-          <SituationSelect value={landOption} onChange={handleLandOptionChange} />
+          <SituationSelect
+            value={landOption}
+            onChange={handleLandOptionChange}
+          />
           <AssessmentWorkflow landOption={landOption} />
           <AuditContact />
         </div>
@@ -46,12 +50,22 @@ export function AuditLeadCapture() {
         <ContactCard />
       </div>
 
-      <p
-        className="bg-[#F7F6F4] py-section text-center text-xs font-bold text-embed-brand-navy"
-        data-testid="audit-final-footer"
-      >
-        CONIS • Conversion Intelligence System – created by Radim Věntus © 2026
-      </p>
+      <footer className="bg-[#F7F6F4]" data-testid="audit-final-footer">
+        <div className="px-section pt-5">
+          <button
+            type="button"
+            onClick={onBack}
+            className={`${JOURNEY_CTA_SECONDARY_CLASS} justify-start mobile:w-full`}
+            data-testid="audit-back"
+          >
+            ← Zpět
+          </button>
+        </div>
+        <p className="py-section text-center text-xs font-bold text-embed-brand-navy">
+          CONIS • Conversion Intelligence System – created by Radim Věntus ©
+          2026
+        </p>
+      </footer>
     </section>
   );
 }

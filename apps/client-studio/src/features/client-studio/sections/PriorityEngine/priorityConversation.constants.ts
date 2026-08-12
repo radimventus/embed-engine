@@ -102,26 +102,32 @@ export const PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL = 'Pokračovat v rozhov
 export const PRIORITY_BRIDGE_TITLE =
   'Co pro vás může tento dům znamenat';
 
-export const PRIORITY_BRIDGE_SUMMARY =
-  'Díky našemu rozhovoru už vidím první obraz toho, jak se rozhodujete. To je základ, na kterém můžeme stavět dál.';
+export const PRIORITY_PAYOFF_INTRO =
+  'Teď můžeme hlouběji prozkoumat, co je z vašeho pohledu nyní důležité.';
 
-export const PRIORITY_BRIDGE_KNOW_HEADING = 'Co už o vás vím';
-
-export const PRIORITY_BRIDGE_GAIN_HEADING = 'Co získáte';
-
-export const PRIORITY_BRIDGE_REPORT_TITLE =
-  'Souhrn s obrázky, čísly a doporučeními dle vašich priorit';
-
-export const PRIORITY_BRIDGE_REPORT_LINES = Object.freeze([
-  'Na konci naší cesty obdržíte osobní rozhodovací zprávu ve formátu PDF. Jde o celkové shrnutí na základě vašich priorit, výklad způsobu vašeho uvažování a „mapu pro vaše rozhodování“. V příloze také bude doporučení dalších vhodných domů.',
+export const PRIORITY_PAYOFF_UPPER_LINES = Object.freeze([
+  'Máte už jasněji v tom, co od domu očekáváte. Super.',
+  'Teď vám rád pomůžu všimnout si věcí, které pro vás mohou být důležité.',
 ] as const);
 
-export const PRIORITY_BRIDGE_NEXT_HEADING = 'Co bude následovat';
+export const PRIORITY_PAYOFF_FACTS_HEADING = 'Co dostáváte';
 
-export const PRIORITY_BRIDGE_NEXT_LINES = Object.freeze([
-  'Můžete ověřit, zda je váš pozemek vhodný právě pro vybraný dům.',
-  'Pokud pozemek ještě nemáte, pomůžeme vám pochopit, jaký hledat — případně vás propojíme s lidmi, kteří s hledáním pomohou.',
+export const PRIORITY_PAYOFF_MEANING_HEADING =
+  'Co to znamená v běžném životě';
+
+export const PRIORITY_PAYOFF_RECALL_HEADING = 'Všimněte si';
+
+export const PRIORITY_PAYOFF_RECALL_INTRO =
+  'Tento prostor už znáte z prohlídky domu.';
+
+export const PRIORITY_PAYOFF_EXPLORATION_BULLETS = Object.freeze([
+  'Projděte si OTÁZKY A ODPOVĚDI přizpůsobené vašim prioritám.',
+  'Můžeme také DISKUTOVAT PŘES CHAT o čemkoli, co vás k tomuto domu zajímá.',
+  'Na konci vám připravím OSOBNÍ SOUHRN s důležitými FAKTY A OBRÁZKY dle vašich priorit.',
 ] as const);
+
+export const PRIORITY_PAYOFF_PLOT_TRANSITION =
+  'V dalším kroku se pak podíváme, jestli už pozemek máte, nebo ho teprve hledáte.';
 
 export type PriorityDialogOption = {
   readonly id: string;

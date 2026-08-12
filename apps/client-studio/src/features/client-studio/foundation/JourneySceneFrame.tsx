@@ -1,10 +1,10 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from "react";
 
 import {
   JOURNEY_CTA_FOOTER_ROW_CLASS,
   JOURNEY_CTA_PRIMARY_CLASS,
   JOURNEY_CTA_SECONDARY_CLASS,
-} from './journeyCta';
+} from "./journeyCta";
 
 type JourneySceneFrameProps = {
   readonly sceneId: string;
@@ -21,10 +21,10 @@ type JourneySceneFrameProps = {
 };
 
 const SCENE_MIN_HEIGHT =
-  'calc(100dvh - var(--experience-header-height, 72px) - var(--guided-journey-bottom-nav-offset, 0px))';
-const SCENE_CTA_GAP = '20px';
+  "calc(100dvh - var(--experience-header-height, 72px) - var(--guided-journey-bottom-nav-offset, 0px))";
+const SCENE_CTA_GAP = "20px";
 const UNREVEALED_SCENE_SPACE =
-  'calc(20px + var(--guided-journey-bottom-nav-offset, 0px))';
+  "calc(20px + var(--guided-journey-bottom-nav-offset, 0px) + 100dvh - var(--experience-header-height, 72px))";
 
 /**
  * Scene shell for one guided stop in the Decision Journey.
@@ -61,7 +61,8 @@ export function JourneySceneFrame({
     onNavigate?.(targetSceneId);
   };
 
-  const hasFooterLeading = footerLeading !== undefined && footerLeading !== null;
+  const hasFooterLeading =
+    footerLeading !== undefined && footerLeading !== null;
 
   return (
     <div
@@ -77,21 +78,19 @@ export function JourneySceneFrame({
           : nextSceneId
             ? SCENE_CTA_GAP
             : previousSceneId
-              ? '40px'
-              : '0px',
+              ? "40px"
+              : "0px",
         opacity: isEntered ? 1 : 0,
-        transform: 'translateY(0)',
-        transition: animateOnMount
-          ? 'opacity 1000ms ease'
-          : undefined,
-        willChange: animateOnMount ? 'opacity' : undefined,
+        transform: "translateY(0)",
+        transition: animateOnMount ? "opacity 1000ms ease" : undefined,
+        willChange: animateOnMount ? "opacity" : undefined,
       }}
     >
       {children}
       {hasFooterLeading ? (
         <div
           className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 px-section ${
-            pinFooterToBottom ? 'mt-auto' : ''
+            pinFooterToBottom ? "mt-auto" : ""
           }`}
         >
           <div className="min-w-0">{footerLeading}</div>
@@ -108,7 +107,7 @@ export function JourneySceneFrame({
       ) : (
         <div
           className={`${JOURNEY_CTA_FOOTER_ROW_CLASS} ${
-            pinFooterToBottom ? 'mt-auto' : ''
+            pinFooterToBottom ? "mt-auto" : ""
           }`}
         >
           {previousSceneId ? (
@@ -120,7 +119,10 @@ export function JourneySceneFrame({
               ← Zpět
             </button>
           ) : (
-            <span aria-hidden="true" className="hidden min-h-[32px] desktop:block" />
+            <span
+              aria-hidden="true"
+              className="hidden min-h-[32px] desktop:block"
+            />
           )}
           {nextSceneId ? (
             <button

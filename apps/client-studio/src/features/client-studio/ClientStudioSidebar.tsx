@@ -1,41 +1,57 @@
-import { useMemo, useState } from 'react';
-import type { ReactExperienceModel } from '@embed-engine/model';
+import { useEffect, useMemo, useState } from "react";
+import type { ReactExperienceModel } from "@embed-engine/model";
 import {
   createWorkspaceHouseChangeMessage,
   listWorkspaceHouses,
   resolveWorkspaceHostHref,
   usePlatformSession,
   type WorkspaceHouseIdentity,
-} from '@embed-engine/platform-access';
+} from "@embed-engine/platform-access";
 
-import { DecisionFlowNavigator } from './decision-flow/DecisionFlowNavigator';
-import { navigateToJourneySection } from './foundation/journeyNavigation';
-import { PILOT_SECTION_IDS } from './pilot/pilotVocabulary';
+import { DecisionFlowNavigator } from "./decision-flow/DecisionFlowNavigator";
+import { navigateToJourneySection } from "./foundation/journeyNavigation";
+import { useActiveSection } from "./foundation/useActiveSection";
+import { PILOT_SECTION_IDS } from "./pilot/pilotVocabulary";
 import {
   resolveClientActiveProjectId,
   readActiveClientHouseId,
-} from './runtime/clientCanonicalBind';
+} from "./runtime/clientCanonicalBind";
 
 /** Layout-spec fixed sidebar width (48px). */
 const SIDEBAR_WIDTH_PX = 48;
 
-/** PT-CS-07 — Scene Navigator targets (Hero/Tour · Priority/Ratio · Audit/Footer). */
+/** PT-CS-07 — visible Journey progress targets, grouped by canonical scenes. */
 const SCENE_NAV = [
   {
-    sceneId: 'journey-scene-orientation',
+    sceneId: "journey-scene-orientation",
     sectionId: PILOT_SECTION_IDS.hero,
-    label: 'Scéna 1 — Hero a Tour',
+    label: "Scéna 1 — Hero",
   },
   {
-    sceneId: 'journey-scene-interpretation',
+    sceneId: "journey-scene-orientation",
+    sectionId: PILOT_SECTION_IDS.walkthrough,
+    label: "Scéna 2 — Tour",
+  },
+  {
+    sceneId: "journey-scene-priority",
     sectionId: PILOT_SECTION_IDS.priority,
-    label: 'Scéna 2 — Priority a Ratio',
+    label: "Scéna 3 — Priority",
   },
   {
-    sceneId: 'journey-scene-decision',
-    sectionId: PILOT_SECTION_IDS.audit,
-    label: 'Scéna 3 — Audit a Footer',
+    sceneId: "journey-scene-racio",
+    sectionId: PILOT_SECTION_IDS.aiAdvisor,
+    label: "Scéna 4 — Racio",
   },
+  {
+    sceneId: "journey-scene-decision",
+    sectionId: PILOT_SECTION_IDS.audit,
+    label: "Scéna 5 — Audit a Footer",
+  },
+] as const;
+
+const ORIENTATION_SECTION_IDS = [
+  PILOT_SECTION_IDS.hero,
+  PILOT_SECTION_IDS.walkthrough,
 ] as const;
 
 type ClientStudioSidebarProps = {
@@ -54,18 +70,42 @@ export function ClientStudioSidebar({
   legacyExperience = null,
   onSelectDecision,
   activeSceneId = null,
-  visibleSceneIds: _visibleSceneIds = [SCENE_NAV[0].sceneId],
+  visibleSceneIds = [SCENE_NAV[0].sceneId],
 }: ClientStudioSidebarProps) {
   const { session, updateWorkspaceScope } = usePlatformSession();
   const showLegacyFlow =
     legacyExperience !== null && onSelectDecision !== undefined;
 
-  const visibleSceneNav = SCENE_NAV;
+  const visibleSceneNav = useMemo(
+    () => SCENE_NAV.filter((item) => visibleSceneIds.includes(item.sceneId)),
+    [visibleSceneIds],
+  );
+  const [activeOrientationSectionId, setActiveOrientationSectionId] =
+    useState<string>(PILOT_SECTION_IDS.hero);
+  const observedOrientationSectionId = useActiveSection(
+    ORIENTATION_SECTION_IDS,
+  );
+
+  useEffect(() => {
+    if (
+      activeSceneId === "journey-scene-orientation" &&
+      observedOrientationSectionId !== null
+    ) {
+      setActiveOrientationSectionId(observedOrientationSectionId);
+    }
+  }, [activeSceneId, observedOrientationSectionId]);
+
+  const activeSectionId =
+    activeSceneId === "journey-scene-orientation"
+      ? activeOrientationSectionId
+      : (visibleSceneNav.find((item) => item.sceneId === activeSceneId)
+          ?.sectionId ?? null);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const activeProjectId = resolveClientActiveProjectId(session?.projectId);
   const houses = useMemo<readonly WorkspaceHouseIdentity[]>(
-    () => (activeProjectId === null ? [] : listWorkspaceHouses(activeProjectId)),
+    () =>
+      activeProjectId === null ? [] : listWorkspaceHouses(activeProjectId),
     [activeProjectId, session],
   );
   const activeHouseId = session?.activeHouseId ?? readActiveClientHouseId();
@@ -81,14 +121,15 @@ export function ClientStudioSidebar({
     }
     updateWorkspaceScope({ activeHouseId: houseId });
     const message = createWorkspaceHouseChangeMessage(houseId);
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     if (window.parent === window) {
-      window.dispatchEvent(
-        new CustomEvent(message.type, { detail: message }),
-      );
+      window.dispatchEvent(new CustomEvent(message.type, { detail: message }));
       return;
     }
-    window.parent.postMessage(message, new URL(resolveWorkspaceHostHref()).origin);
+    window.parent.postMessage(
+      message,
+      new URL(resolveWorkspaceHostHref()).origin,
+    );
   };
 
   const toggleHouseMenu = (): void => {
@@ -122,31 +163,34 @@ export function ClientStudioSidebar({
           data-testid="client-scene-navigator"
         >
           {visibleSceneNav.map((item) => {
-            const isActive = activeSceneId === item.sceneId;
+            const isActive = activeSectionId === item.sectionId;
             return (
               <button
-                key={item.sceneId}
+                key={item.sectionId}
                 type="button"
                 title={item.label}
                 aria-label={item.label}
-                aria-current={isActive ? 'true' : undefined}
-                data-testid={`client-scene-dot-${item.sceneId}`}
+                aria-current={isActive ? "true" : undefined}
+                data-testid={`client-scene-dot-${item.sectionId}`}
                 data-client-scene-dot=""
-                data-active-scene-dot={isActive ? 'true' : 'false'}
+                data-active-scene-dot={isActive ? "true" : "false"}
                 onClick={() => {
+                  if (item.sceneId === "journey-scene-orientation") {
+                    setActiveOrientationSectionId(item.sectionId);
+                  }
                   navigateToJourneySection(item.sectionId);
                 }}
                 className={[
-                  'box-border h-3 w-3 rounded-full transition-colors',
+                  "box-border h-3 w-3 rounded-full transition-colors",
                   isActive
-                    ? 'border-2 border-embed-brand-gold bg-embed-brand-gold'
-                    : 'border border-embed-background-primary/50 bg-embed-background-primary/25 hover:border-embed-brand-gold/70',
-                ].join(' ')}
+                    ? "border-2 border-embed-brand-gold bg-embed-brand-gold"
+                    : "border border-embed-background-primary/50 bg-embed-background-primary/25 hover:border-embed-brand-gold/70",
+                ].join(" ")}
               />
             );
           })}
           <span className="sr-only">
-            {visibleSceneNav.map((scene) => scene.label).join(' · ')}
+            {visibleSceneNav.map((scene) => scene.label).join(" · ")}
           </span>
         </nav>
       ) : (
@@ -180,7 +224,7 @@ export function ClientStudioSidebar({
                   <button
                     type="button"
                     data-testid={`client-house-option-${houseId}`}
-                    aria-current={isActive ? 'true' : undefined}
+                    aria-current={isActive ? "true" : undefined}
                     onClick={() => {
                       setMenuOpen(false);
                       if (houseId !== activeHouseId) {
@@ -188,11 +232,11 @@ export function ClientStudioSidebar({
                       }
                     }}
                     className={[
-                      'w-full rounded-[6px] px-3 py-2 text-left text-sm transition-colors',
+                      "w-full rounded-[6px] px-3 py-2 text-left text-sm transition-colors",
                       isActive
-                        ? 'bg-embed-background-primary/15 text-embed-brand-gold'
-                        : 'text-embed-background-primary/85 hover:bg-embed-background-primary/10 hover:text-embed-brand-gold',
-                    ].join(' ')}
+                        ? "bg-embed-background-primary/15 text-embed-brand-gold"
+                        : "text-embed-background-primary/85 hover:bg-embed-background-primary/10 hover:text-embed-brand-gold",
+                    ].join(" ")}
                   >
                     {house.name}
                   </button>

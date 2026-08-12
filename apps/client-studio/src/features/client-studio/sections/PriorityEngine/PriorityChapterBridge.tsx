@@ -1,31 +1,32 @@
+import { colors } from "@embed-engine/design-tokens";
+
 import {
-  PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL,
-  PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL,
-  PRIORITY_CONVERSATION_NEXT_PATHS_PROMPT,
-  PRIORITY_BRIDGE_GAIN_HEADING,
-  PRIORITY_BRIDGE_KNOW_HEADING,
-  PRIORITY_BRIDGE_NEXT_HEADING,
-  PRIORITY_BRIDGE_NEXT_LINES,
-  PRIORITY_BRIDGE_REPORT_LINES,
-  PRIORITY_BRIDGE_REPORT_TITLE,
-  PRIORITY_BRIDGE_SUMMARY,
   PRIORITY_BRIDGE_TITLE,
-} from './priorityConversation.constants';
-import { usePriorityConversationContext } from './PriorityConversationProvider';
-import { PRIORITY_BRIDGE_ANCHOR_ID } from '../../foundation/scrollToSection';
-
-const titleClass =
-  'm-0 text-[20px] font-semibold leading-[1.35] text-embed-foreground-primary';
-
-/** Shared gold heading — CAP UX 41 (prompt + section titles). */
-const goldHeadingClass =
-  'm-0 text-[18px] font-semibold leading-[1.45] text-embed-brand-gold';
+  PRIORITY_PAYOFF_EXPLORATION_BULLETS,
+  PRIORITY_PAYOFF_FACTS_HEADING,
+  PRIORITY_PAYOFF_INTRO,
+  PRIORITY_PAYOFF_MEANING_HEADING,
+  PRIORITY_PAYOFF_PLOT_TRANSITION,
+  PRIORITY_PAYOFF_RECALL_HEADING,
+  PRIORITY_PAYOFF_RECALL_INTRO,
+  PRIORITY_PAYOFF_UPPER_LINES,
+} from "./priorityConversation.constants";
+import { PRIORITY_ENGINE_TITLE_CLASS } from "./priority-engine-layout";
+import { usePriorityConversationContext } from "./PriorityConversationProvider";
+import { PRIORITY_BRIDGE_ANCHOR_ID } from "../../foundation/scrollToSection";
+import { useDecisionSessionRuntime } from "../../runtime/DecisionSessionRuntimeProvider";
 
 const bodyClass =
-  'm-0 text-[15px] leading-[1.65] text-embed-foreground-primary';
+  "m-0 text-[15px] leading-[1.65] text-embed-foreground-primary";
 
-const softClass =
-  'm-0 text-[14px] leading-[1.6] text-embed-foreground-primary/75';
+const panelHeadingClass = "m-0 text-[17px] font-bold uppercase leading-[1.4]";
+
+const goldIntenseStyle = { color: colors.brand.goldIntense };
+
+const panelClass =
+  "rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] p-5 desktop:grid desktop:grid-rows-[48px_repeat(3,minmax(132px,1fr))]";
+
+const payoffRowClass = `${bodyClass} relative flex flex-col items-start py-3 desktop:py-3`;
 
 /**
  * Bridge block inside Priority section — under cards (CAP UX 31).
@@ -33,87 +34,180 @@ const softClass =
  */
 export function PriorityChapterBridge() {
   const { phase, hypothesis } = usePriorityConversationContext();
+  const { experience, houseKnowledge } = useDecisionSessionRuntime();
 
-  if (phase !== 'complete' || hypothesis === null) {
+  if (phase !== "complete" || hypothesis === null) {
     return null;
   }
+
+  const roomMedia = experience.context.roomMedia;
+  const recallImage = roomMedia.thumbnails.find(
+    (item) =>
+      item.kind === "photo" &&
+      !/(?:^|\/)01\.(?:png|jpe?g|webp)$/i.test(item.src),
+  );
+  const roomTitle = roomMedia.title ?? "vybraný prostor";
+  const interpretationByFactId = new Map(
+    (houseKnowledge?.interpretations ?? []).map((item) => [
+      item.factId,
+      item.text,
+    ]),
+  );
+  const payoffRows = (houseKnowledge?.facts ?? [])
+    .flatMap((fact) => {
+      const meaning = interpretationByFactId.get(fact.id);
+      return meaning === undefined ||
+        fact.factPoint === undefined ||
+        fact.interpretationPoint === undefined
+        ? []
+        : [
+            {
+              factPoint: fact.factPoint,
+              interpretationPoint: fact.interpretationPoint,
+              fact: fact.statement,
+              meaning,
+            },
+          ];
+    })
+    .slice(0, 3);
 
   return (
     <div
       id={PRIORITY_BRIDGE_ANCHOR_ID}
       tabIndex={-1}
-      className="mt-[50px] rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] p-[50px] mobile:mt-8 mobile:p-5"
+      className="mt-[50px] bg-[#FFFFFF] py-[50px] mobile:mt-8 mobile:py-5"
       data-testid="priority-chapter-bridge"
       aria-label="Shrnutí priorit a další hodnota"
     >
-      <div className="flex flex-col gap-5">
-        <header className="mx-auto flex w-[75%] flex-col gap-3 mobile:w-full">
-          <h2 className={titleClass} data-testid="priority-bridge-title">
+      <div className="flex flex-col gap-8">
+        <header className="flex w-full flex-col gap-2">
+          <h2
+            className={`${PRIORITY_ENGINE_TITLE_CLASS} uppercase`}
+            data-testid="priority-bridge-title"
+          >
             {PRIORITY_BRIDGE_TITLE}
           </h2>
-          <p className={bodyClass}>{PRIORITY_BRIDGE_SUMMARY}</p>
+          <div className="flex flex-wrap gap-x-2 gap-y-1">
+            {PRIORITY_PAYOFF_UPPER_LINES.map((line) => (
+              <p key={line} className={bodyClass}>
+                {line}
+              </p>
+            ))}
+          </div>
         </header>
 
-        {/* Full card width + expanded insight lines (CAP UX3 07). */}
         <div
-          className="flex w-full flex-col gap-3"
-          data-testid="priority-bridge-know"
+          className="grid w-full grid-cols-3 items-stretch gap-5 mobile:grid-cols-1"
+          data-testid="priority-payoff-panels"
         >
-          <h3 className={goldHeadingClass}>{PRIORITY_BRIDGE_KNOW_HEADING}</h3>
-          <p className={bodyClass}>{hypothesis.prioritiesLine}</p>
-          <p
-            className={bodyClass}
-            data-testid="priority-bridge-hypothesis"
+          <section className={panelClass} data-testid="priority-payoff-facts">
+            <h3 className={panelHeadingClass} style={goldIntenseStyle}>
+              {PRIORITY_PAYOFF_FACTS_HEADING}
+            </h3>
+            {payoffRows.map((row, index) => (
+              <div
+                key={row.fact}
+                className={`${payoffRowClass} ${index === 0 ? "" : "border-t border-[#E3E3E3]"}`}
+              >
+                <strong className="block uppercase">{row.factPoint}</strong>
+                <span>{row.fact}</span>
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute left-[calc(100%+10px)] top-[calc(0.75rem+1.4em/2)] z-10 hidden h-px w-[42px] -translate-y-1/2 bg-[#D9CDAF] before:absolute before:-left-1 before:top-1/2 before:h-2 before:w-2 before:-translate-y-1/2 before:rounded-full before:border before:border-[#D9CDAF] before:bg-[#F7F6F4] after:absolute after:-right-1 after:top-1/2 after:h-2 after:w-2 after:-translate-y-1/2 after:rounded-full after:border after:border-[#D9CDAF] after:bg-[#F7F6F4] desktop:block"
+                />
+              </div>
+            ))}
+          </section>
+
+          <section className={panelClass} data-testid="priority-payoff-meaning">
+            <h3 className={panelHeadingClass} style={goldIntenseStyle}>
+              {PRIORITY_PAYOFF_MEANING_HEADING}
+            </h3>
+            {payoffRows.map((row, index) => (
+              <p
+                key={row.fact}
+                className={`${payoffRowClass} ${index === 0 ? "" : "border-t border-[#E3E3E3]"}`}
+              >
+                <strong className="uppercase">{row.interpretationPoint}</strong>
+                <span>{row.meaning}</span>
+              </p>
+            ))}
+          </section>
+
+          <section
+            className="flex min-h-full flex-col rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] p-5"
+            data-testid="priority-payoff-recall"
           >
-            {hypothesis.pictureLine}
-          </p>
-          {hypothesis.insightLines.map((line) => (
-            <p key={line} className={bodyClass}>
-              {line}
+            <h3 className={panelHeadingClass} style={goldIntenseStyle}>
+              {PRIORITY_PAYOFF_RECALL_HEADING}
+            </h3>
+            {recallImage ? (
+              <img
+                src={recallImage.src}
+                alt={roomTitle}
+                className="-mt-[2px] aspect-[4/3] w-full rounded-[6px] object-contain"
+              />
+            ) : null}
+            <p className={`${bodyClass} mt-[30px]`}>
+              {PRIORITY_PAYOFF_RECALL_INTRO}
             </p>
-          ))}
-          <p className={softClass}>{hypothesis.thanksLine}</p>
+          </section>
         </div>
 
-        <div
-          className="mx-auto flex w-[75%] flex-col gap-2 mobile:w-full"
-          data-testid="priority-bridge-report"
-        >
-          <h3 className={goldHeadingClass}>{PRIORITY_BRIDGE_GAIN_HEADING}</h3>
+        <div className="mx-auto flex w-full max-w-[760px] flex-col items-center gap-2 text-center">
           <p
-            className={bodyClass}
-            style={{ fontWeight: 700 }}
+            className="m-0 text-[18px] font-bold leading-[1.5]"
+            style={goldIntenseStyle}
           >
-            {PRIORITY_BRIDGE_REPORT_TITLE}
+            {PRIORITY_PAYOFF_INTRO}
           </p>
-          {PRIORITY_BRIDGE_REPORT_LINES.map((line) => (
-            <p key={line} className={bodyClass}>
-              {line}
-            </p>
-          ))}
-        </div>
-
-        <div
-          className="mx-auto flex w-[75%] flex-col gap-2 mobile:w-full"
-          data-testid="priority-bridge-next"
-        >
-          <h3 className={goldHeadingClass}>{PRIORITY_BRIDGE_NEXT_HEADING}</h3>
-          {PRIORITY_BRIDGE_NEXT_LINES.map((line) => (
-            <p key={line} className={bodyClass}>
-              {line}
-            </p>
-          ))}
-        </div>
-
-        <div
-          className="mx-auto w-[75%] border-t border-[#E3E3E3] pt-4 text-center mobile:w-full"
-          data-testid="priority-bridge-crossroads"
-        >
-          <p className={goldHeadingClass}>
-            {PRIORITY_CONVERSATION_NEXT_PATHS_PROMPT}
-          </p>
-          <p className="mt-2 whitespace-pre text-[18px] font-medium leading-[1.45] text-embed-foreground-primary mobile:whitespace-normal mobile:text-base">
-            {`\u2199 ${PRIORITY_CONVERSATION_COMPLETION_FAQ_LABEL}            ${PRIORITY_CONVERSATION_COMPLETION_CHAT_LABEL} \u2198`}
+          <ul
+            className={`${bodyClass} m-0 flex w-full max-w-[760px] list-disc flex-col gap-1.5 pl-12 text-left`}
+          >
+            <li>
+              {
+                PRIORITY_PAYOFF_EXPLORATION_BULLETS[0].split(
+                  "OTÁZKY A ODPOVĚDI",
+                )[0]
+              }
+              <strong>OTÁZKY A ODPOVĚDI</strong>
+              {
+                PRIORITY_PAYOFF_EXPLORATION_BULLETS[0].split(
+                  "OTÁZKY A ODPOVĚDI",
+                )[1]
+              }
+            </li>
+            <li>
+              {
+                PRIORITY_PAYOFF_EXPLORATION_BULLETS[1].split(
+                  "DISKUTOVAT PŘES CHAT",
+                )[0]
+              }
+              <strong>DISKUTOVAT PŘES CHAT</strong>
+              {
+                PRIORITY_PAYOFF_EXPLORATION_BULLETS[1].split(
+                  "DISKUTOVAT PŘES CHAT",
+                )[1]
+              }
+            </li>
+            <li>
+              {PRIORITY_PAYOFF_EXPLORATION_BULLETS[2].split("OSOBNÍ SOUHRN")[0]}
+              <strong>OSOBNÍ SOUHRN</strong>
+              {
+                PRIORITY_PAYOFF_EXPLORATION_BULLETS[2]
+                  .split("OSOBNÍ SOUHRN")[1]
+                  .split("FAKTY A OBRÁZKY")[0]
+              }
+              <strong>FAKTY A OBRÁZKY</strong>
+              {
+                PRIORITY_PAYOFF_EXPLORATION_BULLETS[2].split(
+                  "FAKTY A OBRÁZKY",
+                )[1]
+              }
+            </li>
+          </ul>
+          <p className={`${bodyClass} font-bold`}>
+            {PRIORITY_PAYOFF_PLOT_TRANSITION}
           </p>
         </div>
       </div>

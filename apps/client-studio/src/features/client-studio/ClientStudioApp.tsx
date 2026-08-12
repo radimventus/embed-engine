@@ -1,14 +1,14 @@
-import { useState } from 'react';
-import type { DecisionSessionRuntime } from '@embed-engine/runtime';
+import { useState } from "react";
+import type { DecisionSessionRuntime } from "@embed-engine/runtime";
 
-import { AppShell } from '../../components/layout/AppShell';
-import { ClientStudioHeader } from './ClientStudioHeader';
-import { ClientStudioMobileNav } from './ClientStudioMobileNav';
-import { ClientStudioPage } from './ClientStudioPage';
-import { ClientStudioSidebar } from './ClientStudioSidebar';
-import { decisionJourneyScenes } from './foundation/decisionJourney';
-import { LegacyCommandRuntimeHost } from './legacy/LegacyCommandRuntimeHost';
-import { isLegacyCommandRuntimeEnabled } from './legacy/isLegacyCommandRuntimeEnabled';
+import { AppShell } from "../../components/layout/AppShell";
+import { ClientStudioHeader } from "./ClientStudioHeader";
+import { ClientStudioMobileNav } from "./ClientStudioMobileNav";
+import { ClientStudioPage } from "./ClientStudioPage";
+import { ClientStudioSidebar } from "./ClientStudioSidebar";
+import { decisionJourneyScenes } from "./foundation/decisionJourney";
+import { LegacyCommandRuntimeHost } from "./legacy/LegacyCommandRuntimeHost";
+import { isLegacyCommandRuntimeEnabled } from "./legacy/isLegacyCommandRuntimeEnabled";
 
 type ClientStudioAppProps = {
   /**
@@ -30,7 +30,10 @@ export function ClientStudioApp({ runtime }: ClientStudioAppProps = {}) {
     () => decisionJourneyScenes()[0]?.id ?? null,
   );
   const [visibleSceneIds, setVisibleSceneIds] = useState<readonly string[]>(
-    () => decisionJourneyScenes().slice(0, 1).map((scene) => scene.id),
+    () =>
+      decisionJourneyScenes()
+        .slice(0, 1)
+        .map((scene) => scene.id),
   );
 
   if (legacyEnabled) {
@@ -55,7 +58,7 @@ export function ClientStudioApp({ runtime }: ClientStudioAppProps = {}) {
           onVisibleSceneIdsChange={setVisibleSceneIds}
         />
       </AppShell>
-      <ClientStudioMobileNav />
+      <ClientStudioMobileNav visibleSceneIds={visibleSceneIds} />
     </>
   );
 }

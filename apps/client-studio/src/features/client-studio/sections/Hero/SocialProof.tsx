@@ -1,23 +1,18 @@
 import { colors } from '@embed-engine/design-tokens';
-import { getCanonicalProject } from '@embed-engine/platform-access';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Panel } from '@embed-engine/ui';
 
-import { useSocialProofReadModel } from '../../analytics/useSocialProofReadModel';
-import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
-import { SocialProofIcon, type SocialProofIconName } from './SocialProofIcon';
+import { SocialProofIcon } from './SocialProofIcon';
+import {
+  nextSocialProofIndex,
+  SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT,
+  type SocialProofEntry,
+  useSocialProofFeed,
+} from './useSocialProofFeed';
 
 const FEED_TICKER_PAUSE_MS = 12000;
 const FEED_TICKER_SLIDE_MS = 400;
 const FEED_VISIBLE_ITEM_COUNT = 3;
-const MIN_MESSAGES_BEFORE_REPEAT = 5;
-
-type SocialProofEntry = {
-  readonly id: string;
-  readonly icon: SocialProofIconName;
-  readonly value: string;
-  readonly message: string;
-};
 
 function SocialProofItem({ icon, value, message }: SocialProofEntry) {
   return (
@@ -33,60 +28,11 @@ function SocialProofItem({ icon, value, message }: SocialProofEntry) {
   );
 }
 
-function readModelEntries(
-  model: ReturnType<typeof useSocialProofReadModel>,
-): readonly SocialProofEntry[] {
-  if (model === null) return [];
-  const { aggregate } = model;
-  const recentEntries = model.recent.flatMap((item): readonly SocialProofEntry[] => {
-    const houseName = getCanonicalProject(item.houseId)?.house?.name;
-    if (houseName === undefined) return [];
-    return [{
-      id: `recent:${item.houseId}`,
-      icon: 'viewing' as const,
-      value: String(item.activeVisitors),
-      message: item.locality === null
-        ? `návštěvníci právě prohlížejí ${houseName}.`
-        : `návštěvníci z oblasti ${item.locality} právě prohlížejí ${houseName}.`,
-    }];
-  });
-  return [
-    aggregate.savedByVisitors > 0
-      ? { id: 'saved', icon: 'saved' as const, value: String(aggregate.savedByVisitors), message: 'návštěvníků si tento dům uložilo.' }
-      : null,
-    aggregate.returningVisitors > 0
-      ? { id: 'returning', icon: 'viewing' as const, value: String(aggregate.returningVisitors), message: 'návštěvníků se k domu vrátilo.' }
-      : null,
-    aggregate.priorityPreferences[0]
-      ? { id: `preference:${aggregate.priorityPreferences[0].priorityId}`, icon: 'inquiry' as const, value: `${aggregate.priorityPreferences[0].percentOfVisitors} %`, message: 'návštěvníků označilo tuto prioritu mezi důležitými.' }
-      : null,
-    ...recentEntries,
-  ].filter((entry): entry is SocialProofEntry => entry !== null);
-}
-
-function nextStartIndex(
-  current: number,
-  entries: readonly SocialProofEntry[],
-  recentMessages: readonly string[],
-): number {
-  for (let step = 1; step <= entries.length; step += 1) {
-    const candidate = (current + step) % entries.length;
-    const message = entries[candidate]!.message;
-    const lastIndex = recentMessages.lastIndexOf(message);
-    if (lastIndex === -1 || recentMessages.length - lastIndex - 1 >= MIN_MESSAGES_BEFORE_REPEAT) {
-      return candidate;
-    }
-  }
-  return (current + 1) % entries.length;
-}
-
 export function SocialProof() {
-  const { analyticsScope } = useDecisionSessionRuntime();
-  const readModel = useSocialProofReadModel(analyticsScope);
   const [startIndex, setStartIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const recentMessagesRef = useRef<string[]>([]);
-  const entries = useMemo(() => readModelEntries(readModel), [readModel]);
+  const entries = useSocialProofFeed();
   const visibleEntries = useMemo(
     () =>
       Array.from(
@@ -106,7 +52,7 @@ export function SocialProof() {
   }, [entries.length]);
 
   useEffect(() => {
-    if (entries.length <= MIN_MESSAGES_BEFORE_REPEAT || isAnimating) {
+    if (entries.length <= SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT || isAnimating) {
       return;
     }
     const timer = window.setTimeout(() => setIsAnimating(true), FEED_TICKER_PAUSE_MS);
@@ -132,9 +78,9 @@ export function SocialProof() {
         <ul
           className="m-0 flex list-none p-0"
           onTransitionEnd={() => {
-            if (!isAnimating || entries.length <= MIN_MESSAGES_BEFORE_REPEAT) return;
+            if (!isAnimating || entries.length <= SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT) return;
             setStartIndex((current) => {
-              const next = nextStartIndex(current, entries, recentMessagesRef.current);
+              const next = nextSocialProofIndex(current, entries, recentMessagesRef.current);
               recentMessagesRef.current = [...recentMessagesRef.current, entries[next]!.message].slice(-12);
               return next;
             });

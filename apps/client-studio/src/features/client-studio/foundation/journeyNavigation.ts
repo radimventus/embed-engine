@@ -1,5 +1,5 @@
-import { PILOT_SECTION_IDS } from '../pilot/pilotVocabulary';
-import { scrollToSection } from './scrollToSection';
+import { PILOT_SECTION_IDS } from "../pilot/pilotVocabulary";
+import { scrollToSection } from "./scrollToSection";
 
 export type JourneySectionNavigator = (sectionId: string) => void;
 
@@ -26,11 +26,12 @@ export function isOrientationSection(sectionId: string): boolean {
   );
 }
 
-export function isInterpretationSection(sectionId: string): boolean {
-  return (
-    sectionId === PILOT_SECTION_IDS.priority ||
-    sectionId === PILOT_SECTION_IDS.aiAdvisor
-  );
+export function isPrioritySection(sectionId: string): boolean {
+  return sectionId === PILOT_SECTION_IDS.priority;
+}
+
+export function isRacioSection(sectionId: string): boolean {
+  return sectionId === PILOT_SECTION_IDS.aiAdvisor;
 }
 
 export function isDecisionSection(sectionId: string): boolean {
@@ -42,7 +43,10 @@ export function isDecisionSection(sectionId: string): boolean {
  * Same destinations as desktop sidebar — no new product routes.
  */
 export function navigateToJourneySection(sectionId: string): void {
-  sectionNavigator?.(sectionId);
+  if (sectionNavigator !== null) {
+    sectionNavigator(sectionId);
+    return;
+  }
 
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {

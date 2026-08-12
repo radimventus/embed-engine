@@ -1,30 +1,44 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
-import { navigateToJourneySection } from './foundation/journeyNavigation';
-import { useActiveSection } from './foundation/useActiveSection';
-import {
-  PILOT_FLAGS,
-  PILOT_SECTION_NAV,
-} from './pilot/pilotVocabulary';
+import { navigateToJourneySection } from "./foundation/journeyNavigation";
+import { useActiveSection } from "./foundation/useActiveSection";
+import { PILOT_FLAGS, PILOT_SECTION_NAV } from "./pilot/pilotVocabulary";
+
+type ClientStudioMobileNavProps = {
+  readonly visibleSceneIds: readonly string[];
+};
+
+function sceneIdForSection(sectionId: string): string {
+  if (sectionId === "priority-experience") {
+    return "journey-scene-priority";
+  }
+  if (sectionId === "ai-advisor") {
+    return "journey-scene-racio";
+  }
+  if (sectionId === "audit-lead-capture") {
+    return "journey-scene-decision";
+  }
+  return "journey-scene-orientation";
+}
 
 /**
  * Mobile section navigation (RCS-01 / RCS-05).
  * Same section ids as the desktop sidebar — reveals journey scenes when needed.
  */
-export function ClientStudioMobileNav() {
+export function ClientStudioMobileNav({
+  visibleSceneIds,
+}: ClientStudioMobileNavProps) {
   const navItems = useMemo(
     () =>
       PILOT_SECTION_NAV.filter(
         (item) =>
-          item.id !== 'ai-advisor' || PILOT_FLAGS.showAiAdvisor,
+          (item.id !== "ai-advisor" || PILOT_FLAGS.showAiAdvisor) &&
+          visibleSceneIds.includes(sceneIdForSection(item.id)),
       ),
-    [],
+    [visibleSceneIds],
   );
 
-  const sectionIds = useMemo(
-    () => navItems.map((item) => item.id),
-    [navItems],
-  );
+  const sectionIds = useMemo(() => navItems.map((item) => item.id), [navItems]);
 
   const activeId = useActiveSection(sectionIds);
 
@@ -43,16 +57,16 @@ export function ClientStudioMobileNav() {
                 type="button"
                 title={item.label}
                 aria-label={item.label}
-                aria-current={isActive ? 'true' : undefined}
+                aria-current={isActive ? "true" : undefined}
                 onClick={() => {
                   navigateToJourneySection(item.id);
                 }}
                 className={[
-                  'flex min-h-11 w-full flex-col items-center justify-center gap-0.5 px-1 text-[10px] font-medium leading-tight transition-colors touch-manipulation',
+                  "flex min-h-11 w-full flex-col items-center justify-center gap-0.5 px-1 text-[10px] font-medium leading-tight transition-colors touch-manipulation",
                   isActive
-                    ? 'text-embed-brand-gold'
-                    : 'text-embed-background-primary/70',
-                ].join(' ')}
+                    ? "text-embed-brand-gold"
+                    : "text-embed-background-primary/70",
+                ].join(" ")}
               >
                 <span className="text-xs font-semibold" aria-hidden="true">
                   {item.short}

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { ConversationError } from '@embed-engine/ai';
+import { canonicalHouseKnowledgeEntries } from '@embed-engine/object-house';
 
 import { SECTION_SURFACE_CLASS } from '../../section-surface';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
@@ -24,6 +25,7 @@ import { Disclaimer } from './Disclaimer';
 import { getEmbedAIService } from './embedAIService';
 import {
   advisorOpeningForExperience,
+  faqItemsFromCanonicalHouseKnowledge,
   faqItemsForExperience,
 } from './experiencePresentation';
 import { InputBar } from './InputBar';
@@ -49,14 +51,17 @@ function createAssistantSeed(text: string): Message {
  * AI Advisor — Priority coaching FAQ + seeded chat; live replies via AIService.
  */
 export function AIAdvisor() {
-  const { experience } = useDecisionSessionRuntime();
+  const { experience, houseKnowledge } = useDecisionSessionRuntime();
   const decision = useDecisionContext();
   const analytics = useOptionalDecisionAnalytics();
   const ai = experience.context.decision.ai;
   const priorityIds = experience.context.decision.priorityIds;
   const faqItems = useMemo(
-    () => faqItemsForExperience({ ai, priorityIds }),
-    [ai, priorityIds],
+    () =>
+      houseKnowledge !== null && houseKnowledge.priorityFaq.length > 0
+        ? faqItemsFromCanonicalHouseKnowledge(houseKnowledge)
+        : faqItemsForExperience({ ai, priorityIds }),
+    [ai, houseKnowledge, priorityIds],
   );
   const openingText = useMemo(
     () => advisorOpeningForExperience({ ai, priorityIds }),
@@ -122,6 +127,15 @@ export function AIAdvisor() {
         const result = await getEmbedAIService().sendMessage({
           message: text,
           decision,
+          object:
+            houseKnowledge === null
+              ? undefined
+              : {
+                  objectId: houseKnowledge.canonicalHouseId,
+                  knowledge: {
+                    entries: canonicalHouseKnowledgeEntries(houseKnowledge),
+                  },
+                },
         });
 
         setMessages((current) =>

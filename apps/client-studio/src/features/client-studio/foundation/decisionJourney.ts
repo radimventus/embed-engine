@@ -4,12 +4,13 @@ export type DecisionJourneyScene = {
 };
 
 const BASE_DECISION_JOURNEY_SCENES: readonly DecisionJourneyScene[] = [
-  { id: 'journey-scene-orientation', label: 'Orientace' },
-  { id: 'journey-scene-interpretation', label: 'Interpretace' },
-  { id: 'journey-scene-decision', label: 'Rozhodnutí' },
+  { id: "journey-scene-orientation", label: "Orientace" },
+  { id: "journey-scene-priority", label: "Priority" },
+  { id: "journey-scene-racio", label: "Racio" },
+  { id: "journey-scene-decision", label: "Rozhodnutí" },
 ] as const;
 
-/** Three meaning-driven guided scenes — not raw technical sections. */
+/** Four meaning-driven guided scenes — not raw technical sections. */
 export function decisionJourneyScenes(): readonly DecisionJourneyScene[] {
   return BASE_DECISION_JOURNEY_SCENES;
 }

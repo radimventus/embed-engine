@@ -10,7 +10,12 @@ import {
   advisorIntroFromAiContext,
   faqItemsForExperience,
   faqItemsFromAiContext,
+  faqItemsFromCanonicalHouseKnowledge,
 } from './experiencePresentation';
+import {
+  getCanonicalHouseRuntimeContext,
+  selectCanonicalHouseKnowledge,
+} from '@embed-engine/object-house';
 import { decisionReportPreviewFromTerminal } from '../DecisionReportPreview/DecisionReportPreviewViewModel';
 import { recommendationViewFromTerminal } from '../PriorityEngine/RecommendationViewModel';
 import { coachFaqItemsFromPriorities } from '../PriorityEngine/priorityCoachingDialogue';
@@ -117,5 +122,19 @@ describe('Runtime presentation ownership (ED-DA-01R)', () => {
     assert.ok(experienceFaq.length > 3);
     assert.equal(experienceFaq[0]!.id, 'coach-faq:layout');
     assert.match(experienceFaq[0]!.question, /\?$/);
+  });
+
+  it('presents canonical FAQ only for Runtime priorities and retains constraints', () => {
+    const context = getCanonicalHouseRuntimeContext('modern-4kk');
+    assert.ok(context);
+    const knowledge = selectCanonicalHouseKnowledge(context, ['energy']);
+    const faq = faqItemsFromCanonicalHouseKnowledge(knowledge);
+
+    assert.equal(faq.length, 10);
+    assert.ok(faq.every((item) => item.id.startsWith('energy-')));
+    assert.match(
+      faq.find((item) => item.id === 'energy-07')!.answer,
+      /trvalou energetickou soběstačnost/i,
+    );
   });
 });
