@@ -12,6 +12,7 @@ import {
   buildDocumentContextFromPayload,
   COMMERCIAL_DOCUMENT_CATALOG,
   createDocumentRuntime,
+  DEAL_TEMPLATES,
   DEAL_PACKAGE_ROOT,
   documentsForBusinessEvent,
   ELECTRONIC_ORDER_PACKAGE,
@@ -119,5 +120,41 @@ describe('PT-15 document runtime', () => {
       'utf8',
     );
     assert.match(css, /--conis-gold/);
+  });
+
+  it('derives canonical individualized templates without content divergence', () => {
+    const sources = {
+      electronic_order: 'electronic-order.html',
+      proforma: 'proforma-invoice.html',
+      pilot_offer: 'pilot-offer.html',
+    } as const;
+    for (const [type, sourceFile] of Object.entries(sources)) {
+      assert.equal(
+        DEAL_TEMPLATES[type as keyof typeof sources],
+        readFileSync(join(repoRoot, DEAL_PACKAGE_ROOT, sourceFile), 'utf8'),
+        `${type} must match its canonical HTML source`,
+      );
+    }
+  });
+
+  it('generates the three canonical individualized document types', async () => {
+    const runtime = createDocumentRuntime();
+    const context = buildDocumentContextFromPayload({
+      projectId: 'order-1',
+      payload: {
+        partnerName: 'Domy s energií',
+        companyName: 'DSE s.r.o.',
+        packageName: 'Starter',
+        orderId: 'OFF-1',
+        amountCzk: 14_970,
+        proformaNumber: 'PF-1',
+        dueDate: '2026-08-18T00:00:00.000Z',
+      },
+    });
+    for (const type of ['pilot_offer', 'electronic_order', 'proforma'] as const) {
+      const artifact = await runtime.generate({ type, context });
+      assert.equal(artifact.type, type);
+      assert.ok(artifact.attachment.byteLength > 100);
+    }
   });
 });

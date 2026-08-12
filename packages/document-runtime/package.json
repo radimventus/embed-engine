@@ -15,7 +15,10 @@
   },
   "files": ["src"],
   "scripts": {
+    "generate:deal-templates": "node scripts/generate-deal-templates.mjs",
+    "pretypecheck": "pnpm run generate:deal-templates",
     "typecheck": "tsc --noEmit",
+    "pretest": "pnpm run generate:deal-templates",
     "test": "tsx --test src/documentRuntime.test.ts"
   },
   "devDependencies": {

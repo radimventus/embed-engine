@@ -1,27 +1,13 @@
 /**
- * PT-15 — Embedded deal templates (mirror of docs/platform/office/deal).
- * Runtime must not depend on filesystem in the browser.
+ * PT-15 — Deal templates embedded at build time from the canonical deal package.
  */
 
+import { GENERATED_DEAL_TEMPLATES } from './generatedDealTemplates';
 import type { CommercialDocumentType } from './types';
 
 export const DEAL_TEMPLATES: Readonly<Record<CommercialDocumentType, string>> =
   Object.freeze({
-    electronic_order: `<!DOCTYPE html>
-<html lang="cs"><head><meta charset="utf-8" /><title>Elektronická objednávka CONIS</title></head>
-<body>
-<p class="brand">CONIS</p>
-<h1>Elektronická objednávka</h1>
-<p>Individualizovaný obchodní dokument · SSOT</p>
-<p>Číslo objednávky: {{orderId}}</p>
-<p>Partner: {{partnerName}}</p>
-<p>Společnost: {{companyName}}</p>
-<p>Balíček: {{packageName}}</p>
-<p>Částka: {{amountCzk}} CZK</p>
-<p>Datum: {{issuedAt}}</p>
-<p>Projekt: {{projectId}}</p>
-<p>Navázáno na Rámcovou smlouvu, Implementační standard, DPA a VOP.</p>
-</body></html>`,
+    electronic_order: GENERATED_DEAL_TEMPLATES.electronic_order,
     framework: `<!DOCTYPE html>
 <html lang="cs"><head><meta charset="utf-8" /><title>Rámcová smlouva CONIS</title></head>
 <body>
@@ -54,34 +40,8 @@ export const DEAL_TEMPLATES: Readonly<Record<CommercialDocumentType, string>> =
 <p>VOP CONIS platné pro obchodní případ partnera {{partnerName}}.</p>
 <p>Projekt: {{projectId}}</p>
 </body></html>`,
-    proforma: `<!DOCTYPE html>
-<html lang="cs"><head><meta charset="utf-8" /><title>Proforma faktura CONIS</title></head>
-<body class="invoice">
-<p class="brand">CONIS</p>
-<h1>Proforma faktura</h1>
-<p>Číslo: {{proformaNumber}}</p>
-<p>Objednávka: {{orderId}}</p>
-<p>Odběratel: {{companyName}} ({{partnerName}})</p>
-<p>Balíček: {{packageName}}</p>
-<p>Částka k úhradě: {{amountCzk}} CZK</p>
-<p>Vystaveno: {{issuedAt}}</p>
-<p>Splatnost: {{dueDate}}</p>
-<p>Projekt: {{projectId}}</p>
-</body></html>`,
-    pilot_offer: `<!DOCTYPE html>
-<html lang="cs"><head><meta charset="utf-8" /><title>Nabídka pilotního programu CONIS</title></head>
-<body>
-<p class="brand">CONIS</p>
-<h1>Nabídka pilotního programu</h1>
-<p>Personalizovaná nabídka pro partnera {{partnerName}}.</p>
-<p>Společnost: {{companyName}}</p>
-<p>Hero: {{heroLabel}}</p>
-<p>Web partnera: {{websiteUrl}}</p>
-<p>Projekt: {{projectId}}</p>
-<p>Balíček: {{packageName}}</p>
-<p>Datum: {{issuedAt}}</p>
-<p>Ostatní obsah nabídky zůstává společný pro všechny partnery.</p>
-</body></html>`,
+    proforma: GENERATED_DEAL_TEMPLATES.proforma,
+    pilot_offer: GENERATED_DEAL_TEMPLATES.pilot_offer,
   });
 
 export function fillTemplate(
