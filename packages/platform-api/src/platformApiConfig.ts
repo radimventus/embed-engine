@@ -3,6 +3,7 @@ import { join } from 'node:path';
 
 const LOCAL_ALLOWED_ORIGINS = [
   'http://127.0.0.1:4173',
+  'http://127.0.0.1:4177',
   'http://127.0.0.1:4175',
   'http://127.0.0.1:4181',
   'http://127.0.0.1:4192',
