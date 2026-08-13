@@ -1,21 +1,43 @@
-// Runtime config SSOT is vite.config.js (Vite prefers .js).
-// Keep this TypeScript mirror for editors; prefer editing vite.config.js.
 import { existsSync, mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, normalize, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, type UserConfig } from 'vite';
 
 import {
   createSsotResolveAliases,
   repoRoot as ssotRepoRoot,
 } from '../../packages/embed/vite.ssot-aliases.js';
+import { conisViteDevLogging } from '../../packages/embed/vite.dev-logging.js';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
 const repoRoot = ssotRepoRoot;
 const packageJson = JSON.parse(
   readFileSync(join(rootDir, 'package.json'), 'utf8'),
 );
+
+function localSameSiteServer(port: number): UserConfig['server'] {
+  if (process.env.CONIS_LOCAL_HTTPS !== '1') {
+    return { host: '127.0.0.1', port, strictPort: true };
+  }
+  const certificatePath = process.env.CONIS_LOCAL_HTTPS_CERT_PATH;
+  const keyPath = process.env.CONIS_LOCAL_HTTPS_KEY_PATH;
+  if (certificatePath === undefined || keyPath === undefined) {
+    throw new Error(
+      'CONIS_LOCAL_HTTPS_CERT_PATH and CONIS_LOCAL_HTTPS_KEY_PATH are required for same-site local HTTPS.',
+    );
+  }
+  return {
+    host: 'conis.cz',
+    port,
+    strictPort: true,
+    allowedHosts: ['conis.cz'],
+    https: {
+      cert: readFileSync(certificatePath),
+      key: readFileSync(keyPath),
+    },
+  };
+}
 
 const defaultHousePackageDiskRoot = resolve(
   repoRoot,
@@ -517,9 +539,10 @@ function serveHousePackagePlugin() {
 
 /**
  * Builder Studio Vite config (CAP-BLD-02..07).
- * Vite prefers vite.config.js over vite.config.ts when both exist.
+ * TypeScript is the only Vite config source of truth.
  */
 export default defineConfig({
+  ...conisViteDevLogging(),
   base: process.env.VITE_BASE ?? '/',
   envDir: repoRoot,
   plugins: [react(), serveHousePackagePlugin()],
@@ -544,9 +567,7 @@ export default defineConfig({
     target: 'es2022',
   },
   server: {
-    host: '127.0.0.1',
-    port: 4177,
-    strictPort: true,
+    ...localSameSiteServer(4177),
     fs: {
       allow: [repoRoot],
     },
