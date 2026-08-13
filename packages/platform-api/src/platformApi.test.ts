@@ -13,6 +13,7 @@ import {
   FileSocialProofAnalyticsRepository,
   platformApiAllowedOrigins,
   platformApiStatePath,
+  requiresLoopbackAccess,
 } from './index.ts';
 
 async function repositoryForTest(): Promise<{
@@ -155,6 +156,47 @@ describe('Platform API production configuration', () => {
   });
 });
 
+describe('Public Offer flow access policy', () => {
+  it('bypasses the loopback gate only for Offer checkout routes', () => {
+    assert.equal(requiresLoopbackAccess('POST', '/local-pilot/orders'), false);
+    assert.equal(
+      requiresLoopbackAccess('POST', '/local-pilot/orders/OFF-TEST-001/proforma'),
+      false,
+    );
+    assert.equal(
+      requiresLoopbackAccess('GET', '/local-pilot/orders/OFF-TEST-001'),
+      false,
+    );
+    assert.equal(
+      requiresLoopbackAccess(
+        'GET',
+        '/local-pilot/orders/OFF-TEST-001/proforma',
+      ),
+      false,
+    );
+    assert.equal(
+      requiresLoopbackAccess(
+        'GET',
+        '/local-pilot/orders/OFF-TEST-001/proforma/pdf',
+      ),
+      false,
+    );
+
+    assert.equal(
+      requiresLoopbackAccess('POST', '/local-pilot/offer-write-capabilities'),
+      true,
+    );
+    assert.equal(
+      requiresLoopbackAccess('GET', '/local-pilot/proformas/proforma-OFF-TEST-001'),
+      true,
+    );
+    assert.equal(
+      requiresLoopbackAccess('POST', '/local-pilot/social-proof/events'),
+      true,
+    );
+  });
+});
+
 describe('Durable order repository', () => {
   it('persists an accepted order across repository restart', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-order-test-'));
@@ -198,12 +240,28 @@ describe('Durable order repository', () => {
       const address = server.address();
       assert.ok(address !== null && typeof address !== 'string');
       const baseUrl = `http://127.0.0.1:${address.port}/local-pilot/orders`;
+      const preflight = await fetch(baseUrl, {
+        method: 'OPTIONS',
+        headers: {
+          origin: 'https://conis.cz',
+          'access-control-request-method': 'POST',
+          'access-control-request-headers': 'authorization, content-type',
+        },
+      });
+      assert.equal(preflight.status, 204);
+      assert.equal(
+        preflight.headers.get('access-control-allow-headers'),
+        'content-type, authorization',
+      );
       const missing = await fetch(baseUrl, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(durableOrderInput),
       });
       assert.equal(missing.status, 401);
+      assert.deepEqual(await missing.json(), {
+        error: 'Offer write capability is required.',
+      });
       const invalid = await fetch(baseUrl, {
         method: 'POST',
         headers: { 'content-type': 'application/json', authorization: 'Bearer invalid-token-1234567890' },

@@ -301,6 +301,34 @@ function isLoopback(request: IncomingMessage): boolean {
   return address === '127.0.0.1' || address === '::1' || address === '::ffff:127.0.0.1';
 }
 
+/**
+ * The Offer checkout is the only public capability surface under
+ * `/local-pilot`. Every other local-pilot operation remains operator-local.
+ */
+export function requiresLoopbackAccess(
+  method: string | undefined,
+  path: string,
+): boolean {
+  if (method === 'POST' && path === '/local-pilot/orders') return false;
+  if (
+    method === 'POST' &&
+    /^\/local-pilot\/orders\/[^/]+\/proforma$/.test(path)
+  ) {
+    return false;
+  }
+  if (
+    method === 'GET' &&
+    (
+      /^\/local-pilot\/orders\/[^/]+$/.test(path) ||
+      /^\/local-pilot\/orders\/[^/]+\/proforma$/.test(path) ||
+      /^\/local-pilot\/orders\/[^/]+\/proforma\/pdf$/.test(path)
+    )
+  ) {
+    return false;
+  }
+  return true;
+}
+
 async function requestBody(request: IncomingMessage): Promise<unknown> {
   let body = '';
   for await (const chunk of request) body += String(chunk);
@@ -338,7 +366,7 @@ export function createPlatformApiServer(
       response.setHeader('access-control-allow-origin', origin);
       response.setHeader('vary', 'origin');
       response.setHeader('access-control-allow-methods', 'GET,POST,OPTIONS');
-      response.setHeader('access-control-allow-headers', 'content-type');
+      response.setHeader('access-control-allow-headers', 'content-type, authorization');
     }
     if (request.method === 'OPTIONS') return respond(response, 204, {});
     const path = new URL(request.url ?? '/', 'http://localhost').pathname;
@@ -356,7 +384,9 @@ export function createPlatformApiServer(
         const result = await repository.activate(token, body.ndaAccepted === true);
         return respond(response, result.ok ? 200 : 409, result);
       }
-      if (!isLoopback(request)) return respond(response, 403, { error: 'Local-pilot access requires loopback.' });
+      if (requiresLoopbackAccess(request.method, path) && !isLoopback(request)) {
+        return respond(response, 403, { error: 'Local-pilot access requires loopback.' });
+      }
       if (request.method === 'POST' && path === '/local-pilot/social-proof/events') {
         await socialProofRepository.record(
           await requestBody(request) as import('./socialProofAnalytics').SocialProofAnalyticsEventInput,
