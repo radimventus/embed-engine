@@ -14,6 +14,7 @@ const LOCAL_SAME_SITE_ALLOWED_ORIGINS = [
   'https://conis.cz:4177',
   'https://conis.cz:4179',
   'https://conis.cz:4181',
+  'https://conis.cz:4183',
 ];
 
 export function platformApiStatePath(fileName: string): string {

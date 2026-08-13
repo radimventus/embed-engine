@@ -3,7 +3,7 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, type UserConfig } from 'vite';
 
 import {
   createSsotResolveAliases,
@@ -15,6 +15,29 @@ const clientPublicDir = join(repoRoot, 'apps/client-studio/public');
 const packageJson = JSON.parse(
   readFileSync(join(rootDir, 'package.json'), 'utf8'),
 ) as { version: string };
+
+function localSameSiteServer(port: number): UserConfig['server'] {
+  if (process.env.CONIS_LOCAL_HTTPS !== '1') {
+    return { host: '127.0.0.1', port, strictPort: true };
+  }
+  const certificatePath = process.env.CONIS_LOCAL_HTTPS_CERT_PATH;
+  const keyPath = process.env.CONIS_LOCAL_HTTPS_KEY_PATH;
+  if (certificatePath === undefined || keyPath === undefined) {
+    throw new Error(
+      'CONIS_LOCAL_HTTPS_CERT_PATH and CONIS_LOCAL_HTTPS_KEY_PATH are required for same-site local HTTPS.',
+    );
+  }
+  return {
+    host: 'conis.cz',
+    port,
+    strictPort: true,
+    allowedHosts: ['conis.cz'],
+    https: {
+      cert: readFileSync(certificatePath),
+      key: readFileSync(keyPath),
+    },
+  };
+}
 
 /**
  * ARCH-01 — CONIS Workspace Host.
@@ -41,9 +64,7 @@ export default defineConfig({
     'process.env.NODE_ENV': JSON.stringify('development'),
   },
   server: {
-    host: '127.0.0.1',
-    port: 4183,
-    strictPort: true,
+    ...localSameSiteServer(4183),
     fs: {
       allow: [repoRoot],
     },
