@@ -16,6 +16,10 @@ import {
   requiresLoopbackAccess,
 } from './index.ts';
 
+process.env.OFFER_CAPABILITY_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString(
+  'base64url',
+);
+
 async function repositoryForTest(): Promise<{
   readonly repository: FilePlatformInviteRepository;
   readonly statePath: string;
@@ -297,6 +301,104 @@ describe('Durable order repository', () => {
 });
 
 describe('Offer write capability repository', () => {
+  it('reuses an active capability through the Office capability endpoint', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-offer-write-api-test-'));
+    const tokens = new FileOfferWriteTokenRepository(join(directory, 'tokens.json'));
+    const scope = {
+      offerSlug: 'domy-s-energi',
+      companyId: 'company-domy-s-energi',
+      partnerId: 'p-dse',
+    };
+    const server = createPlatformApiServer(undefined, undefined, undefined, undefined, tokens);
+    await new Promise<void>((resolve) => {
+      server.listen(0, '127.0.0.1', resolve);
+    });
+    try {
+      const address = server.address();
+      assert.ok(address !== null && typeof address !== 'string');
+      const endpoint = `http://127.0.0.1:${address.port}/local-pilot/offer-write-capabilities`;
+      const request = () =>
+        fetch(endpoint, {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(scope),
+        });
+      const first = await request();
+      const second = await request();
+      assert.equal(first.status, 201);
+      assert.equal(second.status, 201);
+      assert.equal(
+        (await first.json() as { token: string }).token,
+        (await second.json() as { token: string }).token,
+      );
+    } finally {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => (error === undefined ? resolve() : reject(error)));
+      });
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('persists one encrypted capability and restores it after restart', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-offer-write-persistence-test-'));
+    const statePath = join(directory, 'tokens.json');
+    const scope = {
+      offerSlug: 'domy-s-energi',
+      companyId: 'company-domy-s-energi',
+      partnerId: 'p-dse',
+    };
+    try {
+      const firstRepository = new FileOfferWriteTokenRepository(statePath);
+      const first = await firstRepository.getOrIssue(scope);
+      const stored = await readFile(statePath, 'utf8');
+      assert.equal(stored.includes(first.token), false);
+      assert.match(stored, /"encryptedToken":"v1\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+"/);
+
+      const restartedRepository = new FileOfferWriteTokenRepository(statePath);
+      const recovered = await restartedRepository.getOrIssue(scope);
+      assert.equal(recovered.id, first.id);
+      assert.equal(recovered.token, first.token);
+
+      assert.equal(await restartedRepository.bindOrder(recovered.token, {
+        ...scope,
+        orderId: 'OFF-1',
+      }), true);
+      assert.equal(
+        await new FileOfferWriteTokenRepository(statePath).verifyOrder(
+          first.token,
+          'OFF-1',
+        ),
+        true,
+      );
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('replaces an expired capability for the same scope', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-offer-write-expiry-test-'));
+    const statePath = join(directory, 'tokens.json');
+    const scope = {
+      offerSlug: 'domy-s-energi',
+      companyId: 'company-domy-s-energi',
+      partnerId: 'p-dse',
+    };
+    try {
+      const repository = new FileOfferWriteTokenRepository(statePath);
+      const expired = await repository.getOrIssue({
+        ...scope,
+        expiresAt: '2020-01-01T00:00:00.000Z',
+      });
+      const active = await new FileOfferWriteTokenRepository(statePath).getOrIssue(
+        scope,
+      );
+      assert.notEqual(active.id, expired.id);
+      assert.notEqual(active.token, expired.token);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
   it('binds one matching order and rejects another scope or order', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-offer-write-test-'));
     try {

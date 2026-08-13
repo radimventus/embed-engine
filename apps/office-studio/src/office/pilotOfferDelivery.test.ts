@@ -30,6 +30,7 @@ import {
   getPartner,
   resetPartnerRegistryForTests,
 } from './officePartnerRegistry.ts';
+import { buildOfficePartnerEnvironment } from './officePartnerEnvironment.ts';
 import { resetOperationsRegistryForTests } from './officeOperationsRegistry.ts';
 import { preparePilotForPartner } from './preparePilotProvisioning.ts';
 import {
@@ -135,9 +136,7 @@ describe('PT-CJ-00 Pilot Delivery', () => {
     );
 
     const projectId =
-      result.delivery.preview.projectName.length > 0
-        ? 'project-domy-s-energi-01'
-        : 'p-dse';
+      buildOfficePartnerEnvironment('p-dse').environment?.projectId ?? 'p-dse';
     const timeline = projectTimelineFromConversation(projectId);
     assert.ok(
       timeline.some((event) => event.kind === 'email.sent') ||

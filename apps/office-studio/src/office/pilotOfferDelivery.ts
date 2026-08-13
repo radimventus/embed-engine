@@ -85,7 +85,7 @@ export type OfferWriteCapabilityIssuer = (scope: {
   readonly partnerId: string;
 }) => Promise<{ readonly token: string }>;
 
-async function issueOfferWriteCapability(scope: {
+async function getOrIssueOfferWriteCapability(scope: {
   readonly offerSlug: string;
   readonly companyId: string;
   readonly partnerId: string;
@@ -347,7 +347,7 @@ export async function generatePersonalizedPilotOfferPdf(
 export async function deliverPilotOffer(
   partnerId: string,
   mailSession: PilotMailTransportSession,
-  capabilityIssuer: OfferWriteCapabilityIssuer = issueOfferWriteCapability,
+  capabilityIssuer: OfferWriteCapabilityIssuer = getOrIssueOfferWriteCapability,
 ): Promise<PilotOfferDeliveryResult> {
   const readiness = verifyPilotDeliveryReadiness(partnerId);
   if (!readiness.ready) {

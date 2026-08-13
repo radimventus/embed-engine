@@ -448,7 +448,7 @@ export function createPlatformApiServer(
         return respond(
           response,
           201,
-          await offerWriteTokens.issue(
+          await offerWriteTokens.getOrIssue(
             await requestBody(request) as import('./offerWriteTokenRepository').OfferWriteCapabilityScope,
           ),
         );
