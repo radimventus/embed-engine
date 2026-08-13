@@ -89,23 +89,6 @@ function localStudioOrigin(port: number): string {
   return `${protocol}//${host}:${port}`;
 }
 
-function localStudioPort(studioId: PlatformStudioId): number {
-  if (studioId !== 'office') return LOCAL_STUDIO_PORTS[studioId];
-  try {
-    const configured = Number.parseInt(
-      (import.meta as { env?: Record<string, string | undefined> })
-        .env?.VITE_LOCAL_OFFICE_STUDIO_PORT ?? '',
-      10,
-    );
-    if (Number.isInteger(configured) && configured > 0 && configured <= 65_535) {
-      return configured;
-    }
-  } catch {
-    // Non-Vite hosts use the default Office port.
-  }
-  return LOCAL_STUDIO_PORTS.office;
-}
-
 export function getCloudPlatformConfig(): CloudPlatformConfig {
   const envOrigin = readEnvOrigin();
   if (envOrigin !== null) {
@@ -148,7 +131,7 @@ export function resolveCloudStudioHref(studioId: PlatformStudioId): string {
 
   const config = getCloudPlatformConfig();
   if (config.mode === 'local') {
-    return `${localStudioOrigin(localStudioPort(studioId))}/`;
+    return `${localStudioOrigin(LOCAL_STUDIO_PORTS[studioId])}/`;
   }
   return `${config.origin}${CLOUD_STUDIO_PATHS[studioId]}`;
 }

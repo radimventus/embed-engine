@@ -17,6 +17,7 @@ describe('Platform API local CORS origins', () => {
     assert.equal(origins.has('https://conis.cz:4177'), true);
     assert.equal(origins.has('https://conis.cz:4175'), true);
     assert.equal(origins.has('https://conis.cz:4179'), true);
+    assert.equal(origins.has('https://conis.cz:4181'), true);
     assert.equal(origins.has('https://conis.cz:4173'), false);
   });
 });

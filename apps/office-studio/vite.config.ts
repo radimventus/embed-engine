@@ -8,10 +8,6 @@ import { defineConfig, type UserConfig } from 'vite';
 import { pilotMailRelayPlugin } from './vite/pilotMailRelayPlugin';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
-const officePort = Number.parseInt(
-  process.env.VITE_LOCAL_OFFICE_STUDIO_PORT ?? '4181',
-  10,
-);
 
 /** Node-only mail transport — never prebundle / never ship in browser. */
 const NODE_ONLY_MAIL = ['nodemailer', 'imapflow'] as const;
@@ -63,7 +59,7 @@ export default defineConfig({
     external: [...NODE_ONLY_MAIL],
   },
   server: {
-    ...localSameSiteServer(officePort),
+    ...localSameSiteServer(4181),
   },
   preview: {
     host: '127.0.0.1',
