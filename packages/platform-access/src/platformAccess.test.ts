@@ -529,6 +529,31 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     );
   });
 
+  it('keeps local HTTPS Studio transitions on the same conis.cz site', () => {
+    const windowDescriptor = Object.getOwnPropertyDescriptor(globalThis, 'window');
+    Object.defineProperty(globalThis, 'window', {
+      configurable: true,
+      value: {
+        location: {
+          hostname: 'conis.cz',
+          protocol: 'https:',
+          port: '4175',
+        },
+      },
+    });
+    try {
+      assert.equal(getCloudPlatformConfig().mode, 'local');
+      assert.equal(resolveCloudStudioHref('office'), 'https://conis.cz:4181/');
+      assert.equal(resolveCloudStudioHref('manager'), 'https://conis.cz:4175/');
+    } finally {
+      if (windowDescriptor === undefined) {
+        delete (globalThis as { window?: unknown }).window;
+      } else {
+        Object.defineProperty(globalThis, 'window', windowDescriptor);
+      }
+    }
+  });
+
   it('routes operator Client selection through Workspace, separate from public Embed', () => {
     const originalWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
     Object.defineProperty(globalThis, 'window', {

@@ -10,4 +10,12 @@ describe('Platform API local CORS origins', () => {
       true,
     );
   });
+
+  it('allows only the Office and Manager same-site HTTPS development origins', () => {
+    const origins = platformApiAllowedOrigins();
+
+    assert.equal(origins.has('https://conis.cz:4177'), true);
+    assert.equal(origins.has('https://conis.cz:4175'), true);
+    assert.equal(origins.has('https://conis.cz:4173'), false);
+  });
 });

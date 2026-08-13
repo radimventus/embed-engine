@@ -1,15 +1,43 @@
+import { readFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { defineConfig, type UserConfig } from 'vite';
 
 import { pilotMailRelayPlugin } from './vite/pilotMailRelayPlugin';
 
 const rootDir = dirname(fileURLToPath(import.meta.url));
+const officePort = Number.parseInt(
+  process.env.VITE_LOCAL_OFFICE_STUDIO_PORT ?? '4181',
+  10,
+);
 
 /** Node-only mail transport — never prebundle / never ship in browser. */
 const NODE_ONLY_MAIL = ['nodemailer', 'imapflow'] as const;
+
+function localSameSiteServer(port: number): UserConfig['server'] {
+  if (process.env.CONIS_LOCAL_HTTPS !== '1') {
+    return { host: '127.0.0.1', port, strictPort: true };
+  }
+  const certificatePath = process.env.CONIS_LOCAL_HTTPS_CERT_PATH;
+  const keyPath = process.env.CONIS_LOCAL_HTTPS_KEY_PATH;
+  if (certificatePath === undefined || keyPath === undefined) {
+    throw new Error(
+      'CONIS_LOCAL_HTTPS_CERT_PATH and CONIS_LOCAL_HTTPS_KEY_PATH are required for same-site local HTTPS.',
+    );
+  }
+  return {
+    host: 'conis.cz',
+    port,
+    strictPort: true,
+    allowedHosts: ['conis.cz'],
+    https: {
+      cert: readFileSync(certificatePath),
+      key: readFileSync(keyPath),
+    },
+  };
+}
 
 /**
  * Office Studio Vite config (OF-01).
@@ -35,9 +63,7 @@ export default defineConfig({
     external: [...NODE_ONLY_MAIL],
   },
   server: {
-    host: '127.0.0.1',
-    port: 4181,
-    strictPort: true,
+    ...localSameSiteServer(officePort),
   },
   preview: {
     host: '127.0.0.1',

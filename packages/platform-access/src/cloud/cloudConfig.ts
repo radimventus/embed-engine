@@ -69,6 +69,43 @@ function isLocalHost(hostname: string): boolean {
   return hostname === '127.0.0.1' || hostname === 'localhost';
 }
 
+function isSameSiteLocalDevelopment(location: Location): boolean {
+  return (
+    location.hostname === 'conis.cz' &&
+    location.protocol === 'https:' &&
+    [...Object.values(LOCAL_STUDIO_PORTS), LOCAL_WORKSPACE_HOST_PORT].includes(
+      Number(location.port),
+    )
+  );
+}
+
+function localStudioOrigin(port: number): string {
+  const host =
+    typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
+  const protocol =
+    typeof window !== 'undefined' && window.location.protocol === 'https:'
+      ? 'https:'
+      : 'http:';
+  return `${protocol}//${host}:${port}`;
+}
+
+function localStudioPort(studioId: PlatformStudioId): number {
+  if (studioId !== 'office') return LOCAL_STUDIO_PORTS[studioId];
+  try {
+    const configured = Number.parseInt(
+      (import.meta as { env?: Record<string, string | undefined> })
+        .env?.VITE_LOCAL_OFFICE_STUDIO_PORT ?? '',
+      10,
+    );
+    if (Number.isInteger(configured) && configured > 0 && configured <= 65_535) {
+      return configured;
+    }
+  } catch {
+    // Non-Vite hosts use the default Office port.
+  }
+  return LOCAL_STUDIO_PORTS.office;
+}
+
 export function getCloudPlatformConfig(): CloudPlatformConfig {
   const envOrigin = readEnvOrigin();
   if (envOrigin !== null) {
@@ -83,10 +120,10 @@ export function getCloudPlatformConfig(): CloudPlatformConfig {
 
   if (typeof window !== 'undefined') {
     const { hostname } = window.location;
-    if (isLocalHost(hostname)) {
+    if (isLocalHost(hostname) || isSameSiteLocalDevelopment(window.location)) {
       return {
         mode: 'local',
-        origin: `http://${hostname}`,
+        origin: `${window.location.protocol}//${hostname}`,
         appHost: CLOUD_APP_HOST,
       };
     }
@@ -111,10 +148,7 @@ export function resolveCloudStudioHref(studioId: PlatformStudioId): string {
 
   const config = getCloudPlatformConfig();
   if (config.mode === 'local') {
-    const port = LOCAL_STUDIO_PORTS[studioId];
-    const host =
-      typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
-    return `http://${host}:${port}/`;
+    return `${localStudioOrigin(localStudioPort(studioId))}/`;
   }
   return `${config.origin}${CLOUD_STUDIO_PATHS[studioId]}`;
 }
@@ -122,9 +156,7 @@ export function resolveCloudStudioHref(studioId: PlatformStudioId): string {
 export function resolveCloudLandingHref(): string {
   const config = getCloudPlatformConfig();
   if (config.mode === 'local') {
-    const host =
-      typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
-    return `http://${host}:4177/`;
+    return `${localStudioOrigin(4177)}/`;
   }
   return `${config.origin}${CLOUD_STUDIO_ENTRY_PATH}`;
 }
@@ -137,9 +169,7 @@ export function resolveClientStudioHref(projectId?: string | null): string {
   const config = getCloudPlatformConfig();
   let base: string;
   if (config.mode === 'local') {
-    const host =
-      typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
-    base = `http://${host}:${LOCAL_CLIENT_STUDIO_PORT}/`;
+    base = `${localStudioOrigin(LOCAL_CLIENT_STUDIO_PORT)}/`;
   } else {
     base = `${config.origin}${CLOUD_STUDIO_PATHS.client}`;
   }
@@ -169,9 +199,7 @@ export function resolvePilotOfferHref(offerSlug?: string, writeToken?: string): 
   const slug = offerSlug?.trim().toLowerCase() ?? '';
   const config = getCloudPlatformConfig();
   if (config.mode === 'local') {
-    const host =
-      typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
-    const base = `http://${host}:${LOCAL_OFFER_EXPERIENCE_PORT}`;
+    const base = localStudioOrigin(LOCAL_OFFER_EXPERIENCE_PORT);
     const href = slug.length === 0 ? `${base}/` : `${base}/${encodeURIComponent(slug)}`;
     return writeToken === undefined ? href : `${href}?write=${encodeURIComponent(writeToken)}`;
   }
@@ -188,9 +216,7 @@ export function resolvePublicLegalHref(fileName: string): string {
   const file = fileName.replace(/^\/+/, '');
   const config = getCloudPlatformConfig();
   if (config.mode === 'local') {
-    const host =
-      typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
-    return `http://${host}:${LOCAL_PUBLIC_WEB_PORT}/legal/${file}`;
+    return `${localStudioOrigin(LOCAL_PUBLIC_WEB_PORT)}/legal/${file}`;
   }
   return `${config.origin}/legal/${file}`;
 }
@@ -212,9 +238,7 @@ export function resolvePilotEntryHref(pilotPayloadEncoded: string): string {
 export function resolveWorkspaceHostHref(): string {
   const config = getCloudPlatformConfig();
   if (config.mode === 'local') {
-    const host =
-      typeof window !== 'undefined' ? window.location.hostname : '127.0.0.1';
-    return `http://${host}:${LOCAL_WORKSPACE_HOST_PORT}/`;
+    return `${localStudioOrigin(LOCAL_WORKSPACE_HOST_PORT)}/`;
   }
   return `${config.origin}${CLOUD_WORKSPACE_HOST_PATH}`;
 }
