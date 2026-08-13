@@ -11,6 +11,7 @@
       "typecheck": "turbo run typecheck",
       "format": "prettier --write .",
       "embed:publish": "pnpm --filter @embed-engine/embed publish:release",
+      "offer:publish": "node ./scripts/publish-offer.mjs",
       "platform-api:start": "pnpm --filter @embed-engine/platform-api start",
     "studio:publish": "node ./scripts/publish-studio-platform.mjs",
     "web:dev": "pnpm --filter @embed-engine/conis-web dev",
