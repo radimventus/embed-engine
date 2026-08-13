@@ -163,8 +163,6 @@ export {
   loadPlatformSession,
   savePlatformSession,
   clearPlatformSession,
-  PLATFORM_SESSION_COOKIE,
-  PLATFORM_SESSION_STORAGE_KEY,
 } from './session/sessionStore';
 
 export {
@@ -278,7 +276,11 @@ export {
 
 export {
   createPlatformAccessInviteClient,
+  createPlatformAccessAuthClient,
+  platformApiOrigin,
   type PlatformAccessInvite,
+  type PlatformAccessAuthClient,
+  type PlatformAccessAuthResult,
   type PlatformAccessInviteActivation,
   type PlatformAccessInviteClient,
   type PlatformAccessInviteCreateInput,

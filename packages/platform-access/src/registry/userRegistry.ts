@@ -1,6 +1,7 @@
 /**
  * OF-07 — User Registry (Identity Management).
- * Shared across Studios — local MVP store, not production IAM.
+ * Shared local registry for Studio metadata. Authentication is handled by
+ * Platform API; passwords are never persisted in browser storage.
  */
 
 import type {
@@ -55,10 +56,7 @@ function loadStore(): UserRegistryStore {
     const users = Array.isArray(parsed.users)
       ? parsed.users.map(normalizeUser)
       : seedUsers();
-    const passwords =
-      parsed.passwords !== null && typeof parsed.passwords === 'object'
-        ? parsed.passwords
-        : seedPasswords();
+    const passwords = seedPasswords();
     // Ensure demo seeds always exist.
     for (const seed of seedUsers()) {
       if (!users.some((user) => user.id === seed.id)) {
@@ -81,7 +79,10 @@ function saveStore(store: UserRegistryStore): void {
   memoryStore = store;
   if (!canUseStorage()) return;
   try {
-    localStorage.setItem(USER_REGISTRY_STORAGE_KEY, JSON.stringify(store));
+    localStorage.setItem(
+      USER_REGISTRY_STORAGE_KEY,
+      JSON.stringify({ users: store.users }),
+    );
   } catch {
     // ignore
   }

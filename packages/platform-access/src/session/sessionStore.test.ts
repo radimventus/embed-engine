@@ -5,7 +5,7 @@ import type { PlatformSession } from '../domain/types';
 import {
   clearPlatformSession,
   loadPlatformSession,
-  PLATFORM_SESSION_STORAGE_KEY,
+  savePlatformSession,
 } from './sessionStore';
 
 const staleSession: PlatformSession = {
@@ -32,44 +32,16 @@ const staleSession: PlatformSession = {
   lastLoginAt: '2026-08-11T00:00:00.000Z',
 };
 
-const originalDocument = Object.getOwnPropertyDescriptor(globalThis, 'document');
-const originalLocalStorage = Object.getOwnPropertyDescriptor(
-  globalThis,
-  'localStorage',
-);
-
 afterEach(() => {
   clearPlatformSession();
-  if (originalDocument === undefined) {
-    delete (globalThis as { document?: unknown }).document;
-  } else {
-    Object.defineProperty(globalThis, 'document', originalDocument);
-  }
-  if (originalLocalStorage === undefined) {
-    delete (globalThis as { localStorage?: unknown }).localStorage;
-  } else {
-    Object.defineProperty(globalThis, 'localStorage', originalLocalStorage);
-  }
 });
 
 describe('browser session restoration', () => {
-  it('does not revive a logged-out session from port-local storage', () => {
-    Object.defineProperty(globalThis, 'document', {
-      configurable: true,
-      value: { cookie: '' },
-    });
-    Object.defineProperty(globalThis, 'localStorage', {
-      configurable: true,
-      value: {
-        getItem(key: string) {
-          return key === PLATFORM_SESSION_STORAGE_KEY
-            ? JSON.stringify(staleSession)
-            : null;
-        },
-        removeItem() {},
-      },
-    });
-
+  it('keeps identity only in the in-memory API-session projection', () => {
+    assert.equal(loadPlatformSession(), null);
+    savePlatformSession(staleSession);
+    assert.equal(loadPlatformSession()?.user.id, 'user-manager');
+    clearPlatformSession();
     assert.equal(loadPlatformSession(), null);
   });
 });

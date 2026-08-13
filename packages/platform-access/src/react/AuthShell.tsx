@@ -27,10 +27,10 @@ export function AuthShell({ onOpenInvite }: AuthShellProps) {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
 
-  const onLogin = (event: FormEvent) => {
+  const onLogin = async (event: FormEvent) => {
     event.preventDefault();
     setError(null);
-    const result = login({ email, password, rememberMe });
+    const result = await login({ email, password, rememberMe });
     if (!result.ok) {
       setError(result.error);
     }
@@ -49,7 +49,7 @@ export function AuthShell({ onOpenInvite }: AuthShellProps) {
     setMode('reset-complete');
   };
 
-  const onCompleteReset = (event: FormEvent) => {
+  const onCompleteReset = async (event: FormEvent) => {
     event.preventDefault();
     setError(null);
     const result = finishPasswordReset({
@@ -61,7 +61,7 @@ export function AuthShell({ onOpenInvite }: AuthShellProps) {
       setError(result.error);
       return;
     }
-    const synced = login({
+    const synced = await login({
       email: result.email,
       password,
       rememberMe: true,
@@ -88,7 +88,12 @@ export function AuthShell({ onOpenInvite }: AuthShellProps) {
         </p>
 
         {mode === 'login' ? (
-          <form className="platform-access__form" onSubmit={onLogin}>
+          <form
+            className="platform-access__form"
+            onSubmit={(event) => {
+              void onLogin(event);
+            }}
+          >
             <label className="platform-access__label">
               E-mail
               <input
@@ -152,7 +157,12 @@ export function AuthShell({ onOpenInvite }: AuthShellProps) {
         ) : null}
 
         {mode === 'reset-complete' ? (
-          <form className="platform-access__form" onSubmit={onCompleteReset}>
+          <form
+            className="platform-access__form"
+            onSubmit={(event) => {
+              void onCompleteReset(event);
+            }}
+          >
             {info !== null ? (
               <p className="platform-access__lead">{info}</p>
             ) : null}

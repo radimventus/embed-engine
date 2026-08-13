@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, it } from 'node:test';
@@ -8,6 +8,7 @@ import {
   createPlatformApiServer,
   FileOrderRepository,
   FileOfferWriteTokenRepository,
+  FilePartnerSessionRepository,
   FilePlatformInviteRepository,
   FileProformaRepository,
   FileSocialProofAnalyticsRepository,
@@ -139,6 +140,140 @@ describe('Platform API invitation repository', () => {
       assert.match(stored, /"verifier":"[A-Za-z0-9_-]{43}"/);
     } finally {
       await fixture.cleanup();
+    }
+  });
+});
+
+describe('Durable partner sessions', () => {
+  it('persists an opaque session, preserves the Manager role, and revokes it', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-session-test-'));
+    const statePath = join(directory, 'partner-sessions.json');
+    const invite = {
+      id: 'invite-manager',
+      email: 'manager@example.test',
+      displayName: 'Manager',
+      roles: ['manager'],
+      tenantId: 'tenant-1',
+      companyId: 'company-1',
+      workspaceId: 'workspace-1',
+      projectId: 'project-1',
+    };
+    try {
+      const first = new FilePartnerSessionRepository(statePath);
+      const issued = await first.activate({
+        invite,
+        password: 'secure-password',
+        rememberMe: true,
+      });
+      const stored = await readFile(statePath, 'utf8');
+      assert.equal(stored.includes(issued.token), false);
+      assert.equal(stored.includes('secure-password'), false);
+      assert.match(stored, /"passwordHash":"[A-Za-z0-9_-]+"/);
+
+      const restarted = new FilePartnerSessionRepository(statePath);
+      const restored = await restarted.resolve(issued.token);
+      assert.equal(restored?.user.email, invite.email);
+      assert.deepEqual(restored?.user.roles, ['manager']);
+
+      await restarted.revoke(issued.token);
+      assert.equal(await new FilePartnerSessionRepository(statePath).resolve(issued.token), null);
+      assert.equal(await restarted.resolve('invalid-session-token'), null);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('rejects an expired persisted session', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-session-expiry-test-'));
+    const statePath = join(directory, 'partner-sessions.json');
+    try {
+      const repository = new FilePartnerSessionRepository(statePath);
+      const issued = await repository.activate({
+        invite: {
+          id: 'invite-expired',
+          email: 'expired@example.test',
+          displayName: 'Expired',
+          roles: ['manager'],
+          tenantId: 'tenant-1',
+          companyId: 'company-1',
+          workspaceId: 'workspace-1',
+          projectId: 'project-1',
+        },
+        password: 'secure-password',
+        rememberMe: false,
+      });
+      const persisted = JSON.parse(await readFile(statePath, 'utf8')) as {
+        sessions: Array<{ expiresAt: string }>;
+      };
+      persisted.sessions[0]!.expiresAt = '2020-01-01T00:00:00.000Z';
+      await writeFile(statePath, JSON.stringify(persisted), { mode: 0o600 });
+      assert.equal(await new FilePartnerSessionRepository(statePath).resolve(issued.token), null);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('issues an HttpOnly host-only cookie through activation and resolves it over credentialed CORS', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-auth-api-test-'));
+    const inviteRepository = new FilePlatformInviteRepository(join(directory, 'invites.json'));
+    const sessionRepository = new FilePartnerSessionRepository(
+      join(directory, 'partner-sessions.json'),
+    );
+    const issuedInvite = await inviteRepository.create(inviteInput);
+    const server = createPlatformApiServer(
+      inviteRepository,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      sessionRepository,
+    );
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    try {
+      const address = server.address();
+      assert.ok(address !== null && typeof address !== 'string');
+      const baseUrl = `http://127.0.0.1:${address.port}`;
+      const activation = await fetch(
+        `${baseUrl}/public/auth/activate/${encodeURIComponent(issuedInvite.token)}`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json', origin: 'https://conis.cz' },
+          body: JSON.stringify({
+            ndaAccepted: true,
+            password: 'secure-password',
+            rememberMe: true,
+          }),
+        },
+      );
+      assert.equal(activation.status, 200);
+      assert.equal(activation.headers.get('access-control-allow-origin'), 'https://conis.cz');
+      assert.equal(activation.headers.get('access-control-allow-credentials'), 'true');
+      const cookie = activation.headers.get('set-cookie');
+      assert.match(cookie ?? '', /^__Host-conis_partner_session=[^;]+; Path=\/; Max-Age=\d+; HttpOnly; Secure; SameSite=Lax$/);
+
+      const me = await fetch(`${baseUrl}/public/auth/me`, {
+        headers: { cookie: cookie!.split(';')[0]! },
+      });
+      assert.equal(me.status, 200);
+      assert.deepEqual(
+        (await me.json() as { user: { roles: string[] } }).user.roles,
+        ['manager'],
+      );
+
+      const logout = await fetch(`${baseUrl}/public/auth/logout`, {
+        method: 'POST',
+        headers: { cookie: cookie!.split(';')[0]! },
+      });
+      assert.equal(logout.status, 204);
+      const rejected = await fetch(`${baseUrl}/public/auth/me`, {
+        headers: { cookie: cookie!.split(';')[0]! },
+      });
+      assert.equal(rejected.status, 401);
+    } finally {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => (error === undefined ? resolve() : reject(error)));
+      });
+      await rm(directory, { recursive: true, force: true });
     }
   });
 });
@@ -641,4 +776,5 @@ describe('Social Proof analytics repository', () => {
       await rm(directory, { recursive: true, force: true });
     }
   });
+
 });

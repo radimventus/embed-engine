@@ -24,6 +24,10 @@ import {
   FileOfferWriteTokenRepository,
   type OfferWriteTokenRepository,
 } from './offerWriteTokenRepository';
+import {
+  FilePartnerSessionRepository,
+  type PartnerSessionRepository,
+} from './partnerSessionRepository';
 import { platformApiAllowedOrigins, platformApiStatePath } from './platformApiConfig';
 
 export {
@@ -56,6 +60,12 @@ export {
   type OfferWriteCapabilityScope,
   type OfferWriteTokenRepository,
 } from './offerWriteTokenRepository';
+export {
+  FilePartnerSessionRepository,
+  type IssuedPartnerSession,
+  type PartnerIdentity,
+  type PartnerSessionRepository,
+} from './partnerSessionRepository';
 export {
   platformApiAllowedOrigins,
   platformApiHost,
@@ -352,12 +362,45 @@ function bearerToken(request: IncomingMessage): string | null {
   return match?.[1] ?? null;
 }
 
+const PARTNER_SESSION_COOKIE = '__Host-conis_partner_session';
+
+function requestCookie(request: IncomingMessage, name: string): string | null {
+  const value = request.headers.cookie;
+  if (value === undefined) return null;
+  const part = value.split(';').map((item) => item.trim()).find(
+    (item) => item.startsWith(`${name}=`),
+  );
+  return part === undefined ? null : decodeURIComponent(part.slice(name.length + 1));
+}
+
+function setPartnerSessionCookie(
+  response: import('node:http').ServerResponse,
+  token: string,
+  expiresAt: string,
+): void {
+  const maxAge = Math.max(0, Math.floor((Date.parse(expiresAt) - Date.now()) / 1_000));
+  response.setHeader(
+    'set-cookie',
+    `${PARTNER_SESSION_COOKIE}=${encodeURIComponent(token)}; Path=/; Max-Age=${maxAge}; HttpOnly; Secure; SameSite=Lax`,
+  );
+}
+
+function clearPartnerSessionCookie(
+  response: import('node:http').ServerResponse,
+): void {
+  response.setHeader(
+    'set-cookie',
+    `${PARTNER_SESSION_COOKIE}=; Path=/; Max-Age=0; HttpOnly; Secure; SameSite=Lax`,
+  );
+}
+
 export function createPlatformApiServer(
   repository: PlatformInviteRepository = new FilePlatformInviteRepository(),
   socialProofRepository: SocialProofAnalyticsRepository = new FileSocialProofAnalyticsRepository(),
   orderRepository: OrderRepository = new FileOrderRepository(),
   proformaRepository: ProformaRepository = new FileProformaRepository(),
   offerWriteTokens: OfferWriteTokenRepository = new FileOfferWriteTokenRepository(),
+  partnerSessions: PartnerSessionRepository = new FilePartnerSessionRepository(),
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
@@ -367,10 +410,63 @@ export function createPlatformApiServer(
       response.setHeader('vary', 'origin');
       response.setHeader('access-control-allow-methods', 'GET,POST,OPTIONS');
       response.setHeader('access-control-allow-headers', 'content-type, authorization');
+      response.setHeader('access-control-allow-credentials', 'true');
     }
     if (request.method === 'OPTIONS') return respond(response, 204, {});
     const path = new URL(request.url ?? '/', 'http://localhost').pathname;
     try {
+      if (request.method === 'POST' && path.startsWith('/public/auth/activate/')) {
+        const token = decodeURIComponent(path.slice('/public/auth/activate/'.length));
+        const body = await requestBody(request) as {
+          ndaAccepted?: boolean;
+          password?: string;
+          rememberMe?: boolean;
+        };
+        if (body.ndaAccepted !== true) {
+          return respond(response, 409, { error: 'Bez souhlasu s NDA není aktivace účtu možná.' });
+        }
+        if (typeof body.password !== 'string' || body.password.trim().length < 8) {
+          return respond(response, 400, { error: 'Heslo musí mít alespoň 8 znaků.' });
+        }
+        const activation = await repository.activate(token, true);
+        if (!activation.ok) return respond(response, 409, activation);
+        const issued = await partnerSessions.activate({
+          invite: activation.invite,
+          password: body.password,
+          rememberMe: body.rememberMe !== false,
+        });
+        setPartnerSessionCookie(response, issued.token, issued.expiresAt);
+        return respond(response, 200, { ok: true, session: issued.identity });
+      }
+      if (request.method === 'POST' && path === '/public/auth/login') {
+        const body = await requestBody(request) as {
+          email?: string;
+          password?: string;
+          rememberMe?: boolean;
+        };
+        if (typeof body.email !== 'string' || typeof body.password !== 'string') {
+          return respond(response, 400, { error: 'E-mail a heslo jsou povinné.' });
+        }
+        const issued = await partnerSessions.login({
+          email: body.email,
+          password: body.password,
+          rememberMe: body.rememberMe !== false,
+        });
+        if (issued === null) return respond(response, 401, { error: 'Neplatné přihlášení.' });
+        setPartnerSessionCookie(response, issued.token, issued.expiresAt);
+        return respond(response, 200, { ok: true, session: issued.identity });
+      }
+      if (request.method === 'GET' && path === '/public/auth/me') {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session = token === null ? null : await partnerSessions.resolve(token);
+        return respond(response, session === null ? 401 : 200, session ?? { error: 'Neplatná relace.' });
+      }
+      if (request.method === 'POST' && path === '/public/auth/logout') {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        if (token !== null) await partnerSessions.revoke(token);
+        clearPartnerSessionCookie(response);
+        return respond(response, 204, {});
+      }
       if (request.method === 'GET' && path.startsWith('/public/invites/')) {
         const token = decodeURIComponent(path.slice('/public/invites/'.length));
         const invite = await repository.resolve(token);

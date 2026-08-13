@@ -1,4 +1,5 @@
 import type { PlatformRole } from '../domain/types';
+import type { PlatformSession } from '../domain/types';
 import type { PilotInviteStatus } from '../domain/pilotTypes';
 
 export type PlatformAccessInvite = {
@@ -56,11 +57,15 @@ export interface PlatformAccessInviteClient {
   ): Promise<PlatformAccessInviteActivation>;
 }
 
-function apiOrigin(): string {
-  return (
-    (import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env
-      ?.VITE_PLATFORM_API_ORIGIN ?? 'http://127.0.0.1:4310'
-  );
+export function platformApiOrigin(): string {
+  const env = (import.meta as ImportMeta & {
+    env?: Record<string, string | boolean | undefined>;
+  }).env;
+  const configuredOrigin = env?.VITE_PLATFORM_API_ORIGIN;
+  if (typeof configuredOrigin === 'string' && configuredOrigin.length > 0) {
+    return configuredOrigin;
+  }
+  return env?.PROD === true ? 'https://api.conis.cz' : 'http://127.0.0.1:4310';
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
@@ -68,7 +73,7 @@ async function parseResponse<T>(response: Response): Promise<T> {
 }
 
 export function createPlatformAccessInviteClient(
-  origin = apiOrigin(),
+  origin = platformApiOrigin(),
 ): PlatformAccessInviteClient {
   const baseUrl = origin.replace(/\/$/, '');
   return {
@@ -117,6 +122,79 @@ export function createPlatformAccessInviteClient(
         },
       );
       return parseResponse<PlatformAccessInviteActivation>(response);
+    },
+  };
+}
+
+export type PlatformAccessAuthResult =
+  | { readonly ok: true; readonly session: PlatformSession }
+  | { readonly ok: false; readonly error: string };
+
+export interface PlatformAccessAuthClient {
+  activateInvite(input: {
+    readonly token: string;
+    readonly password: string;
+    readonly rememberMe: boolean;
+  }): Promise<PlatformAccessAuthResult>;
+  login(input: {
+    readonly email: string;
+    readonly password: string;
+    readonly rememberMe: boolean;
+  }): Promise<PlatformAccessAuthResult>;
+  restoreSession(): Promise<PlatformSession | null>;
+  logout(): Promise<void>;
+}
+
+export function createPlatformAccessAuthClient(
+  origin = platformApiOrigin(),
+): PlatformAccessAuthClient {
+  const baseUrl = origin.replace(/\/$/, '');
+  async function postAuthentication(
+    path: string,
+    body: unknown,
+  ): Promise<PlatformAccessAuthResult> {
+    const response = await fetch(`${baseUrl}${path}`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const result = await parseResponse<
+      { readonly ok: true; readonly session: PlatformSession } | { readonly error?: string }
+    >(response);
+    return response.ok && 'session' in result
+      ? result
+      : {
+          ok: false,
+          error: ('error' in result ? result.error : undefined) ??
+            'Přihlášení se nepodařilo dokončit.',
+        };
+  }
+  return {
+    activateInvite(input) {
+      return postAuthentication(
+        `/public/auth/activate/${encodeURIComponent(input.token)}`,
+        {
+          ndaAccepted: true,
+          password: input.password,
+          rememberMe: input.rememberMe,
+        },
+      );
+    },
+    login(input) {
+      return postAuthentication('/public/auth/login', input);
+    },
+    async restoreSession() {
+      const response = await fetch(`${baseUrl}/public/auth/me`, {
+        credentials: 'include',
+      });
+      return response.ok ? parseResponse<PlatformSession>(response) : null;
+    },
+    async logout() {
+      await fetch(`${baseUrl}/public/auth/logout`, {
+        method: 'POST',
+        credentials: 'include',
+      });
     },
   };
 }

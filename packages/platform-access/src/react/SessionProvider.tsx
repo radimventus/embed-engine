@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -33,12 +34,13 @@ import {
   type CompanyRegistryState,
 } from '../registry/companyRegistry';
 import {
-  login as authLogin,
-  logout as authLogout,
-  restoreSession,
   updateSession,
   getSharedWorkspaceContext,
 } from '../session/authService';
+import {
+  createPlatformAccessAuthClient,
+} from '../api/platformAccessClient';
+import { savePlatformSession } from '../session/sessionStore';
 import { touchUserLastStudio } from '../registry/userRegistry';
 import { isWorkspaceShellEmbed } from '../domain/workspaceShellEmbed';
 import {
@@ -50,8 +52,9 @@ export type PlatformSessionContextValue = {
   readonly session: PlatformSession | null;
   readonly registry: CompanyRegistryState;
   readonly bootstrap: WorkspaceBootstrap | null;
-  readonly login: (credentials: LoginCredentials) => { ok: true } | { ok: false; error: string };
-  readonly logout: () => void;
+  readonly login: (credentials: LoginCredentials) => Promise<{ ok: true } | { ok: false; error: string }>;
+  readonly acceptAuthenticatedSession: (session: PlatformSession) => void;
+  readonly logout: () => Promise<void>;
   readonly selectStudio: (studioId: PlatformStudioId) => void;
   readonly clearStudio: () => void;
   readonly selectProject: (projectId: string) => void;
@@ -92,17 +95,19 @@ export function SessionProvider({
   const refreshRegistry = useCallback(() => {
     setRegistryTick((value) => value + 1);
   }, []);
-  const [session, setSession] = useState<PlatformSession | null>(() => {
-    const restored = restoreSession();
-    if (restored === null) return null;
+  const [session, setSession] = useState<PlatformSession | null>(null);
+  const applySession = useCallback((restored: PlatformSession) => {
+    savePlatformSession(restored);
     // VR-04 — nested Workspace Shell views must not rewrite activeStudio.
     if (isWorkspaceShellEmbed()) {
-      return restored;
+      setSession(restored);
+      return;
     }
     if (bindStudioId !== undefined && restored.activeStudioId === null) {
       // Direct deep-link into a studio after login from another tab — keep landing
       // until user explicitly selects, unless they already picked this studio.
-      return restored;
+      setSession(restored);
+      return;
     }
     const workspaceContext = getSharedWorkspaceContext();
     if (
@@ -122,7 +127,8 @@ export function SessionProvider({
       if (next !== null) {
         touchUserLastStudio(next.user.id, bindStudioId);
       }
-      return next ?? restored;
+      setSession(next ?? restored);
+      return;
     }
     if (
       bindStudioId !== undefined &&
@@ -134,24 +140,36 @@ export function SessionProvider({
       if (next !== null) {
         touchUserLastStudio(next.user.id, bindStudioId);
       }
-      return next ?? restored;
+      setSession(next ?? restored);
+      return;
     }
     if (bindStudioId !== undefined && restored.activeStudioId === bindStudioId) {
       touchUserLastStudio(restored.user.id, bindStudioId);
     }
-    return restored;
-  });
+    setSession(restored);
+  }, [bindStudioId]);
+
+  useEffect(() => {
+    let active = true;
+    void createPlatformAccessAuthClient().restoreSession().then((restored) => {
+      if (active && restored !== null) applySession(restored);
+    });
+    return () => {
+      active = false;
+    };
+  }, [applySession]);
 
   const bootstrap = useMemo(
     () => (session !== null ? bootstrapWorkspace(session) : null),
     [session],
   );
 
-  const login = useCallback((credentials: LoginCredentials) => {
-    const result = authLogin(credentials);
+  const login = useCallback(async (credentials: LoginCredentials) => {
+    const result = await createPlatformAccessAuthClient().login(credentials);
     if (!result.ok) {
       return { ok: false as const, error: result.error };
     }
+    savePlatformSession(result.session);
     setSession(result.session);
     // CAP-GOV-06 / RC-002 — prefer the Studio host that mounted SessionProvider
     // (bindStudioId). Deep-link login on Office must not teleport to Manager/Sales
@@ -169,9 +187,14 @@ export function SessionProvider({
     return { ok: true as const };
   }, [bindStudioId]);
 
-  const logout = useCallback(() => {
+  const acceptAuthenticatedSession = useCallback((next: PlatformSession) => {
+    savePlatformSession(next);
+    setSession(next);
+  }, []);
+
+  const logout = useCallback(async () => {
     clearOperatorPartnerEnvironment();
-    authLogout();
+    await createPlatformAccessAuthClient().logout();
     setSession(null);
   }, []);
 
@@ -305,6 +328,7 @@ export function SessionProvider({
       registry,
       bootstrap,
       login,
+      acceptAuthenticatedSession,
       logout,
       selectStudio,
       clearStudio,
@@ -321,6 +345,7 @@ export function SessionProvider({
       registry,
       bootstrap,
       login,
+      acceptAuthenticatedSession,
       logout,
       selectStudio,
       clearStudio,

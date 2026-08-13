@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 
 import {
+  createPlatformAccessAuthClient,
   createPlatformAccessInviteClient,
   type PlatformAccessInvite,
 } from '../api/platformAccessClient';
 import { inviteLifecycleMessage } from '../pilot/invitationWorkflow';
 import { prepareWelcomeJourney } from '../pilot/welcomeStore';
-import { upsertActivatedUser } from '../registry/userRegistry';
 import { usePlatformSession } from './SessionProvider';
 
 type InviteShellProps = {
@@ -23,7 +23,7 @@ const NDA_SUMMARY =
  * PE-04 — Invitation → NDA Gateway → First Password → Account Activation.
  */
 export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
-  const { login } = usePlatformSession();
+  const { acceptAuthenticatedSession } = usePlatformSession();
   const [token, setToken] = useState(initialToken);
   const [step, setStep] = useState<InviteStep>(
     initialToken.trim().length > 0 ? 'nda' : 'token',
@@ -107,7 +107,11 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
     }
     let result;
     try {
-      result = await inviteClient.activateInvite(token.trim(), true);
+      result = await createPlatformAccessAuthClient().activateInvite({
+        token: token.trim(),
+        password,
+        rememberMe: true,
+      });
     } catch {
       setError('Aktivaci se nepodařilo dokončit. Zkontrolujte Platform API.');
       return;
@@ -116,22 +120,8 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
       setError(result.error);
       return;
     }
-    const user = upsertActivatedUser({
-      id: `user-invite-${result.invite.id}`,
-      email: result.invite.email,
-      displayName: result.invite.displayName,
-      roles: result.invite.roles,
-      password,
-    });
-    prepareWelcomeJourney(user.email);
-    const loggedIn = login({
-      email: user.email,
-      password,
-      rememberMe: true,
-    });
-    if (!loggedIn.ok) {
-      setError(loggedIn.error);
-    }
+    prepareWelcomeJourney(result.session.user.email);
+    acceptAuthenticatedSession(result.session);
   };
 
   return (
