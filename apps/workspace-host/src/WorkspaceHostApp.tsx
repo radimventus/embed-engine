@@ -99,19 +99,11 @@ function studioFrameSrc(
   projectId: string | null,
   activeHouseId: string | null,
 ): string {
-  const ctx = getSharedWorkspaceContext();
-  if (surface === 'office') {
-    const href =
-      ctx?.officeReturnHref?.trim() || resolveCloudStudioHref('office');
-    return withWorkspaceShellEmbed(
-      withProjectIdQuery(href, projectId, null),
-    );
-  }
   return withWorkspaceShellEmbed(
     withProjectIdQuery(
       resolveCloudStudioHref(surface),
       projectId,
-      activeHouseId,
+      surface === 'office' ? null : activeHouseId,
     ),
   );
 }
