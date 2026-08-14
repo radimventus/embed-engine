@@ -28,8 +28,11 @@ describe('PE-02 Brand Projection studio wiring', () => {
       'packages/platform-access/src/pilot/projectPartnerBrand.ts',
     );
 
-    assert.match(clientHeader, /projectPartnerBrand/);
-    assert.match(clientHeader, /client-partner-logo|AstavLogo/);
+    assert.match(clientHeader, /projection\.branding\.logoLabel/);
+    assert.match(clientHeader, /projection\.partner\.companyName/);
+    assert.match(clientHeader, /PartnerBrandMark/);
+    assert.doesNotMatch(clientHeader, /AstavLogo/);
+    assert.doesNotMatch(clientHeader, /['"]ASTAV['"]/);
     assert.match(hero, /client-partner-hero/);
     assert.match(hero, /projectPartnerBrand/);
     assert.doesNotMatch(hero, /@embed-engine\/runtime/);
@@ -41,7 +44,8 @@ describe('PE-02 Brand Projection studio wiring', () => {
 
     assert.doesNotMatch(officeApp, /useStudioBrandProjection/);
     assert.doesNotMatch(officeApp, /partnerBrandLabel/);
-    assert.match(projection, /Client \/ Manager \/ Sales/);
+    assert.match(projection, /Manager \/ Sales chrome/);
+    assert.match(projection, /Client chrome uses/);
     assert.match(projection, /Builder/);
   });
 });

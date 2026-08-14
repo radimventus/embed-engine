@@ -3,17 +3,20 @@ import { colors } from '@embed-engine/design-tokens';
 const LOGO_MARK_SIZE_PX = 43;
 const LOGO_GAP_PX = 14;
 
-type AstavLogoProps = {
+type PartnerBrandMarkProps = {
   /** PE-02 — projected partner logo / trade mark label. */
-  readonly label?: string;
+  readonly label: string;
 };
 
 /**
- * Experience header mark — geometric A + wordmark.
- * PE-02 — wordmark comes from Brand Projection when personalized.
+ * Experience header mark — partner label comes only from canonical Brand Projection.
  */
-export function AstavLogo({ label = 'ASTAV' }: AstavLogoProps) {
-  const mark = label.trim() || 'ASTAV';
+export function PartnerBrandMark({ label }: PartnerBrandMarkProps) {
+  const mark = label.trim();
+
+  if (mark.length === 0) {
+    return null;
+  }
 
   return (
     <div

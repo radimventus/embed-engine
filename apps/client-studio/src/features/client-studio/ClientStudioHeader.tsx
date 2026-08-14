@@ -7,7 +7,7 @@ import {
 import actionCallUrl from '../../assets/icons/action-call.png';
 import actionPdfUrl from '../../assets/icons/action-pdf.png';
 
-import { AstavLogo } from './AstavLogo';
+import { PartnerBrandMark } from './PartnerBrandMark';
 import { HeaderContactMenu } from './header/HeaderContactMenu';
 import { HeaderSaveMenu } from './header/HeaderSaveMenu';
 import {
@@ -59,7 +59,7 @@ export function ClientStudioHeader() {
     >
       <div className="mx-auto grid h-header w-full min-w-0 max-w-none grid-cols-[1fr_auto_1fr] items-center px-section desktop:w-canvas desktop:max-w-canvas">
         <div className="justify-self-start">
-          <AstavLogo label={logoLabel} />
+          <PartnerBrandMark label={logoLabel} />
         </div>
         <p
           className="max-w-[12rem] truncate text-center text-sm text-embed-foreground-primary/70 tablet:max-w-[16rem] tablet:text-base desktop:max-w-[20rem]"
