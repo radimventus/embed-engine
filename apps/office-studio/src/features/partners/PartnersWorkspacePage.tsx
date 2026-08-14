@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import {
-  enterOperatorPartnerEnvironment,
+  enterOperatorPartnerEnvironmentAuthoritatively,
   resolveCloudStudioHref,
 } from '@embed-engine/platform-access';
 import {
@@ -155,18 +155,24 @@ export function PartnersWorkspacePage({
         return;
       }
       const officeBase = resolveCloudStudioHref('office').replace(/\/?$/, '/');
-      const result = enterOperatorPartnerEnvironment({
+      void enterOperatorPartnerEnvironmentAuthoritatively({
         companyId: env.companyId,
         workspaceId: env.environment.workspaceId,
         projectId: env.environment.projectId,
         officePartnerId: activePartner.id,
         officeReturnHref: `${officeBase}partners/${encodeURIComponent(activePartner.id)}`,
         initialSurface: 'client',
-      });
-      if (!result.ok) {
-        setPilotNotice(result.error);
+      }).then((result) => {
+        if (!result.ok) {
+          setPilotNotice(result.error);
+          bump();
+        }
+      }).catch(() => {
+        setPilotNotice(
+          'Partner Environment se nepodařilo spojit s Platform API.',
+        );
         bump();
-      }
+      });
       return;
     }
     if (actionId === 'suspend-partner') {

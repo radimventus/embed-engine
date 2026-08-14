@@ -22,7 +22,11 @@ import {
   getSharedWorkspaceContext,
   updateSession,
 } from '../session/authService';
-import { loadPlatformSession } from '../session/sessionStore';
+import {
+  loadPlatformSession,
+  savePlatformSession,
+} from '../session/sessionStore';
+import { createPlatformAccessAuthClient } from '../api/platformAccessClient';
 
 /**
  * @deprecated OF-14 — Workspace Context is on the platform session cookie.
@@ -225,6 +229,84 @@ export function enterOperatorPartnerEnvironment(
     window.location.assign(href);
   }
   return { ok: true, state, href, surface };
+}
+
+export async function enterOperatorPartnerEnvironmentAuthoritatively(
+  input: EnterOperatorPartnerEnvironmentInput,
+): Promise<EnterOperatorPartnerEnvironmentResult> {
+  const session = loadPlatformSession();
+  if (session === null) {
+    return { ok: false, error: 'Nejste přihlášeni.' };
+  }
+
+  const companyId = input.companyId.trim();
+  const workspaceId = input.workspaceId.trim();
+  const projectId = input.projectId.trim();
+  const partnerId = input.officePartnerId.trim();
+
+  if (
+    companyId.length === 0 ||
+    workspaceId.length === 0 ||
+    projectId.length === 0 ||
+    partnerId.length === 0
+  ) {
+    return { ok: false, error: 'Partner Environment není připraveno.' };
+  }
+
+  const surface = input.initialSurface ?? 'client';
+  if (surface === 'office') {
+    return { ok: false, error: 'Office není vstupní Workspace Studio.' };
+  }
+
+  const tenantId = resolveTenantId(companyId, session.tenantId);
+  const officeReturnHref =
+    input.officeReturnHref.trim() || resolveCloudStudioHref('office');
+
+  let result;
+  try {
+    result = await createPlatformAccessAuthClient().mutateSessionContext({
+      action: 'enter',
+      partnerId,
+      tenantId,
+      companyId,
+      workspaceId,
+      projectId,
+      activeHouseId: session.activeHouseId,
+      activeStudio: surface,
+      officeReturnHref,
+    });
+  } catch {
+    return {
+      ok: false,
+      error: 'Partner Environment se nepodařilo spojit s Platform API.',
+    };
+  }
+
+  if (!result.ok) {
+    return { ok: false, error: result.error };
+  }
+
+  savePlatformSession(result.session);
+
+  const workspaceContext = result.session.workspaceContext;
+  if (workspaceContext === null) {
+    return {
+      ok: false,
+      error: 'Platform API nevrátilo aktivní Partner Environment.',
+    };
+  }
+
+  const href = hrefForSurface(surface);
+  if (input.navigate !== false && typeof window !== 'undefined') {
+    window.location.assign(href);
+  }
+
+  return {
+    ok: true,
+    state: toOperatorState(workspaceContext),
+    href,
+    surface,
+  };
 }
 
 export function switchOperatorPartnerStudio(

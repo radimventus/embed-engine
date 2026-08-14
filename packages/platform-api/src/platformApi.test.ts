@@ -213,6 +213,240 @@ describe('Durable partner sessions', () => {
     }
   });
 
+  it('persists authoritative Partner Environment context across session restore', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-context-test-'));
+    const statePath = join(directory, 'partner-sessions.json');
+    const repository = new FilePartnerSessionRepository(statePath);
+
+    try {
+      const issued = await repository.activate({
+        invite: {
+          id: 'invite-conis-admin',
+          email: 'admin@conis.test',
+          displayName: 'CONIS Admin',
+          roles: ['conis-admin'],
+          tenantId: 'tenant-conis-admin',
+          companyId: 'company-conis',
+          workspaceId: 'workspace-conis',
+          projectId: 'project-conis',
+        },
+        password: 'secure-password',
+        rememberMe: true,
+      });
+
+      const entered = await repository.mutateContext(issued.token, {
+        action: 'enter',
+        partnerId: 'p-dse',
+        tenantId: 'tenant-domy-s-energii',
+        companyId: 'company-domy-s-energii',
+        workspaceId: 'domy-s-energii-main',
+        projectId: 'project-domy-s-energii',
+        activeHouseId: 'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+        activeStudio: 'client',
+        officeReturnHref: 'https://conis.cz:4181/partners/p-dse',
+      });
+
+      assert.ok(entered !== null);
+      assert.equal(entered.workspaceContext?.operatorMode, true);
+      assert.equal(entered.workspaceContext?.partnerId, 'p-dse');
+      assert.equal(
+        entered.workspaceContext?.companyId,
+        'company-domy-s-energii',
+      );
+      assert.equal(entered.workspaceContext?.activeStudio, 'client');
+
+      const restarted = new FilePartnerSessionRepository(statePath);
+      const restored = await restarted.resolve(issued.token);
+
+      assert.ok(restored !== null);
+      assert.equal(restored.companyId, 'company-domy-s-energii');
+      assert.equal(restored.workspaceId, 'domy-s-energii-main');
+      assert.equal(restored.projectId, 'project-domy-s-energii');
+      assert.equal(restored.activeStudioId, 'client');
+      assert.equal(restored.workspaceContext?.operatorMode, true);
+      assert.equal(restored.workspaceContext?.partnerId, 'p-dse');
+      assert.equal(
+        restored.workspaceContext?.officeReturnHref,
+        'https://conis.cz:4181/partners/p-dse',
+      );
+      assert.equal(
+        restored.workspaceContext?.previous.companyId,
+        'company-conis',
+      );
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('mutates Partner Environment context through the authenticated cookie and restores it through /me', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-context-api-test-'));
+    const inviteRepository = new FilePlatformInviteRepository(
+      join(directory, 'invites.json'),
+    );
+    const sessionRepository = new FilePartnerSessionRepository(
+      join(directory, 'partner-sessions.json'),
+    );
+
+    const issuedInvite = await inviteRepository.create({
+      email: 'admin-context@example.test',
+      displayName: 'CONIS Admin',
+      roles: ['conis-admin'],
+      invitedByUserId: 'user-operator',
+      tenantId: 'tenant-conis-admin',
+      companyId: 'company-conis',
+      workspaceId: 'workspace-conis',
+      projectId: 'project-conis',
+    });
+
+    const server = createPlatformApiServer(
+      inviteRepository,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      sessionRepository,
+    );
+
+    await new Promise<void>((resolve) =>
+      server.listen(0, '127.0.0.1', resolve),
+    );
+
+    try {
+      const address = server.address();
+      assert.ok(address !== null && typeof address !== 'string');
+      const baseUrl = `http://127.0.0.1:${address.port}`;
+
+      const activation = await fetch(
+        `${baseUrl}/public/auth/activate/${encodeURIComponent(issuedInvite.token)}`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            origin: 'https://conis.cz:4181',
+          },
+          body: JSON.stringify({
+            ndaAccepted: true,
+            password: 'secure-password',
+            rememberMe: true,
+          }),
+        },
+      );
+
+      assert.equal(activation.status, 200);
+      const setCookie = activation.headers.get('set-cookie');
+      assert.ok(setCookie !== null);
+      const cookie = setCookie.split(';')[0]!;
+
+      const mutation = await fetch(`${baseUrl}/public/auth/context`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          cookie,
+          origin: 'https://conis.cz:4181',
+        },
+        body: JSON.stringify({
+          action: 'enter',
+          partnerId: 'p-dse',
+          tenantId: 'tenant-domy-s-energii',
+          companyId: 'company-domy-s-energii',
+          workspaceId: 'domy-s-energii-main',
+          projectId: 'project-domy-s-energii',
+          activeHouseId:
+            'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+          activeStudio: 'client',
+          officeReturnHref: 'https://conis.cz:4181/partners/p-dse',
+        }),
+      });
+
+      assert.equal(mutation.status, 200);
+
+      const mutationBody = await mutation.json() as {
+        ok: boolean;
+        session: {
+          companyId: string;
+          workspaceId: string;
+          projectId: string;
+          activeStudioId: string | null;
+          workspaceContext: {
+            partnerId: string;
+            companyId: string;
+            workspaceId: string;
+            projectId: string;
+            activeStudio: string;
+            officeReturnHref: string;
+          } | null;
+        };
+      };
+
+      assert.equal(mutationBody.ok, true);
+      assert.equal(
+        mutationBody.session.workspaceContext?.partnerId,
+        'p-dse',
+      );
+
+      const me = await fetch(`${baseUrl}/public/auth/me`, {
+        headers: {
+          cookie,
+          origin: 'https://conis.cz:4183',
+        },
+      });
+
+      assert.equal(me.status, 200);
+
+      const restored = await me.json() as {
+        companyId: string;
+        workspaceId: string;
+        projectId: string;
+        activeStudioId: string | null;
+        workspaceContext: {
+          operatorMode: boolean;
+          partnerId: string;
+          companyId: string;
+          workspaceId: string;
+          projectId: string;
+          activeStudio: string;
+          officeReturnHref: string;
+        } | null;
+      };
+
+      assert.equal(restored.companyId, 'company-domy-s-energii');
+      assert.equal(restored.workspaceId, 'domy-s-energii-main');
+      assert.equal(restored.projectId, 'project-domy-s-energii');
+      assert.equal(restored.activeStudioId, 'client');
+      assert.equal(restored.workspaceContext?.operatorMode, true);
+      assert.equal(restored.workspaceContext?.partnerId, 'p-dse');
+      assert.equal(
+        restored.workspaceContext?.officeReturnHref,
+        'https://conis.cz:4181/partners/p-dse',
+      );
+
+      const restartedRepository =
+        new FilePartnerSessionRepository(
+          join(directory, 'partner-sessions.json'),
+        );
+
+      const persisted = await restartedRepository.resolve(
+        cookie.slice(cookie.indexOf('=') + 1),
+      );
+
+      assert.equal(
+        persisted?.workspaceContext?.companyId,
+        'company-domy-s-energii',
+      );
+      assert.equal(
+        persisted?.workspaceContext?.activeStudio,
+        'client',
+      );
+    } finally {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) =>
+          error === undefined ? resolve() : reject(error),
+        );
+      });
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
   it('issues an HttpOnly host-only cookie through activation and resolves it over credentialed CORS', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-auth-api-test-'));
     const inviteRepository = new FilePlatformInviteRepository(join(directory, 'invites.json'));

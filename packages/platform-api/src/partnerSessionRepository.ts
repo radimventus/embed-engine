@@ -12,6 +12,50 @@ import { platformApiStatePath } from './platformApiConfig';
 
 const scrypt = promisify(scryptCallback);
 const SESSION_VALIDITY_MS = 30 * 24 * 60 * 60 * 1_000;
+const DSE_PARTNER_SCOPE = {
+  tenantId: 'tenant-domy-s-energii',
+  companyId: 'company-domy-s-energii',
+  workspaceId: 'domy-s-energii-main',
+  projectId: 'project-domy-s-energii',
+  partnerId: 'p-dse',
+  activeHouseId:
+    'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+} as const;
+
+type PartnerWorkspaceContext = {
+  readonly operatorMode: true;
+  readonly partnerId: string;
+  readonly companyId: string;
+  readonly workspaceId: string;
+  readonly projectId: string;
+  readonly activeHouseId: string | null;
+  readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
+  readonly officeReturnHref: string;
+  readonly previous: {
+    readonly tenantId: string;
+    readonly companyId: string;
+    readonly workspaceId: string;
+    readonly projectId: string | null;
+  };
+};
+
+export type PartnerSessionContextMutation =
+  | {
+      readonly action: 'enter';
+      readonly partnerId: string;
+      readonly tenantId: string;
+      readonly companyId: string;
+      readonly workspaceId: string;
+      readonly projectId: string;
+      readonly activeHouseId: string | null;
+      readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
+      readonly officeReturnHref: string;
+    }
+  | {
+      readonly action: 'switch';
+      readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
+    }
+  | { readonly action: 'leave' };
 
 export type PartnerIdentity = {
   readonly user: {
@@ -28,9 +72,9 @@ export type PartnerIdentity = {
   readonly companyId: string;
   readonly workspaceId: string;
   readonly projectId: string;
-  readonly activeHouseId: null;
-  readonly activeStudioId: null;
-  readonly workspaceContext: null;
+  readonly activeHouseId: string | null;
+  readonly activeStudioId: 'client' | 'office' | 'builder' | 'manager' | 'sales' | null;
+  readonly workspaceContext: PartnerWorkspaceContext | null;
   readonly rememberMe: boolean;
   readonly issuedAt: string;
   readonly expiresAt: string;
@@ -60,6 +104,13 @@ type StoredSession = {
   readonly expiresAt: string;
   readonly rememberMe: boolean;
   readonly revokedAt: string | null;
+  readonly tenantId?: string;
+  readonly companyId?: string;
+  readonly workspaceId?: string;
+  readonly projectId?: string;
+  readonly activeHouseId?: string | null;
+  readonly activeStudioId?: PartnerIdentity['activeStudioId'];
+  readonly workspaceContext?: PartnerWorkspaceContext | null;
 };
 
 type PartnerSessionState = {
@@ -94,6 +145,10 @@ export interface PartnerSessionRepository {
     readonly rememberMe: boolean;
   }): Promise<IssuedPartnerSession | null>;
   resolve(token: string): Promise<PartnerIdentity | null>;
+  mutateContext(
+    token: string,
+    mutation: PartnerSessionContextMutation,
+  ): Promise<PartnerIdentity | null>;
   revoke(token: string): Promise<void>;
 }
 
@@ -111,7 +166,19 @@ function defaultStatePath(): string {
 
 function identity(
   account: StoredAccount,
-  session: Pick<StoredSession, 'issuedAt' | 'expiresAt' | 'rememberMe'>,
+  session: Pick<
+    StoredSession,
+    | 'issuedAt'
+    | 'expiresAt'
+    | 'rememberMe'
+    | 'tenantId'
+    | 'companyId'
+    | 'workspaceId'
+    | 'projectId'
+    | 'activeHouseId'
+    | 'activeStudioId'
+    | 'workspaceContext'
+  >,
 ): PartnerIdentity {
   return {
     user: {
@@ -124,13 +191,13 @@ function identity(
       lastActivityAt: account.lastLoginAt,
       lastStudioId: null,
     },
-    tenantId: account.tenantId,
-    companyId: account.companyId,
-    workspaceId: account.workspaceId,
-    projectId: account.projectId,
-    activeHouseId: null,
-    activeStudioId: null,
-    workspaceContext: null,
+    tenantId: session.tenantId ?? account.tenantId,
+    companyId: session.companyId ?? account.companyId,
+    workspaceId: session.workspaceId ?? account.workspaceId,
+    projectId: session.projectId ?? account.projectId,
+    activeHouseId: session.activeHouseId ?? null,
+    activeStudioId: session.activeStudioId ?? null,
+    workspaceContext: session.workspaceContext ?? null,
     rememberMe: session.rememberMe,
     issuedAt: session.issuedAt,
     expiresAt: session.expiresAt,
@@ -220,6 +287,127 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
     if (session === undefined) return null;
     const account = state.accounts.find((item) => item.id === session.accountId);
     return account === undefined ? null : identity(account, session);
+  }
+
+  async mutateContext(
+    token: string,
+    mutation: PartnerSessionContextMutation,
+  ): Promise<PartnerIdentity | null> {
+    return this.exclusively(async () => {
+      const state = await this.read();
+      const verifier = tokenVerifier(token);
+      const sessionIndex = state.sessions.findIndex(
+        (item) =>
+          item.verifier === verifier &&
+          item.revokedAt === null &&
+          Date.parse(item.expiresAt) > Date.now(),
+      );
+      if (sessionIndex < 0) return null;
+
+      const current = state.sessions[sessionIndex]!;
+      const account = state.accounts.find(
+        (item) => item.id === current.accountId,
+      );
+      if (account === undefined) return null;
+
+      if (!account.roles.includes('conis-admin')) {
+        return null;
+      }
+
+      let next: StoredSession;
+
+      if (mutation.action === 'enter') {
+        const validScope =
+          mutation.partnerId === DSE_PARTNER_SCOPE.partnerId &&
+          mutation.tenantId === DSE_PARTNER_SCOPE.tenantId &&
+          mutation.companyId === DSE_PARTNER_SCOPE.companyId &&
+          mutation.workspaceId === DSE_PARTNER_SCOPE.workspaceId &&
+          mutation.projectId === DSE_PARTNER_SCOPE.projectId;
+
+        if (!validScope) return null;
+
+        let officeReturnHref: string;
+        try {
+          const url = new URL(mutation.officeReturnHref);
+          const productionOffice =
+            url.protocol === 'https:' &&
+            url.hostname === 'conis.cz' &&
+            url.port === '' &&
+            url.pathname.startsWith('/studio/office/');
+          const localQaOffice =
+            url.protocol === 'https:' &&
+            url.hostname === 'conis.cz' &&
+            url.port === '4181';
+
+          if (!productionOffice && !localQaOffice) return null;
+          officeReturnHref = url.toString();
+        } catch {
+          return null;
+        }
+
+        const previous = identity(account, current);
+        const activeHouseId = DSE_PARTNER_SCOPE.activeHouseId;
+
+        const workspaceContext: PartnerWorkspaceContext = {
+          operatorMode: true,
+          partnerId: DSE_PARTNER_SCOPE.partnerId,
+          companyId: DSE_PARTNER_SCOPE.companyId,
+          workspaceId: DSE_PARTNER_SCOPE.workspaceId,
+          projectId: DSE_PARTNER_SCOPE.projectId,
+          activeHouseId,
+          activeStudio: mutation.activeStudio,
+          officeReturnHref,
+          previous: {
+            tenantId: previous.tenantId,
+            companyId: previous.companyId,
+            workspaceId: previous.workspaceId,
+            projectId: previous.projectId,
+          },
+        };
+
+        next = {
+          ...current,
+          tenantId: DSE_PARTNER_SCOPE.tenantId,
+          companyId: DSE_PARTNER_SCOPE.companyId,
+          workspaceId: DSE_PARTNER_SCOPE.workspaceId,
+          projectId: DSE_PARTNER_SCOPE.projectId,
+          activeHouseId,
+          activeStudioId: mutation.activeStudio,
+          workspaceContext,
+        };
+      } else if (mutation.action === 'switch') {
+        if (current.workspaceContext == null) return null;
+
+        next = {
+          ...current,
+          activeStudioId: mutation.activeStudio,
+          workspaceContext: {
+            ...current.workspaceContext,
+            activeStudio: mutation.activeStudio,
+          },
+        };
+      } else {
+        const context = current.workspaceContext;
+        if (context == null) return null;
+
+        next = {
+          ...current,
+          tenantId: context.previous.tenantId,
+          companyId: context.previous.companyId,
+          workspaceId: context.previous.workspaceId,
+          projectId: context.previous.projectId ?? account.projectId,
+          activeHouseId: null,
+          activeStudioId: 'office',
+          workspaceContext: null,
+        };
+      }
+
+      const sessions = [...state.sessions];
+      sessions[sessionIndex] = next;
+      await this.write({ ...state, sessions });
+
+      return identity(account, next);
+    });
   }
 
   async revoke(token: string): Promise<void> {

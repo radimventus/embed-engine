@@ -461,6 +461,28 @@ export function createPlatformApiServer(
         const session = token === null ? null : await partnerSessions.resolve(token);
         return respond(response, session === null ? 401 : 200, session ?? { error: 'Neplatná relace.' });
       }
+      if (request.method === 'POST' && path === '/public/auth/context') {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        if (token === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+
+        const current = await partnerSessions.resolve(token);
+        if (current === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+
+        const mutation = await requestBody(request) as import('./partnerSessionRepository').PartnerSessionContextMutation;
+        const session = await partnerSessions.mutateContext(token, mutation);
+
+        if (session === null) {
+          return respond(response, 403, {
+            error: 'Požadovaný Partner Environment není pro tuto relaci povolen.',
+          });
+        }
+
+        return respond(response, 200, { ok: true, session });
+      }
       if (request.method === 'POST' && path === '/public/auth/logout') {
         const token = requestCookie(request, PARTNER_SESSION_COOKIE);
         if (token !== null) await partnerSessions.revoke(token);

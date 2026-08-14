@@ -65,7 +65,7 @@ export function platformApiOrigin(): string {
   if (typeof configuredOrigin === 'string' && configuredOrigin.length > 0) {
     return configuredOrigin;
   }
-  return env?.PROD === true ? 'https://api.conis.cz' : 'http://127.0.0.1:4310';
+  return 'https://api.conis.cz';
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
@@ -142,6 +142,24 @@ export interface PlatformAccessAuthClient {
     readonly rememberMe: boolean;
   }): Promise<PlatformAccessAuthResult>;
   restoreSession(): Promise<PlatformSession | null>;
+  mutateSessionContext(input:
+    | {
+        readonly action: 'enter';
+        readonly partnerId: string;
+        readonly tenantId: string;
+        readonly companyId: string;
+        readonly workspaceId: string;
+        readonly projectId: string;
+        readonly activeHouseId: string | null;
+        readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
+        readonly officeReturnHref: string;
+      }
+    | {
+        readonly action: 'switch';
+        readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
+      }
+    | { readonly action: 'leave' }
+  ): Promise<PlatformAccessAuthResult>;
   logout(): Promise<void>;
 }
 
@@ -189,6 +207,25 @@ export function createPlatformAccessAuthClient(
         credentials: 'include',
       });
       return response.ok ? parseResponse<PlatformSession>(response) : null;
+    },
+    async mutateSessionContext(input) {
+      const response = await fetch(`${baseUrl}/public/auth/context`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(input),
+      });
+      const result = await parseResponse<
+        { readonly ok: true; readonly session: PlatformSession } |
+        { readonly error?: string }
+      >(response);
+      return response.ok && 'session' in result
+        ? result
+        : {
+            ok: false,
+            error: ('error' in result ? result.error : undefined) ??
+              'Partner Environment se nepodařilo aktivovat.',
+          };
     },
     async logout() {
       await fetch(`${baseUrl}/public/auth/logout`, {

@@ -405,6 +405,7 @@ export {
 
 export {
   enterOperatorPartnerEnvironment,
+  enterOperatorPartnerEnvironmentAuthoritatively,
   switchOperatorPartnerStudio,
   returnFromOperatorPartnerEnvironment,
   getOperatorPartnerEnvironment,
