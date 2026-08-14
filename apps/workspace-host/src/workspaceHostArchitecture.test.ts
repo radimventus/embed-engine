@@ -98,6 +98,24 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.match(app, /mode:\s*'standalone'/);
   });
 
+  it('TASK-42 — Studio scope updates do not reload the active iframe', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    assert.match(app, /function WorkspaceStudioFrame/);
+    assert.match(
+      app,
+      /const \[src\] = useState\(\(\) =>[\s\S]*studioFrameSrc\(surface, projectId, activeHouseId\)/,
+    );
+    assert.match(
+      app,
+      /currentHouseId[\s\S]*isHouseInProject\(currentHouseId, event\.data\.projectId\)[\s\S]*activeHouseId: nextActiveHouseId/,
+    );
+    assert.doesNotMatch(
+      app,
+      /<iframe[\s\S]*src=\{studioFrameSrc\(/,
+    );
+  });
+
   it('PT-BS-01 — Client surface unlocks document scrollport', () => {
     const css = read('src/workspace-host.css');
     assert.match(

@@ -109,6 +109,29 @@ function studioFrameSrc(
 }
 
 /** PlatformShell studio id — Client is a first-class switcher surface (PT-OS-02). */
+function WorkspaceStudioFrame({
+  surface,
+  projectId,
+  activeHouseId,
+}: {
+  readonly surface: Exclude<WorkspaceStudioSurface, 'client'>;
+  readonly projectId: string | null;
+  readonly activeHouseId: string | null;
+}) {
+  const [src] = useState(() =>
+    studioFrameSrc(surface, projectId, activeHouseId),
+  );
+
+  return (
+    <iframe
+      className="workspace-shell__view workspace-shell__frame"
+      title={WORKSPACE_STUDIO_LABELS[surface]}
+      src={src}
+      data-testid={`workspace-shell-frame-${surface}`}
+    />
+  );
+}
+
 function platformStudioIdForSurface(
   surface: WorkspaceStudioSurface,
 ): PlatformStudioId {
@@ -270,11 +293,23 @@ export function WorkspaceHostApp() {
         isWorkspaceProjectChangeMessage(event.data) &&
         isCanonicalProjectId(event.data.projectId)
       ) {
+        const currentHouseId =
+          loadPlatformSession()?.activeHouseId ??
+          currentContext.activeHouseId ??
+          null;
+        const nextActiveHouseId =
+          currentHouseId !== null &&
+          isHouseInProject(currentHouseId, event.data.projectId)
+            ? currentHouseId
+            : null;
+
         const next = updateSession({
           projectId: event.data.projectId,
+          activeHouseId: nextActiveHouseId,
           workspaceContext: {
             ...currentContext,
             projectId: event.data.projectId,
+            activeHouseId: nextActiveHouseId,
           },
         });
         if (next !== null) {
@@ -462,16 +497,11 @@ export function WorkspaceHostApp() {
               data-testid="workspace-host-client-root"
             />
           ) : (
-            <iframe
+            <WorkspaceStudioFrame
               key={surface}
-              className="workspace-shell__view workspace-shell__frame"
-              title={WORKSPACE_STUDIO_LABELS[surface]}
-              src={studioFrameSrc(
-                surface,
-                sharedProjectId,
-                sharedActiveHouseId,
-              )}
-              data-testid={`workspace-shell-frame-${surface}`}
+              surface={surface}
+              projectId={sharedProjectId}
+              activeHouseId={sharedActiveHouseId}
             />
           )}
         </main>
