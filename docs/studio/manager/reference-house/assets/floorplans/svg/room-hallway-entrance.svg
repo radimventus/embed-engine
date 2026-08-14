@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="100%" height="100%">
+  <defs>
+    <style>
+      .overlay-shape {
+        fill: #F5DC91;
+        fill-opacity: 0.85;
+        stroke: #E5C467;
+        stroke-width: 1.5;
+        stroke-linejoin: round;
+      }
+    </style>
+  </defs>
+
+  <polygon points="222,332 586,332 586,470 500,470 500,390 222,390" class="overlay-shape" />
+</svg>
