@@ -86,7 +86,7 @@ describe('PE-03 Pilot Workspace', () => {
     assert.equal(
       first?.houses.find((house) => house.id === DSE_FIRST_DRAFT_HOUSE_ID)
         ?.name,
-      'VÁŠ PRVNÍ DŮM 5KK',
+      'Váš první dům',
     );
     assert.equal(
       first?.houses.find((house) => house.id === DSE_FIRST_DRAFT_HOUSE_ID)

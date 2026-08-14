@@ -10,6 +10,7 @@
  */
 
 import {
+  DSE_FIRST_DRAFT_HOUSE_ID,
   DEFAULT_COMPANY_ID as PLATFORM_DEFAULT_COMPANY_ID,
   DEFAULT_PROJECT_ID as PLATFORM_DEFAULT_PROJECT_ID,
   DEFAULT_TENANT_ID,
@@ -1039,6 +1040,24 @@ export function toPersistedWorkspaceSlice(
   };
 }
 
+const LEGACY_DSE_FIRST_DRAFT_HOUSE_ID = 'patrovy-5kk' as const;
+const DSE_FIRST_DRAFT_HOUSE_LABEL = 'Váš první dům' as const;
+
+function migrateLegacyDseFirstDraftIdentity(
+  record: Record<string, string>,
+): void {
+  if (record[LEGACY_DSE_FIRST_DRAFT_HOUSE_ID] === undefined) {
+    return;
+  }
+
+  if (record[DSE_FIRST_DRAFT_HOUSE_ID] === undefined) {
+    record[DSE_FIRST_DRAFT_HOUSE_ID] =
+      record[LEGACY_DSE_FIRST_DRAFT_HOUSE_ID];
+  }
+
+  delete record[LEGACY_DSE_FIRST_DRAFT_HOUSE_ID];
+}
+
 function migrateLegacyDomainExtras(
   persisted: WorkspacePersistedSlice,
 ): {
@@ -1075,6 +1094,18 @@ function migrateLegacyDomainExtras(
   const housePackageRoots: Record<string, string> = {
     ...(persisted.housePackageRoots ?? {}),
   };
+
+  // Historical Builder builds persisted the DSE starter draft under
+  // `patrovy-5kk`. It is the same logical House as the canonical
+  // "Váš první dům", never a second authored House.
+  migrateLegacyDseFirstDraftIdentity(houseFolderIds);
+  migrateLegacyDseFirstDraftIdentity(houseLabels);
+  migrateLegacyDseFirstDraftIdentity(houseMetadata);
+  migrateLegacyDseFirstDraftIdentity(housePackageRoots);
+
+  if (houseFolderIds[DSE_FIRST_DRAFT_HOUSE_ID] !== undefined) {
+    houseLabels[DSE_FIRST_DRAFT_HOUSE_ID] = DSE_FIRST_DRAFT_HOUSE_LABEL;
+  }
 
   for (const folder of persisted.folders ?? []) {
     if (

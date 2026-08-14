@@ -172,7 +172,8 @@ describe('platformAccess (EPIC-BX-14)', () => {
     assert.equal(result.ok, true);
     if (!result.ok) return;
 
-    assert.equal(isHouseInProject('modern-4kk', 'project-domy-s-energii'), true);
+    assert.equal(isHouseInProject('modern-4kk', 'project-domy-s-energii'), false);
+    assert.equal(isHouseInProject('modern-4kk', 'project-ac-modular'), true);
     upsertBuilderProject({
       id: 'patrovy-5kk',
       workspaceId: 'dse-main',
@@ -203,15 +204,18 @@ describe('platformAccess (EPIC-BX-14)', () => {
       activeHouseId: 'modern-4kk',
     });
     assert.equal(dse?.projectId, 'project-domy-s-energii');
-    assert.equal(dse?.activeHouseId, 'modern-4kk');
+    assert.equal(dse?.activeHouseId, null);
 
-    const ac = updateSession({ projectId: 'project-ac-modular' });
+    const ac = updateSession({
+      projectId: 'project-ac-modular',
+      activeHouseId: 'modern-4kk',
+    });
     assert.equal(ac?.projectId, 'project-ac-modular');
-    assert.equal(ac?.activeHouseId, null);
+    assert.equal(ac?.activeHouseId, 'modern-4kk');
 
     const rejectedHouseProject = updateSession({ projectId: 'modern-4kk' });
     assert.equal(rejectedHouseProject?.projectId, 'project-ac-modular');
-    assert.equal(rejectedHouseProject?.activeHouseId, null);
+    assert.equal(rejectedHouseProject?.activeHouseId, 'modern-4kk');
     resetCompanyRegistryExtras();
   });
 
@@ -267,7 +271,7 @@ describe('platformAccess (EPIC-BX-14)', () => {
     );
     assert.equal(
       loadPlatformSession()?.workspaceContext?.activeHouseId,
-      'modern-4kk',
+      null,
     );
     assert.deepEqual(
       listWorkspaceHouses('project-domy-s-energii').map(
@@ -275,13 +279,12 @@ describe('platformAccess (EPIC-BX-14)', () => {
       ),
       [
         'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
-        'modern-4kk',
         'patrovy-5kk',
       ],
     );
     assert.deepEqual(
       listWorkspaceHouses('project-ac-modular').map((house) => house.houseId),
-      ['family-98', 'harmony-124', 'villa-168'],
+      ['modern-4kk', 'family-98', 'harmony-124', 'villa-168'],
     );
 
     updateSession({ projectId: 'project-ac-modular' });
@@ -334,7 +337,6 @@ describe('platformAccess (EPIC-BX-14)', () => {
       dseHouses.map((house) => house.houseId),
       [
         'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
-        'modern-4kk',
         'patrovy-5kk',
       ],
     );
@@ -344,7 +346,6 @@ describe('platformAccess (EPIC-BX-14)', () => {
       ),
       [
         'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
-        'modern-4kk',
       ],
     );
     const bungalov = listCanonicalHouses('project-domy-s-energii')[0]?.house;
@@ -355,7 +356,7 @@ describe('platformAccess (EPIC-BX-14)', () => {
       }),
       'modern-4kk',
     );
-    assert.deepEqual(dseHouses[2], {
+    assert.deepEqual(dseHouses[1], {
       houseId: 'patrovy-5kk',
       name: 'PATROVÝ 5KK',
       canonicalProjectId: 'project-domy-s-energii',
@@ -375,13 +376,16 @@ describe('platformAccess (EPIC-BX-14)', () => {
       isHouseInProject('unknown-house', 'project-domy-s-energii'),
       false,
     );
-    const modernBinding = resolveWorkspaceHouseBinding({
+    const referenceBinding = resolveWorkspaceHouseBinding({
       projectId: 'project-domy-s-energii',
-      houseId: 'modern-4kk',
+      houseId: bungalov?.houseId ?? '',
     });
-    assert.equal(modernBinding?.dataMode, 'REFERENCE_DEMO');
-    assert.equal(modernBinding?.runtimeContentAvailable, true);
-    assert.equal(modernBinding?.canonicalBinding?.runtimeHouseId, 'modern-4kk');
+    assert.equal(referenceBinding?.dataMode, 'REFERENCE_DEMO');
+    assert.equal(referenceBinding?.runtimeContentAvailable, true);
+    assert.equal(
+      referenceBinding?.canonicalBinding?.runtimeHouseId,
+      bungalov?.houseId,
+    );
     assert.deepEqual(
       resolveWorkspaceHouseBinding({
         projectId: 'project-domy-s-energii',
@@ -421,7 +425,7 @@ describe('platformAccess (EPIC-BX-14)', () => {
       listWorkspaceHouses('project-domy-s-energii').map(
         (house) => house.houseId,
       ),
-      [bungalovId, 'modern-4kk', 'patrovy-5kk'],
+      [bungalovId, 'patrovy-5kk'],
     );
     const restoredDraftScope = updateSession({ activeHouseId: 'patrovy-5kk' });
     assert.equal(restoredDraftScope?.activeHouseId, 'patrovy-5kk');
@@ -611,7 +615,7 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     assert.match(provisioned.workspace.name, /Nordic Homes/);
     assert.match(provisioned.workspace.name, /Pilot Workspace/);
     assert.equal(provisioned.project.name, 'Reference House');
-    assert.match(provisioned.project.packageRoot, /house-package/);
+    assert.match(provisioned.houses[0]?.packageRoot ?? '', /house-package/);
     assert.equal(isPilotWorkspaceReady(provisioned.company.id), true);
     const registry = getDefaultCompanyRegistry();
     assert.ok(registry.companies.some((c) => c.id === provisioned.company.id));

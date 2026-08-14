@@ -50,6 +50,8 @@ import {
 
 export type PlatformSessionContextValue = {
   readonly session: PlatformSession | null;
+  /** True while the HttpOnly Platform API session is being restored. */
+  readonly isRestoring: boolean;
   readonly registry: CompanyRegistryState;
   readonly bootstrap: WorkspaceBootstrap | null;
   readonly login: (credentials: LoginCredentials) => Promise<{ ok: true } | { ok: false; error: string }>;
@@ -96,6 +98,7 @@ export function SessionProvider({
     setRegistryTick((value) => value + 1);
   }, []);
   const [session, setSession] = useState<PlatformSession | null>(null);
+  const [isRestoring, setIsRestoring] = useState(true);
   const applySession = useCallback((restored: PlatformSession) => {
     savePlatformSession(restored);
     // VR-04 — nested Workspace Shell views must not rewrite activeStudio.
@@ -104,9 +107,13 @@ export function SessionProvider({
       return;
     }
     if (bindStudioId !== undefined && restored.activeStudioId === null) {
-      // Direct deep-link into a studio after login from another tab — keep landing
-      // until user explicitly selects, unless they already picked this studio.
-      setSession(restored);
+      // The server session has no app-local activeStudioId. Adopt the mounted
+      // Studio in the in-memory projection so valid restores open its shell.
+      const next = updateSession({ activeStudioId: bindStudioId });
+      if (next !== null) {
+        touchUserLastStudio(next.user.id, bindStudioId);
+      }
+      setSession(next ?? restored);
       return;
     }
     const workspaceContext = getSharedWorkspaceContext();
@@ -151,9 +158,15 @@ export function SessionProvider({
 
   useEffect(() => {
     let active = true;
-    void createPlatformAccessAuthClient().restoreSession().then((restored) => {
-      if (active && restored !== null) applySession(restored);
-    });
+    setIsRestoring(true);
+    void createPlatformAccessAuthClient().restoreSession()
+      .then((restored) => {
+        if (active && restored !== null) applySession(restored);
+      })
+      .catch(() => undefined)
+      .finally(() => {
+        if (active) setIsRestoring(false);
+      });
     return () => {
       active = false;
     };
@@ -165,7 +178,15 @@ export function SessionProvider({
   );
 
   const login = useCallback(async (credentials: LoginCredentials) => {
-    const result = await createPlatformAccessAuthClient().login(credentials);
+    let result;
+    try {
+      result = await createPlatformAccessAuthClient().login(credentials);
+    } catch {
+      return {
+        ok: false as const,
+        error: 'Přihlášení se nepodařilo spojit s Platform API.',
+      };
+    }
     if (!result.ok) {
       return { ok: false as const, error: result.error };
     }
@@ -272,6 +293,14 @@ export function SessionProvider({
       if (session === null) return null;
       const projectId =
         input.projectId !== undefined ? input.projectId : session.projectId;
+
+      const canonicalProject =
+        projectId === null
+          ? undefined
+          : registry.canonicalProjects.find(
+              (project) => project.id === projectId,
+            );
+
       const activeHouseId =
         input.activeHouseId !== undefined
           ? input.activeHouseId
@@ -288,14 +317,27 @@ export function SessionProvider({
               activeHouseId,
             };
       const next = updateSession({
+        ...(canonicalProject === undefined
+          ? {}
+          : {
+              companyId: canonicalProject.companyId,
+              workspaceId: canonicalProject.workspaceId,
+            }),
         projectId,
         activeHouseId,
-        workspaceContext,
+        workspaceContext:
+          workspaceContext === null || canonicalProject === undefined
+            ? workspaceContext
+            : {
+                ...workspaceContext,
+                companyId: canonicalProject.companyId,
+                workspaceId: canonicalProject.workspaceId,
+              },
       });
       setSession(next);
       return next;
     },
-    [session],
+    [registry.canonicalProjects, session],
   );
 
   const bootstrapActiveProject = useCallback(
@@ -325,6 +367,7 @@ export function SessionProvider({
   const value = useMemo<PlatformSessionContextValue>(
     () => ({
       session,
+      isRestoring,
       registry,
       bootstrap,
       login,
@@ -342,6 +385,7 @@ export function SessionProvider({
     }),
     [
       session,
+      isRestoring,
       registry,
       bootstrap,
       login,

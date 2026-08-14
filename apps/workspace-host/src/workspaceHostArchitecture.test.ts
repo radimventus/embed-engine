@@ -52,6 +52,38 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
   });
 
+  it('TASK-42 — durable session opens Workspace without explicit Partner Environment activation', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    // Authenticated Platform session is the Workspace activation boundary.
+    assert.match(app, /if \(session === null\)/);
+    assert.doesNotMatch(app, /if \(ctx === null \|\| session === null\)/);
+
+    // Durable session scope wins; workspaceContext is compatibility fallback only.
+    assert.match(
+      app,
+      /effectiveCompanyId = session\?\.companyId \?\? ctx\?\.companyId \?\? null/,
+    );
+    assert.match(
+      app,
+      /effectiveProjectId = session\?\.projectId \?\? ctx\?\.projectId \?\? null/,
+    );
+
+    // Project and House bootstrap are derived from the persisted session scope.
+    assert.match(
+      app,
+      /candidates = \[session\?\.projectId, ctx\?\.projectId\]/,
+    );
+    assert.match(
+      app,
+      /session\?\.activeHouseId[\s\S]*isHouseInProject\(houseId, projectId\)/,
+    );
+
+    // Workspace rendering must not directly require ctx fields.
+    assert.doesNotMatch(app, /ctx\.companyId/);
+    assert.doesNotMatch(app, /ctx\.projectId/);
+  });
+
   it('PT-VR-06 — Workspace Shell hosts studios without redesign chrome', () => {
     const app = read('src/WorkspaceHostApp.tsx');
     const css = read('src/workspace-host.css');

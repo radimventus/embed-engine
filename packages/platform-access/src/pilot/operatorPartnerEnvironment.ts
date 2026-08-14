@@ -272,6 +272,8 @@ export async function enterOperatorPartnerEnvironmentAuthoritatively(
       workspaceId,
       projectId,
       activeHouseId: session.activeHouseId,
+      authoredHouseIdentities:
+        session.workspaceContext?.authoredHouseIdentities,
       activeStudio: surface,
       officeReturnHref,
     });

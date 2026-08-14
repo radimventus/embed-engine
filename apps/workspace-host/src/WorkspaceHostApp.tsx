@@ -9,6 +9,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Embed, registerClientStudioCss } from '@embed-engine/embed';
 import {
   clearOperatorPartnerEnvironment,
+  createPlatformAccessAuthClient,
   isHouseInProject,
   isWorkspaceHouseChangeMessage,
   isWorkspaceProjectChangeMessage,
@@ -23,6 +24,7 @@ import {
   resolveMountProjectView,
   resolveWorkspaceHouseBinding,
   resolveWorkspaceHostHref,
+  savePlatformSession,
   switchOperatorPartnerStudio,
   updateSession,
   withWorkspaceShellEmbed,
@@ -121,6 +123,17 @@ function platformStudioIdForSurface(
   return surface;
 }
 
+function authoritativeStudioForSurface(
+  surface: WorkspaceStudioSurface,
+): 'client' | 'builder' | 'manager' | 'sales' {
+  return surface === 'builder' ||
+    surface === 'manager' ||
+    surface === 'sales' ||
+    surface === 'client'
+    ? surface
+    : 'client';
+}
+
 /**
  * Shared Workspace Shell — hosts studios without modifying their layouts.
  * Top chrome is PlatformShell only (VR-005).
@@ -150,23 +163,72 @@ export function WorkspaceHostApp() {
   const ctx = getSharedWorkspaceContext();
   const session = loadPlatformSession();
 
+  const effectiveCompanyId = session?.companyId ?? ctx?.companyId ?? null;
+  const effectiveProjectId = session?.projectId ?? ctx?.projectId ?? null;
+  const authoritativeMutationQueueRef = useRef<Promise<void>>(
+    Promise.resolve(),
+  );
+
+  const enqueueAuthoritativeMutation = useCallback(
+    (
+      mutation: Parameters<
+        ReturnType<
+          typeof createPlatformAccessAuthClient
+        >['mutateSessionContext']
+      >[0],
+    ): Promise<void> => {
+      const queued = authoritativeMutationQueueRef.current.then(async () => {
+        const result =
+          await createPlatformAccessAuthClient().mutateSessionContext(mutation);
+
+        if (!result.ok) {
+          return;
+        }
+
+        savePlatformSession(result.session);
+        setSharedProjectId(result.session.projectId);
+        setSharedActiveHouseId(result.session.activeHouseId);
+      });
+
+      authoritativeMutationQueueRef.current = queued.catch(() => undefined);
+      return queued;
+    },
+    [],
+  );
+
   const brand = useMemo(
     () =>
       projectPartnerBrand({
-        companyId: ctx?.companyId ?? null,
-        projectId: sharedProjectId,
+        companyId: effectiveCompanyId,
+        projectId: sharedProjectId ?? effectiveProjectId,
       }),
-    [ctx?.companyId, sharedProjectId],
+    [effectiveCompanyId, effectiveProjectId, sharedProjectId],
   );
 
-  const selectSurface = useCallback((next: WorkspaceStudioSurface) => {
-    const result = switchOperatorPartnerStudio(next, {
-      navigate: false,
-      retainWorkspace: true,
-    });
-    if (!result.ok) return;
-    setSurface(next);
-  }, []);
+  const selectSurface = useCallback(
+    async (next: WorkspaceStudioSurface) => {
+      const result = switchOperatorPartnerStudio(next, {
+        navigate: false,
+        retainWorkspace: true,
+      });
+      if (!result.ok) return;
+
+      const nextSession = loadPlatformSession();
+      if (nextSession?.projectId !== null && nextSession?.projectId !== undefined) {
+        await enqueueAuthoritativeMutation({
+          action: 'switch',
+          activeStudio: authoritativeStudioForSurface(next),
+          projectId: nextSession.projectId,
+          activeHouseId: nextSession.activeHouseId,
+          authoredHouseIdentities:
+            nextSession.workspaceContext?.authoredHouseIdentities,
+        });
+      }
+
+      setSurface(next);
+    },
+    [enqueueAuthoritativeMutation],
+  );
 
   useEffect(() => {
     const scopeWriterOrigins = new Set(
@@ -194,6 +256,17 @@ export function WorkspaceHostApp() {
       if (next !== null) {
         setSharedProjectId(next.projectId);
         setSharedActiveHouseId(next.activeHouseId);
+
+        if (next.projectId !== null) {
+          void enqueueAuthoritativeMutation({
+            action: 'switch',
+            activeStudio: authoritativeStudioForSurface(surface),
+            projectId: next.projectId,
+            activeHouseId: next.activeHouseId,
+            authoredHouseIdentities:
+              next.workspaceContext?.authoredHouseIdentities,
+          });
+        }
       }
     };
     const onWorkspaceChange = (event: MessageEvent<unknown>) => {
@@ -215,6 +288,17 @@ export function WorkspaceHostApp() {
         if (next !== null) {
           setSharedProjectId(next.projectId);
           setSharedActiveHouseId(next.activeHouseId);
+
+          if (next.projectId !== null) {
+            void enqueueAuthoritativeMutation({
+              action: 'switch',
+              activeStudio: authoritativeStudioForSurface(surface),
+              projectId: next.projectId,
+              activeHouseId: next.activeHouseId,
+              authoredHouseIdentities:
+                next.workspaceContext?.authoredHouseIdentities,
+            });
+          }
         }
         return;
       }
@@ -242,7 +326,7 @@ export function WorkspaceHostApp() {
         onDirectClientHouseChange,
       );
     };
-  }, []);
+  }, [enqueueAuthoritativeMutation, surface]);
 
   useEffect(() => {
     if (surface !== 'client') {
@@ -314,7 +398,7 @@ export function WorkspaceHostApp() {
     window.location.assign(resolveCloudStudioHref('office'));
   };
 
-  if (ctx === null || session === null) {
+  if (session === null) {
     return (
       <p className="workspace-host__redirect" data-testid="workspace-host-redirect">
         Přesměrování do Office Studio…
@@ -323,12 +407,13 @@ export function WorkspaceHostApp() {
   }
 
   const projectLabel =
-    brand.personalized && brand.companyName.trim().length > 0
-      ? (sharedProjectId || ctx.projectId || 'Projekt')
-      : (sharedProjectId || ctx.projectId);
+    sharedProjectId || effectiveProjectId || 'Projekt';
 
   const workspaceState = buildPlatformWorkspaceState({
-    companyLabel: brand.personalized ? brand.companyName : ctx.companyId,
+    companyLabel:
+      brand.personalized
+        ? brand.companyName
+        : (effectiveCompanyId ?? 'Partner'),
     projectLabel,
     projects: [],
   });
@@ -347,7 +432,10 @@ export function WorkspaceHostApp() {
     { id: 'workspace', label: 'Workspace' },
     {
       id: 'company',
-      label: brand.personalized ? brand.companyName : ctx.companyId,
+      label:
+        brand.personalized
+          ? brand.companyName
+          : (effectiveCompanyId ?? 'Partner'),
     },
     { id: 'section', label: sectionLabel },
   ];

@@ -50,7 +50,7 @@ function hydratePilotFromUrlOnce(): void {
  * VR-04 — operator Workspace is a single host; nested embeds skip outer chrome.
  */
 function AccessGateInner({ children }: AccessGateProps) {
-  const { session } = usePlatformSession();
+  const { session, isRestoring } = usePlatformSession();
   hydratePilotFromUrlOnce();
   const urlToken = readInviteTokenFromUrl();
   const [inviteMode, setInviteMode] = useState(urlToken.length > 0);
@@ -78,6 +78,14 @@ function AccessGateInner({ children }: AccessGateProps) {
         initialToken={urlToken}
         onCancel={dismissInviteRoute}
       />
+    );
+  }
+
+  if (isRestoring) {
+    return (
+      <div className="platform-access" data-testid="platform-session-restoring">
+        <p className="platform-access__lead">Obnovuji přihlášení…</p>
+      </div>
     );
   }
 

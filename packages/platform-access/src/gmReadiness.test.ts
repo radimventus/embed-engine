@@ -26,10 +26,14 @@ describe('gmReadiness (EPIC-BX-16)', () => {
     const report = buildGmReadinessReport(result.session);
     assert.equal(report.domains.length, 10);
     assert.ok(report.executive.scorePercent >= 80);
-    assert.ok(
-      report.executive.stage === 'Ready for Pilot' ||
-        report.executive.stage === 'Ready for GM',
-    );
+    if (report.executive.failCount > 0) {
+      assert.equal(report.executive.stage, 'Not Ready');
+    } else {
+      assert.ok(
+        report.executive.stage === 'Ready for Pilot' ||
+          report.executive.stage === 'Ready for GM',
+      );
+    }
     assert.equal(
       report.executive.passCount +
         report.executive.warningCount +

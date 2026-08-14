@@ -22,6 +22,15 @@ const DSE_PARTNER_SCOPE = {
     'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
 } as const;
 
+type PartnerAuthoredHouseIdentity = {
+  readonly houseId: string;
+  readonly name: string;
+  readonly canonicalProjectId: string;
+  readonly packageRoot: string;
+  readonly dataMode: 'REFERENCE_DEMO' | 'LIVE_EMPTY' | 'LIVE';
+  readonly status: 'draft';
+};
+
 type PartnerWorkspaceContext = {
   readonly operatorMode: true;
   readonly partnerId: string;
@@ -29,6 +38,7 @@ type PartnerWorkspaceContext = {
   readonly workspaceId: string;
   readonly projectId: string;
   readonly activeHouseId: string | null;
+  readonly authoredHouseIdentities?: readonly PartnerAuthoredHouseIdentity[];
   readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
   readonly officeReturnHref: string;
   readonly previous: {
@@ -48,12 +58,19 @@ export type PartnerSessionContextMutation =
       readonly workspaceId: string;
       readonly projectId: string;
       readonly activeHouseId: string | null;
+      readonly authoredHouseIdentities?: readonly PartnerAuthoredHouseIdentity[];
       readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
       readonly officeReturnHref: string;
     }
   | {
       readonly action: 'switch';
       readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
+      readonly tenantId?: string;
+      readonly companyId?: string;
+      readonly workspaceId?: string;
+      readonly projectId?: string;
+      readonly activeHouseId?: string | null;
+      readonly authoredHouseIdentities?: readonly PartnerAuthoredHouseIdentity[];
     }
   | { readonly action: 'leave' };
 
@@ -346,7 +363,24 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
         }
 
         const previous = identity(account, current);
-        const activeHouseId = DSE_PARTNER_SCOPE.activeHouseId;
+        const authoredHouseIdentities =
+          mutation.authoredHouseIdentities?.filter(
+            (house) =>
+              house.houseId.trim().length > 0 &&
+              house.name.trim().length > 0 &&
+              house.packageRoot.trim().length > 0 &&
+              house.canonicalProjectId === DSE_PARTNER_SCOPE.projectId &&
+              house.status === 'draft',
+          ) ?? [];
+
+        const requestedHouseId = mutation.activeHouseId?.trim() || null;
+        const activeHouseId =
+          requestedHouseId === DSE_PARTNER_SCOPE.activeHouseId ||
+          authoredHouseIdentities.some(
+            (house) => house.houseId === requestedHouseId,
+          )
+            ? requestedHouseId
+            : DSE_PARTNER_SCOPE.activeHouseId;
 
         const workspaceContext: PartnerWorkspaceContext = {
           operatorMode: true,
@@ -355,6 +389,7 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
           workspaceId: DSE_PARTNER_SCOPE.workspaceId,
           projectId: DSE_PARTNER_SCOPE.projectId,
           activeHouseId,
+          authoredHouseIdentities,
           activeStudio: mutation.activeStudio,
           officeReturnHref,
           previous: {
@@ -378,11 +413,112 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
       } else if (mutation.action === 'switch') {
         if (current.workspaceContext == null) return null;
 
+        const context = current.workspaceContext;
+
+        const requestedProjectId =
+          mutation.projectId?.trim() ||
+          current.projectId ||
+          context.projectId;
+
+        const DSE_SCOPE = {
+          tenantId: 'tenant-domy-s-energii',
+          companyId: 'company-domy-s-energii',
+          workspaceId: 'domy-s-energii-main',
+          projectId: 'project-domy-s-energii',
+        } as const;
+
+        const AC_SCOPE = {
+          tenantId: 'tenant-ac-modular',
+          companyId: 'ac-modular',
+          workspaceId: 'ac-modular-main',
+          projectId: 'project-ac-modular',
+        } as const;
+
+        const targetScope =
+          requestedProjectId === DSE_SCOPE.projectId
+            ? DSE_SCOPE
+            : requestedProjectId === AC_SCOPE.projectId
+              ? AC_SCOPE
+              : null;
+
+        if (targetScope === null) return null;
+
+        if (
+          mutation.tenantId !== undefined &&
+          mutation.tenantId !== targetScope.tenantId
+        ) {
+          return null;
+        }
+        if (
+          mutation.companyId !== undefined &&
+          mutation.companyId !== targetScope.companyId
+        ) {
+          return null;
+        }
+        if (
+          mutation.workspaceId !== undefined &&
+          mutation.workspaceId !== targetScope.workspaceId
+        ) {
+          return null;
+        }
+
+        const authoredHouseIdentities =
+          mutation.authoredHouseIdentities?.filter(
+            (house) =>
+              house.houseId.trim().length > 0 &&
+              house.name.trim().length > 0 &&
+              house.canonicalProjectId === targetScope.projectId &&
+              house.status === 'draft',
+          ) ??
+          context.authoredHouseIdentities?.filter(
+            (house) => house.canonicalProjectId === targetScope.projectId,
+          ) ??
+          [];
+
+        const canonicalHouseIds =
+          targetScope.projectId === DSE_SCOPE.projectId
+            ? new Set([
+                'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+                'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk',
+              ])
+            : new Set([
+                'family-98',
+                'harmony-124',
+                'modern-4kk',
+                'villa-168',
+              ]);
+
+        const requestedHouseId: string | null =
+          mutation.activeHouseId === undefined
+            ? current.activeHouseId ?? null
+            : mutation.activeHouseId?.trim() || null;
+
+        const activeHouseId =
+          requestedHouseId !== null &&
+          (
+            canonicalHouseIds.has(requestedHouseId) ||
+            authoredHouseIdentities.some(
+              (house) => house.houseId === requestedHouseId,
+            )
+          )
+            ? requestedHouseId
+            : null;
+
         next = {
           ...current,
+          tenantId: targetScope.tenantId,
+          companyId: targetScope.companyId,
+          workspaceId: targetScope.workspaceId,
+          projectId: targetScope.projectId,
+          activeHouseId,
           activeStudioId: mutation.activeStudio,
           workspaceContext: {
-            ...current.workspaceContext,
+            ...context,
+            companyId: targetScope.companyId,
+            workspaceId: targetScope.workspaceId,
+            projectId: targetScope.projectId,
+            activeHouseId,
+            authoredHouseIdentities,
             activeStudio: mutation.activeStudio,
           },
         };

@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { afterEach, describe, it } from 'node:test';
 
+import type { WorkspaceAuthoredHouseIdentity } from '../domain/workspaceContext';
 import { createPlatformAccessAuthClient } from './platformAccessClient';
 
 const originalFetch = globalThis.fetch;
@@ -68,5 +69,78 @@ describe('Platform Access authentication client', () => {
         },
       },
     ]);
+  });
+
+  it('forwards authored House identities through authoritative session context mutation', async () => {
+    const requests: Array<{ url: string; init?: RequestInit }> = [];
+    globalThis.fetch = (async (input, init) => {
+      requests.push({ url: String(input), init });
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          session: {
+            user: {
+              id: 'user-admin',
+              email: 'admin@example.test',
+              displayName: 'Admin',
+              roles: ['conis-admin'],
+              status: 'active',
+              lastLoginAt: '2026-08-14T10:00:00.000Z',
+              lastActivityAt: '2026-08-14T10:00:00.000Z',
+              lastStudioId: 'client',
+            },
+            tenantId: 'tenant-domy-s-energii',
+            companyId: 'company-domy-s-energii',
+            workspaceId: 'domy-s-energii-main',
+            projectId: 'project-domy-s-energii',
+            activeHouseId: 'patrovy-5kk',
+            activeStudioId: 'client',
+            workspaceContext: null,
+            rememberMe: true,
+            issuedAt: '2026-08-14T10:00:00.000Z',
+            expiresAt: '2026-09-14T10:00:00.000Z',
+            lastLoginAt: '2026-08-14T10:00:00.000Z',
+          },
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    }) as typeof fetch;
+
+    const client = createPlatformAccessAuthClient('https://api.conis.cz');
+
+    const authoredHouseIdentities: readonly WorkspaceAuthoredHouseIdentity[] = [
+      {
+        houseId: 'patrovy-5kk',
+        name: 'PATROVÝ 5KK',
+        canonicalProjectId: 'project-domy-s-energii',
+        packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
+        dataMode: 'LIVE_EMPTY' as const,
+        status: 'draft' as const,
+      },
+    ];
+
+    const result = await client.mutateSessionContext({
+      action: 'enter',
+      partnerId: 'p-dse',
+      tenantId: 'tenant-domy-s-energii',
+      companyId: 'company-domy-s-energii',
+      workspaceId: 'domy-s-energii-main',
+      projectId: 'project-domy-s-energii',
+      activeHouseId: 'patrovy-5kk',
+      authoredHouseIdentities,
+      activeStudio: 'client',
+      officeReturnHref: 'https://conis.cz:4181/partners/p-dse',
+    });
+
+    assert.equal(result.ok, true);
+    assert.equal(requests.length, 1);
+    assert.equal(
+      requests[0]?.url,
+      'https://api.conis.cz/public/auth/context',
+    );
+
+    const body = JSON.parse(String(requests[0]?.init?.body));
+    assert.deepEqual(body.authoredHouseIdentities, authoredHouseIdentities);
+    assert.equal(body.activeHouseId, 'patrovy-5kk');
   });
 });

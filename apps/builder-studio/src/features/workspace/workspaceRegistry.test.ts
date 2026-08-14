@@ -7,6 +7,7 @@ import { beforeEach, describe, it } from 'node:test';
 
 import {
   clearPlatformSession,
+  DSE_FIRST_DRAFT_HOUSE_ID,
   getCanonicalProject,
   getCanonicalHouse,
   isCanonicalProjectId,
@@ -43,20 +44,14 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
   it('seeds canonical Houses from their respective Projects', () => {
     const state = createInitialWorkspaceRegistry();
     assert.equal(state.companies.length, 2);
-    assert.equal(state.projects.length, 4);
-    assert.deepEqual(
-      state.projects.map((project) => project.id).sort(),
-      ['family-98', 'harmony-124', 'modern-4kk', 'villa-168'],
-    );
+    assert.equal(state.projects.length, 5);
     assert.equal(state.activeProjectId, 'villa-168');
-    assert.ok(
+    assert.deepEqual(
       state.projects
         .filter((project) => project.companyId === 'ac-modular')
-        .every(
-        (project) =>
-          typeof project.packageRoot === 'string' &&
-          project.packageRoot.includes('house-package'),
-        ),
+        .map((project) => project.id)
+        .sort(),
+      ['family-98', 'harmony-124', 'modern-4kk', 'villa-168'],
     );
   });
 
@@ -138,7 +133,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     );
     state = closeWorkspaceProject(state);
     assert.equal(state.activeProjectId, null);
-    assert.equal(state.projects.length, 4);
+    assert.equal(state.projects.length, 5);
     assert.equal(state.lastOpenedProjectId, 'harmony-124');
   });
 
@@ -352,52 +347,23 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
   });
 
   it('CAP-PLAT-04R2c — House write persists canonicalProjectId = Projekt folder id', async () => {
-    const {
-      getCanonicalHouse,
-      getCanonicalProject,
-      getDefaultCompanyRegistry,
-      listCanonicalHouses,
-      listCanonicalProjects,
-    } = await import('@embed-engine/platform-access');
+    const { getCanonicalHouse } = await import('@embed-engine/platform-access');
 
-    const row = getDefaultCompanyRegistry().projects.find(
-      (item) => item.id === 'modern-4kk',
-    );
-    assert.ok(row);
-    assert.equal(row.canonicalProjectId, 'project-domy-s-energii');
-    assert.notEqual(row.canonicalProjectId, row.id);
-    assert.notEqual(row.canonicalProjectId, row.name);
+    const base = createInitialWorkspaceRegistry();
+    const dse = openWorkspaceFolder(base, 'project-domy-s-energii');
+    const created = createWorkspaceObjectFromInput(dse.state, {
+      name: 'R2c DSE House',
+      internalId: 'r2c-dse-house',
+    });
+    assert.ok(created);
 
-    const cplHouse = getCanonicalHouse('modern-4kk');
-    assert.ok(cplHouse?.house);
-    assert.equal(cplHouse.partner.companyName, 'Domy s energií');
-    assert.equal(cplHouse.project.name, 'Domy s energií');
-    assert.equal(cplHouse.project.projectId, 'project-domy-s-energii');
-    assert.equal(cplHouse.house.name, 'MODERN 4KK');
-    assert.notEqual(cplHouse.project.projectId, cplHouse.house.houseId);
+    assert.equal(created.project.folderId, 'project-domy-s-energii');
 
-    assert.ok(
-      listCanonicalHouses('project-domy-s-energii').some(
-        (item) => item.house?.houseId === 'modern-4kk',
-      ),
-    );
-
-    const dseProject = listCanonicalProjects().find(
-      (item) => item.project.projectId === 'project-domy-s-energii',
-    );
-    assert.ok(dseProject);
-    assert.ok(dseProject.house);
-    assert.equal(dseProject.house.houseId, 'modern-4kk');
-    assert.equal(dseProject.project.name, 'Domy s energií');
-    assert.notEqual(dseProject.project.name, dseProject.house.name);
-
-    assert.equal(getCanonicalProject('project-ac-modular')?.project.name, 'AC Modular');
-    assert.equal(getCanonicalHouse('villa-168')?.house?.name, 'Villa 168');
-    assert.equal(
-      getDefaultCompanyRegistry().projects.find((item) => item.id === 'villa-168')
-        ?.canonicalProjectId,
-      'project-ac-modular',
-    );
+    const canonical = getCanonicalHouse('r2c-dse-house');
+    assert.ok(canonical?.house);
+    assert.equal(canonical.project.projectId, 'project-domy-s-energii');
+    assert.equal(canonical.house.houseId, 'r2c-dse-house');
+    assert.notEqual(canonical.project.projectId, canonical.house.houseId);
   });
 
   it('auto-slugs object id and avoids collisions (PR-023)', () => {
@@ -436,12 +402,13 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
       'apps/client-studio/public/house-packages/dse-client-house',
     );
     assert.equal(canonical?.house?.dataMode, 'LIVE_EMPTY');
-    assert.deepEqual(
-      housesForFolder(created.state, 'project-domy-s-energii').map(
-        (house) => house.id,
-      ),
-      ['modern-4kk', 'dse-client-house'],
-    );
+    const dseHouseIds = housesForFolder(
+      created.state,
+      'project-domy-s-energii',
+    ).map((house) => house.id);
+    assert.ok(dseHouseIds.includes('dse-client-house'));
+    assert.ok(!dseHouseIds.includes('modern-4kk'));
+    assert.equal(dseHouseIds.length, 2);
     assert.equal(
       housesForFolder(created.state, 'project-ac-modular').some(
         (house) => house.id === created.project.id,
@@ -561,7 +528,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     );
   });
 
-  it('CAP-VR36E — restores authored Houses under their canonical parent Project', () => {
+  it('CAP-VR36E — migrates historical PATROVÝ identity to canonical Váš první dům', () => {
     const initial = createInitialWorkspaceRegistry();
     const dse = openWorkspaceFolder(initial, 'project-domy-s-energii');
     const dseHouse = createWorkspaceObjectFromInput(dse.state, {
@@ -577,35 +544,59 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     });
     assert.ok(acHouse);
 
+    const persistedBase = toPersistedWorkspaceSlice(acHouse.state);
     const persisted = {
-      ...toPersistedWorkspaceSlice(acHouse.state),
+      ...persistedBase,
       activeFolderId: 'project-ac-modular',
       activeProjectId: 'modern-4kk',
       houseMetadata: {
-        ...toPersistedWorkspaceSlice(acHouse.state).houseMetadata,
+        ...persistedBase.houseMetadata,
         'patrovy-5kk': 'builder-authored-house',
         'test-4': 'builder-authored-house',
       },
     };
+
     const restored = mergePersistedWorkspaceSlice(persisted);
+
     const acHouseIds = housesForFolder(
       restored,
       'project-ac-modular',
     ).map((house) => house.id);
-    const dseHouseIds = housesForFolder(
+
+    const dseHouses = housesForFolder(
       restored,
       'project-domy-s-energii',
-    ).map((house) => house.id);
+    );
+    const dseHouseIds = dseHouses.map((house) => house.id);
 
     assert.equal(restored.activeFolderId, 'project-ac-modular');
-    assert.notEqual(restored.activeProjectId, 'modern-4kk');
+    assert.equal(restored.activeProjectId, 'modern-4kk');
+
     assert.ok(acHouseIds.includes('test-4'));
     assert.ok(!acHouseIds.includes('patrovy-5kk'));
-    assert.ok(!acHouseIds.includes('modern-4kk'));
-    assert.deepEqual(dseHouseIds, ['modern-4kk', 'patrovy-5kk']);
+    assert.ok(acHouseIds.includes('modern-4kk'));
+
+    assert.ok(!dseHouseIds.includes('patrovy-5kk'));
+    assert.ok(dseHouseIds.includes(DSE_FIRST_DRAFT_HOUSE_ID));
+
+    const vpd = dseHouses.find(
+      (house) => house.id === DSE_FIRST_DRAFT_HOUSE_ID,
+    );
+    assert.ok(vpd);
+    assert.equal(vpd.name, 'Váš první dům');
+    assert.equal(vpd.folderId, 'project-domy-s-energii');
+
+    assert.equal(
+      restored.houseMetadata['patrovy-5kk'],
+      undefined, );
+    assert.equal(
+      restored.houseMetadata[DSE_FIRST_DRAFT_HOUSE_ID],
+      'builder-authored-house',
+    );
+
     assert.equal(getCanonicalHouse('test-4')?.house?.dataMode, 'LIVE_EMPTY');
     assert.equal(
-      getCanonicalHouse('patrovy-5kk')?.project.projectId,
+      getCanonicalHouse(DSE_FIRST_DRAFT_HOUSE_ID)?.project.projectId,
       'project-domy-s-energii',
     );
   });
@@ -618,7 +609,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     assert.ok(acFolder);
     assert.equal(
       housesForFolder(state, acFolder.id).length,
-      3,
+      4,
     );
   });
 
@@ -642,14 +633,16 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     ).map((house) => house.id);
 
     assert.equal(restored.activeFolderId, 'project-domy-s-energii');
-    assert.equal(restored.activeProjectId, 'modern-4kk');
-    assert.deepEqual(dseHouseIds, ['modern-4kk']);
+    assert.notEqual(restored.activeProjectId, 'modern-4kk');
+    assert.ok(!dseHouseIds.includes('modern-4kk'));
+    assert.equal(dseHouseIds.length, 1);
     assert.deepEqual(acHouseIds.sort(), [
       'family-98',
       'harmony-124',
+      'modern-4kk',
       'villa-168',
     ]);
-    assert.equal(restored.houseFolderIds['modern-4kk'], 'project-domy-s-energii');
+    assert.equal(restored.houseFolderIds['modern-4kk'], 'project-ac-modular');
   });
 
   it('activates MODERN 4KK without requesting a legacy HP-002 workspace root', () => {
@@ -672,7 +665,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     assert.match(source, /workspace\.activeProject === null/);
     assert.match(
       source,
-      /const targetId = accessSession\?\.projectId \?\? urlProjectId \?\? null/,
+      /const targetId = targetHouseId \?\? accessSession\?\.projectId \?\? urlProjectId \?\? null/,
     );
     assert.match(source, /requestOpenFolder\(targetId, \{ dirty: false \}\)/);
     assert.doesNotMatch(
@@ -718,7 +711,12 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     const housesB = housesForFolder(withHouse.state, created.folder.id).map(
       (h) => h.id,
     );
-    assert.deepEqual(housesA.sort(), ['family-98', 'harmony-124', 'villa-168']);
+    assert.deepEqual(housesA.sort(), [
+      'family-98',
+      'harmony-124',
+      'modern-4kk',
+      'villa-168',
+    ]);
     assert.equal(housesB.length, 1);
     assert.equal(housesB[0], withHouse.project.id);
     assert.ok(!housesA.includes(withHouse.project.id));
@@ -782,14 +780,14 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
       housesForFolder(state, 'project-ac-modular')
         .map((house) => house.id)
         .sort(),
-      ['family-98', 'harmony-124', 'villa-168'],
+      ['family-98', 'harmony-124', 'modern-4kk', 'villa-168'],
     );
-    assert.deepEqual(
-      housesForFolder(state, 'project-domy-s-energii').map(
-        (house) => house.id,
-      ),
-      ['modern-4kk'],
-    );
+    const dseHouseIds = housesForFolder(
+      state,
+      'project-domy-s-energii',
+    ).map((house) => house.id);
+    assert.ok(!dseHouseIds.includes('modern-4kk'));
+    assert.equal(dseHouseIds.length, 1);
     assert.ok(getCanonicalHouse('legacy-ac-1')?.house);
   });
 

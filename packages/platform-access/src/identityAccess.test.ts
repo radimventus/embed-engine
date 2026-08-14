@@ -134,7 +134,7 @@ describe('identityAccess (OF-07)', () => {
   });
 
   it('enforces roles, studio access and inactive accounts', () => {
-    assert.deepEqual(studiosForRoles(['salesman']), ['sales']);
+    assert.deepEqual(studiosForRoles(['salesman']), ['client', 'sales']);
     assert.equal(canAccessStudio(['salesman'], 'sales'), true);
     assert.equal(canAccessStudio(['salesman'], 'office'), false);
     assert.equal(canAccessStudio(['conis-admin'], 'office'), true);

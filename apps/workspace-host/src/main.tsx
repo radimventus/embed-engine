@@ -8,12 +8,14 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
+  createPlatformAccessAuthClient,
   getSharedWorkspaceContext,
   loadPlatformSession,
   resolveCloudStudioHref,
   resolveWorkspaceHostHref,
   restoreAuthenticatedPartnerEnvironment,
   restoreSession,
+  savePlatformSession,
 } from '@embed-engine/platform-access';
 import '@embed-engine/platform-access/styles.css';
 import '@embed-engine/platform-shell/styles.css';
@@ -26,20 +28,34 @@ if (rootElement === null) {
   throw new Error('Workspace Host root element is missing');
 }
 
-const session = restoreSession() ?? loadPlatformSession();
-const workspaceContext =
-  getSharedWorkspaceContext() ?? restoreAuthenticatedPartnerEnvironment();
+const root = rootElement;
 
-if (session !== null && workspaceContext !== null) {
-  createRoot(rootElement).render(
-    <StrictMode>
-      <WorkspaceHostApp />
-    </StrictMode>,
-  );
-} else {
+async function bootstrapWorkspaceHost(): Promise<void> {
+  try {
+    const restored = await createPlatformAccessAuthClient().restoreSession();
+    if (restored !== null) {
+      savePlatformSession(restored);
+    }
+  } catch {
+    // Fall through to the existing missing-context gate.
+  }
+
+  const session = restoreSession() ?? loadPlatformSession();
+  const workspaceContext =
+    getSharedWorkspaceContext() ?? restoreAuthenticatedPartnerEnvironment();
+
+  if (session !== null && workspaceContext !== null) {
+    createRoot(root).render(
+      <StrictMode>
+        <WorkspaceHostApp />
+      </StrictMode>,
+    );
+    return;
+  }
+
   // VR-05 — keep operators off Legacy Platform Studio Switcher (Office-first).
   const officeHref = resolveCloudStudioHref('office');
-  createRoot(rootElement).render(
+  createRoot(root).render(
     <StrictMode>
       <div className="workspace-host__redirect" data-testid="workspace-host-missing-context">
         <p>Workspace Host vyžaduje aktivní Partner Environment.</p>
@@ -55,3 +71,5 @@ if (session !== null && workspaceContext !== null) {
     </StrictMode>,
   );
 }
+
+void bootstrapWorkspaceHost();

@@ -151,12 +151,19 @@ export interface PlatformAccessAuthClient {
         readonly workspaceId: string;
         readonly projectId: string;
         readonly activeHouseId: string | null;
+        readonly authoredHouseIdentities?: readonly import('../domain/workspaceContext').WorkspaceAuthoredHouseIdentity[];
         readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
         readonly officeReturnHref: string;
       }
     | {
         readonly action: 'switch';
         readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
+        readonly tenantId?: string;
+        readonly companyId?: string;
+        readonly workspaceId?: string;
+        readonly projectId?: string;
+        readonly activeHouseId?: string | null;
+        readonly authoredHouseIdentities?: readonly import('../domain/workspaceContext').WorkspaceAuthoredHouseIdentity[];
       }
     | { readonly action: 'leave' }
   ): Promise<PlatformAccessAuthResult>;

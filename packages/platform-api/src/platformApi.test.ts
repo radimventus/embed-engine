@@ -213,6 +213,230 @@ describe('Durable partner sessions', () => {
     }
   });
 
+  it('falls back to the canonical BUNGALOV when authoritative PE receives an unverified House', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-house-scope-test-'));
+    const statePath = join(directory, 'partner-sessions.json');
+    const repository = new FilePartnerSessionRepository(statePath);
+
+    try {
+      const issued = await repository.activate({
+        invite: {
+          id: 'invite-conis-admin-house-scope',
+          email: 'admin-house-scope@conis.test',
+          displayName: 'CONIS Admin',
+          roles: ['conis-admin'],
+          tenantId: 'tenant-conis-admin',
+          companyId: 'company-conis',
+          workspaceId: 'workspace-conis',
+          projectId: 'project-conis',
+        },
+        password: 'secure-password',
+        rememberMe: true,
+      });
+
+      const entered = await repository.mutateContext(issued.token, {
+        action: 'enter',
+        partnerId: 'p-dse',
+        tenantId: 'tenant-domy-s-energii',
+        companyId: 'company-domy-s-energii',
+        workspaceId: 'domy-s-energii-main',
+        projectId: 'project-domy-s-energii',
+        activeHouseId: 'unverified-house',
+        activeStudio: 'client',
+        officeReturnHref: 'https://conis.cz:4181/partners/p-dse',
+      });
+
+      assert.ok(entered !== null);
+
+      const bungalovId =
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk';
+
+      assert.equal(entered.activeHouseId, bungalovId);
+      assert.equal(
+        entered.workspaceContext?.activeHouseId,
+        bungalovId,
+      );
+
+      const restarted = new FilePartnerSessionRepository(statePath);
+      const restored = await restarted.resolve(issued.token);
+
+      assert.equal(restored?.activeHouseId, bungalovId);
+      assert.equal(
+        restored?.workspaceContext?.activeHouseId,
+        bungalovId,
+      );
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('round-trips authored DSE House identity through the durable Partner Environment session', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-authored-house-test-'));
+    const statePath = join(directory, 'partner-sessions.json');
+    const repository = new FilePartnerSessionRepository(statePath);
+
+    try {
+      const issued = await repository.activate({
+        invite: {
+          id: 'invite-conis-admin-authored-house',
+          email: 'admin-authored-house@conis.test',
+          displayName: 'CONIS Admin',
+          roles: ['conis-admin'],
+          tenantId: 'tenant-conis-admin',
+          companyId: 'company-conis',
+          workspaceId: 'workspace-conis',
+          projectId: 'project-conis',
+        },
+        password: 'secure-password',
+        rememberMe: true,
+      });
+
+      const entered = await repository.mutateContext(issued.token, {
+        action: 'enter',
+        partnerId: 'p-dse',
+        tenantId: 'tenant-domy-s-energii',
+        companyId: 'company-domy-s-energii',
+        workspaceId: 'domy-s-energii-main',
+        projectId: 'project-domy-s-energii',
+        activeHouseId: 'patrovy-5kk',
+        authoredHouseIdentities: [
+          {
+            houseId: 'patrovy-5kk',
+            name: 'PATROVÝ 5KK',
+            canonicalProjectId: 'project-domy-s-energii',
+            packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
+            dataMode: 'LIVE_EMPTY',
+            status: 'draft',
+          },
+        ],
+        activeStudio: 'client',
+       officeReturnHref: 'https://conis.cz:4181/partners/p-dse',
+      });
+
+      assert.ok(entered !== null);
+
+      assert.deepEqual(
+        entered.workspaceContext?.authoredHouseIdentities,
+        [
+          {
+            houseId: 'patrovy-5kk',
+            name: 'PATROVÝ 5KK',
+            canonicalProjectId: 'project-domy-s-energii',
+            packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
+            dataMode: 'LIVE_EMPTY',
+            status: 'draft',
+          },
+        ],
+      );
+
+      const restarted = new FilePartnerSessionRepository(statePath);
+      const restored = await restarted.resolve(issued.token);
+
+      assert.equal(restored?.activeHouseId, 'patrovy-5kk');
+      assert.deepEqual(
+        restored?.workspaceContext?.authoredHouseIdentities,
+        entered.workspaceContext?.authoredHouseIdentities,
+      );
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('persists AC Modular / MODERN scope through authoritative Partner Environment switch and repository restart', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-scope-switch-test-'));
+    const statePath = join(directory, 'partner-sessions.json');
+    const repository = new FilePartnerSessionRepository(statePath);
+
+    try {
+      const issued = await repository.activate({
+        invite: {
+          id: 'invite-conis-admin-scope-switch',
+          email: 'admin-scope-switch@conis.test',
+          displayName: 'CONIS Admin',
+          roles: ['conis-admin'],
+          tenantId: 'tenant-conis-admin',
+          companyId: 'company-conis',
+          workspaceId: 'workspace-conis',
+          projectId: 'project-conis',
+        },
+        password: 'secure-password',
+        rememberMe: true,
+      });
+
+      const entered = await repository.mutateContext(issued.token, {
+        action: 'enter',
+        partnerId: 'p-dse',
+        tenantId: 'tenant-domy-s-energii',
+        companyId: 'company-domy-s-energii',
+        workspaceId: 'domy-s-energii-main',
+        projectId: 'project-domy-s-energii',
+        activeHouseId:
+          'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+        activeStudio: 'client',
+        officeReturnHref: 'https://conis.cz:4181/partners/p-dse',
+      });
+
+      assert.ok(entered !== null);
+      assert.equal(entered.projectId, 'project-domy-s-energii');
+
+      const switched = await repository.mutateContext(issued.token, {
+        action: 'switch',
+        activeStudio: 'builder',
+        tenantId: 'tenant-ac-modular',
+        companyId: 'ac-modular',
+        workspaceId: 'ac-modular-main',
+        projectId: 'project-ac-modular',
+        activeHouseId: 'modern-4kk',
+      });
+
+      assert.ok(switched !== null);
+      assert.equal(switched.tenantId, 'tenant-ac-modular');
+      assert.equal(switched.companyId, 'ac-modular');
+      assert.equal(switched.workspaceId, 'ac-modular-main');
+      assert.equal(switched.projectId, 'project-ac-modular');
+      assert.equal(switched.activeHouseId, 'modern-4kk');
+      assert.equal(switched.activeStudioId, 'builder');
+
+      assert.equal(
+        switched.workspaceContext?.companyId,
+        'ac-modular',
+      );
+      assert.equal(
+        switched.workspaceContext?.workspaceId,
+        'ac-modular-main',
+      );
+      assert.equal(
+        switched.workspaceContext?.projectId,
+        'project-ac-modular',
+      );
+      assert.equal(
+        switched.workspaceContext?.activeHouseId,
+        'modern-4kk',
+      );
+
+      const restarted = new FilePartnerSessionRepository(statePath);
+      const restored = await restarted.resolve(issued.token);
+
+      assert.ok(restored !== null);
+      assert.equal(restored.companyId, 'ac-modular');
+      assert.equal(restored.workspaceId, 'ac-modular-main');
+      assert.equal(restored.projectId, 'project-ac-modular');
+      assert.equal(restored.activeHouseId, 'modern-4kk');
+      assert.equal(restored.activeStudioId, 'builder');
+
+      assert.equal(
+        restored.workspaceContext?.projectId,
+        'project-ac-modular',
+      );
+      assert.equal(
+        restored.workspaceContext?.activeHouseId,
+        'modern-4kk',
+      );
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
   it('persists authoritative Partner Environment context across session restore', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-context-test-'));
     const statePath = join(directory, 'partner-sessions.json');
