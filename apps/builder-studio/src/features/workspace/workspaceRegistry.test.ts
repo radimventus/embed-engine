@@ -645,8 +645,14 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     assert.equal(restored.houseFolderIds['modern-4kk'], 'project-ac-modular');
   });
 
-  it('activates MODERN 4KK without requesting a legacy HP-002 workspace root', () => {
+  it('activates canonical Reference Houses without requesting a legacy HP-002 workspace root', () => {
     assert.equal(requiresLegacyWorkspaceActivation('modern-4kk'), false);
+    assert.equal(
+      requiresLegacyWorkspaceActivation(
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      ),
+      false,
+    );
     assert.equal(requiresLegacyWorkspaceActivation('villa-168'), true);
   });
 

@@ -37,8 +37,8 @@ describe('Builder shared active House publication', () => {
 
     assert.equal(
       resolveBuilderActiveHouseId(
-        dse,
-        house('modern-4kk', dse, 'published'),
+        'project-ac-modular',
+        house('modern-4kk', 'project-ac-modular', 'published'),
       ),
       'modern-4kk',
     );

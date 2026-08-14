@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { getCanonicalHouseRuntimeContext } from '@embed-engine/object-house';
 import {
   createWorkspaceProjectChangeMessage,
   createWorkspaceHouseChangeMessage,
+  getCanonicalHouse,
   isHouseInProject,
   isCanonicalProjectId,
   resolveWorkspaceHostHref,
@@ -125,9 +125,15 @@ export function requiresLegacyWorkspaceActivation(
   houseId: string,
   packageRoot?: string,
 ): boolean {
+  const canonicalHouse = getCanonicalHouse(houseId)?.house ?? null;
+
+  if (canonicalHouse?.dataMode === 'REFERENCE_DEMO') {
+    return false;
+  }
+
   return (
-    (packageRoot === undefined || packageRoot.trim().length > 0) &&
-    getCanonicalHouseRuntimeContext(houseId) === null
+    packageRoot === undefined ||
+    packageRoot.trim().length > 0
   );
 }
 
