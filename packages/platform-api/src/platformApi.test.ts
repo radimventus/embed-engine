@@ -437,6 +437,142 @@ describe('Durable partner sessions', () => {
     }
   });
 
+  it('TASK-42U — Manager follows canonical Studio access within its authenticated Partner scope', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-manager-switch-test-'));
+    const statePath = join(directory, 'partner-sessions.json');
+    const repository = new FilePartnerSessionRepository(statePath);
+
+    try {
+      const issued = await repository.activate({
+        invite: {
+          id: 'invite-manager-dse-switch',
+          email: 'manager-dse-switch@example.test',
+          displayName: 'DSE Manager',
+          roles: ['manager'],
+          tenantId: 'tenant-domy-s-energii',
+          companyId: 'company-domy-s-energii',
+          workspaceId: 'domy-s-energii-main',
+          projectId: 'project-domy-s-energii',
+        },
+        password: 'secure-password',
+        rememberMe: true,
+      });
+
+      const manager = await repository.mutateContext(issued.token, {
+        action: 'switch',
+        activeStudio: 'manager',
+        projectId: 'project-domy-s-energii',
+        activeHouseId:
+          'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      });
+
+      assert.ok(manager !== null);
+      assert.equal(manager.activeStudioId, 'manager');
+      assert.equal(manager.projectId, 'project-domy-s-energii');
+      assert.equal(
+        manager.activeHouseId,
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      );
+
+      const sales = await repository.mutateContext(issued.token, {
+        action: 'switch',
+        activeStudio: 'sales',
+        projectId: 'project-domy-s-energii',
+      });
+
+      assert.ok(sales !== null);
+      assert.equal(sales.activeStudioId, 'sales');
+
+      const builder = await repository.mutateContext(issued.token, {
+        action: 'switch',
+        activeStudio: 'builder',
+        projectId: 'project-domy-s-energii',
+      });
+
+      assert.equal(builder, null);
+
+      const escaped = await repository.mutateContext(issued.token, {
+        action: 'switch',
+        activeStudio: 'manager',
+        tenantId: 'tenant-ac-modular',
+        companyId: 'ac-modular',
+        workspaceId: 'ac-modular-main',
+        projectId: 'project-ac-modular',
+        activeHouseId: 'modern-4kk',
+      });
+
+      assert.equal(escaped, null);
+
+      const entered = await repository.mutateContext(issued.token, {
+        action: 'enter',
+        partnerId: 'p-dse',
+        tenantId: 'tenant-domy-s-energii',
+        companyId: 'company-domy-s-energii',
+        workspaceId: 'domy-s-energii-main',
+        projectId: 'project-domy-s-energii',
+        activeHouseId:
+          'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+        activeStudio: 'client',
+        officeReturnHref: 'https://conis.cz/studio/office/',
+      });
+
+      assert.equal(entered, null);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
+  it('TASK-42T — Sales may switch Client/Sales but never Manager or another Partner scope', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-sales-switch-test-'));
+    const statePath = join(directory, 'partner-sessions.json');
+    const repository = new FilePartnerSessionRepository(statePath);
+
+    try {
+      const issued = await repository.activate({
+        invite: {
+          id: 'invite-sales-dse-switch',
+          email: 'sales-dse-switch@example.test',
+          displayName: 'DSE Sales',
+          roles: ['salesman'],
+          tenantId: 'tenant-domy-s-energii',
+          companyId: 'company-domy-s-energii',
+          workspaceId: 'domy-s-energii-main',
+          projectId: 'project-domy-s-energii',
+        },
+        password: 'secure-password',
+        rememberMe: true,
+      });
+
+      const sales = await repository.mutateContext(issued.token, {
+        action: 'switch',
+        activeStudio: 'sales',
+        projectId: 'project-domy-s-energii',
+      });
+
+      assert.ok(sales !== null);
+      assert.equal(sales.activeStudioId, 'sales');
+
+      const client = await repository.mutateContext(issued.token, {
+        action: 'switch',
+        activeStudio: 'client',
+        projectId: 'project-domy-s-energii',
+      });
+
+      assert.ok(client !== null);
+      assert.equal(client.activeStudioId, 'client');
+
+      const manager = await repository.mutateContext(issued.token, {
+        action: 'switch',
+        activeStudio: 'manager',
+        projectId: 'project-domy-s-energii',
+      });
+
+      assert.equal(manager, null);
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
   it('persists authoritative Partner Environment context across session restore', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-context-test-'));
     const statePath = join(directory, 'partner-sessions.json');

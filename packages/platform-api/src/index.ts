@@ -29,6 +29,7 @@ import {
   type PartnerSessionRepository,
 } from './partnerSessionRepository';
 import { platformApiAllowedOrigins, platformApiStatePath } from './platformApiConfig';
+import type { PlatformRole } from '@embed-engine/platform-access/rbac';
 
 export {
   FileSocialProofAnalyticsRepository,
@@ -82,7 +83,7 @@ export type PlatformInviteStatus =
 export type PlatformInviteScope = {
   readonly email: string;
   readonly displayName: string;
-  readonly roles: readonly string[];
+  readonly roles: readonly PlatformRole[];
   readonly invitedByUserId: string;
   readonly tenantId: string;
   readonly companyId: string;

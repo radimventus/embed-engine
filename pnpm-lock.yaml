@@ -823,6 +823,9 @@ importers:
       '@embed-engine/document-runtime':
         specifier: workspace:*
         version: link:../document-runtime
+      '@embed-engine/platform-access':
+        specifier: workspace:*
+        version: link:../platform-access
     devDependencies:
       '@types/node':
         specifier: ^22.20.1

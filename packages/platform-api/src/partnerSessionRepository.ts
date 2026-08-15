@@ -9,6 +9,10 @@ import { dirname } from 'node:path';
 import { promisify } from 'node:util';
 
 import { platformApiStatePath } from './platformApiConfig';
+import {
+  canAccessStudio,
+  type PlatformRole,
+} from '@embed-engine/platform-access/rbac';
 
 const scrypt = promisify(scryptCallback);
 const SESSION_VALIDITY_MS = 30 * 24 * 60 * 60 * 1_000;
@@ -79,7 +83,7 @@ export type PartnerIdentity = {
     readonly id: string;
     readonly email: string;
     readonly displayName: string;
-    readonly roles: readonly string[];
+    readonly roles: readonly PlatformRole[];
     readonly status: 'active';
     readonly lastLoginAt: string;
     readonly lastActivityAt: string;
@@ -102,7 +106,7 @@ type StoredAccount = {
   readonly id: string;
   readonly email: string;
   readonly displayName: string;
-  readonly roles: readonly string[];
+  readonly roles: readonly PlatformRole[];
   readonly tenantId: string;
   readonly companyId: string;
   readonly workspaceId: string;
@@ -147,7 +151,7 @@ export interface PartnerSessionRepository {
       readonly id: string;
       readonly email: string;
       readonly displayName: string;
-      readonly roles: readonly string[];
+      readonly roles: readonly PlatformRole[];
       readonly tenantId: string;
       readonly companyId: string;
       readonly workspaceId: string;
@@ -327,7 +331,12 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
       );
       if (account === undefined) return null;
 
-      if (!account.roles.includes('conis-admin')) {
+      const isConisAdmin = account.roles.includes('conis-admin');
+
+      // TASK-42T — entering/leaving an operator Partner Environment remains
+      // a CONIS-admin capability. A normal partner session may only switch
+      // Studio inside its own already-authorized canonical scope.
+      if (mutation.action !== 'switch' && !isConisAdmin) {
         return null;
       }
 
@@ -411,14 +420,13 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
           workspaceContext,
         };
       } else if (mutation.action === 'switch') {
-        if (current.workspaceContext == null) return null;
-
         const context = current.workspaceContext;
 
         const requestedProjectId =
           mutation.projectId?.trim() ||
           current.projectId ||
-          context.projectId;
+          context?.projectId ||
+          account.projectId;
 
         const DSE_SCOPE = {
           tenantId: 'tenant-domy-s-energii',
@@ -442,6 +450,51 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
               : null;
 
         if (targetScope === null) return null;
+
+        if (!isConisAdmin) {
+          if (!canAccessStudio(account.roles, mutation.activeStudio)) {
+            return null;
+          }
+
+          // A partner may never use Studio switching to escape the scope
+          // assigned to its authenticated account.
+          if (
+            targetScope.tenantId !== account.tenantId ||
+            targetScope.companyId !== account.companyId ||
+            targetScope.workspaceId !== account.workspaceId ||
+            targetScope.projectId !== account.projectId
+          ) {
+            return null;
+          }
+
+          if (
+            mutation.tenantId !== undefined &&
+            mutation.tenantId !== account.tenantId
+          ) {
+            return null;
+          }
+
+          if (
+            mutation.companyId !== undefined &&
+            mutation.companyId !== account.companyId
+          ) {
+            return null;
+          }
+
+          if (
+            mutation.workspaceId !== undefined &&
+            mutation.workspaceId !== account.workspaceId
+          ) {
+            return null;
+          }
+
+          if (
+            mutation.projectId !== undefined &&
+            mutation.projectId !== account.projectId
+          ) {
+            return null;
+          }
+        }
 
         if (
           mutation.tenantId !== undefined &&
@@ -470,7 +523,7 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
               house.canonicalProjectId === targetScope.projectId &&
               house.status === 'draft',
           ) ??
-          context.authoredHouseIdentities?.filter(
+          context?.authoredHouseIdentities?.filter(
             (house) => house.canonicalProjectId === targetScope.projectId,
           ) ??
           [];
@@ -512,15 +565,18 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
           projectId: targetScope.projectId,
           activeHouseId,
           activeStudioId: mutation.activeStudio,
-          workspaceContext: {
-            ...context,
-            companyId: targetScope.companyId,
-            workspaceId: targetScope.workspaceId,
-            projectId: targetScope.projectId,
-            activeHouseId,
-            authoredHouseIdentities,
-            activeStudio: mutation.activeStudio,
-          },
+          workspaceContext:
+            context === null || context === undefined
+              ? null
+              : {
+                  ...context,
+                  companyId: targetScope.companyId,
+                  workspaceId: targetScope.workspaceId,
+                  projectId: targetScope.projectId,
+                  activeHouseId,
+                  authoredHouseIdentities,
+                  activeStudio: mutation.activeStudio,
+                },
         };
       } else {
         const context = current.workspaceContext;

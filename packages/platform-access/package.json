@@ -11,7 +11,12 @@
       "import": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./styles.css": "./src/platform-access.css"
+    "./styles.css": "./src/platform-access.css",
+    "./rbac": {
+      "types": "./src/rbac.ts",
+      "import": "./src/rbac.ts",
+      "default": "./src/rbac.ts"
+    }
   },
   "files": [
     "src"

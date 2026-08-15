@@ -16,6 +16,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
-    "@embed-engine/document-runtime": "workspace:*"
+    "@embed-engine/document-runtime": "workspace:*",
+    "@embed-engine/platform-access": "workspace:*"
   }
 }
