@@ -290,9 +290,27 @@ export function WorkspaceHostApp() {
         navigate: false,
         retainWorkspace: true,
       });
+
+      task42Trace('surface-select:local-result', {
+        from: surface,
+        to: next,
+        ok: result.ok,
+        error: result.ok ? null : result.error,
+      });
+
       if (!result.ok) return;
 
       const nextSession = loadPlatformSession();
+
+      task42Trace('surface-select:local-session', {
+        from: surface,
+        to: next,
+        projectId: nextSession?.projectId ?? null,
+        activeHouseId: nextSession?.activeHouseId ?? null,
+        activeStudioId: nextSession?.activeStudioId ?? null,
+        workspaceContextActiveStudio:
+          nextSession?.workspaceContext?.activeStudio ?? null,
+      });
       if (nextSession?.projectId !== null && nextSession?.projectId !== undefined) {
         await enqueueAuthoritativeMutation({
           action: 'switch',

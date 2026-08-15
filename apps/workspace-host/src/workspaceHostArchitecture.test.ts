@@ -279,6 +279,30 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.match(app, /surface-select:applied/);
   });
 
+  it('TASK-42N — Studio switch trace exposes local switch result and resulting session', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    assert.match(app, /surface-select:local-result/);
+    assert.match(app, /surface-select:local-session/);
+
+    const resultTrace = app.indexOf('surface-select:local-result');
+    const resultGuard = app.indexOf('if (!result.ok) return;', resultTrace);
+    const sessionTrace = app.indexOf('surface-select:local-session', resultGuard);
+    const mutation = app.indexOf('await enqueueAuthoritativeMutation', sessionTrace);
+    const applied = app.indexOf('surface-select:applied', mutation);
+
+    assert.notEqual(resultTrace, -1);
+    assert.notEqual(resultGuard, -1);
+    assert.notEqual(sessionTrace, -1);
+    assert.notEqual(mutation, -1);
+    assert.notEqual(applied, -1);
+
+    assert.ok(resultTrace < resultGuard);
+    assert.ok(resultGuard < sessionTrace);
+    assert.ok(sessionTrace < mutation);
+    assert.ok(mutation < applied);
+  });
+
   it('TASK-42 — Studio scope updates do not reload the active iframe', () => {
     const app = read('src/WorkspaceHostApp.tsx');
 
