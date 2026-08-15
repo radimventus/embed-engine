@@ -9,6 +9,8 @@ import { createRoot } from 'react-dom/client';
 
 import {
   createPlatformAccessAuthClient,
+  enterOperatorPartnerEnvironmentAuthoritatively,
+  getSharedWorkspaceContext,
   loadPlatformSession,
   resolveCloudStudioHref,
   resolveWorkspaceHostHref,
@@ -42,7 +44,40 @@ async function bootstrapWorkspaceHost(): Promise<void> {
   const session = restoreSession() ?? loadPlatformSession();
 
   if (session !== null) {
+    const requiresAuthoritativePartnerEnvironment =
+      session.workspaceContext === null ||
+      session.activeHouseId === null;
+
     restoreAuthenticatedPartnerEnvironment();
+
+    if (requiresAuthoritativePartnerEnvironment) {
+      const restoredContext = getSharedWorkspaceContext();
+
+      if (restoredContext !== null) {
+        const initialSurface =
+          restoredContext.activeStudio === 'office'
+            ? 'client'
+            : restoredContext.activeStudio;
+
+        const authoritativeResult =
+          await enterOperatorPartnerEnvironmentAuthoritatively({
+            companyId: restoredContext.companyId,
+            workspaceId: restoredContext.workspaceId,
+            projectId: restoredContext.projectId,
+            officePartnerId: restoredContext.partnerId,
+            officeReturnHref: restoredContext.officeReturnHref,
+            initialSurface,
+            navigate: false,
+          });
+
+        if (!authoritativeResult.ok) {
+          console.error(
+            'Workspace cold Partner Environment reconciliation failed:',
+            authoritativeResult.error,
+          );
+        }
+      }
+    }
     createRoot(root).render(
       <StrictMode>
         <WorkspaceHostApp />

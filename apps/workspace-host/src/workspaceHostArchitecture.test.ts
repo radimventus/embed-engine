@@ -109,6 +109,90 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
   });
 
+  it('TASK-42M — cold authenticated Workspace reconciles Partner Environment authoritatively before render', () => {
+    const main = read('src/main.tsx');
+
+    assert.match(
+      main,
+      /session\.workspaceContext === null[\s\S]*session\.activeHouseId === null/,
+    );
+
+    assert.match(
+      main,
+      /restoreAuthenticatedPartnerEnvironment\(\)/,
+    );
+
+    assert.match(
+      main,
+      /getSharedWorkspaceContext\(\)/,
+    );
+
+    assert.match(
+      main,
+      /enterOperatorPartnerEnvironmentAuthoritatively\(\{/,
+    );
+
+    assert.match(
+      main,
+      /companyId:\s*restoredContext\.companyId/,
+    );
+
+    assert.match(
+      main,
+      /workspaceId:\s*restoredContext\.workspaceId/,
+    );
+
+    assert.match(
+      main,
+      /projectId:\s*restoredContext\.projectId/,
+    );
+
+    assert.match(
+      main,
+      /officePartnerId:\s*restoredContext\.partnerId/,
+    );
+
+    assert.match(
+      main,
+      /officeReturnHref:\s*restoredContext\.officeReturnHref/,
+    );
+
+    assert.match(
+      main,
+      /navigate:\s*false/,
+    );
+
+    const localRestore =
+      main.indexOf('restoreAuthenticatedPartnerEnvironment()');
+
+    const authoritativeRestore =
+      main.indexOf('enterOperatorPartnerEnvironmentAuthoritatively({');
+
+    const workspaceRender =
+      main.indexOf('<WorkspaceHostApp />');
+
+    assert.notEqual(localRestore, -1);
+    assert.notEqual(authoritativeRestore, -1);
+    assert.notEqual(workspaceRender, -1);
+
+    assert.ok(localRestore < authoritativeRestore);
+    assert.ok(authoritativeRestore < workspaceRender);
+  });
+
+  it('TASK-42M — complete authenticated Workspace does not require authoritative cold reconciliation', () => {
+    const main = read('src/main.tsx');
+
+    assert.match(
+      main,
+      /const requiresAuthoritativePartnerEnvironment =[\s\S]*session\.workspaceContext === null[\s\S]*session\.activeHouseId === null/,
+    );
+
+    assert.match(
+      main,
+      /if \(requiresAuthoritativePartnerEnvironment\) \{/,
+    );
+  });
+
   it('PT-VR-06 — Workspace Shell hosts studios without redesign chrome', () => {
     const app = read('src/WorkspaceHostApp.tsx');
     const css = read('src/workspace-host.css');
