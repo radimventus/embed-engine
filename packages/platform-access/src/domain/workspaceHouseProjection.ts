@@ -1,4 +1,5 @@
 import {
+  getCanonicalHouse,
   isCanonicalProjectId,
   listCanonicalHouses,
   resolveCanonicalRuntimeBinding,
@@ -104,7 +105,14 @@ export function listWorkspaceHouses(
     addPublishedHouse(byId, projection);
   }
   for (const house of getSharedWorkspaceContext()?.authoredHouseIdentities ?? []) {
+    const canonicalHouse = getCanonicalHouse(house.houseId);
     if (house.canonicalProjectId === canonicalProjectId) {
+      // TASK-42D — canonical published House identity is authoritative.
+      // A stale Builder-authored identity with the same House id must never
+      // downgrade a published House to draft/LIVE_EMPTY runtime semantics.
+      if (canonicalHouse !== null) {
+        continue;
+      }
       byId.set(house.houseId, house);
     }
   }

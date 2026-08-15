@@ -303,6 +303,72 @@ describe('platformAccess (EPIC-BX-14)', () => {
     );
   });
 
+  it('TASK-42D — stale authored identity cannot downgrade canonical BUNGALOV runtime', () => {
+    clearPlatformSession();
+
+    const result = login({
+      email: 'radim@conis.local',
+      password: 'demo',
+      rememberMe: false,
+    });
+
+    assert.equal(result.ok, true);
+    if (!result.ok) return;
+
+    const bungalovId =
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk';
+
+    updateSession({
+      projectId: 'project-domy-s-energii',
+      activeHouseId: bungalovId,
+      workspaceContext: {
+        operatorMode: true,
+        partnerId: 'company-domy-s-energii',
+        companyId: 'company-domy-s-energii',
+        workspaceId: 'domy-s-energii-main',
+        projectId: 'project-domy-s-energii',
+        activeHouseId: bungalovId,
+        activeStudio: 'client',
+        officeReturnHref: '',
+        previous: {
+          tenantId: result.session.tenantId,
+          companyId: result.session.companyId,
+          workspaceId: result.session.workspaceId,
+          projectId: result.session.projectId,
+        },
+        authoredHouseIdentities: [
+          {
+            houseId: bungalovId,
+            name: 'BUNGALOV 4KK',
+            canonicalProjectId: 'project-domy-s-energii',
+            packageRoot: '',
+            dataMode: 'LIVE_EMPTY',
+            status: 'draft',
+          },
+        ],
+      },
+    });
+
+    const houses = listWorkspaceHouses('project-domy-s-energii');
+    const bungalov = houses.find((house) => house.houseId === bungalovId);
+
+    assert.ok(bungalov !== undefined);
+    assert.equal(bungalov?.status, 'published');
+    assert.equal(bungalov?.dataMode, 'REFERENCE_DEMO');
+
+    const binding = resolveWorkspaceHouseBinding({
+      projectId: 'project-domy-s-energii',
+      houseId: bungalovId,
+    });
+
+    assert.ok(binding !== null);
+    assert.equal(binding?.status, 'published');
+    assert.equal(binding?.runtimeContentAvailable, true);
+    assert.equal(binding?.canonicalBinding?.runtimeHouseId, bungalovId);
+
+    clearPlatformSession();
+  });
+
   it('CAP-VR39a — projects authored House identities without publishing them', () => {
     clearPlatformSession();
     const result = login({
