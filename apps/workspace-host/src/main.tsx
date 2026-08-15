@@ -48,9 +48,19 @@ async function bootstrapWorkspaceHost(): Promise<void> {
       session.workspaceContext === null ||
       session.activeHouseId === null;
 
+    const isConisAdmin = session.user.roles.includes('conis-admin');
+
+    // TASK-42AC / H9 + H1
+    // A normal authenticated partner already owns one canonical scope.
+    // Cold/private-browser bootstrap restores that scope locally from the
+    // durable authenticated session, including the first canonical House.
+    //
+    // Do not reinterpret that cold restore as an operator ENTER mutation:
+    // ENTER is intentionally a CONIS-admin capability on Platform API.
+    // Only an actual CONIS admin may perform authoritative PE entry.
     restoreAuthenticatedPartnerEnvironment();
 
-    if (requiresAuthoritativePartnerEnvironment) {
+    if (isConisAdmin && requiresAuthoritativePartnerEnvironment) {
       const restoredContext = getSharedWorkspaceContext();
 
       if (restoredContext !== null) {
@@ -72,12 +82,13 @@ async function bootstrapWorkspaceHost(): Promise<void> {
 
         if (!authoritativeResult.ok) {
           console.error(
-            'Workspace cold Partner Environment reconciliation failed:',
+            'Workspace admin Partner Environment reconciliation failed:',
             authoritativeResult.error,
           );
         }
       }
     }
+
     createRoot(root).render(
       <StrictMode>
         <WorkspaceHostApp />

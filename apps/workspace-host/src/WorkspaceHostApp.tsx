@@ -311,8 +311,20 @@ export function WorkspaceHostApp() {
         workspaceContextActiveStudio:
           nextSession?.workspaceContext?.activeStudio ?? null,
       });
+
+      // TASK-42AC / H2
+      // Local role authorization + local session mutation have already
+      // succeeded. Reflect the selected Studio immediately; authoritative
+      // persistence must not block the visible Workspace surface transition.
+      setSurface(next);
+
+      task42Trace('surface-select:applied', {
+        from: surface,
+        to: next,
+      });
+
       if (nextSession?.projectId !== null && nextSession?.projectId !== undefined) {
-        await enqueueAuthoritativeMutation({
+        void enqueueAuthoritativeMutation({
           action: 'switch',
           activeStudio: authoritativeStudioForSurface(next),
           projectId: nextSession.projectId,
@@ -321,13 +333,6 @@ export function WorkspaceHostApp() {
             nextSession.workspaceContext?.authoredHouseIdentities,
         });
       }
-
-      setSurface(next);
-
-      task42Trace('surface-select:applied', {
-        from: surface,
-        to: next,
-      });
     },
     [enqueueAuthoritativeMutation, surface],
   );

@@ -109,12 +109,12 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
   });
 
-  it('TASK-42M — cold authenticated Workspace reconciles Partner Environment authoritatively before render', () => {
+  it('TASK-42AC — cold partner Workspace restores canonical scope without admin-only ENTER', () => {
     const main = read('src/main.tsx');
 
     assert.match(
       main,
-      /session\.workspaceContext === null[\s\S]*session\.activeHouseId === null/,
+      /const isConisAdmin = session\.user\.roles\.includes\('conis-admin'\)/,
     );
 
     assert.match(
@@ -124,60 +124,28 @@ describe('VR-04 Canonical Workspace Shell', () => {
 
     assert.match(
       main,
-      /getSharedWorkspaceContext\(\)/,
+      /if \(isConisAdmin && requiresAuthoritativePartnerEnvironment\)/,
     );
 
     assert.match(
       main,
-      /enterOperatorPartnerEnvironmentAuthoritatively\(\{/,
+      /if \(isConisAdmin && requiresAuthoritativePartnerEnvironment\)[\s\S]*enterOperatorPartnerEnvironmentAuthoritatively\(\{/,
     );
 
-    assert.match(
-      main,
-      /companyId:\s*restoredContext\.companyId/,
-    );
-
-    assert.match(
-      main,
-      /workspaceId:\s*restoredContext\.workspaceId/,
-    );
-
-    assert.match(
-      main,
-      /projectId:\s*restoredContext\.projectId/,
-    );
-
-    assert.match(
-      main,
-      /officePartnerId:\s*restoredContext\.partnerId/,
-    );
-
-    assert.match(
-      main,
-      /officeReturnHref:\s*restoredContext\.officeReturnHref/,
-    );
-
-    assert.match(
-      main,
-      /navigate:\s*false/,
-    );
-
-    const localRestore =
-      main.indexOf('restoreAuthenticatedPartnerEnvironment()');
-
-    const authoritativeRestore =
-      main.indexOf('enterOperatorPartnerEnvironmentAuthoritatively({');
-
-    const workspaceRender =
+    const partnerRestoreIndex =
+      main.indexOf('restoreAuthenticatedPartnerEnvironment();');
+    const adminGuardIndex =
+      main.indexOf(
+        'if (isConisAdmin && requiresAuthoritativePartnerEnvironment)',
+      );
+    const renderIndex =
       main.indexOf('<WorkspaceHostApp />');
 
-    assert.notEqual(localRestore, -1);
-    assert.notEqual(authoritativeRestore, -1);
-    assert.notEqual(workspaceRender, -1);
-
-    assert.ok(localRestore < authoritativeRestore);
-    assert.ok(authoritativeRestore < workspaceRender);
+    assert.ok(partnerRestoreIndex >= 0);
+    assert.ok(adminGuardIndex > partnerRestoreIndex);
+    assert.ok(renderIndex > adminGuardIndex);
   });
+
 
   it('TASK-42M — complete authenticated Workspace does not require authoritative cold reconciliation', () => {
     const main = read('src/main.tsx');
@@ -189,7 +157,7 @@ describe('VR-04 Canonical Workspace Shell', () => {
 
     assert.match(
       main,
-      /if \(requiresAuthoritativePartnerEnvironment\) \{/,
+      /if \(isConisAdmin && requiresAuthoritativePartnerEnvironment\) \{/,
     );
   });
 
@@ -298,6 +266,39 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
   });
 
+  it('TASK-42AC — visible Studio switch is not blocked by authoritative persistence', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    const selectStart = app.indexOf(
+      'const selectSurface = useCallback',
+    );
+    const selectEnd = app.indexOf(
+      'useEffect(() => {',
+      selectStart,
+    );
+
+    assert.ok(selectStart >= 0);
+    assert.ok(selectEnd > selectStart);
+
+    const select = app.slice(selectStart, selectEnd);
+
+    const localSwitchIndex =
+      select.indexOf('switchOperatorPartnerStudio(next');
+    const setSurfaceIndex =
+      select.indexOf('setSurface(next)');
+    const authoritativeIndex =
+      select.indexOf('void enqueueAuthoritativeMutation({');
+
+    assert.ok(localSwitchIndex >= 0);
+    assert.ok(setSurfaceIndex > localSwitchIndex);
+    assert.ok(authoritativeIndex > setSurfaceIndex);
+
+    assert.doesNotMatch(
+      select,
+      /await enqueueAuthoritativeMutation\(\{/,
+    );
+  });
+
   it('TASK-42N — Studio switch trace exposes local switch result and resulting session', () => {
     const app = read('src/WorkspaceHostApp.tsx');
 
@@ -307,19 +308,22 @@ describe('VR-04 Canonical Workspace Shell', () => {
     const resultTrace = app.indexOf('surface-select:local-result');
     const resultGuard = app.indexOf('if (!result.ok) return;', resultTrace);
     const sessionTrace = app.indexOf('surface-select:local-session', resultGuard);
-    const mutation = app.indexOf('await enqueueAuthoritativeMutation', sessionTrace);
-    const applied = app.indexOf('surface-select:applied', mutation);
+    const applied = app.indexOf('surface-select:applied', sessionTrace);
+    const mutation = app.indexOf(
+      'void enqueueAuthoritativeMutation',
+      applied,
+    );
 
     assert.notEqual(resultTrace, -1);
     assert.notEqual(resultGuard, -1);
     assert.notEqual(sessionTrace, -1);
-    assert.notEqual(mutation, -1);
     assert.notEqual(applied, -1);
+    assert.notEqual(mutation, -1);
 
     assert.ok(resultTrace < resultGuard);
     assert.ok(resultGuard < sessionTrace);
-    assert.ok(sessionTrace < mutation);
-    assert.ok(mutation < applied);
+    assert.ok(sessionTrace < applied);
+    assert.ok(applied < mutation);
   });
 
   it('TASK-42 — Studio scope updates do not reload the active iframe', () => {
