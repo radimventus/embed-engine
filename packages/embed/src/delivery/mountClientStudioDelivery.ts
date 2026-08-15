@@ -52,10 +52,10 @@ function resolvePilotProjectId(objectId: string | undefined): string {
  * (`ensureBuilderPackageBootstrapped` → `projectBuilderImportToHousePackage`) — same as
  * standalone Client Studio.
  */
-export async function bootstrapClientStudioDelivery(
+export function bootstrapClientStudioDelivery(
   host: HTMLElement,
   options: Pick<EmbedProductionMountOptions, "objectId" | "assetBase">,
-): Promise<ClientStudioDeliverySession> {
+): ClientStudioDeliverySession {
   ensureClientStudioStyles();
 
   const objectId = resolvePilotProjectId(options.objectId);

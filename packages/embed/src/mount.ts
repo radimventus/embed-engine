@@ -109,16 +109,11 @@ export function mount(options: EmbedMountOptions): void {
     }
 
     const host = resolveInlineTarget(options);
-    void bootstrapClientStudioDelivery(host, {
+    const session = bootstrapClientStudioDelivery(host, {
       objectId: options.objectId,
       assetBase,
-    })
-      .then((session) => {
-        setActiveSession(session);
-      })
-      .catch((error: unknown) => {
-        console.error("Embed.mount: Client Studio delivery failed", error);
-      });
+    });
+    setActiveSession(session);
     return;
   }
 
