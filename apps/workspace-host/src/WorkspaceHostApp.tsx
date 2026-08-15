@@ -175,6 +175,7 @@ export function WorkspaceHostApp() {
   );
   const clientMountedRef = useRef(false);
   const clientObjectIdRef = useRef<string | null>(null);
+  const clientFinalDisposeTimerRef = useRef<number | null>(null);
   const ctx = getSharedWorkspaceContext();
   const session = loadPlatformSession();
 
@@ -413,12 +414,24 @@ export function WorkspaceHostApp() {
   }, [surface, sharedActiveHouseId, sharedProjectId]);
 
   useEffect(() => {
+    // React development StrictMode intentionally runs effect
+    // setup → cleanup → setup once during initial mount.
+    // Never synchronously destroy the nested Client React root
+    // from that synthetic cleanup while React is still rendering.
+    if (clientFinalDisposeTimerRef.current !== null) {
+      window.clearTimeout(clientFinalDisposeTimerRef.current);
+      clientFinalDisposeTimerRef.current = null;
+    }
+
     return () => {
-      if (clientMountedRef.current) {
-        Embed.unmount(`#${CLIENT_MOUNT_ID}`);
-        clientMountedRef.current = false;
-        clientObjectIdRef.current = null;
-      }
+      clientFinalDisposeTimerRef.current = window.setTimeout(() => {
+        if (clientMountedRef.current) {
+          Embed.unmount(`#${CLIENT_MOUNT_ID}`);
+          clientMountedRef.current = false;
+          clientObjectIdRef.current = null;
+        }
+        clientFinalDisposeTimerRef.current = null;
+      }, 0);
     };
   }, []);
 

@@ -155,6 +155,21 @@ describe('VR-04 Canonical Workspace Shell', () => {
 
     assert.match(
       app,
+      /clientFinalDisposeTimerRef = useRef<number \| null>\(null\)/,
+    );
+
+    assert.match(
+      app,
+      /window\.clearTimeout\(clientFinalDisposeTimerRef\.current\)/,
+    );
+
+    assert.match(
+      app,
+      /clientFinalDisposeTimerRef\.current = window\.setTimeout\(\(\) => \{[\s\S]*?Embed\.unmount/,
+    );
+
+    assert.doesNotMatch(
+      app,
       /useEffect\(\(\) => \{\s*return \(\) => \{\s*if \(clientMountedRef\.current\) \{\s*Embed\.unmount/,
     );
   });
