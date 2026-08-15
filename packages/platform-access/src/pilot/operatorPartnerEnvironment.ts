@@ -16,7 +16,7 @@ import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation
 import { canAccessStudio } from '../domain/roles';
 import { isOnWorkspaceHost } from '../domain/workspaceShellEmbed';
 import { getSharedProject } from '../project/projectRepository';
-import { resolvePilotWorkspace } from './provisionPilotWorkspace';
+import { isCanonicalProjectId } from '../projection/canonicalProjectProjection';
 import { getDefaultCompanyRegistry } from '../registry/companyRegistry';
 import {
   getSharedWorkspaceContext,
@@ -78,30 +78,25 @@ export function getOperatorPartnerEnvironment(): OperatorPartnerEnvironmentState
  */
 export function restoreAuthenticatedPartnerEnvironment(): SharedWorkspaceContext | null {
   const session = loadPlatformSession();
-  if (
-    session === null ||
-    session.workspaceContext !== null ||
-    (!session.user.roles.includes('manager') &&
-      !session.user.roles.includes('salesman'))
-  ) {
+  if (session === null) {
     return null;
   }
-  const provision = resolvePilotWorkspace(session.companyId);
-  if (
-    provision === null ||
-    provision.tenant.id !== session.tenantId ||
-    provision.workspace.id !== session.workspaceId ||
-    provision.project.id !== session.projectId
-  ) {
+
+  if (session.workspaceContext !== null) {
+    return session.workspaceContext;
+  }
+
+  const projectId = session.projectId?.trim() ?? '';
+  if (projectId.length === 0 || !isCanonicalProjectId(projectId)) {
     return null;
   }
 
   const workspaceContext: SharedWorkspaceContext = {
     operatorMode: true,
-    partnerId: provision.company.id,
-    companyId: provision.company.id,
-    workspaceId: provision.workspace.id,
-    projectId: provision.project.id,
+    partnerId: session.companyId,
+    companyId: session.companyId,
+    workspaceId: session.workspaceId,
+    projectId,
     activeHouseId: session.activeHouseId,
     activeStudio: 'client',
     officeReturnHref: resolveCloudStudioHref('office'),
@@ -112,6 +107,7 @@ export function restoreAuthenticatedPartnerEnvironment(): SharedWorkspaceContext
       projectId: session.projectId,
     },
   };
+
   return updateSession({
     activeStudioId: 'client',
     workspaceContext,

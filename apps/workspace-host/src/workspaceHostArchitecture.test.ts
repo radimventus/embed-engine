@@ -43,9 +43,19 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
   });
 
-  it('VR-05 — missing context does not bounce into Office Platform Switcher', () => {
+  it('VR-05 / TASK-42 — Workspace entry does not require Partner Environment activation', () => {
     const main = read('src/main.tsx');
-    assert.match(main, /workspace-host-missing-context/);
+
+    assert.match(main, /if \(session !== null\)/);
+    assert.match(main, /<WorkspaceHostApp \/>/);
+
+    assert.doesNotMatch(main, /workspaceContext !== null/);
+    assert.doesNotMatch(main, /Otevřít Partner Environment/);
+    assert.doesNotMatch(
+      main,
+      /Workspace Host vyžaduje aktivní Partner Environment/,
+    );
+
     assert.doesNotMatch(
       main,
       /location\.replace\(resolveCloudStudioHref\('office'\)\)/,
@@ -82,6 +92,21 @@ describe('VR-04 Canonical Workspace Shell', () => {
     // Workspace rendering must not directly require ctx fields.
     assert.doesNotMatch(app, /ctx\.companyId/);
     assert.doesNotMatch(app, /ctx\.projectId/);
+  });
+
+  it('TASK-42B — authenticated Workspace auto-restores Partner Environment context', () => {
+    const main = read('src/main.tsx');
+
+    assert.match(
+      main,
+      /if \(session !== null\)[\s\S]*restoreAuthenticatedPartnerEnvironment\(\)[\s\S]*<WorkspaceHostApp \/>/,
+    );
+    assert.doesNotMatch(main, /workspaceContext !== null/);
+    assert.doesNotMatch(main, /Otevřít Partner Environment/);
+    assert.doesNotMatch(
+      main,
+      /Workspace Host vyžaduje aktivní Partner Environment/,
+    );
   });
 
   it('PT-VR-06 — Workspace Shell hosts studios without redesign chrome', () => {

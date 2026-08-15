@@ -9,7 +9,6 @@ import { createRoot } from 'react-dom/client';
 
 import {
   createPlatformAccessAuthClient,
-  getSharedWorkspaceContext,
   loadPlatformSession,
   resolveCloudStudioHref,
   resolveWorkspaceHostHref,
@@ -37,14 +36,13 @@ async function bootstrapWorkspaceHost(): Promise<void> {
       savePlatformSession(restored);
     }
   } catch {
-    // Fall through to the existing missing-context gate.
+    // Fall through to the local durable session restore.
   }
 
   const session = restoreSession() ?? loadPlatformSession();
-  const workspaceContext =
-    getSharedWorkspaceContext() ?? restoreAuthenticatedPartnerEnvironment();
 
-  if (session !== null && workspaceContext !== null) {
+  if (session !== null) {
+    restoreAuthenticatedPartnerEnvironment();
     createRoot(root).render(
       <StrictMode>
         <WorkspaceHostApp />
@@ -53,15 +51,11 @@ async function bootstrapWorkspaceHost(): Promise<void> {
     return;
   }
 
-  // VR-05 — keep operators off Legacy Platform Studio Switcher (Office-first).
   const officeHref = resolveCloudStudioHref('office');
   createRoot(root).render(
     <StrictMode>
-      <div className="workspace-host__redirect" data-testid="workspace-host-missing-context">
-        <p>Workspace Host vyžaduje aktivní Partner Environment.</p>
-        <p>
-          Vraťte se do Office Studio a zvolte <strong>Otevřít Partner Environment</strong>.
-        </p>
+      <div className="workspace-host__redirect" data-testid="workspace-host-missing-session">
+        <p>Workspace Host vyžaduje přihlášení.</p>
         <p>
           <a href={officeHref}>Otevřít Office Studio</a>
           {' · '}
