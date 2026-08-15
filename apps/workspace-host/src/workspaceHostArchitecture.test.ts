@@ -36,7 +36,10 @@ describe('VR-04 Canonical Workspace Shell', () => {
 
   it('defaults to Client Studio and keeps Office as a switchable view', () => {
     const app = read('src/WorkspaceHostApp.tsx');
-    assert.match(app, /readActiveSurface\(\)[\s\S]*'client'/);
+    assert.match(
+      app,
+      /initialContextRef\.current\?\.activeStudio \?\? 'client'/,
+    );
     assert.match(
       app,
       /studioFrameSrc\('office'\)|surface === 'office'|WORKSPACE_STUDIO_LABELS\[surface\]/,
@@ -82,7 +85,11 @@ describe('VR-04 Canonical Workspace Shell', () => {
     // Project and House bootstrap are derived from the persisted session scope.
     assert.match(
       app,
-      /candidates = \[session\?\.projectId, ctx\?\.projectId\]/,
+      /sessionProjectId[\s\S]*isCanonicalProjectId\(sessionProjectId\)[\s\S]*return sessionProjectId/,
+    );
+    assert.match(
+      app,
+      /contextProjectId[\s\S]*isCanonicalProjectId\(contextProjectId\)[\s\S]*return contextProjectId/,
     );
     assert.match(
       app,
@@ -266,6 +273,29 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
   });
 
+  it('TASK-42AJ — Workspace consumes one normalized cold session snapshot before Client mount', () => {
+    const main = read('src/main.tsx');
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    const restore = main.indexOf(
+      'restoreAuthenticatedPartnerEnvironment()',
+    );
+    const render = main.indexOf('<WorkspaceHostApp />');
+
+    assert.ok(restore >= 0);
+    assert.ok(render > restore);
+
+    assert.match(app, /initialSessionRef = useRef\(loadPlatformSession\(\)\)/);
+    assert.match(
+      app,
+      /initialContextRef = useRef\(getSharedWorkspaceContext\(\)\)/,
+    );
+    assert.match(
+      app,
+      /session\?\.activeHouseId[\s\S]*context\?\.activeHouseId/,
+    );
+  });
+
   it('TASK-42AC — visible Studio switch is not blocked by authoritative persistence', () => {
     const app = read('src/WorkspaceHostApp.tsx');
 
@@ -359,10 +389,22 @@ describe('VR-04 Canonical Workspace Shell', () => {
   it('CAP-VR33E — accepts canonical Builder Project changes in Workspace Host', () => {
     const app = read('src/WorkspaceHostApp.tsx');
 
-    assert.match(app, /function boundSharedProjectId\(\)/);
-    assert.match(app, /candidates = \[session\?\.projectId, ctx\?\.projectId\]/);
-    assert.match(app, /isCanonicalProjectId\(id\)/);
-    assert.doesNotMatch(app, /getSharedProject\(id\)/);
+    assert.match(
+      app,
+      /initialSessionRef = useRef\(loadPlatformSession\(\)\)/,
+    );
+    assert.match(
+      app,
+      /initialContextRef = useRef\(getSharedWorkspaceContext\(\)\)/,
+    );
+    assert.match(
+      app,
+      /sessionProjectId[\s\S]*isCanonicalProjectId\(sessionProjectId\)[\s\S]*return sessionProjectId/,
+    );
+    assert.match(
+      app,
+      /contextProjectId[\s\S]*isCanonicalProjectId\(contextProjectId\)[\s\S]*return contextProjectId/,
+    );
     assert.match(app, /addEventListener\('message', onWorkspaceChange\)/);
     assert.match(app, /isWorkspaceProjectChangeMessage\(event\.data\)/);
     assert.match(app, /isCanonicalProjectId\(event\.data\.projectId\)/);

@@ -24,6 +24,40 @@ import {
 } from '../index';
 
 describe('OF-14 Shared Workspace Context', () => {
+
+  it('TASK-42AJ — authenticated partner Studio switch self-restores missing Workspace Context', () => {
+    resetUserRegistry();
+    resetOperatorPartnerEnvironmentForTests();
+    clearPlatformSession();
+
+    assert.equal(
+      login({
+        email: 'manager@ac.local',
+        password: 'demo',
+        rememberMe: false,
+      }).ok,
+      true,
+    );
+
+    const session = loadPlatformSession();
+    assert.ok(session !== null);
+
+    updateSession({
+      workspaceContext: null,
+    });
+
+    const result = switchOperatorPartnerStudio('manager', {
+      navigate: false,
+      retainWorkspace: true,
+    });
+
+    assert.equal(result.ok, true);
+    assert.equal(
+      loadPlatformSession()?.workspaceContext?.activeStudio,
+      'manager',
+    );
+  });
+
   function reset(): void {
     resetUserRegistry();
     resetOperatorPartnerEnvironmentForTests();

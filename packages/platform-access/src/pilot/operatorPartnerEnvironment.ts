@@ -353,14 +353,19 @@ export function switchOperatorPartnerStudio(
     readonly retainWorkspace?: boolean;
   },
 ): EnterOperatorPartnerEnvironmentResult {
-  const ctx = getSharedWorkspaceContext();
-  if (ctx === null) {
-    return { ok: false, error: 'Operator PE mode není aktivní.' };
-  }
   const session = loadPlatformSession();
   if (session === null) {
     return { ok: false, error: 'Nejste přihlášeni.' };
   }
+
+  const ctx =
+    getSharedWorkspaceContext() ??
+    restoreAuthenticatedPartnerEnvironment();
+
+  if (ctx === null) {
+    return { ok: false, error: 'Workspace scope není připraven.' };
+  }
+
   if (!canAccessStudio(session.user.roles, surface)) {
     return { ok: false, error: 'Pro tento účet nemáte přístup do Studia.' };
   }

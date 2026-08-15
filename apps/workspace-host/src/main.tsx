@@ -58,7 +58,15 @@ async function bootstrapWorkspaceHost(): Promise<void> {
     // Do not reinterpret that cold restore as an operator ENTER mutation:
     // ENTER is intentionally a CONIS-admin capability on Platform API.
     // Only an actual CONIS admin may perform authoritative PE entry.
-    restoreAuthenticatedPartnerEnvironment();
+    const restoredPartnerContext =
+      restoreAuthenticatedPartnerEnvironment();
+
+    if (restoredPartnerContext !== null) {
+      const normalizedSession = loadPlatformSession();
+      if (normalizedSession !== null) {
+        savePlatformSession(normalizedSession);
+      }
+    }
 
     if (isConisAdmin && requiresAuthoritativePartnerEnvironment) {
       const restoredContext = getSharedWorkspaceContext();

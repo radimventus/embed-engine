@@ -52,24 +52,7 @@ const WORKSPACE_SCOPE_WRITER_SURFACES = [
   'client',
 ] as const;
 
-function readActiveSurface(): WorkspaceStudioSurface {
-  return getSharedWorkspaceContext()?.activeStudio ?? 'client';
-}
-
 /** PT-OS-02 / B-02 / B-03 — bind iframe studios to Shared Project from session. */
-function boundSharedProjectId(): string | null {
-  const session = loadPlatformSession();
-  const ctx = getSharedWorkspaceContext();
-  const candidates = [session?.projectId, ctx?.projectId];
-  for (const candidate of candidates) {
-    const id = candidate?.trim() ?? '';
-    if (id.length > 0 && isCanonicalProjectId(id)) {
-      return id;
-    }
-  }
-  return null;
-}
-
 function withProjectIdQuery(
   href: string,
   projectId: string | null,
@@ -188,17 +171,43 @@ function authoritativeStudioForSurface(
  * Top chrome is PlatformShell only (VR-005).
  */
 export function WorkspaceHostApp() {
-  const [surface, setSurface] = useState<WorkspaceStudioSurface>(readActiveSurface);
-  const [sharedProjectId, setSharedProjectId] = useState<string | null>(
-    boundSharedProjectId,
+  const initialSessionRef = useRef(loadPlatformSession());
+  const initialContextRef = useRef(getSharedWorkspaceContext());
+
+  const [surface, setSurface] = useState<WorkspaceStudioSurface>(() =>
+    initialContextRef.current?.activeStudio ?? 'client',
   );
+  const [sharedProjectId, setSharedProjectId] = useState<string | null>(() => {
+    const sessionProjectId = initialSessionRef.current?.projectId?.trim() ?? '';
+    const contextProjectId = initialContextRef.current?.projectId?.trim() ?? '';
+
+    if (
+      sessionProjectId.length > 0 &&
+      isCanonicalProjectId(sessionProjectId)
+    ) {
+      return sessionProjectId;
+    }
+
+    if (
+      contextProjectId.length > 0 &&
+      isCanonicalProjectId(contextProjectId)
+    ) {
+      return contextProjectId;
+    }
+
+    return null;
+  });
   const [sharedActiveHouseId, setSharedActiveHouseId] = useState<string | null>(
     () => {
-      const projectId = boundSharedProjectId();
-      const session = loadPlatformSession();
+      const session = initialSessionRef.current;
+      const context = initialContextRef.current;
+      const projectId =
+        session?.projectId ??
+        context?.projectId ??
+        null;
       const houseId =
         session?.activeHouseId ??
-        getSharedWorkspaceContext()?.activeHouseId ??
+        context?.activeHouseId ??
         null;
       return projectId !== null &&
         houseId !== null &&
