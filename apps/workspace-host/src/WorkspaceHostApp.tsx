@@ -138,6 +138,40 @@ function platformStudioIdForSurface(
   return surface;
 }
 
+function task42Trace(
+  event: string,
+  detail: Record<string, unknown> = {},
+): void {
+  if (
+    typeof window === 'undefined' ||
+    new URLSearchParams(window.location.search).get('task42trace') !== '1'
+  ) {
+    return;
+  }
+
+  const session = loadPlatformSession();
+  const context = getSharedWorkspaceContext();
+
+  console.info('[TASK-42-TRACE]', event, {
+    at: new Date().toISOString(),
+    session: session === null
+      ? null
+      : {
+          projectId: session.projectId,
+          activeHouseId: session.activeHouseId,
+          activeStudioId: session.activeStudioId,
+        },
+    workspaceContext: context === null
+      ? null
+      : {
+          projectId: context.projectId,
+          activeHouseId: context.activeHouseId,
+          activeStudio: context.activeStudio,
+        },
+    ...detail,
+  });
+}
+
 function authoritativeStudioForSurface(
   surface: WorkspaceStudioSurface,
 ): 'client' | 'builder' | 'manager' | 'sales' {
@@ -194,16 +228,32 @@ export function WorkspaceHostApp() {
       >[0],
     ): Promise<void> => {
       const queued = authoritativeMutationQueueRef.current.then(async () => {
+        task42Trace('authoritative-mutation:start', { mutation });
+
         const result =
           await createPlatformAccessAuthClient().mutateSessionContext(mutation);
 
         if (!result.ok) {
+          task42Trace('authoritative-mutation:fail', { mutation });
           return;
         }
+
+        task42Trace('authoritative-mutation:response', {
+          mutation,
+          response: {
+            projectId: result.session.projectId,
+            activeHouseId: result.session.activeHouseId,
+            activeStudioId: result.session.activeStudioId,
+            workspaceContextActiveHouseId:
+              result.session.workspaceContext?.activeHouseId ?? null,
+          },
+        });
 
         savePlatformSession(result.session);
         setSharedProjectId(result.session.projectId);
         setSharedActiveHouseId(result.session.activeHouseId);
+
+        task42Trace('authoritative-mutation:applied', { mutation });
       });
 
       authoritativeMutationQueueRef.current = queued.catch(() => undefined);
@@ -211,6 +261,14 @@ export function WorkspaceHostApp() {
     },
     [],
   );
+
+  useEffect(() => {
+    task42Trace('workspace-bootstrap', {
+      surface,
+      sharedProjectId,
+      sharedActiveHouseId,
+    });
+  }, []);
 
   const brand = useMemo(
     () =>
@@ -223,6 +281,11 @@ export function WorkspaceHostApp() {
 
   const selectSurface = useCallback(
     async (next: WorkspaceStudioSurface) => {
+      task42Trace('surface-select:start', {
+        from: surface,
+        to: next,
+      });
+
       const result = switchOperatorPartnerStudio(next, {
         navigate: false,
         retainWorkspace: true,
@@ -242,8 +305,13 @@ export function WorkspaceHostApp() {
       }
 
       setSurface(next);
+
+      task42Trace('surface-select:applied', {
+        from: surface,
+        to: next,
+      });
     },
-    [enqueueAuthoritativeMutation],
+    [enqueueAuthoritativeMutation, surface],
   );
 
   useEffect(() => {
@@ -252,7 +320,15 @@ export function WorkspaceHostApp() {
         (studio) => new URL(resolveCloudStudioHref(studio)).origin,
       ),
     );
-    const applyHouseChange = (houseId: string | null): void => {
+    const applyHouseChange = (
+      houseId: string | null,
+      source: 'post-message' | 'direct-client',
+    ): void => {
+      task42Trace('house-change:received', {
+        source,
+        houseId,
+      });
+
       const currentContext = getSharedWorkspaceContext();
       if (currentContext === null) return;
       const projectId = loadPlatformSession()?.projectId ?? currentContext.projectId;
@@ -270,6 +346,13 @@ export function WorkspaceHostApp() {
         },
       });
       if (next !== null) {
+        task42Trace('house-change:local-session-updated', {
+          source,
+          requestedHouseId: houseId,
+          resultingProjectId: next.projectId,
+          resultingHouseId: next.activeHouseId,
+        });
+
         setSharedProjectId(next.projectId);
         setSharedActiveHouseId(next.activeHouseId);
 
@@ -294,6 +377,10 @@ export function WorkspaceHostApp() {
         isWorkspaceProjectChangeMessage(event.data) &&
         isCanonicalProjectId(event.data.projectId)
       ) {
+        task42Trace('project-change:received', {
+          projectId: event.data.projectId,
+          origin: event.origin,
+        });
         const currentHouseId =
           loadPlatformSession()?.activeHouseId ??
           currentContext.activeHouseId ??
@@ -334,12 +421,12 @@ export function WorkspaceHostApp() {
       if (!isWorkspaceHouseChangeMessage(event.data)) {
         return;
       }
-      applyHouseChange(event.data.houseId);
+      applyHouseChange(event.data.houseId, 'post-message');
     };
     const onDirectClientHouseChange = (event: Event) => {
       const detail = (event as CustomEvent<unknown>).detail;
       if (!isWorkspaceHouseChangeMessage(detail)) return;
-      applyHouseChange(detail.houseId);
+      applyHouseChange(detail.houseId, 'direct-client');
     };
 
     window.addEventListener('message', onWorkspaceChange);

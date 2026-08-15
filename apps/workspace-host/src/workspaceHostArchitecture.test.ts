@@ -174,6 +174,27 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
   });
 
+  it('TASK-42I — cold-session trace is opt-in and observes scope reconciliation', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    assert.match(app, /get\('task42trace'\) !== '1'/);
+    assert.match(app, /\[TASK-42-TRACE\]/);
+
+    assert.match(app, /workspace-bootstrap/);
+
+    assert.match(app, /authoritative-mutation:start/);
+    assert.match(app, /authoritative-mutation:response/);
+    assert.match(app, /authoritative-mutation:applied/);
+
+    assert.match(app, /house-change:received/);
+    assert.match(app, /house-change:local-session-updated/);
+
+    assert.match(app, /project-change:received/);
+
+    assert.match(app, /surface-select:start/);
+    assert.match(app, /surface-select:applied/);
+  });
+
   it('TASK-42 — Studio scope updates do not reload the active iframe', () => {
     const app = read('src/WorkspaceHostApp.tsx');
 
@@ -249,7 +270,7 @@ describe('VR-04 Canonical Workspace Shell', () => {
 
     assert.match(app, /onDirectClientHouseChange/);
     assert.match(app, /isWorkspaceHouseChangeMessage\(detail\)/);
-    assert.match(app, /applyHouseChange\(detail\.houseId\)/);
+    assert.match(app, /applyHouseChange\(detail\.houseId,\s*'direct-client'\)/);
     assert.match(app, /WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE/);
   });
 });
