@@ -14,5 +14,5 @@ export type ClientStudioDeliverySession = EmbedSession & {
  * (`ensureBuilderPackageBootstrapped` → `projectBuilderImportToHousePackage`) — same as
  * standalone Client Studio.
  */
-export declare function bootstrapClientStudioDelivery(host: HTMLElement, options: Pick<EmbedProductionMountOptions, "objectId" | "assetBase">): Promise<ClientStudioDeliverySession>;
+export declare function bootstrapClientStudioDelivery(host: HTMLElement, options: Pick<EmbedProductionMountOptions, "objectId" | "assetBase">): ClientStudioDeliverySession;
 //# sourceMappingURL=mountClientStudioDelivery.d.ts.map
