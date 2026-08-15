@@ -159,7 +159,9 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  z-index: 1;
+  /* TASK-42P — keep the centered Studio Switcher above the
+     left/right header clusters so their boxes cannot intercept clicks. */
+  z-index: 3;
   display: flex;
   gap: 4px;
   border: 1px solid var(--platform-cream-dark);

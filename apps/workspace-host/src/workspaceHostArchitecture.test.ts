@@ -279,6 +279,25 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.match(app, /surface-select:applied/);
   });
 
+  it('TASK-42P — Studio Switcher stays above sibling header hit-target layers', () => {
+    const css = read('../../packages/platform-shell/src/platform-shell.css');
+
+    assert.match(
+      css,
+      /\.platform-header__cluster\s*\{[\s\S]*?z-index:\s*2;/,
+    );
+
+    assert.match(
+      css,
+      /\.platform-header__actions\s*\{[\s\S]*?z-index:\s*2;/,
+    );
+
+    assert.match(
+      css,
+      /\.platform-role-switcher\s*\{[\s\S]*?z-index:\s*3;/,
+    );
+  });
+
   it('TASK-42N — Studio switch trace exposes local switch result and resulting session', () => {
     const app = read('src/WorkspaceHostApp.tsx');
 
