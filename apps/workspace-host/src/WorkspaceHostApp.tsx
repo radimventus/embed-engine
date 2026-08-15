@@ -410,6 +410,9 @@ export function WorkspaceHostApp() {
     clientMountedRef.current = true;
     clientObjectIdRef.current = objectId;
 
+  }, [surface, sharedActiveHouseId, sharedProjectId]);
+
+  useEffect(() => {
     return () => {
       if (clientMountedRef.current) {
         Embed.unmount(`#${CLIENT_MOUNT_ID}`);
@@ -417,7 +420,7 @@ export function WorkspaceHostApp() {
         clientObjectIdRef.current = null;
       }
     };
-  }, [surface, sharedActiveHouseId, sharedProjectId]);
+  }, []);
 
   const handleLogout = () => {
     clearOperatorPartnerEnvironment();

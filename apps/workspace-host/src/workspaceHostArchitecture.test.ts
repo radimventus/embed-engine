@@ -123,6 +123,42 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.match(app, /mode:\s*'standalone'/);
   });
 
+  it('TASK-42F — Client Studio mount survives Workspace scope effect cleanup', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    const effectStart = app.indexOf(
+      "  useEffect(() => {\n    if (surface !== 'client') {",
+    );
+    assert.notEqual(effectStart, -1);
+
+    const effectEnd = app.indexOf(
+      "  }, [surface, sharedActiveHouseId, sharedProjectId]);",
+      effectStart,
+    );
+    assert.notEqual(effectEnd, -1);
+
+    const mountEffect = app.slice(
+      effectStart,
+      effectEnd +
+        "  }, [surface, sharedActiveHouseId, sharedProjectId]);".length,
+    );
+
+    assert.match(
+      mountEffect,
+      /Embed\.mount\(\{/,
+    );
+
+    assert.doesNotMatch(
+      mountEffect,
+      /return \(\) => \{[\s\S]*?Embed\.unmount/,
+    );
+
+    assert.match(
+      app,
+      /useEffect\(\(\) => \{\s*return \(\) => \{\s*if \(clientMountedRef\.current\) \{\s*Embed\.unmount/,
+    );
+  });
+
   it('TASK-42 — Studio scope updates do not reload the active iframe', () => {
     const app = read('src/WorkspaceHostApp.tsx');
 
