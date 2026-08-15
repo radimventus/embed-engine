@@ -37,6 +37,7 @@ import {
   resolvePublicLegalHref,
   resolveWorkspaceHostHref,
   resolveWorkspaceHouseBinding,
+  restoreAuthenticatedPartnerEnvironment,
   restoreSession,
   submitPlatformFeedback,
   listPlatformFeedback,
@@ -462,6 +463,40 @@ describe('platformAccess (EPIC-BX-14)', () => {
       );
     }
     logout();
+  });
+
+  it('TASK-42C — authenticated DSE Workspace defaults to BUNGALOV 4KK when House scope is empty', () => {
+    clearPlatformSession();
+
+    const result = login({
+      email: 'radim@conis.local',
+      password: 'demo',
+      rememberMe: false,
+    });
+
+    assert.equal(result.ok, true);
+    if (!result.ok) return;
+
+    updateSession({
+      projectId: 'project-domy-s-energii',
+      activeHouseId: null,
+      workspaceContext: null,
+    });
+
+    const restored = restoreAuthenticatedPartnerEnvironment();
+
+    const bungalovId =
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk';
+
+    assert.equal(restored?.projectId, 'project-domy-s-energii');
+    assert.equal(restored?.activeHouseId, bungalovId);
+    assert.equal(loadPlatformSession()?.activeHouseId, bungalovId);
+    assert.equal(
+      loadPlatformSession()?.workspaceContext?.activeHouseId,
+      bungalovId,
+    );
+
+    clearPlatformSession();
   });
 
   it('project bootstrap marks capability and intelligence readiness', () => {

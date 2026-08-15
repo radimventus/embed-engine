@@ -16,7 +16,10 @@ import type { WorkspaceStudioSurface } from '../domain/workspaceStudioNavigation
 import { canAccessStudio } from '../domain/roles';
 import { isOnWorkspaceHost } from '../domain/workspaceShellEmbed';
 import { getSharedProject } from '../project/projectRepository';
-import { isCanonicalProjectId } from '../projection/canonicalProjectProjection';
+import {
+  isCanonicalProjectId,
+  resolveCanonicalRuntimeBinding,
+} from '../projection/canonicalProjectProjection';
 import { getDefaultCompanyRegistry } from '../registry/companyRegistry';
 import {
   getSharedWorkspaceContext,
@@ -82,14 +85,37 @@ export function restoreAuthenticatedPartnerEnvironment(): SharedWorkspaceContext
     return null;
   }
 
-  if (session.workspaceContext !== null) {
-    return session.workspaceContext;
-  }
-
   const projectId = session.projectId?.trim() ?? '';
   if (projectId.length === 0 || !isCanonicalProjectId(projectId)) {
     return null;
   }
+
+  const currentHouseId =
+    session.workspaceContext?.activeHouseId ?? session.activeHouseId;
+
+  const currentHouseBinding =
+    currentHouseId === null
+      ? null
+      : resolveCanonicalRuntimeBinding({
+          sessionProjectId: currentHouseId,
+          fallbackToFirstPublished: false,
+        });
+
+  const currentHouseIsValid =
+    currentHouseBinding?.runtimeHouseId === currentHouseId &&
+    currentHouseBinding.runtimeProjectId === projectId;
+
+  const projectBinding = resolveCanonicalRuntimeBinding({
+    sessionProjectId: projectId,
+  });
+
+  const activeHouseId = currentHouseIsValid
+    ? currentHouseId
+    : projectBinding.runtimeProjectId === projectId
+      ? projectBinding.runtimeHouseId
+      : null;
+
+  const existingContext = session.workspaceContext;
 
   const workspaceContext: SharedWorkspaceContext = {
     operatorMode: true,
@@ -97,19 +123,27 @@ export function restoreAuthenticatedPartnerEnvironment(): SharedWorkspaceContext
     companyId: session.companyId,
     workspaceId: session.workspaceId,
     projectId,
-    activeHouseId: session.activeHouseId,
-    activeStudio: 'client',
-    officeReturnHref: resolveCloudStudioHref('office'),
-    previous: {
-      tenantId: session.tenantId,
-      companyId: session.companyId,
-      workspaceId: session.workspaceId,
-      projectId: session.projectId,
-    },
+    activeHouseId,
+    activeStudio: existingContext?.activeStudio ?? 'client',
+    officeReturnHref:
+      existingContext?.officeReturnHref ?? resolveCloudStudioHref('office'),
+    previous:
+      existingContext?.previous ?? {
+        tenantId: session.tenantId,
+        companyId: session.companyId,
+        workspaceId: session.workspaceId,
+        projectId: session.projectId,
+      },
+    ...(existingContext?.authoredHouseIdentities === undefined
+      ? {}
+      : {
+          authoredHouseIdentities: existingContext.authoredHouseIdentities,
+        }),
   };
 
   return updateSession({
-    activeStudioId: 'client',
+    activeHouseId,
+    activeStudioId: workspaceContext.activeStudio,
     workspaceContext,
   })?.workspaceContext ?? null;
 }
