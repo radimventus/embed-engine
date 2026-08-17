@@ -15,6 +15,7 @@ import {
 } from '../session/authService';
 import { loadPlatformSession } from '../session/sessionStore';
 import { packageRootToPublicUrl } from '../project/packagePublicUrl';
+import { getDefaultCompanyRegistry } from '../registry/companyRegistry';
 import type { WorkspaceAuthoredHouseIdentity } from './workspaceContext';
 
 export type WorkspaceHouseIdentity = {
@@ -104,6 +105,28 @@ export function listWorkspaceHouses(
   for (const projection of listCanonicalHouses(canonicalProjectId)) {
     addPublishedHouse(byId, projection);
   }
+
+  // TASK-56I — authenticated Workspace must also project canonical draft
+  // Houses owned by the active Project. These registry rows are not public
+  // canonical Houses, so listCanonicalHouses() deliberately omits them.
+  for (const project of getDefaultCompanyRegistry().projects) {
+    if (
+      project.canonicalProjectId !== canonicalProjectId ||
+      project.status !== 'draft'
+    ) {
+      continue;
+    }
+
+    byId.set(project.id, {
+      houseId: project.id,
+      name: project.name,
+      canonicalProjectId,
+      packageRoot: project.packageRoot,
+      dataMode: project.dataMode ?? 'LIVE_EMPTY',
+      status: 'draft',
+    });
+  }
+
   for (const house of getSharedWorkspaceContext()?.authoredHouseIdentities ?? []) {
     const canonicalHouse = getCanonicalHouse(house.houseId);
     if (house.canonicalProjectId === canonicalProjectId) {
