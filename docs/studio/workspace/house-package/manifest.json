@@ -1,0 +1,251 @@
+{
+  "version": "1",
+  "basePath": "/house-package",
+  "defaultRoomId": "living-room",
+  "floorPlan": {
+    "path": "floor-plan/ground-floor.png",
+    "viewBox": 400
+  },
+  "walkthrough": {
+    "roomId": "living-room"
+  },
+  "opening": {
+    "roomId": "exterior",
+    "asset": "hero"
+  },
+  "rooms": [
+    {
+      "id": "exterior",
+      "title": "Exteriér",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/exterior.svg",
+      "media": {
+        "folder": "media/exterior",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      }
+    },
+    {
+      "id": "vestibule-corridor",
+      "title": "Vstupní chodba",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/vestibule-corridor.svg",
+      "media": {
+        "folder": "media/vestibule-corridor",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      }
+    },
+    {
+      "id": "hall",
+      "title": "Chodba",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/hall.svg",
+      "media": {
+        "folder": "media/hall",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      }
+    },
+    {
+      "id": "living-room",
+      "title": "Obývací pokoj",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/living-room.svg",
+      "media": {
+        "folder": "media/living-room",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      },
+      "floorPlanRegion": {
+        "x": 205.01329,
+        "y": 207.50111,
+        "width": 119.33858,
+        "height": 114.17323
+      }
+    },
+    {
+      "id": "kitchen",
+      "title": "Kuchyně",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/kitchen.svg",
+      "media": {
+        "folder": "media/kitchen",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      },
+      "floorPlanRegion": {
+        "x": 85.6747,
+        "y": 93.32788,
+        "width": 119.33859,
+        "height": 114.17323
+      }
+    },
+    {
+      "id": "bedroom",
+      "title": "Ložnice",
+      "floor": "upper-floor",
+      "decisionCanvas": "decision-canvas/bedroom.svg",
+      "media": {
+        "folder": "media/bedroom",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      },
+      "floorPlanRegion": {
+        "x": 85.6747,
+        "y": 207.50111,
+        "width": 119.33859,
+        "height": 114.17323
+      }
+    },
+    {
+      "id": "children-room",
+      "title": "Dětský pokoj",
+      "floor": "upper-floor",
+      "decisionCanvas": "decision-canvas/children-room.svg",
+      "media": {
+        "folder": "media/children-room",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      }
+    },
+    {
+      "id": "bathroom",
+      "title": "Koupelna",
+      "floor": "upper-floor",
+      "decisionCanvas": "decision-canvas/bathroom.svg",
+      "media": {
+        "folder": "media/bathroom",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      },
+      "floorPlanRegion": {
+        "x": 205.01329,
+        "y": 93.32788,
+        "width": 119.33858,
+        "height": 114.17323
+      }
+    },
+    {
+      "id": "toilet",
+      "title": "WC",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/toilet.svg",
+      "media": {
+        "folder": "media/toilet",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      }
+    },
+    {
+      "id": "office",
+      "title": "Pracovna",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/office.svg",
+      "media": {
+        "folder": "media/office",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      }
+    },
+    {
+      "id": "wardrobe",
+      "title": "Šatna",
+      "floor": "upper-floor",
+      "decisionCanvas": "decision-canvas/wardrobe.svg",
+      "media": {
+        "folder": "media/wardrobe",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      }
+    },
+    {
+      "id": "technical-room",
+      "title": "Technická místnost",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/technical-room.svg",
+      "media": {
+        "folder": "media/technical-room",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      }
+    },
+    {
+      "id": "terrace",
+      "title": "Terasa",
+      "floor": "ground-floor",
+      "decisionCanvas": "decision-canvas/terrace.svg",
+      "media": {
+        "folder": "media/terrace",
+        "hero": "hero.jpg",
+        "gallery": [
+          "01.jpg",
+          "02.jpg",
+          "03.jpg"
+        ],
+        "video": "video.mp4"
+      }
+    }
+  ],
+  "deprecated": "CAP-BP-01: Runtime uses HP-002 CSVs + registries; do not edit this file for media."
+}

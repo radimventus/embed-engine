@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2790 1938" data-floor="p1" data-hp003="1">
+  <!-- Generated from media/plans/p1.rooms/room-*.svg. Do not edit by hand. -->
+  <path id="bathroom" data-room="bathroom" d="M 1114 947 L 1179 947 L 1179 1036 L 1133 1034 L 1124 1033 L 1124 1051 L 1130 1051 L 1197 1052 L 1237 1053 L 1241 1054 L 1242 1140 L 887 1140 L 796 1139 L 796 948 L 1014 947 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="bedroom" data-room="bedroom" d="M 228 543 L 600 543 L 600 930 L 498 930 L 498 1139 L 228 1139 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="children-room" data-room="children-room" d="M 618 545 L 753 545 L 753 521 L 981 521 L 981 545 L 1076 545 L 1076 678 L 1146 678 L 1146 780 L 618 780 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="kitchen" data-room="kitchen" d="M 1655 545 L 1786 545 L 1786 516 L 2013 516 L 2013 545 L 2025 545 L 2025 896 L 1916 896 L 1916 962 L 1655 962 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="living-room" data-room="living-room" d="M 2045 524 L 2147 524 L 2147 544 L 2537 544 L 2538 585 L 2539 620 L 2540 649 L 2557 651 L 2558 763 L 2559 866 L 2560 954 L 2561 1034 L 2551 1034 L 2540 1033 L 2544 1138 L 1995 1138 L 1994 1117 L 1992 1028 L 2021 1025 L 2029 1024 L 2029 540 L 2041 540 L 2042 531 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="office" data-room="office" d="M 1093 545 L 1093 654 L 1162 654 L 1162 780 L 1634 780 L 1634 545 L 1495 545 L 1495 521 L 1272 521 L 1272 545 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="technical-room" data-room="technical-room" d="M 1936 914 L 2012 914 L 2012 964 L 2011 1011 L 1998 1012 L 1979 1013 L 1980 1046 L 1980 1136 L 1858 1136 L 1722 1136 L 1659 1135 L 1659 983 L 1935 983 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="toilet" data-room="toilet" d="M 1200 951 C 1256.76 951 1313.52 951 1372 951 C 1372 1012.71 1372 1074.42 1372 1138 C 1337.02 1138 1302.04 1138 1266 1138 C 1266 1102.36 1266 1066.72 1266 1030 C 1244.22 1030 1222.44 1030 1200 1030 C 1200 1003.93 1200 977.86 1200 951 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="vestibule" data-room="vestibule" d="M 620 802 L 849 802 L 1415 803 L 1637 803 L 1637 1135 L 1398 1135 L 1397 1072 L 1397 948 L 1447 946 L 1468 946 L 1467 929 L 1118 931 L 719 931 L 620 931 Z" fill="#f5b900" fill-opacity="0.01" />
+  <path id="wardrobe" data-room="wardrobe" d="M 517 949 L 586 949 L 733 950 L 776 950 L 775 1025 L 775 1138 L 516 1138 L 516 1033 Z" fill="#f5b900" fill-opacity="0.01" />
+</svg>
