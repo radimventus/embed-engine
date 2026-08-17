@@ -150,7 +150,7 @@ export const DEFAULT_PROJECTS: readonly PlatformProject[] = [
     workspaceId: DSE_WORKSPACE_ID,
     companyId: DSE_COMPANY_ID,
     name: 'Váš první dům',
-    packageRoot: '',
+    packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
     status: 'draft',
     slug: 'vas-prvni-dum-5kk',
     objectType: 'partner-house',

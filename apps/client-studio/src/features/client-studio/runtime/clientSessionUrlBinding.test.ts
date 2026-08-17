@@ -141,12 +141,12 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
       ),
       [
         'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
-        'modern-4kk',
+        'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk',
       ],
     );
     assert.deepEqual(
       acModularHouses.map((projection) => projection.house?.houseId),
-      ['family-98', 'harmony-124', 'villa-168'],
+      ['modern-4kk', 'family-98', 'harmony-124', 'villa-168'],
     );
     assert.equal(
       resolveClientActiveProjectId('project-domy-s-energii'),
@@ -182,6 +182,68 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
       '/house-packages/bungalov-4kk',
     );
     assert.notEqual(binding.runtimeHouseId, 'villa-168');
+  });
+
+
+  it('TASK-56H — canonical VPD binds historical populated package', () => {
+    clearPlatformSession();
+
+    const canonicalVpdId =
+      'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk';
+
+    const authenticated = login({
+      email: 'radim@conis.local',
+      password: 'demo',
+      rememberMe: false,
+    });
+
+    assert.equal(authenticated.ok, true);
+    if (!authenticated.ok) return;
+
+    updateSession({
+      projectId: 'project-domy-s-energii',
+      activeHouseId: canonicalVpdId,
+      workspaceContext: {
+        projectId: 'project-domy-s-energii',
+        authoredHouseIdentities: [
+          {
+            houseId: canonicalVpdId,
+            name: 'Váš první dům',
+            canonicalProjectId: 'project-domy-s-energii',
+            packageRoot:
+              'apps/client-studio/public/house-packages/patrovy-5kk',
+            dataMode: 'LIVE_EMPTY',
+            status: 'draft',
+          },
+        ],
+      },
+    });
+
+    const binding = resolveClientRuntimeBindingFromCandidates({
+      urlProjectId: null,
+      urlHouseId: null,
+      workspaceContextProjectId: 'project-domy-s-energii',
+      workspaceContextHouseId: canonicalVpdId,
+      sessionProjectId: 'project-domy-s-energii',
+      sessionHouseId: canonicalVpdId,
+      embedObjectId: null,
+    });
+
+    assert.equal(binding.runtimeHouseId, canonicalVpdId);
+    assert.equal(
+      binding.runtimeProjectId,
+      'project-domy-s-energii',
+    );
+    assert.equal(
+      binding.packagePublicRoot,
+      '/house-packages/patrovy-5kk',
+    );
+    assert.equal(
+      binding.project?.house?.name,
+      'Váš první dům',
+    );
+
+    clearPlatformSession();
   });
 
   it('binds an in-scope authored draft only when it owns a package', () => {
@@ -313,7 +375,7 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
     assert.equal(binding.runtimeHouseId, 'patrovy-5kk');
     assert.deepEqual(dseHouseIds, [
       'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
-      'modern-4kk',
+      'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk',
       'patrovy-5kk',
     ]);
     assert.match(sidebar, /updateWorkspaceScope\(\{ activeHouseId: houseId \}\)/);
