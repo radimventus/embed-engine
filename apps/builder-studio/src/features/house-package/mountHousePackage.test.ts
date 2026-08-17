@@ -104,3 +104,50 @@ describe('mountHousePackage (CAP-BLD-02)', () => {
     );
   });
 });
+
+describe('TASK-56I-minimal — VPD active package root', () => {
+  it('loads VPD data from /house-packages/patrovy-5kk', async () => {
+    const requested: string[] = [];
+
+    const files = new Map<string, string>([
+      ['/house-packages/patrovy-5kk/gallery.csv', 'order,room,file\n'],
+      ['/house-packages/patrovy-5kk/rooms.csv', 'floor,room,name,area\n'],
+      ['/house-packages/patrovy-5kk/videos.csv', 'order,room,provider,mediaId\n'],
+      ['/house-packages/patrovy-5kk/manifest.json', '{}'],
+    ]);
+
+    const mount = await mountHousePackage({
+      diskRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
+      validationMode: 'AUTHORING_DRAFT',
+      fetchText: async (url) => {
+        requested.push(url);
+        const value = files.get(url);
+        if (value === undefined) {
+          throw new Error(`Unexpected fetch: ${url}`);
+        }
+        return value;
+      },
+      probeExists: async () => false,
+    });
+
+    assert.equal(
+      mount.packageRootLabel,
+      '/house-packages/patrovy-5kk',
+    );
+
+    assert.equal(
+      mount.canonicalDiskRoot,
+      'apps/client-studio/public/house-packages/patrovy-5kk',
+    );
+
+    assert.deepEqual(
+      requested.slice(0, 4).sort(),
+      [
+        '/house-packages/patrovy-5kk/gallery.csv',
+        '/house-packages/patrovy-5kk/manifest.json',
+        '/house-packages/patrovy-5kk/rooms.csv',
+        '/house-packages/patrovy-5kk/videos.csv',
+      ].sort(),
+    );
+  });
+});

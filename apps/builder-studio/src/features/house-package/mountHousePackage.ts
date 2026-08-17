@@ -12,10 +12,8 @@ import {
 } from '@embed-engine/object-house/builder-package';
 
 import {
-  HOUSE_PACKAGE_CSV,
   HOUSE_PACKAGE_DISK_ROOT,
   HOUSE_PACKAGE_HERO_CANDIDATES,
-  HOUSE_PACKAGE_MANIFEST_URL,
   HOUSE_PACKAGE_URL_ROOT,
 } from './housePackagePaths';
 import { readHeroRelativePathFromManifest } from './buildPersistFiles';
@@ -33,7 +31,7 @@ export type HousePackageMountTexts = {
  * Not a parallel content model: registries are HP import outputs.
  */
 export type HousePackageMount = {
-  readonly packageRootLabel: typeof HOUSE_PACKAGE_URL_ROOT;
+  readonly packageRootLabel: string;
   /** Repo-relative HP-002 disk root for the active workspace project. */
   readonly canonicalDiskRoot: string;
   readonly ok: boolean;
@@ -114,10 +112,11 @@ async function defaultProbeExists(url: string): Promise<boolean> {
 }
 
 async function resolveHeroPath(
+  packageUrlRoot: string,
   probeExists: (url: string) => Promise<boolean>,
 ): Promise<string | null> {
   for (const relative of HOUSE_PACKAGE_HERO_CANDIDATES) {
-    const exists = await probeExists(`${HOUSE_PACKAGE_URL_ROOT}/${relative}`);
+    const exists = await probeExists(`${packageUrlRoot}/${relative}`);
     if (exists) {
       return relative;
     }
@@ -127,13 +126,14 @@ async function resolveHeroPath(
 
 async function loadGeometryByFloor(
   floorIds: readonly string[],
+  packageUrlRoot: string,
   fetchText: (url: string) => Promise<string>,
 ): Promise<
   Record<string, FloorPlanGeometry | 'missing' | 'invalid'>
 > {
   const entries = await Promise.all(
     floorIds.map(async (floorId) => {
-      const url = `${HOUSE_PACKAGE_URL_ROOT}/media/plans/${floorId}.geometry.json`;
+      const url = `${packageUrlRoot}/media/plans/${floorId}.geometry.json`;
       try {
         const text = await fetchText(url);
         const parsed: unknown = JSON.parse(text);
@@ -166,25 +166,29 @@ export async function mountHousePackage(
     options.probeExists ?? defaults?.probeExists ?? defaultProbeExists;
   const now = options.now ?? (() => new Date());
   const diskRoot = options.diskRoot ?? HOUSE_PACKAGE_DISK_ROOT;
+  const packageUrlRoot =
+    diskRoot === HOUSE_PACKAGE_DISK_ROOT
+      ? HOUSE_PACKAGE_URL_ROOT
+      : `/${diskRoot.replace(/^apps\/client-studio\/public\//, '')}`;
   const validationMode = options.validationMode ?? 'PUBLISH_READY';
 
   const [galleryCsv, roomsCsv, videosCsv, manifestJson] = await Promise.all([
-    fetchText(HOUSE_PACKAGE_CSV.gallery),
-    fetchText(HOUSE_PACKAGE_CSV.rooms),
-    fetchText(HOUSE_PACKAGE_CSV.videos),
-    fetchText(HOUSE_PACKAGE_MANIFEST_URL).catch(() => null),
+    fetchText(`${packageUrlRoot}/gallery.csv`),
+    fetchText(`${packageUrlRoot}/rooms.csv`),
+    fetchText(`${packageUrlRoot}/videos.csv`),
+    fetchText(`${packageUrlRoot}/manifest.json`).catch(() => null),
   ]);
 
   const manifestHero = readHeroRelativePathFromManifest(manifestJson);
   const heroRelativePath =
     manifestHero !== null &&
-    (await probeExists(`${HOUSE_PACKAGE_URL_ROOT}/${manifestHero}`))
+    (await probeExists(`${packageUrlRoot}/${manifestHero}`))
       ? manifestHero
-      : await resolveHeroPath(probeExists);
+      : await resolveHeroPath(packageUrlRoot, probeExists);
 
   const planPairs = planPairsFromRooms(roomsCsv);
   const registryResult = buildBuilderPackageRegistries({
-    packageRoot: HOUSE_PACKAGE_URL_ROOT,
+    packageRoot: packageUrlRoot,
     galleryCsv,
     roomsCsv,
     videosCsv,
@@ -194,11 +198,15 @@ export async function mountHousePackage(
   });
 
   const floorIds = planPairs.map((pair) => pair.floorId);
-  const geometryByFloor = await loadGeometryByFloor(floorIds, fetchText);
+  const geometryByFloor = await loadGeometryByFloor(
+    floorIds,
+    packageUrlRoot,
+    fetchText,
+  );
 
   if (!registryResult.ok) {
     return {
-      packageRootLabel: HOUSE_PACKAGE_URL_ROOT,
+      packageRootLabel: packageUrlRoot,
       canonicalDiskRoot: diskRoot,
       ok: false,
       errors: registryResult.errors,
@@ -211,7 +219,7 @@ export async function mountHousePackage(
   }
 
   return {
-    packageRootLabel: HOUSE_PACKAGE_URL_ROOT,
+    packageRootLabel: packageUrlRoot,
     canonicalDiskRoot: diskRoot,
     ok: true,
     errors: [],
