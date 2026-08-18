@@ -31,6 +31,20 @@ export type MountClientStudioOptions = {
 export type ClientStudioMountHandle = {
   readonly dispose: () => void;
   readonly rootElement: HTMLElement;
+  readonly getDeliveryState: () => EmbedDeliveryState | null;
+};
+
+export const EMBED_DELIVERY_STATE_EVENT = 'embed:delivery-state';
+
+export type EmbedDeliveryState = {
+  readonly requestedHouseId: string | null;
+  readonly resolvedHouseId: string;
+  readonly projectId: string;
+  readonly packageRoot: string;
+  readonly permittedHouses: readonly { readonly houseId: string; readonly name: string }[];
+  readonly normalizedPresentationAssets: unknown;
+  readonly activeHouseId: string;
+  readonly activeRoomId: string | null;
 };
 
 function assertMountTarget(target: HTMLElement | null | undefined): HTMLElement {
@@ -78,6 +92,11 @@ export function mountClientStudio(
     CLIENT_STUDIO_RELEASE.generation;
 
   const reactRoot: Root = createRoot(target);
+  let deliveryState: EmbedDeliveryState | null = null;
+  const onDeliveryState = (event: Event): void => {
+    deliveryState = (event as CustomEvent<EmbedDeliveryState>).detail;
+  };
+  target.addEventListener(EMBED_DELIVERY_STATE_EVENT, onDeliveryState);
   reactRoot.render(
     <StrictMode>
       <ErrorBoundary>
@@ -90,7 +109,9 @@ export function mountClientStudio(
 
   return {
     rootElement: target,
+    getDeliveryState: () => deliveryState,
     dispose: () => {
+      target.removeEventListener(EMBED_DELIVERY_STATE_EVENT, onDeliveryState);
       reactRoot.unmount();
       setPresentationAssetBase(undefined);
       target.removeAttribute('data-embed-root');

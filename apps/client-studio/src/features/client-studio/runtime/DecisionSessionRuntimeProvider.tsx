@@ -33,10 +33,12 @@ import {
   ensureBuilderPackageBootstrapped,
   getBuilderRuntimeHousePackage,
   getNormalizedBuilderHousePackageAssets,
+  getBuilderPackagePublicRoot,
 } from './builderPackageBootstrap';
 import { loadDurableHousePackageOverlay } from './durableHousePackageOverlay';
 import {
   readClientBindCandidates,
+  listClientHouses,
   resolveClientActiveProjectId,
   resolveClientRuntimeBindingFromCandidates,
 } from './clientCanonicalBind';
@@ -498,6 +500,41 @@ export function DecisionSessionRuntimeProvider({
     requestedRuntimeBindingKey,
     revision,
   ]);
+
+  useEffect(() => {
+    if (
+      value === null ||
+      projectBind === null ||
+      projectBind.runtimeHouseId === null ||
+      projectBind.runtimeProjectId === null
+    ) {
+      return;
+    }
+    const root = document.querySelector<HTMLElement>('[data-embed-root]');
+    if (root === null) {
+      return;
+    }
+    root.dispatchEvent(
+      new CustomEvent('embed:delivery-state', {
+        detail: Object.freeze({
+          requestedHouseId: root.dataset.objectId ?? null,
+          resolvedHouseId: projectBind.runtimeHouseId,
+          projectId: projectBind.runtimeProjectId,
+          packageRoot: getBuilderPackagePublicRoot(),
+          permittedHouses: Object.freeze(
+            listClientHouses(projectBind.runtimeProjectId).flatMap((item) =>
+              item.house === null
+                ? []
+                : [{ houseId: item.house.houseId, name: item.house.name }],
+            ),
+          ),
+          normalizedPresentationAssets: getNormalizedBuilderHousePackageAssets(),
+          activeHouseId: value.experience.house.id,
+          activeRoomId: value.experience.context.activeRoom.id,
+        }),
+      }),
+    );
+  }, [projectBind, value]);
 
   // PT-RUNTIME-TRACE-01 / PT-EMBED-RUNTIME-INTEGRATION-01 — live Runtime proof.
   useEffect(() => {
