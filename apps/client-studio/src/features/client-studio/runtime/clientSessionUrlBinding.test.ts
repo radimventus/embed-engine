@@ -126,9 +126,10 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
       join(here, '../ClientStudioSidebar.tsx'),
       'utf8',
     );
-    assert.match(sidebar, /listWorkspaceHouses/);
-    assert.match(sidebar, /house\.houseId/);
-    assert.match(sidebar, /house\.name/);
+    assert.match(sidebar, /resolveClientRuntimeBinding/);
+    assert.match(sidebar, /listClientHouses\(activeProjectId\)/);
+    assert.match(sidebar, /house\.house\.houseId/);
+    assert.match(sidebar, /house\.house\.name/);
   });
 
   it('CAP-VR33c — scopes Client houses to shared canonical Project', () => {

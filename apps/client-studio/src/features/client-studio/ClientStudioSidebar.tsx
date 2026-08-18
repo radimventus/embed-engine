@@ -2,10 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import type { ReactExperienceModel } from "@embed-engine/model";
 import {
   createWorkspaceHouseChangeMessage,
-  listWorkspaceHouses,
   resolveWorkspaceHostHref,
   usePlatformSession,
-  type WorkspaceHouseIdentity,
 } from "@embed-engine/platform-access";
 
 import { DecisionFlowNavigator } from "./decision-flow/DecisionFlowNavigator";
@@ -15,6 +13,8 @@ import { PILOT_SECTION_IDS } from "./pilot/pilotVocabulary";
 import {
   resolveClientActiveProjectId,
   readActiveClientHouseId,
+  listClientHouses,
+  resolveClientRuntimeBinding,
 } from "./runtime/clientCanonicalBind";
 
 /** Layout-spec fixed sidebar width (48px). */
@@ -102,19 +102,20 @@ export function ClientStudioSidebar({
           ?.sectionId ?? null);
 
   const [menuOpen, setMenuOpen] = useState(false);
-  const activeProjectId = resolveClientActiveProjectId(session?.projectId);
-  const houses = useMemo<readonly WorkspaceHouseIdentity[]>(
-    () =>
-      activeProjectId === null ? [] : listWorkspaceHouses(activeProjectId),
-    [activeProjectId, session],
+  const binding = resolveClientRuntimeBinding();
+  const activeProjectId =
+    binding.runtimeProjectId ?? resolveClientActiveProjectId(session?.projectId);
+  const houses = useMemo(
+    () => listClientHouses(activeProjectId),
+    [activeProjectId],
   );
-  const activeHouseId = session?.activeHouseId ?? readActiveClientHouseId();
+  const activeHouseId = readActiveClientHouseId(binding);
 
   const switchActiveHouse = (houseId: string): void => {
     if (
       activeProjectId === null ||
-      !listWorkspaceHouses(activeProjectId).some(
-        (house) => house.houseId === houseId,
+      !listClientHouses(activeProjectId).some(
+        (house) => house.house?.houseId === houseId,
       )
     ) {
       return;
@@ -217,7 +218,10 @@ export function ClientStudioSidebar({
           </p>
           <ul className="flex flex-1 flex-col gap-1 overflow-y-auto px-2 pb-4">
             {houses.map((house) => {
-              const houseId = house.houseId;
+              if (house.house === null) {
+                return null;
+              }
+              const houseId = house.house.houseId;
               const isActive = houseId === activeHouseId;
               return (
                 <li key={houseId}>
@@ -238,7 +242,7 @@ export function ClientStudioSidebar({
                         : "text-embed-background-primary/85 hover:bg-embed-background-primary/10 hover:text-embed-brand-gold",
                     ].join(" ")}
                   >
-                    {house.name}
+                    {house.house.name}
                   </button>
                 </li>
               );
