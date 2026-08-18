@@ -115,6 +115,21 @@ export function isRuntimeReadyForBinding(
   );
 }
 
+export function isClientContentUnavailable(input: {
+  readonly injectedRuntime: boolean;
+  readonly hasAuthoringDraftPackage: boolean;
+  readonly dataMode: string | null | undefined;
+  readonly runtimeHouseId: string | null;
+  readonly packagePublicRoot: string | null;
+}): boolean {
+  return (
+    !input.injectedRuntime &&
+    !input.hasAuthoringDraftPackage &&
+    input.dataMode === 'LIVE_EMPTY' &&
+    input.packagePublicRoot === null
+  );
+}
+
 type DecisionSessionRuntimeProviderProps = {
   readonly children: ReactNode;
   /**
@@ -178,11 +193,13 @@ export function DecisionSessionRuntimeProvider({
     runtimeBinding.workspaceBinding?.houseId ?? projectBind?.runtimeHouseId ?? null;
   const packagePublicRoot =
     authoringDraftPackage?.packagePublicRoot ?? projectBind?.packagePublicRoot ?? null;
-  const clientContentUnavailable =
-    injectedRuntime === undefined &&
-    authoringDraftPackage === null &&
-    projectBind?.project?.house?.dataMode === 'LIVE_EMPTY' &&
-    runtimeHouseId !== 'villa-168';
+  const clientContentUnavailable = isClientContentUnavailable({
+    injectedRuntime: injectedRuntime !== undefined,
+    hasAuthoringDraftPackage: authoringDraftPackage !== null,
+    dataMode: projectBind?.project?.house?.dataMode,
+    runtimeHouseId,
+    packagePublicRoot,
+  });
   const unavailableHouseId =
     workspaceDraftBinding?.houseId ?? runtimeHouseId;
   const requestedRuntimeBindingKey = runtimeBindingKey(

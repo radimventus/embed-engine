@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 
 import {
+  isClientContentUnavailable,
   isRuntimeReadyForBinding,
   runtimeBindingKey,
 } from './DecisionSessionRuntimeProvider';
@@ -35,6 +36,20 @@ describe('Context-only Provider boundary (ED-DA-04)', () => {
 
     assert.equal(isRuntimeReadyForBinding(previous, requested), false);
     assert.equal(isRuntimeReadyForBinding(requested, requested), true);
+  });
+
+  it('keeps a canonical LIVE_EMPTY House available when it owns a package', () => {
+    assert.equal(
+      isClientContentUnavailable({
+        injectedRuntime: false,
+        hasAuthoringDraftPackage: false,
+        dataMode: 'LIVE_EMPTY',
+        runtimeHouseId:
+          'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk',
+        packagePublicRoot: '/house-packages/patrovy-5kk',
+      }),
+      false,
+    );
   });
 
   it('DecisionSessionRuntimeProvider does not expose runtime or interpretation', () => {

@@ -44,6 +44,7 @@ import {
 } from '../workspace';
 import { BuilderAnchorRail } from '../workspace/BuilderAnchorRail';
 import { BuilderClickModelCanvas } from '../workspace/BuilderClickModelCanvas';
+import { resolveBuilderHousePackageRoot } from './resolveBuilderHousePackageRoot';
 
 const SECTION_LABEL: Record<HousePackageNavId, string> = {
   overview: 'Přehled',
@@ -100,10 +101,10 @@ export function BuilderStudioApp() {
         : getCanonicalHouseRuntimeContext(activeHouseId),
     [activeHouseId],
   );
-  const diskRoot =
-    canonicalHouseContext === null
-      ? (workspace.activeProject?.packageRoot.trim() || null)
-      : null;
+  const diskRoot = resolveBuilderHousePackageRoot(
+    workspace.activeProject,
+    canonicalHouseContext,
+  );
   const activeHouseDataMode =
     activeHouseId === null
       ? null
