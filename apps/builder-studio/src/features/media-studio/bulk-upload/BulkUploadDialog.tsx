@@ -25,10 +25,13 @@ export const BULK_UPLOAD_PROGRESS_REVEAL_MS = 300;
 export type BulkUploadCompletedFile = {
   readonly fileName: string;
   readonly relativePath: string;
+  readonly mediaUrl?: string;
 };
 
 type BulkUploadDialogProps = {
   readonly open: boolean;
+  /** Active House Package scope required by the authenticated Platform API. */
+  readonly houseId: string;
   readonly kind: BulkUploadKind;
   readonly onClose: () => void;
   readonly onCompleted: (files: readonly BulkUploadCompletedFile[]) => void;
@@ -42,6 +45,7 @@ type Phase = 'pick' | 'uploading' | 'done';
 
 export function BulkUploadDialog({
   open,
+  houseId,
   kind,
   onClose,
   onCompleted,
@@ -125,6 +129,7 @@ export function BulkUploadDialog({
     const uploaded: BulkUploadCompletedFile[] = [];
     for (let index = 0; index < accepted.length; index += 1) {
       const result = await requestBulkMediaUpload({
+        houseId,
         kind,
         file: accepted[index],
       });
@@ -138,6 +143,7 @@ export function BulkUploadDialog({
       uploaded.push({
         fileName: result.fileName,
         relativePath: result.relativePath,
+        mediaUrl: result.mediaUrl,
       });
       setDoneCount(index + 1);
     }

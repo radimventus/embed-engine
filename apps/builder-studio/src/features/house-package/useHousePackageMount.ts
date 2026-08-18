@@ -45,7 +45,11 @@ export function useHousePackageMount(
     }
     setState({ status: 'loading' });
     try {
-      const mount = await mountHousePackage({ diskRoot, validationMode });
+      const mount = await mountHousePackage({
+        diskRoot,
+        houseId,
+        validationMode,
+      });
       setState({ status: 'ready', mount });
       return mount;
     } catch (error: unknown) {
@@ -56,7 +60,7 @@ export function useHousePackageMount(
       setState({ status: 'error', message });
       throw error instanceof Error ? error : new Error(message);
     }
-  }, [diskRoot, validationMode]);
+  }, [diskRoot, houseId, validationMode]);
 
   useEffect(() => {
     if (diskRoot === null) {
@@ -69,7 +73,12 @@ export function useHousePackageMount(
 
     const abort = new AbortController();
     setState({ status: 'loading' });
-    void mountHousePackage({ diskRoot, validationMode, signal: abort.signal })
+    void mountHousePackage({
+      diskRoot,
+      houseId,
+      validationMode,
+      signal: abort.signal,
+    })
       .then((mount) => {
         if (!abort.signal.aborted) {
           setState({ status: 'ready', mount });

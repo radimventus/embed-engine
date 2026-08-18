@@ -153,6 +153,7 @@ export function BuilderClickModelCanvas({
           </header>
           <MediaStudioView
             projectId={projectId}
+            houseId={projectId}
             projectName={projectName}
             snapshot={snapshot}
             session={session}

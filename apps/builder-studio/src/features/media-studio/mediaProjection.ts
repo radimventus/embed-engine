@@ -6,6 +6,7 @@ import { parseCsv } from '@embed-engine/object-house/builder-package';
 import { BUILDER_RUNTIME_HOUSE_DEFAULTS } from '../../../../client-studio/src/features/client-studio/runtime/builderRuntimeHouseDefaults';
 
 import type { HousePackageEditSnapshot } from '../house-package/housePackageEditSession';
+import { platformHousePackageMediaUrl } from '../house-package/requestPlatformHousePackage';
 import { serializeCsv } from '../house-package/housePackageCsv';
 import { HOUSE_PACKAGE_URL_ROOT } from '../house-package/housePackagePaths';
 import {
@@ -35,6 +36,8 @@ export type GalleryMediaItem = {
   readonly file: string;
   readonly path: string;
   readonly url: string;
+  /** Local package asset used when this media has not been durably uploaded. */
+  readonly fallbackUrl: string;
   readonly meta: MediaPresentationMeta;
 };
 
@@ -77,9 +80,11 @@ export type MediaStudioModel = {
 
 export function buildMediaStudioModel(input: {
   readonly projectId: string;
+  /** Active authenticated House Package for durable media references. */
+  readonly houseId?: string | null;
   readonly snapshot: HousePackageEditSnapshot | null;
 }): MediaStudioModel {
-  const { projectId, snapshot } = input;
+  const { projectId, houseId = null, snapshot } = input;
   const pkg = snapshot?.validation.builderImport ?? null;
   const heroPath = snapshot?.working.heroRelativePath ?? '';
   const galleryRows = snapshot
@@ -101,7 +106,11 @@ export function buildMediaStudioModel(input: {
       room: row.room ?? '',
       file,
       path,
-      url: `${HOUSE_PACKAGE_URL_ROOT}/${path}`,
+      url:
+        houseId === null
+          ? `${HOUSE_PACKAGE_URL_ROOT}/${path}`
+          : platformHousePackageMediaUrl(houseId, path),
+      fallbackUrl: `${HOUSE_PACKAGE_URL_ROOT}/${path}`,
       meta: getMediaPresentationMeta(projectId, key, file),
     };
   });
