@@ -105,6 +105,12 @@ export function mergeProjects(
         ...extra,
         id: seed.id,
         status: seed.status,
+        // A persisted editor snapshot must not sever a seeded House from its
+        // canonical package merely because its legacy package field is blank.
+        packageRoot:
+          extra.packageRoot.trim().length > 0
+            ? extra.packageRoot
+            : seed.packageRoot,
       });
       continue;
     }

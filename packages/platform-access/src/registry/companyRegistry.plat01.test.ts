@@ -35,7 +35,7 @@ describe('PT-PLAT-01 Canonical Registry', () => {
     const merged = mergeProjects(DEFAULT_PROJECTS, []);
     assert.equal(merged.length, DEFAULT_PROJECTS.length);
     const published = listPublishedProjects();
-    assert.ok(published.length >= DEFAULT_PROJECTS.length);
+    assert.ok(published.length < DEFAULT_PROJECTS.length);
     assert.ok(published.every((project) => project.status === 'published'));
   });
 
@@ -163,6 +163,27 @@ describe('PT-PLAT-01 Canonical Registry', () => {
     assert.ok(published.some((item) => item.id === 'villa-168'));
     assert.ok(published.some((item) => item.id === 'harmony-124'));
     assert.ok(published.some((item) => item.id === 'family-98'));
+  });
+
+  it('retains a seeded package root when a stale editor snapshot is blank', () => {
+    const vpd = DEFAULT_PROJECTS.find(
+      (project) =>
+        project.id ===
+        'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk',
+    );
+    assert.ok(vpd);
+
+    const merged = mergeProjects(DEFAULT_PROJECTS, [
+      {
+        ...vpd,
+        packageRoot: '',
+      },
+    ]);
+
+    assert.equal(
+      merged.find((project) => project.id === vpd.id)?.packageRoot,
+      'apps/client-studio/public/house-packages/patrovy-5kk',
+    );
   });
 
   it('mergeProjects keeps published defaults + published extras', () => {
