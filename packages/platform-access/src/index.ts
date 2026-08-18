@@ -46,12 +46,16 @@ export {
 export {
   WORKSPACE_PROJECT_CHANGE_MESSAGE_TYPE,
   WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE,
+  WORKSPACE_HOUSE_SCOPE_REQUEST_MESSAGE_TYPE,
   createWorkspaceProjectChangeMessage,
   createWorkspaceHouseChangeMessage,
+  createWorkspaceHouseScopeRequestMessage,
   isWorkspaceProjectChangeMessage,
   isWorkspaceHouseChangeMessage,
+  isWorkspaceHouseScopeRequestMessage,
   type WorkspaceProjectChangeMessage,
   type WorkspaceHouseChangeMessage,
+  type WorkspaceHouseScopeRequestMessage,
 } from './domain/workspaceProjectSync';
 
 export type {

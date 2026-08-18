@@ -7,6 +7,8 @@ export const WORKSPACE_PROJECT_CHANGE_MESSAGE_TYPE =
   'conis:workspace-project-change';
 export const WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE =
   'conis:workspace-house-change';
+export const WORKSPACE_HOUSE_SCOPE_REQUEST_MESSAGE_TYPE =
+  'conis:workspace-house-scope-request';
 
 export type WorkspaceProjectChangeMessage = {
   readonly type: typeof WORKSPACE_PROJECT_CHANGE_MESSAGE_TYPE;
@@ -17,6 +19,18 @@ export type WorkspaceHouseChangeMessage = {
   readonly type: typeof WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE;
   /** null retains Project scope; a non-null value is validated by the host. */
   readonly houseId: string | null;
+};
+
+/**
+ * A Studio asks its Workspace Host to durably authorize a House scope before
+ * it begins reading or mounting that House Package. The response travels over
+ * the transferred MessagePort, so it cannot be confused with another frame's
+ * scope update.
+ */
+export type WorkspaceHouseScopeRequestMessage = {
+  readonly type: typeof WORKSPACE_HOUSE_SCOPE_REQUEST_MESSAGE_TYPE;
+  readonly houseId: string | null;
+  readonly authoredHouseIdentity?: import('./workspaceContext').WorkspaceAuthoredHouseIdentity;
 };
 
 export function createWorkspaceProjectChangeMessage(
@@ -56,6 +70,28 @@ export function isWorkspaceHouseChangeMessage(
   const message = value as Partial<WorkspaceHouseChangeMessage>;
   return (
     message.type === WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE &&
+    (message.houseId === null ||
+      (typeof message.houseId === 'string' && message.houseId.trim().length > 0))
+  );
+}
+
+export function createWorkspaceHouseScopeRequestMessage(input: {
+  readonly houseId: string | null;
+  readonly authoredHouseIdentity?: import('./workspaceContext').WorkspaceAuthoredHouseIdentity;
+}): WorkspaceHouseScopeRequestMessage {
+  return {
+    type: WORKSPACE_HOUSE_SCOPE_REQUEST_MESSAGE_TYPE,
+    ...input,
+  };
+}
+
+export function isWorkspaceHouseScopeRequestMessage(
+  value: unknown,
+): value is WorkspaceHouseScopeRequestMessage {
+  if (value === null || typeof value !== 'object') return false;
+  const message = value as Partial<WorkspaceHouseScopeRequestMessage>;
+  return (
+    message.type === WORKSPACE_HOUSE_SCOPE_REQUEST_MESSAGE_TYPE &&
     (message.houseId === null ||
       (typeof message.houseId === 'string' && message.houseId.trim().length > 0))
   );

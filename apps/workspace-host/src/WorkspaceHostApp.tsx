@@ -12,6 +12,7 @@ import {
   createPlatformAccessAuthClient,
   isHouseInProject,
   isWorkspaceHouseChangeMessage,
+  isWorkspaceHouseScopeRequestMessage,
   isWorkspaceProjectChangeMessage,
   getSharedWorkspaceContext,
   isCanonicalProjectId,
@@ -224,8 +225,11 @@ export function WorkspaceHostApp() {
 
   const effectiveCompanyId = session?.companyId ?? ctx?.companyId ?? null;
   const effectiveProjectId = session?.projectId ?? ctx?.projectId ?? null;
-  const authoritativeMutationQueueRef = useRef<Promise<void>>(
-    Promise.resolve(),
+  const authoritativeMutationQueueRef = useRef<Promise<{
+    readonly ok: boolean;
+    readonly error?: string;
+  }>>(
+    Promise.resolve({ ok: true }),
   );
 
   const enqueueAuthoritativeMutation = useCallback(
@@ -235,16 +239,23 @@ export function WorkspaceHostApp() {
           typeof createPlatformAccessAuthClient
         >['mutateSessionContext']
       >[0],
-    ): Promise<void> => {
+    ): Promise<{ readonly ok: boolean; readonly error?: string }> => {
       const queued = authoritativeMutationQueueRef.current.then(async () => {
         task42Trace('authoritative-mutation:start', { mutation });
 
-        const result =
-          await createPlatformAccessAuthClient().mutateSessionContext(mutation);
+        let result;
+        try {
+          result = await createPlatformAccessAuthClient().mutateSessionContext(mutation);
+        } catch {
+          return {
+            ok: false,
+            error: 'Platform API se nepodařilo spojit.',
+          };
+        }
 
         if (!result.ok) {
           task42Trace('authoritative-mutation:fail', { mutation });
-          return;
+          return { ok: false, error: result.error };
         }
 
         task42Trace('authoritative-mutation:response', {
@@ -263,9 +274,10 @@ export function WorkspaceHostApp() {
         setSharedActiveHouseId(result.session.activeHouseId);
 
         task42Trace('authoritative-mutation:applied', { mutation });
+        return { ok: true };
       });
 
-      authoritativeMutationQueueRef.current = queued.catch(() => undefined);
+      authoritativeMutationQueueRef.current = queued;
       return queued;
     },
     [],
@@ -404,6 +416,51 @@ export function WorkspaceHostApp() {
       if (!scopeWriterOrigins.has(event.origin)) return;
       const currentContext = getSharedWorkspaceContext();
       if (currentContext === null) return;
+
+      if (isWorkspaceHouseScopeRequestMessage(event.data)) {
+        const replyPort = event.ports[0];
+        if (replyPort === undefined) return;
+        const projectId =
+          loadPlatformSession()?.projectId ?? currentContext.projectId;
+        const requestedIdentity = event.data.authoredHouseIdentity;
+        const isRequestedAuthoredHouse =
+          event.data.houseId !== null &&
+          requestedIdentity?.houseId === event.data.houseId &&
+          requestedIdentity.canonicalProjectId === projectId &&
+          requestedIdentity.status === 'draft' &&
+          requestedIdentity.dataMode === 'LIVE_EMPTY';
+        const isAllowed =
+          projectId !== null &&
+          (event.data.houseId === null ||
+            isHouseInProject(event.data.houseId, projectId) ||
+            isRequestedAuthoredHouse);
+        if (!isAllowed) {
+          replyPort.postMessage({
+            ok: false,
+            error: 'House Package není pro tuto relaci povolen.',
+          });
+          return;
+        }
+        const authoredHouseIdentities =
+          requestedIdentity === undefined
+            ? (currentContext.authoredHouseIdentities ?? [])
+            : [
+                ...(currentContext.authoredHouseIdentities ?? []).filter(
+                  (identity) => identity.houseId !== requestedIdentity.houseId,
+                ),
+                requestedIdentity,
+              ];
+        void enqueueAuthoritativeMutation({
+          action: 'switch',
+          activeStudio: authoritativeStudioForSurface(surface),
+          projectId,
+          activeHouseId: event.data.houseId,
+          authoredHouseIdentities,
+        }).then((result) => {
+          replyPort.postMessage(result);
+        });
+        return;
+      }
 
       if (
         isWorkspaceProjectChangeMessage(event.data) &&
