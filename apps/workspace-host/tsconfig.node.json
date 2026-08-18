@@ -6,7 +6,8 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noEmit": true
   },
   "include": ["vite.config.ts", "../../packages/embed/vite.ssot-aliases.ts"]
 }
