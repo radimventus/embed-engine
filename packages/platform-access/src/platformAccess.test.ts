@@ -397,6 +397,33 @@ describe('platformAccess (EPIC-BX-14)', () => {
       },
     );
 
+    updateSession({
+      activeHouseId: vpdId,
+      workspaceContext: {
+        ...getSharedWorkspaceContext()!,
+        activeHouseId: vpdId,
+        authoredHouseIdentities: [
+          {
+            houseId: vpdId,
+            name: 'Váš první dům',
+            canonicalProjectId: projectId,
+            packageRoot: '',
+            dataMode: 'LIVE_EMPTY',
+            status: 'draft',
+          },
+        ],
+      },
+    });
+    assert.deepEqual(
+      resolveWorkspaceHouseBinding({ projectId, houseId: vpdId })
+        ?.authoringDraftPackage,
+      {
+        packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
+        packagePublicRoot: '/house-packages/patrovy-5kk',
+        name: 'Váš první dům',
+      },
+    );
+
     clearPlatformSession();
   });
 

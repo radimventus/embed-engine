@@ -136,6 +136,17 @@ export function listWorkspaceHouses(
       if (canonicalHouse !== null) {
         continue;
       }
+      const existing = byId.get(house.houseId);
+      // TASK-56 — a durable session can retain an older authored identity
+      // while the seeded VPD package is already known locally. Never let an
+      // empty stale packageRoot downgrade that seed into LIVE_EMPTY terminal
+      // state; it would prevent the Client durable overlay from bootstrapping.
+      if (
+        existing?.packageRoot?.trim().length &&
+        house.packageRoot.trim().length === 0
+      ) {
+        continue;
+      }
       byId.set(house.houseId, house);
     }
   }
