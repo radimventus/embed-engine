@@ -7,7 +7,7 @@
  */
 import type { HousePackage } from "@embed-engine/object-house";
 /** Pilot Object Package id (canonical Gen1 identity after Builder import). */
-export declare const DEFAULT_OBJECT_ID = "reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk";
+export declare const DEFAULT_OBJECT_ID = "house-modern-01";
 export type BuilderCsvTexts = {
     readonly galleryCsv: string;
     readonly roomsCsv: string;

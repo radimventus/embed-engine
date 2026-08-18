@@ -5,9 +5,12 @@
  */
 import type { EmbedSession } from "../bootstrap";
 import type { EmbedProductionMountOptions } from "./types";
+import type { EmbedDeliveryState } from "@client-studio/embed-mount";
 export type ClientStudioDeliverySession = EmbedSession & {
     readonly kind: "client-studio";
     readonly objectId: string;
+    /** Live state emitted by the mounted Client Studio delivery boundary. */
+    readonly getDeliveryState: () => EmbedDeliveryState | null;
 };
 /**
  * Mount ClientStudioApp. Provider creates Decision Session Runtime from Builder Package
