@@ -38,6 +38,7 @@ import {
   resolveClientActiveProjectId,
   resolveClientRuntimeBindingFromCandidates,
 } from './clientCanonicalBind';
+import { evidenceLog } from './runtimeEvidence';
 import {
   projectSynchronizedExperience,
   type SynchronizedExperience,
@@ -128,6 +129,28 @@ export function isClientContentUnavailable(input: {
     input.dataMode === 'LIVE_EMPTY' &&
     input.packagePublicRoot === null
   );
+}
+
+export function createClientPackageBindingEvidence(input: {
+  readonly canonicalHouseId: string | null;
+  readonly workspaceHouseId: string | null;
+  readonly runtimeHouseId: string | null;
+  readonly canonicalPackagePublicRoot: string | null;
+  readonly workspacePackagePublicRoot: string | null;
+  readonly resolvedPackagePublicRoot: string | null;
+  readonly requestedRuntimeBindingKey: string | null;
+  readonly loadedRuntimeBindingKey: string | null;
+  readonly runtimeContentAvailable: boolean | null;
+  readonly authoringDraftPackage: {
+    readonly packageRoot: string;
+    readonly packagePublicRoot: string;
+    readonly name: string;
+  } | null;
+  readonly bootstrapRoot: string | null;
+  readonly bootstrapState: 'requested' | 'loading' | 'ready' | 'error';
+  readonly bootstrapError: string | null;
+}): Record<string, unknown> {
+  return input;
 }
 
 type DecisionSessionRuntimeProviderProps = {
@@ -254,6 +277,32 @@ export function DecisionSessionRuntimeProvider({
       binding.workspaceBinding?.houseId ??
       binding.canonicalBinding?.runtimeHouseId ??
       null;
+    const emitBindingEvidence = (
+      bootstrapState: 'requested' | 'loading' | 'ready' | 'error',
+      bootstrapErrorValue: string | null,
+      loadedBindingKey: string | null,
+    ) => {
+      evidenceLog(
+        'ClientPackageBinding',
+        createClientPackageBindingEvidence({
+          canonicalHouseId,
+          workspaceHouseId: binding.workspaceBinding?.houseId ?? null,
+          runtimeHouseId: canonicalHouseId,
+          canonicalPackagePublicRoot:
+            binding.canonicalBinding?.packagePublicRoot ?? null,
+          workspacePackagePublicRoot: draftPackage?.packagePublicRoot ?? null,
+          resolvedPackagePublicRoot: root,
+          requestedRuntimeBindingKey: runtimeBindingKey(canonicalHouseId, root),
+          loadedRuntimeBindingKey: loadedBindingKey,
+          runtimeContentAvailable:
+            binding.workspaceBinding?.runtimeContentAvailable ?? null,
+          authoringDraftPackage: draftPackage,
+          bootstrapRoot: root,
+          bootstrapState,
+          bootstrapError: bootstrapErrorValue,
+        }),
+      );
+    };
 
     if (
       root === null ||
@@ -270,6 +319,7 @@ export function DecisionSessionRuntimeProvider({
     }
 
     bootstrapEvents.emit('BOOTSTRAP_LOADING');
+    emitBindingEvidence('loading', null, null);
     runtimeRef.current = null;
     setPackageReady(false);
     setLoadedRuntimeBindingKey(null);
@@ -296,6 +346,11 @@ export function DecisionSessionRuntimeProvider({
           runtimeBindingKey(canonicalHouseId, root),
         );
         setBootstrapError(null);
+        emitBindingEvidence(
+          'ready',
+          null,
+          runtimeBindingKey(canonicalHouseId, root),
+        );
         setRevision((value) => value + 1);
         bootstrapEvents.emit('RUNTIME_READY');
       })
@@ -309,6 +364,11 @@ export function DecisionSessionRuntimeProvider({
           setBootstrapError(error instanceof Error ? error.message : String(error));
           setPackageReady(false);
           setLoadedRuntimeBindingKey(null);
+          emitBindingEvidence(
+            'error',
+            error instanceof Error ? error.message : String(error),
+            null,
+          );
         }
       });
     return () => {

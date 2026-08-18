@@ -44,6 +44,10 @@ import {
 } from '../workspace';
 import { BuilderAnchorRail } from '../workspace/BuilderAnchorRail';
 import { BuilderClickModelCanvas } from '../workspace/BuilderClickModelCanvas';
+import {
+  createBuilderPackageRuntimeEvidence,
+  logBuilderPackageRuntimeEvidence,
+} from './builderPackageRuntimeEvidence';
 import { resolveBuilderHousePackageRoot } from './resolveBuilderHousePackageRoot';
 
 const SECTION_LABEL: Record<HousePackageNavId, string> = {
@@ -150,6 +154,30 @@ export function BuilderStudioApp() {
     activeHouseId,
     mountValidationMode,
   );
+
+  useEffect(() => {
+    logBuilderPackageRuntimeEvidence(
+      createBuilderPackageRuntimeEvidence({
+        activeProjectId: activeFolder?.id ?? null,
+        activeHouseId,
+        houseName: workspace.activeProject?.name ?? null,
+        houseStatus: workspace.activeProject?.status ?? null,
+        houseDataMode: activeHouseDataMode,
+        registryPackageRoot: workspace.activeProject?.packageRoot ?? null,
+        resolvedBuilderHousePackageRoot: diskRoot,
+        mountState: mountStatus,
+      }),
+    );
+  }, [
+    activeFolder?.id,
+    activeHouseDataMode,
+    activeHouseId,
+    diskRoot,
+    mountStatus,
+    workspace.activeProject?.name,
+    workspace.activeProject?.packageRoot,
+    workspace.activeProject?.status,
+  ]);
 
   const loadError =
     diskRoot === null

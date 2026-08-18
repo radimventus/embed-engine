@@ -30,11 +30,6 @@ import {
 const PACKAGE_ROOT_LABEL = '/house-package';
 const HERO_PATH = 'media/hero/hero.png';
 
-export const GALLERY_CSV_PATH = '/house-package/gallery.csv';
-export const ROOMS_CSV_PATH = '/house-package/rooms.csv';
-export const VIDEOS_CSV_PATH = '/house-package/videos.csv';
-const HERO_PUBLIC_PATH = '/house-package/media/hero/hero.png';
-
 type AuthoringDraftManifest = {
   readonly validationMode: 'AUTHORING_DRAFT';
   readonly heroPath: string;
@@ -258,29 +253,50 @@ function buildRegistriesFromTexts(
   return result.result;
 }
 
+export function createBuilderPackageEvidence(input: {
+  readonly packagePublicRoot: string;
+  readonly heroRelativePath: string | null;
+  readonly registries: BuilderHousePackageImport;
+  readonly texts: BuilderPackageCsvTexts;
+}): Record<string, unknown> {
+  const paths = csvPathsForPackageRoot(input.packagePublicRoot);
+  const heroRelativePath = input.heroRelativePath ?? HERO_PATH;
+  return {
+    packageRoot: paths.packageRootLabel,
+    galleryCsvPath: paths.gallery,
+    roomsCsvPath: paths.rooms,
+    videosCsvPath: paths.videos,
+    heroPath: `${paths.packageRootLabel}/${heroRelativePath.replace(/^\/+/, '')}`,
+    galleryCsvSource: `HTTP fetch of public${paths.packageRootLabel}/*.csv (Vite 7 compatible)`,
+    galleryCsvFingerprint: fingerprintText(input.texts.galleryCsv),
+    galleryItemCount: input.registries.gallery.entries.length,
+    galleryFirst: input.registries.gallery.entries[0] ?? null,
+    galleryLast:
+      input.registries.gallery.entries[input.registries.gallery.entries.length - 1] ?? null,
+    roomsCsvFingerprint: fingerprintText(input.texts.roomsCsv),
+    videosCsvFingerprint: fingerprintText(input.texts.videosCsv),
+  };
+}
+
 function logBuilderPackageEvidence(
   registries: BuilderHousePackageImport,
   texts: BuilderPackageCsvTexts,
+  packagePublicRoot: string,
+  heroRelativePath: string | null,
 ): void {
   if (!isRuntimeEvidenceEnabled()) {
     return;
   }
 
-  evidenceLog('1.BuilderPackage', {
-    packageRoot: PACKAGE_ROOT_LABEL,
-    galleryCsvPath: GALLERY_CSV_PATH,
-    roomsCsvPath: ROOMS_CSV_PATH,
-    videosCsvPath: VIDEOS_CSV_PATH,
-    heroPath: HERO_PUBLIC_PATH,
-    galleryCsvSource: 'HTTP fetch of public/house-package/*.csv (Vite 7 compatible)',
-    galleryCsvFingerprint: fingerprintText(texts.galleryCsv),
-    galleryItemCount: registries.gallery.entries.length,
-    galleryFirst: registries.gallery.entries[0] ?? null,
-    galleryLast:
-      registries.gallery.entries[registries.gallery.entries.length - 1] ?? null,
-    roomsCsvFingerprint: fingerprintText(texts.roomsCsv),
-    videosCsvFingerprint: fingerprintText(texts.videosCsv),
-  });
+  evidenceLog(
+    '1.BuilderPackage',
+    createBuilderPackageEvidence({
+      packagePublicRoot,
+      heroRelativePath,
+      registries,
+      texts,
+    }),
+  );
 
   evidenceLog('2.RuntimeRegistry', {
     gallery: firstLast(registries.gallery.entries),
@@ -389,7 +405,12 @@ export async function ensureBuilderPackageBootstrapped(
       manifest.authoringDraft?.validationMode === 'AUTHORING_DRAFT',
       manifest.heroCopy,
     );
-    logBuilderPackageEvidence(registries, texts);
+    logBuilderPackageEvidence(
+      registries,
+      texts,
+      root,
+      manifest.heroRelativePath,
+    );
     return registries;
   })();
 
