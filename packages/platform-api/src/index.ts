@@ -28,6 +28,11 @@ import {
   FilePartnerSessionRepository,
   type PartnerSessionRepository,
 } from './partnerSessionRepository';
+import {
+  FileHousePackageRepository,
+  type HousePackageRepository,
+  type HousePackagePersistFiles,
+} from './housePackageRepository';
 import { platformApiAllowedOrigins, platformApiStatePath } from './platformApiConfig';
 import type { PlatformRole } from '@embed-engine/platform-access/rbac';
 
@@ -67,6 +72,13 @@ export {
   type PartnerIdentity,
   type PartnerSessionRepository,
 } from './partnerSessionRepository';
+export {
+  FileHousePackageRepository,
+  type DurableHousePackage,
+  type HousePackageMedia,
+  type HousePackagePersistFiles,
+  type HousePackageRepository,
+} from './housePackageRepository';
 export {
   platformApiAllowedOrigins,
   platformApiHost,
@@ -346,6 +358,20 @@ async function requestBody(request: IncomingMessage): Promise<unknown> {
   return body.length === 0 ? {} : JSON.parse(body) as unknown;
 }
 
+async function requestBytes(request: IncomingMessage): Promise<Buffer> {
+  const chunks: Buffer[] = [];
+  let length = 0;
+  for await (const chunk of request) {
+    const bytes = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+    length += bytes.length;
+    if (length > 25 * 1024 * 1024) {
+      throw new Error('House Package media exceeds 25 MiB.');
+    }
+    chunks.push(bytes);
+  }
+  return Buffer.concat(chunks);
+}
+
 function respond(
   response: import('node:http').ServerResponse,
   status: number,
@@ -355,6 +381,19 @@ function respond(
     'content-type': 'application/json',
   });
   response.end(JSON.stringify(body));
+}
+
+function respondMedia(
+  response: import('node:http').ServerResponse,
+  contentType: string,
+  bytes: Buffer,
+): void {
+  response.writeHead(200, {
+    'content-type': contentType,
+    'content-length': bytes.length,
+    'cache-control': 'private, no-store',
+  });
+  response.end(bytes);
 }
 
 function bearerToken(request: IncomingMessage): string | null {
@@ -402,6 +441,7 @@ export function createPlatformApiServer(
   proformaRepository: ProformaRepository = new FileProformaRepository(),
   offerWriteTokens: OfferWriteTokenRepository = new FileOfferWriteTokenRepository(),
   partnerSessions: PartnerSessionRepository = new FilePartnerSessionRepository(),
+  housePackages: HousePackageRepository = new FileHousePackageRepository(),
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
@@ -409,7 +449,7 @@ export function createPlatformApiServer(
     if (origin !== undefined && allowedOrigins.has(origin)) {
       response.setHeader('access-control-allow-origin', origin);
       response.setHeader('vary', 'origin');
-      response.setHeader('access-control-allow-methods', 'GET,POST,OPTIONS');
+      response.setHeader('access-control-allow-methods', 'GET,POST,DELETE,OPTIONS');
       response.setHeader('access-control-allow-headers', 'content-type, authorization');
       response.setHeader('access-control-allow-credentials', 'true');
     }
@@ -461,6 +501,95 @@ export function createPlatformApiServer(
         const token = requestCookie(request, PARTNER_SESSION_COOKIE);
         const session = token === null ? null : await partnerSessions.resolve(token);
         return respond(response, session === null ? 401 : 200, session ?? { error: 'Neplatná relace.' });
+      }
+      const housePackageMatch = path.match(
+        /^\/public\/house-packages\/([^/]+)\/(initialize|persist|state)$/,
+      );
+      const housePackageMediaMatch = path.match(
+        /^\/public\/house-packages\/([^/]+)\/media\/(.+)$/,
+      );
+      if (housePackageMatch !== null || housePackageMediaMatch !== null) {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session = token === null ? null : await partnerSessions.resolve(token);
+        if (session === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+
+        const houseId = decodeURIComponent(
+          (housePackageMatch ?? housePackageMediaMatch)![1]!,
+        );
+        const authorizedHouseIds = new Set([
+          session.activeHouseId,
+          ...(session.workspaceContext?.authoredHouseIdentities ?? []).map(
+            (house) => house.houseId,
+          ),
+        ]);
+        if (!authorizedHouseIds.has(houseId)) {
+          return respond(response, 403, {
+            error: 'House Package není pro tuto relaci povolen.',
+          });
+        }
+
+        if (housePackageMediaMatch !== null) {
+          const mediaPath = housePackageMediaMatch[2]!;
+          if (request.method === 'POST') {
+            const contentType = request.headers['content-type'];
+            if (typeof contentType !== 'string' || contentType.trim().length === 0) {
+              return respond(response, 400, { error: 'Media content-type is required.' });
+            }
+            await housePackages.writeMedia(houseId, mediaPath, {
+              bytes: await requestBytes(request),
+              contentType,
+            });
+            return respond(response, 201, { ok: true, houseId });
+          }
+          if (request.method === 'GET') {
+            const media = await housePackages.readMedia(houseId, mediaPath);
+            return media === null
+              ? respond(response, 404, { error: 'House Package media neexistuje.' })
+              : respondMedia(response, media.contentType, media.bytes);
+          }
+          if (request.method === 'DELETE') {
+            const deleted = await housePackages.deleteMedia(houseId, mediaPath);
+            return respond(response, deleted ? 204 : 404, deleted ? {} : {
+              error: 'House Package media neexistuje.',
+            });
+          }
+          return respond(response, 405, { error: 'Method not allowed.' });
+        }
+
+        const action = housePackageMatch![2]!;
+        if (action === 'initialize' && request.method === 'POST') {
+          const initialized = await housePackages.initialize(houseId);
+          return respond(response, 200, { ok: true, houseId: initialized.houseId });
+        }
+        if (action === 'persist' && request.method === 'POST') {
+          const body = await requestBody(request) as {
+            files?: HousePackagePersistFiles;
+            packageRoot?: unknown;
+          };
+          if ('packageRoot' in body) {
+            return respond(response, 400, { error: 'packageRoot is server-owned.' });
+          }
+          if (body.files === null || typeof body.files !== 'object') {
+            return respond(response, 400, { error: 'House Package files are required.' });
+          }
+          const persisted = await housePackages.persist(houseId, body.files);
+          return respond(response, 200, {
+            ok: true,
+            houseId: persisted.houseId,
+            updatedAt: persisted.updatedAt,
+          });
+        }
+        if (action === 'state' && request.method === 'GET') {
+          const current = await housePackages.get(houseId);
+          return respond(
+            response,
+            current === null ? 404 : 200,
+            current ?? { error: 'House Package neexistuje.' },
+          );
+        }
+        return respond(response, 405, { error: 'Method not allowed.' });
       }
       if (request.method === 'POST' && path === '/public/auth/context') {
         const token = requestCookie(request, PARTNER_SESSION_COOKIE);
