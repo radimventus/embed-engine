@@ -137,6 +137,16 @@ export function requiresLegacyWorkspaceActivation(
   );
 }
 
+/**
+ * `/api/workspace/active` is Vite middleware that selects a disk package for
+ * the local Builder host. Published Studio is static and has no such endpoint.
+ */
+export function canUseLegacyWorkspaceActivation(
+  isDevelopment = import.meta.env?.DEV ?? false,
+): boolean {
+  return isDevelopment;
+}
+
 function publishWorkspaceProjectChange(projectId: string): void {
   if (
     typeof window === 'undefined' ||
@@ -318,6 +328,7 @@ export function useWorkspaceController(): WorkspaceController {
 
         if (
           !alreadyHost &&
+          canUseLegacyWorkspaceActivation() &&
           requiresLegacyWorkspaceActivation(target.id, target.packageRoot)
         ) {
           const result = await requestWorkspaceActive({
@@ -644,7 +655,10 @@ export function useWorkspaceController(): WorkspaceController {
     if (project === null) {
       return;
     }
-    if (requiresLegacyWorkspaceActivation(project.id, project.packageRoot)) {
+    if (
+      canUseLegacyWorkspaceActivation() &&
+      requiresLegacyWorkspaceActivation(project.id, project.packageRoot)
+    ) {
       void requestWorkspaceActive({
         projectId: project.id,
         packageRoot: project.packageRoot,

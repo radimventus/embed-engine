@@ -6,7 +6,9 @@ import {
 } from '@embed-engine/platform-access';
 
 import {
+  canUseLegacyWorkspaceActivation,
   isBuilderAuthoredHouseForScope,
+  requiresLegacyWorkspaceActivation,
   resolveBuilderActiveHouseId,
   shouldRecoverLegacyLiveEmptyHouse,
 } from './useWorkspaceController';
@@ -32,6 +34,18 @@ function house(
 }
 
 describe('Builder shared active House publication', () => {
+  it('uses the Vite-only activation endpoint only in a development host', () => {
+    assert.equal(canUseLegacyWorkspaceActivation(true), true);
+    assert.equal(canUseLegacyWorkspaceActivation(false), false);
+    assert.equal(
+      requiresLegacyWorkspaceActivation(
+        'legacy-live-empty',
+        'apps/client-studio/public/house-packages/patrovy-5kk',
+      ),
+      true,
+    );
+  });
+
   it('CAP-VR38b — scopes canonical and authored Houses to their Project', () => {
     const dse = 'project-domy-s-energii';
 
