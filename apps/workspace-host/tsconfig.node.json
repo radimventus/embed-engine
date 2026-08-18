@@ -7,6 +7,7 @@
     "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
+    "rootDir": "../..",
     "outDir": "../../.cache/tsbuild/workspace-host"
   },
   "include": ["vite.config.ts", "../../packages/embed/vite.ssot-aliases.ts"]
