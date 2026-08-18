@@ -53,7 +53,7 @@ describe('mediaProjection (EPIC-BX-05)', () => {
 
     assert.equal(
       model.gallery[0]?.url,
-      'https://api.conis.cz/public/house-packages/house-a/media/media/gallery/01.webp',
+      'https://api.conis.cz/public/house-packages/house-a/media/gallery/01.webp',
     );
     assert.equal(model.gallery[0]?.fallbackUrl, '/house-package/media/gallery/01.webp');
   });

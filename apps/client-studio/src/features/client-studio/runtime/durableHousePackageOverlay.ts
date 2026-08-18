@@ -1,3 +1,4 @@
+import { parseCsv } from '@embed-engine/object-house/builder-package';
 import { platformApiOrigin } from '@embed-engine/platform-access';
 
 import type { BuilderPackageDurableOverlay } from './builderPackageBootstrap';
@@ -18,6 +19,56 @@ function endpoint(houseId: string): string {
   return `${baseUrl}/public/house-packages/${encodeURIComponent(houseId)}`;
 }
 
+function mediaEndpoint(houseId: string, mediaPath: string): string {
+  const packagePath = mediaPath.replace(/^media\//, '');
+  const encodedPath = packagePath
+    .split('/')
+    .map((segment) => encodeURIComponent(segment))
+    .join('/');
+  return `${endpoint(houseId)}/media/${encodedPath}`;
+}
+
+function galleryMediaPaths(galleryCsv: string | undefined): readonly string[] {
+  if (galleryCsv === undefined) {
+    return [];
+  }
+  return parseCsv(galleryCsv).rows.flatMap((row) => {
+    const file = row.file?.trim() ?? '';
+    return file.length === 0 || file.includes('/')
+      ? []
+      : [`media/gallery/${file}`];
+  });
+}
+
+async function readAuthenticatedImageUrl(
+  url: string,
+  signal: AbortSignal | undefined,
+): Promise<string> {
+  const response = await fetch(url, {
+    credentials: 'include',
+    signal,
+  });
+  const contentType = response.headers.get('content-type') ?? '';
+  if (!response.ok || !contentType.toLowerCase().startsWith('image/')) {
+    return url;
+  }
+  return URL.createObjectURL(await response.blob());
+}
+
+async function materializeAuthenticatedGalleryMedia(input: {
+  readonly houseId: string;
+  readonly galleryCsv: string | undefined;
+  readonly signal: AbortSignal | undefined;
+}): Promise<Readonly<Record<string, string>>> {
+  const urls = galleryMediaPaths(input.galleryCsv).map((path) =>
+    mediaEndpoint(input.houseId, path),
+  );
+  const materialized = await Promise.all(
+    urls.map(async (url) => [url, await readAuthenticatedImageUrl(url, input.signal)] as const),
+  );
+  return Object.freeze(Object.fromEntries(materialized));
+}
+
 function isDurableHousePackageState(
   value: unknown,
 ): value is DurableHousePackageState {
@@ -35,7 +86,8 @@ function isDurableHousePackageState(
 
 /**
  * Reads authenticated VPD persistence without making durable state mandatory.
- * A missing/unauthenticated state deliberately leaves the seeded package intact.
+ * Image bytes are materialized via credentialed Fetch so native `<img>` never
+ * needs to satisfy the Platform API's cross-origin authentication contract.
  */
 export async function loadDurableHousePackageOverlay(
   houseId: string,
@@ -78,11 +130,18 @@ export async function loadDurableHousePackageOverlay(
     return null;
   }
 
+  const mediaUrls = await materializeAuthenticatedGalleryMedia({
+    houseId,
+    galleryCsv: files.galleryCsv,
+    signal,
+  });
+
   return {
     files,
     // Builder package paths are already rooted at `media/...`. Keep the
     // House Package endpoint as the base so projection produces exactly one
     // `/media/` segment.
     mediaPublicRoot: endpoint(houseId),
+    ...(Object.keys(mediaUrls).length > 0 ? { mediaUrls } : {}),
   };
 }

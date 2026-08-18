@@ -150,7 +150,85 @@ describe('durable VPD House Package overlay', () => {
       assert.deepEqual(overlay, {
         files: { galleryCsv },
         mediaPublicRoot: stableMediaRoot,
+        mediaUrls: {
+          [`${stableMediaRoot}/media/gallery/persisted.png`]:
+            `${stableMediaRoot}/media/gallery/persisted.png`,
+        },
       });
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it('reads persisted gallery bytes with credentials and exposes a local image URL', async () => {
+    const originalFetch = globalThis.fetch;
+    const requests: Array<{ readonly url: string; readonly credentials?: RequestCredentials }> = [];
+    globalThis.fetch = async (input, init) => {
+      const url = String(input);
+      requests.push({ url, credentials: init?.credentials });
+      if (url.endsWith('/state')) {
+        return new Response(
+          JSON.stringify({
+            houseId: 'vpd-house',
+            updatedAt: '2026-08-18T08:00:00.000Z',
+            files: { galleryCsv },
+          }),
+          { status: 200 },
+        );
+      }
+      if (url.endsWith('/media/gallery/persisted.png')) {
+        return new Response(new Blob(['photo'], { type: 'image/png' }), {
+          status: 200,
+          headers: { 'content-type': 'image/png' },
+        });
+      }
+      return new Response(null, { status: 404 });
+    };
+
+    try {
+      const overlay = await loadDurableHousePackageOverlay('vpd-house');
+      const mediaUrl = overlay?.mediaUrls?.[
+        `${stableMediaRoot}/media/gallery/persisted.png`
+      ];
+      assert.ok(mediaUrl?.startsWith('blob:'));
+      assert.deepEqual(requests, [
+        { url: `${stableMediaRoot}/state`, credentials: 'include' },
+        {
+          url: `${stableMediaRoot}/media/gallery/persisted.png`,
+          credentials: 'include',
+        },
+      ]);
+      URL.revokeObjectURL(mediaUrl!);
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it('keeps a deleted durable gallery item deleted rather than restoring a seed URL', async () => {
+    const originalFetch = globalThis.fetch;
+    globalThis.fetch = async (input) => {
+      const url = String(input);
+      if (url.endsWith('/state')) {
+        return new Response(
+          JSON.stringify({
+            houseId: 'vpd-house',
+            updatedAt: '2026-08-18T08:00:00.000Z',
+            files: { galleryCsv },
+          }),
+          { status: 200 },
+        );
+      }
+      return new Response(null, { status: 404 });
+    };
+
+    try {
+      const overlay = await loadDurableHousePackageOverlay('vpd-house');
+      assert.equal(
+        overlay?.mediaUrls?.[
+          `${stableMediaRoot}/media/gallery/persisted.png`
+        ],
+        `${stableMediaRoot}/media/gallery/persisted.png`,
+      );
     } finally {
       globalThis.fetch = originalFetch;
     }

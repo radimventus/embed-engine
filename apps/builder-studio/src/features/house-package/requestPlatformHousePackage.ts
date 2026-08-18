@@ -28,7 +28,8 @@ export function platformHousePackageMediaUrl(
   houseId: string,
   relativePath: string,
 ): string {
-  const segments = relativePath.split('/').map(encodeURIComponent);
+  const packagePath = relativePath.replace(/^media\//, '');
+  const segments = packagePath.split('/').map(encodeURIComponent);
   return `${platformApiOrigin().replace(/\/$/, '')}/public/house-packages/${encodeURIComponent(houseId)}/media/${segments.join('/')}`;
 }
 

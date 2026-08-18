@@ -77,6 +77,19 @@ function normalizeMediaPath(mediaPath: string): string[] {
   return parts;
 }
 
+/**
+ * The API owns the durable `media/` storage root. Browser-facing package paths
+ * may still contain that conventional prefix, but it must not be persisted a
+ * second time below the API media root.
+ */
+function canonicalMediaPath(mediaPath: string): string[] {
+  const parts = normalizeMediaPath(mediaPath);
+  const canonical = parts[0] === 'media' ? parts.slice(1) : parts;
+  if (canonical.length === 0) {
+    throw new Error('Invalid House Package media path.');
+  }
+  return canonical;
+}
 function normalizePersistFiles(files: HousePackagePersistFiles): HousePackagePersistFiles {
   const normalized: HousePackagePersistFiles = {};
   if (typeof files.roomsCsv === 'string') Object.assign(normalized, { roomsCsv: files.roomsCsv });
@@ -160,34 +173,43 @@ export class FileHousePackageRepository implements HousePackageRepository {
   }
 
   async readMedia(houseId: string, mediaPath: string): Promise<HousePackageMedia | null> {
-    const target = this.mediaPath(houseId, mediaPath);
-    try {
-      const [bytes, metadata] = await Promise.all([
-        readFile(target),
-        readFile(`${target}${MEDIA_METADATA_SUFFIX}`, 'utf8'),
-      ]);
-      const parsed = JSON.parse(metadata) as Partial<StoredMedia>;
-      if (typeof parsed.contentType !== 'string' || !isValidContentType(parsed.contentType)) {
-        throw new Error('Invalid durable House Package media metadata.');
+    const canonical = this.mediaPath(houseId, mediaPath);
+    const legacy = this.legacyMediaPath(houseId, mediaPath);
+    const legacyPrefixed = this.legacyMediaPath(houseId, `media/${mediaPath}`);
+    for (const target of new Set([canonical, legacy, legacyPrefixed])) {
+      try {
+        const [bytes, metadata] = await Promise.all([
+          readFile(target),
+          readFile(`${target}${MEDIA_METADATA_SUFFIX}`, 'utf8'),
+        ]);
+        const parsed = JSON.parse(metadata) as Partial<StoredMedia>;
+        if (typeof parsed.contentType !== 'string' || !isValidContentType(parsed.contentType)) {
+          throw new Error('Invalid durable House Package media metadata.');
+        }
+        return { bytes, contentType: parsed.contentType };
+      } catch (error) {
+        if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
       }
-      return { bytes, contentType: parsed.contentType };
-    } catch (error) {
-      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
-      throw error;
     }
+    return null;
   }
 
   async deleteMedia(houseId: string, mediaPath: string): Promise<boolean> {
     return this.exclusively(async () => {
-      const target = this.mediaPath(houseId, mediaPath);
-      try {
-        await rm(target);
-        await rm(`${target}${MEDIA_METADATA_SUFFIX}`, { force: true });
-        return true;
-      } catch (error) {
-        if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false;
-        throw error;
+      const canonical = this.mediaPath(houseId, mediaPath);
+      const legacy = this.legacyMediaPath(houseId, mediaPath);
+      const legacyPrefixed = this.legacyMediaPath(houseId, `media/${mediaPath}`);
+      let deleted = false;
+      for (const target of new Set([canonical, legacy, legacyPrefixed])) {
+        try {
+          await rm(target);
+          await rm(`${target}${MEDIA_METADATA_SUFFIX}`, { force: true });
+          deleted = true;
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+        }
       }
+      return deleted;
     });
   }
 
@@ -196,6 +218,11 @@ export class FileHousePackageRepository implements HousePackageRepository {
   }
 
   private mediaPath(houseId: string, mediaPath: string): string {
+    return childPath(this.resolveStorageRoot(houseId), 'media', ...canonicalMediaPath(mediaPath));
+  }
+
+  /** Previous releases stored a second `media/` directory; retain read/delete compatibility. */
+  private legacyMediaPath(houseId: string, mediaPath: string): string {
     return childPath(this.resolveStorageRoot(houseId), 'media', ...normalizeMediaPath(mediaPath));
   }
 

@@ -1441,6 +1441,13 @@ describe('Durable House Package API', () => {
       });
       assert.equal(upload.status, 201);
 
+      const replacement = await fetch(`${baseUrl}/house-a/media/gallery/hero.png`, {
+        method: 'POST',
+        headers: { ...cookieA, 'content-type': 'image/png' },
+        body: Buffer.from([4, 5, 6, 7]),
+      });
+      assert.equal(replacement.status, 201);
+
       const isolated = await fetch(`${baseUrl}/house-a/media/gallery/hero.png`, {
         headers: cookieB,
       });
@@ -1451,7 +1458,7 @@ describe('Durable House Package API', () => {
       });
       assert.equal(media.status, 200);
       assert.equal(media.headers.get('content-type'), 'image/png');
-      assert.deepEqual([...new Uint8Array(await media.arrayBuffer())], [0, 1, 2, 3]);
+      assert.deepEqual([...new Uint8Array(await media.arrayBuffer())], [4, 5, 6, 7]);
 
       await assert.rejects(
         () => housePackages.writeMedia('house-a', '../escape.png', {

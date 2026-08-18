@@ -50,6 +50,8 @@ export type BuilderPackageDurableOverlay = {
     readonly manifestJson?: string | null;
   };
   readonly mediaPublicRoot: string;
+  /** Authenticated durable media endpoint → browser-local blob URL. */
+  readonly mediaUrls?: Readonly<Record<string, string>>;
 };
 
 function csvPathsForPackageRoot(packagePublicRoot: string): {
@@ -354,6 +356,7 @@ function projectCachedHousePackage(
   projection?: BuilderPackageBootstrapProjection,
   isAuthoringDraft = false,
   heroCopy: ReturnType<typeof readHeroCopyFromManifest> = null,
+  mediaUrls?: Readonly<Record<string, string>>,
 ): HousePackage {
   const housePackage = projectBuilderImportToHousePackage(registries, {
     ...(isAuthoringDraft
@@ -365,8 +368,18 @@ function projectCachedHousePackage(
     packagePublicRoot,
     ...(heroCopy !== null ? { heroCopy } : {}),
   });
-  cachedHousePackage = housePackage;
-  return housePackage;
+  const projected =
+    mediaUrls === undefined
+      ? housePackage
+      : {
+          ...housePackage,
+          media: housePackage.media.map((asset) => ({
+            ...asset,
+            url: mediaUrls[asset.url] ?? asset.url,
+          })),
+        };
+  cachedHousePackage = projected;
+  return projected;
 }
 
 /**
@@ -434,6 +447,7 @@ export async function ensureBuilderPackageBootstrapped(
       projection,
       manifest.authoringDraft?.validationMode === 'AUTHORING_DRAFT',
       manifest.heroCopy,
+      durableOverlay?.mediaUrls,
     );
     logBuilderPackageEvidence(
       registries,
