@@ -5,6 +5,9 @@ import { getActiveSession } from "../src/session";
 
 const DSE_BUNGALOV_4KK_HOUSE_ID =
   "reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk";
+const requestedHouseId =
+  new URLSearchParams(window.location.search).get("objectId")?.trim() ||
+  DSE_BUNGALOV_4KK_HOUSE_ID;
 
 declare global {
   interface Window {
@@ -19,23 +22,14 @@ registerClientStudioCss(clientStudioCss);
 Embed.mount({
   mode: "inline",
   target: "#embed",
-  objectId: DSE_BUNGALOV_4KK_HOUSE_ID,
+  objectId: requestedHouseId,
 });
 
 window.__embedIntegration = {
   getDeliveryState: () => {
     const session = getActiveSession();
-    const state =
-      session !== null && "getDeliveryState" in session
-        ? session.getDeliveryState()
-        : null;
-    return state === null
-      ? null
-      : {
-          requestedHouseId: state.requestedHouseId,
-          resolvedHouseId: state.resolvedHouseId,
-          projectId: state.projectId,
-          activeHouseId: state.activeHouseId,
-        };
+    return session !== null && "getDeliveryState" in session
+      ? session.getDeliveryState()
+      : null;
   },
 };

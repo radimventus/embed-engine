@@ -25,7 +25,17 @@ import {
 const execFileAsync = promisify(execFile);
 const DSE_BUNGALOV_4KK_HOUSE_ID =
   "reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk";
+const DSE_VPD_HOUSE_ID =
+  "draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk";
 const DSE_PROJECT_ID = "project-domy-s-energii";
+const VPD_AUTHORED_IDENTITY = {
+  houseId: DSE_VPD_HOUSE_ID,
+  name: "Váš první dům",
+  canonicalProjectId: DSE_PROJECT_ID,
+  packageRoot: "apps/client-studio/public/house-packages/patrovy-5kk",
+  dataMode: "LIVE_EMPTY",
+  status: "draft",
+} as const;
 const ONE_PIXEL_PNG = Buffer.from(
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScL9WQAAAABJRU5ErkJggg==",
   "base64",
@@ -35,7 +45,27 @@ type DeliveryState = {
   readonly requestedHouseId: string | null;
   readonly resolvedHouseId: string;
   readonly projectId: string;
+  readonly packageRoot: string;
+  readonly permittedHouses: readonly { readonly houseId: string; readonly name: string }[];
+  readonly normalizedPresentationAssets: {
+    readonly houseId: string;
+    readonly gallery: readonly {
+      readonly order: number;
+      readonly roomId: string;
+      readonly src: string;
+    }[];
+    readonly floors: readonly {
+      readonly floorId: string;
+      readonly rasterSrc: string;
+      readonly geometry: {
+        readonly schema: string;
+        readonly viewBox: { readonly width: number; readonly height: number };
+        readonly rooms: readonly { readonly roomId: string }[];
+      } | null;
+    }[];
+  };
   readonly activeHouseId: string;
+  readonly activeRoomId: string | null;
 };
 
 async function closeServer(
@@ -165,6 +195,7 @@ describe("Embed browser integration", () => {
             workspaceId: "domy-s-energii-main",
             projectId: DSE_PROJECT_ID,
             activeHouseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+            authoredHouseIdentities: [VPD_AUTHORED_IDENTITY],
             activeStudio: "client",
             officeReturnHref: "https://conis.cz:4181/partners/p-dse",
           },
@@ -179,6 +210,20 @@ describe("Embed browser integration", () => {
           resolve(repoRoot, "apps/client-studio/public/house-packages/bungalov-4kk/gallery.csv"),
           "utf8",
         );
+        const [vpdGalleryCsv, vpdRoomsCsv, vpdVideosCsv] = await Promise.all([
+          readFile(
+            resolve(repoRoot, "apps/client-studio/public/house-packages/patrovy-5kk/gallery.csv"),
+            "utf8",
+          ),
+          readFile(
+            resolve(repoRoot, "apps/client-studio/public/house-packages/patrovy-5kk/rooms.csv"),
+            "utf8",
+          ),
+          readFile(
+            resolve(repoRoot, "apps/client-studio/public/house-packages/patrovy-5kk/videos.csv"),
+            "utf8",
+          ),
+        ]);
         const persisted = await context.request.post(
           `${apiOrigin}/public/house-packages/${DSE_BUNGALOV_4KK_HOUSE_ID}/persist`,
           {
@@ -195,6 +240,67 @@ describe("Embed browser integration", () => {
           },
         );
         assert.equal(uploadedMedia.status(), 201);
+        const vpdContext = await context.request.post(`${apiOrigin}/public/auth/context`, {
+          headers: { origin: hostOrigin },
+          data: {
+            action: "enter",
+            partnerId: "p-dse",
+            tenantId: "tenant-domy-s-energii",
+            companyId: "company-domy-s-energii",
+            workspaceId: "domy-s-energii-main",
+            projectId: DSE_PROJECT_ID,
+            activeHouseId: DSE_VPD_HOUSE_ID,
+            authoredHouseIdentities: [VPD_AUTHORED_IDENTITY],
+            activeStudio: "client",
+            officeReturnHref: "https://conis.cz:4181/partners/p-dse",
+          },
+        });
+        assert.equal(vpdContext.status(), 200, await vpdContext.text());
+        const persistedVpd = await context.request.post(
+          `${apiOrigin}/public/house-packages/${DSE_VPD_HOUSE_ID}/persist`,
+          {
+            headers: { origin: hostOrigin },
+            data: {
+              files: {
+                galleryCsv: vpdGalleryCsv,
+                roomsCsv: vpdRoomsCsv,
+                videosCsv: vpdVideosCsv,
+              },
+            },
+          },
+        );
+        assert.equal(persistedVpd.status(), 200, await persistedVpd.text());
+        const uploadedVpdMedia = await context.request.post(
+          `${apiOrigin}/public/house-packages/${DSE_VPD_HOUSE_ID}/media/gallery/01.png`,
+          {
+            headers: { origin: hostOrigin, "content-type": "image/png" },
+            data: ONE_PIXEL_PNG,
+          },
+        );
+        assert.equal(uploadedVpdMedia.status(), 201);
+        const staleBungalovContext = await context.request.post(
+          `${apiOrigin}/public/auth/context`,
+          {
+            headers: { origin: hostOrigin },
+            data: {
+              action: "enter",
+              partnerId: "p-dse",
+              tenantId: "tenant-domy-s-energii",
+              companyId: "company-domy-s-energii",
+              workspaceId: "domy-s-energii-main",
+              projectId: DSE_PROJECT_ID,
+              activeHouseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+              authoredHouseIdentities: [VPD_AUTHORED_IDENTITY],
+              activeStudio: "client",
+              officeReturnHref: "https://conis.cz:4181/partners/p-dse",
+            },
+          },
+        );
+        assert.equal(
+          staleBungalovContext.status(),
+          200,
+          await staleBungalovContext.text(),
+        );
 
         const page = await context.newPage();
         const browserErrors: string[] = [];
@@ -224,22 +330,119 @@ describe("Embed browser integration", () => {
             const state = window.__embedIntegration?.getDeliveryState() as
               | DeliveryState
               | null;
-            return state === null
-              ? null
-              : {
-                  requestedHouseId: state.requestedHouseId,
-                  resolvedHouseId: state.resolvedHouseId,
-                  projectId: state.projectId,
-                  activeHouseId: state.activeHouseId,
-                };
+            return state;
           },
         );
-        assert.deepEqual(deliveryState, {
-          requestedHouseId: DSE_BUNGALOV_4KK_HOUSE_ID,
-          resolvedHouseId: DSE_BUNGALOV_4KK_HOUSE_ID,
-          projectId: DSE_PROJECT_ID,
-          activeHouseId: DSE_BUNGALOV_4KK_HOUSE_ID,
-        });
+        assert.ok(deliveryState !== null);
+        assert.equal(deliveryState.requestedHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+        assert.equal(deliveryState.resolvedHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+        assert.equal(deliveryState.activeHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+        assert.equal(deliveryState.projectId, DSE_PROJECT_ID);
+        assert.equal(deliveryState.packageRoot, "/house-packages/bungalov-4kk");
+        assert.deepEqual(
+          deliveryState.permittedHouses.map((house) => house.houseId),
+          [DSE_BUNGALOV_4KK_HOUSE_ID, DSE_VPD_HOUSE_ID],
+        );
+        assert.equal(
+          deliveryState.normalizedPresentationAssets.gallery.map((item) => item.order).join(","),
+          "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16",
+        );
+        assert.equal(
+          deliveryState.normalizedPresentationAssets.gallery[0]?.roomId,
+          "exterior",
+        );
+        const bungalovFloor = deliveryState.normalizedPresentationAssets.floors[0];
+        assert.equal(bungalovFloor?.rasterSrc, "/house-packages/bungalov-4kk/media/plans/p1.webp");
+        assert.equal(bungalovFloor?.geometry?.schema, "hp-003-floorplan-geometry");
+        assert.equal(bungalovFloor?.geometry?.rooms.length, 10);
+
+        const bungalovKitchenZone = page.locator('[data-room="kitchen"]');
+        await bungalovKitchenZone.scrollIntoViewIfNeeded();
+        await bungalovKitchenZone.click();
+        await page.waitForTimeout(250);
+        assert.deepEqual(
+          await page.evaluate(() => ({
+            activeRoomId: (
+              window.__embedIntegration?.getDeliveryState() as DeliveryState | null
+            )?.activeRoomId,
+            fill: document.querySelector('[data-room="kitchen"]')?.getAttribute("fill"),
+          })),
+          { activeRoomId: "kitchen", fill: "#f5b9007f" },
+        );
+
+        const vpdPage = await context.newPage();
+        await vpdPage.goto(
+          `${hostOrigin}/?objectId=${encodeURIComponent(DSE_VPD_HOUSE_ID)}`,
+          { waitUntil: "domcontentloaded" },
+        );
+        await vpdPage.waitForFunction(
+          (houseId) =>
+            (window.__embedIntegration?.getDeliveryState() as DeliveryState | null)
+              ?.resolvedHouseId === houseId,
+          DSE_VPD_HOUSE_ID,
+          { timeout: 10_000 },
+        );
+        const vpdState = await vpdPage.evaluate(
+          () => window.__embedIntegration?.getDeliveryState() as DeliveryState | null,
+        );
+        assert.ok(vpdState !== null);
+        assert.equal(vpdState.requestedHouseId, DSE_VPD_HOUSE_ID);
+        assert.equal(vpdState.resolvedHouseId, DSE_VPD_HOUSE_ID);
+        assert.equal(vpdState.activeHouseId, DSE_VPD_HOUSE_ID);
+        assert.notEqual(vpdState.resolvedHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+        assert.equal(vpdState.packageRoot, "/house-packages/patrovy-5kk");
+        assert.deepEqual(
+          vpdState.permittedHouses.map((house) => house.houseId),
+          [DSE_BUNGALOV_4KK_HOUSE_ID, DSE_VPD_HOUSE_ID],
+        );
+        assert.deepEqual(
+          vpdState.normalizedPresentationAssets.gallery.map((item) => item.order),
+          [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+        );
+        assert.match(
+          vpdState.normalizedPresentationAssets.gallery[0]?.src ?? "",
+          /^blob:/,
+        );
+        const vpdFloor = vpdState.normalizedPresentationAssets.floors[0];
+        assert.equal(vpdFloor?.rasterSrc, "/house-packages/patrovy-5kk/media/plans/p1.png");
+        assert.equal(vpdFloor?.geometry?.schema, "hp-003-floorplan-geometry");
+        assert.equal(vpdFloor?.geometry?.rooms.length, 10);
+
+        const vpdKitchenZone = vpdPage.locator('[data-room="kitchen"]');
+        await vpdKitchenZone.scrollIntoViewIfNeeded();
+        await vpdKitchenZone.click();
+        await vpdPage.waitForFunction(
+          () =>
+            (window.__embedIntegration?.getDeliveryState() as DeliveryState | null)
+              ?.activeRoomId === "kitchen",
+        );
+
+        await vpdPage.getByTestId("client-house-menu-toggle").click();
+        await assert.equal(
+          await vpdPage.getByTestId(`client-house-option-${DSE_BUNGALOV_4KK_HOUSE_ID}`).count(),
+          1,
+        );
+        await assert.equal(
+          await vpdPage.getByTestId(`client-house-option-${DSE_VPD_HOUSE_ID}`).count(),
+          1,
+        );
+        await vpdPage.getByTestId(`client-house-option-${DSE_BUNGALOV_4KK_HOUSE_ID}`).click();
+        await vpdPage.waitForFunction(
+          (houseId) =>
+            (window.__embedIntegration?.getDeliveryState() as DeliveryState | null)
+              ?.resolvedHouseId === houseId,
+          DSE_BUNGALOV_4KK_HOUSE_ID,
+          { timeout: 10_000 },
+        );
+        await vpdPage.getByTestId("client-house-menu-toggle").click();
+        await vpdPage.getByTestId(`client-house-option-${DSE_VPD_HOUSE_ID}`).click();
+        await vpdPage.waitForFunction(
+          (houseId) =>
+            (window.__embedIntegration?.getDeliveryState() as DeliveryState | null)
+              ?.resolvedHouseId === houseId,
+          DSE_VPD_HOUSE_ID,
+          { timeout: 10_000 },
+        );
       } finally {
         await browser.close();
         if (vite !== null) await vite.close();
