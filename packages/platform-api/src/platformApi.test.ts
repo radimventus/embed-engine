@@ -9,6 +9,7 @@ import {
   FileOrderRepository,
   FileOfferWriteTokenRepository,
   FilePartnerSessionRepository,
+  FileHousePackageRepository,
   FilePlatformInviteRepository,
   FileProformaRepository,
   FileSocialProofAnalyticsRepository,
@@ -1371,4 +1372,109 @@ describe('Social Proof analytics repository', () => {
     }
   });
 
+});
+
+describe('Durable House Package API', () => {
+  it('scopes text and binary persistence to the authenticated session', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-house-package-api-test-'));
+    const housePackages = new FileHousePackageRepository(join(directory, 'house-packages'));
+    const identities = new Map([
+      ['session-house-a', {
+        activeHouseId: 'house-a',
+        workspaceContext: {
+          authoredHouseIdentities: [{ houseId: 'house-a' }],
+        },
+      }],
+      ['session-house-b', {
+        activeHouseId: 'house-b',
+        workspaceContext: {
+          authoredHouseIdentities: [{ houseId: 'house-b' }],
+        },
+      }],
+    ]);
+    const partnerSessions = {
+      resolve: async (token: string) => identities.get(token) ?? null,
+    };
+    const server = createPlatformApiServer(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      partnerSessions as never,
+      housePackages,
+    );
+    await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
+    try {
+      const address = server.address();
+      assert.ok(address !== null && typeof address !== 'string');
+      const baseUrl = `http://127.0.0.1:${address.port}/public/house-packages`;
+      const cookieA = { cookie: '__Host-conis_partner_session=session-house-a' };
+      const cookieB = { cookie: '__Host-conis_partner_session=session-house-b' };
+
+      const unauthenticated = await fetch(`${baseUrl}/house-a/state`);
+      assert.equal(unauthenticated.status, 401);
+
+      const forbidden = await fetch(`${baseUrl}/house-b/persist`, {
+        method: 'POST',
+        headers: { ...cookieA, 'content-type': 'application/json' },
+        body: JSON.stringify({ files: { roomsCsv: 'forbidden' } }),
+      });
+      assert.equal(forbidden.status, 403);
+
+      const persisted = await fetch(`${baseUrl}/house-a/persist`, {
+        method: 'POST',
+        headers: { ...cookieA, 'content-type': 'application/json' },
+        body: JSON.stringify({ files: { roomsCsv: 'id,name\nroom-a,A\n' } }),
+      });
+      assert.equal(persisted.status, 200);
+      assert.equal(
+        (await new FileHousePackageRepository(join(directory, 'house-packages')).get('house-a'))
+          ?.files.roomsCsv,
+        'id,name\nroom-a,A\n',
+      );
+
+      const upload = await fetch(`${baseUrl}/house-a/media/gallery/hero.png`, {
+        method: 'POST',
+        headers: { ...cookieA, 'content-type': 'image/png' },
+        body: Buffer.from([0, 1, 2, 3]),
+      });
+      assert.equal(upload.status, 201);
+
+      const isolated = await fetch(`${baseUrl}/house-a/media/gallery/hero.png`, {
+        headers: cookieB,
+      });
+      assert.equal(isolated.status, 403);
+
+      const media = await fetch(`${baseUrl}/house-a/media/gallery/hero.png`, {
+        headers: cookieA,
+      });
+      assert.equal(media.status, 200);
+      assert.equal(media.headers.get('content-type'), 'image/png');
+      assert.deepEqual([...new Uint8Array(await media.arrayBuffer())], [0, 1, 2, 3]);
+
+      await assert.rejects(
+        () => housePackages.writeMedia('house-a', '../escape.png', {
+          bytes: Buffer.from([1]),
+          contentType: 'image/png',
+        }),
+        /Invalid House Package media path/,
+      );
+
+      const deleted = await fetch(`${baseUrl}/house-a/media/gallery/hero.png`, {
+        method: 'DELETE',
+        headers: cookieA,
+      });
+      assert.equal(deleted.status, 204);
+      const missing = await fetch(`${baseUrl}/house-a/media/gallery/hero.png`, {
+        headers: cookieA,
+      });
+      assert.equal(missing.status, 404);
+    } finally {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) => (error === undefined ? resolve() : reject(error)));
+      });
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
 });
