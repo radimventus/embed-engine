@@ -68,6 +68,20 @@ describe('Context-only Provider boundary (ED-DA-04)', () => {
     );
   });
 
+  it('bootstraps a LIVE_EMPTY canonical House through its durable overlay', () => {
+    const source = stripComments(
+      readSource(
+        'src/features/client-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+      ),
+    );
+
+    assert.match(source, /loadDurableHousePackageOverlay\(/);
+    assert.doesNotMatch(
+      source,
+      /\}\)\s*\|\|\s*clientContentUnavailable\s*\)\s*\{/,
+    );
+  });
+
   it('DecisionSessionRuntimeProvider does not expose runtime or interpretation', () => {
     const source = stripComments(
       readSource(

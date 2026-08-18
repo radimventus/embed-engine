@@ -284,8 +284,7 @@ export function DecisionSessionRuntimeProvider({
           binding.workspaceBinding?.runtimeContentAvailable,
         authoringDraftPackage:
           binding.workspaceBinding?.authoringDraftPackage ?? null,
-      }) ||
-      clientContentUnavailable
+      })
     ) {
       runtimeRef.current = null;
       setPackageReady(false);
@@ -568,8 +567,7 @@ export function DecisionSessionRuntimeProvider({
 
   if (
     bootstrapError !== null ||
-    workspaceDraftBinding !== null ||
-    clientContentUnavailable
+    workspaceDraftBinding !== null
   ) {
     return (
       <section
