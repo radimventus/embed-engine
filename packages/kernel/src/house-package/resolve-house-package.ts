@@ -30,8 +30,18 @@ function resolveRoomMedia(basePath: string, room: HousePackageRoom): ResolvedHou
   );
 
   const mediaItems = [
-    { kind: 'video' as const, src: `${mediaBase}/${room.media.video}`, thumbnailSrc: heroSrc },
-    ...photoSrcs.map((src) => ({ kind: 'photo' as const, src, thumbnailSrc: src })),
+    {
+      kind: 'video' as const,
+      src: `${mediaBase}/${room.media.video}`,
+      thumbnailSrc: heroSrc,
+      roomId: null,
+    },
+    ...photoSrcs.map((src) => ({
+      kind: 'photo' as const,
+      src,
+      thumbnailSrc: src,
+      roomId: room.id,
+    })),
   ];
 
   return {
