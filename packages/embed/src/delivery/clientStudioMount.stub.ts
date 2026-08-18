@@ -15,6 +15,18 @@ export type MountClientStudioOptions = {
 export type ClientStudioMountHandle = {
   readonly dispose: () => void;
   readonly rootElement: HTMLElement;
+  readonly getDeliveryState: () => EmbedDeliveryState | null;
+};
+
+export type EmbedDeliveryState = {
+  readonly requestedHouseId: string | null;
+  readonly resolvedHouseId: string;
+  readonly projectId: string;
+  readonly packageRoot: string;
+  readonly permittedHouses: readonly { readonly houseId: string; readonly name: string }[];
+  readonly normalizedPresentationAssets: unknown;
+  readonly activeHouseId: string;
+  readonly activeRoomId: string | null;
 };
 
 export function mountClientStudio(

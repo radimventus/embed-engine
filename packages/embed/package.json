@@ -27,6 +27,7 @@
     "ssot:guard": "tsx --test scripts/ssot-guard.test.ts",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts src/delivery/deliveryLayer.test.ts src/delivery/revealEngine.test.ts src/delivery/cssIsolation.test.ts src/delivery/resolveProductionAssetBase.test.ts scripts/ssot-guard.test.ts",
+    "test:browser": "tsx --test src/browser/embed.browser.test.ts",
     "demo": "vite --config demo/vite.config.ts"
   },
   "dependencies": {
@@ -47,8 +48,10 @@
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.7.0",
+    "@embed-engine/platform-api": "workspace:*",
     "autoprefixer": "^10.4.21",
     "happy-dom": "^17.4.4",
+    "playwright": "1.61.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.17",
     "tsx": "^4.20.3",

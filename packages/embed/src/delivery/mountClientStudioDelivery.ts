@@ -14,10 +14,13 @@ import {
 import type { EmbedSession } from "../bootstrap";
 import { ensureClientStudioStyles } from "./ensureStyles";
 import type { EmbedProductionMountOptions } from "./types";
+import type { EmbedDeliveryState } from "@client-studio/embed-mount";
 
 export type ClientStudioDeliverySession = EmbedSession & {
   readonly kind: "client-studio";
   readonly objectId: string;
+  /** Live state emitted by the mounted Client Studio delivery boundary. */
+  readonly getDeliveryState: () => EmbedDeliveryState | null;
 };
 
 /** PT-PDM-03 — Shared Project Runtime validates mount id before Client Studio. */
@@ -71,6 +74,7 @@ export function bootstrapClientStudioDelivery(
     root: handle.rootElement,
     styleElement: document.createElement("style"),
     objectId,
+    getDeliveryState: handle.getDeliveryState,
     dispose: () => {
       handle.dispose();
     },
