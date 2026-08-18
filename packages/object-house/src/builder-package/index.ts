@@ -39,6 +39,10 @@ export {
   videoMediaId,
   type BuilderHousePackageProjectionOptions,
 } from "./projectToHousePackage";
+export {
+  normalizeRuntimeHousePackageAssets,
+  type NormalizedHousePackageAssets,
+} from "./normalizeRuntimeHousePackageAssets";
 export type {
   BuilderHousePackageImport,
   FloorRegistry,

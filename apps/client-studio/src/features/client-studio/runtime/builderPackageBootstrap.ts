@@ -1,6 +1,7 @@
 import {
   buildBuilderPackageRegistries,
   isFloorPlanGeometry,
+  normalizeRuntimeHousePackageAssets,
   parseCsv,
   projectBuilderImportToHousePackage,
   readHeroCopyFromManifest,
@@ -8,6 +9,7 @@ import {
   type BuilderHousePackageImport,
   type BuilderHousePackageProjectionOptions,
   type FloorPlanGeometry,
+  type NormalizedHousePackageAssets,
 } from '@embed-engine/object-house/builder-package';
 import type { HousePackage } from '@embed-engine/object-house';
 
@@ -17,6 +19,8 @@ import {
 } from './builderRuntimeHouseDefaults';
 import {
   clearFloorPlanGeometryCache,
+  getFloorPlanGeometryForFloor,
+  listFloorPlanGeometryFloors,
   setFloorPlanGeometryForFloor,
 } from './floorPlanGeometryStore';
 import { getPresentationAssetBase } from './presentationAssetBase';
@@ -337,6 +341,7 @@ function logBuilderPackageEvidence(
 
 let cachedRegistries: BuilderHousePackageImport | null = null;
 let cachedHousePackage: HousePackage | null = null;
+let cachedNormalizedAssets: NormalizedHousePackageAssets | null = null;
 let cachedPackagePublicRoot: string | null = null;
 let cachedMediaPublicRoot: string | null = null;
 let cachedProjectionKey: string | null = null;
@@ -410,6 +415,7 @@ export async function ensureBuilderPackageBootstrapped(
 
   cachedRegistries = null;
   cachedHousePackage = null;
+  cachedNormalizedAssets = null;
   cachedPackagePublicRoot = root;
   cachedProjectionKey = cacheKey;
 
@@ -443,7 +449,7 @@ export async function ensureBuilderPackageBootstrapped(
       manifest.heroRelativePath,
     );
     cachedRegistries = registries;
-    projectCachedHousePackage(
+    const housePackage = projectCachedHousePackage(
       registries,
       mediaRoot,
       root,
@@ -451,6 +457,16 @@ export async function ensureBuilderPackageBootstrapped(
       manifest.authoringDraft?.validationMode === 'AUTHORING_DRAFT',
       manifest.heroCopy,
       durableOverlay?.mediaUrls,
+    );
+    const geometryByFloor = Object.fromEntries(
+      listFloorPlanGeometryFloors().flatMap((floorId) => {
+        const geometry = getFloorPlanGeometryForFloor(floorId);
+        return geometry === null ? [] : [[floorId, geometry]];
+      }),
+    );
+    cachedNormalizedAssets = normalizeRuntimeHousePackageAssets(
+      housePackage,
+      geometryByFloor,
     );
     logBuilderPackageEvidence(
       registries,
@@ -503,6 +519,16 @@ export function getBuilderRuntimeHousePackage(): HousePackage {
   );
 }
 
+/** Shared presentation asset contract for Client and Embed delivery. */
+export function getNormalizedBuilderHousePackageAssets(): NormalizedHousePackageAssets {
+  if (cachedNormalizedAssets === null) {
+    throw new Error(
+      'Normalized House Package assets are not ready. Await ensureBuilderPackageBootstrapped() first.',
+    );
+  }
+  return cachedNormalizedAssets;
+}
+
 /**
  * Node/unit-test bootstrap — inject CSV texts without HTTP (no Vite public/?raw).
  */
@@ -525,7 +551,17 @@ export function bootstrapBuilderPackageRegistriesSyncForTests(
   const registries = buildRegistriesFromTexts(texts, root);
   cachedRegistries = registries;
   bootstrapPromise = Promise.resolve(registries);
-  projectCachedHousePackage(registries, root, root, projection);
+  const housePackage = projectCachedHousePackage(registries, root, root, projection);
+  const normalizedGeometryByFloor = Object.fromEntries(
+    listFloorPlanGeometryFloors().flatMap((floorId) => {
+      const geometry = getFloorPlanGeometryForFloor(floorId);
+      return geometry === null ? [] : [[floorId, geometry]];
+    }),
+  );
+  cachedNormalizedAssets = normalizeRuntimeHousePackageAssets(
+    housePackage,
+    normalizedGeometryByFloor,
+  );
   return registries;
 }
 
@@ -533,6 +569,7 @@ export function bootstrapBuilderPackageRegistriesSyncForTests(
 export function resetBuilderPackageBootstrapForTests(): void {
   cachedRegistries = null;
   cachedHousePackage = null;
+  cachedNormalizedAssets = null;
   cachedPackagePublicRoot = null;
   cachedMediaPublicRoot = null;
   cachedProjectionKey = null;
