@@ -3,12 +3,17 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   createWorkspaceProjectChangeMessage,
   createWorkspaceHouseChangeMessage,
+  createWorkspaceHouseScopeRequestMessage,
+  createPlatformAccessAuthClient,
   getCanonicalHouse,
   isHouseInProject,
   isCanonicalProjectId,
+  loadPlatformSession,
   resolveWorkspaceHostHref,
+  savePlatformSession,
   upsertWorkspaceAuthoredHouse,
   updateSession,
+  type WorkspaceAuthoredHouseIdentity,
 } from '@embed-engine/platform-access';
 
 import { requestWorkspaceActive } from './requestWorkspaceActive';
@@ -216,28 +221,114 @@ export function shouldRecoverLegacyLiveEmptyHouse(
   );
 }
 
-function publishBuilderHouseScope(
+function prepareBuilderHouseScope(
   projectId: string,
   house: WorkspaceProject | null,
-): void {
+): {
+  readonly activeHouseId: string | null;
+  readonly authoredHouseIdentity: WorkspaceAuthoredHouseIdentity | undefined;
+} {
   const activeHouseId = resolveBuilderActiveHouseId(projectId, house);
   const isAuthoredHouse = isBuilderAuthoredHouseForScope(projectId, house);
   updateSession({
     projectId,
     activeHouseId: isAuthoredHouse ? null : activeHouseId,
   });
+  let authoredHouseIdentity: WorkspaceAuthoredHouseIdentity | undefined;
   if (isAuthoredHouse) {
-    upsertWorkspaceAuthoredHouse({
+    authoredHouseIdentity = {
       houseId: house.id,
       name: house.name,
       canonicalProjectId: projectId,
       packageRoot: house.packageRoot,
       dataMode: 'LIVE_EMPTY',
       status: 'draft',
-    });
+    };
+    upsertWorkspaceAuthoredHouse(authoredHouseIdentity);
     updateSession({ projectId, activeHouseId });
   }
-  publishWorkspaceHouseChange(activeHouseId);
+  return { activeHouseId, authoredHouseIdentity };
+}
+
+async function awaitAuthoritativeBuilderHouseScope(input: {
+  readonly projectId: string;
+  readonly activeHouseId: string | null;
+  readonly authoredHouseIdentity: WorkspaceAuthoredHouseIdentity | undefined;
+}): Promise<void> {
+  if (typeof window !== 'undefined' && window.parent !== window) {
+    const channel = new MessageChannel();
+    const response = new Promise<{ readonly ok: boolean; readonly error?: string }>(
+      (resolve) => {
+        channel.port1.onmessage = (event: MessageEvent<unknown>) => {
+          const value = event.data as { readonly ok?: unknown; readonly error?: unknown };
+          resolve({
+            ok: value.ok === true,
+            ...(typeof value.error === 'string' ? { error: value.error } : {}),
+          });
+        };
+      },
+    );
+    window.parent.postMessage(
+      createWorkspaceHouseScopeRequestMessage({
+        houseId: input.activeHouseId,
+        ...(input.authoredHouseIdentity === undefined
+          ? {}
+          : { authoredHouseIdentity: input.authoredHouseIdentity }),
+      }),
+      new URL(resolveWorkspaceHostHref()).origin,
+      [channel.port2],
+    );
+    const result = await response;
+    if (!result.ok) {
+      throw new Error(
+        result.error ?? 'Platform API nepotvrdilo oprávnění House Package.',
+      );
+    }
+    return;
+  }
+
+  const session = loadPlatformSession();
+  if (session === null) {
+    throw new Error('Nejste přihlášeni.');
+  }
+  const result = await createPlatformAccessAuthClient().mutateSessionContext({
+    action: 'switch',
+    activeStudio: 'builder',
+    projectId: input.projectId,
+    activeHouseId: input.activeHouseId,
+    authoredHouseIdentities: [
+      ...(session.workspaceContext?.authoredHouseIdentities ?? []).filter(
+        (identity) => identity.houseId !== input.authoredHouseIdentity?.houseId,
+      ),
+      ...(input.authoredHouseIdentity === undefined
+        ? []
+        : [input.authoredHouseIdentity]),
+    ],
+  });
+  if (!result.ok) throw new Error(result.error);
+  savePlatformSession(result.session);
+}
+
+/**
+ * Activation boundary: no House Package read or mount may begin until the
+ * authoritative Platform API scope transition has resolved successfully.
+ */
+export async function runBuilderHouseActivation(input: {
+  readonly prepareLocalScope: () => void;
+  readonly authorizeScope: () => Promise<void>;
+  readonly mountHousePackage: () => Promise<void>;
+}): Promise<void> {
+  input.prepareLocalScope();
+  await input.authorizeScope();
+  await input.mountHousePackage();
+}
+
+function publishBuilderHouseScope(
+  projectId: string,
+  house: WorkspaceProject | null,
+): void {
+  const scope = prepareBuilderHouseScope(projectId, house);
+  publishWorkspaceHouseChange(scope.activeHouseId);
 }
 
 /**
@@ -287,6 +378,46 @@ export function useWorkspaceController(): WorkspaceController {
       while (pendingTargetRef.current !== null) {
         let target = pendingTargetRef.current;
         pendingTargetRef.current = null;
+        const previousTarget =
+          registryRef.current.projects.find(
+            (project) => project.id === registryRef.current.activeProjectId,
+          ) ?? null;
+        try {
+          let targetScope: ReturnType<typeof prepareBuilderHouseScope> | null =
+            null;
+          await runBuilderHouseActivation({
+            prepareLocalScope: () => {
+              targetScope = prepareBuilderHouseScope(target.folderId, target);
+            },
+            authorizeScope: () => {
+              if (targetScope === null) {
+                throw new Error('House scope nebyl připraven.');
+              }
+              return awaitAuthoritativeBuilderHouseScope({
+                projectId: target.folderId,
+                activeHouseId: targetScope.activeHouseId,
+                authoredHouseIdentity: targetScope.authoredHouseIdentity,
+              });
+            },
+            // The concrete Builder package activation follows this boundary.
+            mountHousePackage: async () => undefined,
+          });
+        } catch (error) {
+          // The local projection is prepared before authorization so every
+          // authoritative request has the target identity. Restore it when
+          // that request is rejected; no target mount has started yet.
+          prepareBuilderHouseScope(
+            previousTarget?.folderId ?? target.folderId,
+            previousTarget,
+          );
+          setSwitchError(
+            error instanceof Error
+              ? error.message
+              : 'Oprávnění House Package se nepodařilo potvrdit.',
+          );
+          lastOk = false;
+          break;
+        }
 
         if (shouldRecoverLegacyLiveEmptyHouse(target.folderId, target)) {
           try {
@@ -356,7 +487,6 @@ export function useWorkspaceController(): WorkspaceController {
 
         setRegistry((prev) => openWorkspaceProject(prev, target.id));
         setDirtyPrompt(null);
-        publishBuilderHouseScope(target.folderId, target);
         lastOk = true;
       }
       return lastOk;

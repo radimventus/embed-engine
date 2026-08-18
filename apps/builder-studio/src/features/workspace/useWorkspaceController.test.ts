@@ -10,6 +10,7 @@ import {
   isBuilderAuthoredHouseForScope,
   requiresLegacyWorkspaceActivation,
   resolveBuilderActiveHouseId,
+  runBuilderHouseActivation,
   shouldRecoverLegacyLiveEmptyHouse,
 } from './useWorkspaceController';
 import type { WorkspaceProject } from './workspaceRegistry';
@@ -34,6 +35,58 @@ function house(
 }
 
 describe('Builder shared active House publication', () => {
+  it('awaits authoritative VPD → BUNGALOV scope authorization before mounting', async () => {
+    let resolveAuthorization: (() => void) | undefined;
+    const authorization = new Promise<void>((resolve) => {
+      resolveAuthorization = resolve;
+    });
+    const events: string[] = [];
+
+    const activation = runBuilderHouseActivation({
+      prepareLocalScope: () => events.push('local:bungalov-4kk'),
+      authorizeScope: async () => {
+        events.push('authoritative:start');
+        await authorization;
+        events.push('authoritative:accepted');
+      },
+      mountHousePackage: async () => {
+        events.push('mount:bungalov-4kk');
+      },
+    });
+
+    await Promise.resolve();
+    assert.deepEqual(events, ['local:bungalov-4kk', 'authoritative:start']);
+
+    resolveAuthorization?.();
+    await activation;
+    assert.deepEqual(events, [
+      'local:bungalov-4kk',
+      'authoritative:start',
+      'authoritative:accepted',
+      'mount:bungalov-4kk',
+    ]);
+  });
+
+  it('does not mount BUNGALOV when authoritative scope authorization rejects', async () => {
+    const events: string[] = [];
+
+    await assert.rejects(
+      runBuilderHouseActivation({
+        prepareLocalScope: () => events.push('local:bungalov-4kk'),
+        authorizeScope: async () => {
+          events.push('authoritative:start');
+          throw new Error('House Package není pro tuto relaci povolen.');
+        },
+        mountHousePackage: async () => {
+          events.push('mount:bungalov-4kk');
+        },
+      }),
+      /House Package není pro tuto relaci povolen/,
+    );
+
+    assert.deepEqual(events, ['local:bungalov-4kk', 'authoritative:start']);
+  });
+
   it('uses the Vite-only activation endpoint only in a development host', () => {
     assert.equal(canUseLegacyWorkspaceActivation(true), true);
     assert.equal(canUseLegacyWorkspaceActivation(false), false);
