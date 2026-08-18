@@ -391,4 +391,25 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
     assert.match(provider, /client-workspace-draft-empty/);
     resetCompanyRegistryExtras();
   });
+
+  it('uses an Embed requested House ahead of a stale workspace selection', () => {
+    const binding = resolveClientRuntimeBindingFromCandidates({
+      urlProjectId: null,
+      urlHouseId: null,
+      workspaceContextProjectId: 'project-domy-s-energii',
+      workspaceContextHouseId:
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      sessionProjectId: 'project-domy-s-energii',
+      sessionHouseId:
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      embedObjectId:
+        'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk',
+    });
+
+    assert.equal(
+      binding.runtimeHouseId,
+      'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk',
+    );
+    assert.equal(binding.runtimeProjectId, 'project-domy-s-energii');
+  });
 });

@@ -1,10 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot, type Root } from 'react-dom/client';
 import type { DecisionSessionRuntime } from '@embed-engine/runtime';
-import {
-  getCanonicalHouse,
-  resolveCanonicalRuntimeBinding,
-} from '@embed-engine/platform-access';
 
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { ClientStudioApp } from '../features/client-studio/ClientStudioApp';
@@ -48,17 +44,7 @@ function assertMountTarget(target: HTMLElement | null | undefined): HTMLElement 
 
 function resolveMountHouseId(objectId: string | undefined): string | null {
   const candidate = objectId?.trim() ?? '';
-  if (candidate.length === 0 || getCanonicalHouse(candidate) === null) {
-    return null;
-  }
-  const binding = resolveCanonicalRuntimeBinding({
-    explicitProjectId: candidate,
-    fallbackToFirstPublished: false,
-  });
-  if (binding.runtimeHouseId === null) {
-    return null;
-  }
-  return binding.runtimeHouseId;
+  return candidate.length > 0 ? candidate : null;
 }
 
 /**

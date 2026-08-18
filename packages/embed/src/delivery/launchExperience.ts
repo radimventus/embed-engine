@@ -18,7 +18,6 @@ import {
 import type { LaunchRequest } from "./launchRequest";
 import { createOverlaySurface, type OverlaySurface } from "./overlaySurface";
 import { runRevealEngine } from "./revealEngine";
-import { DEFAULT_OBJECT_ID } from "./resolveObjectPackage";
 
 export type LauncherDeliverySession = EmbedSession & {
   readonly kind: "client-studio-launcher";
@@ -53,19 +52,6 @@ function failSafeDispose(
   }
 }
 
-function resolvePilotObjectId(objectId: string | undefined): string {
-  const resolved =
-    objectId === undefined || objectId.trim().length === 0
-      ? DEFAULT_OBJECT_ID
-      : objectId.trim();
-  if (resolved !== DEFAULT_OBJECT_ID) {
-    throw new Error(
-      `Embed.mount: unknown objectId "${resolved}". Known: ${DEFAULT_OBJECT_ID}`,
-    );
-  }
-  return resolved;
-}
-
 /**
  * Execute Launch Request: overlay → Studio mount → Reveal → Active.
  * Runtime is created inside Client Studio Provider from Builder Package.
@@ -86,7 +72,7 @@ export async function launchExperience(
 
     ensureClientStudioStyles();
 
-    const objectId = resolvePilotObjectId(request.objectId);
+    const objectId = request.objectId?.trim() || undefined;
 
     overlay = createOverlaySurface({ onClose: options.onClose });
 
@@ -101,7 +87,7 @@ export async function launchExperience(
 
     const handle = mountClientStudio({
       target: mountTarget,
-      objectId,
+      objectId: objectId ?? "",
       assetBase: request.assetBase,
     });
     studioDispose = handle.dispose;
@@ -145,7 +131,7 @@ export async function launchExperience(
       host: restoreFocusTo ?? overlay.root,
       root: handle.rootElement,
       styleElement: document.createElement("style"),
-      objectId,
+      objectId: objectId ?? "",
       overlay,
       dispose: () => {
         failSafeDispose(overlay, studioDispose, revealAbort);

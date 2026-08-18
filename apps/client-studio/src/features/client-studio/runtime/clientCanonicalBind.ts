@@ -107,6 +107,31 @@ export function resolveClientRuntimeBindingFromCandidates(
   const activeProjectId = resolveClientActiveProjectId(
     candidates.sessionProjectId,
   );
+  // An Embed mount selects one explicit House. It is a validated input to the
+  // shared binding boundary and must not be silently replaced by a stale
+  // workspace/session active House.
+  const requestedHouseId = candidates.embedObjectId ?? candidates.urlHouseId;
+  if (activeProjectId !== null && requestedHouseId !== null) {
+    const workspaceBinding = resolveWorkspaceHouseBinding({
+      projectId: activeProjectId,
+      houseId: requestedHouseId,
+    });
+    if (
+      workspaceBinding !== null &&
+      workspaceBinding.authoringDraftPackage !== null
+    ) {
+      return resolveAuthoringDraftRuntimeBinding(workspaceBinding);
+    }
+    if (isHouseInProject(requestedHouseId, activeProjectId)) {
+      const canonicalBinding = resolveCanonicalRuntimeBinding({
+        explicitProjectId: requestedHouseId,
+        fallbackToFirstPublished: false,
+      });
+      if (canonicalBinding.runtimeHouseId !== null) {
+        return canonicalBinding;
+      }
+    }
+  }
   const sharedHouseId =
     candidates.sessionHouseId ??
     candidates.workspaceContextHouseId ??

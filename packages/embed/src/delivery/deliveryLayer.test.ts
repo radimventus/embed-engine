@@ -210,7 +210,7 @@ describe("Launcher launch failure recovery", () => {
     document.documentElement.style.cssText = "";
   });
 
-  it("bootstrap failure (unknown objectId) restores host without leftover overlay", async () => {
+  it("studio binding failure restores host without leftover overlay", async () => {
     installDom();
     await assert.rejects(
       () =>
@@ -222,7 +222,7 @@ describe("Launcher launch failure recovery", () => {
           },
           { onClose: () => undefined },
         ),
-      /unknown objectId/,
+      /Vite bundle/,
     );
     assert.equal(document.querySelector("[data-embed-overlay]"), null);
     assert.equal(document.body.style.position, "");
