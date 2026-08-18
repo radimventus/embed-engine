@@ -51,8 +51,13 @@ import {
 /** CAP-PLAT-02c.1a/1b — Runtime Binding: Session/URL IDs → CPL. */
 function resolveRuntimeBinding() {
   const candidates = readClientBindCandidates();
-  const projectId = resolveClientActiveProjectId(candidates.sessionProjectId);
+  const canonicalBinding = resolveClientRuntimeBindingFromCandidates(candidates);
+  const projectId =
+    canonicalBinding.runtimeProjectId ??
+    resolveClientActiveProjectId(candidates.sessionProjectId);
   const houseId =
+    canonicalBinding.runtimeHouseId ??
+    candidates.embedObjectId ??
     candidates.sessionHouseId ??
     candidates.workspaceContextHouseId ??
     candidates.urlHouseId;
@@ -65,7 +70,7 @@ function resolveRuntimeBinding() {
     canonicalBinding:
       workspaceBinding?.runtimeContentAvailable === false
         ? null
-        : resolveClientRuntimeBindingFromCandidates(candidates),
+        : canonicalBinding,
   };
 }
 
@@ -220,6 +225,16 @@ export function DecisionSessionRuntimeProvider({
   >(null);
   const [bootstrapError, setBootstrapError] = useState<string | null>(null);
   const analytics = useOptionalDecisionAnalytics();
+
+  useEffect(() => {
+    const refreshEmbedHouseBinding = () => {
+      setRevision((value) => value + 1);
+    };
+    window.addEventListener('embed:house-change', refreshEmbedHouseBinding);
+    return () => {
+      window.removeEventListener('embed:house-change', refreshEmbedHouseBinding);
+    };
+  }, []);
 
   /** CAP-PLAT-04h — Runtime bind House; package from House slice. */
   const runtimeBinding = resolveRuntimeBinding();

@@ -121,6 +121,11 @@ export function ClientStudioSidebar({
       return;
     }
     updateWorkspaceScope({ activeHouseId: houseId });
+    const embedRoot = document.querySelector<HTMLElement>('[data-embed-root]');
+    if (embedRoot !== null) {
+      embedRoot.dataset.objectId = houseId;
+      window.dispatchEvent(new Event('embed:house-change'));
+    }
     const message = createWorkspaceHouseChangeMessage(houseId);
     if (typeof window === "undefined") return;
     if (window.parent === window) {

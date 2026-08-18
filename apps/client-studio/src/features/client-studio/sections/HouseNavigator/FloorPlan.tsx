@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useWalkthrough } from '../../../walkthrough';
 import { useOptionalDecisionAnalytics } from '../../analytics';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { evidenceLog } from '../../runtime/runtimeEvidence';
@@ -30,8 +29,8 @@ type FloorPlanCanvasProps = {
  */
 function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
   const { experience } = useDecisionSessionRuntime();
-  const { selectedFloor, isRoomActive, activeRoomId } = useHouseNavigator();
-  const { selectRoom } = useWalkthrough();
+  const { selectedFloor, isRoomActive, activeRoomId, selectRoom } =
+    useHouseNavigator();
   const floorPlan = experience.context.floorPlan;
   const viewBoxWidth = floorPlan.viewBoxWidth;
   const viewBoxHeight = floorPlan.viewBoxHeight;
@@ -76,6 +75,7 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
               className:
                 'cursor-pointer touch-manipulation transition-[fill] duration-125 ease-out',
               onClick: () => selectRoom(room.id),
+              onPointerDown: () => selectRoom(room.id),
               onPointerEnter: () => {
                 setHoveredRoomId(room.id);
               },
