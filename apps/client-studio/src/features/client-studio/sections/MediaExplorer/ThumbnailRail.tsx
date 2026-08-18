@@ -21,9 +21,6 @@ const THUMB_GAP_PX = 16;
 /** Side control columns — keeps chevrons outside the visible thumbs (≥44px RCS-04). */
 const CHEVRON_COLUMN_PX = 48;
 
-/** First photo in the global timeline (video is #1). */
-const FIRST_PHOTO_SLOT_INDEX = 1;
-
 /** Active border only — idle stays borderless (transparent keeps layout stable). */
 const THUMB_BORDER_PX = 4;
 /** White ring between gold border and thumb body (active); idle keeps transparent padding for stable size. */
@@ -234,6 +231,8 @@ export function ThumbnailRail() {
   /** Global Media Timeline — identical for every room; only activeIndex changes. */
   const mediaTimeline = gallery.thumbnails;
   const itemCount = mediaTimeline.length;
+  const firstPhotoIndex = mediaTimeline.findIndex((item) => item.kind === 'photo');
+  const firstPhotoSlot = firstPhotoIndex >= 0 ? firstPhotoIndex : 0;
 
   useHorizontalWheelScroll(scrollRef);
   const { canScrollLeft, canScrollRight, scrollGroup, scrollToSlot } =
@@ -298,7 +297,7 @@ export function ThumbnailRail() {
       if (!indexChanged) {
         skipNextIndexScrollRef.current = true;
       }
-      scrollToSlot(mediaMode === 'video' ? 0 : FIRST_PHOTO_SLOT_INDEX);
+      scrollToSlot(mediaMode === 'video' ? 0 : firstPhotoSlot);
       return;
     }
 
@@ -308,7 +307,7 @@ export function ThumbnailRail() {
         skipNextIndexScrollRef.current = true;
       }
       if (activeRoomId === 'exterior') {
-        scrollToSlot(FIRST_PHOTO_SLOT_INDEX);
+        scrollToSlot(firstPhotoSlot);
         return;
       }
       const roomPhotoIndex = firstPhotoTimelineIndexForRoom(
@@ -338,6 +337,7 @@ export function ThumbnailRail() {
     activeRoomId,
     experience.house,
     itemCount,
+    firstPhotoSlot,
     mediaMode,
     mediaModeEpoch,
     scrollToSlot,

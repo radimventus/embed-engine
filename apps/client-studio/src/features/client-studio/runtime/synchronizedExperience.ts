@@ -30,6 +30,8 @@ export type ProjectedMediaAsset = {
   readonly url: string;
   readonly thumbnailUrl: string;
   readonly title: string;
+  readonly roomId?: string | null;
+  readonly order?: number;
 };
 
 /**
@@ -207,6 +209,8 @@ function projectGlobalMediaTimeline(
         url: photo.url,
         thumbnailUrl: photo.url,
         title: photo.roomId,
+        roomId: photo.roomId,
+        order: photo.order,
       }),
     ),
   );
@@ -219,6 +223,8 @@ function projectGlobalMediaTimeline(
         url: video.url,
         thumbnailUrl: firstPhotoUrl ?? video.url,
         title: 'Tour',
+        roomId: video.roomId,
+        order: video.order,
       }),
     ),
   );
@@ -228,13 +234,19 @@ function projectGlobalMediaTimeline(
       kind: 'video' as const,
       src: video.url,
       thumbnailSrc: video.thumbnailUrl,
+      roomId: null,
+      order: video.order ?? Number.MAX_SAFE_INTEGER,
     })),
     ...gallery.map((photo) => ({
       kind: 'photo' as const,
       src: photo.url,
       thumbnailSrc: photo.thumbnailUrl,
+      roomId: photo.roomId ?? null,
+      order: photo.order ?? Number.MAX_SAFE_INTEGER,
     })),
-  ] satisfies HousePackageMediaItem[]);
+  ]
+    .sort((left, right) => left.order - right.order)
+    .map(({ order: _order, ...item }) => item) satisfies HousePackageMediaItem[]);
 
   return { gallery, videos, thumbnails };
 }

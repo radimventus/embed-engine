@@ -17,7 +17,6 @@ import type {
 import { useDecisionSessionRuntime } from '../client-studio/runtime/DecisionSessionRuntimeProvider';
 import {
   firstPhotoTimelineIndexForRoom,
-  roomIdForTimelineIndex,
 } from '../client-studio/runtime/experienceHouseMedia';
 import type { ExperienceFloorPlanRoom } from '../client-studio/runtime/synchronizedExperience';
 
@@ -79,7 +78,9 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
   const selectedFloor =
     context.navigation.currentFloor ?? floors[0] ?? '0';
 
-  const [mediaMode, setMediaModeState] = useState<MediaMode>('video');
+  const [mediaMode, setMediaModeState] = useState<MediaMode>(
+    projectedThumbnails[0]?.kind === 'video' ? 'video' : 'photo',
+  );
   const [activeMediaIndex, setActiveMediaIndex] = useState(0);
   const [mode, setMode] = useState<WalkthroughState['mode']>('ready');
   const [mediaModeEpoch, setMediaModeEpoch] = useState(0);
@@ -101,10 +102,8 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
     setMode('ready');
 
     /** Thumbnail already selected a photo of this room — keep that index. */
-    const roomForActivePhoto = roomIdForTimelineIndex(
-      experience.house,
-      activeMediaIndexRef.current,
-    );
+    const roomForActivePhoto =
+      projectedThumbnails[activeMediaIndexRef.current]?.roomId ?? null;
     if (roomForActivePhoto === activeRoomId) {
       return;
     }
@@ -156,7 +155,7 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
         }
         if (item?.kind === 'photo') {
           setMediaModeState('photo');
-          const roomId = roomIdForTimelineIndex(experience.house, mediaIndex);
+          const roomId = item.roomId;
           if (roomId !== null && roomId !== activeRoomId) {
             dispatch({ type: 'SelectRoom', roomId });
           }
@@ -164,11 +163,16 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
         setMode('ready');
       },
       setMediaMode: (nextMode: MediaMode) => {
+        const firstMatchingIndex = roomMediaItems.findIndex(
+          (item) => item.kind === nextMode,
+        );
+        const resolvedMode =
+          firstMatchingIndex >= 0 ? nextMode : 'photo';
         setMediaModeEpoch((value) => value + 1);
-        setMediaModeState(nextMode);
+        setMediaModeState(resolvedMode);
         setMode('ready');
-        if (nextMode === 'video') {
-          setActiveMediaIndex(0);
+        if (firstMatchingIndex >= 0) {
+          setActiveMediaIndex(firstMatchingIndex);
           return;
         }
         setActiveMediaIndex(firstPhotoIndex(roomMediaItems));
