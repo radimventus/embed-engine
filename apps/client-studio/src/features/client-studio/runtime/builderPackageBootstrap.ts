@@ -415,7 +415,10 @@ export async function ensureBuilderPackageBootstrapped(
     cachedMediaPublicRoot = mediaRoot;
     await loadFloorPlanGeometryForRooms(
       texts.roomsCsv,
-      mediaRoot,
+      // Durable state overlays authored text and uploaded media only. HP-003
+      // geometry remains required seed package infrastructure, so an absent
+      // optional API media object must not fail the entire Runtime bootstrap.
+      root,
       manifest.authoringDraft?.floorPlans !== 'not-authored',
     );
     const registries = buildRegistriesFromTexts(

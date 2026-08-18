@@ -80,6 +80,9 @@ export async function loadDurableHousePackageOverlay(
 
   return {
     files,
-    mediaPublicRoot: `${endpoint(houseId)}/media`,
+    // Builder package paths are already rooted at `media/...`. Keep the
+    // House Package endpoint as the base so projection produces exactly one
+    // `/media/` segment.
+    mediaPublicRoot: endpoint(houseId),
   };
 }

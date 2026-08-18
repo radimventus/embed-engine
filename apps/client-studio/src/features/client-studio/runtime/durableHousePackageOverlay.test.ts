@@ -11,7 +11,7 @@ import { loadDurableHousePackageOverlay } from './durableHousePackageOverlay';
 
 const seedRoot = '/house-packages/seed';
 const stableMediaRoot =
-  'https://api.conis.cz/public/house-packages/vpd-house/media';
+  'https://api.conis.cz/public/house-packages/vpd-house';
 
 const roomsCsv = `floor,room,name,area
 p1,living-room,Obývací pokoj,30`;
@@ -65,6 +65,56 @@ describe('durable VPD House Package overlay', () => {
         `${stableMediaRoot}/media/gallery/persisted.png`,
       );
       assert.equal(getBuilderPackagePublicRoot(), stableMediaRoot);
+    } finally {
+      globalThis.fetch = originalFetch;
+      resetBuilderPackageBootstrapForTests();
+    }
+  });
+
+  it('keeps required floor geometry on the static seed when durable media exists', async () => {
+    const originalFetch = globalThis.fetch;
+    const requests: string[] = [];
+    globalThis.fetch = async (input) => {
+      const url = String(input);
+      requests.push(url);
+      const files: Record<string, string> = {
+        [`${seedRoot}/rooms.csv`]: roomsCsv,
+        [`${seedRoot}/gallery.csv`]: galleryCsv,
+        [`${seedRoot}/videos.csv`]: videosCsv,
+        [`${seedRoot}/media/plans/p1.geometry.json`]: JSON.stringify({
+          schema: 'hp-003-floorplan-geometry',
+          schemaVersion: '1.0',
+          floorId: 'p1',
+          viewBox: { width: 1, height: 1 },
+          units: 'px',
+          rooms: [],
+        }),
+      };
+      return url in files
+        ? new Response(files[url], { status: 200 })
+        : new Response(null, { status: 404 });
+    };
+
+    try {
+      await ensureBuilderPackageBootstrapped(
+        seedRoot,
+        { identity: { id: 'vpd-house', title: 'VPD house', reference: 'vpd-house' } },
+        {
+          files: {
+            manifestJson: JSON.stringify({
+              validationMode: 'AUTHORING_DRAFT',
+              heroPath: 'media/hero/hero.png',
+              floorPlans: 'placeholder',
+            }),
+          },
+          mediaPublicRoot: stableMediaRoot,
+        },
+      );
+      assert.ok(requests.includes(`${seedRoot}/media/plans/p1.geometry.json`));
+      assert.equal(
+        requests.some((url) => url.includes('/media/media/plans/')),
+        false,
+      );
     } finally {
       globalThis.fetch = originalFetch;
       resetBuilderPackageBootstrapForTests();
