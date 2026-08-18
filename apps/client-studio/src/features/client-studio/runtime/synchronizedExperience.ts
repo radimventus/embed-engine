@@ -1,5 +1,6 @@
 import type { HousePackageMediaItem } from '@embed-engine/contracts';
 import type { ExperienceHouse, ExperienceHouseRoom } from '@embed-engine/model';
+import type { NormalizedHousePackageAssets } from '@embed-engine/object-house/builder-package';
 import type {
   ExperienceContext,
   FocusRoom,
@@ -137,8 +138,11 @@ export type SynchronizedExperience = {
 };
 
 /** Opening Hero from Runtime HousePackage media (Builder-derived). */
-function packageHeroMedia(house: ExperienceHouse): ProjectedMediaAsset | null {
-  const src = getOpeningHeroUrlFromHouse(house);
+function packageHeroMedia(
+  house: ExperienceHouse,
+  normalizedAssets?: NormalizedHousePackageAssets,
+): ProjectedMediaAsset | null {
+  const src = normalizedAssets?.hero?.src ?? getOpeningHeroUrlFromHouse(house);
   if (src.length === 0) {
     return null;
   }
@@ -147,7 +151,7 @@ function packageHeroMedia(house: ExperienceHouse): ProjectedMediaAsset | null {
     kind: 'image' as const,
     url: src,
     thumbnailUrl: src,
-    title: 'Hero',
+    title: normalizedAssets?.hero?.title ?? 'Hero',
   });
 }
 
@@ -173,13 +177,26 @@ function projectHouseDocuments(
  * Global Media Timeline — video(s) then all gallery photos in CSV order.
  * Identical for every room. Never filtered, reordered, or rebuilt per room.
  */
-function projectGlobalMediaTimeline(house: ExperienceHouse): {
+function projectGlobalMediaTimeline(
+  house: ExperienceHouse,
+  normalizedAssets?: NormalizedHousePackageAssets,
+): {
   readonly gallery: readonly ProjectedMediaAsset[];
   readonly videos: readonly ProjectedMediaAsset[];
   readonly thumbnails: readonly HousePackageMediaItem[];
 } {
-  const photos = listGlobalGalleryPhotos(house);
-  const tourVideos = listTourVideos(house);
+  const photos =
+    normalizedAssets?.gallery.map((item) => ({
+      order: item.order,
+      roomId: item.roomId,
+      url: item.src,
+    })) ?? listGlobalGalleryPhotos(house);
+  const tourVideos =
+    normalizedAssets?.videos.map((item) => ({
+      order: item.order,
+      roomId: item.roomId,
+      url: item.src,
+    })) ?? listTourVideos(house);
   const firstPhotoUrl = photos[0]?.url;
 
   const gallery = Object.freeze(
@@ -226,10 +243,14 @@ function projectRoomContext(
   room: ExperienceHouseRoom,
   experience: SessionExperience,
   globalMedia: ReturnType<typeof projectGlobalMediaTimeline>,
+  normalizedAssets?: NormalizedHousePackageAssets,
 ): ContextualActiveRoom {
-  const fallbackHero = packageHeroMedia(experience.house);
+  const fallbackHero = packageHeroMedia(experience.house, normalizedAssets);
   const documents = projectHouseDocuments(experience);
-  const roomPhotoUrls = listRoomGalleryUrls(experience.house, room.id);
+  const roomPhotoUrls =
+    normalizedAssets?.gallery
+      .filter((photo) => photo.roomId === room.id)
+      .map((photo) => photo.src) ?? listRoomGalleryUrls(experience.house, room.id);
   const roomHeroUrl = roomPhotoUrls[0];
   const heroMedia =
     roomHeroUrl !== undefined
@@ -353,16 +374,22 @@ function builderFloorIdFromNavigationFloor(floorKeyValue: string): string {
 
 function projectFloorPlan(
   experience: SessionExperience,
+  normalizedAssets?: NormalizedHousePackageAssets,
 ): ExperienceFloorPlanContext {
   const currentFloor =
     experience.context.navigation.currentFloor ??
     experience.context.navigation.floors[0] ??
     '0';
-  const floorPlanSrc =
-    getFloorPlanUrlForFloor(experience.house, currentFloor) ||
-    getFloorPlanUrlFromHouse(experience.house);
   const builderFloorId = builderFloorIdFromNavigationFloor(currentFloor);
-  const geometry = getFloorPlanGeometryForFloor(builderFloorId);
+  const normalizedFloor = normalizedAssets?.floors.find(
+    (floor) => floor.floorId === builderFloorId,
+  );
+  const floorPlanSrc =
+    normalizedFloor?.rasterSrc ??
+    (getFloorPlanUrlForFloor(experience.house, currentFloor) ||
+      getFloorPlanUrlFromHouse(experience.house));
+  const geometry =
+    normalizedFloor?.geometry ?? getFloorPlanGeometryForFloor(builderFloorId);
   // HP-003: viewBox + regions come only from published geometry.json (no TS fallback).
   const viewBoxWidth = geometry?.viewBox.width ?? 0;
   const viewBoxHeight = geometry?.viewBox.height ?? 0;
@@ -409,6 +436,7 @@ function projectSynchronizedContext(
   experience: SessionExperience,
   activeRoom: ContextualActiveRoom | null,
   globalMedia: ReturnType<typeof projectGlobalMediaTimeline>,
+  normalizedAssets?: NormalizedHousePackageAssets,
 ): SynchronizedExperienceContext {
   const { context } = experience;
 
@@ -421,7 +449,7 @@ function projectSynchronizedContext(
     }),
     roomMedia: projectRoomMedia(activeRoom, experience, globalMedia),
     hero: projectHeroContext(experience, activeRoom),
-    floorPlan: projectFloorPlan(experience),
+    floorPlan: projectFloorPlan(experience, normalizedAssets),
   });
 }
 
@@ -432,18 +460,26 @@ function projectSynchronizedContext(
  */
 export function projectSynchronizedExperience(
   experience: SessionExperience,
+  normalizedAssets?: NormalizedHousePackageAssets,
 ): SynchronizedExperience {
-  const globalMedia = projectGlobalMediaTimeline(experience.house);
+  const matchingAssets =
+    normalizedAssets?.houseId === experience.house.id ? normalizedAssets : undefined;
+  const globalMedia = projectGlobalMediaTimeline(experience.house, matchingAssets);
   const baseRoom = experience.context.activeRoom.room;
   const activeRoomId = experience.context.activeRoom.id;
   const activeRoom =
     baseRoom === null || activeRoomId === null
       ? null
-      : projectRoomContext(baseRoom, experience, globalMedia);
+      : projectRoomContext(baseRoom, experience, globalMedia, matchingAssets);
 
   return Object.freeze({
     house: experience.house,
-    context: projectSynchronizedContext(experience, activeRoom, globalMedia),
+    context: projectSynchronizedContext(
+      experience,
+      activeRoom,
+      globalMedia,
+      matchingAssets,
+    ),
   });
 }
 /** @deprecated Prefer `experience.context.hero` — kept for thin adapters. */

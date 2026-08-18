@@ -32,6 +32,7 @@ import { bootstrapEvents } from './bootstrapEvents';
 import {
   ensureBuilderPackageBootstrapped,
   getBuilderRuntimeHousePackage,
+  getNormalizedBuilderHousePackageAssets,
 } from './builderPackageBootstrap';
 import { loadDurableHousePackageOverlay } from './durableHousePackageOverlay';
 import {
@@ -463,7 +464,10 @@ export function DecisionSessionRuntimeProvider({
       throw new Error('DecisionSessionRuntime produced no Experience projection.');
     }
     return {
-      experience: projectSynchronizedExperience(base),
+      experience: projectSynchronizedExperience(
+        base,
+        getNormalizedBuilderHousePackageAssets(),
+      ),
       ready: true,
       houseKnowledge:
         canonicalHouseContext === null
