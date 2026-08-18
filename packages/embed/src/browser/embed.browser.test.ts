@@ -7,7 +7,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { promisify } from "node:util";
 import { after, describe, it } from "node:test";
-import { chromium } from "playwright";
+import { chromium, type Page } from "playwright";
 import { createServer as createViteServer } from "vite";
 import react from "@vitejs/plugin-react";
 import {
@@ -74,6 +74,23 @@ async function closeServer(
   await new Promise<void>((resolveClose, reject) => {
     server.close((error) => (error === undefined ? resolveClose() : reject(error)));
   });
+}
+
+async function assertRenderedFloorplanRaster(
+  page: Page,
+  expectedRasterSrc: string,
+): Promise<void> {
+  await page.waitForFunction(
+    (src) =>
+      document.querySelector("svg[data-floorplan-src] image")?.getAttribute("href") === src,
+    expectedRasterSrc,
+  );
+  const response = await page.evaluate(async (src) => {
+    const result = await fetch(src, { cache: "no-store" });
+    return { ok: result.ok, contentType: result.headers.get("content-type") };
+  }, expectedRasterSrc);
+  assert.equal(response.ok, true);
+  assert.match(response.contentType ?? "", /^image\//);
 }
 
 async function createCertificate(directory: string): Promise<{
@@ -352,9 +369,11 @@ describe("Embed browser integration", () => {
           "exterior",
         );
         const bungalovFloor = deliveryState.normalizedPresentationAssets.floors[0];
+        assert.ok(bungalovFloor !== undefined);
         assert.equal(bungalovFloor?.rasterSrc, "/house-packages/bungalov-4kk/media/plans/p1.webp");
         assert.equal(bungalovFloor?.geometry?.schema, "hp-003-floorplan-geometry");
         assert.equal(bungalovFloor?.geometry?.rooms.length, 10);
+        await assertRenderedFloorplanRaster(page, bungalovFloor.rasterSrc);
 
         const bungalovKitchenZone = page.locator('[data-room="kitchen"]');
         await bungalovKitchenZone.scrollIntoViewIfNeeded();
@@ -404,9 +423,11 @@ describe("Embed browser integration", () => {
           /^blob:/,
         );
         const vpdFloor = vpdState.normalizedPresentationAssets.floors[0];
+        assert.ok(vpdFloor !== undefined);
         assert.equal(vpdFloor?.rasterSrc, "/house-packages/patrovy-5kk/media/plans/p1.png");
         assert.equal(vpdFloor?.geometry?.schema, "hp-003-floorplan-geometry");
         assert.equal(vpdFloor?.geometry?.rooms.length, 10);
+        await assertRenderedFloorplanRaster(vpdPage, vpdFloor.rasterSrc);
 
         const vpdKitchenZone = vpdPage.locator('[data-room="kitchen"]');
         await vpdKitchenZone.scrollIntoViewIfNeeded();
