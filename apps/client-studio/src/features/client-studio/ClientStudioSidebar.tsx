@@ -16,6 +16,7 @@ import {
   listClientHouses,
   resolveClientRuntimeBinding,
 } from "./runtime/clientCanonicalBind";
+import { evidenceLog } from "./runtime/runtimeEvidence";
 
 /** Layout-spec fixed sidebar width (48px). */
 const SIDEBAR_WIDTH_PX = 48;
@@ -110,6 +111,15 @@ export function ClientStudioSidebar({
     [activeProjectId],
   );
   const activeHouseId = readActiveClientHouseId(binding);
+  evidenceLog("ClientStudioSidebar.selector", {
+    runtimeProjectId: binding.runtimeProjectId,
+    sessionProjectId: session?.projectId ?? null,
+    activeProjectId,
+    permittedHouseIds: houses.flatMap((house) =>
+      house.house === null ? [] : [house.house.houseId],
+    ),
+    activeHouseId,
+  });
 
   const switchActiveHouse = (houseId: string): void => {
     if (
