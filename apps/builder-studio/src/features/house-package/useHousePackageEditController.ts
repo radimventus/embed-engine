@@ -16,6 +16,7 @@ import {
   type ReleaseVerification,
 } from './releaseVerification';
 import { requestHousePackagePersist } from './requestHousePackagePersist';
+import { requestPlatformHousePackagePersist } from './requestPlatformHousePackage';
 import { requestHousePackagePublish } from './requestHousePackagePublish';
 import { runDiskHousePackageValidation } from './runHousePackageValidation';
 import { useHousePackageMount } from './useHousePackageMount';
@@ -191,7 +192,10 @@ export function useHousePackageEditController(
         );
         return;
       }
-      const result = await requestHousePackagePersist(files, diskRoot);
+      const result =
+        houseId === null
+          ? await requestHousePackagePersist(files, diskRoot)
+          : await requestPlatformHousePackagePersist(houseId, files);
       if (!result.ok) {
         apply(session.markSaveFailed(result.error));
         return;
@@ -207,7 +211,7 @@ export function useHousePackageEditController(
     } finally {
       setSaving(false);
     }
-  }, [apply, diskRoot, remount, session, snapshot]);
+  }, [apply, diskRoot, houseId, remount, session, snapshot]);
 
   const publish = useCallback(async (): Promise<HousePackageReleaseSummary | null> => {
     const dirty = snapshot !== null && snapshot.dirtyState !== 'clean';

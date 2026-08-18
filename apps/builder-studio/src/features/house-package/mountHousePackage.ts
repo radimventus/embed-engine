@@ -18,6 +18,10 @@ import {
 } from './housePackagePaths';
 import { readHeroRelativePathFromManifest } from './buildPersistFiles';
 import { planPairsFromRooms } from './validateHousePackageWorking';
+import {
+  requestPlatformHousePackageState,
+  type PlatformHousePackageState,
+} from './requestPlatformHousePackage';
 
 export type HousePackageMountTexts = {
   readonly galleryCsv: string;
@@ -55,6 +59,13 @@ export type MountHousePackageOptions = {
   readonly validationMode?: HousePackageMountValidationMode;
   /** Abort in-flight HTTP when workspace switches (PR-003B). */
   readonly signal?: AbortSignal;
+  /** Authenticated House whose durable Platform state overlays package defaults. */
+  readonly houseId?: string | null;
+  /** Injectable only to keep the durable overlay boundary testable. */
+  readonly loadPersistedState?: (
+    houseId: string,
+    signal?: AbortSignal,
+  ) => Promise<PlatformHousePackageState | null>;
 };
 
 export type HousePackageMountValidationMode =
@@ -171,13 +182,23 @@ export async function mountHousePackage(
       ? HOUSE_PACKAGE_URL_ROOT
       : `/${diskRoot.replace(/^apps\/client-studio\/public\//, '')}`;
   const validationMode = options.validationMode ?? 'PUBLISH_READY';
+  const loadPersistedState =
+    options.loadPersistedState ?? requestPlatformHousePackageState;
 
-  const [galleryCsv, roomsCsv, videosCsv, manifestJson] = await Promise.all([
+  const [diskGalleryCsv, diskRoomsCsv, diskVideosCsv, diskManifestJson] = await Promise.all([
     fetchText(`${packageUrlRoot}/gallery.csv`),
     fetchText(`${packageUrlRoot}/rooms.csv`),
     fetchText(`${packageUrlRoot}/videos.csv`),
     fetchText(`${packageUrlRoot}/manifest.json`).catch(() => null),
   ]);
+  const persisted =
+    options.houseId === null || options.houseId === undefined
+      ? null
+      : await loadPersistedState(options.houseId, signal);
+  const galleryCsv = persisted?.files.galleryCsv ?? diskGalleryCsv;
+  const roomsCsv = persisted?.files.roomsCsv ?? diskRoomsCsv;
+  const videosCsv = persisted?.files.videosCsv ?? diskVideosCsv;
+  const manifestJson = persisted?.files.manifestJson ?? diskManifestJson;
 
   const manifestHero = readHeroRelativePathFromManifest(manifestJson);
   const heroRelativePath =

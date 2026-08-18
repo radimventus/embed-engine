@@ -41,6 +41,17 @@ export type BuilderPackageBootstrapProjection = {
   readonly identity?: BuilderHousePackageProjectionOptions['identity'];
 };
 
+/**
+ * Durable VPD state overlays the seeded package text while its media remains
+ * addressable through the Platform API's stable per-house media endpoint.
+ */
+export type BuilderPackageDurableOverlay = {
+  readonly files: Partial<BuilderPackageCsvTexts> & {
+    readonly manifestJson?: string | null;
+  };
+  readonly mediaPublicRoot: string;
+};
+
 function csvPathsForPackageRoot(packagePublicRoot: string): {
   readonly gallery: string;
   readonly rooms: string;
@@ -138,15 +149,19 @@ function isAuthoringDraftManifest(value: unknown): value is AuthoringDraftManife
 
 async function loadAuthoringDraftManifest(
   packagePublicRoot: string,
+  manifestJson?: string | null,
 ): Promise<{
   readonly authoringDraft: AuthoringDraftManifest | null;
   readonly heroCopy: ReturnType<typeof readHeroCopyFromManifest>;
   readonly heroRelativePath: ReturnType<typeof readHeroRelativePathFromManifest>;
 }> {
   try {
-    const text = await fetchText(
-      `${packagePublicRoot.replace(/\/+$/, '')}/manifest.json`,
-    );
+    const text =
+      typeof manifestJson === 'string'
+        ? manifestJson
+        : await fetchText(
+            `${packagePublicRoot.replace(/\/+$/, '')}/manifest.json`,
+          );
     const parsed: unknown = JSON.parse(text);
     return {
       authoringDraft: isAuthoringDraftManifest(parsed) ? parsed : null,
@@ -318,15 +333,19 @@ function logBuilderPackageEvidence(
 let cachedRegistries: BuilderHousePackageImport | null = null;
 let cachedHousePackage: HousePackage | null = null;
 let cachedPackagePublicRoot: string | null = null;
+let cachedMediaPublicRoot: string | null = null;
 let cachedProjectionKey: string | null = null;
 let bootstrapPromise: Promise<BuilderHousePackageImport> | null = null;
 
 function projectionCacheKey(
   packagePublicRoot: string,
   projection?: BuilderPackageBootstrapProjection,
+  durableOverlay?: BuilderPackageDurableOverlay,
 ): string {
   const identityId = projection?.identity?.id ?? '';
-  return `${packagePublicRoot}::${identityId}`;
+  const durableMediaRoot = durableOverlay?.mediaPublicRoot ?? '';
+  const durableFiles = durableOverlay?.files ?? {};
+  return `${packagePublicRoot}::${identityId}::${durableMediaRoot}::${JSON.stringify(durableFiles)}`;
 }
 
 function projectCachedHousePackage(
@@ -358,9 +377,10 @@ function projectCachedHousePackage(
 export async function ensureBuilderPackageBootstrapped(
   packagePublicRoot: string = PACKAGE_ROOT_LABEL,
   projection?: BuilderPackageBootstrapProjection,
+  durableOverlay?: BuilderPackageDurableOverlay,
 ): Promise<BuilderHousePackageImport> {
   const root = packagePublicRoot.replace(/\/+$/, '') || PACKAGE_ROOT_LABEL;
-  const cacheKey = projectionCacheKey(root, projection);
+  const cacheKey = projectionCacheKey(root, projection, durableOverlay);
   if (
     cachedRegistries !== null &&
     cachedPackagePublicRoot === root &&
@@ -382,25 +402,32 @@ export async function ensureBuilderPackageBootstrapped(
   cachedProjectionKey = cacheKey;
 
   bootstrapPromise = (async () => {
-    const [texts, manifest] = await Promise.all([
+    const [seedTexts, manifest] = await Promise.all([
       loadBuilderPackageCsvTexts(root),
-      loadAuthoringDraftManifest(root),
+      loadAuthoringDraftManifest(root, durableOverlay?.files.manifestJson),
     ]);
+    const texts: BuilderPackageCsvTexts = {
+      galleryCsv: durableOverlay?.files.galleryCsv ?? seedTexts.galleryCsv,
+      roomsCsv: durableOverlay?.files.roomsCsv ?? seedTexts.roomsCsv,
+      videosCsv: durableOverlay?.files.videosCsv ?? seedTexts.videosCsv,
+    };
+    const mediaRoot = durableOverlay?.mediaPublicRoot ?? root;
+    cachedMediaPublicRoot = mediaRoot;
     await loadFloorPlanGeometryForRooms(
       texts.roomsCsv,
-      root,
+      mediaRoot,
       manifest.authoringDraft?.floorPlans !== 'not-authored',
     );
     const registries = buildRegistriesFromTexts(
       texts,
-      root,
+      mediaRoot,
       manifest.authoringDraft,
       manifest.heroRelativePath,
     );
     cachedRegistries = registries;
     projectCachedHousePackage(
       registries,
-      root,
+      mediaRoot,
       projection,
       manifest.authoringDraft?.validationMode === 'AUTHORING_DRAFT',
       manifest.heroCopy,
@@ -408,7 +435,7 @@ export async function ensureBuilderPackageBootstrapped(
     logBuilderPackageEvidence(
       registries,
       texts,
-      root,
+      mediaRoot,
       manifest.heroRelativePath,
     );
     return registries;
@@ -419,6 +446,7 @@ export async function ensureBuilderPackageBootstrapped(
   } catch (error) {
     bootstrapPromise = null;
     cachedPackagePublicRoot = null;
+    cachedMediaPublicRoot = null;
     cachedProjectionKey = null;
     throw error;
   }
@@ -438,7 +466,7 @@ export function getBuilderPackageRegistries(): BuilderHousePackageImport {
 
 /** Active package public root after bootstrap (for presentation asset URLs). */
 export function getBuilderPackagePublicRoot(): string {
-  return cachedPackagePublicRoot ?? PACKAGE_ROOT_LABEL;
+  return cachedMediaPublicRoot ?? cachedPackagePublicRoot ?? PACKAGE_ROOT_LABEL;
 }
 
 /**
@@ -471,6 +499,7 @@ export function bootstrapBuilderPackageRegistriesSyncForTests(
   }
   const root = packagePublicRoot.replace(/\/+$/, '') || PACKAGE_ROOT_LABEL;
   cachedPackagePublicRoot = root;
+  cachedMediaPublicRoot = root;
   cachedProjectionKey = projectionCacheKey(root, projection);
   const registries = buildRegistriesFromTexts(texts, root);
   cachedRegistries = registries;
@@ -484,6 +513,7 @@ export function resetBuilderPackageBootstrapForTests(): void {
   cachedRegistries = null;
   cachedHousePackage = null;
   cachedPackagePublicRoot = null;
+  cachedMediaPublicRoot = null;
   cachedProjectionKey = null;
   bootstrapPromise = null;
   clearFloorPlanGeometryCache();

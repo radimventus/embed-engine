@@ -32,4 +32,29 @@ describe('mediaProjection (EPIC-BX-05)', () => {
     assert.ok(gallery?.usages.includes('Gallery'));
     assert.ok(gallery?.usages.includes('House Navigator'));
   });
+
+  it('uses a stable house-scoped Platform reference for durable gallery media', () => {
+    const snapshot = {
+      working: {
+        galleryCsv: 'order,room,file\n1,exterior,01.webp\n',
+        videosCsv: 'order,room,provider,mediaId\n',
+        heroRelativePath: '',
+      },
+      validation: { builderImport: null },
+      geometryByFloor: {},
+      mountedAt: '2026-08-18T08:00:00.000Z',
+      dirtyState: 'clean',
+    } as never;
+    const model = buildMediaStudioModel({
+      projectId: 'house-a',
+      houseId: 'house-a',
+      snapshot,
+    });
+
+    assert.equal(
+      model.gallery[0]?.url,
+      'https://api.conis.cz/public/house-packages/house-a/media/media/gallery/01.webp',
+    );
+    assert.equal(model.gallery[0]?.fallbackUrl, '/house-package/media/gallery/01.webp');
+  });
 });

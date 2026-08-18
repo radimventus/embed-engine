@@ -47,6 +47,8 @@ import { HOUSE_PACKAGE_URL_ROOT } from '../house-package/housePackagePaths';
 
 type MediaStudioViewProps = {
   readonly projectId: string;
+  /** Active House Package scope for durable media uploads and references. */
+  readonly houseId: string;
   readonly projectName: string;
   readonly snapshot: HousePackageEditSnapshot | null;
   readonly session: HousePackageEditSession | null;
@@ -63,6 +65,7 @@ type MediaStudioViewProps = {
  */
 export function MediaStudioView({
   projectId,
+  houseId,
   projectName,
   snapshot,
   session,
@@ -81,8 +84,8 @@ export function MediaStudioView({
   const area = lockedArea ?? areaState;
 
   const model = useMemo(
-    () => buildMediaStudioModel({ projectId, snapshot }),
-    [projectId, snapshot, metaTick, stagingTick],
+    () => buildMediaStudioModel({ projectId, houseId, snapshot }),
+    [projectId, houseId, snapshot, metaTick, stagingTick],
   );
 
   const refreshMeta = () => setMetaTick((value) => value + 1);
@@ -164,6 +167,7 @@ export function MediaStudioView({
       {bulkKind !== null && (
         <BulkUploadDialog
           open
+          houseId={houseId}
           kind={bulkKind}
           initialFiles={bulkInitialFiles ?? undefined}
           autoStart={bulkAutoStart}
@@ -667,6 +671,12 @@ function GalleryManager({
               >
                 <img
                   src={item.url}
+                  onError={(event) => {
+                    if (event.currentTarget.dataset.fallbackApplied !== 'true') {
+                      event.currentTarget.dataset.fallbackApplied = 'true';
+                      event.currentTarget.src = item.fallbackUrl;
+                    }
+                  }}
                   alt={item.meta.alt || item.file}
                   className="aspect-[4/3] w-full object-cover"
                   draggable={false}

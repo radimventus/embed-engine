@@ -33,6 +33,7 @@ import {
   ensureBuilderPackageBootstrapped,
   getBuilderRuntimeHousePackage,
 } from './builderPackageBootstrap';
+import { loadDurableHousePackageOverlay } from './durableHousePackageOverlay';
 import {
   readClientBindCandidates,
   resolveClientActiveProjectId,
@@ -349,35 +350,56 @@ export function DecisionSessionRuntimeProvider({
     setLoadedRuntimeBindingKey(null);
 
     let cancelled = false;
-    void ensureBuilderPackageBootstrapped(root, {
-      identity: {
-        id: canonicalHouseId ?? '',
-        title: draftPackage?.name ?? projection?.house?.name ?? '',
-        reference: projection?.house?.slug ?? canonicalHouseId ?? '',
-      },
-    })
-      .then(() => {
-        if (cancelled) {
-          return;
+    const controller = new AbortController();
+    void (async () => {
+      let durableOverlay = null;
+      if (canonicalHouseId !== null) {
+        try {
+          durableOverlay = await loadDurableHousePackageOverlay(
+            canonicalHouseId,
+            controller.signal,
+          );
+        } catch (error) {
+          if (!controller.signal.aborted) {
+            console.warn(
+              '[ClientStudio] Persisted House Package unavailable; using seed package',
+              { houseId: canonicalHouseId, error },
+            );
+          }
         }
-        runtimeRef.current = createDecisionSessionRuntime({
-          housePackage: getBuilderRuntimeHousePackage(),
-          clock: createSystemClock(),
-          now: 1,
-        });
-        setPackageReady(true);
-        setLoadedRuntimeBindingKey(
-          runtimeBindingKey(canonicalHouseId, root),
-        );
-        setBootstrapError(null);
-        emitBindingEvidence(
-          'ready',
-          null,
-          runtimeBindingKey(canonicalHouseId, root),
-        );
-        setRevision((value) => value + 1);
-        bootstrapEvents.emit('RUNTIME_READY');
-      })
+      }
+      await ensureBuilderPackageBootstrapped(
+        root,
+        {
+          identity: {
+            id: canonicalHouseId ?? '',
+            title: draftPackage?.name ?? projection?.house?.name ?? '',
+            reference: projection?.house?.slug ?? canonicalHouseId ?? '',
+          },
+        },
+        durableOverlay ?? undefined,
+      );
+      if (cancelled) {
+        return;
+      }
+      runtimeRef.current = createDecisionSessionRuntime({
+        housePackage: getBuilderRuntimeHousePackage(),
+        clock: createSystemClock(),
+        now: 1,
+      });
+      setPackageReady(true);
+      setLoadedRuntimeBindingKey(
+        runtimeBindingKey(canonicalHouseId, root),
+      );
+      setBootstrapError(null);
+      emitBindingEvidence(
+        'ready',
+        null,
+        runtimeBindingKey(canonicalHouseId, root),
+      );
+      setRevision((value) => value + 1);
+      bootstrapEvents.emit('RUNTIME_READY');
+    })()
       .catch((error: unknown) => {
         if (!cancelled) {
           console.error('[ClientStudio] House package bootstrap failed', {
@@ -397,6 +419,7 @@ export function DecisionSessionRuntimeProvider({
       });
     return () => {
       cancelled = true;
+      controller.abort();
     };
   }, [
     injectedRuntime,

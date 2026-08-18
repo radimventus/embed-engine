@@ -17,15 +17,16 @@ describe('BU-001 bulk upload wiring', () => {
     assert.doesNotMatch(view, /univerzální upload/i);
   });
 
-  it('hosts Builder upload endpoint without Package Layer persist changes', () => {
-    const vite = readFileSync(
-      join(here, '../../../../vite.config.js'),
+  it('uses authenticated, house-scoped Platform media uploads', () => {
+    const request = readFileSync(
+      join(here, 'requestBulkMediaUpload.ts'),
       'utf8',
     );
-    assert.match(vite, /\/api\/house-package\/upload/);
-    assert.match(vite, /media\/gallery/);
-    assert.match(vite, /media\/plans/);
-    assert.match(vite, /media\/documents/);
+    assert.match(request, /requestPlatformHousePackageMediaUpload/);
+    assert.match(request, /houseId/);
+    assert.match(request, /relativeDir/);
+    assert.doesNotMatch(request, /\/api\/house-package\/upload/);
+    assert.doesNotMatch(request, /base64/);
   });
 
   it('polishes completion and deferred progress (BU-001A)', () => {

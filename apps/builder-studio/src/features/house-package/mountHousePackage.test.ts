@@ -150,4 +150,40 @@ describe('TASK-56I-minimal — VPD active package root', () => {
       ].sort(),
     );
   });
+
+  it('overlays an authenticated House durable state on every remount', async () => {
+    const files = new Map<string, string>([
+      ['/house-package/gallery.csv', 'order,room,file\n'],
+      ['/house-package/rooms.csv', 'floor,room,name,area\n'],
+      ['/house-package/videos.csv', 'order,room,provider,mediaId\n'],
+      ['/house-package/manifest.json', '{"source":"disk"}\n'],
+    ]);
+    const loadedHouseIds: string[] = [];
+
+    const mount = await mountHousePackage({
+      houseId: 'house-a',
+      validationMode: 'AUTHORING_DRAFT',
+      fetchText: async (url) => {
+        const text = files.get(url);
+        if (text === undefined) throw new Error(`Unexpected fetch: ${url}`);
+        return text;
+      },
+      probeExists: async () => false,
+      loadPersistedState: async (houseId) => {
+        loadedHouseIds.push(houseId);
+        return {
+          houseId,
+          updatedAt: '2026-08-18T08:00:00.000Z',
+          files: {
+            galleryCsv: 'order,room,file\n',
+            manifestJson: '{"source":"platform"}\n',
+          },
+        };
+      },
+    });
+
+    assert.deepEqual(loadedHouseIds, ['house-a']);
+    assert.equal(mount.texts.manifestJson, '{"source":"platform"}\n');
+    assert.equal(mount.mountedAt.length > 0, true);
+  });
 });
