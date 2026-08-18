@@ -7,7 +7,7 @@
     "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "outDir": "../../.cache/tsbuild/office-studio"
   },
   "include": ["vite.config.ts", "vite/pilotMailRelayPlugin.ts"]
 }

@@ -7,7 +7,7 @@
     "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "outDir": "../../.cache/tsbuild/builder-studio"
   },
   "include": ["vite.config.ts"]
 }

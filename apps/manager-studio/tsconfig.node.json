@@ -7,7 +7,7 @@
     "moduleResolution": "bundler",
     "strict": true,
     "skipLibCheck": true,
-    "noEmit": true
+    "outDir": "../../.cache/tsbuild/manager-studio"
   },
   "include": ["vite.config.ts"]
 }
