@@ -26,6 +26,7 @@ import {
   firstLast,
   isRuntimeEvidenceEnabled,
 } from './runtimeEvidence';
+import { normalizeHousePackageAssets } from './normalizeHousePackageAssets';
 
 const PACKAGE_ROOT_LABEL = '/house-package';
 const HERO_PATH = 'media/hero/hero.png';
@@ -49,8 +50,7 @@ export type BuilderPackageDurableOverlay = {
   readonly files: Partial<BuilderPackageCsvTexts> & {
     readonly manifestJson?: string | null;
   };
-  readonly mediaPublicRoot: string;
-  /** Authenticated durable media endpoint → browser-local blob URL. */
+  /** Package-relative asset path → authenticated browser-local URL. */
   readonly mediaUrls?: Readonly<Record<string, string>>;
 };
 
@@ -348,9 +348,9 @@ function projectionCacheKey(
   durableOverlay?: BuilderPackageDurableOverlay,
 ): string {
   const identityId = projection?.identity?.id ?? '';
-  const durableMediaRoot = durableOverlay?.mediaPublicRoot ?? '';
+  const durableMediaUrls = durableOverlay?.mediaUrls ?? {};
   const durableFiles = durableOverlay?.files ?? {};
-  return `${packagePublicRoot}::${identityId}::${durableMediaRoot}::${JSON.stringify(durableFiles)}`;
+  return `${packagePublicRoot}::${identityId}::${JSON.stringify(durableFiles)}::${JSON.stringify(durableMediaUrls)}`;
 }
 
 function projectCachedHousePackage(
@@ -372,19 +372,11 @@ function projectCachedHousePackage(
     packagePublicRoot,
     ...(heroCopy !== null ? { heroCopy } : {}),
   });
-  const projected =
-    mediaUrls === undefined && packagePublicRoot === staticPackagePublicRoot
-      ? housePackage
-      : {
-          ...housePackage,
-          media: housePackage.media.map((asset) => ({
-            ...asset,
-            url:
-              asset.type === 'floorplan'
-                ? `${staticPackagePublicRoot}${asset.url.slice(packagePublicRoot.length)}`
-                : (mediaUrls?.[asset.url] ?? asset.url),
-          })),
-        };
+  const projected = normalizeHousePackageAssets(
+    housePackage,
+    staticPackagePublicRoot,
+    mediaUrls,
+  );
   cachedHousePackage = projected;
   return projected;
 }
@@ -431,8 +423,11 @@ export async function ensureBuilderPackageBootstrapped(
       roomsCsv: durableOverlay?.files.roomsCsv ?? seedTexts.roomsCsv,
       videosCsv: durableOverlay?.files.videosCsv ?? seedTexts.videosCsv,
     };
-    const mediaRoot = durableOverlay?.mediaPublicRoot ?? root;
-    cachedMediaPublicRoot = mediaRoot;
+    // Registries describe package-relative assets. Keep that source invariant
+    // for every House; durable URLs are applied once by the normalizer after
+    // projection rather than changing the shape seen by Runtime consumers.
+    const mediaRoot = root;
+    cachedMediaPublicRoot = root;
     await loadFloorPlanGeometryForRooms(
       texts.roomsCsv,
       // Durable state overlays authored text and uploaded media only. HP-003

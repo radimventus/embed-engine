@@ -60,11 +60,15 @@ async function materializeAuthenticatedGalleryMedia(input: {
   readonly galleryCsv: string | undefined;
   readonly signal: AbortSignal | undefined;
 }): Promise<Readonly<Record<string, string>>> {
-  const urls = galleryMediaPaths(input.galleryCsv).map((path) =>
-    mediaEndpoint(input.houseId, path),
-  );
+  const paths = galleryMediaPaths(input.galleryCsv);
   const materialized = await Promise.all(
-    urls.map(async (url) => [url, await readAuthenticatedImageUrl(url, input.signal)] as const),
+    paths.map(async (path) => [
+      path,
+      await readAuthenticatedImageUrl(
+        mediaEndpoint(input.houseId, path),
+        input.signal,
+      ),
+    ] as const),
   );
   return Object.freeze(Object.fromEntries(materialized));
 }
@@ -138,10 +142,6 @@ export async function loadDurableHousePackageOverlay(
 
   return {
     files,
-    // Builder package paths are already rooted at `media/...`. Keep the
-    // House Package endpoint as the base so projection produces exactly one
-    // `/media/` segment.
-    mediaPublicRoot: endpoint(houseId),
     ...(Object.keys(mediaUrls).length > 0 ? { mediaUrls } : {}),
   };
 }

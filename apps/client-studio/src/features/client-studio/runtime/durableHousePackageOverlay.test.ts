@@ -25,7 +25,7 @@ const manifestJson = JSON.stringify({
 });
 
 describe('durable VPD House Package overlay', () => {
-  it('uses persisted CSV and manifest with stable Platform API media URLs', async () => {
+  it('normalizes persisted content against the same package root as seed content', async () => {
     const originalFetch = globalThis.fetch;
     globalThis.fetch = async (input) => {
       const url = String(input);
@@ -51,20 +51,20 @@ describe('durable VPD House Package overlay', () => {
         },
         {
           files: { galleryCsv, manifestJson },
-          mediaPublicRoot: stableMediaRoot,
+          mediaUrls: { 'media/gallery/persisted.png': 'blob:durable-gallery' },
         },
       );
 
       const house = getBuilderRuntimeHousePackage();
       assert.equal(
         house.media.find((asset) => asset.id === 'hero')?.url,
-        `${stableMediaRoot}/media/hero/persisted-hero.png`,
+        `${seedRoot}/media/hero/persisted-hero.png`,
       );
       assert.equal(
         house.media.find((asset) => asset.id.startsWith('gallery:'))?.url,
-        `${stableMediaRoot}/media/gallery/persisted.png`,
+        'blob:durable-gallery',
       );
-      assert.equal(getBuilderPackagePublicRoot(), stableMediaRoot);
+      assert.equal(getBuilderPackagePublicRoot(), seedRoot);
     } finally {
       globalThis.fetch = originalFetch;
       resetBuilderPackageBootstrapForTests();
@@ -107,7 +107,6 @@ describe('durable VPD House Package overlay', () => {
               floorPlans: 'placeholder',
             }),
           },
-          mediaPublicRoot: stableMediaRoot,
         },
       );
       assert.ok(requests.includes(`${seedRoot}/media/plans/p1.geometry.json`));
@@ -155,9 +154,8 @@ describe('durable VPD House Package overlay', () => {
       const overlay = await loadDurableHousePackageOverlay('vpd-house');
       assert.deepEqual(overlay, {
         files: { galleryCsv },
-        mediaPublicRoot: stableMediaRoot,
         mediaUrls: {
-          [`${stableMediaRoot}/media/gallery/persisted.png`]:
+          'media/gallery/persisted.png':
             `${stableMediaRoot}/media/gallery/persisted.png`,
         },
       });
@@ -194,7 +192,7 @@ describe('durable VPD House Package overlay', () => {
     try {
       const overlay = await loadDurableHousePackageOverlay('vpd-house');
       const mediaUrl = overlay?.mediaUrls?.[
-        `${stableMediaRoot}/media/gallery/persisted.png`
+        'media/gallery/persisted.png'
       ];
       assert.ok(mediaUrl?.startsWith('blob:'));
       assert.deepEqual(requests, [
@@ -231,7 +229,7 @@ describe('durable VPD House Package overlay', () => {
       const overlay = await loadDurableHousePackageOverlay('vpd-house');
       assert.equal(
         overlay?.mediaUrls?.[
-          `${stableMediaRoot}/media/gallery/persisted.png`
+          'media/gallery/persisted.png'
         ],
         `${stableMediaRoot}/media/gallery/persisted.png`,
       );
