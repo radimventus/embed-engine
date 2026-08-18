@@ -305,7 +305,17 @@ async function awaitAuthoritativeBuilderHouseScope(input: {
         : [input.authoredHouseIdentity]),
     ],
   });
-  if (!result.ok) throw new Error(result.error);
+  if (
+    !result.ok ||
+    result.session.projectId !== input.projectId ||
+    result.session.activeHouseId !== input.activeHouseId
+  ) {
+    throw new Error(
+      result.ok
+        ? 'Platform API nepotvrdilo požadovaný House scope.'
+        : result.error,
+    );
+  }
   savePlatformSession(result.session);
 }
 

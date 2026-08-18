@@ -228,6 +228,8 @@ export function WorkspaceHostApp() {
   const authoritativeMutationQueueRef = useRef<Promise<{
     readonly ok: boolean;
     readonly error?: string;
+    readonly projectId?: string | null;
+    readonly activeHouseId?: string | null;
   }>>(
     Promise.resolve({ ok: true }),
   );
@@ -239,7 +241,12 @@ export function WorkspaceHostApp() {
           typeof createPlatformAccessAuthClient
         >['mutateSessionContext']
       >[0],
-    ): Promise<{ readonly ok: boolean; readonly error?: string }> => {
+    ): Promise<{
+      readonly ok: boolean;
+      readonly error?: string;
+      readonly projectId?: string | null;
+      readonly activeHouseId?: string | null;
+    }> => {
       const queued = authoritativeMutationQueueRef.current.then(async () => {
         task42Trace('authoritative-mutation:start', { mutation });
 
@@ -274,7 +281,11 @@ export function WorkspaceHostApp() {
         setSharedActiveHouseId(result.session.activeHouseId);
 
         task42Trace('authoritative-mutation:applied', { mutation });
-        return { ok: true };
+        return {
+          ok: true,
+          projectId: result.session.projectId,
+          activeHouseId: result.session.activeHouseId,
+        };
       });
 
       authoritativeMutationQueueRef.current = queued;
@@ -450,14 +461,28 @@ export function WorkspaceHostApp() {
                 ),
                 requestedIdentity,
               ];
+        const requestedHouseId = event.data.houseId;
         void enqueueAuthoritativeMutation({
           action: 'switch',
           activeStudio: authoritativeStudioForSurface(surface),
           projectId,
-          activeHouseId: event.data.houseId,
+          activeHouseId: requestedHouseId,
           authoredHouseIdentities,
         }).then((result) => {
-          replyPort.postMessage(result);
+          const accepted =
+            result.ok &&
+            result.projectId === projectId &&
+            result.activeHouseId === requestedHouseId;
+          replyPort.postMessage(
+            accepted
+              ? { ok: true }
+              : {
+                  ok: false,
+                  error:
+                    result.error ??
+                    'Platform API nepotvrdilo požadovaný House scope.',
+                },
+          );
         });
         return;
       }
