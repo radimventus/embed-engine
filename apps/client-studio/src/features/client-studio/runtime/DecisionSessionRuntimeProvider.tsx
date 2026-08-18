@@ -131,6 +131,20 @@ export function isClientContentUnavailable(input: {
   );
 }
 
+export function isWorkspaceDraftContentUnavailable(input: {
+  readonly runtimeContentAvailable: boolean | undefined;
+  readonly authoringDraftPackage: {
+    readonly packageRoot: string;
+    readonly packagePublicRoot: string;
+    readonly name: string;
+  } | null;
+}): boolean {
+  return (
+    input.runtimeContentAvailable === false &&
+    input.authoringDraftPackage === null
+  );
+}
+
 export function createClientPackageBindingEvidence(input: {
   readonly canonicalHouseId: string | null;
   readonly workspaceHouseId: string | null;
@@ -206,8 +220,13 @@ export function DecisionSessionRuntimeProvider({
   /** CAP-PLAT-04h — Runtime bind House; package from House slice. */
   const runtimeBinding = resolveRuntimeBinding();
   const workspaceDraftBinding =
-    runtimeBinding.workspaceBinding?.runtimeContentAvailable === false
-      ? runtimeBinding.workspaceBinding
+    isWorkspaceDraftContentUnavailable({
+      runtimeContentAvailable:
+        runtimeBinding.workspaceBinding?.runtimeContentAvailable,
+      authoringDraftPackage:
+        runtimeBinding.workspaceBinding?.authoringDraftPackage ?? null,
+    })
+      ? runtimeBinding.workspaceBinding ?? null
       : null;
   const authoringDraftPackage =
     runtimeBinding.workspaceBinding?.authoringDraftPackage ?? null;
@@ -259,7 +278,12 @@ export function DecisionSessionRuntimeProvider({
 
     const binding = resolveRuntimeBinding();
     if (
-      binding.workspaceBinding?.runtimeContentAvailable === false ||
+      isWorkspaceDraftContentUnavailable({
+        runtimeContentAvailable:
+          binding.workspaceBinding?.runtimeContentAvailable,
+        authoringDraftPackage:
+          binding.workspaceBinding?.authoringDraftPackage ?? null,
+      }) ||
       clientContentUnavailable
     ) {
       runtimeRef.current = null;

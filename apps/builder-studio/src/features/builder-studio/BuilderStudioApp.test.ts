@@ -1,7 +1,10 @@
 import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
-import { resolveBuilderHousePackageRoot } from './resolveBuilderHousePackageRoot';
+import {
+  resolveBuilderHousePackageRoot,
+  shouldShowCanonicalHouseEmptyState,
+} from './resolveBuilderHousePackageRoot';
 
 describe('BuilderStudioApp VPD package binding', () => {
   it('mounts the populated VPD draft package even though its identity is canonical', () => {
@@ -29,6 +32,16 @@ describe('BuilderStudioApp VPD package binding', () => {
         {},
       ),
       null,
+    );
+  });
+
+  it('does not render the canonical empty state over a mounted VPD package', () => {
+    assert.equal(
+      shouldShowCanonicalHouseEmptyState(
+        {},
+        'apps/client-studio/public/house-packages/patrovy-5kk',
+      ),
+      false,
     );
   });
 });

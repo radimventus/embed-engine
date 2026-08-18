@@ -9,3 +9,10 @@ export function resolveBuilderHousePackageRoot(
     ? (input?.packageRoot.trim() || null)
     : null;
 }
+
+export function shouldShowCanonicalHouseEmptyState(
+  canonicalHouseContext: unknown,
+  diskRoot: string | null,
+): boolean {
+  return canonicalHouseContext !== null && diskRoot === null;
+}

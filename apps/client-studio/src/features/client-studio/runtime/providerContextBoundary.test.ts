@@ -8,6 +8,7 @@ import {
   isClientContentUnavailable,
   isRuntimeReadyForBinding,
   runtimeBindingKey,
+  isWorkspaceDraftContentUnavailable,
 } from './DecisionSessionRuntimeProvider';
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -47,6 +48,21 @@ describe('Context-only Provider boundary (ED-DA-04)', () => {
         runtimeHouseId:
           'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk',
         packagePublicRoot: '/house-packages/patrovy-5kk',
+      }),
+      false,
+    );
+  });
+
+  it('does not render the workspace-draft empty state for VPD authoring content', () => {
+    assert.equal(
+      isWorkspaceDraftContentUnavailable({
+        runtimeContentAvailable: false,
+        authoringDraftPackage: {
+          packageRoot:
+            'apps/client-studio/public/house-packages/patrovy-5kk',
+          packagePublicRoot: '/house-packages/patrovy-5kk',
+          name: 'Váš první dům',
+        },
       }),
       false,
     );

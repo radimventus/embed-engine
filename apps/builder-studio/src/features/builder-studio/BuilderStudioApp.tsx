@@ -48,7 +48,10 @@ import {
   createBuilderPackageRuntimeEvidence,
   logBuilderPackageRuntimeEvidence,
 } from './builderPackageRuntimeEvidence';
-import { resolveBuilderHousePackageRoot } from './resolveBuilderHousePackageRoot';
+import {
+  resolveBuilderHousePackageRoot,
+  shouldShowCanonicalHouseEmptyState,
+} from './resolveBuilderHousePackageRoot';
 
 const SECTION_LABEL: Record<HousePackageNavId, string> = {
   overview: 'Přehled',
@@ -446,7 +449,12 @@ export function BuilderStudioApp() {
         {workspace.switching && (
           <PlatformLoading label="Přepínám projekt…" />
         )}
-        {!workspace.switching && canonicalHouseContext !== null && (
+        {!workspace.switching &&
+          canonicalHouseContext !== null &&
+          shouldShowCanonicalHouseEmptyState(
+            canonicalHouseContext,
+            diskRoot,
+          ) && (
           <PlatformEmptyState
             icon="⌂"
             title={`${canonicalHouseContext.specification.identity.name} je aktivní`}
