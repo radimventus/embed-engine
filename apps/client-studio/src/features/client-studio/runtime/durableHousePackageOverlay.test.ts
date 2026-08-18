@@ -112,6 +112,12 @@ describe('durable VPD House Package overlay', () => {
       );
       assert.ok(requests.includes(`${seedRoot}/media/plans/p1.geometry.json`));
       assert.equal(
+        getBuilderRuntimeHousePackage().media.find(
+          (asset) => asset.id === 'floorplan:p1',
+        )?.url,
+        `${seedRoot}/media/plans/p1.png`,
+      );
+      assert.equal(
         requests.some((url) => url.includes('/media/media/plans/')),
         false,
       );

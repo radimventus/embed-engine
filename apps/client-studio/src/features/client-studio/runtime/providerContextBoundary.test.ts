@@ -82,6 +82,23 @@ describe('Context-only Provider boundary (ED-DA-04)', () => {
     );
   });
 
+  it('keeps runtimeEvidence outside the Client binding and readiness path', () => {
+    const provider = stripComments(
+      readSource(
+        'src/features/client-studio/runtime/DecisionSessionRuntimeProvider.tsx',
+      ),
+    );
+    const bootstrap = stripComments(
+      readSource(
+        'src/features/client-studio/runtime/builderPackageBootstrap.ts',
+      ),
+    );
+
+    assert.doesNotMatch(provider, /isRuntimeEvidenceEnabled/);
+    assert.match(bootstrap, /window\.setTimeout\(\(\) => \{/);
+    assert.match(bootstrap, /Evidence must not delay the bootstrap promise/);
+  });
+
   it('DecisionSessionRuntimeProvider does not expose runtime or interpretation', () => {
     const source = stripComments(
       readSource(

@@ -305,31 +305,34 @@ function logBuilderPackageEvidence(
     return;
   }
 
-  evidenceLog(
-    '1.BuilderPackage',
-    createBuilderPackageEvidence({
-      packagePublicRoot,
-      heroRelativePath,
-      registries,
-      texts,
-    }),
-  );
+  // Evidence must not delay the bootstrap promise or mask a binding race.
+  window.setTimeout(() => {
+    evidenceLog(
+      '1.BuilderPackage',
+      createBuilderPackageEvidence({
+        packagePublicRoot,
+        heroRelativePath,
+        registries,
+        texts,
+      }),
+    );
 
-  evidenceLog('2.RuntimeRegistry', {
-    gallery: firstLast(registries.gallery.entries),
-    hero: firstLast(registries.hero.entries),
-    rooms: firstLast(registries.rooms.rooms),
-    videos: firstLast(registries.videos.entries),
-    floors: firstLast(registries.floors.floors),
-  });
+    evidenceLog('2.RuntimeRegistry', {
+      gallery: firstLast(registries.gallery.entries),
+      hero: firstLast(registries.hero.entries),
+      rooms: firstLast(registries.rooms.rooms),
+      videos: firstLast(registries.videos.entries),
+      floors: firstLast(registries.floors.floors),
+    });
 
-  evidenceLog('6.RuntimeSource', {
-    usesBuilderPackageRegistry: true,
-    usesRuntimeHousePackageFromBuilder: true,
-    usesManifestJson: false,
-    usesReferenceHousePackage: false,
-    csvLoadMode: 'http-fetch-public-house-package',
-  });
+    evidenceLog('6.RuntimeSource', {
+      usesBuilderPackageRegistry: true,
+      usesRuntimeHousePackageFromBuilder: true,
+      usesManifestJson: false,
+      usesReferenceHousePackage: false,
+      csvLoadMode: 'http-fetch-public-house-package',
+    });
+  }, 0);
 }
 
 let cachedRegistries: BuilderHousePackageImport | null = null;
@@ -353,6 +356,7 @@ function projectionCacheKey(
 function projectCachedHousePackage(
   registries: BuilderHousePackageImport,
   packagePublicRoot: string,
+  staticPackagePublicRoot: string,
   projection?: BuilderPackageBootstrapProjection,
   isAuthoringDraft = false,
   heroCopy: ReturnType<typeof readHeroCopyFromManifest> = null,
@@ -369,13 +373,16 @@ function projectCachedHousePackage(
     ...(heroCopy !== null ? { heroCopy } : {}),
   });
   const projected =
-    mediaUrls === undefined
+    mediaUrls === undefined && packagePublicRoot === staticPackagePublicRoot
       ? housePackage
       : {
           ...housePackage,
           media: housePackage.media.map((asset) => ({
             ...asset,
-            url: mediaUrls[asset.url] ?? asset.url,
+            url:
+              asset.type === 'floorplan'
+                ? `${staticPackagePublicRoot}${asset.url.slice(packagePublicRoot.length)}`
+                : (mediaUrls?.[asset.url] ?? asset.url),
           })),
         };
   cachedHousePackage = projected;
@@ -444,6 +451,7 @@ export async function ensureBuilderPackageBootstrapped(
     projectCachedHousePackage(
       registries,
       mediaRoot,
+      root,
       projection,
       manifest.authoringDraft?.validationMode === 'AUTHORING_DRAFT',
       manifest.heroCopy,
@@ -496,6 +504,7 @@ export function getBuilderRuntimeHousePackage(): HousePackage {
   return projectCachedHousePackage(
     getBuilderPackageRegistries(),
     cachedPackagePublicRoot ?? PACKAGE_ROOT_LABEL,
+    cachedPackagePublicRoot ?? PACKAGE_ROOT_LABEL,
   );
 }
 
@@ -521,7 +530,7 @@ export function bootstrapBuilderPackageRegistriesSyncForTests(
   const registries = buildRegistriesFromTexts(texts, root);
   cachedRegistries = registries;
   bootstrapPromise = Promise.resolve(registries);
-  projectCachedHousePackage(registries, root, projection);
+  projectCachedHousePackage(registries, root, root, projection);
   return registries;
 }
 
