@@ -343,6 +343,74 @@ describe('Durable partner sessions', () => {
     }
   });
 
+  it('preserves the selected DSE first House across Builder, Client, Manager, Sales, and Builder', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-partner-studio-loop-test-'));
+    const statePath = join(directory, 'partner-sessions.json');
+    const repository = new FilePartnerSessionRepository(statePath);
+    const vpdHouseId =
+      'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk';
+
+    try {
+      const issued = await repository.activate({
+        invite: {
+          id: 'invite-conis-admin-studio-loop',
+          email: 'admin-studio-loop@conis.test',
+          displayName: 'CONIS Admin',
+          roles: ['conis-admin'],
+          tenantId: 'tenant-conis-admin',
+          companyId: 'company-conis',
+          workspaceId: 'workspace-conis',
+          projectId: 'project-conis',
+        },
+        password: 'secure-password',
+        rememberMe: true,
+      });
+      const entered = await repository.mutateContext(issued.token, {
+        action: 'enter',
+        partnerId: 'p-dse',
+        tenantId: 'tenant-domy-s-energii',
+        companyId: 'company-domy-s-energii',
+        workspaceId: 'domy-s-energii-main',
+        projectId: 'project-domy-s-energii',
+        activeHouseId: vpdHouseId,
+        authoredHouseIdentities: [
+          {
+            houseId: vpdHouseId,
+            name: 'VÁŠ PRVNÍ DŮM',
+            canonicalProjectId: 'project-domy-s-energii',
+            packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
+            dataMode: 'LIVE_EMPTY',
+            status: 'draft',
+          },
+        ],
+        activeStudio: 'builder',
+        officeReturnHref: 'https://conis.cz:4181/partners/p-dse',
+      });
+
+      assert.ok(entered !== null);
+      assert.equal(entered.activeHouseId, vpdHouseId);
+
+      let current = entered;
+      for (const activeStudio of ['client', 'manager', 'sales', 'builder'] as const) {
+        current = await repository.mutateContext(issued.token, {
+          action: 'switch',
+          activeStudio,
+          projectId: 'project-domy-s-energii',
+          activeHouseId: vpdHouseId,
+          authoredHouseIdentities: current.workspaceContext?.authoredHouseIdentities,
+        });
+        assert.ok(current !== null);
+        assert.equal(current.projectId, 'project-domy-s-energii');
+        assert.equal(current.activeHouseId, vpdHouseId);
+        assert.equal(current.workspaceContext?.projectId, 'project-domy-s-energii');
+        assert.equal(current.workspaceContext?.activeHouseId, vpdHouseId);
+        assert.equal(current.activeStudioId, activeStudio);
+      }
+    } finally {
+      await rm(directory, { recursive: true, force: true });
+    }
+  });
+
   it('persists AC Modular / MODERN scope through authoritative Partner Environment switch and repository restart', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-scope-switch-test-'));
     const statePath = join(directory, 'partner-sessions.json');

@@ -44,7 +44,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
   it('seeds canonical Houses from their respective Projects', () => {
     const state = createInitialWorkspaceRegistry();
     assert.equal(state.companies.length, 2);
-    assert.equal(state.projects.length, 5);
+    assert.equal(state.projects.length, 6);
     assert.equal(state.activeProjectId, 'villa-168');
     assert.deepEqual(
       state.projects
@@ -133,7 +133,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     );
     state = closeWorkspaceProject(state);
     assert.equal(state.activeProjectId, null);
-    assert.equal(state.projects.length, 5);
+    assert.equal(state.projects.length, 6);
     assert.equal(state.lastOpenedProjectId, 'harmony-124');
   });
 
@@ -453,7 +453,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     ).map((house) => house.id);
     assert.ok(dseHouseIds.includes('dse-client-house'));
     assert.ok(!dseHouseIds.includes('modern-4kk'));
-    assert.equal(dseHouseIds.length, 2);
+    assert.equal(dseHouseIds.length, 3);
     assert.equal(
       housesForFolder(created.state, 'project-ac-modular').some(
         (house) => house.id === created.project.id,
@@ -680,7 +680,10 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     assert.equal(restored.activeFolderId, 'project-domy-s-energii');
     assert.notEqual(restored.activeProjectId, 'modern-4kk');
     assert.ok(!dseHouseIds.includes('modern-4kk'));
-    assert.equal(dseHouseIds.length, 1);
+    assert.deepEqual(dseHouseIds.sort(), [
+      DSE_FIRST_DRAFT_HOUSE_ID,
+      'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+    ]);
     assert.deepEqual(acHouseIds.sort(), [
       'family-98',
       'harmony-124',
@@ -838,7 +841,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
       'project-domy-s-energii',
     ).map((house) => house.id);
     assert.ok(!dseHouseIds.includes('modern-4kk'));
-    assert.equal(dseHouseIds.length, 1);
+    assert.equal(dseHouseIds.length, 2);
     assert.ok(getCanonicalHouse('legacy-ac-1')?.house);
   });
 

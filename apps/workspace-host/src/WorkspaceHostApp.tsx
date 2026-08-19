@@ -53,6 +53,13 @@ const WORKSPACE_SCOPE_WRITER_SURFACES = [
   'client',
 ] as const;
 
+type AuthoritativeMutationResult = {
+  readonly ok: boolean;
+  readonly error?: string;
+  readonly projectId?: string | null;
+  readonly activeHouseId?: string | null;
+};
+
 /** PT-OS-02 / B-02 / B-03 — bind iframe studios to Shared Project from session. */
 function withProjectIdQuery(
   href: string,
@@ -225,12 +232,7 @@ export function WorkspaceHostApp() {
 
   const effectiveCompanyId = session?.companyId ?? ctx?.companyId ?? null;
   const effectiveProjectId = session?.projectId ?? ctx?.projectId ?? null;
-  const authoritativeMutationQueueRef = useRef<Promise<{
-    readonly ok: boolean;
-    readonly error?: string;
-    readonly projectId?: string | null;
-    readonly activeHouseId?: string | null;
-  }>>(
+  const authoritativeMutationQueueRef = useRef<Promise<AuthoritativeMutationResult>>(
     Promise.resolve({ ok: true }),
   );
 
@@ -241,23 +243,17 @@ export function WorkspaceHostApp() {
           typeof createPlatformAccessAuthClient
         >['mutateSessionContext']
       >[0],
-    ): Promise<{
-      readonly ok: boolean;
-      readonly error?: string;
-      readonly projectId?: string | null;
-      readonly activeHouseId?: string | null;
-    }> => {
+    ): Promise<AuthoritativeMutationResult> => {
       const queued = authoritativeMutationQueueRef.current.then(async () => {
         task42Trace('authoritative-mutation:start', { mutation });
 
         let result;
         try {
-          result = await createPlatformAccessAuthClient().mutateSessionContext(mutation);
+          result =
+            await createPlatformAccessAuthClient().mutateSessionContext(mutation);
         } catch {
-          return {
-            ok: false,
-            error: 'Platform API se nepodařilo spojit.',
-          };
+          task42Trace('authoritative-mutation:fail', { mutation });
+          return { ok: false, error: 'Platform API se nepodařilo spojit.' };
         }
 
         if (!result.ok) {
@@ -318,6 +314,7 @@ export function WorkspaceHostApp() {
         to: next,
       });
 
+      const previousSession = loadPlatformSession();
       const result = switchOperatorPartnerStudio(next, {
         navigate: false,
         retainWorkspace: true,
@@ -363,6 +360,16 @@ export function WorkspaceHostApp() {
           activeHouseId: nextSession.activeHouseId,
           authoredHouseIdentities:
             nextSession.workspaceContext?.authoredHouseIdentities,
+        }).then((accepted) => {
+          if (!accepted.ok && previousSession !== null) {
+            savePlatformSession(previousSession);
+            setSharedProjectId(previousSession.projectId);
+            setSharedActiveHouseId(previousSession.activeHouseId);
+            task42Trace('surface-select:persistence-fail', {
+              from: surface,
+              to: next,
+            });
+          }
         });
       }
     },

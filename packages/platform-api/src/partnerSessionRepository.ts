@@ -420,12 +420,28 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
           workspaceContext,
         };
       } else if (mutation.action === 'switch') {
-        const context = current.workspaceContext;
+        const context: PartnerWorkspaceContext =
+          current.workspaceContext ?? {
+            operatorMode: true,
+            partnerId: account.companyId,
+            companyId: account.companyId,
+            workspaceId: account.workspaceId,
+            projectId: account.projectId,
+            activeHouseId: current.activeHouseId ?? null,
+            activeStudio: mutation.activeStudio,
+            officeReturnHref: '',
+            previous: {
+              tenantId: account.tenantId,
+              companyId: account.companyId,
+              workspaceId: account.workspaceId,
+              projectId: account.projectId,
+            },
+          };
 
         const requestedProjectId =
           mutation.projectId?.trim() ||
           current.projectId ||
-          context?.projectId ||
+          context.projectId ||
           account.projectId;
 
         const DSE_SCOPE = {
@@ -466,28 +482,24 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
           ) {
             return null;
           }
-
           if (
             mutation.tenantId !== undefined &&
             mutation.tenantId !== account.tenantId
           ) {
             return null;
           }
-
           if (
             mutation.companyId !== undefined &&
             mutation.companyId !== account.companyId
           ) {
             return null;
           }
-
           if (
             mutation.workspaceId !== undefined &&
             mutation.workspaceId !== account.workspaceId
           ) {
             return null;
           }
-
           if (
             mutation.projectId !== undefined &&
             mutation.projectId !== account.projectId
@@ -523,7 +535,7 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
               house.canonicalProjectId === targetScope.projectId &&
               house.status === 'draft',
           ) ??
-          context?.authoredHouseIdentities?.filter(
+          context.authoredHouseIdentities?.filter(
             (house) => house.canonicalProjectId === targetScope.projectId,
           ) ??
           [];

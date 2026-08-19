@@ -219,6 +219,7 @@ function resolveAuthoringHouses(input: {
     byId.set(projection.house.houseId, projection);
   }
   const authoredIds = new Set([
+    DSE_FIRST_DRAFT_HOUSE_ID,
     ...Object.keys(input.houseFolderIds),
     ...Object.keys(input.houseLabels),
     ...Object.keys(input.houseMetadata),
@@ -1254,7 +1255,10 @@ export function mergePersistedWorkspaceSlice(
   for (const [houseId, packageRoot] of Object.entries(
     migrated.housePackageRoots,
   )) {
-    const canonicalProjectId = migrated.houseFolderIds[houseId];
+    const persistedProjectId = migrated.houseFolderIds[houseId];
+    const existingCanonicalHouse = getCanonicalHouse(houseId);
+    const canonicalProjectId =
+      existingCanonicalHouse?.project.projectId ?? persistedProjectId;
     const folder = migrated.folders.find(
       (item) => item.id === canonicalProjectId,
     );
