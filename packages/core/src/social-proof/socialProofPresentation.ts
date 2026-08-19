@@ -5,8 +5,13 @@ import {
   customerFacingPriorityForm,
   customerFacingTimeWindowForm,
   selectPersonPredicate,
+  type CustomerFacingPersonPredicateForms,
 } from "../customer-language/czechRealization";
 import type { SocialProofSignal } from "./socialProofSignal";
+import {
+  derivedSocialProofPercentage,
+  type SocialProofMetric,
+} from "./socialProofCatalog";
 
 export type SocialProofPresentationIcon = "viewing" | "saved" | "inquiry";
 
@@ -131,4 +136,39 @@ export function presentSocialProofSignal(
       });
     }
   }
+}
+
+/** Presents the canonical COUNT/SHARE catalog without accepting raw producer copy. */
+export function presentSocialProofMetric(
+  metric: SocialProofMetric,
+): SocialProofPresentation | null {
+  const count = customerFacingPersonCount(metric.numerator);
+  const percentage = derivedSocialProofPercentage(metric);
+  const priority = metric.priorityId === undefined
+    ? null
+    : customerFacingPriorityForm(metric.priorityId);
+  const countForms: Partial<Record<SocialProofMetric["topic"], CustomerFacingPersonPredicateForms>> = {
+    LAND_VALIDATION: { singular: "požádal o ověření tohoto domu na svém pozemku", plural: "požádali o ověření tohoto domu na svém pozemku", numericPlural: "požádalo o ověření tohoto domu na svém pozemku" },
+    LAND_SEARCH: { singular: "požádal o pomoc s hledáním vhodného pozemku", plural: "požádali o pomoc s hledáním vhodného pozemku", numericPlural: "požádalo o pomoc s hledáním vhodného pozemku" },
+    PDF: { singular: "si nechal poslat informace o tomto domu v PDF", plural: "si nechali poslat informace o tomto domu v PDF", numericPlural: "si nechalo poslat informace o tomto domu v PDF" },
+    RETURN_TO_TOUR: { singular: "se po nastavení priorit vrátil k prohlídce domu", plural: "se po nastavení priorit vrátili k prohlídce domu", numericPlural: "se po nastavení priorit vrátilo k prohlídce domu" },
+    OWN_QUESTION: { singular: "položil vlastní otázku k tomuto domu", plural: "položili vlastní otázku k tomuto domu", numericPlural: "položilo vlastní otázku k tomuto domu" },
+  };
+  if (metric.group === "COUNT") {
+    const forms = countForms[metric.topic];
+    if (count === null || forms === undefined) return null;
+    return Object.freeze({ id: `count:${metric.topic}`, icon: "inquiry", value: String(count.value), text: `${count.noun} ${selectPersonPredicate(count, forms)}.` });
+  }
+  if (metric.group === "SHARE" && percentage !== null) {
+    const text = metric.topic === "TOP_PRIORITY" && priority !== null
+      ? `zájemců označilo ${priority.accusative} za prioritu.`
+      : ({
+          RETURN_SHARE: "zájemců se po nastavení priorit vrátilo k prohlídce domu.",
+          SET_PRIORITIES: "zájemců si nastavilo vlastní priority.",
+          FAQ: "zájemců využilo odpovědi na časté otázky.",
+          CHAT: "zájemců pokračovalo k osobnímu rozhovoru v chatu.",
+        } as Partial<Record<SocialProofMetric["topic"], string>>)[metric.topic];
+    return text === undefined ? null : Object.freeze({ id: `share:${metric.topic}:${metric.priorityId ?? ""}`, icon: "inquiry", value: `${percentage} %`, text });
+  }
+  return null;
 }

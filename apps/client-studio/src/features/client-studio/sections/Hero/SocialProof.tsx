@@ -1,6 +1,7 @@
 import { colors } from "@embed-engine/design-tokens";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Panel } from "@embed-engine/ui";
+import { SOCIAL_PROOF_TICK_MS } from "@embed-engine/core";
 
 import { SocialProofIcon } from "./SocialProofIcon";
 import {
@@ -10,11 +11,11 @@ import {
   useSocialProofFeed,
 } from "./useSocialProofFeed";
 
-const FEED_TICKER_PAUSE_MS = 12000;
+const FEED_TICKER_PAUSE_MS = SOCIAL_PROOF_TICK_MS;
 const FEED_TICKER_SLIDE_MS = 400;
 const FEED_VISIBLE_ITEM_COUNT = 3;
 
-function SocialProofItem({ icon, value, message }: SocialProofEntry) {
+function SocialProofItem({ icon, value, text }: SocialProofEntry) {
   return (
     <div className="flex min-w-0 items-center gap-3">
       <SocialProofIcon name={icon} />
@@ -23,7 +24,7 @@ function SocialProofItem({ icon, value, message }: SocialProofEntry) {
           <span className="mr-2 text-2xl font-bold tracking-tight">
             {value}
           </span>
-          {message}
+          {text}
         </p>
       </div>
     </div>
@@ -99,7 +100,7 @@ export function SocialProof() {
                 );
                 recentMessagesRef.current = [
                   ...recentMessagesRef.current,
-                  entries[next]!.message,
+                  entries[next]!.id,
                 ].slice(-12);
                 return next;
               });

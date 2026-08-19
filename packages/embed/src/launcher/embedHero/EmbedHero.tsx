@@ -1,6 +1,12 @@
 import { colors } from "@embed-engine/design-tokens";
+import {
+  createSocialProofTickerSchedule,
+  nextSocialProofTickerIndex,
+  resolveSocialProofFeed,
+  SOCIAL_PROOF_TICK_MS,
+} from "@embed-engine/core";
 import { PrimaryLink } from "@embed-engine/ui";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const SECTION_SURFACE_CLASS =
   "overflow-hidden rounded-[11px] border border-embed-border-default bg-[#FFFFFF] shadow-[0_1px_11px_rgba(0,25,48,0.044)]";
@@ -23,40 +29,6 @@ const REFERENCE_HERO_SRC = "/media/house-modern-01/exterior.webp";
 
 /** Compact layout threshold — matches reference mobile breakpoint. */
 const COMPACT_MAX_WIDTH_PX = 767;
-const SOCIAL_PROOF_REVEAL_MS = 8000;
-
-const LAUNCHER_SOCIAL_PROOF_ENTRIES = [
-  {
-    icon: "viewing",
-    value: "Tour",
-    label: "je připravená z ověřeného House package",
-  },
-  {
-    icon: "saved",
-    value: "Půdorys",
-    label: "je součástí prohlídky domu",
-  },
-  {
-    icon: "inquiry",
-    value: "BUNGALOV 4KK",
-    label: "je referenční House pro tuto Experience",
-  },
-  {
-    icon: "viewing",
-    value: "Prostor",
-    label: "si můžete projít vlastním tempem",
-  },
-  {
-    icon: "saved",
-    value: "Detaily",
-    label: "zůstávají dostupné i během prohlídky",
-  },
-  {
-    icon: "inquiry",
-    value: "Otázky",
-    label: "můžete otevřít až podle vlastního pohledu",
-  },
-] as const;
 
 export type EmbedHeroProps = {
   readonly assetBase?: string;
@@ -257,11 +229,20 @@ function EmbedHeroImage({
 
 function EmbedSocialProof({ compact }: { readonly compact: boolean }) {
   const [startIndex, setStartIndex] = useState(0);
+  const entries = useMemo(
+    () =>
+      createSocialProofTickerSchedule(resolveSocialProofFeed({
+        houseId: "bungalov-4kk",
+        isReferenceHouse: true,
+      })),
+    [],
+  );
+  if (entries.length === 0) return null;
   const visibleEntries = Array.from(
     { length: compact ? 1 : 3 },
     (_, offset) =>
-      LAUNCHER_SOCIAL_PROOF_ENTRIES[
-        (startIndex + offset) % LAUNCHER_SOCIAL_PROOF_ENTRIES.length
+      entries[
+        (startIndex + offset) % entries.length
       ]!,
   );
 
@@ -270,12 +251,12 @@ function EmbedSocialProof({ compact }: { readonly compact: boolean }) {
       () =>
         setStartIndex(
           (current) =>
-            (current + 1) % LAUNCHER_SOCIAL_PROOF_ENTRIES.length,
+            nextSocialProofTickerIndex(current, entries),
         ),
-      SOCIAL_PROOF_REVEAL_MS,
+      SOCIAL_PROOF_TICK_MS,
     );
     return () => window.clearInterval(timer);
-  }, []);
+  }, [entries.length]);
 
   return (
     <section
@@ -309,7 +290,7 @@ function EmbedSocialProof({ compact }: { readonly compact: boolean }) {
         </>
       ) : null}
       {visibleEntries.map((entry) => (
-        <SocialProofItem key={entry.value} {...entry} />
+        <SocialProofItem key={entry.id} label={entry.text} {...entry} />
       ))}
     </section>
   );

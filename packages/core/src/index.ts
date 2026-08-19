@@ -17,6 +17,9 @@ export * from "./customer-language/houseIdentity";
 export * from "./customer-language/priorityCorpusV1";
 export * from "./social-proof/socialProofSignal";
 export * from "./social-proof/socialProofPresentation";
+export * from "./social-proof/socialProofCatalog";
+export * from "./social-proof/resolveSocialProofFeed";
+export * from "./social-proof/socialProofTicker";
 
 export type {
   Experience,

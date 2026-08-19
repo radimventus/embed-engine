@@ -83,7 +83,7 @@ export function AmbientSocialProof({
           );
           recentMessagesRef.current = [
             ...recentMessagesRef.current,
-            entries[next]!.message,
+            entries[next]!.id,
           ].slice(-12);
           return next;
         });
@@ -108,7 +108,7 @@ export function AmbientSocialProof({
           <span className="mr-2 text-xl font-bold tracking-tight">
             {entry.value}
           </span>
-          {entry.message}
+          {entry.text}
         </p>
       </div>
     </aside>

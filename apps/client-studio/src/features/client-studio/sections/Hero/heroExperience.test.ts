@@ -81,13 +81,11 @@ describe("Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)", (
     assert.match(hero, /grid-cols-\[minmax\(0,1fr\)_minmax\(0,2fr\)\]/);
     assert.equal(hero.includes("tablet:grid-cols"), false);
     assert.match(socialProof, /useSocialProofFeed/);
-    assert.match(feed, /TASK-40\.5/);
-    assert.match(feed, /useSocialProofReadModel/);
-    assert.match(feed, /presentSocialProofSignal/);
-    assert.match(feed, /normalizeSocialProofSignal/);
+    assert.match(feed, /resolveSocialProofFeed/);
+    assert.match(feed, /createSocialProofTickerSchedule/);
     assert.equal(feed.includes("právě prohlížejí"), false);
     assert.equal(feed.includes("dokončených prohlídek"), false);
-    assert.match(socialProof, /FEED_TICKER_PAUSE_MS = 12000/);
+    assert.match(socialProof, /FEED_TICKER_PAUSE_MS = SOCIAL_PROOF_TICK_MS/);
     assert.match(socialProof, /id="social-proof"/);
     assert.match(socialProof, /entries\.length > 0 \?/);
     assert.doesNotMatch(
