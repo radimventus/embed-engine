@@ -1,5 +1,7 @@
 export type EmbedHeroProps = {
     readonly assetBase?: string;
+    readonly houseId: string;
+    readonly isReferenceHouse: boolean;
     /** Called when the primary CTA is activated (opens Experience). */
     readonly onOpenExperience: () => void;
 };
@@ -9,5 +11,5 @@ export type EmbedHeroProps = {
  * SSOT: docs/architecture/HERO-V1-FREEZE.md
  * CTA opens Experience — does not scroll inside Studio.
  */
-export declare function EmbedHero({ assetBase, onOpenExperience }: EmbedHeroProps): import("react").JSX.Element;
+export declare function EmbedHero({ assetBase, houseId, isReferenceHouse, onOpenExperience, }: EmbedHeroProps): import("react").JSX.Element;
 //# sourceMappingURL=EmbedHero.d.ts.map

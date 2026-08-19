@@ -4,6 +4,8 @@
 export type MountEmbedHeroOptions = {
     readonly host: HTMLElement;
     readonly assetBase?: string;
+    readonly houseId: string;
+    readonly isReferenceHouse: boolean;
     readonly onOpenExperience: () => void;
 };
 export type MountedEmbedHero = {
