@@ -22,7 +22,7 @@ const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
 } as const;
 
 const SOCIAL_PROOF_COLUMN_DIVIDER_STYLE = {
-  backgroundColor: colors.action.accent,
+  backgroundColor: "#D4AF37",
 } as const;
 
 const REFERENCE_HERO_SRC = "/media/house-modern-01/exterior.webp";
@@ -239,6 +239,7 @@ function EmbedSocialProof({
   readonly isReferenceHouse: boolean;
 }) {
   const [startIndex, setStartIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const entries = useMemo(
     () =>
       createSocialProofTickerSchedule(resolveSocialProofFeed({
@@ -249,7 +250,7 @@ function EmbedSocialProof({
   );
   if (entries.length === 0) return null;
   const visibleEntries = Array.from(
-    { length: compact ? 1 : 3 },
+    { length: compact ? 1 : 4 },
     (_, offset) =>
       entries[
         (startIndex + offset) % entries.length
@@ -257,16 +258,10 @@ function EmbedSocialProof({
   );
 
   useEffect(() => {
-    const timer = window.setInterval(
-      () =>
-        setStartIndex(
-          (current) =>
-            nextSocialProofTickerIndex(current, entries),
-        ),
-      SOCIAL_PROOF_TICK_MS,
-    );
-    return () => window.clearInterval(timer);
-  }, [entries.length]);
+    if (compact || entries.length <= 5 || isAnimating) return;
+    const timer = window.setTimeout(() => setIsAnimating(true), SOCIAL_PROOF_TICK_MS);
+    return () => window.clearTimeout(timer);
+  }, [compact, entries.length, isAnimating, startIndex]);
 
   return (
     <section
@@ -299,9 +294,30 @@ function EmbedSocialProof({
           />
         </>
       ) : null}
-      {visibleEntries.map((entry) => (
-        <SocialProofItem key={entry.id} label={entry.text} {...entry} />
-      ))}
+      <div className={compact ? "overflow-hidden" : "overflow-hidden"}>
+        <div
+          className={compact ? "" : "flex w-[calc(400%/3)]"}
+          onTransitionEnd={() => {
+            if (!isAnimating) return;
+            setStartIndex((current) => nextSocialProofTickerIndex(current, entries));
+            setIsAnimating(false);
+          }}
+          style={compact ? undefined : {
+            transform: isAnimating ? "translateX(-25%)" : "translateX(0)",
+            transition: isAnimating ? "transform 400ms linear" : "none",
+          }}
+        >
+          {visibleEntries.map((entry) => (
+            <div
+              key={entry.id}
+              className={compact ? "" : "shrink-0"}
+              style={compact ? undefined : { flexBasis: "25%" }}
+            >
+              <SocialProofItem label={entry.text} {...entry} />
+            </div>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }

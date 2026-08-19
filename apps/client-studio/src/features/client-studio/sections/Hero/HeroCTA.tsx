@@ -5,6 +5,7 @@ import { useOptionalDecisionAnalytics } from "../../analytics";
 import { PILOT_SECTION_IDS } from "../../pilot/pilotVocabulary";
 
 const CTA_SCROLL_DURATION_MS = 520;
+const WORKSPACE_LANDING_ADJUSTMENT_PX = 20;
 
 /**
  * Primary Hero CTA — Morning Baseline reference (PT-HERO-00).
@@ -52,15 +53,24 @@ export function HeroCTA() {
 
     const targetScrollTop = (): number => {
       const elementRect = target.getBoundingClientRect();
+      const workspaceAdjustment = document.querySelector(
+        '[data-testid="workspace-host"]',
+      ) === null
+        ? 0
+        : WORKSPACE_LANDING_ADJUSTMENT_PX;
       if (scroller instanceof Window) {
-        return Math.max(0, window.scrollY + elementRect.top - headerOffset);
+        return Math.max(
+          0,
+          window.scrollY + elementRect.top - headerOffset + workspaceAdjustment,
+        );
       }
       const containerRect = scroller.getBoundingClientRect();
       return Math.max(
         0,
         scroller.scrollTop +
           (elementRect.top - containerRect.top) -
-          headerOffset,
+          headerOffset +
+          workspaceAdjustment,
       );
     };
 
