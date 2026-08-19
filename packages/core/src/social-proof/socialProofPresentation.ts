@@ -148,10 +148,10 @@ export function presentSocialProofMetric(
     ? null
     : customerFacingPriorityForm(metric.priorityId);
   const countForms: Partial<Record<SocialProofMetric["topic"], CustomerFacingPersonPredicateForms>> = {
-    LAND_VALIDATION: { singular: "požádal o ověření tohoto domu na svém pozemku", plural: "požádali o ověření tohoto domu na svém pozemku", numericPlural: "požádalo o ověření tohoto domu na svém pozemku" },
+    LAND_VALIDATION: { singular: "požádal o ověření domu na svém pozemku", plural: "požádali o ověření domu na svém pozemku", numericPlural: "požádalo o ověření domu na svém pozemku" },
     LAND_SEARCH: { singular: "požádal o pomoc s hledáním vhodného pozemku", plural: "požádali o pomoc s hledáním vhodného pozemku", numericPlural: "požádalo o pomoc s hledáním vhodného pozemku" },
     PDF: { singular: "si nechal poslat informace o tomto domu v PDF", plural: "si nechali poslat informace o tomto domu v PDF", numericPlural: "si nechalo poslat informace o tomto domu v PDF" },
-    RETURN_TO_TOUR: { singular: "se po nastavení priorit vrátil k prohlídce domu", plural: "se po nastavení priorit vrátili k prohlídce domu", numericPlural: "se po nastavení priorit vrátilo k prohlídce domu" },
+    RETURN_TO_TOUR: { singular: "se po prioritách vrátil k prohlídce domu", plural: "se po prioritách vrátili k prohlídce domu", numericPlural: "se po prioritách vrátilo k prohlídce domu" },
     OWN_QUESTION: { singular: "položil vlastní otázku k tomuto domu", plural: "položili vlastní otázku k tomuto domu", numericPlural: "položilo vlastní otázku k tomuto domu" },
   };
   if (metric.group === "COUNT") {
@@ -163,7 +163,7 @@ export function presentSocialProofMetric(
     const text = metric.topic === "TOP_PRIORITY" && priority !== null
       ? `zájemců označilo ${priority.accusative} za prioritu.`
       : ({
-          RETURN_SHARE: "zájemců se po nastavení priorit vrátilo k prohlídce domu.",
+          RETURN_SHARE: "zájemců se po prioritách vrátilo k prohlídce domu.",
           SET_PRIORITIES: "zájemců si nastavilo vlastní priority.",
           FAQ: "zájemců využilo odpovědi na časté otázky.",
           CHAT: "zájemců pokračovalo k osobnímu rozhovoru v chatu.",

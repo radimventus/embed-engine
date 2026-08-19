@@ -15,8 +15,8 @@ const corpus = Array.from({ length: 10 }, (_, index) => ({
 }));
 
 describe("Social Proof ticker contract", () => {
-  it("uses the shared 12-second right-to-left cadence", () => {
-    assert.equal(SOCIAL_PROOF_TICK_MS, 12_000);
+  it("uses the shared 18-second right-to-left cadence", () => {
+    assert.equal(SOCIAL_PROOF_TICK_MS, 18_000);
     assert.equal(SOCIAL_PROOF_DIRECTION, "RIGHT_TO_LEFT");
   });
 
@@ -40,5 +40,47 @@ describe("Social Proof ticker contract", () => {
   it("does not repeat early when the corpus cannot satisfy the gap", () => {
     const shortSchedule = createSocialProofTickerSchedule(corpus.slice(0, 5));
     assert.equal(nextSocialProofTickerIndex(2, shortSchedule), 2);
+  });
+
+  it("keeps semantic topic families unique in every visible three-slot window", () => {
+    const schedule = createSocialProofTickerSchedule([
+      { id: "count-priorities", group: "COUNT", topicFamily: "priorities_set" },
+      { id: "share-priorities", group: "SHARE", topicFamily: "priorities_set" },
+      { id: "faq", group: "SHARE", topicFamily: "faq" },
+      { id: "chat", group: "SHARE", topicFamily: "chat" },
+      { id: "land", group: "COUNT", topicFamily: "land_validation" },
+      { id: "pdf", group: "COUNT", topicFamily: "pdf" },
+    ]);
+    for (let index = 0; index < schedule.length; index += 1) {
+      const window = Array.from({ length: 3 }, (_, offset) =>
+        schedule[(index + offset) % schedule.length]!,
+      );
+      assert.equal(new Set(window.map((entry) => entry.topicFamily)).size, 3);
+    }
+  });
+
+  it("keeps every duplicate family out of concurrent slots", () => {
+    for (const family of [
+      "priorities_set",
+      "return_after_priorities",
+      "faq",
+      "chat",
+      "land_validation",
+    ]) {
+      const schedule = createSocialProofTickerSchedule([
+        { id: `${family}:count`, group: "COUNT" as const, topicFamily: family },
+        { id: `${family}:share`, group: "SHARE" as const, topicFamily: family },
+        { id: `${family}:one`, group: "COUNT" as const, topicFamily: `${family}:one` },
+        { id: `${family}:two`, group: "SHARE" as const, topicFamily: `${family}:two` },
+        { id: `${family}:three`, group: "LIVE" as const, topicFamily: `${family}:three` },
+        { id: `${family}:four`, group: "COUNT" as const, topicFamily: `${family}:four` },
+      ]);
+      for (let index = 0; index < schedule.length; index += 1) {
+        const window = Array.from({ length: 3 }, (_, offset) =>
+          schedule[(index + offset) % schedule.length]!,
+        );
+        assert.equal(new Set(window.map((entry) => entry.topicFamily)).size, 3);
+      }
+    }
   });
 });

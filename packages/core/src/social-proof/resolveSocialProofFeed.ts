@@ -18,10 +18,31 @@ export type SocialProofDisplayItem = {
   readonly id: string;
   readonly group: SocialProofGroup;
   readonly topic: SocialProofTopic;
+  readonly topicFamily: SocialProofTopicFamily;
   readonly icon: SocialProofPresentationIcon;
   readonly value: string;
   readonly text: string;
 };
+
+export const SOCIAL_PROOF_TOPIC_FAMILIES = {
+  LAND_VALIDATION: "land_validation",
+  LAND_SEARCH: "land_search",
+  PDF: "pdf",
+  RETURN_TO_TOUR: "return_after_priorities",
+  RETURN_SHARE: "return_after_priorities",
+  OWN_QUESTION: "own_question",
+  TOP_PRIORITY: "top_priority",
+  SET_PRIORITIES: "priorities_set",
+  FAQ: "faq",
+  CHAT: "chat",
+  LIVE_HOUSE_VIEWERS: "house_view",
+  LIVE_SETTING_PRIORITIES: "priorities_set",
+  LIVE_FAQ: "faq",
+  LIVE_CHAT: "chat",
+  LIVE_LAND_VALIDATION: "land_validation",
+} as const satisfies Record<SocialProofTopic, string>;
+export type SocialProofTopicFamily =
+  (typeof SOCIAL_PROOF_TOPIC_FAMILIES)[SocialProofTopic];
 
 export type ResolveSocialProofFeedInput = {
   readonly houseId: string;
@@ -43,7 +64,12 @@ function displayItem(
     readonly text: string;
   },
 ): SocialProofDisplayItem {
-  return Object.freeze({ group, topic, ...presentation });
+  return Object.freeze({
+    group,
+    topic,
+    topicFamily: SOCIAL_PROOF_TOPIC_FAMILIES[topic],
+    ...presentation,
+  });
 }
 
 export function resolveSocialProofFeed(

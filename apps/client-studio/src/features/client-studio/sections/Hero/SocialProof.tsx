@@ -1,4 +1,3 @@
-import { colors } from "@embed-engine/design-tokens";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Panel } from "@embed-engine/ui";
 import { SOCIAL_PROOF_TICK_MS } from "@embed-engine/core";
@@ -14,6 +13,7 @@ import {
 const FEED_TICKER_PAUSE_MS = SOCIAL_PROOF_TICK_MS;
 const FEED_TICKER_SLIDE_MS = 400;
 const FEED_VISIBLE_ITEM_COUNT = 3;
+const FEED_RENDERED_ITEM_COUNT = FEED_VISIBLE_ITEM_COUNT + 1;
 
 function SocialProofItem({ icon, value, text }: SocialProofEntry) {
   return (
@@ -39,7 +39,7 @@ export function SocialProof() {
   const visibleEntries = useMemo(
     () =>
       Array.from(
-        { length: Math.min(FEED_VISIBLE_ITEM_COUNT + 1, entries.length) },
+        { length: Math.min(FEED_RENDERED_ITEM_COUNT, entries.length) },
         (_, offset) => entries[(startIndex + offset) % entries.length]!,
       ),
     [entries, startIndex],
@@ -80,12 +80,12 @@ export function SocialProof() {
     >
       <div
         className="pointer-events-none absolute inset-x-0 top-[2px] z-10 h-px"
-        style={{ backgroundColor: colors.action.accent }}
+        style={{ backgroundColor: "#D4AF37" }}
       />
       <div className="hidden h-social-proof items-center overflow-hidden px-section desktop:flex">
         {entries.length > 0 ? (
           <ul
-            className="m-0 flex list-none p-0"
+            className="m-0 flex w-[calc(400%/3)] list-none p-0"
             onTransitionEnd={() => {
               if (
                 !isAnimating ||
@@ -108,18 +108,23 @@ export function SocialProof() {
             }}
             style={{
               transform: isAnimating
-                ? `translateX(-${100 / FEED_VISIBLE_ITEM_COUNT}%)`
+                ? "translateX(-25%)"
                 : "translateX(0)",
               transition: isAnimating
                 ? `transform ${FEED_TICKER_SLIDE_MS}ms linear`
                 : "none",
             }}
           >
-            {visibleEntries.map((entry) => (
+            {visibleEntries.map((entry, index) => (
               <li
                 key={entry.id}
-                className="min-w-0 shrink-0 border-r border-[#D4AF37]/50 px-4 last:border-r-0"
-                style={{ flexBasis: `${100 / FEED_VISIBLE_ITEM_COUNT}%` }}
+                className={[
+                  "min-w-0 shrink-0 px-4",
+                  index < FEED_VISIBLE_ITEM_COUNT - 1
+                    ? "border-r border-[#D4AF37]/50"
+                    : "",
+                ].join(" ")}
+                style={{ flexBasis: "25%" }}
               >
                 <SocialProofItem {...entry} />
               </li>

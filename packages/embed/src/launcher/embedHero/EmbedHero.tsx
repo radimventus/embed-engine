@@ -283,7 +283,7 @@ function EmbedSocialProof({
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-[2px] z-10 h-px"
-        style={{ backgroundColor: colors.action.accent }}
+        style={{ backgroundColor: "#D4AF37" }}
       />
       {!compact ? (
         <>
