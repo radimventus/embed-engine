@@ -13,24 +13,20 @@ export type SocialProofReadModel = {
     readonly returningVisitors: number;
     readonly savedByVisitors: number;
     readonly completedTours: number;
+    readonly completedPriorities: number;
     readonly priorityPreferences: readonly {
       readonly priorityId: string;
       readonly visitorCount: number;
       readonly percentOfVisitors: number;
     }[];
   };
-  readonly recent: readonly {
-    readonly houseId: string;
-    readonly activeVisitors: number;
-    readonly locality: string | null;
-  }[];
 };
 
 function config(): string | null {
-  if (import.meta.env.VITE_SOCIAL_PROOF_ANALYTICS_CONSENT !== 'granted') {
-    return null;
-  }
-  const endpoint = import.meta.env.VITE_SOCIAL_PROOF_ANALYTICS_API?.replace(/\/$/, '');
+  const endpoint = (
+    import.meta.env.VITE_PLATFORM_API_ORIGIN ??
+    'https://api.conis.cz'
+  )?.replace(/\/$/, '');
   return endpoint && /^https?:\/\//.test(endpoint) ? endpoint : null;
 }
 
@@ -49,19 +45,13 @@ export function useSocialProofReadModel(
     const to = new Date().toISOString();
     const from = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const query = new URLSearchParams({ ...scope, from, to });
-    void Promise.all([
-      fetch(`${endpoint}/local-pilot/social-proof/aggregate?${query}`, {
-        signal: controller.signal,
-      }),
-      fetch(`${endpoint}/local-pilot/social-proof/recent?${query}&minimumVisitors=2`, {
-        signal: controller.signal,
-      }),
-    ])
-      .then(async ([aggregate, recent]) => {
-        if (!aggregate.ok || !recent.ok) return null;
+    void fetch(`${endpoint}/public/social-proof/aggregate?${query}`, {
+      signal: controller.signal,
+    })
+      .then(async (aggregate) => {
+        if (!aggregate.ok) return null;
         return {
           aggregate: await aggregate.json(),
-          recent: await recent.json(),
         } as SocialProofReadModel;
       })
       .then((next) => {

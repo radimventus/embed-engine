@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 
+import {
+  CUSTOMER_FACING_EXPLICIT_PRODUCT_NAME,
+  realizeCustomerFacingHouseIdentityText,
+} from '@embed-engine/core';
 import { colors } from '@embed-engine/design-tokens';
 import {
   loadPlatformSession,
@@ -11,7 +15,7 @@ import { HeroCTA } from './HeroCTA';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 
 const DEFAULT_HERO_COPY = {
-  eyebrow: 'MODERN A01 – 4+kk',
+  eyebrow: CUSTOMER_FACING_EXPLICIT_PRODUCT_NAME,
   headline: 'Rodinný dům, kde to dýchá štěstím',
   metrics: [
     { value: '124 m2', label: 'Užitná plocha' },
@@ -33,6 +37,9 @@ export function HeroContent() {
   const [brand, setBrand] = useState<StudioBrandProjection | null>(null);
   const { experience } = useDecisionSessionRuntime();
   const heroCopy = experience.context.hero.copy ?? DEFAULT_HERO_COPY;
+  const heroEyebrow = realizeCustomerFacingHouseIdentityText(
+    heroCopy.eyebrow,
+  );
 
   useEffect(() => {
     const session = loadPlatformSession();
@@ -57,7 +64,7 @@ export function HeroContent() {
           </p>
         ) : null}
         <p className="text-sm font-bold uppercase tracking-wide text-[#D4AF37]">
-          {heroCopy.eyebrow}
+          {heroEyebrow}
         </p>
 
         <h1 className="mt-3 font-sans text-[2.52rem] font-black leading-[1.15] tracking-tight text-embed-foreground-primary mobile:text-[2rem]">

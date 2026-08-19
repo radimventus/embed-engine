@@ -58,7 +58,8 @@ describe("Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)", (
     const cta = read("HeroCTA.tsx");
     const image = read("HeroImage.tsx");
 
-    assert.match(content, /MODERN A01/);
+    assert.match(content, /CUSTOMER_FACING_EXPLICIT_PRODUCT_NAME/);
+    assert.equal(content.includes("MODERN A01"), false);
     assert.match(content, /Rodinný dům, kde to dýchá štěstím/);
     assert.match(content, /context\.hero\.copy/);
     assert.match(content, /HeroCTA/);
@@ -80,7 +81,12 @@ describe("Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)", (
     assert.match(hero, /grid-cols-\[minmax\(0,1fr\)_minmax\(0,2fr\)\]/);
     assert.equal(hero.includes("tablet:grid-cols"), false);
     assert.match(socialProof, /useSocialProofFeed/);
+    assert.match(feed, /TASK-40\.5/);
     assert.match(feed, /useSocialProofReadModel/);
+    assert.match(feed, /presentSocialProofSignal/);
+    assert.match(feed, /normalizeSocialProofSignal/);
+    assert.equal(feed.includes("právě prohlížejí"), false);
+    assert.equal(feed.includes("dokončených prohlídek"), false);
     assert.match(socialProof, /FEED_TICKER_PAUSE_MS = 12000/);
     assert.match(socialProof, /id="social-proof"/);
     assert.match(socialProof, /entries\.length > 0 \?/);
@@ -88,7 +94,6 @@ describe("Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)", (
       socialProof,
       /if \(entries\.length === 0\) \{\s*return null;/,
     );
-    assert.match(feed, /if \(model === null\) return \[\];/);
     assert.doesNotMatch(socialProof, /label:\s*layer/);
     assert.equal(socialProof.includes("zájemce"), false);
     assert.match(socialProof, /setTimeout/);

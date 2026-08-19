@@ -1,9 +1,11 @@
-import { getCanonicalProject } from '@embed-engine/platform-access';
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
-
-import { useSocialProofReadModel } from '../../analytics/useSocialProofReadModel';
-import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { createContext, useContext, type ReactNode } from 'react';
+import {
+  normalizeSocialProofSignal,
+  presentSocialProofSignal,
+} from '@embed-engine/core';
 import type { SocialProofIconName } from './SocialProofIcon';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
+import { useSocialProofReadModel } from '../../analytics/useSocialProofReadModel';
 
 const MIN_MESSAGES_BEFORE_REPEAT = 5;
 
@@ -16,42 +18,51 @@ export type SocialProofEntry = {
 
 const SocialProofFeedContext = createContext<readonly SocialProofEntry[]>([]);
 
-function readModelEntries(
-  model: ReturnType<typeof useSocialProofReadModel>,
-): readonly SocialProofEntry[] {
-  if (model === null) return [];
-  const { aggregate } = model;
-  const recentEntries = model.recent.flatMap((item): readonly SocialProofEntry[] => {
-    const houseName = getCanonicalProject(item.houseId)?.house?.name;
-    if (houseName === undefined) return [];
-    return [{
-      id: `recent:${item.houseId}`,
-      icon: 'viewing',
-      value: String(item.activeVisitors),
-      message: item.locality === null
-        ? `návštěvníci právě prohlížejí ${houseName}.`
-        : `návštěvníci z oblasti ${item.locality} právě prohlížejí ${houseName}.`,
-    }];
-  });
-  return [
-    aggregate.savedByVisitors > 0
-      ? { id: 'saved', icon: 'saved', value: String(aggregate.savedByVisitors), message: 'návštěvníků si tento dům uložilo.' }
-      : null,
-    aggregate.returningVisitors > 0
-      ? { id: 'returning', icon: 'viewing', value: String(aggregate.returningVisitors), message: 'návštěvníků se k domu vrátilo.' }
-      : null,
-    aggregate.priorityPreferences[0]
-      ? { id: `preference:${aggregate.priorityPreferences[0].priorityId}`, icon: 'inquiry', value: `${aggregate.priorityPreferences[0].percentOfVisitors} %`, message: 'návštěvníků označilo tuto prioritu mezi důležitými.' }
-      : null,
-    ...recentEntries,
-  ].filter((entry): entry is SocialProofEntry => entry !== null);
-}
-
 export function SocialProofFeedProvider({ children }: { readonly children: ReactNode }) {
+  // TASK-40.5: only normalized, server-derived evidence may become customer copy.
   const { analyticsScope } = useDecisionSessionRuntime();
   const model = useSocialProofReadModel(analyticsScope);
-  const entries = useMemo(() => readModelEntries(model), [model]);
-
+  const aggregate = model?.aggregate;
+  const entries: readonly SocialProofEntry[] = [
+    ...(aggregate === undefined ? [] : [
+      normalizeSocialProofSignal({
+        kind: 'TOUR_COMPLETION',
+        houseId: analyticsScope?.houseId ?? '',
+        count: aggregate.completedTours,
+        window: 'ROLLING_7_DAYS',
+        evidence: 'TOUR_TRANSITIONED_TO_PRIORITY',
+      }),
+      normalizeSocialProofSignal({
+        kind: 'PRIORITY_COMPLETION',
+        houseId: analyticsScope?.houseId ?? '',
+        count: aggregate.completedPriorities,
+        window: 'ROLLING_7_DAYS',
+        evidence: 'PRIORITY_SETUP_COMPLETED',
+      }),
+      ...aggregate.priorityPreferences.map((item) =>
+        normalizeSocialProofSignal({
+          kind: 'PRIORITY_PREFERENCE',
+          houseId: analyticsScope?.houseId ?? '',
+          percentage: Math.round(item.percentOfVisitors),
+          priorityId: item.priorityId,
+          window: 'ROLLING_7_DAYS',
+          evidence: 'QUALIFYING_PRIORITY_SELECTION_AGGREGATE',
+        }),
+      ),
+    ]),
+  ].flatMap((signal): readonly SocialProofEntry[] => {
+    if (signal === null) return [];
+    const presentation = presentSocialProofSignal(signal);
+    if (presentation === null) {
+      return [];
+    }
+    return [{
+      id: presentation.id,
+      icon: presentation.icon,
+      value: presentation.value,
+      message: presentation.text,
+    }];
+  });
   return (
     <SocialProofFeedContext.Provider value={entries}>
       {children}
