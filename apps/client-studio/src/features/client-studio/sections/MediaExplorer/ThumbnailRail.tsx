@@ -168,6 +168,7 @@ function VideoThumbnailPreview({
   poster: string;
 }) {
   const hasPoster = poster.length > 0;
+  const wistia = isWistiaEmbedUrl(src);
 
   return (
     <div
@@ -177,18 +178,21 @@ function VideoThumbnailPreview({
         overflow: 'hidden',
       }}
     >
-      {hasPoster ? (
+      {wistia ? (
+        <iframe
+          src={src}
+          title=""
+          tabIndex={-1}
+          className="pointer-events-none h-full w-full border-0"
+          allow="autoplay; fullscreen"
+        />
+      ) : hasPoster ? (
         <img
           src={poster}
           alt=""
           loading="lazy"
           decoding="async"
           className="pointer-events-none h-full w-full object-cover"
-        />
-      ) : isWistiaEmbedUrl(src) ? (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none h-full w-full bg-embed-brand-navy/15"
         />
       ) : (
         <video
