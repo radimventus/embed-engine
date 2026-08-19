@@ -44,7 +44,7 @@ describe('CAP-PLAT-02 Canonical Projection Layer', () => {
     assert.equal(villa.project.name, 'AC Modular');
     assert.equal('objectType' in villa.project, false);
     assert.equal(villa.house.houseId, 'villa-168');
-    assert.equal(villa.house.name, 'Villa 168');
+    assert.equal(villa.house.name, 'VILLA 168');
     assert.equal(villa.house.slug, 'villa-168');
     assert.equal(villa.house.objectType, 'villa');
     assert.equal(villa.house.packagePublicRoot, '/house-package');
@@ -137,7 +137,7 @@ describe('CAP-PLAT-04a Canonical Entity Hierarchy', () => {
     assert.equal(hierarchy.project.companyId, hierarchy.company.companyId);
     assert.equal(hierarchy.project.name, 'AC Modular');
     assert.equal(hierarchy.house.houseId, 'villa-168');
-    assert.equal(hierarchy.house.name, 'Villa 168');
+    assert.equal(hierarchy.house.name, 'VILLA 168');
     assert.notEqual(hierarchy.project.projectId, hierarchy.house.houseId);
     assert.notEqual(hierarchy.project.name, hierarchy.house.name);
 
@@ -157,7 +157,7 @@ describe('CAP-PLAT-04b Runtime Binding → Canonical House', () => {
     const house = getCanonicalHouseEntity('villa-168');
     assert.ok(house);
     assert.equal(house.houseId, 'villa-168');
-    assert.equal(house.name, 'Villa 168');
+    assert.equal(house.name, 'VILLA 168');
     assert.equal(house.objectType, 'villa');
 
     const bound = resolveCanonicalRuntimeBinding({
@@ -355,7 +355,7 @@ describe('CAP-PLAT-04k DIAG gate + collapse alias retirement', () => {
 
     assert.equal(hierarchy.company.name, 'AC Modular');
     assert.equal(hierarchy.project.name, 'AC Modular');
-    assert.equal(hierarchy.house.name, 'Villa 168');
+    assert.equal(hierarchy.house.name, 'VILLA 168');
     assert.notEqual(hierarchy.project.name, hierarchy.house.name);
     assert.notEqual(hierarchy.project.projectId, hierarchy.house.houseId);
     assert.equal(hierarchy.project.projectId, 'project-ac-modular');
@@ -372,7 +372,7 @@ describe('CAP-PLAT-04k DIAG gate + collapse alias retirement', () => {
     assert.ok(bound.project);
     assert.ok(bound.project.house);
     assert.equal(bound.project.project.name, 'AC Modular');
-    assert.equal(bound.project.house.name, 'Villa 168');
+    assert.equal(bound.project.house.name, 'VILLA 168');
     assert.equal('objectType' in bound.project.project, false);
   });
 
@@ -459,7 +459,7 @@ describe('CAP-PLAT-04R2a Canonical Company + Project authoring foundation', () =
     assert.equal(lookedUp.house, null);
     assert.equal(lookedUp.partner.companyId, 'company-r2a');
 
-    assert.notEqual(lookedUp.project.name, 'Villa 168');
+    assert.notEqual(lookedUp.project.name, 'VILLA 168');
     assert.equal(listCanonicalHouses().length, housesBefore);
     assert.equal(
       getDefaultCompanyRegistry().projects.length,
@@ -482,7 +482,7 @@ describe('CAP-PLAT-04R2a Canonical Company + Project authoring foundation', () =
 
     assert.equal(hierarchy.company.name, 'AC Modular');
     assert.equal(hierarchy.project.name, 'AC Modular');
-    assert.equal(hierarchy.house.name, 'Villa 168');
+    assert.equal(hierarchy.house.name, 'VILLA 168');
     assert.equal(hierarchy.project.projectId, 'project-ac-modular');
     assert.equal(hierarchy.house.houseId, 'villa-168');
     assert.notEqual(hierarchy.project.projectId, hierarchy.house.houseId);

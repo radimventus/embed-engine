@@ -106,7 +106,7 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
     assert.ok(binding.project);
     assert.equal(
       formatClientPartnerHouseTitle(binding.project),
-      'AC Modular · Villa 168',
+      'AC Modular · VILLA 168',
     );
     assert.notEqual(binding.project.project.name, binding.project.house.name);
 

@@ -74,7 +74,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     );
     const villa = state.projects.find((house) => house.id === 'villa-168');
     assert.ok(villa);
-    assert.equal(villa.name, 'Villa 168');
+    assert.equal(villa.name, 'VILLA 168');
     assert.notEqual(acFolder?.name, villa.name);
   });
 
@@ -186,7 +186,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     assert.equal(state.activeFolderId, folder.id);
     assert.equal(state.activeProjectId, null);
     assert.notEqual(folder.name, 'Harmony 140');
-    assert.notEqual(folder.name, 'Villa 168');
+    assert.notEqual(folder.name, 'VILLA 168');
   });
 
   it('CAP-VR44 — requires a canonical Partner and writes its canonical Project', () => {
@@ -296,7 +296,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
       getDefaultCompanyRegistry().projects.some((row) => row.id === folder.id),
       false,
     );
-    assert.notEqual(projected.project.name, 'Villa 168');
+    assert.notEqual(projected.project.name, 'VILLA 168');
     assert.notEqual(projected.project.name, 'Harmony 140');
 
     // G+H — AC Modular → AC Modular → Villa 168; no Project↔House collapse
@@ -310,7 +310,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
       state.folders.find((f) => f.id === 'project-ac-modular')?.name,
       'AC Modular',
     );
-    assert.equal(villa.name, 'Villa 168');
+    assert.equal(villa.name, 'VILLA 168');
     assert.notEqual(villa.id, 'project-ac-modular');
     assert.notEqual(
       state.folders.find((f) => f.id === 'project-ac-modular')?.name,
