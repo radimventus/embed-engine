@@ -43,7 +43,7 @@ export const AUTHORING_DRAFT_RUNTIME_HOUSE_DEFAULTS: Omit<
 > = Object.freeze({
   identity: Object.freeze({
     id: 'authoring-draft',
-    title: 'Váš první dům',
+    title: 'VÁŠ PRVNÍ DŮM',
     reference: 'AUTHORING_DRAFT',
   }),
   overview: Object.freeze({

@@ -336,13 +336,58 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
       internalId: 'objekt-alfa',
     });
     assert.ok(created);
-    assert.equal(created.project.name, 'Objekt Alfa');
+    assert.equal(created.project.name, 'OBJEKT ALFA');
     assert.equal(created.project.id, 'objekt-alfa');
     assert.equal(created.project.folderId, opened.state.activeFolderId);
     assert.equal(created.state.activeProjectId, 'objekt-alfa');
     assert.equal(
       housesForFolder(created.state, created.project.folderId).length,
       beforeCount + 1,
+    );
+  });
+
+  it('TASK-59 — House rename persists an uppercase display name without changing identity', () => {
+    const base = createInitialWorkspaceRegistry();
+    const authoringProject = createWorkspaceProjectFromInput(base, {
+      name: 'Task 59 Project',
+      companyId: 'ac-modular',
+      description: '',
+    });
+    const opened = openWorkspaceFolder(
+      authoringProject.state,
+      authoringProject.folder.id,
+    );
+    const created = createWorkspaceObjectFromInput(opened.state, {
+      name: 'Objekt Alfa',
+      internalId: 'objekt-alfa',
+    });
+
+    assert.ok(created);
+
+    const renamed = updateWorkspaceProject(
+      created.state,
+      created.project.id,
+      {
+        name: 'Rodinný dům Beta',
+      },
+    );
+
+    const house =
+      renamed.projects.find(
+        (project) => project.id === created.project.id,
+      ) ?? null;
+
+    assert.ok(house);
+    assert.equal(house.name, 'RODINNÝ DŮM BETA');
+    assert.equal(house.id, 'objekt-alfa');
+    assert.equal(house.slug, created.project.slug);
+    assert.equal(
+      house.folderId,
+      created.project.folderId,
+    );
+    assert.equal(
+      renamed.houseLabels[created.project.id],
+      'RODINNÝ DŮM BETA',
     );
   });
 
@@ -583,7 +628,7 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
       (house) => house.id === DSE_FIRST_DRAFT_HOUSE_ID,
     );
     assert.ok(vpd);
-    assert.equal(vpd.name, 'Váš první dům');
+    assert.equal(vpd.name, 'VÁŠ PRVNÍ DŮM');
     assert.equal(vpd.folderId, 'project-domy-s-energii');
 
     assert.equal(
@@ -817,14 +862,14 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     const before = state.projects.find((project) => project.id === 'villa-168');
     assert.ok(before);
     state = updateWorkspaceProject(state, 'villa-168', {
-      name: 'Villa 168 Premium',
+      name: 'VILLA 168 PREMIUM',
       description: 'Upravený popis',
       status: 'ready',
       slug: 'villa-168-premium',
       metadata: 'tag:pilot',
     });
     const after = state.projects.find((project) => project.id === 'villa-168');
-    assert.equal(after?.name, 'Villa 168 Premium');
+    assert.equal(after?.name, 'VILLA 168 PREMIUM');
     assert.equal(after?.packageRoot, before?.packageRoot);
     assert.equal(after?.metadata, 'tag:pilot');
   });

@@ -30,7 +30,7 @@ const DSE_VPD_HOUSE_ID =
 const DSE_PROJECT_ID = "project-domy-s-energii";
 const VPD_AUTHORED_IDENTITY = {
   houseId: DSE_VPD_HOUSE_ID,
-  name: "Váš první dům",
+  name: "VÁŠ PRVNÍ DŮM",
   canonicalProjectId: DSE_PROJECT_ID,
   packageRoot: "apps/client-studio/public/house-packages/patrovy-5kk",
   dataMode: "LIVE_EMPTY",

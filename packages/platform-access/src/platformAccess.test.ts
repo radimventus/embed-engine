@@ -370,7 +370,7 @@ describe('platformAccess (EPIC-BX-14)', () => {
 
     assert.deepEqual(vpd, {
       houseId: vpdId,
-      name: 'Váš první dům',
+      name: 'VÁŠ PRVNÍ DŮM',
       canonicalProjectId: projectId,
       packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
       dataMode: 'LIVE_EMPTY',
@@ -391,7 +391,7 @@ describe('platformAccess (EPIC-BX-14)', () => {
         authoringDraftPackage: {
           packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
           packagePublicRoot: '/house-packages/patrovy-5kk',
-          name: 'Váš první dům',
+          name: 'VÁŠ PRVNÍ DŮM',
         },
         canonicalBinding: null,
       },
@@ -405,7 +405,7 @@ describe('platformAccess (EPIC-BX-14)', () => {
         authoredHouseIdentities: [
           {
             houseId: vpdId,
-            name: 'Váš první dům',
+            name: 'VÁŠ PRVNÍ DŮM',
             canonicalProjectId: projectId,
             packageRoot: '',
             dataMode: 'LIVE_EMPTY',
@@ -420,7 +420,7 @@ describe('platformAccess (EPIC-BX-14)', () => {
       {
         packageRoot: 'apps/client-studio/public/house-packages/patrovy-5kk',
         packagePublicRoot: '/house-packages/patrovy-5kk',
-        name: 'Váš první dům',
+        name: 'VÁŠ PRVNÍ DŮM',
       },
     );
 

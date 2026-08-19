@@ -87,7 +87,10 @@ export function upsertWorkspaceAuthoredHouse(
     ...(workspaceContext.authoredHouseIdentities ?? []).filter(
       (item) => item.houseId !== house.houseId,
     ),
-    house,
+    {
+      ...house,
+      name: house.name.trim().toLocaleUpperCase('cs-CZ'),
+    },
   ];
   updateSession({
     workspaceContext: {

@@ -61,7 +61,7 @@ describe('Context-only Provider boundary (ED-DA-04)', () => {
           packageRoot:
             'apps/client-studio/public/house-packages/patrovy-5kk',
           packagePublicRoot: '/house-packages/patrovy-5kk',
-          name: 'Váš první dům',
+          name: 'VÁŠ PRVNÍ DŮM',
         },
       }),
       false,

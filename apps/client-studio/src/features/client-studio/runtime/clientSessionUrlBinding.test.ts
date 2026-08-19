@@ -209,7 +209,7 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
         authoredHouseIdentities: [
           {
             houseId: canonicalVpdId,
-            name: 'Váš první dům',
+            name: 'VÁŠ PRVNÍ DŮM',
             canonicalProjectId: 'project-domy-s-energii',
             packageRoot:
               'apps/client-studio/public/house-packages/patrovy-5kk',
@@ -241,7 +241,7 @@ describe('CAP-PLAT-02c.1b / CAP-PLAT-04h Session/URL runtime binding', () => {
     );
     assert.equal(
       binding.project?.house?.name,
-      'Váš první dům',
+      'VÁŠ PRVNÍ DŮM',
     );
 
     clearPlatformSession();

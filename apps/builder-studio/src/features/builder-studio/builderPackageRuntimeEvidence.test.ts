@@ -9,7 +9,7 @@ describe('Builder package runtime evidence', () => {
       activeProjectId: 'project-domy-s-energii',
       activeHouseId:
         'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk',
-      houseName: 'Váš první dům',
+      houseName: 'VÁŠ PRVNÍ DŮM',
       houseStatus: 'draft',
       houseDataMode: 'LIVE_EMPTY',
       registryPackageRoot:

@@ -761,7 +761,10 @@ export function registerWorkspaceProject(
   state: WorkspaceRegistryState,
   project: WorkspaceProject,
 ): WorkspaceRegistryState {
-  const normalized = normalizeWorkspaceProject(project);
+  const normalized = normalizeWorkspaceProject({
+    ...project,
+    name: project.name.trim().toLocaleUpperCase('cs-CZ'),
+  });
   const workspaceId = workspaceIdFromCanonical(normalized.companyId);
   const canonicalProjectId = canonicalizeFolderId(normalized.folderId);
 
@@ -965,7 +968,7 @@ export function createWorkspaceObjectFromInput(
   if (identity === null) {
     return null;
   }
-  const name = input.name.trim();
+  const name = input.name.trim().toLocaleUpperCase('cs-CZ');
 
   const project = normalizeWorkspaceProject({
     id: identity.houseId,
@@ -992,7 +995,7 @@ export function createWorkspaceObjectFromInput(
   next = recompose(next, {
     houseLabels: {
       ...next.houseLabels,
-      [project.id]: name,
+      [project.id]: project.name,
     },
     activeFolderId: folder.id,
     activeProjectId: project.id,
@@ -1041,7 +1044,7 @@ export function toPersistedWorkspaceSlice(
 }
 
 const LEGACY_DSE_FIRST_DRAFT_HOUSE_ID = 'patrovy-5kk' as const;
-const DSE_FIRST_DRAFT_HOUSE_LABEL = 'Váš první dům' as const;
+const DSE_FIRST_DRAFT_HOUSE_LABEL = 'VÁŠ PRVNÍ DŮM' as const;
 
 function migrateLegacyDseFirstDraftIdentity(
   record: Record<string, string>,
