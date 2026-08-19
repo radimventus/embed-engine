@@ -14,6 +14,8 @@ import { EmbedHero } from "./EmbedHero";
 export type MountEmbedHeroOptions = {
   readonly host: HTMLElement;
   readonly assetBase?: string;
+  readonly houseId: string;
+  readonly isReferenceHouse: boolean;
   readonly onOpenExperience: () => void;
 };
 
@@ -28,7 +30,7 @@ export type MountedEmbedHero = {
 export function mountEmbedHero(options: MountEmbedHeroOptions): MountedEmbedHero {
   ensureClientStudioStyles();
 
-  const { host, assetBase, onOpenExperience } = options;
+  const { host, assetBase, houseId, isReferenceHouse, onOpenExperience } = options;
   host.setAttribute("data-embed-hero-host", "");
   markEmbedBoundary(host);
   host.replaceChildren();
@@ -41,6 +43,8 @@ export function mountEmbedHero(options: MountEmbedHeroOptions): MountedEmbedHero
   root.render(
     createElement(EmbedHero, {
       assetBase,
+      houseId,
+      isReferenceHouse,
       onOpenExperience,
     }),
   );

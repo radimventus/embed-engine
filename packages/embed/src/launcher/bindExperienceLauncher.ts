@@ -62,6 +62,10 @@ function isLauncherExperience(
   );
 }
 
+function isReferenceHouse(objectId: string): boolean {
+  return objectId === "house-modern-01" || objectId.includes("bungalov-4kk");
+}
+
 /**
  * Bind a host CTA (and optional Embed Hero) so activation → Launch Request → Delivery.
  */
@@ -97,9 +101,12 @@ export function bindExperienceLauncher(
   };
 
   if (options.heroHost !== undefined) {
+    const houseId = options.objectId ?? "house-modern-01";
     hero = mountEmbedHero({
       host: options.heroHost,
       assetBase: options.assetBase,
+      houseId,
+      isReferenceHouse: isReferenceHouse(houseId),
       onOpenExperience: openExperience,
     });
   }

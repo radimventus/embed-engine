@@ -30,6 +30,7 @@ describe("launcher Social Proof parity", () => {
     assert.equal(bungalov.length, 10);
     assert.equal(vpd.length, 5);
     assert.match(launcherSource, /resolveSocialProofFeed/);
+    assert.match(launcherSource, /houseId,\s*isReferenceHouse/);
     assert.match(clientFeedSource, /resolveSocialProofFeed/);
   });
 

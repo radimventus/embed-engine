@@ -32,6 +32,8 @@ const COMPACT_MAX_WIDTH_PX = 767;
 
 export type EmbedHeroProps = {
   readonly assetBase?: string;
+  readonly houseId: string;
+  readonly isReferenceHouse: boolean;
   /** Called when the primary CTA is activated (opens Experience). */
   readonly onOpenExperience: () => void;
 };
@@ -227,15 +229,23 @@ function EmbedHeroImage({
   );
 }
 
-function EmbedSocialProof({ compact }: { readonly compact: boolean }) {
+function EmbedSocialProof({
+  compact,
+  houseId,
+  isReferenceHouse,
+}: {
+  readonly compact: boolean;
+  readonly houseId: string;
+  readonly isReferenceHouse: boolean;
+}) {
   const [startIndex, setStartIndex] = useState(0);
   const entries = useMemo(
     () =>
       createSocialProofTickerSchedule(resolveSocialProofFeed({
-        houseId: "bungalov-4kk",
-        isReferenceHouse: true,
+        houseId,
+        isReferenceHouse,
       })),
-    [],
+    [houseId, isReferenceHouse],
   );
   if (entries.length === 0) return null;
   const visibleEntries = Array.from(
@@ -329,7 +339,12 @@ function useCompactLayout(host: HTMLElement | null): boolean {
  * SSOT: docs/architecture/HERO-V1-FREEZE.md
  * CTA opens Experience — does not scroll inside Studio.
  */
-export function EmbedHero({ assetBase, onOpenExperience }: EmbedHeroProps) {
+export function EmbedHero({
+  assetBase,
+  houseId,
+  isReferenceHouse,
+  onOpenExperience,
+}: EmbedHeroProps) {
   const [host, setHost] = useState<HTMLElement | null>(null);
   const compact = useCompactLayout(host);
 
@@ -364,7 +379,11 @@ export function EmbedHero({ assetBase, onOpenExperience }: EmbedHeroProps) {
             <EmbedHeroImage assetBase={assetBase} compact={compact} />
           </div>
         </div>
-        <EmbedSocialProof compact={compact} />
+        <EmbedSocialProof
+          compact={compact}
+          houseId={houseId}
+          isReferenceHouse={isReferenceHouse}
+        />
       </section>
     </div>
   );
