@@ -45,7 +45,10 @@ export function ManagerWorkspaceScopeControls() {
             label: project.project.name,
           }))}
           onChange={(nextProjectId) => {
-            updateWorkspaceScope({ projectId: nextProjectId });
+            updateWorkspaceScope({
+              projectId: nextProjectId,
+              activeHouseId: null,
+            });
             publishWorkspaceScope(
               createWorkspaceProjectChangeMessage(nextProjectId),
             );

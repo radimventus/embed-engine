@@ -301,10 +301,14 @@ export function SessionProvider({
               (project) => project.id === projectId,
             );
 
+      const projectChanged =
+        input.projectId !== undefined && projectId !== session.projectId;
       const activeHouseId =
         input.activeHouseId !== undefined
           ? input.activeHouseId
-          : session.activeHouseId;
+          : projectChanged
+            ? null
+            : session.activeHouseId;
       const workspaceContext =
         session.workspaceContext === null
           ? null

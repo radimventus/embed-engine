@@ -229,8 +229,43 @@ describe('platformAccess (EPIC-BX-14)', () => {
     assert.match(provider, /updateWorkspaceScope/);
     assert.match(
       provider,
+      /input\.projectId !== undefined && projectId !== session\.projectId/,
+    );
+    assert.match(
+      provider,
+      /projectChanged\s*\?\s*null\s*:\s*session\.activeHouseId/,
+    );
+    assert.match(
+      provider,
       /updateSession\(\{[\s\S]*projectId,[\s\S]*activeHouseId,[\s\S]*workspaceContext,[\s\S]*\}\)[\s\S]*setSession\(next\)/,
     );
+  });
+
+  it('TASK-61 — clears shared House before publishing a Project change', () => {
+    const manager = readFileSync(
+      new URL(
+        '../../../apps/manager-studio/src/features/manager-studio/ManagerWorkspaceScopeControls.tsx',
+        import.meta.url,
+      ),
+      'utf8',
+    );
+    const sales = readFileSync(
+      new URL('../../../apps/sales-studio/src/SalesWorkspaceScope.tsx', import.meta.url),
+      'utf8',
+    );
+    const salesApp = readFileSync(
+      new URL('../../../apps/sales-studio/src/SalesStudioApp.tsx', import.meta.url),
+      'utf8',
+    );
+
+    for (const source of [manager, sales]) {
+      assert.match(
+        source,
+        /updateWorkspaceScope\(\{\s*projectId: nextProjectId,\s*activeHouseId: null,\s*\}\)/,
+      );
+    }
+    assert.match(salesApp, /activeInterestHouseId/);
+    assert.doesNotMatch(sales, /setActiveHouseId/);
   });
 
   it('CAP-RG1R4 — bootstraps valid Builder-authored House context cross-port', () => {
