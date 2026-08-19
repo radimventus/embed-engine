@@ -1,8 +1,8 @@
 var ak = Object.defineProperty;
 var rk = (n, o, i) => o in n ? ak(n, o, { enumerable: !0, configurable: !0, writable: !0, value: i }) : n[o] = i;
 var ae = (n, o, i) => rk(n, typeof o != "symbol" ? o + "" : o, i);
-const ik = '*,:before,:after{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}*,:before,:after{border-color:#e3e3e3}html,body,#root{min-height:100vh;overscroll-behavior:none;--tw-text-opacity: 1;color:rgb(0 25 48 / var(--tw-text-opacity, 1));background-color:#f7f6f4;overflow-x:clip}body{font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}html[data-guided-journey-root=true],body[data-guided-journey-root=true],[data-guided-journey-root=true]{scroll-behavior:smooth;scroll-padding-top:var(--guided-journey-header-offset, 92px);scroll-padding-bottom:var(--guided-journey-bottom-nav-offset, 0px)}html[data-guided-journey-root=true][data-guided-journey-snap=on],[data-guided-journey-root=true][data-guided-journey-snap=on]{scroll-snap-type:y proximity}input::-moz-placeholder,textarea::-moz-placeholder{color:#00193066}input::placeholder,textarea::placeholder{color:#00193066}[data-embed-boundary] .container{width:100%}@media(min-width:640px){[data-embed-boundary] .container{max-width:640px}}@media(min-width:768px){[data-embed-boundary] .container{max-width:768px}}@media(min-width:1024px){[data-embed-boundary] .container{max-width:1024px}}@media(min-width:1280px){[data-embed-boundary] .container{max-width:1280px}}@media(min-width:1536px){[data-embed-boundary] .container{max-width:1536px}}[data-embed-boundary] .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border-width:0!important}[data-embed-boundary] .pointer-events-none{pointer-events:none!important}[data-embed-boundary] .\\!visible,[data-embed-boundary] .visible{visibility:visible!important}[data-embed-boundary] .invisible{visibility:hidden!important}[data-embed-boundary] .static{position:static!important}[data-embed-boundary] .fixed{position:fixed!important}[data-embed-boundary] .absolute{position:absolute!important}[data-embed-boundary] .relative{position:relative!important}[data-embed-boundary] .sticky{position:sticky!important}[data-embed-boundary] .inset-0{top:0!important;right:0!important;bottom:0!important;left:0!important}[data-embed-boundary] .inset-x-0{left:0!important;right:0!important}[data-embed-boundary] .inset-y-0{top:0!important;bottom:0!important}[data-embed-boundary] .bottom-0{bottom:0!important}[data-embed-boundary] .bottom-3{bottom:.75rem!important}[data-embed-boundary] .bottom-\\[calc\\(20px\\+var\\(--guided-journey-bottom-nav-offset\\,0px\\)\\)\\]{bottom:calc(20px + var(--guided-journey-bottom-nav-offset,0px))!important}[data-embed-boundary] .left-0{left:0!important}[data-embed-boundary] .left-1\\/2{left:50%!important}[data-embed-boundary] .left-1\\/3{left:33.333333%!important}[data-embed-boundary] .left-2\\/3{left:66.666667%!important}[data-embed-boundary] .left-3{left:.75rem!important}[data-embed-boundary] .left-\\[12\\.5\\%\\]{left:12.5%!important}[data-embed-boundary] .left-\\[62\\.5\\%\\]{left:62.5%!important}[data-embed-boundary] .left-\\[calc\\(100\\%\\+10px\\)\\]{left:calc(100% + 10px)!important}[data-embed-boundary] .left-full{left:100%!important}[data-embed-boundary] .right-0{right:0!important}[data-embed-boundary] .right-3{right:.75rem!important}[data-embed-boundary] .right-\\[12\\.5\\%\\]{right:12.5%!important}[data-embed-boundary] .right-\\[37\\.5\\%\\]{right:37.5%!important}[data-embed-boundary] .right-section{right:24px!important}[data-embed-boundary] .top-0{top:0!important}[data-embed-boundary] .top-1\\/2{top:50%!important}[data-embed-boundary] .top-\\[25\\%\\]{top:25%!important}[data-embed-boundary] .top-\\[2px\\]{top:2px!important}[data-embed-boundary] .top-\\[44px\\]{top:44px!important}[data-embed-boundary] .top-\\[calc\\(0\\.75rem\\+1\\.4em\\/2\\)\\]{top:calc(.75rem + .7em)!important}[data-embed-boundary] .top-full{top:100%!important}[data-embed-boundary] .isolate{isolation:isolate!important}[data-embed-boundary] .z-0{z-index:0!important}[data-embed-boundary] .z-10{z-index:10!important}[data-embed-boundary] .z-20{z-index:20!important}[data-embed-boundary] .z-40{z-index:40!important}[data-embed-boundary] .z-50{z-index:50!important}[data-embed-boundary] .z-\\[60\\]{z-index:60!important}[data-embed-boundary] .order-1{order:1!important}[data-embed-boundary] .order-2{order:2!important}[data-embed-boundary] .col-span-2{grid-column:span 2 / span 2!important}[data-embed-boundary] .col-start-1{grid-column-start:1!important}[data-embed-boundary] .col-start-2{grid-column-start:2!important}[data-embed-boundary] .row-span-2{grid-row:span 2 / span 2!important}[data-embed-boundary] .row-start-1{grid-row-start:1!important}[data-embed-boundary] .row-start-2{grid-row-start:2!important}[data-embed-boundary] .row-start-3{grid-row-start:3!important}[data-embed-boundary] .row-start-4{grid-row-start:4!important}[data-embed-boundary] .m-0{margin:0!important}[data-embed-boundary] .mx-1\\.5{margin-left:.375rem!important;margin-right:.375rem!important}[data-embed-boundary] .mx-2{margin-left:.5rem!important;margin-right:.5rem!important}[data-embed-boundary] .mx-auto{margin-left:auto!important;margin-right:auto!important}[data-embed-boundary] .-ml-\\[30px\\]{margin-left:-30px!important}[data-embed-boundary] .-mt-0\\.5{margin-top:-.125rem!important}[data-embed-boundary] .-mt-\\[2px\\]{margin-top:-2px!important}[data-embed-boundary] .mb-1\\.5{margin-bottom:.375rem!important}[data-embed-boundary] .mb-2{margin-bottom:.5rem!important}[data-embed-boundary] .mb-3{margin-bottom:.75rem!important}[data-embed-boundary] .mb-5{margin-bottom:1.25rem!important}[data-embed-boundary] .ml-1{margin-left:.25rem!important}[data-embed-boundary] .ml-1\\.5{margin-left:.375rem!important}[data-embed-boundary] .ml-2{margin-left:.5rem!important}[data-embed-boundary] .ml-auto{margin-left:auto!important}[data-embed-boundary] .mr-2{margin-right:.5rem!important}[data-embed-boundary] .mt-0\\.5{margin-top:.125rem!important}[data-embed-boundary] .mt-1{margin-top:.25rem!important}[data-embed-boundary] .mt-1\\.5{margin-top:.375rem!important}[data-embed-boundary] .mt-10{margin-top:2.5rem!important}[data-embed-boundary] .mt-2{margin-top:.5rem!important}[data-embed-boundary] .mt-2\\.5{margin-top:.625rem!important}[data-embed-boundary] .mt-3{margin-top:.75rem!important}[data-embed-boundary] .mt-4{margin-top:1rem!important}[data-embed-boundary] .mt-5{margin-top:1.25rem!important}[data-embed-boundary] .mt-6{margin-top:1.5rem!important}[data-embed-boundary] .mt-7{margin-top:1.75rem!important}[data-embed-boundary] .mt-8{margin-top:2rem!important}[data-embed-boundary] .mt-\\[30px\\]{margin-top:30px!important}[data-embed-boundary] .mt-\\[50px\\]{margin-top:50px!important}[data-embed-boundary] .mt-auto{margin-top:auto!important}[data-embed-boundary] .mt-px{margin-top:1px!important}[data-embed-boundary] .mt-section{margin-top:24px!important}[data-embed-boundary] .box-border{box-sizing:border-box!important}[data-embed-boundary] .block{display:block!important}[data-embed-boundary] .inline-block{display:inline-block!important}[data-embed-boundary] .inline{display:inline!important}[data-embed-boundary] .flex{display:flex!important}[data-embed-boundary] .inline-flex{display:inline-flex!important}[data-embed-boundary] .table{display:table!important}[data-embed-boundary] .grid{display:grid!important}[data-embed-boundary] .hidden{display:none!important}[data-embed-boundary] .aspect-\\[4\\/3\\]{aspect-ratio:4/3!important}[data-embed-boundary] .aspect-square{aspect-ratio:1 / 1!important}[data-embed-boundary] .aspect-video{aspect-ratio:16 / 9!important}[data-embed-boundary] .h-1\\/2{height:50%!important}[data-embed-boundary] .h-10{height:2.5rem!important}[data-embed-boundary] .h-11{height:2.75rem!important}[data-embed-boundary] .h-12{height:3rem!important}[data-embed-boundary] .h-14{height:3.5rem!important}[data-embed-boundary] .h-16{height:4rem!important}[data-embed-boundary] .h-20{height:5rem!important}[data-embed-boundary] .h-3{height:.75rem!important}[data-embed-boundary] .h-3\\.5{height:.875rem!important}[data-embed-boundary] .h-4{height:1rem!important}[data-embed-boundary] .h-5{height:1.25rem!important}[data-embed-boundary] .h-7{height:1.75rem!important}[data-embed-boundary] .h-8{height:2rem!important}[data-embed-boundary] .h-9{height:2.25rem!important}[data-embed-boundary] .h-\\[100px\\]{height:100px!important}[data-embed-boundary] .h-\\[2px\\]{height:2px!important}[data-embed-boundary] .h-\\[33px\\]{height:33px!important}[data-embed-boundary] .h-\\[36px\\]{height:36px!important}[data-embed-boundary] .h-\\[38px\\]{height:38px!important}[data-embed-boundary] .h-\\[3px\\]{height:3px!important}[data-embed-boundary] .h-\\[50px\\]{height:50px!important}[data-embed-boundary] .h-\\[54px\\]{height:54px!important}[data-embed-boundary] .h-\\[80px\\]{height:80px!important}[data-embed-boundary] .h-\\[88px\\]{height:88px!important}[data-embed-boundary] .h-auto{height:auto!important}[data-embed-boundary] .h-chapter-spacing{height:30px!important}[data-embed-boundary] .h-chapter-title{height:60px!important}[data-embed-boundary] .h-full{height:100%!important}[data-embed-boundary] .h-header{height:72px!important}[data-embed-boundary] .h-hero-image{height:584px!important}[data-embed-boundary] .h-px{height:1px!important}[data-embed-boundary] .h-screen{height:100vh!important}[data-embed-boundary] .h-social-proof{height:90px!important}[data-embed-boundary] .max-h-0{max-height:0px!important}[data-embed-boundary] .max-h-11{max-height:2.75rem!important}[data-embed-boundary] .max-h-\\[90vh\\]{max-height:90vh!important}[data-embed-boundary] .max-h-none{max-height:none!important}[data-embed-boundary] .min-h-0{min-height:0px!important}[data-embed-boundary] .min-h-11{min-height:2.75rem!important}[data-embed-boundary] .min-h-\\[128px\\]{min-height:128px!important}[data-embed-boundary] .min-h-\\[32px\\]{min-height:32px!important}[data-embed-boundary] .min-h-\\[50px\\]{min-height:50px!important}[data-embed-boundary] .min-h-\\[50vh\\]{min-height:50vh!important}[data-embed-boundary] .min-h-\\[60px\\]{min-height:60px!important}[data-embed-boundary] .min-h-faq-ai{min-height:400px!important}[data-embed-boundary] .min-h-full{min-height:100%!important}[data-embed-boundary] .min-h-screen{min-height:100vh!important}[data-embed-boundary] .w-1\\/2{width:50%!important}[data-embed-boundary] .w-1\\/4{width:25%!important}[data-embed-boundary] .w-10{width:2.5rem!important}[data-embed-boundary] .w-11{width:2.75rem!important}[data-embed-boundary] .w-12{width:3rem!important}[data-embed-boundary] .w-16{width:4rem!important}[data-embed-boundary] .w-3{width:.75rem!important}[data-embed-boundary] .w-3\\.5{width:.875rem!important}[data-embed-boundary] .w-4{width:1rem!important}[data-embed-boundary] .w-5{width:1.25rem!important}[data-embed-boundary] .w-56{width:14rem!important}[data-embed-boundary] .w-7{width:1.75rem!important}[data-embed-boundary] .w-8{width:2rem!important}[data-embed-boundary] .w-9{width:2.25rem!important}[data-embed-boundary] .w-\\[38px\\]{width:38px!important}[data-embed-boundary] .w-\\[42px\\]{width:42px!important}[data-embed-boundary] .w-\\[680px\\]{width:680px!important}[data-embed-boundary] .w-\\[690px\\]{width:690px!important}[data-embed-boundary] .w-\\[70\\%\\]{width:70%!important}[data-embed-boundary] .w-\\[88px\\]{width:88px!important}[data-embed-boundary] .w-\\[calc\\(100\\%\\+30px\\)\\]{width:calc(100% + 30px)!important}[data-embed-boundary] .w-\\[min\\(90vw\\,calc\\(90vh\\*16\\/9\\)\\)\\]{width:min(90vw,160vh)!important}[data-embed-boundary] .w-auto{width:auto!important}[data-embed-boundary] .w-full{width:100%!important}[data-embed-boundary] .w-px{width:1px!important}[data-embed-boundary] .w-sidebar{width:48px!important}[data-embed-boundary] .min-w-0{min-width:0px!important}[data-embed-boundary] .min-w-11{min-width:2.75rem!important}[data-embed-boundary] .min-w-\\[260px\\]{min-width:260px!important}[data-embed-boundary] .max-w-2xl{max-width:42rem!important}[data-embed-boundary] .max-w-5xl{max-width:64rem!important}[data-embed-boundary] .max-w-\\[10rem\\]{max-width:10rem!important}[data-embed-boundary] .max-w-\\[12rem\\]{max-width:12rem!important}[data-embed-boundary] .max-w-\\[32rem\\]{max-width:32rem!important}[data-embed-boundary] .max-w-\\[52\\.8rem\\]{max-width:52.8rem!important}[data-embed-boundary] .max-w-\\[560px\\]{max-width:560px!important}[data-embed-boundary] .max-w-\\[61\\.6rem\\]{max-width:61.6rem!important}[data-embed-boundary] .max-w-\\[680px\\]{max-width:680px!important}[data-embed-boundary] .max-w-\\[682px\\]{max-width:682px!important}[data-embed-boundary] .max-w-\\[685px\\]{max-width:685px!important}[data-embed-boundary] .max-w-\\[690px\\]{max-width:690px!important}[data-embed-boundary] .max-w-\\[710px\\]{max-width:710px!important}[data-embed-boundary] .max-w-\\[760px\\]{max-width:760px!important}[data-embed-boundary] .max-w-\\[85\\%\\]{max-width:85%!important}[data-embed-boundary] .max-w-\\[90vw\\]{max-width:90vw!important}[data-embed-boundary] .max-w-canvas{max-width:1432px!important}[data-embed-boundary] .max-w-full{max-width:100%!important}[data-embed-boundary] .max-w-md{max-width:28rem!important}[data-embed-boundary] .max-w-none{max-width:none!important}[data-embed-boundary] .max-w-xl{max-width:36rem!important}[data-embed-boundary] .flex-1{flex:1 1 0%!important}[data-embed-boundary] .shrink-0{flex-shrink:0!important}[data-embed-boundary] .grow-0{flex-grow:0!important}[data-embed-boundary] .origin-center{transform-origin:center!important}[data-embed-boundary] .-translate-x-1\\/2{--tw-translate-x: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .-translate-x-\\[10px\\]{--tw-translate-x: -10px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .-translate-y-1\\/2{--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-x-1\\/2{--tw-translate-x: 50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-x-\\[10px\\]{--tw-translate-x: 10px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-0{--tw-translate-y: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-1{--tw-translate-y: .25rem !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-5{--tw-translate-y: 1.25rem !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-\\[50px\\]{--tw-translate-y: 50px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .rotate-0{--tw-rotate: 0deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .rotate-180{--tw-rotate: 180deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-100{--tw-scale-x: 1 !important;--tw-scale-y: 1 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-\\[0\\.909\\]{--tw-scale-x: .909 !important;--tw-scale-y: .909 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-\\[1\\.10\\]{--tw-scale-x: 1.1 !important;--tw-scale-y: 1.1 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}@keyframes pulse{50%{opacity:.5}}[data-embed-boundary] .animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite!important}[data-embed-boundary] .cursor-not-allowed{cursor:not-allowed!important}[data-embed-boundary] .cursor-pointer{cursor:pointer!important}[data-embed-boundary] .touch-none{touch-action:none!important}[data-embed-boundary] .touch-pan-y{--tw-pan-y: pan-y !important;touch-action:var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom)!important}[data-embed-boundary] .touch-manipulation{touch-action:manipulation!important}[data-embed-boundary] .select-none{-webkit-user-select:none!important;-moz-user-select:none!important;user-select:none!important}[data-embed-boundary] .resize{resize:both!important}[data-embed-boundary] .snap-start{scroll-snap-align:start!important}[data-embed-boundary] .snap-normal{scroll-snap-stop:normal!important}[data-embed-boundary] .scroll-mt-header{scroll-margin-top:72px!important}[data-embed-boundary] .list-decimal{list-style-type:decimal!important}[data-embed-boundary] .list-disc{list-style-type:disc!important}[data-embed-boundary] .list-none{list-style-type:none!important}[data-embed-boundary] .grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-\\[10\\.5rem_1px_1fr\\]{grid-template-columns:10.5rem 1px 1fr!important}[data-embed-boundary] .grid-cols-\\[1fr_auto_1fr\\]{grid-template-columns:1fr auto 1fr!important}[data-embed-boundary] .grid-cols-\\[52fr_48fr\\]{grid-template-columns:52fr 48fr!important}[data-embed-boundary] .grid-cols-\\[690px_minmax\\(0\\,1fr\\)\\]{grid-template-columns:690px minmax(0,1fr)!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_auto\\]{grid-template-columns:minmax(0,1fr) auto!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_auto_minmax\\(0\\,1fr\\)\\]{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,2fr\\)\\]{grid-template-columns:minmax(0,1fr) minmax(0,2fr)!important}[data-embed-boundary] .grid-rows-\\[auto_auto_auto_auto\\]{grid-template-rows:auto auto auto auto!important}[data-embed-boundary] .grid-rows-\\[auto_minmax\\(16rem\\,1fr\\)\\]{grid-template-rows:auto minmax(16rem,1fr)!important}[data-embed-boundary] .flex-col{flex-direction:column!important}[data-embed-boundary] .flex-wrap{flex-wrap:wrap!important}[data-embed-boundary] .place-items-center{place-items:center!important}[data-embed-boundary] .content-start{align-content:flex-start!important}[data-embed-boundary] .items-start{align-items:flex-start!important}[data-embed-boundary] .items-end{align-items:flex-end!important}[data-embed-boundary] .items-center{align-items:center!important}[data-embed-boundary] .items-baseline{align-items:baseline!important}[data-embed-boundary] .items-stretch{align-items:stretch!important}[data-embed-boundary] .justify-start{justify-content:flex-start!important}[data-embed-boundary] .justify-end{justify-content:flex-end!important}[data-embed-boundary] .justify-center{justify-content:center!important}[data-embed-boundary] .justify-between{justify-content:space-between!important}[data-embed-boundary] .justify-around{justify-content:space-around!important}[data-embed-boundary] .justify-items-center{justify-items:center!important}[data-embed-boundary] .gap-0{gap:0px!important}[data-embed-boundary] .gap-0\\.5{gap:.125rem!important}[data-embed-boundary] .gap-1{gap:.25rem!important}[data-embed-boundary] .gap-1\\.5{gap:.375rem!important}[data-embed-boundary] .gap-14{gap:3.5rem!important}[data-embed-boundary] .gap-2{gap:.5rem!important}[data-embed-boundary] .gap-2\\.5{gap:.625rem!important}[data-embed-boundary] .gap-3{gap:.75rem!important}[data-embed-boundary] .gap-4{gap:1rem!important}[data-embed-boundary] .gap-5{gap:1.25rem!important}[data-embed-boundary] .gap-6{gap:1.5rem!important}[data-embed-boundary] .gap-8{gap:2rem!important}[data-embed-boundary] .gap-\\[1\\.6px\\]{gap:1.6px!important}[data-embed-boundary] .gap-\\[14px\\]{gap:14px!important}[data-embed-boundary] .gap-\\[18px\\]{gap:18px!important}[data-embed-boundary] .gap-\\[22px\\]{gap:22px!important}[data-embed-boundary] .gap-\\[30px\\]{gap:30px!important}[data-embed-boundary] .gap-section{gap:24px!important}[data-embed-boundary] .gap-x-10{-moz-column-gap:2.5rem!important;column-gap:2.5rem!important}[data-embed-boundary] .gap-x-2{-moz-column-gap:.5rem!important;column-gap:.5rem!important}[data-embed-boundary] .gap-x-4{-moz-column-gap:1rem!important;column-gap:1rem!important}[data-embed-boundary] .gap-x-6{-moz-column-gap:1.5rem!important;column-gap:1.5rem!important}[data-embed-boundary] .gap-x-8{-moz-column-gap:2rem!important;column-gap:2rem!important}[data-embed-boundary] .gap-x-section{-moz-column-gap:24px!important;column-gap:24px!important}[data-embed-boundary] .gap-y-1{row-gap:.25rem!important}[data-embed-boundary] .gap-y-2{row-gap:.5rem!important}[data-embed-boundary] .gap-y-3{row-gap:.75rem!important}[data-embed-boundary] .gap-y-4{row-gap:1rem!important}[data-embed-boundary] .space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.25rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.25rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-1\\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.375rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.375rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.5rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.5rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.75rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.75rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-section>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(24px * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(24px * var(--tw-space-y-reverse))!important}[data-embed-boundary] .divide-x>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(1px * var(--tw-divide-x-reverse))!important;border-left-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .divide-x-0>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(0px * var(--tw-divide-x-reverse))!important;border-left-width:calc(0px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(1px * var(--tw-divide-y-reverse))!important}[data-embed-boundary] .divide-embed-border-default>:not([hidden])~:not([hidden]){--tw-divide-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-divide-opacity, 1))!important}[data-embed-boundary] .self-start{align-self:flex-start!important}[data-embed-boundary] .self-center{align-self:center!important}[data-embed-boundary] .self-stretch{align-self:stretch!important}[data-embed-boundary] .justify-self-start{justify-self:start!important}[data-embed-boundary] .justify-self-end{justify-self:end!important}[data-embed-boundary] .justify-self-center{justify-self:center!important}[data-embed-boundary] .overflow-hidden{overflow:hidden!important}[data-embed-boundary] .overflow-visible{overflow:visible!important}[data-embed-boundary] .overflow-x-auto{overflow-x:auto!important}[data-embed-boundary] .overflow-y-auto{overflow-y:auto!important}[data-embed-boundary] .overflow-x-hidden{overflow-x:hidden!important}[data-embed-boundary] .overflow-y-hidden{overflow-y:hidden!important}[data-embed-boundary] .overscroll-x-contain{overscroll-behavior-x:contain!important}[data-embed-boundary] .truncate{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}[data-embed-boundary] .whitespace-nowrap{white-space:nowrap!important}[data-embed-boundary] .whitespace-pre-line{white-space:pre-line!important}[data-embed-boundary] .rounded{border-radius:.25rem!important}[data-embed-boundary] .rounded-\\[10px\\]{border-radius:10px!important}[data-embed-boundary] .rounded-\\[11px\\]{border-radius:11px!important}[data-embed-boundary] .rounded-\\[5px\\]{border-radius:5px!important}[data-embed-boundary] .rounded-\\[6\\.4px\\]{border-radius:6.4px!important}[data-embed-boundary] .rounded-\\[6px\\]{border-radius:6px!important}[data-embed-boundary] .rounded-\\[7px\\]{border-radius:7px!important}[data-embed-boundary] .rounded-\\[8px\\]{border-radius:8px!important}[data-embed-boundary] .rounded-full{border-radius:9999px!important}[data-embed-boundary] .rounded-md{border-radius:.375rem!important}[data-embed-boundary] .rounded-sm{border-radius:.125rem!important}[data-embed-boundary] .rounded-xl{border-radius:.75rem!important}[data-embed-boundary] .border{border-width:1px!important}[data-embed-boundary] .border-0{border-width:0px!important}[data-embed-boundary] .border-2{border-width:2px!important}[data-embed-boundary] .border-b{border-bottom-width:1px!important}[data-embed-boundary] .border-l-2{border-left-width:2px!important}[data-embed-boundary] .border-r{border-right-width:1px!important}[data-embed-boundary] .border-t{border-top-width:1px!important}[data-embed-boundary] .border-solid{border-style:solid!important}[data-embed-boundary] .border-dashed{border-style:dashed!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]{--tw-border-opacity: 1 !important;border-color:rgb(212 175 55 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]\\/40{border-color:#d4af3766!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]\\/50{border-color:#d4af3780!important}[data-embed-boundary] .border-\\[\\#E3E3E3\\]{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-action-secondaryAccent{--tw-border-opacity: 1 !important;border-color:rgb(24 66 143 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-background-primary\\/50{border-color:#f7f6f480!important}[data-embed-boundary] .border-embed-border-default{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-border-default\\/60{border-color:#e3e3e399!important}[data-embed-boundary] .border-embed-border-default\\/70{border-color:#e3e3e3b3!important}[data-embed-boundary] .border-embed-border-default\\/80{border-color:#e3e3e3cc!important}[data-embed-boundary] .border-embed-brand-gold{--tw-border-opacity: 1 !important;border-color:rgb(200 161 101 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-brand-gold\\/30{border-color:#c8a1654d!important}[data-embed-boundary] .border-embed-brand-gold\\/50{border-color:#c8a16580!important}[data-embed-boundary] .border-embed-brand-gold\\/60{border-color:#c8a16599!important}[data-embed-boundary] .border-embed-foreground-primary\\/10{border-color:#0019301a!important}[data-embed-boundary] .border-embed-foreground-primary\\/15{border-color:#00193026!important}[data-embed-boundary] .border-transparent{border-color:transparent!important}[data-embed-boundary] .\\!bg-\\[\\#FFFFFF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#001930\\]{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#D9CDAF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(217 205 175 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#F7F6F4\\]{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#FFFFFF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#FFFFFF\\]\\/95{background-color:#fffffff2!important}[data-embed-boundary] .bg-embed-action-secondary{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-primary{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-primary\\/15{background-color:#f7f6f426!important}[data-embed-boundary] .bg-embed-background-primary\\/25{background-color:#f7f6f440!important}[data-embed-boundary] .bg-embed-background-primary\\/50{background-color:#f7f6f480!important}[data-embed-boundary] .bg-embed-background-primary\\/90{background-color:#f7f6f4e6!important}[data-embed-boundary] .bg-embed-background-secondary{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-tertiary{--tw-bg-opacity: 1 !important;background-color:rgb(232 229 224 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-tertiary\\/60{background-color:#e8e5e099!important}[data-embed-boundary] .bg-embed-background-tertiary\\/80{background-color:#e8e5e0cc!important}[data-embed-boundary] .bg-embed-border-default{--tw-bg-opacity: 1 !important;background-color:rgb(227 227 227 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-gold{--tw-bg-opacity: 1 !important;background-color:rgb(200 161 101 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-gold\\/10{background-color:#c8a1651a!important}[data-embed-boundary] .bg-embed-brand-gold\\/15{background-color:#c8a16526!important}[data-embed-boundary] .bg-embed-brand-navy{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-navy\\/15{background-color:#00193026!important}[data-embed-boundary] .bg-embed-brand-navy\\/70{background-color:#001930b3!important}[data-embed-boundary] .bg-embed-foreground-primary\\/10{background-color:#0019301a!important}[data-embed-boundary] .bg-embed-surface-card,[data-embed-boundary] .bg-embed-surface-elevated{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-surface-inset{--tw-bg-opacity: 1 !important;background-color:rgb(232 229 224 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-surface-placeholder{--tw-bg-opacity: 1 !important;background-color:rgb(217 212 204 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-transparent{background-color:transparent!important}[data-embed-boundary] .bg-white{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-white\\/45{background-color:#ffffff73!important}[data-embed-boundary] .bg-white\\/65{background-color:#ffffffa6!important}[data-embed-boundary] .bg-white\\/95{background-color:#fffffff2!important}[data-embed-boundary] .bg-cover{background-size:cover!important}[data-embed-boundary] .bg-\\[center_42\\%\\]{background-position:center 42%!important}[data-embed-boundary] .bg-no-repeat{background-repeat:no-repeat!important}[data-embed-boundary] .fill-embed-foreground-primary{fill:#001930!important}[data-embed-boundary] .object-contain{-o-object-fit:contain!important;object-fit:contain!important}[data-embed-boundary] .object-cover{-o-object-fit:cover!important;object-fit:cover!important}[data-embed-boundary] .p-0{padding:0!important}[data-embed-boundary] .p-0\\.5{padding:.125rem!important}[data-embed-boundary] .p-3\\.5{padding:.875rem!important}[data-embed-boundary] .p-4{padding:1rem!important}[data-embed-boundary] .p-5{padding:1.25rem!important}[data-embed-boundary] .p-6{padding:1.5rem!important}[data-embed-boundary] .p-\\[1\\.6px\\]{padding:1.6px!important}[data-embed-boundary] .p-section{padding:24px!important}[data-embed-boundary] .px-0{padding-left:0!important;padding-right:0!important}[data-embed-boundary] .px-1{padding-left:.25rem!important;padding-right:.25rem!important}[data-embed-boundary] .px-2{padding-left:.5rem!important;padding-right:.5rem!important}[data-embed-boundary] .px-2\\.5{padding-left:.625rem!important;padding-right:.625rem!important}[data-embed-boundary] .px-3{padding-left:.75rem!important;padding-right:.75rem!important}[data-embed-boundary] .px-3\\.5{padding-left:.875rem!important;padding-right:.875rem!important}[data-embed-boundary] .px-4{padding-left:1rem!important;padding-right:1rem!important}[data-embed-boundary] .px-5{padding-left:1.25rem!important;padding-right:1.25rem!important}[data-embed-boundary] .px-6{padding-left:1.5rem!important;padding-right:1.5rem!important}[data-embed-boundary] .px-8{padding-left:2rem!important;padding-right:2rem!important}[data-embed-boundary] .px-\\[19px\\]{padding-left:19px!important;padding-right:19px!important}[data-embed-boundary] .px-\\[21px\\]{padding-left:21px!important;padding-right:21px!important}[data-embed-boundary] .px-section{padding-left:24px!important;padding-right:24px!important}[data-embed-boundary] .py-1{padding-top:.25rem!important;padding-bottom:.25rem!important}[data-embed-boundary] .py-1\\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}[data-embed-boundary] .py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}[data-embed-boundary] .py-2\\.5{padding-top:.625rem!important;padding-bottom:.625rem!important}[data-embed-boundary] .py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .py-3\\.5{padding-top:.875rem!important;padding-bottom:.875rem!important}[data-embed-boundary] .py-4{padding-top:1rem!important;padding-bottom:1rem!important}[data-embed-boundary] .py-5{padding-top:1.25rem!important;padding-bottom:1.25rem!important}[data-embed-boundary] .py-8{padding-top:2rem!important;padding-bottom:2rem!important}[data-embed-boundary] .py-\\[21px\\]{padding-top:21px!important;padding-bottom:21px!important}[data-embed-boundary] .py-\\[50px\\]{padding-top:50px!important;padding-bottom:50px!important}[data-embed-boundary] .py-section{padding-top:24px!important;padding-bottom:24px!important}[data-embed-boundary] .pb-1{padding-bottom:.25rem!important}[data-embed-boundary] .pb-10{padding-bottom:2.5rem!important}[data-embed-boundary] .pb-2{padding-bottom:.5rem!important}[data-embed-boundary] .pb-3{padding-bottom:.75rem!important}[data-embed-boundary] .pb-4{padding-bottom:1rem!important}[data-embed-boundary] .pb-5{padding-bottom:1.25rem!important}[data-embed-boundary] .pb-8{padding-bottom:2rem!important}[data-embed-boundary] .pb-\\[calc\\(3\\.5rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{padding-bottom:calc(3.5rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .pb-\\[env\\(safe-area-inset-bottom\\,0px\\)\\]{padding-bottom:env(safe-area-inset-bottom,0px)!important}[data-embed-boundary] .pb-section{padding-bottom:24px!important}[data-embed-boundary] .pl-12{padding-left:3rem!important}[data-embed-boundary] .pl-2\\.5{padding-left:.625rem!important}[data-embed-boundary] .pl-4{padding-left:1rem!important}[data-embed-boundary] .pl-5{padding-left:1.25rem!important}[data-embed-boundary] .pl-\\[14px\\]{padding-left:14px!important}[data-embed-boundary] .pl-\\[20px\\]{padding-left:20px!important}[data-embed-boundary] .pl-section{padding-left:24px!important}[data-embed-boundary] .pr-0{padding-right:0!important}[data-embed-boundary] .pr-2{padding-right:.5rem!important}[data-embed-boundary] .pr-\\[20px\\]{padding-right:20px!important}[data-embed-boundary] .pt-0{padding-top:0!important}[data-embed-boundary] .pt-0\\.5{padding-top:.125rem!important}[data-embed-boundary] .pt-1{padding-top:.25rem!important}[data-embed-boundary] .pt-14{padding-top:3.5rem!important}[data-embed-boundary] .pt-2{padding-top:.5rem!important}[data-embed-boundary] .pt-3{padding-top:.75rem!important}[data-embed-boundary] .pt-4{padding-top:1rem!important}[data-embed-boundary] .pt-5{padding-top:1.25rem!important}[data-embed-boundary] .pt-6{padding-top:1.5rem!important}[data-embed-boundary] .pt-\\[20px\\]{padding-top:20px!important}[data-embed-boundary] .pt-\\[env\\(safe-area-inset-top\\,0px\\)\\]{padding-top:env(safe-area-inset-top,0px)!important}[data-embed-boundary] .pt-section{padding-top:24px!important}[data-embed-boundary] .text-left{text-align:left!important}[data-embed-boundary] .text-center{text-align:center!important}[data-embed-boundary] .font-sans{font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif!important}[data-embed-boundary] .text-2xl{font-size:1.5rem!important;line-height:2rem!important}[data-embed-boundary] .text-5xl{font-size:3rem!important;line-height:1!important}[data-embed-boundary] .text-\\[10px\\]{font-size:10px!important}[data-embed-boundary] .text-\\[11px\\]{font-size:11px!important}[data-embed-boundary] .text-\\[12px\\]{font-size:12px!important}[data-embed-boundary] .text-\\[13px\\]{font-size:13px!important}[data-embed-boundary] .text-\\[14px\\]{font-size:14px!important}[data-embed-boundary] .text-\\[15px\\]{font-size:15px!important}[data-embed-boundary] .text-\\[16px\\]{font-size:16px!important}[data-embed-boundary] .text-\\[17px\\]{font-size:17px!important}[data-embed-boundary] .text-\\[18px\\]{font-size:18px!important}[data-embed-boundary] .text-\\[2\\.52rem\\]{font-size:2.52rem!important}[data-embed-boundary] .text-\\[22px\\]{font-size:22px!important}[data-embed-boundary] .text-\\[2rem\\]{font-size:2rem!important}[data-embed-boundary] .text-base{font-size:1rem!important;line-height:1.5rem!important}[data-embed-boundary] .text-lg{font-size:1.125rem!important;line-height:1.75rem!important}[data-embed-boundary] .text-sm{font-size:.875rem!important;line-height:1.25rem!important}[data-embed-boundary] .text-xl{font-size:1.25rem!important;line-height:1.75rem!important}[data-embed-boundary] .text-xs{font-size:.75rem!important;line-height:1rem!important}[data-embed-boundary] .\\!font-bold{font-weight:700!important}[data-embed-boundary] .font-black{font-weight:900!important}[data-embed-boundary] .font-bold{font-weight:700!important}[data-embed-boundary] .font-medium{font-weight:500!important}[data-embed-boundary] .font-normal{font-weight:400!important}[data-embed-boundary] .font-semibold{font-weight:600!important}[data-embed-boundary] .uppercase{text-transform:uppercase!important}[data-embed-boundary] .tabular-nums{--tw-numeric-spacing: tabular-nums !important;font-variant-numeric:var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)!important}[data-embed-boundary] .leading-\\[1\\.15\\]{line-height:1.15!important}[data-embed-boundary] .leading-\\[1\\.1\\]{line-height:1.1!important}[data-embed-boundary] .leading-\\[1\\.35\\]{line-height:1.35!important}[data-embed-boundary] .leading-\\[1\\.45\\]{line-height:1.45!important}[data-embed-boundary] .leading-\\[1\\.4\\]{line-height:1.4!important}[data-embed-boundary] .leading-\\[1\\.55\\]{line-height:1.55!important}[data-embed-boundary] .leading-\\[1\\.5\\]{line-height:1.5!important}[data-embed-boundary] .leading-\\[1\\.65\\]{line-height:1.65!important}[data-embed-boundary] .leading-\\[1\\.6\\]{line-height:1.6!important}[data-embed-boundary] .leading-none{line-height:1!important}[data-embed-boundary] .leading-normal{line-height:1.5!important}[data-embed-boundary] .leading-relaxed{line-height:1.625!important}[data-embed-boundary] .leading-snug{line-height:1.375!important}[data-embed-boundary] .leading-tight{line-height:1.25!important}[data-embed-boundary] .tracking-\\[0\\.12em\\]{letter-spacing:.12em!important}[data-embed-boundary] .tracking-\\[0\\.14em\\]{letter-spacing:.14em!important}[data-embed-boundary] .tracking-brand{letter-spacing:.3em!important}[data-embed-boundary] .tracking-tight{letter-spacing:-.025em!important}[data-embed-boundary] .tracking-wide{letter-spacing:.05em!important}[data-embed-boundary] .text-\\[\\#001930\\]{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-\\[\\#001930\\]\\/70{color:#001930b3!important}[data-embed-boundary] .text-\\[\\#D4AF37\\]{--tw-text-opacity: 1 !important;color:rgb(212 175 55 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-\\[\\#FFFFFF\\]{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-action-onSecondary,[data-embed-boundary] .text-embed-action-secondaryAccent{--tw-text-opacity: 1 !important;color:rgb(24 66 143 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-background-primary{--tw-text-opacity: 1 !important;color:rgb(247 246 244 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-background-primary\\/45{color:#f7f6f473!important}[data-embed-boundary] .text-embed-background-primary\\/55{color:#f7f6f48c!important}[data-embed-boundary] .text-embed-background-primary\\/70{color:#f7f6f4b3!important}[data-embed-boundary] .text-embed-background-primary\\/85{color:#f7f6f4d9!important}[data-embed-boundary] .text-embed-background-primary\\/90{color:#f7f6f4e6!important}[data-embed-boundary] .text-embed-border-strong{--tw-text-opacity: 1 !important;color:rgb(227 227 227 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-gold{--tw-text-opacity: 1 !important;color:rgb(200 161 101 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-navy{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-navy\\/70{color:#001930b3!important}[data-embed-boundary] .text-embed-foreground-primary{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-foreground-primary\\/35{color:#00193059!important}[data-embed-boundary] .text-embed-foreground-primary\\/40{color:#00193066!important}[data-embed-boundary] .text-embed-foreground-primary\\/45{color:#00193073!important}[data-embed-boundary] .text-embed-foreground-primary\\/50{color:#00193080!important}[data-embed-boundary] .text-embed-foreground-primary\\/55{color:#0019308c!important}[data-embed-boundary] .text-embed-foreground-primary\\/60{color:#00193099!important}[data-embed-boundary] .text-embed-foreground-primary\\/65{color:#001930a6!important}[data-embed-boundary] .text-embed-foreground-primary\\/70{color:#001930b3!important}[data-embed-boundary] .text-embed-foreground-primary\\/75{color:#001930bf!important}[data-embed-boundary] .text-embed-foreground-primary\\/80{color:#001930cc!important}[data-embed-boundary] .text-embed-foreground-primary\\/85{color:#001930d9!important}[data-embed-boundary] .text-embed-foreground-primary\\/90{color:#001930e6!important}[data-embed-boundary] .text-embed-status-ready{--tw-text-opacity: 1 !important;color:rgb(19 122 67 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-white{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-white\\/90{color:#ffffffe6!important}[data-embed-boundary] .underline{text-decoration-line:underline!important}[data-embed-boundary] .decoration-embed-border-strong{text-decoration-color:#e3e3e3!important}[data-embed-boundary] .decoration-white\\/50{text-decoration-color:#ffffff80!important}[data-embed-boundary] .underline-offset-2{text-underline-offset:2px!important}[data-embed-boundary] .underline-offset-4{text-underline-offset:4px!important}[data-embed-boundary] .antialiased{-webkit-font-smoothing:antialiased!important;-moz-osx-font-smoothing:grayscale!important}[data-embed-boundary] .opacity-0{opacity:0!important}[data-embed-boundary] .opacity-100{opacity:1!important}[data-embed-boundary] .opacity-40{opacity:.4!important}[data-embed-boundary] .opacity-70{opacity:.7!important}[data-embed-boundary] .opacity-80{opacity:.8!important}[data-embed-boundary] .shadow{--tw-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_0_rgba\\(0\\,25\\,48\\,0\\.04\\)\\]{--tw-shadow: 0 1px 0 rgba(0,25,48,.04) !important;--tw-shadow-colored: 0 1px 0 var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_11px_rgba\\(0\\,25\\,48\\,0\\.044\\)\\]{--tw-shadow: 0 1px 11px rgba(0,25,48,.044) !important;--tw-shadow-colored: 0 1px 11px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_4px_rgba\\(0\\,30\\,58\\,0\\.12\\)\\]{--tw-shadow: 0 1px 4px rgba(0,30,58,.12) !important;--tw-shadow-colored: 0 1px 4px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_8px_24px_rgba\\(0\\,25\\,48\\,0\\.18\\)\\]{--tw-shadow: 0 8px 24px rgba(0,25,48,.18) !important;--tw-shadow-colored: 0 8px 24px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-lg{--tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-md{--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-none{--tw-shadow: 0 0 #0000 !important;--tw-shadow-colored: 0 0 #0000 !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .outline-none{outline:2px solid transparent!important;outline-offset:2px!important}[data-embed-boundary] .outline{outline-style:solid!important}[data-embed-boundary] .ring{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-1{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-2{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-embed-brand-gold{--tw-ring-opacity: 1 !important;--tw-ring-color: rgb(200 161 101 / var(--tw-ring-opacity, 1)) !important}[data-embed-boundary] .ring-embed-brand-gold\\/40{--tw-ring-color: rgb(200 161 101 / .4) !important}[data-embed-boundary] .ring-offset-1{--tw-ring-offset-width: 1px !important}[data-embed-boundary] .ring-offset-2{--tw-ring-offset-width: 2px !important}[data-embed-boundary] .ring-offset-\\[\\#F7F6F4\\]{--tw-ring-offset-color: #F7F6F4 !important}[data-embed-boundary] .blur{--tw-blur: blur(8px) !important;filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .grayscale{--tw-grayscale: grayscale(100%) !important;filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .backdrop-blur-sm{--tw-backdrop-blur: blur(4px) !important;-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important;backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important}[data-embed-boundary] .transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[background-color\\,box-shadow\\,color\\]{transition-property:background-color,box-shadow,color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[background-color\\,color\\]{transition-property:background-color,color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[border-color\\]{transition-property:border-color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[box-shadow\\,opacity\\]{transition-property:box-shadow,opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[fill\\]{transition-property:fill!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[grid-template-rows\\]{transition-property:grid-template-rows!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[left\\]{transition-property:left!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[opacity\\,transform\\,max-height\\]{transition-property:opacity,transform,max-height!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[transform\\,box-shadow\\,border-color\\,border-width\\,background-color\\]{transition-property:transform,box-shadow,border-color,border-width,background-color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[transform\\,opacity\\]{transition-property:transform,opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[width\\]{transition-property:width!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-opacity{transition-property:opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-shadow{transition-property:box-shadow!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-transform{transition-property:transform!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .duration-150{transition-duration:.15s!important}[data-embed-boundary] .duration-200{transition-duration:.2s!important}[data-embed-boundary] .duration-500{transition-duration:.5s!important}[data-embed-boundary] .duration-\\[125ms\\]{transition-duration:125ms!important}[data-embed-boundary] .ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)!important}[data-embed-boundary] .ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)!important}[data-embed-boundary] .will-change-transform{will-change:transform!important}[data-journey-scene]{scroll-snap-align:start!important;scroll-snap-stop:normal!important;scroll-margin-top:var(--guided-journey-header-offset, 92px)!important}[data-studio-shell=mobile-nav] button,[data-journey-scene] button{transition-duration:.15s!important;transition-timing-function:ease-out!important}@media(max-width:767px){[data-chapter-spacer]{height:24px!important}[data-journey-scene]:not([data-journey-scene=journey-scene-orientation]){content-visibility:auto!important;contain-intrinsic-size:auto 720px!important}}[data-embed-boundary] .animate-hero-photo-veil{transform-origin:left center!important;animation:hero-photo-veil-cycle 14s linear infinite!important}@keyframes priority-card-attention{0%,to{box-shadow:0 0 #00193000}6%{box-shadow:0 0 0 3px #d4af3759}12%{box-shadow:0 0 #00193000}}[data-embed-boundary] .animate-priority-card-attention{animation:priority-card-attention 3s ease-in-out infinite!important}@media(prefers-reduced-motion:reduce){html[data-guided-journey-root=true],body[data-guided-journey-root=true],[data-guided-journey-root=true]{scroll-behavior:auto!important}[data-embed-boundary] .animate-hero-photo-veil,[data-embed-boundary] .animate-priority-card-attention{animation:none!important}[data-studio-shell=mobile-nav] button,[data-journey-scene] button{transition-duration:0ms!important}}[data-embed-boundary] .\\[-ms-overflow-style\\:none\\]{-ms-overflow-style:none!important}[data-embed-boundary] .\\[scrollbar-width\\:none\\]{scrollbar-width:none!important}@keyframes hero-photo-veil-cycle{0%{transform:scaleX(1)}14.2857%{transform:scaleX(0)}28.5714%{transform:scaleX(0)}42.8571%{transform:scaleX(1)}to{transform:scaleX(1)}}[data-embed-boundary] .marker\\:content-none *::marker{--tw-content: none !important;content:var(--tw-content)!important}[data-embed-boundary] .marker\\:content-none::marker{--tw-content: none !important;content:var(--tw-content)!important}[data-embed-boundary] .placeholder\\:text-embed-foreground-primary\\/40::-moz-placeholder{color:#00193066!important}[data-embed-boundary] .placeholder\\:text-embed-foreground-primary\\/40::placeholder{color:#00193066!important}[data-embed-boundary] .before\\:absolute:before{content:var(--tw-content)!important;position:absolute!important}[data-embed-boundary] .before\\:-left-1:before{content:var(--tw-content)!important;left:-.25rem!important}[data-embed-boundary] .before\\:top-1\\/2:before{content:var(--tw-content)!important;top:50%!important}[data-embed-boundary] .before\\:h-2:before{content:var(--tw-content)!important;height:.5rem!important}[data-embed-boundary] .before\\:w-2:before{content:var(--tw-content)!important;width:.5rem!important}[data-embed-boundary] .before\\:-translate-y-1\\/2:before{content:var(--tw-content)!important;--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .before\\:rounded-full:before{content:var(--tw-content)!important;border-radius:9999px!important}[data-embed-boundary] .before\\:border:before{content:var(--tw-content)!important;border-width:1px!important}[data-embed-boundary] .before\\:border-\\[\\#D9CDAF\\]:before{content:var(--tw-content)!important;--tw-border-opacity: 1 !important;border-color:rgb(217 205 175 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .before\\:bg-\\[\\#F7F6F4\\]:before{content:var(--tw-content)!important;--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .after\\:absolute:after{content:var(--tw-content)!important;position:absolute!important}[data-embed-boundary] .after\\:-right-1:after{content:var(--tw-content)!important;right:-.25rem!important}[data-embed-boundary] .after\\:top-1\\/2:after{content:var(--tw-content)!important;top:50%!important}[data-embed-boundary] .after\\:h-2:after{content:var(--tw-content)!important;height:.5rem!important}[data-embed-boundary] .after\\:w-2:after{content:var(--tw-content)!important;width:.5rem!important}[data-embed-boundary] .after\\:-translate-y-1\\/2:after{content:var(--tw-content)!important;--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .after\\:rounded-full:after{content:var(--tw-content)!important;border-radius:9999px!important}[data-embed-boundary] .after\\:border:after{content:var(--tw-content)!important;border-width:1px!important}[data-embed-boundary] .after\\:border-\\[\\#D9CDAF\\]:after{content:var(--tw-content)!important;--tw-border-opacity: 1 !important;border-color:rgb(217 205 175 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .after\\:bg-\\[\\#F7F6F4\\]:after{content:var(--tw-content)!important;--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .first\\:pl-0:first-child{padding-left:0!important}[data-embed-boundary] .last\\:border-r-0:last-child{border-right-width:0px!important}[data-embed-boundary] .last\\:pr-0:last-child{padding-right:0!important}[data-embed-boundary] .hover\\:z-\\[5\\]:hover{z-index:5!important}[data-embed-boundary] .hover\\:cursor-pointer:hover{cursor:pointer!important}[data-embed-boundary] .hover\\:border-solid:hover{border-style:solid!important}[data-embed-boundary] .hover\\:border-\\[\\#D4AF37\\]:hover{--tw-border-opacity: 1 !important;border-color:rgb(212 175 55 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .hover\\:border-embed-brand-gold:hover{--tw-border-opacity: 1 !important;border-color:rgb(200 161 101 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .hover\\:border-embed-brand-gold\\/40:hover{border-color:#c8a16566!important}[data-embed-boundary] .hover\\:border-embed-brand-gold\\/70:hover{border-color:#c8a165b3!important}[data-embed-boundary] .hover\\:bg-\\[\\#001930\\]:hover{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-embed-background-primary:hover{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-embed-background-primary\\/10:hover{background-color:#f7f6f41a!important}[data-embed-boundary] .hover\\:bg-embed-brand-gold:hover{--tw-bg-opacity: 1 !important;background-color:rgb(200 161 101 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-embed-brand-gold\\/10:hover{background-color:#c8a1651a!important}[data-embed-boundary] .hover\\:text-\\[\\#001930\\]:hover{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-\\[\\#FFFFFF\\]:hover{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-embed-background-primary\\/70:hover{color:#f7f6f4b3!important}[data-embed-boundary] .hover\\:text-embed-brand-gold:hover{--tw-text-opacity: 1 !important;color:rgb(200 161 101 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-embed-brand-navy:hover,[data-embed-boundary] .hover\\:text-embed-foreground-primary:hover{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:underline:hover{text-decoration-line:underline!important}[data-embed-boundary] .hover\\:decoration-embed-brand-navy:hover{text-decoration-color:#001930!important}[data-embed-boundary] .hover\\:decoration-white:hover{text-decoration-color:#fff!important}[data-embed-boundary] .hover\\:opacity-80:hover{opacity:.8!important}[data-embed-boundary] .hover\\:opacity-90:hover{opacity:.9!important}[data-embed-boundary] .hover\\:\\[animation-play-state\\:paused\\]:hover{animation-play-state:paused!important}[data-embed-boundary] .focus-visible\\:outline-none:focus-visible{outline:2px solid transparent!important;outline-offset:2px!important}[data-embed-boundary] .focus-visible\\:outline:focus-visible{outline-style:solid!important}[data-embed-boundary] .focus-visible\\:outline-2:focus-visible{outline-width:2px!important}[data-embed-boundary] .focus-visible\\:outline-offset-2:focus-visible{outline-offset:2px!important}[data-embed-boundary] .focus-visible\\:outline-embed-action-primary:focus-visible{outline-color:#18428f!important}[data-embed-boundary] .focus-visible\\:ring-2:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .focus-visible\\:ring-inset:focus-visible{--tw-ring-inset: inset !important}[data-embed-boundary] .focus-visible\\:ring-embed-brand-gold\\/35:focus-visible{--tw-ring-color: rgb(200 161 101 / .35) !important}[data-embed-boundary] .focus-visible\\:ring-embed-brand-gold\\/40:focus-visible{--tw-ring-color: rgb(200 161 101 / .4) !important}[data-embed-boundary] .focus-visible\\:ring-offset-2:focus-visible{--tw-ring-offset-width: 2px !important}[data-embed-boundary] .focus-visible\\:ring-offset-\\[\\#001930\\]:focus-visible{--tw-ring-offset-color: #001930 !important}[data-embed-boundary] .disabled\\:cursor-default:disabled{cursor:default!important}[data-embed-boundary] .disabled\\:cursor-not-allowed:disabled{cursor:not-allowed!important}[data-embed-boundary] .disabled\\:opacity-45:disabled{opacity:.45!important}[data-embed-boundary] .disabled\\:opacity-50:disabled{opacity:.5!important}[data-embed-boundary] .disabled\\:opacity-55:disabled{opacity:.55!important}[data-embed-boundary] .group[open] .group-open\\:rotate-90{--tw-rotate: 90deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .group:hover .group-hover\\:scale-\\[1\\.04\\]{--tw-scale-x: 1.04 !important;--tw-scale-y: 1.04 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .group:hover .group-hover\\:opacity-95{opacity:.95!important}[data-embed-boundary] .group:hover .group-hover\\:shadow-\\[0_2px_6px_rgba\\(0\\,30\\,58\\,0\\.16\\)\\]{--tw-shadow: 0 2px 6px rgba(0,30,58,.16) !important;--tw-shadow-colored: 0 2px 6px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}@media(max-width:767px){[data-embed-boundary] .mobile\\:sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border-width:0!important}[data-embed-boundary] .mobile\\:sticky{position:sticky!important}[data-embed-boundary] .mobile\\:bottom-\\[calc\\(3\\.5rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{bottom:calc(3.5rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .mobile\\:z-40{z-index:40!important}[data-embed-boundary] .mobile\\:col-span-1{grid-column:span 1 / span 1!important}[data-embed-boundary] .mobile\\:row-auto{grid-row:auto!important}[data-embed-boundary] .mobile\\:row-span-1{grid-row:span 1 / span 1!important}[data-embed-boundary] .mobile\\:-mx-section{margin-left:-24px!important;margin-right:-24px!important}[data-embed-boundary] .mobile\\:\\!ml-0,[data-embed-boundary] .mobile\\:ml-0{margin-left:0!important}[data-embed-boundary] .mobile\\:mt-5{margin-top:1.25rem!important}[data-embed-boundary] .mobile\\:mt-8{margin-top:2rem!important}[data-embed-boundary] .mobile\\:hidden{display:none!important}[data-embed-boundary] .mobile\\:h-24{height:6rem!important}[data-embed-boundary] .mobile\\:h-auto{height:auto!important}[data-embed-boundary] .mobile\\:max-h-\\[calc\\(100dvh-env\\(safe-area-inset-top\\,0px\\)-env\\(safe-area-inset-bottom\\,0px\\)-2rem\\)\\]{max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 2rem)!important}[data-embed-boundary] .mobile\\:max-h-none{max-height:none!important}[data-embed-boundary] .mobile\\:min-h-0{min-height:0px!important}[data-embed-boundary] .mobile\\:min-h-6{min-height:1.5rem!important}[data-embed-boundary] .mobile\\:min-h-\\[48px\\]{min-height:48px!important}[data-embed-boundary] .mobile\\:w-\\[min\\(calc\\(100vw-1\\.5rem\\)\\,calc\\(\\(100dvh-env\\(safe-area-inset-top\\,0px\\)-env\\(safe-area-inset-bottom\\,0px\\)-2rem\\)\\*16\\/9\\)\\)\\]{width:min(calc(100vw - 1.5rem),calc((100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 2rem) * 16 / 9))!important}[data-embed-boundary] .mobile\\:w-full{width:100%!important}[data-embed-boundary] .mobile\\:max-w-\\[7rem\\]{max-width:7rem!important}[data-embed-boundary] .mobile\\:max-w-none{max-width:none!important}[data-embed-boundary] .mobile\\:translate-x-0{--tw-translate-x: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:translate-y-0{--tw-translate-y: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:scale-\\[0\\.971\\]{--tw-scale-x: .971 !important;--tw-scale-y: .971 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:scale-\\[1\\.03\\]{--tw-scale-x: 1.03 !important;--tw-scale-y: 1.03 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))!important}[data-embed-boundary] .mobile\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .mobile\\:grid-rows-\\[auto_minmax\\(16rem\\,1fr\\)\\]{grid-template-rows:auto minmax(16rem,1fr)!important}[data-embed-boundary] .mobile\\:grid-rows-none{grid-template-rows:none!important}[data-embed-boundary] .mobile\\:flex-row{flex-direction:row!important}[data-embed-boundary] .mobile\\:flex-col{flex-direction:column!important}[data-embed-boundary] .mobile\\:items-stretch{align-items:stretch!important}[data-embed-boundary] .mobile\\:justify-start{justify-content:flex-start!important}[data-embed-boundary] .mobile\\:justify-center{justify-content:center!important}[data-embed-boundary] .mobile\\:justify-items-stretch{justify-items:stretch!important}[data-embed-boundary] .mobile\\:gap-11{gap:2.75rem!important}[data-embed-boundary] .mobile\\:gap-3{gap:.75rem!important}[data-embed-boundary] .mobile\\:gap-5{gap:1.25rem!important}[data-embed-boundary] .mobile\\:gap-8{gap:2rem!important}[data-embed-boundary] .mobile\\:gap-x-4{-moz-column-gap:1rem!important;column-gap:1rem!important}[data-embed-boundary] .mobile\\:gap-y-4{row-gap:1rem!important}[data-embed-boundary] .mobile\\:divide-x-0>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(0px * var(--tw-divide-x-reverse))!important;border-left-width:calc(0px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .mobile\\:overflow-visible{overflow:visible!important}[data-embed-boundary] .mobile\\:border-t{border-top-width:1px!important}[data-embed-boundary] .mobile\\:border-embed-border-default{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .mobile\\:bg-\\[\\#FFFFFF\\]\\/95{background-color:#fffffff2!important}[data-embed-boundary] .mobile\\:bg-embed-brand-navy{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .mobile\\:object-contain{-o-object-fit:contain!important;object-fit:contain!important}[data-embed-boundary] .mobile\\:px-0{padding-left:0!important;padding-right:0!important}[data-embed-boundary] .mobile\\:px-section{padding-left:24px!important;padding-right:24px!important}[data-embed-boundary] .mobile\\:py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .mobile\\:py-5{padding-top:1.25rem!important;padding-bottom:1.25rem!important}[data-embed-boundary] .mobile\\:py-8{padding-top:2rem!important;padding-bottom:2rem!important}[data-embed-boundary] .mobile\\:\\!pt-0{padding-top:0!important}[data-embed-boundary] .mobile\\:pb-8{padding-bottom:2rem!important}[data-embed-boundary] .mobile\\:pb-\\[calc\\(1\\.25rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{padding-bottom:calc(1.25rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .mobile\\:pr-section{padding-right:24px!important}[data-embed-boundary] .mobile\\:pt-12{padding-top:3rem!important}[data-embed-boundary] .mobile\\:text-left{text-align:left!important}[data-embed-boundary] .mobile\\:text-4xl{font-size:2.25rem!important;line-height:2.5rem!important}[data-embed-boundary] .mobile\\:text-\\[0\\.9375rem\\]{font-size:.9375rem!important}[data-embed-boundary] .mobile\\:text-\\[18px\\]{font-size:18px!important}[data-embed-boundary] .mobile\\:text-\\[2rem\\]{font-size:2rem!important}[data-embed-boundary] .mobile\\:text-base{font-size:1rem!important;line-height:1.5rem!important}[data-embed-boundary] .mobile\\:text-lg{font-size:1.125rem!important;line-height:1.75rem!important}[data-embed-boundary] .mobile\\:text-sm{font-size:.875rem!important;line-height:1.25rem!important}[data-embed-boundary] .mobile\\:text-xl{font-size:1.25rem!important;line-height:1.75rem!important}[data-embed-boundary] .mobile\\:leading-snug{line-height:1.375!important}[data-embed-boundary] .mobile\\:backdrop-blur-\\[6px\\]{--tw-backdrop-blur: blur(6px) !important;-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important;backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important}}@media(min-width:768px){[data-embed-boundary] .tablet\\:max-w-\\[16rem\\]{max-width:16rem!important}[data-embed-boundary] .tablet\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .tablet\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .tablet\\:text-base{font-size:1rem!important;line-height:1.5rem!important}}@media(min-width:1280px){[data-embed-boundary] .desktop\\:-ml-section{margin-left:-24px!important}[data-embed-boundary] .desktop\\:block{display:block!important}[data-embed-boundary] .desktop\\:flex{display:flex!important}[data-embed-boundary] .desktop\\:grid{display:grid!important}[data-embed-boundary] .desktop\\:hidden{display:none!important}[data-embed-boundary] .desktop\\:h-12{height:3rem!important}[data-embed-boundary] .desktop\\:h-20{height:5rem!important}[data-embed-boundary] .desktop\\:h-7{height:1.75rem!important}[data-embed-boundary] .desktop\\:h-8{height:2rem!important}[data-embed-boundary] .desktop\\:h-\\[155px\\]{height:155px!important}[data-embed-boundary] .desktop\\:max-h-10{max-height:2.5rem!important}[data-embed-boundary] .desktop\\:min-h-0{min-height:0px!important}[data-embed-boundary] .desktop\\:min-h-\\[36px\\]{min-height:36px!important}[data-embed-boundary] .desktop\\:min-h-\\[38px\\]{min-height:38px!important}[data-embed-boundary] .desktop\\:min-h-\\[42px\\]{min-height:42px!important}[data-embed-boundary] .desktop\\:w-1\\/2{width:50%!important}[data-embed-boundary] .desktop\\:w-12{width:3rem!important}[data-embed-boundary] .desktop\\:w-7{width:1.75rem!important}[data-embed-boundary] .desktop\\:w-8{width:2rem!important}[data-embed-boundary] .desktop\\:w-\\[155px\\]{width:155px!important}[data-embed-boundary] .desktop\\:w-\\[600px\\]{width:600px!important}[data-embed-boundary] .desktop\\:w-\\[640px\\]{width:640px!important}[data-embed-boundary] .desktop\\:w-\\[680px\\]{width:680px!important}[data-embed-boundary] .desktop\\:w-\\[682px\\]{width:682px!important}[data-embed-boundary] .desktop\\:w-\\[690px\\]{width:690px!important}[data-embed-boundary] .desktop\\:w-\\[70\\%\\]{width:70%!important}[data-embed-boundary] .desktop\\:w-\\[75\\%\\]{width:75%!important}[data-embed-boundary] .desktop\\:w-canvas{width:1432px!important}[data-embed-boundary] .desktop\\:min-w-\\[42px\\]{min-width:42px!important}[data-embed-boundary] .desktop\\:min-w-\\[600px\\]{min-width:600px!important}[data-embed-boundary] .desktop\\:min-w-canvas{min-width:1432px!important}[data-embed-boundary] .desktop\\:max-w-\\[20rem\\]{max-width:20rem!important}[data-embed-boundary] .desktop\\:max-w-\\[600px\\]{max-width:600px!important}[data-embed-boundary] .desktop\\:max-w-\\[96px\\]{max-width:96px!important}[data-embed-boundary] .desktop\\:max-w-canvas{max-width:1432px!important}[data-embed-boundary] .desktop\\:shrink-0{flex-shrink:0!important}[data-embed-boundary] .desktop\\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}[data-embed-boundary] .desktop\\:grid-cols-\\[var\\(--spatial-terminal-cols\\)\\]{grid-template-columns:var(--spatial-terminal-cols)!important}[data-embed-boundary] .desktop\\:grid-rows-\\[48px_repeat\\(3\\,minmax\\(132px\\,1fr\\)\\)\\]{grid-template-rows:48px repeat(3,minmax(132px,1fr))!important}[data-embed-boundary] .desktop\\:gap-section{gap:24px!important}[data-embed-boundary] .desktop\\:divide-y-0>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(0px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(0px * var(--tw-divide-y-reverse))!important}[data-embed-boundary] .desktop\\:py-1\\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}[data-embed-boundary] .desktop\\:py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .desktop\\:py-\\[6\\.4px\\]{padding-top:6.4px!important;padding-bottom:6.4px!important}[data-embed-boundary] .desktop\\:pb-0{padding-bottom:0!important}}[data-embed-boundary] .\\[\\&\\:\\:-webkit-details-marker\\]\\:hidden::-webkit-details-marker{display:none!important}[data-embed-boundary] .\\[\\&\\:\\:-webkit-scrollbar\\]\\:hidden::-webkit-scrollbar{display:none!important}';
-var zd = { commit: "a57fab1f", builtAt: "2026-08-18T19:08:27Z", runtimeSource: "builder-package/projectBuilderImportToHousePackage", marker: "EMBED_RUNTIME_BUILD:a57fab1f@2026-08-18T19:08:27Z" };
+const ik = '*,:before,:after{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}*,:before,:after{border-color:#e3e3e3}html,body,#root{min-height:100vh;overscroll-behavior:none;--tw-text-opacity: 1;color:rgb(0 25 48 / var(--tw-text-opacity, 1));background-color:#f7f6f4;overflow-x:clip}body{font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}html[data-guided-journey-root=true],body[data-guided-journey-root=true],[data-guided-journey-root=true]{scroll-behavior:smooth;scroll-padding-top:var(--guided-journey-header-offset, 92px);scroll-padding-bottom:var(--guided-journey-bottom-nav-offset, 0px)}html[data-guided-journey-root=true][data-guided-journey-snap=on],[data-guided-journey-root=true][data-guided-journey-snap=on]{scroll-snap-type:y proximity}input::-moz-placeholder,textarea::-moz-placeholder{color:#00193066}input::placeholder,textarea::placeholder{color:#00193066}[data-embed-boundary] .container{width:100%}@media(min-width:640px){[data-embed-boundary] .container{max-width:640px}}@media(min-width:768px){[data-embed-boundary] .container{max-width:768px}}@media(min-width:1024px){[data-embed-boundary] .container{max-width:1024px}}@media(min-width:1280px){[data-embed-boundary] .container{max-width:1280px}}@media(min-width:1536px){[data-embed-boundary] .container{max-width:1536px}}[data-embed-boundary] .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border-width:0!important}[data-embed-boundary] .pointer-events-none{pointer-events:none!important}[data-embed-boundary] .\\!visible,[data-embed-boundary] .visible{visibility:visible!important}[data-embed-boundary] .invisible{visibility:hidden!important}[data-embed-boundary] .static{position:static!important}[data-embed-boundary] .fixed{position:fixed!important}[data-embed-boundary] .absolute{position:absolute!important}[data-embed-boundary] .relative{position:relative!important}[data-embed-boundary] .sticky{position:sticky!important}[data-embed-boundary] .inset-0{top:0!important;right:0!important;bottom:0!important;left:0!important}[data-embed-boundary] .inset-x-0{left:0!important;right:0!important}[data-embed-boundary] .inset-y-0{top:0!important;bottom:0!important}[data-embed-boundary] .bottom-0{bottom:0!important}[data-embed-boundary] .bottom-3{bottom:.75rem!important}[data-embed-boundary] .bottom-\\[calc\\(20px\\+var\\(--guided-journey-bottom-nav-offset\\,0px\\)\\)\\]{bottom:calc(20px + var(--guided-journey-bottom-nav-offset,0px))!important}[data-embed-boundary] .left-0{left:0!important}[data-embed-boundary] .left-1\\/2{left:50%!important}[data-embed-boundary] .left-1\\/3{left:33.333333%!important}[data-embed-boundary] .left-2\\/3{left:66.666667%!important}[data-embed-boundary] .left-3{left:.75rem!important}[data-embed-boundary] .left-\\[12\\.5\\%\\]{left:12.5%!important}[data-embed-boundary] .left-\\[62\\.5\\%\\]{left:62.5%!important}[data-embed-boundary] .left-\\[calc\\(100\\%\\+10px\\)\\]{left:calc(100% + 10px)!important}[data-embed-boundary] .left-full{left:100%!important}[data-embed-boundary] .right-0{right:0!important}[data-embed-boundary] .right-3{right:.75rem!important}[data-embed-boundary] .right-\\[12\\.5\\%\\]{right:12.5%!important}[data-embed-boundary] .right-\\[37\\.5\\%\\]{right:37.5%!important}[data-embed-boundary] .right-section{right:24px!important}[data-embed-boundary] .top-0{top:0!important}[data-embed-boundary] .top-1\\/2{top:50%!important}[data-embed-boundary] .top-\\[25\\%\\]{top:25%!important}[data-embed-boundary] .top-\\[2px\\]{top:2px!important}[data-embed-boundary] .top-\\[44px\\]{top:44px!important}[data-embed-boundary] .top-\\[calc\\(0\\.75rem\\+1\\.4em\\/2\\)\\]{top:calc(.75rem + .7em)!important}[data-embed-boundary] .top-full{top:100%!important}[data-embed-boundary] .isolate{isolation:isolate!important}[data-embed-boundary] .z-0{z-index:0!important}[data-embed-boundary] .z-10{z-index:10!important}[data-embed-boundary] .z-20{z-index:20!important}[data-embed-boundary] .z-40{z-index:40!important}[data-embed-boundary] .z-50{z-index:50!important}[data-embed-boundary] .z-\\[60\\]{z-index:60!important}[data-embed-boundary] .order-1{order:1!important}[data-embed-boundary] .order-2{order:2!important}[data-embed-boundary] .col-span-2{grid-column:span 2 / span 2!important}[data-embed-boundary] .col-start-1{grid-column-start:1!important}[data-embed-boundary] .col-start-2{grid-column-start:2!important}[data-embed-boundary] .row-span-2{grid-row:span 2 / span 2!important}[data-embed-boundary] .row-start-1{grid-row-start:1!important}[data-embed-boundary] .row-start-2{grid-row-start:2!important}[data-embed-boundary] .row-start-3{grid-row-start:3!important}[data-embed-boundary] .row-start-4{grid-row-start:4!important}[data-embed-boundary] .m-0{margin:0!important}[data-embed-boundary] .mx-1\\.5{margin-left:.375rem!important;margin-right:.375rem!important}[data-embed-boundary] .mx-2{margin-left:.5rem!important;margin-right:.5rem!important}[data-embed-boundary] .mx-auto{margin-left:auto!important;margin-right:auto!important}[data-embed-boundary] .-ml-\\[30px\\]{margin-left:-30px!important}[data-embed-boundary] .-mt-0\\.5{margin-top:-.125rem!important}[data-embed-boundary] .-mt-\\[2px\\]{margin-top:-2px!important}[data-embed-boundary] .mb-1\\.5{margin-bottom:.375rem!important}[data-embed-boundary] .mb-2{margin-bottom:.5rem!important}[data-embed-boundary] .mb-3{margin-bottom:.75rem!important}[data-embed-boundary] .mb-5{margin-bottom:1.25rem!important}[data-embed-boundary] .ml-1{margin-left:.25rem!important}[data-embed-boundary] .ml-1\\.5{margin-left:.375rem!important}[data-embed-boundary] .ml-2{margin-left:.5rem!important}[data-embed-boundary] .ml-auto{margin-left:auto!important}[data-embed-boundary] .mr-2{margin-right:.5rem!important}[data-embed-boundary] .mt-0\\.5{margin-top:.125rem!important}[data-embed-boundary] .mt-1{margin-top:.25rem!important}[data-embed-boundary] .mt-1\\.5{margin-top:.375rem!important}[data-embed-boundary] .mt-10{margin-top:2.5rem!important}[data-embed-boundary] .mt-2{margin-top:.5rem!important}[data-embed-boundary] .mt-2\\.5{margin-top:.625rem!important}[data-embed-boundary] .mt-3{margin-top:.75rem!important}[data-embed-boundary] .mt-4{margin-top:1rem!important}[data-embed-boundary] .mt-5{margin-top:1.25rem!important}[data-embed-boundary] .mt-6{margin-top:1.5rem!important}[data-embed-boundary] .mt-7{margin-top:1.75rem!important}[data-embed-boundary] .mt-8{margin-top:2rem!important}[data-embed-boundary] .mt-\\[30px\\]{margin-top:30px!important}[data-embed-boundary] .mt-\\[50px\\]{margin-top:50px!important}[data-embed-boundary] .mt-auto{margin-top:auto!important}[data-embed-boundary] .mt-px{margin-top:1px!important}[data-embed-boundary] .mt-section{margin-top:24px!important}[data-embed-boundary] .box-border{box-sizing:border-box!important}[data-embed-boundary] .block{display:block!important}[data-embed-boundary] .inline-block{display:inline-block!important}[data-embed-boundary] .inline{display:inline!important}[data-embed-boundary] .flex{display:flex!important}[data-embed-boundary] .inline-flex{display:inline-flex!important}[data-embed-boundary] .table{display:table!important}[data-embed-boundary] .grid{display:grid!important}[data-embed-boundary] .hidden{display:none!important}[data-embed-boundary] .aspect-\\[4\\/3\\]{aspect-ratio:4/3!important}[data-embed-boundary] .aspect-square{aspect-ratio:1 / 1!important}[data-embed-boundary] .aspect-video{aspect-ratio:16 / 9!important}[data-embed-boundary] .h-1\\/2{height:50%!important}[data-embed-boundary] .h-10{height:2.5rem!important}[data-embed-boundary] .h-11{height:2.75rem!important}[data-embed-boundary] .h-12{height:3rem!important}[data-embed-boundary] .h-14{height:3.5rem!important}[data-embed-boundary] .h-16{height:4rem!important}[data-embed-boundary] .h-20{height:5rem!important}[data-embed-boundary] .h-3{height:.75rem!important}[data-embed-boundary] .h-3\\.5{height:.875rem!important}[data-embed-boundary] .h-4{height:1rem!important}[data-embed-boundary] .h-5{height:1.25rem!important}[data-embed-boundary] .h-7{height:1.75rem!important}[data-embed-boundary] .h-8{height:2rem!important}[data-embed-boundary] .h-9{height:2.25rem!important}[data-embed-boundary] .h-\\[100px\\]{height:100px!important}[data-embed-boundary] .h-\\[2px\\]{height:2px!important}[data-embed-boundary] .h-\\[33px\\]{height:33px!important}[data-embed-boundary] .h-\\[36px\\]{height:36px!important}[data-embed-boundary] .h-\\[38px\\]{height:38px!important}[data-embed-boundary] .h-\\[3px\\]{height:3px!important}[data-embed-boundary] .h-\\[50px\\]{height:50px!important}[data-embed-boundary] .h-\\[54px\\]{height:54px!important}[data-embed-boundary] .h-\\[80px\\]{height:80px!important}[data-embed-boundary] .h-\\[88px\\]{height:88px!important}[data-embed-boundary] .h-auto{height:auto!important}[data-embed-boundary] .h-chapter-spacing{height:30px!important}[data-embed-boundary] .h-chapter-title{height:60px!important}[data-embed-boundary] .h-full{height:100%!important}[data-embed-boundary] .h-header{height:72px!important}[data-embed-boundary] .h-hero-image{height:584px!important}[data-embed-boundary] .h-px{height:1px!important}[data-embed-boundary] .h-screen{height:100vh!important}[data-embed-boundary] .h-social-proof{height:90px!important}[data-embed-boundary] .max-h-0{max-height:0px!important}[data-embed-boundary] .max-h-11{max-height:2.75rem!important}[data-embed-boundary] .max-h-\\[90vh\\]{max-height:90vh!important}[data-embed-boundary] .max-h-none{max-height:none!important}[data-embed-boundary] .min-h-0{min-height:0px!important}[data-embed-boundary] .min-h-11{min-height:2.75rem!important}[data-embed-boundary] .min-h-\\[128px\\]{min-height:128px!important}[data-embed-boundary] .min-h-\\[32px\\]{min-height:32px!important}[data-embed-boundary] .min-h-\\[50px\\]{min-height:50px!important}[data-embed-boundary] .min-h-\\[50vh\\]{min-height:50vh!important}[data-embed-boundary] .min-h-\\[60px\\]{min-height:60px!important}[data-embed-boundary] .min-h-faq-ai{min-height:400px!important}[data-embed-boundary] .min-h-full{min-height:100%!important}[data-embed-boundary] .min-h-screen{min-height:100vh!important}[data-embed-boundary] .w-1\\/2{width:50%!important}[data-embed-boundary] .w-1\\/4{width:25%!important}[data-embed-boundary] .w-10{width:2.5rem!important}[data-embed-boundary] .w-11{width:2.75rem!important}[data-embed-boundary] .w-12{width:3rem!important}[data-embed-boundary] .w-16{width:4rem!important}[data-embed-boundary] .w-3{width:.75rem!important}[data-embed-boundary] .w-3\\.5{width:.875rem!important}[data-embed-boundary] .w-4{width:1rem!important}[data-embed-boundary] .w-5{width:1.25rem!important}[data-embed-boundary] .w-56{width:14rem!important}[data-embed-boundary] .w-7{width:1.75rem!important}[data-embed-boundary] .w-8{width:2rem!important}[data-embed-boundary] .w-9{width:2.25rem!important}[data-embed-boundary] .w-\\[38px\\]{width:38px!important}[data-embed-boundary] .w-\\[42px\\]{width:42px!important}[data-embed-boundary] .w-\\[680px\\]{width:680px!important}[data-embed-boundary] .w-\\[690px\\]{width:690px!important}[data-embed-boundary] .w-\\[70\\%\\]{width:70%!important}[data-embed-boundary] .w-\\[88px\\]{width:88px!important}[data-embed-boundary] .w-\\[calc\\(100\\%\\+30px\\)\\]{width:calc(100% + 30px)!important}[data-embed-boundary] .w-\\[min\\(90vw\\,calc\\(90vh\\*16\\/9\\)\\)\\]{width:min(90vw,160vh)!important}[data-embed-boundary] .w-auto{width:auto!important}[data-embed-boundary] .w-full{width:100%!important}[data-embed-boundary] .w-px{width:1px!important}[data-embed-boundary] .w-sidebar{width:48px!important}[data-embed-boundary] .min-w-0{min-width:0px!important}[data-embed-boundary] .min-w-11{min-width:2.75rem!important}[data-embed-boundary] .min-w-\\[260px\\]{min-width:260px!important}[data-embed-boundary] .max-w-2xl{max-width:42rem!important}[data-embed-boundary] .max-w-5xl{max-width:64rem!important}[data-embed-boundary] .max-w-\\[10rem\\]{max-width:10rem!important}[data-embed-boundary] .max-w-\\[12rem\\]{max-width:12rem!important}[data-embed-boundary] .max-w-\\[32rem\\]{max-width:32rem!important}[data-embed-boundary] .max-w-\\[52\\.8rem\\]{max-width:52.8rem!important}[data-embed-boundary] .max-w-\\[560px\\]{max-width:560px!important}[data-embed-boundary] .max-w-\\[61\\.6rem\\]{max-width:61.6rem!important}[data-embed-boundary] .max-w-\\[680px\\]{max-width:680px!important}[data-embed-boundary] .max-w-\\[682px\\]{max-width:682px!important}[data-embed-boundary] .max-w-\\[685px\\]{max-width:685px!important}[data-embed-boundary] .max-w-\\[690px\\]{max-width:690px!important}[data-embed-boundary] .max-w-\\[710px\\]{max-width:710px!important}[data-embed-boundary] .max-w-\\[760px\\]{max-width:760px!important}[data-embed-boundary] .max-w-\\[85\\%\\]{max-width:85%!important}[data-embed-boundary] .max-w-\\[90vw\\]{max-width:90vw!important}[data-embed-boundary] .max-w-canvas{max-width:1432px!important}[data-embed-boundary] .max-w-full{max-width:100%!important}[data-embed-boundary] .max-w-md{max-width:28rem!important}[data-embed-boundary] .max-w-none{max-width:none!important}[data-embed-boundary] .max-w-xl{max-width:36rem!important}[data-embed-boundary] .flex-1{flex:1 1 0%!important}[data-embed-boundary] .shrink-0{flex-shrink:0!important}[data-embed-boundary] .grow-0{flex-grow:0!important}[data-embed-boundary] .origin-center{transform-origin:center!important}[data-embed-boundary] .-translate-x-1\\/2{--tw-translate-x: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .-translate-x-\\[10px\\]{--tw-translate-x: -10px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .-translate-y-1\\/2{--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-x-1\\/2{--tw-translate-x: 50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-x-\\[10px\\]{--tw-translate-x: 10px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-0{--tw-translate-y: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-1{--tw-translate-y: .25rem !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-5{--tw-translate-y: 1.25rem !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-\\[50px\\]{--tw-translate-y: 50px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .rotate-0{--tw-rotate: 0deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .rotate-180{--tw-rotate: 180deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-100{--tw-scale-x: 1 !important;--tw-scale-y: 1 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-\\[0\\.909\\]{--tw-scale-x: .909 !important;--tw-scale-y: .909 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-\\[1\\.10\\]{--tw-scale-x: 1.1 !important;--tw-scale-y: 1.1 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}@keyframes pulse{50%{opacity:.5}}[data-embed-boundary] .animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite!important}[data-embed-boundary] .cursor-not-allowed{cursor:not-allowed!important}[data-embed-boundary] .cursor-pointer{cursor:pointer!important}[data-embed-boundary] .touch-none{touch-action:none!important}[data-embed-boundary] .touch-pan-y{--tw-pan-y: pan-y !important;touch-action:var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom)!important}[data-embed-boundary] .touch-manipulation{touch-action:manipulation!important}[data-embed-boundary] .select-none{-webkit-user-select:none!important;-moz-user-select:none!important;user-select:none!important}[data-embed-boundary] .resize{resize:both!important}[data-embed-boundary] .snap-start{scroll-snap-align:start!important}[data-embed-boundary] .snap-normal{scroll-snap-stop:normal!important}[data-embed-boundary] .scroll-mt-header{scroll-margin-top:72px!important}[data-embed-boundary] .list-decimal{list-style-type:decimal!important}[data-embed-boundary] .list-disc{list-style-type:disc!important}[data-embed-boundary] .list-none{list-style-type:none!important}[data-embed-boundary] .grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-\\[10\\.5rem_1px_1fr\\]{grid-template-columns:10.5rem 1px 1fr!important}[data-embed-boundary] .grid-cols-\\[1fr_auto_1fr\\]{grid-template-columns:1fr auto 1fr!important}[data-embed-boundary] .grid-cols-\\[52fr_48fr\\]{grid-template-columns:52fr 48fr!important}[data-embed-boundary] .grid-cols-\\[690px_minmax\\(0\\,1fr\\)\\]{grid-template-columns:690px minmax(0,1fr)!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_auto\\]{grid-template-columns:minmax(0,1fr) auto!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_auto_minmax\\(0\\,1fr\\)\\]{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,2fr\\)\\]{grid-template-columns:minmax(0,1fr) minmax(0,2fr)!important}[data-embed-boundary] .grid-rows-\\[auto_auto_auto_auto\\]{grid-template-rows:auto auto auto auto!important}[data-embed-boundary] .grid-rows-\\[auto_minmax\\(16rem\\,1fr\\)\\]{grid-template-rows:auto minmax(16rem,1fr)!important}[data-embed-boundary] .flex-col{flex-direction:column!important}[data-embed-boundary] .flex-wrap{flex-wrap:wrap!important}[data-embed-boundary] .place-items-center{place-items:center!important}[data-embed-boundary] .content-start{align-content:flex-start!important}[data-embed-boundary] .items-start{align-items:flex-start!important}[data-embed-boundary] .items-end{align-items:flex-end!important}[data-embed-boundary] .items-center{align-items:center!important}[data-embed-boundary] .items-baseline{align-items:baseline!important}[data-embed-boundary] .items-stretch{align-items:stretch!important}[data-embed-boundary] .justify-start{justify-content:flex-start!important}[data-embed-boundary] .justify-end{justify-content:flex-end!important}[data-embed-boundary] .justify-center{justify-content:center!important}[data-embed-boundary] .justify-between{justify-content:space-between!important}[data-embed-boundary] .justify-around{justify-content:space-around!important}[data-embed-boundary] .justify-items-center{justify-items:center!important}[data-embed-boundary] .gap-0{gap:0px!important}[data-embed-boundary] .gap-0\\.5{gap:.125rem!important}[data-embed-boundary] .gap-1{gap:.25rem!important}[data-embed-boundary] .gap-1\\.5{gap:.375rem!important}[data-embed-boundary] .gap-14{gap:3.5rem!important}[data-embed-boundary] .gap-2{gap:.5rem!important}[data-embed-boundary] .gap-2\\.5{gap:.625rem!important}[data-embed-boundary] .gap-3{gap:.75rem!important}[data-embed-boundary] .gap-4{gap:1rem!important}[data-embed-boundary] .gap-5{gap:1.25rem!important}[data-embed-boundary] .gap-6{gap:1.5rem!important}[data-embed-boundary] .gap-8{gap:2rem!important}[data-embed-boundary] .gap-\\[1\\.6px\\]{gap:1.6px!important}[data-embed-boundary] .gap-\\[14px\\]{gap:14px!important}[data-embed-boundary] .gap-\\[18px\\]{gap:18px!important}[data-embed-boundary] .gap-\\[22px\\]{gap:22px!important}[data-embed-boundary] .gap-\\[30px\\]{gap:30px!important}[data-embed-boundary] .gap-section{gap:24px!important}[data-embed-boundary] .gap-x-10{-moz-column-gap:2.5rem!important;column-gap:2.5rem!important}[data-embed-boundary] .gap-x-2{-moz-column-gap:.5rem!important;column-gap:.5rem!important}[data-embed-boundary] .gap-x-4{-moz-column-gap:1rem!important;column-gap:1rem!important}[data-embed-boundary] .gap-x-6{-moz-column-gap:1.5rem!important;column-gap:1.5rem!important}[data-embed-boundary] .gap-x-8{-moz-column-gap:2rem!important;column-gap:2rem!important}[data-embed-boundary] .gap-x-section{-moz-column-gap:24px!important;column-gap:24px!important}[data-embed-boundary] .gap-y-1{row-gap:.25rem!important}[data-embed-boundary] .gap-y-2{row-gap:.5rem!important}[data-embed-boundary] .gap-y-3{row-gap:.75rem!important}[data-embed-boundary] .gap-y-4{row-gap:1rem!important}[data-embed-boundary] .space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.25rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.25rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-1\\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.375rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.375rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.5rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.5rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.75rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.75rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-section>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(24px * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(24px * var(--tw-space-y-reverse))!important}[data-embed-boundary] .divide-x>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(1px * var(--tw-divide-x-reverse))!important;border-left-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .divide-x-0>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(0px * var(--tw-divide-x-reverse))!important;border-left-width:calc(0px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(1px * var(--tw-divide-y-reverse))!important}[data-embed-boundary] .divide-embed-border-default>:not([hidden])~:not([hidden]){--tw-divide-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-divide-opacity, 1))!important}[data-embed-boundary] .self-start{align-self:flex-start!important}[data-embed-boundary] .self-center{align-self:center!important}[data-embed-boundary] .self-stretch{align-self:stretch!important}[data-embed-boundary] .justify-self-start{justify-self:start!important}[data-embed-boundary] .justify-self-end{justify-self:end!important}[data-embed-boundary] .justify-self-center{justify-self:center!important}[data-embed-boundary] .overflow-hidden{overflow:hidden!important}[data-embed-boundary] .overflow-visible{overflow:visible!important}[data-embed-boundary] .overflow-x-auto{overflow-x:auto!important}[data-embed-boundary] .overflow-y-auto{overflow-y:auto!important}[data-embed-boundary] .overflow-x-hidden{overflow-x:hidden!important}[data-embed-boundary] .overflow-y-hidden{overflow-y:hidden!important}[data-embed-boundary] .overscroll-x-contain{overscroll-behavior-x:contain!important}[data-embed-boundary] .truncate{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}[data-embed-boundary] .whitespace-nowrap{white-space:nowrap!important}[data-embed-boundary] .whitespace-pre-line{white-space:pre-line!important}[data-embed-boundary] .rounded{border-radius:.25rem!important}[data-embed-boundary] .rounded-\\[10px\\]{border-radius:10px!important}[data-embed-boundary] .rounded-\\[11px\\]{border-radius:11px!important}[data-embed-boundary] .rounded-\\[5px\\]{border-radius:5px!important}[data-embed-boundary] .rounded-\\[6\\.4px\\]{border-radius:6.4px!important}[data-embed-boundary] .rounded-\\[6px\\]{border-radius:6px!important}[data-embed-boundary] .rounded-\\[7px\\]{border-radius:7px!important}[data-embed-boundary] .rounded-\\[8px\\]{border-radius:8px!important}[data-embed-boundary] .rounded-full{border-radius:9999px!important}[data-embed-boundary] .rounded-md{border-radius:.375rem!important}[data-embed-boundary] .rounded-sm{border-radius:.125rem!important}[data-embed-boundary] .rounded-xl{border-radius:.75rem!important}[data-embed-boundary] .border{border-width:1px!important}[data-embed-boundary] .border-0{border-width:0px!important}[data-embed-boundary] .border-2{border-width:2px!important}[data-embed-boundary] .border-b{border-bottom-width:1px!important}[data-embed-boundary] .border-l-2{border-left-width:2px!important}[data-embed-boundary] .border-r{border-right-width:1px!important}[data-embed-boundary] .border-t{border-top-width:1px!important}[data-embed-boundary] .border-solid{border-style:solid!important}[data-embed-boundary] .border-dashed{border-style:dashed!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]{--tw-border-opacity: 1 !important;border-color:rgb(212 175 55 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]\\/40{border-color:#d4af3766!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]\\/50{border-color:#d4af3780!important}[data-embed-boundary] .border-\\[\\#E3E3E3\\]{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-action-secondaryAccent{--tw-border-opacity: 1 !important;border-color:rgb(24 66 143 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-background-primary\\/50{border-color:#f7f6f480!important}[data-embed-boundary] .border-embed-border-default{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-border-default\\/60{border-color:#e3e3e399!important}[data-embed-boundary] .border-embed-border-default\\/70{border-color:#e3e3e3b3!important}[data-embed-boundary] .border-embed-border-default\\/80{border-color:#e3e3e3cc!important}[data-embed-boundary] .border-embed-brand-gold{--tw-border-opacity: 1 !important;border-color:rgb(200 161 101 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-brand-gold\\/30{border-color:#c8a1654d!important}[data-embed-boundary] .border-embed-brand-gold\\/50{border-color:#c8a16580!important}[data-embed-boundary] .border-embed-brand-gold\\/60{border-color:#c8a16599!important}[data-embed-boundary] .border-embed-foreground-primary\\/10{border-color:#0019301a!important}[data-embed-boundary] .border-embed-foreground-primary\\/15{border-color:#00193026!important}[data-embed-boundary] .border-transparent{border-color:transparent!important}[data-embed-boundary] .\\!bg-\\[\\#FFFFFF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#001930\\]{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#D9CDAF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(217 205 175 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#F7F6F4\\]{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#FFFFFF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#FFFFFF\\]\\/95{background-color:#fffffff2!important}[data-embed-boundary] .bg-embed-action-secondary{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-primary{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-primary\\/15{background-color:#f7f6f426!important}[data-embed-boundary] .bg-embed-background-primary\\/25{background-color:#f7f6f440!important}[data-embed-boundary] .bg-embed-background-primary\\/50{background-color:#f7f6f480!important}[data-embed-boundary] .bg-embed-background-primary\\/90{background-color:#f7f6f4e6!important}[data-embed-boundary] .bg-embed-background-secondary{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-tertiary{--tw-bg-opacity: 1 !important;background-color:rgb(232 229 224 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-tertiary\\/60{background-color:#e8e5e099!important}[data-embed-boundary] .bg-embed-background-tertiary\\/80{background-color:#e8e5e0cc!important}[data-embed-boundary] .bg-embed-border-default{--tw-bg-opacity: 1 !important;background-color:rgb(227 227 227 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-gold{--tw-bg-opacity: 1 !important;background-color:rgb(200 161 101 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-gold\\/10{background-color:#c8a1651a!important}[data-embed-boundary] .bg-embed-brand-gold\\/15{background-color:#c8a16526!important}[data-embed-boundary] .bg-embed-brand-navy{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-navy\\/70{background-color:#001930b3!important}[data-embed-boundary] .bg-embed-foreground-primary\\/10{background-color:#0019301a!important}[data-embed-boundary] .bg-embed-surface-card,[data-embed-boundary] .bg-embed-surface-elevated{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-surface-inset{--tw-bg-opacity: 1 !important;background-color:rgb(232 229 224 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-surface-placeholder{--tw-bg-opacity: 1 !important;background-color:rgb(217 212 204 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-transparent{background-color:transparent!important}[data-embed-boundary] .bg-white{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-white\\/45{background-color:#ffffff73!important}[data-embed-boundary] .bg-white\\/65{background-color:#ffffffa6!important}[data-embed-boundary] .bg-white\\/95{background-color:#fffffff2!important}[data-embed-boundary] .bg-cover{background-size:cover!important}[data-embed-boundary] .bg-\\[center_42\\%\\]{background-position:center 42%!important}[data-embed-boundary] .bg-no-repeat{background-repeat:no-repeat!important}[data-embed-boundary] .fill-embed-foreground-primary{fill:#001930!important}[data-embed-boundary] .object-contain{-o-object-fit:contain!important;object-fit:contain!important}[data-embed-boundary] .object-cover{-o-object-fit:cover!important;object-fit:cover!important}[data-embed-boundary] .p-0{padding:0!important}[data-embed-boundary] .p-0\\.5{padding:.125rem!important}[data-embed-boundary] .p-3\\.5{padding:.875rem!important}[data-embed-boundary] .p-4{padding:1rem!important}[data-embed-boundary] .p-5{padding:1.25rem!important}[data-embed-boundary] .p-6{padding:1.5rem!important}[data-embed-boundary] .p-\\[1\\.6px\\]{padding:1.6px!important}[data-embed-boundary] .p-section{padding:24px!important}[data-embed-boundary] .px-0{padding-left:0!important;padding-right:0!important}[data-embed-boundary] .px-1{padding-left:.25rem!important;padding-right:.25rem!important}[data-embed-boundary] .px-2{padding-left:.5rem!important;padding-right:.5rem!important}[data-embed-boundary] .px-2\\.5{padding-left:.625rem!important;padding-right:.625rem!important}[data-embed-boundary] .px-3{padding-left:.75rem!important;padding-right:.75rem!important}[data-embed-boundary] .px-3\\.5{padding-left:.875rem!important;padding-right:.875rem!important}[data-embed-boundary] .px-4{padding-left:1rem!important;padding-right:1rem!important}[data-embed-boundary] .px-5{padding-left:1.25rem!important;padding-right:1.25rem!important}[data-embed-boundary] .px-6{padding-left:1.5rem!important;padding-right:1.5rem!important}[data-embed-boundary] .px-8{padding-left:2rem!important;padding-right:2rem!important}[data-embed-boundary] .px-\\[19px\\]{padding-left:19px!important;padding-right:19px!important}[data-embed-boundary] .px-\\[21px\\]{padding-left:21px!important;padding-right:21px!important}[data-embed-boundary] .px-section{padding-left:24px!important;padding-right:24px!important}[data-embed-boundary] .py-1{padding-top:.25rem!important;padding-bottom:.25rem!important}[data-embed-boundary] .py-1\\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}[data-embed-boundary] .py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}[data-embed-boundary] .py-2\\.5{padding-top:.625rem!important;padding-bottom:.625rem!important}[data-embed-boundary] .py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .py-3\\.5{padding-top:.875rem!important;padding-bottom:.875rem!important}[data-embed-boundary] .py-4{padding-top:1rem!important;padding-bottom:1rem!important}[data-embed-boundary] .py-5{padding-top:1.25rem!important;padding-bottom:1.25rem!important}[data-embed-boundary] .py-8{padding-top:2rem!important;padding-bottom:2rem!important}[data-embed-boundary] .py-\\[21px\\]{padding-top:21px!important;padding-bottom:21px!important}[data-embed-boundary] .py-\\[50px\\]{padding-top:50px!important;padding-bottom:50px!important}[data-embed-boundary] .py-section{padding-top:24px!important;padding-bottom:24px!important}[data-embed-boundary] .pb-1{padding-bottom:.25rem!important}[data-embed-boundary] .pb-10{padding-bottom:2.5rem!important}[data-embed-boundary] .pb-2{padding-bottom:.5rem!important}[data-embed-boundary] .pb-3{padding-bottom:.75rem!important}[data-embed-boundary] .pb-4{padding-bottom:1rem!important}[data-embed-boundary] .pb-5{padding-bottom:1.25rem!important}[data-embed-boundary] .pb-8{padding-bottom:2rem!important}[data-embed-boundary] .pb-\\[calc\\(3\\.5rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{padding-bottom:calc(3.5rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .pb-\\[env\\(safe-area-inset-bottom\\,0px\\)\\]{padding-bottom:env(safe-area-inset-bottom,0px)!important}[data-embed-boundary] .pb-section{padding-bottom:24px!important}[data-embed-boundary] .pl-12{padding-left:3rem!important}[data-embed-boundary] .pl-2\\.5{padding-left:.625rem!important}[data-embed-boundary] .pl-4{padding-left:1rem!important}[data-embed-boundary] .pl-5{padding-left:1.25rem!important}[data-embed-boundary] .pl-\\[14px\\]{padding-left:14px!important}[data-embed-boundary] .pl-\\[20px\\]{padding-left:20px!important}[data-embed-boundary] .pl-section{padding-left:24px!important}[data-embed-boundary] .pr-0{padding-right:0!important}[data-embed-boundary] .pr-2{padding-right:.5rem!important}[data-embed-boundary] .pr-\\[20px\\]{padding-right:20px!important}[data-embed-boundary] .pt-0{padding-top:0!important}[data-embed-boundary] .pt-0\\.5{padding-top:.125rem!important}[data-embed-boundary] .pt-1{padding-top:.25rem!important}[data-embed-boundary] .pt-14{padding-top:3.5rem!important}[data-embed-boundary] .pt-2{padding-top:.5rem!important}[data-embed-boundary] .pt-3{padding-top:.75rem!important}[data-embed-boundary] .pt-4{padding-top:1rem!important}[data-embed-boundary] .pt-5{padding-top:1.25rem!important}[data-embed-boundary] .pt-6{padding-top:1.5rem!important}[data-embed-boundary] .pt-\\[20px\\]{padding-top:20px!important}[data-embed-boundary] .pt-\\[env\\(safe-area-inset-top\\,0px\\)\\]{padding-top:env(safe-area-inset-top,0px)!important}[data-embed-boundary] .pt-section{padding-top:24px!important}[data-embed-boundary] .text-left{text-align:left!important}[data-embed-boundary] .text-center{text-align:center!important}[data-embed-boundary] .font-sans{font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif!important}[data-embed-boundary] .text-2xl{font-size:1.5rem!important;line-height:2rem!important}[data-embed-boundary] .text-5xl{font-size:3rem!important;line-height:1!important}[data-embed-boundary] .text-\\[10px\\]{font-size:10px!important}[data-embed-boundary] .text-\\[11px\\]{font-size:11px!important}[data-embed-boundary] .text-\\[12px\\]{font-size:12px!important}[data-embed-boundary] .text-\\[13px\\]{font-size:13px!important}[data-embed-boundary] .text-\\[14px\\]{font-size:14px!important}[data-embed-boundary] .text-\\[15px\\]{font-size:15px!important}[data-embed-boundary] .text-\\[16px\\]{font-size:16px!important}[data-embed-boundary] .text-\\[17px\\]{font-size:17px!important}[data-embed-boundary] .text-\\[18px\\]{font-size:18px!important}[data-embed-boundary] .text-\\[2\\.52rem\\]{font-size:2.52rem!important}[data-embed-boundary] .text-\\[22px\\]{font-size:22px!important}[data-embed-boundary] .text-\\[2rem\\]{font-size:2rem!important}[data-embed-boundary] .text-base{font-size:1rem!important;line-height:1.5rem!important}[data-embed-boundary] .text-lg{font-size:1.125rem!important;line-height:1.75rem!important}[data-embed-boundary] .text-sm{font-size:.875rem!important;line-height:1.25rem!important}[data-embed-boundary] .text-xl{font-size:1.25rem!important;line-height:1.75rem!important}[data-embed-boundary] .text-xs{font-size:.75rem!important;line-height:1rem!important}[data-embed-boundary] .\\!font-bold{font-weight:700!important}[data-embed-boundary] .font-black{font-weight:900!important}[data-embed-boundary] .font-bold{font-weight:700!important}[data-embed-boundary] .font-medium{font-weight:500!important}[data-embed-boundary] .font-normal{font-weight:400!important}[data-embed-boundary] .font-semibold{font-weight:600!important}[data-embed-boundary] .uppercase{text-transform:uppercase!important}[data-embed-boundary] .tabular-nums{--tw-numeric-spacing: tabular-nums !important;font-variant-numeric:var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)!important}[data-embed-boundary] .leading-\\[1\\.15\\]{line-height:1.15!important}[data-embed-boundary] .leading-\\[1\\.1\\]{line-height:1.1!important}[data-embed-boundary] .leading-\\[1\\.35\\]{line-height:1.35!important}[data-embed-boundary] .leading-\\[1\\.45\\]{line-height:1.45!important}[data-embed-boundary] .leading-\\[1\\.4\\]{line-height:1.4!important}[data-embed-boundary] .leading-\\[1\\.55\\]{line-height:1.55!important}[data-embed-boundary] .leading-\\[1\\.5\\]{line-height:1.5!important}[data-embed-boundary] .leading-\\[1\\.65\\]{line-height:1.65!important}[data-embed-boundary] .leading-\\[1\\.6\\]{line-height:1.6!important}[data-embed-boundary] .leading-none{line-height:1!important}[data-embed-boundary] .leading-normal{line-height:1.5!important}[data-embed-boundary] .leading-relaxed{line-height:1.625!important}[data-embed-boundary] .leading-snug{line-height:1.375!important}[data-embed-boundary] .leading-tight{line-height:1.25!important}[data-embed-boundary] .tracking-\\[0\\.12em\\]{letter-spacing:.12em!important}[data-embed-boundary] .tracking-\\[0\\.14em\\]{letter-spacing:.14em!important}[data-embed-boundary] .tracking-brand{letter-spacing:.3em!important}[data-embed-boundary] .tracking-tight{letter-spacing:-.025em!important}[data-embed-boundary] .tracking-wide{letter-spacing:.05em!important}[data-embed-boundary] .text-\\[\\#001930\\]{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-\\[\\#001930\\]\\/70{color:#001930b3!important}[data-embed-boundary] .text-\\[\\#D4AF37\\]{--tw-text-opacity: 1 !important;color:rgb(212 175 55 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-\\[\\#FFFFFF\\]{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-action-onSecondary,[data-embed-boundary] .text-embed-action-secondaryAccent{--tw-text-opacity: 1 !important;color:rgb(24 66 143 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-background-primary{--tw-text-opacity: 1 !important;color:rgb(247 246 244 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-background-primary\\/45{color:#f7f6f473!important}[data-embed-boundary] .text-embed-background-primary\\/55{color:#f7f6f48c!important}[data-embed-boundary] .text-embed-background-primary\\/70{color:#f7f6f4b3!important}[data-embed-boundary] .text-embed-background-primary\\/85{color:#f7f6f4d9!important}[data-embed-boundary] .text-embed-background-primary\\/90{color:#f7f6f4e6!important}[data-embed-boundary] .text-embed-border-strong{--tw-text-opacity: 1 !important;color:rgb(227 227 227 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-gold{--tw-text-opacity: 1 !important;color:rgb(200 161 101 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-navy{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-navy\\/70{color:#001930b3!important}[data-embed-boundary] .text-embed-foreground-primary{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-foreground-primary\\/35{color:#00193059!important}[data-embed-boundary] .text-embed-foreground-primary\\/40{color:#00193066!important}[data-embed-boundary] .text-embed-foreground-primary\\/45{color:#00193073!important}[data-embed-boundary] .text-embed-foreground-primary\\/50{color:#00193080!important}[data-embed-boundary] .text-embed-foreground-primary\\/55{color:#0019308c!important}[data-embed-boundary] .text-embed-foreground-primary\\/60{color:#00193099!important}[data-embed-boundary] .text-embed-foreground-primary\\/65{color:#001930a6!important}[data-embed-boundary] .text-embed-foreground-primary\\/70{color:#001930b3!important}[data-embed-boundary] .text-embed-foreground-primary\\/75{color:#001930bf!important}[data-embed-boundary] .text-embed-foreground-primary\\/80{color:#001930cc!important}[data-embed-boundary] .text-embed-foreground-primary\\/85{color:#001930d9!important}[data-embed-boundary] .text-embed-foreground-primary\\/90{color:#001930e6!important}[data-embed-boundary] .text-embed-status-ready{--tw-text-opacity: 1 !important;color:rgb(19 122 67 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-white{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-white\\/90{color:#ffffffe6!important}[data-embed-boundary] .underline{text-decoration-line:underline!important}[data-embed-boundary] .decoration-embed-border-strong{text-decoration-color:#e3e3e3!important}[data-embed-boundary] .decoration-white\\/50{text-decoration-color:#ffffff80!important}[data-embed-boundary] .underline-offset-2{text-underline-offset:2px!important}[data-embed-boundary] .underline-offset-4{text-underline-offset:4px!important}[data-embed-boundary] .antialiased{-webkit-font-smoothing:antialiased!important;-moz-osx-font-smoothing:grayscale!important}[data-embed-boundary] .opacity-0{opacity:0!important}[data-embed-boundary] .opacity-100{opacity:1!important}[data-embed-boundary] .opacity-40{opacity:.4!important}[data-embed-boundary] .opacity-70{opacity:.7!important}[data-embed-boundary] .opacity-80{opacity:.8!important}[data-embed-boundary] .shadow{--tw-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_0_rgba\\(0\\,25\\,48\\,0\\.04\\)\\]{--tw-shadow: 0 1px 0 rgba(0,25,48,.04) !important;--tw-shadow-colored: 0 1px 0 var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_11px_rgba\\(0\\,25\\,48\\,0\\.044\\)\\]{--tw-shadow: 0 1px 11px rgba(0,25,48,.044) !important;--tw-shadow-colored: 0 1px 11px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_4px_rgba\\(0\\,30\\,58\\,0\\.12\\)\\]{--tw-shadow: 0 1px 4px rgba(0,30,58,.12) !important;--tw-shadow-colored: 0 1px 4px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_8px_24px_rgba\\(0\\,25\\,48\\,0\\.18\\)\\]{--tw-shadow: 0 8px 24px rgba(0,25,48,.18) !important;--tw-shadow-colored: 0 8px 24px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-lg{--tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-md{--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-none{--tw-shadow: 0 0 #0000 !important;--tw-shadow-colored: 0 0 #0000 !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .outline-none{outline:2px solid transparent!important;outline-offset:2px!important}[data-embed-boundary] .outline{outline-style:solid!important}[data-embed-boundary] .ring{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-1{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-2{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-embed-brand-gold{--tw-ring-opacity: 1 !important;--tw-ring-color: rgb(200 161 101 / var(--tw-ring-opacity, 1)) !important}[data-embed-boundary] .ring-embed-brand-gold\\/40{--tw-ring-color: rgb(200 161 101 / .4) !important}[data-embed-boundary] .ring-offset-1{--tw-ring-offset-width: 1px !important}[data-embed-boundary] .ring-offset-2{--tw-ring-offset-width: 2px !important}[data-embed-boundary] .ring-offset-\\[\\#F7F6F4\\]{--tw-ring-offset-color: #F7F6F4 !important}[data-embed-boundary] .blur{--tw-blur: blur(8px) !important;filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .grayscale{--tw-grayscale: grayscale(100%) !important;filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .backdrop-blur-sm{--tw-backdrop-blur: blur(4px) !important;-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important;backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important}[data-embed-boundary] .transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[background-color\\,box-shadow\\,color\\]{transition-property:background-color,box-shadow,color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[background-color\\,color\\]{transition-property:background-color,color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[border-color\\]{transition-property:border-color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[box-shadow\\,opacity\\]{transition-property:box-shadow,opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[fill\\]{transition-property:fill!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[grid-template-rows\\]{transition-property:grid-template-rows!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[left\\]{transition-property:left!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[opacity\\,transform\\,max-height\\]{transition-property:opacity,transform,max-height!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[transform\\,box-shadow\\,border-color\\,border-width\\,background-color\\]{transition-property:transform,box-shadow,border-color,border-width,background-color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[transform\\,opacity\\]{transition-property:transform,opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[width\\]{transition-property:width!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-opacity{transition-property:opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-shadow{transition-property:box-shadow!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-transform{transition-property:transform!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .duration-150{transition-duration:.15s!important}[data-embed-boundary] .duration-200{transition-duration:.2s!important}[data-embed-boundary] .duration-500{transition-duration:.5s!important}[data-embed-boundary] .duration-\\[125ms\\]{transition-duration:125ms!important}[data-embed-boundary] .ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)!important}[data-embed-boundary] .ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)!important}[data-embed-boundary] .will-change-transform{will-change:transform!important}[data-journey-scene]{scroll-snap-align:start!important;scroll-snap-stop:normal!important;scroll-margin-top:var(--guided-journey-header-offset, 92px)!important}[data-studio-shell=mobile-nav] button,[data-journey-scene] button{transition-duration:.15s!important;transition-timing-function:ease-out!important}@media(max-width:767px){[data-chapter-spacer]{height:24px!important}[data-journey-scene]:not([data-journey-scene=journey-scene-orientation]){content-visibility:auto!important;contain-intrinsic-size:auto 720px!important}}[data-embed-boundary] .animate-hero-photo-veil{transform-origin:left center!important;animation:hero-photo-veil-cycle 14s linear infinite!important}@keyframes priority-card-attention{0%,to{box-shadow:0 0 #00193000}6%{box-shadow:0 0 0 3px #d4af3759}12%{box-shadow:0 0 #00193000}}[data-embed-boundary] .animate-priority-card-attention{animation:priority-card-attention 3s ease-in-out infinite!important}@media(prefers-reduced-motion:reduce){html[data-guided-journey-root=true],body[data-guided-journey-root=true],[data-guided-journey-root=true]{scroll-behavior:auto!important}[data-embed-boundary] .animate-hero-photo-veil,[data-embed-boundary] .animate-priority-card-attention{animation:none!important}[data-studio-shell=mobile-nav] button,[data-journey-scene] button{transition-duration:0ms!important}}[data-embed-boundary] .\\[-ms-overflow-style\\:none\\]{-ms-overflow-style:none!important}[data-embed-boundary] .\\[scrollbar-width\\:none\\]{scrollbar-width:none!important}@keyframes hero-photo-veil-cycle{0%{transform:scaleX(1)}14.2857%{transform:scaleX(0)}28.5714%{transform:scaleX(0)}42.8571%{transform:scaleX(1)}to{transform:scaleX(1)}}[data-embed-boundary] .marker\\:content-none *::marker{--tw-content: none !important;content:var(--tw-content)!important}[data-embed-boundary] .marker\\:content-none::marker{--tw-content: none !important;content:var(--tw-content)!important}[data-embed-boundary] .placeholder\\:text-embed-foreground-primary\\/40::-moz-placeholder{color:#00193066!important}[data-embed-boundary] .placeholder\\:text-embed-foreground-primary\\/40::placeholder{color:#00193066!important}[data-embed-boundary] .before\\:absolute:before{content:var(--tw-content)!important;position:absolute!important}[data-embed-boundary] .before\\:-left-1:before{content:var(--tw-content)!important;left:-.25rem!important}[data-embed-boundary] .before\\:top-1\\/2:before{content:var(--tw-content)!important;top:50%!important}[data-embed-boundary] .before\\:h-2:before{content:var(--tw-content)!important;height:.5rem!important}[data-embed-boundary] .before\\:w-2:before{content:var(--tw-content)!important;width:.5rem!important}[data-embed-boundary] .before\\:-translate-y-1\\/2:before{content:var(--tw-content)!important;--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .before\\:rounded-full:before{content:var(--tw-content)!important;border-radius:9999px!important}[data-embed-boundary] .before\\:border:before{content:var(--tw-content)!important;border-width:1px!important}[data-embed-boundary] .before\\:border-\\[\\#D9CDAF\\]:before{content:var(--tw-content)!important;--tw-border-opacity: 1 !important;border-color:rgb(217 205 175 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .before\\:bg-\\[\\#F7F6F4\\]:before{content:var(--tw-content)!important;--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .after\\:absolute:after{content:var(--tw-content)!important;position:absolute!important}[data-embed-boundary] .after\\:-right-1:after{content:var(--tw-content)!important;right:-.25rem!important}[data-embed-boundary] .after\\:top-1\\/2:after{content:var(--tw-content)!important;top:50%!important}[data-embed-boundary] .after\\:h-2:after{content:var(--tw-content)!important;height:.5rem!important}[data-embed-boundary] .after\\:w-2:after{content:var(--tw-content)!important;width:.5rem!important}[data-embed-boundary] .after\\:-translate-y-1\\/2:after{content:var(--tw-content)!important;--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .after\\:rounded-full:after{content:var(--tw-content)!important;border-radius:9999px!important}[data-embed-boundary] .after\\:border:after{content:var(--tw-content)!important;border-width:1px!important}[data-embed-boundary] .after\\:border-\\[\\#D9CDAF\\]:after{content:var(--tw-content)!important;--tw-border-opacity: 1 !important;border-color:rgb(217 205 175 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .after\\:bg-\\[\\#F7F6F4\\]:after{content:var(--tw-content)!important;--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .first\\:pl-0:first-child{padding-left:0!important}[data-embed-boundary] .last\\:border-r-0:last-child{border-right-width:0px!important}[data-embed-boundary] .last\\:pr-0:last-child{padding-right:0!important}[data-embed-boundary] .hover\\:z-\\[5\\]:hover{z-index:5!important}[data-embed-boundary] .hover\\:cursor-pointer:hover{cursor:pointer!important}[data-embed-boundary] .hover\\:border-solid:hover{border-style:solid!important}[data-embed-boundary] .hover\\:border-\\[\\#D4AF37\\]:hover{--tw-border-opacity: 1 !important;border-color:rgb(212 175 55 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .hover\\:border-embed-brand-gold:hover{--tw-border-opacity: 1 !important;border-color:rgb(200 161 101 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .hover\\:border-embed-brand-gold\\/40:hover{border-color:#c8a16566!important}[data-embed-boundary] .hover\\:border-embed-brand-gold\\/70:hover{border-color:#c8a165b3!important}[data-embed-boundary] .hover\\:bg-\\[\\#001930\\]:hover{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-embed-background-primary:hover{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-embed-background-primary\\/10:hover{background-color:#f7f6f41a!important}[data-embed-boundary] .hover\\:bg-embed-brand-gold:hover{--tw-bg-opacity: 1 !important;background-color:rgb(200 161 101 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-embed-brand-gold\\/10:hover{background-color:#c8a1651a!important}[data-embed-boundary] .hover\\:text-\\[\\#001930\\]:hover{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-\\[\\#FFFFFF\\]:hover{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-embed-background-primary\\/70:hover{color:#f7f6f4b3!important}[data-embed-boundary] .hover\\:text-embed-brand-gold:hover{--tw-text-opacity: 1 !important;color:rgb(200 161 101 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-embed-brand-navy:hover,[data-embed-boundary] .hover\\:text-embed-foreground-primary:hover{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:underline:hover{text-decoration-line:underline!important}[data-embed-boundary] .hover\\:decoration-embed-brand-navy:hover{text-decoration-color:#001930!important}[data-embed-boundary] .hover\\:decoration-white:hover{text-decoration-color:#fff!important}[data-embed-boundary] .hover\\:opacity-80:hover{opacity:.8!important}[data-embed-boundary] .hover\\:opacity-90:hover{opacity:.9!important}[data-embed-boundary] .hover\\:\\[animation-play-state\\:paused\\]:hover{animation-play-state:paused!important}[data-embed-boundary] .focus-visible\\:outline-none:focus-visible{outline:2px solid transparent!important;outline-offset:2px!important}[data-embed-boundary] .focus-visible\\:outline:focus-visible{outline-style:solid!important}[data-embed-boundary] .focus-visible\\:outline-2:focus-visible{outline-width:2px!important}[data-embed-boundary] .focus-visible\\:outline-offset-2:focus-visible{outline-offset:2px!important}[data-embed-boundary] .focus-visible\\:outline-embed-action-primary:focus-visible{outline-color:#18428f!important}[data-embed-boundary] .focus-visible\\:ring-2:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .focus-visible\\:ring-inset:focus-visible{--tw-ring-inset: inset !important}[data-embed-boundary] .focus-visible\\:ring-embed-brand-gold\\/35:focus-visible{--tw-ring-color: rgb(200 161 101 / .35) !important}[data-embed-boundary] .focus-visible\\:ring-embed-brand-gold\\/40:focus-visible{--tw-ring-color: rgb(200 161 101 / .4) !important}[data-embed-boundary] .focus-visible\\:ring-offset-2:focus-visible{--tw-ring-offset-width: 2px !important}[data-embed-boundary] .focus-visible\\:ring-offset-\\[\\#001930\\]:focus-visible{--tw-ring-offset-color: #001930 !important}[data-embed-boundary] .disabled\\:cursor-default:disabled{cursor:default!important}[data-embed-boundary] .disabled\\:cursor-not-allowed:disabled{cursor:not-allowed!important}[data-embed-boundary] .disabled\\:opacity-45:disabled{opacity:.45!important}[data-embed-boundary] .disabled\\:opacity-50:disabled{opacity:.5!important}[data-embed-boundary] .disabled\\:opacity-55:disabled{opacity:.55!important}[data-embed-boundary] .group[open] .group-open\\:rotate-90{--tw-rotate: 90deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .group:hover .group-hover\\:scale-\\[1\\.04\\]{--tw-scale-x: 1.04 !important;--tw-scale-y: 1.04 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .group:hover .group-hover\\:opacity-95{opacity:.95!important}[data-embed-boundary] .group:hover .group-hover\\:shadow-\\[0_2px_6px_rgba\\(0\\,30\\,58\\,0\\.16\\)\\]{--tw-shadow: 0 2px 6px rgba(0,30,58,.16) !important;--tw-shadow-colored: 0 2px 6px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}@media(max-width:767px){[data-embed-boundary] .mobile\\:sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border-width:0!important}[data-embed-boundary] .mobile\\:sticky{position:sticky!important}[data-embed-boundary] .mobile\\:bottom-\\[calc\\(3\\.5rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{bottom:calc(3.5rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .mobile\\:z-40{z-index:40!important}[data-embed-boundary] .mobile\\:col-span-1{grid-column:span 1 / span 1!important}[data-embed-boundary] .mobile\\:row-auto{grid-row:auto!important}[data-embed-boundary] .mobile\\:row-span-1{grid-row:span 1 / span 1!important}[data-embed-boundary] .mobile\\:-mx-section{margin-left:-24px!important;margin-right:-24px!important}[data-embed-boundary] .mobile\\:\\!ml-0,[data-embed-boundary] .mobile\\:ml-0{margin-left:0!important}[data-embed-boundary] .mobile\\:mt-5{margin-top:1.25rem!important}[data-embed-boundary] .mobile\\:mt-8{margin-top:2rem!important}[data-embed-boundary] .mobile\\:hidden{display:none!important}[data-embed-boundary] .mobile\\:h-24{height:6rem!important}[data-embed-boundary] .mobile\\:h-auto{height:auto!important}[data-embed-boundary] .mobile\\:max-h-\\[calc\\(100dvh-env\\(safe-area-inset-top\\,0px\\)-env\\(safe-area-inset-bottom\\,0px\\)-2rem\\)\\]{max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 2rem)!important}[data-embed-boundary] .mobile\\:max-h-none{max-height:none!important}[data-embed-boundary] .mobile\\:min-h-0{min-height:0px!important}[data-embed-boundary] .mobile\\:min-h-6{min-height:1.5rem!important}[data-embed-boundary] .mobile\\:min-h-\\[48px\\]{min-height:48px!important}[data-embed-boundary] .mobile\\:w-\\[min\\(calc\\(100vw-1\\.5rem\\)\\,calc\\(\\(100dvh-env\\(safe-area-inset-top\\,0px\\)-env\\(safe-area-inset-bottom\\,0px\\)-2rem\\)\\*16\\/9\\)\\)\\]{width:min(calc(100vw - 1.5rem),calc((100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 2rem) * 16 / 9))!important}[data-embed-boundary] .mobile\\:w-full{width:100%!important}[data-embed-boundary] .mobile\\:max-w-\\[7rem\\]{max-width:7rem!important}[data-embed-boundary] .mobile\\:max-w-none{max-width:none!important}[data-embed-boundary] .mobile\\:translate-x-0{--tw-translate-x: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:translate-y-0{--tw-translate-y: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:scale-\\[0\\.971\\]{--tw-scale-x: .971 !important;--tw-scale-y: .971 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:scale-\\[1\\.03\\]{--tw-scale-x: 1.03 !important;--tw-scale-y: 1.03 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))!important}[data-embed-boundary] .mobile\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .mobile\\:grid-rows-\\[auto_minmax\\(16rem\\,1fr\\)\\]{grid-template-rows:auto minmax(16rem,1fr)!important}[data-embed-boundary] .mobile\\:grid-rows-none{grid-template-rows:none!important}[data-embed-boundary] .mobile\\:flex-row{flex-direction:row!important}[data-embed-boundary] .mobile\\:flex-col{flex-direction:column!important}[data-embed-boundary] .mobile\\:items-stretch{align-items:stretch!important}[data-embed-boundary] .mobile\\:justify-start{justify-content:flex-start!important}[data-embed-boundary] .mobile\\:justify-center{justify-content:center!important}[data-embed-boundary] .mobile\\:justify-items-stretch{justify-items:stretch!important}[data-embed-boundary] .mobile\\:gap-11{gap:2.75rem!important}[data-embed-boundary] .mobile\\:gap-3{gap:.75rem!important}[data-embed-boundary] .mobile\\:gap-5{gap:1.25rem!important}[data-embed-boundary] .mobile\\:gap-8{gap:2rem!important}[data-embed-boundary] .mobile\\:gap-x-4{-moz-column-gap:1rem!important;column-gap:1rem!important}[data-embed-boundary] .mobile\\:gap-y-4{row-gap:1rem!important}[data-embed-boundary] .mobile\\:divide-x-0>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(0px * var(--tw-divide-x-reverse))!important;border-left-width:calc(0px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .mobile\\:overflow-visible{overflow:visible!important}[data-embed-boundary] .mobile\\:border-t{border-top-width:1px!important}[data-embed-boundary] .mobile\\:border-embed-border-default{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .mobile\\:bg-\\[\\#FFFFFF\\]\\/95{background-color:#fffffff2!important}[data-embed-boundary] .mobile\\:bg-embed-brand-navy{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .mobile\\:object-contain{-o-object-fit:contain!important;object-fit:contain!important}[data-embed-boundary] .mobile\\:px-0{padding-left:0!important;padding-right:0!important}[data-embed-boundary] .mobile\\:px-section{padding-left:24px!important;padding-right:24px!important}[data-embed-boundary] .mobile\\:py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .mobile\\:py-5{padding-top:1.25rem!important;padding-bottom:1.25rem!important}[data-embed-boundary] .mobile\\:py-8{padding-top:2rem!important;padding-bottom:2rem!important}[data-embed-boundary] .mobile\\:\\!pt-0{padding-top:0!important}[data-embed-boundary] .mobile\\:pb-8{padding-bottom:2rem!important}[data-embed-boundary] .mobile\\:pb-\\[calc\\(1\\.25rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{padding-bottom:calc(1.25rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .mobile\\:pr-section{padding-right:24px!important}[data-embed-boundary] .mobile\\:pt-12{padding-top:3rem!important}[data-embed-boundary] .mobile\\:text-left{text-align:left!important}[data-embed-boundary] .mobile\\:text-4xl{font-size:2.25rem!important;line-height:2.5rem!important}[data-embed-boundary] .mobile\\:text-\\[0\\.9375rem\\]{font-size:.9375rem!important}[data-embed-boundary] .mobile\\:text-\\[18px\\]{font-size:18px!important}[data-embed-boundary] .mobile\\:text-\\[2rem\\]{font-size:2rem!important}[data-embed-boundary] .mobile\\:text-base{font-size:1rem!important;line-height:1.5rem!important}[data-embed-boundary] .mobile\\:text-lg{font-size:1.125rem!important;line-height:1.75rem!important}[data-embed-boundary] .mobile\\:text-sm{font-size:.875rem!important;line-height:1.25rem!important}[data-embed-boundary] .mobile\\:text-xl{font-size:1.25rem!important;line-height:1.75rem!important}[data-embed-boundary] .mobile\\:leading-snug{line-height:1.375!important}[data-embed-boundary] .mobile\\:backdrop-blur-\\[6px\\]{--tw-backdrop-blur: blur(6px) !important;-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important;backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important}}@media(min-width:768px){[data-embed-boundary] .tablet\\:max-w-\\[16rem\\]{max-width:16rem!important}[data-embed-boundary] .tablet\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .tablet\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .tablet\\:text-base{font-size:1rem!important;line-height:1.5rem!important}}@media(min-width:1280px){[data-embed-boundary] .desktop\\:-ml-section{margin-left:-24px!important}[data-embed-boundary] .desktop\\:block{display:block!important}[data-embed-boundary] .desktop\\:flex{display:flex!important}[data-embed-boundary] .desktop\\:grid{display:grid!important}[data-embed-boundary] .desktop\\:hidden{display:none!important}[data-embed-boundary] .desktop\\:h-12{height:3rem!important}[data-embed-boundary] .desktop\\:h-20{height:5rem!important}[data-embed-boundary] .desktop\\:h-7{height:1.75rem!important}[data-embed-boundary] .desktop\\:h-8{height:2rem!important}[data-embed-boundary] .desktop\\:h-\\[155px\\]{height:155px!important}[data-embed-boundary] .desktop\\:max-h-10{max-height:2.5rem!important}[data-embed-boundary] .desktop\\:min-h-0{min-height:0px!important}[data-embed-boundary] .desktop\\:min-h-\\[36px\\]{min-height:36px!important}[data-embed-boundary] .desktop\\:min-h-\\[38px\\]{min-height:38px!important}[data-embed-boundary] .desktop\\:min-h-\\[42px\\]{min-height:42px!important}[data-embed-boundary] .desktop\\:w-1\\/2{width:50%!important}[data-embed-boundary] .desktop\\:w-12{width:3rem!important}[data-embed-boundary] .desktop\\:w-7{width:1.75rem!important}[data-embed-boundary] .desktop\\:w-8{width:2rem!important}[data-embed-boundary] .desktop\\:w-\\[155px\\]{width:155px!important}[data-embed-boundary] .desktop\\:w-\\[600px\\]{width:600px!important}[data-embed-boundary] .desktop\\:w-\\[640px\\]{width:640px!important}[data-embed-boundary] .desktop\\:w-\\[680px\\]{width:680px!important}[data-embed-boundary] .desktop\\:w-\\[682px\\]{width:682px!important}[data-embed-boundary] .desktop\\:w-\\[690px\\]{width:690px!important}[data-embed-boundary] .desktop\\:w-\\[70\\%\\]{width:70%!important}[data-embed-boundary] .desktop\\:w-\\[75\\%\\]{width:75%!important}[data-embed-boundary] .desktop\\:w-canvas{width:1432px!important}[data-embed-boundary] .desktop\\:min-w-\\[42px\\]{min-width:42px!important}[data-embed-boundary] .desktop\\:min-w-\\[600px\\]{min-width:600px!important}[data-embed-boundary] .desktop\\:min-w-canvas{min-width:1432px!important}[data-embed-boundary] .desktop\\:max-w-\\[20rem\\]{max-width:20rem!important}[data-embed-boundary] .desktop\\:max-w-\\[600px\\]{max-width:600px!important}[data-embed-boundary] .desktop\\:max-w-\\[96px\\]{max-width:96px!important}[data-embed-boundary] .desktop\\:max-w-canvas{max-width:1432px!important}[data-embed-boundary] .desktop\\:shrink-0{flex-shrink:0!important}[data-embed-boundary] .desktop\\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}[data-embed-boundary] .desktop\\:grid-cols-\\[var\\(--spatial-terminal-cols\\)\\]{grid-template-columns:var(--spatial-terminal-cols)!important}[data-embed-boundary] .desktop\\:grid-rows-\\[48px_repeat\\(3\\,minmax\\(132px\\,1fr\\)\\)\\]{grid-template-rows:48px repeat(3,minmax(132px,1fr))!important}[data-embed-boundary] .desktop\\:gap-section{gap:24px!important}[data-embed-boundary] .desktop\\:divide-y-0>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(0px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(0px * var(--tw-divide-y-reverse))!important}[data-embed-boundary] .desktop\\:py-1\\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}[data-embed-boundary] .desktop\\:py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .desktop\\:py-\\[6\\.4px\\]{padding-top:6.4px!important;padding-bottom:6.4px!important}[data-embed-boundary] .desktop\\:pb-0{padding-bottom:0!important}}[data-embed-boundary] .\\[\\&\\:\\:-webkit-details-marker\\]\\:hidden::-webkit-details-marker{display:none!important}[data-embed-boundary] .\\[\\&\\:\\:-webkit-scrollbar\\]\\:hidden::-webkit-scrollbar{display:none!important}';
+var zd = { commit: "e1111f88", builtAt: "2026-08-19T06:02:14Z", runtimeSource: "builder-package/projectBuilderImportToHousePackage", marker: "EMBED_RUNTIME_BUILD:e1111f88@2026-08-19T06:02:14Z" };
 const lk = Object.freeze({
   commit: "dev",
   builtAt: "dev",
@@ -1081,13 +1081,13 @@ function Jk(n) {
     n.moves.map((w) => w.objective)
   ), h = Object.freeze(
     i.map((w) => w.objective)
-  ), v = Object.freeze(o.map((w) => w.id)), k = Object.freeze(i.map((w) => w.id)), E = n.moves.length === 0 ? 0 : o.length / n.moves.length + (s !== null ? 0.15 / n.moves.length : 0), O = Kk(
-    n.moves.length === 0 ? 0 : Math.min(1, 0.35 + E * 0.65)
-  ), I = Xk(
+  ), v = Object.freeze(o.map((w) => w.id)), k = Object.freeze(i.map((w) => w.id)), I = n.moves.length === 0 ? 0 : o.length / n.moves.length + (s !== null ? 0.15 / n.moves.length : 0), T = Kk(
+    n.moves.length === 0 ? 0 : Math.min(1, 0.35 + I * 0.65)
+  ), E = Xk(
     n.moves.length,
     o.length,
     i.length
-  ), T = Object.freeze(n.moves.map((w) => w.id));
+  ), O = Object.freeze(n.moves.map((w) => w.id));
   return Object.freeze({
     id: Zk(n, p),
     schemaVersion: $k,
@@ -1095,12 +1095,12 @@ function Jk(n) {
     moveRef: Object.freeze({
       storyId: n.storyId,
       activeMoveId: n.activeMoveId,
-      moveIds: T,
+      moveIds: O,
       moveCount: n.moves.length
     }),
-    status: I,
+    status: E,
     recommendation: p,
-    confidence: O,
+    confidence: T,
     rationale: y,
     completedMoveIds: v,
     unresolvedMoveIds: k,
@@ -1520,31 +1520,31 @@ function wh(n, o) {
   return ((i = n.rooms.find((l) => l.id === o)) == null ? void 0 : i.name) ?? null;
 }
 function h1(n, o, i) {
-  const l = o.config, s = n.housePackage.rooms.map((E) => E.id), m = new Set(s);
-  let p = l.order.filter((E) => m.has(E));
+  const l = o.config, s = n.housePackage.rooms.map((I) => I.id), m = new Set(s);
+  let p = l.order.filter((I) => m.has(I));
   const f = l.boostBySignalKind;
   if (f !== void 0) {
-    const E = [];
-    for (const O of n.prioritySignals) {
-      const I = f[O.kind];
-      if (I !== void 0)
-        for (const T of I)
-          m.has(T) && !E.includes(T) && E.push(T);
+    const I = [];
+    for (const T of n.prioritySignals) {
+      const E = f[T.kind];
+      if (E !== void 0)
+        for (const O of E)
+          m.has(O) && !I.includes(O) && I.push(O);
     }
-    E.length > 0 && (p = [
-      ...E,
-      ...p.filter((O) => !E.includes(O))
+    I.length > 0 && (p = [
+      ...I,
+      ...p.filter((T) => !I.includes(T))
     ]);
   }
   const y = s.filter(
-    (E) => !p.includes(E)
+    (I) => !p.includes(I)
   );
   i.roomImportanceRank = [...p, ...y];
   const h = n.runtimeState.activeRoomId;
   if (h !== null) {
-    const E = wh(n.housePackage, h);
-    if (E !== null) {
-      i.focusRoom = { id: h, name: E };
+    const I = wh(n.housePackage, h);
+    if (I !== null) {
+      i.focusRoom = { id: h, name: I };
       return;
     }
   }
@@ -1604,8 +1604,8 @@ function v1(n, o, i) {
       p.push(k);
       continue;
     }
-    const E = y == null ? void 0 : y[v.priorityId];
-    E !== void 0 && p.push(E);
+    const I = y == null ? void 0 : y[v.priorityId];
+    I !== void 0 && p.push(I);
   }
   i.highlights = [...m, ...p];
 }
@@ -1769,10 +1769,10 @@ function ug(n, o, i) {
     recommendedMedia: h,
     rulesetId: l.id,
     rulesetVersion: l.version
-  }), k = Gk(v), E = Jk(k), O = Wk(E), I = t1(O), T = n.runtimeState.activeRoomId, w = T === null ? null : ((H = o.rooms.find((te) => te.id === T)) == null ? void 0 : H.name) ?? null;
+  }), k = Gk(v), I = Jk(k), T = Wk(I), E = t1(T), O = n.runtimeState.activeRoomId, w = O === null ? null : ((H = o.rooms.find((te) => te.id === O)) == null ? void 0 : H.name) ?? null;
   return Object.freeze({
     objectId: n.objectId,
-    activeRoomId: T,
+    activeRoomId: O,
     activeRoomName: w,
     priorityIds: Object.freeze([...n.runtimeState.priorityIds]),
     prioritySignals: s,
@@ -1787,9 +1787,9 @@ function ug(n, o, i) {
       f,
       v,
       k,
-      E,
-      O,
-      I
+      I,
+      T,
+      E
     ),
     rulesetId: l.id,
     rulesetVersion: l.version,
@@ -1802,9 +1802,9 @@ function ug(n, o, i) {
     decisionFocus: f,
     decisionStory: v,
     decisionMoves: k,
-    decisionOutcome: E,
-    decisionTerminal: O,
-    aiContext: I
+    decisionOutcome: I,
+    decisionTerminal: T,
+    aiContext: E
   });
 }
 const st = "/reference-house", T1 = {
@@ -3303,13 +3303,13 @@ function tj(n, o) {
     )
   ), v = m.filter(f).sort((w, H) => h(w) - h(H)), k = n.knowledge.filter(
     (w) => !s.has(w.id) && y(w) && w.relatedTopics.some((H) => p.has(H))
-  ), E = new Set(k.map((w) => w.id)), O = n.knowledge.filter(
-    (w) => !s.has(w.id) && !E.has(w.id) && y(w)
-  ), I = [
+  ), I = new Set(k.map((w) => w.id)), T = n.knowledge.filter(
+    (w) => !s.has(w.id) && !I.has(w.id) && y(w)
+  ), E = [
     ...v,
     ...k,
-    ...O
-  ], T = [
+    ...T
+  ], O = [
     ...new Set(
       m.flatMap((w) => [
         ...w.constraints,
@@ -3319,12 +3319,12 @@ function tj(n, o) {
   ];
   return {
     canonicalHouseId: n.identity.houseId,
-    facts: I,
-    interpretations: I.filter((w) => w.safeInterpretation !== void 0).map((w) => ({
+    facts: E,
+    interpretations: E.filter((w) => w.safeInterpretation !== void 0).map((w) => ({
       factId: w.id,
       text: w.safeInterpretation
     })),
-    guardrails: T,
+    guardrails: O,
     priorityFaq: l
   };
 }
@@ -3843,26 +3843,26 @@ function uj(n, o, i) {
       fixture: o,
       errorMessage: p
     });
-  }, y = (E) => {
-    const O = m.dispatch(E);
-    if (!O.ok) {
-      p = `${O.error.code}: ${O.error.message}`;
+  }, y = (I) => {
+    const T = m.dispatch(I);
+    if (!T.ok) {
+      p = `${T.error.code}: ${T.error.message}`;
       return;
     }
     p = null;
-  }, h = (E, O) => {
-    switch (E) {
+  }, h = (I, T) => {
+    switch (I) {
       case "select-garden": {
-        const I = Cr(i, "priority.selection.changed");
-        I && y(I);
+        const E = Cr(i, "priority.selection.changed");
+        E && y(E);
         break;
       }
       case "confirm": {
-        const I = Cr(
+        const E = Cr(
           i,
           "priority.confirmation.accepted"
         );
-        I && y(I);
+        E && y(E);
         break;
       }
       case "edit-selection": {
@@ -3870,31 +3870,31 @@ function uj(n, o, i) {
         break;
       }
       case "complete-transition": {
-        const I = Cr(
+        const E = Cr(
           i,
           "priority.transition.completed"
         );
-        I && y(I);
+        E && y(E);
         break;
       }
       case "ready-interpretation": {
-        const I = Cr(
+        const E = Cr(
           i,
           "priority.interpretation.ready"
         );
-        I && y(I);
+        E && y(E);
         break;
       }
       case "ready-mapping": {
-        const I = Cr(i, "priority.mapping.ready");
-        I && y(I);
+        const E = Cr(i, "priority.mapping.ready");
+        E && y(E);
         break;
       }
       case "select-followup": {
-        if (!O) return;
+        if (!T) return;
         y({
           type: "priority.followup.selected",
-          targetId: O
+          targetId: T
         });
         break;
       }
@@ -3904,11 +3904,11 @@ function uj(n, o, i) {
       }
     }
     f();
-  }, v = (E) => {
-    const O = E.target;
-    if (!(O instanceof HTMLElement)) return;
-    const I = O.closest("[data-action]");
-    I instanceof HTMLElement && h(I.dataset.action ?? "", I.dataset.targetId ?? null);
+  }, v = (I) => {
+    const T = I.target;
+    if (!(T instanceof HTMLElement)) return;
+    const E = T.closest("[data-action]");
+    E instanceof HTMLElement && h(E.dataset.action ?? "", E.dataset.targetId ?? null);
   };
   return s.addEventListener("click", v), f(), { root: s, host: n, styleElement: l, dispose: () => {
     s.removeEventListener("click", v), s.remove(), l.remove();
@@ -3964,11 +3964,11 @@ var Eh;
 function fj() {
   if (Eh) return fe;
   Eh = 1;
-  var n = Symbol.for("react.transitional.element"), o = Symbol.for("react.portal"), i = Symbol.for("react.fragment"), l = Symbol.for("react.strict_mode"), s = Symbol.for("react.profiler"), m = Symbol.for("react.consumer"), p = Symbol.for("react.context"), f = Symbol.for("react.forward_ref"), y = Symbol.for("react.suspense"), h = Symbol.for("react.memo"), v = Symbol.for("react.lazy"), k = Symbol.for("react.activity"), E = Symbol.iterator;
-  function O(j) {
-    return j === null || typeof j != "object" ? null : (j = E && j[E] || j["@@iterator"], typeof j == "function" ? j : null);
+  var n = Symbol.for("react.transitional.element"), o = Symbol.for("react.portal"), i = Symbol.for("react.fragment"), l = Symbol.for("react.strict_mode"), s = Symbol.for("react.profiler"), m = Symbol.for("react.consumer"), p = Symbol.for("react.context"), f = Symbol.for("react.forward_ref"), y = Symbol.for("react.suspense"), h = Symbol.for("react.memo"), v = Symbol.for("react.lazy"), k = Symbol.for("react.activity"), I = Symbol.iterator;
+  function T(j) {
+    return j === null || typeof j != "object" ? null : (j = I && j[I] || j["@@iterator"], typeof j == "function" ? j : null);
   }
-  var I = {
+  var E = {
     isMounted: function() {
       return !1;
     },
@@ -3978,9 +3978,9 @@ function fj() {
     },
     enqueueSetState: function() {
     }
-  }, T = Object.assign, w = {};
+  }, O = Object.assign, w = {};
   function H(j, P, Q) {
-    this.props = j, this.context = P, this.refs = w, this.updater = Q || I;
+    this.props = j, this.context = P, this.refs = w, this.updater = Q || E;
   }
   H.prototype.isReactComponent = {}, H.prototype.setState = function(j, P) {
     if (typeof j != "object" && typeof j != "function" && j != null)
@@ -3994,12 +3994,12 @@ function fj() {
   function te() {
   }
   te.prototype = H.prototype;
-  function Y(j, P, Q) {
-    this.props = j, this.context = P, this.refs = w, this.updater = Q || I;
+  function q(j, P, Q) {
+    this.props = j, this.context = P, this.refs = w, this.updater = Q || E;
   }
-  var Z = Y.prototype = new te();
-  Z.constructor = Y, T(Z, H.prototype), Z.isPureReactComponent = !0;
-  var q = Array.isArray;
+  var Z = q.prototype = new te();
+  Z.constructor = q, O(Z, H.prototype), Z.isPureReactComponent = !0;
+  var F = Array.isArray;
   function L() {
   }
   var $ = { H: null, A: null, T: null, S: null }, C = Object.prototype.hasOwnProperty;
@@ -4081,8 +4081,8 @@ function fj() {
           }
       }
     if (ve)
-      return W = W(j), ve = X === "" ? "." + Ie(j, 0) : X, q(W) ? (Q = "", ve != null && (Q = ve.replace(ye, "$&/") + "/"), D(W, P, Q, "", function(en) {
-        return en;
+      return W = W(j), ve = X === "" ? "." + Ie(j, 0) : X, F(W) ? (Q = "", ve != null && (Q = ve.replace(ye, "$&/") + "/"), D(W, P, Q, "", function(tn) {
+        return tn;
       })) : W != null && (ee(W) && (W = J(
         W,
         Q + (W.key == null || j && j.key === W.key ? "" : ("" + W.key).replace(
@@ -4092,7 +4092,7 @@ function fj() {
       )), P.push(W)), 1;
     ve = 0;
     var Ze = X === "" ? "." : X + ":";
-    if (q(j))
+    if (F(j))
       for (var He = 0; He < j.length; He++)
         X = j[He], ue = Ze + Ie(X, He), ve += D(
           X,
@@ -4101,7 +4101,7 @@ function fj() {
           ue,
           W
         );
-    else if (He = O(j), typeof He == "function")
+    else if (He = T(j), typeof He == "function")
       for (j = He.call(j), He = 0; !(X = j.next()).done; )
         X = X.value, ue = Ze + Ie(X, He++), ve += D(
           X,
@@ -4191,7 +4191,7 @@ function fj() {
       return j;
     }
   };
-  return fe.Activity = k, fe.Children = le, fe.Component = H, fe.Fragment = i, fe.Profiler = s, fe.PureComponent = Y, fe.StrictMode = l, fe.Suspense = y, fe.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = $, fe.__COMPILER_RUNTIME = {
+  return fe.Activity = k, fe.Children = le, fe.Component = H, fe.Fragment = i, fe.Profiler = s, fe.PureComponent = q, fe.StrictMode = l, fe.Suspense = y, fe.__CLIENT_INTERNALS_DO_NOT_USE_OR_WARN_USERS_THEY_CANNOT_UPGRADE = $, fe.__COMPILER_RUNTIME = {
     __proto__: null,
     c: function(j) {
       return $.H.useMemoCache(j);
@@ -4207,7 +4207,7 @@ function fj() {
       throw Error(
         "The argument must be a React element, but you passed " + j + "."
       );
-    var X = T({}, j.props), W = j.key;
+    var X = O({}, j.props), W = j.key;
     if (P != null)
       for (ue in P.key !== void 0 && (W = "" + P.key), P)
         !C.call(P, ue) || ue === "key" || ue === "__self" || ue === "__source" || ue === "ref" && P.ref === void 0 || (X[ue] = P[ue]);
@@ -4380,7 +4380,7 @@ function bj() {
         return p.now() - f;
       };
     }
-    var y = [], h = [], v = 1, k = null, E = 3, O = !1, I = !1, T = !1, w = !1, H = typeof setTimeout == "function" ? setTimeout : null, te = typeof clearTimeout == "function" ? clearTimeout : null, Y = typeof setImmediate < "u" ? setImmediate : null;
+    var y = [], h = [], v = 1, k = null, I = 3, T = !1, E = !1, O = !1, w = !1, H = typeof setTimeout == "function" ? setTimeout : null, te = typeof clearTimeout == "function" ? clearTimeout : null, q = typeof setImmediate < "u" ? setImmediate : null;
     function Z(D) {
       for (var U = i(h); U !== null; ) {
         if (U.callback === null) l(h);
@@ -4390,13 +4390,13 @@ function bj() {
         U = i(h);
       }
     }
-    function q(D) {
-      if (T = !1, Z(D), !I)
+    function F(D) {
+      if (O = !1, Z(D), !E)
         if (i(y) !== null)
-          I = !0, L || (L = !0, re());
+          E = !0, L || (L = !0, re());
         else {
           var U = i(h);
-          U !== null && ge(q, U.startTime - D);
+          U !== null && ge(F, U.startTime - D);
         }
     }
     var L = !1, $ = -1, C = 5, K = -1;
@@ -4410,14 +4410,14 @@ function bj() {
         var U = !0;
         try {
           e: {
-            I = !1, T && (T = !1, te($), $ = -1), O = !0;
-            var V = E;
+            E = !1, O && (O = !1, te($), $ = -1), T = !0;
+            var V = I;
             try {
               t: {
                 for (Z(D), k = i(y); k !== null && !(k.expirationTime > D && J()); ) {
                   var ne = k.callback;
                   if (typeof ne == "function") {
-                    k.callback = null, E = k.priorityLevel;
+                    k.callback = null, I = k.priorityLevel;
                     var le = ne(
                       k.expirationTime <= D
                     );
@@ -4433,14 +4433,14 @@ function bj() {
                 else {
                   var j = i(h);
                   j !== null && ge(
-                    q,
+                    F,
                     j.startTime - D
                   ), U = !1;
                 }
               }
               break e;
             } finally {
-              k = null, E = V, O = !1;
+              k = null, I = V, T = !1;
             }
             U = void 0;
           }
@@ -4450,9 +4450,9 @@ function bj() {
       }
     }
     var re;
-    if (typeof Y == "function")
+    if (typeof q == "function")
       re = function() {
-        Y(ee);
+        q(ee);
       };
     else if (typeof MessageChannel < "u") {
       var ye = new MessageChannel(), Ie = ye.port2;
@@ -4475,23 +4475,23 @@ function bj() {
         "forceFrameRate takes a positive int between 0 and 125, forcing frame rates higher than 125 fps is not supported"
       ) : C = 0 < D ? Math.floor(1e3 / D) : 5;
     }, n.unstable_getCurrentPriorityLevel = function() {
-      return E;
+      return I;
     }, n.unstable_next = function(D) {
-      switch (E) {
+      switch (I) {
         case 1:
         case 2:
         case 3:
           var U = 3;
           break;
         default:
-          U = E;
+          U = I;
       }
-      var V = E;
-      E = U;
+      var V = I;
+      I = U;
       try {
         return D();
       } finally {
-        E = V;
+        I = V;
       }
     }, n.unstable_requestPaint = function() {
       w = !0;
@@ -4506,12 +4506,12 @@ function bj() {
         default:
           D = 3;
       }
-      var V = E;
-      E = D;
+      var V = I;
+      I = D;
       try {
         return U();
       } finally {
-        E = V;
+        I = V;
       }
     }, n.unstable_scheduleCallback = function(D, U, V) {
       var ne = n.unstable_now();
@@ -4538,16 +4538,16 @@ function bj() {
         startTime: V,
         expirationTime: le,
         sortIndex: -1
-      }, V > ne ? (D.sortIndex = V, o(h, D), i(y) === null && D === i(h) && (T ? (te($), $ = -1) : T = !0, ge(q, V - ne))) : (D.sortIndex = le, o(y, D), I || O || (I = !0, L || (L = !0, re()))), D;
+      }, V > ne ? (D.sortIndex = V, o(h, D), i(y) === null && D === i(h) && (O ? (te($), $ = -1) : O = !0, ge(F, V - ne))) : (D.sortIndex = le, o(y, D), E || T || (E = !0, L || (L = !0, re()))), D;
     }, n.unstable_shouldYield = J, n.unstable_wrapCallback = function(D) {
-      var U = E;
+      var U = I;
       return function() {
-        var V = E;
-        E = U;
+        var V = I;
+        I = U;
         try {
           return D.apply(this, arguments);
         } finally {
-          E = V;
+          I = V;
         }
       };
     };
@@ -4634,19 +4634,19 @@ function yj() {
     typeof y == "string" && l.d.D(y);
   }, bt.preinit = function(y, h) {
     if (typeof y == "string" && h && typeof h.as == "string") {
-      var v = h.as, k = f(v, h.crossOrigin), E = typeof h.integrity == "string" ? h.integrity : void 0, O = typeof h.fetchPriority == "string" ? h.fetchPriority : void 0;
+      var v = h.as, k = f(v, h.crossOrigin), I = typeof h.integrity == "string" ? h.integrity : void 0, T = typeof h.fetchPriority == "string" ? h.fetchPriority : void 0;
       v === "style" ? l.d.S(
         y,
         typeof h.precedence == "string" ? h.precedence : void 0,
         {
           crossOrigin: k,
-          integrity: E,
-          fetchPriority: O
+          integrity: I,
+          fetchPriority: T
         }
       ) : v === "script" && l.d.X(y, {
         crossOrigin: k,
-        integrity: E,
-        fetchPriority: O,
+        integrity: I,
+        fetchPriority: T,
         nonce: typeof h.nonce == "string" ? h.nonce : void 0
       });
     }
@@ -4836,7 +4836,7 @@ function gj() {
     }
     return null;
   }
-  var k = Object.assign, E = Symbol.for("react.element"), O = Symbol.for("react.transitional.element"), I = Symbol.for("react.portal"), T = Symbol.for("react.fragment"), w = Symbol.for("react.strict_mode"), H = Symbol.for("react.profiler"), te = Symbol.for("react.consumer"), Y = Symbol.for("react.context"), Z = Symbol.for("react.forward_ref"), q = Symbol.for("react.suspense"), L = Symbol.for("react.suspense_list"), $ = Symbol.for("react.memo"), C = Symbol.for("react.lazy"), K = Symbol.for("react.activity"), J = Symbol.for("react.memo_cache_sentinel"), ee = Symbol.iterator;
+  var k = Object.assign, I = Symbol.for("react.element"), T = Symbol.for("react.transitional.element"), E = Symbol.for("react.portal"), O = Symbol.for("react.fragment"), w = Symbol.for("react.strict_mode"), H = Symbol.for("react.profiler"), te = Symbol.for("react.consumer"), q = Symbol.for("react.context"), Z = Symbol.for("react.forward_ref"), F = Symbol.for("react.suspense"), L = Symbol.for("react.suspense_list"), $ = Symbol.for("react.memo"), C = Symbol.for("react.lazy"), K = Symbol.for("react.activity"), J = Symbol.for("react.memo_cache_sentinel"), ee = Symbol.iterator;
   function re(e) {
     return e === null || typeof e != "object" ? null : (e = ee && e[ee] || e["@@iterator"], typeof e == "function" ? e : null);
   }
@@ -4847,13 +4847,13 @@ function gj() {
       return e.$$typeof === ye ? null : e.displayName || e.name || null;
     if (typeof e == "string") return e;
     switch (e) {
-      case T:
+      case O:
         return "Fragment";
       case H:
         return "Profiler";
       case w:
         return "StrictMode";
-      case q:
+      case F:
         return "Suspense";
       case L:
         return "SuspenseList";
@@ -4862,9 +4862,9 @@ function gj() {
     }
     if (typeof e == "object")
       switch (e.$$typeof) {
-        case I:
+        case E:
           return "Portal";
-        case Y:
+        case q:
           return e.displayName || "Context";
         case te:
           return (e._context.displayName || "Context") + ".Consumer";
@@ -4924,7 +4924,7 @@ function gj() {
   function He() {
     P(X), P(W), P(ue);
   }
-  function en(e) {
+  function tn(e) {
     e.memoizedState !== null && Q(ve, e);
     var t = X.current, a = Bb(t, e.type);
     t !== a && (Q(W, e), Q(X, a));
@@ -6317,21 +6317,21 @@ Error generating stack: ` + r.message + `
       e: switch (e) {
         case K:
           return e = Rt(31, a, t, c), e.elementType = K, e.lanes = d, e;
-        case T:
+        case O:
           return Eo(a.children, c, d, t);
         case w:
           b = 8, c |= 24;
           break;
         case H:
           return e = Rt(12, a, t, c | 2), e.elementType = H, e.lanes = d, e;
-        case q:
-          return e = Rt(13, a, t, c), e.elementType = q, e.lanes = d, e;
+        case F:
+          return e = Rt(13, a, t, c), e.elementType = F, e.lanes = d, e;
         case L:
           return e = Rt(19, a, t, c), e.elementType = L, e.lanes = d, e;
         default:
           if (typeof e == "object" && e !== null)
             switch (e.$$typeof) {
-              case Y:
+              case q:
                 b = 10;
                 break e;
               case te:
@@ -6391,22 +6391,22 @@ Error generating stack: ` + r.message + `
       stack: ze(t)
     };
   }
-  var la = [], sa = 0, zi = null, nr = 0, qt = [], Vt = 0, Pn = null, tn = 1, nn = "";
+  var la = [], sa = 0, zi = null, nr = 0, qt = [], Vt = 0, Pn = null, nn = 1, on = "";
   function yn(e, t) {
     la[sa++] = nr, la[sa++] = zi, zi = e, nr = t;
   }
   function gp(e, t, a) {
-    qt[Vt++] = tn, qt[Vt++] = nn, qt[Vt++] = Pn, Pn = e;
-    var r = tn;
-    e = nn;
+    qt[Vt++] = nn, qt[Vt++] = on, qt[Vt++] = Pn, Pn = e;
+    var r = nn;
+    e = on;
     var c = 32 - Tt(r) - 1;
     r &= ~(1 << c), a += 1;
     var d = 32 - Tt(t) + c;
     if (30 < d) {
       var b = c - c % 5;
-      d = (r & (1 << b) - 1).toString(32), r >>= b, c -= b, tn = 1 << 32 - Tt(t) + c | a << c | r, nn = d + e;
+      d = (r & (1 << b) - 1).toString(32), r >>= b, c -= b, nn = 1 << 32 - Tt(t) + c | a << c | r, on = d + e;
     } else
-      tn = 1 << d | a << c | r, nn = e;
+      nn = 1 << d | a << c | r, on = e;
   }
   function $s(e) {
     e.return !== null && (yn(e, 1), gp(e, 1, 0));
@@ -6415,10 +6415,10 @@ Error generating stack: ` + r.message + `
     for (; e === zi; )
       zi = la[--sa], la[sa] = null, nr = la[--sa], la[sa] = null;
     for (; e === Pn; )
-      Pn = qt[--Vt], qt[Vt] = null, nn = qt[--Vt], qt[Vt] = null, tn = qt[--Vt], qt[Vt] = null;
+      Pn = qt[--Vt], qt[Vt] = null, on = qt[--Vt], qt[Vt] = null, nn = qt[--Vt], qt[Vt] = null;
   }
   function vp(e, t) {
-    qt[Vt++] = tn, qt[Vt++] = nn, qt[Vt++] = Pn, tn = t.id, nn = t.overflow, Pn = e;
+    qt[Vt++] = nn, qt[Vt++] = on, qt[Vt++] = Pn, nn = t.id, on = t.overflow, Pn = e;
   }
   var dt = null, Fe = null, Ae = !1, Un = null, Gt = !1, Xs = Error(l(519));
   function Hn(e) {
@@ -6644,7 +6644,7 @@ Error generating stack: ` + r.message + `
       });
     };
   }, Yx = n.unstable_scheduleCallback, qx = n.unstable_NormalPriority, Je = {
-    $$typeof: Y,
+    $$typeof: q,
     Consumer: null,
     Provider: null,
     _currentValue: null,
@@ -6788,7 +6788,7 @@ Error generating stack: ` + r.message + `
     t = t.props.ref, e.ref = t !== void 0 ? t : null;
   }
   function Mi(e, t) {
-    throw t.$$typeof === E ? Error(l(525)) : (e = Object.prototype.toString.call(t), Error(
+    throw t.$$typeof === I ? Error(l(525)) : (e = Object.prototype.toString.call(t), Error(
       l(
         31,
         e === "[object Object]" ? "object with keys {" + Object.keys(t).join(", ") + "}" : e
@@ -6822,16 +6822,16 @@ Error generating stack: ` + r.message + `
     function b(z) {
       return e && z.alternate === null && (z.flags |= 67108866), z;
     }
-    function g(z, A, N, F) {
-      return A === null || A.tag !== 6 ? (A = Vs(N, z.mode, F), A.return = z, A) : (A = c(A, N), A.return = z, A);
+    function g(z, A, N, Y) {
+      return A === null || A.tag !== 6 ? (A = Vs(N, z.mode, Y), A.return = z, A) : (A = c(A, N), A.return = z, A);
     }
-    function S(z, A, N, F) {
+    function S(z, A, N, Y) {
       var se = N.type;
-      return se === T ? B(
+      return se === O ? B(
         z,
         A,
         N.props.children,
-        F,
+        Y,
         N.key
       ) : A !== null && (A.elementType === se || typeof se == "object" && se !== null && se.$$typeof === C && To(se) === A.type) ? (A = c(A, N.props), lr(A, N), A.return = z, A) : (A = Ai(
         N.type,
@@ -6839,17 +6839,17 @@ Error generating stack: ` + r.message + `
         N.props,
         null,
         z.mode,
-        F
+        Y
       ), lr(A, N), A.return = z, A);
     }
-    function R(z, A, N, F) {
-      return A === null || A.tag !== 4 || A.stateNode.containerInfo !== N.containerInfo || A.stateNode.implementation !== N.implementation ? (A = Gs(N, z.mode, F), A.return = z, A) : (A = c(A, N.children || []), A.return = z, A);
+    function R(z, A, N, Y) {
+      return A === null || A.tag !== 4 || A.stateNode.containerInfo !== N.containerInfo || A.stateNode.implementation !== N.implementation ? (A = Gs(N, z.mode, Y), A.return = z, A) : (A = c(A, N.children || []), A.return = z, A);
     }
-    function B(z, A, N, F, se) {
+    function B(z, A, N, Y, se) {
       return A === null || A.tag !== 7 ? (A = Eo(
         N,
         z.mode,
-        F,
+        Y,
         se
       ), A.return = z, A) : (A = c(A, N), A.return = z, A);
     }
@@ -6862,7 +6862,7 @@ Error generating stack: ` + r.message + `
         ), A.return = z, A;
       if (typeof A == "object" && A !== null) {
         switch (A.$$typeof) {
-          case O:
+          case T:
             return N = Ai(
               A.type,
               A.key,
@@ -6871,7 +6871,7 @@ Error generating stack: ` + r.message + `
               z.mode,
               N
             ), lr(N, A), N.return = z, N;
-          case I:
+          case E:
             return A = Gs(
               A,
               z.mode,
@@ -6889,7 +6889,7 @@ Error generating stack: ` + r.message + `
           ), A.return = z, A;
         if (typeof A.then == "function")
           return G(z, Ci(A), N);
-        if (A.$$typeof === Y)
+        if (A.$$typeof === q)
           return G(
             z,
             Ti(z, A),
@@ -6899,91 +6899,91 @@ Error generating stack: ` + r.message + `
       }
       return null;
     }
-    function _(z, A, N, F) {
+    function _(z, A, N, Y) {
       var se = A !== null ? A.key : null;
       if (typeof N == "string" && N !== "" || typeof N == "number" || typeof N == "bigint")
-        return se !== null ? null : g(z, A, "" + N, F);
+        return se !== null ? null : g(z, A, "" + N, Y);
       if (typeof N == "object" && N !== null) {
         switch (N.$$typeof) {
-          case O:
-            return N.key === se ? S(z, A, N, F) : null;
-          case I:
-            return N.key === se ? R(z, A, N, F) : null;
+          case T:
+            return N.key === se ? S(z, A, N, Y) : null;
+          case E:
+            return N.key === se ? R(z, A, N, Y) : null;
           case C:
-            return N = To(N), _(z, A, N, F);
+            return N = To(N), _(z, A, N, Y);
         }
         if (ge(N) || re(N))
-          return se !== null ? null : B(z, A, N, F, null);
+          return se !== null ? null : B(z, A, N, Y, null);
         if (typeof N.then == "function")
           return _(
             z,
             A,
             Ci(N),
-            F
+            Y
           );
-        if (N.$$typeof === Y)
+        if (N.$$typeof === q)
           return _(
             z,
             A,
             Ti(z, N),
-            F
+            Y
           );
         Mi(z, N);
       }
       return null;
     }
-    function M(z, A, N, F, se) {
-      if (typeof F == "string" && F !== "" || typeof F == "number" || typeof F == "bigint")
-        return z = z.get(N) || null, g(A, z, "" + F, se);
-      if (typeof F == "object" && F !== null) {
-        switch (F.$$typeof) {
-          case O:
+    function M(z, A, N, Y, se) {
+      if (typeof Y == "string" && Y !== "" || typeof Y == "number" || typeof Y == "bigint")
+        return z = z.get(N) || null, g(A, z, "" + Y, se);
+      if (typeof Y == "object" && Y !== null) {
+        switch (Y.$$typeof) {
+          case T:
             return z = z.get(
-              F.key === null ? N : F.key
-            ) || null, S(A, z, F, se);
-          case I:
+              Y.key === null ? N : Y.key
+            ) || null, S(A, z, Y, se);
+          case E:
             return z = z.get(
-              F.key === null ? N : F.key
-            ) || null, R(A, z, F, se);
+              Y.key === null ? N : Y.key
+            ) || null, R(A, z, Y, se);
           case C:
-            return F = To(F), M(
+            return Y = To(Y), M(
               z,
               A,
               N,
-              F,
+              Y,
               se
             );
         }
-        if (ge(F) || re(F))
-          return z = z.get(N) || null, B(A, z, F, se, null);
-        if (typeof F.then == "function")
+        if (ge(Y) || re(Y))
+          return z = z.get(N) || null, B(A, z, Y, se, null);
+        if (typeof Y.then == "function")
           return M(
             z,
             A,
             N,
-            Ci(F),
+            Ci(Y),
             se
           );
-        if (F.$$typeof === Y)
+        if (Y.$$typeof === q)
           return M(
             z,
             A,
             N,
-            Ti(A, F),
+            Ti(A, Y),
             se
           );
-        Mi(A, F);
+        Mi(A, Y);
       }
       return null;
     }
-    function oe(z, A, N, F) {
+    function oe(z, A, N, Y) {
       for (var se = null, Oe = null, ie = A, he = A = 0, Ee = null; ie !== null && he < N.length; he++) {
         ie.index > he ? (Ee = ie, ie = null) : Ee = ie.sibling;
         var Te = _(
           z,
           ie,
           N[he],
-          F
+          Y
         );
         if (Te === null) {
           ie === null && (ie = Ee);
@@ -6995,7 +6995,7 @@ Error generating stack: ` + r.message + `
         return a(z, ie), Ae && yn(z, he), se;
       if (ie === null) {
         for (; he < N.length; he++)
-          ie = G(z, N[he], F), ie !== null && (A = d(
+          ie = G(z, N[he], Y), ie !== null && (A = d(
             ie,
             A,
             he
@@ -7008,7 +7008,7 @@ Error generating stack: ` + r.message + `
           z,
           he,
           N[he],
-          F
+          Y
         ), Ee !== null && (e && Ee.alternate !== null && ie.delete(
           Ee.key === null ? he : Ee.key
         ), A = d(
@@ -7020,11 +7020,11 @@ Error generating stack: ` + r.message + `
         return t(z, ro);
       }), Ae && yn(z, he), se;
     }
-    function ce(z, A, N, F) {
+    function ce(z, A, N, Y) {
       if (N == null) throw Error(l(151));
       for (var se = null, Oe = null, ie = A, he = A = 0, Ee = null, Te = N.next(); ie !== null && !Te.done; he++, Te = N.next()) {
         ie.index > he ? (Ee = ie, ie = null) : Ee = ie.sibling;
-        var ro = _(z, ie, Te.value, F);
+        var ro = _(z, ie, Te.value, Y);
         if (ro === null) {
           ie === null && (ie = Ee);
           break;
@@ -7035,38 +7035,38 @@ Error generating stack: ` + r.message + `
         return a(z, ie), Ae && yn(z, he), se;
       if (ie === null) {
         for (; !Te.done; he++, Te = N.next())
-          Te = G(z, Te.value, F), Te !== null && (A = d(Te, A, he), Oe === null ? se = Te : Oe.sibling = Te, Oe = Te);
+          Te = G(z, Te.value, Y), Te !== null && (A = d(Te, A, he), Oe === null ? se = Te : Oe.sibling = Te, Oe = Te);
         return Ae && yn(z, he), se;
       }
       for (ie = r(ie); !Te.done; he++, Te = N.next())
-        Te = M(ie, z, he, Te.value, F), Te !== null && (e && Te.alternate !== null && ie.delete(Te.key === null ? he : Te.key), A = d(Te, A, he), Oe === null ? se = Te : Oe.sibling = Te, Oe = Te);
+        Te = M(ie, z, he, Te.value, Y), Te !== null && (e && Te.alternate !== null && ie.delete(Te.key === null ? he : Te.key), A = d(Te, A, he), Oe === null ? se = Te : Oe.sibling = Te, Oe = Te);
       return e && ie.forEach(function(ok) {
         return t(z, ok);
       }), Ae && yn(z, he), se;
     }
-    function Le(z, A, N, F) {
-      if (typeof N == "object" && N !== null && N.type === T && N.key === null && (N = N.props.children), typeof N == "object" && N !== null) {
+    function Le(z, A, N, Y) {
+      if (typeof N == "object" && N !== null && N.type === O && N.key === null && (N = N.props.children), typeof N == "object" && N !== null) {
         switch (N.$$typeof) {
-          case O:
+          case T:
             e: {
               for (var se = N.key; A !== null; ) {
                 if (A.key === se) {
-                  if (se = N.type, se === T) {
+                  if (se = N.type, se === O) {
                     if (A.tag === 7) {
                       a(
                         z,
                         A.sibling
-                      ), F = c(
+                      ), Y = c(
                         A,
                         N.props.children
-                      ), F.return = z, z = F;
+                      ), Y.return = z, z = Y;
                       break e;
                     }
                   } else if (A.elementType === se || typeof se == "object" && se !== null && se.$$typeof === C && To(se) === A.type) {
                     a(
                       z,
                       A.sibling
-                    ), F = c(A, N.props), lr(F, N), F.return = z, z = F;
+                    ), Y = c(A, N.props), lr(Y, N), Y.return = z, z = Y;
                     break e;
                   }
                   a(z, A);
@@ -7074,22 +7074,22 @@ Error generating stack: ` + r.message + `
                 } else t(z, A);
                 A = A.sibling;
               }
-              N.type === T ? (F = Eo(
+              N.type === O ? (Y = Eo(
                 N.props.children,
                 z.mode,
-                F,
+                Y,
                 N.key
-              ), F.return = z, z = F) : (F = Ai(
+              ), Y.return = z, z = Y) : (Y = Ai(
                 N.type,
                 N.key,
                 N.props,
                 null,
                 z.mode,
-                F
-              ), lr(F, N), F.return = z, z = F);
+                Y
+              ), lr(Y, N), Y.return = z, z = Y);
             }
             return b(z);
-          case I:
+          case E:
             e: {
               for (se = N.key; A !== null; ) {
                 if (A.key === se)
@@ -7097,7 +7097,7 @@ Error generating stack: ` + r.message + `
                     a(
                       z,
                       A.sibling
-                    ), F = c(A, N.children || []), F.return = z, z = F;
+                    ), Y = c(A, N.children || []), Y.return = z, z = Y;
                     break e;
                   } else {
                     a(z, A);
@@ -7106,7 +7106,7 @@ Error generating stack: ` + r.message + `
                 else t(z, A);
                 A = A.sibling;
               }
-              F = Gs(N, z.mode, F), F.return = z, z = F;
+              Y = Gs(N, z.mode, Y), Y.return = z, z = Y;
             }
             return b(z);
           case C:
@@ -7114,7 +7114,7 @@ Error generating stack: ` + r.message + `
               z,
               A,
               N,
-              F
+              Y
             );
         }
         if (ge(N))
@@ -7122,7 +7122,7 @@ Error generating stack: ` + r.message + `
             z,
             A,
             N,
-            F
+            Y
           );
         if (re(N)) {
           if (se = re(N), typeof se != "function") throw Error(l(150));
@@ -7130,7 +7130,7 @@ Error generating stack: ` + r.message + `
             z,
             A,
             N,
-            F
+            Y
           );
         }
         if (typeof N.then == "function")
@@ -7138,33 +7138,33 @@ Error generating stack: ` + r.message + `
             z,
             A,
             Ci(N),
-            F
+            Y
           );
-        if (N.$$typeof === Y)
+        if (N.$$typeof === q)
           return Le(
             z,
             A,
             Ti(z, N),
-            F
+            Y
           );
         Mi(z, N);
       }
-      return typeof N == "string" && N !== "" || typeof N == "number" || typeof N == "bigint" ? (N = "" + N, A !== null && A.tag === 6 ? (a(z, A.sibling), F = c(A, N), F.return = z, z = F) : (a(z, A), F = Vs(N, z.mode, F), F.return = z, z = F), b(z)) : a(z, A);
+      return typeof N == "string" && N !== "" || typeof N == "number" || typeof N == "bigint" ? (N = "" + N, A !== null && A.tag === 6 ? (a(z, A.sibling), Y = c(A, N), Y.return = z, z = Y) : (a(z, A), Y = Vs(N, z.mode, Y), Y.return = z, z = Y), b(z)) : a(z, A);
     }
-    return function(z, A, N, F) {
+    return function(z, A, N, Y) {
       try {
         ir = 0;
         var se = Le(
           z,
           A,
           N,
-          F
+          Y
         );
         return fa = null, se;
       } catch (ie) {
         if (ie === pa || ie === Ri) throw ie;
         var Oe = Rt(29, ie, null, z.mode);
-        return Oe.lanes = F, Oe.return = z, Oe;
+        return Oe.lanes = Y, Oe.return = z, Oe;
       } finally {
       }
     };
@@ -7465,7 +7465,7 @@ Error generating stack: ` + r.message + `
   function Bi(e) {
     if (e !== null && typeof e == "object") {
       if (typeof e.then == "function") return mr(e);
-      if (e.$$typeof === Y) return ut(e);
+      if (e.$$typeof === q) return ut(e);
     }
     throw Error(l(438, String(e)));
   }
@@ -8258,7 +8258,7 @@ Error generating stack: ` + r.message + `
     useId: function() {
       var e = yt(), t = Ue.identifierPrefix;
       if (Ae) {
-        var a = nn, r = tn;
+        var a = on, r = nn;
         a = (r & ~(1 << 32 - Tt(r) - 1)).toString(32) + a, t = "_" + t + "R_" + a, a = Ui++, 0 < a && (t += "H" + a.toString(32)), t += "_";
       } else
         a = $x++, t = "_" + t + "r_" + a.toString(32) + "_";
@@ -8683,7 +8683,7 @@ Error generating stack: ` + r.message + `
           Gt
         ), e = e !== null && e.data === "&" ? e : null, e !== null && (t.memoizedState = {
           dehydrated: e,
-          treeContext: Pn !== null ? { id: tn, overflow: nn } : null,
+          treeContext: Pn !== null ? { id: nn, overflow: on } : null,
           retryLane: 536870912,
           hydrationErrors: null
         }, a = hp(e), a.return = t, t.child = a, dt = t, Fe = null)) : e = null, e === null) throw Hn(t);
@@ -8853,7 +8853,7 @@ Error generating stack: ` + r.message + `
           Gt
         ), e = e !== null && e.data !== "&" ? e : null, e !== null && (t.memoizedState = {
           dehydrated: e,
-          treeContext: Pn !== null ? { id: tn, overflow: nn } : null,
+          treeContext: Pn !== null ? { id: nn, overflow: on } : null,
           retryLane: 536870912,
           hydrationErrors: null
         }, a = hp(e), a.return = t, t.child = a, dt = t, Fe = null)) : e = null, e === null) throw Hn(t);
@@ -9076,7 +9076,7 @@ Error generating stack: ` + r.message + `
         break;
       case 27:
       case 5:
-        en(t);
+        tn(t);
         break;
       case 4:
         Ze(t, t.stateNode.containerInfo);
@@ -9295,7 +9295,7 @@ Error generating stack: ` + r.message + `
           e.memoizedState
         ), null;
       case 27:
-        return en(t), e === null && Ae && (r = t.stateNode = Xb(
+        return tn(t), e === null && Ae && (r = t.stateNode = Xb(
           t.type,
           t.pendingProps,
           ue.current
@@ -9311,7 +9311,7 @@ Error generating stack: ` + r.message + `
           t.type,
           t.pendingProps,
           Gt
-        ), r !== null ? (t.stateNode = r, dt = t, Fe = Kt(r.firstChild), Gt = !1, c = !0) : c = !1), c || Hn(t)), en(t), c = t.type, d = t.pendingProps, b = e !== null ? e.memoizedProps : null, r = d.children, pd(c, d) ? r = null : b !== null && pd(c, b) && (t.flags |= 32), t.memoizedState !== null && (c = mc(
+        ), r !== null ? (t.stateNode = r, dt = t, Fe = Kt(r.firstChild), Gt = !1, c = !0) : c = !1), c || Hn(t)), tn(t), c = t.type, d = t.pendingProps, b = e !== null ? e.memoizedProps : null, r = d.children, pd(c, d) ? r = null : b !== null && pd(c, b) && (t.flags |= 32), t.memoizedState !== null && (c = mc(
           e,
           t,
           Kx,
@@ -9872,7 +9872,7 @@ Error generating stack: ` + r.message + `
       Ce(e, t, c);
     }
   }
-  function on(e, t) {
+  function an(e, t) {
     var a = e.ref, r = e.refCleanup;
     if (a !== null)
       if (typeof r == "function")
@@ -10172,14 +10172,14 @@ Error generating stack: ` + r.message + `
       }
     switch (a.tag) {
       case 26:
-        et || on(a, t), En(
+        et || an(a, t), En(
           e,
           t,
           a
         ), a.memoizedState ? a.memoizedState.count-- : a.stateNode && (a = a.stateNode, a.parentNode.removeChild(a));
         break;
       case 27:
-        et || on(a, t);
+        et || an(a, t);
         var r = qe, c = kt;
         eo(a.type) && (qe = a.stateNode, kt = !1), En(
           e,
@@ -10188,7 +10188,7 @@ Error generating stack: ` + r.message + `
         ), Ar(a.stateNode), qe = r, kt = c;
         break;
       case 5:
-        et || on(a, t);
+        et || an(a, t);
       case 6:
         if (r = qe, c = kt, qe = null, En(
           e,
@@ -10240,7 +10240,7 @@ Error generating stack: ` + r.message + `
         );
         break;
       case 1:
-        et || (on(a, t), r = a.stateNode, typeof r.componentWillUnmount == "function" && Vf(
+        et || (an(a, t), r = a.stateNode, typeof r.componentWillUnmount == "function" && Vf(
           a,
           t,
           r
@@ -10354,11 +10354,11 @@ Error generating stack: ` + r.message + `
         jt(t, e), St(e), r & 4 && ($n(3, e, e.return), yr(3, e), $n(5, e, e.return));
         break;
       case 1:
-        jt(t, e), St(e), r & 512 && (et || a === null || on(a, a.return)), r & 64 && Sn && (e = e.updateQueue, e !== null && (r = e.callbacks, r !== null && (a = e.shared.hiddenCallbacks, e.shared.hiddenCallbacks = a === null ? r : a.concat(r))));
+        jt(t, e), St(e), r & 512 && (et || a === null || an(a, a.return)), r & 64 && Sn && (e = e.updateQueue, e !== null && (r = e.callbacks, r !== null && (a = e.shared.hiddenCallbacks, e.shared.hiddenCallbacks = a === null ? r : a.concat(r))));
         break;
       case 26:
         var c = Jt;
-        if (jt(t, e), St(e), r & 512 && (et || a === null || on(a, a.return)), r & 4) {
+        if (jt(t, e), St(e), r & 512 && (et || a === null || an(a, a.return)), r & 4) {
           var d = a !== null ? a.memoizedState : null;
           if (r = e.memoizedState, a === null)
             if (r === null)
@@ -10436,14 +10436,14 @@ Error generating stack: ` + r.message + `
         }
         break;
       case 27:
-        jt(t, e), St(e), r & 512 && (et || a === null || on(a, a.return)), a !== null && r & 4 && Bc(
+        jt(t, e), St(e), r & 512 && (et || a === null || an(a, a.return)), a !== null && r & 4 && Bc(
           e,
           e.memoizedProps,
           a.memoizedProps
         );
         break;
       case 5:
-        if (jt(t, e), St(e), r & 512 && (et || a === null || on(a, a.return)), e.flags & 32) {
+        if (jt(t, e), St(e), r & 512 && (et || a === null || an(a, a.return)), e.flags & 32) {
           c = e.stateNode;
           try {
             Wo(c, "");
@@ -10620,7 +10620,7 @@ Error generating stack: ` + r.message + `
           $n(4, t, t.return), Mo(t);
           break;
         case 1:
-          on(t, t.return);
+          an(t, t.return);
           var a = t.stateNode;
           typeof a.componentWillUnmount == "function" && Vf(
             t,
@@ -10632,7 +10632,7 @@ Error generating stack: ` + r.message + `
           Ar(t.stateNode);
         case 26:
         case 5:
-          on(t, t.return), Mo(t);
+          an(t, t.return), Mo(t);
           break;
         case 22:
           t.memoizedState === null && Mo(t);
@@ -11142,7 +11142,7 @@ Error generating stack: ` + r.message + `
       Se,
       Dt,
       !1
-    )), an(e));
+    )), rn(e));
   }
   function ub(e, t, a) {
     if ((Ne & 6) !== 0) throw Error(l(327));
@@ -11263,7 +11263,7 @@ Error generating stack: ` + r.message + `
       }
       break;
     } while (!0);
-    an(e);
+    rn(e);
   }
   function mb(e, t, a, r, c, d, b, g, S, R, B, G, _, M) {
     if (e.timeoutHandle = -1, G = t.subtreeFlags, G & 8192 || (G & 16785408) === 16785408) {
@@ -11469,7 +11469,7 @@ Error generating stack: ` + r.message + `
                 break;
               }
               t = function() {
-                _e !== 2 && _e !== 9 || Ue !== e || (_e = 7), an(e);
+                _e !== 2 && _e !== 9 || Ue !== e || (_e = 7), rn(e);
               }, d.then(t, t);
               break e;
             case 3:
@@ -11707,8 +11707,8 @@ Error generating stack: ` + r.message + `
                 top: M.scrollTop
               });
             for (typeof g.focus == "function" && g.focus(), g = 0; g < G.length; g++) {
-              var F = G[g];
-              F.element.scrollLeft = F.left, F.element.scrollTop = F.top;
+              var Y = G[g];
+              Y.element.scrollLeft = Y.left, Y.element.scrollTop = Y.top;
             }
           }
           gl = !!ud, md = ud = null;
@@ -11767,7 +11767,7 @@ Error generating stack: ` + r.message + `
           D.T = t, U.p = c;
         }
       }
-      (On & 3) !== 0 && il(), an(e), c = e.pendingLanes, (a & 261930) !== 0 && (c & 42) !== 0 ? e === Qc ? jr++ : (jr = 0, Qc = e) : jr = 0, Sr(0);
+      (On & 3) !== 0 && il(), rn(e), c = e.pendingLanes, (a & 261930) !== 0 && (c & 42) !== 0 ? e === Qc ? jr++ : (jr = 0, Qc = e) : jr = 0, Sr(0);
     }
   }
   function Sb(e, t) {
@@ -11802,7 +11802,7 @@ Error generating stack: ` + r.message + `
     }
   }
   function Ib(e, t, a) {
-    t = Yt(a, t), t = Tc(e.stateNode, t, 2), e = qn(e, t, 2), e !== null && (qa(e, 2), an(e));
+    t = Yt(a, t), t = Tc(e.stateNode, t, 2), e = qn(e, t, 2), e !== null && (qa(e, 2), rn(e));
   }
   function Ce(e, t, a) {
     if (e.tag === 3)
@@ -11824,7 +11824,7 @@ Error generating stack: ` + r.message + `
               r,
               t,
               e
-            ), qa(r, 2), an(r));
+            ), qa(r, 2), rn(r));
             break;
           }
         }
@@ -11843,10 +11843,10 @@ Error generating stack: ` + r.message + `
   }
   function fw(e, t, a) {
     var r = e.pingCache;
-    r !== null && r.delete(t), e.pingedLanes |= e.suspendedLanes & a, e.warmLanes &= ~a, Ue === e && (Se & a) === a && (Ge === 4 || Ge === 3 && (Se & 62914560) === Se && 300 > zt() - el ? (Ne & 2) === 0 && Sa(e, 0) : Kc |= a, ka === Se && (ka = 0)), an(e);
+    r !== null && r.delete(t), e.pingedLanes |= e.suspendedLanes & a, e.warmLanes &= ~a, Ue === e && (Se & a) === a && (Ge === 4 || Ge === 3 && (Se & 62914560) === Se && 300 > zt() - el ? (Ne & 2) === 0 && Sa(e, 0) : Kc |= a, ka === Se && (ka = 0)), rn(e);
   }
   function Ab(e, t) {
-    t === 0 && (t = xm()), e = So(e, t), e !== null && (qa(e, t), an(e));
+    t === 0 && (t = xm()), e = So(e, t), e !== null && (qa(e, t), rn(e));
   }
   function bw(e) {
     var t = e.memoizedState, a = 0;
@@ -11875,7 +11875,7 @@ Error generating stack: ` + r.message + `
     return Re(e, t);
   }
   var ll = null, Ia = null, nd = !1, sl = !1, od = !1, Wn = 0;
-  function an(e) {
+  function rn(e) {
     e !== Ia && e.next === null && (Ia === null ? ll = Ia = e : Ia = Ia.next = e), sl = !0, nd || (nd = !0, vw());
   }
   function Sr(e, t) {
@@ -12272,9 +12272,9 @@ Error generating stack: ` + r.message + `
           var ce = (t & 4) !== 0, Le = !ce && (e === "scroll" || e === "scrollend"), z = ce ? _ !== null ? _ + "Capture" : null : _;
           ce = [];
           for (var A = R, N; A !== null; ) {
-            var F = A;
-            if (N = F.stateNode, F = F.tag, F !== 5 && F !== 26 && F !== 27 || N === null || z === null || (F = $a(A, z), F != null && ce.push(
-              Ir(A, F, N)
+            var Y = A;
+            if (N = Y.stateNode, Y = Y.tag, Y !== 5 && Y !== 26 && Y !== 27 || N === null || z === null || (Y = $a(A, z), Y != null && ce.push(
+              Ir(A, Y, N)
             )), Le) break;
             A = A.return;
           }
@@ -12292,29 +12292,29 @@ Error generating stack: ` + r.message + `
           if (_ = e === "mouseover" || e === "pointerover", M = e === "mouseout" || e === "pointerout", _ && a !== Es && (oe = a.relatedTarget || a.fromElement) && (Ko(oe) || oe[$o]))
             break e;
           if ((M || _) && (_ = B.window === B ? B : (_ = B.ownerDocument) ? _.defaultView || _.parentWindow : window, M ? (oe = a.relatedTarget || a.toElement, M = R, oe = oe ? Ko(oe) : null, oe !== null && (Le = m(oe), ce = oe.tag, oe !== Le || ce !== 5 && ce !== 27 && ce !== 6) && (oe = null)) : (M = null, oe = R), M !== oe)) {
-            if (ce = Fm, F = "onMouseLeave", z = "onMouseEnter", A = "mouse", (e === "pointerout" || e === "pointerover") && (ce = qm, F = "onPointerLeave", z = "onPointerEnter", A = "pointer"), Le = M == null ? _ : Ga(M), N = oe == null ? _ : Ga(oe), _ = new ce(
-              F,
+            if (ce = Fm, Y = "onMouseLeave", z = "onMouseEnter", A = "mouse", (e === "pointerout" || e === "pointerover") && (ce = qm, Y = "onPointerLeave", z = "onPointerEnter", A = "pointer"), Le = M == null ? _ : Ga(M), N = oe == null ? _ : Ga(oe), _ = new ce(
+              Y,
               A + "leave",
               M,
               a,
               B
-            ), _.target = Le, _.relatedTarget = N, F = null, Ko(B) === R && (ce = new ce(
+            ), _.target = Le, _.relatedTarget = N, Y = null, Ko(B) === R && (ce = new ce(
               z,
               A + "enter",
               oe,
               a,
               B
-            ), ce.target = N, ce.relatedTarget = Le, F = ce), Le = F, M && oe)
+            ), ce.target = N, ce.relatedTarget = Le, Y = ce), Le = Y, M && oe)
               t: {
-                for (ce = Sw, z = M, A = oe, N = 0, F = z; F; F = ce(F))
+                for (ce = Sw, z = M, A = oe, N = 0, Y = z; Y; Y = ce(Y))
                   N++;
-                F = 0;
+                Y = 0;
                 for (var se = A; se; se = ce(se))
-                  F++;
-                for (; 0 < N - F; )
+                  Y++;
+                for (; 0 < N - Y; )
                   z = ce(z), N--;
-                for (; 0 < F - N; )
-                  A = ce(A), F--;
+                for (; 0 < Y - N; )
+                  A = ce(A), Y--;
                 for (; N--; ) {
                   if (z === A || A !== null && z === A.alternate) {
                     ce = z;
@@ -13909,7 +13909,7 @@ Error generating stack: ` + r.message + `
     }
   }
   var Tr = {
-    $$typeof: Y,
+    $$typeof: q,
     Provider: null,
     Consumer: null,
     _currentValue: V,
@@ -14019,7 +14019,7 @@ Error generating stack: ` + r.message + `
                       var S = 1 << 31 - Tt(b);
                       g.entanglements[1] |= S, b &= ~S;
                     }
-                    an(d), (Ne & 6) === 0 && (tl = zt() + 500, Sr(0));
+                    rn(d), (Ne & 6) === 0 && (tl = zt() + 500, Sr(0));
                   }
                 }
                 break;
@@ -14493,7 +14493,7 @@ Error generating stack: ` + r.message + `
       b,
       g,
       bh
-    ), t.context = rh(null), a = t.current, r = Lt(), r = ys(r), c = Yn(r), c.callback = null, qn(a, c, r), a = r, t.current.lanes = a, qa(t, a), an(t), e[$o] = t.current, sd(e), new jl(t);
+    ), t.context = rh(null), a = t.current, r = Lt(), r = ys(r), c = Yn(r), c.callback = null, qn(a, c, r), a = r, t.current.lanes = a, qa(t, a), rn(t), e[$o] = t.current, sd(e), new jl(t);
   }, Dr.version = "19.2.7", Dr;
 }
 var Rh;
@@ -15993,7 +15993,7 @@ function Vl(n) {
 function mu(n, o) {
   var m, p;
   const i = n.trim(), l = o.trim(), s = ri(i);
-  return s !== null && l.length > 0 && s.project.projectId === l || ((p = (m = sn()) == null ? void 0 : m.authoredHouseIdentities) == null ? void 0 : p.some(
+  return s !== null && l.length > 0 && s.project.projectId === l || ((p = (m = cn()) == null ? void 0 : m.authoredHouseIdentities) == null ? void 0 : p.some(
     (f) => f.houseId === i && f.canonicalProjectId === l
   )) === !0;
 }
@@ -16026,7 +16026,7 @@ function Pt(n) {
   };
   return Vl(v), v;
 }
-function sn() {
+function cn() {
   const n = ho();
   return n === null ? null : kg(n.workspaceContext) ? n.workspaceContext : null;
 }
@@ -16044,7 +16044,7 @@ function Gg(n) {
       dataMode: s.dataMode ?? "LIVE_EMPTY",
       status: "draft"
     });
-  for (const s of ((i = sn()) == null ? void 0 : i.authoredHouseIdentities) ?? []) {
+  for (const s of ((i = cn()) == null ? void 0 : i.authoredHouseIdentities) ?? []) {
     const m = ri(s.houseId);
     if (s.canonicalProjectId === n) {
       if (m !== null)
@@ -16446,7 +16446,7 @@ function Yh(n, o) {
   const i = ho();
   if (i === null)
     return { ok: !1, error: "Nejste přihlášeni." };
-  const l = sn() ?? sE();
+  const l = cn() ?? sE();
   if (l === null)
     return { ok: !1, error: "Workspace scope není připraven." };
   if (!Bu(i.user.roles, n))
@@ -16480,7 +16480,7 @@ function Yh(n, o) {
   return (o == null ? void 0 : o.navigate) !== !1 && !Bh() && typeof window < "u" && window.location.assign(y), { ok: !0, state: Fh(p), href: y, surface: n };
 }
 function dE(n) {
-  const o = sn();
+  const o = cn();
   if (o === null)
     return { ok: !1, error: "Operator PE mode není aktivní." };
   const i = o.officeReturnHref;
@@ -16513,7 +16513,7 @@ function uE({
       J !== null && Ur(J.user.id, o), f(J ?? C);
       return;
     }
-    const K = sn();
+    const K = cn();
     if (o !== void 0 && K !== null && (C.activeStudioId !== o || K.activeStudio !== o)) {
       const J = Pt({
         activeStudioId: o,
@@ -16546,7 +16546,7 @@ function uE({
   const k = x.useMemo(
     () => p !== null ? XS(p) : null,
     [p]
-  ), E = x.useCallback(async (C) => {
+  ), I = x.useCallback(async (C) => {
     let K;
     try {
       K = await Ud().login(C);
@@ -16566,12 +16566,12 @@ function uE({
       typeof window < "u" && window.location.href !== re && window.location.assign(re);
     }
     return { ok: !0 };
-  }, [o]), O = x.useCallback((C) => {
+  }, [o]), T = x.useCallback((C) => {
     Vl(C), f(C);
-  }, []), I = x.useCallback(async () => {
+  }, []), E = x.useCallback(async () => {
     cE(), await Ud().logout(), f(null);
-  }, []), T = x.useCallback((C) => {
-    if (sn() !== null) {
+  }, []), O = x.useCallback((C) => {
+    if (cn() !== null) {
       Yh(C === "client" || C === "office" || C === "manager" || C === "sales" || C === "builder" ? C : "client", { retainWorkspace: !0 });
       return;
     }
@@ -16584,7 +16584,7 @@ function uE({
       typeof window < "u" && window.location.href !== ee && window.location.assign(ee);
     }
   }, []), w = x.useCallback(() => {
-    if (sn() !== null) {
+    if (cn() !== null) {
       Yh("client", {
         retainWorkspace: !0,
         navigate: !1
@@ -16612,7 +16612,7 @@ function uE({
       projectId: ((re = J[0]) == null ? void 0 : re.id) ?? null
     });
     f(ee);
-  }, [s]), Y = x.useCallback(
+  }, [s]), q = x.useCallback(
     (C) => {
       if (p === null) return null;
       const K = C.projectId !== void 0 ? C.projectId : p.projectId, J = K === null ? void 0 : s.canonicalProjects.find(
@@ -16643,7 +16643,7 @@ function uE({
       studioId: C
     }),
     [p]
-  ), q = x.useMemo(
+  ), F = x.useMemo(
     () => p !== null ? $g(p.user.roles) : [],
     [p]
   ), L = x.useCallback(
@@ -16655,17 +16655,17 @@ function uE({
       isRestoring: y,
       registry: s,
       bootstrap: k,
-      login: E,
-      acceptAuthenticatedSession: O,
-      logout: I,
-      selectStudio: T,
+      login: I,
+      acceptAuthenticatedSession: T,
+      logout: E,
+      selectStudio: O,
       clearStudio: w,
       selectProject: H,
       selectWorkspace: te,
-      updateWorkspaceScope: Y,
+      updateWorkspaceScope: q,
       bootstrapActiveProject: Z,
       canOpenStudio: L,
-      availableStudios: q,
+      availableStudios: F,
       refreshRegistry: m
     }),
     [
@@ -16673,17 +16673,17 @@ function uE({
       y,
       s,
       k,
-      E,
-      O,
       I,
       T,
+      E,
+      O,
       w,
       H,
       te,
-      Y,
+      q,
       Z,
       L,
-      q,
+      F,
       m
     ]
   );
@@ -16940,7 +16940,7 @@ function wE(n) {
 function kE(n, o) {
   let i = null, l = null, s = "";
   const m = {}, p = {}, f = {};
-  let y = 0, h = 0, v = 0, k = 0, E = 0, O = 0, I = !1, T = !1;
+  let y = 0, h = 0, v = 0, k = 0, I = 0, T = 0, E = !1, O = !1;
   for (const w of o)
     if (w.sessionId === n)
       switch (s = w.decisionSessionId, l = w.at, w.type) {
@@ -16948,10 +16948,10 @@ function kE(n, o) {
           i = w.at;
           break;
         case "journey.completed":
-          I = !0;
+          E = !0;
           break;
         case "journey.abandoned":
-          T = !0;
+          O = !0;
           break;
         case "surface.entered":
           m[w.surfaceId] = (m[w.surfaceId] ?? 0) + 1;
@@ -16975,10 +16975,10 @@ function kE(n, o) {
           k += 1;
           break;
         case "conversion.started":
-          E += 1;
+          I += 1;
           break;
         case "conversion.completed":
-          O += 1;
+          T += 1;
           break;
       }
   return Object.freeze({
@@ -16994,23 +16994,23 @@ function kE(n, o) {
     storyViewCount: h,
     aiSessionOpenCount: v,
     aiInteractionCount: k,
-    conversionStartedCount: E,
-    conversionCompletedCount: O,
-    journeyCompleted: I,
-    journeyAbandoned: T,
+    conversionStartedCount: I,
+    conversionCompletedCount: T,
+    journeyCompleted: E,
+    journeyAbandoned: O,
     eventCount: o.filter((w) => w.sessionId === n).length
   });
 }
 function jE(n) {
   const { sessionId: o, adapter: i } = n, l = n.now ?? (() => Date.now()), s = [], m = /* @__PURE__ */ new Map(), p = /* @__PURE__ */ new Set();
-  let f = n.decisionSessionId ?? "decision-session:pending", y = null, h = null, v = !1, k = !1, E = !1, O = !1;
-  const I = (w) => Object.freeze({
+  let f = n.decisionSessionId ?? "decision-session:pending", y = null, h = null, v = !1, k = !1, I = !1, T = !1;
+  const E = (w) => Object.freeze({
     sessionId: o,
     decisionSessionId: f,
     at: w,
     surfaceId: h,
     runtimeContextRef: y
-  }), T = (w) => {
+  }), O = (w) => {
     s.push(w);
     for (const H of p)
       H();
@@ -17036,24 +17036,24 @@ function jE(n) {
       h = w;
     },
     startJourney(w = l()) {
-      v || (v = !0, T({ ...I(w), type: "journey.started" }));
+      v || (v = !0, O({ ...E(w), type: "journey.started" }));
     },
     resumeJourney(w = l()) {
-      !v || k || T({ ...I(w), type: "journey.resumed" });
+      !v || k || O({ ...E(w), type: "journey.resumed" });
     },
     completeJourney(w = l()) {
-      k = !0, T({ ...I(w), type: "journey.completed" });
+      k = !0, O({ ...E(w), type: "journey.completed" });
     },
     abandonJourney(w = l()) {
-      !v || k || T({ ...I(w), type: "journey.abandoned" });
+      !v || k || O({ ...E(w), type: "journey.abandoned" });
     },
     enterSurface(w, H = l()) {
-      m.has(w) || (m.set(w, H), h = w, T({ ...I(H), type: "surface.entered", surfaceId: w }));
+      m.has(w) || (m.set(w, H), h = w, O({ ...E(H), type: "surface.entered", surfaceId: w }));
     },
     exitSurface(w, H = l()) {
       const te = m.get(w);
-      te !== void 0 && (m.delete(w), h === w && (h = null), T({
-        ...I(H),
+      te !== void 0 && (m.delete(w), h === w && (h = null), O({
+        ...E(H),
         type: "surface.exited",
         surfaceId: w,
         dwellMs: Math.max(0, H - te)
@@ -17062,62 +17062,62 @@ function jE(n) {
     observeDispatch(w, H = l()) {
       if (!w.ok)
         return;
-      const te = w.experience.context.decision, Y = w.experience.context.object.id;
-      f = `${Y}:${w.session.createdAt}`, y = Object.freeze({
+      const te = w.experience.context.decision, q = w.experience.context.object.id;
+      f = `${q}:${w.session.createdAt}`, y = Object.freeze({
         terminalId: te.terminal.id,
         storyId: te.story.id,
         activeRoomId: w.experience.context.activeRoom.id,
-        objectId: Y
+        objectId: q
       });
       const Z = {
         ...SE(w.event),
         floor: w.experience.context.navigation.currentFloor ?? (w.experience.context.activeRoom.room !== null ? String(w.experience.context.activeRoom.room.floor) : null)
       };
-      if (T({
-        ...I(H),
+      if (O({
+        ...E(H),
         type: "runtime.signal",
         runtimeEventType: w.event.type,
         payload: Object.freeze(Z)
-      }), w.event.type === "RoomSelected" && T({
-        ...I(H),
+      }), w.event.type === "RoomSelected" && O({
+        ...E(H),
         type: "experience.event",
         experienceEventType: "room.viewed",
         payload: Object.freeze({ roomId: w.event.roomId })
       }), w.event.type === "PriorityChanged") {
-        const q = w.event.priorityIds.length, L = w.event.priorityIds.join(",");
-        T({
-          ...I(H),
+        const F = w.event.priorityIds.length, L = w.event.priorityIds.join(",");
+        O({
+          ...E(H),
           type: "experience.event",
-          experienceEventType: q > 0 ? "priority.selected" : "priority.changed",
-          payload: Object.freeze({ priorityCount: q, priorityIds: L })
-        }), T({
-          ...I(H),
+          experienceEventType: F > 0 ? "priority.selected" : "priority.changed",
+          payload: Object.freeze({ priorityCount: F, priorityIds: L })
+        }), O({
+          ...E(H),
           type: "experience.event",
           experienceEventType: "priority.changed",
-          payload: Object.freeze({ priorityCount: q, priorityIds: L })
-        }), q >= 3 && T({
-          ...I(H),
+          payload: Object.freeze({ priorityCount: F, priorityIds: L })
+        }), F >= 3 && O({
+          ...E(H),
           type: "experience.event",
           experienceEventType: "priority.completed",
-          payload: Object.freeze({ priorityCount: q, priorityIds: L })
+          payload: Object.freeze({ priorityCount: F, priorityIds: L })
         });
       }
-      E || (E = !0, T({
-        ...I(H),
+      I || (I = !0, O({
+        ...E(H),
         type: "terminal.viewed",
         surfaceId: "decision-terminal",
         terminalId: te.terminal.id,
         recommendationKey: te.terminal.outcome.recommendation
-      })), O || (O = !0, T({
-        ...I(H),
+      })), T || (T = !0, O({
+        ...E(H),
         type: "story.viewed",
         surfaceId: "decision-terminal",
         storyId: te.story.id
       }));
     },
     terminalViewed(w) {
-      T({
-        ...I(w.at ?? l()),
+      O({
+        ...E(w.at ?? l()),
         type: "terminal.viewed",
         surfaceId: "decision-terminal",
         terminalId: w.terminalId,
@@ -17125,29 +17125,29 @@ function jE(n) {
       });
     },
     storyViewed(w, H = l()) {
-      T({
-        ...I(H),
+      O({
+        ...E(H),
         type: "story.viewed",
         surfaceId: "decision-terminal",
         storyId: w
       });
     },
     aiSessionOpened(w, H = l()) {
-      T({
-        ...I(H),
+      O({
+        ...E(H),
         type: "ai.session.opened",
         surfaceId: "ai-advisor",
         aiContextId: w
-      }), T({
-        ...I(H),
+      }), O({
+        ...E(H),
         type: "experience.event",
         experienceEventType: "ai.conversation.started",
         payload: Object.freeze({ aiContextId: w })
       });
     },
     aiInteraction(w) {
-      T({
-        ...I(w.at ?? l()),
+      O({
+        ...E(w.at ?? l()),
         type: "ai.interaction",
         surfaceId: "ai-advisor",
         questionCategory: w.questionCategory,
@@ -17157,13 +17157,13 @@ function jE(n) {
       });
     },
     aiSessionEnded(w, H = l()) {
-      T({
-        ...I(H),
+      O({
+        ...E(H),
         type: "ai.session.ended",
         surfaceId: "ai-advisor",
         conversationLength: w
-      }), T({
-        ...I(H),
+      }), O({
+        ...E(H),
         type: "experience.event",
         experienceEventType: "ai.conversation.completed",
         payload: Object.freeze({ conversationLength: w })
@@ -17171,58 +17171,58 @@ function jE(n) {
     },
     experienceEvent(w) {
       const H = w.at ?? l(), te = h;
-      w.surfaceId !== void 0 && (h = w.surfaceId), T({
-        ...I(H),
+      w.surfaceId !== void 0 && (h = w.surfaceId), O({
+        ...E(H),
         type: "experience.event",
         experienceEventType: w.experienceEventType,
         payload: Object.freeze({ ...w.payload ?? {} })
       }), h = te;
     },
     conversionStarted(w, H = l()) {
-      T({
-        ...I(H),
+      O({
+        ...E(H),
         type: "conversion.started",
         surfaceId: "audit-lead-capture",
         ctaId: w
-      }), T({
-        ...I(H),
+      }), O({
+        ...E(H),
         type: "experience.event",
         experienceEventType: "contact.opened",
         payload: Object.freeze({ ctaId: w })
       });
     },
     conversionFormOpened(w, H = l()) {
-      T({
-        ...I(H),
+      O({
+        ...E(H),
         type: "conversion.form.opened",
         surfaceId: "audit-lead-capture",
         ctaId: w
       });
     },
     conversionConsentAccepted(w, H = l()) {
-      T({
-        ...I(H),
+      O({
+        ...E(H),
         type: "conversion.consent.accepted",
         surfaceId: "audit-lead-capture",
         ctaId: w
       });
     },
     conversionCompleted(w, H = l()) {
-      T({
-        ...I(H),
+      O({
+        ...E(H),
         type: "conversion.completed",
         surfaceId: "audit-lead-capture",
         ctaId: w
-      }), T({
-        ...I(H),
+      }), O({
+        ...E(H),
         type: "experience.event",
         experienceEventType: "contact.submitted",
         payload: Object.freeze({ ctaId: w })
-      }), k = !0, T({ ...I(H), type: "journey.completed" });
+      }), k = !0, O({ ...E(H), type: "journey.completed" });
     },
     conversionCancelled(w, H = l()) {
-      T({
-        ...I(H),
+      O({
+        ...E(H),
         type: "conversion.cancelled",
         surfaceId: "audit-lead-capture",
         ctaId: w
@@ -17377,8 +17377,8 @@ function ov() {
   return {
     urlProjectId: o,
     urlHouseId: i,
-    workspaceContextProjectId: ((p = (m = sn()) == null ? void 0 : m.projectId) == null ? void 0 : p.trim()) || null,
-    workspaceContextHouseId: ((y = (f = sn()) == null ? void 0 : f.activeHouseId) == null ? void 0 : y.trim()) || null,
+    workspaceContextProjectId: ((p = (m = cn()) == null ? void 0 : m.projectId) == null ? void 0 : p.trim()) || null,
+    workspaceContextHouseId: ((y = (f = cn()) == null ? void 0 : f.activeHouseId) == null ? void 0 : y.trim()) || null,
     sessionProjectId: ((h = n == null ? void 0 : n.projectId) == null ? void 0 : h.trim()) || null,
     sessionHouseId: ((v = n == null ? void 0 : n.activeHouseId) == null ? void 0 : v.trim()) || null,
     embedObjectId: l ?? null
@@ -17717,7 +17717,7 @@ function Gu(n) {
   return x.useEffect(() => {
     if (n.length === 0 || typeof IntersectionObserver > "u")
       return;
-    const l = n.map((I) => document.getElementById(I)).filter((I) => I !== null);
+    const l = n.map((E) => document.getElementById(E)).filter((E) => E !== null);
     if (l.length === 0)
       return;
     const s = /* @__PURE__ */ new Map(), m = document.querySelector(
@@ -17725,15 +17725,15 @@ function Gu(n) {
     ), p = () => window.matchMedia(
       `(max-width: ${La.desktopMinPx - 1}px)`
     ).matches ? "-18% 0px -42% 0px" : "-20% 0px -55% 0px", f = () => {
-      let I = null, T = 0;
+      let E = null, O = 0;
       for (const w of n) {
         const H = s.get(w) ?? 0;
-        H > T && (T = H, I = w);
+        H > O && (O = H, E = w);
       }
-      I !== null && i((w) => w === I ? w : I);
-    }, y = (I) => {
-      for (const T of I)
-        s.set(T.target.id, T.intersectionRatio);
+      E !== null && i((w) => w === E ? w : E);
+    }, y = (E) => {
+      for (const O of E)
+        s.set(O.target.id, O.intersectionRatio);
       f();
     };
     let h = new IntersectionObserver(y, {
@@ -17741,23 +17741,23 @@ function Gu(n) {
       rootMargin: p(),
       threshold: [0, 0.25, 0.5, 0.75, 1]
     });
-    for (const I of l)
-      h.observe(I);
+    for (const E of l)
+      h.observe(E);
     const v = () => {
       h.disconnect(), h = new IntersectionObserver(y, {
         root: m,
         rootMargin: p(),
         threshold: [0, 0.25, 0.5, 0.75, 1]
       });
-      for (const I of l)
-        h.observe(I);
+      for (const E of l)
+        h.observe(E);
     }, k = window.matchMedia(
       `(max-width: ${La.desktopMinPx - 1}px)`
-    ), E = Vu(v), O = () => {
-      E.schedule();
+    ), I = Vu(v), T = () => {
+      I.schedule();
     };
-    return k.addEventListener("change", O), () => {
-      k.removeEventListener("change", O), E.cancel(), h.disconnect();
+    return k.addEventListener("change", T), () => {
+      k.removeEventListener("change", T), I.cancel(), h.disconnect();
     };
   }, [n]), o;
 }
@@ -17870,21 +17870,21 @@ function JE(n, o, i) {
     return i.push(nt("BP_INVALID_CSV", s, o)), [];
   const m = /* @__PURE__ */ new Set(), p = [];
   for (let f = 0; f < l.rows.length; f += 1) {
-    const y = l.rows[f], h = y.order ?? "", v = y.room ?? "", k = y.file ?? "", E = `${o}:row ${f + 2}`;
+    const y = l.rows[f], h = y.order ?? "", v = y.room ?? "", k = y.file ?? "", I = `${o}:row ${f + 2}`;
     if (!h || !v || !k) {
-      i.push(nt("BP_MISSING_FIELD", "Missing order, room, or file.", E));
+      i.push(nt("BP_MISSING_FIELD", "Missing order, room, or file.", I));
       continue;
     }
-    const O = lv(h, "order", E);
-    if (typeof O == "string") {
-      i.push(nt("BP_INVALID_TYPE", O, E));
+    const T = lv(h, "order", I);
+    if (typeof T == "string") {
+      i.push(nt("BP_INVALID_TYPE", T, I));
       continue;
     }
-    if (m.has(O)) {
-      i.push(nt("BP_DUPLICATE_ORDER", `Duplicate gallery order ${O}.`, E));
+    if (m.has(T)) {
+      i.push(nt("BP_DUPLICATE_ORDER", `Duplicate gallery order ${T}.`, I));
       continue;
     }
-    m.add(O), p.push({ order: O, room: v, file: k });
+    m.add(T), p.push({ order: T, room: v, file: k });
   }
   return p.sort((f, y) => f.order - y.order), p;
 }
@@ -17898,23 +17898,23 @@ function QE(n, o, i) {
     return i.push(nt("BP_INVALID_CSV", s, o)), [];
   const m = /* @__PURE__ */ new Set(), p = [];
   for (let f = 0; f < l.rows.length; f += 1) {
-    const y = l.rows[f], h = y.floor ?? "", v = y.room ?? "", k = y.name ?? "", E = y.area ?? "", O = `${o}:row ${f + 2}`;
-    if (!h || !v || !k || !E) {
+    const y = l.rows[f], h = y.floor ?? "", v = y.room ?? "", k = y.name ?? "", I = y.area ?? "", T = `${o}:row ${f + 2}`;
+    if (!h || !v || !k || !I) {
       i.push(
-        nt("BP_MISSING_FIELD", "Missing floor, room, name, or area.", O)
+        nt("BP_MISSING_FIELD", "Missing floor, room, name, or area.", T)
       );
       continue;
     }
-    const I = KE(E, "area", O);
-    if (typeof I == "string") {
-      i.push(nt("BP_INVALID_TYPE", I, O));
+    const E = KE(I, "area", T);
+    if (typeof E == "string") {
+      i.push(nt("BP_INVALID_TYPE", E, T));
       continue;
     }
     if (m.has(v)) {
-      i.push(nt("BP_DUPLICATE_ROOM", `Duplicate room id "${v}".`, O));
+      i.push(nt("BP_DUPLICATE_ROOM", `Duplicate room id "${v}".`, T));
       continue;
     }
-    m.add(v), p.push({ floor: h, room: v, name: k, area: I });
+    m.add(v), p.push({ floor: h, room: v, name: k, area: E });
   }
   return p;
 }
@@ -17932,23 +17932,23 @@ function WE(n, o, i) {
     ), [];
   const p = /* @__PURE__ */ new Set(), f = [];
   for (let y = 0; y < l.rows.length; y += 1) {
-    const h = l.rows[y], v = h.order ?? "", k = h.room ?? "", E = h.provider ?? "", O = (h.mediaId ?? h["media-id"] ?? "").trim(), I = `${o}:row ${y + 2}`;
-    if (!v || !k || !E || !O) {
+    const h = l.rows[y], v = h.order ?? "", k = h.room ?? "", I = h.provider ?? "", T = (h.mediaId ?? h["media-id"] ?? "").trim(), E = `${o}:row ${y + 2}`;
+    if (!v || !k || !I || !T) {
       i.push(
-        nt("BP_MISSING_FIELD", "Missing order, room, provider, or mediaId.", I)
+        nt("BP_MISSING_FIELD", "Missing order, room, provider, or mediaId.", E)
       );
       continue;
     }
-    const T = lv(v, "order", I);
-    if (typeof T == "string") {
-      i.push(nt("BP_INVALID_TYPE", T, I));
+    const O = lv(v, "order", E);
+    if (typeof O == "string") {
+      i.push(nt("BP_INVALID_TYPE", O, E));
       continue;
     }
-    if (p.has(T)) {
-      i.push(nt("BP_DUPLICATE_ORDER", `Duplicate video order ${T}.`, I));
+    if (p.has(O)) {
+      i.push(nt("BP_DUPLICATE_ORDER", `Duplicate video order ${O}.`, E));
       continue;
     }
-    p.add(T), f.push({ order: T, room: k, provider: E, mediaId: O });
+    p.add(O), f.push({ order: O, room: k, provider: I, mediaId: T });
   }
   return f.sort((y, h) => y.order - h.order), f;
 }
@@ -17964,40 +17964,40 @@ function eI(n) {
     nt("BP_MISSING_FILE", "Hero asset path is required (media/hero/…).", "media/hero/")
   ) : f.length > 0 && Al(f, n.existingRelativePaths, o);
   const y = {
-    floors: n.planPairs.map((Y) => ({
-      floorId: Y.floorId,
-      planPng: Y.rasterRelativePath,
-      planSvg: Y.svgRelativePath
+    floors: n.planPairs.map((q) => ({
+      floorId: q.floorId,
+      planPng: q.rasterRelativePath,
+      planSvg: q.svgRelativePath
     }))
   };
-  for (const Y of n.planPairs)
-    Al(Y.rasterRelativePath, n.existingRelativePaths, o), Al(Y.svgRelativePath, n.existingRelativePaths, o);
-  const h = new Set(y.floors.map((Y) => Y.floorId)), v = new Set(s.map((Y) => Y.room));
-  for (const Y of s)
-    h.size > 0 && !h.has(Y.floor) && o.push(
+  for (const q of n.planPairs)
+    Al(q.rasterRelativePath, n.existingRelativePaths, o), Al(q.svgRelativePath, n.existingRelativePaths, o);
+  const h = new Set(y.floors.map((q) => q.floorId)), v = new Set(s.map((q) => q.room));
+  for (const q of s)
+    h.size > 0 && !h.has(q.floor) && o.push(
       nt(
         "BP_UNKNOWN_FLOOR",
-        `Room "${Y.room}" references unknown floor "${Y.floor}".`,
+        `Room "${q.room}" references unknown floor "${q.floor}".`,
         "rooms.csv"
       )
     );
-  for (const Y of m)
-    v.has(Y.room) || o.push(
+  for (const q of m)
+    v.has(q.room) || o.push(
       nt(
         "BP_UNKNOWN_ROOM",
-        `Gallery entry references unknown room "${Y.room}".`,
+        `Gallery entry references unknown room "${q.room}".`,
         "gallery.csv"
       )
     ), Al(
-      `media/gallery/${Y.file}`,
+      `media/gallery/${q.file}`,
       n.existingRelativePaths,
       o
     );
-  for (const Y of p)
-    v.has(Y.room) || o.push(
+  for (const q of p)
+    v.has(q.room) || o.push(
       nt(
         "BP_UNKNOWN_ROOM",
-        `Video entry references unknown room "${Y.room}".`,
+        `Video entry references unknown room "${q.room}".`,
         "videos.csv"
       )
     );
@@ -18014,31 +18014,31 @@ function eI(n) {
         ...n.heroTitle !== void 0 ? { title: n.heroTitle } : {}
       }
     ]
-  }, E = {
-    entries: m.map((Y) => ({
-      order: Y.order,
-      roomId: Y.room,
-      file: Y.file,
-      path: `media/gallery/${Y.file}`
-    }))
-  }, O = {
-    rooms: s.map((Y) => ({
-      floorId: Y.floor,
-      roomId: Y.room,
-      name: Y.name,
-      area: Y.area
-    }))
   }, I = {
-    entries: y.floors.map((Y) => ({
-      floorId: Y.floorId,
-      path: Y.planSvg
+    entries: m.map((q) => ({
+      order: q.order,
+      roomId: q.room,
+      file: q.file,
+      path: `media/gallery/${q.file}`
     }))
   }, T = {
-    entries: p.map((Y) => ({
-      order: Y.order,
-      roomId: Y.room,
-      provider: Y.provider,
-      mediaId: Y.mediaId
+    rooms: s.map((q) => ({
+      floorId: q.floor,
+      roomId: q.room,
+      name: q.name,
+      area: q.area
+    }))
+  }, E = {
+    entries: y.floors.map((q) => ({
+      floorId: q.floorId,
+      path: q.planSvg
+    }))
+  }, O = {
+    entries: p.map((q) => ({
+      order: q.order,
+      roomId: q.room,
+      provider: q.provider,
+      mediaId: q.mediaId
     }))
   };
   return { ok: !0, result: {
@@ -18047,18 +18047,18 @@ function eI(n) {
       schemaVersion: ZE,
       packageRoot: n.packageRoot,
       hero: k,
-      gallery: E,
-      rooms: O,
+      gallery: I,
+      rooms: T,
       floors: y,
-      svg: I,
-      videos: T
+      svg: E,
+      videos: O
     },
     hero: k,
-    gallery: E,
-    rooms: O,
+    gallery: I,
+    rooms: T,
     floors: y,
-    svg: I,
-    videos: T
+    svg: E,
+    videos: O
   } };
 }
 function tI(n, o) {
@@ -18317,13 +18317,13 @@ function hI() {
         let y = !1, h = () => {
         };
         const v = () => {
-          h(), m == null || m.removeEventListener("abort", E);
+          h(), m == null || m.removeEventListener("abort", I);
         }, k = () => {
           y || (y = !0, v(), p());
-        }, E = () => {
+        }, I = () => {
           y || (y = !0, v(), f(new DOMException("Bootstrap wait aborted", "AbortError")));
         };
-        h = l.once(s, k), m == null || m.addEventListener("abort", E);
+        h = l.once(s, k), m == null || m.addEventListener("abort", I);
       });
     },
     /** Clear session state — call at the start of each Experience launch. */
@@ -18333,7 +18333,7 @@ function hI() {
   };
   return l;
 }
-const cn = hI(), yI = Object.freeze({
+const dn = hI(), yI = Object.freeze({
   identity: Object.freeze({
     id: "house-modern-01",
     title: "Modern 01",
@@ -18420,7 +18420,7 @@ function pv() {
   }
   return !1;
 }
-function dn(n, o) {
+function en(n, o) {
   pv() && console.info(jI, n, o);
 }
 function Fd(n) {
@@ -18589,7 +18589,7 @@ function RI(n) {
 }
 function _I(n, o, i, l) {
   pv() && window.setTimeout(() => {
-    dn(
+    en(
       "1.BuilderPackage",
       RI({
         packagePublicRoot: i,
@@ -18597,13 +18597,13 @@ function _I(n, o, i, l) {
         registries: n,
         texts: o
       })
-    ), dn("2.RuntimeRegistry", {
+    ), en("2.RuntimeRegistry", {
       gallery: Br(n.gallery.entries),
       hero: Br(n.hero.entries),
       rooms: Br(n.rooms.rooms),
       videos: Br(n.videos.entries),
       floors: Br(n.floors.floors)
-    }), dn("6.RuntimeSource", {
+    }), en("6.RuntimeSource", {
       usesBuilderPackageRegistry: !0,
       usesRuntimeHousePackageFromBuilder: !0,
       usesManifestJson: !1,
@@ -18638,7 +18638,7 @@ async function MI(n = Yo, o, i) {
   if (Fr !== null && Fo === l && zl === s)
     return Fr;
   Ca = null, Jl = null, Ql = null, Fo = l, zl = s, Fr = (async () => {
-    var E, O;
+    var I, T;
     const [m, p] = await Promise.all([
       TI(l),
       zI(l, i == null ? void 0 : i.files.manifestJson)
@@ -18653,7 +18653,7 @@ async function MI(n = Yo, o, i) {
       // geometry remains required seed package infrastructure, so an absent
       // optional API media object must not fail the entire Runtime bootstrap.
       l,
-      ((E = p.authoringDraft) == null ? void 0 : E.floorPlans) !== "not-authored"
+      ((I = p.authoringDraft) == null ? void 0 : I.floorPlans) !== "not-authored"
     );
     const h = NI(
       f,
@@ -18667,13 +18667,13 @@ async function MI(n = Yo, o, i) {
       y,
       l,
       o,
-      ((O = p.authoringDraft) == null ? void 0 : O.validationMode) === "AUTHORING_DRAFT",
+      ((T = p.authoringDraft) == null ? void 0 : T.validationMode) === "AUTHORING_DRAFT",
       p.heroCopy,
       i == null ? void 0 : i.mediaUrls
     ), k = Object.fromEntries(
-      wI().flatMap((I) => {
-        const T = mv(I);
-        return T === null ? [] : [[I, T]];
+      wI().flatMap((E) => {
+        const O = mv(E);
+        return O === null ? [] : [[E, O]];
       })
     );
     return Ql = mI(
@@ -19016,17 +19016,17 @@ function nA(n, o) {
     (k) => k.floorId === l
   ), m = (s == null ? void 0 : s.rasterSrc) ?? ($I(n.house, i) || vv(n.house)), p = (s == null ? void 0 : s.geometry) ?? mv(l), f = (p == null ? void 0 : p.viewBox.width) ?? 0, y = (p == null ? void 0 : p.viewBox.height) ?? 0, h = new Map(
     ((p == null ? void 0 : p.rooms) ?? []).map((k) => {
-      const E = {
+      const I = {
         x: k.bbox.x,
         y: k.bbox.y,
         width: k.bbox.width,
         height: k.bbox.height,
         ...k.polygon !== void 0 && k.polygon.length >= 3 ? { polygon: k.polygon } : {}
       };
-      return [k.roomId, E];
+      return [k.roomId, I];
     })
   ), v = n.house.rooms.map((k) => {
-    const E = h.get(k.id) ?? null;
+    const I = h.get(k.id) ?? null;
     return Object.freeze({
       id: k.id,
       title: k.name,
@@ -19035,7 +19035,7 @@ function nA(n, o) {
         k.id,
         hv()
       ),
-      floorPlanRegion: E
+      floorPlanRegion: I
     });
   });
   return Object.freeze({
@@ -19094,7 +19094,7 @@ function oy(n) {
 }
 function lA() {
   return x.useEffect(() => {
-    cn.emit("EXPERIENCE_READY");
+    dn.emit("EXPERIENCE_READY");
   }, []), null;
 }
 function sA({
@@ -19111,34 +19111,34 @@ function sA({
       window.removeEventListener("embed:house-change", U);
     };
   }, []);
-  const E = ny(), O = oy({
-    runtimeContentAvailable: (K = E.workspaceBinding) == null ? void 0 : K.runtimeContentAvailable,
-    authoringDraftPackage: ((J = E.workspaceBinding) == null ? void 0 : J.authoringDraftPackage) ?? null
-  }) ? E.workspaceBinding ?? null : null, I = ((ee = E.workspaceBinding) == null ? void 0 : ee.authoringDraftPackage) ?? null, T = E.canonicalBinding, w = ((re = E.workspaceBinding) == null ? void 0 : re.houseId) ?? (T == null ? void 0 : T.runtimeHouseId) ?? null, H = (I == null ? void 0 : I.packagePublicRoot) ?? (T == null ? void 0 : T.packagePublicRoot) ?? null, te = iA({
+  const I = ny(), T = oy({
+    runtimeContentAvailable: (K = I.workspaceBinding) == null ? void 0 : K.runtimeContentAvailable,
+    authoringDraftPackage: ((J = I.workspaceBinding) == null ? void 0 : J.authoringDraftPackage) ?? null
+  }) ? I.workspaceBinding ?? null : null, E = ((ee = I.workspaceBinding) == null ? void 0 : ee.authoringDraftPackage) ?? null, O = I.canonicalBinding, w = ((re = I.workspaceBinding) == null ? void 0 : re.houseId) ?? (O == null ? void 0 : O.runtimeHouseId) ?? null, H = (E == null ? void 0 : E.packagePublicRoot) ?? (O == null ? void 0 : O.packagePublicRoot) ?? null, te = iA({
     injectedRuntime: o !== void 0,
-    hasAuthoringDraftPackage: I !== null,
-    dataMode: (Ie = (ye = T == null ? void 0 : T.project) == null ? void 0 : ye.house) == null ? void 0 : Ie.dataMode,
+    hasAuthoringDraftPackage: E !== null,
+    dataMode: (Ie = (ye = O == null ? void 0 : O.project) == null ? void 0 : ye.house) == null ? void 0 : Ie.dataMode,
     packagePublicRoot: H
-  }), Y = (O == null ? void 0 : O.houseId) ?? w, Z = Ol(
+  }), q = (T == null ? void 0 : T.houseId) ?? w, Z = Ol(
     w,
     H
-  ), q = x.useMemo(
+  ), F = x.useMemo(
     () => {
       var U, V;
       return w === null ? null : Cj({
         runtimeHouseId: w,
-        referenceProvenance: (V = (U = T == null ? void 0 : T.project) == null ? void 0 : U.house) == null ? void 0 : V.referenceProvenance
+        referenceProvenance: (V = (U = O == null ? void 0 : O.project) == null ? void 0 : U.house) == null ? void 0 : V.referenceProvenance
       });
     },
-    [(D = (ge = T == null ? void 0 : T.project) == null ? void 0 : ge.house) == null ? void 0 : D.referenceProvenance, w]
+    [(D = (ge = O == null ? void 0 : O.project) == null ? void 0 : ge.house) == null ? void 0 : D.referenceProvenance, w]
   ), L = x.useMemo(
-    () => q === null ? null : Q1(q),
-    [q]
+    () => F === null ? null : Q1(F),
+    [F]
   );
   x.useEffect(() => {
-    var W, ue, ve, Ze, He, en, un;
+    var W, ue, ve, Ze, He, tn, un;
     if (o !== void 0) {
-      i.current = o, p(!0), y(Z), v(null), cn.emit("RUNTIME_READY");
+      i.current = o, p(!0), y(Z), v(null), dn.emit("RUNTIME_READY");
       return;
     }
     const U = ny();
@@ -19149,9 +19149,9 @@ function sA({
       i.current = null, p(!1), y(null), v(null);
       return;
     }
-    const V = ((ve = U.workspaceBinding) == null ? void 0 : ve.authoringDraftPackage) ?? null, ne = ((Ze = U.canonicalBinding) == null ? void 0 : Ze.project) ?? null, le = (V == null ? void 0 : V.packagePublicRoot) ?? ((He = U.canonicalBinding) == null ? void 0 : He.packagePublicRoot) ?? null, j = ((en = U.workspaceBinding) == null ? void 0 : en.houseId) ?? ((un = U.canonicalBinding) == null ? void 0 : un.runtimeHouseId) ?? null, P = (rt, mn, gt) => {
+    const V = ((ve = U.workspaceBinding) == null ? void 0 : ve.authoringDraftPackage) ?? null, ne = ((Ze = U.canonicalBinding) == null ? void 0 : Ze.project) ?? null, le = (V == null ? void 0 : V.packagePublicRoot) ?? ((He = U.canonicalBinding) == null ? void 0 : He.packagePublicRoot) ?? null, j = ((tn = U.workspaceBinding) == null ? void 0 : tn.houseId) ?? ((un = U.canonicalBinding) == null ? void 0 : un.runtimeHouseId) ?? null, P = (rt, mn, gt) => {
       var Ut, Cn, Go;
-      dn(
+      en(
         "ClientPackageBinding",
         {
           canonicalHouseId: j,
@@ -19176,7 +19176,7 @@ function sA({
       );
       return;
     }
-    cn.emit("BOOTSTRAP_LOADING"), P("loading", null, null), i.current = null, p(!1), y(null);
+    dn.emit("BOOTSTRAP_LOADING"), P("loading", null, null), i.current = null, p(!1), y(null);
     let Q = !1;
     const X = new AbortController();
     return (async () => {
@@ -19214,7 +19214,7 @@ function sA({
         "ready",
         null,
         Ol(j, le)
-      ), s((Ut) => Ut + 1), cn.emit("RUNTIME_READY"));
+      ), s((Ut) => Ut + 1), dn.emit("RUNTIME_READY"));
     })().catch((rt) => {
       Q || (console.error("[ClientStudio] House package bootstrap failed", {
         houseId: j,
@@ -19232,7 +19232,7 @@ function sA({
     o,
     H,
     w,
-    O == null ? void 0 : O.houseId,
+    T == null ? void 0 : T.houseId,
     te,
     Z
   ]);
@@ -19264,17 +19264,17 @@ function sA({
         L,
         U.context.decision.priorityIds
       ),
-      analyticsScope: T === null || T.project === null || T.project.house === null ? null : {
-        companyId: T.project.partner.companyId,
-        projectId: T.project.project.projectId,
-        houseId: T.project.house.houseId
+      analyticsScope: O === null || O.project === null || O.project.house === null ? null : {
+        companyId: O.project.partner.companyId,
+        projectId: O.project.project.projectId,
+        houseId: O.project.house.houseId
       },
       dispatch: $
     };
   }, [
     $,
     L,
-    T,
+    O,
     o,
     f,
     m,
@@ -19282,18 +19282,18 @@ function sA({
     l
   ]);
   return x.useEffect(() => {
-    if (C === null || T === null || T.runtimeHouseId === null || T.runtimeProjectId === null)
+    if (C === null || O === null || O.runtimeHouseId === null || O.runtimeProjectId === null)
       return;
     const U = document.querySelector("[data-embed-root]");
     U !== null && U.dispatchEvent(
       new CustomEvent("embed:delivery-state", {
         detail: Object.freeze({
           requestedHouseId: U.dataset.objectId ?? null,
-          resolvedHouseId: T.runtimeHouseId,
-          projectId: T.runtimeProjectId,
+          resolvedHouseId: O.runtimeHouseId,
+          projectId: O.runtimeProjectId,
           packageRoot: hv(),
           permittedHouses: Object.freeze(
-            hu(T.runtimeProjectId).flatMap(
+            hu(O.runtimeProjectId).flatMap(
               (V) => V.house === null ? [] : [{ houseId: V.house.houseId, name: V.house.name }]
             )
           ),
@@ -19303,7 +19303,7 @@ function sA({
         })
       })
     );
-  }, [T, C]), x.useEffect(() => {
+  }, [O, C]), x.useEffect(() => {
     if (C === null)
       return;
     const { experience: U } = C, V = typeof document < "u" && document.querySelector("[data-embed-root]") !== null, ne = V ? "Embed " : "", le = [
@@ -19347,14 +19347,14 @@ function sA({
         type: X.type
       }))
     ));
-  }, [C]), h !== null || O !== null ? /* @__PURE__ */ u.jsx(
+  }, [C]), h !== null || T !== null ? /* @__PURE__ */ u.jsx(
     "section",
     {
       className: "grid min-h-screen place-items-center bg-embed-background-primary p-6 text-center",
       "data-testid": "client-workspace-draft-empty",
       "data-client-runtime-unavailable": "",
       children: /* @__PURE__ */ u.jsxs("div", { children: [
-        /* @__PURE__ */ u.jsx("h1", { className: "text-xl font-semibold text-embed-brand-navy", children: Y ?? "Dům" }),
+        /* @__PURE__ */ u.jsx("h1", { className: "text-xl font-semibold text-embed-brand-navy", children: q ?? "Dům" }),
         /* @__PURE__ */ u.jsx("p", { className: "mt-2 text-embed-brand-navy/70", children: "Experience zatím není připravená." })
       ] })
     }
@@ -19441,8 +19441,8 @@ function bA({ snapEnabled: n }) {
       (f) => f !== null
     ), m = () => {
       const f = document.querySelector("[data-experience-header]"), y = (f == null ? void 0 : f.getBoundingClientRect().height) ?? 72, h = Jh(window.innerWidth), v = qE(h) ? FE : 0, k = `${Math.ceil(y + 20)}px`;
-      for (const E of s)
-        E.style.setProperty("--experience-header-height", `${Math.ceil(y)}px`), E.style.setProperty("--guided-journey-header-offset", k), E.style.setProperty(
+      for (const I of s)
+        I.style.setProperty("--experience-header-height", `${Math.ceil(y)}px`), I.style.setProperty("--guided-journey-header-offset", k), I.style.setProperty(
           "--guided-journey-bottom-nav-offset",
           `${v}px`
         );
@@ -19493,16 +19493,16 @@ function Tl({
       v(!0);
       return;
     }
-    const O = window.requestAnimationFrame(() => {
+    const T = window.requestAnimationFrame(() => {
       v(!0);
     });
     return () => {
-      window.cancelAnimationFrame(O);
+      window.cancelAnimationFrame(T);
     };
   }, [s]);
-  const k = (O) => {
-    l == null || l(O);
-  }, E = f != null;
+  const k = (T) => {
+    l == null || l(T);
+  }, I = f != null;
   return /* @__PURE__ */ u.jsxs(
     "div",
     {
@@ -19521,7 +19521,7 @@ function Tl({
       },
       children: [
         y,
-        E ? /* @__PURE__ */ u.jsxs(
+        I ? /* @__PURE__ */ u.jsxs(
           "div",
           {
             className: `grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 px-section ${p ? "mt-auto" : ""}`,
@@ -20070,25 +20070,25 @@ function iy(n) {
     /\b(rozpočet|budget)\b[^0-9]{0,24}(\d[\d\s.,]{3,})\b/i
   );
   if (v) {
-    const T = v[1].replace(",", "."), w = Number.parseFloat(T);
+    const O = v[1].replace(",", "."), w = Number.parseFloat(O);
     Number.isFinite(w) && m.push(Yr("budget", Math.round(w * 1e6)));
   } else if (k) {
-    const T = k[2].replace(/[\s.]/g, "").replace(",", ""), w = Number.parseInt(T, 10);
+    const O = k[2].replace(/[\s.]/g, "").replace(",", ""), w = Number.parseInt(O, 10);
     Number.isFinite(w) && m.push(Yr("budget", w));
   }
-  const E = /(vlastně|už|now|actually)[\s\S]{0,48}(nevadí|nevadilo|ok|souhlas)/i.test(
+  const I = /(vlastně|už|now|actually)[\s\S]{0,48}(nevadí|nevadilo|ok|souhlas)/i.test(
     o
   ) || /(nevadí|nevadilo|akceptujeme|souhlasíme)[\s\S]{0,40}(tepelné\s+čerpadlo|tepelne\s+cerpadlo|heat[\s-]?pump)/i.test(
     o
   ) || /(tepelné\s+čerpadlo|tepelne\s+cerpadlo|heat[\s-]?pump)[\s\S]{0,40}(nevadí|ok|accept)/i.test(
     o
-  ), O = /(nechceme|nechci|nechce|without|don't want|do not want|no)\b[\s\S]{0,40}(tepelné\s+čerpadlo|tepelne\s+cerpadlo|heat[\s-]?pump)/i.test(
+  ), T = /(nechceme|nechci|nechce|without|don't want|do not want|no)\b[\s\S]{0,40}(tepelné\s+čerpadlo|tepelne\s+cerpadlo|heat[\s-]?pump)/i.test(
     o
   ) || /(tepelné\s+čerpadlo|tepelne\s+cerpadlo|heat[\s-]?pump)\b[\s\S]{0,40}(nechceme|nechci|ne)/i.test(
     o
   );
-  E ? h.push(Yr("heating", "heat-pump")) : O && y.push(Yr("heating", "heat-pump"));
-  const I = l.length + s.length + m.length + p.length + f.length + y.length + h.length > 0;
+  I ? h.push(Yr("heating", "heat-pump")) : T && y.push(Yr("heating", "heat-pump"));
+  const E = l.length + s.length + m.length + p.length + f.length + y.length + h.length > 0;
   return Object.freeze({
     facts: Object.freeze(l),
     preferences: Object.freeze(s),
@@ -20097,7 +20097,7 @@ function iy(n) {
     concerns: Object.freeze(f),
     rejectedOptions: Object.freeze(y),
     acceptedOptions: Object.freeze(h),
-    confidence: I ? JA : 0
+    confidence: E ? JA : 0
   });
 }
 function QA(n = 0) {
@@ -20545,20 +20545,20 @@ class kz {
     }, l = [], s = [], m = [], p = [], f = [], y = /* @__PURE__ */ new Set(), h = /* @__PURE__ */ new Set();
     for (const v of this.rules) {
       const k = v.apply(i);
-      for (const E of k.recommendedOptions ?? [])
-        !y.has(E.id) && !h.has(E.id) && (y.add(E.id), l.push(E));
-      for (const E of k.avoidedOptions ?? [])
-        if (!h.has(E.id)) {
-          h.add(E.id), s.push(E);
-          const O = l.findIndex((I) => I.id === E.id);
-          O >= 0 && (l.splice(O, 1), y.delete(E.id));
+      for (const I of k.recommendedOptions ?? [])
+        !y.has(I.id) && !h.has(I.id) && (y.add(I.id), l.push(I));
+      for (const I of k.avoidedOptions ?? [])
+        if (!h.has(I.id)) {
+          h.add(I.id), s.push(I);
+          const T = l.findIndex((E) => E.id === I.id);
+          T >= 0 && (l.splice(T, 1), y.delete(I.id));
         }
-      for (const E of k.reasoning ?? [])
-        m.includes(E) || m.push(E);
-      for (const E of k.matchedPreferences ?? [])
-        p.includes(E) || p.push(E);
-      for (const E of k.violatedConstraints ?? [])
-        f.includes(E) || f.push(E);
+      for (const I of k.reasoning ?? [])
+        m.includes(I) || m.push(I);
+      for (const I of k.matchedPreferences ?? [])
+        p.includes(I) || p.push(I);
+      for (const I of k.violatedConstraints ?? [])
+        f.includes(I) || f.push(I);
     }
     return Object.freeze({
       recommendedOptions: Object.freeze([...l]),
@@ -21035,38 +21035,38 @@ const eO = {
   provider_error: "Došlo k chybě při generování odpovědi. Zkuste to prosím znovu.",
   empty_message: "Zpráva je prázdná."
 };
-function ln(n) {
+function sn(n) {
   return eO[n];
 }
 function uy(n) {
   if (n instanceof Wt)
     return n;
   if (SA(n)) {
-    const i = n.code, l = n.diagnostic ?? (i === "missing_api_key" ? ln(i) : n.message.trim().length > 0 ? n.message : ln(i));
+    const i = n.code, l = n.diagnostic ?? (i === "missing_api_key" ? sn(i) : n.message.trim().length > 0 ? n.message : sn(i));
     return new Wt(i, l, { cause: n });
   }
   const o = tO(n).trim();
   return /missing api key|pass apiKey/i.test(o) ? new Wt(
     "missing_api_key",
-    ln("missing_api_key"),
+    sn("missing_api_key"),
     { cause: n }
   ) : /timeout|timed out|aborted|vypršelo \(timeout\)/i.test(o) ? new Wt(
     "timeout",
-    o.length > 0 ? o : ln("timeout"),
+    o.length > 0 ? o : sn("timeout"),
     { cause: n }
   ) : /invalid_response|empty content|neplatn/i.test(o) ? new Wt(
     "invalid_response",
-    o.length > 0 ? o : ln("invalid_response"),
+    o.length > 0 ? o : sn("invalid_response"),
     { cause: n }
   ) : /network error|Failed to fetch|fetch failed|Síťové spojení|HTTP\s*\d{3}|401 unauthorized|403 forbidden|404|429|insufficient_quota|rate_limit|5\d\d/i.test(
     o
   ) ? new Wt(
     "http_error",
-    o.length > 0 ? o : ln("http_error"),
+    o.length > 0 ? o : sn("http_error"),
     { cause: n }
   ) : new Wt(
     "provider_error",
-    o.length > 0 ? o : ln("provider_error"),
+    o.length > 0 ? o : sn("provider_error"),
     { cause: n }
   );
 }
@@ -21173,40 +21173,40 @@ class oO {
     if (i.length === 0)
       throw new Wt(
         "empty_message",
-        ln("empty_message")
+        sn("empty_message")
       );
     const l = this.createConversationTrace(), s = Ho(), m = $r(this.delivery);
-    let p = 0, f = 0, y = 0, h = 0, v = 0, k = null, E = null, O = null, I = null, T = null, w = null, H = null, te = !1;
-    const Y = (q) => {
+    let p = 0, f = 0, y = 0, h = 0, v = 0, k = null, I = null, T = null, E = null, O = null, w = null, H = null, te = !1;
+    const q = (F) => {
       te || !this.recorder.isEnabled() || (te = !0, this.recorder.record({
         sessionId: l.sessionId,
         messageId: l.messageId,
         timestamp: Date.now(),
         userMessage: i,
-        analysis: T,
+        analysis: O,
         resolvedMemory: w,
         promptPackage: H,
-        provider: q.providerId,
-        model: q.model,
-        promptTokens: q.promptTokens,
-        completionTokens: q.completionTokens,
+        provider: F.providerId,
+        model: F.model,
+        promptTokens: F.promptTokens,
+        completionTokens: F.completionTokens,
         latency: io(s),
-        response: q.response,
-        error: q.error
+        response: F.response,
+        error: F.error
       }));
     };
     try {
-      const q = Ho(), L = await this.analyzer.analyze({
+      const F = Ho(), L = await this.analyzer.analyze({
         message: i,
         recentMessages: this.history
       });
-      T = L, p = io(q), this.diagnostics.emitPhase(l, "analyzer", p);
+      O = L, p = io(F), this.diagnostics.emitPhase(l, "analyzer", p);
       const $ = Ho();
       this.memoryService.update({ analysis: L }), f = io($), this.diagnostics.emitPhase(l, "memory", f);
       const C = this.memoryService.getMemory(), K = Ho(), J = Gl(C);
       w = J, y = io(K), this.diagnostics.emitPhase(l, "resolution", y);
       const ee = pz(C);
-      E = dz({
+      I = dz({
         ...ee,
         activeItems: fz(J),
         resolutionMs: y
@@ -21235,7 +21235,7 @@ class oO {
       } catch (j) {
         console.error("AIService: provider error", j), v = io(D);
         const P = uy(j);
-        throw O = qd({
+        throw T = qd({
           providerId: m.deliveryId,
           model: m.model,
           requestDurationMs: v,
@@ -21250,12 +21250,12 @@ class oO {
           promptBuilderMs: h,
           providerMs: v,
           promptTrace: k,
-          memoryTrace: E,
-          providerTrace: O,
+          memoryTrace: I,
+          providerTrace: T,
           tokenTrace: null,
           ok: !1,
           errorCode: P.code
-        }), Y({
+        }), q({
           response: null,
           error: P.code,
           promptTokens: null,
@@ -21264,13 +21264,13 @@ class oO {
           model: m.model
         }), P;
       }
-      v = io(D), this.diagnostics.emitPhase(l, "provider", v), O = qd({
+      v = io(D), this.diagnostics.emitPhase(l, "provider", v), T = qd({
         providerId: m.deliveryId,
         model: m.model,
         requestDurationMs: v,
         responseDurationMs: v,
         errorCode: null
-      }), I = cz({
+      }), E = cz({
         promptTokens: U.usage.promptTokens,
         completionTokens: U.usage.completionTokens,
         totalTokens: U.usage.totalTokens
@@ -21279,7 +21279,7 @@ class oO {
       if (V.length === 0) {
         const j = new Wt(
           "invalid_response",
-          ln("invalid_response")
+          sn("invalid_response")
         );
         throw this.diagnostics.emitPhase(l, "error", 0), this.finishTurnTrace({
           conversation: l,
@@ -21290,15 +21290,15 @@ class oO {
           promptBuilderMs: h,
           providerMs: v,
           promptTrace: k,
-          memoryTrace: E,
+          memoryTrace: I,
           providerTrace: qd({
-            ...O,
+            ...T,
             errorCode: j.code
           }),
-          tokenTrace: I,
+          tokenTrace: E,
           ok: !1,
           errorCode: j.code
-        }), Y({
+        }), q({
           response: null,
           error: j.code,
           promptTokens: U.usage.promptTokens,
@@ -21322,12 +21322,12 @@ class oO {
         promptBuilderMs: h,
         providerMs: v,
         promptTrace: k,
-        memoryTrace: E,
-        providerTrace: O,
-        tokenTrace: I,
+        memoryTrace: I,
+        providerTrace: T,
+        tokenTrace: E,
         ok: !0,
         errorCode: null
-      }), Y({
+      }), q({
         response: V,
         error: null,
         promptTokens: U.usage.promptTokens,
@@ -21340,8 +21340,8 @@ class oO {
         resolvedMemory: le,
         messageId: l.messageId
       });
-    } catch (q) {
-      const L = uy(q);
+    } catch (F) {
+      const L = uy(F);
       throw this.diagnostics.isEnabled() && ((Z = this.diagnostics.getLastTrace()) == null ? void 0 : Z.conversation.messageId) !== l.messageId && this.finishTurnTrace({
         conversation: l,
         totalStart: s,
@@ -21351,16 +21351,16 @@ class oO {
         promptBuilderMs: h,
         providerMs: v,
         promptTrace: k,
-        memoryTrace: E,
-        providerTrace: O,
-        tokenTrace: I,
+        memoryTrace: I,
+        providerTrace: T,
+        tokenTrace: E,
         ok: !1,
         errorCode: L.code
-      }), Y({
+      }), q({
         response: null,
         error: L.code,
-        promptTokens: (I == null ? void 0 : I.promptTokens) ?? null,
-        completionTokens: (I == null ? void 0 : I.completionTokens) ?? null,
+        promptTokens: (E == null ? void 0 : E.promptTokens) ?? null,
+        completionTokens: (E == null ? void 0 : E.completionTokens) ?? null,
         providerId: m.deliveryId,
         model: m.model
       }), L;
@@ -21416,7 +21416,7 @@ function lO(n, o) {
       l(
         new Wt(
           "timeout",
-          ln("timeout")
+          sn("timeout")
         )
       );
     }, o);
@@ -21947,20 +21947,20 @@ function XO({
       h(!1);
       return;
     }
-    const E = window.requestAnimationFrame(() => {
+    const I = window.requestAnimationFrame(() => {
       h(!0);
     });
     return () => {
-      window.cancelAnimationFrame(E);
+      window.cancelAnimationFrame(I);
     };
   }, [i]), x.useEffect(() => {
     if (!i)
       return;
-    const E = (O) => {
-      O.key === "Escape" && s();
+    const I = (T) => {
+      T.key === "Escape" && s();
     };
-    return window.addEventListener("keydown", E), () => {
-      window.removeEventListener("keydown", E);
+    return window.addEventListener("keydown", I), () => {
+      window.removeEventListener("keydown", I);
     };
   }, [i, s]), !i)
     return null;
@@ -22983,35 +22983,35 @@ function c2() {
     [s, m]
   ), [y, h] = x.useState(""), [v, k] = x.useState(() => [
     jy(f)
-  ]), [E, O] = x.useState(!1), I = x.useRef(1);
-  I.current = v.length;
-  const T = x.useRef(!1), w = x.useRef(!1);
+  ]), [I, T] = x.useState(!1), E = x.useRef(1);
+  E.current = v.length;
+  const O = x.useRef(!1), w = x.useRef(!1);
   x.useEffect(() => (l == null || l.aiSessionOpened(s.id), () => {
-    l == null || l.aiSessionEnded(I.current);
+    l == null || l.aiSessionEnded(E.current);
   }), [s.id, l]), x.useEffect(() => {
     w.current || k([jy(f)]);
   }, [s.id, f]);
-  const H = (Y) => {
-    h(Y);
+  const H = (q) => {
+    h(q);
   }, te = () => {
-    const Y = y.trim();
-    if (!Y || T.current || E)
+    const q = y.trim();
+    if (!q || O.current || I)
       return;
-    w.current = !0, T.current = !0, O(!0), h("");
-    const q = $l(/* @__PURE__ */ new Date()), L = Su(), $ = Su();
+    w.current = !0, O.current = !0, T(!0), h("");
+    const F = $l(/* @__PURE__ */ new Date()), L = Su(), $ = Su();
     k((C) => [
       ...C,
-      { id: L, role: "user", text: Y, time: q },
+      { id: L, role: "user", text: q, time: F },
       {
         id: $,
         role: "assistant",
         text: s2,
-        time: q
+        time: F
       }
     ]), (async () => {
       try {
         const C = await eT().sendMessage({
-          message: Y,
+          message: q,
           decision: i,
           object: o === null ? void 0 : {
             objectId: o.canonicalHouseId,
@@ -23029,10 +23029,10 @@ function c2() {
             } : J
           )
         ), l == null || l.aiInteraction({
-          questionCategory: Gh(Y),
+          questionCategory: Gh(q),
           responseGenerated: !0,
           clarificationRequested: !1,
-          conversationLength: I.current
+          conversationLength: E.current
         });
       } catch (C) {
         const K = C instanceof Wt ? C.userMessage : "Došlo k chybě při generování odpovědi. Zkuste to prosím znovu.";
@@ -23045,13 +23045,13 @@ function c2() {
             } : ee
           )
         ), l == null || l.aiInteraction({
-          questionCategory: Gh(Y),
+          questionCategory: Gh(q),
           responseGenerated: !1,
           clarificationRequested: !1,
-          conversationLength: I.current
+          conversationLength: E.current
         });
       } finally {
-        T.current = !1, O(!1);
+        O.current = !1, T(!1);
       }
     })();
   };
@@ -23076,7 +23076,7 @@ function c2() {
             value: y,
             onChange: h,
             onSend: te,
-            disabled: E
+            disabled: I
           }
         ) }),
         /* @__PURE__ */ u.jsx("div", { className: AO, children: /* @__PURE__ */ u.jsx(QO, {}) })
@@ -23099,47 +23099,47 @@ function u2() {
       (m == null ? void 0 : m.getBoundingClientRect().height) ?? 72
     ), f = document.querySelector(
       "[data-embed-overlay-mount]"
-    ), y = f ?? window, h = () => y instanceof Window ? y.scrollY : y.scrollTop, v = (q) => {
+    ), y = f ?? window, h = () => y instanceof Window ? y.scrollY : y.scrollTop, v = (F) => {
       if (y instanceof Window) {
-        y.scrollTo({ top: q, left: 0, behavior: "auto" });
+        y.scrollTo({ top: F, left: 0, behavior: "auto" });
         return;
       }
-      y.scrollTop = q;
+      y.scrollTop = F;
     }, k = () => {
-      const q = l.getBoundingClientRect();
+      const F = l.getBoundingClientRect();
       if (y instanceof Window)
-        return Math.max(0, window.scrollY + q.top - p);
+        return Math.max(0, window.scrollY + F.top - p);
       const L = y.getBoundingClientRect();
       return Math.max(
         0,
-        y.scrollTop + (q.top - L.top) - p
+        y.scrollTop + (F.top - L.top) - p
       );
-    }, E = [
+    }, I = [
       document.documentElement,
       document.body,
       f
-    ].filter((q) => q !== null), O = E.map(
-      (q) => q.dataset.guidedJourneySnap
-    ), I = E.map(
-      (q) => q.style.scrollPaddingTop
-    ), T = E.map((q) => q.style.scrollBehavior);
-    for (const q of E)
-      q.dataset.guidedJourneySnap = "off", q.style.scrollPaddingTop = "0px", q.style.scrollBehavior = "auto";
-    const w = h(), H = k(), te = s ? 0 : d2, Y = () => {
-      O.forEach((q, L) => {
-        const $ = E[L];
-        $ && (q === void 0 ? delete $.dataset.guidedJourneySnap : $.dataset.guidedJourneySnap = q, $.style.scrollPaddingTop = I[L] ?? "", $.style.scrollBehavior = T[L] ?? "");
+    ].filter((F) => F !== null), T = I.map(
+      (F) => F.dataset.guidedJourneySnap
+    ), E = I.map(
+      (F) => F.style.scrollPaddingTop
+    ), O = I.map((F) => F.style.scrollBehavior);
+    for (const F of I)
+      F.dataset.guidedJourneySnap = "off", F.style.scrollPaddingTop = "0px", F.style.scrollBehavior = "auto";
+    const w = h(), H = k(), te = s ? 0 : d2, q = () => {
+      T.forEach((F, L) => {
+        const $ = I[L];
+        $ && (F === void 0 ? delete $.dataset.guidedJourneySnap : $.dataset.guidedJourneySnap = F, $.style.scrollPaddingTop = E[L] ?? "", $.style.scrollBehavior = O[L] ?? "");
       });
     }, Z = () => {
-      v(k()), Y(), window.requestAnimationFrame(() => {
+      v(k()), q(), window.requestAnimationFrame(() => {
         v(k());
       });
     };
     if (te <= 0 || Math.abs(H - w) < 1)
       Z();
     else {
-      const q = performance.now(), L = ($) => {
-        const C = Math.min(1, ($ - q) / te), K = C < 0.5 ? 2 * C * C : 1 - (-2 * C + 2) ** 2 / 2;
+      const F = performance.now(), L = ($) => {
+        const C = Math.min(1, ($ - F) / te), K = C < 0.5 ? 2 * C * C : 1 - (-2 * C + 2) ** 2 / 2;
         if (v(w + (H - w) * K), C < 1) {
           window.requestAnimationFrame(L);
           return;
@@ -23236,14 +23236,14 @@ function b2() {
   );
   return x.useEffect(() => {
     var l, s;
-    dn("4.HeroRuntime.beforeHeroImage", {
+    en("4.HeroRuntime.beforeHeroImage", {
       resolvedHeroAsset: o,
       source: "experience.context.hero.primaryMediaUrl | heroMedia.url",
       absoluteRuntimePath: o,
       heroMediaId: ((l = n.context.hero.heroMedia) == null ? void 0 : l.id) ?? null,
       primaryMediaUrl: n.context.hero.primaryMediaUrl,
       heroMediaUrl: ((s = n.context.hero.heroMedia) == null ? void 0 : s.url) ?? null
-    }), dn("5.ComponentEvidence.HeroImage", {
+    }), en("5.ComponentEvidence.HeroImage", {
       backgroundImageUrl: o,
       title: n.context.hero.title,
       eyebrow: n.context.hero.eyebrow
@@ -23493,29 +23493,29 @@ function N2({
       s(!1);
       return;
     }
-    const O = f ? O2 : A2, I = window.setTimeout(() => {
-      T2() ? v((T) => T + 1) : (s(!0), y(!0));
-    }, O);
-    return () => window.clearTimeout(I);
+    const T = f ? O2 : A2, E = window.setTimeout(() => {
+      T2() ? v((O) => O + 1) : (s(!0), y(!0));
+    }, T);
+    return () => window.clearTimeout(E);
   }, [n, i.length, f, m, o, h]), x.useEffect(() => {
     if (!l) return;
-    const O = window.setTimeout(() => {
-      s(!1), i.length > ns && p((I) => {
-        const T = Jv(
-          I,
+    const T = window.setTimeout(() => {
+      s(!1), i.length > ns && p((E) => {
+        const O = Jv(
+          E,
           i,
           k.current
         );
         return k.current = [
           ...k.current,
-          i[T].message
-        ].slice(-12), T;
+          i[O].message
+        ].slice(-12), O;
       });
     }, z2);
-    return () => window.clearTimeout(O);
+    return () => window.clearTimeout(T);
   }, [i, l]), !l || !n || !o || i.length === 0)
     return null;
-  const E = i[m % i.length];
+  const I = i[m % i.length];
   return /* @__PURE__ */ u.jsx(
     "aside",
     {
@@ -23523,10 +23523,10 @@ function N2({
       "aria-label": "Signál důvěry",
       className: "pointer-events-none fixed inset-x-0 bottom-[calc(20px+var(--guided-journey-bottom-nav-offset,0px))] z-40 flex justify-center px-4",
       children: /* @__PURE__ */ u.jsxs("div", { className: "flex max-w-[32rem] items-center gap-3 rounded-xl border border-[#D4AF37]/40 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm", children: [
-        /* @__PURE__ */ u.jsx($v, { name: E.icon }),
+        /* @__PURE__ */ u.jsx($v, { name: I.icon }),
         /* @__PURE__ */ u.jsxs("p", { className: "text-sm leading-snug text-[#001930]", children: [
-          /* @__PURE__ */ u.jsx("span", { className: "mr-2 text-xl font-bold tracking-tight", children: E.value }),
-          E.message
+          /* @__PURE__ */ u.jsx("span", { className: "mr-2 text-xl font-bold tracking-tight", children: I.value }),
+          I.message
         ] })
       ] })
     }
@@ -23787,21 +23787,21 @@ function $2() {
   );
 }
 function K2() {
-  const n = qo(), [o, i] = x.useState("idle"), [l, s] = x.useState(""), [m, p] = x.useState(""), [f, y] = x.useState(""), [h, v] = x.useState(!1), [k, E] = x.useState(null), O = x.useRef(!1), I = () => {
-    O.current || (O.current = !0, n == null || n.conversionStarted("audit-contact-form"));
-  }, T = (w) => {
-    w.preventDefault(), E(null);
+  const n = qo(), [o, i] = x.useState("idle"), [l, s] = x.useState(""), [m, p] = x.useState(""), [f, y] = x.useState(""), [h, v] = x.useState(!1), [k, I] = x.useState(null), T = x.useRef(!1), E = () => {
+    T.current || (T.current = !0, n == null || n.conversionStarted("audit-contact-form"));
+  }, O = (w) => {
+    w.preventDefault(), I(null);
     const H = l.trim(), te = m.trim();
     if (!H || !te) {
-      i("error"), E("Vyplňte jméno a e-mail.");
+      i("error"), I("Vyplňte jméno a e-mail.");
       return;
     }
     if (!h) {
-      i("error"), E("Pro odeslání potvrďte souhlas se zpracováním údajů.");
+      i("error"), I("Pro odeslání potvrďte souhlas se zpracováním údajů.");
       return;
     }
     i("loading");
-    const Y = encodeURIComponent("Poptávka — posouzení umístění domu"), Z = encodeURIComponent(
+    const q = encodeURIComponent("Poptávka — posouzení umístění domu"), Z = encodeURIComponent(
       [
         `Jméno: ${H}`,
         `E-mail: ${te}`,
@@ -23809,13 +23809,13 @@ function K2() {
         "Souhlas GDPR: ano",
         "",
         "Zdroj: Client Studio — Audit / Lead"
-      ].filter((q) => q !== null).join(`
+      ].filter((F) => F !== null).join(`
 `)
     );
     try {
-      n == null || n.conversionCompleted("audit-contact-form"), window.location.href = `mailto:${su}?subject=${Y}&body=${Z}`, window.setTimeout(() => i("success"), 400);
+      n == null || n.conversionCompleted("audit-contact-form"), window.location.href = `mailto:${su}?subject=${q}&body=${Z}`, window.setTimeout(() => i("success"), 400);
     } catch {
-      i("error"), E(
+      i("error"), I(
         `Nepodařilo se otevřít e-mail. Napište nám na ${su}.`
       );
     }
@@ -23833,7 +23833,7 @@ function K2() {
         children: "Po odeslání vám zašleme další postup a informace potřebné pro zpracování posouzení. Poptávku otevřete ve svém e-mailu — odeslání potvrďte tam."
       }
     ),
-    o === "success" ? /* @__PURE__ */ u.jsx("div", { className: "mt-5", children: /* @__PURE__ */ u.jsx($2, {}) }) : /* @__PURE__ */ u.jsxs("form", { className: "mt-5 grid grid-cols-2 gap-3 mobile:grid-cols-1", onSubmit: T, children: [
+    o === "success" ? /* @__PURE__ */ u.jsx("div", { className: "mt-5", children: /* @__PURE__ */ u.jsx($2, {}) }) : /* @__PURE__ */ u.jsxs("form", { className: "mt-5 grid grid-cols-2 gap-3 mobile:grid-cols-1", onSubmit: O, children: [
       /* @__PURE__ */ u.jsx("label", { className: "sr-only", htmlFor: "audit-contact-name", children: "Jméno a příjmení" }),
       /* @__PURE__ */ u.jsx(
         Vd,
@@ -23847,7 +23847,7 @@ function K2() {
           className: $d,
           style: { ...Kd, height: Ml },
           onChange: (w) => s(w.target.value),
-          onFocus: I
+          onFocus: E
         }
       ),
       /* @__PURE__ */ u.jsx("label", { className: "sr-only", htmlFor: "audit-contact-email", children: "E-mail" }),
@@ -23863,7 +23863,7 @@ function K2() {
           className: $d,
           style: { ...Kd, height: Ml },
           onChange: (w) => p(w.target.value),
-          onFocus: I
+          onFocus: E
         }
       ),
       /* @__PURE__ */ u.jsx("label", { className: "sr-only", htmlFor: "audit-contact-phone", children: "Telefon (volitelné)" }),
@@ -23878,7 +23878,7 @@ function K2() {
           className: $d,
           style: { ...Kd, height: Ml },
           onChange: (w) => y(w.target.value),
-          onFocus: I
+          onFocus: E
         }
       ),
       /* @__PURE__ */ u.jsx(
@@ -24666,8 +24666,8 @@ function UN({
   PN(o);
   const y = x.useMemo(() => {
     const v = ds.map((k) => k.id).filter((k) => {
-      var E;
-      return (E = o[k]) == null ? void 0 : E.selected;
+      var I;
+      return (I = o[k]) == null ? void 0 : I.selected;
     }).map((k) => k);
     return Object.freeze({
       selected: Object.freeze(v)
@@ -24704,7 +24704,7 @@ function Dl() {
 function BN() {
   const { cards: n, selectedCount: o, categories: i } = r0(), s = x.useRef(
     TN()
-  ).current, m = x.useRef(null), p = x.useRef(null), [f, y] = x.useState([]), [h, v] = x.useState(!1), [k, E] = x.useState(!1), [O, I] = x.useState(!1), [T, w] = x.useState([]), [H, te] = x.useState({}), [Y, Z] = x.useState("question"), [q, L] = x.useState(null), [$, C] = x.useState(null), [K, J] = x.useState(!1), [ee, re] = x.useState(null), ye = x.useRef("instruction"), Ie = x.useRef({}), ge = x.useCallback(() => {
+  ).current, m = x.useRef(null), p = x.useRef(null), [f, y] = x.useState([]), [h, v] = x.useState(!1), [k, I] = x.useState(!1), [T, E] = x.useState(!1), [O, w] = x.useState([]), [H, te] = x.useState({}), [q, Z] = x.useState("question"), [F, L] = x.useState(null), [$, C] = x.useState(null), [K, J] = x.useState(!1), [ee, re] = x.useState(null), ye = x.useRef("instruction"), Ie = x.useRef({}), ge = x.useCallback(() => {
     m.current !== null && (window.clearTimeout(m.current), m.current = null), p.current !== null && (window.clearTimeout(p.current), p.current = null);
   }, []);
   x.useEffect(() => ge, [ge]);
@@ -24736,7 +24736,7 @@ function BN() {
         type: "priority-order",
         order: Re.order,
         at: Date.now()
-      }), (Re.added.length > 0 || Re.removed.length > 0) && E(!1), Re.order.length < Gd && (v(!1), I(!1), U()), Re.removed.length > 0 && te((vt) => {
+      }), (Re.added.length > 0 || Re.removed.length > 0) && I(!1), Re.order.length < Gd && (v(!1), E(!1), U()), Re.removed.length > 0 && te((vt) => {
         const li = { ...vt };
         for (const bs of Re.removed)
           delete li[bs];
@@ -24756,7 +24756,7 @@ function BN() {
       }));
     }
   }, [n, s]);
-  const V = x.useMemo(() => T.length === 0 || Y === "interpretation" || Y === "thinking" ? !1 : T.every((ze) => H[ze] !== void 0), [H, Y, T]), ne = o <= 0 ? "instruction" : h ? O ? V ? "complete" : "dialog" : "prep" : o >= Gd && !k ? "collection-gate" : "collecting";
+  const V = x.useMemo(() => O.length === 0 || q === "interpretation" || q === "thinking" ? !1 : O.every((ze) => H[ze] !== void 0), [H, q, O]), ne = o <= 0 ? "instruction" : h ? T ? V ? "complete" : "dialog" : "prep" : o >= Gd && !k ? "collection-gate" : "collecting";
   x.useEffect(() => {
     ye.current !== ne && (ye.current = ne, s.record({ type: "phase", phase: ne, at: Date.now() }));
   }, [ne, s]);
@@ -24775,19 +24775,19 @@ function BN() {
   }, [n, i, f]), j = x.useMemo(() => {
     if (ne !== "dialog")
       return null;
-    if ((Y === "thinking" || Y === "interpretation") && $)
+    if ((q === "thinking" || q === "interpretation") && $)
       return Wr($);
-    const ze = T.find((je) => H[je] === void 0);
+    const ze = O.find((je) => H[je] === void 0);
     return ze === void 0 ? null : Wr(ze);
-  }, [$, H, Y, T, ne]), P = x.useMemo(() => ne !== "dialog" || Y !== "question" || !j ? null : UT(j.priorityId), [j, Y, ne]), Q = x.useMemo(() => ne !== "complete" ? null : BT({ tags: le, answers: H }), [H, ne, le]), X = Object.keys(H).filter(
-    (ze) => T.includes(ze)
+  }, [$, H, q, O, ne]), P = x.useMemo(() => ne !== "dialog" || q !== "question" || !j ? null : UT(j.priorityId), [j, q, ne]), Q = x.useMemo(() => ne !== "complete" ? null : BT({ tags: le, answers: H }), [H, ne, le]), X = Object.keys(H).filter(
+    (ze) => O.includes(ze)
   ).length, W = MT({
     phase: ne,
     selectedCount: o,
     dialogAnswered: X,
-    dialogTotal: T.length,
-    isInterpreting: Y === "interpretation",
-    isThinking: Y === "thinking"
+    dialogTotal: O.length,
+    isInterpreting: q === "interpretation",
+    isThinking: q === "thinking"
   }), ue = () => {
     o < Gd || K || D(() => {
       const ze = Object.fromEntries(
@@ -24796,14 +24796,14 @@ function BN() {
           return [Re, ((vt = n[Re]) == null ? void 0 : vt.importance) ?? 0];
         })
       ), je = CT(f, ze);
-      w(je), te({}), Z("question"), L(null), C(null), re(null), v(!0), E(!1), I(!1), s.record({
+      w(je), te({}), Z("question"), L(null), C(null), re(null), v(!0), I(!1), E(!1), s.record({
         type: "selection-finished",
         order: f,
         at: Date.now()
       });
     });
   }, ve = () => {
-    K || (E(!0), s.record({ type: "add-more", at: Date.now() }));
+    K || (I(!0), s.record({ type: "add-more", at: Date.now() }));
   }, Ze = () => {
     if (ne !== "complete" || K)
       return;
@@ -24811,12 +24811,12 @@ function BN() {
     ze && DE(ze, 700, { easing: "linear" });
   }, He = () => {
     K || D(() => {
-      I(!0), Z("question"), L(null), C(null), re(null);
+      E(!0), Z("question"), L(null), C(null), re(null);
     });
-  }, en = (ze, je) => {
-    if (Y !== "question" || K || p.current)
+  }, tn = (ze, je) => {
+    if (q !== "question" || K || p.current)
       return;
-    const Re = T.filter((vt) => H[vt] === void 0).length === 1;
+    const Re = O.filter((vt) => H[vt] === void 0).length === 1;
     if (re(je), C(ze), L(null), s.record({
       type: "dialog-answer",
       priorityId: ze,
@@ -24834,7 +24834,7 @@ function BN() {
       te((vt) => ({ ...vt, [ze]: je })), L(HT(ze, je)), Z("interpretation"), p.current = null;
     }, cT);
   }, un = () => {
-    if (Y !== "interpretation" || $ === null)
+    if (q !== "interpretation" || $ === null)
       return;
     const ze = $;
     s.record({
@@ -24869,13 +24869,13 @@ function BN() {
   };
   return {
     phase: ne,
-    dialogBeat: Y,
+    dialogBeat: q,
     selectionOrder: f,
     selectedCount: o,
     tags: le,
     currentQuestion: j,
     questionIntent: P,
-    interpretation: q,
+    interpretation: F,
     answers: H,
     hypothesis: Q,
     progressPercent: W,
@@ -24887,7 +24887,7 @@ function BN() {
     addMorePriorities: ve,
     continueToSummary: Ze,
     acknowledgePrep: He,
-    answerQuestion: en,
+    answerQuestion: tn,
     continueDialog: un,
     continueToFaq: rt,
     askConis: mn,
@@ -25245,12 +25245,12 @@ function WN() {
     canAddMore: h,
     isAdvancing: v,
     pendingOptionId: k,
-    finishSelection: E,
-    acknowledgePrep: O,
-    answerQuestion: I,
-    continueDialog: T,
+    finishSelection: I,
+    acknowledgePrep: T,
+    answerQuestion: E,
+    continueDialog: O,
     continueToSummary: w
-  } = dm(), H = n === "collecting" || n === "collection-gate" || n === "prep" || n === "dialog" || n === "complete", te = l.map((Z) => nT[Z]).filter((Z) => typeof Z == "string"), Y = n === "dialog" && m !== null && (o === "question" || o === "thinking" || o === "interpretation");
+  } = dm(), H = n === "collecting" || n === "collection-gate" || n === "prep" || n === "dialog" || n === "complete", te = l.map((Z) => nT[Z]).filter((Z) => typeof Z == "string"), q = n === "dialog" && m !== null && (o === "question" || o === "thinking" || o === "interpretation");
   return /* @__PURE__ */ u.jsxs(
     "aside",
     {
@@ -25286,8 +25286,8 @@ function WN() {
               "data-testid": "priority-conversation-start-block",
               children: [
                 /* @__PURE__ */ u.jsx("p", { className: "mb-1.5 text-[14px] font-semibold tracking-wide text-embed-brand-gold", children: dT }),
-                Gv.map((Z, q) => {
-                  const L = q === 0;
+                Gv.map((Z, F) => {
+                  const L = F === 0;
                   return /* @__PURE__ */ u.jsx(
                     "p",
                     {
@@ -25377,7 +25377,7 @@ function WN() {
                   {
                     testId: "priority-conversation-finish-selection",
                     label: hT,
-                    onClick: E,
+                    onClick: I,
                     disabled: v
                   }
                 )
@@ -25406,14 +25406,14 @@ function WN() {
                 {
                   testId: "priority-conversation-prep-continue",
                   label: vy,
-                  onClick: O,
+                  onClick: T,
                   disabled: v
                 }
               )
             }
           ) })
         ] }) : null,
-        n === "dialog" ? /* @__PURE__ */ u.jsx(Na, { testId: "priority-conversation-dialog", children: Y && m ? /* @__PURE__ */ u.jsxs(u.Fragment, { children: [
+        n === "dialog" ? /* @__PURE__ */ u.jsx(Na, { testId: "priority-conversation-dialog", children: q && m ? /* @__PURE__ */ u.jsxs(u.Fragment, { children: [
           p && o === "question" ? /* @__PURE__ */ u.jsx(
             "p",
             {
@@ -25436,17 +25436,17 @@ function WN() {
                     role: "radiogroup",
                     "aria-label": m.prompt,
                     children: m.options.map((Z) => {
-                      const q = k === Z.id;
+                      const F = k === Z.id;
                       return /* @__PURE__ */ u.jsx(
                         "button",
                         {
                           type: "button",
                           role: "radio",
-                          "aria-checked": q,
+                          "aria-checked": F,
                           disabled: o !== "question",
                           "data-testid": `priority-dialog-option-${Z.id}`,
                           className: "min-h-11 touch-manipulation rounded-[10px] px-3.5 py-3 text-left text-[15px] leading-snug transition-[background-color,color] duration-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 disabled:cursor-default",
-                          style: q ? {
+                          style: F ? {
                             backgroundColor: de.warmGray,
                             color: de.navy,
                             borderStyle: "none",
@@ -25460,12 +25460,12 @@ function WN() {
                             borderRadius: 10
                           },
                           onMouseEnter: (L) => {
-                            o !== "question" || q || (L.currentTarget.style.backgroundColor = de.gold, L.currentTarget.style.color = de.navy);
+                            o !== "question" || F || (L.currentTarget.style.backgroundColor = de.gold, L.currentTarget.style.color = de.navy);
                           },
                           onMouseLeave: (L) => {
-                            q || (L.currentTarget.style.backgroundColor = de.navy, L.currentTarget.style.color = de.pureWhite);
+                            F || (L.currentTarget.style.backgroundColor = de.navy, L.currentTarget.style.color = de.pureWhite);
                           },
-                          onClick: () => I(m.priorityId, Z.id),
+                          onClick: () => E(m.priorityId, Z.id),
                           children: Z.label
                         },
                         Z.id
@@ -25514,7 +25514,7 @@ function WN() {
                         {
                           testId: "priority-conversation-dialog-continue",
                           label: vy,
-                          onClick: T
+                          onClick: O
                         }
                       ) }) })
                     ]
@@ -25590,17 +25590,17 @@ function aR({
   onContinueToRacio: o,
   showRacioBridge: i
 }) {
-  const { cards: l, categories: s, setImportance: m, toggleCard: p, minimumMet: f } = r0(), { experience: y } = at(), h = nm(), { phase: v } = dm(), k = y.context.decision.terminal.id, [E, O] = x.useState(!1), I = i && E;
+  const { cards: l, categories: s, setImportance: m, toggleCard: p, minimumMet: f } = r0(), { experience: y } = at(), h = nm(), { phase: v } = dm(), k = y.context.decision.terminal.id, [I, T] = x.useState(!1), E = i && I;
   return x.useEffect(() => {
     if (v !== "complete" || !i) {
-      O(!1);
+      T(!1);
       return;
     }
-    const T = window.setTimeout(() => {
-      O(!0);
+    const O = window.setTimeout(() => {
+      T(!0);
     }, nR);
     return () => {
-      window.clearTimeout(T);
+      window.clearTimeout(O);
     };
   }, [v, i]), /* @__PURE__ */ u.jsxs(u.Fragment, { children: [
     /* @__PURE__ */ u.jsxs(
@@ -25639,7 +25639,7 @@ function aR({
       {
         className: "grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-5 px-section mobile:grid-cols-1 mobile:gap-3",
         "data-testid": "priority-racio-controls",
-        "data-racio-bridge-visible": I ? "true" : "false",
+        "data-racio-bridge-visible": E ? "true" : "false",
         children: [
           /* @__PURE__ */ u.jsx(
             "button",
@@ -25650,7 +25650,7 @@ function aR({
               children: "← Zpět"
             }
           ),
-          I ? /* @__PURE__ */ u.jsx("div", { className: "min-w-0 justify-self-center mobile:w-full", children: /* @__PURE__ */ u.jsx(eR, { onContinue: o }) }) : /* @__PURE__ */ u.jsx("span", { "aria-hidden": "true" }),
+          E ? /* @__PURE__ */ u.jsx("div", { className: "min-w-0 justify-self-center mobile:w-full", children: /* @__PURE__ */ u.jsx(eR, { onContinue: o }) }) : /* @__PURE__ */ u.jsx("span", { "aria-hidden": "true" }),
           /* @__PURE__ */ u.jsx(
             "button",
             {
@@ -25698,7 +25698,7 @@ function us() {
     [i]
   );
   x.useEffect(() => {
-    dn("5.ComponentEvidence.Navigator", {
+    en("5.ComponentEvidence.Navigator", {
       activeRoomId: i.activeRoomId,
       selectedFloor: i.selectedFloor,
       floors: i.floors,
@@ -25759,8 +25759,8 @@ function m0({
     };
     return window.addEventListener("keydown", y), () => {
       window.removeEventListener("keydown", y), p.current.forEach(
-        ({ el: h, display: v, visibility: k, opacity: E }) => {
-          h.style.display = v, h.style.visibility = k, h.style.opacity = E;
+        ({ el: h, display: v, visibility: k, opacity: I }) => {
+          h.style.display = v, h.style.visibility = k, h.style.opacity = I;
         }
       ), p.current = [];
     };
@@ -25862,11 +25862,11 @@ function mR({
 }) {
   const l = x.useRef(null), [s, m] = x.useState(
     tu
-  ), p = x.useRef(s), f = x.useRef(/* @__PURE__ */ new Map()), y = x.useRef(null), h = x.useRef(null), v = x.useRef(!1), k = x.useRef(!1), E = x.useRef(null);
+  ), p = x.useRef(s), f = x.useRef(/* @__PURE__ */ new Map()), y = x.useRef(null), h = x.useRef(null), v = x.useRef(!1), k = x.useRef(!1), I = x.useRef(null);
   x.useEffect(() => {
     p.current = s;
   }, [s]), x.useEffect(() => {
-    m(tu), f.current.clear(), y.current = null, h.current = null, v.current = !1, k.current = !1, E.current = null;
+    m(tu), f.current.clear(), y.current = null, h.current = null, v.current = !1, k.current = !1, I.current = null;
   }, [o]), x.useEffect(() => {
     const L = l.current;
     if (L === null)
@@ -25878,19 +25878,19 @@ function mR({
       L.removeEventListener("click", $, !0);
     };
   }, []);
-  const O = x.useCallback(() => {
+  const T = x.useCallback(() => {
     const L = l.current;
     if (L === null)
       return { width: 0, height: 0 };
     const $ = L.getBoundingClientRect();
     return { width: $.width, height: $.height };
-  }, []), I = x.useCallback(
+  }, []), E = x.useCallback(
     (L) => {
-      const { width: $, height: C } = O(), K = uR(L, $, C);
+      const { width: $, height: C } = T(), K = uR(L, $, C);
       p.current = K, m(K);
     },
-    [O]
-  ), T = (L) => {
+    [T]
+  ), O = (L) => {
     f.current.set(L.pointerId, {
       x: L.clientX,
       y: L.clientY
@@ -25911,17 +25911,17 @@ function mR({
       transform: p.current
     });
   }, H = (L) => {
-    L.pointerType === "mouse" && L.button !== 0 || (L.currentTarget.setPointerCapture(L.pointerId), T(L), f.current.size === 1 ? (E.current = { x: L.clientX, y: L.clientY }, v.current = !1) : v.current = !0, w());
+    L.pointerType === "mouse" && L.button !== 0 || (L.currentTarget.setPointerCapture(L.pointerId), O(L), f.current.size === 1 ? (I.current = { x: L.clientX, y: L.clientY }, v.current = !1) : v.current = !0, w());
   }, te = (L) => {
     if (!f.current.has(L.pointerId))
       return;
-    T(L);
+    O(L);
     const $ = [...f.current.values()];
     if ($.length >= 2 && h.current !== null) {
       const [C, K] = $, J = Math.max(1, Au(C, K)), ee = h.current, re = Iu(
         ee.transform.scale * (J / ee.distance)
       ), ye = re / ee.transform.scale, Ie = My(C, K), ge = Ie.x - ee.midpoint.x, D = Ie.y - ee.midpoint.y;
-      I({
+      E({
         scale: re,
         x: ee.transform.x * ye + ge,
         y: ee.transform.y * ye + D
@@ -25932,17 +25932,17 @@ function mR({
       if (p.current.scale <= Eu)
         return;
       const C = $[0], K = y.current, J = C.x - K.pointer.x, ee = C.y - K.pointer.y;
-      Dy(K.pointer, C) || (v.current = !0), I({
+      Dy(K.pointer, C) || (v.current = !0), E({
         scale: K.transform.scale,
         x: K.transform.x + J,
         y: K.transform.y + ee
       });
     }
-  }, Y = (L) => {
+  }, q = (L) => {
     L.currentTarget.hasPointerCapture(L.pointerId) && L.currentTarget.releasePointerCapture(L.pointerId);
-    const $ = E.current;
+    const $ = I.current;
     if (f.current.delete(L.pointerId), f.current.size === 0 && v.current && $ !== null && !Dy($, { x: L.clientX, y: L.clientY }) && (k.current = !0), f.current.size === 0) {
-      y.current = null, h.current = null, E.current = null, v.current = !1;
+      y.current = null, h.current = null, I.current = null, v.current = !1;
       return;
     }
     w();
@@ -25950,12 +25950,12 @@ function mR({
     if (L.ctrlKey || L.metaKey) {
       L.preventDefault();
       const $ = -L.deltaY * 0.01, C = Iu(p.current.scale + $);
-      I({
+      E({
         ...p.current,
         scale: C
       });
     }
-  }, q = s.scale > Eu + 0.01;
+  }, F = s.scale > Eu + 0.01;
   return /* @__PURE__ */ u.jsxs(
     "div",
     {
@@ -25964,11 +25964,11 @@ function mR({
       style: { aspectRatio: n, touchAction: "none" },
       "data-floorplan-viewport": "",
       "data-floorplan-scale": s.scale.toFixed(2),
-      "data-floorplan-zoomed": q ? "true" : "false",
+      "data-floorplan-zoomed": F ? "true" : "false",
       onPointerDown: H,
       onPointerMove: te,
-      onPointerUp: Y,
-      onPointerCancel: Y,
+      onPointerUp: q,
+      onPointerCancel: q,
       onWheel: Z,
       children: [
         /* @__PURE__ */ u.jsx(
@@ -25982,7 +25982,7 @@ function mR({
             children: i
           }
         ),
-        q ? /* @__PURE__ */ u.jsx(
+        F ? /* @__PURE__ */ u.jsx(
           "button",
           {
             type: "button",
@@ -25990,7 +25990,7 @@ function mR({
             "aria-label": "Obnovit měřítko půdorysu",
             "data-testid": "floorplan-reset-zoom",
             onClick: (L) => {
-              L.stopPropagation(), I(tu);
+              L.stopPropagation(), E(tu);
             },
             children: "1×"
           }
@@ -26072,8 +26072,8 @@ function bR({
 }
 const hR = "#f5b90040", yR = "#f5b9007f", gR = 20;
 function Ly({ interactive: n, className: o }) {
-  const { experience: i } = at(), { selectedFloor: l, isRoomActive: s, activeRoomId: m, selectRoom: p } = us(), f = i.context.floorPlan, y = f.viewBoxWidth, h = f.viewBoxHeight, [v, k] = x.useState(null), E = f.rooms.filter(
-    (O) => O.floorPlanRegion !== null && d0(O.floor) === l
+  const { experience: i } = at(), { selectedFloor: l, isRoomActive: s, activeRoomId: m, selectRoom: p } = us(), f = i.context.floorPlan, y = f.viewBoxWidth, h = f.viewBoxHeight, [v, k] = x.useState(null), I = f.rooms.filter(
+    (T) => T.floorPlanRegion !== null && d0(T.floor) === l
   );
   return /* @__PURE__ */ u.jsxs(
     "svg",
@@ -26096,51 +26096,51 @@ function Ly({ interactive: n, className: o }) {
           },
           f.src
         ),
-        E.map((O) => {
-          const I = O.floorPlanRegion;
-          if (I === null)
+        I.map((T) => {
+          const E = T.floorPlanRegion;
+          if (E === null)
             return null;
-          const T = m !== null && s(O.id), w = n && v === O.id, H = T ? yR : w ? hR : "transparent", te = n ? {
+          const O = m !== null && s(T.id), w = n && v === T.id, H = O ? yR : w ? hR : "transparent", te = n ? {
             className: "cursor-pointer touch-manipulation transition-[fill] duration-125 ease-out",
-            onClick: () => p(O.id),
-            onPointerDown: () => p(O.id),
+            onClick: () => p(T.id),
+            onPointerDown: () => p(T.id),
             onPointerEnter: () => {
-              k(O.id);
+              k(T.id);
             },
             onPointerLeave: () => {
               k(null);
             }
           } : {};
-          if (I.polygon !== void 0 && I.polygon.length >= 3) {
-            const $ = I.polygon.map(([C, K]) => `${C},${K}`).join(" ");
+          if (E.polygon !== void 0 && E.polygon.length >= 3) {
+            const $ = E.polygon.map(([C, K]) => `${C},${K}`).join(" ");
             return /* @__PURE__ */ u.jsx(
               "polygon",
               {
                 points: $,
-                "data-room": O.id,
-                "aria-label": O.title,
+                "data-room": T.id,
+                "aria-label": T.title,
                 fill: H,
                 stroke: "none",
                 ...te
               },
-              O.id
+              T.id
             );
           }
-          const { x: Y, y: Z, width: q, height: L } = I;
+          const { x: q, y: Z, width: F, height: L } = E;
           return /* @__PURE__ */ u.jsx(
             "rect",
             {
-              x: Y,
+              x: q,
               y: Z,
-              width: q,
+              width: F,
               height: L,
-              "data-room": O.id,
-              "aria-label": O.title,
+              "data-room": T.id,
+              "aria-label": T.title,
               fill: H,
               stroke: "none",
               ...te
             },
-            O.id
+            T.id
           );
         })
       ]
@@ -26148,43 +26148,43 @@ function Ly({ interactive: n, className: o }) {
   );
 }
 function vR() {
-  const { experience: n } = at(), o = qo(), { selectedFloor: i } = us(), l = n.context.floorPlan, { viewBoxWidth: s, viewBoxHeight: m } = l, p = l.src, f = i, [y, h] = x.useState(!1), v = x.useRef(null), k = m > 0 ? s / m : 1, E = `${s} / ${m}`;
+  const { experience: n } = at(), o = qo(), { selectedFloor: i } = us(), l = n.context.floorPlan, { viewBoxWidth: s, viewBoxHeight: m } = l, p = l.src, f = i, [y, h] = x.useState(!1), v = x.useRef(null), k = m > 0 ? s / m : 1, I = `${s} / ${m}`;
   return x.useEffect(() => {
-    const O = n.context.floorPlan;
-    dn("5.ComponentEvidence.FloorPlan", {
-      src: O.src,
-      viewBoxWidth: O.viewBoxWidth,
-      viewBoxHeight: O.viewBoxHeight,
-      roomCount: O.rooms.length,
-      firstRoom: O.rooms[0] ?? null,
-      lastRoom: O.rooms[O.rooms.length - 1] ?? null,
-      roomsWithRegions: O.rooms.filter((I) => I.floorPlanRegion !== null).map((I) => I.id)
+    const T = n.context.floorPlan;
+    en("5.ComponentEvidence.FloorPlan", {
+      src: T.src,
+      viewBoxWidth: T.viewBoxWidth,
+      viewBoxHeight: T.viewBoxHeight,
+      roomCount: T.rooms.length,
+      firstRoom: T.rooms[0] ?? null,
+      lastRoom: T.rooms[T.rooms.length - 1] ?? null,
+      roomsWithRegions: T.rooms.filter((E) => E.floorPlanRegion !== null).map((E) => E.id)
     });
   }, [n.context.floorPlan]), x.useEffect(() => {
-    const O = v.current;
-    if (O === null || typeof IntersectionObserver > "u")
+    const T = v.current;
+    if (T === null || typeof IntersectionObserver > "u")
       return;
-    let I = !1;
-    const T = new IntersectionObserver(
+    let E = !1;
+    const O = new IntersectionObserver(
       (w) => {
-        I || !w.some(
+        E || !w.some(
           (te) => te.isIntersecting && te.intersectionRatio >= 0.35
-        ) || (I = !0, o == null || o.experienceEvent({
+        ) || (E = !0, o == null || o.experienceEvent({
           experienceEventType: "floorplan.opened",
           surfaceId: "walkthrough",
           payload: { floor: n.context.navigation.currentFloor ?? null }
-        }), T.disconnect());
+        }), O.disconnect());
       },
       { threshold: [0.35] }
     );
-    return T.observe(O), () => {
-      T.disconnect();
+    return O.observe(T), () => {
+      O.disconnect();
     };
   }, [o, n.context.navigation.currentFloor]), /* @__PURE__ */ u.jsxs("div", { ref: v, className: "relative flex w-full min-w-0 max-w-none shrink-0 flex-col", children: [
     /* @__PURE__ */ u.jsx(
       mR,
       {
-        aspectRatio: E,
+        aspectRatio: I,
         resetKey: `${p}:${f}`,
         children: /* @__PURE__ */ u.jsx(
           "div",
@@ -26328,49 +26328,49 @@ function BR({ children: n }) {
   var Z;
   const { experience: o, dispatch: i } = at(), { context: l } = o, s = l.activeRoom.id, m = l.roomMedia.thumbnails, p = l.floorPlan.rooms, f = l.navigation.floors, y = l.navigation.currentFloor ?? f[0] ?? "0", [h, v] = x.useState(
     ((Z = m[0]) == null ? void 0 : Z.kind) === "video" ? "video" : "photo"
-  ), [k, E] = x.useState(0), [O, I] = x.useState("ready"), [T, w] = x.useState(0), H = x.useRef(s), te = x.useRef(k);
+  ), [k, I] = x.useState(0), [T, E] = x.useState("ready"), [O, w] = x.useState(0), H = x.useRef(s), te = x.useRef(k);
   te.current = k, x.useEffect(() => {
     var $;
     if (s === null || H.current === s) {
       H.current = s;
       return;
     }
-    if (H.current = s, v("photo"), I("ready"), ((($ = m[te.current]) == null ? void 0 : $.roomId) ?? null) === s)
+    if (H.current = s, v("photo"), E("ready"), ((($ = m[te.current]) == null ? void 0 : $.roomId) ?? null) === s)
       return;
     const L = gv(
       o.house,
       s
     );
-    E(
+    I(
       L ?? Hy(m)
     );
   }, [s, o.house, m]);
-  const Y = x.useMemo(() => {
-    const q = m, L = q[k] ?? null, $ = (L == null ? void 0 : L.src) ?? null, C = s === null ? null : p.find((K) => K.id === s) ?? null;
+  const q = x.useMemo(() => {
+    const F = m, L = F[k] ?? null, $ = (L == null ? void 0 : L.src) ?? null, C = s === null ? null : p.find((K) => K.id === s) ?? null;
     return {
-      mode: O,
+      mode: T,
       mediaMode: h,
       activeRoomId: s,
       activeRoom: C,
       activeMediaIndex: k,
       activeMediaItem: L,
       activeMediaSrc: $,
-      roomMediaItems: q,
+      roomMediaItems: F,
       rooms: p,
       selectedFloor: y,
-      mediaModeEpoch: T,
+      mediaModeEpoch: O,
       isRoomActive: (K) => s === K,
       isMediaActive: (K) => k === K,
-      play: () => I("playing"),
-      onVideoEnded: () => I("ready"),
+      play: () => E("playing"),
+      onVideoEnded: () => E("ready"),
       selectRoom: (K) => {
         i({ type: "SelectRoom", roomId: K });
       },
       selectMediaIndex: (K) => {
-        E(K);
-        const J = q[K];
+        I(K);
+        const J = F[K];
         if ((J == null ? void 0 : J.kind) === "video") {
-          v("video"), I("playing");
+          v("video"), E("playing");
           return;
         }
         if ((J == null ? void 0 : J.kind) === "photo") {
@@ -26378,17 +26378,17 @@ function BR({ children: n }) {
           const ee = J.roomId;
           ee !== null && ee !== s && i({ type: "SelectRoom", roomId: ee });
         }
-        I("ready");
+        E("ready");
       },
       setMediaMode: (K) => {
-        const J = q.findIndex(
+        const J = F.findIndex(
           (re) => re.kind === K
         ), ee = J >= 0 ? K : "photo";
-        if (w((re) => re + 1), v(ee), I("ready"), J >= 0) {
-          E(J);
+        if (w((re) => re + 1), v(ee), E("ready"), J >= 0) {
+          I(J);
           return;
         }
-        E(Hy(q));
+        I(Hy(F));
       }
     };
   }, [
@@ -26397,13 +26397,13 @@ function BR({ children: n }) {
     i,
     o.house,
     h,
-    T,
     O,
+    T,
     m,
     p,
     y
   ]);
-  return /* @__PURE__ */ u.jsx(y0.Provider, { value: Y, children: n });
+  return /* @__PURE__ */ u.jsx(y0.Provider, { value: q, children: n });
 }
 function ms() {
   const n = x.useContext(y0);
@@ -26543,9 +26543,9 @@ function WR() {
     play: m,
     onVideoEnded: p,
     selectMediaIndex: f
-  } = ms(), y = x.useRef(null), [h, v] = x.useState(!1), [k, E] = x.useState(!1), [O, I] = x.useState(!1), [T, w] = x.useState(!0);
+  } = ms(), y = x.useRef(null), [h, v] = x.useState(!1), [k, I] = x.useState(!1), [T, E] = x.useState(!1), [O, w] = x.useState(!0);
   x.useEffect(() => {
-    dn("3.GalleryRuntime.beforeMainMedia", {
+    en("3.GalleryRuntime.beforeMainMedia", {
       activeRoomId: o.roomId,
       roomMediaTitle: o.title,
       heroUrl: o.heroUrl,
@@ -26560,7 +26560,7 @@ function WR() {
         id: W.id,
         url: W.url
       }))
-    }), dn("5.ComponentEvidence.MainMedia", {
+    }), en("5.ComponentEvidence.MainMedia", {
       roomId: o.roomId,
       title: o.title,
       heroUrl: o.heroUrl,
@@ -26575,14 +26575,14 @@ function WR() {
   const H = (() => {
     const W = o.thumbnails[s] ?? null;
     return l !== "photo" || W !== null && W.kind === "photo" ? W : o.thumbnails.find((ue) => ue.kind === "photo") ?? W;
-  })(), te = (H == null ? void 0 : H.src) ?? null, Y = o.roomId, Z = ((P = o.thumbnails.find((W) => W.kind === "video")) == null ? void 0 : P.src) ?? o.videoUrl ?? ((Q = o.videos[0]) == null ? void 0 : Q.url) ?? "", q = ((X = o.thumbnails.find((W) => W.kind === "photo")) == null ? void 0 : X.thumbnailSrc) ?? "", L = `${Z}|${l}`, $ = ZR(l, i, te), { displayKey: C, opacity: K, phaseMs: J } = YR($);
+  })(), te = (H == null ? void 0 : H.src) ?? null, q = o.roomId, Z = ((P = o.thumbnails.find((W) => W.kind === "video")) == null ? void 0 : P.src) ?? o.videoUrl ?? ((Q = o.videos[0]) == null ? void 0 : Q.url) ?? "", F = ((X = o.thumbnails.find((W) => W.kind === "photo")) == null ? void 0 : X.thumbnailSrc) ?? "", L = `${Z}|${l}`, $ = ZR(l, i, te), { displayKey: C, opacity: K, phaseMs: J } = YR($);
   x.useEffect(() => {
-    v(!1), I(!1), w(!0);
+    v(!1), E(!1), w(!0);
   }, [l, Z, i, te]), x.useEffect(() => {
     const W = y.current;
     W === null || l !== "video" || (W.pause(), W.currentTime = 0, W.load(), i === "playing" && W.play());
   }, [l, i, L, Z]);
-  const ee = JR(C) ?? (l === "photo" ? te : null), re = l === "photo" && ee !== null && ee.length > 0, ye = l === "video" && !re && QR(Z), Ie = l === "video" && !h && !ye, ge = l === "video" && h && !ye, D = re ? o.title ?? "Fotografie místnosti" : "Náhled procházky domem", U = !O && !k && o.thumbnails.length > 1 && (re || Ie || ye), V = XR({
+  const ee = JR(C) ?? (l === "photo" ? te : null), re = l === "photo" && ee !== null && ee.length > 0, ye = l === "video" && !re && QR(Z), Ie = l === "video" && !h && !ye, ge = l === "video" && h && !ye, D = re ? o.title ?? "Fotografie místnosti" : "Náhled procházky domem", U = !T && !k && o.thumbnails.length > 1 && (re || Ie || ye), V = XR({
     enabled: U,
     itemCount: o.thumbnails.length,
     activeIndex: s,
@@ -26615,9 +26615,9 @@ function WR() {
               transitionDuration: `${J}ms`,
               transitionTimingFunction: FR
             },
-            "data-room-id": Y ?? void 0,
+            "data-room-id": q ?? void 0,
             children: [
-              O ? /* @__PURE__ */ u.jsx(
+              T ? /* @__PURE__ */ u.jsx(
                 "div",
                 {
                   className: "flex h-full w-full items-center justify-center bg-embed-surface-muted px-4 text-center text-sm text-embed-foreground-primary/55",
@@ -26638,7 +26638,7 @@ function WR() {
                   "data-media-mode": l,
                   onLoad: () => w(!1),
                   onError: () => {
-                    w(!1), I(!0);
+                    w(!1), E(!0);
                   }
                 }
               ) : ye ? /* @__PURE__ */ u.jsx(
@@ -26662,7 +26662,7 @@ function WR() {
                   {
                     ref: y,
                     src: Z,
-                    poster: q,
+                    poster: F,
                     controls: ge,
                     className: "h-full w-full object-cover mobile:object-contain",
                     playsInline: !0,
@@ -26671,7 +26671,7 @@ function WR() {
                     onEnded: j,
                     onLoadedData: () => w(!1),
                     onError: () => {
-                      w(!1), I(!0);
+                      w(!1), E(!0);
                     },
                     "data-walkthrough-mode": i,
                     "data-media-mode": l
@@ -26680,7 +26680,7 @@ function WR() {
                 ),
                 Ie ? /* @__PURE__ */ u.jsx($R, { onPlay: ne }) : null
               ] }),
-              T && !O ? /* @__PURE__ */ u.jsx(
+              O && !T ? /* @__PURE__ */ u.jsx(
                 "div",
                 {
                   className: "pointer-events-none absolute inset-0 flex items-center justify-center bg-embed-surface-muted/80 text-sm text-embed-foreground-primary/55",
@@ -26692,16 +26692,16 @@ function WR() {
             ]
           }
         ),
-        !O && !ye ? /* @__PURE__ */ u.jsx(GR, { onClick: () => E(!0) }) : null,
+        !T && !ye ? /* @__PURE__ */ u.jsx(GR, { onClick: () => I(!0) }) : null,
         /* @__PURE__ */ u.jsx(
           VR,
           {
             alt: D,
-            isOpen: k && !O && !ye,
+            isOpen: k && !T && !ye,
             kind: re ? "photo" : "video",
-            poster: q,
+            poster: F,
             src: re ? ee : Z,
-            onClose: () => E(!1)
+            onClose: () => I(!1)
           }
         )
       ]
@@ -26760,24 +26760,24 @@ function r_(n, o, i, l = Nn) {
       return;
     let v = 0;
     const k = () => {
-      const O = Math.round(h.scrollLeft / i);
-      p((I) => {
-        const T = Math.min(s, Math.max(0, O));
-        return I === T ? I : T;
+      const T = Math.round(h.scrollLeft / i);
+      p((E) => {
+        const O = Math.min(s, Math.max(0, T));
+        return E === O ? E : O;
       });
-    }, E = () => {
+    }, I = () => {
       v === 0 && (v = window.requestAnimationFrame(() => {
         v = 0, k();
       }));
     };
-    return h.addEventListener("scroll", E, { passive: !0 }), () => {
-      h.removeEventListener("scroll", E), v !== 0 && window.cancelAnimationFrame(v);
+    return h.addEventListener("scroll", I, { passive: !0 }), () => {
+      h.removeEventListener("scroll", I), v !== 0 && window.cancelAnimationFrame(v);
     };
   }, [n, s, i]);
   const f = x.useCallback(
     (h, v = "smooth") => {
-      const k = n.current, E = Math.min(s, Math.max(0, h));
-      p(E), k !== null && o_(k, E * i, t_);
+      const k = n.current, I = Math.min(s, Math.max(0, h));
+      p(I), k !== null && o_(k, I * i, t_);
     },
     [n, s, i]
   ), y = x.useCallback(
@@ -26869,7 +26869,7 @@ function v_({
   src: n,
   poster: o
 }) {
-  const i = o.length > 0;
+  const i = o.length > 0, l = y_(n);
   return /* @__PURE__ */ u.jsxs(
     "div",
     {
@@ -26879,7 +26879,16 @@ function v_({
         overflow: "hidden"
       },
       children: [
-        i ? /* @__PURE__ */ u.jsx(
+        l ? /* @__PURE__ */ u.jsx(
+          "iframe",
+          {
+            src: n,
+            title: "",
+            tabIndex: -1,
+            className: "pointer-events-none h-full w-full border-0",
+            allow: "autoplay; fullscreen"
+          }
+        ) : i ? /* @__PURE__ */ u.jsx(
           "img",
           {
             src: o,
@@ -26887,12 +26896,6 @@ function v_({
             loading: "lazy",
             decoding: "async",
             className: "pointer-events-none h-full w-full object-cover"
-          }
-        ) : y_(n) ? /* @__PURE__ */ u.jsx(
-          "div",
-          {
-            "aria-hidden": "true",
-            className: "pointer-events-none h-full w-full bg-embed-brand-navy/15"
           }
         ) : /* @__PURE__ */ u.jsx(
           "video",
@@ -26923,15 +26926,15 @@ function x_() {
     mediaMode: m,
     mediaModeEpoch: p,
     selectMediaIndex: f
-  } = ms(), y = x.useRef(null), h = x.useRef(/* @__PURE__ */ new Map()), v = x.useRef(p), k = x.useRef(l), E = x.useRef(i), O = x.useRef(!1), [I, T] = x.useState(
+  } = ms(), y = x.useRef(null), h = x.useRef(/* @__PURE__ */ new Map()), v = x.useRef(p), k = x.useRef(l), I = x.useRef(i), T = x.useRef(!1), [E, O] = x.useState(
     () => Yy(w0)
-  ), w = o.thumbnails, H = w.length, te = w.findIndex((J) => J.kind === "photo"), Y = te >= 0 ? te : 0;
+  ), w = o.thumbnails, H = w.length, te = w.findIndex((J) => J.kind === "photo"), q = te >= 0 ? te : 0;
   a_(y);
-  const { canScrollLeft: Z, canScrollRight: q, scrollGroup: L, scrollToSlot: $ } = r_(
+  const { canScrollLeft: Z, canScrollRight: F, scrollGroup: L, scrollToSlot: $ } = r_(
     y,
     H,
-    I.slotStep,
-    I.visibleSlots
+    E.slotStep,
+    E.visibleSlots
   );
   x.useEffect(() => {
     const J = y.current;
@@ -26939,7 +26942,7 @@ function x_() {
       return;
     const ee = () => {
       const Ie = Yy(J.clientWidth);
-      T(
+      O(
         (ge) => ge.viewportWidth === Ie.viewportWidth && ge.thumbWidth === Ie.thumbWidth && ge.slotStep === Ie.slotStep && ge.visibleSlots === Ie.visibleSlots ? ge : Ie
       );
     };
@@ -26951,15 +26954,15 @@ function x_() {
       ye.disconnect(), re.cancel();
     };
   }, [H]), x.useEffect(() => {
-    const J = v.current !== p, ee = k.current !== l, re = E.current !== i;
-    if (v.current = p, k.current = l, E.current = i, H !== 0) {
+    const J = v.current !== p, ee = k.current !== l, re = I.current !== i;
+    if (v.current = p, k.current = l, I.current = i, H !== 0) {
       if (J) {
-        re || (O.current = !0), $(m === "video" ? 0 : Y);
+        re || (T.current = !0), $(m === "video" ? 0 : q);
         return;
       }
       if (ee && l !== null) {
-        if (re || (O.current = !0), l === "exterior") {
-          $(Y);
+        if (re || (T.current = !0), l === "exterior") {
+          $(q);
           return;
         }
         const ye = gv(
@@ -26970,8 +26973,8 @@ function x_() {
         return;
       }
       if (re) {
-        if (O.current) {
-          O.current = !1;
+        if (T.current) {
+          T.current = !1;
           return;
         }
         $(i === 0 ? 0 : Math.max(0, i - 1));
@@ -26982,7 +26985,7 @@ function x_() {
     l,
     n.house,
     H,
-    Y,
+    q,
     m,
     p,
     $
@@ -26993,7 +26996,7 @@ function x_() {
       return;
     }
     h.current.set(J, ee);
-  }, []), K = H * I.thumbWidth + Math.max(0, H - 1) * _n;
+  }, []), K = H * E.thumbWidth + Math.max(0, H - 1) * _n;
   return H === 0 ? /* @__PURE__ */ u.jsx(
     "div",
     {
@@ -27006,7 +27009,7 @@ function x_() {
           {
             className: "flex h-20 min-w-0 flex-1 items-stretch mobile:h-24",
             style: { gap: _n },
-            children: Array.from({ length: I.visibleSlots }, (J, ee) => /* @__PURE__ */ u.jsx(
+            children: Array.from({ length: E.visibleSlots }, (J, ee) => /* @__PURE__ */ u.jsx(
               "div",
               {
                 className: "min-h-11 flex-1 rounded-[8px] border border-embed-border-default bg-embed-background-tertiary/60"
@@ -27023,7 +27026,7 @@ function x_() {
     {
       className: Fy,
       style: { maxWidth: ei },
-      "data-media-rail-slots": I.visibleSlots,
+      "data-media-rail-slots": E.visibleSlots,
       children: /* @__PURE__ */ u.jsxs("div", { className: "flex w-full items-center justify-center", children: [
         Z ? /* @__PURE__ */ u.jsx(qy, { direction: "left", onClick: () => L(-1) }) : /* @__PURE__ */ u.jsx(Bl, {}),
         /* @__PURE__ */ u.jsx(
@@ -27053,8 +27056,8 @@ function x_() {
                       "aria-pressed": re,
                       className: h_,
                       style: {
-                        width: I.thumbWidth,
-                        minWidth: I.thumbWidth,
+                        width: E.thumbWidth,
+                        minWidth: E.thumbWidth,
                         borderWidth: g0,
                         borderStyle: "solid",
                         // Inline beats Delivery `[data-embed-boundary] button { border-radius: 0 }`.
@@ -27095,7 +27098,7 @@ function x_() {
             )
           }
         ),
-        q ? /* @__PURE__ */ u.jsx(qy, { direction: "right", onClick: () => L(1) }) : /* @__PURE__ */ u.jsx(Bl, {})
+        F ? /* @__PURE__ */ u.jsx(qy, { direction: "right", onClick: () => L(1) }) : /* @__PURE__ */ u.jsx(Bl, {})
       ] })
     }
   );
@@ -27315,11 +27318,11 @@ function C_({
   x.useEffect(() => {
     if (h === void 0 || h.kind !== "delay-after-mount" || !o || p.current)
       return;
-    const E = window.setTimeout(() => {
+    const I = window.setTimeout(() => {
       y();
     }, h.delayMs);
     return () => {
-      window.clearTimeout(E);
+      window.clearTimeout(I);
     };
   }, [h, o, y]);
   const v = x.useCallback(() => {
@@ -27344,9 +27347,9 @@ function j0({
   var re, ye, Ie, ge, D, U;
   const p = wu(), [f, y] = x.useState(1), [h, v] = x.useState(
     me.socialProof
-  ), [k, E] = x.useState(0), [O, I] = x.useState(!1), T = p.slice(0, f).map((V) => V.id), w = Gu(T), [H, te] = x.useState(
+  ), [k, I] = x.useState(0), [T, E] = x.useState(!1), O = p.slice(0, f).map((V) => V.id), w = Gu(O), [H, te] = x.useState(
     ((re = p[0]) == null ? void 0 : re.id) ?? null
-  ), [Y, Z] = x.useState(null), [q, L] = x.useState(!1), $ = x.useRef(null), C = x.useRef(null);
+  ), [q, Z] = x.useState(null), [F, L] = x.useState(!1), $ = x.useRef(null), C = x.useRef(null);
   x.useEffect(() => () => {
     var V;
     $.current !== null && window.clearTimeout($.current), (V = C.current) == null || V.call(C);
@@ -27354,13 +27357,13 @@ function j0({
     s == null || s(H);
   }, [H, s]), x.useEffect(() => {
     if (w !== null) {
-      if (Y === w) {
+      if (q === w) {
         Z(null);
         return;
       }
-      Y === null && te(w);
+      q === null && te(w);
     }
-  }, [w, Y]), x.useEffect(() => {
+  }, [w, q]), x.useEffect(() => {
     m == null || m(
       p.slice(0, f).map((V) => V.id)
     );
@@ -27381,7 +27384,7 @@ function j0({
         return;
       }
       const Q = () => {
-        $.current !== null && (window.clearTimeout($.current), $.current = null), I(!1);
+        $.current !== null && (window.clearTimeout($.current), $.current = null), E(!1);
       };
       (ue = C.current) == null || ue.call(C), C.current = null, $.current = window.setTimeout(Q, 2e3);
       const X = document.getElementById(V), W = X == null ? void 0 : X.style.transform;
@@ -27394,7 +27397,7 @@ function j0({
   const K = (V, ne = V, le = 0) => {
     var P, Q;
     const j = p.findIndex((X) => X.id === V);
-    j !== -1 && (V !== ((P = p[0]) == null ? void 0 : P.id) && L(!0), I(!0), te(V), Z(V), y((X) => Math.max(X, j + 1)), E(le), v(ne), (Q = C.current) == null || Q.call(C), C.current = null, $.current !== null && (window.clearTimeout($.current), $.current = null));
+    j !== -1 && (V !== ((P = p[0]) == null ? void 0 : P.id) && L(!0), E(!0), te(V), Z(V), y((X) => Math.max(X, j + 1)), I(le), v(ne), (Q = C.current) == null || Q.call(C), C.current = null, $.current !== null && (window.clearTimeout($.current), $.current = null));
   };
   x.useEffect(() => (Zh((V) => {
     if (BE(V) && f >= 4) {
@@ -27427,7 +27430,7 @@ function j0({
       /* @__PURE__ */ u.jsx(
         bA,
         {
-          snapEnabled: q && !O
+          snapEnabled: F && !T
         }
       ),
       /* @__PURE__ */ u.jsx(zE, {}),
@@ -27521,7 +27524,7 @@ function j0({
             /* @__PURE__ */ u.jsx(
               N2,
               {
-                enabled: !O,
+                enabled: !T,
                 journeyHasLeftMain: H !== ((U = p[0]) == null ? void 0 : U.id) || f > 1
               }
             )
@@ -27609,7 +27612,7 @@ function S0({
 }) {
   var Z;
   const { session: s, updateWorkspaceScope: m } = tv(), p = n !== null && o !== void 0, f = x.useMemo(
-    () => Vy.filter((q) => l.includes(q.sceneId)),
+    () => Vy.filter((F) => l.includes(F.sceneId)),
     [l]
   ), [y, h] = x.useState(me.hero), v = Gu(
     H_
@@ -27617,21 +27620,31 @@ function S0({
   x.useEffect(() => {
     i === "journey-scene-orientation" && v !== null && h(v);
   }, [i, v]);
-  const k = i === "journey-scene-orientation" ? y : ((Z = f.find((q) => q.sceneId === i)) == null ? void 0 : Z.sectionId) ?? null, [E, O] = x.useState(!1), I = qu(), T = I.runtimeProjectId ?? ls(s == null ? void 0 : s.projectId), w = x.useMemo(
-    () => hu(T),
-    [T]
-  ), H = _E(I), te = (q) => {
-    if (T === null || !hu(T).some(
+  const k = i === "journey-scene-orientation" ? y : ((Z = f.find((F) => F.sceneId === i)) == null ? void 0 : Z.sectionId) ?? null, [I, T] = x.useState(!1), E = qu(), O = E.runtimeProjectId ?? ls(s == null ? void 0 : s.projectId), w = x.useMemo(
+    () => hu(O),
+    [O]
+  ), H = _E(E);
+  en("ClientStudioSidebar.selector", {
+    runtimeProjectId: E.runtimeProjectId,
+    sessionProjectId: (s == null ? void 0 : s.projectId) ?? null,
+    activeProjectId: O,
+    permittedHouseIds: w.flatMap(
+      (F) => F.house === null ? [] : [F.house.houseId]
+    ),
+    activeHouseId: H
+  });
+  const te = (F) => {
+    if (O === null || !hu(O).some(
       (C) => {
         var K;
-        return ((K = C.house) == null ? void 0 : K.houseId) === q;
+        return ((K = C.house) == null ? void 0 : K.houseId) === F;
       }
     ))
       return;
-    m({ activeHouseId: q });
+    m({ activeHouseId: F });
     const L = document.querySelector("[data-embed-root]");
-    L !== null && (L.dataset.objectId = q, window.dispatchEvent(new Event("embed:house-change")));
-    const $ = BS(q);
+    L !== null && (L.dataset.objectId = F, window.dispatchEvent(new Event("embed:house-change")));
+    const $ = BS(F);
     if (!(typeof window > "u")) {
       if (window.parent === window) {
         window.dispatchEvent(new CustomEvent($.type, { detail: $ }));
@@ -27642,8 +27655,8 @@ function S0({
         new URL(Fu()).origin
       );
     }
-  }, Y = () => {
-    O((q) => !q);
+  }, q = () => {
+    T((F) => !F);
   };
   return /* @__PURE__ */ u.jsxs(
     "aside",
@@ -27658,9 +27671,9 @@ function S0({
           {
             type: "button",
             "aria-label": "Otevřít menu domů",
-            "aria-expanded": E,
+            "aria-expanded": I,
             "data-testid": "client-house-menu-toggle",
-            onClick: Y,
+            onClick: q,
             className: "text-xl font-bold text-embed-brand-gold transition-opacity hover:opacity-80",
             children: "☰"
           }
@@ -27685,34 +27698,34 @@ function S0({
             "aria-label": "Scene Navigator",
             "data-testid": "client-scene-navigator",
             children: [
-              f.map((q) => {
-                const L = k === q.sectionId;
+              f.map((F) => {
+                const L = k === F.sectionId;
                 return /* @__PURE__ */ u.jsx(
                   "button",
                   {
                     type: "button",
-                    title: q.label,
-                    "aria-label": q.label,
+                    title: F.label,
+                    "aria-label": F.label,
                     "aria-current": L ? "true" : void 0,
-                    "data-testid": `client-scene-dot-${q.sectionId}`,
+                    "data-testid": `client-scene-dot-${F.sectionId}`,
                     "data-client-scene-dot": "",
                     "data-active-scene-dot": L ? "true" : "false",
                     onClick: () => {
-                      q.sceneId === "journey-scene-orientation" && h(q.sectionId), iv(q.sectionId);
+                      F.sceneId === "journey-scene-orientation" && h(F.sectionId), iv(F.sectionId);
                     },
                     className: [
                       "box-border h-3 w-3 rounded-full transition-colors",
                       L ? "border-2 border-embed-brand-gold bg-embed-brand-gold" : "border border-embed-background-primary/50 bg-embed-background-primary/25 hover:border-embed-brand-gold/70"
                     ].join(" ")
                   },
-                  q.sectionId
+                  F.sectionId
                 );
               }),
-              /* @__PURE__ */ u.jsx("span", { className: "sr-only", children: f.map((q) => q.label).join(" · ") })
+              /* @__PURE__ */ u.jsx("span", { className: "sr-only", children: f.map((F) => F.label).join(" · ") })
             ]
           }
         ),
-        E ? /* @__PURE__ */ u.jsxs(
+        I ? /* @__PURE__ */ u.jsxs(
           "div",
           {
             className: "absolute left-full top-0 z-[60] flex h-full w-56 flex-col border-r border-embed-brand-gold/30 bg-embed-brand-navy shadow-lg",
@@ -27721,10 +27734,10 @@ function S0({
             "aria-label": "Seznam domů",
             children: [
               /* @__PURE__ */ u.jsx("p", { className: "px-3 py-4 text-xs font-semibold uppercase tracking-wide text-embed-brand-gold", children: "Domy" }),
-              /* @__PURE__ */ u.jsx("ul", { className: "flex flex-1 flex-col gap-1 overflow-y-auto px-2 pb-4", children: w.map((q) => {
-                if (q.house === null)
+              /* @__PURE__ */ u.jsx("ul", { className: "flex flex-1 flex-col gap-1 overflow-y-auto px-2 pb-4", children: w.map((F) => {
+                if (F.house === null)
                   return null;
-                const L = q.house.houseId, $ = L === H;
+                const L = F.house.houseId, $ = L === H;
                 return /* @__PURE__ */ u.jsx("li", { children: /* @__PURE__ */ u.jsx(
                   "button",
                   {
@@ -27732,13 +27745,13 @@ function S0({
                     "data-testid": `client-house-option-${L}`,
                     "aria-current": $ ? "true" : void 0,
                     onClick: () => {
-                      O(!1), L !== H && te(L);
+                      T(!1), L !== H && te(L);
                     },
                     className: [
                       "w-full rounded-[6px] px-3 py-2 text-left text-sm transition-colors",
                       $ ? "bg-embed-background-primary/15 text-embed-brand-gold" : "text-embed-background-primary/85 hover:bg-embed-background-primary/10 hover:text-embed-brand-gold"
                     ].join(" "),
-                    children: q.house.name
+                    children: F.house.name
                   }
                 ) }, L);
               }) })
@@ -27842,20 +27855,20 @@ function Q_(n, o, i, l, s) {
   const m = Object.fromEntries(
     o.answers.entries()
   ), p = J_(n, o), f = p.find((v) => v.current) ?? null, y = [...o.answers.keys()].flatMap((v) => {
-    var O;
-    const k = p.find((I) => I.id === v);
+    var T;
+    const k = p.find((E) => E.id === v);
     if (k)
       return [k];
-    const E = n.get(v);
-    return E ? [
+    const I = n.get(v);
+    return I ? [
       {
-        id: E.id,
-        title: E.question,
+        id: I.id,
+        title: I.question,
         visited: o.history.includes(v),
         current: o.currentDecisionId === v,
-        choices: (O = E.choices) == null ? void 0 : O.map((I) => ({
-          id: I.id,
-          label: I.label
+        choices: (T = I.choices) == null ? void 0 : T.map((E) => ({
+          id: E.id,
+          label: E.label
         }))
       }
     ] : [];
@@ -28521,7 +28534,7 @@ function CC(n) {
   const o = Mg(n ?? null);
   if (o !== null)
     return o.project.id;
-  const i = (n == null ? void 0 : n.trim()) ?? "", l = sn(), s = l !== null && i.length > 0 ? Xl({
+  const i = (n == null ? void 0 : n.trim()) ?? "", l = cn(), s = l !== null && i.length > 0 ? Xl({
     projectId: l.projectId,
     houseId: i
   }) : null;
@@ -28710,7 +28723,7 @@ function QC(n) {
   };
 }
 const WC = 500, C0 = 500;
-function rn(n, o) {
+function ln(n, o) {
   var i;
   (i = n.onStateChange) == null || i.call(n, o), n.scrollContainer.dataset.embedRevealState = o;
 }
@@ -28755,13 +28768,13 @@ function o5(n, o, i, l) {
     n.style.scrollBehavior = p, n.style.scrollPaddingTop = f;
   };
   return i <= 0 || Math.abs(m - s) < 1 ? (n.scrollTo({ top: m, left: 0, behavior: "auto" }), y(), Promise.resolve()) : typeof requestAnimationFrame != "function" ? (n.scrollTo({ top: m, left: 0, behavior: "auto" }), y(), Promise.resolve()) : new Promise((h) => {
-    const v = typeof performance < "u" && typeof performance.now == "function" ? performance.now() : Date.now(), k = (E) => {
+    const v = typeof performance < "u" && typeof performance.now == "function" ? performance.now() : Date.now(), k = (I) => {
       if (l.aborted) {
         y(), h();
         return;
       }
-      const O = E - v, I = Math.min(1, O / i);
-      if (n.scrollTop = s + (m - s) * I, I < 1) {
+      const T = I - v, E = Math.min(1, T / i);
+      if (n.scrollTop = s + (m - s) * E, E < 1) {
         requestAnimationFrame(k);
         return;
       }
@@ -28807,57 +28820,57 @@ function r5(n, o, i) {
 }
 async function i5(n) {
   if (Ma(n.signal))
-    return rn(n, "aborted"), {
+    return ln(n, "aborted"), {
       state: "aborted",
       anchorId: n.modeDefaultLandingAnchorId,
       degraded: !0
     };
-  rn(n, "waiting-ready");
+  ln(n, "waiting-ready");
   try {
-    await cn.waitFor("EXPERIENCE_READY", n.signal);
+    await dn.waitFor("EXPERIENCE_READY", n.signal);
   } catch {
-    return rn(n, "aborted"), {
+    return ln(n, "aborted"), {
       state: "aborted",
       anchorId: n.modeDefaultLandingAnchorId,
       degraded: !0
     };
   }
   if (Ma(n.signal))
-    return rn(n, "aborted"), {
+    return ln(n, "aborted"), {
       state: "aborted",
       anchorId: n.modeDefaultLandingAnchorId,
       degraded: !0
     };
-  rn(n, "resolving-anchor");
+  ln(n, "resolving-anchor");
   const o = r5(
     n.studioRoot,
     n.configuredLandingAnchorId,
     n.modeDefaultLandingAnchorId
   );
   if (o.element === null)
-    return rn(n, "degraded"), n.scrollContainer.scrollTo({ top: 0, left: 0, behavior: "auto" }), cn.emit("REVEAL_READY"), n.scrollContainer.dataset.viewportReady = "true", n.scrollContainer.dataset.landingAnchorId = o.anchorId, {
+    return ln(n, "degraded"), n.scrollContainer.scrollTo({ top: 0, left: 0, behavior: "auto" }), dn.emit("REVEAL_READY"), n.scrollContainer.dataset.viewportReady = "true", n.scrollContainer.dataset.landingAnchorId = o.anchorId, {
       state: "degraded",
       anchorId: o.anchorId,
       degraded: !0
     };
   if (Ma(n.signal))
-    return rn(n, "aborted"), {
+    return ln(n, "aborted"), {
       state: "aborted",
       anchorId: o.anchorId,
       degraded: !0
     };
-  if (rn(n, "revealing"), await a5(n.scrollContainer, o.element, {
+  if (ln(n, "revealing"), await a5(n.scrollContainer, o.element, {
     signal: n.signal,
     durationMs: C0,
     fromTop: !0
   }), Ma(n.signal))
-    return rn(n, "aborted"), {
+    return ln(n, "aborted"), {
       state: "aborted",
       anchorId: o.anchorId,
       degraded: !0
     };
   const i = o.usedDefault || o.element.id !== o.anchorId;
-  return rn(n, i ? "degraded" : "active"), n.scrollContainer.dataset.landingAnchorId = o.anchorId, n.scrollContainer.dataset.viewportReady = "true", cn.emit("REVEAL_READY"), {
+  return ln(n, i ? "degraded" : "active"), n.scrollContainer.dataset.landingAnchorId = o.anchorId, n.scrollContainer.dataset.viewportReady = "true", dn.emit("REVEAL_READY"), {
     state: i ? "degraded" : "active",
     anchorId: o.anchorId,
     degraded: i
@@ -28882,7 +28895,7 @@ async function l5(n, o) {
   let i = null, l;
   const s = new AbortController();
   try {
-    cn.reset(), cn.emit("BOOTSTRAP_STARTED"), bm();
+    dn.reset(), dn.emit("BOOTSTRAP_STARTED"), bm();
     const p = ((m = n.objectId) == null ? void 0 : m.trim()) || void 0;
     i = QC({ onClose: o.onClose });
     const f = i.mountTarget;
@@ -28890,7 +28903,7 @@ async function l5(n, o) {
       throw new Error(
         "Embed: launcher mount container is unavailable after overlay initialization"
       );
-    cn.emit("BOOTSTRAP_LOADING");
+    dn.emit("BOOTSTRAP_LOADING");
     const y = I0({
       target: f,
       objectId: p ?? "",
