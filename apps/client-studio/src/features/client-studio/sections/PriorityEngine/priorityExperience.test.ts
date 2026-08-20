@@ -160,4 +160,10 @@ describe('Priority Experience (CSCB-04)', () => {
     assert.match(engine, /onClick={onContinueToRacio}/);
     assert.match(engine, /phase === "complete" && shouldShowDelayedRacioBridge/);
   });
+
+  it('persists supplementary Priority answers as AnswerQuestion', () => {
+    const conversation = stripComments(read('usePriorityConversation.ts'));
+    assert.match(conversation, /type: 'AnswerQuestion'/);
+    assert.match(conversation, /prioritySupplementaryQuestionId\(priorityId\)/);
+  });
 });

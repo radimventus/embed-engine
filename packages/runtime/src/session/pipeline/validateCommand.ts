@@ -163,6 +163,26 @@ export function validateCommand(input: {
       }
       break;
     }
+    case "OpenQuestion": {
+      if (typeof command.questionId !== "string" || command.questionId.length === 0) {
+        errors.push({
+          code: "HP_INVALID_ANSWER",
+          message: "questionId must be a non-empty string.",
+          path: "command.questionId",
+        });
+      }
+      if (
+        command.prompt !== undefined &&
+        (typeof command.prompt !== "string" || command.prompt.trim().length === 0)
+      ) {
+        errors.push({
+          code: "HP_INVALID_ANSWER",
+          message: "prompt must be a non-empty string when provided.",
+          path: "command.prompt",
+        });
+      }
+      break;
+    }
     default: {
       const _exhaustive: never = command;
       errors.push({

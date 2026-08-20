@@ -39,6 +39,15 @@ export function commandToEvent(
         answerId: command.answerId,
         at,
       };
+    case "OpenQuestion":
+      return command.prompt === undefined
+        ? { type: "QuestionOpened", questionId: command.questionId, at }
+        : {
+            type: "QuestionOpened",
+            questionId: command.questionId,
+            prompt: command.prompt,
+            at,
+          };
     default: {
       const _exhaustive: never = command;
       throw new Error(`Unsupported command: ${JSON.stringify(_exhaustive)}`);

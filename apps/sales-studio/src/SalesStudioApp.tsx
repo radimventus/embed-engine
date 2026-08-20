@@ -29,6 +29,7 @@ import {
   HIGH_INTENT_THRESHOLD,
   clientPrimaryScore,
   formatDecisionCertainty,
+  formatPriorityImportance,
   hasMeasuredDecisionCertainty,
   houseDetailLine,
   houseListLine,
@@ -148,7 +149,8 @@ export function SalesStudioApp() {
 
   const desk = (
       <main
-        className="platform-studio-pad sales-desk min-h-0 min-w-0 flex-1 overflow-y-auto"
+        className="platform-studio-pad sales-desk"
+        data-testid="sales-desk-scroll"
         data-workspace-embed-view={isWorkspaceShellEmbed() ? 'sales' : undefined}
       >
         <p
@@ -330,6 +332,56 @@ export function SalesStudioApp() {
                       </PlatformStatusBadge>
                     ))}
                   </div>
+
+                  {activeHouse.priorities.length > 0 ? (
+                    <div
+                      className="sales-desk__facts"
+                      data-testid="sales-profile-priorities"
+                    >
+                      <p className="platform-type-section sales-desk__priorities-label">
+                        Priority a odpovědi
+                      </p>
+                      <ul className="sales-desk__fact-list">
+                        {activeHouse.priorities.map((priority) => {
+                          const importance = formatPriorityImportance(
+                            priority.importance,
+                          );
+                          return (
+                            <li key={priority.id} className="sales-desk__fact">
+                              <p className="sales-desk__fact-title">
+                                {priority.label}
+                                {importance !== null ? ` · ${importance}` : ''}
+                              </p>
+                              {priority.answer !== null ? (
+                                <p className="sales-desk__fact-detail">
+                                  {priority.answer.questionLabel}:{' '}
+                                  {priority.answer.answerLabel}
+                                </p>
+                              ) : null}
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </div>
+                  ) : null}
+
+                  {activeHouse.openedQuestions.length > 0 ? (
+                    <div
+                      className="sales-desk__facts"
+                      data-testid="sales-profile-faq"
+                    >
+                      <p className="platform-type-section sales-desk__priorities-label">
+                        Otevřené FAQ
+                      </p>
+                      <ul className="sales-desk__fact-list">
+                        {activeHouse.openedQuestions.map((item) => (
+                          <li key={item.questionId} className="sales-desk__fact">
+                            <p className="sales-desk__fact-title">{item.label}</p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : null}
 
                   <div className="sales-desk__insight">
                     <h4>Doporučené téma rozhovoru</h4>

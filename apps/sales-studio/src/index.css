@@ -9,11 +9,26 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 #root {
+  display: flex;
+  flex-direction: column;
   height: 100vh;
   overflow: hidden;
   color: var(--platform-navy, #001930);
   font-family: inherit;
+}
+
+.sales-desk {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .sales-workspace-scope {
@@ -345,6 +360,42 @@ body {
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
+  color: #475569;
+}
+
+.sales-desk__facts {
+  margin-top: 18px;
+}
+
+.sales-desk__fact-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sales-desk__fact {
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--platform-line);
+  border-radius: 10px;
+  background: var(--platform-canvas);
+}
+
+.sales-desk__fact:last-child {
+  margin-bottom: 0;
+}
+
+.sales-desk__fact-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--platform-navy);
+}
+
+.sales-desk__fact-detail {
+  margin: 4px 0 0;
+  font-size: 12px;
+  line-height: 1.45;
   color: #475569;
 }
 

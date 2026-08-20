@@ -579,13 +579,13 @@ export function DecisionSessionRuntimeProvider({
                 });
               }
             };
-            if (command.type === 'SelectRoom') {
-              write();
-            } else {
+            if (command.type === 'ChangePriority') {
               if (persistTimerRef.current !== null) {
                 clearTimeout(persistTimerRef.current);
               }
               persistTimerRef.current = setTimeout(write, 400);
+            } else {
+              write();
             }
           }
         }

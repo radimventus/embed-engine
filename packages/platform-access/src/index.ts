@@ -548,9 +548,18 @@ export {
   type OperationalHouseScope,
   type OperationalJourneyStep,
   type OperationalLeadRecord,
+  type OperationalOpenedQuestion,
   type OperationalOrigin,
+  type OperationalPriorityAnswer,
   type OperationalPrioritySelection,
   type ProfilZajemce,
+} from './operations/index';
+export {
+  AUDIT_LAND_HAS_PLOT,
+  AUDIT_LAND_QUESTION_ID,
+  AUDIT_LAND_SEARCHING_PLOT,
+  lookupAuditLandLabel,
+  prioritySupplementaryQuestionId,
 } from './operations/index';
 export { fetchHouseOperationalLeads } from './api/houseOperationalLeadsClient';
 export { fetchHouseOperationalSessions } from './api/houseOperationalSessionsClient';

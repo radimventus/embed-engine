@@ -13,6 +13,7 @@ import {
   AUDIT_MUTED,
   AUDIT_ON_ACCENT,
   AUDIT_WHITE,
+  type LandOption,
 } from './audit-panel';
 import { UserIcon } from './AuditIcons';
 import { SuccessState } from './SuccessState';
@@ -25,10 +26,18 @@ export const AUDIT_GDPR_GUIDANCE = 'Pro odeslání potvrďte souhlas s GDPR.';
 export const AUDIT_POST_SUBMIT_COPY =
   'Po odeslání formuláře se s Vámi spojíme a domluvíme podrobnosti.';
 
+type AuditContactProps = {
+  readonly landOption: LandOption;
+  readonly onPersistLandIntent: (value: LandOption) => void;
+};
+
 /**
  * Lead Capture succeeds only after the Platform API durably accepts a lead.
  */
-export function AuditContact() {
+export function AuditContact({
+  landOption,
+  onPersistLandIntent,
+}: AuditContactProps) {
   const analytics = useOptionalDecisionAnalytics();
   const { analyticsScope, company, project, decisionSessionId } = useDecisionSessionRuntime();
   const [phase, setPhase] = useState<LeadPhase>('idle');
@@ -85,6 +94,7 @@ export function AuditContact() {
     }
 
     setPhase('loading');
+    onPersistLandIntent(landOption);
     const idempotencyKey =
       idempotencyKeyRef.current ?? crypto.randomUUID();
     idempotencyKeyRef.current = idempotencyKey;

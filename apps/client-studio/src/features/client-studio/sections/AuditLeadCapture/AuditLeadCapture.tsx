@@ -1,8 +1,13 @@
 import { useState } from "react";
 
+import {
+  AUDIT_LAND_QUESTION_ID,
+} from "@embed-engine/platform-access";
+
 import { JOURNEY_CTA_SECONDARY_CLASS } from "../../foundation/journeyCta";
 import { scrollToSection } from "../../foundation/scrollToSection";
 import { PILOT_SECTION_IDS } from "../../pilot/pilotVocabulary";
+import { useDecisionSessionRuntime } from "../../runtime/DecisionSessionRuntimeProvider";
 import {
   AssessmentWorkflow,
   AUDIT_ASSESSMENT_WORKFLOW_ID,
@@ -19,9 +24,18 @@ import { SituationSelect } from "./SituationSelect";
  * Not a second Priority. Not a second AI.
  */
 export function AuditLeadCapture({ onBack }: { readonly onBack: () => void }) {
+  const { dispatch } = useDecisionSessionRuntime();
   const [landOption, setLandOption] = useState<LandOption>("owned");
+  const persistLandIntent = (value: LandOption) => {
+    dispatch({
+      type: "AnswerQuestion",
+      questionId: AUDIT_LAND_QUESTION_ID,
+      answerId: value,
+    });
+  };
   const handleLandOptionChange = (value: LandOption) => {
     setLandOption(value);
+    persistLandIntent(value);
     scrollToSection(AUDIT_ASSESSMENT_WORKFLOW_ID);
   };
 
@@ -44,7 +58,7 @@ export function AuditLeadCapture({ onBack }: { readonly onBack: () => void }) {
             onChange={handleLandOptionChange}
           />
           <AssessmentWorkflow landOption={landOption} />
-          <AuditContact />
+          <AuditContact landOption={landOption} onPersistLandIntent={persistLandIntent} />
         </div>
 
         <ContactCard />

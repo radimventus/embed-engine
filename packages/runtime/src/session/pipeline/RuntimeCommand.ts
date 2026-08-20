@@ -26,6 +26,11 @@ export type RuntimeCommand =
       readonly type: "AnswerQuestion";
       readonly questionId: string;
       readonly answerId: string;
+    }
+  | {
+      readonly type: "OpenQuestion";
+      readonly questionId: string;
+      readonly prompt?: string;
     };
 
 export type RuntimeCommandType = RuntimeCommand["type"];

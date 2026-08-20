@@ -63,6 +63,8 @@ describe('Audit Freeze shell (CAP UX 42)', () => {
 
     assert.match(shell, /setLandOption\(value\)/);
     assert.match(shell, /scrollToSection\(AUDIT_ASSESSMENT_WORKFLOW_ID\)/);
+    assert.match(shell, /AUDIT_LAND_QUESTION_ID/);
+    assert.match(shell, /type: "AnswerQuestion"/);
     assert.match(select, /onClick=\{\(\) => onChange\(option\.value\)\}/);
     assert.match(workflow, /AUDIT_ASSESSMENT_WORKFLOW_ID = 'audit-assessment-workflow'/);
     assert.match(workflow, /id=\{AUDIT_ASSESSMENT_WORKFLOW_ID\}/);
@@ -96,7 +98,7 @@ describe('Audit Freeze shell (CAP UX 42)', () => {
     assert.equal(withRecommendation.title.includes('. '), false);
   });
 
-  it('keeps Audit presentation-only — no Runtime dispatch in section', () => {
+  it('persists Audit land intent as AnswerQuestion without composing Runtime semantics', () => {
     const files = readdirSync(here).filter(
       (name) =>
         (name.endsWith('.tsx') || name.endsWith('.ts')) &&
@@ -106,15 +108,22 @@ describe('Audit Freeze shell (CAP UX 42)', () => {
     for (const name of files) {
       const source = stripComments(read(name));
       assert.equal(
-        source.includes('dispatch('),
-        false,
-        `${name} must not dispatch Runtime commands`,
-      );
-      assert.equal(
         source.includes('composeDecision'),
         false,
         `${name} must not compose semantics`,
       );
+      assert.equal(
+        source.includes('ChangePriority'),
+        false,
+        `${name} must not dispatch Priority commands`,
+      );
     }
+
+    const shell = stripComments(read('AuditLeadCapture.tsx'));
+    assert.match(shell, /type: "AnswerQuestion"/);
+    assert.match(shell, /AUDIT_LAND_QUESTION_ID/);
+    const panel = read('audit-panel.ts');
+    assert.match(panel, /value: 'owned'/);
+    assert.match(panel, /value: 'seeking'/);
   });
 });

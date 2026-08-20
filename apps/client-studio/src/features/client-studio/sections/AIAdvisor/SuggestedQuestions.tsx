@@ -28,6 +28,7 @@ const FAQ_LOAD_MORE_BUTTON_CLASS = `${JOURNEY_CTA_PRIMARY_CLASS} w-auto self-cen
 type SuggestedQuestionsProps = {
   items: readonly ExperienceFaqItem[];
   onQuestionSelect: (question: string) => void;
+  onQuestionOpened?: (item: ExperienceFaqItem) => void;
 };
 
 const FAQ_CARET_SIZE = { width: 18, height: 8 } as const;
@@ -80,19 +81,20 @@ export function FaqTitle() {
 }
 
 type FaqItemProps = {
-  question: string;
-  answer: string;
+  item: ExperienceFaqItem;
   onQuestionSelect: (question: string) => void;
+  onQuestionOpened?: (item: ExperienceFaqItem) => void;
 };
 
-function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
+function FaqItem({ item, onQuestionSelect, onQuestionOpened }: FaqItemProps) {
   const [expanded, setExpanded] = useState(false);
 
   const togglePanel = () => {
     setExpanded((current) => {
       const next = !current;
       if (next) {
-        onQuestionSelect(question);
+        onQuestionSelect(item.question);
+        onQuestionOpened?.(item);
       }
       return next;
     });
@@ -113,7 +115,7 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
       >
         <div className="flex min-h-faq-row items-center gap-3 px-section py-3">
           <span className="min-w-0 flex-1 text-[16px] font-semibold leading-snug text-embed-foreground-primary">
-            {question}
+            {item.question}
           </span>
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px]">
             <FaqCaretIcon expanded={expanded} />
@@ -128,7 +130,7 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
               className="border-t border-embed-border-default px-section py-3.5 leading-relaxed text-embed-foreground-primary/80"
               style={{ fontSize: FAQ_ANSWER_FONT_SIZE_PX }}
             >
-              {answer}
+              {item.answer}
             </p>
           </div>
         </div>
@@ -138,7 +140,11 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
 }
 
 /** FAQ topic rows — the approved first five topics are visible on landing. */
-export function FaqList({ items, onQuestionSelect }: SuggestedQuestionsProps) {
+export function FaqList({
+  items,
+  onQuestionSelect,
+  onQuestionOpened,
+}: SuggestedQuestionsProps) {
   const [visibleCount, setVisibleCount] = useState(() =>
     initialFaqVisibleCount(items.length),
   );
@@ -159,9 +165,9 @@ export function FaqList({ items, onQuestionSelect }: SuggestedQuestionsProps) {
         {visibleItems.map((item) => (
           <FaqItem
             key={item.id}
-            question={item.question}
-            answer={item.answer}
+            item={item}
             onQuestionSelect={onQuestionSelect}
+            onQuestionOpened={onQuestionOpened}
           />
         ))}
       </ul>

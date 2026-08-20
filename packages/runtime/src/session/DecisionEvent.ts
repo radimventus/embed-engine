@@ -1,6 +1,8 @@
 /**
  * Semantic Decision Session events (PT-003 / ADR-013).
  * MUST NEVER record UI gestures (ButtonClicked, AccordionOpened, …).
+ * QuestionOpened is a decision-interest fact (which question the Client opened),
+ * not a UI accordion gesture.
  */
 
 export type Timestamp = number;
@@ -41,6 +43,12 @@ export type DecisionEvent =
       readonly type: "QuestionAnswered";
       readonly questionId: string;
       readonly answerId: string;
+      readonly at: Timestamp;
+    }
+  | {
+      readonly type: "QuestionOpened";
+      readonly questionId: string;
+      readonly prompt?: string;
       readonly at: Timestamp;
     };
 

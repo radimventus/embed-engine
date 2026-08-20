@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { prioritySupplementaryQuestionId } from '@embed-engine/platform-access';
+
 import { scrollToSection, scrollElementIntoView, PRIORITY_BRIDGE_ANCHOR_ID } from '../../foundation/scrollToSection';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import {
   buildPriorityHypothesisSummary,
   coachingProgressPercent,
@@ -79,10 +82,12 @@ function scrollToConversion(): void {
 
 /**
  * Priority coaching dialogue (PT-PRIORITY-CONVERSATION-03).
- * User-paced beats with thinking pause — no Runtime dispatch.
+ * User-paced beats with thinking pause.
+ * Supplementary answers persist as AnswerQuestion on the Decision Session.
  */
 export function usePriorityConversation(): PriorityConversationView {
   const { cards, selectedCount, categories } = usePriorityExperience();
+  const { dispatch } = useDecisionSessionRuntime();
   const progressRef = useRef<PriorityConversationProgress>(
     createPriorityConversationProgress(),
   );
@@ -390,6 +395,11 @@ export function usePriorityConversation(): PriorityConversationView {
       priorityId,
       optionId,
       at: Date.now(),
+    });
+    dispatch({
+      type: 'AnswerQuestion',
+      questionId: prioritySupplementaryQuestionId(priorityId),
+      answerId: optionId,
     });
 
     if (isFinalQuestion) {

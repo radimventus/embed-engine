@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 
 import {
@@ -136,5 +139,16 @@ describe('Runtime presentation ownership (ED-DA-01R)', () => {
       faq.find((item) => item.id === 'energy-07')!.answer,
       /trvalou energetickou soběstačnost/i,
     );
+  });
+
+  it('persists FAQ open only after an explicit user expand', () => {
+    const here = dirname(fileURLToPath(import.meta.url));
+    const advisor = readFileSync(join(here, 'AIAdvisor.tsx'), 'utf8');
+    const list = readFileSync(join(here, 'SuggestedQuestions.tsx'), 'utf8');
+    assert.match(advisor, /type: 'OpenQuestion'/);
+    assert.match(advisor, /onQuestionOpened={handleQuestionOpened}/);
+    assert.match(list, /if \(next\) \{/);
+    assert.match(list, /onQuestionOpened\?\.\(item\)/);
+    assert.doesNotMatch(list, /useEffect\(\(\) => \{\s*onQuestionOpened/);
   });
 });

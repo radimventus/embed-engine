@@ -156,5 +156,7 @@ describe('Sales House operational desk', () => {
     ]);
     assert.equal(clients[0]?.houses[0]?.score, null);
     assert.equal(clients[0]?.houses[0]?.tags.includes('Žádost o audit'), false);
+    assert.equal(clients[0]?.houses[0]?.priorities.length, 3);
+    assert.equal(clients[0]?.houses[0]?.openedQuestions.length, 0);
   });
 });

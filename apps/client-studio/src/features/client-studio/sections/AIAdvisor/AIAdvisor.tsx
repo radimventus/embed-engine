@@ -51,7 +51,7 @@ function createAssistantSeed(text: string): Message {
  * AI Advisor — Priority coaching FAQ + seeded chat; live replies via AIService.
  */
 export function AIAdvisor() {
-  const { experience, houseKnowledge } = useDecisionSessionRuntime();
+  const { experience, houseKnowledge, dispatch } = useDecisionSessionRuntime();
   const decision = useDecisionContext();
   const analytics = useOptionalDecisionAnalytics();
   const ai = experience.context.decision.ai;
@@ -93,6 +93,14 @@ export function AIAdvisor() {
 
   const handleQuestionSelect = (question: string) => {
     setInputValue(question);
+  };
+
+  const handleQuestionOpened = (item: (typeof faqItems)[number]) => {
+    dispatch({
+      type: 'OpenQuestion',
+      questionId: item.id,
+      prompt: item.question,
+    });
   };
 
   const handleSend = () => {
@@ -198,7 +206,11 @@ export function AIAdvisor() {
       <div className={AI_ADVISOR_GRID_CLASS}>
         <div className={AI_ADVISOR_FAQ_COLUMN_CELL_CLASS}>
           <FaqTitle />
-          <FaqList items={faqItems} onQuestionSelect={handleQuestionSelect} />
+          <FaqList
+            items={faqItems}
+            onQuestionSelect={handleQuestionSelect}
+            onQuestionOpened={handleQuestionOpened}
+          />
         </div>
 
         <div className={AI_ADVISOR_HEADER_CELL_CLASS}>

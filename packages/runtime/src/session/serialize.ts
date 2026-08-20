@@ -121,6 +121,11 @@ function isDecisionEvent(value: unknown): value is DecisionEvent {
         typeof value.questionId === "string" &&
         typeof value.answerId === "string"
       );
+    case "QuestionOpened":
+      return (
+        typeof value.questionId === "string" &&
+        (value.prompt === undefined || typeof value.prompt === "string")
+      );
     default:
       return false;
   }

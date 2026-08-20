@@ -1,8 +1,19 @@
+import {
+  AUDIT_LAND_QUESTION_ID,
+  AUDIT_LAND_SALES_DETAIL,
+  lookupAuditLandLabel,
+  lookupOpenedQuestionLabel,
+  lookupSupplementaryAnswer,
+  lookupSupplementaryQuestion,
+  prioritySupplementaryQuestionId,
+} from './decisionSignalCatalog';
 import type {
   OperationalDecisionEvent,
   OperationalDecisionSnapshot,
   OperationalJourneyStep,
+  OperationalOpenedQuestion,
   OperationalLeadRecord,
+  OperationalPriorityAnswer,
   OperationalPrioritySelection,
   ProfilZajemce,
 } from './operationalTypes';
@@ -50,6 +61,59 @@ function isRoomSelected(
   return event.type === 'RoomSelected' && typeof (event as { roomId?: unknown }).roomId === 'string';
 }
 
+function isQuestionAnswered(
+  event: OperationalDecisionEvent,
+): event is Extract<OperationalDecisionEvent, { type: 'QuestionAnswered' }> {
+  return (
+    event.type === 'QuestionAnswered' &&
+    typeof (event as { questionId?: unknown }).questionId === 'string' &&
+    typeof (event as { answerId?: unknown }).answerId === 'string'
+  );
+}
+
+function isQuestionOpened(
+  event: OperationalDecisionEvent,
+): event is Extract<OperationalDecisionEvent, { type: 'QuestionOpened' }> {
+  return (
+    event.type === 'QuestionOpened' &&
+    typeof (event as { questionId?: unknown }).questionId === 'string'
+  );
+}
+
+function latestAnswersByQuestion(
+  events: readonly OperationalDecisionEvent[],
+): ReadonlyMap<string, { readonly answerId: string; readonly at: number }> {
+  const latest = new Map<string, { readonly answerId: string; readonly at: number }>();
+  for (const event of events) {
+    if (!isQuestionAnswered(event)) {
+      continue;
+    }
+    latest.set(event.questionId, { answerId: event.answerId, at: event.at });
+  }
+  return latest;
+}
+
+function supplementaryAnswerForPriority(
+  priorityId: string,
+  answers: ReadonlyMap<string, { readonly answerId: string; readonly at: number }>,
+): OperationalPriorityAnswer | null {
+  const questionId = prioritySupplementaryQuestionId(priorityId);
+  const recorded = answers.get(questionId);
+  if (recorded === undefined) {
+    return null;
+  }
+  const questionLabel =
+    lookupSupplementaryQuestion(priorityId) ?? questionId;
+  const answerLabel =
+    lookupSupplementaryAnswer(priorityId, recorded.answerId) ?? recorded.answerId;
+  return {
+    questionId,
+    questionLabel,
+    answerId: recorded.answerId,
+    answerLabel,
+  };
+}
+
 export function selectedPrioritiesFromSnapshot(
   snapshot: OperationalDecisionSnapshot,
 ): readonly OperationalPrioritySelection[] {
@@ -57,12 +121,57 @@ export function selectedPrioritiesFromSnapshot(
     snapshot.priorityIds.length > 0
       ? snapshot.priorityIds
       : [...snapshot.events].reverse().find(isPriorityChanged)?.priorityIds ?? [];
+  const answers = latestAnswersByQuestion(snapshot.events);
 
   return ids.map((id) => ({
     id,
     label: priorityLabel(id),
     importance: snapshot.priorityIntensities?.[id] ?? null,
+    answer: supplementaryAnswerForPriority(id, answers),
   }));
+}
+
+export function openedQuestionsFromSnapshot(
+  snapshot: OperationalDecisionSnapshot,
+): readonly OperationalOpenedQuestion[] {
+  const unique = new Map<string, OperationalOpenedQuestion>();
+  for (const event of snapshot.events) {
+    if (!isQuestionOpened(event)) {
+      continue;
+    }
+    if (unique.has(event.questionId)) {
+      continue;
+    }
+    unique.set(event.questionId, {
+      questionId: event.questionId,
+      label: lookupOpenedQuestionLabel(event.questionId, event.prompt),
+    });
+  }
+  return [...unique.values()];
+}
+
+export function auditLandFromSnapshot(
+  snapshot: OperationalDecisionSnapshot,
+): {
+  readonly answerId: string;
+  readonly label: string;
+  readonly detail: string;
+} | null {
+  const recorded = latestAnswersByQuestion(snapshot.events).get(
+    AUDIT_LAND_QUESTION_ID,
+  );
+  if (recorded === undefined) {
+    return null;
+  }
+  const label = lookupAuditLandLabel(recorded.answerId);
+  if (label === null) {
+    return null;
+  }
+  return {
+    answerId: recorded.answerId,
+    label,
+    detail: AUDIT_LAND_SALES_DETAIL[recorded.answerId] ?? label,
+  };
 }
 
 function strongestPriority(
@@ -83,6 +192,8 @@ function strongestPriority(
 function journeyFromSnapshot(
   snapshot: OperationalDecisionSnapshot,
   converted: boolean,
+  land: ReturnType<typeof auditLandFromSnapshot>,
+  openedQuestions: readonly OperationalOpenedQuestion[],
 ): readonly OperationalJourneyStep[] {
   const steps: OperationalJourneyStep[] = [];
   const seenRooms = new Set<string>();
@@ -124,6 +235,24 @@ function journeyFromSnapshot(
     });
   }
 
+  if (openedQuestions.length > 0) {
+    steps.push({
+      module: 'FAQ',
+      title: 'Otevřené otázky',
+      detail: openedQuestions.map((item) => item.label).join(', '),
+      completed: true,
+    });
+  }
+
+  if (land !== null) {
+    steps.push({
+      module: 'Audit',
+      title: land.label,
+      detail: land.detail,
+      completed: true,
+    });
+  }
+
   if (converted) {
     steps.push({
       module: 'Zachycení kontaktu',
@@ -148,6 +277,7 @@ export function projectLeadProfilZajemce(input: {
       location: null,
       tags: [],
       priorities: [],
+      openedQuestions: [],
       insight:
         'Zájemce odeslal žádost o posouzení. Rozhodovací relace k tomuto kontaktu není k dispozici.',
       score: null,
@@ -164,20 +294,30 @@ export function projectLeadProfilZajemce(input: {
   }
 
   const priorities = selectedPrioritiesFromSnapshot(snapshot);
+  const openedQuestions = openedQuestionsFromSnapshot(snapshot);
+  const land = auditLandFromSnapshot(snapshot);
   const strongest = strongestPriority(priorities);
   const insight =
     strongest === null
       ? 'Zájemce odeslal žádost o posouzení. Zachycené priority zatím nejsou k dispozici.'
-      : `Nejsilnější zachycená priorita: ${strongest.label}.`;
+      : strongest.answer === null
+        ? `Nejsilnější zachycená priorita: ${strongest.label}.`
+        : `Nejsilnější zachycená priorita: ${strongest.label}. ${strongest.answer.answerLabel}.`;
 
   return {
-    land: 'Nezadáno',
+    land: land?.label ?? 'Nezadáno',
     location: null,
     tags: priorities.map((item) => item.label),
     priorities,
+    openedQuestions,
     insight,
     score: null,
-    journey: journeyFromSnapshot(snapshot, lead.status === 'accepted'),
+    journey: journeyFromSnapshot(
+      snapshot,
+      lead.status === 'accepted',
+      land,
+      openedQuestions,
+    ),
   };
 }
 

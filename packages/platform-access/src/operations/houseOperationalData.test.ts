@@ -417,6 +417,156 @@ describe('House operational data path', () => {
       true,
     );
     assert.equal(aggregateHouseOperations(cases).highIntentCount, 0);
+    assert.deepEqual(cases[0]?.profilZajemce.openedQuestions, []);
+    assert.equal(
+      cases[0]?.profilZajemce.priorities.every((item) => item.answer === null),
+      true,
+    );
+    assert.equal(cases[0]?.profilZajemce.land, 'Nezadáno');
+  });
+
+  it('projects supplementary answers, unique FAQ opens, and audit land intent', () => {
+    const accepted = lead({
+      leadId: 'lead-signals',
+      houseId: vpdA.houseId,
+      decisionSessionId: '33333333-3333-4333-8333-333333333333',
+    });
+    const snapshot: OperationalDecisionSnapshot = {
+      decisionSessionId: '33333333-3333-4333-8333-333333333333',
+      companyId: vpdA.companyId,
+      projectId: vpdA.projectId,
+      houseId: vpdA.houseId,
+      priorityIds: ['layout', 'plot', 'energy'],
+      priorityIntensities: {
+        layout: 0.9,
+        plot: 0.6,
+        energy: 0.3,
+      },
+      activeRoomId: 'kitchen',
+      events: [
+        { type: 'RoomSelected', roomId: 'kitchen', at: 1 },
+        {
+          type: 'PriorityChanged',
+          priorityIds: ['layout', 'plot', 'energy'],
+          intensities: [
+            { priorityId: 'layout', importance: 0.9 },
+            { priorityId: 'plot', importance: 0.6 },
+            { priorityId: 'energy', importance: 0.3 },
+          ],
+          at: 2,
+        },
+        {
+          type: 'QuestionAnswered',
+          questionId: 'priority.energy',
+          answerId: 'comfort',
+          at: 3,
+        },
+        {
+          type: 'QuestionOpened',
+          questionId: 'energy-07',
+          prompt: 'Jak poznám, že energie domu bude fungovat i v běžném dni?',
+          at: 4,
+        },
+        {
+          type: 'QuestionOpened',
+          questionId: 'energy-07',
+          prompt: 'Jak poznám, že energie domu bude fungovat i v běžném dni?',
+          at: 5,
+        },
+        {
+          type: 'QuestionOpened',
+          questionId: 'layout-02',
+          prompt: 'Jak velký dům budu ve skutečnosti potřebovat?',
+          at: 6,
+        },
+        {
+          type: 'QuestionAnswered',
+          questionId: 'audit.land',
+          answerId: 'owned',
+          at: 7,
+        },
+      ],
+    };
+    const cases = selectHouseOperationalCases({
+      ...vpdA,
+      durableLeads: [accepted],
+      durableSessions: [snapshot],
+    });
+    const profil = cases[0]?.profilZajemce;
+    assert.equal(profil?.score, null);
+    assert.equal(profil?.land, 'Mám pozemek');
+    assert.equal(
+      profil?.priorities.find((item) => item.id === 'energy')?.answer?.answerLabel,
+      'Každodenní komfort',
+    );
+    assert.deepEqual(
+      profil?.openedQuestions.map((item) => item.questionId),
+      ['energy-07', 'layout-02'],
+    );
+    assert.equal(
+      profil?.journey.some((step) => step.module === 'FAQ' && step.detail.includes('energie')),
+      true,
+    );
+    assert.equal(
+      profil?.journey.some(
+        (step) =>
+          step.module === 'Audit' && step.title === 'Mám pozemek',
+      ),
+      true,
+    );
+    assert.equal(
+      profil?.openedQuestions.some((item) => item.questionId === 'unopened-faq'),
+      false,
+    );
+  });
+
+  it('projects searching-plot audit intent separately from has-plot', () => {
+    const accepted = lead({
+      leadId: 'lead-seeking',
+      houseId: vpdA.houseId,
+      decisionSessionId: '44444444-4444-4444-8444-444444444444',
+    });
+    const snapshot: OperationalDecisionSnapshot = {
+      decisionSessionId: '44444444-4444-4444-8444-444444444444',
+      companyId: vpdA.companyId,
+      projectId: vpdA.projectId,
+      houseId: vpdA.houseId,
+      priorityIds: ['plot'],
+      priorityIntensities: { plot: 0.7 },
+      activeRoomId: null,
+      events: [
+        {
+          type: 'PriorityChanged',
+          priorityIds: ['plot'],
+          intensities: [{ priorityId: 'plot', importance: 0.7 }],
+          at: 1,
+        },
+        {
+          type: 'QuestionAnswered',
+          questionId: 'audit.land',
+          answerId: 'seeking',
+          at: 2,
+        },
+      ],
+    };
+    const cases = selectHouseOperationalCases({
+      ...vpdA,
+      durableLeads: [accepted],
+      durableSessions: [snapshot],
+    });
+    const profil = cases[0]?.profilZajemce;
+    assert.equal(profil?.land, 'Hledám pozemek');
+    assert.equal(
+      profil?.journey.some(
+        (step) =>
+          step.module === 'Audit' && step.title === 'Hledám pozemek',
+      ),
+      true,
+    );
+    assert.equal(
+      profil?.journey.some((step) => step.detail === 'Hledá pozemek'),
+      true,
+    );
   });
 
   it('does not correlate a session from another House', () => {

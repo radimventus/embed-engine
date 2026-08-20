@@ -56,10 +56,12 @@ describe('Durable Decision Session client pointer', () => {
     );
   });
 
-  it('persists only semantic Room and Priority commands', () => {
+  it('persists semantic Room, Priority, Answer, and OpenQuestion commands', () => {
     assert.equal(isDurableDecisionCommand('SelectRoom'), true);
     assert.equal(isDurableDecisionCommand('ChangePriority'), true);
-    assert.equal(isDurableDecisionCommand('AnswerQuestion'), false);
+    assert.equal(isDurableDecisionCommand('AnswerQuestion'), true);
+    assert.equal(isDurableDecisionCommand('OpenQuestion'), true);
+    assert.equal(isDurableDecisionCommand('SelectVariant'), false);
   });
 
   it('keeps Embed / Workspace on the same Client persist and restore path', () => {

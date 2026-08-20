@@ -9,6 +9,8 @@ import {
   listCanonicalHouses,
   listCanonicalProjects,
   type HouseOperationalCase,
+  type OperationalOpenedQuestion,
+  type OperationalPrioritySelection,
 } from '@embed-engine/platform-access';
 
 export { HIGH_INTENT_THRESHOLD };
@@ -29,6 +31,8 @@ export type SalesHouseInterest = {
   readonly land: string;
   readonly location?: string;
   readonly tags: readonly string[];
+  readonly priorities: readonly OperationalPrioritySelection[];
+  readonly openedQuestions: readonly OperationalOpenedQuestion[];
   readonly insight: string;
   readonly journey: readonly SalesJourneyStep[];
 };
@@ -103,6 +107,8 @@ export function toSalesClients(
         land: item.profilZajemce.land,
         location: item.profilZajemce.location ?? undefined,
         tags: item.profilZajemce.tags,
+        priorities: item.profilZajemce.priorities,
+        openedQuestions: item.profilZajemce.openedQuestions,
         insight: item.profilZajemce.insight,
         journey: item.profilZajemce.journey,
       },
@@ -153,6 +159,13 @@ export function houseDetailLine(house: SalesHouseInterest): string {
     return `${house.houseName} • ${house.land} (${house.location})`;
   }
   return `${house.houseName} • ${house.land}`;
+}
+
+export function formatPriorityImportance(importance: number | null): string | null {
+  if (importance === null || !Number.isFinite(importance)) {
+    return null;
+  }
+  return `${Math.round(Math.min(1, Math.max(0, importance)) * 100)} %`;
 }
 
 export function clientPrimaryScore(client: SalesClient): number | null {

@@ -18,16 +18,30 @@ export type ProfilZajemce = {
   readonly location: string | null;
   readonly tags: readonly string[];
   readonly priorities: readonly OperationalPrioritySelection[];
+  readonly openedQuestions: readonly OperationalOpenedQuestion[];
   readonly insight: string;
   /** Measured Index rozhodovací jistoty, or null when insufficient / incompatible. */
   readonly score: number | null;
   readonly journey: readonly OperationalJourneyStep[];
 };
 
+export type OperationalPriorityAnswer = {
+  readonly questionId: string;
+  readonly questionLabel: string;
+  readonly answerId: string;
+  readonly answerLabel: string;
+};
+
+export type OperationalOpenedQuestion = {
+  readonly questionId: string;
+  readonly label: string;
+};
+
 export type OperationalPrioritySelection = {
   readonly id: string;
   readonly label: string;
   readonly importance: number | null;
+  readonly answer: OperationalPriorityAnswer | null;
 };
 
 export type HouseOperationalCase = {
@@ -88,6 +102,18 @@ export type OperationalDecisionEvent =
         readonly priorityId: string;
         readonly importance: number;
       }[];
+      readonly at: number;
+    }
+  | {
+      readonly type: 'QuestionAnswered';
+      readonly questionId: string;
+      readonly answerId: string;
+      readonly at: number;
+    }
+  | {
+      readonly type: 'QuestionOpened';
+      readonly questionId: string;
+      readonly prompt?: string;
       readonly at: number;
     }
   | {

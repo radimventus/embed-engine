@@ -231,4 +231,18 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(html, /family=Inter/);
     assert.doesNotMatch(html, /IBM\+Plex\+Sans/);
   });
+
+  it('keeps the sales desk as the single vertical scroll owner', () => {
+    const app = readFileSync(join(salesRoot, 'src/SalesStudioApp.tsx'), 'utf8');
+    const css = readFileSync(join(salesRoot, 'src/index.css'), 'utf8');
+
+    assert.match(app, /data-testid="sales-desk-scroll"/);
+    assert.match(app, /sales-profile-priorities/);
+    assert.match(app, /sales-profile-faq/);
+    assert.match(app, /Otevřené FAQ/);
+    assert.match(app, /Priority a odpovědi/);
+    assert.match(css, /\.sales-desk\s*\{[\s\S]*?overflow-y:\s*auto/);
+    assert.match(css, /#root\s*\{[\s\S]*?overflow:\s*hidden/);
+    assert.doesNotMatch(app, /overflow-y-auto/);
+  });
 });

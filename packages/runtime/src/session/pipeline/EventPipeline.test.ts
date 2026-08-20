@@ -266,4 +266,61 @@ describe("Runtime Event Pipeline", () => {
     assert.equal(result.event.type, "ScenarioActivated");
     assert.equal(result.session.runtimeState.scenarioId, "day-zone");
   });
+
+  it("AnswerQuestion records QuestionAnswered without changing room or priorities", () => {
+    const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
+      housePackage: HOUSE,
+      now: 1,
+    });
+    runtime.dispatch({ type: "SelectRoom", roomId: "room-kitchen" }, 2);
+    const result = runtime.dispatch(
+      {
+        type: "AnswerQuestion",
+        questionId: "priority.energy",
+        answerId: "comfort",
+      },
+      3,
+    );
+    assert.equal(result.ok, true);
+    if (!result.ok) {
+      return;
+    }
+    assert.equal(result.event.type, "QuestionAnswered");
+    if (result.event.type !== "QuestionAnswered") {
+      return;
+    }
+    assert.equal(result.event.questionId, "priority.energy");
+    assert.equal(result.event.answerId, "comfort");
+    assert.equal(result.session.runtimeState.activeRoomId, "room-kitchen");
+  });
+
+  it("OpenQuestion records QuestionOpened as a semantic interest fact", () => {
+    const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
+      housePackage: HOUSE,
+      now: 1,
+    });
+    const result = runtime.dispatch(
+      {
+        type: "OpenQuestion",
+        questionId: "energy-07",
+        prompt: "Jak poznám, že energie domu bude fungovat i v běžném dni?",
+      },
+      2,
+    );
+    assert.equal(result.ok, true);
+    if (!result.ok) {
+      return;
+    }
+    assert.equal(result.event.type, "QuestionOpened");
+    if (result.event.type !== "QuestionOpened") {
+      return;
+    }
+    assert.equal(result.event.questionId, "energy-07");
+    assert.equal(
+      result.event.prompt,
+      "Jak poznám, že energie domu bude fungovat i v běžném dni?",
+    );
+  });
 });

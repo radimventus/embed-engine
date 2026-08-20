@@ -411,6 +411,8 @@ function payloadFromDecisionEvent(
         questionId: event.questionId,
         answerId: event.answerId,
       };
+    case 'QuestionOpened':
+      return { questionId: event.questionId };
     default:
       return {};
   }

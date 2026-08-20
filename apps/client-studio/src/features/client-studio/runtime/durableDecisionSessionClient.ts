@@ -78,6 +78,11 @@ export async function restorePublicDecisionSession(input: {
 
 export function isDurableDecisionCommand(
   type: string,
-): type is 'SelectRoom' | 'ChangePriority' {
-  return type === 'SelectRoom' || type === 'ChangePriority';
+): type is 'SelectRoom' | 'ChangePriority' | 'AnswerQuestion' | 'OpenQuestion' {
+  return (
+    type === 'SelectRoom' ||
+    type === 'ChangePriority' ||
+    type === 'AnswerQuestion' ||
+    type === 'OpenQuestion'
+  );
 }

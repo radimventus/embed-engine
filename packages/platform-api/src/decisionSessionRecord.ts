@@ -36,6 +36,12 @@ export type DurableDecisionEvent =
       readonly questionId: string;
       readonly answerId: string;
       readonly at: number;
+    }
+  | {
+      readonly type: 'QuestionOpened';
+      readonly questionId: string;
+      readonly prompt?: string;
+      readonly at: number;
     };
 
 export type DurableSerializedDecisionSession = {
@@ -179,6 +185,30 @@ function sanitizeEvent(value: unknown): DurableDecisionEvent {
         answerId: value.answerId.trim(),
         at: value.at,
       };
+    case 'QuestionOpened': {
+      if (
+        typeof value.questionId !== 'string' ||
+        value.questionId.trim().length === 0
+      ) {
+        throw new Error('Invalid QuestionOpened event.');
+      }
+      const prompt =
+        typeof value.prompt === 'string' && value.prompt.trim().length > 0
+          ? value.prompt.trim()
+          : undefined;
+      return prompt === undefined
+        ? {
+            type: 'QuestionOpened',
+            questionId: value.questionId.trim(),
+            at: value.at,
+          }
+        : {
+            type: 'QuestionOpened',
+            questionId: value.questionId.trim(),
+            prompt,
+            at: value.at,
+          };
+    }
     default:
       throw new Error('Unsupported decision session event.');
   }
