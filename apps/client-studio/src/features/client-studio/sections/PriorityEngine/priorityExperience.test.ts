@@ -143,4 +143,11 @@ describe('Priority Experience (CSCB-04)', () => {
     const engine = read('PriorityEngine.tsx');
     assert.equal(engine.includes('DecisionStoryRecommendationBanner'), false);
   });
+
+  it('uses the canonical conversation phase for the shared skip/continue CTA', () => {
+    const engine = read('PriorityEngine.tsx');
+    assert.match(engine, /phase === "complete" \? "Pokračovat →" : "Přeskočit →"/);
+    assert.match(engine, /onClick={onContinueToRacio}/);
+    assert.match(engine, /phase === "complete" && shouldShowDelayedRacioBridge/);
+  });
 });

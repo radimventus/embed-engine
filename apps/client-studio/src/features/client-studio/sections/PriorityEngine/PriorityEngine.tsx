@@ -101,37 +101,35 @@ function PriorityEngineContent({
         </div>
         <PriorityChapterBridge />
       </section>
-      {phase === "complete" ? (
-        <div
-          className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-5 px-section mobile:grid-cols-1 mobile:gap-3"
-          data-testid="priority-racio-controls"
-          data-racio-bridge-visible={
-            shouldShowDelayedRacioBridge ? "true" : "false"
-          }
+      <div
+        className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-5 px-section mobile:grid-cols-1 mobile:gap-3"
+        data-testid="priority-racio-controls"
+        data-racio-bridge-visible={
+          shouldShowDelayedRacioBridge ? "true" : "false"
+        }
+      >
+        <button
+          type="button"
+          onClick={onBack}
+          className={`${JOURNEY_CTA_SECONDARY_CLASS} justify-self-start justify-start mobile:w-full`}
         >
-          <button
-            type="button"
-            onClick={onBack}
-            className={`${JOURNEY_CTA_SECONDARY_CLASS} justify-self-start justify-start mobile:w-full`}
-          >
-            ← Zpět
-          </button>
-          {shouldShowDelayedRacioBridge ? (
-            <div className="min-w-0 justify-self-center mobile:w-full">
-              <PriorityRacioBridge onContinue={onContinueToRacio} />
-            </div>
-          ) : (
-            <span aria-hidden="true" />
-          )}
-          <button
-            type="button"
-            onClick={onContinueToRacio}
-            className={`${JOURNEY_CTA_PRIMARY_CLASS} justify-self-end mobile:w-full`}
-          >
-            Pokračovat →
-          </button>
-        </div>
-      ) : null}
+          ← Zpět
+        </button>
+        {phase === "complete" && shouldShowDelayedRacioBridge ? (
+          <div className="min-w-0 justify-self-center mobile:w-full">
+            <PriorityRacioBridge onContinue={onContinueToRacio} />
+          </div>
+        ) : (
+          <span aria-hidden="true" />
+        )}
+        <button
+          type="button"
+          onClick={onContinueToRacio}
+          className={`${JOURNEY_CTA_PRIMARY_CLASS} justify-self-end mobile:w-full`}
+        >
+          {phase === "complete" ? "Pokračovat →" : "Přeskočit →"}
+        </button>
+      </div>
     </>
   );
 }
