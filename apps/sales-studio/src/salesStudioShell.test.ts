@@ -237,12 +237,16 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     const css = readFileSync(join(salesRoot, 'src/index.css'), 'utf8');
 
     assert.match(app, /data-testid="sales-desk-scroll"/);
+    assert.match(app, /data-testid="sales-decision-journey"/);
     assert.match(app, /sales-profile-priorities/);
     assert.match(app, /sales-profile-faq/);
     assert.match(app, /Otevřené FAQ/);
     assert.match(app, /Priority a odpovědi/);
+    assert.doesNotMatch(app, /Navštívená místnost/);
+    assert.doesNotMatch(app, /Výběr priorit/);
     assert.match(css, /\.sales-desk\s*\{[\s\S]*?overflow-y:\s*auto/);
     assert.match(css, /#root\s*\{[\s\S]*?overflow:\s*hidden/);
+    assert.doesNotMatch(css, /\.sales-desk__timeline\s*\{[\s\S]*?overflow-y:\s*auto/);
     assert.doesNotMatch(app, /overflow-y-auto/);
   });
 });

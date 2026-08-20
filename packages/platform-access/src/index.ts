@@ -540,6 +540,7 @@ export {
   selectScopedOperationalCases,
   REFERENCE_CASE_TEMPLATE_IDS,
   CANONICAL_PRIORITY_LABELS,
+  formatPriorityImportance,
   projectLeadProfilZajemce,
   REAL_DECISION_CERTAINTY_AUTHORITY,
   type HouseOperationalAggregate,

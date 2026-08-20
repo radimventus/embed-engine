@@ -329,7 +329,7 @@ describe('House operational data path', () => {
     assert.equal(vpd[0]?.profilZajemce.score, null);
     assert.equal(
       vpd[0]?.profilZajemce.journey.some(
-        (step) => step.detail === 'Odeslána žádost o audit',
+        (step) => step.title === 'Odeslal žádost o audit.',
       ),
       true,
     );
@@ -392,19 +392,24 @@ describe('House operational data path', () => {
     );
     assert.equal(
       cases[0]?.profilZajemce.journey.some(
-        (step) => step.module === 'Prohlídka domu' && step.detail === 'room-living',
+        (step) =>
+          step.module === 'Prohlídka domu' &&
+          step.title.startsWith('Prošel') &&
+          !step.detail.includes('room-living'),
       ),
       true,
     );
     assert.equal(
       cases[0]?.profilZajemce.journey.some(
-        (step) => step.module === 'Priority' && step.title === 'Výběr priorit',
+        (step) =>
+          step.module === 'Priority' &&
+          (step.lines ?? []).some((line) => line.includes('Dispozice')),
       ),
       true,
     );
     assert.equal(
       cases[0]?.profilZajemce.journey.some(
-        (step) => step.detail === 'Odeslána žádost o audit',
+        (step) => step.title === 'Odeslal žádost o audit.',
       ),
       true,
     );
@@ -504,13 +509,19 @@ describe('House operational data path', () => {
       ['energy-07', 'layout-02'],
     );
     assert.equal(
-      profil?.journey.some((step) => step.module === 'FAQ' && step.detail.includes('energie')),
+      profil?.journey.some(
+        (step) =>
+          step.module === 'FAQ' &&
+          step.title === 'Otevřené otázky · 2' &&
+          (step.lines ?? []).some((line) => line.includes('energie')),
+      ),
       true,
     );
     assert.equal(
       profil?.journey.some(
         (step) =>
-          step.module === 'Audit' && step.title === 'Mám pozemek',
+          step.module === 'Pozemek' &&
+          step.title === 'Má pozemek a chce ověřit jeho vhodnost pro tento dům.',
       ),
       true,
     );
@@ -559,13 +570,13 @@ describe('House operational data path', () => {
     assert.equal(
       profil?.journey.some(
         (step) =>
-          step.module === 'Audit' && step.title === 'Hledám pozemek',
+          step.module === 'Pozemek' && step.title === 'Hledá pozemek.',
       ),
       true,
     );
     assert.equal(
-      profil?.journey.some((step) => step.detail === 'Hledá pozemek'),
-      true,
+      profil?.journey.filter((step) => step.module === 'Pozemek').length,
+      1,
     );
   });
 

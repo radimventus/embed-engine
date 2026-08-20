@@ -371,7 +371,7 @@ export function SalesStudioApp() {
                       data-testid="sales-profile-faq"
                     >
                       <p className="platform-type-section sales-desk__priorities-label">
-                        Otevřené FAQ
+                        Otevřené FAQ · {activeHouse.openedQuestions.length}
                       </p>
                       <ul className="sales-desk__fact-list">
                         {activeHouse.openedQuestions.map((item) => (
@@ -406,22 +406,41 @@ export function SalesStudioApp() {
               description="Pasivní chování vs. reálné rozhodovací signály"
             >
               {activeHouse !== null ? (
-                <div className="sales-desk__timeline">
+                <div
+                  className="sales-desk__timeline"
+                  data-testid="sales-decision-journey"
+                >
                   {activeHouse.journey.map((step) => {
                     const stateClass = step.active
                       ? ' sales-desk__step--active'
                       : step.completed
                         ? ' sales-desk__step--completed'
                         : '';
+                    const lines = step.lines ?? [];
                     return (
                       <div
-                        key={`${step.module}-${step.title}`}
+                        key={step.module}
                         className={`sales-desk__step${stateClass}`}
                       >
                         <span className="sales-desk__step-node" aria-hidden />
                         <p className="sales-desk__step-module">{step.module}</p>
-                        <p className="sales-desk__step-title">{step.title}</p>
-                        <p className="sales-desk__step-detail">{step.detail}</p>
+                        {step.title.length > 0 ? (
+                          <p className="sales-desk__step-title">{step.title}</p>
+                        ) : null}
+                        {lines.length > 0 ? (
+                          <ul className="sales-desk__step-lines">
+                            {lines.map((line, index) => (
+                              <li
+                                key={`${step.module}-${index}`}
+                                className="sales-desk__step-line"
+                              >
+                                {line}
+                              </li>
+                            ))}
+                          </ul>
+                        ) : step.detail.length > 0 ? (
+                          <p className="sales-desk__step-detail">{step.detail}</p>
+                        ) : null}
                       </div>
                     );
                   })}

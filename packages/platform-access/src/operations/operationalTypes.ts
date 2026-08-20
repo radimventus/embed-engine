@@ -8,6 +8,8 @@ export type OperationalJourneyStep = {
   readonly module: string;
   readonly title: string;
   readonly detail: string;
+  /** Optional concrete items (FAQ questions, final Priority rows). */
+  readonly lines?: readonly string[];
   readonly completed?: boolean;
   readonly active?: boolean;
 };
@@ -70,6 +72,8 @@ export type OperationalHouseScope = {
   readonly houseId: string;
   readonly houseName: string;
   readonly dataMode: HouseDataMode;
+  /** Canonical rooms.csv names for this House, when available. */
+  readonly roomNames?: Readonly<Record<string, string>>;
 };
 
 export type OperationalLeadRecord = {

@@ -158,5 +158,19 @@ describe('Sales House operational desk', () => {
     assert.equal(clients[0]?.houses[0]?.tags.includes('Žádost o audit'), false);
     assert.equal(clients[0]?.houses[0]?.priorities.length, 3);
     assert.equal(clients[0]?.houses[0]?.openedQuestions.length, 0);
+    const journey = clients[0]?.houses[0]?.journey ?? [];
+    assert.equal(
+      journey.filter((step) => step.module === 'Prohlídka domu').length,
+      1,
+    );
+    assert.equal(
+      journey.some((step) => step.detail === 'room-living'),
+      false,
+    );
+    assert.equal(journey.filter((step) => step.module === 'Priority').length, 1);
+    assert.equal(
+      (journey.find((step) => step.module === 'Priority')?.lines ?? []).join(' '),
+      'Dispozice · 90 % Energie · 40 % Pozemek · 20 %',
+    );
   });
 });

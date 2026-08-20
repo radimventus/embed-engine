@@ -74,6 +74,7 @@ function leadToCase(
   lead: OperationalLeadRecord,
   houseName: string,
   snapshot: OperationalDecisionSnapshot | null,
+  roomNames?: Readonly<Record<string, string>>,
 ): HouseOperationalCase {
   return {
     caseId: lead.leadId,
@@ -90,7 +91,7 @@ function leadToCase(
       intent: lead.intent,
       status: lead.status,
     },
-    profilZajemce: projectLeadProfilZajemce({ lead, snapshot }),
+    profilZajemce: projectLeadProfilZajemce({ lead, snapshot, roomNames }),
   };
 }
 
@@ -122,6 +123,7 @@ export function selectHouseOperationalCases(input: {
   readonly dataMode: HouseDataMode;
   readonly durableLeads: readonly OperationalLeadRecord[];
   readonly durableSessions?: readonly OperationalDecisionSnapshot[];
+  readonly roomNames?: Readonly<Record<string, string>>;
 }): readonly HouseOperationalCase[] {
   const companyId = input.companyId.trim();
   const projectId = input.projectId.trim();
@@ -153,7 +155,12 @@ export function selectHouseOperationalCases(input: {
     projectId,
     houseId,
   ).map((lead) =>
-    leadToCase(lead, input.houseName, resolveCorrelatedSnapshot(lead, sessions)),
+    leadToCase(
+      lead,
+      input.houseName,
+      resolveCorrelatedSnapshot(lead, sessions),
+      input.roomNames,
+    ),
   );
 
   return [...referenceCases, ...leadCases];
@@ -198,6 +205,7 @@ export function selectScopedOperationalCases(input: {
       dataMode: house.dataMode,
       durableLeads: input.durableLeads,
       durableSessions: input.durableSessions,
+      roomNames: house.roomNames,
     }),
   );
 }

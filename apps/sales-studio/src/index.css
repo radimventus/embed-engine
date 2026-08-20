@@ -469,6 +469,18 @@ body {
   color: #64748b;
 }
 
+.sales-desk__step-lines {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sales-desk__step-line {
+  font-size: 12px;
+  line-height: 1.45;
+  color: #64748b;
+}
+
 @media (max-width: 1100px) {
   .sales-desk__grid {
     grid-template-columns: 1fr;

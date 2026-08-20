@@ -15,8 +15,8 @@ export const AUDIT_LAND_LABELS: Readonly<Record<string, string>> = Object.freeze
 export const AUDIT_LAND_SALES_DETAIL: Readonly<Record<string, string>> =
   Object.freeze({
     [AUDIT_LAND_HAS_PLOT]:
-      'Má pozemek / chce ověřit konkrétní pozemek pro tento dům',
-    [AUDIT_LAND_SEARCHING_PLOT]: 'Hledá pozemek',
+      'Má pozemek a chce ověřit jeho vhodnost pro tento dům.',
+    [AUDIT_LAND_SEARCHING_PLOT]: 'Hledá pozemek.',
   });
 
 export function prioritySupplementaryQuestionId(priorityId: string): string {

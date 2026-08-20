@@ -21,9 +21,16 @@ export {
 } from './decisionSignalCatalog';
 export {
   CANONICAL_PRIORITY_LABELS,
+  formatPriorityImportance,
   projectLeadProfilZajemce,
   REAL_DECISION_CERTAINTY_AUTHORITY,
+  SALES_CONVERSION_JOURNEY_TITLE,
 } from './projectLeadProfil';
+export {
+  formatVisitedRoomsTitle,
+  lookupRoomSalesLabel,
+  parseRoomsCsv,
+} from './lookupRoomSalesLabel';
 export {
   REFERENCE_CASE_TEMPLATE_IDS,
   REFERENCE_CASE_TEMPLATES,

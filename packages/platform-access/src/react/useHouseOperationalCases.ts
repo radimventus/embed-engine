@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { listWorkspaceHouses } from '../domain/workspaceHouseProjection';
 import { fetchHouseOperationalLeads } from '../api/houseOperationalLeadsClient';
 import { fetchHouseOperationalSessions } from '../api/houseOperationalSessionsClient';
+import { fetchRoomNamesByHouseId } from '../api/houseRoomNamesClient';
 import { aggregateHouseOperations } from '../operations/aggregateHouseOperations';
 import {
   selectScopedOperationalCases,
@@ -34,14 +35,19 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
   const [durableSessions, setDurableSessions] = useState<
     readonly OperationalDecisionSnapshot[]
   >([]);
+  const [roomNamesByHouseId, setRoomNamesByHouseId] = useState<
+    Readonly<Record<string, Readonly<Record<string, string>>>>
+  >({});
 
   useEffect(() => {
     if (companyId === null || projectId === null) {
       setDurableLeads([]);
       setDurableSessions([]);
+      setRoomNamesByHouseId({});
       return;
     }
     let cancelled = false;
+    const houses = listWorkspaceHouses(projectId);
     void Promise.all([
       fetchHouseOperationalLeads({
         companyId,
@@ -53,10 +59,12 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
         projectId,
         houseId: activeHouseId,
       }),
-    ]).then(([leads, sessions]) => {
+      fetchRoomNamesByHouseId({ houses }),
+    ]).then(([leads, sessions, roomNames]) => {
       if (!cancelled) {
         setDurableLeads(leads);
         setDurableSessions(sessions);
+        setRoomNamesByHouseId(roomNames);
       }
     });
     return () => {
@@ -78,6 +86,7 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
       houseId: house.houseId,
       houseName: house.name,
       dataMode: house.dataMode,
+      roomNames: roomNamesByHouseId[house.houseId],
     }));
     const cases = selectScopedOperationalCases({
       companyId,
@@ -94,5 +103,5 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
       projectId,
       activeHouseId,
     };
-  }, [activeHouseId, companyId, durableLeads, durableSessions, projectId]);
+  }, [activeHouseId, companyId, durableLeads, durableSessions, projectId, roomNamesByHouseId]);
 }

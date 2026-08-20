@@ -7,6 +7,10 @@ import {
   lookupSupplementaryQuestion,
   prioritySupplementaryQuestionId,
 } from './decisionSignalCatalog';
+import {
+  formatVisitedRoomsTitle,
+  lookupRoomSalesLabel,
+} from './lookupRoomSalesLabel';
 import type {
   OperationalDecisionEvent,
   OperationalDecisionSnapshot,
@@ -45,6 +49,40 @@ export const REAL_DECISION_CERTAINTY_AUTHORITY = 'unscored' as const;
 
 export function priorityLabel(priorityId: string): string {
   return CANONICAL_PRIORITY_LABELS[priorityId] ?? priorityId;
+}
+
+export function formatPriorityImportance(importance: number | null): string | null {
+  if (importance === null || !Number.isFinite(importance)) {
+    return null;
+  }
+  return `${Math.round(Math.min(1, Math.max(0, importance)) * 100)} %`;
+}
+
+export const SALES_CONVERSION_JOURNEY_TITLE = 'Odeslal žádost o audit.';
+
+function conversionJourneyStep(): OperationalJourneyStep {
+  return {
+    module: 'Konverze',
+    title: SALES_CONVERSION_JOURNEY_TITLE,
+    detail: '',
+    completed: true,
+    active: true,
+  };
+}
+
+function visitedRoomIdsFromSnapshot(
+  snapshot: OperationalDecisionSnapshot,
+): readonly string[] {
+  const seen = new Set<string>();
+  const ordered: string[] = [];
+  for (const event of snapshot.events) {
+    if (!isRoomSelected(event) || seen.has(event.roomId)) {
+      continue;
+    }
+    seen.add(event.roomId);
+    ordered.push(event.roomId);
+  }
+  return ordered;
 }
 
 function isPriorityChanged(
@@ -194,43 +232,34 @@ function journeyFromSnapshot(
   converted: boolean,
   land: ReturnType<typeof auditLandFromSnapshot>,
   openedQuestions: readonly OperationalOpenedQuestion[],
+  priorities: readonly OperationalPrioritySelection[],
+  roomNames?: Readonly<Record<string, string>>,
 ): readonly OperationalJourneyStep[] {
   const steps: OperationalJourneyStep[] = [];
-  const seenRooms = new Set<string>();
-  let sawPriority = false;
-  let changedPriority = false;
-
-  for (const event of snapshot.events) {
-    if (isRoomSelected(event) && !seenRooms.has(event.roomId)) {
-      seenRooms.add(event.roomId);
-      steps.push({
-        module: 'Prohlídka domu',
-        title: 'Navštívená místnost',
-        detail: event.roomId,
-        completed: true,
-      });
-    }
-    if (isPriorityChanged(event)) {
-      if (!sawPriority) {
-        sawPriority = true;
-        steps.push({
-          module: 'Priority',
-          title: 'Výběr priorit',
-          detail: event.priorityIds.map(priorityLabel).join(', '),
-          completed: true,
-        });
-      } else {
-        changedPriority = true;
-      }
-    }
+  const roomIds = visitedRoomIdsFromSnapshot(snapshot);
+  if (roomIds.length > 0) {
+    const labels = roomIds.map((roomId) =>
+      lookupRoomSalesLabel(roomId, roomNames),
+    );
+    steps.push({
+      module: 'Prohlídka domu',
+      title: formatVisitedRoomsTitle(labels.length),
+      detail: labels.join(', '),
+      completed: true,
+    });
   }
 
-  if (changedPriority) {
-    const latest = [...snapshot.events].reverse().find(isPriorityChanged);
+  if (priorities.length > 0) {
     steps.push({
       module: 'Priority',
-      title: 'Úprava priorit',
-      detail: (latest?.priorityIds ?? []).map(priorityLabel).join(', '),
+      title: '',
+      detail: '',
+      lines: priorities.map((priority) => {
+        const importance = formatPriorityImportance(priority.importance);
+        return importance === null
+          ? priority.label
+          : `${priority.label} · ${importance}`;
+      }),
       completed: true,
     });
   }
@@ -238,29 +267,24 @@ function journeyFromSnapshot(
   if (openedQuestions.length > 0) {
     steps.push({
       module: 'FAQ',
-      title: 'Otevřené otázky',
-      detail: openedQuestions.map((item) => item.label).join(', '),
+      title: `Otevřené otázky · ${openedQuestions.length}`,
+      detail: '',
+      lines: openedQuestions.map((item) => item.label),
       completed: true,
     });
   }
 
   if (land !== null) {
     steps.push({
-      module: 'Audit',
-      title: land.label,
-      detail: land.detail,
+      module: 'Pozemek',
+      title: land.detail,
+      detail: '',
       completed: true,
     });
   }
 
   if (converted) {
-    steps.push({
-      module: 'Zachycení kontaktu',
-      title: 'Žádost o audit',
-      detail: 'Odeslána žádost o audit',
-      completed: true,
-      active: true,
-    });
+    steps.push(conversionJourneyStep());
   }
 
   return steps;
@@ -269,8 +293,9 @@ function journeyFromSnapshot(
 export function projectLeadProfilZajemce(input: {
   readonly lead: OperationalLeadRecord;
   readonly snapshot: OperationalDecisionSnapshot | null;
+  readonly roomNames?: Readonly<Record<string, string>>;
 }): ProfilZajemce {
-  const { lead, snapshot } = input;
+  const { lead, snapshot, roomNames } = input;
   if (snapshot === null) {
     return {
       land: 'Nezadáno',
@@ -281,15 +306,7 @@ export function projectLeadProfilZajemce(input: {
       insight:
         'Zájemce odeslal žádost o posouzení. Rozhodovací relace k tomuto kontaktu není k dispozici.',
       score: null,
-      journey: [
-        {
-          module: 'Zachycení kontaktu',
-          title: 'Žádost o audit',
-          detail: 'Odeslána žádost o audit',
-          completed: true,
-          active: true,
-        },
-      ],
+      journey: [conversionJourneyStep()],
     };
   }
 
@@ -317,6 +334,8 @@ export function projectLeadProfilZajemce(input: {
       lead.status === 'accepted',
       land,
       openedQuestions,
+      priorities,
+      roomNames,
     ),
   };
 }

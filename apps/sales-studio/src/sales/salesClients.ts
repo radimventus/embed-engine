@@ -6,6 +6,7 @@
 
 import {
   HIGH_INTENT_THRESHOLD,
+  formatPriorityImportance,
   listCanonicalHouses,
   listCanonicalProjects,
   type HouseOperationalCase,
@@ -19,6 +20,7 @@ export type SalesJourneyStep = {
   readonly module: string;
   readonly title: string;
   readonly detail: string;
+  readonly lines?: readonly string[];
   readonly completed?: boolean;
   readonly active?: boolean;
 };
@@ -161,12 +163,7 @@ export function houseDetailLine(house: SalesHouseInterest): string {
   return `${house.houseName} • ${house.land}`;
 }
 
-export function formatPriorityImportance(importance: number | null): string | null {
-  if (importance === null || !Number.isFinite(importance)) {
-    return null;
-  }
-  return `${Math.round(Math.min(1, Math.max(0, importance)) * 100)} %`;
-}
+export { formatPriorityImportance };
 
 export function clientPrimaryScore(client: SalesClient): number | null {
   return highestInterestHouse(client).score;
