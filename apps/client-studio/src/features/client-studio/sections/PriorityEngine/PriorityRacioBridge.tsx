@@ -12,7 +12,7 @@ export function PriorityRacioBridge({ onContinue }: PriorityRacioBridgeProps) {
       data-testid="priority-racio-bridge"
     >
       <p className="m-0 text-sm leading-relaxed text-embed-background-primary">
-        Teď se podíváme také na racionální stránku domu a jeho kompromisy.
+        Teď přejdeme k častým otázkám a možnosti chat diskuse.
       </p>
       <button
         type="button"

@@ -68,6 +68,14 @@ describe("Responsive Decision Journey (RCS-05)", () => {
     assert.match(engine, /window\.clearTimeout\(timerId\)/);
     assert.match(interSceneBridge, /priority-racio-bridge-continue/);
     assert.match(interSceneBridge, /onClick=\{onContinue\}/);
+    assert.match(
+      interSceneBridge,
+      /Teď přejdeme k častým otázkám a možnosti chat diskuse\./,
+    );
+    assert.doesNotMatch(
+      interSceneBridge,
+      /Teď se podíváme také na racionální stránku domu a jeho kompromisy\./,
+    );
   });
 
   it("keeps scene controls at content boundaries and targets Social Proof from Priority", () => {

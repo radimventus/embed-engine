@@ -17,14 +17,14 @@ export const CONIS_QUIZ_ADVANCE_MS = 1500;
  * Keep a short orientation into Priority work (no second self-introduction).
  */
 export const PRIORITY_CONVERSATION_INTRO_LINES: readonly string[] = Object.freeze([
-  'Teď se zaměříme na to, co je pro vás podstatné.',
+  'Teď se zaměříme na vaše priority.',
 ] as const);
 
 export const PRIORITY_CONVERSATION_START_HEADING = 'Začněme';
 
 export const PRIORITY_CONVERSATION_START_LINES = Object.freeze([
-  'Označte alespoň tři témata a nastavte jejich intenzitu.',
-  'Ukážu vám, co stojí za pozornost právě z jejich pohledu.',
+  'Označte alespoň tři karty a nastavte jejich intenzitu (míru důležitosti pro vás).',
+  'Ukážu vám pak, co stojí za pozornost právě z tohoto pohledu.',
 ] as const);
 
 /** @deprecated Prefer PRIORITY_CONVERSATION_START_LINES */
@@ -55,12 +55,12 @@ export const PRIORITY_CONVERSATION_GATE_LINES = Object.freeze([
 
 export const PRIORITY_CONVERSATION_GATE_PROMPT = (count: number): string => {
   if (count === 1) {
-    return 'Máte jednu prioritu. Stačí nám to takto, nebo chcete ještě něco doplnit?';
+    return 'Máte jednu zvolenou prioritu. Stačí to takto, nebo chcete ještě něco upravit?';
   }
   if (count >= 2 && count <= 4) {
-    return `Máte ${count} priority. Stačí nám to takto, nebo chcete ještě něco doplnit?`;
+    return `Máte ${count} zvolené priority. Stačí to takto, nebo chcete ještě něco upravit?`;
   }
-  return `Máte ${count} priorit. Stačí nám to takto, nebo chcete ještě něco doplnit?`;
+  return `Máte ${count} zvolených priorit. Stačí to takto, nebo chcete ještě něco upravit?`;
 };
 
 export const PRIORITY_CONVERSATION_FINISH_SELECTION = 'Potvrdit nastavení';
@@ -85,7 +85,6 @@ export const PRIORITY_CONVERSATION_COMPLETE_PANEL_TITLE =
 
 export const PRIORITY_CONVERSATION_COMPLETE_PANEL_LINES = Object.freeze([
   'Teď už vím, na co se u tohoto domu společně podívat.',
-  'Teď vám ukážu, co pro vás může znamenat.',
 ] as const);
 
 /** Continues to chapter summary — scroll only on this click (CAP UX3 08). */

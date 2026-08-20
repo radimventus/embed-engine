@@ -226,8 +226,14 @@ export function PriorityConversationPanel() {
 
       {phase === 'instruction' ? (
         <ConisMessage testId="priority-conversation-instruction">
-          <p className={leadTextClass}>{PRIORITY_CONVERSATION_INTRO_LINES[0]}</p>
-          <p className={bodyTextClass}>{PRIORITY_CONVERSATION_INTRO_LINES[1]}</p>
+          {PRIORITY_CONVERSATION_INTRO_LINES.map((line, index) => (
+            <p
+              key={line}
+              className={index === 0 ? leadTextClass : bodyTextClass}
+            >
+              {line}
+            </p>
+          ))}
           <div
             className="mt-1 rounded-[8px] border border-[#E3E3E3] bg-[#F7F6F4] px-3.5 py-3"
             data-testid="priority-conversation-start-block"

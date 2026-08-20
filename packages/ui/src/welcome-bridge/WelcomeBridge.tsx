@@ -64,12 +64,28 @@ export function WelcomeBridge({
 
   const { content } = config;
   const closeLabel = content.closeLabel ?? "Zavřít";
+  const headline = content.headline.trim();
+  const title = content.title.trim();
+  const description = content.description.trim();
+  const labelledBy = headline
+    ? "welcome-bridge-headline"
+    : title
+      ? "welcome-bridge-title"
+      : description
+        ? "welcome-bridge-description"
+        : undefined;
+  const describedBy = [
+    headline && title ? "welcome-bridge-title" : null,
+    (headline || title) && description ? "welcome-bridge-description" : null,
+  ]
+    .filter((id): id is string => id !== null)
+    .join(" ");
 
   return (
     <div
       role="region"
-      aria-labelledby="welcome-bridge-headline"
-      aria-describedby="welcome-bridge-title welcome-bridge-description"
+      aria-labelledby={labelledBy}
+      aria-describedby={describedBy === "" ? undefined : describedBy}
       data-testid="welcome-bridge"
       data-welcome-bridge-variant={config.variant}
       style={HOST_STYLE}
@@ -142,43 +158,49 @@ export function WelcomeBridge({
               flex: 1,
             }}
           >
-            <p
-              id="welcome-bridge-headline"
-              style={{
-                margin: 0,
-                fontSize: 18,
-                fontWeight: 500,
-                lineHeight: 1.45,
-                color: theme.headlineColor,
-              }}
-            >
-              {content.headline}
-            </p>
-            <p
-              id="welcome-bridge-title"
-              style={{
-                margin: 0,
-                fontSize: 13,
-                fontWeight: 600,
-                letterSpacing: "0.04em",
-                textTransform: "uppercase",
-                color: theme.titleColor,
-              }}
-            >
-              {content.title}
-            </p>
-            <p
-              id="welcome-bridge-description"
-              style={{
-                margin: 0,
-                fontSize: 15,
-                fontWeight: 500,
-                lineHeight: 1.45,
-                color: theme.descriptionColor,
-              }}
-            >
-              {content.description}
-            </p>
+            {headline ? (
+              <p
+                id="welcome-bridge-headline"
+                style={{
+                  margin: 0,
+                  fontSize: 18,
+                  fontWeight: 500,
+                  lineHeight: 1.45,
+                  color: theme.headlineColor,
+                }}
+              >
+                {headline}
+              </p>
+            ) : null}
+            {title ? (
+              <p
+                id="welcome-bridge-title"
+                style={{
+                  margin: 0,
+                  fontSize: 13,
+                  fontWeight: 600,
+                  letterSpacing: "0.04em",
+                  textTransform: "uppercase",
+                  color: theme.titleColor,
+                }}
+              >
+                {title}
+              </p>
+            ) : null}
+            {description ? (
+              <p
+                id="welcome-bridge-description"
+                style={{
+                  margin: 0,
+                  fontSize: 15,
+                  fontWeight: 500,
+                  lineHeight: 1.45,
+                  color: theme.descriptionColor,
+                }}
+              >
+                {description}
+              </p>
+            ) : null}
           </div>
         </div>
 

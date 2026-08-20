@@ -73,11 +73,11 @@ describe("PT-PRIORITY-CONVERSATION-03 decision conversation", () => {
     assert.ok(CONIS_THINKING_MS >= 700 && CONIS_THINKING_MS <= 1000);
     assert.equal(
       PRIORITY_CONVERSATION_INTRO_LINES[0],
-      "Teď se zaměříme na to, co je pro vás podstatné.",
+      "Teď se zaměříme na vaše priority.",
     );
     assert.deepEqual(PRIORITY_CONVERSATION_START_LINES, [
-      "Označte alespoň tři témata a nastavte jejich intenzitu.",
-      "Ukážu vám, co stojí za pozornost právě z jejich pohledu.",
+      "Označte alespoň tři karty a nastavte jejich intenzitu (míru důležitosti pro vás).",
+      "Ukážu vám pak, co stojí za pozornost právě z tohoto pohledu.",
     ]);
     assert.match(PRIORITY_CONVERSATION_START_HEADING, /^Začněme$/);
     assert.equal(
@@ -128,7 +128,6 @@ describe("PT-PRIORITY-CONVERSATION-03 decision conversation", () => {
     );
     assert.deepEqual(PRIORITY_CONVERSATION_COMPLETE_PANEL_LINES, [
       "Teď už vím, na co se u tohoto domu společně podívat.",
-      "Teď vám ukážu, co pro vás může znamenat.",
     ]);
     assert.equal(PRIORITY_BRIDGE_TITLE, "Co pro vás může tento dům znamenat");
   });
