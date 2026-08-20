@@ -719,6 +719,7 @@ export function WorkspaceHostApp() {
               id={CLIENT_MOUNT_ID}
               className="workspace-shell__view"
               data-testid="workspace-host-client-root"
+              data-client-initial-landing-offset="20"
             />
           ) : (
             <WorkspaceStudioFrame

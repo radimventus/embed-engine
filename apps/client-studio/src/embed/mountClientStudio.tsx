@@ -56,6 +56,11 @@ function assertMountTarget(target: HTMLElement | null | undefined): HTMLElement 
   return target;
 }
 
+function resolveInitialLandingOffsetPx(target: HTMLElement): number {
+  const value = Number(target.dataset.clientInitialLandingOffset);
+  return Number.isFinite(value) ? value : 0;
+}
+
 function resolveMountHouseId(objectId: string | undefined): string | null {
   const candidate = objectId?.trim() ?? '';
   return candidate.length > 0 ? candidate : null;
@@ -74,6 +79,7 @@ export function mountClientStudio(
   const { runtime, assetBase, objectId } = options;
   const target = assertMountTarget(options.target);
   const houseId = resolveMountHouseId(objectId);
+  const initialLandingOffsetPx = resolveInitialLandingOffsetPx(target);
 
   setPresentationAssetBase(assetBase);
 
@@ -101,7 +107,10 @@ export function mountClientStudio(
     <StrictMode>
       <ErrorBoundary>
         <ClientStudioSessionBoundary>
-          <ClientStudioApp runtime={runtime} />
+          <ClientStudioApp
+            runtime={runtime}
+            initialLandingOffsetPx={initialLandingOffsetPx}
+          />
         </ClientStudioSessionBoundary>
       </ErrorBoundary>
     </StrictMode>,

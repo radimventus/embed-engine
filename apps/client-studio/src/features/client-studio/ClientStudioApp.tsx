@@ -16,6 +16,7 @@ type ClientStudioAppProps = {
    * When omitted (standalone SPA), the Provider creates the Runtime once.
    */
   readonly runtime?: DecisionSessionRuntime;
+  readonly initialLandingOffsetPx?: number;
 };
 
 /**
@@ -24,7 +25,10 @@ type ClientStudioAppProps = {
  * Single AppShell entry for the default Decision Session path.
  * Legacy CommandRuntime is unreachable unless explicitly enabled.
  */
-export function ClientStudioApp({ runtime }: ClientStudioAppProps = {}) {
+export function ClientStudioApp({
+  runtime,
+  initialLandingOffsetPx = 0,
+}: ClientStudioAppProps = {}) {
   const [legacyEnabled] = useState(() => isLegacyCommandRuntimeEnabled());
   const [activeSceneId, setActiveSceneId] = useState<string | null>(
     () => decisionJourneyScenes()[0]?.id ?? null,
@@ -54,6 +58,7 @@ export function ClientStudioApp({ runtime }: ClientStudioAppProps = {}) {
       >
         <ClientStudioPage
           runtime={runtime}
+          initialLandingOffsetPx={initialLandingOffsetPx}
           onActiveSceneChange={setActiveSceneId}
           onVisibleSceneIdsChange={setVisibleSceneIds}
         />

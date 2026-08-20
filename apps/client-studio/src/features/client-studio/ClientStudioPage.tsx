@@ -45,6 +45,8 @@ type ClientStudioPageProps = {
   onLegacyContinue?: () => void;
   /** Shared Runtime from Embed Delivery Layer (optional for standalone SPA). */
   runtime?: DecisionSessionRuntime;
+  /** Workspace-only initial scene landing adjustment supplied by its mount. */
+  initialLandingOffsetPx?: number;
   /** Publishes the canonical visible scene to shell navigation. */
   onActiveSceneChange?: (sceneId: string | null) => void;
   /** Publishes the scene anchors that are currently rendered and navigable. */
@@ -67,6 +69,7 @@ export function ClientStudioPage({
   onLegacySelectChoice,
   onLegacyContinue,
   runtime,
+  initialLandingOffsetPx = 0,
   onActiveSceneChange,
   onVisibleSceneIdsChange,
 }: ClientStudioPageProps) {
@@ -76,7 +79,7 @@ export function ClientStudioPage({
     PILOT_SECTION_IDS.socialProof,
   );
   const [pendingSceneScrollOffsetPx, setPendingSceneScrollOffsetPx] =
-    useState(0);
+    useState(initialLandingOffsetPx);
   const [isSceneTransitioning, setIsSceneTransitioning] = useState(false);
   const visibleSceneIds = scenes
     .slice(0, revealedSceneCount)

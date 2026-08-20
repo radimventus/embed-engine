@@ -11,6 +11,8 @@ import { describe, it } from 'node:test';
 const here = dirname(fileURLToPath(import.meta.url));
 const page = readFileSync(join(here, '../ClientStudioPage.tsx'), 'utf8');
 const header = readFileSync(join(here, '../ClientStudioHeader.tsx'), 'utf8');
+const app = readFileSync(join(here, '../ClientStudioApp.tsx'), 'utf8');
+const mount = readFileSync(join(here, '../../../embed/mountClientStudio.tsx'), 'utf8');
 
 describe('PT-VR-06 Client Studio boundaries', () => {
   it('does not branch Experience on Workspace Host', () => {
@@ -29,5 +31,15 @@ describe('PT-VR-06 Client Studio boundaries', () => {
     assert.doesNotMatch(header, /isOperatorWorkspaceMode/);
     assert.doesNotMatch(header, /isConisWorkspaceHost/);
     assert.match(header, /data-experience-header/);
+  });
+
+  it('accepts a mount-time initial landing offset without changing later CTA navigation', () => {
+    assert.match(mount, /clientInitialLandingOffset/);
+    assert.match(mount, /initialLandingOffsetPx={initialLandingOffsetPx}/);
+    assert.match(app, /initialLandingOffsetPx={initialLandingOffsetPx}/);
+    assert.match(page, /initialLandingOffsetPx = 0/);
+    assert.match(page, /useState\(initialLandingOffsetPx\)/);
+    const cta = readFileSync(join(here, '../sections/Hero/HeroCTA.tsx'), 'utf8');
+    assert.doesNotMatch(cta, /WORKSPACE_LANDING_ADJUSTMENT_PX|workspaceAdjustment/);
   });
 });

@@ -182,6 +182,14 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.match(app, /mode:\s*'standalone'/);
   });
 
+  it('preserves the Workspace-only initial Client landing contract', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+    assert.match(
+      app,
+      /data-client-initial-landing-offset="20"/,
+    );
+  });
+
   it('TASK-42F — Client Studio mount survives Workspace scope effect cleanup', () => {
     const app = read('src/WorkspaceHostApp.tsx');
 
