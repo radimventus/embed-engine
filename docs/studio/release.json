@@ -1,6 +1,6 @@
 {
-  "sourceGitSha": "092dac3d667c2194365e1546f890c6c64cbc840b",
-  "builtAt": "2026-08-20T17:34:03.008Z",
+  "sourceGitSha": "8aedf4f4c87e234491551f469758c0edd8e15418",
+  "builtAt": "2026-08-20T18:45:56.173Z",
   "topologyVersion": "partner-environment-v1",
   "surfaces": [
     "office",
