@@ -23,11 +23,13 @@ export type DurableLeadInput = {
     readonly privacyUrl: string;
     readonly privacyVersion: string;
   };
+  readonly decisionSessionId?: string | null;
 };
 
 export type DurableLead = DurableLeadInput & {
   readonly status: 'accepted';
   readonly notificationStatus: 'pending';
+  readonly decisionSessionId: string | null;
 };
 
 export type LeadScopeQuery = {
@@ -51,6 +53,10 @@ export class LeadAlreadyExistsError extends Error {
 type LeadState = { readonly leads: readonly DurableLead[] };
 
 function validate(input: DurableLeadInput): DurableLead {
+  const decisionSessionId =
+    typeof input.decisionSessionId === 'string' && input.decisionSessionId.trim().length > 0
+      ? input.decisionSessionId.trim()
+      : null;
   if (
     [input.leadId, input.idempotencyKey, input.companyId, input.projectId, input.houseId,
       input.contact.name, input.contact.email, input.consent.privacyUrl, input.consent.privacyVersion]
@@ -74,6 +80,7 @@ function validate(input: DurableLeadInput): DurableLead {
       phone: input.contact.phone?.trim() || null,
     },
     consent: { ...input.consent, acceptedAt: new Date(input.consent.acceptedAt).toISOString() },
+    decisionSessionId,
     status: 'accepted',
     notificationStatus: 'pending',
   };
@@ -116,7 +123,14 @@ export class FileLeadRepository implements LeadRepository {
   private async read(): Promise<LeadState> {
     try {
       const parsed = JSON.parse(await readFile(this.statePath, 'utf8')) as LeadState;
-      return { leads: Array.isArray(parsed.leads) ? parsed.leads : [] };
+      return {
+        leads: Array.isArray(parsed.leads)
+          ? parsed.leads.map((item) => ({
+              ...item,
+              decisionSessionId: item.decisionSessionId ?? null,
+            }))
+          : [],
+      };
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code === 'ENOENT') return { leads: [] };
       throw error;

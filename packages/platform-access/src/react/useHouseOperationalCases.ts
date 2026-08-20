@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { listWorkspaceHouses } from '../domain/workspaceHouseProjection';
 import { fetchHouseOperationalLeads } from '../api/houseOperationalLeadsClient';
+import { fetchHouseOperationalSessions } from '../api/houseOperationalSessionsClient';
 import { aggregateHouseOperations } from '../operations/aggregateHouseOperations';
 import {
   selectScopedOperationalCases,
@@ -9,6 +10,7 @@ import {
 import type {
   HouseOperationalAggregate,
   HouseOperationalCase,
+  OperationalDecisionSnapshot,
   OperationalLeadRecord,
 } from '../operations/operationalTypes';
 import { usePlatformSession } from './SessionProvider';
@@ -29,19 +31,33 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
   const [durableLeads, setDurableLeads] = useState<
     readonly OperationalLeadRecord[]
   >([]);
+  const [durableSessions, setDurableSessions] = useState<
+    readonly OperationalDecisionSnapshot[]
+  >([]);
 
   useEffect(() => {
     if (companyId === null || projectId === null) {
       setDurableLeads([]);
+      setDurableSessions([]);
       return;
     }
     let cancelled = false;
-    void fetchHouseOperationalLeads({
-      companyId,
-      projectId,
-      houseId: activeHouseId,
-    }).then((leads) => {
-      if (!cancelled) setDurableLeads(leads);
+    void Promise.all([
+      fetchHouseOperationalLeads({
+        companyId,
+        projectId,
+        houseId: activeHouseId,
+      }),
+      fetchHouseOperationalSessions({
+        companyId,
+        projectId,
+        houseId: activeHouseId,
+      }),
+    ]).then(([leads, sessions]) => {
+      if (!cancelled) {
+        setDurableLeads(leads);
+        setDurableSessions(sessions);
+      }
     });
     return () => {
       cancelled = true;
@@ -69,6 +85,7 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
       activeHouseId,
       houses,
       durableLeads,
+      durableSessions,
     });
     return {
       cases,
@@ -77,5 +94,5 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
       projectId,
       activeHouseId,
     };
-  }, [activeHouseId, companyId, durableLeads, projectId]);
+  }, [activeHouseId, companyId, durableLeads, durableSessions, projectId]);
 }

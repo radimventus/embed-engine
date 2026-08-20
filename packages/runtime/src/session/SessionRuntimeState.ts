@@ -10,6 +10,11 @@ export type SessionRuntimeState = {
   readonly activeRoomId: RoomId | null;
   /** Selected priority ids (semantic, not UI). */
   readonly priorityIds: readonly string[];
+  /**
+   * Captured Client-scale importance keyed by priorityId.
+   * Null when the latest PriorityChanged carried ids only (legacy sessions).
+   */
+  readonly priorityIntensities: Readonly<Record<string, number>> | null;
   /** Selected variant id, if any. */
   readonly variantId: string | null;
   /** Active scenario id, if any. */
@@ -22,6 +27,7 @@ export function createInitialSessionRuntimeState(): SessionRuntimeState {
   return Object.freeze({
     activeRoomId: null,
     priorityIds: Object.freeze([]) as readonly string[],
+    priorityIntensities: null,
     variantId: null,
     scenarioId: null,
     version: 0,

@@ -62,6 +62,40 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
+function isPriorityIntensities(value: unknown): boolean {
+  if (value === undefined) {
+    return true;
+  }
+  if (!Array.isArray(value)) {
+    return false;
+  }
+  return value.every(
+    (item) =>
+      isRecord(item) &&
+      typeof item.priorityId === "string" &&
+      item.priorityId.length > 0 &&
+      typeof item.importance === "number" &&
+      Number.isFinite(item.importance) &&
+      item.importance >= 0 &&
+      item.importance <= 1,
+  );
+}
+
+function isIntensityRecord(
+  value: unknown,
+): value is Readonly<Record<string, number>> {
+  if (!isRecord(value)) {
+    return false;
+  }
+  return Object.values(value).every(
+    (importance) =>
+      typeof importance === "number" &&
+      Number.isFinite(importance) &&
+      importance >= 0 &&
+      importance <= 1,
+  );
+}
+
 function isDecisionEvent(value: unknown): value is DecisionEvent {
   if (!isRecord(value) || typeof value.type !== "string") {
     return false;
@@ -75,7 +109,8 @@ function isDecisionEvent(value: unknown): value is DecisionEvent {
     case "PriorityChanged":
       return (
         Array.isArray(value.priorityIds) &&
-        value.priorityIds.every((id) => typeof id === "string")
+        value.priorityIds.every((id) => typeof id === "string") &&
+        isPriorityIntensities(value.intensities)
       );
     case "VariantSelected":
       return typeof value.variantId === "string";
@@ -122,13 +157,21 @@ export function restoreDecisionSession(
   const priorityIds = raw.runtimeState.priorityIds;
   const variantId = raw.runtimeState.variantId;
   const scenarioId = raw.runtimeState.scenarioId;
+  const rawIntensities = raw.runtimeState.priorityIntensities;
+  const priorityIntensities =
+    rawIntensities === undefined || rawIntensities === null
+      ? null
+      : isIntensityRecord(rawIntensities)
+        ? Object.freeze({ ...rawIntensities })
+        : undefined;
   if (
     !(activeRoomId === null || typeof activeRoomId === "string") ||
     typeof raw.runtimeState.version !== "number" ||
     !Array.isArray(priorityIds) ||
     !priorityIds.every((id) => typeof id === "string") ||
     !(variantId === null || typeof variantId === "string") ||
-    !(scenarioId === null || typeof scenarioId === "string")
+    !(scenarioId === null || typeof scenarioId === "string") ||
+    priorityIntensities === undefined
   ) {
     return { ok: false, message: "runtimeState shape is invalid." };
   }
@@ -146,6 +189,7 @@ export function restoreDecisionSession(
       runtimeState: {
         activeRoomId,
         priorityIds: Object.freeze([...priorityIds]),
+        priorityIntensities,
         variantId,
         scenarioId,
         version: raw.runtimeState.version,
@@ -179,6 +223,10 @@ export function cloneDecisionSession(session: DecisionSession): DecisionSession 
     runtimeState: {
       ...session.runtimeState,
       priorityIds: [...session.runtimeState.priorityIds],
+      priorityIntensities:
+        session.runtimeState.priorityIntensities === null
+          ? null
+          : { ...session.runtimeState.priorityIntensities },
     },
     events: session.events.map((event) => ({ ...event })),
     createdAt: session.createdAt,

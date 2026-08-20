@@ -21,6 +21,7 @@ const canonicalScope = {
 function acceptedLead(input: DurableLeadInput): DurableLead {
   return {
     ...input,
+    decisionSessionId: input.decisionSessionId ?? null,
     status: 'accepted',
     notificationStatus: 'pending',
   };

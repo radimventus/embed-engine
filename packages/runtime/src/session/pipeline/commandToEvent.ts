@@ -13,11 +13,21 @@ export function commandToEvent(
     case "SelectRoom":
       return { type: "RoomSelected", roomId: command.roomId, at };
     case "ChangePriority":
-      return {
-        type: "PriorityChanged",
-        priorityIds: [...command.priorityIds],
-        at,
-      };
+      return command.intensities === undefined
+        ? {
+            type: "PriorityChanged",
+            priorityIds: [...command.priorityIds],
+            at,
+          }
+        : {
+            type: "PriorityChanged",
+            priorityIds: [...command.priorityIds],
+            intensities: command.intensities.map((item) => ({
+              priorityId: item.priorityId,
+              importance: item.importance,
+            })),
+            at,
+          };
     case "SelectVariant":
       return { type: "VariantSelected", variantId: command.variantId, at };
     case "ActivateScenario":

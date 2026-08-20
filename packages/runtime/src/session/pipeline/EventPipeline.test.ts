@@ -103,6 +103,66 @@ describe("Runtime Event Pipeline", () => {
     assert.match(result.interpretation.summary, /priorities:price,garden/);
   });
 
+  it("ChangePriority preserves Client-scale intensities on the event and runtime state", () => {
+    const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
+      housePackage: HOUSE,
+      now: 1,
+    });
+    const result = runtime.dispatch(
+      {
+        type: "ChangePriority",
+        priorityIds: ["price", "garden"],
+        intensities: [
+          { priorityId: "price", importance: 0.9 },
+          { priorityId: "garden", importance: 0.4 },
+        ],
+      },
+      2,
+    );
+    assert.equal(result.ok, true);
+    if (!result.ok) {
+      return;
+    }
+    assert.equal(result.event.type, "PriorityChanged");
+    if (result.event.type !== "PriorityChanged") {
+      return;
+    }
+    assert.deepEqual(result.event.intensities, [
+      { priorityId: "price", importance: 0.9 },
+      { priorityId: "garden", importance: 0.4 },
+    ]);
+    assert.deepEqual(result.session.runtimeState.priorityIntensities, {
+      price: 0.9,
+      garden: 0.4,
+    });
+    assert.deepEqual(result.experience.context.decision.priorityIntensities, {
+      price: 0.9,
+      garden: 0.4,
+    });
+  });
+
+  it("legacy ChangePriority without intensities remains valid", () => {
+    const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
+      housePackage: HOUSE,
+      now: 1,
+    });
+    const result = runtime.dispatch(
+      { type: "ChangePriority", priorityIds: ["price", "garden"] },
+      2,
+    );
+    assert.equal(result.ok, true);
+    if (!result.ok) {
+      return;
+    }
+    assert.equal(result.session.runtimeState.priorityIntensities, null);
+    assert.equal(
+      result.experience.context.decision.priorityIntensities,
+      null,
+    );
+  });
+
   it("mutation → Interpretation → Projection is deterministic", () => {
     const a = createDecisionSessionRuntime({
       clock: createFixedClock(100),

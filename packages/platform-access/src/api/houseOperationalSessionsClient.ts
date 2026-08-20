@@ -1,12 +1,12 @@
 import { platformApiOrigin } from './platformAccessClient';
-import type { OperationalLeadRecord } from '../operations/operationalTypes';
+import type { OperationalDecisionSnapshot } from '../operations/operationalTypes';
 
-export async function fetchHouseOperationalLeads(input: {
+export async function fetchHouseOperationalSessions(input: {
   readonly companyId: string;
   readonly projectId: string;
   readonly houseId?: string | null;
   readonly fetchImpl?: typeof fetch;
-}): Promise<readonly OperationalLeadRecord[]> {
+}): Promise<readonly OperationalDecisionSnapshot[]> {
   const companyId = input.companyId.trim();
   const projectId = input.projectId.trim();
   if (companyId.length === 0 || projectId.length === 0) {
@@ -25,7 +25,7 @@ export async function fetchHouseOperationalLeads(input: {
   const fetchImpl = input.fetchImpl ?? fetch;
   try {
     const response = await fetchImpl(
-      `${platformApiOrigin().replace(/\/$/, '')}/partner/leads?${params}`,
+      `${platformApiOrigin().replace(/\/$/, '')}/partner/decision-sessions?${params}`,
       {
         credentials: 'include',
       },
@@ -34,17 +34,9 @@ export async function fetchHouseOperationalLeads(input: {
       return [];
     }
     const body = (await response.json()) as {
-      readonly leads?: readonly (OperationalLeadRecord & {
-        readonly decisionSessionId?: string | null;
-      })[];
+      readonly sessions?: readonly OperationalDecisionSnapshot[];
     };
-    if (!Array.isArray(body.leads)) {
-      return [];
-    }
-    return body.leads.map((item) => ({
-      ...item,
-      decisionSessionId: item.decisionSessionId ?? null,
-    }));
+    return Array.isArray(body.sessions) ? body.sessions : [];
   } catch {
     return [];
   }

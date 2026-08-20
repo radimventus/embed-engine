@@ -30,7 +30,7 @@ export const AUDIT_POST_SUBMIT_COPY =
  */
 export function AuditContact() {
   const analytics = useOptionalDecisionAnalytics();
-  const { analyticsScope, company, project } = useDecisionSessionRuntime();
+  const { analyticsScope, company, project, decisionSessionId } = useDecisionSessionRuntime();
   const [phase, setPhase] = useState<LeadPhase>('idle');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -104,6 +104,7 @@ export function AuditContact() {
           phone: phone.trim() || null,
         },
         acceptedAt: new Date().toISOString(),
+        decisionSessionId,
       });
       analytics?.conversionCompleted('audit-contact-form');
       idempotencyKeyRef.current = null;

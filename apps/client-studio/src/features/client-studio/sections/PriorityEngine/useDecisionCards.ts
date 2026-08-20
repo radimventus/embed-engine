@@ -19,6 +19,7 @@ export type DecisionCardState = {
  */
 export function createCardsFromPriorityIds(
   priorityIds: readonly string[],
+  intensities?: Readonly<Record<string, number>> | null,
 ): Record<string, DecisionCardState> {
   const cards = Object.fromEntries(
     SELECTABLE_DECISION_CATEGORIES.map((category) => [
@@ -33,10 +34,15 @@ export function createCardsFromPriorityIds(
     if (card === undefined) {
       return;
     }
+    const captured = intensities?.[id];
     cards[id] = {
       selected: true,
       importance:
-        count <= 1 ? 1 : Number(((count - index) / count).toFixed(3)),
+        typeof captured === 'number'
+          ? captured
+          : count <= 1
+            ? 1
+            : Number(((count - index) / count).toFixed(3)),
     };
   });
 
@@ -50,7 +56,10 @@ export function createCardsFromPriorityIds(
 export function useDecisionCards() {
   const { experience } = useDecisionSessionRuntime();
   const [cards, setCards] = useState<Record<string, DecisionCardState>>(() =>
-    createCardsFromPriorityIds(experience.context.decision.priorityIds),
+    createCardsFromPriorityIds(
+      experience.context.decision.priorityIds,
+      experience.context.decision.priorityIntensities,
+    ),
   );
 
   const toggleCard = useCallback((id: string) => {

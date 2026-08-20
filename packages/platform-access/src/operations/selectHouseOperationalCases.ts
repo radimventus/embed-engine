@@ -1,10 +1,15 @@
 import type { HouseDataMode } from '../domain/types';
 import {
+  projectLeadProfilZajemce,
+  resolveCorrelatedSnapshot,
+} from './projectLeadProfil';
+import {
   REFERENCE_CASE_TEMPLATES,
   type ReferenceCaseTemplate,
 } from './referenceOperationalTemplates';
 import type {
   HouseOperationalCase,
+  OperationalDecisionSnapshot,
   OperationalHouseScope,
   OperationalLeadRecord,
 } from './operationalTypes';
@@ -51,6 +56,11 @@ function instantiateTemplate(
       land: template.land,
       location: template.location,
       tags: template.tags,
+      priorities: template.tags.map((label) => ({
+        id: label,
+        label,
+        importance: null,
+      })),
       insight: template.insight(scope.houseName),
       score: template.score,
       journey: template.journey,
@@ -61,6 +71,7 @@ function instantiateTemplate(
 function leadToCase(
   lead: OperationalLeadRecord,
   houseName: string,
+  snapshot: OperationalDecisionSnapshot | null,
 ): HouseOperationalCase {
   return {
     caseId: lead.leadId,
@@ -77,23 +88,7 @@ function leadToCase(
       intent: lead.intent,
       status: lead.status,
     },
-    profilZajemce: {
-      land: 'Nezadáno',
-      location: null,
-      tags: ['Žádost o audit'],
-      insight:
-        'Zájemce odeslal žádost o posouzení z Client Experience.',
-      score: 70,
-      journey: [
-        {
-          module: 'Zachycení kontaktu',
-          title: 'Kvalifikovaný požadavek',
-          detail: 'Odeslána žádost o audit',
-          completed: true,
-          active: true,
-        },
-      ],
-    },
+    profilZajemce: projectLeadProfilZajemce({ lead, snapshot }),
   };
 }
 
@@ -124,6 +119,7 @@ export function selectHouseOperationalCases(input: {
   readonly houseName: string;
   readonly dataMode: HouseDataMode;
   readonly durableLeads: readonly OperationalLeadRecord[];
+  readonly durableSessions?: readonly OperationalDecisionSnapshot[];
 }): readonly HouseOperationalCase[] {
   const companyId = input.companyId.trim();
   const projectId = input.projectId.trim();
@@ -148,12 +144,15 @@ export function selectHouseOperationalCases(input: {
         )
       : [];
 
+  const sessions = input.durableSessions ?? [];
   const leadCases = leadsForHouse(
     input.durableLeads,
     companyId,
     projectId,
     houseId,
-  ).map((lead) => leadToCase(lead, input.houseName));
+  ).map((lead) =>
+    leadToCase(lead, input.houseName, resolveCorrelatedSnapshot(lead, sessions)),
+  );
 
   return [...referenceCases, ...leadCases];
 }
@@ -170,6 +169,7 @@ export function selectScopedOperationalCases(input: {
   readonly activeHouseId: string | null;
   readonly houses: readonly OperationalHouseScope[];
   readonly durableLeads: readonly OperationalLeadRecord[];
+  readonly durableSessions?: readonly OperationalDecisionSnapshot[];
 }): readonly HouseOperationalCase[] {
   const companyId = input.companyId.trim();
   const projectId = input.projectId.trim();
@@ -195,6 +195,7 @@ export function selectScopedOperationalCases(input: {
       houseName: house.houseName,
       dataMode: house.dataMode,
       durableLeads: input.durableLeads,
+      durableSessions: input.durableSessions,
     }),
   );
 }

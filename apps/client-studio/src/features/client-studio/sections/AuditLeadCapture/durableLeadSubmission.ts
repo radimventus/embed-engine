@@ -18,6 +18,7 @@ export type DurableLeadSubmissionInput = {
   readonly contact: DurableLeadContact;
   readonly idempotencyKey: string;
   readonly acceptedAt: string;
+  readonly decisionSessionId?: string | null;
 };
 
 export type DurableLeadAccepted = {
@@ -43,6 +44,10 @@ export function createDurableLeadPayload(
       privacyUrl: input.scope.privacyUrl,
       privacyVersion: 'partner-current',
     },
+    ...(typeof input.decisionSessionId === 'string' &&
+    input.decisionSessionId.trim().length > 0
+      ? { decisionSessionId: input.decisionSessionId.trim() }
+      : {}),
   };
 }
 

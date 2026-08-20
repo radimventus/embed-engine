@@ -16,6 +16,8 @@ import {
 import {
   createDecisionSessionRuntime,
   createSystemClock,
+  restoreDecisionSession,
+  serializeDecisionSession,
   type DecisionSessionRuntime,
   type RuntimeCommand,
   type DispatchResult,
@@ -39,6 +41,16 @@ import {
 import { loadDurableHousePackageOverlay } from './durableHousePackageOverlay';
 import { hydrateDurableProjectPrivacy } from './durableProjectPrivacy';
 import { hydrateDurableCompanyContact } from './durableCompanyContact';
+import {
+  persistPublicDecisionSession,
+  restorePublicDecisionSession,
+  isDurableDecisionCommand,
+} from './durableDecisionSessionClient';
+import {
+  readDecisionSessionPointer,
+  writeDecisionSessionPointer,
+  type DecisionSessionScope,
+} from './decisionSessionPointer';
 import {
   readClientBindCandidates,
   listClientHouses,
@@ -117,6 +129,8 @@ export type DecisionSessionRuntimeContextValue = {
     readonly projectId: string;
     readonly privacyUrl?: string;
   } | null;
+  /** Durable Decision Session identity for this House-scoped Client journey. */
+  readonly decisionSessionId: string | null;
   /** Dispatch Runtime commands (SelectRoom, ChangePriority, …). */
   readonly dispatch: (command: RuntimeCommand, now?: number) => DispatchResult;
 };
@@ -237,6 +251,9 @@ export function DecisionSessionRuntimeProvider({
   runtime: injectedRuntime,
 }: DecisionSessionRuntimeProviderProps) {
   const runtimeRef = useRef<DecisionSessionRuntime | null>(injectedRuntime ?? null);
+  const decisionSessionIdRef = useRef<string | null>(null);
+  const persistScopeRef = useRef<DecisionSessionScope | null>(null);
+  const persistTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [revision, setRevision] = useState(0);
   const [packageReady, setPackageReady] = useState(injectedRuntime !== undefined);
   const [loadedRuntimeBindingKey, setLoadedRuntimeBindingKey] = useState<
@@ -307,6 +324,8 @@ export function DecisionSessionRuntimeProvider({
   useEffect(() => {
     if (injectedRuntime !== undefined) {
       runtimeRef.current = injectedRuntime;
+      decisionSessionIdRef.current = null;
+      persistScopeRef.current = null;
       setPackageReady(true);
       setLoadedRuntimeBindingKey(requestedRuntimeBindingKey);
       setBootstrapError(null);
@@ -382,6 +401,8 @@ export function DecisionSessionRuntimeProvider({
     bootstrapEvents.emit('BOOTSTRAP_LOADING');
     emitBindingEvidence('loading', null, null);
     runtimeRef.current = null;
+    decisionSessionIdRef.current = null;
+    persistScopeRef.current = null;
     setPackageReady(false);
     setLoadedRuntimeBindingKey(null);
 
@@ -432,11 +453,61 @@ export function DecisionSessionRuntimeProvider({
       if (cancelled) {
         return;
       }
+      const housePackage = getBuilderRuntimeHousePackage();
+      const scope: DecisionSessionScope | null =
+        canonicalCompanyId !== null &&
+        canonicalProjectId !== null &&
+        canonicalHouseId !== null
+          ? {
+              companyId: canonicalCompanyId,
+              projectId: canonicalProjectId,
+              houseId: canonicalHouseId,
+            }
+          : null;
+      let restoredSession = undefined;
+      let decisionSessionId = crypto.randomUUID();
+      if (scope !== null) {
+        const pointer = readDecisionSessionPointer(scope);
+        if (pointer !== null) {
+          const record = await restorePublicDecisionSession({
+            decisionSessionId: pointer,
+            scope,
+            signal: controller.signal,
+          });
+          if (record !== null) {
+            const restored = restoreDecisionSession(record.serialized);
+            if (
+              restored.ok &&
+              restored.session.objectId === housePackage.identity.id
+            ) {
+              restoredSession = restored.session;
+              decisionSessionId = pointer;
+            }
+          } else {
+            decisionSessionId = pointer;
+          }
+        }
+        writeDecisionSessionPointer(scope, decisionSessionId);
+      }
       runtimeRef.current = createDecisionSessionRuntime({
-        housePackage: getBuilderRuntimeHousePackage(),
+        housePackage,
         clock: createSystemClock(),
-        now: 1,
+        now: restoredSession?.createdAt ?? 1,
+        session: restoredSession,
       });
+      decisionSessionIdRef.current = scope === null ? null : decisionSessionId;
+      persistScopeRef.current = scope;
+      if (scope !== null && runtimeRef.current !== null) {
+        const serialized = serializeDecisionSession(runtimeRef.current.getSession());
+        if (serialized.ok) {
+          void persistPublicDecisionSession({
+            decisionSessionId,
+            scope,
+            serialized: serialized.data,
+            signal: controller.signal,
+          });
+        }
+      }
       setPackageReady(true);
       setLoadedRuntimeBindingKey(
         runtimeBindingKey(canonicalHouseId, root),
@@ -470,6 +541,10 @@ export function DecisionSessionRuntimeProvider({
     return () => {
       cancelled = true;
       controller.abort();
+      if (persistTimerRef.current !== null) {
+        clearTimeout(persistTimerRef.current);
+        persistTimerRef.current = null;
+      }
     };
   }, [
     injectedRuntime,
@@ -490,6 +565,30 @@ export function DecisionSessionRuntimeProvider({
       if (result.ok) {
         analytics?.observeDispatch(result);
         setRevision((value) => value + 1);
+        if (isDurableDecisionCommand(command.type)) {
+          const scope = persistScopeRef.current;
+          const decisionSessionId = decisionSessionIdRef.current;
+          if (scope !== null && decisionSessionId !== null) {
+            const write = () => {
+              const serialized = serializeDecisionSession(runtime.getSession());
+              if (serialized.ok) {
+                void persistPublicDecisionSession({
+                  decisionSessionId,
+                  scope,
+                  serialized: serialized.data,
+                });
+              }
+            };
+            if (command.type === 'SelectRoom') {
+              write();
+            } else {
+              if (persistTimerRef.current !== null) {
+                clearTimeout(persistTimerRef.current);
+              }
+              persistTimerRef.current = setTimeout(write, 400);
+            }
+          }
+        }
       }
       return result;
     },
@@ -560,6 +659,7 @@ export function DecisionSessionRuntimeProvider({
               projectId: projectBind.project.project.projectId,
               privacyUrl: projectBind.project.project.privacyUrl,
             },
+      decisionSessionId: decisionSessionIdRef.current,
       dispatch,
     };
   }, [

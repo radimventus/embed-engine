@@ -1,5 +1,18 @@
 import { freezeDecisionSession, type DecisionSession } from "../DecisionSession";
-import type { DecisionEvent } from "../DecisionEvent";
+import type { DecisionEvent, PriorityIntensity } from "../DecisionEvent";
+
+function intensitiesFromEvent(
+  intensities: readonly PriorityIntensity[] | undefined,
+): Readonly<Record<string, number>> | null {
+  if (intensities === undefined) {
+    return null;
+  }
+  return Object.freeze(
+    Object.fromEntries(
+      intensities.map((item) => [item.priorityId, item.importance]),
+    ),
+  );
+}
 
 /**
  * Apply a semantic Decision Event to Runtime State.
@@ -26,6 +39,7 @@ export function applyDecisionEvent(
       runtimeState = {
         ...runtimeState,
         priorityIds: Object.freeze([...event.priorityIds]),
+        priorityIntensities: intensitiesFromEvent(event.intensities),
       };
       break;
     case "VariantSelected":

@@ -53,6 +53,7 @@ export type ExperienceNavigationContext = {
  */
 export type ExperienceDecisionContext = {
   readonly priorityIds: readonly string[];
+  readonly priorityIntensities: Readonly<Record<string, number>> | null;
   readonly prioritySignals: readonly PrioritySignal[];
   readonly variantId: string | null;
   readonly scenarioId: string | null;
@@ -98,6 +99,7 @@ export type ProjectExperienceContextInput = {
   readonly activeRoom: ExperienceHouseRoom | null;
   readonly focusRoom: FocusRoom | null;
   readonly priorityIds: readonly string[];
+  readonly priorityIntensities: Readonly<Record<string, number>> | null;
   readonly prioritySignals: readonly PrioritySignal[];
   readonly variantId: string | null;
   readonly scenarioId: string | null;
@@ -166,6 +168,7 @@ export function projectExperienceContext(
     }),
     decision: Object.freeze({
       priorityIds: input.priorityIds,
+      priorityIntensities: input.priorityIntensities,
       prioritySignals: input.prioritySignals,
       variantId: input.variantId,
       scenarioId: input.scenarioId,

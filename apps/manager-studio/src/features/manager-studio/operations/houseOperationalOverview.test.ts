@@ -103,4 +103,59 @@ describe('Manager House operational aggregates', () => {
     assert.doesNotMatch(workCenter, /value="1000"/);
     assert.doesNotMatch(workCenter, /Ukázkové metriky/);
   });
+
+  it('includes real selected priorities in Manager aggregates and excludes unscored high-certainty', () => {
+    const cases = selectHouseOperationalCases({
+      companyId: DSE_COMPANY_ID,
+      projectId: DSE_CANONICAL_PROJECT_ID,
+      houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+      houseName: 'BUNGALOV 4KK',
+      dataMode: 'REFERENCE_DEMO',
+      durableLeads: [
+        {
+          leadId: 'lead-real',
+          companyId: DSE_COMPANY_ID,
+          projectId: DSE_CANONICAL_PROJECT_ID,
+          houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+          createdAt: '2026-08-20T10:00:00.000Z',
+          source: 'EMBED',
+          intent: 'audit',
+          status: 'accepted',
+          contact: {
+            name: 'Petr Lead',
+            email: 'petr.lead@example.cz',
+            phone: null,
+          },
+          decisionSessionId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+        },
+      ],
+      durableSessions: [
+        {
+          decisionSessionId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+          companyId: DSE_COMPANY_ID,
+          projectId: DSE_CANONICAL_PROJECT_ID,
+          houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+          priorityIds: ['layout'],
+          priorityIntensities: { layout: 0.85 },
+          activeRoomId: null,
+          events: [
+            {
+              type: 'PriorityChanged',
+              priorityIds: ['layout'],
+              intensities: [{ priorityId: 'layout', importance: 0.85 }],
+              at: 2,
+            },
+          ],
+        },
+      ],
+    });
+    const aggregate = aggregateHouseOperations(cases);
+    assert.equal(aggregate.caseCount, 4);
+    assert.equal(aggregate.convertedCount, 4);
+    assert.equal(aggregate.highIntentCount, 2);
+    assert.equal(
+      aggregate.priorityCounts.some((item) => item.label === 'Dispozice'),
+      true,
+    );
+  });
 });

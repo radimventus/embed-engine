@@ -17,9 +17,17 @@ export type ProfilZajemce = {
   readonly land: string;
   readonly location: string | null;
   readonly tags: readonly string[];
+  readonly priorities: readonly OperationalPrioritySelection[];
   readonly insight: string;
-  readonly score: number;
+  /** Measured Index rozhodovací jistoty, or null when insufficient / incompatible. */
+  readonly score: number | null;
   readonly journey: readonly OperationalJourneyStep[];
+};
+
+export type OperationalPrioritySelection = {
+  readonly id: string;
+  readonly label: string;
+  readonly importance: number | null;
 };
 
 export type HouseOperationalCase = {
@@ -64,6 +72,38 @@ export type OperationalLeadRecord = {
     readonly email: string;
     readonly phone: string | null;
   };
+  readonly decisionSessionId: string | null;
+};
+
+export type OperationalDecisionEvent =
+  | {
+      readonly type: 'RoomSelected';
+      readonly roomId: string;
+      readonly at: number;
+    }
+  | {
+      readonly type: 'PriorityChanged';
+      readonly priorityIds: readonly string[];
+      readonly intensities?: readonly {
+        readonly priorityId: string;
+        readonly importance: number;
+      }[];
+      readonly at: number;
+    }
+  | {
+      readonly type: string;
+      readonly at: number;
+    };
+
+export type OperationalDecisionSnapshot = {
+  readonly decisionSessionId: string;
+  readonly companyId: string;
+  readonly projectId: string;
+  readonly houseId: string;
+  readonly priorityIds: readonly string[];
+  readonly priorityIntensities: Readonly<Record<string, number>> | null;
+  readonly activeRoomId: string | null;
+  readonly events: readonly OperationalDecisionEvent[];
 };
 
 export type HouseOperationalAggregate = {

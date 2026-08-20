@@ -25,7 +25,7 @@ export type SalesJourneyStep = {
 export type SalesHouseInterest = {
   readonly id: string;
   readonly houseName: string;
-  readonly score: number;
+  readonly score: number | null;
   readonly land: string;
   readonly location?: string;
   readonly tags: readonly string[];
@@ -110,12 +110,26 @@ export function toSalesClients(
   }));
 }
 
+export function hasMeasuredDecisionCertainty(
+  score: number | null,
+): score is number {
+  return typeof score === 'number' && Number.isFinite(score);
+}
+
+export function formatDecisionCertainty(score: number | null): string {
+  return hasMeasuredDecisionCertainty(score) ? `${score} %` : 'Zatím neměřeno';
+}
+
+function comparableScore(score: number | null): number {
+  return hasMeasuredDecisionCertainty(score) ? score : Number.NEGATIVE_INFINITY;
+}
+
 /** Active house = highest interest score (current commercial case). */
 export function highestInterestHouse(
   client: SalesClient,
 ): SalesHouseInterest {
   return client.houses.reduce((best, house) =>
-    house.score > best.score ? house : best,
+    comparableScore(house.score) > comparableScore(best.score) ? house : best,
   );
 }
 
@@ -141,6 +155,6 @@ export function houseDetailLine(house: SalesHouseInterest): string {
   return `${house.houseName} • ${house.land}`;
 }
 
-export function clientPrimaryScore(client: SalesClient): number {
+export function clientPrimaryScore(client: SalesClient): number | null {
   return highestInterestHouse(client).score;
 }

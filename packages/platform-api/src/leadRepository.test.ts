@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
@@ -231,6 +231,59 @@ test('FileLeadRepository lists only the requested Company/Project/House scope', 
       houseId: 'house-test',
     });
     assert.deepEqual(foreign, []);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('FileLeadRepository persists decisionSessionId', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'conis-lead-session-'));
+  const statePath = join(dir, 'leads.json');
+  try {
+    const repository = new FileLeadRepository(statePath);
+    const created = await repository.create(
+      validLead({
+        decisionSessionId: 'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+      }),
+    );
+    assert.equal(
+      created.decisionSessionId,
+      'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+    );
+    const restored = await new FileLeadRepository(statePath).getByIdempotencyKey(
+      created.idempotencyKey,
+    );
+    assert.equal(
+      restored?.decisionSessionId,
+      'dddddddd-dddd-4ddd-8ddd-dddddddddddd',
+    );
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('FileLeadRepository remains readable without decisionSessionId', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'conis-lead-legacy-session-'));
+  const statePath = join(dir, 'leads.json');
+  try {
+    const legacy = validLead();
+    await writeFile(
+      statePath,
+      JSON.stringify({
+        leads: [
+          {
+            ...legacy,
+            status: 'accepted',
+            notificationStatus: 'pending',
+          },
+        ],
+      }),
+    );
+    const restored = await new FileLeadRepository(statePath).getByIdempotencyKey(
+      legacy.idempotencyKey,
+    );
+    assert.equal(restored?.leadId, legacy.leadId);
+    assert.equal(restored?.decisionSessionId, null);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

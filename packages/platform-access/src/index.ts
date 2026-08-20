@@ -539,15 +539,21 @@ export {
   selectHouseOperationalCases,
   selectScopedOperationalCases,
   REFERENCE_CASE_TEMPLATE_IDS,
+  CANONICAL_PRIORITY_LABELS,
+  projectLeadProfilZajemce,
+  REAL_DECISION_CERTAINTY_AUTHORITY,
   type HouseOperationalAggregate,
   type HouseOperationalCase,
+  type OperationalDecisionSnapshot,
   type OperationalHouseScope,
   type OperationalJourneyStep,
   type OperationalLeadRecord,
   type OperationalOrigin,
+  type OperationalPrioritySelection,
   type ProfilZajemce,
 } from './operations/index';
 export { fetchHouseOperationalLeads } from './api/houseOperationalLeadsClient';
+export { fetchHouseOperationalSessions } from './api/houseOperationalSessionsClient';
 export {
   useHouseOperationalCases,
   type HouseOperationalCasesState,

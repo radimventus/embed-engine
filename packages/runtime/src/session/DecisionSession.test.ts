@@ -6,6 +6,8 @@ import type { HousePackage } from "@embed-engine/object-house";
 import {
   cloneDecisionSession,
   createDecisionSession,
+  createDecisionSessionRuntime,
+  createFixedClock,
   projectDecisionSession,
   replayDecisionSession,
   restoreDecisionSessionFromJson,
@@ -184,6 +186,81 @@ describe("DecisionSession execution model", () => {
       ),
       ["room-bedroom", "room-kitchen", "room-bedroom"],
     );
+  });
+
+  it("serialize → restore preserves priority intensities", () => {
+    const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(10),
+      housePackage: HOUSE,
+      now: 10,
+    });
+    const changed = runtime.dispatch(
+      {
+        type: "ChangePriority",
+        priorityIds: ["price", "garden"],
+        intensities: [
+          { priorityId: "price", importance: 0.8 },
+          { priorityId: "garden", importance: 0.2 },
+        ],
+      },
+      20,
+    );
+    assert.equal(changed.ok, true);
+    if (!changed.ok) {
+      return;
+    }
+    const json = serializeDecisionSessionToJson(changed.session);
+    const restored = restoreDecisionSessionFromJson(json);
+    assert.equal(restored.ok, true);
+    if (!restored.ok) {
+      return;
+    }
+    assert.deepEqual(restored.session.runtimeState.priorityIds, [
+      "price",
+      "garden",
+    ]);
+    assert.deepEqual(restored.session.runtimeState.priorityIntensities, {
+      price: 0.8,
+      garden: 0.2,
+    });
+    const priorityEvent = restored.session.events.find(
+      (event) => event.type === "PriorityChanged",
+    );
+    assert.equal(priorityEvent?.type, "PriorityChanged");
+    if (priorityEvent?.type !== "PriorityChanged") {
+      return;
+    }
+    assert.deepEqual(priorityEvent.intensities, [
+      { priorityId: "price", importance: 0.8 },
+      { priorityId: "garden", importance: 0.2 },
+    ]);
+  });
+
+  it("serialize → restore accepts older sessions with priority ids only", () => {
+    const json = JSON.stringify({
+      format: "decision-session",
+      schemaVersion: "1.0",
+      objectId: HOUSE.identity.id,
+      runtimeState: {
+        activeRoomId: null,
+        priorityIds: ["price"],
+        variantId: null,
+        scenarioId: null,
+        version: 1,
+      },
+      events: [
+        { type: "PriorityChanged", priorityIds: ["price"], at: 2 },
+      ],
+      createdAt: 1,
+      updatedAt: 2,
+    });
+    const restored = restoreDecisionSessionFromJson(json);
+    assert.equal(restored.ok, true);
+    if (!restored.ok) {
+      return;
+    }
+    assert.deepEqual(restored.session.runtimeState.priorityIds, ["price"]);
+    assert.equal(restored.session.runtimeState.priorityIntensities, null);
   });
 
   it("clone is independent of the original session", () => {

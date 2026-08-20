@@ -87,6 +87,16 @@ describe('Priority Experience (CSCB-04)', () => {
     assert.equal(Object.values(cards).filter((card) => card.selected).length, 4);
   });
 
+  it('hydrates captured Client-scale intensities when Runtime preserved them', () => {
+    const cards = createCardsFromPriorityIds(
+      ['plot', 'layout', 'privacy'],
+      { plot: 0.2, layout: 0.9, privacy: 0.5 },
+    );
+    assert.equal(cards.plot?.importance, 0.2);
+    assert.equal(cards.layout?.importance, 0.9);
+    assert.equal(cards.privacy?.importance, 0.5);
+  });
+
   it('dispatches ChangePriority only — no semantic composition', () => {
     const bridge = stripComments(read('usePrioritySignalBridge.ts'));
     assert.match(bridge, /ChangePriority/);

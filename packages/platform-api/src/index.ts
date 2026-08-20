@@ -21,7 +21,16 @@ import {
   LeadAlreadyExistsError,
   type LeadRepository,
 } from './leadRepository';
-import { resolveLeadScope } from './leadScope';
+import { resolveLeadScope, resolvePublicHouseScope } from './leadScope';
+import {
+  DecisionSessionScopeMismatchError,
+  FileDecisionSessionRepository,
+  type DecisionSessionRepository,
+} from './decisionSessionRepository';
+import {
+  isDecisionSessionId,
+  toOperationalDecisionSnapshot,
+} from './decisionSessionRecord';
 import {
   FileProjectConfigRepository,
   type ProjectConfigRepository,
@@ -87,6 +96,19 @@ export {
   type LeadScopeQuery,
   LeadAlreadyExistsError,
 } from './leadRepository';
+export {
+  FileDecisionSessionRepository,
+  DecisionSessionScopeMismatchError,
+  type DecisionSessionRepository,
+  type DecisionSessionScopeQuery,
+} from './decisionSessionRepository';
+export {
+  isDecisionSessionId,
+  sanitizeSerializedDecisionSession,
+  toOperationalDecisionSnapshot,
+  type DurableDecisionSessionRecord,
+  type DurableSerializedDecisionSession,
+} from './decisionSessionRecord';
 export {
   FileProjectConfigRepository,
   type DurableProjectConfig,
@@ -556,6 +578,7 @@ export function createPlatformApiServer(
   leadScopeResolver: typeof resolveLeadScope = resolveLeadScope,
   projectConfigs: ProjectConfigRepository = new FileProjectConfigRepository(),
   officePartners: OfficePartnerRepository = new FileOfficePartnerRepository(),
+  decisionSessions: DecisionSessionRepository = new FileDecisionSessionRepository(),
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
@@ -570,6 +593,102 @@ export function createPlatformApiServer(
     if (request.method === 'OPTIONS') return respond(response, 204, {});
     const path = new URL(request.url ?? '/', 'http://localhost').pathname;
     try {
+      if (
+        (request.method === 'PUT' || request.method === 'GET') &&
+        path === '/public/decision-sessions'
+      ) {
+        applyDurableProjectConfigs(await projectConfigs.list());
+        if (request.method === 'PUT') {
+          const rawBody = await requestBody(request);
+          if (
+            typeof rawBody !== 'object' ||
+            rawBody === null ||
+            Array.isArray(rawBody)
+          ) {
+            return respond(response, 400, { error: 'Neplatná relace rozhodnutí.' });
+          }
+          const candidate = rawBody as Record<string, unknown>;
+          if (
+            typeof candidate.decisionSessionId !== 'string' ||
+            !isDecisionSessionId(candidate.decisionSessionId) ||
+            typeof candidate.companyId !== 'string' ||
+            typeof candidate.projectId !== 'string' ||
+            typeof candidate.houseId !== 'string'
+          ) {
+            return respond(response, 400, { error: 'Neplatná relace rozhodnutí.' });
+          }
+          let scope;
+          try {
+            scope = resolvePublicHouseScope({
+              companyId: candidate.companyId,
+              projectId: candidate.projectId,
+              houseId: candidate.houseId,
+            });
+          } catch {
+            return respond(response, 400, { error: 'Neplatný rozsah.' });
+          }
+          try {
+            const record = await decisionSessions.upsert({
+              decisionSessionId: candidate.decisionSessionId.trim(),
+              companyId: scope.companyId,
+              projectId: scope.projectId,
+              houseId: scope.houseId,
+              serialized: candidate.serialized,
+            });
+            return respond(response, 200, {
+              decisionSessionId: record.decisionSessionId,
+              companyId: record.companyId,
+              projectId: record.projectId,
+              houseId: record.houseId,
+              createdAt: record.createdAt,
+              updatedAt: record.updatedAt,
+            });
+          } catch (error) {
+            if (error instanceof DecisionSessionScopeMismatchError) {
+              return respond(response, 409, { error: 'Relace rozhodnutí nepatří tomuto domu.' });
+            }
+            return respond(response, 400, { error: 'Neplatná relace rozhodnutí.' });
+          }
+        }
+
+        const url = new URL(request.url ?? '/', 'http://localhost');
+        const decisionSessionId = url.searchParams.get('decisionSessionId')?.trim() ?? '';
+        const companyId = url.searchParams.get('companyId')?.trim() ?? '';
+        const projectId = url.searchParams.get('projectId')?.trim() ?? '';
+        const houseId = url.searchParams.get('houseId')?.trim() ?? '';
+        if (
+          !isDecisionSessionId(decisionSessionId) ||
+          companyId.length === 0 ||
+          projectId.length === 0 ||
+          houseId.length === 0
+        ) {
+          return respond(response, 400, { error: 'Neplatný rozsah relace.' });
+        }
+        let scope;
+        try {
+          scope = resolvePublicHouseScope({ companyId, projectId, houseId });
+        } catch {
+          return respond(response, 400, { error: 'Neplatný rozsah.' });
+        }
+        const record = await decisionSessions.getByScopeAndId({
+          companyId: scope.companyId,
+          projectId: scope.projectId,
+          houseId: scope.houseId,
+          decisionSessionId,
+        });
+        if (record === null) {
+          return respond(response, 404, { error: 'Relace rozhodnutí neexistuje.' });
+        }
+        return respond(response, 200, {
+          decisionSessionId: record.decisionSessionId,
+          companyId: record.companyId,
+          projectId: record.projectId,
+          houseId: record.houseId,
+          createdAt: record.createdAt,
+          updatedAt: record.updatedAt,
+          serialized: record.serialized,
+        });
+      }
       if (request.method === 'POST' && path === '/public/leads') {
         const rawBody = await requestBody(request);
         if (
@@ -635,12 +754,39 @@ export function createPlatformApiServer(
         if (body.consent?.privacyUrl !== scope.privacyUrl) {
           return respond(response, 400, { error: 'Zásady soukromí neodpovídají partnerovi.' });
         }
+
+        let decisionSessionId: string | null = null;
+        const requestedSessionId = candidate.decisionSessionId;
+        if (
+          requestedSessionId !== undefined &&
+          requestedSessionId !== null
+        ) {
+          if (
+            typeof requestedSessionId !== 'string' ||
+            !isDecisionSessionId(requestedSessionId)
+          ) {
+            return respond(response, 400, { error: 'Neplatná relace rozhodnutí.' });
+          }
+          const sessionRecord = await decisionSessions.getById(requestedSessionId.trim());
+          if (sessionRecord !== null) {
+            if (
+              sessionRecord.companyId !== scope.companyId ||
+              sessionRecord.projectId !== scope.projectId ||
+              sessionRecord.houseId !== scope.houseId
+            ) {
+              return respond(response, 400, { error: 'Relace rozhodnutí nepatří tomuto domu.' });
+            }
+            decisionSessionId = sessionRecord.decisionSessionId;
+          }
+        }
+
         const input = {
           ...body,
           companyId: scope.companyId,
           projectId: scope.projectId,
           houseId: scope.houseId,
           consent: { ...body.consent, privacyUrl: scope.privacyUrl },
+          decisionSessionId,
           leadId: randomBytes(16).toString('hex'),
           createdAt: new Date().toISOString(),
         };
@@ -710,7 +856,49 @@ export function createPlatformApiServer(
             intent: item.intent,
             status: item.status,
             contact: item.contact,
+            decisionSessionId: item.decisionSessionId ?? null,
           })),
+        });
+      }
+      if (request.method === 'GET' && path === '/partner/decision-sessions') {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session =
+          token === null ? null : await partnerSessions.resolve(token);
+        if (session === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+        const roles = sessionRoles(session);
+        if (
+          !canAccessStudio(roles, 'sales') &&
+          !canAccessStudio(roles, 'manager')
+        ) {
+          return respond(response, 403, { error: 'Přístup k relacím rozhodnutí není povolen.' });
+        }
+
+        const url = new URL(request.url ?? '/', 'http://localhost');
+        const companyId = url.searchParams.get('companyId')?.trim() ?? '';
+        const projectId = url.searchParams.get('projectId')?.trim() ?? '';
+        const houseId = url.searchParams.get('houseId')?.trim() ?? '';
+        if (companyId.length === 0 || projectId.length === 0) {
+          return respond(response, 400, { error: 'Neplatný rozsah.' });
+        }
+        if (companyId !== sessionCompanyId(session)) {
+          return respond(response, 403, { error: 'Společnost není pro tuto relaci povolena.' });
+        }
+        const sessionProjectId = (
+          session.workspaceContext?.projectId ?? session.projectId ?? ''
+        ).trim();
+        if (projectId !== sessionProjectId) {
+          return respond(response, 403, { error: 'Projekt není pro tuto relaci povolen.' });
+        }
+
+        const scoped = await decisionSessions.list({
+          companyId,
+          projectId,
+          ...(houseId.length > 0 ? { houseId } : {}),
+        });
+        return respond(response, 200, {
+          sessions: scoped.map(toOperationalDecisionSnapshot),
         });
       }
       const projectConfigMatch = path.match(/^\/public\/projects\/([^/]+)\/config$/);

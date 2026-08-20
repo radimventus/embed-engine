@@ -44,6 +44,7 @@ export type SessionInterpretation = {
   readonly activeRoomId: string | null;
   readonly activeRoomName: string | null;
   readonly priorityIds: readonly string[];
+  readonly priorityIntensities: Readonly<Record<string, number>> | null;
   /** Active Priority Signals feeding Interpretation Rules (CAP-PRI-001). */
   readonly prioritySignals: readonly PrioritySignal[];
   readonly variantId: string | null;
@@ -182,6 +183,7 @@ export function interpretDecisionSession(
     activeRoomId,
     activeRoomName,
     priorityIds: Object.freeze([...session.runtimeState.priorityIds]),
+    priorityIntensities: session.runtimeState.priorityIntensities,
     prioritySignals,
     variantId: session.runtimeState.variantId,
     scenarioId: session.runtimeState.scenarioId,

@@ -19,6 +19,7 @@ export {
 export type {
   DecisionEvent,
   ObjectId,
+  PriorityIntensity,
   RoomId,
   Timestamp,
 } from "./DecisionEvent";

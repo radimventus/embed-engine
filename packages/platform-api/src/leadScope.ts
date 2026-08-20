@@ -12,6 +12,12 @@ export type ResolvedLeadScope = {
   readonly privacyUrl: string;
 };
 
+export type ResolvedPublicHouseScope = {
+  readonly companyId: string;
+  readonly projectId: string;
+  readonly houseId: string;
+};
+
 function validPrivacyUrl(value: string | undefined): value is string {
   if (value === undefined) return false;
   try {
@@ -19,6 +25,55 @@ function validPrivacyUrl(value: string | undefined): value is string {
   } catch {
     return false;
   }
+}
+
+/**
+ * Company / Project / House ownership without requiring partner privacy URL.
+ * Used by public Decision Session persistence.
+ */
+export function resolvePublicHouseScope(input: {
+  readonly companyId: string;
+  readonly projectId: string;
+  readonly houseId: string;
+}): ResolvedPublicHouseScope {
+  const company = findCompany(getDefaultCompanyRegistry(), input.companyId);
+  const project = getCanonicalProject(input.projectId);
+  if (
+    company === undefined ||
+    project === null ||
+    project.partner.companyId !== company.id
+  ) {
+    throw new Error('Invalid public house scope.');
+  }
+
+  const publishedHouse = listCanonicalHouses(input.projectId).find(
+    (item) => item.house?.houseId === input.houseId,
+  );
+  if (
+    publishedHouse !== undefined &&
+    publishedHouse.project.projectId === project.project.projectId
+  ) {
+    return {
+      companyId: company.id,
+      projectId: project.project.projectId,
+      houseId: publishedHouse.house!.houseId,
+    };
+  }
+
+  const registryHouse = getDefaultCompanyRegistry().projects.find(
+    (item) =>
+      item.id === input.houseId &&
+      item.companyId === company.id &&
+      item.canonicalProjectId === project.project.projectId,
+  );
+  if (registryHouse === undefined) {
+    throw new Error('Invalid public house scope.');
+  }
+  return {
+    companyId: company.id,
+    projectId: project.project.projectId,
+    houseId: registryHouse.id,
+  };
 }
 
 /**
@@ -31,25 +86,13 @@ export function resolveLeadScope(input: {
   readonly projectId: string;
   readonly houseId: string;
 }): ResolvedLeadScope {
-  const company = findCompany(getDefaultCompanyRegistry(), input.companyId);
-  const project = getCanonicalProject(input.projectId);
-  const house = listCanonicalHouses(input.projectId).find(
-    (item) => item.house?.houseId === input.houseId,
-  );
-  if (
-    company === undefined ||
-    project === null ||
-    project.partner.companyId !== company.id ||
-    house === undefined ||
-    house.project.projectId !== project.project.projectId ||
-    !validPrivacyUrl(project.project.privacyUrl)
-  ) {
+  const scope = resolvePublicHouseScope(input);
+  const project = getCanonicalProject(scope.projectId);
+  if (project === null || !validPrivacyUrl(project.project.privacyUrl)) {
     throw new Error('Invalid lead scope or missing partner privacy configuration.');
   }
   return {
-    companyId: company.id,
-    projectId: project.project.projectId,
-    houseId: house.house!.houseId,
+    ...scope,
     privacyUrl: project.project.privacyUrl,
   };
 }

@@ -34,7 +34,9 @@ export function aggregateHouseOperations(
       (item) => item.conversion.status === 'accepted',
     ).length,
     highIntentCount: cases.filter(
-      (item) => item.profilZajemce.score >= HIGH_INTENT_THRESHOLD,
+      (item) =>
+        typeof item.profilZajemce.score === 'number' &&
+        item.profilZajemce.score >= HIGH_INTENT_THRESHOLD,
     ).length,
     priorityCounts,
     journeyModuleCounts,

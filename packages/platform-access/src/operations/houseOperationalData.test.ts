@@ -13,7 +13,7 @@ import {
   selectHouseOperationalCases,
   selectScopedOperationalCases,
 } from './selectHouseOperationalCases';
-import type { OperationalLeadRecord } from './operationalTypes';
+import type { OperationalDecisionSnapshot, OperationalLeadRecord } from './operationalTypes';
 
 function lead(
   overrides: Partial<OperationalLeadRecord> = {},
@@ -32,6 +32,7 @@ function lead(
       email: 'petr.lead@example.cz',
       phone: null,
     },
+    decisionSessionId: null,
     ...overrides,
   };
 }
@@ -324,11 +325,154 @@ describe('House operational data path', () => {
     assert.equal(vpd.length, 1);
     assert.equal(vpd[0]?.leadId, 'lead-vpd-1');
     assert.equal(vpd[0]?.caseId, 'lead-vpd-1');
-    assert.equal(vpd[0]?.profilZajemce.tags.includes('Žádost o audit'), true);
+    assert.deepEqual(vpd[0]?.profilZajemce.tags, []);
+    assert.equal(vpd[0]?.profilZajemce.score, null);
+    assert.equal(
+      vpd[0]?.profilZajemce.journey.some(
+        (step) => step.detail === 'Odeslána žádost o audit',
+      ),
+      true,
+    );
     assert.equal(
       bungalov.some((item) => item.leadId === 'lead-vpd-1'),
       false,
     );
     assert.equal(bungalov.length, 3);
+  });
+
+  it('projects real selected priorities and truthful journey from a correlated session', () => {
+    const accepted = lead({
+      leadId: 'lead-real-1',
+      houseId: vpdA.houseId,
+      decisionSessionId: '11111111-1111-4111-8111-111111111111',
+    });
+    const snapshot: OperationalDecisionSnapshot = {
+      decisionSessionId: '11111111-1111-4111-8111-111111111111',
+      companyId: vpdA.companyId,
+      projectId: vpdA.projectId,
+      houseId: vpdA.houseId,
+      priorityIds: ['layout', 'energy', 'plot'],
+      priorityIntensities: {
+        layout: 0.9,
+        energy: 0.5,
+        plot: 0.2,
+      },
+      activeRoomId: 'room-living',
+      events: [
+        { type: 'RoomSelected', roomId: 'room-living', at: 2 },
+        {
+          type: 'PriorityChanged',
+          priorityIds: ['layout', 'energy', 'plot'],
+          intensities: [
+            { priorityId: 'layout', importance: 0.9 },
+            { priorityId: 'energy', importance: 0.5 },
+            { priorityId: 'plot', importance: 0.2 },
+          ],
+          at: 3,
+        },
+      ],
+    };
+    const cases = selectHouseOperationalCases({
+      ...vpdA,
+      durableLeads: [accepted],
+      durableSessions: [snapshot],
+    });
+    assert.equal(cases.length, 1);
+    assert.deepEqual(cases[0]?.profilZajemce.tags, [
+      'Dispozice',
+      'Energie',
+      'Pozemek',
+    ]);
+    assert.equal(cases[0]?.profilZajemce.tags.includes('Žádost o audit'), false);
+    assert.equal(cases[0]?.profilZajemce.score, null);
+    assert.equal(
+      cases[0]?.profilZajemce.priorities.find((item) => item.id === 'layout')
+        ?.importance,
+      0.9,
+    );
+    assert.equal(
+      cases[0]?.profilZajemce.journey.some(
+        (step) => step.module === 'Prohlídka domu' && step.detail === 'room-living',
+      ),
+      true,
+    );
+    assert.equal(
+      cases[0]?.profilZajemce.journey.some(
+        (step) => step.module === 'Priority' && step.title === 'Výběr priorit',
+      ),
+      true,
+    );
+    assert.equal(
+      cases[0]?.profilZajemce.journey.some(
+        (step) => step.detail === 'Odeslána žádost o audit',
+      ),
+      true,
+    );
+    assert.match(cases[0]?.profilZajemce.insight ?? '', /Dispozice/);
+    assert.equal(cases[0]?.profilZajemce.location, null);
+    assert.equal(
+      aggregateHouseOperations(cases).priorityCounts.some(
+        (item) => item.label === 'Dispozice',
+      ),
+      true,
+    );
+    assert.equal(aggregateHouseOperations(cases).highIntentCount, 0);
+  });
+
+  it('does not correlate a session from another House', () => {
+    const accepted = lead({
+      leadId: 'lead-mismatch',
+      houseId: vpdA.houseId,
+      decisionSessionId: '22222222-2222-4222-8222-222222222222',
+    });
+    const foreign: OperationalDecisionSnapshot = {
+      decisionSessionId: '22222222-2222-4222-8222-222222222222',
+      companyId: bungalowA.companyId,
+      projectId: bungalowA.projectId,
+      houseId: bungalowA.houseId,
+      priorityIds: ['layout'],
+      priorityIntensities: { layout: 1 },
+      activeRoomId: null,
+      events: [
+        {
+          type: 'PriorityChanged',
+          priorityIds: ['layout'],
+          intensities: [{ priorityId: 'layout', importance: 1 }],
+          at: 1,
+        },
+      ],
+    };
+    const cases = selectHouseOperationalCases({
+      ...vpdA,
+      durableLeads: [accepted],
+      durableSessions: [foreign],
+    });
+    assert.deepEqual(cases[0]?.profilZajemce.tags, []);
+    assert.equal(cases[0]?.profilZajemce.score, null);
+  });
+
+  it('does not count an unscored real case as high-certainty alongside reference scores', () => {
+    const accepted = lead({
+      leadId: 'lead-unscored',
+      houseId: bungalowA.houseId,
+    });
+    const cases = selectHouseOperationalCases({
+      ...bungalowA,
+      durableLeads: [accepted],
+    });
+    const aggregate = aggregateHouseOperations(cases);
+    assert.equal(cases.length, 4);
+    assert.equal(aggregate.convertedCount, 4);
+    assert.equal(aggregate.highIntentCount, 2);
+    assert.equal(
+      cases.find((item) => item.origin === 'LEAD')?.profilZajemce.score,
+      null,
+    );
+    assert.equal(
+      cases
+        .filter((item) => item.origin === 'REFERENCE')
+        .every((item) => typeof item.profilZajemce.score === 'number'),
+      true,
+    );
   });
 });

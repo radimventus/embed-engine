@@ -95,4 +95,66 @@ describe('Sales House operational desk', () => {
     assert.doesNotMatch(app, /SALES_CLIENTS/);
     assert.doesNotMatch(app, /harmony-124/);
   });
+
+  it('renders real selected priorities and does not fabricate 70 for a Lead case', () => {
+    const clients = toSalesClients(
+      selectHouseOperationalCases({
+        companyId: DSE_COMPANY_ID,
+        projectId: DSE_CANONICAL_PROJECT_ID,
+        houseId: DSE_FIRST_DRAFT_HOUSE_ID,
+        houseName: 'VÁŠ PRVNÍ DŮM',
+        dataMode: 'LIVE_EMPTY',
+        durableLeads: [
+          {
+            leadId: 'lead-real',
+            companyId: DSE_COMPANY_ID,
+            projectId: DSE_CANONICAL_PROJECT_ID,
+            houseId: DSE_FIRST_DRAFT_HOUSE_ID,
+            createdAt: '2026-08-20T10:00:00.000Z',
+            source: 'EMBED',
+            intent: 'audit',
+            status: 'accepted',
+            contact: {
+              name: 'Petr Lead',
+              email: 'petr.lead@example.cz',
+              phone: null,
+            },
+            decisionSessionId: 'ffffffff-ffff-4fff-8fff-ffffffffffff',
+          },
+        ],
+        durableSessions: [
+          {
+            decisionSessionId: 'ffffffff-ffff-4fff-8fff-ffffffffffff',
+            companyId: DSE_COMPANY_ID,
+            projectId: DSE_CANONICAL_PROJECT_ID,
+            houseId: DSE_FIRST_DRAFT_HOUSE_ID,
+            priorityIds: ['layout', 'energy', 'plot'],
+            priorityIntensities: { layout: 0.9, energy: 0.4, plot: 0.2 },
+            activeRoomId: 'room-living',
+            events: [
+              { type: 'RoomSelected', roomId: 'room-living', at: 2 },
+              {
+                type: 'PriorityChanged',
+                priorityIds: ['layout', 'energy', 'plot'],
+                intensities: [
+                  { priorityId: 'layout', importance: 0.9 },
+                  { priorityId: 'energy', importance: 0.4 },
+                  { priorityId: 'plot', importance: 0.2 },
+                ],
+                at: 3,
+              },
+            ],
+          },
+        ],
+      }),
+    );
+    assert.equal(clients.length, 1);
+    assert.deepEqual(clients[0]?.houses[0]?.tags, [
+      'Dispozice',
+      'Energie',
+      'Pozemek',
+    ]);
+    assert.equal(clients[0]?.houses[0]?.score, null);
+    assert.equal(clients[0]?.houses[0]?.tags.includes('Žádost o audit'), false);
+  });
 });

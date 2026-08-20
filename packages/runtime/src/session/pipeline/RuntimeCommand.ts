@@ -1,4 +1,4 @@
-import type { RoomId, Timestamp } from "../DecisionEvent";
+import type { PriorityIntensity, RoomId, Timestamp } from "../DecisionEvent";
 
 /**
  * Semantic Runtime Commands — express user intent only.
@@ -12,6 +12,7 @@ export type RuntimeCommand =
   | {
       readonly type: "ChangePriority";
       readonly priorityIds: readonly string[];
+      readonly intensities?: readonly PriorityIntensity[];
     }
   | {
       readonly type: "SelectVariant";

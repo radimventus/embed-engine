@@ -89,6 +89,41 @@ export function validateCommand(input: {
           path: "command.priorityIds",
         });
       }
+      if (command.intensities !== undefined) {
+        if (
+          !Array.isArray(command.intensities) ||
+          command.intensities.length !== command.priorityIds.length
+        ) {
+          errors.push({
+            code: "HP_INVALID_PRIORITY",
+            message: "intensities must match priorityIds one-for-one.",
+            path: "command.intensities",
+          });
+          break;
+        }
+        const intensityIds = command.intensities.map((item) => item.priorityId);
+        const intensitySet = new Set(intensityIds);
+        if (
+          intensitySet.size !== intensityIds.length ||
+          command.priorityIds.some((id) => !intensitySet.has(id)) ||
+          command.intensities.some(
+            (item) =>
+              typeof item.priorityId !== "string" ||
+              item.priorityId.length === 0 ||
+              typeof item.importance !== "number" ||
+              !Number.isFinite(item.importance) ||
+              item.importance < 0 ||
+              item.importance > 1,
+          )
+        ) {
+          errors.push({
+            code: "HP_INVALID_PRIORITY",
+            message:
+              "Each intensity must use the Client 0–1 importance scale for a selected priorityId.",
+            path: "command.intensities",
+          });
+        }
+      }
       break;
     }
     case "SelectVariant": {

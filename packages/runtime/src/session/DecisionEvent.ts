@@ -9,6 +9,12 @@ export type ObjectId = string;
 
 export type RoomId = string;
 
+/** Captured Client-scale importance for one selected priority. Optional on older events. */
+export type PriorityIntensity = {
+  readonly priorityId: string;
+  readonly importance: number;
+};
+
 export type DecisionEvent =
   | {
       readonly type: "RoomSelected";
@@ -18,6 +24,7 @@ export type DecisionEvent =
   | {
       readonly type: "PriorityChanged";
       readonly priorityIds: readonly string[];
+      readonly intensities?: readonly PriorityIntensity[];
       readonly at: Timestamp;
     }
   | {

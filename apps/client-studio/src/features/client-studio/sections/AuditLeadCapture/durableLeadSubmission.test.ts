@@ -48,6 +48,17 @@ describe('Audit durable lead submission', () => {
     assert.equal(payload.consent.privacyVersion, 'partner-current');
   });
 
+  it('includes decisionSessionId when the Client journey has one', () => {
+    const payload = createDurableLeadPayload({
+      ...input(),
+      decisionSessionId: 'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+    });
+    assert.equal(
+      payload.decisionSessionId,
+      'eeeeeeee-eeee-4eee-8eee-eeeeeeeeeeee',
+    );
+  });
+
   it('does not resolve before backend acceptance resolves', async () => {
     let release!: () => void;
 

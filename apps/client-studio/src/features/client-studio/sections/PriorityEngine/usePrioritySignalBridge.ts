@@ -18,8 +18,8 @@ export function usePrioritySignalBridge(
   const { dispatch, experience } = useDecisionSessionRuntime();
   const lastDispatchedKey = useRef<string>('');
 
-  const profileIds = useMemo(() => {
-    return SELECTABLE_DECISION_CATEGORIES.map((category) => category.id)
+  const profile = useMemo(() => {
+    const ids = SELECTABLE_DECISION_CATEGORIES.map((category) => category.id)
       .filter((id) => cards[id]?.selected === true)
       .sort((left, right) => {
         const importanceDelta =
@@ -29,30 +29,53 @@ export function usePrioritySignalBridge(
         }
         return left.localeCompare(right);
       });
+    return {
+      ids,
+      intensities: ids.map((id) => ({
+        priorityId: id,
+        importance: cards[id]?.importance ?? 0,
+      })),
+    };
   }, [cards]);
 
   useEffect(() => {
-    if (profileIds.length === 0) {
+    if (profile.ids.length === 0) {
       return;
     }
 
-    const key = profileIds.join(',');
+    const key = profile.intensities
+      .map((item) => `${item.priorityId}:${item.importance}`)
+      .join(',');
     if (key === lastDispatchedKey.current) {
       return;
     }
 
-    const currentKey = experience.context.decision.priorityIds.join(',');
-    if (key === currentKey) {
+    const currentIds = experience.context.decision.priorityIds.join(',');
+    const currentIntensities = experience.context.decision.priorityIntensities;
+    const currentKey = profile.ids
+      .map(
+        (id) =>
+          `${id}:${currentIntensities?.[id] ?? ''}`,
+      )
+      .join(',');
+    if (key === currentKey && currentIds === profile.ids.join(',')) {
       lastDispatchedKey.current = key;
       return;
     }
 
-    const result = dispatch({
-      type: 'ChangePriority',
-      priorityIds: profileIds,
-    });
-    if (result.ok) {
-      lastDispatchedKey.current = key;
-    }
-  }, [dispatch, experience.context.decision.priorityIds, profileIds]);
+    const timer = window.setTimeout(() => {
+      const result = dispatch({
+        type: 'ChangePriority',
+        priorityIds: profile.ids,
+        intensities: profile.intensities,
+      });
+      if (result.ok) {
+        lastDispatchedKey.current = key;
+      }
+    }, 300);
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [dispatch, experience.context.decision.priorityIds, experience.context.decision.priorityIntensities, profile]);
 }

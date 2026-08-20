@@ -28,6 +28,8 @@ import {
 import {
   HIGH_INTENT_THRESHOLD,
   clientPrimaryScore,
+  formatDecisionCertainty,
+  hasMeasuredDecisionCertainty,
   houseDetailLine,
   houseListLine,
   listSalesCanonicalProjects,
@@ -91,7 +93,10 @@ export function SalesStudioApp() {
     if (!matchesQuery(client, query)) return false;
     if (
       intentFilter === 'high' &&
-      clientPrimaryScore(client) < HIGH_INTENT_THRESHOLD
+      (
+        !hasMeasuredDecisionCertainty(clientPrimaryScore(client)) ||
+        clientPrimaryScore(client) < HIGH_INTENT_THRESHOLD
+      )
     ) {
       return false;
     }
@@ -127,9 +132,12 @@ export function SalesStudioApp() {
     { id: 'prospect', label: activeClient?.name ?? 'Zájemce' },
   ];
 
-  const highIntentCount = scopedClients.filter(
-    (client) => clientPrimaryScore(client) >= HIGH_INTENT_THRESHOLD,
-  ).length;
+  const highIntentCount = scopedClients.filter((client) => {
+    const score = clientPrimaryScore(client);
+    return (
+      hasMeasuredDecisionCertainty(score) && score >= HIGH_INTENT_THRESHOLD
+    );
+  }).length;
   const preData = scopedClients.length === 0;
 
   function selectClient(clientId: string) {
@@ -222,7 +230,9 @@ export function SalesStudioApp() {
                               {client.name}
                             </span>
                             <span className="sales-desk__intent-score">
-                              {primary.score} % Jistota
+                              {hasMeasuredDecisionCertainty(primary.score)
+                                ? `${formatDecisionCertainty(primary.score)} Jistota`
+                                : formatDecisionCertainty(primary.score)}
                             </span>
                           </div>
                           <p className="sales-desk__client-project">
@@ -265,7 +275,7 @@ export function SalesStudioApp() {
                           >
                             <span>{house.houseName}</span>
                             <span className="sales-desk__house-chip-score">
-                              {house.score} %
+                              {formatDecisionCertainty(house.score)}
                             </span>
                           </button>
                         </li>
@@ -292,12 +302,16 @@ export function SalesStudioApp() {
                   <div className="sales-desk__meter">
                     <div className="sales-desk__meter-header">
                       <span>Index rozhodovací jistoty</span>
-                      <span>{activeHouse.score} %</span>
+                      <span>{formatDecisionCertainty(activeHouse.score)}</span>
                     </div>
                     <div className="sales-desk__meter-track">
                       <div
                         className="sales-desk__meter-fill"
-                        style={{ width: `${activeHouse.score}%` }}
+                        style={{
+                          width: hasMeasuredDecisionCertainty(activeHouse.score)
+                            ? `${activeHouse.score}%`
+                            : '0%',
+                        }}
                       />
                     </div>
                   </div>

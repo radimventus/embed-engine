@@ -75,6 +75,7 @@ export function projectFromInterpretation(
     activeRoom,
     focusRoom: interpretation.focusRoom,
     priorityIds: interpretation.priorityIds,
+    priorityIntensities: interpretation.priorityIntensities,
     prioritySignals: interpretation.prioritySignals,
     variantId: interpretation.variantId,
     scenarioId: interpretation.scenarioId,
