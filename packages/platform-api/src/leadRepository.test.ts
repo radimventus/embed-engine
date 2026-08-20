@@ -154,3 +154,32 @@ test('FileLeadRepository rejects malformed lead before persistence', async () =>
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test('FileLeadRepository rejects consent.accepted=false before persistence', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'conis-lead-consent-false-'));
+  const statePath = join(dir, 'leads.json');
+
+  try {
+    const repository = new FileLeadRepository(statePath);
+
+    await assert.rejects(
+      () =>
+        repository.create(
+          validLead({
+            consent: {
+              accepted: false as unknown as true,
+              acceptedAt: '2026-08-20T05:00:01.000Z',
+              privacyUrl: 'https://partner.example/privacy',
+              privacyVersion: 'partner-current',
+            },
+          }),
+        ),
+      /Invalid durable lead/,
+    );
+
+    const stored = await repository.getByIdempotencyKey('idem-test-001');
+    assert.equal(stored, null);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});

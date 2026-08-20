@@ -20,6 +20,9 @@ import { submitDurableLead } from './durableLeadSubmission';
 
 type LeadPhase = 'idle' | 'loading' | 'success' | 'error';
 
+export const AUDIT_GDPR_GUIDANCE =
+  'Pro odeslání poptávky potvrďte souhlas se zpracováním osobních údajů.';
+
 /**
  * Lead Capture succeeds only after the Platform API durably accepts a lead.
  */
@@ -43,9 +46,17 @@ export function AuditContact() {
     analytics?.conversionStarted('audit-contact-form');
   };
 
+  const consentReady =
+    gdprConsent && project?.privacyUrl !== undefined;
+  const submitEnabled = consentReady && phase !== 'loading';
+
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage(null);
+
+    if (!gdprConsent) {
+      return;
+    }
 
     if (project?.privacyUrl === undefined || analyticsScope === null || company === null) {
       setPhase('error');
@@ -60,12 +71,6 @@ export function AuditContact() {
     if (!trimmedName || !trimmedEmail) {
       setPhase('error');
       setErrorMessage('Vyplňte jméno a e-mail.');
-      return;
-    }
-
-    if (!gdprConsent) {
-      setPhase('error');
-      setErrorMessage('Pro odeslání potvrďte souhlas se zpracováním údajů.');
       return;
     }
 
@@ -122,6 +127,80 @@ export function AuditContact() {
         </div>
       ) : (
         <form className="mt-5 grid grid-cols-2 gap-3 mobile:grid-cols-1" onSubmit={handleSubmit}>
+          <div
+            className="col-span-2 mobile:col-span-1"
+            data-testid="audit-gdpr-consent"
+          >
+            <div className="flex items-start gap-3">
+              <label
+                htmlFor="audit-gdpr-consent"
+                className="mt-0.5 cursor-pointer"
+                data-testid="audit-gdpr-consent-control"
+              >
+                <input
+                  id="audit-gdpr-consent"
+                  type="checkbox"
+                  checked={gdprConsent}
+                  disabled={phase === 'loading'}
+                  className="sr-only"
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    setGdprConsent(event.target.checked)
+                  }
+                />
+                <span
+                  aria-hidden="true"
+                  data-testid="audit-gdpr-consent-mark"
+                  className="flex h-5 w-5 items-center justify-center border-2"
+                  style={{
+                    borderColor: AUDIT_ACCENT,
+                    backgroundColor: gdprConsent ? AUDIT_ACCENT : 'transparent',
+                    borderRadius: 4,
+                  }}
+                >
+                  {gdprConsent ? (
+                    <svg
+                      viewBox="0 0 16 16"
+                      className="h-3.5 w-3.5"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M3.5 8.5 6.5 11.5 12.5 4.5"
+                        fill="none"
+                        stroke={AUDIT_ON_ACCENT}
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ) : null}
+                </span>
+              </label>
+              <p className="text-sm leading-snug" style={{ color: AUDIT_MUTED }}>
+                Vaše data jsou u nás v bezpečí. Odesláním souhlasíte se{' '}
+                <a
+                  href={project?.privacyUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-testid="audit-gdpr-privacy-link"
+                  className="underline underline-offset-2"
+                  style={{ color: AUDIT_ACCENT }}
+                >
+                  zpracováním osobních údajů
+                </a>{' '}
+                v souladu s pravidly GDPR.
+              </p>
+            </div>
+            {gdprConsent ? null : (
+              <p
+                className="mt-2 text-sm leading-snug"
+                style={{ color: AUDIT_MUTED }}
+                data-testid="audit-gdpr-guidance"
+              >
+                {AUDIT_GDPR_GUIDANCE}
+              </p>
+            )}
+          </div>
+
           <label className="sr-only" htmlFor="audit-contact-name">
             Jméno a příjmení
           </label>
@@ -163,7 +242,7 @@ export function AuditContact() {
             value={phone}
             placeholder="Telefon (volitelné)"
             disabled={phase === 'loading'}
-            className={AUDIT_INPUT_CLASS}
+            className={`${AUDIT_INPUT_CLASS} col-span-2 mobile:col-span-1`}
             style={{ ...AUDIT_INPUT_STYLE, height: AUDIT_INPUT_HEIGHT_PX }}
             onChange={(event: ChangeEvent<HTMLInputElement>) => setPhone(event.target.value)}
             onFocus={trackContactOpened}
@@ -171,54 +250,20 @@ export function AuditContact() {
 
           <button
             type="submit"
-            disabled={phase === 'loading' || !gdprConsent || project?.privacyUrl === undefined}
-            className="flex w-full items-center justify-center px-4 text-center text-sm font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001930] disabled:cursor-not-allowed"
+            disabled={!submitEnabled}
+            className="col-span-2 flex w-full items-center justify-center px-4 text-center text-sm font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001930] disabled:cursor-not-allowed mobile:col-span-1"
             style={{
               height: AUDIT_INPUT_HEIGHT_PX,
-              // Same fill as selected Mám/Hledám panel (CAP UX 55) — full gold, no opacity mute.
               backgroundColor: AUDIT_ACCENT,
               color: AUDIT_ON_ACCENT,
               borderRadius: AUDIT_CONTROL_RADIUS_PX,
               borderStyle: 'none',
               borderWidth: 0,
-              opacity: phase === 'loading' ? 0.6 : 1,
+              opacity: phase === 'loading' ? 0.6 : submitEnabled ? 1 : 0.42,
             }}
           >
             {phase === 'loading' ? 'ODESÍLÁM…' : 'ODESLAT POPTÁVKU →'}
           </button>
-
-          <label
-            htmlFor="audit-gdpr-consent"
-            className="col-span-2 flex cursor-pointer items-start gap-3 mobile:col-span-1"
-            data-testid="audit-gdpr-consent"
-          >
-            <input
-              id="audit-gdpr-consent"
-              type="checkbox"
-              checked={gdprConsent}
-              disabled={phase === 'loading'}
-              required
-              className="mt-1 h-4 w-4 shrink-0"
-              style={{ accentColor: AUDIT_ACCENT }}
-              onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                setGdprConsent(event.target.checked)
-              }
-            />
-            <span className="text-sm leading-snug" style={{ color: AUDIT_MUTED }}>
-              Vaše data jsou u nás v bezpečí. Odesláním souhlasíte se{' '}
-              <a
-                href={project?.privacyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline underline-offset-2"
-                style={{ color: AUDIT_ACCENT }}
-                onClick={(event) => event.stopPropagation()}
-              >
-                zpracováním osobních údajů
-              </a>{' '}
-              v souladu s pravidly GDPR.
-            </span>
-          </label>
         </form>
       )}
 

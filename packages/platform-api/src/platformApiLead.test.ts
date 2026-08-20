@@ -259,6 +259,39 @@ describe('Public durable lead API', () => {
     });
   });
 
+  it('rejects consent.accepted=false before repository persistence', async () => {
+    let createCalls = 0;
+
+    const repository: LeadRepository = {
+      create: async (input) => {
+        createCalls += 1;
+        return acceptedLead(input);
+      },
+      getByIdempotencyKey: async () => null,
+    };
+
+    await withServer(repository, async (baseUrl) => {
+      const response = await fetch(`${baseUrl}/public/leads`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify(
+          validPayload({
+            consent: {
+              accepted: false,
+              acceptedAt: '2026-08-20T06:00:00.000Z',
+              privacyUrl: canonicalScope.privacyUrl,
+              privacyVersion: 'partner-current',
+            },
+          }),
+        ),
+      });
+
+      assert.equal(response.status, 400);
+      assert.deepEqual(await response.json(), { error: 'Neplatná poptávka.' });
+      assert.equal(createCalls, 0);
+    });
+  });
+
   it('rejects privacy URL mismatch before persistence', async () => {
     let createCalls = 0;
 
