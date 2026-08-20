@@ -37,7 +37,7 @@ import {
   PilotWorkspaceProvider,
   usePilotWorkspaceContext,
 } from './office/PilotWorkspaceContext';
-import { getPartner } from './office/officePartnerRegistry';
+import { getPartner, hydrateOfficePartnersFromServer } from './office/officePartnerRegistry';
 import {
   officeHref,
   officeRouteLabel,
@@ -82,6 +82,12 @@ function OfficeStudioAppInner() {
     const onPopState = () => setLocation(readLocation());
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
+  }, []);
+
+  useEffect(() => {
+    void hydrateOfficePartnersFromServer().catch(() => {
+      // Partner form keeps the last known in-memory snapshot until save succeeds.
+    });
   }, []);
 
   useEffect(() => {

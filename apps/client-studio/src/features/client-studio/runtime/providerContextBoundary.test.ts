@@ -123,14 +123,17 @@ describe('Context-only Provider boundary (ED-DA-04)', () => {
   });
 
   it('ClientStudioPage does not mount cognitive Providers', () => {
-    const source = readSource(
+    const page = readSource(
       'src/features/client-studio/ClientStudioPage.tsx',
     );
+    const app = readSource(
+      'src/features/client-studio/ClientStudioApp.tsx',
+    );
 
-    assert.equal(source.includes('ExperienceBindingProvider'), false);
-    assert.equal(source.includes('InterpretationProvider'), false);
-    assert.equal(source.includes('DecisionStoryProvider'), false);
-    assert.match(source, /DecisionSessionRuntimeProvider/);
+    assert.equal(page.includes('ExperienceBindingProvider'), false);
+    assert.equal(page.includes('InterpretationProvider'), false);
+    assert.equal(page.includes('DecisionStoryProvider'), false);
+    assert.match(app, /DecisionSessionRuntimeProvider/);
   });
 
   it('WalkthroughProvider does not emit cognitive signals', () => {

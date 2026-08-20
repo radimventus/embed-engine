@@ -119,6 +119,35 @@ export {
   type DurableProjectConfigOverlay,
 } from './registry/durableProjectConfig';
 
+export {
+  applyDurableCompanyContacts,
+  durableCompanyContact,
+  resetDurableCompanyContacts,
+} from './registry/durableCompanyContact';
+
+export {
+  OFFICE_REFERENCE_PARTNER_ID,
+  canonicalCompanyIdForOfficePartner,
+} from './partner/canonicalOfficePartner';
+
+export {
+  OFFICE_PARTNER_STATUSES,
+  InvalidOfficePartnerError,
+  normalizeDurableOfficePartner,
+  parseStoredOfficePartner,
+  type DurableOfficeCompanyCard,
+  type DurableOfficeContactCard,
+  type DurableOfficePartner,
+  type DurableOfficePartnerDraft,
+  type DurableOfficePartnerStatus,
+} from './partner/officePartnerRecord';
+
+export {
+  emptyPublicCompanyContact,
+  projectPublicCompanyContact,
+  type PublicCompanyContact,
+} from './partner/publicCompanyContact';
+
 export { normalizeProjectPrivacyUrl } from './project/projectPrivacyUrl';
 
 export {

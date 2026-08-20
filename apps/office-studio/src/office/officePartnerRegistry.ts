@@ -1,9 +1,12 @@
 /**
- * OF-02 / OF-10 / OF-11 — Partner Registry (persisted Office domain store).
- * Create / read / update partners; production seed is the OF-11 reference partner.
+ * OF-02 / OF-10 / OF-11 — Partner Registry (Office authoring cache).
+ * Server-backed Platform API is the durable SSOT after hydrate / save.
  */
 
-import { createCanonicalPartner } from '@embed-engine/platform-access';
+import {
+  createCanonicalPartner,
+  type DurableOfficePartner,
+} from '@embed-engine/platform-access';
 
 import {
   defaultNextStep,
@@ -12,9 +15,14 @@ import {
   type OfficePartnerStatus,
 } from './officePartnerModel';
 import { appendOfficeEvent } from './officeEventCatalog';
-import { loadJson, removeJson, saveJson } from './officeLocalStore';
+import { loadJson, removeJson } from './officeLocalStore';
 import { OFFICE_STORAGE_KEYS } from './officeStorageKeys';
 import { buildOfficeReferencePartner } from './officeReferencePartner';
+import {
+  createOfficePartner,
+  requestOfficePartners,
+  saveOfficePartner,
+} from './requestOfficePartner';
 
 const SEED_PARTNERS: readonly OfficePartner[] = Object.freeze([
   buildOfficeReferencePartner(),
@@ -32,7 +40,7 @@ function seedState(): PartnerPersistState {
   };
 }
 
-function readState(): PartnerPersistState {
+function readLocalState(): PartnerPersistState | null {
   const stored = loadJson<PartnerPersistState | null>(
     OFFICE_STORAGE_KEYS.partners,
     null,
@@ -47,14 +55,18 @@ function readState(): PartnerPersistState {
       idSeq: typeof stored.idSeq === 'number' ? stored.idSeq : 100,
     };
   }
-  return seedState();
+  return null;
+}
+
+function readState(): PartnerPersistState {
+  return readLocalState() ?? seedState();
 }
 
 const initial = readState();
 let partners: OfficePartner[] = initial.partners.map((partner) => ({
   ...partner,
 }));
-let idSeq = initial.idSeq;
+let serverAuthority = false;
 
 export type PartnerQuickActionId =
   | 'prepare-pilot'
@@ -72,11 +84,36 @@ function nowIso(): string {
   return new Date().toISOString();
 }
 
-function persist(): void {
-  saveJson(OFFICE_STORAGE_KEYS.partners, {
-    partners,
-    idSeq,
-  } satisfies PartnerPersistState);
+function toOfficePartner(record: DurableOfficePartner): OfficePartner {
+  return {
+    id: record.id,
+    name: record.name,
+    status: record.status,
+    nextStep: record.nextStep,
+    company: { ...record.company },
+    contact: { ...record.contact },
+    createdAt: record.createdAt,
+    updatedAt: record.updatedAt,
+  };
+}
+
+function replaceMemory(next: readonly OfficePartner[]): void {
+  partners = next.map((partner) => ({ ...partner }));
+}
+
+function adoptAuthoritative(record: DurableOfficePartner): OfficePartner {
+  const office = toOfficePartner(record);
+  const index = partners.findIndex((partner) => partner.id === office.id);
+  partners =
+    index < 0
+      ? [...partners, office]
+      : partners.map((partner, i) => (i === index ? office : partner));
+  return office;
+}
+
+function dropLocalPartnerAuthority(): void {
+  removeJson(OFFICE_STORAGE_KEYS.partners);
+  serverAuthority = true;
 }
 
 export function listPartners(): readonly OfficePartner[] {
@@ -91,8 +128,6 @@ export function createPartner(draft: OfficePartnerDraft): OfficePartner {
   const createdAt = nowIso();
   const canonicalPartner = createCanonicalPartner({ name: draft.name });
   const partner: OfficePartner = {
-    // New Office projections are keyed by shared canonical Company identity.
-    // Existing p-* records remain readable as legacy Office-only projections.
     id: canonicalPartner.companyId,
     name: draft.name.trim(),
     status: draft.status,
@@ -113,7 +148,6 @@ export function createPartner(draft: OfficePartnerDraft): OfficePartner {
     updatedAt: createdAt,
   };
   partners = [...partners, partner];
-  persist();
   appendOfficeEvent({
     kind: 'partner.created',
     label: 'Partner vytvořen',
@@ -150,7 +184,6 @@ export function updatePartner(
     updatedAt: nowIso(),
   };
   partners = partners.map((partner, i) => (i === index ? updated : partner));
-  persist();
   appendOfficeEvent({
     kind: 'partner.updated',
     label: 'Partner upraven',
@@ -158,6 +191,77 @@ export function updatePartner(
     partnerId: updated.id,
   });
   return updated;
+}
+
+export function discardUnsavedPartner(id: string): void {
+  partners = partners.filter((partner) => partner.id !== id);
+}
+
+export async function persistCreatedPartner(
+  partner: OfficePartner,
+): Promise<OfficePartner> {
+  const saved = await createOfficePartner(partner.id, draftFromPartner(partner));
+  const adopted = adoptAuthoritative(saved);
+  dropLocalPartnerAuthority();
+  return adopted;
+}
+
+export async function persistUpdatedPartner(
+  partnerId: string,
+  draft: OfficePartnerDraft,
+): Promise<OfficePartner> {
+  const saved = await saveOfficePartner(partnerId, draft);
+  const adopted = adoptAuthoritative(saved);
+  dropLocalPartnerAuthority();
+  return adopted;
+}
+
+let hydrateInFlight: Promise<void> | null = null;
+
+export async function hydrateOfficePartnersFromServer(): Promise<void> {
+  if (hydrateInFlight !== null) {
+    return hydrateInFlight;
+  }
+  hydrateInFlight = hydrateOfficePartnersFromServerOnce().finally(() => {
+    hydrateInFlight = null;
+  });
+  return hydrateInFlight;
+}
+
+async function hydrateOfficePartnersFromServerOnce(): Promise<void> {
+  const remote = await requestOfficePartners();
+  if (remote.length > 0) {
+    replaceMemory(remote.map(toOfficePartner));
+    dropLocalPartnerAuthority();
+    return;
+  }
+
+  const local = readLocalState();
+  if (local === null) {
+    return;
+  }
+
+  for (const partner of local.partners) {
+    try {
+      const saved = await saveOfficePartner(partner.id, draftFromPartner(partner));
+      adoptAuthoritative(saved);
+    } catch {
+      const created = await createOfficePartner(
+        partner.id,
+        draftFromPartner(partner),
+      );
+      adoptAuthoritative(created);
+    }
+  }
+  const confirmed = await requestOfficePartners();
+  if (confirmed.length > 0) {
+    replaceMemory(confirmed.map(toOfficePartner));
+    dropLocalPartnerAuthority();
+  }
+}
+
+export function isOfficePartnerServerAuthority(): boolean {
+  return serverAuthority;
 }
 
 export function applyPartnerQuickAction(
@@ -216,7 +320,6 @@ export function applyPartnerQuickAction(
     updatedAt: nowIso(),
   };
   partners = partners.map((entry) => (entry.id === id ? updated : entry));
-  persist();
   appendOfficeEvent({
     kind,
     label,
@@ -231,7 +334,7 @@ export function resetPartnerRegistryForTests(): void {
   removeJson(OFFICE_STORAGE_KEYS.partners);
   const seeded = seedState();
   partners = seeded.partners.map((partner) => ({ ...partner }));
-  idSeq = seeded.idSeq;
+  serverAuthority = false;
 }
 
 export function emptyPartnerDraft(): OfficePartnerDraft {

@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import type { ReactExperienceModel } from "@embed-engine/model";
-import type { DecisionSessionRuntime } from "@embed-engine/runtime";
 
 import { DecisionAnalyticsProvider, JourneySurfaceObserver } from "./analytics";
 import { BuilderPreviewPersonaApplicator } from "./runtime/BuilderPreviewPersonaApplicator";
-import { DecisionSessionRuntimeProvider } from "./runtime/DecisionSessionRuntimeProvider";
 import { DesktopCanvas } from "./DesktopCanvas";
 import {
   ChapterSpacer,
@@ -43,8 +41,6 @@ type ClientStudioPageProps = {
   legacyExperience?: ReactExperienceModel | null;
   onLegacySelectChoice?: (decisionId: string, choiceId: string) => void;
   onLegacyContinue?: () => void;
-  /** Shared Runtime from Embed Delivery Layer (optional for standalone SPA). */
-  runtime?: DecisionSessionRuntime;
   /** Workspace-only initial scene landing adjustment supplied by its mount. */
   initialLandingOffsetPx?: number;
   /** Publishes the canonical visible scene to shell navigation. */
@@ -57,8 +53,8 @@ type ClientStudioPageProps = {
  * Decision Session Experience host (ED-DA-04 / CSCB-01).
  *
  * Provider tree is Context transport only:
- * DecisionAnalyticsProvider → DecisionSessionRuntimeProvider → WalkthroughProvider → PriorityExperienceProvider.
- * Cognitive Interpretation / Story providers are not mounted on the live path.
+ * DecisionAnalyticsProvider → WalkthroughProvider → PriorityExperienceProvider,
+ * inside the App-level DecisionSessionRuntimeProvider.
  *
  * Runtime is bootstrapped exactly once via DecisionSessionRuntimeProvider
  * (or injected once by Embed delivery).
@@ -68,7 +64,6 @@ export function ClientStudioPage({
   legacyExperience = null,
   onLegacySelectChoice,
   onLegacyContinue,
-  runtime,
   initialLandingOffsetPx = 0,
   onActiveSceneChange,
   onVisibleSceneIdsChange,
@@ -245,7 +240,6 @@ export function ClientStudioPage({
 
   return (
     <DecisionAnalyticsProvider>
-      <DecisionSessionRuntimeProvider runtime={runtime}>
         <SocialProofFeedProvider>
           <RuntimeBootstrapGate>
             <BuilderPreviewPersonaApplicator />
@@ -347,7 +341,6 @@ export function ClientStudioPage({
             </WalkthroughProvider>
           </RuntimeBootstrapGate>
         </SocialProofFeedProvider>
-      </DecisionSessionRuntimeProvider>
     </DecisionAnalyticsProvider>
   );
 }

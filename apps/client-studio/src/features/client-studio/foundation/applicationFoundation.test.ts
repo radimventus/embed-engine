@@ -44,7 +44,7 @@ describe("Application Foundation (CSCB-01 / SR-001)", () => {
     );
 
     assert.match(provider, /createDecisionSessionRuntime/);
-    assert.match(page, /DecisionSessionRuntimeProvider/);
+    assert.match(app, /DecisionSessionRuntimeProvider/);
     assert.match(page, /RuntimeBootstrapGate/);
     assert.equal(app.includes("createDecisionSessionRuntime"), false);
   });
@@ -65,9 +65,6 @@ describe("Application Foundation (CSCB-01 / SR-001)", () => {
     const saveMenu = readSource(
       "src/features/client-studio/header/HeaderSaveMenu.tsx",
     );
-    const contact = readSource(
-      "src/features/client-studio/header/experienceContact.ts",
-    );
 
     assert.match(vocabulary, /PILOT_SECTION_NAV/);
     assert.match(vocabulary, /hero:/);
@@ -78,14 +75,14 @@ describe("Application Foundation (CSCB-01 / SR-001)", () => {
     assert.match(sidebar, /desktop:flex/);
     assert.match(header, /HeaderContactMenu/);
     assert.match(header, /HeaderSaveMenu/);
-    assert.match(header, /formatExperienceHeaderTitle/);
+    assert.match(header, /formatClientPartnerHouseTitle/);
     assert.match(header, /desktop:w-canvas/);
     assert.match(contactMenu, /mailto:/);
     assert.match(contactMenu, /tel:/);
+    assert.match(contactMenu, /useDecisionSessionRuntime/);
+    assert.equal(contactMenu.includes("kontakt@astav.cz"), false);
     assert.match(saveMenu, /Uložit tuto stránku jako PDF/);
     assert.match(saveMenu, /window\.print/);
-    assert.match(contact, /kontakt@astav\.cz/);
-    assert.match(contact, /\+420 987 654 321/);
   });
 
   it("keeps guided journey scene shells without changing onepage architecture", () => {

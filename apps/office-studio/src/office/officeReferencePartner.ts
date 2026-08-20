@@ -3,11 +3,15 @@
  * Single production seed. Legacy demo partners live only as test fixtures.
  */
 
-import { DSE_COMPANY_ID } from '@embed-engine/platform-access';
+import {
+  DSE_COMPANY_ID,
+  OFFICE_REFERENCE_PARTNER_ID as SHARED_OFFICE_REFERENCE_PARTNER_ID,
+  canonicalCompanyIdForOfficePartner,
+} from '@embed-engine/platform-access';
 
 import type { OfficePartner } from './officePartnerModel';
 
-export const OFFICE_REFERENCE_PARTNER_ID = 'p-dse' as const;
+export const OFFICE_REFERENCE_PARTNER_ID = SHARED_OFFICE_REFERENCE_PARTNER_ID;
 /** Legacy Office identifier; DSE runtime scope is always this canonical Partner. */
 export const OFFICE_REFERENCE_CANONICAL_PARTNER_ID = DSE_COMPANY_ID;
 
@@ -38,9 +42,7 @@ export const PILOT_DELIVERY_PASSWORD = 'conis' as const;
 
 /** Compatibility mapping only — never creates a second runtime Partner. */
 export function canonicalPartnerIdForOfficePartner(partnerId: string): string {
-  return partnerId === OFFICE_REFERENCE_PARTNER_ID
-    ? OFFICE_REFERENCE_CANONICAL_PARTNER_ID
-    : partnerId;
+  return canonicalCompanyIdForOfficePartner(partnerId);
 }
 
 export function brandingLabelsForPartner(firmName: string): {

@@ -27,6 +27,13 @@ import {
   type ProjectConfigRepository,
 } from './projectConfigRepository';
 import {
+  DuplicateOfficePartnerError,
+  FileOfficePartnerRepository,
+  InvalidOfficePartnerError,
+  OfficePartnerNotFoundError,
+  type OfficePartnerRepository,
+} from './officePartnerRepository';
+import {
   FileProformaRepository,
   type ProformaRepository,
 } from './proformaRepository';
@@ -46,9 +53,13 @@ import {
 import { platformApiAllowedOrigins, platformApiStatePath } from './platformApiConfig';
 import {
   applyDurableProjectConfigs,
+  canonicalCompanyIdForOfficePartner,
+  findCompany,
   getCanonicalProject,
+  getDefaultCompanyRegistry,
+  projectPublicCompanyContact,
 } from '@embed-engine/platform-access';
-import type { PlatformRole } from '@embed-engine/platform-access/rbac';
+import { isPlatformAdmin, type PlatformRole } from '@embed-engine/platform-access/rbac';
 
 export {
   FileSocialProofAnalyticsRepository,
@@ -77,6 +88,14 @@ export {
   type DurableProjectConfigInput,
   type ProjectConfigRepository,
 } from './projectConfigRepository';
+export {
+  DuplicateOfficePartnerError,
+  FileOfficePartnerRepository,
+  InvalidOfficePartnerError,
+  OfficePartnerNotFoundError,
+  type DurableOfficePartnerInput,
+  type OfficePartnerRepository,
+} from './officePartnerRepository';
 export {
   buildSpdQrPayload,
   COMMERCIAL_PAYMENT_ACCOUNT,
@@ -440,6 +459,65 @@ function requestCookie(request: IncomingMessage, name: string): string | null {
   return part === undefined ? null : decodeURIComponent(part.slice(name.length + 1));
 }
 
+function sessionRoles(
+  session: { readonly user?: { readonly roles?: readonly PlatformRole[] } },
+): readonly PlatformRole[] {
+  return session.user?.roles ?? [];
+}
+
+function sessionCompanyId(
+  session: {
+    readonly companyId?: string;
+    readonly workspaceContext?: { readonly companyId?: string } | null;
+  },
+): string {
+  return (session.workspaceContext?.companyId ?? session.companyId ?? '').trim();
+}
+
+function canAuthorOfficePartners(
+  session: {
+    readonly user?: { readonly roles?: readonly PlatformRole[] };
+  },
+): boolean {
+  return isPlatformAdmin(sessionRoles(session));
+}
+
+function canMutateOfficePartner(
+  session: {
+    readonly companyId?: string;
+    readonly workspaceContext?: { readonly companyId?: string } | null;
+    readonly user?: { readonly roles?: readonly PlatformRole[] };
+  },
+  partnerCompanyId: string,
+): boolean {
+  const roles = sessionRoles(session);
+  if (roles.includes('conis-admin')) return true;
+  if (!isPlatformAdmin(roles)) return false;
+  return sessionCompanyId(session) === partnerCompanyId;
+}
+
+function officePartnerDraftFromBody(body: unknown): {
+  readonly id?: string;
+  readonly name: unknown;
+  readonly status: unknown;
+  readonly nextStep: unknown;
+  readonly company: unknown;
+  readonly contact: unknown;
+} | null {
+  if (body === null || typeof body !== 'object' || Array.isArray(body)) {
+    return null;
+  }
+  const record = body as Record<string, unknown>;
+  return {
+    id: typeof record.id === 'string' ? record.id : undefined,
+    name: record.name,
+    status: record.status,
+    nextStep: record.nextStep,
+    company: record.company,
+    contact: record.contact,
+  };
+}
+
 function setPartnerSessionCookie(
   response: import('node:http').ServerResponse,
   token: string,
@@ -472,6 +550,7 @@ export function createPlatformApiServer(
   leads: LeadRepository = new FileLeadRepository(),
   leadScopeResolver: typeof resolveLeadScope = resolveLeadScope,
   projectConfigs: ProjectConfigRepository = new FileProjectConfigRepository(),
+  officePartners: OfficePartnerRepository = new FileOfficePartnerRepository(),
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
@@ -623,6 +702,143 @@ export function createPlatformApiServer(
             return respond(response, 200, saved);
           } catch {
             return respond(response, 400, { error: 'Neplatná adresa zásad ochrany osobních údajů.' });
+          }
+        }
+
+        return respond(response, 405, { error: 'Method not allowed.' });
+      }
+      const publicCompanyContactMatch = path.match(
+        /^\/public\/companies\/([^/]+)\/contact$/,
+      );
+      if (publicCompanyContactMatch !== null && request.method === 'GET') {
+        const companyId = decodeURIComponent(
+          publicCompanyContactMatch[1] ?? '',
+        ).trim();
+        const canonicalCompanyId = canonicalCompanyIdForOfficePartner(companyId);
+        const registry = getDefaultCompanyRegistry();
+        const company = findCompany(registry, canonicalCompanyId);
+        const partner = await officePartners.getByCompanyId(canonicalCompanyId);
+        if (company === undefined && partner === null) {
+          return respond(response, 404, { error: 'Společnost neexistuje.' });
+        }
+        return respond(
+          response,
+          200,
+          projectPublicCompanyContact({
+            companyId: canonicalCompanyId,
+            displayName: company?.name ?? partner?.name ?? '',
+            partner,
+          }),
+        );
+      }
+      if (path === '/office/partners' || path.startsWith('/office/partners/')) {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session = token === null ? null : await partnerSessions.resolve(token);
+        if (session === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+        if (!canAuthorOfficePartners(session)) {
+          return respond(response, 403, {
+            error: 'Office Partner není pro tuto relaci povolen.',
+          });
+        }
+
+        if (request.method === 'GET' && path === '/office/partners') {
+          const partners = await officePartners.list();
+          const visible = sessionRoles(session).includes('conis-admin')
+            ? partners
+            : partners.filter((item) =>
+                canMutateOfficePartner(session, item.companyId),
+              );
+          return respond(response, 200, { partners: visible });
+        }
+
+        const partnerMatch = path.match(/^\/office\/partners\/([^/]+)$/);
+        if (partnerMatch !== null) {
+          const partnerId = decodeURIComponent(partnerMatch[1] ?? '').trim();
+          if (partnerId.length === 0) {
+            return respond(response, 404, { error: 'Partner neexistuje.' });
+          }
+
+          if (request.method === 'GET') {
+            const current = await officePartners.get(partnerId);
+            if (current === null) {
+              return respond(response, 404, { error: 'Partner neexistuje.' });
+            }
+            if (!canMutateOfficePartner(session, current.companyId)) {
+              return respond(response, 403, {
+                error: 'Partner není pro tuto relaci povolen.',
+              });
+            }
+            return respond(response, 200, current);
+          }
+
+          if (request.method === 'PUT') {
+            const current = await officePartners.get(partnerId);
+            if (current === null) {
+              return respond(response, 404, { error: 'Partner neexistuje.' });
+            }
+            if (!canMutateOfficePartner(session, current.companyId)) {
+              return respond(response, 403, {
+                error: 'Partner není pro tuto relaci povolen.',
+              });
+            }
+            const draft = officePartnerDraftFromBody(await requestBody(request));
+            if (draft === null) {
+              return respond(response, 400, { error: 'Neplatný partner.' });
+            }
+            try {
+              const saved = await officePartners.update({
+                id: partnerId,
+                draft,
+              });
+              return respond(response, 200, saved);
+            } catch (error) {
+              if (error instanceof OfficePartnerNotFoundError) {
+                return respond(response, 404, { error: 'Partner neexistuje.' });
+              }
+              if (error instanceof DuplicateOfficePartnerError) {
+                return respond(response, 409, {
+                  error: 'Partner s touto identitou už existuje.',
+                });
+              }
+              if (error instanceof InvalidOfficePartnerError) {
+                return respond(response, 400, { error: error.message });
+              }
+              throw error;
+            }
+          }
+
+          return respond(response, 405, { error: 'Method not allowed.' });
+        }
+
+        if (request.method === 'POST' && path === '/office/partners') {
+          const draft = officePartnerDraftFromBody(await requestBody(request));
+          if (draft === null || draft.id === undefined || draft.id.trim().length === 0) {
+            return respond(response, 400, { error: 'Neplatný partner.' });
+          }
+          const companyId = canonicalCompanyIdForOfficePartner(draft.id);
+          if (!canMutateOfficePartner(session, companyId)) {
+            return respond(response, 403, {
+              error: 'Partner není pro tuto relaci povolen.',
+            });
+          }
+          try {
+            const created = await officePartners.create({
+              id: draft.id,
+              draft,
+            });
+            return respond(response, 201, created);
+          } catch (error) {
+            if (error instanceof DuplicateOfficePartnerError) {
+              return respond(response, 409, {
+                error: 'Partner s touto identitou už existuje.',
+              });
+            }
+            if (error instanceof InvalidOfficePartnerError) {
+              return respond(response, 400, { error: error.message });
+            }
+            throw error;
           }
         }
 

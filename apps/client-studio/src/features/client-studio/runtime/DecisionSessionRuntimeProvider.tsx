@@ -22,6 +22,7 @@ import {
 } from '@embed-engine/runtime';
 import { RUNTIME_HOUSE_PACKAGE_SOURCE } from '@embed-engine/object-house/builder-package';
 import {
+  durableCompanyContact,
   resolveWorkspaceHouseBinding,
   resolveCanonicalKnowledgeHouseId,
 } from '@embed-engine/platform-access';
@@ -37,6 +38,7 @@ import {
 } from './builderPackageBootstrap';
 import { loadDurableHousePackageOverlay } from './durableHousePackageOverlay';
 import { hydrateDurableProjectPrivacy } from './durableProjectPrivacy';
+import { hydrateDurableCompanyContact } from './durableCompanyContact';
 import {
   readClientBindCandidates,
   listClientHouses,
@@ -99,10 +101,16 @@ export type DecisionSessionRuntimeContextValue = {
     readonly projectId: string;
     readonly houseId: string;
   } | null;
-  /** Immutable Company identity resolved with the active Project/House binding. */
+  /** Immutable Company identity plus public Partner contact projection. */
   readonly company: {
     readonly companyId: string;
     readonly companyName: string;
+    readonly legalName: string | null;
+    readonly ico: string | null;
+    readonly city: string | null;
+    readonly country: string | null;
+    readonly email: string | null;
+    readonly phone: string | null;
   } | null;
   /** Canonical Project context, including optional Project privacy destination. */
   readonly project: {
@@ -381,9 +389,16 @@ export function DecisionSessionRuntimeProvider({
     const controller = new AbortController();
     void (async () => {
       const canonicalProjectId = projection?.project.projectId ?? null;
+      const canonicalCompanyId = projection?.partner.companyId ?? null;
       if (canonicalProjectId !== null) {
         await hydrateDurableProjectPrivacy(
           canonicalProjectId,
+          controller.signal,
+        );
+      }
+      if (canonicalCompanyId !== null) {
+        await hydrateDurableCompanyContact(
+          canonicalCompanyId,
           controller.signal,
         );
       }
@@ -524,10 +539,20 @@ export function DecisionSessionRuntimeProvider({
       company:
         projectBind === null || projectBind.project === null
           ? null
-          : {
-              companyId: projectBind.project.partner.companyId,
-              companyName: projectBind.project.partner.companyName,
-            },
+          : (() => {
+              const companyId = projectBind.project.partner.companyId;
+              const contact = durableCompanyContact(companyId);
+              return {
+                companyId,
+                companyName: projectBind.project.partner.companyName,
+                legalName: contact?.legalName ?? null,
+                ico: contact?.ico ?? null,
+                city: contact?.city ?? null,
+                country: contact?.country ?? null,
+                email: contact?.email ?? null,
+                phone: contact?.phone ?? null,
+              };
+            })(),
       project:
         projectBind === null || projectBind.project === null
           ? null

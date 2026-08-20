@@ -56,6 +56,7 @@ describe('TASK 49 durable lead delivery parity', () => {
     );
 
     assert.match(source, /hydrateDurableProjectPrivacy/);
+    assert.match(source, /hydrateDurableCompanyContact/);
 
     assert.equal(
       source.includes('privacyUrl: window'),
@@ -71,6 +72,9 @@ describe('TASK 49 durable lead delivery parity', () => {
       source.includes('partner.privacyUrl'),
       false,
     );
+    assert.equal(source.includes('kontakt@astav.cz'), false);
+    assert.equal(source.includes('data-contact-phone'), false);
+    assert.equal(source.includes('data-contact-email'), false);
   });
 
   it('durable lead helper owns the single public lead endpoint', () => {
@@ -99,6 +103,8 @@ describe('TASK 49 durable lead delivery parity', () => {
     assert.equal(source.includes('/public/leads'), false);
     assert.equal(source.includes('privacyUrl='), false);
     assert.equal(source.includes('data-client-privacy'), false);
+    assert.equal(source.includes('contactPhone='), false);
+    assert.equal(source.includes('contactEmail='), false);
   });
 
   it('Embed launcher does not expose caller-controlled privacy configuration', () => {
@@ -123,6 +129,11 @@ describe('TASK 49 durable lead delivery parity', () => {
       /privacyUrl\s*[?:]/.test(existing),
       false,
       'public Embed API must not expose privacyUrl as caller authority',
+    );
+    assert.equal(
+      /contactPhone|contactEmail|partnerPhone|partnerEmail/.test(existing),
+      false,
+      'public Embed API must not expose caller-controlled contact',
     );
   });
 });

@@ -20,55 +20,58 @@ describe('Audit GDPR consent UX', () => {
   const form = stripComments(read('AuditContact.tsx'));
   const payload = stripComments(read('durableLeadSubmission.ts'));
 
-  it('places the GDPR block above contact fields', () => {
-    const gdprIndex = form.indexOf('data-testid="audit-gdpr-consent"');
+  it('places GDPR after the compact contact grid', () => {
     const nameIndex = form.indexOf('id="audit-contact-name"');
     const emailIndex = form.indexOf('id="audit-contact-email"');
     const phoneIndex = form.indexOf('id="audit-contact-phone"');
-    const submitIndex = form.indexOf('type="submit"');
+    const submitIndex = form.indexOf('data-testid="audit-contact-submit"');
+    const gdprIndex = form.indexOf('data-testid="audit-gdpr-consent"');
 
-    assert.ok(gdprIndex > 0);
-    assert.ok(gdprIndex < nameIndex);
+    assert.ok(nameIndex > 0);
     assert.ok(nameIndex < emailIndex);
     assert.ok(emailIndex < phoneIndex);
     assert.ok(phoneIndex < submitIndex);
+    assert.ok(submitIndex < gdprIndex);
   });
 
   it('keeps a togglable checkbox with a visible checked mark', () => {
     assert.match(form, /id="audit-gdpr-consent"/);
     assert.match(form, /type="checkbox"/);
     assert.match(form, /checked=\{gdprConsent\}/);
-    assert.match(form, /setGdprConsent\(event\.target\.checked\)/);
+    assert.match(form, /setGdprConsent\(checked\)/);
     assert.match(form, /data-testid="audit-gdpr-consent-mark"/);
     assert.match(form, /backgroundColor: gdprConsent \? AUDIT_ACCENT : 'transparent'/);
   });
 
-  it('disables submit while unchecked and does not POST', () => {
+  it('blocks POST and submitDurableLead while consent is unchecked', () => {
     const handlerStart = form.indexOf('const handleSubmit');
     const handlerEnd = form.indexOf('return (', handlerStart);
     const handler = form.slice(handlerStart, handlerEnd);
     const guard = handler.indexOf('if (!gdprConsent)');
     const post = handler.indexOf('submitDurableLead');
 
-    assert.match(form, /disabled=\{!submitEnabled\}/);
-    assert.match(form, /gdprConsent && project\?\.privacyUrl !== undefined/);
     assert.ok(guard >= 0);
     assert.ok(guard < post);
     assert.match(handler.slice(guard, post), /return;/);
     assert.equal(handler.slice(guard, post).includes('submitDurableLead'), false);
+    assert.match(form, /handleCtaClick/);
+    assert.match(form, /event\.preventDefault\(\)/);
   });
 
-  it('shows guidance only while consent is unchecked', () => {
-    assert.match(
-      form,
-      /Pro odeslání poptávky potvrďte souhlas se zpracováním osobních údajů/,
-    );
+  it('exposes contextual GDPR guidance from the CTA, not a permanent row', () => {
+    assert.match(form, /Pro odeslání potvrďte souhlas s GDPR\./);
     assert.match(form, /data-testid="audit-gdpr-guidance"/);
-    assert.match(form, /\{gdprConsent \? null : \(/);
-    assert.match(form, /\{AUDIT_GDPR_GUIDANCE\}/);
+    assert.match(form, /onMouseEnter/);
+    assert.match(form, /onMouseLeave/);
+    assert.equal(
+      form.includes(
+        'Pro odeslání poptávky potvrďte souhlas se zpracováním osobních údajů',
+      ),
+      false,
+    );
   });
 
-  it('keeps the Project privacy link outside the checkbox label', () => {
+  it('keeps the Project privacy link outside the checkbox control label', () => {
     const controlStart = form.indexOf('data-testid="audit-gdpr-consent-control"');
     const controlLabelClose = form.indexOf('</label>', controlStart);
     const linkIndex = form.indexOf('data-testid="audit-gdpr-privacy-link"');

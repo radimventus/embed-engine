@@ -103,17 +103,12 @@ describe('office persistence registries (OF-10)', () => {
       },
     });
 
-    const partnersStored = loadJson<{
-      partners: readonly { id: string; name: string }[];
-    } | null>(OFFICE_STORAGE_KEYS.partners, null);
-    assert.ok(partnersStored !== null);
-    assert.ok(
-      partnersStored!.partners.some(
-        (partner) =>
-          partner.id === created.id && partner.name === 'Persist Partner',
-      ),
-    );
     assert.ok(listPartners().some((partner) => partner.id === created.id));
+    assert.equal(
+      loadJson(OFFICE_STORAGE_KEYS.partners, null),
+      null,
+      'Office Partner memory cache is not a durable localStorage authority',
+    );
 
     selectSalesPackage(created.id, 'pilot');
     const salesStored = loadJson<{

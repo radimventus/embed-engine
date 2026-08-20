@@ -16,6 +16,8 @@ type PartnerFormDialogProps = {
   readonly open: boolean;
   readonly mode: 'create' | 'edit';
   readonly initial: OfficePartnerDraft;
+  readonly busy?: boolean;
+  readonly error?: string | null;
   readonly onClose: () => void;
   readonly onSubmit: (draft: OfficePartnerDraft) => void;
 };
@@ -28,6 +30,8 @@ export function PartnerFormDialog({
   open,
   mode,
   initial,
+  busy = false,
+  error = null,
   onClose,
   onSubmit,
 }: PartnerFormDialogProps) {
@@ -46,6 +50,7 @@ export function PartnerFormDialog({
       description="Partner je hlavní entita Office Studia — firma, kontakt a status."
       primaryLabel={primaryLabel}
       primaryDisabled={!nameOk || !contactOk}
+      busy={busy}
       asForm
       onClose={onClose}
       onPrimary={() => onSubmit(draft)}
@@ -196,6 +201,11 @@ export function PartnerFormDialog({
             />
           </PlatformField>
         </div>
+        {error !== null && error.length > 0 ? (
+          <p className="office-partner-form__error" role="alert">
+            {error}
+          </p>
+        ) : null}
       </div>
     </PlatformDialog>
   );

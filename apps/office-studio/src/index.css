@@ -568,6 +568,12 @@ body {
   gap: 12px;
 }
 
+.office-partner-form__error {
+  margin: 0;
+  font-size: 13px;
+  color: var(--platform-danger, #b42318);
+}
+
 .office-sales {
   display: flex;
   flex-direction: column;

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   enterOperatorPartnerEnvironmentAuthoritatively,
@@ -26,9 +26,12 @@ import {
   draftFromPartner,
   emptyPartnerDraft,
   getPartner,
+  hydrateOfficePartnersFromServer,
   listPartners,
+  persistCreatedPartner,
+  persistUpdatedPartner,
+  discardUnsavedPartner,
   type PartnerQuickActionId,
-  updatePartner,
 } from '../../office/officePartnerRegistry';
 import { preparePilotForPartner } from '../../office/preparePilotProvisioning';
 import {
@@ -69,6 +72,8 @@ export function PartnersWorkspacePage({
   const [statusFilter, setStatusFilter] =
     useState<PartnerStatusFilter>('all');
   const [dialog, setDialog] = useState<DialogState>({ mode: 'closed' });
+  const [formBusy, setFormBusy] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const [pilotNotice, setPilotNotice] = useState<string | null>(null);
   const [deliveryPreview, setDeliveryPreview] =
     useState<PilotDeliveryPreview | null>(null);
@@ -90,24 +95,63 @@ export function PartnersWorkspacePage({
     visible[0] ??
     null;
 
+  useEffect(() => {
+    let cancelled = false;
+    void hydrateOfficePartnersFromServer()
+      .then(() => {
+        if (!cancelled) bump();
+      })
+      .catch(() => {
+        // Keep the in-memory / migrated local snapshot until a save succeeds.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   function bump() {
     setRevision((value) => value + 1);
   }
 
-  function handleCreate(draft: OfficePartnerDraft) {
+  async function handleCreate(draft: OfficePartnerDraft) {
+    setFormBusy(true);
+    setFormError(null);
     const created = createPartner(draft);
-    bump();
-    setDialog({ mode: 'closed' });
-    onSelectPartner(created.id);
+    try {
+      const saved = await persistCreatedPartner(created);
+      bump();
+      setDialog({ mode: 'closed' });
+      onSelectPartner(saved.id);
+    } catch (error) {
+      discardUnsavedPartner(created.id);
+      bump();
+      setFormError(
+        error instanceof Error
+          ? error.message
+          : 'Partnera se nepodařilo uložit.',
+      );
+    } finally {
+      setFormBusy(false);
+    }
   }
 
-  function handleEdit(draft: OfficePartnerDraft) {
+  async function handleEdit(draft: OfficePartnerDraft) {
     if (dialog.mode !== 'edit') return;
-    const updated = updatePartner(dialog.partnerId, draft);
-    bump();
-    setDialog({ mode: 'closed' });
-    if (updated !== null) {
-      onSelectPartner(updated.id);
+    setFormBusy(true);
+    setFormError(null);
+    try {
+      const saved = await persistUpdatedPartner(dialog.partnerId, draft);
+      bump();
+      setDialog({ mode: 'closed' });
+      onSelectPartner(saved.id);
+    } catch (error) {
+      setFormError(
+        error instanceof Error
+          ? error.message
+          : 'Partnera se nepodařilo uložit.',
+      );
+    } finally {
+      setFormBusy(false);
     }
   }
 
@@ -285,7 +329,10 @@ export function PartnersWorkspacePage({
             <button
               type="button"
               className="platform-btn platform-btn--primary platform-btn--sm"
-              onClick={() => setDialog({ mode: 'create' })}
+              onClick={() => {
+                setFormError(null);
+                setDialog({ mode: 'create' });
+              }}
               data-testid="office-partner-create"
             >
               Nový partner
@@ -370,6 +417,7 @@ export function PartnersWorkspacePage({
           partner={activePartner}
           onEdit={() => {
             if (activePartner !== null) {
+              setFormError(null);
               setDialog({ mode: 'edit', partnerId: activePartner.id });
             }
           }}
@@ -384,8 +432,16 @@ export function PartnersWorkspacePage({
           open
           mode="create"
           initial={emptyPartnerDraft()}
-          onClose={() => setDialog({ mode: 'closed' })}
-          onSubmit={handleCreate}
+          busy={formBusy}
+          error={formError}
+          onClose={() => {
+            if (formBusy) return;
+            setFormError(null);
+            setDialog({ mode: 'closed' });
+          }}
+          onSubmit={(draft) => {
+            void handleCreate(draft);
+          }}
         />
       ) : null}
       {dialog.mode === 'edit' ? (
@@ -396,8 +452,16 @@ export function PartnersWorkspacePage({
           initial={draftFromPartner(
             getPartner(dialog.partnerId) ?? partners[0]!,
           )}
-          onClose={() => setDialog({ mode: 'closed' })}
-          onSubmit={handleEdit}
+          busy={formBusy}
+          error={formError}
+          onClose={() => {
+            if (formBusy) return;
+            setFormError(null);
+            setDialog({ mode: 'closed' });
+          }}
+          onSubmit={(draft) => {
+            void handleEdit(draft);
+          }}
         />
       ) : null}
       {deliveryPreview !== null ? (

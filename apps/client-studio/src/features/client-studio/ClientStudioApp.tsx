@@ -9,6 +9,7 @@ import { ClientStudioSidebar } from "./ClientStudioSidebar";
 import { decisionJourneyScenes } from "./foundation/decisionJourney";
 import { LegacyCommandRuntimeHost } from "./legacy/LegacyCommandRuntimeHost";
 import { isLegacyCommandRuntimeEnabled } from "./legacy/isLegacyCommandRuntimeEnabled";
+import { DecisionSessionRuntimeProvider } from "./runtime/DecisionSessionRuntimeProvider";
 
 type ClientStudioAppProps = {
   /**
@@ -45,25 +46,26 @@ export function ClientStudioApp({
   }
 
   return (
-    <>
-      <AppShell
-        sidebar={
-          <ClientStudioSidebar
-            activeSceneId={activeSceneId}
-            visibleSceneIds={visibleSceneIds}
+    <DecisionSessionRuntimeProvider runtime={runtime}>
+      <>
+        <AppShell
+          sidebar={
+            <ClientStudioSidebar
+              activeSceneId={activeSceneId}
+              visibleSceneIds={visibleSceneIds}
+            />
+          }
+          header={<ClientStudioHeader />}
+          showStatusBar={false}
+        >
+          <ClientStudioPage
+            initialLandingOffsetPx={initialLandingOffsetPx}
+            onActiveSceneChange={setActiveSceneId}
+            onVisibleSceneIdsChange={setVisibleSceneIds}
           />
-        }
-        header={<ClientStudioHeader />}
-        showStatusBar={false}
-      >
-        <ClientStudioPage
-          runtime={runtime}
-          initialLandingOffsetPx={initialLandingOffsetPx}
-          onActiveSceneChange={setActiveSceneId}
-          onVisibleSceneIdsChange={setVisibleSceneIds}
-        />
-      </AppShell>
-      <ClientStudioMobileNav visibleSceneIds={visibleSceneIds} />
-    </>
+        </AppShell>
+        <ClientStudioMobileNav visibleSceneIds={visibleSceneIds} />
+      </>
+    </DecisionSessionRuntimeProvider>
   );
 }
