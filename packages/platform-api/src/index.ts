@@ -17,6 +17,16 @@ import {
   type OrderRepository,
 } from './orderRepository';
 import {
+  FileLeadRepository,
+  LeadAlreadyExistsError,
+  type LeadRepository,
+} from './leadRepository';
+import { resolveLeadScope } from './leadScope';
+import {
+  FileProjectConfigRepository,
+  type ProjectConfigRepository,
+} from './projectConfigRepository';
+import {
   FileProformaRepository,
   type ProformaRepository,
 } from './proformaRepository';
@@ -34,6 +44,10 @@ import {
   type HousePackagePersistFiles,
 } from './housePackageRepository';
 import { platformApiAllowedOrigins, platformApiStatePath } from './platformApiConfig';
+import {
+  applyDurableProjectConfigs,
+  getCanonicalProject,
+} from '@embed-engine/platform-access';
 import type { PlatformRole } from '@embed-engine/platform-access/rbac';
 
 export {
@@ -50,6 +64,19 @@ export {
   type OrderRepository,
   OrderAlreadyExistsError,
 } from './orderRepository';
+export {
+  FileLeadRepository,
+  type DurableLead,
+  type DurableLeadInput,
+  type LeadRepository,
+  LeadAlreadyExistsError,
+} from './leadRepository';
+export {
+  FileProjectConfigRepository,
+  type DurableProjectConfig,
+  type DurableProjectConfigInput,
+  type ProjectConfigRepository,
+} from './projectConfigRepository';
 export {
   buildSpdQrPayload,
   COMMERCIAL_PAYMENT_ACCOUNT,
@@ -442,6 +469,9 @@ export function createPlatformApiServer(
   offerWriteTokens: OfferWriteTokenRepository = new FileOfferWriteTokenRepository(),
   partnerSessions: PartnerSessionRepository = new FilePartnerSessionRepository(),
   housePackages: HousePackageRepository = new FileHousePackageRepository(),
+  leads: LeadRepository = new FileLeadRepository(),
+  leadScopeResolver: typeof resolveLeadScope = resolveLeadScope,
+  projectConfigs: ProjectConfigRepository = new FileProjectConfigRepository(),
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
@@ -449,13 +479,155 @@ export function createPlatformApiServer(
     if (origin !== undefined && allowedOrigins.has(origin)) {
       response.setHeader('access-control-allow-origin', origin);
       response.setHeader('vary', 'origin');
-      response.setHeader('access-control-allow-methods', 'GET,POST,DELETE,OPTIONS');
+      response.setHeader('access-control-allow-methods', 'GET,POST,PUT,DELETE,OPTIONS');
       response.setHeader('access-control-allow-headers', 'content-type, authorization');
       response.setHeader('access-control-allow-credentials', 'true');
     }
     if (request.method === 'OPTIONS') return respond(response, 204, {});
     const path = new URL(request.url ?? '/', 'http://localhost').pathname;
     try {
+      if (request.method === 'POST' && path === '/public/leads') {
+        const rawBody = await requestBody(request);
+        if (
+          typeof rawBody !== 'object' ||
+          rawBody === null ||
+          Array.isArray(rawBody)
+        ) {
+          return respond(response, 400, { error: 'Neplatná poptávka.' });
+        }
+
+        const candidate = rawBody as Record<string, unknown>;
+        const contact = candidate.contact;
+        const consent = candidate.consent;
+
+        if (
+          typeof candidate.idempotencyKey !== 'string' ||
+          candidate.idempotencyKey.trim().length === 0 ||
+          typeof candidate.companyId !== 'string' ||
+          candidate.companyId.trim().length === 0 ||
+          typeof candidate.projectId !== 'string' ||
+          candidate.projectId.trim().length === 0 ||
+          typeof candidate.houseId !== 'string' ||
+          candidate.houseId.trim().length === 0 ||
+          candidate.source !== 'EMBED' ||
+          candidate.intent !== 'audit' ||
+          typeof contact !== 'object' ||
+          contact === null ||
+          Array.isArray(contact) ||
+          typeof (contact as Record<string, unknown>).name !== 'string' ||
+          ((contact as Record<string, unknown>).name as string).trim().length === 0 ||
+          typeof (contact as Record<string, unknown>).email !== 'string' ||
+          ((contact as Record<string, unknown>).email as string).trim().length === 0 ||
+          (
+            (contact as Record<string, unknown>).phone !== null &&
+            typeof (contact as Record<string, unknown>).phone !== 'string'
+          ) ||
+          typeof consent !== 'object' ||
+          consent === null ||
+          Array.isArray(consent) ||
+          (consent as Record<string, unknown>).accepted !== true ||
+          typeof (consent as Record<string, unknown>).acceptedAt !== 'string' ||
+          ((consent as Record<string, unknown>).acceptedAt as string).trim().length === 0 ||
+          typeof (consent as Record<string, unknown>).privacyUrl !== 'string' ||
+          ((consent as Record<string, unknown>).privacyUrl as string).trim().length === 0 ||
+          typeof (consent as Record<string, unknown>).privacyVersion !== 'string' ||
+          ((consent as Record<string, unknown>).privacyVersion as string).trim().length === 0
+        ) {
+          return respond(response, 400, { error: 'Neplatná poptávka.' });
+        }
+
+        const body = rawBody as Omit<
+          import('./leadRepository').DurableLeadInput,
+          'leadId' | 'createdAt'
+        >;
+
+        let scope;
+        try {
+          applyDurableProjectConfigs(await projectConfigs.list());
+          scope = leadScopeResolver(body);
+        } catch {
+          return respond(response, 400, { error: 'Neplatný rozsah nebo chybějící zásady soukromí partnera.' });
+        }
+        if (body.consent?.privacyUrl !== scope.privacyUrl) {
+          return respond(response, 400, { error: 'Zásady soukromí neodpovídají partnerovi.' });
+        }
+        const input = {
+          ...body,
+          companyId: scope.companyId,
+          projectId: scope.projectId,
+          houseId: scope.houseId,
+          consent: { ...body.consent, privacyUrl: scope.privacyUrl },
+          leadId: randomBytes(16).toString('hex'),
+          createdAt: new Date().toISOString(),
+        };
+        try {
+          const lead = await leads.create(input);
+          return respond(response, 201, {
+            leadId: lead.leadId,
+            createdAt: lead.createdAt,
+            status: lead.status,
+          });
+        } catch (error) {
+          if (error instanceof LeadAlreadyExistsError) {
+            return respond(response, 200, {
+              leadId: error.lead.leadId,
+              createdAt: error.lead.createdAt,
+              status: error.lead.status,
+            });
+          }
+          return respond(response, 400, { error: 'Neplatná poptávka.' });
+        }
+      }
+      const projectConfigMatch = path.match(/^\/public\/projects\/([^/]+)\/config$/);
+      if (projectConfigMatch !== null) {
+        const projectId = decodeURIComponent(projectConfigMatch[1] ?? '').trim();
+        const canonical = projectId.length === 0 ? null : getCanonicalProject(projectId);
+        if (canonical === null || canonical.project.projectId !== projectId) {
+          return respond(response, 404, { error: 'Projekt neexistuje.' });
+        }
+
+        if (request.method === 'GET') {
+          const current = await projectConfigs.get(projectId);
+          return respond(response, 200, {
+            projectId: canonical.project.projectId,
+            privacyUrl: current?.privacyUrl ?? null,
+          });
+        }
+
+        if (request.method === 'PUT') {
+          const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+          const session = token === null ? null : await partnerSessions.resolve(token);
+          if (session === null) {
+            return respond(response, 401, { error: 'Neplatná relace.' });
+          }
+          const authorizedCompanyId =
+            session.workspaceContext?.companyId ?? session.companyId;
+          if (canonical.partner.companyId !== authorizedCompanyId) {
+            return respond(response, 403, {
+              error: 'Projekt není pro tuto relaci povolen.',
+            });
+          }
+          const rawConfig = await requestBody(request);
+          const privacyUrl =
+            rawConfig !== null &&
+            typeof rawConfig === 'object' &&
+            !Array.isArray(rawConfig)
+              ? (rawConfig as Record<string, unknown>).privacyUrl
+              : undefined;
+          try {
+            const saved = await projectConfigs.upsert({
+              projectId,
+              privacyUrl,
+            });
+            applyDurableProjectConfigs(await projectConfigs.list());
+            return respond(response, 200, saved);
+          } catch {
+            return respond(response, 400, { error: 'Neplatná adresa zásad ochrany osobních údajů.' });
+          }
+        }
+
+        return respond(response, 405, { error: 'Method not allowed.' });
+      }
       if (request.method === 'POST' && path.startsWith('/public/auth/activate/')) {
         const token = decodeURIComponent(path.slice('/public/auth/activate/'.length));
         const body = await requestBody(request) as {

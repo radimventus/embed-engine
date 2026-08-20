@@ -19,6 +19,7 @@ type WorkspaceSidebarProps = {
   readonly onOpenHouse: (houseId: string) => void;
   readonly onCreateProject: () => void;
   readonly onCreateObject: () => void;
+  readonly onEditProject: () => void;
   readonly onDirtySave: () => void;
   readonly onDirtyDiscard: () => void;
   readonly onDirtyCancel: () => void;
@@ -48,6 +49,7 @@ export function WorkspaceSidebar({
   onOpenHouse,
   onCreateProject,
   onCreateObject,
+  onEditProject,
   onDirtySave,
   onDirtyDiscard,
   onDirtyCancel,
@@ -108,6 +110,16 @@ export function WorkspaceSidebar({
           +
         </button>
       </div>
+
+      <button
+        type="button"
+        className="platform-btn mt-3 w-full"
+        disabled={activeFolder === null || switching}
+        data-testid="workspace-edit-project"
+        onClick={onEditProject}
+      >
+        Upravit projekt
+      </button>
 
       <div className="my-5 border-t border-builder-creamDark" />
 

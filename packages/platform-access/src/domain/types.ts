@@ -75,6 +75,13 @@ export type PlatformCanonicalProject = {
   readonly name: string;
   readonly slug: string;
   readonly description: string;
+  /**
+   * Optional Project privacy destination for public lead consent.
+   * Absence is explicit — lead capture stays fail-closed.
+   * Authoritative value comes from durable Platform API Project config overlay,
+   * never from browser extras.
+   */
+  readonly privacyUrl?: string;
 };
 
 /**

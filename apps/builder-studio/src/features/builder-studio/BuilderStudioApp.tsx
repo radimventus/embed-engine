@@ -389,6 +389,7 @@ export function BuilderStudioApp() {
             onOpenHouse={openHouseStable}
             onCreateProject={() => setCreateOpen(true)}
             onCreateObject={() => setObjectCreateOpen(true)}
+            onEditProject={() => setEditOpen(true)}
             onDirtySave={() => {
               void workspace.confirmDirtySave(async () => {
                 await save();
@@ -663,6 +664,14 @@ export function BuilderStudioApp() {
       <ProjectEditDialog
         open={editOpen}
         project={workspace.activeProject}
+        canonicalProjectId={
+          getActiveWorkspaceFolder(workspace.registry)?.id ??
+          workspace.activeProject?.folderId ??
+          null
+        }
+        canonicalProjectName={
+          getActiveWorkspaceFolder(workspace.registry)?.name ?? null
+        }
         companies={workspace.registry.companies}
         onClose={() => setEditOpen(false)}
         onSubmit={(input) => {

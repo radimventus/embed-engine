@@ -35,6 +35,8 @@ export type CanonicalProjectIdentity = {
   readonly name: string;
   readonly slug: string;
   readonly description: string;
+  /** Optional Project privacy destination; absence is explicit. */
+  readonly privacyUrl?: string;
 };
 
 /**

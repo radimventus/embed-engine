@@ -1,5 +1,4 @@
 import { AUDIT_ACCENT, AUDIT_MUTED, AUDIT_WHITE } from './audit-panel';
-import { PILOT_LEAD_MAILTO } from '../../pilot/pilotVocabulary';
 
 export function SuccessState() {
   return (
@@ -9,11 +8,11 @@ export function SuccessState() {
       data-testid="lead-capture-success"
     >
       <p className="text-xl font-semibold" style={{ color: AUDIT_WHITE }}>
-        E-mail je připraven.
+        Poptávka byla přijata.
       </p>
       <p className="mt-2 text-sm leading-relaxed" style={{ color: AUDIT_MUTED }}>
-        Dokončete odeslání ve svém e-mailovém klientovi. Pokud se neotevřel, napište
-        na {PILOT_LEAD_MAILTO}.
+        Vaše údaje jsme bezpečně uložili. Partner vás bude kontaktovat s dalším
+        postupem.
       </p>
     </div>
   );

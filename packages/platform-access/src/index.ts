@@ -114,11 +114,20 @@ export {
 } from './registry/companyRegistry';
 
 export {
+  applyDurableProjectConfigs,
+  resetDurableProjectConfigs,
+  type DurableProjectConfigOverlay,
+} from './registry/durableProjectConfig';
+
+export { normalizeProjectPrivacyUrl } from './project/projectPrivacyUrl';
+
+export {
   DEFAULT_COMPANIES,
   DEFAULT_WORKSPACES,
   DEFAULT_PROJECTS,
   DEFAULT_TENANTS,
   DEFAULT_TENANT_ID,
+  DEFAULT_CANONICAL_PROJECT_ID,
   DEMO_USERS,
   DSE_BUNGALOV_4KK_HOUSE_ID,
   DSE_CANONICAL_PROJECT_ID,

@@ -36,6 +36,10 @@ import {
   readCrossPortJson,
   writeCrossPortJson,
 } from './crossPortJsonStore';
+import {
+  durableProjectPrivacyUrl,
+  resetDurableProjectConfigs,
+} from './durableProjectConfig';
 
 export type CompanyRegistryState = {
   readonly tenants: readonly PlatformTenant[];
@@ -208,17 +212,47 @@ function persistExtrasToStorage(): void {
   });
 }
 
+function stripBrowserPrivacyUrl(
+  project: PlatformCanonicalProject,
+): PlatformCanonicalProject {
+  const privacyUrl = durableProjectPrivacyUrl(project.id);
+  return privacyUrl === undefined
+    ? {
+        id: project.id,
+        companyId: project.companyId,
+        workspaceId: project.workspaceId,
+        name: project.name,
+        slug: project.slug,
+        description: project.description,
+      }
+    : {
+        id: project.id,
+        companyId: project.companyId,
+        workspaceId: project.workspaceId,
+        name: project.name,
+        slug: project.slug,
+        description: project.description,
+        privacyUrl,
+      };
+}
+
 export function getDefaultCompanyRegistry(): CompanyRegistryState {
   ensureExtrasHydrated();
   return {
     tenants: mergeById(DEFAULT_TENANTS, mutableExtras.tenants),
-    companies: mergeById(DEFAULT_COMPANIES, mutableExtras.companies),
+    companies: mergeById(DEFAULT_COMPANIES, mutableExtras.companies).map(
+      (company) => ({
+        id: company.id,
+        name: company.name,
+        tenantId: company.tenantId,
+      }),
+    ),
     workspaces: mergeById(DEFAULT_WORKSPACES, mutableExtras.workspaces),
     projects: mergeProjects(DEFAULT_PROJECTS, mutableExtras.projects),
     canonicalProjects: mergeById(
       DEFAULT_CANONICAL_PROJECTS,
       mutableExtras.canonicalProjects,
-    ),
+    ).map(stripBrowserPrivacyUrl),
   };
 }
 
@@ -252,6 +286,7 @@ export function resolveCanonicalProjectForHouseRow(
 export function resetCompanyRegistryExtras(): void {
   mutableExtras = emptyExtras();
   lastExtrasRaw = null;
+  resetDurableProjectConfigs();
   clearCrossPortJson({
     cookieName: COMPANY_EXTRAS_COOKIE,
     storageKey: COMPANY_EXTRAS_STORAGE_KEY,

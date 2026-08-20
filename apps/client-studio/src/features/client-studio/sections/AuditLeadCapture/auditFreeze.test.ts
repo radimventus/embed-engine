@@ -48,8 +48,11 @@ describe('Audit Freeze shell (CAP UX 42)', () => {
 
     const form = stripComments(read('AuditContact.tsx'));
     assert.match(form, /ODESLAT POPTÁVKU/);
-    assert.match(form, /mailto:/);
-    assert.match(form, /AUDIT_PRIVACY_HREF/);
+    assert.match(form, /submitDurableLead/);
+    assert.match(form, /project\?\.privacyUrl/);
+    assert.match(form, /audit-gdpr-consent/);
+    assert.equal(form.includes('mailto:'), false);
+    assert.equal(form.includes('AUDIT_PRIVACY_HREF'), false);
     assert.equal(form.includes('COMMERCIAL_CONSENT'), false);
   });
 

@@ -2,7 +2,7 @@ import { useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import { Input } from '@embed-engine/ui';
 
 import { useOptionalDecisionAnalytics } from '../../analytics';
-import { PILOT_FLAGS, PILOT_LEAD_MAILTO } from '../../pilot/pilotVocabulary';
+import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import {
   AUDIT_ACCENT,
   AUDIT_CONTROL_RADIUS_PX,
@@ -12,20 +12,20 @@ import {
   AUDIT_INPUT_STYLE,
   AUDIT_MUTED,
   AUDIT_ON_ACCENT,
-  AUDIT_PRIVACY_HREF,
   AUDIT_WHITE,
 } from './audit-panel';
 import { LockIcon, UserIcon } from './AuditIcons';
 import { SuccessState } from './SuccessState';
+import { submitDurableLead } from './durableLeadSubmission';
 
 type LeadPhase = 'idle' | 'loading' | 'success' | 'error';
 
 /**
- * Lead Capture — operational mailto handoff until a backend exists (S-006A).
- * Never claims a server received the request when none exists.
+ * Lead Capture succeeds only after the Platform API durably accepts a lead.
  */
 export function AuditContact() {
   const analytics = useOptionalDecisionAnalytics();
+  const { analyticsScope, company, project } = useDecisionSessionRuntime();
   const [phase, setPhase] = useState<LeadPhase>('idle');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -33,6 +33,7 @@ export function AuditContact() {
   const [gdprConsent, setGdprConsent] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const contactOpenedRef = useRef(false);
+  const idempotencyKeyRef = useRef<string | null>(null);
 
   const trackContactOpened = () => {
     if (contactOpenedRef.current) {
@@ -42,14 +43,14 @@ export function AuditContact() {
     analytics?.conversionStarted('audit-contact-form');
   };
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setErrorMessage(null);
 
-    if (PILOT_FLAGS.leadCaptureMode !== 'mailto') {
+    if (project?.privacyUrl === undefined || analyticsScope === null || company === null) {
       setPhase('error');
       setErrorMessage(
-        'Odesílání poptávek zatím není aktivní. Použijte kontakt níže.',
+        'Pro tohoto partnera nejsou dostupné zásady soukromí. Poptávku nelze odeslat.',
       );
       return;
     }
@@ -69,29 +70,33 @@ export function AuditContact() {
     }
 
     setPhase('loading');
-
-    const subject = encodeURIComponent('Poptávka — posouzení umístění domu');
-    const body = encodeURIComponent(
-      [
-        `Jméno: ${trimmedName}`,
-        `E-mail: ${trimmedEmail}`,
-        phone.trim() ? `Telefon: ${phone.trim()}` : null,
-        'Souhlas GDPR: ano',
-        '',
-        'Zdroj: Client Studio — Audit / Lead',
-      ]
-        .filter((line): line is string => line !== null)
-        .join('\n'),
-    );
+    const idempotencyKey =
+      idempotencyKeyRef.current ?? crypto.randomUUID();
+    idempotencyKeyRef.current = idempotencyKey;
 
     try {
+      await submitDurableLead({
+        idempotencyKey,
+        scope: {
+          companyId: company.companyId,
+          projectId: analyticsScope.projectId,
+          houseId: analyticsScope.houseId,
+          privacyUrl: project.privacyUrl,
+        },
+        contact: {
+          name: trimmedName,
+          email: trimmedEmail,
+          phone: phone.trim() || null,
+        },
+        acceptedAt: new Date().toISOString(),
+      });
       analytics?.conversionCompleted('audit-contact-form');
-      window.location.href = `mailto:${PILOT_LEAD_MAILTO}?subject=${subject}&body=${body}`;
-      window.setTimeout(() => setPhase('success'), 400);
+      idempotencyKeyRef.current = null;
+      setPhase('success');
     } catch {
       setPhase('error');
       setErrorMessage(
-        `Nepodařilo se otevřít e-mail. Napište nám na ${PILOT_LEAD_MAILTO}.`,
+        'Poptávku se nepodařilo uložit. Zkuste to prosím znovu.',
       );
     }
   };
@@ -108,7 +113,7 @@ export function AuditContact() {
         style={{ color: AUDIT_MUTED }}
       >
         Po odeslání vám zašleme další postup a informace potřebné pro zpracování
-        posouzení. Poptávku otevřete ve svém e-mailu — odeslání potvrďte tam.
+        posouzení.
       </p>
 
       {phase === 'success' ? (
@@ -166,7 +171,7 @@ export function AuditContact() {
 
           <button
             type="submit"
-            disabled={phase === 'loading' || !gdprConsent}
+            disabled={phase === 'loading' || !gdprConsent || project?.privacyUrl === undefined}
             className="flex w-full items-center justify-center px-4 text-center text-sm font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001930] disabled:cursor-not-allowed"
             style={{
               height: AUDIT_INPUT_HEIGHT_PX,
@@ -179,7 +184,7 @@ export function AuditContact() {
               opacity: phase === 'loading' ? 0.6 : 1,
             }}
           >
-            {phase === 'loading' ? 'Otevírám e-mail…' : 'ODESLAT POPTÁVKU →'}
+            {phase === 'loading' ? 'ODESÍLÁM…' : 'ODESLAT POPTÁVKU →'}
           </button>
 
           <label
@@ -202,7 +207,7 @@ export function AuditContact() {
             <span className="text-sm leading-snug" style={{ color: AUDIT_MUTED }}>
               Vaše data jsou u nás v bezpečí. Odesláním souhlasíte se{' '}
               <a
-                href={AUDIT_PRIVACY_HREF}
+                href={project?.privacyUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="underline underline-offset-2"

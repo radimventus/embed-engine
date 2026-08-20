@@ -80,6 +80,7 @@ function projectIdentityFromRegistry(
       name: canonical.name,
       slug: canonical.slug,
       description: canonical.description,
+      privacyUrl: canonical.privacyUrl,
     };
   }
   return {
@@ -112,7 +113,8 @@ export function projectCanonicalFromShared(
   shared: SharedProject,
 ): CanonicalProjectProjection {
   const packagePublicRoot = packageRootToPublicUrl(shared.packageRoot);
-  const workspace = getDefaultCompanyRegistry().workspaces.find(
+  const registry = getDefaultCompanyRegistry();
+  const workspace = registry.workspaces.find(
     (item) => item.id === shared.workspaceId,
   );
   return {
@@ -164,6 +166,7 @@ function projectCanonicalFromDelivery(
       name: delivery.name,
       slug: delivery.slug,
       description: delivery.description,
+      privacyUrl: delivery.privacyUrl,
     },
     house: null,
     branding: {

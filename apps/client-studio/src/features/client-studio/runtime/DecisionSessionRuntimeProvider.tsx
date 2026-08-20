@@ -36,6 +36,7 @@ import {
   getBuilderPackagePublicRoot,
 } from './builderPackageBootstrap';
 import { loadDurableHousePackageOverlay } from './durableHousePackageOverlay';
+import { hydrateDurableProjectPrivacy } from './durableProjectPrivacy';
 import {
   readClientBindCandidates,
   listClientHouses,
@@ -97,6 +98,16 @@ export type DecisionSessionRuntimeContextValue = {
     readonly companyId: string;
     readonly projectId: string;
     readonly houseId: string;
+  } | null;
+  /** Immutable Company identity resolved with the active Project/House binding. */
+  readonly company: {
+    readonly companyId: string;
+    readonly companyName: string;
+  } | null;
+  /** Canonical Project context, including optional Project privacy destination. */
+  readonly project: {
+    readonly projectId: string;
+    readonly privacyUrl?: string;
   } | null;
   /** Dispatch Runtime commands (SelectRoom, ChangePriority, …). */
   readonly dispatch: (command: RuntimeCommand, now?: number) => DispatchResult;
@@ -369,6 +380,13 @@ export function DecisionSessionRuntimeProvider({
     let cancelled = false;
     const controller = new AbortController();
     void (async () => {
+      const canonicalProjectId = projection?.project.projectId ?? null;
+      if (canonicalProjectId !== null) {
+        await hydrateDurableProjectPrivacy(
+          canonicalProjectId,
+          controller.signal,
+        );
+      }
       let durableOverlay = null;
       if (canonicalHouseId !== null) {
         try {
@@ -502,6 +520,20 @@ export function DecisionSessionRuntimeProvider({
               companyId: projectBind.project.partner.companyId,
               projectId: projectBind.project.project.projectId,
               houseId: projectBind.project.house.houseId,
+            },
+      company:
+        projectBind === null || projectBind.project === null
+          ? null
+          : {
+              companyId: projectBind.project.partner.companyId,
+              companyName: projectBind.project.partner.companyName,
+            },
+      project:
+        projectBind === null || projectBind.project === null
+          ? null
+          : {
+              projectId: projectBind.project.project.projectId,
+              privacyUrl: projectBind.project.project.privacyUrl,
             },
       dispatch,
     };
