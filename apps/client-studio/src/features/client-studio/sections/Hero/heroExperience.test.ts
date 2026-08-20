@@ -77,6 +77,7 @@ describe("Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)", (
     const hero = read("Hero.tsx");
     const socialProof = read("SocialProof.tsx");
     const feed = read("useSocialProofFeed.tsx");
+    const cta = read("HeroCTA.tsx");
     assert.match(hero, /SocialProof/);
     assert.match(hero, /grid-cols-\[minmax\(0,1fr\)_minmax\(0,2fr\)\]/);
     assert.equal(hero.includes("tablet:grid-cols"), false);
@@ -98,7 +99,7 @@ describe("Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)", (
     assert.match(socialProof, /w-\[calc\(400%\/3\+1px\)\] shrink-0/);
     assert.match(socialProof, /flexBasis: "25%"/);
     assert.match(socialProof, /index < FEED_VISIBLE_ITEM_COUNT - 1/);
-    assert.match(cta, /WORKSPACE_LANDING_ADJUSTMENT_PX = -20/);
+    assert.match(cta, /WORKSPACE_LANDING_ADJUSTMENT_PX = -40/);
     assert.match(cta, /\+ workspaceAdjustment/);
   });
 });

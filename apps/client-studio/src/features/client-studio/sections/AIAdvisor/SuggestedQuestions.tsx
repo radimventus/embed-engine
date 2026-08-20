@@ -101,7 +101,7 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
   return (
     <li
       className="shrink-0 overflow-hidden rounded-[8px] border border-embed-border-default"
-      style={{ backgroundColor: colors.surface.card }}
+      style={{ backgroundColor: palette.creamLight }}
     >
       {/* RAC-07 — entire FAQ panel is one hit target (expand + seed input). */}
       <button
@@ -137,7 +137,7 @@ function FaqItem({ question, answer, onQuestionSelect }: FaqItemProps) {
   );
 }
 
-/** FAQ topic rows — progressive pages of 3; load-more appends the next 3 (CAP UX3 08). */
+/** FAQ topic rows — the approved first five topics are visible on landing. */
 export function FaqList({ items, onQuestionSelect }: SuggestedQuestionsProps) {
   const [visibleCount, setVisibleCount] = useState(() =>
     initialFaqVisibleCount(items.length),

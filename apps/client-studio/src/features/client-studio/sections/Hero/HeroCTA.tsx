@@ -5,7 +5,11 @@ import { useOptionalDecisionAnalytics } from "../../analytics";
 import { PILOT_SECTION_IDS } from "../../pilot/pilotVocabulary";
 
 const CTA_SCROLL_DURATION_MS = 520;
-const WORKSPACE_LANDING_ADJUSTMENT_PX = -20;
+/**
+ * Additional Workspace-only correction relative to the deployed -20px target.
+ * A lower visual landing needs a lower scrollTop, so this is -40px in total.
+ */
+const WORKSPACE_LANDING_ADJUSTMENT_PX = -40;
 
 /**
  * Primary Hero CTA — Morning Baseline reference (PT-HERO-00).

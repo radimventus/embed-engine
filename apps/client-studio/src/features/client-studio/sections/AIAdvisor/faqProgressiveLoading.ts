@@ -1,6 +1,7 @@
 /** Progressive FAQ reveal helpers (CAP UX 48 / RACIO 05) — UI-only, no content logic. */
 
-export const FAQ_VISIBLE_PAGE_SIZE = 3;
+/** Approved Racio landing presentation: show the canonical five questions. */
+export const FAQ_VISIBLE_PAGE_SIZE = 5;
 
 export function initialFaqVisibleCount(
   total: number,

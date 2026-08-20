@@ -8,25 +8,21 @@ import {
   nextFaqVisibleCount,
 } from './faqProgressiveLoading';
 
-describe('CAP UX 48 / RACIO 05 FAQ progressive loading', () => {
-  it('starts with at most three panels', () => {
-    assert.equal(FAQ_VISIBLE_PAGE_SIZE, 3);
-    assert.equal(initialFaqVisibleCount(11), 3);
+describe('Racio FAQ landing presentation', () => {
+  it('starts with the approved five panels', () => {
+    assert.equal(FAQ_VISIBLE_PAGE_SIZE, 5);
+    assert.equal(initialFaqVisibleCount(11), 5);
     assert.equal(initialFaqVisibleCount(2), 2);
     assert.equal(initialFaqVisibleCount(0), 0);
   });
 
-  it('each load adds three while preserving previous count', () => {
+  it('each load adds five while preserving previous count', () => {
     let visible = initialFaqVisibleCount(11);
-    assert.equal(visible, 3);
+    assert.equal(visible, 5);
     assert.equal(hasMoreFaqItems(visible, 11), true);
 
     visible = nextFaqVisibleCount(visible, 11);
-    assert.equal(visible, 6);
-    assert.equal(hasMoreFaqItems(visible, 11), true);
-
-    visible = nextFaqVisibleCount(visible, 11);
-    assert.equal(visible, 9);
+    assert.equal(visible, 10);
     assert.equal(hasMoreFaqItems(visible, 11), true);
 
     visible = nextFaqVisibleCount(visible, 11);
@@ -36,7 +32,7 @@ describe('CAP UX 48 / RACIO 05 FAQ progressive loading', () => {
 
   it('supports unlimited expansion bounded only by data length', () => {
     let visible = initialFaqVisibleCount(23);
-    assert.equal(visible, 3);
+    assert.equal(visible, 5);
     while (hasMoreFaqItems(visible, 23)) {
       const previous = visible;
       visible = nextFaqVisibleCount(visible, 23);
