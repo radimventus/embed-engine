@@ -5,7 +5,7 @@ import { useOptionalDecisionAnalytics } from "../../analytics";
 import { PILOT_SECTION_IDS } from "../../pilot/pilotVocabulary";
 
 const CTA_SCROLL_DURATION_MS = 520;
-const WORKSPACE_LANDING_ADJUSTMENT_PX = 20;
+const WORKSPACE_LANDING_ADJUSTMENT_PX = -20;
 
 /**
  * Primary Hero CTA — Morning Baseline reference (PT-HERO-00).

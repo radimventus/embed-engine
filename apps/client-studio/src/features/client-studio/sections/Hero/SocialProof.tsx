@@ -5,7 +5,6 @@ import { SOCIAL_PROOF_TICK_MS } from "@embed-engine/core";
 import { SocialProofIcon } from "./SocialProofIcon";
 import {
   nextSocialProofIndex,
-  SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT,
   type SocialProofEntry,
   useSocialProofFeed,
 } from "./useSocialProofFeed";
@@ -56,7 +55,7 @@ export function SocialProof() {
 
   useEffect(() => {
     if (
-      entries.length <= SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT ||
+      entries.length <= FEED_VISIBLE_ITEM_COUNT ||
       isAnimating
     ) {
       return;
@@ -82,14 +81,15 @@ export function SocialProof() {
         className="pointer-events-none absolute inset-x-0 top-[2px] z-10 h-px"
         style={{ backgroundColor: "#D4AF37" }}
       />
-      <div className="hidden h-social-proof items-center overflow-hidden px-section desktop:flex">
-        {entries.length > 0 ? (
+      <div className="hidden h-social-proof items-center px-section desktop:flex">
+        <div className="w-full overflow-hidden">
+          {entries.length > 0 ? (
           <ul
-            className="m-0 flex w-[calc(400%/3)] list-none p-0"
+            className="m-0 flex w-[calc(400%/3+1px)] shrink-0 list-none p-0"
             onTransitionEnd={() => {
               if (
                 !isAnimating ||
-                entries.length <= SOCIAL_PROOF_MIN_MESSAGES_BEFORE_REPEAT
+                entries.length <= FEED_VISIBLE_ITEM_COUNT
               )
                 return;
               setStartIndex((current) => {
@@ -130,7 +130,8 @@ export function SocialProof() {
               </li>
             ))}
           </ul>
-        ) : null}
+          ) : null}
+        </div>
       </div>
       {entries.length > 0 ? (
         <div className="desktop:hidden px-section py-3">

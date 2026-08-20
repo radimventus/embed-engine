@@ -258,7 +258,7 @@ function EmbedSocialProof({
   );
 
   useEffect(() => {
-    if (compact || entries.length <= 5 || isAnimating) return;
+    if (compact || entries.length <= 3 || isAnimating) return;
     const timer = window.setTimeout(() => setIsAnimating(true), SOCIAL_PROOF_TICK_MS);
     return () => window.clearTimeout(timer);
   }, [compact, entries.length, isAnimating, startIndex]);
@@ -267,8 +267,7 @@ function EmbedSocialProof({
     <section
       aria-label="Social Proof"
       className={[
-        "relative grid bg-[#FFFFFF] text-[#001930]",
-        compact ? "grid-cols-1" : "grid-cols-3",
+        "relative bg-[#FFFFFF] text-[#001930]",
       ].join(" ")}
     >
       <div
@@ -294,9 +293,9 @@ function EmbedSocialProof({
           />
         </>
       ) : null}
-      <div className={compact ? "overflow-hidden" : "overflow-hidden"}>
+      <div className="overflow-hidden">
         <div
-          className={compact ? "" : "flex w-[calc(400%/3)]"}
+          className={compact ? "" : "flex w-[calc(400%/3+1px)]"}
           onTransitionEnd={() => {
             if (!isAnimating) return;
             setStartIndex((current) => nextSocialProofTickerIndex(current, entries));

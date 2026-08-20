@@ -38,4 +38,11 @@ describe("launcher Social Proof parity", () => {
     assert.doesNotMatch(launcherSource, /ověřeného House package|Půdorys je součástí|referenční House/);
     assert.doesNotMatch(launcherSource, /numerator|denominator|REFERENCE_HISTORICAL/);
   });
+
+  it("uses a full-width three-slot viewport with a clipped incoming fourth item", () => {
+    assert.match(launcherSource, /overflow-hidden/);
+    assert.match(launcherSource, /flex w-\[calc\(400%\/3\+1px\)\]/);
+    assert.match(launcherSource, /flexBasis: "25%"/);
+    assert.match(launcherSource, /translateX\(-25%\)/);
+  });
 });
