@@ -59,7 +59,11 @@ import {
   getDefaultCompanyRegistry,
   projectPublicCompanyContact,
 } from '@embed-engine/platform-access';
-import { isPlatformAdmin, type PlatformRole } from '@embed-engine/platform-access/rbac';
+import {
+  canAccessStudio,
+  isPlatformAdmin,
+  type PlatformRole,
+} from '@embed-engine/platform-access/rbac';
 
 export {
   FileSocialProofAnalyticsRepository,
@@ -80,6 +84,7 @@ export {
   type DurableLead,
   type DurableLeadInput,
   type LeadRepository,
+  type LeadScopeQuery,
   LeadAlreadyExistsError,
 } from './leadRepository';
 export {
@@ -656,6 +661,57 @@ export function createPlatformApiServer(
           }
           return respond(response, 400, { error: 'Neplatná poptávka.' });
         }
+      }
+      if (request.method === 'GET' && path === '/partner/leads') {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session =
+          token === null ? null : await partnerSessions.resolve(token);
+        if (session === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+        const roles = sessionRoles(session);
+        if (
+          !canAccessStudio(roles, 'sales') &&
+          !canAccessStudio(roles, 'manager')
+        ) {
+          return respond(response, 403, { error: 'Přístup k poptávkám není povolen.' });
+        }
+
+        const url = new URL(request.url ?? '/', 'http://localhost');
+        const companyId = url.searchParams.get('companyId')?.trim() ?? '';
+        const projectId = url.searchParams.get('projectId')?.trim() ?? '';
+        const houseId = url.searchParams.get('houseId')?.trim() ?? '';
+        if (companyId.length === 0 || projectId.length === 0) {
+          return respond(response, 400, { error: 'Neplatný rozsah.' });
+        }
+        if (companyId !== sessionCompanyId(session)) {
+          return respond(response, 403, { error: 'Společnost není pro tuto relaci povolena.' });
+        }
+        const sessionProjectId = (
+          session.workspaceContext?.projectId ?? session.projectId ?? ''
+        ).trim();
+        if (projectId !== sessionProjectId) {
+          return respond(response, 403, { error: 'Projekt není pro tuto relaci povolen.' });
+        }
+
+        const scoped = await leads.list({
+          companyId,
+          projectId,
+          ...(houseId.length > 0 ? { houseId } : {}),
+        });
+        return respond(response, 200, {
+          leads: scoped.map((item) => ({
+            leadId: item.leadId,
+            companyId: item.companyId,
+            projectId: item.projectId,
+            houseId: item.houseId,
+            createdAt: item.createdAt,
+            source: item.source,
+            intent: item.intent,
+            status: item.status,
+            contact: item.contact,
+          })),
+        });
       }
       const projectConfigMatch = path.match(/^\/public\/projects\/([^/]+)\/config$/);
       if (projectConfigMatch !== null) {

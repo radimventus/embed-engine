@@ -56,12 +56,15 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(app, /Rozhodovací cesta/);
     assert.match(app, /Hledat zájemce/);
     assert.match(app, /Vysoká jistota/);
+    assert.match(app, /useHouseOperationalCases/);
+    assert.match(app, /toSalesClients/);
+    assert.match(app, /sales-operational-empty/);
     assert.doesNotMatch(app, /CapabilityInspector/);
     assert.doesNotMatch(app, /platform-nav-rail/);
     assert.doesNotMatch(app, /platform-inspector-rail/);
     assert.match(css, /sales-desk__grid/);
-    assert.match(clients, /Jan Novák/);
-    assert.match(clients, /Úvodní prohlídka/);
+    assert.match(clients, /toSalesClients/);
+    assert.doesNotMatch(clients, /SALES_CLIENTS/);
   });
 
   it('applies Sales IA hierarchy (SR-002)', () => {
@@ -93,8 +96,9 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(app, /id: 'prospect'/);
     assert.match(app, /sales-desk__center/);
     assert.match(app, /sales-desk__context/);
-    assert.match(app, /activeHouse\.houseName/);
+    assert.match(app, /activeHouse\?\.houseName/);
     assert.match(app, /sales-desk__house-list/);
+    assert.match(app, /Profil zájemce/);
     assert.doesNotMatch(app, /id: 'company'/);
     assert.doesNotMatch(app, /Decision Journey/);
     assert.doesNotMatch(app, /Decision Signals/);
@@ -102,8 +106,7 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(css, /50%/);
     assert.match(css, /sales-desk__center/);
     assert.match(css, /text-align:\s*center/);
-    assert.match(clients, /Family 98/);
-    assert.match(clients, /Navigátor domu/);
+    assert.match(clients, /toSalesClients/);
     assert.match(shellCss, /\.platform-role-btn[\s\S]*?text-transform:\s*none/);
     assert.match(userMenu, /Vstupní stránka/);
     assert.doesNotMatch(userMenu, /Platform Landing/);
@@ -125,10 +128,10 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(clients, /listCanonicalHouses/);
 
     const {
-      assertSalesFixtureHousesAreCanonical,
       listSalesCanonicalHouses,
       listSalesCanonicalProjects,
       resolveSalesActiveProjectId,
+      toSalesClients,
     } = await import('./sales/salesClients.ts');
 
     const projects = listSalesCanonicalProjects();
@@ -157,7 +160,7 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
       ),
     );
     assert.ok(houses.some((house) => house.id === 'villa-168'));
-    assertSalesFixtureHousesAreCanonical();
+    assert.equal(typeof toSalesClients, 'function');
 
     assert.equal(
       resolveSalesActiveProjectId('project-domy-s-energii', projects),
@@ -199,6 +202,7 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     );
     assert.match(scopeControls, /createWorkspaceProjectChangeMessage/);
     assert.match(scopeControls, /createWorkspaceHouseChangeMessage/);
+    assert.match(app, /useHouseOperationalCases/);
     assert.match(app, /activeInterestHouseId/);
     assert.doesNotMatch(app, /setActiveHouseId/);
     assert.match(scopeControls, /listWorkspaceHouses\(activeProjectId\)/);

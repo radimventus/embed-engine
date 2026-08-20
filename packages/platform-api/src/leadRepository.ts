@@ -30,9 +30,16 @@ export type DurableLead = DurableLeadInput & {
   readonly notificationStatus: 'pending';
 };
 
+export type LeadScopeQuery = {
+  readonly companyId: string;
+  readonly projectId: string;
+  readonly houseId?: string;
+};
+
 export interface LeadRepository {
   create(input: DurableLeadInput): Promise<DurableLead>;
   getByIdempotencyKey(key: string): Promise<DurableLead | null>;
+  list(query: LeadScopeQuery): Promise<readonly DurableLead[]>;
 }
 
 export class LeadAlreadyExistsError extends Error {
@@ -89,6 +96,21 @@ export class FileLeadRepository implements LeadRepository {
 
   async getByIdempotencyKey(key: string): Promise<DurableLead | null> {
     return (await this.read()).leads.find((item) => item.idempotencyKey === key) ?? null;
+  }
+
+  async list(query: LeadScopeQuery): Promise<readonly DurableLead[]> {
+    const companyId = query.companyId.trim();
+    const projectId = query.projectId.trim();
+    const houseId = query.houseId?.trim() ?? '';
+    if (companyId.length === 0 || projectId.length === 0) {
+      return [];
+    }
+    return (await this.read()).leads.filter(
+      (item) =>
+        item.companyId === companyId &&
+        item.projectId === projectId &&
+        (houseId.length === 0 || item.houseId === houseId),
+    );
   }
 
   private async read(): Promise<LeadState> {

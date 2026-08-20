@@ -7,6 +7,8 @@ import {
   type DurableLead,
   type DurableLeadInput,
   type LeadRepository,
+  type PartnerIdentity,
+  type PartnerSessionRepository,
 } from './index.ts';
 
 const canonicalScope = {
@@ -97,6 +99,7 @@ describe('Public durable lead API', () => {
         return acceptedLead(input);
       },
       getByIdempotencyKey: async () => null,
+      list: async () => [],
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -140,6 +143,7 @@ describe('Public durable lead API', () => {
         throw new Error('disk failure');
       },
       getByIdempotencyKey: async () => null,
+      list: async () => [],
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -183,6 +187,7 @@ describe('Public durable lead API', () => {
         throw new LeadAlreadyExistsError(existing);
       },
       getByIdempotencyKey: async () => existing,
+      list: async () => [],
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -217,6 +222,7 @@ describe('Public durable lead API', () => {
         return acceptedLead(input);
       },
       getByIdempotencyKey: async () => null,
+      list: async () => [],
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -268,6 +274,7 @@ describe('Public durable lead API', () => {
         return acceptedLead(input);
       },
       getByIdempotencyKey: async () => null,
+      list: async () => [],
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -301,6 +308,7 @@ describe('Public durable lead API', () => {
         return acceptedLead(input);
       },
       getByIdempotencyKey: async () => null,
+      list: async () => [],
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -333,6 +341,7 @@ describe('Public durable lead API', () => {
         return acceptedLead(input);
       },
       getByIdempotencyKey: async () => null,
+      list: async () => [],
     };
 
     const rejectingResolver: typeof import('./leadScope').resolveLeadScope =
@@ -354,5 +363,139 @@ describe('Public durable lead API', () => {
       },
       rejectingResolver,
     );
+  });
+});
+
+describe('Partner House-scoped lead list', () => {
+  const identity: PartnerIdentity = {
+    user: {
+      id: 'user-sales',
+      email: 'sales@example.test',
+      displayName: 'Sales',
+      roles: ['salesman'],
+      status: 'active',
+      lastLoginAt: '2026-08-20T08:00:00.000Z',
+      lastActivityAt: '2026-08-20T08:00:00.000Z',
+      lastStudioId: null,
+    },
+    tenantId: 'tenant-test',
+    companyId: canonicalScope.companyId,
+    workspaceId: 'workspace-test',
+    projectId: canonicalScope.projectId,
+    activeHouseId: canonicalScope.houseId,
+    activeStudioId: 'sales',
+    workspaceContext: null,
+    rememberMe: true,
+    issuedAt: '2026-08-20T08:00:00.000Z',
+    expiresAt: '2026-09-20T08:00:00.000Z',
+    lastLoginAt: '2026-08-20T08:00:00.000Z',
+  };
+
+  const sessions: PartnerSessionRepository = {
+    activate: async () => {
+      throw new Error('unused');
+    },
+    login: async () => null,
+    resolve: async (token) => (token === 'sales-token' ? identity : null),
+    mutateContext: async () => null,
+    revoke: async () => undefined,
+  };
+
+  async function withReadServer(
+    repository: LeadRepository,
+    run: (baseUrl: string) => Promise<void>,
+  ): Promise<void> {
+    const server = createPlatformApiServer(
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      sessions,
+      undefined,
+      repository,
+    );
+    await new Promise<void>((resolve) => {
+      server.listen(0, '127.0.0.1', resolve);
+    });
+    try {
+      const address = server.address();
+      assert.ok(address !== null && typeof address !== 'string');
+      await run(`http://127.0.0.1:${address.port}`);
+    } finally {
+      await new Promise<void>((resolve, reject) => {
+        server.close((error) =>
+          error === undefined ? resolve() : reject(error),
+        );
+      });
+    }
+  }
+
+  it('returns only House-scoped leads for the authenticated Partner', async () => {
+    const inScope = acceptedLead({
+      leadId: 'lead-house',
+      idempotencyKey: 'idem-house',
+      createdAt: '2026-08-20T06:01:00.000Z',
+      companyId: canonicalScope.companyId,
+      projectId: canonicalScope.projectId,
+      houseId: canonicalScope.houseId,
+      source: 'EMBED',
+      intent: 'audit',
+      contact: {
+        name: 'Petr Lead',
+        email: 'petr.lead@example.test',
+        phone: null,
+      },
+      consent: {
+        accepted: true,
+        acceptedAt: '2026-08-20T06:00:00.000Z',
+        privacyUrl: canonicalScope.privacyUrl,
+        privacyVersion: 'partner-current',
+      },
+    });
+    const otherHouse = acceptedLead({
+      ...inScope,
+      leadId: 'lead-other-house',
+      idempotencyKey: 'idem-other-house',
+      houseId: 'house-other',
+    });
+
+    const repository: LeadRepository = {
+      create: async (input) => acceptedLead(input),
+      getByIdempotencyKey: async () => null,
+      list: async (query) =>
+        [inScope, otherHouse].filter(
+          (item) =>
+            item.companyId === query.companyId &&
+            item.projectId === query.projectId &&
+            (query.houseId === undefined || item.houseId === query.houseId),
+        ),
+    };
+
+    await withReadServer(repository, async (baseUrl) => {
+      const unauthorized = await fetch(
+        `${baseUrl}/partner/leads?companyId=${canonicalScope.companyId}&projectId=${canonicalScope.projectId}&houseId=${canonicalScope.houseId}`,
+      );
+      assert.equal(unauthorized.status, 401);
+
+      const foreignCompany = await fetch(
+        `${baseUrl}/partner/leads?companyId=company-other&projectId=${canonicalScope.projectId}&houseId=${canonicalScope.houseId}`,
+        { headers: { cookie: '__Host-conis_partner_session=sales-token' } },
+      );
+      assert.equal(foreignCompany.status, 403);
+
+      const response = await fetch(
+        `${baseUrl}/partner/leads?companyId=${canonicalScope.companyId}&projectId=${canonicalScope.projectId}&houseId=${canonicalScope.houseId}`,
+        { headers: { cookie: '__Host-conis_partner_session=sales-token' } },
+      );
+      assert.equal(response.status, 200);
+      const body = (await response.json()) as {
+        readonly leads: readonly { readonly leadId: string }[];
+      };
+      assert.deepEqual(
+        body.leads.map((item) => item.leadId),
+        ['lead-house'],
+      );
+    });
   });
 });

@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/salesStudioShell.test.ts src/intelligence/salesIntelligenceAdapter.test.ts"
+    "test": "tsx --test src/salesStudioShell.test.ts src/intelligence/salesIntelligenceAdapter.test.ts src/salesHouseOperational.test.ts"
   },
   "dependencies": {
     "@embed-engine/capabilities": "workspace:*",

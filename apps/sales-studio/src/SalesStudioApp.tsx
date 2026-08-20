@@ -4,13 +4,15 @@
  * CAP-PLAT-04j — shell Project list from CPL Projects; desk houses = House ids.
  */
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   PLATFORM_ROLE_LABELS,
+  listWorkspaceHouses,
   primaryRole,
   recordPlatformActivity,
   submitPlatformFeedback,
+  useHouseOperationalCases,
   usePlatformSession,
   useStudioBrandProjection,
   isWorkspaceShellEmbed,
@@ -25,13 +27,13 @@ import {
 
 import {
   HIGH_INTENT_THRESHOLD,
-  SALES_CLIENTS,
   clientPrimaryScore,
   houseDetailLine,
   houseListLine,
   listSalesCanonicalProjects,
   resolveSalesActiveProjectId,
   resolveActiveHouse,
+  toSalesClients,
   type SalesClient,
 } from './sales/salesClients';
 import { SalesWorkspaceScope } from './SalesWorkspaceScope';
@@ -65,14 +67,27 @@ export function SalesStudioApp() {
   );
   const activeProject =
     salesProjects.find((project) => project.id === activeProjectId) ?? null;
-  const [activeClientId, setActiveClientId] = useState(SALES_CLIENTS[0].id);
+  const { cases } = useHouseOperationalCases();
+  const scopedClients = useMemo(() => toSalesClients(cases), [cases]);
+  const [activeClientId, setActiveClientId] = useState<string | null>(null);
   const [activeInterestHouseId, setActiveInterestHouseId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [intentFilter, setIntentFilter] = useState<IntentFilter>('all');
   const scopeHouseId = session?.activeHouseId ?? null;
+  const scopedHouseName =
+    scopeHouseId !== null && activeProjectId !== null
+      ? listWorkspaceHouses(activeProjectId).find(
+          (house) => house.houseId === scopeHouseId,
+        )?.name ?? null
+      : null;
+
+  useEffect(() => {
+    setActiveClientId(null);
+    setActiveInterestHouseId(null);
+  }, [scopeHouseId, activeProjectId]);
 
   const query = searchQuery.trim().toLowerCase();
-  const visibleClients = SALES_CLIENTS.filter((client) => {
+  const visibleClients = scopedClients.filter((client) => {
     if (!matchesQuery(client, query)) return false;
     if (
       intentFilter === 'high' &&
@@ -86,12 +101,15 @@ export function SalesStudioApp() {
   const activeClient =
     visibleClients.find((client) => client.id === activeClientId) ??
     visibleClients[0] ??
-    SALES_CLIENTS[0];
+    null;
 
-  const activeHouse = resolveActiveHouse(
-    activeClient,
-    activeClient.id === activeClientId ? activeInterestHouseId : null,
-  );
+  const activeHouse =
+    activeClient === null
+      ? null
+      : resolveActiveHouse(
+          activeClient,
+          activeClient.id === activeClientId ? activeInterestHouseId : null,
+        );
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: brand.companyName,
@@ -106,12 +124,13 @@ export function SalesStudioApp() {
     { id: 'conis', label: 'CONIS', onSelect: clearStudio },
     { id: 'studio', label: 'Sales' },
     { id: 'project', label: projectCrumb },
-    { id: 'prospect', label: activeClient.name },
+    { id: 'prospect', label: activeClient?.name ?? 'Zájemce' },
   ];
 
-  const highIntentCount = SALES_CLIENTS.filter(
+  const highIntentCount = scopedClients.filter(
     (client) => clientPrimaryScore(client) >= HIGH_INTENT_THRESHOLD,
   ).length;
+  const preData = scopedClients.length === 0;
 
   function selectClient(clientId: string) {
     setActiveClientId(clientId);
@@ -172,41 +191,51 @@ export function SalesStudioApp() {
                 </button>
               </div>
 
-              <ul className="sales-desk__client-list">
-                {visibleClients.map((client) => {
-                  const active = client.id === activeClient.id;
-                  const primary = resolveActiveHouse(
-                    client,
-                    active && activeInterestHouseId !== null
-                      ? activeInterestHouseId
-                      : null,
-                  );
-                  return (
-                    <li key={client.id}>
-                      <button
-                        type="button"
-                        className={`sales-desk__client${active ? ' sales-desk__client--active' : ''}`}
-                        onClick={() => selectClient(client.id)}
-                        aria-current={active ? 'true' : undefined}
-                      >
-                        <div className="sales-desk__client-head">
-                          <span className="sales-desk__client-name">
-                            {client.name}
-                          </span>
-                          <span className="sales-desk__intent-score">
-                            {primary.score} % Jistota
-                          </span>
-                        </div>
-                        <p className="sales-desk__client-project">
-                          {houseListLine(primary)}
-                        </p>
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
+              {preData ? (
+                <p
+                  className="sales-desk__empty"
+                  data-testid="sales-operational-empty"
+                >
+                  Pro tento dům zatím nejsou žádné případy. Objeví se
+                  používáním Client Experience.
+                </p>
+              ) : (
+                <ul className="sales-desk__client-list">
+                  {visibleClients.map((client) => {
+                    const active = client.id === activeClient?.id;
+                    const primary = resolveActiveHouse(
+                      client,
+                      active && activeInterestHouseId !== null
+                        ? activeInterestHouseId
+                        : null,
+                    );
+                    return (
+                      <li key={client.id}>
+                        <button
+                          type="button"
+                          className={`sales-desk__client${active ? ' sales-desk__client--active' : ''}`}
+                          onClick={() => selectClient(client.id)}
+                          aria-current={active ? 'true' : undefined}
+                        >
+                          <div className="sales-desk__client-head">
+                            <span className="sales-desk__client-name">
+                              {client.name}
+                            </span>
+                            <span className="sales-desk__intent-score">
+                              {primary.score} % Jistota
+                            </span>
+                          </div>
+                          <p className="sales-desk__client-project">
+                            {houseListLine(primary)}
+                          </p>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
 
-              {visibleClients.length === 0 ? (
+              {!preData && visibleClients.length === 0 ? (
                 <p className="sales-desk__empty">Žádný zájemce neodpovídá.</p>
               ) : null}
             </PlatformCard>
@@ -214,103 +243,127 @@ export function SalesStudioApp() {
             <div className="sales-desk__center">
               <header className="sales-desk__context">
                 <h1 className="platform-type-h1 sales-desk__house-title">
-                  {activeHouse.houseName}
+                  {activeHouse?.houseName ?? scopedHouseName ?? activeProject?.label ?? '—'}
                 </h1>
-                <p className="sales-desk__prospect-name">{activeClient.name}</p>
-                <ul
-                  className="sales-desk__house-list"
-                  aria-label="Domy se zájmem"
-                >
-                  {activeClient.houses.map((house) => {
-                    const selected = house.id === activeHouse.id;
-                    return (
-                      <li key={house.id}>
-                        <button
-                          type="button"
-                          className={`sales-desk__house-chip${selected ? ' sales-desk__house-chip--active' : ''}`}
-                          onClick={() => setActiveInterestHouseId(house.id)}
-                          aria-current={selected ? 'true' : undefined}
-                        >
-                          <span>{house.houseName}</span>
-                          <span className="sales-desk__house-chip-score">
-                            {house.score} %
-                          </span>
-                        </button>
-                      </li>
-                    );
-                  })}
-                </ul>
-                <div className="sales-desk__context-badge">
-                  <PlatformStatusBadge tone="gold">
-                    {`● ${highIntentCount} klienti s vysokou rozhodovací jistotou`}
-                  </PlatformStatusBadge>
-                </div>
+                {activeClient !== null ? (
+                  <p className="sales-desk__prospect-name">{activeClient.name}</p>
+                ) : null}
+                {activeClient !== null && activeHouse !== null ? (
+                  <ul
+                    className="sales-desk__house-list"
+                    aria-label="Domy se zájmem"
+                  >
+                    {activeClient.houses.map((house) => {
+                      const selected = house.id === activeHouse.id;
+                      return (
+                        <li key={house.id}>
+                          <button
+                            type="button"
+                            className={`sales-desk__house-chip${selected ? ' sales-desk__house-chip--active' : ''}`}
+                            onClick={() => setActiveInterestHouseId(house.id)}
+                            aria-current={selected ? 'true' : undefined}
+                          >
+                            <span>{house.houseName}</span>
+                            <span className="sales-desk__house-chip-score">
+                              {house.score} %
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                ) : null}
+                {highIntentCount > 0 ? (
+                  <div className="sales-desk__context-badge">
+                    <PlatformStatusBadge tone="gold">
+                      {`● ${highIntentCount} klienti s vysokou rozhodovací jistotou`}
+                    </PlatformStatusBadge>
+                  </div>
+                ) : null}
               </header>
 
-              <PlatformCard title="Detail nákupního záměru">
-                <h2 className="sales-desk__detail-name">{activeClient.name}</h2>
-                <p className="sales-desk__detail-project">
-                  {houseDetailLine(activeHouse)}
-                </p>
+              {activeClient !== null && activeHouse !== null ? (
+                <PlatformCard title="Detail nákupního záměru">
+                  <h2 className="sales-desk__detail-name">{activeClient.name}</h2>
+                  <p className="sales-desk__detail-project">
+                    {houseDetailLine(activeHouse)}
+                  </p>
 
-                <div className="sales-desk__meter">
-                  <div className="sales-desk__meter-header">
-                    <span>Index rozhodovací jistoty</span>
-                    <span>{activeHouse.score} %</span>
+                  <div className="sales-desk__meter">
+                    <div className="sales-desk__meter-header">
+                      <span>Index rozhodovací jistoty</span>
+                      <span>{activeHouse.score} %</span>
+                    </div>
+                    <div className="sales-desk__meter-track">
+                      <div
+                        className="sales-desk__meter-fill"
+                        style={{ width: `${activeHouse.score}%` }}
+                      />
+                    </div>
                   </div>
-                  <div className="sales-desk__meter-track">
-                    <div
-                      className="sales-desk__meter-fill"
-                      style={{ width: `${activeHouse.score}%` }}
-                    />
+
+                  <p className="platform-type-section sales-desk__priorities-label">
+                    Profil zájemce
+                  </p>
+                  <div className="sales-desk__tags">
+                    {activeHouse.tags.map((tag, index) => (
+                      <PlatformStatusBadge
+                        key={tag}
+                        tone={index === 0 ? 'gold' : 'info'}
+                      >
+                        {tag}
+                      </PlatformStatusBadge>
+                    ))}
                   </div>
-                </div>
 
-                <p className="platform-type-section sales-desk__priorities-label">
-                  Hlavní deklarované priority
-                </p>
-                <div className="sales-desk__tags">
-                  {activeHouse.tags.map((tag, index) => (
-                    <PlatformStatusBadge
-                      key={tag}
-                      tone={index === 0 ? 'gold' : 'info'}
-                    >
-                      {tag}
-                    </PlatformStatusBadge>
-                  ))}
-                </div>
-
-                <div className="sales-desk__insight">
-                  <h4>Doporučené téma rozhovoru</h4>
-                  <p>{activeHouse.insight}</p>
-                </div>
-              </PlatformCard>
+                  <div className="sales-desk__insight">
+                    <h4>Doporučené téma rozhovoru</h4>
+                    <p>{activeHouse.insight}</p>
+                  </div>
+                </PlatformCard>
+              ) : (
+                <PlatformCard title="Detail nákupního záměru">
+                  <p
+                    className="sales-desk__empty"
+                    data-testid="sales-operational-empty-detail"
+                  >
+                    Pro tento dům zatím nejsou provozní data. Vzniknou
+                    používáním Client Experience.
+                  </p>
+                </PlatformCard>
+              )}
             </div>
 
             <PlatformCard
               title="Rozhodovací cesta"
               description="Pasivní chování vs. reálné rozhodovací signály"
             >
-              <div className="sales-desk__timeline">
-                {activeHouse.journey.map((step) => {
-                  const stateClass = step.active
-                    ? ' sales-desk__step--active'
-                    : step.completed
-                      ? ' sales-desk__step--completed'
-                      : '';
-                  return (
-                    <div
-                      key={`${step.module}-${step.title}`}
-                      className={`sales-desk__step${stateClass}`}
-                    >
-                      <span className="sales-desk__step-node" aria-hidden />
-                      <p className="sales-desk__step-module">{step.module}</p>
-                      <p className="sales-desk__step-title">{step.title}</p>
-                      <p className="sales-desk__step-detail">{step.detail}</p>
-                    </div>
-                  );
-                })}
-              </div>
+              {activeHouse !== null ? (
+                <div className="sales-desk__timeline">
+                  {activeHouse.journey.map((step) => {
+                    const stateClass = step.active
+                      ? ' sales-desk__step--active'
+                      : step.completed
+                        ? ' sales-desk__step--completed'
+                        : '';
+                    return (
+                      <div
+                        key={`${step.module}-${step.title}`}
+                        className={`sales-desk__step${stateClass}`}
+                      >
+                        <span className="sales-desk__step-node" aria-hidden />
+                        <p className="sales-desk__step-module">{step.module}</p>
+                        <p className="sales-desk__step-title">{step.title}</p>
+                        <p className="sales-desk__step-detail">{step.detail}</p>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="sales-desk__empty">
+                  Rozhodovací cesta se zobrazí s prvním případem tohoto domu.
+                </p>
+              )}
             </PlatformCard>
           </div>
         </div>

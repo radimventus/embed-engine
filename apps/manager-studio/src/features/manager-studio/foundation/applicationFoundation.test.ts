@@ -420,21 +420,21 @@ describe('Application Foundation (MSCB-01)', () => {
     assert.match(gate, /runtime\.bootstrapStatus !== null/);
   });
 
-  it('CAP-VR35b — demo operational fixtures require REFERENCE_DEMO House mode', () => {
-    const provider = readSource(
-      'src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx',
-    );
+  it('CAP-VR35b — operational empty state follows zero canonical cases', () => {
     const workCenter = readSource(
       'src/features/manager-studio/ManagerWorkCenterHome.tsx',
     );
 
-    assert.match(provider, /const houseDataMode = workspaceHouseBinding\?\.dataMode/);
-    assert.match(workCenter, /houseDataMode !== 'REFERENCE_DEMO'/);
+    assert.match(workCenter, /useHouseOperationalCases/);
+    assert.match(workCenter, /aggregate\.caseCount === 0/);
     assert.match(workCenter, /manager-operational-empty/);
     assert.match(
       workCenter,
       /zatím nejsou žádná provozní ani zákaznická data/,
     );
+    assert.match(workCenter, /Data vzniknou používáním Client Experience/);
+    assert.doesNotMatch(workCenter, /Ukázkové metriky/);
+    assert.doesNotMatch(workCenter, /houseDataMode !== 'REFERENCE_DEMO'/);
   });
 
   it('CAP-PLAT-02d.2 / CAP-PLAT-04i — shell Company / Project / House presentation from CPL only', async () => {

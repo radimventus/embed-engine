@@ -534,6 +534,26 @@ export type {
 export { buildGaReadinessReport } from './ga/buildGaReadinessReport';
 
 export {
+  HIGH_INTENT_THRESHOLD,
+  aggregateHouseOperations,
+  selectHouseOperationalCases,
+  selectScopedOperationalCases,
+  REFERENCE_CASE_TEMPLATE_IDS,
+  type HouseOperationalAggregate,
+  type HouseOperationalCase,
+  type OperationalHouseScope,
+  type OperationalJourneyStep,
+  type OperationalLeadRecord,
+  type OperationalOrigin,
+  type ProfilZajemce,
+} from './operations/index';
+export { fetchHouseOperationalLeads } from './api/houseOperationalLeadsClient';
+export {
+  useHouseOperationalCases,
+  type HouseOperationalCasesState,
+} from './react/useHouseOperationalCases';
+
+export {
   SessionProvider,
   usePlatformSession,
   usePlatformUserLabel,

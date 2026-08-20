@@ -23,7 +23,7 @@
   ],
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/platformAccess.test.ts src/gmReadiness.test.ts src/gaReadiness.test.ts src/identityAccess.test.ts src/pilot/projectPartnerBrand.test.ts src/pilot/pilotWorkspace.test.ts src/pilot/invitationNda.test.ts src/pilot/welcomeJourney.test.ts src/pilot/partnerEnvironment.test.ts src/pilot/sharedWorkspaceContext.test.ts src/pilot/pilotProvisionSnapshot.test.ts src/project/sharedProjectRuntime.test.ts src/react/inviteRouting.test.ts src/session/sessionStore.test.ts src/api/platformAccessClient.test.ts src/partner/publicCompanyContact.test.ts src/projection/projectPrivacyProjection.test.ts"
+    "test": "tsx --test src/platformAccess.test.ts src/gmReadiness.test.ts src/gaReadiness.test.ts src/identityAccess.test.ts src/pilot/projectPartnerBrand.test.ts src/pilot/pilotWorkspace.test.ts src/pilot/invitationNda.test.ts src/pilot/welcomeJourney.test.ts src/pilot/partnerEnvironment.test.ts src/pilot/sharedWorkspaceContext.test.ts src/pilot/pilotProvisionSnapshot.test.ts src/project/sharedProjectRuntime.test.ts src/react/inviteRouting.test.ts src/session/sessionStore.test.ts src/api/platformAccessClient.test.ts src/partner/publicCompanyContact.test.ts src/projection/projectPrivacyProjection.test.ts src/operations/houseOperationalData.test.ts"
   },
   "peerDependencies": {
     "react": "^19.0.0",

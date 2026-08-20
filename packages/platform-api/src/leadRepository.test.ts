@@ -183,3 +183,55 @@ test('FileLeadRepository rejects consent.accepted=false before persistence', asy
     await rm(dir, { recursive: true, force: true });
   }
 });
+
+test('FileLeadRepository lists only the requested Company/Project/House scope', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'conis-lead-list-'));
+  const statePath = join(dir, 'leads.json');
+
+  try {
+    const repository = new FileLeadRepository(statePath);
+    await repository.create(validLead());
+    await repository.create(
+      validLead({
+        leadId: 'lead-test-002',
+        idempotencyKey: 'idem-test-002',
+        houseId: 'house-other',
+      }),
+    );
+    await repository.create(
+      validLead({
+        leadId: 'lead-test-003',
+        idempotencyKey: 'idem-test-003',
+        projectId: 'project-other',
+      }),
+    );
+
+    const house = await repository.list({
+      companyId: 'company-test',
+      projectId: 'project-test',
+      houseId: 'house-test',
+    });
+    assert.deepEqual(
+      house.map((item) => item.leadId),
+      ['lead-test-001'],
+    );
+
+    const project = await repository.list({
+      companyId: 'company-test',
+      projectId: 'project-test',
+    });
+    assert.deepEqual(
+      project.map((item) => item.leadId).sort(),
+      ['lead-test-001', 'lead-test-002'],
+    );
+
+    const foreign = await repository.list({
+      companyId: 'company-other',
+      projectId: 'project-test',
+      houseId: 'house-test',
+    });
+    assert.deepEqual(foreign, []);
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
