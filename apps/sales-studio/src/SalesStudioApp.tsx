@@ -91,11 +91,12 @@ export function SalesStudioApp() {
   const query = searchQuery.trim().toLowerCase();
   const visibleClients = scopedClients.filter((client) => {
     if (!matchesQuery(client, query)) return false;
+    const score = clientPrimaryScore(client);
     if (
       intentFilter === 'high' &&
       (
-        !hasMeasuredDecisionCertainty(clientPrimaryScore(client)) ||
-        clientPrimaryScore(client) < HIGH_INTENT_THRESHOLD
+        !hasMeasuredDecisionCertainty(score) ||
+        score < HIGH_INTENT_THRESHOLD
       )
     ) {
       return false;
