@@ -76,7 +76,8 @@ describe("PT-PRIORITY-CONVERSATION-03 decision conversation", () => {
       "Teď se zaměříme na vaše priority.",
     );
     assert.deepEqual(PRIORITY_CONVERSATION_START_LINES, [
-      "Označte alespoň tři karty a nastavte jejich intenzitu (míru důležitosti pro vás).",
+      "Označte alespoň tři karty a nastavte jejich intenzitu",
+      "(míru důležitosti pro vás).",
       "Ukážu vám pak, co stojí za pozornost právě z tohoto pohledu.",
     ]);
     assert.match(PRIORITY_CONVERSATION_START_HEADING, /^Začněme$/);

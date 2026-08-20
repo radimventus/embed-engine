@@ -23,7 +23,8 @@ export const PRIORITY_CONVERSATION_INTRO_LINES: readonly string[] = Object.freez
 export const PRIORITY_CONVERSATION_START_HEADING = 'Začněme';
 
 export const PRIORITY_CONVERSATION_START_LINES = Object.freeze([
-  'Označte alespoň tři karty a nastavte jejich intenzitu (míru důležitosti pro vás).',
+  'Označte alespoň tři karty a nastavte jejich intenzitu',
+  '(míru důležitosti pro vás).',
   'Ukážu vám pak, co stojí za pozornost právě z tohoto pohledu.',
 ] as const);
 

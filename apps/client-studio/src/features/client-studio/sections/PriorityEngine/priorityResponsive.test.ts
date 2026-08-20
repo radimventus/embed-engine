@@ -63,6 +63,8 @@ describe('Responsive Priority Experience (RCS-02)', () => {
     assert.match(panel, /x:\s*-60/);
     assert.match(panel, /priority-conversation-finish-selection/);
     assert.match(panel, /mobile:!ml-0/);
+    assert.match(panel, /PRIORITY_CONVERSATION_START_LINES\.map\(\(line, index\)/);
+    assert.equal(panel.includes("PRIORITY_CONVERSATION_START_LINES.join"), false);
     assert.match(layout, /mobile:ml-0/);
     assert.match(layout, /PRIORITY_ENGINE_MOBILE_STICKY_CTA_CLASS/);
     assert.match(chapter, /mobile:mt-8/);

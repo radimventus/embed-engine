@@ -164,7 +164,7 @@ export function WelcomeBridge({
                 style={{
                   margin: 0,
                   fontSize: 18,
-                  fontWeight: 500,
+                  fontWeight: 700,
                   lineHeight: 1.45,
                   color: theme.headlineColor,
                 }}

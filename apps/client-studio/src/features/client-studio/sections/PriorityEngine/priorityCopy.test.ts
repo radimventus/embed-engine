@@ -7,6 +7,7 @@ import { describe, it } from "node:test";
 import {
   CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,
   PRIORITY_MOTIVATION_BANNER_COPY,
+  PRIORITY_MOTIVATION_BANNER_HEADLINE,
 } from "../../welcome-bridge/clientStudioWelcomeBridgeConfig";
 import {
   PRIORITY_CONVERSATION_COMPLETE_PANEL_LINES,
@@ -35,28 +36,50 @@ function stripComments(source: string): string {
 }
 
 describe("TASK 64 Priority copy contract", () => {
-  it("keeps the exact motivation sentence once and drops the old CONIS intro", () => {
+  it("keeps the banner headline, supporting sentence, and no CONIS intro", () => {
+    assert.equal(
+      PRIORITY_MOTIVATION_BANNER_HEADLINE,
+      "Pojďme spolu objevit, co je pro Vás skutečně podstatné.",
+    );
     assert.equal(
       PRIORITY_MOTIVATION_BANNER_COPY,
-      "Nastavte si priority, které zohledníme v dalším obsahu a přípravě PDF ke stažení.",
+      "Nastavte si priority, které pak zohledním v dalším obsahu a v PDF ke stažení.",
+    );
+    assert.equal(
+      CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.headline,
+      PRIORITY_MOTIVATION_BANNER_HEADLINE,
     );
     assert.equal(
       CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.description,
       PRIORITY_MOTIVATION_BANNER_COPY,
     );
+    assert.equal(CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.title, "");
     const renderedBannerParts = [
       CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.title,
       CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.headline,
       CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.description,
     ].filter((part) => part.trim() !== "");
-    assert.deepEqual(renderedBannerParts, [PRIORITY_MOTIVATION_BANNER_COPY]);
+    assert.deepEqual(renderedBannerParts, [
+      PRIORITY_MOTIVATION_BANNER_HEADLINE,
+      PRIORITY_MOTIVATION_BANNER_COPY,
+    ]);
 
     const banner = readRepo(
       "apps/client-studio/src/features/client-studio/welcome-bridge/clientStudioWelcomeBridgeConfig.ts",
     );
+    const bridge = readRepo("packages/ui/src/welcome-bridge/WelcomeBridge.tsx");
     assert.equal(banner.includes("Jmenuji se CONIS"), false);
     assert.equal(banner.includes("Ptejte se, na co uznáte za vhodné"), false);
     assert.equal(banner.includes("Vaše odpovědi ovlivní další témata"), false);
+    assert.equal(
+      banner.includes(
+        "Nastavte si priority, které zohledníme v dalším obsahu a přípravě PDF ke stažení.",
+      ),
+      false,
+    );
+    assert.match(bridge, /id="welcome-bridge-headline"/);
+    assert.match(bridge, /fontWeight: 700/);
+    assert.match(bridge, /id="welcome-bridge-description"/);
   });
 
   it("keeps the initial right-hand dialog wording and Začněme hierarchy", () => {
@@ -65,9 +88,19 @@ describe("TASK 64 Priority copy contract", () => {
     ]);
     assert.equal(PRIORITY_CONVERSATION_START_HEADING, "Začněme");
     assert.deepEqual([...PRIORITY_CONVERSATION_START_LINES], [
-      "Označte alespoň tři karty a nastavte jejich intenzitu (míru důležitosti pro vás).",
+      "Označte alespoň tři karty a nastavte jejich intenzitu",
+      "(míru důležitosti pro vás).",
       "Ukážu vám pak, co stojí za pozornost právě z tohoto pohledu.",
     ]);
+    assert.equal(
+      PRIORITY_CONVERSATION_START_LINES[0].endsWith("intenzitu"),
+      true,
+    );
+    assert.equal(PRIORITY_CONVERSATION_START_LINES[0].includes("("), false);
+    assert.equal(
+      PRIORITY_CONVERSATION_START_LINES[1],
+      "(míru důležitosti pro vás).",
+    );
 
     const constants = readFromHere("priorityConversation.constants.ts");
     assert.equal(
@@ -91,7 +124,10 @@ describe("TASK 64 Priority copy contract", () => {
       panel,
       /font-semibold tracking-wide text-embed-brand-gold/,
     );
-    assert.match(panel, /isCardInstruction \? '!font-bold' : ''/);
+    assert.match(panel, /isCloser \? '' : '!font-bold'/);
+    assert.match(panel, /PRIORITY_CONVERSATION_START_LINES\.map\(\(line, index\)/);
+    assert.equal(panel.includes("PRIORITY_CONVERSATION_START_LINES.join"), false);
+    assert.equal(panel.includes("<br"), false);
   });
 
   it("preserves dynamic selected-count copy with the refined second sentence", () => {

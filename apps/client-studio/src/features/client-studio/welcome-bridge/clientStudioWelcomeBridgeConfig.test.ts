@@ -4,11 +4,16 @@ import { describe, it } from "node:test";
 import {
   CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,
   PRIORITY_MOTIVATION_BANNER_COPY,
+  PRIORITY_MOTIVATION_BANNER_HEADLINE,
 } from "./clientStudioWelcomeBridgeConfig";
 
 describe("CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG", () => {
   it("is a config-driven Experience variant without Runtime coupling", () => {
     assert.equal(CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.variant, "client-studio-tour-to-priority");
+    assert.equal(
+      CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.headline,
+      PRIORITY_MOTIVATION_BANNER_HEADLINE,
+    );
     assert.equal(
       CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content.description,
       PRIORITY_MOTIVATION_BANNER_COPY,
@@ -30,13 +35,22 @@ describe("CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG", () => {
     assert.equal(delay.delayMs, 20_000);
   });
 
-  it("renders one motivation sentence and drops the old CONIS intro", () => {
+  it("keeps the banner headline and supporting sentence without the CONIS intro", () => {
     const { title, headline, description } = CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content;
     assert.equal(title, "");
-    assert.equal(headline, "");
+    assert.equal(
+      headline,
+      "Pojďme spolu objevit, co je pro Vás skutečně podstatné.",
+    );
     assert.equal(
       description,
-      "Nastavte si priority, které zohledníme v dalším obsahu a přípravě PDF ke stažení.",
+      "Nastavte si priority, které pak zohledním v dalším obsahu a v PDF ke stažení.",
+    );
+    assert.equal(
+      description.includes(
+        "Nastavte si priority, které zohledníme v dalším obsahu a přípravě PDF ke stažení.",
+      ),
+      false,
     );
     assert.equal(title.includes("Jmenuji se CONIS"), false);
     assert.equal(headline.includes("Jmenuji se CONIS"), false);
@@ -45,7 +59,7 @@ describe("CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG", () => {
     assert.equal(description.includes("Vaše odpovědi ovlivní další témata"), false);
     assert.equal(
       [title, headline, description].filter((part) => part.trim() !== "").length,
-      1,
+      2,
     );
   });
 });
