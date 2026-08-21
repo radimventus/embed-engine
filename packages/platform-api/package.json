@@ -8,7 +8,7 @@
   "scripts": {
     "start": "tsx src/main.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/platformApi.test.ts src/platformApiConfig.test.ts src/officePartnerRepository.test.ts src/platformApiOfficePartner.test.ts src/platformApiOfficeInvite.test.ts src/projectConfigRepository.test.ts src/platformApiProjectConfig.test.ts src/leadRepository.test.ts src/platformApiLead.test.ts src/caseProcessingRepository.test.ts src/platformApiCaseProcessing.test.ts src/decisionSessionRepository.test.ts src/platformApiDecisionSession.test.ts"
+    "test": "tsx --test src/platformApi.test.ts src/platformApiConfig.test.ts src/officePartnerRepository.test.ts src/platformApiOfficePartner.test.ts src/platformApiOfficeInvite.test.ts src/partnerSessionAccountCollision.test.ts src/projectConfigRepository.test.ts src/platformApiProjectConfig.test.ts src/leadRepository.test.ts src/platformApiLead.test.ts src/caseProcessingRepository.test.ts src/platformApiCaseProcessing.test.ts src/decisionSessionRepository.test.ts src/platformApiDecisionSession.test.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",

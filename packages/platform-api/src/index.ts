@@ -58,6 +58,8 @@ import {
 } from './offerWriteTokenRepository';
 import {
   FilePartnerSessionRepository,
+  PARTNER_ACCOUNT_COLLISION_MESSAGE,
+  PartnerAccountCollisionError,
   type PartnerSessionRepository,
 } from './partnerSessionRepository';
 import {
@@ -156,7 +158,10 @@ export {
 } from './offerWriteTokenRepository';
 export {
   FilePartnerSessionRepository,
+  PARTNER_ACCOUNT_COLLISION_MESSAGE,
+  PartnerAccountCollisionError,
   type IssuedPartnerSession,
+  type PartnerAccountSummary,
   type PartnerIdentity,
   type PartnerSessionRepository,
 } from './partnerSessionRepository';
@@ -1347,6 +1352,9 @@ export function createPlatformApiServer(
           if (invitedByUserId.length === 0) {
             return respond(response, 403, { error: 'Neplatná relace.' });
           }
+          if (await partnerSessions.findAccountByEmail(draft.email) !== null) {
+            return respond(response, 409, { error: PARTNER_ACCOUNT_COLLISION_MESSAGE });
+          }
           return respond(
             response,
             201,
@@ -1401,15 +1409,38 @@ export function createPlatformApiServer(
         if (typeof body.password !== 'string' || body.password.trim().length < 8) {
           return respond(response, 400, { error: 'Heslo musí mít alespoň 8 znaků.' });
         }
+        const invite = await repository.resolve(token);
+        if (invite === null || invite.status !== 'pending') {
+          return respond(response, 409, {
+            error:
+              invite === null
+                ? 'Pozvánka neexistuje.'
+                : invite.status === 'expired'
+                  ? 'Platnost pozvánky vypršela. Požádejte o nové odeslání.'
+                  : invite.status === 'revoked'
+                    ? 'Pozvánka byla zrušena.'
+                    : 'Pozvánka už byla aktivována.',
+          });
+        }
+        if (await partnerSessions.findAccountByEmail(invite.email) !== null) {
+          return respond(response, 409, { error: PARTNER_ACCOUNT_COLLISION_MESSAGE });
+        }
         const activation = await repository.activate(token, true);
         if (!activation.ok) return respond(response, 409, activation);
-        const issued = await partnerSessions.activate({
-          invite: activation.invite,
-          password: body.password,
-          rememberMe: body.rememberMe !== false,
-        });
-        setPartnerSessionCookie(response, issued.token, issued.expiresAt);
-        return respond(response, 200, { ok: true, session: issued.identity });
+        try {
+          const issued = await partnerSessions.activate({
+            invite: activation.invite,
+            password: body.password,
+            rememberMe: body.rememberMe !== false,
+          });
+          setPartnerSessionCookie(response, issued.token, issued.expiresAt);
+          return respond(response, 200, { ok: true, session: issued.identity });
+        } catch (error) {
+          if (error instanceof PartnerAccountCollisionError) {
+            return respond(response, 409, { error: error.message });
+          }
+          throw error;
+        }
       }
       if (request.method === 'POST' && path === '/public/auth/login') {
         const body = await requestBody(request) as {

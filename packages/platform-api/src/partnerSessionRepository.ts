@@ -16,6 +16,48 @@ import {
 
 const scrypt = promisify(scryptCallback);
 const SESSION_VALIDITY_MS = 30 * 24 * 60 * 60 * 1_000;
+
+export const PARTNER_ACCOUNT_COLLISION_MESSAGE =
+  'Pro tento e-mail již existuje účet CONIS.';
+
+export class PartnerAccountCollisionError extends Error {
+  constructor(message = PARTNER_ACCOUNT_COLLISION_MESSAGE) {
+    super(message);
+    this.name = 'PartnerAccountCollisionError';
+  }
+}
+
+export type PartnerAccountSummary = {
+  readonly id: string;
+  readonly email: string;
+  readonly displayName: string;
+  readonly roles: readonly PlatformRole[];
+  readonly tenantId: string;
+  readonly companyId: string;
+  readonly workspaceId: string;
+  readonly projectId: string;
+  readonly createdAt: string;
+  readonly lastLoginAt: string;
+};
+
+function normalizeAccountEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
+
+function toAccountSummary(account: StoredAccount): PartnerAccountSummary {
+  return {
+    id: account.id,
+    email: account.email,
+    displayName: account.displayName,
+    roles: account.roles,
+    tenantId: account.tenantId,
+    companyId: account.companyId,
+    workspaceId: account.workspaceId,
+    projectId: account.projectId,
+    createdAt: account.createdAt,
+    lastLoginAt: account.lastLoginAt,
+  };
+}
 const DSE_PARTNER_SCOPE = {
   tenantId: 'tenant-domy-s-energii',
   companyId: 'company-domy-s-energii',
@@ -146,6 +188,7 @@ export type IssuedPartnerSession = {
 };
 
 export interface PartnerSessionRepository {
+  findAccountByEmail(email: string): Promise<PartnerAccountSummary | null>;
   activate(input: {
     readonly invite: {
       readonly id: string;
@@ -234,6 +277,15 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
     this.statePath = statePath;
   }
 
+  async findAccountByEmail(email: string): Promise<PartnerAccountSummary | null> {
+    const normalized = normalizeAccountEmail(email);
+    if (normalized.length === 0) return null;
+    const account = (await this.read()).accounts.find(
+      (item) => item.email === normalized,
+    );
+    return account === undefined ? null : toAccountSummary(account);
+  }
+
   async activate(input: Parameters<PartnerSessionRepository['activate']>[0]): Promise<IssuedPartnerSession> {
     const password = input.password.trim();
     if (password.length < 8) {
@@ -241,7 +293,12 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
     }
     return this.exclusively(async () => {
       const state = await this.read();
-      const email = input.invite.email.trim().toLowerCase();
+      const email = normalizeAccountEmail(input.invite.email);
+      if (
+        state.accounts.some((item) => item.email === email)
+      ) {
+        throw new PartnerAccountCollisionError();
+      }
       const now = new Date().toISOString();
       const passwordSalt = randomBytes(16).toString('base64url');
       const passwordHash = await this.hashPassword(password, passwordSalt);
@@ -259,10 +316,9 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
         createdAt: now,
         lastLoginAt: now,
       };
-      const accounts = state.accounts.filter((item) => item.email !== email);
       const issued = this.issue(account, input.rememberMe, now);
       await this.write({
-        accounts: [...accounts, account],
+        accounts: [...state.accounts, account],
         sessions: [...state.sessions, issued.session],
       });
       return {

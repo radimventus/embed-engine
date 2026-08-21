@@ -57,6 +57,10 @@ const partnerSessions = {
   activate: async () => {
     throw new Error('Not used in this test file.');
   },
+  findAccountByEmail: async () => null,
+  login: async () => null,
+  mutateContext: async () => null,
+  revoke: async () => {},
 };
 
 const createBody = {
