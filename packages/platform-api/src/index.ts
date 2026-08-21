@@ -22,6 +22,11 @@ import {
   LeadNotFoundError,
   type LeadRepository,
 } from './leadRepository';
+import {
+  CaseProcessingNotFoundError,
+  FileCaseProcessingRepository,
+  type CaseProcessingRepository,
+} from './caseProcessingRepository';
 import { resolveLeadScope, resolvePublicHouseScope } from './leadScope';
 import {
   DecisionSessionScopeMismatchError,
@@ -98,6 +103,13 @@ export {
   LeadAlreadyExistsError,
   LeadNotFoundError,
 } from './leadRepository';
+export {
+  FileCaseProcessingRepository,
+  CaseProcessingNotFoundError,
+  isReferenceOperationalCaseId,
+  type CaseProcessingRecord,
+  type CaseProcessingRepository,
+} from './caseProcessingRepository';
 export {
   FileDecisionSessionRepository,
   DecisionSessionScopeMismatchError,
@@ -581,6 +593,7 @@ export function createPlatformApiServer(
   projectConfigs: ProjectConfigRepository = new FileProjectConfigRepository(),
   officePartners: OfficePartnerRepository = new FileOfficePartnerRepository(),
   decisionSessions: DecisionSessionRepository = new FileDecisionSessionRepository(),
+  caseProcessing: CaseProcessingRepository = new FileCaseProcessingRepository(),
 ): Server {
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
@@ -918,6 +931,113 @@ export function createPlatformApiServer(
         } catch (error) {
           if (error instanceof LeadNotFoundError) {
             return respond(response, 404, { error: 'Poptávka nebyla nalezena.' });
+          }
+          throw error;
+        }
+      }
+      if (request.method === 'GET' && path === '/partner/case-processing') {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session =
+          token === null ? null : await partnerSessions.resolve(token);
+        if (session === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+        const roles = sessionRoles(session);
+        if (
+          !canAccessStudio(roles, 'sales') &&
+          !canAccessStudio(roles, 'manager')
+        ) {
+          return respond(response, 403, { error: 'Přístup k poptávkám není povolen.' });
+        }
+        const url = new URL(request.url ?? '/', 'http://localhost');
+        const companyId = url.searchParams.get('companyId')?.trim() ?? '';
+        const projectId = url.searchParams.get('projectId')?.trim() ?? '';
+        const houseId = url.searchParams.get('houseId')?.trim() ?? '';
+        if (companyId.length === 0 || projectId.length === 0) {
+          return respond(response, 400, { error: 'Neplatný rozsah.' });
+        }
+        if (companyId !== sessionCompanyId(session)) {
+          return respond(response, 403, { error: 'Společnost není pro tuto relaci povolena.' });
+        }
+        const sessionProjectId = (
+          session.workspaceContext?.projectId ?? session.projectId ?? ''
+        ).trim();
+        if (projectId !== sessionProjectId) {
+          return respond(response, 403, { error: 'Projekt není pro tuto relaci povolen.' });
+        }
+        const scoped = await caseProcessing.list({
+          companyId,
+          projectId,
+          ...(houseId.length > 0 ? { houseId } : {}),
+        });
+        return respond(response, 200, {
+          cases: scoped.map((item) => ({
+            caseId: item.caseId,
+            companyId: item.companyId,
+            projectId: item.projectId,
+            houseId: item.houseId,
+            processingStatus: item.processingStatus,
+          })),
+        });
+      }
+      if (
+        request.method === 'POST' &&
+        path === '/partner/case-processing/accept'
+      ) {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session =
+          token === null ? null : await partnerSessions.resolve(token);
+        if (session === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+        const roles = sessionRoles(session);
+        if (!canAccessStudio(roles, 'sales')) {
+          return respond(response, 403, { error: 'Přístup k poptávkám není povolen.' });
+        }
+        const rawBody = await requestBody(request);
+        const body =
+          typeof rawBody === 'object' && rawBody !== null && !Array.isArray(rawBody)
+            ? (rawBody as Record<string, unknown>)
+            : {};
+        const caseId =
+          typeof body.caseId === 'string' ? body.caseId.trim() : '';
+        const companyId =
+          typeof body.companyId === 'string' ? body.companyId.trim() : '';
+        const projectId =
+          typeof body.projectId === 'string' ? body.projectId.trim() : '';
+        const houseId =
+          typeof body.houseId === 'string' ? body.houseId.trim() : '';
+        if (
+          caseId.length === 0 ||
+          companyId.length === 0 ||
+          projectId.length === 0 ||
+          houseId.length === 0
+        ) {
+          return respond(response, 400, { error: 'Neplatný rozsah.' });
+        }
+        if (companyId !== sessionCompanyId(session)) {
+          return respond(response, 403, { error: 'Společnost není pro tuto relaci povolena.' });
+        }
+        const sessionProjectId = (
+          session.workspaceContext?.projectId ?? session.projectId ?? ''
+        ).trim();
+        if (projectId !== sessionProjectId) {
+          return respond(response, 403, { error: 'Projekt není pro tuto relaci povolen.' });
+        }
+        try {
+          const accepted = await caseProcessing.accept({
+            caseId,
+            companyId,
+            projectId,
+            houseId,
+          });
+          return respond(response, 200, {
+            caseId: accepted.caseId,
+            processingStatus: accepted.processingStatus,
+          });
+        } catch (error) {
+          if (error instanceof CaseProcessingNotFoundError) {
+            return respond(response, 404, { error: 'Případ nebyl nalezen.' });
           }
           throw error;
         }

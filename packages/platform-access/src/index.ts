@@ -538,6 +538,7 @@ export {
   aggregateHouseOperations,
   selectHouseOperationalCases,
   selectScopedOperationalCases,
+  applyReferenceCaseProcessing,
   relatedHousesForContact,
   type RelatedHousePill,
   REFERENCE_CASE_TEMPLATE_IDS,
@@ -556,6 +557,7 @@ export {
   type OperationalPriorityAnswer,
   type OperationalPrioritySelection,
   type ProfilZajemce,
+  type OperationalCaseProcessingRecord,
 } from './operations/index';
 export {
   AUDIT_LAND_HAS_PLOT,
@@ -566,6 +568,10 @@ export {
 } from './operations/index';
 export { fetchHouseOperationalLeads } from './api/houseOperationalLeadsClient';
 export { acceptHouseOperationalLead } from './api/acceptHouseOperationalLead';
+export {
+  acceptOperationalReferenceCase,
+  fetchOperationalCaseProcessing,
+} from './api/operationalCaseProcessingClient';
 export { fetchHouseOperationalSessions } from './api/houseOperationalSessionsClient';
 export {
   canonicalImageMediaId,

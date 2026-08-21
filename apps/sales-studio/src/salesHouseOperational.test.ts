@@ -9,6 +9,7 @@ import {
   DSE_CANONICAL_PROJECT_ID,
   DSE_COMPANY_ID,
   DSE_FIRST_DRAFT_HOUSE_ID,
+  applyReferenceCaseProcessing,
   selectHouseOperationalCases,
   selectScopedOperationalCases,
 } from '@embed-engine/platform-access';
@@ -41,6 +42,10 @@ describe('Sales House operational desk', () => {
     );
 
     assert.equal(bungalov.length, 3);
+    assert.equal(
+      bungalov.every((client) => client.processingStatus === 'new'),
+      true,
+    );
     assert.equal(
       bungalov.every((client) => client.houses[0]?.id === DSE_BUNGALOV_4KK_HOUSE_ID),
       true,
@@ -251,5 +256,85 @@ describe('Sales House operational desk', () => {
     );
     assert.equal(bungalovCases.length, 1);
     assert.equal(bungalovCases[0]?.houseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+  });
+
+  it('orders REAL leads newest first and keeps REFERENCE after them', () => {
+    const older = {
+      leadId: 'lead-older',
+      companyId: DSE_COMPANY_ID,
+      projectId: DSE_CANONICAL_PROJECT_ID,
+      houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+      createdAt: '2026-08-20T10:00:00.000Z',
+      source: 'EMBED' as const,
+      intent: 'audit' as const,
+      status: 'accepted' as const,
+      processingStatus: 'accepted' as const,
+      contact: {
+        name: 'Starší Lead',
+        email: 'older@example.cz',
+        phone: null,
+      },
+      decisionSessionId: null,
+    };
+    const newer = {
+      ...older,
+      leadId: 'lead-newer',
+      createdAt: '2026-08-21T10:00:00.000Z',
+      processingStatus: 'new' as const,
+      contact: {
+        name: 'Novější Lead',
+        email: 'newer@example.cz',
+        phone: null,
+      },
+    };
+    const mixed = toSalesClients(
+      selectHouseOperationalCases({
+        companyId: DSE_COMPANY_ID,
+        projectId: DSE_CANONICAL_PROJECT_ID,
+        houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+        houseName: 'BUNGALOV 4KK',
+        dataMode: 'REFERENCE_DEMO',
+        durableLeads: [older, newer],
+      }),
+    );
+    assert.equal(mixed[0]?.name, 'Novější Lead');
+    assert.equal(mixed[1]?.name, 'Starší Lead');
+    assert.equal(mixed[0]?.origin, 'LEAD');
+    assert.equal(mixed[1]?.processingStatus, 'accepted');
+    assert.equal(mixed[2]?.origin, 'REFERENCE');
+    assert.equal(mixed[2]?.processingStatus, 'new');
+  });
+
+  it('overlays durable REFERENCE acceptance without changing REAL order', () => {
+    const cases = selectHouseOperationalCases({
+      companyId: DSE_COMPANY_ID,
+      projectId: DSE_CANONICAL_PROJECT_ID,
+      houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+      houseName: 'BUNGALOV 4KK',
+      dataMode: 'REFERENCE_DEMO',
+      durableLeads: [],
+    });
+    const first = cases[0]!;
+    const clients = toSalesClients(
+      applyReferenceCaseProcessing(cases, [
+        {
+          caseId: first.caseId,
+          companyId: first.companyId,
+          projectId: first.projectId,
+          houseId: first.houseId,
+          processingStatus: 'accepted',
+        },
+      ]),
+    );
+    const accepted = clients.find((client) => client.id === first.caseId);
+    assert.equal(accepted?.processingStatus, 'accepted');
+    assert.equal(
+      clients.filter((client) => client.processingStatus === 'new').length,
+      2,
+    );
+    assert.deepEqual(
+      clients.map((client) => client.id),
+      toSalesClients(cases).map((client) => client.id),
+    );
   });
 });

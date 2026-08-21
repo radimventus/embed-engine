@@ -41,6 +41,10 @@ export {
   selectScopedOperationalCases,
 } from './selectHouseOperationalCases';
 export {
+  applyReferenceCaseProcessing,
+  type OperationalCaseProcessingRecord,
+} from './applyReferenceCaseProcessing';
+export {
   relatedHousesForContact,
   type RelatedHousePill,
 } from './relatedHousesForContact';

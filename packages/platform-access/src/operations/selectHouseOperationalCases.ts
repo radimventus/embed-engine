@@ -46,7 +46,7 @@ function instantiateTemplate(
     houseName: scope.houseName,
     origin: 'REFERENCE',
     leadId: null,
-    processingStatus: null,
+    processingStatus: 'new',
     createdAt: template.createdAt,
     contact: template.contact,
     conversion: {

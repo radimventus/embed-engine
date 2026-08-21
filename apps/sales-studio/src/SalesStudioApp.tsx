@@ -70,7 +70,8 @@ export function SalesStudioApp() {
   );
   const activeProject =
     salesProjects.find((project) => project.id === activeProjectId) ?? null;
-  const { cases, projectLeads, acceptLead } = useHouseOperationalCases();
+  const { cases, projectLeads, acceptLead, acceptReferenceCase } =
+    useHouseOperationalCases();
   const scopedHouses = useMemo(
     () =>
       activeProjectId === null
@@ -155,18 +156,22 @@ export function SalesStudioApp() {
   }
 
   async function acceptActiveLead() {
-    if (
-      activeClient === null ||
-      activeClient.origin !== 'LEAD' ||
-      activeClient.leadId === null ||
-      activeHouse === null
-    ) {
+    if (activeClient === null || activeHouse === null) {
       return;
     }
-    await acceptLead({
-      leadId: activeClient.leadId,
-      houseId: activeHouse.id,
-    });
+    if (activeClient.origin === 'LEAD' && activeClient.leadId !== null) {
+      await acceptLead({
+        leadId: activeClient.leadId,
+        houseId: activeHouse.id,
+      });
+      return;
+    }
+    if (activeClient.origin === 'REFERENCE') {
+      await acceptReferenceCase({
+        caseId: activeClient.id,
+        houseId: activeHouse.id,
+      });
+    }
   }
 
   const desk = (
@@ -247,17 +252,11 @@ export function SalesStudioApp() {
                       <li key={client.id}>
                         <button
                           type="button"
-                          className={`sales-desk__client${active ? ' sales-desk__client--active' : ''}`}
+                          className={`sales-desk__client${accepted ? ' sales-desk__client--accepted' : ' sales-desk__client--new'}${active ? ' sales-desk__client--active' : ''}`}
                           onClick={() => selectClient(client.id)}
                           aria-current={active ? 'true' : undefined}
                         >
                           <div className="sales-desk__client-head">
-                            <span
-                              className={`sales-desk__accept-mark${accepted ? ' sales-desk__accept-mark--on' : ''}`}
-                              aria-hidden="true"
-                              data-testid="sales-accept-indicator"
-                              data-accepted={accepted ? 'true' : 'false'}
-                            />
                             <span className="sales-desk__client-name">
                               {client.name}
                             </span>
@@ -265,9 +264,17 @@ export function SalesStudioApp() {
                               {formatIndexPripravenosti(primary.readinessScore)}
                             </span>
                           </div>
-                          <p className="sales-desk__client-project">
-                            {houseListLine(primary)}
-                          </p>
+                          <div className="sales-desk__client-sub">
+                            <p className="sales-desk__client-project">
+                              {houseListLine(primary)}
+                            </p>
+                            <span
+                              className={`sales-desk__accept-mark${accepted ? ' sales-desk__accept-mark--on' : ''}`}
+                              aria-hidden="true"
+                              data-testid="sales-accept-indicator"
+                              data-accepted={accepted ? 'true' : 'false'}
+                            />
+                          </div>
                         </button>
                       </li>
                     );
@@ -284,19 +291,37 @@ export function SalesStudioApp() {
               {activeClient !== null && activeHouse !== null ? (
                 <PlatformCard className="sales-desk__case">
                   <header className="sales-desk__case-header">
-                    <div className="sales-desk__case-identity">
-                      <h1
-                        className="platform-type-h1 sales-desk__house-title"
-                        data-testid="sales-case-house-title"
-                      >
-                        {activeHouse.houseName}
-                      </h1>
+                    <h1
+                      className="platform-type-h1 sales-desk__house-title"
+                      data-testid="sales-case-house-title"
+                    >
+                      {activeHouse.houseName}
+                    </h1>
+                    <div
+                      className="sales-desk__header-row"
+                      data-testid="sales-case-header-row-2"
+                    >
                       <p
                         className="sales-desk__prospect-name"
                         data-testid="sales-case-client-name"
                       >
                         {activeClient.name}
                       </p>
+                      {landPill !== null ? (
+                        <span
+                          className="sales-desk__land-pill"
+                          data-testid="sales-case-land-pill"
+                        >
+                          {landPill}
+                        </span>
+                      ) : (
+                        <span />
+                      )}
+                    </div>
+                    <div
+                      className="sales-desk__header-row"
+                      data-testid="sales-case-header-row-3"
+                    >
                       <ul
                         className="sales-desk__house-list"
                         aria-label="Domy tohoto zájemce"
@@ -317,36 +342,25 @@ export function SalesStudioApp() {
                           );
                         })}
                       </ul>
-                    </div>
-                    <div className="sales-desk__case-actions">
-                      {landPill !== null ? (
-                        <span data-testid="sales-case-land-pill">
-                          <PlatformStatusBadge tone="fill">
-                            {landPill}
-                          </PlatformStatusBadge>
-                        </span>
-                      ) : null}
-                      {activeClient.origin === 'LEAD' ? (
-                        activeClient.processingStatus === 'accepted' ? (
-                          <p
-                            className="sales-desk__accepted"
-                            data-testid="sales-lead-accepted"
-                          >
-                            PŘIJATO
-                          </p>
-                        ) : (
-                          <button
-                            type="button"
-                            className="sales-desk__accept"
-                            data-testid="sales-lead-accept"
-                            onClick={() => {
-                              void acceptActiveLead();
-                            }}
-                          >
-                            PŘIJMOUT
-                          </button>
-                        )
-                      ) : null}
+                      {activeClient.processingStatus === 'accepted' ? (
+                        <p
+                          className="sales-desk__accepted"
+                          data-testid="sales-lead-accepted"
+                        >
+                          PŘIJATO
+                        </p>
+                      ) : (
+                        <button
+                          type="button"
+                          className="sales-desk__accept"
+                          data-testid="sales-lead-accept"
+                          onClick={() => {
+                            void acceptActiveLead();
+                          }}
+                        >
+                          PŘIJMOUT
+                        </button>
+                      )}
                     </div>
                   </header>
 

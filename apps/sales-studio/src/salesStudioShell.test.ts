@@ -110,8 +110,14 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(app, /sales-desk__case-header/);
     assert.match(app, /sales-desk__house-title/);
     assert.match(app, /sales-desk__prospect-name/);
-    assert.match(app, /sales-case-land-pill/);
-    assert.match(app, /sales-case-house-pills/);
+    assert.match(app, /sales-case-header-row-2/);
+    assert.match(app, /sales-case-header-row-3/);
+    assert.match(app, /sales-desk__land-pill/);
+    assert.match(app, /sales-desk__client-sub/);
+    assert.match(app, /sales-desk__client--new/);
+    assert.match(app, /acceptReferenceCase/);
+    assert.match(css, /sales-desk__client--new/);
+    assert.match(css, /sales-desk__land-pill/);
     assert.match(app, /Profil zájemce/);
     assert.match(app, /Doporučené téma rozhovoru/);
     assert.doesNotMatch(app, /id: 'company'/);

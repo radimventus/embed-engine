@@ -51,6 +51,7 @@ export type SalesClient = {
   readonly origin: OperationalOrigin;
   readonly processingStatus: LeadProcessingStatus | null;
   readonly leadId: string | null;
+  readonly createdAt: string;
   readonly houses: readonly SalesHouseInterest[];
   readonly relatedHouses: readonly RelatedHousePill[];
 };
@@ -105,6 +106,17 @@ export function listSalesCanonicalHouses(
   });
 }
 
+export function sortSalesQueueCases(
+  cases: readonly HouseOperationalCase[],
+): readonly HouseOperationalCase[] {
+  return [...cases].sort((left, right) => {
+    if (left.origin !== right.origin) {
+      return left.origin === 'LEAD' ? -1 : 1;
+    }
+    return Date.parse(right.createdAt) - Date.parse(left.createdAt);
+  });
+}
+
 export function toSalesClients(
   cases: readonly HouseOperationalCase[],
   context: {
@@ -117,12 +129,13 @@ export function toSalesClients(
 ): readonly SalesClient[] {
   const projectLeads = context.projectLeads ?? [];
   const houses = context.houses ?? [];
-  return cases.map((item) => ({
+  return sortSalesQueueCases(cases).map((item) => ({
     id: item.caseId,
     name: item.contact.name,
     origin: item.origin,
     processingStatus: item.processingStatus,
     leadId: item.leadId,
+    createdAt: item.createdAt,
     relatedHouses: relatedHousesForContact({
       current: item,
       projectLeads,
