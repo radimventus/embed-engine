@@ -94,6 +94,33 @@ body {
   align-items: flex-start;
   gap: 16px;
   margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.sales-desk__case-identity {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.sales-desk__case-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.sales-desk__case-header .sales-desk__house-title {
+  text-align: left;
+}
+
+.sales-desk__case-header .sales-desk__prospect-name {
+  text-align: left;
+}
+
+.sales-desk__case-header .sales-desk__house-list {
+  justify-content: flex-start;
+  margin-top: 10px;
 }
 
 .sales-desk__case-name {

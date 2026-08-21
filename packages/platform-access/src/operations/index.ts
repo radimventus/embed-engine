@@ -40,4 +40,8 @@ export {
   selectHouseOperationalCases,
   selectScopedOperationalCases,
 } from './selectHouseOperationalCases';
+export {
+  relatedHousesForContact,
+  type RelatedHousePill,
+} from './relatedHousesForContact';
 export { aggregateHouseOperations } from './aggregateHouseOperations';

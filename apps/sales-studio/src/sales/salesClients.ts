@@ -9,11 +9,14 @@ import {
   formatPriorityImportance,
   listCanonicalHouses,
   listCanonicalProjects,
+  relatedHousesForContact,
   type HouseOperationalCase,
   type LeadProcessingStatus,
+  type OperationalLeadRecord,
   type OperationalOpenedQuestion,
   type OperationalOrigin,
   type OperationalPrioritySelection,
+  type RelatedHousePill,
 } from '@embed-engine/platform-access';
 
 export { HIGH_INTENT_THRESHOLD };
@@ -49,6 +52,7 @@ export type SalesClient = {
   readonly processingStatus: LeadProcessingStatus | null;
   readonly leadId: string | null;
   readonly houses: readonly SalesHouseInterest[];
+  readonly relatedHouses: readonly RelatedHousePill[];
 };
 
 /** CAP-PLAT-04j — shell Project list from true CPL Projects (never House rows). */
@@ -103,13 +107,29 @@ export function listSalesCanonicalHouses(
 
 export function toSalesClients(
   cases: readonly HouseOperationalCase[],
+  context: {
+    readonly projectLeads?: readonly OperationalLeadRecord[];
+    readonly houses?: readonly {
+      readonly houseId: string;
+      readonly houseName: string;
+    }[];
+  } = {},
 ): readonly SalesClient[] {
+  const projectLeads = context.projectLeads ?? [];
+  const houses = context.houses ?? [];
   return cases.map((item) => ({
     id: item.caseId,
     name: item.contact.name,
     origin: item.origin,
     processingStatus: item.processingStatus,
     leadId: item.leadId,
+    relatedHouses: relatedHousesForContact({
+      current: item,
+      projectLeads,
+      houses: houses.length > 0
+        ? houses
+        : [{ houseId: item.houseId, houseName: item.houseName }],
+    }),
     houses: [
       {
         id: item.houseId,
@@ -166,6 +186,16 @@ export function resolveActiveHouse(
 
 export function houseListLine(house: SalesHouseInterest): string {
   return `${house.houseName} • ${house.land}`;
+}
+
+export function formatLandIntentPill(land: string): string | null {
+  if (land === 'Hledám pozemek') {
+    return 'HLEDÁM POZEMEK';
+  }
+  if (land === 'Mám pozemek') {
+    return 'MÁM POZEMEK';
+  }
+  return null;
 }
 
 export function houseDetailLine(house: SalesHouseInterest): string {

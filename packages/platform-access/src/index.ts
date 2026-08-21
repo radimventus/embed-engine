@@ -538,6 +538,8 @@ export {
   aggregateHouseOperations,
   selectHouseOperationalCases,
   selectScopedOperationalCases,
+  relatedHousesForContact,
+  type RelatedHousePill,
   REFERENCE_CASE_TEMPLATE_IDS,
   CANONICAL_PRIORITY_LABELS,
   formatPriorityImportance,

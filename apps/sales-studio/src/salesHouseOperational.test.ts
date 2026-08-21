@@ -13,7 +13,7 @@ import {
   selectScopedOperationalCases,
 } from '@embed-engine/platform-access';
 
-import { toSalesClients } from './sales/salesClients.ts';
+import { formatLandIntentPill, toSalesClients } from './sales/salesClients.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -176,5 +176,80 @@ describe('Sales House operational desk', () => {
       (journey.find((step) => step.module === 'Priority')?.lines ?? []).join(' '),
       'Dispozice · 90 % Energie · 40 % Pozemek · 20 %',
     );
+  });
+
+  it('shows land-intent pill labels and email-correlated Houses only', () => {
+    assert.equal(formatLandIntentPill('Hledám pozemek'), 'HLEDÁM POZEMEK');
+    assert.equal(formatLandIntentPill('Mám pozemek'), 'MÁM POZEMEK');
+    assert.equal(formatLandIntentPill('Nezadáno'), null);
+
+    const bungalovLead = {
+      leadId: 'lead-bungalov',
+      companyId: DSE_COMPANY_ID,
+      projectId: DSE_CANONICAL_PROJECT_ID,
+      houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+      createdAt: '2026-08-21T10:00:00.000Z',
+      source: 'EMBED' as const,
+      intent: 'audit' as const,
+      status: 'accepted' as const,
+      processingStatus: 'new' as const,
+      contact: {
+        name: 'Andrej Věntus',
+        email: 'andrej@example.cz',
+        phone: null,
+      },
+      decisionSessionId: null,
+    };
+    const vpdSameEmail = {
+      ...bungalovLead,
+      leadId: 'lead-vpd',
+      houseId: DSE_FIRST_DRAFT_HOUSE_ID,
+    };
+    const vpdSameName = {
+      ...bungalovLead,
+      leadId: 'lead-homonym',
+      houseId: DSE_FIRST_DRAFT_HOUSE_ID,
+      contact: {
+        name: 'Andrej Věntus',
+        email: 'other@example.cz',
+        phone: null,
+      },
+    };
+    const houses = [
+      {
+        houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+        houseName: 'BUNGALOV 4KK',
+      },
+      {
+        houseId: DSE_FIRST_DRAFT_HOUSE_ID,
+        houseName: 'VÁŠ PRVNÍ DŮM',
+      },
+    ];
+    const bungalovCases = selectHouseOperationalCases({
+      companyId: DSE_COMPANY_ID,
+      projectId: DSE_CANONICAL_PROJECT_ID,
+      houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+      houseName: 'BUNGALOV 4KK',
+      dataMode: 'LIVE_EMPTY',
+      durableLeads: [bungalovLead],
+    });
+    const withEvidence = toSalesClients(bungalovCases, {
+      projectLeads: [bungalovLead, vpdSameEmail],
+      houses,
+    });
+    assert.deepEqual(
+      withEvidence[0]?.relatedHouses.map((item) => item.houseId),
+      [DSE_BUNGALOV_4KK_HOUSE_ID, DSE_FIRST_DRAFT_HOUSE_ID],
+    );
+    const nameOnly = toSalesClients(bungalovCases, {
+      projectLeads: [bungalovLead, vpdSameName],
+      houses,
+    });
+    assert.deepEqual(
+      nameOnly[0]?.relatedHouses.map((item) => item.houseId),
+      [DSE_BUNGALOV_4KK_HOUSE_ID],
+    );
+    assert.equal(bungalovCases.length, 1);
+    assert.equal(bungalovCases[0]?.houseId, DSE_BUNGALOV_4KK_HOUSE_ID);
   });
 });

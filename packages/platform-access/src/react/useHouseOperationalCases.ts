@@ -20,6 +20,7 @@ import { usePlatformSession } from './SessionProvider';
 
 export type HouseOperationalCasesState = {
   readonly cases: readonly HouseOperationalCase[];
+  readonly projectLeads: readonly OperationalLeadRecord[];
   readonly aggregate: HouseOperationalAggregate;
   readonly companyId: string | null;
   readonly projectId: string | null;
@@ -93,7 +94,6 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
       fetchHouseOperationalLeads({
         companyId,
         projectId,
-        houseId: activeHouseId,
       }),
       fetchHouseOperationalSessions({
         companyId,
@@ -117,6 +117,7 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
     if (companyId === null || projectId === null) {
       return {
         cases: [] as readonly HouseOperationalCase[],
+        projectLeads: [] as readonly OperationalLeadRecord[],
         aggregate: aggregateHouseOperations([]),
         companyId,
         projectId,
@@ -140,6 +141,7 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
     });
     return {
       cases,
+      projectLeads: durableLeads,
       aggregate: aggregateHouseOperations(cases),
       companyId,
       projectId,

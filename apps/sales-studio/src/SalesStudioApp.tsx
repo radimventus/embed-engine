@@ -11,6 +11,7 @@ import {
   primaryRole,
   recordPlatformActivity,
   submitPlatformFeedback,
+  listWorkspaceHouses,
   useHouseOperationalCases,
   usePlatformSession,
   useStudioBrandProjection,
@@ -28,9 +29,9 @@ import {
   HIGH_INTENT_THRESHOLD,
   clientPrimaryReadiness,
   formatIndexPripravenosti,
+  formatLandIntentPill,
   formatPriorityImportance,
   hasMeasuredReadiness,
-  houseDetailLine,
   houseListLine,
   listSalesCanonicalProjects,
   resolveSalesActiveProjectId,
@@ -69,8 +70,25 @@ export function SalesStudioApp() {
   );
   const activeProject =
     salesProjects.find((project) => project.id === activeProjectId) ?? null;
-  const { cases, acceptLead } = useHouseOperationalCases();
-  const scopedClients = useMemo(() => toSalesClients(cases), [cases]);
+  const { cases, projectLeads, acceptLead } = useHouseOperationalCases();
+  const scopedHouses = useMemo(
+    () =>
+      activeProjectId === null
+        ? []
+        : listWorkspaceHouses(activeProjectId).map((house) => ({
+            houseId: house.houseId,
+            houseName: house.name,
+          })),
+    [activeProjectId],
+  );
+  const scopedClients = useMemo(
+    () =>
+      toSalesClients(cases, {
+        projectLeads,
+        houses: scopedHouses,
+      }),
+    [cases, projectLeads, scopedHouses],
+  );
   const [activeClientId, setActiveClientId] = useState<string | null>(null);
   const [activeInterestHouseId, setActiveInterestHouseId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -110,6 +128,8 @@ export function SalesStudioApp() {
           activeClient,
           activeClient.id === activeClientId ? activeInterestHouseId : null,
         );
+  const landPill =
+    activeHouse === null ? null : formatLandIntentPill(activeHouse.land);
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel: brand.companyName,
@@ -265,32 +285,69 @@ export function SalesStudioApp() {
                 <PlatformCard className="sales-desk__case">
                   <header className="sales-desk__case-header">
                     <div className="sales-desk__case-identity">
-                      <h1 className="sales-desk__case-name">{activeClient.name}</h1>
-                      <p className="sales-desk__case-meta">
-                        {houseDetailLine(activeHouse)}
+                      <h1
+                        className="platform-type-h1 sales-desk__house-title"
+                        data-testid="sales-case-house-title"
+                      >
+                        {activeHouse.houseName}
+                      </h1>
+                      <p
+                        className="sales-desk__prospect-name"
+                        data-testid="sales-case-client-name"
+                      >
+                        {activeClient.name}
                       </p>
+                      <ul
+                        className="sales-desk__house-list"
+                        aria-label="Domy tohoto zájemce"
+                        data-testid="sales-case-house-pills"
+                      >
+                        {activeClient.relatedHouses.map((house) => {
+                          const selected = house.houseId === activeHouse.id;
+                          return (
+                            <li key={house.houseId}>
+                              <span
+                                className={`sales-desk__house-chip${selected ? ' sales-desk__house-chip--active' : ''}`}
+                                data-house-id={house.houseId}
+                                data-active={selected ? 'true' : 'false'}
+                              >
+                                {house.houseName}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ul>
                     </div>
-                    {activeClient.origin === 'LEAD' ? (
-                      activeClient.processingStatus === 'accepted' ? (
-                        <p
-                          className="sales-desk__accepted"
-                          data-testid="sales-lead-accepted"
-                        >
-                          PŘIJATO
-                        </p>
-                      ) : (
-                        <button
-                          type="button"
-                          className="sales-desk__accept"
-                          data-testid="sales-lead-accept"
-                          onClick={() => {
-                            void acceptActiveLead();
-                          }}
-                        >
-                          PŘIJMOUT
-                        </button>
-                      )
-                    ) : null}
+                    <div className="sales-desk__case-actions">
+                      {landPill !== null ? (
+                        <span data-testid="sales-case-land-pill">
+                          <PlatformStatusBadge tone="fill">
+                            {landPill}
+                          </PlatformStatusBadge>
+                        </span>
+                      ) : null}
+                      {activeClient.origin === 'LEAD' ? (
+                        activeClient.processingStatus === 'accepted' ? (
+                          <p
+                            className="sales-desk__accepted"
+                            data-testid="sales-lead-accepted"
+                          >
+                            PŘIJATO
+                          </p>
+                        ) : (
+                          <button
+                            type="button"
+                            className="sales-desk__accept"
+                            data-testid="sales-lead-accept"
+                            onClick={() => {
+                              void acceptActiveLead();
+                            }}
+                          >
+                            PŘIJMOUT
+                          </button>
+                        )
+                      ) : null}
+                    </div>
                   </header>
 
                   <div className="sales-desk__meter">

@@ -55,6 +55,11 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(app, /Index připravenosti/);
     assert.match(app, /PŘIJMOUT/);
     assert.match(app, /PŘIJATO/);
+    assert.match(app, /sales-lead-accept/);
+    assert.match(app, /sales-accept-indicator/);
+    assert.doesNotMatch(app, /type="checkbox"/);
+    assert.match(app, /<span\s+className=\{`sales-desk__house-chip/);
+    assert.doesNotMatch(app, /onClick=\{\(\) => setActiveInterestHouseId/);
     assert.match(app, /Rozhodovací cesta/);
     assert.match(app, /Hledat zájemce/);
     assert.match(app, /Vyšší index/);
@@ -103,7 +108,10 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(app, /id: 'prospect'/);
     assert.match(app, /sales-desk__center/);
     assert.match(app, /sales-desk__case-header/);
-    assert.match(app, /sales-desk__case-name/);
+    assert.match(app, /sales-desk__house-title/);
+    assert.match(app, /sales-desk__prospect-name/);
+    assert.match(app, /sales-case-land-pill/);
+    assert.match(app, /sales-case-house-pills/);
     assert.match(app, /Profil zájemce/);
     assert.match(app, /Doporučené téma rozhovoru/);
     assert.doesNotMatch(app, /id: 'company'/);
