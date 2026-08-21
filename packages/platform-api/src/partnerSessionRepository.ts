@@ -13,6 +13,11 @@ import {
   canAccessStudio,
   type PlatformRole,
 } from '@embed-engine/platform-access/rbac';
+import {
+  getDefaultCompanyRegistry,
+  partnerEnvironmentScopesMatch,
+  type AuthoritativePartnerEnvironmentScope,
+} from '@embed-engine/platform-access';
 
 const scrypt = promisify(scryptCallback);
 const SESSION_VALIDITY_MS = 30 * 24 * 60 * 60 * 1_000;
@@ -58,15 +63,17 @@ function toAccountSummary(account: StoredAccount): PartnerAccountSummary {
     lastLoginAt: account.lastLoginAt,
   };
 }
-const DSE_PARTNER_SCOPE = {
-  tenantId: 'tenant-domy-s-energii',
-  companyId: 'company-domy-s-energii',
-  workspaceId: 'domy-s-energii-main',
-  projectId: 'project-domy-s-energii',
-  partnerId: 'p-dse',
-  activeHouseId:
-    'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
-} as const;
+function canonicalHouseIdsForProject(projectId: string): ReadonlySet<string> {
+  return new Set(
+    getDefaultCompanyRegistry()
+      .projects.filter((house) => house.canonicalProjectId === projectId)
+      .map((house) => house.id),
+  );
+}
+
+export type PartnerEnvironmentScopeResolver = (
+  partnerId: string,
+) => Promise<AuthoritativePartnerEnvironmentScope | null>;
 
 type PartnerAuthoredHouseIdentity = {
   readonly houseId: string;
@@ -273,7 +280,11 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
   readonly statePath: string;
   private mutation: Promise<void> = Promise.resolve();
 
-  constructor(statePath = defaultStatePath()) {
+  constructor(
+    statePath = defaultStatePath(),
+    private readonly resolvePartnerEnvironmentScope: PartnerEnvironmentScopeResolver = async () =>
+      null,
+  ) {
     this.statePath = statePath;
   }
 
@@ -399,12 +410,21 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
       let next: StoredSession;
 
       if (mutation.action === 'enter') {
-        const validScope =
-          mutation.partnerId === DSE_PARTNER_SCOPE.partnerId &&
-          mutation.tenantId === DSE_PARTNER_SCOPE.tenantId &&
-          mutation.companyId === DSE_PARTNER_SCOPE.companyId &&
-          mutation.workspaceId === DSE_PARTNER_SCOPE.workspaceId &&
-          mutation.projectId === DSE_PARTNER_SCOPE.projectId;
+        const authoritativeScope = await this.resolvePartnerEnvironmentScope(
+          mutation.partnerId,
+        );
+        if (authoritativeScope === null) return null;
+
+        const validScope = partnerEnvironmentScopesMatch(
+          {
+            partnerId: mutation.partnerId,
+            tenantId: mutation.tenantId,
+            companyId: mutation.companyId,
+            workspaceId: mutation.workspaceId,
+            projectId: mutation.projectId,
+          },
+          authoritativeScope,
+        );
 
         if (!validScope) return null;
 
@@ -434,25 +454,31 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
               house.houseId.trim().length > 0 &&
               house.name.trim().length > 0 &&
               house.packageRoot.trim().length > 0 &&
-              house.canonicalProjectId === DSE_PARTNER_SCOPE.projectId &&
+              house.canonicalProjectId === authoritativeScope.projectId &&
               house.status === 'draft',
           ) ?? [];
 
         const requestedHouseId = mutation.activeHouseId?.trim() || null;
+        const validHouseIds = canonicalHouseIdsForProject(
+          authoritativeScope.projectId,
+        );
         const activeHouseId =
-          requestedHouseId === DSE_PARTNER_SCOPE.activeHouseId ||
-          authoredHouseIdentities.some(
-            (house) => house.houseId === requestedHouseId,
+          requestedHouseId !== null &&
+          (
+            validHouseIds.has(requestedHouseId) ||
+            authoredHouseIdentities.some(
+              (house) => house.houseId === requestedHouseId,
+            )
           )
             ? requestedHouseId
-            : DSE_PARTNER_SCOPE.activeHouseId;
+            : null;
 
         const workspaceContext: PartnerWorkspaceContext = {
           operatorMode: true,
-          partnerId: DSE_PARTNER_SCOPE.partnerId,
-          companyId: DSE_PARTNER_SCOPE.companyId,
-          workspaceId: DSE_PARTNER_SCOPE.workspaceId,
-          projectId: DSE_PARTNER_SCOPE.projectId,
+          partnerId: authoritativeScope.partnerId,
+          companyId: authoritativeScope.companyId,
+          workspaceId: authoritativeScope.workspaceId,
+          projectId: authoritativeScope.projectId,
           activeHouseId,
           authoredHouseIdentities,
           activeStudio: mutation.activeStudio,
@@ -467,10 +493,10 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
 
         next = {
           ...current,
-          tenantId: DSE_PARTNER_SCOPE.tenantId,
-          companyId: DSE_PARTNER_SCOPE.companyId,
-          workspaceId: DSE_PARTNER_SCOPE.workspaceId,
-          projectId: DSE_PARTNER_SCOPE.projectId,
+          tenantId: authoritativeScope.tenantId,
+          companyId: authoritativeScope.companyId,
+          workspaceId: authoritativeScope.workspaceId,
+          projectId: authoritativeScope.projectId,
           activeHouseId,
           activeStudioId: mutation.activeStudio,
           workspaceContext,

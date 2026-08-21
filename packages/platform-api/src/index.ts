@@ -69,11 +69,15 @@ import {
 } from './housePackageRepository';
 import { platformApiAllowedOrigins, platformApiStatePath } from './platformApiConfig';
 import {
+  createPartnerEnvironmentScopeResolver,
+} from './resolveAuthoritativePartnerEnvironmentScope';
+import {
   applyDurableProjectConfigs,
   canonicalCompanyIdForOfficePartner,
   findCompany,
   getCanonicalProject,
   getDefaultCompanyRegistry,
+  parsePartnerEnvironmentScope,
   projectPublicCompanyContact,
   resolvePilotWorkspace,
 } from '@embed-engine/platform-access';
@@ -635,7 +639,7 @@ export function createPlatformApiServer(
   orderRepository: OrderRepository = new FileOrderRepository(),
   proformaRepository: ProformaRepository = new FileProformaRepository(),
   offerWriteTokens: OfferWriteTokenRepository = new FileOfferWriteTokenRepository(),
-  partnerSessions: PartnerSessionRepository = new FilePartnerSessionRepository(),
+  partnerSessionsParam?: PartnerSessionRepository,
   housePackages: HousePackageRepository = new FileHousePackageRepository(),
   leads: LeadRepository = new FileLeadRepository(),
   leadScopeResolver: typeof resolveLeadScope = resolveLeadScope,
@@ -644,6 +648,12 @@ export function createPlatformApiServer(
   decisionSessions: DecisionSessionRepository = new FileDecisionSessionRepository(),
   caseProcessing: CaseProcessingRepository = new FileCaseProcessingRepository(),
 ): Server {
+  const partnerSessions =
+    partnerSessionsParam ??
+    new FilePartnerSessionRepository(
+      undefined,
+      createPartnerEnvironmentScopeResolver(officePartners),
+    );
   return createServer(async (request, response) => {
     const origin = request.headers.origin;
     const allowedOrigins = platformApiAllowedOrigins();
@@ -1226,6 +1236,51 @@ export function createPlatformApiServer(
                 canMutateOfficePartner(session, item.companyId),
               );
           return respond(response, 200, { partners: visible });
+        }
+
+        const environmentScopeMatch = path.match(
+          /^\/office\/partners\/([^/]+)\/environment-scope$/,
+        );
+        if (environmentScopeMatch !== null) {
+          const partnerId = decodeURIComponent(
+            environmentScopeMatch[1] ?? '',
+          ).trim();
+          if (partnerId.length === 0) {
+            return respond(response, 404, { error: 'Partner neexistuje.' });
+          }
+          if (request.method !== 'PUT') {
+            return respond(response, 405, { error: 'Method not allowed.' });
+          }
+          const current = await officePartners.get(partnerId);
+          if (current === null) {
+            return respond(response, 404, { error: 'Partner neexistuje.' });
+          }
+          if (!canMutateOfficePartner(session, current.companyId)) {
+            return respond(response, 403, {
+              error: 'Partner není pro tuto relaci povolen.',
+            });
+          }
+          const scope = parsePartnerEnvironmentScope(await requestBody(request));
+          if (scope === null) {
+            return respond(response, 400, {
+              error: 'Neplatný Partner Environment scope.',
+            });
+          }
+          try {
+            const saved = await officePartners.updateEnvironmentScope(
+              partnerId,
+              scope,
+            );
+            return respond(response, 200, saved);
+          } catch (error) {
+            if (error instanceof OfficePartnerNotFoundError) {
+              return respond(response, 404, { error: 'Partner neexistuje.' });
+            }
+            if (error instanceof InvalidOfficePartnerError) {
+              return respond(response, 400, { error: error.message });
+            }
+            throw error;
+          }
         }
 
         const partnerMatch = path.match(/^\/office\/partners\/([^/]+)$/);

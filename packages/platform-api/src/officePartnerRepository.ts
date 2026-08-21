@@ -6,8 +6,11 @@ import {
   InvalidOfficePartnerError,
   normalizeDurableOfficePartner,
   parseStoredOfficePartner,
+  partnerEnvironmentScopeMatchesPartner,
+  withPartnerEnvironmentScope,
   type DurableOfficePartner,
   type DurableOfficePartnerDraft,
+  type PartnerEnvironmentScope,
 } from '@embed-engine/platform-access';
 
 import { platformApiStatePath } from './platformApiConfig';
@@ -23,6 +26,10 @@ export interface OfficePartnerRepository {
   getByCompanyId(companyId: string): Promise<DurableOfficePartner | null>;
   create(input: DurableOfficePartnerInput): Promise<DurableOfficePartner>;
   update(input: DurableOfficePartnerInput): Promise<DurableOfficePartner>;
+  updateEnvironmentScope(
+    partnerId: string,
+    scope: PartnerEnvironmentScope,
+  ): Promise<DurableOfficePartner>;
 }
 
 export class OfficePartnerNotFoundError extends Error {
@@ -111,6 +118,38 @@ export class FileOfficePartnerRepository implements OfficePartnerRepository {
       ) {
         throw new DuplicateOfficePartnerError(partner.id);
       }
+      await this.write({
+        partners: state.partners.map((item) =>
+          item.id === partner.id ? partner : item,
+        ),
+      });
+      return partner;
+    });
+  }
+
+  async updateEnvironmentScope(
+    partnerId: string,
+    scope: PartnerEnvironmentScope,
+  ): Promise<DurableOfficePartner> {
+    return this.exclusively(async () => {
+      const state = await this.read();
+      const previous =
+        state.partners.find((item) => item.id === partnerId.trim()) ?? null;
+      if (previous === null) {
+        throw new OfficePartnerNotFoundError(partnerId);
+      }
+      if (
+        !partnerEnvironmentScopeMatchesPartner({
+          partnerId: previous.id,
+          partnerCompanyId: previous.companyId,
+          scope,
+        })
+      ) {
+        throw new InvalidOfficePartnerError(
+          'Invalid Partner Environment scope.',
+        );
+      }
+      const partner = withPartnerEnvironmentScope(previous, scope);
       await this.write({
         partners: state.partners.map((item) =>
           item.id === partner.id ? partner : item,

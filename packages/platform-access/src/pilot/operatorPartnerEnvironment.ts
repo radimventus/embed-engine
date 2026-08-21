@@ -292,9 +292,28 @@ export async function enterOperatorPartnerEnvironmentAuthoritatively(
   const officeReturnHref =
     input.officeReturnHref.trim() || resolveCloudStudioHref('office');
 
+  const client = createPlatformAccessAuthClient();
+  let persisted;
+  try {
+    persisted = await client.persistPartnerEnvironmentScope(partnerId, {
+      tenantId,
+      companyId,
+      workspaceId,
+      projectId,
+    });
+  } catch {
+    return {
+      ok: false,
+      error: 'Partner Environment se nepodařilo spojit s Platform API.',
+    };
+  }
+  if (!persisted.ok) {
+    return { ok: false, error: persisted.error };
+  }
+
   let result;
   try {
-    result = await createPlatformAccessAuthClient().mutateSessionContext({
+    result = await client.mutateSessionContext({
       action: 'enter',
       partnerId,
       tenantId,

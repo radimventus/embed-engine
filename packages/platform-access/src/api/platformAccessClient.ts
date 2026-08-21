@@ -1,6 +1,7 @@
 import type { PlatformRole } from '../domain/types';
 import type { PlatformSession } from '../domain/types';
 import type { PilotInviteStatus } from '../domain/pilotTypes';
+import type { PartnerEnvironmentScope } from '../partner/partnerEnvironmentScope';
 
 export type PlatformAccessInvite = {
   readonly id: string;
@@ -126,6 +127,10 @@ export type PlatformAccessAuthResult =
   | { readonly ok: true; readonly session: PlatformSession }
   | { readonly ok: false; readonly error: string };
 
+export type PlatformAccessWriteResult =
+  | { readonly ok: true }
+  | { readonly ok: false; readonly error: string };
+
 export interface PlatformAccessAuthClient {
   activateInvite(input: {
     readonly token: string;
@@ -163,6 +168,10 @@ export interface PlatformAccessAuthClient {
       }
     | { readonly action: 'leave' }
   ): Promise<PlatformAccessAuthResult>;
+  persistPartnerEnvironmentScope(
+    partnerId: string,
+    scope: PartnerEnvironmentScope,
+  ): Promise<PlatformAccessWriteResult>;
   logout(): Promise<void>;
 }
 
@@ -229,6 +238,29 @@ export function createPlatformAccessAuthClient(
             error: ('error' in result ? result.error : undefined) ??
               'Partner Environment se nepodařilo aktivovat.',
           };
+    },
+    async persistPartnerEnvironmentScope(partnerId, scope) {
+      const response = await fetch(
+        `${baseUrl}/office/partners/${encodeURIComponent(partnerId)}/environment-scope`,
+        {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(scope),
+        },
+      );
+      if (!response.ok) {
+        const result = await parseResponse<{ readonly error?: string }>(response).catch(
+          () => ({ error: undefined }),
+        );
+        return {
+          ok: false,
+          error:
+            result.error ??
+            'Partner Environment scope se nepodařilo uložit.',
+        };
+      }
+      return { ok: true };
     },
     async logout() {
       await fetch(`${baseUrl}/public/auth/logout`, {

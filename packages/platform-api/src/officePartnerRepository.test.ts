@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import {
+  CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
   DSE_COMPANY_ID,
   InvalidOfficePartnerError,
 } from '@embed-engine/platform-access';
@@ -94,6 +95,7 @@ describe('FileOfficePartnerRepository', () => {
       assert.equal(restored?.contact.email, 'kontakt@domysenergii.cz');
       assert.equal(restored?.id, 'p-dse');
       assert.equal(restored?.companyId, DSE_COMPANY_ID);
+      assert.equal(restored?.partnerEnvironmentScope, null);
     });
   });
 
@@ -160,6 +162,64 @@ describe('FileOfficePartnerRepository', () => {
         DuplicateOfficePartnerError,
       );
       assert.equal((await repository.list()).length, 1);
+    });
+  });
+
+  it('persists Partner Environment scope and reloads it', async () => {
+    await withRepo(async (repository, statePath) => {
+      await repository.create({ id: 'p-dse', draft: dseDraft });
+      const saved = await repository.updateEnvironmentScope(
+        'p-dse',
+        CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+      );
+      assert.deepEqual(
+        saved.partnerEnvironmentScope,
+        CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+      );
+
+      const fresh = new FileOfficePartnerRepository(statePath);
+      const restored = await fresh.get('p-dse');
+      assert.deepEqual(
+        restored?.partnerEnvironmentScope,
+        CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+      );
+    });
+  });
+
+  it('preserves PE scope when unrelated commercial fields change', async () => {
+    await withRepo(async (repository) => {
+      await repository.create({ id: 'p-dse', draft: dseDraft });
+      await repository.updateEnvironmentScope(
+        'p-dse',
+        CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+      );
+      const updated = await repository.update({
+        id: 'p-dse',
+        draft: {
+          ...dseDraft,
+          company: { ...dseDraft.company, city: 'Ostrava' },
+        },
+      });
+      assert.equal(updated.company.city, 'Ostrava');
+      assert.deepEqual(
+        updated.partnerEnvironmentScope,
+        CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+      );
+    });
+  });
+
+  it('rejects a forged DSE PE scope write', async () => {
+    await withRepo(async (repository) => {
+      await repository.create({ id: 'p-dse', draft: dseDraft });
+      await assert.rejects(
+        () =>
+          repository.updateEnvironmentScope('p-dse', {
+            ...CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+            projectId: 'project-forged',
+          }),
+        InvalidOfficePartnerError,
+      );
+      assert.equal((await repository.get('p-dse'))?.partnerEnvironmentScope, null);
     });
   });
 });

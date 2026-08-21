@@ -146,6 +146,39 @@ describe('Platform Access authentication client', () => {
     assert.deepEqual(body.authoredHouseIdentities, authoredHouseIdentities);
     assert.equal(body.activeHouseId, 'patrovy-5kk');
   });
+
+  it('persists Partner Environment scope through the Office Partner write path', async () => {
+    const requests: Array<{ url: string; init?: RequestInit }> = [];
+    globalThis.fetch = (async (input, init) => {
+      requests.push({ url: String(input), init });
+      return new Response(
+        JSON.stringify({
+          id: 'p-dse',
+          partnerEnvironmentScope: {
+            tenantId: 'tenant-domy-s-energii',
+            companyId: 'company-domy-s-energii',
+            workspaceId: 'domy-s-energii-main',
+            projectId: 'project-domy-s-energii',
+          },
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    }) as typeof fetch;
+
+    const client = createPlatformAccessAuthClient('https://api.conis.cz');
+    const result = await client.persistPartnerEnvironmentScope('p-dse', {
+      tenantId: 'tenant-domy-s-energii',
+      companyId: 'company-domy-s-energii',
+      workspaceId: 'domy-s-energii-main',
+      projectId: 'project-domy-s-energii',
+    });
+    assert.equal(result.ok, true);
+    assert.equal(
+      requests[0]?.url,
+      'https://api.conis.cz/office/partners/p-dse/environment-scope',
+    );
+    assert.equal(requests[0]?.init?.method, 'PUT');
+  });
 });
 
 describe('Platform Access invitation client', () => {

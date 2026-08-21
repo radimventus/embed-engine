@@ -5,6 +5,7 @@ import { join } from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
 import {
+  CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
   DEFAULT_COMPANY_ID,
   DSE_COMPANY_ID,
   projectPublicCompanyContact,
@@ -226,6 +227,76 @@ describe('Platform API Office Partner', () => {
     assert.equal(JSON.stringify(body).includes('"status"'), false);
     assert.equal(JSON.stringify(body).includes('Referenční šablona'), false);
     assert.equal(JSON.stringify(body).includes('Jméno'), false);
+  });
+
+  it('persists Partner Environment scope and preserves it across commercial updates', async () => {
+    const persist = await fetch(
+      `${baseUrl}/office/partners/p-dse/environment-scope`,
+      {
+        method: 'PUT',
+        headers: {
+          cookie: '__Host-conis_partner_session=session-admin',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE),
+      },
+    );
+    assert.equal(persist.status, 200);
+    const persisted = (await persist.json()) as {
+      partnerEnvironmentScope: unknown;
+    };
+    assert.deepEqual(
+      persisted.partnerEnvironmentScope,
+      CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+    );
+
+    const commercial = await fetch(`${baseUrl}/office/partners/p-dse`, {
+      method: 'PUT',
+      headers: {
+        cookie: '__Host-conis_partner_session=session-admin',
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...dseDraft,
+        nextStep: 'Provozní péče',
+      }),
+    });
+    assert.equal(commercial.status, 200);
+    const body = (await commercial.json()) as {
+      nextStep: string;
+      partnerEnvironmentScope: unknown;
+    };
+    assert.equal(body.nextStep, 'Provozní péče');
+    assert.deepEqual(
+      body.partnerEnvironmentScope,
+      CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+    );
+
+    const manager = await fetch(
+      `${baseUrl}/office/partners/p-dse/environment-scope`,
+      {
+        method: 'PUT',
+        headers: {
+          cookie: '__Host-conis_partner_session=session-manager',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE),
+      },
+    );
+    assert.equal(manager.status, 403);
+
+    const foreign = await fetch(
+      `${baseUrl}/office/partners/p-dse/environment-scope`,
+      {
+        method: 'PUT',
+        headers: {
+          cookie: '__Host-conis_partner_session=session-ac',
+          'content-type': 'application/json',
+        },
+        body: JSON.stringify(CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE),
+      },
+    );
+    assert.equal(foreign.status, 403);
   });
 
   it('does not leak DSE contact onto another Company', async () => {

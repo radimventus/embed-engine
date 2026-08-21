@@ -1,4 +1,8 @@
 import { canonicalCompanyIdForOfficePartner } from './canonicalOfficePartner';
+import {
+  parsePartnerEnvironmentScope,
+  type PartnerEnvironmentScope,
+} from './partnerEnvironmentScope';
 
 export const OFFICE_PARTNER_STATUSES = [
   'lead',
@@ -34,6 +38,7 @@ export type DurableOfficePartner = {
   readonly nextStep: string;
   readonly company: DurableOfficeCompanyCard;
   readonly contact: DurableOfficeContactCard;
+  readonly partnerEnvironmentScope: PartnerEnvironmentScope | null;
   readonly createdAt: string;
   readonly updatedAt: string;
 };
@@ -135,6 +140,7 @@ export function normalizeDurableOfficePartner(input: {
     nextStep: trimText(input.draft.nextStep),
     company: asCompany(input.draft.company),
     contact: asContact(input.draft.contact),
+    partnerEnvironmentScope: input.previous?.partnerEnvironmentScope ?? null,
     createdAt,
     updatedAt: now,
   };
@@ -165,8 +171,23 @@ export function parseStoredOfficePartner(
     return {
       ...partner,
       createdAt: asIso(stored.createdAt, partner.createdAt),
+      partnerEnvironmentScope: parsePartnerEnvironmentScope(
+        stored.partnerEnvironmentScope,
+      ),
     };
   } catch {
     return null;
   }
+}
+
+export function withPartnerEnvironmentScope(
+  partner: DurableOfficePartner,
+  scope: PartnerEnvironmentScope,
+  now = new Date().toISOString(),
+): DurableOfficePartner {
+  return {
+    ...partner,
+    partnerEnvironmentScope: scope,
+    updatedAt: now,
+  };
 }

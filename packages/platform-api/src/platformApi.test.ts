@@ -5,6 +5,10 @@ import { join } from 'node:path';
 import { describe, it } from 'node:test';
 
 import {
+  CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+} from '@embed-engine/platform-access';
+
+import {
   createPlatformApiServer,
   FileOrderRepository,
   FileOfferWriteTokenRepository,
@@ -17,6 +21,8 @@ import {
   platformApiStatePath,
   requiresLoopbackAccess,
 } from './index.ts';
+import { FileOfficePartnerRepository } from './officePartnerRepository.ts';
+import { createPartnerEnvironmentScopeResolver } from './resolveAuthoritativePartnerEnvironmentScope.ts';
 
 process.env.OFFER_CAPABILITY_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString(
   'base64url',
@@ -75,6 +81,45 @@ const durableOrderInput = {
   termsVersion: '1.0',
   termsAcceptedAt: '2026-08-12T12:00:00.000Z',
 } as const;
+
+const dsePartnerDraft = {
+  name: 'Domy s energií',
+  status: 'active',
+  nextStep: 'Referenční šablona',
+  company: {
+    legalName: 'Domy s energií',
+    ico: '62288474',
+    city: 'Opava',
+    country: 'Česko',
+  },
+  contact: {
+    name: 'Radim Věntus',
+    email: 'kontakt@domysenergii.cz',
+    phone: '+420 725 020 757',
+    role: 'Majitel',
+  },
+} as const;
+
+async function partnerSessionRepositoryWithDseScope(directory: string): Promise<{
+  readonly repository: FilePartnerSessionRepository;
+  readonly partners: FileOfficePartnerRepository;
+}> {
+  const partners = new FileOfficePartnerRepository(
+    join(directory, 'office-partners.json'),
+  );
+  await partners.create({ id: 'p-dse', draft: dsePartnerDraft });
+  await partners.updateEnvironmentScope(
+    'p-dse',
+    CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+  );
+  return {
+    partners,
+    repository: new FilePartnerSessionRepository(
+      join(directory, 'partner-sessions.json'),
+      createPartnerEnvironmentScopeResolver(partners),
+    ),
+  };
+}
 
 describe('Platform API invitation repository', () => {
   it('resolves an invite from another client repository', async () => {
@@ -214,10 +259,10 @@ describe('Durable partner sessions', () => {
     }
   });
 
-  it('falls back to the canonical BUNGALOV when authoritative PE receives an unverified House', async () => {
+  it('clears an unverified House instead of substituting DSE BUNGALOV', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-house-scope-test-'));
+    const { repository } = await partnerSessionRepositoryWithDseScope(directory);
     const statePath = join(directory, 'partner-sessions.json');
-    const repository = new FilePartnerSessionRepository(statePath);
 
     try {
       const issued = await repository.activate({
@@ -248,24 +293,14 @@ describe('Durable partner sessions', () => {
       });
 
       assert.ok(entered !== null);
-
-      const bungalovId =
-        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk';
-
-      assert.equal(entered.activeHouseId, bungalovId);
-      assert.equal(
-        entered.workspaceContext?.activeHouseId,
-        bungalovId,
-      );
+      assert.equal(entered.activeHouseId, null);
+      assert.equal(entered.workspaceContext?.activeHouseId, null);
 
       const restarted = new FilePartnerSessionRepository(statePath);
       const restored = await restarted.resolve(issued.token);
 
-      assert.equal(restored?.activeHouseId, bungalovId);
-      assert.equal(
-        restored?.workspaceContext?.activeHouseId,
-        bungalovId,
-      );
+      assert.equal(restored?.activeHouseId, null);
+      assert.equal(restored?.workspaceContext?.activeHouseId, null);
     } finally {
       await rm(directory, { recursive: true, force: true });
     }
@@ -273,8 +308,8 @@ describe('Durable partner sessions', () => {
 
   it('round-trips authored DSE House identity through the durable Partner Environment session', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-authored-house-test-'));
+    const { repository } = await partnerSessionRepositoryWithDseScope(directory);
     const statePath = join(directory, 'partner-sessions.json');
-    const repository = new FilePartnerSessionRepository(statePath);
 
     try {
       const issued = await repository.activate({
@@ -345,8 +380,7 @@ describe('Durable partner sessions', () => {
 
   it('preserves the selected DSE first House across Builder, Client, Manager, Sales, and Builder', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-studio-loop-test-'));
-    const statePath = join(directory, 'partner-sessions.json');
-    const repository = new FilePartnerSessionRepository(statePath);
+    const { repository } = await partnerSessionRepositoryWithDseScope(directory);
     const vpdHouseId =
       'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk';
 
@@ -413,8 +447,8 @@ describe('Durable partner sessions', () => {
 
   it('persists AC Modular / MODERN scope through authoritative Partner Environment switch and repository restart', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-scope-switch-test-'));
+    const { repository } = await partnerSessionRepositoryWithDseScope(directory);
     const statePath = join(directory, 'partner-sessions.json');
-    const repository = new FilePartnerSessionRepository(statePath);
 
     try {
       const issued = await repository.activate({
@@ -508,8 +542,7 @@ describe('Durable partner sessions', () => {
 
   it('TASK-42U — Manager follows canonical Studio access within its authenticated Partner scope', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-manager-switch-test-'));
-    const statePath = join(directory, 'partner-sessions.json');
-    const repository = new FilePartnerSessionRepository(statePath);
+    const { repository } = await partnerSessionRepositoryWithDseScope(directory);
 
     try {
       const issued = await repository.activate({
@@ -644,8 +677,8 @@ describe('Durable partner sessions', () => {
 
   it('persists authoritative Partner Environment context across session restore', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-context-test-'));
+    const { repository } = await partnerSessionRepositoryWithDseScope(directory);
     const statePath = join(directory, 'partner-sessions.json');
-    const repository = new FilePartnerSessionRepository(statePath);
 
     try {
       const issued = await repository.activate({
@@ -712,9 +745,8 @@ describe('Durable partner sessions', () => {
     const inviteRepository = new FilePlatformInviteRepository(
       join(directory, 'invites.json'),
     );
-    const sessionRepository = new FilePartnerSessionRepository(
-      join(directory, 'partner-sessions.json'),
-    );
+    const { repository: sessionRepository, partners } =
+      await partnerSessionRepositoryWithDseScope(directory);
 
     const issuedInvite = await inviteRepository.create({
       email: 'admin-context@example.test',
@@ -734,6 +766,11 @@ describe('Durable partner sessions', () => {
       undefined,
       undefined,
       sessionRepository,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      partners,
     );
 
     await new Promise<void>((resolve) =>

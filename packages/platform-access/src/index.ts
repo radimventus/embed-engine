@@ -150,12 +150,22 @@ export {
   InvalidOfficePartnerError,
   normalizeDurableOfficePartner,
   parseStoredOfficePartner,
+  withPartnerEnvironmentScope,
   type DurableOfficeCompanyCard,
   type DurableOfficeContactCard,
   type DurableOfficePartner,
   type DurableOfficePartnerDraft,
   type DurableOfficePartnerStatus,
 } from './partner/officePartnerRecord';
+
+export {
+  CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+  parsePartnerEnvironmentScope,
+  partnerEnvironmentScopeMatchesPartner,
+  partnerEnvironmentScopesMatch,
+  type AuthoritativePartnerEnvironmentScope,
+  type PartnerEnvironmentScope,
+} from './partner/partnerEnvironmentScope';
 
 export {
   emptyPublicCompanyContact,
