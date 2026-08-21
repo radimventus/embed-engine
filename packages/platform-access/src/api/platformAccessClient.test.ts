@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import { afterEach, describe, it } from 'node:test';
 
 import type { WorkspaceAuthoredHouseIdentity } from '../domain/workspaceContext';
-import { createPlatformAccessAuthClient } from './platformAccessClient';
+import {
+  createPlatformAccessAuthClient,
+  createPlatformAccessInviteClient,
+} from './platformAccessClient';
 
 const originalFetch = globalThis.fetch;
 
@@ -142,5 +145,89 @@ describe('Platform Access authentication client', () => {
     const body = JSON.parse(String(requests[0]?.init?.body));
     assert.deepEqual(body.authoredHouseIdentities, authoredHouseIdentities);
     assert.equal(body.activeHouseId, 'patrovy-5kk');
+  });
+});
+
+describe('Platform Access invitation client', () => {
+  it('uses credentialed Office invite producer routes without authoritative scope', async () => {
+    const requests: Array<{ url: string; init?: RequestInit }> = [];
+    globalThis.fetch = (async (input, init) => {
+      requests.push({ url: String(input), init });
+      const url = String(input);
+      if (url.endsWith('/office/invites')) {
+        return new Response(
+          JSON.stringify({
+            id: 'invite-test',
+            email: 'anna@dse.test',
+            displayName: 'Anna',
+            roles: ['manager'],
+            tenantId: 'tenant-domy-s-energii',
+            companyId: 'company-domy-s-energii',
+            workspaceId: 'domy-s-energii-main',
+            projectId: 'project-domy-s-energii',
+            status: 'pending',
+            createdAt: '2026-08-10T10:00:00.000Z',
+            activatedAt: null,
+            ndaAcceptedAt: null,
+            expiresAt: '2026-08-17T10:00:00.000Z',
+            token: 'issued-token',
+          }),
+          { status: 201, headers: { 'content-type': 'application/json' } },
+        );
+      }
+      return new Response(
+        JSON.stringify({
+          id: 'invite-test',
+          email: 'anna@dse.test',
+          displayName: 'Anna',
+          roles: ['manager'],
+          tenantId: 'tenant-domy-s-energii',
+          companyId: 'company-domy-s-energii',
+          workspaceId: 'domy-s-energii-main',
+          projectId: 'project-domy-s-energii',
+          status: 'pending',
+          createdAt: '2026-08-10T10:00:00.000Z',
+          activatedAt: null,
+          ndaAcceptedAt: null,
+          expiresAt: '2026-08-17T10:00:00.000Z',
+          token: 'reissued-token',
+        }),
+        { status: 200, headers: { 'content-type': 'application/json' } },
+      );
+    }) as typeof fetch;
+
+    const client = createPlatformAccessInviteClient('https://api.conis.cz');
+    await client.createInvite({
+      partnerId: 'p-dse',
+      email: 'anna@dse.test',
+      displayName: 'Anna',
+      roles: ['manager'],
+    });
+    await client.reissueInvite('invite-test');
+
+    assert.deepEqual(requests, [
+      {
+        url: 'https://api.conis.cz/office/invites',
+        init: {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            partnerId: 'p-dse',
+            email: 'anna@dse.test',
+            displayName: 'Anna',
+            roles: ['manager'],
+          }),
+        },
+      },
+      {
+        url: 'https://api.conis.cz/office/invites/invite-test/reissue',
+        init: {
+          method: 'POST',
+          credentials: 'include',
+        },
+      },
+    ]);
+    assert.equal(JSON.stringify(requests[0]?.init?.body).includes('companyId'), false);
   });
 });

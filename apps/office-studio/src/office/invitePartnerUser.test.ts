@@ -33,10 +33,10 @@ describe("Office partner user invitation", () => {
         email: input.email,
         displayName: input.displayName,
         roles: input.roles,
-        tenantId: input.tenantId,
-        companyId: input.companyId,
-        workspaceId: input.workspaceId,
-        projectId: input.projectId,
+        tenantId: "tenant-domy-s-energii",
+        companyId: "company-domy-s-energii",
+        workspaceId: "domy-s-energii-main",
+        projectId: "project-domy-s-energii",
         status: "pending",
         createdAt: "2026-08-10T10:00:00.000Z",
         activatedAt: null,
@@ -96,6 +96,8 @@ describe("Office partner user invitation", () => {
     assert.equal(result.invite.workspaceId, "domy-s-energii-main");
     assert.equal(result.invite.projectId, "project-domy-s-energii");
     assert.deepEqual(creates[0]?.roles, ["manager"]);
+    assert.equal(creates[0]?.partnerId, "p-dse");
+    assert.equal("companyId" in (creates[0] ?? {}), false);
   });
 
   it("preserves Sales role and invalidates the old token when reissuing", async () => {

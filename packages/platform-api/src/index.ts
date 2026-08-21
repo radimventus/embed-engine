@@ -73,6 +73,7 @@ import {
   getCanonicalProject,
   getDefaultCompanyRegistry,
   projectPublicCompanyContact,
+  resolvePilotWorkspace,
 } from '@embed-engine/platform-access';
 import {
   canAccessStudio,
@@ -215,6 +216,7 @@ export type InviteActivation =
 /** Persistence boundary used by the minimal Platform API process. */
 export interface PlatformInviteRepository {
   create(input: PlatformInviteScope): Promise<IssuedPlatformInvite>;
+  findById(id: string): Promise<ResolvedPlatformInvite | null>;
   resolve(token: string): Promise<ResolvedPlatformInvite | null>;
   activate(token: string, ndaAccepted: boolean): Promise<InviteActivation>;
   reissue(id: string): Promise<IssuedPlatformInvite | null>;
@@ -231,6 +233,8 @@ type InviteState = {
 };
 
 const INVITE_VALIDITY_MS = 7 * 24 * 60 * 60 * 1000;
+
+const OFFICE_PARTNER_INVITE_ROLES = new Set<PlatformRole>(['manager', 'salesman']);
 
 function lifecycle(invite: StoredInvite, now = Date.now()): PlatformInviteStatus {
   if (invite.status !== 'pending') return invite.status;
@@ -291,6 +295,12 @@ export class FilePlatformInviteRepository implements PlatformInviteRepository {
     const state = await this.read();
     await this.write({ invites: [...state.invites, invite] });
     return { ...toResolved(invite), token };
+  }
+
+  async findById(id: string): Promise<ResolvedPlatformInvite | null> {
+    const invite = (await this.read()).invites.find((item) => item.id === id);
+    if (invite === undefined) return null;
+    return toResolved(invite);
   }
 
   async resolve(token: string): Promise<ResolvedPlatformInvite | null> {
@@ -535,6 +545,40 @@ function canMutateOfficePartner(
   if (roles.includes('conis-admin')) return true;
   if (!isPlatformAdmin(roles)) return false;
   return sessionCompanyId(session) === partnerCompanyId;
+}
+
+function officeInviteRolesFromBody(value: unknown): readonly PlatformRole[] | null {
+  if (!Array.isArray(value) || value.length === 0) return null;
+  const roles = value.filter(
+    (role): role is PlatformRole =>
+      typeof role === 'string' && OFFICE_PARTNER_INVITE_ROLES.has(role as PlatformRole),
+  );
+  if (roles.length !== value.length || roles.length === 0) return null;
+  return roles;
+}
+
+function officeInviteCreateFromBody(body: unknown): {
+  readonly partnerId: string;
+  readonly email: string;
+  readonly displayName: string;
+  readonly roles: readonly PlatformRole[];
+} | null {
+  if (body === null || typeof body !== 'object' || Array.isArray(body)) {
+    return null;
+  }
+  const record = body as Record<string, unknown>;
+  const partnerId = typeof record.partnerId === 'string' ? record.partnerId.trim() : '';
+  const email = typeof record.email === 'string' ? record.email.trim().toLowerCase() : '';
+  const displayName =
+    typeof record.displayName === 'string' ? record.displayName.trim() : '';
+  const roles = officeInviteRolesFromBody(record.roles);
+  if (partnerId.length === 0 || email.length === 0 || roles === null) return null;
+  return {
+    partnerId,
+    email,
+    displayName: displayName.length > 0 ? displayName : email,
+    roles,
+  };
 }
 
 function officePartnerDraftFromBody(body: unknown): {
@@ -1266,6 +1310,80 @@ export function createPlatformApiServer(
             }
             throw error;
           }
+        }
+
+        return respond(response, 405, { error: 'Method not allowed.' });
+      }
+      if (path === '/office/invites' || path.startsWith('/office/invites/')) {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session = token === null ? null : await partnerSessions.resolve(token);
+        if (session === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+        if (!canAuthorOfficePartners(session)) {
+          return respond(response, 403, {
+            error: 'Office Partner není pro tuto relaci povolen.',
+          });
+        }
+
+        if (request.method === 'POST' && path === '/office/invites') {
+          const draft = officeInviteCreateFromBody(await requestBody(request));
+          if (draft === null) {
+            return respond(response, 400, { error: 'Neplatná pozvánka.' });
+          }
+          const companyId = canonicalCompanyIdForOfficePartner(draft.partnerId);
+          if (!canMutateOfficePartner(session, companyId)) {
+            return respond(response, 403, {
+              error: 'Partner není pro tuto relaci povolen.',
+            });
+          }
+          const provision = resolvePilotWorkspace(companyId);
+          if (provision === null) {
+            return respond(response, 400, {
+              error: 'Partner environment is not prepared in Builder Studio.',
+            });
+          }
+          const invitedByUserId = session.user?.id?.trim() ?? '';
+          if (invitedByUserId.length === 0) {
+            return respond(response, 403, { error: 'Neplatná relace.' });
+          }
+          return respond(
+            response,
+            201,
+            await repository.create({
+              email: draft.email,
+              displayName: draft.displayName,
+              roles: draft.roles,
+              invitedByUserId,
+              tenantId: provision.tenant.id,
+              companyId: provision.company.id,
+              workspaceId: provision.workspace.id,
+              projectId: provision.project.id,
+            }),
+          );
+        }
+
+        const reissueMatch = path.match(/^\/office\/invites\/([^/]+)\/reissue$/);
+        if (request.method === 'POST' && reissueMatch !== null) {
+          const inviteId = decodeURIComponent(reissueMatch[1] ?? '').trim();
+          if (inviteId.length === 0) {
+            return respond(response, 404, { error: 'Pozvánka není dostupná.' });
+          }
+          const current = await repository.findById(inviteId);
+          if (current === null) {
+            return respond(response, 404, { error: 'Pozvánka není dostupná.' });
+          }
+          if (!canMutateOfficePartner(session, current.companyId)) {
+            return respond(response, 403, {
+              error: 'Partner není pro tuto relaci povolen.',
+            });
+          }
+          const reissued = await repository.reissue(inviteId);
+          return respond(
+            response,
+            reissued === null ? 404 : 200,
+            reissued ?? { error: 'Pozvánka není dostupná.' },
+          );
         }
 
         return respond(response, 405, { error: 'Method not allowed.' });

@@ -72,14 +72,10 @@ export async function invitePartnerUser(
     return {
       ok: true,
       invite: await client.createInvite({
+        partnerId: input.partnerId,
         email,
         displayName: input.name,
         roles: rolesForPartnerInvite(input.role ?? "manager"),
-        invitedByUserId: input.invitedByUserId,
-        tenantId: provision.tenant.id,
-        companyId: provision.company.id,
-        workspaceId: provision.workspace.id,
-        projectId: provision.project.id,
       }),
     };
   } catch (error) {

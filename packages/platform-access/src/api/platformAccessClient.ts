@@ -28,20 +28,15 @@ export type PlatformAccessInviteIssue = PlatformAccessInvite & {
 };
 
 export type PlatformAccessInviteCreateInput = {
+  readonly partnerId: string;
   readonly email: string;
   readonly displayName: string;
   readonly roles: readonly PlatformRole[];
-  readonly invitedByUserId: string;
-  readonly tenantId: string;
-  readonly companyId: string;
-  readonly workspaceId: string;
-  readonly projectId: string;
-  readonly expiresAt?: string;
 };
 
 /**
  * Narrow API boundary for shared invite activation records.
- * Create/reissue/revoke are accepted only by the loopback local-pilot process;
+ * Create/reissue are authenticated Office operations; revoke remains local-pilot.
  * resolve/activate are the public partner operations.
  */
 export interface PlatformAccessInviteClient {
@@ -78,8 +73,9 @@ export function createPlatformAccessInviteClient(
   const baseUrl = origin.replace(/\/$/, '');
   return {
     async createInvite(input) {
-      const response = await fetch(`${baseUrl}/local-pilot/invites`, {
+      const response = await fetch(`${baseUrl}/office/invites`, {
         method: 'POST',
+        credentials: 'include',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify(input),
       });
@@ -88,8 +84,8 @@ export function createPlatformAccessInviteClient(
     },
     async reissueInvite(id) {
       const response = await fetch(
-        `${baseUrl}/local-pilot/invites/${encodeURIComponent(id)}/reissue`,
-        { method: 'POST' },
+        `${baseUrl}/office/invites/${encodeURIComponent(id)}/reissue`,
+        { method: 'POST', credentials: 'include' },
       );
       if (response.status === 404) return null;
       if (!response.ok) throw new Error('Pozvánku se nepodařilo obnovit.');
