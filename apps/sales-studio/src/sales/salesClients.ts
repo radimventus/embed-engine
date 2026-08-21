@@ -52,6 +52,7 @@ export type SalesClient = {
   readonly processingStatus: LeadProcessingStatus | null;
   readonly leadId: string | null;
   readonly createdAt: string;
+  readonly contactEmail: string;
   readonly houses: readonly SalesHouseInterest[];
   readonly relatedHouses: readonly RelatedHousePill[];
 };
@@ -136,6 +137,7 @@ export function toSalesClients(
     processingStatus: item.processingStatus,
     leadId: item.leadId,
     createdAt: item.createdAt,
+    contactEmail: item.contact.email.trim().toLowerCase(),
     relatedHouses: relatedHousesForContact({
       current: item,
       projectLeads,
@@ -159,6 +161,28 @@ export function toSalesClients(
       },
     ],
   }));
+}
+
+export function findSalesCaseForContactHouse(
+  clients: readonly SalesClient[],
+  input: {
+    readonly email: string;
+    readonly houseId: string;
+  },
+): SalesClient | null {
+  const email = input.email.trim().toLowerCase();
+  const houseId = input.houseId.trim();
+  if (email.length === 0 || houseId.length === 0) {
+    return null;
+  }
+  return (
+    clients.find(
+      (client) =>
+        client.origin === 'LEAD' &&
+        client.contactEmail === email &&
+        client.houses.some((house) => house.id === houseId),
+    ) ?? null
+  );
 }
 
 export function hasMeasuredReadiness(

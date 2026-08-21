@@ -58,7 +58,10 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(app, /sales-lead-accept/);
     assert.match(app, /sales-accept-indicator/);
     assert.doesNotMatch(app, /type="checkbox"/);
-    assert.match(app, /<span\s+className=\{`sales-desk__house-chip/);
+    assert.match(app, /data-testid="sales-related-house"/);
+    assert.match(app, /openRelatedHouse/);
+    assert.match(app, /updateWorkspaceScope\(\{ activeHouseId: houseId \}\)/);
+    assert.match(app, /sales-desk__house-chip sales-desk__house-chip--active/);
     assert.doesNotMatch(app, /onClick=\{\(\) => setActiveInterestHouseId/);
     assert.match(app, /Rozhodovací cesta/);
     assert.match(app, /Hledat zájemce/);

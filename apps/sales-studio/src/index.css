@@ -224,6 +224,10 @@ body {
   cursor: pointer;
 }
 
+button.sales-desk__house-chip {
+  margin: 0;
+}
+
 .sales-desk__house-chip:hover {
   border-color: var(--platform-gold);
 }

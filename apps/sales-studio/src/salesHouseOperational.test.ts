@@ -14,7 +14,7 @@ import {
   selectScopedOperationalCases,
 } from '@embed-engine/platform-access';
 
-import { formatLandIntentPill, toSalesClients } from './sales/salesClients.ts';
+import { findSalesCaseForContactHouse, formatLandIntentPill, toSalesClients } from './sales/salesClients.ts';
 
 const here = dirname(fileURLToPath(import.meta.url));
 
@@ -256,6 +256,35 @@ describe('Sales House operational desk', () => {
     );
     assert.equal(bungalovCases.length, 1);
     assert.equal(bungalovCases[0]?.houseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+
+    const projectCases = [
+      ...bungalovCases,
+      ...selectHouseOperationalCases({
+        companyId: DSE_COMPANY_ID,
+        projectId: DSE_CANONICAL_PROJECT_ID,
+        houseId: DSE_FIRST_DRAFT_HOUSE_ID,
+        houseName: 'VÁŠ PRVNÍ DŮM',
+        dataMode: 'LIVE_EMPTY',
+        durableLeads: [vpdSameEmail],
+      }),
+    ];
+    const projectClients = toSalesClients(projectCases, {
+      projectLeads: [bungalovLead, vpdSameEmail],
+      houses,
+    });
+    const opened = findSalesCaseForContactHouse(projectClients, {
+      email: 'andrej@example.cz',
+      houseId: DSE_FIRST_DRAFT_HOUSE_ID,
+    });
+    assert.equal(opened?.houses[0]?.id, DSE_FIRST_DRAFT_HOUSE_ID);
+    assert.equal(opened?.leadId, 'lead-vpd');
+    assert.equal(
+      findSalesCaseForContactHouse(projectClients, {
+        email: 'andrej@example.cz',
+        houseId: 'house-other',
+      }),
+      null,
+    );
   });
 
   it('orders REAL leads newest first and keeps REFERENCE after them', () => {

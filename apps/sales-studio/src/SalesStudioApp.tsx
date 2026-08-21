@@ -16,6 +16,9 @@ import {
   usePlatformSession,
   useStudioBrandProjection,
   isWorkspaceShellEmbed,
+  isHouseInProject,
+  createWorkspaceHouseChangeMessage,
+  resolveWorkspaceHostHref,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -36,6 +39,7 @@ import {
   listSalesCanonicalProjects,
   resolveSalesActiveProjectId,
   resolveActiveHouse,
+  findSalesCaseForContactHouse,
   toSalesClients,
   type SalesClient,
 } from './sales/salesClients';
@@ -54,12 +58,7 @@ function matchesQuery(client: SalesClient, query: string): boolean {
 }
 
 export function SalesStudioApp() {
-  const {
-    session,
-    logout,
-    clearStudio,
-    selectStudio,
-  } =
+  const { session, logout, clearStudio, selectStudio, updateWorkspaceScope } =
     usePlatformSession();
   const capabilityHost = useMemo(() => getSalesCapabilityHost(), []);
   const brand = useStudioBrandProjection();
@@ -92,6 +91,10 @@ export function SalesStudioApp() {
   );
   const [activeClientId, setActiveClientId] = useState<string | null>(null);
   const [activeInterestHouseId, setActiveInterestHouseId] = useState<string | null>(null);
+  const [followContact, setFollowContact] = useState<{
+    readonly email: string;
+    readonly houseId: string;
+  } | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [intentFilter, setIntentFilter] = useState<IntentFilter>('all');
   const scopeHouseId = session?.activeHouseId ?? null;
@@ -100,6 +103,17 @@ export function SalesStudioApp() {
     setActiveClientId(null);
     setActiveInterestHouseId(null);
   }, [scopeHouseId, activeProjectId]);
+
+  useEffect(() => {
+    if (followContact === null || scopeHouseId !== followContact.houseId) {
+      return;
+    }
+    const match = findSalesCaseForContactHouse(scopedClients, followContact);
+    if (match !== null) {
+      setActiveClientId(match.id);
+      setFollowContact(null);
+    }
+  }, [followContact, scopedClients, scopeHouseId]);
 
   const query = searchQuery.trim().toLowerCase();
   const visibleClients = scopedClients.filter((client) => {
@@ -153,6 +167,40 @@ export function SalesStudioApp() {
   function selectClient(clientId: string) {
     setActiveClientId(clientId);
     setActiveInterestHouseId(null);
+    setFollowContact(null);
+  }
+
+  function publishHouseScope(houseId: string) {
+    if (typeof window === 'undefined' || window.parent === window) {
+      return;
+    }
+    window.parent.postMessage(
+      createWorkspaceHouseChangeMessage(houseId),
+      new URL(resolveWorkspaceHostHref()).origin,
+    );
+  }
+
+  function openRelatedHouse(houseId: string) {
+    if (
+      activeClient === null ||
+      activeHouse === null ||
+      activeProjectId === null ||
+      houseId === activeHouse.id ||
+      !isHouseInProject(houseId, activeProjectId)
+    ) {
+      return;
+    }
+    if (activeClient.origin === 'LEAD' && activeClient.contactEmail.length > 0) {
+      setFollowContact({
+        email: activeClient.contactEmail,
+        houseId,
+      });
+    }
+    if (scopeHouseId === houseId) {
+      return;
+    }
+    updateWorkspaceScope({ activeHouseId: houseId });
+    publishHouseScope(houseId);
   }
 
   async function acceptActiveLead() {
@@ -329,15 +377,31 @@ export function SalesStudioApp() {
                       >
                         {activeClient.relatedHouses.map((house) => {
                           const selected = house.houseId === activeHouse.id;
+                          if (selected) {
+                            return (
+                              <li key={house.houseId}>
+                                <span
+                                  className="sales-desk__house-chip sales-desk__house-chip--active"
+                                  data-house-id={house.houseId}
+                                  data-active="true"
+                                >
+                                  {house.houseName}
+                                </span>
+                              </li>
+                            );
+                          }
                           return (
                             <li key={house.houseId}>
-                              <span
-                                className={`sales-desk__house-chip${selected ? ' sales-desk__house-chip--active' : ''}`}
+                              <button
+                                type="button"
+                                className="sales-desk__house-chip"
                                 data-house-id={house.houseId}
-                                data-active={selected ? 'true' : 'false'}
+                                data-active="false"
+                                data-testid="sales-related-house"
+                                onClick={() => openRelatedHouse(house.houseId)}
                               >
                                 {house.houseName}
-                              </span>
+                              </button>
                             </li>
                           );
                         })}
