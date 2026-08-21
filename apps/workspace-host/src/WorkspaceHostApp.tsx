@@ -513,23 +513,24 @@ export function WorkspaceHostApp() {
           projectId: event.data.projectId,
           origin: event.origin,
         });
+        const requestedProjectId = event.data.projectId;
         const currentHouseId =
           loadPlatformSession()?.activeHouseId ??
           currentContext.activeHouseId ??
           null;
         const nextActiveHouseId =
           currentHouseId !== null &&
-          isHouseInProject(currentHouseId, event.data.projectId)
+          isHouseInProject(currentHouseId, requestedProjectId)
             ? currentHouseId
             : null;
 
         const previousSession = loadPlatformSession();
         const next = updateSession({
-          projectId: event.data.projectId,
+          projectId: requestedProjectId,
           activeHouseId: nextActiveHouseId,
           workspaceContext: {
             ...currentContext,
-            projectId: event.data.projectId,
+            projectId: requestedProjectId,
             activeHouseId: nextActiveHouseId,
           },
         });
@@ -551,7 +552,7 @@ export function WorkspaceHostApp() {
                 setSharedProjectId(previousSession.projectId);
                 setSharedActiveHouseId(previousSession.activeHouseId);
                 task42Trace('project-change:persistence-fail', {
-                  projectId: event.data.projectId,
+                  projectId: requestedProjectId,
                 });
               }
             });
