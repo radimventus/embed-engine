@@ -376,7 +376,7 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
     assert.match(
       app,
-      /currentHouseId[\s\S]*isHouseInProject\(currentHouseId, event\.data\.projectId\)[\s\S]*activeHouseId: nextActiveHouseId/,
+      /currentHouseId[\s\S]*isHouseInProject\(currentHouseId, requestedProjectId\)[\s\S]*activeHouseId: nextActiveHouseId/,
     );
     assert.doesNotMatch(
       app,
