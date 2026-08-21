@@ -13,6 +13,7 @@ import type {
   MediaMode,
   WalkthroughState,
 } from '@embed-engine/contracts';
+import { canonicalImageMediaId } from '@embed-engine/platform-access';
 
 import { useDecisionSessionRuntime } from '../client-studio/runtime/DecisionSessionRuntimeProvider';
 import {
@@ -112,10 +113,19 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
       experience.house,
       activeRoomId,
     );
-    setActiveMediaIndex(
-      roomPhotoIndex ?? firstPhotoIndex(projectedThumbnails),
-    );
-  }, [activeRoomId, experience.house, projectedThumbnails]);
+    const nextIndex = roomPhotoIndex ?? firstPhotoIndex(projectedThumbnails);
+    setActiveMediaIndex(nextIndex);
+    const nextPhoto = projectedThumbnails[nextIndex];
+    if (nextPhoto?.kind === 'photo') {
+      dispatch({
+        type: 'ViewImage',
+        mediaId: canonicalImageMediaId({
+          roomId: nextPhoto.roomId,
+          src: nextPhoto.src,
+        }),
+      });
+    }
+  }, [activeRoomId, dispatch, experience.house, projectedThumbnails]);
 
   const value = useMemo((): WalkthroughContextValue => {
     const roomMediaItems = projectedThumbnails;
@@ -155,6 +165,13 @@ export function WalkthroughProvider({ children }: WalkthroughProviderProps) {
         }
         if (item?.kind === 'photo') {
           setMediaModeState('photo');
+          dispatch({
+            type: 'ViewImage',
+            mediaId: canonicalImageMediaId({
+              roomId: item.roomId,
+              src: item.src,
+            }),
+          });
           const roomId = item.roomId;
           if (roomId !== null && roomId !== activeRoomId) {
             dispatch({ type: 'SelectRoom', roomId });

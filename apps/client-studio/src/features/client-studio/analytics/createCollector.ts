@@ -413,6 +413,16 @@ function payloadFromDecisionEvent(
       };
     case 'QuestionOpened':
       return { questionId: event.questionId };
+    case 'VideoPlaybackStarted':
+      return { mediaId: event.mediaId };
+    case 'VideoPlaybackMilestone':
+      return { mediaId: event.mediaId, milestone: event.milestone };
+    case 'ImageViewed':
+      return { mediaId: event.mediaId };
+    case 'JourneyStageEntered':
+      return { stageId: event.stageId };
+    case 'ChatQuestionSubmitted':
+      return { questionId: event.questionId };
     default:
       return {};
   }

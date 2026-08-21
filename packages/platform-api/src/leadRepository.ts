@@ -28,6 +28,7 @@ export type DurableLeadInput = {
 
 export type DurableLead = DurableLeadInput & {
   readonly status: 'accepted';
+  readonly processingStatus: 'new' | 'accepted';
   readonly notificationStatus: 'pending';
   readonly decisionSessionId: string | null;
 };
@@ -38,15 +39,29 @@ export type LeadScopeQuery = {
   readonly houseId?: string;
 };
 
+export type LeadAcceptInput = {
+  readonly leadId: string;
+  readonly companyId: string;
+  readonly projectId: string;
+  readonly houseId: string;
+};
+
 export interface LeadRepository {
   create(input: DurableLeadInput): Promise<DurableLead>;
   getByIdempotencyKey(key: string): Promise<DurableLead | null>;
   list(query: LeadScopeQuery): Promise<readonly DurableLead[]>;
+  accept(input: LeadAcceptInput): Promise<DurableLead>;
 }
 
 export class LeadAlreadyExistsError extends Error {
   constructor(readonly lead: DurableLead) {
     super('Lead already exists.');
+  }
+}
+
+export class LeadNotFoundError extends Error {
+  constructor() {
+    super('Lead not found.');
   }
 }
 
@@ -82,6 +97,7 @@ function validate(input: DurableLeadInput): DurableLead {
     consent: { ...input.consent, acceptedAt: new Date(input.consent.acceptedAt).toISOString() },
     decisionSessionId,
     status: 'accepted',
+    processingStatus: 'new',
     notificationStatus: 'pending',
   };
 }
@@ -120,6 +136,46 @@ export class FileLeadRepository implements LeadRepository {
     );
   }
 
+  async accept(input: LeadAcceptInput): Promise<DurableLead> {
+    const leadId = input.leadId.trim();
+    const companyId = input.companyId.trim();
+    const projectId = input.projectId.trim();
+    const houseId = input.houseId.trim();
+    if (
+      leadId.length === 0 ||
+      companyId.length === 0 ||
+      projectId.length === 0 ||
+      houseId.length === 0
+    ) {
+      throw new LeadNotFoundError();
+    }
+    return this.exclusively(async () => {
+      const state = await this.read();
+      const index = state.leads.findIndex(
+        (item) =>
+          item.leadId === leadId &&
+          item.companyId === companyId &&
+          item.projectId === projectId &&
+          item.houseId === houseId,
+      );
+      if (index < 0) {
+        throw new LeadNotFoundError();
+      }
+      const existing = state.leads[index]!;
+      if (existing.processingStatus === 'accepted') {
+        return existing;
+      }
+      const accepted: DurableLead = {
+        ...existing,
+        processingStatus: 'accepted',
+      };
+      const leads = [...state.leads];
+      leads[index] = accepted;
+      await this.write({ leads });
+      return accepted;
+    });
+  }
+
   private async read(): Promise<LeadState> {
     try {
       const parsed = JSON.parse(await readFile(this.statePath, 'utf8')) as LeadState;
@@ -128,6 +184,8 @@ export class FileLeadRepository implements LeadRepository {
           ? parsed.leads.map((item) => ({
               ...item,
               decisionSessionId: item.decisionSessionId ?? null,
+              processingStatus:
+                item.processingStatus === 'accepted' ? 'accepted' : 'new',
             }))
           : [],
       };

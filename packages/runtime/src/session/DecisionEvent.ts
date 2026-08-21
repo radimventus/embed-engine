@@ -11,6 +11,13 @@ export type ObjectId = string;
 
 export type RoomId = string;
 
+export type MediaId = string;
+
+/** Explicit Client Journey stages used for genuine TOUR-return capture. */
+export type JourneyStageId = "tour" | "priority" | "racio" | "audit";
+
+export type VideoPlaybackMilestone = "half" | "end";
+
 /** Captured Client-scale importance for one selected priority. Optional on older events. */
 export type PriorityIntensity = {
   readonly priorityId: string;
@@ -49,6 +56,32 @@ export type DecisionEvent =
       readonly type: "QuestionOpened";
       readonly questionId: string;
       readonly prompt?: string;
+      readonly at: Timestamp;
+    }
+  | {
+      readonly type: "VideoPlaybackStarted";
+      readonly mediaId: MediaId;
+      readonly at: Timestamp;
+    }
+  | {
+      readonly type: "VideoPlaybackMilestone";
+      readonly mediaId: MediaId;
+      readonly milestone: VideoPlaybackMilestone;
+      readonly at: Timestamp;
+    }
+  | {
+      readonly type: "ImageViewed";
+      readonly mediaId: MediaId;
+      readonly at: Timestamp;
+    }
+  | {
+      readonly type: "JourneyStageEntered";
+      readonly stageId: JourneyStageId;
+      readonly at: Timestamp;
+    }
+  | {
+      readonly type: "ChatQuestionSubmitted";
+      readonly questionId: string;
       readonly at: Timestamp;
     };
 

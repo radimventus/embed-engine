@@ -183,6 +183,59 @@ export function validateCommand(input: {
       }
       break;
     }
+    case "StartVideoPlayback":
+    case "ViewImage": {
+      if (typeof command.mediaId !== "string" || command.mediaId.trim().length === 0) {
+        errors.push({
+          code: "HP_INVALID_ANSWER",
+          message: "mediaId must be a non-empty string.",
+          path: "command.mediaId",
+        });
+      }
+      break;
+    }
+    case "MarkVideoPlaybackMilestone": {
+      if (typeof command.mediaId !== "string" || command.mediaId.trim().length === 0) {
+        errors.push({
+          code: "HP_INVALID_ANSWER",
+          message: "mediaId must be a non-empty string.",
+          path: "command.mediaId",
+        });
+      }
+      if (command.milestone !== "half" && command.milestone !== "end") {
+        errors.push({
+          code: "HP_INVALID_ANSWER",
+          message: "milestone must be half or end.",
+          path: "command.milestone",
+        });
+      }
+      break;
+    }
+    case "EnterJourneyStage": {
+      if (
+        command.stageId !== "tour" &&
+        command.stageId !== "priority" &&
+        command.stageId !== "racio" &&
+        command.stageId !== "audit"
+      ) {
+        errors.push({
+          code: "HP_INVALID_ANSWER",
+          message: "stageId must be a canonical Client Journey stage.",
+          path: "command.stageId",
+        });
+      }
+      break;
+    }
+    case "SubmitChatQuestion": {
+      if (typeof command.questionId !== "string" || command.questionId.length === 0) {
+        errors.push({
+          code: "HP_INVALID_ANSWER",
+          message: "questionId must be a non-empty string.",
+          path: "command.questionId",
+        });
+      }
+      break;
+    }
     default: {
       const _exhaustive: never = command;
       errors.push({

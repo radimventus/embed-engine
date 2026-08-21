@@ -114,6 +114,7 @@ describe('Sales House operational desk', () => {
             source: 'EMBED',
             intent: 'audit',
             status: 'accepted',
+            processingStatus: 'new',
             contact: {
               name: 'Petr Lead',
               email: 'petr.lead@example.cz',
@@ -155,6 +156,9 @@ describe('Sales House operational desk', () => {
       'Pozemek',
     ]);
     assert.equal(clients[0]?.houses[0]?.score, null);
+    assert.equal(clients[0]?.houses[0]?.readinessScore, 10);
+    assert.equal(clients[0]?.processingStatus, 'new');
+    assert.equal(clients[0]?.origin, 'LEAD');
     assert.equal(clients[0]?.houses[0]?.tags.includes('Žádost o audit'), false);
     assert.equal(clients[0]?.houses[0]?.priorities.length, 3);
     assert.equal(clients[0]?.houses[0]?.openedQuestions.length, 0);

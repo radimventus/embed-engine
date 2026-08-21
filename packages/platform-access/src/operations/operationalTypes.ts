@@ -1,4 +1,5 @@
 import type { HouseDataMode } from '../domain/types';
+import type { LeadProcessingStatus, ReadinessCatalog } from '../readiness/readinessTypes';
 
 export const HIGH_INTENT_THRESHOLD = 65;
 
@@ -22,8 +23,13 @@ export type ProfilZajemce = {
   readonly priorities: readonly OperationalPrioritySelection[];
   readonly openedQuestions: readonly OperationalOpenedQuestion[];
   readonly insight: string;
-  /** Measured Index rozhodovací jistoty, or null when insufficient / incompatible. */
+  /**
+   * Legacy reference certainty only. Never Index připravenosti.
+   * REAL cases stay null.
+   */
   readonly score: number | null;
+  /** Canonical Index připravenosti 0–100, or null when unavailable. */
+  readonly readinessScore: number | null;
   readonly journey: readonly OperationalJourneyStep[];
 };
 
@@ -54,6 +60,7 @@ export type HouseOperationalCase = {
   readonly houseName: string;
   readonly origin: OperationalOrigin;
   readonly leadId: string | null;
+  readonly processingStatus: LeadProcessingStatus | null;
   readonly createdAt: string;
   readonly contact: {
     readonly name: string;
@@ -74,6 +81,7 @@ export type OperationalHouseScope = {
   readonly dataMode: HouseDataMode;
   /** Canonical rooms.csv names for this House, when available. */
   readonly roomNames?: Readonly<Record<string, string>>;
+  readonly readinessCatalog?: ReadinessCatalog;
 };
 
 export type OperationalLeadRecord = {
@@ -85,6 +93,7 @@ export type OperationalLeadRecord = {
   readonly source: 'EMBED';
   readonly intent: 'audit';
   readonly status: 'accepted';
+  readonly processingStatus: LeadProcessingStatus;
   readonly contact: {
     readonly name: string;
     readonly email: string;
@@ -118,6 +127,32 @@ export type OperationalDecisionEvent =
       readonly type: 'QuestionOpened';
       readonly questionId: string;
       readonly prompt?: string;
+      readonly at: number;
+    }
+  | {
+      readonly type: 'VideoPlaybackStarted';
+      readonly mediaId: string;
+      readonly at: number;
+    }
+  | {
+      readonly type: 'VideoPlaybackMilestone';
+      readonly mediaId: string;
+      readonly milestone: 'half' | 'end';
+      readonly at: number;
+    }
+  | {
+      readonly type: 'ImageViewed';
+      readonly mediaId: string;
+      readonly at: number;
+    }
+  | {
+      readonly type: 'JourneyStageEntered';
+      readonly stageId: 'tour' | 'priority' | 'racio' | 'audit';
+      readonly at: number;
+    }
+  | {
+      readonly type: 'ChatQuestionSubmitted';
+      readonly questionId: string;
       readonly at: number;
     }
   | {

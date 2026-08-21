@@ -42,6 +42,32 @@ export type DurableDecisionEvent =
       readonly questionId: string;
       readonly prompt?: string;
       readonly at: number;
+    }
+  | {
+      readonly type: 'VideoPlaybackStarted';
+      readonly mediaId: string;
+      readonly at: number;
+    }
+  | {
+      readonly type: 'VideoPlaybackMilestone';
+      readonly mediaId: string;
+      readonly milestone: 'half' | 'end';
+      readonly at: number;
+    }
+  | {
+      readonly type: 'ImageViewed';
+      readonly mediaId: string;
+      readonly at: number;
+    }
+  | {
+      readonly type: 'JourneyStageEntered';
+      readonly stageId: 'tour' | 'priority' | 'racio' | 'audit';
+      readonly at: number;
+    }
+  | {
+      readonly type: 'ChatQuestionSubmitted';
+      readonly questionId: string;
+      readonly at: number;
     };
 
 export type DurableSerializedDecisionSession = {
@@ -208,6 +234,69 @@ function sanitizeEvent(value: unknown): DurableDecisionEvent {
             prompt,
             at: value.at,
           };
+    }
+    case 'VideoPlaybackStarted': {
+      if (typeof value.mediaId !== 'string' || value.mediaId.trim().length === 0) {
+        throw new Error('Invalid VideoPlaybackStarted event.');
+      }
+      return {
+        type: 'VideoPlaybackStarted',
+        mediaId: value.mediaId.trim(),
+        at: value.at,
+      };
+    }
+    case 'VideoPlaybackMilestone': {
+      if (
+        typeof value.mediaId !== 'string' ||
+        value.mediaId.trim().length === 0 ||
+        (value.milestone !== 'half' && value.milestone !== 'end')
+      ) {
+        throw new Error('Invalid VideoPlaybackMilestone event.');
+      }
+      return {
+        type: 'VideoPlaybackMilestone',
+        mediaId: value.mediaId.trim(),
+        milestone: value.milestone,
+        at: value.at,
+      };
+    }
+    case 'ImageViewed': {
+      if (typeof value.mediaId !== 'string' || value.mediaId.trim().length === 0) {
+        throw new Error('Invalid ImageViewed event.');
+      }
+      return {
+        type: 'ImageViewed',
+        mediaId: value.mediaId.trim(),
+        at: value.at,
+      };
+    }
+    case 'JourneyStageEntered': {
+      if (
+        value.stageId !== 'tour' &&
+        value.stageId !== 'priority' &&
+        value.stageId !== 'racio' &&
+        value.stageId !== 'audit'
+      ) {
+        throw new Error('Invalid JourneyStageEntered event.');
+      }
+      return {
+        type: 'JourneyStageEntered',
+        stageId: value.stageId,
+        at: value.at,
+      };
+    }
+    case 'ChatQuestionSubmitted': {
+      if (
+        typeof value.questionId !== 'string' ||
+        value.questionId.trim().length === 0
+      ) {
+        throw new Error('Invalid ChatQuestionSubmitted event.');
+      }
+      return {
+        type: 'ChatQuestionSubmitted',
+        questionId: value.questionId.trim(),
+        at: value.at,
+      };
     }
     default:
       throw new Error('Unsupported decision session event.');

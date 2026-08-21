@@ -8,7 +8,6 @@ import { useEffect, useMemo, useState } from 'react';
 
 import {
   PLATFORM_ROLE_LABELS,
-  listWorkspaceHouses,
   primaryRole,
   recordPlatformActivity,
   submitPlatformFeedback,
@@ -27,10 +26,10 @@ import {
 
 import {
   HIGH_INTENT_THRESHOLD,
-  clientPrimaryScore,
-  formatDecisionCertainty,
+  clientPrimaryReadiness,
+  formatIndexPripravenosti,
   formatPriorityImportance,
-  hasMeasuredDecisionCertainty,
+  hasMeasuredReadiness,
   houseDetailLine,
   houseListLine,
   listSalesCanonicalProjects,
@@ -70,19 +69,13 @@ export function SalesStudioApp() {
   );
   const activeProject =
     salesProjects.find((project) => project.id === activeProjectId) ?? null;
-  const { cases } = useHouseOperationalCases();
+  const { cases, acceptLead } = useHouseOperationalCases();
   const scopedClients = useMemo(() => toSalesClients(cases), [cases]);
   const [activeClientId, setActiveClientId] = useState<string | null>(null);
   const [activeInterestHouseId, setActiveInterestHouseId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [intentFilter, setIntentFilter] = useState<IntentFilter>('all');
   const scopeHouseId = session?.activeHouseId ?? null;
-  const scopedHouseName =
-    scopeHouseId !== null && activeProjectId !== null
-      ? listWorkspaceHouses(activeProjectId).find(
-          (house) => house.houseId === scopeHouseId,
-        )?.name ?? null
-      : null;
 
   useEffect(() => {
     setActiveClientId(null);
@@ -92,11 +85,11 @@ export function SalesStudioApp() {
   const query = searchQuery.trim().toLowerCase();
   const visibleClients = scopedClients.filter((client) => {
     if (!matchesQuery(client, query)) return false;
-    const score = clientPrimaryScore(client);
+    const score = clientPrimaryReadiness(client);
     if (
       intentFilter === 'high' &&
       (
-        !hasMeasuredDecisionCertainty(score) ||
+        !hasMeasuredReadiness(score) ||
         score < HIGH_INTENT_THRESHOLD
       )
     ) {
@@ -134,17 +127,26 @@ export function SalesStudioApp() {
     { id: 'prospect', label: activeClient?.name ?? 'Zájemce' },
   ];
 
-  const highIntentCount = scopedClients.filter((client) => {
-    const score = clientPrimaryScore(client);
-    return (
-      hasMeasuredDecisionCertainty(score) && score >= HIGH_INTENT_THRESHOLD
-    );
-  }).length;
   const preData = scopedClients.length === 0;
 
   function selectClient(clientId: string) {
     setActiveClientId(clientId);
     setActiveInterestHouseId(null);
+  }
+
+  async function acceptActiveLead() {
+    if (
+      activeClient === null ||
+      activeClient.origin !== 'LEAD' ||
+      activeClient.leadId === null ||
+      activeHouse === null
+    ) {
+      return;
+    }
+    await acceptLead({
+      leadId: activeClient.leadId,
+      houseId: activeHouse.id,
+    });
   }
 
   const desk = (
@@ -198,7 +200,7 @@ export function SalesStudioApp() {
                   className={`sales-desk__filter${intentFilter === 'high' ? ' sales-desk__filter--active' : ''}`}
                   onClick={() => setIntentFilter('high')}
                 >
-                  Vysoká jistota
+                  Vyšší index
                 </button>
               </div>
 
@@ -220,6 +222,7 @@ export function SalesStudioApp() {
                         ? activeInterestHouseId
                         : null,
                     );
+                    const accepted = client.processingStatus === 'accepted';
                     return (
                       <li key={client.id}>
                         <button
@@ -229,13 +232,17 @@ export function SalesStudioApp() {
                           aria-current={active ? 'true' : undefined}
                         >
                           <div className="sales-desk__client-head">
+                            <span
+                              className={`sales-desk__accept-mark${accepted ? ' sales-desk__accept-mark--on' : ''}`}
+                              aria-hidden="true"
+                              data-testid="sales-accept-indicator"
+                              data-accepted={accepted ? 'true' : 'false'}
+                            />
                             <span className="sales-desk__client-name">
                               {client.name}
                             </span>
                             <span className="sales-desk__intent-score">
-                              {hasMeasuredDecisionCertainty(primary.score)
-                                ? `${formatDecisionCertainty(primary.score)} Jistota`
-                                : formatDecisionCertainty(primary.score)}
+                              {formatIndexPripravenosti(primary.readinessScore)}
                             </span>
                           </div>
                           <p className="sales-desk__client-project">
@@ -254,69 +261,58 @@ export function SalesStudioApp() {
             </PlatformCard>
 
             <div className="sales-desk__center">
-              <header className="sales-desk__context">
-                <h1 className="platform-type-h1 sales-desk__house-title">
-                  {activeHouse?.houseName ?? scopedHouseName ?? activeProject?.label ?? '—'}
-                </h1>
-                {activeClient !== null ? (
-                  <p className="sales-desk__prospect-name">{activeClient.name}</p>
-                ) : null}
-                {activeClient !== null && activeHouse !== null ? (
-                  <ul
-                    className="sales-desk__house-list"
-                    aria-label="Domy se zájmem"
-                  >
-                    {activeClient.houses.map((house) => {
-                      const selected = house.id === activeHouse.id;
-                      return (
-                        <li key={house.id}>
-                          <button
-                            type="button"
-                            className={`sales-desk__house-chip${selected ? ' sales-desk__house-chip--active' : ''}`}
-                            onClick={() => setActiveInterestHouseId(house.id)}
-                            aria-current={selected ? 'true' : undefined}
-                          >
-                            <span>{house.houseName}</span>
-                            <span className="sales-desk__house-chip-score">
-                              {formatDecisionCertainty(house.score)}
-                            </span>
-                          </button>
-                        </li>
-                      );
-                    })}
-                  </ul>
-                ) : null}
-                {highIntentCount > 0 ? (
-                  <div className="sales-desk__context-badge">
-                    <PlatformStatusBadge tone="gold">
-                      {`● ${highIntentCount} klienti s vysokou rozhodovací jistotou`}
-                    </PlatformStatusBadge>
-                  </div>
-                ) : null}
-              </header>
-
               {activeClient !== null && activeHouse !== null ? (
-                <PlatformCard title="Detail nákupního záměru">
-                  <h2 className="sales-desk__detail-name">{activeClient.name}</h2>
-                  <p className="sales-desk__detail-project">
-                    {houseDetailLine(activeHouse)}
-                  </p>
+                <PlatformCard className="sales-desk__case">
+                  <header className="sales-desk__case-header">
+                    <div className="sales-desk__case-identity">
+                      <h1 className="sales-desk__case-name">{activeClient.name}</h1>
+                      <p className="sales-desk__case-meta">
+                        {houseDetailLine(activeHouse)}
+                      </p>
+                    </div>
+                    {activeClient.origin === 'LEAD' ? (
+                      activeClient.processingStatus === 'accepted' ? (
+                        <p
+                          className="sales-desk__accepted"
+                          data-testid="sales-lead-accepted"
+                        >
+                          PŘIJATO
+                        </p>
+                      ) : (
+                        <button
+                          type="button"
+                          className="sales-desk__accept"
+                          data-testid="sales-lead-accept"
+                          onClick={() => {
+                            void acceptActiveLead();
+                          }}
+                        >
+                          PŘIJMOUT
+                        </button>
+                      )
+                    ) : null}
+                  </header>
 
                   <div className="sales-desk__meter">
                     <div className="sales-desk__meter-header">
-                      <span>Index rozhodovací jistoty</span>
-                      <span>{formatDecisionCertainty(activeHouse.score)}</span>
+                      <span>Index připravenosti</span>
+                      <span>{formatIndexPripravenosti(activeHouse.readinessScore)}</span>
                     </div>
                     <div className="sales-desk__meter-track">
                       <div
                         className="sales-desk__meter-fill"
                         style={{
-                          width: hasMeasuredDecisionCertainty(activeHouse.score)
-                            ? `${activeHouse.score}%`
+                          width: hasMeasuredReadiness(activeHouse.readinessScore)
+                            ? `${Math.min(100, activeHouse.readinessScore)}%`
                             : '0%',
                         }}
                       />
                     </div>
+                  </div>
+
+                  <div className="sales-desk__insight">
+                    <h4>Doporučené téma rozhovoru</h4>
+                    <p>{activeHouse.insight}</p>
                   </div>
 
                   <p className="platform-type-section sales-desk__priorities-label">
@@ -382,14 +378,9 @@ export function SalesStudioApp() {
                       </ul>
                     </div>
                   ) : null}
-
-                  <div className="sales-desk__insight">
-                    <h4>Doporučené téma rozhovoru</h4>
-                    <p>{activeHouse.insight}</p>
-                  </div>
                 </PlatformCard>
               ) : (
-                <PlatformCard title="Detail nákupního záměru">
+                <PlatformCard title="Případ">
                   <p
                     className="sales-desk__empty"
                     data-testid="sales-operational-empty-detail"

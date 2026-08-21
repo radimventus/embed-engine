@@ -5,6 +5,7 @@ import { DECISION_TRANSITION_EASING } from '../../../walkthrough/transition-toke
 import { useDecisionCrossfade } from '../../../walkthrough/useDecisionCrossfade';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import { evidenceLog } from '../../runtime/runtimeEvidence';
+import { TOUR_VIDEO_MEDIA_ID } from '@embed-engine/platform-access';
 
 import { MediaLightbox } from './MediaLightbox';
 import { MediaZoomControl } from './MediaZoomControl';
@@ -55,7 +56,7 @@ function isWistiaEmbedUrl(url: string): boolean {
 }
 
 export function MainMedia() {
-  const { experience } = useDecisionSessionRuntime();
+  const { experience, dispatch } = useDecisionSessionRuntime();
   const gallery = experience.context.roomMedia;
   const {
     mode,
@@ -66,6 +67,11 @@ export function MainMedia() {
     selectMediaIndex,
   } = useWalkthrough();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoStartedRef = useRef(false);
+  const videoEndedRef = useRef(false);
+  const lastVideoStartAtRef = useRef(0);
+  const halfReportedRef = useRef(false);
+  const ignoreProgrammaticPlayRef = useRef(false);
   const [hasStartedPlayback, setHasStartedPlayback] = useState(false);
   const [isLightboxOpen, setIsLightboxOpen] = useState(false);
   const [mediaFailed, setMediaFailed] = useState(false);
@@ -135,12 +141,20 @@ export function MainMedia() {
   }, [mediaMode, videoSrc, mode, activeMediaSrc]);
 
   useEffect(() => {
+    videoStartedRef.current = false;
+    videoEndedRef.current = false;
+    halfReportedRef.current = false;
+    lastVideoStartAtRef.current = 0;
+  }, [videoSrc]);
+
+  useEffect(() => {
     const video = videoRef.current;
 
     if (video === null || mediaMode !== 'video') {
       return;
     }
 
+    ignoreProgrammaticPlayRef.current = true;
     video.pause();
     video.currentTime = 0;
     video.load();
@@ -148,6 +162,12 @@ export function MainMedia() {
     if (mode === 'playing') {
       void video.play();
     }
+    const timer = window.setTimeout(() => {
+      ignoreProgrammaticPlayRef.current = false;
+    }, 400);
+    return () => {
+      window.clearTimeout(timer);
+    };
   }, [mediaMode, mode, videoKey, videoSrc]);
 
   const photoSrc =
@@ -178,7 +198,23 @@ export function MainMedia() {
     onSelectIndex: selectMediaIndex,
   });
 
+  const captureVideoStart = () => {
+    const now = Date.now();
+    if (now - lastVideoStartAtRef.current < 800) {
+      return;
+    }
+    lastVideoStartAtRef.current = now;
+    dispatch({
+      type: 'StartVideoPlayback',
+      mediaId: TOUR_VIDEO_MEDIA_ID,
+    });
+  };
+
   const handlePlay = () => {
+    if (!videoStartedRef.current) {
+      videoStartedRef.current = true;
+      captureVideoStart();
+    }
     if (mode === 'ready') {
       play();
       return;
@@ -193,9 +229,51 @@ export function MainMedia() {
 
   const handleVideoPlay = () => {
     setHasStartedPlayback(true);
+    if (ignoreProgrammaticPlayRef.current) {
+      return;
+    }
+    const video = videoRef.current;
+    const isRestart =
+      videoEndedRef.current ||
+      (video !== null && video.currentTime < 0.35);
+    if (!videoStartedRef.current) {
+      videoStartedRef.current = true;
+      captureVideoStart();
+      return;
+    }
+    if (isRestart) {
+      videoEndedRef.current = false;
+      captureVideoStart();
+    }
+  };
+
+  const handleVideoTimeUpdate = () => {
+    const video = videoRef.current;
+    if (
+      video === null ||
+      halfReportedRef.current ||
+      !Number.isFinite(video.duration) ||
+      video.duration <= 0
+    ) {
+      return;
+    }
+    if (video.currentTime / video.duration >= 0.5) {
+      halfReportedRef.current = true;
+      dispatch({
+        type: 'MarkVideoPlaybackMilestone',
+        mediaId: TOUR_VIDEO_MEDIA_ID,
+        milestone: 'half',
+      });
+    }
   };
 
   const handleVideoEnded = () => {
+    videoEndedRef.current = true;
+    dispatch({
+      type: 'MarkVideoPlaybackMilestone',
+      mediaId: TOUR_VIDEO_MEDIA_ID,
+      milestone: 'end',
+    });
     if (mode === 'playing') {
       onVideoEnded();
     }
@@ -267,6 +345,7 @@ export function MainMedia() {
               playsInline
               preload="metadata"
               onPlay={handleVideoPlay}
+              onTimeUpdate={handleVideoTimeUpdate}
               onEnded={handleVideoEnded}
               onLoadedData={() => setMediaPending(false)}
               onError={() => {

@@ -126,6 +126,25 @@ function isDecisionEvent(value: unknown): value is DecisionEvent {
         typeof value.questionId === "string" &&
         (value.prompt === undefined || typeof value.prompt === "string")
       );
+    case "VideoPlaybackStarted":
+      return typeof value.mediaId === "string" && value.mediaId.length > 0;
+    case "VideoPlaybackMilestone":
+      return (
+        typeof value.mediaId === "string" &&
+        value.mediaId.length > 0 &&
+        (value.milestone === "half" || value.milestone === "end")
+      );
+    case "ImageViewed":
+      return typeof value.mediaId === "string" && value.mediaId.length > 0;
+    case "JourneyStageEntered":
+      return (
+        value.stageId === "tour" ||
+        value.stageId === "priority" ||
+        value.stageId === "racio" ||
+        value.stageId === "audit"
+      );
+    case "ChatQuestionSubmitted":
+      return typeof value.questionId === "string" && value.questionId.length > 0;
     default:
       return false;
   }

@@ -46,6 +46,7 @@ test('FileLeadRepository persists and reads an accepted durable lead', async () 
     const created = await repository.create(validLead());
 
     assert.equal(created.status, 'accepted');
+    assert.equal(created.processingStatus, 'new');
     assert.equal(created.notificationStatus, 'pending');
     assert.equal(created.companyId, 'company-test');
     assert.equal(created.projectId, 'project-test');
@@ -284,6 +285,56 @@ test('FileLeadRepository remains readable without decisionSessionId', async () =
     );
     assert.equal(restored?.leadId, legacy.leadId);
     assert.equal(restored?.decisionSessionId, null);
+    assert.equal(restored?.processingStatus, 'new');
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('FileLeadRepository accepts a NEW lead idempotently within House scope', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'conis-lead-accept-'));
+  const statePath = join(dir, 'leads.json');
+  try {
+    const repository = new FileLeadRepository(statePath);
+    const created = await repository.create(validLead());
+    assert.equal(created.processingStatus, 'new');
+
+    const accepted = await repository.accept({
+      leadId: created.leadId,
+      companyId: created.companyId,
+      projectId: created.projectId,
+      houseId: created.houseId,
+    });
+    assert.equal(accepted.processingStatus, 'accepted');
+    assert.equal(accepted.decisionSessionId, created.decisionSessionId);
+    assert.deepEqual(accepted.contact, created.contact);
+
+    const again = await repository.accept({
+      leadId: created.leadId,
+      companyId: created.companyId,
+      projectId: created.projectId,
+      houseId: created.houseId,
+    });
+    assert.equal(again.processingStatus, 'accepted');
+    assert.deepEqual(again, accepted);
+
+    await assert.rejects(
+      () =>
+        repository.accept({
+          leadId: created.leadId,
+          companyId: created.companyId,
+          projectId: created.projectId,
+          houseId: 'house-other',
+        }),
+      /Lead not found/,
+    );
+
+    const listed = await new FileLeadRepository(statePath).list({
+      companyId: created.companyId,
+      projectId: created.projectId,
+      houseId: created.houseId,
+    });
+    assert.equal(listed[0]?.processingStatus, 'accepted');
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

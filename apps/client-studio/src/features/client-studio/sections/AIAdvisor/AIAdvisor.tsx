@@ -118,6 +118,10 @@ export function AIAdvisor() {
     const time = formatMessageTime(now);
     const userId = createMessageId();
     const pendingId = createMessageId();
+    dispatch({
+      type: 'SubmitChatQuestion',
+      questionId: userId,
+    });
 
     setMessages((current) => [
       ...current,

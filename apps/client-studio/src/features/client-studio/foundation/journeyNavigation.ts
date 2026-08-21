@@ -1,4 +1,5 @@
 import { PILOT_SECTION_IDS } from "../pilot/pilotVocabulary";
+import { captureJourneyStageFromSection } from "./journeyStageCapture";
 import { scrollToSection } from "./scrollToSection";
 
 export type JourneySectionNavigator = (sectionId: string) => void;
@@ -43,6 +44,7 @@ export function isDecisionSection(sectionId: string): boolean {
  * Same destinations as desktop sidebar — no new product routes.
  */
 export function navigateToJourneySection(sectionId: string): void {
+  captureJourneyStageFromSection(sectionId);
   if (sectionNavigator !== null) {
     sectionNavigator(sectionId);
     return;

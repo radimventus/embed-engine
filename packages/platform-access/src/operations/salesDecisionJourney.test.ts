@@ -44,6 +44,7 @@ function lead(
     source: 'EMBED',
     intent: 'audit',
     status: 'accepted',
+    processingStatus: 'new',
     contact: {
       name: 'VR Zájemce',
       email: 'vr@example.cz',
@@ -312,6 +313,7 @@ describe('Sales Decision Journey presentation', () => {
     });
     const profil = cases[0]?.profilZajemce;
     assert.equal(profil?.score, null);
+    assert.equal(profil?.readinessScore, null);
     assert.deepEqual(profil?.priorities, []);
     assert.deepEqual(profil?.openedQuestions, []);
     assert.equal(profil?.land, 'Nezadáno');
@@ -329,9 +331,10 @@ describe('Sales Decision Journey presentation', () => {
     );
   });
 
-  it('keeps REAL score null and REFERENCE cases valid', () => {
+  it('keeps REAL legacy score null, scores Index připravenosti, and leaves REFERENCE readiness unavailable', () => {
     const real = projectUserCase();
     assert.equal(real?.score, null);
+    assert.equal(real?.readinessScore, 52);
 
     const reference = selectHouseOperationalCases({
       companyId: DSE_COMPANY_ID,
@@ -344,6 +347,10 @@ describe('Sales Decision Journey presentation', () => {
     assert.equal(reference.length, 3);
     assert.equal(
       reference.every((item) => typeof item.profilZajemce.score === 'number'),
+      true,
+    );
+    assert.equal(
+      reference.every((item) => item.profilZajemce.readinessScore === null),
       true,
     );
     assert.equal(

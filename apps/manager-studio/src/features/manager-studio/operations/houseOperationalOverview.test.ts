@@ -121,6 +121,7 @@ describe('Manager House operational aggregates', () => {
           source: 'EMBED',
           intent: 'audit',
           status: 'accepted',
+          processingStatus: 'new',
           contact: {
             name: 'Petr Lead',
             email: 'petr.lead@example.cz',

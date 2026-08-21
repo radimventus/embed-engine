@@ -19,6 +19,7 @@ import {
 import {
   FileLeadRepository,
   LeadAlreadyExistsError,
+  LeadNotFoundError,
   type LeadRepository,
 } from './leadRepository';
 import { resolveLeadScope, resolvePublicHouseScope } from './leadScope';
@@ -95,6 +96,7 @@ export {
   type LeadRepository,
   type LeadScopeQuery,
   LeadAlreadyExistsError,
+  LeadNotFoundError,
 } from './leadRepository';
 export {
   FileDecisionSessionRepository,
@@ -855,10 +857,70 @@ export function createPlatformApiServer(
             source: item.source,
             intent: item.intent,
             status: item.status,
+            processingStatus: item.processingStatus,
             contact: item.contact,
             decisionSessionId: item.decisionSessionId ?? null,
           })),
         });
+      }
+      const acceptMatch = path.match(/^\/partner\/leads\/([^/]+)\/accept$/);
+      if (request.method === 'POST' && acceptMatch !== null) {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session =
+          token === null ? null : await partnerSessions.resolve(token);
+        if (session === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+        const roles = sessionRoles(session);
+        if (!canAccessStudio(roles, 'sales')) {
+          return respond(response, 403, { error: 'Přístup k poptávkám není povolen.' });
+        }
+        const leadId = decodeURIComponent(acceptMatch[1] ?? '').trim();
+        const rawBody = await requestBody(request);
+        const body =
+          typeof rawBody === 'object' && rawBody !== null && !Array.isArray(rawBody)
+            ? (rawBody as Record<string, unknown>)
+            : {};
+        const companyId =
+          typeof body.companyId === 'string' ? body.companyId.trim() : '';
+        const projectId =
+          typeof body.projectId === 'string' ? body.projectId.trim() : '';
+        const houseId =
+          typeof body.houseId === 'string' ? body.houseId.trim() : '';
+        if (
+          leadId.length === 0 ||
+          companyId.length === 0 ||
+          projectId.length === 0 ||
+          houseId.length === 0
+        ) {
+          return respond(response, 400, { error: 'Neplatný rozsah.' });
+        }
+        if (companyId !== sessionCompanyId(session)) {
+          return respond(response, 403, { error: 'Společnost není pro tuto relaci povolena.' });
+        }
+        const sessionProjectId = (
+          session.workspaceContext?.projectId ?? session.projectId ?? ''
+        ).trim();
+        if (projectId !== sessionProjectId) {
+          return respond(response, 403, { error: 'Projekt není pro tuto relaci povolen.' });
+        }
+        try {
+          const accepted = await leads.accept({
+            leadId,
+            companyId,
+            projectId,
+            houseId,
+          });
+          return respond(response, 200, {
+            leadId: accepted.leadId,
+            processingStatus: accepted.processingStatus,
+          });
+        } catch (error) {
+          if (error instanceof LeadNotFoundError) {
+            return respond(response, 404, { error: 'Poptávka nebyla nalezena.' });
+          }
+          throw error;
+        }
       }
       if (request.method === 'GET' && path === '/partner/decision-sessions') {
         const token = requestCookie(request, PARTNER_SESSION_COOKIE);

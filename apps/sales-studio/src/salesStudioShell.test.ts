@@ -52,10 +52,15 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     );
 
     assert.match(app, /Případy k hovoru/);
-    assert.match(app, /Detail nákupního záměru/);
+    assert.match(app, /Index připravenosti/);
+    assert.match(app, /PŘIJMOUT/);
+    assert.match(app, /PŘIJATO/);
     assert.match(app, /Rozhodovací cesta/);
     assert.match(app, /Hledat zájemce/);
-    assert.match(app, /Vysoká jistota/);
+    assert.match(app, /Vyšší index/);
+    assert.doesNotMatch(app, /Index rozhodovací jistoty/);
+    assert.doesNotMatch(app, /Detail nákupního záměru/);
+    assert.doesNotMatch(app, /Vysoká jistota/);
     assert.match(app, /useHouseOperationalCases/);
     assert.match(app, /toSalesClients/);
     assert.match(app, /sales-operational-empty/);
@@ -64,7 +69,9 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.doesNotMatch(app, /platform-inspector-rail/);
     assert.match(css, /sales-desk__grid/);
     assert.match(clients, /toSalesClients/);
+    assert.match(clients, /Zatím neměřeno/);
     assert.doesNotMatch(clients, /SALES_CLIENTS/);
+    assert.doesNotMatch(clients, /score:\s*70/);
   });
 
   it('applies Sales IA hierarchy (SR-002)', () => {
@@ -95,17 +102,17 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
 
     assert.match(app, /id: 'prospect'/);
     assert.match(app, /sales-desk__center/);
-    assert.match(app, /sales-desk__context/);
-    assert.match(app, /activeHouse\?\.houseName/);
-    assert.match(app, /sales-desk__house-list/);
+    assert.match(app, /sales-desk__case-header/);
+    assert.match(app, /sales-desk__case-name/);
     assert.match(app, /Profil zájemce/);
+    assert.match(app, /Doporučené téma rozhovoru/);
     assert.doesNotMatch(app, /id: 'company'/);
     assert.doesNotMatch(app, /Decision Journey/);
     assert.doesNotMatch(app, /Decision Signals/);
     assert.match(css, /25%/);
     assert.match(css, /50%/);
     assert.match(css, /sales-desk__center/);
-    assert.match(css, /text-align:\s*center/);
+    assert.match(css, /sales-desk__accept-mark/);
     assert.match(clients, /toSalesClients/);
     assert.match(shellCss, /\.platform-role-btn[\s\S]*?text-transform:\s*none/);
     assert.match(userMenu, /Vstupní stránka/);

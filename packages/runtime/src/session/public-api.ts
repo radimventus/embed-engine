@@ -18,10 +18,13 @@ export {
 
 export type {
   DecisionEvent,
+  JourneyStageId,
+  MediaId,
   ObjectId,
   PriorityIntensity,
   RoomId,
   Timestamp,
+  VideoPlaybackMilestone,
 } from "./DecisionEvent";
 export type { DecisionSession } from "./DecisionSession";
 export type { SessionRuntimeState } from "./SessionRuntimeState";

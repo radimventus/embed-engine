@@ -1,13 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { listWorkspaceHouses } from '../domain/workspaceHouseProjection';
+import { acceptHouseOperationalLead } from '../api/acceptHouseOperationalLead';
+import { fetchReadinessCatalogsByHouseId } from '../api/houseRoomNamesClient';
 import { fetchHouseOperationalLeads } from '../api/houseOperationalLeadsClient';
 import { fetchHouseOperationalSessions } from '../api/houseOperationalSessionsClient';
-import { fetchRoomNamesByHouseId } from '../api/houseRoomNamesClient';
 import { aggregateHouseOperations } from '../operations/aggregateHouseOperations';
 import {
   selectScopedOperationalCases,
 } from '../operations/selectHouseOperationalCases';
+import type { ReadinessCatalog } from '../readiness/readinessTypes';
 import type {
   HouseOperationalAggregate,
   HouseOperationalCase,
@@ -22,6 +24,10 @@ export type HouseOperationalCasesState = {
   readonly companyId: string | null;
   readonly projectId: string | null;
   readonly activeHouseId: string | null;
+  readonly acceptLead: (input: {
+    readonly leadId: string;
+    readonly houseId: string;
+  }) => Promise<boolean>;
 };
 
 export function useHouseOperationalCases(): HouseOperationalCasesState {
@@ -35,15 +41,50 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
   const [durableSessions, setDurableSessions] = useState<
     readonly OperationalDecisionSnapshot[]
   >([]);
-  const [roomNamesByHouseId, setRoomNamesByHouseId] = useState<
-    Readonly<Record<string, Readonly<Record<string, string>>>>
+  const [catalogsByHouseId, setCatalogsByHouseId] = useState<
+    Readonly<
+      Record<
+        string,
+        {
+          readonly roomNames: Readonly<Record<string, string>>;
+          readonly catalog: ReadinessCatalog;
+        }
+      >
+    >
   >({});
+  const [refreshToken, setRefreshToken] = useState(0);
+
+  const acceptLead = useCallback(
+    async (input: { readonly leadId: string; readonly houseId: string }) => {
+      if (companyId === null || projectId === null) {
+        return false;
+      }
+      const ok = await acceptHouseOperationalLead({
+        leadId: input.leadId,
+        companyId,
+        projectId,
+        houseId: input.houseId,
+      });
+      if (ok) {
+        setDurableLeads((current) =>
+          current.map((lead) =>
+            lead.leadId === input.leadId && lead.houseId === input.houseId
+              ? { ...lead, processingStatus: 'accepted' as const }
+              : lead,
+          ),
+        );
+        setRefreshToken((value) => value + 1);
+      }
+      return ok;
+    },
+    [companyId, projectId],
+  );
 
   useEffect(() => {
     if (companyId === null || projectId === null) {
       setDurableLeads([]);
       setDurableSessions([]);
-      setRoomNamesByHouseId({});
+      setCatalogsByHouseId({});
       return;
     }
     let cancelled = false;
@@ -59,23 +100,23 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
         projectId,
         houseId: activeHouseId,
       }),
-      fetchRoomNamesByHouseId({ houses }),
-    ]).then(([leads, sessions, roomNames]) => {
+      fetchReadinessCatalogsByHouseId({ houses }),
+    ]).then(([leads, sessions, catalogs]) => {
       if (!cancelled) {
         setDurableLeads(leads);
         setDurableSessions(sessions);
-        setRoomNamesByHouseId(roomNames);
+        setCatalogsByHouseId(catalogs);
       }
     });
     return () => {
       cancelled = true;
     };
-  }, [activeHouseId, companyId, projectId]);
+  }, [activeHouseId, companyId, projectId, refreshToken]);
 
-  return useMemo(() => {
+  const projected = useMemo(() => {
     if (companyId === null || projectId === null) {
       return {
-        cases: [],
+        cases: [] as readonly HouseOperationalCase[],
         aggregate: aggregateHouseOperations([]),
         companyId,
         projectId,
@@ -86,7 +127,8 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
       houseId: house.houseId,
       houseName: house.name,
       dataMode: house.dataMode,
-      roomNames: roomNamesByHouseId[house.houseId],
+      roomNames: catalogsByHouseId[house.houseId]?.roomNames,
+      readinessCatalog: catalogsByHouseId[house.houseId]?.catalog,
     }));
     const cases = selectScopedOperationalCases({
       companyId,
@@ -103,5 +145,10 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
       projectId,
       activeHouseId,
     };
-  }, [activeHouseId, companyId, durableLeads, durableSessions, projectId, roomNamesByHouseId]);
+  }, [activeHouseId, companyId, durableLeads, durableSessions, projectId, catalogsByHouseId]);
+
+  return {
+    ...projected,
+    acceptLead,
+  };
 }

@@ -61,6 +61,10 @@ describe('Durable Decision Session client pointer', () => {
     assert.equal(isDurableDecisionCommand('ChangePriority'), true);
     assert.equal(isDurableDecisionCommand('AnswerQuestion'), true);
     assert.equal(isDurableDecisionCommand('OpenQuestion'), true);
+    assert.equal(isDurableDecisionCommand('StartVideoPlayback'), true);
+    assert.equal(isDurableDecisionCommand('ViewImage'), true);
+    assert.equal(isDurableDecisionCommand('EnterJourneyStage'), true);
+    assert.equal(isDurableDecisionCommand('SubmitChatQuestion'), true);
     assert.equal(isDurableDecisionCommand('SelectVariant'), false);
   });
 

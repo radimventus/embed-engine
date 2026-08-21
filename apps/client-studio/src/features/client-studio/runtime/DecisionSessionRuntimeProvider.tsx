@@ -31,6 +31,7 @@ import {
 
 import { useOptionalDecisionAnalytics } from '../analytics/DecisionAnalyticsProvider';
 import { StudioLoading } from '../foundation/StudioLoading';
+import { registerJourneyStageCapture } from '../foundation/journeyStageCapture';
 import { bootstrapEvents } from './bootstrapEvents';
 import {
   ensureBuilderPackageBootstrapped,
@@ -594,6 +595,18 @@ export function DecisionSessionRuntimeProvider({
     },
     [analytics],
   );
+
+  useEffect(() => {
+    registerJourneyStageCapture((stageId) => {
+      if (runtimeRef.current === null) {
+        return;
+      }
+      dispatch({ type: 'EnterJourneyStage', stageId });
+    });
+    return () => {
+      registerJourneyStageCapture(null);
+    };
+  }, [dispatch]);
 
   const value = useMemo((): DecisionSessionRuntimeContextValue | null => {
     if (

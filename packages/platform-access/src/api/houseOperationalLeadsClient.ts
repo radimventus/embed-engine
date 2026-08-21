@@ -44,6 +44,8 @@ export async function fetchHouseOperationalLeads(input: {
     return body.leads.map((item) => ({
       ...item,
       decisionSessionId: item.decisionSessionId ?? null,
+      processingStatus:
+        item.processingStatus === 'accepted' ? 'accepted' : 'new',
     }));
   } catch {
     return [];

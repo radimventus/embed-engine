@@ -66,6 +66,7 @@ function acceptedLead(input: DurableLeadInput): DurableLead {
     ...input,
     decisionSessionId: input.decisionSessionId ?? null,
     status: 'accepted',
+    processingStatus: 'new',
     notificationStatus: 'pending',
   };
 }
@@ -88,6 +89,9 @@ async function withServer(input: {
       create: async (lead) => acceptedLead(lead),
       getByIdempotencyKey: async () => null,
       list: async () => [],
+      accept: async () => {
+        throw new Error('unused');
+      },
     },
     () => canonicalScope,
     undefined,
@@ -199,6 +203,9 @@ describe('Public durable Decision Session API', () => {
       },
       getByIdempotencyKey: async () => null,
       list: async () => stored,
+      accept: async () => {
+        throw new Error('unused');
+      },
     };
 
     await withServer({

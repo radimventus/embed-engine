@@ -7,6 +7,7 @@ import {
   REFERENCE_CASE_TEMPLATES,
   type ReferenceCaseTemplate,
 } from './referenceOperationalTemplates';
+import type { ReadinessCatalog } from '../readiness/readinessTypes';
 import type {
   HouseOperationalCase,
   OperationalDecisionSnapshot,
@@ -45,6 +46,7 @@ function instantiateTemplate(
     houseName: scope.houseName,
     origin: 'REFERENCE',
     leadId: null,
+    processingStatus: null,
     createdAt: template.createdAt,
     contact: template.contact,
     conversion: {
@@ -65,6 +67,7 @@ function instantiateTemplate(
       openedQuestions: [],
       insight: template.insight(scope.houseName),
       score: template.score,
+      readinessScore: null,
       journey: template.journey,
     },
   };
@@ -75,6 +78,7 @@ function leadToCase(
   houseName: string,
   snapshot: OperationalDecisionSnapshot | null,
   roomNames?: Readonly<Record<string, string>>,
+  readinessCatalog?: ReadinessCatalog,
 ): HouseOperationalCase {
   return {
     caseId: lead.leadId,
@@ -84,6 +88,7 @@ function leadToCase(
     houseName,
     origin: 'LEAD',
     leadId: lead.leadId,
+    processingStatus: lead.processingStatus,
     createdAt: lead.createdAt,
     contact: lead.contact,
     conversion: {
@@ -91,7 +96,12 @@ function leadToCase(
       intent: lead.intent,
       status: lead.status,
     },
-    profilZajemce: projectLeadProfilZajemce({ lead, snapshot, roomNames }),
+    profilZajemce: projectLeadProfilZajemce({
+      lead,
+      snapshot,
+      roomNames,
+      readinessCatalog,
+    }),
   };
 }
 
@@ -124,6 +134,7 @@ export function selectHouseOperationalCases(input: {
   readonly durableLeads: readonly OperationalLeadRecord[];
   readonly durableSessions?: readonly OperationalDecisionSnapshot[];
   readonly roomNames?: Readonly<Record<string, string>>;
+  readonly readinessCatalog?: ReadinessCatalog;
 }): readonly HouseOperationalCase[] {
   const companyId = input.companyId.trim();
   const projectId = input.projectId.trim();
@@ -160,6 +171,7 @@ export function selectHouseOperationalCases(input: {
       input.houseName,
       resolveCorrelatedSnapshot(lead, sessions),
       input.roomNames,
+      input.readinessCatalog,
     ),
   );
 
@@ -206,6 +218,7 @@ export function selectScopedOperationalCases(input: {
       durableLeads: input.durableLeads,
       durableSessions: input.durableSessions,
       roomNames: house.roomNames,
+      readinessCatalog: house.readinessCatalog,
     }),
   );
 }

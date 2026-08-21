@@ -323,4 +323,52 @@ describe("Runtime Event Pipeline", () => {
       "Jak poznám, že energie domu bude fungovat i v běžném dni?",
     );
   });
+
+  it("readiness facts record without mutating room or priorities", () => {
+    const runtime = createDecisionSessionRuntime({
+      clock: createFixedClock(1),
+      housePackage: HOUSE,
+      now: 1,
+    });
+    runtime.dispatch({ type: "SelectRoom", roomId: "room-kitchen" }, 2);
+    runtime.dispatch(
+      { type: "ChangePriority", priorityIds: ["price"] },
+      3,
+    );
+    const started = runtime.dispatch(
+      { type: "StartVideoPlayback", mediaId: "tour-video" },
+      4,
+    );
+    const half = runtime.dispatch(
+      {
+        type: "MarkVideoPlaybackMilestone",
+        mediaId: "tour-video",
+        milestone: "half",
+      },
+      5,
+    );
+    const image = runtime.dispatch(
+      { type: "ViewImage", mediaId: "kitchen/11.webp" },
+      6,
+    );
+    const stage = runtime.dispatch(
+      { type: "EnterJourneyStage", stageId: "priority" },
+      7,
+    );
+    const chat = runtime.dispatch(
+      { type: "SubmitChatQuestion", questionId: "q-1" },
+      8,
+    );
+    assert.equal(started.ok && half.ok && image.ok && stage.ok && chat.ok, true);
+    if (!started.ok || !half.ok || !image.ok || !stage.ok || !chat.ok) {
+      return;
+    }
+    assert.equal(started.event.type, "VideoPlaybackStarted");
+    assert.equal(half.event.type, "VideoPlaybackMilestone");
+    assert.equal(image.event.type, "ImageViewed");
+    assert.equal(stage.event.type, "JourneyStageEntered");
+    assert.equal(chat.event.type, "ChatQuestionSubmitted");
+    assert.equal(chat.session.runtimeState.activeRoomId, "room-kitchen");
+    assert.deepEqual(chat.session.runtimeState.priorityIds, ["price"]);
+  });
 });

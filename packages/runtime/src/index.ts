@@ -98,6 +98,8 @@ export {
   type ExperienceNavigationContext,
   type ExperienceObjectContext,
   type FocusRoom,
+  type JourneyStageId,
+  type MediaId,
   type ObjectId,
   type PipelineError,
   type PipelineErrorCode,
@@ -121,4 +123,5 @@ export {
   type SessionRuntimeState,
   type Timestamp,
   type ValidationResult,
+  type VideoPlaybackMilestone,
 } from "./session/public-api";

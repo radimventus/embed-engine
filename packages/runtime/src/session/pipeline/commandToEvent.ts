@@ -48,6 +48,29 @@ export function commandToEvent(
             prompt: command.prompt,
             at,
           };
+    case "StartVideoPlayback":
+      return {
+        type: "VideoPlaybackStarted",
+        mediaId: command.mediaId,
+        at,
+      };
+    case "MarkVideoPlaybackMilestone":
+      return {
+        type: "VideoPlaybackMilestone",
+        mediaId: command.mediaId,
+        milestone: command.milestone,
+        at,
+      };
+    case "ViewImage":
+      return { type: "ImageViewed", mediaId: command.mediaId, at };
+    case "EnterJourneyStage":
+      return { type: "JourneyStageEntered", stageId: command.stageId, at };
+    case "SubmitChatQuestion":
+      return {
+        type: "ChatQuestionSubmitted",
+        questionId: command.questionId,
+        at,
+      };
     default: {
       const _exhaustive: never = command;
       throw new Error(`Unsupported command: ${JSON.stringify(_exhaustive)}`);

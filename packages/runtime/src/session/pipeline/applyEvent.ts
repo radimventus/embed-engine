@@ -56,6 +56,11 @@ export function applyDecisionEvent(
       break;
     case "QuestionAnswered":
     case "QuestionOpened":
+    case "VideoPlaybackStarted":
+    case "VideoPlaybackMilestone":
+    case "ImageViewed":
+    case "JourneyStageEntered":
+    case "ChatQuestionSubmitted":
       // Facts recorded in event log; state version advances for determinism.
       break;
     default: {

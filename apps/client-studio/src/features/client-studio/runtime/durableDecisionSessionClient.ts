@@ -78,11 +78,25 @@ export async function restorePublicDecisionSession(input: {
 
 export function isDurableDecisionCommand(
   type: string,
-): type is 'SelectRoom' | 'ChangePriority' | 'AnswerQuestion' | 'OpenQuestion' {
+): type is
+  | 'SelectRoom'
+  | 'ChangePriority'
+  | 'AnswerQuestion'
+  | 'OpenQuestion'
+  | 'StartVideoPlayback'
+  | 'MarkVideoPlaybackMilestone'
+  | 'ViewImage'
+  | 'EnterJourneyStage'
+  | 'SubmitChatQuestion' {
   return (
     type === 'SelectRoom' ||
     type === 'ChangePriority' ||
     type === 'AnswerQuestion' ||
-    type === 'OpenQuestion'
+    type === 'OpenQuestion' ||
+    type === 'StartVideoPlayback' ||
+    type === 'MarkVideoPlaybackMilestone' ||
+    type === 'ViewImage' ||
+    type === 'EnterJourneyStage' ||
+    type === 'SubmitChatQuestion'
   );
 }

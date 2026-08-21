@@ -4,6 +4,7 @@ import { describe, it } from 'node:test';
 import {
   createPlatformApiServer,
   LeadAlreadyExistsError,
+  LeadNotFoundError,
   type DurableLead,
   type DurableLeadInput,
   type LeadRepository,
@@ -23,6 +24,7 @@ function acceptedLead(input: DurableLeadInput): DurableLead {
     ...input,
     decisionSessionId: input.decisionSessionId ?? null,
     status: 'accepted',
+    processingStatus: 'new',
     notificationStatus: 'pending',
   };
 }
@@ -101,6 +103,9 @@ describe('Public durable lead API', () => {
       },
       getByIdempotencyKey: async () => null,
       list: async () => [],
+      accept: async () => {
+        throw new Error('unused');
+      },
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -145,6 +150,9 @@ describe('Public durable lead API', () => {
       },
       getByIdempotencyKey: async () => null,
       list: async () => [],
+      accept: async () => {
+        throw new Error('unused');
+      },
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -189,6 +197,9 @@ describe('Public durable lead API', () => {
       },
       getByIdempotencyKey: async () => existing,
       list: async () => [],
+      accept: async () => {
+        throw new Error('unused');
+      },
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -224,6 +235,9 @@ describe('Public durable lead API', () => {
       },
       getByIdempotencyKey: async () => null,
       list: async () => [],
+      accept: async () => {
+        throw new Error('unused');
+      },
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -276,6 +290,9 @@ describe('Public durable lead API', () => {
       },
       getByIdempotencyKey: async () => null,
       list: async () => [],
+      accept: async () => {
+        throw new Error('unused');
+      },
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -310,6 +327,9 @@ describe('Public durable lead API', () => {
       },
       getByIdempotencyKey: async () => null,
       list: async () => [],
+      accept: async () => {
+        throw new Error('unused');
+      },
     };
 
     await withServer(repository, async (baseUrl) => {
@@ -343,6 +363,9 @@ describe('Public durable lead API', () => {
       },
       getByIdempotencyKey: async () => null,
       list: async () => [],
+      accept: async () => {
+        throw new Error('unused');
+      },
     };
 
     const rejectingResolver: typeof import('./leadScope').resolveLeadScope =
@@ -471,6 +494,9 @@ describe('Partner House-scoped lead list', () => {
             item.projectId === query.projectId &&
             (query.houseId === undefined || item.houseId === query.houseId),
         ),
+      accept: async () => {
+        throw new Error('unused');
+      },
     };
 
     await withReadServer(repository, async (baseUrl) => {
@@ -497,6 +523,124 @@ describe('Partner House-scoped lead list', () => {
         body.leads.map((item) => item.leadId),
         ['lead-house'],
       );
+    });
+  });
+
+  it('accepts a NEW lead idempotently and does not leak across Houses', async () => {
+    const dirLeads: DurableLead[] = [
+      acceptedLead({
+        leadId: 'lead-house',
+        idempotencyKey: 'idem-house-accept',
+        createdAt: '2026-08-20T06:01:00.000Z',
+        companyId: canonicalScope.companyId,
+        projectId: canonicalScope.projectId,
+        houseId: canonicalScope.houseId,
+        source: 'EMBED',
+        intent: 'audit',
+        contact: {
+          name: 'Petr Lead',
+          email: 'petr.lead@example.test',
+          phone: null,
+        },
+        consent: {
+          accepted: true,
+          acceptedAt: '2026-08-20T06:00:00.000Z',
+          privacyUrl: canonicalScope.privacyUrl,
+          privacyVersion: 'partner-current',
+        },
+      }),
+    ];
+    const repository: LeadRepository = {
+      create: async (input) => acceptedLead(input),
+      getByIdempotencyKey: async () => null,
+      list: async () => dirLeads,
+      accept: async (input) => {
+        const found = dirLeads.find(
+          (item) =>
+            item.leadId === input.leadId &&
+            item.companyId === input.companyId &&
+            item.projectId === input.projectId &&
+            item.houseId === input.houseId,
+        );
+        if (found === undefined) {
+          throw new LeadNotFoundError();
+        }
+        const accepted = { ...found, processingStatus: 'accepted' as const };
+        dirLeads[0] = accepted;
+        return accepted;
+      },
+    };
+
+    await withReadServer(repository, async (baseUrl) => {
+      const unauthorized = await fetch(
+        `${baseUrl}/partner/leads/lead-house/accept`,
+        {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({
+            companyId: canonicalScope.companyId,
+            projectId: canonicalScope.projectId,
+            houseId: canonicalScope.houseId,
+          }),
+        },
+      );
+      assert.equal(unauthorized.status, 401);
+
+      const foreignHouse = await fetch(
+        `${baseUrl}/partner/leads/lead-house/accept`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            cookie: '__Host-conis_partner_session=sales-token',
+          },
+          body: JSON.stringify({
+            companyId: canonicalScope.companyId,
+            projectId: canonicalScope.projectId,
+            houseId: 'house-other',
+          }),
+        },
+      );
+      assert.equal(foreignHouse.status, 404);
+
+      const accepted = await fetch(
+        `${baseUrl}/partner/leads/lead-house/accept`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            cookie: '__Host-conis_partner_session=sales-token',
+          },
+          body: JSON.stringify({
+            companyId: canonicalScope.companyId,
+            projectId: canonicalScope.projectId,
+            houseId: canonicalScope.houseId,
+          }),
+        },
+      );
+      assert.equal(accepted.status, 200);
+      const body = (await accepted.json()) as {
+        readonly processingStatus: string;
+      };
+      assert.equal(body.processingStatus, 'accepted');
+
+      const again = await fetch(
+        `${baseUrl}/partner/leads/lead-house/accept`,
+        {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json',
+            cookie: '__Host-conis_partner_session=sales-token',
+          },
+          body: JSON.stringify({
+            companyId: canonicalScope.companyId,
+            projectId: canonicalScope.projectId,
+            houseId: canonicalScope.houseId,
+          }),
+        },
+      );
+      assert.equal(again.status, 200);
+      assert.equal(dirLeads[0]?.processingStatus, 'accepted');
     });
   });
 });

@@ -11,6 +11,10 @@ import {
   formatVisitedRoomsTitle,
   lookupRoomSalesLabel,
 } from './lookupRoomSalesLabel';
+import {
+  scoreIndexPripravenosti,
+} from '../readiness/scoreIndexPripravenosti';
+import type { ReadinessCatalog } from '../readiness/readinessTypes';
 import type {
   OperationalDecisionEvent,
   OperationalDecisionSnapshot,
@@ -42,8 +46,8 @@ export const CANONICAL_PRIORITY_LABELS: Readonly<Record<string, string>> =
 
 /**
  * Decision Outcome `confidence` is recommendation-progress
- * (0.35 + progressRatio * 0.65). That is not Index rozhodovací jistoty.
- * REAL cases therefore stay `score: null` until a compatible measured metric exists.
+ * (0.35 + progressRatio * 0.65). That is not Index připravenosti.
+ * Legacy `score` stays null on REAL cases. Readiness is scored separately.
  */
 export const REAL_DECISION_CERTAINTY_AUTHORITY = 'unscored' as const;
 
@@ -294,8 +298,9 @@ export function projectLeadProfilZajemce(input: {
   readonly lead: OperationalLeadRecord;
   readonly snapshot: OperationalDecisionSnapshot | null;
   readonly roomNames?: Readonly<Record<string, string>>;
+  readonly readinessCatalog?: ReadinessCatalog;
 }): ProfilZajemce {
-  const { lead, snapshot, roomNames } = input;
+  const { lead, snapshot, roomNames, readinessCatalog } = input;
   if (snapshot === null) {
     return {
       land: 'Nezadáno',
@@ -306,6 +311,7 @@ export function projectLeadProfilZajemce(input: {
       insight:
         'Zájemce odeslal žádost o posouzení. Rozhodovací relace k tomuto kontaktu není k dispozici.',
       score: null,
+      readinessScore: null,
       journey: [conversionJourneyStep()],
     };
   }
@@ -320,6 +326,14 @@ export function projectLeadProfilZajemce(input: {
       : strongest.answer === null
         ? `Nejsilnější zachycená priorita: ${strongest.label}.`
         : `Nejsilnější zachycená priorita: ${strongest.label}. ${strongest.answer.answerLabel}.`;
+  const readiness = scoreIndexPripravenosti({
+    events: snapshot.events,
+    catalog: readinessCatalog ?? {
+      roomIds: roomNames === undefined ? [] : Object.keys(roomNames),
+      imageIds: [],
+    },
+    qualifiedLead: lead.status === 'accepted',
+  });
 
   return {
     land: land?.label ?? 'Nezadáno',
@@ -329,6 +343,7 @@ export function projectLeadProfilZajemce(input: {
     openedQuestions,
     insight,
     score: null,
+    readinessScore: readiness.displayScore,
     journey: journeyFromSnapshot(
       snapshot,
       lead.status === 'accepted',

@@ -27,6 +27,7 @@ function lead(
     source: 'EMBED',
     intent: 'audit',
     status: 'accepted',
+    processingStatus: 'new',
     contact: {
       name: 'Petr Lead',
       email: 'petr.lead@example.cz',
@@ -385,6 +386,8 @@ describe('House operational data path', () => {
     ]);
     assert.equal(cases[0]?.profilZajemce.tags.includes('Žádost o audit'), false);
     assert.equal(cases[0]?.profilZajemce.score, null);
+    assert.equal(cases[0]?.profilZajemce.readinessScore, 10);
+    assert.equal(cases[0]?.processingStatus, 'new');
     assert.equal(
       cases[0]?.profilZajemce.priorities.find((item) => item.id === 'layout')
         ?.importance,
@@ -630,10 +633,87 @@ describe('House operational data path', () => {
       null,
     );
     assert.equal(
+      cases.find((item) => item.origin === 'LEAD')?.profilZajemce.readinessScore,
+      null,
+    );
+    assert.equal(
       cases
         .filter((item) => item.origin === 'REFERENCE')
         .every((item) => typeof item.profilZajemce.score === 'number'),
       true,
+    );
+    assert.equal(
+      cases
+        .filter((item) => item.origin === 'REFERENCE')
+        .every((item) => item.profilZajemce.readinessScore === null),
+      true,
+    );
+  });
+
+  it('keeps Index připravenosti unchanged when a Lead is accepted for processing', () => {
+    const snapshot: OperationalDecisionSnapshot = {
+      decisionSessionId: '11111111-1111-4111-8111-111111111111',
+      companyId: vpdA.companyId,
+      projectId: vpdA.projectId,
+      houseId: vpdA.houseId,
+      priorityIds: ['layout', 'energy', 'plot'],
+      priorityIntensities: {
+        layout: 0.9,
+        energy: 0.5,
+        plot: 0.2,
+      },
+      activeRoomId: 'room-living',
+      events: [
+        { type: 'RoomSelected', roomId: 'room-living', at: 2 },
+        {
+          type: 'PriorityChanged',
+          priorityIds: ['layout', 'energy', 'plot'],
+          intensities: [
+            { priorityId: 'layout', importance: 0.9 },
+            { priorityId: 'energy', importance: 0.5 },
+            { priorityId: 'plot', importance: 0.2 },
+          ],
+          at: 3,
+        },
+      ],
+    };
+    const before = selectHouseOperationalCases({
+      ...vpdA,
+      durableLeads: [
+        lead({
+          leadId: 'lead-real-1',
+          houseId: vpdA.houseId,
+          decisionSessionId: snapshot.decisionSessionId,
+          processingStatus: 'new',
+        }),
+      ],
+      durableSessions: [snapshot],
+    });
+    const after = selectHouseOperationalCases({
+      ...vpdA,
+      durableLeads: [
+        lead({
+          leadId: 'lead-real-1',
+          houseId: vpdA.houseId,
+          decisionSessionId: snapshot.decisionSessionId,
+          processingStatus: 'accepted',
+        }),
+      ],
+      durableSessions: [snapshot],
+    });
+    assert.equal(before[0]?.processingStatus, 'new');
+    assert.equal(after[0]?.processingStatus, 'accepted');
+    assert.equal(
+      before[0]?.profilZajemce.readinessScore,
+      after[0]?.profilZajemce.readinessScore,
+    );
+    assert.deepEqual(
+      before[0]?.profilZajemce.journey,
+      after[0]?.profilZajemce.journey,
+    );
+    assert.deepEqual(
+      before[0]?.profilZajemce.priorities,
+      after[0]?.profilZajemce.priorities,
     );
   });
 });

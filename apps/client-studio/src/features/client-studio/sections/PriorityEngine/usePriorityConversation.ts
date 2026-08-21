@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { prioritySupplementaryQuestionId } from '@embed-engine/platform-access';
 
 import { scrollToSection, scrollElementIntoView, PRIORITY_BRIDGE_ANCHOR_ID } from '../../foundation/scrollToSection';
+import { captureJourneyStageFromSection } from '../../foundation/journeyStageCapture';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 import {
@@ -443,16 +444,19 @@ export function usePriorityConversation(): PriorityConversationView {
 
   const continueToFaq = () => {
     progress.record({ type: 'completion-path', path: 'faq', at: Date.now() });
+    captureJourneyStageFromSection(PILOT_SECTION_IDS.aiAdvisor);
     scrollToSection(PILOT_SECTION_IDS.aiAdvisor);
   };
 
   const askConis = () => {
     progress.record({ type: 'completion-path', path: 'chat', at: Date.now() });
+    captureJourneyStageFromSection(PILOT_SECTION_IDS.aiAdvisor);
     focusAdvisorChat();
   };
 
   const continueToNextChapter = () => {
     progress.record({ type: 'completion-path', path: 'next', at: Date.now() });
+    captureJourneyStageFromSection(PILOT_SECTION_IDS.audit);
     scrollToConversion();
   };
 
@@ -462,6 +466,7 @@ export function usePriorityConversation(): PriorityConversationView {
       path: 'plot-check',
       at: Date.now(),
     });
+    captureJourneyStageFromSection(PILOT_SECTION_IDS.audit);
     scrollToConversion();
   };
 
@@ -471,6 +476,7 @@ export function usePriorityConversation(): PriorityConversationView {
       path: 'plot-find',
       at: Date.now(),
     });
+    captureJourneyStageFromSection(PILOT_SECTION_IDS.audit);
     scrollToConversion();
   };
 
@@ -480,6 +486,7 @@ export function usePriorityConversation(): PriorityConversationView {
       path: 'report',
       at: Date.now(),
     });
+    captureJourneyStageFromSection(PILOT_SECTION_IDS.audit);
     scrollToConversion();
   };
 
