@@ -131,6 +131,9 @@ export function BuilderStudioApp() {
   const [activeNav, setActiveNav] = useState<HousePackageNavId>('media-studio');
   const [createOpen, setCreateOpen] = useState(false);
   const [objectCreateOpen, setObjectCreateOpen] = useState(false);
+  const [defaultHousesMessage, setDefaultHousesMessage] = useState<string | null>(
+    null,
+  );
   const [editOpen, setEditOpen] = useState(false);
   const [historyOpen, setHistoryOpen] = useState(false);
   /** PT-BS-01 — external ?projectId= / session bind runs once; never fights DOMY switches. */
@@ -389,6 +392,11 @@ export function BuilderStudioApp() {
             onOpenHouse={openHouseStable}
             onCreateProject={() => setCreateOpen(true)}
             onCreateObject={() => setObjectCreateOpen(true)}
+            onRecoverDefaultHouses={() => {
+              const result = workspace.recoverDefaultHouses();
+              setDefaultHousesMessage(result?.message ?? null);
+            }}
+            recoveryMessage={defaultHousesMessage}
             onEditProject={() => setEditOpen(true)}
             onDirtySave={() => {
               void workspace.confirmDirtySave(async () => {

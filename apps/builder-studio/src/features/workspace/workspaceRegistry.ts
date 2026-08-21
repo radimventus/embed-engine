@@ -10,6 +10,8 @@
  */
 
 import {
+  buildDefaultPartnerVpdHouse,
+  buildDefaultReferenceBungalovHouse,
   DSE_FIRST_DRAFT_HOUSE_ID,
   DEFAULT_COMPANY_ID as PLATFORM_DEFAULT_COMPANY_ID,
   DEFAULT_PROJECT_ID as PLATFORM_DEFAULT_PROJECT_ID,
@@ -21,12 +23,14 @@ import {
   listCanonicalCompanies,
   listCanonicalHouses,
   listCanonicalProjects,
+  provisionDefaultProjectHouses,
   upsertWorkspaceAuthoredHouse,
   syncBuilderWorkspaceHouse,
   upsertBuilderCanonicalProject,
   upsertBuilderCompany,
   upsertBuilderProject,
   type CanonicalProjectProjection,
+  type PlatformProject,
 } from '@embed-engine/platform-access';
 export type WorkspaceProjectStatus = 'draft' | 'ready' | 'published';
 
@@ -54,6 +58,8 @@ export type WorkspaceProject = {
   readonly slug: string;
   readonly objectType: string;
   readonly metadata: string;
+  readonly dataMode?: PlatformProject['dataMode'];
+  readonly referenceProvenance?: PlatformProject['referenceProvenance'];
 };
 
 export type WorkspaceRegistryState = {
@@ -158,6 +164,10 @@ function houseFromCanonical(
     slug: house.slug,
     objectType: house.objectType,
     metadata: '',
+    dataMode: house.dataMode,
+    ...(house.referenceProvenance !== undefined
+      ? { referenceProvenance: house.referenceProvenance }
+      : {}),
   };
 }
 
@@ -568,6 +578,10 @@ export function normalizeWorkspaceProject(
         ? input.objectType
         : 'villa',
     metadata: typeof input.metadata === 'string' ? input.metadata : '',
+    ...(input.dataMode !== undefined ? { dataMode: input.dataMode } : {}),
+    ...(input.referenceProvenance !== undefined
+      ? { referenceProvenance: input.referenceProvenance }
+      : {}),
   };
 }
 
@@ -781,6 +795,10 @@ export function registerWorkspaceProject(
     objectType: normalized.objectType,
     description: normalized.description,
     canonicalProjectId,
+    ...(normalized.dataMode !== undefined ? { dataMode: normalized.dataMode } : {}),
+    ...(normalized.referenceProvenance !== undefined
+      ? { referenceProvenance: normalized.referenceProvenance }
+      : {}),
   });
 
   return recompose(state, {
@@ -1005,6 +1023,64 @@ export function createWorkspaceObjectFromInput(
   });
 
   return { state: next, project: findWorkspaceProject(next, project.id) ?? project };
+}
+
+export function recoverDefaultProjectHousesInWorkspace(
+  state: WorkspaceRegistryState,
+): {
+  readonly state: WorkspaceRegistryState;
+  readonly result: ReturnType<typeof provisionDefaultProjectHouses>;
+} | null {
+  const folder = getActiveWorkspaceFolder(state);
+  if (folder === null) {
+    return null;
+  }
+
+  const scope = {
+    companyId: folder.companyId,
+    projectId: folder.id,
+    workspaceId: workspaceIdFromCanonical(folder.companyId),
+  };
+  const result = provisionDefaultProjectHouses(scope);
+  if (result.createdCount === 0) {
+    return { state, result };
+  }
+
+  let next = state;
+  for (const role of result.created) {
+    const registryHouse =
+      role === 'bungalov-4kk'
+        ? buildDefaultReferenceBungalovHouse(scope)
+        : buildDefaultPartnerVpdHouse(scope);
+    const project = normalizeWorkspaceProject({
+      id: registryHouse.id,
+      name: registryHouse.name,
+      packageRoot: registryHouse.packageRoot,
+      companyId: registryHouse.companyId,
+      folderId: folder.id,
+      description: registryHouse.description,
+      status: registryHouse.status,
+      slug: registryHouse.slug,
+      objectType: registryHouse.objectType,
+      metadata:
+        role === 'vas-prvni-dum' ? BUILDER_AUTHORED_HOUSE_MARKER : '',
+      dataMode: registryHouse.dataMode,
+      referenceProvenance: registryHouse.referenceProvenance,
+    });
+    next = registerWorkspaceProject(next, project);
+    if (role === 'vas-prvni-dum') {
+      upsertWorkspaceAuthoredHouse({
+        houseId: project.id,
+        name: project.name,
+        canonicalProjectId: folder.id,
+        packageRoot: project.packageRoot,
+        dataMode: 'LIVE_EMPTY',
+        status: 'draft',
+      });
+    }
+  }
+
+  return { state: next, result };
 }
 
 /** CAP-PLAT-02a — UI state only (no Company / Project / House documents). */

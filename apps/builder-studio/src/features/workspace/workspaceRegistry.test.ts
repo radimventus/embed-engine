@@ -16,6 +16,9 @@ import {
   resetSharedProjectManifestsForTests,
   resolveWorkspaceHouseBinding,
   updateSession,
+  upsertBuilderCanonicalProject,
+  upsertBuilderCompany,
+  upsertBuilderWorkspace,
 } from '@embed-engine/platform-access';
 
 import {
@@ -28,6 +31,8 @@ import {
   housesForFolder,
   mergePersistedWorkspaceSlice,
   openWorkspaceFolder,
+  recoverDefaultProjectHousesInWorkspace,
+  registerWorkspaceFolder,
   openWorkspaceProject,
   registerWorkspaceCompany,
   toPersistedWorkspaceSlice,
@@ -875,5 +880,41 @@ describe('workspaceRegistry (CAP-BLD-08 / EPIC-BX-01 / CAP-PLAT-02a / CAP-PLAT-0
     assert.equal(after?.name, 'VILLA 168 PREMIUM');
     assert.equal(after?.packageRoot, before?.packageRoot);
     assert.equal(after?.metadata, 'tag:pilot');
+  });
+
+  it('recoverDefaultProjectHousesInWorkspace provisions missing defaults for active Project', () => {
+    resetCompanyRegistryExtras();
+    upsertBuilderCompany({
+      id: 'company-nordic-demo',
+      name: 'Nordic Demo',
+      tenantId: 'tenant-nordic-demo',
+    });
+    upsertBuilderWorkspace({
+      id: 'workspace-nordic-demo',
+      companyId: 'company-nordic-demo',
+      name: 'Nordic Demo Workspace',
+    });
+    upsertBuilderCanonicalProject({
+      id: 'project-nordic-demo',
+      companyId: 'company-nordic-demo',
+      workspaceId: 'workspace-nordic-demo',
+      name: 'Nordic Demo',
+      slug: 'nordic-demo',
+      description: 'TASK-66 builder recovery test',
+    });
+
+    let state = createInitialWorkspaceRegistry();
+    const folder = {
+      id: 'project-nordic-demo',
+      name: 'Nordic Demo',
+      companyId: 'company-nordic-demo',
+    };
+    state = registerWorkspaceFolder(state, folder);
+    state = openWorkspaceFolder(state, folder.id).state;
+
+    const recovered = recoverDefaultProjectHousesInWorkspace(state);
+    assert.ok(recovered !== null);
+    assert.equal(recovered.result.createdCount, 2);
+    assert.equal(housesForFolder(recovered.state, folder.id).length, 2);
   });
 });

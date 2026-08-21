@@ -19,6 +19,8 @@ type WorkspaceSidebarProps = {
   readonly onOpenHouse: (houseId: string) => void;
   readonly onCreateProject: () => void;
   readonly onCreateObject: () => void;
+  readonly onRecoverDefaultHouses: () => void;
+  readonly recoveryMessage: string | null;
   readonly onEditProject: () => void;
   readonly onDirtySave: () => void;
   readonly onDirtyDiscard: () => void;
@@ -49,6 +51,8 @@ export function WorkspaceSidebar({
   onOpenHouse,
   onCreateProject,
   onCreateObject,
+  onRecoverDefaultHouses,
+  recoveryMessage,
   onEditProject,
   onDirtySave,
   onDirtyDiscard,
@@ -188,7 +192,26 @@ export function WorkspaceSidebar({
         )}
       </ul>
 
-      <div className="mt-3 flex w-full justify-center">
+      <div className="mt-3 flex w-full flex-col items-center gap-2">
+        <button
+          type="button"
+          title="Doplnit výchozí domy"
+          aria-label="Doplnit výchozí domy"
+          disabled={activeFolder === null || switching}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onRecoverDefaultHouses();
+          }}
+          className="w-full rounded-md border border-builder-ink/20 px-3 py-2 text-sm text-builder-ink hover:bg-builder-ink hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          Doplnit výchozí domy
+        </button>
+        {recoveryMessage !== null && (
+          <p className="px-1 text-center text-xs text-builder-ink/80">
+            {recoveryMessage}
+          </p>
+        )}
         <button
           type="button"
           title="Nový objekt"

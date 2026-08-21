@@ -21,6 +21,7 @@ import {
   closeWorkspaceProject,
   createWorkspaceObjectFromInput,
   createWorkspaceProjectFromInput,
+  recoverDefaultProjectHousesInWorkspace,
   decideProjectSwitch,
   getActiveWorkspaceProject,
   openWorkspaceFolder,
@@ -119,6 +120,10 @@ export type WorkspaceController = {
     input: CreateWorkspaceObjectInput,
     options: { readonly dirty: boolean },
   ) => Promise<WorkspaceProject | null>;
+  readonly recoverDefaultHouses: () => {
+    readonly message: string;
+    readonly createdCount: number;
+  } | null;
   readonly updateProject: (
     projectId: string,
     input: UpdateWorkspaceProjectInput,
@@ -790,6 +795,25 @@ export function useWorkspaceController(): WorkspaceController {
     [],
   );
 
+  const recoverDefaultHouses = useCallback(() => {
+    if (registryRef.current.activeFolderId === null) {
+      setSwitchError('Nejdřív vyberte projekt.');
+      return null;
+    }
+    const recovered = recoverDefaultProjectHousesInWorkspace(registryRef.current);
+    if (recovered === null) {
+      setSwitchError('Nejdřív vyberte projekt.');
+      return null;
+    }
+    setRegistry(recovered.state);
+    registryRef.current = recovered.state;
+    setSwitchError(null);
+    return {
+      message: recovered.result.message,
+      createdCount: recovered.result.createdCount,
+    };
+  }, []);
+
   useEffect(() => {
     const project = getActiveWorkspaceProject(registryRef.current);
     if (project === null) {
@@ -834,6 +858,7 @@ export function useWorkspaceController(): WorkspaceController {
     requestCloseProject,
     createProject,
     createObject,
+    recoverDefaultHouses,
     updateProject,
   };
 }

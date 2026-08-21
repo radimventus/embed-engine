@@ -114,6 +114,21 @@ export {
 } from './registry/companyRegistry';
 
 export {
+  buildDefaultPartnerVpdHouse,
+  buildDefaultReferenceBungalovHouse,
+  DEFAULT_PARTNER_DRAFT_HOUSE_SLUG,
+  DEFAULT_VPD_PACKAGE_ROOT,
+  formatDefaultProjectHousesRecoveryMessage,
+  housesForCanonicalProject,
+  isDefaultPartnerVpdHouse,
+  isDefaultReferenceBungalovHouse,
+  provisionDefaultProjectHouses,
+  type DefaultProjectHouseRole,
+  type ProvisionDefaultProjectHousesInput,
+  type ProvisionDefaultProjectHousesResult,
+} from './provisioning/defaultProjectHouses';
+
+export {
   applyDurableProjectConfigs,
   resetDurableProjectConfigs,
   type DurableProjectConfigOverlay,
