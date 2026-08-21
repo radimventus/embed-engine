@@ -12,6 +12,7 @@ import { usePlatformSession } from './SessionProvider';
 type InviteShellProps = {
   readonly initialToken?: string;
   readonly onCancel: () => void;
+  readonly onActivated?: () => void;
 };
 
 type InviteStep = 'token' | 'nda' | 'password';
@@ -22,7 +23,11 @@ const NDA_SUMMARY =
 /**
  * PE-04 — Invitation → NDA Gateway → First Password → Account Activation.
  */
-export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
+export function InviteShell({
+  initialToken = '',
+  onCancel,
+  onActivated,
+}: InviteShellProps) {
   const { acceptAuthenticatedSession } = usePlatformSession();
   const [token, setToken] = useState(initialToken);
   const [step, setStep] = useState<InviteStep>(
@@ -122,6 +127,7 @@ export function InviteShell({ initialToken = '', onCancel }: InviteShellProps) {
     }
     prepareWelcomeJourney(result.session.user.email);
     acceptAuthenticatedSession(result.session);
+    onActivated?.();
   };
 
   return (

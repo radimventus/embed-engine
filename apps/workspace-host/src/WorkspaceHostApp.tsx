@@ -644,9 +644,16 @@ export function WorkspaceHostApp() {
   }, []);
 
   const handleLogout = () => {
-    clearOperatorPartnerEnvironment();
-    platformLogout();
-    window.location.assign(resolveCloudStudioHref('office'));
+    void (async () => {
+      clearOperatorPartnerEnvironment();
+      try {
+        await createPlatformAccessAuthClient().logout();
+      } catch {
+        // Continue clearing local projection even when the API is unreachable.
+      }
+      platformLogout();
+      window.location.assign(resolveCloudStudioHref('office'));
+    })();
   };
 
   if (session === null) {

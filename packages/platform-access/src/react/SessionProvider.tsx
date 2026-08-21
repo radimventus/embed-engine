@@ -40,7 +40,11 @@ import {
 import {
   createPlatformAccessAuthClient,
 } from '../api/platformAccessClient';
-import { savePlatformSession } from '../session/sessionStore';
+import {
+  clearPlatformSession,
+  savePlatformSession,
+} from '../session/sessionStore';
+import { urlWithoutInviteParam } from './inviteRouting';
 import { touchUserLastStudio } from '../registry/userRegistry';
 import { isWorkspaceShellEmbed } from '../domain/workspaceShellEmbed';
 import {
@@ -209,14 +213,24 @@ export function SessionProvider({
   }, [bindStudioId]);
 
   const acceptAuthenticatedSession = useCallback((next: PlatformSession) => {
-    savePlatformSession(next);
-    setSession(next);
-  }, []);
+    applySession(next);
+  }, [applySession]);
 
   const logout = useCallback(async () => {
     clearOperatorPartnerEnvironment();
-    await createPlatformAccessAuthClient().logout();
+    clearPlatformSession();
+    try {
+      await createPlatformAccessAuthClient().logout();
+    } catch {
+      // Local session projection is already cleared; server logout is best-effort.
+    }
     setSession(null);
+    if (typeof window !== 'undefined') {
+      const nextHref = urlWithoutInviteParam(window.location.href);
+      if (nextHref !== `${window.location.pathname}${window.location.search}${window.location.hash}`) {
+        window.history.replaceState(null, '', nextHref);
+      }
+    }
   }, []);
 
   const selectStudio = useCallback((studioId: PlatformStudioId) => {

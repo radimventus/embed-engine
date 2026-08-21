@@ -16,7 +16,7 @@ import { AuthShell } from './AuthShell';
 import { InviteShell } from './InviteShell';
 import { PlatformLanding } from './PlatformLanding';
 import { SessionProvider, usePlatformSession } from './SessionProvider';
-import { shouldPrioritizeInviteRoute } from './inviteRouting';
+import { shouldPrioritizeInviteRoute, urlWithoutInviteParam } from './inviteRouting';
 
 type AccessGateProps = {
   readonly children: ReactNode;
@@ -58,9 +58,7 @@ function AccessGateInner({ children }: AccessGateProps) {
   const shellEmbed = isWorkspaceShellEmbed();
   const dismissInviteRoute = () => {
     if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.searchParams.delete('invite');
-      window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`);
+      window.history.replaceState(null, '', urlWithoutInviteParam(window.location.href));
     }
     setInviteMode(false);
   };
@@ -77,6 +75,7 @@ function AccessGateInner({ children }: AccessGateProps) {
       <InviteShell
         initialToken={urlToken}
         onCancel={dismissInviteRoute}
+        onActivated={dismissInviteRoute}
       />
     );
   }
@@ -95,6 +94,7 @@ function AccessGateInner({ children }: AccessGateProps) {
         <InviteShell
           initialToken={urlToken}
           onCancel={dismissInviteRoute}
+          onActivated={dismissInviteRoute}
         />
       );
     }
