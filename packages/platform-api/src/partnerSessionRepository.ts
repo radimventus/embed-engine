@@ -15,6 +15,7 @@ import {
 } from '@embed-engine/platform-access/rbac';
 import {
   getDefaultCompanyRegistry,
+  houseIdentityBelongsToAuthorizedProject,
   partnerEnvironmentScopesMatch,
   type AuthoritativePartnerEnvironmentScope,
 } from '@embed-engine/platform-access';
@@ -502,13 +503,63 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
           workspaceContext,
         };
       } else if (mutation.action === 'switch') {
+        // Switch stays inside the already-authorized Partner Environment.
+        // Durable PE (FIX-02 enter) is already bound on the session; this
+        // action must not invent a second Partner/Project authority.
+        const authorizedScope = {
+          tenantId: current.tenantId ?? account.tenantId,
+          companyId: current.companyId ?? account.companyId,
+          workspaceId: current.workspaceId ?? account.workspaceId,
+          projectId: current.projectId ?? account.projectId,
+        };
+
+        const requestedProjectId =
+          mutation.projectId?.trim() || authorizedScope.projectId;
+
+        if (requestedProjectId !== authorizedScope.projectId) {
+          return null;
+        }
+        if (
+          mutation.tenantId !== undefined &&
+          mutation.tenantId !== authorizedScope.tenantId
+        ) {
+          return null;
+        }
+        if (
+          mutation.companyId !== undefined &&
+          mutation.companyId !== authorizedScope.companyId
+        ) {
+          return null;
+        }
+        if (
+          mutation.workspaceId !== undefined &&
+          mutation.workspaceId !== authorizedScope.workspaceId
+        ) {
+          return null;
+        }
+
+        if (!isConisAdmin) {
+          if (!canAccessStudio(account.roles, mutation.activeStudio)) {
+            return null;
+          }
+
+          if (
+            authorizedScope.tenantId !== account.tenantId ||
+            authorizedScope.companyId !== account.companyId ||
+            authorizedScope.workspaceId !== account.workspaceId ||
+            authorizedScope.projectId !== account.projectId
+          ) {
+            return null;
+          }
+        }
+
         const context: PartnerWorkspaceContext =
           current.workspaceContext ?? {
             operatorMode: true,
-            partnerId: account.companyId,
-            companyId: account.companyId,
-            workspaceId: account.workspaceId,
-            projectId: account.projectId,
+            partnerId: authorizedScope.companyId,
+            companyId: authorizedScope.companyId,
+            workspaceId: authorizedScope.workspaceId,
+            projectId: authorizedScope.projectId,
             activeHouseId: current.activeHouseId ?? null,
             activeStudio: mutation.activeStudio,
             officeReturnHref: '',
@@ -520,120 +571,18 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
             },
           };
 
-        const requestedProjectId =
-          mutation.projectId?.trim() ||
-          current.projectId ||
-          context.projectId ||
-          account.projectId;
-
-        const DSE_SCOPE = {
-          tenantId: 'tenant-domy-s-energii',
-          companyId: 'company-domy-s-energii',
-          workspaceId: 'domy-s-energii-main',
-          projectId: 'project-domy-s-energii',
-        } as const;
-
-        const AC_SCOPE = {
-          tenantId: 'tenant-ac-modular',
-          companyId: 'ac-modular',
-          workspaceId: 'ac-modular-main',
-          projectId: 'project-ac-modular',
-        } as const;
-
-        const targetScope =
-          requestedProjectId === DSE_SCOPE.projectId
-            ? DSE_SCOPE
-            : requestedProjectId === AC_SCOPE.projectId
-              ? AC_SCOPE
-              : null;
-
-        if (targetScope === null) return null;
-
-        if (!isConisAdmin) {
-          if (!canAccessStudio(account.roles, mutation.activeStudio)) {
-            return null;
-          }
-
-          // A partner may never use Studio switching to escape the scope
-          // assigned to its authenticated account.
-          if (
-            targetScope.tenantId !== account.tenantId ||
-            targetScope.companyId !== account.companyId ||
-            targetScope.workspaceId !== account.workspaceId ||
-            targetScope.projectId !== account.projectId
-          ) {
-            return null;
-          }
-          if (
-            mutation.tenantId !== undefined &&
-            mutation.tenantId !== account.tenantId
-          ) {
-            return null;
-          }
-          if (
-            mutation.companyId !== undefined &&
-            mutation.companyId !== account.companyId
-          ) {
-            return null;
-          }
-          if (
-            mutation.workspaceId !== undefined &&
-            mutation.workspaceId !== account.workspaceId
-          ) {
-            return null;
-          }
-          if (
-            mutation.projectId !== undefined &&
-            mutation.projectId !== account.projectId
-          ) {
-            return null;
-          }
-        }
-
-        if (
-          mutation.tenantId !== undefined &&
-          mutation.tenantId !== targetScope.tenantId
-        ) {
-          return null;
-        }
-        if (
-          mutation.companyId !== undefined &&
-          mutation.companyId !== targetScope.companyId
-        ) {
-          return null;
-        }
-        if (
-          mutation.workspaceId !== undefined &&
-          mutation.workspaceId !== targetScope.workspaceId
-        ) {
-          return null;
-        }
-
         const authoredHouseIdentities =
           mutation.authoredHouseIdentities?.filter(
             (house) =>
               house.houseId.trim().length > 0 &&
               house.name.trim().length > 0 &&
-              house.canonicalProjectId === targetScope.projectId &&
+              house.canonicalProjectId === authorizedScope.projectId &&
               house.status === 'draft',
           ) ??
           context.authoredHouseIdentities?.filter(
-            (house) => house.canonicalProjectId === targetScope.projectId,
+            (house) => house.canonicalProjectId === authorizedScope.projectId,
           ) ??
           [];
-
-        const canonicalHouseIds =
-          targetScope.projectId === DSE_SCOPE.projectId
-            ? new Set([
-                'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
-                'draft-company-domy-s-energii-project-domy-s-energii-vas-prvni-dum-5kk',
-              ])
-            : new Set([
-                'family-98',
-                'harmony-124',
-                'modern-4kk',
-                'villa-168',
-              ]);
 
         const requestedHouseId: string | null =
           mutation.activeHouseId === undefined
@@ -643,7 +592,10 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
         const activeHouseId =
           requestedHouseId !== null &&
           (
-            canonicalHouseIds.has(requestedHouseId) ||
+            houseIdentityBelongsToAuthorizedProject(requestedHouseId, {
+              companyId: authorizedScope.companyId,
+              projectId: authorizedScope.projectId,
+            }) ||
             authoredHouseIdentities.some(
               (house) => house.houseId === requestedHouseId,
             )
@@ -653,24 +605,21 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
 
         next = {
           ...current,
-          tenantId: targetScope.tenantId,
-          companyId: targetScope.companyId,
-          workspaceId: targetScope.workspaceId,
-          projectId: targetScope.projectId,
+          tenantId: authorizedScope.tenantId,
+          companyId: authorizedScope.companyId,
+          workspaceId: authorizedScope.workspaceId,
+          projectId: authorizedScope.projectId,
           activeHouseId,
           activeStudioId: mutation.activeStudio,
-          workspaceContext:
-            context === null || context === undefined
-              ? null
-              : {
-                  ...context,
-                  companyId: targetScope.companyId,
-                  workspaceId: targetScope.workspaceId,
-                  projectId: targetScope.projectId,
-                  activeHouseId,
-                  authoredHouseIdentities,
-                  activeStudio: mutation.activeStudio,
-                },
+          workspaceContext: {
+            ...context,
+            companyId: authorizedScope.companyId,
+            workspaceId: authorizedScope.workspaceId,
+            projectId: authorizedScope.projectId,
+            activeHouseId,
+            authoredHouseIdentities,
+            activeStudio: mutation.activeStudio,
+          },
         };
       } else {
         const context = current.workspaceContext;

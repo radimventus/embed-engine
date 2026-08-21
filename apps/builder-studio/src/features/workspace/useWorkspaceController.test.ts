@@ -1,4 +1,7 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, it } from 'node:test';
 import {
   resetCompanyRegistryExtras,
@@ -189,5 +192,18 @@ describe('Builder shared active House publication', () => {
       false,
     );
     resetCompanyRegistryExtras();
+  });
+
+  it('rolls back the previous platform session when authoritative House switch fails', () => {
+    const source = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), 'useWorkspaceController.ts'),
+      'utf8',
+    );
+    assert.match(source, /const previousSession = loadPlatformSession\(\)/);
+    assert.match(source, /savePlatformSession\(previousSession\)/);
+    assert.doesNotMatch(
+      source,
+      /prepareBuilderHouseScope\(\s*previousTarget/,
+    );
   });
 });

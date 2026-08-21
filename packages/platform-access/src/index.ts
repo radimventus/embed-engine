@@ -167,6 +167,8 @@ export {
   type PartnerEnvironmentScope,
 } from './partner/partnerEnvironmentScope';
 
+export { houseIdentityBelongsToAuthorizedProject } from './partner/houseProjectOwnership';
+
 export {
   emptyPublicCompanyContact,
   projectPublicCompanyContact,

@@ -393,7 +393,8 @@ export function WorkspaceHostApp() {
 
       const currentContext = getSharedWorkspaceContext();
       if (currentContext === null) return;
-      const projectId = loadPlatformSession()?.projectId ?? currentContext.projectId;
+      const previousSession = loadPlatformSession();
+      const projectId = previousSession?.projectId ?? currentContext.projectId;
       if (
         projectId === null ||
         (houseId !== null && !isHouseInProject(houseId, projectId))
@@ -426,6 +427,16 @@ export function WorkspaceHostApp() {
             activeHouseId: next.activeHouseId,
             authoredHouseIdentities:
               next.workspaceContext?.authoredHouseIdentities,
+          }).then((accepted) => {
+            if (!accepted.ok && previousSession !== null) {
+              savePlatformSession(previousSession);
+              setSharedProjectId(previousSession.projectId);
+              setSharedActiveHouseId(previousSession.activeHouseId);
+              task42Trace('house-change:persistence-fail', {
+                source,
+                requestedHouseId: houseId,
+              });
+            }
           });
         }
       }
@@ -512,6 +523,7 @@ export function WorkspaceHostApp() {
             ? currentHouseId
             : null;
 
+        const previousSession = loadPlatformSession();
         const next = updateSession({
           projectId: event.data.projectId,
           activeHouseId: nextActiveHouseId,
@@ -533,6 +545,15 @@ export function WorkspaceHostApp() {
               activeHouseId: next.activeHouseId,
               authoredHouseIdentities:
                 next.workspaceContext?.authoredHouseIdentities,
+            }).then((accepted) => {
+              if (!accepted.ok && previousSession !== null) {
+                savePlatformSession(previousSession);
+                setSharedProjectId(previousSession.projectId);
+                setSharedActiveHouseId(previousSession.activeHouseId);
+                task42Trace('project-change:persistence-fail', {
+                  projectId: event.data.projectId,
+                });
+              }
             });
           }
         }

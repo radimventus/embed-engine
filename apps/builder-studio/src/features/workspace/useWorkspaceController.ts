@@ -393,10 +393,7 @@ export function useWorkspaceController(): WorkspaceController {
       while (pendingTargetRef.current !== null) {
         let target = pendingTargetRef.current;
         pendingTargetRef.current = null;
-        const previousTarget =
-          registryRef.current.projects.find(
-            (project) => project.id === registryRef.current.activeProjectId,
-          ) ?? null;
+        const previousSession = loadPlatformSession();
         try {
           let targetScope: ReturnType<typeof prepareBuilderHouseScope> | null =
             null;
@@ -418,13 +415,12 @@ export function useWorkspaceController(): WorkspaceController {
             mountHousePackage: async () => undefined,
           });
         } catch (error) {
-          // The local projection is prepared before authorization so every
-          // authoritative request has the target identity. Restore it when
-          // that request is rejected; no target mount has started yet.
-          prepareBuilderHouseScope(
-            previousTarget?.folderId ?? target.folderId,
-            previousTarget,
-          );
+          // Optimistic local session was written before authorization.
+          // Restore the previous server-backed Partner Environment; never
+          // substitute a Builder-local previous house (that was DSE).
+          if (previousSession !== null) {
+            savePlatformSession(previousSession);
+          }
           setSwitchError(
             error instanceof Error
               ? error.message

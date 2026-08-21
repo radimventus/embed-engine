@@ -255,6 +255,8 @@ describe('VR-04 Canonical Workspace Shell', () => {
 
     assert.match(app, /house-change:received/);
     assert.match(app, /house-change:local-session-updated/);
+    assert.match(app, /house-change:persistence-fail/);
+    assert.match(app, /project-change:persistence-fail/);
 
     assert.match(app, /project-change:received/);
 

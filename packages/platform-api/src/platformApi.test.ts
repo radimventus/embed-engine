@@ -445,12 +445,31 @@ describe('Durable partner sessions', () => {
     }
   });
 
-  it('persists AC Modular / MODERN scope through authoritative Partner Environment switch and repository restart', async () => {
+  it('persists AC Modular house switching inside an authorized AC Partner Environment', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-scope-switch-test-'));
-    const { repository } = await partnerSessionRepositoryWithDseScope(directory);
+    const { repository, partners } = await partnerSessionRepositoryWithDseScope(directory);
     const statePath = join(directory, 'partner-sessions.json');
+    const acScope = {
+      tenantId: 'tenant-ac-modular',
+      companyId: 'ac-modular',
+      workspaceId: 'ac-modular-main',
+      projectId: 'project-ac-modular',
+    } as const;
 
     try {
+      await partners.create({
+        id: 'ac-modular',
+        draft: {
+          ...dsePartnerDraft,
+          name: 'AC Modular',
+          company: {
+            ...dsePartnerDraft.company,
+            legalName: 'AC Modular',
+          },
+        },
+      });
+      await partners.updateEnvironmentScope('ac-modular', acScope);
+
       const issued = await repository.activate({
         invite: {
           id: 'invite-conis-admin-scope-switch',
@@ -468,73 +487,64 @@ describe('Durable partner sessions', () => {
 
       const entered = await repository.mutateContext(issued.token, {
         action: 'enter',
-        partnerId: 'p-dse',
+        partnerId: 'ac-modular',
+        ...acScope,
+        activeHouseId: 'modern-4kk',
+        activeStudio: 'client',
+        officeReturnHref: 'https://conis.cz:4181/partners/ac-modular',
+      });
+
+      assert.ok(entered !== null);
+      assert.equal(entered.projectId, acScope.projectId);
+      assert.equal(entered.companyId, acScope.companyId);
+      assert.equal(entered.activeHouseId, 'modern-4kk');
+
+      const switched = await repository.mutateContext(issued.token, {
+        action: 'switch',
+        activeStudio: 'builder',
+        projectId: acScope.projectId,
+        activeHouseId: 'family-98',
+      });
+
+      assert.ok(switched !== null);
+      assert.equal(switched.tenantId, acScope.tenantId);
+      assert.equal(switched.companyId, acScope.companyId);
+      assert.equal(switched.workspaceId, acScope.workspaceId);
+      assert.equal(switched.projectId, acScope.projectId);
+      assert.equal(switched.activeHouseId, 'family-98');
+      assert.equal(switched.activeStudioId, 'builder');
+      assert.equal(switched.workspaceContext?.projectId, acScope.projectId);
+      assert.equal(switched.workspaceContext?.activeHouseId, 'family-98');
+
+      const escaped = await repository.mutateContext(issued.token, {
+        action: 'switch',
+        activeStudio: 'builder',
         tenantId: 'tenant-domy-s-energii',
         companyId: 'company-domy-s-energii',
         workspaceId: 'domy-s-energii-main',
         projectId: 'project-domy-s-energii',
         activeHouseId:
           'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
-        activeStudio: 'client',
-        officeReturnHref: 'https://conis.cz:4181/partners/p-dse',
       });
+      assert.equal(escaped, null);
 
-      assert.ok(entered !== null);
-      assert.equal(entered.projectId, 'project-domy-s-energii');
+      const stillAc = await repository.resolve(issued.token);
+      assert.equal(stillAc?.companyId, acScope.companyId);
+      assert.equal(stillAc?.projectId, acScope.projectId);
+      assert.equal(stillAc?.activeHouseId, 'family-98');
 
-      const switched = await repository.mutateContext(issued.token, {
-        action: 'switch',
-        activeStudio: 'builder',
-        tenantId: 'tenant-ac-modular',
-        companyId: 'ac-modular',
-        workspaceId: 'ac-modular-main',
-        projectId: 'project-ac-modular',
-        activeHouseId: 'modern-4kk',
-      });
-
-      assert.ok(switched !== null);
-      assert.equal(switched.tenantId, 'tenant-ac-modular');
-      assert.equal(switched.companyId, 'ac-modular');
-      assert.equal(switched.workspaceId, 'ac-modular-main');
-      assert.equal(switched.projectId, 'project-ac-modular');
-      assert.equal(switched.activeHouseId, 'modern-4kk');
-      assert.equal(switched.activeStudioId, 'builder');
-
-      assert.equal(
-        switched.workspaceContext?.companyId,
-        'ac-modular',
+      const restarted = new FilePartnerSessionRepository(
+        statePath,
+        createPartnerEnvironmentScopeResolver(partners),
       );
-      assert.equal(
-        switched.workspaceContext?.workspaceId,
-        'ac-modular-main',
-      );
-      assert.equal(
-        switched.workspaceContext?.projectId,
-        'project-ac-modular',
-      );
-      assert.equal(
-        switched.workspaceContext?.activeHouseId,
-        'modern-4kk',
-      );
-
-      const restarted = new FilePartnerSessionRepository(statePath);
       const restored = await restarted.resolve(issued.token);
 
       assert.ok(restored !== null);
-      assert.equal(restored.companyId, 'ac-modular');
-      assert.equal(restored.workspaceId, 'ac-modular-main');
-      assert.equal(restored.projectId, 'project-ac-modular');
-      assert.equal(restored.activeHouseId, 'modern-4kk');
+      assert.equal(restored.companyId, acScope.companyId);
+      assert.equal(restored.workspaceId, acScope.workspaceId);
+      assert.equal(restored.projectId, acScope.projectId);
+      assert.equal(restored.activeHouseId, 'family-98');
       assert.equal(restored.activeStudioId, 'builder');
-
-      assert.equal(
-        restored.workspaceContext?.projectId,
-        'project-ac-modular',
-      );
-      assert.equal(
-        restored.workspaceContext?.activeHouseId,
-        'modern-4kk',
-      );
     } finally {
       await rm(directory, { recursive: true, force: true });
     }

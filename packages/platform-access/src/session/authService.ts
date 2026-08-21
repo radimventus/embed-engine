@@ -10,6 +10,7 @@ import type {
 } from '../domain/types';
 import type { SharedWorkspaceContext } from '../domain/workspaceContext';
 import { isSharedWorkspaceContext } from '../domain/workspaceContext';
+import { houseIdentityBelongsToAuthorizedProject } from '../partner/houseProjectOwnership';
 import {
   getCanonicalHouse,
   isCanonicalProjectId,
@@ -51,15 +52,30 @@ export function isHouseInProject(houseId: string, projectId: string): boolean {
   const normalizedHouseId = houseId.trim();
   const normalizedProjectId = projectId.trim();
   const house = getCanonicalHouse(normalizedHouseId);
-  return (
-    (house !== null &&
-      normalizedProjectId.length > 0 &&
-      house.project.projectId === normalizedProjectId) ||
+  if (
+    house !== null &&
+    normalizedProjectId.length > 0 &&
+    house.project.projectId === normalizedProjectId
+  ) {
+    return true;
+  }
+  if (
     getSharedWorkspaceContext()?.authoredHouseIdentities?.some(
       (draft) =>
         draft.houseId === normalizedHouseId &&
         draft.canonicalProjectId === normalizedProjectId,
     ) === true
+  ) {
+    return true;
+  }
+  const session = loadPlatformSession();
+  const companyId = session?.companyId?.trim() ?? '';
+  return (
+    companyId.length > 0 &&
+    houseIdentityBelongsToAuthorizedProject(normalizedHouseId, {
+      companyId,
+      projectId: normalizedProjectId,
+    })
   );
 }
 
