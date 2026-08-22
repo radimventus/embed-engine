@@ -318,9 +318,16 @@ export function composeWorkspaceRegistry(input: {
     });
   };
 
+  const authorizedCanonicalProjectIds = new Set(
+    deliveryProjects.map((item) => canonicalizeFolderId(item.project.projectId)),
+  );
+
   if (input.folders !== undefined && input.folders.length > 0) {
     for (const folder of input.folders) {
-      pushFolder(folder);
+      const folderId = canonicalizeFolderId(folder.id);
+      if (authorizedCanonicalProjectIds.has(folderId)) {
+        pushFolder(folder);
+      }
     }
   } else {
     const fromCpl = foldersFromCanonicalProjects();

@@ -35,7 +35,7 @@ describe('requestPlatformHousePackageMediaUpload', () => {
       ok: true,
       media: {
         relativePath: 'media/gallery/living-room.png',
-        url: 'https://api.conis.cz/public/house-packages/house-a/media/media/gallery/living-room.png',
+        url: 'https://api.conis.cz/public/house-packages/house-a/media/gallery/living-room.png',
       },
     });
     assert.equal(request?.method, 'POST');
@@ -46,7 +46,7 @@ describe('requestPlatformHousePackageMediaUpload', () => {
   it('returns a stable encoded media reference', () => {
     assert.equal(
       platformHousePackageMediaUrl('house/a', 'media/gallery/naše foto.png'),
-      'https://api.conis.cz/public/house-packages/house%2Fa/media/media/gallery/na%C5%A1e%20foto.png',
+      'https://api.conis.cz/public/house-packages/house%2Fa/media/gallery/na%C5%A1e%20foto.png',
     );
   });
 });
