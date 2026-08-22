@@ -23,11 +23,21 @@ export type CanonicalRegistryAuthorityBundle = {
   readonly project: PlatformCanonicalProject;
 };
 
+
+export type PlatformCanonicalHouse = {
+  readonly id: string;
+  readonly canonicalProjectId: string;
+  readonly name: string;
+  readonly packageRoot?: string;
+  readonly status?: string;
+};
+
 export type CanonicalRegistryAuthoritySnapshot = {
   readonly tenants: readonly PlatformTenant[];
   readonly companies: readonly PlatformCompany[];
   readonly workspaces: readonly PlatformWorkspace[];
   readonly projects: readonly PlatformCanonicalProject[];
+  readonly houses: readonly PlatformCanonicalHouse[];
 };
 
 
@@ -36,6 +46,7 @@ type CanonicalRegistryAuthorityExtras = {
   readonly companies: readonly PlatformCompany[];
   readonly workspaces: readonly PlatformWorkspace[];
   readonly canonicalProjects: readonly PlatformCanonicalProject[];
+  readonly houses: readonly PlatformCanonicalHouse[];
 };
 
 export type PlatformCanonicalProjectRuntimeAuthority = {
@@ -50,6 +61,7 @@ const EMPTY_EXTRAS: CanonicalRegistryAuthorityExtras = {
   companies: [],
   workspaces: [],
   canonicalProjects: [],
+  houses: [],
 };
 
 function normalize(value: string): string {
@@ -72,6 +84,7 @@ function cloneExtras(
     companies: [...input.companies],
     workspaces: [...input.workspaces],
     canonicalProjects: [...input.canonicalProjects],
+    houses: [...(input.houses ?? [])],
   };
 }
 
@@ -85,6 +98,7 @@ function parseExtras(raw: string): CanonicalRegistryAuthorityExtras {
     canonicalProjects: Array.isArray(parsed.canonicalProjects)
       ? parsed.canonicalProjects
       : [],
+    houses: Array.isArray(parsed.houses) ? parsed.houses : [],
   };
 }
 
@@ -236,6 +250,7 @@ export class FileCanonicalRegistryAuthorityRepository {
       companies: upsertById(extras.companies, company),
       workspaces: upsertById(extras.workspaces, workspace),
       canonicalProjects: upsertById(extras.canonicalProjects, project),
+      houses: extras.houses ?? [],
     };
 
     await this.writeExtras(next);
@@ -246,6 +261,25 @@ export class FileCanonicalRegistryAuthorityRepository {
       workspaceId: workspace.id,
       projectId: project.id,
     };
+  }
+
+
+  async upsertHouseAuthority(house: PlatformCanonicalHouse): Promise<PlatformCanonicalHouse> {
+    const normalizedHouse: PlatformCanonicalHouse = {
+      id: requireId('house.id', house.id),
+      canonicalProjectId: requireId('house.canonicalProjectId', house.canonicalProjectId),
+      name: requireId('house.name', house.name),
+      ...(house.packageRoot !== undefined ? { packageRoot: house.packageRoot } : {}),
+      ...(house.status !== undefined ? { status: house.status } : {}),
+    };
+
+    const extras = await this.readExtras();
+    const nextHouses = upsertById(extras.houses ?? [], normalizedHouse);
+    await this.writeExtras({
+      ...extras,
+      houses: nextHouses,
+    });
+    return normalizedHouse;
   }
 
   async readAuthoritySnapshot(): Promise<CanonicalRegistryAuthoritySnapshot> {
@@ -267,6 +301,7 @@ export class FileCanonicalRegistryAuthorityRepository {
         DEFAULT_CANONICAL_PROJECTS,
         extras.canonicalProjects,
       ),
+      houses: extras.houses ?? [],
     };
   }
 

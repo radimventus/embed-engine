@@ -7,6 +7,7 @@ import {
   resetCompanyRegistryExtras,
   upsertBuilderCanonicalProject,
 } from './index';
+import { listCanonicalHouses } from './projection/canonicalProjectProjection';
 
 test(
   'TASK-66VR-FIX-05 — server authority hydrates a fresh browser Project projection',
@@ -98,6 +99,86 @@ test(
           'project-browser-local-orphan',
         ),
         null,
+      );
+    } finally {
+      resetCompanyRegistryExtras();
+    }
+  },
+);
+
+test(
+  'TASK-66 HOUSE — clean client hydrates canonical Houses and preserves Project isolation',
+  () => {
+    resetCompanyRegistryExtras();
+
+    try {
+      hydrateCanonicalRegistryFromAuthority({
+        tenants: [],
+        companies: [],
+        workspaces: [],
+        projects: [
+          {
+            id: 'project-alpha',
+            companyId: 'company-a',
+            workspaceId: 'workspace-a',
+            name: 'Project Alpha',
+            slug: 'project-alpha',
+            description: '',
+          },
+          {
+            id: 'project-beta',
+            companyId: 'company-b',
+            workspaceId: 'workspace-b',
+            name: 'Project Beta',
+            slug: 'project-beta',
+            description: '',
+          },
+        ],
+        houses: [
+          {
+            id: 'house-alpha-1',
+            canonicalProjectId: 'project-alpha',
+            name: 'Alpha House 1',
+            status: 'draft',
+          },
+          {
+            id: 'house-beta-1',
+            canonicalProjectId: 'project-beta',
+            name: 'Beta House 1',
+            status: 'draft',
+          },
+        ],
+      });
+
+      const alphaHouses = listCanonicalHouses('project-alpha');
+      const betaHouses = listCanonicalHouses('project-beta');
+
+      assert.ok(
+        alphaHouses.some(
+          (house) => house.id === 'house-alpha-1',
+        ),
+        'Alpha House must hydrate under Project Alpha',
+      );
+
+      assert.ok(
+        !alphaHouses.some(
+          (house) => house.id === 'house-beta-1',
+        ),
+        'Beta House must not leak into Project Alpha',
+      );
+
+      assert.ok(
+        betaHouses.some(
+          (house) => house.id === 'house-beta-1',
+        ),
+        'Beta House must hydrate under Project Beta',
+      );
+
+      assert.ok(
+        !betaHouses.some(
+          (house) => house.id === 'house-alpha-1',
+        ),
+        'Alpha House must not leak into Project Beta',
       );
     } finally {
       resetCompanyRegistryExtras();

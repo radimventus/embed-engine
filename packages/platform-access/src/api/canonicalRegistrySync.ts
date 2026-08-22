@@ -29,6 +29,7 @@ export async function syncCanonicalRegistryFromAuthority():
       companies: result.registry.companies,
       workspaces: result.registry.workspaces,
       projects: result.registry.projects,
+      houses: result.registry.houses,
     });
 
     return { ok: true };

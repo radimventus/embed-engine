@@ -88,6 +88,15 @@ import {
 } from '@embed-engine/platform-access/rbac';
 
 import { FileCanonicalRegistryAuthorityRepository } from './canonicalRegistryAuthorityRepository';
+
+async function readRequestBodyJson<T>(req: any): Promise<T> {
+  const chunks: Buffer[] = [];
+  for await (const chunk of req) {
+    chunks.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+  }
+  const raw = Buffer.concat(chunks).toString('utf8');
+  return raw.trim().length === 0 ? ({} as T) : JSON.parse(raw);
+}
 export {
   FileSocialProofAnalyticsRepository,
   type RecentHouseActivity,
@@ -1652,6 +1661,40 @@ export function createPlatformApiServer(
           ok: true,
           registry,
         });
+      }
+
+      if (
+        request.method === 'POST' &&
+        path === '/public/auth/canonical-house-authority'
+      ) {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        if (token === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+        const current = await partnerSessions.resolve(token);
+        if (current === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+        if (!isPlatformAdmin(current.user.roles)) {
+          return respond(response, 403, { error: 'Přidávat domy do registru může pouze CONIS Admin.' });
+        }
+        const body = (await readRequestBodyJson(request)) as {
+          id?: string;
+          canonicalProjectId?: string;
+          name?: string;
+          packageRoot?: string;
+        };
+        if (!body.id || !body.canonicalProjectId || !body.name) {
+          return respond(response, 400, { error: 'id, canonicalProjectId a name jsou povinné.' });
+        }
+        const saved = await canonicalRegistryAuthorityRepository.upsertHouseAuthority({
+          id: body.id.trim(),
+          canonicalProjectId: body.canonicalProjectId.trim(),
+          name: body.name.trim(),
+          packageRoot: body.packageRoot,
+          status: 'draft',
+        });
+        return respond(response, 201, { ok: true, house: saved });
       }
 
       if (

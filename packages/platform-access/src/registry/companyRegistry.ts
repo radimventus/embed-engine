@@ -143,12 +143,14 @@ let mutableExtras: {
   workspaces: PlatformWorkspace[];
   projects: PlatformProject[];
   canonicalProjects: PlatformCanonicalProject[];
+  houses?: any[];
 } = {
   tenants: [],
   companies: [],
   workspaces: [],
   projects: [],
   canonicalProjects: [],
+    houses: [],
 };
 
 export const COMPANY_EXTRAS_STORAGE_KEY = 'conis.platform.companyExtras.v1';
@@ -164,6 +166,7 @@ function emptyExtras(): typeof mutableExtras {
     workspaces: [],
     projects: [],
     canonicalProjects: [],
+    houses: [],
   };
 }
 
@@ -637,6 +640,7 @@ export {
 export { DEFAULT_CANONICAL_PROJECT_ID } from './defaults';
 
 export type CanonicalRegistryAuthoritySnapshotInput = {
+  readonly houses?: readonly any[];
   readonly tenants: readonly PlatformTenant[];
   readonly companies: readonly PlatformCompany[];
   readonly workspaces: readonly PlatformWorkspace[];
@@ -654,9 +658,16 @@ export function hydrateCanonicalRegistryFromAuthority(
     companies: [...snapshot.companies],
     workspaces: [...snapshot.workspaces],
     canonicalProjects: [...snapshot.projects],
+    houses: [...((snapshot as any).houses ?? [])],
   };
 
   persistExtrasToStorage();
 
   return getDefaultCompanyRegistry();
+}
+
+
+export function getHydratedCanonicalHouses(): readonly any[] {
+  ensureExtrasHydrated();
+  return mutableExtras.houses ?? [];
 }

@@ -1,3 +1,4 @@
+import { getHydratedCanonicalHouses } from '../registry/companyRegistry';
 /**
  * CAP-PLAT-02 / CAP-PLAT-04d — Canonical Projection Layer (read-only).
  *
@@ -326,10 +327,62 @@ function listPublishedHouseProjections(): readonly CanonicalProjectProjection[] 
 export function listCanonicalHouses(
   projectId?: string | null,
 ): readonly CanonicalProjectProjection[] {
-  const all = listPublishedHouseProjections();
+
+  const base = (() => {
+    const all = listPublishedHouseProjections();
   const filter = projectId?.trim();
   if (filter === undefined || filter.length === 0) return all;
   return all.filter((item) => item.project.projectId === filter);
+  })();
+
+  const dynamic = typeof getHydratedCanonicalHouses === 'function' ? getHydratedCanonicalHouses() : [];
+  const filter = projectId?.trim();
+
+  const dynamicProjections = dynamic
+    .filter((h: any) => {
+      if (!h) return false;
+      if (!filter) return true;
+      return h.canonicalProjectId === filter || h.projectId === filter;
+    })
+    .map((h: any) => {
+      const pId = h.canonicalProjectId ?? filter ?? '';
+      const hId = h.id ?? h.houseId;
+      const housePayload: any = {
+        id: hId,
+        houseId: hId,
+        canonicalProjectId: pId,
+        name: h.name,
+        packageRoot: h.packageRoot ?? `/house-packages/${hId}`,
+        status: h.status ?? 'draft',
+        dataMode: h.dataMode ?? 'LIVE_EMPTY',
+        ...h,
+      };
+
+      return {
+        ...housePayload,
+        house: housePayload,
+        project: {
+          projectId: pId,
+          canonicalProjectId: pId,
+          name: pId,
+        },
+      };
+    });
+
+  const map = new Map<string, any>();
+  for (const item of base) {
+    const id = (item as any)?.house?.id ?? (item as any)?.house?.houseId ?? (item as any)?.id ?? (item as any)?.houseId;
+    if (id) map.set(id, item);
+  }
+  for (const dyn of dynamicProjections) {
+    const id = dyn?.house?.id ?? dyn?.id;
+    if (id && !map.has(id)) {
+      map.set(id, dyn);
+    }
+  }
+
+  return [...map.values()];
+
 }
 
 /**

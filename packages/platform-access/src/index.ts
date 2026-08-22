@@ -354,6 +354,7 @@ export {
   type PlatformAccessInviteClient,
   type PlatformAccessInviteCreateInput,
   type PlatformAccessInviteIssue,
+  type PlatformAccessCanonicalHouseAuthorityInput,
 } from './api/platformAccessClient';
 
 export {

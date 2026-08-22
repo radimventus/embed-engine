@@ -157,6 +157,21 @@ export type PlatformAccessCanonicalRegistrySnapshot = {
     readonly slug: string;
     readonly description: string;
   }[];
+  readonly houses: readonly {
+    readonly id: string;
+    readonly canonicalProjectId: string;
+    readonly name: string;
+    readonly packageRoot?: string;
+    readonly status?: string;
+  }[];
+};
+
+export type PlatformAccessCanonicalHouseAuthorityInput = {
+  readonly id: string;
+  readonly canonicalProjectId: string;
+  readonly name: string;
+  readonly packageRoot?: string;
+  readonly status?: string;
 };
 
 export type PlatformAccessCanonicalAuthorityBundle = {
@@ -236,6 +251,9 @@ export interface PlatformAccessAuthClient {
   >;
   persistCanonicalProjectAuthority(
     input: PlatformAccessCanonicalAuthorityBundle,
+  ): Promise<PlatformAccessWriteResult>;
+  persistCanonicalHouseAuthority(
+    input: PlatformAccessCanonicalHouseAuthorityInput,
   ): Promise<PlatformAccessWriteResult>;
   persistPartnerEnvironmentScope(
     partnerId: string,
@@ -369,6 +387,29 @@ export function createPlatformAccessAuthClient(
           error:
             result.error ??
             'Canonical Project se nepodařilo registrovat.',
+        };
+      }
+      return { ok: true };
+    },
+    async persistCanonicalHouseAuthority(input) {
+      const response = await fetch(
+        `${baseUrl}/public/auth/canonical-house-authority`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(input),
+        },
+      );
+      if (!response.ok) {
+        const result = await parseResponse<{ readonly error?: string }>(
+          response,
+        ).catch(() => ({ error: undefined }));
+        return {
+          ok: false,
+          error:
+            result.error ??
+            'Canonical House se nepodařilo registrovat.',
         };
       }
       return { ok: true };

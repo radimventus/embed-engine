@@ -334,3 +334,73 @@ describe('Platform Access invitation client', () => {
     assert.equal(JSON.stringify(requests[0]?.init?.body).includes('companyId'), false);
   });
 });
+
+it(
+  'TASK-66 — persists canonical House authority through authenticated HTTP',
+  async () => {
+    const originalFetch = globalThis.fetch;
+    const requests: Array<{
+      readonly url: string;
+      readonly init: RequestInit | undefined;
+    }> = [];
+
+    globalThis.fetch = (async (
+      input: string | URL | Request,
+      init?: RequestInit,
+    ) => {
+      requests.push({
+        url: String(input),
+        init,
+      });
+
+      return new Response(
+        JSON.stringify({ ok: true }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
+    }) as typeof fetch;
+
+    try {
+      const client = createPlatformAccessAuthClient(
+        'https://api.conis.cz',
+      );
+
+      const result =
+        await client.persistCanonicalHouseAuthority({
+          id: 'house-66-a',
+          canonicalProjectId: 'project-test',
+          name: 'HOUSE66 A',
+          packageRoot: '/house-packages/house-66-a',
+          status: 'draft',
+        });
+
+      assert.deepEqual(result, { ok: true });
+      assert.equal(requests.length, 1);
+
+      assert.equal(
+        requests[0]?.url,
+        'https://api.conis.cz/public/auth/canonical-house-authority',
+      );
+
+      assert.equal(requests[0]?.init?.method, 'POST');
+      assert.equal(requests[0]?.init?.credentials, 'include');
+
+      assert.deepEqual(
+        JSON.parse(String(requests[0]?.init?.body)),
+        {
+          id: 'house-66-a',
+          canonicalProjectId: 'project-test',
+          name: 'HOUSE66 A',
+          packageRoot: '/house-packages/house-66-a',
+          status: 'draft',
+        },
+      );
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  },
+);

@@ -237,4 +237,40 @@ describe('FileCanonicalRegistryAuthorityRepository', () => {
       await rm(dir, { recursive: true, force: true });
     }
   });
+
+  it('persists houses across repository instance recreation (restart durability)', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'conis-house-durability-'));
+    const statePath = join(dir, 'canonical-registry-extras.json');
+
+    try {
+      const repoA = new FileCanonicalRegistryAuthorityRepository(statePath);
+      await repoA.upsertAuthorityBundle({
+        tenant: { id: 'tenant-test', companyId: 'company-test', name: 'Test Tenant' },
+        company: { id: 'company-test', tenantId: 'tenant-test', name: 'Test Company' },
+        workspace: { id: 'workspace-test', companyId: 'company-test', name: 'Test Workspace' },
+        project: { id: 'project-test', companyId: 'company-test', workspaceId: 'workspace-test', name: 'Test Project' },
+      });
+      await repoA.upsertHouseAuthority({
+        id: 'house-durability-1',
+        canonicalProjectId: 'project-test',
+        name: 'DURABLE HOUSE 1',
+        packageRoot: '/packages/durable-1',
+        status: 'draft',
+      });
+
+      // Instance B nad stejným souborem (simulace restartu procesu)
+      const repoB = new FileCanonicalRegistryAuthorityRepository(statePath);
+      const snapshot = await repoB.readAuthoritySnapshot();
+
+      const found = snapshot.houses.find((h) => h.id === 'house-durability-1');
+      assert.ok(found !== undefined, 'House must exist after repository recreation');
+      assert.equal(found?.canonicalProjectId, 'project-test');
+      assert.equal(found?.name, 'DURABLE HOUSE 1');
+      assert.equal(found?.packageRoot, '/packages/durable-1');
+      assert.equal(found?.status, 'draft');
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
 });

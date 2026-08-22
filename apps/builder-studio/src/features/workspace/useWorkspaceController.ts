@@ -303,6 +303,24 @@ async function awaitAuthoritativeBuilderHouseScope(input: {
     throw new Error(reconciled.error);
   }
 
+  if (input.authoredHouseIdentity !== undefined) {
+    const houseAuthority =
+      await createPlatformAccessAuthClient().persistCanonicalHouseAuthority({
+        id: input.authoredHouseIdentity.houseId,
+        canonicalProjectId:
+          input.authoredHouseIdentity.canonicalProjectId,
+        name: input.authoredHouseIdentity.name,
+        ...(input.authoredHouseIdentity.packageRoot.trim().length > 0
+          ? { packageRoot: input.authoredHouseIdentity.packageRoot }
+          : {}),
+        status: input.authoredHouseIdentity.status,
+      });
+
+    if (!houseAuthority.ok) {
+      throw new Error(houseAuthority.error);
+    }
+  }
+
   const result = await createPlatformAccessAuthClient().mutateSessionContext({
     action: 'switch',
     activeStudio: 'builder',
