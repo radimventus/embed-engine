@@ -4,6 +4,7 @@ import {
   createWorkspaceProjectChangeMessage,
   createWorkspaceHouseChangeMessage,
   createWorkspaceHouseScopeRequestMessage,
+  createWorkspaceProjectScopeRequestMessage,
   createPlatformAccessAuthClient,
   getCanonicalHouse,
   isHouseInProject,
@@ -253,6 +254,70 @@ function prepareBuilderHouseScope(
     updateSession({ projectId, activeHouseId });
   }
   return { activeHouseId, authoredHouseIdentity };
+}
+
+async function awaitAuthoritativeBuilderProjectScope(
+  projectId: string,
+): Promise<void> {
+  if (
+    typeof window === 'undefined' ||
+    window.parent === window ||
+    typeof MessageChannel === 'undefined'
+  ) {
+    return;
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const channel = new MessageChannel();
+    let settled = false;
+
+    const finish = (error?: Error) => {
+      if (settled) return;
+      settled = true;
+      channel.port1.close();
+      if (error === undefined) {
+        resolve();
+      } else {
+        reject(error);
+      }
+    };
+
+    const timeoutId = window.setTimeout(() => {
+      finish(
+        new Error(
+          'Workspace Host nepotvrdil změnu Projectu.',
+        ),
+      );
+    }, 10_000);
+
+    channel.port1.onmessage = (event: MessageEvent<unknown>) => {
+      window.clearTimeout(timeoutId);
+
+      const result =
+        event.data !== null && typeof event.data === 'object'
+          ? (event.data as { ok?: unknown; error?: unknown })
+          : null;
+
+      if (result?.ok === true) {
+        finish();
+        return;
+      }
+
+      finish(
+        new Error(
+          typeof result?.error === 'string'
+            ? result.error
+            : 'Workspace Host odmítl změnu Projectu.',
+        ),
+      );
+    };
+
+    window.parent.postMessage(
+      createWorkspaceProjectScopeRequestMessage(projectId),
+      window.location.origin,
+      [channel.port2],
+    );
+  });
 }
 
 async function awaitAuthoritativeBuilderHouseScope(input: {
@@ -605,8 +670,18 @@ export function useWorkspaceController(): WorkspaceController {
         return null;
       }
 
+      try {
+        await awaitAuthoritativeBuilderProjectScope(folderId);
+      } catch (error: unknown) {
+        setSwitchError(
+          error instanceof Error
+            ? error.message
+            : 'Platform API nepotvrdilo změnu Projectu.',
+        );
+        return null;
+      }
+
       publishBuilderHouseScope(folderId, null);
-      publishWorkspaceProjectChange(folderId);
       const ok = await requestOpenProject(opened.houseId, { dirty: false });
       return ok ? opened.houseId : null;
     },

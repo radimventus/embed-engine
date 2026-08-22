@@ -9,6 +9,8 @@ export const WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE =
   'conis:workspace-house-change';
 export const WORKSPACE_HOUSE_SCOPE_REQUEST_MESSAGE_TYPE =
   'conis:workspace-house-scope-request';
+export const WORKSPACE_PROJECT_SCOPE_REQUEST_MESSAGE_TYPE =
+  'conis:workspace-project-scope-request';
 
 export type WorkspaceProjectChangeMessage = {
   readonly type: typeof WORKSPACE_PROJECT_CHANGE_MESSAGE_TYPE;
@@ -31,6 +33,11 @@ export type WorkspaceHouseScopeRequestMessage = {
   readonly type: typeof WORKSPACE_HOUSE_SCOPE_REQUEST_MESSAGE_TYPE;
   readonly houseId: string | null;
   readonly authoredHouseIdentity?: import('./workspaceContext').WorkspaceAuthoredHouseIdentity;
+};
+
+export type WorkspaceProjectScopeRequestMessage = {
+  readonly type: typeof WORKSPACE_PROJECT_SCOPE_REQUEST_MESSAGE_TYPE;
+  readonly projectId: string;
 };
 
 export function createWorkspaceProjectChangeMessage(
@@ -72,6 +79,27 @@ export function isWorkspaceHouseChangeMessage(
     message.type === WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE &&
     (message.houseId === null ||
       (typeof message.houseId === 'string' && message.houseId.trim().length > 0))
+  );
+}
+
+export function createWorkspaceProjectScopeRequestMessage(
+  projectId: string,
+): WorkspaceProjectScopeRequestMessage {
+  return {
+    type: WORKSPACE_PROJECT_SCOPE_REQUEST_MESSAGE_TYPE,
+    projectId,
+  };
+}
+
+export function isWorkspaceProjectScopeRequestMessage(
+  value: unknown,
+): value is WorkspaceProjectScopeRequestMessage {
+  if (value === null || typeof value !== 'object') return false;
+  const message = value as Partial<WorkspaceProjectScopeRequestMessage>;
+  return (
+    message.type === WORKSPACE_PROJECT_SCOPE_REQUEST_MESSAGE_TYPE &&
+    typeof message.projectId === 'string' &&
+    message.projectId.trim().length > 0
   );
 }
 

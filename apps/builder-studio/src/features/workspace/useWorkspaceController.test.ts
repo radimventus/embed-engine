@@ -38,6 +38,50 @@ function house(
 }
 
 describe('Builder shared active House publication', () => {
+  it('TASK 66VR-FIX-04 — cross-Project folder switch waits for Workspace Host Project ACK', () => {
+    const source = readFileSync(
+      join(dirname(fileURLToPath(import.meta.url)), 'useWorkspaceController.ts'),
+      'utf8',
+    );
+
+    assert.match(
+      source,
+      /createWorkspaceProjectScopeRequestMessage/,
+    );
+    assert.match(
+      source,
+      /new MessageChannel\(\)/,
+    );
+    assert.match(
+      source,
+      /await awaitAuthoritativeBuilderProjectScope\(folderId\)/,
+    );
+
+    const ack = source.indexOf(
+      'await awaitAuthoritativeBuilderProjectScope(folderId)',
+    );
+    const houseScope = source.indexOf(
+      'publishBuilderHouseScope(folderId, null)',
+      ack,
+    );
+    const openHouse = source.indexOf(
+      'requestOpenProject(opened.houseId, { dirty: false })',
+      houseScope,
+    );
+
+    assert.notEqual(ack, -1);
+    assert.notEqual(houseScope, -1);
+    assert.notEqual(openHouse, -1);
+    assert.ok(ack < houseScope);
+    assert.ok(houseScope < openHouse);
+
+    const crossProjectBlock = source.slice(ack - 300, openHouse + 200);
+    assert.doesNotMatch(
+      crossProjectBlock,
+      /publishWorkspaceProjectChange\(folderId\)/,
+    );
+  });
+
   it('awaits authoritative VPD → BUNGALOV scope authorization before mounting', async () => {
     let resolveAuthorization: (() => void) | undefined;
     const authorization = new Promise<void>((resolve) => {

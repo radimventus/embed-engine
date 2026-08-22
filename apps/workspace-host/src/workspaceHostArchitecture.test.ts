@@ -16,6 +16,39 @@ function read(relative: string): string {
 }
 
 describe('VR-04 Canonical Workspace Shell', () => {
+  it('TASK 66VR-FIX-04 — acknowledges authoritative Project scope requests only after persistence', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    assert.match(
+      app,
+      /isWorkspaceProjectScopeRequestMessage\(event\.data\)/,
+    );
+    assert.match(
+      app,
+      /const replyPort = event\.ports\[0\]/,
+    );
+    assert.match(
+      app,
+      /selectProjectAuthoritatively\(/,
+    );
+    assert.match(
+      app,
+      /project-scope-request:persistence-ok/,
+    );
+    assert.match(
+      app,
+      /replyPort\.postMessage\(\{\s*ok: true/,
+    );
+    assert.match(
+      app,
+      /project-scope-request:persistence-fail/,
+    );
+    assert.match(
+      app,
+      /replyPort\.postMessage\(\{\s*ok: false/,
+    );
+  });
+
   it('keeps a single Workspace Shell with PlatformShell chrome only', () => {
     const app = read('src/WorkspaceHostApp.tsx');
     const html = read('index.html');
@@ -376,7 +409,7 @@ describe('VR-04 Canonical Workspace Shell', () => {
     );
     assert.match(
       app,
-      /currentHouseId[\s\S]*isHouseInProject\(currentHouseId, requestedProjectId\)[\s\S]*activeHouseId: nextActiveHouseId/,
+      /requestedProjectId[\s\S]*selectProjectAuthoritatively\(\{[\s\S]*projectId: targetProject\.project\.projectId[\s\S]*setSharedProjectId\(acceptedSession\.projectId\)[\s\S]*setSharedActiveHouseId\(acceptedSession\.activeHouseId\)/,
     );
     assert.doesNotMatch(
       app,

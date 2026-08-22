@@ -47,15 +47,19 @@ export {
   WORKSPACE_PROJECT_CHANGE_MESSAGE_TYPE,
   WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE,
   WORKSPACE_HOUSE_SCOPE_REQUEST_MESSAGE_TYPE,
+  WORKSPACE_PROJECT_SCOPE_REQUEST_MESSAGE_TYPE,
   createWorkspaceProjectChangeMessage,
   createWorkspaceHouseChangeMessage,
   createWorkspaceHouseScopeRequestMessage,
+  createWorkspaceProjectScopeRequestMessage,
   isWorkspaceProjectChangeMessage,
   isWorkspaceHouseChangeMessage,
   isWorkspaceHouseScopeRequestMessage,
+  isWorkspaceProjectScopeRequestMessage,
   type WorkspaceProjectChangeMessage,
   type WorkspaceHouseChangeMessage,
   type WorkspaceHouseScopeRequestMessage,
+  type WorkspaceProjectScopeRequestMessage,
 } from './domain/workspaceProjectSync';
 
 export type {
@@ -487,6 +491,11 @@ export {
   type EnterOperatorPartnerEnvironmentInput,
   type EnterOperatorPartnerEnvironmentResult,
 } from './pilot/operatorPartnerEnvironment';
+
+export {
+  selectProjectAuthoritatively,
+  type AuthoritativeProjectTarget,
+} from './pilot/authoritativeProjectSelection';
 
 export {
   WORKSPACE_STUDIO_SWITCH_ORDER,

@@ -13,6 +13,7 @@ import {
   isHouseInProject,
   isWorkspaceHouseChangeMessage,
   isWorkspaceHouseScopeRequestMessage,
+  isWorkspaceProjectScopeRequestMessage,
   isWorkspaceProjectChangeMessage,
   getSharedWorkspaceContext,
   isCanonicalProjectId,
@@ -33,6 +34,8 @@ import {
   WORKSPACE_STUDIO_LABELS,
   workspaceStudiosForRoles,
   type WorkspaceStudioSurface,
+  getCanonicalProject,
+  selectProjectAuthoritatively,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -505,6 +508,72 @@ export function WorkspaceHostApp() {
         return;
       }
 
+      if (isWorkspaceProjectScopeRequestMessage(event.data)) {
+        const replyPort = event.ports[0];
+        if (replyPort === undefined) return;
+
+        const requestedProjectId = event.data.projectId;
+        const previousSession = loadPlatformSession();
+        const targetProject = getCanonicalProject(requestedProjectId);
+
+        if (
+          previousSession === null ||
+          targetProject === null ||
+          !isCanonicalProjectId(requestedProjectId)
+        ) {
+          replyPort.postMessage({
+            ok: false,
+            error: 'Project není pro tuto relaci povolen.',
+          });
+          return;
+        }
+
+        void selectProjectAuthoritatively({
+          session: previousSession,
+          target: {
+            companyId: targetProject.partner.companyId,
+            workspaceId: targetProject.partner.workspaceId,
+            projectId: targetProject.project.projectId,
+          },
+          activeStudio: authoritativeStudioForSurface(surface),
+          officeReturnHref:
+            previousSession.workspaceContext?.officeReturnHref ??
+            'https://conis.cz/studio/office/',
+        })
+          .then((acceptedSession) => {
+            savePlatformSession(acceptedSession);
+            setSharedProjectId(acceptedSession.projectId);
+            setSharedActiveHouseId(acceptedSession.activeHouseId);
+
+            task42Trace('project-scope-request:persistence-ok', {
+              projectId: requestedProjectId,
+            });
+
+            replyPort.postMessage({
+              ok: true,
+            });
+          })
+          .catch((error: unknown) => {
+            savePlatformSession(previousSession);
+            setSharedProjectId(previousSession.projectId);
+            setSharedActiveHouseId(previousSession.activeHouseId);
+
+            task42Trace('project-scope-request:persistence-fail', {
+              projectId: requestedProjectId,
+            });
+
+            replyPort.postMessage({
+              ok: false,
+              error:
+                error instanceof Error
+                  ? error.message
+                  : 'Platform API nepotvrdilo požadovaný Project.',
+            });
+          });
+
+        return;
+      }
+
       if (
         isWorkspaceProjectChangeMessage(event.data) &&
         isCanonicalProjectId(event.data.projectId)
@@ -514,50 +583,45 @@ export function WorkspaceHostApp() {
           origin: event.origin,
         });
         const requestedProjectId = event.data.projectId;
-        const currentHouseId =
-          loadPlatformSession()?.activeHouseId ??
-          currentContext.activeHouseId ??
-          null;
-        const nextActiveHouseId =
-          currentHouseId !== null &&
-          isHouseInProject(currentHouseId, requestedProjectId)
-            ? currentHouseId
-            : null;
-
         const previousSession = loadPlatformSession();
-        const next = updateSession({
-          projectId: requestedProjectId,
-          activeHouseId: nextActiveHouseId,
-          workspaceContext: {
-            ...currentContext,
-            projectId: requestedProjectId,
-            activeHouseId: nextActiveHouseId,
-          },
-        });
-        if (next !== null) {
-          setSharedProjectId(next.projectId);
-          setSharedActiveHouseId(next.activeHouseId);
+        const targetProject = getCanonicalProject(requestedProjectId);
 
-          if (next.projectId !== null) {
-            void enqueueAuthoritativeMutation({
-              action: 'switch',
-              activeStudio: authoritativeStudioForSurface(surface),
-              projectId: next.projectId,
-              activeHouseId: next.activeHouseId,
-              authoredHouseIdentities:
-                next.workspaceContext?.authoredHouseIdentities,
-            }).then((accepted) => {
-              if (!accepted.ok && previousSession !== null) {
-                savePlatformSession(previousSession);
-                setSharedProjectId(previousSession.projectId);
-                setSharedActiveHouseId(previousSession.activeHouseId);
-                task42Trace('project-change:persistence-fail', {
-                  projectId: requestedProjectId,
-                });
-              }
-            });
-          }
+        if (previousSession === null || targetProject === null) {
+          task42Trace('project-change:persistence-fail', {
+            projectId: requestedProjectId,
+          });
+          return;
         }
+
+        void selectProjectAuthoritatively({
+          session: previousSession,
+          target: {
+            companyId: targetProject.partner.companyId,
+            workspaceId: targetProject.partner.workspaceId,
+            projectId: targetProject.project.projectId,
+          },
+          activeStudio: authoritativeStudioForSurface(surface),
+          officeReturnHref:
+            previousSession.workspaceContext?.officeReturnHref ??
+            'https://conis.cz/studio/office/',
+        })
+          .then((acceptedSession) => {
+            savePlatformSession(acceptedSession);
+            setSharedProjectId(acceptedSession.projectId);
+            setSharedActiveHouseId(acceptedSession.activeHouseId);
+            task42Trace('project-change:persistence-ok', {
+              projectId: requestedProjectId,
+            });
+          })
+          .catch(() => {
+            savePlatformSession(previousSession);
+            setSharedProjectId(previousSession.projectId);
+            setSharedActiveHouseId(previousSession.activeHouseId);
+            task42Trace('project-change:persistence-fail', {
+              projectId: requestedProjectId,
+            });
+          });
+
         return;
       }
 
