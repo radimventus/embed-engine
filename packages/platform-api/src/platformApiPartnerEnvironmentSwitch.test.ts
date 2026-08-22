@@ -225,7 +225,7 @@ describe('Authoritative Partner Environment house switch', () => {
     });
   });
 
-  it('clears a cross-Project House and rejects a cross-Partner Project switch', async () => {
+  it('clears a foreign House and lets CONIS Admin switch to another authoritative Partner Environment', async () => {
     await withHarness(async ({ sessions, adminToken }) => {
       const entered = await sessions.mutateContext(adminToken, {
         ...enterBlokki,
@@ -278,13 +278,17 @@ describe('Authoritative Partner Environment house switch', () => {
         projectId: DSE_CANONICAL_PROJECT_ID,
         activeHouseId: DSE_BUNGALOV_4KK_HOUSE_ID,
       });
-      assert.equal(escaped, null);
+      assert.ok(escaped !== null);
+      assert.equal(escaped.tenantId, DSE_TENANT_ID);
+      assert.equal(escaped.companyId, DSE_COMPANY_ID);
+      assert.equal(escaped.workspaceId, DSE_WORKSPACE_ID);
+      assert.equal(escaped.projectId, DSE_CANONICAL_PROJECT_ID);
+      assert.equal(escaped.activeHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
 
       const remaining = await sessions.resolve(adminToken);
-      assert.equal(remaining?.companyId, BLOKKI_SCOPE.companyId);
-      assert.equal(remaining?.projectId, BLOKKI_SCOPE.projectId);
-      assert.notEqual(remaining?.companyId, DSE_COMPANY_ID);
-      assert.notEqual(remaining?.activeHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+      assert.equal(remaining?.companyId, DSE_COMPANY_ID);
+      assert.equal(remaining?.projectId, DSE_CANONICAL_PROJECT_ID);
+      assert.equal(remaining?.activeHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
     });
   });
 

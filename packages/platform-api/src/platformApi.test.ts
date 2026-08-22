@@ -526,12 +526,27 @@ describe('Durable partner sessions', () => {
         activeHouseId:
           'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
       });
-      assert.equal(escaped, null);
 
-      const stillAc = await repository.resolve(issued.token);
-      assert.equal(stillAc?.companyId, acScope.companyId);
-      assert.equal(stillAc?.projectId, acScope.projectId);
-      assert.equal(stillAc?.activeHouseId, 'family-98');
+      assert.ok(escaped !== null);
+      assert.equal(escaped.tenantId, 'tenant-domy-s-energii');
+      assert.equal(escaped.companyId, 'company-domy-s-energii');
+      assert.equal(escaped.workspaceId, 'domy-s-energii-main');
+      assert.equal(escaped.projectId, 'project-domy-s-energii');
+      assert.equal(
+        escaped.activeHouseId,
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      );
+      assert.equal(escaped.activeStudioId, 'builder');
+
+      const switchedEnvironment = await repository.resolve(issued.token);
+      assert.equal(switchedEnvironment?.tenantId, 'tenant-domy-s-energii');
+      assert.equal(switchedEnvironment?.companyId, 'company-domy-s-energii');
+      assert.equal(switchedEnvironment?.workspaceId, 'domy-s-energii-main');
+      assert.equal(switchedEnvironment?.projectId, 'project-domy-s-energii');
+      assert.equal(
+        switchedEnvironment?.activeHouseId,
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      );
 
       const restarted = new FilePartnerSessionRepository(
         statePath,
@@ -540,10 +555,14 @@ describe('Durable partner sessions', () => {
       const restored = await restarted.resolve(issued.token);
 
       assert.ok(restored !== null);
-      assert.equal(restored.companyId, acScope.companyId);
-      assert.equal(restored.workspaceId, acScope.workspaceId);
-      assert.equal(restored.projectId, acScope.projectId);
-      assert.equal(restored.activeHouseId, 'family-98');
+      assert.equal(restored.tenantId, 'tenant-domy-s-energii');
+      assert.equal(restored.companyId, 'company-domy-s-energii');
+      assert.equal(restored.workspaceId, 'domy-s-energii-main');
+      assert.equal(restored.projectId, 'project-domy-s-energii');
+      assert.equal(
+        restored.activeHouseId,
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      );
       assert.equal(restored.activeStudioId, 'builder');
     } finally {
       await rm(directory, { recursive: true, force: true });
