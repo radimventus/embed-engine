@@ -1,4 +1,7 @@
-import { ensureCanonicalProjectAuthority } from '@embed-engine/platform-access';
+import {
+  ensureCanonicalProjectAuthority,
+  usePlatformSession,
+} from '@embed-engine/platform-access';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
@@ -19,6 +22,7 @@ import {
 
 import { requestWorkspaceActive } from './requestWorkspaceActive';
 import {
+  composeWorkspaceRegistry,
   closeWorkspaceProject,
   createWorkspaceObjectFromInput,
   createWorkspaceProjectFromInput,
@@ -376,6 +380,7 @@ function publishBuilderHouseScope(
  * Domain lists from CPL via workspaceRegistry compose; local state = selection + UI.
  */
 export function useWorkspaceController(): WorkspaceController {
+  const { registry: platformRegistry } = usePlatformSession();
   const [registry, setRegistry] = useState<WorkspaceRegistryState>(() =>
     loadWorkspaceRegistryFromStorage(),
   );
@@ -385,6 +390,26 @@ export function useWorkspaceController(): WorkspaceController {
   const [switching, setSwitching] = useState(false);
   const [switchError, setSwitchError] = useState<string | null>(null);
   const registryRef = useRef(registry);
+
+  useEffect(() => {
+    setRegistry((current) => {
+      const recomposed = composeWorkspaceRegistry({
+        folders: current.folders,
+        houseFolderIds: current.houseFolderIds,
+        houseLabels: current.houseLabels,
+        houseMetadata: current.houseMetadata,
+        housePackageRoots: current.housePackageRoots,
+        activeFolderId: current.activeFolderId,
+        activeProjectId: current.activeProjectId,
+        recentProjectIds: current.recentProjectIds,
+        lastOpenedProjectId: current.lastOpenedProjectId,
+      });
+
+      registryRef.current = recomposed;
+      return recomposed;
+    });
+  }, [platformRegistry]);
+
   const pendingTargetRef = useRef<WorkspaceProject | null>(null);
   const drainRunningRef = useRef(false);
   const hostActiveRef = useRef<{
