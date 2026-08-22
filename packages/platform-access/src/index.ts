@@ -635,3 +635,10 @@ export { GmReadinessCenter } from './react/GmReadinessCenter';
 export { GaReadinessCenter } from './react/GaReadinessCenter';
 export { useStudioBrandProjection } from './react/useStudioBrandProjection';
 export { usePilotWorkspace } from './react/usePilotWorkspace';
+
+export type {
+  PlatformCanonicalProject,
+} from './domain/types';
+export {
+  DEFAULT_CANONICAL_PROJECTS,
+} from './registry/defaults';

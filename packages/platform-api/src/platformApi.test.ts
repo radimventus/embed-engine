@@ -23,6 +23,7 @@ import {
 } from './index.ts';
 import { FileOfficePartnerRepository } from './officePartnerRepository.ts';
 import { createPartnerEnvironmentScopeResolver } from './resolveAuthoritativePartnerEnvironmentScope.ts';
+import { FileCanonicalRegistryAuthorityRepository } from './canonicalRegistryAuthorityRepository';
 
 process.env.OFFER_CAPABILITY_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString(
   'base64url',
@@ -445,9 +446,22 @@ describe('Durable partner sessions', () => {
     }
   });
 
-  it('persists AC Modular house switching inside an authorized AC Partner Environment', async () => {
+  it('persists AC Modular house switching and canonical CONIS Admin cross-Project switching', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-scope-switch-test-'));
-    const { repository, partners } = await partnerSessionRepositoryWithDseScope(directory);
+
+
+    const partners = new FileOfficePartnerRepository(
+      join(directory, 'office-partners.json'),
+    );
+    await partners.create({
+      id: 'p-dse',
+      draft: dsePartnerDraft,
+    });
+    await partners.updateEnvironmentScope(
+      'p-dse',
+      CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+    );
+
     const statePath = join(directory, 'partner-sessions.json');
     const acScope = {
       tenantId: 'tenant-ac-modular',
@@ -455,6 +469,39 @@ describe('Durable partner sessions', () => {
       workspaceId: 'ac-modular-main',
       projectId: 'project-ac-modular',
     } as const;
+
+    const canonicalAuthority =
+        new FileCanonicalRegistryAuthorityRepository(
+          join(directory, 'canonical-registry-extras.json'),
+        );
+
+      await canonicalAuthority.upsertAuthorityBundle({
+        tenant: {
+          id: acScope.tenantId,
+          companyId: acScope.companyId,
+        },
+        company: {
+          id: acScope.companyId,
+          tenantId: acScope.tenantId,
+        },
+        workspace: {
+          id: acScope.workspaceId,
+          companyId: acScope.companyId,
+        },
+        project: {
+          id: acScope.projectId,
+          companyId: acScope.companyId,
+          workspaceId: acScope.workspaceId,
+        },
+      });
+
+    const repository = new FilePartnerSessionRepository(
+      statePath,
+      createPartnerEnvironmentScopeResolver(partners),
+      canonicalAuthority,
+    );
+
+
 
     try {
       await partners.create({
@@ -526,24 +573,44 @@ describe('Durable partner sessions', () => {
         activeHouseId:
           'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
       });
-      assert.equal(escaped, null);
 
-      const stillAc = await repository.resolve(issued.token);
-      assert.equal(stillAc?.companyId, acScope.companyId);
-      assert.equal(stillAc?.projectId, acScope.projectId);
-      assert.equal(stillAc?.activeHouseId, 'family-98');
+      assert.ok(escaped !== null);
+      assert.equal(escaped.tenantId, 'tenant-domy-s-energii');
+      assert.equal(escaped.companyId, 'company-domy-s-energii');
+      assert.equal(escaped.workspaceId, 'domy-s-energii-main');
+      assert.equal(escaped.projectId, 'project-domy-s-energii');
+      assert.equal(
+        escaped.activeHouseId,
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      );
+      assert.equal(escaped.activeStudioId, 'builder');
+
+      const switchedEnvironment = await repository.resolve(issued.token);
+      assert.equal(switchedEnvironment?.tenantId, 'tenant-domy-s-energii');
+      assert.equal(switchedEnvironment?.companyId, 'company-domy-s-energii');
+      assert.equal(switchedEnvironment?.workspaceId, 'domy-s-energii-main');
+      assert.equal(switchedEnvironment?.projectId, 'project-domy-s-energii');
+      assert.equal(
+        switchedEnvironment?.activeHouseId,
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      );
 
       const restarted = new FilePartnerSessionRepository(
         statePath,
         createPartnerEnvironmentScopeResolver(partners),
+        canonicalAuthority,
       );
       const restored = await restarted.resolve(issued.token);
 
       assert.ok(restored !== null);
-      assert.equal(restored.companyId, acScope.companyId);
-      assert.equal(restored.workspaceId, acScope.workspaceId);
-      assert.equal(restored.projectId, acScope.projectId);
-      assert.equal(restored.activeHouseId, 'family-98');
+      assert.equal(restored.tenantId, 'tenant-domy-s-energii');
+      assert.equal(restored.companyId, 'company-domy-s-energii');
+      assert.equal(restored.workspaceId, 'domy-s-energii-main');
+      assert.equal(restored.projectId, 'project-domy-s-energii');
+      assert.equal(
+        restored.activeHouseId,
+        'reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk',
+      );
       assert.equal(restored.activeStudioId, 'builder');
     } finally {
       await rm(directory, { recursive: true, force: true });

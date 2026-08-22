@@ -76,6 +76,15 @@ export type PartnerEnvironmentScopeResolver = (
   partnerId: string,
 ) => Promise<AuthoritativePartnerEnvironmentScope | null>;
 
+export type CanonicalProjectAuthorityResolver = {
+  resolveProjectAuthority(projectId: string): Promise<{
+    tenantId: string;
+    companyId: string;
+    workspaceId: string;
+    projectId: string;
+  } | null>;
+};
+
 type PartnerAuthoredHouseIdentity = {
   readonly houseId: string;
   readonly name: string;
@@ -285,6 +294,9 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
     statePath = defaultStatePath(),
     private readonly resolvePartnerEnvironmentScope: PartnerEnvironmentScopeResolver = async () =>
       null,
+    private readonly canonicalProjectAuthorityResolver: CanonicalProjectAuthorityResolver = {
+      resolveProjectAuthority: async () => null,
+    },
   ) {
     this.statePath = statePath;
   }
@@ -503,10 +515,10 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
           workspaceContext,
         };
       } else if (mutation.action === 'switch') {
-        // Switch stays inside the already-authorized Partner Environment.
-        // Durable PE (FIX-02 enter) is already bound on the session; this
-        // action must not invent a second Partner/Project authority.
-        const authorizedScope = {
+        // A normal Partner remains bound to its authenticated Partner
+        // Environment. A CONIS Admin may intentionally switch to another
+        // authoritative Partner Environment registered by Office.
+        const currentAuthorizedScope = {
           tenantId: current.tenantId ?? account.tenantId,
           companyId: current.companyId ?? account.companyId,
           workspaceId: current.workspaceId ?? account.workspaceId,
@@ -514,11 +526,35 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
         };
 
         const requestedProjectId =
-          mutation.projectId?.trim() || authorizedScope.projectId;
+          mutation.projectId?.trim() || currentAuthorizedScope.projectId;
 
-        if (requestedProjectId !== authorizedScope.projectId) {
+        let authorizedScope = currentAuthorizedScope;
+        let targetPartnerId =
+          current.workspaceContext?.partnerId ?? currentAuthorizedScope.companyId;
+
+        if (isConisAdmin && requestedProjectId !== currentAuthorizedScope.projectId) {
+          const targetScope =
+            await this.canonicalProjectAuthorityResolver.resolveProjectAuthority(
+              requestedProjectId,
+            );
+
+          if (targetScope === null) return null;
+
+          authorizedScope = {
+            tenantId: targetScope.tenantId,
+            companyId: targetScope.companyId,
+            workspaceId: targetScope.workspaceId,
+            projectId: targetScope.projectId,
+          };
+        }
+
+        if (
+          !isConisAdmin &&
+          requestedProjectId !== currentAuthorizedScope.projectId
+        ) {
           return null;
         }
+
         if (
           mutation.tenantId !== undefined &&
           mutation.tenantId !== authorizedScope.tenantId
@@ -556,7 +592,7 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
         const context: PartnerWorkspaceContext =
           current.workspaceContext ?? {
             operatorMode: true,
-            partnerId: authorizedScope.companyId,
+            partnerId: targetPartnerId,
             companyId: authorizedScope.companyId,
             workspaceId: authorizedScope.workspaceId,
             projectId: authorizedScope.projectId,
@@ -613,6 +649,7 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
           activeStudioId: mutation.activeStudio,
           workspaceContext: {
             ...context,
+            partnerId: targetPartnerId,
             companyId: authorizedScope.companyId,
             workspaceId: authorizedScope.workspaceId,
             projectId: authorizedScope.projectId,

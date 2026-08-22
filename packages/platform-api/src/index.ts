@@ -87,6 +87,7 @@ import {
   type PlatformRole,
 } from '@embed-engine/platform-access/rbac';
 
+import { FileCanonicalRegistryAuthorityRepository } from './canonicalRegistryAuthorityRepository';
 export {
   FileSocialProofAnalyticsRepository,
   type RecentHouseActivity,
@@ -647,12 +648,15 @@ export function createPlatformApiServer(
   officePartners: OfficePartnerRepository = new FileOfficePartnerRepository(),
   decisionSessions: DecisionSessionRepository = new FileDecisionSessionRepository(),
   caseProcessing: CaseProcessingRepository = new FileCaseProcessingRepository(),
+  canonicalRegistryAuthorityRepository: FileCanonicalRegistryAuthorityRepository =
+    new FileCanonicalRegistryAuthorityRepository(),
 ): Server {
   const partnerSessions =
     partnerSessionsParam ??
     new FilePartnerSessionRepository(
       undefined,
       createPartnerEnvironmentScopeResolver(officePartners),
+      canonicalRegistryAuthorityRepository,
     );
   return createServer(async (request, response) => {
     const origin = request.headers.origin;

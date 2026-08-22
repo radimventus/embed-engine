@@ -21,6 +21,7 @@ import { createPlatformApiServer, FilePlatformInviteRepository } from './index.t
 import { FileOfficePartnerRepository } from './officePartnerRepository.ts';
 import { FilePartnerSessionRepository } from './partnerSessionRepository.ts';
 import { createPartnerEnvironmentScopeResolver } from './resolveAuthoritativePartnerEnvironmentScope.ts';
+import { FileCanonicalRegistryAuthorityRepository } from './canonicalRegistryAuthorityRepository';
 
 const dseDraft = {
   name: 'Domy s energií',
@@ -106,6 +107,12 @@ describe('Authoritative Partner Environment house switch', () => {
     }) => Promise<void>,
   ): Promise<void> {
     const directory = await mkdtemp(join(tmpdir(), 'conis-pe-switch-'));
+
+    const canonicalAuthority =
+      new FileCanonicalRegistryAuthorityRepository(
+        `${directory}/canonical-registry-extras.json`,
+      );
+
     try {
       const partners = new FileOfficePartnerRepository(
         join(directory, 'office-partners.json'),
@@ -115,12 +122,34 @@ describe('Authoritative Partner Environment house switch', () => {
         'p-dse',
         CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
       );
+
+    await canonicalAuthority.upsertAuthorityBundle({
+      tenant: {
+        id: 'tenant-blokki',
+        companyId: 'company-blokki',
+      },
+      company: {
+        id: 'company-blokki',
+        tenantId: 'tenant-blokki',
+      },
+      workspace: {
+        id: 'blokki-main',
+        companyId: 'company-blokki',
+      },
+      project: {
+        id: 'project-blokki',
+        companyId: 'company-blokki',
+        workspaceId: 'blokki-main',
+      },
+    });
+
       await partners.create({ id: 'company-blokki', draft: blokkiDraft });
       await partners.updateEnvironmentScope('company-blokki', BLOKKI_SCOPE);
 
       const sessions = new FilePartnerSessionRepository(
         join(directory, 'partner-sessions.json'),
         createPartnerEnvironmentScopeResolver(partners),
+        canonicalAuthority,
       );
       const admin = await sessions.activate({
         invite: {
@@ -198,6 +227,44 @@ describe('Authoritative Partner Environment house switch', () => {
     });
   });
 
+
+  it('lets CONIS Admin enter persisted BLOKKI by Project through durable PE resolution', async () => {
+    await withHarness(async ({ sessions, adminToken }) => {
+      const enteredDse = await sessions.mutateContext(adminToken, enterDse);
+      assert.ok(enteredDse !== null);
+      assert.equal(enteredDse.projectId, DSE_CANONICAL_PROJECT_ID);
+
+      const blokki = await sessions.mutateContext(adminToken, {
+        action: 'switch',
+        activeStudio: 'builder',
+        tenantId: BLOKKI_SCOPE.tenantId,
+        companyId: BLOKKI_SCOPE.companyId,
+        workspaceId: BLOKKI_SCOPE.workspaceId,
+        projectId: BLOKKI_SCOPE.projectId,
+        activeHouseId: null,
+      });
+
+      assert.ok(blokki !== null);
+      assert.equal(blokki.tenantId, BLOKKI_SCOPE.tenantId);
+      assert.equal(blokki.companyId, BLOKKI_SCOPE.companyId);
+      assert.equal(blokki.workspaceId, BLOKKI_SCOPE.workspaceId);
+      assert.equal(blokki.projectId, BLOKKI_SCOPE.projectId);
+      assert.equal(blokki.activeHouseId, null);
+
+      const bungalov = await sessions.mutateContext(adminToken, {
+        action: 'switch',
+        activeStudio: 'builder',
+        projectId: BLOKKI_SCOPE.projectId,
+        activeHouseId: BLOKKI_BUNGALOV_ID,
+      });
+
+      assert.ok(bungalov !== null);
+      assert.equal(bungalov.companyId, BLOKKI_SCOPE.companyId);
+      assert.equal(bungalov.projectId, BLOKKI_SCOPE.projectId);
+      assert.equal(bungalov.activeHouseId, BLOKKI_BUNGALOV_ID);
+    });
+  });
+
   it('keeps DSE BUNGALOV ↔ VPD switching inside authorized DSE', async () => {
     await withHarness(async ({ sessions, adminToken }) => {
       const entered = await sessions.mutateContext(adminToken, enterDse);
@@ -225,7 +292,7 @@ describe('Authoritative Partner Environment house switch', () => {
     });
   });
 
-  it('clears a cross-Project House and rejects a cross-Partner Project switch', async () => {
+  it('clears a foreign House and lets CONIS Admin switch to another authoritative Partner Environment', async () => {
     await withHarness(async ({ sessions, adminToken }) => {
       const entered = await sessions.mutateContext(adminToken, {
         ...enterBlokki,
@@ -278,13 +345,17 @@ describe('Authoritative Partner Environment house switch', () => {
         projectId: DSE_CANONICAL_PROJECT_ID,
         activeHouseId: DSE_BUNGALOV_4KK_HOUSE_ID,
       });
-      assert.equal(escaped, null);
+      assert.ok(escaped !== null);
+      assert.equal(escaped.tenantId, DSE_TENANT_ID);
+      assert.equal(escaped.companyId, DSE_COMPANY_ID);
+      assert.equal(escaped.workspaceId, DSE_WORKSPACE_ID);
+      assert.equal(escaped.projectId, DSE_CANONICAL_PROJECT_ID);
+      assert.equal(escaped.activeHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
 
       const remaining = await sessions.resolve(adminToken);
-      assert.equal(remaining?.companyId, BLOKKI_SCOPE.companyId);
-      assert.equal(remaining?.projectId, BLOKKI_SCOPE.projectId);
-      assert.notEqual(remaining?.companyId, DSE_COMPANY_ID);
-      assert.notEqual(remaining?.activeHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+      assert.equal(remaining?.companyId, DSE_COMPANY_ID);
+      assert.equal(remaining?.projectId, DSE_CANONICAL_PROJECT_ID);
+      assert.equal(remaining?.activeHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
     });
   });
 
@@ -315,8 +386,32 @@ describe('Authoritative Partner Environment house switch', () => {
     });
   });
 
-  it('switches Blokki Houses through POST /public/auth/context and rejects a forged DSE House', async () => {
+  it('switches Blokki Houses through POST /public/auth/context, sanitizes a foreign House, and lets CONIS Admin switch Partner Environment', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'conis-pe-switch-http-'));
+    const canonicalAuthority =
+      new FileCanonicalRegistryAuthorityRepository(
+        `${directory}/canonical-registry-extras.json`,
+      );
+
+    await canonicalAuthority.upsertAuthorityBundle({
+      tenant: {
+        id: 'tenant-blokki',
+        companyId: 'company-blokki',
+      },
+      company: {
+        id: 'company-blokki',
+        tenantId: 'tenant-blokki',
+      },
+      workspace: {
+        id: 'blokki-main',
+        companyId: 'company-blokki',
+      },
+      project: {
+        id: 'project-blokki',
+        companyId: 'company-blokki',
+        workspaceId: 'blokki-main',
+      },
+    });
     const inviteRepository = new FilePlatformInviteRepository(
       join(directory, 'invites.json'),
     );
@@ -327,6 +422,7 @@ describe('Authoritative Partner Environment house switch', () => {
     const sessions = new FilePartnerSessionRepository(
       join(directory, 'partner-sessions.json'),
       createPartnerEnvironmentScopeResolver(partners),
+      canonicalAuthority,
     );
     const server = createPlatformApiServer(
       inviteRepository,
@@ -467,21 +563,44 @@ describe('Authoritative Partner Environment house switch', () => {
           activeHouseId: DSE_BUNGALOV_4KK_HOUSE_ID,
         }),
       });
-      assert.equal(forgedProject.status, 403);
+      assert.equal(forgedProject.status, 200);
+      const forgedProjectBody = (await forgedProject.json()) as {
+        session: {
+          tenantId: string;
+          companyId: string;
+          workspaceId: string;
+          projectId: string;
+          activeHouseId: string | null;
+        };
+      };
+      assert.equal(forgedProjectBody.session.tenantId, DSE_TENANT_ID);
+      assert.equal(forgedProjectBody.session.companyId, DSE_COMPANY_ID);
+      assert.equal(forgedProjectBody.session.workspaceId, DSE_WORKSPACE_ID);
+      assert.equal(forgedProjectBody.session.projectId, DSE_CANONICAL_PROJECT_ID);
+      assert.equal(
+        forgedProjectBody.session.activeHouseId,
+        DSE_BUNGALOV_4KK_HOUSE_ID,
+      );
 
       const remaining = await fetch(`${baseUrl}/public/auth/me`, {
         headers: { cookie, origin: 'https://conis.cz' },
       });
       assert.equal(remaining.status, 200);
       const remainingBody = (await remaining.json()) as {
+        tenantId: string;
         companyId: string;
+        workspaceId: string;
         projectId: string;
         activeHouseId: string | null;
       };
-      assert.equal(remainingBody.companyId, BLOKKI_SCOPE.companyId);
-      assert.equal(remainingBody.projectId, BLOKKI_SCOPE.projectId);
-      assert.notEqual(remainingBody.companyId, DSE_COMPANY_ID);
-      assert.notEqual(remainingBody.activeHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+      assert.equal(remainingBody.tenantId, DSE_TENANT_ID);
+      assert.equal(remainingBody.companyId, DSE_COMPANY_ID);
+      assert.equal(remainingBody.workspaceId, DSE_WORKSPACE_ID);
+      assert.equal(remainingBody.projectId, DSE_CANONICAL_PROJECT_ID);
+      assert.equal(
+        remainingBody.activeHouseId,
+        DSE_BUNGALOV_4KK_HOUSE_ID,
+      );
     } finally {
       await new Promise<void>((resolve, reject) => {
         server.close((error) =>
