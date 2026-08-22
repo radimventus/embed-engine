@@ -642,3 +642,7 @@ export type {
 export {
   DEFAULT_CANONICAL_PROJECTS,
 } from './registry/defaults';
+
+export {
+  ensureCanonicalProjectAuthority,
+} from './api/canonicalProjectAuthority';

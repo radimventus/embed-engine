@@ -1613,6 +1613,74 @@ export function createPlatformApiServer(
         }
         return respond(response, 405, { error: 'Method not allowed.' });
       }
+      if (
+        request.method === 'POST' &&
+        path === '/public/auth/canonical-project-authority'
+      ) {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        if (token === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+
+        const current = await partnerSessions.resolve(token);
+        if (current === null) {
+          return respond(response, 401, { error: 'Neplatná relace.' });
+        }
+
+        if (!isPlatformAdmin(current.user.roles)) {
+          return respond(response, 403, {
+            error:
+              'Canonical Project může registrovat pouze CONIS Admin.',
+          });
+        }
+
+        const body =
+          await requestBody(request) as
+            import('./canonicalRegistryAuthorityRepository')
+              .CanonicalRegistryAuthorityBundle;
+
+        try {
+          const projectId =
+            typeof body?.project?.id === 'string'
+              ? body.project.id.trim()
+              : '';
+
+          const existing =
+            projectId.length === 0
+              ? null
+              : await canonicalRegistryAuthorityRepository
+                  .resolveProjectAuthority(projectId);
+
+          if (
+            existing !== null &&
+            existing.companyId === body.project.companyId &&
+            existing.workspaceId === body.project.workspaceId &&
+            existing.tenantId === body.tenant.id
+          ) {
+            return respond(response, 200, {
+              ok: true,
+              authority: existing,
+            });
+          }
+
+          const authority =
+            await canonicalRegistryAuthorityRepository
+              .upsertAuthorityBundle(body);
+
+          return respond(response, 201, {
+            ok: true,
+            authority,
+          });
+        } catch (error) {
+          return respond(response, 400, {
+            error:
+              error instanceof Error
+                ? error.message
+                : 'Canonical Project se nepodařilo registrovat.',
+          });
+        }
+      }
+
       if (request.method === 'POST' && path === '/public/auth/context') {
         const token = requestCookie(request, PARTNER_SESSION_COOKIE);
         if (token === null) {
@@ -1629,7 +1697,11 @@ export function createPlatformApiServer(
 
         if (session === null) {
           return respond(response, 403, {
-            error: 'Požadovaný Partner Environment není pro tuto relaci povolen.',
+            error:
+              mutation.action === 'switch' &&
+              mutation.projectId !== undefined
+                ? 'Požadovaný Project není pro tuto relaci povolen.'
+                : 'Požadovaný Partner Environment není pro tuto relaci povolen.',
           });
         }
 

@@ -179,6 +179,76 @@ describe('Platform Access authentication client', () => {
     );
     assert.equal(requests[0]?.init?.method, 'PUT');
   });
+  it('registers durable canonical Project authority', async () => {
+    const requests: Array<{ url: string; init?: RequestInit }> = [];
+
+    globalThis.fetch = (async (input, init) => {
+      requests.push({ url: String(input), init });
+      return new Response(
+        JSON.stringify({
+          ok: true,
+          authority: {
+            tenantId: 'tenant-blokki',
+            companyId: 'company-blokki',
+            workspaceId: 'blokki-main',
+            projectId: 'project-blokki',
+          },
+        }),
+        {
+          status: 201,
+          headers: { 'content-type': 'application/json' },
+        },
+      );
+    }) as typeof fetch;
+
+    const client =
+      createPlatformAccessAuthClient('https://api.conis.cz');
+
+    const result =
+      await client.persistCanonicalProjectAuthority({
+        tenant: {
+          id: 'tenant-blokki',
+          name: 'BLOKKI',
+          companyId: 'company-blokki',
+          pilot: false,
+          createdAt: '2026-08-22T00:00:00.000Z',
+        },
+        company: {
+          id: 'company-blokki',
+          name: 'BLOKKI',
+          tenantId: 'tenant-blokki',
+        },
+        workspace: {
+          id: 'blokki-main',
+          companyId: 'company-blokki',
+          name: 'BLOKKI',
+        },
+        project: {
+          id: 'project-blokki',
+          companyId: 'company-blokki',
+          workspaceId: 'blokki-main',
+          name: 'BLOKKI',
+          slug: 'blokki',
+          description: '',
+        },
+      });
+
+    assert.equal(result.ok, true);
+    assert.equal(requests.length, 1);
+    assert.equal(
+      requests[0]?.url,
+      'https://api.conis.cz/public/auth/canonical-project-authority',
+    );
+    assert.equal(requests[0]?.init?.method, 'POST');
+    assert.equal(requests[0]?.init?.credentials, 'include');
+
+    const body =
+      JSON.parse(String(requests[0]?.init?.body));
+
+    assert.equal(body.project.id, 'project-blokki');
+    assert.equal(body.company.id, 'company-blokki');
+    assert.equal(body.workspace.id, 'blokki-main');
+  });
 });
 
 describe('Platform Access invitation client', () => {

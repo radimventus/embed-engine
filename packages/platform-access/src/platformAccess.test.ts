@@ -966,3 +966,46 @@ describe('platformAccess cloud pilot (EPIC-BX-15)', () => {
     assert.ok(listPlatformFeedback().some((item) => item.message === 'Pilot feedback'));
   });
 });
+
+it('TASK-66VR-FIX-04 — reconciles dynamic canonical authority before real authoritative switches', async () => {
+  const { readFileSync } = await import('node:fs');
+
+  const workspaceHost = readFileSync(
+    new URL(
+      '../../../apps/workspace-host/src/WorkspaceHostApp.tsx',
+      import.meta.url,
+    ),
+    'utf8',
+  );
+
+  const builder = readFileSync(
+    new URL(
+      '../../../apps/builder-studio/src/features/workspace/useWorkspaceController.ts',
+      import.meta.url,
+    ),
+    'utf8',
+  );
+
+  assert.match(
+    workspaceHost,
+    /ensureCanonicalProjectAuthority\(mutation\.projectId\)/,
+  );
+  assert.match(
+    workspaceHost,
+    /action:\s*'switch'/,
+  );
+
+  assert.match(
+    builder,
+    /ensureCanonicalProjectAuthority\(input\.projectId\)/,
+  );
+  assert.match(
+    builder,
+    /action:\s*'switch'/,
+  );
+
+  assert.doesNotMatch(
+    `${workspaceHost}\n${builder}`,
+    /switch-project/,
+  );
+});

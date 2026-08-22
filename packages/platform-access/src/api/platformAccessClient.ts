@@ -131,6 +131,34 @@ export type PlatformAccessWriteResult =
   | { readonly ok: true }
   | { readonly ok: false; readonly error: string };
 
+export type PlatformAccessCanonicalAuthorityBundle = {
+  readonly tenant: {
+    readonly id: string;
+    readonly name: string;
+    readonly companyId: string;
+    readonly pilot: boolean;
+    readonly createdAt: string;
+  };
+  readonly company: {
+    readonly id: string;
+    readonly name: string;
+    readonly tenantId: string;
+  };
+  readonly workspace: {
+    readonly id: string;
+    readonly companyId: string;
+    readonly name: string;
+  };
+  readonly project: {
+    readonly id: string;
+    readonly companyId: string;
+    readonly workspaceId: string;
+    readonly name: string;
+    readonly slug: string;
+    readonly description: string;
+  };
+};
+
 export interface PlatformAccessAuthClient {
   activateInvite(input: {
     readonly token: string;
@@ -168,6 +196,9 @@ export interface PlatformAccessAuthClient {
       }
     | { readonly action: 'leave' }
   ): Promise<PlatformAccessAuthResult>;
+  persistCanonicalProjectAuthority(
+    input: PlatformAccessCanonicalAuthorityBundle,
+  ): Promise<PlatformAccessWriteResult>;
   persistPartnerEnvironmentScope(
     partnerId: string,
     scope: PartnerEnvironmentScope,
@@ -238,6 +269,29 @@ export function createPlatformAccessAuthClient(
             error: ('error' in result ? result.error : undefined) ??
               'Partner Environment se nepodařilo aktivovat.',
           };
+    },
+    async persistCanonicalProjectAuthority(input) {
+      const response = await fetch(
+        `${baseUrl}/public/auth/canonical-project-authority`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(input),
+        },
+      );
+      if (!response.ok) {
+        const result = await parseResponse<{ readonly error?: string }>(
+          response,
+        ).catch(() => ({ error: undefined }));
+        return {
+          ok: false,
+          error:
+            result.error ??
+            'Canonical Project se nepodařilo registrovat.',
+        };
+      }
+      return { ok: true };
     },
     async persistPartnerEnvironmentScope(partnerId, scope) {
       const response = await fetch(

@@ -1667,3 +1667,29 @@ describe('Durable House Package API', () => {
     }
   });
 });
+
+it('TASK-66VR-FIX-04 — exposes admin-only durable canonical Project authority registration', async () => {
+  const { readFileSync } = await import('node:fs');
+
+  const source = readFileSync(
+    new URL('./index.ts', import.meta.url),
+    'utf8',
+  );
+
+  assert.match(
+    source,
+    /\/public\/auth\/canonical-project-authority/,
+  );
+  assert.match(
+    source,
+    /isPlatformAdmin\(current\.user\.roles\)/,
+  );
+  assert.match(
+    source,
+    /canonicalRegistryAuthorityRepository[\s\S]*upsertAuthorityBundle\(body\)/,
+  );
+  assert.match(
+    source,
+    /Požadovaný Project není pro tuto relaci povolen\./,
+  );
+});

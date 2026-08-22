@@ -1,3 +1,4 @@
+import { ensureCanonicalProjectAuthority } from '@embed-engine/platform-access';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
@@ -296,6 +297,12 @@ async function awaitAuthoritativeBuilderHouseScope(input: {
   if (session === null) {
     throw new Error('Nejste přihlášeni.');
   }
+  const reconciled =
+    await ensureCanonicalProjectAuthority(input.projectId);
+  if (!reconciled.ok) {
+    throw new Error(reconciled.error);
+  }
+
   const result = await createPlatformAccessAuthClient().mutateSessionContext({
     action: 'switch',
     activeStudio: 'builder',

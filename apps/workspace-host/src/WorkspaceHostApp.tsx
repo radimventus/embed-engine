@@ -4,6 +4,7 @@
  * Studios own their UI — host does not redesign them.
  */
 
+import { ensureCanonicalProjectAuthority } from '@embed-engine/platform-access';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Embed, registerClientStudioCss } from '@embed-engine/embed';
@@ -246,6 +247,25 @@ export function WorkspaceHostApp() {
     ): Promise<AuthoritativeMutationResult> => {
       const queued = authoritativeMutationQueueRef.current.then(async () => {
         task42Trace('authoritative-mutation:start', { mutation });
+
+        if (
+          mutation.action === 'switch' &&
+          mutation.projectId !== undefined
+        ) {
+          const reconciled =
+            await ensureCanonicalProjectAuthority(mutation.projectId);
+
+          if (!reconciled.ok) {
+            task42Trace('authoritative-mutation:authority-fail', {
+              mutation,
+              error: reconciled.error,
+            });
+            return {
+              ok: false,
+              error: reconciled.error,
+            };
+          }
+        }
 
         let result;
         try {
