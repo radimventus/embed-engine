@@ -282,6 +282,16 @@ function identity(
   };
 }
 
+
+export type CanonicalProjectAuthorityResolver = {
+  resolveProjectAuthority(projectId: string): Promise<{
+    tenantId: string;
+    companyId: string;
+    workspaceId: string;
+    projectId: string;
+  } | null>;
+};
+
 export class FilePartnerSessionRepository implements PartnerSessionRepository {
   readonly statePath: string;
   private mutation: Promise<void> = Promise.resolve();
@@ -290,6 +300,9 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
     statePath = defaultStatePath(),
     private readonly resolvePartnerEnvironmentScope: PartnerEnvironmentScopeResolver = async () =>
       null,
+    private readonly canonicalProjectAuthorityResolver: CanonicalProjectAuthorityResolver = {
+      resolveProjectAuthority: async () => null,
+    },
   ) {
     this.statePath = statePath;
   }
@@ -521,43 +534,17 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
         const requestedProjectId =
           mutation.projectId?.trim() || currentAuthorizedScope.projectId;
 
-        const DSE_SCOPE = {
-          tenantId: 'tenant-domy-s-energii',
-          companyId: 'company-domy-s-energii',
-          workspaceId: 'domy-s-energii-main',
-          projectId: 'project-domy-s-energii',
-          partnerId: 'p-dse',
-        } as const;
-
-        const AC_SCOPE = {
-          tenantId: 'tenant-ac-modular',
-          companyId: 'ac-modular',
-          workspaceId: 'ac-modular-main',
-          projectId: 'project-ac-modular',
-          partnerId: 'ac-modular',
-        } as const;
-
-        const canonicalAdminFallbackScope =
-          requestedProjectId === DSE_SCOPE.projectId
-            ? DSE_SCOPE
-            : requestedProjectId === AC_SCOPE.projectId
-              ? AC_SCOPE
-              : null;
-
         let authorizedScope = currentAuthorizedScope;
         let targetPartnerId =
           current.workspaceContext?.partnerId ?? currentAuthorizedScope.companyId;
 
         if (isConisAdmin && requestedProjectId !== currentAuthorizedScope.projectId) {
-          const durableTargetScope =
-            await this.resolvePartnerEnvironmentScope.byProject?.(
+          const targetScope =
+            await this.canonicalProjectAuthorityResolver.resolveProjectAuthority(
               requestedProjectId,
             );
 
-          const targetScope =
-            durableTargetScope ?? canonicalAdminFallbackScope;
-
-          if (targetScope === null || targetScope === undefined) return null;
+          if (targetScope === null) return null;
 
           authorizedScope = {
             tenantId: targetScope.tenantId,
@@ -565,7 +552,6 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
             workspaceId: targetScope.workspaceId,
             projectId: targetScope.projectId,
           };
-          targetPartnerId = targetScope.partnerId;
         }
 
         if (

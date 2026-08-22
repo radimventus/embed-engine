@@ -21,6 +21,7 @@ import { createPlatformApiServer, FilePlatformInviteRepository } from './index.t
 import { FileOfficePartnerRepository } from './officePartnerRepository.ts';
 import { FilePartnerSessionRepository } from './partnerSessionRepository.ts';
 import { createPartnerEnvironmentScopeResolver } from './resolveAuthoritativePartnerEnvironmentScope.ts';
+import { FileCanonicalRegistryAuthorityRepository } from './canonicalRegistryAuthorityRepository';
 
 const dseDraft = {
   name: 'Domy s energií',
@@ -106,6 +107,12 @@ describe('Authoritative Partner Environment house switch', () => {
     }) => Promise<void>,
   ): Promise<void> {
     const directory = await mkdtemp(join(tmpdir(), 'conis-pe-switch-'));
+
+    const canonicalAuthority =
+      new FileCanonicalRegistryAuthorityRepository(
+        `${directory}/canonical-registry-extras.json`,
+      );
+
     try {
       const partners = new FileOfficePartnerRepository(
         join(directory, 'office-partners.json'),
@@ -115,12 +122,34 @@ describe('Authoritative Partner Environment house switch', () => {
         'p-dse',
         CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
       );
+
+    await canonicalAuthority.upsertAuthorityBundle({
+      tenant: {
+        id: 'tenant-blokki',
+        companyId: 'company-blokki',
+      },
+      company: {
+        id: 'company-blokki',
+        tenantId: 'tenant-blokki',
+      },
+      workspace: {
+        id: 'blokki-main',
+        companyId: 'company-blokki',
+      },
+      project: {
+        id: 'project-blokki',
+        companyId: 'company-blokki',
+        workspaceId: 'blokki-main',
+      },
+    });
+
       await partners.create({ id: 'company-blokki', draft: blokkiDraft });
       await partners.updateEnvironmentScope('company-blokki', BLOKKI_SCOPE);
 
       const sessions = new FilePartnerSessionRepository(
         join(directory, 'partner-sessions.json'),
         createPartnerEnvironmentScopeResolver(partners),
+        canonicalAuthority,
       );
       const admin = await sessions.activate({
         invite: {
@@ -359,6 +388,30 @@ describe('Authoritative Partner Environment house switch', () => {
 
   it('switches Blokki Houses through POST /public/auth/context, sanitizes a foreign House, and lets CONIS Admin switch Partner Environment', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'conis-pe-switch-http-'));
+    const canonicalAuthority =
+      new FileCanonicalRegistryAuthorityRepository(
+        `${directory}/canonical-registry-extras.json`,
+      );
+
+    await canonicalAuthority.upsertAuthorityBundle({
+      tenant: {
+        id: 'tenant-blokki',
+        companyId: 'company-blokki',
+      },
+      company: {
+        id: 'company-blokki',
+        tenantId: 'tenant-blokki',
+      },
+      workspace: {
+        id: 'blokki-main',
+        companyId: 'company-blokki',
+      },
+      project: {
+        id: 'project-blokki',
+        companyId: 'company-blokki',
+        workspaceId: 'blokki-main',
+      },
+    });
     const inviteRepository = new FilePlatformInviteRepository(
       join(directory, 'invites.json'),
     );
@@ -369,6 +422,7 @@ describe('Authoritative Partner Environment house switch', () => {
     const sessions = new FilePartnerSessionRepository(
       join(directory, 'partner-sessions.json'),
       createPartnerEnvironmentScopeResolver(partners),
+      canonicalAuthority,
     );
     const server = createPlatformApiServer(
       inviteRepository,

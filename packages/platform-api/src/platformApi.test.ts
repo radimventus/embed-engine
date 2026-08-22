@@ -23,6 +23,7 @@ import {
 } from './index.ts';
 import { FileOfficePartnerRepository } from './officePartnerRepository.ts';
 import { createPartnerEnvironmentScopeResolver } from './resolveAuthoritativePartnerEnvironmentScope.ts';
+import { FileCanonicalRegistryAuthorityRepository } from './canonicalRegistryAuthorityRepository';
 
 process.env.OFFER_CAPABILITY_ENCRYPTION_KEY = Buffer.alloc(32, 7).toString(
   'base64url',
@@ -445,9 +446,22 @@ describe('Durable partner sessions', () => {
     }
   });
 
-  it('persists AC Modular house switching inside an authorized AC Partner Environment', async () => {
+  it('persists AC Modular house switching and canonical CONIS Admin cross-Project switching', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-partner-scope-switch-test-'));
-    const { repository, partners } = await partnerSessionRepositoryWithDseScope(directory);
+
+
+    const partners = new FileOfficePartnerRepository(
+      join(directory, 'office-partners.json'),
+    );
+    await partners.create({
+      id: 'p-dse',
+      draft: dsePartnerDraft,
+    });
+    await partners.updateEnvironmentScope(
+      'p-dse',
+      CANONICAL_DSE_PARTNER_ENVIRONMENT_SCOPE,
+    );
+
     const statePath = join(directory, 'partner-sessions.json');
     const acScope = {
       tenantId: 'tenant-ac-modular',
@@ -455,6 +469,39 @@ describe('Durable partner sessions', () => {
       workspaceId: 'ac-modular-main',
       projectId: 'project-ac-modular',
     } as const;
+
+    const canonicalAuthority =
+        new FileCanonicalRegistryAuthorityRepository(
+          join(directory, 'canonical-registry-extras.json'),
+        );
+
+      await canonicalAuthority.upsertAuthorityBundle({
+        tenant: {
+          id: acScope.tenantId,
+          companyId: acScope.companyId,
+        },
+        company: {
+          id: acScope.companyId,
+          tenantId: acScope.tenantId,
+        },
+        workspace: {
+          id: acScope.workspaceId,
+          companyId: acScope.companyId,
+        },
+        project: {
+          id: acScope.projectId,
+          companyId: acScope.companyId,
+          workspaceId: acScope.workspaceId,
+        },
+      });
+
+    const repository = new FilePartnerSessionRepository(
+      statePath,
+      createPartnerEnvironmentScopeResolver(partners),
+      canonicalAuthority,
+    );
+
+
 
     try {
       await partners.create({
@@ -551,6 +598,7 @@ describe('Durable partner sessions', () => {
       const restarted = new FilePartnerSessionRepository(
         statePath,
         createPartnerEnvironmentScopeResolver(partners),
+        canonicalAuthority,
       );
       const restored = await restarted.resolve(issued.token);
 

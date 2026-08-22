@@ -644,3 +644,11 @@ export { GmReadinessCenter } from './react/GmReadinessCenter';
 export { GaReadinessCenter } from './react/GaReadinessCenter';
 export { useStudioBrandProjection } from './react/useStudioBrandProjection';
 export { usePilotWorkspace } from './react/usePilotWorkspace';
+
+// TASK 66A — server-durable dynamic canonical authority public contracts.
+export type {
+  PlatformCanonicalProject,
+} from './domain/types';
+export {
+  DEFAULT_CANONICAL_PROJECTS,
+} from './registry/defaults';
