@@ -537,7 +537,7 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
           partnerId: 'ac-modular',
         } as const;
 
-        const canonicalAdminTargetScope =
+        const canonicalAdminFallbackScope =
           requestedProjectId === DSE_SCOPE.projectId
             ? DSE_SCOPE
             : requestedProjectId === AC_SCOPE.projectId
@@ -549,15 +549,23 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
           current.workspaceContext?.partnerId ?? currentAuthorizedScope.companyId;
 
         if (isConisAdmin && requestedProjectId !== currentAuthorizedScope.projectId) {
-          if (canonicalAdminTargetScope === null) return null;
+          const durableTargetScope =
+            await this.resolvePartnerEnvironmentScope.byProject?.(
+              requestedProjectId,
+            );
+
+          const targetScope =
+            durableTargetScope ?? canonicalAdminFallbackScope;
+
+          if (targetScope === null || targetScope === undefined) return null;
 
           authorizedScope = {
-            tenantId: canonicalAdminTargetScope.tenantId,
-            companyId: canonicalAdminTargetScope.companyId,
-            workspaceId: canonicalAdminTargetScope.workspaceId,
-            projectId: canonicalAdminTargetScope.projectId,
+            tenantId: targetScope.tenantId,
+            companyId: targetScope.companyId,
+            workspaceId: targetScope.workspaceId,
+            projectId: targetScope.projectId,
           };
-          targetPartnerId = canonicalAdminTargetScope.partnerId;
+          targetPartnerId = targetScope.partnerId;
         }
 
         if (

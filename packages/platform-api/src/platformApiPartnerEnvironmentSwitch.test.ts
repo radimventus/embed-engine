@@ -198,6 +198,44 @@ describe('Authoritative Partner Environment house switch', () => {
     });
   });
 
+
+  it('lets CONIS Admin enter persisted BLOKKI by Project through durable PE resolution', async () => {
+    await withHarness(async ({ sessions, adminToken }) => {
+      const enteredDse = await sessions.mutateContext(adminToken, enterDse);
+      assert.ok(enteredDse !== null);
+      assert.equal(enteredDse.projectId, DSE_CANONICAL_PROJECT_ID);
+
+      const blokki = await sessions.mutateContext(adminToken, {
+        action: 'switch',
+        activeStudio: 'builder',
+        tenantId: BLOKKI_SCOPE.tenantId,
+        companyId: BLOKKI_SCOPE.companyId,
+        workspaceId: BLOKKI_SCOPE.workspaceId,
+        projectId: BLOKKI_SCOPE.projectId,
+        activeHouseId: null,
+      });
+
+      assert.ok(blokki !== null);
+      assert.equal(blokki.tenantId, BLOKKI_SCOPE.tenantId);
+      assert.equal(blokki.companyId, BLOKKI_SCOPE.companyId);
+      assert.equal(blokki.workspaceId, BLOKKI_SCOPE.workspaceId);
+      assert.equal(blokki.projectId, BLOKKI_SCOPE.projectId);
+      assert.equal(blokki.activeHouseId, null);
+
+      const bungalov = await sessions.mutateContext(adminToken, {
+        action: 'switch',
+        activeStudio: 'builder',
+        projectId: BLOKKI_SCOPE.projectId,
+        activeHouseId: BLOKKI_BUNGALOV_ID,
+      });
+
+      assert.ok(bungalov !== null);
+      assert.equal(bungalov.companyId, BLOKKI_SCOPE.companyId);
+      assert.equal(bungalov.projectId, BLOKKI_SCOPE.projectId);
+      assert.equal(bungalov.activeHouseId, BLOKKI_BUNGALOV_ID);
+    });
+  });
+
   it('keeps DSE BUNGALOV ↔ VPD switching inside authorized DSE', async () => {
     await withHarness(async ({ sessions, adminToken }) => {
       const entered = await sessions.mutateContext(adminToken, enterDse);
