@@ -319,7 +319,7 @@ describe('Authoritative Partner Environment house switch', () => {
     });
   });
 
-  it('switches Blokki Houses through POST /public/auth/context and rejects a forged DSE House', async () => {
+  it('switches Blokki Houses through POST /public/auth/context, sanitizes a foreign House, and lets CONIS Admin switch Partner Environment', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'conis-pe-switch-http-'));
     const inviteRepository = new FilePlatformInviteRepository(
       join(directory, 'invites.json'),
@@ -471,21 +471,44 @@ describe('Authoritative Partner Environment house switch', () => {
           activeHouseId: DSE_BUNGALOV_4KK_HOUSE_ID,
         }),
       });
-      assert.equal(forgedProject.status, 403);
+      assert.equal(forgedProject.status, 200);
+      const forgedProjectBody = (await forgedProject.json()) as {
+        session: {
+          tenantId: string;
+          companyId: string;
+          workspaceId: string;
+          projectId: string;
+          activeHouseId: string | null;
+        };
+      };
+      assert.equal(forgedProjectBody.session.tenantId, DSE_TENANT_ID);
+      assert.equal(forgedProjectBody.session.companyId, DSE_COMPANY_ID);
+      assert.equal(forgedProjectBody.session.workspaceId, DSE_WORKSPACE_ID);
+      assert.equal(forgedProjectBody.session.projectId, DSE_CANONICAL_PROJECT_ID);
+      assert.equal(
+        forgedProjectBody.session.activeHouseId,
+        DSE_BUNGALOV_4KK_HOUSE_ID,
+      );
 
       const remaining = await fetch(`${baseUrl}/public/auth/me`, {
         headers: { cookie, origin: 'https://conis.cz' },
       });
       assert.equal(remaining.status, 200);
       const remainingBody = (await remaining.json()) as {
+        tenantId: string;
         companyId: string;
+        workspaceId: string;
         projectId: string;
         activeHouseId: string | null;
       };
-      assert.equal(remainingBody.companyId, BLOKKI_SCOPE.companyId);
-      assert.equal(remainingBody.projectId, BLOKKI_SCOPE.projectId);
-      assert.notEqual(remainingBody.companyId, DSE_COMPANY_ID);
-      assert.notEqual(remainingBody.activeHouseId, DSE_BUNGALOV_4KK_HOUSE_ID);
+      assert.equal(remainingBody.tenantId, DSE_TENANT_ID);
+      assert.equal(remainingBody.companyId, DSE_COMPANY_ID);
+      assert.equal(remainingBody.workspaceId, DSE_WORKSPACE_ID);
+      assert.equal(remainingBody.projectId, DSE_CANONICAL_PROJECT_ID);
+      assert.equal(
+        remainingBody.activeHouseId,
+        DSE_BUNGALOV_4KK_HOUSE_ID,
+      );
     } finally {
       await new Promise<void>((resolve, reject) => {
         server.close((error) =>

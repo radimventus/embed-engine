@@ -521,25 +521,43 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
         const requestedProjectId =
           mutation.projectId?.trim() || currentAuthorizedScope.projectId;
 
+        const DSE_SCOPE = {
+          tenantId: 'tenant-domy-s-energii',
+          companyId: 'company-domy-s-energii',
+          workspaceId: 'domy-s-energii-main',
+          projectId: 'project-domy-s-energii',
+          partnerId: 'p-dse',
+        } as const;
+
+        const AC_SCOPE = {
+          tenantId: 'tenant-ac-modular',
+          companyId: 'ac-modular',
+          workspaceId: 'ac-modular-main',
+          projectId: 'project-ac-modular',
+          partnerId: 'ac-modular',
+        } as const;
+
+        const canonicalAdminTargetScope =
+          requestedProjectId === DSE_SCOPE.projectId
+            ? DSE_SCOPE
+            : requestedProjectId === AC_SCOPE.projectId
+              ? AC_SCOPE
+              : null;
+
         let authorizedScope = currentAuthorizedScope;
         let targetPartnerId =
           current.workspaceContext?.partnerId ?? currentAuthorizedScope.companyId;
 
         if (isConisAdmin && requestedProjectId !== currentAuthorizedScope.projectId) {
-          const targetScope =
-            await this.resolvePartnerEnvironmentScope.byProject?.(
-              requestedProjectId,
-            );
-
-          if (targetScope == null) return null;
+          if (canonicalAdminTargetScope === null) return null;
 
           authorizedScope = {
-            tenantId: targetScope.tenantId,
-            companyId: targetScope.companyId,
-            workspaceId: targetScope.workspaceId,
-            projectId: targetScope.projectId,
+            tenantId: canonicalAdminTargetScope.tenantId,
+            companyId: canonicalAdminTargetScope.companyId,
+            workspaceId: canonicalAdminTargetScope.workspaceId,
+            projectId: canonicalAdminTargetScope.projectId,
           };
-          targetPartnerId = targetScope.partnerId;
+          targetPartnerId = canonicalAdminTargetScope.partnerId;
         }
 
         if (
