@@ -648,35 +648,12 @@ export function hydrateCanonicalRegistryFromAuthority(
 ): CompanyRegistryState {
   ensureExtrasHydrated();
 
-  const mergeById = <T extends { readonly id: string }>(
-    local: readonly T[],
-    authoritative: readonly T[],
-  ): T[] => [
-    ...new Map(
-      [...local, ...authoritative].map(
-        (item) => [item.id, item] as const,
-      ),
-    ).values(),
-  ];
-
   mutableExtras = {
     ...mutableExtras,
-    tenants: mergeById(
-      mutableExtras.tenants,
-      snapshot.tenants,
-    ),
-    companies: mergeById(
-      mutableExtras.companies,
-      snapshot.companies,
-    ),
-    workspaces: mergeById(
-      mutableExtras.workspaces,
-      snapshot.workspaces,
-    ),
-    canonicalProjects: mergeById(
-      mutableExtras.canonicalProjects,
-      snapshot.projects,
-    ),
+    tenants: [...snapshot.tenants],
+    companies: [...snapshot.companies],
+    workspaces: [...snapshot.workspaces],
+    canonicalProjects: [...snapshot.projects],
   };
 
   persistExtrasToStorage();

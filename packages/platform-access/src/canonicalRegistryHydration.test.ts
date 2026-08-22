@@ -5,6 +5,7 @@ import {
   getCanonicalProject,
   hydrateCanonicalRegistryFromAuthority,
   resetCompanyRegistryExtras,
+  upsertBuilderCanonicalProject,
 } from './index';
 
 test(
@@ -55,6 +56,48 @@ test(
           'project-profile-b',
         )?.project.name,
         'Profile B',
+      );
+    } finally {
+      resetCompanyRegistryExtras();
+    }
+  },
+);
+
+
+test(
+  'TASK-66VR-FIX-06 — authoritative hydration removes a browser-local canonical Project orphan',
+  () => {
+    resetCompanyRegistryExtras();
+
+    try {
+      upsertBuilderCanonicalProject({
+        id: 'project-browser-local-orphan',
+        companyId: 'company-domy-s-energii',
+        workspaceId: 'domy-s-energii-main',
+        name: 'Browser Local Orphan',
+        slug: 'browser-local-orphan',
+        description: '',
+      });
+
+      assert.equal(
+        getCanonicalProject(
+          'project-browser-local-orphan',
+        )?.project.name,
+        'Browser Local Orphan',
+      );
+
+      hydrateCanonicalRegistryFromAuthority({
+        tenants: [],
+        companies: [],
+        workspaces: [],
+        projects: [],
+      });
+
+      assert.equal(
+        getCanonicalProject(
+          'project-browser-local-orphan',
+        ),
+        null,
       );
     } finally {
       resetCompanyRegistryExtras();
