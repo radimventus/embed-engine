@@ -23,6 +23,14 @@ export type CanonicalRegistryAuthorityBundle = {
   readonly project: PlatformCanonicalProject;
 };
 
+export type CanonicalRegistryAuthoritySnapshot = {
+  readonly tenants: readonly PlatformTenant[];
+  readonly companies: readonly PlatformCompany[];
+  readonly workspaces: readonly PlatformWorkspace[];
+  readonly projects: readonly PlatformCanonicalProject[];
+};
+
+
 type CanonicalRegistryAuthorityExtras = {
   readonly tenants: readonly PlatformTenant[];
   readonly companies: readonly PlatformCompany[];
@@ -30,7 +38,7 @@ type CanonicalRegistryAuthorityExtras = {
   readonly canonicalProjects: readonly PlatformCanonicalProject[];
 };
 
-export type CanonicalProjectRuntimeAuthority = {
+export type PlatformCanonicalProjectRuntimeAuthority = {
   readonly tenantId: string;
   readonly companyId: string;
   readonly workspaceId: string;
@@ -141,7 +149,7 @@ export class FileCanonicalRegistryAuthorityRepository {
 
   async upsertAuthorityBundle(
     input: CanonicalRegistryAuthorityBundle,
-  ): Promise<CanonicalProjectRuntimeAuthority> {
+  ): Promise<PlatformCanonicalProjectRuntimeAuthority> {
     const tenant: PlatformTenant = {
       ...input.tenant,
       id: requireId('tenant.id', input.tenant.id),
@@ -240,9 +248,31 @@ export class FileCanonicalRegistryAuthorityRepository {
     };
   }
 
+  async readAuthoritySnapshot(): Promise<CanonicalRegistryAuthoritySnapshot> {
+    const extras = await this.readExtras();
+
+    const byId = <T extends { readonly id: string }>(
+      defaults: readonly T[],
+      dynamic: readonly T[],
+    ): readonly T[] =>
+      [...new Map(
+        [...defaults, ...dynamic].map((item) => [item.id, item]),
+      ).values()];
+
+    return {
+      tenants: byId(DEFAULT_TENANTS, extras.tenants),
+      companies: byId(DEFAULT_COMPANIES, extras.companies),
+      workspaces: byId(DEFAULT_WORKSPACES, extras.workspaces),
+      projects: byId(
+        DEFAULT_CANONICAL_PROJECTS,
+        extras.canonicalProjects,
+      ),
+    };
+  }
+
   async resolveProjectAuthority(
     projectIdInput: string,
-  ): Promise<CanonicalProjectRuntimeAuthority | null> {
+  ): Promise<PlatformCanonicalProjectRuntimeAuthority | null> {
     const projectId = normalize(projectIdInput);
     if (projectId.length === 0) return null;
 

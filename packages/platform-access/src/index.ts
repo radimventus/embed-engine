@@ -646,3 +646,19 @@ export {
 export {
   ensureCanonicalProjectAuthority,
 } from './api/canonicalProjectAuthority';
+
+export {
+  hydrateCanonicalRegistryFromAuthority,
+} from './registry/companyRegistry';
+
+export type {
+  CanonicalRegistryAuthoritySnapshotInput,
+} from './registry/companyRegistry';
+
+export type {
+  PlatformAccessCanonicalRegistrySnapshot,
+} from './api/platformAccessClient';
+
+export {
+  syncCanonicalRegistryFromAuthority,
+} from './api/canonicalRegistrySync';

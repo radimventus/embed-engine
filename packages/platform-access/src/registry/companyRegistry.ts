@@ -635,3 +635,51 @@ export {
   DEFAULT_PROJECT_ID,
 };
 export { DEFAULT_CANONICAL_PROJECT_ID } from './defaults';
+
+export type CanonicalRegistryAuthoritySnapshotInput = {
+  readonly tenants: readonly PlatformTenant[];
+  readonly companies: readonly PlatformCompany[];
+  readonly workspaces: readonly PlatformWorkspace[];
+  readonly projects: readonly PlatformCanonicalProject[];
+};
+
+export function hydrateCanonicalRegistryFromAuthority(
+  snapshot: CanonicalRegistryAuthoritySnapshotInput,
+): CompanyRegistryState {
+  ensureExtrasHydrated();
+
+  const mergeById = <T extends { readonly id: string }>(
+    local: readonly T[],
+    authoritative: readonly T[],
+  ): T[] => [
+    ...new Map(
+      [...local, ...authoritative].map(
+        (item) => [item.id, item] as const,
+      ),
+    ).values(),
+  ];
+
+  mutableExtras = {
+    ...mutableExtras,
+    tenants: mergeById(
+      mutableExtras.tenants,
+      snapshot.tenants,
+    ),
+    companies: mergeById(
+      mutableExtras.companies,
+      snapshot.companies,
+    ),
+    workspaces: mergeById(
+      mutableExtras.workspaces,
+      snapshot.workspaces,
+    ),
+    canonicalProjects: mergeById(
+      mutableExtras.canonicalProjects,
+      snapshot.projects,
+    ),
+  };
+
+  persistExtrasToStorage();
+
+  return getDefaultCompanyRegistry();
+}

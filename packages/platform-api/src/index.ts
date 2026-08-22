@@ -1614,6 +1614,47 @@ export function createPlatformApiServer(
         return respond(response, 405, { error: 'Method not allowed.' });
       }
       if (
+        request.method === 'GET' &&
+        path === '/public/auth/canonical-registry'
+      ) {
+        const token = requestCookie(
+          request,
+          PARTNER_SESSION_COOKIE,
+        );
+
+        if (token === null) {
+          return respond(response, 401, {
+            error: 'Neplatná relace.',
+          });
+        }
+
+        const current =
+          await partnerSessions.resolve(token);
+
+        if (current === null) {
+          return respond(response, 401, {
+            error: 'Neplatná relace.',
+          });
+        }
+
+        if (!isPlatformAdmin(current.user.roles)) {
+          return respond(response, 403, {
+            error:
+              'Canonical registry může číst pouze CONIS Admin.',
+          });
+        }
+
+        const registry =
+          await canonicalRegistryAuthorityRepository
+            .readAuthoritySnapshot();
+
+        return respond(response, 200, {
+          ok: true,
+          registry,
+        });
+      }
+
+      if (
         request.method === 'POST' &&
         path === '/public/auth/canonical-project-authority'
       ) {

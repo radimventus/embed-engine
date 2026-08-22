@@ -40,6 +40,7 @@ import {
 import {
   createPlatformAccessAuthClient,
 } from '../api/platformAccessClient';
+import { syncCanonicalRegistryFromAuthority } from '../api/canonicalRegistrySync';
 import {
   clearPlatformSession,
   savePlatformSession,
@@ -164,8 +165,18 @@ export function SessionProvider({
     let active = true;
     setIsRestoring(true);
     void createPlatformAccessAuthClient().restoreSession()
-      .then((restored) => {
-        if (active && restored !== null) applySession(restored);
+      .then(async (restored) => {
+        if (!active || restored === null) return;
+
+        // TASK 66VR-FIX-05 shared registry restore:
+        // reconstruct dynamic canonical identities from durable Platform API
+        // before applying a restored Project session.
+        await syncCanonicalRegistryFromAuthority();
+
+        if (!active) return;
+
+        refreshRegistry();
+        applySession(restored);
       })
       .catch(() => undefined)
       .finally(() => {
@@ -174,7 +185,7 @@ export function SessionProvider({
     return () => {
       active = false;
     };
-  }, [applySession]);
+  }, [applySession, refreshRegistry]);
 
   const bootstrap = useMemo(
     () => (session !== null ? bootstrapWorkspace(session) : null),
@@ -194,6 +205,9 @@ export function SessionProvider({
     if (!result.ok) {
       return { ok: false as const, error: result.error };
     }
+    // TASK 66VR-FIX-05 login registry hydration.
+    await syncCanonicalRegistryFromAuthority();
+    refreshRegistry();
     savePlatformSession(result.session);
     setSession(result.session);
     // CAP-GOV-06 / RC-002 — prefer the Studio host that mounted SessionProvider

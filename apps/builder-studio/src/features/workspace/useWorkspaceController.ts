@@ -694,6 +694,20 @@ export function useWorkspaceController(): WorkspaceController {
           registryRef.current,
           input,
         );
+
+        // TASK 66VR-FIX-05 create authority:
+        // Project creation is successful only after its canonical
+        // Tenant/Company/Workspace/Project bundle is durable on Platform API.
+        const canonicalAuthority =
+          await ensureCanonicalProjectAuthority(
+            created.folder.id,
+          );
+
+        if (!canonicalAuthority.ok) {
+          throw new Error(
+            canonicalAuthority.error,
+          );
+        }
       } catch (error) {
         const message =
           error instanceof Error

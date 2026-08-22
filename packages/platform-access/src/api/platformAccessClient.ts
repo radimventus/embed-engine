@@ -131,6 +131,34 @@ export type PlatformAccessWriteResult =
   | { readonly ok: true }
   | { readonly ok: false; readonly error: string };
 
+export type PlatformAccessCanonicalRegistrySnapshot = {
+  readonly tenants: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly companyId: string;
+    readonly pilot: boolean;
+    readonly createdAt: string;
+  }[];
+  readonly companies: readonly {
+    readonly id: string;
+    readonly name: string;
+    readonly tenantId: string;
+  }[];
+  readonly workspaces: readonly {
+    readonly id: string;
+    readonly companyId: string;
+    readonly name: string;
+  }[];
+  readonly projects: readonly {
+    readonly id: string;
+    readonly companyId: string;
+    readonly workspaceId: string;
+    readonly name: string;
+    readonly slug: string;
+    readonly description: string;
+  }[];
+};
+
 export type PlatformAccessCanonicalAuthorityBundle = {
   readonly tenant: {
     readonly id: string;
@@ -196,6 +224,16 @@ export interface PlatformAccessAuthClient {
       }
     | { readonly action: 'leave' }
   ): Promise<PlatformAccessAuthResult>;
+  readCanonicalRegistry(): Promise<
+    | {
+        readonly ok: true;
+        readonly registry: PlatformAccessCanonicalRegistrySnapshot;
+      }
+    | {
+        readonly ok: false;
+        readonly error: string;
+      }
+  >;
   persistCanonicalProjectAuthority(
     input: PlatformAccessCanonicalAuthorityBundle,
   ): Promise<PlatformAccessWriteResult>;
@@ -269,6 +307,48 @@ export function createPlatformAccessAuthClient(
             error: ('error' in result ? result.error : undefined) ??
               'Partner Environment se nepodařilo aktivovat.',
           };
+    },
+    async readCanonicalRegistry() {
+      const response = await fetch(
+        `${baseUrl}/public/auth/canonical-registry`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        },
+      );
+
+      const payload = await parseResponse<
+        | {
+            readonly ok: true;
+            readonly registry:
+              PlatformAccessCanonicalRegistrySnapshot;
+          }
+        | {
+            readonly error?: string;
+          }
+      >(response);
+
+      if (
+        response.ok &&
+        typeof payload === 'object' &&
+        payload !== null &&
+        'registry' in payload
+      ) {
+        return payload;
+      }
+
+      return {
+        ok: false,
+        error:
+          (
+            typeof payload === 'object' &&
+            payload !== null &&
+            'error' in payload
+              ? payload.error
+              : undefined
+          ) ??
+          'Canonical registry se nepodařilo načíst.',
+      };
     },
     async persistCanonicalProjectAuthority(input) {
       const response = await fetch(
