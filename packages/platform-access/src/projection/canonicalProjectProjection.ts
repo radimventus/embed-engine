@@ -255,17 +255,21 @@ export function getCanonicalHouseEntity(
 ): CanonicalHouseProjection | null {
   const normalized = normalizeProjectIdCandidate(houseId) ?? houseId.trim();
   if (normalized.length === 0) return null;
-  const fromList = listCanonicalHouseEntities().find(
-    (house) => house.houseId === normalized,
-  );
-  if (fromList !== undefined) return fromList;
 
   const shared = getSharedProject(normalized);
-  if (shared === null) return null;
-  return houseFromSharedLegacy(
-    shared,
-    packageRootToPublicUrl(shared.packageRoot),
+  if (shared !== null) {
+    return houseFromSharedLegacy(
+      shared,
+      packageRootToPublicUrl(shared.packageRoot),
+    );
+  }
+
+  const authorityHouse = getDefaultCompanyRegistry().houses.find(
+    (house) => house.id === normalized,
   );
+  if (authorityHouse === undefined) return null;
+
+  return authorityHouseProjection(authorityHouse)?.house ?? null;
 }
 
 /**
@@ -276,9 +280,18 @@ export function getCanonicalHouse(
 ): CanonicalProjectProjection | null {
   const normalized = normalizeProjectIdCandidate(houseId) ?? houseId.trim();
   if (normalized.length === 0) return null;
+
   const shared = getSharedProject(normalized);
-  if (shared === null) return null;
-  return projectCanonicalFromShared(shared);
+  if (shared !== null) {
+    return projectCanonicalFromShared(shared);
+  }
+
+  const authorityHouse = getDefaultCompanyRegistry().houses.find(
+    (house) => house.id === normalized,
+  );
+  if (authorityHouse === undefined) return null;
+
+  return authorityHouseProjection(authorityHouse);
 }
 
 /**

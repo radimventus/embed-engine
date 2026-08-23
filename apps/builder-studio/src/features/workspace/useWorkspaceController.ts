@@ -236,6 +236,7 @@ export function isBuilderAuthoredHouseForScope(
   return (
     house !== null &&
     house.status === "draft" &&
+    house.dataMode !== "REFERENCE_DEMO" &&
     house.folderId === projectId &&
     isCanonicalProjectId(projectId)
   );
@@ -836,6 +837,39 @@ export function useWorkspaceController(): WorkspaceController {
       }
       if (created === null) {
         setSwitchError("Objekt se nepodařilo založit.");
+        return null;
+      }
+
+      try {
+        const authority =
+          await createPlatformAccessAuthClient().persistCanonicalHouseAuthority({
+            id: created.project.id,
+            canonicalProjectId: created.project.folderId,
+            name: created.project.name,
+            slug: created.project.slug,
+            ...(created.project.packageRoot.trim().length > 0
+              ? { packageRoot: created.project.packageRoot }
+              : {}),
+            status: created.project.status,
+            objectType: created.project.objectType,
+            dataMode: created.project.dataMode ?? "LIVE_EMPTY",
+          });
+
+        if (!authority.ok) {
+          throw new Error(authority.error);
+        }
+
+        const sync = await syncCanonicalRegistryFromAuthority();
+
+        if (!sync.ok) {
+          throw new Error(sync.error);
+        }
+      } catch (error) {
+        setSwitchError(
+          error instanceof Error
+            ? error.message
+            : "Objekt se nepodařilo uložit do kanonického registru.",
+        );
         return null;
       }
 
