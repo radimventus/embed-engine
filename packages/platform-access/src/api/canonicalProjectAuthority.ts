@@ -1,3 +1,4 @@
+import { syncCanonicalRegistryFromAuthority } from "./canonicalRegistrySync";
 import {
   createPlatformAccessAuthClient,
   type PlatformAccessWriteResult,
@@ -96,13 +97,17 @@ export async function ensureCanonicalProjectAuthority(
     return { ok: true };
   }
 
-  const bundle = bundleForProject(projectId);
+  let bundle = bundleForProject(projectId);
+
+  if (bundle === null) {
+    await syncCanonicalRegistryFromAuthority();
+    bundle = bundleForProject(projectId);
+  }
 
   if (bundle === null) {
     return {
       ok: false,
-      error:
-        'Canonical Project není v klientském registru kompletní.',
+      error: 'Canonical Project není v klientském registru kompletní.',
     };
   }
 
