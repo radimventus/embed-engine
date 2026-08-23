@@ -1,8 +1,12 @@
 import {
+  buildDefaultPartnerVpdHouse,
+  buildDefaultReferenceBungalovHouse,
   ensureCanonicalProjectAuthority,
+  getCanonicalWorkspaceForCompany,
+  syncCanonicalRegistryFromAuthority,
   usePlatformSession,
-} from '@embed-engine/platform-access';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+} from "@embed-engine/platform-access";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   createWorkspaceProjectChangeMessage,
@@ -18,9 +22,10 @@ import {
   upsertWorkspaceAuthoredHouse,
   updateSession,
   type WorkspaceAuthoredHouseIdentity,
-} from '@embed-engine/platform-access';
+} from "@embed-engine/platform-access";
 
-import { requestWorkspaceActive } from './requestWorkspaceActive';
+import { requestPlatformHousePackageInitialize } from "../house-package/requestPlatformHousePackage";
+import { requestWorkspaceActive } from "./requestWorkspaceActive";
 import {
   composeWorkspaceRegistry,
   closeWorkspaceProject,
@@ -40,47 +45,65 @@ import {
   type WorkspaceProjectFolder,
   type WorkspaceProjectStatus,
   type WorkspaceRegistryState,
-} from './workspaceRegistry';
+} from "./workspaceRegistry";
 import {
   loadWorkspaceRegistryFromStorage,
   saveWorkspaceRegistryToStorage,
-} from './workspaceStorage';
-
-const HOUSE_PACKAGE_INITIALIZE_API = '/__builder/house-package/initialize';
+} from "./workspaceStorage";
 
 async function initializeHousePackageForBuilder(
   houseId: string,
 ): Promise<string> {
-  const isDev = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-  const targetUrl = isDev ? HOUSE_PACKAGE_INITIALIZE_API : ('https://api.conis.cz/public/house-packages/' + encodeURIComponent(houseId) + '/initialize');
-  const response = await fetch(targetUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ houseId }),
-  });
-  const payload: unknown = await response.json().catch(() => null);
-  if (
-    payload !== null &&
-    typeof payload === 'object' &&
-    (payload as { ok?: unknown }).ok === true &&
-    (payload as { houseId?: unknown }).houseId === houseId &&
-    typeof (payload as { packageRoot?: unknown }).packageRoot === 'string' &&
-    (payload as { packageRoot: string }).packageRoot.trim().length > 0
-  ) {
-    return (payload as { packageRoot: string }).packageRoot;
+  const isDevelopmentHost =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1");
+
+  if (isDevelopmentHost) {
+    const response = await fetch("/__builder/house-package/initialize", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ houseId }),
+    });
+
+    const payload = (await response.json().catch(() => null)) as {
+      ok?: unknown;
+      houseId?: unknown;
+      packageRoot?: unknown;
+      error?: unknown;
+    } | null;
+
+    if (
+      response.ok &&
+      payload?.ok === true &&
+      payload.houseId === houseId &&
+      typeof payload.packageRoot === "string" &&
+      payload.packageRoot.trim().length > 0
+    ) {
+      return payload.packageRoot;
+    }
+
+    throw new Error(
+      typeof payload?.error === "string"
+        ? payload.error
+        : `House Package initialization failed (HTTP ${response.status}).`,
+    );
   }
-  const error =
-    payload !== null &&
-    typeof payload === 'object' &&
-    typeof (payload as { error?: unknown }).error === 'string'
-      ? (payload as { error: string }).error
-      : `House Package initialization failed (HTTP ${response.status}).`;
-  throw new Error(error);
+
+  const result = await requestPlatformHousePackageInitialize(houseId);
+
+  if (!result.ok) {
+    throw new Error(result.error);
+  }
+
+  return result.packageRoot;
 }
 
 export type DirtySwitchPrompt =
-  | { readonly kind: 'switch'; readonly target: WorkspaceProject }
-  | { readonly kind: 'close' };
+  | { readonly kind: "switch"; readonly target: WorkspaceProject }
+  | { readonly kind: "close" };
 
 export type UpdateWorkspaceProjectInput = {
   readonly name: string;
@@ -116,9 +139,7 @@ export type WorkspaceController = {
   readonly confirmDirtyDiscard: () => Promise<boolean>;
   readonly cancelDirtySwitch: () => void;
   readonly closeActiveProject: () => void;
-  readonly requestCloseProject: (options: {
-    readonly dirty: boolean;
-  }) => void;
+  readonly requestCloseProject: (options: { readonly dirty: boolean }) => void;
   readonly createProject: (
     input: CreateWorkspaceProjectInput,
     options: { readonly dirty: boolean },
@@ -127,10 +148,10 @@ export type WorkspaceController = {
     input: CreateWorkspaceObjectInput,
     options: { readonly dirty: boolean },
   ) => Promise<WorkspaceProject | null>;
-  readonly recoverDefaultHouses: () => {
+  readonly recoverDefaultHouses: () => Promise<{
     readonly message: string;
     readonly createdCount: number;
-  } | null;
+  } | null>;
   readonly updateProject: (
     projectId: string,
     input: UpdateWorkspaceProjectInput,
@@ -144,14 +165,11 @@ export function requiresLegacyWorkspaceActivation(
 ): boolean {
   const canonicalHouse = getCanonicalHouse(houseId)?.house ?? null;
 
-  if (canonicalHouse?.dataMode === 'REFERENCE_DEMO') {
+  if (canonicalHouse?.dataMode === "REFERENCE_DEMO") {
     return false;
   }
 
-  return (
-    packageRoot === undefined ||
-    packageRoot.trim().length > 0
-  );
+  return packageRoot === undefined || packageRoot.trim().length > 0;
 }
 
 /**
@@ -166,7 +184,7 @@ export function canUseLegacyWorkspaceActivation(
 
 function publishWorkspaceProjectChange(projectId: string): void {
   if (
-    typeof window === 'undefined' ||
+    typeof window === "undefined" ||
     window.parent === window ||
     !isCanonicalProjectId(projectId)
   ) {
@@ -180,7 +198,7 @@ function publishWorkspaceProjectChange(projectId: string): void {
 }
 
 function publishWorkspaceHouseChange(houseId: string | null): void {
-  if (typeof window === 'undefined' || window.parent === window) {
+  if (typeof window === "undefined" || window.parent === window) {
     return;
   }
   const targetOrigin = new URL(resolveWorkspaceHostHref()).origin;
@@ -206,7 +224,7 @@ export function resolveBuilderActiveHouseId(
   ) {
     return null;
   }
-  return isHouseInProject(house.id, projectId) || house.status === 'draft'
+  return isHouseInProject(house.id, projectId) || house.status === "draft"
     ? house.id
     : null;
 }
@@ -217,7 +235,7 @@ export function isBuilderAuthoredHouseForScope(
 ): house is WorkspaceProject {
   return (
     house !== null &&
-    house.status === 'draft' &&
+    house.status === "draft" &&
     house.folderId === projectId &&
     isCanonicalProjectId(projectId)
   );
@@ -253,8 +271,8 @@ function prepareBuilderHouseScope(
       name: house.name,
       canonicalProjectId: projectId,
       packageRoot: house.packageRoot,
-      dataMode: 'LIVE_EMPTY',
-      status: 'draft',
+      dataMode: "LIVE_EMPTY",
+      status: "draft",
     };
     upsertWorkspaceAuthoredHouse(authoredHouseIdentity);
     updateSession({ projectId, activeHouseId });
@@ -267,19 +285,23 @@ async function awaitAuthoritativeBuilderHouseScope(input: {
   readonly activeHouseId: string | null;
   readonly authoredHouseIdentity: WorkspaceAuthoredHouseIdentity | undefined;
 }): Promise<void> {
-  if (typeof window !== 'undefined' && window.parent !== window) {
+  if (typeof window !== "undefined" && window.parent !== window) {
     const channel = new MessageChannel();
-    const response = new Promise<{ readonly ok: boolean; readonly error?: string }>(
-      (resolve) => {
-        channel.port1.onmessage = (event: MessageEvent<unknown>) => {
-          const value = event.data as { readonly ok?: unknown; readonly error?: unknown };
-          resolve({
-            ok: value.ok === true,
-            ...(typeof value.error === 'string' ? { error: value.error } : {}),
-          });
+    const response = new Promise<{
+      readonly ok: boolean;
+      readonly error?: string;
+    }>((resolve) => {
+      channel.port1.onmessage = (event: MessageEvent<unknown>) => {
+        const value = event.data as {
+          readonly ok?: unknown;
+          readonly error?: unknown;
         };
-      },
-    );
+        resolve({
+          ok: value.ok === true,
+          ...(typeof value.error === "string" ? { error: value.error } : {}),
+        });
+      };
+    });
     window.parent.postMessage(
       createWorkspaceHouseScopeRequestMessage({
         houseId: input.activeHouseId,
@@ -293,7 +315,7 @@ async function awaitAuthoritativeBuilderHouseScope(input: {
     const result = await response;
     if (!result.ok) {
       throw new Error(
-        result.error ?? 'Platform API nepotvrdilo oprávnění House Package.',
+        result.error ?? "Platform API nepotvrdilo oprávnění House Package.",
       );
     }
     return;
@@ -301,10 +323,9 @@ async function awaitAuthoritativeBuilderHouseScope(input: {
 
   const session = loadPlatformSession();
   if (session === null) {
-    throw new Error('Nejste přihlášeni.');
+    throw new Error("Nejste přihlášeni.");
   }
-  const reconciled =
-    await ensureCanonicalProjectAuthority(input.projectId);
+  const reconciled = await ensureCanonicalProjectAuthority(input.projectId);
   if (!reconciled.ok) {
     throw new Error(reconciled.error);
   }
@@ -313,8 +334,7 @@ async function awaitAuthoritativeBuilderHouseScope(input: {
     const houseAuthority =
       await createPlatformAccessAuthClient().persistCanonicalHouseAuthority({
         id: input.authoredHouseIdentity.houseId,
-        canonicalProjectId:
-          input.authoredHouseIdentity.canonicalProjectId,
+        canonicalProjectId: input.authoredHouseIdentity.canonicalProjectId,
         name: input.authoredHouseIdentity.name,
         ...(input.authoredHouseIdentity.packageRoot.trim().length > 0
           ? { packageRoot: input.authoredHouseIdentity.packageRoot }
@@ -329,7 +349,7 @@ async function awaitAuthoritativeBuilderHouseScope(input: {
 
   const result = await createPlatformAccessAuthClient().mutateSessionContext({
     action: 'switch',
-    activeStudio: 'builder',
+    activeStudio: "builder",
     projectId: input.projectId,
     activeHouseId: input.activeHouseId,
     authoredHouseIdentities: [
@@ -348,7 +368,7 @@ async function awaitAuthoritativeBuilderHouseScope(input: {
   ) {
     throw new Error(
       result.ok
-        ? 'Platform API nepotvrdilo požadovaný House scope.'
+        ? "Platform API nepotvrdilo požadovaný House scope."
         : result.error,
     );
   }
@@ -455,7 +475,7 @@ export function useWorkspaceController(): WorkspaceController {
             },
             authorizeScope: () => {
               if (targetScope === null) {
-                throw new Error('House scope nebyl připraven.');
+                throw new Error("House scope nebyl připraven.");
               }
               return awaitAuthoritativeBuilderHouseScope({
                 projectId: target.folderId,
@@ -476,7 +496,7 @@ export function useWorkspaceController(): WorkspaceController {
           setSwitchError(
             error instanceof Error
               ? error.message
-              : 'Oprávnění House Package se nepodařilo potvrdit.',
+              : "Oprávnění House Package se nepodařilo potvrdit.",
           );
           lastOk = false;
           break;
@@ -484,7 +504,9 @@ export function useWorkspaceController(): WorkspaceController {
 
         if (shouldRecoverLegacyLiveEmptyHouse(target.folderId, target)) {
           try {
-            const packageRoot = await initializeHousePackageForBuilder(target.id);
+            const packageRoot = await initializeHousePackageForBuilder(
+              target.id,
+            );
             if (pendingTargetRef.current !== null) {
               continue;
             }
@@ -496,7 +518,9 @@ export function useWorkspaceController(): WorkspaceController {
               (project) => project.id === target.id,
             );
             if (recoveredTarget === undefined) {
-              setSwitchError('Dům se po obnově House Package nepodařilo načíst.');
+              setSwitchError(
+                "Dům se po obnově House Package nepodařilo načíst.",
+              );
               lastOk = false;
               break;
             }
@@ -508,7 +532,7 @@ export function useWorkspaceController(): WorkspaceController {
             setSwitchError(
               error instanceof Error
                 ? error.message
-                : 'Obnovu House Package se nepodařilo dokončit.',
+                : "Obnovu House Package se nepodařilo dokončit.",
             );
             lastOk = false;
             break;
@@ -605,8 +629,8 @@ export function useWorkspaceController(): WorkspaceController {
         targetProjectId: projectId,
       });
 
-      if (decision.action === 'confirm-dirty') {
-        setDirtyPrompt({ kind: 'switch', target });
+      if (decision.action === "confirm-dirty") {
+        setDirtyPrompt({ kind: "switch", target });
         return false;
       }
 
@@ -647,12 +671,12 @@ export function useWorkspaceController(): WorkspaceController {
         activeProjectId: current.activeProjectId,
         targetProjectId: opened.houseId,
       });
-      if (decision.action === 'confirm-dirty') {
+      if (decision.action === "confirm-dirty") {
         const target = current.projects.find(
           (project) => project.id === opened.houseId,
         );
         if (target !== undefined) {
-          setDirtyPrompt({ kind: 'switch', target });
+          setDirtyPrompt({ kind: "switch", target });
         }
         return null;
       }
@@ -671,7 +695,7 @@ export function useWorkspaceController(): WorkspaceController {
         return false;
       }
       await save();
-      if (dirtyPrompt.kind === 'close') {
+      if (dirtyPrompt.kind === "close") {
         setRegistry((prev) => closeWorkspaceProject(prev));
         setDirtyPrompt(null);
         return true;
@@ -685,7 +709,7 @@ export function useWorkspaceController(): WorkspaceController {
     if (dirtyPrompt === null) {
       return false;
     }
-    if (dirtyPrompt.kind === 'close') {
+    if (dirtyPrompt.kind === "close") {
       setRegistry((prev) => closeWorkspaceProject(prev));
       setDirtyPrompt(null);
       return true;
@@ -708,7 +732,7 @@ export function useWorkspaceController(): WorkspaceController {
         return;
       }
       if (options.dirty) {
-        setDirtyPrompt({ kind: 'close' });
+        setDirtyPrompt({ kind: "close" });
         return;
       }
       closeActiveProject();
@@ -723,41 +747,35 @@ export function useWorkspaceController(): WorkspaceController {
     ) => {
       const name = input.name.trim();
       if (name.length === 0) {
-        const error = 'Zadejte název projektu.';
+        const error = "Zadejte název projektu.";
         setSwitchError(error);
         return { folder: null, error };
       }
       if (options.dirty) {
-        const error = 'Nejdřív uložte nebo zahoďte změny aktivního domu.';
+        const error = "Nejdřív uložte nebo zahoďte změny aktivního domu.";
         setSwitchError(error);
         return { folder: null, error };
       }
 
       let created: ReturnType<typeof createWorkspaceProjectFromInput>;
       try {
-        created = createWorkspaceProjectFromInput(
-          registryRef.current,
-          input,
-        );
+        created = createWorkspaceProjectFromInput(registryRef.current, input);
 
         // TASK 66VR-FIX-05 create authority:
         // Project creation is successful only after its canonical
         // Tenant/Company/Workspace/Project bundle is durable on Platform API.
-        const canonicalAuthority =
-          await ensureCanonicalProjectAuthority(
-            created.folder.id,
-          );
+        const canonicalAuthority = await ensureCanonicalProjectAuthority(
+          created.folder.id,
+        );
 
         if (!canonicalAuthority.ok) {
-          throw new Error(
-            canonicalAuthority.error,
-          );
+          throw new Error(canonicalAuthority.error);
         }
       } catch (error) {
         const message =
           error instanceof Error
             ? error.message
-            : 'Nepodařilo se založit projekt.';
+            : "Nepodařilo se založit projekt.";
         setSwitchError(message);
         return { folder: null, error: message };
       }
@@ -780,15 +798,15 @@ export function useWorkspaceController(): WorkspaceController {
     ) => {
       const name = input.name.trim();
       if (name.length === 0) {
-        setSwitchError('Zadejte název objektu.');
+        setSwitchError("Zadejte název objektu.");
         return null;
       }
       if (registryRef.current.activeFolderId === null) {
-        setSwitchError('Nejdřív vyberte projekt.');
+        setSwitchError("Nejdřív vyberte projekt.");
         return null;
       }
       if (options.dirty) {
-        setSwitchError('Nejdřív uložte nebo zahoďte změny aktivního domu.');
+        setSwitchError("Nejdřív uložte nebo zahoďte změny aktivního domu.");
         return null;
       }
 
@@ -797,30 +815,27 @@ export function useWorkspaceController(): WorkspaceController {
         input,
       );
       if (identity === null) {
-        setSwitchError('Objekt se nepodařilo založit.');
+        setSwitchError("Objekt se nepodařilo založit.");
         return null;
       }
 
       let created: ReturnType<typeof createWorkspaceObjectFromInput>;
       try {
-        const packageRoot = await initializeHousePackageForBuilder(
-          identity.houseId,
-        );
         created = createWorkspaceObjectFromInput(
           registryRef.current,
           input,
-          packageRoot,
+          "",
         );
       } catch (error) {
         setSwitchError(
           error instanceof Error
             ? error.message
-            : 'Objekt se nepodařilo založit.',
+            : "Objekt se nepodařilo založit.",
         );
         return null;
       }
       if (created === null) {
-        setSwitchError('Objekt se nepodařilo založit.');
+        setSwitchError("Objekt se nepodařilo založit.");
         return null;
       }
 
@@ -833,7 +848,7 @@ export function useWorkspaceController(): WorkspaceController {
         setSwitchError(
           (prev) =>
             prev ??
-            'Objekt je založen, ale aktivace se nepovedla — vyberte dům vlevo.',
+            "Objekt je založen, ale aktivace se nepovedla — vyberte dům vlevo.",
         );
       }
       return created.project;
@@ -857,19 +872,114 @@ export function useWorkspaceController(): WorkspaceController {
     [],
   );
 
-  const recoverDefaultHouses = useCallback(() => {
-    if (registryRef.current.activeFolderId === null) {
-      setSwitchError('Nejdřív vyberte projekt.');
+  const recoverDefaultHouses = useCallback(async () => {
+    const current = registryRef.current;
+
+    if (current.activeFolderId === null) {
+      setSwitchError("Nejdřív vyberte projekt.");
       return null;
     }
-    const recovered = recoverDefaultProjectHousesInWorkspace(registryRef.current);
+
+    const folder = current.folders.find(
+      (item) => item.id === current.activeFolderId,
+    );
+
+    if (folder === undefined) {
+      setSwitchError("Nejdřív vyberte projekt.");
+      return null;
+    }
+
+    const workspace = getCanonicalWorkspaceForCompany(folder.companyId);
+
+    if (workspace === null) {
+      setSwitchError(
+        "Canonical Workspace není v klientském registru kompletní.",
+      );
+      return null;
+    }
+
+    const projectAuthority = await ensureCanonicalProjectAuthority(folder.id);
+
+    if (!projectAuthority.ok) {
+      setSwitchError(projectAuthority.error);
+      return null;
+    }
+
+    const recovered = recoverDefaultProjectHousesInWorkspace(current);
+
     if (recovered === null) {
-      setSwitchError('Nejdřív vyberte projekt.');
+      setSwitchError("Nejdřív vyberte projekt.");
       return null;
     }
-    setRegistry(recovered.state);
-    registryRef.current = recovered.state;
+
+    const scope = {
+      companyId: folder.companyId,
+      projectId: folder.id,
+      workspaceId: workspace.id,
+    };
+
+    const canonicalDefaults = [
+      buildDefaultReferenceBungalovHouse(scope),
+      buildDefaultPartnerVpdHouse(scope),
+    ];
+
+    try {
+      for (const house of canonicalDefaults) {
+        const result =
+          await createPlatformAccessAuthClient().persistCanonicalHouseAuthority(
+            {
+              id: house.id,
+              canonicalProjectId: folder.id,
+              name: house.name,
+              slug: house.slug,
+              packageRoot: house.packageRoot,
+              status: house.status,
+              objectType: house.objectType,
+              dataMode: house.dataMode,
+              ...(house.referenceProvenance === undefined
+                ? {}
+                : {
+                    referenceProvenance: house.referenceProvenance,
+                  }),
+            },
+          );
+
+        if (!result.ok) {
+          throw new Error(result.error);
+        }
+      }
+
+      const sync = await syncCanonicalRegistryFromAuthority();
+
+      if (!sync.ok) {
+        throw new Error(sync.error);
+      }
+    } catch (error) {
+      setSwitchError(
+        error instanceof Error
+          ? error.message
+          : "Referenční domy se nepodařilo uložit.",
+      );
+      return null;
+    }
+
+    const recomposed = composeWorkspaceRegistry({
+      folders: recovered.state.folders,
+      houseFolderIds: recovered.state.houseFolderIds,
+      houseLabels: recovered.state.houseLabels,
+      houseMetadata: recovered.state.houseMetadata,
+      housePackageRoots: recovered.state.housePackageRoots,
+      activeFolderId: recovered.state.activeFolderId,
+      activeProjectId: recovered.state.activeProjectId,
+      recentProjectIds: recovered.state.recentProjectIds,
+      lastOpenedProjectId: recovered.state.lastOpenedProjectId,
+    });
+
+    setRegistry(recomposed);
+    registryRef.current = recomposed;
+    saveWorkspaceRegistryToStorage(recomposed);
     setSwitchError(null);
+
     return {
       message: recovered.result.message,
       createdCount: recovered.result.createdCount,

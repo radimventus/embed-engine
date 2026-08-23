@@ -18,8 +18,8 @@ import type {
   PlatformProject,
   PlatformProjectStatus,
   PlatformWorkspace,
-} from '../domain/types';
-import type { PlatformTenant } from '../domain/pilotTypes';
+} from "../domain/types";
+import type { PlatformTenant } from "../domain/pilotTypes";
 import {
   DEFAULT_CANONICAL_PROJECTS,
   DEFAULT_COMPANIES,
@@ -30,16 +30,16 @@ import {
   DEFAULT_TENANTS,
   DEFAULT_WORKSPACE_ID,
   DEFAULT_WORKSPACES,
-} from './defaults';
+} from "./defaults";
 import {
   clearCrossPortJson,
   readCrossPortJson,
   writeCrossPortJson,
-} from './crossPortJsonStore';
+} from "./crossPortJsonStore";
 import {
   durableProjectPrivacyUrl,
   resetDurableProjectConfigs,
-} from './durableProjectConfig';
+} from "./durableProjectConfig";
 
 export type CompanyRegistryState = {
   readonly tenants: readonly PlatformTenant[];
@@ -150,12 +150,12 @@ let mutableExtras: {
   workspaces: [],
   projects: [],
   canonicalProjects: [],
-    houses: [],
+  houses: [],
 };
 
-export const COMPANY_EXTRAS_STORAGE_KEY = 'conis.platform.companyExtras.v1';
+export const COMPANY_EXTRAS_STORAGE_KEY = "conis.platform.companyExtras.v1";
 /** Cookie twin — shared across local Studio ports (PT-PROJECT-01 / PT-CS-07). */
-export const COMPANY_EXTRAS_COOKIE = 'conis_platform_company_extras_v1';
+export const COMPANY_EXTRAS_COOKIE = "conis_platform_company_extras_v1";
 
 let lastExtrasRaw: string | null = null;
 
@@ -183,6 +183,7 @@ function parseExtras(raw: string): typeof mutableExtras {
       canonicalProjects: Array.isArray(parsed.canonicalProjects)
         ? parsed.canonicalProjects
         : [],
+      houses: Array.isArray(parsed.houses) ? parsed.houses : [],
     };
   } catch {
     return emptyExtras();
@@ -271,7 +272,7 @@ export function findCanonicalProject(
  * House must not duplicate Project fields; link via canonicalProjectId only.
  */
 export function resolveCanonicalProjectForHouseRow(
-  houseRow: Pick<PlatformProject, 'id' | 'canonicalProjectId' | 'companyId'>,
+  houseRow: Pick<PlatformProject, "id" | "canonicalProjectId" | "companyId">,
 ): PlatformCanonicalProject | null {
   const registry = getDefaultCompanyRegistry();
   const linkedId = houseRow.canonicalProjectId?.trim();
@@ -307,7 +308,9 @@ export function appendPilotProvision(input: {
   const project = input.project;
   const canonicalProject = input.canonicalProject;
   const withoutDup = {
-    tenants: mutableExtras.tenants.filter((item) => item.id !== input.tenant.id),
+    tenants: mutableExtras.tenants.filter(
+      (item) => item.id !== input.tenant.id,
+    ),
     companies: mutableExtras.companies.filter(
       (item) => item.id !== input.company.id,
     ),
@@ -403,16 +406,16 @@ export function listProjectsForCompany(
 
 function canonicalPartnerSlug(name: string): string {
   return name
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
     .slice(0, 48);
 }
 
 function nextCanonicalPartnerId(
-  prefix: 'company' | 'workspace',
+  prefix: "tenant" | "company" | "workspace",
   slug: string,
   knownIds: ReadonlySet<string>,
 ): string {
@@ -435,14 +438,14 @@ export function createCanonicalPartner(
 ): CanonicalPartnerIdentity {
   const name = input.name.trim();
   if (name.length === 0) {
-    throw new Error('createCanonicalPartner: partner name is required');
+    throw new Error("createCanonicalPartner: partner name is required");
   }
 
   const registry = getDefaultCompanyRegistry();
   const existingCompany = registry.companies.find(
     (company) =>
       company.name.trim().localeCompare(name, undefined, {
-        sensitivity: 'accent',
+        sensitivity: "accent",
       }) === 0,
   );
   if (existingCompany !== undefined) {
@@ -460,8 +463,8 @@ export function createCanonicalPartner(
 
     const workspace = {
       id: nextCanonicalPartnerId(
-        'workspace',
-        canonicalPartnerSlug(existingCompany.name) || 'partner',
+        "workspace",
+        canonicalPartnerSlug(existingCompany.name) || "partner",
         new Set(registry.workspaces.map((item) => item.id)),
       ),
       companyId: existingCompany.id,
@@ -483,19 +486,49 @@ export function createCanonicalPartner(
     };
   }
 
-  const slug = canonicalPartnerSlug(name) || 'partner';
-  const company: PlatformCompany = {
-    id: nextCanonicalPartnerId(
-      'company',
-      slug,
-      new Set(registry.companies.map((item) => item.id)),
-    ),
+  const slug = canonicalPartnerSlug(name) || "partner";
+
+  const companyId = nextCanonicalPartnerId(
+    "company",
+    slug,
+    new Set(registry.companies.map((item) => item.id)),
+  );
+
+  const requestedTenantId = input.tenantId?.trim() ?? "";
+  const tenantId =
+    requestedTenantId.length > 0
+      ? requestedTenantId
+      : nextCanonicalPartnerId(
+          "tenant",
+          slug,
+          new Set(registry.tenants.map((item) => item.id)),
+        );
+
+  const existingTenant = registry.tenants.find((item) => item.id === tenantId);
+
+  if (existingTenant !== undefined && existingTenant.companyId !== companyId) {
+    throw new Error(
+      "createCanonicalPartner: Tenant already belongs to another Company",
+    );
+  }
+
+  const tenant: PlatformTenant = existingTenant ?? {
+    id: tenantId,
     name,
-    tenantId: input.tenantId?.trim() || DEFAULT_TENANT_ID,
+    companyId,
+    pilot: false,
+    createdAt: new Date().toISOString(),
   };
+
+  const company: PlatformCompany = {
+    id: companyId,
+    name,
+    tenantId,
+  };
+
   const workspace: PlatformWorkspace = {
     id: nextCanonicalPartnerId(
-      'workspace',
+      "workspace",
       slug,
       new Set(registry.workspaces.map((item) => item.id)),
     ),
@@ -504,6 +537,10 @@ export function createCanonicalPartner(
   };
   mutableExtras = {
     ...mutableExtras,
+    tenants: [
+      ...mutableExtras.tenants.filter((item) => item.id !== tenant.id),
+      tenant,
+    ],
     companies: [...mutableExtras.companies, company],
     workspaces: [...mutableExtras.workspaces, workspace],
   };
@@ -520,7 +557,9 @@ export function createCanonicalPartner(
  * PT-PDM-02 / PT-PLAT-01 — Builder-only write into the Shared Project Repository.
  * Upserts by id into extras. Seed `status` is locked to defaults.
  */
-export function upsertBuilderProject(project: PlatformProject): CompanyRegistryState {
+export function upsertBuilderProject(
+  project: PlatformProject,
+): CompanyRegistryState {
   ensureExtrasHydrated();
   const normalized = lockSeedProjectStatus(project);
   mutableExtras = {
@@ -535,7 +574,9 @@ export function upsertBuilderProject(project: PlatformProject): CompanyRegistryS
 }
 
 /** Builder-only — create/update Company identity in Canonical Registry. */
-export function upsertBuilderCompany(company: PlatformCompany): CompanyRegistryState {
+export function upsertBuilderCompany(
+  company: PlatformCompany,
+): CompanyRegistryState {
   ensureExtrasHydrated();
   mutableExtras = {
     ...mutableExtras,
@@ -568,7 +609,7 @@ export function upsertBuilderCanonicalProject(
     description: project.description.trim(),
   };
   if (normalized.id.length === 0) {
-    throw new Error('upsertBuilderCanonicalProject: project id is required');
+    throw new Error("upsertBuilderCanonicalProject: project id is required");
   }
   mutableExtras = {
     ...mutableExtras,
@@ -637,7 +678,7 @@ export {
   DEFAULT_WORKSPACE_ID,
   DEFAULT_PROJECT_ID,
 };
-export { DEFAULT_CANONICAL_PROJECT_ID } from './defaults';
+export { DEFAULT_CANONICAL_PROJECT_ID } from "./defaults";
 
 export type CanonicalRegistryAuthoritySnapshotInput = {
   readonly houses?: readonly any[];
@@ -665,7 +706,6 @@ export function hydrateCanonicalRegistryFromAuthority(
 
   return getDefaultCompanyRegistry();
 }
-
 
 export function getHydratedCanonicalHouses(): readonly any[] {
   ensureExtrasHydrated();

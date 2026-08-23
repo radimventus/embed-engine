@@ -1,7 +1,7 @@
-import type { PlatformRole } from '../domain/types';
-import type { PlatformSession } from '../domain/types';
-import type { PilotInviteStatus } from '../domain/pilotTypes';
-import type { PartnerEnvironmentScope } from '../partner/partnerEnvironmentScope';
+import type { PlatformRole } from "../domain/types";
+import type { PlatformSession } from "../domain/types";
+import type { PilotInviteStatus } from "../domain/pilotTypes";
+import type { PartnerEnvironmentScope } from "../partner/partnerEnvironmentScope";
 
 export type PlatformAccessInvite = {
   readonly id: string;
@@ -54,14 +54,16 @@ export interface PlatformAccessInviteClient {
 }
 
 export function platformApiOrigin(): string {
-  const env = (import.meta as ImportMeta & {
-    env?: Record<string, string | boolean | undefined>;
-  }).env;
+  const env = (
+    import.meta as ImportMeta & {
+      env?: Record<string, string | boolean | undefined>;
+    }
+  ).env;
   const configuredOrigin = env?.VITE_PLATFORM_API_ORIGIN;
-  if (typeof configuredOrigin === 'string' && configuredOrigin.length > 0) {
+  if (typeof configuredOrigin === "string" && configuredOrigin.length > 0) {
     return configuredOrigin;
   }
-  return 'https://api.conis.cz';
+  return "https://api.conis.cz";
 }
 
 async function parseResponse<T>(response: Response): Promise<T> {
@@ -71,34 +73,34 @@ async function parseResponse<T>(response: Response): Promise<T> {
 export function createPlatformAccessInviteClient(
   origin = platformApiOrigin(),
 ): PlatformAccessInviteClient {
-  const baseUrl = origin.replace(/\/$/, '');
+  const baseUrl = origin.replace(/\/$/, "");
   return {
     async createInvite(input) {
       const response = await fetch(`${baseUrl}/office/invites`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'content-type': 'application/json' },
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
         body: JSON.stringify(input),
       });
-      if (!response.ok) throw new Error('Pozvánku se nepodařilo vytvořit.');
+      if (!response.ok) throw new Error("Pozvánku se nepodařilo vytvořit.");
       return parseResponse<PlatformAccessInviteIssue>(response);
     },
     async reissueInvite(id) {
       const response = await fetch(
         `${baseUrl}/office/invites/${encodeURIComponent(id)}/reissue`,
-        { method: 'POST', credentials: 'include' },
+        { method: "POST", credentials: "include" },
       );
       if (response.status === 404) return null;
-      if (!response.ok) throw new Error('Pozvánku se nepodařilo obnovit.');
+      if (!response.ok) throw new Error("Pozvánku se nepodařilo obnovit.");
       return parseResponse<PlatformAccessInviteIssue>(response);
     },
     async revokeInvite(id) {
       const response = await fetch(
         `${baseUrl}/local-pilot/invites/${encodeURIComponent(id)}/revoke`,
-        { method: 'POST' },
+        { method: "POST" },
       );
       if (response.status === 404) return null;
-      if (!response.ok) throw new Error('Pozvánku se nepodařilo zrušit.');
+      if (!response.ok) throw new Error("Pozvánku se nepodařilo zrušit.");
       return parseResponse<PlatformAccessInvite>(response);
     },
     async resolveInvite(token) {
@@ -106,15 +108,15 @@ export function createPlatformAccessInviteClient(
         `${baseUrl}/public/invites/${encodeURIComponent(token)}`,
       );
       if (response.status === 404) return null;
-      if (!response.ok) throw new Error('Pozvánku se nepodařilo ověřit.');
+      if (!response.ok) throw new Error("Pozvánku se nepodařilo ověřit.");
       return parseResponse<PlatformAccessInvite>(response);
     },
     async activateInvite(token, ndaAccepted) {
       const response = await fetch(
         `${baseUrl}/public/invites/${encodeURIComponent(token)}/activate`,
         {
-          method: 'POST',
-          headers: { 'content-type': 'application/json' },
+          method: "POST",
+          headers: { "content-type": "application/json" },
           body: JSON.stringify({ ndaAccepted }),
         },
       );
@@ -128,8 +130,7 @@ export type PlatformAccessAuthResult =
   | { readonly ok: false; readonly error: string };
 
 export type PlatformAccessWriteResult =
-  | { readonly ok: true }
-  | { readonly ok: false; readonly error: string };
+  { readonly ok: true } | { readonly ok: false; readonly error: string };
 
 export type PlatformAccessCanonicalRegistrySnapshot = {
   readonly tenants: readonly {
@@ -161,8 +162,15 @@ export type PlatformAccessCanonicalRegistrySnapshot = {
     readonly id: string;
     readonly canonicalProjectId: string;
     readonly name: string;
+    readonly slug?: string;
     readonly packageRoot?: string;
     readonly status?: string;
+    readonly objectType?: string;
+    readonly dataMode?: string;
+    readonly referenceProvenance?: {
+      readonly sourceId: string;
+      readonly sourceVersion: string;
+    };
   }[];
 };
 
@@ -170,8 +178,35 @@ export type PlatformAccessCanonicalHouseAuthorityInput = {
   readonly id: string;
   readonly canonicalProjectId: string;
   readonly name: string;
+  readonly slug?: string;
   readonly packageRoot?: string;
   readonly status?: string;
+  readonly objectType?: string;
+  readonly dataMode?: string;
+  readonly referenceProvenance?: {
+    readonly sourceId: string;
+    readonly sourceVersion: string;
+  };
+};
+
+export type PlatformAccessCanonicalPartnerAuthorityBundle = {
+  readonly tenant: {
+    readonly id: string;
+    readonly name: string;
+    readonly companyId: string;
+    readonly pilot: boolean;
+    readonly createdAt: string;
+  };
+  readonly company: {
+    readonly id: string;
+    readonly name: string;
+    readonly tenantId: string;
+  };
+  readonly workspace: {
+    readonly id: string;
+    readonly companyId: string;
+    readonly name: string;
+  };
 };
 
 export type PlatformAccessCanonicalAuthorityBundle = {
@@ -214,30 +249,31 @@ export interface PlatformAccessAuthClient {
     readonly rememberMe: boolean;
   }): Promise<PlatformAccessAuthResult>;
   restoreSession(): Promise<PlatformSession | null>;
-  mutateSessionContext(input:
-    | {
-        readonly action: 'enter';
-        readonly partnerId: string;
-        readonly tenantId: string;
-        readonly companyId: string;
-        readonly workspaceId: string;
-        readonly projectId: string;
-        readonly activeHouseId: string | null;
-        readonly authoredHouseIdentities?: readonly import('../domain/workspaceContext').WorkspaceAuthoredHouseIdentity[];
-        readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
-        readonly officeReturnHref: string;
-      }
-    | {
-        readonly action: 'switch';
-        readonly activeStudio: 'client' | 'builder' | 'manager' | 'sales';
-        readonly tenantId?: string;
-        readonly companyId?: string;
-        readonly workspaceId?: string;
-        readonly projectId?: string;
-        readonly activeHouseId?: string | null;
-        readonly authoredHouseIdentities?: readonly import('../domain/workspaceContext').WorkspaceAuthoredHouseIdentity[];
-      }
-    | { readonly action: 'leave' }
+  mutateSessionContext(
+    input:
+      | {
+          readonly action: "enter";
+          readonly partnerId: string;
+          readonly tenantId: string;
+          readonly companyId: string;
+          readonly workspaceId: string;
+          readonly projectId: string;
+          readonly activeHouseId: string | null;
+          readonly authoredHouseIdentities?: readonly import("../domain/workspaceContext").WorkspaceAuthoredHouseIdentity[];
+          readonly activeStudio: "client" | "builder" | "manager" | "sales";
+          readonly officeReturnHref: string;
+        }
+      | {
+          readonly action: "switch";
+          readonly activeStudio: "client" | "builder" | "manager" | "sales";
+          readonly tenantId?: string;
+          readonly companyId?: string;
+          readonly workspaceId?: string;
+          readonly projectId?: string;
+          readonly activeHouseId?: string | null;
+          readonly authoredHouseIdentities?: readonly import("../domain/workspaceContext").WorkspaceAuthoredHouseIdentity[];
+        }
+      | { readonly action: "leave" },
   ): Promise<PlatformAccessAuthResult>;
   readCanonicalRegistry(): Promise<
     | {
@@ -249,6 +285,9 @@ export interface PlatformAccessAuthClient {
         readonly error: string;
       }
   >;
+  persistCanonicalPartnerAuthority(
+    input: PlatformAccessCanonicalPartnerAuthorityBundle,
+  ): Promise<PlatformAccessWriteResult>;
   persistCanonicalProjectAuthority(
     input: PlatformAccessCanonicalAuthorityBundle,
   ): Promise<PlatformAccessWriteResult>;
@@ -265,26 +304,28 @@ export interface PlatformAccessAuthClient {
 export function createPlatformAccessAuthClient(
   origin = platformApiOrigin(),
 ): PlatformAccessAuthClient {
-  const baseUrl = origin.replace(/\/$/, '');
+  const baseUrl = origin.replace(/\/$/, "");
   async function postAuthentication(
     path: string,
     body: unknown,
   ): Promise<PlatformAccessAuthResult> {
     const response = await fetch(`${baseUrl}${path}`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'content-type': 'application/json' },
+      method: "POST",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
       body: JSON.stringify(body),
     });
     const result = await parseResponse<
-      { readonly ok: true; readonly session: PlatformSession } | { readonly error?: string }
+      | { readonly ok: true; readonly session: PlatformSession }
+      | { readonly error?: string }
     >(response);
-    return response.ok && 'session' in result
+    return response.ok && "session" in result
       ? result
       : {
           ok: false,
-          error: ('error' in result ? result.error : undefined) ??
-            'Přihlášení se nepodařilo dokončit.',
+          error:
+            ("error" in result ? result.error : undefined) ??
+            "Přihlášení se nepodařilo dokončit.",
         };
   }
   return {
@@ -299,47 +340,47 @@ export function createPlatformAccessAuthClient(
       );
     },
     login(input) {
-      return postAuthentication('/public/auth/login', input);
+      return postAuthentication("/public/auth/login", input);
     },
     async restoreSession() {
       const response = await fetch(`${baseUrl}/public/auth/me`, {
-        credentials: 'include',
+        credentials: "include",
       });
       return response.ok ? parseResponse<PlatformSession>(response) : null;
     },
     async mutateSessionContext(input) {
       const response = await fetch(`${baseUrl}/public/auth/context`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'content-type': 'application/json' },
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
         body: JSON.stringify(input),
       });
       const result = await parseResponse<
-        { readonly ok: true; readonly session: PlatformSession } |
-        { readonly error?: string }
+        | { readonly ok: true; readonly session: PlatformSession }
+        | { readonly error?: string }
       >(response);
-      return response.ok && 'session' in result
+      return response.ok && "session" in result
         ? result
         : {
             ok: false,
-            error: ('error' in result ? result.error : undefined) ??
-              'Partner Environment se nepodařilo aktivovat.',
+            error:
+              ("error" in result ? result.error : undefined) ??
+              "Partner Environment se nepodařilo aktivovat.",
           };
     },
     async readCanonicalRegistry() {
       const response = await fetch(
         `${baseUrl}/public/auth/canonical-registry`,
         {
-          method: 'GET',
-          credentials: 'include',
+          method: "GET",
+          credentials: "include",
         },
       );
 
       const payload = await parseResponse<
         | {
             readonly ok: true;
-            readonly registry:
-              PlatformAccessCanonicalRegistrySnapshot;
+            readonly registry: PlatformAccessCanonicalRegistrySnapshot;
           }
         | {
             readonly error?: string;
@@ -348,9 +389,9 @@ export function createPlatformAccessAuthClient(
 
       if (
         response.ok &&
-        typeof payload === 'object' &&
+        typeof payload === "object" &&
         payload !== null &&
-        'registry' in payload
+        "registry" in payload
       ) {
         return payload;
       }
@@ -358,23 +399,46 @@ export function createPlatformAccessAuthClient(
       return {
         ok: false,
         error:
-          (
-            typeof payload === 'object' &&
-            payload !== null &&
-            'error' in payload
-              ? payload.error
-              : undefined
-          ) ??
-          'Canonical registry se nepodařilo načíst.',
+          (typeof payload === "object" && payload !== null && "error" in payload
+            ? payload.error
+            : undefined) ?? "Canonical registry se nepodařilo načíst.",
       };
+    },
+    async persistCanonicalPartnerAuthority(input) {
+      const response = await fetch(
+        `${baseUrl}/public/auth/canonical-partner-authority`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(input),
+        },
+      );
+
+      if (!response.ok) {
+        const result = await parseResponse<{
+          readonly error?: string;
+        }>(response).catch(() => ({
+          error: undefined,
+        }));
+
+        return {
+          ok: false,
+          error: result.error ?? "Canonical Partner se nepodařilo registrovat.",
+        };
+      }
+
+      return { ok: true };
     },
     async persistCanonicalProjectAuthority(input) {
       const response = await fetch(
         `${baseUrl}/public/auth/canonical-project-authority`,
         {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'content-type': 'application/json' },
+          method: "POST",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
           body: JSON.stringify(input),
         },
       );
@@ -384,9 +448,7 @@ export function createPlatformAccessAuthClient(
         ).catch(() => ({ error: undefined }));
         return {
           ok: false,
-          error:
-            result.error ??
-            'Canonical Project se nepodařilo registrovat.',
+          error: result.error ?? "Canonical Project se nepodařilo registrovat.",
         };
       }
       return { ok: true };
@@ -395,9 +457,9 @@ export function createPlatformAccessAuthClient(
       const response = await fetch(
         `${baseUrl}/public/auth/canonical-house-authority`,
         {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'content-type': 'application/json' },
+          method: "POST",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
           body: JSON.stringify(input),
         },
       );
@@ -407,9 +469,7 @@ export function createPlatformAccessAuthClient(
         ).catch(() => ({ error: undefined }));
         return {
           ok: false,
-          error:
-            result.error ??
-            'Canonical House se nepodařilo registrovat.',
+          error: result.error ?? "Canonical House se nepodařilo registrovat.",
         };
       }
       return { ok: true };
@@ -418,29 +478,28 @@ export function createPlatformAccessAuthClient(
       const response = await fetch(
         `${baseUrl}/office/partners/${encodeURIComponent(partnerId)}/environment-scope`,
         {
-          method: 'PUT',
-          credentials: 'include',
-          headers: { 'content-type': 'application/json' },
+          method: "PUT",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
           body: JSON.stringify(scope),
         },
       );
       if (!response.ok) {
-        const result = await parseResponse<{ readonly error?: string }>(response).catch(
-          () => ({ error: undefined }),
-        );
+        const result = await parseResponse<{ readonly error?: string }>(
+          response,
+        ).catch(() => ({ error: undefined }));
         return {
           ok: false,
           error:
-            result.error ??
-            'Partner Environment scope se nepodařilo uložit.',
+            result.error ?? "Partner Environment scope se nepodařilo uložit.",
         };
       }
       return { ok: true };
     },
     async logout() {
       await fetch(`${baseUrl}/public/auth/logout`, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
       });
     },
   };

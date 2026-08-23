@@ -5,24 +5,27 @@
 
 import {
   createCanonicalPartner,
+  createPlatformAccessAuthClient,
+  getDefaultCompanyRegistry,
+  syncCanonicalRegistryFromAuthority,
   type DurableOfficePartner,
-} from '@embed-engine/platform-access';
+} from "@embed-engine/platform-access";
 
 import {
   defaultNextStep,
   type OfficePartner,
   type OfficePartnerDraft,
   type OfficePartnerStatus,
-} from './officePartnerModel';
-import { appendOfficeEvent } from './officeEventCatalog';
-import { loadJson, removeJson } from './officeLocalStore';
-import { OFFICE_STORAGE_KEYS } from './officeStorageKeys';
-import { buildOfficeReferencePartner } from './officeReferencePartner';
+} from "./officePartnerModel";
+import { appendOfficeEvent } from "./officeEventCatalog";
+import { loadJson, removeJson } from "./officeLocalStore";
+import { OFFICE_STORAGE_KEYS } from "./officeStorageKeys";
+import { buildOfficeReferencePartner } from "./officeReferencePartner";
 import {
   createOfficePartner,
   requestOfficePartners,
   saveOfficePartner,
-} from './requestOfficePartner';
+} from "./requestOfficePartner";
 
 const SEED_PARTNERS: readonly OfficePartner[] = Object.freeze([
   buildOfficeReferencePartner(),
@@ -52,7 +55,7 @@ function readLocalState(): PartnerPersistState | null {
   ) {
     return {
       partners: stored.partners.map((partner) => ({ ...partner })),
-      idSeq: typeof stored.idSeq === 'number' ? stored.idSeq : 100,
+      idSeq: typeof stored.idSeq === "number" ? stored.idSeq : 100,
     };
   }
   return null;
@@ -69,16 +72,16 @@ let partners: OfficePartner[] = initial.partners.map((partner) => ({
 let serverAuthority = false;
 
 export type PartnerQuickActionId =
-  | 'prepare-pilot'
-  | 'deliver-pilot'
-  | 'open-partner-environment'
-  | 'send-offer'
-  | 'confirm-order'
-  | 'record-payment'
-  | 'open-builder'
-  | 'suspend-partner'
-  | 'restore-partner'
-  | 'archive-partner';
+  | "prepare-pilot"
+  | "deliver-pilot"
+  | "open-partner-environment"
+  | "send-offer"
+  | "confirm-order"
+  | "record-payment"
+  | "open-builder"
+  | "suspend-partner"
+  | "restore-partner"
+  | "archive-partner";
 
 function nowIso(): string {
   return new Date().toISOString();
@@ -117,7 +120,7 @@ function dropLocalPartnerAuthority(): void {
 }
 
 export function listPartners(): readonly OfficePartner[] {
-  return [...partners].sort((a, b) => a.name.localeCompare(b.name, 'cs'));
+  return [...partners].sort((a, b) => a.name.localeCompare(b.name, "cs"));
 }
 
 export function getPartner(id: string): OfficePartner | null {
@@ -136,7 +139,7 @@ export function createPartner(draft: OfficePartnerDraft): OfficePartner {
       legalName: draft.company.legalName.trim() || draft.name.trim(),
       ico: draft.company.ico.trim(),
       city: draft.company.city.trim(),
-      country: draft.company.country.trim() || 'Česko',
+      country: draft.company.country.trim() || "Česko",
     },
     contact: {
       name: draft.contact.name.trim(),
@@ -149,8 +152,8 @@ export function createPartner(draft: OfficePartnerDraft): OfficePartner {
   };
   partners = [...partners, partner];
   appendOfficeEvent({
-    kind: 'partner.created',
-    label: 'Partner vytvořen',
+    kind: "partner.created",
+    label: "Partner vytvořen",
     detail: `${partner.name} · nový partner`,
     partnerId: partner.id,
   });
@@ -173,7 +176,7 @@ export function updatePartner(
       legalName: draft.company.legalName.trim() || draft.name.trim(),
       ico: draft.company.ico.trim(),
       city: draft.company.city.trim(),
-      country: draft.company.country.trim() || 'Česko',
+      country: draft.company.country.trim() || "Česko",
     },
     contact: {
       name: draft.contact.name.trim(),
@@ -185,8 +188,8 @@ export function updatePartner(
   };
   partners = partners.map((partner, i) => (i === index ? updated : partner));
   appendOfficeEvent({
-    kind: 'partner.updated',
-    label: 'Partner upraven',
+    kind: "partner.updated",
+    label: "Partner upraven",
     detail: `${updated.name} · ${updated.nextStep}`,
     partnerId: updated.id,
   });
@@ -200,7 +203,49 @@ export function discardUnsavedPartner(id: string): void {
 export async function persistCreatedPartner(
   partner: OfficePartner,
 ): Promise<OfficePartner> {
-  const saved = await createOfficePartner(partner.id, draftFromPartner(partner));
+  const registry = getDefaultCompanyRegistry();
+
+  const company = registry.companies.find((item) => item.id === partner.id);
+
+  const workspace = registry.workspaces.find(
+    (item) => item.companyId === partner.id,
+  );
+
+  const tenant =
+    company === undefined
+      ? undefined
+      : registry.tenants.find((item) => item.id === company.tenantId);
+
+  if (
+    company === undefined ||
+    workspace === undefined ||
+    tenant === undefined
+  ) {
+    throw new Error("Canonical Partner není v klientském registru kompletní.");
+  }
+
+  const canonical =
+    await createPlatformAccessAuthClient().persistCanonicalPartnerAuthority({
+      tenant,
+      company,
+      workspace,
+    });
+
+  if (!canonical.ok) {
+    throw new Error(canonical.error);
+  }
+
+  const saved = await createOfficePartner(
+    partner.id,
+    draftFromPartner(partner),
+  );
+
+  const sync = await syncCanonicalRegistryFromAuthority();
+
+  if (!sync.ok) {
+    throw new Error(sync.error);
+  }
+
   const adopted = adoptAuthoritative(saved);
   dropLocalPartnerAuthority();
   return adopted;
@@ -243,7 +288,10 @@ async function hydrateOfficePartnersFromServerOnce(): Promise<void> {
 
   for (const partner of local.partners) {
     try {
-      const saved = await saveOfficePartner(partner.id, draftFromPartner(partner));
+      const saved = await saveOfficePartner(
+        partner.id,
+        draftFromPartner(partner),
+      );
       adoptAuthoritative(saved);
     } catch {
       const created = await createOfficePartner(
@@ -273,43 +321,41 @@ export function applyPartnerQuickAction(
 
   let status: OfficePartnerStatus = partner.status;
   let kind:
-    | 'offer.sent'
-    | 'order.confirmed'
-    | 'payment.received'
-    | 'builder.opened' = 'offer.sent';
-  let label = '';
-  let detail = '';
+    "offer.sent" | "order.confirmed" | "payment.received" | "builder.opened" =
+    "offer.sent";
+  let label = "";
+  let detail = "";
 
   switch (actionId) {
-    case 'prepare-pilot':
+    case "prepare-pilot":
       return partner;
-    case 'deliver-pilot':
+    case "deliver-pilot":
       return partner;
-    case 'open-partner-environment':
+    case "open-partner-environment":
       return partner;
-    case 'send-offer':
+    case "send-offer":
       return partner;
-    case 'confirm-order':
-      status = 'order';
-      kind = 'order.confirmed';
-      label = 'Objednávka potvrzena';
+    case "confirm-order":
+      status = "order";
+      kind = "order.confirmed";
+      label = "Objednávka potvrzena";
       detail = `${partner.name} · objednávka potvrzena`;
       break;
-    case 'record-payment':
-      status = 'payment';
-      kind = 'payment.received';
-      label = 'Platba přijata';
+    case "record-payment":
+      status = "payment";
+      kind = "payment.received";
+      label = "Platba přijata";
       detail = `${partner.name} · platba evidována`;
       break;
-    case 'open-builder':
-      status = 'implementation';
-      kind = 'builder.opened';
-      label = 'Builder otevřen';
+    case "open-builder":
+      status = "implementation";
+      kind = "builder.opened";
+      label = "Builder otevřen";
       detail = `${partner.name} · handoff do Builderu`;
       break;
-    case 'suspend-partner':
-    case 'restore-partner':
-    case 'archive-partner':
+    case "suspend-partner":
+    case "restore-partner":
+    case "archive-partner":
       return partner;
   }
 
@@ -339,20 +385,20 @@ export function resetPartnerRegistryForTests(): void {
 
 export function emptyPartnerDraft(): OfficePartnerDraft {
   return {
-    name: '',
-    status: 'lead',
-    nextStep: defaultNextStep('lead'),
+    name: "",
+    status: "lead",
+    nextStep: defaultNextStep("lead"),
     company: {
-      legalName: '',
-      ico: '',
-      city: '',
-      country: 'Česko',
+      legalName: "",
+      ico: "",
+      city: "",
+      country: "Česko",
     },
     contact: {
-      name: '',
-      email: '',
-      phone: '',
-      role: '',
+      name: "",
+      email: "",
+      phone: "",
+      role: "",
     },
   };
 }

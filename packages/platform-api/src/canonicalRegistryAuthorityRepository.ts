@@ -1,20 +1,20 @@
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { dirname } from 'node:path';
+import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
+import { dirname } from "node:path";
 
 import {
   DEFAULT_CANONICAL_PROJECTS,
   DEFAULT_COMPANIES,
   DEFAULT_TENANTS,
   DEFAULT_WORKSPACES,
-} from '@embed-engine/platform-access';
+} from "@embed-engine/platform-access";
 import type {
   PlatformCanonicalProject,
   PlatformCompany,
   PlatformTenant,
   PlatformWorkspace,
-} from '@embed-engine/platform-access';
+} from "@embed-engine/platform-access";
 
-import { platformApiStatePath } from './platformApiConfig';
+import { platformApiStatePath } from "./platformApiConfig";
 
 export type CanonicalRegistryAuthorityBundle = {
   readonly tenant: PlatformTenant;
@@ -23,13 +23,25 @@ export type CanonicalRegistryAuthorityBundle = {
   readonly project: PlatformCanonicalProject;
 };
 
+export type CanonicalRegistryPartnerAuthorityBundle = {
+  readonly tenant: PlatformTenant;
+  readonly company: PlatformCompany;
+  readonly workspace: PlatformWorkspace;
+};
 
 export type PlatformCanonicalHouse = {
   readonly id: string;
   readonly canonicalProjectId: string;
   readonly name: string;
+  readonly slug?: string;
   readonly packageRoot?: string;
   readonly status?: string;
+  readonly objectType?: string;
+  readonly dataMode?: string;
+  readonly referenceProvenance?: {
+    readonly sourceId: string;
+    readonly sourceVersion: string;
+  };
 };
 
 export type CanonicalRegistryAuthoritySnapshot = {
@@ -39,7 +51,6 @@ export type CanonicalRegistryAuthoritySnapshot = {
   readonly projects: readonly PlatformCanonicalProject[];
   readonly houses: readonly PlatformCanonicalHouse[];
 };
-
 
 type CanonicalRegistryAuthorityExtras = {
   readonly tenants: readonly PlatformTenant[];
@@ -120,20 +131,20 @@ export class FileCanonicalRegistryAuthorityRepository {
   readonly statePath: string;
 
   constructor(
-    statePath = platformApiStatePath('canonical-registry-extras.json'),
+    statePath = platformApiStatePath("canonical-registry-extras.json"),
   ) {
     this.statePath = statePath;
   }
 
   private async readExtras(): Promise<CanonicalRegistryAuthorityExtras> {
     try {
-      return parseExtras(await readFile(this.statePath, 'utf8'));
+      return parseExtras(await readFile(this.statePath, "utf8"));
     } catch (error) {
       if (
-        typeof error === 'object' &&
+        typeof error === "object" &&
         error !== null &&
-        'code' in error &&
-        error.code === 'ENOENT'
+        "code" in error &&
+        error.code === "ENOENT"
       ) {
         return cloneExtras(EMPTY_EXTRAS);
       }
@@ -151,7 +162,7 @@ export class FileCanonicalRegistryAuthorityRepository {
     await writeFile(
       temporaryPath,
       `${JSON.stringify(extras, null, 2)}\n`,
-      'utf8',
+      "utf8",
     );
 
     await rename(temporaryPath, this.statePath);
@@ -161,52 +172,129 @@ export class FileCanonicalRegistryAuthorityRepository {
     return cloneExtras(await this.readExtras());
   }
 
+  async upsertPartnerAuthority(
+    input: CanonicalRegistryPartnerAuthorityBundle,
+  ): Promise<{
+    readonly tenantId: string;
+    readonly companyId: string;
+    readonly workspaceId: string;
+  }> {
+    const tenant: PlatformTenant = {
+      ...input.tenant,
+      id: requireId("tenant.id", input.tenant.id),
+      companyId: requireId("tenant.companyId", input.tenant.companyId),
+    };
+
+    const company: PlatformCompany = {
+      ...input.company,
+      id: requireId("company.id", input.company.id),
+      tenantId: requireId("company.tenantId", input.company.tenantId),
+    };
+
+    const workspace: PlatformWorkspace = {
+      ...input.workspace,
+      id: requireId("workspace.id", input.workspace.id),
+      companyId: requireId("workspace.companyId", input.workspace.companyId),
+    };
+
+    if (tenant.companyId !== company.id) {
+      throw new Error("Tenant company binding does not match Company.");
+    }
+
+    if (company.tenantId !== tenant.id) {
+      throw new Error("Company tenant binding does not match Tenant.");
+    }
+
+    if (workspace.companyId !== company.id) {
+      throw new Error("Workspace does not belong to Company.");
+    }
+
+    const extras = await this.readExtras();
+
+    const existingCompany =
+      findById(DEFAULT_COMPANIES, company.id) ??
+      findById(extras.companies, company.id);
+
+    if (
+      existingCompany !== undefined &&
+      existingCompany.tenantId !== company.tenantId
+    ) {
+      throw new Error("Company ownership cannot be changed.");
+    }
+
+    const existingWorkspace =
+      findById(DEFAULT_WORKSPACES, workspace.id) ??
+      findById(extras.workspaces, workspace.id);
+
+    if (
+      existingWorkspace !== undefined &&
+      existingWorkspace.companyId !== workspace.companyId
+    ) {
+      throw new Error("Workspace ownership cannot be changed.");
+    }
+
+    const next: CanonicalRegistryAuthorityExtras = {
+      ...extras,
+      tenants: upsertById(extras.tenants, tenant),
+      companies: upsertById(extras.companies, company),
+      workspaces: upsertById(extras.workspaces, workspace),
+    };
+
+    await this.writeExtras(next);
+
+    return {
+      tenantId: tenant.id,
+      companyId: company.id,
+      workspaceId: workspace.id,
+    };
+  }
+
   async upsertAuthorityBundle(
     input: CanonicalRegistryAuthorityBundle,
   ): Promise<PlatformCanonicalProjectRuntimeAuthority> {
     const tenant: PlatformTenant = {
       ...input.tenant,
-      id: requireId('tenant.id', input.tenant.id),
-      companyId: requireId('tenant.companyId', input.tenant.companyId),
+      id: requireId("tenant.id", input.tenant.id),
+      companyId: requireId("tenant.companyId", input.tenant.companyId),
     };
 
     const company: PlatformCompany = {
       ...input.company,
-      id: requireId('company.id', input.company.id),
-      tenantId: requireId('company.tenantId', input.company.tenantId),
+      id: requireId("company.id", input.company.id),
+      tenantId: requireId("company.tenantId", input.company.tenantId),
     };
 
     const workspace: PlatformWorkspace = {
       ...input.workspace,
-      id: requireId('workspace.id', input.workspace.id),
-      companyId: requireId('workspace.companyId', input.workspace.companyId),
+      id: requireId("workspace.id", input.workspace.id),
+      companyId: requireId("workspace.companyId", input.workspace.companyId),
     };
 
     const project: PlatformCanonicalProject = {
       ...input.project,
-      id: requireId('project.id', input.project.id),
-      companyId: requireId('project.companyId', input.project.companyId),
-      workspaceId: requireId('project.workspaceId', input.project.workspaceId),
+      id: requireId("project.id", input.project.id),
+      companyId: requireId("project.companyId", input.project.companyId),
+      workspaceId: requireId("project.workspaceId", input.project.workspaceId),
     };
 
     if (tenant.companyId !== company.id) {
-      throw new Error('Tenant company binding does not match Company.');
+      throw new Error("Tenant company binding does not match Company.");
     }
 
     if (company.tenantId !== tenant.id) {
-      throw new Error('Company tenant binding does not match Tenant.');
+      throw new Error("Company tenant binding does not match Tenant.");
     }
 
     if (workspace.companyId !== company.id) {
-      throw new Error('Workspace does not belong to Company.');
+      throw new Error("Workspace does not belong to Company.");
     }
 
     if (project.companyId !== company.id) {
-      throw new Error('Project does not belong to Company.');
+      throw new Error("Project does not belong to Company.");
     }
 
     if (project.workspaceId !== workspace.id) {
-      throw new Error('Project does not belong to Workspace.');
+      throw new Error("Project does not belong to Workspace.");
     }
 
     const extras = await this.readExtras();
@@ -220,7 +308,7 @@ export class FileCanonicalRegistryAuthorityRepository {
       (existingProject.companyId !== project.companyId ||
         existingProject.workspaceId !== project.workspaceId)
     ) {
-      throw new Error('Canonical Project ownership cannot be changed.');
+      throw new Error("Canonical Project ownership cannot be changed.");
     }
 
     const existingCompany =
@@ -231,7 +319,7 @@ export class FileCanonicalRegistryAuthorityRepository {
       existingCompany !== undefined &&
       existingCompany.tenantId !== company.tenantId
     ) {
-      throw new Error('Company ownership cannot be changed.');
+      throw new Error("Company ownership cannot be changed.");
     }
 
     const existingWorkspace =
@@ -242,7 +330,7 @@ export class FileCanonicalRegistryAuthorityRepository {
       existingWorkspace !== undefined &&
       existingWorkspace.companyId !== workspace.companyId
     ) {
-      throw new Error('Workspace ownership cannot be changed.');
+      throw new Error("Workspace ownership cannot be changed.");
     }
 
     const next: CanonicalRegistryAuthorityExtras = {
@@ -263,14 +351,30 @@ export class FileCanonicalRegistryAuthorityRepository {
     };
   }
 
-
-  async upsertHouseAuthority(house: PlatformCanonicalHouse): Promise<PlatformCanonicalHouse> {
+  async upsertHouseAuthority(
+    house: PlatformCanonicalHouse,
+  ): Promise<PlatformCanonicalHouse> {
     const normalizedHouse: PlatformCanonicalHouse = {
-      id: requireId('house.id', house.id),
-      canonicalProjectId: requireId('house.canonicalProjectId', house.canonicalProjectId),
-      name: requireId('house.name', house.name),
-      ...(house.packageRoot !== undefined ? { packageRoot: house.packageRoot } : {}),
+      id: requireId("house.id", house.id),
+      canonicalProjectId: requireId(
+        "house.canonicalProjectId",
+        house.canonicalProjectId,
+      ),
+      name: requireId("house.name", house.name),
+      ...(house.slug !== undefined ? { slug: house.slug } : {}),
+      ...(house.packageRoot !== undefined
+        ? { packageRoot: house.packageRoot }
+        : {}),
       ...(house.status !== undefined ? { status: house.status } : {}),
+      ...(house.objectType !== undefined
+        ? { objectType: house.objectType }
+        : {}),
+      ...(house.dataMode !== undefined ? { dataMode: house.dataMode } : {}),
+      ...(house.referenceProvenance !== undefined
+        ? {
+            referenceProvenance: house.referenceProvenance,
+          }
+        : {}),
     };
 
     const extras = await this.readExtras();
@@ -288,19 +392,17 @@ export class FileCanonicalRegistryAuthorityRepository {
     const byId = <T extends { readonly id: string }>(
       defaults: readonly T[],
       dynamic: readonly T[],
-    ): readonly T[] =>
-      [...new Map(
+    ): readonly T[] => [
+      ...new Map(
         [...defaults, ...dynamic].map((item) => [item.id, item]),
-      ).values()];
+      ).values(),
+    ];
 
     return {
       tenants: byId(DEFAULT_TENANTS, extras.tenants),
       companies: byId(DEFAULT_COMPANIES, extras.companies),
       workspaces: byId(DEFAULT_WORKSPACES, extras.workspaces),
-      projects: byId(
-        DEFAULT_CANONICAL_PROJECTS,
-        extras.canonicalProjects,
-      ),
+      projects: byId(DEFAULT_CANONICAL_PROJECTS, extras.canonicalProjects),
       houses: extras.houses ?? [],
     };
   }
@@ -329,10 +431,7 @@ export class FileCanonicalRegistryAuthorityRepository {
       findById(DEFAULT_WORKSPACES, project.workspaceId) ??
       findById(extras.workspaces, project.workspaceId);
 
-    if (
-      workspace === undefined ||
-      workspace.companyId !== company.id
-    ) {
+    if (workspace === undefined || workspace.companyId !== company.id) {
       return null;
     }
 
@@ -340,10 +439,7 @@ export class FileCanonicalRegistryAuthorityRepository {
       findById(DEFAULT_TENANTS, company.tenantId) ??
       findById(extras.tenants, company.tenantId);
 
-    if (
-      tenant === undefined ||
-      tenant.companyId !== company.id
-    ) {
+    if (tenant === undefined || tenant.companyId !== company.id) {
       return null;
     }
 
