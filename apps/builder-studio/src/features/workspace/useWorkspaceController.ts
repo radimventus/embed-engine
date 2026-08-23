@@ -51,7 +51,9 @@ const HOUSE_PACKAGE_INITIALIZE_API = '/__builder/house-package/initialize';
 async function initializeHousePackageForBuilder(
   houseId: string,
 ): Promise<string> {
-  const response = await fetch(HOUSE_PACKAGE_INITIALIZE_API, {
+  const isDev = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  const targetUrl = isDev ? HOUSE_PACKAGE_INITIALIZE_API : ('https://api.conis.cz/public/house-packages/' + encodeURIComponent(houseId) + '/initialize');
+  const response = await fetch(targetUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ houseId }),
