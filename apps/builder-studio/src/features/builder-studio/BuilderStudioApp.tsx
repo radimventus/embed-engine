@@ -250,8 +250,7 @@ export function BuilderStudioApp() {
       accessSession?.workspaceContext?.activeHouseId ??
       accessSession?.activeHouseId ??
       null;
-    const targetId =
-      targetHouseId ?? accessSession?.projectId ?? urlProjectId ?? null;
+    const targetId = targetHouseId ?? accessSession?.projectId ?? urlProjectId ?? null;
 
     if (targetId == null) {
       externalHouseBindDoneRef.current = true;

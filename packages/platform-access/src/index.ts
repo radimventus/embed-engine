@@ -109,6 +109,7 @@ export {
   DEFAULT_WORKSPACE_ID,
   DEFAULT_PROJECT_ID,
   type CompanyRegistryState,
+  type CanonicalAuthorityHouse,
   type CreateCanonicalPartnerInput,
   type CanonicalPartnerIdentity,
 } from './registry/companyRegistry';

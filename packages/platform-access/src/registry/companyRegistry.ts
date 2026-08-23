@@ -41,6 +41,18 @@ import {
   resetDurableProjectConfigs,
 } from "./durableProjectConfig";
 
+export type CanonicalAuthorityHouse = {
+  readonly id: string;
+  readonly canonicalProjectId: string;
+  readonly name: string;
+  readonly slug?: string;
+  readonly packageRoot?: string;
+  readonly status?: string;
+  readonly objectType?: string;
+  readonly dataMode?: PlatformProject['dataMode'];
+  readonly referenceProvenance?: PlatformProject['referenceProvenance'];
+};
+
 export type CompanyRegistryState = {
   readonly tenants: readonly PlatformTenant[];
   readonly companies: readonly PlatformCompany[];
@@ -49,6 +61,8 @@ export type CompanyRegistryState = {
   readonly projects: readonly PlatformProject[];
   /** CAP-PLAT-04c — true delivery Projects (no House Package fields). */
   readonly canonicalProjects: readonly PlatformCanonicalProject[];
+  /** TASK-66VR-FIX-09 — durable server-authored Houses. */
+  readonly houses: readonly CanonicalAuthorityHouse[];
 };
 
 export type CreateCanonicalPartnerInput = {
@@ -143,7 +157,7 @@ let mutableExtras: {
   workspaces: PlatformWorkspace[];
   projects: PlatformProject[];
   canonicalProjects: PlatformCanonicalProject[];
-  houses?: any[];
+  houses: CanonicalAuthorityHouse[];
 } = {
   tenants: [],
   companies: [],
@@ -257,6 +271,7 @@ export function getDefaultCompanyRegistry(): CompanyRegistryState {
       DEFAULT_CANONICAL_PROJECTS,
       mutableExtras.canonicalProjects,
     ).map(stripBrowserPrivacyUrl),
+    houses: [...mutableExtras.houses],
   };
 }
 
@@ -337,6 +352,7 @@ export function appendPilotProvision(input: {
       canonicalProject === undefined
         ? mutableExtras.canonicalProjects
         : [...withoutDup.canonicalProjects, canonicalProject],
+    houses: mutableExtras.houses,
   };
   persistExtrasToStorage();
   return getDefaultCompanyRegistry();
@@ -681,7 +697,7 @@ export {
 export { DEFAULT_CANONICAL_PROJECT_ID } from "./defaults";
 
 export type CanonicalRegistryAuthoritySnapshotInput = {
-  readonly houses?: readonly any[];
+  readonly houses: readonly CanonicalAuthorityHouse[];
   readonly tenants: readonly PlatformTenant[];
   readonly companies: readonly PlatformCompany[];
   readonly workspaces: readonly PlatformWorkspace[];
@@ -699,7 +715,7 @@ export function hydrateCanonicalRegistryFromAuthority(
     companies: [...snapshot.companies],
     workspaces: [...snapshot.workspaces],
     canonicalProjects: [...snapshot.projects],
-    houses: [...((snapshot as any).houses ?? [])],
+    houses: [...snapshot.houses],
   };
 
   persistExtrasToStorage();
@@ -707,7 +723,7 @@ export function hydrateCanonicalRegistryFromAuthority(
   return getDefaultCompanyRegistry();
 }
 
-export function getHydratedCanonicalHouses(): readonly any[] {
-  ensureExtrasHydrated();
-  return mutableExtras.houses ?? [];
+export function getHydratedCanonicalHouses():
+  readonly CanonicalAuthorityHouse[] {
+  return getDefaultCompanyRegistry().houses;
 }

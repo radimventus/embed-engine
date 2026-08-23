@@ -4,6 +4,7 @@
  */
 
 import {
+  canonicalCompanyIdForOfficePartner,
   createCanonicalPartner,
   createPlatformAccessAuthClient,
   getDefaultCompanyRegistry,
@@ -211,10 +212,11 @@ export async function persistCreatedPartner(
     (item) => item.companyId === partner.id,
   );
 
+  const tenantId = company?.tenantId;
   const tenant =
-    company === undefined
+    tenantId === undefined
       ? undefined
-      : registry.tenants.find((item) => item.id === company.tenantId);
+      : registry.tenants.find((item) => item.id === tenantId);
 
   if (
     company === undefined ||
@@ -273,10 +275,85 @@ export async function hydrateOfficePartnersFromServer(): Promise<void> {
   return hydrateInFlight;
 }
 
+async function ensureOfficePartnerCanonicalAuthority(
+  partner: OfficePartner,
+): Promise<void> {
+  const companyId =
+    canonicalCompanyIdForOfficePartner(partner.id);
+
+  let registry = getDefaultCompanyRegistry();
+  let company = registry.companies.find(
+    (item) => item.id === companyId,
+  );
+  let workspace = registry.workspaces.find(
+    (item) => item.companyId === companyId,
+  );
+  const initialTenantId = company?.tenantId;
+  let tenant =
+    initialTenantId === undefined
+      ? undefined
+      : registry.tenants.find(
+          (item) => item.id === initialTenantId,
+        );
+
+  if (
+    company === undefined ||
+    workspace === undefined ||
+    tenant === undefined
+  ) {
+    const created = createCanonicalPartner({
+      name: partner.name,
+    });
+
+    company = created.company;
+    workspace = created.workspace;
+
+    registry = getDefaultCompanyRegistry();
+    tenant = registry.tenants.find(
+      (item) => item.id === created.company.tenantId,
+    );
+  }
+
+  if (
+    company === undefined ||
+    workspace === undefined ||
+    tenant === undefined
+  ) {
+    throw new Error(
+      `Canonical Partner authority is incomplete for ${partner.id}.`,
+    );
+  }
+
+  const persisted =
+    await createPlatformAccessAuthClient()
+      .persistCanonicalPartnerAuthority({
+        tenant,
+        company,
+        workspace,
+      });
+
+  if (!persisted.ok) {
+    throw new Error(persisted.error);
+  }
+}
+
 async function hydrateOfficePartnersFromServerOnce(): Promise<void> {
   const remote = await requestOfficePartners();
   if (remote.length > 0) {
-    replaceMemory(remote.map(toOfficePartner));
+    const remotePartners = remote.map(toOfficePartner);
+
+    for (const partner of remotePartners) {
+      await ensureOfficePartnerCanonicalAuthority(partner);
+    }
+
+    const sync =
+      await syncCanonicalRegistryFromAuthority();
+
+    if (!sync.ok) {
+      throw new Error(sync.error);
+    }
+
+    replaceMemory(remotePartners);
     dropLocalPartnerAuthority();
     return;
   }

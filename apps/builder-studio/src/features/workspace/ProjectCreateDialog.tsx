@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { createCanonicalPartner } from '@embed-engine/platform-access';
+import {
+  createCanonicalPartner,
+  createPlatformAccessAuthClient,
+  getDefaultCompanyRegistry,
+  syncCanonicalRegistryFromAuthority,
+} from '@embed-engine/platform-access';
 import { PlatformDialog, PlatformField } from '@embed-engine/platform-shell';
 
 import {
@@ -88,27 +93,65 @@ export function ProjectCreateDialog({
           setPartnerError(null);
         }}
         onPrimary={() => {
-          try {
-            const created = createCanonicalPartner({ name: partnerName });
-            const company: WorkspaceCompany = {
-              id: created.companyId,
-              name: created.company.name,
-            };
-            setCreatedCompanies((current) => [
-              ...current.filter((item) => item.id !== company.id),
-              company,
-            ]);
-            setCompanyId(company.id);
-            setPartnerFormOpen(false);
-            setPartnerName('');
-            setPartnerError(null);
-          } catch (error: unknown) {
-            setPartnerError(
-              error instanceof Error
-                ? error.message
-                : 'Partner se nepodařilo vytvořit.',
-            );
-          }
+          void (async () => {
+            try {
+              const created = createCanonicalPartner({
+                name: partnerName,
+              });
+
+              const registry = getDefaultCompanyRegistry();
+              const tenant = registry.tenants.find(
+                (item) => item.id === created.company.tenantId,
+              );
+
+              if (tenant === undefined) {
+                throw new Error(
+                  'Canonical Partner není v klientském registru kompletní.',
+                );
+              }
+
+              const persisted =
+                await createPlatformAccessAuthClient()
+                  .persistCanonicalPartnerAuthority({
+                    tenant,
+                    company: created.company,
+                    workspace: created.workspace,
+                  });
+
+              if (!persisted.ok) {
+                throw new Error(persisted.error);
+              }
+
+              const sync =
+                await syncCanonicalRegistryFromAuthority();
+
+              if (!sync.ok) {
+                throw new Error(sync.error);
+              }
+
+              const company: WorkspaceCompany = {
+                id: created.companyId,
+                name: created.company.name,
+              };
+
+              setCreatedCompanies((current) => [
+                ...current.filter(
+                  (item) => item.id !== company.id,
+                ),
+                company,
+              ]);
+              setCompanyId(company.id);
+              setPartnerFormOpen(false);
+              setPartnerName('');
+              setPartnerError(null);
+            } catch (error: unknown) {
+              setPartnerError(
+                error instanceof Error
+                  ? error.message
+                  : 'Partner se nepodařilo vytvořit.',
+              );
+            }
+          })();
         }}
       >
         <PlatformField label="Název partnera">

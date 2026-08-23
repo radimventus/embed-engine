@@ -1,4 +1,3 @@
-import { getHydratedCanonicalHouses } from '../registry/companyRegistry';
 /**
  * CAP-PLAT-02 / CAP-PLAT-04d — Canonical Projection Layer (read-only).
  *
@@ -10,6 +9,7 @@ import {
   isSeedProjectId,
   getDefaultCompanyRegistry,
   resolveCanonicalProjectForHouseRow,
+  type CanonicalAuthorityHouse,
 } from '../registry/companyRegistry';
 import {
   getSharedProject,
@@ -324,65 +324,140 @@ function listPublishedHouseProjections(): readonly CanonicalProjectProjection[] 
 /**
  * CAP-PLAT-04d — true House list (optional filter by parent Project id).
  */
+function authorityHouseProjection(
+  authorityHouse: CanonicalAuthorityHouse,
+): CanonicalProjectProjection | null {
+  const registry = getDefaultCompanyRegistry();
+
+  const project = registry.canonicalProjects.find(
+    (item) => item.id === authorityHouse.canonicalProjectId,
+  );
+  if (project === undefined) return null;
+
+  const company = registry.companies.find(
+    (item) => item.id === project.companyId,
+  );
+  const workspace = registry.workspaces.find(
+    (item) => item.id === project.workspaceId,
+  );
+
+  if (company === undefined || workspace === undefined) {
+    return null;
+  }
+
+  const houseStatus =
+    authorityHouse.status === 'published'
+      ? 'published'
+      : authorityHouse.status === 'ready'
+        ? 'ready'
+        : 'draft';
+
+  const packageRoot = authorityHouse.packageRoot ?? '';
+
+  return {
+    partner: {
+      companyId: company.id,
+      companyName: company.name,
+      workspaceId: workspace.id,
+      workspaceName: workspace.name,
+    },
+    project: {
+      projectId: project.id,
+      name: project.name,
+      slug: project.slug,
+      description: project.description,
+      privacyUrl: project.privacyUrl,
+    },
+    house: {
+      houseId: authorityHouse.id,
+      name: authorityHouse.name,
+      slug: authorityHouse.slug ?? authorityHouse.id,
+      objectType: authorityHouse.objectType ?? '',
+      packageRoot,
+      packagePublicRoot:
+        packageRoot.trim().length > 0
+          ? packageRootToPublicUrl(packageRoot)
+          : '',
+      dataMode:
+        authorityHouse.dataMode ?? DEFAULT_HOUSE_DATA_MODE,
+      ...(authorityHouse.referenceProvenance === undefined
+        ? {}
+        : {
+            referenceProvenance:
+              authorityHouse.referenceProvenance,
+          }),
+    },
+    branding: {
+      logoLabel: company.name,
+      heroLabel: '',
+      websiteUrl: '',
+      documents: [],
+    },
+    publication: {
+      projectStatus: houseStatus,
+      houseStatus,
+      isProjectPublished: houseStatus === 'published',
+      isHousePublished: houseStatus === 'published',
+      publishedAt: null,
+      isSeed: false,
+      status: houseStatus,
+      isPublished: houseStatus === 'published',
+    },
+    experience: {
+      offerTemplateId: null,
+      authorStudio: 'builder',
+    },
+  };
+}
+
+/**
+ * CAP-PLAT-04d / TASK-66VR-FIX-09
+ * Complete House projections from published Shared Houses plus durable
+ * server-authoritative authoring Houses.
+ */
 export function listCanonicalHouses(
   projectId?: string | null,
 ): readonly CanonicalProjectProjection[] {
-
-  const base = (() => {
-    const all = listPublishedHouseProjections();
-  const filter = projectId?.trim();
-  if (filter === undefined || filter.length === 0) return all;
-  return all.filter((item) => item.project.projectId === filter);
-  })();
-
-  const dynamic = typeof getHydratedCanonicalHouses === 'function' ? getHydratedCanonicalHouses() : [];
   const filter = projectId?.trim();
 
-  const dynamicProjections = dynamic
-    .filter((h: any) => {
-      if (!h) return false;
-      if (!filter) return true;
-      return h.canonicalProjectId === filter || h.projectId === filter;
-    })
-    .map((h: any) => {
-      const pId = h.canonicalProjectId ?? filter ?? '';
-      const hId = h.id ?? h.houseId;
-      const housePayload: any = {
-        id: hId,
-        houseId: hId,
-        canonicalProjectId: pId,
-        name: h.name,
-        packageRoot: h.packageRoot ?? `/house-packages/${hId}`,
-        status: h.status ?? 'draft',
-        dataMode: h.dataMode ?? 'LIVE_EMPTY',
-        ...h,
-      };
+  const published =
+    filter === undefined || filter.length === 0
+      ? listPublishedHouseProjections()
+      : listPublishedHouseProjections().filter(
+          (item) => item.project.projectId === filter,
+        );
 
-      return {
-        ...housePayload,
-        house: housePayload,
-        project: {
-          projectId: pId,
-          canonicalProjectId: pId,
-          name: pId,
-        },
-      };
-    });
+  const dynamic = getDefaultCompanyRegistry().houses
+    .filter(
+      (house) =>
+        filter === undefined ||
+        filter.length === 0 ||
+        house.canonicalProjectId === filter,
+    )
+    .map(authorityHouseProjection)
+    .filter(
+      (
+        projection,
+      ): projection is CanonicalProjectProjection =>
+        projection !== null,
+    );
 
-  const map = new Map<string, any>();
-  for (const item of base) {
-    const id = (item as any)?.house?.id ?? (item as any)?.house?.houseId ?? (item as any)?.id ?? (item as any)?.houseId;
-    if (id) map.set(id, item);
-  }
-  for (const dyn of dynamicProjections) {
-    const id = dyn?.house?.id ?? dyn?.id;
-    if (id && !map.has(id)) {
-      map.set(id, dyn);
+  const byHouseId =
+    new Map<string, CanonicalProjectProjection>();
+
+  for (const projection of published) {
+    if (projection.house !== null) {
+      byHouseId.set(projection.house.houseId, projection);
     }
   }
 
-  return [...map.values()];
+  for (const projection of dynamic) {
+    if (projection.house !== null) {
+      byHouseId.set(projection.house.houseId, projection);
+    }
+  }
 
+  return [...byHouseId.values()];
 }
 
 /**

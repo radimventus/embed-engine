@@ -5,6 +5,20 @@ import {
 import {
   hydrateCanonicalRegistryFromAuthority,
 } from '../registry/companyRegistry';
+import type { HouseDataMode } from '../domain/types';
+
+function normalizeHouseDataMode(
+  value: string | undefined,
+): HouseDataMode | undefined {
+  switch (value) {
+    case 'REFERENCE_DEMO':
+    case 'LIVE_EMPTY':
+    case 'LIVE':
+      return value;
+    default:
+      return undefined;
+  }
+}
 
 export type CanonicalRegistrySyncResult =
   | { readonly ok: true }
@@ -29,7 +43,10 @@ export async function syncCanonicalRegistryFromAuthority():
       companies: result.registry.companies,
       workspaces: result.registry.workspaces,
       projects: result.registry.projects,
-      houses: result.registry.houses,
+      houses: result.registry.houses.map((house) => ({
+        ...house,
+        dataMode: normalizeHouseDataMode(house.dataMode),
+      })),
     });
 
     return { ok: true };
