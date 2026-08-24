@@ -29,7 +29,7 @@ export const PARTNER_NAV_GROUPS: readonly PartnerNavGroup[] = [
     items: [
       {
         id: "manager-work-center",
-        label: "Dashboard",
+        label: "Přehled",
         short: "D",
       },
       {
@@ -55,14 +55,14 @@ export const PARTNER_NAV_GROUPS: readonly PartnerNavGroup[] = [
       },
       {
         id: "manager-engagement",
-        label: "Engagement domu",
+        label: "Aktivita v prohlídce",
         short: "E",
       },
     ],
   },
   {
-    title: "Intelligence",
-    ariaLabel: "Manager Intelligence",
+    title: "Doporučení",
+    ariaLabel: "Manažerský přehled",
     items: [
       {
         id: "manager-improvements",
@@ -77,7 +77,7 @@ export const PARTNER_SECTION_IDS: readonly string[] =
   PARTNER_NAV_GROUPS.flatMap((group) => group.items.map((item) => item.id));
 
 export function partnerSectionLabel(sectionId: string | null): string {
-  if (sectionId === null) return "Dashboard";
+  if (sectionId === null) return "Přehled";
 
   for (const group of PARTNER_NAV_GROUPS) {
     const item = group.items.find((entry) => entry.id === sectionId);
@@ -85,5 +85,5 @@ export function partnerSectionLabel(sectionId: string | null): string {
     if (item !== undefined) return item.label;
   }
 
-  return "Dashboard";
+  return "Přehled";
 }

@@ -26,8 +26,8 @@ describe("TASK 71B Manager Intelligence productization", () => {
     assert.match(source, /Index ztráty zájmu/);
     assert.match(source, /Co rozhoduje/);
     assert.match(source, /Co si klienti ověřují/);
-    assert.match(source, /Engagement domu/);
-    assert.match(source, /Doporučená vylepšení Experience/);
+    assert.match(source, /Aktivita v prohlídce/);
+    assert.match(source, /Doporučená vylepšení zákaznické zkušenosti/);
   });
 
   it("defines loss-of-interest as an auditable REAL-profile signal gap, not fabricated drop-off", () => {
@@ -78,7 +78,7 @@ describe("TASK 71B Manager Intelligence productization", () => {
     assert.match(source, /managerProjectIntelligence/);
     assert.match(
       source,
-      /Žádné metriky ani doporučení nejsou dopočítávány z reference\s+dat/,
+      /Žádné metriky ani doporučení nejsou dopočítávány z referenčních\s+dat/,
     );
   });
 });

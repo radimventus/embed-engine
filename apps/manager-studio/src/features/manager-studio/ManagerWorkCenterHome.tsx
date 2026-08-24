@@ -115,7 +115,7 @@ export function ManagerWorkCenterHome() {
         data-testid="manager-operational-empty"
       >
         <PlatformCard
-          title="Manager Intelligence"
+          title="Manažerský přehled"
           description="Pro tento dům zatím nejsou k dispozici skutečná provozní data."
         >
           <div className="grid gap-5 desktop:grid-cols-[1fr_300px]">
@@ -123,16 +123,16 @@ export function ManagerWorkCenterHome() {
               <p className="text-sm text-[var(--platform-navy)] opacity-70">
                 Jakmile začnou vznikat reálné Profily zájemce, CONIS zde ukáže
                 jejich připravenost, rozhodovací trajektorii a podklady pro
-                zlepšení Client Experience.
+                zlepšení zákaznické zkušenosti.
               </p>
             </div>
 
             <div className="rounded-[14px] bg-[var(--platform-cream-light)] p-4">
               <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-[var(--platform-accent)]">
-                Pre-data stav
+                Stav bez dat
               </p>
               <p className="mt-2 text-sm font-semibold text-[var(--platform-navy)]">
-                Žádné metriky ani doporučení nejsou dopočítávány z reference
+                Žádné metriky ani doporučení nejsou dopočítávány z referenčních
                 dat.
               </p>
             </div>
@@ -148,7 +148,7 @@ export function ManagerWorkCenterHome() {
   const lossSignals = [
     {
       id: "tour",
-      label: "TOUR",
+      label: "PROHLÍDKA",
       value: lossOfInterestIndex(
         intelligence.trajectory.tourProfiles,
         intelligence.realProfileCount,
@@ -164,7 +164,7 @@ export function ManagerWorkCenterHome() {
     },
     {
       id: "faq",
-      label: "FAQ",
+      label: "OTÁZKY",
       value: lossOfInterestIndex(
         intelligence.trajectory.faqProfiles,
         intelligence.realProfileCount,
@@ -172,7 +172,7 @@ export function ManagerWorkCenterHome() {
     },
     {
       id: "chat",
-      label: "Chat",
+      label: "KONVERZACE",
       value: lossOfInterestIndex(
         intelligence.trajectory.chatProfiles,
         intelligence.realProfileCount,
@@ -180,7 +180,7 @@ export function ManagerWorkCenterHome() {
     },
     {
       id: "tour-return",
-      label: "Návrat do TOUR",
+      label: "Návrat do prohlídky",
       value: lossOfInterestIndex(
         intelligence.trajectory.tourReturnProfiles,
         intelligence.realProfileCount,
@@ -205,7 +205,7 @@ export function ManagerWorkCenterHome() {
                 description="Distribuce skutečně měřených Profilů podle Indexu připravenosti."
                 action={
                   <PlatformStatusBadge tone="gold">
-                    Kvalita pipeline
+                    Kvalita zájemců
                   </PlatformStatusBadge>
                 }
               >
@@ -218,7 +218,7 @@ export function ManagerWorkCenterHome() {
                 action={
                   intelligence.priorities[0] === undefined ? undefined : (
                     <PlatformStatusBadge tone="gold">
-                      {`Top: ${intelligence.priorities[0].label}`}
+                      {`Nejsilnější: ${intelligence.priorities[0].label}`}
                     </PlatformStatusBadge>
                   )
                 }
@@ -231,7 +231,7 @@ export function ManagerWorkCenterHome() {
           <section id="manager-trajectory">
             <PlatformCard
               title="Rozhodovací trajektorie"
-              description="Skutečně zachycené rozhodovací signály. Nejde o anonymní návštěvnický funnel."
+              description="Skutečně zachycené rozhodovací signály. Nejde o pouhou anonymní návštěvnost."
             >
               <TrajectoryVisual intelligence={intelligence} />
             </PlatformCard>
@@ -254,7 +254,7 @@ export function ManagerWorkCenterHome() {
 
               <PlatformCard
                 title="Index ztráty zájmu"
-                description="Podíl REAL profilů bez zachyceného signálu v dané oblasti. Nejde o prokázaný sekvenční drop-off."
+                description="Podíl skutečných profilů bez zachyceného signálu v dané oblasti. Nejde o prokázaný sekvenční pokles zájmu."
                 action={
                   <PlatformStatusBadge tone="gold">
                     Signál oslabení
@@ -320,7 +320,7 @@ export function ManagerWorkCenterHome() {
 
               <PlatformCard
                 title="Co si klienti ověřují"
-                description="FAQ jako místo aktivního hledání jistoty."
+                description="Otázky jako místo aktivního hledání jistoty."
               >
                 {intelligence.faq.length === 0 ? (
                   <EmptyEvidence />
@@ -343,7 +343,7 @@ export function ManagerWorkCenterHome() {
           <section id="manager-engagement">
             <div className="grid gap-5 min-[900px]:grid-cols-2">
               <PlatformCard
-                title="Engagement domu"
+                title="Aktivita v prohlídce"
                 description="Místnosti, ke kterým se klienti při rozhodování vracejí."
               >
                 {intelligence.rooms.length === 0 ? (
@@ -373,7 +373,7 @@ export function ManagerWorkCenterHome() {
 
           <section id="manager-improvements">
             <PlatformCard
-              title="Doporučená vylepšení Experience"
+              title="Doporučená vylepšení zákaznické zkušenosti"
               description="CONIS vidí vzorec → ukáže důkazy → navrhne zásah."
             >
               {intelligence.recommendations.length === 0 ? (
@@ -435,10 +435,10 @@ function ExecutiveDashboard({
   return (
     <PlatformCard
       title="Jak si projekt vede a co změnit"
-      description="Rychlý obraz kvality zájemců, rozhodovacích témat a příležitostí ke zlepšení Experience."
+      description="Rychlý obraz kvality zájemců, rozhodovacích témat a příležitostí ke zlepšení zákaznické zkušenosti."
       action={
         <PlatformStatusBadge tone="gold">
-          Manager Intelligence
+          Manažerský přehled
         </PlatformStatusBadge>
       }
     >
@@ -447,13 +447,13 @@ function ExecutiveDashboard({
           PILOT
         </span>
         <span className="rounded-full border border-[var(--platform-line)] px-3 py-1.5">
-          MTD {intelligence.profilePeriods.monthToDate}
+          Měsíc {intelligence.profilePeriods.monthToDate}
         </span>
         <span className="rounded-full border border-[var(--platform-line)] px-3 py-1.5">
-          QTD {intelligence.profilePeriods.quarterToDate}
+          Čtvrtletí {intelligence.profilePeriods.quarterToDate}
         </span>
         <span className="rounded-full border border-[var(--platform-line)] px-3 py-1.5">
-          YTD {intelligence.profilePeriods.yearToDate}
+          Rok {intelligence.profilePeriods.yearToDate}
         </span>
       </div>
 
@@ -602,10 +602,10 @@ function TrajectoryVisual({
   readonly intelligence: ManagerHouseIntelligence;
 }) {
   const items = [
-    ["TOUR", intelligence.trajectory.tourProfiles],
-    ["Priority", intelligence.trajectory.priorityProfiles],
-    ["FAQ", intelligence.trajectory.faqProfiles],
-    ["Chat", intelligence.trajectory.chatProfiles],
+    ["PROHLÍDKA", intelligence.trajectory.tourProfiles],
+    ["PRIORITY", intelligence.trajectory.priorityProfiles],
+    ["OTÁZKY", intelligence.trajectory.faqProfiles],
+    ["KONVERZACE", intelligence.trajectory.chatProfiles],
     ["Návrat", intelligence.trajectory.tourReturnProfiles],
     ["Konverze", intelligence.trajectory.convertedProfiles],
   ] as const;
@@ -614,7 +614,7 @@ function TrajectoryVisual({
     <div className="overflow-x-auto py-1">
       <div className="flex min-w-[690px] items-center">
         {items.map(([label, value], index) => {
-          const emphasized = label === "FAQ" || label === "Konverze";
+          const emphasized = label === "OTÁZKY" || label === "Konverze";
 
           return (
             <div key={label} className="flex min-w-0 flex-1 items-center">
@@ -661,8 +661,8 @@ function TrajectoryVisual({
       </div>
 
       <p className="mt-3 text-[10px] leading-relaxed text-[var(--platform-navy)] opacity-50">
-        Řetězec ukazuje zachycené rozhodovací signály, nikoli sekvenční
-        návštěvnický funnel.
+        Řetězec ukazuje zachycené rozhodovací signály, nikoli sekvenční sled
+        anonymních návštěv.
       </p>
     </div>
   );
@@ -852,9 +852,9 @@ function ManagerAttentionRail({
         description="CONIS převádí zachycené rozhodovací signály do srozumitelného obrazu."
       >
         <p className="text-sm leading-relaxed text-[var(--platform-navy)] opacity-75">
-          Dashboard ukazuje, jakou rozhodovací práci zákazníci před kontaktem
-          skutečně udělali, co aktivně ověřovali a kde má Experience prostor ke
-          zlepšení.
+          Přehled ukazuje, jakou rozhodovací práci zákazníci před kontaktem
+          skutečně udělali, co aktivně ověřovali a kde má zákaznická zkušenost
+          prostor ke zlepšení.
         </p>
       </PlatformCard>
     </aside>

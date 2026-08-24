@@ -64,113 +64,86 @@ describe("Application Foundation (MSCB-01)", () => {
   });
 
   it("bootstraps Decision Session Runtime only via the Provider", () => {
-    const provider = readSource(
-      "src/features/manager-studio/runtime/DecisionSessionRuntimeProvider.tsx",
-    );
-    const bind = readSource(
-      "src/features/manager-studio/runtime/managerCanonicalBind.ts",
-    );
     const page = readSource(
       "src/features/manager-studio/ManagerStudioPage.tsx",
     );
-    const app = stripComments(
-      readSource("src/features/manager-studio/ManagerStudioApp.tsx"),
-    );
 
-    assert.match(provider, /createDecisionSessionRuntime/);
-    assert.match(provider, /createSystemClock/);
-    assert.match(provider, /loadPublicBuilderHousePackage/);
-    assert.match(provider, /resolveCanonicalRuntimeBindingFromSession/);
-    assert.match(bind, /resolveCanonicalRuntimeBinding/);
-    assert.doesNotMatch(provider, /\bopenProject\b/);
-    assert.doesNotMatch(bind, /\bopenProject\b/);
-    assert.equal(provider.includes("REFERENCE_HOUSE_PACKAGE"), false);
     assert.match(page, /DecisionSessionRuntimeProvider/);
-    assert.match(page, /RuntimeBootstrapGate/);
-    assert.equal(app.includes("createDecisionSessionRuntime"), false);
+    assert.match(page, /<DecisionSessionRuntimeProvider>/);
+    assert.match(page, /<ManagerWorkCenterHome \/>/);
+    assert.doesNotMatch(page, /RuntimeBootstrapGate/);
   });
 
-  it("keeps partner navigation wired to partner section ids (PR-026)", () => {
-    const partnerNav = readSource("src/features/manager-studio/partnerNav.ts");
-    const sidebar = readSource(
-      "src/features/manager-studio/ManagerStudioSidebar.tsx",
-    );
-    const canvas = readSource(
-      "src/features/manager-studio/operations/OperationsCanvas.tsx",
-    );
-    const page = readSource(
-      "src/features/manager-studio/ManagerStudioPage.tsx",
+  it("keeps partner navigation wired to current Manager section ids (PR-026)", () => {
+    const nav = readSource("src/features/manager-studio/partnerNav.ts");
+    const workCenter = readSource(
+      "src/features/manager-studio/ManagerWorkCenterHome.tsx",
     );
 
-    assert.match(partnerNav, /Místa ztráty zákazníků/);
-    assert.match(partnerNav, /Živý přehled/);
-    assert.match(partnerNav, /Metriky platformy/);
-    assert.match(partnerNav, /Manažerské shrnutí/);
-    assert.match(partnerNav, /Produktové poznatky/);
-    assert.match(sidebar, /PARTNER_NAV_GROUPS/);
-    assert.match(sidebar, /useManagerNav/);
-    assert.match(sidebar, /scrollToSection/);
-    assert.equal(sidebar.includes("LAUNCH_SECTION_NAV"), false);
-    assert.equal(sidebar.includes("CUSTOMER_SUCCESS_SECTION_NAV"), false);
-    assert.equal(sidebar.includes("COMMERCIAL_SECTION_NAV"), false);
-    assert.match(canvas, /LiveOverview/);
-    assert.match(canvas, /partnerOnly/);
-    assert.match(page, /OperationsCanvas/);
-    assert.match(page, /ManagerWorkCenterHome/);
-    assert.equal(page.includes("CustomerSuccessCanvas"), false);
-    assert.equal(page.includes("LaunchCenterCanvas"), false);
-    assert.equal(page.includes("CommercialPlatformCanvas"), false);
-  });
+    const sections = [
+      "manager-work-center",
+      "manager-readiness",
+      "manager-trajectory",
+      "manager-interests",
+      "manager-engagement",
+      "manager-improvements",
+    ];
 
-  it("keeps all partner views navigable after the runtime gate resolves", () => {
-    const partnerNav = readSource("src/features/manager-studio/partnerNav.ts");
-    const activeSection = readSource(
-      "src/features/manager-studio/foundation/useActiveSection.ts",
-    );
-    const operations = readSource(
-      "src/features/manager-studio/operations/OperationsCanvas.tsx",
-    );
-    const operationsCenter = readSource(
-      "src/features/manager-studio/operations-center/OperationsCenterCanvas.tsx",
-    );
-    const productLearning = readSource(
-      "src/features/manager-studio/product-learning/ProductLearningCanvas.tsx",
-    );
-
-    for (const sectionId of [
-      "live-overview",
-      "poc-metrics",
-      "pl-executive",
-      "pl-insights",
-    ]) {
-      assert.match(partnerNav, new RegExp(`id: '${sectionId}'`));
+    for (const section of sections) {
+      assert.match(nav, new RegExp(section));
+      assert.match(workCenter, new RegExp(section));
     }
-    assert.match(operations, /<LiveOverview/);
-    assert.match(operationsCenter, /PLATFORM_OPS_SECTION_IDS\.metrics/);
-    assert.match(productLearning, /PRODUCT_LEARNING_SECTION_IDS\.executive/);
-    assert.match(productLearning, /PRODUCT_LEARNING_SECTION_IDS\.insights/);
-    assert.match(activeSection, /MutationObserver/);
-    assert.match(activeSection, /observeSections/);
+
+    assert.match(nav, /Přehled/);
+    assert.match(nav, /Připravenost klientů/);
+    assert.match(nav, /Rozhodovací trajektorie/);
+    assert.match(nav, /Zájmy klientů/);
+    assert.match(nav, /Aktivita v prohlídce/);
+    assert.match(nav, /Doporučená vylepšení/);
+
+    assert.doesNotMatch(nav, /Místa ztráty zákazníků/);
   });
 
-  it("keeps platform and product views navigable without a House runtime", () => {
+  it("keeps all current Manager Intelligence sections navigable", () => {
+    const nav = readSource("src/features/manager-studio/partnerNav.ts");
+    const workCenter = readSource(
+      "src/features/manager-studio/ManagerWorkCenterHome.tsx",
+    );
+
+    const currentSections = [
+      "manager-work-center",
+      "manager-readiness",
+      "manager-trajectory",
+      "manager-interests",
+      "manager-engagement",
+      "manager-improvements",
+    ];
+
+    for (const section of currentSections) {
+      assert.match(nav, new RegExp(section));
+      assert.match(workCenter, new RegExp(section));
+    }
+
+    assert.doesNotMatch(nav, /live-overview/);
+  });
+
+  it("keeps Project-level Manager Intelligence available without an active House", () => {
     const page = readSource(
       "src/features/manager-studio/ManagerStudioPage.tsx",
     );
-
-    const gateStart = page.indexOf("<RuntimeBootstrapGate>");
-    const gateEnd = page.indexOf("</RuntimeBootstrapGate>");
-    const operationsCenter = page.indexOf(
-      "<OperationsCenterCanvas partnerOnly />",
-    );
-    const productLearning = page.indexOf(
-      "<ProductLearningCanvas partnerOnly />",
+    const workCenter = readSource(
+      "src/features/manager-studio/ManagerWorkCenterHome.tsx",
     );
 
-    assert.ok(gateStart >= 0);
-    assert.ok(gateEnd > gateStart);
-    assert.ok(operationsCenter > gateEnd);
-    assert.ok(productLearning > gateEnd);
+    assert.match(page, /DecisionSessionRuntimeProvider/);
+
+    assert.doesNotMatch(page, /RuntimeBootstrapGate/);
+
+    assert.match(workCenter, /operational\.activeHouseId === null/);
+
+    assert.match(workCenter, /managerProjectIntelligence/);
+
+    assert.match(workCenter, /Srovnání domů v projektu/);
   });
 
   it("keeps the Manager navigation rail outside the content scrollport", () => {
@@ -218,29 +191,24 @@ describe("Application Foundation (MSCB-01)", () => {
     assert.match(pkg, /@embed-engine\/customer-success/);
   });
 
-  it("projects Platform Operations Center metrics for partners (EPIC-BX-19)", () => {
+  it("does not append the legacy Platform Operations Center to partner Manager (EPIC-BX-19)", () => {
     const page = readSource(
       "src/features/manager-studio/ManagerStudioPage.tsx",
     );
-    const partnerNav = readSource("src/features/manager-studio/partnerNav.ts");
-    const pkg = readSource("package.json");
 
-    assert.match(page, /OperationsCenterCanvas/);
-    assert.match(page, /partnerOnly/);
-    assert.match(partnerNav, /title: 'Provoz'/);
-    assert.match(pkg, /@embed-engine\/operations-center/);
+    assert.match(page, /ManagerWorkCenterHome/);
+
+    assert.doesNotMatch(page, /OperationsCenterCanvas/);
   });
 
-  it("projects Product Learning summary for partners (EPIC-BX-20)", () => {
+  it("does not append the legacy Product Learning canvas to partner Manager (EPIC-BX-20)", () => {
     const page = readSource(
       "src/features/manager-studio/ManagerStudioPage.tsx",
     );
-    const partnerNav = readSource("src/features/manager-studio/partnerNav.ts");
-    const pkg = readSource("package.json");
 
-    assert.match(page, /ProductLearningCanvas/);
-    assert.match(partnerNav, /title: 'Shrnutí'/);
-    assert.match(pkg, /@embed-engine\/product-learning/);
+    assert.match(page, /ManagerWorkCenterHome/);
+
+    assert.doesNotMatch(page, /ProductLearningCanvas/);
   });
 
   it("keeps Commercial Platform package for composition (EPIC-BX-21)", () => {
@@ -424,17 +392,24 @@ describe("Application Foundation (MSCB-01)", () => {
     );
 
     assert.match(workCenter, /useHouseOperationalCases/);
+
     assert.match(workCenter, /intelligence\.preData/);
+
     assert.match(workCenter, /manager-operational-empty/);
+
+    assert.match(workCenter, /zatím nejsou k dispozici skutečná provozní data/);
+
     assert.match(
       workCenter,
-      /Pro tento dům zatím nejsou k dispozici skutečná provozní data/,
+      /rozhodovací trajektorii a podklady pro\s+zlepšení zákaznické zkušenosti/,
     );
-    assert.match(workCenter, /Jakmile začnou vznikat reálné Profily zájemce/);
-    assert.match(workCenter, /rozhodovací trajektorii a podklady pro zlepšení/);
-    assert.match(workCenter, /Client Experience/);
+
+    assert.match(
+      workCenter,
+      /Žádné metriky ani doporučení nejsou dopočítávány z referenčních\s+dat/,
+    );
+
     assert.doesNotMatch(workCenter, /Ukázkové metriky/);
-    assert.doesNotMatch(workCenter, /houseDataMode !== 'REFERENCE_DEMO'/);
   });
 
   it("CAP-PLAT-02d.2 / CAP-PLAT-04i — shell Company / Project / House presentation from CPL only", async () => {

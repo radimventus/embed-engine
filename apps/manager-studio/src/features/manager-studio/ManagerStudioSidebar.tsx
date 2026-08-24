@@ -31,7 +31,7 @@ function NavGroup({
               key={item.id}
               type="button"
               aria-label={item.label}
-              aria-current={isActive ? "true" : undefined}
+              aria-current={isActive ? "page" : undefined}
               onClick={() => {
                 scrollToSection(item.id);
               }}
