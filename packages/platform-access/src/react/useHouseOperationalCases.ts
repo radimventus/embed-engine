@@ -1,36 +1,38 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from "react";
 
-import { listWorkspaceHouses } from '../domain/workspaceHouseProjection';
-import { acceptHouseOperationalLead } from '../api/acceptHouseOperationalLead';
+import { listWorkspaceHouses } from "../domain/workspaceHouseProjection";
+import { acceptHouseOperationalLead } from "../api/acceptHouseOperationalLead";
 import {
   acceptOperationalReferenceCase,
   fetchOperationalCaseProcessing,
-} from '../api/operationalCaseProcessingClient';
-import { fetchReadinessCatalogsByHouseId } from '../api/houseRoomNamesClient';
-import { fetchHouseOperationalLeads } from '../api/houseOperationalLeadsClient';
-import { fetchHouseOperationalSessions } from '../api/houseOperationalSessionsClient';
-import { aggregateHouseOperations } from '../operations/aggregateHouseOperations';
-import { applyReferenceCaseProcessing } from '../operations/applyReferenceCaseProcessing';
-import {
-  selectScopedOperationalCases,
-} from '../operations/selectHouseOperationalCases';
-import type { ReadinessCatalog } from '../readiness/readinessTypes';
+} from "../api/operationalCaseProcessingClient";
+import { fetchReadinessCatalogsByHouseId } from "../api/houseRoomNamesClient";
+import { fetchHouseOperationalLeads } from "../api/houseOperationalLeadsClient";
+import { fetchHouseOperationalSessions } from "../api/houseOperationalSessionsClient";
+import { aggregateHouseOperations } from "../operations/aggregateHouseOperations";
+import { applyReferenceCaseProcessing } from "../operations/applyReferenceCaseProcessing";
+import { selectScopedOperationalCases } from "../operations/selectHouseOperationalCases";
+import type { ReadinessCatalog } from "../readiness/readinessTypes";
 import type {
   HouseOperationalAggregate,
   HouseOperationalCase,
   OperationalDecisionSnapshot,
+  OperationalHouseScope,
   OperationalLeadRecord,
-} from '../operations/operationalTypes';
-import type { OperationalCaseProcessingRecord } from '../operations/applyReferenceCaseProcessing';
-import { usePlatformSession } from './SessionProvider';
+} from "../operations/operationalTypes";
+import type { OperationalCaseProcessingRecord } from "../operations/applyReferenceCaseProcessing";
+import { usePlatformSession } from "./SessionProvider";
 
 export type HouseOperationalCasesState = {
   readonly cases: readonly HouseOperationalCase[];
   readonly projectLeads: readonly OperationalLeadRecord[];
+  readonly decisionSessions: readonly OperationalDecisionSnapshot[];
+  readonly houses: readonly OperationalHouseScope[];
   readonly aggregate: HouseOperationalAggregate;
   readonly companyId: string | null;
   readonly projectId: string | null;
   readonly activeHouseId: string | null;
+  readonly activeHouseName: string | null;
   readonly acceptLead: (input: {
     readonly leadId: string;
     readonly houseId: string;
@@ -83,7 +85,7 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
         setDurableLeads((current) =>
           current.map((lead) =>
             lead.leadId === input.leadId && lead.houseId === input.houseId
-              ? { ...lead, processingStatus: 'accepted' as const }
+              ? { ...lead, processingStatus: "accepted" as const }
               : lead,
           ),
         );
@@ -112,7 +114,7 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
             companyId,
             projectId,
             houseId: input.houseId,
-            processingStatus: 'accepted',
+            processingStatus: "accepted",
           };
           const index = current.findIndex(
             (item) => item.caseId === input.caseId,
@@ -174,13 +176,18 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
       return {
         cases: [] as readonly HouseOperationalCase[],
         projectLeads: [] as readonly OperationalLeadRecord[],
+        decisionSessions: [] as readonly OperationalDecisionSnapshot[],
+        houses: [] as readonly OperationalHouseScope[],
         aggregate: aggregateHouseOperations([]),
         companyId,
         projectId,
         activeHouseId,
+        activeHouseName: null,
       };
     }
-    const houses = listWorkspaceHouses(projectId).map((house) => ({
+    const houses: readonly OperationalHouseScope[] = listWorkspaceHouses(
+      projectId,
+    ).map((house) => ({
       houseId: house.houseId,
       houseName: house.name,
       dataMode: house.dataMode,
@@ -201,10 +208,17 @@ export function useHouseOperationalCases(): HouseOperationalCasesState {
     return {
       cases,
       projectLeads: durableLeads,
+      decisionSessions: durableSessions,
+      houses,
       aggregate: aggregateHouseOperations(cases),
       companyId,
       projectId,
       activeHouseId,
+      activeHouseName:
+        activeHouseId === null
+          ? null
+          : (houses.find((house) => house.houseId === activeHouseId)
+              ?.houseName ?? null),
     };
   }, [
     activeHouseId,

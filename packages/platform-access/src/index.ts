@@ -664,3 +664,19 @@ export type {
 export {
   syncCanonicalRegistryFromAuthority,
 } from './api/canonicalRegistrySync';
+
+export {
+  managerHouseIntelligence,
+  managerProjectIntelligence,
+  type ManagerHouseIntelligence,
+  type ManagerProjectHouseComparison,
+  type ManagerProjectIntelligence,
+  type ManagerPriorityInsight,
+  type ManagerQuestionInsight,
+  type ManagerReadinessBucket,
+  type ManagerReadinessDistribution,
+  type ManagerRecommendation,
+  type ManagerRoomInsight,
+  type ManagerMediaInsight,
+  type ManagerTrajectory,
+} from './operations/managerIntelligence';

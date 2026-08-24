@@ -49,3 +49,19 @@ export {
   type RelatedHousePill,
 } from './relatedHousesForContact';
 export { aggregateHouseOperations } from './aggregateHouseOperations';
+
+export {
+  managerHouseIntelligence,
+  managerProjectIntelligence,
+  type ManagerHouseIntelligence,
+  type ManagerProjectHouseComparison,
+  type ManagerProjectIntelligence,
+  type ManagerPriorityInsight,
+  type ManagerQuestionInsight,
+  type ManagerReadinessBucket,
+  type ManagerReadinessDistribution,
+  type ManagerRecommendation,
+  type ManagerRoomInsight,
+  type ManagerMediaInsight,
+  type ManagerTrajectory,
+} from './managerIntelligence';
