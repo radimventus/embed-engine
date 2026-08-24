@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import { before, describe, it } from 'node:test';
 
 import type { SessionExperience } from '@embed-engine/runtime';
@@ -13,6 +14,7 @@ import {
   listGlobalGalleryPhotos,
   listTourVideos,
 } from './experienceHouseMedia';
+import { setPresentationAssetBase } from './presentationAssetBase';
 import {
   getGalleryMediaProjection,
   getHeroMediaProjection,
@@ -409,4 +411,60 @@ describe('Contextual Media Projection (CAP-HP-003.4)', () => {
     assert.notDeepEqual(vb.polygon, bb.polygon);
     assert.notDeepEqual(vb.polygon, wb.polygon);
   });
+});
+
+
+it("resolves canonical raster assets against Embed presentation origin", () => {
+  setPresentationAssetBase("https://conis.cz");
+
+  try {
+    const source = readFileSync(
+      new URL("./synchronizedExperience.ts", import.meta.url),
+      "utf8",
+    );
+
+    assert.match(
+      source,
+      /resolvePublicAssetUrl\(normalizedFloor\.rasterSrc\)/,
+    );
+
+    assert.doesNotMatch(
+      source,
+      /const floorPlanSrc =\s*normalizedFloor\?\.rasterSrc \?\?/,
+    );
+  } finally {
+    setPresentationAssetBase(undefined);
+  }
+});
+
+it("keeps every normalized static media path on the Embed presentation origin", () => {
+  const source = readFileSync(
+    new URL("./synchronizedExperience.ts", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(
+    source,
+    /resolvePublicAssetUrl\(normalizedAssets\.hero\.src\)/,
+  );
+
+  assert.match(
+    source,
+    /url:\s*resolvePublicAssetUrl\(item\.src\)/,
+  );
+
+  assert.match(
+    source,
+    /resolvePublicAssetUrl\(photo\.src\)/,
+  );
+
+  assert.match(
+    source,
+    /resolvePublicAssetUrl\(normalizedFloor\.rasterSrc\)/,
+  );
+
+  assert.doesNotMatch(
+    source,
+    /normalizedFloor\?\.rasterSrc\s*\?\?/,
+  );
 });

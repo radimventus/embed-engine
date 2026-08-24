@@ -144,7 +144,10 @@ function packageHeroMedia(
   house: ExperienceHouse,
   normalizedAssets?: NormalizedHousePackageAssets,
 ): ProjectedMediaAsset | null {
-  const src = normalizedAssets?.hero?.src ?? getOpeningHeroUrlFromHouse(house);
+  const src =
+    normalizedAssets?.hero !== undefined && normalizedAssets.hero !== null
+      ? resolvePublicAssetUrl(normalizedAssets.hero.src)
+      : getOpeningHeroUrlFromHouse(house);
   if (src.length === 0) {
     return null;
   }
@@ -191,13 +194,13 @@ function projectGlobalMediaTimeline(
     normalizedAssets?.gallery.map((item) => ({
       order: item.order,
       roomId: item.roomId,
-      url: item.src,
+      url: resolvePublicAssetUrl(item.src),
     })) ?? listGlobalGalleryPhotos(house);
   const tourVideos =
     normalizedAssets?.videos.map((item) => ({
       order: item.order,
       roomId: item.roomId,
-      url: item.src,
+      url: resolvePublicAssetUrl(item.src),
     })) ?? listTourVideos(house);
   const firstPhotoUrl = photos[0]?.url;
 
@@ -262,7 +265,8 @@ function projectRoomContext(
   const roomPhotoUrls =
     normalizedAssets?.gallery
       .filter((photo) => photo.roomId === room.id)
-      .map((photo) => photo.src) ?? listRoomGalleryUrls(experience.house, room.id);
+      .map((photo) => resolvePublicAssetUrl(photo.src)) ??
+    listRoomGalleryUrls(experience.house, room.id);
   const roomHeroUrl = roomPhotoUrls[0];
   const heroMedia =
     roomHeroUrl !== undefined
@@ -397,9 +401,10 @@ function projectFloorPlan(
     (floor) => floor.floorId === builderFloorId,
   );
   const floorPlanSrc =
-    normalizedFloor?.rasterSrc ??
-    (getFloorPlanUrlForFloor(experience.house, currentFloor) ||
-      getFloorPlanUrlFromHouse(experience.house));
+    normalizedFloor !== undefined
+      ? resolvePublicAssetUrl(normalizedFloor.rasterSrc)
+      : (getFloorPlanUrlForFloor(experience.house, currentFloor) ||
+        getFloorPlanUrlFromHouse(experience.house));
   const geometry =
     normalizedFloor?.geometry ?? getFloorPlanGeometryForFloor(builderFloorId);
   // HP-003: viewBox + regions come only from published geometry.json (no TS fallback).
