@@ -13,6 +13,15 @@ export type ClientStudioDeliverySession = EmbedSession & {
     readonly getDeliveryState: () => EmbedDeliveryState | null;
 };
 /**
+ * PT-PDM-03 — validate the requested delivery identity while preserving
+ * House semantics for the Client Studio mount boundary.
+ *
+ * Client Studio `objectId` is explicitly a House id. A canonical House may
+ * resolve through Shared Project Runtime, but must not be collapsed to its
+ * enclosing Project id before `mountClientStudio`.
+ */
+export declare function resolveClientHouseId(objectId: string | undefined): string;
+/**
  * Mount ClientStudioApp. Provider creates Decision Session Runtime from Builder Package
  * (`ensureBuilderPackageBootstrapped` → `projectBuilderImportToHousePackage`) — same as
  * standalone Client Studio.
