@@ -132,3 +132,31 @@ describe("CAP-AI-PUBLISH-01 Delivery binding", () => {
     assert.equal(source.includes("apiKey"), false);
   });
 });
+
+it("boots published delivery when Node process is unavailable", () => {
+  const runtime = globalThis as typeof globalThis & {
+    process?: unknown;
+  };
+  const descriptor = Object.getOwnPropertyDescriptor(runtime, "process");
+
+  try {
+    Object.defineProperty(runtime, "process", {
+      configurable: true,
+      writable: true,
+      value: undefined,
+    });
+
+    assert.doesNotThrow(() => {
+      createEmbedAIDelivery({
+        mode: "published",
+        deliveryUrl: "https://edge.example.test",
+      });
+    });
+  } finally {
+    if (descriptor === undefined) {
+      delete runtime.process;
+    } else {
+      Object.defineProperty(runtime, "process", descriptor);
+    }
+  }
+});

@@ -55,6 +55,10 @@ export function detectLocalOpenAiCredentialSource(): {
 }
 
 function readProcessEnv(name: string): string | undefined {
+  if (typeof process === "undefined") {
+    return undefined;
+  }
+
   const value = process.env[name];
   if (value === undefined || value.trim().length === 0) {
     return undefined;
