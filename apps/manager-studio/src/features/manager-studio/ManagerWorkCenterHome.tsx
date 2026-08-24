@@ -265,7 +265,59 @@ export function ManagerWorkCenterHome() {
               </PlatformCard>
             </div>
 
-            <div className="mt-5">
+            <div className="mt-5 grid gap-5 min-[900px]:grid-cols-[1.08fr_.92fr]">
+              {projectIntelligence === null ? null : (
+                <PlatformCard
+                  title="Srovnání domů v projektu"
+                  description="Každý dům zůstává samostatně identifikovaný."
+                  action={
+                    <PlatformStatusBadge tone="gold">
+                      Celý projekt
+                    </PlatformStatusBadge>
+                  }
+                >
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[500px] text-left text-sm text-[var(--platform-navy)]">
+                      <thead>
+                        <tr className="border-b border-[var(--platform-line)]">
+                          <th className="py-2 pr-4">Dům</th>
+                          <th className="py-2 pr-4">Profily</th>
+                          <th className="py-2 pr-4">Ø Index</th>
+                          <th className="py-2">75–100</th>
+                        </tr>
+                      </thead>
+
+                      <tbody>
+                        {projectIntelligence.houses.map((house) => (
+                          <tr
+                            key={house.houseId}
+                            className="border-b border-[var(--platform-line)] last:border-0"
+                          >
+                            <td className="py-3 pr-4 font-semibold">
+                              {house.houseName}
+                            </td>
+
+                            <td className="py-3 pr-4">
+                              {house.realProfileCount}
+                            </td>
+
+                            <td className="py-3 pr-4 font-semibold">
+                              {formatPercent(house.averageReadiness)}
+                            </td>
+
+                            <td className="py-3">
+                              {house.preData
+                                ? "Zatím bez dat"
+                                : house.highReadinessCount}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </PlatformCard>
+              )}
+
               <PlatformCard
                 title="Co si klienti ověřují"
                 description="FAQ jako místo aktivního hledání jistoty."
@@ -318,47 +370,6 @@ export function ManagerWorkCenterHome() {
               </PlatformCard>
             </div>
           </section>
-
-          {projectIntelligence === null ? null : (
-            <PlatformCard
-              title="Srovnání domů v projektu"
-              description="Každý dům si zachovává vlastní House identitu a vlastní měřená data."
-            >
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[620px] text-left text-sm text-[var(--platform-navy)]">
-                  <thead>
-                    <tr className="border-b border-[var(--platform-line)]">
-                      <th className="py-2 pr-4">Dům</th>
-                      <th className="py-2 pr-4">Profily</th>
-                      <th className="py-2 pr-4">Ø Index</th>
-                      <th className="py-2">75–100</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {projectIntelligence.houses.map((house) => (
-                      <tr
-                        key={house.houseId}
-                        className="border-b border-[var(--platform-line)] last:border-0"
-                      >
-                        <td className="py-3 pr-4 font-semibold">
-                          {house.houseName}
-                        </td>
-                        <td className="py-3 pr-4">{house.realProfileCount}</td>
-                        <td className="py-3 pr-4">
-                          {formatPercent(house.averageReadiness)}
-                        </td>
-                        <td className="py-3">
-                          {house.preData
-                            ? "Zatím bez dat"
-                            : house.highReadinessCount}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </PlatformCard>
-          )}
 
           <section id="manager-improvements">
             <PlatformCard
@@ -595,28 +606,64 @@ function TrajectoryVisual({
     ["Priority", intelligence.trajectory.priorityProfiles],
     ["FAQ", intelligence.trajectory.faqProfiles],
     ["Chat", intelligence.trajectory.chatProfiles],
-    ["Návraty", intelligence.trajectory.tourReturnProfiles],
+    ["Návrat", intelligence.trajectory.tourReturnProfiles],
     ["Konverze", intelligence.trajectory.convertedProfiles],
   ] as const;
 
   return (
-    <div className="grid grid-cols-2 gap-2 tablet:grid-cols-3">
-      {items.map(([label, value], index) => (
-        <div
-          key={label}
-          className={[
-            "rounded-[12px] border p-3 text-center",
-            index === 2 || index === 5
-              ? "border-[var(--platform-accent)] bg-[var(--platform-cream-light)]"
-              : "border-[var(--platform-line)] bg-white",
-          ].join(" ")}
-        >
-          <b className="block text-xl text-[var(--platform-navy)]">{value}</b>
-          <span className="text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--platform-navy)] opacity-55">
-            {label}
-          </span>
-        </div>
-      ))}
+    <div className="overflow-x-auto py-1">
+      <div className="flex min-w-[690px] items-center">
+        {items.map(([label, value], index) => {
+          const emphasized = label === "FAQ" || label === "Konverze";
+
+          return (
+            <div key={label} className="flex min-w-0 flex-1 items-center">
+              <div
+                className={[
+                  "flex min-h-[88px] min-w-0 flex-1 flex-col items-center justify-center rounded-[12px] border px-3 py-3 text-center",
+                  emphasized
+                    ? "border-[var(--platform-accent)] bg-[var(--platform-cream-light)]"
+                    : "border-[var(--platform-line)] bg-white",
+                ].join(" ")}
+              >
+                <span
+                  className={[
+                    "mb-2 flex h-6 w-6 items-center justify-center rounded-full border text-[10px] font-bold",
+                    emphasized
+                      ? "border-[var(--platform-accent)] bg-[var(--platform-accent)] text-white"
+                      : "border-[var(--platform-navy)] bg-white text-[var(--platform-navy)]",
+                  ].join(" ")}
+                >
+                  {index + 1}
+                </span>
+
+                <b className="text-xl leading-none text-[var(--platform-navy)]">
+                  {value}
+                </b>
+
+                <span className="mt-2 text-[10px] font-bold uppercase tracking-[0.06em] text-[var(--platform-navy)] opacity-60">
+                  {label}
+                </span>
+              </div>
+
+              {index === items.length - 1 ? null : (
+                <div
+                  aria-hidden="true"
+                  className="flex w-8 shrink-0 items-center text-[var(--platform-accent)]"
+                >
+                  <span className="h-px flex-1 bg-[var(--platform-accent)]" />
+                  <span className="-ml-px text-lg leading-none">›</span>
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <p className="mt-3 text-[10px] leading-relaxed text-[var(--platform-navy)] opacity-50">
+        Řetězec ukazuje zachycené rozhodovací signály, nikoli sekvenční
+        návštěvnický funnel.
+      </p>
     </div>
   );
 }
@@ -676,7 +723,7 @@ function PriorityChart({
 
   return (
     <div className="space-y-3">
-      {intelligence.priorities.slice(0, 6).map((priority) => {
+      {intelligence.priorities.slice(0, 6).map((priority, index) => {
         const percent =
           priority.averageImportance === null
             ? 0
@@ -693,7 +740,12 @@ function PriorityChart({
 
             <div className="h-2 overflow-hidden rounded-full bg-[var(--platform-line)]">
               <div
-                className="h-full rounded-full bg-[var(--platform-accent)]"
+                className={[
+                  "h-full rounded-full",
+                  index < 2
+                    ? "bg-[var(--platform-accent)]"
+                    : "bg-[var(--platform-navy)]",
+                ].join(" ")}
                 style={{ width: `${percent}%` }}
               />
             </div>
