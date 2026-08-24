@@ -190,7 +190,7 @@ export function ManagerWorkCenterHome() {
 
   return (
     <section id="manager-work-center" className="mb-8 space-y-6">
-      <div className="grid gap-6 desktop:grid-cols-[minmax(0,1fr)_300px]">
+      <div className="grid gap-5 min-[1180px]:grid-cols-[minmax(0,1fr)_280px]">
         <div className="min-w-0 space-y-6">
           <ExecutiveDashboard
             intelligence={intelligence}
@@ -199,7 +199,7 @@ export function ManagerWorkCenterHome() {
           />
 
           <section id="manager-readiness">
-            <div className="grid gap-6 desktop:grid-cols-2">
+            <div className="grid gap-5 min-[900px]:grid-cols-2">
               <PlatformCard
                 title="Připravenost zákazníků"
                 description="Distribuce skutečně měřených Profilů podle Indexu připravenosti."
@@ -213,6 +213,33 @@ export function ManagerWorkCenterHome() {
               </PlatformCard>
 
               <PlatformCard
+                title="Co rozhoduje"
+                description="Nejsilnější deklarovaná témata v Profilech zájemce."
+                action={
+                  intelligence.priorities[0] === undefined ? undefined : (
+                    <PlatformStatusBadge tone="gold">
+                      {`Top: ${intelligence.priorities[0].label}`}
+                    </PlatformStatusBadge>
+                  )
+                }
+              >
+                <PriorityChart intelligence={intelligence} />
+              </PlatformCard>
+            </div>
+          </section>
+
+          <section id="manager-trajectory">
+            <PlatformCard
+              title="Rozhodovací trajektorie"
+              description="Skutečně zachycené rozhodovací signály. Nejde o anonymní návštěvnický funnel."
+            >
+              <TrajectoryVisual intelligence={intelligence} />
+            </PlatformCard>
+          </section>
+
+          <section id="manager-interests">
+            <div className="grid gap-5 min-[900px]:grid-cols-2">
+              <PlatformCard
                 title="Průměrná připravenost zájemce"
                 description="Rychlá manažerská interpretace průměrného Indexu."
                 action={
@@ -223,17 +250,6 @@ export function ManagerWorkCenterHome() {
                   average={intelligence.averageReadiness}
                   highReadiness={highReadiness}
                 />
-              </PlatformCard>
-            </div>
-          </section>
-
-          <section id="manager-trajectory">
-            <div className="grid gap-6 desktop:grid-cols-2">
-              <PlatformCard
-                title="Rozhodovací trajektorie"
-                description="Skutečně zachycené rozhodovací signály. Nejde o anonymní návštěvnický funnel."
-              >
-                <TrajectoryVisual intelligence={intelligence} />
               </PlatformCard>
 
               <PlatformCard
@@ -248,24 +264,8 @@ export function ManagerWorkCenterHome() {
                 <LossOfInterestChart items={lossSignals} />
               </PlatformCard>
             </div>
-          </section>
 
-          <section id="manager-interests">
-            <div className="grid gap-6 desktop:grid-cols-2">
-              <PlatformCard
-                title="Co rozhoduje"
-                description="Nejsilnější deklarovaná témata v Profilech zájemce."
-                action={
-                  intelligence.priorities[0] === undefined ? undefined : (
-                    <PlatformStatusBadge tone="gold">
-                      {`Top: ${intelligence.priorities[0].label}`}
-                    </PlatformStatusBadge>
-                  )
-                }
-              >
-                <PriorityChart intelligence={intelligence} />
-              </PlatformCard>
-
+            <div className="mt-5">
               <PlatformCard
                 title="Co si klienti ověřují"
                 description="FAQ jako místo aktivního hledání jistoty."
@@ -289,7 +289,7 @@ export function ManagerWorkCenterHome() {
           </section>
 
           <section id="manager-engagement">
-            <div className="grid gap-6 desktop:grid-cols-2">
+            <div className="grid gap-5 min-[900px]:grid-cols-2">
               <PlatformCard
                 title="Engagement domu"
                 description="Místnosti, ke kterým se klienti při rozhodování vracejí."
@@ -446,7 +446,7 @@ function ExecutiveDashboard({
         </span>
       </div>
 
-      <div className="grid gap-3 tablet:grid-cols-2 desktop:grid-cols-4">
+      <div className="grid gap-3 tablet:grid-cols-2 min-[900px]:grid-cols-4">
         <MetricBox
           label="Profily zájemce"
           value={String(intelligence.realProfileCount)}
@@ -763,7 +763,7 @@ function ManagerAttentionRail({
   const recommendations = intelligence.recommendations.slice(0, 3);
 
   return (
-    <aside className="space-y-4 desktop:sticky desktop:top-4">
+    <aside className="space-y-4 min-[1180px]:sticky min-[1180px]:top-4">
       <PlatformCard
         title="Vyžaduje pozornost"
         description="Nejdůležitější doložené signály pro manažerské rozhodnutí."
