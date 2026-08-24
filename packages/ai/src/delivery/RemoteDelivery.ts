@@ -39,6 +39,9 @@ export class RemoteDelivery implements AIDelivery {
   }
 
   async chat(request: ChatRequest): Promise<ChatResponse> {
+    console.info("[T72-CHAT-TRACE] RemoteDelivery.chat entry", {
+      deliveryUrl: this.deliveryUrl,
+    });
     let response: Response;
     try {
       response = await this.request(`${this.deliveryUrl}/v1/chat`, {

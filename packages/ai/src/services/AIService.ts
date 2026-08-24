@@ -246,6 +246,11 @@ export class AIService {
    * PT-012 Recorder — optional full audit snapshots for debug / replay.
    */
   async sendMessage(input: SendMessageInput): Promise<SendMessageResult> {
+    console.info("[T72-CHAT-TRACE] AIService sendMessage entry", {
+      delivery: readDeliveryMeta(this.delivery),
+      messageLength: input.message.length,
+    });
+
     const text = input.message.trim();
     if (text.length === 0) {
       throw new ConversationError(
@@ -303,11 +308,13 @@ export class AIService {
 
     try {
       const analyzerStart = nowMs();
+      console.info("[T72-CHAT-TRACE] analyzer begin");
       const analysis = await this.analyzer.analyze({
         message: text,
         recentMessages: this.history,
       });
       analysisSnapshot = analysis;
+      console.info("[T72-CHAT-TRACE] analyzer complete");
       analyzerMs = elapsedMs(analyzerStart);
       this.diagnostics.emitPhase(conversation, "analyzer", analyzerMs);
 
@@ -354,11 +361,18 @@ export class AIService {
       const providerStart = nowMs();
       let response: ChatResponse;
       try {
+        console.info("[T72-CHAT-TRACE] before delivery chat", {
+          delivery: readDeliveryMeta(this.delivery),
+        });
         response = await withTimeout(
           this.chatWithPackage(this.sessionId, promptPackage),
           this.requestTimeoutMs,
         );
       } catch (providerError) {
+        console.error("[T72-CHAT-TRACE] provider caught", {
+          delivery: readDeliveryMeta(this.delivery),
+          error: providerError,
+        });
         console.error("AIService: provider error", providerError);
         providerMs = elapsedMs(providerStart);
         const mapped = mapConversationError(providerError);

@@ -136,6 +136,17 @@ export function AIAdvisor() {
 
     void (async () => {
       try {
+        console.info("[T72-CHAT-TRACE] AIAdvisor before sendMessage", {
+          messageLength: text.length,
+          hasWindowDelivery:
+            typeof window !== 'undefined' &&
+            typeof window.__EMBED_AI_DELIVERY__?.deliveryUrl === 'string',
+          windowDeliveryUrl:
+            typeof window !== 'undefined'
+              ? window.__EMBED_AI_DELIVERY__?.deliveryUrl ?? null
+              : null,
+        });
+
         const result = await getEmbedAIService().sendMessage({
           message: text,
           decision,
