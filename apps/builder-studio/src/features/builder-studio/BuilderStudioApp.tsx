@@ -421,6 +421,7 @@ export function BuilderStudioApp() {
                 <div className="min-h-0 flex-1 overflow-y-auto">
                   <ProjectActionPanel
                     loadError={loadError}
+                    houseId={activeHouseId}
                     publishError={publishError}
                     validationReport={validationReport}
                     releaseSummary={releaseSummary}

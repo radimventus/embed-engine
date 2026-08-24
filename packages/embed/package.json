@@ -11,11 +11,18 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/embed.es.js",
       "default": "./dist/embed.es.js"
+    },
+    "./partner-snippet": {
+      "types": "./scripts/lib/partnerSnippet.d.ts",
+      "import": "./scripts/lib/partnerSnippet.mjs",
+      "default": "./scripts/lib/partnerSnippet.mjs"
     }
   },
   "files": [
     "dist",
-    "DISTRIBUTION.md"
+    "DISTRIBUTION.md",
+    "scripts/lib/partnerSnippet.mjs",
+    "scripts/lib/partnerSnippet.d.ts"
   ],
   "scripts": {
     "build": "node ./scripts/build-distribution.mjs",
@@ -26,7 +33,7 @@
     "deploy:pages": "pnpm run publish:release",
     "ssot:guard": "tsx --test scripts/ssot-guard.test.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts src/delivery/deliveryLayer.test.ts src/delivery/revealEngine.test.ts src/delivery/cssIsolation.test.ts src/delivery/resolveProductionAssetBase.test.ts src/launcher/embedHero/socialProofParity.test.ts scripts/ssot-guard.test.ts",
+    "test": "tsx --test src/Embed.test.ts src/fixtures.test.ts src/delivery/deliveryLayer.test.ts src/delivery/revealEngine.test.ts src/delivery/cssIsolation.test.ts src/delivery/resolveProductionAssetBase.test.ts src/launcher/embedHero/socialProofParity.test.ts scripts/ssot-guard.test.ts scripts/lib/partnerSnippet.test.mjs src/delivery/chatParity.test.ts",
     "test:browser": "tsx --test src/browser/embed.browser.test.ts",
     "demo": "vite --config demo/vite.config.ts"
   },
