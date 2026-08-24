@@ -6,8 +6,8 @@
 
 import { mountClientStudio } from "@client-studio/embed-mount";
 import {
+  getCanonicalHouse,
   getSharedWorkspaceContext,
-  resolveMountProjectView,
   resolveWorkspaceHouseBinding,
 } from "@embed-engine/platform-access";
 
@@ -23,30 +23,44 @@ export type ClientStudioDeliverySession = EmbedSession & {
   readonly getDeliveryState: () => EmbedDeliveryState | null;
 };
 
-/** PT-PDM-03 — Shared Project Runtime validates mount id before Client Studio. */
-function resolvePilotProjectId(objectId: string | undefined): string {
-  const view = resolveMountProjectView(objectId ?? null);
-  if (view !== null) {
-    return view.project.id;
+/**
+ * PT-PDM-03 — validate the requested delivery identity while preserving
+ * House semantics for the Client Studio mount boundary.
+ *
+ * Client Studio `objectId` is explicitly a House id. A canonical House may
+ * resolve through Shared Project Runtime, but must not be collapsed to its
+ * enclosing Project id before `mountClientStudio`.
+ */
+export function resolveClientHouseId(
+  objectId: string | undefined,
+): string {
+  const requestedHouseId = objectId?.trim() ?? "";
+
+  if (
+    requestedHouseId.length > 0 &&
+    getCanonicalHouse(requestedHouseId) !== null
+  ) {
+    return requestedHouseId;
   }
-  const draftHouseId = objectId?.trim() ?? "";
+
   const workspace = getSharedWorkspaceContext();
-  const draftBinding =
-    workspace !== null && draftHouseId.length > 0
+  const workspaceBinding =
+    workspace !== null && requestedHouseId.length > 0
       ? resolveWorkspaceHouseBinding({
           projectId: workspace.projectId,
-          houseId: draftHouseId,
+          houseId: requestedHouseId,
         })
       : null;
-  if (
-    draftBinding !== null &&
-    draftBinding.authoringDraftPackage !== null
-  ) {
-    return draftBinding.houseId;
+
+  if (workspaceBinding !== null) {
+    return workspaceBinding.houseId;
   }
-  const label = draftHouseId.length > 0 ? draftHouseId : "(default)";
+
+  const label =
+    requestedHouseId.length > 0 ? requestedHouseId : "(default)";
+
   throw new Error(
-    `Embed.mount: unknown projectId "${label}". Use a Shared Project id from Shared Project Runtime.`,
+    `Embed.mount: unknown objectId "${label}". Use a canonical House id from Shared Project Runtime.`,
   );
 }
 
@@ -61,7 +75,7 @@ export function bootstrapClientStudioDelivery(
 ): ClientStudioDeliverySession {
   ensureClientStudioStyles();
 
-  const objectId = resolvePilotProjectId(options.objectId);
+  const objectId = resolveClientHouseId(options.objectId);
   const handle = mountClientStudio({
     target: host,
     objectId,

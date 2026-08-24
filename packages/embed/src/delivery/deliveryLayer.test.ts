@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { afterEach, describe, it } from "node:test";
 import { Window } from "happy-dom";
 
+import { resolveClientHouseId } from "./mountClientStudioDelivery";
 import { createDeliveryRuntime } from "./createDeliveryRuntime";
 import {
   captureHostScroll,
@@ -57,6 +58,28 @@ function installDom(): Window {
 }
 
 describe("Embed delivery layer preparation", () => {
+
+  it("preserves canonical DSE House identity across the Client Studio delivery boundary", () => {
+    const houseId =
+      "reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk";
+
+    assert.equal(resolveClientHouseId(houseId), houseId);
+  });
+
+  it("does not reinterpret a Project identity as a Client House identity", () => {
+    assert.throws(
+      () => resolveClientHouseId("project-domy-s-energii"),
+      /unknown objectId/,
+    );
+  });
+
+  it("rejects an unknown Client House identity", () => {
+    assert.throws(
+      () => resolveClientHouseId("house-does-not-exist"),
+      /unknown objectId/,
+    );
+  });
+
   const fixturePackage = projectRuntimeHousePackageFromCsvTexts({
     galleryCsv: `order,room,file
 1,exterior,01.webp
