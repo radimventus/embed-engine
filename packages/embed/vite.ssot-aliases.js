@@ -40,6 +40,7 @@ export const workspaceSourceAliases = {
     "@embed-engine/core/priority": pkgSrc("core", "priority/index.ts"),
     "@embed-engine/core": pkgSrc("core"),
     "@embed-engine/ai": pkgSrc("ai"),
+    "@embed-engine/embed/partner-snippet": path.resolve(embedPackageRoot, "scripts/lib/partnerSnippet.mjs"),
     "@embed-engine/embed": path.resolve(embedPackageRoot, "src/index.ts"),
     "@embed-engine/contracts": pkgSrc("contracts"),
     "@embed-engine/model": pkgSrc("model"),
