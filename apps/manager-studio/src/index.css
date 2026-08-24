@@ -21,3 +21,18 @@
     @apply font-sans antialiased;
   }
 }
+
+/* TASK-71F MANAGER GOLD ACCENT BEGIN */
+/*
+ * Manager Studio business/active language.
+ *
+ * Navy remains the structural/text colour.
+ * Gold is the canonical CONIS active/business accent.
+ *
+ * This is Manager-owned presentation only; no shared platform or
+ * intelligence data authority is changed.
+ */
+:root {
+  --platform-accent: #c89b2d;
+}
+/* TASK-71F MANAGER GOLD ACCENT END */
