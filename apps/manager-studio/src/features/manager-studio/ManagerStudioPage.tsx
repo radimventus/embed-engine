@@ -1,22 +1,15 @@
-import { RuntimeBootstrapGate } from './foundation';
-import { ManagerWorkCenterHome } from './ManagerWorkCenterHome';
-import { OperationsCenterCanvas } from './operations-center/OperationsCenterCanvas';
-import { OperationsCanvas } from './operations/OperationsCanvas';
-import { ProductLearningCanvas } from './product-learning/ProductLearningCanvas';
-import { DecisionSessionRuntimeProvider } from './runtime/DecisionSessionRuntimeProvider';
+import { ManagerWorkCenterHome } from "./ManagerWorkCenterHome";
+import { DecisionSessionRuntimeProvider } from "./runtime/DecisionSessionRuntimeProvider";
 
 /**
- * PR-026 — Partner Manager page: Přehled · Provoz · Shrnutí only.
+ * TASK 71B — Partner Manager Studio is one coherent Manager Intelligence
+ * product. Legacy Operations / Product Learning canvases are no longer
+ * appended below the new dashboard.
  */
 export function ManagerStudioPage() {
   return (
     <DecisionSessionRuntimeProvider>
       <ManagerWorkCenterHome />
-      <RuntimeBootstrapGate>
-        <OperationsCanvas partnerOnly />
-      </RuntimeBootstrapGate>
-      <OperationsCenterCanvas partnerOnly />
-      <ProductLearningCanvas partnerOnly />
     </DecisionSessionRuntimeProvider>
   );
 }

@@ -1,7 +1,7 @@
-import { scrollToSection } from './foundation/scrollToSection';
-import { ManagerWorkspaceScopeControls } from './ManagerWorkspaceScopeControls';
-import { useManagerNav } from './foundation/ManagerNavProvider';
-import { PARTNER_NAV_GROUPS } from './partnerNav';
+import { scrollToSection } from "./foundation/scrollToSection";
+import { ManagerWorkspaceScopeControls } from "./ManagerWorkspaceScopeControls";
+import { useManagerNav } from "./foundation/ManagerNavProvider";
+import { PARTNER_NAV_GROUPS } from "./partnerNav";
 
 function NavGroup({
   title,
@@ -31,16 +31,16 @@ function NavGroup({
               key={item.id}
               type="button"
               aria-label={item.label}
-              aria-current={isActive ? 'true' : undefined}
+              aria-current={isActive ? "true" : undefined}
               onClick={() => {
                 scrollToSection(item.id);
               }}
               className={[
-                'rounded-xl border px-3.5 py-3 text-left text-sm font-semibold platform-motion',
+                "rounded-xl border px-3.5 py-3 text-left text-sm font-semibold platform-motion",
                 isActive
-                  ? 'border-[var(--platform-blue)] bg-[var(--platform-cream-light)] text-[var(--platform-navy)]'
-                  : 'border-[#E3E3E3] bg-white text-[var(--platform-navy)] hover:border-[var(--platform-blue)] hover:bg-[var(--platform-blue)] hover:text-white',
-              ].join(' ')}
+                  ? "border-[var(--platform-accent)] bg-[var(--platform-cream-light)] text-[var(--platform-navy)]"
+                  : "border-[#E3E3E3] bg-white text-[var(--platform-navy)] hover:border-[var(--platform-accent)] hover:bg-[var(--platform-cream-light)]",
+              ].join(" ")}
             >
               {item.label}
             </button>
@@ -65,7 +65,7 @@ export function ManagerStudioSidebar() {
     >
       <div className="flex h-[52px] shrink-0 items-center px-6">
         <span className="text-[11px] font-bold uppercase tracking-[1px] text-[var(--platform-section)]">
-          Pracovní centrum
+          Manažerský přehled
         </span>
       </div>
       <ManagerWorkspaceScopeControls />

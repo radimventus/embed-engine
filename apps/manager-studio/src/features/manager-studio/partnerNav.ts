@@ -1,6 +1,13 @@
 /**
- * PR-026 — Partner-facing Manager navigation (firma majitel).
- * Internal CONIS admin surfaces are filtered out of the partner UI.
+ * TASK 71B — Partner-facing Manager Intelligence navigation.
+ *
+ * The information architecture follows the actual Manager product:
+ *
+ * Overview → decision intelligence → Experience recommendations.
+ *
+ * Every navigation item maps to a real section rendered by
+ * ManagerWorkCenterHome. Legacy pilot/platform navigation is intentionally
+ * removed from the partner Manager surface.
  */
 
 export type PartnerNavItem = {
@@ -17,57 +24,66 @@ export type PartnerNavGroup = {
 
 export const PARTNER_NAV_GROUPS: readonly PartnerNavGroup[] = [
   {
-    title: 'Přehled',
-    ariaLabel: 'Přehled',
+    title: "Přehled",
+    ariaLabel: "Manažerský přehled",
     items: [
       {
-        id: 'mwc-dropoff',
-        label: 'Místa ztráty zákazníků',
-        short: 'Z',
+        id: "manager-work-center",
+        label: "Dashboard",
+        short: "D",
       },
       {
-        id: 'mwc-factors',
-        label: 'Co ovlivňuje rozhodnutí zákazníků',
-        short: 'R',
+        id: "manager-readiness",
+        label: "Připravenost klientů",
+        short: "P",
       },
       {
-        id: 'mwc-improvements',
-        label: 'Doporučená vylepšení zážitkové vrstvy',
-        short: 'V',
+        id: "manager-trajectory",
+        label: "Rozhodovací trajektorie",
+        short: "T",
       },
     ],
   },
   {
-    title: 'Provoz',
-    ariaLabel: 'Provoz',
+    title: "Rozhodování",
+    ariaLabel: "Rozhodování klientů",
     items: [
-      { id: 'live-overview', label: 'Živý přehled', short: 'Ž' },
-      { id: 'poc-metrics', label: 'Metriky platformy', short: 'M' },
+      {
+        id: "manager-interests",
+        label: "Zájmy klientů",
+        short: "Z",
+      },
+      {
+        id: "manager-engagement",
+        label: "Engagement domu",
+        short: "E",
+      },
     ],
   },
   {
-    title: 'Shrnutí',
-    ariaLabel: 'Shrnutí',
+    title: "Intelligence",
+    ariaLabel: "Manager Intelligence",
     items: [
-      { id: 'pl-executive', label: 'Manažerské shrnutí', short: 'S' },
-      { id: 'pl-insights', label: 'Produktové poznatky', short: 'P' },
+      {
+        id: "manager-improvements",
+        label: "Doporučená vylepšení",
+        short: "V",
+      },
     ],
   },
 ] as const;
 
-export const PARTNER_SECTION_IDS: readonly string[] = [
-  'manager-work-center',
-  ...PARTNER_NAV_GROUPS.flatMap((group) => group.items.map((item) => item.id)),
-];
+export const PARTNER_SECTION_IDS: readonly string[] =
+  PARTNER_NAV_GROUPS.flatMap((group) => group.items.map((item) => item.id));
 
 export function partnerSectionLabel(sectionId: string | null): string {
-  if (sectionId === null) return 'Přehled';
-  if (sectionId === 'manager-work-center') {
-    return 'Místa ztráty zákazníků';
-  }
+  if (sectionId === null) return "Dashboard";
+
   for (const group of PARTNER_NAV_GROUPS) {
     const item = group.items.find((entry) => entry.id === sectionId);
+
     if (item !== undefined) return item.label;
   }
-  return 'Přehled';
+
+  return "Dashboard";
 }
