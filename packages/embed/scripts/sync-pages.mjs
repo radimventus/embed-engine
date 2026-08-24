@@ -30,6 +30,8 @@ import {
   pagesDir,
 } from "./lib/distributionTree.mjs";
 
+import { buildOfficialPartnerSnippet } from "./lib/partnerSnippet.mjs";
+
 const REQUIRED = ["embed.es.js", "embed.iife.js", "index.d.ts", "version.json"];
 
 /**
@@ -39,6 +41,9 @@ const REQUIRED = ["embed.es.js", "embed.iife.js", "index.d.ts", "version.json"];
  * that cross-origin redirect (CORS / Failed to fetch on house-package CSV).
  */
 const PAGES_ORIGIN = "https://conis.cz";
+const DSE_BUNGALOV_4KK_HOUSE_ID =
+  "reference-v1-company-domy-s-energii-project-domy-s-energii-bungalov-4kk";
+
 
 /**
  * Public AI Delivery Edge URL (Method A host bootstrap).
@@ -51,15 +56,6 @@ const AI_DELIVERY_URL = (
   ""
 ).replace(/\/$/, "");
 
-function aiDeliveryHostBootstrap() {
-  if (AI_DELIVERY_URL.length === 0) {
-    return "";
-  }
-  return `<script>
-  window.__EMBED_AI_DELIVERY__ = { deliveryUrl: ${JSON.stringify(AI_DELIVERY_URL)} };
-</script>
-`;
-}
 
 /**
  * Official partner distribution fragment — derived from Embed.mount launcher API.
@@ -78,24 +74,13 @@ function resolvePartnerCacheBust(_fingerprintCacheBust) {
   return "embed-02";
 }
 
-function buildOfficialPartnerSnippet(cacheBust) {
-  const partnerCacheBust = resolvePartnerCacheBust(cacheBust);
-  const scriptSrc = `${PAGES_ORIGIN}/embed/embed.iife.js?v=${partnerCacheBust}`;
-  const deliveryBootstrap = aiDeliveryHostBootstrap();
-  return `<!-- BEGIN OFFICIAL PARTNER SNIPPET -->
-<div id="embed-hero"></div>
-${deliveryBootstrap}<script src="${scriptSrc}"></script>
-<script>
-  Embed.mount({
-    mode: "launcher",
-    target: "#embed-hero",
-    objectId: "house-modern-01",
-    assetBase: "${PAGES_ORIGIN}",
-    entryPoint: "hero-cta",
-    launcherId: "embed-hero"
+function buildDsePartnerSnippet(cacheBust) {
+  return buildOfficialPartnerSnippet({
+    houseId: DSE_BUNGALOV_4KK_HOUSE_ID,
+    assetBase: PAGES_ORIGIN,
+    cacheBust: resolvePartnerCacheBust(cacheBust),
+    aiDeliveryUrl: AI_DELIVERY_URL,
   });
-</script>
-<!-- END OFFICIAL PARTNER SNIPPET -->`;
 }
 
 function assertTreeReady() {
@@ -171,12 +156,12 @@ function writeIndexHtml(version, cacheBust) {
     <li><a href="./version.json"><code>version.json</code></a> — manifest + Runtime fingerprint</li>
   </ul>
   <h2>Usage (Launcher Mode — Embed Hero)</h2>
-  <pre>${buildOfficialPartnerSnippet(cacheBust)
+  <pre>${buildDsePartnerSnippet(cacheBust)
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")}</pre>
   <p>Copy the official snippet from <a href="./OFFICIAL-PARTNER-SNIPPET.html">OFFICIAL-PARTNER-SNIPPET.html</a> (absolute script URL required on partner hosts).</p>
   <p>After publishing a new IIFE, the <code>?v=</code> query is the build commit (automatic fingerprint). Hard-refresh if a CDN/browser cache sticks.</p>
-  <p>Inline / Standalone (explicit): <code>Embed.mount({ target: "#embed", objectId: "house-modern-01" })</code></p>
+  <p>Inline / Standalone (explicit): <code>Embed.mount({ target: "#embed", objectId: DSE_BUNGALOV_4KK_HOUSE_ID })</code></p>
   <p>Legacy Garden (explicit opt-in only): <code>Embed.mount({ target: "#embed", fixture: "garden" })</code></p>
   <p>Verify console on mount: <code>Embed Runtime</code> / <code>Build:</code> / <code>Runtime:</code> / <code>Built:</code>.</p>
 </body>
@@ -237,7 +222,7 @@ function writeLiveHtml(cacheBust) {
   </header>
 
   <main class="host-main">
-    <div id="embed-hero"></div>
+    ${buildDsePartnerSnippet(cacheBust)}
     <p class="host-filler">
       Partnerský obsah pod Hero — ověření scroll lock / restore po Close.
     </p>
@@ -245,17 +230,6 @@ function writeLiveHtml(cacheBust) {
     <p class="host-filler">Ještě jeden blok, aby stránka byla delší než viewport.</p>
   </main>
 
-  <script src="${PAGES_ORIGIN}/embed/embed.iife.js?v=${cacheBust}"></script>
-  ${aiDeliveryHostBootstrap()}  <script>
-    Embed.mount({
-      mode: "launcher",
-      target: "#embed-hero",
-      objectId: "house-modern-01",
-      assetBase: "${PAGES_ORIGIN}",
-      entryPoint: "hero-cta",
-      launcherId: "embed-hero",
-    });
-  </script>
 </body>
 </html>
 `;
@@ -263,7 +237,7 @@ function writeLiveHtml(cacheBust) {
 }
 
 function writePartnerSnippetHtml(cacheBust) {
-  const snippet = buildOfficialPartnerSnippet(cacheBust);
+  const snippet = buildDsePartnerSnippet(cacheBust);
   writeFileSync(path.join(pagesDir, "OFFICIAL-PARTNER-SNIPPET.html"), `${snippet}\n`, "utf8");
 
   const html = `<!DOCTYPE html>

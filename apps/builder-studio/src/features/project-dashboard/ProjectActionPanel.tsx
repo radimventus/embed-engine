@@ -3,9 +3,11 @@ import type { HousePackageValidationReport } from '../house-package/housePackage
 import { formatCzechDateTime } from './projectDashboardModel';
 import { PilotReadyPanel } from './PilotReadyPanel';
 import { CustomerSuccessStatusPanel } from './CustomerSuccessStatusPanel';
+import { HouseEmbedSnippetPanel } from './HouseEmbedSnippetPanel';
 
 type ProjectActionPanelProps = {
   readonly loadError: string | null;
+  readonly houseId: string | null;
   readonly publishError: string | null;
   readonly validationReport: HousePackageValidationReport | null;
   readonly releaseSummary: HousePackageReleaseSummary | null;
@@ -25,6 +27,7 @@ type ProjectActionPanelProps = {
  */
 export function ProjectActionPanel({
   loadError,
+  houseId,
   publishError,
   validationReport,
   releaseSummary,
@@ -120,6 +123,8 @@ export function ProjectActionPanel({
           </p>
         </div>
       )}
+
+      <HouseEmbedSnippetPanel houseId={houseId} />
 
       <PilotReadyPanel />
       <CustomerSuccessStatusPanel />
