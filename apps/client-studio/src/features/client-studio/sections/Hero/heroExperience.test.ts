@@ -73,6 +73,17 @@ describe("Hero Experience (CSCB-02 / SR-002) — Reference Hero (PT-HERO-00)", (
     assert.match(image, /animate-hero-photo-veil/);
   });
 
+
+  it("does not render partner implementation metadata inside Hero content", () => {
+    const content = read("HeroContent.tsx");
+
+    assert.doesNotMatch(content, /data-testid="client-partner-hero"/);
+    assert.doesNotMatch(
+      content,
+      /\{brand\.logoLabel\} · \{brand\.companyName\} · \{brand\.heroLabel\}/,
+    );
+  });
+
   it("keeps Social Proof inside the Hero card (reference parity)", () => {
     const hero = read("Hero.tsx");
     const socialProof = read("SocialProof.tsx");
