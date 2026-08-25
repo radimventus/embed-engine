@@ -27,3 +27,24 @@ export function nextFaqVisibleCount(
 export function hasMoreFaqItems(visibleCount: number, total: number): boolean {
   return visibleCount < total;
 }
+
+export type FaqDatasetIdentityItem = {
+  readonly id: string;
+  readonly question: string;
+  readonly answer: string;
+};
+
+/**
+ * Stable semantic identity of an FAQ dataset.
+ *
+ * Runtime events such as OpenQuestion may cause the parent to create a fresh
+ * array containing the same FAQ data. That must not reset progressive
+ * visibility from 10/15/... back to the landing count.
+ */
+export function faqDatasetIdentity(
+  items: readonly FaqDatasetIdentityItem[],
+): string {
+  return JSON.stringify(
+    items.map((item) => [item.id, item.question, item.answer]),
+  );
+}

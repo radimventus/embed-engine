@@ -1,23 +1,24 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
-import { colors, palette } from '@embed-engine/design-tokens';
+import { colors, palette } from "@embed-engine/design-tokens";
 
-import { JOURNEY_CTA_PRIMARY_CLASS } from '../../foundation/journeyCta';
+import { JOURNEY_CTA_PRIMARY_CLASS } from "../../foundation/journeyCta";
 import {
   FAQ_ACCORDION_LIST_WIDTH_CLASS,
   FAQ_COLUMN_WIDTH_CLASS,
-} from './ai-advisor-layout';
-import type { ExperienceFaqItem } from './experiencePresentation';
+} from "./ai-advisor-layout";
+import type { ExperienceFaqItem } from "./experiencePresentation";
 import {
   FAQ_VISIBLE_PAGE_SIZE,
+  faqDatasetIdentity,
   hasMoreFaqItems,
   initialFaqVisibleCount,
   nextFaqVisibleCount,
-} from './faqProgressiveLoading';
+} from "./faqProgressiveLoading";
 
-export { FAQ_VISIBLE_PAGE_SIZE } from './faqProgressiveLoading';
+export { FAQ_VISIBLE_PAGE_SIZE } from "./faqProgressiveLoading";
 
-const LOAD_MORE_LABEL = 'Zobrazit další';
+const LOAD_MORE_LABEL = "Zobrazit další";
 
 /** RAC-06 — answer body 20% larger than the prior 14px baseline. */
 const FAQ_ANSWER_FONT_SIZE_PX = 16.8;
@@ -39,7 +40,7 @@ function FaqCaretIcon({ expanded }: { expanded: boolean }) {
     <span
       aria-hidden="true"
       className={`inline-flex shrink-0 grow-0 items-center justify-center transition-transform duration-500 ease-out ${
-        expanded ? 'rotate-180' : 'rotate-0'
+        expanded ? "rotate-180" : "rotate-0"
       }`}
       style={{
         width: FAQ_CARET_SIZE.width,
@@ -109,7 +110,7 @@ function FaqItem({ item, onQuestionSelect, onQuestionOpened }: FaqItemProps) {
       <button
         type="button"
         aria-expanded={expanded}
-        aria-label={expanded ? 'Sbalit odpověď' : 'Rozbalit odpověď'}
+        aria-label={expanded ? "Sbalit odpověď" : "Rozbalit odpověď"}
         onClick={togglePanel}
         className="flex w-full cursor-pointer flex-col border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-embed-brand-gold/35"
       >
@@ -123,7 +124,7 @@ function FaqItem({ item, onQuestionSelect, onQuestionOpened }: FaqItemProps) {
         </div>
         <div
           className="grid transition-[grid-template-rows] duration-500 ease-out"
-          style={{ gridTemplateRows: expanded ? '1fr' : '0fr' }}
+          style={{ gridTemplateRows: expanded ? "1fr" : "0fr" }}
         >
           <div className="min-h-0 overflow-hidden">
             <p
@@ -148,10 +149,11 @@ export function FaqList({
   const [visibleCount, setVisibleCount] = useState(() =>
     initialFaqVisibleCount(items.length),
   );
+  const datasetIdentity = faqDatasetIdentity(items);
 
   useEffect(() => {
     setVisibleCount(initialFaqVisibleCount(items.length));
-  }, [items]);
+  }, [datasetIdentity, items.length]);
 
   const visibleItems = items.slice(0, visibleCount);
   const hasMore = hasMoreFaqItems(visibleCount, items.length);
@@ -187,7 +189,7 @@ export function FaqList({
           style={{
             backgroundColor: palette.navy,
             color: palette.pureWhite,
-            borderStyle: 'none',
+            borderStyle: "none",
             borderWidth: 0,
             borderRadius: 8,
             fontSize: 13,
