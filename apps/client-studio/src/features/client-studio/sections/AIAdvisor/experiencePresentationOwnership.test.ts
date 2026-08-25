@@ -105,6 +105,26 @@ describe('Runtime presentation ownership (ED-DA-01R)', () => {
     );
   });
 
+  it('uses natural coaching FAQ even before priorities are selected', () => {
+    const runtime = createTestBuilderRuntime();
+    const decision = runtime.getExperience()!.context.decision;
+    const experienceFaq = faqItemsForExperience({
+      ai: decision.ai,
+      priorityIds: [],
+    });
+
+    assert.ok(experienceFaq.length >= 5);
+    assert.ok(experienceFaq.every((item) => item.question.endsWith('?')));
+    assert.ok(
+      experienceFaq.every(
+        (item) =>
+          !/^(Podpora|Doporučení|Přechod|Vysvětlení|Pokračování):/i.test(
+            item.question,
+          ),
+      ),
+    );
+  });
+
   it('presentation coaching FAQ derives from priorities without Runtime mutation', () => {
     const coach = coachFaqItemsFromPriorities(['privacy', 'plot']);
     assert.ok(coach.length > 3);

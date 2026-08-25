@@ -64,13 +64,7 @@ export function faqItemsForExperience(input: {
   readonly ai: AIContextContract;
   readonly priorityIds: readonly string[];
 }): readonly ExperienceFaqItem[] {
-  if (input.priorityIds.length > 0) {
-    return coachFaqItemsFromPriorities(input.priorityIds);
-  }
-  return orderFaqItemsForPriorities(
-    faqItemsFromAiContext(input.ai),
-    input.priorityIds,
-  );
+  return coachFaqItemsFromPriorities(input.priorityIds);
 }
 
 /**
