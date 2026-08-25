@@ -283,7 +283,7 @@ export function ManagerWorkCenterHome() {
                           <th className="py-2 pr-4">Dům</th>
                           <th className="py-2 pr-4">Profily</th>
                           <th className="py-2 pr-4">Ø Index</th>
-                          <th className="py-2">75–100</th>
+                          <th className="py-2">75–100 %</th>
                         </tr>
                       </thead>
 
@@ -471,7 +471,7 @@ function ExecutiveDashboard({
         <MetricBox
           label="Vysoká připravenost"
           value={String(highReadiness)}
-          detail="pásmo 75–100"
+          detail="pásmo 75–100 %"
         />
         <MetricBox
           label="Konverze"
@@ -509,10 +509,10 @@ function ReadinessDistribution({
   readonly intelligence: ManagerHouseIntelligence;
 }) {
   const values = [
-    ["0–24", intelligence.readinessDistribution["0-24"]],
-    ["25–49", intelligence.readinessDistribution["25-49"]],
-    ["50–74", intelligence.readinessDistribution["50-74"]],
-    ["75–100", intelligence.readinessDistribution["75-100"]],
+    ["0–24 %", intelligence.readinessDistribution["0-24"]],
+    ["25–49 %", intelligence.readinessDistribution["25-49"]],
+    ["50–74 %", intelligence.readinessDistribution["50-74"]],
+    ["75–100 %", intelligence.readinessDistribution["75-100"]],
   ] as const;
 
   const max = Math.max(1, ...values.map(([, value]) => value));
@@ -588,7 +588,7 @@ function AverageReadinessDonut({
         </p>
 
         <p className="mt-3 text-xs opacity-65">
-          V pásmu nejvyšší připravenosti 75–100 je aktuálně {highReadiness}{" "}
+          V pásmu nejvyšší připravenosti 75–100 % je aktuálně {highReadiness}{" "}
           profilů.
         </p>
       </div>

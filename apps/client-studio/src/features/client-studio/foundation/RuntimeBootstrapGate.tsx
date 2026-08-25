@@ -15,7 +15,7 @@ export function RuntimeBootstrapGate({ children }: RuntimeBootstrapGateProps) {
   const { ready } = useDecisionSessionRuntime();
 
   if (!ready) {
-    return <StudioLoading label="Připravuji Decision Session…" />;
+    return <StudioLoading label="Připravuji prostředí…" />;
   }
 
   return children;

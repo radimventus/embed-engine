@@ -100,7 +100,7 @@ export function AmbientSocialProof({
     <aside
       aria-live="polite"
       aria-label="Signál důvěry"
-      className="pointer-events-none fixed inset-x-0 bottom-[calc(20px+var(--guided-journey-bottom-nav-offset,0px))] z-40 flex justify-center px-4"
+      className="pointer-events-none fixed inset-x-0 bottom-[calc(20px+var(--guided-journey-bottom-nav-offset,0px))] z-40 flex justify-start px-section"
     >
       <div className="flex max-w-[32rem] items-center gap-3 rounded-xl border border-[#D4AF37]/40 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm">
         <SocialProofIcon name={entry.icon} />
