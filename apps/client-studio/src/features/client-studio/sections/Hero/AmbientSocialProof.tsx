@@ -100,16 +100,18 @@ export function AmbientSocialProof({
     <aside
       aria-live="polite"
       aria-label="Signál důvěry"
-      className="pointer-events-none fixed inset-x-0 bottom-[calc(20px+var(--guided-journey-bottom-nav-offset,0px))] z-40 flex justify-start px-section desktop:ml-sidebar"
+      className="pointer-events-none fixed inset-x-0 bottom-[calc(20px+var(--guided-journey-bottom-nav-offset,0px))] z-40 desktop:left-sidebar"
     >
-      <div className="flex max-w-[32rem] items-center gap-3 rounded-xl border border-[#D4AF37]/40 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm">
-        <SocialProofIcon name={entry.icon} />
-        <p className="text-sm leading-snug text-[#001930]">
-          <span className="mr-2 text-xl font-bold tracking-tight">
-            {entry.value}
-          </span>
-          {entry.text}
-        </p>
+      <div className="mx-auto box-border w-full px-section desktop:w-canvas desktop:min-w-canvas desktop:max-w-canvas">
+        <div className="flex max-w-[32rem] items-center gap-3 rounded-xl border border-[#D4AF37]/40 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm">
+          <SocialProofIcon name={entry.icon} />
+          <p className="text-sm leading-snug text-[#001930]">
+            <span className="mr-2 text-xl font-bold tracking-tight">
+              {entry.value}
+            </span>
+            {entry.text}
+          </p>
+        </div>
       </div>
     </aside>
   );
