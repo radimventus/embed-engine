@@ -57,7 +57,7 @@ describe('Responsive House Navigator (RCS-03)', () => {
     assert.match(viewport, /floorplan-reset-zoom/);
     assert.match(navigator, /SelectRoom/);
     assert.equal(navigator.includes('ChangeFloor'), false);
-    assert.match(roomIndex, /SpatialContextPanel/);
+    assert.match(roomIndex, /RoomSelect/);
     assert.match(roomIndex, /desktop:hidden/);
     assert.match(roomPanel, /min-h-11/);
     assert.match(segmented, /min-h-11/);

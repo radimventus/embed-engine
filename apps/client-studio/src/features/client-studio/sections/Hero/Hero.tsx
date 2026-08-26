@@ -21,7 +21,7 @@ export function Hero() {
       className={`scroll-mt-header ${SECTION_SURFACE_CLASS}`}
     >
       <HeroSurface>
-        <div className="grid h-full min-h-0 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] mobile:grid-cols-1 mobile:grid-rows-[auto_minmax(16rem,1fr)]">
+        <div className="grid h-full min-h-0 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] tabletMin:grid-cols-[minmax(0,1fr)_minmax(0,1.55fr)] tabletMax:grid-cols-[minmax(0,1fr)_minmax(0,1.85fr)] mobile:grid-cols-1 mobile:grid-rows-[auto_minmax(16rem,1fr)]">
           <HeroContent />
           <HeroImage />
         </div>

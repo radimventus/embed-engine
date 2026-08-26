@@ -466,7 +466,7 @@ export function DecisionSessionRuntimeProvider({
             }
           : null;
       let restoredSession = undefined;
-      let decisionSessionId = crypto.randomUUID();
+      let decisionSessionId: string = crypto.randomUUID();
       if (scope !== null) {
         const pointer = readDecisionSessionPointer(scope);
         if (pointer !== null) {

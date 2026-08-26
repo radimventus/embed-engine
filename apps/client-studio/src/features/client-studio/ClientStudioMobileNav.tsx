@@ -46,9 +46,9 @@ export function ClientStudioMobileNav({
     <nav
       data-studio-shell="mobile-nav"
       aria-label="Navigace Client Studia"
-      className="fixed inset-x-0 bottom-0 z-50 border-t border-embed-border-default bg-embed-brand-navy pb-[env(safe-area-inset-bottom,0px)] desktop:hidden"
+      className="sticky top-[var(--experience-header-height,72px)] z-40 w-full border-b border-embed-border-default bg-[#F7F6F4]/95 backdrop-blur desktop:hidden"
     >
-      <ul className="mx-auto flex h-14 max-w-canvas items-stretch justify-around px-1">
+      <ul className="mx-auto flex min-h-9 max-w-canvas items-stretch justify-around px-1 mobile:min-h-8">
         {navItems.map((item) => {
           const isActive = activeId === item.id;
           return (
@@ -62,16 +62,16 @@ export function ClientStudioMobileNav({
                   navigateToJourneySection(item.id);
                 }}
                 className={[
-                  "flex min-h-11 w-full flex-col items-center justify-center gap-0.5 px-1 text-[10px] font-medium leading-tight transition-colors touch-manipulation",
+                  "flex min-h-9 w-full items-center justify-center gap-1 px-1 text-[10px] font-medium leading-none transition-colors touch-manipulation mobile:min-h-8",
                   isActive
                     ? "text-embed-brand-gold"
-                    : "text-embed-background-primary/70",
+                    : "text-embed-foreground-primary/65",
                 ].join(" ")}
               >
-                <span className="text-xs font-semibold" aria-hidden="true">
+                <span className="text-[10px] font-semibold" aria-hidden="true">
                   {item.short}
                 </span>
-                <span className="max-w-full truncate">{item.label}</span>
+                <span className="max-w-full truncate mobile:hidden">{item.label}</span>
               </button>
             </li>
           );

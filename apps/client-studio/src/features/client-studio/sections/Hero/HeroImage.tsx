@@ -35,7 +35,7 @@ export function HeroImage() {
     <section
       role="img"
       aria-label="Rodinný dům MODERN A01"
-      className="relative h-full min-h-0 w-full bg-cover bg-[center_42%] bg-no-repeat"
+      className="relative h-full min-h-0 w-full bg-cover bg-[center_42%] bg-no-repeat min-w-0"
       style={heroSrc ? { backgroundImage: `url('${heroSrc}')` } : undefined}
     >
       <div

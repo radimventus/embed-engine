@@ -57,7 +57,7 @@ const DESKTOP_VIEWPORT_WIDTH_PX =
 const DESKTOP_SLOT_STEP_PX = DESKTOP_FITTED_THUMB_WIDTH_PX + THUMB_GAP_PX;
 
 /** Below this measured viewport width, show 3 larger thumbs (RCS-04). */
-const MOBILE_SLOT_BREAKPOINT_PX = 420;
+const MOBILE_VIEWPORT_MAX_PX = 767;
 const MOBILE_VISIBLE_SLOTS = 3;
 
 /** Same gold as SpatialZoomControl loupe (`#D4AF37`). */
@@ -85,8 +85,11 @@ function resolveRailLayout(viewportWidth: number): RailLayout {
     };
   }
 
-  const visibleSlots =
-    width < MOBILE_SLOT_BREAKPOINT_PX ? MOBILE_VISIBLE_SLOTS : THUMBNAIL_SLOT_COUNT;
+  const mobilePortrait =
+    typeof window !== 'undefined' && window.innerWidth <= MOBILE_VIEWPORT_MAX_PX;
+  const visibleSlots = mobilePortrait
+    ? MOBILE_VISIBLE_SLOTS
+    : THUMBNAIL_SLOT_COUNT;
   const thumbWidth = Math.max(
     44,
     Math.floor((width - (visibleSlots - 1) * THUMB_GAP_PX) / visibleSlots),

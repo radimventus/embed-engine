@@ -1,5 +1,6 @@
 import { FloorPlan } from './FloorPlan';
 import { FloorSelector } from './FloorSelector';
+import { MediaModeToggle } from './MediaModeToggle';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import {
   HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS,
@@ -20,16 +21,25 @@ export function FloorPlanExplorer() {
       id={PILOT_SECTION_IDS.floorPlan}
       tabIndex={-1}
       aria-label="Půdorys"
-      className={`scroll-mt-header ${SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS}`}
+      className={`scroll-mt-header ${SPATIAL_TERMINAL_FLOOR_PLAN_SECTION_CLASS} tabletMin:col-start-2 tabletMin:row-start-1 tabletMin:row-span-2`}
     >
       {/* Align plan top with Media Display (same title band as Room Menu). */}
-      <div className={SPATIAL_TERMINAL_WALKTHROUGH_TITLE_CLASS} aria-hidden="true">
+      <div className={`${SPATIAL_TERMINAL_WALKTHROUGH_TITLE_CLASS} mobile:hidden`} aria-hidden="true">
         <span className="invisible">.</span>
       </div>
       <FloorPlan />
       <div className={SPATIAL_TERMINAL_PLAN_TOGGLE_GAP_CLASS} aria-hidden="true" />
-      <div className={`${SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS} justify-center pb-1`}>
+      <div className={`${SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS} hidden justify-center pb-1 tabletMax:flex desktop:flex`}>
         <div className={HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS}>
+          <FloorSelector />
+        </div>
+      </div>
+
+      <div className="hidden w-full items-center justify-center gap-3 pt-4 tabletMin:flex mobile:hidden tabletMax:hidden desktop:hidden">
+        <div className="min-w-0 flex-1">
+          <MediaModeToggle />
+        </div>
+        <div className="min-w-0 flex-1">
           <FloorSelector />
         </div>
       </div>

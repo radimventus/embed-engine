@@ -52,7 +52,7 @@ export function HeroContent() {
   return (
     <section
       aria-label="Hero Content"
-      className="relative flex h-full min-h-0 w-full flex-col justify-center bg-white px-section py-section mobile:py-8"
+      className="relative flex h-full min-h-0 w-full flex-col justify-center bg-white px-section py-section mobile:py-8 min-w-0"
     >
       <div className="translate-x-[10px] mobile:translate-x-0">
         {brand !== null ? (

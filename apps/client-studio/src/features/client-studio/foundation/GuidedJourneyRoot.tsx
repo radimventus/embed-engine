@@ -2,11 +2,9 @@ import { useEffect } from 'react';
 
 import { createFrameScheduler } from './scheduleOnAnimationFrame';
 import {
-  MOBILE_NAV_HEIGHT_PX,
   VIEWPORT_BREAKPOINTS,
   matchViewportBand,
   usesGuidedScrollSnap,
-  usesMobileSectionNav,
 } from './responsiveLayout';
 
 type GuidedJourneyRootProps = {
@@ -33,15 +31,13 @@ export function GuidedJourneyRoot({ snapEnabled }: GuidedJourneyRootProps) {
     const applyShellOffsets = () => {
       const header = document.querySelector<HTMLElement>('[data-experience-header]');
       const headerHeight = header?.getBoundingClientRect().height ?? 72;
-      const band = matchViewportBand(window.innerWidth);
-      const bottomNav = usesMobileSectionNav(band) ? MOBILE_NAV_HEIGHT_PX : 0;
       const headerOffset = `${Math.ceil(headerHeight + 20)}px`;
       for (const root of roots) {
         root.style.setProperty('--experience-header-height', `${Math.ceil(headerHeight)}px`);
         root.style.setProperty('--guided-journey-header-offset', headerOffset);
         root.style.setProperty(
           '--guided-journey-bottom-nav-offset',
-          `${bottomNav}px`,
+          '0px',
         );
       }
     };

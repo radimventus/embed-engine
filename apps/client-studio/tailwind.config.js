@@ -32,7 +32,10 @@ export default {
         // RCS-01 breakpoint system — desktop (≥1280) is SSOT geometry.
         mobile: { max: '767px' },
         tablet: { min: '768px' },
+        tabletMin: { min: '768px', max: '1199px' },
+        tabletMax: { min: '1200px', max: '1439px' },
         desktop: { min: '1280px' },
+        desktopWide: { min: '1440px' },
       },
       width: {
         sidebar: '48px',

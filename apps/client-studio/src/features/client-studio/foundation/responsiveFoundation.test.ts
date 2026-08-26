@@ -79,13 +79,23 @@ describe('Responsive Foundation (RCS-01)', () => {
     assert.match(canvas, /desktop:min-w-canvas/);
     assert.match(canvas, /w-full/);
 
+    // AppShell owns responsive visibility of the sidebar slot:
+    // hidden on mobile/tablet, restored only at desktop.
+    assert.match(shell, /hidden sticky/);
     assert.match(shell, /desktop:block/);
-    assert.match(sidebar, /desktop:flex/);
+    assert.match(shell, /data-studio-shell="sidebar-slot"/);
+
+    // Mobile/tablet navigation retains the canonical section authority,
+    // but lives at the top instead of a fixed bottom bar.
     assert.match(mobileNav, /PILOT_SECTION_NAV/);
     assert.match(mobileNav, /navigateToJourneySection/);
     assert.match(mobileNav, /desktop:hidden/);
+    assert.match(mobileNav, /sticky top-/);
+    assert.doesNotMatch(mobileNav, /fixed inset-x-0 bottom-0/);
+
     assert.match(header, /desktop:w-canvas/);
     assert.match(workspace, /desktop:pb-0/);
     assert.match(journeyRoot, /usesGuidedScrollSnap/);
   });
+
 });

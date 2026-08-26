@@ -75,12 +75,12 @@ export function PriorityChapterBridge() {
     <div
       id={PRIORITY_BRIDGE_ANCHOR_ID}
       tabIndex={-1}
-      className="mt-[50px] bg-[#FFFFFF] py-[50px] mobile:mt-8 mobile:py-5"
+      className="mt-[50px] w-full min-w-0 max-w-none bg-[#FFFFFF] py-[50px] mobile:mt-8 mobile:px-3 mobile:py-5"
       data-testid="priority-chapter-bridge"
       aria-label="Shrnutí priorit a další hodnota"
     >
-      <div className="flex flex-col gap-8">
-        <header className="flex w-full flex-col gap-2">
+      <div className="flex w-full min-w-0 max-w-none flex-col gap-8">
+        <header className="flex w-full min-w-0 max-w-none flex-col gap-2">
           <h2
             className={`${PRIORITY_ENGINE_TITLE_CLASS} uppercase`}
             data-testid="priority-bridge-title"
@@ -97,7 +97,7 @@ export function PriorityChapterBridge() {
         </header>
 
         <div
-          className="grid w-full grid-cols-3 items-stretch gap-5 mobile:grid-cols-1"
+          className="grid w-full grid-cols-3 items-stretch gap-5 tabletMin:grid-cols-2 tabletMin:gap-4 tabletMax:grid-cols-3 mobile:grid-cols-1 mobile:gap-4"
           data-testid="priority-payoff-panels"
         >
           <section className={panelClass} data-testid="priority-payoff-facts">
@@ -154,7 +154,7 @@ export function PriorityChapterBridge() {
           </section>
         </div>
 
-        <div className="mx-auto flex w-full max-w-[760px] flex-col items-center gap-2 text-center">
+        <div className="mx-auto flex w-full min-w-0 max-w-[760px] flex-col items-center gap-2 text-center mobile:max-w-none">
           <p
             className="m-0 text-[18px] font-bold leading-[1.5]"
             style={goldIntenseStyle}
@@ -162,7 +162,7 @@ export function PriorityChapterBridge() {
             {PRIORITY_PAYOFF_INTRO}
           </p>
           <ul
-            className={`${bodyClass} m-0 flex w-full max-w-[760px] list-disc flex-col gap-1.5 pl-12 text-left`}
+            className={`${bodyClass} m-0 flex w-full min-w-0 max-w-[760px] list-disc flex-col gap-1.5 pl-12 text-left mobile:max-w-none mobile:pl-6`}
           >
             <li>
               {

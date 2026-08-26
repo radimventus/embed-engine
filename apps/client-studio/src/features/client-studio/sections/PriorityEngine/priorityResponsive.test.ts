@@ -24,10 +24,10 @@ describe('Responsive Priority Experience (RCS-02)', () => {
     const engine = read('PriorityEngine.tsx');
 
     assert.match(cards, /grid-cols-4/);
-    assert.match(cards, /mobile:grid-cols-2/);
+    assert.match(cards, /mobile:grid-cols-3/);
     assert.match(cards, /mobile:max-w-none/);
     assert.match(cards, /overflow-visible/);
-    assert.equal(cards.includes('tablet:grid-cols-3'), false);
+    assert.match(cards, /tabletMin:grid-cols-3/);
 
     assert.match(layout, /DECISION_CARD_SHELL_CLASS/);
     assert.match(layout, /desktop:h-\[155px\]/);
