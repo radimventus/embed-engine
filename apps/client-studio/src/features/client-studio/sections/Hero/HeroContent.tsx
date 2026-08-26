@@ -71,7 +71,7 @@ export function HeroContent() {
           {heroCopy.headline}
         </h1>
 
-        <dl className="mt-8 grid grid-cols-3 divide-x divide-embed-border-default mobile:grid-cols-1 mobile:gap-3 mobile:divide-x-0">
+        <dl className="mt-8 grid grid-cols-3 divide-x divide-embed-border-default mobile:grid-cols-2 mobile:gap-3 mobile:divide-x-0">
           {heroCopy.metrics.map((feature, index) => (
             <div
               key={`${feature.label}-${index}`}
@@ -87,7 +87,7 @@ export function HeroContent() {
           ))}
         </dl>
 
-        <div className="mt-10 flex -translate-x-[10px] translate-y-[50px] justify-center mobile:translate-x-0 mobile:translate-y-0 mobile:justify-start">
+        <div className="mt-10 flex -translate-x-[10px] translate-y-[50px] justify-center mobile:translate-x-0 mobile:translate-y-0 mobile:justify-center">
           <HeroCTA />
         </div>
       </div>

@@ -36,7 +36,7 @@ describe("TASK48A mobile TOUR corrections 1-5", () => {
   it("keeps the mobile display 16:9 and compact", () => {
     const media = read("../sections/MediaExplorer/MediaExplorer.tsx");
     assert.match(media, /mobile:aspect-video/);
-    assert.match(media, /mobile:mt-1/);
+    assert.match(media, /mobile:mt-0\.5/);
   });
 
   it("uses RoomSelect on mobile without a mobile title spacer", () => {
@@ -47,7 +47,7 @@ describe("TASK48A mobile TOUR corrections 1-5", () => {
       room,
       /SPATIAL_TERMINAL_WALKTHROUGH_TITLE_CLASS[^}]*} mobile:hidden/,
     );
-    assert.match(room, /mobile:px-1/);
+    assert.match(room, /mobile:px-0/);
   });
 
   it("keeps the floorplan full-width and removes the mobile title spacer", () => {

@@ -33,7 +33,7 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
       id={AUDIT_ASSESSMENT_WORKFLOW_ID}
       className={`${AUDIT_PANEL_MAX_WIDTH_CLASS} px-section`}
     >
-      <h2 className="text-center text-base font-semibold tracking-wide">
+      <h2 className="text-center text-base font-semibold tracking-wide mobile:text-[0.8rem] mobile:leading-[1.15]">
         <span style={{ color: AUDIT_ACCENT }}>2. </span>
         <span style={{ color: AUDIT_WHITE }}>Jak probíhá posouzení</span>
       </h2>
@@ -54,7 +54,7 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
           style={{ borderColor: AUDIT_ACCENT }}
         />
 
-        <div className="grid grid-cols-4 gap-4 mobile:grid-cols-1 mobile:gap-8">
+        <div className="grid grid-cols-4 gap-4 mobile:grid-cols-2 mobile:gap-4">
           {stations.map((station) => (
             <div
               key={station.motif}
@@ -92,7 +92,7 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
           style={{ backgroundColor: AUDIT_ACCENT }}
         />
 
-        <div className="grid grid-cols-4 gap-4 mobile:grid-cols-1 mobile:gap-5">
+        <div className="grid grid-cols-4 gap-4 mobile:grid-cols-2 mobile:gap-4">
           {stations.map((station, index) => (
             <div key={station.title} className="text-center mobile:text-left">
               <p className="text-sm font-semibold tracking-wide">

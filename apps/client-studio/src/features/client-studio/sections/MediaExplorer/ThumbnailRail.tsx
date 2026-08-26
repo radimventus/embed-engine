@@ -373,7 +373,7 @@ export function ThumbnailRail() {
         <div className="flex w-full items-center justify-center">
           <ChevronSpacer />
           <div
-            className="flex h-20 min-w-0 flex-1 items-stretch mobile:h-24"
+            className="flex h-20 min-w-0 flex-1 items-stretch mobile:h-20"
             style={{ gap: THUMB_GAP_PX }}
           >
             {Array.from({ length: layout.visibleSlots }, (_, index) => (
@@ -404,7 +404,7 @@ export function ThumbnailRail() {
         <div
           ref={scrollRef}
           aria-label="Náhledy médií"
-          className="h-20 min-w-0 flex-1 overflow-x-auto overflow-y-hidden overscroll-x-contain mobile:h-24 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="h-20 min-w-0 flex-1 overflow-x-auto overflow-y-hidden overscroll-x-contain mobile:h-20 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           role="region"
         >
           <div

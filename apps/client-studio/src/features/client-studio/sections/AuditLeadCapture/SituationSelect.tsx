@@ -24,7 +24,7 @@ export function SituationSelect({ value, onChange }: SituationSelectProps) {
 
   return (
     <div className={`${AUDIT_PANEL_MAX_WIDTH_CLASS} px-section`}>
-      <h2 className="text-center text-base font-semibold tracking-wide">
+      <h2 className="text-center text-base font-semibold tracking-wide mobile:text-[0.8rem] mobile:leading-[1.15]">
         <span style={{ color: AUDIT_ACCENT }}>1. </span>
         <span style={{ color: AUDIT_WHITE }}>Vyberte, v jaké fázi se nacházíte</span>
       </h2>

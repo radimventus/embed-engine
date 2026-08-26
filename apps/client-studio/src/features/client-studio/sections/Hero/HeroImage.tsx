@@ -40,7 +40,7 @@ export function HeroImage() {
     >
       <div
         aria-hidden="true"
-        className="animate-hero-photo-veil pointer-events-none absolute inset-y-0 left-0 z-10 w-1/4 mobile:hidden"
+        className="animate-hero-photo-veil pointer-events-none absolute inset-y-0 left-0 z-10 w-1/4"
       >
         <div className="absolute inset-y-0 left-0 w-1/2 bg-white/65" />
         <div className="absolute inset-y-0 left-1/2 w-1/2 bg-white/45" />

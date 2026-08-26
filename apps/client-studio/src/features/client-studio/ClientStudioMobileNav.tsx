@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { navigateToJourneySection } from "./foundation/journeyNavigation";
 import { useActiveSection } from "./foundation/useActiveSection";
@@ -42,6 +42,16 @@ export function ClientStudioMobileNav({
 
   const activeId = useActiveSection(sectionIds);
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const syncScrollState = () => {
+      setIsScrolled(window.scrollY > 24);
+    };
+    syncScrollState();
+    window.addEventListener("scroll", syncScrollState, { passive: true });
+    return () => window.removeEventListener("scroll", syncScrollState);
+  }, []);
   const activeItem = navItems.find((item) => item.id === activeId) ?? navItems[0];
 
   return (
@@ -61,7 +71,11 @@ export function ClientStudioMobileNav({
           ☰
         </button>
 
-        <span className="min-w-0 flex-1 truncate text-[11px] text-embed-foreground-primary/70">
+        <span
+          className={`min-w-0 flex-1 truncate text-[11px] text-embed-foreground-primary/70 ${
+            isScrolled ? "hidden" : ""
+          }`}
+        >
           {activeItem?.label ?? "Prohlídka"}
         </span>
       </div>

@@ -27,9 +27,10 @@ test("Journey navigation actions remain on one mobile row", () => {
 
 test("TOUR bridge replaces mobile forward CTA", () => {
   const s = read("foundation/JourneySceneFrame.tsx");
+  assert.match(s, /isFooterLeadingVisible/);
   assert.match(
     s,
-    /shrink-0 justify-self-end mobile:hidden/,
+    /isFooterLeadingVisible \? "mobile:hidden" : ""/,
   );
 });
 
@@ -42,10 +43,11 @@ test("Priority banner replaces mobile forward CTA", () => {
 test("TOUR switches are compact and responsive to floor count", () => {
   const s = read("sections/HouseNavigator/RoomIndex.tsx");
   assert.match(s, /hasMultipleFloors/);
-  assert.match(s, /scale-50/);
-  assert.match(s, /origin-left/);
-  assert.match(s, /origin-right/);
-  assert.match(s, /origin-center/);
+  assert.ok((s.match(/w-\[40%\]/g) ?? []).length >= 3);
+  assert.doesNotMatch(s, /scale-50/);
+  assert.match(s, /w-\[40%\] justify-start/);
+  assert.match(s, /w-\[40%\] justify-end/);
+  assert.match(s, /w-full justify-center/);
 });
 
 test("RACIO layout remains locked", () => {

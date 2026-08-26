@@ -9,6 +9,8 @@ import {
   useSocialProofFeed,
 } from "./useSocialProofFeed";
 
+const MOBILE_SOCIAL_PROOF_ROTATION_MS = 8000;
+
 const FEED_TICKER_PAUSE_MS = SOCIAL_PROOF_TICK_MS;
 const FEED_TICKER_SLIDE_MS = 400;
 const FEED_VISIBLE_ITEM_COUNT = 3;
@@ -16,11 +18,11 @@ const FEED_RENDERED_ITEM_COUNT = FEED_VISIBLE_ITEM_COUNT + 1;
 
 function SocialProofItem({ icon, value, text }: SocialProofEntry) {
   return (
-    <div className="flex min-w-0 items-center gap-3">
+    <div className="flex min-w-0 items-center gap-3 mobile:gap-1">
       <SocialProofIcon name={icon} />
       <div className="min-w-0">
         <p className="text-sm leading-snug text-[#001930]">
-          <span className="mr-2 text-2xl font-bold tracking-tight">
+          <span className="mr-1 text-2xl font-bold tracking-tight mobile:text-[17px]">
             {value}
           </span>
           {text}
@@ -43,6 +45,51 @@ export function SocialProof() {
       ),
     [entries, startIndex],
   );
+
+  const [isMobileSocialProof, setIsMobileSocialProof] = useState(false);
+  const [mobileSocialProofIndex, setMobileSocialProofIndex] = useState(0);
+
+  useEffect(() => {
+    const query = window.matchMedia("(max-width: 767px)");
+
+    const syncMobile = () => {
+      setIsMobileSocialProof(query.matches);
+    };
+
+    syncMobile();
+    query.addEventListener("change", syncMobile);
+
+    return () => {
+      query.removeEventListener("change", syncMobile);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isMobileSocialProof || visibleEntries.length <= 1) {
+      setMobileSocialProofIndex(0);
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setMobileSocialProofIndex(
+        (current) => (current + 1) % visibleEntries.length,
+      );
+    }, MOBILE_SOCIAL_PROOF_ROTATION_MS);
+
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [isMobileSocialProof, visibleEntries.length]);
+
+  const renderedEntries =
+    isMobileSocialProof && visibleEntries.length > 0
+      ? [
+          visibleEntries[
+            mobileSocialProofIndex % visibleEntries.length
+          ],
+        ]
+      : visibleEntries;
+
 
   useEffect(() => {
     if (entries.length === 0) {
@@ -115,7 +162,7 @@ export function SocialProof() {
                 : "none",
             }}
           >
-            {visibleEntries.map((entry, index) => (
+            {renderedEntries.map((entry, index) => (
               <li
                 key={entry.id}
                 className={[
@@ -134,8 +181,8 @@ export function SocialProof() {
         </div>
       </div>
       {entries.length > 0 ? (
-        <div className="tabletMax:hidden desktop:hidden px-section py-3">
-          <ul className="m-0 flex list-none flex-col gap-3 p-0">
+        <div className="tabletMax:hidden desktop:hidden px-2 py-1.5">
+          <ul className="m-0 flex list-none p-0">
             {entries.slice(0, FEED_VISIBLE_ITEM_COUNT).map((entry) => (
               <li key={entry.id}>
                 <SocialProofItem {...entry} />

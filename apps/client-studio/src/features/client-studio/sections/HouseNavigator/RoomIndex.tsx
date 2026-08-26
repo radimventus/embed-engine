@@ -22,7 +22,7 @@ export function RoomIndex() {
   return (
     <section
       aria-label="Seznam místností"
-      className="relative z-20 flex h-full min-w-0 shrink-0 flex-col content-start items-stretch gap-0 overflow-x-hidden pb-section pl-[20px] pr-0 tabletMin:col-start-1 tabletMin:row-start-2 tabletMin:px-section mobile:px-1 mobile:pb-2"
+      className="relative z-20 flex h-full min-w-0 shrink-0 flex-col content-start items-stretch gap-0 overflow-x-hidden pb-section pl-[20px] pr-0 tabletMin:col-start-1 tabletMin:row-start-2 tabletMin:px-section mobile:px-0 mobile:pb-2"
     >
       <div className={`${SPATIAL_TERMINAL_WALKTHROUGH_TITLE_CLASS} mobile:hidden`} aria-hidden="true">
         <span className="invisible">.</span>
@@ -31,7 +31,7 @@ export function RoomIndex() {
         <RoomPanel />
       </div>
 
-      <div className="hidden w-full mobile:block tabletMin:block tabletMax:hidden desktop:hidden mobile:mt-1">
+      <div className="hidden w-full mobile:mx-auto mobile:mt-1 mobile:block mobile:w-4/5 tabletMin:block tabletMax:hidden desktop:hidden">
         <RoomSelect />
       </div>
 
@@ -47,20 +47,20 @@ export function RoomIndex() {
       >
         {hasMultipleFloors ? (
           <>
-            <div className="flex w-1/2 justify-start">
-              <div className="origin-left scale-50">
+            <div className="flex w-[40%] justify-start">
+              <div className="w-full">
                 <MediaModeToggle />
               </div>
             </div>
-            <div className="flex w-1/2 justify-end">
-              <div className="origin-right scale-50">
+            <div className="flex w-[40%] justify-end">
+              <div className="w-full">
                 <FloorSelector />
               </div>
             </div>
           </>
         ) : (
           <div className="flex w-full justify-center">
-            <div className="origin-center scale-50">
+            <div className="w-[40%]">
               <MediaModeToggle />
             </div>
           </div>

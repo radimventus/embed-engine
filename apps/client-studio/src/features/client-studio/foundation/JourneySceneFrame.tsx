@@ -1,4 +1,4 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 
 import {
   JOURNEY_CTA_FOOTER_ROW_CLASS,
@@ -43,6 +43,59 @@ export function JourneySceneFrame({
   children,
 }: JourneySceneFrameProps) {
   const [isEntered, setIsEntered] = useState(!animateOnMount);
+  const hasFooterLeading =
+    footerLeading !== undefined && footerLeading !== null;
+  const footerLeadingRef = useRef<HTMLDivElement>(null);
+  const [isFooterLeadingVisible, setIsFooterLeadingVisible] = useState(false);
+
+  useEffect(() => {
+    const root = footerLeadingRef.current;
+
+    if (!hasFooterLeading || root === null) {
+      setIsFooterLeadingVisible(false);
+      return;
+    }
+
+    const updateVisibility = () => {
+      const child = root.firstElementChild as HTMLElement | null;
+
+      if (child === null) {
+        setIsFooterLeadingVisible(false);
+        return;
+      }
+
+      const style = window.getComputedStyle(child);
+      const rect = child.getBoundingClientRect();
+
+      setIsFooterLeadingVisible(
+        style.display !== "none" &&
+          style.visibility !== "hidden" &&
+          Number.parseFloat(style.opacity || "1") > 0.05 &&
+          rect.width > 1 &&
+          rect.height > 1,
+      );
+    };
+
+    updateVisibility();
+
+    const mutationObserver = new MutationObserver(updateVisibility);
+    mutationObserver.observe(root, {
+      attributes: true,
+      childList: true,
+      subtree: true,
+    });
+
+    const resizeObserver = new ResizeObserver(updateVisibility);
+    resizeObserver.observe(root);
+
+    const timer = window.setInterval(updateVisibility, 120);
+
+    return () => {
+      mutationObserver.disconnect();
+      resizeObserver.disconnect();
+      window.clearInterval(timer);
+    };
+  }, [hasFooterLeading]);
 
   useEffect(() => {
     if (!animateOnMount) {
@@ -60,9 +113,6 @@ export function JourneySceneFrame({
   const navigate = (targetSceneId: string) => {
     onNavigate?.(targetSceneId);
   };
-
-  const hasFooterLeading =
-    footerLeading !== undefined && footerLeading !== null;
 
   return (
     <div
@@ -93,12 +143,14 @@ export function JourneySceneFrame({
             pinFooterToBottom ? "mt-auto" : ""
           }`}
         >
-          <div className="min-w-0">{footerLeading}</div>
+          <div ref={footerLeadingRef} className="min-w-0">{footerLeading}</div>
           {nextSceneId ? (
             <button
               type="button"
               onClick={() => navigate(nextSceneId)}
-              className={`${JOURNEY_CTA_PRIMARY_CLASS} shrink-0 justify-self-end mobile:hidden`}
+              className={`${JOURNEY_CTA_PRIMARY_CLASS} shrink-0 justify-self-end ${
+                isFooterLeadingVisible ? "mobile:hidden" : ""
+              }`}
             >
               Pokračovat →
             </button>

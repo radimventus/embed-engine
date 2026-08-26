@@ -22,6 +22,12 @@ import {
 export function ClientStudioHeader() {
   const { session } = usePlatformSession();
   const [title, setTitle] = useState('');
+  const mobileHouseTitle = title
+    .split("·")
+    .map((part) => part.trim())
+    .filter(Boolean)
+    .at(-1) ?? title;
+
   const [logoLabel, setLogoLabel] = useState('');
 
   useEffect(() => {
@@ -55,17 +61,18 @@ export function ClientStudioHeader() {
   return (
     <header
       data-experience-header=""
-      className="relative sticky top-0 z-50 shrink-0 border-b border-embed-border-default bg-embed-background-primary pt-[env(safe-area-inset-top,0px)]"
+      className="relative sticky top-0 z-50 shrink-0 border-b border-embed-border-default bg-embed-background-primary pt-[env(safe-area-inset-top,0px)] mobile:static mobile:relative"
     >
       <div className="mx-auto grid h-header w-full min-w-0 max-w-none grid-cols-[1fr_auto_1fr] items-center px-section desktop:w-canvas desktop:max-w-canvas">
-        <div className="justify-self-start">
+        <div className="justify-self-start mobile:hidden">
           <PartnerBrandMark label={logoLabel} />
         </div>
         <p
           className="max-w-[12rem] truncate text-center text-sm text-embed-foreground-primary/70 tablet:max-w-[16rem] tablet:text-base desktop:max-w-[20rem]"
           data-testid="client-partner-title"
         >
-          {title}
+          <span className="mobile:hidden">{title}</span>
+          <span className="hidden mobile:inline">{mobileHouseTitle}</span>
         </p>
         <div className="flex items-center justify-end gap-3 justify-self-end desktop:gap-section">
           <HeaderContactMenu

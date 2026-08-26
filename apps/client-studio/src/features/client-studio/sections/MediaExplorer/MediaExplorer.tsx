@@ -26,7 +26,7 @@ export function MediaExplorer() {
       >
         <MainMedia />
       </div>
-        <div className="mt-auto w-full shrink-0 mobile:mt-1">
+        <div className="mt-auto w-full shrink-0 mobile:mt-0.5">
           <ThumbnailRail />
         </div>
       </div>
