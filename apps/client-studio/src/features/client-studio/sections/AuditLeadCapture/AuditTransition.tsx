@@ -17,7 +17,7 @@ export function AuditTransition() {
   return (
     <div className="mx-auto w-full max-w-[61.6rem] px-section pb-10 pt-14 text-center mobile:pb-8 mobile:pt-12">
       <h1
-        className="font-sans text-5xl font-bold leading-[1.1] tracking-tight mobile:text-4xl"
+        className="font-sans text-5xl font-bold leading-[1.1] tracking-tight mobile:text-[80%] mobile:leading-tight"
         style={{ color: AUDIT_WHITE }}
         data-testid="audit-hero-title"
       >

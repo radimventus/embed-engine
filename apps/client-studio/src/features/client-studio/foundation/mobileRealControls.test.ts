@@ -43,10 +43,10 @@ test("Priority banner replaces mobile forward CTA", () => {
 test("TOUR switches are compact and responsive to floor count", () => {
   const s = read("sections/HouseNavigator/RoomIndex.tsx");
   assert.match(s, /hasMultipleFloors/);
-  assert.ok((s.match(/w-\[40%\]/g) ?? []).length >= 3);
+  assert.ok((s.match(/w-\[36%\]/g) ?? []).length >= 3)
   assert.doesNotMatch(s, /scale-50/);
-  assert.match(s, /w-\[40%\] justify-start/);
-  assert.match(s, /w-\[40%\] justify-end/);
+  assert.match(s, /w-\[36%\] justify-start/);
+  assert.match(s, /w-\[36%\] justify-end/);
   assert.match(s, /w-full justify-center/);
 });
 

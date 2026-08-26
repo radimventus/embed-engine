@@ -28,15 +28,20 @@ test("Audit situation cards keep the full mobile content band", () => {
   assert.match(situation, /grid grid-cols-2/);
 });
 
-test("Audit workflow uses 2x2 mobile station and caption grids", () => {
+test("Audit workflow uses paired icon/text mobile columns", () => {
   const workflow = read("AssessmentWorkflow.tsx");
 
-  const grids =
-    workflow.match(
-      /grid grid-cols-4 gap-4 mobile:grid-cols-2 mobile:gap-4/g,
-    ) ?? [];
+  assert.match(workflow, /data-mobile-audit-workflow/);
+  assert.match(
+    workflow,
+    /mobile:grid-cols-\[44px_minmax\(0,1fr\)\]/,
+  );
 
-  assert.equal(grids.length, 2);
+  assert.doesNotMatch(
+    workflow,
+    /grid-cols-4 gap-4 mobile:grid-cols-2/,
+  );
+
   assert.match(workflow, /stations\.map/);
 });
 

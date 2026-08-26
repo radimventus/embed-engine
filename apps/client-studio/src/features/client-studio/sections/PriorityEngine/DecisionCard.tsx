@@ -129,7 +129,17 @@ export function DecisionCard({
               : 'pointer-events-none max-h-0 translate-y-1 opacity-0'
           }`}
         >
-          {isActive ? <DecisionSlider value={importance} onChange={onImportanceChange} /> : null}
+          {isActive ? (
+          <div
+            className="w-full min-w-0 overflow-visible mobile:block mobile:w-full mobile:overflow-visible"
+            data-mobile-priority-intensity
+          >
+            <DecisionSlider
+              value={importance}
+              onChange={onImportanceChange}
+            />
+          </div>
+        ) : null}
         </div>
       </button>
     </div>

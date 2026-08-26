@@ -82,6 +82,26 @@ export function WelcomeBridge({
     .join(" ");
 
   return (
+    <>
+    <style>{`
+      .welcome-bridge-copy {
+        flex-direction: column;
+      }
+
+      @media (max-width: 767px) {
+        .welcome-bridge-copy {
+          flex-direction: row;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 8px;
+        }
+
+        .welcome-bridge-copy > * {
+          flex: 1 1 0;
+          min-width: 0;
+        }
+      }
+    `}</style>
     <div
       role="region"
       aria-labelledby={labelledBy}
@@ -150,9 +170,9 @@ export function WelcomeBridge({
           </div>
 
           <div
+            className="welcome-bridge-copy"
             style={{
               display: "flex",
-              flexDirection: "column",
               gap: 8,
               minWidth: 0,
               flex: 1,
@@ -234,5 +254,6 @@ export function WelcomeBridge({
         </div>
       </div>
     </div>
+    </>
   );
 }

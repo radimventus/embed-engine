@@ -76,7 +76,7 @@ function PriorityWhiteActionButton({
     <button
       type="button"
       data-testid={testId}
-      className="min-h-11 min-w-0 flex-1 touch-manipulation px-2 py-3 text-center font-medium leading-normal tracking-wide disabled:opacity-55 desktop:min-h-0 desktop:py-[6.4px]"
+      className="min-h-11 min-w-0 flex-1 touch-manipulation px-2 py-3 text-center font-medium leading-normal tracking-wide disabled:opacity-55 desktop:min-h-0 desktop:py-[6.4px] mobile:w-full mobile:max-w-none"
       style={{
         backgroundColor: SWITCH_IDLE_BG,
         color: SWITCH_IDLE_TEXT,
@@ -133,7 +133,7 @@ function PrioritySwitchTrack({
       }}
     >
       <div
-        className="flex w-full min-w-0 shrink-0 items-stretch gap-[1.6px] rounded-[6.4px] border border-solid p-[1.6px] desktop:w-1/2"
+        className="flex w-full min-w-0 shrink-0 items-stretch gap-[1.6px] rounded-[6.4px] border border-solid p-[1.6px] desktop:w-1/2 mobile:w-full mobile:max-w-none"
         style={{
           backgroundColor: SWITCH_SHELL_BG,
           borderColor: SWITCH_SHELL_BG,

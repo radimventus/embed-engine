@@ -140,7 +140,7 @@ function RailChevron({ direction, onClick }: RailChevronProps) {
     <button
       type="button"
       aria-label={direction === 'left' ? 'Předchozí náhledy' : 'Další náhledy'}
-      className="flex h-11 w-12 shrink-0 cursor-pointer items-center justify-center touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 desktop:h-20"
+      className="flex h-11 w-9 shrink-0 cursor-pointer items-center justify-center touch-manipulation focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 desktop:h-20"
       style={{ width: CHEVRON_COLUMN_PX }}
       onClick={onClick}
     >
@@ -153,7 +153,7 @@ function ChevronSpacer() {
   return (
     <div
       aria-hidden="true"
-      className="h-11 w-12 shrink-0 desktop:h-20"
+      className="h-11 w-9 shrink-0 desktop:h-20"
       style={{ width: CHEVRON_COLUMN_PX }}
     />
   );

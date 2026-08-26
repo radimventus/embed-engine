@@ -47,12 +47,12 @@ export function RoomIndex() {
       >
         {hasMultipleFloors ? (
           <>
-            <div className="flex w-[40%] justify-start">
+            <div className="flex w-[36%] justify-start">
               <div className="w-full">
                 <MediaModeToggle />
               </div>
             </div>
-            <div className="flex w-[40%] justify-end">
+            <div className="flex w-[36%] justify-end">
               <div className="w-full">
                 <FloorSelector />
               </div>
@@ -60,7 +60,7 @@ export function RoomIndex() {
           </>
         ) : (
           <div className="flex w-full justify-center">
-            <div className="w-[40%]">
+            <div className="w-[36%]">
               <MediaModeToggle />
             </div>
           </div>

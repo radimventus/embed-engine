@@ -19,7 +19,7 @@ const FEED_RENDERED_ITEM_COUNT = FEED_VISIBLE_ITEM_COUNT + 1;
 function SocialProofItem({ icon, value, text }: SocialProofEntry) {
   return (
     <div className="flex min-w-0 items-center gap-3 mobile:gap-1">
-      <SocialProofIcon name={icon} />
+      <span className="shrink-0 mobile:[&>*]:!h-7 mobile:[&>*]:!w-7"><SocialProofIcon name={icon} /></span>
       <div className="min-w-0">
         <p className="text-sm leading-snug text-[#001930]">
           <span className="mr-1 text-2xl font-bold tracking-tight mobile:text-[17px]">
@@ -33,7 +33,7 @@ function SocialProofItem({ icon, value, text }: SocialProofEntry) {
 }
 
 export function SocialProof() {
-  const [startIndex, setStartIndex] = useState(0);
+const [startIndex, setStartIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const recentMessagesRef = useRef<string[]>([]);
   const entries = useSocialProofFeed();
@@ -183,7 +183,7 @@ export function SocialProof() {
       {entries.length > 0 ? (
         <div className="tabletMax:hidden desktop:hidden px-2 py-1.5">
           <ul className="m-0 flex list-none p-0">
-            {entries.slice(0, FEED_VISIBLE_ITEM_COUNT).map((entry) => (
+            {renderedEntries.slice(0, 1).map((entry) => (
               <li key={entry.id}>
                 <SocialProofItem {...entry} />
               </li>

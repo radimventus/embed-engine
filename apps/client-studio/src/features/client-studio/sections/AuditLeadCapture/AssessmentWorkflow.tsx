@@ -39,6 +39,30 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
       </h2>
 
       <div
+        data-mobile-audit-workflow
+        className="hidden mobile:grid mobile:grid-cols-[44px_minmax(0,1fr)] mobile:items-start mobile:gap-x-3 mobile:gap-y-4"
+      >
+        {stations.map((station, index) => (
+          <div
+            key={`mobile-${station.title}`}
+            className="col-span-2 grid grid-cols-[44px_minmax(0,1fr)] items-start"
+          >
+            <div className="flex min-h-10 items-start justify-center">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-current text-sm font-semibold">
+                {index + 1}
+              </span>
+            </div>
+
+            <div className="min-w-0 text-left">
+              <p className="font-semibold">
+                {station.title}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div
         className="relative mt-10"
         role="list"
         aria-label="Stanice posouzení"
@@ -54,7 +78,7 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
           style={{ borderColor: AUDIT_ACCENT }}
         />
 
-        <div className="grid grid-cols-4 gap-4 mobile:grid-cols-2 mobile:gap-4">
+        <div className="grid grid-cols-4 gap-4 mobile:hidden">
           {stations.map((station) => (
             <div
               key={station.motif}
@@ -92,7 +116,7 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
           style={{ backgroundColor: AUDIT_ACCENT }}
         />
 
-        <div className="grid grid-cols-4 gap-4 mobile:grid-cols-2 mobile:gap-4">
+        <div className="grid grid-cols-4 gap-4 mobile:hidden">
           {stations.map((station, index) => (
             <div key={station.title} className="text-center mobile:text-left">
               <p className="text-sm font-semibold tracking-wide">
