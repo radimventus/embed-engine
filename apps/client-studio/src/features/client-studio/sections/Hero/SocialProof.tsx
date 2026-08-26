@@ -81,7 +81,7 @@ export function SocialProof() {
         className="pointer-events-none absolute inset-x-0 top-[2px] z-10 h-px"
         style={{ backgroundColor: "#D4AF37" }}
       />
-      <div className="hidden h-social-proof items-center px-section desktop:flex">
+      <div className="hidden h-social-proof items-center px-section tabletMax:flex desktop:flex">
         <div className="w-full overflow-hidden">
           {entries.length > 0 ? (
           <ul
@@ -134,7 +134,7 @@ export function SocialProof() {
         </div>
       </div>
       {entries.length > 0 ? (
-        <div className="desktop:hidden px-section py-3">
+        <div className="tabletMax:hidden desktop:hidden px-section py-3">
           <ul className="m-0 flex list-none flex-col gap-3 p-0">
             {entries.slice(0, FEED_VISIBLE_ITEM_COUNT).map((entry) => (
               <li key={entry.id}>

@@ -143,7 +143,7 @@ describe("Responsive Decision Journey (RCS-05)", () => {
     assert.match(page, /isDecisionSection/);
     assert.match(mobileNav, /navigateToJourneySection/);
     assert.match(scene, /JOURNEY_CTA_PRIMARY_CLASS/);
-    assert.match(scene, /guided-journey-bottom-nav-offset/);
+    assert.doesNotMatch(scene, /100dvh[^\"\\n]*guided-journey-bottom-nav-offset/);
     assert.match(cta, /min-h-11/);
     assert.match(cta, /desktop:min-h-\[38px\]/);
     assert.match(faq, /JOURNEY_CTA_PRIMARY_CLASS/);

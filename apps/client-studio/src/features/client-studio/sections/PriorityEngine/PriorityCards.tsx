@@ -30,7 +30,7 @@ export function PriorityCards({
         aria-label="Katalog priorit"
         data-pt002-primary={highlight.primaryPriorityId ?? ''}
         data-pt002-related={highlight.relatedPriorityIds.join(',')}
-        className="grid w-full max-w-[685px] grid-cols-4 justify-items-center gap-[22px] overflow-visible mobile:max-w-none mobile:grid-cols-2 mobile:justify-items-stretch mobile:gap-3"
+        className="grid w-full max-w-[685px] grid-cols-4 justify-items-center gap-[22px] overflow-visible tabletMin:max-w-none tabletMin:grid-cols-3 tabletMin:justify-items-stretch tabletMin:gap-4 tabletMax:max-w-none tabletMax:grid-cols-4 tabletMax:gap-[18px] mobile:max-w-none mobile:grid-cols-3 mobile:justify-items-stretch mobile:gap-3"
       >
         {categories.map((category) => {
           const card = cards[category.id];

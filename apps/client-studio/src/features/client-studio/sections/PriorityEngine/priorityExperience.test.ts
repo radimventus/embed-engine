@@ -131,7 +131,7 @@ describe('Priority Experience (CSCB-04)', () => {
     assert.equal(header.includes('podstatné'), false);
     const cards = read('PriorityCards.tsx');
     assert.match(cards, /grid-cols-4/);
-    assert.match(cards, /mobile:grid-cols-2/);
+    assert.match(cards, /mobile:grid-cols-3/);
     assert.equal(cards.includes('tablet:grid-cols-3'), false);
     const layout = read('decision-cards-layout.ts');
     assert.match(layout, /DECISION_GRID_GAP_PX = 22/);

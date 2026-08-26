@@ -31,7 +31,7 @@ export function SituationSelect({ value, onChange }: SituationSelectProps) {
 
       {/* Width 70% of content band (−30% narrowing). */}
       <div className="mx-auto mt-6 w-[70%] mobile:w-full">
-        <div className="grid grid-cols-2 gap-5 mobile:grid-cols-1">
+        <div className="grid grid-cols-2 gap-5 tabletMin:gap-4 mobile:gap-2">
           {LAND_OPTIONS.map((option) => {
             const selected = option.value === value;
             const goldSurface = selected || hovered === option.value;

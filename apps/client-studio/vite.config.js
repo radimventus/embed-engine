@@ -16,6 +16,10 @@ export default defineConfig({
     base: process.env.VITE_BASE ?? '/',
     envDir: repoRoot,
     plugins: [react()],
+    css: {
+        // SSOT CSS pipeline must match Embed hosts exactly.
+        postcss: join(repoRoot, 'packages/embed/postcss.config.js'),
+    },
     resolve: {
         alias: createSsotResolveAliases(),
         dedupe: ['react', 'react-dom'],

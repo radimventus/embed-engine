@@ -15,7 +15,7 @@ export const VIEWPORT_BREAKPOINTS = {
 
 export type ViewportBand = 'mobile' | 'tablet' | 'desktop';
 
-export const MOBILE_NAV_HEIGHT_PX = 56;
+export const MOBILE_NAV_HEIGHT_PX = 0;
 
 export function resolveViewportBand(widthPx: number): ViewportBand {
   if (widthPx <= VIEWPORT_BREAKPOINTS.mobileMaxPx) {
@@ -36,12 +36,12 @@ export function usesFixedDesktopCanvas(band: ViewportBand): boolean {
   return band === 'desktop';
 }
 
-/** Left rail is desktop-only; below desktop the bottom nav owns section jumps. */
+/** Left rail is desktop-only; below desktop compact top navigation owns section jumps. */
 export function usesDesktopSidebarRail(band: ViewportBand): boolean {
   return band === 'desktop';
 }
 
-/** Bottom section navigation — tablet + mobile (RCS-01 shell). */
+/** Compact top section navigation — tablet + mobile (RCS-01 shell). */
 export function usesMobileSectionNav(band: ViewportBand): boolean {
   return band !== 'desktop';
 }

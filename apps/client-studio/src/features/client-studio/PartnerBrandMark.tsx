@@ -20,7 +20,7 @@ export function PartnerBrandMark({ label }: PartnerBrandMarkProps) {
 
   return (
     <div
-      className="flex items-center"
+      className="flex items-center min-w-0"
       style={{ gap: LOGO_GAP_PX }}
       aria-label={mark}
       data-testid="client-partner-logo"

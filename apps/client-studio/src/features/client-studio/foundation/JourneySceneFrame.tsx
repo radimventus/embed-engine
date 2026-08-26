@@ -21,10 +21,10 @@ type JourneySceneFrameProps = {
 };
 
 const SCENE_MIN_HEIGHT =
-  "calc(100dvh - var(--experience-header-height, 72px) - var(--guided-journey-bottom-nav-offset, 0px))";
+  "calc(100dvh - var(--experience-header-height, 72px))";
 const SCENE_CTA_GAP = "20px";
 const UNREVEALED_SCENE_SPACE =
-  "calc(20px + var(--guided-journey-bottom-nav-offset, 0px) + 100dvh - var(--experience-header-height, 72px))";
+  "calc(20px + 100dvh - var(--experience-header-height, 72px))";
 
 /**
  * Scene shell for one guided stop in the Decision Journey.
