@@ -13,7 +13,7 @@ function read(relative: string): string {
 describe("TASK48A mobile TOUR corrections 1-5", () => {
   it("uses compact top journey navigation instead of a fixed bottom bar", () => {
     const nav = read("../ClientStudioMobileNav.tsx");
-    assert.match(nav, /sticky top-\[var\(--experience-header-height,72px\)\]/);
+    assert.match(nav, /sticky top-0/);
     assert.doesNotMatch(nav, /fixed inset-x-0 bottom-0/);
     assert.match(nav, /navigateToJourneySection/);
   });

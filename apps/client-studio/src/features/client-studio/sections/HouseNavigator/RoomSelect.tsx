@@ -17,11 +17,12 @@ export function RoomSelect() {
       <span className="mb-2 block text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/55">
         Místnost
       </span>
-      <select
+      <div className="relative w-full" data-mobile-room-select>
+<select
         aria-label="Místnost"
         value={value}
         onChange={(event) => selectRoom(event.target.value)}
-        className="min-h-11 w-full min-w-0 rounded-[8px] border border-embed-border-default bg-white px-3 text-sm font-medium text-embed-foreground-primary outline-none touch-manipulation"
+        className="min-h-11 w-full min-w-0 rounded-[8px] border border-embed-border-default bg-white px-3 text-sm font-medium text-embed-foreground-primary outline-none touch-manipulation appearance-none border border-[#C89B2D] pr-10 focus:border-[#C89B2D] focus:outline-none"
       >
         {floorRooms.map((room) => (
           <option key={room.id} value={room.id}>
@@ -29,6 +30,8 @@ export function RoomSelect() {
           </option>
         ))}
       </select>
+<span aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-[#C89B2D]">▼</span>
+</div>
     </label>
   );
 }

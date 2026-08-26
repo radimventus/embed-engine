@@ -46,7 +46,7 @@ export function ClientStudioMobileNav({
     <nav
       data-studio-shell="mobile-nav"
       aria-label="Navigace Client Studia"
-      className="sticky top-[var(--experience-header-height,72px)] z-40 w-full border-b border-embed-border-default bg-[#F7F6F4]/95 backdrop-blur desktop:hidden"
+      className="sticky top-0 z-40 w-full border-b border-embed-border-default bg-[#F7F6F4]/95 backdrop-blur desktop:hidden"
     >
       <ul className="mx-auto flex min-h-9 max-w-canvas items-stretch justify-around px-1 mobile:min-h-8">
         {navItems.map((item) => {
