@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { navigateToJourneySection } from "./foundation/journeyNavigation";
 import { useActiveSection } from "./foundation/useActiveSection";
@@ -41,6 +41,8 @@ export function ClientStudioMobileNav({
   const sectionIds = useMemo(() => navItems.map((item) => item.id), [navItems]);
 
   const activeId = useActiveSection(sectionIds);
+  const [isOpen, setIsOpen] = useState(false);
+  const activeItem = navItems.find((item) => item.id === activeId) ?? navItems[0];
 
   return (
     <nav
@@ -48,35 +50,39 @@ export function ClientStudioMobileNav({
       aria-label="Navigace Client Studia"
       className="sticky top-0 z-40 w-full border-b border-embed-border-default bg-[#F7F6F4]/95 backdrop-blur desktop:hidden"
     >
-      <ul className="mx-auto flex min-h-9 max-w-canvas items-stretch justify-around px-1 mobile:min-h-8">
-        {navItems.map((item) => {
-          const isActive = activeId === item.id;
-          return (
-            <li key={item.id} className="flex min-w-0 flex-1">
-              <button
-                type="button"
-                title={item.label}
-                aria-label={item.label}
-                aria-current={isActive ? "true" : undefined}
-                onClick={() => {
-                  navigateToJourneySection(item.id);
-                }}
-                className={[
-                  "flex min-h-9 w-full items-center justify-center gap-1 px-1 text-[10px] font-medium leading-none transition-colors touch-manipulation mobile:min-h-8",
-                  isActive
-                    ? "text-embed-brand-gold"
-                    : "text-embed-foreground-primary/65",
-                ].join(" ")}
-              >
-                <span className="text-[10px] font-semibold" aria-hidden="true">
-                  {item.short}
-                </span>
-                <span className="max-w-full truncate mobile:hidden">{item.label}</span>
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      <div className="relative flex min-h-9 w-full items-center gap-2 px-2">
+        <button
+          type="button"
+          aria-label="Otevřít navigaci"
+          aria-expanded={isOpen}
+          onClick={() => setIsOpen((value) => !value)}
+          className="flex h-8 w-8 shrink-0 items-center justify-center text-lg text-embed-foreground-primary"
+        >
+          ☰
+        </button>
+
+        <span className="min-w-0 flex-1 truncate text-[11px] text-embed-foreground-primary/70">
+          {activeItem?.label ?? "Prohlídka"}
+        </span>
+      </div>
+
+      {isOpen ? (
+        <div className="absolute left-2 top-full z-50 mt-1 min-w-44 rounded-md border border-embed-border-default bg-white p-1 shadow-lg">
+          {navItems.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => {
+                navigateToJourneySection(item.id);
+                setIsOpen(false);
+              }}
+              className="block w-full rounded px-3 py-2 text-left text-xs text-embed-foreground-primary hover:bg-black/5"
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+      ) : null}
     </nav>
   );
 }

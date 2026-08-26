@@ -102,7 +102,7 @@ function PriorityEngineContent({
         <PriorityChapterBridge />
       </section>
       <div
-        className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-5 px-section mobile:grid-cols-1 mobile:gap-3"
+        className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-5 px-section mobile:grid-cols-[auto_minmax(0,1fr)_auto] mobile:items-center mobile:gap-3"
         data-testid="priority-racio-controls"
         data-racio-bridge-visible={
           shouldShowDelayedRacioBridge ? "true" : "false"
@@ -111,12 +111,12 @@ function PriorityEngineContent({
         <button
           type="button"
           onClick={onBack}
-          className={`${JOURNEY_CTA_SECONDARY_CLASS} justify-self-start justify-start mobile:w-full`}
+          className={`${JOURNEY_CTA_SECONDARY_CLASS} justify-self-start justify-start mobile:w-auto mobile:shrink-0`}
         >
           ← Zpět
         </button>
         {phase === "complete" && shouldShowDelayedRacioBridge ? (
-          <div className="min-w-0 justify-self-center mobile:w-full">
+          <div className="min-w-0 justify-self-center mobile:col-start-2 mobile:col-end-4 mobile:w-full">
             <PriorityRacioBridge onContinue={onContinueToRacio} />
           </div>
         ) : (
@@ -125,7 +125,9 @@ function PriorityEngineContent({
         <button
           type="button"
           onClick={onContinueToRacio}
-          className={`${JOURNEY_CTA_PRIMARY_CLASS} justify-self-end mobile:w-full`}
+          className={`${JOURNEY_CTA_PRIMARY_CLASS} justify-self-end mobile:w-auto mobile:shrink-0 ${
+          shouldShowDelayedRacioBridge ? "mobile:hidden" : ""
+        }`}
         >
           {phase === "complete" ? "Pokračovat →" : "Přeskočit →"}
         </button>

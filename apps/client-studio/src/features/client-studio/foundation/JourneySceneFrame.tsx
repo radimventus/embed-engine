@@ -98,7 +98,7 @@ export function JourneySceneFrame({
             <button
               type="button"
               onClick={() => navigate(nextSceneId)}
-              className={`${JOURNEY_CTA_PRIMARY_CLASS} shrink-0 justify-self-end`}
+              className={`${JOURNEY_CTA_PRIMARY_CLASS} shrink-0 justify-self-end mobile:hidden`}
             >
               Pokračovat →
             </button>
@@ -106,7 +106,7 @@ export function JourneySceneFrame({
         </div>
       ) : (
         <div
-          className={`${JOURNEY_CTA_FOOTER_ROW_CLASS} ${
+          className={`${JOURNEY_CTA_FOOTER_ROW_CLASS} mobile:flex-row mobile:items-center mobile:justify-between mobile:gap-3 ${
             pinFooterToBottom ? "mt-auto" : ""
           }`}
         >
@@ -114,7 +114,7 @@ export function JourneySceneFrame({
             <button
               type="button"
               onClick={() => navigate(previousSceneId)}
-              className={`${JOURNEY_CTA_SECONDARY_CLASS} justify-start mobile:w-full`}
+              className={`${JOURNEY_CTA_SECONDARY_CLASS} justify-start mobile:w-auto mobile:shrink-0`}
             >
               ← Zpět
             </button>
@@ -128,7 +128,7 @@ export function JourneySceneFrame({
             <button
               type="button"
               onClick={() => navigate(nextSceneId)}
-              className={`${JOURNEY_CTA_PRIMARY_CLASS} ml-auto shrink-0 mobile:w-full`}
+              className={`${JOURNEY_CTA_PRIMARY_CLASS} ml-auto shrink-0 mobile:w-auto`}
             >
               Pokračovat →
             </button>
