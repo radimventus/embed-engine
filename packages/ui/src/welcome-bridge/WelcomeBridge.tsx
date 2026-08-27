@@ -91,6 +91,7 @@ export function WelcomeBridge({
       @media (max-width: 767px) {
         .welcome-bridge-copy {
           flex-direction: row;
+          flex-wrap: nowrap;
           align-items: flex-start;
           justify-content: space-between;
           gap: 8px;

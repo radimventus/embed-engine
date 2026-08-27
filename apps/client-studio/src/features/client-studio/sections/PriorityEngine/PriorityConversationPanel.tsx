@@ -125,7 +125,7 @@ function PrioritySwitchTrack({
 }) {
   return (
     <div
-      className={`${className} flex w-full justify-center [margin-left:var(--priority-switch-shift-x,0px)] mobile:![margin-left:0px] mobile:!pt-0`}
+      className={`${className} flex w-full justify-center [margin-left:var(--priority-switch-shift-x,0px)] mobile:![margin-left:0px] mobile:w-full mobile:max-w-none mobile:!pt-0`}
       style={{
         ...(shift ? { '--priority-switch-shift-x': `${shift.x}px` } : {}),
         // Use paddingTop — ConisMessage space-y utilities set margin-top !important.

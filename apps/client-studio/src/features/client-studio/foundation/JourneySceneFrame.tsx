@@ -158,7 +158,7 @@ export function JourneySceneFrame({
         </div>
       ) : (
         <div
-          className={`${JOURNEY_CTA_FOOTER_ROW_CLASS} mobile:flex-row mobile:flex-nowrap mobile:items-center mobile:justify-between mobile:gap-3 ${
+          className={`${JOURNEY_CTA_FOOTER_ROW_CLASS} mobile:flex-row mobile:flex-nowrap mobile:items-center mobile:[&>*]:min-w-0 mobile:items-center mobile:justify-between mobile:gap-3 ${
             pinFooterToBottom ? "mt-auto" : ""
           }`}
         >

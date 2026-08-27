@@ -792,7 +792,7 @@ export function DecisionSessionRuntimeProvider({
   }
 
   if (value === null) {
-    return <StudioLoading label="Připravuji Decision Session…" />;
+    return <StudioLoading label="Připravuji prostředí…" />;
   }
 
   return (
