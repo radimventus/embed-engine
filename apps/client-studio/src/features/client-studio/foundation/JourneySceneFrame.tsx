@@ -140,6 +140,10 @@ export function JourneySceneFrame({
       {hasFooterLeading ? (
         <div
           className={`grid grid-cols-[minmax(0,1fr)_auto] items-start gap-5 px-section ${
+            isFooterLeadingVisible
+              ? "mobile:grid-cols-1 mobile:gap-0"
+              : ""
+          } ${
             pinFooterToBottom ? "mt-auto" : ""
           }`}
         >

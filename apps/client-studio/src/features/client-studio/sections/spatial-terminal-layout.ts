@@ -16,7 +16,7 @@ export const PRIORITY_ENGINE_HEADER_CLASS =
 /** 16:9 thumbnail — height matches rail, width follows aspect. */
 export const SPATIAL_TERMINAL_THUMBNAIL_WIDTH_CLASS = 'aspect-video h-[80px] w-auto shrink-0';
 
-export const SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS = 'pt-[20px]';
+export const SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS = 'pt-[20px] mobile:pt-1';
 
 export const SPATIAL_TERMINAL_CONTROL_GAP_CLASS = 'gap-5';
 

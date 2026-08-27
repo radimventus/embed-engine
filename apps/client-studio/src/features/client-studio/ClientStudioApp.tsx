@@ -58,13 +58,13 @@ export function ClientStudioApp({
           header={<ClientStudioHeader />}
           showStatusBar={false}
         >
+          <ClientStudioMobileNav visibleSceneIds={visibleSceneIds} />
           <ClientStudioPage
             initialLandingOffsetPx={initialLandingOffsetPx}
             onActiveSceneChange={setActiveSceneId}
             onVisibleSceneIdsChange={setVisibleSceneIds}
           />
         </AppShell>
-        <ClientStudioMobileNav visibleSceneIds={visibleSceneIds} />
       </>
     </DecisionSessionRuntimeProvider>
   );

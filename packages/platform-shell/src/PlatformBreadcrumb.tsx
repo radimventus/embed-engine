@@ -17,7 +17,11 @@ export function PlatformBreadcrumb({ items }: PlatformBreadcrumbProps) {
       {items.map((item, index) => {
         const current = index === items.length - 1;
         return (
-          <span key={item.id} style={{ display: 'inline-flex', gap: 8 }}>
+          <span
+            key={item.id}
+            data-platform-breadcrumb-id={item.id}
+            style={{ display: 'inline-flex', gap: 8 }}
+          >
             {index > 0 && (
               <span className="platform-breadcrumb__sep" aria-hidden>
                 /

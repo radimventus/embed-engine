@@ -79,6 +79,6 @@ test("VR3 Audit", () => {
 
   assert.match(
     transition,
-    /mobile:text-\[80%\]/,
+    /mobile:text-\[2\.4rem\]/,
   );
 });

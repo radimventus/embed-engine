@@ -1433,6 +1433,17 @@
 }
 
 @media (max-width: 720px) {
+  /*
+   * CONIS Mobile VR — Client Studio owns its own House identity.
+   * Suppress duplicate outer Company breadcrumb on mobile only.
+   * Domain/workspace identity and desktop breadcrumb stay unchanged.
+   */
+  [data-platform-shell][data-studio='client']
+    .platform-breadcrumb
+    [data-platform-breadcrumb-id='company'] {
+    display: none;
+  }
+
   .platform-header__brand {
     letter-spacing: 0.18em;
     font-size: 16px;

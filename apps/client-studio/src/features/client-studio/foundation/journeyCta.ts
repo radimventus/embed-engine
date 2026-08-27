@@ -9,4 +9,4 @@ export const JOURNEY_CTA_PRIMARY_CLASS =
 export const JOURNEY_CTA_SECONDARY_CLASS = JOURNEY_CTA_PRIMARY_CLASS;
 
 export const JOURNEY_CTA_FOOTER_ROW_CLASS =
-  'flex items-start justify-between gap-3 px-section mobile:flex-col mobile:gap-3';
+  'flex items-start justify-between gap-3 px-section mobile:flex-row mobile:flex-nowrap mobile:items-center mobile:gap-3';

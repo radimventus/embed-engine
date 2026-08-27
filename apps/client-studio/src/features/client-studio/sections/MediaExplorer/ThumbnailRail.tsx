@@ -16,7 +16,8 @@ import { firstPhotoTimelineIndexForRoom, roomIdForTimelineIndex } from '../../ru
 import { SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS } from '../spatial-terminal-layout';
 
 /** Gap between thumbnails inside the visible slot viewport. */
-const THUMB_GAP_PX = 16;
+const DESKTOP_THUMB_GAP_PX = 16;
+const MOBILE_THUMB_GAP_PX = 6;
 
 /** Side control columns — keeps chevrons outside the visible thumbs (≥44px RCS-04). */
 const CHEVRON_COLUMN_PX = 32;
@@ -42,19 +43,19 @@ const MAX_VIEWPORT_WIDTH_PX =
 const DESKTOP_FITTED_THUMB_WIDTH_PX = Math.floor(
   (Math.min(
     THUMBNAIL_SLOT_COUNT * SPATIAL_TERMINAL_THUMBNAIL_WIDTH_PX +
-      (THUMBNAIL_SLOT_COUNT - 1) * THUMB_GAP_PX,
+      (THUMBNAIL_SLOT_COUNT - 1) * DESKTOP_THUMB_GAP_PX,
     MAX_VIEWPORT_WIDTH_PX,
   ) -
-    (THUMBNAIL_SLOT_COUNT - 1) * THUMB_GAP_PX) /
+    (THUMBNAIL_SLOT_COUNT - 1) * DESKTOP_THUMB_GAP_PX) /
     THUMBNAIL_SLOT_COUNT,
 );
 
 /** Desktop SSOT — viewport shows exactly four full thumbnails. */
 const DESKTOP_VIEWPORT_WIDTH_PX =
   THUMBNAIL_SLOT_COUNT * DESKTOP_FITTED_THUMB_WIDTH_PX +
-  (THUMBNAIL_SLOT_COUNT - 1) * THUMB_GAP_PX;
+  (THUMBNAIL_SLOT_COUNT - 1) * DESKTOP_THUMB_GAP_PX;
 
-const DESKTOP_SLOT_STEP_PX = DESKTOP_FITTED_THUMB_WIDTH_PX + THUMB_GAP_PX;
+const DESKTOP_SLOT_STEP_PX = DESKTOP_FITTED_THUMB_WIDTH_PX + DESKTOP_THUMB_GAP_PX;
 
 /** Below this measured viewport width, show 3 larger thumbs (RCS-04). */
 const MOBILE_VIEWPORT_MAX_PX = 767;
@@ -90,14 +91,17 @@ function resolveRailLayout(viewportWidth: number): RailLayout {
   const visibleSlots = mobilePortrait
     ? MOBILE_VISIBLE_SLOTS
     : THUMBNAIL_SLOT_COUNT;
+  const gapPx = mobilePortrait
+    ? MOBILE_THUMB_GAP_PX
+    : DESKTOP_THUMB_GAP_PX;
   const thumbWidth = Math.max(
     44,
-    Math.floor((width - (visibleSlots - 1) * THUMB_GAP_PX) / visibleSlots),
+    Math.floor((width - (visibleSlots - 1) * gapPx) / visibleSlots),
   );
   return {
     viewportWidth: width,
     thumbWidth,
-    slotStep: thumbWidth + THUMB_GAP_PX,
+    slotStep: thumbWidth + gapPx,
     visibleSlots,
   };
 }
@@ -361,8 +365,12 @@ export function ThumbnailRail() {
     };
   }, []);
 
+  const railGapPx =
+    layout.visibleSlots === MOBILE_VISIBLE_SLOTS
+      ? MOBILE_THUMB_GAP_PX
+      : DESKTOP_THUMB_GAP_PX;
   const trackWidthPx =
-    itemCount * layout.thumbWidth + Math.max(0, itemCount - 1) * THUMB_GAP_PX;
+    itemCount * layout.thumbWidth + Math.max(0, itemCount - 1) * railGapPx;
 
   if (itemCount === 0) {
     return (
@@ -373,8 +381,8 @@ export function ThumbnailRail() {
         <div className="flex w-full items-center justify-center">
           <ChevronSpacer />
           <div
-            className="flex h-20 min-w-0 flex-1 items-stretch mobile:h-20"
-            style={{ gap: THUMB_GAP_PX }}
+            className="flex h-20 min-w-0 flex-1 items-stretch mobile:h-14"
+            style={{ gap: railGapPx }}
           >
             {Array.from({ length: layout.visibleSlots }, (_, index) => (
               <div
@@ -404,13 +412,13 @@ export function ThumbnailRail() {
         <div
           ref={scrollRef}
           aria-label="Náhledy médií"
-          className="h-20 min-w-0 flex-1 overflow-x-auto overflow-y-hidden overscroll-x-contain mobile:h-20 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="h-20 min-w-0 flex-1 overflow-x-auto overflow-y-hidden overscroll-x-contain mobile:h-14 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           role="region"
         >
           <div
             className="flex h-full transition-[width] duration-150 ease-out"
             style={{
-              gap: THUMB_GAP_PX,
+              gap: railGapPx,
               width: trackWidthPx,
               minWidth: trackWidthPx,
             }}

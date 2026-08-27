@@ -93,13 +93,30 @@ export function WelcomeBridge({
           flex-direction: row;
           flex-wrap: nowrap;
           align-items: flex-start;
-          justify-content: space-between;
-          gap: 8px;
+          justify-content: center;
+          gap: 6px;
         }
 
         .welcome-bridge-copy > * {
-          flex: 1 1 0;
+          flex: 0 1 auto;
           min-width: 0;
+          margin: 0;
+        }
+
+        .welcome-bridge-copy #welcome-bridge-headline {
+          font-size: 13px !important;
+          line-height: 1.2 !important;
+        }
+
+        .welcome-bridge-copy #welcome-bridge-title {
+          font-size: 11px !important;
+          line-height: 1.2 !important;
+          letter-spacing: 0.02em !important;
+        }
+
+        .welcome-bridge-copy #welcome-bridge-description {
+          font-size: 12px !important;
+          line-height: 1.25 !important;
         }
       }
     `}</style>

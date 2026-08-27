@@ -17,7 +17,7 @@ export function AuditTransition() {
   return (
     <div className="mx-auto w-full max-w-[61.6rem] px-section pb-10 pt-14 text-center mobile:pb-8 mobile:pt-12">
       <h1
-        className="font-sans text-5xl font-bold leading-[1.1] tracking-tight mobile:text-[80%] mobile:leading-tight"
+        className="font-sans text-5xl font-bold leading-[1.1] tracking-tight mobile:text-[2.4rem] mobile:leading-tight"
         style={{ color: AUDIT_WHITE }}
         data-testid="audit-hero-title"
       >
@@ -25,14 +25,14 @@ export function AuditTransition() {
       </h1>
 
       <p
-        className="mx-auto mt-7 max-w-[52.8rem] font-sans text-xl font-normal leading-snug text-white/90 mobile:mt-5 mobile:text-lg"
+        className="mx-auto mt-7 max-w-[52.8rem] font-sans text-xl font-normal leading-snug text-white/90 mobile:mt-5 mobile:max-w-none mobile:text-lg"
         data-testid="audit-hero-subtitle"
       >
         {hero.subtitle}
       </p>
 
       <p
-        className="mx-auto mt-5 max-w-[52.8rem] font-sans text-xl font-semibold leading-snug mobile:text-lg"
+        className="mx-auto mt-5 max-w-[52.8rem] font-sans text-xl font-semibold leading-snug mobile:max-w-none mobile:text-lg"
         style={{ color: AUDIT_ACCENT }}
         data-testid="audit-hero-highlight"
       >

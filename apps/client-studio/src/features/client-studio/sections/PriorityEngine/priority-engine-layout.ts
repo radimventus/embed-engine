@@ -42,11 +42,11 @@ export const PRIORITY_ENGINE_INTRO_PANEL_CLASS =
  * Stretched 30 px left into the gap on desktop; full-bleed stack on mobile (RCS-02).
  */
 export const PRIORITY_ENGINE_CONVERSATION_PANEL_CLASS =
-  'box-border relative z-0 -ml-[30px] flex h-auto w-[calc(100%+30px)] max-w-[710px] flex-col self-start overflow-visible bg-transparent px-section pb-section pt-0 mobile:ml-0 mobile:w-full mobile:max-w-none';
+  'box-border relative z-0 -ml-[30px] flex h-auto w-[calc(100%+30px)] max-w-[710px] flex-col self-start overflow-visible bg-transparent px-section pb-section pt-0 mobile:ml-0 mobile:w-full mobile:max-w-none mobile:px-0';
 
 /** Sticky conversation CTA — clears RCS-01 mobile bottom nav (RCS-02). */
 export const PRIORITY_ENGINE_MOBILE_STICKY_CTA_CLASS =
-  'mobile:sticky mobile:bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px))] mobile:z-40 mobile:-mx-section mobile:border-t mobile:border-embed-border-default mobile:bg-[#FFFFFF]/95 mobile:px-section mobile:py-3 mobile:backdrop-blur-[6px]';
+  'mobile:sticky mobile:bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px))] mobile:z-40 mobile:mx-0 mobile:border-t mobile:border-embed-border-default mobile:bg-[#FFFFFF]/95 mobile:px-0 mobile:py-3 mobile:backdrop-blur-[6px]';
 
 export const PRIORITY_ENGINE_ACTION_AREA_CLASS =
   'mt-5 flex w-[680px] shrink-0 items-center justify-between gap-section';
