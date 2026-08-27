@@ -1,22 +1,22 @@
-var Qx = Object.defineProperty;
-var Wx = (t, n, i) => n in t ? Qx(t, n, { enumerable: !0, configurable: !0, writable: !0, value: i }) : t[n] = i;
-var ae = (t, n, i) => Wx(t, typeof n != "symbol" ? n + "" : n, i);
-const e0 = '*,:before,:after{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}*,:before,:after{border-color:#e3e3e3}html,body,#root{min-height:100vh;overscroll-behavior:none;--tw-text-opacity: 1;color:rgb(0 25 48 / var(--tw-text-opacity, 1));background-color:#f7f6f4;overflow-x:clip}body{font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}html[data-guided-journey-root=true],body[data-guided-journey-root=true],[data-guided-journey-root=true]{scroll-behavior:smooth;scroll-padding-top:var(--guided-journey-header-offset, 92px);scroll-padding-bottom:var(--guided-journey-bottom-nav-offset, 0px)}html[data-guided-journey-root=true][data-guided-journey-snap=on],[data-guided-journey-root=true][data-guided-journey-snap=on]{scroll-snap-type:y proximity}input::-moz-placeholder,textarea::-moz-placeholder{color:#00193066}input::placeholder,textarea::placeholder{color:#00193066}[data-embed-boundary] .container{width:100%}@media(min-width:640px){[data-embed-boundary] .container{max-width:640px}}@media(min-width:768px){[data-embed-boundary] .container{max-width:768px}}@media(min-width:1024px){[data-embed-boundary] .container{max-width:1024px}}@media(min-width:1200px){[data-embed-boundary] .container{max-width:1200px}}@media(min-width:1280px){[data-embed-boundary] .container{max-width:1280px}}@media(min-width:1440px){[data-embed-boundary] .container{max-width:1440px}}@media(min-width:1536px){[data-embed-boundary] .container{max-width:1536px}}[data-embed-boundary] .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border-width:0!important}[data-embed-boundary] .pointer-events-none{pointer-events:none!important}[data-embed-boundary] .\\!visible,[data-embed-boundary] .visible{visibility:visible!important}[data-embed-boundary] .invisible{visibility:hidden!important}[data-embed-boundary] .static{position:static!important}[data-embed-boundary] .fixed{position:fixed!important}[data-embed-boundary] .absolute{position:absolute!important}[data-embed-boundary] .relative{position:relative!important}[data-embed-boundary] .sticky{position:sticky!important}[data-embed-boundary] .inset-0{top:0!important;right:0!important;bottom:0!important;left:0!important}[data-embed-boundary] .inset-x-0{left:0!important;right:0!important}[data-embed-boundary] .inset-y-0{top:0!important;bottom:0!important}[data-embed-boundary] .bottom-0{bottom:0!important}[data-embed-boundary] .bottom-3{bottom:.75rem!important}[data-embed-boundary] .bottom-\\[calc\\(20px\\+var\\(--guided-journey-bottom-nav-offset\\,0px\\)\\)\\]{bottom:calc(20px + var(--guided-journey-bottom-nav-offset,0px))!important}[data-embed-boundary] .left-0{left:0!important}[data-embed-boundary] .left-1\\/2{left:50%!important}[data-embed-boundary] .left-1\\/3{left:33.333333%!important}[data-embed-boundary] .left-2{left:.5rem!important}[data-embed-boundary] .left-2\\/3{left:66.666667%!important}[data-embed-boundary] .left-3{left:.75rem!important}[data-embed-boundary] .left-\\[12\\.5\\%\\]{left:12.5%!important}[data-embed-boundary] .left-\\[62\\.5\\%\\]{left:62.5%!important}[data-embed-boundary] .left-\\[calc\\(100\\%\\+10px\\)\\]{left:calc(100% + 10px)!important}[data-embed-boundary] .left-full{left:100%!important}[data-embed-boundary] .right-0{right:0!important}[data-embed-boundary] .right-3{right:.75rem!important}[data-embed-boundary] .right-\\[12\\.5\\%\\]{right:12.5%!important}[data-embed-boundary] .right-\\[37\\.5\\%\\]{right:37.5%!important}[data-embed-boundary] .right-section{right:24px!important}[data-embed-boundary] .top-0{top:0!important}[data-embed-boundary] .top-1\\/2{top:50%!important}[data-embed-boundary] .top-\\[25\\%\\]{top:25%!important}[data-embed-boundary] .top-\\[2px\\]{top:2px!important}[data-embed-boundary] .top-\\[44px\\]{top:44px!important}[data-embed-boundary] .top-\\[calc\\(0\\.75rem\\+1\\.4em\\/2\\)\\]{top:calc(.75rem + .7em)!important}[data-embed-boundary] .top-\\[calc\\(100\\%\\+6px\\)\\]{top:calc(100% + 6px)!important}[data-embed-boundary] .top-full{top:100%!important}[data-embed-boundary] .isolate{isolation:isolate!important}[data-embed-boundary] .z-0{z-index:0!important}[data-embed-boundary] .z-10{z-index:10!important}[data-embed-boundary] .z-20{z-index:20!important}[data-embed-boundary] .z-40{z-index:40!important}[data-embed-boundary] .z-50{z-index:50!important}[data-embed-boundary] .z-\\[60\\]{z-index:60!important}[data-embed-boundary] .order-1{order:1!important}[data-embed-boundary] .order-2{order:2!important}[data-embed-boundary] .col-span-2{grid-column:span 2 / span 2!important}[data-embed-boundary] .col-start-1{grid-column-start:1!important}[data-embed-boundary] .col-start-2{grid-column-start:2!important}[data-embed-boundary] .row-span-2{grid-row:span 2 / span 2!important}[data-embed-boundary] .row-start-1{grid-row-start:1!important}[data-embed-boundary] .row-start-2{grid-row-start:2!important}[data-embed-boundary] .row-start-3{grid-row-start:3!important}[data-embed-boundary] .row-start-4{grid-row-start:4!important}[data-embed-boundary] .m-0{margin:0!important}[data-embed-boundary] .mx-1\\.5{margin-left:.375rem!important;margin-right:.375rem!important}[data-embed-boundary] .mx-2{margin-left:.5rem!important;margin-right:.5rem!important}[data-embed-boundary] .mx-auto{margin-left:auto!important;margin-right:auto!important}[data-embed-boundary] .-ml-\\[30px\\]{margin-left:-30px!important}[data-embed-boundary] .-mt-0\\.5{margin-top:-.125rem!important}[data-embed-boundary] .-mt-\\[2px\\]{margin-top:-2px!important}[data-embed-boundary] .mb-1\\.5{margin-bottom:.375rem!important}[data-embed-boundary] .mb-2{margin-bottom:.5rem!important}[data-embed-boundary] .mb-3{margin-bottom:.75rem!important}[data-embed-boundary] .mb-5{margin-bottom:1.25rem!important}[data-embed-boundary] .ml-1{margin-left:.25rem!important}[data-embed-boundary] .ml-1\\.5{margin-left:.375rem!important}[data-embed-boundary] .ml-2{margin-left:.5rem!important}[data-embed-boundary] .ml-auto{margin-left:auto!important}[data-embed-boundary] .mr-1{margin-right:.25rem!important}[data-embed-boundary] .mr-2{margin-right:.5rem!important}[data-embed-boundary] .mt-0\\.5{margin-top:.125rem!important}[data-embed-boundary] .mt-1{margin-top:.25rem!important}[data-embed-boundary] .mt-1\\.5{margin-top:.375rem!important}[data-embed-boundary] .mt-10{margin-top:2.5rem!important}[data-embed-boundary] .mt-2{margin-top:.5rem!important}[data-embed-boundary] .mt-2\\.5{margin-top:.625rem!important}[data-embed-boundary] .mt-3{margin-top:.75rem!important}[data-embed-boundary] .mt-4{margin-top:1rem!important}[data-embed-boundary] .mt-5{margin-top:1.25rem!important}[data-embed-boundary] .mt-6{margin-top:1.5rem!important}[data-embed-boundary] .mt-7{margin-top:1.75rem!important}[data-embed-boundary] .mt-8{margin-top:2rem!important}[data-embed-boundary] .mt-\\[30px\\]{margin-top:30px!important}[data-embed-boundary] .mt-\\[50px\\]{margin-top:50px!important}[data-embed-boundary] .mt-auto{margin-top:auto!important}[data-embed-boundary] .mt-px{margin-top:1px!important}[data-embed-boundary] .mt-section{margin-top:24px!important}[data-embed-boundary] .box-border{box-sizing:border-box!important}[data-embed-boundary] .block{display:block!important}[data-embed-boundary] .inline-block{display:inline-block!important}[data-embed-boundary] .inline{display:inline!important}[data-embed-boundary] .flex{display:flex!important}[data-embed-boundary] .inline-flex{display:inline-flex!important}[data-embed-boundary] .table{display:table!important}[data-embed-boundary] .grid{display:grid!important}[data-embed-boundary] .hidden{display:none!important}[data-embed-boundary] .aspect-\\[4\\/3\\]{aspect-ratio:4/3!important}[data-embed-boundary] .aspect-square{aspect-ratio:1 / 1!important}[data-embed-boundary] .aspect-video{aspect-ratio:16 / 9!important}[data-embed-boundary] .h-1\\/2{height:50%!important}[data-embed-boundary] .h-10{height:2.5rem!important}[data-embed-boundary] .h-11{height:2.75rem!important}[data-embed-boundary] .h-12{height:3rem!important}[data-embed-boundary] .h-14{height:3.5rem!important}[data-embed-boundary] .h-16{height:4rem!important}[data-embed-boundary] .h-20{height:5rem!important}[data-embed-boundary] .h-3{height:.75rem!important}[data-embed-boundary] .h-3\\.5{height:.875rem!important}[data-embed-boundary] .h-4{height:1rem!important}[data-embed-boundary] .h-5{height:1.25rem!important}[data-embed-boundary] .h-7{height:1.75rem!important}[data-embed-boundary] .h-8{height:2rem!important}[data-embed-boundary] .h-9{height:2.25rem!important}[data-embed-boundary] .h-\\[100px\\]{height:100px!important}[data-embed-boundary] .h-\\[2px\\]{height:2px!important}[data-embed-boundary] .h-\\[33px\\]{height:33px!important}[data-embed-boundary] .h-\\[36px\\]{height:36px!important}[data-embed-boundary] .h-\\[38px\\]{height:38px!important}[data-embed-boundary] .h-\\[3px\\]{height:3px!important}[data-embed-boundary] .h-\\[50px\\]{height:50px!important}[data-embed-boundary] .h-\\[54px\\]{height:54px!important}[data-embed-boundary] .h-\\[80px\\]{height:80px!important}[data-embed-boundary] .h-\\[88px\\]{height:88px!important}[data-embed-boundary] .h-auto{height:auto!important}[data-embed-boundary] .h-chapter-spacing{height:30px!important}[data-embed-boundary] .h-chapter-title{height:60px!important}[data-embed-boundary] .h-full{height:100%!important}[data-embed-boundary] .h-header{height:72px!important}[data-embed-boundary] .h-hero-image{height:584px!important}[data-embed-boundary] .h-px{height:1px!important}[data-embed-boundary] .h-screen{height:100vh!important}[data-embed-boundary] .h-social-proof{height:90px!important}[data-embed-boundary] .max-h-0{max-height:0px!important}[data-embed-boundary] .max-h-11{max-height:2.75rem!important}[data-embed-boundary] .max-h-\\[90vh\\]{max-height:90vh!important}[data-embed-boundary] .max-h-none{max-height:none!important}[data-embed-boundary] .min-h-0{min-height:0px!important}[data-embed-boundary] .min-h-10{min-height:2.5rem!important}[data-embed-boundary] .min-h-11{min-height:2.75rem!important}[data-embed-boundary] .min-h-9{min-height:2.25rem!important}[data-embed-boundary] .min-h-\\[128px\\]{min-height:128px!important}[data-embed-boundary] .min-h-\\[32px\\]{min-height:32px!important}[data-embed-boundary] .min-h-\\[50px\\]{min-height:50px!important}[data-embed-boundary] .min-h-\\[50vh\\]{min-height:50vh!important}[data-embed-boundary] .min-h-\\[60px\\]{min-height:60px!important}[data-embed-boundary] .min-h-faq-ai{min-height:400px!important}[data-embed-boundary] .min-h-full{min-height:100%!important}[data-embed-boundary] .min-h-screen{min-height:100vh!important}[data-embed-boundary] .w-1\\/2{width:50%!important}[data-embed-boundary] .w-1\\/4{width:25%!important}[data-embed-boundary] .w-10{width:2.5rem!important}[data-embed-boundary] .w-11{width:2.75rem!important}[data-embed-boundary] .w-12{width:3rem!important}[data-embed-boundary] .w-16{width:4rem!important}[data-embed-boundary] .w-3{width:.75rem!important}[data-embed-boundary] .w-3\\.5{width:.875rem!important}[data-embed-boundary] .w-4{width:1rem!important}[data-embed-boundary] .w-5{width:1.25rem!important}[data-embed-boundary] .w-56{width:14rem!important}[data-embed-boundary] .w-7{width:1.75rem!important}[data-embed-boundary] .w-8{width:2rem!important}[data-embed-boundary] .w-9{width:2.25rem!important}[data-embed-boundary] .w-\\[36\\%\\]{width:36%!important}[data-embed-boundary] .w-\\[38px\\]{width:38px!important}[data-embed-boundary] .w-\\[42px\\]{width:42px!important}[data-embed-boundary] .w-\\[680px\\]{width:680px!important}[data-embed-boundary] .w-\\[690px\\]{width:690px!important}[data-embed-boundary] .w-\\[70\\%\\]{width:70%!important}[data-embed-boundary] .w-\\[88px\\]{width:88px!important}[data-embed-boundary] .w-\\[calc\\(100\\%\\+30px\\)\\]{width:calc(100% + 30px)!important}[data-embed-boundary] .w-\\[calc\\(400\\%\\/3\\+1px\\)\\]{width:calc(400% / 3 + 1px)!important}[data-embed-boundary] .w-\\[min\\(90vw\\,calc\\(90vh\\*16\\/9\\)\\)\\]{width:min(90vw,160vh)!important}[data-embed-boundary] .w-auto{width:auto!important}[data-embed-boundary] .w-full{width:100%!important}[data-embed-boundary] .w-px{width:1px!important}[data-embed-boundary] .w-sidebar{width:48px!important}[data-embed-boundary] .min-w-0{min-width:0px!important}[data-embed-boundary] .min-w-11{min-width:2.75rem!important}[data-embed-boundary] .min-w-44{min-width:11rem!important}[data-embed-boundary] .min-w-\\[260px\\]{min-width:260px!important}[data-embed-boundary] .max-w-2xl{max-width:42rem!important}[data-embed-boundary] .max-w-5xl{max-width:64rem!important}[data-embed-boundary] .max-w-\\[10rem\\]{max-width:10rem!important}[data-embed-boundary] .max-w-\\[12rem\\]{max-width:12rem!important}[data-embed-boundary] .max-w-\\[32rem\\]{max-width:32rem!important}[data-embed-boundary] .max-w-\\[52\\.8rem\\]{max-width:52.8rem!important}[data-embed-boundary] .max-w-\\[560px\\]{max-width:560px!important}[data-embed-boundary] .max-w-\\[61\\.6rem\\]{max-width:61.6rem!important}[data-embed-boundary] .max-w-\\[680px\\]{max-width:680px!important}[data-embed-boundary] .max-w-\\[682px\\]{max-width:682px!important}[data-embed-boundary] .max-w-\\[685px\\]{max-width:685px!important}[data-embed-boundary] .max-w-\\[690px\\]{max-width:690px!important}[data-embed-boundary] .max-w-\\[710px\\]{max-width:710px!important}[data-embed-boundary] .max-w-\\[760px\\]{max-width:760px!important}[data-embed-boundary] .max-w-\\[85\\%\\]{max-width:85%!important}[data-embed-boundary] .max-w-\\[90vw\\]{max-width:90vw!important}[data-embed-boundary] .max-w-full{max-width:100%!important}[data-embed-boundary] .max-w-md{max-width:28rem!important}[data-embed-boundary] .max-w-none{max-width:none!important}[data-embed-boundary] .flex-1{flex:1 1 0%!important}[data-embed-boundary] .shrink-0{flex-shrink:0!important}[data-embed-boundary] .grow-0{flex-grow:0!important}[data-embed-boundary] .origin-center{transform-origin:center!important}[data-embed-boundary] .-translate-x-1\\/2{--tw-translate-x: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .-translate-x-\\[10px\\]{--tw-translate-x: -10px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .-translate-y-1\\/2{--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-x-1\\/2{--tw-translate-x: 50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-x-\\[10px\\]{--tw-translate-x: 10px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-0{--tw-translate-y: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-1{--tw-translate-y: .25rem !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-5{--tw-translate-y: 1.25rem !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-\\[50px\\]{--tw-translate-y: 50px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .rotate-0{--tw-rotate: 0deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .rotate-180{--tw-rotate: 180deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-100{--tw-scale-x: 1 !important;--tw-scale-y: 1 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-\\[0\\.909\\]{--tw-scale-x: .909 !important;--tw-scale-y: .909 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-\\[1\\.10\\]{--tw-scale-x: 1.1 !important;--tw-scale-y: 1.1 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}@keyframes pulse{50%{opacity:.5}}[data-embed-boundary] .animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite!important}[data-embed-boundary] .cursor-not-allowed{cursor:not-allowed!important}[data-embed-boundary] .cursor-pointer{cursor:pointer!important}[data-embed-boundary] .touch-none{touch-action:none!important}[data-embed-boundary] .touch-pan-y{--tw-pan-y: pan-y !important;touch-action:var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom)!important}[data-embed-boundary] .touch-manipulation{touch-action:manipulation!important}[data-embed-boundary] .select-none{-webkit-user-select:none!important;-moz-user-select:none!important;user-select:none!important}[data-embed-boundary] .resize{resize:both!important}[data-embed-boundary] .snap-start{scroll-snap-align:start!important}[data-embed-boundary] .snap-normal{scroll-snap-stop:normal!important}[data-embed-boundary] .scroll-mt-header{scroll-margin-top:72px!important}[data-embed-boundary] .list-decimal{list-style-type:decimal!important}[data-embed-boundary] .list-disc{list-style-type:disc!important}[data-embed-boundary] .list-none{list-style-type:none!important}[data-embed-boundary] .appearance-none{-webkit-appearance:none!important;-moz-appearance:none!important;appearance:none!important}[data-embed-boundary] .grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-\\[10\\.5rem_1px_1fr\\]{grid-template-columns:10.5rem 1px 1fr!important}[data-embed-boundary] .grid-cols-\\[1fr_auto_1fr\\]{grid-template-columns:1fr auto 1fr!important}[data-embed-boundary] .grid-cols-\\[44px_minmax\\(0\\,1fr\\)\\]{grid-template-columns:44px minmax(0,1fr)!important}[data-embed-boundary] .grid-cols-\\[52fr_48fr\\]{grid-template-columns:52fr 48fr!important}[data-embed-boundary] .grid-cols-\\[690px_minmax\\(0\\,1fr\\)\\]{grid-template-columns:690px minmax(0,1fr)!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_auto\\]{grid-template-columns:minmax(0,1fr) auto!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_auto_minmax\\(0\\,1fr\\)\\]{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,2fr\\)\\]{grid-template-columns:minmax(0,1fr) minmax(0,2fr)!important}[data-embed-boundary] .grid-rows-\\[auto_auto_auto_auto\\]{grid-template-rows:auto auto auto auto!important}[data-embed-boundary] .grid-rows-\\[auto_minmax\\(16rem\\,1fr\\)\\]{grid-template-rows:auto minmax(16rem,1fr)!important}[data-embed-boundary] .flex-col{flex-direction:column!important}[data-embed-boundary] .flex-wrap{flex-wrap:wrap!important}[data-embed-boundary] .place-items-center{place-items:center!important}[data-embed-boundary] .content-start{align-content:flex-start!important}[data-embed-boundary] .items-start{align-items:flex-start!important}[data-embed-boundary] .items-end{align-items:flex-end!important}[data-embed-boundary] .items-center{align-items:center!important}[data-embed-boundary] .items-baseline{align-items:baseline!important}[data-embed-boundary] .items-stretch{align-items:stretch!important}[data-embed-boundary] .justify-start{justify-content:flex-start!important}[data-embed-boundary] .justify-end{justify-content:flex-end!important}[data-embed-boundary] .justify-center{justify-content:center!important}[data-embed-boundary] .justify-between{justify-content:space-between!important}[data-embed-boundary] .justify-items-center{justify-items:center!important}[data-embed-boundary] .gap-0{gap:0px!important}[data-embed-boundary] .gap-0\\.5{gap:.125rem!important}[data-embed-boundary] .gap-1{gap:.25rem!important}[data-embed-boundary] .gap-1\\.5{gap:.375rem!important}[data-embed-boundary] .gap-14{gap:3.5rem!important}[data-embed-boundary] .gap-2{gap:.5rem!important}[data-embed-boundary] .gap-2\\.5{gap:.625rem!important}[data-embed-boundary] .gap-3{gap:.75rem!important}[data-embed-boundary] .gap-4{gap:1rem!important}[data-embed-boundary] .gap-5{gap:1.25rem!important}[data-embed-boundary] .gap-6{gap:1.5rem!important}[data-embed-boundary] .gap-8{gap:2rem!important}[data-embed-boundary] .gap-\\[1\\.6px\\]{gap:1.6px!important}[data-embed-boundary] .gap-\\[14px\\]{gap:14px!important}[data-embed-boundary] .gap-\\[18px\\]{gap:18px!important}[data-embed-boundary] .gap-\\[22px\\]{gap:22px!important}[data-embed-boundary] .gap-\\[30px\\]{gap:30px!important}[data-embed-boundary] .gap-section{gap:24px!important}[data-embed-boundary] .gap-x-10{-moz-column-gap:2.5rem!important;column-gap:2.5rem!important}[data-embed-boundary] .gap-x-2{-moz-column-gap:.5rem!important;column-gap:.5rem!important}[data-embed-boundary] .gap-x-4{-moz-column-gap:1rem!important;column-gap:1rem!important}[data-embed-boundary] .gap-x-6{-moz-column-gap:1.5rem!important;column-gap:1.5rem!important}[data-embed-boundary] .gap-x-8{-moz-column-gap:2rem!important;column-gap:2rem!important}[data-embed-boundary] .gap-x-section{-moz-column-gap:24px!important;column-gap:24px!important}[data-embed-boundary] .gap-y-1{row-gap:.25rem!important}[data-embed-boundary] .gap-y-2{row-gap:.5rem!important}[data-embed-boundary] .gap-y-3{row-gap:.75rem!important}[data-embed-boundary] .gap-y-4{row-gap:1rem!important}[data-embed-boundary] .space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.25rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.25rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-1\\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.375rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.375rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.5rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.5rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.75rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.75rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-section>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(24px * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(24px * var(--tw-space-y-reverse))!important}[data-embed-boundary] .divide-x>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(1px * var(--tw-divide-x-reverse))!important;border-left-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .divide-x-0>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(0px * var(--tw-divide-x-reverse))!important;border-left-width:calc(0px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(1px * var(--tw-divide-y-reverse))!important}[data-embed-boundary] .divide-embed-border-default>:not([hidden])~:not([hidden]){--tw-divide-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-divide-opacity, 1))!important}[data-embed-boundary] .self-start{align-self:flex-start!important}[data-embed-boundary] .self-center{align-self:center!important}[data-embed-boundary] .self-stretch{align-self:stretch!important}[data-embed-boundary] .justify-self-start{justify-self:start!important}[data-embed-boundary] .justify-self-end{justify-self:end!important}[data-embed-boundary] .justify-self-center{justify-self:center!important}[data-embed-boundary] .overflow-hidden{overflow:hidden!important}[data-embed-boundary] .overflow-visible{overflow:visible!important}[data-embed-boundary] .overflow-x-auto{overflow-x:auto!important}[data-embed-boundary] .overflow-y-auto{overflow-y:auto!important}[data-embed-boundary] .overflow-x-hidden{overflow-x:hidden!important}[data-embed-boundary] .overflow-y-hidden{overflow-y:hidden!important}[data-embed-boundary] .overscroll-x-contain{overscroll-behavior-x:contain!important}[data-embed-boundary] .truncate{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}[data-embed-boundary] .whitespace-nowrap{white-space:nowrap!important}[data-embed-boundary] .whitespace-pre-line{white-space:pre-line!important}[data-embed-boundary] .rounded{border-radius:.25rem!important}[data-embed-boundary] .rounded-\\[10px\\]{border-radius:10px!important}[data-embed-boundary] .rounded-\\[11px\\]{border-radius:11px!important}[data-embed-boundary] .rounded-\\[5px\\]{border-radius:5px!important}[data-embed-boundary] .rounded-\\[6\\.4px\\]{border-radius:6.4px!important}[data-embed-boundary] .rounded-\\[6px\\]{border-radius:6px!important}[data-embed-boundary] .rounded-\\[7px\\]{border-radius:7px!important}[data-embed-boundary] .rounded-\\[8px\\]{border-radius:8px!important}[data-embed-boundary] .rounded-full{border-radius:9999px!important}[data-embed-boundary] .rounded-md{border-radius:.375rem!important}[data-embed-boundary] .rounded-sm{border-radius:.125rem!important}[data-embed-boundary] .rounded-xl{border-radius:.75rem!important}[data-embed-boundary] .border{border-width:1px!important}[data-embed-boundary] .border-0{border-width:0px!important}[data-embed-boundary] .border-2{border-width:2px!important}[data-embed-boundary] .border-b{border-bottom-width:1px!important}[data-embed-boundary] .border-l-2{border-left-width:2px!important}[data-embed-boundary] .border-r{border-right-width:1px!important}[data-embed-boundary] .border-t{border-top-width:1px!important}[data-embed-boundary] .border-solid{border-style:solid!important}[data-embed-boundary] .border-dashed{border-style:dashed!important}[data-embed-boundary] .border-\\[\\#C89B2D\\]{--tw-border-opacity: 1 !important;border-color:rgb(200 155 45 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]{--tw-border-opacity: 1 !important;border-color:rgb(212 175 55 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]\\/40{border-color:#d4af3766!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]\\/50{border-color:#d4af3780!important}[data-embed-boundary] .border-\\[\\#E3E3E3\\]{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-current{border-color:currentColor!important}[data-embed-boundary] .border-embed-action-secondaryAccent{--tw-border-opacity: 1 !important;border-color:rgb(24 66 143 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-background-primary\\/50{border-color:#f7f6f480!important}[data-embed-boundary] .border-embed-border-default{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-border-default\\/60{border-color:#e3e3e399!important}[data-embed-boundary] .border-embed-border-default\\/70{border-color:#e3e3e3b3!important}[data-embed-boundary] .border-embed-border-default\\/80{border-color:#e3e3e3cc!important}[data-embed-boundary] .border-embed-brand-gold{--tw-border-opacity: 1 !important;border-color:rgb(200 161 101 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-brand-gold\\/30{border-color:#c8a1654d!important}[data-embed-boundary] .border-embed-brand-gold\\/50{border-color:#c8a16580!important}[data-embed-boundary] .border-embed-brand-gold\\/60{border-color:#c8a16599!important}[data-embed-boundary] .border-embed-foreground-primary\\/10{border-color:#0019301a!important}[data-embed-boundary] .border-embed-foreground-primary\\/15{border-color:#00193026!important}[data-embed-boundary] .border-transparent{border-color:transparent!important}[data-embed-boundary] .\\!bg-\\[\\#FFFFFF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#001930\\]{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#D9CDAF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(217 205 175 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#F7F6F4\\]{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#F7F6F4\\]\\/95{background-color:#f7f6f4f2!important}[data-embed-boundary] .bg-\\[\\#FFFFFF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#FFFFFF\\]\\/95{background-color:#fffffff2!important}[data-embed-boundary] .bg-embed-action-secondary{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-primary{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-primary\\/15{background-color:#f7f6f426!important}[data-embed-boundary] .bg-embed-background-primary\\/25{background-color:#f7f6f440!important}[data-embed-boundary] .bg-embed-background-primary\\/50{background-color:#f7f6f480!important}[data-embed-boundary] .bg-embed-background-primary\\/90{background-color:#f7f6f4e6!important}[data-embed-boundary] .bg-embed-background-secondary{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-tertiary{--tw-bg-opacity: 1 !important;background-color:rgb(232 229 224 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-tertiary\\/60{background-color:#e8e5e099!important}[data-embed-boundary] .bg-embed-background-tertiary\\/80{background-color:#e8e5e0cc!important}[data-embed-boundary] .bg-embed-border-default{--tw-bg-opacity: 1 !important;background-color:rgb(227 227 227 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-gold{--tw-bg-opacity: 1 !important;background-color:rgb(200 161 101 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-gold\\/10{background-color:#c8a1651a!important}[data-embed-boundary] .bg-embed-brand-gold\\/15{background-color:#c8a16526!important}[data-embed-boundary] .bg-embed-brand-navy{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-navy\\/70{background-color:#001930b3!important}[data-embed-boundary] .bg-embed-foreground-primary\\/10{background-color:#0019301a!important}[data-embed-boundary] .bg-embed-surface-card,[data-embed-boundary] .bg-embed-surface-elevated{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-surface-inset{--tw-bg-opacity: 1 !important;background-color:rgb(232 229 224 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-surface-placeholder{--tw-bg-opacity: 1 !important;background-color:rgb(217 212 204 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-transparent{background-color:transparent!important}[data-embed-boundary] .bg-white{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-white\\/45{background-color:#ffffff73!important}[data-embed-boundary] .bg-white\\/65{background-color:#ffffffa6!important}[data-embed-boundary] .bg-white\\/95{background-color:#fffffff2!important}[data-embed-boundary] .bg-cover{background-size:cover!important}[data-embed-boundary] .bg-\\[center_42\\%\\]{background-position:center 42%!important}[data-embed-boundary] .bg-no-repeat{background-repeat:no-repeat!important}[data-embed-boundary] .fill-embed-foreground-primary{fill:#001930!important}[data-embed-boundary] .object-contain{-o-object-fit:contain!important;object-fit:contain!important}[data-embed-boundary] .object-cover{-o-object-fit:cover!important;object-fit:cover!important}[data-embed-boundary] .p-0{padding:0!important}[data-embed-boundary] .p-0\\.5{padding:.125rem!important}[data-embed-boundary] .p-1{padding:.25rem!important}[data-embed-boundary] .p-3\\.5{padding:.875rem!important}[data-embed-boundary] .p-4{padding:1rem!important}[data-embed-boundary] .p-5{padding:1.25rem!important}[data-embed-boundary] .p-6{padding:1.5rem!important}[data-embed-boundary] .p-\\[1\\.6px\\]{padding:1.6px!important}[data-embed-boundary] .p-section{padding:24px!important}[data-embed-boundary] .px-0{padding-left:0!important;padding-right:0!important}[data-embed-boundary] .px-2{padding-left:.5rem!important;padding-right:.5rem!important}[data-embed-boundary] .px-2\\.5{padding-left:.625rem!important;padding-right:.625rem!important}[data-embed-boundary] .px-3{padding-left:.75rem!important;padding-right:.75rem!important}[data-embed-boundary] .px-3\\.5{padding-left:.875rem!important;padding-right:.875rem!important}[data-embed-boundary] .px-4{padding-left:1rem!important;padding-right:1rem!important}[data-embed-boundary] .px-5{padding-left:1.25rem!important;padding-right:1.25rem!important}[data-embed-boundary] .px-6{padding-left:1.5rem!important;padding-right:1.5rem!important}[data-embed-boundary] .px-8{padding-left:2rem!important;padding-right:2rem!important}[data-embed-boundary] .px-\\[19px\\]{padding-left:19px!important;padding-right:19px!important}[data-embed-boundary] .px-\\[21px\\]{padding-left:21px!important;padding-right:21px!important}[data-embed-boundary] .px-section{padding-left:24px!important;padding-right:24px!important}[data-embed-boundary] .py-1{padding-top:.25rem!important;padding-bottom:.25rem!important}[data-embed-boundary] .py-1\\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}[data-embed-boundary] .py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}[data-embed-boundary] .py-2\\.5{padding-top:.625rem!important;padding-bottom:.625rem!important}[data-embed-boundary] .py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .py-3\\.5{padding-top:.875rem!important;padding-bottom:.875rem!important}[data-embed-boundary] .py-4{padding-top:1rem!important;padding-bottom:1rem!important}[data-embed-boundary] .py-5{padding-top:1.25rem!important;padding-bottom:1.25rem!important}[data-embed-boundary] .py-8{padding-top:2rem!important;padding-bottom:2rem!important}[data-embed-boundary] .py-\\[21px\\]{padding-top:21px!important;padding-bottom:21px!important}[data-embed-boundary] .py-\\[50px\\]{padding-top:50px!important;padding-bottom:50px!important}[data-embed-boundary] .py-section{padding-top:24px!important;padding-bottom:24px!important}[data-embed-boundary] .pb-1{padding-bottom:.25rem!important}[data-embed-boundary] .pb-10{padding-bottom:2.5rem!important}[data-embed-boundary] .pb-3{padding-bottom:.75rem!important}[data-embed-boundary] .pb-4{padding-bottom:1rem!important}[data-embed-boundary] .pb-5{padding-bottom:1.25rem!important}[data-embed-boundary] .pb-8{padding-bottom:2rem!important}[data-embed-boundary] .pb-\\[calc\\(3\\.5rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{padding-bottom:calc(3.5rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .pb-\\[env\\(safe-area-inset-bottom\\,0px\\)\\]{padding-bottom:env(safe-area-inset-bottom,0px)!important}[data-embed-boundary] .pb-section{padding-bottom:24px!important}[data-embed-boundary] .pl-12{padding-left:3rem!important}[data-embed-boundary] .pl-2\\.5{padding-left:.625rem!important}[data-embed-boundary] .pl-4{padding-left:1rem!important}[data-embed-boundary] .pl-5{padding-left:1.25rem!important}[data-embed-boundary] .pl-\\[14px\\]{padding-left:14px!important}[data-embed-boundary] .pl-\\[20px\\]{padding-left:20px!important}[data-embed-boundary] .pl-section{padding-left:24px!important}[data-embed-boundary] .pr-0{padding-right:0!important}[data-embed-boundary] .pr-10{padding-right:2.5rem!important}[data-embed-boundary] .pr-2{padding-right:.5rem!important}[data-embed-boundary] .pr-\\[20px\\]{padding-right:20px!important}[data-embed-boundary] .pt-0{padding-top:0!important}[data-embed-boundary] .pt-0\\.5{padding-top:.125rem!important}[data-embed-boundary] .pt-1{padding-top:.25rem!important}[data-embed-boundary] .pt-14{padding-top:3.5rem!important}[data-embed-boundary] .pt-2{padding-top:.5rem!important}[data-embed-boundary] .pt-3{padding-top:.75rem!important}[data-embed-boundary] .pt-4{padding-top:1rem!important}[data-embed-boundary] .pt-5{padding-top:1.25rem!important}[data-embed-boundary] .pt-6{padding-top:1.5rem!important}[data-embed-boundary] .pt-\\[20px\\]{padding-top:20px!important}[data-embed-boundary] .pt-\\[env\\(safe-area-inset-top\\,0px\\)\\]{padding-top:env(safe-area-inset-top,0px)!important}[data-embed-boundary] .pt-section{padding-top:24px!important}[data-embed-boundary] .text-left{text-align:left!important}[data-embed-boundary] .text-center{text-align:center!important}[data-embed-boundary] .text-right{text-align:right!important}[data-embed-boundary] .font-sans{font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif!important}[data-embed-boundary] .text-2xl{font-size:1.5rem!important;line-height:2rem!important}[data-embed-boundary] .text-5xl{font-size:3rem!important;line-height:1!important}[data-embed-boundary] .text-\\[10px\\]{font-size:10px!important}[data-embed-boundary] .text-\\[11px\\]{font-size:11px!important}[data-embed-boundary] .text-\\[12px\\]{font-size:12px!important}[data-embed-boundary] .text-\\[13px\\]{font-size:13px!important}[data-embed-boundary] .text-\\[14px\\]{font-size:14px!important}[data-embed-boundary] .text-\\[15px\\]{font-size:15px!important}[data-embed-boundary] .text-\\[16px\\]{font-size:16px!important}[data-embed-boundary] .text-\\[17px\\]{font-size:17px!important}[data-embed-boundary] .text-\\[18px\\]{font-size:18px!important}[data-embed-boundary] .text-\\[2\\.52rem\\]{font-size:2.52rem!important}[data-embed-boundary] .text-\\[22px\\]{font-size:22px!important}[data-embed-boundary] .text-\\[2rem\\]{font-size:2rem!important}[data-embed-boundary] .text-base{font-size:1rem!important;line-height:1.5rem!important}[data-embed-boundary] .text-lg{font-size:1.125rem!important;line-height:1.75rem!important}[data-embed-boundary] .text-sm{font-size:.875rem!important;line-height:1.25rem!important}[data-embed-boundary] .text-xl{font-size:1.25rem!important;line-height:1.75rem!important}[data-embed-boundary] .text-xs{font-size:.75rem!important;line-height:1rem!important}[data-embed-boundary] .\\!font-bold{font-weight:700!important}[data-embed-boundary] .font-black{font-weight:900!important}[data-embed-boundary] .font-bold{font-weight:700!important}[data-embed-boundary] .font-medium{font-weight:500!important}[data-embed-boundary] .font-normal{font-weight:400!important}[data-embed-boundary] .font-semibold{font-weight:600!important}[data-embed-boundary] .uppercase{text-transform:uppercase!important}[data-embed-boundary] .tabular-nums{--tw-numeric-spacing: tabular-nums !important;font-variant-numeric:var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)!important}[data-embed-boundary] .leading-\\[1\\.15\\]{line-height:1.15!important}[data-embed-boundary] .leading-\\[1\\.1\\]{line-height:1.1!important}[data-embed-boundary] .leading-\\[1\\.35\\]{line-height:1.35!important}[data-embed-boundary] .leading-\\[1\\.45\\]{line-height:1.45!important}[data-embed-boundary] .leading-\\[1\\.4\\]{line-height:1.4!important}[data-embed-boundary] .leading-\\[1\\.55\\]{line-height:1.55!important}[data-embed-boundary] .leading-\\[1\\.5\\]{line-height:1.5!important}[data-embed-boundary] .leading-\\[1\\.65\\]{line-height:1.65!important}[data-embed-boundary] .leading-\\[1\\.6\\]{line-height:1.6!important}[data-embed-boundary] .leading-none{line-height:1!important}[data-embed-boundary] .leading-normal{line-height:1.5!important}[data-embed-boundary] .leading-relaxed{line-height:1.625!important}[data-embed-boundary] .leading-snug{line-height:1.375!important}[data-embed-boundary] .leading-tight{line-height:1.25!important}[data-embed-boundary] .tracking-\\[0\\.12em\\]{letter-spacing:.12em!important}[data-embed-boundary] .tracking-\\[0\\.14em\\]{letter-spacing:.14em!important}[data-embed-boundary] .tracking-brand{letter-spacing:.3em!important}[data-embed-boundary] .tracking-tight{letter-spacing:-.025em!important}[data-embed-boundary] .tracking-wide{letter-spacing:.05em!important}[data-embed-boundary] .text-\\[\\#001930\\]{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-\\[\\#001930\\]\\/70{color:#001930b3!important}[data-embed-boundary] .text-\\[\\#C89B2D\\]{--tw-text-opacity: 1 !important;color:rgb(200 155 45 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-\\[\\#D4AF37\\]{--tw-text-opacity: 1 !important;color:rgb(212 175 55 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-\\[\\#FFFFFF\\]{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-action-onSecondary,[data-embed-boundary] .text-embed-action-secondaryAccent{--tw-text-opacity: 1 !important;color:rgb(24 66 143 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-background-primary{--tw-text-opacity: 1 !important;color:rgb(247 246 244 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-background-primary\\/45{color:#f7f6f473!important}[data-embed-boundary] .text-embed-background-primary\\/55{color:#f7f6f48c!important}[data-embed-boundary] .text-embed-background-primary\\/85{color:#f7f6f4d9!important}[data-embed-boundary] .text-embed-background-primary\\/90{color:#f7f6f4e6!important}[data-embed-boundary] .text-embed-border-strong{--tw-text-opacity: 1 !important;color:rgb(227 227 227 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-gold{--tw-text-opacity: 1 !important;color:rgb(200 161 101 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-navy{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-navy\\/70{color:#001930b3!important}[data-embed-boundary] .text-embed-foreground-primary{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-foreground-primary\\/35{color:#00193059!important}[data-embed-boundary] .text-embed-foreground-primary\\/40{color:#00193066!important}[data-embed-boundary] .text-embed-foreground-primary\\/45{color:#00193073!important}[data-embed-boundary] .text-embed-foreground-primary\\/50{color:#00193080!important}[data-embed-boundary] .text-embed-foreground-primary\\/55{color:#0019308c!important}[data-embed-boundary] .text-embed-foreground-primary\\/60{color:#00193099!important}[data-embed-boundary] .text-embed-foreground-primary\\/65{color:#001930a6!important}[data-embed-boundary] .text-embed-foreground-primary\\/70{color:#001930b3!important}[data-embed-boundary] .text-embed-foreground-primary\\/75{color:#001930bf!important}[data-embed-boundary] .text-embed-foreground-primary\\/80{color:#001930cc!important}[data-embed-boundary] .text-embed-foreground-primary\\/85{color:#001930d9!important}[data-embed-boundary] .text-embed-foreground-primary\\/90{color:#001930e6!important}[data-embed-boundary] .text-embed-status-ready{--tw-text-opacity: 1 !important;color:rgb(19 122 67 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-white{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-white\\/90{color:#ffffffe6!important}[data-embed-boundary] .underline{text-decoration-line:underline!important}[data-embed-boundary] .decoration-embed-border-strong{text-decoration-color:#e3e3e3!important}[data-embed-boundary] .decoration-white\\/50{text-decoration-color:#ffffff80!important}[data-embed-boundary] .underline-offset-2{text-underline-offset:2px!important}[data-embed-boundary] .underline-offset-4{text-underline-offset:4px!important}[data-embed-boundary] .antialiased{-webkit-font-smoothing:antialiased!important;-moz-osx-font-smoothing:grayscale!important}[data-embed-boundary] .opacity-0{opacity:0!important}[data-embed-boundary] .opacity-100{opacity:1!important}[data-embed-boundary] .opacity-40{opacity:.4!important}[data-embed-boundary] .opacity-70{opacity:.7!important}[data-embed-boundary] .opacity-80{opacity:.8!important}[data-embed-boundary] .shadow{--tw-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_0_rgba\\(0\\,25\\,48\\,0\\.04\\)\\]{--tw-shadow: 0 1px 0 rgba(0,25,48,.04) !important;--tw-shadow-colored: 0 1px 0 var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_11px_rgba\\(0\\,25\\,48\\,0\\.044\\)\\]{--tw-shadow: 0 1px 11px rgba(0,25,48,.044) !important;--tw-shadow-colored: 0 1px 11px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_4px_rgba\\(0\\,30\\,58\\,0\\.12\\)\\]{--tw-shadow: 0 1px 4px rgba(0,30,58,.12) !important;--tw-shadow-colored: 0 1px 4px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_8px_24px_rgba\\(0\\,25\\,48\\,0\\.18\\)\\]{--tw-shadow: 0 8px 24px rgba(0,25,48,.18) !important;--tw-shadow-colored: 0 8px 24px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-lg{--tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-md{--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-none{--tw-shadow: 0 0 #0000 !important;--tw-shadow-colored: 0 0 #0000 !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .outline-none{outline:2px solid transparent!important;outline-offset:2px!important}[data-embed-boundary] .outline{outline-style:solid!important}[data-embed-boundary] .ring{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-1{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-2{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-embed-brand-gold{--tw-ring-opacity: 1 !important;--tw-ring-color: rgb(200 161 101 / var(--tw-ring-opacity, 1)) !important}[data-embed-boundary] .ring-embed-brand-gold\\/40{--tw-ring-color: rgb(200 161 101 / .4) !important}[data-embed-boundary] .ring-offset-1{--tw-ring-offset-width: 1px !important}[data-embed-boundary] .ring-offset-2{--tw-ring-offset-width: 2px !important}[data-embed-boundary] .ring-offset-\\[\\#F7F6F4\\]{--tw-ring-offset-color: #F7F6F4 !important}[data-embed-boundary] .blur{--tw-blur: blur(8px) !important;filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .grayscale{--tw-grayscale: grayscale(100%) !important;filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .backdrop-blur{--tw-backdrop-blur: blur(8px) !important;-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important;backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important}[data-embed-boundary] .backdrop-blur-sm{--tw-backdrop-blur: blur(4px) !important;-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important;backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important}[data-embed-boundary] .transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[background-color\\,box-shadow\\,color\\]{transition-property:background-color,box-shadow,color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[background-color\\,color\\]{transition-property:background-color,color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[border-color\\]{transition-property:border-color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[box-shadow\\,opacity\\]{transition-property:box-shadow,opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[fill\\]{transition-property:fill!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[grid-template-rows\\]{transition-property:grid-template-rows!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[left\\]{transition-property:left!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[opacity\\,transform\\,max-height\\]{transition-property:opacity,transform,max-height!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[transform\\,box-shadow\\,border-color\\,border-width\\,background-color\\]{transition-property:transform,box-shadow,border-color,border-width,background-color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[transform\\,opacity\\]{transition-property:transform,opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[width\\]{transition-property:width!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-opacity{transition-property:opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-shadow{transition-property:box-shadow!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-transform{transition-property:transform!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .duration-150{transition-duration:.15s!important}[data-embed-boundary] .duration-200{transition-duration:.2s!important}[data-embed-boundary] .duration-500{transition-duration:.5s!important}[data-embed-boundary] .duration-\\[125ms\\]{transition-duration:125ms!important}[data-embed-boundary] .ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)!important}[data-embed-boundary] .ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)!important}[data-embed-boundary] .will-change-transform{will-change:transform!important}[data-journey-scene]{scroll-snap-align:start!important;scroll-snap-stop:normal!important;scroll-margin-top:var(--guided-journey-header-offset, 92px)!important}[data-studio-shell=mobile-nav] button,[data-journey-scene] button{transition-duration:.15s!important;transition-timing-function:ease-out!important}@media(max-width:767px){[data-chapter-spacer]{height:24px!important}[data-journey-scene]:not([data-journey-scene=journey-scene-orientation]){content-visibility:auto!important;contain-intrinsic-size:auto 720px!important}}[data-embed-boundary] .animate-hero-photo-veil{transform-origin:left center!important;animation:hero-photo-veil-cycle 14s linear infinite!important}@keyframes priority-card-attention{0%,to{box-shadow:0 0 #00193000}6%{box-shadow:0 0 0 3px #d4af3759}12%{box-shadow:0 0 #00193000}}[data-embed-boundary] .animate-priority-card-attention{animation:priority-card-attention 3s ease-in-out infinite!important}@media(prefers-reduced-motion:reduce){html[data-guided-journey-root=true],body[data-guided-journey-root=true],[data-guided-journey-root=true]{scroll-behavior:auto!important}[data-embed-boundary] .animate-hero-photo-veil,[data-embed-boundary] .animate-priority-card-attention{animation:none!important}[data-studio-shell=mobile-nav] button,[data-journey-scene] button{transition-duration:0ms!important}}[data-embed-boundary] .\\[-ms-overflow-style\\:none\\]{-ms-overflow-style:none!important}[data-embed-boundary] .\\[scrollbar-width\\:none\\]{scrollbar-width:none!important}@keyframes hero-photo-veil-cycle{0%{transform:scaleX(1)}14.2857%{transform:scaleX(0)}28.5714%{transform:scaleX(0)}42.8571%{transform:scaleX(1)}to{transform:scaleX(1)}}[data-embed-boundary] .marker\\:content-none *::marker{--tw-content: none !important;content:var(--tw-content)!important}[data-embed-boundary] .marker\\:content-none::marker{--tw-content: none !important;content:var(--tw-content)!important}[data-embed-boundary] .placeholder\\:text-embed-foreground-primary\\/40::-moz-placeholder{color:#00193066!important}[data-embed-boundary] .placeholder\\:text-embed-foreground-primary\\/40::placeholder{color:#00193066!important}[data-embed-boundary] .before\\:absolute:before{content:var(--tw-content)!important;position:absolute!important}[data-embed-boundary] .before\\:-left-1:before{content:var(--tw-content)!important;left:-.25rem!important}[data-embed-boundary] .before\\:top-1\\/2:before{content:var(--tw-content)!important;top:50%!important}[data-embed-boundary] .before\\:h-2:before{content:var(--tw-content)!important;height:.5rem!important}[data-embed-boundary] .before\\:w-2:before{content:var(--tw-content)!important;width:.5rem!important}[data-embed-boundary] .before\\:-translate-y-1\\/2:before{content:var(--tw-content)!important;--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .before\\:rounded-full:before{content:var(--tw-content)!important;border-radius:9999px!important}[data-embed-boundary] .before\\:border:before{content:var(--tw-content)!important;border-width:1px!important}[data-embed-boundary] .before\\:border-\\[\\#D9CDAF\\]:before{content:var(--tw-content)!important;--tw-border-opacity: 1 !important;border-color:rgb(217 205 175 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .before\\:bg-\\[\\#F7F6F4\\]:before{content:var(--tw-content)!important;--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .after\\:absolute:after{content:var(--tw-content)!important;position:absolute!important}[data-embed-boundary] .after\\:-right-1:after{content:var(--tw-content)!important;right:-.25rem!important}[data-embed-boundary] .after\\:top-1\\/2:after{content:var(--tw-content)!important;top:50%!important}[data-embed-boundary] .after\\:h-2:after{content:var(--tw-content)!important;height:.5rem!important}[data-embed-boundary] .after\\:w-2:after{content:var(--tw-content)!important;width:.5rem!important}[data-embed-boundary] .after\\:-translate-y-1\\/2:after{content:var(--tw-content)!important;--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .after\\:rounded-full:after{content:var(--tw-content)!important;border-radius:9999px!important}[data-embed-boundary] .after\\:border:after{content:var(--tw-content)!important;border-width:1px!important}[data-embed-boundary] .after\\:border-\\[\\#D9CDAF\\]:after{content:var(--tw-content)!important;--tw-border-opacity: 1 !important;border-color:rgb(217 205 175 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .after\\:bg-\\[\\#F7F6F4\\]:after{content:var(--tw-content)!important;--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .first\\:pl-0:first-child{padding-left:0!important}[data-embed-boundary] .last\\:pr-0:last-child{padding-right:0!important}[data-embed-boundary] .hover\\:z-\\[5\\]:hover{z-index:5!important}[data-embed-boundary] .hover\\:cursor-pointer:hover{cursor:pointer!important}[data-embed-boundary] .hover\\:border-solid:hover{border-style:solid!important}[data-embed-boundary] .hover\\:border-\\[\\#D4AF37\\]:hover{--tw-border-opacity: 1 !important;border-color:rgb(212 175 55 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .hover\\:border-embed-brand-gold:hover{--tw-border-opacity: 1 !important;border-color:rgb(200 161 101 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .hover\\:border-embed-brand-gold\\/40:hover{border-color:#c8a16566!important}[data-embed-boundary] .hover\\:border-embed-brand-gold\\/70:hover{border-color:#c8a165b3!important}[data-embed-boundary] .hover\\:bg-\\[\\#001930\\]:hover{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-black\\/5:hover{background-color:#0000000d!important}[data-embed-boundary] .hover\\:bg-embed-background-primary:hover{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-embed-background-primary\\/10:hover{background-color:#f7f6f41a!important}[data-embed-boundary] .hover\\:bg-embed-brand-gold:hover{--tw-bg-opacity: 1 !important;background-color:rgb(200 161 101 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-embed-brand-gold\\/10:hover{background-color:#c8a1651a!important}[data-embed-boundary] .hover\\:text-\\[\\#001930\\]:hover{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-\\[\\#FFFFFF\\]:hover{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-embed-background-primary\\/70:hover{color:#f7f6f4b3!important}[data-embed-boundary] .hover\\:text-embed-brand-gold:hover{--tw-text-opacity: 1 !important;color:rgb(200 161 101 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-embed-brand-navy:hover,[data-embed-boundary] .hover\\:text-embed-foreground-primary:hover{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:underline:hover{text-decoration-line:underline!important}[data-embed-boundary] .hover\\:decoration-embed-brand-navy:hover{text-decoration-color:#001930!important}[data-embed-boundary] .hover\\:decoration-white:hover{text-decoration-color:#fff!important}[data-embed-boundary] .hover\\:opacity-80:hover{opacity:.8!important}[data-embed-boundary] .hover\\:opacity-90:hover{opacity:.9!important}[data-embed-boundary] .hover\\:\\[animation-play-state\\:paused\\]:hover{animation-play-state:paused!important}[data-embed-boundary] .focus\\:border-\\[\\#C89B2D\\]:focus{--tw-border-opacity: 1 !important;border-color:rgb(200 155 45 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .focus\\:outline-none:focus{outline:2px solid transparent!important;outline-offset:2px!important}[data-embed-boundary] .focus-visible\\:outline-none:focus-visible{outline:2px solid transparent!important;outline-offset:2px!important}[data-embed-boundary] .focus-visible\\:outline:focus-visible{outline-style:solid!important}[data-embed-boundary] .focus-visible\\:outline-2:focus-visible{outline-width:2px!important}[data-embed-boundary] .focus-visible\\:outline-offset-2:focus-visible{outline-offset:2px!important}[data-embed-boundary] .focus-visible\\:outline-embed-action-primary:focus-visible{outline-color:#18428f!important}[data-embed-boundary] .focus-visible\\:ring-2:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .focus-visible\\:ring-inset:focus-visible{--tw-ring-inset: inset !important}[data-embed-boundary] .focus-visible\\:ring-embed-brand-gold\\/35:focus-visible{--tw-ring-color: rgb(200 161 101 / .35) !important}[data-embed-boundary] .focus-visible\\:ring-embed-brand-gold\\/40:focus-visible{--tw-ring-color: rgb(200 161 101 / .4) !important}[data-embed-boundary] .focus-visible\\:ring-offset-2:focus-visible{--tw-ring-offset-width: 2px !important}[data-embed-boundary] .focus-visible\\:ring-offset-\\[\\#001930\\]:focus-visible{--tw-ring-offset-color: #001930 !important}[data-embed-boundary] .disabled\\:cursor-default:disabled{cursor:default!important}[data-embed-boundary] .disabled\\:cursor-not-allowed:disabled{cursor:not-allowed!important}[data-embed-boundary] .disabled\\:opacity-45:disabled{opacity:.45!important}[data-embed-boundary] .disabled\\:opacity-50:disabled{opacity:.5!important}[data-embed-boundary] .disabled\\:opacity-55:disabled{opacity:.55!important}[data-embed-boundary] .group[open] .group-open\\:rotate-90{--tw-rotate: 90deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .group:hover .group-hover\\:scale-\\[1\\.04\\]{--tw-scale-x: 1.04 !important;--tw-scale-y: 1.04 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .group:hover .group-hover\\:opacity-95{opacity:.95!important}[data-embed-boundary] .group:hover .group-hover\\:shadow-\\[0_2px_6px_rgba\\(0\\,30\\,58\\,0\\.16\\)\\]{--tw-shadow: 0 2px 6px rgba(0,30,58,.16) !important;--tw-shadow-colored: 0 2px 6px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}@media(max-width:767px){[data-embed-boundary] .mobile\\:sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border-width:0!important}[data-embed-boundary] .mobile\\:static{position:static!important}[data-embed-boundary] .mobile\\:relative{position:relative!important}[data-embed-boundary] .mobile\\:sticky{position:sticky!important}[data-embed-boundary] .mobile\\:bottom-\\[calc\\(3\\.5rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{bottom:calc(3.5rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .mobile\\:z-40{z-index:40!important}[data-embed-boundary] .mobile\\:col-span-1{grid-column:span 1 / span 1!important}[data-embed-boundary] .mobile\\:col-start-2{grid-column-start:2!important}[data-embed-boundary] .mobile\\:col-end-4{grid-column-end:4!important}[data-embed-boundary] .mobile\\:row-auto{grid-row:auto!important}[data-embed-boundary] .mobile\\:row-span-1{grid-row:span 1 / span 1!important}[data-embed-boundary] .mobile\\:-mx-section{margin-left:-24px!important;margin-right:-24px!important}[data-embed-boundary] .mobile\\:mx-auto{margin-left:auto!important;margin-right:auto!important}[data-embed-boundary] .mobile\\:\\!ml-0,[data-embed-boundary] .mobile\\:ml-0{margin-left:0!important}[data-embed-boundary] .mobile\\:mt-0{margin-top:0!important}[data-embed-boundary] .mobile\\:mt-1{margin-top:.25rem!important}[data-embed-boundary] .mobile\\:mt-5{margin-top:1.25rem!important}[data-embed-boundary] .mobile\\:mt-8{margin-top:2rem!important}[data-embed-boundary] .mobile\\:block{display:block!important}[data-embed-boundary] .mobile\\:inline{display:inline!important}[data-embed-boundary] .mobile\\:flex{display:flex!important}[data-embed-boundary] .mobile\\:grid{display:grid!important}[data-embed-boundary] .mobile\\:hidden{display:none!important}[data-embed-boundary] .mobile\\:aspect-video{aspect-ratio:16 / 9!important}[data-embed-boundary] .mobile\\:h-20{height:5rem!important}[data-embed-boundary] .mobile\\:h-auto{height:auto!important}[data-embed-boundary] .mobile\\:max-h-\\[calc\\(100dvh-env\\(safe-area-inset-top\\,0px\\)-env\\(safe-area-inset-bottom\\,0px\\)-2rem\\)\\]{max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 2rem)!important}[data-embed-boundary] .mobile\\:max-h-none{max-height:none!important}[data-embed-boundary] .mobile\\:min-h-0{min-height:0px!important}[data-embed-boundary] .mobile\\:min-h-2{min-height:.5rem!important}[data-embed-boundary] .mobile\\:min-h-\\[48px\\]{min-height:48px!important}[data-embed-boundary] .mobile\\:w-4\\/5{width:80%!important}[data-embed-boundary] .mobile\\:w-\\[min\\(calc\\(100vw-1\\.5rem\\)\\,calc\\(\\(100dvh-env\\(safe-area-inset-top\\,0px\\)-env\\(safe-area-inset-bottom\\,0px\\)-2rem\\)\\*16\\/9\\)\\)\\]{width:min(calc(100vw - 1.5rem),calc((100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 2rem) * 16 / 9))!important}[data-embed-boundary] .mobile\\:w-auto{width:auto!important}[data-embed-boundary] .mobile\\:w-full{width:100%!important}[data-embed-boundary] .mobile\\:max-w-\\[7rem\\]{max-width:7rem!important}[data-embed-boundary] .mobile\\:max-w-none{max-width:none!important}[data-embed-boundary] .mobile\\:shrink-0{flex-shrink:0!important}[data-embed-boundary] .mobile\\:translate-x-0{--tw-translate-x: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:translate-y-0{--tw-translate-y: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:scale-\\[0\\.971\\]{--tw-scale-x: .971 !important;--tw-scale-y: .971 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:scale-\\[1\\.03\\]{--tw-scale-x: 1.03 !important;--tw-scale-y: 1.03 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))!important}[data-embed-boundary] .mobile\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .mobile\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .mobile\\:grid-cols-\\[44px_minmax\\(0\\,1fr\\)\\]{grid-template-columns:44px minmax(0,1fr)!important}[data-embed-boundary] .mobile\\:grid-cols-\\[auto_minmax\\(0\\,1fr\\)_auto\\]{grid-template-columns:auto minmax(0,1fr) auto!important}[data-embed-boundary] .mobile\\:grid-rows-\\[auto_minmax\\(16rem\\,1fr\\)\\]{grid-template-rows:auto minmax(16rem,1fr)!important}[data-embed-boundary] .mobile\\:grid-rows-none{grid-template-rows:none!important}[data-embed-boundary] .mobile\\:flex-row{flex-direction:row!important}[data-embed-boundary] .mobile\\:flex-col{flex-direction:column!important}[data-embed-boundary] .mobile\\:items-start{align-items:flex-start!important}[data-embed-boundary] .mobile\\:items-center{align-items:center!important}[data-embed-boundary] .mobile\\:items-stretch{align-items:stretch!important}[data-embed-boundary] .mobile\\:justify-center{justify-content:center!important}[data-embed-boundary] .mobile\\:justify-between{justify-content:space-between!important}[data-embed-boundary] .mobile\\:justify-items-stretch{justify-items:stretch!important}[data-embed-boundary] .mobile\\:gap-1{gap:.25rem!important}[data-embed-boundary] .mobile\\:gap-11{gap:2.75rem!important}[data-embed-boundary] .mobile\\:gap-2{gap:.5rem!important}[data-embed-boundary] .mobile\\:gap-3{gap:.75rem!important}[data-embed-boundary] .mobile\\:gap-4{gap:1rem!important}[data-embed-boundary] .mobile\\:gap-5{gap:1.25rem!important}[data-embed-boundary] .mobile\\:gap-x-3{-moz-column-gap:.75rem!important;column-gap:.75rem!important}[data-embed-boundary] .mobile\\:gap-x-4{-moz-column-gap:1rem!important;column-gap:1rem!important}[data-embed-boundary] .mobile\\:gap-y-4{row-gap:1rem!important}[data-embed-boundary] .mobile\\:divide-x-0>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(0px * var(--tw-divide-x-reverse))!important;border-left-width:calc(0px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .mobile\\:overflow-hidden{overflow:hidden!important}[data-embed-boundary] .mobile\\:overflow-visible{overflow:visible!important}[data-embed-boundary] .mobile\\:border-t{border-top-width:1px!important}[data-embed-boundary] .mobile\\:border-embed-border-default{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .mobile\\:bg-\\[\\#FFFFFF\\]\\/95{background-color:#fffffff2!important}[data-embed-boundary] .mobile\\:bg-embed-brand-navy{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .mobile\\:object-contain{-o-object-fit:contain!important;object-fit:contain!important}[data-embed-boundary] .mobile\\:px-0{padding-left:0!important;padding-right:0!important}[data-embed-boundary] .mobile\\:px-3{padding-left:.75rem!important;padding-right:.75rem!important}[data-embed-boundary] .mobile\\:px-section{padding-left:24px!important;padding-right:24px!important}[data-embed-boundary] .mobile\\:py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .mobile\\:py-5{padding-top:1.25rem!important;padding-bottom:1.25rem!important}[data-embed-boundary] .mobile\\:py-8{padding-top:2rem!important;padding-bottom:2rem!important}[data-embed-boundary] .mobile\\:\\!pt-0{padding-top:0!important}[data-embed-boundary] .mobile\\:pb-2{padding-bottom:.5rem!important}[data-embed-boundary] .mobile\\:pb-8{padding-bottom:2rem!important}[data-embed-boundary] .mobile\\:pb-\\[calc\\(1\\.25rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{padding-bottom:calc(1.25rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .mobile\\:pl-6{padding-left:1.5rem!important}[data-embed-boundary] .mobile\\:pr-section{padding-right:24px!important}[data-embed-boundary] .mobile\\:pt-12{padding-top:3rem!important}[data-embed-boundary] .mobile\\:text-left{text-align:left!important}[data-embed-boundary] .mobile\\:text-\\[0\\.8rem\\]{font-size:.8rem!important}[data-embed-boundary] .mobile\\:text-\\[0\\.9375rem\\]{font-size:.9375rem!important}[data-embed-boundary] .mobile\\:text-\\[17px\\]{font-size:17px!important}[data-embed-boundary] .mobile\\:text-\\[18px\\]{font-size:18px!important}[data-embed-boundary] .mobile\\:text-\\[2rem\\]{font-size:2rem!important}[data-embed-boundary] .mobile\\:text-\\[80\\%\\]{font-size:80%!important}[data-embed-boundary] .mobile\\:text-base{font-size:1rem!important;line-height:1.5rem!important}[data-embed-boundary] .mobile\\:text-lg{font-size:1.125rem!important;line-height:1.75rem!important}[data-embed-boundary] .mobile\\:text-sm{font-size:.875rem!important;line-height:1.25rem!important}[data-embed-boundary] .mobile\\:text-xl{font-size:1.25rem!important;line-height:1.75rem!important}[data-embed-boundary] .mobile\\:leading-\\[1\\.15\\]{line-height:1.15!important}[data-embed-boundary] .mobile\\:leading-snug{line-height:1.375!important}[data-embed-boundary] .mobile\\:leading-tight{line-height:1.25!important}[data-embed-boundary] .mobile\\:backdrop-blur-\\[6px\\]{--tw-backdrop-blur: blur(6px) !important;-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important;backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important}}@media(min-width:768px){[data-embed-boundary] .tablet\\:max-w-\\[16rem\\]{max-width:16rem!important}[data-embed-boundary] .tablet\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .tablet\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .tablet\\:text-base{font-size:1rem!important;line-height:1.5rem!important}}@media(min-width:768px)and (max-width:1199px){[data-embed-boundary] .tabletMin\\:col-span-1{grid-column:span 1 / span 1!important}[data-embed-boundary] .tabletMin\\:col-start-1{grid-column-start:1!important}[data-embed-boundary] .tabletMin\\:col-start-2{grid-column-start:2!important}[data-embed-boundary] .tabletMin\\:row-auto{grid-row:auto!important}[data-embed-boundary] .tabletMin\\:row-span-1{grid-row:span 1 / span 1!important}[data-embed-boundary] .tabletMin\\:row-span-2{grid-row:span 2 / span 2!important}[data-embed-boundary] .tabletMin\\:row-start-1{grid-row-start:1!important}[data-embed-boundary] .tabletMin\\:row-start-2{grid-row-start:2!important}[data-embed-boundary] .tabletMin\\:block{display:block!important}[data-embed-boundary] .tabletMin\\:flex{display:flex!important}[data-embed-boundary] .tabletMin\\:hidden{display:none!important}[data-embed-boundary] .tabletMin\\:\\!w-full{width:100%!important}[data-embed-boundary] .tabletMin\\:\\!max-w-none,[data-embed-boundary] .tabletMin\\:max-w-none{max-width:none!important}[data-embed-boundary] .tabletMin\\:grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))!important}[data-embed-boundary] .tabletMin\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .tabletMin\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .tabletMin\\:grid-cols-\\[minmax\\(0\\,1\\.08fr\\)_minmax\\(0\\,0\\.92fr\\)\\]{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important}[data-embed-boundary] .tabletMin\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.55fr\\)\\]{grid-template-columns:minmax(0,1fr) minmax(0,1.55fr)!important}[data-embed-boundary] .tabletMin\\:grid-rows-none{grid-template-rows:none!important}[data-embed-boundary] .tabletMin\\:justify-items-stretch{justify-items:stretch!important}[data-embed-boundary] .tabletMin\\:gap-4{gap:1rem!important}[data-embed-boundary] .tabletMin\\:divide-y-0>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(0px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(0px * var(--tw-divide-y-reverse))!important}[data-embed-boundary] .tabletMin\\:px-section{padding-left:24px!important;padding-right:24px!important}}@media(min-width:1200px)and (max-width:1439px){[data-embed-boundary] .tabletMax\\:flex{display:flex!important}[data-embed-boundary] .tabletMax\\:hidden{display:none!important}[data-embed-boundary] .tabletMax\\:\\!w-full{width:100%!important}[data-embed-boundary] .tabletMax\\:\\!max-w-none,[data-embed-boundary] .tabletMax\\:max-w-none{max-width:none!important}[data-embed-boundary] .tabletMax\\:\\!grid-cols-\\[minmax\\(0\\,1\\.55fr\\)_minmax\\(12rem\\,0\\.55fr\\)_minmax\\(0\\,1fr\\)\\]{grid-template-columns:minmax(0,1.55fr) minmax(12rem,.55fr) minmax(0,1fr)!important}[data-embed-boundary] .tabletMax\\:\\!grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1fr\\)\\]{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}[data-embed-boundary] .tabletMax\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .tabletMax\\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}[data-embed-boundary] .tabletMax\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.85fr\\)\\]{grid-template-columns:minmax(0,1fr) minmax(0,1.85fr)!important}[data-embed-boundary] .tabletMax\\:gap-\\[18px\\]{gap:18px!important}[data-embed-boundary] .tabletMax\\:\\!divide-y-0>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(0px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(0px * var(--tw-divide-y-reverse))!important}}@media(min-width:1280px){[data-embed-boundary] .desktop\\:-ml-section{margin-left:-24px!important}[data-embed-boundary] .desktop\\:block{display:block!important}[data-embed-boundary] .desktop\\:flex{display:flex!important}[data-embed-boundary] .desktop\\:grid{display:grid!important}[data-embed-boundary] .desktop\\:hidden{display:none!important}[data-embed-boundary] .desktop\\:h-12{height:3rem!important}[data-embed-boundary] .desktop\\:h-20{height:5rem!important}[data-embed-boundary] .desktop\\:h-7{height:1.75rem!important}[data-embed-boundary] .desktop\\:h-8{height:2rem!important}[data-embed-boundary] .desktop\\:h-\\[155px\\]{height:155px!important}[data-embed-boundary] .desktop\\:max-h-10{max-height:2.5rem!important}[data-embed-boundary] .desktop\\:min-h-0{min-height:0px!important}[data-embed-boundary] .desktop\\:min-h-\\[36px\\]{min-height:36px!important}[data-embed-boundary] .desktop\\:min-h-\\[38px\\]{min-height:38px!important}[data-embed-boundary] .desktop\\:min-h-\\[42px\\]{min-height:42px!important}[data-embed-boundary] .desktop\\:w-1\\/2{width:50%!important}[data-embed-boundary] .desktop\\:w-12{width:3rem!important}[data-embed-boundary] .desktop\\:w-7{width:1.75rem!important}[data-embed-boundary] .desktop\\:w-8{width:2rem!important}[data-embed-boundary] .desktop\\:w-\\[155px\\]{width:155px!important}[data-embed-boundary] .desktop\\:w-\\[600px\\]{width:600px!important}[data-embed-boundary] .desktop\\:w-\\[640px\\]{width:640px!important}[data-embed-boundary] .desktop\\:w-\\[680px\\]{width:680px!important}[data-embed-boundary] .desktop\\:w-\\[682px\\]{width:682px!important}[data-embed-boundary] .desktop\\:w-\\[690px\\]{width:690px!important}[data-embed-boundary] .desktop\\:w-\\[70\\%\\]{width:70%!important}[data-embed-boundary] .desktop\\:w-\\[75\\%\\]{width:75%!important}[data-embed-boundary] .desktop\\:w-canvas{width:1432px!important}[data-embed-boundary] .desktop\\:min-w-\\[42px\\]{min-width:42px!important}[data-embed-boundary] .desktop\\:min-w-\\[600px\\]{min-width:600px!important}[data-embed-boundary] .desktop\\:min-w-canvas{min-width:1432px!important}[data-embed-boundary] .desktop\\:max-w-\\[20rem\\]{max-width:20rem!important}[data-embed-boundary] .desktop\\:max-w-\\[600px\\]{max-width:600px!important}[data-embed-boundary] .desktop\\:max-w-\\[96px\\]{max-width:96px!important}[data-embed-boundary] .desktop\\:max-w-canvas{max-width:1432px!important}[data-embed-boundary] .desktop\\:shrink-0{flex-shrink:0!important}[data-embed-boundary] .desktop\\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}[data-embed-boundary] .desktop\\:grid-cols-\\[var\\(--spatial-terminal-cols\\)\\]{grid-template-columns:var(--spatial-terminal-cols)!important}[data-embed-boundary] .desktop\\:grid-rows-\\[48px_repeat\\(3\\,minmax\\(132px\\,1fr\\)\\)\\]{grid-template-rows:48px repeat(3,minmax(132px,1fr))!important}[data-embed-boundary] .desktop\\:gap-section{gap:24px!important}[data-embed-boundary] .desktop\\:divide-y-0>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(0px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(0px * var(--tw-divide-y-reverse))!important}[data-embed-boundary] .desktop\\:py-1\\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}[data-embed-boundary] .desktop\\:py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .desktop\\:py-\\[6\\.4px\\]{padding-top:6.4px!important;padding-bottom:6.4px!important}[data-embed-boundary] .desktop\\:pb-0{padding-bottom:0!important}}[data-embed-boundary] .\\[\\&\\:\\:-webkit-details-marker\\]\\:hidden::-webkit-details-marker{display:none!important}[data-embed-boundary] .\\[\\&\\:\\:-webkit-scrollbar\\]\\:hidden::-webkit-scrollbar{display:none!important}@media(max-width:767px){[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!h-7>*{height:1.75rem!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!h-8>*{height:2rem!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!h-full>*{height:100%!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!min-h-0>*{min-height:0px!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!min-h-8>*{min-height:2rem!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!w-7>*{width:1.75rem!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!w-full>*{width:100%!important}}';
-var Uu = { commit: "34f10a35", builtAt: "2026-08-26T21:00:34Z", runtimeSource: "builder-package/projectBuilderImportToHousePackage", marker: "EMBED_RUNTIME_BUILD:34f10a35@2026-08-26T21:00:34Z" };
-const t0 = Object.freeze({
+var Wx = Object.defineProperty;
+var e0 = (t, n, i) => n in t ? Wx(t, n, { enumerable: !0, configurable: !0, writable: !0, value: i }) : t[n] = i;
+var ae = (t, n, i) => e0(t, typeof n != "symbol" ? n + "" : n, i);
+const t0 = '*,:before,:after{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x: 0;--tw-border-spacing-y: 0;--tw-translate-x: 0;--tw-translate-y: 0;--tw-rotate: 0;--tw-skew-x: 0;--tw-skew-y: 0;--tw-scale-x: 1;--tw-scale-y: 1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness: proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width: 0px;--tw-ring-offset-color: #fff;--tw-ring-color: rgb(59 130 246 / .5);--tw-ring-offset-shadow: 0 0 #0000;--tw-ring-shadow: 0 0 #0000;--tw-shadow: 0 0 #0000;--tw-shadow-colored: 0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }*,:before,:after{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}:before,:after{--tw-content: ""}html,:host{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;-o-tab-size:4;tab-size:4;font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,samp,pre{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dl,dd,h1,h2,h3,h4,h5,h6,hr,figure,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}ol,ul,menu{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{opacity:1;color:#9ca3af}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}button,[role=button]{cursor:pointer}:disabled{cursor:default}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}*,:before,:after{border-color:#e3e3e3}html,body,#root{min-height:100vh;overscroll-behavior:none;--tw-text-opacity: 1;color:rgb(0 25 48 / var(--tw-text-opacity, 1));background-color:#f7f6f4;overflow-x:clip}body{font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}html[data-guided-journey-root=true],body[data-guided-journey-root=true],[data-guided-journey-root=true]{scroll-behavior:smooth;scroll-padding-top:var(--guided-journey-header-offset, 92px);scroll-padding-bottom:var(--guided-journey-bottom-nav-offset, 0px)}html[data-guided-journey-root=true][data-guided-journey-snap=on],[data-guided-journey-root=true][data-guided-journey-snap=on]{scroll-snap-type:y proximity}input::-moz-placeholder,textarea::-moz-placeholder{color:#00193066}input::placeholder,textarea::placeholder{color:#00193066}[data-embed-boundary] .container{width:100%}@media(min-width:640px){[data-embed-boundary] .container{max-width:640px}}@media(min-width:768px){[data-embed-boundary] .container{max-width:768px}}@media(min-width:1024px){[data-embed-boundary] .container{max-width:1024px}}@media(min-width:1200px){[data-embed-boundary] .container{max-width:1200px}}@media(min-width:1280px){[data-embed-boundary] .container{max-width:1280px}}@media(min-width:1440px){[data-embed-boundary] .container{max-width:1440px}}@media(min-width:1536px){[data-embed-boundary] .container{max-width:1536px}}[data-embed-boundary] .sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border-width:0!important}[data-embed-boundary] .pointer-events-none{pointer-events:none!important}[data-embed-boundary] .\\!visible,[data-embed-boundary] .visible{visibility:visible!important}[data-embed-boundary] .invisible{visibility:hidden!important}[data-embed-boundary] .static{position:static!important}[data-embed-boundary] .fixed{position:fixed!important}[data-embed-boundary] .absolute{position:absolute!important}[data-embed-boundary] .relative{position:relative!important}[data-embed-boundary] .sticky{position:sticky!important}[data-embed-boundary] .inset-0{top:0!important;right:0!important;bottom:0!important;left:0!important}[data-embed-boundary] .inset-x-0{left:0!important;right:0!important}[data-embed-boundary] .inset-y-0{top:0!important;bottom:0!important}[data-embed-boundary] .bottom-0{bottom:0!important}[data-embed-boundary] .bottom-3{bottom:.75rem!important}[data-embed-boundary] .bottom-\\[calc\\(20px\\+var\\(--guided-journey-bottom-nav-offset\\,0px\\)\\)\\]{bottom:calc(20px + var(--guided-journey-bottom-nav-offset,0px))!important}[data-embed-boundary] .left-0{left:0!important}[data-embed-boundary] .left-1\\/2{left:50%!important}[data-embed-boundary] .left-1\\/3{left:33.333333%!important}[data-embed-boundary] .left-2{left:.5rem!important}[data-embed-boundary] .left-2\\/3{left:66.666667%!important}[data-embed-boundary] .left-3{left:.75rem!important}[data-embed-boundary] .left-\\[12\\.5\\%\\]{left:12.5%!important}[data-embed-boundary] .left-\\[62\\.5\\%\\]{left:62.5%!important}[data-embed-boundary] .left-\\[calc\\(100\\%\\+10px\\)\\]{left:calc(100% + 10px)!important}[data-embed-boundary] .left-full{left:100%!important}[data-embed-boundary] .right-0{right:0!important}[data-embed-boundary] .right-3{right:.75rem!important}[data-embed-boundary] .right-\\[12\\.5\\%\\]{right:12.5%!important}[data-embed-boundary] .right-\\[37\\.5\\%\\]{right:37.5%!important}[data-embed-boundary] .right-section{right:24px!important}[data-embed-boundary] .top-0{top:0!important}[data-embed-boundary] .top-1\\/2{top:50%!important}[data-embed-boundary] .top-\\[25\\%\\]{top:25%!important}[data-embed-boundary] .top-\\[2px\\]{top:2px!important}[data-embed-boundary] .top-\\[44px\\]{top:44px!important}[data-embed-boundary] .top-\\[calc\\(0\\.75rem\\+1\\.4em\\/2\\)\\]{top:calc(.75rem + .7em)!important}[data-embed-boundary] .top-\\[calc\\(100\\%\\+6px\\)\\]{top:calc(100% + 6px)!important}[data-embed-boundary] .top-full{top:100%!important}[data-embed-boundary] .isolate{isolation:isolate!important}[data-embed-boundary] .z-0{z-index:0!important}[data-embed-boundary] .z-10{z-index:10!important}[data-embed-boundary] .z-20{z-index:20!important}[data-embed-boundary] .z-40{z-index:40!important}[data-embed-boundary] .z-50{z-index:50!important}[data-embed-boundary] .z-\\[60\\]{z-index:60!important}[data-embed-boundary] .order-1{order:1!important}[data-embed-boundary] .order-2{order:2!important}[data-embed-boundary] .col-span-2{grid-column:span 2 / span 2!important}[data-embed-boundary] .col-start-1{grid-column-start:1!important}[data-embed-boundary] .col-start-2{grid-column-start:2!important}[data-embed-boundary] .row-span-2{grid-row:span 2 / span 2!important}[data-embed-boundary] .row-start-1{grid-row-start:1!important}[data-embed-boundary] .row-start-2{grid-row-start:2!important}[data-embed-boundary] .row-start-3{grid-row-start:3!important}[data-embed-boundary] .row-start-4{grid-row-start:4!important}[data-embed-boundary] .m-0{margin:0!important}[data-embed-boundary] .mx-1\\.5{margin-left:.375rem!important;margin-right:.375rem!important}[data-embed-boundary] .mx-2{margin-left:.5rem!important;margin-right:.5rem!important}[data-embed-boundary] .mx-auto{margin-left:auto!important;margin-right:auto!important}[data-embed-boundary] .-ml-\\[30px\\]{margin-left:-30px!important}[data-embed-boundary] .-mt-0\\.5{margin-top:-.125rem!important}[data-embed-boundary] .-mt-\\[2px\\]{margin-top:-2px!important}[data-embed-boundary] .mb-1\\.5{margin-bottom:.375rem!important}[data-embed-boundary] .mb-2{margin-bottom:.5rem!important}[data-embed-boundary] .mb-3{margin-bottom:.75rem!important}[data-embed-boundary] .mb-5{margin-bottom:1.25rem!important}[data-embed-boundary] .ml-1{margin-left:.25rem!important}[data-embed-boundary] .ml-1\\.5{margin-left:.375rem!important}[data-embed-boundary] .ml-2{margin-left:.5rem!important}[data-embed-boundary] .ml-auto{margin-left:auto!important}[data-embed-boundary] .mr-1{margin-right:.25rem!important}[data-embed-boundary] .mr-2{margin-right:.5rem!important}[data-embed-boundary] .mt-0\\.5{margin-top:.125rem!important}[data-embed-boundary] .mt-1{margin-top:.25rem!important}[data-embed-boundary] .mt-1\\.5{margin-top:.375rem!important}[data-embed-boundary] .mt-10{margin-top:2.5rem!important}[data-embed-boundary] .mt-2{margin-top:.5rem!important}[data-embed-boundary] .mt-2\\.5{margin-top:.625rem!important}[data-embed-boundary] .mt-3{margin-top:.75rem!important}[data-embed-boundary] .mt-4{margin-top:1rem!important}[data-embed-boundary] .mt-5{margin-top:1.25rem!important}[data-embed-boundary] .mt-6{margin-top:1.5rem!important}[data-embed-boundary] .mt-7{margin-top:1.75rem!important}[data-embed-boundary] .mt-8{margin-top:2rem!important}[data-embed-boundary] .mt-\\[30px\\]{margin-top:30px!important}[data-embed-boundary] .mt-\\[50px\\]{margin-top:50px!important}[data-embed-boundary] .mt-auto{margin-top:auto!important}[data-embed-boundary] .mt-px{margin-top:1px!important}[data-embed-boundary] .mt-section{margin-top:24px!important}[data-embed-boundary] .box-border{box-sizing:border-box!important}[data-embed-boundary] .block{display:block!important}[data-embed-boundary] .inline-block{display:inline-block!important}[data-embed-boundary] .inline{display:inline!important}[data-embed-boundary] .flex{display:flex!important}[data-embed-boundary] .inline-flex{display:inline-flex!important}[data-embed-boundary] .table{display:table!important}[data-embed-boundary] .grid{display:grid!important}[data-embed-boundary] .hidden{display:none!important}[data-embed-boundary] .aspect-\\[4\\/3\\]{aspect-ratio:4/3!important}[data-embed-boundary] .aspect-square{aspect-ratio:1 / 1!important}[data-embed-boundary] .aspect-video{aspect-ratio:16 / 9!important}[data-embed-boundary] .h-1\\/2{height:50%!important}[data-embed-boundary] .h-10{height:2.5rem!important}[data-embed-boundary] .h-11{height:2.75rem!important}[data-embed-boundary] .h-12{height:3rem!important}[data-embed-boundary] .h-14{height:3.5rem!important}[data-embed-boundary] .h-16{height:4rem!important}[data-embed-boundary] .h-20{height:5rem!important}[data-embed-boundary] .h-3{height:.75rem!important}[data-embed-boundary] .h-3\\.5{height:.875rem!important}[data-embed-boundary] .h-4{height:1rem!important}[data-embed-boundary] .h-5{height:1.25rem!important}[data-embed-boundary] .h-6{height:1.5rem!important}[data-embed-boundary] .h-7{height:1.75rem!important}[data-embed-boundary] .h-8{height:2rem!important}[data-embed-boundary] .h-9{height:2.25rem!important}[data-embed-boundary] .h-\\[100px\\]{height:100px!important}[data-embed-boundary] .h-\\[2px\\]{height:2px!important}[data-embed-boundary] .h-\\[33px\\]{height:33px!important}[data-embed-boundary] .h-\\[36px\\]{height:36px!important}[data-embed-boundary] .h-\\[38px\\]{height:38px!important}[data-embed-boundary] .h-\\[3px\\]{height:3px!important}[data-embed-boundary] .h-\\[50px\\]{height:50px!important}[data-embed-boundary] .h-\\[54px\\]{height:54px!important}[data-embed-boundary] .h-\\[80px\\]{height:80px!important}[data-embed-boundary] .h-\\[88px\\]{height:88px!important}[data-embed-boundary] .h-auto{height:auto!important}[data-embed-boundary] .h-chapter-spacing{height:30px!important}[data-embed-boundary] .h-chapter-title{height:60px!important}[data-embed-boundary] .h-full{height:100%!important}[data-embed-boundary] .h-header{height:72px!important}[data-embed-boundary] .h-hero-image{height:584px!important}[data-embed-boundary] .h-px{height:1px!important}[data-embed-boundary] .h-screen{height:100vh!important}[data-embed-boundary] .h-social-proof{height:90px!important}[data-embed-boundary] .max-h-0{max-height:0px!important}[data-embed-boundary] .max-h-11{max-height:2.75rem!important}[data-embed-boundary] .max-h-14{max-height:3.5rem!important}[data-embed-boundary] .max-h-\\[90vh\\]{max-height:90vh!important}[data-embed-boundary] .max-h-none{max-height:none!important}[data-embed-boundary] .min-h-0{min-height:0px!important}[data-embed-boundary] .min-h-10{min-height:2.5rem!important}[data-embed-boundary] .min-h-11{min-height:2.75rem!important}[data-embed-boundary] .min-h-9{min-height:2.25rem!important}[data-embed-boundary] .min-h-\\[128px\\]{min-height:128px!important}[data-embed-boundary] .min-h-\\[32px\\]{min-height:32px!important}[data-embed-boundary] .min-h-\\[50px\\]{min-height:50px!important}[data-embed-boundary] .min-h-\\[50vh\\]{min-height:50vh!important}[data-embed-boundary] .min-h-\\[60px\\]{min-height:60px!important}[data-embed-boundary] .min-h-faq-ai{min-height:400px!important}[data-embed-boundary] .min-h-full{min-height:100%!important}[data-embed-boundary] .min-h-screen{min-height:100vh!important}[data-embed-boundary] .w-1\\/2{width:50%!important}[data-embed-boundary] .w-1\\/4{width:25%!important}[data-embed-boundary] .w-10{width:2.5rem!important}[data-embed-boundary] .w-11{width:2.75rem!important}[data-embed-boundary] .w-12{width:3rem!important}[data-embed-boundary] .w-16{width:4rem!important}[data-embed-boundary] .w-3{width:.75rem!important}[data-embed-boundary] .w-3\\.5{width:.875rem!important}[data-embed-boundary] .w-4{width:1rem!important}[data-embed-boundary] .w-5{width:1.25rem!important}[data-embed-boundary] .w-56{width:14rem!important}[data-embed-boundary] .w-6{width:1.5rem!important}[data-embed-boundary] .w-7{width:1.75rem!important}[data-embed-boundary] .w-8{width:2rem!important}[data-embed-boundary] .w-9{width:2.25rem!important}[data-embed-boundary] .w-\\[36\\%\\]{width:36%!important}[data-embed-boundary] .w-\\[38px\\]{width:38px!important}[data-embed-boundary] .w-\\[42px\\]{width:42px!important}[data-embed-boundary] .w-\\[680px\\]{width:680px!important}[data-embed-boundary] .w-\\[690px\\]{width:690px!important}[data-embed-boundary] .w-\\[70\\%\\]{width:70%!important}[data-embed-boundary] .w-\\[88px\\]{width:88px!important}[data-embed-boundary] .w-\\[calc\\(100\\%\\+30px\\)\\]{width:calc(100% + 30px)!important}[data-embed-boundary] .w-\\[calc\\(400\\%\\/3\\+1px\\)\\]{width:calc(400% / 3 + 1px)!important}[data-embed-boundary] .w-\\[min\\(90vw\\,calc\\(90vh\\*16\\/9\\)\\)\\]{width:min(90vw,160vh)!important}[data-embed-boundary] .w-auto{width:auto!important}[data-embed-boundary] .w-full{width:100%!important}[data-embed-boundary] .w-px{width:1px!important}[data-embed-boundary] .w-sidebar{width:48px!important}[data-embed-boundary] .min-w-0{min-width:0px!important}[data-embed-boundary] .min-w-11{min-width:2.75rem!important}[data-embed-boundary] .min-w-44{min-width:11rem!important}[data-embed-boundary] .min-w-\\[260px\\]{min-width:260px!important}[data-embed-boundary] .max-w-2xl{max-width:42rem!important}[data-embed-boundary] .max-w-5xl{max-width:64rem!important}[data-embed-boundary] .max-w-\\[10rem\\]{max-width:10rem!important}[data-embed-boundary] .max-w-\\[12rem\\]{max-width:12rem!important}[data-embed-boundary] .max-w-\\[32rem\\]{max-width:32rem!important}[data-embed-boundary] .max-w-\\[52\\.8rem\\]{max-width:52.8rem!important}[data-embed-boundary] .max-w-\\[560px\\]{max-width:560px!important}[data-embed-boundary] .max-w-\\[61\\.6rem\\]{max-width:61.6rem!important}[data-embed-boundary] .max-w-\\[680px\\]{max-width:680px!important}[data-embed-boundary] .max-w-\\[682px\\]{max-width:682px!important}[data-embed-boundary] .max-w-\\[685px\\]{max-width:685px!important}[data-embed-boundary] .max-w-\\[690px\\]{max-width:690px!important}[data-embed-boundary] .max-w-\\[710px\\]{max-width:710px!important}[data-embed-boundary] .max-w-\\[760px\\]{max-width:760px!important}[data-embed-boundary] .max-w-\\[85\\%\\]{max-width:85%!important}[data-embed-boundary] .max-w-\\[90vw\\]{max-width:90vw!important}[data-embed-boundary] .max-w-full{max-width:100%!important}[data-embed-boundary] .max-w-md{max-width:28rem!important}[data-embed-boundary] .max-w-none{max-width:none!important}[data-embed-boundary] .flex-1{flex:1 1 0%!important}[data-embed-boundary] .shrink-0{flex-shrink:0!important}[data-embed-boundary] .grow-0{flex-grow:0!important}[data-embed-boundary] .origin-center{transform-origin:center!important}[data-embed-boundary] .-translate-x-1\\/2{--tw-translate-x: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .-translate-x-\\[10px\\]{--tw-translate-x: -10px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .-translate-y-1\\/2{--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-x-1\\/2{--tw-translate-x: 50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-x-\\[10px\\]{--tw-translate-x: 10px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-0{--tw-translate-y: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-1{--tw-translate-y: .25rem !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-5{--tw-translate-y: 1.25rem !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .translate-y-\\[50px\\]{--tw-translate-y: 50px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .rotate-0{--tw-rotate: 0deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .rotate-180{--tw-rotate: 180deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-100{--tw-scale-x: 1 !important;--tw-scale-y: 1 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-\\[0\\.909\\]{--tw-scale-x: .909 !important;--tw-scale-y: .909 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .scale-\\[1\\.10\\]{--tw-scale-x: 1.1 !important;--tw-scale-y: 1.1 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .transform{transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}@keyframes pulse{50%{opacity:.5}}[data-embed-boundary] .animate-pulse{animation:pulse 2s cubic-bezier(.4,0,.6,1) infinite!important}[data-embed-boundary] .cursor-not-allowed{cursor:not-allowed!important}[data-embed-boundary] .cursor-pointer{cursor:pointer!important}[data-embed-boundary] .touch-none{touch-action:none!important}[data-embed-boundary] .touch-pan-y{--tw-pan-y: pan-y !important;touch-action:var(--tw-pan-x) var(--tw-pan-y) var(--tw-pinch-zoom)!important}[data-embed-boundary] .touch-manipulation{touch-action:manipulation!important}[data-embed-boundary] .select-none{-webkit-user-select:none!important;-moz-user-select:none!important;user-select:none!important}[data-embed-boundary] .resize{resize:both!important}[data-embed-boundary] .snap-start{scroll-snap-align:start!important}[data-embed-boundary] .snap-normal{scroll-snap-stop:normal!important}[data-embed-boundary] .scroll-mt-header{scroll-margin-top:72px!important}[data-embed-boundary] .list-decimal{list-style-type:decimal!important}[data-embed-boundary] .list-disc{list-style-type:disc!important}[data-embed-boundary] .list-none{list-style-type:none!important}[data-embed-boundary] .appearance-none{-webkit-appearance:none!important;-moz-appearance:none!important;appearance:none!important}[data-embed-boundary] .grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}[data-embed-boundary] .grid-cols-\\[10\\.5rem_1px_1fr\\]{grid-template-columns:10.5rem 1px 1fr!important}[data-embed-boundary] .grid-cols-\\[1fr_auto_1fr\\]{grid-template-columns:1fr auto 1fr!important}[data-embed-boundary] .grid-cols-\\[44px_minmax\\(0\\,1fr\\)\\]{grid-template-columns:44px minmax(0,1fr)!important}[data-embed-boundary] .grid-cols-\\[52fr_48fr\\]{grid-template-columns:52fr 48fr!important}[data-embed-boundary] .grid-cols-\\[690px_minmax\\(0\\,1fr\\)\\]{grid-template-columns:690px minmax(0,1fr)!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_auto\\]{grid-template-columns:minmax(0,1fr) auto!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_auto_minmax\\(0\\,1fr\\)\\]{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr)!important}[data-embed-boundary] .grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,2fr\\)\\]{grid-template-columns:minmax(0,1fr) minmax(0,2fr)!important}[data-embed-boundary] .grid-rows-\\[auto_auto_auto_auto\\]{grid-template-rows:auto auto auto auto!important}[data-embed-boundary] .grid-rows-\\[auto_minmax\\(16rem\\,1fr\\)\\]{grid-template-rows:auto minmax(16rem,1fr)!important}[data-embed-boundary] .flex-col{flex-direction:column!important}[data-embed-boundary] .flex-wrap{flex-wrap:wrap!important}[data-embed-boundary] .place-items-center{place-items:center!important}[data-embed-boundary] .content-start{align-content:flex-start!important}[data-embed-boundary] .items-start{align-items:flex-start!important}[data-embed-boundary] .items-end{align-items:flex-end!important}[data-embed-boundary] .items-center{align-items:center!important}[data-embed-boundary] .items-baseline{align-items:baseline!important}[data-embed-boundary] .items-stretch{align-items:stretch!important}[data-embed-boundary] .justify-start{justify-content:flex-start!important}[data-embed-boundary] .justify-end{justify-content:flex-end!important}[data-embed-boundary] .justify-center{justify-content:center!important}[data-embed-boundary] .justify-between{justify-content:space-between!important}[data-embed-boundary] .justify-items-center{justify-items:center!important}[data-embed-boundary] .gap-0{gap:0px!important}[data-embed-boundary] .gap-0\\.5{gap:.125rem!important}[data-embed-boundary] .gap-1{gap:.25rem!important}[data-embed-boundary] .gap-1\\.5{gap:.375rem!important}[data-embed-boundary] .gap-14{gap:3.5rem!important}[data-embed-boundary] .gap-2{gap:.5rem!important}[data-embed-boundary] .gap-2\\.5{gap:.625rem!important}[data-embed-boundary] .gap-3{gap:.75rem!important}[data-embed-boundary] .gap-4{gap:1rem!important}[data-embed-boundary] .gap-5{gap:1.25rem!important}[data-embed-boundary] .gap-6{gap:1.5rem!important}[data-embed-boundary] .gap-8{gap:2rem!important}[data-embed-boundary] .gap-\\[1\\.6px\\]{gap:1.6px!important}[data-embed-boundary] .gap-\\[14px\\]{gap:14px!important}[data-embed-boundary] .gap-\\[18px\\]{gap:18px!important}[data-embed-boundary] .gap-\\[22px\\]{gap:22px!important}[data-embed-boundary] .gap-\\[30px\\]{gap:30px!important}[data-embed-boundary] .gap-section{gap:24px!important}[data-embed-boundary] .gap-x-10{-moz-column-gap:2.5rem!important;column-gap:2.5rem!important}[data-embed-boundary] .gap-x-2{-moz-column-gap:.5rem!important;column-gap:.5rem!important}[data-embed-boundary] .gap-x-3{-moz-column-gap:.75rem!important;column-gap:.75rem!important}[data-embed-boundary] .gap-x-4{-moz-column-gap:1rem!important;column-gap:1rem!important}[data-embed-boundary] .gap-x-6{-moz-column-gap:1.5rem!important;column-gap:1.5rem!important}[data-embed-boundary] .gap-x-8{-moz-column-gap:2rem!important;column-gap:2rem!important}[data-embed-boundary] .gap-x-section{-moz-column-gap:24px!important;column-gap:24px!important}[data-embed-boundary] .gap-y-1{row-gap:.25rem!important}[data-embed-boundary] .gap-y-2{row-gap:.5rem!important}[data-embed-boundary] .gap-y-3{row-gap:.75rem!important}[data-embed-boundary] .gap-y-4{row-gap:1rem!important}[data-embed-boundary] .space-y-1>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.25rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.25rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-1\\.5>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.375rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.375rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-2>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.5rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.5rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-3>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(.75rem * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(.75rem * var(--tw-space-y-reverse))!important}[data-embed-boundary] .space-y-section>:not([hidden])~:not([hidden]){--tw-space-y-reverse: 0 !important;margin-top:calc(24px * calc(1 - var(--tw-space-y-reverse)))!important;margin-bottom:calc(24px * var(--tw-space-y-reverse))!important}[data-embed-boundary] .divide-x>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(1px * var(--tw-divide-x-reverse))!important;border-left-width:calc(1px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .divide-x-0>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(0px * var(--tw-divide-x-reverse))!important;border-left-width:calc(0px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .divide-y>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(1px * var(--tw-divide-y-reverse))!important}[data-embed-boundary] .divide-embed-border-default>:not([hidden])~:not([hidden]){--tw-divide-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-divide-opacity, 1))!important}[data-embed-boundary] .self-start{align-self:flex-start!important}[data-embed-boundary] .self-center{align-self:center!important}[data-embed-boundary] .self-stretch{align-self:stretch!important}[data-embed-boundary] .justify-self-start{justify-self:start!important}[data-embed-boundary] .justify-self-end{justify-self:end!important}[data-embed-boundary] .justify-self-center{justify-self:center!important}[data-embed-boundary] .overflow-hidden{overflow:hidden!important}[data-embed-boundary] .overflow-visible{overflow:visible!important}[data-embed-boundary] .overflow-x-auto{overflow-x:auto!important}[data-embed-boundary] .overflow-y-auto{overflow-y:auto!important}[data-embed-boundary] .overflow-x-hidden{overflow-x:hidden!important}[data-embed-boundary] .overflow-y-hidden{overflow-y:hidden!important}[data-embed-boundary] .overscroll-x-contain{overscroll-behavior-x:contain!important}[data-embed-boundary] .truncate{overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}[data-embed-boundary] .whitespace-nowrap{white-space:nowrap!important}[data-embed-boundary] .whitespace-pre-line{white-space:pre-line!important}[data-embed-boundary] .rounded{border-radius:.25rem!important}[data-embed-boundary] .rounded-\\[10px\\]{border-radius:10px!important}[data-embed-boundary] .rounded-\\[11px\\]{border-radius:11px!important}[data-embed-boundary] .rounded-\\[5px\\]{border-radius:5px!important}[data-embed-boundary] .rounded-\\[6\\.4px\\]{border-radius:6.4px!important}[data-embed-boundary] .rounded-\\[6px\\]{border-radius:6px!important}[data-embed-boundary] .rounded-\\[7px\\]{border-radius:7px!important}[data-embed-boundary] .rounded-\\[8px\\]{border-radius:8px!important}[data-embed-boundary] .rounded-full{border-radius:9999px!important}[data-embed-boundary] .rounded-md{border-radius:.375rem!important}[data-embed-boundary] .rounded-sm{border-radius:.125rem!important}[data-embed-boundary] .rounded-xl{border-radius:.75rem!important}[data-embed-boundary] .border{border-width:1px!important}[data-embed-boundary] .border-0{border-width:0px!important}[data-embed-boundary] .border-2{border-width:2px!important}[data-embed-boundary] .border-b{border-bottom-width:1px!important}[data-embed-boundary] .border-l-2{border-left-width:2px!important}[data-embed-boundary] .border-r{border-right-width:1px!important}[data-embed-boundary] .border-t{border-top-width:1px!important}[data-embed-boundary] .border-solid{border-style:solid!important}[data-embed-boundary] .border-dashed{border-style:dashed!important}[data-embed-boundary] .border-\\[\\#C89B2D\\]{--tw-border-opacity: 1 !important;border-color:rgb(200 155 45 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]{--tw-border-opacity: 1 !important;border-color:rgb(212 175 55 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]\\/40{border-color:#d4af3766!important}[data-embed-boundary] .border-\\[\\#D4AF37\\]\\/50{border-color:#d4af3780!important}[data-embed-boundary] .border-\\[\\#E3E3E3\\]{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-action-secondaryAccent{--tw-border-opacity: 1 !important;border-color:rgb(24 66 143 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-background-primary\\/50{border-color:#f7f6f480!important}[data-embed-boundary] .border-embed-border-default{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-border-default\\/60{border-color:#e3e3e399!important}[data-embed-boundary] .border-embed-border-default\\/70{border-color:#e3e3e3b3!important}[data-embed-boundary] .border-embed-border-default\\/80{border-color:#e3e3e3cc!important}[data-embed-boundary] .border-embed-brand-gold{--tw-border-opacity: 1 !important;border-color:rgb(200 161 101 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .border-embed-brand-gold\\/30{border-color:#c8a1654d!important}[data-embed-boundary] .border-embed-brand-gold\\/50{border-color:#c8a16580!important}[data-embed-boundary] .border-embed-brand-gold\\/60{border-color:#c8a16599!important}[data-embed-boundary] .border-embed-foreground-primary\\/10{border-color:#0019301a!important}[data-embed-boundary] .border-embed-foreground-primary\\/15{border-color:#00193026!important}[data-embed-boundary] .border-transparent{border-color:transparent!important}[data-embed-boundary] .\\!bg-\\[\\#FFFFFF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#001930\\]{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#D9CDAF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(217 205 175 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#F7F6F4\\]{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#F7F6F4\\]\\/95{background-color:#f7f6f4f2!important}[data-embed-boundary] .bg-\\[\\#FFFFFF\\]{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-\\[\\#FFFFFF\\]\\/95{background-color:#fffffff2!important}[data-embed-boundary] .bg-embed-action-secondary{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-primary{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-primary\\/15{background-color:#f7f6f426!important}[data-embed-boundary] .bg-embed-background-primary\\/25{background-color:#f7f6f440!important}[data-embed-boundary] .bg-embed-background-primary\\/50{background-color:#f7f6f480!important}[data-embed-boundary] .bg-embed-background-primary\\/90{background-color:#f7f6f4e6!important}[data-embed-boundary] .bg-embed-background-secondary{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-tertiary{--tw-bg-opacity: 1 !important;background-color:rgb(232 229 224 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-background-tertiary\\/60{background-color:#e8e5e099!important}[data-embed-boundary] .bg-embed-background-tertiary\\/80{background-color:#e8e5e0cc!important}[data-embed-boundary] .bg-embed-border-default{--tw-bg-opacity: 1 !important;background-color:rgb(227 227 227 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-gold{--tw-bg-opacity: 1 !important;background-color:rgb(200 161 101 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-gold\\/10{background-color:#c8a1651a!important}[data-embed-boundary] .bg-embed-brand-gold\\/15{background-color:#c8a16526!important}[data-embed-boundary] .bg-embed-brand-navy{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-brand-navy\\/70{background-color:#001930b3!important}[data-embed-boundary] .bg-embed-foreground-primary\\/10{background-color:#0019301a!important}[data-embed-boundary] .bg-embed-surface-card,[data-embed-boundary] .bg-embed-surface-elevated{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-surface-inset{--tw-bg-opacity: 1 !important;background-color:rgb(232 229 224 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-embed-surface-placeholder{--tw-bg-opacity: 1 !important;background-color:rgb(217 212 204 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-transparent{background-color:transparent!important}[data-embed-boundary] .bg-white{--tw-bg-opacity: 1 !important;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .bg-white\\/45{background-color:#ffffff73!important}[data-embed-boundary] .bg-white\\/65{background-color:#ffffffa6!important}[data-embed-boundary] .bg-white\\/95{background-color:#fffffff2!important}[data-embed-boundary] .bg-cover{background-size:cover!important}[data-embed-boundary] .bg-\\[center_42\\%\\]{background-position:center 42%!important}[data-embed-boundary] .bg-no-repeat{background-repeat:no-repeat!important}[data-embed-boundary] .fill-embed-foreground-primary{fill:#001930!important}[data-embed-boundary] .object-contain{-o-object-fit:contain!important;object-fit:contain!important}[data-embed-boundary] .object-cover{-o-object-fit:cover!important;object-fit:cover!important}[data-embed-boundary] .p-0{padding:0!important}[data-embed-boundary] .p-0\\.5{padding:.125rem!important}[data-embed-boundary] .p-1{padding:.25rem!important}[data-embed-boundary] .p-3\\.5{padding:.875rem!important}[data-embed-boundary] .p-4{padding:1rem!important}[data-embed-boundary] .p-5{padding:1.25rem!important}[data-embed-boundary] .p-6{padding:1.5rem!important}[data-embed-boundary] .p-\\[1\\.6px\\]{padding:1.6px!important}[data-embed-boundary] .p-section{padding:24px!important}[data-embed-boundary] .px-0{padding-left:0!important;padding-right:0!important}[data-embed-boundary] .px-2{padding-left:.5rem!important;padding-right:.5rem!important}[data-embed-boundary] .px-2\\.5{padding-left:.625rem!important;padding-right:.625rem!important}[data-embed-boundary] .px-3{padding-left:.75rem!important;padding-right:.75rem!important}[data-embed-boundary] .px-3\\.5{padding-left:.875rem!important;padding-right:.875rem!important}[data-embed-boundary] .px-4{padding-left:1rem!important;padding-right:1rem!important}[data-embed-boundary] .px-5{padding-left:1.25rem!important;padding-right:1.25rem!important}[data-embed-boundary] .px-6{padding-left:1.5rem!important;padding-right:1.5rem!important}[data-embed-boundary] .px-8{padding-left:2rem!important;padding-right:2rem!important}[data-embed-boundary] .px-\\[19px\\]{padding-left:19px!important;padding-right:19px!important}[data-embed-boundary] .px-\\[21px\\]{padding-left:21px!important;padding-right:21px!important}[data-embed-boundary] .px-section{padding-left:24px!important;padding-right:24px!important}[data-embed-boundary] .py-1{padding-top:.25rem!important;padding-bottom:.25rem!important}[data-embed-boundary] .py-1\\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}[data-embed-boundary] .py-2{padding-top:.5rem!important;padding-bottom:.5rem!important}[data-embed-boundary] .py-2\\.5{padding-top:.625rem!important;padding-bottom:.625rem!important}[data-embed-boundary] .py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .py-3\\.5{padding-top:.875rem!important;padding-bottom:.875rem!important}[data-embed-boundary] .py-4{padding-top:1rem!important;padding-bottom:1rem!important}[data-embed-boundary] .py-5{padding-top:1.25rem!important;padding-bottom:1.25rem!important}[data-embed-boundary] .py-8{padding-top:2rem!important;padding-bottom:2rem!important}[data-embed-boundary] .py-\\[21px\\]{padding-top:21px!important;padding-bottom:21px!important}[data-embed-boundary] .py-\\[50px\\]{padding-top:50px!important;padding-bottom:50px!important}[data-embed-boundary] .py-section{padding-top:24px!important;padding-bottom:24px!important}[data-embed-boundary] .pb-1{padding-bottom:.25rem!important}[data-embed-boundary] .pb-10{padding-bottom:2.5rem!important}[data-embed-boundary] .pb-3{padding-bottom:.75rem!important}[data-embed-boundary] .pb-4{padding-bottom:1rem!important}[data-embed-boundary] .pb-5{padding-bottom:1.25rem!important}[data-embed-boundary] .pb-8{padding-bottom:2rem!important}[data-embed-boundary] .pb-\\[calc\\(3\\.5rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{padding-bottom:calc(3.5rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .pb-\\[env\\(safe-area-inset-bottom\\,0px\\)\\]{padding-bottom:env(safe-area-inset-bottom,0px)!important}[data-embed-boundary] .pb-section{padding-bottom:24px!important}[data-embed-boundary] .pl-12{padding-left:3rem!important}[data-embed-boundary] .pl-2\\.5{padding-left:.625rem!important}[data-embed-boundary] .pl-4{padding-left:1rem!important}[data-embed-boundary] .pl-5{padding-left:1.25rem!important}[data-embed-boundary] .pl-\\[14px\\]{padding-left:14px!important}[data-embed-boundary] .pl-\\[20px\\]{padding-left:20px!important}[data-embed-boundary] .pl-section{padding-left:24px!important}[data-embed-boundary] .pr-0{padding-right:0!important}[data-embed-boundary] .pr-10{padding-right:2.5rem!important}[data-embed-boundary] .pr-2{padding-right:.5rem!important}[data-embed-boundary] .pr-\\[20px\\]{padding-right:20px!important}[data-embed-boundary] .pt-0{padding-top:0!important}[data-embed-boundary] .pt-0\\.5{padding-top:.125rem!important}[data-embed-boundary] .pt-1{padding-top:.25rem!important}[data-embed-boundary] .pt-14{padding-top:3.5rem!important}[data-embed-boundary] .pt-2{padding-top:.5rem!important}[data-embed-boundary] .pt-3{padding-top:.75rem!important}[data-embed-boundary] .pt-4{padding-top:1rem!important}[data-embed-boundary] .pt-5{padding-top:1.25rem!important}[data-embed-boundary] .pt-6{padding-top:1.5rem!important}[data-embed-boundary] .pt-\\[20px\\]{padding-top:20px!important}[data-embed-boundary] .pt-\\[env\\(safe-area-inset-top\\,0px\\)\\]{padding-top:env(safe-area-inset-top,0px)!important}[data-embed-boundary] .pt-section{padding-top:24px!important}[data-embed-boundary] .text-left{text-align:left!important}[data-embed-boundary] .text-center{text-align:center!important}[data-embed-boundary] .text-right{text-align:right!important}[data-embed-boundary] .font-sans{font-family:Inter,-apple-system,BlinkMacSystemFont,sans-serif!important}[data-embed-boundary] .text-2xl{font-size:1.5rem!important;line-height:2rem!important}[data-embed-boundary] .text-5xl{font-size:3rem!important;line-height:1!important}[data-embed-boundary] .text-\\[10px\\]{font-size:10px!important}[data-embed-boundary] .text-\\[11px\\]{font-size:11px!important}[data-embed-boundary] .text-\\[12px\\]{font-size:12px!important}[data-embed-boundary] .text-\\[13px\\]{font-size:13px!important}[data-embed-boundary] .text-\\[14px\\]{font-size:14px!important}[data-embed-boundary] .text-\\[15px\\]{font-size:15px!important}[data-embed-boundary] .text-\\[16px\\]{font-size:16px!important}[data-embed-boundary] .text-\\[17px\\]{font-size:17px!important}[data-embed-boundary] .text-\\[18px\\]{font-size:18px!important}[data-embed-boundary] .text-\\[2\\.52rem\\]{font-size:2.52rem!important}[data-embed-boundary] .text-\\[22px\\]{font-size:22px!important}[data-embed-boundary] .text-\\[2rem\\]{font-size:2rem!important}[data-embed-boundary] .text-base{font-size:1rem!important;line-height:1.5rem!important}[data-embed-boundary] .text-lg{font-size:1.125rem!important;line-height:1.75rem!important}[data-embed-boundary] .text-sm{font-size:.875rem!important;line-height:1.25rem!important}[data-embed-boundary] .text-xl{font-size:1.25rem!important;line-height:1.75rem!important}[data-embed-boundary] .text-xs{font-size:.75rem!important;line-height:1rem!important}[data-embed-boundary] .\\!font-bold{font-weight:700!important}[data-embed-boundary] .font-black{font-weight:900!important}[data-embed-boundary] .font-bold{font-weight:700!important}[data-embed-boundary] .font-medium{font-weight:500!important}[data-embed-boundary] .font-normal{font-weight:400!important}[data-embed-boundary] .font-semibold{font-weight:600!important}[data-embed-boundary] .uppercase{text-transform:uppercase!important}[data-embed-boundary] .tabular-nums{--tw-numeric-spacing: tabular-nums !important;font-variant-numeric:var(--tw-ordinal) var(--tw-slashed-zero) var(--tw-numeric-figure) var(--tw-numeric-spacing) var(--tw-numeric-fraction)!important}[data-embed-boundary] .leading-\\[1\\.15\\]{line-height:1.15!important}[data-embed-boundary] .leading-\\[1\\.1\\]{line-height:1.1!important}[data-embed-boundary] .leading-\\[1\\.35\\]{line-height:1.35!important}[data-embed-boundary] .leading-\\[1\\.45\\]{line-height:1.45!important}[data-embed-boundary] .leading-\\[1\\.4\\]{line-height:1.4!important}[data-embed-boundary] .leading-\\[1\\.55\\]{line-height:1.55!important}[data-embed-boundary] .leading-\\[1\\.5\\]{line-height:1.5!important}[data-embed-boundary] .leading-\\[1\\.65\\]{line-height:1.65!important}[data-embed-boundary] .leading-\\[1\\.6\\]{line-height:1.6!important}[data-embed-boundary] .leading-none{line-height:1!important}[data-embed-boundary] .leading-normal{line-height:1.5!important}[data-embed-boundary] .leading-relaxed{line-height:1.625!important}[data-embed-boundary] .leading-snug{line-height:1.375!important}[data-embed-boundary] .leading-tight{line-height:1.25!important}[data-embed-boundary] .tracking-\\[0\\.12em\\]{letter-spacing:.12em!important}[data-embed-boundary] .tracking-\\[0\\.14em\\]{letter-spacing:.14em!important}[data-embed-boundary] .tracking-brand{letter-spacing:.3em!important}[data-embed-boundary] .tracking-tight{letter-spacing:-.025em!important}[data-embed-boundary] .tracking-wide{letter-spacing:.05em!important}[data-embed-boundary] .text-\\[\\#001930\\]{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-\\[\\#001930\\]\\/70{color:#001930b3!important}[data-embed-boundary] .text-\\[\\#C89B2D\\]{--tw-text-opacity: 1 !important;color:rgb(200 155 45 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-\\[\\#D4AF37\\]{--tw-text-opacity: 1 !important;color:rgb(212 175 55 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-\\[\\#FFFFFF\\]{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-action-onSecondary,[data-embed-boundary] .text-embed-action-secondaryAccent{--tw-text-opacity: 1 !important;color:rgb(24 66 143 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-background-primary{--tw-text-opacity: 1 !important;color:rgb(247 246 244 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-background-primary\\/45{color:#f7f6f473!important}[data-embed-boundary] .text-embed-background-primary\\/55{color:#f7f6f48c!important}[data-embed-boundary] .text-embed-background-primary\\/85{color:#f7f6f4d9!important}[data-embed-boundary] .text-embed-background-primary\\/90{color:#f7f6f4e6!important}[data-embed-boundary] .text-embed-border-strong{--tw-text-opacity: 1 !important;color:rgb(227 227 227 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-gold{--tw-text-opacity: 1 !important;color:rgb(200 161 101 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-navy{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-brand-navy\\/70{color:#001930b3!important}[data-embed-boundary] .text-embed-foreground-primary{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-embed-foreground-primary\\/35{color:#00193059!important}[data-embed-boundary] .text-embed-foreground-primary\\/40{color:#00193066!important}[data-embed-boundary] .text-embed-foreground-primary\\/45{color:#00193073!important}[data-embed-boundary] .text-embed-foreground-primary\\/50{color:#00193080!important}[data-embed-boundary] .text-embed-foreground-primary\\/55{color:#0019308c!important}[data-embed-boundary] .text-embed-foreground-primary\\/60{color:#00193099!important}[data-embed-boundary] .text-embed-foreground-primary\\/65{color:#001930a6!important}[data-embed-boundary] .text-embed-foreground-primary\\/70{color:#001930b3!important}[data-embed-boundary] .text-embed-foreground-primary\\/75{color:#001930bf!important}[data-embed-boundary] .text-embed-foreground-primary\\/80{color:#001930cc!important}[data-embed-boundary] .text-embed-foreground-primary\\/85{color:#001930d9!important}[data-embed-boundary] .text-embed-foreground-primary\\/90{color:#001930e6!important}[data-embed-boundary] .text-embed-status-ready{--tw-text-opacity: 1 !important;color:rgb(19 122 67 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-white{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .text-white\\/90{color:#ffffffe6!important}[data-embed-boundary] .underline{text-decoration-line:underline!important}[data-embed-boundary] .decoration-embed-border-strong{text-decoration-color:#e3e3e3!important}[data-embed-boundary] .decoration-white\\/50{text-decoration-color:#ffffff80!important}[data-embed-boundary] .underline-offset-2{text-underline-offset:2px!important}[data-embed-boundary] .underline-offset-4{text-underline-offset:4px!important}[data-embed-boundary] .antialiased{-webkit-font-smoothing:antialiased!important;-moz-osx-font-smoothing:grayscale!important}[data-embed-boundary] .opacity-0{opacity:0!important}[data-embed-boundary] .opacity-100{opacity:1!important}[data-embed-boundary] .opacity-40{opacity:.4!important}[data-embed-boundary] .opacity-70{opacity:.7!important}[data-embed-boundary] .opacity-80{opacity:.8!important}[data-embed-boundary] .shadow{--tw-shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_0_rgba\\(0\\,25\\,48\\,0\\.04\\)\\]{--tw-shadow: 0 1px 0 rgba(0,25,48,.04) !important;--tw-shadow-colored: 0 1px 0 var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_11px_rgba\\(0\\,25\\,48\\,0\\.044\\)\\]{--tw-shadow: 0 1px 11px rgba(0,25,48,.044) !important;--tw-shadow-colored: 0 1px 11px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_1px_4px_rgba\\(0\\,30\\,58\\,0\\.12\\)\\]{--tw-shadow: 0 1px 4px rgba(0,30,58,.12) !important;--tw-shadow-colored: 0 1px 4px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-\\[0_8px_24px_rgba\\(0\\,25\\,48\\,0\\.18\\)\\]{--tw-shadow: 0 8px 24px rgba(0,25,48,.18) !important;--tw-shadow-colored: 0 8px 24px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-lg{--tw-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-md{--tw-shadow: 0 4px 6px -1px rgb(0 0 0 / .1), 0 2px 4px -2px rgb(0 0 0 / .1) !important;--tw-shadow-colored: 0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .shadow-none{--tw-shadow: 0 0 #0000 !important;--tw-shadow-colored: 0 0 #0000 !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}[data-embed-boundary] .outline-none{outline:2px solid transparent!important;outline-offset:2px!important}[data-embed-boundary] .outline{outline-style:solid!important}[data-embed-boundary] .ring{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-1{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-2{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .ring-embed-brand-gold{--tw-ring-opacity: 1 !important;--tw-ring-color: rgb(200 161 101 / var(--tw-ring-opacity, 1)) !important}[data-embed-boundary] .ring-embed-brand-gold\\/40{--tw-ring-color: rgb(200 161 101 / .4) !important}[data-embed-boundary] .ring-offset-1{--tw-ring-offset-width: 1px !important}[data-embed-boundary] .ring-offset-2{--tw-ring-offset-width: 2px !important}[data-embed-boundary] .ring-offset-\\[\\#F7F6F4\\]{--tw-ring-offset-color: #F7F6F4 !important}[data-embed-boundary] .blur{--tw-blur: blur(8px) !important;filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .grayscale{--tw-grayscale: grayscale(100%) !important;filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .filter{filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)!important}[data-embed-boundary] .backdrop-blur{--tw-backdrop-blur: blur(8px) !important;-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important;backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important}[data-embed-boundary] .backdrop-blur-sm{--tw-backdrop-blur: blur(4px) !important;-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important;backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important}[data-embed-boundary] .transition{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke,opacity,box-shadow,transform,filter,backdrop-filter!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[background-color\\,box-shadow\\,color\\]{transition-property:background-color,box-shadow,color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[background-color\\,color\\]{transition-property:background-color,color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[border-color\\]{transition-property:border-color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[box-shadow\\,opacity\\]{transition-property:box-shadow,opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[fill\\]{transition-property:fill!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[grid-template-rows\\]{transition-property:grid-template-rows!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[left\\]{transition-property:left!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[opacity\\,transform\\,max-height\\]{transition-property:opacity,transform,max-height!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[transform\\,box-shadow\\,border-color\\,border-width\\,background-color\\]{transition-property:transform,box-shadow,border-color,border-width,background-color!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[transform\\,opacity\\]{transition-property:transform,opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-\\[width\\]{transition-property:width!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-colors{transition-property:color,background-color,border-color,text-decoration-color,fill,stroke!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-opacity{transition-property:opacity!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-shadow{transition-property:box-shadow!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .transition-transform{transition-property:transform!important;transition-timing-function:cubic-bezier(.4,0,.2,1)!important;transition-duration:.15s!important}[data-embed-boundary] .duration-150{transition-duration:.15s!important}[data-embed-boundary] .duration-200{transition-duration:.2s!important}[data-embed-boundary] .duration-500{transition-duration:.5s!important}[data-embed-boundary] .duration-\\[125ms\\]{transition-duration:125ms!important}[data-embed-boundary] .ease-in-out{transition-timing-function:cubic-bezier(.4,0,.2,1)!important}[data-embed-boundary] .ease-out{transition-timing-function:cubic-bezier(0,0,.2,1)!important}[data-embed-boundary] .will-change-transform{will-change:transform!important}[data-journey-scene]{scroll-snap-align:start!important;scroll-snap-stop:normal!important;scroll-margin-top:var(--guided-journey-header-offset, 92px)!important}[data-studio-shell=mobile-nav] button,[data-journey-scene] button{transition-duration:.15s!important;transition-timing-function:ease-out!important}@media(max-width:767px){[data-chapter-spacer]{height:24px!important}[data-journey-scene]:not([data-journey-scene=journey-scene-orientation]){content-visibility:auto!important;contain-intrinsic-size:auto 720px!important}}[data-embed-boundary] .animate-hero-photo-veil{transform-origin:left center!important;animation:hero-photo-veil-cycle 14s linear infinite!important}@keyframes priority-card-attention{0%,to{box-shadow:0 0 #00193000}6%{box-shadow:0 0 0 3px #d4af3759}12%{box-shadow:0 0 #00193000}}[data-embed-boundary] .animate-priority-card-attention{animation:priority-card-attention 3s ease-in-out infinite!important}@media(prefers-reduced-motion:reduce){html[data-guided-journey-root=true],body[data-guided-journey-root=true],[data-guided-journey-root=true]{scroll-behavior:auto!important}[data-embed-boundary] .animate-hero-photo-veil,[data-embed-boundary] .animate-priority-card-attention{animation:none!important}[data-studio-shell=mobile-nav] button,[data-journey-scene] button{transition-duration:0ms!important}}[data-embed-boundary] .\\[-ms-overflow-style\\:none\\]{-ms-overflow-style:none!important}[data-embed-boundary] .\\[margin-left\\:var\\(--priority-switch-shift-x\\,0px\\)\\]{margin-left:var(--priority-switch-shift-x,0px)!important}[data-embed-boundary] .\\[scrollbar-width\\:none\\]{scrollbar-width:none!important}@keyframes hero-photo-veil-cycle{0%{transform:scaleX(1)}14.2857%{transform:scaleX(0)}28.5714%{transform:scaleX(0)}42.8571%{transform:scaleX(1)}to{transform:scaleX(1)}}[data-embed-boundary] .marker\\:content-none *::marker{--tw-content: none !important;content:var(--tw-content)!important}[data-embed-boundary] .marker\\:content-none::marker{--tw-content: none !important;content:var(--tw-content)!important}[data-embed-boundary] .placeholder\\:text-embed-foreground-primary\\/40::-moz-placeholder{color:#00193066!important}[data-embed-boundary] .placeholder\\:text-embed-foreground-primary\\/40::placeholder{color:#00193066!important}[data-embed-boundary] .before\\:absolute:before{content:var(--tw-content)!important;position:absolute!important}[data-embed-boundary] .before\\:-left-1:before{content:var(--tw-content)!important;left:-.25rem!important}[data-embed-boundary] .before\\:top-1\\/2:before{content:var(--tw-content)!important;top:50%!important}[data-embed-boundary] .before\\:h-2:before{content:var(--tw-content)!important;height:.5rem!important}[data-embed-boundary] .before\\:w-2:before{content:var(--tw-content)!important;width:.5rem!important}[data-embed-boundary] .before\\:-translate-y-1\\/2:before{content:var(--tw-content)!important;--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .before\\:rounded-full:before{content:var(--tw-content)!important;border-radius:9999px!important}[data-embed-boundary] .before\\:border:before{content:var(--tw-content)!important;border-width:1px!important}[data-embed-boundary] .before\\:border-\\[\\#D9CDAF\\]:before{content:var(--tw-content)!important;--tw-border-opacity: 1 !important;border-color:rgb(217 205 175 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .before\\:bg-\\[\\#F7F6F4\\]:before{content:var(--tw-content)!important;--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .after\\:absolute:after{content:var(--tw-content)!important;position:absolute!important}[data-embed-boundary] .after\\:-right-1:after{content:var(--tw-content)!important;right:-.25rem!important}[data-embed-boundary] .after\\:top-1\\/2:after{content:var(--tw-content)!important;top:50%!important}[data-embed-boundary] .after\\:h-2:after{content:var(--tw-content)!important;height:.5rem!important}[data-embed-boundary] .after\\:w-2:after{content:var(--tw-content)!important;width:.5rem!important}[data-embed-boundary] .after\\:-translate-y-1\\/2:after{content:var(--tw-content)!important;--tw-translate-y: -50% !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .after\\:rounded-full:after{content:var(--tw-content)!important;border-radius:9999px!important}[data-embed-boundary] .after\\:border:after{content:var(--tw-content)!important;border-width:1px!important}[data-embed-boundary] .after\\:border-\\[\\#D9CDAF\\]:after{content:var(--tw-content)!important;--tw-border-opacity: 1 !important;border-color:rgb(217 205 175 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .after\\:bg-\\[\\#F7F6F4\\]:after{content:var(--tw-content)!important;--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .first\\:pl-0:first-child{padding-left:0!important}[data-embed-boundary] .last\\:pr-0:last-child{padding-right:0!important}[data-embed-boundary] .hover\\:z-\\[5\\]:hover{z-index:5!important}[data-embed-boundary] .hover\\:cursor-pointer:hover{cursor:pointer!important}[data-embed-boundary] .hover\\:border-solid:hover{border-style:solid!important}[data-embed-boundary] .hover\\:border-\\[\\#D4AF37\\]:hover{--tw-border-opacity: 1 !important;border-color:rgb(212 175 55 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .hover\\:border-embed-brand-gold:hover{--tw-border-opacity: 1 !important;border-color:rgb(200 161 101 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .hover\\:border-embed-brand-gold\\/40:hover{border-color:#c8a16566!important}[data-embed-boundary] .hover\\:border-embed-brand-gold\\/70:hover{border-color:#c8a165b3!important}[data-embed-boundary] .hover\\:bg-\\[\\#001930\\]:hover{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-black\\/5:hover{background-color:#0000000d!important}[data-embed-boundary] .hover\\:bg-embed-background-primary:hover{--tw-bg-opacity: 1 !important;background-color:rgb(247 246 244 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-embed-background-primary\\/10:hover{background-color:#f7f6f41a!important}[data-embed-boundary] .hover\\:bg-embed-brand-gold:hover{--tw-bg-opacity: 1 !important;background-color:rgb(200 161 101 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .hover\\:bg-embed-brand-gold\\/10:hover{background-color:#c8a1651a!important}[data-embed-boundary] .hover\\:text-\\[\\#001930\\]:hover{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-\\[\\#FFFFFF\\]:hover{--tw-text-opacity: 1 !important;color:rgb(255 255 255 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-embed-background-primary\\/70:hover{color:#f7f6f4b3!important}[data-embed-boundary] .hover\\:text-embed-brand-gold:hover{--tw-text-opacity: 1 !important;color:rgb(200 161 101 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:text-embed-brand-navy:hover,[data-embed-boundary] .hover\\:text-embed-foreground-primary:hover{--tw-text-opacity: 1 !important;color:rgb(0 25 48 / var(--tw-text-opacity, 1))!important}[data-embed-boundary] .hover\\:underline:hover{text-decoration-line:underline!important}[data-embed-boundary] .hover\\:decoration-embed-brand-navy:hover{text-decoration-color:#001930!important}[data-embed-boundary] .hover\\:decoration-white:hover{text-decoration-color:#fff!important}[data-embed-boundary] .hover\\:opacity-80:hover{opacity:.8!important}[data-embed-boundary] .hover\\:opacity-90:hover{opacity:.9!important}[data-embed-boundary] .hover\\:\\[animation-play-state\\:paused\\]:hover{animation-play-state:paused!important}[data-embed-boundary] .focus\\:border-\\[\\#C89B2D\\]:focus{--tw-border-opacity: 1 !important;border-color:rgb(200 155 45 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .focus\\:outline-none:focus{outline:2px solid transparent!important;outline-offset:2px!important}[data-embed-boundary] .focus-visible\\:outline-none:focus-visible{outline:2px solid transparent!important;outline-offset:2px!important}[data-embed-boundary] .focus-visible\\:outline:focus-visible{outline-style:solid!important}[data-embed-boundary] .focus-visible\\:outline-2:focus-visible{outline-width:2px!important}[data-embed-boundary] .focus-visible\\:outline-offset-2:focus-visible{outline-offset:2px!important}[data-embed-boundary] .focus-visible\\:outline-embed-action-primary:focus-visible{outline-color:#18428f!important}[data-embed-boundary] .focus-visible\\:ring-2:focus-visible{--tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color) !important;--tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;box-shadow:var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow, 0 0 #0000)!important}[data-embed-boundary] .focus-visible\\:ring-inset:focus-visible{--tw-ring-inset: inset !important}[data-embed-boundary] .focus-visible\\:ring-embed-brand-gold\\/35:focus-visible{--tw-ring-color: rgb(200 161 101 / .35) !important}[data-embed-boundary] .focus-visible\\:ring-embed-brand-gold\\/40:focus-visible{--tw-ring-color: rgb(200 161 101 / .4) !important}[data-embed-boundary] .focus-visible\\:ring-offset-2:focus-visible{--tw-ring-offset-width: 2px !important}[data-embed-boundary] .focus-visible\\:ring-offset-\\[\\#001930\\]:focus-visible{--tw-ring-offset-color: #001930 !important}[data-embed-boundary] .disabled\\:cursor-default:disabled{cursor:default!important}[data-embed-boundary] .disabled\\:cursor-not-allowed:disabled{cursor:not-allowed!important}[data-embed-boundary] .disabled\\:opacity-45:disabled{opacity:.45!important}[data-embed-boundary] .disabled\\:opacity-50:disabled{opacity:.5!important}[data-embed-boundary] .disabled\\:opacity-55:disabled{opacity:.55!important}[data-embed-boundary] .group[open] .group-open\\:rotate-90{--tw-rotate: 90deg !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .group:hover .group-hover\\:scale-\\[1\\.04\\]{--tw-scale-x: 1.04 !important;--tw-scale-y: 1.04 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .group:hover .group-hover\\:opacity-95{opacity:.95!important}[data-embed-boundary] .group:hover .group-hover\\:shadow-\\[0_2px_6px_rgba\\(0\\,30\\,58\\,0\\.16\\)\\]{--tw-shadow: 0 2px 6px rgba(0,30,58,.16) !important;--tw-shadow-colored: 0 2px 6px var(--tw-shadow-color) !important;box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000),var(--tw-ring-shadow, 0 0 #0000),var(--tw-shadow)!important}@media(max-width:767px){[data-embed-boundary] .mobile\\:sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border-width:0!important}[data-embed-boundary] .mobile\\:static{position:static!important}[data-embed-boundary] .mobile\\:relative{position:relative!important}[data-embed-boundary] .mobile\\:sticky{position:sticky!important}[data-embed-boundary] .mobile\\:bottom-\\[calc\\(3\\.5rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{bottom:calc(3.5rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .mobile\\:z-40{z-index:40!important}[data-embed-boundary] .mobile\\:col-span-1{grid-column:span 1 / span 1!important}[data-embed-boundary] .mobile\\:col-start-2{grid-column-start:2!important}[data-embed-boundary] .mobile\\:col-end-4{grid-column-end:4!important}[data-embed-boundary] .mobile\\:row-auto{grid-row:auto!important}[data-embed-boundary] .mobile\\:row-span-1{grid-row:span 1 / span 1!important}[data-embed-boundary] .mobile\\:-mx-section{margin-left:-24px!important;margin-right:-24px!important}[data-embed-boundary] .mobile\\:mx-auto{margin-left:auto!important;margin-right:auto!important}[data-embed-boundary] .mobile\\:ml-0{margin-left:0!important}[data-embed-boundary] .mobile\\:mt-0{margin-top:0!important}[data-embed-boundary] .mobile\\:mt-1{margin-top:.25rem!important}[data-embed-boundary] .mobile\\:mt-5{margin-top:1.25rem!important}[data-embed-boundary] .mobile\\:mt-8{margin-top:2rem!important}[data-embed-boundary] .mobile\\:block{display:block!important}[data-embed-boundary] .mobile\\:inline{display:inline!important}[data-embed-boundary] .mobile\\:flex{display:flex!important}[data-embed-boundary] .mobile\\:grid{display:grid!important}[data-embed-boundary] .mobile\\:hidden{display:none!important}[data-embed-boundary] .mobile\\:aspect-video{aspect-ratio:16 / 9!important}[data-embed-boundary] .mobile\\:h-20{height:5rem!important}[data-embed-boundary] .mobile\\:h-auto{height:auto!important}[data-embed-boundary] .mobile\\:max-h-\\[calc\\(100dvh-env\\(safe-area-inset-top\\,0px\\)-env\\(safe-area-inset-bottom\\,0px\\)-2rem\\)\\]{max-height:calc(100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 2rem)!important}[data-embed-boundary] .mobile\\:max-h-none{max-height:none!important}[data-embed-boundary] .mobile\\:min-h-0{min-height:0px!important}[data-embed-boundary] .mobile\\:min-h-2{min-height:.5rem!important}[data-embed-boundary] .mobile\\:min-h-\\[48px\\]{min-height:48px!important}[data-embed-boundary] .mobile\\:w-4\\/5{width:80%!important}[data-embed-boundary] .mobile\\:w-\\[min\\(calc\\(100vw-1\\.5rem\\)\\,calc\\(\\(100dvh-env\\(safe-area-inset-top\\,0px\\)-env\\(safe-area-inset-bottom\\,0px\\)-2rem\\)\\*16\\/9\\)\\)\\]{width:min(calc(100vw - 1.5rem),calc((100dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px) - 2rem) * 16 / 9))!important}[data-embed-boundary] .mobile\\:w-auto{width:auto!important}[data-embed-boundary] .mobile\\:w-full{width:100%!important}[data-embed-boundary] .mobile\\:max-w-\\[7rem\\]{max-width:7rem!important}[data-embed-boundary] .mobile\\:max-w-none{max-width:none!important}[data-embed-boundary] .mobile\\:shrink-0{flex-shrink:0!important}[data-embed-boundary] .mobile\\:translate-x-0{--tw-translate-x: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:translate-y-0{--tw-translate-y: 0px !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:scale-\\[0\\.971\\]{--tw-scale-x: .971 !important;--tw-scale-y: .971 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:scale-\\[1\\.03\\]{--tw-scale-x: 1.03 !important;--tw-scale-y: 1.03 !important;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))!important}[data-embed-boundary] .mobile\\:grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))!important}[data-embed-boundary] .mobile\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .mobile\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .mobile\\:grid-cols-\\[44px_minmax\\(0\\,1fr\\)\\]{grid-template-columns:44px minmax(0,1fr)!important}[data-embed-boundary] .mobile\\:grid-cols-\\[auto_minmax\\(0\\,1fr\\)_auto\\]{grid-template-columns:auto minmax(0,1fr) auto!important}[data-embed-boundary] .mobile\\:grid-rows-\\[auto_minmax\\(16rem\\,1fr\\)\\]{grid-template-rows:auto minmax(16rem,1fr)!important}[data-embed-boundary] .mobile\\:grid-rows-none{grid-template-rows:none!important}[data-embed-boundary] .mobile\\:flex-row{flex-direction:row!important}[data-embed-boundary] .mobile\\:flex-col{flex-direction:column!important}[data-embed-boundary] .mobile\\:items-start{align-items:flex-start!important}[data-embed-boundary] .mobile\\:items-center{align-items:center!important}[data-embed-boundary] .mobile\\:items-stretch{align-items:stretch!important}[data-embed-boundary] .mobile\\:justify-center{justify-content:center!important}[data-embed-boundary] .mobile\\:justify-between{justify-content:space-between!important}[data-embed-boundary] .mobile\\:justify-items-stretch{justify-items:stretch!important}[data-embed-boundary] .mobile\\:gap-1{gap:.25rem!important}[data-embed-boundary] .mobile\\:gap-11{gap:2.75rem!important}[data-embed-boundary] .mobile\\:gap-2{gap:.5rem!important}[data-embed-boundary] .mobile\\:gap-3{gap:.75rem!important}[data-embed-boundary] .mobile\\:gap-4{gap:1rem!important}[data-embed-boundary] .mobile\\:gap-5{gap:1.25rem!important}[data-embed-boundary] .mobile\\:gap-x-3{-moz-column-gap:.75rem!important;column-gap:.75rem!important}[data-embed-boundary] .mobile\\:gap-x-4{-moz-column-gap:1rem!important;column-gap:1rem!important}[data-embed-boundary] .mobile\\:gap-y-4{row-gap:1rem!important}[data-embed-boundary] .mobile\\:divide-x-0>:not([hidden])~:not([hidden]){--tw-divide-x-reverse: 0 !important;border-right-width:calc(0px * var(--tw-divide-x-reverse))!important;border-left-width:calc(0px * calc(1 - var(--tw-divide-x-reverse)))!important}[data-embed-boundary] .mobile\\:overflow-hidden{overflow:hidden!important}[data-embed-boundary] .mobile\\:overflow-visible{overflow:visible!important}[data-embed-boundary] .mobile\\:border-t{border-top-width:1px!important}[data-embed-boundary] .mobile\\:border-embed-border-default{--tw-border-opacity: 1 !important;border-color:rgb(227 227 227 / var(--tw-border-opacity, 1))!important}[data-embed-boundary] .mobile\\:bg-\\[\\#FFFFFF\\]\\/95{background-color:#fffffff2!important}[data-embed-boundary] .mobile\\:bg-embed-brand-navy{--tw-bg-opacity: 1 !important;background-color:rgb(0 25 48 / var(--tw-bg-opacity, 1))!important}[data-embed-boundary] .mobile\\:object-contain{-o-object-fit:contain!important;object-fit:contain!important}[data-embed-boundary] .mobile\\:px-0{padding-left:0!important;padding-right:0!important}[data-embed-boundary] .mobile\\:px-3{padding-left:.75rem!important;padding-right:.75rem!important}[data-embed-boundary] .mobile\\:px-section{padding-left:24px!important;padding-right:24px!important}[data-embed-boundary] .mobile\\:py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .mobile\\:py-5{padding-top:1.25rem!important;padding-bottom:1.25rem!important}[data-embed-boundary] .mobile\\:py-8{padding-top:2rem!important;padding-bottom:2rem!important}[data-embed-boundary] .mobile\\:\\!pt-0{padding-top:0!important}[data-embed-boundary] .mobile\\:pb-2{padding-bottom:.5rem!important}[data-embed-boundary] .mobile\\:pb-8{padding-bottom:2rem!important}[data-embed-boundary] .mobile\\:pb-\\[calc\\(1\\.25rem\\+env\\(safe-area-inset-bottom\\,0px\\)\\)\\]{padding-bottom:calc(1.25rem + env(safe-area-inset-bottom,0px))!important}[data-embed-boundary] .mobile\\:pl-6{padding-left:1.5rem!important}[data-embed-boundary] .mobile\\:pr-section{padding-right:24px!important}[data-embed-boundary] .mobile\\:pt-12{padding-top:3rem!important}[data-embed-boundary] .mobile\\:text-left{text-align:left!important}[data-embed-boundary] .mobile\\:text-\\[0\\.8rem\\]{font-size:.8rem!important}[data-embed-boundary] .mobile\\:text-\\[0\\.9375rem\\]{font-size:.9375rem!important}[data-embed-boundary] .mobile\\:text-\\[17px\\]{font-size:17px!important}[data-embed-boundary] .mobile\\:text-\\[18px\\]{font-size:18px!important}[data-embed-boundary] .mobile\\:text-\\[2rem\\]{font-size:2rem!important}[data-embed-boundary] .mobile\\:text-\\[80\\%\\]{font-size:80%!important}[data-embed-boundary] .mobile\\:text-base{font-size:1rem!important;line-height:1.5rem!important}[data-embed-boundary] .mobile\\:text-lg{font-size:1.125rem!important;line-height:1.75rem!important}[data-embed-boundary] .mobile\\:text-sm{font-size:.875rem!important;line-height:1.25rem!important}[data-embed-boundary] .mobile\\:text-xl{font-size:1.25rem!important;line-height:1.75rem!important}[data-embed-boundary] .mobile\\:leading-\\[1\\.15\\]{line-height:1.15!important}[data-embed-boundary] .mobile\\:leading-snug{line-height:1.375!important}[data-embed-boundary] .mobile\\:leading-tight{line-height:1.25!important}[data-embed-boundary] .mobile\\:backdrop-blur-\\[6px\\]{--tw-backdrop-blur: blur(6px) !important;-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important;backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)!important}[data-embed-boundary] .mobile\\:\\!\\[margin-left\\:0px\\]{margin-left:0!important}}@media(min-width:768px){[data-embed-boundary] .tablet\\:max-w-\\[16rem\\]{max-width:16rem!important}[data-embed-boundary] .tablet\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .tablet\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .tablet\\:text-base{font-size:1rem!important;line-height:1.5rem!important}}@media(min-width:768px)and (max-width:1199px){[data-embed-boundary] .tabletMin\\:col-span-1{grid-column:span 1 / span 1!important}[data-embed-boundary] .tabletMin\\:col-start-1{grid-column-start:1!important}[data-embed-boundary] .tabletMin\\:col-start-2{grid-column-start:2!important}[data-embed-boundary] .tabletMin\\:row-auto{grid-row:auto!important}[data-embed-boundary] .tabletMin\\:row-span-1{grid-row:span 1 / span 1!important}[data-embed-boundary] .tabletMin\\:row-span-2{grid-row:span 2 / span 2!important}[data-embed-boundary] .tabletMin\\:row-start-1{grid-row-start:1!important}[data-embed-boundary] .tabletMin\\:row-start-2{grid-row-start:2!important}[data-embed-boundary] .tabletMin\\:block{display:block!important}[data-embed-boundary] .tabletMin\\:flex{display:flex!important}[data-embed-boundary] .tabletMin\\:hidden{display:none!important}[data-embed-boundary] .tabletMin\\:\\!w-full{width:100%!important}[data-embed-boundary] .tabletMin\\:\\!max-w-none,[data-embed-boundary] .tabletMin\\:max-w-none{max-width:none!important}[data-embed-boundary] .tabletMin\\:grid-cols-1{grid-template-columns:repeat(1,minmax(0,1fr))!important}[data-embed-boundary] .tabletMin\\:grid-cols-2{grid-template-columns:repeat(2,minmax(0,1fr))!important}[data-embed-boundary] .tabletMin\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .tabletMin\\:grid-cols-\\[minmax\\(0\\,1\\.08fr\\)_minmax\\(0\\,0\\.92fr\\)\\]{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr)!important}[data-embed-boundary] .tabletMin\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.55fr\\)\\]{grid-template-columns:minmax(0,1fr) minmax(0,1.55fr)!important}[data-embed-boundary] .tabletMin\\:grid-rows-none{grid-template-rows:none!important}[data-embed-boundary] .tabletMin\\:justify-items-stretch{justify-items:stretch!important}[data-embed-boundary] .tabletMin\\:gap-4{gap:1rem!important}[data-embed-boundary] .tabletMin\\:divide-y-0>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(0px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(0px * var(--tw-divide-y-reverse))!important}[data-embed-boundary] .tabletMin\\:px-section{padding-left:24px!important;padding-right:24px!important}}@media(min-width:1200px)and (max-width:1439px){[data-embed-boundary] .tabletMax\\:flex{display:flex!important}[data-embed-boundary] .tabletMax\\:hidden{display:none!important}[data-embed-boundary] .tabletMax\\:\\!w-full{width:100%!important}[data-embed-boundary] .tabletMax\\:\\!max-w-none,[data-embed-boundary] .tabletMax\\:max-w-none{max-width:none!important}[data-embed-boundary] .tabletMax\\:\\!grid-cols-\\[minmax\\(0\\,1\\.55fr\\)_minmax\\(12rem\\,0\\.55fr\\)_minmax\\(0\\,1fr\\)\\]{grid-template-columns:minmax(0,1.55fr) minmax(12rem,.55fr) minmax(0,1fr)!important}[data-embed-boundary] .tabletMax\\:\\!grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1fr\\)\\]{grid-template-columns:minmax(0,1fr) minmax(0,1fr)!important}[data-embed-boundary] .tabletMax\\:grid-cols-3{grid-template-columns:repeat(3,minmax(0,1fr))!important}[data-embed-boundary] .tabletMax\\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}[data-embed-boundary] .tabletMax\\:grid-cols-\\[minmax\\(0\\,1fr\\)_minmax\\(0\\,1\\.85fr\\)\\]{grid-template-columns:minmax(0,1fr) minmax(0,1.85fr)!important}[data-embed-boundary] .tabletMax\\:gap-\\[18px\\]{gap:18px!important}[data-embed-boundary] .tabletMax\\:\\!divide-y-0>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(0px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(0px * var(--tw-divide-y-reverse))!important}}@media(min-width:1280px){[data-embed-boundary] .desktop\\:-ml-section{margin-left:-24px!important}[data-embed-boundary] .desktop\\:block{display:block!important}[data-embed-boundary] .desktop\\:flex{display:flex!important}[data-embed-boundary] .desktop\\:grid{display:grid!important}[data-embed-boundary] .desktop\\:hidden{display:none!important}[data-embed-boundary] .desktop\\:h-12{height:3rem!important}[data-embed-boundary] .desktop\\:h-20{height:5rem!important}[data-embed-boundary] .desktop\\:h-7{height:1.75rem!important}[data-embed-boundary] .desktop\\:h-8{height:2rem!important}[data-embed-boundary] .desktop\\:h-\\[155px\\]{height:155px!important}[data-embed-boundary] .desktop\\:max-h-10{max-height:2.5rem!important}[data-embed-boundary] .desktop\\:min-h-0{min-height:0px!important}[data-embed-boundary] .desktop\\:min-h-\\[36px\\]{min-height:36px!important}[data-embed-boundary] .desktop\\:min-h-\\[38px\\]{min-height:38px!important}[data-embed-boundary] .desktop\\:min-h-\\[42px\\]{min-height:42px!important}[data-embed-boundary] .desktop\\:w-1\\/2{width:50%!important}[data-embed-boundary] .desktop\\:w-12{width:3rem!important}[data-embed-boundary] .desktop\\:w-7{width:1.75rem!important}[data-embed-boundary] .desktop\\:w-8{width:2rem!important}[data-embed-boundary] .desktop\\:w-\\[155px\\]{width:155px!important}[data-embed-boundary] .desktop\\:w-\\[600px\\]{width:600px!important}[data-embed-boundary] .desktop\\:w-\\[640px\\]{width:640px!important}[data-embed-boundary] .desktop\\:w-\\[680px\\]{width:680px!important}[data-embed-boundary] .desktop\\:w-\\[682px\\]{width:682px!important}[data-embed-boundary] .desktop\\:w-\\[690px\\]{width:690px!important}[data-embed-boundary] .desktop\\:w-\\[70\\%\\]{width:70%!important}[data-embed-boundary] .desktop\\:w-\\[75\\%\\]{width:75%!important}[data-embed-boundary] .desktop\\:w-canvas{width:1432px!important}[data-embed-boundary] .desktop\\:min-w-\\[42px\\]{min-width:42px!important}[data-embed-boundary] .desktop\\:min-w-\\[600px\\]{min-width:600px!important}[data-embed-boundary] .desktop\\:min-w-canvas{min-width:1432px!important}[data-embed-boundary] .desktop\\:max-w-\\[20rem\\]{max-width:20rem!important}[data-embed-boundary] .desktop\\:max-w-\\[600px\\]{max-width:600px!important}[data-embed-boundary] .desktop\\:max-w-\\[96px\\]{max-width:96px!important}[data-embed-boundary] .desktop\\:max-w-canvas{max-width:1432px!important}[data-embed-boundary] .desktop\\:shrink-0{flex-shrink:0!important}[data-embed-boundary] .desktop\\:grid-cols-4{grid-template-columns:repeat(4,minmax(0,1fr))!important}[data-embed-boundary] .desktop\\:grid-cols-\\[var\\(--spatial-terminal-cols\\)\\]{grid-template-columns:var(--spatial-terminal-cols)!important}[data-embed-boundary] .desktop\\:grid-rows-\\[48px_repeat\\(3\\,minmax\\(132px\\,1fr\\)\\)\\]{grid-template-rows:48px repeat(3,minmax(132px,1fr))!important}[data-embed-boundary] .desktop\\:gap-section{gap:24px!important}[data-embed-boundary] .desktop\\:divide-y-0>:not([hidden])~:not([hidden]){--tw-divide-y-reverse: 0 !important;border-top-width:calc(0px * calc(1 - var(--tw-divide-y-reverse)))!important;border-bottom-width:calc(0px * var(--tw-divide-y-reverse))!important}[data-embed-boundary] .desktop\\:py-1\\.5{padding-top:.375rem!important;padding-bottom:.375rem!important}[data-embed-boundary] .desktop\\:py-3{padding-top:.75rem!important;padding-bottom:.75rem!important}[data-embed-boundary] .desktop\\:py-\\[6\\.4px\\]{padding-top:6.4px!important;padding-bottom:6.4px!important}[data-embed-boundary] .desktop\\:pb-0{padding-bottom:0!important}}[data-embed-boundary] .\\[\\&\\:\\:-webkit-details-marker\\]\\:hidden::-webkit-details-marker{display:none!important}[data-embed-boundary] .\\[\\&\\:\\:-webkit-scrollbar\\]\\:hidden::-webkit-scrollbar{display:none!important}@media(max-width:767px){[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!h-7>*{height:1.75rem!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!h-8>*{height:2rem!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!h-full>*{height:100%!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!min-h-0>*{min-height:0px!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!min-h-8>*{min-height:2rem!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!w-7>*{width:1.75rem!important}[data-embed-boundary] .mobile\\:\\[\\&\\>\\*\\]\\:\\!w-full>*{width:100%!important}}';
+var Uu = { commit: "d5671edf", builtAt: "2026-08-27T08:28:54Z", runtimeSource: "builder-package/projectBuilderImportToHousePackage", marker: "EMBED_RUNTIME_BUILD:d5671edf@2026-08-27T08:28:54Z" };
+const o0 = Object.freeze({
   commit: "dev",
   builtAt: "dev",
   runtimeSource: "builder-package/projectBuilderImportToHousePackage",
   marker: "EMBED_RUNTIME_BUILD:dev@dev"
 });
-function Nb() {
-  return typeof Uu < "u" && Uu ? Uu : t0;
+function Tb() {
+  return typeof Uu < "u" && Uu ? Uu : o0;
 }
-function o0(t = "Embed Runtime") {
-  const n = Nb();
+function n0(t = "Embed Runtime") {
+  const n = Tb();
   console.info(t), console.info(`Build: ${n.commit}`), console.info(`Runtime: ${n.runtimeSource}`), console.info(`Built: ${n.builtAt}`);
 }
-const n0 = {
+const a0 = {
   selectedPriorityIds: [],
   dominantPriorityId: ""
 };
@@ -24,7 +24,7 @@ function Vh(t) {
   return {
     object: t,
     stage: "Selection",
-    selection: n0,
+    selection: a0,
     confirmation: null,
     transitionMessage: null,
     interpretation: null,
@@ -34,7 +34,7 @@ function Vh(t) {
     completed: !1
   };
 }
-function Tb(t) {
+function Db(t) {
   return t.completed;
 }
 function Vu(t) {
@@ -43,10 +43,10 @@ function Vu(t) {
 function Fh(t) {
   return t.confirmation !== null && t.confirmation.accepted;
 }
-function a0(t) {
+function i0(t) {
   return t.experience !== null;
 }
-function i0(t) {
+function r0(t) {
   return t.houseMapping !== null && t.houseMapping.entries.length > 0;
 }
 function bt(t, n, i, s) {
@@ -61,7 +61,7 @@ function bt(t, n, i, s) {
     }
   };
 }
-function Db() {
+function _b() {
   return {
     confirmation: null,
     transitionMessage: null,
@@ -77,15 +77,15 @@ function Yh(t, n, i) {
     ok: !0,
     state: {
       ...t,
-      ...Db(),
+      ..._b(),
       stage: n,
       selection: i
     },
     emitted: ["priority.context.invalidated"]
   };
 }
-function r0(t, n) {
-  if (Tb(t) && n.type !== "priority.selection.changed")
+function s0(t, n) {
+  if (Db(t) && n.type !== "priority.selection.changed")
     return bt(
       t,
       n.type,
@@ -107,7 +107,7 @@ function r0(t, n) {
         ok: !0,
         state: {
           ...t,
-          ...Db(),
+          ..._b(),
           stage: "Selection"
         },
         emitted: []
@@ -192,7 +192,7 @@ function r0(t, n) {
         n.type,
         "INVALID_TRANSITION",
         "mapping.ready requires Interpretation (with Experience) or HouseMapping stage"
-      ) : a0(t) ? n.houseMapping.entries.length === 0 ? bt(
+      ) : i0(t) ? n.houseMapping.entries.length === 0 ? bt(
         t,
         n.type,
         "GUARD_FAILED",
@@ -223,7 +223,7 @@ function r0(t, n) {
         n.type,
         "INVALID_TRANSITION",
         "followup.selected requires HouseMapping or FollowUp stage"
-      ) : i0(t) ? (t.followUps ?? []).some((s) => s.targetId === n.targetId) ? {
+      ) : r0(t) ? (t.followUps ?? []).some((s) => s.targetId === n.targetId) ? {
         ok: !0,
         state: {
           ...t,
@@ -255,20 +255,20 @@ function r0(t, n) {
       );
   }
 }
-function s0(t) {
+function l0(t) {
   let n = Vh({ objectId: t });
   return {
     getState() {
       return n;
     },
     isComplete() {
-      return Tb(n);
+      return Db(n);
     },
     reset() {
       return n = Vh(n.object), n;
     },
     dispatch(i) {
-      const s = r0(n, i);
+      const s = s0(n, i);
       return s.ok && (n = s.state), s;
     }
   };
@@ -289,7 +289,7 @@ Nejdřív potvrďte, že toto je opravdu váš důraz.`,
 }, op = {
   selectedPriorityIds: [jc],
   dominantPriorityId: jc
-}, _b = {
+}, Rb = {
   id: "mock-interpretation-garden-house-modern-01",
   objectId: ep,
   priorityIds: [jc],
@@ -356,7 +356,7 @@ Nejdřív potvrďte, že toto je opravdu váš důraz.`,
   ],
   matchScore: 62,
   recommendedIntent: "VERIFY_HOUSE_GARDEN_THRESHOLD"
-}, Rb = {
+}, Mb = {
   id: "mock-experience-garden-house-modern-01",
   title: "Čtení domu přes zahradu",
   summary: "Podle vaší priority Zahrada se tento dům čte jako objekt, kde venkovní prostor není jen „něco navíc“, ale součást každodenního bydlení — pokud sedí propojení denní zóny s venkem a charakter pozemku.",
@@ -424,9 +424,9 @@ Nejdřív potvrďte, že toto je opravdu váš důraz.`,
       intent: "explore"
     }
   ]
-}, Mb = {
-  text: tp.stageMicrocopy.transition
 }, Pb = {
+  text: tp.stageMicrocopy.transition
+}, Lb = {
   object: { objectId: ep },
   entries: [
     {
@@ -455,7 +455,7 @@ Nejdřív potvrďte, že toto je opravdu váš důraz.`,
       why: "Posiluje čtení, že zahrada patří k atmosféře bydlení, ne jen k pozemku."
     }
   ]
-}, Lb = [
+}, Bb = [
   {
     targetId: "tour-day-zone",
     label: "Prohlídka denní zóny"
@@ -468,28 +468,28 @@ Nejdřív potvrďte, že toto je opravdu váš důraz.`,
     targetId: "decision-terminal",
     label: "Decision Terminal / Experience shrnutí"
   }
-], l0 = "tour-day-zone";
-function d0() {
+], d0 = "tour-day-zone";
+function u0() {
   return {
     selectionSnapshot: op,
     accepted: !0,
     presentationPayload: tp.stageMicrocopy.confirmation
   };
 }
-function u0() {
+function c0() {
   return {
     object: { objectId: ep },
     stage: "FollowUp",
     selection: op,
-    confirmation: d0(),
-    transitionMessage: Mb,
-    interpretation: _b,
-    experience: Rb,
-    houseMapping: Pb,
-    followUps: Lb
+    confirmation: u0(),
+    transitionMessage: Pb,
+    interpretation: Rb,
+    experience: Mb,
+    houseMapping: Lb,
+    followUps: Bb
   };
 }
-function c0() {
+function p0() {
   return [
     {
       type: "priority.selection.changed",
@@ -501,32 +501,32 @@ function c0() {
     },
     {
       type: "priority.transition.completed",
-      transitionMessage: Mb
+      transitionMessage: Pb
     },
     {
       type: "priority.interpretation.ready",
-      interpretation: _b,
-      experience: Rb
+      interpretation: Rb,
+      experience: Mb
     },
     {
       type: "priority.mapping.ready",
-      houseMapping: Pb,
-      followUps: Lb
+      houseMapping: Lb,
+      followUps: Bb
     },
     {
       type: "priority.followup.selected",
-      targetId: l0
+      targetId: d0
     }
   ];
 }
 function Ve(t) {
   return t.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
 }
-function p0(t) {
+function m0(t) {
   return Ve(t).replaceAll(`
 `, "<br />");
 }
-const m0 = {
+const v0 = {
   Selection: "Selection",
   Confirmation: "Confirmation",
   Transition: "Transition",
@@ -534,7 +534,7 @@ const m0 = {
   HouseMapping: "House Mapping",
   FollowUp: "Follow-up"
 };
-function v0(t) {
+function k0(t) {
   return `<ol class="stage-rail" aria-label="Journey stages">${[
     "Selection",
     "Confirmation",
@@ -542,9 +542,9 @@ function v0(t) {
     "Interpretation",
     "HouseMapping",
     "FollowUp"
-  ].map((s) => `<li class="stage-rail__item${s === t ? " is-active" : ""}">${Ve(m0[s])}</li>`).join("")}</ol>`;
+  ].map((s) => `<li class="stage-rail__item${s === t ? " is-active" : ""}">${Ve(v0[s])}</li>`).join("")}</ol>`;
 }
-function k0(t) {
+function h0(t) {
   const n = t.selection.dominantPriorityId;
   return `
     <section class="panel" data-stage="Selection">
@@ -557,14 +557,14 @@ function k0(t) {
     </section>
   `;
 }
-function h0(t) {
+function y0(t) {
   var i;
   const n = (i = t.confirmation) == null ? void 0 : i.presentationPayload;
   return n ? `
     <section class="panel" data-stage="Confirmation">
       <p class="eyebrow">Confirmation</p>
       <h2>${Ve(n.title)}</h2>
-      <p class="body">${p0(n.body)}</p>
+      <p class="body">${m0(n.body)}</p>
       <div class="actions">
         <button type="button" class="btn btn-primary" data-action="confirm">
           ${Ve(n.primaryAction)}
@@ -576,7 +576,7 @@ function h0(t) {
     </section>
   ` : '<section class="panel"><p>Chybí Confirmation payload ve fixture.</p></section>';
 }
-function y0(t) {
+function b0(t) {
   var i;
   const n = ((i = t.transitionMessage) == null ? void 0 : i.text) ?? "Teď se podíváme na dům vaší optikou.";
   return `
@@ -590,7 +590,7 @@ function y0(t) {
     </section>
   `;
 }
-function b0(t) {
+function f0(t) {
   const n = t.focus.map((p) => `<li>${Ve(p)}</li>`).join(""), i = t.evidence.map(
     (p) => `
         <article class="claim">
@@ -635,7 +635,7 @@ function b0(t) {
     </div>
   `;
 }
-function f0(t, n) {
+function j0(t, n) {
   if (!t.experience)
     return `
       <section class="panel" data-stage="Interpretation">
@@ -651,7 +651,7 @@ function f0(t, n) {
   return i ? `
     <section class="panel panel--wide" data-stage="Interpretation">
       <p class="eyebrow">Interpretation → Experience</p>
-      ${b0(i)}
+      ${f0(i)}
       <div class="actions">
         <button type="button" class="btn btn-primary" data-action="ready-mapping">
           Pokračovat k House Mapping
@@ -660,7 +660,7 @@ function f0(t, n) {
     </section>
   ` : '<section class="panel"><p>Experience chybí.</p></section>';
 }
-function j0(t, n) {
+function g0(t, n) {
   const i = t.entries.map(
     (l) => `
         <li class="mapping-item">
@@ -695,7 +695,7 @@ function j0(t, n) {
     </section>
   `;
 }
-function g0(t) {
+function z0(t) {
   return `
     <section class="panel" data-stage="FollowUp">
       <p class="eyebrow">Follow-up</p>
@@ -710,31 +710,31 @@ function g0(t) {
     </section>
   `;
 }
-function z0(t) {
+function x0(t) {
   const { state: n, fixture: i } = t;
   switch (n.stage) {
     case "Selection":
-      return k0(i);
-    case "Confirmation":
       return h0(i);
-    case "Transition":
+    case "Confirmation":
       return y0(i);
+    case "Transition":
+      return b0(i);
     case "Interpretation":
-      return f0(n, i);
+      return j0(n, i);
     case "HouseMapping":
-      return j0(
+      return g0(
         n.houseMapping ?? i.houseMapping,
         n.followUps ?? i.followUps ?? []
       );
     case "FollowUp":
-      return g0(n);
+      return z0(n);
     default: {
       const s = n.stage;
       return `<section class="panel"><p>Neznámá fáze: ${Ve(String(s))}</p></section>`;
     }
   }
 }
-function x0(t) {
+function I0(t) {
   const n = t.errorMessage ? `<p class="banner banner--error" role="alert">${Ve(t.errorMessage)}</p>` : "", i = t.state.completed ? '<p class="banner banner--ok">Stav: Completed</p>' : "";
   return `
     <header class="hero">
@@ -742,20 +742,20 @@ function x0(t) {
       <h1>Garden — HTML Renderer v0.1</h1>
       <p class="hero__sub">Vizualizace nad Runtime Engine. Data: createGardenJourneyRun().</p>
     </header>
-    ${v0(t.state.stage)}
+    ${k0(t.state.stage)}
     ${n}
     ${i}
     <main id="stage-root">
-      ${z0(t)}
+      ${x0(t)}
     </main>
   `;
 }
-function I0() {
+function E0() {
   return Object.freeze({
     now: () => Date.now()
   });
 }
-function Bb(t) {
+function Hb(t) {
   if (t.now !== void 0)
     return t.now;
   if (t.clock !== void 0)
@@ -773,13 +773,13 @@ function np(t) {
     updatedAt: t.updatedAt
   });
 }
-const Hb = "decision-session", Kb = "1.0";
+const Kb = "decision-session", Ub = "1.0";
 function qh(t) {
   return {
     ok: !0,
     data: Object.freeze({
-      format: Hb,
-      schemaVersion: Kb,
+      format: Kb,
+      schemaVersion: Ub,
       objectId: t.objectId,
       runtimeState: Object.freeze({ ...t.runtimeState }),
       events: Object.freeze(
@@ -793,24 +793,24 @@ function qh(t) {
 function lr(t) {
   return typeof t == "object" && t !== null && !Array.isArray(t);
 }
-function E0(t) {
+function w0(t) {
   return t === void 0 ? !0 : Array.isArray(t) ? t.every(
     (n) => lr(n) && typeof n.priorityId == "string" && n.priorityId.length > 0 && typeof n.importance == "number" && Number.isFinite(n.importance) && n.importance >= 0 && n.importance <= 1
   ) : !1;
 }
-function w0(t) {
+function S0(t) {
   return lr(t) ? Object.values(t).every(
     (n) => typeof n == "number" && Number.isFinite(n) && n >= 0 && n <= 1
   ) : !1;
 }
-function S0(t) {
+function A0(t) {
   if (!lr(t) || typeof t.type != "string" || typeof t.at != "number" || !Number.isFinite(t.at))
     return !1;
   switch (t.type) {
     case "RoomSelected":
       return typeof t.roomId == "string";
     case "PriorityChanged":
-      return Array.isArray(t.priorityIds) && t.priorityIds.every((n) => typeof n == "string") && E0(t.intensities);
+      return Array.isArray(t.priorityIds) && t.priorityIds.every((n) => typeof n == "string") && w0(t.intensities);
     case "VariantSelected":
       return typeof t.variantId == "string";
     case "ScenarioActivated":
@@ -833,15 +833,15 @@ function S0(t) {
       return !1;
   }
 }
-function A0(t) {
+function O0(t) {
   if (!lr(t))
     return { ok: !1, message: "Serialized session must be an object." };
-  if (t.format !== Hb)
+  if (t.format !== Kb)
     return {
       ok: !1,
       message: `Unexpected format "${String(t.format)}".`
     };
-  if (t.schemaVersion !== Kb)
+  if (t.schemaVersion !== Ub)
     return {
       ok: !1,
       message: `Unsupported schemaVersion "${String(t.schemaVersion)}".`
@@ -850,8 +850,8 @@ function A0(t) {
     return { ok: !1, message: "objectId is required." };
   if (!lr(t.runtimeState))
     return { ok: !1, message: "runtimeState is required." };
-  const n = t.runtimeState.activeRoomId, i = t.runtimeState.priorityIds, s = t.runtimeState.variantId, l = t.runtimeState.scenarioId, p = t.runtimeState.priorityIntensities, m = p == null ? null : w0(p) ? Object.freeze({ ...p }) : void 0;
-  return !(n === null || typeof n == "string") || typeof t.runtimeState.version != "number" || !Array.isArray(i) || !i.every((v) => typeof v == "string") || !(s === null || typeof s == "string") || !(l === null || typeof l == "string") || m === void 0 ? { ok: !1, message: "runtimeState shape is invalid." } : !Array.isArray(t.events) || !t.events.every(S0) ? { ok: !1, message: "events must be a DecisionEvent array." } : typeof t.createdAt != "number" || typeof t.updatedAt != "number" ? { ok: !1, message: "createdAt/updatedAt must be numbers." } : {
+  const n = t.runtimeState.activeRoomId, i = t.runtimeState.priorityIds, s = t.runtimeState.variantId, l = t.runtimeState.scenarioId, p = t.runtimeState.priorityIntensities, m = p == null ? null : S0(p) ? Object.freeze({ ...p }) : void 0;
+  return !(n === null || typeof n == "string") || typeof t.runtimeState.version != "number" || !Array.isArray(i) || !i.every((v) => typeof v == "string") || !(s === null || typeof s == "string") || !(l === null || typeof l == "string") || m === void 0 ? { ok: !1, message: "runtimeState shape is invalid." } : !Array.isArray(t.events) || !t.events.every(A0) ? { ok: !1, message: "events must be a DecisionEvent array." } : typeof t.createdAt != "number" || typeof t.updatedAt != "number" ? { ok: !1, message: "createdAt/updatedAt must be numbers." } : {
     ok: !0,
     session: np({
       objectId: t.objectId,
@@ -869,7 +869,7 @@ function A0(t) {
     })
   };
 }
-function O0() {
+function C0() {
   return Object.freeze({
     activeRoomId: null,
     priorityIds: Object.freeze([]),
@@ -879,28 +879,28 @@ function O0() {
     version: 0
   });
 }
-function C0(t) {
-  const n = Bb({
+function N0(t) {
+  const n = Hb({
     now: t.now,
     clock: t.clock,
     label: "createDecisionSession"
   });
   return np({
     objectId: t.housePackage.identity.id,
-    runtimeState: O0(),
+    runtimeState: C0(),
     events: [],
     createdAt: n,
     updatedAt: n
   });
 }
-function N0(t) {
+function T0(t) {
   return t === void 0 ? null : Object.freeze(
     Object.fromEntries(
       t.map((n) => [n.priorityId, n.importance])
     )
   );
 }
-function T0(t, n) {
+function D0(t, n) {
   const i = t.runtimeState;
   let s = {
     ...i,
@@ -917,7 +917,7 @@ function T0(t, n) {
       s = {
         ...s,
         priorityIds: Object.freeze([...n.priorityIds]),
-        priorityIntensities: N0(n.intensities)
+        priorityIntensities: T0(n.intensities)
       };
       break;
     case "VariantSelected":
@@ -956,7 +956,7 @@ function T0(t, n) {
 function Fu(t) {
   return String(t);
 }
-function D0(t) {
+function _0(t) {
   const n = Object.freeze([
     ...new Set(t.house.rooms.map((s) => Fu(s.floor)))
   ]);
@@ -1015,11 +1015,11 @@ function D0(t) {
     })
   });
 }
-const _0 = 1;
-function R0(t) {
+const R0 = 1;
+function M0(t) {
   return Object.freeze(t.map((n) => Object.freeze({ ...n })));
 }
-function M0(t, n, i) {
+function P0(t, n, i) {
   return [
     "story",
     t.objectId,
@@ -1031,7 +1031,7 @@ function M0(t, n, i) {
     `r${t.rulesetId}@${t.rulesetVersion}`
   ].join(":");
 }
-function P0(t) {
+function L0(t) {
   const n = [];
   let i = 1;
   n.push({
@@ -1066,9 +1066,9 @@ function P0(t) {
     kind: "next-decision-step",
     key: t.nextDecisionStep,
     order: i
-  }), R0(n);
+  }), M0(n);
 }
-function L0(t) {
+function B0(t) {
   const { decisionFocus: n, semantics: i, prioritySignals: s } = t, l = i.primaryReason, p = Object.freeze([...t.highlights]), m = Object.freeze([
     n.recommendedAction,
     ...t.recommendedMedia.map((z) => `media:${z.role}`)
@@ -1085,7 +1085,7 @@ function L0(t) {
     focusRoomId: n.focusRoomId,
     focusPriorityId: n.focusPriorityId,
     focusAction: n.recommendedAction
-  }), f = P0({
+  }), f = L0({
     primaryExplanation: l,
     supportingArguments: p,
     recommendationSequence: m,
@@ -1093,8 +1093,8 @@ function L0(t) {
     nextDecisionStep: y
   });
   return Object.freeze({
-    id: M0(h, l, y),
-    schemaVersion: _0,
+    id: P0(h, l, y),
+    schemaVersion: R0,
     primaryExplanation: l,
     supportingArguments: p,
     recommendationSequence: m,
@@ -1105,11 +1105,11 @@ function L0(t) {
     provenance: h
   });
 }
-const B0 = 1;
-function H0(t, n, i) {
+const H0 = 1;
+function K0(t, n, i) {
   return `move:${t}:${n}:${i}`;
 }
-function K0(t, n) {
+function U0(t, n) {
   switch (t) {
     case "primary-explanation":
       return `explain:${n}`;
@@ -1125,32 +1125,32 @@ function K0(t, n) {
       return `progress:${n}`;
   }
 }
-function U0(t, n, i) {
+function V0(t, n, i) {
   return t === "next-decision-step" ? i.nextDecisionStep : t === "recommendation" && !n.startsWith("media:") ? n : t === "primary-explanation" ? `acknowledge:${n}` : t === "supporting-argument" ? `consider:${n}` : t === "semantic-transition" ? `follow:${n}` : `inspect:${n}`;
 }
-function V0(t, n) {
+function F0(t, n) {
   return `completed:${t}:${n}`;
 }
-function F0(t, n, i) {
+function Y0(t, n, i) {
   const s = [`story:${i.id}`, `chapter:${t}:${n}`];
   return i.provenance.focusRoomId !== null && s.push(`focus-room:${i.provenance.focusRoomId}`), i.provenance.focusPriorityId !== null && s.push(`focus-priority:${i.provenance.focusPriorityId}`), Object.freeze(s);
 }
-function Y0(t) {
+function q0(t) {
   var s;
   const n = [];
   for (const l of t.chapters)
     n.push({
-      id: H0(t.id, l.order, l.key),
+      id: K0(t.id, l.order, l.key),
       storyId: t.id,
       order: l.order,
-      objective: K0(l.kind, l.key),
-      requiredContext: F0(l.kind, l.key, t),
-      recommendedAction: U0(
+      objective: U0(l.kind, l.key),
+      requiredContext: Y0(l.kind, l.key, t),
+      recommendedAction: V0(
         l.kind,
         l.key,
         t
       ),
-      completionCriteria: V0(l.kind, l.key),
+      completionCriteria: F0(l.kind, l.key),
       chapterKind: l.kind,
       chapterKey: l.key
     });
@@ -1163,20 +1163,20 @@ function Y0(t) {
     });
   });
   return Object.freeze({
-    schemaVersion: B0,
+    schemaVersion: H0,
     storyId: t.id,
     moves: Object.freeze(i),
     activeMoveId: ((s = i[0]) == null ? void 0 : s.id) ?? null
   });
 }
-const q0 = 1;
-function $0(t) {
+const $0 = 1;
+function G0(t) {
   return Math.round(Math.min(1, Math.max(0, t)) * 100) / 100;
 }
-function G0(t, n, i) {
+function Z0(t, n, i) {
   return t === 0 ? "weak-fit" : n === t ? "strong-fit" : n === 0 ? "in-progress" : i > 0 ? "conditional-fit" : "in-progress";
 }
-function Z0(t, n) {
+function J0(t, n) {
   return [
     "outcome",
     t.storyId,
@@ -1186,23 +1186,23 @@ function Z0(t, n) {
     n
   ].join(":");
 }
-function J0(t) {
+function X0(t) {
   const n = t.moves.filter((g) => g.status === "completed"), i = t.moves.filter(
     (g) => g.status === "pending" || g.status === "active" || g.status === "deferred"
   ), s = t.moves.find((g) => g.chapterKind === "next-decision-step") ?? null, l = t.moves.find((g) => g.id === t.activeMoveId) ?? t.moves[0] ?? null, p = t.moves[t.moves.length - 1] ?? null, m = (s == null ? void 0 : s.recommendedAction) ?? (l == null ? void 0 : l.recommendedAction) ?? (p == null ? void 0 : p.recommendedAction) ?? "continue-decision", v = (l == null ? void 0 : l.recommendedAction) ?? (s == null ? void 0 : s.recommendedAction) ?? m, y = Object.freeze(
     t.moves.map((g) => g.objective)
   ), h = Object.freeze(
     i.map((g) => g.objective)
-  ), f = Object.freeze(n.map((g) => g.id)), z = Object.freeze(i.map((g) => g.id)), E = t.moves.length === 0 ? 0 : n.length / t.moves.length + (l !== null ? 0.15 / t.moves.length : 0), A = $0(
+  ), f = Object.freeze(n.map((g) => g.id)), z = Object.freeze(i.map((g) => g.id)), E = t.moves.length === 0 ? 0 : n.length / t.moves.length + (l !== null ? 0.15 / t.moves.length : 0), A = G0(
     t.moves.length === 0 ? 0 : Math.min(1, 0.35 + E * 0.65)
-  ), w = G0(
+  ), w = Z0(
     t.moves.length,
     n.length,
     i.length
   ), N = Object.freeze(t.moves.map((g) => g.id));
   return Object.freeze({
-    id: Z0(t, m),
-    schemaVersion: q0,
+    id: J0(t, m),
+    schemaVersion: $0,
     storyId: t.storyId,
     moveRef: Object.freeze({
       storyId: t.storyId,
@@ -1220,24 +1220,24 @@ function J0(t) {
     recommendedNextAction: v
   });
 }
-const X0 = 1;
-function Q0(t) {
+const Q0 = 1;
+function W0(t) {
   return Object.freeze({
     id: `terminal:${t.id}`,
-    schemaVersion: X0,
+    schemaVersion: Q0,
     outcome: t
   });
 }
-const W0 = 1;
-function eI(t) {
+const eI = 1;
+function tI(t) {
   return Object.freeze({
     id: `ai-context:${t.id}`,
-    schemaVersion: W0,
+    schemaVersion: eI,
     terminal: t,
     outcome: t.outcome
   });
 }
-function tI(t) {
+function oI(t) {
   const { session: n, housePackage: i, command: s } = t, l = [];
   if (i.identity.id !== n.objectId)
     return l.push({
@@ -1386,7 +1386,7 @@ function tI(t) {
   }
   return l.length > 0 ? { ok: !1, errors: l } : { ok: !0 };
 }
-function oI(t, n) {
+function nI(t, n) {
   switch (t.type) {
     case "SelectRoom":
       return { type: "RoomSelected", roomId: t.roomId, at: n };
@@ -1451,23 +1451,23 @@ function oI(t, n) {
     }
   }
 }
-const nI = {
+const aI = {
   "emphasize-value": "inspect-value-drivers",
   "emphasize-outdoor": "inspect-outdoor-connection",
   "emphasize-space": "inspect-spatial-volume",
   "emphasize-privacy": "inspect-privacy-zones",
   "priority-generic": "compare-priority-tradeoffs"
-}, aI = {
+}, iI = {
   "emphasize-value": "hero",
   "emphasize-outdoor": "gallery",
   "emphasize-space": "video",
   "emphasize-privacy": "hero",
   "priority-generic": "gallery"
 };
-function iI(t) {
+function rI(t) {
   return Math.round(Math.min(1, Math.max(0, t)) * 100) / 100;
 }
-function rI(t) {
+function sI(t) {
   const { activeRoomId: n, housePackage: i, semantics: s } = t;
   if (n !== null) {
     const m = i.rooms.find((v) => v.id === n);
@@ -1482,17 +1482,17 @@ function rI(t) {
   const p = i.rooms.find((m) => m.id === l);
   return p === void 0 ? null : { id: p.id, name: p.name };
 }
-function sI(t, n) {
+function lI(t, n) {
   var i;
   if (t !== void 0) {
-    const s = aI[t.kind];
+    const s = iI[t.kind];
     if (s !== void 0)
       return s;
   }
   return ((i = n.recommendedMedia[0]) == null ? void 0 : i.role) ?? "hero";
 }
-function lI(t) {
-  const n = t.prioritySignals[0], i = rI(t), s = t.semantics.primaryReason, l = n !== void 0 ? nI[n.kind] ?? "explore-primary-room" : "explore-house-structure", p = sI(
+function dI(t) {
+  const n = t.prioritySignals[0], i = sI(t), s = t.semantics.primaryReason, l = n !== void 0 ? aI[n.kind] ?? "explore-primary-room" : "explore-house-structure", p = lI(
     n,
     t.semantics
   );
@@ -1503,12 +1503,12 @@ function lI(t) {
     focusReason: s,
     focusPriorityId: (n == null ? void 0 : n.priorityId) ?? null,
     focusSignalKind: (n == null ? void 0 : n.kind) ?? null,
-    confidence: iI(m),
+    confidence: rI(m),
     recommendedAction: l,
     recommendedMediaRole: p
   });
 }
-function dI(t, n) {
+function uI(t, n) {
   const i = n.recommendedMediaRole, s = t.filter((m) => m.role === i), l = t.filter((m) => m.role !== i), p = [...s, ...l].map(
     (m, v) => Object.freeze({
       ...m,
@@ -1518,7 +1518,7 @@ function dI(t, n) {
   );
   return Object.freeze(p);
 }
-function uI(t, n) {
+function cI(t, n) {
   if (t.length === 0)
     return t;
   const i = [];
@@ -1526,7 +1526,7 @@ function uI(t, n) {
   const s = i.filter((p) => t.includes(p)), l = t.filter((p) => !s.includes(p));
   return Object.freeze([...s, ...l]);
 }
-function cI(t) {
+function pI(t) {
   return Object.freeze({
     housePackage: t.housePackage,
     runtimeState: t.runtimeState,
@@ -1534,7 +1534,7 @@ function cI(t) {
     prioritySignals: Object.freeze([...t.prioritySignals ?? []])
   });
 }
-function pI(t) {
+function mI(t) {
   return Object.freeze({
     id: t.id,
     kind: t.kind,
@@ -1544,14 +1544,14 @@ function pI(t) {
     config: Object.freeze({ ...t.config })
   });
 }
-function mI(t) {
+function vI(t) {
   return Object.freeze({
     id: t.id,
     version: t.version,
-    rules: Object.freeze(t.rules.map(pI))
+    rules: Object.freeze(t.rules.map(mI))
   });
 }
-const Ub = mI({
+const Vb = vI({
   id: "house-session-default",
   version: 1,
   rules: [
@@ -1725,7 +1725,7 @@ const Ub = mI({
   "contextual-messaging": 3,
   "recommendation-ordering": 4
 };
-function vI(t, n) {
+function kI(t, n) {
   if (t.priority !== n.priority)
     return t.priority - n.priority;
   const i = $h[t.kind] - $h[n.kind];
@@ -1735,7 +1735,7 @@ function Gh(t, n) {
   var i;
   return ((i = t.rooms.find((s) => s.id === n)) == null ? void 0 : i.name) ?? null;
 }
-function kI(t, n, i) {
+function hI(t, n, i) {
   const s = n.config, l = t.housePackage.rooms.map((E) => E.id), p = new Set(l);
   let m = s.order.filter((E) => p.has(E));
   const v = s.boostBySignalKind;
@@ -1775,7 +1775,7 @@ function kI(t, n, i) {
     name: z
   };
 }
-function hI(t, n, i) {
+function yI(t, n, i) {
   var v;
   const s = n.config, l = ((v = i.focusRoom) == null ? void 0 : v.id) ?? t.runtimeState.activeRoomId;
   let p = l === null ? s.defaultReason : s.reasonsByRoomId[l] ?? s.defaultReason;
@@ -1790,7 +1790,7 @@ function hI(t, n, i) {
     }
   i.primaryReason = p;
 }
-function yI(t, n, i) {
+function bI(t, n, i) {
   var v, y;
   const s = n.config, l = ((v = i.focusRoom) == null ? void 0 : v.id) ?? t.runtimeState.activeRoomId;
   let p = l !== null && ((y = s.roleOrderByRoomId) == null ? void 0 : y[l]) !== void 0 ? s.roleOrderByRoomId[l] : s.roleOrder;
@@ -1811,7 +1811,7 @@ function yI(t, n, i) {
     })
   );
 }
-function bI(t, n, i) {
+function fI(t, n, i) {
   var h;
   const s = n.config, l = ((h = i.focusRoom) == null ? void 0 : h.id) ?? t.runtimeState.activeRoomId, p = l !== null ? s.messagesByRoomId[l] ?? s.defaultMessages : s.defaultMessages, m = [], v = s.messagesBySignalKind, y = s.messagesByPriorityId;
   for (const f of t.prioritySignals) {
@@ -1825,7 +1825,7 @@ function bI(t, n, i) {
   }
   i.highlights = [...p, ...m];
 }
-function fI(t, n, i) {
+function jI(t, n, i) {
   const s = n.config, l = new Map(
     s.highlightOrder.map((p, m) => [p, m])
   );
@@ -1834,29 +1834,29 @@ function fI(t, n, i) {
     return v !== y ? v - y : p.localeCompare(m);
   });
 }
-function jI(t, n, i) {
+function gI(t, n, i) {
   switch (n.kind) {
     case "room-importance":
-      kI(t, n, i);
-      break;
-    case "hero-emphasis":
       hI(t, n, i);
       break;
-    case "media-prioritization":
+    case "hero-emphasis":
       yI(t, n, i);
       break;
-    case "contextual-messaging":
+    case "media-prioritization":
       bI(t, n, i);
       break;
-    case "recommendation-ordering":
+    case "contextual-messaging":
       fI(t, n, i);
+      break;
+    case "recommendation-ordering":
+      jI(t, n, i);
       break;
     default:
       n.kind;
   }
   i.applied.push(n);
 }
-function gI(t) {
+function zI(t) {
   const n = {
     focusRoom: null,
     primaryReason: "uninterpreted",
@@ -1864,9 +1864,9 @@ function gI(t) {
     recommendedMedia: [],
     roomImportanceRank: t.housePackage.rooms.map((l) => l.id),
     applied: []
-  }, i = t.rules.rules.filter((l) => l.enabled).slice().sort(vI);
+  }, i = t.rules.rules.filter((l) => l.enabled).slice().sort(kI);
   for (const l of i)
-    jI(t, l, n);
+    gI(t, l, n);
   const s = n.applied.slice().sort((l, p) => p.priority !== l.priority ? p.priority - l.priority : l.id.localeCompare(p.id)).map((l) => l.id);
   return Object.freeze({
     focusRoom: n.focusRoom === null ? null : Object.freeze({ ...n.focusRoom }),
@@ -1879,7 +1879,7 @@ function gI(t) {
     appliedRuleIds: Object.freeze(s)
   });
 }
-function zI(t) {
+function xI(t) {
   const n = t.map(
     (i, s) => Object.freeze({
       priorityId: i,
@@ -1890,7 +1890,7 @@ function zI(t) {
     entries: Object.freeze(n)
   });
 }
-const xI = Object.freeze({
+const II = Object.freeze({
   price: "emphasize-value",
   garden: "emphasize-outdoor",
   space: "emphasize-space",
@@ -1906,18 +1906,18 @@ const xI = Object.freeze({
   design: "priority-generic",
   quality: "priority-generic"
 });
-function II(t) {
-  return xI[t] ?? "priority-generic";
+function EI(t) {
+  return II[t] ?? "priority-generic";
 }
-function EI(t, n) {
+function wI(t, n) {
   return n.strength !== t.strength ? n.strength - t.strength : t.rank !== n.rank ? t.rank - n.rank : t.id.localeCompare(n.id);
 }
-function wI(t) {
+function SI(t) {
   const n = t.entries.length;
   if (n === 0)
     return Object.freeze([]);
   const i = t.entries.map((s) => {
-    const l = II(s.priorityId), p = (n - s.rank + 1) / n;
+    const l = EI(s.priorityId), p = (n - s.rank + 1) / n;
     return Object.freeze({
       id: `${s.priorityId}@${s.rank}`,
       kind: l,
@@ -1926,12 +1926,12 @@ function wI(t) {
       strength: p
     });
   });
-  return Object.freeze([...i].sort(EI));
+  return Object.freeze([...i].sort(wI));
 }
-function SI(t) {
-  return wI(zI(t));
+function AI(t) {
+  return SI(xI(t));
 }
-function AI(t, n, i, s, l, p, m, v, y, h) {
+function OI(t, n, i, s, l, p, m, v, y, h) {
   var f;
   return [
     `object:${t.objectId}`,
@@ -1956,27 +1956,27 @@ function AI(t, n, i, s, l, p, m, v, y, h) {
     `v:${t.runtimeState.version}`
   ].join("|");
 }
-function Vb(t, n, i) {
+function Fb(t, n, i) {
   var H;
-  const s = (i == null ? void 0 : i.rules) ?? Ub, l = SI(
+  const s = (i == null ? void 0 : i.rules) ?? Vb, l = AI(
     t.runtimeState.priorityIds
-  ), p = cI({
+  ), p = pI({
     housePackage: n,
     runtimeState: t.runtimeState,
     rules: s,
     prioritySignals: l
-  }), m = gI(p), v = lI({
+  }), m = zI(p), v = dI({
     housePackage: n,
     activeRoomId: t.runtimeState.activeRoomId,
     prioritySignals: l,
     semantics: m
-  }), y = uI(
+  }), y = cI(
     m.highlights,
     v
-  ), h = dI(
+  ), h = uI(
     m.recommendedMedia,
     v
-  ), f = L0({
+  ), f = B0({
     objectId: t.objectId,
     prioritySignals: l,
     semantics: { ...m, highlights: y, recommendedMedia: h },
@@ -1985,7 +1985,7 @@ function Vb(t, n, i) {
     recommendedMedia: h,
     rulesetId: s.id,
     rulesetVersion: s.version
-  }), z = Y0(f), E = J0(z), A = Q0(E), w = eI(A), N = t.runtimeState.activeRoomId, g = N === null ? null : ((H = n.rooms.find((V) => V.id === N)) == null ? void 0 : H.name) ?? null;
+  }), z = q0(f), E = X0(z), A = W0(E), w = tI(A), N = t.runtimeState.activeRoomId, g = N === null ? null : ((H = n.rooms.find((V) => V.id === N)) == null ? void 0 : H.name) ?? null;
   return Object.freeze({
     objectId: t.objectId,
     activeRoomId: N,
@@ -1996,7 +1996,7 @@ function Vb(t, n, i) {
     variantId: t.runtimeState.variantId,
     scenarioId: t.runtimeState.scenarioId,
     runtimeVersion: t.runtimeState.version,
-    summary: AI(
+    summary: OI(
       t,
       { ...m, highlights: y, recommendedMedia: h },
       s,
@@ -2024,7 +2024,7 @@ function Vb(t, n, i) {
     aiContext: w
   });
 }
-const pt = "/reference-house", OI = {
+const pt = "/reference-house", CI = {
   identity: {
     id: "house-modern-01",
     title: "Modern 01",
@@ -2178,7 +2178,7 @@ const pt = "/reference-house", OI = {
     }
   ]
 };
-function Fb(t) {
+function Yb(t) {
   return t === null ? null : {
     id: t.identity.id,
     title: t.identity.title,
@@ -2214,7 +2214,7 @@ function Fb(t) {
     ...t.heroCopy !== void 0 ? { heroCopy: t.heroCopy } : {}
   };
 }
-const CI = "start", NI = [
+const NI = "start", TI = [
   {
     id: "start",
     question: "House Package",
@@ -2249,8 +2249,8 @@ const CI = "start", NI = [
     type: "text",
     previous: "garden-importance"
   }
-], TI = /* @__PURE__ */ new Set(["room-living"]), DI = /* @__PURE__ */ new Set(["room-children"]);
-function _I(t, n) {
+], DI = /* @__PURE__ */ new Set(["room-living"]), _I = /* @__PURE__ */ new Set(["room-children"]);
+function RI(t, n) {
   const i = [], s = [];
   if (t.preferPrice && i.push({
     target: "price",
@@ -2262,7 +2262,7 @@ function _I(t, n) {
       label: "Dispozice",
       reason: "Preferujete prostor"
     });
-    const l = n.rooms.find((m) => TI.has(m.id)), p = n.rooms.find((m) => DI.has(m.id));
+    const l = n.rooms.find((m) => DI.has(m.id)), p = n.rooms.find((m) => _I.has(m.id));
     l && s.push({
       id: l.id,
       name: l.name,
@@ -2281,16 +2281,16 @@ function _I(t, n) {
     reason: "Zahrada je pro vás důležitá"
   }), { highlights: i, recommendedRooms: s };
 }
-const Yb = "modern-4kk", qb = /* @__PURE__ */ new Map();
-function RI(t) {
-  const n = t.trim();
-  return n.length === 0 ? null : qb.get(n) ?? null;
-}
+const qb = "modern-4kk", $b = /* @__PURE__ */ new Map();
 function MI(t) {
+  const n = t.trim();
+  return n.length === 0 ? null : $b.get(n) ?? null;
+}
+function PI(t) {
   const n = t.identity.houseId.trim();
   if (n.length === 0)
     throw new Error("upsertHouseSpecification: identity.houseId is required");
-  if (t.identity.role === "reference" && n !== Yb)
+  if (t.identity.role === "reference" && n !== qb)
     throw new Error(
       'upsertHouseSpecification: only modern-4kk may have role "reference"'
     );
@@ -2301,22 +2301,22 @@ function MI(t) {
       houseId: n
     }
   };
-  return qb.set(n, i), i;
+  return $b.set(n, i), i;
 }
 const gc = /* @__PURE__ */ new Map();
-function $b(t) {
+function Gb(t) {
   return t.trim();
 }
-function PI(t) {
+function LI(t) {
   var i;
-  const n = $b(t);
+  const n = Gb(t);
   return n.length === 0 ? [] : [...((i = gc.get(n)) == null ? void 0 : i.values()) ?? []];
 }
-function LI(t) {
-  return PI(t);
-}
 function BI(t) {
-  const n = $b(t.houseId), i = t.id.trim();
+  return LI(t);
+}
+function HI(t) {
+  const n = Gb(t.houseId), i = t.id.trim();
   if (n.length === 0)
     throw new Error("upsertHouseKnowledgeAtom: houseId is required");
   if (i.length === 0)
@@ -2324,22 +2324,22 @@ function BI(t) {
   const s = { ...t, id: i, houseId: n }, l = gc.get(n) ?? /* @__PURE__ */ new Map();
   return l.set(i, s), gc.set(n, l), s;
 }
-function HI(t) {
+function KI(t) {
   for (const n of t)
-    BI(n);
+    HI(n);
   return t;
 }
 const zc = /* @__PURE__ */ new Map();
-function Gb(t) {
+function Zb(t) {
   return t.trim();
 }
-function KI(t) {
+function UI(t) {
   var i;
-  const n = Gb(t);
+  const n = Zb(t);
   return n.length === 0 ? [] : [...((i = zc.get(n)) == null ? void 0 : i.values()) ?? []];
 }
-function UI(t) {
-  const n = Gb(t.houseId), i = t.id.trim();
+function VI(t) {
+  const n = Zb(t.houseId), i = t.id.trim();
   if (n.length === 0)
     throw new Error("upsertHousePriorityFaqItem: houseId is required");
   if (i.length === 0)
@@ -2347,12 +2347,12 @@ function UI(t) {
   const s = { ...t, id: i, houseId: n }, l = zc.get(n) ?? /* @__PURE__ */ new Map();
   return l.set(i, s), zc.set(n, l), s;
 }
-function VI(t) {
+function FI(t) {
   for (const n of t)
-    UI(n);
+    VI(n);
   return t;
 }
-const FI = [
+const YI = [
   {
     id: "land-01",
     houseId: "modern-4kk",
@@ -3053,7 +3053,7 @@ const FI = [
     question: "V čem je největší flexibilita celého konceptu?",
     answer: "Ne v libovolném překreslování domu, ale v tom, že pevné a odladěné architektonické jádro může spolupracovat s různým způsobem řízení, energetickým provozem, materiálovým vybavením a vhodnými pozemky."
   }
-], YI = {
+], qI = {
   identity: {
     houseId: "modern-4kk",
     name: "MODERN 4KK",
@@ -3099,7 +3099,7 @@ const FI = [
   sourceId: "conis-dse-4kk-knowledge-base-v1",
   kind: "CURRENT_CONFIRMED",
   label: "Konsolidovaná Knowledge Base DSE 4KK v1"
-}, qI = [
+}, $I = [
   {
     id: "product-optimized-house",
     houseId: "modern-4kk",
@@ -3406,7 +3406,7 @@ const FI = [
     constraints: ["Jde o evidence rozhodovacích témat, nikoli o fyzické vlastnosti domu."],
     relatedTopics: ["priorities", "customer-evidence"]
   }
-], $I = {
+], GI = {
   LAND: ["product-optimized-house", "product-garden-living", "reference-krasne-pole-boundary"],
   LAYOUT: ["product-space-efficiency", "product-layout-structure", "product-technical-attic"],
   PRIVACY: ["product-private-rooms", "product-garden-living"],
@@ -3417,7 +3417,7 @@ const FI = [
   INVESTMENT: ["dse-energy-cost-guardrail", "reference-krasne-pole-realization"],
   MAINTENANCE: ["product-maintenance-design", "product-diffusion-open-envelope"],
   FLEXIBILITY: ["product-optimized-house", "product-layout-structure"]
-}, GI = {
+}, ZI = {
   "land-01": ["Vhodnost vždy závisí na parametrech konkrétní parcely."],
   "land-05": ["Zrcadlení může zhoršit optimalizaci světových stran."],
   "land-08": ["Krásné Pole je reference, nikoli obecný požadavek typového domu."],
@@ -3438,27 +3438,27 @@ const FI = [
   "flexibility-01": ["Rozsáhlé změny mohou ztratit výhody optimalizovaného celku."],
   "flexibility-05": ["Aktuální Knowledge Base rozlišuje referenční a historické konfigurace."],
   "flexibility-09": ["ČOV není standardem tam, kde je dostupná kanalizace."]
-}, ZI = FI.map((t) => ({
+}, JI = YI.map((t) => ({
   ...t,
-  knowledgeAtomIds: $I[t.priority],
-  constraints: GI[t.id] ?? []
+  knowledgeAtomIds: GI[t.priority],
+  constraints: ZI[t.id] ?? []
 }));
-function JI() {
-  MI(YI), HI(qI), VI(ZI);
+function XI() {
+  PI(qI), KI($I), FI(JI);
 }
-function XI(t) {
+function QI(t) {
   const n = t.trim();
   if (n.length === 0) return null;
-  n === Yb && JI();
-  const i = RI(n);
+  n === qb && XI();
+  const i = MI(n);
   return i === null ? null : {
     identity: { houseId: i.identity.houseId },
     specification: i,
-    knowledge: LI(n),
-    priorityFaq: KI(n)
+    knowledge: BI(n),
+    priorityFaq: UI(n)
   };
 }
-const QI = {
+const WI = {
   plot: "LAND",
   land: "LAND",
   layout: "LAYOUT",
@@ -3483,7 +3483,7 @@ const QI = {
   maintenance: ["údržba"],
   flexibility: ["flexibilita"]
 };
-function WI(t) {
+function eE(t) {
   const n = new Map(
     t.interpretations.map((i) => [i.factId, i.text])
   );
@@ -3503,9 +3503,9 @@ function WI(t) {
     }))
   ];
 }
-function eE(t, n) {
+function tE(t, n) {
   const i = new Set(
-    n.map((g) => QI[g]).filter((g) => g !== void 0)
+    n.map((g) => WI[g]).filter((g) => g !== void 0)
   ), s = t.priorityFaq.filter(
     (g) => i.has(g.priority)
   ), l = new Set(
@@ -3545,21 +3545,21 @@ function eE(t, n) {
     priorityFaq: s
   };
 }
-function Zb(t, n) {
+function Jb(t, n) {
   if (n.identity.id !== t.objectId)
     return {
       ok: !1,
       code: "HP_OBJECT_MISMATCH",
       message: `HousePackage id "${n.identity.id}" does not match interpretation objectId "${t.objectId}".`
     };
-  const i = Fb(n);
+  const i = Yb(n);
   if (i === null)
     return {
       ok: !1,
       code: "HP_MISSING_HOUSE",
       message: "projectHouse returned null."
     };
-  const s = t.activeRoomId, l = s === null ? null : i.rooms.find((m) => m.id === s) ?? null, p = D0({
+  const s = t.activeRoomId, l = s === null ? null : i.rooms.find((m) => m.id === s) ?? null, p = _0({
     house: i,
     activeRoomId: s,
     activeRoom: l,
@@ -3592,21 +3592,21 @@ function Zb(t, n) {
     })
   };
 }
-function tE(t) {
-  const { session: n, housePackage: i, command: s } = t, l = Bb({
+function oE(t) {
+  const { session: n, housePackage: i, command: s } = t, l = Hb({
     now: t.now,
     clock: t.clock,
     label: "dispatchCommand"
-  }), p = tI({ session: n, housePackage: i, command: s });
+  }), p = oI({ session: n, housePackage: i, command: s });
   if (!p.ok)
     return {
       ok: !1,
       errors: p.errors,
       session: n
     };
-  const m = oI(s, l), v = T0(n, m), y = Vb(v, i, {
+  const m = nI(s, l), v = D0(n, m), y = Fb(v, i, {
     rules: t.rules
-  }), h = Zb(y, i);
+  }), h = Jb(y, i);
   return h.ok ? {
     ok: !0,
     session: v,
@@ -3624,7 +3624,7 @@ function tE(t) {
     session: n
   };
 }
-class oE {
+class nE {
   constructor(n) {
     ae(this, "housePackage");
     ae(this, "rules");
@@ -3632,16 +3632,16 @@ class oE {
     ae(this, "session");
     ae(this, "interpretation", null);
     ae(this, "experience", null);
-    this.housePackage = n.housePackage, this.rules = n.rules ?? Ub, this.clock = n.clock, this.session = n.session ?? C0({
+    this.housePackage = n.housePackage, this.rules = n.rules ?? Vb, this.clock = n.clock, this.session = n.session ?? N0({
       housePackage: n.housePackage,
       now: n.now,
       clock: n.clock
-    }), this.interpretation = Vb(
+    }), this.interpretation = Fb(
       this.session,
       this.housePackage,
       { rules: this.rules }
     );
-    const i = Zb(
+    const i = Jb(
       this.interpretation,
       this.housePackage
     );
@@ -3652,7 +3652,7 @@ class oE {
    * When `now` is omitted, uses the injected Runtime clock.
    */
   dispatch(n, i) {
-    const s = tE({
+    const s = oE({
       session: this.session,
       housePackage: this.housePackage,
       command: n,
@@ -3681,10 +3681,10 @@ class oE {
     return this.clock;
   }
 }
-function nE(t) {
-  return new oE(t);
+function aE(t) {
+  return new nE(t);
 }
-const aE = {
+const iE = {
   energy: {
     headline: "Nejvyšší prioritu mají provozní náklady.",
     summary: "Během celé Experience budeme zvýrazňovat informace související s energetickou efektivitou.",
@@ -3775,13 +3775,13 @@ const aE = {
       "Rozšiřitelnost"
     ]
   }
-}, iE = {
+}, rE = {
   headline: "Decision Context ještě neurčuje čočku Experience.",
   summary: "Vyberte priority — Decision Context se odvodí z Decision Story a řídí všechny moduly Experience.",
   recommendations: []
 };
-function rE(t) {
-  const n = t.primaryPriority === null ? iE : aE[t.primaryPriority] ?? {
+function sE(t) {
+  const n = t.primaryPriority === null ? rE : iE[t.primaryPriority] ?? {
     headline: `Nejvyšší prioritu má ${t.primaryPriority}.`,
     summary: "Během celé Experience budeme zvýrazňovat informace související s vybranou prioritou.",
     recommendations: [t.primaryPriority]
@@ -3795,7 +3795,7 @@ function rE(t) {
     recommendations: Object.freeze([...n.recommendations])
   });
 }
-function sE(t, n) {
+function lE(t, n) {
   return Object.freeze({
     primaryPriority: t[0] ?? null,
     secondaryPriority: t[1] ?? null,
@@ -3803,10 +3803,10 @@ function sE(t, n) {
     updatedAt: n
   });
 }
-function lE(t, n) {
-  return sE(t, n);
+function dE(t, n) {
+  return lE(t, n);
 }
-const dE = `
+const uE = `
 .embed-root {
   --embed-bg: #e8f0ea;
   --embed-bg-deep: #d5e4da;
@@ -4048,15 +4048,15 @@ const dE = `
 function Vi(t, n) {
   return t.find((i) => i.type === n);
 }
-function uE(t, n, i) {
+function cE(t, n, i) {
   const s = document.createElement("style");
-  s.setAttribute("data-embed-engine", "priority-styles"), s.textContent = dE, document.head.appendChild(s);
+  s.setAttribute("data-embed-engine", "priority-styles"), s.textContent = uE, document.head.appendChild(s);
   const l = document.createElement("div");
   l.className = "embed-root", l.setAttribute("data-embed-root", ""), t.appendChild(l);
-  const p = s0(n.object.objectId);
+  const p = l0(n.object.objectId);
   let m = null;
   const v = () => {
-    l.innerHTML = x0({
+    l.innerHTML = I0({
       state: p.getState(),
       fixture: n,
       errorMessage: m
@@ -4143,7 +4143,7 @@ var Yu = { exports: {} }, Fi = {};
  * LICENSE file in the root directory of this source tree.
  */
 var Jh;
-function cE() {
+function pE() {
   if (Jh) return Fi;
   Jh = 1;
   var t = Symbol.for("react.transitional.element"), n = Symbol.for("react.fragment");
@@ -4165,10 +4165,10 @@ function cE() {
   return Fi.Fragment = n, Fi.jsx = i, Fi.jsxs = i, Fi;
 }
 var Xh;
-function pE() {
-  return Xh || (Xh = 1, Yu.exports = cE()), Yu.exports;
+function mE() {
+  return Xh || (Xh = 1, Yu.exports = pE()), Yu.exports;
 }
-var c = pE(), qu = { exports: {} }, je = {};
+var c = mE(), qu = { exports: {} }, je = {};
 /**
  * @license React
  * react.production.js
@@ -4179,7 +4179,7 @@ var c = pE(), qu = { exports: {} }, je = {};
  * LICENSE file in the root directory of this source tree.
  */
 var Qh;
-function mE() {
+function vE() {
   if (Qh) return je;
   Qh = 1;
   var t = Symbol.for("react.transitional.element"), n = Symbol.for("react.portal"), i = Symbol.for("react.fragment"), s = Symbol.for("react.strict_mode"), l = Symbol.for("react.profiler"), p = Symbol.for("react.consumer"), m = Symbol.for("react.context"), v = Symbol.for("react.forward_ref"), y = Symbol.for("react.suspense"), h = Symbol.for("react.memo"), f = Symbol.for("react.lazy"), z = Symbol.for("react.activity"), E = Symbol.iterator;
@@ -4539,7 +4539,7 @@ function mE() {
 }
 var Wh;
 function ap() {
-  return Wh || (Wh = 1, qu.exports = mE()), qu.exports;
+  return Wh || (Wh = 1, qu.exports = vE()), qu.exports;
 }
 var j = ap(), $u = { exports: {} }, Yi = {}, Gu = { exports: {} }, Zu = {};
 /**
@@ -4552,7 +4552,7 @@ var j = ap(), $u = { exports: {} }, Yi = {}, Gu = { exports: {} }, Zu = {};
  * LICENSE file in the root directory of this source tree.
  */
 var ey;
-function vE() {
+function kE() {
   return ey || (ey = 1, (function(t) {
     function n(R, X) {
       var J = R.length;
@@ -4772,8 +4772,8 @@ function vE() {
   })(Zu)), Zu;
 }
 var ty;
-function kE() {
-  return ty || (ty = 1, Gu.exports = vE()), Gu.exports;
+function hE() {
+  return ty || (ty = 1, Gu.exports = kE()), Gu.exports;
 }
 var Ju = { exports: {} }, ft = {};
 /**
@@ -4786,7 +4786,7 @@ var Ju = { exports: {} }, ft = {};
  * LICENSE file in the root directory of this source tree.
  */
 var oy;
-function hE() {
+function yE() {
   if (oy) return ft;
   oy = 1;
   var t = ap();
@@ -4919,7 +4919,7 @@ function hE() {
   }, ft.version = "19.2.7", ft;
 }
 var ny;
-function Jb() {
+function Xb() {
   if (ny) return Ju.exports;
   ny = 1;
   function t() {
@@ -4930,7 +4930,7 @@ function Jb() {
         console.error(n);
       }
   }
-  return t(), Ju.exports = hE(), Ju.exports;
+  return t(), Ju.exports = yE(), Ju.exports;
 }
 /**
  * @license React
@@ -4942,10 +4942,10 @@ function Jb() {
  * LICENSE file in the root directory of this source tree.
  */
 var ay;
-function yE() {
+function bE() {
   if (ay) return Yi;
   ay = 1;
-  var t = kE(), n = ap(), i = Jb();
+  var t = hE(), n = ap(), i = Xb();
   function s(e) {
     var o = "https://react.dev/errors/" + e;
     if (1 < arguments.length) {
@@ -5254,7 +5254,7 @@ function yE() {
     }
     return (a = e ? e.displayName || e.name : "") ? tt(a) : "";
   }
-  function Bo(e, o) {
+  function Ho(e, o) {
     switch (e.tag) {
       case 26:
       case 27:
@@ -5283,7 +5283,7 @@ function yE() {
     try {
       var o = "", a = null;
       do
-        o += Bo(e, a), a = e, e = e.return;
+        o += Ho(e, a), a = e, e = e.return;
       while (e);
       return o;
     } catch (r) {
@@ -5292,17 +5292,17 @@ Error generating stack: ` + r.message + `
 ` + r.stack;
     }
   }
-  var ke = Object.prototype.hasOwnProperty, ye = t.unstable_scheduleCallback, Oe = t.unstable_cancelCallback, jt = t.unstable_shouldYield, xn = t.unstable_requestPaint, Ue = t.unstable_now, fr = t.unstable_getCurrentPriorityLevel, Qn = t.unstable_ImmediatePriority, Yp = t.unstable_UserBlockingPriority, jr = t.unstable_NormalPriority, Dg = t.unstable_LowPriority, qp = t.unstable_IdlePriority, _g = t.log, Rg = t.unstable_setDisableYieldValue, Xa = null, Nt = null;
-  function Ho(e) {
-    if (typeof _g == "function" && Rg(e), Nt && typeof Nt.setStrictMode == "function")
+  var ke = Object.prototype.hasOwnProperty, ye = t.unstable_scheduleCallback, Oe = t.unstable_cancelCallback, jt = t.unstable_shouldYield, xn = t.unstable_requestPaint, Ue = t.unstable_now, fr = t.unstable_getCurrentPriorityLevel, Qn = t.unstable_ImmediatePriority, Yp = t.unstable_UserBlockingPriority, jr = t.unstable_NormalPriority, _g = t.unstable_LowPriority, qp = t.unstable_IdlePriority, Rg = t.log, Mg = t.unstable_setDisableYieldValue, Xa = null, Nt = null;
+  function Ko(e) {
+    if (typeof Rg == "function" && Mg(e), Nt && typeof Nt.setStrictMode == "function")
       try {
         Nt.setStrictMode(Xa, e);
       } catch {
       }
   }
-  var Tt = Math.clz32 ? Math.clz32 : Lg, Mg = Math.log, Pg = Math.LN2;
-  function Lg(e) {
-    return e >>>= 0, e === 0 ? 32 : 31 - (Mg(e) / Pg | 0) | 0;
+  var Tt = Math.clz32 ? Math.clz32 : Bg, Pg = Math.log, Lg = Math.LN2;
+  function Bg(e) {
+    return e >>>= 0, e === 0 ? 32 : 31 - (Pg(e) / Lg | 0) | 0;
   }
   var gr = 256, zr = 262144, xr = 4194304;
   function In(e) {
@@ -5371,7 +5371,7 @@ Error generating stack: ` + r.message + `
   function Qa(e, o) {
     return (e.pendingLanes & ~(e.suspendedLanes & ~e.pingedLanes) & o) === 0;
   }
-  function Bg(e, o) {
+  function Hg(e, o) {
     switch (e) {
       case 1:
       case 2:
@@ -5423,7 +5423,7 @@ Error generating stack: ` + r.message + `
   function Wa(e, o) {
     e.pendingLanes |= o, o !== 268435456 && (e.suspendedLanes = 0, e.pingedLanes = 0, e.warmLanes = 0);
   }
-  function Hg(e, o, a, r, d, u) {
+  function Kg(e, o, a, r, d, u) {
     var k = e.pendingLanes;
     e.pendingLanes = a, e.suspendedLanes = 0, e.pingedLanes = 0, e.warmLanes = 0, e.expiredLanes &= a, e.entangledLanes &= a, e.errorRecoveryDisabledLanes &= a, e.shellSuspendCounter = 0;
     var b = e.entanglements, I = e.expirationTimes, D = e.hiddenUpdates;
@@ -5510,9 +5510,9 @@ Error generating stack: ` + r.message + `
       X.p = a;
     }
   }
-  var Ko = Math.random().toString(36).slice(2), mt = "__reactFiber$" + Ko, zt = "__reactProps$" + Ko, Wn = "__reactContainer$" + Ko, Dl = "__reactEvents$" + Ko, Kg = "__reactListeners$" + Ko, Ug = "__reactHandles$" + Ko, Wp = "__reactResources$" + Ko, ei = "__reactMarker$" + Ko;
+  var Uo = Math.random().toString(36).slice(2), mt = "__reactFiber$" + Uo, zt = "__reactProps$" + Uo, Wn = "__reactContainer$" + Uo, Dl = "__reactEvents$" + Uo, Ug = "__reactListeners$" + Uo, Vg = "__reactHandles$" + Uo, Wp = "__reactResources$" + Uo, ei = "__reactMarker$" + Uo;
   function _l(e) {
-    delete e[mt], delete e[zt], delete e[Dl], delete e[Kg], delete e[Ug];
+    delete e[mt], delete e[zt], delete e[Dl], delete e[Ug], delete e[Vg];
   }
   function ea(e) {
     var o = e[mt];
@@ -5558,14 +5558,14 @@ Error generating stack: ` + r.message + `
     for (tm[e] = o, e = 0; e < o.length; e++)
       em.add(o[e]);
   }
-  var Vg = RegExp(
+  var Fg = RegExp(
     "^[:A-Z_a-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD][:A-Z_a-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\uFDF0-\\uFFFD\\-.0-9\\u00B7\\u0300-\\u036F\\u203F-\\u2040]*$"
   ), om = {}, nm = {};
-  function Fg(e) {
-    return ke.call(nm, e) ? !0 : ke.call(om, e) ? !1 : Vg.test(e) ? nm[e] = !0 : (om[e] = !0, !1);
+  function Yg(e) {
+    return ke.call(nm, e) ? !0 : ke.call(om, e) ? !1 : Fg.test(e) ? nm[e] = !0 : (om[e] = !0, !1);
   }
   function Er(e, o, a) {
-    if (Fg(o))
+    if (Yg(o))
       if (a === null) e.removeAttribute(o);
       else {
         switch (typeof a) {
@@ -5598,7 +5598,7 @@ Error generating stack: ` + r.message + `
       e.setAttribute(o, "" + a);
     }
   }
-  function yo(e, o, a, r) {
+  function bo(e, o, a, r) {
     if (r === null) e.removeAttribute(a);
     else {
       switch (typeof r) {
@@ -5630,7 +5630,7 @@ Error generating stack: ` + r.message + `
     var o = e.type;
     return (e = e.nodeName) && e.toLowerCase() === "input" && (o === "checkbox" || o === "radio");
   }
-  function Yg(e, o, a) {
+  function qg(e, o, a) {
     var r = Object.getOwnPropertyDescriptor(
       e.constructor.prototype,
       o
@@ -5663,7 +5663,7 @@ Error generating stack: ` + r.message + `
   function Rl(e) {
     if (!e._valueTracker) {
       var o = am(e) ? "checked" : "value";
-      e._valueTracker = Yg(
+      e._valueTracker = qg(
         e,
         o,
         "" + e[o]
@@ -5685,10 +5685,10 @@ Error generating stack: ` + r.message + `
       return e.body;
     }
   }
-  var qg = /[\n"\\]/g;
+  var $g = /[\n"\\]/g;
   function Yt(e) {
     return e.replace(
-      qg,
+      $g,
       function(o) {
         return "\\" + o.charCodeAt(0).toString(16) + " ";
       }
@@ -5759,14 +5759,14 @@ Error generating stack: ` + r.message + `
     }
     e.textContent = o;
   }
-  var $g = new Set(
+  var Gg = new Set(
     "animationIterationCount aspectRatio borderImageOutset borderImageSlice borderImageWidth boxFlex boxFlexGroup boxOrdinalGroup columnCount columns flex flexGrow flexPositive flexShrink flexNegative flexOrder gridArea gridRow gridRowEnd gridRowSpan gridRowStart gridColumn gridColumnEnd gridColumnSpan gridColumnStart fontWeight lineClamp lineHeight opacity order orphans scale tabSize widows zIndex zoom fillOpacity floodOpacity stopOpacity strokeDasharray strokeDashoffset strokeMiterlimit strokeOpacity strokeWidth MozAnimationIterationCount MozBoxFlex MozBoxFlexGroup MozLineClamp msAnimationIterationCount msFlex msZoom msFlexGrow msFlexNegative msFlexOrder msFlexPositive msFlexShrink msGridColumn msGridColumnSpan msGridRow msGridRowSpan WebkitAnimationIterationCount WebkitBoxFlex WebKitBoxFlexGroup WebkitBoxOrdinalGroup WebkitColumnCount WebkitColumns WebkitFlex WebkitFlexGrow WebkitFlexPositive WebkitFlexShrink WebkitLineClamp".split(
       " "
     )
   );
   function dm(e, o, a) {
     var r = o.indexOf("--") === 0;
-    a == null || typeof a == "boolean" || a === "" ? r ? e.setProperty(o, "") : o === "float" ? e.cssFloat = "" : e[o] = "" : r ? e.setProperty(o, a) : typeof a != "number" || a === 0 || $g.has(o) ? o === "float" ? e.cssFloat = a : e[o] = ("" + a).trim() : e[o] = a + "px";
+    a == null || typeof a == "boolean" || a === "" ? r ? e.setProperty(o, "") : o === "float" ? e.cssFloat = "" : e[o] = "" : r ? e.setProperty(o, a) : typeof a != "number" || a === 0 || Gg.has(o) ? o === "float" ? e.cssFloat = a : e[o] = ("" + a).trim() : e[o] = a + "px";
   }
   function um(e, o, a) {
     if (o != null && typeof o != "object")
@@ -5796,7 +5796,7 @@ Error generating stack: ` + r.message + `
         return !0;
     }
   }
-  var Gg = /* @__PURE__ */ new Map([
+  var Zg = /* @__PURE__ */ new Map([
     ["acceptCharset", "accept-charset"],
     ["htmlFor", "for"],
     ["httpEquiv", "http-equiv"],
@@ -5875,11 +5875,11 @@ Error generating stack: ` + r.message + `
     ["writingMode", "writing-mode"],
     ["xmlnsXlink", "xmlns:xlink"],
     ["xHeight", "x-height"]
-  ]), Zg = /^[\u0000-\u001F ]*j[\r\n\t]*a[\r\n\t]*v[\r\n\t]*a[\r\n\t]*s[\r\n\t]*c[\r\n\t]*r[\r\n\t]*i[\r\n\t]*p[\r\n\t]*t[\r\n\t]*:/i;
+  ]), Jg = /^[\u0000-\u001F ]*j[\r\n\t]*a[\r\n\t]*v[\r\n\t]*a[\r\n\t]*s[\r\n\t]*c[\r\n\t]*r[\r\n\t]*i[\r\n\t]*p[\r\n\t]*t[\r\n\t]*:/i;
   function Ar(e) {
-    return Zg.test("" + e) ? "javascript:throw new Error('React has blocked a javascript: URL as a security precaution.')" : e;
+    return Jg.test("" + e) ? "javascript:throw new Error('React has blocked a javascript: URL as a security precaution.')" : e;
   }
-  function bo() {
+  function fo() {
   }
   var Bl = null;
   function Hl(e) {
@@ -5978,8 +5978,8 @@ Error generating stack: ` + r.message + `
       );
     return a;
   }
-  var fo = !(typeof window > "u" || typeof window.document > "u" || typeof window.document.createElement > "u"), Ul = !1;
-  if (fo)
+  var jo = !(typeof window > "u" || typeof window.document > "u" || typeof window.document.createElement > "u"), Ul = !1;
+  if (jo)
     try {
       var ni = {};
       Object.defineProperty(ni, "passive", {
@@ -5990,10 +5990,10 @@ Error generating stack: ` + r.message + `
     } catch {
       Ul = !1;
     }
-  var Uo = null, Vl = null, Or = null;
+  var Vo = null, Vl = null, Or = null;
   function mm() {
     if (Or) return Or;
-    var e, o = Vl, a = o.length, r, d = "value" in Uo ? Uo.value : Uo.textContent, u = d.length;
+    var e, o = Vl, a = o.length, r, d = "value" in Vo ? Vo.value : Vo.textContent, u = d.length;
     for (e = 0; e < a && o[e] === d[e]; e++) ;
     var k = a - e;
     for (r = 1; r <= k && o[a - r] === d[u - r]; r++) ;
@@ -6040,7 +6040,7 @@ Error generating stack: ` + r.message + `
     },
     defaultPrevented: 0,
     isTrusted: 0
-  }, Tr = xt(wn), ai = z({}, wn, { view: 0, detail: 0 }), Jg = xt(ai), Fl, Yl, ii, Dr = z({}, ai, {
+  }, Tr = xt(wn), ai = z({}, wn, { view: 0, detail: 0 }), Xg = xt(ai), Fl, Yl, ii, Dr = z({}, ai, {
     screenX: 0,
     screenY: 0,
     clientX: 0,
@@ -6063,15 +6063,15 @@ Error generating stack: ` + r.message + `
     movementY: function(e) {
       return "movementY" in e ? e.movementY : Yl;
     }
-  }), km = xt(Dr), Xg = z({}, Dr, { dataTransfer: 0 }), Qg = xt(Xg), Wg = z({}, ai, { relatedTarget: 0 }), ql = xt(Wg), ez = z({}, wn, {
+  }), km = xt(Dr), Qg = z({}, Dr, { dataTransfer: 0 }), Wg = xt(Qg), ez = z({}, ai, { relatedTarget: 0 }), ql = xt(ez), tz = z({}, wn, {
     animationName: 0,
     elapsedTime: 0,
     pseudoElement: 0
-  }), tz = xt(ez), oz = z({}, wn, {
+  }), oz = xt(tz), nz = z({}, wn, {
     clipboardData: function(e) {
       return "clipboardData" in e ? e.clipboardData : window.clipboardData;
     }
-  }), nz = xt(oz), az = z({}, wn, { data: 0 }), hm = xt(az), iz = {
+  }), az = xt(nz), iz = z({}, wn, { data: 0 }), hm = xt(iz), rz = {
     Esc: "Escape",
     Spacebar: " ",
     Left: "ArrowLeft",
@@ -6084,7 +6084,7 @@ Error generating stack: ` + r.message + `
     Apps: "ContextMenu",
     Scroll: "ScrollLock",
     MozPrintableKey: "Unidentified"
-  }, rz = {
+  }, sz = {
     8: "Backspace",
     9: "Tab",
     12: "Clear",
@@ -6121,26 +6121,26 @@ Error generating stack: ` + r.message + `
     144: "NumLock",
     145: "ScrollLock",
     224: "Meta"
-  }, sz = {
+  }, lz = {
     Alt: "altKey",
     Control: "ctrlKey",
     Meta: "metaKey",
     Shift: "shiftKey"
   };
-  function lz(e) {
+  function dz(e) {
     var o = this.nativeEvent;
-    return o.getModifierState ? o.getModifierState(e) : (e = sz[e]) ? !!o[e] : !1;
+    return o.getModifierState ? o.getModifierState(e) : (e = lz[e]) ? !!o[e] : !1;
   }
   function $l() {
-    return lz;
+    return dz;
   }
-  var dz = z({}, ai, {
+  var uz = z({}, ai, {
     key: function(e) {
       if (e.key) {
-        var o = iz[e.key] || e.key;
+        var o = rz[e.key] || e.key;
         if (o !== "Unidentified") return o;
       }
-      return e.type === "keypress" ? (e = Cr(e), e === 13 ? "Enter" : String.fromCharCode(e)) : e.type === "keydown" || e.type === "keyup" ? rz[e.keyCode] || "Unidentified" : "";
+      return e.type === "keypress" ? (e = Cr(e), e === 13 ? "Enter" : String.fromCharCode(e)) : e.type === "keydown" || e.type === "keyup" ? sz[e.keyCode] || "Unidentified" : "";
     },
     code: 0,
     location: 0,
@@ -6160,7 +6160,7 @@ Error generating stack: ` + r.message + `
     which: function(e) {
       return e.type === "keypress" ? Cr(e) : e.type === "keydown" || e.type === "keyup" ? e.keyCode : 0;
     }
-  }), uz = xt(dz), cz = z({}, Dr, {
+  }), cz = xt(uz), pz = z({}, Dr, {
     pointerId: 0,
     width: 0,
     height: 0,
@@ -6171,7 +6171,7 @@ Error generating stack: ` + r.message + `
     twist: 0,
     pointerType: 0,
     isPrimary: 0
-  }), ym = xt(cz), pz = z({}, ai, {
+  }), ym = xt(pz), mz = z({}, ai, {
     touches: 0,
     targetTouches: 0,
     changedTouches: 0,
@@ -6180,11 +6180,11 @@ Error generating stack: ` + r.message + `
     ctrlKey: 0,
     shiftKey: 0,
     getModifierState: $l
-  }), mz = xt(pz), vz = z({}, wn, {
+  }), vz = xt(mz), kz = z({}, wn, {
     propertyName: 0,
     elapsedTime: 0,
     pseudoElement: 0
-  }), kz = xt(vz), hz = z({}, Dr, {
+  }), hz = xt(kz), yz = z({}, Dr, {
     deltaX: function(e) {
       return "deltaX" in e ? e.deltaX : "wheelDeltaX" in e ? -e.wheelDeltaX : 0;
     },
@@ -6193,16 +6193,16 @@ Error generating stack: ` + r.message + `
     },
     deltaZ: 0,
     deltaMode: 0
-  }), yz = xt(hz), bz = z({}, wn, {
+  }), bz = xt(yz), fz = z({}, wn, {
     newState: 0,
     oldState: 0
-  }), fz = xt(bz), jz = [9, 13, 27, 32], Gl = fo && "CompositionEvent" in window, ri = null;
-  fo && "documentMode" in document && (ri = document.documentMode);
-  var gz = fo && "TextEvent" in window && !ri, bm = fo && (!Gl || ri && 8 < ri && 11 >= ri), fm = " ", jm = !1;
+  }), jz = xt(fz), gz = [9, 13, 27, 32], Gl = jo && "CompositionEvent" in window, ri = null;
+  jo && "documentMode" in document && (ri = document.documentMode);
+  var zz = jo && "TextEvent" in window && !ri, bm = jo && (!Gl || ri && 8 < ri && 11 >= ri), fm = " ", jm = !1;
   function gm(e, o) {
     switch (e) {
       case "keyup":
-        return jz.indexOf(o.keyCode) !== -1;
+        return gz.indexOf(o.keyCode) !== -1;
       case "keydown":
         return o.keyCode !== 229;
       case "keypress":
@@ -6217,7 +6217,7 @@ Error generating stack: ` + r.message + `
     return e = e.detail, typeof e == "object" && "data" in e ? e.data : null;
   }
   var la = !1;
-  function zz(e, o) {
+  function xz(e, o) {
     switch (e) {
       case "compositionend":
         return zm(o);
@@ -6229,9 +6229,9 @@ Error generating stack: ` + r.message + `
         return null;
     }
   }
-  function xz(e, o) {
+  function Iz(e, o) {
     if (la)
-      return e === "compositionend" || !Gl && gm(e, o) ? (e = mm(), Or = Vl = Uo = null, la = !1, e) : null;
+      return e === "compositionend" || !Gl && gm(e, o) ? (e = mm(), Or = Vl = Vo = null, la = !1, e) : null;
     switch (e) {
       case "paste":
         return null;
@@ -6248,7 +6248,7 @@ Error generating stack: ` + r.message + `
         return null;
     }
   }
-  var Iz = {
+  var Ez = {
     color: !0,
     date: !0,
     datetime: !0,
@@ -6267,7 +6267,7 @@ Error generating stack: ` + r.message + `
   };
   function xm(e) {
     var o = e && e.nodeName && e.nodeName.toLowerCase();
-    return o === "input" ? !!Iz[e.type] : o === "textarea";
+    return o === "input" ? !!Ez[e.type] : o === "textarea";
   }
   function Im(e, o, a, r) {
     ra ? sa ? sa.push(r) : sa = [r] : ra = r, o = zs(o, "onChange"), 0 < o.length && (a = new Tr(
@@ -6279,7 +6279,7 @@ Error generating stack: ` + r.message + `
     ), e.push({ event: a, listeners: o }));
   }
   var si = null, li = null;
-  function Ez(e) {
+  function wz(e) {
     rh(e, 0);
   }
   function _r(e) {
@@ -6290,9 +6290,9 @@ Error generating stack: ` + r.message + `
     if (e === "change") return o;
   }
   var wm = !1;
-  if (fo) {
+  if (jo) {
     var Zl;
-    if (fo) {
+    if (jo) {
       var Jl = "oninput" in document;
       if (!Jl) {
         var Sm = document.createElement("div");
@@ -6313,27 +6313,27 @@ Error generating stack: ` + r.message + `
         li,
         e,
         Hl(e)
-      ), pm(Ez, o);
+      ), pm(wz, o);
     }
   }
-  function wz(e, o, a) {
+  function Sz(e, o, a) {
     e === "focusin" ? (Am(), si = o, li = a, si.attachEvent("onpropertychange", Om)) : e === "focusout" && Am();
   }
-  function Sz(e) {
+  function Az(e) {
     if (e === "selectionchange" || e === "keyup" || e === "keydown")
       return _r(li);
   }
-  function Az(e, o) {
+  function Oz(e, o) {
     if (e === "click") return _r(o);
   }
-  function Oz(e, o) {
+  function Cz(e, o) {
     if (e === "input" || e === "change")
       return _r(o);
   }
-  function Cz(e, o) {
+  function Nz(e, o) {
     return e === o && (e !== 0 || 1 / e === 1 / o) || e !== e && o !== o;
   }
-  var Dt = typeof Object.is == "function" ? Object.is : Cz;
+  var Dt = typeof Object.is == "function" ? Object.is : Nz;
   function di(e, o) {
     if (Dt(e, o)) return !0;
     if (typeof e != "object" || e === null || typeof o != "object" || o === null)
@@ -6394,7 +6394,7 @@ Error generating stack: ` + r.message + `
     var o = e && e.nodeName && e.nodeName.toLowerCase();
     return o && (o === "input" && (e.type === "text" || e.type === "search" || e.type === "tel" || e.type === "url" || e.type === "password") || o === "textarea" || e.contentEditable === "true");
   }
-  var Nz = fo && "documentMode" in document && 11 >= document.documentMode, da = null, Ql = null, ui = null, Wl = !1;
+  var Tz = jo && "documentMode" in document && 11 >= document.documentMode, da = null, Ql = null, ui = null, Wl = !1;
   function _m(e, o, a) {
     var r = a.window === a ? a.document : a.nodeType === 9 ? a : a.ownerDocument;
     Wl || da == null || da !== Sr(r) || (r = da, "selectionStart" in r && Xl(r) ? r = { start: r.selectionStart, end: r.selectionEnd } : (r = (r.ownerDocument && r.ownerDocument.defaultView || window).getSelection(), r = {
@@ -6423,7 +6423,7 @@ Error generating stack: ` + r.message + `
     transitioncancel: Sn("Transition", "TransitionCancel"),
     transitionend: Sn("Transition", "TransitionEnd")
   }, ed = {}, Rm = {};
-  fo && (Rm = document.createElement("div").style, "AnimationEvent" in window || (delete ua.animationend.animation, delete ua.animationiteration.animation, delete ua.animationstart.animation), "TransitionEvent" in window || delete ua.transitionend.transition);
+  jo && (Rm = document.createElement("div").style, "AnimationEvent" in window || (delete ua.animationend.animation, delete ua.animationiteration.animation, delete ua.animationstart.animation), "TransitionEvent" in window || delete ua.transitionend.transition);
   function An(e) {
     if (ed[e]) return ed[e];
     if (!ua[e]) return e;
@@ -6433,7 +6433,7 @@ Error generating stack: ` + r.message + `
         return ed[e] = o[a];
     return e;
   }
-  var Mm = An("animationend"), Pm = An("animationiteration"), Lm = An("animationstart"), Tz = An("transitionrun"), Dz = An("transitionstart"), _z = An("transitioncancel"), Bm = An("transitionend"), Hm = /* @__PURE__ */ new Map(), td = "abort auxClick beforeToggle cancel canPlay canPlayThrough click close contextMenu copy cut drag dragEnd dragEnter dragExit dragLeave dragOver dragStart drop durationChange emptied encrypted ended error gotPointerCapture input invalid keyDown keyPress keyUp load loadedData loadedMetadata loadStart lostPointerCapture mouseDown mouseMove mouseOut mouseOver mouseUp paste pause play playing pointerCancel pointerDown pointerMove pointerOut pointerOver pointerUp progress rateChange reset resize seeked seeking stalled submit suspend timeUpdate touchCancel touchEnd touchStart volumeChange scroll toggle touchMove waiting wheel".split(
+  var Mm = An("animationend"), Pm = An("animationiteration"), Lm = An("animationstart"), Dz = An("transitionrun"), _z = An("transitionstart"), Rz = An("transitioncancel"), Bm = An("transitionend"), Hm = /* @__PURE__ */ new Map(), td = "abort auxClick beforeToggle cancel canPlay canPlayThrough click close contextMenu copy cut drag dragEnd dragEnter dragExit dragLeave dragOver dragStart drop durationChange emptied encrypted ended error gotPointerCapture input invalid keyDown keyPress keyUp load loadedData loadedMetadata loadStart lostPointerCapture mouseDown mouseMove mouseOut mouseOver mouseUp paste pause play playing pointerCancel pointerDown pointerMove pointerOut pointerOver pointerUp progress rateChange reset resize seeked seeking stalled submit suspend timeUpdate touchCancel touchEnd touchStart volumeChange scroll toggle touchMove waiting wheel".split(
     " "
   );
   td.push("scrollEnd");
@@ -6496,16 +6496,16 @@ Error generating stack: ` + r.message + `
     return e.tag === 3 ? e.stateNode : null;
   }
   var pa = {};
-  function Rz(e, o, a, r) {
+  function Mz(e, o, a, r) {
     this.tag = e, this.key = a, this.sibling = this.child = this.return = this.stateNode = this.type = this.elementType = null, this.index = 0, this.refCleanup = this.ref = null, this.pendingProps = o, this.dependencies = this.memoizedState = this.updateQueue = this.memoizedProps = null, this.mode = r, this.subtreeFlags = this.flags = 0, this.deletions = null, this.childLanes = this.lanes = 0, this.alternate = null;
   }
   function _t(e, o, a, r) {
-    return new Rz(e, o, a, r);
+    return new Mz(e, o, a, r);
   }
   function ad(e) {
     return e = e.prototype, !(!e || !e.isReactComponent);
   }
-  function jo(e, o) {
+  function go(e, o) {
     var a = e.alternate;
     return a === null ? (a = _t(
       e.tag,
@@ -6526,7 +6526,7 @@ Error generating stack: ` + r.message + `
     var k = 0;
     if (r = e, typeof e == "function") ad(e) && (k = 1);
     else if (typeof e == "string")
-      k = Hx(
+      k = Kx(
         e,
         a,
         Q.current
@@ -6609,12 +6609,12 @@ Error generating stack: ` + r.message + `
       stack: ro(o)
     };
   }
-  var ma = [], va = 0, Hr = null, ci = 0, Gt = [], Zt = 0, Vo = null, so = 1, lo = "";
-  function go(e, o) {
+  var ma = [], va = 0, Hr = null, ci = 0, Gt = [], Zt = 0, Fo = null, so = 1, lo = "";
+  function zo(e, o) {
     ma[va++] = ci, ma[va++] = Hr, Hr = e, ci = o;
   }
   function Ym(e, o, a) {
-    Gt[Zt++] = so, Gt[Zt++] = lo, Gt[Zt++] = Vo, Vo = e;
+    Gt[Zt++] = so, Gt[Zt++] = lo, Gt[Zt++] = Fo, Fo = e;
     var r = so;
     e = lo;
     var d = 32 - Tt(r) - 1;
@@ -6627,19 +6627,19 @@ Error generating stack: ` + r.message + `
       so = 1 << u | a << d | r, lo = e;
   }
   function sd(e) {
-    e.return !== null && (go(e, 1), Ym(e, 1, 0));
+    e.return !== null && (zo(e, 1), Ym(e, 1, 0));
   }
   function ld(e) {
     for (; e === Hr; )
       Hr = ma[--va], ma[va] = null, ci = ma[--va], ma[va] = null;
-    for (; e === Vo; )
-      Vo = Gt[--Zt], Gt[Zt] = null, lo = Gt[--Zt], Gt[Zt] = null, so = Gt[--Zt], Gt[Zt] = null;
+    for (; e === Fo; )
+      Fo = Gt[--Zt], Gt[Zt] = null, lo = Gt[--Zt], Gt[Zt] = null, so = Gt[--Zt], Gt[Zt] = null;
   }
   function qm(e, o) {
-    Gt[Zt++] = so, Gt[Zt++] = lo, Gt[Zt++] = Vo, so = o.id, lo = o.overflow, Vo = e;
+    Gt[Zt++] = so, Gt[Zt++] = lo, Gt[Zt++] = Fo, so = o.id, lo = o.overflow, Fo = e;
   }
-  var vt = null, Fe = null, Ce = !1, Fo = null, Jt = !1, dd = Error(s(519));
-  function Yo(e) {
+  var vt = null, Ye = null, Ce = !1, Yo = null, Jt = !1, dd = Error(s(519));
+  function qo(e) {
     var o = Error(
       s(
         418,
@@ -6694,7 +6694,7 @@ Error generating stack: ` + r.message + `
       case "textarea":
         we("invalid", o), lm(o, r.value, r.defaultValue, r.children);
     }
-    a = r.children, typeof a != "string" && typeof a != "number" && typeof a != "bigint" || o.textContent === "" + a || r.suppressHydrationWarning === !0 || uh(o.textContent, a) ? (r.popover != null && (we("beforetoggle", o), we("toggle", o)), r.onScroll != null && we("scroll", o), r.onScrollEnd != null && we("scrollend", o), r.onClick != null && (o.onclick = bo), o = !0) : o = !1, o || Yo(e, !0);
+    a = r.children, typeof a != "string" && typeof a != "number" && typeof a != "bigint" || o.textContent === "" + a || r.suppressHydrationWarning === !0 || uh(o.textContent, a) ? (r.popover != null && (we("beforetoggle", o), we("toggle", o)), r.onScroll != null && we("scroll", o), r.onScrollEnd != null && we("scrollend", o), r.onClick != null && (o.onclick = fo), o = !0) : o = !1, o || qo(e, !0);
   }
   function Gm(e) {
     for (vt = e.return; vt; )
@@ -6716,34 +6716,34 @@ Error generating stack: ` + r.message + `
     if (e !== vt) return !1;
     if (!Ce) return Gm(e), Ce = !0, !1;
     var o = e.tag, a;
-    if ((a = o !== 3 && o !== 27) && ((a = o === 5) && (a = e.type, a = !(a !== "form" && a !== "button") || Su(e.type, e.memoizedProps)), a = !a), a && Fe && Yo(e), Gm(e), o === 13) {
+    if ((a = o !== 3 && o !== 27) && ((a = o === 5) && (a = e.type, a = !(a !== "form" && a !== "button") || Su(e.type, e.memoizedProps)), a = !a), a && Ye && qo(e), Gm(e), o === 13) {
       if (e = e.memoizedState, e = e !== null ? e.dehydrated : null, !e) throw Error(s(317));
-      Fe = fh(e);
+      Ye = fh(e);
     } else if (o === 31) {
       if (e = e.memoizedState, e = e !== null ? e.dehydrated : null, !e) throw Error(s(317));
-      Fe = fh(e);
+      Ye = fh(e);
     } else
-      o === 27 ? (o = Fe, rn(e.type) ? (e = Tu, Tu = null, Fe = e) : Fe = o) : Fe = vt ? Qt(e.stateNode.nextSibling) : null;
+      o === 27 ? (o = Ye, sn(e.type) ? (e = Tu, Tu = null, Ye = e) : Ye = o) : Ye = vt ? Qt(e.stateNode.nextSibling) : null;
     return !0;
   }
   function Nn() {
-    Fe = vt = null, Ce = !1;
+    Ye = vt = null, Ce = !1;
   }
   function ud() {
-    var e = Fo;
+    var e = Yo;
     return e !== null && (St === null ? St = e : St.push.apply(
       St,
       e
-    ), Fo = null), e;
+    ), Yo = null), e;
   }
   function pi(e) {
-    Fo === null ? Fo = [e] : Fo.push(e);
+    Yo === null ? Yo = [e] : Yo.push(e);
   }
-  var cd = x(null), Tn = null, zo = null;
-  function qo(e, o, a) {
+  var cd = x(null), Tn = null, xo = null;
+  function $o(e, o, a) {
     W(cd, o._currentValue), o._currentValue = a;
   }
-  function xo(e) {
+  function Io(e) {
     e._currentValue = cd.current, C(cd);
   }
   function pd(e, o, a) {
@@ -6833,7 +6833,7 @@ Error generating stack: ` + r.message + `
     return !1;
   }
   function Dn(e) {
-    Tn = e, zo = null, e = e.dependencies, e !== null && (e.firstContext = null);
+    Tn = e, xo = null, e = e.dependencies, e !== null && (e.firstContext = null);
   }
   function kt(e) {
     return Zm(Tn, e);
@@ -6843,13 +6843,13 @@ Error generating stack: ` + r.message + `
   }
   function Zm(e, o) {
     var a = o._currentValue;
-    if (o = { context: o, memoizedValue: a, next: null }, zo === null) {
+    if (o = { context: o, memoizedValue: a, next: null }, xo === null) {
       if (e === null) throw Error(s(308));
-      zo = o, e.dependencies = { lanes: 0, firstContext: o }, e.flags |= 524288;
-    } else zo = zo.next = o;
+      xo = o, e.dependencies = { lanes: 0, firstContext: o }, e.flags |= 524288;
+    } else xo = xo.next = o;
     return a;
   }
-  var Mz = typeof AbortController < "u" ? AbortController : function() {
+  var Pz = typeof AbortController < "u" ? AbortController : function() {
     var e = [], o = this.signal = {
       aborted: !1,
       addEventListener: function(a, r) {
@@ -6861,7 +6861,7 @@ Error generating stack: ` + r.message + `
         return a();
       });
     };
-  }, Pz = t.unstable_scheduleCallback, Lz = t.unstable_NormalPriority, nt = {
+  }, Lz = t.unstable_scheduleCallback, Bz = t.unstable_NormalPriority, nt = {
     $$typeof: q,
     Consumer: null,
     Provider: null,
@@ -6871,18 +6871,18 @@ Error generating stack: ` + r.message + `
   };
   function vd() {
     return {
-      controller: new Mz(),
+      controller: new Pz(),
       data: /* @__PURE__ */ new Map(),
       refCount: 0
     };
   }
   function mi(e) {
-    e.refCount--, e.refCount === 0 && Pz(Lz, function() {
+    e.refCount--, e.refCount === 0 && Lz(Bz, function() {
       e.controller.abort();
     });
   }
   var vi = null, kd = 0, ya = 0, ba = null;
-  function Bz(e, o) {
+  function Hz(e, o) {
     if (vi === null) {
       var a = vi = [];
       kd = 0, ya = bu(), ba = {
@@ -6903,7 +6903,7 @@ Error generating stack: ` + r.message + `
       for (var o = 0; o < e.length; o++) (0, e[o])();
     }
   }
-  function Hz(e, o) {
+  function Kz(e, o) {
     var a = [], r = {
       status: "pending",
       value: null,
@@ -6925,7 +6925,7 @@ Error generating stack: ` + r.message + `
   }
   var Xm = R.S;
   R.S = function(e, o) {
-    _k = Ue(), typeof o == "object" && o !== null && typeof o.then == "function" && Bz(e, o), Xm !== null && Xm(e, o);
+    _k = Ue(), typeof o == "object" && o !== null && typeof o.then == "function" && Hz(e, o), Xm !== null && Xm(e, o);
   };
   var _n = x(null);
   function hd() {
@@ -6945,13 +6945,13 @@ Error generating stack: ` + r.message + `
     return e = e.status, e === "fulfilled" || e === "rejected";
   }
   function ev(e, o, a) {
-    switch (a = e[a], a === void 0 ? e.push(o) : a !== o && (o.then(bo, bo), o = a), o.status) {
+    switch (a = e[a], a === void 0 ? e.push(o) : a !== o && (o.then(fo, fo), o = a), o.status) {
       case "fulfilled":
         return o.value;
       case "rejected":
         throw e = o.reason, ov(e), e;
       default:
-        if (typeof o.status == "string") o.then(bo, bo);
+        if (typeof o.status == "string") o.then(fo, fo);
         else {
           if (e = Ke, e !== null && 100 < e.shellSuspendCounter)
             throw Error(s(482));
@@ -7032,7 +7032,7 @@ Error generating stack: ` + r.message + `
       return S;
     }
     function d(O, S) {
-      return O = jo(O, S), O.index = 0, O.sibling = null, O;
+      return O = go(O, S), O.index = 0, O.sibling = null, O;
     }
     function u(O, S, T) {
       return O.index = T, e ? (T = O.alternate, T !== null ? (T = T.index, T < S ? (O.flags |= 67108866, S) : T) : (O.flags |= 67108866, S)) : (O.flags |= 1048576, S);
@@ -7210,7 +7210,7 @@ Error generating stack: ` + r.message + `
         e && re && Te.alternate === null && o(O, re), S = u(Te, S, ze), Ne === null ? de = Te : Ne.sibling = Te, Ne = Te, re = Ae;
       }
       if (ze === T.length)
-        return a(O, re), Ce && go(O, ze), de;
+        return a(O, re), Ce && zo(O, ze), de;
       if (re === null) {
         for (; ze < T.length; ze++)
           re = Y(O, T[ze], F), re !== null && (S = u(
@@ -7218,7 +7218,7 @@ Error generating stack: ` + r.message + `
             S,
             ze
           ), Ne === null ? de = re : Ne.sibling = re, Ne = re);
-        return Ce && go(O, ze), de;
+        return Ce && zo(O, ze), de;
       }
       for (re = r(re); ze < T.length; ze++)
         Ae = P(
@@ -7234,33 +7234,33 @@ Error generating stack: ` + r.message + `
           S,
           ze
         ), Ne === null ? de = Ae : Ne.sibling = Ae, Ne = Ae);
-      return e && re.forEach(function(cn) {
-        return o(O, cn);
-      }), Ce && go(O, ze), de;
+      return e && re.forEach(function(pn) {
+        return o(O, pn);
+      }), Ce && zo(O, ze), de;
     }
     function pe(O, S, T, F) {
       if (T == null) throw Error(s(151));
       for (var de = null, Ne = null, re = S, ze = S = 0, Ae = null, Te = T.next(); re !== null && !Te.done; ze++, Te = T.next()) {
         re.index > ze ? (Ae = re, re = null) : Ae = re.sibling;
-        var cn = _(O, re, Te.value, F);
-        if (cn === null) {
+        var pn = _(O, re, Te.value, F);
+        if (pn === null) {
           re === null && (re = Ae);
           break;
         }
-        e && re && cn.alternate === null && o(O, re), S = u(cn, S, ze), Ne === null ? de = cn : Ne.sibling = cn, Ne = cn, re = Ae;
+        e && re && pn.alternate === null && o(O, re), S = u(pn, S, ze), Ne === null ? de = pn : Ne.sibling = pn, Ne = pn, re = Ae;
       }
       if (Te.done)
-        return a(O, re), Ce && go(O, ze), de;
+        return a(O, re), Ce && zo(O, ze), de;
       if (re === null) {
         for (; !Te.done; ze++, Te = T.next())
           Te = Y(O, Te.value, F), Te !== null && (S = u(Te, S, ze), Ne === null ? de = Te : Ne.sibling = Te, Ne = Te);
-        return Ce && go(O, ze), de;
+        return Ce && zo(O, ze), de;
       }
       for (re = r(re); !Te.done; ze++, Te = T.next())
         Te = P(re, O, ze, Te.value, F), Te !== null && (e && Te.alternate !== null && re.delete(Te.key === null ? ze : Te.key), S = u(Te, S, ze), Ne === null ? de = Te : Ne.sibling = Te, Ne = Te);
-      return e && re.forEach(function(Xx) {
-        return o(O, Xx);
-      }), Ce && go(O, ze), de;
+      return e && re.forEach(function(Qx) {
+        return o(O, Qx);
+      }), Ce && zo(O, ze), de;
     }
     function He(O, S, T, F) {
       if (typeof T == "object" && T !== null && T.type === N && T.key === null && (T = T.props.children), typeof T == "object" && T !== null) {
@@ -7387,7 +7387,7 @@ Error generating stack: ` + r.message + `
       }
     };
   }
-  var Pn = nv(!0), av = nv(!1), $o = !1;
+  var Pn = nv(!0), av = nv(!1), Go = !1;
   function bd(e) {
     e.updateQueue = {
       baseState: e.memoizedState,
@@ -7406,10 +7406,10 @@ Error generating stack: ` + r.message + `
       callbacks: null
     });
   }
-  function Go(e) {
+  function Zo(e) {
     return { lane: e, tag: 0, payload: null, callback: null, next: null };
   }
-  function Zo(e, o, a) {
+  function Jo(e, o, a) {
     var r = e.updateQueue;
     if (r === null) return null;
     if (r = r.shared, (De & 2) !== 0) {
@@ -7462,7 +7462,7 @@ Error generating stack: ` + r.message + `
   function fi(e, o, a, r) {
     gd = !1;
     var d = e.updateQueue;
-    $o = !1;
+    Go = !1;
     var u = d.firstBaseUpdate, k = d.lastBaseUpdate, b = d.shared.pending;
     if (b !== null) {
       d.shared.pending = null;
@@ -7503,7 +7503,7 @@ Error generating stack: ` + r.message + `
                 Y = z({}, Y, _);
                 break e;
               case 2:
-                $o = !0;
+                Go = !0;
             }
           }
           _ = b.callback, _ !== null && (e.flags |= 64, P && (e.flags |= 8192), P = d.callbacks, P === null ? d.callbacks = [_] : P.push(_));
@@ -7521,7 +7521,7 @@ Error generating stack: ` + r.message + `
           P = b, b = P.next, P.next = null, d.lastBaseUpdate = P, d.shared.pending = null;
         }
       } while (!0);
-      K === null && (I = Y), d.baseState = I, d.firstBaseUpdate = D, d.lastBaseUpdate = K, u === null && (d.shared.lanes = 0), en |= k, e.lanes = k, e.memoizedState = Y;
+      K === null && (I = Y), d.baseState = I, d.firstBaseUpdate = D, d.lastBaseUpdate = K, u === null && (d.shared.lanes = 0), tn |= k, e.lanes = k, e.memoizedState = Y;
     }
   }
   function iv(e, o) {
@@ -7537,16 +7537,16 @@ Error generating stack: ` + r.message + `
   }
   var ga = x(null), Gr = x(0);
   function sv(e, o) {
-    e = To, W(Gr, e), W(ga, o), To = e | o.baseLanes;
+    e = Do, W(Gr, e), W(ga, o), Do = e | o.baseLanes;
   }
   function zd() {
-    W(Gr, To), W(ga, ga.current);
+    W(Gr, Do), W(ga, ga.current);
   }
   function xd() {
-    To = Gr.current, C(ga), C(Gr);
+    Do = Gr.current, C(ga), C(Gr);
   }
   var Rt = x(null), Xt = null;
-  function Jo(e) {
+  function Xo(e) {
     var o = e.alternate;
     W(We, We.current & 1), W(Rt, e), Xt === null && (o === null || ga.current !== null || o.memoizedState !== null) && (Xt = e);
   }
@@ -7554,9 +7554,9 @@ Error generating stack: ` + r.message + `
     W(We, We.current), W(Rt, e), Xt === null && (Xt = e);
   }
   function lv(e) {
-    e.tag === 22 ? (W(We, We.current), W(Rt, e), Xt === null && (Xt = e)) : Xo();
+    e.tag === 22 ? (W(We, We.current), W(Rt, e), Xt === null && (Xt = e)) : Qo();
   }
-  function Xo() {
+  function Qo() {
     W(We, We.current), W(Rt, Rt.current);
   }
   function Mt(e) {
@@ -7584,7 +7584,7 @@ Error generating stack: ` + r.message + `
     }
     return null;
   }
-  var Io = 0, ge = null, Le = null, at = null, Jr = !1, za = !1, Ln = !1, Xr = 0, ji = 0, xa = null, Kz = 0;
+  var Eo = 0, ge = null, Le = null, at = null, Jr = !1, za = !1, Ln = !1, Xr = 0, ji = 0, xa = null, Uz = 0;
   function Je() {
     throw Error(s(321));
   }
@@ -7595,7 +7595,7 @@ Error generating stack: ` + r.message + `
     return !0;
   }
   function wd(e, o, a, r, d, u) {
-    return Io = u, ge = o, o.memoizedState = null, o.updateQueue = null, o.lanes = 0, R.H = e === null || e.memoizedState === null ? Yv : Kd, Ln = !1, u = a(r, d), Ln = !1, za && (u = uv(
+    return Eo = u, ge = o, o.memoizedState = null, o.updateQueue = null, o.lanes = 0, R.H = e === null || e.memoizedState === null ? Yv : Kd, Ln = !1, u = a(r, d), Ln = !1, za && (u = uv(
       o,
       a,
       r,
@@ -7605,7 +7605,7 @@ Error generating stack: ` + r.message + `
   function dv(e) {
     R.H = xi;
     var o = Le !== null && Le.next !== null;
-    if (Io = 0, at = Le = ge = null, Jr = !1, ji = 0, xa = null, o) throw Error(s(300));
+    if (Eo = 0, at = Le = ge = null, Jr = !1, ji = 0, xa = null, o) throw Error(s(300));
     e === null || it || (e = e.dependencies, e !== null && Kr(e) && (it = !0));
   }
   function uv(e, o, a, r) {
@@ -7621,7 +7621,7 @@ Error generating stack: ` + r.message + `
     } while (za);
     return u;
   }
-  function Uz() {
+  function Vz() {
     var e = R.H, o = e.useState()[0];
     return o = typeof o.then == "function" ? gi(o) : o, e = e.useState()[0], (Le !== null ? Le.memoizedState : null) !== e && (ge.flags |= 1024), o;
   }
@@ -7640,7 +7640,7 @@ Error generating stack: ` + r.message + `
       }
       Jr = !1;
     }
-    Io = 0, at = Le = ge = null, za = !1, ji = Xr = 0, xa = null;
+    Eo = 0, at = Le = ge = null, za = !1, ji = Xr = 0, xa = null;
   }
   function gt() {
     var e = {
@@ -7703,7 +7703,7 @@ Error generating stack: ` + r.message + `
         a[r] = $;
     return o.index++, a;
   }
-  function Eo(e, o) {
+  function wo(e, o) {
     return typeof o == "function" ? o(e) : o;
   }
   function es(e) {
@@ -7728,7 +7728,7 @@ Error generating stack: ` + r.message + `
       var b = k = null, I = null, D = o, K = !1;
       do {
         var Y = D.lane & -536870913;
-        if (Y !== D.lane ? (Se & Y) === Y : (Io & Y) === Y) {
+        if (Y !== D.lane ? (Se & Y) === Y : (Eo & Y) === Y) {
           var _ = D.revertLane;
           if (_ === 0)
             I !== null && (I = I.next = {
@@ -7740,7 +7740,7 @@ Error generating stack: ` + r.message + `
               eagerState: D.eagerState,
               next: null
             }), Y === ya && (K = !0);
-          else if ((Io & _) === _) {
+          else if ((Eo & _) === _) {
             D = D.next, _ === ya && (K = !0);
             continue;
           } else
@@ -7752,7 +7752,7 @@ Error generating stack: ` + r.message + `
               hasEagerState: D.hasEagerState,
               eagerState: D.eagerState,
               next: null
-            }, I === null ? (b = I = Y, k = u) : I = I.next = Y, ge.lanes |= _, en |= _;
+            }, I === null ? (b = I = Y, k = u) : I = I.next = Y, ge.lanes |= _, tn |= _;
           Y = D.action, Ln && a(u, Y), u = D.hasEagerState ? D.eagerState : a(u, Y);
         } else
           _ = {
@@ -7763,7 +7763,7 @@ Error generating stack: ` + r.message + `
             hasEagerState: D.hasEagerState,
             eagerState: D.eagerState,
             next: null
-          }, I === null ? (b = I = _, k = u) : I = I.next = _, ge.lanes |= Y, en |= Y;
+          }, I === null ? (b = I = _, k = u) : I = I.next = _, ge.lanes |= Y, tn |= Y;
         D = D.next;
       } while (D !== null && D !== o);
       if (I === null ? k = u : I.next = b, !Dt(u, e.memoizedState) && (it = !0, K && (a = ba, a !== null)))
@@ -7812,7 +7812,7 @@ Error generating stack: ` + r.message + `
         ),
         null
       ), Ke === null) throw Error(s(349));
-      u || (Io & 127) !== 0 || pv(r, o, a);
+      u || (Eo & 127) !== 0 || pv(r, o, a);
     }
     return a;
   }
@@ -7846,11 +7846,11 @@ Error generating stack: ` + r.message + `
     if (typeof e == "function") {
       var a = e;
       if (e = a(), Ln) {
-        Ho(!0);
+        Ko(!0);
         try {
           a();
         } finally {
-          Ho(!1);
+          Ko(!1);
         }
       }
     }
@@ -7858,7 +7858,7 @@ Error generating stack: ` + r.message + `
       pending: null,
       lanes: 0,
       dispatch: null,
-      lastRenderedReducer: Eo,
+      lastRenderedReducer: wo,
       lastRenderedState: e
     }, o;
   }
@@ -7866,10 +7866,10 @@ Error generating stack: ` + r.message + `
     return e.baseState = a, Nd(
       e,
       Le,
-      typeof r == "function" ? r : Eo
+      typeof r == "function" ? r : wo
     );
   }
-  function Vz(e, o, a, r, d) {
+  function Fz(e, o, a, r, d) {
     if (ns(e)) throw Error(s(485));
     if (e = o.action, e !== null) {
       var u = {
@@ -7945,9 +7945,9 @@ Error generating stack: ` + r.message + `
         e: {
           var r = ge;
           if (Ce) {
-            if (Fe) {
+            if (Ye) {
               t: {
-                for (var d = Fe, u = Jt; d.nodeType !== 8; ) {
+                for (var d = Ye, u = Jt; d.nodeType !== 8; ) {
                   if (!u) {
                     d = null;
                     break t;
@@ -7962,13 +7962,13 @@ Error generating stack: ` + r.message + `
                 u = d.data, d = u === "F!" || u === "F" ? d : null;
               }
               if (d) {
-                Fe = Qt(
+                Ye = Qt(
                   d.nextSibling
                 ), r = d.data === "F!";
                 break e;
               }
             }
-            Yo(r);
+            qo(r);
           }
           r = !1;
         }
@@ -7995,7 +7995,7 @@ Error generating stack: ` + r.message + `
       dispatch: null,
       action: e,
       pending: null
-    }, r.queue = d, a = Vz.bind(
+    }, r.queue = d, a = Fz.bind(
       null,
       ge,
       d,
@@ -8012,7 +8012,7 @@ Error generating stack: ` + r.message + `
       e,
       o,
       zv
-    )[0], e = es(Eo)[0], typeof o == "object" && o !== null && typeof o.then == "function")
+    )[0], e = es(wo)[0], typeof o == "object" && o !== null && typeof o.then == "function")
       try {
         var r = gi(o);
       } catch (k) {
@@ -8024,11 +8024,11 @@ Error generating stack: ` + r.message + `
     return a !== o.memoizedState && (ge.flags |= 2048, Ia(
       9,
       { destroy: void 0 },
-      Fz.bind(null, d, a),
+      Yz.bind(null, d, a),
       null
     )), [r, u, e];
   }
-  function Fz(e, o) {
+  function Yz(e, o) {
     e.action = o;
   }
   function wv(e) {
@@ -8071,7 +8071,7 @@ Error generating stack: ` + r.message + `
   function Rd(e, o) {
     os(2048, 8, e, o);
   }
-  function Yz(e) {
+  function qz(e) {
     ge.flags |= 4;
     var o = ge.updateQueue;
     if (o === null)
@@ -8083,7 +8083,7 @@ Error generating stack: ` + r.message + `
   }
   function Ov(e) {
     var o = et().memoizedState;
-    return Yz({ ref: o, nextImpl: e }), function() {
+    return qz({ ref: o, nextImpl: e }), function() {
       if ((De & 2) !== 0) throw Error(s(440));
       return o.impl.apply(void 0, arguments);
     };
@@ -8125,20 +8125,20 @@ Error generating stack: ` + r.message + `
     if (o !== null && Ed(o, r[1]))
       return r[0];
     if (r = e(), Ln) {
-      Ho(!0);
+      Ko(!0);
       try {
         e();
       } finally {
-        Ho(!1);
+        Ko(!1);
       }
     }
     return a.memoizedState = [r, o], r;
   }
   function Pd(e, o, a) {
-    return a === void 0 || (Io & 1073741824) !== 0 && (Se & 261930) === 0 ? e.memoizedState = o : (e.memoizedState = a, e = Mk(), ge.lanes |= e, en |= e, a);
+    return a === void 0 || (Eo & 1073741824) !== 0 && (Se & 261930) === 0 ? e.memoizedState = o : (e.memoizedState = a, e = Mk(), ge.lanes |= e, tn |= e, a);
   }
   function Mv(e, o, a, r) {
-    return Dt(a, o) ? a : ga.current !== null ? (e = Pd(e, a, r), Dt(e, o) || (it = !0), e) : (Io & 42) === 0 || (Io & 1073741824) !== 0 && (Se & 261930) === 0 ? (it = !0, e.memoizedState = a) : (e = Mk(), ge.lanes |= e, en |= e, o);
+    return Dt(a, o) ? a : ga.current !== null ? (e = Pd(e, a, r), Dt(e, o) || (it = !0), e) : (Eo & 42) === 0 || (Eo & 1073741824) !== 0 && (Se & 261930) === 0 ? (it = !0, e.memoizedState = a) : (e = Mk(), ge.lanes |= e, tn |= e, o);
   }
   function Pv(e, o, a, r, d) {
     var u = X.p;
@@ -8148,7 +8148,7 @@ Error generating stack: ` + r.message + `
     try {
       var I = d(), D = R.S;
       if (D !== null && D(b, I), I !== null && typeof I == "object" && typeof I.then == "function") {
-        var K = Hz(
+        var K = Kz(
           I,
           r
         );
@@ -8177,7 +8177,7 @@ Error generating stack: ` + r.message + `
       X.p = u, k !== null && b.types !== null && (k.types = b.types), R.T = k;
     }
   }
-  function qz() {
+  function $z() {
   }
   function Ld(e, o, a, r) {
     if (e.tag !== 5) throw Error(s(476));
@@ -8187,7 +8187,7 @@ Error generating stack: ` + r.message + `
       d,
       o,
       J,
-      a === null ? qz : function() {
+      a === null ? $z : function() {
         return Bv(e), a(r);
       }
     );
@@ -8203,7 +8203,7 @@ Error generating stack: ` + r.message + `
         pending: null,
         lanes: 0,
         dispatch: null,
-        lastRenderedReducer: Eo,
+        lastRenderedReducer: wo,
         lastRenderedState: J
       },
       next: null
@@ -8217,7 +8217,7 @@ Error generating stack: ` + r.message + `
         pending: null,
         lanes: 0,
         dispatch: null,
-        lastRenderedReducer: Eo,
+        lastRenderedReducer: wo,
         lastRenderedState: a
       },
       next: null
@@ -8241,21 +8241,21 @@ Error generating stack: ` + r.message + `
   function Kv() {
     return et().memoizedState;
   }
-  function $z(e) {
+  function Gz(e) {
     for (var o = e.return; o !== null; ) {
       switch (o.tag) {
         case 24:
         case 3:
           var a = Bt();
-          e = Go(a);
-          var r = Zo(o, e, a);
+          e = Zo(a);
+          var r = Jo(o, e, a);
           r !== null && (At(r, o, a), yi(r, o, a)), o = { cache: vd() }, e.payload = o;
           return;
       }
       o = o.return;
     }
   }
-  function Gz(e, o, a) {
+  function Zz(e, o, a) {
     var r = Bt();
     a = {
       lane: r,
@@ -8387,11 +8387,11 @@ Error generating stack: ` + r.message + `
       o = o === void 0 ? null : o;
       var r = e();
       if (Ln) {
-        Ho(!0);
+        Ko(!0);
         try {
           e();
         } finally {
-          Ho(!1);
+          Ko(!1);
         }
       }
       return a.memoizedState = [r, o], r;
@@ -8401,11 +8401,11 @@ Error generating stack: ` + r.message + `
       if (a !== void 0) {
         var d = a(o);
         if (Ln) {
-          Ho(!0);
+          Ko(!0);
           try {
             a(o);
           } finally {
-            Ho(!1);
+            Ko(!1);
           }
         }
       } else d = o;
@@ -8415,7 +8415,7 @@ Error generating stack: ` + r.message + `
         dispatch: null,
         lastRenderedReducer: e,
         lastRenderedState: d
-      }, r.queue = e, e = e.dispatch = Gz.bind(
+      }, r.queue = e, e = e.dispatch = Zz.bind(
         null,
         ge,
         e
@@ -8479,7 +8479,7 @@ Error generating stack: ` + r.message + `
         var a = lo, r = so;
         a = (r & ~(1 << 32 - Tt(r) - 1)).toString(32) + a, o = "_" + o + "R_" + a, a = Xr++, 0 < a && (o += "H" + a.toString(32)), o += "_";
       } else
-        a = Kz++, o = "_" + o + "r_" + a.toString(32) + "_";
+        a = Uz++, o = "_" + o + "r_" + a.toString(32) + "_";
       return e.memoizedState = o;
     },
     useHostTransitionStatus: Bd,
@@ -8504,7 +8504,7 @@ Error generating stack: ` + r.message + `
     },
     useMemoCache: Cd,
     useCacheRefresh: function() {
-      return gt().memoizedState = $z.bind(
+      return gt().memoizedState = Gz.bind(
         null,
         ge
       );
@@ -8530,7 +8530,7 @@ Error generating stack: ` + r.message + `
     useReducer: es,
     useRef: Sv,
     useState: function() {
-      return es(Eo);
+      return es(wo);
     },
     useDebugValue: Md,
     useDeferredValue: function(e, o) {
@@ -8543,7 +8543,7 @@ Error generating stack: ` + r.message + `
       );
     },
     useTransition: function() {
-      var e = es(Eo)[0], o = et().memoizedState;
+      var e = es(wo)[0], o = et().memoizedState;
       return [
         typeof e == "boolean" ? e : gi(e),
         o
@@ -8575,7 +8575,7 @@ Error generating stack: ` + r.message + `
     useReducer: Td,
     useRef: Sv,
     useState: function() {
-      return Td(Eo);
+      return Td(wo);
     },
     useDebugValue: Md,
     useDeferredValue: function(e, o) {
@@ -8588,7 +8588,7 @@ Error generating stack: ` + r.message + `
       );
     },
     useTransition: function() {
-      var e = Td(Eo)[0], o = et().memoizedState;
+      var e = Td(wo)[0], o = et().memoizedState;
       return [
         typeof e == "boolean" ? e : gi(e),
         o
@@ -8613,18 +8613,18 @@ Error generating stack: ` + r.message + `
   var Vd = {
     enqueueSetState: function(e, o, a) {
       e = e._reactInternals;
-      var r = Bt(), d = Go(r);
-      d.payload = o, a != null && (d.callback = a), o = Zo(e, d, r), o !== null && (At(o, e, r), yi(o, e, r));
+      var r = Bt(), d = Zo(r);
+      d.payload = o, a != null && (d.callback = a), o = Jo(e, d, r), o !== null && (At(o, e, r), yi(o, e, r));
     },
     enqueueReplaceState: function(e, o, a) {
       e = e._reactInternals;
-      var r = Bt(), d = Go(r);
-      d.tag = 1, d.payload = o, a != null && (d.callback = a), o = Zo(e, d, r), o !== null && (At(o, e, r), yi(o, e, r));
+      var r = Bt(), d = Zo(r);
+      d.tag = 1, d.payload = o, a != null && (d.callback = a), o = Jo(e, d, r), o !== null && (At(o, e, r), yi(o, e, r));
     },
     enqueueForceUpdate: function(e, o) {
       e = e._reactInternals;
-      var a = Bt(), r = Go(a);
-      r.tag = 2, o != null && (r.callback = o), o = Zo(e, r, a), o !== null && (At(o, e, a), yi(o, e, a));
+      var a = Bt(), r = Zo(a);
+      r.tag = 2, o != null && (r.callback = o), o = Jo(e, r, a), o !== null && (At(o, e, a), yi(o, e, a));
     }
   };
   function $v(e, o, a, r, d, u, k) {
@@ -8680,12 +8680,12 @@ Error generating stack: ` + r.message + `
     }
   }
   function Fd(e, o, a) {
-    return a = Go(a), a.tag = 3, a.payload = { element: null }, a.callback = function() {
+    return a = Zo(a), a.tag = 3, a.payload = { element: null }, a.callback = function() {
       as(e, o);
     }, a;
   }
   function Wv(e) {
-    return e = Go(e), e.tag = 3, e;
+    return e = Zo(e), e.tag = 3, e;
   }
   function ek(e, o, a, r) {
     var d = a.type.getDerivedStateFromError;
@@ -8699,14 +8699,14 @@ Error generating stack: ` + r.message + `
     }
     var k = a.stateNode;
     k !== null && typeof k.componentDidCatch == "function" && (e.callback = function() {
-      Qv(o, a, r), typeof d != "function" && (tn === null ? tn = /* @__PURE__ */ new Set([this]) : tn.add(this));
+      Qv(o, a, r), typeof d != "function" && (on === null ? on = /* @__PURE__ */ new Set([this]) : on.add(this));
       var b = r.stack;
       this.componentDidCatch(r.value, {
         componentStack: b !== null ? b : ""
       });
     });
   }
-  function Zz(e, o, a, r, d) {
+  function Jz(e, o, a, r, d) {
     if (a.flags |= 32768, r !== null && typeof r == "object" && typeof r.then == "function") {
       if (o = a.alternate, o !== null && ha(
         o,
@@ -8747,7 +8747,7 @@ Error generating stack: ` + r.message + `
         case 3:
           return a.flags |= 65536, e = d & -d, a.lanes |= e, e = Fd(a.stateNode, r, e), jd(a, e), !1;
         case 1:
-          if (o = a.type, u = a.stateNode, (a.flags & 128) === 0 && (typeof o.getDerivedStateFromError == "function" || u !== null && typeof u.componentDidCatch == "function" && (tn === null || !tn.has(u))))
+          if (o = a.type, u = a.stateNode, (a.flags & 128) === 0 && (typeof o.getDerivedStateFromError == "function" || u !== null && typeof u.componentDidCatch == "function" && (on === null || !on.has(u))))
             return a.flags |= 65536, d &= -d, a.lanes |= d, d = Wv(d), ek(
               d,
               e,
@@ -8783,7 +8783,7 @@ Error generating stack: ` + r.message + `
       k,
       u,
       d
-    ), b = Sd(), e !== null && !it ? (Ad(e, o, d), wo(e, o, d)) : (Ce && b && sd(o), o.flags |= 1, ht(e, o, r, d), o.child);
+    ), b = Sd(), e !== null && !it ? (Ad(e, o, d), So(e, o, d)) : (Ce && b && sd(o), o.flags |= 1, ht(e, o, r, d), o.child);
   }
   function ok(e, o, a, r, d) {
     if (e === null) {
@@ -8806,9 +8806,9 @@ Error generating stack: ` + r.message + `
     if (u = e.child, !Wd(e, d)) {
       var k = u.memoizedProps;
       if (a = a.compare, a = a !== null ? a : di, a(k, r) && e.ref === o.ref)
-        return wo(e, o, d);
+        return So(e, o, d);
     }
-    return o.flags |= 1, e = jo(u, r), e.ref = o.ref, e.return = o, o.child = e;
+    return o.flags |= 1, e = go(u, r), e.ref = o.ref, e.return = o, o.child = e;
   }
   function nk(e, o, a, r, d) {
     if (e !== null) {
@@ -8817,7 +8817,7 @@ Error generating stack: ` + r.message + `
         if (it = !1, o.pendingProps = r = u, Wd(e, d))
           (e.flags & 131072) !== 0 && (it = !0);
         else
-          return o.lanes = e.lanes, wo(e, o, d);
+          return o.lanes = e.lanes, So(e, o, d);
     }
     return qd(
       e,
@@ -8863,7 +8863,7 @@ Error generating stack: ` + r.message + `
           r
         );
     } else
-      u !== null ? (Vr(o, u.cachePool), sv(o, u), Xo(), o.memoizedState = null) : (e !== null && Vr(o, null), zd(), Xo());
+      u !== null ? (Vr(o, u.cachePool), sv(o, u), Qo(), o.memoizedState = null) : (e !== null && Vr(o, null), zd(), Qo());
     return ht(e, o, d, a), o.child;
   }
   function Ii(e, o) {
@@ -8890,21 +8890,21 @@ Error generating stack: ` + r.message + `
   function rk(e, o, a) {
     return Pn(o, e.child, null, a), e = is(o, o.pendingProps), e.flags |= 2, Mt(o), o.memoizedState = null, e;
   }
-  function Jz(e, o, a) {
+  function Xz(e, o, a) {
     var r = o.pendingProps, d = (o.flags & 128) !== 0;
     if (o.flags &= -129, e === null) {
       if (Ce) {
         if (r.mode === "hidden")
           return e = is(o, r), o.lanes = 536870912, Ii(null, e);
-        if (Id(o), (e = Fe) ? (e = bh(
+        if (Id(o), (e = Ye) ? (e = bh(
           e,
           Jt
         ), e = e !== null && e.data === "&" ? e : null, e !== null && (o.memoizedState = {
           dehydrated: e,
-          treeContext: Vo !== null ? { id: so, overflow: lo } : null,
+          treeContext: Fo !== null ? { id: so, overflow: lo } : null,
           retryLane: 536870912,
           hydrationErrors: null
-        }, a = Vm(e), a.return = o, o.child = a, vt = o, Fe = null)) : e = null, e === null) throw Yo(o);
+        }, a = Vm(e), a.return = o, o.child = a, vt = o, Ye = null)) : e = null, e === null) throw qo(o);
         return o.lanes = 536870912, null;
       }
       return is(o, r);
@@ -8931,10 +8931,10 @@ Error generating stack: ` + r.message + `
           a
         );
       } else
-        e = u.treeContext, Fe = Qt(k.nextSibling), vt = o, Ce = !0, Fo = null, Jt = !1, e !== null && qm(o, e), o = is(o, r), o.flags |= 4096;
+        e = u.treeContext, Ye = Qt(k.nextSibling), vt = o, Ce = !0, Yo = null, Jt = !1, e !== null && qm(o, e), o = is(o, r), o.flags |= 4096;
       return o;
     }
-    return e = jo(e.child, {
+    return e = go(e.child, {
       mode: r.mode,
       children: r.children
     }), e.ref = o.ref, o.child = e, e.return = o, e;
@@ -8957,7 +8957,7 @@ Error generating stack: ` + r.message + `
       r,
       void 0,
       d
-    ), r = Sd(), e !== null && !it ? (Ad(e, o, d), wo(e, o, d)) : (Ce && r && sd(o), o.flags |= 1, ht(e, o, a, d), o.child);
+    ), r = Sd(), e !== null && !it ? (Ad(e, o, d), So(e, o, d)) : (Ce && r && sd(o), o.flags |= 1, ht(e, o, a, d), o.child);
   }
   function sk(e, o, a, r, d, u) {
     return Dn(o), o.updateQueue = null, a = uv(
@@ -8965,7 +8965,7 @@ Error generating stack: ` + r.message + `
       r,
       a,
       d
-    ), dv(e), r = Sd(), e !== null && !it ? (Ad(e, o, u), wo(e, o, u)) : (Ce && r && sd(o), o.flags |= 1, ht(e, o, a, u), o.child);
+    ), dv(e), r = Sd(), e !== null && !it ? (Ad(e, o, u), So(e, o, u)) : (Ce && r && sd(o), o.flags |= 1, ht(e, o, a, u), o.child);
   }
   function lk(e, o, a, r, d) {
     if (Dn(o), o.stateNode === null) {
@@ -8988,14 +8988,14 @@ Error generating stack: ` + r.message + `
         u,
         r,
         k
-      ), $o = !1;
+      ), Go = !1;
       var _ = o.memoizedState;
-      u.state = _, fi(o, r, u, d), bi(), D = o.memoizedState, b || _ !== D || $o ? (typeof Y == "function" && (Ud(
+      u.state = _, fi(o, r, u, d), bi(), D = o.memoizedState, b || _ !== D || Go ? (typeof Y == "function" && (Ud(
         o,
         a,
         Y,
         r
-      ), D = o.memoizedState), (I = $o || $v(
+      ), D = o.memoizedState), (I = Go || $v(
         o,
         a,
         I,
@@ -9010,14 +9010,14 @@ Error generating stack: ` + r.message + `
         u,
         r,
         I
-      ), $o = !1, _ = o.memoizedState, u.state = _, fi(o, r, u, d), bi();
+      ), Go = !1, _ = o.memoizedState, u.state = _, fi(o, r, u, d), bi();
       var P = o.memoizedState;
-      k !== Y || _ !== P || $o || e !== null && e.dependencies !== null && Kr(e.dependencies) ? (typeof b == "function" && (Ud(
+      k !== Y || _ !== P || Go || e !== null && e.dependencies !== null && Kr(e.dependencies) ? (typeof b == "function" && (Ud(
         o,
         a,
         b,
         r
-      ), P = o.memoizedState), (K = $o || $v(
+      ), P = o.memoizedState), (K = Go || $v(
         o,
         a,
         K,
@@ -9041,7 +9041,7 @@ Error generating stack: ` + r.message + `
       null,
       a,
       d
-    )) : ht(e, o, a, d), o.memoizedState = u.state, e = o.child) : e = wo(
+    )) : ht(e, o, a, d), o.memoizedState = u.state, e = o.child) : e = So(
       e,
       o,
       d
@@ -9066,19 +9066,19 @@ Error generating stack: ` + r.message + `
     var r = o.pendingProps, d = !1, u = (o.flags & 128) !== 0, k;
     if ((k = u) || (k = e !== null && e.memoizedState === null ? !1 : (We.current & 2) !== 0), k && (d = !0, o.flags &= -129), k = (o.flags & 32) !== 0, o.flags &= -33, e === null) {
       if (Ce) {
-        if (d ? Jo(o) : Xo(), (e = Fe) ? (e = bh(
+        if (d ? Xo(o) : Qo(), (e = Ye) ? (e = bh(
           e,
           Jt
         ), e = e !== null && e.data !== "&" ? e : null, e !== null && (o.memoizedState = {
           dehydrated: e,
-          treeContext: Vo !== null ? { id: so, overflow: lo } : null,
+          treeContext: Fo !== null ? { id: so, overflow: lo } : null,
           retryLane: 536870912,
           hydrationErrors: null
-        }, a = Vm(e), a.return = o, o.child = a, vt = o, Fe = null)) : e = null, e === null) throw Yo(o);
+        }, a = Vm(e), a.return = o, o.child = a, vt = o, Ye = null)) : e = null, e === null) throw qo(o);
         return Nu(e) ? o.lanes = 32 : o.lanes = 536870912, null;
       }
       var b = r.children;
-      return r = r.fallback, d ? (Xo(), d = o.mode, b = ss(
+      return r = r.fallback, d ? (Qo(), d = o.mode, b = ss(
         { mode: "hidden", children: b },
         d
       ), r = Cn(
@@ -9090,16 +9090,16 @@ Error generating stack: ` + r.message + `
         e,
         k,
         a
-      ), o.memoizedState = $d, Ii(null, r)) : (Jo(o), Jd(o, b));
+      ), o.memoizedState = $d, Ii(null, r)) : (Xo(o), Jd(o, b));
     }
     var I = e.memoizedState;
     if (I !== null && (b = I.dehydrated, b !== null)) {
       if (u)
-        o.flags & 256 ? (Jo(o), o.flags &= -257, o = Xd(
+        o.flags & 256 ? (Xo(o), o.flags &= -257, o = Xd(
           e,
           o,
           a
-        )) : o.memoizedState !== null ? (Xo(), o.child = e.child, o.flags |= 128, o = null) : (Xo(), b = r.fallback, d = o.mode, r = ss(
+        )) : o.memoizedState !== null ? (Qo(), o.child = e.child, o.flags |= 128, o = null) : (Qo(), b = r.fallback, d = o.mode, r = ss(
           { mode: "visible", children: r.children },
           d
         ), b = Cn(
@@ -9117,7 +9117,7 @@ Error generating stack: ` + r.message + `
           k,
           a
         ), o.memoizedState = $d, o = Ii(null, r));
-      else if (Jo(o), Nu(b)) {
+      else if (Xo(o), Nu(b)) {
         if (k = b.nextSibling && b.nextSibling.dataset, k) var D = k.dgst;
         k = D, r = Error(s(419)), r.stack = "", r.digest = k, pi({ value: r, source: null, stack: null }), o = Xd(
           e,
@@ -9133,18 +9133,18 @@ Error generating stack: ` + r.message + `
           a
         );
       } else
-        Cu(b) ? (o.flags |= 192, o.child = e.child, o = null) : (e = I.treeContext, Fe = Qt(
+        Cu(b) ? (o.flags |= 192, o.child = e.child, o = null) : (e = I.treeContext, Ye = Qt(
           b.nextSibling
-        ), vt = o, Ce = !0, Fo = null, Jt = !1, e !== null && qm(o, e), o = Jd(
+        ), vt = o, Ce = !0, Yo = null, Jt = !1, e !== null && qm(o, e), o = Jd(
           o,
           r.children
         ), o.flags |= 4096);
       return o;
     }
-    return d ? (Xo(), b = r.fallback, d = o.mode, I = e.child, D = I.sibling, r = jo(I, {
+    return d ? (Qo(), b = r.fallback, d = o.mode, I = e.child, D = I.sibling, r = go(I, {
       mode: "hidden",
       children: r.children
-    }), r.subtreeFlags = I.subtreeFlags & 65011712, D !== null ? b = jo(
+    }), r.subtreeFlags = I.subtreeFlags & 65011712, D !== null ? b = go(
       D,
       b
     ) : (b = Cn(
@@ -9159,7 +9159,7 @@ Error generating stack: ` + r.message + `
       e,
       k,
       a
-    ), o.memoizedState = $d, Ii(e.child, r)) : (Jo(o), a = e.child, e = a.sibling, a = jo(a, {
+    ), o.memoizedState = $d, Ii(e.child, r)) : (Xo(o), a = e.child, e = a.sibling, a = go(a, {
       mode: "visible",
       children: r.children
     }), a.return = o, a.sibling = null, e !== null && (k = o.deletions, k === null ? (o.deletions = [e], o.flags |= 16) : k.push(e)), o.child = a, o.memoizedState = null, a);
@@ -9264,8 +9264,8 @@ Error generating stack: ` + r.message + `
     }
     return o.child;
   }
-  function wo(e, o, a) {
-    if (e !== null && (o.dependencies = e.dependencies), en |= o.lanes, (a & o.childLanes) === 0)
+  function So(e, o, a) {
+    if (e !== null && (o.dependencies = e.dependencies), tn |= o.lanes, (a & o.childLanes) === 0)
       if (e !== null) {
         if (ha(
           e,
@@ -9278,8 +9278,8 @@ Error generating stack: ` + r.message + `
     if (e !== null && o.child !== e.child)
       throw Error(s(153));
     if (o.child !== null) {
-      for (e = o.child, a = jo(e, e.pendingProps), o.child = a, a.return = o; e.sibling !== null; )
-        e = e.sibling, a = a.sibling = jo(e, e.pendingProps), a.return = o;
+      for (e = o.child, a = go(e, e.pendingProps), o.child = a, a.return = o; e.sibling !== null; )
+        e = e.sibling, a = a.sibling = go(e, e.pendingProps), a.return = o;
       a.sibling = null;
     }
     return o.child;
@@ -9287,10 +9287,10 @@ Error generating stack: ` + r.message + `
   function Wd(e, o) {
     return (e.lanes & o) !== 0 ? !0 : (e = e.dependencies, !!(e !== null && Kr(e)));
   }
-  function Xz(e, o, a) {
+  function Qz(e, o, a) {
     switch (o.tag) {
       case 3:
-        Me(o, o.stateNode.containerInfo), qo(o, nt, e.memoizedState.cache), Nn();
+        Me(o, o.stateNode.containerInfo), $o(o, nt, e.memoizedState.cache), Nn();
         break;
       case 27:
       case 5:
@@ -9300,7 +9300,7 @@ Error generating stack: ` + r.message + `
         Me(o, o.stateNode.containerInfo);
         break;
       case 10:
-        qo(
+        $o(
           o,
           o.type,
           o.memoizedProps.value
@@ -9313,12 +9313,12 @@ Error generating stack: ` + r.message + `
       case 13:
         var r = o.memoizedState;
         if (r !== null)
-          return r.dehydrated !== null ? (Jo(o), o.flags |= 128, null) : (a & o.child.childLanes) !== 0 ? uk(e, o, a) : (Jo(o), e = wo(
+          return r.dehydrated !== null ? (Xo(o), o.flags |= 128, null) : (a & o.child.childLanes) !== 0 ? uk(e, o, a) : (Xo(o), e = So(
             e,
             o,
             a
           ), e !== null ? e.sibling : null);
-        Jo(o);
+        Xo(o);
         break;
       case 19:
         var d = (e.flags & 128) !== 0;
@@ -9346,9 +9346,9 @@ Error generating stack: ` + r.message + `
           o.pendingProps
         );
       case 24:
-        qo(o, nt, e.memoizedState.cache);
+        $o(o, nt, e.memoizedState.cache);
     }
-    return wo(e, o, a);
+    return So(e, o, a);
   }
   function mk(e, o, a) {
     if (e !== null)
@@ -9356,7 +9356,7 @@ Error generating stack: ` + r.message + `
         it = !0;
       else {
         if (!Wd(e, a) && (o.flags & 128) === 0)
-          return it = !1, Xz(
+          return it = !1, Qz(
             e,
             o,
             a
@@ -9439,7 +9439,7 @@ Error generating stack: ` + r.message + `
           var u = o.memoizedState;
           d = u.element, fd(e, o), fi(o, r, null, a);
           var k = o.memoizedState;
-          if (r = k.cache, qo(o, nt, r), r !== u.cache && md(
+          if (r = k.cache, $o(o, nt, r), r !== u.cache && md(
             o,
             [nt],
             a,
@@ -9476,7 +9476,7 @@ Error generating stack: ` + r.message + `
                 default:
                   e = e.nodeName === "HTML" ? e.ownerDocument.body : e;
               }
-              for (Fe = Qt(e.firstChild), vt = o, Ce = !0, Fo = null, Jt = !0, a = av(
+              for (Ye = Qt(e.firstChild), vt = o, Ce = !0, Yo = null, Jt = !0, a = av(
                 o,
                 null,
                 r,
@@ -9486,7 +9486,7 @@ Error generating stack: ` + r.message + `
             }
           else {
             if (Nn(), r === d) {
-              o = wo(
+              o = So(
                 e,
                 o,
                 a
@@ -9517,32 +9517,32 @@ Error generating stack: ` + r.message + `
           o.type,
           o.pendingProps,
           ce.current
-        ), vt = o, Jt = !0, d = Fe, rn(o.type) ? (Tu = d, Fe = Qt(r.firstChild)) : Fe = d), ht(
+        ), vt = o, Jt = !0, d = Ye, sn(o.type) ? (Tu = d, Ye = Qt(r.firstChild)) : Ye = d), ht(
           e,
           o,
           o.pendingProps.children,
           a
         ), rs(e, o), e === null && (o.flags |= 4194304), o.child;
       case 5:
-        return e === null && Ce && ((d = r = Fe) && (r = Sx(
+        return e === null && Ce && ((d = r = Ye) && (r = Ax(
           r,
           o.type,
           o.pendingProps,
           Jt
-        ), r !== null ? (o.stateNode = r, vt = o, Fe = Qt(r.firstChild), Jt = !1, d = !0) : d = !1), d || Yo(o)), Ct(o), d = o.type, u = o.pendingProps, k = e !== null ? e.memoizedProps : null, r = u.children, Su(d, u) ? r = null : k !== null && Su(d, k) && (o.flags |= 32), o.memoizedState !== null && (d = wd(
+        ), r !== null ? (o.stateNode = r, vt = o, Ye = Qt(r.firstChild), Jt = !1, d = !0) : d = !1), d || qo(o)), Ct(o), d = o.type, u = o.pendingProps, k = e !== null ? e.memoizedProps : null, r = u.children, Su(d, u) ? r = null : k !== null && Su(d, k) && (o.flags |= 32), o.memoizedState !== null && (d = wd(
           e,
           o,
-          Uz,
+          Vz,
           null,
           null,
           a
         ), Bi._currentValue = d), rs(e, o), ht(e, o, r, a), o.child;
       case 6:
-        return e === null && Ce && ((e = a = Fe) && (a = Ax(
+        return e === null && Ce && ((e = a = Ye) && (a = Ox(
           a,
           o.pendingProps,
           Jt
-        ), a !== null ? (o.stateNode = a, vt = o, Fe = null, e = !0) : e = !1), e || Yo(o)), null;
+        ), a !== null ? (o.stateNode = a, vt = o, Ye = null, e = !0) : e = !1), e || qo(o)), null;
       case 13:
         return uk(e, o, a);
       case 4:
@@ -9585,7 +9585,7 @@ Error generating stack: ` + r.message + `
           a
         ), o.child;
       case 10:
-        return r = o.pendingProps, qo(o, o.type, r.value), ht(e, o, r.children, a), o.child;
+        return r = o.pendingProps, $o(o, o.type, r.value), ht(e, o, r.children, a), o.child;
       case 9:
         return d = o.type._context, r = o.pendingProps.children, Dn(o), d = kt(d), r = r(d), o.flags |= 1, ht(e, o, r, a), o.child;
       case 14:
@@ -9607,7 +9607,7 @@ Error generating stack: ` + r.message + `
       case 19:
         return pk(e, o, a);
       case 31:
-        return Jz(e, o, a);
+        return Xz(e, o, a);
       case 22:
         return ak(
           e,
@@ -9616,7 +9616,7 @@ Error generating stack: ` + r.message + `
           o.pendingProps
         );
       case 24:
-        return Dn(o), r = kt(nt), e === null ? (d = hd(), d === null && (d = Ke, u = vd(), d.pooledCache = u, u.refCount++, u !== null && (d.pooledCacheLanes |= a), d = u), o.memoizedState = { parent: r, cache: d }, bd(o), qo(o, nt, d)) : ((e.lanes & a) !== 0 && (fd(e, o), fi(o, null, null, a), bi()), d = e.memoizedState, u = o.memoizedState, d.parent !== r ? (d = { parent: r, cache: r }, o.memoizedState = d, o.lanes === 0 && (o.memoizedState = o.updateQueue.baseState = d), qo(o, nt, r)) : (r = u.cache, qo(o, nt, r), r !== d.cache && md(
+        return Dn(o), r = kt(nt), e === null ? (d = hd(), d === null && (d = Ke, u = vd(), d.pooledCache = u, u.refCount++, u !== null && (d.pooledCacheLanes |= a), d = u), o.memoizedState = { parent: r, cache: d }, bd(o), $o(o, nt, d)) : ((e.lanes & a) !== 0 && (fd(e, o), fi(o, null, null, a), bi()), d = e.memoizedState, u = o.memoizedState, d.parent !== r ? (d = { parent: r, cache: r }, o.memoizedState = d, o.lanes === 0 && (o.memoizedState = o.updateQueue.baseState = d), $o(o, nt, r)) : (r = u.cache, $o(o, nt, r), r !== d.cache && md(
           o,
           [nt],
           a,
@@ -9632,7 +9632,7 @@ Error generating stack: ` + r.message + `
     }
     throw Error(s(156, o.tag));
   }
-  function So(e) {
+  function Ao(e) {
     e.flags |= 4;
   }
   function eu(e, o, a, r, d) {
@@ -9671,7 +9671,7 @@ Error generating stack: ` + r.message + `
           r === null ? o || e.tail === null ? e.tail = null : e.tail.sibling = null : r.sibling = null;
       }
   }
-  function Ye(e) {
+  function qe(e) {
     var o = e.alternate !== null && e.alternate.child === e.child, a = 0, r = 0;
     if (o)
       for (var d = e.child; d !== null; )
@@ -9681,7 +9681,7 @@ Error generating stack: ` + r.message + `
         a |= d.lanes | d.childLanes, r |= d.subtreeFlags, r |= d.flags, d.return = e, d = d.sibling;
     return e.subtreeFlags |= r, e.childLanes = a, o;
   }
-  function Qz(e, o, a) {
+  function Wz(e, o, a) {
     var r = o.pendingProps;
     switch (ld(o), o.tag) {
       case 16:
@@ -9693,20 +9693,20 @@ Error generating stack: ` + r.message + `
       case 12:
       case 9:
       case 14:
-        return Ye(o), null;
+        return qe(o), null;
       case 1:
-        return Ye(o), null;
+        return qe(o), null;
       case 3:
-        return a = o.stateNode, r = null, e !== null && (r = e.memoizedState.cache), o.memoizedState.cache !== r && (o.flags |= 2048), xo(nt), Pe(), a.pendingContext && (a.context = a.pendingContext, a.pendingContext = null), (e === null || e.child === null) && (ka(o) ? So(o) : e === null || e.memoizedState.isDehydrated && (o.flags & 256) === 0 || (o.flags |= 1024, ud())), Ye(o), null;
+        return a = o.stateNode, r = null, e !== null && (r = e.memoizedState.cache), o.memoizedState.cache !== r && (o.flags |= 2048), Io(nt), Pe(), a.pendingContext && (a.context = a.pendingContext, a.pendingContext = null), (e === null || e.child === null) && (ka(o) ? Ao(o) : e === null || e.memoizedState.isDehydrated && (o.flags & 256) === 0 || (o.flags |= 1024, ud())), qe(o), null;
       case 26:
         var d = o.type, u = o.memoizedState;
-        return e === null ? (So(o), u !== null ? (Ye(o), vk(o, u)) : (Ye(o), eu(
+        return e === null ? (Ao(o), u !== null ? (qe(o), vk(o, u)) : (qe(o), eu(
           o,
           d,
           null,
           r,
           a
-        ))) : u ? u !== e.memoizedState ? (So(o), Ye(o), vk(o, u)) : (Ye(o), o.flags &= -16777217) : (e = e.memoizedProps, e !== r && So(o), Ye(o), eu(
+        ))) : u ? u !== e.memoizedState ? (Ao(o), qe(o), vk(o, u)) : (qe(o), o.flags &= -16777217) : (e = e.memoizedProps, e !== r && Ao(o), qe(o), eu(
           o,
           d,
           e,
@@ -9715,24 +9715,24 @@ Error generating stack: ` + r.message + `
         )), null;
       case 27:
         if (Ut(o), a = ce.current, d = o.type, e !== null && o.stateNode != null)
-          e.memoizedProps !== r && So(o);
+          e.memoizedProps !== r && Ao(o);
         else {
           if (!r) {
             if (o.stateNode === null)
               throw Error(s(166));
-            return Ye(o), null;
+            return qe(o), null;
           }
-          e = Q.current, ka(o) ? $m(o) : (e = gh(d, r, a), o.stateNode = e, So(o));
+          e = Q.current, ka(o) ? $m(o) : (e = gh(d, r, a), o.stateNode = e, Ao(o));
         }
-        return Ye(o), null;
+        return qe(o), null;
       case 5:
         if (Ut(o), d = o.type, e !== null && o.stateNode != null)
-          e.memoizedProps !== r && So(o);
+          e.memoizedProps !== r && Ao(o);
         else {
           if (!r) {
             if (o.stateNode === null)
               throw Error(s(166));
-            return Ye(o), null;
+            return qe(o), null;
           }
           if (u = Q.current, ka(o))
             $m(o);
@@ -9811,10 +9811,10 @@ Error generating stack: ` + r.message + `
               default:
                 r = !1;
             }
-            r && So(o);
+            r && Ao(o);
           }
         }
-        return Ye(o), eu(
+        return qe(o), eu(
           o,
           o.type,
           e === null ? null : e.memoizedProps,
@@ -9823,7 +9823,7 @@ Error generating stack: ` + r.message + `
         ), null;
       case 6:
         if (e && o.stateNode != null)
-          e.memoizedProps !== r && So(o);
+          e.memoizedProps !== r && Ao(o);
         else {
           if (typeof r != "string" && o.stateNode === null)
             throw Error(s(166));
@@ -9834,13 +9834,13 @@ Error generating stack: ` + r.message + `
                 case 5:
                   r = d.memoizedProps;
               }
-            e[mt] = o, e = !!(e.nodeValue === a || r !== null && r.suppressHydrationWarning === !0 || uh(e.nodeValue, a)), e || Yo(o, !0);
+            e[mt] = o, e = !!(e.nodeValue === a || r !== null && r.suppressHydrationWarning === !0 || uh(e.nodeValue, a)), e || qo(o, !0);
           } else
             e = xs(e).createTextNode(
               r
             ), e[mt] = o, o.stateNode = e;
         }
-        return Ye(o), null;
+        return qe(o), null;
       case 31:
         if (a = o.memoizedState, e === null || e.memoizedState !== null) {
           if (r = ka(o), a !== null) {
@@ -9850,7 +9850,7 @@ Error generating stack: ` + r.message + `
               e[mt] = o;
             } else
               Nn(), (o.flags & 128) === 0 && (o.memoizedState = null), o.flags |= 4;
-            Ye(o), e = !1;
+            qe(o), e = !1;
           } else
             a = ud(), e !== null && e.memoizedState !== null && (e.memoizedState.hydrationErrors = a), e = !0;
           if (!e)
@@ -9858,7 +9858,7 @@ Error generating stack: ` + r.message + `
           if ((o.flags & 128) !== 0)
             throw Error(s(558));
         }
-        return Ye(o), null;
+        return qe(o), null;
       case 13:
         if (r = o.memoizedState, e === null || e.memoizedState !== null && e.memoizedState.dehydrated !== null) {
           if (d = ka(o), r !== null && r.dehydrated !== null) {
@@ -9868,19 +9868,19 @@ Error generating stack: ` + r.message + `
               d[mt] = o;
             } else
               Nn(), (o.flags & 128) === 0 && (o.memoizedState = null), o.flags |= 4;
-            Ye(o), d = !1;
+            qe(o), d = !1;
           } else
             d = ud(), e !== null && e.memoizedState !== null && (e.memoizedState.hydrationErrors = d), d = !0;
           if (!d)
             return o.flags & 256 ? (Mt(o), o) : (Mt(o), null);
         }
-        return Mt(o), (o.flags & 128) !== 0 ? (o.lanes = a, o) : (a = r !== null, e = e !== null && e.memoizedState !== null, a && (r = o.child, d = null, r.alternate !== null && r.alternate.memoizedState !== null && r.alternate.memoizedState.cachePool !== null && (d = r.alternate.memoizedState.cachePool.pool), u = null, r.memoizedState !== null && r.memoizedState.cachePool !== null && (u = r.memoizedState.cachePool.pool), u !== d && (r.flags |= 2048)), a !== e && a && (o.child.flags |= 8192), ls(o, o.updateQueue), Ye(o), null);
+        return Mt(o), (o.flags & 128) !== 0 ? (o.lanes = a, o) : (a = r !== null, e = e !== null && e.memoizedState !== null, a && (r = o.child, d = null, r.alternate !== null && r.alternate.memoizedState !== null && r.alternate.memoizedState.cachePool !== null && (d = r.alternate.memoizedState.cachePool.pool), u = null, r.memoizedState !== null && r.memoizedState.cachePool !== null && (u = r.memoizedState.cachePool.pool), u !== d && (r.flags |= 2048)), a !== e && a && (o.child.flags |= 8192), ls(o, o.updateQueue), qe(o), null);
       case 4:
-        return Pe(), e === null && zu(o.stateNode.containerInfo), Ye(o), null;
+        return Pe(), e === null && zu(o.stateNode.containerInfo), qe(o), null;
       case 10:
-        return xo(o.type), Ye(o), null;
+        return Io(o.type), qe(o), null;
       case 19:
-        if (C(We), r = o.memoizedState, r === null) return Ye(o), null;
+        if (C(We), r = o.memoizedState, r === null) return qe(o), null;
         if (d = (o.flags & 128) !== 0, u = r.rendering, u === null)
           if (d) Ei(r, !1);
           else {
@@ -9892,7 +9892,7 @@ Error generating stack: ` + r.message + `
                   return W(
                     We,
                     We.current & 1 | 2
-                  ), Ce && go(o, r.treeForkCount), o.child;
+                  ), Ce && zo(o, r.treeForkCount), o.child;
                 }
                 e = e.sibling;
               }
@@ -9902,7 +9902,7 @@ Error generating stack: ` + r.message + `
           if (!d)
             if (e = Zr(u), e !== null) {
               if (o.flags |= 128, d = !0, e = e.updateQueue, o.updateQueue = e, ls(o, e), Ei(r, !0), r.tail === null && r.tailMode === "hidden" && !u.alternate && !Ce)
-                return Ye(o), null;
+                return qe(o), null;
             } else
               2 * Ue() - r.renderingStartTime > ms && a !== 536870912 && (o.flags |= 128, d = !0, Ei(r, !1), o.lanes = 4194304);
           r.isBackwards ? (u.sibling = o.child, o.child = u) : (e = r.last, e !== null ? e.sibling = u : o.child = u, r.last = u);
@@ -9910,12 +9910,12 @@ Error generating stack: ` + r.message + `
         return r.tail !== null ? (e = r.tail, r.rendering = e, r.tail = e.sibling, r.renderingStartTime = Ue(), e.sibling = null, a = We.current, W(
           We,
           d ? a & 1 | 2 : a & 1
-        ), Ce && go(o, r.treeForkCount), e) : (Ye(o), null);
+        ), Ce && zo(o, r.treeForkCount), e) : (qe(o), null);
       case 22:
       case 23:
-        return Mt(o), xd(), r = o.memoizedState !== null, e !== null ? e.memoizedState !== null !== r && (o.flags |= 8192) : r && (o.flags |= 8192), r ? (a & 536870912) !== 0 && (o.flags & 128) === 0 && (Ye(o), o.subtreeFlags & 6 && (o.flags |= 8192)) : Ye(o), a = o.updateQueue, a !== null && ls(o, a.retryQueue), a = null, e !== null && e.memoizedState !== null && e.memoizedState.cachePool !== null && (a = e.memoizedState.cachePool.pool), r = null, o.memoizedState !== null && o.memoizedState.cachePool !== null && (r = o.memoizedState.cachePool.pool), r !== a && (o.flags |= 2048), e !== null && C(_n), null;
+        return Mt(o), xd(), r = o.memoizedState !== null, e !== null ? e.memoizedState !== null !== r && (o.flags |= 8192) : r && (o.flags |= 8192), r ? (a & 536870912) !== 0 && (o.flags & 128) === 0 && (qe(o), o.subtreeFlags & 6 && (o.flags |= 8192)) : qe(o), a = o.updateQueue, a !== null && ls(o, a.retryQueue), a = null, e !== null && e.memoizedState !== null && e.memoizedState.cachePool !== null && (a = e.memoizedState.cachePool.pool), r = null, o.memoizedState !== null && o.memoizedState.cachePool !== null && (r = o.memoizedState.cachePool.pool), r !== a && (o.flags |= 2048), e !== null && C(_n), null;
       case 24:
-        return a = null, e !== null && (a = e.memoizedState.cache), o.memoizedState.cache !== a && (o.flags |= 2048), xo(nt), Ye(o), null;
+        return a = null, e !== null && (a = e.memoizedState.cache), o.memoizedState.cache !== a && (o.flags |= 2048), Io(nt), qe(o), null;
       case 25:
         return null;
       case 30:
@@ -9923,12 +9923,12 @@ Error generating stack: ` + r.message + `
     }
     throw Error(s(156, o.tag));
   }
-  function Wz(e, o) {
+  function ex(e, o) {
     switch (ld(o), o.tag) {
       case 1:
         return e = o.flags, e & 65536 ? (o.flags = e & -65537 | 128, o) : null;
       case 3:
-        return xo(nt), Pe(), e = o.flags, (e & 65536) !== 0 && (e & 128) === 0 ? (o.flags = e & -65537 | 128, o) : null;
+        return Io(nt), Pe(), e = o.flags, (e & 65536) !== 0 && (e & 128) === 0 ? (o.flags = e & -65537 | 128, o) : null;
       case 26:
       case 27:
       case 5:
@@ -9952,12 +9952,12 @@ Error generating stack: ` + r.message + `
       case 4:
         return Pe(), null;
       case 10:
-        return xo(o.type), null;
+        return Io(o.type), null;
       case 22:
       case 23:
         return Mt(o), xd(), e !== null && C(_n), e = o.flags, e & 65536 ? (o.flags = e & -65537 | 128, o) : null;
       case 24:
-        return xo(nt), null;
+        return Io(nt), null;
       case 25:
         return null;
       default:
@@ -9967,7 +9967,7 @@ Error generating stack: ` + r.message + `
   function kk(e, o) {
     switch (ld(o), o.tag) {
       case 3:
-        xo(nt), Pe();
+        Io(nt), Pe();
         break;
       case 26:
       case 27:
@@ -9987,14 +9987,14 @@ Error generating stack: ` + r.message + `
         C(We);
         break;
       case 10:
-        xo(o.type);
+        Io(o.type);
         break;
       case 22:
       case 23:
         Mt(o), xd(), e !== null && C(_n);
         break;
       case 24:
-        xo(nt);
+        Io(nt);
     }
   }
   function wi(e, o) {
@@ -10016,7 +10016,7 @@ Error generating stack: ` + r.message + `
       Re(o, o.return, b);
     }
   }
-  function Qo(e, o, a) {
+  function Wo(e, o, a) {
     try {
       var r = o.updateQueue, d = r !== null ? r.lastEffect : null;
       if (d !== null) {
@@ -10129,13 +10129,13 @@ Error generating stack: ` + r.message + `
   function tu(e, o, a) {
     try {
       var r = e.stateNode;
-      gx(r, e.type, a, o), r[zt] = o;
+      zx(r, e.type, a, o), r[zt] = o;
     } catch (d) {
       Re(e, e.return, d);
     }
   }
   function fk(e) {
-    return e.tag === 5 || e.tag === 3 || e.tag === 26 || e.tag === 27 && rn(e.type) || e.tag === 4;
+    return e.tag === 5 || e.tag === 3 || e.tag === 26 || e.tag === 27 && sn(e.type) || e.tag === 4;
   }
   function ou(e) {
     e: for (; ; ) {
@@ -10144,7 +10144,7 @@ Error generating stack: ` + r.message + `
         e = e.return;
       }
       for (e.sibling.return = e.return, e = e.sibling; e.tag !== 5 && e.tag !== 6 && e.tag !== 18; ) {
-        if (e.tag === 27 && rn(e.type) || e.flags & 2 || e.child === null || e.tag === 4) continue e;
+        if (e.tag === 27 && sn(e.type) || e.flags & 2 || e.child === null || e.tag === 4) continue e;
         e.child.return = e, e = e.child;
       }
       if (!(e.flags & 2)) return e.stateNode;
@@ -10153,8 +10153,8 @@ Error generating stack: ` + r.message + `
   function nu(e, o, a) {
     var r = e.tag;
     if (r === 5 || r === 6)
-      e = e.stateNode, o ? (a.nodeType === 9 ? a.body : a.nodeName === "HTML" ? a.ownerDocument.body : a).insertBefore(e, o) : (o = a.nodeType === 9 ? a.body : a.nodeName === "HTML" ? a.ownerDocument.body : a, o.appendChild(e), a = a._reactRootContainer, a != null || o.onclick !== null || (o.onclick = bo));
-    else if (r !== 4 && (r === 27 && rn(e.type) && (a = e.stateNode, o = null), e = e.child, e !== null))
+      e = e.stateNode, o ? (a.nodeType === 9 ? a.body : a.nodeName === "HTML" ? a.ownerDocument.body : a).insertBefore(e, o) : (o = a.nodeType === 9 ? a.body : a.nodeName === "HTML" ? a.ownerDocument.body : a, o.appendChild(e), a = a._reactRootContainer, a != null || o.onclick !== null || (o.onclick = fo));
+    else if (r !== 4 && (r === 27 && sn(e.type) && (a = e.stateNode, o = null), e = e.child, e !== null))
       for (nu(e, o, a), e = e.sibling; e !== null; )
         nu(e, o, a), e = e.sibling;
   }
@@ -10162,7 +10162,7 @@ Error generating stack: ` + r.message + `
     var r = e.tag;
     if (r === 5 || r === 6)
       e = e.stateNode, o ? a.insertBefore(e, o) : a.appendChild(e);
-    else if (r !== 4 && (r === 27 && rn(e.type) && (a = e.stateNode), e = e.child, e !== null))
+    else if (r !== 4 && (r === 27 && sn(e.type) && (a = e.stateNode), e = e.child, e !== null))
       for (ds(e, o, a), e = e.sibling; e !== null; )
         ds(e, o, a), e = e.sibling;
   }
@@ -10176,8 +10176,8 @@ Error generating stack: ` + r.message + `
       Re(e, e.return, u);
     }
   }
-  var Ao = !1, rt = !1, au = !1, gk = typeof WeakSet == "function" ? WeakSet : Set, ct = null;
-  function ex(e, o) {
+  var Oo = !1, rt = !1, au = !1, gk = typeof WeakSet == "function" ? WeakSet : Set, ct = null;
+  function tx(e, o) {
     if (e = e.containerInfo, Eu = Cs, e = Dm(e), Xl(e)) {
       if ("selectionStart" in e)
         var a = {
@@ -10288,10 +10288,10 @@ Error generating stack: ` + r.message + `
       case 0:
       case 11:
       case 15:
-        Co(e, a), r & 4 && wi(5, a);
+        No(e, a), r & 4 && wi(5, a);
         break;
       case 1:
-        if (Co(e, a), r & 4)
+        if (No(e, a), r & 4)
           if (e = a.stateNode, o === null)
             try {
               e.componentDidMount();
@@ -10321,7 +10321,7 @@ Error generating stack: ` + r.message + `
         r & 64 && hk(a), r & 512 && Si(a, a.return);
         break;
       case 3:
-        if (Co(e, a), r & 64 && (e = a.updateQueue, e !== null)) {
+        if (No(e, a), r & 64 && (e = a.updateQueue, e !== null)) {
           if (o = null, a.child !== null)
             switch (a.child.tag) {
               case 27:
@@ -10342,43 +10342,43 @@ Error generating stack: ` + r.message + `
         o === null && r & 4 && jk(a);
       case 26:
       case 5:
-        Co(e, a), o === null && r & 4 && bk(a), r & 512 && Si(a, a.return);
+        No(e, a), o === null && r & 4 && bk(a), r & 512 && Si(a, a.return);
         break;
       case 12:
-        Co(e, a);
+        No(e, a);
         break;
       case 31:
-        Co(e, a), r & 4 && Ek(e, a);
+        No(e, a), r & 4 && Ek(e, a);
         break;
       case 13:
-        Co(e, a), r & 4 && wk(e, a), r & 64 && (e = a.memoizedState, e !== null && (e = e.dehydrated, e !== null && (a = dx.bind(
+        No(e, a), r & 4 && wk(e, a), r & 64 && (e = a.memoizedState, e !== null && (e = e.dehydrated, e !== null && (a = ux.bind(
           null,
           a
-        ), Ox(e, a))));
+        ), Cx(e, a))));
         break;
       case 22:
-        if (r = a.memoizedState !== null || Ao, !r) {
-          o = o !== null && o.memoizedState !== null || rt, d = Ao;
+        if (r = a.memoizedState !== null || Oo, !r) {
+          o = o !== null && o.memoizedState !== null || rt, d = Oo;
           var u = rt;
-          Ao = r, (rt = o) && !u ? No(
+          Oo = r, (rt = o) && !u ? To(
             e,
             a,
             (a.subtreeFlags & 8772) !== 0
-          ) : Co(e, a), Ao = d, rt = u;
+          ) : No(e, a), Oo = d, rt = u;
         }
         break;
       case 30:
         break;
       default:
-        Co(e, a);
+        No(e, a);
     }
   }
   function xk(e) {
     var o = e.alternate;
     o !== null && (e.alternate = null, xk(o)), e.child = null, e.deletions = null, e.sibling = null, e.tag === 5 && (o = e.stateNode, o !== null && _l(o)), e.stateNode = null, e.return = null, e.dependencies = null, e.memoizedProps = null, e.memoizedState = null, e.pendingProps = null, e.stateNode = null, e.updateQueue = null;
   }
-  var qe = null, It = !1;
-  function Oo(e, o, a) {
+  var $e = null, It = !1;
+  function Co(e, o, a) {
     for (a = a.child; a !== null; )
       Ik(e, o, a), a = a.sibling;
   }
@@ -10390,7 +10390,7 @@ Error generating stack: ` + r.message + `
       }
     switch (a.tag) {
       case 26:
-        rt || uo(a, o), Oo(
+        rt || uo(a, o), Co(
           e,
           o,
           a
@@ -10398,24 +10398,24 @@ Error generating stack: ` + r.message + `
         break;
       case 27:
         rt || uo(a, o);
-        var r = qe, d = It;
-        rn(a.type) && (qe = a.stateNode, It = !1), Oo(
+        var r = $e, d = It;
+        sn(a.type) && ($e = a.stateNode, It = !1), Co(
           e,
           o,
           a
-        ), Mi(a.stateNode), qe = r, It = d;
+        ), Mi(a.stateNode), $e = r, It = d;
         break;
       case 5:
         rt || uo(a, o);
       case 6:
-        if (r = qe, d = It, qe = null, Oo(
+        if (r = $e, d = It, $e = null, Co(
           e,
           o,
           a
-        ), qe = r, It = d, qe !== null)
+        ), $e = r, It = d, $e !== null)
           if (It)
             try {
-              (qe.nodeType === 9 ? qe.body : qe.nodeName === "HTML" ? qe.ownerDocument.body : qe).removeChild(a.stateNode);
+              ($e.nodeType === 9 ? $e.body : $e.nodeName === "HTML" ? $e.ownerDocument.body : $e).removeChild(a.stateNode);
             } catch (u) {
               Re(
                 a,
@@ -10425,7 +10425,7 @@ Error generating stack: ` + r.message + `
             }
           else
             try {
-              qe.removeChild(a.stateNode);
+              $e.removeChild(a.stateNode);
             } catch (u) {
               Re(
                 a,
@@ -10435,23 +10435,23 @@ Error generating stack: ` + r.message + `
             }
         break;
       case 18:
-        qe !== null && (It ? (e = qe, hh(
+        $e !== null && (It ? (e = $e, hh(
           e.nodeType === 9 ? e.body : e.nodeName === "HTML" ? e.ownerDocument.body : e,
           a.stateNode
-        ), Ma(e)) : hh(qe, a.stateNode));
+        ), Ma(e)) : hh($e, a.stateNode));
         break;
       case 4:
-        r = qe, d = It, qe = a.stateNode.containerInfo, It = !0, Oo(
+        r = $e, d = It, $e = a.stateNode.containerInfo, It = !0, Co(
           e,
           o,
           a
-        ), qe = r, It = d;
+        ), $e = r, It = d;
         break;
       case 0:
       case 11:
       case 14:
       case 15:
-        Qo(2, a, o), rt || Qo(4, a, o), Oo(
+        Wo(2, a, o), rt || Wo(4, a, o), Co(
           e,
           o,
           a
@@ -10462,28 +10462,28 @@ Error generating stack: ` + r.message + `
           a,
           o,
           r
-        )), Oo(
+        )), Co(
           e,
           o,
           a
         );
         break;
       case 21:
-        Oo(
+        Co(
           e,
           o,
           a
         );
         break;
       case 22:
-        rt = (r = rt) || a.memoizedState !== null, Oo(
+        rt = (r = rt) || a.memoizedState !== null, Co(
           e,
           o,
           a
         ), rt = r;
         break;
       default:
-        Oo(
+        Co(
           e,
           o,
           a
@@ -10508,7 +10508,7 @@ Error generating stack: ` + r.message + `
         Re(o, o.return, a);
       }
   }
-  function tx(e) {
+  function ox(e) {
     switch (e.tag) {
       case 31:
       case 13:
@@ -10522,11 +10522,11 @@ Error generating stack: ` + r.message + `
     }
   }
   function us(e, o) {
-    var a = tx(e);
+    var a = ox(e);
     o.forEach(function(r) {
       if (!a.has(r)) {
         a.add(r);
-        var d = ux.bind(null, e, r);
+        var d = cx.bind(null, e, r);
         r.then(d, d);
       }
     });
@@ -10539,23 +10539,23 @@ Error generating stack: ` + r.message + `
         e: for (; b !== null; ) {
           switch (b.tag) {
             case 27:
-              if (rn(b.type)) {
-                qe = b.stateNode, It = !1;
+              if (sn(b.type)) {
+                $e = b.stateNode, It = !1;
                 break e;
               }
               break;
             case 5:
-              qe = b.stateNode, It = !1;
+              $e = b.stateNode, It = !1;
               break e;
             case 3:
             case 4:
-              qe = b.stateNode.containerInfo, It = !0;
+              $e = b.stateNode.containerInfo, It = !0;
               break e;
           }
           b = b.return;
         }
-        if (qe === null) throw Error(s(160));
-        Ik(u, k, d), qe = null, It = !1, u = d.alternate, u !== null && (u.return = null), d.return = null;
+        if ($e === null) throw Error(s(160));
+        Ik(u, k, d), $e = null, It = !1, u = d.alternate, u !== null && (u.return = null), d.return = null;
       }
     if (o.subtreeFlags & 13886)
       for (o = o.child; o !== null; )
@@ -10569,10 +10569,10 @@ Error generating stack: ` + r.message + `
       case 11:
       case 14:
       case 15:
-        Et(o, e), wt(e), r & 4 && (Qo(3, e, e.return), wi(3, e), Qo(5, e, e.return));
+        Et(o, e), wt(e), r & 4 && (Wo(3, e, e.return), wi(3, e), Wo(5, e, e.return));
         break;
       case 1:
-        Et(o, e), wt(e), r & 512 && (rt || a === null || uo(a, a.return)), r & 64 && Ao && (e = e.updateQueue, e !== null && (r = e.callbacks, r !== null && (a = e.shared.hiddenCallbacks, e.shared.hiddenCallbacks = a === null ? r : a.concat(r))));
+        Et(o, e), wt(e), r & 512 && (rt || a === null || uo(a, a.return)), r & 64 && Oo && (e = e.updateQueue, e !== null && (r = e.callbacks, r !== null && (a = e.shared.hiddenCallbacks, e.shared.hiddenCallbacks = a === null ? r : a.concat(r))));
         break;
       case 26:
         var d = oo;
@@ -10712,9 +10712,9 @@ Error generating stack: ` + r.message + `
         break;
       case 22:
         d = e.memoizedState !== null;
-        var I = a !== null && a.memoizedState !== null, D = Ao, K = rt;
-        if (Ao = D || d, rt = K || I, Et(o, e), rt = K, Ao = D, wt(e), r & 8192)
-          e: for (o = e.stateNode, o._visibility = d ? o._visibility & -2 : o._visibility | 1, d && (a === null || I || Ao || rt || Hn(e)), a = null, o = e; ; ) {
+        var I = a !== null && a.memoizedState !== null, D = Oo, K = rt;
+        if (Oo = D || d, rt = K || I, Et(o, e), rt = K, Oo = D, wt(e), r & 8192)
+          e: for (o = e.stateNode, o._visibility = d ? o._visibility & -2 : o._visibility | 1, d && (a === null || I || Oo || rt || Hn(e)), a = null, o = e; ; ) {
             if (o.tag === 5 || o.tag === 26) {
               if (a === null) {
                 I = a = o;
@@ -10822,7 +10822,7 @@ Error generating stack: ` + r.message + `
         Ak(o), o.tag === 5 && o.flags & 1024 && o.stateNode.reset(), e = e.sibling;
       }
   }
-  function Co(e, o) {
+  function No(e, o) {
     if (o.subtreeFlags & 8772)
       for (o = o.child; o !== null; )
         zk(e, o.alternate, o), o = o.sibling;
@@ -10835,7 +10835,7 @@ Error generating stack: ` + r.message + `
         case 11:
         case 14:
         case 15:
-          Qo(4, o, o.return), Hn(o);
+          Wo(4, o, o.return), Hn(o);
           break;
         case 1:
           uo(o, o.return);
@@ -10864,21 +10864,21 @@ Error generating stack: ` + r.message + `
       e = e.sibling;
     }
   }
-  function No(e, o, a) {
+  function To(e, o, a) {
     for (a = a && (o.subtreeFlags & 8772) !== 0, o = o.child; o !== null; ) {
       var r = o.alternate, d = e, u = o, k = u.flags;
       switch (u.tag) {
         case 0:
         case 11:
         case 15:
-          No(
+          To(
             d,
             u,
             a
           ), wi(4, u);
           break;
         case 1:
-          if (No(
+          if (To(
             d,
             u,
             a
@@ -10905,35 +10905,35 @@ Error generating stack: ` + r.message + `
           jk(u);
         case 26:
         case 5:
-          No(
+          To(
             d,
             u,
             a
           ), a && r === null && k & 4 && bk(u), Si(u, u.return);
           break;
         case 12:
-          No(
+          To(
             d,
             u,
             a
           );
           break;
         case 31:
-          No(
+          To(
             d,
             u,
             a
           ), a && k & 4 && Ek(d, u);
           break;
         case 13:
-          No(
+          To(
             d,
             u,
             a
           ), a && k & 4 && wk(d, u);
           break;
         case 22:
-          u.memoizedState === null && No(
+          u.memoizedState === null && To(
             d,
             u,
             a
@@ -10942,7 +10942,7 @@ Error generating stack: ` + r.message + `
         case 30:
           break;
         default:
-          No(
+          To(
             d,
             u,
             a
@@ -11175,7 +11175,7 @@ Error generating stack: ` + r.message + `
           e,
           o,
           a
-        ), e.flags & Oi && e.memoizedState !== null && Kx(
+        ), e.flags & Oi && e.memoizedState !== null && Ux(
           a,
           oo,
           e.memoizedState,
@@ -11248,7 +11248,7 @@ Error generating stack: ` + r.message + `
       case 0:
       case 11:
       case 15:
-        Ci(e), e.flags & 2048 && Qo(9, e, e.return);
+        Ci(e), e.flags & 2048 && Wo(9, e, e.return);
         break;
       case 3:
         Ci(e);
@@ -11282,7 +11282,7 @@ Error generating stack: ` + r.message + `
         case 0:
         case 11:
         case 15:
-          Qo(8, o, o.return), cs(o);
+          Wo(8, o, o.return), cs(o);
           break;
         case 22:
           a = o.stateNode, a._visibility & 2 && (a._visibility &= -3, cs(o));
@@ -11300,7 +11300,7 @@ Error generating stack: ` + r.message + `
         case 0:
         case 11:
         case 15:
-          Qo(8, a, o);
+          Wo(8, a, o);
           break;
         case 23:
         case 22:
@@ -11329,7 +11329,7 @@ Error generating stack: ` + r.message + `
         }
     }
   }
-  var ox = {
+  var nx = {
     getCacheForType: function(e) {
       var o = kt(nt), a = o.data.get(e);
       return a === void 0 && (a = e(), o.data.set(e, a)), a;
@@ -11337,7 +11337,7 @@ Error generating stack: ` + r.message + `
     cacheSignal: function() {
       return kt(nt).controller.signal;
     }
-  }, nx = typeof WeakMap == "function" ? WeakMap : Map, De = 0, Ke = null, Ee = null, Se = 0, _e = 0, Pt = null, Wo = !1, Sa = !1, su = !1, To = 0, Xe = 0, en = 0, Kn = 0, lu = 0, Lt = 0, Aa = 0, Ni = null, St = null, du = !1, ps = 0, _k = 0, ms = 1 / 0, vs = null, tn = null, st = 0, on = null, Oa = null, Do = 0, uu = 0, cu = null, Rk = null, Ti = 0, pu = null;
+  }, ax = typeof WeakMap == "function" ? WeakMap : Map, De = 0, Ke = null, Ee = null, Se = 0, _e = 0, Pt = null, en = !1, Sa = !1, su = !1, Do = 0, Xe = 0, tn = 0, Kn = 0, lu = 0, Lt = 0, Aa = 0, Ni = null, St = null, du = !1, ps = 0, _k = 0, ms = 1 / 0, vs = null, on = null, st = 0, nn = null, Oa = null, _o = 0, uu = 0, cu = null, Rk = null, Ti = 0, pu = null;
   function Bt() {
     return (De & 2) !== 0 && Se !== 0 ? Se & -Se : R.T !== null ? bu() : Xp();
   }
@@ -11350,12 +11350,12 @@ Error generating stack: ` + r.message + `
     return e = Rt.current, e !== null && (e.flags |= 32), Lt;
   }
   function At(e, o, a) {
-    (e === Ke && (_e === 2 || _e === 9) || e.cancelPendingCommit !== null) && (Ca(e, 0), nn(
+    (e === Ke && (_e === 2 || _e === 9) || e.cancelPendingCommit !== null) && (Ca(e, 0), an(
       e,
       Se,
       Lt,
       !1
-    )), Wa(e, a), ((De & 2) === 0 || e !== Ke) && (e === Ke && ((De & 2) === 0 && (Kn |= a), Xe === 4 && nn(
+    )), Wa(e, a), ((De & 2) === 0 || e !== Ke) && (e === Ke && ((De & 2) === 0 && (Kn |= a), Xe === 4 && an(
       e,
       Se,
       Lt,
@@ -11364,13 +11364,13 @@ Error generating stack: ` + r.message + `
   }
   function Pk(e, o, a) {
     if ((De & 6) !== 0) throw Error(s(327));
-    var r = !a && (o & 127) === 0 && (o & e.expiredLanes) === 0 || Qa(e, o), d = r ? rx(e, o) : vu(e, o, !0), u = r;
+    var r = !a && (o & 127) === 0 && (o & e.expiredLanes) === 0 || Qa(e, o), d = r ? sx(e, o) : vu(e, o, !0), u = r;
     do {
       if (d === 0) {
-        Sa && !r && nn(e, o, 0, !1);
+        Sa && !r && an(e, o, 0, !1);
         break;
       } else {
-        if (a = e.current.alternate, u && !ax(a)) {
+        if (a = e.current.alternate, u && !ix(a)) {
           d = vu(e, o, !1), u = !1;
           continue;
         }
@@ -11405,7 +11405,7 @@ Error generating stack: ` + r.message + `
           }
         }
         if (d === 1) {
-          Ca(e, 0), nn(e, o, 0, !0);
+          Ca(e, 0), an(e, o, 0, !0);
           break;
         }
         e: {
@@ -11416,11 +11416,11 @@ Error generating stack: ` + r.message + `
             case 4:
               if ((o & 4194048) !== o) break;
             case 6:
-              nn(
+              an(
                 r,
                 o,
                 Lt,
-                !Wo
+                !en
               );
               break e;
             case 2:
@@ -11433,13 +11433,13 @@ Error generating stack: ` + r.message + `
               throw Error(s(329));
           }
           if ((o & 62914560) === o && (d = ps + 300 - Ue(), 10 < d)) {
-            if (nn(
+            if (an(
               r,
               o,
               Lt,
-              !Wo
+              !en
             ), Ir(r, 0, !0) !== 0) break e;
-            Do = o, r.timeoutHandle = vh(
+            _o = o, r.timeoutHandle = vh(
               Lk.bind(
                 null,
                 r,
@@ -11451,7 +11451,7 @@ Error generating stack: ` + r.message + `
                 Lt,
                 Kn,
                 Aa,
-                Wo,
+                en,
                 u,
                 "Throttled",
                 -0,
@@ -11471,7 +11471,7 @@ Error generating stack: ` + r.message + `
             Lt,
             Kn,
             Aa,
-            Wo,
+            en,
             u,
             null,
             -0,
@@ -11493,18 +11493,18 @@ Error generating stack: ` + r.message + `
         suspenseyImages: [],
         waitingForImages: !0,
         waitingForViewTransition: !1,
-        unsuspend: bo
+        unsuspend: fo
       }, Ck(
         o,
         u,
         Y
       );
       var ne = (u & 62914560) === u ? ps - Ue() : (u & 4194048) === u ? _k - Ue() : 0;
-      if (ne = Ux(
+      if (ne = Vx(
         Y,
         ne
       ), ne !== null) {
-        Do = u, e.cancelPendingCommit = ne(
+        _o = u, e.cancelPendingCommit = ne(
           qk.bind(
             null,
             e,
@@ -11522,7 +11522,7 @@ Error generating stack: ` + r.message + `
             _,
             P
           )
-        ), nn(e, u, k, !D);
+        ), an(e, u, k, !D);
         return;
       }
     }
@@ -11538,7 +11538,7 @@ Error generating stack: ` + r.message + `
       I
     );
   }
-  function ax(e) {
+  function ix(e) {
     for (var o = e; ; ) {
       var a = o.tag;
       if ((a === 0 || a === 11 || a === 15) && o.flags & 16384 && (a = o.updateQueue, a !== null && (a = a.stores, a !== null)))
@@ -11564,7 +11564,7 @@ Error generating stack: ` + r.message + `
     }
     return !0;
   }
-  function nn(e, o, a, r) {
+  function an(e, o, a, r) {
     o &= ~lu, o &= ~Kn, e.suspendedLanes |= o, e.pingedLanes &= ~o, r && (e.warmLanes |= o), r = e.expirationTimes;
     for (var d = o; 0 < d; ) {
       var u = 31 - Tt(d), k = 1 << u;
@@ -11580,7 +11580,7 @@ Error generating stack: ` + r.message + `
       if (_e === 0)
         var e = Ee.return;
       else
-        e = Ee, zo = Tn = null, Od(e), ja = null, ki = 0, e = Ee;
+        e = Ee, xo = Tn = null, Od(e), ja = null, ki = 0, e = Ee;
       for (; e !== null; )
         kk(e.alternate, e), e = e.return;
       Ee = null;
@@ -11588,14 +11588,14 @@ Error generating stack: ` + r.message + `
   }
   function Ca(e, o) {
     var a = e.timeoutHandle;
-    a !== -1 && (e.timeoutHandle = -1, Ix(a)), a = e.cancelPendingCommit, a !== null && (e.cancelPendingCommit = null, a()), Do = 0, mu(), Ke = e, Ee = a = jo(e.current, null), Se = o, _e = 0, Pt = null, Wo = !1, Sa = Qa(e, o), su = !1, Aa = Lt = lu = Kn = en = Xe = 0, St = Ni = null, du = !1, (o & 8) !== 0 && (o |= o & 32);
+    a !== -1 && (e.timeoutHandle = -1, Ex(a)), a = e.cancelPendingCommit, a !== null && (e.cancelPendingCommit = null, a()), _o = 0, mu(), Ke = e, Ee = a = go(e.current, null), Se = o, _e = 0, Pt = null, en = !1, Sa = Qa(e, o), su = !1, Aa = Lt = lu = Kn = tn = Xe = 0, St = Ni = null, du = !1, (o & 8) !== 0 && (o |= o & 32);
     var r = e.entangledLanes;
     if (r !== 0)
       for (e = e.entanglements, r &= o; 0 < r; ) {
         var d = 31 - Tt(r), u = 1 << d;
         o |= e[d], r &= ~u;
       }
-    return To = o, Mr(), a;
+    return Do = o, Mr(), a;
   }
   function Bk(e, o) {
     ge = null, R.H = xi, o === fa || o === Fr ? (o = tv(), _e = 3) : o === yd ? (o = tv(), _e = 4) : _e = o === Yd ? 8 : o !== null && typeof o == "object" && typeof o.then == "function" ? 6 : 1, Pt = o, Ee === null && (Xe = 1, as(
@@ -11613,10 +11613,10 @@ Error generating stack: ` + r.message + `
   }
   function Uk() {
     var e = R.A;
-    return R.A = ox, e;
+    return R.A = nx, e;
   }
   function hs() {
-    Xe = 4, Wo || (Se & 4194048) !== Se && Rt.current !== null || (Sa = !0), (en & 134217727) === 0 && (Kn & 134217727) === 0 || Ke === null || nn(
+    Xe = 4, en || (Se & 4194048) !== Se && Rt.current !== null || (Sa = !0), (tn & 134217727) === 0 && (Kn & 134217727) === 0 || Ke === null || an(
       Ke,
       Se,
       Lt,
@@ -11652,18 +11652,18 @@ Error generating stack: ` + r.message + `
               D = _e, _e = 0, Pt = null, Na(e, b, I, D);
           }
         }
-        ix(), k = Xe;
+        rx(), k = Xe;
         break;
       } catch (K) {
         Bk(e, K);
       }
     while (!0);
-    return o && e.shellSuspendCounter++, zo = Tn = null, De = r, R.H = d, R.A = u, Ee === null && (Ke = null, Se = 0, Mr()), k;
+    return o && e.shellSuspendCounter++, xo = Tn = null, De = r, R.H = d, R.A = u, Ee === null && (Ke = null, Se = 0, Mr()), k;
   }
-  function ix() {
+  function rx() {
     for (; Ee !== null; ) Vk(Ee);
   }
-  function rx(e, o) {
+  function sx(e, o) {
     var a = De;
     De |= 2;
     var r = Kk(), d = Uk();
@@ -11730,20 +11730,20 @@ Error generating stack: ` + r.message + `
               throw Error(s(462));
           }
         }
-        sx();
+        lx();
         break;
       } catch (K) {
         Bk(e, K);
       }
     while (!0);
-    return zo = Tn = null, R.H = r, R.A = d, De = a, Ee !== null ? 0 : (Ke = null, Se = 0, Mr(), Xe);
+    return xo = Tn = null, R.H = r, R.A = d, De = a, Ee !== null ? 0 : (Ke = null, Se = 0, Mr(), Xe);
   }
-  function sx() {
+  function lx() {
     for (; Ee !== null && !jt(); )
       Vk(Ee);
   }
   function Vk(e) {
-    var o = mk(e.alternate, e, To);
+    var o = mk(e.alternate, e, Do);
     e.memoizedProps = e.pendingProps, o === null ? ys(e) : Ee = o;
   }
   function Fk(e) {
@@ -11773,15 +11773,15 @@ Error generating stack: ` + r.message + `
       case 5:
         Od(o);
       default:
-        kk(a, o), o = Ee = Um(o, To), o = mk(a, o, To);
+        kk(a, o), o = Ee = Um(o, Do), o = mk(a, o, Do);
     }
     e.memoizedProps = e.pendingProps, o === null ? ys(e) : Ee = o;
   }
   function Na(e, o, a, r) {
-    zo = Tn = null, Od(o), ja = null, ki = 0;
+    xo = Tn = null, Od(o), ja = null, ki = 0;
     var d = o.return;
     try {
-      if (Zz(
+      if (Jz(
         e,
         d,
         o,
@@ -11802,7 +11802,7 @@ Error generating stack: ` + r.message + `
       ), Ee = null;
       return;
     }
-    o.flags & 32768 ? (Ce || r === 1 ? e = !0 : Sa || (Se & 536870912) !== 0 ? e = !1 : (Wo = e = !0, (r === 2 || r === 9 || r === 3 || r === 6) && (r = Rt.current, r !== null && r.tag === 13 && (r.flags |= 16384))), Yk(o, e)) : ys(o);
+    o.flags & 32768 ? (Ce || r === 1 ? e = !0 : Sa || (Se & 536870912) !== 0 ? e = !1 : (en = e = !0, (r === 2 || r === 9 || r === 3 || r === 6) && (r = Rt.current, r !== null && r.tag === 13 && (r.flags |= 16384))), Yk(o, e)) : ys(o);
   }
   function ys(e) {
     var o = e;
@@ -11810,15 +11810,15 @@ Error generating stack: ` + r.message + `
       if ((o.flags & 32768) !== 0) {
         Yk(
           o,
-          Wo
+          en
         );
         return;
       }
       e = o.return;
-      var a = Qz(
+      var a = Wz(
         o.alternate,
         o,
-        To
+        Do
       );
       if (a !== null) {
         Ee = a;
@@ -11834,7 +11834,7 @@ Error generating stack: ` + r.message + `
   }
   function Yk(e, o) {
     do {
-      var a = Wz(e.alternate, e);
+      var a = ex(e.alternate, e);
       if (a !== null) {
         a.flags &= 32767, Ee = a;
         return;
@@ -11855,19 +11855,19 @@ Error generating stack: ` + r.message + `
     if ((De & 6) !== 0) throw Error(s(327));
     if (o !== null) {
       if (o === e.current) throw Error(s(177));
-      if (u = o.lanes | o.childLanes, u |= od, Hg(
+      if (u = o.lanes | o.childLanes, u |= od, Kg(
         e,
         a,
         u,
         k,
         b,
         I
-      ), e === Ke && (Ee = Ke = null, Se = 0), Oa = o, on = e, Do = a, uu = u, cu = d, Rk = r, (o.subtreeFlags & 10256) !== 0 || (o.flags & 10256) !== 0 ? (e.callbackNode = null, e.callbackPriority = 0, cx(jr, function() {
+      ), e === Ke && (Ee = Ke = null, Se = 0), Oa = o, nn = e, _o = a, uu = u, cu = d, Rk = r, (o.subtreeFlags & 10256) !== 0 || (o.flags & 10256) !== 0 ? (e.callbackNode = null, e.callbackPriority = 0, px(jr, function() {
         return Xk(), null;
       })) : (e.callbackNode = null, e.callbackPriority = 0), r = (o.flags & 13878) !== 0, (o.subtreeFlags & 13878) !== 0 || r) {
         r = R.T, R.T = null, d = X.p, X.p = 2, k = De, De |= 4;
         try {
-          ex(e, o, a);
+          tx(e, o, a);
         } finally {
           De = k, X.p = d, R.T = r;
         }
@@ -11878,7 +11878,7 @@ Error generating stack: ` + r.message + `
   function $k() {
     if (st === 1) {
       st = 0;
-      var e = on, o = Oa, a = (o.flags & 13878) !== 0;
+      var e = nn, o = Oa, a = (o.flags & 13878) !== 0;
       if ((o.subtreeFlags & 13878) !== 0 || a) {
         a = R.T, R.T = null;
         var r = X.p;
@@ -11940,7 +11940,7 @@ Error generating stack: ` + r.message + `
   function Gk() {
     if (st === 2) {
       st = 0;
-      var e = on, o = Oa, a = (o.flags & 8772) !== 0;
+      var e = nn, o = Oa, a = (o.flags & 8772) !== 0;
       if ((o.subtreeFlags & 8772) !== 0 || a) {
         a = R.T, R.T = null;
         var r = X.p;
@@ -11959,10 +11959,10 @@ Error generating stack: ` + r.message + `
   function Zk() {
     if (st === 4 || st === 3) {
       st = 0, xn();
-      var e = on, o = Oa, a = Do, r = Rk;
-      (o.subtreeFlags & 10256) !== 0 || (o.flags & 10256) !== 0 ? st = 5 : (st = 0, Oa = on = null, Jk(e, e.pendingLanes));
+      var e = nn, o = Oa, a = _o, r = Rk;
+      (o.subtreeFlags & 10256) !== 0 || (o.flags & 10256) !== 0 ? st = 5 : (st = 0, Oa = nn = null, Jk(e, e.pendingLanes));
       var d = e.pendingLanes;
-      if (d === 0 && (tn = null), Tl(a), o = o.stateNode, Nt && typeof Nt.onCommitFiberRoot == "function")
+      if (d === 0 && (on = null), Tl(a), o = o.stateNode, Nt && typeof Nt.onCommitFiberRoot == "function")
         try {
           Nt.onCommitFiberRoot(
             Xa,
@@ -11985,7 +11985,7 @@ Error generating stack: ` + r.message + `
           R.T = o, X.p = d;
         }
       }
-      (Do & 3) !== 0 && bs(), co(e), d = e.pendingLanes, (a & 261930) !== 0 && (d & 42) !== 0 ? e === pu ? Ti++ : (Ti = 0, pu = e) : Ti = 0, Di(0);
+      (_o & 3) !== 0 && bs(), co(e), d = e.pendingLanes, (a & 261930) !== 0 && (d & 42) !== 0 ? e === pu ? Ti++ : (Ti = 0, pu = e) : Ti = 0, Di(0);
     }
   }
   function Jk(e, o) {
@@ -11996,13 +11996,13 @@ Error generating stack: ` + r.message + `
   }
   function Xk() {
     if (st !== 5) return !1;
-    var e = on, o = uu;
+    var e = nn, o = uu;
     uu = 0;
-    var a = Tl(Do), r = R.T, d = X.p;
+    var a = Tl(_o), r = R.T, d = X.p;
     try {
       X.p = 32 > a ? 32 : a, R.T = null, a = cu, cu = null;
-      var u = on, k = Do;
-      if (st = 0, Oa = on = null, Do = 0, (De & 6) !== 0) throw Error(s(331));
+      var u = nn, k = _o;
+      if (st = 0, Oa = nn = null, _o = 0, (De & 6) !== 0) throw Error(s(331));
       var b = De;
       if (De |= 4, Tk(u.current), Ok(
         u,
@@ -12020,7 +12020,7 @@ Error generating stack: ` + r.message + `
     }
   }
   function Qk(e, o, a) {
-    o = $t(a, o), o = Fd(e.stateNode, o, 2), e = Zo(e, o, 2), e !== null && (Wa(e, 2), co(e));
+    o = $t(a, o), o = Fd(e.stateNode, o, 2), e = Jo(e, o, 2), e !== null && (Wa(e, 2), co(e));
   }
   function Re(e, o, a) {
     if (e.tag === 3)
@@ -12036,8 +12036,8 @@ Error generating stack: ` + r.message + `
           break;
         } else if (o.tag === 1) {
           var r = o.stateNode;
-          if (typeof o.type.getDerivedStateFromError == "function" || typeof r.componentDidCatch == "function" && (tn === null || !tn.has(r))) {
-            e = $t(a, e), a = Wv(2), r = Zo(o, a, 2), r !== null && (ek(
+          if (typeof o.type.getDerivedStateFromError == "function" || typeof r.componentDidCatch == "function" && (on === null || !on.has(r))) {
+            e = $t(a, e), a = Wv(2), r = Jo(o, a, 2), r !== null && (ek(
               a,
               r,
               o,
@@ -12052,25 +12052,25 @@ Error generating stack: ` + r.message + `
   function ku(e, o, a) {
     var r = e.pingCache;
     if (r === null) {
-      r = e.pingCache = new nx();
+      r = e.pingCache = new ax();
       var d = /* @__PURE__ */ new Set();
       r.set(o, d);
     } else
       d = r.get(o), d === void 0 && (d = /* @__PURE__ */ new Set(), r.set(o, d));
-    d.has(a) || (su = !0, d.add(a), e = lx.bind(null, e, o, a), o.then(e, e));
+    d.has(a) || (su = !0, d.add(a), e = dx.bind(null, e, o, a), o.then(e, e));
   }
-  function lx(e, o, a) {
+  function dx(e, o, a) {
     var r = e.pingCache;
     r !== null && r.delete(o), e.pingedLanes |= e.suspendedLanes & a, e.warmLanes &= ~a, Ke === e && (Se & a) === a && (Xe === 4 || Xe === 3 && (Se & 62914560) === Se && 300 > Ue() - ps ? (De & 2) === 0 && Ca(e, 0) : lu |= a, Aa === Se && (Aa = 0)), co(e);
   }
   function Wk(e, o) {
     o === 0 && (o = $p()), e = On(e, o), e !== null && (Wa(e, o), co(e));
   }
-  function dx(e) {
+  function ux(e) {
     var o = e.memoizedState, a = 0;
     o !== null && (a = o.retryLane), Wk(e, a);
   }
-  function ux(e, o) {
+  function cx(e, o) {
     var a = 0;
     switch (e.tag) {
       case 31:
@@ -12089,12 +12089,12 @@ Error generating stack: ` + r.message + `
     }
     r !== null && r.delete(o), Wk(e, a);
   }
-  function cx(e, o) {
+  function px(e, o) {
     return ye(e, o);
   }
-  var fs = null, Ta = null, hu = !1, js = !1, yu = !1, an = 0;
+  var fs = null, Ta = null, hu = !1, js = !1, yu = !1, rn = 0;
   function co(e) {
-    e !== Ta && e.next === null && (Ta === null ? fs = Ta = e : Ta = Ta.next = e), js = !0, hu || (hu = !0, mx());
+    e !== Ta && e.next === null && (Ta === null ? fs = Ta = e : Ta = Ta.next = e), js = !0, hu || (hu = !0, vx());
   }
   function Di(e, o) {
     if (!yu && js) {
@@ -12121,23 +12121,23 @@ Error generating stack: ` + r.message + `
       yu = !1;
     }
   }
-  function px() {
+  function mx() {
     eh();
   }
   function eh() {
     js = hu = !1;
     var e = 0;
-    an !== 0 && xx() && (e = an);
+    rn !== 0 && Ix() && (e = rn);
     for (var o = Ue(), a = null, r = fs; r !== null; ) {
       var d = r.next, u = th(r, o);
       u === 0 ? (r.next = null, a === null ? fs = d : a.next = d, d === null && (Ta = a)) : (a = r, (e !== 0 || (u & 3) !== 0) && (js = !0)), r = d;
     }
-    st !== 0 && st !== 5 || Di(e), an !== 0 && (an = 0);
+    st !== 0 && st !== 5 || Di(e), rn !== 0 && (rn = 0);
   }
   function th(e, o) {
     for (var a = e.suspendedLanes, r = e.pingedLanes, d = e.expirationTimes, u = e.pendingLanes & -62914561; 0 < u; ) {
       var k = 31 - Tt(u), b = 1 << k, I = d[k];
-      I === -1 ? ((b & a) === 0 || (b & r) !== 0) && (d[k] = Bg(b, o)) : I <= o && (e.expiredLanes |= b), u &= ~b;
+      I === -1 ? ((b & a) === 0 || (b & r) !== 0) && (d[k] = Hg(b, o)) : I <= o && (e.expiredLanes |= b), u &= ~b;
     }
     if (o = Ke, a = Se, a = Ir(
       e,
@@ -12182,20 +12182,20 @@ Error generating stack: ` + r.message + `
     if (bs()) return null;
     Pk(e, o, !0);
   }
-  function mx() {
-    Ex(function() {
+  function vx() {
+    wx(function() {
       (De & 6) !== 0 ? ye(
         Qn,
-        px
+        mx
       ) : eh();
     });
   }
   function bu() {
-    if (an === 0) {
+    if (rn === 0) {
       var e = ya;
-      e === 0 && (e = gr, gr <<= 1, (gr & 261888) === 0 && (gr = 256)), an = e;
+      e === 0 && (e = gr, gr <<= 1, (gr & 261888) === 0 && (gr = 256)), rn = e;
     }
-    return an;
+    return rn;
   }
   function ah(e) {
     return e == null || typeof e == "symbol" || typeof e == "boolean" ? null : typeof e == "function" ? e : Ar("" + e);
@@ -12204,7 +12204,7 @@ Error generating stack: ` + r.message + `
     var a = o.ownerDocument.createElement("input");
     return a.name = o.name, a.value = o.value, e.id && a.setAttribute("form", e.id), o.parentNode.insertBefore(a, o), e = new FormData(e), a.parentNode.removeChild(a), e;
   }
-  function vx(e, o, a, r, d) {
+  function kx(e, o, a, r, d) {
     if (o === "submit" && a && a.stateNode === d) {
       var u = ah(
         (d[zt] || null).action
@@ -12224,7 +12224,7 @@ Error generating stack: ` + r.message + `
             instance: null,
             listener: function() {
               if (r.defaultPrevented) {
-                if (an !== 0) {
+                if (rn !== 0) {
                   var I = k ? ih(d, k) : new FormData(d);
                   Ld(
                     a,
@@ -12258,13 +12258,13 @@ Error generating stack: ` + r.message + `
     }
   }
   for (var fu = 0; fu < td.length; fu++) {
-    var ju = td[fu], kx = ju.toLowerCase(), hx = ju[0].toUpperCase() + ju.slice(1);
+    var ju = td[fu], hx = ju.toLowerCase(), yx = ju[0].toUpperCase() + ju.slice(1);
     to(
-      kx,
-      "on" + hx
+      hx,
+      "on" + yx
     );
   }
-  to(Mm, "onAnimationEnd"), to(Pm, "onAnimationIteration"), to(Lm, "onAnimationStart"), to("dblclick", "onDoubleClick"), to("focusin", "onFocus"), to("focusout", "onBlur"), to(Tz, "onTransitionRun"), to(Dz, "onTransitionStart"), to(_z, "onTransitionCancel"), to(Bm, "onTransitionEnd"), na("onMouseEnter", ["mouseout", "mouseover"]), na("onMouseLeave", ["mouseout", "mouseover"]), na("onPointerEnter", ["pointerout", "pointerover"]), na("onPointerLeave", ["pointerout", "pointerover"]), En(
+  to(Mm, "onAnimationEnd"), to(Pm, "onAnimationIteration"), to(Lm, "onAnimationStart"), to("dblclick", "onDoubleClick"), to("focusin", "onFocus"), to("focusout", "onBlur"), to(Dz, "onTransitionRun"), to(_z, "onTransitionStart"), to(Rz, "onTransitionCancel"), to(Bm, "onTransitionEnd"), na("onMouseEnter", ["mouseout", "mouseover"]), na("onMouseLeave", ["mouseout", "mouseover"]), na("onPointerEnter", ["pointerout", "pointerover"]), na("onPointerLeave", ["pointerout", "pointerover"]), En(
     "onChange",
     "change click focusin focusout input keydown keyup selectionchange".split(" ")
   ), En(
@@ -12289,7 +12289,7 @@ Error generating stack: ` + r.message + `
   );
   var _i = "abort canplay canplaythrough durationchange emptied encrypted ended error loadeddata loadedmetadata loadstart pause play playing progress ratechange resize seeked seeking stalled suspend timeupdate volumechange waiting".split(
     " "
-  ), yx = new Set(
+  ), bx = new Set(
     "beforetoggle cancel close invalid load scroll scrollend toggle".split(" ").concat(_i)
   );
   function rh(e, o) {
@@ -12346,7 +12346,7 @@ Error generating stack: ` + r.message + `
   function zu(e) {
     if (!e[gs]) {
       e[gs] = !0, em.forEach(function(a) {
-        a !== "selectionchange" && (yx.has(a) || gu(a, !1, e), gu(a, !0, e));
+        a !== "selectionchange" && (bx.has(a) || gu(a, !1, e), gu(a, !0, e));
       });
       var o = e.nodeType === 9 ? e : e.ownerDocument;
       o === null || o[gs] || (o[gs] = !0, gu("selectionchange", !1, o));
@@ -12355,10 +12355,10 @@ Error generating stack: ` + r.message + `
   function sh(e, o, a, r) {
     switch (Mh(o)) {
       case 2:
-        var d = Yx;
+        var d = qx;
         break;
       case 8:
-        d = qx;
+        d = $x;
         break;
       default:
         d = Pu;
@@ -12413,7 +12413,7 @@ Error generating stack: ` + r.message + `
               if (Cr(a) === 0) break e;
             case "keydown":
             case "keyup":
-              P = uz;
+              P = cz;
               break;
             case "focusin":
               ne = "focus", P = ql;
@@ -12445,33 +12445,33 @@ Error generating stack: ` + r.message + `
             case "dragover":
             case "dragstart":
             case "drop":
-              P = Qg;
+              P = Wg;
               break;
             case "touchcancel":
             case "touchend":
             case "touchmove":
             case "touchstart":
-              P = mz;
+              P = vz;
               break;
             case Mm:
             case Pm:
             case Lm:
-              P = tz;
+              P = oz;
               break;
             case Bm:
-              P = kz;
+              P = hz;
               break;
             case "scroll":
             case "scrollend":
-              P = Jg;
+              P = Xg;
               break;
             case "wheel":
-              P = yz;
+              P = bz;
               break;
             case "copy":
             case "cut":
             case "paste":
-              P = nz;
+              P = az;
               break;
             case "gotpointercapture":
             case "lostpointercapture":
@@ -12485,7 +12485,7 @@ Error generating stack: ` + r.message + `
               break;
             case "toggle":
             case "beforetoggle":
-              P = fz;
+              P = jz;
           }
           var pe = (o & 4) !== 0, He = !pe && (e === "scroll" || e === "scrollend"), O = pe ? _ !== null ? _ + "Capture" : null : _;
           pe = [];
@@ -12524,7 +12524,7 @@ Error generating stack: ` + r.message + `
               K
             ), pe.target = T, pe.relatedTarget = He, F = pe), He = F, P && ne)
               t: {
-                for (pe = bx, O = P, S = ne, T = 0, F = O; F; F = pe(F))
+                for (pe = fx, O = P, S = ne, T = 0, F = O; F; F = pe(F))
                   T++;
                 F = 0;
                 for (var de = S; de; de = pe(de))
@@ -12563,13 +12563,13 @@ Error generating stack: ` + r.message + `
             var Ne = Em;
           else if (xm(_))
             if (wm)
-              Ne = Oz;
+              Ne = Cz;
             else {
-              Ne = Sz;
-              var re = wz;
+              Ne = Az;
+              var re = Sz;
             }
           else
-            P = _.nodeName, !P || P.toLowerCase() !== "input" || _.type !== "checkbox" && _.type !== "radio" ? D && Ll(D.elementType) && (Ne = Em) : Ne = Az;
+            P = _.nodeName, !P || P.toLowerCase() !== "input" || _.type !== "checkbox" && _.type !== "radio" ? D && Ll(D.elementType) && (Ne = Em) : Ne = Oz;
           if (Ne && (Ne = Ne(e, D))) {
             Im(
               Y,
@@ -12597,7 +12597,7 @@ Error generating stack: ` + r.message + `
             Wl = !1, _m(Y, a, K);
             break;
           case "selectionchange":
-            if (Nz) break;
+            if (Tz) break;
           case "keydown":
           case "keyup":
             _m(Y, a, K);
@@ -12620,13 +12620,13 @@ Error generating stack: ` + r.message + `
           }
         else
           la ? gm(e, a) && (Ae = "onCompositionEnd") : e === "keydown" && a.keyCode === 229 && (Ae = "onCompositionStart");
-        Ae && (bm && a.locale !== "ko" && (la || Ae !== "onCompositionStart" ? Ae === "onCompositionEnd" && la && (ze = mm()) : (Uo = K, Vl = "value" in Uo ? Uo.value : Uo.textContent, la = !0)), re = zs(D, Ae), 0 < re.length && (Ae = new hm(
+        Ae && (bm && a.locale !== "ko" && (la || Ae !== "onCompositionStart" ? Ae === "onCompositionEnd" && la && (ze = mm()) : (Vo = K, Vl = "value" in Vo ? Vo.value : Vo.textContent, la = !0)), re = zs(D, Ae), 0 < re.length && (Ae = new hm(
           Ae,
           e,
           null,
           a,
           K
-        ), Y.push({ event: Ae, listeners: re }), ze ? Ae.data = ze : (ze = zm(a), ze !== null && (Ae.data = ze)))), (ze = gz ? zz(e, a) : xz(e, a)) && (Ae = zs(D, "onBeforeInput"), 0 < Ae.length && (re = new hm(
+        ), Y.push({ event: Ae, listeners: re }), ze ? Ae.data = ze : (ze = zm(a), ze !== null && (Ae.data = ze)))), (ze = zz ? xz(e, a) : Iz(e, a)) && (Ae = zs(D, "onBeforeInput"), 0 < Ae.length && (re = new hm(
           "onBeforeInput",
           "beforeinput",
           null,
@@ -12635,7 +12635,7 @@ Error generating stack: ` + r.message + `
         ), Y.push({
           event: re,
           listeners: Ae
-        }), re.data = ze)), vx(
+        }), re.data = ze)), kx(
           Y,
           e,
           D,
@@ -12665,7 +12665,7 @@ Error generating stack: ` + r.message + `
     }
     return [];
   }
-  function bx(e) {
+  function fx(e) {
     if (e === null) return null;
     do
       e = e.return;
@@ -12684,10 +12684,10 @@ Error generating stack: ` + r.message + `
     }
     k.length !== 0 && e.push({ event: o, listeners: k });
   }
-  var fx = /\r\n?/g, jx = /\u0000|\uFFFD/g;
+  var jx = /\r\n?/g, gx = /\u0000|\uFFFD/g;
   function dh(e) {
-    return (typeof e == "string" ? e : "" + e).replace(fx, `
-`).replace(jx, "");
+    return (typeof e == "string" ? e : "" + e).replace(jx, `
+`).replace(gx, "");
   }
   function uh(e, o) {
     return o = dh(o), dh(e) === o;
@@ -12768,7 +12768,7 @@ Error generating stack: ` + r.message + `
         r = Ar("" + r), e.setAttribute(a, r);
         break;
       case "onClick":
-        r != null && (e.onclick = bo);
+        r != null && (e.onclick = fo);
         break;
       case "onScroll":
         r != null && we("scroll", e);
@@ -12865,7 +12865,7 @@ Error generating stack: ` + r.message + `
         we("beforetoggle", e), we("toggle", e), Er(e, "popover", r);
         break;
       case "xlinkActuate":
-        yo(
+        bo(
           e,
           "http://www.w3.org/1999/xlink",
           "xlink:actuate",
@@ -12873,7 +12873,7 @@ Error generating stack: ` + r.message + `
         );
         break;
       case "xlinkArcrole":
-        yo(
+        bo(
           e,
           "http://www.w3.org/1999/xlink",
           "xlink:arcrole",
@@ -12881,7 +12881,7 @@ Error generating stack: ` + r.message + `
         );
         break;
       case "xlinkRole":
-        yo(
+        bo(
           e,
           "http://www.w3.org/1999/xlink",
           "xlink:role",
@@ -12889,7 +12889,7 @@ Error generating stack: ` + r.message + `
         );
         break;
       case "xlinkShow":
-        yo(
+        bo(
           e,
           "http://www.w3.org/1999/xlink",
           "xlink:show",
@@ -12897,7 +12897,7 @@ Error generating stack: ` + r.message + `
         );
         break;
       case "xlinkTitle":
-        yo(
+        bo(
           e,
           "http://www.w3.org/1999/xlink",
           "xlink:title",
@@ -12905,7 +12905,7 @@ Error generating stack: ` + r.message + `
         );
         break;
       case "xlinkType":
-        yo(
+        bo(
           e,
           "http://www.w3.org/1999/xlink",
           "xlink:type",
@@ -12913,7 +12913,7 @@ Error generating stack: ` + r.message + `
         );
         break;
       case "xmlBase":
-        yo(
+        bo(
           e,
           "http://www.w3.org/XML/1998/namespace",
           "xml:base",
@@ -12921,7 +12921,7 @@ Error generating stack: ` + r.message + `
         );
         break;
       case "xmlLang":
-        yo(
+        bo(
           e,
           "http://www.w3.org/XML/1998/namespace",
           "xml:lang",
@@ -12929,7 +12929,7 @@ Error generating stack: ` + r.message + `
         );
         break;
       case "xmlSpace":
-        yo(
+        bo(
           e,
           "http://www.w3.org/XML/1998/namespace",
           "xml:space",
@@ -12943,7 +12943,7 @@ Error generating stack: ` + r.message + `
       case "textContent":
         break;
       default:
-        (!(2 < a.length) || a[0] !== "o" && a[0] !== "O" || a[1] !== "n" && a[1] !== "N") && (a = Gg.get(a) || a, Er(e, a, r));
+        (!(2 < a.length) || a[0] !== "o" && a[0] !== "O" || a[1] !== "n" && a[1] !== "N") && (a = Zg.get(a) || a, Er(e, a, r));
     }
   }
   function Iu(e, o, a, r, d, u) {
@@ -12971,7 +12971,7 @@ Error generating stack: ` + r.message + `
         r != null && we("scrollend", e);
         break;
       case "onClick":
-        r != null && (e.onclick = bo);
+        r != null && (e.onclick = fo);
         break;
       case "suppressContentEditableWarning":
       case "suppressHydrationWarning":
@@ -13183,7 +13183,7 @@ Error generating stack: ` + r.message + `
     for (b in a)
       a.hasOwnProperty(b) && (r = a[b], r != null && Be(e, o, b, r, a, null));
   }
-  function gx(e, o, a, r) {
+  function zx(e, o, a, r) {
     switch (o) {
       case "div":
       case "span":
@@ -13444,7 +13444,7 @@ Error generating stack: ` + r.message + `
         return !1;
     }
   }
-  function zx() {
+  function xx() {
     if (typeof performance.getEntriesByType == "function") {
       for (var e = 0, o = 0, a = performance.getEntriesByType("resource"), r = 0; r < a.length; r++) {
         var d = a[r], u = d.transferSize, k = d.initiatorType, b = d.duration;
@@ -13492,19 +13492,19 @@ Error generating stack: ` + r.message + `
     return e === "textarea" || e === "noscript" || typeof o.children == "string" || typeof o.children == "number" || typeof o.children == "bigint" || typeof o.dangerouslySetInnerHTML == "object" && o.dangerouslySetInnerHTML !== null && o.dangerouslySetInnerHTML.__html != null;
   }
   var Au = null;
-  function xx() {
+  function Ix() {
     var e = window.event;
     return e && e.type === "popstate" ? e === Au ? !1 : (Au = e, !0) : (Au = null, !1);
   }
-  var vh = typeof setTimeout == "function" ? setTimeout : void 0, Ix = typeof clearTimeout == "function" ? clearTimeout : void 0, kh = typeof Promise == "function" ? Promise : void 0, Ex = typeof queueMicrotask == "function" ? queueMicrotask : typeof kh < "u" ? function(e) {
-    return kh.resolve(null).then(e).catch(wx);
+  var vh = typeof setTimeout == "function" ? setTimeout : void 0, Ex = typeof clearTimeout == "function" ? clearTimeout : void 0, kh = typeof Promise == "function" ? Promise : void 0, wx = typeof queueMicrotask == "function" ? queueMicrotask : typeof kh < "u" ? function(e) {
+    return kh.resolve(null).then(e).catch(Sx);
   } : vh;
-  function wx(e) {
+  function Sx(e) {
     setTimeout(function() {
       throw e;
     });
   }
-  function rn(e) {
+  function sn(e) {
     return e === "head";
   }
   function hh(e, o) {
@@ -13567,7 +13567,7 @@ Error generating stack: ` + r.message + `
       e.removeChild(a);
     }
   }
-  function Sx(e, o, a, r) {
+  function Ax(e, o, a, r) {
     for (; e.nodeType === 1; ) {
       var d = a;
       if (e.nodeName.toLowerCase() !== o.toLowerCase()) {
@@ -13604,7 +13604,7 @@ Error generating stack: ` + r.message + `
     }
     return null;
   }
-  function Ax(e, o, a) {
+  function Ox(e, o, a) {
     if (o === "") return null;
     for (; e.nodeType !== 3; )
       if ((e.nodeType !== 1 || e.nodeName !== "INPUT" || e.type !== "hidden") && !a || (e = Qt(e.nextSibling), e === null)) return null;
@@ -13621,7 +13621,7 @@ Error generating stack: ` + r.message + `
   function Nu(e) {
     return e.data === "$!" || e.data === "$?" && e.ownerDocument.readyState !== "loading";
   }
-  function Ox(e, o) {
+  function Cx(e, o) {
     var a = e.ownerDocument;
     if (e.data === "$~") e._reactRetry = o;
     else if (e.data !== "$?" || a.readyState !== "loading")
@@ -13700,25 +13700,25 @@ Error generating stack: ` + r.message + `
   function Is(e) {
     return typeof e.getRootNode == "function" ? e.getRootNode() : e.nodeType === 9 ? e : e.ownerDocument;
   }
-  var _o = X.d;
+  var Ro = X.d;
   X.d = {
-    f: Cx,
-    r: Nx,
-    D: Tx,
-    C: Dx,
-    L: _x,
-    m: Rx,
-    X: Px,
-    S: Mx,
-    M: Lx
+    f: Nx,
+    r: Tx,
+    D: Dx,
+    C: _x,
+    L: Rx,
+    m: Mx,
+    X: Lx,
+    S: Px,
+    M: Bx
   };
-  function Cx() {
-    var e = _o.f(), o = ks();
+  function Nx() {
+    var e = Ro.f(), o = ks();
     return e || o;
   }
-  function Nx(e) {
+  function Tx(e) {
     var o = ta(e);
-    o !== null && o.tag === 5 && o.type === "form" ? Bv(o) : _o.r(e);
+    o !== null && o.tag === 5 && o.type === "form" ? Bv(o) : Ro.r(e);
   }
   var Da = typeof document > "u" ? null : document;
   function xh(e, o, a) {
@@ -13728,14 +13728,14 @@ Error generating stack: ` + r.message + `
       d = 'link[rel="' + e + '"][href="' + d + '"]', typeof a == "string" && (d += '[crossorigin="' + a + '"]'), zh.has(d) || (zh.add(d), e = { rel: e, crossOrigin: a, href: o }, r.querySelector(d) === null && (o = r.createElement("link"), yt(o, "link", e), ut(o), r.head.appendChild(o)));
     }
   }
-  function Tx(e) {
-    _o.D(e), xh("dns-prefetch", e, null);
+  function Dx(e) {
+    Ro.D(e), xh("dns-prefetch", e, null);
   }
-  function Dx(e, o) {
-    _o.C(e, o), xh("preconnect", e, o);
+  function _x(e, o) {
+    Ro.C(e, o), xh("preconnect", e, o);
   }
-  function _x(e, o, a) {
-    _o.L(e, o, a);
+  function Rx(e, o, a) {
+    Ro.L(e, o, a);
     var r = Da;
     if (r && e && o) {
       var d = 'link[rel="preload"][as="' + Yt(o) + '"]';
@@ -13762,8 +13762,8 @@ Error generating stack: ` + r.message + `
       ), Wt.set(u, e), r.querySelector(d) !== null || o === "style" && r.querySelector(Pi(u)) || o === "script" && r.querySelector(Li(u)) || (o = r.createElement("link"), yt(o, "link", e), ut(o), r.head.appendChild(o)));
     }
   }
-  function Rx(e, o) {
-    _o.m(e, o);
+  function Mx(e, o) {
+    Ro.m(e, o);
     var a = Da;
     if (a && e) {
       var r = o && typeof o.as == "string" ? o.as : "script", d = 'link[rel="modulepreload"][as="' + Yt(r) + '"][href="' + Yt(e) + '"]', u = d;
@@ -13791,8 +13791,8 @@ Error generating stack: ` + r.message + `
       }
     }
   }
-  function Mx(e, o, a) {
-    _o.S(e, o, a);
+  function Px(e, o, a) {
+    Ro.S(e, o, a);
     var r = Da;
     if (r && e) {
       var d = oa(r).hoistableStyles, u = _a(e);
@@ -13827,8 +13827,8 @@ Error generating stack: ` + r.message + `
       }
     }
   }
-  function Px(e, o) {
-    _o.X(e, o);
+  function Lx(e, o) {
+    Ro.X(e, o);
     var a = Da;
     if (a && e) {
       var r = oa(a).hoistableScripts, d = Ra(e), u = r.get(d);
@@ -13840,8 +13840,8 @@ Error generating stack: ` + r.message + `
       }, r.set(d, u));
     }
   }
-  function Lx(e, o) {
-    _o.M(e, o);
+  function Bx(e, o) {
+    Ro.M(e, o);
     var a = Da;
     if (a && e) {
       var r = oa(a).hoistableScripts, d = Ra(e), u = r.get(d);
@@ -13891,7 +13891,7 @@ Error generating stack: ` + r.message + `
             media: a.media,
             hrefLang: a.hrefLang,
             referrerPolicy: a.referrerPolicy
-          }, Wt.set(e, a), u || Bx(
+          }, Wt.set(e, a), u || Hx(
             d,
             e,
             a,
@@ -13928,7 +13928,7 @@ Error generating stack: ` + r.message + `
       precedence: null
     });
   }
-  function Bx(e, o, a, r) {
+  function Hx(e, o, a, r) {
     e.querySelector('link[rel="preload"][as="style"][' + o + "]") ? r.loading = 1 : (o = e.createElement("link"), r.preload = o, o.addEventListener("load", function() {
       return r.loading |= 1;
     }), o.addEventListener("error", function() {
@@ -14025,7 +14025,7 @@ Error generating stack: ` + r.message + `
       o === "title" ? e.querySelector("head > title") : null
     );
   }
-  function Hx(e, o, a) {
+  function Kx(e, o, a) {
     if (a === 1 || o.itemProp != null) return !1;
     switch (e) {
       case "meta":
@@ -14053,7 +14053,7 @@ Error generating stack: ` + r.message + `
   function Oh(e) {
     return !(e.type === "stylesheet" && (e.state.loading & 3) === 0);
   }
-  function Kx(e, o, a, r) {
+  function Ux(e, o, a, r) {
     if (a.type === "stylesheet" && (typeof r.media != "string" || matchMedia(r.media).matches !== !1) && (a.state.loading & 4) === 0) {
       if (a.instance === null) {
         var d = _a(r.href), u = o.querySelector(
@@ -14073,7 +14073,7 @@ Error generating stack: ` + r.message + `
     }
   }
   var Ru = 0;
-  function Ux(e, o) {
+  function Vx(e, o) {
     return e.stylesheets && e.count === 0 && Os(e, e.stylesheets), 0 < e.count || 0 < e.imgCount ? function(a) {
       var r = setTimeout(function() {
         if (e.stylesheets && Os(e, e.stylesheets), e.unsuspend) {
@@ -14081,7 +14081,7 @@ Error generating stack: ` + r.message + `
           e.unsuspend = null, u();
         }
       }, 6e4 + o);
-      0 < e.imgBytes && Ru === 0 && (Ru = 62500 * zx());
+      0 < e.imgBytes && Ru === 0 && (Ru = 62500 * xx());
       var d = setTimeout(
         function() {
           if (e.waitingForImages = !1, e.count === 0 && (e.stylesheets && Os(e, e.stylesheets), e.unsuspend)) {
@@ -14107,9 +14107,9 @@ Error generating stack: ` + r.message + `
   }
   var As = null;
   function Os(e, o) {
-    e.stylesheets = null, e.unsuspend !== null && (e.count++, As = /* @__PURE__ */ new Map(), o.forEach(Vx, e), As = null, Ss.call(e));
+    e.stylesheets = null, e.unsuspend !== null && (e.count++, As = /* @__PURE__ */ new Map(), o.forEach(Fx, e), As = null, Ss.call(e));
   }
-  function Vx(e, o) {
+  function Fx(e, o) {
     if (!(o.state.loading & 4)) {
       var a = As.get(e);
       if (a) var r = a.get(null);
@@ -14134,11 +14134,11 @@ Error generating stack: ` + r.message + `
     _currentValue2: J,
     _threadCount: 0
   };
-  function Fx(e, o, a, r, d, u, k, b, I) {
+  function Yx(e, o, a, r, d, u, k, b, I) {
     this.tag = 1, this.containerInfo = e, this.pingCache = this.current = this.pendingChildren = null, this.timeoutHandle = -1, this.callbackNode = this.next = this.pendingContext = this.context = this.cancelPendingCommit = null, this.callbackPriority = 0, this.expirationTimes = Cl(-1), this.entangledLanes = this.shellSuspendCounter = this.errorRecoveryDisabledLanes = this.expiredLanes = this.warmLanes = this.pingedLanes = this.suspendedLanes = this.pendingLanes = 0, this.entanglements = Cl(0), this.hiddenUpdates = Cl(null), this.identifierPrefix = r, this.onUncaughtError = d, this.onCaughtError = u, this.onRecoverableError = k, this.pooledCache = null, this.pooledCacheLanes = 0, this.formState = I, this.incompleteTransitions = /* @__PURE__ */ new Map();
   }
   function Ch(e, o, a, r, d, u, k, b, I, D, K, Y) {
-    return e = new Fx(
+    return e = new Yx(
       e,
       o,
       a,
@@ -14158,7 +14158,7 @@ Error generating stack: ` + r.message + `
     return e ? (e = pa, e) : pa;
   }
   function Th(e, o, a, r, d, u) {
-    d = Nh(d), r.context === null ? r.context = d : r.pendingContext = d, r = Go(o), r.payload = { element: a }, u = u === void 0 ? null : u, u !== null && (r.callback = u), a = Zo(e, r, o), a !== null && (At(a, e, o), yi(a, e, o));
+    d = Nh(d), r.context === null ? r.context = d : r.pendingContext = d, r = Zo(o), r.payload = { element: a }, u = u === void 0 ? null : u, u !== null && (r.callback = u), a = Jo(e, r, o), a !== null && (At(a, e, o), yi(a, e, o));
   }
   function Dh(e, o) {
     if (e = e.memoizedState, e !== null && e.dehydrated !== null) {
@@ -14184,7 +14184,7 @@ Error generating stack: ` + r.message + `
     }
   }
   var Cs = !0;
-  function Yx(e, o, a, r) {
+  function qx(e, o, a, r) {
     var d = R.T;
     R.T = null;
     var u = X.p;
@@ -14194,7 +14194,7 @@ Error generating stack: ` + r.message + `
       X.p = u, R.T = d;
     }
   }
-  function qx(e, o, a, r) {
+  function $x(e, o, a, r) {
     var d = R.T;
     R.T = null;
     var u = X.p;
@@ -14215,7 +14215,7 @@ Error generating stack: ` + r.message + `
           Ns,
           a
         ), Ph(e, r);
-      else if (Gx(
+      else if (Zx(
         d,
         e,
         o,
@@ -14223,7 +14223,7 @@ Error generating stack: ` + r.message + `
         r
       ))
         r.stopPropagation();
-      else if (Ph(e, r), o & 4 && -1 < $x.indexOf(e)) {
+      else if (Ph(e, r), o & 4 && -1 < Gx.indexOf(e)) {
         for (; d !== null; ) {
           var u = ta(d);
           if (u !== null)
@@ -14372,7 +14372,7 @@ Error generating stack: ` + r.message + `
           case Yp:
             return 8;
           case jr:
-          case Dg:
+          case _g:
             return 32;
           case qp:
             return 268435456;
@@ -14383,22 +14383,22 @@ Error generating stack: ` + r.message + `
         return 32;
     }
   }
-  var Hu = !1, sn = null, ln = null, dn = null, Hi = /* @__PURE__ */ new Map(), Ki = /* @__PURE__ */ new Map(), un = [], $x = "mousedown mouseup touchcancel touchend touchstart auxclick dblclick pointercancel pointerdown pointerup dragend dragstart drop compositionend compositionstart keydown keypress keyup input textInput copy cut paste click change contextmenu reset".split(
+  var Hu = !1, ln = null, dn = null, un = null, Hi = /* @__PURE__ */ new Map(), Ki = /* @__PURE__ */ new Map(), cn = [], Gx = "mousedown mouseup touchcancel touchend touchstart auxclick dblclick pointercancel pointerdown pointerup dragend dragstart drop compositionend compositionstart keydown keypress keyup input textInput copy cut paste click change contextmenu reset".split(
     " "
   );
   function Ph(e, o) {
     switch (e) {
       case "focusin":
       case "focusout":
-        sn = null;
+        ln = null;
         break;
       case "dragenter":
       case "dragleave":
-        ln = null;
+        dn = null;
         break;
       case "mouseover":
       case "mouseout":
-        dn = null;
+        un = null;
         break;
       case "pointerover":
       case "pointerout":
@@ -14418,18 +14418,9 @@ Error generating stack: ` + r.message + `
       targetContainers: [d]
     }, o !== null && (o = ta(o), o !== null && _h(o)), e) : (e.eventSystemFlags |= r, o = e.targetContainers, d !== null && o.indexOf(d) === -1 && o.push(d), e);
   }
-  function Gx(e, o, a, r, d) {
+  function Zx(e, o, a, r, d) {
     switch (o) {
       case "focusin":
-        return sn = Ui(
-          sn,
-          e,
-          o,
-          a,
-          r,
-          d
-        ), !0;
-      case "dragenter":
         return ln = Ui(
           ln,
           e,
@@ -14438,9 +14429,18 @@ Error generating stack: ` + r.message + `
           r,
           d
         ), !0;
-      case "mouseover":
+      case "dragenter":
         return dn = Ui(
           dn,
+          e,
+          o,
+          a,
+          r,
+          d
+        ), !0;
+      case "mouseover":
+        return un = Ui(
+          un,
           e,
           o,
           a,
@@ -14522,13 +14522,13 @@ Error generating stack: ` + r.message + `
   function Bh(e, o, a) {
     Ts(e) && a.delete(o);
   }
-  function Zx() {
-    Hu = !1, sn !== null && Ts(sn) && (sn = null), ln !== null && Ts(ln) && (ln = null), dn !== null && Ts(dn) && (dn = null), Hi.forEach(Bh), Ki.forEach(Bh);
+  function Jx() {
+    Hu = !1, ln !== null && Ts(ln) && (ln = null), dn !== null && Ts(dn) && (dn = null), un !== null && Ts(un) && (un = null), Hi.forEach(Bh), Ki.forEach(Bh);
   }
   function Ds(e, o) {
     e.blockedOn === o && (e.blockedOn = null, Hu || (Hu = !0, t.unstable_scheduleCallback(
       t.unstable_NormalPriority,
-      Zx
+      Jx
     )));
   }
   var _s = null;
@@ -14564,13 +14564,13 @@ Error generating stack: ` + r.message + `
     function o(I) {
       return Ds(I, e);
     }
-    sn !== null && Ds(sn, e), ln !== null && Ds(ln, e), dn !== null && Ds(dn, e), Hi.forEach(o), Ki.forEach(o);
-    for (var a = 0; a < un.length; a++) {
-      var r = un[a];
+    ln !== null && Ds(ln, e), dn !== null && Ds(dn, e), un !== null && Ds(un, e), Hi.forEach(o), Ki.forEach(o);
+    for (var a = 0; a < cn.length; a++) {
+      var r = cn[a];
       r.blockedOn === e && (r.blockedOn = null);
     }
-    for (; 0 < un.length && (a = un[0], a.blockedOn === null); )
-      Lh(a), a.blockedOn === null && un.shift();
+    for (; 0 < cn.length && (a = cn[0], a.blockedOn === null); )
+      Lh(a), a.blockedOn === null && cn.shift();
     if (a = (e.ownerDocument || e).$$reactFormReplay, a != null)
       for (r = 0; r < a.length; r += 3) {
         var d = a[r], u = a[r + 1], k = d[zt] || null;
@@ -14642,8 +14642,8 @@ Error generating stack: ` + r.message + `
     if (e) {
       var o = Xp();
       e = { blockedOn: null, target: e, priority: o };
-      for (var a = 0; a < un.length && o !== 0 && o < un[a].priority; a++) ;
-      un.splice(a, 0, e), a === 0 && Lh(e);
+      for (var a = 0; a < cn.length && o !== 0 && o < cn[a].priority; a++) ;
+      cn.splice(a, 0, e), a === 0 && Lh(e);
     }
   };
   var Uh = n.version;
@@ -14661,7 +14661,7 @@ Error generating stack: ` + r.message + `
       throw typeof e.render == "function" ? Error(s(188)) : (e = Object.keys(e).join(","), Error(s(268, e)));
     return e = h(o), e = e !== null ? f(e) : null, e = e === null ? null : e.stateNode, e;
   };
-  var Jx = {
+  var Xx = {
     bundleType: 0,
     version: "19.2.7",
     rendererPackageName: "react-dom",
@@ -14673,7 +14673,7 @@ Error generating stack: ` + r.message + `
     if (!Ms.isDisabled && Ms.supportsFiber)
       try {
         Xa = Ms.inject(
-          Jx
+          Xx
         ), Nt = Ms;
       } catch {
       }
@@ -14711,11 +14711,11 @@ Error generating stack: ` + r.message + `
       k,
       b,
       Kh
-    ), o.context = Nh(null), a = o.current, r = Bt(), r = Nl(r), d = Go(r), d.callback = null, Zo(a, d, r), a = r, o.current.lanes = a, Wa(o, a), co(o), e[Wn] = o.current, zu(e), new Rs(o);
+    ), o.context = Nh(null), a = o.current, r = Bt(), r = Nl(r), d = Zo(r), d.callback = null, Jo(a, d, r), a = r, o.current.lanes = a, Wa(o, a), co(o), e[Wn] = o.current, zu(e), new Rs(o);
   }, Yi.version = "19.2.7", Yi;
 }
 var iy;
-function bE() {
+function fE() {
   if (iy) return $u.exports;
   iy = 1;
   function t() {
@@ -14726,15 +14726,15 @@ function bE() {
         console.error(n);
       }
   }
-  return t(), $u.exports = yE(), $u.exports;
+  return t(), $u.exports = bE(), $u.exports;
 }
-var Xb = bE();
-const fE = {
+var Qb = fE();
+const jE = {
   /**
    * FAQ + AI Chat section visibility (approved Client Studio baseline).
    */
   showAiAdvisor: !0
-}, jE = {
+}, gE = {
   priority: "Priorita"
 }, le = {
   hero: "hero",
@@ -14745,20 +14745,20 @@ const fE = {
   priority: "priority-experience",
   aiAdvisor: "ai-advisor",
   audit: "audit-lead-capture"
-}, gE = [
+}, zE = [
   { id: le.hero, label: "Úvod", short: "Ú" },
   { id: le.walkthrough, label: "Prohlídka", short: "D" },
   { id: le.priority, label: "Priority", short: "P" },
   { id: le.aiAdvisor, label: "Racio", short: "R" },
   { id: le.audit, label: "Kontakt", short: "K" }
-], hn = {
+], yn = {
   /** Package version — injected at build time when available. */
   version: "0.1.0",
   /** Product label for support / diagnostics (not Runtime semantics). */
   product: "Client Studio",
   generation: "1"
 };
-class zE extends j.Component {
+class xE extends j.Component {
   constructor() {
     super(...arguments);
     ae(this, "state", { error: null });
@@ -14768,8 +14768,8 @@ class zE extends j.Component {
   }
   componentDidCatch(i, s) {
     console.error("[ClientStudio] Uncaught render error", {
-      version: hn.version,
-      product: hn.product,
+      version: yn.version,
+      product: yn.product,
       message: i.message,
       componentStack: s.componentStack
     });
@@ -14795,16 +14795,16 @@ class zE extends j.Component {
             }
           ),
           /* @__PURE__ */ c.jsxs("p", { className: "text-xs text-embed-foreground-primary/40", children: [
-            hn.product,
+            yn.product,
             " v",
-            hn.version
+            yn.version
           ] })
         ]
       }
     ) : this.props.children;
   }
 }
-function xE({ studioTitle: t }) {
+function IE({ studioTitle: t }) {
   return /* @__PURE__ */ c.jsxs("header", { className: "flex h-14 shrink-0 items-center justify-between border-b border-embed-border-default px-6", children: [
     /* @__PURE__ */ c.jsxs("div", { className: "flex items-center gap-6", children: [
       /* @__PURE__ */ c.jsx("span", { className: "text-sm font-medium tracking-brand text-embed-foreground-primary", children: "EMBED" }),
@@ -14813,14 +14813,14 @@ function xE({ studioTitle: t }) {
     /* @__PURE__ */ c.jsx("div", { "aria-hidden": "true" })
   ] });
 }
-const IE = [
+const EE = [
   "Dashboard",
   "Projects",
   "Properties",
   "Clients",
   "Settings"
 ];
-function EE({ items: t = IE }) {
+function wE({ items: t = EE }) {
   return /* @__PURE__ */ c.jsx("aside", { className: "flex w-56 shrink-0 flex-col border-r border-embed-border-default bg-embed-background-secondary", children: /* @__PURE__ */ c.jsx("nav", { className: "flex flex-col gap-1 p-4", children: t.map((n) => /* @__PURE__ */ c.jsx(
     "span",
     {
@@ -14830,16 +14830,16 @@ function EE({ items: t = IE }) {
     n
   )) }) });
 }
-function wE({ status: t = "READY" }) {
+function SE({ status: t = "READY" }) {
   return /* @__PURE__ */ c.jsx("footer", { className: "flex h-8 shrink-0 items-center border-t border-embed-border-default bg-embed-background-secondary px-6", children: /* @__PURE__ */ c.jsxs("span", { className: "flex items-center gap-1.5 text-xs uppercase tracking-wide text-embed-foreground-primary/45", children: [
     /* @__PURE__ */ c.jsx("span", { className: "text-embed-status-ready", children: "●" }),
     t
   ] }) });
 }
-function SE({ children: t }) {
+function AE({ children: t }) {
   return /* @__PURE__ */ c.jsx("main", { className: "flex min-w-0 flex-1 justify-center overflow-x-hidden bg-embed-background-secondary pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))] desktop:pb-0", children: t ?? /* @__PURE__ */ c.jsx("div", { className: "flex flex-1 items-center justify-center", children: /* @__PURE__ */ c.jsx("p", { className: "text-sm text-embed-foreground-primary/45", children: "Workspace" }) }) });
 }
-function Qb({
+function Wb({
   studioTitle: t = "Studio",
   sidebarItems: n,
   status: i,
@@ -14854,17 +14854,17 @@ function Qb({
       {
         className: "hidden sticky top-0 z-[60] h-screen shrink-0 self-start overflow-visible desktop:block",
         "data-studio-shell": "sidebar-slot",
-        children: l ?? /* @__PURE__ */ c.jsx(EE, { items: n })
+        children: l ?? /* @__PURE__ */ c.jsx(wE, { items: n })
       }
     ),
     /* @__PURE__ */ c.jsxs("div", { className: "flex min-w-0 flex-1 flex-col", children: [
-      s ?? /* @__PURE__ */ c.jsx(xE, { studioTitle: t }),
-      /* @__PURE__ */ c.jsx(SE, { children: m }),
-      p ? /* @__PURE__ */ c.jsx(wE, { status: i }) : null
+      s ?? /* @__PURE__ */ c.jsx(IE, { studioTitle: t }),
+      /* @__PURE__ */ c.jsx(AE, { children: m }),
+      p ? /* @__PURE__ */ c.jsx(SE, { status: i }) : null
     ] })
   ] });
 }
-const jl = "bungalov-4kk-reference-v1", AE = {
+const jl = "bungalov-4kk-reference-v1", OE = {
   sourceId: jl,
   displayName: "BUNGALOV 4KK",
   version: "v1",
@@ -14873,27 +14873,27 @@ const jl = "bungalov-4kk-reference-v1", AE = {
   runtimeContextBinding: {
     canonicalHouseId: "modern-4kk"
   }
-}, OE = [
-  AE
+}, CE = [
+  OE
 ];
 function rr(t) {
   return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(t);
 }
-function Wb(t) {
-  return OE.find((n) => n.sourceId === t) ?? null;
+function ef(t) {
+  return CE.find((n) => n.sourceId === t) ?? null;
 }
-function CE(t) {
+function NE(t) {
   var l, p, m;
   const n = t.runtimeHouseId.trim();
   if (n.length === 0) return null;
   const i = (l = t.referenceProvenance) == null ? void 0 : l.sourceId;
   if (i === void 0)
     return n;
-  const s = Wb(i);
+  const s = ef(i);
   return s === null || s.version !== ((p = t.referenceProvenance) == null ? void 0 : p.sourceVersion) ? null : ((m = s.runtimeContextBinding) == null ? void 0 : m.canonicalHouseId) ?? null;
 }
-function ef(t) {
-  const n = Wb(t.sourceId);
+function tf(t) {
+  const n = ef(t.sourceId);
   if (n === null)
     throw new Error(`Unknown reference source "${t.sourceId}".`);
   const i = t.companyId.trim(), s = t.projectId.trim();
@@ -14901,55 +14901,55 @@ function ef(t) {
     throw new Error("Reference instance requires canonical Company and Project ids.");
   return `reference-${n.version}-${i}-${s}-bungalov-4kk`;
 }
-function tf(t) {
+function of(t) {
   const n = t.companyId.trim(), i = t.projectId.trim(), s = t.houseSlug.trim();
   if (!rr(n) || !rr(i) || !rr(s))
     throw new Error("Draft House requires canonical Company, Project, and House ids.");
   return `draft-${n}-${i}-${s}`;
 }
-function of(t) {
+function nf(t) {
   if (t === null || typeof t != "object") return !1;
   const n = t;
   return n.operatorMode === !0 && typeof n.partnerId == "string" && typeof n.companyId == "string" && typeof n.workspaceId == "string" && typeof n.projectId == "string" && typeof n.activeStudio == "string" && typeof n.officeReturnHref == "string" && n.previous !== null && typeof n.previous == "object" && typeof n.previous.tenantId == "string" && typeof n.previous.companyId == "string" && typeof n.previous.workspaceId == "string";
 }
-const nf = "tenant-ac-modular", yn = "ac-modular", La = "ac-modular-main", NE = "villa-168", nr = "project-ac-modular", af = "tenant-domy-s-energii", gn = "company-domy-s-energii", cl = "domy-s-energii-main", Ka = "project-domy-s-energii", rf = ef({
+const af = "tenant-ac-modular", bn = "ac-modular", La = "ac-modular-main", TE = "villa-168", nr = "project-ac-modular", rf = "tenant-domy-s-energii", gn = "company-domy-s-energii", cl = "domy-s-energii-main", Ka = "project-domy-s-energii", sf = tf({
   sourceId: jl,
   companyId: gn,
   projectId: Ka
-}), TE = rf, DE = "modern-4kk", _E = tf({
+}), DE = sf, _E = "modern-4kk", RE = of({
   companyId: gn,
   projectId: Ka,
   houseSlug: "vas-prvni-dum-5kk"
-}), RE = "apps/client-studio/public/house-packages/bungalov-4kk", ME = "apps/client-studio/public/house-package", PE = [
+}), ME = "apps/client-studio/public/house-packages/bungalov-4kk", PE = "apps/client-studio/public/house-package", LE = [
   {
-    id: nf,
+    id: af,
     name: "AC Modular Pilot",
-    companyId: yn,
+    companyId: bn,
     pilot: !0,
     createdAt: "2026-01-01T00:00:00.000Z"
   },
   {
-    id: af,
+    id: rf,
     name: "Domy s energií",
     companyId: gn,
     pilot: !1,
     createdAt: "2026-08-07T00:00:00.000Z"
   }
-], LE = [
+], BE = [
   {
-    id: yn,
+    id: bn,
     name: "AC Modular",
-    tenantId: nf
+    tenantId: af
   },
   {
     id: gn,
     name: "Domy s energií",
-    tenantId: af
+    tenantId: rf
   }
-], BE = [
+], HE = [
   {
     id: La,
-    companyId: yn,
+    companyId: bn,
     name: "AC Modular Main"
   },
   {
@@ -14957,10 +14957,10 @@ const nf = "tenant-ac-modular", yn = "ac-modular", La = "ac-modular-main", NE = 
     companyId: gn,
     name: "Domy s energií"
   }
-], HE = [
+], KE = [
   {
     id: nr,
-    companyId: yn,
+    companyId: bn,
     workspaceId: La,
     name: "AC Modular",
     slug: "ac-modular",
@@ -14974,13 +14974,13 @@ const nf = "tenant-ac-modular", yn = "ac-modular", La = "ac-modular-main", NE = 
     slug: "domy-s-energii",
     description: "Canonical Reference House delivery project."
   }
-], sf = [
+], lf = [
   {
-    id: rf,
+    id: sf,
     workspaceId: cl,
     companyId: gn,
     name: "BUNGALOV 4KK",
-    packageRoot: RE,
+    packageRoot: ME,
     status: "published",
     slug: "bungalov-4kk",
     objectType: "reference-house",
@@ -14993,9 +14993,9 @@ const nf = "tenant-ac-modular", yn = "ac-modular", La = "ac-modular-main", NE = 
     canonicalProjectId: Ka
   },
   {
-    id: DE,
+    id: _E,
     workspaceId: La,
-    companyId: yn,
+    companyId: bn,
     name: "MODERN 4KK",
     packageRoot: "/canonical-houses/modern-4kk",
     status: "published",
@@ -15006,7 +15006,7 @@ const nf = "tenant-ac-modular", yn = "ac-modular", La = "ac-modular-main", NE = 
     canonicalProjectId: nr
   },
   {
-    id: _E,
+    id: RE,
     workspaceId: cl,
     companyId: gn,
     name: "VÁŠ PRVNÍ DŮM",
@@ -15021,7 +15021,7 @@ const nf = "tenant-ac-modular", yn = "ac-modular", La = "ac-modular-main", NE = 
   {
     id: "family-98",
     workspaceId: La,
-    companyId: yn,
+    companyId: bn,
     name: "FAMILY 98",
     packageRoot: "apps/client-studio/public/house-packages/family-98",
     status: "published",
@@ -15034,7 +15034,7 @@ const nf = "tenant-ac-modular", yn = "ac-modular", La = "ac-modular-main", NE = 
   {
     id: "harmony-124",
     workspaceId: La,
-    companyId: yn,
+    companyId: bn,
     name: "HARMONY 124",
     packageRoot: "apps/client-studio/public/house-packages/harmony-124",
     status: "published",
@@ -15047,9 +15047,9 @@ const nf = "tenant-ac-modular", yn = "ac-modular", La = "ac-modular-main", NE = 
   {
     id: "villa-168",
     workspaceId: La,
-    companyId: yn,
+    companyId: bn,
     name: "VILLA 168",
-    packageRoot: ME,
+    packageRoot: PE,
     status: "published",
     slug: "villa-168",
     objectType: "villa",
@@ -15057,7 +15057,7 @@ const nf = "tenant-ac-modular", yn = "ac-modular", La = "ac-modular-main", NE = 
     dataMode: "LIVE_EMPTY",
     canonicalProjectId: nr
   }
-], lf = [
+], df = [
   {
     id: "user-radim",
     email: "radim@conis.local",
@@ -15122,7 +15122,7 @@ function ip() {
     })
   );
 }
-function KE(t) {
+function UE(t) {
   const n = ip(), i = Number(n.get(`${t}${xc}`));
   if (!Number.isInteger(i) || i < 1) return null;
   let s = "";
@@ -15137,7 +15137,7 @@ function KE(t) {
     return null;
   }
 }
-function UE(t) {
+function VE(t) {
   const n = ip().get(t);
   if (n === void 0 || n.length === 0) return null;
   try {
@@ -15146,11 +15146,11 @@ function UE(t) {
     return n;
   }
 }
-function VE(t) {
+function FE(t) {
   if (typeof document < "u") {
-    const n = KE(t.cookieName);
+    const n = UE(t.cookieName);
     if (n !== null) return n;
-    const i = UE(t.cookieName);
+    const i = VE(t.cookieName);
     if (i !== null) return i;
   }
   if (typeof localStorage < "u")
@@ -15161,7 +15161,7 @@ function VE(t) {
     }
   return null;
 }
-function FE(t) {
+function YE(t) {
   const n = t.maxAgeSeconds ?? 2592e3;
   if (typeof document < "u") {
     const i = encodeURIComponent(t.json), s = Number(
@@ -15188,22 +15188,22 @@ function FE(t) {
     }
 }
 const Ic = /* @__PURE__ */ new Map();
-function YE(t) {
+function qE(t) {
   Ic.clear();
   for (const n of t) {
     const i = n.projectId.trim();
     i.length !== 0 && Ic.set(i, n.privacyUrl);
   }
 }
-function qE(t) {
+function $E(t) {
   const n = Ic.get(t);
   if (!(n == null || n.length === 0))
     return n;
 }
 const rp = new Map(
-  sf.map((t) => [t.id, t])
+  lf.map((t) => [t.id, t])
 );
-function $E(t) {
+function GE(t) {
   return rp.has(t);
 }
 function Ps(t, n) {
@@ -15214,7 +15214,7 @@ function Ps(t, n) {
     i.set(s.id, s);
   return [...i.values()];
 }
-function GE(t, n) {
+function ZE(t, n) {
   const i = /* @__PURE__ */ new Map();
   for (const s of t)
     i.set(s.id, s);
@@ -15236,12 +15236,12 @@ function GE(t, n) {
   }
   return [...i.values()];
 }
-function ZE(t) {
+function JE(t) {
   const n = rp.get(t.id);
   return n === void 0 || t.status === n.status ? t : { ...t, status: n.status };
 }
-function JE(t) {
-  return t.map(ZE);
+function XE(t) {
+  return t.map(JE);
 }
 let vo = {
   tenants: [],
@@ -15251,9 +15251,9 @@ let vo = {
   canonicalProjects: [],
   houses: []
 };
-const df = "conis.platform.companyExtras.v1", uf = "conis_platform_company_extras_v1";
+const uf = "conis.platform.companyExtras.v1", cf = "conis_platform_company_extras_v1";
 let el = null;
-function cf() {
+function pf() {
   return {
     tenants: [],
     companies: [],
@@ -15263,40 +15263,40 @@ function cf() {
     houses: []
   };
 }
-function XE(t) {
+function QE(t) {
   try {
     const n = JSON.parse(t);
     return {
       tenants: Array.isArray(n.tenants) ? n.tenants : [],
       companies: Array.isArray(n.companies) ? n.companies : [],
       workspaces: Array.isArray(n.workspaces) ? n.workspaces : [],
-      projects: JE(
+      projects: XE(
         Array.isArray(n.projects) ? n.projects : []
       ),
       canonicalProjects: Array.isArray(n.canonicalProjects) ? n.canonicalProjects : [],
       houses: Array.isArray(n.houses) ? n.houses : []
     };
   } catch {
-    return cf();
+    return pf();
   }
 }
-function pf() {
-  const t = VE({
-    cookieName: uf,
-    storageKey: df
+function mf() {
+  const t = FE({
+    cookieName: cf,
+    storageKey: uf
   });
-  t !== el && ((t === null || t.length === 0) && el !== null || (el = t, vo = t === null || t.length === 0 ? cf() : XE(t)));
+  t !== el && ((t === null || t.length === 0) && el !== null || (el = t, vo = t === null || t.length === 0 ? pf() : QE(t)));
 }
-function QE() {
+function WE() {
   const t = JSON.stringify(vo);
-  el = t, FE({
-    cookieName: uf,
-    storageKey: df,
+  el = t, YE({
+    cookieName: cf,
+    storageKey: uf,
     json: t
   });
 }
-function WE(t) {
-  const n = qE(t.id);
+function ew(t) {
+  const n = $E(t.id);
   return n === void 0 ? {
     id: t.id,
     companyId: t.companyId,
@@ -15315,32 +15315,32 @@ function WE(t) {
   };
 }
 function Qe() {
-  return pf(), {
-    tenants: Ps(PE, vo.tenants),
-    companies: Ps(LE, vo.companies).map(
+  return mf(), {
+    tenants: Ps(LE, vo.tenants),
+    companies: Ps(BE, vo.companies).map(
       (t) => ({
         id: t.id,
         name: t.name,
         tenantId: t.tenantId
       })
     ),
-    workspaces: Ps(BE, vo.workspaces),
-    projects: GE(sf, vo.projects),
+    workspaces: Ps(HE, vo.workspaces),
+    projects: ZE(lf, vo.projects),
     canonicalProjects: Ps(
-      HE,
+      KE,
       vo.canonicalProjects
-    ).map(WE),
+    ).map(ew),
     houses: [...vo.houses]
   };
 }
-function ew(t, n) {
+function tw(t, n) {
   return t.canonicalProjects.find((i) => i.id === n);
 }
-function tw(t) {
+function ow(t) {
   var l;
   const n = Qe(), i = (l = t.canonicalProjectId) == null ? void 0 : l.trim();
   if (i !== void 0 && i.length > 0) {
-    const p = ew(n, i);
+    const p = tw(n, i);
     if (p !== void 0) return p;
   }
   return n.canonicalProjects.find(
@@ -15350,26 +15350,26 @@ function tw(t) {
 function sp(t, n) {
   return t.companies.find((i) => i.id === n);
 }
-function mf(t, n) {
+function vf(t, n) {
   return t.workspaces.find((i) => i.id === n);
 }
 function lp(t, n) {
   return t.projects.find((i) => i.id === n);
 }
-function ow(t, n) {
+function nw(t, n) {
   return t.projects.filter((i) => i.workspaceId === n);
 }
-function nw(t) {
-  return pf(), vo = {
+function aw(t) {
+  return mf(), vo = {
     ...vo,
     tenants: [...t.tenants],
     companies: [...t.companies],
     workspaces: [...t.workspaces],
     canonicalProjects: [...t.projects],
     houses: [...t.houses]
-  }, QE(), Qe();
+  }, WE(), Qe();
 }
-const aw = "conis.platform.projectManifest.v1", iw = [
+const iw = "conis.platform.projectManifest.v1", rw = [
   {
     projectId: "villa-168",
     logoLabel: "AC Modular Logo",
@@ -15398,25 +15398,25 @@ const aw = "conis.platform.projectManifest.v1", iw = [
     publishedAt: "2026-01-01T00:00:00.000Z"
   }
 ];
-let vf = new Map(
-  iw.map((t) => [t.projectId, t])
+let kf = new Map(
+  rw.map((t) => [t.projectId, t])
 ), ry = !1;
-function rw() {
+function sw() {
   if (!(typeof localStorage > "u"))
     try {
-      const t = localStorage.getItem(aw);
+      const t = localStorage.getItem(iw);
       if (t === null || t.length === 0) return;
       const n = JSON.parse(t);
       if (!Array.isArray(n)) return;
       for (const i of n)
-        typeof (i == null ? void 0 : i.projectId) == "string" && vf.set(i.projectId, i);
+        typeof (i == null ? void 0 : i.projectId) == "string" && kf.set(i.projectId, i);
     } catch {
     }
 }
-function sw() {
-  ry || (ry = !0, rw());
+function lw() {
+  ry || (ry = !0, sw());
 }
-function lw(t) {
+function dw(t) {
   return {
     projectId: t,
     logoLabel: "",
@@ -15427,11 +15427,11 @@ function lw(t) {
     publishedAt: null
   };
 }
-function dw(t) {
-  return sw(), vf.get(t) ?? lw(t);
+function uw(t) {
+  return lw(), kf.get(t) ?? dw(t);
 }
-function kf(t) {
-  const n = Qe(), i = sp(n, t.companyId), s = dw(t.id);
+function hf(t) {
+  const n = Qe(), i = sp(n, t.companyId), s = uw(t.id);
   return {
     id: t.id,
     companyId: t.companyId,
@@ -15452,15 +15452,15 @@ function kf(t) {
     authorStudio: "builder"
   };
 }
-function hf() {
-  return Qe().projects.map(kf);
+function yf() {
+  return Qe().projects.map(hf);
 }
 function hr() {
-  return hf().filter((t) => t.status === "published");
+  return yf().filter((t) => t.status === "published");
 }
 function Va(t) {
   const n = Qe(), i = lp(n, t);
-  return i === void 0 ? null : kf(i);
+  return i === void 0 ? null : hf(i);
 }
 const sy = "apps/client-studio/public";
 function Fa(t) {
@@ -15488,7 +15488,7 @@ function Ec(t) {
     isPublished: n.status === "published"
   };
 }
-function yf(t) {
+function bf(t) {
   if (t == null || t.trim().length === 0)
     return null;
   const n = gl(t);
@@ -15502,7 +15502,7 @@ function yf(t) {
   const l = hr();
   if (s.id === Ka) {
     const m = l.find(
-      (v) => v.id === TE
+      (v) => v.id === DE
     );
     return (m == null ? void 0 : m.id) ?? null;
   }
@@ -15512,32 +15512,32 @@ function yf(t) {
   });
   return (p == null ? void 0 : p.id) ?? null;
 }
-function uw(t) {
+function cw(t) {
   const i = hr()[0];
   if (i === void 0) {
-    const s = hf()[0];
+    const s = yf()[0];
     return s === void 0 ? null : Ec(s.id);
   }
   return Ec(i.id);
 }
-const cw = Object.freeze({
-  "house-modern-01": NE
+const pw = Object.freeze({
+  "house-modern-01": TE
 });
 function gl(t) {
   const n = t.trim();
-  return cw[n] ?? n;
+  return pw[n] ?? n;
 }
-function pw(t) {
+function mw(t) {
   if (t == null || t.trim().length === 0)
-    return uw();
-  const n = yf(t);
+    return cw();
+  const n = bf(t);
   return n === null ? null : Ec(n);
 }
-const bf = "LIVE_EMPTY";
+const ff = "LIVE_EMPTY";
 function dp(t, n) {
   const i = Qe().projects.find(
     (l) => l.id === t.id
-  ), s = (i == null ? void 0 : i.dataMode) ?? bf;
+  ), s = (i == null ? void 0 : i.dataMode) ?? ff;
   return {
     houseId: t.id,
     name: t.name,
@@ -15549,8 +15549,8 @@ function dp(t, n) {
     referenceProvenance: i == null ? void 0 : i.referenceProvenance
   };
 }
-function mw(t) {
-  const i = Qe().projects.find((l) => l.id === t.id), s = tw(
+function vw(t) {
+  const i = Qe().projects.find((l) => l.id === t.id), s = ow(
     i ?? {
       id: t.id,
       companyId: t.companyId,
@@ -15570,8 +15570,8 @@ function mw(t) {
     description: t.description
   };
 }
-function vw(t) {
-  const n = t.status, i = n === "published", s = $E(t.id);
+function kw(t) {
+  const n = t.status, i = n === "published", s = GE(t.id);
   return {
     projectStatus: n,
     houseStatus: n,
@@ -15594,7 +15594,7 @@ function yr(t) {
       workspaceId: t.workspaceId,
       workspaceName: (s == null ? void 0 : s.name) ?? t.workspaceId
     },
-    project: mw(t),
+    project: vw(t),
     house: dp(t, n),
     branding: {
       logoLabel: t.logoLabel,
@@ -15602,14 +15602,14 @@ function yr(t) {
       websiteUrl: t.websiteUrl,
       documents: t.documents
     },
-    publication: vw(t),
+    publication: kw(t),
     experience: {
       offerTemplateId: t.offerTemplateId,
       authorStudio: t.authorStudio
     }
   };
 }
-function ff(t) {
+function jf(t) {
   const n = Qe(), i = n.companies.find(
     (l) => l.id === t.companyId
   ), s = n.workspaces.find(
@@ -15652,12 +15652,12 @@ function ff(t) {
     }
   };
 }
-function kw() {
+function hw() {
   return hr().map(
     (t) => dp(t, Fa(t.packageRoot))
   );
 }
-function hw(t) {
+function yw(t) {
   var l;
   const n = gl(t) ?? t.trim();
   if (n.length === 0) return null;
@@ -15683,7 +15683,7 @@ function Ya(t) {
   );
   return s === void 0 ? null : up(s);
 }
-function jf(t) {
+function gf(t) {
   const n = Qe(), i = n.canonicalProjects.filter(
     (p) => !0
   ), s = hr(), l = [];
@@ -15696,7 +15696,7 @@ function jf(t) {
       l.push(yr(m));
       continue;
     }
-    l.push(ff(p));
+    l.push(jf(p));
   }
   return l;
 }
@@ -15737,7 +15737,7 @@ function up(t) {
       objectType: t.objectType ?? "",
       packageRoot: m,
       packagePublicRoot: m.trim().length > 0 ? Fa(m) : "",
-      dataMode: t.dataMode ?? bf,
+      dataMode: t.dataMode ?? ff,
       ...t.referenceProvenance === void 0 ? {} : {
         referenceProvenance: t.referenceProvenance
       }
@@ -15778,7 +15778,7 @@ function cp(t) {
     p.house !== null && l.set(p.house.houseId, p);
   return [...l.values()];
 }
-function gf(t) {
+function zf(t) {
   const n = gl(t) ?? t.trim();
   if (n.length === 0) return null;
   const i = Va(n);
@@ -15787,11 +15787,11 @@ function gf(t) {
   const l = Qe().canonicalProjects.find(
     (m) => m.id === n
   );
-  return l === void 0 ? null : cp(l.id)[0] ?? ff(l);
+  return l === void 0 ? null : cp(l.id)[0] ?? jf(l);
 }
 function tl(t) {
   const n = t.trim();
-  return n.length > 0 && jf().some(
+  return n.length > 0 && gf().some(
     (i) => i.project.projectId === n
   );
 }
@@ -15819,7 +15819,7 @@ function Gn(t) {
   if (p !== null)
     return $i(p, "embed");
   if (t.fallbackToFirstPublished === !0) {
-    const m = kw()[0];
+    const m = hw()[0];
     if (m !== void 0)
       return wc(m, "published-default");
   }
@@ -15857,13 +15857,13 @@ function wc(t, n) {
   };
 }
 function $i(t, n) {
-  const i = yf(t);
+  const i = bf(t);
   if (i !== null) {
-    const l = hw(i);
+    const l = yw(i);
     if (l !== null)
       return wc(l, n);
   }
-  const s = pw(t);
+  const s = mw(t);
   if (s !== null) {
     const l = yr(s.project);
     if (l.house !== null)
@@ -15878,7 +15878,7 @@ function $i(t, n) {
     project: null
   };
 }
-function yw(t, n) {
+function bw(t, n) {
   const i = t.trim(), s = n.companyId.trim(), l = n.projectId.trim();
   if (i.length === 0 || s.length === 0 || l.length === 0)
     return !1;
@@ -15888,7 +15888,7 @@ function yw(t, n) {
   if (p !== void 0 && p.companyId === s && p.canonicalProjectId === l)
     return !0;
   try {
-    if (ef({
+    if (tf({
       sourceId: jl,
       companyId: s,
       projectId: l
@@ -15901,7 +15901,7 @@ function yw(t, n) {
     return !1;
   const v = i.slice(m.length);
   try {
-    return tf({
+    return of({
       companyId: s,
       projectId: l,
       houseSlug: v
@@ -15910,16 +15910,16 @@ function yw(t, n) {
     return !1;
   }
 }
-const zf = "conis.platform.users.v1";
+const xf = "conis.platform.users.v1";
 function ol() {
-  return lf.map((t) => {
+  return df.map((t) => {
     const { password: n, ...i } = t;
-    return wf(i);
+    return Sf(i);
   });
 }
 function nl() {
   const t = {};
-  for (const n of lf)
+  for (const n of df)
     t[n.email.toLowerCase()] = n.password;
   return t;
 }
@@ -15927,16 +15927,16 @@ let Yn = {
   users: ol(),
   passwords: nl()
 };
-function xf() {
+function If() {
   return typeof localStorage < "u";
 }
-function If() {
-  if (!xf()) return Yn;
+function Ef() {
+  if (!If()) return Yn;
   try {
-    const t = localStorage.getItem(zf);
+    const t = localStorage.getItem(xf);
     if (t === null || t.length === 0)
       return Yn = { users: ol(), passwords: nl() }, Yn;
-    const n = JSON.parse(t), i = Array.isArray(n.users) ? n.users.map(wf) : ol(), s = nl();
+    const n = JSON.parse(t), i = Array.isArray(n.users) ? n.users.map(Sf) : ol(), s = nl();
     for (const l of ol())
       i.some((p) => p.id === l.id) || i.push(l);
     for (const [l, p] of Object.entries(nl()))
@@ -15946,17 +15946,17 @@ function If() {
     return Yn;
   }
 }
-function Ef(t) {
-  if (Yn = t, !!xf())
+function wf(t) {
+  if (Yn = t, !!If())
     try {
       localStorage.setItem(
-        zf,
+        xf,
         JSON.stringify({ users: t.users })
       );
     } catch {
     }
 }
-function wf(t) {
+function Sf(t) {
   return {
     id: t.id,
     email: t.email.trim().toLowerCase(),
@@ -15968,35 +15968,35 @@ function wf(t) {
     lastStudioId: t.lastStudioId ?? null
   };
 }
-function Sf() {
+function Af() {
   return (/* @__PURE__ */ new Date()).toISOString();
 }
-function bw(t) {
-  const n = If(), i = n.users.find((l) => l.id === t);
+function fw(t) {
+  const n = Ef(), i = n.users.find((l) => l.id === t);
   if (i === void 0) return null;
   const s = {
     ...i,
-    lastActivityAt: Sf()
+    lastActivityAt: Af()
   };
-  return Ef({
+  return wf({
     ...n,
     users: n.users.map((l) => l.id === t ? s : l)
   }), s;
 }
 function Gi(t, n) {
-  const i = If(), s = i.users.find((m) => m.id === t);
+  const i = Ef(), s = i.users.find((m) => m.id === t);
   if (s === void 0) return null;
-  const l = Sf(), p = {
+  const l = Af(), p = {
     ...s,
     lastActivityAt: l,
     lastStudioId: n
   };
-  return Ef({
+  return wf({
     ...i,
     users: i.users.map((m) => m.id === t ? p : m)
   }), p;
 }
-const fw = [
+const jw = [
   {
     id: "dashboard",
     name: "Dashboard",
@@ -16173,19 +16173,19 @@ const fw = [
     entitlement: "included",
     description: "CONIS Launch Center — Pilot → GA orchestration over existing readiness projections."
   }
-], jw = new Map(
-  fw.map((t) => [t.id, t])
+], gw = new Map(
+  jw.map((t) => [t.id, t])
 );
 function Sc(t) {
-  const n = jw.get(t);
+  const n = gw.get(t);
   if (n === void 0)
     throw new Error(`Unknown capability: ${t}`);
   return n;
 }
-function gw() {
+function zw() {
   return (/* @__PURE__ */ new Date()).toISOString();
 }
-function zw(t) {
+function xw(t) {
   let n = !1;
   const i = () => ({
     id: t.id,
@@ -16202,7 +16202,7 @@ function zw(t) {
     status: n ? "healthy" : "inactive",
     active: n,
     message: n ? `${t.name} is active` : `${t.name} is inactive`,
-    checkedAt: gw()
+    checkedAt: zw()
   });
   return {
     id: t.id,
@@ -16225,7 +16225,7 @@ function dy(t) {
     l(p);
   return s;
 }
-function xw(t) {
+function Iw(t) {
   const n = t.uses.map((m) => m.id), i = /* @__PURE__ */ new Map();
   for (const m of n) {
     const v = Sc(m);
@@ -16233,7 +16233,7 @@ function xw(t) {
       throw new Error(
         `Capability "${m}" does not support studio "${t.studioId}"`
       );
-    i.set(m, zw(v));
+    i.set(m, xw(v));
   }
   const s = (m) => i.get(m), l = (m) => {
     var h;
@@ -16291,7 +16291,7 @@ function xw(t) {
     })
   };
 }
-const Iw = {
+const Ew = {
   studioId: "builder",
   version: "1.0.0",
   uses: [
@@ -16306,7 +16306,7 @@ const Iw = {
     { id: "intelligence" },
     { id: "customer-success" }
   ]
-}, Ew = {
+}, ww = {
   studioId: "manager",
   version: "1.0.0",
   uses: [
@@ -16319,7 +16319,7 @@ const Iw = {
     { id: "intelligence" },
     { id: "collaboration" }
   ]
-}, ww = {
+}, Sw = {
   studioId: "sales",
   version: "0.1.0",
   uses: [
@@ -16328,50 +16328,50 @@ const Iw = {
     { id: "intelligence" },
     { id: "experience" }
   ]
-}, Sw = {
+}, Aw = {
   studioId: "builder",
   label: "Builder Studio",
-  manifest: Iw
-}, Aw = {
-  studioId: "manager",
-  label: "Manager Studio",
   manifest: Ew
 }, Ow = {
+  studioId: "manager",
+  label: "Manager Studio",
+  manifest: ww
+}, Cw = {
   studioId: "sales",
   label: "Sales Studio",
-  manifest: ww
-}, Cw = [
-  Sw,
+  manifest: Sw
+}, Nw = [
   Aw,
-  Ow
+  Ow,
+  Cw
 ];
-function Nw(t) {
-  const n = xw(t.manifest);
+function Tw(t) {
+  const n = Iw(t.manifest);
   return n.activateAll(), n;
 }
-function Tw(t) {
-  const n = Cw.find(
+function Dw(t) {
+  const n = Nw.find(
     (i) => i.studioId === t
   );
   if (n === void 0)
     throw new Error(`Unknown studio composition: ${t}`);
-  return Nw(n);
-}
-function Dw(t) {
-  return t === "office" || t === "client" ? null : t;
+  return Tw(n);
 }
 function _w(t) {
+  return t === "office" || t === "client" ? null : t;
+}
+function Rw(t) {
   const n = Qe(), i = lp(n, t.projectId);
   if (i === void 0) return null;
-  const s = mf(n, i.workspaceId), l = sp(n, i.companyId);
+  const s = vf(n, i.workspaceId), l = sp(n, i.companyId);
   if (s === void 0 || l === void 0) return null;
   let p = !1;
-  const m = Dw(t.studioId);
+  const m = _w(t.studioId);
   if (m === null)
     p = !0;
   else
     try {
-      p = Tw(m).declaredIds.length > 0;
+      p = Dw(m).declaredIds.length > 0;
     } catch {
       p = !1;
     }
@@ -16386,19 +16386,19 @@ function _w(t) {
   };
 }
 let pp = null;
-function Rw(t) {
+function Mw(t) {
   return {
     ...t,
-    workspaceContext: of(t.workspaceContext) ? t.workspaceContext : null
+    workspaceContext: nf(t.workspaceContext) ? t.workspaceContext : null
   };
 }
-function Lo() {
+function Bo() {
   return pp;
 }
 function Ac(t) {
-  pp = Rw(t);
+  pp = Mw(t);
 }
-function Mw() {
+function Pw() {
   pp = null;
 }
 function Oc(t, n) {
@@ -16408,8 +16408,8 @@ function Oc(t, n) {
     (f) => f.houseId === i && f.canonicalProjectId === s
   )) === !0)
     return !0;
-  const p = Lo(), m = ((h = p == null ? void 0 : p.companyId) == null ? void 0 : h.trim()) ?? "";
-  return m.length > 0 && yw(i, {
+  const p = Bo(), m = ((h = p == null ? void 0 : p.companyId) == null ? void 0 : h.trim()) ?? "";
+  return m.length > 0 && bw(i, {
     companyId: m,
     projectId: s
   });
@@ -16421,9 +16421,9 @@ function uy(t, n) {
 }
 function Ht(t) {
   var z;
-  const n = Lo();
+  const n = Bo();
   if (n === null) return null;
-  n.user.id && bw(n.user.id);
+  n.user.id && fw(n.user.id);
   const i = t.projectId !== void 0 ? t.projectId : n.projectId, s = n.projectId !== null && tl(n.projectId) ? n.projectId : null, l = i === null ? null : tl(i) ? i : s, p = t.activeHouseId !== void 0 ? t.activeHouseId : ((z = t.workspaceContext) == null ? void 0 : z.activeHouseId) !== void 0 ? t.workspaceContext.activeHouseId : n.activeHouseId, m = uy(
     l,
     p
@@ -16444,14 +16444,14 @@ function Ht(t) {
   return Ac(f), f;
 }
 function ko() {
-  const t = Lo();
-  return t === null ? null : of(t.workspaceContext) ? t.workspaceContext : null;
+  const t = Bo();
+  return t === null ? null : nf(t.workspaceContext) ? t.workspaceContext : null;
 }
-function Af(t) {
+function Of(t) {
   var i, s;
   const n = /* @__PURE__ */ new Map();
   for (const l of cp(t))
-    Pw(n, l);
+    Lw(n, l);
   for (const l of Qe().projects)
     l.canonicalProjectId !== t || l.status !== "draft" || n.set(l.id, {
       houseId: l.id,
@@ -16476,7 +16476,7 @@ function Af(t) {
 }
 function pl(t) {
   var s;
-  const n = Af(t.projectId).find(
+  const n = Of(t.projectId).find(
     (l) => l.houseId === t.houseId
   );
   if (n === void 0) return null;
@@ -16510,7 +16510,7 @@ function pl(t) {
     canonicalBinding: i
   };
 }
-function Pw(t, n) {
+function Lw(t, n) {
   n.house !== null && t.set(n.house.houseId, {
     houseId: n.house.houseId,
     name: n.house.name,
@@ -16519,10 +16519,10 @@ function Pw(t, n) {
     status: "published"
   });
 }
-const Lw = "conis:workspace-house-change";
-function Bw(t) {
+const Bw = "conis:workspace-house-change";
+function Hw(t) {
   return {
-    type: Lw,
+    type: Bw,
     houseId: t
   };
 }
@@ -16533,7 +16533,7 @@ const cy = {
   manager: 50,
   salesman: 50
 };
-function Hw(t) {
+function Kw(t) {
   return t.length === 0 ? "builder" : [...t].sort((n, i) => cy[i] - cy[n])[0];
 }
 function mp(t, n) {
@@ -16552,42 +16552,42 @@ function mp(t, n) {
       return t.includes("manager") || t.includes("salesman");
   }
 }
-function Of(t) {
+function Cf(t) {
   return ["client", "manager", "sales", "builder", "office"].filter((n) => mp(t, n));
 }
-function Kw(t) {
-  const n = Of(t);
+function Uw(t) {
+  const n = Cf(t);
   if (n.length === 0) return "builder";
-  const i = Hw(t);
+  const i = Kw(t);
   return i === "builder" && n.includes("builder") ? "builder" : i === "manager" && n.includes("manager") ? "manager" : i === "salesman" && n.includes("sales") ? "sales" : n.includes("manager") ? "manager" : n.includes("sales") ? "sales" : n[0];
 }
 const Cc = /* @__PURE__ */ new Map();
-function Uw(t) {
+function Vw(t) {
   Cc.clear();
   for (const n of t) {
     const i = n.companyId.trim();
     i.length !== 0 && Cc.set(i, n);
   }
 }
-function Vw(t) {
+function Fw(t) {
   const n = t.trim();
   if (n.length !== 0)
     return Cc.get(n);
 }
-const py = "https://conis.cz", Ls = "conis.cz/studio", Cf = {
+const py = "https://conis.cz", Ls = "conis.cz/studio", Nf = {
   client: 4173,
   office: 4181,
   builder: 4177,
   manager: 4175,
   sales: 4179
-}, Nf = 4183, Fw = {
+}, Tf = 4183, Yw = {
   client: "/embed/",
   office: "/studio/office/",
   builder: "/studio/builder/",
   manager: "/studio/manager/",
   sales: "/studio/sales/"
-}, Yw = "/studio/workspace/";
-function qw() {
+}, qw = "/studio/workspace/";
+function $w() {
   var t, n;
   try {
     const s = (n = (t = import.meta.env) == null ? void 0 : t.VITE_PLATFORM_ORIGIN) == null ? void 0 : n.trim();
@@ -16597,20 +16597,20 @@ function qw() {
   }
   return null;
 }
-function $w(t) {
+function Gw(t) {
   return t === "127.0.0.1" || t === "localhost";
 }
-function Gw(t) {
-  return t.hostname === "conis.cz" && t.protocol === "https:" && [...Object.values(Cf), Nf].includes(
+function Zw(t) {
+  return t.hostname === "conis.cz" && t.protocol === "https:" && [...Object.values(Nf), Tf].includes(
     Number(t.port)
   );
 }
-function Tf(t) {
+function Df(t) {
   const n = typeof window < "u" ? window.location.hostname : "127.0.0.1";
   return `${typeof window < "u" && window.location.protocol === "https:" ? "https:" : "http:"}//${n}:${t}`;
 }
-function Df() {
-  const t = qw();
+function _f() {
+  const t = $w();
   if (t !== null) {
     const n = t.includes("127.0.0.1") || t.includes("localhost");
     return {
@@ -16621,7 +16621,7 @@ function Df() {
   }
   if (typeof window < "u") {
     const { hostname: n } = window.location;
-    return $w(n) || Gw(window.location) ? {
+    return Gw(n) || Zw(window.location) ? {
       mode: "local",
       origin: `${window.location.protocol}//${n}`,
       appHost: Ls
@@ -16637,18 +16637,18 @@ function Df() {
     appHost: Ls
   };
 }
-function _f(t) {
+function Rf(t) {
   if (t === "client")
     return vp();
-  const n = Df();
-  return n.mode === "local" ? `${Tf(Cf[t])}/` : `${n.origin}${Fw[t]}`;
+  const n = _f();
+  return n.mode === "local" ? `${Df(Nf[t])}/` : `${n.origin}${Yw[t]}`;
 }
 function vp() {
-  const t = Df();
-  return t.mode === "local" ? `${Tf(Nf)}/` : `${t.origin}${Yw}`;
+  const t = _f();
+  return t.mode === "local" ? `${Df(Tf)}/` : `${t.origin}${qw}`;
 }
-function Zw(t) {
-  const n = Qe(), i = sp(n, t.companyId), s = mf(n, t.workspaceId);
+function Jw(t) {
+  const n = Qe(), i = sp(n, t.companyId), s = vf(n, t.workspaceId);
   if (i === void 0 || s === void 0)
     return null;
   const l = t.projectId !== null ? lp(n, t.projectId) ?? null : null;
@@ -16661,10 +16661,10 @@ function Zw(t) {
   };
 }
 function my(t) {
-  return _f(t);
+  return Rf(t);
 }
-const Jw = "workspaceEmbed", Xw = "1", Nc = "conis.workspaceShellEmbed.v1";
-function Qw() {
+const Xw = "workspaceEmbed", Qw = "1", Nc = "conis.workspaceShellEmbed.v1";
+function Ww() {
   if (typeof sessionStorage > "u") return !1;
   try {
     return sessionStorage.getItem(Nc) === "1";
@@ -16679,22 +16679,22 @@ function vy(t) {
     } catch {
     }
 }
-function Ww() {
+function eS() {
   return typeof window > "u" ? !1 : new URLSearchParams(window.location.search).get(
-    Jw
-  ) === Xw ? (vy(!0), !0) : window.self === window.top ? (vy(!1), !1) : Qw();
+    Xw
+  ) === Qw ? (vy(!0), !0) : window.self === window.top ? (vy(!1), !1) : Ww();
 }
 function ky() {
   if (typeof window > "u") return !1;
   const { port: t, pathname: n } = window.location;
   return !!(t === "4183" || n.includes("/studio/workspace"));
 }
-const eS = {};
+const tS = {};
 function qa() {
-  const t = eS, n = t == null ? void 0 : t.VITE_PLATFORM_API_ORIGIN;
+  const t = tS, n = t == null ? void 0 : t.VITE_PLATFORM_API_ORIGIN;
   return typeof n == "string" && n.length > 0 ? n : "https://api.conis.cz";
 }
-async function pn(t) {
+async function mn(t) {
   return t.json();
 }
 function al(t = qa()) {
@@ -16705,7 +16705,7 @@ function al(t = qa()) {
       credentials: "include",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(l)
-    }), m = await pn(p);
+    }), m = await mn(p);
     return p.ok && "session" in m ? m : {
       ok: !1,
       error: ("error" in m ? m.error : void 0) ?? "Přihlášení se nepodařilo dokončit."
@@ -16729,7 +16729,7 @@ function al(t = qa()) {
       const s = await fetch(`${n}/public/auth/me`, {
         credentials: "include"
       });
-      return s.ok ? pn(s) : null;
+      return s.ok ? mn(s) : null;
     },
     async mutateSessionContext(s) {
       const l = await fetch(`${n}/public/auth/context`, {
@@ -16737,7 +16737,7 @@ function al(t = qa()) {
         credentials: "include",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(s)
-      }), p = await pn(l);
+      }), p = await mn(l);
       return l.ok && "session" in p ? p : {
         ok: !1,
         error: ("error" in p ? p.error : void 0) ?? "Partner Environment se nepodařilo aktivovat."
@@ -16750,7 +16750,7 @@ function al(t = qa()) {
           method: "GET",
           credentials: "include"
         }
-      ), l = await pn(s);
+      ), l = await mn(s);
       return s.ok && typeof l == "object" && l !== null && "registry" in l ? l : {
         ok: !1,
         error: (typeof l == "object" && l !== null && "error" in l ? l.error : void 0) ?? "Canonical registry se nepodařilo načíst."
@@ -16770,7 +16770,7 @@ function al(t = qa()) {
       );
       return l.ok ? { ok: !0 } : {
         ok: !1,
-        error: (await pn(l).catch(() => ({
+        error: (await mn(l).catch(() => ({
           error: void 0
         }))).error ?? "Canonical Partner se nepodařilo registrovat."
       };
@@ -16787,7 +16787,7 @@ function al(t = qa()) {
       );
       return l.ok ? { ok: !0 } : {
         ok: !1,
-        error: (await pn(
+        error: (await mn(
           l
         ).catch(() => ({ error: void 0 }))).error ?? "Canonical Project se nepodařilo registrovat."
       };
@@ -16804,7 +16804,7 @@ function al(t = qa()) {
       );
       return l.ok ? { ok: !0 } : {
         ok: !1,
-        error: (await pn(
+        error: (await mn(
           l
         ).catch(() => ({ error: void 0 }))).error ?? "Canonical House se nepodařilo registrovat."
       };
@@ -16821,7 +16821,7 @@ function al(t = qa()) {
       );
       return p.ok ? { ok: !0 } : {
         ok: !1,
-        error: (await pn(
+        error: (await mn(
           p
         ).catch(() => ({ error: void 0 }))).error ?? "Partner Environment scope se nepodařilo uložit."
       };
@@ -16834,15 +16834,15 @@ function al(t = qa()) {
     }
   };
 }
-const Tc = "Pilot Logo (placeholder)", Dc = "Reference House Hero", tS = "", oS = "conis.platform.partner-branding.v1";
+const Tc = "Pilot Logo (placeholder)", Dc = "Reference House Hero", oS = "", nS = "conis.platform.partner-branding.v1";
 let Zi = { byCompanyId: {} };
-function nS() {
+function aS() {
   return typeof localStorage < "u";
 }
-function aS() {
-  if (!nS()) return Zi;
+function iS() {
+  if (!aS()) return Zi;
   try {
-    const t = localStorage.getItem(oS);
+    const t = localStorage.getItem(nS);
     if (t === null || t.length === 0) return Zi;
     const n = JSON.parse(t);
     return Zi = {
@@ -16852,14 +16852,14 @@ function aS() {
     return Zi;
   }
 }
-function iS(t) {
-  const n = aS().byCompanyId[t];
+function rS(t) {
+  const n = iS().byCompanyId[t];
   return n === void 0 ? null : {
     ...n,
-    websiteUrl: typeof n.websiteUrl == "string" ? n.websiteUrl : tS
+    websiteUrl: typeof n.websiteUrl == "string" ? n.websiteUrl : oS
   };
 }
-function rS(t) {
+function sS(t) {
   const n = t.firmName.trim() || "Partner";
   return {
     companyId: t.companyId,
@@ -16870,11 +16870,11 @@ function rS(t) {
     personalized: !0
   };
 }
-function sS(t = {}) {
+function lS(t = {}) {
   var l, p, m;
   const n = ((l = t.projectId) == null ? void 0 : l.trim()) || null;
   if (n !== null) {
-    const v = gf(n);
+    const v = zf(n);
     if (v !== null) {
       const y = v.partner.companyName.trim() || "Partner", h = v.branding.logoLabel.trim() || Tc, f = v.branding.heroLabel.trim() || Dc;
       return {
@@ -16889,9 +16889,9 @@ function sS(t = {}) {
   }
   const i = ((p = t.companyId) == null ? void 0 : p.trim()) || null;
   if (i !== null) {
-    const v = iS(i);
+    const v = rS(i);
     if (v !== null)
-      return rS(v);
+      return sS(v);
   }
   const s = ((m = t.fallbackCompanyName) == null ? void 0 : m.trim()) || "Pilot Partner";
   return {
@@ -16913,9 +16913,9 @@ function hy(t) {
     previous: t.previous
   };
 }
-function lS() {
+function dS() {
   var h, f, z;
-  const t = Lo();
+  const t = Bo();
   if (t === null)
     return null;
   const n = ((h = t.projectId) == null ? void 0 : h.trim()) ?? "";
@@ -16934,7 +16934,7 @@ function lS() {
     projectId: n,
     activeHouseId: m,
     activeStudio: (v == null ? void 0 : v.activeStudio) ?? "client",
-    officeReturnHref: (v == null ? void 0 : v.officeReturnHref) ?? _f("office"),
+    officeReturnHref: (v == null ? void 0 : v.officeReturnHref) ?? Rf("office"),
     previous: (v == null ? void 0 : v.previous) ?? {
       tenantId: t.tenantId,
       companyId: t.companyId,
@@ -16951,22 +16951,22 @@ function lS() {
     workspaceContext: y
   })) == null ? void 0 : z.workspaceContext) ?? null;
 }
-function dS() {
-  const t = Lo();
+function uS() {
+  const t = Bo();
   t !== null && t.workspaceContext !== null && Ht({ workspaceContext: null });
 }
 function yy(t, n) {
-  const i = Lo();
+  const i = Bo();
   if (i === null)
     return { ok: !1, error: "Nejste přihlášeni." };
-  const s = ko() ?? lS();
+  const s = ko() ?? dS();
   if (s === null)
     return { ok: !1, error: "Workspace scope není připraven." };
   if (!mp(i.user.roles, t))
     return { ok: !1, error: "Pro tento účet nemáte přístup do Studia." };
   const l = (n == null ? void 0 : n.retainWorkspace) ?? ky();
   if (t === "office" && !l) {
-    const f = uS({
+    const f = cS({
       navigate: n == null ? void 0 : n.navigate
     });
     return f.ok ? {
@@ -16992,7 +16992,7 @@ function yy(t, n) {
   const y = vp();
   return (n == null ? void 0 : n.navigate) !== !1 && !ky() && typeof window < "u" && window.location.assign(y), { ok: !0, state: hy(m), href: y, surface: t };
 }
-function uS(t) {
+function cS(t) {
   const n = ko();
   if (n === null)
     return { ok: !1, error: "Operator PE mode není aktivní." };
@@ -17006,17 +17006,17 @@ function uS(t) {
     workspaceContext: null
   }) === null ? { ok: !1, error: "Session se nepodařilo obnovit." } : ((t == null ? void 0 : t.navigate) !== !1 && typeof window < "u" && window.location.assign(i), { ok: !0, href: i });
 }
-const cS = "audit.land";
-function pS(t) {
+const pS = "audit.land";
+function mS(t) {
   return `priority.${t}`;
 }
 function by(t) {
   var s;
-  const n = mS(t.src);
+  const n = vS(t.src);
   return `${((s = t.roomId) == null ? void 0 : s.trim()) || "house"}/${n}`;
 }
 const Qu = "tour-video";
-function mS(t) {
+function vS(t) {
   const n = t.trim();
   if (n.length === 0)
     return "image";
@@ -17029,7 +17029,7 @@ function mS(t) {
   const i = n.split("/").filter((s) => s.length > 0).pop();
   return i !== void 0 && i.length > 0 ? i : n;
 }
-function vS(t) {
+function kS(t) {
   switch (t) {
     case "REFERENCE_DEMO":
     case "LIVE_EMPTY":
@@ -17042,14 +17042,14 @@ function vS(t) {
 async function fy() {
   try {
     const t = await al().readCanonicalRegistry();
-    return t.ok ? (nw({
+    return t.ok ? (aw({
       tenants: t.registry.tenants,
       companies: t.registry.companies,
       workspaces: t.registry.workspaces,
       projects: t.registry.projects,
       houses: t.registry.houses.map((n) => ({
         ...n,
-        dataMode: vS(n.dataMode)
+        dataMode: kS(n.dataMode)
       }))
     }), { ok: !0 }) : t;
   } catch {
@@ -17059,12 +17059,12 @@ async function fy() {
     };
   }
 }
-function kS(t) {
+function hS(t) {
   const n = new URL(t);
   return n.searchParams.delete("invite"), `${n.pathname}${n.search}${n.hash}`;
 }
-const Rf = j.createContext(null);
-function hS({
+const Mf = j.createContext(null);
+function yS({
   children: t,
   bindStudioId: n
 }) {
@@ -17074,7 +17074,7 @@ function hS({
   ), p = j.useCallback(() => {
     s((M) => M + 1);
   }, []), [m, v] = j.useState(null), [y, h] = j.useState(!0), f = j.useCallback((M) => {
-    if (Ac(M), Ww()) {
+    if (Ac(M), eS()) {
       v(M);
       return;
     }
@@ -17114,7 +17114,7 @@ function hS({
     };
   }, [f, p]);
   const z = j.useMemo(
-    () => m !== null ? Zw(m) : null,
+    () => m !== null ? Jw(m) : null,
     [m]
   ), E = j.useCallback(async (M) => {
     let G;
@@ -17129,7 +17129,7 @@ function hS({
     if (!G.ok)
       return { ok: !1, error: G.error };
     await fy(), p(), Ac(G.session), v(G.session);
-    const $ = n ?? Kw(G.session.user.roles), te = Ht({ activeStudioId: $ });
+    const $ = n ?? Uw(G.session.user.roles), te = Ht({ activeStudioId: $ });
     if (te !== null) {
       v(te);
       const ie = my($);
@@ -17139,13 +17139,13 @@ function hS({
   }, [n]), A = j.useCallback((M) => {
     f(M);
   }, [f]), w = j.useCallback(async () => {
-    dS(), Mw();
+    uS(), Pw();
     try {
       await al().logout();
     } catch {
     }
     if (v(null), typeof window < "u") {
-      const M = kS(window.location.href);
+      const M = hS(window.location.href);
       M !== `${window.location.pathname}${window.location.search}${window.location.hash}` && window.history.replaceState(null, "", M);
     }
   }, []), N = j.useCallback((M) => {
@@ -17184,7 +17184,7 @@ function hS({
     var ie;
     const G = l.workspaces.find((fe) => fe.id === M);
     if (G === void 0) return;
-    const $ = ow(l, M), te = Ht({
+    const $ = nw(l, M), te = Ht({
       workspaceId: M,
       companyId: G.companyId,
       projectId: ((ie = $[0]) == null ? void 0 : ie.id) ?? null
@@ -17216,13 +17216,13 @@ function hS({
     },
     [l.canonicalProjects, m]
   ), Z = j.useCallback(
-    (M) => m === null || m.projectId === null ? null : _w({
+    (M) => m === null || m.projectId === null ? null : Rw({
       projectId: m.projectId,
       studioId: M
     }),
     [m]
   ), L = j.useMemo(
-    () => m !== null ? Of(m.user.roles) : [],
+    () => m !== null ? Cf(m.user.roles) : [],
     [m]
   ), B = j.useCallback(
     (M) => m !== null && mp(m.user.roles, M),
@@ -17265,15 +17265,15 @@ function hS({
       p
     ]
   );
-  return /* @__PURE__ */ c.jsx(Rf.Provider, { value: U, children: t });
+  return /* @__PURE__ */ c.jsx(Mf.Provider, { value: U, children: t });
 }
-function Mf() {
-  const t = j.useContext(Rf);
+function Pf() {
+  const t = j.useContext(Mf);
   if (t === null)
     throw new Error("usePlatformSession requires SessionProvider");
   return t;
 }
-const yS = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAK5klEQVR4nOydC3BU1RnHv+/ezQMEQar4gikgFRN2U2sdOxVIBUJ2N2DHQmtbqhVoHQo02QRr6YxTB9tpS1tLsgkiWq211lbbijgFdhMeoYA6faGymyBvbH0VCx2gEvLYe/qdRWq899yQQNzk7nd+M8luzuPe7J7/+c4533lcAzSsMUDDGi0A5mgBMEcLgDlaAMzRAmCOFgBztACYowXAHC0A5mgBMEcLgDlaAMzRAmCOFgBztACYowXAHC0A5mgBMEcLgDlaAMzRAmCOFgBztACYowXAHC0A5mgBMEcLgDlaAMzRAmCOFgBzfJDl1EcL/PI1GNmVBI0DhCwiXhsoAWGNQ8ArBcIX6OON/UACIfbSr0dCkaafgCZN1gggHh3/M0BjcXfSCiHW+/JPzp42/8AxYE5WCCAe9f8cEL/ekzwCxGuQ6rgpXPXqIWCM5wUQiwZ+iQh3wLkg4BD6RHFwUfKfwBRPC4Bq/tNU82/tKg3V9P3ylfoFV7kkOWgBFpdV7HwdGOLZYWA8GljTVeELgNepQzglXJEcK38QU1NJDG8rko42wGqMVxdcDgzxpAWgml9DhR9RRgrYSr/2YK5xT3DBzsOdozYuD4zpMMV2yusobCFgd44QnympTP4LGOE5AVDh30oF+LQzhopQWLeFIs2/6Sr/+lr/VfSht1OTcJniGq/mtbVNmvytPf8GJnhKAPU/LbrAyrXeQsTB9jgB1uxwRdNvu3OdhmjBxyz0bae3wx2RQuzqyMEJMxYm/gMM8FQfwMqzvqYqfBCpr3S38CWlkV17zZS4ifwBzpqOWODrEI8AE7zVCRTOdp8KceXZzL6KaVXJXT4Dp1BnUVHTcWY8WjgbGOAZAcSqrxlF4/0xHwwVwvDBMjhHppUnEoboKKa3Do+gQKMKGOAZARhGzkfsYULgwfN14shJImGlZtjDqXPkBwZ4pwkQYpg9iArpHegFwpXN26kp2Wm7ev6GukAAshzPCMDy4X8dgQgjoRd4YfmIASSmEfZwAW1HIMvxThPQgjsVwVdsWn71lXCeHDMvepB6/3YLc7i0fPebkOV4RgDBu3e+e8av35l2X+6X4DyI1wYedplM+jswwFPDQDLTaxyBAm6DcyRe63+UXu5URLWjgO8CAzw2GSSecAQhXruh2l8APYQmk1ZQ5nnKu6CYF4wktAXob4Qqml6Rrlp7eMrsmRUgs7+MzMkiVZxAa1G4PPlrYILnpoOpGXhSEXw7dJNYtHAqvSxRRgqxIFzetBIY4TkB+MyUonbiyFjU/znoFubj6nCrKhRJrgJmeE4AU7+56zVy2my3h1NP/qwrfetrAsWUzjFspInku6h5qQGGeHJFEAqhKCwcG6sNzO8ynyHy7WE0GfRO/oUnWJn9znhSAKHKpmfoZYc9nIRxn1wz4JZPYPteRx6AS1qPD6oGpnh5a5izI4d4qcgVrnsDguW7D5K536TI9436Gv8MYIhnBRCqSGykxrvRHi4QvrO+duwlbvkQrB+owgXiExwXhnp6cyh1Bh1WgEz6QGrqH3TLE4o0NVLGKDgzDhWmbx2JJw8Y4WkBhCub/koyWO2IQJwVrx1/p1u+i/Pz7qbOX8KRDeAThhiwRizls2va8zuD1tcWjSCz3oSAF3YOp7a+RWDq+rKK5mZVvlhN0Tg0rJflvL89jvI+Ho4k5kAPaaweNbTNHDyd8hfRVQop6G36gmkWM9XYX3cnZ8XewPraws8LMH/viBCQtLCFRLCvVZmvLnALNSOr014Ee1YSAfUz5lKMgG4QiwbKKO1joFhpTPew6AZ12GbcI2c1oR+RFaYuWNH8B/qSnR5CBD/1B1wdPMHyxBqa9fu2Kk5OEcfr/M/JxSJwFmK1/lWUfh2olpmnr4WG3Mgi8kRCrm2EfkTWtHWDT7UvpLrmXB9IQzxyEM1xyxeMJO+n2v6wKo6alZuP+4Zu2fDQmCFu+eWUMqXr0gHVidFg5mzrjUUsvUVWHRBRX1P4KWEYL9pNOtnwFAWE0kNHBSQApIJcSzW1zOXSB41UamZpVfPLnQNPrydQTyl3iYBDOanWiVMX73kD+pis6u0GK5v/TC8/sodT4Zv0rT8bq/EXqfLJdj4cSU4nJfzO5dKjLdN8qT7qLz8T0OV6AmEts6BlOBX0LfTHW84bwqh2X+6W/uB3yCoLcAZZm+mjTXdEUGFYaNzQ1VbweG1AuoUr3eLpGnRtOOm2M5m0tDBYkfy/H+K9DakvSC+l81KwW2DLJOqk9srq5nMhK8e7FpyaRWb/JUcE4uUorHV/fOiKgW55qZmokusC0sWjAnGG67Z0yte58CUlixMHaAgwQbU1nSzPOAPytzbef/XF0EdkpQDksC+/rbWUSmSfPY7a+SJf67DVXeWX6wIQrRJ624NVwe7rCcoqkvtNkZI7kA47Y/Ga1pzcrWtXBi6CPiBrPV5yizeaMIVqpWO/P/Xag/Gof3PjA4WD3PIHy5s3m3nvFio9jXaEqDzbegK5IZW8AcVCtZnl9IbUX0AfkJV9gM7Ijh+Nwp+nj+oobOkONnKwxH6QhB0Sy+2UdjlZD7uppnxiXqgiuQ66iTy3UKC5hf4fxVY368vhSNNTkEGyXgCS9PmBABuUkTQkA19qWmhR876uriEdQsdyhsxFy5hAM465gFYjtounQoubj0KP/5/xH6fpx82KzSg7qA/yScggLAQgOe32hWdVcdIsGwLCmVwK3lDnv94SsM0+F0HDxyHUhzkOGYLNrJd0+worNYmK27HHUK4KEii21Nf4p0GGKC1P/o0E+WN7uIkDJkAGYXVYtNwFbCLeqD4tDAcJAxvIwZO5HUEIzv2OlrgOMgi708LTh0KYcIN0wigTIHyPOn3Pb1pR8FH4kCHLU2IPs1AcgAzC8rh4eagEplI3UnPwF2UCshJtKTMhe//wIUFuZbo/LnBEWOYOyCBsOoEqGh8blX/qxKDnyC9Q6p5KrB7U0j5n4pLdJ6CXiK8ouE5YZqNqEUs4khgIGYT1AyMmzz106sRlyTIaBtxLPx3qVDjzxIDc/bG6QFVvrBeUM5aQ8m21F/7pW1k/hAzD2gJ0pqG68NqUYT7jPIjqfaiGvkHf2PfzjyYenbzUTTDuxGoKJwKaDXQPxSITsYUcSpMhw+hHxryHnOvvyD8SoIJwXVEst5VRjVnVOiywpz46vkcnlJMfIoyGsUFV+OnziTqsWdAHaAugIFY3PogCn1S5azuTHk4KWGcYuLYt90jDzfPfPGlPI5sNAwbcR+nuom/b8YgeWfi+/JPFffXwCi0AF+QK31PGBUvI/1+pWjmsggTRgALWCwNeQQuGk4eRTD58ltp7lyGleJGmrkOZ9PzZ0QI4Cxtr/Je2I9xLQpD7DHKg99jWnnckpLIamUQLoJukTxkXsJSEcM5nEp2BLEV9uCIZgn6AFkAPqX/AP1J04BxA8VXHU8m6hfhV8GhyLi6leZ9+gBbAeRBbEfg0+e7voA7jF+Xewq7SUq1vNixYEqxMroV+hBZAL5E+XRyNidTxk88myiNRtND7f2C64K0/2ZeU9xe0AJijHUHM0QJgjhYAc7QAmKMFwBwtAOZoATBHC4A5WgDM0QJgjhYAc7QAmKMFwBwtAOZoATBHC4A5WgDM0QJgjhYAc7QAmKMFwBwtAOZoATBHC4A5WgDM0QJgjhYAc7QAmKMFwBwtAOZoATBHC4A5WgDM0QJgjhYAc7QAmKMFwJz/AQAA///B+hJTAAAABklEQVQDAPTCoAiNkZxrAAAAAElFTkSuQmCC", bS = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAFqElEQVR4nOzdS2xUVRzH8f//zrRQEx/gA0gaRWjEkqkKirogtMQSx+40GBNjNBLjSkchMbKjCxOji4Y+dGUkLnRhjBuRaeMYkaARo2BsbSGhBZMaoxF8YKNM596/56JgO49kpsz03HP/v08CbU4Jub3z7blnes+0HoFqHoFqCEA5BKAcAlAOASiHAJRDAMohAOUQgHIIQDkEoBwCUA4BKIcAlEMAyiEA5RCAcghAOQSgHAJQLkkR9Hlfa8ufTVdvDMTbICLXkUXMMrXkypl3tz55+m+KIaYIyQ6kXjAH9LQ5rDaKllPJAnV37xqdopiJRAAHBlJrPeG3zdHcQxElRNPNXmHzfc9MfE8xYn0NkB1MPeYRn4zWgy8lI0zSmveTn+X6OtZQjFidAcKTOZugMWZqoUgJA+CyY+FM4HF+y/3PnjhFMWA1gOGB1BFzCHeX/6icFKFPzTvTtPi6mLlz/tD/UZjj+qHJpy1xWBNYCyA72LGbhV4u+YDQEWI/k86Mf0mWZPtTvSaAPfNH588KcVkTWFsDcCCZ4jFzUr9IPzd6r80Hv1omhdZ8kDz88VD7TeQwKwHsf71jmXmCvWrumJlW/xLihymiTJx/FI9djGBkcN3N5CgrATTlqaN4zCwEv+rJfGvjel8Vs/x7U8qsR8IIAmk+5OpMYCWAIBGkSkdljCJMhH8Pr/mVInD1cmBnDRDwDcVD5hLwM0VcuOCLWwS4GVSjuEWAABYgThEggAWKSwQI4DLEIQIEcJlcjwAB1IHLESCAOnE1AgRQRy5GgADqzLUIEEADuBQBAmgQVyJAAA3kQgSRfF1AJDF1hTuFqEZ5P7zVHbwnxDvMg37V/P/yUgTWdhYhgCoxcaf5q5MWhCvuvQsjmPWTBw+/su62zS+eOEeLDJeAKGBafa6l+VGyADNAGcz8Cy02kVVkAWaAMsSf3U9CBVIAM0AZD+w8ftoszNpmfW+bWby1Uv118aX1hN1X5yGACv5blb9BDfDvswle4IKyvnAJUA4BKIcAlEMAyiEA5RCAcghAOQSgHAJQDgEohwCUQwDKIQDlEIByCEA5BKAcAlDO2R1Bw33rl1OCH2rQlq2qMck0+fJ+etf4WXKQkwF8+Nr6lVTwviHmFfZ/3r05goS8lNubur37+bGfyDFOXgISfmJ7+OBTVJhjKbBsJwdhU2i9sBep375SLSdngCav8EGk9u2bY7lwTA5ycgYIt2w3eN9+1cJFYFMi+MjVHxvv7CWgkfv2NcH3AZRDAMohAOUQgHIIQDkEoBwCUA4BKIcAlMN+gCKu39+vFfYDlHD7/n6tsB+gHIfv79cK+wEqcfT+fq2wH6Ach+/v1wr7AYq4fn+/VtgPoBy+D6AcAlAOASiHAJRDAMohAOUQgHIIQDkEoBwCUA4BKIcAlLNzM4j5x5Ihouj8wIdGY1pZOlZ6ThaDlRmAyT9WPCbMd5ASJvYNJYNBcJQssBLAkrPjR0UkKBreNNLfnqKYGx5q32jebJo7Fp6Lpb99d4wssBLA1l4qmC+D43PHwq2YASf2Udz5ybfC+b5odOzCObHA2iKQhQZLxojvyvZ35A4MtF1PMZPbm1oRfm7mkyyZ5ZhkkCyxuvExO5A6yGV/g6acEaFD5p1J82eGHGZO8DVCdKN522m+8JeX+Se5dGZ0G1lidUtYs+c/kfeTE2ZCbJn/Eb7WjD1IMVHxq0xM3EHhcbLI6vcBwn195hnBU6SW7EjvnLDy9O+iSOx9zw3dekvBb3rHHM2dpIHQ1wHLIz2ZsUmyLDIvfpBe8kaWp3aba/8eZm6mGBKS82Yd0Js+M/oq91JAERC5V798sm/10vMzV6zlgNeImD9Ey8hh5gT/yixTPslkT2Z8nCJGxcufoDLcDFIOASiHAJRDAMohAOUQgHIIQDkEoBwCUA4BKIcAlEMAyv0DAAD//wjZdnMAAAAGSURBVAMANy4L9l5nTn4AAAAASUVORK5CYII=", me = {
+const bS = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAK5klEQVR4nOydC3BU1RnHv+/ezQMEQar4gikgFRN2U2sdOxVIBUJ2N2DHQmtbqhVoHQo02QRr6YxTB9tpS1tLsgkiWq211lbbijgFdhMeoYA6faGymyBvbH0VCx2gEvLYe/qdRWq899yQQNzk7nd+M8luzuPe7J7/+c4533lcAzSsMUDDGi0A5mgBMEcLgDlaAMzRAmCOFgBztACYowXAHC0A5mgBMEcLgDlaAMzRAmCOFgBztACYowXAHC0A5mgBMEcLgDlaAMzRAmCOFgBztACYowXAHC0A5mgBMEcLgDlaAMzRAmCOFgBzfJDl1EcL/PI1GNmVBI0DhCwiXhsoAWGNQ8ArBcIX6OON/UACIfbSr0dCkaafgCZN1gggHh3/M0BjcXfSCiHW+/JPzp42/8AxYE5WCCAe9f8cEL/ekzwCxGuQ6rgpXPXqIWCM5wUQiwZ+iQh3wLkg4BD6RHFwUfKfwBRPC4Bq/tNU82/tKg3V9P3ylfoFV7kkOWgBFpdV7HwdGOLZYWA8GljTVeELgNepQzglXJEcK38QU1NJDG8rko42wGqMVxdcDgzxpAWgml9DhR9RRgrYSr/2YK5xT3DBzsOdozYuD4zpMMV2yusobCFgd44QnympTP4LGOE5AVDh30oF+LQzhopQWLeFIs2/6Sr/+lr/VfSht1OTcJniGq/mtbVNmvytPf8GJnhKAPU/LbrAyrXeQsTB9jgB1uxwRdNvu3OdhmjBxyz0bae3wx2RQuzqyMEJMxYm/gMM8FQfwMqzvqYqfBCpr3S38CWlkV17zZS4ifwBzpqOWODrEI8AE7zVCRTOdp8KceXZzL6KaVXJXT4Dp1BnUVHTcWY8WjgbGOAZAcSqrxlF4/0xHwwVwvDBMjhHppUnEoboKKa3Do+gQKMKGOAZARhGzkfsYULgwfN14shJImGlZtjDqXPkBwZ4pwkQYpg9iArpHegFwpXN26kp2Wm7ev6GukAAshzPCMDy4X8dgQgjoRd4YfmIASSmEfZwAW1HIMvxThPQgjsVwVdsWn71lXCeHDMvepB6/3YLc7i0fPebkOV4RgDBu3e+e8av35l2X+6X4DyI1wYedplM+jswwFPDQDLTaxyBAm6DcyRe63+UXu5URLWjgO8CAzw2GSSecAQhXruh2l8APYQmk1ZQ5nnKu6CYF4wktAXob4Qqml6Rrlp7eMrsmRUgs7+MzMkiVZxAa1G4PPlrYILnpoOpGXhSEXw7dJNYtHAqvSxRRgqxIFzetBIY4TkB+MyUonbiyFjU/znoFubj6nCrKhRJrgJmeE4AU7+56zVy2my3h1NP/qwrfetrAsWUzjFspInku6h5qQGGeHJFEAqhKCwcG6sNzO8ynyHy7WE0GfRO/oUnWJn9znhSAKHKpmfoZYc9nIRxn1wz4JZPYPteRx6AS1qPD6oGpnh5a5izI4d4qcgVrnsDguW7D5K536TI9436Gv8MYIhnBRCqSGykxrvRHi4QvrO+duwlbvkQrB+owgXiExwXhnp6cyh1Bh1WgEz6QGrqH3TLE4o0NVLGKDgzDhWmbx2JJw8Y4WkBhCub/koyWO2IQJwVrx1/p1u+i/Pz7qbOX8KRDeAThhiwRizls2va8zuD1tcWjSCz3oSAF3YOp7a+RWDq+rKK5mZVvlhN0Tg0rJflvL89jvI+Ho4k5kAPaaweNbTNHDyd8hfRVQop6G36gmkWM9XYX3cnZ8XewPraws8LMH/viBCQtLCFRLCvVZmvLnALNSOr014Ee1YSAfUz5lKMgG4QiwbKKO1joFhpTPew6AZ12GbcI2c1oR+RFaYuWNH8B/qSnR5CBD/1B1wdPMHyxBqa9fu2Kk5OEcfr/M/JxSJwFmK1/lWUfh2olpmnr4WG3Mgi8kRCrm2EfkTWtHWDT7UvpLrmXB9IQzxyEM1xyxeMJO+n2v6wKo6alZuP+4Zu2fDQmCFu+eWUMqXr0gHVidFg5mzrjUUsvUVWHRBRX1P4KWEYL9pNOtnwFAWE0kNHBSQApIJcSzW1zOXSB41UamZpVfPLnQNPrydQTyl3iYBDOanWiVMX73kD+pis6u0GK5v/TC8/sodT4Zv0rT8bq/EXqfLJdj4cSU4nJfzO5dKjLdN8qT7qLz8T0OV6AmEts6BlOBX0LfTHW84bwqh2X+6W/uB3yCoLcAZZm+mjTXdEUGFYaNzQ1VbweG1AuoUr3eLpGnRtOOm2M5m0tDBYkfy/H+K9DakvSC+l81KwW2DLJOqk9srq5nMhK8e7FpyaRWb/JUcE4uUorHV/fOiKgW55qZmokusC0sWjAnGG67Z0yte58CUlixMHaAgwQbU1nSzPOAPytzbef/XF0EdkpQDksC+/rbWUSmSfPY7a+SJf67DVXeWX6wIQrRJ624NVwe7rCcoqkvtNkZI7kA47Y/Ga1pzcrWtXBi6CPiBrPV5yizeaMIVqpWO/P/Xag/Gof3PjA4WD3PIHy5s3m3nvFio9jXaEqDzbegK5IZW8AcVCtZnl9IbUX0AfkJV9gM7Ijh+Nwp+nj+oobOkONnKwxH6QhB0Sy+2UdjlZD7uppnxiXqgiuQ66iTy3UKC5hf4fxVY368vhSNNTkEGyXgCS9PmBABuUkTQkA19qWmhR876uriEdQsdyhsxFy5hAM465gFYjtounQoubj0KP/5/xH6fpx82KzSg7qA/yScggLAQgOe32hWdVcdIsGwLCmVwK3lDnv94SsM0+F0HDxyHUhzkOGYLNrJd0+worNYmK27HHUK4KEii21Nf4p0GGKC1P/o0E+WN7uIkDJkAGYXVYtNwFbCLeqD4tDAcJAxvIwZO5HUEIzv2OlrgOMgi708LTh0KYcIN0wigTIHyPOn3Pb1pR8FH4kCHLU2IPs1AcgAzC8rh4eagEplI3UnPwF2UCshJtKTMhe//wIUFuZbo/LnBEWOYOyCBsOoEqGh8blX/qxKDnyC9Q6p5KrB7U0j5n4pLdJ6CXiK8ouE5YZqNqEUs4khgIGYT1AyMmzz106sRlyTIaBtxLPx3qVDjzxIDc/bG6QFVvrBeUM5aQ8m21F/7pW1k/hAzD2gJ0pqG68NqUYT7jPIjqfaiGvkHf2PfzjyYenbzUTTDuxGoKJwKaDXQPxSITsYUcSpMhw+hHxryHnOvvyD8SoIJwXVEst5VRjVnVOiywpz46vkcnlJMfIoyGsUFV+OnziTqsWdAHaAugIFY3PogCn1S5azuTHk4KWGcYuLYt90jDzfPfPGlPI5sNAwbcR+nuom/b8YgeWfi+/JPFffXwCi0AF+QK31PGBUvI/1+pWjmsggTRgALWCwNeQQuGk4eRTD58ltp7lyGleJGmrkOZ9PzZ0QI4Cxtr/Je2I9xLQpD7DHKg99jWnnckpLIamUQLoJukTxkXsJSEcM5nEp2BLEV9uCIZgn6AFkAPqX/AP1J04BxA8VXHU8m6hfhV8GhyLi6leZ9+gBbAeRBbEfg0+e7voA7jF+Xewq7SUq1vNixYEqxMroV+hBZAL5E+XRyNidTxk88myiNRtND7f2C64K0/2ZeU9xe0AJijHUHM0QJgjhYAc7QAmKMFwBwtAOZoATBHC4A5WgDM0QJgjhYAc7QAmKMFwBwtAOZoATBHC4A5WgDM0QJgjhYAc7QAmKMFwBwtAOZoATBHC4A5WgDM0QJgjhYAc7QAmKMFwBwtAOZoATBHC4A5WgDM0QJgjhYAc7QAmKMFwJz/AQAA///B+hJTAAAABklEQVQDAPTCoAiNkZxrAAAAAElFTkSuQmCC", fS = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAFqElEQVR4nOzdS2xUVRzH8f//zrRQEx/gA0gaRWjEkqkKirogtMQSx+40GBNjNBLjSkchMbKjCxOji4Y+dGUkLnRhjBuRaeMYkaARo2BsbSGhBZMaoxF8YKNM596/56JgO49kpsz03HP/v08CbU4Jub3z7blnes+0HoFqHoFqCEA5BKAcAlAOASiHAJRDAMohAOUQgHIIQDkEoBwCUA4BKIcAlEMAyiEA5RCAcghAOQSgHAJQLkkR9Hlfa8ufTVdvDMTbICLXkUXMMrXkypl3tz55+m+KIaYIyQ6kXjAH9LQ5rDaKllPJAnV37xqdopiJRAAHBlJrPeG3zdHcQxElRNPNXmHzfc9MfE8xYn0NkB1MPeYRn4zWgy8lI0zSmveTn+X6OtZQjFidAcKTOZugMWZqoUgJA+CyY+FM4HF+y/3PnjhFMWA1gOGB1BFzCHeX/6icFKFPzTvTtPi6mLlz/tD/UZjj+qHJpy1xWBNYCyA72LGbhV4u+YDQEWI/k86Mf0mWZPtTvSaAPfNH588KcVkTWFsDcCCZ4jFzUr9IPzd6r80Hv1omhdZ8kDz88VD7TeQwKwHsf71jmXmCvWrumJlW/xLihymiTJx/FI9djGBkcN3N5CgrATTlqaN4zCwEv+rJfGvjel8Vs/x7U8qsR8IIAmk+5OpMYCWAIBGkSkdljCJMhH8Pr/mVInD1cmBnDRDwDcVD5hLwM0VcuOCLWwS4GVSjuEWAABYgThEggAWKSwQI4DLEIQIEcJlcjwAB1IHLESCAOnE1AgRQRy5GgADqzLUIEEADuBQBAmgQVyJAAA3kQgSRfF1AJDF1hTuFqEZ5P7zVHbwnxDvMg37V/P/yUgTWdhYhgCoxcaf5q5MWhCvuvQsjmPWTBw+/su62zS+eOEeLDJeAKGBafa6l+VGyADNAGcz8Cy02kVVkAWaAMsSf3U9CBVIAM0AZD+w8ftoszNpmfW+bWby1Uv118aX1hN1X5yGACv5blb9BDfDvswle4IKyvnAJUA4BKIcAlEMAyiEA5RCAcghAOQSgHAJQDgEohwCUQwDKIQDlEIByCEA5BKAcAlDO2R1Bw33rl1OCH2rQlq2qMck0+fJ+etf4WXKQkwF8+Nr6lVTwviHmFfZ/3r05goS8lNubur37+bGfyDFOXgISfmJ7+OBTVJhjKbBsJwdhU2i9sBep375SLSdngCav8EGk9u2bY7lwTA5ycgYIt2w3eN9+1cJFYFMi+MjVHxvv7CWgkfv2NcH3AZRDAMohAOUQgHIIQDkEoBwCUA4BKIcAlMN+gCKu39+vFfYDlHD7/n6tsB+gHIfv79cK+wEqcfT+fq2wH6Ach+/v1wr7AYq4fn+/VtgPoBy+D6AcAlAOASiHAJRDAMohAOUQgHIIQDkEoBwCUA4BKIcAlLNzM4j5x5Ihouj8wIdGY1pZOlZ6ThaDlRmAyT9WPCbMd5ASJvYNJYNBcJQssBLAkrPjR0UkKBreNNLfnqKYGx5q32jebJo7Fp6Lpb99d4wssBLA1l4qmC+D43PHwq2YASf2Udz5ybfC+b5odOzCObHA2iKQhQZLxojvyvZ35A4MtF1PMZPbm1oRfm7mkyyZ5ZhkkCyxuvExO5A6yGV/g6acEaFD5p1J82eGHGZO8DVCdKN522m+8JeX+Se5dGZ0G1lidUtYs+c/kfeTE2ZCbJn/Eb7WjD1IMVHxq0xM3EHhcbLI6vcBwn195hnBU6SW7EjvnLDy9O+iSOx9zw3dekvBb3rHHM2dpIHQ1wHLIz2ZsUmyLDIvfpBe8kaWp3aba/8eZm6mGBKS82Yd0Js+M/oq91JAERC5V798sm/10vMzV6zlgNeImD9Ey8hh5gT/yixTPslkT2Z8nCJGxcufoDLcDFIOASiHAJRDAMohAOUQgHIIQDkEoBwCUA4BKIcAlEMAyv0DAAD//wjZdnMAAAAGSURBVAMANy4L9l5nTn4AAAAASUVORK5CYII=", me = {
   navy: "#001930",
   creamLight: "#F7F6F4",
   creamMid: "#E8E5E0",
@@ -17309,14 +17309,14 @@ const yS = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAA
     card: me.pureWhite,
     interactive: me.creamMid
   }
-}, jy = 43, fS = 14;
-function jS({ label: t }) {
+}, jy = 43, jS = 14;
+function gS({ label: t }) {
   const n = t.trim();
   return n.length === 0 ? null : /* @__PURE__ */ c.jsxs(
     "div",
     {
       className: "flex items-center min-w-0",
-      style: { gap: fS },
+      style: { gap: jS },
       "aria-label": n,
       "data-testid": "client-partner-logo",
       children: [
@@ -17362,11 +17362,11 @@ function jS({ label: t }) {
     }
   );
 }
-const gS = "rgba(0, 25, 48, 0.7)", zS = "inline-flex items-center gap-2 text-sm text-embed-foreground-primary underline decoration-embed-border-strong underline-offset-4 transition-colors hover:text-embed-brand-navy hover:decoration-embed-brand-navy";
+const zS = "rgba(0, 25, 48, 0.7)", xS = "inline-flex items-center gap-2 text-sm text-embed-foreground-primary underline decoration-embed-border-strong underline-offset-4 transition-colors hover:text-embed-brand-navy hover:decoration-embed-brand-navy";
 function Wu() {
   return typeof window < "u" && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 }
-function Pf({
+function Lf({
   label: t,
   icon: n,
   panelTestId: i,
@@ -17400,7 +17400,7 @@ function Pf({
           "button",
           {
             type: "button",
-            className: zS,
+            className: xS,
             "aria-expanded": l,
             "aria-haspopup": "true",
             onClick: () => {
@@ -17424,7 +17424,7 @@ function Pf({
                 "data-testid": i,
                 className: "rounded-[8px] px-4 py-3 text-left shadow-[0_8px_24px_rgba(0,25,48,0.18)]",
                 style: {
-                  backgroundColor: gS,
+                  backgroundColor: zS,
                   color: me.pureWhite,
                   borderRadius: 8
                 },
@@ -17482,21 +17482,21 @@ function kp(t, n, i) {
     if (!t.headers.includes(s))
       return `Missing required CSV header "${s}" in ${i}`;
 }
-function Lf(t, n, i) {
+function Bf(t, n, i) {
   if (!/^-?\d+$/.test(t))
     return `Invalid integer for "${n}" in ${i}: ${t}`;
   const s = Number(t);
   return Number.isSafeInteger(s) ? s : `Integer out of range for "${n}" in ${i}: ${t}`;
 }
-function xS(t, n, i) {
+function IS(t, n, i) {
   const s = t.replace(",", ".");
   if (!/^\d+(\.\d+)?$/.test(s))
     return `Invalid number for "${n}" in ${i}: ${t}`;
   const l = Number(s);
   return !Number.isFinite(l) || l < 0 ? `Number out of range for "${n}" in ${i}: ${t}` : l;
 }
-const IS = "builder-house-package", ES = "1.0";
-function wS(t, n, i) {
+const ES = "builder-house-package", wS = "1.0";
+function SS(t, n, i) {
   const s = $a(t), l = kp(s, ["order", "room", "file"], n);
   if (l)
     return i.push(lt("BP_INVALID_CSV", l, n)), [];
@@ -17507,7 +17507,7 @@ function wS(t, n, i) {
       i.push(lt("BP_MISSING_FIELD", "Missing order, room, or file.", E));
       continue;
     }
-    const A = Lf(h, "order", E);
+    const A = Bf(h, "order", E);
     if (typeof A == "string") {
       i.push(lt("BP_INVALID_TYPE", A, E));
       continue;
@@ -17520,7 +17520,7 @@ function wS(t, n, i) {
   }
   return m.sort((v, y) => v.order - y.order), m;
 }
-function SS(t, n, i) {
+function AS(t, n, i) {
   const s = $a(t), l = kp(
     s,
     ["floor", "room", "name", "area"],
@@ -17537,7 +17537,7 @@ function SS(t, n, i) {
       );
       continue;
     }
-    const w = xS(E, "area", A);
+    const w = IS(E, "area", A);
     if (typeof w == "string") {
       i.push(lt("BP_INVALID_TYPE", w, A));
       continue;
@@ -17550,7 +17550,7 @@ function SS(t, n, i) {
   }
   return m;
 }
-function AS(t, n, i) {
+function OS(t, n, i) {
   const s = $a(t), l = kp(s, ["order", "room", "provider"], n);
   if (l)
     return i.push(lt("BP_INVALID_CSV", l, n)), [];
@@ -17571,7 +17571,7 @@ function AS(t, n, i) {
       );
       continue;
     }
-    const N = Lf(f, "order", w);
+    const N = Bf(f, "order", w);
     if (typeof N == "string") {
       i.push(lt("BP_INVALID_TYPE", N, w));
       continue;
@@ -17589,9 +17589,9 @@ function Bs(t, n, i) {
     lt("BP_ASSET_MISSING", `Referenced asset is missing: ${t}`, t)
   ));
 }
-function OS(t) {
+function CS(t) {
   var V;
-  const n = [], s = (t.validationMode ?? "PUBLISH_READY") === "PUBLISH_READY", l = SS(t.roomsCsv, "rooms.csv", n), p = wS(t.galleryCsv, "gallery.csv", n), m = AS(t.videosCsv, "videos.csv", n), v = ((V = t.heroPath) == null ? void 0 : V.trim()) ?? "";
+  const n = [], s = (t.validationMode ?? "PUBLISH_READY") === "PUBLISH_READY", l = AS(t.roomsCsv, "rooms.csv", n), p = SS(t.galleryCsv, "gallery.csv", n), m = OS(t.videosCsv, "videos.csv", n), v = ((V = t.heroPath) == null ? void 0 : V.trim()) ?? "";
   v.length === 0 && s ? n.push(
     lt("BP_MISSING_FILE", "Hero asset path is required (media/hero/…).", "media/hero/")
   ) : v.length > 0 && Bs(v, t.existingRelativePaths, n);
@@ -17675,8 +17675,8 @@ function OS(t) {
   };
   return { ok: !0, result: {
     manifest: {
-      packageFormat: IS,
-      schemaVersion: ES,
+      packageFormat: ES,
+      schemaVersion: wS,
       packageRoot: t.packageRoot,
       hero: z,
       gallery: E,
@@ -17693,7 +17693,7 @@ function OS(t) {
     videos: N
   } };
 }
-function CS(t, n) {
+function NS(t, n) {
   switch (t) {
     case "wistia":
       return `https://fast.wistia.net/embed/iframe/${n}`;
@@ -17709,29 +17709,29 @@ function CS(t, n) {
       return n;
   }
 }
-function NS(t) {
+function TS(t) {
   if (t === null || typeof t != "object")
     return !1;
   const n = t;
   return typeof n.label == "string" && typeof n.value == "string";
 }
-function TS(t) {
+function DS(t) {
   if (t === null || typeof t != "object")
     return !1;
   const n = t;
-  return typeof n.eyebrow == "string" && typeof n.headline == "string" && Array.isArray(n.metrics) && n.metrics.length === 3 && n.metrics.every(NS);
+  return typeof n.eyebrow == "string" && typeof n.headline == "string" && Array.isArray(n.metrics) && n.metrics.length === 3 && n.metrics.every(TS);
 }
-function DS(t) {
+function _S(t) {
   if (t === null || t.trim().length === 0)
     return null;
   try {
     const n = JSON.parse(t);
-    return TS(n.heroCopy) ? n.heroCopy : null;
+    return DS(n.heroCopy) ? n.heroCopy : null;
   } catch {
     return null;
   }
 }
-function _S(t) {
+function RS(t) {
   if (t === null || t.trim().length === 0)
     return null;
   try {
@@ -17741,28 +17741,28 @@ function _S(t) {
     return null;
   }
 }
-const RS = "builder-package/projectBuilderImportToHousePackage", hp = "hero", _c = "gallery:", Rc = "video:", MS = "floorplan:";
+const MS = "builder-package/projectBuilderImportToHousePackage", hp = "hero", _c = "gallery:", Rc = "video:", PS = "floorplan:";
 function ec(t, n) {
   const i = t.replace(/\/+$/, ""), s = n.replace(/^\/+/, "");
   return `${i}/${s}`;
 }
-function PS(t) {
+function LS(t) {
   const n = /^p(\d+)$/i.exec(t.trim());
   if (n === null)
     return 0;
   const i = Number.parseInt(n[1], 10);
   return !Number.isFinite(i) || i < 1 ? 0 : i - 1;
 }
-function LS(t, n) {
+function BS(t, n) {
   return `${_c}${t}:${n}`;
 }
-function BS(t, n) {
+function HS(t, n) {
   return `${Rc}${t}:${n}`;
 }
-function Bf(t) {
-  return `${MS}${t}`;
-}
 function Hf(t) {
+  return `${PS}${t}`;
+}
+function Kf(t) {
   if (!t.startsWith(_c))
     return null;
   const n = t.slice(_c.length), i = n.lastIndexOf(":");
@@ -17771,7 +17771,7 @@ function Hf(t) {
   const s = n.slice(0, i), l = Number.parseInt(n.slice(i + 1), 10);
   return s.length === 0 || !Number.isFinite(l) ? null : { roomId: s, order: l };
 }
-function Kf(t) {
+function Uf(t) {
   if (!t.startsWith(Rc))
     return null;
   const n = t.slice(Rc.length), i = n.lastIndexOf(":");
@@ -17780,13 +17780,13 @@ function Kf(t) {
   const s = n.slice(0, i), l = Number.parseInt(n.slice(i + 1), 10);
   return s.length === 0 || !Number.isFinite(l) ? null : { roomId: s, order: l };
 }
-function HS(t, n) {
+function KS(t, n) {
   const i = n.packagePublicRoot ?? "/house-package", s = t.rooms.rooms.map(
     (m) => Object.freeze({
       id: m.roomId,
       name: m.name,
       area: m.area,
-      floor: PS(m.floorId)
+      floor: LS(m.floorId)
     })
   ), l = [], p = t.hero.entries[0];
   p !== void 0 && l.push(
@@ -17800,7 +17800,7 @@ function HS(t, n) {
   for (const m of t.gallery.entries)
     l.push(
       Object.freeze({
-        id: LS(m.roomId, m.order),
+        id: BS(m.roomId, m.order),
         type: "image",
         title: m.roomId,
         url: ec(i, m.path)
@@ -17809,16 +17809,16 @@ function HS(t, n) {
   for (const m of t.videos.entries)
     l.push(
       Object.freeze({
-        id: BS(m.roomId, m.order),
+        id: HS(m.roomId, m.order),
         type: "video",
         title: m.roomId,
-        url: CS(m.provider, m.mediaId)
+        url: NS(m.provider, m.mediaId)
       })
     );
   for (const m of t.floors.floors)
     l.push(
       Object.freeze({
-        id: Bf(m.floorId),
+        id: Hf(m.floorId),
         type: "floorplan",
         title: m.floorId,
         url: ec(i, m.planPng)
@@ -17838,18 +17838,18 @@ function HS(t, n) {
     ...n.heroCopy !== void 0 ? { heroCopy: n.heroCopy } : {}
   });
 }
-function KS(t, n = {}) {
+function US(t, n = {}) {
   const i = t.media.find(
     (m) => m.id === hp
   ), s = t.media.flatMap((m) => {
-    const v = Hf(m.id);
+    const v = Kf(m.id);
     return v === null ? [] : [{ order: v.order, roomId: v.roomId, src: m.url }];
   }), l = t.media.flatMap((m) => {
-    const v = Kf(m.id);
+    const v = Uf(m.id);
     return v === null ? [] : [{ order: v.order, roomId: v.roomId, src: m.url }];
   }), p = Object.entries(n).map(([m, v]) => {
     const y = t.media.find(
-      (h) => h.id === Bf(m)
+      (h) => h.id === Hf(m)
     );
     return y === void 0 ? null : { floorId: m, rasterSrc: y.url, geometry: v };
   }).filter(
@@ -17867,14 +17867,14 @@ function KS(t, n = {}) {
     floors: Object.freeze(p.map((m) => Object.freeze(m)))
   });
 }
-const US = "hp-003-floorplan-geometry";
-function VS(t) {
+const VS = "hp-003-floorplan-geometry";
+function FS(t) {
   if (t === null || typeof t != "object")
     return !1;
   const n = t;
-  return n.schema === US && typeof n.schemaVersion == "string" && typeof n.floorId == "string" && Array.isArray(n.rooms);
+  return n.schema === VS && typeof n.schemaVersion == "string" && typeof n.floorId == "string" && Array.isArray(n.rooms);
 }
-function FS() {
+function YS() {
   const t = [];
   return {
     name: "memory",
@@ -17889,7 +17889,7 @@ function FS() {
     }
   };
 }
-function YS(t = "[decision-analytics]") {
+function qS(t = "[decision-analytics]") {
   return {
     name: "console",
     exportEvent(n) {
@@ -17900,7 +17900,7 @@ function YS(t = "[decision-analytics]") {
     }
   };
 }
-function qS(t) {
+function $S(t) {
   return {
     name: "composite",
     exportEvent(n) {
@@ -17920,7 +17920,7 @@ function qS(t) {
     }
   };
 }
-function $S(t, n) {
+function GS(t, n) {
   let i = null, s = null, l = "";
   const p = {}, m = {}, v = {};
   let y = 0, h = 0, f = 0, z = 0, E = 0, A = 0, w = !1, N = !1;
@@ -17984,7 +17984,7 @@ function $S(t, n) {
     eventCount: n.filter((g) => g.sessionId === t).length
   });
 }
-function GS(t) {
+function ZS(t) {
   const { sessionId: n, adapter: i } = t, s = t.now ?? (() => Date.now()), l = [], p = /* @__PURE__ */ new Map(), m = /* @__PURE__ */ new Set();
   let v = t.decisionSessionId ?? "decision-session:pending", y = null, h = null, f = !1, z = !1, E = !1, A = !1;
   const w = (g) => Object.freeze({
@@ -18006,7 +18006,7 @@ function GS(t) {
     sessionId: n,
     getDecisionSessionId: () => v,
     getEvents: () => l.slice(),
-    getMetrics: () => $S(n, l),
+    getMetrics: () => GS(n, l),
     subscribe(g) {
       return m.add(g), () => {
         m.delete(g);
@@ -18053,7 +18053,7 @@ function GS(t) {
         objectId: q
       });
       const Z = {
-        ...ZS(g.event),
+        ...JS(g.event),
         floor: g.experience.context.navigation.currentFloor ?? (g.experience.context.activeRoom.room !== null ? String(g.experience.context.activeRoom.room.floor) : null)
       };
       if (N({
@@ -18217,7 +18217,7 @@ function GS(t) {
     }
   };
 }
-function ZS(t) {
+function JS(t) {
   switch (t.type) {
     case "RoomSelected":
       return { roomId: t.roomId };
@@ -18256,19 +18256,19 @@ function zy(t) {
   return n.length === 0 ? "empty" : /proč|why|důvod/.test(n) ? "why-recommendation" : /priorit|ovlivn|driver|vliv/.test(n) ? "drivers" : /pokoj|room|místnost|fokus/.test(n) ? "room-focus" : /story|příběh|shrň|summ/.test(n) ? "story-summary" : /další|next|krok/.test(n) ? "next-step" : "general";
 }
 const yp = j.createContext(null);
-function JS() {
-  const t = FS(), i = typeof window < "u" && !1 ? qS([t, YS()]) : t;
-  return GS({
+function XS() {
+  const t = YS(), i = typeof window < "u" && !1 ? $S([t, qS()]) : t;
+  return ZS({
     sessionId: `analytics-${Date.now().toString(36)}`,
     adapter: i
   });
 }
-function XS({
+function QS({
   children: t,
   collector: n
 }) {
   const i = j.useRef(n ?? null);
-  i.current === null && (i.current = JS());
+  i.current === null && (i.current = XS());
   const s = i.current;
   j.useEffect(() => {
     s.startJourney(), s.experienceEvent({
@@ -18287,7 +18287,7 @@ function XS({
   const l = j.useMemo(() => s, [s]);
   return /* @__PURE__ */ c.jsx(yp.Provider, { value: l, children: t });
 }
-function QS() {
+function WS() {
   const t = j.useContext(yp);
   if (t === null)
     throw new Error(
@@ -18298,7 +18298,7 @@ function QS() {
 function Xn() {
   return j.useContext(yp);
 }
-function Uf({ label: t = "Načítání Client Studia…" }) {
+function Vf({ label: t = "Načítání Client Studia…" }) {
   return /* @__PURE__ */ c.jsx(
     "div",
     {
@@ -18310,7 +18310,7 @@ function Uf({ label: t = "Načítání Client Studia…" }) {
     }
   );
 }
-const WS = Object.freeze({
+const eA = Object.freeze({
   [le.walkthrough]: "tour",
   [le.priority]: "priority",
   [le.aiAdvisor]: "racio",
@@ -18321,17 +18321,17 @@ function xy(t) {
   il = t;
 }
 function qn(t) {
-  const n = WS[t];
+  const n = eA[t];
   n !== void 0 && (il == null || il(n));
 }
-const eA = /* @__PURE__ */ new Set([
+const tA = /* @__PURE__ */ new Set([
   "BOOTSTRAP_STARTED",
   "BOOTSTRAP_LOADING",
   "RUNTIME_READY",
   "EXPERIENCE_READY",
   "REVEAL_READY"
 ]);
-function tA() {
+function oA() {
   const t = /* @__PURE__ */ new Map(), n = /* @__PURE__ */ new Set();
   function i(l) {
     let p = t.get(l);
@@ -18342,7 +18342,7 @@ function tA() {
      * Emit a lifecycle event. Once-per-session events are ignored if already emitted.
      */
     emit(l) {
-      if (eA.has(l) && n.has(l))
+      if (tA.has(l) && n.has(l))
         return;
       n.add(l);
       const p = t.get(l);
@@ -18403,7 +18403,7 @@ function tA() {
   };
   return s;
 }
-const ho = tA(), oA = Object.freeze({
+const ho = oA(), nA = Object.freeze({
   identity: Object.freeze({
     id: "house-modern-01",
     title: "Modern 01",
@@ -18430,7 +18430,7 @@ const ho = tA(), oA = Object.freeze({
       url: "/reference-house/assets/documents/technical.pdf"
     })
   ])
-}), nA = Object.freeze({
+}), aA = Object.freeze({
   identity: Object.freeze({
     id: "authoring-draft",
     title: "VÁŠ PRVNÍ DŮM",
@@ -18452,16 +18452,16 @@ const ho = tA(), oA = Object.freeze({
   }),
   documents: Object.freeze([])
 }), zl = /* @__PURE__ */ new Map();
-function aA(t, n) {
+function iA(t, n) {
   zl.set(t, n);
 }
-function Vf(t) {
+function Ff(t) {
   return zl.get(t) ?? null;
 }
-function iA() {
+function rA() {
   zl.clear();
 }
-function rA() {
+function sA() {
   return Object.freeze([...zl.keys()]);
 }
 let ml = null;
@@ -18472,15 +18472,15 @@ function Iy(t) {
   }
   ml = t.replace(/\/+$/, "");
 }
-function sA() {
+function lA() {
   return ml;
 }
 function Kt(t) {
   const n = ml;
   return n === null || t.startsWith("https://") || t.startsWith("http://") || t.startsWith("data:") || t.startsWith("blob:") ? t : t.startsWith("/") ? `${n}${t}` : t;
 }
-const lA = "[PT-RUNTIME-EVIDENCE-01]";
-function Ff() {
+const dA = "[PT-RUNTIME-EVIDENCE-01]";
+function Yf() {
   if (typeof window > "u")
     return !1;
   try {
@@ -18491,7 +18491,7 @@ function Ff() {
   return !1;
 }
 function io(t, n) {
-  Ff() && console.info(lA, t, n);
+  Yf() && console.info(dA, t, n);
 }
 function tc(t) {
   let n = 2166136261;
@@ -18506,7 +18506,7 @@ function Ji(t) {
     last: t[t.length - 1] ?? null
   };
 }
-function dA(t, n, i = {}) {
+function uA(t, n, i = {}) {
   const s = n.replace(/\/+$/, ""), l = (p) => p.startsWith(`${s}/`) ? p.slice(s.length + 1) : null;
   return Object.freeze({
     ...t,
@@ -18521,7 +18521,7 @@ function dA(t, n, i = {}) {
     )
   });
 }
-const Jn = "/house-package", Yf = "media/hero/hero.png";
+const Jn = "/house-package", qf = "media/hero/hero.png";
 function bp(t) {
   const n = t.replace(/\/+$/, "") || "/house-package";
   return {
@@ -18531,7 +18531,7 @@ function bp(t) {
     packageRootLabel: n
   };
 }
-function uA(t, n = "webp") {
+function cA(t, n = "webp") {
   var l;
   const i = $a(t), s = /* @__PURE__ */ new Set();
   for (const p of i.rows) {
@@ -18544,12 +18544,12 @@ function uA(t, n = "webp") {
     svgRelativePath: `media/plans/${p}.svg`
   }));
 }
-function cA(t) {
-  const n = sA();
+function pA(t) {
+  const n = lA();
   return n === null || n.length === 0 || t.startsWith("https://") || t.startsWith("http://") || t.startsWith("data:") || t.startsWith("blob:") ? t : t.startsWith("/") ? `${n}${t}` : t;
 }
 async function fp(t) {
-  const n = cA(t), i = await fetch(n, { cache: "no-store" });
+  const n = pA(t), i = await fetch(n, { cache: "no-store" });
   if (!i.ok)
     throw new Error(
       `Failed to load House Package asset ${n}: HTTP ${i.status}`
@@ -18559,21 +18559,21 @@ async function fp(t) {
 async function oc(t) {
   return fp(t);
 }
-function pA(t) {
+function mA(t) {
   if (t === null || typeof t != "object")
     return !1;
   const n = t;
   return n.validationMode === "AUTHORING_DRAFT" && typeof n.heroPath == "string" && n.heroPath.length > 0 && (n.floorPlans === "not-authored" || n.floorPlans === "placeholder");
 }
-async function mA(t, n) {
+async function vA(t, n) {
   try {
     const i = typeof n == "string" ? n : await fp(
       `${t.replace(/\/+$/, "")}/manifest.json`
     ), s = JSON.parse(i);
     return {
-      authoringDraft: pA(s) ? s : null,
-      heroCopy: DS(i),
-      heroRelativePath: _S(i)
+      authoringDraft: mA(s) ? s : null,
+      heroCopy: _S(i),
+      heroRelativePath: RS(i)
     };
   } catch {
     return {
@@ -18583,9 +18583,9 @@ async function mA(t, n) {
     };
   }
 }
-async function vA(t, n, i) {
+async function kA(t, n, i) {
   var m;
-  if (iA(), !i)
+  if (rA(), !i)
     return;
   const s = $a(t), l = /* @__PURE__ */ new Set();
   for (const v of s.rows) {
@@ -18602,18 +18602,18 @@ async function vA(t, n, i) {
       } catch {
         throw new Error(`Invalid HP-003 geometry JSON at ${y}`);
       }
-      if (!VS(f))
+      if (!FS(f))
         throw new Error(`HP-003 schema mismatch at ${y}`);
       const z = f;
       if (z.floorId !== v)
         throw new Error(
           `HP-003 floorId mismatch at ${y}: expected ${v}, got ${z.floorId}`
         );
-      aA(v, z);
+      iA(v, z);
     })
   );
 }
-async function kA(t = Jn) {
+async function hA(t = Jn) {
   const n = bp(t), [i, s, l] = await Promise.all([
     oc(n.gallery),
     oc(n.rooms),
@@ -18621,15 +18621,15 @@ async function kA(t = Jn) {
   ]);
   return { galleryCsv: i, roomsCsv: s, videosCsv: l };
 }
-function hA(t, n = Jn, i = null, s = null) {
-  const l = bp(n), p = OS({
+function yA(t, n = Jn, i = null, s = null) {
+  const l = bp(n), p = CS({
     packageRoot: l.packageRootLabel,
     galleryCsv: t.galleryCsv,
     roomsCsv: t.roomsCsv,
     videosCsv: t.videosCsv,
     validationMode: (i == null ? void 0 : i.validationMode) ?? "PUBLISH_READY",
-    heroPath: s ?? (i == null ? void 0 : i.heroPath) ?? Yf,
-    planPairs: (i == null ? void 0 : i.floorPlans) === "not-authored" ? [] : uA(
+    heroPath: s ?? (i == null ? void 0 : i.heroPath) ?? qf,
+    planPairs: (i == null ? void 0 : i.floorPlans) === "not-authored" ? [] : cA(
       t.roomsCsv,
       (i == null ? void 0 : i.floorPlans) === "placeholder" ? "png" : "webp"
     )
@@ -18640,8 +18640,8 @@ function hA(t, n = Jn, i = null, s = null) {
   }
   return p.result;
 }
-function yA(t) {
-  const n = bp(t.packagePublicRoot), i = t.heroRelativePath ?? Yf;
+function bA(t) {
+  const n = bp(t.packagePublicRoot), i = t.heroRelativePath ?? qf;
   return {
     packageRoot: n.packageRootLabel,
     galleryCsvPath: n.gallery,
@@ -18657,11 +18657,11 @@ function yA(t) {
     videosCsvFingerprint: tc(t.texts.videosCsv)
   };
 }
-function bA(t, n, i, s) {
-  Ff() && window.setTimeout(() => {
+function fA(t, n, i, s) {
+  Yf() && window.setTimeout(() => {
     io(
       "1.BuilderPackage",
-      yA({
+      bA({
         packagePublicRoot: i,
         heroRelativePath: s,
         registries: t,
@@ -18683,26 +18683,26 @@ function bA(t, n, i, s) {
   }, 0);
 }
 let Ba = null, vl = null, kl = null, Zn = null, Mc = null, Hs = null, Xi = null;
-function fA(t, n, i) {
+function jA(t, n, i) {
   var m;
   const s = ((m = n == null ? void 0 : n.identity) == null ? void 0 : m.id) ?? "", l = (i == null ? void 0 : i.mediaUrls) ?? {}, p = (i == null ? void 0 : i.files) ?? {};
   return `${t}::${s}::${JSON.stringify(p)}::${JSON.stringify(l)}`;
 }
-function qf(t, n, i, s, l = !1, p = null, m) {
-  const v = HS(t, {
-    ...l ? nA : oA,
+function $f(t, n, i, s, l = !1, p = null, m) {
+  const v = KS(t, {
+    ...l ? aA : nA,
     ...(s == null ? void 0 : s.identity) !== void 0 ? { identity: s.identity } : {},
     packagePublicRoot: n,
     ...p !== null ? { heroCopy: p } : {}
-  }), y = dA(
+  }), y = uA(
     v,
     i,
     m
   );
   return vl = y, y;
 }
-async function jA(t = Jn, n, i) {
-  const s = t.replace(/\/+$/, "") || Jn, l = fA(s, n, i);
+async function gA(t = Jn, n, i) {
+  const s = t.replace(/\/+$/, "") || Jn, l = jA(s, n, i);
   if (Ba !== null && Zn === s && Hs === l)
     return Ba;
   if (Xi !== null && Zn === s && Hs === l)
@@ -18710,14 +18710,14 @@ async function jA(t = Jn, n, i) {
   Ba = null, vl = null, kl = null, Zn = s, Hs = l, Xi = (async () => {
     var E, A;
     const [p, m] = await Promise.all([
-      kA(s),
-      mA(s, i == null ? void 0 : i.files.manifestJson)
+      hA(s),
+      vA(s, i == null ? void 0 : i.files.manifestJson)
     ]), v = {
       galleryCsv: (i == null ? void 0 : i.files.galleryCsv) ?? p.galleryCsv,
       roomsCsv: (i == null ? void 0 : i.files.roomsCsv) ?? p.roomsCsv,
       videosCsv: (i == null ? void 0 : i.files.videosCsv) ?? p.videosCsv
     }, y = s;
-    Mc = s, await vA(
+    Mc = s, await kA(
       v.roomsCsv,
       // Durable state overlays authored text and uploaded media only. HP-003
       // geometry remains required seed package infrastructure, so an absent
@@ -18725,14 +18725,14 @@ async function jA(t = Jn, n, i) {
       s,
       ((E = m.authoringDraft) == null ? void 0 : E.floorPlans) !== "not-authored"
     );
-    const h = hA(
+    const h = yA(
       v,
       y,
       m.authoringDraft,
       m.heroRelativePath
     );
     Ba = h;
-    const f = qf(
+    const f = $f(
       h,
       y,
       s,
@@ -18741,15 +18741,15 @@ async function jA(t = Jn, n, i) {
       m.heroCopy,
       i == null ? void 0 : i.mediaUrls
     ), z = Object.fromEntries(
-      rA().flatMap((w) => {
-        const N = Vf(w);
+      sA().flatMap((w) => {
+        const N = Ff(w);
         return N === null ? [] : [[w, N]];
       })
     );
-    return kl = KS(
+    return kl = US(
       f,
       z
-    ), bA(
+    ), fA(
       h,
       v,
       y,
@@ -18762,19 +18762,19 @@ async function jA(t = Jn, n, i) {
     throw Xi = null, Zn = null, Mc = null, Hs = null, p;
   }
 }
-function gA() {
+function zA() {
   if (Ba === null)
     throw new Error(
       "Builder House Package registries are not ready. Await ensureBuilderPackageBootstrapped() first."
     );
   return Ba;
 }
-function $f() {
+function Gf() {
   return Mc ?? Zn ?? Jn;
 }
-function zA() {
-  return vl !== null ? vl : qf(
-    gA(),
+function xA() {
+  return vl !== null ? vl : $f(
+    zA(),
     Zn ?? Jn,
     Zn ?? Jn
   );
@@ -18786,47 +18786,47 @@ function Ey() {
     );
   return kl;
 }
-function Gf(t) {
+function Zf(t) {
   return `${qa().replace(/\/$/, "")}/public/house-packages/${encodeURIComponent(t)}`;
 }
-function xA(t, n) {
+function IA(t, n) {
   const s = n.replace(/^media\//, "").split("/").map((l) => encodeURIComponent(l)).join("/");
-  return `${Gf(t)}/media/${s}`;
+  return `${Zf(t)}/media/${s}`;
 }
-function IA(t) {
+function EA(t) {
   return t === void 0 ? [] : $a(t).rows.flatMap((n) => {
     var s;
     const i = ((s = n.file) == null ? void 0 : s.trim()) ?? "";
     return i.length === 0 || i.includes("/") ? [] : [`media/gallery/${i}`];
   });
 }
-async function EA(t, n) {
+async function wA(t, n) {
   const i = await fetch(t, {
     credentials: "include",
     signal: n
   }), s = i.headers.get("content-type") ?? "";
   return !i.ok || !s.toLowerCase().startsWith("image/") ? t : URL.createObjectURL(await i.blob());
 }
-async function wA(t) {
-  const n = IA(t.galleryCsv), i = await Promise.all(
+async function SA(t) {
+  const n = EA(t.galleryCsv), i = await Promise.all(
     n.map(async (s) => [
       s,
-      await EA(
-        xA(t.houseId, s),
+      await wA(
+        IA(t.houseId, s),
         t.signal
       )
     ])
   );
   return Object.freeze(Object.fromEntries(i));
 }
-function SA(t) {
+function AA(t) {
   if (t === null || typeof t != "object")
     return !1;
   const n = t;
   return typeof n.houseId == "string" && typeof n.updatedAt == "string" && n.files !== null && typeof n.files == "object";
 }
-async function AA(t, n) {
-  const i = await fetch(`${Gf(t)}/state`, {
+async function OA(t, n) {
+  const i = await fetch(`${Zf(t)}/state`, {
     credentials: "include",
     signal: n
   });
@@ -18837,7 +18837,7 @@ async function AA(t, n) {
       `Platform API House Package state failed (HTTP ${i.status}).`
     );
   const s = await i.json();
-  if (!SA(s) || s.houseId !== t)
+  if (!AA(s) || s.houseId !== t)
     throw new Error("Platform API returned invalid persisted House Package state.");
   const l = {
     ...typeof s.files.roomsCsv == "string" ? { roomsCsv: s.files.roomsCsv } : {},
@@ -18847,7 +18847,7 @@ async function AA(t, n) {
   };
   if (Object.keys(l).length === 0)
     return null;
-  const p = await wA({
+  const p = await SA({
     houseId: t,
     galleryCsv: l.galleryCsv,
     signal: n
@@ -18857,7 +18857,7 @@ async function AA(t, n) {
     ...Object.keys(p).length > 0 ? { mediaUrls: p } : {}
   };
 }
-async function OA(t, n) {
+async function CA(t, n) {
   const i = t.trim();
   if (i.length !== 0)
     try {
@@ -18867,7 +18867,7 @@ async function OA(t, n) {
       );
       if (!s.ok) return;
       const l = await s.json();
-      YE([
+      qE([
         {
           projectId: i,
           privacyUrl: typeof l.privacyUrl == "string" ? l.privacyUrl : null
@@ -18876,7 +18876,7 @@ async function OA(t, n) {
     } catch {
     }
 }
-function CA(t, n) {
+function NA(t, n) {
   const i = (s) => typeof s == "string" && s.trim().length > 0 ? s.trim() : null;
   return {
     companyId: t,
@@ -18889,7 +18889,7 @@ function CA(t, n) {
     phone: i(n.phone)
   };
 }
-async function NA(t, n) {
+async function TA(t, n) {
   const i = t.trim();
   if (i.length !== 0)
     try {
@@ -18899,16 +18899,16 @@ async function NA(t, n) {
       );
       if (!s.ok) return;
       const l = await s.json();
-      Uw([CA(i, l)]);
+      Vw([NA(i, l)]);
     } catch {
     }
 }
-function Zf() {
+function Jf() {
   return `${qa().replace(/\/$/, "")}/public/decision-sessions`;
 }
 async function wy(t) {
   try {
-    return (await fetch(Zf(), {
+    return (await fetch(Jf(), {
       method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({
@@ -18924,7 +18924,7 @@ async function wy(t) {
     return !1;
   }
 }
-async function TA(t) {
+async function DA(t) {
   const n = new URLSearchParams({
     decisionSessionId: t.decisionSessionId,
     companyId: t.scope.companyId,
@@ -18932,7 +18932,7 @@ async function TA(t) {
     houseId: t.scope.houseId
   });
   try {
-    const i = await fetch(`${Zf()}?${n}`, {
+    const i = await fetch(`${Jf()}?${n}`, {
       signal: t.signal
     });
     if (!i.ok)
@@ -18943,27 +18943,27 @@ async function TA(t) {
     return null;
   }
 }
-function DA(t) {
+function _A(t) {
   return t === "SelectRoom" || t === "ChangePriority" || t === "AnswerQuestion" || t === "OpenQuestion" || t === "StartVideoPlayback" || t === "MarkVideoPlaybackMilestone" || t === "ViewImage" || t === "EnterJourneyStage" || t === "SubmitChatQuestion";
 }
-function Jf(t) {
+function Xf(t) {
   return `conis.decisionSessionId:${t.companyId}:${t.projectId}:${t.houseId}`;
 }
-function _A(t, n = Xf()) {
+function RA(t, n = Qf()) {
   if (n === null)
     return null;
-  const i = n.getItem(Jf(t));
+  const i = n.getItem(Xf(t));
   return i !== null && i.trim().length > 0 ? i.trim() : null;
 }
-function RA(t, n, i = Xf()) {
-  i !== null && i.setItem(Jf(t), n);
-}
-function Xf() {
-  return typeof sessionStorage > "u" ? null : sessionStorage;
+function MA(t, n, i = Qf()) {
+  i !== null && i.setItem(Xf(t), n);
 }
 function Qf() {
+  return typeof sessionStorage > "u" ? null : sessionStorage;
+}
+function Wf() {
   var l, p, m, v, y, h, f;
-  const t = Lo(), n = typeof window < "u" ? new URLSearchParams(window.location.search).get("projectId") : null, i = typeof window < "u" ? new URLSearchParams(window.location.search).get("houseId") : null, s = typeof document < "u" ? (l = document.querySelector("[data-embed-root], [data-client-studio-root]")) == null ? void 0 : l.getAttribute("data-object-id") : null;
+  const t = Bo(), n = typeof window < "u" ? new URLSearchParams(window.location.search).get("projectId") : null, i = typeof window < "u" ? new URLSearchParams(window.location.search).get("houseId") : null, s = typeof document < "u" ? (l = document.querySelector("[data-embed-root], [data-client-studio-root]")) == null ? void 0 : l.getAttribute("data-object-id") : null;
   return {
     urlProjectId: n,
     urlHouseId: i,
@@ -18975,9 +18975,9 @@ function Qf() {
   };
 }
 function jp() {
-  return Wf(Qf());
+  return ej(Wf());
 }
-function Wf(t) {
+function ej(t) {
   const n = xl(
     t.sessionProjectId
   ), i = t.embedObjectId ?? t.urlHouseId;
@@ -19034,7 +19034,7 @@ function Sy(t) {
   const n = t.authoringDraftPackage;
   if (n === null)
     throw new Error("AUTHORING_DRAFT package is required for draft runtime binding.");
-  const i = gf(t.projectId);
+  const i = zf(t.projectId);
   return i === null ? {
     runtimeHouseId: null,
     runtimeProjectId: null,
@@ -19062,7 +19062,7 @@ function Sy(t) {
     }
   };
 }
-function MA(t) {
+function PA(t) {
   if (t == null)
     return "";
   const n = t.partner.companyName.trim(), i = t.house;
@@ -19071,9 +19071,9 @@ function MA(t) {
   const s = i.name.trim() || i.houseId;
   return n.length === 0 ? s : `${n} · ${s}`;
 }
-function xl(t = ((n) => (n = Lo()) == null ? void 0 : n.projectId)()) {
+function xl(t = ((n) => (n = Bo()) == null ? void 0 : n.projectId)()) {
   const i = (t == null ? void 0 : t.trim()) ?? "";
-  return jf().some(
+  return gf().some(
     (s) => s.project.projectId === i
   ) ? i : null;
 }
@@ -19090,20 +19090,20 @@ function Pc(t = xl()) {
     }
   return [...n.values()];
 }
-function PA(t = jp()) {
+function LA(t = jp()) {
   var n;
   return ((n = t.runtimeHouseId) == null ? void 0 : n.trim()) ?? "";
 }
-const LA = {
+const BA = {
   vestibule: "vestibule-corridor"
 };
-function BA(t) {
+function HA(t) {
   const n = t.media.find((i) => i.id === hp);
   return n !== void 0 ? Kt(n.url) : "";
 }
 function Il(t) {
   const n = t.media.map((i) => {
-    const s = Hf(i.id);
+    const s = Kf(i.id);
     return s === null ? null : {
       order: s.order,
       roomId: s.roomId,
@@ -19114,7 +19114,7 @@ function Il(t) {
 }
 function gp(t) {
   const n = /* @__PURE__ */ new Set(), i = [], s = t.media.map((l) => {
-    const p = Kf(l.id);
+    const p = Uf(l.id);
     return p === null ? null : {
       order: p.order,
       roomId: p.roomId,
@@ -19125,39 +19125,39 @@ function gp(t) {
     n.has(l.url) || (n.add(l.url), i.push(l));
   return Object.freeze(i);
 }
-function ej(t, n) {
+function tj(t, n) {
   const i = gp(t), l = Il(t).findIndex((p) => p.roomId === n);
   return l < 0 ? null : i.length + l;
 }
-function HA(t, n) {
+function KA(t, n) {
   return Object.freeze(
     Il(t).filter((i) => i.roomId === n).map((i) => i.url)
   );
 }
-function tj(t) {
+function oj(t) {
   const n = t.media.find((i) => i.type === "floorplan");
   return n !== void 0 ? Kt(n.url) : "";
 }
-function KA(t, n) {
+function UA(t, n) {
   const i = Number.parseInt(n, 10), s = Number.isFinite(i) ? `p${i + 1}` : `p${n}`, l = t.media.find(
     (p) => p.id === `floorplan:${s}`
   );
-  return l !== void 0 ? Kt(l.url) : tj(t);
+  return l !== void 0 ? Kt(l.url) : oj(t);
 }
-function UA(t, n) {
+function VA(t, n) {
   const i = gp(t);
   if (n < i.length)
     return null;
   const s = Il(t)[n - i.length];
   return (s == null ? void 0 : s.roomId) ?? null;
 }
-function VA(t, n = "/house-package") {
-  const i = LA[t] ?? t, s = n.replace(/\/+$/, "") || "/house-package";
+function FA(t, n = "/house-package") {
+  const i = BA[t] ?? t, s = n.replace(/\/+$/, "") || "/house-package";
   return Kt(`${s}/decision-canvas/${i}.svg`);
 }
 function zp(t, n) {
   var s;
-  const i = (n == null ? void 0 : n.hero) !== void 0 && n.hero !== null ? Kt(n.hero.src) : BA(t);
+  const i = (n == null ? void 0 : n.hero) !== void 0 && n.hero !== null ? Kt(n.hero.src) : HA(t);
   return i.length === 0 ? null : Object.freeze({
     id: "builder-package-hero",
     kind: "image",
@@ -19166,7 +19166,7 @@ function zp(t, n) {
     title: ((s = n == null ? void 0 : n.hero) == null ? void 0 : s.title) ?? "Hero"
   });
 }
-function oj(t) {
+function nj(t) {
   const n = t.house.documents ?? [];
   return Object.freeze(
     n.map((i) => {
@@ -19181,7 +19181,7 @@ function oj(t) {
     })
   );
 }
-function FA(t, n) {
+function YA(t, n) {
   var y;
   const i = (n == null ? void 0 : n.gallery.map((h) => ({
     order: h.order,
@@ -19233,8 +19233,8 @@ function FA(t, n) {
   ].sort((h, f) => h.order - f.order).map(({ order: h, ...f }) => f));
   return { gallery: p, videos: m, thumbnails: v };
 }
-function YA(t, n, i, s) {
-  const l = zp(n.house, s), p = oj(n), v = ((s == null ? void 0 : s.gallery.filter((h) => h.roomId === t.id).map((h) => Kt(h.src))) ?? HA(n.house, t.id))[0], y = v !== void 0 ? Object.freeze({
+function qA(t, n, i, s) {
+  const l = zp(n.house, s), p = nj(n), v = ((s == null ? void 0 : s.gallery.filter((h) => h.roomId === t.id).map((h) => Kt(h.src))) ?? KA(n.house, t.id))[0], y = v !== void 0 ? Object.freeze({
     id: `${t.id}-hero`,
     kind: "image",
     url: v,
@@ -19262,9 +19262,9 @@ function YA(t, n, i, s) {
     ])
   });
 }
-function qA(t, n, i) {
+function $A(t, n, i) {
   var p, m, v;
-  const s = (t == null ? void 0 : t.documents) ?? oj(n), l = zp(n.house);
+  const s = (t == null ? void 0 : t.documents) ?? nj(n), l = zp(n.house);
   return Object.freeze(t === null ? {
     roomId: null,
     title: (l == null ? void 0 : l.title) ?? n.house.title,
@@ -19290,10 +19290,10 @@ function qA(t, n, i) {
 function Ay(t) {
   return `${t} m²`;
 }
-function $A(t) {
+function GA(t) {
   return `${t.toLocaleString("cs-CZ")} Kč`;
 }
-function GA(t, n) {
+function ZA(t, n) {
   const { house: i } = t, s = t.context.object, { highlights: l, focus: p } = t.context.decision, m = zp(i);
   return Object.freeze({
     eyebrow: `${s.reference} · ${s.construction}`,
@@ -19302,7 +19302,7 @@ function GA(t, n) {
     metrics: Object.freeze([
       { label: "Užitná plocha", value: Ay(s.usableArea) },
       { label: "Pozemek", value: Ay(i.landArea) },
-      { label: "Cena", value: $A(i.price) }
+      { label: "Cena", value: GA(i.price) }
     ]),
     ...i.heroCopy !== void 0 ? { copy: i.heroCopy } : {},
     heroMedia: m,
@@ -19314,14 +19314,14 @@ function GA(t, n) {
     focusRoomName: p.focusRoomName
   });
 }
-function ZA(t) {
+function JA(t) {
   const n = Number.parseInt(t, 10);
   return Number.isFinite(n) ? `p${n + 1}` : t.startsWith("p") ? t : `p${t}`;
 }
-function JA(t, n) {
-  const i = t.context.navigation.currentFloor ?? t.context.navigation.floors[0] ?? "0", s = ZA(i), l = n == null ? void 0 : n.floors.find(
+function XA(t, n) {
+  const i = t.context.navigation.currentFloor ?? t.context.navigation.floors[0] ?? "0", s = JA(i), l = n == null ? void 0 : n.floors.find(
     (z) => z.floorId === s
-  ), p = l !== void 0 ? Kt(l.rasterSrc) : KA(t.house, i) || tj(t.house), m = (l == null ? void 0 : l.geometry) ?? Vf(s), v = (m == null ? void 0 : m.viewBox.width) ?? 0, y = (m == null ? void 0 : m.viewBox.height) ?? 0, h = new Map(
+  ), p = l !== void 0 ? Kt(l.rasterSrc) : UA(t.house, i) || oj(t.house), m = (l == null ? void 0 : l.geometry) ?? Ff(s), v = (m == null ? void 0 : m.viewBox.width) ?? 0, y = (m == null ? void 0 : m.viewBox.height) ?? 0, h = new Map(
     ((m == null ? void 0 : m.rooms) ?? []).map((z) => {
       const E = {
         x: z.bbox.x,
@@ -19338,9 +19338,9 @@ function JA(t, n) {
       id: z.id,
       title: z.name,
       floor: String(z.floor),
-      decisionCanvasSrc: VA(
+      decisionCanvasSrc: FA(
         z.id,
-        $f()
+        Gf()
       ),
       floorPlanRegion: E
     });
@@ -19353,7 +19353,7 @@ function JA(t, n) {
     rooms: Object.freeze(f)
   });
 }
-function XA(t, n, i, s) {
+function QA(t, n, i, s) {
   const { context: l } = t;
   return Object.freeze({
     ...l,
@@ -19362,16 +19362,16 @@ function XA(t, n, i, s) {
       room: n,
       focusRoom: l.activeRoom.focusRoom
     }),
-    roomMedia: qA(n, t, i),
-    hero: GA(t),
-    floorPlan: JA(t, s)
+    roomMedia: $A(n, t, i),
+    hero: ZA(t),
+    floorPlan: XA(t, s)
   });
 }
-function QA(t, n) {
-  const i = (n == null ? void 0 : n.houseId) === t.house.id ? n : void 0, s = FA(t.house, i), l = t.context.activeRoom.room, p = t.context.activeRoom.id, m = l === null || p === null ? null : YA(l, t, s, i);
+function WA(t, n) {
+  const i = (n == null ? void 0 : n.houseId) === t.house.id ? n : void 0, s = YA(t.house, i), l = t.context.activeRoom.room, p = t.context.activeRoom.id, m = l === null || p === null ? null : qA(l, t, s, i);
   return Object.freeze({
     house: t.house,
-    context: XA(
+    context: QA(
       t,
       m,
       s,
@@ -19380,31 +19380,31 @@ function QA(t, n) {
   });
 }
 function Oy() {
-  const t = Qf(), n = Wf(t), i = n.runtimeProjectId ?? xl(t.sessionProjectId), s = n.runtimeHouseId ?? t.embedObjectId ?? t.sessionHouseId ?? t.workspaceContextHouseId ?? t.urlHouseId, l = i !== null && s !== null ? pl({ projectId: i, houseId: s }) : null;
+  const t = Wf(), n = ej(t), i = n.runtimeProjectId ?? xl(t.sessionProjectId), s = n.runtimeHouseId ?? t.embedObjectId ?? t.sessionHouseId ?? t.workspaceContextHouseId ?? t.urlHouseId, l = i !== null && s !== null ? pl({ projectId: i, houseId: s }) : null;
   return {
     workspaceBinding: l,
     canonicalBinding: (l == null ? void 0 : l.runtimeContentAvailable) === !1 ? null : n
   };
 }
-const nj = j.createContext(null);
+const aj = j.createContext(null);
 function Ks(t, n) {
   return t === null || n === null ? null : `${t}::${n}`;
 }
-function WA(t, n) {
+function eO(t, n) {
   return n !== null && t === n;
 }
-function eO(t) {
+function tO(t) {
   return !t.injectedRuntime && !t.hasAuthoringDraftPackage && t.dataMode === "LIVE_EMPTY" && t.packagePublicRoot === null;
 }
 function Cy(t) {
   return t.runtimeContentAvailable === !1 && t.authoringDraftPackage === null;
 }
-function tO() {
+function oO() {
   return j.useEffect(() => {
     ho.emit("EXPERIENCE_READY");
   }, []), null;
 }
-function oO({
+function nO({
   children: t,
   runtime: n
 }) {
@@ -19421,7 +19421,7 @@ function oO({
   const N = Oy(), g = Cy({
     runtimeContentAvailable: (ie = N.workspaceBinding) == null ? void 0 : ie.runtimeContentAvailable,
     authoringDraftPackage: ((fe = N.workspaceBinding) == null ? void 0 : fe.authoringDraftPackage) ?? null
-  }) ? N.workspaceBinding ?? null : null, H = ((Ie = N.workspaceBinding) == null ? void 0 : Ie.authoringDraftPackage) ?? null, V = N.canonicalBinding, q = ((ue = N.workspaceBinding) == null ? void 0 : ue.houseId) ?? (V == null ? void 0 : V.runtimeHouseId) ?? null, Z = (H == null ? void 0 : H.packagePublicRoot) ?? (V == null ? void 0 : V.packagePublicRoot) ?? null, L = eO({
+  }) ? N.workspaceBinding ?? null : null, H = ((Ie = N.workspaceBinding) == null ? void 0 : Ie.authoringDraftPackage) ?? null, V = N.canonicalBinding, q = ((ue = N.workspaceBinding) == null ? void 0 : ue.houseId) ?? (V == null ? void 0 : V.runtimeHouseId) ?? null, Z = (H == null ? void 0 : H.packagePublicRoot) ?? (V == null ? void 0 : V.packagePublicRoot) ?? null, L = tO({
     injectedRuntime: n !== void 0,
     hasAuthoringDraftPackage: H !== null,
     dataMode: (X = (R = V == null ? void 0 : V.project) == null ? void 0 : R.house) == null ? void 0 : X.dataMode,
@@ -19432,14 +19432,14 @@ function oO({
   ), M = j.useMemo(
     () => {
       var ee, x;
-      return q === null ? null : CE({
+      return q === null ? null : NE({
         runtimeHouseId: q,
         referenceProvenance: (x = (ee = V == null ? void 0 : V.project) == null ? void 0 : ee.house) == null ? void 0 : x.referenceProvenance
       });
     },
     [(ve = (J = V == null ? void 0 : V.project) == null ? void 0 : J.house) == null ? void 0 : ve.referenceProvenance, q]
   ), G = j.useMemo(
-    () => M === null ? null : XI(M),
+    () => M === null ? null : QI(M),
     [M]
   );
   j.useEffect(() => {
@@ -19456,7 +19456,7 @@ function oO({
       i.current = null, h(!1), z(null), A(null);
       return;
     }
-    const x = ((Ct = ee.workspaceBinding) == null ? void 0 : Ct.authoringDraftPackage) ?? null, C = ((Ut = ee.canonicalBinding) == null ? void 0 : Ut.project) ?? null, W = (x == null ? void 0 : x.packagePublicRoot) ?? ((eo = ee.canonicalBinding) == null ? void 0 : eo.packagePublicRoot) ?? null, Q = ((he = ee.workspaceBinding) == null ? void 0 : he.houseId) ?? ((tt = ee.canonicalBinding) == null ? void 0 : tt.runtimeHouseId) ?? null, se = (ot, Vt, Bo) => {
+    const x = ((Ct = ee.workspaceBinding) == null ? void 0 : Ct.authoringDraftPackage) ?? null, C = ((Ut = ee.canonicalBinding) == null ? void 0 : Ut.project) ?? null, W = (x == null ? void 0 : x.packagePublicRoot) ?? ((eo = ee.canonicalBinding) == null ? void 0 : eo.packagePublicRoot) ?? null, Q = ((he = ee.workspaceBinding) == null ? void 0 : he.houseId) ?? ((tt = ee.canonicalBinding) == null ? void 0 : tt.runtimeHouseId) ?? null, se = (ot, Vt, Ho) => {
       var ro, ke, ye;
       io(
         "ClientPackageBinding",
@@ -19468,7 +19468,7 @@ function oO({
           workspacePackagePublicRoot: (x == null ? void 0 : x.packagePublicRoot) ?? null,
           resolvedPackagePublicRoot: W,
           requestedRuntimeBindingKey: Ks(Q, W),
-          loadedRuntimeBindingKey: Bo,
+          loadedRuntimeBindingKey: Ho,
           runtimeContentAvailable: ((ye = ee.workspaceBinding) == null ? void 0 : ye.runtimeContentAvailable) ?? null,
           authoringDraftPackage: x,
           bootstrapRoot: W,
@@ -19489,17 +19489,17 @@ function oO({
     return (async () => {
       var jt, xn;
       const ot = (C == null ? void 0 : C.project.projectId) ?? null, Vt = (C == null ? void 0 : C.partner.companyId) ?? null;
-      ot !== null && await OA(
+      ot !== null && await CA(
         ot,
         oe.signal
-      ), Vt !== null && await NA(
+      ), Vt !== null && await TA(
         Vt,
         oe.signal
       );
-      let Bo = null;
+      let Ho = null;
       if (Q !== null)
         try {
-          Bo = await AA(
+          Ho = await OA(
             Q,
             oe.signal
           );
@@ -19509,7 +19509,7 @@ function oO({
             { houseId: Q, error: Ue }
           );
         }
-      if (await jA(
+      if (await gA(
         W,
         {
           identity: {
@@ -19518,34 +19518,34 @@ function oO({
             reference: ((xn = C == null ? void 0 : C.house) == null ? void 0 : xn.slug) ?? Q ?? ""
           }
         },
-        Bo ?? void 0
+        Ho ?? void 0
       ), ce)
         return;
-      const ro = zA(), ke = Vt !== null && ot !== null && Q !== null ? {
+      const ro = xA(), ke = Vt !== null && ot !== null && Q !== null ? {
         companyId: Vt,
         projectId: ot,
         houseId: Q
       } : null;
       let ye, Oe = crypto.randomUUID();
       if (ke !== null) {
-        const Ue = _A(ke);
+        const Ue = RA(ke);
         if (Ue !== null) {
-          const fr = await TA({
+          const fr = await DA({
             decisionSessionId: Ue,
             scope: ke,
             signal: oe.signal
           });
           if (fr !== null) {
-            const Qn = A0(fr.serialized);
+            const Qn = O0(fr.serialized);
             Qn.ok && Qn.session.objectId === ro.identity.id && (ye = Qn.session, Oe = Ue);
           } else
             Oe = Ue;
         }
-        RA(ke, Oe);
+        MA(ke, Oe);
       }
-      if (i.current = nE({
+      if (i.current = aE({
         housePackage: ro,
-        clock: I0(),
+        clock: E0(),
         now: (ye == null ? void 0 : ye.createdAt) ?? 1,
         session: ye
       }), s.current = ke === null ? null : Oe, l.current = ke, ke !== null && i.current !== null) {
@@ -19591,7 +19591,7 @@ function oO({
       if (C === null)
         throw new Error("Decision Session Runtime is not ready.");
       const W = C.dispatch(ee, x);
-      if (W.ok && (w == null || w.observeDispatch(W), v((Q) => Q + 1), DA(ee.type))) {
+      if (W.ok && (w == null || w.observeDispatch(W), v((Q) => Q + 1), _A(ee.type))) {
         const Q = l.current, se = s.current;
         if (Q !== null && se !== null) {
           const ce = () => {
@@ -19615,7 +19615,7 @@ function oO({
     xy(null);
   }), [$]);
   const te = j.useMemo(() => {
-    if (!y || i.current === null || n === void 0 && !WA(
+    if (!y || i.current === null || n === void 0 && !eO(
       f,
       U
     ))
@@ -19624,12 +19624,12 @@ function oO({
     if (ee === null)
       throw new Error("DecisionSessionRuntime produced no Experience projection.");
     return {
-      experience: QA(
+      experience: WA(
         ee,
         Ey()
       ),
       ready: !0,
-      houseKnowledge: G === null ? null : eE(
+      houseKnowledge: G === null ? null : tE(
         G,
         ee.context.decision.priorityIds
       ),
@@ -19639,7 +19639,7 @@ function oO({
         houseId: V.project.house.houseId
       },
       company: V === null || V.project === null ? null : (() => {
-        const x = V.project.partner.companyId, C = Vw(x);
+        const x = V.project.partner.companyId, C = Fw(x);
         return {
           companyId: x,
           companyName: V.project.partner.companyName,
@@ -19678,7 +19678,7 @@ function oO({
           requestedHouseId: ee.dataset.objectId ?? null,
           resolvedHouseId: V.runtimeHouseId,
           projectId: V.runtimeProjectId,
-          packageRoot: $f(),
+          packageRoot: Gf(),
           permittedHouses: Object.freeze(
             Pc(V.runtimeProjectId).flatMap(
               (x) => x.house === null ? [] : [{ houseId: x.house.houseId, name: x.house.name }]
@@ -19707,7 +19707,7 @@ function oO({
     );
     console.log(
       `${C}Runtime source:`,
-      RS
+      MS
     ), console.log(
       `${C}rooms:`,
       ee.house.rooms.map((oe) => oe.id)
@@ -19745,13 +19745,13 @@ function oO({
         /* @__PURE__ */ c.jsx("p", { className: "mt-2 text-embed-brand-navy/70", children: "Experience zatím není připravená." })
       ] })
     }
-  ) : te === null ? /* @__PURE__ */ c.jsx(Uf, { label: "Připravuji Decision Session…" }) : /* @__PURE__ */ c.jsxs(nj.Provider, { value: te, children: [
-    /* @__PURE__ */ c.jsx(tO, {}),
+  ) : te === null ? /* @__PURE__ */ c.jsx(Vf, { label: "Připravuji Decision Session…" }) : /* @__PURE__ */ c.jsxs(aj.Provider, { value: te, children: [
+    /* @__PURE__ */ c.jsx(oO, {}),
     t
   ] });
 }
 function Ze() {
-  const t = j.useContext(nj);
+  const t = j.useContext(aj);
   if (t === null)
     throw new Error(
       "useDecisionSessionRuntime must be used within DecisionSessionRuntimeProvider"
@@ -19759,15 +19759,15 @@ function Ze() {
   return t;
 }
 const nc = "block text-sm text-white underline decoration-white/50 underline-offset-2 hover:decoration-white";
-function nO(t) {
+function aO(t) {
   const n = t.trim(), i = n.replace(/[^\d+]/g, "");
   return `tel:${i.length > 0 ? i : n}`;
 }
-function aO({ icon: t }) {
+function iO({ icon: t }) {
   var l, p;
   const { company: n } = Ze(), i = ((l = n == null ? void 0 : n.phone) == null ? void 0 : l.trim()) || null, s = ((p = n == null ? void 0 : n.email) == null ? void 0 : p.trim()) || null;
   return i === null && s === null ? null : /* @__PURE__ */ c.jsxs(
-    Pf,
+    Lf,
     {
       label: "Kontakt",
       icon: t,
@@ -19787,7 +19787,7 @@ function aO({ icon: t }) {
           "a",
           {
             role: "menuitem",
-            href: nO(i),
+            href: aO(i),
             className: s !== null ? `${nc} mt-2` : nc,
             style: { color: "#FFFFFF" },
             children: i
@@ -19804,8 +19804,8 @@ const Ny = [
   le.aiAdvisor,
   le.audit
 ];
-function iO() {
-  const t = QS();
+function rO() {
+  const t = WS();
   return j.useEffect(() => {
     if (typeof IntersectionObserver > "u")
       return;
@@ -19835,13 +19835,13 @@ function iO() {
     };
   }, [t]), null;
 }
-const rO = "Doporučujeme nejprve nastavit priority ve střední části stránky, aby export obsahoval vaše preference.";
-function sO() {
+const sO = "Doporučujeme nejprve nastavit priority ve střední části stránky, aby export obsahoval vaše preference.";
+function lO() {
   window.print();
 }
-function lO({ icon: t }) {
+function dO({ icon: t }) {
   const n = Xn();
-  return /* @__PURE__ */ c.jsxs(Pf, { label: "Uložit", icon: t, panelTestId: "header-save-panel", children: [
+  return /* @__PURE__ */ c.jsxs(Lf, { label: "Uložit", icon: t, panelTestId: "header-save-panel", children: [
     /* @__PURE__ */ c.jsx(
       "button",
       {
@@ -19857,18 +19857,18 @@ function lO({ icon: t }) {
           n == null || n.experienceEvent({
             experienceEventType: "house.saved",
             surfaceId: "hero"
-          }), sO();
+          }), lO();
         },
         children: "Uložit tuto stránku jako PDF"
       }
     ),
-    /* @__PURE__ */ c.jsx("p", { className: "mt-2.5 text-xs leading-snug", style: { color: "rgba(255,255,255,0.8)" }, children: rO })
+    /* @__PURE__ */ c.jsx("p", { className: "mt-2.5 text-xs leading-snug", style: { color: "rgba(255,255,255,0.8)" }, children: sO })
   ] });
 }
-function dO() {
-  const { session: t } = Mf(), [n, i] = j.useState(""), s = n.split("·").map((m) => m.trim()).filter(Boolean).at(-1) ?? n, [l, p] = j.useState("");
+function uO() {
+  const { session: t } = Pf(), [n, i] = j.useState(""), s = n.split("·").map((m) => m.trim()).filter(Boolean).at(-1) ?? n, [l, p] = j.useState("");
   return j.useEffect(() => {
-    const m = (t == null ? void 0 : t.projectId) !== null && (t == null ? void 0 : t.projectId) !== void 0 ? Af(t.projectId).find(
+    const m = (t == null ? void 0 : t.projectId) !== null && (t == null ? void 0 : t.projectId) !== void 0 ? Of(t.projectId).find(
       (f) => f.houseId === t.activeHouseId && f.status === "draft"
     ) : void 0;
     if (m !== void 0) {
@@ -19881,14 +19881,14 @@ function dO() {
       return;
     }
     const h = y.branding.logoLabel.trim() || y.partner.companyName.trim();
-    p(h.length > 0 ? h : y.partner.companyName), i(MA(y));
+    p(h.length > 0 ? h : y.partner.companyName), i(PA(y));
   }, [t == null ? void 0 : t.activeHouseId, t == null ? void 0 : t.projectId]), /* @__PURE__ */ c.jsx(
     "header",
     {
       "data-experience-header": "",
       className: "relative sticky top-0 z-50 shrink-0 border-b border-embed-border-default bg-embed-background-primary pt-[env(safe-area-inset-top,0px)] mobile:static mobile:relative",
       children: /* @__PURE__ */ c.jsxs("div", { className: "mx-auto grid h-header w-full min-w-0 max-w-none grid-cols-[1fr_auto_1fr] items-center px-section desktop:w-canvas desktop:max-w-canvas", children: [
-        /* @__PURE__ */ c.jsx("div", { className: "justify-self-start mobile:hidden", children: /* @__PURE__ */ c.jsx(jS, { label: l }) }),
+        /* @__PURE__ */ c.jsx("div", { className: "justify-self-start mobile:hidden", children: /* @__PURE__ */ c.jsx(gS, { label: l }) }),
         /* @__PURE__ */ c.jsxs(
           "p",
           {
@@ -19902,12 +19902,12 @@ function dO() {
         ),
         /* @__PURE__ */ c.jsxs("div", { className: "flex items-center justify-end gap-3 justify-self-end desktop:gap-section", children: [
           /* @__PURE__ */ c.jsx(
-            aO,
+            iO,
             {
               icon: /* @__PURE__ */ c.jsx(
                 "img",
                 {
-                  src: yS,
+                  src: bS,
                   alt: "",
                   width: 48,
                   height: 48,
@@ -19918,12 +19918,12 @@ function dO() {
             }
           ),
           /* @__PURE__ */ c.jsx(
-            lO,
+            dO,
             {
               icon: /* @__PURE__ */ c.jsx(
                 "img",
                 {
-                  src: bS,
+                  src: fS,
                   alt: "",
                   width: 32,
                   height: 32,
@@ -19960,7 +19960,7 @@ function Ga(t, n = "smooth") {
   }
   typeof i.focus == "function" && i.focus({ preventScroll: !0 });
 }
-function uO(t) {
+function cO(t) {
   const n = document.getElementById(t);
   if (n === null)
     return !1;
@@ -19974,8 +19974,8 @@ function uO(t) {
   const m = p.getBoundingClientRect(), v = p.scrollTop + (n.getBoundingClientRect().top - m.top) - l, y = p.scrollHeight - p.clientHeight;
   return v <= y;
 }
-const aj = "priority-chapter-bridge";
-function cO(t, n = 600, i = {}) {
+const ij = "priority-chapter-bridge";
+function pO(t, n = 600, i = {}) {
   const s = document.querySelector(
     "[data-experience-header]"
   ), l = 20, p = s ? Math.ceil(s.getBoundingClientRect().height) + l : l, m = i.easing ?? "linear", v = document.querySelector(
@@ -19998,7 +19998,7 @@ function cO(t, n = 600, i = {}) {
   }
   typeof t.focus == "function" && t.focus({ preventScroll: !0 });
 }
-function pO(t, n) {
+function mO(t, n) {
   return n === "linear" ? t : t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
 }
 function Ty(t, n, i, s, l) {
@@ -20011,7 +20011,7 @@ function Ty(t, n, i, s, l) {
   if (Math.abs(m) < 1)
     return;
   const v = performance.now(), y = (h) => {
-    const f = Math.min(1, (h - v) / i), z = p + m * pO(f, l);
+    const f = Math.min(1, (h - v) / i), z = p + m * mO(f, l);
     t instanceof Window ? t.scrollTo({ top: z, left: 0, behavior: "auto" }) : t.scrollTop = z, f < 1 && window.requestAnimationFrame(y);
   };
   window.requestAnimationFrame(y);
@@ -20020,19 +20020,19 @@ let Lc = null;
 function Dy(t) {
   Lc = t;
 }
-function mO(t) {
+function vO(t) {
   return t === le.hero || t === le.socialProof || t === le.walkthrough || t === le.floorPlan || t === le.propertyExplorer;
 }
-function vO(t) {
+function kO(t) {
   return t === le.priority;
 }
-function kO(t) {
+function hO(t) {
   return t === le.aiAdvisor;
 }
-function hO(t) {
+function yO(t) {
   return t === le.audit;
 }
-function ij(t) {
+function rj(t) {
   if (qn(t), Lc !== null) {
     Lc(t);
     return;
@@ -20062,14 +20062,14 @@ const Ua = {
   /** Inclusive min width for the desktop (SSOT) band. */
   desktopMinPx: 1280
 };
-function yO(t) {
+function bO(t) {
   return t <= Ua.mobileMaxPx ? "mobile" : t < Ua.desktopMinPx ? "tablet" : "desktop";
 }
-function bO(t) {
+function fO(t) {
   return t !== "mobile";
 }
-function fO(t = typeof window < "u" ? window.innerWidth : Ua.desktopMinPx) {
-  return yO(t);
+function jO(t = typeof window < "u" ? window.innerWidth : Ua.desktopMinPx) {
+  return bO(t);
 }
 function Ip(t) {
   const [n, i] = j.useState(
@@ -20122,15 +20122,15 @@ function Ip(t) {
     };
   }, [t]), n;
 }
-function jO(t) {
+function gO(t) {
   return t === "priority-experience" ? "journey-scene-priority" : t === "ai-advisor" ? "journey-scene-racio" : t === "audit-lead-capture" ? "journey-scene-decision" : "journey-scene-orientation";
 }
-function gO({
+function zO({
   visibleSceneIds: t
 }) {
   const n = j.useMemo(
-    () => gE.filter(
-      (h) => (h.id !== "ai-advisor" || fE.showAiAdvisor) && t.includes(jO(h.id))
+    () => zE.filter(
+      (h) => (h.id !== "ai-advisor" || jE.showAiAdvisor) && t.includes(gO(h.id))
     ),
     [t]
   ), i = j.useMemo(() => n.map((h) => h.id), [n]), s = Ip(i), [l, p] = j.useState(!1), [m, v] = j.useState(!1);
@@ -20173,7 +20173,7 @@ function gO({
           {
             type: "button",
             onClick: () => {
-              ij(h.id), p(!1);
+              rj(h.id), p(!1);
             },
             className: "block w-full rounded px-3 py-2 text-left text-xs text-embed-foreground-primary hover:bg-black/5",
             children: h.label
@@ -20184,12 +20184,12 @@ function gO({
     }
   );
 }
-const zO = "conis.builder.preview-persona.v1";
-function xO() {
+const xO = "conis.builder.preview-persona.v1";
+function IO() {
   if (typeof sessionStorage > "u")
     return null;
   try {
-    const t = sessionStorage.getItem(zO);
+    const t = sessionStorage.getItem(xO);
     if (t === null || t.length === 0)
       return null;
     const n = JSON.parse(t);
@@ -20198,12 +20198,12 @@ function xO() {
     return null;
   }
 }
-function IO() {
+function EO() {
   const { dispatch: t, experience: n, ready: i } = Ze(), s = j.useRef("");
   return j.useEffect(() => {
     if (!i)
       return;
-    const l = xO();
+    const l = IO();
     if (l === null)
       return;
     const p = `${l.personaId}:${l.priorityIds.join(",")}:${l.updatedAt}`;
@@ -20220,7 +20220,7 @@ function IO() {
     }).ok && (s.current = p);
   }, [t, n.context.decision.priorityIds, i]), null;
 }
-function EO({ children: t }) {
+function wO({ children: t }) {
   return /* @__PURE__ */ c.jsx(
     "div",
     {
@@ -20230,8 +20230,8 @@ function EO({ children: t }) {
     }
   );
 }
-const wO = 30;
-function SO() {
+const SO = 30;
+function AO() {
   return /* @__PURE__ */ c.jsx(
     "div",
     {
@@ -20239,14 +20239,14 @@ function SO() {
       "data-chapter-spacer": "",
       className: "w-full shrink-0 bg-embed-background-primary",
       style: {
-        height: wO,
+        height: SO,
         marginTop: -18,
         marginBottom: -18
       }
     }
   );
 }
-function AO({ snapEnabled: t }) {
+function OO({ snapEnabled: t }) {
   return j.useEffect(() => {
     const n = document.querySelector(
       "[data-embed-overlay-mount]"
@@ -20273,7 +20273,7 @@ function AO({ snapEnabled: t }) {
     ), i = document.documentElement, s = document.body, l = [i, s, n].filter(
       (v) => v !== null
     ), p = () => {
-      const v = fO(window.innerWidth), y = t && bO(v);
+      const v = jO(window.innerWidth), y = t && fO(v);
       for (const h of l)
         h.dataset.guidedJourneySnap = y ? "on" : "off";
     };
@@ -20288,7 +20288,7 @@ function AO({ snapEnabled: t }) {
     };
   }, [t]), null;
 }
-const dr = "inline-flex min-h-11 items-center justify-center rounded-[8px] bg-[#001930] px-[19px] text-[13px] font-medium text-[#FFFFFF] transition-colors duration-150 hover:bg-embed-brand-gold hover:text-[#001930] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 touch-manipulation desktop:min-h-[38px]", Ep = dr, OO = "flex items-start justify-between gap-3 px-section mobile:flex-col mobile:gap-3", CO = "calc(100dvh - var(--experience-header-height, 72px))", NO = "20px", TO = "calc(20px + 100dvh - var(--experience-header-height, 72px))";
+const dr = "inline-flex min-h-11 items-center justify-center rounded-[8px] bg-[#001930] px-[19px] text-[13px] font-medium text-[#FFFFFF] transition-colors duration-150 hover:bg-embed-brand-gold hover:text-[#001930] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 touch-manipulation desktop:min-h-[38px]", Ep = dr, CO = "flex items-start justify-between gap-3 px-section mobile:flex-col mobile:gap-3", NO = "calc(100dvh - var(--experience-header-height, 72px))", TO = "20px", DO = "calc(20px + 100dvh - var(--experience-header-height, 72px))";
 function Us({
   sceneId: t,
   previousSceneId: n,
@@ -20353,10 +20353,10 @@ function Us({
       "data-journey-scene": t,
       className: "flex w-full snap-start snap-normal flex-col gap-5",
       style: {
-        minHeight: CO,
+        minHeight: NO,
         // Before the next scene is revealed, retain only the space needed to
         // expose the CTA above mobile navigation.
-        paddingBottom: p ? TO : i ? NO : n ? "40px" : "0px",
+        paddingBottom: p ? DO : i ? TO : n ? "40px" : "0px",
         opacity: h ? 1 : 0,
         transform: "translateY(0)",
         transition: l ? "opacity 1000ms ease" : void 0,
@@ -20384,7 +20384,7 @@ function Us({
         ) : /* @__PURE__ */ c.jsxs(
           "div",
           {
-            className: `${OO} mobile:flex-row mobile:items-center mobile:justify-between mobile:gap-3 ${m ? "mt-auto" : ""}`,
+            className: `${CO} mobile:flex-row mobile:items-center mobile:justify-between mobile:gap-3 ${m ? "mt-auto" : ""}`,
             children: [
               n ? /* @__PURE__ */ c.jsx(
                 "button",
@@ -20417,21 +20417,21 @@ function Us({
     }
   );
 }
-function DO({ children: t }) {
+function _O({ children: t }) {
   const { ready: n } = Ze();
-  return n ? t : /* @__PURE__ */ c.jsx(Uf, { label: "Připravuji prostředí…" });
+  return n ? t : /* @__PURE__ */ c.jsx(Vf, { label: "Připravuji prostředí…" });
 }
-const _O = [
+const RO = [
   { id: "journey-scene-orientation", label: "Orientace" },
   { id: "journey-scene-priority", label: "Priority" },
   { id: "journey-scene-racio", label: "Racio" },
   { id: "journey-scene-decision", label: "Rozhodnutí" }
 ];
 function Bc() {
-  return _O;
+  return RO;
 }
 const br = "overflow-hidden rounded-[11px] border border-embed-border-default bg-[#FFFFFF] shadow-[0_1px_11px_rgba(0,25,48,0.044)]";
-function RO({
+function MO({
   experience: t,
   onSelectChoice: n,
   onContinue: i
@@ -20580,7 +20580,7 @@ function RO({
     }
   );
 }
-function MO({
+function PO({
   experience: t,
   onSelectChoice: n,
   onContinue: i
@@ -20592,7 +20592,7 @@ function MO({
         "data-legacy-experience": "command-runtime",
         "data-testid": "legacy-command-experience",
         children: /* @__PURE__ */ c.jsx(
-          RO,
+          MO,
           {
             experience: t,
             onSelectChoice: n,
@@ -20628,17 +20628,17 @@ class dt extends Error {
     this.name = "AdapterFailure", this.code = i, this.diagnostic = (l == null ? void 0 : l.diagnostic) === void 0 ? null : l.diagnostic;
   }
 }
-function PO(t) {
+function LO(t) {
   return t instanceof dt;
 }
-const LO = "OpenAIProvider: missing API key. Set OPENAI_API_KEY or pass apiKey.";
-function BO() {
+const BO = "OpenAIProvider: missing API key. Set OPENAI_API_KEY or pass apiKey.";
+function HO() {
   return new dt(
     "missing_api_key",
-    LO
+    BO
   );
 }
-function HO(t) {
+function KO(t) {
   const n = t instanceof Error ? t.message : String(t);
   if ((t instanceof Error ? t.name : "") === "AbortError" || /timeout|timed out|aborted/i.test(n)) {
     const l = "Spojení s OpenAI vypršelo (timeout). Zkuste to prosím znovu.";
@@ -20662,9 +20662,9 @@ function HO(t) {
     cause: t
   });
 }
-function KO(t, n, i) {
+function UO(t, n, i) {
   var v, y;
-  const s = YO(n), l = ((y = (v = n == null ? void 0 : n.error) == null ? void 0 : v.message) == null ? void 0 : y.trim()) ?? "", p = FO(
+  const s = qO(n), l = ((y = (v = n == null ? void 0 : n.error) == null ? void 0 : v.message) == null ? void 0 : y.trim()) ?? "", p = YO(
     t,
     s,
     l,
@@ -20672,20 +20672,20 @@ function KO(t, n, i) {
   ), m = (t >= 500 || t === 401 || t === 403 || t === 404 || t === 429, "http_error");
   return new dt(m, p, { diagnostic: p });
 }
-function UO() {
+function VO() {
   const t = "OpenAI vrátila neplatnou JSON odpověď (invalid_response).";
   return new dt("invalid_response", t, { diagnostic: t });
 }
-function VO() {
+function FO() {
   return new dt(
     "provider_error",
     "OpenAIProvider: fetch is not available in this environment."
   );
 }
-function FO(t, n, i, s) {
-  return t === 401 ? "OpenAI autentizace selhala (401 unauthorized). Zkontrolujte API klíč." : t === 403 ? "OpenAI přístup byl odepřen (403 forbidden)." : t === 404 ? `OpenAI model nebyl nalezen (404). Zkontrolujte model „${s}".` : t === 429 ? qO(n, i) ? "OpenAI účet nemá dostupnou kvótu (429 insufficient_quota)." : "OpenAI rate limit byl překročen (429 rate_limit). Zkuste to za chvíli znovu." : t >= 500 && t <= 599 ? `OpenAI služba je dočasně nedostupná (${t}). Zkuste to prosím znovu.` : `OpenAI požadavek selhal (HTTP ${t}): ${i || n || "unknown error"}`;
+function YO(t, n, i, s) {
+  return t === 401 ? "OpenAI autentizace selhala (401 unauthorized). Zkontrolujte API klíč." : t === 403 ? "OpenAI přístup byl odepřen (403 forbidden)." : t === 404 ? `OpenAI model nebyl nalezen (404). Zkontrolujte model „${s}".` : t === 429 ? $O(n, i) ? "OpenAI účet nemá dostupnou kvótu (429 insufficient_quota)." : "OpenAI rate limit byl překročen (429 rate_limit). Zkuste to za chvíli znovu." : t >= 500 && t <= 599 ? `OpenAI služba je dočasně nedostupná (${t}). Zkuste to prosím znovu.` : `OpenAI požadavek selhal (HTTP ${t}): ${i || n || "unknown error"}`;
 }
-function YO(t) {
+function qO(t) {
   var s, l;
   const n = (s = t == null ? void 0 : t.error) == null ? void 0 : s.code;
   if (typeof n == "string" && n.trim().length > 0)
@@ -20693,13 +20693,13 @@ function YO(t) {
   const i = (l = t == null ? void 0 : t.error) == null ? void 0 : l.type;
   return typeof i == "string" && i.trim().length > 0 ? i.trim() : "";
 }
-function qO(t, n) {
+function $O(t, n) {
   return /insufficient_quota/i.test(t) || /insufficient_quota|exceeded your current quota/i.test(n);
 }
-const $O = "openai", GO = $O, ZO = "gpt-4o-mini", JO = "https://api.openai.com/v1";
-class XO {
+const GO = "openai", ZO = GO, JO = "gpt-4o-mini", XO = "https://api.openai.com/v1";
+class QO {
   constructor(n = {}) {
-    ae(this, "id", GO);
+    ae(this, "id", ZO);
     ae(this, "apiKey");
     ae(this, "model");
     ae(this, "baseUrl");
@@ -20707,13 +20707,13 @@ class XO {
     ae(this, "fetchOverride");
     const i = n.apiKey ?? _y("OPENAI_API_KEY") ?? "";
     if (i.length === 0)
-      throw BO();
-    this.apiKey = i, this.model = n.model ?? _y("OPENAI_MODEL") ?? ZO, this.baseUrl = (n.baseUrl ?? JO).replace(/\/$/, ""), this.fetchOverride = n.fetch ?? null;
+      throw HO();
+    this.apiKey = i, this.model = n.model ?? _y("OPENAI_MODEL") ?? JO, this.baseUrl = (n.baseUrl ?? XO).replace(/\/$/, ""), this.fetchOverride = n.fetch ?? null;
   }
   async chat(n) {
     const i = {
       model: this.model,
-      messages: e1(n),
+      messages: t1(n),
       temperature: 0,
       seed: 42
     };
@@ -20728,14 +20728,14 @@ class XO {
         body: JSON.stringify(i)
       });
     } catch (m) {
-      throw HO(m);
+      throw KO(m);
     }
-    const l = await s.text(), p = QO(l);
+    const l = await s.text(), p = WO(l);
     if (!s.ok)
-      throw WO(l, p), KO(s.status, p, this.model);
+      throw e1(l, p), UO(s.status, p, this.model);
     if (p === null)
-      throw UO();
-    return o1(p);
+      throw VO();
+    return n1(p);
   }
   /**
    * Call platform fetch without detaching it from its receiver.
@@ -20745,7 +20745,7 @@ class XO {
    * Production path therefore always calls `globalThis.fetch(...)` as a method.
    */
   request(n, i) {
-    return this.fetchOverride !== null ? this.fetchOverride(n, i) : typeof globalThis.fetch != "function" ? Promise.reject(VO()) : globalThis.fetch(n, i);
+    return this.fetchOverride !== null ? this.fetchOverride(n, i) : typeof globalThis.fetch != "function" ? Promise.reject(FO()) : globalThis.fetch(n, i);
   }
 }
 function _y(t) {
@@ -20753,7 +20753,7 @@ function _y(t) {
   if (!(n === void 0 || n.trim().length === 0))
     return n.trim();
 }
-function QO(t) {
+function WO(t) {
   if (t.trim().length === 0)
     return null;
   try {
@@ -20762,14 +20762,14 @@ function QO(t) {
     return null;
   }
 }
-function WO(t, n) {
+function e1(t, n) {
   if (n !== null) {
     console.error("OpenAIProvider: error response JSON", n);
     return;
   }
   console.error("OpenAIProvider: error response body", t);
 }
-function e1(t) {
+function t1(t) {
   const n = [
     {
       role: "system",
@@ -20777,17 +20777,17 @@ function e1(t) {
     }
   ];
   for (const i of t.messages) {
-    const s = t1(i);
+    const s = o1(i);
     s !== null && n.push({ role: s, content: i.content });
   }
   return n;
 }
-function t1(t) {
+function o1(t) {
   return t.role === "system" || t.role === "user" || t.role === "assistant" ? t.role : null;
 }
-function o1(t) {
+function n1(t) {
   var v, y, h, f, z;
-  const n = (v = t.choices) == null ? void 0 : v[0], i = ((y = n == null ? void 0 : n.message) == null ? void 0 : y.content) ?? "", s = n1(n == null ? void 0 : n.finish_reason), l = ((h = t.usage) == null ? void 0 : h.prompt_tokens) ?? 0, p = ((f = t.usage) == null ? void 0 : f.completion_tokens) ?? 0, m = ((z = t.usage) == null ? void 0 : z.total_tokens) ?? l + p;
+  const n = (v = t.choices) == null ? void 0 : v[0], i = ((y = n == null ? void 0 : n.message) == null ? void 0 : y.content) ?? "", s = a1(n == null ? void 0 : n.finish_reason), l = ((h = t.usage) == null ? void 0 : h.prompt_tokens) ?? 0, p = ((f = t.usage) == null ? void 0 : f.completion_tokens) ?? 0, m = ((z = t.usage) == null ? void 0 : z.total_tokens) ?? l + p;
   return Object.freeze({
     content: i,
     usage: Object.freeze({
@@ -20798,7 +20798,7 @@ function o1(t) {
     finishReason: s
   });
 }
-function n1(t) {
+function a1(t) {
   switch (t) {
     case "stop":
       return "stop";
@@ -20810,7 +20810,7 @@ function n1(t) {
       return t == null ? "stop" : "error";
   }
 }
-class rj {
+class sj {
   constructor(n) {
     ae(this, "id");
     ae(this, "model");
@@ -20823,26 +20823,26 @@ class rj {
   }
 }
 function Sp(t) {
-  return new rj(t);
+  return new sj(t);
 }
-function a1(t) {
-  return t instanceof rj;
+function i1(t) {
+  return t instanceof sj;
 }
-function i1() {
-  const t = sj() ?? Hc("OPENAI_API_KEY") ?? "";
+function r1() {
+  const t = lj() ?? Hc("OPENAI_API_KEY") ?? "";
   if (t.length === 0)
     return null;
-  const n = s1() ?? Hc("OPENAI_MODEL");
+  const n = l1() ?? Hc("OPENAI_MODEL");
   return Sp(
-    new XO({
+    new QO({
       apiKey: t,
       ...n !== void 0 && n.length > 0 ? { model: n } : {}
     })
   );
 }
-function r1() {
+function s1() {
   return {
-    viteApiKey: sj() !== void 0 ? "present" : "missing",
+    viteApiKey: lj() !== void 0 ? "present" : "missing",
     processApiKey: Hc("OPENAI_API_KEY") !== void 0 ? "present" : "missing"
   };
 }
@@ -20853,21 +20853,21 @@ function Hc(t) {
   if (!(n === void 0 || n.trim().length === 0))
     return n.trim();
 }
-function sj() {
+function lj() {
   try {
     return "".trim().length === 0 ? void 0 : "".trim();
   } catch {
     return;
   }
 }
-function s1() {
+function l1() {
   try {
     return;
   } catch {
     return;
   }
 }
-class l1 {
+class d1 {
   constructor(n) {
     ae(this, "provider");
     this.provider = n.provider;
@@ -20877,14 +20877,14 @@ class l1 {
   }
 }
 function Ry(t) {
-  return new l1({ provider: t });
+  return new d1({ provider: t });
 }
 function hl() {
   return Object.freeze({
     entries: Object.freeze([])
   });
 }
-function d1() {
+function u1() {
   return Object.freeze({
     facts: Object.freeze([]),
     preferences: Object.freeze([]),
@@ -20895,7 +20895,7 @@ function d1() {
     rejectedOptions: Object.freeze([])
   });
 }
-function lj() {
+function dj() {
   return Object.freeze({
     recommendedOptions: Object.freeze([]),
     avoidedOptions: Object.freeze([]),
@@ -20904,7 +20904,7 @@ function lj() {
     violatedConstraints: Object.freeze([])
   });
 }
-const u1 = 0.72;
+const c1 = 0.72;
 function Qi(t, n) {
   return Object.freeze({ key: t, value: n });
 }
@@ -20942,10 +20942,10 @@ function My(t) {
     concerns: Object.freeze(v),
     rejectedOptions: Object.freeze(y),
     acceptedOptions: Object.freeze(h),
-    confidence: w ? u1 : 0
+    confidence: w ? c1 : 0
   });
 }
-function c1(t = 0) {
+function p1(t = 0) {
   return Object.freeze({
     facts: Object.freeze([]),
     preferences: Object.freeze([]),
@@ -20957,7 +20957,7 @@ function c1(t = 0) {
     confidence: t
   });
 }
-const p1 = [
+const m1 = [
   "Extrahuj pouze informace důležité pro budoucí rozhodování.",
   "Nevysvětluj.",
   "Neodpovídej.",
@@ -20966,7 +20966,7 @@ const p1 = [
   'Každá položka je { "key": string, "value": string | number | boolean }.',
   "confidence je číslo 0..1."
 ].join(" ");
-class m1 {
+class v1 {
   constructor(n) {
     ae(this, "llm");
     ae(this, "deterministicOnly");
@@ -20976,7 +20976,7 @@ class m1 {
     if (this.deterministicOnly)
       return My(n.message);
     try {
-      const i = await this.llm.chat(v1(n)), s = h1(i.content);
+      const i = await this.llm.chat(k1(n)), s = y1(i.content);
       if (s !== null)
         return s;
     } catch {
@@ -20985,9 +20985,9 @@ class m1 {
   }
 }
 function Py(t) {
-  return new m1(t);
+  return new v1(t);
 }
-function v1(t) {
+function k1(t) {
   const n = t.recentMessages ?? [], i = {
     decision: {
       headline: "",
@@ -21010,13 +21010,13 @@ function v1(t) {
       turnCount: n.length + 1,
       recentMessages: n
     },
-    memory: d1(),
-    recommendation: lj(),
+    memory: u1(),
+    recommendation: dj(),
     knowledge: hl()
   };
   return {
-    sessionId: `analyze:${k1(t.message)}`,
-    systemPrompt: wp(p1),
+    sessionId: `analyze:${h1(t.message)}`,
+    systemPrompt: wp(m1),
     context: i,
     messages: [
       ...n.map(
@@ -21029,31 +21029,31 @@ function v1(t) {
     ]
   };
 }
-function k1(t) {
+function h1(t) {
   let n = 0;
   for (let i = 0; i < t.length; i += 1)
     n = n * 31 + t.charCodeAt(i) >>> 0;
   return n.toString(16);
 }
-function h1(t) {
-  const n = y1(t);
+function y1(t) {
+  const n = b1(t);
   if (n === null)
     return null;
   try {
     const i = JSON.parse(n);
-    return b1(i);
+    return f1(i);
   } catch {
     return null;
   }
 }
-function y1(t) {
+function b1(t) {
   const n = t.trim();
   if (n.startsWith("{") && n.endsWith("}"))
     return n;
   const i = n.indexOf("{"), s = n.lastIndexOf("}");
   return i >= 0 && s > i ? n.slice(i, s + 1) : null;
 }
-function b1(t) {
+function f1(t) {
   const n = t.confidence, i = typeof n == "number" && Number.isFinite(n) ? Math.min(1, Math.max(0, n)) : 0.5, s = Object.freeze({
     facts: Object.freeze(Un(t.facts)),
     preferences: Object.freeze(Un(t.preferences)),
@@ -21064,7 +21064,7 @@ function b1(t) {
     acceptedOptions: Object.freeze(Un(t.acceptedOptions)),
     confidence: i
   });
-  return s.facts.length + s.preferences.length + s.constraints.length + s.goals.length + s.concerns.length + s.rejectedOptions.length + s.acceptedOptions.length === 0 && i === 0 ? c1(0) : s;
+  return s.facts.length + s.preferences.length + s.constraints.length + s.goals.length + s.concerns.length + s.rejectedOptions.length + s.acceptedOptions.length === 0 && i === 0 ? p1(0) : s;
 }
 function Un(t) {
   if (!Array.isArray(t))
@@ -21074,14 +21074,14 @@ function Un(t) {
     if (i === null || typeof i != "object")
       continue;
     const s = i, l = s.key, p = s.value;
-    typeof l != "string" || l.length === 0 || f1(p) && n.push(Object.freeze({ key: l, value: p }));
+    typeof l != "string" || l.length === 0 || j1(p) && n.push(Object.freeze({ key: l, value: p }));
   }
   return n;
 }
-function f1(t) {
+function j1(t) {
   return typeof t == "string" || typeof t == "number" || typeof t == "boolean";
 }
-class dj {
+class uj {
   constructor(n = {}) {
     ae(this, "enabled");
     ae(this, "listener");
@@ -21094,7 +21094,7 @@ class dj {
   }
   emit(n) {
     var i;
-    this.enabled && (n.kind === "turn" ? (this.turns.push(n.trace), this.useConsole && I1(n.trace)) : this.useConsole && n.kind, (i = this.listener) == null || i.call(this, n));
+    this.enabled && (n.kind === "turn" ? (this.turns.push(n.trace), this.useConsole && E1(n.trace)) : this.useConsole && n.kind, (i = this.listener) == null || i.call(this, n));
   }
   emitPhase(n, i, s) {
     this.emit({
@@ -21119,25 +21119,25 @@ class dj {
     this.turns.length = 0;
   }
 }
-function uj(t) {
-  return new dj(t);
+function cj(t) {
+  return new uj(t);
 }
-function j1() {
-  return new dj({ enabled: !1 });
+function g1() {
+  return new uj({ enabled: !1 });
 }
-function g1(t) {
+function z1(t) {
   return Object.freeze({ ...t });
 }
 function ac(t) {
-  return Object.freeze({ ...t });
-}
-function z1(t) {
   return Object.freeze({ ...t });
 }
 function x1(t) {
   return Object.freeze({ ...t });
 }
 function I1(t) {
+  return Object.freeze({ ...t });
+}
+function E1(t) {
   var l;
   const { conversation: n, latency: i } = t, s = [
     `[ai.trace] session=${n.sessionId} conversation=${n.conversationId} message=${n.messageId} ok=${t.ok}`,
@@ -21157,7 +21157,7 @@ function I1(t) {
   ), ((l = t.provider) == null ? void 0 : l.errorCode) !== null && t.provider !== null ? s.push(`  ProviderError ${t.provider.errorCode}`) : t.errorCode !== null && s.push(`  Error ${t.errorCode}`), console.info(s.join(`
 `));
 }
-function E1(t) {
+function w1(t) {
   let n = 0, i = 0;
   for (const s of t.sections)
     n += s.content.length, s.id === "decision-memory" && (i = s.content.length);
@@ -21167,7 +21167,7 @@ function E1(t) {
     memoryContextChars: i
   });
 }
-function w1(t) {
+function S1(t) {
   return Object.freeze({
     facts: t.facts.length,
     preferences: t.preferences.length,
@@ -21178,10 +21178,10 @@ function w1(t) {
     rejectedOptions: t.rejectedOptions.length
   });
 }
-function S1(t) {
+function A1(t) {
   return t.facts.length + t.preferences.length + t.constraints.length + t.goals.length + t.concerns.length + t.acceptedOptions.length + t.rejectedOptions.length;
 }
-class cj {
+class pj {
   constructor(n = {}) {
     ae(this, "enabled");
     ae(this, "sessionId");
@@ -21219,17 +21219,17 @@ class cj {
     return JSON.stringify(this.toExport(), null, n ? 2 : void 0);
   }
 }
-function pj(t) {
-  return new cj(t);
+function mj(t) {
+  return new pj(t);
 }
-function A1(t = {}) {
-  return new cj({ ...t, enabled: !1 });
+function O1(t = {}) {
+  return new pj({ ...t, enabled: !1 });
 }
 function yl(t, n, i) {
   var s;
   return (s = t[n].find((l) => l.key === i)) == null ? void 0 : s.value;
 }
-function mj(t) {
+function vj(t) {
   if (typeof t == "number" && Number.isFinite(t))
     return t;
   if (typeof t == "string") {
@@ -21251,14 +21251,14 @@ function Kc(t, n) {
   }
   return null;
 }
-function O1(t, n) {
+function C1(t, n) {
   const i = t[n];
   return typeof i == "string" && i.length > 0 ? i : null;
 }
-const C1 = {
+const N1 = {
   id: "budget-conflict",
   apply(t) {
-    const n = mj(yl(t.memory, "constraints", "budget")), i = Kc(t.object.attributes, "price");
+    const n = vj(yl(t.memory, "constraints", "budget")), i = Kc(t.object.attributes, "price");
     return n === null || i === null ? {} : n < i ? {
       violatedConstraints: [
         `budget:${n}<price:${i}`
@@ -21283,13 +21283,13 @@ const C1 = {
   "energy",
   "operating-costs",
   "provozni-naklady"
-]), N1 = {
+]), T1 = {
   id: "energy-priority",
   apply(t) {
     const n = t.decision.focusPriority, i = t.decision.selectedPriorities;
     if (!(n !== null && By.has(n) || i.some((v) => By.has(v))))
       return {};
-    const l = O1(
+    const l = C1(
       t.object.attributes,
       "energyClass"
     ), p = [
@@ -21310,10 +21310,10 @@ const C1 = {
       reasoning: m
     };
   }
-}, T1 = {
+}, D1 = {
   id: "family-size",
   apply(t) {
-    const n = mj(
+    const n = vj(
       yl(t.memory, "facts", "familySize")
     );
     if (n === null || n < 3)
@@ -21339,7 +21339,7 @@ const C1 = {
       reasoning: p
     };
   }
-}, Hy = "heat-pump", D1 = {
+}, Hy = "heat-pump", _1 = {
   id: "heating-preference",
   apply(t) {
     const n = Ly(
@@ -21371,16 +21371,16 @@ const C1 = {
       ]
     } : {};
   }
-}, _1 = Object.freeze([
-  C1,
-  D1,
+}, R1 = Object.freeze([
   N1,
-  T1
+  _1,
+  T1,
+  D1
 ]);
-class R1 {
+class M1 {
   constructor(n = {}) {
     ae(this, "rules");
-    this.rules = n.rules ?? _1;
+    this.rules = n.rules ?? R1;
   }
   recommend(n) {
     const i = {
@@ -21414,10 +21414,10 @@ class R1 {
     });
   }
 }
-function M1(t) {
-  return new R1(t);
+function P1(t) {
+  return new M1(t);
 }
-function vj(t = {}) {
+function kj(t = {}) {
   const n = t.attributes ?? {}, i = Object.keys(n).sort(), s = {};
   for (const l of i)
     s[l] = n[l] ?? null;
@@ -21430,7 +21430,7 @@ function vj(t = {}) {
     mediaReferences: Object.freeze([...t.mediaReferences ?? []])
   });
 }
-function P1(t) {
+function L1(t) {
   const n = [
     "Object Context",
     `objectId: ${t.objectId ?? "null"}`,
@@ -21461,7 +21461,7 @@ function P1(t) {
   return n.join(`
 `);
 }
-function kj() {
+function hj() {
   return Object.freeze({
     facts: Object.freeze([]),
     preferences: Object.freeze([]),
@@ -21472,7 +21472,7 @@ function kj() {
     rejectedOptions: Object.freeze([])
   });
 }
-const hj = [
+const yj = [
   "facts",
   "preferences",
   "constraints",
@@ -21481,11 +21481,11 @@ const hj = [
   "acceptedOptions",
   "rejectedOptions"
 ];
-class L1 {
+class B1 {
   constructor(n = {}) {
     ae(this, "memory");
     ae(this, "seq");
-    this.memory = n.initial ?? kj(), this.seq = H1(this.memory);
+    this.memory = n.initial ?? hj(), this.seq = K1(this.memory);
   }
   /** Read-only historical snapshot. */
   getMemory() {
@@ -21507,12 +21507,12 @@ class L1 {
       acceptedOptions: [...this.memory.acceptedOptions],
       rejectedOptions: [...this.memory.rejectedOptions]
     };
-    for (const v of hj) {
+    for (const v of yj) {
       const y = new Set(
         m[v].map((h) => h.key)
       );
       for (const h of i[v]) {
-        const f = K1(h, () => (this.seq += 1, this.seq));
+        const f = U1(h, () => (this.seq += 1, this.seq));
         if (f === null) {
           l += 1;
           continue;
@@ -21531,29 +21531,29 @@ class L1 {
     }), Object.freeze({ added: s, skipped: l, duplicated: p });
   }
 }
-function B1(t) {
-  return new L1(t);
-}
 function H1(t) {
+  return new B1(t);
+}
+function K1(t) {
   let n = 0;
-  for (const i of hj)
+  for (const i of yj)
     for (const s of t[i])
       s.at > n && (n = s.at);
   return n;
 }
-function K1(t, n) {
-  return typeof t.key != "string" || t.key.trim().length === 0 || !U1(t.value) ? null : Object.freeze({
+function U1(t, n) {
+  return typeof t.key != "string" || t.key.trim().length === 0 || !V1(t.value) ? null : Object.freeze({
     key: t.key.trim(),
     value: t.value,
     at: n()
   });
 }
-function U1(t) {
+function V1(t) {
   return typeof t == "string" || typeof t == "number" || typeof t == "boolean";
 }
-class V1 {
+class F1 {
   resolve(n) {
-    const i = F1(
+    const i = Y1(
       n.acceptedOptions,
       n.rejectedOptions
     );
@@ -21576,7 +21576,7 @@ function Wi(t) {
   }
   return [...n.values()].sort((i, s) => i.key < s.key ? -1 : i.key > s.key ? 1 : 0).map((i) => Object.freeze({ key: i.key, value: i.value }));
 }
-function F1(t, n) {
+function Y1(t, n) {
   const i = [
     ...t.map((m) => ({ ...m, side: "accepted" })),
     ...n.map((m) => ({ ...m, side: "rejected" }))
@@ -21592,24 +21592,24 @@ function F1(t, n) {
   }
   return { accepted: l, rejected: p };
 }
-class Y1 {
+class q1 {
   constructor(n = {}) {
     ae(this, "strategy");
-    this.strategy = n.strategy ?? new V1();
+    this.strategy = n.strategy ?? new F1();
   }
   resolve(n) {
     return this.strategy.resolve(n);
   }
 }
-function q1(t) {
-  return new Y1(t);
+function $1(t) {
+  return new q1(t);
 }
 function rl(t) {
-  return q1().resolve(t);
+  return $1().resolve(t);
 }
-const yj = 10;
-function $1(t) {
-  const n = t.maxMessages ?? yj, i = n <= 0 ? [] : t.messages.slice(Math.max(0, t.messages.length - n));
+const bj = 10;
+function G1(t) {
+  const n = t.maxMessages ?? bj, i = n <= 0 ? [] : t.messages.slice(Math.max(0, t.messages.length - n));
   return Object.freeze({
     sessionId: t.sessionId,
     turnCount: t.messages.length,
@@ -21623,7 +21623,7 @@ function $1(t) {
     )
   });
 }
-function G1(t) {
+function Z1(t) {
   const n = [
     "Conversation Context",
     `sessionId: ${t.sessionId}`,
@@ -21639,7 +21639,7 @@ function G1(t) {
   return n.join(`
 `);
 }
-const Z1 = [
+const J1 = [
   "facts",
   "preferences",
   "constraints",
@@ -21647,7 +21647,7 @@ const Z1 = [
   "concerns",
   "acceptedOptions",
   "rejectedOptions"
-], J1 = {
+], X1 = {
   facts: "Facts",
   preferences: "Preferences",
   constraints: "Constraints",
@@ -21656,32 +21656,32 @@ const Z1 = [
   acceptedOptions: "Accepted Options",
   rejectedOptions: "Rejected Options"
 };
-function bj(t) {
+function fj(t) {
   return rl(t);
 }
-function X1(t) {
-  const n = Q1(t) ? t : bj(t), i = ["Decision Memory"];
-  for (const s of Z1) {
-    const l = J1[s], p = n[s];
+function Q1(t) {
+  const n = W1(t) ? t : fj(t), i = ["Decision Memory"];
+  for (const s of J1) {
+    const l = X1[s], p = n[s];
     if (p.length === 0)
       i.push(`${l}: (none)`);
     else {
       i.push(`${l}:`);
       for (const m of p)
-        i.push(`  ${m.key}: ${W1(m.value)}`);
+        i.push(`  ${m.key}: ${eC(m.value)}`);
     }
   }
   return i.join(`
 `);
 }
-function Q1(t) {
+function W1(t) {
   const n = t.facts[0] ?? t.preferences[0] ?? t.constraints[0] ?? t.goals[0] ?? t.concerns[0] ?? t.acceptedOptions[0] ?? t.rejectedOptions[0];
   return n === void 0 ? !0 : !("at" in n);
 }
-function W1(t) {
+function eC(t) {
   return typeof t == "number" ? Number.isFinite(t) ? String(t) : "null" : String(t);
 }
-function eC(t) {
+function tC(t) {
   const n = ["Recommendation Context"];
   return n.push(
     er(
@@ -21715,7 +21715,7 @@ const Vs = [
   "conversation-context",
   "user-message"
 ];
-function tC(t) {
+function oC(t) {
   return [
     "Decision Context",
     `headline: ${t.headline}`,
@@ -21727,17 +21727,17 @@ function tC(t) {
   ].join(`
 `);
 }
-function oC(t) {
-  return X1(t);
-}
 function nC(t) {
+  return Q1(t);
+}
+function aC(t) {
   return ["Partner Identity", t].join(`
 `);
 }
-function aC(t) {
-  return eC(t);
-}
 function iC(t) {
+  return tC(t);
+}
+function rC(t) {
   const n = [
     {
       id: "system",
@@ -21745,34 +21745,34 @@ function iC(t) {
     },
     {
       id: "partner-identity",
-      content: nC(t.partnerIdentity)
+      content: aC(t.partnerIdentity)
     },
     {
       id: "object-context",
-      content: P1(t.context.object)
+      content: L1(t.context.object)
     },
     {
       id: "decision-context",
-      content: tC(t.context.decision)
+      content: oC(t.context.decision)
     },
     {
       id: "decision-memory",
-      content: oC(t.context.memory)
+      content: nC(t.context.memory)
     },
     {
       id: "recommendation-context",
-      content: aC(t.context.recommendation)
+      content: iC(t.context.recommendation)
     },
     {
       id: "conversation-context",
-      content: G1(t.context.conversation)
+      content: Z1(t.context.conversation)
     },
     {
       id: "user-message",
       content: t.currentUserMessage
     }
   ];
-  rC(n);
+  sC(n);
   const i = [
     ...t.historyMessages.map(
       (s) => Object.freeze({ role: s.role, content: s.content })
@@ -21789,7 +21789,7 @@ function iC(t) {
     sections: Object.freeze(n)
   });
 }
-function rC(t) {
+function sC(t) {
   var n, i;
   if (t.length !== Vs.length)
     throw new Error("PromptAssembler: unexpected section count.");
@@ -21799,7 +21799,7 @@ function rC(t) {
         `PromptAssembler: section order violation at ${s}: expected ${Vs[s]}, got ${(i = t[s]) == null ? void 0 : i.id}`
       );
 }
-const sC = [
+const lC = [
   "Jsi AI poradce partnera.",
   "Nevymýšlej informace.",
   "Odpovídej pouze z poskytnutého kontextu.",
@@ -21807,34 +21807,34 @@ const sC = [
   "Vysvětluj a formuluj; nerozhoduj mimo Recommendation Context.",
   "Pokud odpověď neznáš, přiznej to."
 ];
-function lC(t = {}) {
-  const n = t.lines ?? sC;
+function dC(t = {}) {
+  const n = t.lines ?? lC;
   return wp(n.join(`
 `));
 }
-const dC = "Partner: EMBED / Conis Decision Experience.";
-class uC {
+const uC = "Partner: EMBED / Conis Decision Experience.";
+class cC {
   constructor(n = {}) {
     ae(this, "partnerIdentity");
     ae(this, "maxConversationMessages");
-    this.partnerIdentity = n.partnerIdentity ?? dC, this.maxConversationMessages = n.maxConversationMessages ?? yj;
+    this.partnerIdentity = n.partnerIdentity ?? uC, this.maxConversationMessages = n.maxConversationMessages ?? bj;
   }
   build(n) {
-    const i = n.conversationMessages ?? [], s = n.maxConversationMessages ?? this.maxConversationMessages, l = vj(n.object), p = $1({
+    const i = n.conversationMessages ?? [], s = n.maxConversationMessages ?? this.maxConversationMessages, l = kj(n.object), p = G1({
       sessionId: n.sessionId,
       messages: i,
       maxMessages: s
-    }), m = bj(n.memory ?? kj()), v = n.recommendation ?? lj(), y = hl(), h = Object.freeze({
+    }), m = fj(n.memory ?? hj()), v = n.recommendation ?? dj(), y = hl(), h = Object.freeze({
       decision: n.decision,
       object: l,
       conversation: p,
       memory: m,
       recommendation: v,
       knowledge: y
-    }), f = lC({
+    }), f = dC({
       lines: n.systemPromptLines
     });
-    return iC({
+    return rC({
       systemPrompt: f,
       partnerIdentity: n.partnerIdentity ?? this.partnerIdentity,
       context: h,
@@ -21843,10 +21843,10 @@ class uC {
     });
   }
 }
-function cC(t) {
-  return new uC(t);
+function pC(t) {
+  return new cC(t);
 }
-function pC(t, n) {
+function mC(t, n) {
   const i = n.sections.filter((s) => s.id !== "user-message").map((s) => s.content).join(`
 
 `);
@@ -21872,7 +21872,7 @@ class ao extends Error {
     this.name = "ConversationError", this.code = i, this.userMessage = s;
   }
 }
-const mC = {
+const vC = {
   missing_api_key: "AI není připravená — chybí API klíč. Kontaktujte provozovatele.",
   timeout: "Odpověď trvala příliš dlouho. Zkuste to prosím znovu.",
   http_error: "Nepodařilo se spojit s AI službou. Zkuste to prosím znovu.",
@@ -21881,16 +21881,16 @@ const mC = {
   empty_message: "Zpráva je prázdná."
 };
 function mo(t) {
-  return mC[t];
+  return vC[t];
 }
 function Ky(t) {
   if (t instanceof ao)
     return t;
-  if (PO(t)) {
+  if (LO(t)) {
     const i = t.code, s = t.diagnostic ?? (i === "missing_api_key" ? mo(i) : t.message.trim().length > 0 ? t.message : mo(i));
     return new ao(i, s, { cause: t });
   }
-  const n = vC(t).trim();
+  const n = kC(t).trim();
   return /missing api key|pass apiKey/i.test(n) ? new ao(
     "missing_api_key",
     mo("missing_api_key"),
@@ -21915,11 +21915,11 @@ function Ky(t) {
     { cause: t }
   );
 }
-function vC(t) {
+function kC(t) {
   return t instanceof Error ? t.message : typeof t == "string" ? t : String(t);
 }
-const kC = 3e4;
-class hC {
+const hC = 3e4;
+class yC {
   constructor(n) {
     ae(this, "delivery");
     ae(this, "analyzer");
@@ -21933,14 +21933,14 @@ class hC {
     ae(this, "recommendationEngine");
     /** Prior turns only (excludes in-flight user message). */
     ae(this, "history", []);
-    this.delivery = n.delivery, this.sessionId = n.sessionId ?? bC(), this.conversationId = this.sessionId, this.requestTimeoutMs = n.requestTimeoutMs ?? kC, this.memoryService = n.memoryService ?? B1(), this.promptBuilder = n.promptBuilder ?? cC(), this.recommendationEngine = n.recommendationEngine ?? M1(), this.analyzer = n.analyzer ?? Ry(
+    this.delivery = n.delivery, this.sessionId = n.sessionId ?? fC(), this.conversationId = this.sessionId, this.requestTimeoutMs = n.requestTimeoutMs ?? hC, this.memoryService = n.memoryService ?? H1(), this.promptBuilder = n.promptBuilder ?? pC(), this.recommendationEngine = n.recommendationEngine ?? P1(), this.analyzer = n.analyzer ?? Ry(
       Py({
         llm: { chat: (i) => this.delivery.chat(i) }
       })
-    ), this.diagnostics = n.diagnostics === !1 ? j1() : n.diagnostics ?? uj({ enabled: !0 }), this.recorder = n.recorder === !1 ? A1({
+    ), this.diagnostics = n.diagnostics === !1 ? g1() : n.diagnostics ?? cj({ enabled: !0 }), this.recorder = n.recorder === !1 ? O1({
       sessionId: this.sessionId,
       conversationId: this.conversationId
-    }) : n.recorder ?? pj({
+    }) : n.recorder ?? mj({
       sessionId: this.sessionId,
       conversationId: this.conversationId,
       enabled: !0
@@ -21963,7 +21963,7 @@ class hC {
    * Prefer getDelivery().
    */
   getProvider() {
-    return a1(this.delivery) ? this.delivery.adapter : {
+    return i1(this.delivery) ? this.delivery.adapter : {
       chat: (n) => this.delivery.chat(n)
     };
   }
@@ -22004,7 +22004,7 @@ class hC {
    * Delivery/Adapter never compose prompts — only receive ChatRequest.
    */
   chatWithPackage(n, i) {
-    return this.chat(pC(n, i));
+    return this.chat(mC(n, i));
   }
   /**
    * PT-011 — Full conversation turn:
@@ -22035,7 +22035,7 @@ class hC {
         model: L.model,
         promptTokens: L.promptTokens,
         completionTokens: L.completionTokens,
-        latency: mn(l),
+        latency: vn(l),
         response: L.response,
         error: L.error
       }));
@@ -22045,18 +22045,18 @@ class hC {
         message: i,
         recentMessages: this.history
       });
-      N = B, m = mn(L), this.diagnostics.emitPhase(s, "analyzer", m);
+      N = B, m = vn(L), this.diagnostics.emitPhase(s, "analyzer", m);
       const U = $n();
-      this.memoryService.update({ analysis: B }), v = mn(U), this.diagnostics.emitPhase(s, "memory", v);
+      this.memoryService.update({ analysis: B }), v = vn(U), this.diagnostics.emitPhase(s, "memory", v);
       const M = this.memoryService.getMemory(), G = $n(), $ = rl(M);
-      g = $, y = mn(G), this.diagnostics.emitPhase(s, "resolution", y);
-      const te = w1(M);
-      E = x1({
+      g = $, y = vn(G), this.diagnostics.emitPhase(s, "resolution", y);
+      const te = S1(M);
+      E = I1({
         ...te,
-        activeItems: S1($),
+        activeItems: A1($),
         resolutionMs: y
       });
-      const ie = $n(), fe = vj(n.object), Ie = this.recommendationEngine.recommend({
+      const ie = $n(), fe = kj(n.object), Ie = this.recommendationEngine.recommend({
         memory: $,
         object: fe,
         decision: n.decision
@@ -22069,16 +22069,16 @@ class hC {
         conversationMessages: this.history,
         currentUserMessage: i
       });
-      H = ue, h = mn(ie), this.diagnostics.emitPhase(s, "prompt", h), z = E1(ue);
+      H = ue, h = vn(ie), this.diagnostics.emitPhase(s, "prompt", h), z = w1(ue);
       const R = $n();
       let X;
       try {
-        X = await jC(
+        X = await gC(
           this.chatWithPackage(this.sessionId, ue),
           this.requestTimeoutMs
         );
       } catch (x) {
-        console.error("AIService: provider error", x), f = mn(R);
+        console.error("AIService: provider error", x), f = vn(R);
         const C = Ky(x);
         throw A = ac({
           providerId: p.deliveryId,
@@ -22109,13 +22109,13 @@ class hC {
           model: p.model
         }), C;
       }
-      f = mn(R), this.diagnostics.emitPhase(s, "provider", f), A = ac({
+      f = vn(R), this.diagnostics.emitPhase(s, "provider", f), A = ac({
         providerId: p.deliveryId,
         model: p.model,
         requestDurationMs: f,
         responseDurationMs: f,
         errorCode: null
-      }), w = z1({
+      }), w = x1({
         promptTokens: X.usage.promptTokens,
         completionTokens: X.usage.completionTokens,
         totalTokens: X.usage.totalTokens
@@ -22215,19 +22215,19 @@ class hC {
     return Object.freeze({
       sessionId: this.sessionId,
       conversationId: this.conversationId,
-      messageId: fC()
+      messageId: jC()
     });
   }
   finishTurnTrace(n) {
     const i = Object.freeze({
       conversation: n.conversation,
-      latency: g1({
+      latency: z1({
         analyzerMs: n.analyzerMs,
         memoryMs: n.memoryMs,
         resolutionMs: n.resolutionMs,
         promptBuilderMs: n.promptBuilderMs,
         providerMs: n.providerMs,
-        totalMs: mn(n.totalStart)
+        totalMs: vn(n.totalStart)
       }),
       prompt: n.promptTrace,
       provider: n.providerTrace,
@@ -22240,22 +22240,22 @@ class hC {
     this.diagnostics.emitTurn(i);
   }
 }
-function yC(t, n = {}) {
-  return new hC({ delivery: t, ...n });
-}
-function bC() {
-  return typeof crypto < "u" && "randomUUID" in crypto ? `embed-${crypto.randomUUID()}` : `embed-${Date.now().toString(36)}`;
+function bC(t, n = {}) {
+  return new yC({ delivery: t, ...n });
 }
 function fC() {
+  return typeof crypto < "u" && "randomUUID" in crypto ? `embed-${crypto.randomUUID()}` : `embed-${Date.now().toString(36)}`;
+}
+function jC() {
   return typeof crypto < "u" && "randomUUID" in crypto ? `msg-${crypto.randomUUID()}` : `msg-${Date.now().toString(36)}`;
 }
 function $n() {
   return typeof performance < "u" && typeof performance.now == "function" ? performance.now() : Date.now();
 }
-function mn(t) {
+function vn(t) {
   return Math.max(0, Math.round($n() - t));
 }
-function jC(t, n) {
+function gC(t, n) {
   return new Promise((i, s) => {
     const l = setTimeout(() => {
       s(
@@ -22275,7 +22275,7 @@ function jC(t, n) {
     );
   });
 }
-class gC {
+class zC {
   constructor(n) {
     ae(this, "id");
     ae(this, "model", null);
@@ -22301,12 +22301,12 @@ class gC {
         body: JSON.stringify(n)
       });
     } catch (p) {
-      throw IC(p);
+      throw EC(p);
     }
     const s = await i.text();
     if (!i.ok)
-      throw EC(i.status, s);
-    const l = xC(s);
+      throw wC(i.status, s);
+    const l = IC(s);
     if (l === null)
       throw new dt(
         "invalid_response",
@@ -22326,10 +22326,10 @@ class gC {
     ) : globalThis.fetch(n, i);
   }
 }
-function zC(t) {
-  return new gC(t);
-}
 function xC(t) {
+  return new zC(t);
+}
+function IC(t) {
   if (t.trim().length === 0)
     return null;
   try {
@@ -22347,7 +22347,7 @@ function xC(t) {
     return null;
   }
 }
-function IC(t) {
+function EC(t) {
   const n = t instanceof Error ? t.message : String(t);
   return (t instanceof Error ? t.name : "") === "AbortError" || /timeout|timed out|aborted/i.test(n) ? new dt(
     "timeout",
@@ -22369,7 +22369,7 @@ function IC(t) {
     { cause: t }
   );
 }
-function EC(t, n) {
+function wC(t, n) {
   if (t === 401 || t === 403)
     return new dt(
       "http_error",
@@ -22397,9 +22397,9 @@ function EC(t, n) {
     }
   );
 }
-const wC = "AI Delivery není nakonfigurovaná. Kontaktujte provozovatele.";
+const SC = "AI Delivery není nakonfigurovaná. Kontaktujte provozovatele.";
 function Uy(t = "disabled") {
-  const n = t === "missing_local_credentials" ? null : wC;
+  const n = t === "missing_local_credentials" ? null : SC;
   return Sp({
     id: "not-configured",
     async chat(s) {
@@ -22411,17 +22411,17 @@ function Uy(t = "disabled") {
     }
   });
 }
-function SC(t = {}) {
-  const n = OC(t), i = t.mode ?? "auto";
+function AC(t = {}) {
+  const n = CC(t), i = t.mode ?? "auto";
   return i === "published" ? {
     mode: n.length > 0 ? "published" : "disabled",
     deliveryUrl: n.length > 0 ? n : null
-  } : i === "local" ? { mode: "local", deliveryUrl: null } : i === "disabled" ? { mode: "disabled", deliveryUrl: null } : n.length > 0 ? { mode: "published", deliveryUrl: n } : TC() ? { mode: "disabled", deliveryUrl: null } : { mode: "local", deliveryUrl: null };
+  } : i === "local" ? { mode: "local", deliveryUrl: null } : i === "disabled" ? { mode: "disabled", deliveryUrl: null } : n.length > 0 ? { mode: "published", deliveryUrl: n } : DC() ? { mode: "disabled", deliveryUrl: null } : { mode: "local", deliveryUrl: null };
 }
-function AC(t = {}) {
-  const n = SC(t), i = r1();
+function OC(t = {}) {
+  const n = AC(t), i = s1();
   if (n.mode === "published" && n.deliveryUrl !== null) {
-    const p = zC({
+    const p = xC({
       deliveryUrl: n.deliveryUrl,
       id: "published-remote"
     });
@@ -22434,7 +22434,7 @@ function AC(t = {}) {
     }), p;
   }
   if (n.mode === "local") {
-    const p = i1();
+    const p = r1();
     if (p !== null)
       return Fs({
         mode: n.mode,
@@ -22463,39 +22463,39 @@ function AC(t = {}) {
     credentials: i
   }), l;
 }
-function OC(t) {
+function CC(t) {
   var l;
   const n = ((l = t.deliveryUrl) == null ? void 0 : l.trim()) ?? "";
   if (n.length > 0)
     return n.replace(/\/$/, "");
-  const i = CC();
+  const i = NC();
   if (i.length > 0)
     return i;
-  const s = NC();
+  const s = TC();
   return s.length > 0 ? s.replace(/\/$/, "") : "";
 }
-function CC() {
+function NC() {
   var i, s;
   if (typeof globalThis > "u")
     return "";
   const n = (s = (i = globalThis.window) == null ? void 0 : i.__EMBED_AI_DELIVERY__) == null ? void 0 : s.deliveryUrl;
   return typeof n != "string" || n.trim().length === 0 ? "" : n.trim().replace(/\/$/, "");
 }
-function NC() {
+function TC() {
   try {
     return "".trim().length === 0 ? "" : "".trim();
   } catch {
     return "";
   }
 }
-function TC() {
+function DC() {
   try {
     return !0;
   } catch {
     return !1;
   }
 }
-function DC() {
+function _C() {
   try {
     return !1;
   } catch {
@@ -22503,7 +22503,7 @@ function DC() {
   }
 }
 function Fs(t) {
-  DC() && console.info(
+  _C() && console.info(
     [
       "[AI Delivery]",
       `mode=${t.mode}`,
@@ -22516,17 +22516,17 @@ function Fs(t) {
   );
 }
 function Ap() {
-  const { experience: t } = Ze(), n = lE(
+  const { experience: t } = Ze(), n = dE(
     t.context.decision.priorityIds,
     0
   );
-  return rE(n);
+  return sE(n);
 }
-const _C = "w-full max-w-[690px] tabletMin:!max-w-none tabletMin:!w-full tabletMax:!max-w-none tabletMax:!w-full desktop:w-[690px]", fj = "w-full max-w-[680px] tabletMin:!max-w-none tabletMin:!w-full tabletMax:!max-w-none tabletMax:!w-full desktop:w-[680px]", RC = "grid min-h-faq-ai grid-cols-[690px_minmax(0,1fr)] grid-rows-[auto_auto_auto_auto] items-start gap-x-section content-start overflow-x-hidden tabletMin:grid-cols-1 tabletMin:grid-rows-none tabletMax:!grid-cols-[minmax(0,1fr)_minmax(0,1fr)] mobile:grid-cols-1 mobile:grid-rows-none", MC = "col-start-1 row-start-1 row-span-2 box-border flex flex-col gap-[30px] pt-section pl-section pr-0 tabletMin:col-start-1 tabletMin:col-span-1 tabletMin:row-auto tabletMin:row-span-1 mobile:col-span-1 mobile:row-auto mobile:row-span-1 mobile:gap-5 mobile:pr-section", PC = "relative z-20 col-start-2 row-start-1 box-border overflow-visible bg-[#FFFFFF] pt-section pl-[14px] pr-[20px] tabletMin:col-start-1 tabletMin:col-span-1 tabletMin:row-auto tabletMin:px-section mobile:col-span-1 mobile:row-auto mobile:px-section", LC = "col-start-2 row-start-2 box-border flex flex-col self-stretch pl-[14px] pr-[20px] tabletMin:col-start-1 tabletMin:col-span-1 tabletMin:row-auto tabletMin:px-section mobile:col-span-1 mobile:row-auto mobile:px-section", BC = "col-start-2 row-start-3 box-border pl-[14px] pr-[20px] tabletMin:col-start-1 tabletMin:col-span-1 tabletMin:row-auto tabletMin:px-section mobile:col-span-1 mobile:row-auto mobile:px-section", HC = "col-start-2 row-start-4 box-border pb-section pl-[14px] pr-[20px] tabletMin:col-start-1 tabletMin:col-span-1 tabletMin:row-auto tabletMin:px-section mobile:col-span-1 mobile:row-auto mobile:px-section mobile:pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]", KC = "box-border flex min-h-full w-full max-w-[682px] min-w-0 shrink-0 flex-col tabletMin:!max-w-none tabletMin:!w-full tabletMax:!max-w-none tabletMax:!w-full desktop:w-[682px]", UC = 28, VC = "shrink-0";
+const RC = "w-full max-w-[690px] tabletMin:!max-w-none tabletMin:!w-full tabletMax:!max-w-none tabletMax:!w-full desktop:w-[690px]", jj = "w-full max-w-[680px] tabletMin:!max-w-none tabletMin:!w-full tabletMax:!max-w-none tabletMax:!w-full desktop:w-[680px]", MC = "grid min-h-faq-ai grid-cols-[690px_minmax(0,1fr)] grid-rows-[auto_auto_auto_auto] items-start gap-x-section content-start overflow-x-hidden tabletMin:grid-cols-1 tabletMin:grid-rows-none tabletMax:!grid-cols-[minmax(0,1fr)_minmax(0,1fr)] mobile:grid-cols-1 mobile:grid-rows-none", PC = "col-start-1 row-start-1 row-span-2 box-border flex flex-col gap-[30px] pt-section pl-section pr-0 tabletMin:col-start-1 tabletMin:col-span-1 tabletMin:row-auto tabletMin:row-span-1 mobile:col-span-1 mobile:row-auto mobile:row-span-1 mobile:gap-5 mobile:pr-section", LC = "relative z-20 col-start-2 row-start-1 box-border overflow-visible bg-[#FFFFFF] pt-section pl-[14px] pr-[20px] tabletMin:col-start-1 tabletMin:col-span-1 tabletMin:row-auto tabletMin:px-section mobile:col-span-1 mobile:row-auto mobile:px-section", BC = "col-start-2 row-start-2 box-border flex flex-col self-stretch pl-[14px] pr-[20px] tabletMin:col-start-1 tabletMin:col-span-1 tabletMin:row-auto tabletMin:px-section mobile:col-span-1 mobile:row-auto mobile:px-section", HC = "col-start-2 row-start-3 box-border pl-[14px] pr-[20px] tabletMin:col-start-1 tabletMin:col-span-1 tabletMin:row-auto tabletMin:px-section mobile:col-span-1 mobile:row-auto mobile:px-section", KC = "col-start-2 row-start-4 box-border pb-section pl-[14px] pr-[20px] tabletMin:col-start-1 tabletMin:col-span-1 tabletMin:row-auto tabletMin:px-section mobile:col-span-1 mobile:row-auto mobile:px-section mobile:pb-[calc(1.25rem+env(safe-area-inset-bottom,0px))]", UC = "box-border flex min-h-full w-full max-w-[682px] min-w-0 shrink-0 flex-col tabletMin:!max-w-none tabletMin:!w-full tabletMax:!max-w-none tabletMax:!w-full desktop:w-[682px]", VC = 28, FC = "shrink-0";
 function zn(...t) {
   return t.filter(Boolean).join(" ");
 }
-const jj = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2", FC = "duration-200 ease-out", YC = {
+const gj = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2", YC = "duration-200 ease-out", qC = {
   md: "rounded-[8px] px-8 py-4 text-base",
   sm: "rounded-[8px] px-6 py-3 text-sm",
   full: "w-full rounded-[8px] px-6 py-3 text-sm"
@@ -22535,15 +22535,15 @@ function Op(t) {
   const n = t.size ?? "md", i = t.state ?? "default";
   return zn(
     "inline-flex items-center justify-center text-center font-sans font-medium",
-    FC,
-    jj,
-    YC[n],
+    YC,
+    gj,
+    qC[n],
     "bg-[#001930] text-[#FFFFFF]",
     i === "disabled" && "cursor-not-allowed",
     t.className
   );
 }
-function gj({
+function zj({
   children: t,
   size: n = "md",
   className: i,
@@ -22560,7 +22560,7 @@ function gj({
     }
   );
 }
-const qC = {
+const $C = {
   default: "h-[50px] rounded-[8px] bg-[#F7F6F4]",
   framed: "h-[50px] rounded-[8px] border border-embed-border-default bg-[#F7F6F4]"
 };
@@ -22568,14 +22568,14 @@ function Cp(t) {
   const n = t.variant ?? "default";
   return zn(
     "box-border w-full px-4 text-sm text-embed-foreground-primary placeholder:text-embed-foreground-primary/40",
-    qC[n],
+    $C[n],
     t.className
   );
 }
-function $C(t) {
+function GC(t) {
   return zn(
     Cp({ variant: "framed", className: "px-3" }),
-    jj,
+    gj,
     t == null ? void 0 : t.className
   );
 }
@@ -22587,110 +22587,110 @@ j.forwardRef(function({ variant: n = "default", className: i, ...s }, l) {
 });
 j.forwardRef(
   function({ className: n, ...i }, s) {
-    return /* @__PURE__ */ c.jsx("input", { ref: s, className: $C({ className: n }), ...i });
+    return /* @__PURE__ */ c.jsx("input", { ref: s, className: GC({ className: n }), ...i });
   }
 );
-const GC = {
+const ZC = {
   user: "rounded-[8px] border border-embed-border-default",
   assistant: "rounded-[8px] border border-embed-border-default"
 };
-function ZC(t, n) {
+function JC(t, n) {
   return zn(
     "max-w-[85%] px-4 py-3 text-sm text-embed-foreground-primary",
-    GC[t],
+    ZC[t],
     n
   );
 }
-const JC = {
+const XC = {
   /** Client query — light gray */
   user: { backgroundColor: Ge.surface.card },
   /** AI reply — dark gray */
   assistant: { backgroundColor: Ge.surface.interactive }
 };
-function XC({ role: t, children: n, time: i, className: s }) {
+function QC({ role: t, children: n, time: i, className: s }) {
   const l = t === "user";
   return /* @__PURE__ */ c.jsxs("div", { className: l ? "flex flex-col items-end" : "flex flex-col items-start", children: [
-    /* @__PURE__ */ c.jsx("div", { className: ZC(t, s), style: JC[t], children: n }),
+    /* @__PURE__ */ c.jsx("div", { className: JC(t, s), style: XC[t], children: n }),
     i ? /* @__PURE__ */ c.jsx("span", { className: "mt-1 text-xs text-embed-foreground-primary/40", children: i }) : null
   ] });
 }
-const QC = {
+const WC = {
   elevated: "bg-embed-surface-elevated",
   cream: "bg-embed-surface-card",
   inset: "rounded-[8px] border border-embed-border-default bg-embed-surface-inset px-section py-5",
   row: "bg-embed-surface-card"
 };
-function WC(t) {
+function eN(t) {
   const n = t.variant ?? "cream";
-  return zn(QC[n], t.className);
+  return zn(WC[n], t.className);
 }
-function eN({
+function tN({
   children: t,
   variant: n = "cream",
   className: i,
   as: s = "div",
   ...l
 }) {
-  return /* @__PURE__ */ c.jsx(s, { className: WC({ variant: n, className: i }), ...l, children: t });
+  return /* @__PURE__ */ c.jsx(s, { className: eN({ variant: n, className: i }), ...l, children: t });
 }
 const Np = {
   hitAreaPx: 44,
   displayPx: 30
-}, zj = "0 0 820 820", xj = "#173660", Ij = "#FFFFFF", bn = {
+}, xj = "0 0 820 820", Ij = "#173660", Ej = "#FFFFFF", fn = {
   cx: 410,
   cy: 410,
   r: 400
-}, Ej = [
+}, wj = [
   { x: 188, y: 360, width: 444, height: 100 },
   { x: 360, y: 188, width: 100, height: 444 }
-], wj = `rotate(45 ${bn.cx} ${bn.cy})`;
-function tN() {
+], Sj = `rotate(45 ${fn.cx} ${fn.cy})`;
+function oN() {
   const { displayPx: t } = Np, n = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  n.setAttribute("width", String(t)), n.setAttribute("height", String(t)), n.setAttribute("viewBox", zj), n.setAttribute("aria-hidden", "true"), n.setAttribute("focusable", "false"), n.style.display = "block", n.style.pointerEvents = "none", n.style.userSelect = "none", n.style.flexShrink = "0";
+  n.setAttribute("width", String(t)), n.setAttribute("height", String(t)), n.setAttribute("viewBox", xj), n.setAttribute("aria-hidden", "true"), n.setAttribute("focusable", "false"), n.style.display = "block", n.style.pointerEvents = "none", n.style.userSelect = "none", n.style.flexShrink = "0";
   const i = document.createElementNS(
     "http://www.w3.org/2000/svg",
     "circle"
   );
-  i.setAttribute("cx", String(bn.cx)), i.setAttribute("cy", String(bn.cy)), i.setAttribute("r", String(bn.r)), i.setAttribute("fill", xj), n.appendChild(i);
+  i.setAttribute("cx", String(fn.cx)), i.setAttribute("cy", String(fn.cy)), i.setAttribute("r", String(fn.r)), i.setAttribute("fill", Ij), n.appendChild(i);
   const s = document.createElementNS("http://www.w3.org/2000/svg", "g");
-  s.setAttribute("transform", wj), s.setAttribute("fill", Ij);
-  for (const l of Ej) {
+  s.setAttribute("transform", Sj), s.setAttribute("fill", Ej);
+  for (const l of wj) {
     const p = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     p.setAttribute("x", String(l.x)), p.setAttribute("y", String(l.y)), p.setAttribute("width", String(l.width)), p.setAttribute("height", String(l.height)), s.appendChild(p);
   }
   return n.appendChild(s), n;
 }
-function Sj(t) {
+function Aj(t) {
   throw new Error(`Unknown visual: ${String(t)}`);
 }
-function Aj(t) {
+function Oj(t) {
   switch (t) {
     case "close":
       return Np;
     default:
-      return Sj(t);
+      return Aj(t);
   }
 }
-function oN(t) {
+function nN(t) {
   switch (t.name) {
     case "close":
-      return tN();
+      return oN();
     default:
-      return Sj(t.name);
+      return Aj(t.name);
   }
 }
-function nN(t, n) {
-  const i = oN(n);
+function aN(t, n) {
+  const i = nN(n);
   return t.appendChild(i), i;
 }
-function aN({ className: t }) {
+function iN({ className: t }) {
   const { displayPx: n } = Np;
   return /* @__PURE__ */ c.jsxs(
     "svg",
     {
       width: n,
       height: n,
-      viewBox: zj,
+      viewBox: xj,
       className: zn("pointer-events-none select-none", t),
       style: {
         width: n,
@@ -22704,13 +22704,13 @@ function aN({ className: t }) {
         /* @__PURE__ */ c.jsx(
           "circle",
           {
-            cx: bn.cx,
-            cy: bn.cy,
-            r: bn.r,
-            fill: xj
+            cx: fn.cx,
+            cy: fn.cy,
+            r: fn.r,
+            fill: Ij
           }
         ),
-        /* @__PURE__ */ c.jsx("g", { transform: wj, fill: Ij, children: Ej.map((i) => /* @__PURE__ */ c.jsx(
+        /* @__PURE__ */ c.jsx("g", { transform: Sj, fill: Ej, children: wj.map((i) => /* @__PURE__ */ c.jsx(
           "rect",
           {
             x: i.x,
@@ -22724,12 +22724,12 @@ function aN({ className: t }) {
     }
   );
 }
-function iN({
+function rN({
   className: t,
   "aria-label": n = "Zavřít",
   ...i
 }) {
-  const { hitAreaPx: s } = Aj("close");
+  const { hitAreaPx: s } = Oj("close");
   return /* @__PURE__ */ c.jsx(
     "button",
     {
@@ -22746,7 +22746,7 @@ function iN({
         minHeight: s
       },
       ...i,
-      children: /* @__PURE__ */ c.jsx(aN, {})
+      children: /* @__PURE__ */ c.jsx(iN, {})
     }
   );
 }
@@ -22764,20 +22764,20 @@ const Vy = Object.freeze({
   borderRadiusPx: 14,
   shadow: "0 18px 48px rgba(0, 25, 48, 0.35)"
 });
-function rN(t) {
+function sN(t) {
   return t === void 0 ? Vy : {
     ...Vy,
     ...t
   };
 }
-const sN = {
+const lN = {
   display: "flex",
   justifyContent: "center",
   width: "100%",
   boxSizing: "border-box",
   pointerEvents: "auto"
 };
-function lN({
+function dN({
   config: t,
   avatar: n,
   open: i,
@@ -22786,7 +22786,7 @@ function lN({
   className: p,
   style: m
 }) {
-  const v = rN(t.theme), [y, h] = j.useState(!1);
+  const v = sN(t.theme), [y, h] = j.useState(!1);
   if (j.useEffect(() => {
     if (!i) {
       h(!1);
@@ -22841,7 +22841,7 @@ function lN({
         "aria-describedby": g === "" ? void 0 : g,
         "data-testid": "welcome-bridge",
         "data-welcome-bridge-variant": t.variant,
-        style: sN,
+        style: lN,
         children: /* @__PURE__ */ c.jsxs(
           "div",
           {
@@ -23006,10 +23006,10 @@ function lN({
     )
   ] });
 }
-function dN({ role: t, text: n, time: i }) {
-  return /* @__PURE__ */ c.jsx(XC, { role: t, time: i, children: /* @__PURE__ */ c.jsx("span", { className: "whitespace-pre-line", children: n }) });
+function uN({ role: t, text: n, time: i }) {
+  return /* @__PURE__ */ c.jsx(QC, { role: t, time: i, children: /* @__PURE__ */ c.jsx("span", { className: "whitespace-pre-line", children: n }) });
 }
-function uN({ messages: t }) {
+function cN({ messages: t }) {
   const n = j.useRef(null);
   return j.useEffect(() => {
     const i = n.current;
@@ -23025,10 +23025,10 @@ function uN({ messages: t }) {
     {
       ref: n,
       className: "flex flex-col space-y-section overflow-x-hidden",
-      style: { paddingTop: UC },
+      style: { paddingTop: VC },
       "data-testid": "ai-advisor-conversation",
       children: t.map((i) => /* @__PURE__ */ c.jsx(
-        dN,
+        uN,
         {
           role: i.role,
           text: i.text,
@@ -23039,22 +23039,22 @@ function uN({ messages: t }) {
     }
   );
 }
-function cN() {
+function pN() {
   return /* @__PURE__ */ c.jsx("p", { className: "mt-section text-xs leading-relaxed text-embed-foreground-primary/45", children: "AI průvodce poskytuje obecné informace. Pro závazné odpovědi kontaktujte našeho specialistu." });
 }
-const pN = { BASE_URL: "/", DEV: !1, MODE: "production", PROD: !0, SSR: !1, VITE_AI_DELIVERY_URL: "", VITE_OPENAI_API_KEY: "" };
+const mN = { BASE_URL: "/", DEV: !1, MODE: "production", PROD: !0, SSR: !1, VITE_AI_DELIVERY_URL: "", VITE_OPENAI_API_KEY: "" };
 let Ys = null;
-function mN() {
+function vN() {
   if (Ys !== null)
     return Ys;
   const t = Fy("VITE_AI_DIAGNOSTICS") !== "0", n = Fy("VITE_AI_RECORDER") !== "0", i = typeof crypto < "u" && "randomUUID" in crypto ? `embed-${crypto.randomUUID()}` : `embed-${Date.now().toString(36)}`;
-  return Ys = yC(AC(), {
+  return Ys = bC(OC(), {
     sessionId: i,
-    diagnostics: uj({
+    diagnostics: cj({
       enabled: t,
       console: t
     }),
-    recorder: pj({
+    recorder: mj({
       sessionId: i,
       conversationId: i,
       enabled: n
@@ -23062,7 +23062,7 @@ function mN() {
   }), Ys;
 }
 function Fy(t) {
-  const n = pN[t];
+  const n = mN[t];
   if (!(typeof n != "string" || n.trim().length === 0))
     return n.trim();
 }
@@ -23077,7 +23077,7 @@ const ur = [
   { id: "investment", title: "Investice" },
   { id: "maintenance", title: "Údržba" },
   { id: "flexibility", title: "Flexibilita" }
-], vN = [
+], kN = [
   "plot",
   "layout",
   "privacy",
@@ -23086,23 +23086,23 @@ const ur = [
   "operating-costs",
   "quality",
   "maintenance"
-], El = vN.map((t) => {
+], El = kN.map((t) => {
   const n = ur.find((i) => i.id === t);
   if (n === void 0)
     throw new Error(`Unknown selectable decision category: ${t}`);
   return n;
-}), kN = Object.freeze({
+}), hN = Object.freeze({
   layout: "Dispozice znamená, jak jsou místnosti uspořádané a jak v domě žijete.",
   investment: "Investice znamená dlouhodobou hodnotu a jistotu vašeho rozhodnutí."
-}), Yy = 3, hN = 0.5, Oj = Object.freeze(
+}), Yy = 3, yN = 0.5, Cj = Object.freeze(
   Object.fromEntries(ur.map((t) => [t.id, t.title]))
-), yN = Object.freeze({
+), bN = Object.freeze({
   "primary-explanation": "Hlavní vysvětlení",
   "supporting-argument": "Podpůrný argument",
   recommendation: "Doporučení",
   "semantic-transition": "Přechod",
   "next-decision-step": "Další krok"
-}), bN = Object.freeze({
+}), fN = Object.freeze({
   explain: "Vysvětlení",
   acknowledge: "Potvrzení",
   support: "Podpora",
@@ -23113,7 +23113,7 @@ const ur = [
   advance: "Pokračování",
   inspect: "Prohlédnout",
   media: "Médium"
-}), fN = Object.freeze({
+}), jN = Object.freeze({
   "explore-house-structure": "Prozkoumejte strukturu domu",
   "primary-living-volume": "Obývací prostor je jádrem denního života",
   "daily-workflow-core": "Kuchyně jako centrum denního provozu",
@@ -23167,13 +23167,13 @@ function Uc(t) {
   const n = t.trim();
   if (n.length === 0)
     return n;
-  const i = fN[n];
+  const i = jN[n];
   if (i !== void 0)
     return i;
-  const s = Oj[n];
+  const s = Cj[n];
   if (s !== void 0)
     return s;
-  const l = yN[n];
+  const l = bN[n];
   if (l !== void 0)
     return l;
   if (n.startsWith("focus-room:"))
@@ -23184,39 +23184,39 @@ function Uc(t) {
   }
   const p = n.indexOf(":");
   if (p > 0) {
-    const m = n.slice(0, p), v = n.slice(p + 1), y = bN[m], h = Uc(v);
+    const m = n.slice(0, p), v = n.slice(p + 1), y = fN[m], h = Uc(v);
     return y !== void 0 ? `${y}: ${h}` : `${qy(m)}: ${h}`;
   }
   return qy(n);
 }
 function $y(t) {
-  return Oj[t] ?? Uc(t);
+  return Cj[t] ?? Uc(t);
 }
-const jN = 750, gN = 850, zN = Object.freeze([
+const gN = 750, zN = 850, xN = Object.freeze([
   "Teď se zaměříme na vaše priority."
-]), xN = "Začněme", Vc = Object.freeze([
+]), IN = "Začněme", Vc = Object.freeze([
   "Označte alespoň tři karty a nastavte jejich intenzitu",
   "(míru důležitosti pro vás).",
   "Ukážu vám pak, co stojí za pozornost právě z tohoto pohledu."
 ]);
 Vc.join(" ");
-const rc = 3, IN = 3, EN = Object.freeze([
+const rc = 3, EN = 3, wN = Object.freeze([
   "Dobře.",
   "Už vidím, kudy vaše uvažování míří."
-]), wN = "Až budeme mít alespoň tři priority, můžeme jít o krok dál.", SN = Object.freeze([
+]), SN = "Až budeme mít alespoň tři priority, můžeme jít o krok dál.", AN = Object.freeze([
   "Už mám první představu o tom, jak přemýšlíte."
-]), AN = (t) => t === 1 ? "Máte jednu zvolenou prioritu. Stačí to takto, nebo chcete ještě něco upravit?" : t >= 2 && t <= 4 ? `Máte ${t} zvolené priority. Stačí to takto, nebo chcete ještě něco upravit?` : `Máte ${t} zvolených priorit. Stačí to takto, nebo chcete ještě něco upravit?`, ON = "Potvrdit nastavení", CN = "Ještě to doplním", NN = "Už rozumím tomu, co je pro vás důležité.", TN = Object.freeze([
+]), ON = (t) => t === 1 ? "Máte jednu zvolenou prioritu. Stačí to takto, nebo chcete ještě něco upravit?" : t >= 2 && t <= 4 ? `Máte ${t} zvolené priority. Stačí to takto, nebo chcete ještě něco upravit?` : `Máte ${t} zvolených priorit. Stačí to takto, nebo chcete ještě něco upravit?`, CN = "Potvrdit nastavení", NN = "Ještě to doplním", TN = "Už rozumím tomu, co je pro vás důležité.", DN = Object.freeze([
   "Pomozte mi ještě lépe porozumět tomu, jak přemýšlíte — ověřím několik souvislostí."
-]), Gy = "Pokračovat", DN = "Rozumím.", _N = "První kapitola je hotová.", RN = Object.freeze([
+]), Gy = "Pokračovat", _N = "Rozumím.", RN = "První kapitola je hotová.", MN = Object.freeze([
   "Teď už vím, na co se u tohoto domu společně podívat."
-]), MN = "Pokračovat", PN = "Co pro vás může tento dům znamenat", LN = "Teď můžeme hlouběji prozkoumat, co je z vašeho pohledu nyní důležité.", BN = Object.freeze([
+]), PN = "Pokračovat", LN = "Co pro vás může tento dům znamenat", BN = "Teď můžeme hlouběji prozkoumat, co je z vašeho pohledu nyní důležité.", HN = Object.freeze([
   "Máte už jasněji v tom, co od domu očekáváte. Super.",
   "Teď vám rád pomůžu všimnout si věcí, které pro vás mohou být důležité."
-]), HN = "Co dostáváte", KN = "Co to znamená v běžném životě", UN = "Všimněte si", VN = "Tento prostor už znáte z prohlídky domu.", Vn = Object.freeze([
+]), KN = "Co dostáváte", UN = "Co to znamená v běžném životě", VN = "Všimněte si", FN = "Tento prostor už znáte z prohlídky domu.", Vn = Object.freeze([
   "Projděte si OTÁZKY A ODPOVĚDI přizpůsobené vašim prioritám.",
   "Můžeme také DISKUTOVAT PŘES CHAT o čemkoli, co vás k tomuto domu zajímá.",
   "Na konci vám připravím OSOBNÍ SOUHRN s důležitými FAKTY A OBRÁZKY dle vašich priorit."
-]), FN = "V dalším kroku se pak podíváme, jestli už pozemek máte, nebo ho teprve hledáte.", YN = Object.freeze({
+]), YN = "V dalším kroku se pak podíváme, jestli už pozemek máte, nebo ho teprve hledáte.", qN = Object.freeze({
   energy: Object.freeze({
     priorityId: "energy",
     prompt: "Co je pro vás u energie nejdůležitější?",
@@ -23308,20 +23308,20 @@ const rc = 3, IN = 3, EN = Object.freeze([
     ])
   })
 });
-function qN(t) {
+function $N(t) {
   var n;
   return ((n = ur.find((i) => i.id === t)) == null ? void 0 : n.title) ?? t;
 }
 function cr(t) {
-  return YN[t] ?? null;
+  return qN[t] ?? null;
 }
-function $N(t, n, i = IN) {
+function GN(t, n, i = EN) {
   return [...t].sort((s, l) => {
     const p = (n[l] ?? 0) - (n[s] ?? 0);
     return p !== 0 ? p : t.indexOf(s) - t.indexOf(l);
   }).slice(0, i);
 }
-function GN(t) {
+function ZN(t) {
   const {
     phase: n,
     selectedCount: i,
@@ -23351,10 +23351,10 @@ function GN(t) {
       return 5;
   }
 }
-function ZN(t) {
+function JN(t) {
   return t.length === 0 ? "" : t.length === 1 ? t[0] : t.length === 2 ? `${t[0]} a ${t[1]}` : `${t.slice(0, -1).join(", ")} a ${t[t.length - 1]}`;
 }
-const JN = Object.freeze({
+const XN = Object.freeze({
   energy: "Tahle otázka mi pomůže pochopit, co pro vás znamená energie v každodenním životě.",
   "operating-costs": "Tahle otázka mi pomůže pochopit, jak přemýšlíte o nákladech v čase.",
   layout: "Tahle otázka mi pomůže pochopit, jak má dům podporovat váš denní rytmus.",
@@ -23365,7 +23365,7 @@ const JN = Object.freeze({
   investment: "Tahle otázka mi pomůže pochopit, jak vnímáte dlouhodobou jistotu rozhodnutí.",
   maintenance: "Tahle otázka mi pomůže pochopit, kolik péče o dům chcete ve svém životě mít.",
   flexibility: "Tahle otázka mi pomůže pochopit, jak připravený má dům být na změny."
-}), XN = Object.freeze({
+}), QN = Object.freeze({
   energy: Object.freeze({
     "low-cost": "Zdá se, že vás u energie nejvíce zajímá, aby dům zbytečně nezatěžoval rozpočet.",
     independence: "Zdá se, že vám záleží na větší nezávislosti — méně spoléhat na vnější systémy.",
@@ -23417,18 +23417,18 @@ const JN = Object.freeze({
     guests: "Zdá se, že počítáte s prostorem pro hosty — dům jako místo setkávání."
   })
 });
-function QN(t) {
-  return JN[t] ?? "Tahle otázka mi pomůže lépe porozumět tomu, jak přemýšlíte.";
+function WN(t) {
+  return XN[t] ?? "Tahle otázka mi pomůže lépe porozumět tomu, jak přemýšlíte.";
 }
-function WN(t, n) {
-  const i = XN[t], s = i == null ? void 0 : i[n];
+function eT(t, n) {
+  const i = QN[t], s = i == null ? void 0 : i[n];
   if (s)
     return s;
   const l = cr(t), p = l == null ? void 0 : l.options.find((m) => m.id === n);
   return p ? `Rozumím. ${p.label} — to mi pomáhá lépe vidět, jak přemýšlíte.` : "Rozumím. Tohle mi pomáhá lépe vidět, jak přemýšlíte.";
 }
-function eT(t) {
-  const n = t.tags.map((p) => p.title), i = ZN(n), s = [];
+function tT(t) {
+  const n = t.tags.map((p) => p.title), i = JN(n), s = [];
   for (const p of t.tags) {
     const m = t.answers[p.id];
     if (!m)
@@ -23440,7 +23440,7 @@ function eT(t) {
   }
   if (s.length === 0)
     for (const [p, m] of Object.entries(t.answers)) {
-      const v = cr(p), y = v == null ? void 0 : v.options.find((f) => f.id === m), h = qN(p);
+      const v = cr(p), y = v == null ? void 0 : v.options.find((f) => f.id === m), h = $N(p);
       y && s.push(
         `U priority ${h.toLowerCase()} vnímám důraz na „${y.label.toLowerCase()}“.`
       );
@@ -23455,7 +23455,7 @@ function eT(t) {
     thanksLine: "Díky vašim odpovědím už dokážu připravit přesnější doporučení — jako první odhad, ne jako hotový závěr. Budeme z toho vycházet v další kapitole."
   };
 }
-const tT = Object.freeze({
+const oT = Object.freeze({
   plot: Object.freeze({
     question: "Jak poznám, že je pozemek opravdu vhodný?",
     answer: "Vhodný pozemek není jen o metrech. Společně ověříme orientaci, okolí a to, jak pozemek ladí s tím, co je pro vás důležité."
@@ -23500,7 +23500,7 @@ const tT = Object.freeze({
 function Zy(t, n, i) {
   if (n.has(i))
     return;
-  const s = tT[i];
+  const s = oT[i];
   s && (n.add(i), t.push(
     Object.freeze({
       id: `coach-faq:${i}`,
@@ -23509,7 +23509,7 @@ function Zy(t, n, i) {
     })
   ));
 }
-function oT(t) {
+function nT(t) {
   const n = t.length > 0 ? t : ur.slice(0, 3).map((l) => l.id), i = [], s = /* @__PURE__ */ new Set();
   for (const l of n)
     Zy(i, s, l);
@@ -23517,7 +23517,7 @@ function oT(t) {
     Zy(i, s, l.id);
   return Object.freeze(i);
 }
-function nT(t) {
+function aT(t) {
   const n = new Map(t.facts.map((i) => [i.id, i]));
   return t.priorityFaq.map((i) => {
     const s = i.knowledgeAtomIds.flatMap((l) => {
@@ -23531,19 +23531,19 @@ function nT(t) {
     });
   });
 }
-function aT(t) {
-  return oT(t.priorityIds);
+function iT(t) {
+  return nT(t.priorityIds);
 }
-const iT = [
+const rT = [
   "Jsem tu s vámi i pro volnou diskusi o domě.",
   "",
   "Zeptejte se na cokoli — nebo vyberte otázku vlevo, která navazuje na náš rozhovor."
 ].join(`
 `);
-function rT(t) {
-  return iT;
+function sT(t) {
+  return rT;
 }
-function sT({ disabled: t = !1, onClick: n }) {
+function lT({ disabled: t = !1, onClick: n }) {
   return /* @__PURE__ */ c.jsx(
     "button",
     {
@@ -23569,9 +23569,9 @@ function sT({ disabled: t = !1, onClick: n }) {
     }
   );
 }
-function lT({ value: t, onChange: n, onSend: i, disabled: s = !1 }) {
+function dT({ value: t, onChange: n, onSend: i, disabled: s = !1 }) {
   const l = !s && t.trim().length > 0;
-  return /* @__PURE__ */ c.jsxs("div", { className: `${VC} ${fj} flex items-stretch gap-3`, children: [
+  return /* @__PURE__ */ c.jsxs("div", { className: `${FC} ${jj} flex items-stretch gap-3`, children: [
     /* @__PURE__ */ c.jsx(
       "div",
       {
@@ -23609,11 +23609,11 @@ function lT({ value: t, onChange: n, onSend: i, disabled: s = !1 }) {
         )
       }
     ),
-    /* @__PURE__ */ c.jsx(sT, { disabled: !l, onClick: i })
+    /* @__PURE__ */ c.jsx(lT, { disabled: !l, onClick: i })
   ] });
 }
 const Jy = "w-[690px] max-w-full";
-function dT() {
+function uT() {
   return /* @__PURE__ */ c.jsxs("div", { className: "relative z-20 bg-[#FFFFFF]", children: [
     /* @__PURE__ */ c.jsx("h2", { className: "pb-section text-base font-bold tracking-wide text-embed-foreground-primary", children: "CHAT PRŮVODCE CONIS – ZEPTEJTE SE NA COKOLI" }),
     /* @__PURE__ */ c.jsx(
@@ -23640,41 +23640,41 @@ const Tp = 5;
 function Xy(t, n = Tp) {
   return t <= 0 ? 0 : Math.min(n, t);
 }
-function uT(t, n, i = Tp) {
+function cT(t, n, i = Tp) {
   return n <= 0 ? 0 : Math.min(Math.max(t, 0) + i, n);
 }
-function cT(t, n) {
+function pT(t, n) {
   return t < n;
 }
-function pT(t) {
+function mT(t) {
   return JSON.stringify(
     t.map((n) => [n.id, n.question, n.answer])
   );
 }
-const mT = "Zobrazit další", vT = 16.8, kT = `${dr} w-auto self-center disabled:cursor-default disabled:opacity-45`, vn = { width: 18, height: 8 };
-function hT({ expanded: t }) {
+const vT = "Zobrazit další", kT = 16.8, hT = `${dr} w-auto self-center disabled:cursor-default disabled:opacity-45`, kn = { width: 18, height: 8 };
+function yT({ expanded: t }) {
   return /* @__PURE__ */ c.jsx(
     "span",
     {
       "aria-hidden": "true",
       className: `inline-flex shrink-0 grow-0 items-center justify-center transition-transform duration-500 ease-out ${t ? "rotate-180" : "rotate-0"}`,
       style: {
-        width: vn.width,
-        height: vn.height,
-        minWidth: vn.width,
-        minHeight: vn.height
+        width: kn.width,
+        height: kn.height,
+        minWidth: kn.width,
+        minHeight: kn.height
       },
       children: /* @__PURE__ */ c.jsx(
         "svg",
         {
           viewBox: "0 0 12 8",
-          width: vn.width,
-          height: vn.height,
+          width: kn.width,
+          height: kn.height,
           preserveAspectRatio: "none",
           className: "block max-h-none max-w-none",
           style: {
-            width: vn.width,
-            height: vn.height,
+            width: kn.width,
+            height: kn.height,
             flexShrink: 0
           },
           fill: Ge.action.accent,
@@ -23684,13 +23684,13 @@ function hT({ expanded: t }) {
     }
   );
 }
-function yT() {
-  return /* @__PURE__ */ c.jsxs("div", { className: `${_C} relative z-10 m-0 shrink-0`, children: [
+function bT() {
+  return /* @__PURE__ */ c.jsxs("div", { className: `${RC} relative z-10 m-0 shrink-0`, children: [
     /* @__PURE__ */ c.jsx("h2", { className: "m-0 text-base font-bold uppercase leading-none tracking-wide text-embed-foreground-primary", children: "Otázky, které navazují na náš rozhovor" }),
     /* @__PURE__ */ c.jsx("p", { className: "mt-1.5 text-[13px] leading-relaxed text-embed-foreground-primary/60", children: "Vycházejí z vašich priorit a připravují vás na další společný krok." })
   ] });
 }
-function bT({ item: t, onQuestionSelect: n, onQuestionOpened: i }) {
+function fT({ item: t, onQuestionSelect: n, onQuestionOpened: i }) {
   const [s, l] = j.useState(!1), p = () => {
     l((m) => {
       const v = !m;
@@ -23713,7 +23713,7 @@ function bT({ item: t, onQuestionSelect: n, onQuestionOpened: i }) {
           children: [
             /* @__PURE__ */ c.jsxs("div", { className: "flex min-h-faq-row items-center gap-3 px-section py-3", children: [
               /* @__PURE__ */ c.jsx("span", { className: "min-w-0 flex-1 text-[16px] font-semibold leading-snug text-embed-foreground-primary", children: t.question }),
-              /* @__PURE__ */ c.jsx("span", { className: "flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px]", children: /* @__PURE__ */ c.jsx(hT, { expanded: s }) })
+              /* @__PURE__ */ c.jsx("span", { className: "flex h-8 w-8 shrink-0 items-center justify-center rounded-[6px]", children: /* @__PURE__ */ c.jsx(yT, { expanded: s }) })
             ] }),
             /* @__PURE__ */ c.jsx(
               "div",
@@ -23724,7 +23724,7 @@ function bT({ item: t, onQuestionSelect: n, onQuestionOpened: i }) {
                   "p",
                   {
                     className: "border-t border-embed-border-default px-section py-3.5 leading-relaxed text-embed-foreground-primary/80",
-                    style: { fontSize: vT },
+                    style: { fontSize: kT },
                     children: t.answer
                   }
                 ) })
@@ -23736,25 +23736,25 @@ function bT({ item: t, onQuestionSelect: n, onQuestionOpened: i }) {
     }
   );
 }
-function fT({
+function jT({
   items: t,
   onQuestionSelect: n,
   onQuestionOpened: i
 }) {
   const [s, l] = j.useState(
     () => Xy(t.length)
-  ), p = pT(t);
+  ), p = mT(t);
   j.useEffect(() => {
     l(Xy(t.length));
   }, [p, t.length]);
-  const m = t.slice(0, s), v = cT(s, t.length), y = t.length > Tp;
+  const m = t.slice(0, s), v = pT(s, t.length), y = t.length > Tp;
   return /* @__PURE__ */ c.jsxs(
     "div",
     {
-      className: `${fj} flex shrink-0 flex-col items-center gap-[14px]`,
+      className: `${jj} flex shrink-0 flex-col items-center gap-[14px]`,
       children: [
         /* @__PURE__ */ c.jsx("ul", { className: "m-0 flex w-full list-none flex-col gap-[14px] p-0", children: m.map((h) => /* @__PURE__ */ c.jsx(
-          bT,
+          fT,
           {
             item: h,
             onQuestionSelect: n,
@@ -23769,10 +23769,10 @@ function fT({
             disabled: !v,
             onClick: () => {
               v && l(
-                (h) => uT(h, t.length)
+                (h) => cT(h, t.length)
               );
             },
-            className: kT,
+            className: hT,
             style: {
               backgroundColor: me.navy,
               color: me.pureWhite,
@@ -23782,14 +23782,14 @@ function fT({
               fontSize: 13,
               fontWeight: 500
             },
-            children: mT
+            children: vT
           }
         ) : null
       ]
     }
   );
 }
-const jT = "Přemýšlím…";
+const gT = "Přemýšlím…";
 function sl(t) {
   const n = t.getHours().toString().padStart(2, "0"), i = t.getMinutes().toString().padStart(2, "0");
   return `${n}:${i}`;
@@ -23805,12 +23805,12 @@ function Qy(t) {
     time: sl(/* @__PURE__ */ new Date())
   };
 }
-function gT() {
+function zT() {
   const { experience: t, houseKnowledge: n, dispatch: i } = Ze(), s = Ap(), l = Xn(), p = t.context.decision.ai, m = t.context.decision.priorityIds, v = j.useMemo(
-    () => n !== null && n.priorityFaq.length > 0 ? nT(n) : aT({ priorityIds: m }),
+    () => n !== null && n.priorityFaq.length > 0 ? aT(n) : iT({ priorityIds: m }),
     [p, n, m]
   ), y = j.useMemo(
-    () => rT(),
+    () => sT(),
     [p, m]
   ), [h, f] = j.useState(""), [z, E] = j.useState(() => [
     Qy(y)
@@ -23845,18 +23845,18 @@ function gT() {
       {
         id: G,
         role: "assistant",
-        text: jT,
+        text: gT,
         time: U
       }
     ]), (async () => {
       try {
-        const $ = await mN().sendMessage({
+        const $ = await vN().sendMessage({
           message: L,
           decision: s,
           object: n === null ? void 0 : {
             objectId: n.canonicalHouseId,
             knowledge: {
-              entries: WI(n)
+              entries: eE(n)
             }
           }
         });
@@ -23903,11 +23903,11 @@ function gT() {
       "aria-label": "AI Advisor",
       className: `scroll-mt-header ${br}`,
       "data-ai-context-id": p.id,
-      children: /* @__PURE__ */ c.jsxs("div", { className: RC, children: [
-        /* @__PURE__ */ c.jsxs("div", { className: MC, children: [
-          /* @__PURE__ */ c.jsx(yT, {}),
+      children: /* @__PURE__ */ c.jsxs("div", { className: MC, children: [
+        /* @__PURE__ */ c.jsxs("div", { className: PC, children: [
+          /* @__PURE__ */ c.jsx(bT, {}),
           /* @__PURE__ */ c.jsx(
-            fT,
+            jT,
             {
               items: v,
               onQuestionSelect: V,
@@ -23915,10 +23915,10 @@ function gT() {
             }
           )
         ] }),
-        /* @__PURE__ */ c.jsx("div", { className: PC, children: /* @__PURE__ */ c.jsx(dT, {}) }),
-        /* @__PURE__ */ c.jsx("div", { className: LC, children: /* @__PURE__ */ c.jsx("div", { className: KC, children: /* @__PURE__ */ c.jsx(uN, { messages: z }) }) }),
-        /* @__PURE__ */ c.jsx("div", { className: BC, children: /* @__PURE__ */ c.jsx(
-          lT,
+        /* @__PURE__ */ c.jsx("div", { className: LC, children: /* @__PURE__ */ c.jsx(uT, {}) }),
+        /* @__PURE__ */ c.jsx("div", { className: BC, children: /* @__PURE__ */ c.jsx("div", { className: UC, children: /* @__PURE__ */ c.jsx(cN, { messages: z }) }) }),
+        /* @__PURE__ */ c.jsx("div", { className: HC, children: /* @__PURE__ */ c.jsx(
+          dT,
           {
             value: h,
             onChange: f,
@@ -23926,12 +23926,12 @@ function gT() {
             disabled: A
           }
         ) }),
-        /* @__PURE__ */ c.jsx("div", { className: HC, children: /* @__PURE__ */ c.jsx(cN, {}) })
+        /* @__PURE__ */ c.jsx("div", { className: KC, children: /* @__PURE__ */ c.jsx(pN, {}) })
       ] })
     }
   );
 }
-class zT {
+class xT {
   constructor() {
     ae(this, "handlers", /* @__PURE__ */ new Map());
   }
@@ -23942,22 +23942,22 @@ class zT {
     return this.handlers.get(n.type);
   }
 }
-class xT extends Error {
+class IT extends Error {
   constructor(n) {
     super(`No handler registered for command "${n}"`), this.name = "UnknownCommandError";
   }
 }
-class IT extends Error {
+class ET extends Error {
   constructor(n) {
     super(n), this.name = "InvalidCommandError";
   }
 }
-function ET(t) {
+function wT(t) {
   if (typeof (t == null ? void 0 : t.type) != "string" || t.type.length === 0)
-    throw new IT("Command.type is required");
+    throw new ET("Command.type is required");
   return t;
 }
-class wT {
+class ST {
   constructor(n, i) {
     ae(this, "executionContext");
     ae(this, "interpreter");
@@ -23965,19 +23965,19 @@ class wT {
     this.executionContext = n, this.interpreter = i.interpreter, this.resolver = i.resolver;
   }
   run(n) {
-    ET(n);
+    wT(n);
     const i = this.resolver.resolve(n);
     if (!i)
-      throw new xT(n.type);
+      throw new IT(n.type);
     return i.execute(n, this.executionContext), this.interpreter.interpret(this.executionContext);
   }
 }
-class ST {
+class AT {
   constructor(n, i) {
     ae(this, "sceneGraph");
     ae(this, "executionContext");
     ae(this, "workflow");
-    this.sceneGraph = n, this.executionContext = i.executionContext, this.workflow = new wT(this.executionContext, {
+    this.sceneGraph = n, this.executionContext = i.executionContext, this.workflow = new ST(this.executionContext, {
       resolver: i.resolver,
       interpreter: i.interpreter
     });
@@ -24004,18 +24004,18 @@ class ST {
   answer(n, i) {
   }
 }
-const AT = Object.freeze({
+const OT = Object.freeze({
   ONE: Object.freeze({ noun: "člověk", agreement: "SINGULAR" }),
   FEW: Object.freeze({ noun: "lidé", agreement: "PLURAL" }),
   MANY: Object.freeze({ noun: "lidí", agreement: "NUMERIC_PLURAL" })
 });
-function OT(t) {
+function CT(t) {
   return Number.isSafeInteger(t) && t > 0;
 }
 function Dp(t) {
-  if (!OT(t))
+  if (!CT(t))
     return null;
-  const n = t === 1 ? "ONE" : t >= 2 && t <= 4 ? "FEW" : "MANY", i = AT[n];
+  const n = t === 1 ? "ONE" : t >= 2 && t <= 4 ? "FEW" : "MANY", i = OT[n];
   return Object.freeze({
     value: t,
     countClass: n,
@@ -24033,7 +24033,7 @@ function _p(t, n) {
       return n.numericPlural;
   }
 }
-function CT(t) {
+function NT(t) {
   return !Number.isSafeInteger(t) || t < 0 ? null : Object.freeze({
     value: t,
     text: `${t} %`,
@@ -24041,7 +24041,7 @@ function CT(t) {
     agreement: "NUMERIC_PLURAL"
   });
 }
-const NT = Object.freeze({
+const TT = Object.freeze({
   plot: Object.freeze({
     id: "plot",
     display: "Pozemek",
@@ -24083,20 +24083,20 @@ const NT = Object.freeze({
     accusative: "údržbu"
   })
 });
-function Cj(t) {
-  return NT[t] ?? null;
+function Nj(t) {
+  return TT[t] ?? null;
 }
-const TT = "CURRENT_HOUSE", Nj = "EXPLICIT_PRODUCT", Tj = "Bungalov 4KK", DT = Object.freeze({
+const DT = "CURRENT_HOUSE", Tj = "EXPLICIT_PRODUCT", Dj = "Bungalov 4KK", _T = Object.freeze({
   ACCUSATIVE: "tento dům",
   DATIVE: "tomuto domu"
 });
-function Dj(t, n) {
-  return t === Nj ? n === "DISPLAY" ? Tj : null : t !== TT ? null : DT[n] ?? null;
+function _j(t, n) {
+  return t === Tj ? n === "DISPLAY" ? Dj : null : t !== DT ? null : _T[n] ?? null;
 }
 function sc(t, n) {
-  return Dj(t, n);
+  return _j(t, n);
 }
-const _T = Object.freeze({
+const RT = Object.freeze({
   LIVE: "právě",
   ROLLING_7_DAYS: "za posledních 7 dní",
   ROLLING_WEEK: "za poslední týden",
@@ -24104,29 +24104,29 @@ const _T = Object.freeze({
   NO_EXPLICIT_WINDOW: null
 });
 function Yc(t) {
-  return _T[t] ?? null;
+  return RT[t] ?? null;
 }
-const RT = Object.freeze([
+const MT = Object.freeze([
   "MODERN A01 – 4+kk",
   "MODERN A01",
   "MODERN 4KK",
   "MODERN"
 ]);
-function MT() {
-  const t = Dj(Nj, "DISPLAY");
+function PT() {
+  const t = _j(Tj, "DISPLAY");
   if (t === null)
     throw new Error("Missing controlled explicit product display form.");
   return t;
 }
-function PT(t) {
+function LT(t) {
   let n = t;
-  for (const i of RT) {
+  for (const i of MT) {
     const s = n.split(i);
-    s.length > 1 && (n = s.join(MT()));
+    s.length > 1 && (n = s.join(PT()));
   }
   return n;
 }
-const LT = Object.freeze(
+const BT = Object.freeze(
   [
     {
       dmpId: "01",
@@ -27283,21 +27283,21 @@ const LT = Object.freeze(
   Kvalita: "quality",
   Údržba: "maintenance"
 });
-function BT(t) {
+function HT(t) {
   return wl.includes(
     t
   );
 }
-function HT(t, n, i) {
+function KT(t, n, i) {
   return `${t}|${n}|${i}`;
 }
-function _j(t) {
+function Rj(t) {
   return `${t.dmpId}|${t.sliderState}`;
 }
 const ll = Object.freeze(
-  LT.map((t) => {
+  BT.map((t) => {
     const n = lc[t.priorityA], i = lc[t.priorityB], s = lc[t.priorityC];
-    if (n === void 0 || i === void 0 || s === void 0 || !BT(t.sliderState) || t.text.trim().length === 0)
+    if (n === void 0 || i === void 0 || s === void 0 || !HT(t.sliderState) || t.text.trim().length === 0)
       throw new Error("Invalid frozen Priority Corpus v1 entry.");
     return Object.freeze({
       dmpId: t.dmpId,
@@ -27311,33 +27311,33 @@ const ll = Object.freeze(
 ), qc = /* @__PURE__ */ new Map(), pr = /* @__PURE__ */ new Map();
 let $c = 0;
 for (const t of ll) {
-  const n = _j(t);
+  const n = Rj(t);
   if (qc.has(n)) {
     $c += 1;
     continue;
   }
   qc.set(n, t);
-  const i = HT(
+  const i = KT(
     t.priorityA,
     t.priorityB,
     t.priorityC
   ), s = pr.get(i);
   s === void 0 ? pr.set(i, t) : s.dmpId !== t.dmpId && ($c += 1);
 }
-const KT = pr.size * wl.length;
-let Rj = 0;
+const UT = pr.size * wl.length;
+let Mj = 0;
 for (const t of pr.values())
   for (const n of wl)
-    qc.has(_j({ dmpId: t.dmpId, sliderState: n })) || (Rj += 1);
+    qc.has(Rj({ dmpId: t.dmpId, sliderState: n })) || (Mj += 1);
 Object.freeze({
   dmpCount: new Set(ll.map((t) => t.dmpId)).size,
   combinationCount: pr.size,
   sliderStateCount: wl.length,
   realizationCount: ll.length,
   duplicateKeys: $c,
-  missingKeys: Rj + Math.max(0, KT - ll.length)
+  missingKeys: Mj + Math.max(0, UT - ll.length)
 });
-const tr = 108, UT = Object.freeze([
+const tr = 108, VT = Object.freeze([
   { topic: "LAND_VALIDATION", group: "COUNT", numerator: 14 },
   { topic: "LAND_SEARCH", group: "COUNT", numerator: 9 },
   { topic: "PDF", group: "COUNT", numerator: 37 },
@@ -27352,10 +27352,10 @@ const tr = 108, UT = Object.freeze([
 function or(t) {
   return { topic: t, group: "COUNT", numerator: 1 };
 }
-function VT(t) {
+function FT(t) {
   return t.houseId.trim().length === 0 ? null : t.isReferenceHouse ? Object.freeze({
     mode: "REFERENCE",
-    historical: UT,
+    historical: VT,
     // LIVE is always external truthful evidence; reference data never simulates it.
     live: Object.freeze([])
   }) : Object.freeze({
@@ -27370,7 +27370,7 @@ function VT(t) {
     live: Object.freeze([])
   });
 }
-function FT(t) {
+function YT(t) {
   return t.group !== "SHARE" || t.denominator === void 0 || t.denominator < 1 ? null : Math.round(t.numerator / t.denominator * 100);
 }
 function qs(t, n) {
@@ -27380,7 +27380,7 @@ function qs(t, n) {
     text: `${i.noun} ${_p(i, n)} ${s}.`
   });
 }
-function YT(t) {
+function qT(t) {
   switch (t.kind) {
     case "LIVE": {
       const n = Dp(t.count), i = Yc(t.window), s = sc("CURRENT_HOUSE", "ACCUSATIVE");
@@ -27440,7 +27440,7 @@ function YT(t) {
       });
     }
     case "PRIORITY_PREFERENCE": {
-      const n = CT(t.percentage), i = Cj(t.priorityId), s = Yc(t.window);
+      const n = NT(t.percentage), i = Nj(t.priorityId), s = Yc(t.window);
       return n === null || i === null || s === null ? null : Object.freeze({
         id: `priority-preference:${t.priorityId}`,
         icon: "inquiry",
@@ -27450,8 +27450,8 @@ function YT(t) {
     }
   }
 }
-function qT(t) {
-  const n = Dp(t.numerator), i = FT(t), s = t.priorityId === void 0 ? null : Cj(t.priorityId), l = {
+function $T(t) {
+  const n = Dp(t.numerator), i = YT(t), s = t.priorityId === void 0 ? null : Nj(t.priorityId), l = {
     LAND_VALIDATION: { singular: "požádal o ověření domu na svém pozemku", plural: "požádali o ověření domu na svém pozemku", numericPlural: "požádalo o ověření domu na svém pozemku" },
     LAND_SEARCH: { singular: "požádal o pomoc s hledáním vhodného pozemku", plural: "požádali o pomoc s hledáním vhodného pozemku", numericPlural: "požádalo o pomoc s hledáním vhodného pozemku" },
     PDF: { singular: "si nechal poslat informace o tomto domu v PDF", plural: "si nechali poslat informace o tomto domu v PDF", numericPlural: "si nechalo poslat informace o tomto domu v PDF" },
@@ -27473,7 +27473,7 @@ function qT(t) {
   }
   return null;
 }
-const $T = {
+const GT = {
   LAND_VALIDATION: "land_validation",
   LAND_SEARCH: "land_search",
   PDF: "pdf",
@@ -27494,25 +27494,25 @@ function Wy(t, n, i) {
   return Object.freeze({
     group: t,
     topic: n,
-    topicFamily: $T[n],
+    topicFamily: GT[n],
     ...i
   });
 }
-function Mj(t) {
-  const n = VT(t);
+function Pj(t) {
+  const n = FT(t);
   if (n === null) return Object.freeze([]);
   const i = n.historical.flatMap((l) => {
-    const p = qT(l);
+    const p = $T(l);
     return p === null ? [] : [Wy(l.group, l.topic, p)];
   }), s = (t.live ?? []).flatMap((l) => {
     if (l.houseId !== t.houseId) return [];
-    const p = YT(l);
+    const p = qT(l);
     return p === null ? [] : [Wy("LIVE", "LIVE_HOUSE_VIEWERS", p)];
   });
   return Object.freeze([...i, ...s]);
 }
-const Pj = 18e3, Lj = 5;
-function Bj(t) {
+const Lj = 18e3, Bj = 5;
+function Hj(t) {
   const n = /* @__PURE__ */ new Set(), i = t.filter((p) => n.has(p.id) ? !1 : (n.add(p.id), !0)), s = [], l = [...i];
   for (; l.length > 0; ) {
     const p = new Set(
@@ -27524,15 +27524,15 @@ function Bj(t) {
   }
   return Object.freeze(s);
 }
-function Hj(t, n, i = []) {
-  return n.length === 0 ? 0 : n.length <= Lj ? t % n.length : (t + 1) % n.length;
+function Kj(t, n, i = []) {
+  return n.length === 0 ? 0 : n.length <= Bj ? t % n.length : (t + 1) % n.length;
 }
-function GT() {
+function ZT() {
   return Object.freeze({
     selected: Object.freeze([])
   });
 }
-function ZT(t) {
+function JT(t) {
   return Object.freeze({
     id: t.id,
     version: t.version,
@@ -27541,9 +27541,9 @@ function ZT(t) {
   });
 }
 function be(t, n, i, s = 1) {
-  return ZT({ id: t, version: s, meaning: n, domain: i });
+  return JT({ id: t, version: s, meaning: n, domain: i });
 }
-const Kj = Object.freeze([
+const Uj = Object.freeze([
   // Lens selection
   be("LENS_001", "lens.layout", "lens"),
   be("LENS_002", "lens.investment", "lens"),
@@ -27599,13 +27599,13 @@ const Kj = Object.freeze([
   be("INTENT_005", "intent.select-priority", "intent")
 ]);
 new Map(
-  Kj.map((t) => [t.id, t])
+  Uj.map((t) => [t.id, t])
 );
 new Map(
-  Kj.map((t) => [t.meaning, t])
+  Uj.map((t) => [t.meaning, t])
 );
-const JT = 520;
-function XT() {
+const XT = 520;
+function QT() {
   const t = Xn(), n = (i) => {
     i.preventDefault();
     const s = document.getElementById(le.socialProof);
@@ -27648,7 +27648,7 @@ function XT() {
     ), N = E.map((L) => L.style.scrollBehavior);
     for (const L of E)
       L.dataset.guidedJourneySnap = "off", L.style.scrollPaddingTop = "0px", L.style.scrollBehavior = "auto";
-    const g = h(), H = z(), V = l ? 0 : JT, q = () => {
+    const g = h(), H = z(), V = l ? 0 : XT, q = () => {
       A.forEach((L, B) => {
         const U = E[B];
         U && (L === void 0 ? delete U.dataset.guidedJourneySnap : U.dataset.guidedJourneySnap = L, U.style.scrollPaddingTop = w[B] ?? "", U.style.scrollBehavior = N[B] ?? "");
@@ -27677,7 +27677,7 @@ function XT() {
     }), s.focus({ preventScroll: !0 }), window.history.pushState(null, "", `#${le.socialProof}`);
   };
   return /* @__PURE__ */ c.jsx(
-    gj,
+    zj,
     {
       href: `#${le.socialProof}`,
       "data-embed-hero-cta": "",
@@ -27686,23 +27686,23 @@ function XT() {
     }
   );
 }
-const QT = {
-  eyebrow: Tj,
+const WT = {
+  eyebrow: Dj,
   headline: "Rodinný dům, kde to dýchá štěstím",
   metrics: [
     { value: "124 m2", label: "Užitná plocha" },
     { value: "A ++", label: "Energetická třída" },
     { value: "Dřevostavba", label: "Difuzně otevřená" }
   ]
-}, WT = {
+}, eD = {
   backgroundImage: `linear-gradient(to top, color-mix(in srgb, ${Ge.border.default} 30%, #FFFFFF), #FFFFFF)`
 };
-function eD() {
-  const [t, n] = j.useState(null), { experience: i } = Ze(), s = i.context.hero.copy ?? QT, l = PT(
+function tD() {
+  const [t, n] = j.useState(null), { experience: i } = Ze(), s = i.context.hero.copy ?? WT, l = LT(
     s.eyebrow
   );
   return j.useEffect(() => {
-    const p = Lo(), m = sS({
+    const p = Bo(), m = lS({
       companyId: (p == null ? void 0 : p.companyId) ?? null
     });
     n(m.personalized ? m : null);
@@ -27740,21 +27740,21 @@ function eD() {
             },
             `${p.label}-${m}`
           )) }),
-          /* @__PURE__ */ c.jsx("div", { className: "mt-10 flex -translate-x-[10px] translate-y-[50px] justify-center mobile:translate-x-0 mobile:translate-y-0 mobile:justify-center", children: /* @__PURE__ */ c.jsx(XT, {}) })
+          /* @__PURE__ */ c.jsx("div", { className: "mt-10 flex -translate-x-[10px] translate-y-[50px] justify-center mobile:translate-x-0 mobile:translate-y-0 mobile:justify-center", children: /* @__PURE__ */ c.jsx(QT, {}) })
         ] }),
         /* @__PURE__ */ c.jsx(
           "div",
           {
             "aria-hidden": "true",
             className: "pointer-events-none absolute inset-x-0 bottom-0 z-10 h-[33px] mobile:hidden",
-            style: WT
+            style: eD
           }
         )
       ]
     }
   );
 }
-function tD() {
+function oD() {
   var i;
   const { experience: t } = Ze(), n = Kt(
     t.context.hero.primaryMediaUrl ?? ((i = t.context.hero.heroMedia) == null ? void 0 : i.url) ?? ""
@@ -27794,19 +27794,19 @@ function tD() {
     }
   );
 }
-function oD({ children: t }) {
+function nD({ children: t }) {
   return /* @__PURE__ */ c.jsx("div", { className: "relative h-hero-image w-full overflow-hidden mobile:h-auto mobile:min-h-0", children: t });
 }
-const nD = "#D4AF37", aD = "h-8 w-8";
-function Uj({ name: t }) {
+const aD = "#D4AF37", iD = "h-8 w-8";
+function Vj({ name: t }) {
   const n = {
     viewBox: "0 0 24 24",
     fill: "none",
-    stroke: nD,
+    stroke: aD,
     strokeWidth: 1.5,
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    className: aD,
+    className: iD,
     "aria-hidden": !0
   };
   switch (t) {
@@ -27830,38 +27830,38 @@ function Uj({ name: t }) {
       return null;
   }
 }
-const Vj = j.createContext([]);
-function iD({ children: t }) {
-  const { analyticsScope: n } = Ze(), i = n === null ? [] : Bj(Mj({
+const Fj = j.createContext([]);
+function rD({ children: t }) {
+  const { analyticsScope: n } = Ze(), i = n === null ? [] : Hj(Pj({
     houseId: n.houseId,
     isReferenceHouse: n.houseId.includes("bungalov-4kk")
   }));
-  return /* @__PURE__ */ c.jsx(Vj.Provider, { value: i, children: t });
+  return /* @__PURE__ */ c.jsx(Fj.Provider, { value: i, children: t });
 }
-function Fj() {
-  return j.useContext(Vj);
+function Yj() {
+  return j.useContext(Fj);
 }
-function Yj(t, n, i) {
-  return Hj(
+function qj(t, n, i) {
+  return Kj(
     t,
     n,
     i
   );
 }
-const eb = Lj, rD = 8e3, sD = Pj, lD = 400, dl = 3, dD = dl + 1;
+const eb = Bj, sD = 8e3, lD = Lj, dD = 400, dl = 3, uD = dl + 1;
 function tb({ icon: t, value: n, text: i }) {
   return /* @__PURE__ */ c.jsxs("div", { className: "flex min-w-0 items-center gap-3 mobile:gap-1", children: [
-    /* @__PURE__ */ c.jsx("span", { className: "shrink-0 mobile:[&>*]:!h-7 mobile:[&>*]:!w-7", children: /* @__PURE__ */ c.jsx(Uj, { name: t }) }),
+    /* @__PURE__ */ c.jsx("span", { className: "shrink-0 mobile:[&>*]:!h-7 mobile:[&>*]:!w-7", children: /* @__PURE__ */ c.jsx(Vj, { name: t }) }),
     /* @__PURE__ */ c.jsx("div", { className: "min-w-0", children: /* @__PURE__ */ c.jsxs("p", { className: "text-sm leading-snug text-[#001930]", children: [
       /* @__PURE__ */ c.jsx("span", { className: "mr-1 text-2xl font-bold tracking-tight mobile:text-[17px]", children: n }),
       i
     ] }) })
   ] });
 }
-function uD() {
-  const [t, n] = j.useState(0), [i, s] = j.useState(!1), l = j.useRef([]), p = Fj(), m = j.useMemo(
+function cD() {
+  const [t, n] = j.useState(0), [i, s] = j.useState(!1), l = j.useRef([]), p = Yj(), m = j.useMemo(
     () => Array.from(
-      { length: Math.min(dD, p.length) },
+      { length: Math.min(uD, p.length) },
       (E, A) => p[(t + A) % p.length]
     ),
     [p, t]
@@ -27882,7 +27882,7 @@ function uD() {
       f(
         (A) => (A + 1) % m.length
       );
-    }, rD);
+    }, sD);
     return () => {
       window.clearInterval(E);
     };
@@ -27901,11 +27901,11 @@ function uD() {
       return;
     const E = window.setTimeout(
       () => s(!0),
-      sD
+      lD
     );
     return () => window.clearTimeout(E);
   }, [p.length, i, t]), /* @__PURE__ */ c.jsxs(
-    eN,
+    tN,
     {
       as: "section",
       id: "social-proof",
@@ -27928,7 +27928,7 @@ function uD() {
             className: "m-0 flex w-[calc(400%/3+1px)] shrink-0 list-none p-0",
             onTransitionEnd: () => {
               !i || p.length <= dl || (n((E) => {
-                const A = Yj(
+                const A = qj(
                   E,
                   p,
                   l.current
@@ -27941,7 +27941,7 @@ function uD() {
             },
             style: {
               transform: i ? "translateX(-25%)" : "translateX(0)",
-              transition: i ? `transform ${lD}ms linear` : "none"
+              transition: i ? `transform ${dD}ms linear` : "none"
             },
             children: z.map((E, A) => /* @__PURE__ */ c.jsx(
               "li",
@@ -27962,7 +27962,7 @@ function uD() {
     }
   );
 }
-function cD() {
+function pD() {
   return /* @__PURE__ */ c.jsxs(
     "section",
     {
@@ -27971,17 +27971,17 @@ function cD() {
       "aria-label": "Object Discovery",
       className: `scroll-mt-header ${br}`,
       children: [
-        /* @__PURE__ */ c.jsx(oD, { children: /* @__PURE__ */ c.jsxs("div", { className: "grid h-full min-h-0 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] tabletMin:grid-cols-[minmax(0,1fr)_minmax(0,1.55fr)] tabletMax:grid-cols-[minmax(0,1fr)_minmax(0,1.85fr)] mobile:grid-cols-1 mobile:grid-rows-[auto_minmax(16rem,1fr)]", children: [
-          /* @__PURE__ */ c.jsx(eD, {}),
-          /* @__PURE__ */ c.jsx(tD, {})
+        /* @__PURE__ */ c.jsx(nD, { children: /* @__PURE__ */ c.jsxs("div", { className: "grid h-full min-h-0 grid-cols-[minmax(0,1fr)_minmax(0,2fr)] tabletMin:grid-cols-[minmax(0,1fr)_minmax(0,1.55fr)] tabletMax:grid-cols-[minmax(0,1fr)_minmax(0,1.85fr)] mobile:grid-cols-1 mobile:grid-rows-[auto_minmax(16rem,1fr)]", children: [
+          /* @__PURE__ */ c.jsx(tD, {}),
+          /* @__PURE__ */ c.jsx(oD, {})
         ] }) }),
-        /* @__PURE__ */ c.jsx(uD, {})
+        /* @__PURE__ */ c.jsx(cD, {})
       ]
     }
   );
 }
-const pD = 1e4, mD = 6e3, vD = 12e3;
-function kD() {
+const mD = 1e4, vD = 6e3, kD = 12e3;
+function hD() {
   const t = document.activeElement, n = document.querySelector(
     '[data-testid="priority-conversation"]'
   ), i = n == null ? void 0 : n.getBoundingClientRect(), s = i != null && i.bottom > 0 && i.top < window.innerHeight;
@@ -27989,25 +27989,25 @@ function kD() {
     '[role="dialog"][aria-modal="true"]:not([data-embed-overlay])'
   ) !== null || s || t instanceof HTMLInputElement || t instanceof HTMLTextAreaElement || t instanceof HTMLSelectElement || (t == null ? void 0 : t.getAttribute("contenteditable")) === "true";
 }
-function hD({
+function yD({
   enabled: t,
   journeyHasLeftMain: n
 }) {
-  const i = Fj(), [s, l] = j.useState(!1), [p, m] = j.useState(0), [v, y] = j.useState(!1), [h, f] = j.useState(0), z = j.useRef([]);
+  const i = Yj(), [s, l] = j.useState(!1), [p, m] = j.useState(0), [v, y] = j.useState(!1), [h, f] = j.useState(0), z = j.useRef([]);
   if (j.useEffect(() => {
     if (!t || !n || i.length === 0 || v && i.length <= eb) {
       l(!1);
       return;
     }
-    const A = v ? vD : pD, w = window.setTimeout(() => {
-      kD() ? f((N) => N + 1) : (l(!0), y(!0));
+    const A = v ? kD : mD, w = window.setTimeout(() => {
+      hD() ? f((N) => N + 1) : (l(!0), y(!0));
     }, A);
     return () => window.clearTimeout(w);
   }, [t, i.length, v, p, n, h]), j.useEffect(() => {
     if (!s) return;
     const A = window.setTimeout(() => {
       l(!1), i.length > eb && m((w) => {
-        const N = Yj(
+        const N = qj(
           w,
           i,
           z.current
@@ -28017,7 +28017,7 @@ function hD({
           i[N].id
         ].slice(-12), N;
       });
-    }, mD);
+    }, vD);
     return () => window.clearTimeout(A);
   }, [i, s]), !s || !t || !n || i.length === 0)
     return null;
@@ -28029,7 +28029,7 @@ function hD({
       "aria-label": "Signál důvěry",
       className: "pointer-events-none fixed inset-x-0 bottom-[calc(20px+var(--guided-journey-bottom-nav-offset,0px))] z-40 desktop:left-sidebar",
       children: /* @__PURE__ */ c.jsx("div", { className: "mx-auto box-border w-full px-section desktop:w-canvas desktop:min-w-canvas desktop:max-w-canvas", children: /* @__PURE__ */ c.jsxs("div", { className: "flex max-w-[32rem] items-center gap-3 rounded-xl border border-[#D4AF37]/40 bg-white/95 px-4 py-3 shadow-lg backdrop-blur-sm", children: [
-        /* @__PURE__ */ c.jsx(Uj, { name: E.icon }),
+        /* @__PURE__ */ c.jsx(Vj, { name: E.icon }),
         /* @__PURE__ */ c.jsxs("p", { className: "text-sm leading-snug text-[#001930]", children: [
           /* @__PURE__ */ c.jsx("span", { className: "mr-2 text-xl font-bold tracking-tight", children: E.value }),
           E.text
@@ -28038,12 +28038,12 @@ function hD({
     }
   );
 }
-const Rp = "mx-auto w-full max-w-5xl", yD = "mx-auto w-full max-w-2xl", bD = {
+const Rp = "mx-auto w-full max-w-5xl", bD = "mx-auto w-full max-w-2xl", fD = {
   backgroundColor: Ge.brand.navy
-}, $e = Ge.brand.gold, mr = Ge.brand.navy, Po = Ge.action.onPrimary, fn = Ge.border.default, fD = [
+}, Fe = Ge.brand.gold, mr = Ge.brand.navy, yo = Ge.action.onPrimary, Po = Ge.border.default, jD = [
   { value: "owned", label: "MÁM POZEMEK", description: "Chci ověřit konkrétní pozemek." },
   { value: "seeking", label: "HLEDÁM POZEMEK", description: "Ještě hledám vhodnou lokalitu." }
-], jD = {
+], gD = {
   owned: [
     {
       motif: "house",
@@ -28088,14 +28088,14 @@ const Rp = "mx-auto w-full max-w-5xl", yD = "mx-auto w-full max-w-2xl", bD = {
       lines: ["Navrhneme vhodnější dům", "nebo doporučíme", "další postup."]
     }
   ]
-}, $s = 54, Mp = 10, gD = `0 0 20px ${Ge.action.accent}99`, dc = "h-[54px] border", uc = {
+}, $s = 54, Mp = 10, zD = `0 0 20px ${Ge.action.accent}99`, dc = "h-[54px] border", uc = {
   backgroundColor: Ge.surface.interactive,
   borderColor: Ge.action.accent,
   color: Ge.action.onSecondary,
   borderRadius: Mp
 };
-function zD(t) {
-  return t === "onAccent" ? mr : $e;
+function xD(t) {
+  return t === "onAccent" ? mr : Fe;
 }
 function Za({
   tone: t = "gold",
@@ -28107,7 +28107,7 @@ function Za({
     {
       viewBox: "0 0 24 24",
       fill: "none",
-      stroke: zD(t),
+      stroke: xD(t),
       strokeWidth: 1.6,
       strokeLinecap: "round",
       strokeLinejoin: "round",
@@ -28120,37 +28120,37 @@ function Za({
 function Pp({ tone: t, className: n }) {
   return /* @__PURE__ */ c.jsx(Za, { tone: t, className: n, children: /* @__PURE__ */ c.jsx("path", { d: "M3.5 10.5 12 3.5l8.5 7V20.5H14v-6h-4v6H3.5z" }) });
 }
-function xD({ tone: t, className: n }) {
+function ID({ tone: t, className: n }) {
   return /* @__PURE__ */ c.jsxs(Za, { tone: t, className: n, children: [
     /* @__PURE__ */ c.jsx("path", { d: "M12 21s6.5-5.4 6.5-11.2A6.5 6.5 0 0 0 5.5 9.8C5.5 15.6 12 21 12 21z" }),
     /* @__PURE__ */ c.jsx("circle", { cx: "12", cy: "9.8", r: "2.3" })
   ] });
 }
-function ID({ tone: t, className: n }) {
+function ED({ tone: t, className: n }) {
   return /* @__PURE__ */ c.jsxs(Za, { tone: t, className: n, children: [
     /* @__PURE__ */ c.jsx("path", { d: "M7 3.5h7.5L19 8v12.5H7z" }),
     /* @__PURE__ */ c.jsx("path", { d: "M14.5 3.5V8H19M9.5 12h5M9.5 15.5h5M9.5 19h3.5" })
   ] });
 }
-function ED({ tone: t, className: n }) {
+function wD({ tone: t, className: n }) {
   return /* @__PURE__ */ c.jsxs(Za, { tone: t, className: n, children: [
     /* @__PURE__ */ c.jsx("circle", { cx: "12", cy: "12", r: "8.5" }),
     /* @__PURE__ */ c.jsx("path", { d: "M8 12.2 10.8 15 16 9.5" })
   ] });
 }
-function qj({ tone: t, className: n }) {
+function $j({ tone: t, className: n }) {
   return /* @__PURE__ */ c.jsxs(Za, { tone: t, className: n, children: [
     /* @__PURE__ */ c.jsx("circle", { cx: "11", cy: "11", r: "6.5" }),
     /* @__PURE__ */ c.jsx("path", { d: "M16 16l4.2 4.2" })
   ] });
 }
-function wD({ tone: t, className: n }) {
+function SD({ tone: t, className: n }) {
   return /* @__PURE__ */ c.jsxs(Za, { tone: t, className: n, children: [
     /* @__PURE__ */ c.jsx("circle", { cx: "12", cy: "8.5", r: "3.2" }),
     /* @__PURE__ */ c.jsx("path", { d: "M5.5 19.5c1.4-3.2 3.6-4.8 6.5-4.8s5.1 1.6 6.5 4.8" })
   ] });
 }
-function SD({
+function ob({
   motif: t,
   tone: n = "gold",
   className: i = "h-12 w-12"
@@ -28159,30 +28159,30 @@ function SD({
     case "house":
       return /* @__PURE__ */ c.jsx(Pp, { tone: n, className: i });
     case "pin":
-      return /* @__PURE__ */ c.jsx(xD, { tone: n, className: i });
-    case "document":
       return /* @__PURE__ */ c.jsx(ID, { tone: n, className: i });
-    case "check":
+    case "document":
       return /* @__PURE__ */ c.jsx(ED, { tone: n, className: i });
+    case "check":
+      return /* @__PURE__ */ c.jsx(wD, { tone: n, className: i });
     default:
       return null;
   }
 }
-const $j = "audit-assessment-workflow", AD = {
+const Gj = "audit-assessment-workflow", AD = {
   owned: { label: "MÁM POZEMEK", Icon: Pp },
-  seeking: { label: "HLEDÁM POZEMEK", Icon: qj }
+  seeking: { label: "HLEDÁM POZEMEK", Icon: $j }
 };
 function OD({ landOption: t }) {
-  const n = jD[t], i = AD[t], s = i.Icon;
+  const n = gD[t], i = AD[t], s = i.Icon;
   return /* @__PURE__ */ c.jsxs(
     "div",
     {
-      id: $j,
+      id: Gj,
       className: `${Rp} px-section`,
       children: [
         /* @__PURE__ */ c.jsxs("h2", { className: "text-center text-base font-semibold tracking-wide mobile:text-[0.8rem] mobile:leading-[1.15]", children: [
-          /* @__PURE__ */ c.jsx("span", { style: { color: $e }, children: "2. " }),
-          /* @__PURE__ */ c.jsx("span", { style: { color: Po }, children: "Jak probíhá posouzení" })
+          /* @__PURE__ */ c.jsx("span", { style: { color: Fe }, children: "2. " }),
+          /* @__PURE__ */ c.jsx("span", { style: { color: yo }, children: "Jak probíhá posouzení" })
         ] }),
         /* @__PURE__ */ c.jsx(
           "div",
@@ -28192,10 +28192,39 @@ function OD({ landOption: t }) {
             children: n.map((l, p) => /* @__PURE__ */ c.jsxs(
               "div",
               {
-                className: "col-span-2 grid grid-cols-[44px_minmax(0,1fr)] items-start",
+                className: "col-span-2 grid grid-cols-[44px_minmax(0,1fr)] items-start gap-x-3",
                 children: [
-                  /* @__PURE__ */ c.jsx("div", { className: "flex min-h-10 items-start justify-center", children: /* @__PURE__ */ c.jsx("span", { className: "flex h-10 w-10 items-center justify-center rounded-full border border-current text-sm font-semibold", children: p + 1 }) }),
-                  /* @__PURE__ */ c.jsx("div", { className: "min-w-0 text-left", children: /* @__PURE__ */ c.jsx("p", { className: "font-semibold", children: l.title }) })
+                  /* @__PURE__ */ c.jsx("div", { className: "flex min-h-10 items-start justify-center", children: /* @__PURE__ */ c.jsx(
+                    "div",
+                    {
+                      className: "flex h-10 w-10 items-center justify-center rounded-full border",
+                      style: { borderColor: Fe },
+                      children: /* @__PURE__ */ c.jsx(
+                        ob,
+                        {
+                          motif: l.motif,
+                          className: "h-6 w-6"
+                        }
+                      )
+                    }
+                  ) }),
+                  /* @__PURE__ */ c.jsxs("div", { className: "min-w-0 text-left", children: [
+                    /* @__PURE__ */ c.jsxs("p", { className: "text-sm font-semibold tracking-wide", children: [
+                      /* @__PURE__ */ c.jsxs("span", { style: { color: Fe }, children: [
+                        String(p + 1).padStart(2, "0"),
+                        " "
+                      ] }),
+                      /* @__PURE__ */ c.jsx("span", { style: { color: yo }, children: l.title })
+                    ] }),
+                    /* @__PURE__ */ c.jsx(
+                      "p",
+                      {
+                        className: "mt-1 text-[13px] leading-snug",
+                        style: { color: Po },
+                        children: l.lines.join(" ")
+                      }
+                    )
+                  ] })
                 ]
               },
               `mobile-${l.title}`
@@ -28214,7 +28243,7 @@ function OD({ landOption: t }) {
                 {
                   "aria-hidden": "true",
                   className: "pointer-events-none absolute left-[12.5%] right-[37.5%] top-[44px] h-px mobile:hidden",
-                  style: { backgroundColor: $e }
+                  style: { backgroundColor: Fe }
                 }
               ),
               /* @__PURE__ */ c.jsx(
@@ -28222,7 +28251,7 @@ function OD({ landOption: t }) {
                 {
                   "aria-hidden": "true",
                   className: "pointer-events-none absolute left-[62.5%] right-[12.5%] top-[44px] border-t border-dashed mobile:hidden",
-                  style: { borderColor: $e }
+                  style: { borderColor: Fe }
                 }
               ),
               /* @__PURE__ */ c.jsx("div", { className: "grid grid-cols-4 gap-4 mobile:hidden", children: n.map((l) => /* @__PURE__ */ c.jsx(
@@ -28234,8 +28263,8 @@ function OD({ landOption: t }) {
                     "div",
                     {
                       className: "flex h-[88px] w-[88px] items-center justify-center rounded-full border-2 bg-[#001930]",
-                      style: { borderColor: $e },
-                      children: /* @__PURE__ */ c.jsx(SD, { motif: l.motif, className: "h-12 w-12" })
+                      style: { borderColor: Fe },
+                      children: /* @__PURE__ */ c.jsx(ob, { motif: l.motif, className: "h-12 w-12" })
                     }
                   )
                 },
@@ -28255,7 +28284,7 @@ function OD({ landOption: t }) {
                   "p",
                   {
                     className: "whitespace-nowrap text-center text-xs font-bold tracking-[0.14em] mobile:text-left",
-                    style: { color: $e },
+                    style: { color: Fe },
                     children: i.label
                   }
                 )
@@ -28265,18 +28294,18 @@ function OD({ landOption: t }) {
                 {
                   "aria-hidden": "true",
                   className: "w-px self-stretch mobile:hidden",
-                  style: { backgroundColor: $e }
+                  style: { backgroundColor: Fe }
                 }
               ),
               /* @__PURE__ */ c.jsx("div", { className: "grid grid-cols-4 gap-4 mobile:hidden", children: n.map((l, p) => /* @__PURE__ */ c.jsxs("div", { className: "text-center mobile:text-left", children: [
                 /* @__PURE__ */ c.jsxs("p", { className: "text-sm font-semibold tracking-wide", children: [
-                  /* @__PURE__ */ c.jsxs("span", { style: { color: $e }, children: [
+                  /* @__PURE__ */ c.jsxs("span", { style: { color: Fe }, children: [
                     String(p + 1).padStart(2, "0"),
                     " "
                   ] }),
-                  /* @__PURE__ */ c.jsx("span", { style: { color: Po }, children: l.title })
+                  /* @__PURE__ */ c.jsx("span", { style: { color: yo }, children: l.title })
                 ] }),
-                /* @__PURE__ */ c.jsx("p", { className: "mt-1.5 text-[13px] leading-snug", style: { color: fn }, children: l.lines.join(" ") })
+                /* @__PURE__ */ c.jsx("p", { className: "mt-1.5 text-[13px] leading-snug", style: { color: Po }, children: l.lines.join(" ") })
               ] }, l.title)) })
             ]
           },
@@ -28291,11 +28320,11 @@ function CD() {
     "div",
     {
       className: "rounded-[8px] border px-6 py-8 text-center",
-      style: { borderColor: `${$e}66` },
+      style: { borderColor: `${Fe}66` },
       "data-testid": "lead-capture-success",
       children: [
-        /* @__PURE__ */ c.jsx("p", { className: "text-xl font-semibold", style: { color: Po }, children: "Poptávka byla přijata." }),
-        /* @__PURE__ */ c.jsx("p", { className: "mt-2 text-sm leading-relaxed", style: { color: fn }, children: "Vaše údaje jsme bezpečně uložili. Partner vás bude kontaktovat s dalším postupem." })
+        /* @__PURE__ */ c.jsx("p", { className: "text-xl font-semibold", style: { color: yo }, children: "Poptávka byla přijata." }),
+        /* @__PURE__ */ c.jsx("p", { className: "mt-2 text-sm leading-relaxed", style: { color: Po }, children: "Vaše údaje jsme bezpečně uložili. Partner vás bude kontaktovat s dalším postupem." })
       ]
     }
   );
@@ -28392,10 +28421,10 @@ function RD({
   }, Ie = (ue) => {
     N || (ue.preventDefault(), ie());
   };
-  return /* @__PURE__ */ c.jsxs("div", { className: `${yD} px-section`, children: [
+  return /* @__PURE__ */ c.jsxs("div", { className: `${bD} px-section`, children: [
     /* @__PURE__ */ c.jsxs("h2", { className: "text-center text-base font-semibold tracking-wide", children: [
-      /* @__PURE__ */ c.jsx("span", { style: { color: $e }, children: "3. " }),
-      /* @__PURE__ */ c.jsx("span", { style: { color: Po }, children: "Kam vám máme poslat výstup?" })
+      /* @__PURE__ */ c.jsx("span", { style: { color: Fe }, children: "3. " }),
+      /* @__PURE__ */ c.jsx("span", { style: { color: yo }, children: "Kam vám máme poslat výstup?" })
     ] }),
     v === "success" ? /* @__PURE__ */ c.jsx("div", { className: "mt-5", children: /* @__PURE__ */ c.jsx(CD, {}) }) : /* @__PURE__ */ c.jsxs("form", { className: "mt-5", onSubmit: fe, children: [
       /* @__PURE__ */ c.jsxs(
@@ -28468,7 +28497,7 @@ function RD({
                   className: "flex w-full items-center justify-center px-4 text-center text-sm font-semibold tracking-wide focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001930] disabled:cursor-not-allowed",
                   style: {
                     height: $s,
-                    backgroundColor: $e,
+                    backgroundColor: Fe,
                     color: mr,
                     borderRadius: Mp,
                     borderStyle: "none",
@@ -28490,7 +28519,7 @@ function RD({
                   role: "status",
                   "data-testid": "audit-gdpr-guidance",
                   className: "pointer-events-none absolute top-[calc(100%+6px)] left-1/2 z-10 -translate-x-1/2 whitespace-nowrap text-xs leading-none",
-                  style: { color: $e },
+                  style: { color: Fe },
                   children: DD
                 }
               ) : null
@@ -28533,10 +28562,10 @@ function RD({
                       "data-testid": "audit-gdpr-consent-mark",
                       className: "flex h-4 w-4 items-center justify-center border-2",
                       style: {
-                        borderColor: $e,
-                        backgroundColor: N ? $e : "transparent",
+                        borderColor: Fe,
+                        backgroundColor: N ? Fe : "transparent",
                         borderRadius: 3,
-                        boxShadow: L && !N ? `0 0 0 2px ${$e}66` : void 0
+                        boxShadow: L && !N ? `0 0 0 2px ${Fe}66` : void 0
                       },
                       children: N ? /* @__PURE__ */ c.jsx(
                         "svg",
@@ -28562,7 +28591,7 @@ function RD({
                 ]
               }
             ),
-            /* @__PURE__ */ c.jsxs("p", { className: "text-sm leading-snug", style: { color: fn }, children: [
+            /* @__PURE__ */ c.jsxs("p", { className: "text-sm leading-snug", style: { color: Po }, children: [
               /* @__PURE__ */ c.jsxs("label", { htmlFor: "audit-gdpr-consent", className: "cursor-pointer", children: [
                 "Odesláním souhlasíte se",
                 " "
@@ -28575,7 +28604,7 @@ function RD({
                   rel: "noopener noreferrer",
                   "data-testid": "audit-gdpr-privacy-link",
                   className: "underline underline-offset-2",
-                  style: { color: $e },
+                  style: { color: Fe },
                   children: "zpracováním osobních údajů"
                 }
               ),
@@ -28591,7 +28620,7 @@ function RD({
         "p",
         {
           className: "mt-3 text-center text-sm leading-snug",
-          style: { color: fn },
+          style: { color: Po },
           "data-testid": "audit-post-submit-copy",
           children: _D
         }
@@ -28601,7 +28630,7 @@ function RD({
       "p",
       {
         className: "mt-3 text-center text-sm",
-        style: { color: $e },
+        style: { color: Fe },
         role: "alert",
         "data-testid": "lead-capture-error",
         children: H
@@ -28612,18 +28641,18 @@ function RD({
         "div",
         {
           className: "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border",
-          style: { borderColor: $e },
-          children: /* @__PURE__ */ c.jsx(wD, { className: "h-5 w-5" })
+          style: { borderColor: Fe },
+          children: /* @__PURE__ */ c.jsx(SD, { className: "h-5 w-5" })
         }
       ),
       /* @__PURE__ */ c.jsxs("div", { children: [
-        /* @__PURE__ */ c.jsx("p", { className: "text-sm font-semibold", style: { color: Po }, children: "Nezávislé posouzení." }),
-        /* @__PURE__ */ c.jsx("p", { className: "mt-1 text-xs leading-snug", style: { color: fn }, children: "Posouzení je nezávazné. Rozhodnutí je vždy na vás." })
+        /* @__PURE__ */ c.jsx("p", { className: "text-sm font-semibold", style: { color: yo }, children: "Nezávislé posouzení." }),
+        /* @__PURE__ */ c.jsx("p", { className: "mt-1 text-xs leading-snug", style: { color: Po }, children: "Posouzení je nezávazné. Rozhodnutí je vždy na vás." })
       ] })
     ] })
   ] });
 }
-const ob = 34, nb = Object.freeze({
+const nb = 34, ab = Object.freeze({
   title: "Tento dům vás zaujal.",
   subtitle: "Teď ověřme, jak bude pasovat na váš pozemek, ať už jej máte, nebo hledáte.",
   highlight: "Provedeme odborné posouzení a doporučíme vám ideální řešení umístění domu."
@@ -28631,9 +28660,9 @@ const ob = 34, nb = Object.freeze({
 function cc(t) {
   if (t.includes(". "))
     throw new Error(`Audit hero title must be one sentence: "${t}"`);
-  if (t.length > ob)
+  if (t.length > nb)
     throw new Error(
-      `Audit hero title exceeds ${ob} chars (${t.length}): "${t}"`
+      `Audit hero title exceeds ${nb} chars (${t.length}): "${t}"`
     );
   return t;
 }
@@ -28648,8 +28677,8 @@ function MD(t = {}) {
     subtitle: "Ověříme, jak dům pasuje na váš pozemek — ať už jej máte, nebo hledáte.",
     highlight: "Posouzení uzavře vaši cestu konkrétním doporučením k umístění domu."
   } : {
-    ...nb,
-    title: cc(nb.title)
+    ...ab,
+    title: cc(ab.title)
   };
 }
 function PD() {
@@ -28662,7 +28691,7 @@ function PD() {
       "h1",
       {
         className: "font-sans text-5xl font-bold leading-[1.1] tracking-tight mobile:text-[80%] mobile:leading-tight",
-        style: { color: Po },
+        style: { color: yo },
         "data-testid": "audit-hero-title",
         children: i.title
       }
@@ -28679,7 +28708,7 @@ function PD() {
       "p",
       {
         className: "mx-auto mt-5 max-w-[52.8rem] font-sans text-xl font-semibold leading-snug mobile:text-lg",
-        style: { color: $e },
+        style: { color: Fe },
         "data-testid": "audit-hero-highlight",
         children: i.highlight
       }
@@ -28700,14 +28729,14 @@ function LD(t) {
     email: Fn(t.email)
   };
 }
-function Gj(t) {
+function Zj(t) {
   return t.legalName !== null || t.address !== null || t.ico !== null;
 }
-function Zj(t) {
+function Jj(t) {
   return t.phone !== null || t.email !== null;
 }
 function BD(t) {
-  return Gj(t) || Zj(t);
+  return Zj(t) || Jj(t);
 }
 function HD() {
   const { company: t } = Ze(), n = LD({
@@ -28721,12 +28750,12 @@ function HD() {
   });
   if (!BD(n))
     return null;
-  const i = Gj(n), s = Zj(n);
+  const i = Zj(n), s = Jj(n);
   return /* @__PURE__ */ c.jsx(
     "div",
     {
       className: `${Rp} mt-10 border-t px-section pt-6 mobile:mt-8`,
-      style: { borderColor: $e },
+      style: { borderColor: Fe },
       "data-testid": "audit-project-footer",
       children: /* @__PURE__ */ c.jsxs(
         "div",
@@ -28737,9 +28766,9 @@ function HD() {
               "div",
               {
                 "data-testid": "audit-project-footer-identity",
-                style: { color: fn },
+                style: { color: Po },
                 children: [
-                  n.legalName ? /* @__PURE__ */ c.jsx("p", { style: { color: Po }, children: n.legalName }) : null,
+                  n.legalName ? /* @__PURE__ */ c.jsx("p", { style: { color: yo }, children: n.legalName }) : null,
                   n.address ? /* @__PURE__ */ c.jsx("p", { children: n.address }) : null,
                   n.ico ? /* @__PURE__ */ c.jsxs("p", { children: [
                     "IČO: ",
@@ -28753,9 +28782,9 @@ function HD() {
               {
                 className: i ? "text-right mobile:text-left" : void 0,
                 "data-testid": "audit-project-footer-contact",
-                style: { color: fn },
+                style: { color: Po },
                 children: [
-                  n.phone ? /* @__PURE__ */ c.jsx("p", { style: { color: Po }, children: n.phone }) : null,
+                  n.phone ? /* @__PURE__ */ c.jsx("p", { style: { color: yo }, children: n.phone }) : null,
                   n.email ? /* @__PURE__ */ c.jsx("p", { children: n.email }) : null
                 ]
               }
@@ -28770,11 +28799,11 @@ function KD({ value: t, onChange: n }) {
   const [i, s] = j.useState(null);
   return /* @__PURE__ */ c.jsxs("div", { className: `${Rp} px-section`, children: [
     /* @__PURE__ */ c.jsxs("h2", { className: "text-center text-base font-semibold tracking-wide mobile:text-[0.8rem] mobile:leading-[1.15]", children: [
-      /* @__PURE__ */ c.jsx("span", { style: { color: $e }, children: "1. " }),
-      /* @__PURE__ */ c.jsx("span", { style: { color: Po }, children: "Vyberte, v jaké fázi se nacházíte" })
+      /* @__PURE__ */ c.jsx("span", { style: { color: Fe }, children: "1. " }),
+      /* @__PURE__ */ c.jsx("span", { style: { color: yo }, children: "Vyberte, v jaké fázi se nacházíte" })
     ] }),
-    /* @__PURE__ */ c.jsx("div", { className: "mx-auto mt-6 w-[70%] mobile:w-full", children: /* @__PURE__ */ c.jsx("div", { className: "grid grid-cols-2 gap-5 tabletMin:gap-4 mobile:gap-2", children: fD.map((l) => {
-      const p = l.value === t, m = p || i === l.value, v = l.value === "owned" ? Pp : qj;
+    /* @__PURE__ */ c.jsx("div", { className: "mx-auto mt-6 w-[70%] mobile:w-full", children: /* @__PURE__ */ c.jsx("div", { className: "grid grid-cols-2 gap-5 tabletMin:gap-4 mobile:gap-2", children: jD.map((l) => {
+      const p = l.value === t, m = p || i === l.value, v = l.value === "owned" ? Pp : $j;
       return /* @__PURE__ */ c.jsxs(
         "button",
         {
@@ -28785,13 +28814,13 @@ function KD({ value: t, onChange: n }) {
           onMouseLeave: () => s(null),
           className: "flex min-h-[128px] flex-col items-start gap-3 px-6 py-[21px] text-left transition-[background-color,box-shadow,color] duration-125 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2 focus-visible:ring-offset-[#001930]",
           style: {
-            backgroundColor: m ? $e : Ge.brand.navy,
+            backgroundColor: m ? Fe : Ge.brand.navy,
             borderStyle: "solid",
             borderWidth: 2,
-            borderColor: $e,
+            borderColor: Fe,
             borderRadius: Mp,
             // Glow only on navy panel with gold border — not on gold fill.
-            boxShadow: m ? "none" : gD
+            boxShadow: m ? "none" : zD
           },
           children: [
             /* @__PURE__ */ c.jsx(
@@ -28805,7 +28834,7 @@ function KD({ value: t, onChange: n }) {
               "span",
               {
                 className: "text-lg font-bold tracking-wide",
-                style: { color: m ? mr : $e },
+                style: { color: m ? mr : Fe },
                 children: l.label
               }
             ),
@@ -28813,7 +28842,7 @@ function KD({ value: t, onChange: n }) {
               "span",
               {
                 className: "text-sm leading-snug",
-                style: { color: m ? mr : fn },
+                style: { color: m ? mr : Po },
                 children: l.description
               }
             )
@@ -28828,11 +28857,11 @@ function UD({ onBack: t }) {
   const { dispatch: n } = Ze(), [i, s] = j.useState("owned"), l = (m) => {
     n({
       type: "AnswerQuestion",
-      questionId: cS,
+      questionId: pS,
       answerId: m
     });
   }, p = (m) => {
-    s(m), l(m), Ga($j);
+    s(m), l(m), Ga(Gj);
   };
   return /* @__PURE__ */ c.jsxs(
     "section",
@@ -28846,7 +28875,7 @@ function UD({ onBack: t }) {
           "div",
           {
             className: "overflow-hidden rounded-[11px] pb-8 shadow-[0_1px_11px_rgba(0,25,48,0.044)]",
-            style: bD,
+            style: fD,
             children: [
               /* @__PURE__ */ c.jsx(PD, {}),
               /* @__PURE__ */ c.jsxs("div", { className: "flex flex-col gap-14 mobile:gap-11", children: [
@@ -28881,12 +28910,12 @@ function UD({ onBack: t }) {
     }
   );
 }
-const VD = 1432, FD = 20, vr = 600, Jj = FD + vr, Xj = 240, YD = VD - Jj - Xj, qD = 80, $D = Math.round(
+const VD = 1432, FD = 20, vr = 600, Xj = FD + vr, Qj = 240, YD = VD - Xj - Qj, qD = 80, $D = Math.round(
   qD * 16 / 9
 ), GD = "duration-200 ease-out", bl = GD, ZD = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-embed-brand-gold/35 focus-visible:ring-offset-2", JD = "rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] shadow-none", XD = "hover:z-[5] hover:cursor-pointer hover:border-solid hover:border-[#D4AF37]", QD = "animate-priority-card-attention hover:[animation-play-state:paused]", WD = "z-10 scale-[1.10] rounded-[8px] border-2 border-solid border-[#D4AF37] bg-[#F7F6F4] shadow-none mobile:scale-[1.03]", e_ = "relative w-full aspect-square desktop:h-[155px] desktop:w-[155px] desktop:shrink-0", t_ = "ring-2 ring-embed-brand-gold ring-offset-2 ring-offset-[#F7F6F4]", o_ = "ring-1 ring-embed-brand-gold/40 ring-offset-1 ring-offset-[#F7F6F4]";
 Op({ size: "md" });
 Op({ size: "md", state: "disabled" });
-const n_ = "pb-5", a_ = "box-border flex min-h-[60px] shrink-0 grow-0 items-center overflow-visible mobile:min-h-[48px]", Qj = "m-0 p-0 text-base font-bold leading-none tracking-wide text-embed-foreground-primary mobile:text-[0.9375rem] mobile:leading-snug", i_ = "px-[21px] mobile:px-section", r_ = "box-border relative z-0 -ml-[30px] flex h-auto w-[calc(100%+30px)] max-w-[710px] flex-col self-start overflow-visible bg-transparent px-section pb-section pt-0 mobile:ml-0 mobile:w-full mobile:max-w-none", s_ = "mobile:sticky mobile:bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px))] mobile:z-40 mobile:-mx-section mobile:border-t mobile:border-embed-border-default mobile:bg-[#FFFFFF]/95 mobile:px-section mobile:py-3 mobile:backdrop-blur-[6px]", pc = [
+const n_ = "pb-5", a_ = "box-border flex min-h-[60px] shrink-0 grow-0 items-center overflow-visible mobile:min-h-[48px]", Wj = "m-0 p-0 text-base font-bold leading-none tracking-wide text-embed-foreground-primary mobile:text-[0.9375rem] mobile:leading-snug", i_ = "px-[21px] mobile:px-section", r_ = "box-border relative z-0 -ml-[30px] flex h-auto w-[calc(100%+30px)] max-w-[710px] flex-col self-start overflow-visible bg-transparent px-section pb-section pt-0 mobile:ml-0 mobile:w-full mobile:max-w-none", s_ = "mobile:sticky mobile:bottom-[calc(3.5rem+env(safe-area-inset-bottom,0px))] mobile:z-40 mobile:-mx-section mobile:border-t mobile:border-embed-border-default mobile:bg-[#FFFFFF]/95 mobile:px-section mobile:py-3 mobile:backdrop-blur-[6px]", pc = [
   { id: "ai-advisor", href: `#${le.aiAdvisor}` },
   { id: "spatial", href: `#${le.walkthrough}` },
   { id: "audit", href: `#${le.audit}` }
@@ -29056,7 +29085,7 @@ function m_({ value: t, onChange: n }) {
     }
   );
 }
-const ab = "scale-[0.909] mobile:scale-[0.971]", ib = "#E3E3E3", v_ = "#D4AF37", k_ = "#D4AF37", h_ = "#F7F6F4";
+const ib = "scale-[0.909] mobile:scale-[0.971]", rb = "#E3E3E3", v_ = "#D4AF37", k_ = "#D4AF37", h_ = "#F7F6F4";
 function y_({
   category: t,
   importance: n,
@@ -29086,7 +29115,7 @@ function y_({
             // Explicit solid border — embed boundary resets button border-style to none.
             borderStyle: "solid",
             borderWidth: i ? 2 : 1,
-            borderColor: i ? k_ : ib,
+            borderColor: i ? k_ : rb,
             backgroundColor: h_,
             borderRadius: 8
           },
@@ -29094,7 +29123,7 @@ function y_({
             i || (h.currentTarget.style.borderColor = v_, h.currentTarget.style.borderWidth = "1px", h.currentTarget.style.boxShadow = "none", h.currentTarget.style.transform = "translateY(-2px) scale(1.01)", h.currentTarget.style.zIndex = "5");
           },
           onMouseLeave: (h) => {
-            i || (h.currentTarget.style.borderColor = ib, h.currentTarget.style.borderWidth = "1px", h.currentTarget.style.boxShadow = "none", h.currentTarget.style.transform = "translateY(0) scale(1)", h.currentTarget.style.zIndex = "0");
+            i || (h.currentTarget.style.borderColor = rb, h.currentTarget.style.borderWidth = "1px", h.currentTarget.style.boxShadow = "none", h.currentTarget.style.transform = "translateY(0) scale(1)", h.currentTarget.style.zIndex = "0");
           },
           children: [
             /* @__PURE__ */ c.jsxs(
@@ -29105,7 +29134,7 @@ function y_({
                   /* @__PURE__ */ c.jsx(
                     "span",
                     {
-                      className: `-mt-0.5 flex items-center justify-center leading-none ${i ? ab : ""}`,
+                      className: `-mt-0.5 flex items-center justify-center leading-none ${i ? ib : ""}`,
                       "aria-hidden": "true",
                       children: /* @__PURE__ */ c.jsx(p_, { categoryId: t.id })
                     }
@@ -29113,7 +29142,7 @@ function y_({
                   /* @__PURE__ */ c.jsx(
                     "span",
                     {
-                      className: `max-w-full text-center font-medium leading-snug tracking-wide desktop:max-w-[96px] text-[16px] ${i ? `${ab} text-embed-foreground-primary` : "text-embed-foreground-primary/70"}`,
+                      className: `max-w-full text-center font-medium leading-snug tracking-wide desktop:max-w-[96px] text-[16px] ${i ? `${ib} text-embed-foreground-primary` : "text-embed-foreground-primary/70"}`,
                       children: t.title
                     }
                   )
@@ -29123,7 +29152,7 @@ function y_({
             /* @__PURE__ */ c.jsx(
               "div",
               {
-                className: `w-full transition-[opacity,transform,max-height] ${bl} ${i ? "max-h-11 translate-y-0 pt-2 opacity-100 desktop:max-h-10" : "pointer-events-none max-h-0 translate-y-1 opacity-0"}`,
+                className: `w-full transition-[opacity,transform,max-height] ${bl} ${i ? "max-h-14 translate-y-0 pt-2 opacity-100 desktop:max-h-10" : "pointer-events-none max-h-0 translate-y-1 opacity-0"}`,
                 children: i ? /* @__PURE__ */ c.jsx(
                   "div",
                   {
@@ -29206,13 +29235,13 @@ function j_(t, n) {
   };
 }
 const g_ = j.createContext(
-  GT()
+  ZT()
 ), z_ = g_.Provider;
 function x_(t, n) {
   const i = Object.fromEntries(
     El.map((l) => [
       l.id,
-      { selected: !1, importance: hN }
+      { selected: !1, importance: yN }
     ])
   ), s = t.length;
   return t.forEach((l, p) => {
@@ -29314,7 +29343,7 @@ function E_(t) {
     };
   }, [n, i.context.decision.priorityIds, i.context.decision.priorityIntensities, l]);
 }
-const Wj = j.createContext(
+const eg = j.createContext(
   null
 );
 function w_({
@@ -29348,10 +29377,10 @@ function w_({
     minimumSelection: m,
     minimumMet: v
   };
-  return /* @__PURE__ */ c.jsx(Wj.Provider, { value: h, children: /* @__PURE__ */ c.jsx(z_, { value: y, children: t }) });
+  return /* @__PURE__ */ c.jsx(eg.Provider, { value: h, children: /* @__PURE__ */ c.jsx(z_, { value: y, children: t }) });
 }
-function eg() {
-  const t = j.useContext(Wj);
+function tg() {
+  const t = j.useContext(eg);
   if (t === null)
     throw new Error(
       "usePriorityExperience must be used within PriorityExperienceProvider"
@@ -29368,14 +29397,14 @@ function Gs() {
   Ga(le.audit);
 }
 function A_() {
-  const { cards: t, selectedCount: n, categories: i } = eg(), { dispatch: s } = Ze(), p = j.useRef(
+  const { cards: t, selectedCount: n, categories: i } = tg(), { dispatch: s } = Ze(), p = j.useRef(
     f_()
   ).current, m = j.useRef(null), v = j.useRef(null), [y, h] = j.useState([]), [f, z] = j.useState(!1), [E, A] = j.useState(!1), [w, N] = j.useState(!1), [g, H] = j.useState([]), [V, q] = j.useState({}), [Z, L] = j.useState("question"), [B, U] = j.useState(null), [M, G] = j.useState(null), [$, te] = j.useState(!1), [ie, fe] = j.useState(null), Ie = j.useRef("instruction"), ue = j.useRef({}), R = j.useCallback(() => {
     m.current !== null && (window.clearTimeout(m.current), m.current = null), v.current !== null && (window.clearTimeout(v.current), v.current = null);
   }, []);
   j.useEffect(() => R, [R]);
   const X = j.useCallback(
-    (ke, ye = jN) => {
+    (ke, ye = gN) => {
       m.current !== null && window.clearTimeout(m.current), te(!0), m.current = window.setTimeout(() => {
         ke(), te(!1), m.current = null;
       }, ye);
@@ -29445,9 +29474,9 @@ function A_() {
       return cr(M);
     const ke = g.find((ye) => V[ye] === void 0);
     return ke === void 0 ? null : cr(ke);
-  }, [M, V, Z, g, ee]), W = j.useMemo(() => ee !== "dialog" || Z !== "question" || !C ? null : QN(C.priorityId), [C, Z, ee]), Q = j.useMemo(() => ee !== "complete" ? null : eT({ tags: x, answers: V }), [V, ee, x]), se = Object.keys(V).filter(
+  }, [M, V, Z, g, ee]), W = j.useMemo(() => ee !== "dialog" || Z !== "question" || !C ? null : WN(C.priorityId), [C, Z, ee]), Q = j.useMemo(() => ee !== "complete" ? null : tT({ tags: x, answers: V }), [V, ee, x]), se = Object.keys(V).filter(
     (ke) => g.includes(ke)
-  ).length, ce = GN({
+  ).length, ce = ZN({
     phase: ee,
     selectedCount: n,
     dialogAnswered: se,
@@ -29461,7 +29490,7 @@ function A_() {
           var jt;
           return [Oe, ((jt = t[Oe]) == null ? void 0 : jt.importance) ?? 0];
         })
-      ), ye = $N(y, ke);
+      ), ye = GN(y, ke);
       H(ye), q({}), L("question"), U(null), G(null), fe(null), z(!0), A(!1), N(!1), p.record({
         type: "selection-finished",
         order: y,
@@ -29473,8 +29502,8 @@ function A_() {
   }, Pe = () => {
     if (ee !== "complete" || $)
       return;
-    const ke = document.getElementById(aj);
-    ke && cO(ke, 700, { easing: "linear" });
+    const ke = document.getElementById(ij);
+    ke && pO(ke, 700, { easing: "linear" });
   }, Ct = () => {
     $ || X(() => {
       N(!0), L("question"), U(null), G(null), fe(null);
@@ -29490,7 +29519,7 @@ function A_() {
       at: Date.now()
     }), s({
       type: "AnswerQuestion",
-      questionId: pS(ke),
+      questionId: mS(ke),
       answerId: ye
     }), Oe) {
       q((jt) => ({ ...jt, [ke]: ye })), L("question"), G(null), fe(null);
@@ -29501,8 +29530,8 @@ function A_() {
       priorityId: ke,
       at: Date.now()
     }), v.current = window.setTimeout(() => {
-      q((jt) => ({ ...jt, [ke]: ye })), U(WN(ke, ye)), L("interpretation"), v.current = null;
-    }, gN);
+      q((jt) => ({ ...jt, [ke]: ye })), U(eT(ke, ye)), L("interpretation"), v.current = null;
+    }, zN);
   }, eo = () => {
     if (Z !== "interpretation" || M === null)
       return;
@@ -29524,7 +29553,7 @@ function A_() {
       path: "plot-check",
       at: Date.now()
     }), qn(le.audit), Gs();
-  }, Bo = () => {
+  }, Ho = () => {
     p.record({
       type: "completion-path",
       path: "plot-find",
@@ -29563,26 +29592,26 @@ function A_() {
     askConis: tt,
     continueToNextChapter: ot,
     continueWithPlotCheck: Vt,
-    continueWithPlotFind: Bo,
+    continueWithPlotFind: Ho,
     continueWithReport: ro
   };
 }
-const tg = j.createContext(null);
+const og = j.createContext(null);
 function O_({
   children: t
 }) {
   const n = A_();
-  return /* @__PURE__ */ c.jsx(tg.Provider, { value: n, children: t });
+  return /* @__PURE__ */ c.jsx(og.Provider, { value: n, children: t });
 }
 function Lp() {
-  const t = j.useContext(tg);
+  const t = j.useContext(og);
   if (t === null)
     throw new Error(
       "usePriorityConversationContext must be used within PriorityConversationProvider"
     );
   return t;
 }
-const ir = "m-0 text-[15px] leading-[1.65] text-embed-foreground-primary", vc = "m-0 text-[17px] font-bold uppercase leading-[1.4]", Zs = { color: Ge.brand.goldIntense }, rb = "rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] p-5 desktop:grid desktop:grid-rows-[48px_repeat(3,minmax(132px,1fr))]", sb = `${ir} relative flex flex-col items-start py-3 desktop:py-3`;
+const ir = "m-0 text-[15px] leading-[1.65] text-embed-foreground-primary", vc = "m-0 text-[17px] font-bold uppercase leading-[1.4]", Zs = { color: Ge.brand.goldIntense }, sb = "rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] p-5 desktop:grid desktop:grid-rows-[48px_repeat(3,minmax(132px,1fr))]", lb = `${ir} relative flex flex-col items-start py-3 desktop:py-3`;
 function C_() {
   const { phase: t, hypothesis: n } = Lp(), { experience: i, houseKnowledge: s } = Ze();
   if (t !== "complete" || n === null)
@@ -29608,7 +29637,7 @@ function C_() {
   return /* @__PURE__ */ c.jsx(
     "div",
     {
-      id: aj,
+      id: ij,
       tabIndex: -1,
       className: "mt-[50px] w-full min-w-0 max-w-none bg-[#FFFFFF] py-[50px] mobile:mt-8 mobile:px-3 mobile:py-5",
       "data-testid": "priority-chapter-bridge",
@@ -29618,12 +29647,12 @@ function C_() {
           /* @__PURE__ */ c.jsx(
             "h2",
             {
-              className: `${Qj} uppercase`,
+              className: `${Wj} uppercase`,
               "data-testid": "priority-bridge-title",
-              children: PN
+              children: LN
             }
           ),
-          /* @__PURE__ */ c.jsx("div", { className: "flex flex-wrap gap-x-2 gap-y-1", children: BN.map((h) => /* @__PURE__ */ c.jsx("p", { className: ir, children: h }, h)) })
+          /* @__PURE__ */ c.jsx("div", { className: "flex flex-wrap gap-x-2 gap-y-1", children: HN.map((h) => /* @__PURE__ */ c.jsx("p", { className: ir, children: h }, h)) })
         ] }),
         /* @__PURE__ */ c.jsxs(
           "div",
@@ -29631,12 +29660,12 @@ function C_() {
             className: "grid w-full grid-cols-3 items-stretch gap-5 tabletMin:grid-cols-2 tabletMin:gap-4 tabletMax:grid-cols-3 mobile:grid-cols-1 mobile:gap-4",
             "data-testid": "priority-payoff-panels",
             children: [
-              /* @__PURE__ */ c.jsxs("section", { className: rb, "data-testid": "priority-payoff-facts", children: [
-                /* @__PURE__ */ c.jsx("h3", { className: vc, style: Zs, children: HN }),
+              /* @__PURE__ */ c.jsxs("section", { className: sb, "data-testid": "priority-payoff-facts", children: [
+                /* @__PURE__ */ c.jsx("h3", { className: vc, style: Zs, children: KN }),
                 y.map((h, f) => /* @__PURE__ */ c.jsxs(
                   "div",
                   {
-                    className: `${sb} ${f === 0 ? "" : "border-t border-[#E3E3E3]"}`,
+                    className: `${lb} ${f === 0 ? "" : "border-t border-[#E3E3E3]"}`,
                     children: [
                       /* @__PURE__ */ c.jsx("strong", { className: "block uppercase", children: h.factPoint }),
                       /* @__PURE__ */ c.jsx("span", { children: h.fact }),
@@ -29652,12 +29681,12 @@ function C_() {
                   h.fact
                 ))
               ] }),
-              /* @__PURE__ */ c.jsxs("section", { className: rb, "data-testid": "priority-payoff-meaning", children: [
-                /* @__PURE__ */ c.jsx("h3", { className: vc, style: Zs, children: KN }),
+              /* @__PURE__ */ c.jsxs("section", { className: sb, "data-testid": "priority-payoff-meaning", children: [
+                /* @__PURE__ */ c.jsx("h3", { className: vc, style: Zs, children: UN }),
                 y.map((h, f) => /* @__PURE__ */ c.jsxs(
                   "p",
                   {
-                    className: `${sb} ${f === 0 ? "" : "border-t border-[#E3E3E3]"}`,
+                    className: `${lb} ${f === 0 ? "" : "border-t border-[#E3E3E3]"}`,
                     children: [
                       /* @__PURE__ */ c.jsx("strong", { className: "uppercase", children: h.interpretationPoint }),
                       /* @__PURE__ */ c.jsx("span", { children: h.meaning })
@@ -29672,7 +29701,7 @@ function C_() {
                   className: "flex min-h-full flex-col rounded-[8px] border border-solid border-[#E3E3E3] bg-[#F7F6F4] p-5",
                   "data-testid": "priority-payoff-recall",
                   children: [
-                    /* @__PURE__ */ c.jsx("h3", { className: vc, style: Zs, children: UN }),
+                    /* @__PURE__ */ c.jsx("h3", { className: vc, style: Zs, children: VN }),
                     p ? /* @__PURE__ */ c.jsx(
                       "img",
                       {
@@ -29681,7 +29710,7 @@ function C_() {
                         className: "-mt-[2px] aspect-[4/3] w-full rounded-[6px] object-contain"
                       }
                     ) : null,
-                    /* @__PURE__ */ c.jsx("p", { className: `${ir} mt-[30px]`, children: VN })
+                    /* @__PURE__ */ c.jsx("p", { className: `${ir} mt-[30px]`, children: FN })
                   ]
                 }
               )
@@ -29694,7 +29723,7 @@ function C_() {
             {
               className: "m-0 text-[18px] font-bold leading-[1.5]",
               style: Zs,
-              children: LN
+              children: BN
             }
           ),
           /* @__PURE__ */ c.jsxs(
@@ -29732,13 +29761,13 @@ function C_() {
               ]
             }
           ),
-          /* @__PURE__ */ c.jsx("p", { className: `${ir} font-bold`, children: FN })
+          /* @__PURE__ */ c.jsx("p", { className: `${ir} font-bold`, children: YN })
         ] })
       ] })
     }
   );
 }
-function og({ size: t = 40 }) {
+function ng({ size: t = 40 }) {
   return /* @__PURE__ */ c.jsx(
     "span",
     {
@@ -29788,7 +29817,7 @@ function Pa({ children: t, className: n = "", testId: i }) {
       className: `flex items-start gap-3 ${n}`,
       "data-testid": i,
       children: [
-        /* @__PURE__ */ c.jsx(og, { size: 40 }),
+        /* @__PURE__ */ c.jsx(ng, { size: 40 }),
         /* @__PURE__ */ c.jsx("div", { className: "min-w-0 flex-1 space-y-2 pt-0.5", children: t })
       ]
     }
@@ -29823,7 +29852,7 @@ function N_({ className: t = "" }) {
     }
   );
 }
-const kn = "text-[15px] leading-[1.6] text-embed-foreground-primary", T_ = "text-[16px] font-medium leading-[1.45] text-embed-foreground-primary", lb = "text-[18px] font-semibold leading-[1.35] text-embed-foreground-primary", Js = "text-[13px] leading-[1.55] text-embed-foreground-primary/65", db = me.lightGray, D_ = me.warmGray, ub = me.navy, cb = me.pureWhite, __ = me.gold, R_ = me.navy, M_ = me.navy, P_ = 4.8, ng = 12.5, ag = 600, L_ = me.warmWhite, B_ = `${me.lightGray}8C`;
+const hn = "text-[15px] leading-[1.6] text-embed-foreground-primary", T_ = "text-[16px] font-medium leading-[1.45] text-embed-foreground-primary", db = "text-[18px] font-semibold leading-[1.35] text-embed-foreground-primary", Js = "text-[13px] leading-[1.55] text-embed-foreground-primary/65", ub = me.lightGray, D_ = me.warmGray, cb = me.navy, pb = me.pureWhite, __ = me.gold, R_ = me.navy, M_ = me.navy, P_ = 4.8, ag = 12.5, ig = 600, L_ = me.warmWhite, B_ = `${me.lightGray}8C`;
 function Xs({
   testId: t,
   label: n,
@@ -29837,10 +29866,10 @@ function Xs({
       "data-testid": t,
       className: "min-h-11 min-w-0 flex-1 touch-manipulation px-2 py-3 text-center font-medium leading-normal tracking-wide disabled:opacity-55 desktop:min-h-0 desktop:py-[6.4px] mobile:w-full mobile:max-w-none",
       style: {
-        backgroundColor: ub,
-        color: cb,
-        fontSize: ng,
-        fontWeight: ag,
+        backgroundColor: cb,
+        color: pb,
+        fontSize: ag,
+        fontWeight: ig,
         borderRadius: P_,
         borderStyle: "none",
         borderWidth: 0,
@@ -29852,7 +29881,7 @@ function Xs({
         l.currentTarget.style.backgroundColor = __, l.currentTarget.style.color = R_;
       },
       onMouseLeave: (l) => {
-        l.currentTarget.style.backgroundColor = ub, l.currentTarget.style.color = cb;
+        l.currentTarget.style.backgroundColor = cb, l.currentTarget.style.color = pb;
       },
       children: n
     }
@@ -29869,9 +29898,9 @@ function kc({
   return /* @__PURE__ */ c.jsx(
     "div",
     {
-      className: `${i} flex w-full justify-center mobile:!ml-0 mobile:!pt-0`,
+      className: `${i} flex w-full justify-center [margin-left:var(--priority-switch-shift-x,0px)] mobile:![margin-left:0px] mobile:!pt-0`,
       style: {
-        ...s ? { marginLeft: s.x } : {},
+        ...s ? { "--priority-switch-shift-x": `${s.x}px` } : {},
         // Use paddingTop — ConisMessage space-y utilities set margin-top !important.
         ...l > 0 ? { paddingTop: `${l * 1.6}em` } : s && s.y !== 0 ? { paddingTop: s.y } : {}
       },
@@ -29880,8 +29909,8 @@ function kc({
         {
           className: "flex w-full min-w-0 shrink-0 items-stretch gap-[1.6px] rounded-[6.4px] border border-solid p-[1.6px] desktop:w-1/2 mobile:w-full mobile:max-w-none",
           style: {
-            backgroundColor: db,
-            borderColor: db
+            backgroundColor: ub,
+            borderColor: ub
           },
           role: n ? "group" : void 0,
           "aria-label": n,
@@ -29920,7 +29949,7 @@ function H_() {
     answerQuestion: w,
     continueDialog: N,
     continueToSummary: g
-  } = Lp(), H = t === "collecting" || t === "collection-gate" || t === "prep" || t === "dialog" || t === "complete", V = s.map((Z) => kN[Z]).filter((Z) => typeof Z == "string"), q = t === "dialog" && p !== null && (n === "question" || n === "thinking" || n === "interpretation");
+  } = Lp(), H = t === "collecting" || t === "collection-gate" || t === "prep" || t === "dialog" || t === "complete", V = s.map((Z) => hN[Z]).filter((Z) => typeof Z == "string"), q = t === "dialog" && p !== null && (n === "question" || n === "thinking" || n === "interpretation");
   return /* @__PURE__ */ c.jsxs(
     "aside",
     {
@@ -29947,10 +29976,10 @@ function H_() {
           }
         ),
         t === "instruction" ? /* @__PURE__ */ c.jsxs(Pa, { testId: "priority-conversation-instruction", children: [
-          zN.map((Z, L) => /* @__PURE__ */ c.jsx(
+          xN.map((Z, L) => /* @__PURE__ */ c.jsx(
             "p",
             {
-              className: L === 0 ? T_ : kn,
+              className: L === 0 ? T_ : hn,
               children: Z
             },
             Z
@@ -29961,13 +29990,13 @@ function H_() {
               className: "mt-1 rounded-[8px] border border-[#E3E3E3] bg-[#F7F6F4] px-3.5 py-3",
               "data-testid": "priority-conversation-start-block",
               children: [
-                /* @__PURE__ */ c.jsx("p", { className: "mb-1.5 text-[14px] font-semibold tracking-wide text-embed-brand-gold", children: xN }),
+                /* @__PURE__ */ c.jsx("p", { className: "mb-1.5 text-[14px] font-semibold tracking-wide text-embed-brand-gold", children: IN }),
                 Vc.map((Z, L) => {
                   const B = L === Vc.length - 1;
                   return /* @__PURE__ */ c.jsx(
                     "p",
                     {
-                      className: `${kn} text-embed-foreground-primary/90 ${B ? "" : "!font-bold"}`,
+                      className: `${hn} text-embed-foreground-primary/90 ${B ? "" : "!font-bold"}`,
                       children: Z
                     },
                     Z
@@ -30001,8 +30030,8 @@ function H_() {
           }
         ) }) : null,
         t === "collecting" ? /* @__PURE__ */ c.jsxs(Pa, { testId: "priority-conversation-collecting", children: [
-          EN.map((Z) => /* @__PURE__ */ c.jsx("p", { className: kn, children: Z }, Z)),
-          /* @__PURE__ */ c.jsx("p", { className: Js, children: wN }),
+          wN.map((Z) => /* @__PURE__ */ c.jsx("p", { className: hn, children: Z }, Z)),
+          /* @__PURE__ */ c.jsx("p", { className: Js, children: SN }),
           V.map((Z) => /* @__PURE__ */ c.jsx(
             "p",
             {
@@ -30014,8 +30043,8 @@ function H_() {
           ))
         ] }) : null,
         t === "collection-gate" ? /* @__PURE__ */ c.jsxs(Pa, { testId: "priority-conversation-gate", children: [
-          SN.map((Z) => /* @__PURE__ */ c.jsx("p", { className: kn, children: Z }, Z)),
-          /* @__PURE__ */ c.jsx("p", { className: kn, children: AN(i) }),
+          AN.map((Z) => /* @__PURE__ */ c.jsx("p", { className: hn, children: Z }, Z)),
+          /* @__PURE__ */ c.jsx("p", { className: hn, children: ON(i) }),
           V.map((Z) => /* @__PURE__ */ c.jsx(
             "p",
             {
@@ -30041,18 +30070,18 @@ function H_() {
                     style: {
                       backgroundColor: D_,
                       color: M_,
-                      fontSize: ng,
-                      fontWeight: ag,
+                      fontSize: ag,
+                      fontWeight: ig,
                       borderRadius: 0
                     },
-                    children: CN
+                    children: NN
                   }
                 ) : null,
                 /* @__PURE__ */ c.jsx(
                   Xs,
                   {
                     testId: "priority-conversation-finish-selection",
-                    label: ON,
+                    label: CN,
                     onClick: E,
                     disabled: f
                   }
@@ -30065,12 +30094,12 @@ function H_() {
           /* @__PURE__ */ c.jsx(
             "h3",
             {
-              className: lb,
+              className: db,
               "data-testid": "priority-conversation-prep-title",
-              children: NN
+              children: TN
             }
           ),
-          TN.map((Z) => /* @__PURE__ */ c.jsx("p", { className: kn, children: Z }, Z)),
+          DN.map((Z) => /* @__PURE__ */ c.jsx("p", { className: hn, children: Z }, Z)),
           /* @__PURE__ */ c.jsx(hc, { children: /* @__PURE__ */ c.jsx(
             kc,
             {
@@ -30104,7 +30133,7 @@ function H_() {
               className: "relative overflow-hidden rounded-[10px] border border-[#E3E3E3] bg-[#F7F6F4] p-3.5 shadow-[0_1px_0_rgba(0,25,48,0.04)]",
               style: n === "interpretation" || n === "thinking" ? { marginRight: 80 } : void 0,
               children: [
-                /* @__PURE__ */ c.jsx("p", { className: `${kn} font-medium`, children: p.prompt }),
+                /* @__PURE__ */ c.jsx("p", { className: `${hn} font-medium`, children: p.prompt }),
                 /* @__PURE__ */ c.jsx(
                   "div",
                   {
@@ -30172,7 +30201,7 @@ function H_() {
                             className: "text-[16px] font-medium leading-[1.45]",
                             style: { color: me.navy },
                             "data-testid": "priority-conversation-answer-ack",
-                            children: DN
+                            children: _N
                           }
                         ),
                         /* @__PURE__ */ c.jsx(
@@ -30204,12 +30233,12 @@ function H_() {
           /* @__PURE__ */ c.jsx(
             "h3",
             {
-              className: lb,
+              className: db,
               "data-testid": "priority-conversation-summary",
-              children: _N
+              children: RN
             }
           ),
-          RN.map((Z) => /* @__PURE__ */ c.jsx("p", { className: kn, children: Z }, Z)),
+          MN.map((Z) => /* @__PURE__ */ c.jsx("p", { className: hn, children: Z }, Z)),
           /* @__PURE__ */ c.jsx(hc, { children: /* @__PURE__ */ c.jsx(
             kc,
             {
@@ -30220,7 +30249,7 @@ function H_() {
                 Xs,
                 {
                   testId: "priority-conversation-revisit-continue",
-                  label: MN,
+                  label: PN,
                   onClick: g,
                   disabled: f
                 }
@@ -30255,7 +30284,7 @@ function K_({ onContinue: t }) {
   );
 }
 function U_() {
-  return /* @__PURE__ */ c.jsx("div", { className: a_, children: /* @__PURE__ */ c.jsx("h2", { className: `${Qj} uppercase`, children: "Co vás na tomto domě zajímá nejvíce?" }) });
+  return /* @__PURE__ */ c.jsx("div", { className: a_, children: /* @__PURE__ */ c.jsx("h2", { className: `${Wj} uppercase`, children: "Co vás na tomto domě zajímá nejvíce?" }) });
 }
 const V_ = 1e4;
 function F_(t) {
@@ -30266,7 +30295,7 @@ function Y_({
   onContinueToRacio: n,
   showRacioBridge: i
 }) {
-  const { cards: s, categories: l, setImportance: p, toggleCard: m, minimumMet: v } = eg(), { experience: y } = Ze(), h = Ap(), { phase: f } = Lp(), z = y.context.decision.terminal.id, [E, A] = j.useState(!1), w = i && E;
+  const { cards: s, categories: l, setImportance: p, toggleCard: m, minimumMet: v } = tg(), { experience: y } = Ze(), h = Ap(), { phase: f } = Lp(), z = y.context.decision.terminal.id, [E, A] = j.useState(!1), w = i && E;
   return j.useEffect(() => {
     if (f !== "complete" || !i) {
       A(!1);
@@ -30284,7 +30313,7 @@ function Y_({
       {
         id: le.priority,
         tabIndex: -1,
-        "aria-label": `${jE.priority} Experience`,
+        "aria-label": `${gE.priority} Experience`,
         "data-testid": "priority-experience",
         "data-terminal-id": z,
         "data-minimum-met": v ? "true" : "false",
@@ -30341,7 +30370,7 @@ function Y_({
     )
   ] });
 }
-function ig(t) {
+function rg(t) {
   return String(t);
 }
 function q_(t) {
@@ -30357,20 +30386,20 @@ function q_(t) {
 function $_(t, n) {
   return t.activeRoomId === n;
 }
-function rg(t, n) {
+function sg(t, n) {
   return Object.freeze(
-    t.rooms.filter((i) => ig(i.floor) === n)
+    t.rooms.filter((i) => rg(i.floor) === n)
   );
 }
 function G_(t, n) {
-  return rg(t, n)[0];
+  return sg(t, n)[0];
 }
 function Ja() {
   const { experience: t, dispatch: n } = Ze(), i = j.useMemo(
     () => q_(t.context),
     [t.context]
   ), s = j.useMemo(
-    () => rg(i, i.selectedFloor),
+    () => sg(i, i.selectedFloor),
     [i]
   );
   j.useEffect(() => {
@@ -30406,8 +30435,8 @@ function Ja() {
     isRoomActive: m
   };
 }
-var Z_ = Jb();
-function sg({
+var Z_ = Xb();
+function lg({
   children: t,
   frameClassName: n,
   frameStyle: i,
@@ -30451,7 +30480,7 @@ function sg({
         onClick: p,
         children: /* @__PURE__ */ c.jsxs("div", { className: "relative", onClick: (v) => v.stopPropagation(), children: [
           /* @__PURE__ */ c.jsx(
-            iN,
+            rN,
             {
               "aria-label": "Zavřít",
               className: "absolute right-0 top-0 z-20 translate-x-1/2 -translate-y-1/2",
@@ -30485,7 +30514,7 @@ function J_({
     aspectRatio: String(l)
   };
   return /* @__PURE__ */ c.jsx(
-    sg,
+    lg,
     {
       frameClassName: "overflow-hidden",
       frameStyle: p,
@@ -30496,14 +30525,14 @@ function J_({
     }
   );
 }
-const Gc = 1, lg = 4, X_ = 10, yc = {
+const Gc = 1, dg = 4, X_ = 10, yc = {
   scale: 1,
   x: 0,
   y: 0
 };
 function Zc(t) {
   return Math.min(
-    lg,
+    dg,
     Math.max(Gc, t)
   );
 }
@@ -30522,13 +30551,13 @@ function Jc(t, n) {
   const i = t.x - n.x, s = t.y - n.y;
   return Math.hypot(i, s);
 }
-function pb(t, n) {
+function mb(t, n) {
   return {
     x: (t.x + n.x) / 2,
     y: (t.y + n.y) / 2
   };
 }
-function mb(t, n, i = X_) {
+function vb(t, n, i = X_) {
   return Jc(t, n) <= i;
 }
 function W_({
@@ -30577,7 +30606,7 @@ function W_({
       const [U, M] = B;
       h.current = {
         distance: Math.max(1, Jc(U, M)),
-        midpoint: pb(U, M),
+        midpoint: mb(U, M),
         transform: m.current
       }, y.current = null;
       return;
@@ -30596,7 +30625,7 @@ function W_({
     if (U.length >= 2 && h.current !== null) {
       const [M, G] = U, $ = Math.max(1, Jc(M, G)), te = h.current, ie = Zc(
         te.transform.scale * ($ / te.distance)
-      ), fe = ie / te.transform.scale, Ie = pb(M, G), ue = Ie.x - te.midpoint.x, R = Ie.y - te.midpoint.y;
+      ), fe = ie / te.transform.scale, Ie = mb(M, G), ue = Ie.x - te.midpoint.x, R = Ie.y - te.midpoint.y;
       w({
         scale: ie,
         x: te.transform.x * fe + ue,
@@ -30608,7 +30637,7 @@ function W_({
       if (m.current.scale <= Gc)
         return;
       const M = U[0], G = y.current, $ = M.x - G.pointer.x, te = M.y - G.pointer.y;
-      mb(G.pointer, M) || (f.current = !0), w({
+      vb(G.pointer, M) || (f.current = !0), w({
         scale: G.transform.scale,
         x: G.transform.x + $,
         y: G.transform.y + te
@@ -30617,7 +30646,7 @@ function W_({
   }, q = (B) => {
     B.currentTarget.hasPointerCapture(B.pointerId) && B.currentTarget.releasePointerCapture(B.pointerId);
     const U = E.current;
-    if (v.current.delete(B.pointerId), v.current.size === 0 && f.current && U !== null && !mb(U, { x: B.clientX, y: B.clientY }) && (z.current = !0), v.current.size === 0) {
+    if (v.current.delete(B.pointerId), v.current.size === 0 && f.current && U !== null && !vb(U, { x: B.clientX, y: B.clientY }) && (z.current = !0), v.current.size === 0) {
       y.current = null, h.current = null, E.current = null, f.current = !1;
       return;
     }
@@ -30676,7 +30705,7 @@ function W_({
           Math.round(l.scale * 100),
           " procent. Maximum",
           " ",
-          lg * 100,
+          dg * 100,
           " procent."
         ] })
       ]
@@ -30684,7 +30713,7 @@ function W_({
   );
 }
 const bc = "#D4AF37", eR = "#001930", tR = "#FFFFFF";
-function dg({
+function ug({
   onClick: t,
   label: n = "Zvětšit náhled",
   className: i = "absolute bottom-3 right-3 z-10",
@@ -30737,7 +30766,7 @@ function oR({
   style: i
 }) {
   return /* @__PURE__ */ c.jsx(
-    dg,
+    ug,
     {
       label: "Zvětšit půdorys",
       className: n,
@@ -30747,9 +30776,9 @@ function oR({
   );
 }
 const nR = "#f5b90040", aR = "#f5b9007f", iR = 20;
-function vb({ interactive: t, className: n }) {
+function kb({ interactive: t, className: n }) {
   const { experience: i } = Ze(), { selectedFloor: s, isRoomActive: l, activeRoomId: p, selectRoom: m } = Ja(), v = i.context.floorPlan, y = v.viewBoxWidth, h = v.viewBoxHeight, [f, z] = j.useState(null), E = v.rooms.filter(
-    (A) => A.floorPlanRegion !== null && ig(A.floor) === s
+    (A) => A.floorPlanRegion !== null && rg(A.floor) === s
   );
   return /* @__PURE__ */ c.jsxs(
     "svg",
@@ -30867,7 +30896,7 @@ function rR() {
           {
             className: "h-full w-full",
             "data-floorplan-aspect": z.toFixed(4),
-            children: /* @__PURE__ */ c.jsx(vb, { interactive: !0, className: "block h-full w-full" })
+            children: /* @__PURE__ */ c.jsx(kb, { interactive: !0, className: "block h-full w-full" })
           }
         )
       }
@@ -30897,16 +30926,16 @@ function rR() {
         aspectRatio: z,
         isOpen: y,
         onClose: () => h(!1),
-        children: /* @__PURE__ */ c.jsx(vb, { interactive: !1, className: "block h-full w-full" })
+        children: /* @__PURE__ */ c.jsx(kb, { interactive: !1, className: "block h-full w-full" })
       }
     )
   ] });
 }
-const sR = me.lightGray, lR = me.warmGray, kb = me.navy, hb = me.pureWhite, dR = me.gold, uR = me.navy, cR = me.navy, pR = "mx-auto flex w-full min-w-0 shrink-0 gap-[1.6px] rounded-[6.4px] border border-embed-border-default p-[1.6px] desktop:w-[70%]", mR = 4.8, vR = 12.5, kR = 600;
+const sR = me.lightGray, lR = me.warmGray, hb = me.navy, yb = me.pureWhite, dR = me.gold, uR = me.navy, cR = me.navy, pR = "mx-auto flex w-full min-w-0 shrink-0 gap-[1.6px] rounded-[6.4px] border border-embed-border-default p-[1.6px] desktop:w-[70%]", mR = 4.8, vR = 12.5, kR = 600;
 function hR(t) {
   return `flex min-h-11 flex-1 items-center justify-center py-3 font-medium leading-normal tracking-wide transition-colors duration-[125ms] ease-out touch-manipulation desktop:min-h-0 desktop:py-[6.4px] ${t ? "font-semibold" : "font-normal"}`;
 }
-function ug({
+function cg({
   "aria-label": t,
   value: n,
   options: i,
@@ -30927,8 +30956,8 @@ function ug({
             "aria-pressed": p,
             className: hR(p),
             style: {
-              backgroundColor: p ? lR : kb,
-              color: p ? cR : hb,
+              backgroundColor: p ? lR : hb,
+              color: p ? cR : yb,
               borderRadius: p ? 0 : mR,
               borderStyle: "none",
               borderWidth: 0,
@@ -30939,7 +30968,7 @@ function ug({
               p || (m.currentTarget.style.backgroundColor = dR, m.currentTarget.style.color = uR);
             },
             onMouseLeave: (m) => {
-              p || (m.currentTarget.style.backgroundColor = kb, m.currentTarget.style.color = hb);
+              p || (m.currentTarget.style.backgroundColor = hb, m.currentTarget.style.color = yb);
             },
             onClick: () => s(l.value),
             children: l.label
@@ -30962,7 +30991,7 @@ function Xc() {
     label: yR(m)
   }));
   return /* @__PURE__ */ c.jsx(
-    ug,
+    cg,
     {
       "aria-label": "Výběr patra",
       value: l,
@@ -30977,8 +31006,8 @@ function Xc() {
     }
   );
 }
-const cg = j.createContext(null);
-function yb(t) {
+const pg = j.createContext(null);
+function bb(t) {
   const n = t.findIndex((i) => i.kind === "photo");
   return n >= 0 ? n : 0;
 }
@@ -30995,10 +31024,10 @@ function bR({ children: t }) {
     }
     if (H.current = l, f("photo"), w("ready"), (((G = p[V.current]) == null ? void 0 : G.roomId) ?? null) === l)
       return;
-    const U = ej(
+    const U = tj(
       n.house,
       l
-    ) ?? yb(p);
+    ) ?? bb(p);
     E(U);
     const M = p[U];
     (M == null ? void 0 : M.kind) === "photo" && i({
@@ -31058,7 +31087,7 @@ function bR({ children: t }) {
           E($);
           return;
         }
-        E(yb(L));
+        E(bb(L));
       }
     };
   }, [
@@ -31073,10 +31102,10 @@ function bR({ children: t }) {
     m,
     y
   ]);
-  return /* @__PURE__ */ c.jsx(cg.Provider, { value: q, children: t });
+  return /* @__PURE__ */ c.jsx(pg.Provider, { value: q, children: t });
 }
 function Sl() {
-  const t = j.useContext(cg);
+  const t = j.useContext(pg);
   if (t === null)
     throw new Error("useWalkthrough must be used within WalkthroughProvider");
   return t;
@@ -31088,7 +31117,7 @@ const fR = [
 function ul() {
   const { mediaMode: t, setMediaMode: n } = Sl();
   return /* @__PURE__ */ c.jsx(
-    ug,
+    cg,
     {
       "aria-label": "Režim média",
       value: t,
@@ -31097,7 +31126,7 @@ function ul() {
     }
   );
 }
-const Bp = "flex h-chapter-title shrink-0 items-center overflow-hidden text-base font-bold leading-none tracking-wide text-embed-foreground-primary", jR = "pt-[20px]", gR = "w-full", zR = "w-full", xR = "box-border flex h-full w-full min-w-0 flex-col content-start items-start gap-0 overflow-x-hidden pb-section pl-[20px] mobile:px-0 mobile:pb-2", IR = "grid w-full min-w-0 max-w-none shrink-0 content-start items-start gap-0 desktop:w-[600px] desktop:min-w-[600px] desktop:max-w-[600px]", ER = "relative z-0 flex h-full w-full min-w-0 flex-col items-stretch overflow-x-hidden pl-[20px] pr-[20px] pb-section mobile:px-0 mobile:pb-2", wR = "relative box-border aspect-video w-full min-w-0 max-w-none shrink-0 overflow-hidden rounded-[8px] bg-embed-surface-placeholder desktop:w-[600px] desktop:min-w-[600px] desktop:max-w-[600px]", pg = "relative flex w-full shrink-0 items-end", SR = "min-h-[50px] flex-1 mobile:min-h-2";
+const Bp = "flex h-chapter-title shrink-0 items-center overflow-hidden text-base font-bold leading-none tracking-wide text-embed-foreground-primary", jR = "pt-[20px]", gR = "w-full", zR = "w-full", xR = "box-border flex h-full w-full min-w-0 flex-col content-start items-start gap-0 overflow-x-hidden pb-section pl-[20px] mobile:px-0 mobile:pb-2", IR = "grid w-full min-w-0 max-w-none shrink-0 content-start items-start gap-0 desktop:w-[600px] desktop:min-w-[600px] desktop:max-w-[600px]", ER = "relative z-0 flex h-full w-full min-w-0 flex-col items-stretch overflow-x-hidden pl-[20px] pr-[20px] pb-section mobile:px-0 mobile:pb-2", wR = "relative box-border aspect-video w-full min-w-0 max-w-none shrink-0 overflow-hidden rounded-[8px] bg-embed-surface-placeholder desktop:w-[600px] desktop:min-w-[600px] desktop:max-w-[600px]", mg = "relative flex w-full shrink-0 items-end", SR = "min-h-[50px] flex-1 mobile:min-h-2";
 function AR() {
   return /* @__PURE__ */ c.jsxs(
     "section",
@@ -31110,7 +31139,7 @@ function AR() {
         /* @__PURE__ */ c.jsx("div", { className: `${Bp} mobile:hidden`, "aria-hidden": "true", children: /* @__PURE__ */ c.jsx("span", { className: "invisible", children: "." }) }),
         /* @__PURE__ */ c.jsx(rR, {}),
         /* @__PURE__ */ c.jsx("div", { className: SR, "aria-hidden": "true" }),
-        /* @__PURE__ */ c.jsx("div", { className: `${pg} hidden justify-center pb-1 tabletMax:flex desktop:flex`, children: /* @__PURE__ */ c.jsx("div", { className: gR, children: /* @__PURE__ */ c.jsx(Xc, {}) }) }),
+        /* @__PURE__ */ c.jsx("div", { className: `${mg} hidden justify-center pb-1 tabletMax:flex desktop:flex`, children: /* @__PURE__ */ c.jsx("div", { className: gR, children: /* @__PURE__ */ c.jsx(Xc, {}) }) }),
         /* @__PURE__ */ c.jsxs("div", { className: "hidden w-full items-center justify-center gap-3 pt-4 tabletMin:flex mobile:hidden tabletMax:hidden desktop:hidden", children: [
           /* @__PURE__ */ c.jsx("div", { className: "min-w-0 flex-1", children: /* @__PURE__ */ c.jsx(ul, {}) }),
           /* @__PURE__ */ c.jsx("div", { className: "min-w-0 flex-1", children: /* @__PURE__ */ c.jsx(Xc, {}) })
@@ -31119,7 +31148,7 @@ function AR() {
     }
   );
 }
-const bb = 62, OR = "ease-out";
+const fb = 62, OR = "ease-out";
 function CR(t) {
   const [n, i] = j.useState(t), [s, l] = j.useState(1), p = j.useRef(!0);
   return j.useEffect(() => {
@@ -31132,11 +31161,11 @@ function CR(t) {
     l(0);
     const m = window.setTimeout(() => {
       i(t), l(1);
-    }, bb);
+    }, fb);
     return () => {
       window.clearTimeout(m);
     };
-  }, [n, t]), { displayKey: n, opacity: s, phaseMs: bb };
+  }, [n, t]), { displayKey: n, opacity: s, phaseMs: fb };
 }
 const NR = "aspect-video w-[min(90vw,calc(90vh*16/9))] max-h-[90vh] max-w-[90vw] mobile:w-[min(calc(100vw-1.5rem),calc((100dvh-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-2rem)*16/9))] mobile:max-h-[calc(100dvh-env(safe-area-inset-top,0px)-env(safe-area-inset-bottom,0px)-2rem)]";
 function TR({
@@ -31148,7 +31177,7 @@ function TR({
   src: p
 }) {
   return /* @__PURE__ */ c.jsx(
-    sg,
+    lg,
     {
       frameClassName: NR,
       isOpen: n,
@@ -31178,7 +31207,7 @@ function TR({
   );
 }
 function DR({ onClick: t }) {
-  return /* @__PURE__ */ c.jsx(dg, { label: "Zvětšit náhled", onClick: t });
+  return /* @__PURE__ */ c.jsx(ug, { label: "Zvětšit náhled", onClick: t });
 }
 function _R({ onPlay: t }) {
   return /* @__PURE__ */ c.jsx(
@@ -31454,7 +31483,7 @@ function HR() {
 function KR({ title: t }) {
   return /* @__PURE__ */ c.jsx("h2", { className: Bp, children: t });
 }
-const Ro = 4, UR = 330, Qs = /* @__PURE__ */ new WeakMap();
+const Mo = 4, UR = 330, Qs = /* @__PURE__ */ new WeakMap();
 function VR(t) {
   return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
 }
@@ -31491,7 +31520,7 @@ function YR(t) {
     };
   }, [t]);
 }
-function qR(t, n, i, s = Ro) {
+function qR(t, n, i, s = Mo) {
   const l = Math.max(0, n - s), [p, m] = j.useState(0);
   j.useEffect(() => {
     m(0);
@@ -31536,32 +31565,32 @@ function qR(t, n, i, s = Ro) {
     scrollToSlot: v
   };
 }
-const Mo = 16, Hp = 48, mg = 4, $R = 1, vg = 8, kg = Math.max(
+const Lo = 16, Hp = 32, vg = 4, $R = 1, kg = 8, hg = Math.max(
   0,
-  vg - mg
+  kg - vg
 ), GR = "#D4AF37", ZR = "transparent", JR = "#FFFFFF", XR = "transparent", QR = vr - Hp * 2, Kp = Math.floor(
   (Math.min(
-    Ro * $D + (Ro - 1) * Mo,
+    Mo * $D + (Mo - 1) * Lo,
     QR
-  ) - (Ro - 1) * Mo) / Ro
-), hg = Ro * Kp + (Ro - 1) * Mo, WR = Kp + Mo, e2 = 767, t2 = 3, o2 = "#D4AF37", fb = `box-border w-full min-w-0 shrink-0 ${jR}`, n2 = "box-border h-full shrink-0 overflow-hidden transition-[border-color] duration-[125ms] ease-out touch-manipulation";
-function jb(t) {
+  ) - (Mo - 1) * Lo) / Mo
+), yg = Mo * Kp + (Mo - 1) * Lo, WR = Kp + Lo, e2 = 767, t2 = 3, o2 = "#D4AF37", jb = `box-border w-full min-w-0 shrink-0 ${jR}`, n2 = "box-border h-full shrink-0 overflow-hidden transition-[border-color] duration-[125ms] ease-out touch-manipulation";
+function gb(t) {
   const n = Math.max(0, Math.floor(t));
   if (n <= 0)
     return {
-      viewportWidth: hg,
+      viewportWidth: yg,
       thumbWidth: Kp,
       slotStep: WR,
-      visibleSlots: Ro
+      visibleSlots: Mo
     };
-  const s = typeof window < "u" && window.innerWidth <= e2 ? t2 : Ro, l = Math.max(
+  const s = typeof window < "u" && window.innerWidth <= e2 ? t2 : Mo, l = Math.max(
     44,
-    Math.floor((n - (s - 1) * Mo) / s)
+    Math.floor((n - (s - 1) * Lo) / s)
   );
   return {
     viewportWidth: n,
     thumbWidth: l,
-    slotStep: l + Mo,
+    slotStep: l + Lo,
     visibleSlots: s
   };
 }
@@ -31585,7 +31614,7 @@ function i2({ direction: t }) {
     }
   );
 }
-function gb({ direction: t, onClick: n }) {
+function zb({ direction: t, onClick: n }) {
   return /* @__PURE__ */ c.jsx(
     "button",
     {
@@ -31618,7 +31647,7 @@ function r2({
     {
       className: "relative h-full w-full bg-embed-background-tertiary",
       style: {
-        borderRadius: kg,
+        borderRadius: hg,
         overflow: "hidden"
       },
       children: [
@@ -31670,7 +31699,7 @@ function s2() {
     mediaModeEpoch: m,
     selectMediaIndex: v
   } = Sl(), y = j.useRef(null), h = j.useRef(/* @__PURE__ */ new Map()), f = j.useRef(m), z = j.useRef(s), E = j.useRef(i), A = j.useRef(!1), [w, N] = j.useState(
-    () => jb(hg)
+    () => gb(yg)
   ), g = n.thumbnails, H = g.length, V = g.findIndex(($) => $.kind === "photo"), q = V >= 0 ? V : 0;
   YR(y);
   const { canScrollLeft: Z, canScrollRight: L, scrollGroup: B, scrollToSlot: U } = qR(
@@ -31684,7 +31713,7 @@ function s2() {
     if ($ === null || typeof ResizeObserver > "u")
       return;
     const te = () => {
-      const Ie = jb($.clientWidth);
+      const Ie = gb($.clientWidth);
       N(
         (ue) => ue.viewportWidth === Ie.viewportWidth && ue.thumbWidth === Ie.thumbWidth && ue.slotStep === Ie.slotStep && ue.visibleSlots === Ie.visibleSlots ? ue : Ie
       );
@@ -31708,10 +31737,10 @@ function s2() {
           U(q);
           return;
         }
-        const fe = ej(
+        const fe = tj(
           t.house,
           s
-        ), ue = UA(t.house, i) === s ? i : fe ?? i;
+        ), ue = VA(t.house, i) === s ? i : fe ?? i;
         U(Math.max(0, ue - 1));
         return;
       }
@@ -31739,11 +31768,11 @@ function s2() {
       return;
     }
     h.current.set($, te);
-  }, []), G = H * w.thumbWidth + Math.max(0, H - 1) * Mo;
+  }, []), G = H * w.thumbWidth + Math.max(0, H - 1) * Lo;
   return H === 0 ? /* @__PURE__ */ c.jsx(
     "div",
     {
-      className: fb,
+      className: jb,
       style: { maxWidth: vr },
       children: /* @__PURE__ */ c.jsxs("div", { className: "flex w-full items-center justify-center", children: [
         /* @__PURE__ */ c.jsx(Ws, {}),
@@ -31751,7 +31780,7 @@ function s2() {
           "div",
           {
             className: "flex h-20 min-w-0 flex-1 items-stretch mobile:h-20",
-            style: { gap: Mo },
+            style: { gap: Lo },
             children: Array.from({ length: w.visibleSlots }, ($, te) => /* @__PURE__ */ c.jsx(
               "div",
               {
@@ -31767,11 +31796,11 @@ function s2() {
   ) : /* @__PURE__ */ c.jsx(
     "div",
     {
-      className: fb,
+      className: jb,
       style: { maxWidth: vr },
       "data-media-rail-slots": w.visibleSlots,
       children: /* @__PURE__ */ c.jsxs("div", { className: "flex w-full items-center justify-center", children: [
-        Z ? /* @__PURE__ */ c.jsx(gb, { direction: "left", onClick: () => B(-1) }) : /* @__PURE__ */ c.jsx(Ws, {}),
+        Z ? /* @__PURE__ */ c.jsx(zb, { direction: "left", onClick: () => B(-1) }) : /* @__PURE__ */ c.jsx(Ws, {}),
         /* @__PURE__ */ c.jsx(
           "div",
           {
@@ -31784,7 +31813,7 @@ function s2() {
               {
                 className: "flex h-full transition-[width] duration-150 ease-out",
                 style: {
-                  gap: Mo,
+                  gap: Lo,
                   width: G,
                   minWidth: G
                 },
@@ -31801,10 +31830,10 @@ function s2() {
                       style: {
                         width: w.thumbWidth,
                         minWidth: w.thumbWidth,
-                        borderWidth: mg,
+                        borderWidth: vg,
                         borderStyle: "solid",
                         // Inline beats Delivery `[data-embed-boundary] button { border-radius: 0 }`.
-                        borderRadius: vg,
+                        borderRadius: kg,
                         overflow: "hidden",
                         borderColor: ie ? GR : ZR,
                         // Padding + fill = white ring; inset box-shadow is covered by <img> and
@@ -31829,7 +31858,7 @@ function s2() {
                           decoding: "async",
                           className: "h-full w-full object-cover",
                           style: {
-                            borderRadius: kg
+                            borderRadius: hg
                           }
                         }
                       )
@@ -31841,7 +31870,7 @@ function s2() {
             )
           }
         ),
-        L ? /* @__PURE__ */ c.jsx(gb, { direction: "right", onClick: () => B(1) }) : /* @__PURE__ */ c.jsx(Ws, {})
+        L ? /* @__PURE__ */ c.jsx(zb, { direction: "right", onClick: () => B(1) }) : /* @__PURE__ */ c.jsx(Ws, {})
       ] })
     }
   );
@@ -31950,7 +31979,7 @@ function p2() {
         /* @__PURE__ */ c.jsx("div", { className: `${Bp} mobile:hidden`, "aria-hidden": "true", children: /* @__PURE__ */ c.jsx("span", { className: "invisible", children: "." }) }),
         /* @__PURE__ */ c.jsx("div", { className: "hidden min-h-0 flex-1 flex-col justify-start pt-0 tabletMax:flex desktop:flex", children: /* @__PURE__ */ c.jsx(u2, {}) }),
         /* @__PURE__ */ c.jsx("div", { className: "hidden w-full mobile:mx-auto mobile:mt-1 mobile:block mobile:w-4/5 tabletMin:block tabletMax:hidden desktop:hidden", children: /* @__PURE__ */ c.jsx(c2, {}) }),
-        /* @__PURE__ */ c.jsx("div", { className: `${pg} hidden justify-center pb-1 tabletMax:flex desktop:flex`, children: /* @__PURE__ */ c.jsx("div", { className: `${zR} z-20`, children: /* @__PURE__ */ c.jsx(ul, {}) }) }),
+        /* @__PURE__ */ c.jsx("div", { className: `${mg} hidden justify-center pb-1 tabletMax:flex desktop:flex`, children: /* @__PURE__ */ c.jsx("div", { className: `${zR} z-20`, children: /* @__PURE__ */ c.jsx(ul, {}) }) }),
         /* @__PURE__ */ c.jsx(
           "div",
           {
@@ -31974,7 +32003,7 @@ function m2() {
       tabIndex: -1,
       className: `scroll-mt-header grid w-full min-w-0 items-stretch gap-0 overflow-x-hidden ${br} grid-cols-1 mobile:px-0 divide-y divide-embed-border-default tabletMin:grid-cols-[minmax(0,1.08fr)_minmax(0,0.92fr)] tabletMin:divide-y-0 tabletMax:!grid-cols-[minmax(0,1.55fr)_minmax(12rem,0.55fr)_minmax(0,1fr)] tabletMax:!divide-y-0 desktop:grid-cols-[var(--spatial-terminal-cols)] desktop:divide-y-0 [&>[aria-label='Seznam místností']]:border-embed-border-default desktop:[&>[aria-label='Seznam místností']]:border-r mobile:[&>[aria-label='Seznam místností']]:border-r-0`,
       style: {
-        "--spatial-terminal-cols": `${Jj}px ${Xj}px ${YD}px`
+        "--spatial-terminal-cols": `${Xj}px ${Qj}px ${YD}px`
       },
       children: [
         /* @__PURE__ */ c.jsx(l2, {}),
@@ -31984,7 +32013,7 @@ function m2() {
     }
   );
 }
-const v2 = "Pojďme spolu objevit, co je pro Vás skutečně podstatné.", k2 = "Nastavte si priority, které pak zohledním v dalším obsahu a v PDF ke stažení.", yg = Object.freeze({
+const v2 = "Pojďme spolu objevit, co je pro Vás skutečně podstatné.", k2 = "Nastavte si priority, které pak zohledním v dalším obsahu a v PDF ke stažení.", bg = Object.freeze({
   variant: "client-studio-tour-to-priority",
   content: Object.freeze({
     title: "",
@@ -32003,9 +32032,9 @@ function b2({
   onDismiss: i
 }) {
   return /* @__PURE__ */ c.jsx("div", { className: "desktop:-ml-section desktop:w-[640px]", children: /* @__PURE__ */ c.jsx(
-    lN,
+    dN,
     {
-      config: yg,
+      config: bg,
       avatar: /* @__PURE__ */ c.jsx(
         "span",
         {
@@ -32017,7 +32046,7 @@ function b2({
             background: "#F7F6F4",
             padding: 2
           },
-          children: /* @__PURE__ */ c.jsx(og, { size: 48 })
+          children: /* @__PURE__ */ c.jsx(ng, { size: 48 })
         }
       ),
       open: t,
@@ -32060,7 +32089,7 @@ function j2({
     dismiss: z
   };
 }
-function bg({
+function fg({
   legacyExperience: t = null,
   onLegacySelectChoice: n,
   onLegacyContinue: i,
@@ -32103,7 +32132,7 @@ function bg({
       var ce;
       if (x)
         return;
-      if (document.getElementById(J) === null || !uO(J)) {
+      if (document.getElementById(J) === null || !cO(J)) {
         ee = window.requestAnimationFrame(C);
         return;
       }
@@ -32124,41 +32153,41 @@ function bg({
     x !== -1 && (J !== ((C = m[0]) == null ? void 0 : C.id) && B(!0), w(!0), V(J), Z(J), y((Q) => Math.max(Q, x + 1)), E(ee), f(ve), (W = M.current) == null || W.call(M), M.current = null, U.current !== null && (window.clearTimeout(U.current), U.current = null));
   };
   j.useEffect(() => (Dy((J) => {
-    if (hO(J) && v >= 4) {
+    if (yO(J) && v >= 4) {
       G(m[3].id, J);
       return;
     }
-    if (vO(J)) {
+    if (kO(J)) {
       G(m[1].id, J);
       return;
     }
-    if (kO(J) && v >= 3) {
+    if (hO(J) && v >= 3) {
       G(m[2].id, J);
       return;
     }
-    mO(J) && G(m[0].id, J);
+    vO(J) && G(m[0].id, J);
   }), () => {
     Dy(null);
   }), [v, m]);
   const $ = j2({
-    config: yg,
+    config: bg,
     isTourActive: v === 1,
     prioritySceneId: ((fe = m[1]) == null ? void 0 : fe.id) ?? "journey-scene-interpretation",
     onEnterPriority: G
   }), te = (J) => {
     G(J);
   };
-  return /* @__PURE__ */ c.jsx(XS, { children: /* @__PURE__ */ c.jsx(iD, { children: /* @__PURE__ */ c.jsxs(DO, { children: [
-    /* @__PURE__ */ c.jsx(IO, {}),
+  return /* @__PURE__ */ c.jsx(QS, { children: /* @__PURE__ */ c.jsx(rD, { children: /* @__PURE__ */ c.jsxs(_O, { children: [
+    /* @__PURE__ */ c.jsx(EO, {}),
     /* @__PURE__ */ c.jsxs(bR, { children: [
       /* @__PURE__ */ c.jsx(
-        AO,
+        OO,
         {
           snapEnabled: L && !A
         }
       ),
-      /* @__PURE__ */ c.jsx(iO, {}),
-      /* @__PURE__ */ c.jsx(EO, { children: /* @__PURE__ */ c.jsxs(
+      /* @__PURE__ */ c.jsx(rO, {}),
+      /* @__PURE__ */ c.jsx(wO, { children: /* @__PURE__ */ c.jsxs(
         "div",
         {
           className: "relative",
@@ -32166,7 +32195,7 @@ function bg({
           "data-current-scene": H ?? "",
           children: [
             t !== null && n !== void 0 && i !== void 0 ? /* @__PURE__ */ c.jsx(
-              MO,
+              PO,
               {
                 experience: t,
                 onSelectChoice: n,
@@ -32190,8 +32219,8 @@ function bg({
                   }
                 ),
                 children: [
-                  /* @__PURE__ */ c.jsx(cD, {}),
-                  /* @__PURE__ */ c.jsx(SO, {}),
+                  /* @__PURE__ */ c.jsx(pD, {}),
+                  /* @__PURE__ */ c.jsx(AO, {}),
                   /* @__PURE__ */ c.jsx(m2, {})
                 ]
               }
@@ -32227,7 +32256,7 @@ function bg({
                 onNavigate: te,
                 animateOnMount: v === 3,
                 pinFooterToBottom: !1,
-                children: /* @__PURE__ */ c.jsx(gT, {})
+                children: /* @__PURE__ */ c.jsx(zT, {})
               }
             ) : null,
             v >= 4 ? /* @__PURE__ */ c.jsx(
@@ -32246,7 +32275,7 @@ function bg({
               }
             ) : null,
             /* @__PURE__ */ c.jsx(
-              hD,
+              yD,
               {
                 enabled: !A,
                 journeyHasLeftMain: H !== ((X = m[0]) == null ? void 0 : X.id) || v > 1
@@ -32298,7 +32327,7 @@ function I2({
     )
   ] });
 }
-const E2 = 48, zb = [
+const E2 = 48, xb = [
   {
     sceneId: "journey-scene-orientation",
     sectionId: le.hero,
@@ -32328,15 +32357,15 @@ const E2 = 48, zb = [
   le.hero,
   le.walkthrough
 ];
-function fg({
+function jg({
   legacyExperience: t = null,
   onSelectDecision: n,
   activeSceneId: i = null,
-  visibleSceneIds: s = [zb[0].sceneId]
+  visibleSceneIds: s = [xb[0].sceneId]
 }) {
   var Z;
-  const { session: l, updateWorkspaceScope: p } = Mf(), m = t !== null && n !== void 0, v = j.useMemo(
-    () => zb.filter((L) => s.includes(L.sceneId)),
+  const { session: l, updateWorkspaceScope: p } = Pf(), m = t !== null && n !== void 0, v = j.useMemo(
+    () => xb.filter((L) => s.includes(L.sceneId)),
     [s]
   ), [y, h] = j.useState(le.hero), f = Ip(
     w2
@@ -32347,7 +32376,7 @@ function fg({
   const z = i === "journey-scene-orientation" ? y : ((Z = v.find((L) => L.sceneId === i)) == null ? void 0 : Z.sectionId) ?? null, [E, A] = j.useState(!1), w = jp(), N = w.runtimeProjectId ?? xl(l == null ? void 0 : l.projectId), g = j.useMemo(
     () => Pc(N),
     [N]
-  ), H = PA(w);
+  ), H = LA(w);
   io("ClientStudioSidebar.selector", {
     runtimeProjectId: w.runtimeProjectId,
     sessionProjectId: (l == null ? void 0 : l.projectId) ?? null,
@@ -32368,7 +32397,7 @@ function fg({
     p({ activeHouseId: L });
     const B = document.querySelector("[data-embed-root]");
     B !== null && (B.dataset.objectId = L, window.dispatchEvent(new Event("embed:house-change")));
-    const U = Bw(L);
+    const U = Hw(L);
     if (!(typeof window > "u")) {
       if (window.parent === window) {
         window.dispatchEvent(new CustomEvent(U.type, { detail: U }));
@@ -32435,7 +32464,7 @@ function fg({
                     "data-client-scene-dot": "",
                     "data-active-scene-dot": B ? "true" : "false",
                     onClick: () => {
-                      L.sceneId === "journey-scene-orientation" && h(L.sectionId), ij(L.sectionId);
+                      L.sceneId === "journey-scene-orientation" && h(L.sectionId), rj(L.sectionId);
                     },
                     className: [
                       "box-border h-3 w-3 rounded-full transition-colors",
@@ -32540,7 +32569,7 @@ function _2(t) {
   };
 }
 function R2(t) {
-  return Fb(t);
+  return Yb(t);
 }
 function M2(t) {
   const n = t.list();
@@ -32596,7 +32625,7 @@ function L2(t, n, i, s, l) {
         }))
       }
     ] : [];
-  }), h = i.decisionFilter === null || l === null ? { highlights: [], recommendedRooms: [] } : _I(i.decisionFilter, l);
+  }), h = i.decisionFilter === null || l === null ? { highlights: [], recommendedRooms: [] } : RI(i.decisionFilter, l);
   return {
     currentSceneId: s,
     answers: p,
@@ -32663,7 +32692,7 @@ class F2 {
     l.history = [], l.currentDecisionId = s;
   }
 }
-function jg(t, n) {
+function gg(t, n) {
   t.currentDecisionId !== n && (t.currentDecisionId !== null && t.history.push(t.currentDecisionId), t.currentDecisionId = n);
 }
 const Y2 = "go-to-decision";
@@ -32676,7 +32705,7 @@ class q2 {
     const { decisionId: s } = n;
     if (!this.registry.get(s))
       throw new Up(s);
-    jg(i.state, s);
+    gg(i.state, s);
   }
 }
 const $2 = "go-next";
@@ -32702,7 +32731,7 @@ class G2 {
       throw new sr(
         `Decision "${l}" has next "${p}" which is not registered`
       );
-    jg(s, p);
+    gg(s, p);
   }
 }
 const Z2 = "go-back";
@@ -32715,16 +32744,16 @@ class J2 {
     s.currentDecisionId = l ?? null;
   }
 }
-const X2 = CI;
+const X2 = NI;
 function Q2(t) {
-  const n = new S2(NI), i = {
+  const n = new S2(TI), i = {
     answers: /* @__PURE__ */ new Map(),
     currentDecisionId: null,
     history: []
   }, s = {
     currentSceneId: t.start,
     state: i
-  }, l = new zT();
+  }, l = new xT();
   return l.register(K2, new U2()), l.register(
     V2,
     new F2(n)
@@ -32734,12 +32763,12 @@ function Q2(t) {
   ), l.register(
     $2,
     new G2(n)
-  ), l.register(Z2, new J2()), new ST(t, {
+  ), l.register(Z2, new J2()), new AT(t, {
     executionContext: s,
     resolver: l,
     interpreter: new H2(
       n,
-      OI
+      CI
     )
   });
 }
@@ -32780,10 +32809,10 @@ function eM() {
     i(s.dispatch(v));
   };
   return /* @__PURE__ */ c.jsx(
-    Qb,
+    Wb,
     {
       sidebar: /* @__PURE__ */ c.jsx(
-        fg,
+        jg,
         {
           legacyExperience: n,
           onSelectDecision: l
@@ -32792,7 +32821,7 @@ function eM() {
       showStatusBar: !1,
       header: /* @__PURE__ */ c.jsx(c.Fragment, {}),
       children: /* @__PURE__ */ c.jsx(
-        bg,
+        fg,
         {
           legacyExperience: n,
           onLegacySelectChoice: p,
@@ -32823,21 +32852,21 @@ function oM({
   ), [p, m] = j.useState(
     () => Bc().slice(0, 1).map((v) => v.id)
   );
-  return i ? /* @__PURE__ */ c.jsx(eM, {}) : /* @__PURE__ */ c.jsx(oO, { runtime: t, children: /* @__PURE__ */ c.jsxs(c.Fragment, { children: [
+  return i ? /* @__PURE__ */ c.jsx(eM, {}) : /* @__PURE__ */ c.jsx(nO, { runtime: t, children: /* @__PURE__ */ c.jsxs(c.Fragment, { children: [
     /* @__PURE__ */ c.jsx(
-      Qb,
+      Wb,
       {
         sidebar: /* @__PURE__ */ c.jsx(
-          fg,
+          jg,
           {
             activeSceneId: s,
             visibleSceneIds: p
           }
         ),
-        header: /* @__PURE__ */ c.jsx(dO, {}),
+        header: /* @__PURE__ */ c.jsx(uO, {}),
         showStatusBar: !1,
         children: /* @__PURE__ */ c.jsx(
-          bg,
+          fg,
           {
             initialLandingOffsetPx: n,
             onActiveSceneChange: l,
@@ -32846,15 +32875,15 @@ function oM({
         )
       }
     ),
-    /* @__PURE__ */ c.jsx(gO, { visibleSceneIds: p })
+    /* @__PURE__ */ c.jsx(zO, { visibleSceneIds: p })
   ] }) });
 }
 function nM({
   children: t
 }) {
-  return /* @__PURE__ */ c.jsx(hS, { bindStudioId: "client", children: t });
+  return /* @__PURE__ */ c.jsx(yS, { bindStudioId: "client", children: t });
 }
-const xb = "embed:delivery-state";
+const Ib = "embed:delivery-state";
 function aM(t) {
   if (t == null || typeof t.setAttribute != "function")
     throw new Error(
@@ -32870,16 +32899,16 @@ function rM(t) {
   const n = (t == null ? void 0 : t.trim()) ?? "";
   return n.length > 0 ? n : null;
 }
-function gg(t) {
+function zg(t) {
   const { runtime: n, assetBase: i, objectId: s } = t, l = aM(t.target), p = rM(s), m = iM(l);
-  Iy(i), l.setAttribute("data-embed-root", ""), l.setAttribute("data-client-studio-root", ""), l.setAttribute("data-embed-boundary", ""), l.dataset.clientStudioVersion = hn.version, l.dataset.clientStudioGeneration = hn.generation, p !== null && (l.dataset.objectId = p), document.documentElement.dataset.clientStudioVersion = hn.version, document.documentElement.dataset.clientStudioGeneration = hn.generation;
-  const v = Xb.createRoot(l);
+  Iy(i), l.setAttribute("data-embed-root", ""), l.setAttribute("data-client-studio-root", ""), l.setAttribute("data-embed-boundary", ""), l.dataset.clientStudioVersion = yn.version, l.dataset.clientStudioGeneration = yn.generation, p !== null && (l.dataset.objectId = p), document.documentElement.dataset.clientStudioVersion = yn.version, document.documentElement.dataset.clientStudioGeneration = yn.generation;
+  const v = Qb.createRoot(l);
   let y = null;
   const h = (f) => {
     y = f.detail;
   };
-  return l.addEventListener(xb, h), v.render(
-    /* @__PURE__ */ c.jsx(j.StrictMode, { children: /* @__PURE__ */ c.jsx(zE, { children: /* @__PURE__ */ c.jsx(nM, { children: /* @__PURE__ */ c.jsx(
+  return l.addEventListener(Ib, h), v.render(
+    /* @__PURE__ */ c.jsx(j.StrictMode, { children: /* @__PURE__ */ c.jsx(xE, { children: /* @__PURE__ */ c.jsx(nM, { children: /* @__PURE__ */ c.jsx(
       oM,
       {
         runtime: n,
@@ -32890,11 +32919,11 @@ function gg(t) {
     rootElement: l,
     getDeliveryState: () => y,
     dispose: () => {
-      l.removeEventListener(xb, h), v.unmount(), Iy(void 0), l.removeAttribute("data-embed-root"), l.removeAttribute("data-client-studio-root"), l.removeAttribute("data-embed-boundary"), delete l.dataset.clientStudioVersion, delete l.dataset.clientStudioGeneration, delete l.dataset.objectId, l.replaceChildren();
+      l.removeEventListener(Ib, h), v.unmount(), Iy(void 0), l.removeAttribute("data-embed-root"), l.removeAttribute("data-client-studio-root"), l.removeAttribute("data-embed-boundary"), delete l.dataset.clientStudioVersion, delete l.dataset.clientStudioGeneration, delete l.dataset.objectId, l.replaceChildren();
     }
   };
 }
-const zg = "data-embed-boundary", xe = zg, sM = `
+const xg = "data-embed-boundary", xe = xg, sM = `
 /* ── Boundary inheritance root (no reliance on host html/body) ── */
 [${xe}] {
   color: rgb(0 25 48);
@@ -33087,7 +33116,7 @@ const zg = "data-embed-boundary", xe = zg, sM = `
   box-shadow: none !important;
 }
 `;
-function xg() {
+function Ig() {
   const t = document.body;
   if (t)
     return t;
@@ -33098,16 +33127,16 @@ function xg() {
     "Embed: cannot attach Experience — document body is unavailable"
   );
 }
-function Ig() {
+function Eg() {
   const t = document.head;
-  return t || xg();
+  return t || Ig();
 }
-function Eg(t, ...n) {
+function wg(t, ...n) {
   for (const i of n)
     t.appendChild(i);
 }
 let Qc = null;
-const Ib = "embed-client-studio-fonts", lM = "embed-client-studio-css", dM = "embed-client-studio-shell-css", uM = "embed-css-isolation", cM = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap", pM = `
+const Eb = "embed-client-studio-fonts", lM = "embed-client-studio-css", dM = "embed-client-studio-shell-css", uM = "embed-css-isolation", cM = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;900&display=swap", pM = `
 html {
   overscroll-behavior: auto;
 }
@@ -33169,27 +33198,27 @@ function mM(t) {
   Qc = t;
 }
 function vM() {
-  if (typeof document > "u" || document.getElementById(Ib))
+  if (typeof document > "u" || document.getElementById(Eb))
     return;
   const t = document.createElement("link");
   t.rel = "preconnect", t.href = "https://fonts.googleapis.com";
   const n = document.createElement("link");
   n.rel = "preconnect", n.href = "https://fonts.gstatic.com", n.crossOrigin = "anonymous";
   const i = document.createElement("link");
-  i.id = Ib, i.rel = "stylesheet", i.href = cM, Eg(
-    Ig(),
+  i.id = Eb, i.rel = "stylesheet", i.href = cM, wg(
+    Eg(),
     t,
     n,
     i
   );
 }
 function fc(t, n) {
-  const i = Ig();
+  const i = Eg();
   let s = document.getElementById(t);
   s || (s = document.createElement("style"), s.id = t, i.appendChild(s)), s.textContent = n, i.appendChild(s);
 }
 function Wc(t) {
-  t.setAttribute(zg, "");
+  t.setAttribute(xg, "");
 }
 function Vp() {
   typeof document > "u" || (vM(), Qc !== null && fc(lM, Qc), fc(dM, pM), fc(uM, sM));
@@ -33211,7 +33240,7 @@ function kM(t) {
 }
 function hM(t, n) {
   Vp();
-  const i = kM(n.objectId), s = gg({
+  const i = kM(n.objectId), s = zg({
     target: t,
     objectId: i,
     assetBase: n.assetBase
@@ -33228,7 +33257,7 @@ function hM(t, n) {
     }
   };
 }
-const Eb = "https://conis.cz", yM = Object.freeze([
+const wb = "https://conis.cz", yM = Object.freeze([
   "https://radimventus.github.io/embed-engine",
   "http://radimventus.github.io/embed-engine"
 ]);
@@ -33243,17 +33272,17 @@ function fM(t) {
   const n = t.trim().replace(/\/+$/, "");
   if (n.length !== 0)
     return bM(n) ? (typeof console < "u" && typeof console.warn == "function" && console.warn(
-      `Embed.mount: legacy assetBase "${t}" uses GitHub Pages and breaks house-package CSV fetch (CORS on 301). Using ${Eb}.`
-    ), Eb) : n;
-}
-function wg(t) {
-  return "fixture" in t && t.fixture === "garden";
+      `Embed.mount: legacy assetBase "${t}" uses GitHub Pages and breaks house-package CSV fetch (CORS on 301). Using ${wb}.`
+    ), wb) : n;
 }
 function Sg(t) {
+  return "fixture" in t && t.fixture === "garden";
+}
+function Ag(t) {
   return "experience" in t && t.experience !== void 0;
 }
 function jM(t) {
-  return !wg(t) && !Sg(t);
+  return !Sg(t) && !Ag(t);
 }
 function gM(t) {
   return t.mode ? t.mode : t.launcher !== void 0 ? "launcher" : "inline";
@@ -33269,7 +33298,7 @@ function zM(t) {
 }
 function xM(t) {
   if ("fixture" in t && t.fixture === "garden")
-    return u0();
+    return c0();
   if ("experience" in t && t.experience)
     return t.experience;
   throw new Error(
@@ -33316,7 +33345,7 @@ function IM(t) {
   ];
 }
 function EM(t, n) {
-  return "fixture" in t && t.fixture === "garden" ? c0().filter(
+  return "fixture" in t && t.fixture === "garden" ? p0().filter(
     (i) => i.type !== "priority.followup.selected"
   ) : IM(n);
 }
@@ -33329,11 +33358,11 @@ const wM = Object.freeze([
   "priority-experience",
   "ai-advisor",
   "audit-lead-capture"
-]), Ag = "social-proof", wb = new Set(wM);
+]), Og = "social-proof", Sb = new Set(wM);
 function SM(t) {
   var s;
   const n = ((s = t.configuredId) == null ? void 0 : s.trim()) ?? "";
-  return n.length > 0 && wb.has(n) ? { elementId: n, usedDefault: !1 } : { elementId: wb.has(t.modeDefaultId) ? t.modeDefaultId : Ag, usedDefault: !0 };
+  return n.length > 0 && Sb.has(n) ? { elementId: n, usedDefault: !1 } : { elementId: Sb.has(t.modeDefaultId) ? t.modeDefaultId : Og, usedDefault: !0 };
 }
 function AM(t) {
   return `#${t.replace(/[^a-zA-Z0-9_-]/g, "")}`;
@@ -33357,36 +33386,36 @@ function CM(t) {
   const { body: n, html: i } = Fp();
   i.style.overflow = "hidden", n.style.overflow = "hidden", n.style.position = "fixed", n.style.top = `-${t.scrollY}px`, n.style.left = `-${t.scrollX}px`, n.style.right = "0", n.style.width = "100%";
 }
-function Sb(t) {
+function Ab(t) {
   const { body: n, html: i } = Fp();
   n.style.position = "", n.style.top = "", n.style.left = "", n.style.right = "", n.style.width = "", n.style.overflow = t.bodyOverflow, i.style.overflow = t.htmlOverflow, window.scrollTo(t.scrollX, t.scrollY);
 }
-const NM = "data-embed-overlay", TM = "data-embed-overlay-mount", Ab = "data-embed-close";
+const NM = "data-embed-overlay", TM = "data-embed-overlay-mount", Ob = "data-embed-close";
 function DM(t) {
-  const n = xg(), i = OM();
+  const n = Ig(), i = OM();
   CM(i);
   const s = document.createElement("div");
   s.setAttribute(NM, ""), Wc(s), s.setAttribute("role", "dialog"), s.setAttribute("aria-modal", "true"), s.setAttribute("aria-label", "Client Studio"), s.style.position = "fixed", s.style.inset = "0", s.style.zIndex = "2147483000";
   const l = document.createElement("div");
   l.setAttribute(TM, ""), Wc(l), l.style.position = "absolute", l.style.inset = "0";
-  const { hitAreaPx: p } = Aj("close"), m = document.createElement("button");
-  m.type = "button", m.setAttribute(Ab, ""), m.setAttribute("aria-label", "Zavřít Client Studio"), m.style.position = "absolute", m.style.top = "0.75rem", m.style.right = "0.75rem", m.style.zIndex = "1", m.style.display = "flex", m.style.height = `${p}px`, m.style.width = `${p}px`, m.style.alignItems = "center", m.style.justifyContent = "center", m.style.border = "0", m.style.background = "transparent", m.style.padding = "0", m.style.cursor = "pointer", m.style.color = "rgb(0 25 48)", nN(m, { name: "close" });
+  const { hitAreaPx: p } = Oj("close"), m = document.createElement("button");
+  m.type = "button", m.setAttribute(Ob, ""), m.setAttribute("aria-label", "Zavřít Client Studio"), m.style.position = "absolute", m.style.top = "0.75rem", m.style.right = "0.75rem", m.style.zIndex = "1", m.style.display = "flex", m.style.height = `${p}px`, m.style.width = `${p}px`, m.style.alignItems = "center", m.style.justifyContent = "center", m.style.border = "0", m.style.background = "transparent", m.style.padding = "0", m.style.cursor = "pointer", m.style.color = "rgb(0 25 48)", aN(m, { name: "close" });
   const v = (y) => {
     const h = y.target;
-    h == null || typeof h.closest != "function" || !h.closest(`[${Ab}]`) || (y.preventDefault(), t.onClose());
+    h == null || typeof h.closest != "function" || !h.closest(`[${Ob}]`) || (y.preventDefault(), t.onClose());
   };
-  if (s.addEventListener("click", v), Eg(s, l, m), n.appendChild(s), typeof l.setAttribute != "function")
-    throw s.parentNode && s.parentNode.removeChild(s), Sb(i), new Error("Embed: launcher mount container failed to initialize");
+  if (s.addEventListener("click", v), wg(s, l, m), n.appendChild(s), typeof l.setAttribute != "function")
+    throw s.parentNode && s.parentNode.removeChild(s), Ab(i), new Error("Embed: launcher mount container failed to initialize");
   return {
     root: s,
     mountTarget: l,
     scrollSnapshot: i,
     dispose: () => {
-      s.removeEventListener("click", v), s.parentNode && s.parentNode.removeChild(s), Sb(i);
+      s.removeEventListener("click", v), s.parentNode && s.parentNode.removeChild(s), Ab(i);
     }
   };
 }
-const _M = 500, Og = 500;
+const _M = 500, Cg = 500;
 function po(t, n) {
   var i;
   (i = t.onStateChange) == null || i.call(t, n), t.scrollContainer.dataset.embedRevealState = n;
@@ -33448,7 +33477,7 @@ function LM(t, n, i, s) {
   });
 }
 async function BM(t, n, i = {}) {
-  const s = i.signal ?? new AbortController().signal, l = i.durationMs ?? Og, p = i.staticHoldMs ?? _M;
+  const s = i.signal ?? new AbortController().signal, l = i.durationMs ?? Cg, p = i.staticHoldMs ?? _M;
   if (i.fromTop !== !1 && (t.style.scrollBehavior = "auto", t.scrollTo({ top: 0, left: 0, behavior: "auto" }), await RM()), Ha(s) || (await MM(p, s), Ha(s)))
     return;
   const v = PM(t), y = t.getBoundingClientRect(), h = n.getBoundingClientRect(), f = t.scrollTop + (h.top - y.top) - v;
@@ -33525,7 +33554,7 @@ async function KM(t) {
     };
   if (po(t, "revealing"), await BM(t.scrollContainer, n.element, {
     signal: t.signal,
-    durationMs: Og,
+    durationMs: Cg,
     fromTop: !0
   }), Ha(t.signal))
     return po(t, "aborted"), {
@@ -33540,7 +33569,7 @@ async function KM(t) {
     degraded: i
   };
 }
-function Ob(t, n, i) {
+function Cb(t, n, i) {
   try {
     i == null || i.abort();
   } catch {
@@ -33568,7 +33597,7 @@ async function UM(t, n) {
         "Embed: launcher mount container is unavailable after overlay initialization"
       );
     ho.emit("BOOTSTRAP_LOADING");
-    const y = gg({
+    const y = zg({
       target: v,
       objectId: m ?? "",
       assetBase: t.assetBase
@@ -33579,7 +33608,7 @@ async function UM(t, n) {
       studioRoot: v,
       scrollContainer: v,
       configuredLandingAnchorId: t.presentation.landingAnchorId,
-      modeDefaultLandingAnchorId: Ag,
+      modeDefaultLandingAnchorId: Og,
       signal: l.signal,
       onStateChange: (z) => {
         f.root.dataset.embedRevealState = z;
@@ -33595,7 +33624,7 @@ async function UM(t, n) {
       objectId: m ?? "",
       overlay: i,
       dispose: () => {
-        if (Ob(i, s, l), h && typeof h.focus == "function")
+        if (Cb(i, s, l), h && typeof h.focus == "function")
           try {
             h.focus();
           } catch {
@@ -33603,7 +33632,7 @@ async function UM(t, n) {
       }
     };
   } catch (m) {
-    throw Ob(i, s, l), m;
+    throw Cb(i, s, l), m;
   }
 }
 const VM = Object.freeze({
@@ -33611,18 +33640,18 @@ const VM = Object.freeze({
   landingAnchorId: "social-proof",
   showCloseAction: !0
 });
-let Cg = null, Ng = null;
+let Ng = null, Tg = null;
 function Al() {
-  return Cg;
-}
-function jn(t) {
-  Cg = t;
-}
-function fl() {
   return Ng;
 }
-function kr(t) {
+function jn(t) {
   Ng = t;
+}
+function fl() {
+  return Tg;
+}
+function kr(t) {
+  Tg = t;
 }
 function FM(t) {
   var n;
@@ -33631,7 +33660,7 @@ function FM(t) {
 function YM(t) {
   return "kind" in t ? String(t.kind) : void 0;
 }
-function Tg(t) {
+function Dg(t) {
   const n = Al();
   if (!n) {
     const l = fl();
@@ -33658,7 +33687,7 @@ const qM = "overflow-hidden rounded-[11px] border border-embed-border-default bg
   { value: "Dřevostavba", label: "Difuzně otevřená" }
 ], GM = {
   backgroundImage: `linear-gradient(to top, color-mix(in srgb, ${Ge.border.default} 30%, #FFFFFF), #FFFFFF)`
-}, Cb = {
+}, Nb = {
   backgroundColor: "#D4AF37"
 }, ZM = "/media/house-modern-01/exterior.webp", JM = 767;
 function XM(t, n) {
@@ -33768,7 +33797,7 @@ function e4({
                 t ? "justify-start" : "-translate-x-[10px] translate-y-[50px] justify-center"
               ].join(" "),
               children: /* @__PURE__ */ c.jsx(
-                gj,
+                zj,
                 {
                   href: "#embed-experience",
                   "data-embed-hero-cta": "",
@@ -33825,7 +33854,7 @@ function o4({
   isReferenceHouse: i
 }) {
   const [s, l] = j.useState(0), [p, m] = j.useState(!1), v = j.useMemo(
-    () => Bj(Mj({
+    () => Hj(Pj({
       houseId: n,
       isReferenceHouse: i
     })),
@@ -33838,7 +33867,7 @@ function o4({
   );
   return j.useEffect(() => {
     if (t || v.length <= 3 || p) return;
-    const h = window.setTimeout(() => m(!0), Pj);
+    const h = window.setTimeout(() => m(!0), Lj);
     return () => window.clearTimeout(h);
   }, [t, v.length, p, s]), /* @__PURE__ */ c.jsxs(
     "section",
@@ -33869,7 +33898,7 @@ function o4({
             {
               "aria-hidden": "true",
               className: "pointer-events-none absolute left-1/3 top-[25%] z-10 h-1/2 w-px -translate-x-1/2",
-              style: Cb
+              style: Nb
             }
           ),
           /* @__PURE__ */ c.jsx(
@@ -33877,7 +33906,7 @@ function o4({
             {
               "aria-hidden": "true",
               className: "pointer-events-none absolute left-2/3 top-[25%] z-10 h-1/2 w-px -translate-x-1/2",
-              style: Cb
+              style: Nb
             }
           )
         ] }),
@@ -33886,7 +33915,7 @@ function o4({
           {
             className: t ? "" : "flex w-[calc(400%/3+1px)]",
             onTransitionEnd: () => {
-              p && (l((h) => Hj(h, v)), m(!1));
+              p && (l((h) => Kj(h, v)), m(!1));
             },
             style: t ? void 0 : {
               transform: p ? "translateX(-25%)" : "translateX(0)",
@@ -33988,7 +34017,7 @@ function i4(t) {
   n.setAttribute("data-embed-hero-host", ""), Wc(n), n.replaceChildren();
   const m = document.createElement("div");
   m.setAttribute("data-embed-hero-root", ""), n.appendChild(m);
-  const v = Xb.createRoot(m);
+  const v = Qb.createRoot(m);
   return v.render(
     j.createElement(a4, {
       assetBase: i,
@@ -34035,7 +34064,7 @@ function d4(t) {
     const y = r4(t, n);
     UM(y, {
       onClose: () => {
-        Tg();
+        Dg();
       }
     }).then((h) => {
       jn(h);
@@ -34101,8 +34130,8 @@ function m4(t) {
   return Ol(t.target, "target");
 }
 function v4(t) {
-  if (u4(), o0("Embed Runtime"), wg(t) || Sg(t)) {
-    const n = Ol(t.target, "target"), i = xM(t), s = EM(t, i), l = uE(n, i, s);
+  if (u4(), n0("Embed Runtime"), Sg(t) || Ag(t)) {
+    const n = Ol(t.target, "target"), i = xM(t), s = EM(t, i), l = cE(n, i, s);
     jn(l);
     return;
   }
@@ -34135,12 +34164,12 @@ function v4(t) {
 }
 const k4 = "0.1.0", y4 = {
   mount: v4,
-  unmount: Tg,
+  unmount: Dg,
   version: k4,
   /** PT-DEPLOY-EMBED-01 — automatic Runtime build fingerprint. */
-  build: Nb()
+  build: Tb()
 };
-mM(e0);
+mM(t0);
 export {
   y4 as Embed,
   y4 as default
