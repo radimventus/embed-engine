@@ -104,6 +104,10 @@ function PriorityWhiteActionButton({
 }
 
 /** Tour-style gray track hosting label + white action (or white action alone). */
+type PrioritySwitchStyle = React.CSSProperties & {
+  "--priority-switch-shift-x"?: string;
+};
+
 function PrioritySwitchTrack({
   children,
   ariaLabel,
@@ -121,16 +125,16 @@ function PrioritySwitchTrack({
 }) {
   return (
     <div
-      className={`${className} flex w-full justify-center mobile:!ml-0 mobile:!pt-0`}
+      className={`${className} flex w-full justify-center [margin-left:var(--priority-switch-shift-x,0px)] mobile:![margin-left:0px] mobile:!pt-0`}
       style={{
-        ...(shift ? { marginLeft: shift.x } : {}),
+        ...(shift ? { '--priority-switch-shift-x': `${shift.x}px` } : {}),
         // Use paddingTop — ConisMessage space-y utilities set margin-top !important.
         ...(offsetLines > 0
           ? { paddingTop: `${offsetLines * 1.6}em` }
           : shift && shift.y !== 0
             ? { paddingTop: shift.y }
             : {}),
-      }}
+      } as PrioritySwitchStyle}
     >
       <div
         className="flex w-full min-w-0 shrink-0 items-stretch gap-[1.6px] rounded-[6.4px] border border-solid p-[1.6px] desktop:w-1/2 mobile:w-full mobile:max-w-none"

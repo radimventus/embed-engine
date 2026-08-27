@@ -19,7 +19,7 @@ import { SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS } from '../spatial-terminal-
 const THUMB_GAP_PX = 16;
 
 /** Side control columns — keeps chevrons outside the visible thumbs (≥44px RCS-04). */
-const CHEVRON_COLUMN_PX = 48;
+const CHEVRON_COLUMN_PX = 32;
 
 /** Active border only — idle stays borderless (transparent keeps layout stable). */
 const THUMB_BORDER_PX = 4;

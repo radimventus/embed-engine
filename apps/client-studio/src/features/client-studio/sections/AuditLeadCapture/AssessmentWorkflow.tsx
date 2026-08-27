@@ -45,17 +45,34 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
         {stations.map((station, index) => (
           <div
             key={`mobile-${station.title}`}
-            className="col-span-2 grid grid-cols-[44px_minmax(0,1fr)] items-start"
+            className="col-span-2 grid grid-cols-[44px_minmax(0,1fr)] items-start gap-x-3"
           >
             <div className="flex min-h-10 items-start justify-center">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full border border-current text-sm font-semibold">
-                {index + 1}
-              </span>
+              <div
+                className="flex h-10 w-10 items-center justify-center rounded-full border"
+                style={{ borderColor: AUDIT_ACCENT }}
+              >
+                <StationMotifIcon
+                  motif={station.motif}
+                  className="h-6 w-6"
+                />
+              </div>
             </div>
 
             <div className="min-w-0 text-left">
-              <p className="font-semibold">
-                {station.title}
+              <p className="text-sm font-semibold tracking-wide">
+                <span style={{ color: AUDIT_ACCENT }}>
+                  {String(index + 1).padStart(2, '0')}{' '}
+                </span>
+                <span style={{ color: AUDIT_WHITE }}>
+                  {station.title}
+                </span>
+              </p>
+              <p
+                className="mt-1 text-[13px] leading-snug"
+                style={{ color: AUDIT_MUTED }}
+              >
+                {station.lines.join(' ')}
               </p>
             </div>
           </div>
