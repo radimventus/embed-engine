@@ -59,7 +59,7 @@ export function ClientStudioMobileNav({
       data-studio-shell="mobile-nav"
       data-mobile-scrolled={isScrolled ? "true" : "false"}
       aria-label="Navigace Client Studia"
-      className="sticky top-0 z-40 w-full border-b border-embed-border-default bg-[#F7F6F4]/95 backdrop-blur desktop:hidden"
+      className="z-40 border-b border-embed-border-default bg-[#F7F6F4]/95 backdrop-blur desktop:hidden mobile:fixed mobile:left-3 mobile:top-3 mobile:z-[80] mobile:w-auto mobile:min-w-0 mobile:max-w-none"
     >
       <div className="relative flex min-h-9 w-full items-center gap-2 px-2">
         <button
