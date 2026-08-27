@@ -42,6 +42,15 @@ const REQUIRED_ARTIFACTS = [
 const OPTIONAL_ARTIFACTS = ["embed.es.js.map", "embed.iife.js.map"];
 
 /**
+ * Public production AI Delivery endpoint.
+ * Not a secret. Every reproducible production Embed build must carry it,
+ * otherwise createEmbedAIDelivery() intentionally resolves to disabled.
+ */
+const PUBLIC_AI_DELIVERY_URL =
+  process.env.VITE_AI_DELIVERY_URL?.trim() ||
+  "https://embed-engineai-delivery-edge-production.up.railway.app";
+
+/**
  * Declaration files that are implementation-internal and must not be part of
  * the public distribution surface.
  */
@@ -60,10 +69,11 @@ const INTERNAL_DECLARATIONS = [
   "iife.bundle.d.ts.map",
 ];
 
-function run(command, args) {
+function run(command, args, env = {}) {
   const result = spawnSync(command, args, {
     cwd: packageDir,
     stdio: "inherit",
+    env: { ...process.env, ...env },
     shell: process.platform === "win32",
   });
   if (result.status !== 0) {
@@ -182,10 +192,18 @@ console.log(`  builtAt=${fingerprint.builtAt}`);
 console.log(`  runtimeSource=${fingerprint.runtimeSource}`);
 
 console.log("→ ESM bundle");
-run("pnpm", ["exec", "vite", "build"]);
+run("pnpm", ["exec", "vite", "build"], {
+  VITE_AI_DELIVERY_URL: PUBLIC_AI_DELIVERY_URL,
+});
 
 console.log("→ IIFE bundle");
-run("pnpm", ["exec", "vite", "build", "--config", "vite.iife.config.ts"]);
+run(
+  "pnpm",
+  ["exec", "vite", "build", "--config", "vite.iife.config.ts"],
+  {
+    VITE_AI_DELIVERY_URL: PUBLIC_AI_DELIVERY_URL,
+  },
+);
 
 console.log("→ TypeScript declarations");
 run("pnpm", ["exec", "tsc", "--emitDeclarationOnly"]);

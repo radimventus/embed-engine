@@ -24,6 +24,12 @@ const service = read(
     import.meta.url,
   ),
 );
+const embedBuild = read(
+  new URL("../../scripts/build-distribution.mjs", import.meta.url),
+);
+const studioPublish = read(
+  new URL("../../../../scripts/publish-studio-platform.mjs", import.meta.url),
+);
 
 describe("TASK-64 Workspace / Embed Chat parity", () => {
   it("mounts the same Client Studio implementation in both Embed modes", () => {
@@ -35,6 +41,19 @@ describe("TASK-64 Workspace / Embed Chat parity", () => {
     assert.match(advisor, /getEmbedAIService\(\)\.sendMessage/);
     assert.match(service, /createAIServiceFromDelivery/);
     assert.match(service, /createEmbedAIDelivery\(\)/);
+  });
+
+
+
+  it("locks the public AI Delivery binding into every production publish path", () => {
+    const deliveryUrl =
+      "https://embed-engineai-delivery-edge-production.up.railway.app";
+
+    assert.match(embedBuild, /VITE_AI_DELIVERY_URL/);
+    assert.match(embedBuild, new RegExp(deliveryUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+
+    assert.match(studioPublish, /VITE_AI_DELIVERY_URL/);
+    assert.match(studioPublish, new RegExp(deliveryUrl.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
   });
 
   it("does not introduce browser direct OpenAI credentials", () => {

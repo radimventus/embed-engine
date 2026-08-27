@@ -30,6 +30,15 @@ import { fileURLToPath } from "node:url";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const STUDIO_ORIGIN = "https://conis.cz";
+
+/**
+ * Public AI Delivery edge binding used by every production Studio build.
+ * This is intentionally source-controlled because it is a public endpoint,
+ * not an OpenAI/model credential.
+ */
+const AI_DELIVERY_URL =
+  process.env.VITE_AI_DELIVERY_URL?.trim() ||
+  "https://embed-engineai-delivery-edge-production.up.railway.app";
 const TOPOLOGY_VERSION = "partner-environment-v1";
 const stagingRel = ".studio-publish-staging";
 const sourcePublicRel = "apps/client-studio/public";
@@ -180,6 +189,7 @@ function buildStudio(studio) {
       VITE_OPENAI_API_KEY: "",
       VITE_OPENAI_MODEL: "",
       OPENAI_API_KEY: "",
+      VITE_AI_DELIVERY_URL: AI_DELIVERY_URL,
       // House Packages are copied by this release script into the shared
       // Pages root after every Studio build succeeds.
       VITE_SHARED_PUBLIC_ROOT: "1",
