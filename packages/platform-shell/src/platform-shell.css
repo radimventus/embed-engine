@@ -1461,3 +1461,9 @@
     padding: 20px;
   }
 }
+
+@media (max-width: 767px) {
+  [data-platform-breadcrumb-id="company"] {
+    display: none;
+  }
+}

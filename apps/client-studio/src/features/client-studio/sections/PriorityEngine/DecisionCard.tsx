@@ -55,7 +55,7 @@ export function DecisionCard({
   return (
     <div
       className={`${DECISION_CARD_SHELL_CLASS} ${
-        isActive ? 'mobile:aspect-auto' : ''
+        isActive ? 'mobile:z-20 mobile:scale-110' : ''
       }`}
       data-pt002-highlight={
         isPrimary ? 'primary' : isRelated ? 'related' : undefined
@@ -68,7 +68,7 @@ export function DecisionCard({
         onClick={onToggle}
         className={`absolute inset-0 flex flex-col items-center overflow-hidden rounded-[8px] px-2.5 touch-manipulation transition-[transform,box-shadow,border-color,border-width,background-color] ${DECISION_TRANSITION_CLASS} ${DECISION_CARD_FOCUS_CLASS} ${highlightClass} ${
           isActive
-            ? `${DECISION_CARD_ACTIVE_CLASS} justify-between py-2.5 mobile:relative mobile:inset-auto`
+            ? `${DECISION_CARD_ACTIVE_CLASS} justify-between py-2.5`
             : `${DECISION_CARD_IDLE_CLASS} ${DECISION_CARD_HOVER_CLASS} ${DECISION_CARD_ATTENTION_CLASS} z-0 scale-100 justify-center py-3`
         }`}
         style={{

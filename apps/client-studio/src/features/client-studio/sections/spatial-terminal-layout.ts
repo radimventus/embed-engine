@@ -32,7 +32,7 @@ export const HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS = 'w-full';
 export const HOUSE_NAVIGATOR_ROOM_CONTROL_WIDTH_CLASS = 'w-full';
 
 export const SPATIAL_TERMINAL_SECTION_CLASS =
-  'grid w-full min-w-0 content-start items-start gap-0 overflow-x-hidden px-section pb-section';
+  'grid w-full min-w-0 content-start items-start gap-0 overflow-x-hidden px-section pb-section mobile:pb-2';
 
 export const SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS =
   'box-border flex h-full w-full min-w-0 flex-col content-start items-start gap-0 overflow-x-hidden pb-section pl-[20px] mobile:px-0 mobile:pb-2';
