@@ -68,7 +68,7 @@ describe('Durable Decision Session client pointer', () => {
     assert.equal(isDurableDecisionCommand('SelectVariant'), false);
   });
 
-  it('keeps Embed / Workspace on the same Client persist and restore path', () => {
+  it('keeps Embed / Workspace on the same current-page persistence path', () => {
     const provider = readFileSync(
       join(here, 'DecisionSessionRuntimeProvider.tsx'),
       'utf8',
@@ -78,7 +78,10 @@ describe('Durable Decision Session client pointer', () => {
       'utf8',
     );
     assert.match(provider, /persistPublicDecisionSession/);
-    assert.match(provider, /restorePublicDecisionSession/);
+    assert.match(provider, /crypto\.randomUUID\(\)/);
+    assert.match(provider, /writeDecisionSessionPointer/);
+    assert.doesNotMatch(provider, /restorePublicDecisionSession/);
+    assert.doesNotMatch(provider, /readDecisionSessionPointer\(scope\)/);
     assert.match(provider, /serializeDecisionSession/);
     assert.match(mount, /DecisionSessionRuntimeProvider/);
     assert.match(

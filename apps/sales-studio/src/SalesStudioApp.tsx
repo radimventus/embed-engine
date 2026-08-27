@@ -19,6 +19,7 @@ import {
   isHouseInProject,
   createWorkspaceHouseChangeMessage,
   resolveWorkspaceHostHref,
+  workspaceStudiosForRoles,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -589,6 +590,7 @@ export function SalesStudioApp() {
   return (
     <PlatformShell
       activeStudioId="sales"
+        availableStudioIds={workspaceStudiosForRoles(session?.user.roles ?? [])}
       userLabel={session?.user.displayName ?? 'Host'}
       roleLabel={
         session !== null

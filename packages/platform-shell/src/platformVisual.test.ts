@@ -24,7 +24,7 @@ describe('platformVisual (VR-FIX-02)', () => {
 
   it('uses shared interaction blue accent across studios (PR-022C)', () => {
     assert.equal(getPlatformTheme('builder').accent, '#18428F');
-    assert.equal(getPlatformTheme('manager').accent, '#18428F');
+    assert.equal(getPlatformTheme('manager').accent, '#C89B2D');
     assert.equal(getPlatformTheme('sales').accent, '#18428F');
   });
 });

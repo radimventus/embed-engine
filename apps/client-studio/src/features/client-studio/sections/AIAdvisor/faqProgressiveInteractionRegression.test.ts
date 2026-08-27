@@ -57,5 +57,9 @@ describe("TASK 73 FAQ progressive state regression", () => {
 
   it("preserves durable QuestionOpened signaling", () => {
     assert.match(source, /onQuestionOpened\?\.\(item\)/);
+  assert.match(source, /mobile:normal-case/);
+  assert.match(source, /mobile:py-2/);
+  assert.match(source, /mobile:min-h-0/);
+
   });
 });

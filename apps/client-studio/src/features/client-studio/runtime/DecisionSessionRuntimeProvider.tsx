@@ -16,7 +16,6 @@ import {
 import {
   createDecisionSessionRuntime,
   createSystemClock,
-  restoreDecisionSession,
   serializeDecisionSession,
   type DecisionSessionRuntime,
   type RuntimeCommand,
@@ -44,11 +43,9 @@ import { hydrateDurableProjectPrivacy } from './durableProjectPrivacy';
 import { hydrateDurableCompanyContact } from './durableCompanyContact';
 import {
   persistPublicDecisionSession,
-  restorePublicDecisionSession,
   isDurableDecisionCommand,
 } from './durableDecisionSessionClient';
 import {
-  readDecisionSessionPointer,
   writeDecisionSessionPointer,
   type DecisionSessionScope,
 } from './decisionSessionPointer';
@@ -465,36 +462,17 @@ export function DecisionSessionRuntimeProvider({
               houseId: canonicalHouseId,
             }
           : null;
-      let restoredSession = undefined;
-      let decisionSessionId: string = crypto.randomUUID();
+      // A browser page load is a new Client completion/session.
+      // Persist the new session for current-page evidence, but never hydrate
+      // Priority/answers/completion from a previous page instance.
+      const decisionSessionId: string = crypto.randomUUID();
       if (scope !== null) {
-        const pointer = readDecisionSessionPointer(scope);
-        if (pointer !== null) {
-          const record = await restorePublicDecisionSession({
-            decisionSessionId: pointer,
-            scope,
-            signal: controller.signal,
-          });
-          if (record !== null) {
-            const restored = restoreDecisionSession(record.serialized);
-            if (
-              restored.ok &&
-              restored.session.objectId === housePackage.identity.id
-            ) {
-              restoredSession = restored.session;
-              decisionSessionId = pointer;
-            }
-          } else {
-            decisionSessionId = pointer;
-          }
-        }
         writeDecisionSessionPointer(scope, decisionSessionId);
       }
       runtimeRef.current = createDecisionSessionRuntime({
         housePackage,
         clock: createSystemClock(),
-        now: restoredSession?.createdAt ?? 1,
-        session: restoredSession,
+        now: 1,
       });
       decisionSessionIdRef.current = scope === null ? null : decisionSessionId;
       persistScopeRef.current = scope;

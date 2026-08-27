@@ -11,6 +11,7 @@ import {
   submitPlatformFeedback,
   usePlatformSession,
   isWorkspaceShellEmbed,
+  workspaceStudiosForRoles,
 } from "@embed-engine/platform-access";
 
 import { AppShell } from "../../components/layout/AppShell";
@@ -348,6 +349,7 @@ export function BuilderStudioApp() {
     <>
       <PlatformShell
         activeStudioId="builder"
+        availableStudioIds={workspaceStudiosForRoles(accessSession?.user.roles ?? [])}
         userLabel={userLabel}
         roleLabel={roleLabel}
         workspace={platformWorkspace}

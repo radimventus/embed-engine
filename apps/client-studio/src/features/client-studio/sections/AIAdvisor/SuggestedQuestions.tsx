@@ -112,7 +112,7 @@ function FaqItem({ item, onQuestionSelect, onQuestionOpened }: FaqItemProps) {
         aria-expanded={expanded}
         aria-label={expanded ? "Sbalit odpověď" : "Rozbalit odpověď"}
         onClick={togglePanel}
-        className="flex w-full cursor-pointer flex-col border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-embed-brand-gold/35"
+        className="normal-case mobile:normal-case mobile:py-2 mobile:min-h-0 flex w-full cursor-pointer flex-col border-0 bg-transparent p-0 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-embed-brand-gold/35"
       >
         <div className="flex min-h-faq-row items-center gap-3 px-section py-3">
           <span className="min-w-0 flex-1 text-[16px] font-semibold leading-snug text-embed-foreground-primary">

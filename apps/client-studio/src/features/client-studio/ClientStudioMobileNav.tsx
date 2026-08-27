@@ -57,11 +57,13 @@ export function ClientStudioMobileNav({
   return (
     <nav
       data-studio-shell="mobile-nav"
+      data-mobile-scrolled={isScrolled ? "true" : "false"}
       aria-label="Navigace Client Studia"
       className="sticky top-0 z-40 w-full border-b border-embed-border-default bg-[#F7F6F4]/95 backdrop-blur desktop:hidden"
     >
       <div className="relative flex min-h-9 w-full items-center gap-2 px-2">
         <button
+          data-mobile-hamburger=""
           type="button"
           aria-label="Otevřít navigaci"
           aria-expanded={isOpen}

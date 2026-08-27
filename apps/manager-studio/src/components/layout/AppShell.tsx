@@ -10,6 +10,7 @@ import {
   usePilotWorkspace,
   useStudioBrandProjection,
   isWorkspaceShellEmbed,
+  workspaceStudiosForRoles,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
@@ -88,6 +89,7 @@ export function AppShell({ sidebar, children }: AppShellProps) {
   return (
     <PlatformShell
       activeStudioId="manager"
+        availableStudioIds={workspaceStudiosForRoles(session?.user.roles ?? [])}
       userLabel={session?.user.displayName ?? 'Host'}
       roleLabel={
         session !== null

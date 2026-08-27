@@ -24,7 +24,7 @@ describe('platformShell (EPIC-BX-11 / BX-15 / VR-FIX-01 / OF-01)', () => {
     assert.equal(builder.gold, '#B8922D');
     assert.equal(builder.accent, '#18428F');
     assert.equal(office.accent, '#18428F');
-    assert.equal(manager.accent, '#18428F');
+    assert.equal(manager.accent, '#C89B2D');
     assert.equal(sales.accent, '#18428F');
   });
 });
