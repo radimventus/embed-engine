@@ -38,7 +38,7 @@ export const SPATIAL_TERMINAL_MEDIA_TERMINAL_SECTION_CLASS =
   'box-border flex h-full w-full min-w-0 flex-col content-start items-start gap-0 overflow-x-hidden pb-section pl-[20px] mobile:px-0 mobile:pb-2';
 
 export const SPATIAL_TERMINAL_MEDIA_TERMINAL_CONTENT_CLASS =
-  'grid w-full min-w-0 max-w-none shrink-0 content-start items-start gap-0 mobile:!w-full mobile:!min-w-0 mobile:!max-w-full desktop:w-[600px] desktop:min-w-[600px] desktop:max-w-[600px]';
+  'grid w-full min-w-0 max-w-none shrink-0 content-start items-start gap-0 mobile:!w-full mobile:!min-w-0 mobile:!max-w-full mobile:!grid-cols-[minmax(0,1fr)] desktop:w-[600px] desktop:min-w-[600px] desktop:max-w-[600px]';
 
 /**
  * Floor plan column:
