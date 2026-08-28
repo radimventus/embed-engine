@@ -128,13 +128,12 @@ export function DecisionCard({
           className={`w-full transition-[opacity,transform,max-height] ${DECISION_TRANSITION_CLASS} ${
             isActive
               ? 'max-h-16 translate-y-0 pt-2 opacity-100 desktop:max-h-10'
-              : 'pointer-events-none max-h-0 translate-y-1 opacity-0 mobile:pointer-events-auto mobile:max-h-16 mobile:translate-y-0 mobile:pt-2 mobile:opacity-100'
+              : 'pointer-events-none max-h-0 translate-y-1 opacity-0'
           }`}
         >
+          {isActive ? (
           <div
-            className={`w-full min-w-0 overflow-visible mobile:block mobile:w-full mobile:overflow-visible ${
-              isActive ? '' : 'hidden mobile:block'
-            }`}
+            className="w-full min-w-0 overflow-visible mobile:block mobile:w-full mobile:overflow-visible"
             data-mobile-priority-intensity
           >
             <DecisionSlider
@@ -142,6 +141,7 @@ export function DecisionCard({
               onChange={onImportanceChange}
             />
           </div>
+        ) : null}
         </div>
       </button>
     </div>

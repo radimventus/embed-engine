@@ -14,7 +14,7 @@ type ConisMessageProps = {
 export function ConisMessage({ children, className = '', testId }: ConisMessageProps) {
   return (
     <div
-      className={`mobile:!ml-0 mobile:!mr-0 mobile:w-full mobile:max-w-none mobile:!pl-0 mobile:!pr-0 flex items-start gap-3 ${className}`}
+      className={`flex items-start gap-3 ${className}`}
       data-testid={testId}
     >
       <ConisAvatar size={40} />

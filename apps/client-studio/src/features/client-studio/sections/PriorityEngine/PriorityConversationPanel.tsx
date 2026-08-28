@@ -125,7 +125,7 @@ function PrioritySwitchTrack({
 }) {
   return (
     <div
-      className={`${className} flex w-full justify-center [margin-left:var(--priority-switch-shift-x,0px)] mobile:![margin-left:0px] mobile:w-full mobile:max-w-none mobile:!pt-0`}
+      className={`${className} flex w-full justify-center [margin-left:var(--priority-switch-shift-x,0px)] mobile:!ml-[-52px] mobile:w-[calc(100%+52px)] mobile:max-w-none mobile:!pt-0`}
       style={{
         ...(shift ? { '--priority-switch-shift-x': `${shift.x}px` } : {}),
         // Use paddingTop — ConisMessage space-y utilities set margin-top !important.
@@ -401,12 +401,8 @@ export function PriorityConversationPanel() {
                 </p>
               ) : null}
               <div
-                className="relative overflow-hidden rounded-[10px] border border-[#E3E3E3] bg-[#F7F6F4] p-3.5 shadow-[0_1px_0_rgba(0,25,48,0.04)]"
-                style={
-                  dialogBeat === 'interpretation' || dialogBeat === 'thinking'
-                    ? { marginRight: 80 }
-                    : undefined
-                }
+                className="relative overflow-hidden rounded-[10px] border border-[#E3E3E3] bg-[#F7F6F4] p-3.5 shadow-[0_1px_0_rgba(0,25,48,0.04)] desktop:mr-[80px]"
+
               >
                 <p className={`${bodyTextClass} font-medium`}>
                   {currentQuestion.prompt}
