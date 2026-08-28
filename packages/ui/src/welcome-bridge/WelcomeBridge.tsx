@@ -85,15 +85,15 @@ export function WelcomeBridge({
     <>
     <style>{`
       .welcome-bridge-copy {
-        flex-direction: column;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 6px;
       }
 
       @media (max-width: 767px) {
         .welcome-bridge-copy {
-          flex-direction: row;
-          flex-wrap: nowrap;
-          align-items: flex-start;
-          justify-content: center;
           gap: 6px;
         }
 
@@ -154,7 +154,7 @@ export function WelcomeBridge({
           aria-label={closeLabel}
           data-testid="welcome-bridge-close"
           onClick={onDismiss}
-          style={{ marginInline: "auto",
+          style={{
             position: "absolute",
             top: 10,
             right: 10,
