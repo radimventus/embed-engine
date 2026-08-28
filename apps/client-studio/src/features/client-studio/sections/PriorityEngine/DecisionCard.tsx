@@ -127,7 +127,7 @@ export function DecisionCard({
         <div
           className={`w-full transition-[opacity,transform,max-height] ${DECISION_TRANSITION_CLASS} ${
             isActive
-              ? 'max-h-16 translate-y-0 pt-2 opacity-100 desktop:max-h-10'
+              ? 'max-h-16 translate-y-0 pt-2 opacity-100 mobile:absolute mobile:inset-x-2.5 mobile:bottom-1 mobile:w-auto mobile:pt-0 desktop:max-h-10'
               : 'pointer-events-none max-h-0 translate-y-1 opacity-0'
           }`}
         >
