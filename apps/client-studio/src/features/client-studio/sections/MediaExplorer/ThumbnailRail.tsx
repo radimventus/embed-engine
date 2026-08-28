@@ -416,7 +416,7 @@ export function ThumbnailRail() {
           role="region"
         >
           <div
-            className="flex h-full transition-[width] duration-150 ease-out"
+            className="flex h-full items-start transition-[width] duration-150 ease-out"
             style={{
               gap: railGapPx,
               width: trackWidthPx,
