@@ -1,6 +1,7 @@
 import { FloorPlan } from './FloorPlan';
 import { FloorSelector } from './FloorSelector';
 import { MediaModeToggle } from './MediaModeToggle';
+import { useHouseNavigator } from './useHouseNavigator';
 import { PILOT_SECTION_IDS } from '../../pilot/pilotVocabulary';
 import {
   HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS,
@@ -16,6 +17,9 @@ import {
  * Toggle sits on the shared baseline with VIDEO/FOTKY (min 50 px below plan).
  */
 export function FloorPlanExplorer() {
+  const { floors } = useHouseNavigator();
+  const hasMultipleFloors = floors.length >= 2;
+
   return (
     <section
       id={PILOT_SECTION_IDS.floorPlan}
@@ -28,6 +32,31 @@ export function FloorPlanExplorer() {
         <span className="invisible">.</span>
       </div>
       <FloorPlan />
+      <div
+        className="hidden w-full items-center pt-2 mobile:flex tabletMin:hidden tabletMax:hidden desktop:hidden"
+        data-mobile-tour-switch-row
+      >
+        {hasMultipleFloors ? (
+          <>
+            <div className="flex w-[36%] justify-start">
+              <div className="w-full">
+                <MediaModeToggle />
+              </div>
+            </div>
+            <div className="flex w-[36%] justify-end">
+              <div className="w-full">
+                <FloorSelector />
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex w-full justify-center">
+            <div className="w-[36%]">
+              <MediaModeToggle />
+            </div>
+          </div>
+        )}
+      </div>
       <div className={SPATIAL_TERMINAL_PLAN_TOGGLE_GAP_CLASS} aria-hidden="true" />
       <div className={`${SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS} hidden justify-center pb-1 tabletMax:flex desktop:flex`}>
         <div className={HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS}>

@@ -14,9 +14,6 @@ export function RoomSelect() {
 
   return (
     <label className="block w-full min-w-0">
-      <span className="mb-2 block text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/55">
-        Místnost
-      </span>
       <div className="relative w-full" data-mobile-room-select>
 <select
         aria-label="Místnost"

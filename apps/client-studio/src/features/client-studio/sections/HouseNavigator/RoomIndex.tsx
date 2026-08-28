@@ -1,8 +1,6 @@
 import { MediaModeToggle } from './MediaModeToggle';
 import { RoomPanel } from './RoomPanel';
 import { RoomSelect } from './RoomSelect';
-import { FloorSelector } from './FloorSelector';
-import { useHouseNavigator } from './useHouseNavigator';
 import {
   HOUSE_NAVIGATOR_ROOM_CONTROL_WIDTH_CLASS,
   SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS,
@@ -16,9 +14,6 @@ import {
  * Responsive variants preserve canonical room navigation authority; desktop SSOT remains unchanged.
  */
 export function RoomIndex() {
-  const { floors } = useHouseNavigator();
-  const hasMultipleFloors = floors.length >= 2;
-
   return (
     <section
       aria-label="Seznam místností"
@@ -41,31 +36,7 @@ export function RoomIndex() {
         </div>
       </div>
 
-      <div
-        className="hidden w-full items-center pt-1 mobile:flex tabletMin:hidden tabletMax:hidden desktop:hidden"
-        data-mobile-tour-switch-row
-      >
-        {hasMultipleFloors ? (
-          <>
-            <div className="flex w-[36%] justify-start">
-              <div className="w-full">
-                <MediaModeToggle />
-              </div>
-            </div>
-            <div className="flex w-[36%] justify-end">
-              <div className="w-full">
-                <FloorSelector />
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="flex w-full justify-center">
-            <div className="w-[36%]">
-              <MediaModeToggle />
-            </div>
-          </div>
-        )}
-      </div>
+
     </section>
   );
 }
