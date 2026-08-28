@@ -21,6 +21,10 @@ export type WelcomeBridgeContent = {
   readonly title: string;
   readonly headline: string;
   readonly description: string;
+  readonly metrics?: readonly {
+    readonly label: string;
+    readonly value: string;
+  }[];
   readonly ctaLabel: string;
   readonly closeLabel?: string;
 };
