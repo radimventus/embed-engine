@@ -31,32 +31,36 @@ export function FloorPlanExplorer() {
       <div className={`${SPATIAL_TERMINAL_WALKTHROUGH_TITLE_CLASS} mobile:hidden`} aria-hidden="true">
         <span className="invisible">.</span>
       </div>
-      <FloorPlan />
-      <div
-        className="hidden w-full items-center pt-2 mobile:flex tabletMin:hidden tabletMax:hidden desktop:hidden"
+      <FloorPlan
+        mobileControls={(
+<div
+        className="flex items-center justify-center gap-2"
         data-mobile-tour-switch-row
       >
         {hasMultipleFloors ? (
           <>
-            <div className="flex w-[36%] justify-start">
+            <div className="flex w-[7.5rem] justify-center">
               <div className="w-full">
                 <MediaModeToggle />
               </div>
             </div>
-            <div className="flex w-[36%] justify-end">
+            <div className="flex w-[7.5rem] justify-center">
               <div className="w-full">
                 <FloorSelector />
               </div>
             </div>
           </>
         ) : (
-          <div className="flex w-full justify-center">
-            <div className="w-[36%]">
+          <div className="flex justify-center">
+            <div className="w-[7.5rem]">
               <MediaModeToggle />
             </div>
           </div>
         )}
       </div>
+        )}
+      />
+
       <div className={SPATIAL_TERMINAL_PLAN_TOGGLE_GAP_CLASS} aria-hidden="true" />
       <div className={`${SEGMENTED_CONTROL_FLOOR_BASELINE_CLASS} hidden justify-center pb-1 tabletMax:flex desktop:flex`}>
         <div className={HOUSE_NAVIGATOR_SEGMENTED_WIDTH_CLASS}>

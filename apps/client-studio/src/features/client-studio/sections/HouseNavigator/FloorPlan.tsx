@@ -127,7 +127,7 @@ function FloorPlanCanvas({ interactive, className }: FloorPlanCanvasProps) {
  * Floor plan display — fills column width, keeps real aspect.
  * Rendered height drives Tour section height.
  */
-export function FloorPlan() {
+export function FloorPlan({ mobileControls }: { mobileControls?: React.ReactNode }) {
   const { experience } = useDecisionSessionRuntime();
   const analytics = useOptionalDecisionAnalytics();
   const { selectedFloor } = useHouseNavigator();
@@ -204,9 +204,16 @@ export function FloorPlan() {
         </div>
       </FloorPlanViewport>
       <div
-        className="flex w-full shrink-0 justify-end"
+        className="relative flex w-full shrink-0 items-center justify-end"
         style={{ marginTop: LOUPE_BELOW_GAP_PX }}
       >
+        {mobileControls !== undefined ? (
+          <div className="pointer-events-none absolute inset-x-0 flex justify-center mobile:flex tabletMin:hidden tabletMax:hidden desktop:hidden">
+            <div className="pointer-events-auto">
+              {mobileControls}
+            </div>
+          </div>
+        ) : null}
         <FloorPlanZoomControl
           onClick={() => {
             analytics?.experienceEvent({
