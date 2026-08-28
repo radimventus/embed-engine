@@ -58,7 +58,7 @@ export function ClientStudioApp({
           header={<ClientStudioHeader />}
           showStatusBar={false}
         >
-          <ClientStudioMobileNav visibleSceneIds={visibleSceneIds} />
+          <ClientStudioMobileNav />
           <ClientStudioPage
             initialLandingOffsetPx={initialLandingOffsetPx}
             onActiveSceneChange={setActiveSceneId}

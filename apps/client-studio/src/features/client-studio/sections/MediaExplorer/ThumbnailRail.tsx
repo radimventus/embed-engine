@@ -66,7 +66,7 @@ const LOUPE_GOLD = '#D4AF37';
 
 const THUMBNAIL_RAIL_ROW_CLASS = `box-border w-full min-w-0 shrink-0 ${SPATIAL_TERMINAL_MEDIA_THUMBNAIL_GAP_CLASS}`;
 const THUMB_BASE_CLASS =
-  'box-border h-full shrink-0 overflow-hidden transition-[border-color] duration-[125ms] ease-out touch-manipulation';
+  'box-border shrink-0 overflow-hidden transition-[border-color] duration-[125ms] ease-out touch-manipulation';
 
 type RailLayout = {
   readonly viewportWidth: number;
@@ -437,6 +437,8 @@ export function ThumbnailRail() {
                   style={{
                     width: layout.thumbWidth,
                     minWidth: layout.thumbWidth,
+                    aspectRatio: '16 / 9',
+                    height: 'auto',
                     borderWidth: THUMB_BORDER_PX,
                     borderStyle: 'solid',
                     // Inline beats Delivery `[data-embed-boundary] button { border-radius: 0 }`.
