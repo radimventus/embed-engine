@@ -137,7 +137,7 @@ export function AuditContact({
 
   return (
     <div className={`${AUDIT_FORM_MAX_WIDTH_CLASS} px-section`}>
-      <h2 className="text-center text-base font-semibold tracking-wide mobile:text-[1.1rem] mobile:leading-[1.2]">
+      <h2 className="text-left text-base font-semibold tracking-wide mobile:text-[1.1rem] mobile:leading-[1.2]">
         <span style={{ color: AUDIT_ACCENT }}>3. </span>
         <span style={{ color: AUDIT_WHITE }}>Kam vám máme poslat výstup?</span>
       </h2>
