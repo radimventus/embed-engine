@@ -1,6 +1,6 @@
 /**
  * OF-13 / PT-OS-02 — Workspace Studio Navigation (role-filtered).
- * Order aligned with PlatformShell SSOT: Client · Manager · Sales · Office · Builder
+ * Order aligned with PlatformShell SSOT: Client · Sales · Manager · Builder · Office
  */
 
 import { canAccessStudio } from './roles';
@@ -17,8 +17,8 @@ export type WorkspaceStudioSurface =
 export const WORKSPACE_STUDIO_SWITCH_ORDER: readonly WorkspaceStudioSurface[] =
   Object.freeze([
     'client',
-    'manager',
     'sales',
+    'manager',
     'builder',
     'office',
   ]);
