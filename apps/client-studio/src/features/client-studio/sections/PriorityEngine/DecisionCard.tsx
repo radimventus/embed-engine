@@ -27,7 +27,7 @@ type DecisionCardProps = {
 };
 
 /** Counters card active scale so content pixel size stays constant across states. */
-const ACTIVE_CONTENT_COUNTER_SCALE = 'scale-[0.909] mobile:scale-[0.971]';
+const ACTIVE_CONTENT_COUNTER_SCALE = 'scale-100';
 
 const IDLE_BORDER = '#E3E3E3';
 const HOVER_BORDER = '#D4AF37';
