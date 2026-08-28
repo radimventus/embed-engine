@@ -27,7 +27,7 @@ type DecisionCardProps = {
 };
 
 /** Counters card active scale so content pixel size stays constant across states. */
-const ACTIVE_CONTENT_COUNTER_SCALE = 'scale-100';
+const ACTIVE_CONTENT_COUNTER_SCALE = 'mobile:scale-[0.909] desktop:scale-100';
 
 const IDLE_BORDER = '#E3E3E3';
 const HOVER_BORDER = '#D4AF37';
@@ -108,7 +108,7 @@ export function DecisionCard({
         >
           <span
             className={`-mt-0.5 flex items-center justify-center leading-none mobile:scale-80 ${
-              isActive ? ACTIVE_CONTENT_COUNTER_SCALE : ''
+              isActive ? `${ACTIVE_CONTENT_COUNTER_SCALE} mobile:-translate-y-[20px]` : ''
             }`}
             aria-hidden="true"
           >
@@ -127,7 +127,7 @@ export function DecisionCard({
         <div
           className={`w-full transition-[opacity,transform,max-height] ${DECISION_TRANSITION_CLASS} ${
             isActive
-              ? 'max-h-16 translate-y-0 pt-2 opacity-100 mobile:absolute mobile:inset-x-2.5 mobile:bottom-1 mobile:w-auto mobile:pt-0 desktop:max-h-10'
+              ? 'max-h-16 translate-y-0 pt-2 opacity-100 mobile:absolute mobile:inset-x-2.5 mobile:bottom-[16px] mobile:w-auto mobile:pt-0 desktop:max-h-10'
               : 'pointer-events-none max-h-0 translate-y-1 opacity-0'
           }`}
         >
