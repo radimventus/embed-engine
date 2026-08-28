@@ -53,6 +53,7 @@ export type SalesClient = {
   readonly leadId: string | null;
   readonly createdAt: string;
   readonly contactEmail: string;
+  readonly contactPhone: string | null;
   readonly houses: readonly SalesHouseInterest[];
   readonly relatedHouses: readonly RelatedHousePill[];
 };
@@ -138,6 +139,7 @@ export function toSalesClients(
     leadId: item.leadId,
     createdAt: item.createdAt,
     contactEmail: item.contact.email.trim().toLowerCase(),
+    contactPhone: item.contact.phone?.trim() || null,
     relatedHouses: relatedHousesForContact({
       current: item,
       projectLeads,

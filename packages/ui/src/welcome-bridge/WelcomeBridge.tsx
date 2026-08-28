@@ -154,7 +154,7 @@ export function WelcomeBridge({
           aria-label={closeLabel}
           data-testid="welcome-bridge-close"
           onClick={onDismiss}
-          style={{
+          style={{ marginInline: "auto",
             position: "absolute",
             top: 10,
             right: 10,

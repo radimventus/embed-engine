@@ -308,6 +308,17 @@ export function SalesStudioApp() {
                           <div className="sales-desk__client-head">
                             <span className="sales-desk__client-name">
                               {client.name}
+                              <span
+                                style={{
+                                  display: 'block',
+                                  textAlign: 'left',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 400,
+                                }}
+                              >
+                                {client.contactEmail}
+                                {client.contactPhone ? ` / ${client.contactPhone}` : ''}
+                              </span>
                             </span>
                             <span className="sales-desk__intent-score">
                               {formatIndexPripravenosti(primary.readinessScore)}
