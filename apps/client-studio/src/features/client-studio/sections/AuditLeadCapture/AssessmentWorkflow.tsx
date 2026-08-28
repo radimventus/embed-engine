@@ -33,7 +33,7 @@ export function AssessmentWorkflow({ landOption }: AssessmentWorkflowProps) {
       id={AUDIT_ASSESSMENT_WORKFLOW_ID}
       className={`${AUDIT_PANEL_MAX_WIDTH_CLASS} px-section`}
     >
-      <h2 className="text-center text-base font-semibold tracking-wide mobile:mb-[10px] mobile:text-left mobile:text-[1.1rem] mobile:leading-[1.2]">
+      <h2 className="text-center text-base font-semibold tracking-wide mobile:mb-[10px] mobile:text-[1.1rem] mobile:leading-[1.2]">
         <span style={{ color: AUDIT_ACCENT }}>2. </span>
         <span style={{ color: AUDIT_WHITE }}>Jak probíhá posouzení</span>
       </h2>
