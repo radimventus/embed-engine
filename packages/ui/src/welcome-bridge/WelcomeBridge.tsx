@@ -67,7 +67,6 @@ export function WelcomeBridge({
   const headline = content.headline.trim();
   const title = content.title.trim();
   const description = content.description.trim();
-  const metrics = content.metrics ?? [];
   const labelledBy = headline
     ? "welcome-bridge-headline"
     : title
@@ -242,46 +241,6 @@ export function WelcomeBridge({
             ) : null}
           </div>
         </div>
-
-        {metrics.length > 0 ? (
-          <div
-            data-testid="welcome-bridge-hero-metrics"
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-              gap: 12,
-              width: "100%",
-            }}
-          >
-            {metrics.map((metric, index) => (
-              <div
-                key={`${metric.label}-${index}`}
-                style={{ minWidth: 0, textAlign: "center" }}
-              >
-                <div
-                  style={{
-                    fontSize: 16,
-                    fontWeight: 700,
-                    lineHeight: 1.25,
-                    color: "#D4AF37",
-                  }}
-                >
-                  {metric.value}
-                </div>
-                <div
-                  style={{
-                    marginTop: 4,
-                    fontSize: 12,
-                    lineHeight: 1.35,
-                    color: theme.descriptionColor,
-                  }}
-                >
-                  {metric.label}
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : null}
 
         <div
           style={{

@@ -1,5 +1,4 @@
 import { WelcomeBridge } from "@embed-engine/ui";
-import { useDecisionSessionRuntime } from "../runtime/DecisionSessionRuntimeProvider";
 
 import { SPATIAL_TERMINAL_MEDIA_TERMINAL_WIDTH_PX } from "../chapter-layout";
 import { ConisAvatar } from "../sections/PriorityEngine/ConisAvatar";
@@ -22,21 +21,10 @@ export function ClientStudioWelcomeBridge({
   onContinue,
   onDismiss,
 }: ClientStudioWelcomeBridgeProps) {
-  const { experience } = useDecisionSessionRuntime();
-  const heroCopy = experience.context.hero.copy;
-
-  const config = {
-    ...CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG,
-    content: {
-      ...CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG.content,
-      ...(heroCopy !== undefined ? { metrics: heroCopy.metrics } : {}),
-    },
-  };
-
   return (
     <div className="desktop:-ml-section desktop:w-[640px]">
       <WelcomeBridge
-        config={config}
+        config={CLIENT_STUDIO_WELCOME_BRIDGE_CONFIG}
         avatar={
           <span
             style={{
