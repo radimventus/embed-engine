@@ -192,13 +192,30 @@ export function useHousePackageEditController(
         );
         return;
       }
-      const result =
-        houseId === null
-          ? await requestHousePackagePersist(files, diskRoot)
-          : await requestPlatformHousePackagePersist(houseId, files);
-      if (!result.ok) {
-        apply(session.markSaveFailed(result.error));
-        return;
+      if (houseId === null) {
+        const result = await requestHousePackagePersist(files, diskRoot);
+        if (!result.ok) {
+          apply(session.markSaveFailed(result.error));
+          return;
+        }
+      } else {
+        const durableResult = await requestPlatformHousePackagePersist(
+          houseId,
+          files,
+        );
+        if (!durableResult.ok) {
+          apply(session.markSaveFailed(durableResult.error));
+          return;
+        }
+
+        // Publish consumes the canonical disk House Package. Keep its files
+        // synchronized with the same validated Builder save payload so the
+        // next explicit Publish projects exactly the saved Builder state.
+        const diskResult = await requestHousePackagePersist(files, diskRoot);
+        if (!diskResult.ok) {
+          apply(session.markSaveFailed(diskResult.error));
+          return;
+        }
       }
       await remount();
       setSessionEpoch((value) => value + 1);
