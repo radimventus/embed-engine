@@ -1,16 +1,8 @@
-import { useEffect, useState } from 'react';
-
 import {
   CUSTOMER_FACING_EXPLICIT_PRODUCT_NAME,
   realizeCustomerFacingHouseIdentityText,
 } from '@embed-engine/core';
 import { colors } from '@embed-engine/design-tokens';
-import {
-  loadPlatformSession,
-  projectPartnerBrand,
-  type StudioBrandProjection,
-} from '@embed-engine/platform-access';
-
 import { HeroCTA } from './HeroCTA';
 import { useDecisionSessionRuntime } from '../../runtime/DecisionSessionRuntimeProvider';
 
@@ -34,20 +26,11 @@ const HERO_CONTENT_BOTTOM_VEIL_STYLE = {
  * PE-02 — partner Hero strip from Brand Projection (presentation only; no Runtime).
  */
 export function HeroContent() {
-  const [brand, setBrand] = useState<StudioBrandProjection | null>(null);
   const { experience } = useDecisionSessionRuntime();
   const heroCopy = experience.context.hero.copy ?? DEFAULT_HERO_COPY;
   const heroEyebrow = realizeCustomerFacingHouseIdentityText(
     heroCopy.eyebrow,
   );
-
-  useEffect(() => {
-    const session = loadPlatformSession();
-    const projected = projectPartnerBrand({
-      companyId: session?.companyId ?? null,
-    });
-    setBrand(projected.personalized ? projected : null);
-  }, []);
 
   return (
     <section
@@ -55,14 +38,6 @@ export function HeroContent() {
       className="relative flex h-full min-h-0 w-full flex-col justify-center bg-white px-section py-section mobile:py-8 min-w-0"
     >
       <div className="translate-x-[10px] mobile:translate-x-0">
-        {brand !== null ? (
-          <p
-            className="mb-2 text-xs font-semibold uppercase tracking-wide text-embed-foreground-primary/55"
-            data-testid="client-partner-hero"
-          >
-            {brand.logoLabel} · {brand.companyName} · {brand.heroLabel}
-          </p>
-        ) : null}
         <p className="text-sm font-bold uppercase tracking-wide text-[#D4AF37]">
           {heroEyebrow}
         </p>
