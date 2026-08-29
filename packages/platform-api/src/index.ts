@@ -1708,18 +1708,11 @@ export function createPlatformApiServer(
           const houseId = decodeURIComponent(housePackageMatch[1]!);
           const published = await housePackages.getPublished(houseId);
           if (published === null) {
-            return new Response(
-            JSON.stringify({ error: 'Published House Package not found.' }),
-            {
-              status: 404,
-              headers: { 'content-type': 'application/json' },
-            },
-          );
+            return respond(response, 404, {
+              error: "Published House Package not found.",
+            });
           }
-          return new Response(JSON.stringify(published), {
-            status: 200,
-            headers: { 'content-type': 'application/json' },
-          });
+          return respond(response, 200, published);
         }
 
 
