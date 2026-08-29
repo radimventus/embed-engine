@@ -36,3 +36,10 @@
   --platform-accent: #c89b2d;
 }
 /* TASK-71F MANAGER GOLD ACCENT END */
+
+/* CONIS_MANAGER_GOLD_ACCENT
+   Manager Intelligence owns a gold active/data accent independently
+   from the shared platform accent used by other Studio surfaces. */
+#root {
+  --platform-accent: #b8922d;
+}
