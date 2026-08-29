@@ -468,6 +468,13 @@ export function requiresLoopbackAccess(
   method: string | undefined,
   path: string,
 ): boolean {
+  const publishedHousePackagePath =
+    method === "GET" &&
+    /^\/public\/house-packages\/[^/]+\/published$/.test(path);
+  if (publishedHousePackagePath) {
+    return false;
+  }
+
   if (method === "POST" && path === "/local-pilot/orders") return false;
   if (
     method === "POST" &&
