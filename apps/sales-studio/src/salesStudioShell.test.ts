@@ -274,3 +274,15 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.doesNotMatch(app, /overflow-y-auto/);
   });
 });
+
+describe('TASK 63 — prospect contact', () => {
+  it('renders email and phone below active prospect name', () => {
+    const source = readFileSync(
+      new URL('./SalesStudioApp.tsx', import.meta.url),
+      'utf8',
+    );
+    assert.match(source, /data-testid="sales-case-client-contact"/);
+    assert.match(source, /activeClient\.contactEmail/);
+    assert.match(source, /activeClient\.contactPhone/);
+  });
+});
