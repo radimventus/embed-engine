@@ -16,7 +16,9 @@ import {
   type ReleaseVerification,
 } from './releaseVerification';
 import { requestHousePackagePersist } from './requestHousePackagePersist';
-import { requestPlatformHousePackagePersist } from './requestPlatformHousePackage';
+import { requestPlatformHousePackagePersist,
+  requestPlatformHousePackageState,
+} from './requestPlatformHousePackage';
 import { requestHousePackagePublish } from './requestHousePackagePublish';
 import { runDiskHousePackageValidation } from './runHousePackageValidation';
 import { useHousePackageMount } from './useHousePackageMount';
@@ -192,30 +194,13 @@ export function useHousePackageEditController(
         );
         return;
       }
-      if (houseId === null) {
-        const result = await requestHousePackagePersist(files, diskRoot);
-        if (!result.ok) {
-          apply(session.markSaveFailed(result.error));
-          return;
-        }
-      } else {
-        const durableResult = await requestPlatformHousePackagePersist(
-          houseId,
-          files,
-        );
-        if (!durableResult.ok) {
-          apply(session.markSaveFailed(durableResult.error));
-          return;
-        }
-
-        // Publish consumes the canonical disk House Package. Keep its files
-        // synchronized with the same validated Builder save payload so the
-        // next explicit Publish projects exactly the saved Builder state.
-        const diskResult = await requestHousePackagePersist(files, diskRoot);
-        if (!diskResult.ok) {
-          apply(session.markSaveFailed(diskResult.error));
-          return;
-        }
+      const result =
+        houseId === null
+          ? await requestHousePackagePersist(files, diskRoot)
+          : await requestPlatformHousePackagePersist(houseId, files);
+      if (!result.ok) {
+        apply(session.markSaveFailed(result.error));
+        return;
       }
       await remount();
       setSessionEpoch((value) => value + 1);
@@ -236,6 +221,34 @@ export function useHousePackageEditController(
     setPublishError(null);
     setReleaseSummary(null);
     try {
+      if (houseId !== null) {
+        if (diskRoot === null) {
+          setPublishError(
+            'Publish blocked: active House Package root is unavailable.',
+          );
+          return null;
+        }
+
+        const durableState = await requestPlatformHousePackageState(houseId);
+        if (durableState === null) {
+          setPublishError(
+            'Publish blocked: saved House Package state is unavailable.',
+          );
+          return null;
+        }
+
+        const materialized = await requestHousePackagePersist(
+          durableState.files,
+          diskRoot,
+        );
+        if (!materialized.ok) {
+          setPublishError(
+            `Publish blocked: failed to materialize saved House Package: ${materialized.error}`,
+          );
+          return null;
+        }
+      }
+
       const gateReport = await runDiskHousePackageValidation({ dirty });
       setValidationReport(gateReport);
       if (!gateReport.canPublish) {
@@ -285,7 +298,7 @@ export function useHousePackageEditController(
     } finally {
       setPublishing(false);
     }
-  }, [remount, snapshot]);
+  }, [diskRoot, houseId, remount, snapshot]);
 
   const openPreview = useCallback(() => {
     if (houseId === null) {
