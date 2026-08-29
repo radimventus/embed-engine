@@ -6,10 +6,58 @@ import {
   SOCIAL_PROOF_TICK_MS,
 } from "@embed-engine/core";
 import { PrimaryLink } from "@embed-engine/ui";
+import { platformApiOrigin } from "@embed-engine/platform-access";
 import { useEffect, useMemo, useState } from "react";
 
 const SECTION_SURFACE_CLASS =
   "overflow-hidden rounded-[11px] border border-embed-border-default bg-[#FFFFFF] shadow-[0_1px_11px_rgba(0,25,48,0.044)]";
+
+type PublishedHeroCopy = {
+  readonly eyebrow?: string;
+  readonly headline?: string;
+};
+
+async function loadPublishedHeroCopy(
+  houseId: string,
+  signal: AbortSignal,
+): Promise<PublishedHeroCopy | null> {
+  const origin = platformApiOrigin().replace(/\/$/, "");
+  const response = await fetch(
+    `${origin}/public/house-packages/${encodeURIComponent(houseId)}/published`,
+    { signal },
+  );
+
+  if (response.status === 403 || response.status === 404) return null;
+  if (!response.ok) {
+    throw new Error(`Published Hero failed (HTTP ${response.status}).`);
+  }
+
+  const body = (await response.json()) as {
+    houseId?: unknown;
+    files?: { manifestJson?: unknown };
+  };
+
+  if (body.houseId !== houseId || typeof body.files?.manifestJson !== "string") {
+    return null;
+  }
+
+  try {
+    const manifest = JSON.parse(body.files.manifestJson) as {
+      heroCopy?: unknown;
+    };
+    if (manifest.heroCopy === null || typeof manifest.heroCopy !== "object") {
+      return null;
+    }
+
+    const copy = manifest.heroCopy as Record<string, unknown>;
+    return {
+      ...(typeof copy.eyebrow === "string" ? { eyebrow: copy.eyebrow } : {}),
+      ...(typeof copy.headline === "string" ? { headline: copy.headline } : {}),
+    };
+  } catch {
+    return null;
+  }
+}
 
 const HERO_FEATURES = [
   { value: "124 m2", label: "Užitná plocha" },
@@ -116,9 +164,11 @@ function SocialProofItem({
 function EmbedHeroContent({
   compact,
   onOpenExperience,
+  heroCopy,
 }: {
   readonly compact: boolean;
   readonly onOpenExperience: () => void;
+  readonly heroCopy: PublishedHeroCopy | null;
 }) {
   return (
     <section
@@ -130,7 +180,7 @@ function EmbedHeroContent({
     >
       <div className={compact ? "" : "translate-x-[10px]"}>
         <p className="text-sm font-bold uppercase tracking-wide text-[#D4AF37]">
-          MODERN A01 – 4+kk
+          {heroCopy?.eyebrow ?? "MODERN A01 – 4+kk"}
         </p>
 
         <h1
@@ -139,7 +189,7 @@ function EmbedHeroContent({
             compact ? "text-[2rem]" : "text-[2.52rem]",
           ].join(" ")}
         >
-          Rodinný dům, kde to dýchá štěstím
+          {heroCopy?.headline ?? "Rodinný dům, kde to dýchá štěstím"}
         </h1>
 
         <dl
@@ -362,6 +412,17 @@ export function EmbedHero({
 }: EmbedHeroProps) {
   const [host, setHost] = useState<HTMLElement | null>(null);
   const compact = useCompactLayout(host);
+  const [heroCopy, setHeroCopy] = useState<PublishedHeroCopy | null>(null);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    void loadPublishedHeroCopy(houseId, controller.signal)
+      .then(setHeroCopy)
+      .catch(() => setHeroCopy(null));
+
+    return () => controller.abort();
+  }, [houseId]);
 
   return (
     <div
@@ -390,6 +451,7 @@ export function EmbedHero({
             <EmbedHeroContent
               compact={compact}
               onOpenExperience={onOpenExperience}
+              heroCopy={heroCopy}
             />
             <EmbedHeroImage assetBase={assetBase} compact={compact} />
           </div>

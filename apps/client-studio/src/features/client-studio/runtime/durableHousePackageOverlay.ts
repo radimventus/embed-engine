@@ -93,6 +93,48 @@ function isDurableHousePackageState(
  * Image bytes are materialized via credentialed Fetch so native `<img>` never
  * needs to satisfy the Platform API's cross-origin authentication contract.
  */
+
+export async function loadPublishedHousePackageOverlay(
+  houseId: string,
+  signal?: AbortSignal,
+): Promise<BuilderPackageDurableOverlay | null> {
+  const response = await fetch(`${endpoint(houseId)}/published`, {
+    signal,
+  });
+
+  if (response.status === 403 || response.status === 404) {
+    return null;
+  }
+  if (!response.ok) {
+    throw new Error(
+      `Platform API published House Package failed (HTTP ${response.status}).`,
+    );
+  }
+
+  const body: unknown = await response.json();
+  if (!isDurableHousePackageState(body) || body.houseId !== houseId) {
+    throw new Error('Platform API returned invalid published House Package state.');
+  }
+
+  const files = {
+    ...(typeof body.files.roomsCsv === 'string'
+      ? { roomsCsv: body.files.roomsCsv }
+      : {}),
+    ...(typeof body.files.galleryCsv === 'string'
+      ? { galleryCsv: body.files.galleryCsv }
+      : {}),
+    ...(typeof body.files.videosCsv === 'string'
+      ? { videosCsv: body.files.videosCsv }
+      : {}),
+    ...(typeof body.files.manifestJson === 'string' ||
+    body.files.manifestJson === null
+      ? { manifestJson: body.files.manifestJson }
+      : {}),
+  };
+
+  return Object.keys(files).length === 0 ? null : { files };
+}
+
 export async function loadDurableHousePackageOverlay(
   houseId: string,
   signal?: AbortSignal,

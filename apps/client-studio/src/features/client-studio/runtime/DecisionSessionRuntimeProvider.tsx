@@ -38,7 +38,10 @@ import {
   getNormalizedBuilderHousePackageAssets,
   getBuilderPackagePublicRoot,
 } from './builderPackageBootstrap';
-import { loadDurableHousePackageOverlay } from './durableHousePackageOverlay';
+import {
+  loadDurableHousePackageOverlay,
+  loadPublishedHousePackageOverlay,
+} from './durableHousePackageOverlay';
 import { hydrateDurableProjectPrivacy } from './durableProjectPrivacy';
 import { hydrateDurableCompanyContact } from './durableCompanyContact';
 import {
@@ -432,6 +435,21 @@ export function DecisionSessionRuntimeProvider({
           if (!controller.signal.aborted) {
             console.warn(
               '[ClientStudio] Persisted House Package unavailable; using seed package',
+              { houseId: canonicalHouseId, error },
+            );
+          }
+        }
+      }
+      if (durableOverlay === null && canonicalHouseId !== null) {
+        try {
+          durableOverlay = await loadPublishedHousePackageOverlay(
+            canonicalHouseId,
+            controller.signal,
+          );
+        } catch (error) {
+          if (!controller.signal.aborted) {
+            console.warn(
+              '[ClientStudio] Published House Package unavailable; using seed package',
               { houseId: canonicalHouseId, error },
             );
           }
