@@ -146,7 +146,7 @@ function EmbedHeroContent({
           className={[
             "mt-8 grid divide-x divide-embed-border-default",
             compact
-              ? "grid-cols-1 gap-3 divide-x-0"
+              ? "grid-cols-3 gap-3 divide-x-0"
               : "grid-cols-3",
           ].join(" ")}
         >
@@ -172,7 +172,7 @@ function EmbedHeroContent({
           className={[
             "mt-10 flex",
             compact
-              ? "justify-start"
+              ? "justify-center"
               : "-translate-x-[10px] translate-y-[50px] justify-center",
           ].join(" ")}
         >
