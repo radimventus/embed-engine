@@ -1803,6 +1803,7 @@ export function createPlatformApiServer(
             });
           }
           const persisted = await housePackages.persist(houseId, body.files);
+          await housePackages.publish(houseId);
           return respond(response, 200, {
             ok: true,
             houseId: persisted.houseId,
@@ -1812,18 +1813,11 @@ export function createPlatformApiServer(
         if (action === 'publish' && request.method === 'POST') {
           const published = await housePackages.publish(houseId);
           if (published === null) {
-            return new Response(
-            JSON.stringify({ error: 'Saved House Package not found.' }),
-            {
-              status: 404,
-              headers: { 'content-type': 'application/json' },
-            },
-          );
+            return respond(response, 404, {
+              error: "Saved House Package not found.",
+            });
           }
-          return new Response(JSON.stringify(published), {
-            status: 200,
-            headers: { 'content-type': 'application/json' },
-          });
+          return respond(response, 200, published);
         }
 
         if (action === "state" && request.method === "GET") {
