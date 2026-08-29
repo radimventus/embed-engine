@@ -18,6 +18,7 @@ import {
 import { requestHousePackagePersist } from './requestHousePackagePersist';
 import { requestPlatformHousePackagePersist,
   requestPlatformHousePackageState,
+  requestPlatformHousePackagePublish,
 } from './requestPlatformHousePackage';
 import { requestHousePackagePublish } from './requestHousePackagePublish';
 import { runDiskHousePackageValidation } from './runHousePackageValidation';
@@ -284,6 +285,16 @@ export function useHousePackageEditController(
           );
         }
         return null;
+      }
+
+      if (houseId !== null) {
+        const publicSnapshot = await requestPlatformHousePackagePublish(houseId);
+        if (publicSnapshot === null) {
+          setPublishError(
+            'Publish completed locally, but public House Package promotion failed.',
+          );
+          return null;
+        }
       }
 
       setReleaseSummary(result.summary);

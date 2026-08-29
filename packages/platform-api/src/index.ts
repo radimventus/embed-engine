@@ -1687,12 +1687,35 @@ export function createPlatformApiServer(
         );
       }
       const housePackageMatch = path.match(
-        /^\/public\/house-packages\/([^/]+)\/(initialize|persist|state)$/,
+        /^\/public\/house-packages\/([^/]+)\/(initialize|persist|state|publish|published)$/,
       );
       const housePackageMediaMatch = path.match(
         /^\/public\/house-packages\/([^/]+)\/media\/(.+)$/,
       );
       if (housePackageMatch !== null || housePackageMediaMatch !== null) {
+        if (
+          housePackageMatch !== null &&
+          housePackageMatch[2] === 'published' &&
+          request.method === 'GET'
+        ) {
+          const houseId = decodeURIComponent(housePackageMatch[1]!);
+          const published = await housePackages.getPublished(houseId);
+          if (published === null) {
+            return new Response(
+            JSON.stringify({ error: 'Published House Package not found.' }),
+            {
+              status: 404,
+              headers: { 'content-type': 'application/json' },
+            },
+          );
+          }
+          return new Response(JSON.stringify(published), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          });
+        }
+
+
         const token = requestCookie(request, PARTNER_SESSION_COOKIE);
         const session =
           token === null ? null : await partnerSessions.resolve(token);
@@ -1786,6 +1809,23 @@ export function createPlatformApiServer(
             updatedAt: persisted.updatedAt,
           });
         }
+        if (action === 'publish' && request.method === 'POST') {
+          const published = await housePackages.publish(houseId);
+          if (published === null) {
+            return new Response(
+            JSON.stringify({ error: 'Saved House Package not found.' }),
+            {
+              status: 404,
+              headers: { 'content-type': 'application/json' },
+            },
+          );
+          }
+          return new Response(JSON.stringify(published), {
+            status: 200,
+            headers: { 'content-type': 'application/json' },
+          });
+        }
+
         if (action === "state" && request.method === "GET") {
           const current = await housePackages.get(houseId);
           return respond(

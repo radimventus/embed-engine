@@ -165,3 +165,25 @@ export async function requestPlatformHousePackageState(
   }
   return body as PlatformHousePackageState;
 }
+
+
+export async function requestPlatformHousePackagePublish(
+  houseId: string,
+): Promise<PlatformHousePackageState | null> {
+  const response = await fetch(`${platformApiOrigin().replace(/\/$/, "")}/public/house-packages/${encodeURIComponent(houseId)}/publish`, {
+    method: "POST",
+    credentials: "include",
+  });
+
+  if (response.status === 401 || response.status === 403 || response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      `Platform API House Package publish failed (HTTP ${response.status}).`,
+    );
+  }
+
+  return (await response.json()) as PlatformHousePackageState;
+}

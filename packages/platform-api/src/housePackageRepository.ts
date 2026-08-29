@@ -27,6 +27,8 @@ export interface HousePackageRepository {
   initialize(houseId: string): Promise<DurableHousePackage>;
   get(houseId: string): Promise<DurableHousePackage | null>;
   persist(houseId: string, files: HousePackagePersistFiles): Promise<DurableHousePackage>;
+  publish(houseId: string): Promise<DurableHousePackage | null>;
+  getPublished(houseId: string): Promise<DurableHousePackage | null>;
   writeMedia(houseId: string, mediaPath: string, media: HousePackageMedia): Promise<void>;
   readMedia(houseId: string, mediaPath: string): Promise<HousePackageMedia | null>;
   deleteMedia(houseId: string, mediaPath: string): Promise<boolean>;
@@ -37,6 +39,7 @@ type StoredMedia = {
 };
 
 const TEXT_STATE_FILE = 'package.json';
+const PUBLISHED_STATE_FILE = 'published.json';
 const MEDIA_METADATA_SUFFIX = '.metadata.json';
 
 function defaultStorageRoot(): string {
@@ -145,6 +148,48 @@ export class FileHousePackageRepository implements HousePackageRepository {
     }
   }
 
+  async getPublished(houseId: string): Promise<DurableHousePackage | null> {
+    try {
+      const parsed = JSON.parse(
+        await readFile(this.publishedStatePath(houseId), 'utf8'),
+      ) as Partial<DurableHousePackage>;
+
+      if (
+        parsed.houseId !== houseId ||
+        typeof parsed.updatedAt !== 'string' ||
+        parsed.files === null ||
+        typeof parsed.files !== 'object'
+      ) {
+        throw new Error('Invalid published House Package state.');
+      }
+
+      return parsed as DurableHousePackage;
+    } catch (error: unknown) {
+      if (
+        error !== null &&
+        typeof error === 'object' &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        return null;
+      }
+      throw error;
+    }
+  }
+
+  async publish(houseId: string): Promise<DurableHousePackage | null> {
+    const current = await this.get(houseId);
+    if (current === null) {
+      return null;
+    }
+
+    await this.atomicWrite(
+      this.publishedStatePath(houseId),
+      JSON.stringify(current),
+    );
+    return current;
+  }
+
   async persist(houseId: string, files: HousePackagePersistFiles): Promise<DurableHousePackage> {
     return this.exclusively(async () => {
       const current = await this.get(houseId);
@@ -211,6 +256,10 @@ export class FileHousePackageRepository implements HousePackageRepository {
       }
       return deleted;
     });
+  }
+
+  private publishedStatePath(houseId: string): string {
+    return childPath(this.resolveStorageRoot(houseId), PUBLISHED_STATE_FILE);
   }
 
   private statePath(houseId: string): string {
