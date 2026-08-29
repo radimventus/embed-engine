@@ -361,12 +361,28 @@ export function SalesStudioApp() {
                       className="sales-desk__header-row"
                       data-testid="sales-case-header-row-2"
                     >
-                      <p
-                        className="sales-desk__prospect-name"
-                        data-testid="sales-case-client-name"
-                      >
-                        {activeClient.name}
-                      </p>
+                      <div style={{ minWidth: 0, textAlign: 'left' }}>
+                        <p
+                          className="sales-desk__prospect-name"
+                          data-testid="sales-case-client-name"
+                        >
+                          {activeClient.name}
+                        </p>
+                        <p
+                          data-testid="sales-case-client-contact"
+                          style={{
+                            marginTop: 4,
+                            fontSize: '0.75rem',
+                            fontWeight: 400,
+                            textAlign: 'left',
+                          }}
+                        >
+                          {activeClient.contactEmail}
+                          {activeClient.contactPhone
+                            ? ` / ${activeClient.contactPhone}`
+                            : ''}
+                        </p>
+                      </div>
                       {landPill !== null ? (
                         <span
                           className="sales-desk__land-pill"
