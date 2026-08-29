@@ -58,6 +58,18 @@ function matchesQuery(client: SalesClient, query: string): boolean {
   return haystack.includes(query);
 }
 
+function formatContactPhone(phone: string): string {
+  const compact = phone.replace(/\s+/g, '');
+  const match = compact.match(/^(\+420)?(\d{3})(\d{3})(\d{3})$/);
+  if (!match) return phone;
+  const [, prefix, a, b, c] = match;
+  return `${prefix ? '+420 ' : ''}${a} ${b} ${c}`;
+}
+
+function phoneHref(phone: string): string {
+  return `tel:${phone.replace(/\s+/g, '')}`;
+}
+
 export function SalesStudioApp() {
   const { session, logout, clearStudio, selectStudio, updateWorkspaceScope } =
     usePlatformSession();
@@ -316,8 +328,23 @@ export function SalesStudioApp() {
                                   fontWeight: 400,
                                 }}
                               >
-                                {client.contactEmail}
-                                {client.contactPhone ? ` / ${client.contactPhone}` : ''}
+                                <a
+                                  className="sales-desk__contact-link"
+                                  href={`mailto:${client.contactEmail}`}
+                                >
+                                  {client.contactEmail}
+                                </a>
+                                {client.contactPhone ? (
+                                  <>
+                                    {' / '}
+                                    <a
+                                      className="sales-desk__contact-link"
+                                      href={phoneHref(client.contactPhone)}
+                                    >
+                                      {formatContactPhone(client.contactPhone)}
+                                    </a>
+                                  </>
+                                ) : null}
                               </span>
                             </span>
                             <span className="sales-desk__intent-score">
@@ -372,10 +399,23 @@ export function SalesStudioApp() {
                           className="sales-desk__prospect-contact"
                           data-testid="sales-case-client-contact"
                         >
-                          {activeClient.contactEmail}
-                          {activeClient.contactPhone
-                            ? ` / ${activeClient.contactPhone}`
-                            : ''}
+                          <a
+                            className="sales-desk__contact-link"
+                            href={`mailto:${activeClient.contactEmail}`}
+                          >
+                            {activeClient.contactEmail}
+                          </a>
+                          {activeClient.contactPhone ? (
+                            <>
+                              {' / '}
+                              <a
+                                className="sales-desk__contact-link"
+                                href={phoneHref(activeClient.contactPhone)}
+                              >
+                                {formatContactPhone(activeClient.contactPhone)}
+                              </a>
+                            </>
+                          ) : null}
                         </p>
                       </div>
                       {landPill !== null ? (

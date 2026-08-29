@@ -625,3 +625,13 @@ button.sales-desk__house-chip {
     grid-template-columns: 1fr;
   }
 }
+
+.sales-desk__contact-link {
+  color: #0067c5;
+  text-decoration: none;
+}
+
+.sales-desk__contact-link:hover,
+.sales-desk__contact-link:focus-visible {
+  text-decoration: underline;
+}
