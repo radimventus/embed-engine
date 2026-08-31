@@ -1,21 +1,23 @@
 /**
- * PT-CJ-06 — Persistent CTA while browsing studios without purchase.
- * Partner can return to Pilot Program selection anytime.
+ * TASK-83 — Persistent PRE-PILOT conversion layer.
+ * The CTA always returns to the same Partner Commercial Journey
+ * inside canonical Workspace Host. It never opens legacy /offer/.
  */
 
 import { useMemo, type CSSProperties } from 'react';
 
-import { resolvePilotOfferHref } from '../cloud/cloudConfig';
+import { resolvePartnerCommercialJourneyHref } from '../cloud/cloudConfig';
 import { isPilotPartnerRoles } from '../domain/pilotPartnerAccess';
-import { offerSlugFromCompanyId } from '../pilot/pilotProvisionSnapshot';
 import { WELCOME_PRIMARY_CTA_LABEL } from '../pilot/welcomeExperience';
 import { restoreSession } from '../session/authService';
 
 type SelectPilotProgramCtaProps = {
-  /** Visual density — landing vs floating studio chrome. */
   readonly variant?: 'landing' | 'bar';
   readonly className?: string;
 };
+
+const INTENSE_GOLD = '#f2b705';
+const NAVY = '#071b33';
 
 const BAR_STYLE: CSSProperties = {
   position: 'fixed',
@@ -24,13 +26,13 @@ const BAR_STYLE: CSSProperties = {
   bottom: 16,
   padding: '12px 18px',
   borderRadius: 999,
-  border: '1px solid #18428f',
-  background: '#18428f',
-  color: '#fff',
+  border: `1px solid ${INTENSE_GOLD}`,
+  background: INTENSE_GOLD,
+  color: NAVY,
   fontSize: 14,
-  fontWeight: 600,
+  fontWeight: 700,
   textDecoration: 'none',
-  boxShadow: '0 8px 24px rgba(0, 25, 48, 0.18)',
+  boxShadow: '0 8px 24px rgba(0, 25, 48, 0.22)',
 };
 
 const LANDING_STYLE: CSSProperties = {
@@ -39,20 +41,20 @@ const LANDING_STYLE: CSSProperties = {
   marginTop: 12,
   padding: '12px 16px',
   borderRadius: 10,
-  border: '1px solid #18428f',
-  background: '#18428f',
-  color: '#fff',
+  border: `1px solid ${INTENSE_GOLD}`,
+  background: INTENSE_GOLD,
+  color: NAVY,
   textAlign: 'center',
   fontSize: 15,
-  fontWeight: 600,
+  fontWeight: 700,
   textDecoration: 'none',
   boxSizing: 'border-box',
 };
 
 /**
- * Shows "Vybrat pilotní program" for pilot partners with a restored session.
- * Works without SessionProvider (Client Studio / Embed browse path).
- * Hidden for operators and anonymous Embed hosts.
+ * TASK-83 lifecycle visibility is intentionally role/session based in this
+ * cutover. TASK-84 will replace this with authoritative lifecycle gating:
+ * PRE_PILOT → PAYMENT_REPORTED → PILOT_ACTIVE.
  */
 export function SelectPilotProgramCta({
   variant = 'bar',
@@ -62,9 +64,11 @@ export function SelectPilotProgramCta({
     const session = restoreSession();
     if (session === null) return null;
     if (!isPilotPartnerRoles(session.user.roles)) return null;
+
     const companyId = session.companyId;
     if (typeof companyId !== 'string' || companyId.length === 0) return null;
-    return resolvePilotOfferHref(offerSlugFromCompanyId(companyId));
+
+    return resolvePartnerCommercialJourneyHref();
   }, []);
 
   if (href === null) return null;

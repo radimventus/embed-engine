@@ -3,10 +3,9 @@ import { useMemo, useState, type FormEvent } from 'react';
 import { bootstrapTenant } from '../bootstrap/tenantBootstrap';
 import {
   resolveClientStudioHref,
-  resolvePilotOfferHref,
+  resolvePartnerCommercialJourneyHref,
   resolveWorkspaceHostHref,
 } from '../cloud/cloudConfig';
-import { offerSlugFromCompanyId } from '../pilot/pilotProvisionSnapshot';
 import { touchUserLastStudio } from '../registry/userRegistry';
 import { updateSession } from '../session/authService';
 import { isPilotPartnerRoles } from '../domain/pilotPartnerAccess';
@@ -150,13 +149,12 @@ export function PlatformLanding() {
 
   const openPilotOffer = () => {
     bindSampleProject();
-    const offerSlug = offerSlugFromCompanyId(session.companyId);
     recordPlatformActivity({
       label: 'Welcome → Vybrat pilotní program',
-      detail: `${bootstrap.company.name} · ${offerSlug}`,
+      detail: `${bootstrap.company.name} · Partner Commercial Journey`,
     });
     if (typeof window !== 'undefined') {
-      window.location.assign(resolvePilotOfferHref(offerSlug));
+      window.location.assign(resolvePartnerCommercialJourneyHref());
     }
   };
 

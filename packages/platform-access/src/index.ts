@@ -311,6 +311,7 @@ export {
   resolveClientStudioHref,
   resolveBuilderStudioHref,
   resolvePilotOfferHref,
+  resolvePartnerCommercialJourneyHref,
   resolvePublicLegalHref,
   resolvePilotEntryHref,
   resolveWorkspaceHostHref,

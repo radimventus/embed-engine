@@ -89,4 +89,13 @@ describe('PT-CJ-02 lean commercial journey workflow runtime', () => {
     assert.doesNotMatch(work, /CommercialJourneyScreen/);
     assert.match(work, /data-office-mode="work"/);
   });
+
+
+  it('TASK-82 partner Workspace reuse excludes Office operator chrome', () => {
+    const partnerApp = read('../PartnerCommercialJourneyApp.tsx');
+
+    assert.match(partnerApp, /PilotWorkspaceProvider/);
+    assert.match(partnerApp, /CommercialJourneySurface/);
+    assert.doesNotMatch(partnerApp, /OfficeSidebar|OfficeStudioApp|PlatformShell/);
+  });
 });

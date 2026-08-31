@@ -23,7 +23,7 @@ import {
   WELCOME_PRIMARY_CTA_LABEL,
   WELCOME_SECONDARY_CTA_LABEL,
   WELCOME_TITLE,
-  resolvePilotOfferHref,
+  resolvePartnerCommercialJourneyHref,
 } from '../index.ts';
 import { clearPlatformSession } from '../session/sessionStore.ts';
 
@@ -65,11 +65,11 @@ describe('PT-CJ-01 Welcome & Pilot Entry', () => {
     resetPartnerWelcomeStore();
   });
 
-  it('exposes Apple Easy copy and single primary CTA', () => {
-    assert.equal(WELCOME_TITLE, 'Vítejte ve svém CONIS Studio');
+  it('exposes TASK-81 START copy, Studio orientation and primary CTA', () => {
+    assert.equal(WELCOME_TITLE, 'Vítejte v CONIS');
     assert.equal(
       WELCOME_LEAD,
-      'Vše je připravené. Zbývá už jen vybrat pilotní program.',
+      'Vaše partnerské prostředí je připravené. V CONIS pracujete ve třech vzájemně propojených Studiích.',
     );
     assert.equal(
       WELCOME_PASSWORD_NOTE,
@@ -80,7 +80,7 @@ describe('PT-CJ-01 Welcome & Pilot Entry', () => {
       WELCOME_SECONDARY_CTA_LABEL,
       'Pokračovat do CONIS Studio',
     );
-    assert.match(resolvePilotOfferHref(), /4192|\/offer\//);
+    assert.match(resolvePartnerCommercialJourneyHref(), /workspace|journey/);
   });
 
   it('welcome screen is one goal with quiet secondary Studio path', () => {
@@ -111,7 +111,7 @@ describe('PT-CJ-01 Welcome & Pilot Entry', () => {
     assert.doesNotMatch(source, /type="password"/);
     assert.doesNotMatch(source, /<form/);
 
-    assert.match(landing, /resolvePilotOfferHref/);
+    assert.match(landing, /resolvePartnerCommercialJourneyHref/);
     assert.match(landing, /onSelectPilotProgram/);
     assert.match(landing, /onContinueToStudio/);
     assert.match(landing, /openManagerStudio/);

@@ -129,6 +129,35 @@ function WorkspaceStudioFrame({
   );
 }
 
+function partnerCommercialJourneyFrameSrc(
+  projectId: string | null,
+): string {
+  const base = resolveCloudStudioHref('office');
+  const url = new URL(
+    withWorkspaceShellEmbed(
+      withProjectIdQuery(base, projectId, null),
+    ),
+  );
+  url.searchParams.set('partnerJourney', '1');
+  return url.toString();
+}
+
+function PartnerCommercialJourneyFrame({
+  projectId,
+}: {
+  readonly projectId: string | null;
+}) {
+  return (
+    <iframe
+      className="workspace-shell__view workspace-shell__frame"
+      title="Pilotní program"
+      src={partnerCommercialJourneyFrameSrc(projectId)}
+      data-testid="workspace-partner-commercial-journey"
+      style={{ width: '100%', minHeight: 'calc(100vh - 64px)', border: 0 }}
+    />
+  );
+}
+
 function platformStudioIdForSurface(
   surface: WorkspaceStudioSurface,
 ): PlatformStudioId {
@@ -190,6 +219,11 @@ export function WorkspaceHostApp() {
 
   const [surface, setSurface] = useState<WorkspaceStudioSurface>(() =>
     initialContextRef.current?.activeStudio ?? 'client',
+  );
+  const [partnerJourneyOpen, setPartnerJourneyOpen] = useState(
+    () =>
+      typeof window !== 'undefined' &&
+      new URLSearchParams(window.location.search).get('journey') === 'pilot',
   );
   const [sharedProjectId, setSharedProjectId] = useState<string | null>(() => {
     const sessionProjectId = initialSessionRef.current?.projectId?.trim() ?? '';
@@ -334,6 +368,15 @@ export function WorkspaceHostApp() {
 
   const selectSurface = useCallback(
     async (next: WorkspaceStudioSurface) => {
+      setPartnerJourneyOpen(false);
+      if (typeof window !== 'undefined') {
+        const url = new URL(window.location.href);
+        if (url.searchParams.has('journey')) {
+          url.searchParams.delete('journey');
+          window.history.replaceState({}, '', url.toString());
+        }
+      }
+
       task42Trace('surface-select:start', {
         from: surface,
         to: next,
@@ -738,9 +781,11 @@ export function WorkspaceHostApp() {
   });
 
   const sectionLabel =
-    surface === 'client'
-      ? 'Client Studio'
-      : WORKSPACE_STUDIO_LABELS[surface];
+    partnerJourneyOpen
+      ? 'Pilotní program'
+      : surface === 'client'
+        ? 'Client Studio'
+        : WORKSPACE_STUDIO_LABELS[surface];
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] =
     projectSlug !== null
@@ -782,9 +827,11 @@ export function WorkspaceHostApp() {
           // Feedback stays available; Workspace Host has no separate store.
         }}
       >
-        <SelectPilotProgramCta variant="bar" />
+        {!partnerJourneyOpen ? <SelectPilotProgramCta variant="bar" /> : null}
         <main className="workspace-shell__main" data-testid="workspace-shell-main">
-          {surface === 'client' ? (
+          {partnerJourneyOpen ? (
+            <PartnerCommercialJourneyFrame projectId={sharedProjectId} />
+          ) : surface === 'client' ? (
             <div
               id={CLIENT_MOUNT_ID}
               className="workspace-shell__view"
