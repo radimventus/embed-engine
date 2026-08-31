@@ -195,6 +195,18 @@ export function resolvePilotOfferHref(offerSlug?: string, writeToken?: string): 
 }
 
 /** Canonical public legal document URL, resolved against the public web host. */
+/**
+ * TASK-82 — Partner Commercial Journey lives inside canonical Workspace Host.
+ * It is a temporary commercial/lifecycle surface, never a Studio and never
+ * the historical standalone /offer/ application.
+ */
+export function resolvePartnerCommercialJourneyHref(): string {
+  const base = resolveWorkspaceHostHref();
+  const url = new URL(base);
+  url.searchParams.set('journey', 'pilot');
+  return url.toString();
+}
+
 export function resolvePublicLegalHref(fileName: string): string {
   const file = fileName.replace(/^\/+/, '');
   const config = getCloudPlatformConfig();

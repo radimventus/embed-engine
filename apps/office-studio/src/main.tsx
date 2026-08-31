@@ -5,6 +5,7 @@ import { PlatformAccessRoot } from '@embed-engine/platform-access';
 import '@embed-engine/platform-access/styles.css';
 
 import { OfficeStudioApp } from './OfficeStudioApp';
+import { PartnerCommercialJourneyApp } from './PartnerCommercialJourneyApp';
 import '@embed-engine/platform-shell/styles.css';
 import './index.css';
 
@@ -14,10 +15,17 @@ if (rootElement === null) {
   throw new Error('Root element not found');
 }
 
+const partnerCommercialJourney =
+  new URLSearchParams(window.location.search).get('partnerJourney') === '1';
+
 createRoot(rootElement).render(
   <StrictMode>
-    <PlatformAccessRoot studioId="office">
-      <OfficeStudioApp />
+    <PlatformAccessRoot studioId={partnerCommercialJourney ? 'manager' : 'office'}>
+      {partnerCommercialJourney ? (
+        <PartnerCommercialJourneyApp />
+      ) : (
+        <OfficeStudioApp />
+      )}
     </PlatformAccessRoot>
   </StrictMode>,
 );

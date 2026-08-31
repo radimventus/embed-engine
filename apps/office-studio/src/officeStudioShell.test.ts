@@ -127,7 +127,12 @@ describe('officeStudioShell (OF-01 / OF-02 / CAP-OP-10A)', () => {
     assert.match(app, /PilotWorkspaceProvider/);
     assert.match(app, /PilotRuntimePage/);
     assert.doesNotMatch(app, /PilotCasesPanel/);
-    assert.match(main, /studioId="office"/);
+    assert.match(main, /partnerCommercialJourney/);
+    assert.match(
+      main,
+      /PlatformAccessRoot studioId=\{partnerCommercialJourney \? 'manager' : 'office'\}/,
+    );
+    assert.match(main, /PartnerCommercialJourneyApp/);
     assert.match(pkg, /@embed-engine\/platform-shell/);
     assert.match(pkg, /@embed-engine\/platform-access/);
   });

@@ -486,3 +486,24 @@ describe('VR-04 Canonical Workspace Shell', () => {
     assert.match(app, /WORKSPACE_HOUSE_CHANGE_MESSAGE_TYPE/);
   });
 });
+
+
+describe('TASK-81-83 partner journey cutover', () => {
+  it('hosts Commercial Journey inside Workspace without making it a Studio', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    assert.match(app, /partnerJourneyOpen/);
+    assert.match(app, /PartnerCommercialJourneyFrame/);
+    assert.match(app, /partnerJourney=1|partnerJourney', '1'/);
+    assert.match(app, /SelectPilotProgramCta/);
+    assert.doesNotMatch(app, /setSurface\(['"]commercial-journey['"]\)/);
+  });
+
+  it('keeps Studio switching separate from temporary Commercial Journey', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+
+    assert.match(app, /setPartnerJourneyOpen\(false\)/);
+    assert.match(app, /url\.searchParams\.delete\(['"]journey['"]\)/);
+    assert.match(app, /partnerJourneyOpen\s*\?\s*'Pilotní program'/);
+  });
+});

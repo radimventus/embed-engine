@@ -59,8 +59,8 @@ describe('PT-COM-02 Remove P0 Sales Barriers', () => {
     assert.match(delivery, /encodePilotProvisionSnapshot|buildPilotProvisionSnapshot/);
     assert.match(delivery, /resolvePilotEntryHref/);
     assert.match(delivery, /offerHref/);
-    assert.match(landing, /offerSlugFromCompanyId/);
-    assert.match(landing, /resolvePilotOfferHref\(offerSlug\)/);
+    assert.match(landing, /resolvePartnerCommercialJourneyHref/);
+    assert.doesNotMatch(landing, /resolvePilotOfferHref|offerSlugFromCompanyId/);
     assert.match(cloud, /resolvePilotEntryHref/);
     assert.match(cloud, /offerSlug\?:/);
     assert.match(offer, /synthesizePublicOffer/);
