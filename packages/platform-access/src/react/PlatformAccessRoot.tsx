@@ -125,6 +125,13 @@ function AccessGateInner({ children }: AccessGateProps) {
     return null;
   }
 
+  // Nested Workspace Shell views are already authenticated by the outer
+  // Workspace Host. They must render their requested content directly;
+  // otherwise a null activeStudioId incorrectly falls back to PlatformLanding.
+  if (shellEmbed) {
+    return <>{children}</>;
+  }
+
   if (session.activeStudioId === null) {
     if (workspaceContext !== null) {
       updateSession({
@@ -145,10 +152,6 @@ function AccessGateInner({ children }: AccessGateProps) {
     return <PlatformLanding />;
   }
 
-  // Nested Workspace Shell views — content only (no second PE switcher).
-  if (shellEmbed) {
-    return <>{children}</>;
-  }
 
   return <>{children}</>;
 }
