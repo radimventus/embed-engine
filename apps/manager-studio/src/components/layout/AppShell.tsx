@@ -9,11 +9,13 @@ import {
   usePlatformSession,
   usePilotWorkspace,
   useStudioBrandProjection,
+  getCanonicalProject,
   isWorkspaceShellEmbed,
   workspaceStudiosForRoles,
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
+  buildWorkspaceBreadcrumb,
   PlatformShell,
   type PlatformBreadcrumbItem,
 } from '@embed-engine/platform-shell';
@@ -55,13 +57,34 @@ export function AppShell({ sidebar, children }: AppShellProps) {
     projects: [],
   });
 
-  const breadcrumb: readonly PlatformBreadcrumbItem[] = [
-    { id: 'conis', label: 'CONIS', onSelect: clearStudio },
-    { id: 'studio', label: 'Manager' },
-    { id: 'company', label: brand.tradeMark },
-    { id: 'project', label: projectLabel },
-    { id: 'section', label: partnerSectionLabel(activeSectionId) },
-  ];
+  const canonicalProject =
+    session?.projectId !== null && session?.projectId !== undefined
+      ? getCanonicalProject(session.projectId)
+      : null;
+
+  const breadcrumb: readonly PlatformBreadcrumbItem[] =
+    canonicalProject !== null
+      ? buildWorkspaceBreadcrumb({
+          projectSlug: canonicalProject.project.slug,
+          studioLabel: 'Manager Studio',
+          onOpenWorkspace: clearStudio,
+          trailing: [
+            {
+              id: 'section',
+              label: partnerSectionLabel(activeSectionId),
+            },
+          ],
+        })
+      : [
+          { id: 'conis', label: 'CONIS', onSelect: clearStudio },
+          { id: 'workspace', label: 'Workspace' },
+          { id: 'project', label: 'Projekt' },
+          { id: 'studio', label: 'Manager Studio' },
+          {
+            id: 'section',
+            label: partnerSectionLabel(activeSectionId),
+          },
+        ];
 
   const body = (
     <div

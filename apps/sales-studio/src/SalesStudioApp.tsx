@@ -23,6 +23,7 @@ import {
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
+  buildWorkspaceBreadcrumb,
   PlatformCard,
   PlatformShell,
   PlatformStatusBadge,
@@ -165,15 +166,26 @@ export function SalesStudioApp() {
     projects: salesProjects,
   });
 
-  // SR-002 — CONIS / Sales / Projekt / Zájemce (bez názvu domu).
-  // PE-02 — company crumb from Brand Projection.
-  const projectCrumb = activeProject?.label ?? brand.tradeMark;
-  const breadcrumb: readonly PlatformBreadcrumbItem[] = [
-    { id: 'conis', label: 'CONIS', onSelect: clearStudio },
-    { id: 'studio', label: 'Sales' },
-    { id: 'project', label: projectCrumb },
-    { id: 'prospect', label: activeClient?.name ?? 'Zájemce' },
-  ];
+  const breadcrumb: readonly PlatformBreadcrumbItem[] =
+    activeProject !== null
+      ? buildWorkspaceBreadcrumb({
+          projectSlug: activeProject.slug,
+          studioLabel: 'Sales Studio',
+          onOpenWorkspace: clearStudio,
+          trailing: [
+            {
+              id: 'prospect',
+              label: activeClient?.name ?? 'Zájemce',
+            },
+          ],
+        })
+      : [
+          { id: 'conis', label: 'CONIS', onSelect: clearStudio },
+          { id: 'workspace', label: 'Workspace' },
+          { id: 'project', label: 'Projekt' },
+          { id: 'studio', label: 'Sales Studio' },
+          { id: 'prospect', label: activeClient?.name ?? 'Zájemce' },
+        ];
 
   const preData = scopedClients.length === 0;
 

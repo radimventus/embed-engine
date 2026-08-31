@@ -83,23 +83,10 @@ export function InviteShell({
     }
   };
 
-  const continueFromNda = () => {
-    setError(null);
-    if (!ndaAccepted) {
-      setError('Bez souhlasu s NDA není aktivace účtu možná.');
-      return;
-    }
-    setStep('password');
-  };
-
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (step === 'token') {
       await continueFromToken();
-      return;
-    }
-    if (step === 'nda') {
-      continueFromNda();
       return;
     }
     if (!ndaAccepted) {
@@ -202,7 +189,7 @@ export function InviteShell({
             </fieldset>
           )}
 
-          {step === 'password' && (
+          {(step === 'nda' || step === 'password') && (
             <>
               <p className="platform-access__lead" data-testid="nda-confirmed">
                 NDA přijato — nastavte první heslo.
@@ -245,9 +232,7 @@ export function InviteShell({
           >
             {step === 'token'
               ? 'Ověřit pozvánku'
-              : step === 'nda'
-                ? 'Pokračovat k heslu'
-                : 'Aktivovat a vstoupit'}
+              : 'Aktivovat a vstoupit'}
           </button>
         </form>
         {step !== 'token' && (

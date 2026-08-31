@@ -7,6 +7,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import {
+  getCanonicalProject,
   PLATFORM_ROLE_LABELS,
   primaryRole,
   recordPlatformActivity,
@@ -18,6 +19,7 @@ import {
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
+  buildWorkspaceBreadcrumb,
   PlatformShell,
   type PlatformBreadcrumbItem,
 } from '@embed-engine/platform-shell';
@@ -139,12 +141,26 @@ function OfficeStudioAppInner() {
             officeRouteLabel(location.routeId))
           : officeRouteLabel(location.routeId);
 
-  const breadcrumb: readonly PlatformBreadcrumbItem[] = [
-    { id: 'conis', label: 'CONIS', onSelect: clearStudio },
-    { id: 'studio', label: 'Office' },
-    { id: 'company', label: bootstrap?.company.name ?? 'Firma' },
-    { id: 'section', label: sectionLabel },
-  ];
+  const canonicalProject =
+    session?.projectId !== null && session?.projectId !== undefined
+      ? getCanonicalProject(session.projectId)
+      : null;
+
+  const breadcrumb: readonly PlatformBreadcrumbItem[] =
+    canonicalProject !== null
+      ? buildWorkspaceBreadcrumb({
+          projectSlug: canonicalProject.project.slug,
+          studioLabel: 'Office Studio',
+          onOpenWorkspace: clearStudio,
+          trailing: [{ id: 'section', label: sectionLabel }],
+        })
+      : [
+          { id: 'conis', label: 'CONIS', onSelect: clearStudio },
+          { id: 'workspace', label: 'Workspace' },
+          { id: 'project', label: 'Projekt' },
+          { id: 'studio', label: 'Office Studio' },
+          { id: 'section', label: sectionLabel },
+        ];
 
   const mainContent =
     location.routeId === 'work' ? (

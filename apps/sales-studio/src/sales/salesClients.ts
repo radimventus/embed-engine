@@ -62,6 +62,7 @@ export type SalesClient = {
 export type SalesCanonicalProjectOption = {
   readonly id: string;
   readonly label: string;
+  readonly slug: string;
   readonly companyLabel: string;
 };
 
@@ -76,6 +77,7 @@ export function listSalesCanonicalProjects(): readonly SalesCanonicalProjectOpti
   return listCanonicalProjects().map((projection) => ({
     id: projection.project.projectId,
     label: projection.project.name,
+    slug: projection.project.slug,
     companyLabel: projection.partner.companyName,
   }));
 }

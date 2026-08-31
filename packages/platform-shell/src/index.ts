@@ -50,3 +50,8 @@ export type {
   PlatformWorkspaceState,
 } from './platformTypes';
 export { buildPlatformWorkspaceState } from './buildPlatformWorkspaceState';
+
+export {
+  buildWorkspaceBreadcrumb,
+  type WorkspaceBreadcrumbInput,
+} from './platformBreadcrumbContract';

@@ -16,6 +16,7 @@ import {
   isWorkspaceHouseScopeRequestMessage,
   isWorkspaceProjectChangeMessage,
   getSharedWorkspaceContext,
+  getCanonicalProject,
   isCanonicalProjectId,
   loadPlatformSession,
   logout as platformLogout,
@@ -37,6 +38,7 @@ import {
 } from '@embed-engine/platform-access';
 import {
   buildPlatformWorkspaceState,
+  buildWorkspaceBreadcrumb,
   PlatformShell,
   type PlatformBreadcrumbItem,
   type PlatformStudioId,
@@ -706,8 +708,22 @@ export function WorkspaceHostApp() {
     );
   }
 
+  const authoritativeProjectId =
+    sharedProjectId ?? effectiveProjectId;
+
+  const canonicalProject =
+    authoritativeProjectId !== null
+      ? getCanonicalProject(authoritativeProjectId)
+      : null;
+
   const projectLabel =
-    sharedProjectId || effectiveProjectId || 'Projekt';
+    canonicalProject?.project.name ??
+    authoritativeProjectId ??
+    'Projekt';
+
+  const projectSlug =
+    canonicalProject?.project.slug ??
+    null;
 
   const workspaceState = buildPlatformWorkspaceState({
     companyLabel:
@@ -723,22 +739,23 @@ export function WorkspaceHostApp() {
       ? 'Client Studio'
       : WORKSPACE_STUDIO_LABELS[surface];
 
-  const breadcrumb: readonly PlatformBreadcrumbItem[] = [
-    {
-      id: 'conis',
-      label: 'CONIS',
-      onSelect: () => selectSurface('client'),
-    },
-    { id: 'workspace', label: 'Workspace' },
-    {
-      id: 'company',
-      label:
-        brand.personalized
-          ? brand.companyName
-          : (effectiveCompanyId ?? 'Partner'),
-    },
-    { id: 'section', label: sectionLabel },
-  ];
+  const breadcrumb: readonly PlatformBreadcrumbItem[] =
+    projectSlug !== null
+      ? buildWorkspaceBreadcrumb({
+          projectSlug,
+          studioLabel: sectionLabel,
+          onOpenWorkspace: () => selectSurface('client'),
+        })
+      : [
+          {
+            id: 'conis',
+            label: 'CONIS',
+            onSelect: () => selectSurface('client'),
+          },
+          { id: 'workspace', label: 'Workspace' },
+          { id: 'project', label: 'Projekt' },
+          { id: 'studio', label: sectionLabel },
+        ];
 
   return (
     <div

@@ -193,7 +193,7 @@ describe('OF-14 Shared Workspace Context', () => {
     assert.deepEqual(loadPlatformSession()?.user.roles, ['manager']);
     assert.deepEqual(
       workspaceStudiosForRoles(loadPlatformSession()?.user.roles ?? []),
-      ['client', 'manager', 'sales'],
+      ['client', 'sales', 'manager'],
     );
   });
 

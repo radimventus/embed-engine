@@ -5,8 +5,8 @@
 
 import type { PilotInvite, PilotInviteStatus } from '../domain/pilotTypes';
 
-/** Default pilot invite validity: 7 days. */
-export const INVITE_VALIDITY_MS = 7 * 24 * 60 * 60 * 1000;
+/** Default pilot invite validity: 30 minutes. */
+export const INVITE_VALIDITY_MS = 30 * 60 * 1000;
 
 export type InviteLifecycleState =
   | 'missing'

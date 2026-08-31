@@ -17,7 +17,7 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(app, /PlatformShell/);
     assert.match(app, /activeStudioId="sales"/);
     assert.match(pkg, /@embed-engine\/platform-shell/);
-    assert.match(vite, /port:\s*4179/);
+    assert.match(vite, /(?:port:\s*4179|localSameSiteServer\(4179\))/);
   });
 
   it('composes Sales from Capability Registry (EPIC-BX-13)', () => {
@@ -218,7 +218,7 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.doesNotMatch(scopeControls, /Dům \/ objekt/);
     assert.match(
       scopeControls,
-      /updateWorkspaceScope\(\{ projectId: nextProjectId \}\)/,
+      /updateWorkspaceScope\(\{\s*projectId:\s*nextProjectId,\s*activeHouseId:\s*null,\s*\}\)/,
     );
     assert.match(
       scopeControls,

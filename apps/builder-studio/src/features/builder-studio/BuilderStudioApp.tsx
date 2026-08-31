@@ -12,7 +12,8 @@ import {
   usePlatformSession,
   isWorkspaceShellEmbed,
   workspaceStudiosForRoles,
-} from "@embed-engine/platform-access";
+
+  getCanonicalProject,} from "@embed-engine/platform-access";
 
 import { AppShell } from "../../components/layout/AppShell";
 import { getBuilderCapabilityHost } from "../../studio/builderStudioComposition";
@@ -53,6 +54,7 @@ import {
   resolveBuilderHousePackageRoot,
   shouldShowCanonicalHouseEmptyState,
 } from "./resolveBuilderHousePackageRoot";
+import { buildWorkspaceBreadcrumb } from "@embed-engine/platform-shell";
 
 const SECTION_LABEL: Record<HousePackageNavId, string> = {
   overview: "Přehled",
@@ -310,23 +312,37 @@ export function BuilderStudioApp() {
     });
   };
 
-  const activeFolderName =
-    workspace.registry.folders.find(
-      (folder) => folder.id === workspace.registry.activeFolderId,
-    )?.name ?? "Projekt";
-
   const platformWorkspace = null;
-  const breadcrumb: PlatformBreadcrumbItem[] = [
-    { id: "conis", label: "CONIS", onSelect: clearStudio },
-    { id: "studio", label: "Builder" },
-    { id: "company", label: companyName },
-    { id: "project", label: activeFolderName },
-    {
-      id: "house",
-      label: workspace.activeProject?.name ?? "Dům",
-    },
-    { id: "section", label: SECTION_LABEL[activeNav] },
-  ];
+  const canonicalProject =
+    workspace.registry.activeFolderId !== null
+      ? getCanonicalProject(workspace.registry.activeFolderId)
+      : null;
+
+  const breadcrumb: readonly PlatformBreadcrumbItem[] =
+    canonicalProject !== null
+      ? buildWorkspaceBreadcrumb({
+          projectSlug: canonicalProject.project.slug,
+          studioLabel: "Builder Studio",
+          onOpenWorkspace: clearStudio,
+          trailing: [
+            {
+              id: "house",
+              label: workspace.activeProject?.name ?? "Dům",
+            },
+            { id: "section", label: SECTION_LABEL[activeNav] },
+          ],
+        })
+      : [
+          { id: "conis", label: "CONIS", onSelect: clearStudio },
+          { id: "workspace", label: "Workspace" },
+          { id: "project", label: "Projekt" },
+          { id: "studio", label: "Builder Studio" },
+          {
+            id: "house",
+            label: workspace.activeProject?.name ?? "Dům",
+          },
+          { id: "section", label: SECTION_LABEL[activeNav] },
+        ];
 
   const activeCapabilityId = capabilityIdFromBuilderNav(
     clickModelMode ? "media-studio" : activeNav,
