@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CONIS – inteligence pro váš web</title>
+<meta name="description" content="CONIS – inteligence pro weby firem, které prodávají typové a modulární domy.">
+
+<style>
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  min-height:100%
+}
+
+body{
+  background:#f7f7f5;
+  color:#181818;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased
+}
+
+main{
+  width:min(1120px,calc(100% - 40px));
+  margin:0 auto;
+  padding:64px 0 56px
+}
+
+header{
+  margin-bottom:28px;
+  text-align:center
+}
+
+h1{
+  margin:0;
+  font-size:clamp(28px,4vw,44px);
+  line-height:1.08;
+  letter-spacing:-.035em;
+  font-weight:650
+}
+
+.video-shell{
+  overflow:hidden;
+  width:100%;
+  background:#fff;
+  border:1px solid rgba(24,24,24,.10);
+  border-radius:16px;
+  box-shadow:0 16px 48px rgba(0,0,0,.07)
+}
+
+wistia-player{
+  width:100%
+}
+
+.follow-up{
+  max-width:840px;
+  margin:24px auto 0;
+  color:#66635e;
+  font-size:15px;
+  line-height:1.65;
+  text-align:center
+}
+
+.follow-up strong{
+  color:#181818;
+  font-weight:650
+}
+
+@media(max-width:640px){
+  main{
+    width:calc(100% - 24px);
+    padding:36px 0 40px
+  }
+
+  header{
+    margin-bottom:20px
+  }
+
+  h1{
+    font-size:28px
+  }
+
+  .video-shell{
+    border-radius:12px
+  }
+
+  .follow-up{
+    margin-top:20px;
+    font-size:14px
+  }
+}
+</style>
+
+<script src="https://fast.wistia.com/player.js" async></script>
+<script src="https://fast.wistia.com/embed/exw1j8nm3p.js" async type="module"></script>
+
+<style>
+wistia-player[media-id='exw1j8nm3p']:not(:defined){
+  background:center / contain no-repeat url('https://fast.wistia.com/embed/medias/exw1j8nm3p/swatch');
+  display:block;
+  filter:blur(5px);
+  padding-top:55.21%
+}
+</style>
+</head>
+
+<body>
+<main>
+  <header>
+    <h1>CONIS – inteligence pro váš web</h1>
+  </header>
+
+  <section class="video-shell" aria-label="Video CONIS">
+    <wistia-player
+      media-id="exw1j8nm3p"
+      seo="false"
+      aspect="1.8113207547169812">
+    </wistia-player>
+  </section>
+
+  <p class="follow-up">
+    Další informace máte v e-mailu, který jste ode mě obdrželi –
+    prosím projděte si <strong>PDF / Pilotní program</strong>
+    a poté <strong>Vyzkoušet prostředí CONIS.</strong>
+  </p>
+</main>
+</body>
+</html>
