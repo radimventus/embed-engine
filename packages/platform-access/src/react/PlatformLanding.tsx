@@ -4,9 +4,11 @@ import { bootstrapTenant } from '../bootstrap/tenantBootstrap';
 import {
   resolveClientStudioHref,
   resolvePilotOfferHref,
+  resolveWorkspaceHostHref,
 } from '../cloud/cloudConfig';
 import { offerSlugFromCompanyId } from '../pilot/pilotProvisionSnapshot';
 import { touchUserLastStudio } from '../registry/userRegistry';
+import { updateSession } from '../session/authService';
 import { isPilotPartnerRoles } from '../domain/pilotPartnerAccess';
 import { PLATFORM_ROLE_LABELS, isPlatformAdmin, primaryRole } from '../domain/roles';
 import type { PlatformStudioId } from '../domain/types';
@@ -103,11 +105,39 @@ export function PlatformLanding() {
     setWelcomeOpen(false);
   };
 
+  const openManagerStudio = () => {
+    bindSampleProject();
+    touchUserLastStudio(session.user.id, 'manager');
+    updateSession({
+      activeStudioId: 'manager',
+      workspaceContext:
+        session.workspaceContext === null
+          ? session.workspaceContext
+          : {
+              ...session.workspaceContext,
+              activeStudio: 'manager',
+            },
+    });
+    recordPlatformActivity({
+      label: 'Welcome → CONIS Studio',
+      detail:
+        bootstrap.project?.name ??
+        pilotWorkspace?.sampleProjectLabel ??
+        'Reference House',
+    });
+    if (typeof window !== 'undefined') {
+      window.location.assign(resolveWorkspaceHostHref());
+    }
+  };
+
+  // Existing general Platform Landing action. TASK-81 changes only
+  // the first-session START continuation; the ordinary Client Studio
+  // entry remains available independently.
   const openClientStudio = () => {
     bindSampleProject();
     touchUserLastStudio(session.user.id, 'client');
     recordPlatformActivity({
-      label: 'Welcome → CONIS Studio',
+      label: 'Otevřít Client Studio',
       detail:
         bootstrap.project?.name ??
         pilotWorkspace?.sampleProjectLabel ??
@@ -146,7 +176,7 @@ export function PlatformLanding() {
         }}
         onContinueToStudio={() => {
           finishWelcome();
-          openClientStudio();
+          openManagerStudio();
         }}
       />
     );

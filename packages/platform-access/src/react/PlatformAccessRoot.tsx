@@ -11,6 +11,8 @@ import {
   hydratePilotProvisionSnapshot,
   readPilotProvisionFromUrl,
 } from '../pilot/pilotProvisionSnapshot';
+import { isPilotPartnerRoles } from '../domain/pilotPartnerAccess';
+import { shouldShowPartnerWelcome } from '../pilot/welcomeStore';
 import { getSharedWorkspaceContext, updateSession } from '../session/authService';
 import { AuthShell } from './AuthShell';
 import { InviteShell } from './InviteShell';
@@ -99,6 +101,17 @@ function AccessGateInner({ children }: AccessGateProps) {
       );
     }
     return <AuthShell onOpenInvite={() => setInviteMode(true)} />;
+  }
+
+  // TASK-81 — first successful partner activation enters START before
+  // any Studio surface. The pending Welcome Journey is the lifecycle
+  // authority prepared by InviteShell during activation.
+  if (
+    !shellEmbed &&
+    isPilotPartnerRoles(session.user.roles) &&
+    shouldShowPartnerWelcome(session.user.email)
+  ) {
+    return <PlatformLanding />;
   }
 
   // VR-04 — PE mode on a standalone studio host redirects into Workspace Host.

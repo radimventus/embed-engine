@@ -16,6 +16,18 @@ function read(relative: string): string {
 }
 
 describe('VR-04 Canonical Workspace Shell', () => {
+  it('TASK-81 — keeps persistent Pilot Program CTA above Workspace content', () => {
+    const app = read('src/WorkspaceHostApp.tsx');
+    const cta = app.indexOf('<SelectPilotProgramCta variant="bar" />');
+    const main = app.indexOf(
+      '<main className="workspace-shell__main" data-testid="workspace-shell-main">',
+    );
+
+    assert.ok(cta >= 0);
+    assert.ok(main > cta);
+  });
+
+
   it('TASK-80 — explicit invite enters Platform Access before session restore', () => {
     const main = read('src/main.tsx');
 

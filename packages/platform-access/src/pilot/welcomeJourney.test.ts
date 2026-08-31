@@ -114,5 +114,9 @@ describe('PT-CJ-01 Welcome & Pilot Entry', () => {
     assert.match(landing, /resolvePilotOfferHref/);
     assert.match(landing, /onSelectPilotProgram/);
     assert.match(landing, /onContinueToStudio/);
+    assert.match(landing, /openManagerStudio/);
+    assert.match(landing, /activeStudioId: 'manager'/);
+    assert.match(landing, /activeStudio: 'manager'/);
+    assert.match(landing, /resolveWorkspaceHostHref/);
   });
 });

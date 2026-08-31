@@ -4,7 +4,10 @@
  * Studios own their UI — host does not redesign them.
  */
 
-import { ensureCanonicalProjectAuthority } from '@embed-engine/platform-access';
+import {
+  SelectPilotProgramCta,
+  ensureCanonicalProjectAuthority,
+} from '@embed-engine/platform-access';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Embed, registerClientStudioCss } from '@embed-engine/embed';
@@ -779,6 +782,7 @@ export function WorkspaceHostApp() {
           // Feedback stays available; Workspace Host has no separate store.
         }}
       >
+        <SelectPilotProgramCta variant="bar" />
         <main className="workspace-shell__main" data-testid="workspace-shell-main">
           {surface === 'client' ? (
             <div
