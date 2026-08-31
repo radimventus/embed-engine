@@ -811,6 +811,7 @@ export function WorkspaceHostApp() {
       data-testid="workspace-host"
       data-workspace-surface={surface}
     >
+      {!partnerJourneyOpen ? <SelectPilotProgramCta variant="bar" /> : null}
       <PlatformShell
         activeStudioId={platformStudioIdForSurface(surface)}
         availableStudioIds={workspaceStudiosForRoles(session.user.roles)}
@@ -827,7 +828,6 @@ export function WorkspaceHostApp() {
           // Feedback stays available; Workspace Host has no separate store.
         }}
       >
-        {!partnerJourneyOpen ? <SelectPilotProgramCta variant="bar" /> : null}
         <main className="workspace-shell__main" data-testid="workspace-shell-main">
           {partnerJourneyOpen ? (
             <PartnerCommercialJourneyFrame projectId={sharedProjectId} />

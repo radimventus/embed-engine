@@ -18,7 +18,7 @@ type InviteShellProps = {
 type InviteStep = 'token' | 'nda' | 'password';
 
 const NDA_SUMMARY =
-  'Pilotní NDA — důvěrné informace CONIS a partnerského nasazení Embed Experience se nesmí sdílet mimo schválený tým. Souhlas je podmínkou vstupu do Studií.';
+  'Informace a podklady zpřístupněné v rámci pilotního programu CONIS jsou důvěrné a jsou určeny pouze pro Vaši společnost a zapojený tým.';
 
 /**
  * PE-04 — Invitation → NDA Gateway → First Password → Account Activation.
@@ -37,11 +37,10 @@ export function InviteShell({
   const [password2, setPassword2] = useState('');
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [preview, setPreview] = useState<PlatformAccessInvite | null>(null);
+  const [, setPreview] = useState<PlatformAccessInvite | null>(null);
   const [isResolving, setIsResolving] = useState(initialToken.trim().length > 0);
 
   const inviteClient = useMemo(() => createPlatformAccessInviteClient(), []);
-  const lifecycle = preview?.status ?? 'missing';
 
   useEffect(() => {
     const trimmed = token.trim();
@@ -120,34 +119,14 @@ export function InviteShell({
   return (
     <div className="platform-access" data-testid="invite-shell">
       <div className="platform-access__panel">
-        <p className="platform-access__eyebrow">CONIS Invite · PE-04</p>
         <h1 className="platform-access__title">Aktivace partnerského účtu</h1>
-        <p className="platform-access__lead">
-          Pozvánka → NDA → první heslo → vstup do Partner Workspace.
-        </p>
-        <p className="platform-access__lead" data-testid="invite-step">
-          Krok:{' '}
-          {step === 'token'
-            ? 'Pozvánka'
-            : step === 'nda'
-              ? 'NDA Gateway'
-              : 'První heslo'}
-        </p>
-        {preview !== null && (
-          <p className="platform-access__lead" data-testid="invite-status">
-            {preview.displayName} ({preview.email}) · stav {lifecycle}
-            {lifecycle === 'pending'
-              ? ` · platná do ${new Date(preview.expiresAt).toLocaleString('cs-CZ')}`
-              : ''}
-          </p>
-        )}
         <form
           className="platform-access__form"
           onSubmit={(event) => {
             void onSubmit(event);
           }}
         >
-          {(step === 'token' || token.length > 0) && (
+          {step === 'token' && (
             <label className="platform-access__label">
               Invite token
               <input
@@ -171,7 +150,9 @@ export function InviteShell({
                 padding: 12,
               }}
             >
-              <legend style={{ padding: '0 6px' }}>NDA Gateway</legend>
+              <legend style={{ padding: '0 6px' }}>
+                Důvěrnost a podmínky pilotního přístupu
+              </legend>
               <p className="platform-access__lead" style={{ marginTop: 0 }}>
                 {NDA_SUMMARY}
               </p>
@@ -184,16 +165,16 @@ export function InviteShell({
                   onChange={(event) => setNdaAccepted(event.target.checked)}
                   data-testid="nda-accept"
                 />
-                <span>Souhlasím s NDA a podmínkami pilotního přístupu.</span>
+                <span>
+                  Souhlasím s podmínkami pilotního přístupu a zachováním
+                  důvěrnosti.
+                </span>
               </label>
             </fieldset>
           )}
 
           {(step === 'nda' || step === 'password') && (
             <>
-              <p className="platform-access__lead" data-testid="nda-confirmed">
-                NDA přijato — nastavte první heslo.
-              </p>
               <label className="platform-access__label">
                 Nové heslo
                 <input
@@ -229,36 +210,26 @@ export function InviteShell({
             type="submit"
             disabled={isResolving || (step === 'nda' && !ndaAccepted)}
             data-testid="invite-continue"
+            style={{
+              background: '#d1a55f',
+              borderColor: '#d1a55f',
+              color: '#ffffff',
+            }}
           >
             {step === 'token'
               ? 'Ověřit pozvánku'
               : 'Aktivovat a vstoupit'}
           </button>
         </form>
-        {step !== 'token' && (
+        {step === 'token' && (
           <button
             type="button"
             className="platform-access__logout"
-            onClick={() => {
-              setError(null);
-              if (step === 'password') {
-                setStep('nda');
-                return;
-              }
-              setStep('token');
-              setNdaAccepted(false);
-            }}
+            onClick={onCancel}
           >
-            Zpět
+            Zpět na přihlášení
           </button>
         )}
-        <button
-          type="button"
-          className="platform-access__logout"
-          onClick={onCancel}
-        >
-          Zpět na přihlášení
-        </button>
       </div>
     </div>
   );

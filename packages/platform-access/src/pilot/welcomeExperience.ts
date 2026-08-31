@@ -3,10 +3,10 @@
  * One-time PRE-PILOT lifecycle entry, not a Studio.
  */
 
-export const WELCOME_TITLE = 'Vítejte v CONIS' as const;
+export const WELCOME_TITLE = 'Vítejte ve svém CONIS Studio' as const;
 
 export const WELCOME_LEAD =
-  'Vaše partnerské prostředí je připravené. V CONIS pracujete ve třech vzájemně propojených Studiích.' as const;
+  'Vše je připravené. Zbývá už jen vybrat pilotní program.' as const;
 
 export const WELCOME_PASSWORD_NOTE =
   'Heslo můžete kdykoliv změnit v Nastavení.' as const;
@@ -30,19 +30,19 @@ export const WELCOME_STUDIO_INTROS: readonly WelcomeStudioIntro[] =
     {
       id: 'client',
       name: 'Client Studio',
-      summary: 'Zkušenost, kterou vidí a používá zákazník.',
+      summary: 'Prostor, kde si klient (zájemce) prohlédne dům.',
       primary: false,
     },
     {
       id: 'sales',
       name: 'Sales Studio',
-      summary: 'Konkrétní zákazníci, jejich priority a další obchodní krok.',
+      summary: 'Prostředí obchodníka ukazuje, co klienta zajímá.',
       primary: false,
     },
     {
       id: 'manager',
       name: 'Manager Studio',
-      summary: 'Připravenost projektu, rozhodovací trajektorie a doporučení.',
+      summary: 'Informační centrum zobrazuje, jak se klienti rozhodují.',
       primary: true,
     },
   ]);

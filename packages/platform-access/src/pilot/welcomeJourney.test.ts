@@ -66,10 +66,10 @@ describe('PT-CJ-01 Welcome & Pilot Entry', () => {
   });
 
   it('exposes TASK-81 START copy, Studio orientation and primary CTA', () => {
-    assert.equal(WELCOME_TITLE, 'Vítejte v CONIS');
+    assert.equal(WELCOME_TITLE, 'Vítejte ve svém CONIS Studio');
     assert.equal(
       WELCOME_LEAD,
-      'Vaše partnerské prostředí je připravené. V CONIS pracujete ve třech vzájemně propojených Studiích.',
+      'Vše je připravené. Zbývá už jen vybrat pilotní program.',
     );
     assert.equal(
       WELCOME_PASSWORD_NOTE,

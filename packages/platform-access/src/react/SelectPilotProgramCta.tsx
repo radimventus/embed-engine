@@ -20,19 +20,18 @@ const INTENSE_GOLD = '#f2b705';
 const NAVY = '#071b33';
 
 const BAR_STYLE: CSSProperties = {
-  position: 'fixed',
-  zIndex: 40,
-  right: 16,
-  bottom: 16,
-  padding: '12px 18px',
-  borderRadius: 999,
+  display: 'block',
+  width: '100%',
+  boxSizing: 'border-box',
+  padding: '14px 24px',
+  borderRadius: 0,
   border: `1px solid ${INTENSE_GOLD}`,
   background: INTENSE_GOLD,
   color: NAVY,
-  fontSize: 14,
+  textAlign: 'center',
+  fontSize: 15,
   fontWeight: 700,
   textDecoration: 'none',
-  boxShadow: '0 8px 24px rgba(0, 25, 48, 0.22)',
 };
 
 const LANDING_STYLE: CSSProperties = {
