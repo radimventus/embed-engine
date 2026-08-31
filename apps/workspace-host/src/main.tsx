@@ -12,6 +12,7 @@ import {
   enterOperatorPartnerEnvironmentAuthoritatively,
   getSharedWorkspaceContext,
   loadPlatformSession,
+  PlatformAccessRoot,
   resolveCloudStudioHref,
   resolveWorkspaceHostHref,
   restoreAuthenticatedPartnerEnvironment,
@@ -31,7 +32,30 @@ if (rootElement === null) {
 
 const root = rootElement;
 
+function hasExplicitInviteRoute(): boolean {
+  return (
+    (new URLSearchParams(window.location.search).get('invite')?.trim().length ?? 0) >
+    0
+  );
+}
+
 async function bootstrapWorkspaceHost(): Promise<void> {
+  // TASK-80 / VR-FIX-01
+  // A bearer invite is an explicit activation route. Workspace Host normally
+  // performs its durable-session bootstrap before rendering Platform Access,
+  // so the invite must be intercepted here first. This keeps the established
+  // cold-session restore path untouched for every non-invite Workspace entry.
+  if (hasExplicitInviteRoute()) {
+    createRoot(root).render(
+      <StrictMode>
+        <PlatformAccessRoot studioId="manager">
+          <WorkspaceHostApp />
+        </PlatformAccessRoot>
+      </StrictMode>,
+    );
+    return;
+  }
+
   try {
     const restored = await createPlatformAccessAuthClient().restoreSession();
     if (restored !== null) {

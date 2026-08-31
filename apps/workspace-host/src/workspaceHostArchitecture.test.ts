@@ -16,6 +16,23 @@ function read(relative: string): string {
 }
 
 describe('VR-04 Canonical Workspace Shell', () => {
+  it('TASK-80 — explicit invite enters Platform Access before session restore', () => {
+    const main = read('src/main.tsx');
+
+    const inviteGate = main.indexOf('if (hasExplicitInviteRoute())');
+    const inviteAccess = main.indexOf(
+      '<PlatformAccessRoot studioId="manager">',
+      inviteGate,
+    );
+    const serverRestore = main.indexOf(
+      'createPlatformAccessAuthClient().restoreSession()',
+    );
+
+    assert.ok(inviteGate >= 0);
+    assert.ok(inviteAccess > inviteGate);
+    assert.ok(serverRestore > inviteAccess);
+  });
+
   it('keeps a single Workspace Shell with PlatformShell chrome only', () => {
     const app = read('src/WorkspaceHostApp.tsx');
     const html = read('index.html');
@@ -146,7 +163,7 @@ describe('VR-04 Canonical Workspace Shell', () => {
         'if (isConisAdmin && requiresAuthoritativePartnerEnvironment)',
       );
     const renderIndex =
-      main.indexOf('<WorkspaceHostApp />');
+      main.indexOf('<WorkspaceHostApp />', adminGuardIndex);
 
     assert.ok(partnerRestoreIndex >= 0);
     assert.ok(adminGuardIndex > partnerRestoreIndex);
@@ -290,7 +307,7 @@ describe('VR-04 Canonical Workspace Shell', () => {
     const restore = main.indexOf(
       'restoreAuthenticatedPartnerEnvironment()',
     );
-    const render = main.indexOf('<WorkspaceHostApp />');
+    const render = main.indexOf('<WorkspaceHostApp />', restore);
 
     assert.ok(restore >= 0);
     assert.ok(render > restore);
