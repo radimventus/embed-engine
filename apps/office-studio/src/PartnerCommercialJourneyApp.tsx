@@ -1,5 +1,9 @@
+import { useEffect } from 'react';
 import { CommercialJourneySurface } from './features/pilot-workspace/CommercialJourneySurface';
-import { PilotWorkspaceProvider } from './office/PilotWorkspaceContext';
+import {
+  PilotWorkspaceProvider,
+  usePilotWorkspaceContext,
+} from './office/PilotWorkspaceContext';
 
 /**
  * TASK-82 — partner-facing reuse of the existing Commercial Journey runtime.
@@ -13,6 +17,16 @@ import { PilotWorkspaceProvider } from './office/PilotWorkspaceContext';
  * Business/runtime authority remains PilotWorkspaceProvider + existing
  * Commercial Journey screens. This is reuse, not a second journey.
  */
+function PartnerCommercialJourneyStart() {
+  const { navigateCommercialJourneyStep } = usePilotWorkspaceContext();
+
+  useEffect(() => {
+    navigateCommercialJourneyStep('pilot_program');
+  }, [navigateCommercialJourneyStep]);
+
+  return <CommercialJourneySurface />;
+}
+
 export function PartnerCommercialJourneyApp() {
   return (
     <PilotWorkspaceProvider>
@@ -24,7 +38,7 @@ export function PartnerCommercialJourneyApp() {
           className="platform-studio-pad office-workspace__main office-workspace__main--work"
           style={{ width: '100%', maxWidth: 'none' }}
         >
-          <CommercialJourneySurface />
+          <PartnerCommercialJourneyStart />
         </main>
       </div>
     </PilotWorkspaceProvider>
