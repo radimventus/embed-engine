@@ -15,8 +15,9 @@ type PartnerWelcomeScreenProps = {
   readonly onContinueToStudio: () => void;
 };
 
-const INTENSE_GOLD = '#d1a55f';
 const NAVY = '#071b33';
+const LIGHT_GOLD = '#d1a55f';
+const MUTED = '#718096';
 
 /**
  * TASK-81 — one-time START.
@@ -30,15 +31,25 @@ export function PartnerWelcomeScreen({
   onContinueToStudio,
 }: PartnerWelcomeScreenProps) {
   return (
-    <div className="platform-access" data-testid="partner-welcome">
+    <div
+      className="platform-access"
+      data-testid="partner-welcome"
+      style={{
+        display: 'block',
+        minHeight: 'calc(100vh - 98px)',
+        boxSizing: 'border-box',
+        padding: 0,
+        background: '#f7f7f6',
+      }}
+    >
       <div
         data-testid="welcome-experience"
         style={{
           width: '100%',
-          maxWidth: 920,
-          margin: '0 auto',
-          padding: '28px 24px 48px',
+          maxWidth: 960,
           boxSizing: 'border-box',
+          margin: '0 auto',
+          padding: '22px 24px 44px',
         }}
       >
         <div
@@ -47,9 +58,10 @@ export function PartnerWelcomeScreen({
             textAlign: 'center',
             color: NAVY,
             fontWeight: 800,
-            fontSize: 22,
+            fontSize: 21,
+            lineHeight: 1,
             letterSpacing: '0.32em',
-            marginBottom: 22,
+            marginBottom: 14,
           }}
         >
           CONIS
@@ -61,7 +73,7 @@ export function PartnerWelcomeScreen({
             display: 'grid',
             gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
             gap: 10,
-            marginBottom: 56,
+            margin: 0,
           }}
         >
           {WELCOME_STUDIO_INTROS.map((studio) => (
@@ -69,29 +81,34 @@ export function PartnerWelcomeScreen({
               key={studio.id}
               data-testid={`welcome-studio-${studio.id}`}
               style={{
+                minHeight: 78,
+                boxSizing: 'border-box',
                 border: `1px solid ${NAVY}`,
                 borderRadius: 10,
-                padding: '14px 16px',
-                background: '#ffffff',
+                padding: '13px 16px',
+                background: '#fff',
                 textAlign: 'left',
+                color: NAVY,
               }}
             >
               <strong
                 style={{
                   display: 'block',
-                  color: NAVY,
                   marginBottom: 5,
-                  fontSize: 13,
+                  color: NAVY,
+                  fontSize: 12,
+                  lineHeight: 1.2,
                   textTransform: 'uppercase',
                 }}
               >
                 {studio.name}
               </strong>
+
               <span
                 style={{
                   display: 'block',
                   color: NAVY,
-                  fontSize: 13,
+                  fontSize: 12,
                   lineHeight: 1.35,
                 }}
               >
@@ -104,23 +121,46 @@ export function PartnerWelcomeScreen({
         <div
           className="platform-access__panel platform-access__panel--welcome"
           style={{
+            width: '100%',
             maxWidth: 500,
-            margin: '0 auto',
+            boxSizing: 'border-box',
+            margin: '26px auto 0',
+            padding: '32px 34px 28px',
             textAlign: 'center',
+            background: '#fff',
           }}
         >
-          <h1 className="platform-access__title" data-testid="welcome-title">
+          <h1
+            className="platform-access__title"
+            data-testid="welcome-title"
+            style={{
+              margin: 0,
+              color: NAVY,
+              fontSize: 29,
+              lineHeight: 1.08,
+            }}
+          >
             {WELCOME_TITLE}
           </h1>
 
-          <p className="platform-access__lead" data-testid="welcome-lead">
+          <p
+            className="platform-access__lead"
+            data-testid="welcome-lead"
+            style={{
+              marginTop: 14,
+              color: MUTED,
+            }}
+          >
             {WELCOME_LEAD}
           </p>
 
           <p
             className="platform-access__hint"
             data-testid="welcome-password-note"
-            style={{ marginTop: 12 }}
+            style={{
+              marginTop: 10,
+              color: MUTED,
+            }}
           >
             {WELCOME_PASSWORD_NOTE}
           </p>
@@ -130,13 +170,13 @@ export function PartnerWelcomeScreen({
             className="platform-access__submit"
             style={{
               width: '100%',
+              minHeight: 54,
               marginTop: 24,
-              background: INTENSE_GOLD,
-              borderColor: INTENSE_GOLD,
-              color: '#ffffff',
-              fontWeight: 700,
               borderRadius: 999,
-              minHeight: 52,
+              border: `1px solid ${LIGHT_GOLD}`,
+              background: LIGHT_GOLD,
+              color: '#fff',
+              fontWeight: 700,
             }}
             onClick={onSelectPilotProgram}
             data-testid="welcome-select-pilot-program"
@@ -151,7 +191,7 @@ export function PartnerWelcomeScreen({
             data-testid="welcome-continue-studio"
             style={{
               marginTop: 16,
-              color: '#68768a',
+              color: MUTED,
               textDecoration: 'underline',
             }}
           >

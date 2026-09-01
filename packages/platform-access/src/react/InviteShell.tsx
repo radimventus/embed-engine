@@ -156,18 +156,72 @@ export function InviteShell({
               <p className="platform-access__lead" style={{ marginTop: 0 }}>
                 {NDA_SUMMARY}
               </p>
+              {!ndaAccepted && (
+                <div
+                  data-testid="nda-consent-comment"
+                  style={{
+                    marginTop: 10,
+                    marginBottom: 12,
+                    padding: '10px 12px',
+                    border: '1px solid rgba(7, 27, 51, 0.18)',
+                    borderRadius: 8,
+                    background: '#f7f8fa',
+                    color: '#071b33',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: 12,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontSize: 13,
+                      lineHeight: 1.4,
+                      fontWeight: 600,
+                    }}
+                  >
+                    Souhlasím s podmínkami pilotního přístupu a zachováním
+                    důvěrnosti.
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={() => setNdaAccepted(true)}
+                    data-testid="nda-consent-button"
+                    style={{
+                      flex: '0 0 auto',
+                      padding: '7px 13px',
+                      borderRadius: 999,
+                      border: '1px solid #071b33',
+                      background: '#071b33',
+                      color: '#fff',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Souhlasím
+                  </button>
+                </div>
+              )}
+
               <label
-                style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}
+                style={{
+                  display: 'flex',
+                  gap: 8,
+                  alignItems: 'center',
+                  color: '#071b33',
+                }}
               >
                 <input
                   type="checkbox"
                   checked={ndaAccepted}
                   onChange={(event) => setNdaAccepted(event.target.checked)}
                   data-testid="nda-accept"
+                  aria-label="Souhlas s podmínkami pilotního přístupu a zachováním důvěrnosti"
                 />
                 <span>
-                  Souhlasím s podmínkami pilotního přístupu a zachováním
-                  důvěrnosti.
+                  {ndaAccepted ? 'Souhlas potvrzen.' : 'Souhlas'}
                 </span>
               </label>
             </fieldset>

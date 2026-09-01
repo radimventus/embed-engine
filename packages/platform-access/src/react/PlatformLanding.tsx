@@ -1,5 +1,7 @@
 import { useMemo, useState, type FormEvent } from 'react';
 
+import { createPlatformAccessAuthClient } from '../api/platformAccessClient';
+
 import { bootstrapTenant } from '../bootstrap/tenantBootstrap';
 import {
   resolveClientStudioHref,
@@ -8,6 +10,7 @@ import {
 } from '../cloud/cloudConfig';
 import { touchUserLastStudio } from '../registry/userRegistry';
 import { updateSession } from '../session/authService';
+import { savePlatformSession } from '../session/sessionStore';
 import { isPilotPartnerRoles } from '../domain/pilotPartnerAccess';
 import { PLATFORM_ROLE_LABELS, isPlatformAdmin, primaryRole } from '../domain/roles';
 import type { PlatformStudioId } from '../domain/types';
@@ -104,10 +107,11 @@ export function PlatformLanding() {
     setWelcomeOpen(false);
   };
 
-  const openManagerStudio = () => {
+  const openManagerStudio = async () => {
     bindSampleProject();
     touchUserLastStudio(session.user.id, 'manager');
-    updateSession({
+
+    const locallyUpdated = updateSession({
       activeStudioId: 'manager',
       workspaceContext:
         session.workspaceContext === null
@@ -117,6 +121,9 @@ export function PlatformLanding() {
               activeStudio: 'manager',
             },
     });
+
+    const nextSession = locallyUpdated ?? session;
+
     recordPlatformActivity({
       label: 'Welcome → CONIS Studio',
       detail:
@@ -124,6 +131,32 @@ export function PlatformLanding() {
         pilotWorkspace?.sampleProjectLabel ??
         'Reference House',
     });
+
+    // TASK-81 VR convergence:
+    // "Pokračovat do CONIS Studio" must survive the Workspace reload.
+    // Persist Manager Studio into the same authoritative Platform session
+    // before navigating into Workspace Host.
+    if (nextSession.projectId !== null) {
+      try {
+        const persisted =
+          await createPlatformAccessAuthClient().mutateSessionContext({
+            action: 'switch',
+            activeStudio: 'manager',
+            projectId: nextSession.projectId,
+            activeHouseId: nextSession.activeHouseId,
+            authoredHouseIdentities:
+              nextSession.workspaceContext?.authoredHouseIdentities,
+          });
+
+        if (persisted.ok) {
+          savePlatformSession(persisted.session);
+        }
+      } catch {
+        // Local session already carries Manager. Workspace bootstrap retains
+        // the local fallback if Platform API is temporarily unavailable.
+      }
+    }
+
     if (typeof window !== 'undefined') {
       window.location.assign(resolveWorkspaceHostHref());
     }
@@ -174,7 +207,7 @@ export function PlatformLanding() {
         }}
         onContinueToStudio={() => {
           finishWelcome();
-          openManagerStudio();
+          void openManagerStudio();
         }}
       />
     );

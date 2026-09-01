@@ -19,17 +19,28 @@ type SelectPilotProgramCtaProps = {
 const INTENSE_GOLD = '#f2b705';
 const NAVY = '#071b33';
 
+const BAR_ZONE_STYLE: CSSProperties = {
+  width: '100%',
+  minHeight: 92,
+  boxSizing: 'border-box',
+  padding: '18px 24px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  background: '#fff',
+};
+
 const BAR_STYLE: CSSProperties = {
   display: 'block',
-  width: '100%',
+  width: 'min(100%, 384px)',
   boxSizing: 'border-box',
-  padding: '14px 24px',
-  borderRadius: 0,
-  border: `1px solid ${INTENSE_GOLD}`,
-  background: INTENSE_GOLD,
-  color: NAVY,
+  padding: '16px 28px',
+  borderRadius: 999,
+  border: '1px solid #d1a55f',
+  background: '#d1a55f',
+  color: '#fff',
   textAlign: 'center',
-  fontSize: 15,
+  fontSize: 16,
   fontWeight: 700,
   textDecoration: 'none',
 };
@@ -82,7 +93,7 @@ export function SelectPilotProgramCta({
     .filter(Boolean)
     .join(' ');
 
-  return (
+  const link = (
     <a
       className={classes}
       href={href}
@@ -91,5 +102,16 @@ export function SelectPilotProgramCta({
     >
       {WELCOME_PRIMARY_CTA_LABEL}
     </a>
+  );
+
+  if (variant === 'landing') return link;
+
+  return (
+    <div
+      style={BAR_ZONE_STYLE}
+      data-testid="select-pilot-program-zone"
+    >
+      {link}
+    </div>
   );
 }
