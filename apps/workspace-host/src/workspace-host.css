@@ -175,3 +175,20 @@ body:has(.workspace-shell[data-workspace-surface='client']),
   transform: translateY(-1px);
   box-shadow: 0 5px 14px rgba(0, 25, 48, 0.18);
 }
+
+/* FIX65D — Commercial Journey is a temporary commercial layer,
+   not a Studio and not part of the Workspace PlatformShell. */
+.workspace-partner-journey {
+  width: 100%;
+  min-height: 100vh;
+  background: #f7f6f4;
+}
+
+.workspace-partner-journey
+  [data-testid='workspace-partner-commercial-journey'] {
+  width: 100%;
+  min-height: 100vh !important;
+  height: 100vh !important;
+  border: 0;
+  display: block;
+}

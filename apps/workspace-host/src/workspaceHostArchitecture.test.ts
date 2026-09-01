@@ -523,6 +523,6 @@ describe('TASK-81-83 partner journey cutover', () => {
 
     assert.match(app, /setPartnerJourneyOpen\(false\)/);
     assert.match(app, /url\.searchParams\.delete\(['"]journey['"]\)/);
-    assert.match(app, /partnerJourneyOpen\s*\?\s*'Pilotní program'/);
+    assert.match(app, /if\s*\(partnerJourneyOpen\)\s*\{[\s\S]*?workspace-partner-journey-standalone[\s\S]*?<PartnerCommercialJourneyFrame/);
   });
 });

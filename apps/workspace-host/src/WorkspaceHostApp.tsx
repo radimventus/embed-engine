@@ -172,6 +172,24 @@ function platformStudioIdForSurface(
   return surface;
 }
 
+const PARTNER_WORKSPACE_STUDIOS = [
+  'client',
+  'sales',
+  'manager',
+] as const satisfies readonly WorkspaceStudioSurface[];
+
+function partnerWorkspaceStudiosForRoles(
+  roles: Parameters<typeof workspaceStudiosForRoles>[0],
+): readonly WorkspaceStudioSurface[] {
+  const authorized = new Set(
+    workspaceStudiosForRoles(roles),
+  );
+
+  return PARTNER_WORKSPACE_STUDIOS.filter(
+    (studio) => authorized.has(studio),
+  );
+}
+
 function task42Trace(
   event: string,
   detail: Record<string, unknown> = {},
@@ -883,6 +901,19 @@ export function WorkspaceHostApp() {
     );
   }
 
+  if (partnerJourneyOpen) {
+    return (
+      <div
+        className="workspace-partner-journey"
+        data-testid="workspace-partner-journey-standalone"
+      >
+        <PartnerCommercialJourneyFrame
+          projectId={sharedProjectId}
+        />
+      </div>
+    );
+  }
+
   const authoritativeProjectId =
     sharedProjectId ?? effectiveProjectId;
 
@@ -910,11 +941,9 @@ export function WorkspaceHostApp() {
   });
 
   const sectionLabel =
-    partnerJourneyOpen
-      ? 'Pilotní program'
-      : surface === 'client'
-        ? 'Client Studio'
-        : WORKSPACE_STUDIO_LABELS[surface];
+    surface === 'client'
+      ? 'Client Studio'
+      : WORKSPACE_STUDIO_LABELS[surface];
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] =
     projectSlug !== null
@@ -940,10 +969,10 @@ export function WorkspaceHostApp() {
       data-testid="workspace-host"
       data-workspace-surface={surface}
     >
-      {!partnerJourneyOpen ? <SelectPilotProgramCta variant="bar" /> : null}
+      <SelectPilotProgramCta variant="bar" />
       <PlatformShell
         activeStudioId={platformStudioIdForSurface(surface)}
-        availableStudioIds={workspaceStudiosForRoles(session.user.roles)}
+        availableStudioIds={partnerWorkspaceStudiosForRoles(session.user.roles)}
         userLabel={session.user.displayName}
         roleLabel={PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]}
         workspace={workspaceState}
@@ -958,9 +987,7 @@ export function WorkspaceHostApp() {
         }}
       >
         <main className="workspace-shell__main" data-testid="workspace-shell-main">
-          {partnerJourneyOpen ? (
-            <PartnerCommercialJourneyFrame projectId={sharedProjectId} />
-          ) : surface === 'client' ? (
+          {surface === 'client' ? (
             <div
               id={CLIENT_MOUNT_ID}
               className="workspace-shell__view"

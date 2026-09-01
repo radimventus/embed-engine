@@ -15,8 +15,8 @@ describe('PT-VR-07 workspaceStudiosForRoles', () => {
   it('keeps canonical five-studio order', () => {
     assert.deepEqual([...WORKSPACE_STUDIO_SWITCH_ORDER], [
       'client',
-      'manager',
       'sales',
+      'manager',
       'builder',
       'office',
     ]);
@@ -32,13 +32,13 @@ describe('PT-VR-07 workspaceStudiosForRoles', () => {
   it('project manager sees Client · Manager · Sales only', () => {
     assert.deepEqual([...workspaceStudiosForRoles(['manager'])], [
       'client',
-      'manager',
       'sales',
+      'manager',
     ]);
     assert.deepEqual([...workspaceStudiosForRoles(['project-admin'])], [
       'client',
-      'manager',
       'sales',
+      'manager',
       'builder',
       'office',
     ]);
