@@ -34,12 +34,39 @@ test('FIX64 CJ uses horizontal schema and scrollable viewport', () => {
   );
 });
 
-test('FIX64 Manager handoff completes START before navigation', () => {
-  const start = landing.indexOf('const openManagerStudio = async');
-  assert.ok(start >= 0);
+test('FIX64 START Studio handoff completes Welcome before async work', () => {
+  const handlerStart = landing.indexOf(
+    'const handleWelcomeStudioSelect = async',
+  );
+  assert.ok(handlerStart >= 0);
 
-  const slice = landing.slice(start, start + 500);
-  assert.match(slice, /finishWelcome\(\)/);
+  const handlerEnd = landing.indexOf(
+    '\n  const ',
+    handlerStart + 10,
+  );
+  assert.ok(handlerEnd > handlerStart);
+
+  const handler = landing.slice(handlerStart, handlerEnd);
+
+  const finish = handler.indexOf('finishWelcome();');
+  const firstAwait = handler.indexOf('await ');
+
+  assert.ok(finish >= 0);
+  assert.ok(firstAwait >= 0);
+  assert.ok(finish < firstAwait);
+
+  assert.match(
+    handler,
+    /touchUserLastStudio\(session\.user\.id, studioId\)/,
+  );
+  assert.match(
+    handler,
+    /activeStudio:\s*studioId/,
+  );
+  assert.match(
+    handler,
+    /resolveWorkspaceHostHref/,
+  );
 });
 
 test('FIX64 does not reintroduce visual WorkspaceEntryFrame chrome', () => {

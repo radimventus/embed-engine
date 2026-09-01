@@ -18,6 +18,15 @@ export function CommercialJourneyNavigator() {
     (step) => step.id !== 'welcome',
   );
 
+  const activeVisibleIndex =
+    commercialJourneyStepId === 'welcome'
+      ? 0
+      : visibleSteps.findIndex(
+          (step) => step.id === commercialJourneyStepId,
+        );
+
+  const unlockedThroughIndex = Math.max(0, activeVisibleIndex);
+
   return (
     <nav
       className="office-pilot-ws__workflow office-pilot-ws__workflow--journey"
@@ -39,6 +48,7 @@ export function CommercialJourneyNavigator() {
               step.id === commercialJourneyStepId ||
               (commercialJourneyStepId === 'welcome' && index === 0)
             }
+            enabled={index <= unlockedThroughIndex}
             onNavigate={() => navigateCommercialJourneyStep(step.id)}
             showArrow={index < visibleSteps.length - 1}
           />
@@ -51,11 +61,13 @@ export function CommercialJourneyNavigator() {
 function JourneyNavItem({
   step,
   highlighted,
+  enabled,
   onNavigate,
   showArrow,
 }: {
   readonly step: CommercialJourneyStep;
   readonly highlighted: boolean;
+  readonly enabled: boolean;
   readonly onNavigate: () => void;
   readonly showArrow: boolean;
 }) {
@@ -71,15 +83,13 @@ function JourneyNavItem({
         data-testid={`commercial-journey-nav-${step.id}`}
         data-step-state={step.state}
         data-highlighted={highlighted ? 'true' : 'false'}
+        data-enabled={enabled ? 'true' : 'false'}
         aria-current={highlighted ? 'step' : undefined}
+        aria-disabled={!enabled}
+        disabled={!enabled}
         title={step.label}
-        onClick={onNavigate}
+        onClick={enabled ? onNavigate : undefined}
       >
-        <span
-          className="office-pilot-workflow-nav__marker"
-          aria-hidden="true"
-          title={step.label}
-        />
         <span className="office-pilot-workflow-nav__label">
           {step.label}
         </span>

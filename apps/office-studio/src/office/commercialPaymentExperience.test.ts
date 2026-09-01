@@ -47,7 +47,7 @@ describe('PT-CJ-04 Payment Experience', () => {
       variableSymbol: '123456',
       message: 'CONIS Pilot',
     });
-    assert.match(payload, /ACC:CZ1520100000002303345128/);
+    assert.match(payload, /ACC:CZ3530300000003452548011/);
   });
 
   it('wires payment screen with PDF actions and QR confirm', () => {

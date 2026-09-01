@@ -161,3 +161,17 @@ body:has(.workspace-shell[data-workspace-surface='client']),
 }
 
 /* FIX65-PARTNER-VR-END */
+
+/* FIX65B — persistent pilot conversion hover */
+.platform-select-pilot-cta {
+  transition:
+    background-color 160ms ease,
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.platform-select-pilot-cta:hover {
+  background: #a98222 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(0, 25, 48, 0.18);
+}

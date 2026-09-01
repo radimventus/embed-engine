@@ -12,6 +12,9 @@ type PartnerWelcomeScreenProps = {
   readonly firmName: string;
   readonly projectName: string;
   readonly onSelectPilotProgram: () => void;
+  readonly onSelectStudio: (
+    studioId: 'client' | 'sales' | 'manager',
+  ) => void;
   readonly onContinueToStudio: () => void;
 };
 
@@ -28,6 +31,7 @@ export function PartnerWelcomeScreen({
   firmName: _firmName,
   projectName: _projectName,
   onSelectPilotProgram,
+  onSelectStudio,
   onContinueToStudio,
 }: PartnerWelcomeScreenProps) {
   return (
@@ -77,9 +81,12 @@ export function PartnerWelcomeScreen({
           }}
         >
           {WELCOME_STUDIO_INTROS.map((studio) => (
-            <div
+            <button
               key={studio.id}
+              type="button"
               data-testid={`welcome-studio-${studio.id}`}
+              data-start-studio={studio.id}
+              onClick={() => onSelectStudio(studio.id)}
               style={{
                 minHeight: 78,
                 boxSizing: 'border-box',
@@ -89,6 +96,8 @@ export function PartnerWelcomeScreen({
                 background: '#F7F6F4',
                 textAlign: 'left',
                 color: NAVY,
+                cursor: 'pointer',
+                font: 'inherit',
               }}
             >
               <strong
@@ -114,12 +123,13 @@ export function PartnerWelcomeScreen({
               >
                 {studio.summary}
               </span>
-            </div>
+            </button>
           ))}
         </div>
 
         <div
           className="platform-access__panel platform-access__panel--welcome"
+          data-partner-welcome-card
           style={{
             width: '100%',
             maxWidth: 500,

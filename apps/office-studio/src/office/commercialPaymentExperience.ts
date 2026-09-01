@@ -23,9 +23,9 @@ import {
 import type { PilotWorkspaceCase } from './pilotWorkspaceModel';
 
 export const COMMERCIAL_PAYMENT_ACCOUNT = Object.freeze({
-  accountNumber: '2303345128/2010',
-  iban: 'CZ1520100000002303345128',
-  bankName: 'Fio banka',
+  accountNumber: '3452548011/3030',
+  iban: 'CZ3530300000003452548011',
+  bankName: 'Air Bank',
 });
 
 export type CommercialProforma = {

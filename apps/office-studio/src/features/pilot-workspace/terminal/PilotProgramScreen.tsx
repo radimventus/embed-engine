@@ -38,8 +38,7 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
       data-cj-pilot-program="true"
     >
       <header className="office-cj-pilot__head">
-        <p className="office-cj-pilot__eyebrow">Pilotní program</p>
-        <p className="office-cj-pilot__partner">{activeCase.partnerName}</p>
+        <p className="office-cj-pilot__eyebrow">Pilotní program / {activeCase.partnerName}</p>
         <h2 className="office-cj-pilot__title" id="cj-pilot-program-title">
           Začněte v rozsahu, který vám dává smysl.
         </h2>

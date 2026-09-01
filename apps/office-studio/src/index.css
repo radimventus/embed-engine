@@ -3227,3 +3227,23 @@ body {
 }
 
 /* FIX65-CJ-APPLE-EASY-END */
+
+/* FIX65B — package action returns to canonical navy */
+.office-cj-pilot__continue,
+.office-cj-pilot__package-action,
+.office-cj-pilot__select {
+  background: #001930;
+  border-color: #001930;
+  color: #fff;
+}
+
+.office-cj-pilot__continue:hover,
+.office-cj-pilot__package-action:hover,
+.office-cj-pilot__select:hover {
+  background: #002744;
+  border-color: #002744;
+}
+
+.office-cj-pilot__eyebrow {
+  white-space: nowrap;
+}

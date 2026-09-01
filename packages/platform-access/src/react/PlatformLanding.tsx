@@ -107,42 +107,44 @@ export function PlatformLanding() {
     setWelcomeOpen(false);
   };
 
-  const openManagerStudio = async () => {
+  const handleWelcomeStudioSelect = async (
+    studioId: 'client' | 'sales' | 'manager',
+  ) => {
+    // Finish START synchronously before any async persistence/navigation.
+    // This prevents the old Welcome surface flashing during handoff.
     finishWelcome();
     bindSampleProject();
-    touchUserLastStudio(session.user.id, 'manager');
+    touchUserLastStudio(session.user.id, studioId);
 
     const locallyUpdated = updateSession({
-      activeStudioId: 'manager',
+      activeStudioId: studioId === 'client' ? null : studioId,
       workspaceContext:
         session.workspaceContext === null
           ? session.workspaceContext
           : {
               ...session.workspaceContext,
-              activeStudio: 'manager',
+              activeStudio: studioId,
             },
     });
 
     const nextSession = locallyUpdated ?? session;
 
     recordPlatformActivity({
-      label: 'Welcome → CONIS Studio',
+      label: `Welcome → ${studioId} Studio`,
       detail:
         bootstrap.project?.name ??
         pilotWorkspace?.sampleProjectLabel ??
         'Reference House',
     });
 
-    // TASK-81 VR convergence:
-    // "Pokračovat do CONIS Studio" must survive the Workspace reload.
-    // Persist Manager Studio into the same authoritative Platform session
-    // before navigating into Workspace Host.
+    // Persist the selected Studio through the same authoritative Platform
+    // session used by the existing Manager START handoff.
     if (nextSession.projectId !== null) {
       try {
         const persisted =
           await createPlatformAccessAuthClient().mutateSessionContext({
             action: 'switch',
-            activeStudio: 'manager',
+            activeStudio: studioId,
             projectId: nextSession.projectId,
             activeHouseId: nextSession.activeHouseId,
             authoredHouseIdentities:
@@ -153,8 +155,8 @@ export function PlatformLanding() {
           savePlatformSession(persisted.session);
         }
       } catch {
-        // Local session already carries Manager. Workspace bootstrap retains
-        // the local fallback if Platform API is temporarily unavailable.
+        // Local session already carries the requested Studio.
+        // Workspace bootstrap retains it if Platform API is unavailable.
       }
     }
 
@@ -206,9 +208,11 @@ export function PlatformLanding() {
           finishWelcome();
           openPilotOffer();
         }}
+        onSelectStudio={(studioId) => {
+          void handleWelcomeStudioSelect(studioId);
+        }}
         onContinueToStudio={() => {
-          finishWelcome();
-          void openManagerStudio();
+          void handleWelcomeStudioSelect('manager');
         }}
       />
     );

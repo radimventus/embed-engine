@@ -113,10 +113,26 @@ describe('PT-CJ-01 Welcome & Pilot Entry', () => {
 
     assert.match(landing, /resolvePartnerCommercialJourneyHref/);
     assert.match(landing, /onSelectPilotProgram/);
+    assert.match(landing, /onSelectStudio/);
     assert.match(landing, /onContinueToStudio/);
-    assert.match(landing, /openManagerStudio/);
-    assert.match(landing, /activeStudioId: 'manager'/);
-    assert.match(landing, /activeStudio: 'manager'/);
+    assert.match(landing, /handleWelcomeStudioSelect/);
+    assert.match(
+      landing,
+      /handleWelcomeStudioSelect\('manager'\)/,
+    );
+    assert.match(
+      landing,
+      /activeStudioId: studioId === 'client' \? null : studioId/,
+    );
+    assert.match(landing, /activeStudio: studioId/);
+    assert.match(
+      landing,
+      /finishWelcome\(\);[\s\S]*touchUserLastStudio/,
+    );
+    assert.match(
+      source,
+      /onClick=\{\(\) => onSelectStudio\(studio\.id\)\}/,
+    );
     assert.match(landing, /resolveWorkspaceHostHref/);
   });
 });
