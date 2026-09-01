@@ -320,9 +320,35 @@ export function WorkspaceHostApp() {
   const initialSessionRef = useRef(loadPlatformSession());
   const initialContextRef = useRef(getSharedWorkspaceContext());
 
-  const [surface, setSurface] = useState<WorkspaceStudioSurface>(() =>
-    initialContextRef.current?.activeStudio ?? 'client',
-  );
+  const [surface, setSurface] = useState<WorkspaceStudioSurface>(() => {
+    const requestedStudio =
+      typeof window === 'undefined'
+        ? null
+        : new URLSearchParams(window.location.search).get('studio');
+
+    if (
+      requestedStudio === 'client' ||
+      requestedStudio === 'sales' ||
+      requestedStudio === 'manager'
+    ) {
+      return requestedStudio;
+    }
+
+    const sessionStudio =
+      initialSessionRef.current?.workspaceContext?.activeStudio ??
+      initialSessionRef.current?.activeStudioId ??
+      null;
+
+    if (
+      sessionStudio === 'client' ||
+      sessionStudio === 'sales' ||
+      sessionStudio === 'manager'
+    ) {
+      return sessionStudio;
+    }
+
+    return initialContextRef.current?.activeStudio ?? 'client';
+  });
   const [partnerJourneyOpen, setPartnerJourneyOpen] = useState(
     () =>
       typeof window !== 'undefined' &&

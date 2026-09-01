@@ -35,10 +35,10 @@ export function PaymentScreen({ activeCase }: PaymentScreenProps) {
     }
     let cancelled = false;
     void QRCode.toDataURL(proforma.qrPayload, {
-      errorCorrectionLevel: 'M',
-      margin: 1,
-      width: 220,
-      color: { dark: '#001930', light: '#ffffff' },
+      errorCorrectionLevel: 'H',
+      margin: 4,
+      width: 320,
+      color: { dark: '#000000', light: '#ffffff' },
     }).then((url) => {
       if (!cancelled) setQrImageSrc(url);
     });
@@ -87,8 +87,8 @@ export function PaymentScreen({ activeCase }: PaymentScreenProps) {
               className="office-cj-payment__qr-image"
               src={qrImageSrc}
               alt="QR platba"
-              width={220}
-              height={220}
+              width={320}
+              height={320}
             />
           )}
         </div>
@@ -161,6 +161,22 @@ function ProformaPreview({
         <div>
           <dt>Splatnost</dt>
           <dd>{formatCommercialDateCs(proforma.dueDate)}</dd>
+        </div>
+        <div>
+          <dt>Banka</dt>
+          <dd data-testid="cj-payment-bank">{proforma.bankName}</dd>
+        </div>
+        <div>
+          <dt>Účet</dt>
+          <dd data-testid="cj-payment-account">{proforma.accountNumber}</dd>
+        </div>
+        <div>
+          <dt>IBAN</dt>
+          <dd data-testid="cj-payment-iban">{proforma.iban}</dd>
+        </div>
+        <div>
+          <dt>Variabilní symbol</dt>
+          <dd data-testid="cj-payment-vs">{proforma.variableSymbol}</dd>
         </div>
       </dl>
     </section>

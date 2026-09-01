@@ -127,7 +127,19 @@ describe('PT-CJ-01 Welcome & Pilot Entry', () => {
     assert.match(landing, /activeStudio: studioId/);
     assert.match(
       landing,
-      /finishWelcome\(\);[\s\S]*touchUserLastStudio/,
+      /finishWelcomeJourney\(session\.user\.email\);[\s\S]*touchUserLastStudio/,
+    );
+    assert.doesNotMatch(
+      landing,
+      /setWelcomeOpen\(false\)/,
+    );
+    assert.match(
+      landing,
+      /onSelectPilotProgram=\{\(\) => \{[\s\S]*finishWelcomeJourney\(session\.user\.email\);[\s\S]*openPilotOffer\(\);/,
+    );
+    assert.match(
+      landing,
+      /searchParams\.set\('studio', studioId\)/,
     );
     assert.match(
       source,

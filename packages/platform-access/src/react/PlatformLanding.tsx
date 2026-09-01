@@ -68,7 +68,7 @@ export function PlatformLanding() {
   } = usePlatformSession();
   const [pilotFirm, setPilotFirm] = useState('');
   const [pilotMessage, setPilotMessage] = useState<string | null>(null);
-  const [welcomeOpen, setWelcomeOpen] = useState(true);
+  const [welcomeOpen] = useState(true);
 
   const diagnostics = useMemo(
     () => buildPilotDiagnostics(session),
@@ -102,17 +102,13 @@ export function PlatformLanding() {
     }
   };
 
-  const finishWelcome = () => {
-    finishWelcomeJourney(session.user.email);
-    setWelcomeOpen(false);
-  };
-
   const handleWelcomeStudioSelect = async (
     studioId: 'client' | 'sales' | 'manager',
   ) => {
-    // Finish START synchronously before any async persistence/navigation.
-    // This prevents the old Welcome surface flashing during handoff.
-    finishWelcome();
+    // Persist START completion synchronously, but keep the current START
+    // surface mounted until navigation. Changing local welcome state here
+    // would briefly reveal the historical Platform Landing.
+    finishWelcomeJourney(session.user.email);
     bindSampleProject();
     touchUserLastStudio(session.user.id, studioId);
 
@@ -161,7 +157,9 @@ export function PlatformLanding() {
     }
 
     if (typeof window !== 'undefined') {
-      window.location.assign(resolveWorkspaceHostHref());
+      const workspaceHref = new URL(resolveWorkspaceHostHref());
+      workspaceHref.searchParams.set('studio', studioId);
+      window.location.assign(workspaceHref.toString());
     }
   };
 
@@ -205,7 +203,7 @@ export function PlatformLanding() {
           'Reference House'
         }
         onSelectPilotProgram={() => {
-          finishWelcome();
+          finishWelcomeJourney(session.user.email);
           openPilotOffer();
         }}
         onSelectStudio={(studioId) => {

@@ -37,7 +37,7 @@ export function InviteShell({
   const [password2, setPassword2] = useState('');
   const [ndaAccepted, setNdaAccepted] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [, setPreview] = useState<PlatformAccessInvite | null>(null);
+  const [preview, setPreview] = useState<PlatformAccessInvite | null>(null);
   const [isResolving, setIsResolving] = useState(initialToken.trim().length > 0);
 
   const inviteClient = useMemo(() => createPlatformAccessInviteClient(), []);
@@ -119,7 +119,26 @@ export function InviteShell({
   return (
     <div className="platform-access" data-testid="invite-shell">
       <div className="platform-access__panel">
-        <h1 className="platform-access__title">Aktivace partnerského účtu</h1>
+        <h1
+          className="platform-access__title"
+          style={{ fontSize: '1.8rem' }}
+        >
+          Aktivace partnerského účtu
+        </h1>
+        {preview?.email ? (
+          <p
+            data-testid="invite-email"
+            style={{
+              margin: '8px 0 18px',
+              color: '#071b33',
+              textAlign: 'center',
+              fontSize: 14,
+              lineHeight: 1.35,
+            }}
+          >
+            <strong>{preview.email}</strong>
+          </p>
+        ) : null}
         <form
           className="platform-access__form"
           onSubmit={(event) => {

@@ -48,7 +48,7 @@ test('FIX64 START Studio handoff completes Welcome before async work', () => {
 
   const handler = landing.slice(handlerStart, handlerEnd);
 
-  const finish = handler.indexOf('finishWelcome();');
+  const finish = handler.indexOf('finishWelcomeJourney(session.user.email);');
   const firstAwait = handler.indexOf('await ');
 
   assert.ok(finish >= 0);
@@ -66,6 +66,14 @@ test('FIX64 START Studio handoff completes Welcome before async work', () => {
   assert.match(
     handler,
     /resolveWorkspaceHostHref/,
+  );
+
+
+  // FIX65C: completing START must not locally unmount Welcome before
+  // target navigation, otherwise historical Platform Landing flashes.
+  assert.doesNotMatch(
+    landing,
+    /setWelcomeOpen\(false\)/,
   );
 });
 

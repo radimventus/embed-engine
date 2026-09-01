@@ -3247,3 +3247,28 @@ body {
 .office-cj-pilot__eyebrow {
   white-space: nowrap;
 }
+
+/* FIX65C — Pilot package continuation is canonical CONIS navy. */
+button.office-cj-pilot__continue[data-package-select-action] {
+  background: #001930 !important;
+  border-color: #001930 !important;
+  color: #ffffff !important;
+}
+
+button.office-cj-pilot__continue[data-package-select-action]:hover {
+  background: #001930 !important;
+  border-color: #001930 !important;
+  color: #ffffff !important;
+}
+
+/* FIX65C — bank-app scanability: keep QR large, crisp and isolated. */
+.office-cj-payment__qr-frame {
+  padding: 16px;
+  background: #ffffff;
+}
+
+.office-cj-payment__qr-image {
+  width: min(320px, 100%);
+  height: auto;
+  display: block;
+}
