@@ -106,3 +106,58 @@ body:has(.workspace-shell[data-workspace-surface='client']),
   padding: 24px;
   font-size: 14px;
 }
+
+
+/* FIX65-PARTNER-VR-BEGIN */
+
+/*
+ * Partner activation / START presentation.
+ * Scope deliberately stays inside Workspace entry states.
+ */
+.workspace-shell[data-workspace-entry-stage] {
+  font-size: calc(1rem + 1.333px);
+}
+
+.workspace-shell[data-workspace-entry-stage="heslo"] main,
+.workspace-shell[data-workspace-entry-stage="activation"] main {
+  transform: translateY(-120px);
+}
+
+.workspace-shell[data-workspace-entry-stage="start"] main {
+  transform: none;
+}
+
+/*
+ * START orientation remains close to the functional Studio
+ * switcher while the Welcome decision card moves down.
+ */
+.workspace-shell[data-workspace-entry-stage="start"]
+  [data-partner-welcome-card],
+.workspace-shell[data-workspace-entry-stage="start"]
+  .partner-welcome-card {
+  transform: translateY(120px);
+}
+
+/*
+ * Persistent pilot conversion CTA:
+ * visible interaction feedback without changing hierarchy.
+ */
+.workspace-shell [data-pilot-program-cta],
+.workspace-shell .select-pilot-program-cta button,
+.workspace-shell .select-pilot-program-cta a {
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    filter 160ms ease,
+    transform 160ms ease;
+}
+
+.workspace-shell [data-pilot-program-cta]:hover,
+.workspace-shell .select-pilot-program-cta button:hover,
+.workspace-shell .select-pilot-program-cta a:hover {
+  filter: brightness(0.96);
+  box-shadow: 0 4px 14px rgba(0, 25, 48, 0.14);
+  transform: translateY(-1px);
+}
+
+/* FIX65-PARTNER-VR-END */

@@ -84,6 +84,7 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
               type="button"
               className="office-cj-pilot__continue"
               data-testid="cj-pilot-continue"
+              data-package-select-action
               onClick={() => {
                 setCommercialJourneySelectedProgramId(selected.id);
                 navigateCommercialJourneyStep('complete_order');

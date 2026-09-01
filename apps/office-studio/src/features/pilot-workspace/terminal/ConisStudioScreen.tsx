@@ -1,4 +1,3 @@
-import { resolveClientStudioHref } from '@embed-engine/platform-access';
 
 import type { PilotWorkspaceCase } from '../../../office/pilotWorkspaceModel';
 
@@ -29,7 +28,7 @@ export function ConisStudioScreen({ activeCase }: ConisStudioScreenProps) {
       </p>
       <a
         className="office-cj-pilot__continue office-cj-pilot__continue--link"
-        href={resolveClientStudioHref()}
+        href="/studio/manager/"
         data-testid="cj-studio-open"
       >
         Otevřít CONIS Studio

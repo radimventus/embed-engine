@@ -44,7 +44,7 @@ describe('PT-CJ-04 Commercial Journey Completion', () => {
     assert.match(studio, /Vítejte v CONIS Studio/);
     assert.match(studio, /Podklady můžete nahrát nyní nebo kdykoliv později/);
     assert.match(studio, /Otevřít CONIS Studio/);
-    assert.match(studio, /resolveClientStudioHref/);
+    assert.match(studio, /\/studio\/manager\//);
     assert.doesNotMatch(
       studio,
       /Office mezitím|handoff|Business Automation|SMTP|IMAP/i,

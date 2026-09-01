@@ -3110,3 +3110,120 @@ body {
 }
 
 /* FIX64-V2-END */
+
+
+/* FIX65-CJ-APPLE-EASY-BEGIN */
+
+/*
+ * Partner-facing CJ typography:
+ * minimum +1pt relative to current presentation.
+ */
+.office-work-surface--commercial-journey {
+  font-size: calc(1rem + 1.333px);
+}
+
+/*
+ * Workflow is informational schema, not another card.
+ */
+.office-work-surface--commercial-journey
+  .office-pilot-workflow-nav,
+.office-work-surface--commercial-journey
+  .office-pilot-workflow-nav__list {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/*
+ * Apple Easy:
+ * cream page is the structural canvas.
+ * Remove the large "card around cards".
+ */
+.office-work-surface--commercial-journey
+  .office-pilot-ws__terminal,
+.office-work-surface--commercial-journey
+  .office-pilot-ws__terminal-body {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/*
+ * Pilot screen: the package cards themselves are the only
+ * visible card group.
+ */
+.office-work-surface--commercial-journey
+  [data-commercial-step="pilot_program"],
+.office-work-surface--commercial-journey
+  [data-commercial-step="complete_order"],
+.office-work-surface--commercial-journey
+  [data-commercial-step="payment"] {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/*
+ * Package interaction:
+ * recommendation = gold
+ * hover = navy
+ * selected = navy
+ */
+.office-work-surface--commercial-journey
+  [data-package-card] {
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.office-work-surface--commercial-journey
+  [data-package-card]:hover {
+  border: 2px solid #001930 !important;
+  box-shadow: 0 4px 14px rgba(0, 25, 48, 0.10);
+  transform: translateY(-1px);
+}
+
+.office-work-surface--commercial-journey
+  [data-package-card][data-package-selected="true"] {
+  border: 2px solid #001930 !important;
+}
+
+.office-work-surface--commercial-journey
+  [data-package-card][data-package-selected="false"]
+  [data-package-select-action] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 18px;
+  border: 1px solid #b8922d;
+  border-radius: 5px;
+  background: #c8a165;
+  color: #001930;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    filter 150ms ease,
+    transform 150ms ease;
+}
+
+.office-work-surface--commercial-journey
+  [data-package-card][data-package-selected="false"]
+  [data-package-select-action]:hover {
+  filter: brightness(0.96);
+}
+
+/*
+ * Final reported-payment card is deliberately narrower,
+ * aligned with the preceding decision content.
+ */
+.office-work-surface--commercial-journey
+  [data-commercial-step="complete"],
+.office-work-surface--commercial-journey
+  [data-commercial-step="conis_studio"] {
+  width: min(100%, 760px);
+  margin-inline: auto;
+}
+
+/* FIX65-CJ-APPLE-EASY-END */
