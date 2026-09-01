@@ -32,9 +32,9 @@ export const COMMERCIAL_PILOT_PROGRAM_PACKAGES: readonly CommercialPilotProgramP
       id: 'pilot',
       name: 'Pilot',
       housesLabel: '1 dům',
-      priceCzk: 4_970,
+      priceCzk: 9_970,
       trialDays: COMMERCIAL_PILOT_TRIAL_DAYS,
-      summary: 'Vstupní spolupráce — 1 dům a plná CONIS nabídka pro váš web.',
+      summary: 'Nejjednodušší způsob, jak CONIS ověřit v praxi.',
       followOnTariff: 'Navazující tarif · Pilot',
       recommended: false,
       priceAnchor: false,
@@ -46,30 +46,30 @@ export const COMMERCIAL_PILOT_PROGRAM_PACKAGES: readonly CommercialPilotProgramP
     },
     {
       id: 'pilot-plus',
-      name: 'Pilot Plus',
-      housesLabel: 'až 3 domy',
-      priceCzk: 14_970,
+      name: 'Pilot TIP',
+      housesLabel: '3 domy',
+      priceCzk: 19_970,
       trialDays: COMMERCIAL_PILOT_TRIAL_DAYS,
-      summary: 'Doporučený start — až 3 domy a rozšířený provoz.',
-      followOnTariff: 'Navazující tarif · Pilot Plus',
+      summary: 'Pro rychlé ověření na reprezentativním vzorku nabídky.',
+      followOnTariff: 'Navazující tarif · Pilot TIP',
       recommended: true,
       priceAnchor: false,
-      highlights: ['Až 3 domy', 'Pro zákazníky, správu i obchod', 'Plný brand'],
+      highlights: ['3 domy', '90 dní provozu v ceně', 'Doporučená varianta'],
     },
     {
       id: 'pilot-max',
       name: 'Pilot Max',
-      housesLabel: 'Neomezeně',
-      priceCzk: 29_970,
+      housesLabel: 'Až 10 domů',
+      priceCzk: 59_970,
       trialDays: COMMERCIAL_PILOT_TRIAL_DAYS,
-      summary: 'Partnerský provoz — více objektů a dlouhodobá spolupráce.',
+      summary: 'Pro rychlejší nasazení větší části katalogu.',
       followOnTariff: 'Navazující tarif · Pilot Max',
       recommended: false,
       priceAnchor: true,
       highlights: [
-        'Neomezeně objektů',
-        'Pro zákazníky, správu i obchod',
-        'Vlastní brand',
+        'Až 10 domů',
+        '90 dní provozu v ceně',
+        'Rozšířený vzorek katalogu',
       ],
     },
   ]);
@@ -118,6 +118,8 @@ export function resolveCommercialPilotProgramId(
   }
   const normalized = packageName.trim().toLowerCase();
   if (
+    normalized === 'pilot tip' ||
+    normalized === 'pilot-tip' ||
     normalized === 'pilot plus' ||
     normalized === 'pilot-plus' ||
     normalized === 'starter' ||

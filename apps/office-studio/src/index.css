@@ -2624,3 +2624,309 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* PTM63R_PARTNER_CJ_DESIGN */
+
+/*
+ * Partner Commercial Journey presentation.
+ * Business/runtime authority remains in PilotWorkspaceContext.
+ */
+
+.office-work-surface--commercial-journey {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 18px;
+  padding: 16px 18px 24px;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #001930;
+  background: #ffffff;
+}
+
+.office-work-surface--commercial-journey,
+.office-work-surface--commercial-journey button,
+.office-work-surface--commercial-journey input,
+.office-work-surface--commercial-journey select,
+.office-work-surface--commercial-journey textarea {
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-ws__workflow--journey {
+  order: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav--journey {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 16px;
+  list-style: none;
+  border: 1px solid #E3E3E3;
+  border-radius: 8px;
+  background: #F7F6F4;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav__step {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav__item {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid #E3E3E3;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #001930;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  box-shadow: none;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav__item--highlighted {
+  border-color: #B8922D;
+  background: #ffffff;
+  color: #001930;
+  box-shadow: inset 0 0 0 1px #B8922D;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav__marker {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 8px;
+  border-radius: 50%;
+  background: #D9DDE2;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav__item--highlighted
+.office-pilot-workflow-nav__marker {
+  background: #B8922D;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav__arrow {
+  flex: 0 0 auto;
+  color: #B8922D;
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-ws__terminal--journey {
+  order: 1;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  border: 0;
+  background: transparent;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-ws__terminal-body--journey {
+  padding: 0;
+}
+
+/* PILOT PROGRAM */
+
+.office-work-surface--commercial-journey
+.office-cj-screen--pilot-program {
+  padding: 26px 34px 30px;
+  border: 1px solid #E3E3E3;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot__head {
+  max-width: 900px;
+  margin-bottom: 22px;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot__eyebrow {
+  margin: 0 0 7px;
+  color: #B8922D;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot__partner {
+  color: #B8922D;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot__title {
+  color: #001930;
+  font-family: inherit;
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.4px;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot__lead {
+  max-width: 860px;
+  color: #001930;
+  font-size: 14px;
+  line-height: 1.55;
+  opacity: 0.82;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot__grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr 1fr;
+  gap: 12px;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot-card {
+  position: relative;
+  min-width: 0;
+  padding: 18px 18px 16px;
+  border: 1px solid #E3E3E3;
+  border-radius: 6px;
+  background: #F7F6F4;
+  color: #001930;
+  text-align: left;
+  box-shadow: none;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot-card--recommended {
+  border: 2px solid #B8922D;
+  background: #ffffff;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot-card__badge {
+  display: block;
+  margin-bottom: 5px;
+  color: #B8922D;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot-card__name {
+  margin: 0;
+  color: #001930;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot-card__price {
+  margin: 5px 0;
+  color: #001930;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot-card--recommended
+.office-cj-pilot-card__price {
+  color: #B8922D;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot-card__license {
+  color: #B8922D;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot-card__summary {
+  color: #001930;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot-card__highlights {
+  margin: 14px 0;
+  padding-left: 17px;
+  color: #001930;
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot-card__select {
+  color: #001930;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-pilot__footer {
+  margin-top: 18px;
+}
+
+/* ORDER / PAYMENT / FINAL */
+
+.office-work-surface--commercial-journey
+.office-cj-screen:not(.office-cj-screen--pilot-program) {
+  color: #001930;
+}
+
+.office-work-surface--commercial-journey
+.office-cj-screen:not(.office-cj-screen--pilot-program)
+> * {
+  font-family: inherit;
+}
+
+@media (max-width: 900px) {
+  .office-work-surface--commercial-journey
+  .office-pilot-workflow-nav--journey {
+    overflow-x: auto;
+  }
+
+  .office-work-surface--commercial-journey
+  .office-pilot-workflow-nav__step {
+    flex: 0 0 auto;
+  }
+
+  .office-work-surface--commercial-journey
+  .office-pilot-workflow-nav__item {
+    min-width: 160px;
+  }
+
+  .office-work-surface--commercial-journey
+  .office-cj-pilot__grid {
+    grid-template-columns: 1fr;
+  }
+}

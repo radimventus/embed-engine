@@ -41,10 +41,11 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
         <p className="office-cj-pilot__eyebrow">Pilotní program</p>
         <p className="office-cj-pilot__partner">{activeCase.partnerName}</p>
         <h2 className="office-cj-pilot__title" id="cj-pilot-program-title">
-          Vyberte variantu spolupráce
+          Začněte v rozsahu, který vám dává smysl.
         </h2>
         <p className="office-cj-pilot__lead">
-          Jedna volba. Stejná obchodní cesta, kterou jsme připravili na schůzce.
+          Vyberete rozsah pilotu, my vše připravíme a 90 dní ověříte
+          CONIS na skutečných návštěvnících vašeho webu.
         </p>
       </header>
 
@@ -124,7 +125,9 @@ function PilotProgramCard({
       onClick={() => onSelect(pkg.id)}
     >
       {pkg.recommended ? (
-        <span className="office-cj-pilot-card__badge">Doporučeno</span>
+        <span className="office-cj-pilot-card__badge">
+          ★ Doporučená varianta
+        </span>
       ) : null}
       <h3 className="office-cj-pilot-card__name">{pkg.name}</h3>
       <p className="office-cj-pilot-card__price">

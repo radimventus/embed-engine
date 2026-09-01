@@ -72,7 +72,7 @@ export function PartnerWelcomeScreen({
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-            gap: 10,
+            gap: 16,
             margin: 0,
           }}
         >
@@ -86,7 +86,7 @@ export function PartnerWelcomeScreen({
                 border: `1px solid ${NAVY}`,
                 borderRadius: 10,
                 padding: '13px 16px',
-                background: '#fff',
+                background: '#F7F6F4',
                 textAlign: 'left',
                 color: NAVY,
               }}
@@ -124,7 +124,7 @@ export function PartnerWelcomeScreen({
             width: '100%',
             maxWidth: 500,
             boxSizing: 'border-box',
-            margin: '26px auto 0',
+            margin: '44px auto 0',
             padding: '32px 34px 28px',
             textAlign: 'center',
             background: '#fff',

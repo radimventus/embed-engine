@@ -27,7 +27,7 @@ const BAR_ZONE_STYLE: CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  background: '#fff',
+  background: '#F7F6F4',
 };
 
 const BAR_STYLE: CSSProperties = {

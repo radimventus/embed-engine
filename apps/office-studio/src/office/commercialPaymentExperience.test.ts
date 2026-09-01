@@ -30,12 +30,12 @@ describe('PT-CJ-04 Payment Experience', () => {
     assert.ok(activeCase);
     const proforma = buildCommercialProformaForCase(activeCase);
     assert.ok(proforma);
-    assert.equal(proforma.packageName, 'Pilot Plus');
-    assert.equal(proforma.amountCzk, 14_970);
+    assert.equal(proforma.packageName, 'Pilot TIP');
+    assert.equal(proforma.amountCzk, 19_970);
     assert.equal(proforma.iban, COMMERCIAL_PAYMENT_ACCOUNT.iban);
     assert.match(proforma.qrPayload, /^SPD\*1\.0\*/);
     assert.match(proforma.qrPayload, new RegExp(proforma.variableSymbol));
-    assert.match(proforma.qrPayload, /AM:14970\.00/);
+    assert.match(proforma.qrPayload, /AM:19970\.00/);
 
     const pdf = renderCommercialProformaPdf(proforma);
     assert.ok(pdf.byteLength > 100);
@@ -43,7 +43,7 @@ describe('PT-CJ-04 Payment Experience', () => {
 
     const payload = buildSpdQrPayload({
       iban: COMMERCIAL_PAYMENT_ACCOUNT.iban,
-      amountCzk: 4_970,
+      amountCzk: 9_970,
       variableSymbol: '123456',
       message: 'CONIS Pilot',
     });
@@ -63,7 +63,7 @@ describe('PT-CJ-04 Payment Experience', () => {
     assert.match(payment, /openCommercialProformaPdf/);
     assert.match(payment, /downloadCommercialProformaPdf/);
     assert.match(payment, /Potvrdit provedení QR platby/);
-    assert.match(payment, /navigateWorkflowStep\('conis_studio'\)/);
+    assert.match(payment, /navigateCommercialJourneyStep\('conis_studio'\)/);
     assert.match(payment, /cj-proforma-open/);
     assert.match(payment, /cj-proforma-download/);
     assert.doesNotMatch(payment, /SMTP|IMAP|Business Automation|ověření.*bank/i);

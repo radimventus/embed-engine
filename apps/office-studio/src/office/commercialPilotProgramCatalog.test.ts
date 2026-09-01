@@ -47,14 +47,14 @@ describe('PT-CJ-02 Pilot Program + lean journey', () => {
     );
   });
 
-  it('mirrors PDF catalog: Pilot · Pilot Plus · Pilot Max', () => {
+  it('mirrors PDF catalog: Pilot · Pilot TIP · Pilot Max', () => {
     assert.deepEqual(
       COMMERCIAL_PILOT_PROGRAM_PACKAGES.map((pkg) => pkg.name),
-      ['Pilot', 'Pilot Plus', 'Pilot Max'],
+      ['Pilot', 'Pilot TIP', 'Pilot Max'],
     );
     assert.deepEqual(
       COMMERCIAL_PILOT_PROGRAM_PACKAGES.map((pkg) => pkg.priceCzk),
-      [4_970, 14_970, 29_970],
+      [9_970, 19_970, 59_970],
     );
     assert.equal(
       COMMERCIAL_PILOT_PROGRAM_PACKAGES.find((pkg) => pkg.recommended)?.id,
@@ -64,7 +64,7 @@ describe('PT-CJ-02 Pilot Program + lean journey', () => {
       COMMERCIAL_PILOT_PROGRAM_PACKAGES.find((pkg) => pkg.priceAnchor)?.id,
       'pilot-max',
     );
-    assert.match(formatCommercialPilotPriceCzk(14_970), /14.?970/);
+    assert.match(formatCommercialPilotPriceCzk(19_970), /19.?970/);
     assert.equal(resolveCommercialPilotProgramId('Starter'), 'pilot-plus');
   });
 
@@ -88,7 +88,7 @@ describe('PT-CJ-02 Pilot Program + lean journey', () => {
     const css = read('index.css');
 
     assert.match(journey, /CompleteOrderScreen|PaymentScreen|ConisStudioScreen/);
-    assert.match(pilot, /navigateWorkflowStep\('complete_order'\)/);
+    assert.match(pilot, /navigateCommercialJourneyStep\('complete_order'\)/);
     assert.match(order, /Potvrdit objednávku/);
     assert.match(order, /Smluvní dokumenty/);
     assert.match(order, /cj-order-docs-accepted/);
@@ -105,7 +105,10 @@ describe('PT-CJ-02 Pilot Program + lean journey', () => {
     assert.match(studio, /Otevřít CONIS Studio/);
     assert.match(journey, /office-cj-pilot__continue/);
     assert.doesNotMatch(journey, /office_handoff|pilot_confirmed/);
-    assert.doesNotMatch(catalog, /Starter|Studio Partner/);
+    assert.doesNotMatch(
+      COMMERCIAL_PILOT_PROGRAM_PACKAGES.map((pkg) => pkg.name).join('|'),
+      /Starter|Studio Partner/,
+    );
     assert.match(css, /office-cj-pilot-card--recommended/);
     assert.match(css, /office-cj-payment__qr/);
     assert.match(css, /office-cj-enter/);
