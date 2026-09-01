@@ -108,6 +108,7 @@ export function PlatformLanding() {
   };
 
   const openManagerStudio = async () => {
+    finishWelcome();
     bindSampleProject();
     touchUserLastStudio(session.user.id, 'manager');
 

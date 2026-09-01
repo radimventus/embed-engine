@@ -30,19 +30,38 @@ describe('VR-04 Canonical Workspace Shell', () => {
 
   it('TASK-80 — explicit invite enters Platform Access before session restore', () => {
     const main = read('src/main.tsx');
-
     const inviteGate = main.indexOf('if (hasExplicitInviteRoute())');
+
     const inviteAccess = main.indexOf(
-      '<PlatformAccessRoot studioId="manager">',
+      '<PlatformAccessRoot',
       inviteGate,
     );
+
+    const entryRenderer = main.indexOf(
+      'renderWorkspaceEntry=',
+      inviteAccess,
+    );
+
+    const entryShell = main.indexOf(
+      '<WorkspaceHostEntryShell',
+      entryRenderer,
+    );
+
     const serverRestore = main.indexOf(
       'createPlatformAccessAuthClient().restoreSession()',
     );
 
     assert.ok(inviteGate >= 0);
     assert.ok(inviteAccess > inviteGate);
-    assert.ok(serverRestore > inviteAccess);
+    assert.ok(entryRenderer > inviteAccess);
+    assert.ok(entryShell > entryRenderer);
+    assert.ok(serverRestore > entryShell);
+
+    assert.match(
+      main,
+      /PlatformAccessRoot[\s\S]*renderWorkspaceEntry[\s\S]*WorkspaceHostEntryShell/,
+    );
+
   });
 
   it('keeps a single Workspace Shell with PlatformShell chrome only', () => {

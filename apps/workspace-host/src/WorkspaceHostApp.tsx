@@ -8,7 +8,7 @@ import {
   SelectPilotProgramCta,
   ensureCanonicalProjectAuthority,
 } from '@embed-engine/platform-access';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode} from 'react';
 
 import { Embed, registerClientStudioCss } from '@embed-engine/embed';
 import {
@@ -49,6 +49,8 @@ import {
 
 import clientStudioCss from '../../client-studio/src/index.css?inline';
 
+
+type WorkspaceEntryStage = 'heslo' | 'start';
 registerClientStudioCss(clientStudioCss);
 
 const CLIENT_MOUNT_ID = 'workspace-host-client-root';
@@ -153,7 +155,13 @@ function PartnerCommercialJourneyFrame({
       title="Pilotní program"
       src={partnerCommercialJourneyFrameSrc(projectId)}
       data-testid="workspace-partner-commercial-journey"
-      style={{ width: '100%', minHeight: 'calc(100vh - 64px)', border: 0 }}
+      style={{
+        width: '100%',
+        height: 'calc(100vh - 64px)',
+        minHeight: 'calc(100vh - 64px)',
+        border: 0,
+        display: 'block',
+      }}
     />
   );
 }
@@ -213,6 +221,101 @@ function authoritativeStudioForSurface(
  * Shared Workspace Shell — hosts studios without modifying their layouts.
  * Top chrome is PlatformShell only (VR-005).
  */
+
+export function WorkspaceHostEntryShell({
+  stage,
+  children,
+}: {
+  readonly stage: WorkspaceEntryStage;
+  readonly children: ReactNode;
+}) {
+  const session = loadPlatformSession();
+  const ctx = getSharedWorkspaceContext();
+
+  const projectId =
+    session?.projectId ??
+    ctx?.projectId ??
+    null;
+
+  const canonicalProject =
+    projectId !== null
+      ? getCanonicalProject(projectId)
+      : null;
+
+  const projectLabel =
+    canonicalProject?.project.name ??
+    projectId ??
+    'Projekt';
+
+  const projectSlug =
+    canonicalProject?.project.slug ??
+    null;
+
+  const workspaceState = buildPlatformWorkspaceState({
+    companyLabel:
+      session?.companyId ??
+      ctx?.companyId ??
+      'Partner',
+    projectLabel,
+    projects: [],
+  });
+
+  const sectionLabel =
+    stage === 'heslo'
+      ? 'Aktivace'
+      : 'START';
+
+  const breadcrumb: readonly PlatformBreadcrumbItem[] =
+    projectSlug !== null
+      ? buildWorkspaceBreadcrumb({
+          projectSlug,
+          studioLabel: sectionLabel,
+        })
+      : [
+          { id: 'conis', label: 'CONIS' },
+          { id: 'workspace', label: 'Workspace' },
+          { id: 'project', label: 'Projekt' },
+          { id: 'studio', label: sectionLabel },
+        ];
+
+  return (
+    <div
+      className="workspace-shell"
+      data-testid="workspace-host-entry"
+      data-workspace-entry-stage={stage}
+    >
+      <PlatformShell
+        activeStudioId="manager"
+        availableStudioIds={[]}
+        userLabel={
+          session?.user.displayName ??
+          (stage === 'heslo' ? 'Aktivace účtu' : 'Partner')
+        }
+        roleLabel={
+          session !== null
+            ? PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]
+            : 'Partner'
+        }
+        workspace={workspaceState}
+        partnerBrandLabel={null}
+        breadcrumb={breadcrumb}
+        capabilityHost={null}
+        onLogout={() => undefined}
+        onOpenLanding={() => undefined}
+        onSelectStudio={() => undefined}
+        onSubmitFeedback={() => undefined}
+      >
+        <main
+          className="workspace-shell__main"
+          data-testid="workspace-shell-entry-main"
+        >
+          {children}
+        </main>
+      </PlatformShell>
+    </div>
+  );
+}
+
 export function WorkspaceHostApp() {
   const initialSessionRef = useRef(loadPlatformSession());
   const initialContextRef = useRef(getSharedWorkspaceContext());

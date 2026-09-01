@@ -22,7 +22,7 @@ import {
 import '@embed-engine/platform-access/styles.css';
 import '@embed-engine/platform-shell/styles.css';
 
-import { WorkspaceHostApp } from './WorkspaceHostApp';
+import { WorkspaceHostApp, WorkspaceHostEntryShell } from './WorkspaceHostApp';
 import './workspace-host.css';
 
 const rootElement = document.getElementById('root');
@@ -48,7 +48,14 @@ async function bootstrapWorkspaceHost(): Promise<void> {
   if (hasExplicitInviteRoute()) {
     createRoot(root).render(
       <StrictMode>
-        <PlatformAccessRoot studioId="manager">
+        <PlatformAccessRoot
+          studioId="manager"
+          renderWorkspaceEntry={(stage, content) => (
+            <WorkspaceHostEntryShell stage={stage}>
+              {content}
+            </WorkspaceHostEntryShell>
+          )}
+        >
           <WorkspaceHostApp />
         </PlatformAccessRoot>
       </StrictMode>,

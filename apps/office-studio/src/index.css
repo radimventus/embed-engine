@@ -2930,3 +2930,183 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* FIX64-V2-BEGIN */
+
+/*
+ * VR-82 canonical partner Commercial Journey:
+ * - warm cream page
+ * - one white content block
+ * - simple horizontal information schema
+ * - no nested terminal-card presentation
+ * - normal vertical scrolling
+ */
+
+.office-work-surface--commercial-journey {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: 100% !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  padding: 24px !important;
+  background: #f7f6f4 !important;
+}
+
+/* Schema itself is information, not another large card. */
+.office-work-surface--commercial-journey
+.office-pilot-ws__workflow--journey {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 1180px !important;
+  margin: 0 auto 18px !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav--journey {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav__step {
+  display: flex !important;
+  flex: 0 1 auto !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav__item {
+  box-sizing: border-box !important;
+  width: auto !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-workflow-nav__arrow {
+  display: inline-block !important;
+  flex: 0 0 auto !important;
+  margin: 0 !important;
+}
+
+/*
+ * Keep runtime terminal wrappers for data/business compatibility,
+ * but visually flatten them. Only terminal-body remains the white block.
+ */
+.office-work-surface--commercial-journey
+.office-pilot-ws__terminal--journey {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 1180px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 auto !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.office-work-surface--commercial-journey
+.office-pilot-ws__terminal-body--journey {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 32px !important;
+  overflow: visible !important;
+  background: #ffffff !important;
+  border: 1px solid #e3e3e3 !important;
+  border-radius: 5px !important;
+  box-shadow: none !important;
+}
+
+/* Remove redundant large inner-shell/card presentation where present. */
+.office-work-surface--commercial-journey
+.office-pilot-ws__terminal-body--journey
+.office-terminal-card,
+.office-work-surface--commercial-journey
+.office-pilot-ws__terminal-body--journey
+.office-pilot-ws__screen,
+.office-work-surface--commercial-journey
+.office-pilot-ws__terminal-body--journey
+.office-pilot-ws__screen-card {
+  max-height: none !important;
+  overflow: visible !important;
+  box-shadow: none !important;
+}
+
+/*
+ * Package state:
+ * recommendation remains gold;
+ * selection uses navy and must visually win.
+ */
+.office-work-surface--commercial-journey
+[data-package-card="true"] {
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+  transition:
+    border-color 120ms ease,
+    border-width 120ms ease !important;
+}
+
+.office-work-surface--commercial-journey
+[data-package-card="true"]:hover {
+  border: 2px solid #001930 !important;
+}
+
+.office-work-surface--commercial-journey
+[data-package-selected="true"] {
+  border: 2px solid #001930 !important;
+}
+
+/* Explicit selection action. */
+.office-work-surface--commercial-journey
+[data-package-select-action="true"] {
+  background: #b8922d !important;
+  color: #ffffff !important;
+  border: 1px solid #b8922d !important;
+  cursor: pointer !important;
+}
+
+@media (max-width: 900px) {
+  .office-work-surface--commercial-journey
+  .office-pilot-workflow-nav--journey {
+    justify-content: flex-start !important;
+    overflow-x: auto !important;
+    padding-bottom: 4px !important;
+  }
+
+  .office-work-surface--commercial-journey
+  .office-pilot-ws__terminal-body--journey {
+    padding: 24px !important;
+  }
+}
+
+/* FIX64-V2-END */

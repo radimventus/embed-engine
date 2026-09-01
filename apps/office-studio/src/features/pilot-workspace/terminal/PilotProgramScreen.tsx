@@ -123,7 +123,7 @@ function PilotProgramCard({
       data-recommended={pkg.recommended ? 'true' : 'false'}
       data-price-anchor={pkg.priceAnchor ? 'true' : 'false'}
       onClick={() => onSelect(pkg.id)}
-    >
+     data-package-card="true" data-package-selected={selected ? "true" : "false"}>
       {pkg.recommended ? (
         <span className="office-cj-pilot-card__badge">
           ★ Doporučená varianta

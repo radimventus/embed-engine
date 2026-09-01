@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 
 import { resolveWorkspaceHostHref } from '../cloud/cloudConfig';
@@ -22,109 +22,29 @@ import { shouldPrioritizeInviteRoute, urlWithoutInviteParam } from './inviteRout
 
 type AccessGateProps = {
   readonly children: ReactNode;
+  readonly renderWorkspaceEntry?: (
+    stage: WorkspaceEntryStage,
+    content: ReactNode,
+  ) => ReactNode;
 };
 
-type WorkspaceEntryStage = 'heslo' | 'start';
-
-const ENTRY_NAVY = '#071b33';
-const ENTRY_CREAM = '#efede8';
-
-const entryRootStyle: CSSProperties = {
-  minHeight: '100vh',
-  background: '#f7f7f6',
-  color: ENTRY_NAVY,
-};
-
-const entryHeaderStyle: CSSProperties = {
-  height: 64,
-  boxSizing: 'border-box',
-  padding: '0 28px',
-  background: ENTRY_NAVY,
-  color: '#fff',
-  display: 'grid',
-  gridTemplateColumns: '1fr auto 1fr',
-  alignItems: 'center',
-  gap: 20,
-};
-
-const entryBrandStyle: CSSProperties = {
-  fontSize: 16,
-  lineHeight: 1,
-  fontWeight: 800,
-  letterSpacing: '0.31em',
-};
-
-const entrySwitcherStyle: CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: 2,
-  padding: 4,
-  borderRadius: 999,
-  background: ENTRY_CREAM,
-  color: ENTRY_NAVY,
-};
-
-const entrySwitcherItemStyle: CSSProperties = {
-  padding: '8px 14px',
-  fontSize: 11,
-  lineHeight: 1,
-  fontWeight: 700,
-  whiteSpace: 'nowrap',
-};
-
-const entryBreadcrumbStyle: CSSProperties = {
-  height: 34,
-  boxSizing: 'border-box',
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  padding: '0 28px',
-  background: '#fff',
-  borderBottom: '1px solid #e6e7e8',
-  color: '#78879a',
-  fontSize: 11,
-};
+export type WorkspaceEntryStage = 'heslo' | 'start';
 
 function WorkspaceEntryFrame({
   stage,
   children,
+  renderWorkspaceEntry,
 }: {
   readonly stage: WorkspaceEntryStage;
   readonly children: ReactNode;
+  readonly renderWorkspaceEntry?: (
+    stage: WorkspaceEntryStage,
+    content: ReactNode,
+  ) => ReactNode;
 }) {
-  return (
-    <div
-      style={entryRootStyle}
-      data-testid={`workspace-entry-${stage}`}
-    >
-      <header style={entryHeaderStyle}>
-        <div style={entryBrandStyle}>
-          CONIS
-        </div>
-
-        <nav
-          style={entrySwitcherStyle}
-          aria-label="CONIS Studio"
-        >
-          <span style={entrySwitcherItemStyle}>Client studio</span>
-          <span style={entrySwitcherItemStyle}>Sales studio</span>
-          <span style={entrySwitcherItemStyle}>Manager studio</span>
-        </nav>
-
-        <div aria-hidden="true" />
-      </header>
-
-      <div style={entryBreadcrumbStyle}>
-        <span>CONIS</span>
-        <span>/</span>
-        <span>Workspace</span>
-        <span>/</span>
-        <strong style={{ color: ENTRY_NAVY }}>{stage}</strong>
-      </div>
-
-      {children}
-    </div>
-  );
+  return renderWorkspaceEntry !== undefined
+    ? renderWorkspaceEntry(stage, children)
+    : children;
 }
 
 function readInviteTokenFromUrl(): string {
@@ -154,7 +74,7 @@ function hydratePilotFromUrlOnce(): void {
  * Auth → Invite → Landing → Studio.
  * VR-04 — operator Workspace is a single host; nested embeds skip outer chrome.
  */
-function AccessGateInner({ children }: AccessGateProps) {
+function AccessGateInner({ children, renderWorkspaceEntry }: AccessGateProps) {
   const { session, isRestoring } = usePlatformSession();
   hydratePilotFromUrlOnce();
   const urlToken = readInviteTokenFromUrl();
@@ -177,7 +97,7 @@ function AccessGateInner({ children }: AccessGateProps) {
     })
   ) {
     return (
-      <WorkspaceEntryFrame stage="heslo">
+      <WorkspaceEntryFrame stage="heslo" renderWorkspaceEntry={renderWorkspaceEntry}>
         <InviteShell
           initialToken={urlToken}
           onCancel={dismissInviteRoute}
@@ -198,7 +118,7 @@ function AccessGateInner({ children }: AccessGateProps) {
   if (session === null) {
     if (inviteMode) {
       return (
-        <WorkspaceEntryFrame stage="heslo">
+        <WorkspaceEntryFrame stage="heslo" renderWorkspaceEntry={renderWorkspaceEntry}>
           <InviteShell
             initialToken={urlToken}
             onCancel={dismissInviteRoute}
@@ -219,7 +139,7 @@ function AccessGateInner({ children }: AccessGateProps) {
     shouldShowPartnerWelcome(session.user.email)
   ) {
     return (
-      <WorkspaceEntryFrame stage="start">
+      <WorkspaceEntryFrame stage="start" renderWorkspaceEntry={renderWorkspaceEntry}>
         <PlatformLanding />
       </WorkspaceEntryFrame>
     );
@@ -270,6 +190,10 @@ function AccessGateInner({ children }: AccessGateProps) {
 type PlatformAccessRootProps = {
   readonly studioId: PlatformStudioId;
   readonly children: ReactNode;
+  readonly renderWorkspaceEntry?: (
+    stage: WorkspaceEntryStage,
+    content: ReactNode,
+  ) => ReactNode;
 };
 
 /**
@@ -279,10 +203,13 @@ type PlatformAccessRootProps = {
 export function PlatformAccessRoot({
   studioId,
   children,
+  renderWorkspaceEntry,
 }: PlatformAccessRootProps) {
   return (
     <SessionProvider bindStudioId={studioId}>
-      <AccessGateInner>{children}</AccessGateInner>
+      <AccessGateInner renderWorkspaceEntry={renderWorkspaceEntry}>
+        {children}
+      </AccessGateInner>
     </SessionProvider>
   );
 }
