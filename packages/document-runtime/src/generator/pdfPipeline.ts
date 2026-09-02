@@ -78,9 +78,9 @@ export function renderPlainTextPdf(input: {
   }
   const xrefStart = utf8Length(body);
   let xref = `xref\n0 ${objects.length + 1}\n`;
-  xref += '0000000000 65535 f \n';
+  xref += '0000000000 65535 f\n';
   for (let i = 1; i < offsets.length; i += 1) {
-    xref += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`;
+    xref += `${String(offsets[i]).padStart(10, '0')} 00000 n\n`;
   }
   xref += `trailer<< /Size ${objects.length + 1} /Root 1 0 R >>\n`;
   xref += `startxref\n${xrefStart}\n%%EOF`;
@@ -88,11 +88,35 @@ export function renderPlainTextPdf(input: {
   return new TextEncoder().encode(body + xref);
 }
 
-export function bytesToBase64(bytes: Uint8Array): string {
-  if (typeof Buffer !== 'undefined') {
-    return Buffer.from(bytes).toString('base64');
+export function bytesToBase64(
+  bytes: Uint8Array,
+): string {
+  const alphabet =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+
+  let output = '';
+
+  for (let index = 0; index < bytes.length; index += 3) {
+    const first = bytes[index] ?? 0;
+    const hasSecond = index + 1 < bytes.length;
+    const hasThird = index + 2 < bytes.length;
+    const second = hasSecond ? bytes[index + 1]! : 0;
+    const third = hasThird ? bytes[index + 2]! : 0;
+
+    const value =
+      (first << 16) |
+      (second << 8) |
+      third;
+
+    output += alphabet[(value >>> 18) & 63];
+    output += alphabet[(value >>> 12) & 63];
+    output += hasSecond
+      ? alphabet[(value >>> 6) & 63]
+      : '=';
+    output += hasThird
+      ? alphabet[value & 63]
+      : '=';
   }
-  let binary = '';
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary);
+
+  return output;
 }
