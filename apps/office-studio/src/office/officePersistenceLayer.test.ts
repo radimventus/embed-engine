@@ -98,6 +98,7 @@ describe('office persistence registries (OF-10)', () => {
       company: {
         legalName: 'Persist s.r.o.',
         ico: '99887766',
+        streetAddress: '',
         city: 'Brno',
         country: 'Česko',
       },

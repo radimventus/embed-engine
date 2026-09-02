@@ -41,6 +41,7 @@ describe('officePartnerRegistry (OF-02)', () => {
       company: {
         legalName: 'Acme Domů s.r.o.',
         ico: '11223344',
+        streetAddress: '',
         city: 'Plzeň',
         country: 'Česko',
       },

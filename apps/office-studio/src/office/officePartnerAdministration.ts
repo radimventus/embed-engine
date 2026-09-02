@@ -55,6 +55,7 @@ export type PartnerAdminProfile = {
   readonly partnerName: string;
   readonly legalName: string;
   readonly ico: string;
+  readonly streetAddress: string;
   readonly city: string;
   readonly country: string;
   readonly contact: OfficeContactCard;
@@ -222,6 +223,7 @@ export function buildPartnerAdminProfile(
     partnerName: partner.name,
     legalName: partner.company.legalName,
     ico: partner.company.ico,
+    streetAddress: partner.company.streetAddress,
     city: partner.company.city,
     country: partner.company.country,
     contact: { ...partner.contact },

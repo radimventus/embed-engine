@@ -48,6 +48,7 @@ describe('PE-10 Partner Environment lifecycle', () => {
       company: {
         legalName: 'Active Co',
         ico: '',
+        streetAddress: '',
         city: '',
         country: 'Česko',
       },

@@ -111,6 +111,8 @@ export function PartnerDetailPanel({
               <dd>{partner.company.ico || '—'}</dd>
             </div>
             <div>
+              <dt>Ulice a číslo</dt>
+              <dd>{partner.company.streetAddress || '—'}</dd>
               <dt>Město</dt>
               <dd>{partner.company.city || '—'}</dd>
             </div>

@@ -14,6 +14,7 @@ export type OfficePartnerStatus =
 export type OfficeCompanyCard = {
   readonly legalName: string;
   readonly ico: string;
+  readonly streetAddress: string;
   readonly city: string;
   readonly country: string;
 };

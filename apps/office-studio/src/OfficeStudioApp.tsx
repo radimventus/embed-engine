@@ -76,6 +76,7 @@ export function OfficeStudioApp() {
 }
 
 function OfficeStudioAppInner() {
+  const [, setOfficePartnerAuthorityRevision] = useState(0);
   const { session, bootstrap, logout, clearStudio, selectStudio } =
     usePlatformSession();
   const { activeCase } = usePilotWorkspaceContext();
@@ -88,9 +89,13 @@ function OfficeStudioAppInner() {
   }, []);
 
   useEffect(() => {
-    void hydrateOfficePartnersFromServer().catch(() => {
-      // Partner form keeps the last known in-memory snapshot until save succeeds.
-    });
+    void hydrateOfficePartnersFromServer()
+      .then(() => {
+        setOfficePartnerAuthorityRevision((value) => value + 1);
+      })
+      .catch(() => {
+        // Partner form keeps the last known in-memory snapshot until save succeeds.
+      });
   }, []);
 
   useEffect(() => {

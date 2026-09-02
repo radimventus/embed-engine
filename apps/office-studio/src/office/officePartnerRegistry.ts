@@ -139,6 +139,7 @@ export function createPartner(draft: OfficePartnerDraft): OfficePartner {
     company: {
       legalName: draft.company.legalName.trim() || draft.name.trim(),
       ico: draft.company.ico.trim(),
+      streetAddress: '',
       city: draft.company.city.trim(),
       country: draft.company.country.trim() || "Česko",
     },
@@ -176,6 +177,7 @@ export function updatePartner(
     company: {
       legalName: draft.company.legalName.trim() || draft.name.trim(),
       ico: draft.company.ico.trim(),
+      streetAddress: '',
       city: draft.company.city.trim(),
       country: draft.company.country.trim() || "Česko",
     },
@@ -468,6 +470,7 @@ export function emptyPartnerDraft(): OfficePartnerDraft {
     company: {
       legalName: "",
       ico: "",
+      streetAddress: '',
       city: "",
       country: "Česko",
     },

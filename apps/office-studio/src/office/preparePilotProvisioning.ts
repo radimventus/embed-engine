@@ -213,6 +213,7 @@ export function prepareNewPilotPartner(input: {
     company: {
       legalName: input.firmName.trim(),
       ico: '',
+      streetAddress: '',
       city: '',
       country: 'Česko',
     },

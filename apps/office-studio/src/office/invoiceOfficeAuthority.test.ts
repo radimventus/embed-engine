@@ -97,12 +97,9 @@ describe('Invoice Office company authority', () => {
       partnerName: 'Same-looking display name',
     };
 
-    const details =
-      buildCommercialOrderPartnerDetails(foreignCase);
-
-    assert.equal(details.ico, '');
-    assert.equal(details.email, '');
-    assert.equal(details.phone, '');
-    assert.equal(details.address, '');
-  });
+    assert.throws(
+      () => buildCommercialOrderPartnerDetails(foreignCase),
+      /Office Partner billing authority is missing for Company company-does-not-exist\./,
+    );
+});
 });

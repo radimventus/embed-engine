@@ -65,6 +65,7 @@ export function buildOfficeReferencePartner(): OfficePartner {
     company: {
       legalName: 'Domy s energií s.r.o.',
       ico: '06123456',
+      streetAddress: '',
       city: 'Praha',
       country: 'Česko',
     },
@@ -93,6 +94,7 @@ export const LEGACY_OFFICE_DEMO_PARTNERS: readonly OfficePartner[] =
       company: {
         legalName: 'Blokki s.r.o.',
         ico: '08911234',
+        streetAddress: '',
         city: 'Praha',
         country: 'Česko',
       },
@@ -113,6 +115,7 @@ export const LEGACY_OFFICE_DEMO_PARTNERS: readonly OfficePartner[] =
       company: {
         legalName: 'Nordhaus CZ a.s.',
         ico: '04567890',
+        streetAddress: '',
         city: 'Brno',
         country: 'Česko',
       },
@@ -133,6 +136,7 @@ export const LEGACY_OFFICE_DEMO_PARTNERS: readonly OfficePartner[] =
       company: {
         legalName: 'Linea Domů s.r.o.',
         ico: '12345098',
+        streetAddress: '',
         city: 'Ostrava',
         country: 'Česko',
       },

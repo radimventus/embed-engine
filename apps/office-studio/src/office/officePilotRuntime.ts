@@ -223,6 +223,7 @@ export function runPilotRuntime(input?: {
     company: {
       legalName: `${name} s.r.o.`,
       ico: '',
+      streetAddress: '',
       city: 'Praha',
       country: 'Česko',
     },

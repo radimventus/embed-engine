@@ -18,6 +18,7 @@ export type DurableOfficePartnerStatus = (typeof OFFICE_PARTNER_STATUSES)[number
 export type DurableOfficeCompanyCard = {
   readonly legalName: string;
   readonly ico: string;
+  readonly streetAddress: string;
   readonly city: string;
   readonly country: string;
 };
@@ -91,6 +92,7 @@ function asCompany(value: unknown): DurableOfficeCompanyCard {
   return {
     legalName: trimText(company.legalName),
     ico: trimText(company.ico),
+    streetAddress: trimText(company.streetAddress),
     city: trimText(company.city),
     country: trimText(company.country),
   };

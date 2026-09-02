@@ -122,6 +122,24 @@ export function PartnerFormDialog({
               }
             />
           </PlatformField>
+          <PlatformField
+            label="Ulice a číslo"
+            htmlFor={`${formId}-street`}
+          >
+            <input
+              id={`${formId}-street`}
+              value={draft.company.streetAddress}
+              onChange={(event) =>
+                setDraft({
+                  ...draft,
+                  company: {
+                    ...draft.company,
+                    streetAddress: event.target.value,
+                  },
+                })
+              }
+            />
+          </PlatformField>
           <PlatformField label="Město" htmlFor={`${formId}-city`}>
             <input
               id={`${formId}-city`}

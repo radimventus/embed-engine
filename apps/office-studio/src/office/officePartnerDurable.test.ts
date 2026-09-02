@@ -23,6 +23,7 @@ const dseDraft = {
   company: {
     legalName: 'Radim Věntus – Domy s energií',
     ico: '62288474',
+    streetAddress: '',
     city: 'Opava',
     country: 'Česko',
   },

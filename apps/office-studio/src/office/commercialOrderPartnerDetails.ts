@@ -38,14 +38,16 @@ export function buildCommercialOrderPartnerDetails(
 
   const legalName =
     partner.company.legalName.trim();
-
+  const streetAddress =
+    partner.company.streetAddress.trim();
   const city =
     partner.company.city.trim();
-
   const country =
     partner.company.country.trim();
-
-  const address = [city, country]
+  const locality = [city, country]
+    .filter((value) => value.length > 0)
+    .join(', ');
+  const address = [streetAddress, locality]
     .filter((value) => value.length > 0)
     .join(', ');
 

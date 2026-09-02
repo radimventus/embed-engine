@@ -65,6 +65,7 @@ describe('PE-09 Pilot Offer & Checkout', () => {
       company: {
         legalName: 'Offer Co',
         ico: '',
+        streetAddress: '',
         city: '',
         country: 'Česko',
       },
