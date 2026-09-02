@@ -31,6 +31,7 @@ import {
   resolveWorkspaceHouseBinding,
   resolveWorkspaceHostHref,
   savePlatformSession,
+  finishWelcomeJourney,
   switchOperatorPartnerStudio,
   updateSession,
   withWorkspaceShellEmbed,
@@ -283,6 +284,71 @@ export function WorkspaceHostEntryShell({
       ? 'Aktivace'
       : 'START';
 
+  const entryStudios =
+    stage === 'start' && session !== null
+      ? partnerWorkspaceStudiosForRoles(session.user.roles)
+      : [];
+
+  const handleEntryStudioSelect = async (
+    studioId: PlatformStudioId,
+  ): Promise<void> => {
+    if (
+      stage !== 'start' ||
+      session === null ||
+      (
+        studioId !== 'client' &&
+        studioId !== 'sales' &&
+        studioId !== 'manager'
+      ) ||
+      !entryStudios.includes(studioId)
+    ) {
+      return;
+    }
+
+    // Same START lifecycle authority as the Welcome cards:
+    // complete Welcome synchronously before any async persistence.
+    finishWelcomeJourney(session.user.email);
+
+    const nextLocal = updateSession({
+      activeStudioId: studioId === 'client' ? null : studioId,
+      workspaceContext:
+        session.workspaceContext === null
+          ? session.workspaceContext
+          : {
+              ...session.workspaceContext,
+              activeStudio: studioId,
+            },
+    });
+
+    const nextSession = nextLocal ?? session;
+
+    if (nextSession.projectId !== null) {
+      try {
+        const persisted =
+          await createPlatformAccessAuthClient().mutateSessionContext({
+            action: 'switch',
+            activeStudio: studioId,
+            projectId: nextSession.projectId,
+            activeHouseId: nextSession.activeHouseId,
+            authoredHouseIdentities:
+              nextSession.workspaceContext?.authoredHouseIdentities,
+          });
+
+        if (persisted.ok) {
+          savePlatformSession(persisted.session);
+        }
+      } catch {
+        // Local START handoff remains authoritative for navigation.
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      const href = new URL(resolveWorkspaceHostHref());
+      href.searchParams.set('studio', studioId);
+      window.location.assign(href.toString());
+    }
+  };
+
   const breadcrumb: readonly PlatformBreadcrumbItem[] =
     projectSlug !== null
       ? buildWorkspaceBreadcrumb({
@@ -304,7 +370,7 @@ export function WorkspaceHostEntryShell({
     >
       <PlatformShell
         activeStudioId="manager"
-        availableStudioIds={[]}
+        availableStudioIds={entryStudios}
         userLabel={
           session?.user.displayName ??
           (stage === 'heslo' ? 'Aktivace účtu' : 'Partner')
@@ -320,7 +386,9 @@ export function WorkspaceHostEntryShell({
         capabilityHost={null}
         onLogout={() => undefined}
         onOpenLanding={() => undefined}
-        onSelectStudio={() => undefined}
+        onSelectStudio={(studioId) => {
+          void handleEntryStudioSelect(studioId);
+        }}
         onSubmitFeedback={() => undefined}
       >
         <main
@@ -901,19 +969,6 @@ export function WorkspaceHostApp() {
     );
   }
 
-  if (partnerJourneyOpen) {
-    return (
-      <div
-        className="workspace-partner-journey"
-        data-testid="workspace-partner-journey-standalone"
-      >
-        <PartnerCommercialJourneyFrame
-          projectId={sharedProjectId}
-        />
-      </div>
-    );
-  }
-
   const authoritativeProjectId =
     sharedProjectId ?? effectiveProjectId;
 
@@ -941,9 +996,11 @@ export function WorkspaceHostApp() {
   });
 
   const sectionLabel =
-    surface === 'client'
-      ? 'Client Studio'
-      : WORKSPACE_STUDIO_LABELS[surface];
+    partnerJourneyOpen
+      ? 'Pilotní program'
+      : surface === 'client'
+        ? 'Client Studio'
+        : WORKSPACE_STUDIO_LABELS[surface];
 
   const breadcrumb: readonly PlatformBreadcrumbItem[] =
     projectSlug !== null
@@ -969,10 +1026,16 @@ export function WorkspaceHostApp() {
       data-testid="workspace-host"
       data-workspace-surface={surface}
     >
-      <SelectPilotProgramCta variant="bar" />
+      {!partnerJourneyOpen && (
+        <SelectPilotProgramCta variant="bar" />
+      )}
       <PlatformShell
         activeStudioId={platformStudioIdForSurface(surface)}
-        availableStudioIds={partnerWorkspaceStudiosForRoles(session.user.roles)}
+        availableStudioIds={
+          partnerJourneyOpen
+            ? []
+            : partnerWorkspaceStudiosForRoles(session.user.roles)
+        }
         userLabel={session.user.displayName}
         roleLabel={PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]}
         workspace={workspaceState}
@@ -987,7 +1050,16 @@ export function WorkspaceHostApp() {
         }}
       >
         <main className="workspace-shell__main" data-testid="workspace-shell-main">
-          {surface === 'client' ? (
+          {partnerJourneyOpen ? (
+            <div
+              className="workspace-partner-journey"
+              data-testid="workspace-partner-journey-shell-content"
+            >
+              <PartnerCommercialJourneyFrame
+                projectId={sharedProjectId}
+              />
+            </div>
+          ) : surface === 'client' ? (
             <div
               id={CLIENT_MOUNT_ID}
               className="workspace-shell__view"

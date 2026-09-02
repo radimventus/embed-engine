@@ -1,118 +1,109 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import test from 'node:test';
+import { describe, it } from 'node:test';
 
 const host = readFileSync(
   new URL('./WorkspaceHostApp.tsx', import.meta.url),
   'utf8',
 );
 
-test(
-  'FIX65D partner Workspace exposes Client Sales Manager switcher contract',
-  () => {
+describe('FIX65E Workspace shell / Journey contract', () => {
+  it('START entry exposes authoritative partner Studio switcher', () => {
     assert.match(
       host,
-      /const PARTNER_WORKSPACE_STUDIOS = \[\s*'client',\s*'sales',\s*'manager',/s,
+      /const entryStudios =[\s\S]*?stage === 'start'[\s\S]*?partnerWorkspaceStudiosForRoles\(session\.user\.roles\)/,
     );
 
     assert.match(
       host,
-      /availableStudioIds=\{partnerWorkspaceStudiosForRoles\(session\.user\.roles\)\}/,
+      /availableStudioIds=\{entryStudios\}/,
     );
+
+    assert.match(
+      host,
+      /onSelectStudio=\{\(studioId\) => \{[\s\S]*?handleEntryStudioSelect\(studioId\)/,
+    );
+
+    assert.match(
+      host,
+      /finishWelcomeJourney\(session\.user\.email\)/,
+    );
+
+    assert.match(
+      host,
+      /href\.searchParams\.set\('studio', studioId\)/,
+    );
+  });
+
+  it('activation entry keeps Studio switcher disabled', () => {
+    assert.match(
+      host,
+      /stage === 'start' && session !== null[\s\S]*?: \[\]/,
+    );
+  });
+
+  it('partner Studio list is Client Sales Manager only and RBAC-filtered', () => {
+    const start = host.indexOf(
+      'const PARTNER_WORKSPACE_STUDIOS = [',
+    );
+    const end = host.indexOf(
+      '] as const satisfies readonly WorkspaceStudioSurface[];',
+      start,
+    );
+
+    assert.notEqual(start, -1);
+    assert.notEqual(end, -1);
+
+    const block = host.slice(start, end);
+
+    assert.match(block, /'client'/);
+    assert.match(block, /'sales'/);
+    assert.match(block, /'manager'/);
+    assert.doesNotMatch(block, /'builder'/);
+    assert.doesNotMatch(block, /'office'/);
 
     assert.match(
       host,
       /workspaceStudiosForRoles\(roles\)/,
     );
+  });
 
+  it('Commercial Journey keeps PlatformShell chrome but hides Studio switcher', () => {
     assert.doesNotMatch(
       host,
-      /authorized\.add\(/,
-    );
-
-    const partnerStudiosStart = host.indexOf(
-      'const PARTNER_WORKSPACE_STUDIOS = [',
-    );
-    const partnerStudiosEnd = host.indexOf(
-      '] as const satisfies readonly WorkspaceStudioSurface[];',
-      partnerStudiosStart,
-    );
-
-    assert.ok(partnerStudiosStart >= 0);
-    assert.ok(partnerStudiosEnd > partnerStudiosStart);
-
-    const partnerStudios = host.slice(
-      partnerStudiosStart,
-      partnerStudiosEnd,
-    );
-
-    assert.doesNotMatch(
-      partnerStudios,
-      /'office'/,
-    );
-
-    assert.doesNotMatch(
-      partnerStudios,
-      /'builder'/,
-    );
-  },
-);
-
-test(
-  'FIX65D Commercial Journey exits before PlatformShell',
-  () => {
-    const journeyReturn = host.indexOf(
-      'if (partnerJourneyOpen) {',
-    );
-    const shellReturn = host.indexOf(
-      '<PlatformShell',
-      journeyReturn,
-    );
-
-    assert.ok(journeyReturn >= 0);
-    assert.ok(shellReturn > journeyReturn);
-
-    const between = host.slice(
-      journeyReturn,
-      shellReturn,
-    );
-
-    assert.match(
-      between,
       /workspace-partner-journey-standalone/,
     );
 
     assert.match(
-      between,
-      /<PartnerCommercialJourneyFrame/,
-    );
-  },
-);
-
-test(
-  'FIX65D PlatformShell branch renders Studios only',
-  () => {
-    const shellStart = host.lastIndexOf(
-      '<PlatformShell',
-    );
-
-    assert.ok(shellStart >= 0);
-
-    const shell = host.slice(shellStart);
-
-    assert.doesNotMatch(
-      shell,
-      /PartnerCommercialJourneyFrame/,
+      host,
+      /availableStudioIds=\{[\s\S]*?partnerJourneyOpen[\s\S]*?\? \[\][\s\S]*?: partnerWorkspaceStudiosForRoles/,
     );
 
     assert.match(
-      shell,
-      /WorkspaceStudioFrame/,
+      host,
+      /partnerJourneyOpen \? \([\s\S]*?workspace-partner-journey-shell-content[\s\S]*?PartnerCommercialJourneyFrame/,
     );
 
-    assert.match(
-      shell,
-      /workspace-host-client-root/,
+    const shellPos = host.indexOf('<PlatformShell');
+    const journeyContentPos = host.indexOf(
+      'workspace-partner-journey-shell-content',
     );
-  },
-);
+
+    assert.ok(shellPos >= 0);
+    assert.ok(journeyContentPos > shellPos);
+  });
+
+  it('Commercial Journey hides persistent pilot CTA only', () => {
+    assert.match(
+      host,
+      /\{!partnerJourneyOpen && \([\s\S]*?<SelectPilotProgramCta variant="bar" \/>/,
+    );
+  });
+
+  it('Commercial Journey breadcrumb identifies Pilotní program', () => {
+    assert.match(
+      host,
+      /partnerJourneyOpen[\s\S]*?\? 'Pilotní program'/,
+    );
+  });
+});

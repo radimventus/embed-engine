@@ -522,7 +522,27 @@ describe('TASK-81-83 partner journey cutover', () => {
     const app = read('src/WorkspaceHostApp.tsx');
 
     assert.match(app, /setPartnerJourneyOpen\(false\)/);
-    assert.match(app, /url\.searchParams\.delete\(['"]journey['"]\)/);
-    assert.match(app, /if\s*\(partnerJourneyOpen\)\s*\{[\s\S]*?workspace-partner-journey-standalone[\s\S]*?<PartnerCommercialJourneyFrame/);
+
+    assert.match(
+      app,
+      /url\.searchParams\.delete\(['"]journey['"]\)/,
+    );
+
+    // FIX65E — Commercial Journey remains inside PlatformShell chrome,
+    // replaces the Studio content and suppresses only the Studio switcher.
+    assert.match(
+      app,
+      /partnerJourneyOpen\s*\?\s*\([\s\S]*?workspace-partner-journey-shell-content[\s\S]*?<PartnerCommercialJourneyFrame/,
+    );
+
+    assert.match(
+      app,
+      /availableStudioIds=\{[\s\S]*?partnerJourneyOpen[\s\S]*?\? \[\][\s\S]*?: partnerWorkspaceStudiosForRoles/,
+    );
+
+    assert.doesNotMatch(
+      app,
+      /workspace-partner-journey-standalone/,
+    );
   });
 });
