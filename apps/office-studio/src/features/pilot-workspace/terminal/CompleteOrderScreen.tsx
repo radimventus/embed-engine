@@ -50,6 +50,7 @@ type CompleteOrderScreenProps = {
 export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
   const {
     navigateCommercialJourneyStep,
+    partnerAuthorityReady,
     partnerAuthorityRevision,
   } = usePilotWorkspaceContext();
   const selectedId = useSyncExternalStore(
@@ -60,19 +61,46 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
   const program = resolveSelectedProgram(activeCase, selectedId);
 
   const initialDetails = useMemo(
-    () => buildCommercialOrderPartnerDetails(activeCase),
-    [activeCase, partnerAuthorityRevision],
+    () =>
+      partnerAuthorityReady
+        ? buildCommercialOrderPartnerDetails(activeCase)
+        : null,
+    [activeCase, partnerAuthorityReady, partnerAuthorityRevision],
   );
   const [details, setDetails] =
-    useState<CommercialOrderPartnerDetails>(initialDetails);
+    useState<CommercialOrderPartnerDetails | null>(initialDetails);
   const [editing, setEditing] = useState(false);
   const [docsAccepted, setDocsAccepted] = useState(false);
 
   useEffect(() => {
+    if (!partnerAuthorityReady) {
+      setDetails(null);
+      return;
+    }
+
     setDetails(buildCommercialOrderPartnerDetails(activeCase));
     setEditing(false);
     setDocsAccepted(false);
-  }, [activeCase.id, partnerAuthorityRevision]);
+  }, [
+    activeCase.id,
+    partnerAuthorityReady,
+    partnerAuthorityRevision,
+  ]);
+
+  if (!partnerAuthorityReady || details === null) {
+    return (
+      <div
+        className="office-cj-screen office-cj-screen--complete-order"
+        data-testid="commercial-journey-screen"
+        data-cj-step="complete_order"
+        data-cj-customer-authority="loading"
+      >
+        <p className="office-cj-pilot__hint">
+          Načítám firemní údaje…
+        </p>
+      </div>
+    );
+  }
 
   const canConfirm = program !== null && docsAccepted;
 
@@ -110,7 +138,9 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
               label="Společnost"
               value={details.companyName}
               onChange={(companyName) =>
-                setDetails((current) => ({ ...current, companyName }))
+                setDetails((current) =>
+                  current === null ? current : { ...current, companyName },
+                )
               }
             />
             <div className="office-cj-order__form-row">
@@ -118,13 +148,17 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
                 id="ico"
                 label="IČ"
                 value={details.ico}
-                onChange={(ico) => setDetails((current) => ({ ...current, ico }))}
+                onChange={(ico) => setDetails((current) =>
+                  current === null ? current : { ...current, ico },
+                )}
               />
               <OrderField
                 id="dic"
                 label="DIČ"
                 value={details.dic}
-                onChange={(dic) => setDetails((current) => ({ ...current, dic }))}
+                onChange={(dic) => setDetails((current) =>
+                  current === null ? current : { ...current, dic },
+                )}
               />
             </div>
             <OrderField
@@ -132,7 +166,9 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
               label="Kontaktní osoba"
               value={details.contactName}
               onChange={(contactName) =>
-                setDetails((current) => ({ ...current, contactName }))
+                setDetails((current) =>
+                  current === null ? current : { ...current, contactName },
+                )
               }
             />
             <div className="office-cj-order__form-row">
@@ -142,7 +178,9 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
                 type="email"
                 value={details.email}
                 onChange={(email) =>
-                  setDetails((current) => ({ ...current, email }))
+                  setDetails((current) =>
+                    current === null ? current : { ...current, email },
+                  )
                 }
               />
               <OrderField
@@ -151,7 +189,9 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
                 type="tel"
                 value={details.phone}
                 onChange={(phone) =>
-                  setDetails((current) => ({ ...current, phone }))
+                  setDetails((current) =>
+                    current === null ? current : { ...current, phone },
+                  )
                 }
               />
             </div>
@@ -160,7 +200,9 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
               label="Adresa"
               value={details.address}
               onChange={(address) =>
-                setDetails((current) => ({ ...current, address }))
+                setDetails((current) =>
+                  current === null ? current : { ...current, address },
+                )
               }
             />
           </div>

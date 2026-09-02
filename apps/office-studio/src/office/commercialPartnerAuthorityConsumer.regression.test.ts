@@ -42,14 +42,14 @@ test(
     // after durable Partner authority arrives even when project id is unchanged.
     assert.match(
       complete,
-      /\[activeCase\.id, partnerAuthorityRevision\]/,
+      /activeCase\.id,[\s\S]*partnerAuthorityReady,[\s\S]*partnerAuthorityRevision/,
     );
 
     // Existing payment/proforma must be rebuilt for the same case
     // when the customer authority changes.
     assert.match(
       payment,
-      /\[activeCase, partnerAuthorityRevision\]/,
+      /\[activeCase, partnerAuthorityReady, partnerAuthorityRevision\]/,
     );
   },
 );

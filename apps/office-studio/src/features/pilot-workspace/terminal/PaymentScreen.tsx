@@ -23,11 +23,15 @@ type PaymentScreenProps = {
 export function PaymentScreen({ activeCase }: PaymentScreenProps) {
   const {
     navigateCommercialJourneyStep,
+    partnerAuthorityReady,
     partnerAuthorityRevision,
   } = usePilotWorkspaceContext();
   const proforma = useMemo(
-    () => buildCommercialProformaForCase(activeCase),
-    [activeCase, partnerAuthorityRevision],
+    () =>
+      partnerAuthorityReady
+        ? buildCommercialProformaForCase(activeCase)
+        : null,
+    [activeCase, partnerAuthorityReady, partnerAuthorityRevision],
   );
   const [qrImageSrc, setQrImageSrc] = useState<string | null>(null);
 
@@ -49,6 +53,21 @@ export function PaymentScreen({ activeCase }: PaymentScreenProps) {
       cancelled = true;
     };
   }, [proforma]);
+
+  if (!partnerAuthorityReady) {
+    return (
+      <div
+        className="office-cj-screen office-cj-screen--payment"
+        data-testid="commercial-journey-screen"
+        data-cj-step="payment"
+        data-cj-customer-authority="loading"
+      >
+        <p className="office-cj-pilot__hint">
+          Načítám firemní údaje…
+        </p>
+      </div>
+    );
+  }
 
   if (proforma === null) {
     return (

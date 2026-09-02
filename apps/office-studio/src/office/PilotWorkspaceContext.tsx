@@ -121,6 +121,11 @@ export type PilotWorkspaceContextValue = {
    * Consumers deriving customer/billing identity must depend on this revision.
    */
   readonly partnerAuthorityRevision: number;
+  /**
+   * True only after durable Office Partner authority has hydrated successfully.
+   * Commercial customer consumers must not use boot/seed data before this.
+   */
+  readonly partnerAuthorityReady: boolean;
   readonly activeCaseId: PilotWorkspaceCaseId | null;
   readonly activeCase: PilotWorkspaceCase | null;
   readonly terminalView: PilotTerminalViewId;
@@ -218,6 +223,7 @@ export function PilotWorkspaceProvider({
     useState<PilotTerminalViewId>(initialTerminalView);
   const [caseRevision, setCaseRevision] = useState(0);
   const [partnerAuthorityRevision, setPartnerAuthorityRevision] = useState(0);
+  const [partnerAuthorityReady, setPartnerAuthorityReady] = useState(false);
   const [inbox, setInbox] = useState<PilotInboxRuntimeState>(
     createInitialInboxRuntimeState,
   );
@@ -258,6 +264,7 @@ export function PilotWorkspaceProvider({
         if (!cancelled) {
           setCaseRevision((current) => current + 1);
           setPartnerAuthorityRevision((current) => current + 1);
+          setPartnerAuthorityReady(true);
         }
       })
       .catch((error: unknown) => {
@@ -735,6 +742,7 @@ export function PilotWorkspaceProvider({
     () => ({
       cases,
       partnerAuthorityRevision,
+      partnerAuthorityReady,
       activeCaseId,
       activeCase,
       terminalView,
@@ -774,6 +782,7 @@ export function PilotWorkspaceProvider({
       inbox,
       navigateCommercialJourneyStep,
       navigateWorkflowStep,
+      partnerAuthorityReady,
       partnerAuthorityRevision,
       refreshConversationFromStore,
       selectCase,
