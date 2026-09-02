@@ -35,6 +35,11 @@ describe('PT-CJ-04 Payment Experience', () => {
     assert.equal(proforma.iban, COMMERCIAL_PAYMENT_ACCOUNT.iban);
     assert.match(proforma.qrPayload, /^SPD\*1\.0\*/);
     assert.match(proforma.qrPayload, new RegExp(proforma.variableSymbol));
+
+    assert.match(
+      proforma.variableSymbol,
+      /^\d{1,10}$/,
+    );
     assert.match(proforma.qrPayload, /AM:19970\.00/);
     assert.equal(proforma.accountNumber, '3452548011/3030');
     assert.equal(proforma.iban, 'CZ3530300000003452548011');
