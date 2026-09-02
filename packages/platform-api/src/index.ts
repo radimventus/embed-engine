@@ -577,7 +577,8 @@ function sessionCompanyId(session: {
 function canAuthorOfficePartners(session: {
   readonly user?: { readonly roles?: readonly PlatformRole[] };
 }): boolean {
-  return isPlatformAdmin(sessionRoles(session));
+  return sessionRoles(session).includes("conis-admin") ||
+    (isPlatformAdmin(sessionRoles(session)));
 }
 
 function canMutateOfficePartner(
