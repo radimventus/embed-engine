@@ -33,6 +33,8 @@ export type CommercialProforma = {
   readonly partnerName: string;
   readonly companyName: string;
   readonly ico: string;
+  readonly dic: string;
+  readonly address: string;
   readonly packageName: string;
   readonly amountCzk: number;
   readonly currency: 'CZK';
@@ -82,6 +84,8 @@ export function buildCommercialProforma(input: {
     partnerName: input.activeCase.partnerName,
     companyName: input.details.companyName,
     ico: input.details.ico,
+    dic: input.details.dic,
+    address: input.details.address,
     packageName: input.program.name,
     amountCzk: input.program.priceCzk,
     currency: 'CZK',
@@ -127,23 +131,37 @@ export function renderCommercialProformaPdf(
   proforma: CommercialProforma,
 ): Uint8Array {
   return renderPlainTextPdf({
-    title: 'Proforma faktura CONIS',
+    title: 'CONIS — Výzva k úhradě',
     lines: [
-      `Cislo: ${proforma.number}`,
-      `Partner: ${proforma.partnerName}`,
-      `Spolecnost: ${proforma.companyName}`,
-      `ICO: ${proforma.ico || '—'}`,
-      `Program: ${proforma.packageName}`,
-      `Castka: ${formatCommercialPilotPriceCzk(proforma.amountCzk)}`,
-      `Mena: ${proforma.currency}`,
-      `Vystaveno: ${formatCommercialDateCs(proforma.issuedAt)}`,
-      `Splatnost: ${formatCommercialDateCs(proforma.dueDate)}`,
+      `Proforma faktura: ${proforma.number}`,
+      '',
+      'DODAVATEL',
+      'Radim Ventus',
+      'Postovni 115, 747 19 Bohuslavice',
+      'ICO: 62288474',
+      'Neplatce DPH',
+      '',
+      'PARTNER',
+      proforma.companyName,
+      proforma.address.length > 0 ? proforma.address : 'Adresa neuvedena',
+      `ICO: ${proforma.ico || 'neuvedeno'}`,
+      ...(proforma.dic.length > 0 ? [`DIC: ${proforma.dic}`] : []),
+      '',
+      'PREDMET PLNENI',
+      `Pilotni nasazeni platformy CONIS — ${proforma.packageName}`,
+      `Celkem k uhrade: ${formatCommercialPilotPriceCzk(proforma.amountCzk)}`,
+      '',
+      'PLATEBNI UDAJE',
+      `Banka: ${proforma.bankName}`,
       `Ucet: ${proforma.accountNumber}`,
       `IBAN: ${proforma.iban}`,
-      `Banka: ${proforma.bankName}`,
-      `VS: ${proforma.variableSymbol}`,
-      `Zprava: ${proforma.message}`,
+      `Variabilni symbol: ${proforma.variableSymbol}`,
+      `Splatnost: ${formatCommercialDateCs(proforma.dueDate)}`,
+      '',
+      'QR kod obsahuje stejny ucet, castku a variabilni symbol.',
+      'Tato vyzva k uhrade neni danovym dokladem.',
     ],
+    qrPayload: proforma.qrPayload,
   });
 }
 

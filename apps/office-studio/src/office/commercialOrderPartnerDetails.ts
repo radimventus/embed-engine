@@ -3,6 +3,10 @@
  * Preview / local form state only — no registry mutation.
  */
 
+import {
+  canonicalCompanyIdForOfficePartner,
+} from '@embed-engine/platform-access';
+
 import { listPartners } from './officePartnerRegistry';
 import type { PilotWorkspaceCase } from './pilotWorkspaceModel';
 
@@ -20,35 +24,38 @@ export function buildCommercialOrderPartnerDetails(
   activeCase: PilotWorkspaceCase,
 ): CommercialOrderPartnerDetails {
   const contact = activeCase.contacts[0] ?? null;
+
   const partner =
     listPartners().find(
       (item) =>
-        item.company.legalName === activeCase.companyName ||
-        item.name === activeCase.partnerName,
+        item.id === activeCase.companyId ||
+        canonicalCompanyIdForOfficePartner(item.id) === activeCase.companyId,
     ) ?? null;
 
-  const ico = partner?.company.ico.trim() || seedIco(activeCase.id);
-  const city = partner?.company.city.trim() || 'Praha';
-  const country = partner?.company.country.trim() || 'Česká republika';
+  const legalName =
+    partner?.company.legalName.trim() ||
+    activeCase.companyName.trim();
+
+  const city = partner?.company.city.trim() ?? '';
+  const country = partner?.company.country.trim() ?? '';
+
+  const address = [city, country]
+    .filter((value) => value.length > 0)
+    .join(', ');
 
   return {
-    companyName: activeCase.companyName,
-    ico,
-    dic: ico.length > 0 ? `CZ${ico}` : '',
-    contactName: contact?.name ?? activeCase.partnerName,
-    email: contact?.email ?? partner?.contact.email ?? '',
-    phone: partner?.contact.phone ?? contactPhoneFallback(activeCase.id),
-    address: `${city}, ${country}`,
+    companyName: legalName,
+    ico: partner?.company.ico.trim() ?? '',
+    dic: '',
+    contactName:
+      partner?.contact.name.trim() ||
+      contact?.name ||
+      activeCase.partnerName,
+    email:
+      partner?.contact.email.trim() ||
+      contact?.email ||
+      '',
+    phone: partner?.contact.phone.trim() ?? '',
+    address,
   };
-}
-
-function seedIco(caseId: string): string {
-  const digits = caseId.replace(/\D/g, '');
-  if (digits.length >= 8) return digits.slice(-8);
-  return (digits + '06123456').slice(0, 8);
-}
-
-function contactPhoneFallback(caseId: string): string {
-  const n = caseId.replace(/\D/g, '').slice(-6).padStart(6, '0');
-  return `+420 ${n.slice(0, 3)} ${n.slice(3)}`;
 }
