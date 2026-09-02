@@ -726,7 +726,7 @@ export async function renderCommercialProformaPdf(
   );
 
   text(
-    '747 19 Bohuslavice',
+    '746 01 Opava',
     left + 15,
     cardY + 40,
     8.2,
