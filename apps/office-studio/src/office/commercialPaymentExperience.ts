@@ -244,13 +244,11 @@ function pdfPrice(
 export async function renderCommercialProformaPdf(
   proforma: CommercialProforma,
 ): Promise<Uint8Array> {
+  const pdf = await PDFDocument.create();
+  pdf.registerFontkit(fontkit);
+
   const fontBytes =
     await loadCommercialProformaFonts();
-
-  const pdf =
-    await PDFDocument.create();
-
-  pdf.registerFontkit(fontkit);
 
   const regular =
     await pdf.embedFont(
@@ -262,419 +260,520 @@ export async function renderCommercialProformaPdf(
       fontBytes.semibold,
     );
 
-  pdf.setTitle(
-    `CONIS — Výzva k úhradě ${proforma.number}`,
+  const page = pdf.addPage([
+    595.28,
+    841.89,
+  ]);
+
+  const { width } = page.getSize();
+
+  const navy = rgb(
+    0x00 / 255,
+    0x19 / 255,
+    0x30 / 255,
   );
 
-  pdf.setAuthor(
-    'Radim Věntus / CONIS',
+  const gold = rgb(
+    0xc8 / 255,
+    0xa1 / 255,
+    0x65 / 255,
   );
 
-  pdf.setSubject(
-    'Výzva k úhradě / proforma faktura',
+  const goldStrong = rgb(
+    0xb8 / 255,
+    0x92 / 255,
+    0x2d / 255,
   );
 
-  pdf.setCreator('CONIS');
-
-  const page =
-    pdf.addPage([595,842]);
-
-  const navy=rgb(
-    23/255,
-    50/255,
-    77/255,
+  const warm = rgb(
+    0xf7 / 255,
+    0xf6 / 255,
+    0xf4 / 255,
   );
 
-  const gold=rgb(
-    199/255,
-    154/255,
-    43/255,
+  const soft = rgb(
+    0xfa / 255,
+    0xfa / 255,
+    0xfa / 255,
   );
 
-  const muted=rgb(
-    100/255,
-    116/255,
-    139/255,
+  const line = rgb(
+    0xe3 / 255,
+    0xe3 / 255,
+    0xe3 / 255,
   );
 
-  const line=rgb(
-    226/255,
-    232/255,
-    240/255,
+  const muted = rgb(
+    0x69 / 255,
+    0x76 / 255,
+    0x86 / 255,
   );
 
-  const card=rgb(
-    248/255,
-    250/255,
-    252/255,
+  const green = rgb(
+    0x18 / 255,
+    0x9b / 255,
+    0x58 / 255,
   );
 
-  const goldSubtle=rgb(
-    252/255,
-    248/255,
-    238/255,
-  );
+  const white = rgb(1, 1, 1);
 
-  const white=rgb(1,1,1);
-  const black=rgb(0,0,0);
+  const left = 45;
+  const right = width - 45;
+  const contentWidth = right - left;
 
-  page.drawRectangle({
-    x:0,
-    y:0,
-    width:595,
-    height:842,
-    color:white,
-  });
+  const text = (
+    value: string,
+    x: number,
+    y: number,
+    size: number,
+    options: {
+      font?: typeof regular;
+      color?: ReturnType<typeof rgb>;
+    } = {},
+  ) => {
+    page.drawText(value, {
+      x,
+      y,
+      size,
+      font: options.font ?? regular,
+      color: options.color ?? navy,
+    });
+  };
 
-  const text=(
-    value:string,
-    x:number,
-    y:number,
-    size:number,
-    font:PDFFont=regular,
-    color=navy,
-  ):void => {
-    page.drawText(
+  const rightText = (
+    value: string,
+    rightX: number,
+    y: number,
+    size: number,
+    options: {
+      font?: typeof regular;
+      color?: ReturnType<typeof rgb>;
+    } = {},
+  ) => {
+    const font =
+      options.font ?? regular;
+
+    text(
       value,
+      rightX -
+        font.widthOfTextAtSize(
+          value,
+          size,
+        ),
+      y,
+      size,
       {
-        x,
-        y,
-        size,
         font,
-        color,
+        color: options.color,
       },
     );
   };
 
-  const fitted=(
-    value:string,
-    x:number,
-    y:number,
-    size:number,
-    maxWidth:number,
-    font:PDFFont=regular,
-    color=navy,
-  ):void => {
-    text(
-      value,
+  const box = (
+    x: number,
+    y: number,
+    boxWidth: number,
+    boxHeight: number,
+    options: {
+      fill?: ReturnType<typeof rgb>;
+      border?: ReturnType<typeof rgb>;
+      borderWidth?: number;
+    } = {},
+  ) => {
+    page.drawRectangle({
       x,
       y,
-      fitPdfText(
-        font,
-        value,
-        size,
-        maxWidth,
-      ),
-      font,
-      color,
-    );
-  };
-
-  const rule=(
-    y:number,
-    thickness=0.7,
-  ):void => {
-    page.drawLine({
-      start:{x:42,y},
-      end:{x:553,y},
-      thickness,
-      color:line,
+      width: boxWidth,
+      height: boxHeight,
+      color:
+        options.fill ?? white,
+      borderColor:
+        options.border ?? line,
+      borderWidth:
+        options.borderWidth ?? 0.7,
     });
   };
 
-  // HEADER — according to approved invoice design
+  /*
+   * HEADER — larger and denser like approved design.
+   */
   text(
     'CONIS',
-    42,
-    790,
-    26,
-    semibold,
-  );
-
-  text(
-    'SMART WEB CONVERSION LAYER',
-    42,
-    774,
-    6.5,
-    semibold,
-    muted,
+    left,
+    786,
+    27,
+    {
+      font: semibold,
+    },
   );
 
   page.drawRectangle({
-    x:390,
-    y:785,
-    width:163,
-    height:24,
-    color:goldSubtle,
-    borderColor:gold,
-    borderWidth:0.7,
+    x: left + 66,
+    y: 802,
+    width: 4,
+    height: 9,
+    color: goldStrong,
   });
+
+  text(
+    'SMART WEB CONVERSION LAYER',
+    left,
+    770,
+    7.1,
+    {
+      font: semibold,
+      color: muted,
+    },
+  );
+
+  box(
+    right - 121,
+    782,
+    121,
+    25,
+    {
+      fill: warm,
+      border: gold,
+      borderWidth: 0.8,
+    },
+  );
 
   text(
     'VÝZVA K ÚHRADĚ',
-    406,
-    793,
-    9,
-    semibold,
-    navy,
+    right - 106,
+    791,
+    8.3,
+    {
+      font: semibold,
+    },
   );
 
-  fitted(
+  rightText(
     `proforma faktura č. ${proforma.number}`,
-    390,
+    right,
     768,
-    8,
-    163,
-    semibold,
-    muted,
+    7.6,
+    {
+      font: semibold,
+      color: muted,
+    },
   );
 
   page.drawLine({
-    start:{x:42,y:748},
-    end:{x:553,y:748},
-    thickness:1.4,
-    color:navy,
+    start: {
+      x: left,
+      y: 750,
+    },
+    end: {
+      x: right,
+      y: 750,
+    },
+    thickness: 1.5,
+    color: navy,
   });
 
-  // INTRO
+  /*
+   * HERO
+   */
   text(
     'Pilotní nasazení platformy CONIS',
-    42,
-    712,
-    20,
-    semibold,
-    navy,
+    left,
+    718,
+    22.5,
+    {
+      font: semibold,
+    },
   );
 
   text(
     'Děkujeme za projevenou důvěru. Úhradou zahajujeme pilotní spolupráci.',
-    42,
-    691,
-    8.5,
-    regular,
-    muted,
+    left,
+    700,
+    8.7,
+    {
+      color: muted,
+    },
   );
 
-  // PARTY CARDS
-  page.drawRectangle({
-    x:42,
-    y:552,
-    width:247,
-    height:116,
-    color:card,
-    borderColor:line,
-    borderWidth:0.7,
-  });
+  /*
+   * COMPANY CARDS
+   */
+  const cardY = 575;
+  const cardH = 101;
+  const gap = 15;
+  const cardW =
+    (contentWidth - gap) / 2;
 
-  page.drawRectangle({
-    x:306,
-    y:552,
-    width:247,
-    height:116,
-    color:card,
-    borderColor:line,
-    borderWidth:0.7,
-  });
+  box(
+    left,
+    cardY,
+    cardW,
+    cardH,
+    {
+      fill: soft,
+      border: line,
+    },
+  );
+
+  box(
+    left + cardW + gap,
+    cardY,
+    cardW,
+    cardH,
+    {
+      fill: soft,
+      border: line,
+    },
+  );
 
   text(
     'DODAVATEL',
-    56,
-    646,
-    7,
-    semibold,
-    gold,
+    left + 15,
+    cardY + 79,
+    7.2,
+    {
+      font: semibold,
+      color: goldStrong,
+    },
   );
 
   text(
     'Radim Věntus',
-    56,
-    625,
-    10.5,
-    semibold,
+    left + 15,
+    cardY + 58,
+    10.6,
+    {
+      font: semibold,
+    },
   );
 
   text(
     'Poštovní 115',
-    56,
-    606,
-    8,
+    left + 15,
+    cardY + 41,
+    8.2,
   );
 
   text(
     '747 19 Bohuslavice',
-    56,
-    592,
-    8,
+    left + 15,
+    cardY + 29,
+    8.2,
   );
 
   text(
     'Česká republika',
-    56,
-    578,
-    8,
+    left + 15,
+    cardY + 17,
+    8.2,
   );
 
   text(
-    'IČO: 62288474 · Neplátce DPH',
-    56,
-    560,
-    7.5,
-    regular,
-    muted,
+    'IČO: 62288474',
+    left + 119,
+    cardY + 41,
+    7.4,
+    {
+      color: muted,
+    },
   );
+
+  text(
+    'Neplátce DPH',
+    left + 119,
+    cardY + 27,
+    7.4,
+    {
+      color: muted,
+    },
+  );
+
+  const partnerX =
+    left + cardW + gap + 15;
 
   text(
     'PARTNER',
-    320,
-    646,
-    7,
-    semibold,
-    gold,
+    partnerX,
+    cardY + 79,
+    7.2,
+    {
+      font: semibold,
+      color: goldStrong,
+    },
   );
 
-  fitted(
-    proforma.companyName,
-    320,
-    625,
-    10.5,
-    219,
-    semibold,
-  );
-
-  fitted(
-    proforma.address.length > 0
-      ? proforma.address
-      : 'Adresa neuvedena',
-    320,
-    604,
-    8,
-    219,
-  );
+  const partnerCompanyNameSize =
+    fitPdfText(
+      semibold,
+      proforma.companyName,
+      10.6,
+      cardW - 30,
+    );
 
   text(
-    `IČO: ${proforma.ico || 'neuvedeno'}`,
-    320,
-    580,
-    7.5,
-    regular,
-    muted,
+    proforma.companyName,
+    partnerX,
+    cardY + 58,
+    partnerCompanyNameSize,
+    {
+      font: semibold,
+    },
   );
 
-  if (proforma.dic.length > 0) {
+  if (proforma.address) {
     text(
-      `DIČ: ${proforma.dic}`,
-      320,
-      564,
-      7.5,
-      regular,
-      muted,
+      proforma.address,
+      partnerX,
+      cardY + 39,
+      8.2,
     );
   }
 
-  // SUBJECT / PRICE HERO
+  if (proforma.ico) {
+    text(
+      `IČO: ${proforma.ico}`,
+      partnerX,
+      cardY + 19,
+      7.5,
+      {
+        color: muted,
+      },
+    );
+  }
+
+  if (proforma.dic) {
+    text(
+      `DIČ: ${proforma.dic}`,
+      partnerX + 90,
+      cardY + 19,
+      7.5,
+      {
+        color: muted,
+      },
+    );
+  }
+
+  /*
+   * PRICE HERO
+   */
   text(
     'PŘEDMĚT PLNĚNÍ A CENA',
-    42,
-    522,
-    7,
-    semibold,
-    navy,
+    left,
+    550,
+    7.5,
+    {
+      font: semibold,
+    },
+  );
+
+  box(
+    left,
+    470,
+    contentWidth,
+    65,
+    {
+      fill: white,
+      border: line,
+    },
   );
 
   page.drawRectangle({
-    x:42,
-    y:442,
-    width:511,
-    height:64,
-    color:white,
-    borderColor:line,
-    borderWidth:0.7,
+    x: left,
+    y: 470,
+    width: 5,
+    height: 65,
+    color: goldStrong,
   });
 
-  page.drawRectangle({
-    x:42,
-    y:442,
-    width:5,
-    height:64,
-    color:gold,
-  });
-
-  fitted(
+  text(
     `Pilotní nasazení platformy CONIS — ${proforma.packageName}`,
-    61,
-    479,
-    10.5,
-    280,
-    semibold,
+    left + 21,
+    506,
+    10.8,
+    {
+      font: semibold,
+    },
   );
 
   text(
     'První 3 měsíce provozu jsou v ceně Pilotu.',
-    61,
-    458,
-    7.5,
-    regular,
-    muted,
+    left + 21,
+    486,
+    8.2,
+    {
+      color: muted,
+    },
   );
 
-  text(
+  rightText(
     'CELKEM K ÚHRADĚ',
-    410,
-    485,
-    6.5,
-    semibold,
-    muted,
+    right - 18,
+    512,
+    6.9,
+    {
+      font: semibold,
+      color: muted,
+    },
   );
 
-  const amount=
-    pdfPrice(
-      proforma.amountCzk,
-    );
-
-  const amountSize=19;
-
-  const amountWidth=
-    semibold.widthOfTextAtSize(
-      amount,
-      amountSize,
-    );
-
-  text(
-    amount,
-    535-amountWidth,
-    458,
-    amountSize,
-    semibold,
-    gold,
+  rightText(
+    pdfPrice(proforma.amountCzk),
+    right - 18,
+    481,
+    27,
+    {
+      font: semibold,
+      color: goldStrong,
+    },
   );
 
-  // PAYMENT GRID
+  /*
+   * PAYMENT
+   */
   text(
     'PLATEBNÍ ÚDAJE',
-    42,
-    412,
-    7,
-    semibold,
-    navy,
+    left,
+    443,
+    7.5,
+    {
+      font: semibold,
+    },
   );
 
-  page.drawRectangle({
-    x:42,
-    y:272,
-    width:329,
-    height:124,
-    color:white,
-    borderColor:line,
-    borderWidth:0.7,
-  });
+  const paymentY = 320;
+  const paymentH = 107;
+  const qrW = 158;
+  const payGap = 14;
+  const tableW =
+    contentWidth - qrW - payGap;
 
-  const payLabelX=58;
-  const payValueX=177;
+  box(
+    left,
+    paymentY,
+    tableW,
+    paymentH,
+    {
+      fill: white,
+      border: line,
+    },
+  );
 
-  const paymentRows:[
-    string,
-    string
-  ][]=[
+  box(
+    left + tableW + payGap,
+    paymentY,
+    qrW,
+    paymentH,
+    {
+      fill: white,
+      border: line,
+    },
+  );
+
+  const labelX = left + 15;
+  const valueRight =
+    left + tableW - 15;
+
+  const rows = [
     [
       'Bankovní účet:',
       proforma.accountNumber,
@@ -689,7 +788,9 @@ export async function renderCommercialProformaPdf(
     ],
     [
       'Částka k úhradě:',
-      amount,
+      formatCommercialPilotPriceCzk(
+        proforma.amountCzk,
+      ),
     ],
     [
       'Splatnost:',
@@ -701,200 +802,262 @@ export async function renderCommercialProformaPdf(
       'Způsob úhrady:',
       'Převodem / QR platba',
     ],
-  ];
+  ] as const;
 
-  let rowY=376;
+  rows.forEach(
+    ([label, value], index) => {
+      const y =
+        paymentY +
+        paymentH -
+        20 -
+        index * 15;
 
-  for (
-    const [label,value]
-    of paymentRows
-  ) {
-    text(
-      label,
-      payLabelX,
-      rowY,
-      7.5,
-      regular,
-      muted,
-    );
+      text(
+        label,
+        labelX,
+        y,
+        7.7,
+        {
+          color: muted,
+        },
+      );
 
-    fitted(
-      value,
-      payValueX,
-      rowY,
-      8,
-      176,
-      semibold,
-      navy,
-    );
+      rightText(
+        value,
+        valueRight,
+        y,
+        8,
+        {
+          font: semibold,
+        },
+      );
+    },
+  );
 
-    rowY-=18;
-  }
+  /*
+   * ACTUAL SPD QR — larger and navy.
+   */
+  const qr = createQrModules(
+    proforma.qrPayload,
+  );
 
-  // REAL SPD QR
+  const qrSize = 79;
+  const moduleSize =
+    qrSize / qr.size;
+
+  const qrX =
+    left +
+    tableW +
+    payGap +
+    (qrW - qrSize) / 2;
+
+  const qrY =
+    paymentY + 18;
+
   page.drawRectangle({
-    x:388,
-    y:272,
-    width:165,
-    height:124,
-    color:white,
-    borderColor:line,
-    borderWidth:0.7,
+    x: qrX - 5,
+    y: qrY - 5,
+    width: qrSize + 10,
+    height: qrSize + 10,
+    color: white,
   });
 
-  const qr=
-    createQrModules(
-      proforma.qrPayload,
-    );
-
-  const qrSize=92;
-  const qrX=424;
-  const qrY=292;
-  const moduleSize=
-    qrSize/qr.size;
-
   for (
-    let row=0;
-    row<qr.size;
-    row+=1
+    let row = 0;
+    row < qr.size;
+    row += 1
   ) {
     for (
-      let column=0;
-      column<qr.size;
-      column+=1
+      let column = 0;
+      column < qr.size;
+      column += 1
     ) {
-      const index=
-        row*qr.size+
-        column;
-
-      if (!Boolean(
-        qr.data[index]
-      )) {
-        continue;
+      if (
+        qr.data[
+          row * qr.size + column
+        ]
+      ) {
+        page.drawRectangle({
+          x:
+            qrX +
+            column * moduleSize,
+          y:
+            qrY +
+            (
+              qr.size -
+              row -
+              1
+            ) *
+              moduleSize,
+          width:
+            moduleSize + 0.04,
+          height:
+            moduleSize + 0.04,
+          color: navy,
+        });
       }
-
-      page.drawRectangle({
-        x:
-          qrX+
-          column*moduleSize,
-        y:
-          qrY+
-          (
-            qr.size-
-            row-
-            1
-          )*moduleSize,
-        width:
-          moduleSize+0.03,
-        height:
-          moduleSize+0.03,
-        color:black,
-      });
     }
   }
 
-  text(
-    'QR PLATBA',
-    443,
-    280,
-    6.5,
-    semibold,
-    navy,
-  );
-
-  // NEXT STEP — design authority, adapted
-  page.drawRectangle({
-    x:42,
-    y:174,
-    width:511,
-    height:76,
-    color:goldSubtle,
-    borderColor:gold,
-    borderWidth:0.5,
-  });
-
-  text(
-    'DALŠÍ POSTUP',
-    58,
-    229,
-    7,
-    semibold,
-    navy,
-  );
-
-  text(
-    '✓ Uhraďte proforma fakturu převodem nebo QR platbou.',
-    58,
-    208,
-    8,
-    regular,
-    navy,
-  );
-
-  text(
-    '✓ Po ověření platby vám pošleme instrukce k podkladům.',
-    58,
-    191,
-    8,
-    regular,
-    navy,
-  );
-
-  // LEGAL
-  text(
-    'Tato výzva k úhradě (proforma faktura) není daňovým dokladem.',
-    42,
-    142,
-    7,
-    regular,
-    muted,
-  );
-
-  rule(105);
-
-  // FOOTER
-  text(
-    'CONIS',
-    42,
-    78,
-    7.5,
-    semibold,
-    navy,
-  );
-
-  text(
-    'inteligentní vrstva pro web, která zvyšuje konverzi.',
-    79,
-    78,
-    6.5,
-    regular,
-    muted,
-  );
-
-  const footerNumber=
-    proforma.number;
-
-  const footerWidth=
-    regular.widthOfTextAtSize(
-      footerNumber,
-      6.5,
+  const qrLabel = 'QR PLATBA';
+  const qrLabelWidth =
+    semibold.widthOfTextAtSize(
+      qrLabel,
+      6.7,
     );
 
   text(
-    footerNumber,
-    553-footerWidth,
-    78,
+    qrLabel,
+    left +
+      tableW +
+      payGap +
+      (qrW - qrLabelWidth) / 2,
+    paymentY + 6,
+    6.7,
+    {
+      font: semibold,
+    },
+  );
+
+  /*
+   * NEXT STEP — proposal-like two-column composition,
+   * but only truthful current process.
+   */
+  box(
+    left,
+    202,
+    contentWidth,
+    94,
+    {
+      fill: warm,
+      border: gold,
+      borderWidth: 0.8,
+    },
+  );
+
+  text(
+    'Další postup',
+    left + 17,
+    273,
+    9.4,
+    {
+      font: semibold,
+    },
+  );
+
+  const step = (
+    x: number,
+    y: number,
+    value: string,
+    bold = false,
+  ) => {
+    text(
+      '✓',
+      x,
+      y,
+      9.5,
+      {
+        font: semibold,
+        color: green,
+      },
+    );
+
+    text(
+      value,
+      x + 15,
+      y,
+      7.8,
+      {
+        font:
+          bold
+            ? semibold
+            : regular,
+      },
+    );
+  };
+
+  step(
+    left + 17,
+    247,
+    'Uhraďte proforma fakturu',
+  );
+
+  step(
+    left + 274,
+    247,
+    'Převodem nebo QR platbou',
+  );
+
+  step(
+    left + 17,
+    225,
+    'Po ověření platby vám pošleme',
+  );
+
+  step(
+    left + 274,
+    225,
+    'instrukce k podkladům.',
+    true,
+  );
+
+  /*
+   * LEGAL + FOOTER
+   */
+  text(
+    'Tato výzva k úhradě (proforma faktura) není daňovým dokladem.',
+    left,
+    169,
+    6.8,
+    {
+      color: muted,
+    },
+  );
+
+  page.drawLine({
+    start: {
+      x: left,
+      y: 136,
+    },
+    end: {
+      x: right,
+      y: 136,
+    },
+    thickness: 0.6,
+    color: line,
+  });
+
+  text(
+    'CONIS',
+    left,
+    113,
+    7.6,
+    {
+      font: semibold,
+    },
+  );
+
+  text(
+    '• inteligentní vrstva pro web, která zvyšuje konverzi.',
+    left + 38,
+    113,
     6.5,
-    regular,
-    muted,
+    {
+      color: muted,
+    },
   );
 
-  const bytes=
-    await pdf.save();
-
-  return new Uint8Array(
-    bytes,
+  rightText(
+    proforma.number,
+    right,
+    113,
+    6.5,
+    {
+      color: muted,
+    },
   );
+
+  return pdf.save();
 }
 
 export async function commercialProformaPdfObjectUrl(
