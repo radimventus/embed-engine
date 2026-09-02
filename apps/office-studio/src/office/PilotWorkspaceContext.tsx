@@ -14,6 +14,8 @@ import {
   type ReactNode,
 } from 'react';
 
+import { hydrateCommercialProjectConfig } from './commercialProjectConfig';
+
 import {
   DEFAULT_PILOT_MAILBOX_ID,
   wirePilotMailTransportSession,
@@ -240,6 +242,31 @@ export function PilotWorkspaceProvider({
     void caseRevision;
     return listOfficeSelectProjects();
   }, [caseRevision]);
+
+  useEffect(() => {
+    if (activeCaseId === null) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void hydrateCommercialProjectConfig(activeCaseId)
+      .then(() => {
+        if (!cancelled) {
+          setCaseRevision((current) => current + 1);
+        }
+      })
+      .catch((error: unknown) => {
+        console.error(
+          'Commercial Project configuration could not be hydrated.',
+          error,
+        );
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeCaseId]);
 
   const activeCase = useMemo(() => {
     if (activeCaseId === null) return null;

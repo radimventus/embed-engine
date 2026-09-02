@@ -86,6 +86,24 @@ async function fetchProjectConfig(
   return normalize(await response.json());
 }
 
+export async function hydrateCommercialProjectConfig(
+  projectId: string,
+): Promise<CommercialProjectConfig> {
+  const config = await fetchProjectConfig(projectId);
+
+  applyDurableProjectConfig({
+    projectId: config.projectId,
+    privacyUrl: config.privacyUrl,
+    billingNumber: config.billingNumber,
+    commercialProgramId:
+      config.commercialProgramId,
+    commercialProgramSelectedAt:
+      config.commercialProgramSelectedAt,
+  });
+
+  return config;
+}
+
 export async function selectCommercialProjectProgram(input: {
   readonly projectId: string;
   readonly programId: CommercialPilotProgramId;
