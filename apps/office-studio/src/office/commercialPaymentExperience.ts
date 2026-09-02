@@ -378,40 +378,182 @@ export async function renderCommercialProformaPdf(
       fill?: ReturnType<typeof rgb>;
       border?: ReturnType<typeof rgb>;
       borderWidth?: number;
+      radius?: number;
     } = {},
   ) => {
-    page.drawRectangle({
+    const fill =
+      options.fill ?? white;
+    const border =
+      options.border ?? line;
+    const borderWidth =
+      options.borderWidth ?? 0.7;
+    const radius =
+      Math.min(
+        options.radius ?? 5.5,
+        boxWidth / 2,
+        boxHeight / 2,
+      );
+
+    const roundedFill = (
+      shapeX: number,
+      shapeY: number,
+      shapeWidth: number,
+      shapeHeight: number,
+      shapeRadius: number,
+      color: ReturnType<typeof rgb>,
+    ) => {
+      if (
+        shapeWidth <= 0 ||
+        shapeHeight <= 0
+      ) {
+        return;
+      }
+
+      const safeRadius =
+        Math.max(
+          0,
+          Math.min(
+            shapeRadius,
+            shapeWidth / 2,
+            shapeHeight / 2,
+          ),
+        );
+
+      if (safeRadius === 0) {
+        page.drawRectangle({
+          x: shapeX,
+          y: shapeY,
+          width: shapeWidth,
+          height: shapeHeight,
+          color,
+        });
+        return;
+      }
+
+      page.drawRectangle({
+        x: shapeX + safeRadius,
+        y: shapeY,
+        width:
+          shapeWidth -
+          safeRadius * 2,
+        height: shapeHeight,
+        color,
+      });
+
+      page.drawRectangle({
+        x: shapeX,
+        y: shapeY + safeRadius,
+        width: shapeWidth,
+        height:
+          shapeHeight -
+          safeRadius * 2,
+        color,
+      });
+
+      const corners = [
+        [
+          shapeX + safeRadius,
+          shapeY + safeRadius,
+        ],
+        [
+          shapeX +
+            shapeWidth -
+            safeRadius,
+          shapeY + safeRadius,
+        ],
+        [
+          shapeX + safeRadius,
+          shapeY +
+            shapeHeight -
+            safeRadius,
+        ],
+        [
+          shapeX +
+            shapeWidth -
+            safeRadius,
+          shapeY +
+            shapeHeight -
+            safeRadius,
+        ],
+      ] as const;
+
+      corners.forEach(
+        ([centerX, centerY]) => {
+          page.drawCircle({
+            x: centerX,
+            y: centerY,
+            size: safeRadius,
+            color,
+          });
+        },
+      );
+    };
+
+    roundedFill(
       x,
       y,
-      width: boxWidth,
-      height: boxHeight,
-      color:
-        options.fill ?? white,
-      borderColor:
-        options.border ?? line,
-      borderWidth:
-        options.borderWidth ?? 0.7,
-    });
+      boxWidth,
+      boxHeight,
+      radius,
+      border,
+    );
+
+    const inset =
+      Math.max(
+        0,
+        borderWidth,
+      );
+
+    roundedFill(
+      x + inset,
+      y + inset,
+      boxWidth - inset * 2,
+      boxHeight - inset * 2,
+      Math.max(
+        0,
+        radius - inset,
+      ),
+      fill,
+    );
   };
 
   /*
    * HEADER — larger and denser like approved design.
    */
+  const conisLogoSize = 27;
+
   text(
     'CONIS',
     left,
     786,
-    27,
+    conisLogoSize,
     {
       font: semibold,
     },
   );
 
+  const conisPrefixWidth =
+    semibold.widthOfTextAtSize(
+      'CON',
+      conisLogoSize,
+    );
+
+  const conisIWidth =
+    semibold.widthOfTextAtSize(
+      'I',
+      conisLogoSize,
+    );
+
+  const conisAccentCenter =
+    left +
+    conisPrefixWidth +
+    conisIWidth / 2;
+
   page.drawRectangle({
-    x: left + 66,
-    y: 802,
-    width: 4,
-    height: 9,
+    x: conisAccentCenter - 1.8,
+    y: 807,
+    width: 3.6,
+    height: 10,
     color: goldStrong,
   });
 
@@ -435,6 +577,7 @@ export async function renderCommercialProformaPdf(
       fill: warm,
       border: gold,
       borderWidth: 0.8,
+      radius: 3.5,
     },
   );
 
@@ -498,8 +641,8 @@ export async function renderCommercialProformaPdf(
   /*
    * COMPANY CARDS
    */
-  const cardY = 575;
-  const cardH = 101;
+  const cardY = 563;
+  const cardH = 113;
   const gap = 15;
   const cardW =
     (contentWidth - gap) / 2;
@@ -529,7 +672,7 @@ export async function renderCommercialProformaPdf(
   text(
     'DODAVATEL',
     left + 15,
-    cardY + 79,
+    cardY + 91,
     7.2,
     {
       font: semibold,
@@ -540,7 +683,7 @@ export async function renderCommercialProformaPdf(
   text(
     'Radim Věntus',
     left + 15,
-    cardY + 58,
+    cardY + 70,
     10.6,
     {
       font: semibold,
@@ -550,28 +693,28 @@ export async function renderCommercialProformaPdf(
   text(
     'Poštovní 115',
     left + 15,
-    cardY + 41,
+    cardY + 52,
     8.2,
   );
 
   text(
     '747 19 Bohuslavice',
     left + 15,
-    cardY + 29,
+    cardY + 40,
     8.2,
   );
 
   text(
     'Česká republika',
     left + 15,
-    cardY + 17,
+    cardY + 28,
     8.2,
   );
 
   text(
     'IČO: 62288474',
     left + 119,
-    cardY + 41,
+    cardY + 52,
     7.4,
     {
       color: muted,
@@ -594,7 +737,7 @@ export async function renderCommercialProformaPdf(
   text(
     'PARTNER',
     partnerX,
-    cardY + 79,
+    cardY + 91,
     7.2,
     {
       font: semibold,
@@ -613,7 +756,7 @@ export async function renderCommercialProformaPdf(
   text(
     proforma.companyName,
     partnerX,
-    cardY + 58,
+    cardY + 70,
     partnerCompanyNameSize,
     {
       font: semibold,
@@ -624,16 +767,38 @@ export async function renderCommercialProformaPdf(
     text(
       proforma.address,
       partnerX,
-      cardY + 39,
+      cardY + 50,
       8.2,
     );
+  }
+
+  if (
+    proforma.ico ||
+    proforma.dic
+  ) {
+    page.drawLine({
+      start: {
+        x: partnerX,
+        y: cardY + 17,
+      },
+      end: {
+        x:
+          left +
+          cardW * 2 +
+          gap -
+          15,
+        y: cardY + 17,
+      },
+      thickness: 0.45,
+      color: line,
+    });
   }
 
   if (proforma.ico) {
     text(
       `IČO: ${proforma.ico}`,
       partnerX,
-      cardY + 19,
+      cardY + 5,
       7.5,
       {
         color: muted,
@@ -645,7 +810,7 @@ export async function renderCommercialProformaPdf(
     text(
       `DIČ: ${proforma.dic}`,
       partnerX + 90,
-      cardY + 19,
+      cardY + 5,
       7.5,
       {
         color: muted,
@@ -740,8 +905,8 @@ export async function renderCommercialProformaPdf(
     },
   );
 
-  const paymentY = 320;
-  const paymentH = 107;
+  const paymentY = 316;
+  const paymentH = 111;
   const qrW = 158;
   const payGap = 14;
   const tableW =
@@ -809,8 +974,8 @@ export async function renderCommercialProformaPdf(
       const y =
         paymentY +
         paymentH -
-        20 -
-        index * 15;
+        18 -
+        index * 16;
 
       text(
         label,
@@ -852,7 +1017,7 @@ export async function renderCommercialProformaPdf(
     (qrW - qrSize) / 2;
 
   const qrY =
-    paymentY + 18;
+    paymentY + 20;
 
   page.drawRectangle({
     x: qrX - 5,
@@ -912,7 +1077,7 @@ export async function renderCommercialProformaPdf(
       tableW +
       payGap +
       (qrW - qrLabelWidth) / 2,
-    paymentY + 6,
+    paymentY + 7,
     6.7,
     {
       font: semibold,
@@ -978,27 +1143,36 @@ export async function renderCommercialProformaPdf(
 
   step(
     left + 17,
-    247,
+    244,
     'Uhraďte proforma fakturu',
-  );
-
-  step(
-    left + 274,
-    247,
-    'Převodem nebo QR platbou',
-  );
-
-  step(
-    left + 17,
-    225,
-    'Po ověření platby vám pošleme',
-  );
-
-  step(
-    left + 274,
-    225,
-    'instrukce k podkladům.',
     true,
+  );
+
+  text(
+    'Převodem nebo QR platbou.',
+    left + 32,
+    226,
+    7.4,
+    {
+      color: muted,
+    },
+  );
+
+  step(
+    left + 274,
+    244,
+    'Po ověření platby',
+    true,
+  );
+
+  text(
+    'Pošleme vám instrukce k podkladům.',
+    left + 289,
+    226,
+    7.4,
+    {
+      color: muted,
+    },
   );
 
   /*
