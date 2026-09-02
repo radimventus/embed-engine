@@ -15,6 +15,7 @@ import {
 } from 'react';
 
 import { hydrateCommercialProjectConfig } from './commercialProjectConfig';
+import { hydrateOfficePartnersFromServer } from './officePartnerRegistry';
 
 import {
   DEFAULT_PILOT_MAILBOX_ID,
@@ -242,6 +243,27 @@ export function PilotWorkspaceProvider({
     void caseRevision;
     return listOfficeSelectProjects();
   }, [caseRevision]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void hydrateOfficePartnersFromServer()
+      .then(() => {
+        if (!cancelled) {
+          setCaseRevision((current) => current + 1);
+        }
+      })
+      .catch((error: unknown) => {
+        console.error(
+          'Office Partner authority could not be hydrated.',
+          error,
+        );
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     if (activeCaseId === null) {

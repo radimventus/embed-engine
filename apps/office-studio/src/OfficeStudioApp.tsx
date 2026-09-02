@@ -40,7 +40,7 @@ import {
   PilotWorkspaceProvider,
   usePilotWorkspaceContext,
 } from './office/PilotWorkspaceContext';
-import { getPartner, hydrateOfficePartnersFromServer } from './office/officePartnerRegistry';
+import { getPartner } from './office/officePartnerRegistry';
 import {
   officeHref,
   officeRouteLabel,
@@ -76,7 +76,6 @@ export function OfficeStudioApp() {
 }
 
 function OfficeStudioAppInner() {
-  const [, setOfficePartnerAuthorityRevision] = useState(0);
   const { session, bootstrap, logout, clearStudio, selectStudio } =
     usePlatformSession();
   const { activeCase } = usePilotWorkspaceContext();
@@ -86,16 +85,6 @@ function OfficeStudioAppInner() {
     const onPopState = () => setLocation(readLocation());
     window.addEventListener('popstate', onPopState);
     return () => window.removeEventListener('popstate', onPopState);
-  }, []);
-
-  useEffect(() => {
-    void hydrateOfficePartnersFromServer()
-      .then(() => {
-        setOfficePartnerAuthorityRevision((value) => value + 1);
-      })
-      .catch(() => {
-        // Partner form keeps the last known in-memory snapshot until save succeeds.
-      });
   }, []);
 
   useEffect(() => {

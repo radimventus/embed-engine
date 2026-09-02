@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
+import { readFileSync } from 'node:fs';
 
 async function source(file: string): Promise<string> {
   return readFile(
@@ -9,6 +10,11 @@ async function source(file: string): Promise<string> {
     'utf8',
   );
 }
+
+const pilotWorkspaceSource = readFileSync(
+  new URL('./PilotWorkspaceContext.tsx', import.meta.url),
+  'utf8',
+);
 
 test(
   'Office Company Card persists street address as company authority',
@@ -104,25 +110,15 @@ test(
 test(
   'Office rerenders after durable partner authority hydrates',
   async () => {
-    const app = await source(
-      'src/OfficeStudioApp.tsx',
-    );
-
-    assert.match(
-      app,
-      /hydrateOfficePartnersFromServer/,
-    );
-
-    assert.match(
-      app,
-      /setOfficePartnerAuthorityRevision/,
-    );
-
-    assert.match(
-      app,
-      /setOfficePartnerAuthorityRevision\(\(value\) => value \+ 1\)/,
-    );
-  },
+  assert.match(
+    pilotWorkspaceSource,
+    /hydrateOfficePartnersFromServer/,
+  );
+  assert.match(
+    pilotWorkspaceSource,
+    /setCaseRevision\(\(current\) => current \+ 1\)/,
+  );
+},
 );
 
 test(
