@@ -1,5 +1,24 @@
 import { usePilotWorkspaceContext } from '../../office/PilotWorkspaceContext';
-import type { CommercialJourneyStep } from '../../office/commercialJourneyModel';
+import type {
+  CommercialJourneyStep,
+  CommercialJourneyStepId,
+} from '../../office/commercialJourneyModel';
+
+function blockedStepGuidance(
+  activeStepId: CommercialJourneyStepId,
+): string {
+  switch (activeStepId) {
+    case 'welcome':
+    case 'pilot_program':
+      return 'Nejprve vyberte pilotní program.';
+    case 'complete_order':
+      return 'Nejprve dokončete objednávku.';
+    case 'payment':
+      return 'Nejprve potvrďte provedení platby.';
+    case 'conis_studio':
+      return 'Dokončete aktuální krok.';
+  }
+}
 
 /**
  * Partner-facing Commercial Journey navigation.
@@ -26,6 +45,7 @@ export function CommercialJourneyNavigator() {
         );
 
   const unlockedThroughIndex = Math.max(0, activeVisibleIndex);
+  const blockedGuidance = blockedStepGuidance(commercialJourneyStepId);
 
   return (
     <nav
@@ -49,6 +69,9 @@ export function CommercialJourneyNavigator() {
               (commercialJourneyStepId === 'welcome' && index === 0)
             }
             enabled={index <= unlockedThroughIndex}
+            blockedGuidance={
+              index > unlockedThroughIndex ? blockedGuidance : null
+            }
             onNavigate={() => navigateCommercialJourneyStep(step.id)}
             showArrow={index < visibleSteps.length - 1}
           />
@@ -62,17 +85,23 @@ function JourneyNavItem({
   step,
   highlighted,
   enabled,
+  blockedGuidance,
   onNavigate,
   showArrow,
 }: {
   readonly step: CommercialJourneyStep;
   readonly highlighted: boolean;
   readonly enabled: boolean;
+  readonly blockedGuidance: string | null;
   readonly onNavigate: () => void;
   readonly showArrow: boolean;
 }) {
   return (
-    <li className="office-pilot-workflow-nav__step">
+    <li
+      className="office-pilot-workflow-nav__step"
+      data-blocked={blockedGuidance !== null ? 'true' : 'false'}
+      tabIndex={blockedGuidance !== null ? 0 : undefined}
+    >
       <button
         type="button"
         className={
@@ -87,13 +116,29 @@ function JourneyNavItem({
         aria-current={highlighted ? 'step' : undefined}
         aria-disabled={!enabled}
         disabled={!enabled}
-        title={step.label}
+        title={enabled ? step.label : undefined}
+        aria-describedby={
+          blockedGuidance !== null
+            ? `commercial-journey-guidance-${step.id}`
+            : undefined
+        }
         onClick={enabled ? onNavigate : undefined}
       >
         <span className="office-pilot-workflow-nav__label">
           {step.label}
         </span>
       </button>
+
+      {blockedGuidance !== null ? (
+        <span
+          id={`commercial-journey-guidance-${step.id}`}
+          className="office-pilot-workflow-nav__guidance"
+          role="tooltip"
+          data-testid={`commercial-journey-guidance-${step.id}`}
+        >
+          {blockedGuidance}
+        </span>
+      ) : null}
 
       {showArrow ? (
         <span

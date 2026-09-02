@@ -3272,3 +3272,54 @@ button.office-cj-pilot__continue[data-package-select-action]:hover {
   height: auto;
   display: block;
 }
+
+/* UX65F — blocked Commercial Journey step guidance */
+.office-pilot-workflow-nav--journey
+  .office-pilot-workflow-nav__step {
+  position: relative;
+}
+
+.office-pilot-workflow-nav__guidance {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 8px);
+  left: 50%;
+  display: none;
+  width: max-content;
+  max-width: min(280px, 80vw);
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  border: 1px solid #e3e3e3;
+  border-radius: 5px;
+  background: #ffffff;
+  padding: 7px 10px;
+  box-shadow: 0 4px 12px rgba(0, 25, 48, 0.12);
+  color: var(--platform-navy, #001930);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+  white-space: normal;
+  pointer-events: none;
+}
+
+.office-pilot-workflow-nav__step[data-blocked='true']:hover
+  .office-pilot-workflow-nav__guidance,
+.office-pilot-workflow-nav__step[data-blocked='true']:focus
+  .office-pilot-workflow-nav__guidance,
+.office-pilot-workflow-nav__step[data-blocked='true']:focus-within
+  .office-pilot-workflow-nav__guidance {
+  display: block;
+}
+
+/* UX65F — Commercial Journey / Office inner scroll reserve.
+   The inner application owns scrolling inside the Workspace iframe. */
+.office-workspace__main {
+  box-sizing: border-box;
+  padding-bottom: max(80px, env(safe-area-inset-bottom));
+}
+
+.office-workspace--partner-commercial-journey
+  .office-workspace__main {
+  padding-bottom: max(112px, env(safe-area-inset-bottom));
+}

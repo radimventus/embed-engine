@@ -192,3 +192,18 @@ body:has(.workspace-shell[data-workspace-surface='client']),
   border: 0;
   display: block;
 }
+
+/* UX65F — Workspace vertical reachability.
+   Password/activation, START and hosted Studio surfaces must always
+   provide scroll room below their final actionable control. */
+.workspace-shell__main {
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding-bottom: max(72px, env(safe-area-inset-bottom));
+}
+
+.workspace-shell[data-workspace-entry-stage] main {
+  box-sizing: border-box;
+  overflow-y: auto;
+  padding-bottom: max(96px, env(safe-area-inset-bottom));
+}

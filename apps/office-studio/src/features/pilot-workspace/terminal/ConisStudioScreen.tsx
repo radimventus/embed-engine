@@ -24,7 +24,7 @@ export function ConisStudioScreen({ activeCase }: ConisStudioScreenProps) {
         Vítejte v CONIS Studio.
       </p>
       <p className="office-cj-screen__note">
-        Podklady můžete nahrát nyní nebo kdykoliv později.
+        Po ověření platby vám pošleme instrukce k podkladům, které od vás potřebujeme pro zapracování do systému.
       </p>
       <a
         className="office-cj-pilot__continue office-cj-pilot__continue--link"
