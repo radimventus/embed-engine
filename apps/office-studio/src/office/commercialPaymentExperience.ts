@@ -142,6 +142,11 @@ export function renderCommercialProformaPdf(
       .replace(/\(/g, '\\(')
       .replace(/\)/g, '\\)');
 
+  const encoder = new TextEncoder();
+
+  const byteLength = (value: string): number =>
+    encoder.encode(value).byteLength;
+
   const commands: string[] = [];
 
   const text = (
@@ -393,10 +398,7 @@ export function renderCommercialProformaPdf(
       '/MediaBox [0 0 595 842] ' +
       '/Resources << /Font << /F1 5 0 R >> >> ' +
       '/Contents 4 0 R >>',
-    `<< /Length ${Buffer.byteLength(
-      stream,
-      'utf8',
-    )} >>\nstream\n${stream}\nendstream`,
+    `<< /Length ${byteLength(stream)} >>\nstream\n${stream}\nendstream`,
     '<< /Type /Font /Subtype /Type1 ' +
       '/BaseFont /Helvetica >>',
   ];
@@ -407,7 +409,7 @@ export function renderCommercialProformaPdf(
 
   objects.forEach((object,index) => {
     offsets.push(
-      Buffer.byteLength(pdf,'utf8'),
+      byteLength(pdf),
     );
 
     pdf +=
@@ -416,7 +418,7 @@ export function renderCommercialProformaPdf(
   });
 
   const xrefOffset =
-    Buffer.byteLength(pdf,'utf8');
+    byteLength(pdf);
 
   pdf +=
     `xref\n0 ${objects.length + 1}\n`;
@@ -439,7 +441,7 @@ export function renderCommercialProformaPdf(
     `startxref\n${xrefOffset}\n%%EOF`;
 
   return new Uint8Array(
-    Buffer.from(pdf,'utf8'),
+    encoder.encode(pdf),
   );
 }
 
