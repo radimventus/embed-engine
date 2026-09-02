@@ -51,6 +51,39 @@ export function applyDurableProjectConfigs(
   }
 }
 
+export function applyDurableProjectConfig(
+  config: DurableProjectConfigOverlay,
+): void {
+  const projectId = config.projectId.trim();
+
+  if (projectId.length === 0) {
+    return;
+  }
+
+  overlayByProjectId.set(
+    projectId,
+    {
+      privacyUrl:
+        config.privacyUrl,
+      billingNumber:
+        typeof config.billingNumber === 'string' &&
+        /^\d{5}$/.test(config.billingNumber)
+          ? config.billingNumber
+          : null,
+      commercialProgramId:
+        typeof config.commercialProgramId === 'string' &&
+        config.commercialProgramId.trim().length > 0
+          ? config.commercialProgramId.trim()
+          : null,
+      commercialProgramSelectedAt:
+        typeof config.commercialProgramSelectedAt === 'string' &&
+        config.commercialProgramSelectedAt.trim().length > 0
+          ? config.commercialProgramSelectedAt.trim()
+          : null,
+    },
+  );
+}
+
 export function resetDurableProjectConfigs(): void {
   overlayByProjectId.clear();
 }

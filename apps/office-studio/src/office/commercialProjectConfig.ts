@@ -1,5 +1,5 @@
 import {
-  applyDurableProjectConfigs,
+  applyDurableProjectConfig,
   platformApiOrigin,
 } from '@embed-engine/platform-access';
 
@@ -7,6 +7,7 @@ import type { CommercialPilotProgramId } from './commercialPilotProgramCatalog';
 
 export type CommercialProjectConfig = {
   readonly projectId: string;
+  readonly privacyUrl: string | null;
   readonly billingNumber: string | null;
   readonly commercialProgramId: string | null;
   readonly commercialProgramSelectedAt: string | null;
@@ -33,17 +34,25 @@ function normalize(body: unknown): CommercialProjectConfig {
     typeof body !== 'object' ||
     Array.isArray(body)
   ) {
-    throw new Error('Platform API returned invalid Project configuration.');
+    throw new Error(
+      'Platform API returned invalid Project configuration.',
+    );
   }
 
   const value = body as Record<string, unknown>;
 
   if (typeof value.projectId !== 'string') {
-    throw new Error('Platform API returned invalid Project configuration.');
+    throw new Error(
+      'Platform API returned invalid Project configuration.',
+    );
   }
 
   return {
     projectId: value.projectId,
+    privacyUrl:
+      typeof value.privacyUrl === 'string'
+        ? value.privacyUrl
+        : null,
     billingNumber:
       typeof value.billingNumber === 'string'
         ? value.billingNumber
@@ -59,17 +68,22 @@ function normalize(body: unknown): CommercialProjectConfig {
   };
 }
 
-function apply(config: CommercialProjectConfig): void {
-  applyDurableProjectConfigs([
+async function fetchProjectConfig(
+  projectId: string,
+): Promise<CommercialProjectConfig> {
+  const response = await fetch(
+    baseEndpoint(projectId),
     {
-      projectId: config.projectId,
-      privacyUrl: null,
-      billingNumber: config.billingNumber,
-      commercialProgramId: config.commercialProgramId,
-      commercialProgramSelectedAt:
-        config.commercialProgramSelectedAt,
+      method: 'GET',
+      credentials: 'include',
     },
-  ]);
+  );
+
+  if (!response.ok) {
+    throw new Error(await responseError(response));
+  }
+
+  return normalize(await response.json());
 }
 
 export async function selectCommercialProjectProgram(input: {
@@ -85,7 +99,7 @@ export async function selectCommercialProjectProgram(input: {
         'content-type': 'application/json',
       },
       body: JSON.stringify({
-        commercialProgramId: input.programId,
+        programId: input.programId,
       }),
     },
   );
@@ -94,7 +108,21 @@ export async function selectCommercialProjectProgram(input: {
     throw new Error(await responseError(response));
   }
 
-  const config = normalize(await response.json());
-  apply(config);
+  // POST intentionally confirms the mutation only.
+  // Hydrate the complete canonical Project configuration afterwards,
+  // so billing/privacy authority cannot be lost by a partial response.
+  const config =
+    await fetchProjectConfig(input.projectId);
+
+  applyDurableProjectConfig({
+    projectId: config.projectId,
+    privacyUrl: config.privacyUrl,
+    billingNumber: config.billingNumber,
+    commercialProgramId:
+      config.commercialProgramId,
+    commercialProgramSelectedAt:
+      config.commercialProgramSelectedAt,
+  });
+
   return config;
 }

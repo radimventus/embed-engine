@@ -130,6 +130,7 @@ export {
 } from './provisioning/defaultProjectHouses';
 
 export {
+  applyDurableProjectConfig,
   applyDurableProjectConfigs,
   durableProjectBillingNumber,
   durableProjectCommercialProgramId,

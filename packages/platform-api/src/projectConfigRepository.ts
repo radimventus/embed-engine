@@ -34,6 +34,11 @@ export interface ProjectConfigRepository {
     projectId: string,
     createdAt?: string,
   ): Promise<ProjectBillingAllocation>;
+  selectCommercialProgram(
+    projectId: string,
+    programId: string,
+    selectedAt?: string,
+  ): Promise<DurableProjectConfig>;
 }
 
 type ProjectConfigState = {
@@ -433,6 +438,12 @@ export class FileProjectConfigRepository implements ProjectConfigRepository {
               existing?.privacyUrl ??
               null,
             billingNumber,
+            commercialProgramId:
+              existing?.commercialProgramId ??
+              null,
+            commercialProgramSelectedAt:
+              existing?.commercialProgramSelectedAt ??
+              null,
           };
 
         const projects = [
