@@ -7,6 +7,12 @@ import {
   bytesToBase64,
   createQrModules,
 } from '@embed-engine/document-runtime';
+import fontkit from '@pdf-lib/fontkit';
+import {
+  PDFDocument,
+  rgb,
+  type PDFFont,
+} from 'pdf-lib';
 
 import {
   COMMERCIAL_PILOT_PROGRAM_PACKAGES,
@@ -127,355 +133,900 @@ export function buildSpdQrPayload(input: {
   ].join('*');
 }
 
-export function renderCommercialProformaPdf(
+const INTER_REGULAR_URL = new URL(
+  './assets/fonts/inter/Inter-Regular.ttf',
+  import.meta.url,
+);
+
+const INTER_SEMIBOLD_URL = new URL(
+  './assets/fonts/inter/Inter-SemiBold.ttf',
+  import.meta.url,
+);
+
+type CommercialProformaFonts = {
+  readonly regular: Uint8Array;
+  readonly semibold: Uint8Array;
+};
+
+let commercialProformaFontsPromise:
+  | Promise<CommercialProformaFonts>
+  | null = null;
+
+async function loadCommercialProformaFont(
+  url: URL,
+): Promise<Uint8Array> {
+  if (url.protocol === 'file:') {
+    const moduleName = 'node:fs/promises';
+    const fs = await import(
+      /* @vite-ignore */ moduleName
+    );
+
+    const bytes =
+      await fs.readFile(url);
+
+    return new Uint8Array(
+      bytes.buffer,
+      bytes.byteOffset,
+      bytes.byteLength,
+    );
+  }
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(
+      `PDF font HTTP ${response.status}`,
+    );
+  }
+
+  return new Uint8Array(
+    await response.arrayBuffer(),
+  );
+}
+
+function loadCommercialProformaFonts():
+  Promise<CommercialProformaFonts> {
+  if (
+    commercialProformaFontsPromise === null
+  ) {
+    commercialProformaFontsPromise =
+      Promise.all([
+        loadCommercialProformaFont(
+          INTER_REGULAR_URL,
+        ),
+        loadCommercialProformaFont(
+          INTER_SEMIBOLD_URL,
+        ),
+      ]).then(
+        ([regular,semibold]) => ({
+          regular,
+          semibold,
+        }),
+      );
+  }
+
+  return commercialProformaFontsPromise;
+}
+
+function fitPdfText(
+  font: PDFFont,
+  value: string,
+  preferred: number,
+  maxWidth: number,
+  minimum = 7,
+): number {
+  let size=preferred;
+
+  while (
+    size > minimum &&
+    font.widthOfTextAtSize(
+      value,
+      size,
+    ) > maxWidth
+  ) {
+    size -= 0.25;
+  }
+
+  return size;
+}
+
+function pdfPrice(
+  amountCzk: number,
+): string {
+  return formatCommercialPilotPriceCzk(
+    amountCzk,
+  ).replace(
+    /[\u00a0\u202f]/g,
+    ' ',
+  );
+}
+
+export async function renderCommercialProformaPdf(
   proforma: CommercialProforma,
-): Uint8Array {
-  const ascii = (value: string): string =>
-    value
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^\x20-\x7E]/g, '');
+): Promise<Uint8Array> {
+  const fontBytes =
+    await loadCommercialProformaFonts();
 
-  const escapePdfText = (value: string): string =>
-    ascii(value)
-      .replace(/\\/g, '\\\\')
-      .replace(/\(/g, '\\(')
-      .replace(/\)/g, '\\)');
+  const pdf =
+    await PDFDocument.create();
 
-  const encoder = new TextEncoder();
+  pdf.registerFontkit(fontkit);
 
-  const byteLength = (value: string): number =>
-    encoder.encode(value).byteLength;
-
-  const commands: string[] = [];
-
-  const text = (
-    x: number,
-    y: number,
-    size: number,
-    value: string,
-  ): void => {
-    commands.push(
-      `BT /F1 ${size} Tf ${x} ${y} Td ` +
-        `(${escapePdfText(value)}) Tj ET`,
+  const regular =
+    await pdf.embedFont(
+      fontBytes.regular,
     );
-  };
 
-  const line = (
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    width = 1,
-  ): void => {
-    commands.push(
-      `${width} w ${x1} ${y1} m ${x2} ${y2} l S`,
+  const semibold =
+    await pdf.embedFont(
+      fontBytes.semibold,
     );
-  };
 
-  const fillRect = (
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    gray: number,
-  ): void => {
-    commands.push(
-      `${gray} g ${x} ${y} ${width} ${height} re f 0 g`,
-    );
-  };
-
-  // HEADER
-  text(42, 790, 22, 'CONIS');
-  text(350, 792, 15, 'VYZVA K UHRADE');
-  text(
-    350,
-    772,
-    9,
-    `Proforma faktura ${proforma.number}`,
+  pdf.setTitle(
+    `CONIS — Výzva k úhradě ${proforma.number}`,
   );
 
-  line(42, 752, 553, 752, 1.2);
+  pdf.setAuthor(
+    'Radim Věntus / CONIS',
+  );
 
-  // DODAVATEL
-  text(42, 722, 8, 'DODAVATEL');
-  text(42, 700, 12, 'Radim Ventus');
+  pdf.setSubject(
+    'Výzva k úhradě / proforma faktura',
+  );
+
+  pdf.setCreator('CONIS');
+
+  const page =
+    pdf.addPage([595,842]);
+
+  const navy=rgb(
+    23/255,
+    50/255,
+    77/255,
+  );
+
+  const gold=rgb(
+    199/255,
+    154/255,
+    43/255,
+  );
+
+  const muted=rgb(
+    100/255,
+    116/255,
+    139/255,
+  );
+
+  const line=rgb(
+    226/255,
+    232/255,
+    240/255,
+  );
+
+  const card=rgb(
+    248/255,
+    250/255,
+    252/255,
+  );
+
+  const goldSubtle=rgb(
+    252/255,
+    248/255,
+    238/255,
+  );
+
+  const white=rgb(1,1,1);
+  const black=rgb(0,0,0);
+
+  page.drawRectangle({
+    x:0,
+    y:0,
+    width:595,
+    height:842,
+    color:white,
+  });
+
+  const text=(
+    value:string,
+    x:number,
+    y:number,
+    size:number,
+    font:PDFFont=regular,
+    color=navy,
+  ):void => {
+    page.drawText(
+      value,
+      {
+        x,
+        y,
+        size,
+        font,
+        color,
+      },
+    );
+  };
+
+  const fitted=(
+    value:string,
+    x:number,
+    y:number,
+    size:number,
+    maxWidth:number,
+    font:PDFFont=regular,
+    color=navy,
+  ):void => {
+    text(
+      value,
+      x,
+      y,
+      fitPdfText(
+        font,
+        value,
+        size,
+        maxWidth,
+      ),
+      font,
+      color,
+    );
+  };
+
+  const rule=(
+    y:number,
+    thickness=0.7,
+  ):void => {
+    page.drawLine({
+      start:{x:42,y},
+      end:{x:553,y},
+      thickness,
+      color:line,
+    });
+  };
+
+  // HEADER — according to approved invoice design
   text(
+    'CONIS',
     42,
-    681,
-    9,
-    'Postovni 115, 747 19 Bohuslavice',
+    790,
+    26,
+    semibold,
   );
-  text(42, 664, 9, 'ICO: 62288474');
-  text(42, 647, 9, 'Neplatce DPH');
 
-  // PARTNER — canonical company scope
-  text(310, 722, 8, 'PARTNER');
   text(
-    310,
-    700,
-    12,
+    'SMART WEB CONVERSION LAYER',
+    42,
+    774,
+    6.5,
+    semibold,
+    muted,
+  );
+
+  page.drawRectangle({
+    x:390,
+    y:785,
+    width:163,
+    height:24,
+    color:goldSubtle,
+    borderColor:gold,
+    borderWidth:0.7,
+  });
+
+  text(
+    'VÝZVA K ÚHRADĚ',
+    406,
+    793,
+    9,
+    semibold,
+    navy,
+  );
+
+  fitted(
+    `proforma faktura č. ${proforma.number}`,
+    390,
+    768,
+    8,
+    163,
+    semibold,
+    muted,
+  );
+
+  page.drawLine({
+    start:{x:42,y:748},
+    end:{x:553,y:748},
+    thickness:1.4,
+    color:navy,
+  });
+
+  // INTRO
+  text(
+    'Pilotní nasazení platformy CONIS',
+    42,
+    712,
+    20,
+    semibold,
+    navy,
+  );
+
+  text(
+    'Děkujeme za projevenou důvěru. Úhradou zahajujeme pilotní spolupráci.',
+    42,
+    691,
+    8.5,
+    regular,
+    muted,
+  );
+
+  // PARTY CARDS
+  page.drawRectangle({
+    x:42,
+    y:552,
+    width:247,
+    height:116,
+    color:card,
+    borderColor:line,
+    borderWidth:0.7,
+  });
+
+  page.drawRectangle({
+    x:306,
+    y:552,
+    width:247,
+    height:116,
+    color:card,
+    borderColor:line,
+    borderWidth:0.7,
+  });
+
+  text(
+    'DODAVATEL',
+    56,
+    646,
+    7,
+    semibold,
+    gold,
+  );
+
+  text(
+    'Radim Věntus',
+    56,
+    625,
+    10.5,
+    semibold,
+  );
+
+  text(
+    'Poštovní 115',
+    56,
+    606,
+    8,
+  );
+
+  text(
+    '747 19 Bohuslavice',
+    56,
+    592,
+    8,
+  );
+
+  text(
+    'Česká republika',
+    56,
+    578,
+    8,
+  );
+
+  text(
+    'IČO: 62288474 · Neplátce DPH',
+    56,
+    560,
+    7.5,
+    regular,
+    muted,
+  );
+
+  text(
+    'PARTNER',
+    320,
+    646,
+    7,
+    semibold,
+    gold,
+  );
+
+  fitted(
     proforma.companyName,
+    320,
+    625,
+    10.5,
+    219,
+    semibold,
   );
 
-  text(
-    310,
-    681,
-    9,
+  fitted(
     proforma.address.length > 0
       ? proforma.address
       : 'Adresa neuvedena',
+    320,
+    604,
+    8,
+    219,
   );
 
   text(
-    310,
-    664,
-    9,
-    `ICO: ${proforma.ico || 'neuvedeno'}`,
+    `IČO: ${proforma.ico || 'neuvedeno'}`,
+    320,
+    580,
+    7.5,
+    regular,
+    muted,
   );
 
   if (proforma.dic.length > 0) {
     text(
-      310,
-      647,
-      9,
-      `DIC: ${proforma.dic}`,
+      `DIČ: ${proforma.dic}`,
+      320,
+      564,
+      7.5,
+      regular,
+      muted,
     );
   }
 
-  line(42, 600, 553, 600);
-
-  // PREDMET
-  text(42, 568, 8, 'PREDMET PLNENI');
-
+  // SUBJECT / PRICE HERO
   text(
+    'PŘEDMĚT PLNĚNÍ A CENA',
     42,
-    542,
-    12,
-    `Pilotni nasazeni platformy CONIS - ${proforma.packageName}`,
+    522,
+    7,
+    semibold,
+    navy,
   );
 
-  // CENA
-  fillRect(42, 472, 511, 54, 0.94);
+  page.drawRectangle({
+    x:42,
+    y:442,
+    width:511,
+    height:64,
+    color:white,
+    borderColor:line,
+    borderWidth:0.7,
+  });
 
-  text(
-    58,
-    494,
-    9,
-    'CELKEM K UHRADE',
+  page.drawRectangle({
+    x:42,
+    y:442,
+    width:5,
+    height:64,
+    color:gold,
+  });
+
+  fitted(
+    `Pilotní nasazení platformy CONIS — ${proforma.packageName}`,
+    61,
+    479,
+    10.5,
+    280,
+    semibold,
   );
 
   text(
-    350,
-    488,
-    18,
-    formatCommercialPilotPriceCzk(
+    'První 3 měsíce provozu jsou v ceně Pilotu.',
+    61,
+    458,
+    7.5,
+    regular,
+    muted,
+  );
+
+  text(
+    'CELKEM K ÚHRADĚ',
+    410,
+    485,
+    6.5,
+    semibold,
+    muted,
+  );
+
+  const amount=
+    pdfPrice(
       proforma.amountCzk,
-    ),
-  );
+    );
 
-  // PLATBA
-  text(42, 432, 8, 'PLATEBNI UDAJE');
+  const amountSize=19;
 
-  text(
-    42,
-    407,
-    10,
-    `Banka: ${proforma.bankName}`,
-  );
+  const amountWidth=
+    semibold.widthOfTextAtSize(
+      amount,
+      amountSize,
+    );
 
   text(
-    42,
-    388,
-    10,
-    `Ucet: ${proforma.accountNumber}`,
+    amount,
+    535-amountWidth,
+    458,
+    amountSize,
+    semibold,
+    gold,
   );
 
+  // PAYMENT GRID
   text(
+    'PLATEBNÍ ÚDAJE',
     42,
-    369,
-    10,
-    `IBAN: ${proforma.iban}`,
+    412,
+    7,
+    semibold,
+    navy,
   );
 
-  text(
-    42,
-    350,
-    10,
-    `Variabilni symbol: ${proforma.variableSymbol}`,
-  );
+  page.drawRectangle({
+    x:42,
+    y:272,
+    width:329,
+    height:124,
+    color:white,
+    borderColor:line,
+    borderWidth:0.7,
+  });
 
-  text(
-    42,
-    331,
-    10,
-    `Splatnost: ${formatCommercialDateCs(
-      proforma.dueDate,
-    )}`,
-  );
+  const payLabelX=58;
+  const payValueX=177;
 
-  // REAL SPD QR
-  const qr =
-    createQrModules(proforma.qrPayload);
+  const paymentRows:[
+    string,
+    string
+  ][]=[
+    [
+      'Bankovní účet:',
+      proforma.accountNumber,
+    ],
+    [
+      'IBAN:',
+      proforma.iban,
+    ],
+    [
+      'Variabilní symbol:',
+      proforma.variableSymbol,
+    ],
+    [
+      'Částka k úhradě:',
+      amount,
+    ],
+    [
+      'Splatnost:',
+      formatCommercialDateCs(
+        proforma.dueDate,
+      ),
+    ],
+    [
+      'Způsob úhrady:',
+      'Převodem / QR platba',
+    ],
+  ];
 
-  const qrSize = 150;
-  const moduleSize =
-    qrSize / qr.size;
-
-  const qrX = 385;
-  const qrY = 300;
-
-  commands.push('0 g');
+  let rowY=376;
 
   for (
-    let rowIndex = 0;
-    rowIndex < qr.size;
-    rowIndex += 1
+    const [label,value]
+    of paymentRows
+  ) {
+    text(
+      label,
+      payLabelX,
+      rowY,
+      7.5,
+      regular,
+      muted,
+    );
+
+    fitted(
+      value,
+      payValueX,
+      rowY,
+      8,
+      176,
+      semibold,
+      navy,
+    );
+
+    rowY-=18;
+  }
+
+  // REAL SPD QR
+  page.drawRectangle({
+    x:388,
+    y:272,
+    width:165,
+    height:124,
+    color:white,
+    borderColor:line,
+    borderWidth:0.7,
+  });
+
+  const qr=
+    createQrModules(
+      proforma.qrPayload,
+    );
+
+  const qrSize=92;
+  const qrX=424;
+  const qrY=292;
+  const moduleSize=
+    qrSize/qr.size;
+
+  for (
+    let row=0;
+    row<qr.size;
+    row+=1
   ) {
     for (
-      let columnIndex = 0;
-      columnIndex < qr.size;
-      columnIndex += 1
+      let column=0;
+      column<qr.size;
+      column+=1
     ) {
-      const dataIndex =
-        rowIndex * qr.size +
-        columnIndex;
+      const index=
+        row*qr.size+
+        column;
 
-      if (!Boolean(qr.data[dataIndex])) {
+      if (!Boolean(
+        qr.data[index]
+      )) {
         continue;
       }
 
-      const x =
-        qrX +
-        columnIndex * moduleSize;
-
-      const y =
-        qrY +
-        (qr.size - rowIndex - 1) *
-          moduleSize;
-
-      commands.push(
-        `${x.toFixed(3)} ${y.toFixed(3)} ` +
-          `${moduleSize.toFixed(3)} ` +
-          `${moduleSize.toFixed(3)} re f`,
-      );
+      page.drawRectangle({
+        x:
+          qrX+
+          column*moduleSize,
+        y:
+          qrY+
+          (
+            qr.size-
+            row-
+            1
+          )*moduleSize,
+        width:
+          moduleSize+0.03,
+        height:
+          moduleSize+0.03,
+        color:black,
+      });
     }
   }
 
-  line(42, 265, 553, 265);
+  text(
+    'QR PLATBA',
+    443,
+    280,
+    6.5,
+    semibold,
+    navy,
+  );
+
+  // NEXT STEP — design authority, adapted
+  page.drawRectangle({
+    x:42,
+    y:174,
+    width:511,
+    height:76,
+    color:goldSubtle,
+    borderColor:gold,
+    borderWidth:0.5,
+  });
 
   text(
-    42,
-    236,
-    9,
-    'QR kod obsahuje stejny ucet, castku a variabilni symbol.',
+    'DALŠÍ POSTUP',
+    58,
+    229,
+    7,
+    semibold,
+    navy,
   );
 
   text(
-    42,
-    218,
-    9,
-    'Tato vyzva k uhrade neni danovym dokladem.',
+    '✓ Uhraďte proforma fakturu převodem nebo QR platbou.',
+    58,
+    208,
+    8,
+    regular,
+    navy,
   );
+
+  text(
+    '✓ Po ověření platby vám pošleme instrukce k podkladům.',
+    58,
+    191,
+    8,
+    regular,
+    navy,
+  );
+
+  // LEGAL
+  text(
+    'Tato výzva k úhradě (proforma faktura) není daňovým dokladem.',
+    42,
+    142,
+    7,
+    regular,
+    muted,
+  );
+
+  rule(105);
 
   // FOOTER
-  text(42, 72, 8, 'CONIS');
+  text(
+    'CONIS',
+    42,
+    78,
+    7.5,
+    semibold,
+    navy,
+  );
 
   text(
-    395,
-    72,
-    8,
-    proforma.number,
+    'inteligentní vrstva pro web, která zvyšuje konverzi.',
+    79,
+    78,
+    6.5,
+    regular,
+    muted,
   );
 
-  const stream =
-    commands.join('\n');
+  const footerNumber=
+    proforma.number;
 
-  const objects = [
-    '<< /Type /Catalog /Pages 2 0 R >>',
-    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-    '<< /Type /Page /Parent 2 0 R ' +
-      '/MediaBox [0 0 595 842] ' +
-      '/Resources << /Font << /F1 5 0 R >> >> ' +
-      '/Contents 4 0 R >>',
-    `<< /Length ${byteLength(stream)} >>\nstream\n${stream}\nendstream`,
-    '<< /Type /Font /Subtype /Type1 ' +
-      '/BaseFont /Helvetica >>',
-  ];
-
-  let pdf = '%PDF-1.4\n';
-
-  const offsets: number[] = [0];
-
-  objects.forEach((object,index) => {
-    offsets.push(
-      byteLength(pdf),
+  const footerWidth=
+    regular.widthOfTextAtSize(
+      footerNumber,
+      6.5,
     );
 
-    pdf +=
-      `${index + 1} 0 obj\n` +
-      `${object}\nendobj\n`;
-  });
+  text(
+    footerNumber,
+    553-footerWidth,
+    78,
+    6.5,
+    regular,
+    muted,
+  );
 
-  const xrefOffset =
-    byteLength(pdf);
-
-  pdf +=
-    `xref\n0 ${objects.length + 1}\n`;
-
-  pdf +=
-    '0000000000 65535 f\n';
-
-  offsets.slice(1).forEach((offset) => {
-    pdf +=
-      `${String(offset).padStart(
-        10,
-        '0',
-      )} 00000 n\n`;
-  });
-
-  pdf +=
-    'trailer\n' +
-    `<< /Size ${objects.length + 1} ` +
-    '/Root 1 0 R >>\n' +
-    `startxref\n${xrefOffset}\n%%EOF`;
+  const bytes=
+    await pdf.save();
 
   return new Uint8Array(
-    encoder.encode(pdf),
+    bytes,
   );
 }
 
-export function commercialProformaPdfObjectUrl(
+export async function commercialProformaPdfObjectUrl(
   proforma: CommercialProforma,
-): string {
-  const bytes = renderCommercialProformaPdf(proforma);
-  const copy = new Uint8Array(bytes.byteLength);
+): Promise<string> {
+  const bytes=
+    await renderCommercialProformaPdf(
+      proforma,
+    );
+
+  const copy=
+    new Uint8Array(
+      bytes.byteLength,
+    );
+
   copy.set(bytes);
-  const blob = new Blob([copy], { type: 'application/pdf' });
-  return URL.createObjectURL(blob);
+
+  const blob=
+    new Blob(
+      [copy],
+      {
+        type:'application/pdf',
+      },
+    );
+
+  return URL.createObjectURL(
+    blob,
+  );
 }
 
-export function commercialProformaPdfDataUrl(
+export async function commercialProformaPdfDataUrl(
   proforma: CommercialProforma,
-): string {
-  const bytes = renderCommercialProformaPdf(proforma);
-  return `data:application/pdf;base64,${bytesToBase64(bytes)}`;
+): Promise<string> {
+  const bytes=
+    await renderCommercialProformaPdf(
+      proforma,
+    );
+
+  return (
+    'data:application/pdf;base64,'+
+    bytesToBase64(bytes)
+  );
 }
 
 export function downloadCommercialProformaPdf(
   proforma: CommercialProforma,
 ): void {
-  const href = commercialProformaPdfObjectUrl(proforma);
-  const anchor = document.createElement('a');
-  anchor.href = href;
-  anchor.download = `${proforma.number}.pdf`;
-  anchor.click();
-  URL.revokeObjectURL(href);
+  void commercialProformaPdfObjectUrl(
+    proforma,
+  )
+    .then((href) => {
+      const anchor=
+        document.createElement(
+          'a',
+        );
+
+      anchor.href=href;
+      anchor.download=
+        `${proforma.number}.pdf`;
+
+      document.body.appendChild(
+        anchor,
+      );
+
+      anchor.click();
+      anchor.remove();
+
+      window.setTimeout(
+        () => {
+          URL.revokeObjectURL(
+            href,
+          );
+        },
+        5_000,
+      );
+    })
+    .catch(
+      (error:unknown) => {
+        console.error(
+          'CONIS proforma download failed',
+          error,
+        );
+      },
+    );
 }
 
-export function openCommercialProformaPdf(proforma: CommercialProforma): void {
-  const href = commercialProformaPdfObjectUrl(proforma);
-  window.open(href, '_blank', 'noopener,noreferrer');
+export function openCommercialProformaPdf(
+  proforma: CommercialProforma,
+): void {
+  // Open first, while still in the click event,
+  // otherwise popup blockers can reject async PDF generation.
+  const popup=
+    window.open(
+      'about:blank',
+      '_blank',
+    );
+
+  if (popup !== null) {
+    popup.opener=null;
+    popup.document.title=
+      'Připravuji PDF…';
+  }
+
+  void commercialProformaPdfObjectUrl(
+    proforma,
+  )
+    .then((href) => {
+      if (popup !== null) {
+        popup.location.replace(
+          href,
+        );
+        return;
+      }
+
+      window.open(
+        href,
+        '_blank',
+        'noopener,noreferrer',
+      );
+    })
+    .catch(
+      (error:unknown) => {
+        if (popup !== null) {
+          popup.close();
+        }
+
+        console.error(
+          'CONIS proforma open failed',
+          error,
+        );
+      },
+    );
 }
 
 export function formatCommercialDateCs(iso: string): string {

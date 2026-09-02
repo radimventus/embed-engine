@@ -24,7 +24,7 @@ function read(relative: string): string {
 }
 
 describe('PT-CJ-04 Payment Experience', () => {
-  it('builds proforma and SPD QR from selected program', () => {
+  it('builds proforma and SPD QR from selected program', async () => {
     setCommercialJourneySelectedProgramId('pilot-plus');
     const activeCase = getPilotWorkspaceCase('villa-168');
     assert.ok(activeCase);
@@ -44,14 +44,70 @@ describe('PT-CJ-04 Payment Experience', () => {
     assert.equal(proforma.accountNumber, '3452548011/3030');
     assert.equal(proforma.iban, 'CZ3530300000003452548011');
 
-    const pdf = renderCommercialProformaPdf(proforma);
-    assert.ok(pdf.byteLength > 100);
-    assert.equal(String.fromCharCode(pdf[0]!, pdf[1]!, pdf[2]!, pdf[3]!), '%PDF');
+    const pdf = await renderCommercialProformaPdf(proforma);
 
-    const pdfText = Buffer.from(pdf).toString('latin1');
-    assert.match(pdfText, / re f/);
-    assert.match(pdfText, /3452548011\/3030/);
-    assert.match(pdfText, /CZ3530300000003452548011/);
+    assert.ok(
+      pdf.byteLength > 10_000,
+    );
+
+    assert.equal(
+      String.fromCharCode(
+        pdf[0]!,
+        pdf[1]!,
+        pdf[2]!,
+        pdf[3]!,
+      ),
+      '%PDF',
+    );
+
+    const source = read(
+      'office/commercialPaymentExperience.ts',
+    );
+
+    assert.match(
+      source,
+      /VÝZVA K ÚHRADĚ/,
+    );
+
+    assert.match(
+      source,
+      /Radim Věntus/,
+    );
+
+    assert.match(
+      source,
+      /Poštovní 115/,
+    );
+
+    assert.match(
+      source,
+      /PŘEDMĚT PLNĚNÍ A CENA/,
+    );
+
+    assert.match(
+      source,
+      /PLATEBNÍ ÚDAJE/,
+    );
+
+    assert.match(
+      source,
+      /Inter-Regular\.ttf/,
+    );
+
+    assert.match(
+      source,
+      /Inter-SemiBold\.ttf/,
+    );
+
+    assert.doesNotMatch(
+      source,
+      /normalize\('NFD'\)/,
+    );
+
+    assert.doesNotMatch(
+      source,
+      /BaseFont \/Helvetica/,
+    );
 
     const payload = buildSpdQrPayload({
       iban: COMMERCIAL_PAYMENT_ACCOUNT.iban,

@@ -15,8 +15,10 @@
     "@embed-engine/document-runtime": "workspace:*",
     "@embed-engine/platform-access": "workspace:*",
     "@embed-engine/platform-shell": "workspace:*",
+    "@pdf-lib/fontkit": "1.1.1",
     "imapflow": "^1.6.5",
     "nodemailer": "^9.0.3",
+    "pdf-lib": "1.17.1",
     "qrcode": "^1.5.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
