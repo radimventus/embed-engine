@@ -1693,6 +1693,11 @@ export function createPlatformApiServer(
               error: "Partner není pro tuto relaci povolen.",
             });
           }
+          await projectConfigs.ensureBillingNumber(
+            current.projectId,
+            new Date().toISOString(),
+          );
+
           const reissued = await repository.reissue(inviteId);
           return respond(
             response,
