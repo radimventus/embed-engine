@@ -68,11 +68,26 @@ export function buildCommercialProforma(input: {
   readonly activeCase: PilotWorkspaceCase;
   readonly program: CommercialPilotProgramPackage;
   readonly details: CommercialOrderPartnerDetails;
-  readonly issuedAt?: string;
+  readonly issuedAt: string;
 }): CommercialProforma {
-  const issuedAt = input.issuedAt ?? new Date().toISOString();
-  const variableSymbol = variableSymbolFromCaseId(input.activeCase.id);
-  const number = `PF-2026-${variableSymbol.slice(-8).padStart(8, '0')}`;
+  const issuedAt = input.issuedAt;
+  const billingNumber =
+    input.activeCase.billingNumber;
+
+  if (
+    billingNumber === null ||
+    !/^\d{5}$/.test(billingNumber)
+  ) {
+    throw new Error(
+      'Project billing number is not allocated. Generate the first Magic Link for this Project first.',
+    );
+  }
+
+  const variableSymbol =
+    billingNumber;
+
+  const number =
+    billingNumber;
   const message =
     `CONIS ${input.program.name} · ${input.activeCase.partnerName}`.slice(
       0,
@@ -112,7 +127,21 @@ export function buildCommercialProformaForCase(
   const program = resolveCommercialJourneyProgram(activeCase);
   if (program === null) return null;
   const details = buildCommercialOrderPartnerDetails(activeCase);
-  return buildCommercialProforma({ activeCase, program, details });
+  const issuedAt =
+    activeCase.commercialProgramSelectedAt;
+
+  if (issuedAt === null) {
+    throw new Error(
+      'Commercial program selection is not persisted for this Project.',
+    );
+  }
+
+  return buildCommercialProforma({
+    activeCase,
+    program,
+    details,
+    issuedAt,
+  });
 }
 
 export function buildSpdQrPayload(input: {
@@ -522,50 +551,49 @@ export async function renderCommercialProformaPdf(
    */
   const conisLogoSize = 27;
 
+  const logoCon = 'CON';
+  const logoI = 'I';
+  const logoS = 'S';
+
   text(
-    'CONIS',
+    logoCon,
     left,
+    786,
+    conisLogoSize,
+    { font: semibold },
+  );
+
+  const logoConWidth =
+    semibold.widthOfTextAtSize(
+      logoCon,
+      conisLogoSize,
+    );
+
+  text(
+    logoI,
+    left + logoConWidth,
     786,
     conisLogoSize,
     {
       font: semibold,
+      color: gold,
     },
   );
 
-  const conisPrefixWidth =
+  const logoIWidth =
     semibold.widthOfTextAtSize(
-      'CON',
+      logoI,
       conisLogoSize,
     );
-
-  const conisIWidth =
-    semibold.widthOfTextAtSize(
-      'I',
-      conisLogoSize,
-    );
-
-  const conisAccentCenter =
-    left +
-    conisPrefixWidth +
-    conisIWidth / 2;
-
-  page.drawRectangle({
-    x: conisAccentCenter - 1.8,
-    y: 807,
-    width: 3.6,
-    height: 10,
-    color: goldStrong,
-  });
 
   text(
-    'SMART WEB CONVERSION LAYER',
-    left,
-    770,
-    7.1,
-    {
-      font: semibold,
-      color: muted,
-    },
+    logoS,
+    left +
+      logoConWidth +
+      logoIWidth,
+    786,
+    conisLogoSize,
+    { font: semibold },
   );
 
   box(
@@ -691,7 +719,7 @@ export async function renderCommercialProformaPdf(
   );
 
   text(
-    'Poštovní 115',
+    'Stratilova 2',
     left + 15,
     cardY + 52,
     8.2,
@@ -1374,24 +1402,8 @@ export function formatCommercialDateCs(iso: string): string {
   }).format(new Date(iso));
 }
 
-function variableSymbolFromCaseId(caseId: string): string {
-  const digits = caseId.replace(/\D/g, '');
 
-  if (digits.length >= 6) {
-    return digits.slice(-10);
-  }
-
-  let hash = 0x811c9dc5;
-
-  for (let index = 0; index < caseId.length; index += 1) {
-    hash ^= caseId.charCodeAt(index);
-    hash = Math.imul(hash, 0x01000193) >>> 0;
-  }
-
-  return String(hash);
-}
-
-function dueDateFromIssuedAt(issuedAt: string, days = 14): string {
+function dueDateFromIssuedAt(issuedAt: string, days = 3): string {
   const date = new Date(issuedAt);
   date.setUTCDate(date.getUTCDate() + days);
   return date.toISOString();

@@ -35,6 +35,12 @@ export type CanonicalProjectIdentity = {
   readonly name: string;
   readonly slug: string;
   readonly description: string;
+  /** Stable Project billing identity allocated at first Magic Link. */
+  readonly billingNumber?: string;
+  /** Durable commercial package selected for this Project. */
+  readonly commercialProgramId?: string;
+  /** Timestamp of the current durable package selection. */
+  readonly commercialProgramSelectedAt?: string;
   /** Optional Project privacy destination; absence is explicit. */
   readonly privacyUrl?: string;
 };

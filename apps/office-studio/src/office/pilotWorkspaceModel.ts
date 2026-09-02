@@ -55,6 +55,9 @@ export type PilotWorkspaceCase = {
   /** Explicit ProjectId bind — equals `id` (Canonical Project). */
   readonly projectId: string;
   readonly companyId: string;
+  readonly billingNumber: string | null;
+  readonly commercialProgramId: string | null;
+  readonly commercialProgramSelectedAt: string | null;
   /**
    * PT-PLATFORM-01 — Select / chrome: `Firma · Projekt`.
    * Never Builder dům identity.
@@ -227,6 +230,12 @@ export function toOfficeCommercialCase(
     id: projectId,
     projectId,
     companyId: projection.partner.companyId,
+    billingNumber:
+      projection.project.billingNumber ?? null,
+    commercialProgramId:
+      projection.project.commercialProgramId ?? null,
+    commercialProgramSelectedAt:
+      projection.project.commercialProgramSelectedAt ?? null,
     label: `${projection.partner.companyName} · ${projectTitle}`,
     projectTitle,
     partnerName: projection.partner.companyName,

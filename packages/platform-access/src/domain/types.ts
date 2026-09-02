@@ -76,6 +76,12 @@ export type PlatformCanonicalProject = {
   readonly slug: string;
   readonly description: string;
   /**
+   * Stable commercial/billing identity.
+   * Allocated once by Platform API when the first Magic Link for this Project
+   * is issued. Example: 26010.
+   */
+  readonly billingNumber?: string;
+  /**
    * Optional Project privacy destination for public lead consent.
    * Absence is explicit — lead capture stays fail-closed.
    * Authoritative value comes from durable Platform API Project config overlay,

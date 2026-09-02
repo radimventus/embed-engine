@@ -23,8 +23,6 @@ export type CommercialOrderPartnerDetails = {
 export function buildCommercialOrderPartnerDetails(
   activeCase: PilotWorkspaceCase,
 ): CommercialOrderPartnerDetails {
-  const contact = activeCase.contacts[0] ?? null;
-
   const partner =
     listPartners().find(
       (item) =>
@@ -32,12 +30,20 @@ export function buildCommercialOrderPartnerDetails(
         canonicalCompanyIdForOfficePartner(item.id) === activeCase.companyId,
     ) ?? null;
 
-  const legalName =
-    partner?.company.legalName.trim() ||
-    activeCase.companyName.trim();
+  if (partner === null) {
+    throw new Error(
+      `Office Partner billing authority is missing for Company ${activeCase.companyId}.`,
+    );
+  }
 
-  const city = partner?.company.city.trim() ?? '';
-  const country = partner?.company.country.trim() ?? '';
+  const legalName =
+    partner.company.legalName.trim();
+
+  const city =
+    partner.company.city.trim();
+
+  const country =
+    partner.company.country.trim();
 
   const address = [city, country]
     .filter((value) => value.length > 0)
@@ -45,17 +51,13 @@ export function buildCommercialOrderPartnerDetails(
 
   return {
     companyName: legalName,
-    ico: partner?.company.ico.trim() ?? '',
+    ico: partner.company.ico.trim(),
     dic: '',
     contactName:
-      partner?.contact.name.trim() ||
-      contact?.name ||
-      activeCase.partnerName,
+      partner.contact.name.trim(),
     email:
-      partner?.contact.email.trim() ||
-      contact?.email ||
-      '',
-    phone: partner?.contact.phone.trim() ?? '',
+      partner.contact.email.trim(),
+    phone: partner.contact.phone.trim(),
     address,
   };
 }

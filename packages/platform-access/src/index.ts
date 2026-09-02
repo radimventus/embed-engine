@@ -131,6 +131,9 @@ export {
 
 export {
   applyDurableProjectConfigs,
+  durableProjectBillingNumber,
+  durableProjectCommercialProgramId,
+  durableProjectCommercialProgramSelectedAt,
   resetDurableProjectConfigs,
   type DurableProjectConfigOverlay,
 } from './registry/durableProjectConfig';

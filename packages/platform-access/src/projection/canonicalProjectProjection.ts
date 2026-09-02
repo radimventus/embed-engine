@@ -33,6 +33,11 @@ import type {
   ResolveCanonicalRuntimeBindingInput,
 } from './canonicalProjectTypes';
 import type { HouseDataMode, PlatformCanonicalProject } from '../domain/types';
+import {
+  durableProjectBillingNumber,
+  durableProjectCommercialProgramId,
+  durableProjectCommercialProgramSelectedAt,
+} from '../registry/durableProjectConfig';
 
 const DEFAULT_HOUSE_DATA_MODE: HouseDataMode = 'LIVE_EMPTY';
 
@@ -81,6 +86,24 @@ function projectIdentityFromRegistry(
       name: canonical.name,
       slug: canonical.slug,
       description: canonical.description,
+      ...(durableProjectBillingNumber(canonical.id) !== undefined
+        ? {
+            billingNumber:
+              durableProjectBillingNumber(canonical.id),
+          }
+        : {}),
+      ...(durableProjectCommercialProgramId(canonical.id) !== undefined
+        ? {
+            commercialProgramId:
+              durableProjectCommercialProgramId(canonical.id),
+          }
+        : {}),
+      ...(durableProjectCommercialProgramSelectedAt(canonical.id) !== undefined
+        ? {
+            commercialProgramSelectedAt:
+              durableProjectCommercialProgramSelectedAt(canonical.id),
+          }
+        : {}),
       privacyUrl: canonical.privacyUrl,
     };
   }
@@ -89,6 +112,24 @@ function projectIdentityFromRegistry(
     name: shared.companyName,
     slug: shared.slug,
     description: shared.description,
+    ...(durableProjectBillingNumber(shared.id) !== undefined
+      ? {
+          billingNumber:
+            durableProjectBillingNumber(shared.id),
+        }
+      : {}),
+    ...(durableProjectCommercialProgramId(shared.id) !== undefined
+      ? {
+          commercialProgramId:
+            durableProjectCommercialProgramId(shared.id),
+        }
+      : {}),
+    ...(durableProjectCommercialProgramSelectedAt(shared.id) !== undefined
+      ? {
+          commercialProgramSelectedAt:
+            durableProjectCommercialProgramSelectedAt(shared.id),
+        }
+      : {}),
   };
 }
 
@@ -167,6 +208,24 @@ function projectCanonicalFromDelivery(
       name: delivery.name,
       slug: delivery.slug,
       description: delivery.description,
+      ...(durableProjectBillingNumber(delivery.id) !== undefined
+        ? {
+            billingNumber:
+              durableProjectBillingNumber(delivery.id),
+          }
+        : {}),
+      ...(durableProjectCommercialProgramId(delivery.id) !== undefined
+        ? {
+            commercialProgramId:
+              durableProjectCommercialProgramId(delivery.id),
+          }
+        : {}),
+      ...(durableProjectCommercialProgramSelectedAt(delivery.id) !== undefined
+        ? {
+            commercialProgramSelectedAt:
+              durableProjectCommercialProgramSelectedAt(delivery.id),
+          }
+        : {}),
       privacyUrl: delivery.privacyUrl,
     },
     house: null,
@@ -379,6 +438,24 @@ function authorityHouseProjection(
       name: project.name,
       slug: project.slug,
       description: project.description,
+      ...(durableProjectBillingNumber(project.id) !== undefined
+        ? {
+            billingNumber:
+              durableProjectBillingNumber(project.id),
+          }
+        : {}),
+      ...(durableProjectCommercialProgramId(project.id) !== undefined
+        ? {
+            commercialProgramId:
+              durableProjectCommercialProgramId(project.id),
+          }
+        : {}),
+      ...(durableProjectCommercialProgramSelectedAt(project.id) !== undefined
+        ? {
+            commercialProgramSelectedAt:
+              durableProjectCommercialProgramSelectedAt(project.id),
+          }
+        : {}),
       privacyUrl: project.privacyUrl,
     },
     house: {

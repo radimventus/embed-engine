@@ -1266,7 +1266,7 @@ export function createPlatformApiServer(
         });
       }
       const projectConfigMatch = path.match(
-        /^\/public\/projects\/([^/]+)\/config$/,
+        /^\/public\/projects\/([^/]+)\/config(?:\/commercial-selection)?$/,
       );
       if (projectConfigMatch !== null) {
         const projectId = decodeURIComponent(
@@ -1283,7 +1283,102 @@ export function createPlatformApiServer(
           return respond(response, 200, {
             projectId: canonical.project.projectId,
             privacyUrl: current?.privacyUrl ?? null,
+            billingNumber: current?.billingNumber ?? null,
+            commercialProgramId:
+              current?.commercialProgramId ?? null,
+            commercialProgramSelectedAt:
+              current?.commercialProgramSelectedAt ?? null,
           });
+        }
+
+        if (
+          request.method === "POST" &&
+          path.endsWith("/commercial-selection")
+        ) {
+          const token = requestCookie(
+            request,
+            PARTNER_SESSION_COOKIE,
+          );
+
+          const session =
+            token === null
+              ? null
+              : await partnerSessions.resolve(token);
+
+          if (session === null) {
+            return respond(response, 401, {
+              error: "Neplatná relace.",
+            });
+          }
+
+          const authorizedCompanyId =
+            session.workspaceContext?.companyId ??
+            session.companyId;
+
+          if (
+            canonical.partner.companyId !==
+            authorizedCompanyId
+          ) {
+            return respond(response, 403, {
+              error:
+                "Projekt není pro tuto relaci povolen.",
+            });
+          }
+
+          const rawSelection =
+            await requestBody(request);
+
+          const programId =
+            rawSelection !== null &&
+            typeof rawSelection === "object" &&
+            !Array.isArray(rawSelection) &&
+            typeof (
+              rawSelection as Record<
+                string,
+                unknown
+              >
+            ).programId === "string"
+              ? (
+                  (
+                    rawSelection as Record<
+                      string,
+                      unknown
+                    >
+                  ).programId as string
+                ).trim()
+              : "";
+
+          if (programId.length === 0) {
+            return respond(response, 400, {
+              error: "Neplatný program.",
+            });
+          }
+
+          try {
+            const saved =
+              await projectConfigs
+                .selectCommercialProgram(
+                  projectId,
+                  programId,
+                  new Date().toISOString(),
+                );
+
+            applyDurableProjectConfigs(
+              await projectConfigs.list(),
+            );
+
+            return respond(response, 200, {
+              projectId: saved.projectId,
+              commercialProgramId:
+                saved.commercialProgramId,
+              commercialProgramSelectedAt:
+                saved.commercialProgramSelectedAt,
+            });
+          } catch {
+            return respond(response, 400, {
+              error: "Neplatný program.",
+            });
+          }
         }
 
         if (request.method === "PUT") {
@@ -1556,6 +1651,15 @@ export function createPlatformApiServer(
               error: PARTNER_ACCOUNT_COLLISION_MESSAGE,
             });
           }
+          await projectConfigs.ensureBillingNumber(
+            provision.project.id,
+            new Date().toISOString(),
+          );
+
+          applyDurableProjectConfigs(
+            await projectConfigs.list(),
+          );
+
           return respond(
             response,
             201,

@@ -9,12 +9,12 @@ import { describe, it } from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 import {
-  buildCommercialProformaForCase,
+  buildCommercialProforma,
   buildSpdQrPayload,
   COMMERCIAL_PAYMENT_ACCOUNT,
   renderCommercialProformaPdf,
 } from './commercialPaymentExperience';
-import { setCommercialJourneySelectedProgramId } from './commercialJourneySelection';
+import { COMMERCIAL_PILOT_PROGRAM_PACKAGES } from './commercialPilotProgramCatalog';
 import { getPilotWorkspaceCase } from './pilotWorkspaceModel';
 
 const root = dirname(fileURLToPath(import.meta.url));
@@ -25,10 +25,26 @@ function read(relative: string): string {
 
 describe('PT-CJ-04 Payment Experience', () => {
   it('builds proforma and SPD QR from selected program', async () => {
-    setCommercialJourneySelectedProgramId('pilot-plus');
     const activeCase = getPilotWorkspaceCase('villa-168');
     assert.ok(activeCase);
-    const proforma = buildCommercialProformaForCase(activeCase);
+    const proforma = buildCommercialProforma({
+      activeCase: {
+        ...activeCase,
+        billingNumber: '26010',
+      },
+      program: COMMERCIAL_PILOT_PROGRAM_PACKAGES.find(
+        (pkg) => pkg.id === 'pilot-plus',
+      )!,
+      details: {
+        companyName: 'Test Partner s.r.o.',
+        registrationNumber: '12345678',
+        address: 'Testovací 1, 110 00 Praha',
+        contactName: 'Test Partner',
+        contactEmail: 'test@example.com',
+        contactPhone: '+420 700 000 000',
+      },
+      issuedAt: '2026-09-02T10:00:00.000Z',
+    });
     assert.ok(proforma);
     assert.equal(proforma.packageName, 'Pilot TIP');
     assert.equal(proforma.amountCzk, 19_970);
@@ -76,7 +92,7 @@ describe('PT-CJ-04 Payment Experience', () => {
 
     assert.match(
       source,
-      /Poštovní 115/,
+      /Stratilova 2/,
     );
 
     assert.match(

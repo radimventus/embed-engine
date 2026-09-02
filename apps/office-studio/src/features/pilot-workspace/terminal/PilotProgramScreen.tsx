@@ -9,6 +9,7 @@ import {
   type CommercialPilotProgramPackage,
 } from '../../../office/commercialPilotProgramCatalog';
 import { setCommercialJourneySelectedProgramId } from '../../../office/commercialJourneySelection';
+import { selectCommercialProjectProgram } from '../../../office/commercialProjectConfig';
 import type { PilotWorkspaceCase } from '../../../office/pilotWorkspaceModel';
 
 type PilotProgramScreenProps = {
@@ -85,8 +86,20 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
               data-testid="cj-pilot-continue"
               data-package-select-action
               onClick={() => {
-                setCommercialJourneySelectedProgramId(selected.id);
-                navigateCommercialJourneyStep('complete_order');
+                void selectCommercialProjectProgram({
+                  projectId: activeCase.projectId,
+                  programId: selected.id,
+                })
+                  .then(() => {
+                    setCommercialJourneySelectedProgramId(selected.id);
+                    navigateCommercialJourneyStep('complete_order');
+                  })
+                  .catch((error: unknown) => {
+                    console.error(
+                      'Commercial program selection could not be persisted.',
+                      error,
+                    );
+                  });
               }}
             >
               Pokračovat

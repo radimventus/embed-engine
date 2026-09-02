@@ -84,6 +84,9 @@ describe('Platform API Project privacy config', () => {
     assert.deepEqual(await response.json(), {
       projectId: DSE_CANONICAL_PROJECT_ID,
       privacyUrl: null,
+      billingNumber: null,
+      commercialProgramId: null,
+      commercialProgramSelectedAt: null,
     });
   });
 
@@ -103,6 +106,9 @@ describe('Platform API Project privacy config', () => {
     assert.deepEqual(await response.json(), {
       projectId: DSE_CANONICAL_PROJECT_ID,
       privacyUrl: 'https://dse.example/privacy',
+      billingNumber: null,
+      commercialProgramId: null,
+      commercialProgramSelectedAt: null,
     });
 
     const readback = await fetch(
@@ -111,6 +117,9 @@ describe('Platform API Project privacy config', () => {
     assert.deepEqual(await readback.json(), {
       projectId: DSE_CANONICAL_PROJECT_ID,
       privacyUrl: 'https://dse.example/privacy',
+      billingNumber: null,
+      commercialProgramId: null,
+      commercialProgramSelectedAt: null,
     });
   });
 
@@ -180,6 +189,9 @@ describe('Platform API Project privacy config', () => {
     assert.deepEqual(await response.json(), {
       projectId: DSE_CANONICAL_PROJECT_ID,
       privacyUrl: null,
+      billingNumber: null,
+      commercialProgramId: null,
+      commercialProgramSelectedAt: null,
     });
   });
 
