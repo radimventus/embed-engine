@@ -126,6 +126,11 @@ export type PilotWorkspaceContextValue = {
    * Commercial customer consumers must not use boot/seed data before this.
    */
   readonly partnerAuthorityReady: boolean;
+  readonly partnerAuthorityStatus:
+    | 'loading'
+    | 'ready'
+    | 'error';
+  readonly partnerAuthorityError: string | null;
   readonly activeCaseId: PilotWorkspaceCaseId | null;
   readonly activeCase: PilotWorkspaceCase | null;
   readonly terminalView: PilotTerminalViewId;
@@ -224,6 +229,10 @@ export function PilotWorkspaceProvider({
   const [caseRevision, setCaseRevision] = useState(0);
   const [partnerAuthorityRevision, setPartnerAuthorityRevision] = useState(0);
   const [partnerAuthorityReady, setPartnerAuthorityReady] = useState(false);
+  const [partnerAuthorityStatus, setPartnerAuthorityStatus] =
+    useState<'loading' | 'ready' | 'error'>('loading');
+  const [partnerAuthorityError, setPartnerAuthorityError] =
+    useState<string | null>(null);
   const [inbox, setInbox] = useState<PilotInboxRuntimeState>(
     createInitialInboxRuntimeState,
   );
@@ -265,9 +274,21 @@ export function PilotWorkspaceProvider({
           setCaseRevision((current) => current + 1);
           setPartnerAuthorityRevision((current) => current + 1);
           setPartnerAuthorityReady(true);
+          setPartnerAuthorityStatus('ready');
+          setPartnerAuthorityError(null);
         }
       })
       .catch((error: unknown) => {
+        if (!cancelled) {
+          setPartnerAuthorityReady(false);
+          setPartnerAuthorityStatus('error');
+          setPartnerAuthorityError(
+            error instanceof Error
+              ? error.message
+              : String(error),
+          );
+        }
+
         console.error(
           'Office Partner authority could not be hydrated.',
           error,
@@ -743,6 +764,8 @@ export function PilotWorkspaceProvider({
       cases,
       partnerAuthorityRevision,
       partnerAuthorityReady,
+      partnerAuthorityStatus,
+      partnerAuthorityError,
       activeCaseId,
       activeCase,
       terminalView,
@@ -782,8 +805,10 @@ export function PilotWorkspaceProvider({
       inbox,
       navigateCommercialJourneyStep,
       navigateWorkflowStep,
+      partnerAuthorityError,
       partnerAuthorityReady,
       partnerAuthorityRevision,
+      partnerAuthorityStatus,
       refreshConversationFromStore,
       selectCase,
       selectConversation,

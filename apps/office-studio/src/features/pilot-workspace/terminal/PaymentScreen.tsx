@@ -23,8 +23,10 @@ type PaymentScreenProps = {
 export function PaymentScreen({ activeCase }: PaymentScreenProps) {
   const {
     navigateCommercialJourneyStep,
+    partnerAuthorityError,
     partnerAuthorityReady,
     partnerAuthorityRevision,
+    partnerAuthorityStatus,
   } = usePilotWorkspaceContext();
   const proforma = useMemo(
     () =>
@@ -63,7 +65,11 @@ export function PaymentScreen({ activeCase }: PaymentScreenProps) {
         data-cj-customer-authority="loading"
       >
         <p className="office-cj-pilot__hint">
-          Načítám firemní údaje…
+          {partnerAuthorityStatus === 'error'
+            ? `Firemní údaje se nepodařilo načíst: ${
+                partnerAuthorityError ?? 'neznámá chyba'
+              }`
+            : 'Načítám firemní údaje…'}
         </p>
       </div>
     );

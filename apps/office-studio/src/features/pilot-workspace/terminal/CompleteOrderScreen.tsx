@@ -50,8 +50,10 @@ type CompleteOrderScreenProps = {
 export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
   const {
     navigateCommercialJourneyStep,
+    partnerAuthorityError,
     partnerAuthorityReady,
     partnerAuthorityRevision,
+    partnerAuthorityStatus,
   } = usePilotWorkspaceContext();
   const selectedId = useSyncExternalStore(
     subscribeCommercialJourneySelection,
@@ -96,7 +98,11 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
         data-cj-customer-authority="loading"
       >
         <p className="office-cj-pilot__hint">
-          Načítám firemní údaje…
+          {partnerAuthorityStatus === 'error'
+            ? `Firemní údaje se nepodařilo načíst: ${
+                partnerAuthorityError ?? 'neznámá chyba'
+              }`
+            : 'Načítám firemní údaje…'}
         </p>
       </div>
     );
