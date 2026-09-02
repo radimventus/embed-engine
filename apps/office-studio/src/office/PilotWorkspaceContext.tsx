@@ -116,6 +116,11 @@ function syncSessionSharedProject(projectId: string): void {
 
 export type PilotWorkspaceContextValue = {
   readonly cases: readonly PilotWorkspaceCase[];
+  /**
+   * Changes only after durable Office Partner authority is hydrated.
+   * Consumers deriving customer/billing identity must depend on this revision.
+   */
+  readonly partnerAuthorityRevision: number;
   readonly activeCaseId: PilotWorkspaceCaseId | null;
   readonly activeCase: PilotWorkspaceCase | null;
   readonly terminalView: PilotTerminalViewId;
@@ -212,6 +217,7 @@ export function PilotWorkspaceProvider({
   const [terminalView, setTerminalView] =
     useState<PilotTerminalViewId>(initialTerminalView);
   const [caseRevision, setCaseRevision] = useState(0);
+  const [partnerAuthorityRevision, setPartnerAuthorityRevision] = useState(0);
   const [inbox, setInbox] = useState<PilotInboxRuntimeState>(
     createInitialInboxRuntimeState,
   );
@@ -251,6 +257,7 @@ export function PilotWorkspaceProvider({
       .then(() => {
         if (!cancelled) {
           setCaseRevision((current) => current + 1);
+          setPartnerAuthorityRevision((current) => current + 1);
         }
       })
       .catch((error: unknown) => {
@@ -727,6 +734,7 @@ export function PilotWorkspaceProvider({
   const value = useMemo<PilotWorkspaceContextValue>(
     () => ({
       cases,
+      partnerAuthorityRevision,
       activeCaseId,
       activeCase,
       terminalView,
@@ -766,6 +774,7 @@ export function PilotWorkspaceProvider({
       inbox,
       navigateCommercialJourneyStep,
       navigateWorkflowStep,
+      partnerAuthorityRevision,
       refreshConversationFromStore,
       selectCase,
       selectConversation,

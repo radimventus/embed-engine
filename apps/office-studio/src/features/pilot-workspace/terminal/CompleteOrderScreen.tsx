@@ -48,7 +48,10 @@ type CompleteOrderScreenProps = {
  * One screen · one checkbox · one CTA. Visual order confirmation only.
  */
 export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
-  const { navigateCommercialJourneyStep } = usePilotWorkspaceContext();
+  const {
+    navigateCommercialJourneyStep,
+    partnerAuthorityRevision,
+  } = usePilotWorkspaceContext();
   const selectedId = useSyncExternalStore(
     subscribeCommercialJourneySelection,
     getCommercialJourneySelectedProgramId,
@@ -58,7 +61,7 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
 
   const initialDetails = useMemo(
     () => buildCommercialOrderPartnerDetails(activeCase),
-    [activeCase],
+    [activeCase, partnerAuthorityRevision],
   );
   const [details, setDetails] =
     useState<CommercialOrderPartnerDetails>(initialDetails);
@@ -69,7 +72,7 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
     setDetails(buildCommercialOrderPartnerDetails(activeCase));
     setEditing(false);
     setDocsAccepted(false);
-  }, [activeCase.id]);
+  }, [activeCase.id, partnerAuthorityRevision]);
 
   const canConfirm = program !== null && docsAccepted;
 

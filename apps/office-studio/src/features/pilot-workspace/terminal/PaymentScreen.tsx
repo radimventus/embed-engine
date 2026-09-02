@@ -21,10 +21,13 @@ type PaymentScreenProps = {
  * Proforma preview + SPD QR from proforma · confirm → CONIS Studio.
  */
 export function PaymentScreen({ activeCase }: PaymentScreenProps) {
-  const { navigateCommercialJourneyStep } = usePilotWorkspaceContext();
+  const {
+    navigateCommercialJourneyStep,
+    partnerAuthorityRevision,
+  } = usePilotWorkspaceContext();
   const proforma = useMemo(
     () => buildCommercialProformaForCase(activeCase),
-    [activeCase],
+    [activeCase, partnerAuthorityRevision],
   );
   const [qrImageSrc, setQrImageSrc] = useState<string | null>(null);
 
