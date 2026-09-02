@@ -344,19 +344,38 @@ async function hydrateOfficePartnersFromServerOnce(): Promise<void> {
   if (remote.length > 0) {
     const remotePartners = remote.map(toOfficePartner);
 
-    for (const partner of remotePartners) {
-      await ensureOfficePartnerCanonicalAuthority(partner);
-    }
-
-    const sync =
-      await syncCanonicalRegistryFromAuthority();
-
-    if (!sync.ok) {
-      throw new Error(sync.error);
-    }
-
+    // The Office Partner endpoint is the durable authority for Company Card
+    // and commercial customer data. Adopt it immediately so billing/customer
+    // consumers are never blocked by secondary canonical registry sync.
     replaceMemory(remotePartners);
     dropLocalPartnerAuthority();
+
+    // Canonical company/workspace synchronization remains important, but it is
+    // not the authority for Office Company Card billing fields and must not
+    // hold customer hydration open indefinitely.
+    void (async () => {
+      try {
+        for (const partner of remotePartners) {
+          await ensureOfficePartnerCanonicalAuthority(partner);
+        }
+
+        const sync =
+          await syncCanonicalRegistryFromAuthority();
+
+        if (!sync.ok) {
+          console.error(
+            'Canonical Partner registry could not be synchronized.',
+            sync.error,
+          );
+        }
+      } catch (error: unknown) {
+        console.error(
+          'Canonical Partner authority could not be synchronized.',
+          error,
+        );
+      }
+    })();
+
     return;
   }
 
