@@ -20,6 +20,55 @@ type PilotProgramScreenProps = {
  * PT-CJ-02 — Production Pilot Program screen (digital PDF nabídka).
  * Selection is visual only — no order / payment / automation.
  */
+
+function PilotDecisionBridge() {
+  const steps = [
+    ['Vaše', 'podklady'],
+    ['Naše', 'zpracování'],
+    ['Nasazení', 'na web'],
+    ['Skuteční', 'návštěvníci'],
+    ['Profily', 'zájemců'],
+    ['Vyhodnocení', 'po 90 dnech'],
+  ] as const;
+
+  return (
+    <section
+      aria-label="Průběh pilotního programu"
+      className="mt-8 border-t border-slate-200 pt-7"
+    >
+      <p className="mx-auto max-w-3xl text-center text-[15px] font-medium leading-6 text-slate-900">
+        To nejcennější, co CONIS nabízí, nelze ukázat na webu.{' '}
+        <span className="text-[#B8922D]">
+          Otevírá se až partnerům, kteří vstoupí do pilotního programu.
+        </span>
+      </p>
+
+      <div className="mt-7 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr_auto_1fr_auto_1fr] lg:items-stretch">
+        {steps.map(([line1, line2], index) => (
+          <div key={`${line1}-${line2}`} className="contents">
+            <div className="flex min-h-[64px] items-center justify-center rounded-md border border-[#001930] bg-[#001930] px-3 py-3 text-center text-[13px] font-semibold leading-[1.35] text-white">
+              <span>
+                {line1}
+                <br />
+                {line2}
+              </span>
+            </div>
+
+            {index < steps.length - 1 ? (
+              <div
+                aria-hidden="true"
+                className="hidden items-center justify-center px-1 text-xl text-[#B8922D] lg:flex"
+              >
+                →
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
   const { navigateCommercialJourneyStep } = usePilotWorkspaceContext();
   const suggested = resolveCommercialPilotProgramId(activeCase.packageName);
@@ -67,6 +116,8 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
           />
         ))}
       </div>
+
+      <PilotDecisionBridge />
 
       <footer className="office-cj-pilot__footer" data-testid="cj-pilot-summary">
         {selected === null ? (
