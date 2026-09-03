@@ -17,7 +17,6 @@ export function PilotProjectSelector({
     cases,
     activeCaseId,
     selectCase,
-    createCasePlaceholder,
   } = usePilotWorkspaceContext();
 
   const selectedId =
@@ -44,7 +43,7 @@ export function PilotProjectSelector({
             value={selectedId}
             options={cases.map((item) => ({
               value: item.id,
-              label: item.label,
+              label: item.projectTitle,
             }))}
             onChange={(next) => {
               if (next.length === 0) return;
@@ -53,20 +52,6 @@ export function PilotProjectSelector({
             }}
           />
         </div>
-
-        <button
-          type="button"
-          className="platform-btn platform-btn--secondary office-sidebar__projects-add"
-          data-testid="pilot-project-add"
-          aria-label="Přidat projekt"
-          title="Přidat projekt"
-          onClick={() => {
-            createCasePlaceholder();
-            onEnterWorkSurface?.();
-          }}
-        >
-          (+)
-        </button>
       </div>
     </div>
   );

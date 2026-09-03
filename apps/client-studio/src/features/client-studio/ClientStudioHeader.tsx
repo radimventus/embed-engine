@@ -19,6 +19,10 @@ import {
  * AppShell top navigation (CSCB-01 / CAP-PLAT-02c) — Partner · House from CPL.
  * Close is owned by the Delivery overlay ([data-embed-close] in overlaySurface).
  */
+function projectionAlt(title: string): string {
+  return title.trim().length > 0 ? `${title} — logo projektu` : 'Logo projektu';
+}
+
 export function ClientStudioHeader() {
   const { session } = usePlatformSession();
   const [title, setTitle] = useState('');
@@ -28,7 +32,7 @@ export function ClientStudioHeader() {
     .filter(Boolean)
     .at(-1) ?? title;
 
-  const [logoLabel, setLogoLabel] = useState('');
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const workspaceDraft =
@@ -40,7 +44,7 @@ export function ClientStudioHeader() {
           )
         : undefined;
     if (workspaceDraft !== undefined) {
-      setLogoLabel('');
+      setLogoUrl(null);
       setTitle(workspaceDraft.name);
       return;
     }
@@ -48,13 +52,10 @@ export function ClientStudioHeader() {
     const projection = binding.project;
     if (projection === null) {
       setTitle('');
-      setLogoLabel('');
+      setLogoUrl(null);
       return;
     }
-    const logo =
-      projection.branding.logoLabel.trim() ||
-      projection.partner.companyName.trim();
-    setLogoLabel(logo.length > 0 ? logo : projection.partner.companyName);
+    setLogoUrl(projection.branding.logoUrl ?? null);
     setTitle(formatClientPartnerHouseTitle(projection));
   }, [session?.activeHouseId, session?.projectId]);
 
@@ -65,7 +66,10 @@ export function ClientStudioHeader() {
     >
       <div className="mx-auto grid h-header w-full min-w-0 max-w-none grid-cols-[1fr_auto_1fr] items-center px-section desktop:w-canvas desktop:max-w-canvas">
         <div className="justify-self-start mobile:hidden">
-          <PartnerBrandMark label={logoLabel} />
+          <PartnerBrandMark
+            src={logoUrl}
+            alt={projectionAlt(title)}
+          />
         </div>
         <p
           className="max-w-[12rem] truncate text-center text-sm text-embed-foreground-primary/70 tablet:max-w-[16rem] tablet:text-base desktop:max-w-[20rem]"

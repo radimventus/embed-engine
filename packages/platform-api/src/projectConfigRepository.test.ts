@@ -158,10 +158,41 @@ test('FileProjectConfigRepository does not store Company identity', async () => 
       projects: readonly Record<string, unknown>[];
     };
     assert.equal(raw.projects.length, 1);
-    assert.deepEqual(Object.keys(raw.projects[0] ?? {}).sort(), [
-      'privacyUrl',
-      'projectId',
-    ]);
+    const storedKeys = Object.keys(raw.projects[0] ?? {}).sort();
+
+    assert.ok(storedKeys.includes('projectId'));
+    assert.ok(storedKeys.includes('privacyUrl'));
+    assert.ok(!storedKeys.includes('companyId'));
+    assert.ok(!storedKeys.includes('companyName'));
+    assert.ok(!storedKeys.includes('partnerId'));
+    assert.ok(!storedKeys.includes('partnerName'));
+  } finally {
+    await rm(dir, { recursive: true, force: true });
+  }
+});
+
+test('TASK 86 — FileProjectConfigRepository stores Project logos separately and durably', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'conis-project-logo-'));
+  const statePath = join(dir, 'project-config.json');
+
+  try {
+    const repository = new FileProjectConfigRepository(statePath);
+
+    await repository.writeLogo('project-a', {
+      bytes: Buffer.from([1, 2, 3, 4]),
+      contentType: 'image/png',
+    });
+
+    const restored = new FileProjectConfigRepository(statePath);
+    const logo = await restored.readLogo('project-a');
+
+    assert.equal(logo?.contentType, 'image/png');
+    assert.deepEqual([...(logo?.bytes ?? [])], [1, 2, 3, 4]);
+
+    assert.equal(await restored.readLogo('project-b'), null);
+
+    assert.equal(await restored.deleteLogo('project-a'), true);
+    assert.equal(await restored.readLogo('project-a'), null);
   } finally {
     await rm(dir, { recursive: true, force: true });
   }

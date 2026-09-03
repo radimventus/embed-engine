@@ -1266,6 +1266,88 @@ export function createPlatformApiServer(
           sessions: scoped.map(toOperationalDecisionSnapshot),
         });
       }
+      const projectLogoMatch = path.match(
+        /^\/public\/projects\/([^/]+)\/logo$/,
+      );
+      if (projectLogoMatch !== null) {
+        const projectId = decodeURIComponent(
+          projectLogoMatch[1] ?? "",
+        ).trim();
+        const canonical =
+          projectId.length === 0 ? null : getCanonicalProject(projectId);
+
+        if (canonical === null || canonical.project.projectId !== projectId) {
+          return respond(response, 404, { error: "Projekt neexistuje." });
+        }
+
+        if (request.method === "GET") {
+          const logo = await projectConfigs.readLogo(projectId);
+          return logo === null
+            ? respond(response, 404, { error: "Logo projektu není nastaveno." })
+            : respondMedia(response, logo.contentType, logo.bytes);
+        }
+
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session =
+          token === null ? null : await partnerSessions.resolve(token);
+
+        if (session === null) {
+          return respond(response, 401, { error: "Neplatná relace." });
+        }
+
+        const authorizedCompanyId =
+          session.workspaceContext?.companyId ?? session.companyId;
+
+        if (
+          canonical.partner.companyId !== authorizedCompanyId &&
+          !isPlatformAdmin(session.user.roles)
+        ) {
+          return respond(response, 403, {
+            error: "Projekt není pro tuto relaci povolen.",
+          });
+        }
+
+        if (request.method === "PUT") {
+          const contentType = request.headers["content-type"];
+          if (typeof contentType !== "string") {
+            return respond(response, 400, { error: "Neplatný typ loga." });
+          }
+
+          const chunks: Buffer[] = [];
+          let size = 0;
+          for await (const chunk of request) {
+            const bytes =
+              typeof chunk === "string" ? Buffer.from(chunk) : chunk;
+            size += bytes.length;
+            if (size > 2 * 1024 * 1024) {
+              return respond(response, 413, {
+                error: "Logo projektu je příliš velké.",
+              });
+            }
+            chunks.push(bytes);
+          }
+
+          try {
+            await projectConfigs.writeLogo(projectId, {
+              bytes: Buffer.concat(chunks),
+              contentType,
+            });
+            return respond(response, 204, {});
+          } catch {
+            return respond(response, 400, {
+              error: "Neplatné logo projektu.",
+            });
+          }
+        }
+
+        if (request.method === "DELETE") {
+          await projectConfigs.deleteLogo(projectId);
+          return respond(response, 204, {});
+        }
+
+        return respond(response, 405, { error: "Method not allowed." });
+      }
+
       const projectConfigMatch = path.match(
         /^\/public\/projects\/([^/]+)\/config(?:\/commercial-selection)?$/,
       );
@@ -1284,6 +1366,10 @@ export function createPlatformApiServer(
           return respond(response, 200, {
             projectId: canonical.project.projectId,
             privacyUrl: current?.privacyUrl ?? null,
+            logoUrl:
+              (await projectConfigs.readLogo(projectId)) === null
+                ? null
+                : `/public/projects/${encodeURIComponent(projectId)}/logo`,
             billingNumber: current?.billingNumber ?? null,
             commercialProgramId:
               current?.commercialProgramId ?? null,

@@ -1,6 +1,7 @@
 export type DurableProjectConfigOverlay = {
   readonly projectId: string;
   readonly privacyUrl: string | null;
+  readonly logoUrl?: string | null;
   readonly billingNumber?: string | null;
   readonly commercialProgramId?: string | null;
   readonly commercialProgramSelectedAt?: string | null;
@@ -8,6 +9,7 @@ export type DurableProjectConfigOverlay = {
 
 type DurableProjectProjection = {
   readonly privacyUrl: string | null;
+  readonly logoUrl: string | null;
   readonly billingNumber: string | null;
   readonly commercialProgramId: string | null;
   readonly commercialProgramSelectedAt: string | null;
@@ -31,6 +33,10 @@ export function applyDurableProjectConfigs(
       {
         privacyUrl:
           config.privacyUrl,
+        logoUrl:
+          typeof config.logoUrl === 'string' && config.logoUrl.trim().length > 0
+            ? config.logoUrl.trim()
+            : null,
         billingNumber:
           typeof config.billingNumber === 'string' &&
           /^\d{5}$/.test(config.billingNumber)
@@ -65,6 +71,10 @@ export function applyDurableProjectConfig(
     {
       privacyUrl:
         config.privacyUrl,
+      logoUrl:
+        typeof config.logoUrl === 'string' && config.logoUrl.trim().length > 0
+          ? config.logoUrl.trim()
+          : null,
       billingNumber:
         typeof config.billingNumber === 'string' &&
         /^\d{5}$/.test(config.billingNumber)
@@ -108,6 +118,15 @@ export function durableProjectPrivacyUrl(
   }
 
   return value;
+}
+
+export function durableProjectLogoUrl(
+  projectId: string,
+): string | undefined {
+  const value = overlayByProjectId.get(projectId)?.logoUrl;
+  return value === null || value === undefined || value.length === 0
+    ? undefined
+    : value;
 }
 
 export function durableProjectBillingNumber(

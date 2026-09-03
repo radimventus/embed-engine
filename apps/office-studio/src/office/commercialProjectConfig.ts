@@ -8,13 +8,33 @@ import type { CommercialPilotProgramId } from './commercialPilotProgramCatalog';
 export type CommercialProjectConfig = {
   readonly projectId: string;
   readonly privacyUrl: string | null;
+  readonly logoUrl: string | null;
   readonly billingNumber: string | null;
   readonly commercialProgramId: string | null;
   readonly commercialProgramSelectedAt: string | null;
 };
 
+function apiOrigin(): string {
+  return platformApiOrigin().replace(/\/$/, '');
+}
+
 function baseEndpoint(projectId: string): string {
-  return `${platformApiOrigin().replace(/\/$/, '')}/public/projects/${encodeURIComponent(projectId)}/config`;
+  return `${apiOrigin()}/public/projects/${encodeURIComponent(projectId)}/config`;
+}
+
+function normalizeProjectLogoUrl(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+
+  const normalized = value.trim();
+  if (normalized.length === 0) return null;
+
+  if (/^https?:\/\//i.test(normalized)) {
+    return normalized;
+  }
+
+  return normalized.startsWith('/')
+    ? `${apiOrigin()}${normalized}`
+    : `${apiOrigin()}/${normalized}`;
 }
 
 async function responseError(response: Response): Promise<string> {
@@ -53,6 +73,7 @@ function normalize(body: unknown): CommercialProjectConfig {
       typeof value.privacyUrl === 'string'
         ? value.privacyUrl
         : null,
+    logoUrl: normalizeProjectLogoUrl(value.logoUrl),
     billingNumber:
       typeof value.billingNumber === 'string'
         ? value.billingNumber
@@ -94,6 +115,7 @@ export async function hydrateCommercialProjectConfig(
   applyDurableProjectConfig({
     projectId: config.projectId,
     privacyUrl: config.privacyUrl,
+    logoUrl: config.logoUrl,
     billingNumber: config.billingNumber,
     commercialProgramId:
       config.commercialProgramId,
@@ -135,6 +157,7 @@ export async function selectCommercialProjectProgram(input: {
   applyDurableProjectConfig({
     projectId: config.projectId,
     privacyUrl: config.privacyUrl,
+    logoUrl: config.logoUrl,
     billingNumber: config.billingNumber,
     commercialProgramId:
       config.commercialProgramId,

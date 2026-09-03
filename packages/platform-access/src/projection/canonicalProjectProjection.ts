@@ -37,6 +37,7 @@ import {
   durableProjectBillingNumber,
   durableProjectCommercialProgramId,
   durableProjectCommercialProgramSelectedAt,
+  durableProjectLogoUrl,
 } from '../registry/durableProjectConfig';
 
 const DEFAULT_HOUSE_DATA_MODE: HouseDataMode = 'LIVE_EMPTY';
@@ -170,6 +171,9 @@ export function projectCanonicalFromShared(
     house: houseFromSharedLegacy(shared, packagePublicRoot),
     branding: {
       logoLabel: shared.logoLabel,
+      ...(durableProjectLogoUrl(projectIdentityFromRegistry(shared).projectId) !== undefined
+        ? { logoUrl: durableProjectLogoUrl(projectIdentityFromRegistry(shared).projectId) }
+        : {}),
       heroLabel: shared.heroLabel,
       websiteUrl: shared.websiteUrl,
       documents: shared.documents,
@@ -231,6 +235,9 @@ function projectCanonicalFromDelivery(
     house: null,
     branding: {
       logoLabel: company?.name ?? '',
+      ...(durableProjectLogoUrl(delivery.id) !== undefined
+        ? { logoUrl: durableProjectLogoUrl(delivery.id) }
+        : {}),
       heroLabel: '',
       websiteUrl: '',
       documents: [],
@@ -479,6 +486,9 @@ function authorityHouseProjection(
     },
     branding: {
       logoLabel: company.name,
+      ...(durableProjectLogoUrl(project.id) !== undefined
+        ? { logoUrl: durableProjectLogoUrl(project.id) }
+        : {}),
       heroLabel: '',
       websiteUrl: '',
       documents: [],

@@ -83,6 +83,8 @@ export type CanonicalEntityHierarchy = {
 
 export type CanonicalBrandingProjection = {
   readonly logoLabel: string;
+  /** Durable Project-scoped visual logo. */
+  readonly logoUrl?: string;
   readonly heroLabel: string;
   readonly websiteUrl: string;
   readonly documents: readonly SharedProjectDocumentRef[];

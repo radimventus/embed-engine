@@ -1,5 +1,5 @@
-import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
-import { dirname } from 'node:path';
+import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 
 import { normalizeProjectPrivacyUrl } from '@embed-engine/platform-access';
 
@@ -16,6 +16,11 @@ export type DurableProjectConfig = {
 export type ProjectBillingAllocation = {
   readonly projectId: string;
   readonly billingNumber: string;
+};
+
+export type ProjectLogoMedia = {
+  readonly bytes: Buffer;
+  readonly contentType: string;
 };
 
 export type DurableProjectConfigInput = {
@@ -39,6 +44,12 @@ export interface ProjectConfigRepository {
     programId: string,
     selectedAt?: string,
   ): Promise<DurableProjectConfig>;
+
+  writeLogo(projectId: string, media: ProjectLogoMedia): Promise<void>;
+
+  readLogo(projectId: string): Promise<ProjectLogoMedia | null>;
+
+  deleteLogo(projectId: string): Promise<boolean>;
 }
 
 type ProjectConfigState = {
@@ -195,6 +206,26 @@ export class FileProjectConfigRepository implements ProjectConfigRepository {
   constructor(
     private readonly statePath = platformApiStatePath('project-config.json'),
   ) {}
+
+  private logoRoot(): string {
+    return join(dirname(this.statePath), 'project-logo-media');
+  }
+
+  private logoKey(projectId: string): string {
+    const normalized = projectId.trim();
+    if (!/^[A-Za-z0-9][A-Za-z0-9._-]{0,255}$/.test(normalized)) {
+      throw new Error('Invalid Project logo identity.');
+    }
+    return Buffer.from(normalized, 'utf8').toString('base64url');
+  }
+
+  private logoPath(projectId: string): string {
+    return join(this.logoRoot(), `${this.logoKey(projectId)}.bin`);
+  }
+
+  private logoMetaPath(projectId: string): string {
+    return join(this.logoRoot(), `${this.logoKey(projectId)}.json`);
+  }
 
   async get(projectId: string): Promise<DurableProjectConfig | null> {
     const normalized = projectId.trim();
@@ -465,6 +496,73 @@ export class FileProjectConfigRepository implements ProjectConfigRepository {
         };
       },
     );
+  }
+
+  async writeLogo(
+    projectId: string,
+    media: ProjectLogoMedia,
+  ): Promise<void> {
+    const contentType = media.contentType.trim();
+    if (
+      !Buffer.isBuffer(media.bytes) ||
+      media.bytes.length === 0 ||
+      media.bytes.length > 2 * 1024 * 1024 ||
+      !['image/png', 'image/jpeg', 'image/webp', 'image/svg+xml'].includes(contentType)
+    ) {
+      throw new Error('Invalid Project logo.');
+    }
+
+    await this.exclusively(async () => {
+      await mkdir(this.logoRoot(), { recursive: true });
+      const target = this.logoPath(projectId);
+      const metadata = this.logoMetaPath(projectId);
+      await writeFile(`${target}.tmp`, media.bytes, { mode: 0o600 });
+      await rename(`${target}.tmp`, target);
+      await writeFile(
+        `${metadata}.tmp`,
+        JSON.stringify({ contentType }),
+        { mode: 0o600 },
+      );
+      await rename(`${metadata}.tmp`, metadata);
+    });
+  }
+
+  async readLogo(projectId: string): Promise<ProjectLogoMedia | null> {
+    try {
+      const [bytes, rawMetadata] = await Promise.all([
+        readFile(this.logoPath(projectId)),
+        readFile(this.logoMetaPath(projectId), 'utf8'),
+      ]);
+      const metadata = JSON.parse(rawMetadata) as { contentType?: unknown };
+      if (typeof metadata.contentType !== 'string') {
+        throw new Error('Invalid Project logo metadata.');
+      }
+      return {
+        bytes,
+        contentType: metadata.contentType,
+      };
+    } catch (error) {
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return null;
+      throw error;
+    }
+  }
+
+  async deleteLogo(projectId: string): Promise<boolean> {
+    return this.exclusively(async () => {
+      let deleted = false;
+      for (const target of [
+        this.logoPath(projectId),
+        this.logoMetaPath(projectId),
+      ]) {
+        try {
+          await rm(target);
+          deleted = true;
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
+        }
+      }
+      return deleted;
+    });
   }
 
   private async read(): Promise<ProjectConfigState> {

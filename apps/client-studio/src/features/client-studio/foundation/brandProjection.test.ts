@@ -28,8 +28,8 @@ describe('PE-02 Brand Projection studio wiring', () => {
       'packages/platform-access/src/pilot/projectPartnerBrand.ts',
     );
 
-    assert.match(clientHeader, /projection\.branding\.logoLabel/);
-    assert.match(clientHeader, /projection\.partner\.companyName/);
+    assert.match(clientHeader, /projection\.branding\.logoUrl/);
+    assert.doesNotMatch(clientHeader, /projection\.partner\.companyName/);
     assert.match(clientHeader, /PartnerBrandMark/);
     assert.doesNotMatch(clientHeader, /AstavLogo/);
     assert.doesNotMatch(clientHeader, /['"]ASTAV['"]/);
