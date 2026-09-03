@@ -132,11 +132,7 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
       </div>
 
 
-      {selected === null ? (
-        <p className="office-cj-pilot__hint office-cj-pilot__hint--packages">
-          Vyberte balíček pro pokračování.
-        </p>
-      ) : null}
+
 
       <PilotDecisionBridge />
 

@@ -1565,7 +1565,7 @@ body {
   margin-top: 12px;
   font-size: 13px;
   font-weight: 700;
-  color: var(--cj-pilot-navy);
+  color: #ffffff !important;
 }
 
 .office-cj-pilot__footer {
@@ -3386,11 +3386,12 @@ button.office-cj-pilot__continue[data-package-select-action]:hover {
   box-sizing: border-box;
   padding: 8px 10px;
   border-radius: 10px;
-  background: #001930;
-  color: #ffffff;
+  border: 2px solid #001930;
+  background: #ffffff;
+  color: #001930;
   text-align: center;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.25;
 }
 
@@ -3430,13 +3431,13 @@ button.office-cj-pilot__continue[data-package-select-action]:hover {
   line-height: 1;
 }
 
-.office-cj-pilot-card:hover .office-cj-pilot-card__select {
-  background: #0b2a45;
+.office-cj-pilot-card__select,
+.office-cj-pilot-card__select * {
+  color: #ffffff !important;
 }
 
-.office-cj-pilot__hint--packages {
-  margin: 14px 0 0;
-  text-align: center;
+.office-cj-pilot-card:hover .office-cj-pilot-card__select {
+  background: #0b2a45;
 }
 
 @media (max-width: 1100px) {
