@@ -41,9 +41,18 @@ function PilotDecisionBridge() {
         <span className="office-cj-pilot-decision__promise-line">
           To nejcennější, co CONIS nabízí, nelze ukázat na webu.
         </span>
-        <span className="office-cj-pilot-decision__promise-line office-cj-pilot-decision__promise-line--gold">
-          Otevírá se až partnerům, kteří vstoupí do pilotního programu.
+        <span className="office-cj-pilot-decision__promise-line">
+          Otevírá se až partnerům, kteří vstoupí do pilotního programu. Týká se to realitních projektů.
         </span>
+      </p>
+
+      <div
+        className="office-cj-pilot-decision__divider"
+        aria-hidden="true"
+      />
+
+      <p className="office-cj-pilot-decision__flow-label">
+        Co bude následovat:
       </p>
 
       <div
@@ -122,12 +131,17 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
         ))}
       </div>
 
+
+      {selected === null ? (
+        <p className="office-cj-pilot__hint office-cj-pilot__hint--packages">
+          Vyberte balíček pro pokračování.
+        </p>
+      ) : null}
+
       <PilotDecisionBridge />
 
       <footer className="office-cj-pilot__footer" data-testid="cj-pilot-summary">
-        {selected === null ? (
-          <p className="office-cj-pilot__hint">Vyberte balíček pro pokračování.</p>
-        ) : (
+        {selected === null ? null : (
           <>
             <p className="office-cj-pilot__choice">
               <strong>{selected.name}</strong>
