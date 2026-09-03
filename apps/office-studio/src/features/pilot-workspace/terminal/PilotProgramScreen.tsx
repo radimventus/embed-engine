@@ -33,38 +33,39 @@ function PilotDecisionBridge() {
 
   return (
     <section
+      className="office-cj-pilot-decision"
       aria-label="Průběh pilotního programu"
-      className="mt-9 border-t border-slate-200 pt-8"
+      data-testid="cj-pilot-decision"
     >
-      <p className="mx-auto max-w-4xl text-center text-[19px] font-bold leading-[1.4] text-slate-900">
-        <span className="block">
+      <p className="office-cj-pilot-decision__promise">
+        <span className="office-cj-pilot-decision__promise-line">
           To nejcennější, co CONIS nabízí, nelze ukázat na webu.
         </span>
-        <span className="mt-1 block text-[#B8922D]">
+        <span className="office-cj-pilot-decision__promise-line office-cj-pilot-decision__promise-line--gold">
           Otevírá se až partnerům, kteří vstoupí do pilotního programu.
         </span>
       </p>
 
       <div
-        className="mt-8 flex flex-wrap items-stretch justify-center gap-y-3 lg:flex-nowrap lg:justify-between"
+        className="office-cj-pilot-decision__flow"
         data-testid="cj-pilot-process"
       >
         {steps.map((step, index) => (
           <div
+            className="office-cj-pilot-decision__segment"
             key={step}
-            className="flex min-w-0 items-center"
           >
-            <div className="flex min-h-[72px] w-[150px] items-center justify-center rounded-xl bg-[#001930] px-4 py-3 text-center text-[14px] font-bold leading-[1.3] text-white">
+            <div className="office-cj-pilot-decision__step">
               {step}
             </div>
 
             {index < steps.length - 1 ? (
-              <div
+              <span
+                className="office-cj-pilot-decision__arrow"
                 aria-hidden="true"
-                className="flex w-8 shrink-0 items-center justify-center text-[22px] font-bold text-[#B8922D]"
               >
                 →
-              </div>
+              </span>
             ) : null}
           </div>
         ))}
