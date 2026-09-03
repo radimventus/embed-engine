@@ -1,6 +1,9 @@
-import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
+import {
+ useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 
-import { resolvePublicLegalHref } from '@embed-engine/platform-access';
+import { resolvePublicLegalHref,
+  resolveWorkspaceHostHref,
+} from '@embed-engine/platform-access';
 
 import { usePilotWorkspaceContext } from '../../../office/PilotWorkspaceContext';
 import {
@@ -47,6 +50,17 @@ type CompleteOrderScreenProps = {
  * PT-CJ-03 — Dokončit objednávku (Apple Easy).
  * One screen · one checkbox · one CTA. Visual order confirmation only.
  */
+function openManagerWorkspace(): void {
+  const href = new URL(resolveWorkspaceHostHref());
+  href.searchParams.delete('journey');
+  href.searchParams.set('studio', 'manager');
+
+  if (typeof window !== 'undefined') {
+    const target = window.top ?? window;
+    target.location.assign(href.toString());
+  }
+}
+
 export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
   const {
     navigateCommercialJourneyStep,
@@ -111,7 +125,8 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
   const canConfirm = program !== null && docsAccepted;
 
   return (
-    <div
+    <>
+      <div
       className="office-cj-screen office-cj-screen--complete-order"
       data-testid="commercial-journey-screen"
       data-cj-step="complete_order"
@@ -307,6 +322,15 @@ export function CompleteOrderScreen({ activeCase }: CompleteOrderScreenProps) {
         Potvrdit objednávku
       </button>
     </div>
+      <button
+        type="button"
+        className="office-cj-pilot-back-link"
+        data-testid="cj-return-manager-order"
+        onClick={openManagerWorkspace}
+      >
+        Zpět do CONIS studio
+      </button>
+    </>
   );
 }
 

@@ -86,6 +86,17 @@ function PilotDecisionBridge() {
   );
 }
 
+function openManagerWorkspace(): void {
+  const href = new URL(resolveWorkspaceHostHref());
+  href.searchParams.delete('journey');
+  href.searchParams.set('studio', 'manager');
+
+  if (typeof window !== 'undefined') {
+    const target = window.top ?? window;
+    target.location.assign(href.toString());
+  }
+}
+
 export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
   const { navigateCommercialJourneyStep } = usePilotWorkspaceContext();
   const suggested = resolveCommercialPilotProgramId(activeCase.packageName);
@@ -181,7 +192,8 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
 <button
   type="button"
   className="office-cj-pilot-back-link"
-  onClick={() => window.location.assign(resolveWorkspaceHostHref())}
+  data-testid="cj-return-manager-pilot"
+  onClick={openManagerWorkspace}
 >
   Zpět do CONIS studio
 </button>

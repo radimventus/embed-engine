@@ -1,3 +1,4 @@
+import { resolveWorkspaceHostHref } from '@embed-engine/platform-access';
 import { useEffect, useMemo, useState } from 'react';
 import QRCode from 'qrcode';
 
@@ -20,6 +21,17 @@ type PaymentScreenProps = {
  * PT-CJ-04 — Payment Experience.
  * Proforma preview + SPD QR from proforma · confirm → CONIS Studio.
  */
+function openManagerWorkspace(): void {
+  const href = new URL(resolveWorkspaceHostHref());
+  href.searchParams.delete('journey');
+  href.searchParams.set('studio', 'manager');
+
+  if (typeof window !== 'undefined') {
+    const target = window.top ?? window;
+    target.location.assign(href.toString());
+  }
+}
+
 export function PaymentScreen({ activeCase }: PaymentScreenProps) {
   const {
     navigateCommercialJourneyStep,
@@ -88,7 +100,8 @@ export function PaymentScreen({ activeCase }: PaymentScreenProps) {
   }
 
   return (
-    <div
+    <>
+      <div
       className="office-cj-screen office-cj-screen--payment"
       data-testid="commercial-journey-screen"
       data-cj-step="payment"
@@ -134,6 +147,15 @@ export function PaymentScreen({ activeCase }: PaymentScreenProps) {
         Potvrdit provedení QR platby
       </button>
     </div>
+      <button
+        type="button"
+        className="office-cj-pilot-back-link"
+        data-testid="cj-return-manager-payment"
+        onClick={openManagerWorkspace}
+      >
+        Zpět do CONIS studio
+      </button>
+    </>
   );
 }
 
