@@ -23,41 +23,45 @@ type PilotProgramScreenProps = {
 
 function PilotDecisionBridge() {
   const steps = [
-    ['Vaše', 'podklady'],
-    ['Naše', 'zpracování'],
-    ['Nasazení', 'na web'],
-    ['Skuteční', 'návštěvníci'],
-    ['Profily', 'zájemců'],
-    ['Vyhodnocení', 'po 90 dnech'],
+    'Vaše podklady',
+    'Naše zpracování',
+    'Nasazení na web',
+    'Skuteční návštěvníci',
+    'Profily zájemců',
+    'Vyhodnocení po 90 dnech',
   ] as const;
 
   return (
     <section
       aria-label="Průběh pilotního programu"
-      className="mt-8 border-t border-slate-200 pt-7"
+      className="mt-9 border-t border-slate-200 pt-8"
     >
-      <p className="mx-auto max-w-3xl text-center text-[15px] font-medium leading-6 text-slate-900">
-        To nejcennější, co CONIS nabízí, nelze ukázat na webu.{' '}
-        <span className="text-[#B8922D]">
+      <p className="mx-auto max-w-4xl text-center text-[19px] font-bold leading-[1.4] text-slate-900">
+        <span className="block">
+          To nejcennější, co CONIS nabízí, nelze ukázat na webu.
+        </span>
+        <span className="mt-1 block text-[#B8922D]">
           Otevírá se až partnerům, kteří vstoupí do pilotního programu.
         </span>
       </p>
 
-      <div className="mt-7 grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-[1fr_auto_1fr_auto_1fr_auto_1fr_auto_1fr_auto_1fr] lg:items-stretch">
-        {steps.map(([line1, line2], index) => (
-          <div key={`${line1}-${line2}`} className="contents">
-            <div className="flex min-h-[64px] items-center justify-center rounded-md border border-[#001930] bg-[#001930] px-3 py-3 text-center text-[13px] font-semibold leading-[1.35] text-white">
-              <span>
-                {line1}
-                <br />
-                {line2}
-              </span>
+      <div
+        className="mt-8 flex flex-wrap items-stretch justify-center gap-y-3 lg:flex-nowrap lg:justify-between"
+        data-testid="cj-pilot-process"
+      >
+        {steps.map((step, index) => (
+          <div
+            key={step}
+            className="flex min-w-0 items-center"
+          >
+            <div className="flex min-h-[72px] w-[150px] items-center justify-center rounded-xl bg-[#001930] px-4 py-3 text-center text-[14px] font-bold leading-[1.3] text-white">
+              {step}
             </div>
 
             {index < steps.length - 1 ? (
               <div
                 aria-hidden="true"
-                className="hidden items-center justify-center px-1 text-xl text-[#B8922D] lg:flex"
+                className="flex w-8 shrink-0 items-center justify-center text-[22px] font-bold text-[#B8922D]"
               >
                 →
               </div>
