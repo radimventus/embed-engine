@@ -36,6 +36,19 @@ export async function requestOfficePartners(
     credentials: 'include',
     signal,
   });
+
+  if (response.status === 403) {
+    const scopedResponse = await fetch(`${origin()}/partner/company-profile`, {
+      credentials: 'include',
+      signal,
+    });
+    if (!scopedResponse.ok) {
+      throw new Error(await errorMessage(scopedResponse));
+    }
+    const scopedBody = (await scopedResponse.json()) as { partner?: unknown };
+    return [asPartner(scopedBody.partner)];
+  }
+
   if (!response.ok) throw new Error(await errorMessage(response));
   const body = (await response.json()) as { partners?: unknown };
   if (!Array.isArray(body.partners)) {

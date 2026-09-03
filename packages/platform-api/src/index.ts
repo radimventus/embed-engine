@@ -1419,6 +1419,32 @@ export function createPlatformApiServer(
 
         return respond(response, 405, { error: "Method not allowed." });
       }
+
+      if (request.method === "GET" && path === "/partner/company-profile") {
+        const token = requestCookie(request, PARTNER_SESSION_COOKIE);
+        const session =
+          token === null ? null : await partnerSessions.resolve(token);
+        if (session === null) {
+          return respond(response, 401, { error: "Neplatná relace." });
+        }
+
+        const companyId = sessionCompanyId(session);
+        if (companyId.length === 0) {
+          return respond(response, 403, {
+            error: "Společnost není pro tuto relaci povolena.",
+          });
+        }
+
+        const partner = await officePartners.getByCompanyId(companyId);
+        if (partner === null) {
+          return respond(response, 404, {
+            error: "Firemní údaje nejsou dostupné.",
+          });
+        }
+
+        return respond(response, 200, { partner });
+      }
+
       const publicCompanyContactMatch = path.match(
         /^\/public\/companies\/([^/]+)\/contact$/,
       );
