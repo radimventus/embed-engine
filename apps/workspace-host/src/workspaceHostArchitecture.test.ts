@@ -537,7 +537,7 @@ describe('TASK-81-83 partner journey cutover', () => {
 
     assert.match(
       app,
-      /availableStudioIds=\{[\s\S]*?partnerJourneyOpen[\s\S]*?\? \[\][\s\S]*?: partnerWorkspaceStudiosForRoles/,
+      /availableStudioIds=\{[\s\S]*?partnerJourneyOpen[\s\S]*?\? \[\][\s\S]*?: workspaceStudiosForRoles/,
     );
 
     assert.doesNotMatch(

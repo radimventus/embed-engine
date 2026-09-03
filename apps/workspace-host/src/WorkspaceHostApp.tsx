@@ -415,7 +415,9 @@ export function WorkspaceHostApp() {
     if (
       requestedStudio === 'client' ||
       requestedStudio === 'sales' ||
-      requestedStudio === 'manager'
+      requestedStudio === 'manager' ||
+      requestedStudio === 'builder' ||
+      requestedStudio === 'office'
     ) {
       return requestedStudio;
     }
@@ -428,7 +430,9 @@ export function WorkspaceHostApp() {
     if (
       sessionStudio === 'client' ||
       sessionStudio === 'sales' ||
-      sessionStudio === 'manager'
+      sessionStudio === 'manager' ||
+      sessionStudio === 'builder' ||
+      sessionStudio === 'office'
     ) {
       return sessionStudio;
     }
@@ -1034,7 +1038,7 @@ export function WorkspaceHostApp() {
         availableStudioIds={
           partnerJourneyOpen
             ? []
-            : partnerWorkspaceStudiosForRoles(session.user.roles)
+            : workspaceStudiosForRoles(session.user.roles)
         }
         userLabel={session.user.displayName}
         roleLabel={PLATFORM_ROLE_LABELS[primaryRole(session.user.roles)]}

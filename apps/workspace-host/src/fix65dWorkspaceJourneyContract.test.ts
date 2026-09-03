@@ -76,7 +76,7 @@ describe('FIX65E Workspace shell / Journey contract', () => {
 
     assert.match(
       host,
-      /availableStudioIds=\{[\s\S]*?partnerJourneyOpen[\s\S]*?\? \[\][\s\S]*?: partnerWorkspaceStudiosForRoles/,
+      /availableStudioIds=\{[\s\S]*?partnerJourneyOpen[\s\S]*?\? \[\][\s\S]*?: workspaceStudiosForRoles/,
     );
 
     assert.match(
