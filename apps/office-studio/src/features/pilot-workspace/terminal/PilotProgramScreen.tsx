@@ -11,6 +11,7 @@ import {
 import { setCommercialJourneySelectedProgramId } from '../../../office/commercialJourneySelection';
 import { selectCommercialProjectProgram } from '../../../office/commercialProjectConfig';
 import type { PilotWorkspaceCase } from '../../../office/pilotWorkspaceModel';
+import { resolveWorkspaceHostHref } from '@embed-engine/platform-access';
 
 type PilotProgramScreenProps = {
   readonly activeCase: PilotWorkspaceCase;
@@ -32,8 +33,9 @@ function PilotDecisionBridge() {
   ] as const;
 
   return (
-    <section
-      className="office-cj-pilot-decision"
+    <>
+      <section
+        className="office-cj-pilot-decision"
       aria-label="Průběh pilotního programu"
       data-testid="cj-pilot-decision"
     >
@@ -79,7 +81,15 @@ function PilotDecisionBridge() {
           </div>
         ))}
       </div>
-    </section>
+      </section>
+      <button
+        type="button"
+        className="office-cj-pilot-back-link"
+        onClick={() => window.location.assign(resolveWorkspaceHostHref())}
+      >
+        Zpět do CONIS studio
+      </button>
+    </>
   );
 }
 

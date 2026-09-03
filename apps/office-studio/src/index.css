@@ -3498,3 +3498,24 @@ button.office-cj-pilot__continue[data-package-select-action]:hover {
     min-width: 126px;
   }
 }
+
+.office-cj-pilot-back-link {
+  display: block;
+  width: fit-content;
+  margin: 18px auto 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #001930;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.office-cj-pilot-back-link:hover {
+  text-decoration-thickness: 1.5px;
+}
