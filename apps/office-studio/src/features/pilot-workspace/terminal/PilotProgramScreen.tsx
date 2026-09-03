@@ -82,13 +82,6 @@ function PilotDecisionBridge() {
         ))}
       </div>
       </section>
-      <button
-        type="button"
-        className="office-cj-pilot-back-link"
-        onClick={() => window.location.assign(resolveWorkspaceHostHref())}
-      >
-        Zpět do CONIS studio
-      </button>
     </>
   );
 }
@@ -105,7 +98,8 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
     null;
 
   return (
-    <div
+    <>
+<div
       className="office-cj-screen office-cj-screen--pilot-program"
       data-testid="commercial-journey-screen"
       data-cj-step="pilot_program"
@@ -184,6 +178,14 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
         )}
       </footer>
     </div>
+<button
+  type="button"
+  className="office-cj-pilot-back-link"
+  onClick={() => window.location.assign(resolveWorkspaceHostHref())}
+>
+  Zpět do CONIS studio
+</button>
+</>
   );
 }
 
