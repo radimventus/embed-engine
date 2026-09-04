@@ -602,3 +602,20 @@
     font-size: 1.3rem !important;
   }
 }
+
+/* TASK 89 — global vertical availability contract. */
+.platform-access {
+  box-sizing: border-box;
+  min-height: 100dvh;
+  height: auto;
+  max-height: none;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: max(48px, env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
+}
+
+.platform-access__panel {
+  height: auto;
+  max-height: none;
+}

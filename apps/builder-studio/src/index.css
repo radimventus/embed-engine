@@ -98,3 +98,18 @@
     font: inherit;
   }
 }
+
+/* TASK 89 — global vertical availability contract. */
+html,
+body,
+#root {
+  min-height: 100dvh;
+  max-height: none;
+}
+
+body {
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: max(80px, env(safe-area-inset-bottom));
+}

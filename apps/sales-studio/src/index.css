@@ -635,3 +635,19 @@ button.sales-desk__house-chip {
 .sales-desk__contact-link:focus-visible {
   text-decoration: underline;
 }
+
+/* TASK 89 — global vertical availability contract. */
+#root {
+  min-height: 100dvh;
+  height: 100dvh;
+}
+
+.sales-desk {
+  box-sizing: border-box;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding-bottom: max(96px, env(safe-area-inset-bottom)) !important;
+  -webkit-overflow-scrolling: touch;
+}

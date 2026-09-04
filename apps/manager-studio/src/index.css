@@ -36,3 +36,19 @@
   --platform-accent: #c89b2d;
 }
 /* TASK-71F MANAGER GOLD ACCENT END */
+
+/* TASK 89 — global vertical availability contract.
+   Preserve Manager layout; guarantee vertical reachability. */
+html,
+body,
+#root {
+  min-height: 100dvh;
+}
+
+#root {
+  box-sizing: border-box;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  padding-bottom: max(80px, env(safe-area-inset-bottom));
+  -webkit-overflow-scrolling: touch;
+}
