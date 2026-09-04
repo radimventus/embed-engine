@@ -147,10 +147,6 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
       </div>
 
 
-
-
-      <PilotDecisionBridge />
-
       <footer className="office-cj-pilot__footer" data-testid="cj-pilot-summary">
         {selected === null ? null : (
           <>
@@ -188,6 +184,8 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
           </>
         )}
       </footer>
+
+      <PilotDecisionBridge />
     </div>
 <button
   type="button"

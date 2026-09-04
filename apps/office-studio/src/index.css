@@ -3519,3 +3519,43 @@ button.office-cj-pilot__continue[data-package-select-action]:hover {
 .office-cj-pilot-back-link:hover {
   text-decoration-thickness: 1.5px;
 }
+
+/* TASK 87 — compact Pilot Program commercial page.
+   Keep package/card geometry; reduce only vertical whitespace. */
+.office-cj-screen--pilot-program {
+  gap: 18px;
+}
+
+.office-cj-screen--pilot-program .office-cj-pilot__head {
+  margin-bottom: 18px;
+}
+
+.office-cj-screen--pilot-program .office-cj-pilot__grid {
+  margin-bottom: 20px;
+}
+
+.office-cj-screen--pilot-program .office-cj-pilot__footer {
+  margin-top: 18px;
+  margin-bottom: 14px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+
+.office-cj-screen--pilot-program .office-cj-pilot-decision {
+  margin-top: 12px;
+  padding-top: 14px;
+  padding-bottom: 0;
+}
+
+.office-cj-screen--pilot-program .office-cj-pilot-decision__promise {
+  margin-bottom: 14px;
+}
+
+.office-cj-screen--pilot-program .office-cj-pilot-decision__divider {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.office-cj-screen--pilot-program .office-cj-pilot-decision__flow-label {
+  margin-bottom: 10px;
+}
