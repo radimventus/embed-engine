@@ -3316,7 +3316,7 @@ button.office-cj-pilot__continue[data-package-select-action]:hover {
    The inner application owns scrolling inside the Workspace iframe. */
 .office-workspace__main {
   box-sizing: border-box;
-  padding-bottom: max(80px, env(safe-area-inset-bottom));
+  padding-bottom: max(300px, env(safe-area-inset-bottom));
 }
 
 .office-workspace--partner-commercial-journey
@@ -3933,7 +3933,7 @@ button.office-cj-pilot__continue[data-package-select-action] {
   max-height: none !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  padding-bottom: max(96px, env(safe-area-inset-bottom)) !important;
+  padding-bottom: max(300px, env(safe-area-inset-bottom)) !important;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -3959,4 +3959,34 @@ button.office-cj-pilot__continue[data-package-select-action] {
   height: auto !important;
   max-height: none !important;
   overflow-y: visible !important;
+}
+
+/* TASK 89 FIX-01 — hard 300px post-content reserve.
+   Regardless of viewport height, the user must be able to scroll
+   substantially below the last Commercial Journey element. */
+
+.office-workspace--partner-commercial-journey
+  .office-workspace__main {
+  padding-bottom: max(300px, env(safe-area-inset-bottom)) !important;
+}
+
+.office-workspace--partner-commercial-journey
+  .office-work-surface--commercial-journey {
+  margin-bottom: 300px !important;
+}
+
+/* Order / payment / final screens must never terminate at viewport edge. */
+.office-workspace--partner-commercial-journey
+  [data-commercial-step="complete_order"],
+.office-workspace--partner-commercial-journey
+  [data-commercial-step="payment"],
+.office-workspace--partner-commercial-journey
+  [data-commercial-step="conis_studio"],
+.office-workspace--partner-commercial-journey
+  .office-cj-order,
+.office-workspace--partner-commercial-journey
+  .office-cj-payment {
+  margin-bottom: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
 }

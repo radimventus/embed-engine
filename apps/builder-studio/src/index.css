@@ -111,5 +111,5 @@ body {
   box-sizing: border-box;
   overflow-x: hidden;
   overflow-y: auto;
-  padding-bottom: max(80px, env(safe-area-inset-bottom));
+  padding-bottom: max(300px, env(safe-area-inset-bottom));
 }

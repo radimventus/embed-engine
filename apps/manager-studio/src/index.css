@@ -49,6 +49,6 @@ body,
   box-sizing: border-box;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  padding-bottom: max(80px, env(safe-area-inset-bottom));
+  padding-bottom: max(300px, env(safe-area-inset-bottom));
   -webkit-overflow-scrolling: touch;
 }

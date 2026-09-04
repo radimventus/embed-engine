@@ -648,6 +648,6 @@ button.sales-desk__house-chip {
   max-height: none !important;
   overflow-x: hidden !important;
   overflow-y: auto !important;
-  padding-bottom: max(96px, env(safe-area-inset-bottom)) !important;
+  padding-bottom: max(300px, env(safe-area-inset-bottom)) !important;
   -webkit-overflow-scrolling: touch;
 }
