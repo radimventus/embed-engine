@@ -3560,3 +3560,32 @@ button.office-cj-pilot__continue[data-package-select-action]:hover {
 .office-cj-screen--pilot-program .office-cj-pilot-decision__flow {
   margin-top: 8px;
 }
+
+/* TASK 87 FIX-03 — package CTA visual state contract.
+   Available = CONIS gold; hover = navy; selected = navy.
+   Continue uses the same radius as package CTA. */
+
+.office-work-surface--commercial-journey
+  [data-package-card][data-package-selected="false"]
+  .office-cj-pilot-card__select {
+  background: #c89b2d !important;
+  color: #ffffff !important;
+}
+
+.office-work-surface--commercial-journey
+  [data-package-card][data-package-selected="false"]:hover
+  .office-cj-pilot-card__select {
+  background: #001930 !important;
+  color: #ffffff !important;
+}
+
+.office-work-surface--commercial-journey
+  [data-package-card][data-package-selected="true"]
+  .office-cj-pilot-card__select {
+  background: #001930 !important;
+  color: #ffffff !important;
+}
+
+button.office-cj-pilot__continue[data-package-select-action] {
+  border-radius: 8px !important;
+}
