@@ -10,6 +10,7 @@ import {
   type PilotWorkspaceCase,
 } from '../../../office/pilotWorkspaceModel';
 import { PartnerFormDialog } from '../../partners/PartnerFormDialog';
+import { PartnerUserInvitationSection } from '../../partners/PartnerUserInvitationSection';
 import {
   draftFromPartner,
   hydrateOfficePartnersFromServer,
@@ -240,14 +241,55 @@ export function PilotTerminalDetail({
         data-testid="pilot-detail-sections"
       >
         <DetailBlock title="Firma" testId="pilot-detail-firma">
-          <p>{projected.companyName}</p>
-          <p className="office-pilot-detail__meta">
-            {projected.partnerName}
-          </p>
+          {activePartner !== null ? (
+            <>
+              <p>
+                <strong>{activePartner.company.legalName || projected.companyName}</strong>
+              </p>
+              <p className="office-pilot-detail__meta">
+                IČO: {activePartner.company.ico || '—'}
+              </p>
+              <p className="office-pilot-detail__meta">
+                Sídlo:{' '}
+                {[
+                  activePartner.company.streetAddress,
+                  activePartner.company.city,
+                  activePartner.company.country,
+                ]
+                  .filter(Boolean)
+                  .join(', ') || '—'}
+              </p>
+              <p className="office-pilot-detail__meta">
+                Partner: {activePartner.name || projected.partnerName}
+              </p>
+            </>
+          ) : (
+            <>
+              <p>{projected.companyName}</p>
+              <p className="office-pilot-detail__meta">
+                {projected.partnerName}
+              </p>
+            </>
+          )}
         </DetailBlock>
 
         <DetailBlock title="Kontakty" testId="pilot-detail-kontakty">
-          {projected.contacts.length === 0 ? (
+          {activePartner !== null ? (
+            <div className="office-pilot-detail__contacts">
+              <p>
+                <strong>{activePartner.contact.name || '—'}</strong>
+              </p>
+              <p className="office-pilot-detail__meta">
+                Role: {activePartner.contact.role || '—'}
+              </p>
+              <p className="office-pilot-detail__meta">
+                E-mail: {activePartner.contact.email || '—'}
+              </p>
+              <p className="office-pilot-detail__meta">
+                Telefon: {activePartner.contact.phone || '—'}
+              </p>
+            </div>
+          ) : projected.contacts.length === 0 ? (
             <p className="office-pilot-detail__meta">
               Bez kontaktů
             </p>
@@ -357,6 +399,15 @@ export function PilotTerminalDetail({
           {logoError !== null ? (
             <p role="alert">{logoError}</p>
           ) : null}
+        </section>
+      ) : null}
+
+      {activePartner !== null ? (
+        <section
+          className="office-pilot-ws__detail-section"
+          data-testid="project-partner-invitations"
+        >
+          <PartnerUserInvitationSection partnerId={activePartner.id} />
         </section>
       ) : null}
 

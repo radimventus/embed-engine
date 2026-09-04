@@ -17,7 +17,6 @@ import type { PartnerQuickActionId } from '../../office/officePartnerRegistry';
 import { syncCommercialFollowUpTimeline } from '../../office/officeCommercialFollowUpRegistry';
 import { buildOfficePartnerEnvironment } from '../../office/officePartnerEnvironment';
 import { PartnerAdministrationSection } from './PartnerAdministrationSection';
-import { PartnerUserInvitationSection } from './PartnerUserInvitationSection';
 
 type PartnerDetailPanelProps = {
   readonly partner: OfficePartner | null;
@@ -149,8 +148,6 @@ export function PartnerDetailPanel({
         partnerId={partner.id}
         onChanged={() => onAdminChanged?.()}
       />
-      <PartnerUserInvitationSection partnerId={partner.id} />
-
       <PlatformCard
         title="Workspace Summary"
         description="Lifecycle · Licence · balíček · administrace"

@@ -43,13 +43,15 @@ export function ClientStudioHeader() {
               house.status === 'draft',
           )
         : undefined;
+    const binding = resolveClientRuntimeBinding();
+    const projection = binding.project;
+
     if (workspaceDraft !== undefined) {
-      setLogoUrl(null);
+      setLogoUrl(projection?.branding.logoUrl ?? null);
       setTitle(workspaceDraft.name);
       return;
     }
-    const binding = resolveClientRuntimeBinding();
-    const projection = binding.project;
+
     if (projection === null) {
       setTitle('');
       setLogoUrl(null);

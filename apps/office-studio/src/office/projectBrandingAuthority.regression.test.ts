@@ -36,4 +36,31 @@ test('TASK 86 — Client Experience renders real Project logo without pseudo SVG
   assert.doesNotMatch(mark, /<svg/);
   assert.doesNotMatch(mark, /colors\.brand/);
   assert.match(header, /projection\.branding\.logoUrl/);
+  assert.match(header, /projection\?\.branding\.logoUrl/);
+  assert.doesNotMatch(
+    header,
+    /if \(workspaceDraft !== undefined\) \{\s*setLogoUrl\(null\)/,
+  );
+});
+
+test('TASK 86 FIX-01 — Project Detail exposes company authority and owns partner invitation action', async () => {
+  const detail = await read(
+    'apps/office-studio/src/features/pilot-workspace/terminal/PilotTerminalDetail.tsx',
+  );
+  const partnerDetail = await read(
+    'apps/office-studio/src/features/partners/PartnerDetailPanel.tsx',
+  );
+
+  assert.match(detail, /activePartner\.company\.ico/);
+  assert.match(detail, /activePartner\.company\.streetAddress/);
+  assert.match(detail, /activePartner\.company\.city/);
+  assert.match(detail, /activePartner\.company\.country/);
+  assert.match(detail, /activePartner\.contact\.phone/);
+  assert.match(detail, /PartnerUserInvitationSection/);
+  assert.match(detail, /project-partner-invitations/);
+
+  assert.doesNotMatch(
+    partnerDetail,
+    /PartnerUserInvitationSection/,
+  );
 });
