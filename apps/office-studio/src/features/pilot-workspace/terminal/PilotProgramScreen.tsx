@@ -39,15 +39,6 @@ function PilotDecisionBridge() {
       aria-label="Průběh pilotního programu"
       data-testid="cj-pilot-decision"
     >
-      <p className="office-cj-pilot-decision__promise">
-        <span className="office-cj-pilot-decision__promise-line">
-          To nejcennější, co CONIS nabízí, nelze ukázat na webu.
-        </span>
-        <span className="office-cj-pilot-decision__promise-line">
-          Otevírá se až partnerům, kteří vstoupí do pilotního programu. Týká se to realitních projektů.
-        </span>
-      </p>
-
       <div
         className="office-cj-pilot-decision__divider"
         aria-hidden="true"
@@ -99,7 +90,11 @@ function openManagerWorkspace(): void {
 
 export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
   const { navigateCommercialJourneyStep } = usePilotWorkspaceContext();
-  const suggested = resolveCommercialPilotProgramId(activeCase.packageName);
+  const suggested =
+    resolveCommercialPilotProgramId(activeCase.packageName) ??
+    COMMERCIAL_PILOT_PROGRAM_PACKAGES.find((pkg) => pkg.recommended)?.id ??
+    null;
+
   const [selectedId, setSelectedId] = useState<CommercialPilotProgramId | null>(
     suggested,
   );
@@ -146,10 +141,17 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
         ))}
       </div>
 
+      <p className="office-cj-pilot-decision__promise">
+        <span className="office-cj-pilot-decision__promise-line">
+          To nejcennější, co CONIS nabízí, nelze ukázat na webu.
+        </span>
+        <span className="office-cj-pilot-decision__promise-line">
+          Otevírá se až partnerům, kteří vstoupí do pilotního programu. Týká se to realitních projektů.
+        </span>
+      </p>
 
-      <footer className="office-cj-pilot__footer" data-testid="cj-pilot-summary">
-        {selected === null ? null : (
-          <>
+      {selected === null ? null : (
+        <footer className="office-cj-pilot__footer" data-testid="cj-pilot-summary">
             <p className="office-cj-pilot__choice">
               <strong>{selected.name}</strong>
               <span>
@@ -181,9 +183,8 @@ export function PilotProgramScreen({ activeCase }: PilotProgramScreenProps) {
             >
               Pokračovat
             </button>
-          </>
-        )}
-      </footer>
+        </footer>
+      )}
 
       <PilotDecisionBridge />
     </div>

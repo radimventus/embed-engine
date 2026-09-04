@@ -89,6 +89,26 @@ describe('PT-CJ-02 Pilot Program + lean journey', () => {
 
     assert.match(journey, /CompleteOrderScreen|PaymentScreen|ConisStudioScreen/);
     assert.match(pilot, /navigateCommercialJourneyStep\('complete_order'\)/);
+
+    const packageGrid = pilot.indexOf('data-testid="cj-pilot-packages"');
+    const promise = pilot.indexOf(
+      'office-cj-pilot-decision__promise',
+      packageGrid,
+    );
+    const summary = pilot.indexOf(
+      'data-testid="cj-pilot-summary"',
+      promise,
+    );
+    const finalSchema = pilot.indexOf('<PilotDecisionBridge />', summary);
+
+    assert.ok(packageGrid >= 0);
+    assert.ok(packageGrid < promise);
+    assert.ok(promise < summary);
+    assert.ok(summary < finalSchema);
+    assert.match(
+      pilot,
+      /COMMERCIAL_PILOT_PROGRAM_PACKAGES\.find\(\(pkg\) => pkg\.recommended\)\?\.id/,
+    );
     assert.match(order, /Potvrdit objednávku/);
     assert.match(order, /Smluvní dokumenty/);
     assert.match(order, /cj-order-docs-accepted/);
