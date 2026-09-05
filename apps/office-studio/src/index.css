@@ -3961,21 +3961,20 @@ button.office-cj-pilot__continue[data-package-select-action] {
   overflow-y: visible !important;
 }
 
-/* TASK 89 FIX-01 — hard 300px post-content reserve.
-   Regardless of viewport height, the user must be able to scroll
-   substantially below the last Commercial Journey element. */
+/* TASK 89 FIX-02 — single scroll owner.
+   No synthetic 300px content spacer. Bottom reachability is owned by the
+   main scroll surface, never by a second nested scrollbar. */
 
 .office-workspace--partner-commercial-journey
   .office-workspace__main {
-  padding-bottom: max(300px, env(safe-area-inset-bottom)) !important;
+  padding-bottom: max(32px, env(safe-area-inset-bottom)) !important;
 }
 
 .office-workspace--partner-commercial-journey
   .office-work-surface--commercial-journey {
-  margin-bottom: 300px !important;
+  margin-bottom: 0 !important;
 }
 
-/* Order / payment / final screens must never terminate at viewport edge. */
 .office-workspace--partner-commercial-journey
   [data-commercial-step="complete_order"],
 .office-workspace--partner-commercial-journey
@@ -3989,4 +3988,47 @@ button.office-cj-pilot__continue[data-package-select-action] {
   margin-bottom: 0 !important;
   max-height: none !important;
   overflow: visible !important;
+}
+
+/* TASK 89 FIX-02 — mobile single-scroll contract.
+   At <=900px the Office main is the ONLY vertical scroll owner. */
+
+@media (max-width: 900px) {
+  .office-workspace--partner-commercial-journey {
+    height: auto !important;
+    min-height: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .office-workspace--partner-commercial-journey
+    .office-workspace__main {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    padding-bottom: max(32px, env(safe-area-inset-bottom)) !important;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: auto !important;
+  }
+
+  .office-workspace--partner-commercial-journey
+    .office-work-surface--commercial-journey,
+  .office-workspace--partner-commercial-journey
+    .office-pilot-ws__terminal--journey,
+  .office-workspace--partner-commercial-journey
+    .office-pilot-ws__terminal-body--journey,
+  .office-workspace--partner-commercial-journey
+    .office-cj-screen {
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+
+  .office-workspace--partner-commercial-journey
+    .office-work-surface--commercial-journey {
+    margin-bottom: 0 !important;
+  }
 }
