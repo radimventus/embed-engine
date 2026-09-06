@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { usePilotWorkspaceContext } from '../../../office/PilotWorkspaceContext';
 import type { PilotWorkspaceCase } from '../../../office/pilotWorkspaceModel';
 import type { CommercialJourneyStepId } from '../../../office/commercialJourneyModel';
@@ -19,6 +21,66 @@ export function CommercialJourneyScreen({
   stepId,
   activeCase,
 }: CommercialJourneyScreenProps) {
+  useEffect(() => {
+    // TASK 90 — every Commercial Journey step starts at top.
+    // The journey runs inside a same-origin Workspace iframe whose host owns
+    // the primary document scroll. Reset both the local document and the host
+    // document whenever the authoritative step identity changes.
+    const scrollToTop = (): void => {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+      } catch {
+        window.scrollTo(0, 0);
+      }
+
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+
+      try {
+        const parentWindow =
+          window.parent !== window
+            ? window.parent
+            : null;
+
+        if (parentWindow !== null) {
+          try {
+            parentWindow.scrollTo({
+              top: 0,
+              left: 0,
+              behavior: 'auto',
+            });
+          } catch {
+            parentWindow.scrollTo(0, 0);
+          }
+
+          const parentDocument = parentWindow.document;
+          parentDocument.documentElement.scrollTop = 0;
+          parentDocument.body.scrollTop = 0;
+
+          const hostMain =
+            parentDocument.querySelector<HTMLElement>(
+              '[data-testid="workspace-shell-main"]',
+            );
+
+          if (hostMain !== null) {
+            hostMain.scrollTop = 0;
+          }
+        }
+      } catch {
+        // Commercial Journey is same-origin in production.
+        // If embedded elsewhere, local reset remains authoritative.
+      }
+    };
+
+    scrollToTop();
+
+    const raf = window.requestAnimationFrame(scrollToTop);
+
+    return () => {
+      window.cancelAnimationFrame(raf);
+    };
+  }, [stepId]);
+
   if (activeCase === null) {
     return (
       <div
