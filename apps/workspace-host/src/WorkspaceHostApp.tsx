@@ -150,18 +150,115 @@ function PartnerCommercialJourneyFrame({
 }: {
   readonly projectId: string | null;
 }) {
+  const frameRef = useRef<HTMLIFrameElement | null>(null);
+  const [frameHeight, setFrameHeight] = useState<number>(() =>
+    typeof window === 'undefined'
+      ? 800
+      : Math.max(320, window.innerHeight - 64),
+  );
+
+  useEffect(() => {
+    const frame = frameRef.current;
+    if (frame === null) return;
+
+    let resizeObserver: ResizeObserver | null = null;
+    let mutationObserver: MutationObserver | null = null;
+    let observedWindow: Window | null = null;
+
+    const measure = (): void => {
+      try {
+        const doc = frame.contentDocument;
+        if (doc === null) return;
+
+        const html = doc.documentElement;
+        const body = doc.body;
+
+        if (body !== null) {
+          body.style.overflowY = 'hidden';
+        }
+        html.style.overflowY = 'hidden';
+
+        const nextHeight = Math.max(
+          html.scrollHeight,
+          html.offsetHeight,
+          body?.scrollHeight ?? 0,
+          body?.offsetHeight ?? 0,
+        );
+
+        if (nextHeight > 0) {
+          setFrameHeight(Math.ceil(nextHeight));
+        }
+      } catch {
+        // Same-origin Workspace/Office is the production authority.
+        // If browser access is temporarily unavailable during navigation,
+        // preserve the last measured height and retry on the next signal.
+      }
+    };
+
+    const connect = (): void => {
+      resizeObserver?.disconnect();
+      mutationObserver?.disconnect();
+
+      try {
+        const doc = frame.contentDocument;
+        if (doc === null) return;
+
+        const html = doc.documentElement;
+        const body = doc.body;
+
+        resizeObserver = new ResizeObserver(measure);
+        resizeObserver.observe(html);
+        if (body !== null) {
+          resizeObserver.observe(body);
+        }
+
+        mutationObserver = new MutationObserver(measure);
+        mutationObserver.observe(html, {
+          subtree: true,
+          childList: true,
+          attributes: true,
+          characterData: true,
+        });
+
+        observedWindow = frame.contentWindow;
+        observedWindow?.addEventListener('resize', measure);
+
+        measure();
+      } catch {
+        // Retry on a subsequent iframe load.
+      }
+    };
+
+    frame.addEventListener('load', connect);
+    connect();
+
+    const onHostResize = (): void => measure();
+    window.addEventListener('resize', onHostResize);
+
+    return () => {
+      frame.removeEventListener('load', connect);
+      window.removeEventListener('resize', onHostResize);
+      observedWindow?.removeEventListener('resize', measure);
+      resizeObserver?.disconnect();
+      mutationObserver?.disconnect();
+    };
+  }, [projectId]);
+
   return (
     <iframe
+      ref={frameRef}
       className="workspace-shell__view workspace-shell__frame"
       title="Pilotní program"
       src={partnerCommercialJourneyFrameSrc(projectId)}
       data-testid="workspace-partner-commercial-journey"
+      scrolling="no"
       style={{
         width: '100%',
-        height: 'calc(100vh - 64px)',
-        minHeight: 'calc(100vh - 64px)',
+        height: `${frameHeight}px`,
+        minHeight: `${frameHeight}px`,
         border: 0,
         display: 'block',
+        overflow: 'hidden',
       }}
     />
   );
