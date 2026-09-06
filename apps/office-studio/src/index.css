@@ -4032,3 +4032,64 @@ button.office-cj-pilot__continue[data-package-select-action] {
     margin-bottom: 0 !important;
   }
 }
+
+/* TASK 89 FIX-04 — hosted Commercial Journey document height contract.
+   The Workspace Host sizes the same-origin iframe from the real Office
+   document scrollHeight. Therefore the embedded Commercial Journey must
+   not keep #root / Workspace / main locked to one viewport.
+
+   One scroll owner:
+   - Office journey document expands naturally;
+   - iframe expands to Office document height;
+   - Workspace Host / browser document owns the vertical scroll.
+*/
+
+html:has(.office-workspace--partner-commercial-journey),
+body:has(.office-workspace--partner-commercial-journey) {
+  height: auto !important;
+  min-height: 100%;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+#root:has(.office-workspace--partner-commercial-journey) {
+  height: auto !important;
+  min-height: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+#root:has(.office-workspace--partner-commercial-journey)
+  .office-workspace,
+#root:has(.office-workspace--partner-commercial-journey)
+  .office-workspace[data-workspace-embed-view='office'] {
+  display: flex;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+#root:has(.office-workspace--partner-commercial-journey)
+  .office-workspace__main {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  padding-bottom: max(32px, env(safe-area-inset-bottom)) !important;
+}
+
+#root:has(.office-workspace--partner-commercial-journey)
+  .office-work-surface--commercial-journey,
+#root:has(.office-workspace--partner-commercial-journey)
+  .office-pilot-ws__terminal--journey,
+#root:has(.office-workspace--partner-commercial-journey)
+  .office-pilot-ws__terminal-body--journey,
+#root:has(.office-workspace--partner-commercial-journey)
+  .office-cj-screen {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
