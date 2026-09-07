@@ -651,3 +651,136 @@ button.sales-desk__house-chip {
   padding-bottom: max(300px, env(safe-area-inset-bottom)) !important;
   -webkit-overflow-scrolling: touch;
 }
+
+/* TASK 74 — compact Sales navigation: House + Client selects. */
+.sales-desk__client-select-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.sales-desk__scope-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.sales-desk__client-select {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: 40px;
+  border: 1px solid var(--platform-line);
+  border-radius: 8px;
+  background: #fff;
+  padding: 8px 10px;
+  color: var(--platform-navy);
+  font: inherit;
+}
+
+@media (max-width: 1100px) {
+  .sales-desk__layout {
+    min-width: 0;
+  }
+
+  .sales-desk__client-select {
+    max-width: 100%;
+  }
+}
+
+/* TASK 74 — Sales responsive production contract.
+ *
+ * Desktop keeps 25/50/25.
+ * <=1100 remains the existing one-column reflow.
+ * Mobile tightens the presentation and keeps Sales desk as the sole
+ * vertical scroll owner.
+ */
+
+.sales-desk__grid > *,
+.sales-desk__center,
+.sales-desk__cases {
+  min-width: 0;
+  max-width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .sales-desk__grid {
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+  }
+
+  .sales-workspace-scope {
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 767px) {
+  .sales-desk {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden !important;
+    padding: 14px !important;
+    padding-bottom: max(48px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .sales-desk__canvas,
+  .sales-desk__grid,
+  .sales-desk__center {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .sales-desk__grid {
+    gap: 14px;
+  }
+
+  .sales-desk__cases.platform-card {
+    padding: 14px;
+  }
+
+  .sales-workspace-scope {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .sales-workspace-scope__field--house {
+    margin-top: 0;
+  }
+
+  .sales-desk__client-select-wrap {
+    margin-bottom: 10px;
+  }
+
+  .sales-desk__header-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .sales-desk__prospect {
+    flex: 1 1 100%;
+  }
+
+  .sales-desk__land-pill,
+  .sales-desk__accept,
+  .sales-desk__accepted {
+    max-width: 100%;
+  }
+
+  .sales-desk__house-list {
+    justify-content: flex-start;
+  }
+
+  .sales-desk__house-chip {
+    max-width: 100%;
+    white-space: normal;
+  }
+
+  .sales-desk__contact-link {
+    overflow-wrap: anywhere;
+  }
+}

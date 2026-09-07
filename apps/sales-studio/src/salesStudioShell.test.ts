@@ -116,8 +116,8 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     assert.match(app, /sales-case-header-row-2/);
     assert.match(app, /sales-case-header-row-3/);
     assert.match(app, /sales-desk__land-pill/);
-    assert.match(app, /sales-desk__client-sub/);
-    assert.match(app, /sales-desk__client--new/);
+    assert.match(app, /sales-desk__client-select/);
+    assert.doesNotMatch(app, /<ul className="sales-desk__client-list">/);
     assert.match(app, /acceptReferenceCase/);
     assert.match(css, /sales-desk__client--new/);
     assert.match(css, /sales-desk__land-pill/);
@@ -213,18 +213,14 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
 
     assert.match(app, /session\?\.activeHouseId/);
     assert.match(scopeControls, /Celý projekt/);
-    assert.match(scopeControls, />\s*Projekt\s*</);
-    assert.match(scopeControls, />\s*Objekt\s*</);
-    assert.doesNotMatch(scopeControls, /Dům \/ objekt/);
-    assert.match(
-      scopeControls,
-      /updateWorkspaceScope\(\{\s*projectId:\s*nextProjectId,\s*activeHouseId:\s*null,\s*\}\)/,
-    );
+    assert.doesNotMatch(scopeControls, />\s*Projekt\s*</);
+    assert.match(scopeControls, />\s*Dům\s*</);
+    assert.doesNotMatch(scopeControls, /Sales projekt/);
     assert.match(
       scopeControls,
       /activeHouseId:\s*nextHouseId\.length > 0 \? nextHouseId : null/,
     );
-    assert.match(scopeControls, /createWorkspaceProjectChangeMessage/);
+    assert.doesNotMatch(scopeControls, /createWorkspaceProjectChangeMessage/);
     assert.match(scopeControls, /createWorkspaceHouseChangeMessage/);
     assert.match(app, /useHouseOperationalCases/);
     assert.match(app, /activeInterestHouseId/);
@@ -241,6 +237,10 @@ describe('Sales Studio shell (EPIC-BX-11 / SR-001)', () => {
     );
     assert.ok(
       app.indexOf('<SalesWorkspaceScope') <
+        app.indexOf('className="sales-desk__client-select-wrap"'),
+    );
+    assert.ok(
+      app.indexOf('className="sales-desk__client-select-wrap"') <
         app.indexOf('className="sales-desk__search"'),
     );
     assert.match(

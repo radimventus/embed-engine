@@ -1,7 +1,5 @@
 import {
   createWorkspaceHouseChangeMessage,
-  createWorkspaceProjectChangeMessage,
-  listCanonicalProjects,
   listWorkspaceHouses,
   resolveWorkspaceHostHref,
   usePlatformSession,
@@ -9,9 +7,7 @@ import {
 import { PlatformScopeSelect } from '@embed-engine/platform-shell';
 
 function publishWorkspaceScope(
-  message:
-    | ReturnType<typeof createWorkspaceProjectChangeMessage>
-    | ReturnType<typeof createWorkspaceHouseChangeMessage>,
+  message: ReturnType<typeof createWorkspaceHouseChangeMessage>,
 ): void {
   if (typeof window === 'undefined' || window.parent === window) return;
   window.parent.postMessage(
@@ -25,42 +21,19 @@ export function ManagerWorkspaceScopeControls() {
   const { session, updateWorkspaceScope } = usePlatformSession();
   const projectId = session?.projectId ?? null;
   const activeHouseId = session?.activeHouseId ?? null;
-  const projects = listCanonicalProjects();
   const houses = projectId === null ? [] : listWorkspaceHouses(projectId);
 
   return (
     <section
-      className="grid shrink-0 gap-5 border-b border-[var(--platform-cream-dark)] bg-[var(--platform-cream-light)] px-4 pb-6 pt-5"
+      className="manager-workspace-scope grid shrink-0 gap-5 border-b border-[var(--platform-cream-dark)] bg-[var(--platform-cream-light)] px-4 pb-6 pt-5"
       data-testid="manager-workspace-scope"
     >
       <label className="grid gap-2">
         <span className="text-[11px] font-bold uppercase tracking-[1px] text-[var(--platform-section)]">
-          Projekt
+          Dům
         </span>
         <PlatformScopeSelect
-          ariaLabel="Manager projekt"
-          value={projectId ?? ''}
-          options={projects.map((project) => ({
-            value: project.project.projectId,
-            label: project.project.name,
-          }))}
-          onChange={(nextProjectId) => {
-            updateWorkspaceScope({
-              projectId: nextProjectId,
-              activeHouseId: null,
-            });
-            publishWorkspaceScope(
-              createWorkspaceProjectChangeMessage(nextProjectId),
-            );
-          }}
-        />
-      </label>
-      <label className="grid gap-2">
-        <span className="text-[11px] font-bold uppercase tracking-[1px] text-[var(--platform-section)]">
-          Objekt
-        </span>
-        <PlatformScopeSelect
-          ariaLabel="Manager objekt"
+          ariaLabel="Manager dům"
           value={activeHouseId ?? ''}
           options={[
             { value: '', label: 'Celý projekt' },

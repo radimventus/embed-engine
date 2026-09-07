@@ -146,20 +146,18 @@ describe("Application Foundation (MSCB-01)", () => {
     assert.match(workCenter, /Srovnání domů v projektu/);
   });
 
-  it("keeps the Manager navigation rail outside the content scrollport", () => {
+  it("keeps Manager rail responsive without duplicating scroll ownership", () => {
     const shell = readSource("src/components/layout/AppShell.tsx");
     const styles = readSource("src/index.css");
 
-    assert.match(shell, /flex h-full min-h-0 flex-1 overflow-hidden/);
-    assert.match(
-      shell,
-      /platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto/,
-    );
-    assert.match(shell, /min-h-0 min-w-0 flex-1 overflow-y-auto/);
-    assert.match(
-      styles,
-      /@apply h-full min-h-screen overflow-hidden overscroll-none/,
-    );
+    assert.match(shell, /manager-shell-body/);
+    assert.match(shell, /manager-shell-rail/);
+    assert.match(shell, /manager-shell-content/);
+    assert.match(styles, /@media \(max-width: 1100px\)/);
+    assert.match(styles, /\.manager-shell-body/);
+    assert.match(styles, /flex-direction:\s*column/);
+    assert.match(styles, /\.manager-shell-content/);
+    assert.match(styles, /overflow:\s*visible/);
   });
 
   it("uses the active House session binding in every partner view", () => {
@@ -329,13 +327,9 @@ describe("Application Foundation (MSCB-01)", () => {
     assert.equal(projectScope.runtimeHouseId, null);
     assert.equal(houseScope.runtimeHouseId, "modern-4kk");
     assert.match(scopeControls, /Celý projekt/);
-    assert.match(scopeControls, />\s*Projekt\s*</);
-    assert.match(scopeControls, />\s*Objekt\s*</);
-    assert.doesNotMatch(scopeControls, /Dům \/ objekt/);
-    assert.match(
-      scopeControls,
-      /updateWorkspaceScope\(\{ projectId: nextProjectId \}\)/,
-    );
+    assert.doesNotMatch(scopeControls, />\s*Projekt\s*</);
+    assert.match(scopeControls, />\s*Dům\s*</);
+    assert.doesNotMatch(scopeControls, /Manager projekt/);
     assert.match(
       scopeControls,
       /activeHouseId: nextHouseId\.length > 0 \? nextHouseId : null/,
@@ -367,10 +361,8 @@ describe("Application Foundation (MSCB-01)", () => {
     assert.match(scopeControls, /data-testid="manager-workspace-scope"/);
     assert.match(scopeControls, /Celý projekt/);
     assert.match(scopeControls, /listWorkspaceHouses\(projectId\)/);
-    assert.ok(
-      sidebar.indexOf("<ManagerWorkspaceScopeControls />") <
-        sidebar.indexOf("PARTNER_NAV_GROUPS.map"),
-    );
+    assert.match(sidebar, /<ManagerWorkspaceScopeControls \/>/);
+    assert.doesNotMatch(sidebar, /PARTNER_NAV_GROUPS|NavGroup/);
     assert.match(scopeControls, /PlatformScopeSelect/);
     assert.doesNotMatch(scopeControls, /<select\b/);
     assert.match(scopeControls, /bg-\[var\(--platform-cream-light\)\]/);

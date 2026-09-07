@@ -88,13 +88,13 @@ export function AppShell({ sidebar, children }: AppShellProps) {
 
   const body = (
     <div
-      className="flex h-full min-h-0 flex-1 overflow-hidden"
+      className="manager-shell-body flex h-full min-h-0 flex-1 overflow-hidden"
       data-workspace-embed-view={isWorkspaceShellEmbed() ? 'manager' : undefined}
     >
-      <div className="platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto">
+      <div className="manager-shell-rail platform-nav-rail sticky top-0 h-full shrink-0 self-stretch overflow-y-auto">
         {sidebar}
       </div>
-      <div className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+      <div className="manager-shell-content min-h-0 min-w-0 flex-1 overflow-y-auto">
         <Workspace
           brand={brand}
           sampleProjectLabel={pilot?.workspace.sampleProjectLabel}

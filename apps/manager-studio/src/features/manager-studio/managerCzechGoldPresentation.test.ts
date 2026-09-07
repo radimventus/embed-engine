@@ -90,8 +90,8 @@ describe("TASK 71E Manager Czech + gold presentation", () => {
     const sidebar = read("ManagerStudioSidebar.tsx");
     const home = read("ManagerWorkCenterHome.tsx");
 
-    assert.match(sidebar, /isActive/);
-    assert.match(sidebar, /border-\[var\(--platform-accent\)\]/);
+    assert.match(sidebar, /ManagerWorkspaceScopeControls/);
+    assert.doesNotMatch(sidebar, /isActive|PARTNER_NAV_GROUPS/);
 
     assert.match(home, /index < 2[\s\S]*platform-accent/);
 

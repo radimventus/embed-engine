@@ -1,8 +1,6 @@
 import {
   createWorkspaceHouseChangeMessage,
-  createWorkspaceProjectChangeMessage,
   isHouseInProject,
-  listCanonicalProjects,
   listWorkspaceHouses,
   resolveWorkspaceHostHref,
   usePlatformSession,
@@ -18,9 +16,7 @@ type SalesWorkspaceScopeProps = {
 };
 
 function publishWorkspaceScope(
-  message:
-    | ReturnType<typeof createWorkspaceProjectChangeMessage>
-    | ReturnType<typeof createWorkspaceHouseChangeMessage>,
+  message: ReturnType<typeof createWorkspaceHouseChangeMessage>,
 ): void {
   if (typeof window === 'undefined' || window.parent === window) return;
   window.parent.postMessage(
@@ -35,7 +31,6 @@ export function SalesWorkspaceScope({
   activeHouseId,
 }: SalesWorkspaceScopeProps) {
   const { updateWorkspaceScope } = usePlatformSession();
-  const projects = listCanonicalProjects();
   const houses =
     activeProjectId === null ? [] : listWorkspaceHouses(activeProjectId);
 
@@ -44,40 +39,15 @@ export function SalesWorkspaceScope({
       className="sales-workspace-scope"
       data-testid="sales-workspace-scope"
     >
-      <div className="sales-workspace-scope__field">
-        <span
-          className="sales-workspace-scope__label"
-          style={{ paddingLeft: SCOPE_TEXT_INSET_PX }}
-        >
-          Projekt
-        </span>
-        <PlatformScopeSelect
-          ariaLabel="Sales projekt"
-          value={activeProjectId ?? ''}
-          options={projects.map((project) => ({
-            value: project.project.projectId,
-            label: project.project.name,
-          }))}
-          onChange={(nextProjectId) => {
-            updateWorkspaceScope({
-              projectId: nextProjectId,
-              activeHouseId: null,
-            });
-            publishWorkspaceScope(
-              createWorkspaceProjectChangeMessage(nextProjectId),
-            );
-          }}
-        />
-      </div>
       <div className="sales-workspace-scope__field sales-workspace-scope__field--house">
         <span
           className="sales-workspace-scope__label"
           style={{ paddingLeft: SCOPE_TEXT_INSET_PX }}
         >
-          Objekt
+          Dům
         </span>
         <PlatformScopeSelect
-          ariaLabel="Sales objekt"
+          ariaLabel="Sales dům"
           value={activeHouseId ?? ''}
           options={[
             { value: '', label: 'Celý projekt' },

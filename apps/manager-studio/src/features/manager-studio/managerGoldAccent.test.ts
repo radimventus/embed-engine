@@ -16,14 +16,18 @@ describe("TASK 71F Manager canonical gold accent", () => {
     assert.match(css, /--platform-accent:\s*#C89B2D/i);
   });
 
-  it("keeps selected sidebar wired to Manager accent", () => {
+  it("keeps Manager rail reduced to House scope", () => {
     const sidebar = source(
       "src/features/manager-studio/ManagerStudioSidebar.tsx",
     );
+    const scope = source(
+      "src/features/manager-studio/ManagerWorkspaceScopeControls.tsx",
+    );
 
-    assert.match(sidebar, /border-\[var\(--platform-accent\)\]/);
-
-    assert.match(sidebar, /aria-current=\{isActive \? "page" : undefined\}/);
+    assert.match(sidebar, /ManagerWorkspaceScopeControls/);
+    assert.doesNotMatch(sidebar, /PARTNER_NAV_GROUPS|aria-current/);
+    assert.match(scope, />\s*Dům\s*</);
+    assert.doesNotMatch(scope, />\s*Projekt\s*</);
   });
 
   it("keeps executive charts wired to Manager accent", () => {
