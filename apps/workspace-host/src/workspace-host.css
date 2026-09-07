@@ -321,3 +321,28 @@ body:has(.workspace-shell[data-workspace-surface='client']),
   min-height: 100dvh !important;
   align-self: stretch !important;
 }
+
+
+/* TASK 74 FIX-04B — Workspace Client document owns the navy rail backdrop */
+html:has(.workspace-shell[data-workspace-surface='client']),
+body:has(.workspace-shell[data-workspace-surface='client']),
+#root:has(.workspace-shell[data-workspace-surface='client']) {
+  background-color: #F7F6F4;
+}
+
+body:has(.workspace-shell[data-workspace-surface='client']) {
+  background-image: linear-gradient(
+    to right,
+    #001930 0,
+    #001930 48px,
+    #F7F6F4 48px,
+    #F7F6F4 100%
+  );
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  background-attachment: local;
+}
+
+.workspace-shell[data-workspace-surface='client'] {
+  background: transparent !important;
+}

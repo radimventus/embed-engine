@@ -53,6 +53,25 @@ describe('TASK 74 FIX-02 — Workspace Client full-height contract', () => {
     );
   });
 
+  it('keeps the navy Client rail visible through the full Workspace document', () => {
+    const css = source('src/workspace-host.css');
+
+    assert.match(
+      css,
+      /TASK 74 FIX-04B — Workspace Client document owns the navy rail backdrop/,
+    );
+
+    assert.match(
+      css,
+      /body:has\(\.workspace-shell\[data-workspace-surface='client'\]\)[\s\S]*?background-image:\s*linear-gradient/,
+    );
+
+    assert.match(
+      css,
+      /\#001930[\s\S]*?48px/,
+    );
+  });
+
   it('does not touch Embed standalone presentation', () => {
     const css = source('src/workspace-host.css');
 
