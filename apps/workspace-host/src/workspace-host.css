@@ -289,3 +289,35 @@ body:has(.workspace-shell[data-workspace-surface='client']),
   width: 100%;
   overflow: visible !important;
 }
+
+/* TASK 74 FIX-03 — Workspace-hosted Client Studio sidebar must span the
+   complete Client Experience document.
+
+   The shared Client Studio AppShell intentionally uses sticky + h-screen for
+   standalone delivery. In Workspace document-scroll mode that viewport-bound
+   slot truncates the navy navigation column before the Client Experience
+   ends. Override it only inside the Workspace client surface. */
+
+.workspace-shell[data-workspace-surface='client']
+  [data-studio-shell='app'] {
+  align-items: stretch !important;
+  min-height: 100dvh !important;
+  height: auto !important;
+}
+
+.workspace-shell[data-workspace-surface='client']
+  [data-studio-shell='sidebar-slot'] {
+  position: relative !important;
+  top: auto !important;
+  height: auto !important;
+  min-height: 100% !important;
+  align-self: stretch !important;
+  overflow: visible !important;
+}
+
+.workspace-shell[data-workspace-surface='client']
+  [data-studio-shell='sidebar'] {
+  height: 100% !important;
+  min-height: 100dvh !important;
+  align-self: stretch !important;
+}

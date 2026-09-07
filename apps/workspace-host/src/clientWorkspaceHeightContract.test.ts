@@ -34,6 +34,25 @@ describe('TASK 74 FIX-02 — Workspace Client full-height contract', () => {
     );
   });
 
+  it('lets the Workspace Client desktop sidebar span the full journey', () => {
+    const css = source('src/workspace-host.css');
+
+    assert.match(
+      css,
+      /workspace-shell\[data-workspace-surface='client'\][\s\S]*?\[data-studio-shell='sidebar-slot'\][\s\S]*?position:\s*relative !important/,
+    );
+
+    assert.match(
+      css,
+      /workspace-shell\[data-workspace-surface='client'\][\s\S]*?\[data-studio-shell='sidebar-slot'\][\s\S]*?height:\s*auto !important/,
+    );
+
+    assert.match(
+      css,
+      /workspace-shell\[data-workspace-surface='client'\][\s\S]*?\[data-studio-shell='sidebar'\][\s\S]*?height:\s*100% !important/,
+    );
+  });
+
   it('does not touch Embed standalone presentation', () => {
     const css = source('src/workspace-host.css');
 
