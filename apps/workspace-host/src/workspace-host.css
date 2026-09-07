@@ -323,26 +323,30 @@ body:has(.workspace-shell[data-workspace-surface='client']),
 }
 
 
-/* TASK 74 FIX-04B — Workspace Client document owns the navy rail backdrop */
+/* TASK 74 FIX-05 — Workspace Client rail is a continuous desktop viewport layer.
+   The document background can be covered by Workspace child surfaces near the
+   footer. A fixed, non-interactive rail guarantees visual continuity while the
+   real Client sidebar remains the interaction authority above it at z-60. */
 html:has(.workspace-shell[data-workspace-surface='client']),
 body:has(.workspace-shell[data-workspace-surface='client']),
 #root:has(.workspace-shell[data-workspace-surface='client']) {
   background-color: #F7F6F4;
 }
 
-body:has(.workspace-shell[data-workspace-surface='client']) {
-  background-image: linear-gradient(
-    to right,
-    #001930 0,
-    #001930 48px,
-    #F7F6F4 48px,
-    #F7F6F4 100%
-  );
-  background-repeat: no-repeat;
-  background-size: 100% 100%;
-  background-attachment: local;
-}
-
 .workspace-shell[data-workspace-surface='client'] {
   background: transparent !important;
+}
+
+@media (min-width: 1280px) {
+  body:has(.workspace-shell[data-workspace-surface='client'])::before {
+    content: "";
+    position: fixed;
+    z-index: 50;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 48px;
+    background: #001930;
+    pointer-events: none;
+  }
 }

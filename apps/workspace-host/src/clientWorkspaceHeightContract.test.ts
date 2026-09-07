@@ -53,22 +53,32 @@ describe('TASK 74 FIX-02 — Workspace Client full-height contract', () => {
     );
   });
 
-  it('keeps the navy Client rail visible through the full Workspace document', () => {
+  it('keeps the desktop Client rail visually continuous across the viewport', () => {
     const css = source('src/workspace-host.css');
 
     assert.match(
       css,
-      /TASK 74 FIX-04B — Workspace Client document owns the navy rail backdrop/,
+      /TASK 74 FIX-05 — Workspace Client rail is a continuous desktop viewport layer/,
     );
 
     assert.match(
       css,
-      /body:has\(\.workspace-shell\[data-workspace-surface='client'\]\)[\s\S]*?background-image:\s*linear-gradient/,
+      /@media \(min-width: 1280px\)[\s\S]*?body:has\(\.workspace-shell\[data-workspace-surface='client'\]\)::before/,
     );
 
     assert.match(
       css,
-      /\#001930[\s\S]*?48px/,
+      /position:\s*fixed;[\s\S]*?z-index:\s*50;[\s\S]*?top:\s*0;[\s\S]*?bottom:\s*0;/,
+    );
+
+    assert.match(
+      css,
+      /width:\s*48px;[\s\S]*?background:\s*#001930;[\s\S]*?pointer-events:\s*none;/,
+    );
+
+    assert.doesNotMatch(
+      css,
+      /background-image:\s*linear-gradient/,
     );
   });
 
