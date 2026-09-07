@@ -241,3 +241,51 @@ body:has(.workspace-partner-journey),
   overflow-x: hidden !important;
   padding-bottom: max(32px, env(safe-area-inset-bottom));
 }
+
+/* TASK 74 FIX-02 — Client Studio hosted in Workspace must behave as one
+   document-height surface. Embed standalone remains untouched.
+
+   Client Experience is mounted directly into Workspace Host, not iframe.
+   Therefore every Workspace/Platform wrapper on the client surface must
+   grow with document content. No viewport-height ancestor may terminate
+   the left Client Studio column part-way through TOUR. */
+
+html:has(.workspace-shell[data-workspace-surface='client']),
+body:has(.workspace-shell[data-workspace-surface='client']),
+#root:has(.workspace-shell[data-workspace-surface='client']) {
+  height: auto !important;
+  min-height: 100dvh;
+  max-height: none !important;
+  overflow-y: visible !important;
+}
+
+.workspace-shell[data-workspace-surface='client'],
+.workspace-shell[data-workspace-surface='client'] [data-platform-shell],
+.workspace-shell[data-workspace-surface='client'] .platform-body,
+.workspace-shell[data-workspace-surface='client'] .workspace-shell__main,
+.workspace-shell[data-workspace-surface='client'] .workspace-shell__view {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+.workspace-shell[data-workspace-surface='client'] [data-platform-shell],
+.workspace-shell[data-workspace-surface='client'] .platform-body,
+.workspace-shell[data-workspace-surface='client'] .workspace-shell__main {
+  overflow: visible !important;
+}
+
+.workspace-shell[data-workspace-surface='client'] .workspace-shell__main {
+  position: relative !important;
+  flex: 0 0 auto !important;
+  width: 100%;
+  padding-bottom: max(32px, env(safe-area-inset-bottom));
+}
+
+.workspace-shell[data-workspace-surface='client'] .workspace-shell__view {
+  position: static !important;
+  inset: auto !important;
+  display: block;
+  width: 100%;
+  overflow: visible !important;
+}
