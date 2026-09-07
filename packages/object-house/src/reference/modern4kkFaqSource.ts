@@ -822,6 +822,306 @@ export const MODERN_4KK_KNOWLEDGE: readonly HouseKnowledgeAtom[] = [
     relatedTopics: ['kvalita', 'akustika'],
   },
   {
+    id: 'modern-4kk-roof-bratex-click',
+    houseId: 'modern-4kk',
+    subject: 'roof.covering',
+    category: 'architecture',
+    statement:
+      'Šikmá střecha je opatřena antracitovou plechovou krytinou BRATEX CLICK.',
+    scope: 'PRODUCT',
+    confidence: 'CONFIRMED',
+    source: {
+      sourceId: 'owner-confirmation-2026-09-07-roof',
+      kind: 'CURRENT_CONFIRMED',
+      label: 'Potvrzení vlastníka a vizualizace 01–03',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Přesný číselný odstín RAL není v potvrzení uveden.',
+      'Technické vlastnosti střechy se čerpají z technické zprávy, nikoli z vizualizace.',
+    ],
+    unsupportedConclusions: [
+      'Konkrétní číselný odstín RAL.',
+      'Technické parametry, které nejsou doloženy technickou zprávou.',
+    ],
+    relatedTopics: ['design', 'materials', 'durability'],
+  },
+  {
+    id: 'modern-4kk-architectural-form',
+    houseId: 'modern-4kk',
+    subject: 'architecture.form',
+    category: 'architecture',
+    statement:
+      'Dům je navržen jako jednopodlažní podlouhlý bungalov se sedlovou střechou a výrazně proskleným štítem obytné části.',
+    scope: 'PRODUCT',
+    confidence: 'DOCUMENTED',
+    source: {
+      sourceId: 'modern-4kk-visual-exterior-v1',
+      kind: 'PRODUCT_DOCUMENTATION',
+      label: 'Architektonické vizualizace 01–03 a půdorys p1',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Jde o popis aktuálního návrhu doloženého vizualizacemi a půdorysem.',
+    ],
+    unsupportedConclusions: [
+      'Přesné rozměry nebo výměry bez ověření projektové dokumentace.',
+      'Potvrzení skutečného provedení stavby.',
+    ],
+    relatedTopics: ['design', 'layout'],
+  },
+  {
+    id: 'modern-4kk-garden-glazing',
+    houseId: 'modern-4kk',
+    subject: 'openings.gardenGlazing',
+    category: 'architecture',
+    statement:
+      'Obytná část i vybrané pokoje mají velké prosklené plochy v antracitových rámech orientované k terasám a zahradě.',
+    scope: 'PRODUCT',
+    confidence: 'DOCUMENTED',
+    source: {
+      sourceId: 'modern-4kk-visual-glazing-v1',
+      kind: 'PRODUCT_DOCUMENTATION',
+      label: 'Vizualizace 01, 11–12, 15–16 a 19–22',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Orientace je popsána vůči terasám a zahradě, nikoli světovým stranám.',
+      'Technické parametry oken se čerpají z technické zprávy.',
+    ],
+    unsupportedConclusions: [
+      'Konkrétní světová orientace domu.',
+      'Parametry zasklení nebo způsob otevírání bez dokumentace.',
+    ],
+    relatedTopics: ['design', 'daylight', 'garden'],
+  },
+  {
+    id: 'modern-4kk-anthracite-shading',
+    houseId: 'modern-4kk',
+    subject: 'openings.externalShading',
+    category: 'comfort',
+    statement:
+      'Prosklené plochy jsou opatřeny antracitovými roletovými žaluziemi.',
+    scope: 'PRODUCT',
+    confidence: 'CONFIRMED',
+    source: {
+      sourceId: 'owner-confirmation-2026-09-07-shading',
+      kind: 'CURRENT_CONFIRMED',
+      label: 'Potvrzení vlastníka a vizualizace 01–03 a 11',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Způsob ovládání ani konkrétní typ lamel není v potvrzení uveden.',
+    ],
+    unsupportedConclusions: [
+      'Automatické nebo inteligentní ovládání.',
+      'Konkrétní výrobce a model.',
+    ],
+    relatedTopics: ['comfort', 'summer-comfort', 'privacy'],
+  },
+  {
+    id: 'modern-4kk-wooden-terraces',
+    houseId: 'modern-4kk',
+    subject: 'exterior.terraces',
+    category: 'exterior',
+    statement:
+      'Na obytné místnosti navazují dřevěné terasy a významná část venkovního pobytového prostoru je zastřešená.',
+    scope: 'PRODUCT',
+    confidence: 'DOCUMENTED',
+    source: {
+      sourceId: 'modern-4kk-visual-terraces-v1',
+      kind: 'PRODUCT_DOCUMENTATION',
+      label: 'Vizualizace 01–03 a 19–22, půdorys p1',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Přesný rozsah a rozměry teras musí vycházet z projektové dokumentace.',
+    ],
+    unsupportedConclusions: [
+      'Přesná plocha teras.',
+      'Konstrukční skladba zastřešení bez technické dokumentace.',
+    ],
+    relatedTopics: ['garden', 'design', 'layout'],
+  },
+  {
+    id: 'modern-4kk-two-car-shelter',
+    houseId: 'modern-4kk',
+    subject: 'exterior.parkingShelter',
+    category: 'exterior',
+    statement:
+      'Součástí návrhu je navazující dřevěný přístřešek se dvěma parkovacími místy.',
+    scope: 'PRODUCT',
+    confidence: 'DOCUMENTED',
+    source: {
+      sourceId: 'modern-4kk-visual-carport-v1',
+      kind: 'PRODUCT_DOCUMENTATION',
+      label: 'Vizualizace 02–03 a půdorys p1',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Kapacita dvou míst vychází ze zobrazeného návrhu.',
+    ],
+    unsupportedConclusions: [
+      'Přesné rozměry přístřešku.',
+      'Konstrukční nebo statické parametry.',
+    ],
+    relatedTopics: ['layout', 'parking', 'exterior'],
+  },
+  {
+    id: 'modern-4kk-layout-4kk',
+    houseId: 'modern-4kk',
+    subject: 'layout.rooms',
+    category: 'layout',
+    statement:
+      'Dispozice 4+kk obsahuje společnou kuchyňskou, jídelní a obývací část, hlavní ložnici a dva další samostatné pokoje.',
+    scope: 'PRODUCT',
+    confidence: 'DOCUMENTED',
+    source: {
+      sourceId: 'modern-4kk-floorplan-v1',
+      kind: 'PRODUCT_DOCUMENTATION',
+      label: 'Půdorys p1 a vizualizace 11–12 a 15–22',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Přesné plochy místností musí vycházet z čitelné projektové dokumentace.',
+    ],
+    unsupportedConclusions: [
+      'Přesné výměry jednotlivých místností.',
+    ],
+    relatedTopics: ['layout', 'family-living'],
+  },
+  {
+    id: 'modern-4kk-secondary-room-use',
+    houseId: 'modern-4kk',
+    subject: 'layout.secondaryRooms',
+    category: 'layout',
+    statement:
+      'Dva samostatné pokoje lze podle zobrazených variant využít pro spaní, dětský pokoj nebo domácí pracovnu.',
+    scope: 'PRODUCT',
+    confidence: 'DOCUMENTED',
+    source: {
+      sourceId: 'modern-4kk-visual-secondary-rooms-v1',
+      kind: 'PRODUCT_DOCUMENTATION',
+      label: 'Vizualizace 00 a 19–22, půdorys p1',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Jde o možné způsoby zařízení samostatných pokojů.',
+    ],
+    unsupportedConclusions: [
+      'Dodávka zobrazeného nábytku nebo pracovního vybavení.',
+    ],
+    relatedTopics: ['layout', 'flexibility', 'home-office'],
+  },
+  {
+    id: 'modern-4kk-built-in-storage',
+    houseId: 'modern-4kk',
+    subject: 'layout.storage',
+    category: 'layout',
+    statement:
+      'Návrh počítá s vestavěnými úložnými prostory v chodbě, ložnici a dalších pokojích.',
+    scope: 'PRODUCT',
+    confidence: 'DOCUMENTED',
+    source: {
+      sourceId: 'modern-4kk-visual-storage-v1',
+      kind: 'PRODUCT_DOCUMENTATION',
+      label: 'Vizualizace 00, 13–16, 20 a 22',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Rozsah úložných prostor vychází z architektonických vizualizací.',
+    ],
+    unsupportedConclusions: [
+      'Přesný vnitřní objem nebo vybavení skříní.',
+    ],
+    relatedTopics: ['layout', 'storage'],
+  },
+  {
+    id: 'modern-4kk-kitchen-island',
+    houseId: 'modern-4kk',
+    subject: 'interior.kitchen',
+    category: 'interior',
+    statement:
+      'Kuchyňská část je navržena s pracovním ostrůvkem a přímo navazuje na jídelní a obývací prostor.',
+    scope: 'PRODUCT',
+    confidence: 'DOCUMENTED',
+    source: {
+      sourceId: 'modern-4kk-visual-kitchen-v1',
+      kind: 'PRODUCT_DOCUMENTATION',
+      label: 'Vizualizace 11–12 a půdorys p1',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Konkrétní spotřebiče a rozměry kuchyně nejsou z vizualizace určeny.',
+    ],
+    unsupportedConclusions: [
+      'Konkrétní značky nebo modely spotřebičů.',
+      'Přesné rozměry kuchyňské sestavy.',
+    ],
+    relatedTopics: ['layout', 'family-living', 'interior'],
+  },
+  {
+    id: 'modern-4kk-bathroom-equipment',
+    houseId: 'modern-4kk',
+    subject: 'interior.bathroom',
+    category: 'interior',
+    statement:
+      'Koupelna je zobrazena se sprchovým koutem s nízkým nebo nezobrazeným prahem, závěsným WC, umyvadlem a oknem.',
+    scope: 'PRODUCT',
+    confidence: 'DOCUMENTED',
+    source: {
+      sourceId: 'modern-4kk-visual-bathroom-v1',
+      kind: 'PRODUCT_DOCUMENTATION',
+      label: 'Vizualizace 17–18',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Vizualizace sama nepotvrzuje normovou bezbariérovost.',
+    ],
+    unsupportedConclusions: [
+      'Normová bezbariérovost koupelny.',
+      'Konkrétní výrobci a modely sanitárního vybavení.',
+    ],
+    relatedTopics: ['layout', 'comfort', 'interior'],
+  },
+  {
+    id: 'modern-4kk-interior-palette',
+    houseId: 'modern-4kk',
+    subject: 'interior.materialPalette',
+    category: 'interior',
+    statement:
+      'Interiér pracuje se světlými stěnami, světlým přírodním dekorem dřeva, antracitovými rámy prosklení a v koupelně s velkoformátovými šedými obklady a černými armaturami.',
+    scope: 'PRODUCT',
+    confidence: 'DOCUMENTED',
+    source: {
+      sourceId: 'modern-4kk-visual-interior-v1',
+      kind: 'PRODUCT_DOCUMENTATION',
+      label: 'Vizualizace 00 a 11–22',
+    },
+    validFrom: '2026-09-07',
+    temporalStatus: 'CURRENT',
+    constraints: [
+      'Jde o vzhled aktuálního architektonického návrhu.',
+      'Přesné materiály se určují podle produktové nebo technické dokumentace.',
+    ],
+    unsupportedConclusions: [
+      'Konkrétní druh dřeva tam, kde není doložen produktovou dokumentací.',
+      'Výrobce nebo přesný odstín interiérových prvků.',
+    ],
+    relatedTopics: ['design', 'materials', 'interior'],
+  },
+  {
     id: 'product-diffusion-open-envelope',
     houseId: 'modern-4kk', subject: 'Difuzně otevřená obálka', category: 'envelope',
     statement: 'Ekopanel, Climatizer Plus a odvětrávaný plášť tvoří difuzně otevřenou skladbu stěn a šikmin střechy.',
