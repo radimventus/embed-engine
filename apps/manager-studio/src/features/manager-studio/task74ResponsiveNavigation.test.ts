@@ -31,6 +31,23 @@ describe("TASK 74 — Manager responsive navigation", () => {
     assert.doesNotMatch(scope, /createWorkspaceProjectChangeMessage/);
   });
 
+  it("does not consume desktop viewport height with a fake bottom reserve", () => {
+    const css = source("src/index.css");
+
+    assert.match(
+      css,
+      /#root\s*\{[\s\S]*?padding-bottom:\s*0;/,
+    );
+    assert.doesNotMatch(
+      css,
+      /#root\s*\{[\s\S]*?padding-bottom:\s*max\(300px/,
+    );
+    assert.match(
+      css,
+      /@media \(max-width: 1100px\)[\s\S]*?#root\s*\{[\s\S]*?padding-bottom:\s*max\(32px/,
+    );
+  });
+
   it("turns Manager rail into a top scope bar on tablet/mobile", () => {
     const shell = source("src/components/layout/AppShell.tsx");
     const css = source("src/index.css");
