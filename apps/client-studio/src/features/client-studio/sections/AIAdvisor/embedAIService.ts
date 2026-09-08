@@ -14,14 +14,36 @@ import {
 } from '@embed-engine/ai';
 
 let embedAIService: AIService | null = null;
+let embedAIServiceScope: string | null = null;
+
+/** Stable Company + Project + Runtime House boundary for one AI conversation. */
+export function createEmbedAISessionScope(input: {
+  readonly companyId: string | null;
+  readonly projectId: string | null;
+  readonly runtimeHouseId: string | null;
+  readonly canonicalHouseId: string | null;
+}): string {
+  return [
+    input.companyId ?? 'unknown-company',
+    input.projectId ?? 'unknown-project',
+    input.runtimeHouseId ?? input.canonicalHouseId ?? 'unknown-house',
+  ].join('::');
+}
 
 /**
  * Single in-memory pilot session for the current page load.
  * Reload → new conversation (no persistence).
  */
-export function getEmbedAIService(): AIService {
-  if (embedAIService !== null) {
+export function getEmbedAIService(scope?: string): AIService {
+  if (
+    embedAIService !== null &&
+    (scope === undefined || embedAIServiceScope === scope)
+  ) {
     return embedAIService;
+  }
+
+  if (scope !== undefined && embedAIServiceScope !== scope) {
+    embedAIService = null;
   }
 
   const diagnosticsEnabled = readPublicFlag('VITE_AI_DIAGNOSTICS') !== '0';
@@ -32,6 +54,7 @@ export function getEmbedAIService(): AIService {
       ? `embed-${crypto.randomUUID()}`
       : `embed-${Date.now().toString(36)}`;
 
+  embedAIServiceScope = scope ?? embedAIServiceScope;
   embedAIService = createAIServiceFromDelivery(createEmbedAIDelivery(), {
     sessionId,
     diagnostics: createAIDiagnostics({
@@ -55,6 +78,7 @@ export function exportEmbedConversationJSON(pretty = true): string {
 /** Test escape hatch — replace singleton. */
 export function setEmbedAIServiceForTests(service: AIService | null): void {
   embedAIService = service;
+  embedAIServiceScope = null;
 }
 
 /** Non-secret public flags only — never API keys. */

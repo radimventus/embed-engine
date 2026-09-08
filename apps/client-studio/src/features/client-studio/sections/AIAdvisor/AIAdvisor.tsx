@@ -22,7 +22,10 @@ import {
 } from './ai-advisor-layout';
 import { Conversation } from './Conversation';
 import { Disclaimer } from './Disclaimer';
-import { getEmbedAIService } from './embedAIService';
+import {
+  createEmbedAISessionScope,
+  getEmbedAIService,
+} from './embedAIService';
 import {
   advisorOpeningForExperience,
   faqItemsFromCanonicalHouseKnowledge,
@@ -51,11 +54,27 @@ function createAssistantSeed(text: string): Message {
  * AI Advisor — Priority coaching FAQ + seeded chat; live replies via AIService.
  */
 export function AIAdvisor() {
-  const { experience, houseKnowledge, chatHouseKnowledge, dispatch } = useDecisionSessionRuntime();
+  const {
+    experience,
+    houseKnowledge,
+    chatHouseKnowledge,
+    analyticsScope,
+    dispatch,
+  } = useDecisionSessionRuntime();
   const decision = useDecisionContext();
   const analytics = useOptionalDecisionAnalytics();
   const ai = experience.context.decision.ai;
   const priorityIds = experience.context.decision.priorityIds;
+  const aiSessionScope = useMemo(
+    () =>
+      createEmbedAISessionScope({
+        companyId: analyticsScope?.companyId ?? null,
+        projectId: analyticsScope?.projectId ?? null,
+        runtimeHouseId: analyticsScope?.houseId ?? null,
+        canonicalHouseId: chatHouseKnowledge?.canonicalHouseId ?? null,
+      }),
+    [analyticsScope, chatHouseKnowledge?.canonicalHouseId],
+  );
   const faqItems = useMemo(
     () =>
       houseKnowledge !== null && houseKnowledge.priorityFaq.length > 0
@@ -90,6 +109,15 @@ export function AIAdvisor() {
     }
     setMessages([createAssistantSeed(openingText)]);
   }, [ai.id, openingText]);
+
+
+  useEffect(() => {
+    userHasSpokenRef.current = false;
+    sendLockRef.current = false;
+    setInputValue('');
+    setIsLoading(false);
+    setMessages([createAssistantSeed(openingText)]);
+  }, [aiSessionScope]);
 
   const handleQuestionSelect = (question: string) => {
     setInputValue(question);
@@ -136,7 +164,7 @@ export function AIAdvisor() {
 
     void (async () => {
       try {
-        const result = await getEmbedAIService().sendMessage({
+        const result = await getEmbedAIService(aiSessionScope).sendMessage({
           message: text,
           decision,
           object:
