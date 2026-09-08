@@ -105,7 +105,7 @@ export function resolveClientRuntimeBindingFromCandidates(
   candidates: ReturnType<typeof readClientBindCandidates>,
 ): CanonicalRuntimeBinding {
   const activeProjectId = resolveClientActiveProjectId(
-    candidates.sessionProjectId,
+    candidates.sessionProjectId ?? candidates.urlProjectId,
   );
   // An Embed mount selects one explicit House. It is a validated input to the
   // shared binding boundary and must not be silently replaced by a stale
