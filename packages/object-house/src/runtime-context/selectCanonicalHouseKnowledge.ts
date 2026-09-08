@@ -91,6 +91,42 @@ export function canonicalHouseKnowledgeEntries(
 }
 
 /**
+ * Projects every safely usable CURRENT House fact for an explicit Chat question.
+ *
+ * Priority may influence advisory relevance, FAQ and recommendation only. It must
+ * never censor a source-backed fact that belongs to the active canonical House.
+ */
+export function selectCanonicalChatHouseKnowledge(
+  context: CanonicalHouseRuntimeContext,
+): CanonicalHouseKnowledgeSelection {
+  const facts = context.knowledge.filter(
+    (atom) =>
+      atom.temporalStatus === 'CURRENT' &&
+      atom.category !== 'guardrail' &&
+      (atom.scope === 'PRODUCT' || atom.scope === 'DSE_KNOW_HOW'),
+  );
+  return {
+    canonicalHouseId: context.identity.houseId,
+    facts,
+    interpretations: facts
+      .filter((fact) => fact.safeInterpretation !== undefined)
+      .map((fact) => ({
+        factId: fact.id,
+        text: fact.safeInterpretation!,
+      })),
+    guardrails: [
+      ...new Set(
+        facts.flatMap((atom) => [
+          ...atom.constraints,
+          ...(atom.unsupportedConclusions ?? []),
+        ]),
+      ),
+    ],
+    priorityFaq: [],
+  };
+}
+
+/**
  * Projects canonical House knowledge for actual Runtime priorities only.
  *
  * FAQ-linked facts are preferred. When they do not provide a complete payoff,

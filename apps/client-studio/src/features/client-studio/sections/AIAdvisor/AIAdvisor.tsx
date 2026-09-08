@@ -51,7 +51,7 @@ function createAssistantSeed(text: string): Message {
  * AI Advisor — Priority coaching FAQ + seeded chat; live replies via AIService.
  */
 export function AIAdvisor() {
-  const { experience, houseKnowledge, dispatch } = useDecisionSessionRuntime();
+  const { experience, houseKnowledge, chatHouseKnowledge, dispatch } = useDecisionSessionRuntime();
   const decision = useDecisionContext();
   const analytics = useOptionalDecisionAnalytics();
   const ai = experience.context.decision.ai;
@@ -140,12 +140,12 @@ export function AIAdvisor() {
           message: text,
           decision,
           object:
-            houseKnowledge === null
+            chatHouseKnowledge === null
               ? undefined
               : {
-                  objectId: houseKnowledge.canonicalHouseId,
+                  objectId: chatHouseKnowledge.canonicalHouseId,
                   knowledge: {
-                    entries: canonicalHouseKnowledgeEntries(houseKnowledge),
+                    entries: canonicalHouseKnowledgeEntries(chatHouseKnowledge),
                   },
                 },
         });

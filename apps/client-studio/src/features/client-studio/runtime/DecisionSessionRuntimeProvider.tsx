@@ -10,6 +10,7 @@ import {
 } from 'react';
 import {
   getCanonicalHouseRuntimeContext,
+  selectCanonicalChatHouseKnowledge,
   selectCanonicalHouseKnowledge,
   type CanonicalHouseKnowledgeSelection,
 } from '@embed-engine/object-house';
@@ -109,6 +110,8 @@ export type DecisionSessionRuntimeContextValue = {
    * personalization. Null means this Runtime House has no canonical mapping.
    */
   readonly houseKnowledge: CanonicalHouseKnowledgeSelection | null;
+  /** Complete safe CURRENT facts for explicit AI Chat questions. */
+  readonly chatHouseKnowledge: CanonicalHouseKnowledgeSelection | null;
   readonly analyticsScope: {
     readonly companyId: string;
     readonly projectId: string;
@@ -634,6 +637,10 @@ export function DecisionSessionRuntimeProvider({
               canonicalHouseContext,
               base.context.decision.priorityIds,
             ),
+      chatHouseKnowledge:
+        canonicalHouseContext === null
+          ? null
+          : selectCanonicalChatHouseKnowledge(canonicalHouseContext),
       analyticsScope:
         projectBind === null ||
         projectBind.project === null ||

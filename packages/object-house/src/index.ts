@@ -118,5 +118,6 @@ export type {
 } from "./runtime-context/selectCanonicalHouseKnowledge";
 export {
   canonicalHouseKnowledgeEntries,
+  selectCanonicalChatHouseKnowledge,
   selectCanonicalHouseKnowledge,
 } from "./runtime-context/selectCanonicalHouseKnowledge";
