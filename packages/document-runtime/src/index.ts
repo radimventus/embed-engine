@@ -39,3 +39,8 @@ export type {
   DocumentMailPort,
   DocumentTimelinePort,
 } from './ports/documentPorts';
+
+export {
+  renderCanonicalCommercialProformaPdf,
+  type CanonicalCommercialProforma,
+} from './generator/canonicalCommercialProformaPdf';

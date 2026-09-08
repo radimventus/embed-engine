@@ -7,21 +7,32 @@
 </head>
 <body class="invoice">
   <header>
-    <p class="brand">CONIS</p>
+    <p class="brand">REALIVIDEO × CONIS</p>
     <h1>Proforma faktura</h1>
   </header>
+
   <section>
-    <p><strong>Číslo:</strong> {{proformaNumber}}</p>
-    <p><strong>Objednávka:</strong> {{orderId}}</p>
-    <p><strong>Odběratel:</strong> {{companyName}} ({{partnerName}})</p>
-    <p><strong>Balíček:</strong> {{packageName}}</p>
+    <p><strong>Číslo proformy:</strong> {{proformaNumber}}</p>
+    <p><strong>Odběratel:</strong> {{companyName}}</p>
+    <p><strong>Kontaktní osoba:</strong> {{partnerName}}</p>
+  </section>
+
+  <section>
+    <p><strong>Služba:</strong> {{packageName}}</p>
     <p><strong>Částka k úhradě:</strong> {{amountCzk}} CZK</p>
+  </section>
+
+  <section>
     <p><strong>Vystaveno:</strong> {{issuedAt}}</p>
     <p><strong>Splatnost:</strong> {{dueDate}}</p>
     <p><strong>Účet:</strong> {{bankAccountNumber}}</p>
     <p><strong>IBAN:</strong> {{bankIban}}</p>
     <p><strong>Variabilní symbol:</strong> {{variableSymbol}}</p>
-    <p><strong>Projekt:</strong> {{projectId}}</p>
   </section>
+
+  <footer>
+    <p>Objednávka: {{orderId}}</p>
+    <p>Projekt: {{projectId}}</p>
+  </footer>
 </body>
 </html>

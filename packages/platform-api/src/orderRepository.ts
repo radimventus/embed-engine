@@ -16,6 +16,7 @@ export type DurableOrderInput = {
     readonly email: string;
     readonly phone: string;
     readonly ico: string | null;
+    readonly address?: string;
   };
   readonly package: {
     readonly id: string;
@@ -95,6 +96,7 @@ function validateOrder(input: DurableOrderInput): DurableOrder {
       email: input.partner.email.trim().toLowerCase(),
       phone: input.partner.phone.trim(),
       ico: input.partner.ico?.trim() || null,
+      address: input.partner.address?.trim() || '',
     },
     package: {
       ...input.package,

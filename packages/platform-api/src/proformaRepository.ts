@@ -10,6 +10,16 @@ export const COMMERCIAL_PAYMENT_ACCOUNT = Object.freeze({
   bankName: 'Fio banka',
 });
 
+const REALIVIDEO_PAYMENT_ACCOUNT = Object.freeze({
+  accountNumber: '3452548011/3030',
+  iban: 'CZ3530300000003452548011',
+  bankName: 'Air Bank a.s.',
+});
+
+const REALIVIDEO_VARIABLE_SYMBOL_START =
+  20260010;
+
+
 export type DurableProforma = {
   readonly proformaId: string;
   readonly number: string;
@@ -60,7 +70,14 @@ export function buildSpdQrPayload(input: {
   readonly message: string;
 }): string {
   const amount = input.amountCzk.toFixed(2);
-  const message = input.message.replace(/[\r\n*]/g, ' ').slice(0, 60);
+  const message = input.message
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^A-Za-z0-9 -]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .toUpperCase()
+    .slice(0, 60);
   return [
     'SPD*1.0',
     `ACC:${input.iban}`,
@@ -71,9 +88,58 @@ export function buildSpdQrPayload(input: {
   ].join('*');
 }
 
-function createProforma(order: DurableOrder, issuedAt: string): DurableProforma {
-  const variableSymbol = variableSymbolFromOrderId(order.orderId);
+function nextRealivideoVariableSymbol(
+  proformas: readonly DurableProforma[],
+): string {
+  let latest =
+    REALIVIDEO_VARIABLE_SYMBOL_START - 1;
+
+  for (const proforma of proformas) {
+    if (!/^\d{8}$/.test(proforma.variableSymbol)) {
+      continue;
+    }
+
+    const value =
+      Number(proforma.variableSymbol);
+
+    if (
+      value >= REALIVIDEO_VARIABLE_SYMBOL_START
+    ) {
+      latest =
+        Math.max(latest,value);
+    }
+  }
+
+  return String(latest + 1);
+}
+
+function createProforma(
+  order: DurableOrder,
+  issuedAt: string,
+  variableSymbol:
+    string = variableSymbolFromOrderId(
+      order.orderId,
+    ),
+): DurableProforma {
   const proformaId = `proforma-${order.orderId}`;
+
+  const bankAccount =
+    order.offerSlug === 'realivideo'
+      ? REALIVIDEO_PAYMENT_ACCOUNT
+      : COMMERCIAL_PAYMENT_ACCOUNT;
+
+  const paymentMessage =
+    order.offerSlug === 'realivideo'
+      ? `REALIVIDEO ${order.package.name}`
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/[^A-Za-z0-9 -]/g, ' ')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .toUpperCase()
+          .slice(0, 60)
+      : `CONIS ${order.package.name} · ${order.partner.partnerName}`;
+
   return {
     proformaId,
     number: `PF-2026-${variableSymbol.slice(-8).padStart(8, '0')}`,
@@ -82,12 +148,12 @@ function createProforma(order: DurableOrder, issuedAt: string): DurableProforma 
     dueDate: dueDateFromIssuedAt(issuedAt),
     amountCzk: order.priceCzk,
     variableSymbol,
-    bankAccount: COMMERCIAL_PAYMENT_ACCOUNT,
+    bankAccount,
     spdPayload: buildSpdQrPayload({
-      iban: COMMERCIAL_PAYMENT_ACCOUNT.iban,
+      iban: bankAccount.iban,
       amountCzk: order.priceCzk,
       variableSymbol,
-      message: `CONIS ${order.package.name} · ${order.partner.partnerName}`,
+      message: paymentMessage,
     }),
   };
 }
@@ -105,7 +171,21 @@ export class FileProformaRepository implements ProformaRepository {
       const state = await this.read();
       const existing = state.proformas.find((item) => item.orderId === order.orderId);
       if (existing !== undefined) return { proforma: existing, created: false };
-      const proforma = createProforma(order, this.now().toISOString());
+      const variableSymbol =
+        order.offerSlug === 'realivideo'
+          ? nextRealivideoVariableSymbol(
+              state.proformas,
+            )
+          : variableSymbolFromOrderId(
+              order.orderId,
+            );
+
+      const proforma =
+        createProforma(
+          order,
+          this.now().toISOString(),
+          variableSymbol,
+        );
       await this.write({ proformas: [...state.proformas, proforma] });
       return { proforma, created: true };
     });

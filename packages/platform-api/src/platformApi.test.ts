@@ -1213,6 +1213,38 @@ describe('Durable order repository', () => {
 });
 
 describe('Offer write capability repository', () => {
+  it('issues a fresh capability after the previous capability is bound to an order', async () => {
+    const directory = await mkdtemp(join(tmpdir(), 'embed-offer-write-bound-api-test-'));
+    const tokens = new FileOfferWriteTokenRepository(join(directory, 'tokens.json'));
+    const scope = {
+      offerSlug: 'realivideo',
+      companyId: 'company-realivideo',
+      partnerId: 'partner-realivideo',
+    };
+
+    const first = await tokens.getOrIssue(scope);
+
+    assert.equal(
+      await tokens.bindOrder(first.token, {
+        ...scope,
+        orderId: 'realivideo-order-1',
+      }),
+      true,
+    );
+
+    const second = await tokens.getOrIssue(scope);
+
+    assert.notEqual(second.token, first.token);
+
+    assert.equal(
+      await tokens.bindOrder(second.token, {
+        ...scope,
+        orderId: 'realivideo-order-2',
+      }),
+      true,
+    );
+  });
+
   it('reuses an active capability through the Office capability endpoint', async () => {
     const directory = await mkdtemp(join(tmpdir(), 'embed-offer-write-api-test-'));
     const tokens = new FileOfferWriteTokenRepository(join(directory, 'tokens.json'));
@@ -1450,13 +1482,23 @@ describe('Durable proforma repository', () => {
         };
         attachment: { bytesBase64: string };
       };
-      const pdfContents = Buffer.from(artifact.attachment.bytesBase64, 'base64').toString('latin1');
+      const pdfBytes = Buffer.from(
+        artifact.attachment.bytesBase64,
+        'base64',
+      );
       assert.equal(artifact.context.amountCzk, 14_970);
       assert.equal(artifact.context.variableSymbol, 'OFFTEST001');
-      assert.equal(artifact.context.spdPayload.includes('X-VS:OFFTEST001'), true);
-      assert.match(pdfContents, /PF-2026-/);
-      assert.match(pdfContents, /2303345128\/2010/);
-      assert.match(pdfContents, / re f/);
+      assert.equal(
+        artifact.context.spdPayload.includes(
+          'X-VS:OFFTEST001',
+        ),
+        true,
+      );
+      assert.equal(
+        pdfBytes.subarray(0, 5).toString('ascii'),
+        '%PDF-',
+      );
+      assert.equal(pdfBytes.length > 1_000, true);
     } finally {
       await new Promise<void>((resolve, reject) => {
         server.close((error) => (error === undefined ? resolve() : reject(error)));

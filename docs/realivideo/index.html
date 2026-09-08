@@ -1,0 +1,5342 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Realivideo — vizuální komunikace pro realitní byznys</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --navy:#061d34;
+  --text:#162334;
+  --muted:#697582;
+  --line:#d9dde2;
+  --placeholder:#d5d5d5;
+  --max:1217px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:auto}
+body{
+  margin:0;
+  overflow-x:hidden;
+  background:#fff;
+  color:var(--navy);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+  font-size:16px;
+  font-weight:400;
+  line-height:1.375;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+}
+img,svg,video,iframe{display:block;max-width:100%}
+a{color:inherit}
+button,input,select,textarea{font:inherit}
+body,main,section,article,div,p,a,span,ul,li,button,
+h1,h2,h3,h4,.eyebrow,.lead,.scope,.price,.price-sub,.price-kicker,
+.service-head,.discount,.discount-label{
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif !important;
+}
+.container{width:min(var(--max),calc(100% - 40px));margin-inline:auto}
+.section{padding:62px 0;border-top:0}
+.section-rule{border-top:1px solid var(--line)}
+.eyebrow{
+  margin:0 0 13px;
+  color:var(--navy);
+  font-size:24px;
+  font-weight:800 !important;
+  line-height:1.2;
+  letter-spacing:0;
+  text-transform:uppercase;
+}
+h1,h2,h3,h4,p{margin-top:0}
+h1{
+  margin-bottom:0;
+  max-width:820px;
+  color:var(--navy);
+  font-size:56px;
+  font-weight:800 !important;
+  line-height:1.06;
+  letter-spacing:-.022em;
+}
+h2{
+  margin-bottom:16px;
+  color:var(--navy);
+  font-size:40px;
+  font-weight:800 !important;
+  line-height:1.12;
+  letter-spacing:-.018em;
+}
+h3{
+  margin-bottom:8px;
+  color:var(--navy);
+  font-size:24px;
+  font-weight:800;
+  line-height:1.18;
+}
+p{margin-bottom:16px;font-size:16px}
+.lead{
+  max-width:1040px;
+  margin-bottom:0;
+  color:var(--navy);
+  font-size:16px;
+  font-weight:400;
+  line-height:1.38;
+}
+.hero-support{
+  color:var(--navy);
+  font-size:19px;
+  font-weight:300;
+  line-height:1.34;
+}
+.btn{
+  display:inline-flex;
+  min-height:46px;
+  align-items:center;
+  justify-content:center;
+  padding:0 18px;
+  border:1px solid var(--navy);
+  border-radius:0;
+  background:#fff;
+  box-shadow:none;
+  color:var(--navy);
+  cursor:pointer;
+  font-size:19px;
+  font-weight:400;
+  line-height:1;
+  text-decoration:none;
+}
+.btn-primary{background:var(--navy);color:#fff}
+
+/* standalone preview header; on Realivideo it may be replaced by system header */
+.site-header{
+  position:sticky;top:0;z-index:20;
+  background:rgba(255,255,255,.97);
+  border-bottom:0;
+}
+.header-inner{min-height:62px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{color:var(--navy);font-size:16px;font-weight:800;letter-spacing:.06em;text-decoration:none}
+.nav{display:flex;align-items:center;gap:24px}
+.nav a{color:var(--navy);font-size:13px;font-weight:700;text-decoration:none}
+
+/* HERO */
+.hero{padding:26px 0 62px}
+.hero-media{
+  aspect-ratio:16/6.4;
+  margin-bottom:30px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--placeholder);
+  color:#666;font-size:14px;font-weight:400;
+}
+.hero-grid{
+  display:grid;
+  grid-template-columns:minmax(0,1.55fr) minmax(310px,.72fr);
+  gap:40px;
+  align-items:center;
+}
+.hero-copy .hero-support{margin-bottom:22px}
+.hero-copy .btn{font-size:19px}
+
+/* SERVICES — original PDF: 40 px ExtraBold service heads / 19 px Light body */
+.services-shell{margin-top:28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.services{display:grid;grid-template-columns:repeat(3,1fr)}
+.service{padding:28px 22px 30px;min-height:165px}
+.service+.service{border-left:0}
+.service-head{
+  display:flex;align-items:baseline;gap:8px;
+  margin-bottom:9px;
+  color:var(--navy);
+  font-size:40px;
+  font-weight:800;
+  line-height:1.08;
+  letter-spacing:-.018em;
+}
+.service p{
+  margin:0;
+  font-size:18.67px;
+  font-weight:300;
+  line-height:1.30;
+}
+
+/* REALITY CASES */
+.cases-placeholder{
+  min-height:365px;
+  margin-top:22px;
+  display:flex;align-items:center;justify-content:center;
+  padding:28px;
+  background:var(--placeholder);
+  color:#666;
+  font-size:14px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-align:center;
+}
+
+/* DEVELOPERS */
+.cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px}
+.project-media{
+  aspect-ratio:1.0394/1;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:15px;
+  background:var(--placeholder);
+  color:#666;font-size:13px;
+}
+.project-card h3{font-size:24px;font-weight:800 !important;margin-bottom:5px}
+.scope{
+  color:var(--navy);
+  font-size:14.67px;
+  font-weight:400;
+  line-height:1.25;
+  letter-spacing:0;
+  text-transform:uppercase;
+}
+
+/* BUILDERS */
+.cards-2{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:28px}
+.builder-card{border:0}
+.builder-media{
+  aspect-ratio:1.5671/1;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--placeholder);
+  color:#666;font-size:13px;
+}
+.builder-body{padding:9px 4px 8px}
+.builder-body h3{font-size:24px;font-weight:800 !important;margin-bottom:5px}
+
+/* ORDER STEPS */
+.steps{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  margin:28px 0 44px;
+  border-top:0;
+  border-bottom:0;
+}
+.step{min-height:150px;padding:10px 10px 16px}
+.step+.step{border-left:0}
+.step-scheme{width:100%;height:66px;margin-bottom:6px;overflow:visible}
+.step h3{margin-bottom:6px;font-size:21.33px;font-weight:700 !important;line-height:1.15}
+.step p{margin-bottom:5px;color:var(--navy);font-size:14.67px;font-weight:400;line-height:1.25}
+
+/* inline SVG faithfully reconstructs supplied 1–4 scheme without huge base64 payload */
+.step-scheme .solid,.step-scheme .dash{stroke:var(--navy);fill:none}
+.step-scheme .solid{stroke-width:7}
+.step-scheme .dash{stroke-width:7;stroke-dasharray:7 21}
+.step-scheme .circle{fill:var(--navy)}
+.step-scheme .num{fill:#fff;font-family:"Inter",Arial,sans-serif;font-size:52px;font-weight:800;text-anchor:middle;dominant-baseline:middle}
+
+/* PRICING — sizes mapped from original PDF */
+.pricing-title{
+  margin:10px 0 18px;
+  color:var(--navy);
+  font-size:40px;
+  font-weight:800 !important;
+  line-height:1.12;
+  letter-spacing:-.018em;
+}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-bottom:54px;padding:22px 0 28px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.price-card{
+  min-height:0;
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  padding:0 8px;
+  border:0;
+  border-radius:0;
+  background:#fff;
+  box-shadow:none;
+}
+.price-card.featured{border:0}
+.badge{
+  position:absolute;
+  top:1px;
+  right:8px;
+  padding:0;
+  background:transparent;
+  color:#b89263;
+  font-size:16px;
+  font-weight:700 !important;
+  letter-spacing:0;
+}
+.price-kicker{margin-bottom:5px;color:var(--navy);font-size:16px;font-weight:400;line-height:1.2}
+.price-kicker strong{font-weight:700 !important}
+.price-sub{
+  margin-bottom:14px;
+  color:var(--navy);
+  font-size:24px;
+  font-weight:800 !important;
+  line-height:1.16;
+}
+.features{flex:1;list-style:none;margin:0 0 16px;padding:0}
+.features li{
+  padding:3px 0;
+  border-bottom:0;
+  font-size:16px;
+  font-weight:400;
+  line-height:1.20;
+}
+.features li::before{content:"✓ ";font-weight:700;color:var(--navy)}
+.features li.strong{font-weight:700}
+.price{
+  margin:18px 0 14px;
+  color:var(--navy);
+  font-size:24px;
+  font-weight:800 !important;
+  line-height:1.15;
+}
+.select-product{
+  width:100%;
+  min-height:38px;
+  margin-top:auto;
+  border:0;
+  background:var(--navy);
+  color:#fff;
+  font-size:18.67px;
+  font-weight:400;
+}
+.pricing-grid.secondary .price-card{min-height:0}
+.pricing-grid.secondary .price-sub{margin-bottom:9px}
+
+/* ORDER SLOT */
+.selected-product{
+  display:none;
+  margin-top:16px;
+  padding:12px 14px;
+  border:1px solid var(--line);
+  font-size:16px;font-weight:700;
+}
+.selected-product.is-visible{display:block}
+.order-placeholder{
+  min-height:260px;
+  margin-top:18px;
+  display:flex;align-items:center;justify-content:center;
+  padding:28px;
+  background:var(--placeholder);
+  color:#666;
+  font-size:14px;font-weight:700;letter-spacing:.04em;text-align:center;
+}
+
+/* CONIS BENEFIT — original PDF parity: white editorial row */
+.conis{
+  padding:30px 0 32px;
+  background:#fff;
+  color:var(--navy);
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+}
+.conis .container{
+  display:grid;
+  grid-template-columns:.72fr 1.45fr;
+  gap:24px;
+  align-items:center;
+}
+.conis-media{
+  aspect-ratio:1.75/1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--placeholder);
+  color:#666;
+  font-size:13px;
+}
+.conis .eyebrow,.conis h2,.conis p{color:var(--navy)}
+.discount{
+  margin:2px 0 8px;
+  color:var(--navy);
+  font-size:64px;
+  font-weight:900;
+  line-height:.86;
+  letter-spacing:-.04em;
+}
+.discount-label{
+  margin:0 0 16px;
+  color:var(--navy);
+  font-size:20px;
+  font-weight:800;
+}
+.conis h2{font-size:0;margin:0}
+.conis p{max-width:760px;font-size:14px;line-height:1.3}
+.conis .btn{
+  float:right;
+  min-width:315px;
+  min-height:38px;
+  margin-top:8px;
+  border:0;
+  background:var(--navy);
+  color:#fff;
+  font-size:14px;
+}
+
+/* FOUNDER */
+.founder-grid{display:grid;grid-template-columns:minmax(0,1fr) 293px;gap:30px;align-items:center}
+.founder-media{
+  aspect-ratio:1/1;
+  min-height:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--placeholder);color:#666;
+}
+.founder-grid h2{font-size:37.33px;font-weight:800 !important}
+.founder-grid .lead{margin-bottom:14px;font-size:14px}
+
+/* CONTACT — original PDF headline 56px */
+#kontakt{padding-top:60px;padding-bottom:62px;text-align:center}
+#kontakt h2{font-size:56px;font-weight:800 !important;margin-bottom:9px}
+.contact-actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.contact-lines{display:grid;gap:4px;justify-content:center;font-size:13px}
+
+/* preview footer */
+
+@media(max-width:1024px){
+  .container{width:min(var(--max),calc(100% - 32px))}
+  h1{font-size:50px}
+  h2,.pricing-title{font-size:38px}
+  .service-head{font-size:34px}
+  .hero-grid{grid-template-columns:1.3fr .7fr;gap:34px}
+  .cards-3,.pricing-grid{gap:16px}
+  .step{padding-inline:14px}
+}
+@media(max-width:768px){
+  .site-header{position:static}
+  .nav{display:none}
+  .section{padding:52px 0}
+  .hero{padding:18px 0 54px}
+  .hero-media{aspect-ratio:16/9;margin-bottom:34px}
+  .hero-grid,.founder-grid,.conis .container{grid-template-columns:1fr}
+  .conis .btn{float:none;min-width:0;width:100%}
+  .hero-grid{gap:22px}
+  h1{font-size:46px}
+  h2,.pricing-title{font-size:36px}
+  .services,.cards-3,.cards-2,.pricing-grid{grid-template-columns:1fr}
+  .service+.service{border-left:0;border-top:1px solid var(--line)}
+  .service{min-height:0}
+  .project-media,.builder-media{aspect-ratio:1.5671/1;border-top:1px solid var(--line)}
+  .step:nth-child(4){border-top:0}
+  .price-card,.pricing-grid.secondary .price-card{min-height:0}
+}
+@media(max-width:430px){
+  .container{width:min(var(--max),calc(100% - 24px))}
+  body{font-size:15px}
+  .section{padding:46px 0}
+  .eyebrow{font-size:13px}
+  h1{font-size:40px;line-height:1.03}
+  h2,.pricing-title{font-size:31px}
+  #kontakt h2{font-size:40px}
+  .service-head{font-size:30px}
+  .service p{font-size:17px}
+  .hero-support{font-size:17px}
+  .btn{min-height:44px;font-size:16px}
+  .cases-placeholder{min-height:420px}
+  .steps{grid-template-columns:1fr}
+  .step+.step{border-left:0;border-top:0}
+  .step{min-height:0}
+  .step-scheme{height:auto}
+  .price-sub{font-size:22px}
+  .features li{font-size:15px}
+  .price{font-size:22px}
+  .select-product{font-size:16px}
+  .discount{font-size:60px}
+  .discount-label{font-size:22px}
+  .conis h2{font-size:31px}
+  .conis .btn{width:100%;min-width:0}
+  .founder-grid{grid-template-columns:1fr}
+  .founder-media{width:min(100%,293px)}
+  .contact-actions{flex-direction:column}
+  .contact-actions .btn{width:100%}
+}
+/* When Realivideo supplies its own system header/footer, add class="system-shell" to body. */
+body.system-shell .site-header{display:none}
+
+/* VR-06 — typography color authority */
+body,main,section,article,div,p,a,span,ul,li,
+h1,h2,h3,h4,.eyebrow,.lead,.scope,.price,.price-sub,.price-kicker,
+.service-head,.discount,.discount-label{
+  color:var(--navy);
+}
+
+
+/* VR-06 — unified button system */
+.btn,
+.select-product,
+.conis .btn,
+.contact-actions .btn{
+  min-height:46px;
+  height:46px;
+  padding:0 20px;
+  border:2px solid var(--navy);
+  border-radius:6px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+  font-weight:700 !important;
+  line-height:1;
+  text-decoration:none;
+  box-shadow:none;
+}
+.btn-primary,
+.select-product,
+.conis .btn{
+  background:var(--navy);
+  color:#fff !important;
+}
+.btn:not(.btn-primary),
+.contact-actions .btn:not(.btn-primary){
+  background:#fff;
+  color:var(--navy) !important;
+}
+
+
+/* VR-06 — order scheme fills the whole cell width */
+.step-scheme{
+  display:block;
+  width:100%;
+  height:auto;
+  max-width:none;
+  margin:0 0 14px;
+  overflow:visible;
+}
+
+
+/* VR-06 — continuous editorial rhythm */
+.hero{padding-top:28px;padding-bottom:68px}
+.hero-media{margin-bottom:38px}
+.hero-grid{gap:48px}
+
+.section{padding-top:68px;padding-bottom:68px}
+.section > .container > .eyebrow{margin-bottom:12px}
+.section h2{margin-bottom:18px}
+.lead{margin-bottom:22px}
+
+.services-shell{margin-top:32px}
+.service{padding-top:30px;padding-bottom:32px}
+
+.cases-placeholder{margin-top:28px}
+.cards-3,.cards-2{margin-top:30px}
+.project-media,.builder-media{margin-bottom:12px}
+
+.steps{
+  margin-top:34px;
+  margin-bottom:54px;
+  gap:20px;
+}
+.step{padding:0 6px 8px;min-height:0}
+
+.pricing-title{margin-top:18px;margin-bottom:22px}
+.pricing-grid{
+  padding-top:26px;
+  padding-bottom:30px;
+  margin-bottom:58px;
+  gap:24px;
+}
+.price-card{padding-left:10px;padding-right:10px}
+.features{margin-bottom:22px}
+.price{margin-top:22px;margin-bottom:18px}
+
+.order-placeholder{margin-top:24px}
+
+.conis{padding-top:42px;padding-bottom:44px}
+.conis .container{gap:34px}
+.founder-grid{gap:42px}
+
+#kontakt{padding-top:68px;padding-bottom:70px}
+.contact-actions{margin-top:22px;margin-bottom:22px}
+
+
+@media(max-width:1024px){
+  .section{padding-top:58px;padding-bottom:58px}
+  .steps{gap:16px}
+}
+@media(max-width:768px){
+  .hero{padding-bottom:54px}
+  .hero-grid{gap:28px}
+  .section{padding-top:52px;padding-bottom:52px}
+  .step-scheme{width:100%;height:auto;margin-bottom:12px}
+}
+@media(max-width:430px){
+  .btn,.select-product,.conis .btn,.contact-actions .btn{
+    min-height:46px;
+    height:46px;
+    width:100%;
+    font-size:16px;
+  }
+  .step-scheme{width:100%;height:auto}
+  .steps{gap:28px}
+  .pricing-grid{gap:28px}
+}
+
+
+/* VR-07 — definitive navy typography authority */
+:root{--navy:#001b33;}
+html body,
+html body main,
+html body section,
+html body h1,html body h2,html body h3,html body h4,
+html body p,html body li,html body span,
+html body .eyebrow,html body .lead,html body .scope,
+html body .service-head,html body .pricing-title,
+html body .price-kicker,html body .price-sub,html body .price,
+html body .discount,html body .discount-label{
+  color:var(--navy) !important;
+}
+
+
+/* VR-07 — hero lower row 2:1 */
+.hero-grid{
+  grid-template-columns:minmax(0,2fr) minmax(0,1fr) !important;
+}
+
+
+/* VR-07 — header / uppercase-label calibration */
+.site-header .brand,
+.site-header .logo,
+.site-header [class*="brand"]{
+  font-size:110% !important;
+  font-weight:800 !important;
+  letter-spacing:-.01em;
+  color:var(--navy) !important;
+}
+.eyebrow{
+  font-size:14.4px !important; /* 16px - 10% */
+  font-weight:700 !important;
+  letter-spacing:.035em;
+}
+
+
+/* VR-07 — Professional services cards */
+.services-shell{
+  border:0 !important;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:18px;
+}
+.service,
+.service+.service{
+  border:1px solid var(--line) !important;
+  border-radius:12px !important;
+  padding:28px 24px 30px !important;
+  background:#fff;
+}
+
+
+/* VR-07 — unified +10% body typography */
+body{font-size:17.6px !important;}
+p,
+li,
+.lead,
+.scope,
+.service p,
+.step p,
+.features li,
+.conis p,
+.founder-grid .lead,
+.contact-lines{
+  font-size:17.6px !important;
+  line-height:1.42 !important;
+  font-weight:400;
+}
+
+
+/* VR-07 — product/service package cards */
+.pricing-grid{
+  border-top:0 !important;
+  border-bottom:0 !important;
+  align-items:stretch;
+}
+.price-card,
+.price-card.featured{
+  border:1px solid var(--line) !important;
+  border-radius:12px !important;
+  padding:24px 22px 22px !important;
+  background:#fff;
+}
+.price-card.featured{
+  border-color:var(--navy) !important;
+  border-width:2px !important;
+}
+
+
+/* VR-07 — spacing recalibration */
+.services-shell{margin-top:28px !important}
+.cards-3,.cards-2{margin-top:28px !important}
+.steps{margin-top:30px !important;margin-bottom:48px !important}
+.pricing-grid{padding-top:4px !important;padding-bottom:8px !important;gap:18px !important}
+.pricing-title{margin-bottom:20px !important}
+.price-card .features{margin-bottom:24px !important}
+.price-card .price{margin-top:24px !important}
+.section{padding-top:66px !important;padding-bottom:66px !important}
+
+
+@media(max-width:768px){
+  .hero-grid{grid-template-columns:1fr !important}
+  .services-shell{grid-template-columns:1fr}
+}
+@media(max-width:430px){
+  body{font-size:16.5px !important}
+  p,li,.lead,.scope,.service p,.step p,.features li,.conis p,
+  .founder-grid .lead,.contact-lines{font-size:16.5px !important}
+  .eyebrow{font-size:13px !important}
+  .service,.price-card,.price-card.featured{padding:22px 18px !important}
+}
+
+
+/* VR-08 — Professional services: exact thirds / equal height */
+.services-shell{
+  display:block !important;
+  border:0 !important;
+}
+.services{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:18px !important;
+  align-items:stretch !important;
+}
+.service,
+.service + .service{
+  width:100%;
+  height:100%;
+  min-width:0;
+  border:1px solid var(--line) !important;
+  border-radius:12px !important;
+}
+
+
+/* VR-08 — unified header/menu/heading typography +5% */
+.site-header .brand,
+.site-header .nav a,
+h1,h2,h3,h4,
+.pricing-title,
+.service-head,
+.price-sub{
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif !important;
+}
+.site-header .brand{
+  font-size:17.33px !important; /* prior ~16.5px +5% */
+  font-weight:800 !important;
+  letter-spacing:.02em !important;
+}
+.site-header .nav a{
+  font-size:13.65px !important; /* 13px +5% */
+  font-weight:800 !important;
+}
+h1{font-size:58.8px !important;}       /* 56 +5% */
+h2{font-size:42px !important;}         /* 40 +5% */
+h3{font-size:25.2px !important;}       /* 24 +5% */
+.pricing-title{font-size:42px !important;}
+.service-head{font-size:42px !important;}
+.price-sub{font-size:25.2px !important;}
+
+
+/* VR-08 — CONIS benefit immediately under section b heading; top aligned */
+.conis .container{
+  align-items:start !important;
+}
+.conis-media{
+  align-self:start !important;
+  margin-top:0 !important;
+}
+.conis .eyebrow{
+  margin-top:0 !important;
+}
+
+
+/* VR-08 — placement polish for CONIS inside product section */
+#balicky .conis{
+  margin:0 0 28px !important;
+}
+#balicky .conis .container{
+  width:100% !important;
+  max-width:none !important;
+}
+
+
+@media(max-width:768px){
+  .services{grid-template-columns:1fr !important}
+  h1{font-size:48.3px !important}
+  h2,.pricing-title,.service-head{font-size:37.8px !important}
+  h3,.price-sub{font-size:23.1px !important}
+  .site-header .brand{font-size:16px !important}
+}
+
+
+/* VR-09 — unified header/menu/uppercase heading typography */
+.site-header .brand,
+.site-header .nav a,
+.eyebrow{
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif !important;
+  font-size:15.5px !important;
+  font-weight:800 !important;
+  letter-spacing:.025em !important;
+  line-height:1.15 !important;
+  text-transform:uppercase;
+  color:var(--navy) !important;
+}
+
+
+/* VR-09 — button and selected-state system */
+:root{
+  --gold:#c89b2d;
+}
+
+.btn,
+.select-product,
+.conis .btn,
+.contact-actions .btn{
+  transition:
+    background-color .18s ease,
+    border-color .18s ease,
+    color .18s ease,
+    transform .18s ease;
+}
+
+.btn:hover,
+.select-product:hover,
+.conis .btn:hover,
+.contact-actions .btn:hover{
+  background:var(--gold) !important;
+  border-color:var(--gold) !important;
+  color:#fff !important;
+}
+
+.select-product{
+  background:var(--navy) !important;
+  border-color:var(--navy) !important;
+  color:#fff !important;
+}
+
+.price-card.recommended{
+  border:2px solid var(--gold) !important;
+}
+
+.price-card.recommended .badge{
+  color:var(--gold) !important;
+}
+
+.price-card.is-selected{
+  border-color:var(--gold) !important;
+  box-shadow:0 0 0 1px var(--gold) inset;
+}
+
+.price-card.is-selected .select-product{
+  background:var(--gold) !important;
+  border-color:var(--gold) !important;
+  color:#fff !important;
+}
+
+#contact-project-btn{
+  background:#fff !important;
+  border-color:var(--gold) !important;
+  color:var(--gold) !important;
+}
+#contact-project-btn:hover{
+  background:var(--gold) !important;
+  border-color:var(--gold) !important;
+  color:#fff !important;
+}
+
+
+.package-note{
+  margin-top:auto;
+  padding-top:12px;
+  color:var(--navy) !important;
+  font-size:17.6px;
+  font-weight:700;
+  line-height:1.35;
+}
+.pricing-grid.secondary .features{
+  margin-bottom:8px !important;
+}
+
+
+/* VR-10 */
+.product-intro{
+  text-align:center;
+  max-width:920px;
+  margin:0 auto 10px;
+}
+.product-intro .lead{
+  margin-left:auto;
+  margin-right:auto;
+}
+.invoice-note{
+  text-align:center;
+  margin:8px auto 34px !important;
+  max-width:920px;
+  color:var(--navy) !important;
+}
+
+:root{
+  --hover:#7f8c98;
+  --recommend:#f3b819;
+}
+
+.select-product{
+  background:var(--navy) !important;
+  border-color:var(--navy) !important;
+  color:#fff !important;
+}
+
+.btn:hover,
+.select-product:hover,
+.conis .btn:hover{
+  background:var(--hover) !important;
+  border-color:var(--hover) !important;
+  color:#fff !important;
+}
+
+.price-card.is-selected .select-product{
+  background:var(--hover) !important;
+  border-color:var(--hover) !important;
+  color:#fff !important;
+}
+.price-card.is-selected{
+  box-shadow:0 0 0 2px var(--hover) inset;
+}
+
+.price-card.recommended,
+.price-card.featured.recommended{
+  border:2px solid var(--recommend) !important;
+}
+.price-card.recommended .badge,
+.price-card.featured.recommended .badge{
+  color:var(--recommend) !important;
+  text-transform:uppercase !important;
+  font-weight:800 !important;
+}
+.price-card.recommended.is-selected,
+.price-card.featured.recommended.is-selected{
+  border-color:var(--recommend) !important;
+  box-shadow:0 0 0 2px var(--hover) inset;
+}
+
+.conis .btn{
+  background:var(--navy) !important;
+  border-color:var(--navy) !important;
+  color:#fff !important;
+}
+
+#contact-project-btn{
+  background:#fff !important;
+  border-color:var(--navy) !important;
+  color:var(--navy) !important;
+}
+#contact-project-btn:hover{
+  background:var(--hover) !important;
+  border-color:var(--hover) !important;
+  color:#fff !important;
+}
+
+
+/* VR-11 — system-wide hover authority */
+:root{
+  --hover:#7f8c98;
+  --selected-fill:#e4e7ea;
+}
+
+.btn,
+.select-product,
+.conis .btn,
+.contact-actions .btn{
+  text-decoration:none !important;
+}
+
+.btn:hover,
+.select-product:hover,
+.conis .btn:hover,
+.contact-actions .btn:hover{
+  background:var(--hover) !important;
+  border-color:transparent !important;
+  border-style:solid !important;
+  color:#fff !important;
+  text-decoration:none !important;
+  box-shadow:none !important;
+}
+
+
+/* VR-11 — selected package card state */
+.price-card{
+  transition:background-color .18s ease,border-color .18s ease;
+}
+
+.price-card.is-selected{
+  border-color:var(--navy) !important;
+  background:var(--selected-fill) !important;
+  box-shadow:none !important;
+}
+
+.price-card.is-selected:hover{
+  border-color:var(--navy) !important;
+  background:var(--selected-fill) !important;
+}
+
+.price-card.is-selected .select-product{
+  background:var(--navy) !important;
+  border-color:var(--navy) !important;
+  color:#fff !important;
+}
+
+.price-card.is-selected .select-product:hover{
+  background:var(--hover) !important;
+  border-color:transparent !important;
+  color:#fff !important;
+}
+
+/* Recommended cards retain yellow authority until selected;
+   selected state takes navy border + light-gray fill per latest rule. */
+.price-card.recommended.is-selected,
+.price-card.featured.recommended.is-selected{
+  border-color:var(--navy) !important;
+  background:var(--selected-fill) !important;
+  box-shadow:none !important;
+}
+
+
+/* VR-11 — CONIS CTA aligns flush with the content/card width */
+.conis .btn{
+  display:flex !important;
+  width:100% !important;
+  max-width:none !important;
+  margin-left:0 !important;
+  margin-right:0 !important;
+  float:none !important;
+}
+
+
+/* VR-11 — breathing room above pricing group titles */
+.pricing-title{
+  margin-top:34px !important;
+}
+
+
+/* VR-11 — inline contact links */
+.contact-lines{
+  display:flex !important;
+  flex-wrap:wrap;
+  justify-content:center;
+  align-items:center;
+  gap:8px !important;
+  color:var(--navy) !important;
+}
+.contact-lines a{
+  color:var(--navy) !important;
+  text-decoration:none !important;
+}
+.contact-lines a:hover{
+  color:var(--navy) !important;
+  text-decoration:none !important;
+}
+.contact-separator{
+  color:var(--navy) !important;
+}
+
+
+/* VR-12 — default card surfaces */
+.service,
+.price-card,
+.price-card.featured,
+.price-card.recommended,
+.price-card.featured.recommended{
+  background:#f7f8f9 !important;
+}
+
+
+/* VR-12 — package button text authority */
+.select-product,
+.select-product:visited,
+.select-product:hover,
+.select-product:active,
+.price-card.is-selected .select-product,
+.price-card.is-selected .select-product:hover{
+  color:#fff !important;
+  text-decoration:none !important;
+}
+
+
+/* VR-12 — header brand is static text */
+.site-header .brand{
+  cursor:default !important;
+  text-decoration:none !important;
+  pointer-events:none !important;
+  user-select:text;
+}
+
+
+/* VR-12 — menu and text-link hover */
+.site-header .nav a{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:0 8px;
+  border-radius:6px;
+  text-decoration:none !important;
+  transition:background-color .18s ease,color .18s ease;
+}
+.site-header .nav a:hover{
+  background:#e4e7ea !important;
+  color:var(--navy) !important;
+  text-decoration:none !important;
+}
+
+.contact-lines a{
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:0 6px;
+  border-radius:6px;
+  text-decoration:none !important;
+  transition:background-color .18s ease,color .18s ease;
+}
+.contact-lines a:hover{
+  background:#e4e7ea !important;
+  color:var(--navy) !important;
+  text-decoration:none !important;
+}
+
+
+/* VR-12 — hero CTA aligns with 3rd services card */
+.hero-copy .btn{
+  width:100% !important;
+  max-width:none !important;
+}
+
+
+/* VR-12 — CONIS CTA aligns to the VIZUALIZACE card column */
+#balicky .conis .container{
+  display:grid !important;
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:18px !important;
+  align-items:start !important;
+}
+#balicky .conis-media{
+  grid-column:1 / 2;
+}
+#balicky .conis .container > div:last-child{
+  grid-column:2 / 4;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  column-gap:18px;
+}
+#balicky .conis .container > div:last-child .eyebrow,
+#balicky .conis .container > div:last-child .discount,
+#balicky .conis .container > div:last-child .discount-label,
+#balicky .conis .container > div:last-child p{
+  grid-column:1 / 3;
+}
+#balicky .conis .container > div:last-child .btn{
+  grid-column:2 / 3;
+  width:100% !important;
+  margin:8px 0 0 !important;
+}
+
+
+@media(max-width:768px){
+  #balicky .conis .container{
+    grid-template-columns:1fr !important;
+  }
+  #balicky .conis-media,
+  #balicky .conis .container > div:last-child{
+    grid-column:1 !important;
+  }
+  #balicky .conis .container > div:last-child{
+    grid-template-columns:1fr;
+  }
+  #balicky .conis .container > div:last-child .eyebrow,
+  #balicky .conis .container > div:last-child .discount,
+  #balicky .conis .container > div:last-child .discount-label,
+  #balicky .conis .container > div:last-child p,
+  #balicky .conis .container > div:last-child .btn{
+    grid-column:1 !important;
+  }
+}
+
+
+/* VR-13 — package button text visibility authority */
+.price-card .select-product,
+.price-card .select-product:link,
+.price-card .select-product:visited,
+.price-card .select-product:hover,
+.price-card .select-product:focus,
+.price-card .select-product:active,
+.price-card.is-selected .select-product,
+.price-card.is-selected .select-product:hover{
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  opacity:1 !important;
+  text-shadow:none !important;
+  text-decoration:none !important;
+}
+
+
+/* VR-13 — anchor landing geometry */
+.section-rule[id],
+section[id]{
+  scroll-margin-top:76px;
+}
+.anchor-line-target{
+  position:relative;
+}
+
+
+/* VR-13 — stronger spacing above a)/b) product group headings */
+.pricing-title{
+  margin-top:52px !important;
+}
+
+
+/* VR-13 — whole package card is clickable */
+.price-card{
+  cursor:pointer;
+}
+.price-card:focus-visible{
+  outline:2px solid var(--navy);
+  outline-offset:3px;
+}
+.price-card .select-product{
+  width:75% !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  position:relative;
+  z-index:2;
+}
+
+
+/* VR-14 — live media + card hover */
+.service,
+.price-card{
+  transition:background-color .18s ease,border-color .18s ease;
+}
+.service:hover,
+.price-card:not(.is-selected):hover{
+  background:#e4e7ea !important;
+}
+.price-card.is-selected:hover{
+  background:#e4e7ea !important;
+  border-color:var(--navy) !important;
+}
+
+.hero-media.media-live,
+.project-media.media-live,
+.builder-media.media-live,
+.conis-media.media-live,
+.founder-media.media-live{
+  padding:0 !important;
+  overflow:hidden;
+}
+.media-live img,
+.media-live wistia-player{
+  display:block;
+  width:100%;
+  height:100%;
+}
+.media-live img{
+  object-fit:cover;
+}
+.hero-media.media-live wistia-player,
+.project-media.media-live wistia-player{
+  width:100%;
+  height:auto;
+}
+.conis-builder-image{
+  border:1px solid #d7dce0 !important;
+}
+
+/* Wistia pre-definition placeholders */
+wistia-player[media-id="xa2s44wwet"]:not(:defined){
+  background:center / contain no-repeat url("https://fast.wistia.com/embed/medias/xa2s44wwet/swatch");
+  display:block;filter:blur(5px);padding-top:50%;
+}
+wistia-player[media-id="vceryswqqv"]:not(:defined){
+  background:center / contain no-repeat url("https://fast.wistia.com/embed/medias/vceryswqqv/swatch");
+  display:block;filter:blur(5px);padding-top:56.25%;
+}
+wistia-player[media-id="53zcam8uuf"]:not(:defined){
+  background:center / contain no-repeat url("https://fast.wistia.com/embed/medias/53zcam8uuf/swatch");
+  display:block;filter:blur(5px);padding-top:56.25%;
+}
+wistia-player[media-id="lciempxu0r"]:not(:defined){
+  background:center / contain no-repeat url("https://fast.wistia.com/embed/medias/lciempxu0r/swatch");
+  display:block;filter:blur(5px);padding-top:56.25%;
+}
+
+
+/* VR-15 — final media geometry */
+.hero-media.media-live{
+  aspect-ratio:2 / 1 !important;
+  border-radius:12px !important;
+  overflow:hidden !important;
+}
+
+.project-media.media-live{
+  aspect-ratio:16 / 9 !important;
+  border-radius:9px !important;
+  overflow:hidden !important;
+}
+
+.builder-media.media-live{
+  aspect-ratio:16 / 9 !important;
+  border-radius:9px !important;
+  overflow:hidden !important;
+}
+
+.conis-media.media-live,
+.founder-media.media-live{
+  border-radius:9px !important;
+  overflow:hidden !important;
+}
+
+.hero-media.media-live wistia-player,
+.project-media.media-live wistia-player,
+.builder-media.media-live img,
+.conis-media.media-live img,
+.founder-media.media-live img{
+  width:100% !important;
+  height:100% !important;
+  display:block !important;
+}
+
+.builder-media.media-live img,
+.conis-media.media-live img,
+.founder-media.media-live img{
+  object-fit:cover !important;
+}
+
+.conis-builder-image{
+  border:1px solid #d7dce0 !important;
+}
+
+
+/* VR-16 — builders section detail */
+.builder-body{
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
+}
+.builder-body p{
+  color:var(--navy) !important;
+  font-size:17.6px !important;
+  line-height:1.42 !important;
+  margin-bottom:18px;
+}
+.builder-link{
+  align-self:flex-start;
+  min-width:150px;
+  margin-top:auto;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+}
+.builder-link:hover{
+  background:#7f8c98 !important;
+  border-color:transparent !important;
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  text-decoration:none !important;
+}
+
+
+/* VR-17 — builders card containment */
+.builder-card{
+  display:flex !important;
+  flex-direction:column !important;
+  min-width:0;
+  overflow:hidden;
+}
+
+.builder-body{
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+}
+
+.builder-body p{
+  margin-bottom:18px !important;
+}
+
+.builder-link{
+  align-self:flex-start !important;
+  margin-top:0 !important;
+  margin-bottom:0 !important;
+  min-width:150px;
+  position:static !important;
+  transform:none !important;
+}
+
+
+/* VR-18 — builder CTAs centered and vertically aligned */
+.builder-card{
+  display:flex !important;
+  flex-direction:column !important;
+}
+
+.builder-body{
+  display:flex !important;
+  flex-direction:column !important;
+  flex:1 1 auto !important;
+}
+
+.builder-body p{
+  margin-bottom:18px !important;
+}
+
+/* Both CTA buttons sit on the same bottom baseline of equal-height cards. */
+.builder-link{
+  align-self:center !important;
+  margin-top:auto !important;
+  margin-left:auto !important;
+  margin-right:auto !important;
+  min-width:150px;
+  position:static !important;
+  transform:none !important;
+}
+
+
+/* VR-19 — integrated Realivideo order module */
+#rv-order{
+  margin-top:34px;
+  color:var(--navy);
+  font-family:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+#rv-order *{box-sizing:border-box}
+#rv-order .rv-order-head{
+  max-width:850px;
+  margin:0 auto 26px;
+  text-align:center;
+}
+#rv-order .rv-order-eyebrow{
+  margin-bottom:9px;
+  font-size:14px;
+  font-weight:800;
+  letter-spacing:.035em;
+  text-transform:uppercase;
+}
+#rv-order .rv-order-head h2{
+  margin:0 0 10px;
+  font-size:34px !important;
+  line-height:1.1;
+}
+#rv-order .rv-order-head p{
+  margin:0;
+  font-size:17.6px !important;
+}
+#rv-order .rv-checkout{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(320px,.65fr);
+  gap:24px;
+  align-items:start;
+}
+#rv-order .rv-panel{
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#f7f8f9;
+  overflow:hidden;
+}
+#rv-order .rv-panel-head{
+  padding:20px 22px 17px;
+  border-bottom:1px solid var(--line);
+}
+#rv-order .rv-panel-head h3{
+  margin:0 0 5px;
+  font-size:24px !important;
+}
+#rv-order .rv-panel-head p{
+  margin:0;
+  font-size:14px !important;
+}
+#rv-order .rv-panel-body{padding:20px 22px 22px}
+#rv-order .rv-cart-list{display:grid;gap:10px}
+#rv-order .rv-cart-empty{
+  padding:24px 16px;
+  border:1px dashed #b9c0c7;
+  border-radius:9px;
+  text-align:center;
+  background:#fff;
+  font-size:15px;
+}
+#rv-order .rv-cart-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto;
+  gap:13px;
+  align-items:center;
+  padding:14px 15px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#fff;
+}
+#rv-order .rv-cart-title{font-size:16px;font-weight:800}
+#rv-order .rv-cart-meta{margin-top:3px;font-size:13px}
+#rv-order .rv-cart-price{
+  font-size:18px;
+  font-weight:900;
+  white-space:nowrap;
+  text-align:right;
+}
+#rv-order .rv-price-old{
+  display:block;
+  font-size:12px;
+  font-weight:400;
+  text-decoration:line-through;
+  opacity:.6;
+}
+#rv-order .rv-price-benefit{
+  display:block;
+  margin-top:2px;
+  color:#f3b819;
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+#rv-order .rv-remove{
+  width:32px;
+  height:32px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:var(--navy);
+  font-size:18px;
+}
+#rv-order .rv-remove:hover{background:#e4e7ea}
+#rv-order .rv-add-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:10px;
+  margin-top:15px;
+}
+#rv-order select{
+  width:100%;
+  min-height:46px;
+  padding:0 40px 0 14px;
+  border:1px solid var(--navy);
+  border-radius:6px;
+  background:#fff;
+  color:var(--navy);
+  font-weight:600;
+}
+#rv-order .rv-btn{
+  min-height:46px;
+  border:0;
+  border-radius:6px;
+  padding:0 18px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--navy);
+  color:#fff !important;
+  -webkit-text-fill-color:#fff !important;
+  font-weight:800;
+  text-decoration:none !important;
+}
+#rv-order .rv-btn:hover{
+  background:#7f8c98 !important;
+  color:#fff !important;
+}
+#rv-order .rv-mode{
+  margin-top:22px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+}
+#rv-order .rv-mode-title{
+  margin-bottom:9px;
+  font-size:13px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+#rv-order .rv-mode-switch{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+#rv-order .rv-mode-btn{
+  min-height:46px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#fff;
+  color:var(--navy);
+  font-weight:800;
+}
+#rv-order .rv-mode-btn:hover{background:#e4e7ea}
+#rv-order .rv-mode-btn.active{
+  border-color:var(--navy);
+  background:var(--navy);
+  color:#fff !important;
+}
+#rv-order .rv-conis-note{
+  display:none;
+  margin-top:11px;
+  padding:11px 13px;
+  border-left:4px solid #f3b819;
+  background:#fff;
+  font-size:13px;
+  line-height:1.42;
+}
+#rv-order .rv-conis-note.show{display:block}
+#rv-order .rv-form-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:11px;
+  margin-top:22px;
+}
+#rv-order .rv-field{display:grid;gap:5px}
+#rv-order .rv-field.rv-full{grid-column:1/-1}
+#rv-order label{
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+#rv-order input,
+#rv-order textarea{
+  width:100%;
+  min-height:44px;
+  padding:0 12px;
+  border:1px solid var(--line);
+  border-radius:6px;
+  background:#fff;
+  color:var(--navy);
+}
+#rv-order textarea{
+  min-height:80px;
+  padding-top:11px;
+  resize:vertical;
+}
+#rv-order input:focus,
+#rv-order textarea:focus,
+#rv-order select:focus{
+  outline:none;
+  border-color:var(--navy);
+  box-shadow:0 0 0 2px rgba(0,27,51,.08);
+}
+#rv-order .rv-summary{position:sticky;top:18px}
+#rv-order .rv-summary-line{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  padding:9px 0;
+  font-size:14px;
+}
+#rv-order .rv-summary-line + .rv-summary-line{border-top:1px solid var(--line)}
+#rv-order .rv-saving{color:#f3b819;font-weight:800}
+#rv-order .rv-total{
+  margin-top:8px;
+  padding-top:15px;
+  border-top:2px solid var(--navy);
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  align-items:flex-end;
+}
+#rv-order .rv-total > span:first-child{
+  font-size:13px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+#rv-order .rv-total-value{
+  font-size:29px;
+  font-weight:900;
+  white-space:nowrap;
+}
+#rv-order .rv-full-btn{
+  width:100%;
+  margin-top:17px;
+}
+#rv-order .rv-note{
+  margin:11px 0 0;
+  font-size:12px !important;
+  line-height:1.4 !important;
+}
+#rv-order .rv-payment{
+  display:none;
+  margin-top:17px;
+  padding:17px;
+  border:1px solid var(--line);
+  border-radius:9px;
+  background:#fff;
+}
+#rv-order .rv-payment.show{display:block}
+#rv-order .rv-qr{
+  width:150px;
+  aspect-ratio:1/1;
+  margin:13px auto;
+  display:grid;
+  place-items:center;
+  background:
+    linear-gradient(90deg,#001b33 10px,transparent 10px) 0 0/24px 24px,
+    linear-gradient(#001b33 10px,transparent 10px) 0 0/24px 24px,
+    #fff;
+  border:10px solid #fff;
+  outline:1px solid var(--line);
+}
+#rv-order .rv-qr-label{
+  text-align:center;
+  font-size:12px;
+  font-weight:800;
+}
+#rv-order .rv-success-zero{
+  display:none;
+  margin-top:17px;
+  padding:15px;
+  border:1px solid #f3b819;
+  border-radius:8px;
+  background:#fff;
+  font-size:14px;
+  line-height:1.45;
+}
+#rv-order .rv-success-zero.show{display:block}
+
+@media(max-width:850px){
+  #rv-order .rv-checkout{grid-template-columns:1fr}
+  #rv-order .rv-summary{position:static}
+}
+@media(max-width:560px){
+  #rv-order .rv-order-head h2{font-size:30px !important}
+  #rv-order .rv-panel-head,
+  #rv-order .rv-panel-body{padding-left:15px;padding-right:15px}
+  #rv-order .rv-cart-row{grid-template-columns:1fr auto}
+  #rv-order .rv-cart-price{grid-column:1/2;text-align:left}
+  #rv-order .rv-remove{grid-column:2;grid-row:1/3}
+  #rv-order .rv-add-row{grid-template-columns:1fr}
+  #rv-order .rv-form-grid{grid-template-columns:1fr}
+  #rv-order .rv-mode-switch{grid-template-columns:1fr}
+}
+
+
+/* VR-20 — latent order + selected mode + video lightbox */
+#rv-order.rv-order-collapsed{
+  display:none !important;
+}
+#rv-order.rv-order-open{
+  display:block !important;
+  animation:rvOrderReveal .28s ease-out both;
+}
+@keyframes rvOrderReveal{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Standard / CONIS: selected state = same new-grey language as hover. */
+#rv-order .rv-mode-btn.active{
+  background:#e4e7ea !important;
+  border-color:#e4e7ea !important;
+  color:var(--navy) !important;
+  -webkit-text-fill-color:var(--navy) !important;
+}
+#rv-order .rv-mode-btn:hover{
+  background:#e4e7ea !important;
+  border-color:#e4e7ea !important;
+  color:var(--navy) !important;
+}
+
+/* Clickable video banner */
+.rv-video-popup-trigger{
+  position:relative;
+  width:100%;
+  cursor:pointer;
+  overflow:hidden;
+  border-radius:inherit;
+}
+.rv-video-popup-trigger wistia-player{
+  width:100%;
+  pointer-events:none;
+}
+.rv-video-open-hint{
+  position:absolute;
+  right:12px;
+  top:12px;
+  z-index:4;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:6px;
+  background:rgba(0,27,51,.86);
+  color:#fff !important;
+  font-size:17px;
+  font-weight:800;
+  opacity:0;
+  transition:opacity .18s ease,background .18s ease;
+  pointer-events:none;
+}
+.rv-video-popup-trigger:hover .rv-video-open-hint,
+.rv-video-popup-trigger:focus-visible .rv-video-open-hint{
+  opacity:1;
+}
+.rv-video-popup-trigger:hover .rv-video-open-hint{
+  background:#7f8c98;
+}
+
+/* 90% viewport popup */
+.rv-video-modal{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:5vh 5vw;
+  background:rgba(0,27,51,.72);
+  backdrop-filter:blur(3px);
+}
+.rv-video-modal.is-open{display:flex}
+.rv-video-modal-dialog{
+  position:relative;
+  width:90vw;
+  height:90vh;
+  max-width:90vw;
+  max-height:90vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#000;
+  border-radius:12px;
+  overflow:hidden;
+}
+.rv-video-modal-stage{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.rv-video-modal-stage wistia-player{
+  display:block;
+  width:100% !important;
+  height:100% !important;
+  max-width:100%;
+  max-height:100%;
+}
+.rv-video-modal-close{
+  position:absolute;
+  top:12px;
+  right:12px;
+  z-index:10;
+  width:42px;
+  height:42px;
+  border:0;
+  border-radius:6px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.94);
+  color:var(--navy);
+  font-size:28px;
+  line-height:1;
+  font-weight:400;
+}
+.rv-video-modal-close:hover{
+  background:#e4e7ea;
+  color:var(--navy);
+}
+body.rv-modal-lock{overflow:hidden}
+
+@media(max-width:560px){
+  .rv-video-modal{padding:3vh 3vw}
+  .rv-video-modal-dialog{
+    width:94vw;
+    height:88vh;
+    max-width:94vw;
+    max-height:88vh;
+  }
+  .rv-video-open-hint{opacity:1}
+}
+
+
+/* ==========================================================
+   RV-01 POLISH-01
+   ========================================================== */
+
+/* A — HERO: native inline Wistia only */
+.rv-hero-video-inline{
+  width:100%;
+  height:100%;
+  border-radius:inherit;
+  overflow:hidden;
+}
+.rv-hero-video-inline wistia-player{
+  display:block;
+  width:100% !important;
+  height:100% !important;
+}
+
+/* B — live accordion must fill the content block directly */
+.cases-placeholder.rv-cases-live{
+  padding:0 !important;
+  margin:0 !important;
+  background:transparent !important;
+  border:0 !important;
+  border-radius:0 !important;
+  min-height:0 !important;
+  overflow:visible !important;
+}
+.cases-placeholder.rv-cases-live #realivideo-accordion{
+  width:100% !important;
+  max-width:none !important;
+  margin:0 !important;
+  padding:0 !important;
+  background:transparent !important;
+}
+
+/* C — developer cards are popup launchers, not inline players */
+#developeri .rv-video-popup-trigger wistia-player{
+  pointer-events:none !important;
+}
+#developeri .rv-video-popup-trigger{
+  cursor:pointer;
+}
+
+/* D — order mode:
+   selected = approved grey
+   unselected = navy */
+#rv-order .rv-mode-btn:not(.active){
+  background:var(--navy) !important;
+  border-color:var(--navy) !important;
+  color:#fff !important;
+}
+#rv-order .rv-mode-btn:not(.active):hover{
+  background:var(--navy) !important;
+  border-color:var(--navy) !important;
+  color:#fff !important;
+}
+#rv-order .rv-mode-btn.active,
+#rv-order .rv-mode-btn.active:hover{
+  background:#e4e7ea !important;
+  border-color:#e4e7ea !important;
+  color:var(--navy) !important;
+}
+
+/* E — continue/payment hover:
+   preserve approved grey hover + explicit 3px navy border */
+#rv-order #rvContinueBtn{
+  border:3px solid transparent !important;
+}
+#rv-order #rvContinueBtn:hover{
+  background:#e4e7ea !important;
+  color:var(--navy) !important;
+  border:3px solid var(--navy) !important;
+}
+
+/* F — CONIS benefit modal */
+.rv-benefit-modal{
+  position:fixed;
+  inset:0;
+  z-index:1000000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:5vh 5vw;
+  background:rgba(0,27,51,.72);
+}
+.rv-benefit-modal.is-open{
+  display:flex;
+}
+.rv-benefit-modal-dialog{
+  position:relative;
+  width:min(760px,92vw);
+  max-height:90vh;
+  overflow:auto;
+  background:#fff;
+  color:var(--navy);
+  border-radius:12px;
+  padding:38px 40px 34px;
+  box-shadow:0 20px 70px rgba(0,0,0,.28);
+}
+.rv-benefit-modal-dialog h2{
+  margin:6px 42px 22px 0;
+  color:var(--navy);
+  font-size:clamp(24px,3vw,36px);
+  line-height:1.08;
+}
+.rv-benefit-modal-dialog p{
+  margin:0 0 16px;
+  color:var(--navy);
+  line-height:1.6;
+}
+.rv-benefit-modal-dialog p:last-child{
+  margin-bottom:0;
+}
+.rv-benefit-modal-eyebrow{
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.12em;
+  color:var(--gold);
+}
+.rv-benefit-modal-close{
+  position:absolute;
+  top:16px;
+  right:16px;
+  width:38px;
+  height:38px;
+  border:0;
+  border-radius:6px;
+  background:var(--navy);
+  color:#fff;
+  font-size:25px;
+  line-height:1;
+  cursor:pointer;
+}
+.rv-benefit-modal-close:hover{
+  background:#e4e7ea;
+  color:var(--navy);
+}
+body.rv-benefit-modal-lock{
+  overflow:hidden;
+}
+
+@media (max-width:640px){
+  .rv-benefit-modal{
+    padding:3vh 4vw;
+  }
+  .rv-benefit-modal-dialog{
+    width:100%;
+    padding:30px 22px 25px;
+  }
+}
+
+</style>
+
+<script src="https://fast.wistia.com/player.js" async></script>
+<script src="https://fast.wistia.com/embed/xa2s44wwet.js" async type="module"></script>
+<script src="https://fast.wistia.com/embed/vceryswqqv.js" async type="module"></script>
+<script src="https://fast.wistia.com/embed/53zcam8uuf.js" async type="module"></script>
+<script src="https://fast.wistia.com/embed/lciempxu0r.js" async type="module"></script>
+
+
+<!-- RV_REFERENCE_CASES_STYLES_BEGIN -->
+<style data-rv-reference-cases>
+/* RESET PRO GOOGLE SITES IFRAME */
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
+        width: 100% !important;
+        font-family: sans-serif;
+        box-sizing: border-box !important;
+    }
+    *, *:before, *:after {
+        box-sizing: border-box !important;
+    }
+
+    #realivideo-accordion {
+        width: 100%;
+        padding: 5px 0;
+    }
+    #realivideo-accordion h3,
+    #realivideo-accordion h4,
+    #realivideo-accordion p,
+    #realivideo-accordion strong {
+        color: #003366 !important;
+        text-align: left !important;
+        margin: 0;
+    }
+
+    /* VÝCHOZÍ STAV: Světle modré podbarvení zavřených lišt */
+    .rv-card {
+        background-color: #ecf2f8 !important;
+        border: 1px solid #0162cc !important;
+        border-radius: 8px;
+        padding: 12px 20px !important;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.03);
+        width: 100% !important;
+        margin-bottom: 5px !important;
+        transition: background-color 0.2s ease;
+    }
+
+    /* AKTIVNÍ STAV STUDIE: Bílé tělo */
+    .rv-card.rv-active {
+        background-color: #ffffff !important;
+    }
+
+    /* ZÁHLAVÍ KARTY */
+    .rv-card-header-flex {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        cursor: pointer;
+        user-select: none;
+    }
+    .rv-card-text-zone {
+        flex: 1;
+        padding-right: 15px;
+    }
+    .rv-card-btn-zone {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        margin-top: -2px;
+    }
+
+    /* Tlačítko Zobrazit */
+    .rv-toggle-btn {
+        border: 1px solid #0162cc;
+        color: #0162cc;
+        background: transparent;
+        border-radius: 6px;
+        width: 120px;
+        padding: 6px 0;
+        font-size: 14px;
+        font-weight: bold;
+        text-align: center;
+        pointer-events: none;
+        display: inline-block;
+    }
+    .rv-card.rv-active .rv-toggle-btn {
+        display: none !important;
+    }
+
+    /* OBSAH KARTY */
+    .rv-card-body {
+        display: none;
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #dee2e6;
+        width: 100%;
+    }
+    .rv-card.rv-active .rv-card-body {
+        display: block !important;
+    }
+
+    /* GRID FÁZÍ */
+    .rv-phases-grid {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        margin: 0 -10px !important;
+    }
+    .rv-phase-col {
+        flex: 0 0 33.333333% !important;
+        max-width: 33.333333% !important;
+        padding: 0 10px !important;
+        margin-bottom: 15px !important;
+        text-align: center !important;
+    }
+
+    .rv-thumb {
+        cursor: pointer;
+        max-width: 100%;
+        position: relative;
+        border-radius: 10px;
+        overflow: hidden;
+        border: 1px solid #99a8ba;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: transform 0.2s ease;
+    }
+    .rv-thumb:hover { transform: scale(1.02); }
+    .rv-thumb img { width: 100% !important; height: auto !important; display: block !important; }
+
+    @media (max-width: 767px) {
+        .rv-card-header-flex {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        .rv-card-text-zone {
+            padding-right: 0 !important;
+            width: 100% !important;
+            margin-bottom: 10px !important;
+        }
+        .rv-card-btn-zone {
+            width: 100% !important;
+            justify-content: center !important;
+            margin-top: 0 !important;
+        }
+        .rv-phase-col {
+            flex: 0 0 100% !important;
+            max-width: 100% !important;
+        }
+    }
+
+    /* POPUP OKNA UVNITŘ GOOGLE SITES */
+    .video-popup {
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(0,0,0,.92) !important;
+        display: none;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 99999 !important;
+    }
+    .video-popup.active { display: flex !important; }
+    .video-popup-content { width: 90vw !important; max-width: 1400px !important; position: relative; aspect-ratio: 16/9; }
+    .popup-media-container { position: relative; width: 100%; height: 100%; background: #000; border-radius: 10px; }
+    .video-close { position: absolute; top: -15px; right: -15px; width: 40px; height: 40px; border-radius: 50%; background: #0162cc; color: #fff; display: flex; align-items: center; justify-content: center; border: 0; font-size: 20px; cursor: pointer; z-index: 999999; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+    .video-responsive { position: relative; width: 100%; height: 100%; border-radius: 10px; overflow: hidden; }
+    .video-responsive wistia-player { width: 100% !important; height: 100% !important; }
+
+    /* VRSTVA PRO OTOČENÍ MOBILU */
+    .rv-rotate-overlay {
+        display: none;
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 51, 102, 0.94);
+        color: #ffffff;
+        z-index: 10150;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+    }
+    .rv-rotate-overlay span.rv-icon {
+        font-size: 45px;
+        margin-bottom: 15px;
+        display: inline-block;
+        animation: rv-spin-anim 3s infinite ease-in-out;
+    }
+    .rv-rotate-cancel-btn {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: transparent;
+        border: 0;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 28px;
+        cursor: pointer;
+        line-height: 1;
+    }
+    @keyframes rv-spin-anim {
+        0%, 15% { transform: rotate(0deg); }
+        50%, 65% { transform: rotate(-90deg); }
+        100% { transform: rotate(-90deg); }
+    }
+    @media (max-width: 767px) and (orientation: portrait) {
+        .video-popup.active .rv-rotate-overlay { display: flex !important; }
+    }
+
+    /* POPUP PRO SLIDERY */
+    .sliders-popup-zone {
+        position: fixed !important;
+        inset: 0 !important;
+        background: rgba(5, 11, 20, 0.85) !important;
+        display: none;
+        align-items: center !important;
+        justify-content: center !important;
+        z-index: 9998 !important;
+        padding: 15px;
+    }
+    .sliders-popup-zone.active { display: flex !important; }
+
+    .rv-popup-white-window-v12 {
+        height: auto !important;
+        max-height: 94vh !important;
+        width: -webkit-fit-content !important;
+        width: -moz-fit-content !important;
+        width: fit-content !important;
+        max-width: 95vw !important;
+        background: #ffffff !important;
+        border-radius: 12px;
+        padding: 15px !important;
+        box-shadow: 0 12px 50px rgba(0,0,0,0.4);
+        display: flex;
+        flex-direction: column;
+        position: relative;
+    }
+    .sliders-close-btn-v12 {
+        position: absolute;
+        top: -16px !important;
+        right: -16px !important;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #0162cc;
+        color: #fff;
+        font-size: 18px;
+        display: flex; align-items: center; justify-content: center;
+        border: 0; cursor: pointer; z-index: 999999;
+        box-shadow: 0 4px 10px rgba(0,0,0,.3);
+    }
+
+    .rv-pop-accordion { width: 100%; max-width: 100%; height: auto; max-height: 82vh; overflow-y: auto; display: flex; flex-direction: column; gap: 5px; margin: 0; padding: 0; }
+    .rv-pop-item { background-color: #ecf2f8; border: 1px solid #0162cc !important; border-radius: 6px; overflow: hidden; }
+    .rv-pop-item.active { background-color: #ffffff !important; }
+    .rv-pop-item.active .rv-pop-trigger { background-color: #ffffff !important; cursor: default; }
+
+    .rv-pop-trigger {
+        width: 100%;
+        padding: 8px 12px !important;
+        background: transparent;
+        border: none;
+        display: flex;
+        justify-content: space-between;
+        align-items: center !important;
+        cursor: pointer;
+        outline: none !important;
+    }
+    .rv-pop-trigger span { color: #003366; font-size: 14px; font-weight: 700; margin: 0 !important; line-height: 1.2 !important; }
+
+    .rv-pop-btn {
+        border: 1px solid #0162cc;
+        color: #0162cc;
+        padding: 3px 8px !important;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: bold;
+        background: transparent;
+        line-height: 1.2 !important;
+        display: inline-flex;
+        align-items: center;
+    }
+    .rv-pop-item.active .rv-pop-btn { display: none !important; }
+    .rv-pop-content { display: none; padding: 0 !important; margin: 0; width: 100%; }
+    .rv-pop-item.active .rv-pop-content { display: block !important; }
+
+    .rv-popup-slider-display-zone {
+        width: 100%;
+        height: auto !important;
+        background: transparent !important;
+        border: none !important;
+        position: relative;
+        overflow: hidden !important;
+        border-radius: 6px !important;
+        margin: 0 !important;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    /* VÝŠKOVÁ MATEMATICKÁ KOREKCE PROTI OŘEZU ZESPODU */
+    .rv-pop-slider-wrapper { position: relative; width: 100%; height: auto !important; display: flex; justify-content: center; align-items: center; }
+    .rv-pop-slider-wrapper #p-global-bg { width: auto; height: auto; max-width: 100%; max-height: calc(56vh - 35px) !important; display: block; object-fit: contain !important; }
+    .rv-pop-slider-wrapper #p-global-top { position: absolute !important; top: 0; left: 0; width: 100% !important; height: 100% !important; object-fit: contain !important; z-index: 2; clip-path: inset(0 50% 0 0); }
+
+    .rv-pop-range { position: absolute; inset: 0; opacity: 0; cursor: ew-resize; z-index: 10; margin: 0; padding: 0; width: 100%; height: 100%; }
+    .rv-pop-slider-line { position: absolute; top: 0; left: 50%; width: 4px; height: 100%; background: #fff; pointer-events: none; z-index: 3; }
+    .rv-pop-slider-handle { position: absolute; top: 50%; left: 50%; width: 38px; height: 38px; background: #fff; border-radius: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; justify-content: center; pointer-events: none; z-index: 4; box-shadow: 0 0 8px rgba(0,0,0,0.3); }
+    .rv-pop-slider-handle span { color: #0162cc; font-weight: bold; font-size: 15px; }
+
+    /* MOBILNÍ ZOOM */
+    .mobile-zoom-popup { position: fixed !important; inset: 0 !important; background: rgba(5, 11, 20, 0.95) !important; display: none; flex-direction: column; align-items: center; justify-content: flex-start; z-index: 99999 !important; padding: 50px 15px 15px 15px; overflow-y: auto; }
+    .mobile-zoom-popup.active { display: flex !important; }
+    .mobile-zoom-container { width: 100%; max-width: 800px; display: flex; flex-direction: column; gap: 15px; }
+    .mobile-zoom-card { width: 100%; border: 1px solid #0162cc; border-radius: 8px; overflow: hidden; line-height: 0; box-shadow: 0 8px 25px rgba(0,0,0,0.5); }
+    .mobile-zoom-card img { width: 100%; height: auto; display: block; }
+    .mobile-zoom-close { position: fixed; top: 12px; right: 12px; width: 38px; height: 38px; border-radius: 50%; background: #0162cc; color: #fff; display: flex; align-items: center; justify-content: center; border: 0; font-size: 22px; cursor: pointer; z-index: 100000; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+</style>
+<style data-rv-reference-cases>
+/* REALIVIDEO / HARMONIKA / NAVY THEME
+   Scope: pouze barevné sladění. Funkce, obsah a integrační logika beze změny. */
+:root{
+    --rv-navy:#001b33;
+    --rv-white:#ffffff;
+    --rv-yellow:#f3b819;
+}
+
+/* A) NAVY PODKLAD */
+html, body{
+    background:var(--rv-navy) !important;
+}
+#realivideo-accordion{
+    background:var(--rv-navy) !important;
+}
+.rv-card,
+.rv-card.rv-active{
+    background:var(--rv-navy) !important;
+    border-color:rgba(255,255,255,.30) !important;
+    box-shadow:none !important;
+}
+.rv-card-body{
+    border-top-color:rgba(255,255,255,.22) !important;
+}
+
+/* B) PRIMÁRNĚ BÍLÝ FONT */
+#realivideo-accordion h3,
+#realivideo-accordion h4,
+#realivideo-accordion p,
+#realivideo-accordion strong,
+.rv-card-text-zone,
+.rv-card-body{
+    color:var(--rv-white) !important;
+}
+#realivideo-accordion .rv-phase-col p{
+    color:rgba(255,255,255,.78) !important;
+}
+
+/* C) ŽLUTÝ AKCENT */
+#realivideo-accordion h4{
+    color:var(--rv-yellow) !important;
+}
+.rv-thumb{
+    border-color:rgba(243,184,25,.78) !important;
+}
+.rv-card.rv-active{
+    border-color:var(--rv-yellow) !important;
+}
+
+/* D) TLAČÍTKA: BÍLÁ / NAVY BORDER / NAVY FONT */
+.rv-toggle-btn,
+.rv-pop-btn{
+    background:var(--rv-white) !important;
+    border:1px solid var(--rv-navy) !important;
+    color:var(--rv-navy) !important;
+}
+.rv-thumb > div[style*="position: absolute"]{
+    background:var(--rv-white) !important;
+    border:1px solid var(--rv-navy) !important;
+    color:var(--rv-navy) !important;
+}
+
+/* Popup controls ve stejném jazyce */
+.video-close,
+.sliders-close-btn-v12,
+.mobile-zoom-close{
+    background:var(--rv-white) !important;
+    border:1px solid var(--rv-navy) !important;
+    color:var(--rv-navy) !important;
+}
+.rv-rotate-cancel-btn{
+    color:var(--rv-white) !important;
+}
+
+/* Slider popup: navy shell + bílé texty + žlutý aktivní akcent */
+.sliders-popup-zone{
+    background:rgba(0,27,51,.94) !important;
+}
+.rv-popup-white-window-v12{
+    background:var(--rv-navy) !important;
+    border:1px solid rgba(255,255,255,.28) !important;
+}
+.rv-pop-item,
+.rv-pop-item.active,
+.rv-pop-item.active .rv-pop-trigger{
+    background:var(--rv-navy) !important;
+    border-color:rgba(255,255,255,.28) !important;
+}
+.rv-pop-item.active{
+    border-color:var(--rv-yellow) !important;
+}
+.rv-pop-trigger span{
+    color:var(--rv-white) !important;
+}
+.rv-pop-item.active .rv-pop-trigger span{
+    color:var(--rv-yellow) !important;
+}
+
+/* Slider handle: akcent žlutý */
+.rv-pop-slider-line{
+    background:var(--rv-yellow) !important;
+}
+.rv-pop-slider-handle{
+    background:var(--rv-white) !important;
+    border:2px solid var(--rv-yellow) !important;
+}
+.rv-pop-slider-handle span{
+    color:var(--rv-navy) !important;
+}
+
+/* Mobile zoom */
+.mobile-zoom-popup{
+    background:rgba(0,27,51,.97) !important;
+}
+.mobile-zoom-card{
+    border-color:var(--rv-yellow) !important;
+}
+
+/* Rotate overlay */
+.rv-rotate-overlay{
+    background:rgba(0,27,51,.96) !important;
+    color:var(--rv-white) !important;
+}
+</style>
+<style data-rv-reference-cases>
+/* V02 calibration
+   - stránka zůstává bílá, harmonika nemá vlastní plošný podklad
+   - pouze jednotlivé navy lišty / otevřená navy lišta
+   - mezery mezi kartami jsou bílé a bez vnější bordury
+   - bez žlutého akcentu
+   - banner buttons explicitně navy text na bílé
+*/
+html, body{
+    background:#ffffff !important;
+}
+#realivideo-accordion{
+    background:transparent !important;
+    padding:5px 0 !important;
+}
+
+/* Samostatné navy lišty, žádná vnější bordura. */
+.rv-card,
+.rv-card.rv-active{
+    background:#001b33 !important;
+    border:0 !important;
+    box-shadow:none !important;
+    margin-bottom:6px !important;
+}
+.rv-card-body{
+    border-top:1px solid rgba(255,255,255,.22) !important;
+}
+
+/* Všechny texty harmoniky bílé, bez yellow accent. */
+#realivideo-accordion h3,
+#realivideo-accordion h4,
+#realivideo-accordion p,
+#realivideo-accordion strong,
+#realivideo-accordion .rv-phase-col p,
+.rv-card-text-zone,
+.rv-card-body{
+    color:#ffffff !important;
+}
+
+/* Thumbnails bez žluté bordury. */
+.rv-thumb{
+    border:0 !important;
+}
+
+/* Všechna tlačítka: bílá / navy / navy.
+   Explicitní override inline stylů bannerových CTA. */
+.rv-toggle-btn,
+.rv-pop-btn,
+.rv-thumb > div[style*="position: absolute"]{
+    background:#ffffff !important;
+    border:1px solid #001b33 !important;
+    color:#001b33 !important;
+    -webkit-text-fill-color:#001b33 !important;
+    text-shadow:none !important;
+}
+
+/* Popup slider: bez žlutých bordur a fontů. */
+.sliders-popup-zone{
+    background:rgba(0,27,51,.94) !important;
+}
+.rv-popup-white-window-v12{
+    background:#001b33 !important;
+    border:0 !important;
+}
+.rv-pop-item,
+.rv-pop-item.active,
+.rv-pop-item.active .rv-pop-trigger{
+    background:#001b33 !important;
+    border:0 !important;
+}
+.rv-pop-trigger span,
+.rv-pop-item.active .rv-pop-trigger span{
+    color:#ffffff !important;
+}
+.rv-popup-slider-display-zone,
+.rv-pop-slider-wrapper{
+    border:0 !important;
+}
+.rv-pop-slider-line{
+    background:#ffffff !important;
+}
+.rv-pop-slider-handle{
+    background:#ffffff !important;
+    border:0 !important;
+}
+.rv-pop-slider-handle span{
+    color:#001b33 !important;
+}
+
+/* Close controls */
+.video-close,
+.sliders-close-btn-v12,
+.mobile-zoom-close{
+    background:#ffffff !important;
+    border:1px solid #001b33 !important;
+    color:#001b33 !important;
+    -webkit-text-fill-color:#001b33 !important;
+}
+
+/* Mobile zoom bez yellow accent. */
+.mobile-zoom-card{
+    border:0 !important;
+}
+
+/* Rotate overlay */
+.rv-rotate-overlay{
+    background:rgba(0,27,51,.96) !important;
+    color:#ffffff !important;
+}
+</style>
+<style data-rv-reference-cases>
+/* V03 calibration */
+
+/* A) Popup overlay: 50% navy */
+.video-popup,
+.sliders-popup-zone,
+.mobile-zoom-popup{
+    background:rgba(0,27,51,.50) !important;
+}
+
+/* B) Slider accordion:
+   zavřené lišty = 1px white border
+   otevřená lišta = bez border */
+.rv-pop-item{
+    border:1px solid #ffffff !important;
+}
+.rv-pop-item.active,
+.rv-pop-item.active .rv-pop-trigger{
+    border:0 !important;
+}
+
+/* Zachovat čistý bílý text bez akcentu */
+.rv-pop-trigger span,
+.rv-pop-item.active .rv-pop-trigger span{
+    color:#ffffff !important;
+}
+
+/* =========================================================
+   RV-01 POLISH-02
+   ========================================================= */
+
+/* A — CONIS benefit popup */
+#rvConisBenefitModal #rvConisBenefitTitle{
+  font-size:90%;
+  white-space:nowrap;
+}
+
+/* B — checkout interaction contract */
+#rv-order button:not(:disabled),
+#rv-order .rv-btn:not(:disabled),
+#rv-order .rv-mode-btn:not(:disabled){
+  transition:
+    background-color .18s ease,
+    color .18s ease,
+    border-color .18s ease;
+}
+
+#rv-order button:not(:disabled):hover,
+#rv-order .rv-btn:not(:disabled):hover,
+#rv-order .rv-mode-btn:not(:disabled):hover{
+  background:#e4e7ea !important;
+  color:#061d34 !important;
+  border:2px solid #061d34 !important;
+  text-decoration:none !important;
+}
+
+#rv-order .rv-mode-btn.active,
+#rv-order .rv-mode-btn[aria-pressed="true"],
+#rv-order .rv-selected,
+#rv-order [data-selected="true"]{
+  background:#e4e7ea !important;
+  color:#061d34 !important;
+  border-color:transparent !important;
+}
+
+/* E — Builders as full interactive panels */
+#stavfirmy .builder-card,
+#stavfirmy .builder-item,
+#stavfirmy article{
+  position:relative;
+}
+
+/* injected explicit class wins over legacy selectors */
+#stavfirmy .rv-builder-megabutton{
+  position:relative;
+  cursor:pointer;
+  overflow:hidden;
+}
+
+#stavfirmy .rv-builder-megabutton::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(6,29,52,.5);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .2s ease;
+  z-index:2;
+}
+
+#stavfirmy .rv-builder-megabutton:hover::after{
+  opacity:1;
+}
+
+#stavfirmy .rv-builder-megabutton .builder-link{
+  position:relative;
+  z-index:3;
+}
+
+@media (max-width:700px){
+  #rvConisBenefitModal #rvConisBenefitTitle{
+    white-space:normal;
+  }
+}
+
+
+/* =========================================================
+   RV-01 POLISH-02R3
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   ORDER BUTTONS
+   hover = grey + navy text + 2px navy
+   --------------------------------------------------------- */
+
+#rv-order button:not(:disabled):hover,
+#rv-order .rv-btn:not(:disabled):hover,
+#rv-order #rvContinueBtn:hover{
+  background:#e4e7ea !important;
+  color:#061d34 !important;
+  border:2px solid #061d34 !important;
+  text-decoration:none !important;
+}
+
+#rv-order button:not(:disabled):hover *,
+#rv-order .rv-btn:not(:disabled):hover *,
+#rv-order #rvContinueBtn:hover *{
+  color:#061d34 !important;
+  text-decoration:none !important;
+}
+
+/* selected mode = grey + navy + no visible border */
+#rv-order .rv-mode-btn.active,
+#rv-order .rv-mode-btn.active:hover,
+#rv-order .rv-mode-btn[aria-pressed="true"],
+#rv-order .rv-mode-btn[aria-pressed="true"]:hover,
+#rv-order .rv-selected,
+#rv-order [data-selected="true"]{
+  background:#e4e7ea !important;
+  color:#061d34 !important;
+  border-color:transparent !important;
+}
+
+/* ---------------------------------------------------------
+   BUILDERS — WHOLE ARTICLE = BUTTON
+   --------------------------------------------------------- */
+
+#stavfirmy article.builder-card.rv-builder-megabutton{
+  position:relative !important;
+  cursor:pointer !important;
+  overflow:hidden;
+  isolation:isolate;
+}
+
+#stavfirmy article.builder-card.rv-builder-megabutton::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:20;
+  background:rgba(6,29,52,.50);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .20s ease;
+}
+
+#stavfirmy article.builder-card.rv-builder-megabutton:hover::after,
+#stavfirmy article.builder-card.rv-builder-megabutton:focus-visible::after{
+  opacity:1;
+}
+
+#stavfirmy article.builder-card.rv-builder-megabutton .builder-link{
+  position:relative;
+  z-index:30;
+}
+
+/* ---------------------------------------------------------
+   ACCORDION — 3-LINE TEXT RESERVATION
+
+   Applies to textual description areas inside opened cases.
+   min-height preserves three lines even when content has two.
+   --------------------------------------------------------- */
+
+#realivideo-accordion .case-copy p,
+#realivideo-accordion .case-text p,
+#realivideo-accordion .case-description,
+#realivideo-accordion .project-description,
+#realivideo-accordion .reference-description{
+  min-height:4.125em;
+}
+
+/* Common accordion/card prose fallback.
+   Only inside an opened/active accordion item. */
+#realivideo-accordion .open .case-body > p,
+#realivideo-accordion .active .case-body > p,
+#realivideo-accordion [aria-expanded="true"] + * p{
+  min-height:4.125em;
+}
+
+</style>
+<!-- RV_REFERENCE_CASES_STYLES_END -->
+
+<style id="rvRuntimeFix03">
+
+/* =========================================================
+   RV-01 RUNTIME FIX-03 — FINAL SPECIFIC OVERRIDES
+   ========================================================= */
+
+/* ADD + CONTINUE
+   hover = new grey / navy font / 2px navy */
+#rvAddProduct:hover,
+#rvContinueBtn:hover{
+  background:#e4e7ea !important;
+  background-color:#e4e7ea !important;
+  color:#061d34 !important;
+  border:2px solid #061d34 !important;
+  text-decoration:none !important;
+}
+
+#rvAddProduct:hover *,
+#rvContinueBtn:hover *{
+  color:#061d34 !important;
+  -webkit-text-fill-color:#061d34 !important;
+  text-decoration:none !important;
+}
+
+/* BUILDERS — no dependency on section ID */
+article.builder-card.rv-builder-megabutton{
+  position:relative !important;
+  cursor:pointer !important;
+  overflow:hidden !important;
+  isolation:isolate;
+}
+
+article.builder-card.rv-builder-megabutton::after{
+  content:"";
+  display:block;
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  z-index:50;
+  background:rgba(6,29,52,.50);
+  opacity:0;
+  visibility:hidden;
+  pointer-events:none;
+  transition:opacity .20s ease,visibility .20s ease;
+}
+
+article.builder-card.rv-builder-megabutton:hover::after,
+article.builder-card.rv-builder-megabutton:focus-visible::after{
+  opacity:1 !important;
+  visibility:visible !important;
+}
+
+/* Native button remains above overlay */
+article.builder-card.rv-builder-megabutton .builder-link{
+  position:relative !important;
+  z-index:60 !important;
+}
+
+/* keyboard focus */
+article.builder-card.rv-builder-megabutton:focus-visible{
+  outline:2px solid #061d34;
+  outline-offset:3px;
+}
+
+</style>
+<style id="rvFinalABCE">
+
+/* RV-01 FINAL ABCE */
+
+/* A — card remains clickable, overlay only over IMAGE */
+article.builder-card.rv-builder-megabutton::after{
+  display:none !important;
+  content:none !important;
+}
+
+article.builder-card.rv-builder-megabutton .builder-media{
+  position:relative !important;
+  overflow:hidden !important;
+}
+
+article.builder-card.rv-builder-megabutton .builder-media::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:20;
+  background:rgba(6,29,52,.20);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .20s ease;
+}
+
+article.builder-card.rv-builder-megabutton:hover .builder-media::after,
+article.builder-card.rv-builder-megabutton:focus-visible .builder-media::after{
+  opacity:1 !important;
+}
+
+/* B — exact controls, including WebKit text fill */
+#rv-order #rvAddProduct,
+#rv-order #rvContinueBtn{
+  -webkit-text-fill-color:currentColor !important;
+}
+
+#rv-order #rvAddProduct:hover,
+#rv-order #rvContinueBtn:hover{
+  background:#e4e7ea !important;
+  background-color:#e4e7ea !important;
+  color:#061d34 !important;
+  -webkit-text-fill-color:#061d34 !important;
+  border:2px solid #061d34 !important;
+  text-decoration:none !important;
+}
+
+/* C — legal block */
+#rv-order .rv-legal{
+  margin-top:22px;
+  padding-top:18px;
+  border-top:1px solid #d9dde2;
+}
+
+#rv-order .rv-contract-links{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px 18px;
+  margin:0 0 14px;
+}
+
+#rv-order .rv-contract-links a{
+  color:#061d34 !important;
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+
+#rv-order .rv-contract-links a:hover{
+  background:#e4e7ea;
+  text-decoration:none;
+}
+
+#rv-order .rv-consent{
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+  cursor:pointer;
+  color:#061d34;
+  line-height:1.4;
+}
+
+#rv-order .rv-consent input{
+  width:18px;
+  height:18px;
+  flex:0 0 auto;
+  margin-top:2px;
+  accent-color:#061d34;
+}
+
+/* D — reserved real-payment result */
+#rv-order .rv-proforma-actions{
+  display:none;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+
+#rv-order .rv-proforma-actions.show{
+  display:flex;
+}
+
+/* E — actual accordion phase copy authority.
+   14px * 1.375 * 3 = 57.75px */
+#realivideo-accordion .rv-card-body > p{
+  min-height:58px !important;
+}
+
+</style>
+
+<style id="rvFixEF">
+
+/* E — exactly 3-line reserve for phase descriptions */
+#realivideo-accordion .rv-card-body p[style*="min-height: 42px"],
+#realivideo-accordion .rv-card-body p[style*="min-height:42px"]{
+  min-height:58px !important;
+  height:58px !important;
+  line-height:19.25px !important;
+  overflow:hidden !important;
+}
+
+/* F — DEVELOPERS: 20% navy hover over IMAGE ONLY */
+#developeri article{
+  cursor:pointer;
+}
+
+#developeri article .media-live,
+#developeri article .developer-media{
+  position:relative !important;
+  overflow:hidden !important;
+}
+
+#developeri article .media-live::after,
+#developeri article .developer-media::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  z-index:30;
+  background:rgba(6,29,52,.20);
+  opacity:0;
+  pointer-events:none;
+  transition:opacity .20s ease;
+}
+
+#developeri article:hover .media-live::after,
+#developeri article:focus-within .media-live::after,
+#developeri article:hover .developer-media::after,
+#developeri article:focus-within .developer-media::after{
+  opacity:1 !important;
+}
+
+</style>
+
+<style id="rv-order-scheme-frame-06">
+/* RV_ORDER_SCHEME_FRAME_06 */
+#balicky .step-scheme{
+  box-sizing:border-box;
+  height:86px !important;
+  padding:10px 12px !important;
+  background:#f3f3f3 !important;
+  border:1px solid #d9d9d9 !important;
+}
+</style>
+
+
+<style id="rv-professional-services-static-final">
+/* Professional services are informational cards, never buttons. */
+.services .service,
+.services .service:hover,
+.services .service:focus,
+.services .service:focus-visible{
+  transform:none !important;
+  translate:none !important;
+  scale:none !important;
+  box-shadow:none !important;
+  filter:none !important;
+  cursor:default !important;
+}
+
+/* Keep the intended static light-grey card appearance on hover. */
+.services .service:hover,
+.services .service:focus,
+.services .service:focus-visible{
+  background:#f3f3f3 !important;
+}
+</style>
+
+
+<style id="rv-arrows-exact-final">
+
+/* Four static order diagrams.
+   SVG itself is the visible grey framed panel. */
+#balicky .step-scheme{
+  display:block !important;
+  width:100% !important;
+  max-width:none !important;
+
+  /* 494 / 236 source geometry */
+  height:auto !important;
+  aspect-ratio:494 / 236 !important;
+
+  box-sizing:border-box !important;
+  margin:0 0 14px !important;
+  padding:12px 14px !important;
+
+  background:#f3f3f3 !important;
+  border:1px solid #d9d9d9 !important;
+  border-radius:9px !important;
+  overflow:hidden !important;
+}
+
+/* Already visually approved — preserve. */
+#rvConisBenefitModal h2{
+  font-size:36px !important;
+  max-width:100% !important;
+  overflow-wrap:normal !important;
+}
+
+</style>
+
+<script src="./qrcode-1.5.4.min.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <div class="brand">VIZUÁLNÍ KOMUNIKACE PRO REALITNÍ BYZNYS</div>
+    <nav class="nav" aria-label="Hlavní navigace">
+      <a href="#realitky">REALITKY</a>
+      <a href="#developeri">DEVELOPEŘI</a>
+      <a href="#stavebni-firmy">STAVEBNÍ FIRMY</a>
+      <a href="#balicky">BALÍČKY SLUŽEB</a>
+      <a href="#kontakt">KONTAKT</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-media media-live">
+      <div class="rv-hero-video-inline"><wistia-player media-id="xa2s44wwet" seo="false" aspect="2.0"></wistia-player></div>
+    </div>
+    <div class="hero-grid">
+      <div>
+        <h1>Nemovitost nestačí ukázat.<br>Musí zaujmout.</h1>
+      </div>
+      <div class="hero-copy">
+        <p class="hero-support">Vizualizace, prodejní video a promo obsah pro realitky, developery a stavební firmy.</p>
+        <a class="btn btn-primary" href="#realitky">Prohlédnout reference</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="eyebrow">PROFESIONÁLNÍ SLUŽBY A PORADENSTVÍ</div>
+    <div class="services-shell">
+      <div class="services">
+        <article class="service">
+          <div class="service-head"><span>1.</span><span>Vizualizace</span></div>
+          <p>Budoucí stav, rekonstrukce, nový projekt.<br>Fokusováno na cílovou skupinu.</p>
+        </article>
+        <article class="service">
+          <div class="service-head"><span>2.</span><span>Prodejní video</span></div>
+          <p>Obraz, pohyb, informace a emoce v jednom formátu.</p>
+        </article>
+        <article class="service">
+          <div class="service-head"><span>3.</span><span>Promo obsah</span></div>
+          <p>Výstupy připravené pro web, kampaně a sociální sítě.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-rule anchor-line-target" id="realitky">
+  <div class="container">
+    <div class="eyebrow">PRO REALITKY / PŘÍPADOVÉ STUDIE</div>
+    <h2>Ukažte potenciál, který ještě není vidět.</h2>
+    <p class="lead">Každá reference ukazuje celý postup: nejprve analyzujeme původní prezentaci, potom vizuálně upravíme potenciál nemovitosti a nakonec z něj vytvoříme prodejní video.</p>
+    <div class="cases-placeholder rv-cases-live">
+<!-- RV_REFERENCE_CASES_BEGIN -->
+<div id="realivideo-accordion">
+
+    <div id="card-brno" class="rv-card rv-active">
+        <div class="rv-card-header-flex" onclick="rvToggleCase('card-brno')">
+            <div class="rv-card-text-zone">
+                <h3 style="font-size: 18px; line-height: 1.3; font-weight: bold;">Případová studie A): Prémiová Vila – Brno, Hroznová</h3>
+            </div>
+            <div class="rv-card-btn-zone">
+                <div class="rv-toggle-btn">Zobrazit ▾</div>
+            </div>
+        </div>
+
+        <div class="rv-card-body">
+            <div class="rv-phases-grid">
+                <div class="rv-phase-col">
+                    <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Fáze 1) Vstupní diagnostika</h4>
+                    <p style="font-size: 14px; min-height: 42px; color: #6c757d; margin-bottom: 12px;">Odstranění vizuálních bariér prázdných, chladných místností v prémiovém objektu.</p>
+                    <div class="rv-thumb" onclick="rvOpenVideo('wnvw2y5xya')">
+                        <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1779433290/Sni%CC%81mek_obrazovky_2026-05-22_v_8.57.13_fzkyoz.jpg">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #0162cc; color: #ffffff !important; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap;">Spustit analýzu</div>
+                    </div>
+                </div>
+                <div class="rv-phase-col">
+                    <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Fáze 2) Vizuální tuning</h4>
+                    <p style="font-size: 14px; min-height: 42px; color: #6c757d; margin-bottom: 12px;">Ukázka plného potenciálu – prosvětlení vily a kompletní digitální vybavení nábytkem.</p>
+                    <div class="rv-thumb" onclick="rvOpenSliders('brno')">
+                        <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1779433291/Sni%CC%81mek_obrazovky_2026-05-22_v_8.57.22_ajttni.jpg">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #0162cc; color: #ffffff !important; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap;">Zobrazit</div>
+                    </div>
+                </div>
+                <div class="rv-phase-col">
+                    <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Fáze 3) Upgrade na CINEMA</h4>
+                    <p style="font-size: 14px; min-height: 42px; color: #6c757d; margin-bottom: 12px;">Prezentace luxusu, která neprodává pouhé cihly, ale výjimečný společenský status.</p>
+                    <div class="rv-thumb" onclick="rvOpenVideo('z4qjgwizvf')">
+                        <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1779433292/Sni%CC%81mek_obrazovky_2026-05-22_v_8.57.28_p4gibj.jpg">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #0162cc; color: #ffffff !important; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap;">Přehrát video</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="card-jezerany" class="rv-card">
+        <div class="rv-card-header-flex" onclick="rvToggleCase('card-jezerany')">
+            <div class="rv-card-text-zone">
+                <h3 style="font-size: 18px; line-height: 1.3; font-weight: bold;">Případová studie B): Rodinný dům v Jezeřanech</h3>
+            </div>
+            <div class="rv-card-btn-zone">
+                <div class="rv-toggle-btn">Zobrazit ▾</div>
+            </div>
+        </div>
+
+        <div class="rv-card-body">
+            <div class="rv-phases-grid">
+                <div class="rv-phase-col">
+                    <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Fáze 1) Vstupní diagnostika</h4>
+                    <p style="font-size: 14px; min-height: 42px; color: #6c757d; margin-bottom: 12px;">Odhalení kritického hluchého místa v úvodu inzerátu, které odrazovalo kupující.</p>
+                    <div class="rv-thumb" onclick="rvOpenVideo('329fmbuisq')">
+                        <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1779433293/Sni%CC%81mek_obrazovky_2026-05-22_v_8.57.41_b8vqvk.jpg">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #0162cc; color: #ffffff !important; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap;">Spustit analýzu</div>
+                    </div>
+                </div>
+                <div class="rv-phase-col">
+                    <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Fáze 2) Vizuální tuning</h4>
+                    <p style="font-size: 14px; min-height: 42px; color: #6c757d; margin-bottom: 12px;">Zvýraznění skrytého rodinného potenciálu nemovitosti mimo hlavní město.</p>
+                    <div class="rv-thumb" onclick="rvOpenSliders('jezerany')">
+                        <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1779433295/Sni%CC%81mek_obrazovky_2026-05-22_v_8.58.22_pqcuhk.jpg">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #0162cc; color: #ffffff !important; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap;">Zobrazit</div>
+                    </div>
+                </div>
+                <div class="rv-phase-col">
+                    <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Fáze 3) Upgrade na CINEMA</h4>
+                    <p style="font-size: 14px; min-height: 42px; color: #6c757d; margin-bottom: 12px;">Cílené video s titulky. Vyvolání silné emoce nového, klidného venkovského života.</p>
+                    <div class="rv-thumb" onclick="rvOpenVideo('l5tg518y8e')">
+                        <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1779433296/Sni%CC%81mek_obrazovky_2026-05-22_v_8.58.37_soevlo.jpg">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #0162cc; color: #ffffff !important; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap;">Přehrát video</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="card-suchdol" class="rv-card">
+        <div class="rv-card-header-flex" onclick="rvToggleCase('card-suchdol')">
+            <div class="rv-card-text-zone">
+                <h3 style="font-size: 18px; line-height: 1.3; font-weight: bold;">Případová studie C): Byt v Praze-Suchdole</h3>
+            </div>
+            <div class="rv-card-btn-zone">
+                <div class="rv-toggle-btn">Zobrazit ▾</div>
+            </div>
+        </div>
+
+        <div class="rv-card-body">
+            <div class="rv-phases-grid">
+                <div class="rv-phase-col">
+                    <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Fáze 1) Vstupní diagnostika</h4>
+                    <p style="font-size: 14px; min-height: 42px; color: #6c757d; margin-bottom: 12px;">Video-analýza chyb, špatného pořadí fotek a chybějícího stagingu původního inzerátu.</p>
+                    <div class="rv-thumb" onclick="rvOpenVideo('zzf1ac8c8x')">
+                        <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1779433297/Sni%CC%81mek_obrazovky_2026-05-22_v_8.58.57_mhdupx.jpg">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #0162cc; color: #ffffff !important; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap;">Spustit analýzu</div>
+                    </div>
+                </div>
+                <div class="rv-phase-col">
+                    <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Fáze 2) Vizuální tuning</h4>
+                    <p style="font-size: 14px; min-height: 42px; color: #6c757d; margin-bottom: 12px;">Aplikace balíčku TIP - pokročilé fotovizualizace a odstranění morálního stáří prostoru.</p>
+                    <div class="rv-thumb" onclick="rvOpenSliders('suchdol')">
+                        <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1779433299/Sni%CC%81mek_obrazovky_2026-05-22_v_8.59.05_wcmcrg.jpg">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #0162cc; color: #ffffff !important; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap;">Zobrazit</div>
+                    </div>
+                </div>
+                <div class="rv-phase-col">
+                    <h4 style="font-size: 16px; font-weight: bold; margin-bottom: 6px;">Fáze 3) Upgrade na CINEMA</h4>
+                    <p style="font-size: 14px; min-height: 42px; color: #6c757d; margin-bottom: 12px;">Finální filmová prezentace (balíček TOP) s emocí, která filtruje vážné zájemce.</p>
+                    <div class="rv-thumb" onclick="rvOpenVideo('25mb66v7cz')">
+                        <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1779433300/Sni%CC%81mek_obrazovky_2026-05-22_v_8.59.12_a5vcro.jpg">
+                        <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); background: #0162cc; color: #ffffff !important; padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; white-space: nowrap;">Přehrát video</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="video-popup" id="globalDynamicPopup" onclick="rvCloseVideo(event)">
+    <div class="video-popup-content" onclick="event.stopPropagation()">
+        <div class="popup-media-container">
+            <button class="video-close" onclick="rvCloseVideo(event)">×</button>
+            <div class="video-responsive">
+                <div class="rv-rotate-overlay" id="rotateLayer">
+                    <button class="rv-rotate-cancel-btn" onclick="rvDismissRotate(event)">×</button>
+                    <span class="rv-icon">📱</span>
+                    <p style="color:#fff !important; text-align:center !important; font-weight:bold; margin:0; font-size:15px; padding:0 10px;">Pro lepší vnímání<br>otočte telefon na šířku</p>
+                </div>
+                <div id="videoWistiaInjectTarget" style="position: absolute; inset:0; width:100%; height:100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="sliders-popup-zone" id="globalSlidersPopup" onclick="rvCloseSliders(event)">
+    <div class="rv-popup-white-window-v12" onclick="event.stopPropagation()">
+        <button class="sliders-close-btn-v12" onclick="rvCloseSliders(event)">×</button>
+        <div id="popupSlidersInjectZone" class="rv-pop-accordion"></div>
+    </div>
+</div>
+
+<div id="rv-hidden-slider-template" style="display: none;">
+    <div class="rv-popup-slider-display-zone">
+        <div class="rv-pop-slider-wrapper">
+            <img id="p-global-bg"><img id="p-global-top" class="rv-popup-slider-topimg"><input type="range" min="0" max="100" value="50" step="0.1" class="rv-pop-range" oninput="rvUpdateSlider(this.value)" ontouchstart="rvTouchStart(event)" ontouchend="rvTouchEnd(event)" onpointerdown="rvKillAnim()"><div class="rv-pop-slider-line"></div><div class="rv-pop-slider-handle"><span>↔</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="mobile-zoom-popup" id="globalMobileZoomPopup" onclick="rvCloseZoom(event)">
+    <button class="mobile-zoom-close" onclick="rvCloseZoom(event)">×</button>
+    <div class="mobile-zoom-container" onclick="event.stopPropagation()">
+        <div class="mobile-zoom-card"><img id="p-zoom-top"></div>
+        <div class="mobile-zoom-card"><img id="p-zoom-bg"></div>
+    </div>
+</div>
+<!-- RV_REFERENCE_CASES_END -->
+</div>
+  </div>
+</section>
+
+<section class="section section-rule anchor-line-target" id="developeri">
+  <div class="container">
+    <div class="eyebrow">PRO DEVELOPERY</div>
+    <h2>Prodejte představu dřív, než projekt stojí.</h2>
+    <p class="lead">Pro projekt, který ještě není hotový, vytváříme jednotný vizuální svět — od hlavního obrazu až po video a obsah pro prodejní komunikaci.</p>
+    <div class="cards-3">
+      <article class="project-card"><div class="project-media media-live">
+          <div class="rv-video-popup-trigger" data-wistia-id="vceryswqqv" role="button" tabindex="0" aria-label="Otevřít video ve velkém náhledu"><wistia-player media-id="vceryswqqv" seo="false" aspect="1.7777777777777777"></wistia-player><span class="rv-video-open-hint">↗</span></div>
+        </div><h3>Petrov nad Desnou</h3><div class="scope">VIZUALIZACE · VIDEO</div></article>
+      <article class="project-card"><div class="project-media media-live">
+          <div class="rv-video-popup-trigger" data-wistia-id="53zcam8uuf" role="button" tabindex="0" aria-label="Otevřít video ve velkém náhledu"><wistia-player media-id="53zcam8uuf" seo="false" aspect="1.7777777777777777"></wistia-player><span class="rv-video-open-hint">↗</span></div>
+        </div><h3>Brno – Bosonohy</h3><div class="scope">DESIGN · VIZUALIZACE · VIDEO</div></article>
+      <article class="project-card"><div class="project-media media-live">
+          <div class="rv-video-popup-trigger" data-wistia-id="lciempxu0r" role="button" tabindex="0" aria-label="Otevřít video ve velkém náhledu"><wistia-player media-id="lciempxu0r" seo="false" aspect="1.7777777777777777"></wistia-player><span class="rv-video-open-hint">↗</span></div>
+        </div><h3>Bydlení Rostěnice</h3><div class="scope">VIZUALIZACE · VIDEO · WEB · FB KAMPAŇ</div></article>
+    </div>
+  </div>
+</section>
+
+<section class="section section-rule anchor-line-target" id="stavebni-firmy">
+  <div class="container">
+    <div class="eyebrow">PRO STAVEBNÍ FIRMY</div>
+    <h2>Od katalogového domu k prodejnímu produktu.</h2>
+    <p class="lead">U stavebních firem nejde o jeden inzerát. Jde o dlouhodobou vizuální komunikaci celé produktové nabídky.</p>
+    <div class="cards-2">
+        <article class="builder-card rv-builder-megabutton" data-rv-target="https://www.conis.cz" role="link" tabindex="0" aria-label="Prohlédnout CONIS">
+          <div class="builder-media media-live conis-builder-image">
+            <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1788772854/Sni%CC%81mek_obrazovky_2026-09-07_v_11.19.22_bpjdun.png" alt="CONIS" loading="lazy">
+          </div>
+          <div class="builder-body">
+            <h3>CONIS</h3>
+            <p>Vizuální kvalita je klíčová součást koncepce CONIS – inteligentní vrstvy pro prodejní weby pro dodavatele typových a modulárních domů.</p>
+            <a class="btn btn-primary builder-link" href="https://www.conis.cz" target="_blank" rel="noopener noreferrer">Prohlédnout</a>
+          </div>
+        </article>
+
+        <article class="builder-card rv-builder-megabutton" data-rv-target="https://www.domysenergii.cz" role="link" tabindex="0" aria-label="Prohlédnout Domy s energií">
+          <div class="builder-media media-live">
+            <img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1788762704/Sni%CC%81mek_obrazovky_2026-09-07_v_8.30.08_v1sonw.png" alt="Domy s energií" loading="lazy">
+          </div>
+          <div class="builder-body">
+            <h3>Domy s energií</h3>
+            <p>Referenční projekt – koncepční návrh, vizualizace, realizační spolupráce – vlastní zkušenost s prodejem (rezervováno do 1 měsíce po spuštění FB kampaně)</p>
+            <a class="btn btn-primary builder-link" href="https://www.domysenergii.cz" target="_blank" rel="noopener noreferrer">Prohlédnout</a>
+          </div>
+        </article>
+</div>
+  </div>
+</section>
+
+<section class="section section-rule anchor-line-target" id="balicky">
+  <div class="container">
+    <div class="product-intro">
+      <div class="eyebrow">PRODUKTY REALIVIDEO – OBJEDNÁVKA</div>
+    <h2>Vyberte rozsah. Zbytek připravíme.</h2>
+    <p class="lead">Vyberte si podle toho, na jakou úroveň chcete vaši vizuální prezentaci posunout.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <svg class="step-scheme" viewBox="0 0 494 236" aria-hidden="true"><g class="rv-arrow-drawing-plus10" transform="translate(247 118) scale(1.1) translate(-247 -118)">
+          <defs><marker id="a1" markerWidth="8.55" markerHeight="8.55" refX="7.70" refY="4.28" orient="auto"><path d="M0 0L8.55 4.28L0 8.55Z" fill="#061d34"/></marker></defs>
+          <circle class="circle" cx="245" cy="117" r="60"/><text class="num" x="245" y="121">1</text>
+          <line class="solid" x1="305" y1="117" x2="472" y2="117" marker-end="url(#a1)"/>
+        </g></svg>
+        <h3>Vyberete balíček</h3><p>BASIC / TIP / TOP</p>
+      </div>
+      <div class="step">
+        <svg class="step-scheme" viewBox="0 0 494 236" aria-hidden="true"><g class="rv-arrow-drawing-plus10" transform="translate(247 118) scale(1.1) translate(-247 -118)">
+          <defs><marker id="a2" markerWidth="8.55" markerHeight="8.55" refX="7.70" refY="4.28" orient="auto"><path d="M0 0L8.55 4.28L0 8.55Z" fill="#061d34"/></marker></defs>
+          <line class="dash" x1="2" y1="117" x2="185" y2="117"/>
+          <circle class="circle" cx="245" cy="117" r="60"/><text class="num" x="245" y="121">2</text>
+          <line class="solid" x1="305" y1="117" x2="472" y2="117" marker-end="url(#a2)"/>
+        </g></svg>
+        <h3>Vyplníte objednávku</h3><p>Krátký formulář přímo na stránce</p>
+      </div>
+      <div class="step">
+        <svg class="step-scheme" viewBox="0 0 494 236" aria-hidden="true"><g class="rv-arrow-drawing-plus10" transform="translate(247 118) scale(1.1) translate(-247 -118)">
+          <defs><marker id="a3" markerWidth="8.55" markerHeight="8.55" refX="7.70" refY="4.28" orient="auto"><path d="M0 0L8.55 4.28L0 8.55Z" fill="#061d34"/></marker></defs>
+          <line class="dash" x1="2" y1="117" x2="185" y2="117"/>
+          <circle class="circle" cx="245" cy="117" r="60"/><text class="num" x="245" y="121">3</text>
+          <line class="solid" x1="305" y1="117" x2="472" y2="117" marker-end="url(#a3)"/>
+        </g></svg>
+        <h3>Zobrazí se QR kód</h3><p>Ihned po odeslání formuláře</p>
+      </div>
+      <div class="step">
+        <svg class="step-scheme" viewBox="0 0 494 236" aria-hidden="true"><g class="rv-arrow-drawing-plus10" transform="translate(247 118) scale(1.1) translate(-247 -118)">
+          <defs><marker id="a4" markerWidth="8.55" markerHeight="8.55" refX="7.70" refY="4.28" orient="auto"><path d="M0 0L8.55 4.28L0 8.55Z" fill="#061d34"/></marker></defs>
+          <line class="dash" x1="2" y1="117" x2="185" y2="117"/>
+          <circle class="circle" cx="245" cy="117" r="60"/><text class="num" x="245" y="121">4</text>
+          <line class="solid" x1="305" y1="117" x2="472" y2="117" marker-end="url(#a4)"/>
+        </g></svg>
+        <h3>Po úhradě začneme</h3>
+        <p>Nahrajete podklady a do týdne je hotovo.</p>
+
+      </div>
+    </div>
+    <p class="invoice-note">Fakturu a pokyny pro další postup zašleme po ověření platby.</p>
+
+    <div class="pricing-title">a) Prezentace nemovitostí:</div>
+    <div class="pricing-grid">
+      <article class="price-card" tabindex="0" role="button">
+        <div class="price-kicker">BALÍČEK <strong>BASIC</strong></div>
+        <div class="price-sub">Základ prezentace</div>
+        <ul class="features">
+          <li>analýza stávající inzerce</li><li>nová definice cílové skupiny</li><li>doporučené pořadí obrázků pro S-reality</li><li class="strong">1 vizualizace (4K JPG)</li>
+        </ul>
+        <div class="price">2.970 Kč</div>
+        <button class="btn select-product" data-product="BALÍČEK BASIC" data-price="2.970 Kč">Vybrat BASIC</button>
+      </article>
+      <article class="price-card featured recommended" tabindex="0" role="button">
+        <div class="badge">DOPORUČUJEME</div>
+        <div class="price-kicker">BALÍČEK <strong>TIP</strong></div>
+        <div class="price-sub">Vizuální tuning</div>
+        <ul class="features">
+          <li>analýza stávající inzerce</li><li>nová definice cílové skupiny</li><li>doporučené pořadí obrázků pro S-reality</li><li>tuning vašich obrázků</li><li class="strong">3 vizualizace (4K JPG)</li><li class="strong">prodejní video (MP4 full HD)</li>
+        </ul>
+        <div class="price">11.970 Kč</div>
+        <button class="btn btn-primary select-product" data-product="BALÍČEK TIP" data-price="11.970 Kč">Vybrat TIP</button>
+      </article>
+      <article class="price-card" tabindex="0" role="button">
+        <div class="price-kicker">BALÍČEK <strong>TOP</strong></div>
+        <div class="price-sub">Kompletní promo</div>
+        <ul class="features">
+          <li>analýza stávající inzerce</li><li>nová definice cílové skupiny</li><li>doporučené pořadí obrázků pro S-reality</li><li>tuning vašich obrázků</li><li class="strong">6 vizualizací (4K JPG)</li><li class="strong">prodejní video (MP4 full HD)</li><li class="strong">tuning průvodního textu a titulků</li>
+        </ul>
+        <div class="price">19.970 Kč</div>
+        <button class="btn select-product" data-product="BALÍČEK TOP" data-price="19.970 Kč">Vybrat TOP</button>
+      </article>
+    </div>
+
+    <div class="pricing-title">b) Prezentace domů pro výstavbu:</div>
+
+<section class="conis">
+  <div class="container">
+    <div class="conis-media media-live"><img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1788761402/archsynth_image_small_kopie_cdpi5n.jpg" alt="Zvýhodnění pro partnery systému CONIS" loading="lazy"></div>
+    <div>
+      <div class="eyebrow">ZVÝHODNĚNÍ PRO PARTNERY SYSTÉMU CONIS</div>
+      <div class="discount">-50 %</div>
+      <div class="discount-label">na vybrané služby Realivideo</div>
+      <p>Pokud současně vstupujete do 90denního pilotního programu CONIS, získáte vybrané balíčky vizuální produkce za zvýhodněnou cenu.</p>
+      <button id="rvConisBenefitOpen" class="btn" type="button">Jak zvýhodnění funguje →</button>
+    </div>
+  </div>
+</section>
+
+<div class="pricing-grid secondary">
+  <article class="price-card" tabindex="0" role="button">
+    <div class="price-sub">TUNING obrázků</div>
+    <ul class="features">
+      <li>vizuální revize</li>
+      <li>profesionální úpravy</li>
+      <li>psychologie cílové skupiny</li>
+      <li>vysoké rozlišení</li>
+    </ul>
+    <div class="package-note">set až 12 JPG obrázků pro 1 dům, 4K</div>
+    <div class="price">9.970 Kč</div>
+    <button class="btn select-product" data-product="TUNING obrázků" data-price="9.970 Kč">Vybrat TUNING</button>
+  </article>
+
+  <article class="price-card recommended" tabindex="0" role="button">
+    <div class="badge">DOPORUČUJEME</div>
+    <div class="price-sub">Prodejní VIDEO</div>
+    <ul class="features">
+      <li>video z rozhýbaných obrázků (AI sekvence)</li>
+      <li>stručné a výstižné titulky, svižný střih</li>
+      <li>ozvučeno atraktivní melodií</li>
+      <li>emočně laděno na cílovou skupinu</li>
+    </ul>
+    <div class="package-note">video cca 90 vteřin, MP4 full HD</div>
+    <div class="price">14.970 Kč</div>
+    <button class="btn select-product" data-product="Prodejní VIDEO" data-price="14.970 Kč">Vybrat VIDEO</button>
+  </article>
+
+  <article class="price-card" tabindex="0" role="button">
+    <div class="price-sub">VIZUALIZACE</div>
+    <ul class="features">
+      <li>precizní 3D model</li>
+      <li>větší rozlišení</li>
+      <li>profesionální úpravy</li>
+      <li>optimalizace pro cílovou skupinu</li>
+    </ul>
+    <div class="package-note">set až 12 JPG obrázků pro 1 dům, 4K</div>
+    <div class="price">19.970 Kč</div>
+    <button class="btn select-product" data-product="VIZUALIZACE" data-price="19.970 Kč">Vybrat VIZUALIZACE</button>
+  </article>
+</div>
+
+
+<div id="order-module">
+  <div id="rv-order" class="rv-order-collapsed" aria-hidden="true">
+    <div class="rv-order-head">
+      <div class="rv-order-eyebrow">OBJEDNÁVKA REALIVIDEO</div>
+      <h2>Vyberte služby a dokončete objednávku.</h2>
+      <p>Kliknutím na kartu služby ji přidáme do objednávky. Další službu můžete kdykoliv doplnit zde.</p>
+    </div>
+
+    <div class="rv-checkout">
+      <section class="rv-panel">
+        <div class="rv-panel-head">
+          <h3>Vybrané služby</h3>
+          <p>Jedna služba může být v objednávce pouze jednou.</p>
+        </div>
+        <div class="rv-panel-body">
+          <div id="rvCart" class="rv-cart-list"></div>
+
+          <div class="rv-add-row">
+            <select id="rvProductSelect" aria-label="Přidat další službu">
+              <option value="">+ Přidat další službu…</option>
+              <optgroup label="Prezentace nemovitostí">
+                <option value="basic">BASIC — 2 970 Kč</option>
+                <option value="tip">TIP — 11 970 Kč</option>
+                <option value="top">TOP — 19 970 Kč</option>
+              </optgroup>
+              <optgroup label="Prezentace domů pro výstavbu">
+                <option value="tuning">TUNING obrázků — 9 970 Kč</option>
+                <option value="video">Prodejní VIDEO — 14 970 Kč</option>
+                <option value="viz">VIZUALIZACE — 19 970 Kč</option>
+              </optgroup>
+            </select>
+            <button id="rvAddProduct" class="rv-btn" type="button">Přidat</button>
+          </div>
+
+          <div class="rv-mode">
+            <div class="rv-mode-title">Cenový režim</div>
+            <div class="rv-mode-switch">
+              <button class="rv-mode-btn active" data-mode="standard" type="button">Standardní objednávka</button>
+              <button class="rv-mode-btn" data-mode="conis" type="button">Partner CONIS</button>
+            </div>
+            <div id="rvConisNote" class="rv-conis-note">
+              Benefit pilotu CONIS: <strong>1× TUNING zdarma</strong> a <strong>50% sleva na VIZUALIZACE a Prodejní VIDEO</strong>. Nárok bude před zpracováním objednávky ověřen.
+            </div>
+          </div>
+
+          <div class="rv-form-grid">
+            <div class="rv-field">
+              <label for="rvCompany">Firma</label>
+              <input id="rvCompany" placeholder="Název firmy">
+            </div>
+            <div class="rv-field">
+              <label for="rvIco">IČ</label>
+              <input id="rvIco" placeholder="IČ">
+            </div>
+            <div class="rv-field">
+              <label for="rvName">Jméno a příjmení</label>
+              <input id="rvName" placeholder="Jméno a příjmení">
+            </div>
+            <div class="rv-field">
+              <label for="rvEmail">E-mail</label>
+              <input id="rvEmail" type="email" placeholder="e-mail@firma.cz">
+            </div>
+            <div class="rv-field">
+              <label for="rvPhone">Telefon</label>
+              <input id="rvPhone" placeholder="+420">
+            </div>
+            <div class="rv-field">
+              <label for="rvWeb">Web</label>
+              <input id="rvWeb" placeholder="www.firma.cz">
+            </div>
+            <div class="rv-field rv-full">
+              <label for="rvNote">Poznámka</label>
+              <textarea id="rvNote" placeholder="Volitelná poznámka k objednávce"></textarea>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="rv-panel rv-summary">
+        <div class="rv-panel-head">
+          <h3>Rekapitulace</h3>
+          <p id="rvModeLabel">Standardní ceny Realivideo</p>
+        </div>
+        <div class="rv-panel-body">
+          <div id="rvSummaryRows"></div>
+          <div class="rv-summary-line">
+            <span>Standardní cena</span>
+            <strong id="rvStandardTotal">0 Kč</strong>
+          </div>
+          <div id="rvSavingRow" class="rv-summary-line" style="display:none">
+            <span>Úspora CONIS</span>
+            <strong id="rvSaving" class="rv-saving">0 Kč</strong>
+          </div>
+          <div class="rv-total">
+            <span>Celkem</span>
+            <div id="rvTotal" class="rv-total-value">0 Kč</div>
+          </div>
+
+
+<div id="rvLegalBlock" class="rv-legal">
+  <div class="rv-contract-links">
+    <a href="documents/01-obchodni-podminky.pdf"
+       target="_blank"
+       rel="noopener">
+      Všeobecné obchodní podmínky
+    </a>
+    <a href="documents/02-ramcova-smlouva.pdf"
+       target="_blank"
+       rel="noopener">
+      Rámcová smlouva
+    </a>
+  </div>
+
+  <label class="rv-consent">
+    <input id="rvTermsAccepted" type="checkbox">
+    <span>
+      Souhlasím s Všeobecnými obchodními podmínkami
+      a Rámcovou smlouvou.
+    </span>
+  </label>
+</div>
+
+<div id="rvProformaActions" class="rv-proforma-actions"
+     aria-hidden="true">
+  <button id="rvProformaPreview"
+          class="rv-btn"
+          type="button">
+    Náhled faktury
+  </button>
+  <button id="rvProformaDownload"
+          class="rv-btn"
+          type="button">
+    Stáhnout fakturu
+  </button>
+</div>
+
+<button id="rvContinueBtn" class="rv-btn rv-full-btn" type="button">POKRAČOVAT K PLATBĚ →</button>
+          <p class="rv-note">Po odeslání zobrazíme platební údaje. Fakturu a instrukce k předání podkladů odešleme po ověření platby.</p>
+
+          <div id="rvPayment" class="rv-payment">
+            <div class="rv-qr-label">PLATEBNÍ QR — VIZUÁLNÍ PLACEHOLDER</div>
+            <div class="rv-qr" aria-label="QR placeholder"></div>
+            <div class="rv-summary-line"><span>Částka</span><strong id="rvPaymentAmount">0 Kč</strong></div>
+            <div class="rv-summary-line"><span>Variabilní symbol</span><strong>20260907</strong></div>
+          </div>
+
+          <div id="rvZeroState" class="rv-success-zero">
+            <strong>Objednávka v rámci CONIS pilotu</strong><br>
+            Zvolená objednávka nevyžaduje platbu. Po ověření nároku na benefit CONIS vám pošleme instrukce k předání podkladů.
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+</div>
+  </div>
+</section>
+
+
+
+<section class="section section-rule">
+  <div class="container founder-grid">
+    <div>
+      <div class="eyebrow">ZKUŠENOST V OBORU</div>
+      <h2>20+ let ve stavebnictví, architektuře a prodeji.</h2>
+      <p class="lead">Podpořím vaše projekty digitálními výstupy, které zvýší atraktivitu a usnadní prodej.</p>
+      <p>S propagací realit mám bohaté zkušenosti – včetně vlastního developerského projektu Domy s energií, kdy jsme u 2 připravovaných domů (ještě bez stavebního povolení) dosáhli rezervace do 1 měsíce od spuštění kampaně (před zahájením stavby).</p>
+    </div>
+    <div class="founder-media media-live"><img src="https://res.cloudinary.com/djiq5pxj1/image/upload/v1788761360/01_radim_ventus_actual_ugd17c.jpg" alt="Radim Věntus" loading="lazy"></div>
+  </div>
+</section>
+
+<section class="section section-rule anchor-line-target" id="kontakt">
+  <div class="container">
+    <div class="eyebrow">REALIVIDEO</div>
+    <h2>Co potřebujete ukázat?</h2>
+    <p class="lead" style="margin-inline:auto">Nemovitost, developerský projekt nebo katalog domů. Vyberte balíček, nebo nám nejdřív napište.</p>
+    <div class="contact-actions">
+      <a class="btn btn-primary" href="#balicky">Vybrat balíček</a>
+      <a class="btn" id="contact-project-btn" href="mailto:kontakt@realivideo.cz">Probrat projekt</a>
+    </div>
+    <div class="contact-lines">
+        <a href="tel:+420725020757">+420 725 020 757</a>
+        <span class="contact-separator">/</span>
+        <a href="mailto:kontakt@realivideo.cz">kontakt@realivideo.cz</a>
+      </div>
+  </div>
+</section>
+
+</main>
+
+
+<script>
+(()=>{
+  const orderTarget=document.getElementById("order-module");
+  const cards=[...document.querySelectorAll(".price-card")];
+
+  function easeInOutCubic(t){
+    return t<0.5 ? 4*t*t*t : 1-Math.pow(-2*t+2,3)/2;
+  }
+
+  function animateScrollToY(targetY,duration=1500){
+    const maxY=Math.max(
+      0,
+      document.documentElement.scrollHeight-window.innerHeight
+    );
+
+    const endY=Math.max(0,Math.min(targetY,maxY));
+    const startY=window.scrollY;
+    const delta=endY-startY;
+    const start=performance.now();
+
+    function frame(now){
+      const elapsed=now-start;
+      const progress=Math.min(elapsed/duration,1);
+      const eased=easeInOutCubic(progress);
+      window.scrollTo(0,startY + delta*eased);
+      if(progress<1) requestAnimationFrame(frame);
+    }
+
+    requestAnimationFrame(frame);
+  }
+
+  function slowScrollTo(target,duration=1500){
+    if(!target) return;
+
+    const header=document.querySelector(".site-header");
+    const headerH=header ? header.getBoundingClientRect().height : 0;
+
+    const targetY=
+      target.getBoundingClientRect().top +
+      window.scrollY -
+      headerH -
+      2;
+
+    animateScrollToY(targetY,duration);
+  }
+
+  function slowScrollToBottom(duration=1500){
+    const bottomY=Math.max(
+      0,
+      document.documentElement.scrollHeight-window.innerHeight
+    );
+    animateScrollToY(bottomY,duration);
+  }
+
+  function selectCard(card){
+    if(!card) return;
+
+    document.querySelectorAll(".price-card.is-selected")
+      .forEach(c=>c.classList.remove("is-selected"));
+
+    card.classList.add("is-selected");
+
+    const btn=card.querySelector(".select-product");
+    const product=btn?.dataset.product||"";
+
+    const productMap={
+      "BALÍČEK BASIC":"basic",
+      "BALÍČEK TIP":"tip",
+      "BALÍČEK TOP":"top",
+      "TUNING obrázků":"tuning",
+      "Prodejní VIDEO":"video",
+      "VIZUALIZACE":"viz"
+    };
+
+    const id=productMap[product];
+    if(id && window.realivideoOrder){
+      window.realivideoOrder.addProduct(id);
+    }
+
+    slowScrollTo(orderTarget,1500);
+  }
+
+  cards.forEach(card=>{
+    const btn=card.querySelector(".select-product");
+
+    card.addEventListener("click",e=>{
+      if(e.target.closest("a,button")) return;
+      selectCard(card);
+    });
+
+    card.addEventListener("keydown",e=>{
+      if(e.key==="Enter" || e.key===" "){
+        e.preventDefault();
+        selectCard(card);
+      }
+    });
+
+    if(btn){
+      btn.addEventListener("click",e=>{
+        e.preventDefault();
+        e.stopPropagation();
+        selectCard(card);
+      });
+    }
+  });
+
+  document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+    anchor.addEventListener("click",e=>{
+      const href=anchor.getAttribute("href");
+      if(!href || href==="#") return;
+
+      e.preventDefault();
+
+      if(href==="#kontakt"){
+        slowScrollToBottom(1500);
+      }else{
+        let target=null;
+        try{
+          target=document.querySelector(href);
+        }catch(_){
+          return;
+        }
+        if(!target) return;
+        slowScrollTo(target,1500);
+      }
+
+      if(history.replaceState){
+        history.replaceState(null,"",href);
+      }
+    });
+  });
+
+  window.realivideoSlowScrollTo=slowScrollTo;
+  window.realivideoSlowScrollToBottom=slowScrollToBottom;
+})();
+</script>
+
+<script>
+(()=>{
+  const products={
+    basic:{name:"BALÍČEK BASIC",group:"Prezentace nemovitostí",price:2970,eligible:false},
+    tip:{name:"BALÍČEK TIP",group:"Prezentace nemovitostí",price:11970,eligible:false},
+    top:{name:"BALÍČEK TOP",group:"Prezentace nemovitostí",price:19970,eligible:false},
+    tuning:{name:"TUNING obrázků",group:"Domy pro výstavbu",price:9970,eligible:"free"},
+    video:{name:"Prodejní VIDEO",group:"Domy pro výstavbu",price:14970,eligible:"half"},
+    viz:{name:"VIZUALIZACE",group:"Domy pro výstavbu",price:19970,eligible:"half"}
+  };
+
+  const cart=new Set();
+  let mode="standard";
+  const el=id=>document.getElementById(id);
+  const format=n=>new Intl.NumberFormat("cs-CZ").format(n)+" Kč";
+
+  function finalPrice(id){
+    const p=products[id];
+    if(mode!=="conis" || !p.eligible) return p.price;
+    if(p.eligible==="free") return 0;
+    if(p.eligible==="half") return Math.round(p.price/2);
+    return p.price;
+  }
+
+  function render(){
+    const cartEl=el("rvCart");
+    if(!cartEl) return;
+
+    cartEl.innerHTML="";
+
+    if(cart.size===0){
+      cartEl.innerHTML='<div class="rv-cart-empty">Objednávka je zatím prázdná. Přidejte službu kliknutím na kartu výše nebo ze selectboxu.</div>';
+    }else{
+      [...cart].forEach(id=>{
+        const p=products[id];
+        const fp=finalPrice(id);
+        const row=document.createElement("div");
+        row.className="rv-cart-row";
+        row.innerHTML=`
+          <div>
+            <div class="rv-cart-title">${p.name}</div>
+            <div class="rv-cart-meta">${p.group}</div>
+          </div>
+          <div class="rv-cart-price">
+            ${fp!==p.price ? `<span class="rv-price-old">${format(p.price)}</span>` : ""}
+            ${fp===0 ? "ZDARMA" : format(fp)}
+            ${mode==="conis" && p.eligible ? `<span class="rv-price-benefit">${p.eligible==="free" ? "CONIS benefit" : "CONIS −50 %"}</span>` : ""}
+          </div>
+          <button class="rv-remove" type="button" aria-label="Odebrat ${p.name}" data-remove="${id}">×</button>
+        `;
+        cartEl.appendChild(row);
+      });
+    }
+
+    document.querySelectorAll("#rv-order [data-remove]").forEach(btn=>{
+      btn.onclick=()=>{
+        const id=btn.dataset.remove;
+        cart.delete(id);
+        document.querySelectorAll(".price-card.is-selected").forEach(card=>{
+          const label=card.querySelector(".select-product")?.dataset.product||"";
+          const reverse={
+            "BALÍČEK BASIC":"basic","BALÍČEK TIP":"tip","BALÍČEK TOP":"top",
+            "TUNING obrázků":"tuning","Prodejní VIDEO":"video","VIZUALIZACE":"viz"
+          };
+          if(reverse[label]===id) card.classList.remove("is-selected");
+        });
+        syncOrderVisibility();
+        render();
+      };
+    });
+
+    const ids=[...cart];
+    const standard=ids.reduce((s,id)=>s+products[id].price,0);
+    const total=ids.reduce((s,id)=>s+finalPrice(id),0);
+    const saving=standard-total;
+
+    el("rvSummaryRows").innerHTML=ids.map(id=>{
+      const p=products[id];
+      return `<div class="rv-summary-line"><span>${p.name}</span><strong>${finalPrice(id)===0?"ZDARMA":format(finalPrice(id))}</strong></div>`;
+    }).join("");
+
+    el("rvStandardTotal").textContent=format(standard);
+    el("rvTotal").textContent=format(total);
+    el("rvSaving").textContent="− "+format(saving);
+    el("rvSavingRow").style.display=mode==="conis" && saving>0 ? "" : "none";
+    el("rvModeLabel").textContent=mode==="conis" ? "Zvýhodnění partnera CONIS" : "Standardní ceny Realivideo";
+    el("rvConisNote").classList.toggle("show",mode==="conis");
+    el("rvPayment").classList.remove("show");
+    el("rvZeroState").classList.remove("show");
+
+    document.querySelectorAll("#rv-order .rv-mode-btn")
+      .forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+
+    [...el("rvProductSelect").options].forEach(o=>{
+      if(!o.value) return;
+      o.disabled=cart.has(o.value);
+      const p=products[o.value];
+      o.textContent=cart.has(o.value)
+        ? `${p.name} — již přidáno`
+        : `${p.name} — ${format(p.price)}`;
+    });
+  }
+
+  el("rvAddProduct").addEventListener("click",()=>{
+    const id=el("rvProductSelect").value;
+    if(!id || cart.has(id)) return;
+    cart.add(id);
+    el("rvProductSelect").value="";
+    render();
+  });
+
+  document.querySelectorAll("#rv-order .rv-mode-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      mode=btn.dataset.mode;
+      render();
+    });
+  });
+
+    function syncOrderVisibility(){
+    const order=el("rv-order");
+    if(!order) return;
+    const open=cart.size>0;
+    order.classList.toggle("rv-order-open",open);
+    order.classList.toggle("rv-order-collapsed",!open);
+    order.setAttribute("aria-hidden",open ? "false" : "true");
+  }
+
+  window.realivideoOrder={
+    addProduct(id){
+      if(products[id]){
+        cart.add(id);
+        syncOrderVisibility();
+        render();
+      }
+    },
+    removeProduct(id){
+      cart.delete(id);
+      syncOrderVisibility();
+      render();
+    },
+    setMode(nextMode){
+      if(nextMode==="standard" || nextMode==="conis"){
+        mode=nextMode;
+        render();
+      }
+    },
+    getCart(){
+      return [...cart];
+    }
+  };
+
+  syncOrderVisibility();
+  render();
+})();
+</script>
+
+
+<!-- RV_CONIS_BENEFIT_MODAL_BEGIN -->
+<div id="rvConisBenefitModal" class="rv-benefit-modal" aria-hidden="true">
+  <div class="rv-benefit-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="rvConisBenefitTitle">
+    <button id="rvConisBenefitClose" class="rv-benefit-modal-close" type="button" aria-label="Zavřít">×</button>
+
+    <div class="rv-benefit-modal-eyebrow">REALIVIDEO &amp; CONIS</div>
+
+    <h2 id="rvConisBenefitTitle">ZVÝHODNĚNÍ PRO PARTNERY CONIS</h2>
+
+    <p>Zvýhodnění Realivideo je určeno partnerům, kteří přijali nabídku na pilotní režim systému CONIS.</p>
+
+    <p><strong>CONIS je inteligentní vrstva pro prodejní web, která zvyšuje konverzi.</strong> Přidává se ke stávajícímu webu a pomáhá lépe porozumět tomu, co návštěvníky skutečně zajímá a co ovlivňuje jejich rozhodování.</p>
+
+    <p>CONIS je určen primárně pro stavební firmy a developery, kteří prodávají typové a modulární domy. V pilotním režimu má každý partner možnost ověřit si CONIS na skutečných návštěvnících svého webu po dobu 90 dní.</p>
+
+    <p>Realivideo podporuje kvalitní vstupní vizuální prezentaci pro toto obchodní prostředí. <strong>Partner CONIS proto získává TUNING zdarma + 50% zvýhodnění na VIZUALIZACE a VIDEO.</strong></p>
+  </div>
+</div>
+<!-- RV_CONIS_BENEFIT_MODAL_END -->
+
+<div id="rvVideoModal" class="rv-video-modal" aria-hidden="true">
+  <div class="rv-video-modal-dialog" role="dialog" aria-modal="true" aria-label="Video">
+    <button id="rvVideoModalClose" class="rv-video-modal-close" type="button" aria-label="Zavřít video">×</button>
+    <div id="rvVideoModalStage" class="rv-video-modal-stage"></div>
+  </div>
+</div>
+
+
+<script>
+(()=>{
+  const openBtn=document.getElementById("rvConisBenefitOpen");
+  const modal=document.getElementById("rvConisBenefitModal");
+  const closeBtn=document.getElementById("rvConisBenefitClose");
+
+  if(!openBtn || !modal || !closeBtn) return;
+
+  function openBenefit(){
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden","false");
+    document.body.classList.add("rv-benefit-modal-lock");
+    closeBtn.focus();
+  }
+
+  function closeBenefit(){
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden","true");
+    document.body.classList.remove("rv-benefit-modal-lock");
+    openBtn.focus();
+  }
+
+  openBtn.addEventListener("click",openBenefit);
+  closeBtn.addEventListener("click",closeBenefit);
+
+  modal.addEventListener("click",e=>{
+    if(e.target===modal) closeBenefit();
+  });
+
+  document.addEventListener("keydown",e=>{
+    if(
+      e.key==="Escape" &&
+      modal.classList.contains("is-open")
+    ){
+      closeBenefit();
+    }
+  });
+})();
+</script>
+
+<script>
+(()=>{
+  const modal=document.getElementById("rvVideoModal");
+  const stage=document.getElementById("rvVideoModalStage");
+  const closeBtn=document.getElementById("rvVideoModalClose");
+  if(!modal || !stage || !closeBtn) return;
+
+  let lastTrigger=null;
+
+  function openVideo(trigger){
+    const mediaId=trigger?.dataset?.wistiaId;
+    if(!mediaId) return;
+
+    /*
+     * Developer-card player is preview only.
+     * It must never remain the playback owner.
+     */
+    const sourcePlayer=
+      trigger.querySelector("wistia-player");
+
+    const pauseSource=()=>{
+      try{
+        sourcePlayer?.pause?.();
+      }catch{}
+
+      try{
+        const sourceNative=
+          sourcePlayer?.shadowRoot
+            ?.querySelector("video");
+
+        if(sourceNative){
+          sourceNative.pause();
+        }
+      }catch{}
+    };
+
+    pauseSource();
+
+    lastTrigger=trigger;
+    stage.innerHTML="";
+
+    /*
+     * The popup owns playback.
+     * autoplay must be present before the
+     * Wistia element is attached to DOM.
+     */
+    const player=document.createElement("wistia-player");
+    player.setAttribute("media-id",mediaId);
+    player.setAttribute("aspect","1.7777777777777777");
+    player.setAttribute("seo","false");
+    player.setAttribute("autoplay","true");
+    player.style.width="100%";
+    player.style.height="100%";
+
+    modal.classList.add("is-open");
+    modal.setAttribute("aria-hidden","false");
+    document.body.classList.add("rv-modal-lock");
+
+    stage.appendChild(player);
+
+    /*
+     * Wistia initializes asynchronously.
+     * Keep source definitely paused after
+     * the click transaction as well.
+     */
+    requestAnimationFrame(()=>{
+      pauseSource();
+
+      requestAnimationFrame(()=>{
+        pauseSource();
+      });
+    });
+
+    closeBtn.focus();
+  }
+
+  function closeVideo(){
+    modal.classList.remove("is-open");
+    modal.setAttribute("aria-hidden","true");
+    document.body.classList.remove("rv-modal-lock");
+    stage.innerHTML="";
+    if(lastTrigger) lastTrigger.focus({preventScroll:true});
+  }
+
+  document.querySelectorAll(".rv-video-popup-trigger").forEach(trigger=>{
+    trigger.addEventListener("click",e=>{
+      e.preventDefault();
+      openVideo(trigger);
+    });
+    trigger.addEventListener("keydown",e=>{
+      if(e.key==="Enter" || e.key===" "){
+        e.preventDefault();
+        openVideo(trigger);
+      }
+    });
+  });
+
+  closeBtn.addEventListener("click",closeVideo);
+  modal.addEventListener("click",e=>{
+    if(e.target===modal) closeVideo();
+  });
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape" && modal.classList.contains("is-open")) closeVideo();
+  });
+})();
+</script>
+
+
+<!-- RV_REFERENCE_CASES_SCRIPTS_BEGIN -->
+<script src="https://fast.wistia.com/player.js"></script>
+<script data-rv-reference-cases>
+var rvDataset = {
+        brno: [
+            { label: "01. Inzerce na Sreality – srovnání", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780126564/inzerce_nova%CC%81_qyfufv.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780126564/inzerce_pu%CC%8Avodni%CC%81_s9xem8.jpg" },
+            { label: "02. Obývací pokoj", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1779974926/obyvak_potencial_sqlud7.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780126564/obyvak_nyni_4_si805p.jpg" },
+            { label: "03. Ložnice", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1779974926/loznice_potencial_jop6gu.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1779974926/loznice_nyni_foy4x1.jpg" },
+            { label: "04. Zimní zahrada", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780128552/zimni_zahrada_potencial_2_eyivtw.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780128552/zimni_zahrada_nyni_2_kgozzx.jpg" },
+            { label: "05. Průčelí vily", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1779977645/pruceli_potencial_iafuer.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1779977645/pruceli_nyni_kekf7m.jpg" },
+            { label: "06. Zahrada", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1779979978/zahrada_potancial_2_aewmqb.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1779979977/zahara_nyni_2_lbsik9.jpg" }
+        ],
+        suchdol: [
+            { label: "01. Inzerce na Sreality – srovnání", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780412565/02_inzerce_tuning_i7jneh.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780412565/01_inzerce_puvodni_kypsqr.jpg" },
+            { label: "02. Kuchyň", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780410319/04_kuchyn_potencial_dgmcr0.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780410319/03_kuchyn_nyni_b25cjv.jpg" },
+            { label: "03. Obývací pokoj", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780410319/06_obyvak_potencial_wrugwc.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780410320/05_obyvak_nyni_nvnzll.jpg" },
+            { label: "04. Ložnice", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780410320/08_loznice_potencial_rdg7ji.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780410320/07_loznice_nyni_txuwdc.jpg" },
+            { label: "05. Koupelna", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780410322/10_koupelna_potencial_ziifrg.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780410321/09_koupelna_nyni_p58cx1.jpg" },
+            { label: "06. Mapa pro video", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780411492/12_mapa_tuning_gc6lmm.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780410323/11_mapa_puvodni_rslgf6.jpg" }
+        ],
+        jezerany: [
+            { label: "01. Inzerce na Sreality – srovnání", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780412583/02_inzerce_potencial_cbmqpq.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780412582/01_inzerce_nyni_jbhgn8.jpg" },
+            { label: "02. Dům z ulice", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780408614/04_dum_potencial_bdrxj3.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780408614/03_dum_nyni_fjn8nl.jpg" },
+            { label: "03. Dvorek", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780408616/06_dvorek_1_potencial_iymlhy.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780408614/05_dvorek_1_nyni_nxzx4f.jpg" },
+            { label: "04. Kuchyň", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780408615/12_kuchyn_potencial_qcfirs.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780408615/11_kuchyn_nyni_uylotv.jpg" },
+            { label: "05. Ložnice", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780408616/20_loznice_potencial_hfbfjw.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780408615/19_loznice_nyni_uqmhmz.jpg" },
+            { label: "06. Dům zezadu", bg: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780408616/24_staveni_potencial_bjnamz.jpg", top: "https://res.cloudinary.com/djiq5pxj1/image/upload/v1780408616/23_staveni_nyni_clkydx.jpg" }
+        ]
+    };
+
+    var rvLoopInterval = null;
+    var rvTimeouts = [];
+    var rvCurrentContext = [];
+    var rvActiveIdx = 0;
+    var rvStartX = 0, rvStartY = 0, rvStartTime = 0;
+
+    function rvToggleCase(id) {
+        var card = document.getElementById(id);
+        if (!card) return;
+        var act = card.classList.contains('rv-active');
+        var all = document.querySelectorAll('.rv-card');
+        for (var i = 0; i < all.length; i++) all[i].classList.remove('rv-active');
+        if (!act) card.classList.add('rv-active');
+    }
+
+    function rvOpenVideo(id) {
+        var l = document.getElementById('rotateLayer');
+        if (l) l.style.display = '';
+        document.getElementById('videoWistiaInjectTarget').innerHTML = '<wistia-player media-id="' + id + '" autoplay="true"></wistia-player>';
+        document.getElementById('globalDynamicPopup').classList.add('active');
+    }
+
+    function rvCloseVideo(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        document.getElementById('globalDynamicPopup').classList.remove('active');
+        document.getElementById('videoWistiaInjectTarget').innerHTML = '';
+    }
+
+    function rvDismissRotate(e) {
+        if (e) e.stopPropagation();
+        var l = document.getElementById('rotateLayer');
+        if (l) l.style.setProperty('display', 'none', 'important');
+    }
+
+    function rvOpenSliders(key) {
+        rvCurrentContext = rvDataset[key];
+        document.getElementById('globalSlidersPopup').classList.add('active');
+        var h = "";
+        for (var i = 0; i < rvCurrentContext.length; i++) {
+            h += '<div class="rv-pop-item" id="pi-' + i + '"><button type="button" class="rv-pop-trigger" onclick="rvSwitchItem(' + i + ')"><span>' + rvCurrentContext[i].label + '</span><div class="rv-pop-btn">Zobrazit</div></button><div class="rv-pop-content" id="pc-' + i + '"></div></div>';
+        }
+        document.getElementById('popupSlidersInjectZone').innerHTML = h;
+        rvSwitchItem(0);
+    }
+
+    function rvSwitchItem(i) {
+        rvKillAnim();
+        rvActiveIdx = i;
+        var items = document.querySelectorAll('.rv-pop-item');
+        for (var j = 0; j < items.length; j++) {
+            var act = (j === i);
+            items[j].classList.toggle('active', act);
+            var contentZone = items[j].querySelector('.rv-pop-content');
+            if (contentZone) {
+                contentZone.innerHTML = act ? document.getElementById('rv-hidden-slider-template').innerHTML : '';
+            }
+            if (act) {
+                document.getElementById('p-global-bg').src = rvCurrentContext[i].bg;
+                document.getElementById('p-global-top').src = rvCurrentContext[i].top;
+                rvUpdateSlider(50);
+                rvStartSequence();
+            }
+        }
+    }
+
+    function rvUpdateSlider(v) {
+        var top = document.getElementById('p-global-top');
+        var line = document.querySelector('.rv-pop-slider-line');
+        var handle = document.querySelector('.rv-pop-slider-handle');
+        if (top) top.style.clipPath = 'inset(0 ' + (100 - v) + '% 0 0)';
+        if (line) line.style.left = v + '%';
+        if (handle) handle.style.left = v + '%';
+    }
+
+    function rvTouchStart(e) {
+        rvStartX = e.touches[0].clientX;
+        rvStartY = e.touches[0].clientY;
+        rvStartTime = Date.now();
+    }
+
+    function rvTouchEnd(e) {
+        var dx = Math.abs(e.changedTouches[0].clientX - rvStartX);
+        var dy = Math.abs(e.changedTouches[0].clientY - rvStartY);
+        var dt = Date.now() - rvStartTime;
+        if (dx < 8 && dy < 8 && dt < 250) {
+            e.preventDefault();
+            rvTriggerZoom();
+        }
+    }
+
+    function rvTriggerZoom() {
+        document.getElementById('p-zoom-top').src = rvCurrentContext[rvActiveIdx].top;
+        document.getElementById('p-zoom-bg').src = rvCurrentContext[rvActiveIdx].bg;
+        document.getElementById('globalMobileZoomPopup').classList.add('active');
+    }
+
+    function rvCloseZoom(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        document.getElementById('globalMobileZoomPopup').classList.remove('active');
+    }
+
+    function rvRunIteration() {
+        rvTimeouts.push(setTimeout(function() { rvSetTransitions(true); rvUpdateSlider(100); }, 1000));
+        rvTimeouts.push(setTimeout(function() { rvUpdateSlider(0); }, 2300));
+        rvTimeouts.push(setTimeout(function() { rvUpdateSlider(50); }, 3600));
+        rvTimeouts.push(setTimeout(function() { rvSetTransitions(false); }, 5000));
+    }
+
+    function rvStartSequence() {
+        rvKillAnim();
+        rvRunIteration();
+        rvLoopInterval = setInterval(rvRunIteration, 8000);
+    }
+
+    function rvSetTransitions(en) {
+        var top = document.getElementById('p-global-top');
+        var line = document.querySelector('.rv-pop-slider-line');
+        var handle = document.querySelector('.rv-pop-slider-handle');
+        var s = en ? "left 0.8s ease-in-out, clip-path 0.8s ease-in-out" : "none";
+        if (top) top.style.transition = s;
+        if (line) line.style.transition = s;
+        if (handle) handle.style.transition = s;
+    }
+
+    function rvKillAnim() {
+        if (rvLoopInterval) { clearInterval(rvLoopInterval); rvLoopInterval = null; }
+        for (var i = 0; i < rvTimeouts.length; i++) clearTimeout(rvTimeouts[i]);
+        rvTimeouts = [];
+        rvSetTransitions(false);
+    }
+
+    function rvCloseSliders(e) {
+        if (e) { e.preventDefault(); e.stopPropagation(); }
+        rvKillAnim();
+        document.getElementById('globalSlidersPopup').classList.remove('active');
+        document.getElementById('popupSlidersInjectZone').innerHTML = '';
+    }
+</script>
+<!-- RV_REFERENCE_CASES_SCRIPTS_END -->
+
+
+
+
+
+
+<script id="rvBuildersMegabutton">
+(function(){
+  function initRvBuilders(){
+    var cards=document.querySelectorAll(
+      "article.builder-card.rv-builder-megabutton[data-rv-target]"
+    );
+
+    cards.forEach(function(card){
+      if(card.dataset.rvBound==="1") return;
+      card.dataset.rvBound="1";
+
+      function openTarget(){
+        var url=card.getAttribute("data-rv-target");
+        if(!url) return;
+        window.open(url,"_blank","noopener,noreferrer");
+      }
+
+      card.addEventListener("click",function(event){
+        if(event.target.closest("a,button")) return;
+        openTarget();
+      });
+
+      card.addEventListener("keydown",function(event){
+        if(event.key!=="Enter" && event.key!==" ") return;
+        event.preventDefault();
+        openTarget();
+      });
+    });
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      initRvBuilders,
+      {once:true}
+    );
+  }else{
+    initRvBuilders();
+  }
+})();
+</script>
+
+
+<!-- RV_PAYMENT_RUNTIME_BEGIN -->
+<style id="rv-payment-runtime-final">
+#rvPaymentResult[hidden]{
+  display:none !important;
+}
+#rvPaymentResult{
+  margin-top:22px;
+}
+#rvPaymentQr{
+  display:block;
+  width:220px;
+  height:220px;
+  max-width:100%;
+  margin:0 auto 14px;
+}
+#rvInvoiceLinks{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-top:8px;
+}
+#rvInvoiceLinks a{
+  appearance:none;
+  border:0;
+  background:none;
+  padding:0;
+  margin:0;
+  color:inherit;
+  font:inherit;
+  text-decoration:underline;
+  text-underline-offset:3px;
+  cursor:pointer;
+}
+#rvPaymentError{
+  margin-top:12px;
+  text-align:center;
+}
+</style>
+
+<div id="rvPaymentRuntimeMount" hidden>
+  <div id="rvPaymentResult" hidden>
+    <img id="rvPaymentQr" alt="QR kód pro platbu">
+    <div id="rvInvoiceLinks">
+      <a id="rvInvoicePreview" href="#" target="_blank" rel="noopener">
+        Náhled faktury
+      </a>
+      <a id="rvInvoiceDownload" href="#">
+        Stáhnout fakturu
+      </a>
+    </div>
+    <div id="rvPaymentError" hidden></div>
+  </div>
+</div>
+
+<script id="rv-payment-runtime-final">
+(function(){
+  "use strict";
+
+  const API = "https://api.conis.cz";
+
+  const PRODUCTS = {
+    basic:{
+      name:"BALÍČEK BASIC",
+      group:"Prezentace nemovitostí",
+      price:2970
+    },
+    tip:{
+      name:"BALÍČEK TIP",
+      group:"Prezentace nemovitostí",
+      price:11970
+    },
+    top:{
+      name:"BALÍČEK TOP",
+      group:"Prezentace nemovitostí",
+      price:19970
+    },
+    tuning:{
+      name:"TUNING obrázků",
+      group:"Domy pro výstavbu",
+      price:9970
+    },
+    video:{
+      name:"Prodejní VIDEO",
+      group:"Domy pro výstavbu",
+      price:14970
+    },
+    viz:{
+      name:"VIZUALIZACE",
+      group:"Domy pro výstavbu",
+      price:19970
+    }
+  };
+
+  function el(id){
+    return document.getElementById(id);
+  }
+
+  function b64PdfUrl(attachment){
+    const raw=atob(attachment.bytesBase64);
+    const bytes=new Uint8Array(raw.length);
+
+    for(let i=0;i<raw.length;i++){
+      bytes[i]=raw.charCodeAt(i);
+    }
+
+    return URL.createObjectURL(
+      new Blob(
+        [bytes],
+        {type:attachment.mimeType || "application/pdf"}
+      )
+    );
+  }
+
+  async function jsonFetch(url, options){
+    const response=await fetch(url, options);
+    const body=await response.json().catch(function(){
+      return {};
+    });
+
+    if(!response.ok){
+      throw new Error(
+        body.error || ("HTTP "+response.status)
+      );
+    }
+
+    return body;
+  }
+
+  function selectedProducts(){
+    const authority=window.realivideoOrder;
+
+    if(
+      !authority ||
+      typeof authority.getCart!=="function"
+    ){
+      return [];
+    }
+
+    return authority.getCart().filter(function(id){
+      return Boolean(PRODUCTS[id]);
+    });
+  }
+
+function inputValue(){
+    for(let i=0;i<arguments.length;i++){
+      const key=arguments[i];
+
+      const node=
+        document.getElementById(key) ||
+        document.querySelector(
+          '[name="'+CSS.escape(key)+'"]'
+        );
+
+      if(
+        node &&
+        typeof node.value==="string"
+      ){
+        const value=node.value.trim();
+
+        if(value){
+          return value;
+        }
+      }
+    }
+
+    return "";
+  }
+
+  const resolveCompanyInput=()=>{
+    const labels=
+      Array.from(
+        document.querySelectorAll("label")
+      );
+
+    for(const label of labels){
+      const text=
+        String(
+          label.textContent || ""
+        )
+          .trim()
+          .toLocaleLowerCase("cs-CZ");
+
+      if(text!=="firma"){
+        continue;
+      }
+
+      const forId=
+        label.getAttribute("for");
+
+      if(forId){
+        const field=
+          document.getElementById(
+            forId
+          );
+
+        if(field){
+          return field;
+        }
+      }
+
+      const nested=
+        label.querySelector(
+          "input,textarea"
+        );
+
+      if(nested){
+        return nested;
+      }
+    }
+
+    return null;
+  };
+
+    async function runPayment(){
+    const requiredName=
+      inputValue(
+        "rvName",
+        "name"
+      );
+
+    const requiredEmail=
+      inputValue(
+        "rvEmail",
+        "email"
+      );
+
+    if(!requiredName){
+      window.rvPaymentStage="FORM";
+      throw new Error(
+        "Doplňte firmu."
+      );
+    }
+
+    if(!requiredEmail){
+      window.rvPaymentStage="FORM";
+      throw new Error(
+        "Doplňte e-mail."
+      );
+    }
+
+    const icoRaw=inputValue(
+      "rvIco",
+      "ico"
+    ).replace(/\s+/g,"");
+
+    if(!icoRaw){
+      window.rvPaymentStage="ICO";
+      throw new Error(
+        "Doplňte IČ"
+      );
+    }
+
+    if(!/^\d{8}$/.test(icoRaw)){
+      window.rvPaymentStage="ICO";
+      throw new Error(
+        "IČ musí obsahovat 8 číslic."
+      );
+    }
+
+    let aresCompanyName="";
+    let aresAddress="";
+
+    window.rvPaymentStage="ARES";
+
+    try{
+      const ares=await jsonFetch(
+        API+
+        "/local-pilot/realivideo/ares/"+
+        encodeURIComponent(icoRaw),
+        {
+          method:"GET"
+        }
+      );
+
+      aresCompanyName=
+        typeof ares.companyName==="string"
+          ? ares.companyName.trim()
+          : "";
+
+      aresAddress=
+        typeof ares.address==="string"
+          ? ares.address.trim()
+          : "";
+    }catch(err){
+      /*
+       * ARES enrichment must never make checkout
+       * unavailable. IČ itself remains mandatory.
+       */
+      console.warn(
+        "ARES lookup unavailable:",
+        err
+      );
+    }
+
+    const terms=el("rvTermsAccepted");
+
+    if(!terms || !terms.checked){
+      throw new Error(
+        "Potvrďte souhlas s obchodními podmínkami."
+      );
+    }
+
+    const productIds=selectedProducts();
+
+    if(productIds.length===0){
+      throw new Error(
+        "Vyberte alespoň jednu službu."
+      );
+    }
+
+    if(productIds.length!==1){
+      throw new Error(
+        "Platební runtime zatím vyžaduje jednu službu v objednávce."
+      );
+    }
+
+    const productId=productIds[0];
+    const product=PRODUCTS[productId];
+
+    if(!product){
+      throw new Error(
+        "Vybraná služba není platná."
+      );
+    }
+
+    const now=new Date().toISOString();
+    const orderId=
+      "realivideo-"+Date.now()+"-"+
+      Math.random().toString(36).slice(2,8);
+
+    /*
+     * Capability is requested only now.
+     * No token is persisted in static HTML.
+     */
+    window.rvPaymentStage="CAPABILITY";
+    const capability=await jsonFetch(
+      API+"/local-pilot/realivideo/offer-write-capabilities",
+      {
+        method:"POST",
+        headers:{
+          "content-type":"application/json"
+        },
+        body:JSON.stringify({
+          offerSlug:"realivideo",
+          companyId:"company-realivideo",
+          partnerId:"partner-realivideo"
+        })
+      }
+    );
+
+    if(!capability.token){
+      throw new Error(
+        "Chybí platební oprávnění."
+      );
+    }
+
+    const token=capability.token;
+
+    /*
+     * DurableOrderInput — exact CONIS contract.
+     */
+    const order={
+      orderId:orderId,
+      offerSlug:"realivideo",
+      companyId:"company-realivideo",
+      partnerId:"partner-realivideo",
+      createdAt:now,
+
+      partner:{
+        partnerName:
+          inputValue(
+            "rvName",
+            "rvContactName",
+            "name"
+          ) ||
+          "Zákazník Realivideo",
+
+        companyName:
+          (
+            resolveCompanyInput()?.value ||
+            ""
+          ).trim() ||
+          aresCompanyName,
+
+        contactName:
+          inputValue(
+            "rvName",
+            "rvContactName",
+            "name"
+          ),
+
+        email:
+          inputValue(
+            "rvEmail",
+            "email"
+          ) || "objednavka@realivideo.cz",
+
+        phone:
+          inputValue(
+            "rvPhone",
+            "phone"
+          ) || "neuvedeno",
+
+        ico:
+          icoRaw,
+
+        address:
+          aresAddress
+      },
+
+      package:{
+        id:productId,
+        name:product.name,
+        licenseLabel:product.group,
+        trialDays:0
+      },
+
+      priceCzk:product.price,
+      termsVersion:"realivideo-v1",
+      termsAcceptedAt:now
+    };
+
+    window.rvPaymentStage="ORDER";
+    await jsonFetch(
+      API+"/local-pilot/orders",
+      {
+        method:"POST",
+        headers:{
+          "content-type":"application/json",
+          "authorization":"Bearer "+token
+        },
+        body:JSON.stringify(order)
+      }
+    );
+
+    /*
+     * Canonical CONIS proforma.
+     */
+    window.rvPaymentStage="PROFORMA";
+    const proforma=await jsonFetch(
+      API+
+      "/local-pilot/orders/"+
+      encodeURIComponent(orderId)+
+      "/proforma",
+      {
+        method:"POST",
+        headers:{
+          "content-type":"application/json",
+          "authorization":"Bearer "+token
+        },
+        body:"{}"
+      }
+    );
+
+    if(!proforma.spdPayload){
+      throw new Error(
+        "Proforma neobsahuje SPD payload."
+      );
+    }
+
+    /*
+     * Canonical CONIS QR presentation:
+     * H / margin 4 / 320 px.
+     */
+    if(
+      typeof QRCode==="undefined" ||
+      typeof QRCode.toDataURL!=="function"
+    ){
+      throw new Error(
+        "QR renderer není dostupný."
+      );
+    }
+
+    window.rvPaymentStage="QR";
+    const qrUrl=await QRCode.toDataURL(
+      proforma.spdPayload,
+      {
+        errorCorrectionLevel:"H",
+        margin:4,
+        width:320,
+        color:{
+          dark:"#000000",
+          light:"#ffffff"
+        }
+      }
+    );
+
+    /*
+     * Canonical CONIS document-runtime artifact.
+     */
+    window.rvPaymentStage="PDF";
+
+    const artifact=await jsonFetch(
+      API+
+      "/local-pilot/orders/"+
+      encodeURIComponent(orderId)+
+      "/proforma/pdf",
+      {
+        method:"GET"
+      }
+    );
+
+    /*
+     * Canonical Platform API PDF contract:
+     * artifact.attachment.bytesBase64
+     * artifact.attachment.mimeType
+     * artifact.attachment.fileName
+     */
+    const attachment=
+      artifact &&
+      typeof artifact==="object" &&
+      artifact.attachment &&
+      typeof artifact.attachment==="object"
+        ? artifact.attachment
+        : null;
+
+    if(
+      !attachment ||
+      attachment.mimeType!=="application/pdf" ||
+      typeof attachment.bytesBase64!=="string" ||
+      attachment.bytesBase64.length<20
+    ){
+      throw new Error(
+        "PDF odpověď neobsahuje použitelný dokument."
+      );
+    }
+
+    const pdfBinary=atob(
+      attachment.bytesBase64
+    );
+
+    const pdfBytes=
+      new Uint8Array(pdfBinary.length);
+
+    for(
+      let i=0;
+      i<pdfBinary.length;
+      i+=1
+    ){
+      pdfBytes[i]=
+        pdfBinary.charCodeAt(i);
+    }
+
+    if(window.rvPaymentPdfObjectUrl){
+      URL.revokeObjectURL(
+        window.rvPaymentPdfObjectUrl
+      );
+    }
+
+    const pdfUrl=
+      URL.createObjectURL(
+        new Blob(
+          [pdfBytes],
+          {
+            type:attachment.mimeType
+          }
+        )
+      );
+
+    window.rvPaymentPdfObjectUrl=
+      pdfUrl;
+
+    el("rvPaymentQr").src=qrUrl;
+
+    const preview=el("rvInvoicePreview");
+    const download=el("rvInvoiceDownload");
+
+    if(!preview || !download){
+      throw new Error(
+        "Chybí odkazy pro fakturu."
+      );
+    }
+
+    preview.href=pdfUrl;
+    preview.target="_blank";
+    preview.rel="noopener";
+
+    download.href=pdfUrl;
+    download.download=
+      attachment.fileName ||
+      "realivideo-proforma.pdf";
+
+    window.rvPaymentPdfHref=pdfUrl;
+
+    el("rvPaymentResult").hidden=false;
+  }
+
+  function install(){
+    const button=el("rvContinueBtn");
+
+    button.removeAttribute("disabled");
+    button.disabled=false;
+    if(!button || button.dataset.rvFinalPaymentInstalled==="1"){
+      return;
+    }
+
+    button.dataset.rvFinalPaymentInstalled="1";
+
+    /*
+     * Mount payment output directly after existing payment area
+     * without changing approved checkout markup.
+     */
+    const mount=el("rvPaymentRuntimeMount");
+    const payment=el("rvPayment");
+
+    if(mount && payment){
+      payment.insertAdjacentElement(
+        "afterend",
+        mount
+      );
+      mount.hidden=false;
+    }
+
+    /*
+     * ARES preview directly in checkout form.
+     * IČ remains the input authority; company name and
+     * registered address are shown before payment.
+     */
+    const rvIcoAccent=el("rvIco");
+    if(rvIcoAccent){
+      rvIcoAccent.style.border="2px solid #ffc400";
+      rvIcoAccent.style.boxSizing="border-box";
+    }
+
+    const icoInput=el("rvIco");
+
+    if(icoInput){
+      const preview=document.createElement("div");
+      preview.id="rvAresCompanyPreview";
+      preview.hidden=true;
+      preview.style.marginTop="12px";
+      preview.style.display="grid";
+      preview.style.gap="8px";
+
+      const addressLabel=document.createElement("label");
+      addressLabel.textContent="Sídlo firmy";
+
+      const addressInput=icoInput.cloneNode(false);
+      addressInput.id="rvCompanyAddress";
+      addressInput.name="companyAddress";
+      addressInput.type="text";
+      addressInput.value="";
+      addressInput.readOnly=true;
+      addressInput.required=false;
+      addressInput.removeAttribute("pattern");
+      addressInput.removeAttribute("inputmode");
+      addressInput.placeholder="Načte se podle IČ";
+
+      preview.append(
+        addressLabel,
+        addressInput
+      );
+
+      const icoMount=
+        icoInput.closest(".field") ||
+        icoInput.parentElement ||
+        icoInput;
+
+      icoMount.insertAdjacentElement(
+        "afterend",
+        preview
+      );
+
+      const clearAresPreview=()=>{
+        addressInput.value="";
+        preview.hidden=true;
+      };
+
+      const loadAresPreview=async()=>{
+        const icoRaw=
+          String(icoInput.value||"")
+            .replace(/\s+/g,"");
+
+        if(!/^\d{8}$/.test(icoRaw)){
+          clearAresPreview();
+          return;
+        }
+
+        try{
+          const ares=await jsonFetch(
+            API+
+            "/local-pilot/realivideo/ares/"+
+            encodeURIComponent(icoRaw),
+            {method:"GET"}
+          );
+
+          const companyName=
+            typeof ares.companyName==="string"
+              ? ares.companyName.trim()
+              : "";
+
+          const address=
+            typeof ares.address==="string"
+              ? ares.address.trim()
+              : "";
+
+          if(!companyName){
+            clearAresPreview();
+            return;
+          }
+
+          const companyField=
+            resolveCompanyInput();
+
+          if(companyField){
+            companyField.value=companyName;
+            companyField.dispatchEvent(
+              new Event(
+                "input",
+                {bubbles:true}
+              )
+            );
+          }
+
+          addressInput.value=address;
+          preview.hidden=false;
+
+          console.log(
+            "ARES_FORM_AUTOFILL="+
+            companyName
+          );
+        }catch(err){
+          clearAresPreview();
+
+          console.warn(
+            "ARES form preview unavailable:",
+            err
+          );
+        }
+      };
+
+      icoInput.addEventListener(
+        "blur",
+        loadAresPreview
+      );
+
+      icoInput.addEventListener(
+        "change",
+        loadAresPreview
+      );
+
+      icoInput.addEventListener(
+        "input",
+        ()=>{
+          if(
+            String(icoInput.value||"")
+              .replace(/\s+/g,"")
+              .length!==8
+          ){
+            clearAresPreview();
+          }
+        }
+      );
+    }
+
+    const checkoutValidation=
+      document.createElement("div");
+
+    checkoutValidation.id=
+      "rvCheckoutValidation";
+
+    checkoutValidation.hidden=true;
+
+    checkoutValidation.setAttribute(
+      "role",
+      "alert"
+    );
+
+    checkoutValidation.style.margin=
+      "10px 0 8px";
+
+    checkoutValidation.style.padding=
+      "10px 12px";
+
+    checkoutValidation.style.border=
+      "2px solid #ffc400";
+
+    checkoutValidation.style.background=
+      "#ffffff";
+
+    checkoutValidation.style.color=
+      "#001b33";
+
+    checkoutValidation.style.fontWeight=
+      "700";
+
+    button.insertAdjacentElement(
+      "beforebegin",
+      checkoutValidation
+    );
+
+    const showCheckoutValidation=(
+      message
+    )=>{
+      checkoutValidation.textContent=
+        message;
+
+      checkoutValidation.hidden=
+        !message;
+    };
+
+    const checkoutValidationMessage=()=>{
+      const company=
+        String(
+          resolveCompanyInput()?.value ||
+          ""
+        ).trim();
+
+      const name=
+        inputValue(
+          "rvName",
+          "name"
+        );
+
+      const email=
+        inputValue(
+          "rvEmail",
+          "email"
+        );
+
+      const ico=
+        inputValue(
+          "rvIco",
+          "ico"
+        ).replace(/\s+/g,"");
+
+      const terms=
+        el("rvTermsAccepted");
+
+      if(!name){
+        return "Doplňte jméno a příjmení.";
+      }
+
+      if(!email){
+        return "Doplňte e-mail.";
+      }
+
+      if(!ico){
+        return "Doplňte IČ";
+      }
+
+      if(!/^\d{8}$/.test(ico)){
+        return "IČ musí obsahovat 8 číslic.";
+      }
+
+      if(!company){
+        return "Doplňte firmu.";
+      }
+
+      if(!terms || !terms.checked){
+        return "Potvrďte souhlas s obchodními podmínkami.";
+      }
+
+      return "";
+    };
+
+    const setPaymentInvalidState=()=>{
+      const nameOk=
+        Boolean(inputValue("rvName","name"));
+
+      const emailOk=
+        Boolean(inputValue("rvEmail","email"));
+
+      const icoOk=
+        /^\d{8}$/.test(
+          inputValue(
+            "rvIco",
+            "ico"
+          ).replace(/\s+/g,"")
+        );
+
+      const termsOk=
+        Boolean(
+          el("rvTermsAccepted")?.checked
+        );
+
+      const invalid=
+        !nameOk ||
+        !emailOk ||
+        !icoOk ||
+        !termsOk;
+
+      button.disabled=false;
+
+      button.removeAttribute(
+        "aria-disabled"
+      );
+
+      button.dataset.invalid=
+        invalid ? "1" : "0";
+
+      button.style.opacity=
+        invalid ? "0.55" : "";
+
+      button.style.cursor=
+        invalid ? "not-allowed" : "";
+    };
+
+    [
+      el("rvName"),
+      el("rvEmail"),
+      el("rvIco"),
+      el("rvTermsAccepted")
+    ].filter(Boolean).forEach(
+      control=>{
+        control.addEventListener(
+          "input",
+          setPaymentInvalidState
+        );
+        control.addEventListener(
+          "change",
+          setPaymentInvalidState
+        );
+      }
+    );
+
+    setPaymentInvalidState();
+
+    button.addEventListener(
+      "click",
+      async function(event){
+      window.rvPaymentClickProof=(window.rvPaymentClickProof||0)+1;
+      button.dataset.rvPaymentClicked=String(window.rvPaymentClickProof);
+
+        /*
+         * Payment authority owns this action now.
+         * Prevent old prototype payment output.
+         */
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        const result=el("rvPaymentResult");
+        const error=el("rvPaymentError");
+
+        const validationMessage=
+          checkoutValidationMessage();
+
+        if(validationMessage){
+          showCheckoutValidation(
+            validationMessage
+          );
+
+          result.hidden=true;
+          error.hidden=true;
+          error.textContent="";
+          return;
+        }
+
+        showCheckoutValidation("");
+
+        result.hidden=true;
+        error.hidden=true;
+        error.textContent="";
+
+        try{
+          await runPayment();
+        }catch(err){
+          error.textContent=
+            err instanceof Error
+              ? err.message
+              : "Platbu se nepodařilo připravit.";
+
+          if(
+            window.rvPaymentStage!=="ICO" &&
+            window.rvPaymentStage!=="FORM"
+          ){
+            error.textContent=
+              (window.rvPaymentStage||"UNKNOWN")+
+              " | "+
+              error.textContent;
+          }
+      error.hidden=false;
+          result.hidden=true;
+        }finally{
+
+        }
+      },
+      true
+    );
+  }
+
+  if(document.readyState==="loading"){
+    document.addEventListener(
+      "DOMContentLoaded",
+      install,
+      {once:true}
+    );
+  }else{
+    install();
+  }
+})();
+</script>
+<!-- RV_PAYMENT_RUNTIME_END -->
+
+
+
+
+
+
+
+</body>
+</html>

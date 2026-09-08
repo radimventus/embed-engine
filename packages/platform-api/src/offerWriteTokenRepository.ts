@@ -133,6 +133,7 @@ export class FileOfferWriteTokenRepository implements OfferWriteTokenRepository 
       const state = await this.read();
       const existing = state.capabilities.find(
         (capability) =>
+          capability.orderId === null &&
           active(capability) &&
           capability.offerSlug === scope.offerSlug.trim().toLowerCase() &&
           capability.companyId === scope.companyId.trim() &&

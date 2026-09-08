@@ -1,4 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
+import {
+  renderCanonicalCommercialProformaPdf,
+} from "@embed-engine/document-runtime";
 import { createServer, type IncomingMessage, type Server } from "node:http";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
@@ -468,6 +471,10 @@ export function requiresLoopbackAccess(
   method: string | undefined,
   path: string,
 ): boolean {
+  if (method === "POST" &&
+      path === "/local-pilot/realivideo/offer-write-capabilities") return false;
+  if (method === "GET" &&
+      /^\/local-pilot\/realivideo\/ares\/[0-9]{8}$/.test(path)) return false;
   const publishedHousePackagePath =
     method === "GET" &&
     /^\/public\/house-packages\/[^/]+\/published$/.test(path);
@@ -2415,6 +2422,118 @@ export function createPlatformApiServer(
           }),
         );
       }
+      if (request.method === "POST" &&
+          path === "/local-pilot/realivideo/offer-write-capabilities") {
+        const raw = await requestBody(request);
+        if (!raw || typeof raw !== "object" || Array.isArray(raw))
+          return respond(response, 400, { error: "Neplatný požadavek." });
+        const scope = raw as Record<string, unknown>;
+        if (scope.offerSlug !== "realivideo" ||
+            scope.companyId !== "company-realivideo" ||
+            scope.partnerId !== "partner-realivideo" ||
+            Object.keys(scope).some(key =>
+              !["offerSlug", "companyId", "partnerId"].includes(key)))
+          return respond(response, 403, { error: "Neplatný rozsah Realivideo." });
+        return respond(response, 201, await offerWriteTokens.issue({
+          offerSlug: "realivideo",
+          companyId: "company-realivideo",
+          partnerId: "partner-realivideo",
+          expiresAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+        }));
+      }
+      const realivideoAresMatch = path.match(
+        /^\/local-pilot\/realivideo\/ares\/([0-9]{8})$/,
+      );
+
+      if (
+        request.method === "GET" &&
+        realivideoAresMatch !== null
+      ) {
+        const ico = realivideoAresMatch[1]!;
+
+        try {
+          const aresResponse = await fetch(
+            `https://ares.gov.cz/ekonomicke-subjekty-v-be/rest/ekonomicke-subjekty/${ico}`,
+            {
+              headers: {
+                accept: "application/json",
+              },
+            },
+          );
+
+          if (aresResponse.status === 404) {
+            return respond(response, 404, {
+              error: "Firma s tímto IČ nebyla v ARES nalezena.",
+            });
+          }
+
+          if (!aresResponse.ok) {
+            return respond(response, 502, {
+              error: "ARES je dočasně nedostupný.",
+            });
+          }
+
+          const subject =
+            (await aresResponse.json()) as {
+              obchodniJmeno?: string;
+              sidlo?: {
+                textovaAdresa?: string;
+                nazevUlice?: string;
+                cisloDomovni?: number;
+                cisloOrientacni?: number;
+                nazevObce?: string;
+                psc?: number;
+              };
+            };
+
+          const companyName =
+            subject.obchodniJmeno?.trim() ?? "";
+
+          const address =
+            subject.sidlo?.textovaAdresa?.trim() ??
+            [
+              [
+                subject.sidlo?.nazevUlice,
+                subject.sidlo?.cisloDomovni,
+              ]
+                .filter(
+                  (value) =>
+                    value !== undefined &&
+                    String(value).trim().length > 0,
+                )
+                .join(" "),
+              [
+                subject.sidlo?.psc,
+                subject.sidlo?.nazevObce,
+              ]
+                .filter(
+                  (value) =>
+                    value !== undefined &&
+                    String(value).trim().length > 0,
+                )
+                .join(" "),
+            ]
+              .filter((value) => value.length > 0)
+              .join(", ");
+
+          if (companyName.length === 0) {
+            return respond(response, 502, {
+              error: "ARES nevrátil název firmy.",
+            });
+          }
+
+          return respond(response, 200, {
+            ico,
+            companyName,
+            address,
+          });
+        } catch {
+          return respond(response, 502, {
+            error: "ARES je dočasně nedostupný.",
+          });
+        }
+      }
+
       if (request.method === "POST" && path === "/local-pilot/orders") {
         const token = bearerToken(request);
         if (token === null)
@@ -2424,6 +2543,70 @@ export function createPlatformApiServer(
         const orderInput = (await requestBody(
           request,
         )) as import("./orderRepository").DurableOrderInput;
+
+        if (!orderInput || typeof orderInput !== "object")
+          return respond(response, 400, { error: "Neplatná objednávka." });
+        if (
+          String(orderInput.offerSlug).trim().toLowerCase() === "realivideo" ||
+          String(orderInput.companyId).trim() === "company-realivideo" ||
+          String(orderInput.partnerId).trim() === "partner-realivideo"
+        ) {
+          const catalog: Record<string, {
+            name: string; group: string; price: number;
+          }> = {
+    basic:{
+      name:"BALÍČEK BASIC",
+      group:"Prezentace nemovitostí",
+      price:2970
+    },
+    tip:{
+      name:"BALÍČEK TIP",
+      group:"Prezentace nemovitostí",
+      price:11970
+    },
+    top:{
+      name:"BALÍČEK TOP",
+      group:"Prezentace nemovitostí",
+      price:19970
+    },
+    tuning:{
+      name:"TUNING obrázků",
+      group:"Domy pro výstavbu",
+      price:9970
+    },
+    video:{
+      name:"Prodejní VIDEO",
+      group:"Domy pro výstavbu",
+      price:14970
+    },
+    viz:{
+      name:"VIZUALIZACE",
+      group:"Domy pro výstavbu",
+      price:19970
+    }
+          };
+          const id = orderInput.package?.id;
+          const product = typeof id === "string" &&
+            Object.prototype.hasOwnProperty.call(catalog, id)
+              ? catalog[id] : undefined;
+          if (
+            orderInput.offerSlug !== "realivideo" ||
+            orderInput.companyId !== "company-realivideo" ||
+            orderInput.partnerId !== "partner-realivideo" ||
+            !product ||
+            orderInput.priceCzk !== product.price ||
+            orderInput.package.name !== product.name ||
+            orderInput.package.licenseLabel !== product.group ||
+            orderInput.package.trialDays !== 0 ||
+            orderInput.termsVersion !== "realivideo-v1" ||
+            typeof orderInput.partner?.ico !== "string" ||
+            !/^[0-9]{8}$/.test(orderInput.partner.ico) ||
+            typeof orderInput.termsAcceptedAt !== "string" ||
+            !Number.isFinite(Date.parse(orderInput.termsAcceptedAt))
+          ) return respond(response, 400, {
+            error: "Neplatná služba, cena nebo údaje Realivideo.",
+          });
+        }
         const authorized = await offerWriteTokens.bindOrder(token, {
           offerSlug: orderInput.offerSlug,
           companyId: orderInput.companyId,
@@ -2486,7 +2669,60 @@ export function createPlatformApiServer(
             },
           }),
         });
-        return respond(response, 200, artifact);
+        if (order.offerSlug !== "realivideo")
+          return respond(response, 200, artifact);
+        const canonicalPdf =
+          await renderCanonicalCommercialProformaPdf({
+            number: proforma.number,
+            partnerName:
+              order.partner.contactName ||
+              order.partner.partnerName,
+            companyName:
+              order.partner.companyName,
+            ico:
+              order.partner.ico ?? "",
+            dic: "",
+            address:
+              order.partner.address ?? "",
+            packageName:
+              order.package.name,
+            amountCzk:
+              proforma.amountCzk,
+            currency: "CZK",
+            issuedAt:
+              proforma.issuedAt,
+            dueDate:
+              proforma.dueDate,
+            variableSymbol:
+              proforma.variableSymbol,
+            accountNumber:
+              proforma.bankAccount.accountNumber,
+            iban:
+              proforma.bankAccount.iban,
+            bankName:
+              proforma.bankAccount.bankName,
+            message:
+              `Realivideo ${order.package.name}`,
+            qrPayload:
+              proforma.spdPayload,
+          });
+
+        return respond(response, 200, {
+          ...artifact,
+          attachment: {
+            ...artifact.attachment,
+            fileName:
+              `${proforma.number}.pdf`,
+            mimeType:
+              "application/pdf",
+            bytesBase64:
+              Buffer.from(
+                canonicalPdf,
+              ).toString("base64"),
+            byteLength:
+              canonicalPdf.byteLength,
+          },
+        });
       }
       const orderProformaMatch = path.match(
         /^\/local-pilot\/orders\/([^/]+)\/proforma$/,
