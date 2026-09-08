@@ -173,7 +173,7 @@ function formatCommercialDateCs(
 }
 
 export async function renderCanonicalCommercialProformaPdf(
-  proforma: CommercialProforma,
+  proforma: CanonicalCommercialProforma,
 ): Promise<Uint8Array> {
   const pdf = await PDFDocument.create();
   pdf.registerFontkit(fontkit);

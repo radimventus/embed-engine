@@ -28,7 +28,7 @@ export type DurableProforma = {
   readonly dueDate: string;
   readonly amountCzk: number;
   readonly variableSymbol: string;
-  readonly bankAccount: typeof COMMERCIAL_PAYMENT_ACCOUNT;
+  readonly bankAccount: Readonly<{ accountNumber: string; iban: string; bankName: string }>;
   readonly spdPayload: string;
 };
 
