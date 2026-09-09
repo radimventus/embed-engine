@@ -17,6 +17,8 @@ export type PlatformAccessInvite = {
   readonly activatedAt: string | null;
   readonly ndaAcceptedAt: string | null;
   readonly expiresAt: string;
+  readonly lifecycleVersion?: 2;
+  readonly firstOpenedAt?: string | null;
 };
 
 export type PlatformAccessInviteActivation =
@@ -47,6 +49,7 @@ export interface PlatformAccessInviteClient {
   reissueInvite(id: string): Promise<PlatformAccessInviteIssue | null>;
   revokeInvite(id: string): Promise<PlatformAccessInvite | null>;
   resolveInvite(token: string): Promise<PlatformAccessInvite | null>;
+  openInvite(token: string): Promise<PlatformAccessInvite | null>;
   activateInvite(
     token: string,
     ndaAccepted: boolean,
@@ -101,6 +104,15 @@ export function createPlatformAccessInviteClient(
       );
       if (response.status === 404) return null;
       if (!response.ok) throw new Error("Pozvánku se nepodařilo zrušit.");
+      return parseResponse<PlatformAccessInvite>(response);
+    },
+    async openInvite(token) {
+      const response = await fetch(
+        `${baseUrl}/public/invites/${encodeURIComponent(token)}/open`,
+        { method: "POST" },
+      );
+      if (response.status === 404) return null;
+      if (!response.ok) throw new Error("Pozvánku se nepodařilo otevřít.");
       return parseResponse<PlatformAccessInvite>(response);
     },
     async resolveInvite(token) {

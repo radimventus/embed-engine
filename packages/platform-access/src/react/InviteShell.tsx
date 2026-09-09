@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 
 import {
   createPlatformAccessAuthClient,
@@ -41,6 +41,10 @@ export function InviteShell({
   const [isResolving, setIsResolving] = useState(initialToken.trim().length > 0);
 
   const inviteClient = useMemo(() => createPlatformAccessInviteClient(), []);
+  const [resolveFailed, setResolveFailed] = useState(false);
+  const [retry, setRetry] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const submitLock = useRef(false);
 
   useEffect(() => {
     const trimmed = token.trim();
@@ -50,14 +54,19 @@ export function InviteShell({
       return;
     }
     let active = true;
+    setPreview(null);
+    setResolveFailed(false);
     setIsResolving(true);
     void inviteClient
-      .resolveInvite(trimmed)
+      .openInvite(trimmed)
       .then((invite) => {
         if (active) setPreview(invite);
       })
       .catch(() => {
-        if (active) setPreview(null);
+        if (active) {
+          setPreview(null);
+          setResolveFailed(true);
+        }
       })
       .finally(() => {
         if (active) setIsResolving(false);
@@ -65,12 +74,12 @@ export function InviteShell({
     return () => {
       active = false;
     };
-  }, [inviteClient, token]);
+  }, [inviteClient, token, retry]);
 
   const continueFromToken = async () => {
     setError(null);
     try {
-      const invite = await inviteClient.resolveInvite(token.trim());
+      const invite = await inviteClient.openInvite(token.trim());
       if (invite?.status !== 'pending') {
         setError(inviteLifecycleMessage(invite?.status ?? 'missing'));
         return;
@@ -84,10 +93,12 @@ export function InviteShell({
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    if (submitLock.current) return;
     if (step === 'token') {
       await continueFromToken();
       return;
     }
+    if (isResolving || resolveFailed || preview?.status !== 'pending') return;
     if (!ndaAccepted) {
       setError('Bez souhlasu s NDA není aktivace účtu možná.');
       return;
@@ -96,25 +107,80 @@ export function InviteShell({
       setError('Hesla se neshodují.');
       return;
     }
-    let result;
+
+    submitLock.current = true;
+    setIsSubmitting(true);
+    setError(null);
     try {
-      result = await createPlatformAccessAuthClient().activateInvite({
+      const result = await createPlatformAccessAuthClient().activateInvite({
         token: token.trim(),
         password,
         rememberMe: true,
       });
+      if (!result.ok) {
+        setError(result.error);
+        // Re-read authoritative state after a rejected/interrupted attempt.
+        setIsResolving(true);
+        setRetry(value => value + 1);
+        return;
+      }
+      prepareWelcomeJourney(result.session.user.email);
+      acceptAuthenticatedSession(result.session);
+      onActivated?.();
     } catch {
-      setError('Aktivaci se nepodařilo dokončit. Zkontrolujte Platform API.');
-      return;
+      setError('Výsledek aktivace se nepodařilo ověřit. Ověřujeme stav účtu.');
+      setIsResolving(true);
+      setRetry(value => value + 1);
+    } finally {
+      submitLock.current = false;
+      setIsSubmitting(false);
     }
-    if (!result.ok) {
-      setError(result.error);
-      return;
-    }
-    prepareWelcomeJourney(result.session.user.email);
-    acceptAuthenticatedSession(result.session);
-    onActivated?.();
   };
+
+  if (step !== 'token' && (isResolving || resolveFailed || preview?.status !== 'pending')) {
+    const status = preview?.status;
+    const message = isResolving
+      ? 'Ověřuji pozvánku…'
+      : resolveFailed
+        ? 'Pozvánku se nepodařilo ověřit. Zkuste to znovu.'
+        : status === 'activated'
+          ? 'Účet již byl aktivován. Pokračujte přihlášením.'
+          : status === 'expired'
+            ? 'Platnost pozvánky vypršela. Vyžádejte si od odesílatele novou pozvánku. Pokud už máte aktivovaný účet, přihlaste se.'
+            : status === 'revoked'
+              ? 'Tato pozvánka byla zrušena. Pro další přístup kontaktujte jejího odesílatele.'
+              : 'Tento odkaz není platný. Pokud jste obdrželi novější pozvánku, použijte ji. Jinak kontaktujte odesílatele.';
+
+    return (
+      <div className="platform-access" data-testid="invite-recovery">
+        <div className="platform-access__panel">
+          <h1 className="platform-access__title">Aktivace partnerského účtu</h1>
+          <p className="platform-access__lead" role="status">{message}</p>
+          {!isResolving && resolveFailed && (
+            <button
+              type="button"
+              className="platform-access__submit"
+              onClick={() => {
+                setIsResolving(true);
+                setRetry(value => value + 1);
+              }}
+            >
+              Zkusit znovu
+            </button>
+          )}
+          {!isResolving && (
+            <button
+              type="button"
+              className="platform-access__logout"
+              onClick={onCancel}
+            >
+              Pokračovat na přihlášení
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="platform-access" data-testid="invite-shell">
@@ -281,7 +347,7 @@ export function InviteShell({
           <button
             className="platform-access__submit"
             type="submit"
-            disabled={isResolving || (step === 'nda' && !ndaAccepted)}
+            disabled={isResolving || isSubmitting || (step === 'nda' && !ndaAccepted)}
             data-testid="invite-continue"
             style={{
               background: '#d1a55f',
@@ -289,9 +355,11 @@ export function InviteShell({
               color: '#ffffff',
             }}
           >
-            {step === 'token'
-              ? 'Ověřit pozvánku'
-              : 'Aktivovat a vstoupit'}
+            {isSubmitting
+              ? 'Dokončuji aktivaci…'
+              : step === 'token'
+                ? 'Ověřit pozvánku'
+                : 'Aktivovat a vstoupit'}
           </button>
         </form>
         {step === 'token' && (

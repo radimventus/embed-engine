@@ -1,5 +1,10 @@
 import { createHash, randomBytes } from "node:crypto";
 import {
+  createInviteTiming,
+  firstOpenInvite,
+  invitationStatus,
+} from "./partnerInviteLifecycle";
+import {
   renderCanonicalCommercialProformaPdf,
 } from "@embed-engine/document-runtime";
 import { createServer, type IncomingMessage, type Server } from "node:http";
@@ -222,6 +227,8 @@ export type ResolvedPlatformInvite = Omit<
   readonly activatedAt: string | null;
   readonly ndaAcceptedAt: string | null;
   readonly expiresAt: string;
+  readonly lifecycleVersion?: 2;
+  readonly firstOpenedAt?: string | null;
 };
 
 export type IssuedPlatformInvite = ResolvedPlatformInvite & {
@@ -238,7 +245,12 @@ export interface PlatformInviteRepository {
   create(input: PlatformInviteScope): Promise<IssuedPlatformInvite>;
   findById(id: string): Promise<ResolvedPlatformInvite | null>;
   resolve(token: string): Promise<ResolvedPlatformInvite | null>;
-  activate(token: string, ndaAccepted: boolean): Promise<InviteActivation>;
+  open(token: string): Promise<ResolvedPlatformInvite | null>;
+  activate(
+    token: string,
+    ndaAccepted: boolean,
+    completeAccount?: (invite: ResolvedPlatformInvite) => Promise<void>,
+  ): Promise<InviteActivation>;
   reissue(id: string): Promise<IssuedPlatformInvite | null>;
   revoke(id: string): Promise<ResolvedPlatformInvite | null>;
 }
@@ -252,7 +264,7 @@ type InviteState = {
   readonly invites: readonly StoredInvite[];
 };
 
-const INVITE_VALIDITY_MS = 7 * 24 * 60 * 60 * 1000;
+// TASK 108: invitation deadlines are owned by partnerInviteLifecycle.
 
 const OFFICE_PARTNER_INVITE_ROLES = new Set<PlatformRole>([
   "manager",
@@ -263,8 +275,7 @@ function lifecycle(
   invite: StoredInvite,
   now = Date.now(),
 ): PlatformInviteStatus {
-  if (invite.status !== "pending") return invite.status;
-  return Date.parse(invite.expiresAt) < now ? "expired" : "pending";
+  return invitationStatus(invite, now);
 }
 
 function toResolved(invite: StoredInvite): ResolvedPlatformInvite {
@@ -297,30 +308,34 @@ export class FilePlatformInviteRepository implements PlatformInviteRepository {
   }
 
   async create(input: PlatformInviteScope): Promise<IssuedPlatformInvite> {
-    const token = issueToken();
-    const now = new Date().toISOString();
-    const invite: StoredInvite = {
-      id: `invite-${randomBytes(12).toString("base64url")}`,
-      email: input.email.trim().toLowerCase(),
-      displayName: input.displayName.trim() || input.email.trim(),
-      roles: [...input.roles],
-      invitedByUserId: input.invitedByUserId,
-      tenantId: input.tenantId,
-      companyId: input.companyId,
-      workspaceId: input.workspaceId,
-      projectId: input.projectId,
-      status: "pending",
-      createdAt: now,
-      activatedAt: null,
-      ndaAcceptedAt: null,
-      expiresAt:
-        input.expiresAt ??
-        new Date(Date.parse(now) + INVITE_VALIDITY_MS).toISOString(),
-      verifier: tokenVerifier(token),
-    };
-    const state = await this.read();
-    await this.write({ invites: [...state.invites, invite] });
-    return { ...toResolved(invite), token };
+    return this.exclusively(async () => {
+      const token = issueToken();
+      const now = new Date().toISOString();
+      const invite: StoredInvite = {
+        id: `invite-${randomBytes(12).toString("base64url")}`,
+        email: input.email.trim().toLowerCase(),
+        displayName: input.displayName.trim() || input.email.trim(),
+        roles: [...input.roles],
+        invitedByUserId: input.invitedByUserId,
+        tenantId: input.tenantId,
+        companyId: input.companyId,
+        workspaceId: input.workspaceId,
+        projectId: input.projectId,
+        status: "pending",
+        activatedAt: null,
+        ndaAcceptedAt: null,
+        ...createInviteTiming(Date.parse(now)),
+        // Preserve explicit expiry for existing callers and fixtures.
+        // Explicit overrides retain legacy timing rather than gaining time on open.
+        ...(input.expiresAt === undefined
+          ? {}
+          : { lifecycleVersion: undefined, expiresAt: input.expiresAt }),
+        verifier: tokenVerifier(token),
+      };
+      const state = await this.read();
+      await this.write({ invites: [...state.invites, invite] });
+      return { ...toResolved(invite), token };
+    });
   }
 
   async findById(id: string): Promise<ResolvedPlatformInvite | null> {
@@ -337,9 +352,29 @@ export class FilePlatformInviteRepository implements PlatformInviteRepository {
     return toResolved(invite);
   }
 
+  async open(token: string): Promise<ResolvedPlatformInvite | null> {
+    return this.exclusively(async () => {
+      const state = await this.read();
+      const index = state.invites.findIndex(
+        (item) => item.verifier === tokenVerifier(token),
+      );
+      if (index < 0) return null;
+      const current = state.invites[index]!;
+      const opened = firstOpenInvite(current, Date.now());
+      if (opened === null) return toResolved(current);
+      if (opened !== current) {
+        const invites = [...state.invites];
+        invites[index] = opened;
+        await this.write({ invites });
+      }
+      return toResolved(opened);
+    });
+  }
+
   async activate(
     token: string,
     ndaAccepted: boolean,
+    completeAccount?: (invite: ResolvedPlatformInvite) => Promise<void>,
   ): Promise<InviteActivation> {
     return this.exclusively(async () => {
       if (!ndaAccepted) {
@@ -366,6 +401,11 @@ export class FilePlatformInviteRepository implements PlatformInviteRepository {
                 : "Pozvánka už byla aktivována.",
         };
       }
+      // Keep the invitation pending if account creation fails.
+      // This callback runs under the same lock as reissue/revoke.
+      if (completeAccount !== undefined) {
+        await completeAccount(toResolved(current));
+      }
       const activatedAt = new Date().toISOString();
       const activated: StoredInvite = {
         ...current,
@@ -381,42 +421,45 @@ export class FilePlatformInviteRepository implements PlatformInviteRepository {
   }
 
   async reissue(id: string): Promise<IssuedPlatformInvite | null> {
-    const state = await this.read();
-    const index = state.invites.findIndex((item) => item.id === id);
-    if (index < 0) return null;
-    const current = state.invites[index]!;
-    if (
-      lifecycle(current) === "activated" ||
-      lifecycle(current) === "revoked"
-    ) {
-      return null;
-    }
-    const token = issueToken();
-    const now = new Date().toISOString();
-    const reissued: StoredInvite = {
-      ...current,
-      status: "pending",
-      verifier: tokenVerifier(token),
-      createdAt: now,
-      expiresAt: new Date(Date.parse(now) + INVITE_VALIDITY_MS).toISOString(),
-    };
-    const invites = [...state.invites];
-    invites[index] = reissued;
-    await this.write({ invites });
-    return { ...toResolved(reissued), token };
+    return this.exclusively(async () => {
+      const state = await this.read();
+      const index = state.invites.findIndex((item) => item.id === id);
+      if (index < 0) return null;
+      const current = state.invites[index]!;
+      if (
+        lifecycle(current) === "activated" ||
+        lifecycle(current) === "revoked"
+      ) {
+        return null;
+      }
+      const token = issueToken();
+      const now = new Date().toISOString();
+      const reissued: StoredInvite = {
+        ...current,
+        status: "pending",
+        verifier: tokenVerifier(token),
+        ...createInviteTiming(Date.parse(now)),
+      };
+      const invites = [...state.invites];
+      invites[index] = reissued;
+      await this.write({ invites });
+      return { ...toResolved(reissued), token };
+    });
   }
 
   async revoke(id: string): Promise<ResolvedPlatformInvite | null> {
-    const state = await this.read();
-    const index = state.invites.findIndex((item) => item.id === id);
-    if (index < 0) return null;
-    const current = state.invites[index]!;
-    if (lifecycle(current) !== "pending") return null;
-    const revoked: StoredInvite = { ...current, status: "revoked" };
-    const invites = [...state.invites];
-    invites[index] = revoked;
-    await this.write({ invites });
-    return toResolved(revoked);
+    return this.exclusively(async () => {
+      const state = await this.read();
+      const index = state.invites.findIndex((item) => item.id === id);
+      if (index < 0) return null;
+      const current = state.invites[index]!;
+      if (lifecycle(current) !== "pending") return null;
+      const revoked: StoredInvite = { ...current, status: "revoked" };
+      const invites = [...state.invites];
+      invites[index] = revoked;
+      await this.write({ invites });
+      return toResolved(revoked);
+    });
   }
 
   private async read(): Promise<InviteState> {
@@ -1866,26 +1909,57 @@ export function createPlatformApiServer(
                     : "Pozvánka už byla aktivována.",
           });
         }
-        if ((await partnerSessions.findAccountByEmail(invite.email)) !== null) {
-          return respond(response, 409, {
-            error: PARTNER_ACCOUNT_COLLISION_MESSAGE,
-          });
-        }
-        const activation = await repository.activate(token, true);
-        if (!activation.ok) return respond(response, 409, activation);
+        const password = body.password;
+        const completed: {
+          issued: Awaited<ReturnType<PartnerSessionRepository["activate"]>> | null;
+        } = { issued: null };
         try {
-          const issued = await partnerSessions.activate({
-            invite: activation.invite,
-            password: body.password,
-            rememberMe: body.rememberMe !== false,
-          });
+          const activation = await repository.activate(
+            token,
+            true,
+            async (currentInvite) => {
+              const existing = await partnerSessions.findAccountByEmail(
+                currentInvite.email,
+              );
+              if (existing !== null) {
+                // Recover a completed account write followed by an interrupted
+                // invite write. Never issue a new session in this recovery.
+                if (
+                  existing.id === `user-invite-${currentInvite.id}` &&
+                  existing.tenantId === currentInvite.tenantId &&
+                  existing.companyId === currentInvite.companyId &&
+                  existing.workspaceId === currentInvite.workspaceId &&
+                  existing.projectId === currentInvite.projectId
+                ) {
+                  return;
+                }
+                throw new PartnerAccountCollisionError();
+              }
+              completed.issued = await partnerSessions.activate({
+                invite: currentInvite,
+                password,
+                rememberMe: body.rememberMe !== false,
+              });
+            },
+          );
+          if (!activation.ok) return respond(response, 409, activation);
+          const issued = completed.issued;
+          if (issued === null) {
+            return respond(response, 409, {
+              error: "Účet již byl vytvořen. Přihlaste se svým heslem.",
+              code: "ACCOUNT_ALREADY_ACTIVATED",
+            });
+          }
           setPartnerSessionCookie(response, issued.token, issued.expiresAt);
           return respond(response, 200, { ok: true, session: issued.identity });
         } catch (error) {
           if (error instanceof PartnerAccountCollisionError) {
             return respond(response, 409, { error: error.message });
           }
-          throw error;
+          return respond(response, 500, {
+            error: "Aktivaci se nepodařilo dokončit. Zkuste to prosím znovu.",
+            code: "ACTIVATION_FAILED",
+          });
         }
       }
       if (request.method === "POST" && path === "/public/auth/login") {
@@ -2309,6 +2383,18 @@ export function createPlatformApiServer(
         clearPartnerSessionCookie(response);
         return respond(response, 204, {});
       }
+      const inviteOpenMatch = path.match(
+        /^\/public\/invites\/([^/]+)\/open$/,
+      );
+      if (request.method === "POST" && inviteOpenMatch !== null) {
+        const token = decodeURIComponent(inviteOpenMatch[1]!);
+        const invite = await repository.open(token);
+        return respond(
+          response,
+          invite === null ? 404 : 200,
+          invite ?? { error: "Pozvánka neexistuje." },
+        );
+      }
       if (request.method === "GET" && path.startsWith("/public/invites/")) {
         const token = decodeURIComponent(path.slice("/public/invites/".length));
         const invite = await repository.resolve(token);
@@ -2323,15 +2409,10 @@ export function createPlatformApiServer(
         path.startsWith("/public/invites/") &&
         path.endsWith("/activate")
       ) {
-        const token = decodeURIComponent(
-          path.slice("/public/invites/".length, -"/activate".length),
-        );
-        const body = (await requestBody(request)) as { ndaAccepted?: boolean };
-        const result = await repository.activate(
-          token,
-          body.ndaAccepted === true,
-        );
-        return respond(response, result.ok ? 200 : 409, result);
+        return respond(response, 410, {
+          error: "Aktivaci dokončete nastavením hesla v aktivační obrazovce.",
+          code: "FULL_ACCOUNT_ACTIVATION_REQUIRED",
+        });
       }
       if (
         requiresLoopbackAccess(request.method, path) &&
