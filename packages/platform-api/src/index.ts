@@ -6,7 +6,7 @@ import {
 } from "./partnerInviteLifecycle";
 import {
   renderCanonicalCommercialProformaPdf,
-} from "@embed-engine/document-runtime";
+} from "@embed-engine/document-runtime/node";
 import { createServer, type IncomingMessage, type Server } from "node:http";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
