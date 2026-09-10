@@ -1487,3 +1487,50 @@ header {
     font-size: 17px;
   }
 }
+
+/* CONIS HERO RHYTHM FINAL 2026-09-10 */
+
+/*
+ * Hero remains visually centered and spacious,
+ * but the four textual levels form one coherent composition.
+ */
+
+.positioning .core-value__inner {
+  padding-top: clamp(145px, 17vh, 190px);
+}
+
+.positioning__headline {
+  margin-bottom: 0;
+}
+
+.positioning__eyebrow {
+  margin-top: 26px;
+  margin-bottom: 0;
+}
+
+.positioning__descriptor {
+  margin-top: 64px;
+}
+
+.positioning__lead {
+  margin-top: 24px;
+}
+
+@media (max-width: 760px) {
+  .positioning .core-value__inner {
+    padding-top: 105px;
+    padding-bottom: 80px;
+  }
+
+  .positioning__eyebrow {
+    margin-top: 22px;
+  }
+
+  .positioning__descriptor {
+    margin-top: 58px;
+  }
+
+  .positioning__lead {
+    margin-top: 20px;
+  }
+}
