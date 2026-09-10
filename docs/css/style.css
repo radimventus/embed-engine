@@ -1269,3 +1269,221 @@ RESPONSIVE DESIGN
     line-height: 1.04;
   }
 }
+
+/* CONIS VISUAL CORRECTION 2026-09-10 */
+
+/*
+ * Canonical visual rule:
+ * navy is the default visual language;
+ * gold is the only accent.
+ */
+:root {
+  --navy: #001930;
+}
+
+/* Remove grey visual hierarchy from typography / rules. */
+body,
+main,
+section,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+a,
+label,
+button,
+input,
+textarea,
+select,
+.eyebrow,
+.lead,
+.subtitle,
+.statement,
+.soft,
+.footer-line {
+  color: var(--navy);
+}
+
+.gold,
+.gold *,
+a.gold {
+  color: var(--gold);
+}
+
+/* Structural lines / outlines remain navy, with opacity where subtlety is needed. */
+.chapter-rule,
+hr {
+  border-color: rgba(0, 25, 48, 0.12);
+}
+
+.header,
+.site-header,
+header {
+  color: var(--navy);
+}
+
+.header-nav a,
+.header-actions a,
+.header-actions button {
+  color: var(--navy);
+  border-color: var(--navy);
+}
+
+/* ---------------------------------------------------------
+   HERO — reference composition
+   --------------------------------------------------------- */
+
+.positioning {
+  min-height: calc(100vh - 90px);
+  display: flex;
+  align-items: flex-start;
+  text-align: center;
+}
+
+.positioning .core-value__inner {
+  width: 100%;
+  padding-top: clamp(150px, 19vh, 215px);
+}
+
+.positioning__headline {
+  margin: 0 auto;
+  width: 100%;
+  font-size: clamp(42px, 4.75vw, 70px);
+  line-height: 1.02;
+  letter-spacing: -0.045em;
+  white-space: nowrap;
+}
+
+.positioning__eyebrow {
+  margin: 30px auto 0;
+  color: var(--navy);
+  opacity: 0.50;
+}
+
+.positioning__descriptor {
+  max-width: 1000px;
+  margin: clamp(145px, 18vh, 190px) auto 0;
+  font-size: clamp(21px, 1.75vw, 28px);
+  line-height: 1.35;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.positioning__lead {
+  max-width: 900px;
+  margin: 28px auto 0;
+  font-size: clamp(18px, 1.45vw, 23px);
+  line-height: 1.55;
+  color: var(--navy);
+}
+
+/* ---------------------------------------------------------
+   REAL ESTATE OPPORTUNITIES — reference composition
+   --------------------------------------------------------- */
+
+.opportunities {
+  color: var(--navy);
+}
+
+.opportunities .eyebrow {
+  color: var(--navy);
+  opacity: 1;
+}
+
+.opportunities h2 {
+  max-width: 1120px;
+  margin-top: 46px;
+  margin-bottom: 58px;
+  font-size: clamp(48px, 4.4vw, 68px);
+  line-height: 1.03;
+  letter-spacing: -0.045em;
+  color: var(--navy);
+}
+
+.opportunities__copy {
+  max-width: 820px;
+}
+
+.opportunities__copy .lead {
+  font-size: clamp(20px, 1.65vw, 26px);
+  line-height: 1.62;
+  color: var(--navy);
+}
+
+.opportunities__copy .lead + .lead {
+  margin-top: 8px;
+}
+
+.opportunities__statement {
+  margin-top: 42px;
+  max-width: 900px;
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--gold);
+}
+
+.opportunities__note {
+  max-width: 1100px;
+  margin-top: 5px;
+  font-size: clamp(18px, 1.45vw, 22px);
+  line-height: 1.5;
+  color: var(--navy);
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 760px) {
+  .positioning {
+    min-height: auto;
+  }
+
+  .positioning .core-value__inner {
+    padding-top: 115px;
+    padding-bottom: 90px;
+  }
+
+  .positioning__headline {
+    white-space: normal;
+    font-size: clamp(39px, 11vw, 54px);
+  }
+
+  .positioning__eyebrow {
+    margin-top: 25px;
+  }
+
+  .positioning__descriptor {
+    margin-top: 100px;
+    font-size: 21px;
+  }
+
+  .positioning__lead {
+    margin-top: 24px;
+    font-size: 18px;
+  }
+
+  .opportunities h2 {
+    margin-top: 32px;
+    margin-bottom: 40px;
+    font-size: clamp(39px, 10.5vw, 54px);
+  }
+
+  .opportunities__copy .lead {
+    font-size: 19px;
+  }
+
+  .opportunities__statement {
+    font-size: 23px;
+  }
+
+  .opportunities__note {
+    font-size: 17px;
+  }
+}
