@@ -39,13 +39,26 @@ function hasExplicitInviteRoute(): boolean {
   );
 }
 
+function hasExplicitPasswordResetRoute(): boolean {
+  return (
+    (
+      new URLSearchParams(window.location.search)
+        .get('resetToken')
+        ?.trim().length ?? 0
+    ) > 0
+  );
+}
+
 async function bootstrapWorkspaceHost(): Promise<void> {
   // TASK-80 / VR-FIX-01
-  // A bearer invite is an explicit activation route. Workspace Host normally
-  // performs its durable-session bootstrap before rendering Platform Access,
-  // so the invite must be intercepted here first. This keeps the established
-  // cold-session restore path untouched for every non-invite Workspace entry.
-  if (hasExplicitInviteRoute()) {
+  // A bearer invite or password-reset token is an explicit public access
+  // route. Workspace Host normally performs its durable-session bootstrap
+  // before rendering Platform Access, so both routes must be intercepted here.
+  // This keeps the established cold-session restore path untouched otherwise.
+  if (
+    hasExplicitInviteRoute() ||
+    hasExplicitPasswordResetRoute()
+  ) {
     createRoot(root).render(
       <StrictMode>
         <PlatformAccessRoot

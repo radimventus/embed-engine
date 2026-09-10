@@ -30,7 +30,7 @@ describe('VR-04 Canonical Workspace Shell', () => {
 
   it('TASK-80 — explicit invite enters Platform Access before session restore', () => {
     const main = read('src/main.tsx');
-    const inviteGate = main.indexOf('if (hasExplicitInviteRoute())');
+    const inviteGate = main.indexOf('hasExplicitInviteRoute() ||');
 
     const inviteAccess = main.indexOf(
       '<PlatformAccessRoot',
@@ -545,4 +545,18 @@ describe('TASK-81-83 partner journey cutover', () => {
       /workspace-partner-journey-standalone/,
     );
   });
+
+  it('TASK-109 — password reset enters Platform Access before session restore', () => {
+    const main = read('src/main.tsx');
+
+    assert.match(
+      main,
+      /function hasExplicitPasswordResetRoute\(\)[\s\S]*?get\('resetToken'\)/,
+    );
+    assert.match(
+      main,
+      /hasExplicitInviteRoute\(\)\s*\|\|\s*hasExplicitPasswordResetRoute\(\)/,
+    );
+  });
+
 });

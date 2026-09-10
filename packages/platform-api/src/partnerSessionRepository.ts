@@ -225,6 +225,15 @@ export interface PartnerSessionRepository {
     readonly password: string;
     readonly rememberMe: boolean;
   }): Promise<IssuedPartnerSession | null>;
+  /**
+   * Atomically replaces an account password and revokes every existing
+   * session belonging to that account.
+   */
+  resetPassword?(input: {
+    readonly accountId: string;
+    readonly password: string;
+  }): Promise<boolean>;
+
   resolve(token: string): Promise<PartnerIdentity | null>;
   mutateContext(
     token: string,
@@ -374,6 +383,58 @@ export class FilePartnerSessionRepository implements PartnerSessionRepository {
         identity: identity(refreshed, issued.session),
         expiresAt: issued.session.expiresAt,
       };
+    });
+  }
+
+  async resetPassword(input: {
+    readonly accountId: string;
+    readonly password: string;
+  }): Promise<boolean> {
+    const password = input.password.trim();
+
+    if (password.length < 8) {
+      throw new Error('Heslo musí mít alespoň 8 znaků.');
+    }
+
+    return this.exclusively(async () => {
+      const state = await this.read();
+      const account = state.accounts.find(
+        (item) => item.id === input.accountId,
+      );
+
+      if (account === undefined) {
+        return false;
+      }
+
+      const now = new Date().toISOString();
+      const passwordSalt = randomBytes(16).toString('base64url');
+      const passwordHash = await this.hashPassword(
+        password,
+        passwordSalt,
+      );
+
+      const updatedAccount: StoredAccount = {
+        ...account,
+        passwordHash,
+        passwordSalt,
+      };
+
+      await this.write({
+        accounts: state.accounts.map((item) =>
+          item.id === account.id ? updatedAccount : item,
+        ),
+        sessions: state.sessions.map((session) =>
+          session.accountId === account.id &&
+          session.revokedAt === null
+            ? {
+                ...session,
+                revokedAt: now,
+              }
+            : session,
+        ),
+      });
+
+      return true;
     });
   }
 

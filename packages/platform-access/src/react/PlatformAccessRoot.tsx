@@ -18,7 +18,12 @@ import { AuthShell } from './AuthShell';
 import { InviteShell } from './InviteShell';
 import { PlatformLanding } from './PlatformLanding';
 import { SessionProvider, usePlatformSession } from './SessionProvider';
-import { shouldPrioritizeInviteRoute, urlWithoutInviteParam } from './inviteRouting';
+import {
+  shouldPrioritizeInviteRoute,
+  shouldPrioritizePasswordResetRoute,
+  urlWithoutInviteParam,
+  urlWithoutPasswordResetParam,
+} from './inviteRouting';
 
 type AccessGateProps = {
   readonly children: ReactNode;
@@ -52,6 +57,14 @@ function readInviteTokenFromUrl(): string {
   return new URLSearchParams(window.location.search).get('invite') ?? '';
 }
 
+function readPasswordResetTokenFromUrl(): string {
+  if (typeof window === 'undefined') return '';
+
+  return (
+    new URLSearchParams(window.location.search).get('resetToken') ?? ''
+  );
+}
+
 function hydratePilotFromUrlOnce(): void {
   if (typeof window === 'undefined') return;
   const flag = 'conis.pilot.hydrate.done';
@@ -78,6 +91,7 @@ function AccessGateInner({ children, renderWorkspaceEntry }: AccessGateProps) {
   const { session, isRestoring } = usePlatformSession();
   hydratePilotFromUrlOnce();
   const urlToken = readInviteTokenFromUrl();
+  const resetToken = readPasswordResetTokenFromUrl();
   const [inviteMode, setInviteMode] = useState(urlToken.length > 0);
   const workspaceContext = getSharedWorkspaceContext();
   const shellEmbed = isWorkspaceShellEmbed();
@@ -86,6 +100,16 @@ function AccessGateInner({ children, renderWorkspaceEntry }: AccessGateProps) {
       window.history.replaceState(null, '', urlWithoutInviteParam(window.location.href));
     }
     setInviteMode(false);
+  };
+
+  const dismissPasswordResetRoute = () => {
+    if (typeof window !== 'undefined') {
+      window.history.replaceState(
+        null,
+        '',
+        urlWithoutPasswordResetParam(window.location.href),
+      );
+    }
   };
 
   // A bearer invite URL is an explicit activation route. It must take
@@ -102,6 +126,25 @@ function AccessGateInner({ children, renderWorkspaceEntry }: AccessGateProps) {
           initialToken={urlToken}
           onCancel={dismissInviteRoute}
           onActivated={dismissInviteRoute}
+        />
+      </WorkspaceEntryFrame>
+    );
+  }
+
+  if (
+    shouldPrioritizePasswordResetRoute({
+      resetToken,
+      hasRestoredSession: session !== null,
+    })
+  ) {
+    return (
+      <WorkspaceEntryFrame
+        stage="heslo"
+        renderWorkspaceEntry={renderWorkspaceEntry}
+      >
+        <AuthShell
+          initialResetToken={resetToken}
+          onPasswordResetFinished={dismissPasswordResetRoute}
         />
       </WorkspaceEntryFrame>
     );

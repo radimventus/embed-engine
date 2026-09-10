@@ -16,3 +16,22 @@ export function urlWithoutInviteParam(href: string): string {
   url.searchParams.delete('invite');
   return `${url.pathname}${url.search}${url.hash}`;
 }
+
+/**
+ * A password-reset bearer URL is explicit account-recovery authority and must
+ * remain visible even when the browser restores an older authenticated session.
+ */
+export function shouldPrioritizePasswordResetRoute(input: {
+  readonly resetToken: string;
+  readonly hasRestoredSession: boolean;
+}): boolean {
+  void input.hasRestoredSession;
+  return input.resetToken.trim().length > 0;
+}
+
+/** Removes the password-reset bearer token while preserving the remaining URL. */
+export function urlWithoutPasswordResetParam(href: string): string {
+  const url = new URL(href);
+  url.searchParams.delete('resetToken');
+  return `${url.pathname}${url.search}${url.hash}`;
+}

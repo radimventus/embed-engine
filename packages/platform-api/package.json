@@ -8,15 +8,17 @@
   "scripts": {
     "start": "tsx src/main.ts",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/platformApi.test.ts src/platformApiConfig.test.ts src/officePartnerRepository.test.ts src/platformApiOfficePartner.test.ts src/platformApiOfficeInvite.test.ts src/partnerSessionAccountCollision.test.ts src/platformApiPartnerEnvironmentEntry.test.ts src/platformApiPartnerEnvironmentSwitch.test.ts src/projectConfigRepository.test.ts src/platformApiProjectConfig.test.ts src/leadRepository.test.ts src/platformApiLead.test.ts src/caseProcessingRepository.test.ts src/platformApiCaseProcessing.test.ts src/decisionSessionRepository.test.ts src/platformApiDecisionSession.test.ts src/partnerInviteLifecycle.test.mjs src/partnerInviteTiming.test.ts src/partnerInviteOpen.test.ts src/partnerInviteCompletion.test.ts src/partnerInviteRecovery.test.ts"
+    "test": "tsx --test src/platformApi.test.ts src/platformApiConfig.test.ts src/officePartnerRepository.test.ts src/platformApiOfficePartner.test.ts src/platformApiOfficeInvite.test.ts src/partnerSessionAccountCollision.test.ts src/platformApiPartnerEnvironmentEntry.test.ts src/platformApiPartnerEnvironmentSwitch.test.ts src/projectConfigRepository.test.ts src/platformApiProjectConfig.test.ts src/leadRepository.test.ts src/platformApiLead.test.ts src/caseProcessingRepository.test.ts src/platformApiCaseProcessing.test.ts src/decisionSessionRepository.test.ts src/platformApiDecisionSession.test.ts src/partnerInviteLifecycle.test.mjs src/partnerInviteTiming.test.ts src/partnerInviteOpen.test.ts src/partnerInviteCompletion.test.ts src/partnerInviteRecovery.test.ts src/partnerPasswordResetLifecycle.test.mjs src/partnerPasswordResetRepository.test.mjs src/partnerPasswordResetAccount.test.ts src/partnerPasswordResetHttp.test.ts src/partnerPasswordResetSmtp.test.ts"
   },
   "devDependencies": {
     "@types/node": "^22.20.1",
+    "@types/nodemailer": "^8.0.1",
     "tsx": "^4.20.3",
     "typescript": "^5.9.2"
   },
   "dependencies": {
     "@embed-engine/document-runtime": "workspace:*",
-    "@embed-engine/platform-access": "workspace:*"
+    "@embed-engine/platform-access": "workspace:*",
+    "nodemailer": "^9.0.3"
   }
 }

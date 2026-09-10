@@ -249,6 +249,28 @@ export type PlatformAccessCanonicalAuthorityBundle = {
   };
 };
 
+export type PlatformAccessPasswordResetResult =
+  | {
+      readonly ok: true;
+      readonly message: string;
+    }
+  | {
+      readonly ok: false;
+      readonly error: string;
+      readonly code?: string;
+    };
+
+export type PlatformAccessPasswordResetPreview =
+  | {
+      readonly ok: true;
+      readonly expiresAt: string;
+    }
+  | {
+      readonly ok: false;
+      readonly error: string;
+      readonly code?: string;
+    };
+
 export interface PlatformAccessAuthClient {
   activateInvite(input: {
     readonly token: string;
@@ -260,6 +282,17 @@ export interface PlatformAccessAuthClient {
     readonly password: string;
     readonly rememberMe: boolean;
   }): Promise<PlatformAccessAuthResult>;
+  requestPasswordReset(
+    email: string,
+  ): Promise<PlatformAccessPasswordResetResult>;
+  inspectPasswordReset(
+    token: string,
+  ): Promise<PlatformAccessPasswordResetPreview>;
+  completePasswordReset(input: {
+    readonly token: string;
+    readonly password: string;
+    readonly passwordConfirm: string;
+  }): Promise<PlatformAccessPasswordResetResult>;
   restoreSession(): Promise<PlatformSession | null>;
   mutateSessionContext(
     input:
@@ -353,6 +386,98 @@ export function createPlatformAccessAuthClient(
     },
     login(input) {
       return postAuthentication("/public/auth/login", input);
+    },
+    async requestPasswordReset(email) {
+      const response = await fetch(
+        `${baseUrl}/public/auth/password-reset/request`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ email }),
+        },
+      );
+      const result = await parseResponse<{
+        readonly message?: string;
+        readonly error?: string;
+        readonly code?: string;
+      }>(response);
+
+      return response.ok
+        ? {
+            ok: true,
+            message:
+              result.message ??
+              "Pokud účet existuje, poslali jsme odkaz pro změnu hesla.",
+          }
+        : {
+            ok: false,
+            error:
+              result.error ??
+              "Žádost o změnu hesla se nepodařilo odeslat.",
+            ...(result.code === undefined ? {} : { code: result.code }),
+          };
+    },
+    async inspectPasswordReset(token) {
+      const response = await fetch(
+        `${baseUrl}/public/auth/password-reset/${encodeURIComponent(token)}`,
+        {
+          method: "GET",
+          credentials: "include",
+        },
+      );
+      const result = await parseResponse<{
+        readonly expiresAt?: string;
+        readonly error?: string;
+        readonly code?: string;
+      }>(response);
+
+      return response.ok && typeof result.expiresAt === "string"
+        ? {
+            ok: true,
+            expiresAt: result.expiresAt,
+          }
+        : {
+            ok: false,
+            error:
+              result.error ??
+              "Odkaz pro změnu hesla není platný.",
+            ...(result.code === undefined ? {} : { code: result.code }),
+          };
+    },
+    async completePasswordReset(input) {
+      const response = await fetch(
+        `${baseUrl}/public/auth/password-reset/${encodeURIComponent(input.token)}/complete`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            password: input.password,
+            passwordConfirm: input.passwordConfirm,
+          }),
+        },
+      );
+      const result = await parseResponse<{
+        readonly message?: string;
+        readonly error?: string;
+        readonly code?: string;
+      }>(response);
+
+      return response.ok
+        ? {
+            ok: true,
+            message:
+              result.message ??
+              "Heslo bylo úspěšně změněno.",
+          }
+        : {
+            ok: false,
+            error:
+              result.error ??
+              "Heslo se nepodařilo změnit.",
+            ...(result.code === undefined ? {} : { code: result.code }),
+          };
     },
     async restoreSession() {
       const response = await fetch(`${baseUrl}/public/auth/me`, {

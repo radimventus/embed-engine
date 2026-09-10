@@ -71,6 +71,16 @@ import {
   type PartnerSessionRepository,
 } from "./partnerSessionRepository";
 import {
+  FilePartnerPasswordResetRepository,
+  type PasswordResetCompletion,
+} from "./partnerPasswordResetRepository";
+import {
+  type PartnerPasswordResetDelivery,
+} from "./partnerPasswordResetDelivery";
+import {
+  createEnvPartnerPasswordResetDelivery,
+} from "./partnerPasswordResetSmtp";
+import {
   FileHousePackageRepository,
   type HousePackageRepository,
   type HousePackagePersistFiles,
@@ -746,6 +756,10 @@ export function createPlatformApiServer(
   decisionSessions: DecisionSessionRepository = new FileDecisionSessionRepository(),
   caseProcessing: CaseProcessingRepository = new FileCaseProcessingRepository(),
   canonicalRegistryAuthorityRepository: FileCanonicalRegistryAuthorityRepository = new FileCanonicalRegistryAuthorityRepository(),
+  passwordResets: FilePartnerPasswordResetRepository = new FilePartnerPasswordResetRepository(
+    platformApiStatePath("partner-password-resets.json"),
+  ),
+  passwordResetDelivery: PartnerPasswordResetDelivery = createEnvPartnerPasswordResetDelivery(),
 ): Server {
   const partnerSessions =
     partnerSessionsParam ??
@@ -1962,6 +1976,171 @@ export function createPlatformApiServer(
           });
         }
       }
+      if (
+        request.method === "POST" &&
+        path === "/public/auth/password-reset/request"
+      ) {
+        const body = (await requestBody(request)) as {
+          email?: unknown;
+        };
+        const email =
+          typeof body.email === "string" ? body.email.trim() : "";
+
+        const genericResponse = {
+          ok: true,
+          message:
+            "Pokud pro tento e-mail existuje aktivovaný účet, poslali jsme odkaz pro nastavení nového hesla.",
+        };
+
+        if (email.length > 0) {
+          /*
+           * Deliberately detach lookup and SMTP from the public response.
+           * Known and unknown accounts therefore share the same response
+           * status, body and delivery-independent response timing.
+           */
+          void (async () => {
+            const account =
+              await partnerSessions.findAccountByEmail(email);
+
+            if (account === null) return;
+
+            const issued = await passwordResets.issue(account.id);
+
+            try {
+              await passwordResetDelivery.sendPasswordReset({
+                email: account.email,
+                token: issued.token,
+                expiresAt: issued.expiresAt,
+              });
+            } catch {
+              // An undelivered token must not remain usable.
+              await passwordResets.revoke(issued.token);
+              console.error("Partner password-reset delivery failed.");
+            }
+          })().catch(() => {
+            console.error("Partner password-reset request failed.");
+          });
+        }
+
+        return respond(response, 202, genericResponse);
+      }
+
+      const passwordResetCompleteMatch = path.match(
+        /^\/public\/auth\/password-reset\/([^/]+)\/complete$/,
+      );
+
+      if (
+        request.method === "POST" &&
+        passwordResetCompleteMatch !== null
+      ) {
+        const token = decodeURIComponent(
+          passwordResetCompleteMatch[1] ?? "",
+        ).trim();
+        const body = (await requestBody(request)) as {
+          password?: unknown;
+          passwordConfirm?: unknown;
+        };
+
+        if (
+          typeof body.password !== "string" ||
+          body.password.trim().length < 8
+        ) {
+          return respond(response, 400, {
+            error: "Heslo musí mít alespoň 8 znaků.",
+            code: "PASSWORD_TOO_SHORT",
+          });
+        }
+
+        if (
+          typeof body.passwordConfirm !== "string" ||
+          body.password !== body.passwordConfirm
+        ) {
+          return respond(response, 400, {
+            error: "Hesla se neshodují.",
+            code: "PASSWORD_CONFIRMATION_MISMATCH",
+          });
+        }
+
+        const resetPassword =
+          partnerSessions.resetPassword?.bind(partnerSessions);
+
+        if (resetPassword === undefined) {
+          return respond(response, 503, {
+            error: "Obnova hesla není dočasně dostupná.",
+            code: "PASSWORD_RESET_UNAVAILABLE",
+          });
+        }
+
+        let completed: PasswordResetCompletion;
+
+        try {
+          completed = await passwordResets.complete(
+            token,
+            async (accountId) => {
+              const changed = await resetPassword({
+                accountId,
+                password: body.password as string,
+              });
+
+              if (!changed) {
+                throw new Error(
+                  "Password-reset account no longer exists.",
+                );
+              }
+            },
+          );
+        } catch {
+          return respond(response, 500, {
+            error:
+              "Nové heslo se nepodařilo bezpečně uložit. Zkuste to prosím znovu.",
+            code: "PASSWORD_RESET_FAILED",
+          });
+        }
+
+        if (!completed.ok) {
+          return respond(response, 410, {
+            error:
+              "Odkaz pro změnu hesla je neplatný nebo jeho platnost vypršela. Požádejte o nový odkaz.",
+            code: "PASSWORD_RESET_LINK_INVALID",
+          });
+        }
+
+        clearPartnerSessionCookie(response);
+
+        return respond(response, 200, {
+          ok: true,
+          message:
+            "Heslo bylo změněno. Nyní se můžete přihlásit novým heslem.",
+        });
+      }
+
+      const passwordResetInspectMatch = path.match(
+        /^\/public\/auth\/password-reset\/([^/]+)$/,
+      );
+
+      if (
+        request.method === "GET" &&
+        passwordResetInspectMatch !== null
+      ) {
+        const token = decodeURIComponent(
+          passwordResetInspectMatch[1] ?? "",
+        ).trim();
+        const reset = await passwordResets.resolve(token);
+
+        if (reset === null || reset.status !== "pending") {
+          return respond(response, 410, {
+            error:
+              "Odkaz pro změnu hesla je neplatný nebo jeho platnost vypršela. Požádejte o nový odkaz.",
+            code: "PASSWORD_RESET_LINK_INVALID",
+          });
+        }
+
+        return respond(response, 200, {
+          ok: true,
+          expiresAt: reset.expiresAt,
+        });
+      }
+
       if (request.method === "POST" && path === "/public/auth/login") {
         const body = (await requestBody(request)) as {
           email?: string;
