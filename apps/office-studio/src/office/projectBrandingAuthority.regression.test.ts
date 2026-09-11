@@ -43,7 +43,7 @@ test('TASK 86 — Client Experience renders real Project logo without pseudo SVG
   );
 });
 
-test('TASK 86 FIX-02 — Project and Partner Detail expose partner invitation action', async () => {
+test('TASK 86 FIX-03 — Project Detail owns partner invitation action', async () => {
   const detail = await read(
     'apps/office-studio/src/features/pilot-workspace/terminal/PilotTerminalDetail.tsx',
   );
@@ -58,8 +58,12 @@ test('TASK 86 FIX-02 — Project and Partner Detail expose partner invitation ac
   assert.match(detail, /activePartner\.contact\.phone/);
   assert.match(detail, /PartnerUserInvitationSection/);
   assert.match(detail, /project-partner-invitations/);
-
   assert.match(
+    detail,
+    /partnerId=\{activePartner\?\.id \?\? activeCase\.companyId\}/,
+  );
+
+  assert.doesNotMatch(
     partnerDetail,
     /PartnerUserInvitationSection/,
   );

@@ -402,14 +402,14 @@ export function PilotTerminalDetail({
         </section>
       ) : null}
 
-      {activePartner !== null ? (
-        <section
-          className="office-pilot-ws__detail-section"
-          data-testid="project-partner-invitations"
-        >
-          <PartnerUserInvitationSection partnerId={activePartner.id} />
-        </section>
-      ) : null}
+      <section
+        className="office-pilot-ws__detail-section"
+        data-testid="project-partner-invitations"
+      >
+        <PartnerUserInvitationSection
+          partnerId={activePartner?.id ?? activeCase.companyId}
+        />
+      </section>
 
       {editPartner !== null ? (
         <PartnerFormDialog
