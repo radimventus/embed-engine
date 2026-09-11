@@ -132,7 +132,20 @@ export async function loadPublishedHousePackageOverlay(
       : {}),
   };
 
-  return Object.keys(files).length === 0 ? null : { files };
+  if (Object.keys(files).length === 0) {
+    return null;
+  }
+
+  const mediaUrls = await materializeAuthenticatedGalleryMedia({
+    houseId,
+    galleryCsv: files.galleryCsv,
+    signal,
+  });
+
+  return {
+    files,
+    ...(Object.keys(mediaUrls).length > 0 ? { mediaUrls } : {}),
+  };
 }
 
 export async function loadDurableHousePackageOverlay(
