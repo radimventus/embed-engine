@@ -1534,3 +1534,18 @@ header {
     margin-top: 20px;
   }
 }
+
+
+/* CONIS SCROLL AFTER LEAD 2026-09-11 */
+.positioning .scroll-indicator,
+.positioning .scroll,
+.positioning [class*="scroll"] {
+  position: relative;
+  inset: auto;
+  left: auto;
+  right: auto;
+  top: auto;
+  bottom: auto;
+  transform: none;
+  margin-top: 30px;
+}
