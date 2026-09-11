@@ -486,10 +486,13 @@ function GalleryManager({
     );
   });
 
-  const setAsHero = (item: GalleryMediaItem) => {
-    const next = session.setHeroRelativePath(item.path);
+  const persistGallerySnapshot = (next: HousePackageEditSnapshot) => {
     onChange(next);
     onPersist?.(next);
+  };
+
+  const setAsHero = (item: GalleryMediaItem) => {
+    persistGallerySnapshot(session.setHeroRelativePath(item.path));
   };
 
   const clearDrag = () => {
@@ -559,7 +562,7 @@ function GalleryManager({
             }
             onAccept={(payload) => {
               const data = payload as MediaGalleryOrderPayload;
-              onChange(
+              persistGallerySnapshot(
                 session.setGalleryCsv(
                   reorderGalleryCsvByFiles(
                     snapshot.working.galleryCsv,
@@ -651,7 +654,7 @@ function GalleryManager({
                     10,
                   );
                   if (Number.isFinite(from) && index >= 0 && from !== index) {
-                    onChange(
+                    persistGallerySnapshot(
                       session.setGalleryCsv(
                         reorderGalleryCsv(
                           snapshot.working.galleryCsv,
@@ -711,7 +714,7 @@ function GalleryManager({
                       onClick={(event) => {
                         event.stopPropagation();
                         if (index >= 0) {
-                          onChange(
+                          persistGallerySnapshot(
                             session.setGalleryCsv(
                               removeCsvRow(snapshot.working.galleryCsv, index),
                             ),
@@ -739,6 +742,7 @@ function GalleryManager({
         snapshot={snapshot}
         session={session}
         onChange={onChange}
+        onPersist={onPersist}
         onMetaSaved={onMetaSaved}
       />
     </section>
@@ -751,6 +755,7 @@ function SelectedGalleryEditor({
   snapshot,
   session,
   onChange,
+  onPersist,
   onMetaSaved,
 }: {
   readonly item: GalleryMediaItem | null;
@@ -758,6 +763,7 @@ function SelectedGalleryEditor({
   readonly snapshot: HousePackageEditSnapshot;
   readonly session: HousePackageEditSession;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
+  readonly onPersist?: (next: HousePackageEditSnapshot) => void;
   readonly onMetaSaved: () => void;
 }) {
   if (item === null) {
@@ -785,7 +791,9 @@ function SelectedGalleryEditor({
             room,
           );
           csv = updateCsvCell(csv, index, 'file', file);
-          onChange(session.setGalleryCsv(csv));
+          const next = session.setGalleryCsv(csv);
+          onChange(next);
+          onPersist?.(next);
         }
         setMediaPresentationMeta(projectId, item.key, meta);
         onMetaSaved();
