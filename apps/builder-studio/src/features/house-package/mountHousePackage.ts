@@ -19,6 +19,7 @@ import {
 import { readHeroRelativePathFromManifest } from './buildPersistFiles';
 import { planPairsFromRooms } from './validateHousePackageWorking';
 import {
+  platformHousePackageMediaUrl,
   requestPlatformHousePackageState,
   type PlatformHousePackageState,
 } from './requestPlatformHousePackage';
@@ -201,9 +202,24 @@ export async function mountHousePackage(
   const manifestJson = persisted?.files.manifestJson ?? diskManifestJson;
 
   const manifestHero = readHeroRelativePathFromManifest(manifestJson);
+
+  let manifestHeroExists = false;
+  if (manifestHero !== null) {
+    if (options.houseId !== null && options.houseId !== undefined) {
+      manifestHeroExists =
+        (await probeExists(
+          platformHousePackageMediaUrl(options.houseId, manifestHero),
+        )) ||
+        (await probeExists(`${packageUrlRoot}/${manifestHero}`));
+    } else {
+      manifestHeroExists = await probeExists(
+        `${packageUrlRoot}/${manifestHero}`,
+      );
+    }
+  }
+
   const heroRelativePath =
-    manifestHero !== null &&
-    (await probeExists(`${packageUrlRoot}/${manifestHero}`))
+    manifestHero !== null && manifestHeroExists
       ? manifestHero
       : await resolveHeroPath(packageUrlRoot, probeExists);
 

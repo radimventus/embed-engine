@@ -205,7 +205,9 @@ export function buildMediaStudioModel(input: {
     heroPath,
     heroUrl:
       heroPath.length > 0
-        ? `${HOUSE_PACKAGE_URL_ROOT}/${heroPath}`
+        ? houseId === null
+          ? `${HOUSE_PACKAGE_URL_ROOT}/${heroPath}`
+          : platformHousePackageMediaUrl(houseId, heroPath)
         : null,
     heroMeta: getMediaPresentationMeta(projectId, 'hero', 'Hero'),
     gallery,

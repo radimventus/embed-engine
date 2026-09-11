@@ -181,6 +181,7 @@ export function MediaStudioView({
                 session,
                 galleryCount: model.gallery.length,
                 onChange,
+                onPersist,
               });
             } else if (bulkKind === 'svg' || bulkKind === 'documents') {
               appendStagedBulkAssets(
@@ -431,6 +432,7 @@ function applyGalleryBulkUpload(input: {
   readonly session: HousePackageEditSession;
   readonly galleryCount: number;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
+  readonly onPersist?: (next: HousePackageEditSnapshot) => void;
 }): void {
   let csv = input.snapshot.working.galleryCsv;
   let order = input.galleryCount;
@@ -442,7 +444,9 @@ function applyGalleryBulkUpload(input: {
       file: file.fileName,
     });
   }
-  input.onChange(input.session.setGalleryCsv(csv));
+  const next = input.session.setGalleryCsv(csv);
+  input.onChange(next);
+  input.onPersist?.(next);
 }
 
 function GalleryManager({
