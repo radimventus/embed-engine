@@ -5,6 +5,7 @@
 body {
   margin: 0;
   color: var(--platform-navy, #001930);
+  font-family: var(--platform-font);
 }
 
 #root {
