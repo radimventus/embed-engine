@@ -37,6 +37,7 @@ import {
   formatLandIntentPill,
   formatPriorityImportance,
   hasMeasuredReadiness,
+  houseListLine,
   listSalesCanonicalProjects,
   resolveSalesActiveProjectId,
   resolveActiveHouse,
@@ -328,6 +329,77 @@ export function SalesStudioApp() {
                   Pro tento dům zatím nejsou žádné případy. Objeví se
                   používáním Client Experience.
                 </p>
+              ) : null}
+
+              {!preData ? (
+                <ul className="sales-desk__client-list">
+                  {visibleClients.map((client) => {
+                    const active = client.id === activeClient?.id;
+                    const primary = resolveActiveHouse(
+                      client,
+                      active && activeInterestHouseId !== null
+                        ? activeInterestHouseId
+                        : null,
+                    );
+                    const accepted = client.processingStatus === 'accepted';
+                    return (
+                      <li key={client.id}>
+                        <button
+                          type="button"
+                          className={`sales-desk__client${accepted ? ' sales-desk__client--accepted' : ' sales-desk__client--new'}${active ? ' sales-desk__client--active' : ''}`}
+                          onClick={() => selectClient(client.id)}
+                          aria-current={active ? 'true' : undefined}
+                        >
+                          <div className="sales-desk__client-head">
+                            <span className="sales-desk__client-name">
+                              {client.name}
+                              <span
+                                style={{
+                                  display: 'block',
+                                  textAlign: 'left',
+                                  fontSize: '0.75rem',
+                                  fontWeight: 400,
+                                }}
+                              >
+                                <a
+                                  className="sales-desk__contact-link"
+                                  href={`mailto:${client.contactEmail}`}
+                                >
+                                  {client.contactEmail}
+                                </a>
+                                {client.contactPhone ? (
+                                  <>
+                                    {' / '}
+                                    <a
+                                      className="sales-desk__contact-link"
+                                      href={phoneHref(client.contactPhone)}
+                                    >
+                                      {formatContactPhone(client.contactPhone)}
+                                    </a>
+                                  </>
+                                ) : null}
+                              </span>
+                            </span>
+                            <span className="sales-desk__intent-score">
+                              {formatIndexPripravenosti(primary.readinessScore)}
+                            </span>
+                          </div>
+                          <div className="sales-desk__client-sub">
+                            <p className="sales-desk__client-project">
+                              {houseListLine(primary)}
+                            </p>
+                            <span
+                              className={`sales-desk__accept-mark${accepted ? ' sales-desk__accept-mark--on' : ''}`}
+                              aria-hidden="true"
+                              data-testid="sales-accept-indicator"
+                              data-accepted={accepted ? 'true' : 'false'}
+                            />
+                          </div>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
               ) : null}
 
               {!preData && visibleClients.length === 0 ? (
