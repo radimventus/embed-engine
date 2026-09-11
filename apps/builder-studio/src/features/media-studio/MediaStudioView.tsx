@@ -128,6 +128,7 @@ export function MediaStudioView({
           selectedKey={selectedKey}
           onSelect={setSelectedKey}
           onChange={onChange}
+          onPersist={onPersist}
           onMetaSaved={refreshMeta}
           onOpenBulkUpload={() => openBulkUpload('images')}
           onPickFiles={(files) => openBulkUpload('images', files, false)}
@@ -452,6 +453,7 @@ function GalleryManager({
   selectedKey,
   onSelect,
   onChange,
+  onPersist,
   onMetaSaved,
   onOpenBulkUpload,
   onPickFiles,
@@ -463,6 +465,7 @@ function GalleryManager({
   readonly selectedKey: string | null;
   readonly onSelect: (key: string) => void;
   readonly onChange: (next: HousePackageEditSnapshot) => void;
+  readonly onPersist?: (next: HousePackageEditSnapshot) => void;
   readonly onMetaSaved: () => void;
   readonly onOpenBulkUpload: () => void;
   readonly onPickFiles: (files: File[]) => void;
@@ -484,7 +487,9 @@ function GalleryManager({
   });
 
   const setAsHero = (item: GalleryMediaItem) => {
-    onChange(session.setHeroRelativePath(item.path));
+    const next = session.setHeroRelativePath(item.path);
+    onChange(next);
+    onPersist?.(next);
   };
 
   const clearDrag = () => {

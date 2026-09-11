@@ -16,6 +16,10 @@ describe('Media Hero canonical persistence', () => {
 
     assert.match(mediaStudio, /const next = session\.setHeroRelativePath/);
     assert.match(mediaStudio, /onPersist\?\.\(next\)/);
+    assert.match(
+      mediaStudio,
+      /const setAsHero = \(item: GalleryMediaItem\)[\s\S]*?const next = session\.setHeroRelativePath\(item\.path\);[\s\S]*?onChange\(next\);[\s\S]*?onPersist\?\.\(next\);/,
+    );
     assert.match(canvas, /onPersist=\{onSave\}/);
   });
 });
