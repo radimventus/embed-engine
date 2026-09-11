@@ -784,3 +784,16 @@ button.sales-desk__house-chip {
     overflow-wrap: anywhere;
   }
 }
+
+/* TASK 74 recovery: original client list on desktop and tablet. */
+@media (min-width: 768px) {
+  .sales-desk__client-select-wrap {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .sales-desk__client-list {
+    display: none;
+  }
+}
